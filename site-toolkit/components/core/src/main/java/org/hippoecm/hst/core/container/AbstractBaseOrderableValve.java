@@ -32,6 +32,7 @@ import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.container.valves.AbstractOrderableValve;
 import org.hippoecm.hst.content.tool.ContentBeansTool;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -61,7 +62,10 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
 
     protected final static Logger log = LoggerFactory.getLogger(AbstractBaseOrderableValve.class);
 
-    private final static String PAGE_INFO_CACHEABLE = PageInfoRenderingValve.class.getName() + ".pageInfoCacheable";
+    private static final String PAGE_INFO_CACHEABLE = PageInfoRenderingValve.class.getName() + ".pageInfoCacheable";
+
+    private static final String IS_SEARCH_ENGINE_REQUEST_ATTR = AbstractBaseOrderableValve.class.getName()
+            + ".isSearchEngineRequest";
 
     protected ContainerConfiguration containerConfiguration;
     protected HstManager hstManager;
@@ -529,4 +533,22 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
         return true;
     }
 
+    /**
+     * Set the flag whether or not the request comes from a search engine.
+     * @param searchEngineRequest flag whether or not the request comes from a search engine
+     */
+    protected void setSearchEngineRequest(final boolean searchEngineRequest) {
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        requestContext.setAttribute(IS_SEARCH_ENGINE_REQUEST_ATTR, searchEngineRequest);
+    }
+
+    /**
+     * Return true if it was determined that the request comes from a search engine.
+     * @return true if it was determined that the request comes from a search engine
+     */
+    protected boolean isSearchEngineRequest() {
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        final Boolean searchEngineRequestFlag = (Boolean) requestContext.getAttribute(IS_SEARCH_ENGINE_REQUEST_ATTR);
+        return (searchEngineRequestFlag != null) && searchEngineRequestFlag.booleanValue();
+    }
 }

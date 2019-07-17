@@ -66,12 +66,18 @@ public class AggregationValve extends AbstractBaseOrderableValve {
 
     private List<ComponentWindowResponseAppender> componentWindowResponseAppenders;
 
+    private boolean asyncComponentRenderingEnabled = true;
+
     public void setAsynchronousComponentWindowRendererMap(Map<String, AsynchronousComponentWindowRenderer> asynchronousComponentWindowRendererMap) {
         this.asynchronousComponentWindowRendererMap = asynchronousComponentWindowRendererMap;
     }
 
     public void setComponentWindowResponseAppenders(List<ComponentWindowResponseAppender> componentWindowResponseAppenders) {
         this.componentWindowResponseAppenders = componentWindowResponseAppenders;
+    }
+
+    public void setAsyncComponentRenderingEnabled(final boolean asyncComponentRenderingEnabled) {
+        this.asyncComponentRenderingEnabled = asyncComponentRenderingEnabled;
     }
 
     List<ComponentWindowResponseAppender> getComponentWindowResponseAppenders() {
@@ -354,12 +360,13 @@ public class AggregationValve extends AbstractBaseOrderableValve {
             final Map<HstComponentWindow, HstResponse> responseMap)
             throws ContainerException {
         boolean redirectedOrForwarded = false;
+        final boolean asyncCompRenderingEnabled = isAsyncComponentRenderingEnabled();
 
         for (HstComponentWindow window : sortedComponentWindows) {
             HstRequest request = requestMap.get(window);
             HstResponse response = responseMap.get(window);
 
-            if (window.isVisible() && !isAsync(window, request)) {
+            if (window.isVisible() && (!asyncCompRenderingEnabled || !isAsyncComponentWindow(window, request))) {
                 getComponentInvoker().invokePrepareBeforeRender(requestContainerConfig, request, response);
             }
 
@@ -386,12 +393,14 @@ public class AggregationValve extends AbstractBaseOrderableValve {
             final Map<HstComponentWindow, HstResponse> responseMap)
             throws ContainerException {
 
+        final boolean asyncCompRenderingEnabled = isAsyncComponentRenderingEnabled();
+
         for (HstComponentWindow window : sortedComponentWindows) {
             HstRequest request = requestMap.get(window);
             HstResponse response = responseMap.get(window);
 
             if (window.isVisible()) {
-                if (isAsync(window, request)) {
+                if (asyncCompRenderingEnabled && isAsyncComponentWindow(window, request)) {
                     if (request.getAttribute(ASYNC_RENDERED_BY_ANCESTOR_FLAG_ATTR_NAME) == Boolean.TRUE) {
                         // we are done with this component because one of its ancestors is loaded async
                         continue;
@@ -440,6 +449,8 @@ public class AggregationValve extends AbstractBaseOrderableValve {
                                         final HstComponentWindow[] sortedComponentWindows, final Map<HstComponentWindow, HstRequest> requestMap,
                                         final Map<HstComponentWindow, HstResponse> responseMap) throws ContainerException {
 
+        final boolean asyncCompRenderingEnabled = isAsyncComponentRenderingEnabled();
+
         for (int i = sortedComponentWindows.length - 1; i >= 0; i--) {
             HstComponentWindow window = sortedComponentWindows[i];
             if (!window.isVisible()) {
@@ -447,7 +458,7 @@ public class AggregationValve extends AbstractBaseOrderableValve {
             }
 
             HstRequest request = requestMap.get(window);
-            if (isAsync(window, request)) {
+            if (asyncCompRenderingEnabled && isAsyncComponentWindow(window, request)) {
                 continue;
             }
             HstResponse response = responseMap.get(window);
@@ -612,6 +623,33 @@ public class AggregationValve extends AbstractBaseOrderableValve {
     }
 
     /**
+     * returns {@code true} if the asynchronous component window rendering is enabled. {@code true} by default.
+     * <P>
+     * <EM>Note</EM>: By default, it returns {@code false} if the request comes from the Channel Manager preview UI,
+     * if it is a Component Rendering URL request, or if the request comes from a Search Engine.
+     * Otherwise, returns {@code true} by default.
+     * @return {@code true} if the asynchronous component window rendering is enabled
+     */
+    protected boolean isAsyncComponentRenderingEnabled() {
+        final HstRequestContext requestContext = RequestContextProvider.get();
+
+        // in cms request context, we never load asynchronous
+        if (requestContext.isChannelManagerPreviewRequest()) {
+            return false;
+        }
+
+        if (requestContext.getBaseURL().getComponentRenderingWindowReferenceNamespace() != null) {
+            return false;
+        }
+
+        if (isSearchEngineRequest()) {
+            return false;
+        }
+
+        return asyncComponentRenderingEnabled;
+    }
+
+    /**
      * returns <code>true</code> when the component window is marked as async. When the component is async due to a
      * ancestor is async, we also set <code>{@link #ASYNC_RENDERED_BY_ANCESTOR_FLAG_ATTR_NAME}</code> is
      * <code>true</code> on the HstRequest to indicate async due to ancestor
@@ -620,14 +658,7 @@ public class AggregationValve extends AbstractBaseOrderableValve {
      * @param request
      * @return
      */
-    private boolean isAsync(final HstComponentWindow window, final HstRequest request) {
-        // in cms request context, we never load asynchronous
-        if (request.getRequestContext().isChannelManagerPreviewRequest()) {
-            return false;
-        }
-        if (request.getRequestContext().getBaseURL().getComponentRenderingWindowReferenceNamespace() != null) {
-            return false;
-        }
+    private boolean isAsyncComponentWindow(final HstComponentWindow window, final HstRequest request) {
         // check if there is already an async parent.
         HstComponentWindow parent = window.getParentWindow();
         while (parent != null) {
