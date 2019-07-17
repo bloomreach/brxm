@@ -2,7 +2,7 @@
   {
     "id": "hippo-perspective-dashboardperspective",
     "appIframeUrl": "http://localhost:4201",
-    "appPath": "hippo-perspective-dashboardperspective"
+    "appPath": "dashboard"
   },
   {
     "id": "hippo-perspective-channelmanagerperspective",
@@ -17,21 +17,21 @@
   {
     "id": "hippo-perspective-searchperspective",
     "appIframeUrl": "http://localhost:4201",
-    "appPath": "hippo-perspective-searchperspective"
+    "appPath": "search"
   },
   {
     "id": "hippo-perspective-experienceoptimizerperspective",
     "appIframeUrl": "http://localhost:4201",
-    "appPath": "hippo-perspective-experienceoptimizerperspective"
+    "appPath": "experienceoptimizer"
   },
   {
     "id": "hippo-perspective-adminperspective",
     "appIframeUrl": "http://localhost:4201",
-    "appPath": "hippo-perspective-adminperspective"
+    "appPath": "admin"
   },
   {
     "id": "hippo-perspective-formdataperspective",
     "appIframeUrl": "http://localhost:4201",
-    "appPath": "hippo-perspective-formdataperspective"
+    "appPath": "formdata"
   }
 ]

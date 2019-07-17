@@ -133,7 +133,7 @@ export class MenuStructureService {
         ]),
         new MenuItemContainer('SEO analytics', [
           new MenuItemLink('insights/seo-analytics/overall-performance', 'Overall performance'),
-          new MenuItemLink('insights/seo-analytics/Incremental', 'Incremental'),
+          new MenuItemLink('insights/seo-analytics/incremental', 'Incremental'),
           new MenuItemContainer('Targeted pages', [
             new MenuItemLink('insights/seo-analytics/targeted-pages/overview', 'Overview'),
             new MenuItemLink('insights/seo-analytics/targeted-pages/top-performing-pages', 'Top performing pages'),

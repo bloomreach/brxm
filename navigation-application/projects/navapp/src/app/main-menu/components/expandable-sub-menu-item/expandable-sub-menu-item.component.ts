@@ -30,9 +30,9 @@ import { MenuItem } from '../../models/menu-item.model';
 import { MenuStateService } from '../../services/menu-state.service';
 
 @Component({
-  selector: 'brna-expandable-menu-item',
-  templateUrl: 'expandable-menu-item.component.html',
-  styleUrls: ['expandable-menu-item.component.scss'],
+  selector: 'brna-expandable-sub-menu-item',
+  templateUrl: 'expandable-sub-menu-item.component.html',
+  styleUrls: ['expandable-sub-menu-item.component.scss'],
   animations: [
     trigger('slideInOut', [
       state('false', style({ height: '0' })),
@@ -41,7 +41,7 @@ import { MenuStateService } from '../../services/menu-state.service';
     ]),
   ],
 })
-export class ExpandableMenuItemComponent implements OnChanges {
+export class ExpandableSubMenuItemComponent implements OnChanges {
   private isChildMenuOpened = false;
 
   @Input()
@@ -70,15 +70,11 @@ export class ExpandableMenuItemComponent implements OnChanges {
     this.isChildMenuOpened = !this.isChildMenuOpened;
   }
 
-  isContainer(item: MenuItem): boolean {
-    return item instanceof MenuItemContainer;
-  }
-
-  isActive(item: MenuItem): boolean {
+  isChildMenuItemActive(item: MenuItem): boolean {
     return this.menuStateService.isMenuItemActive(item);
   }
 
-  getQaClass(item: MenuItem): string {
+  getQaClass(item: MenuItemLink): string {
     return this.qaHelperService.getMenuItemClass(item);
   }
 }

@@ -20,18 +20,24 @@ const apps = [
   {
     url: 'http://localhost:4201',
     paths: [
-      'category-ranking',
-      'all-category-pages',
+      'categories/category-ranking',
+      'categories/all-category-pages',
       'seo',
-      'merchandising-audiences',
-      'top-opportunities',
-      'improve-category-navigation',
+      'audiences/merchandising-audiences',
+      'insights/opportunities/top-opportunities',
+      'insights/opportunities/improve-category-navigation',
     ],
   },
   {
     url: 'http://localhost:4201/brsm',
     paths: [
-      'product-a-b-testing',
+      'insights/product-a-b-testing',
+      'insights/seo-analytics/overall-performance',
+      'insights/seo-analytics/incremental',
+      'insights/seo-analytics/targeted-pages/overview',
+      'insights/seo-analytics/targeted-pages/top-performing-pages',
+      'insights/seo-analytics/generated-pages/overview',
+      'insights/seo-analytics/generated-pages/top-performing-pages',
     ],
   },
 ];

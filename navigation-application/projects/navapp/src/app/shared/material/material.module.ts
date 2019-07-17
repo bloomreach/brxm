@@ -81,6 +81,7 @@ export class MaterialModule {
         'chevron_right',
         'search',
         'arrow_drop_down',
+        'arrow_right',
       ],
     };
 

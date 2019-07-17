@@ -71,13 +71,11 @@ export class NavConfigService {
   }
 
   init(): Promise<void> {
-
     const loginPromises = this.settingsService.appSettings.loginResources.map(
       resource => this.loginSilently(resource),
     );
 
     return Promise.all(loginPromises).then(results => {
-
       if (results.includes(false)) {
         // At least one iframe failed to login
         // For now just throw an error, will be handled properly when we implement error handling and timeouts

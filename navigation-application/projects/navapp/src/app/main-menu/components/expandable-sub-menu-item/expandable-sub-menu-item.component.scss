@@ -31,14 +31,14 @@
   cursor: pointer;
   display: flex;
   font-size: $menu-drawer-font-size;
-  justify-content: space-between;
+  justify-content: flex-start;
   margin: 0;
   overflow: hidden;
-  padding: 0 10px 5px 0;
   position: relative;
 
   .mat-icon {
     color: $menu-icon-color;
+    width: 17px;
   }
 
   &:hover,
@@ -57,10 +57,10 @@
   }
 
   .item:first-child {
-    padding-top: 10px;
+    padding-top: 5px;
   }
 
   .item:last-child {
-    padding-bottom: 10px;
+    padding-bottom: 5px;
   }
 }
