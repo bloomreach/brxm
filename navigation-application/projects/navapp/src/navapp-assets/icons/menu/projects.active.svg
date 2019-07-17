@@ -1,16 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
 <svg version="1.1" id="icons" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
 	 viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#00B5E2;}
+	.st1{fill:#FFFFFF;}
+</style>
 <g>
-	<linearGradient id="projects-gradient" gradientUnits="userSpaceOnUse" x1="52.0833" y1="-5.456968e-12" x2="0.6024" y2="51.4809">
-		<stop offset="0" style="stop-color:#00ACFB"/>
-		<stop offset="0.3" style="stop-color:#00B5E2"/>
-		<stop offset="1" style="stop-color:#F674F7"/>
-	</linearGradient>
-	<path style="fill:url(#projects-gradient);" d="M37.5,4.2V2.1h-8.3V0h-8.3l0,2.1h-8.3v2.1H4.2V50h41.7V4.2H37.5z M14.6,4.2h8.3V2.1h4.2l0,2.1h8.3v4.2H14.6
+	<path class="st0" d="M37.5,4.2V2.1h-8.3V0h-8.3l0,2.1h-8.3v2.1H4.2V50h41.7V4.2H37.5z M14.6,4.2h8.3V2.1h4.2l0,2.1h8.3v4.2H14.6
 		V4.2z M41.7,45.8H8.3V8.3h4.2v2.1h25V8.3h4.2V45.8z"/>
-	<rect style="fill:#FFFFFF;" x="14.6" y="20.8" width="20.8" height="2.1"/>
-	<rect style="fill:#FFFFFF;" x="14.6" y="29.2" width="20.8" height="2.1"/>
-	<rect style="fill:#FFFFFF;" x="14.6" y="37.5" width="14.6" height="2.1"/>
+	<rect x="14.6" y="20.8" class="st1" width="20.8" height="2.1"/>
+	<rect x="14.6" y="29.2" class="st1" width="20.8" height="2.1"/>
+	<rect x="14.6" y="37.5" class="st1" width="14.6" height="2.1"/>
 </g>
 </svg>
