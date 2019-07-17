@@ -15,23 +15,16 @@
   -->
 
 <h2 class="header" (click)="toggle()">
+  <mat-icon svgIcon="arrow_right" [class.hidden]="isOpened"></mat-icon>
+  <mat-icon svgIcon="arrow_drop_down" [class.hidden]="!isOpened"></mat-icon>
+
   {{ config?.caption }}
-  <mat-icon svgIcon="expand_more" [class.hidden]="isOpened"></mat-icon>
-  <mat-icon svgIcon="expand_less" [class.hidden]="!isOpened"></mat-icon>
 </h2>
 <div [@slideInOut]="isOpened" class="items-wrapper">
-  <ng-container *ngFor="let item of config.children">
-    <brna-menu-item-link
-      *ngIf="!isContainer(item)"
-      [config]="item"
-      [active]="isActive(item)"
-      [ngClass]="getQaClass(item)">
-    </brna-menu-item-link>
-    <brna-expandable-sub-menu-item
-      *ngIf="isContainer(item)"
-      [config]="item"
-      [active]="isActive(item)"
-      [ngClass]="getQaClass(item)">
-    </brna-expandable-sub-menu-item>
-  </ng-container>
+  <brna-menu-item-link *ngFor="let item of config.children"
+                       [config]="item"
+                       [active]="isChildMenuItemActive(item)"
+                       class="item"
+                       [ngClass]="getQaClass(item)">
+  </brna-menu-item-link>
 </div>
