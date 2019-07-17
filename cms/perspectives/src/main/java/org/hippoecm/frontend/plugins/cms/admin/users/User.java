@@ -345,7 +345,7 @@ public class User implements Comparable<User>, IClusterable {
                 passwordLastModified = p.getDate();
             } else if (name.equals(PROP_SYSTEM)) {
                 system = p.getBoolean();
-            } else {
+            } else if (!p.isMultiple()){
                 properties.put(name, p.getString());
             }
         }
