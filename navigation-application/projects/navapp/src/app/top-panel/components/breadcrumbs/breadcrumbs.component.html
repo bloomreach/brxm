@@ -14,18 +14,22 @@
   limitations under the License.
   -->
 
-<ng-template ngFor let-breadcrumb [ngForOf]="breadcrumbs$ | async" let-first="first" let-last="last">
-  <div *ngIf="!last" class="entry">
+<ng-template ngFor let-breadcrumb [ngForOf]="breadcrumbs$ | async" let-first="first" let-last="last" let-i="index">
+  <div *ngIf="!last"
+       class="entry qa-breadcrumb-level-{{i + 1}}">
     <span>{{ breadcrumb }}</span>
     <mat-icon svgIcon="chevron_right"></mat-icon>
   </div>
-  <div *ngIf="last" (click)="onLastBreadcrumbClicked()" matRipple class="entry last">
+  <div *ngIf="last"
+       (click)="onLastBreadcrumbClicked()"
+       matRipple
+       class="entry last qa-breadcrumb-level-{{i + 1}} qa-breadcrumb-last">
     <span>{{ breadcrumb }}</span>
   </div>
 </ng-template>
 
 <div *ngIf="suffix$ | async as suffix"
-     class="entry suffix">
+     class="entry suffix qa-breadcrumb-suffix">
   <mat-icon svgIcon="chevron_right"></mat-icon>
   <span>{{ suffix }}</span>
 </div>
