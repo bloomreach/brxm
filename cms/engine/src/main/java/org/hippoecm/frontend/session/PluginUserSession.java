@@ -64,6 +64,7 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsContextService;
 import org.onehippo.cms7.services.cmscontext.CmsInternalCmsContextService;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.onehippo.cms7.utilities.servlet.HttpSessionBoundJcrSessionHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -393,6 +394,8 @@ public class PluginUserSession extends UserSession {
                         return;
                     }
                     cmsContextService.detach(getHttpSession());
+                    // make sure to logout all cached jcr sessions in the cms http session
+                    HttpSessionBoundJcrSessionHolder.clearAllBoundJcrSessions("", getHttpSession());
                 }
             }
         } finally {
