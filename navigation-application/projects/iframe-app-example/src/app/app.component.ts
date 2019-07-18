@@ -88,7 +88,14 @@ export class AppComponent implements OnInit {
   }
 
   get selectedSiteId(): number {
-    return +this.cookiesService.get(SITE_COOKIE_NAME);
+    let siteId = +this.cookiesService.get(SITE_COOKIE_NAME);
+
+    if (!siteId) {
+      siteId = mockSites[0].id;
+      this.selectedSiteId = siteId;
+    }
+
+    return siteId;
   }
 
   set selectedSiteId(value: number) {
