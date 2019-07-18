@@ -302,15 +302,9 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
                     error(translate("error-setting-password"));
                     log.warn("Setting the password by user '{}' failed.", username);
                 } else {
-                    log.info("Password changed by user '{}'. Logging in again to update the CMS session credentials.",
-                            username);
-                    try {
-                        UserSession.get().login(username, newPassword);
-                        // create a new user, otherwise it will use the session of the previous login
-                        user = new User(username);
-                    } catch (final LoginException e) {
-                        log.warn("User '{}' changed its password but failed to automatically login again.", username, e);
-                    }
+                    log.info("Password changed by user '{}'.", username);
+                    // create a new user to refresh properties like hipposys:passwordlastmodified
+                    user = new User(username);
                 }
             } else {
                 feedbackLevel = "";
