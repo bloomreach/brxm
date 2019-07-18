@@ -34,7 +34,10 @@
     },
     hideMask () {
       Hippo.AppToNavApp.hideMask();
-    }
+    },
+    updateNavLocation(location) {
+      Hippo.AppToNavApp.updateNavLocation(location);
+    },
   };
 
   if (window.parent === window) { // cms is top window
