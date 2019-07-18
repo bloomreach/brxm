@@ -60,24 +60,24 @@ export interface ChildApi {
   getConfig?: () => ChildConfig;
   getNavItems?: () => NavItem[];
   getSites?: () => Site[];
-  getSelectedSite?: () => number;
+  getSelectedSite?: () => SelectedSite;
   beforeNavigation?: () => boolean;
   onUserActivity?: () => void;
   logout?: () => void;
   navigate?: (location: NavLocation) => void;
-  updateSite?: (siteId?: number) => void;
+  updateSelectedSite?: (site?: SelectedSite) => void;
 }
 
 export interface ChildPromisedApi {
   getConfig?: () => Promise<ChildConfig>;
   getNavItems?: () => Promise<NavItem[]>;
   getSites?: () => Promise<Site[]>;
-  getSelectedSite?: () => Promise<number>;
+  getSelectedSite?: () => Promise<SelectedSite>;
   beforeNavigation?: () => Promise<boolean>;
   onUserActivity?: () => Promise<void>;
   logout?: () => Promise<void>;
   navigate?: (location: NavLocation) => Promise<void>;
-  updateSite?: (siteId?: number) => Promise<void>;
+  updateSelectedSite?: (site?: SelectedSite) => Promise<void>;
 }
 
 export interface NavItem {
@@ -97,7 +97,13 @@ export interface NavLocation {
 }
 
 export interface Site {
-   id: number;
+   siteId: number;
+   accountId: number;
    name: string;
    subGroups?: Site[];
  }
+
+export interface SelectedSite {
+  siteId: number;
+  accountId: number;
+}
