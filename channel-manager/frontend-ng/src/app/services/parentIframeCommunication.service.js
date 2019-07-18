@@ -41,7 +41,7 @@ class ParentIframeCommunicationService {
   }
 
   _connectToParent() {
-    const parentOrigin = window.location.hostname;
+    const parentOrigin = `${window.location.protocol}//${window.location.hostname}:${window.location.port}`;
     const methods = {
       navigate() {
       },
