@@ -41,8 +41,7 @@ class ParentIframeCommunicationService {
   }
 
   _connectToParent() {
-    // TODO(mrop) Supply parentOrigin with SSO mechanism
-    const parentOrigin = '*';
+    const parentOrigin = window.location.hostname;
     const methods = {
       navigate() {
       },
