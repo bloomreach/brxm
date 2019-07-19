@@ -33,14 +33,14 @@ import org.slf4j.LoggerFactory;
  * <P>
  * This advice leaves logs on each execution of {@link ResourceResolver} retrieving backend data in the the format:
  * <P>
- * <CODE>space: {}, op: {}, time: {}ms, method: {}, sc: {}, path: {}, params: {}</CODE>
+ * <CODE>space:{}, op:{}, t:{}ms, verb:{}, sc:{}, path:{}, params:{}</CODE>
  * <P>
  * Each attribute represents the following:
  * <UL>
  * <LI><CODE>space</CODE>: The resource space name.
  * <LI><CODE>op</CODE>: The invoked operation name of the {@link ResourceResolver}.
- * <LI><CODE>time</CODE>: The response time in milliseconds on the invocation.
- * <LI><CODE>method</CODE>: The HTTP method name suggested by the given {@link ExchangeHint} if available.
+ * <LI><CODE>t</CODE>: The response time in milliseconds on the invocation.
+ * <LI><CODE>verb</CODE>: The HTTP verb (e.g, "GET", "POST", etc.) suggested by the given {@link ExchangeHint} if available.
  * <LI><CODE>sc</CODE>: The response status code from the backend, retrieved through the given {@link ExchangeHint} if available.
  * <LI><CODE>path</CODE>: The resource path.
  * <LI><CODE>params</CODE>: The path parameters interpolated at runtime.
@@ -50,21 +50,21 @@ public class ResourceResolverProfiler {
 
     private static Logger log = LoggerFactory.getLogger(ResourceResolverProfiler.class);
 
-    private static final String LOG_FORMAT = "space: {}, op: {}, time: {}ms, method: {}, sc: {}, path: {}, params: {}";
+    private static final String LOG_FORMAT = "space:{}, op:{}, t:{}ms, verb:{}, sc:{}, path:{}, params:{}";
 
     private static final String TASK_NAME = "crispResResolver";
 
     public Object profile(ProceedingJoinPoint call) throws Throwable {
         final String resourceSpace = ResourceServiceBrokerRequestContext.getCurrentResourceSpace();
 
-        final String methodName = call.getSignature().getName();
+        final String opName = call.getSignature().getName();
         final Object[] args = call.getArgs();
         final int lastArgIndex = args.length - 1;
 
         final ExchangeHint exchangeHint = (lastArgIndex != -1 && args[lastArgIndex] instanceof ExchangeHint)
                 ? (ExchangeHint) args[lastArgIndex]
                 : null;
-        final String httpMethod = (exchangeHint != null)
+        final String httpVerb = (exchangeHint != null)
                 ? StringUtils.defaultString(exchangeHint.getMethodName(), "GET")
                 : "GET";
 
@@ -85,21 +85,20 @@ public class ResourceResolverProfiler {
             retValue = call.proceed();
         } finally {
             if (task != null) {
+                task.stop();
+
                 final int statusCode = (exchangeHint != null) ? exchangeHint.getResponseStatusCode() : 0;
+                log.info(LOG_FORMAT, resourceSpace, opName, task.getDurationTimeMillis(), httpVerb, statusCode,
+                        resPath, pathParams);
 
                 if (hdcStarted) {
                     task.setAttribute("space", resourceSpace);
-                    task.setAttribute("op", methodName);
-                    task.setAttribute("method", httpMethod);
+                    task.setAttribute("op", opName);
+                    task.setAttribute("verb", httpVerb);
                     task.setAttribute("sc", statusCode);
                     task.setAttribute("path", resPath);
                     task.setAttribute("params", pathParams);
                 }
-
-                task.stop();
-
-                log.info(LOG_FORMAT, resourceSpace, methodName, task.getDurationTimeMillis(), httpMethod, statusCode,
-                        resPath, pathParams);
             }
         }
 
