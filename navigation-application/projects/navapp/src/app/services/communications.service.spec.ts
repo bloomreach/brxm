@@ -47,10 +47,12 @@ describe('CommunicationsService', () => {
   const clientAppServiceMock = jasmine.createSpyObj('ClientAppService', [
     'getApp',
     'activateApplication',
+    'logoutApps',
   ]);
 
   const navConfigServiceMock = jasmine.createSpyObj('NavConfigService', [
     'findNavItem',
+    'logout',
   ]);
 
   const menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
@@ -159,13 +161,14 @@ describe('CommunicationsService', () => {
 
     describe('logout', () => {
       it('should logout all apps', () => {
-        communicationsService.logout();
-
-        clientAppService.apps$.subscribe(apps => {
-          apps.forEach(app => {
-            expect(app.api.logout).toHaveBeenCalled();
-          });
-        });
+        clientAppServiceMock.logoutApps.and.returnValue(Promise.resolve());
+        communicationsService.logout()
+          .then(
+            () => expect(navConfigService.logout).toHaveBeenCalled(),
+          )
+          .catch(
+            () => fail('Expected navConfigService.logout to have been called'),
+          );
       });
     });
   });
