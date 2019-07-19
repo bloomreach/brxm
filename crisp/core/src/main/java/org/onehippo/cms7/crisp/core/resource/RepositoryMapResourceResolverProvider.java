@@ -46,6 +46,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.util.InMemoryResource;
 
 /**
@@ -56,6 +57,10 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
         implements InitializingBean, DisposableBean, ApplicationContextAware {
 
     static Logger log = LoggerFactory.getLogger(RepositoryMapResourceResolverProvider.class);
+
+    private static final String PROFILE_BEAN_DEFS_RESOURCE_PATH = "/"
+            + RepositoryMapResourceResolverProvider.class.getPackage().getName().replace(".", "/")
+            + "/RepositoryMapResourceResolverProvider-profile.xml";
 
     /**
      * Spring ApplicationContext which instantiates this bean.
@@ -314,6 +319,7 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
         GenericApplicationContext childContext = new GenericApplicationContext(applicationContext);
         XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(childContext);
         xmlReader.loadBeanDefinitions(new InMemoryResource(beanDefs));
+        xmlReader.loadBeanDefinitions(new ClassPathResource(PROFILE_BEAN_DEFS_RESOURCE_PATH));
 
         Properties props = new Properties();
 
