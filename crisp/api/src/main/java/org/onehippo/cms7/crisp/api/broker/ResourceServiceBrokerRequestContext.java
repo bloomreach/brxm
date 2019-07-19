@@ -22,9 +22,26 @@ import javax.servlet.ServletRequest;
  */
 public class ResourceServiceBrokerRequestContext {
 
-    private static ThreadLocal<ServletRequest> tlRequest = new ThreadLocal<ServletRequest>();
+    private static ThreadLocal<String> tlResourceSpace = new ThreadLocal<>();
+    private static ThreadLocal<ServletRequest> tlRequest = new ThreadLocal<>();
 
     private ResourceServiceBrokerRequestContext() {
+    }
+
+    /**
+     * Return the current resource space name in the {@link ResourceServiceBroker} invocation.
+     * @return the current resource space name
+     */
+    public static String getCurrentResourceSpace() {
+        return tlResourceSpace.get();
+    }
+
+    /**
+     * Set the current resource space name in the {@link ResourceServiceBroker} invocation.
+     * @param servletRequest the current resource space name
+     */
+    public static void setCurrentResourceSpace(String resourceSpace) {
+        tlResourceSpace.set(resourceSpace);
     }
 
     /**
@@ -55,6 +72,7 @@ public class ResourceServiceBrokerRequestContext {
      * Clear all the attributes stored for the current request context.
      */
     public static void clear() {
+        tlResourceSpace.remove();
         tlRequest.remove();
     }
 
