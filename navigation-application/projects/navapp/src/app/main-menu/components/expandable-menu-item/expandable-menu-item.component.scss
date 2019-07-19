@@ -23,6 +23,7 @@
   &.active .header,
   &.active .header .mat-icon {
     color: $menu-active-text-color;
+    font-weight: $font-weight-semibold;
   }
 }
 
@@ -43,14 +44,15 @@
 
   &:hover,
   &:hover .mat-icon {
-    color: $white;
+    color: $menu-drawer-menu-hover-text-color;
+    font-weight: $font-weight-semibold;
   }
 }
 
 .items-wrapper {
   background-color: $menu-sub-item-bg;
   overflow: hidden;
-  padding: 0 10px;
+  padding: 0 5px 0 10px;
 
   > .item {
     font-size: $menu-sub-menu-font-size;

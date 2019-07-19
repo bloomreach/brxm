@@ -23,6 +23,7 @@
   &.active .header,
   &.active .header .mat-icon {
     color: $menu-active-text-color;
+    font-weight: $font-weight-semibold;
   }
 }
 
@@ -30,7 +31,7 @@
   align-items: center;
   cursor: pointer;
   display: flex;
-  font-size: $menu-drawer-font-size;
+  font-size: $menu-sub-menu-font-size;
   justify-content: flex-start;
   margin: 0;
   overflow: hidden;
@@ -43,14 +44,15 @@
 
   &:hover,
   &:hover .mat-icon {
-    color: $white;
+    color: $menu-drawer-menu-hover-text-color;
+    font-weight: $font-weight-semibold;
   }
 }
 
 .items-wrapper {
   background-color: $menu-sub-item-bg;
   overflow: hidden;
-  padding: 0 10px;
+  padding: 0 5px 0 25px;
 
   > .item {
     font-size: $menu-sub-menu-font-size;
