@@ -26,11 +26,11 @@ import {
   Output,
 } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material';
-
-import { Site } from '../../../models/dto/site.dto';
+import { Site } from '@bloomreach/navapp-communication';
 
 interface SiteFlatNode {
-  id: number;
+  accountId: number;
+  siteId: number;
   expandable: boolean;
   name: string;
   level: number;
@@ -96,11 +96,11 @@ export class SiteSelectionSidePanelComponent implements OnChanges {
   }
 
   onNodeClicked(node: SiteFlatNode): void {
-    this.selectedSiteChange.emit({ id: node.id, name: node.name });
+    this.selectedSiteChange.emit({ accountId: node.accountId, siteId: node.siteId, name: node.name });
   }
 
   isActive(node: Site): boolean {
-    return this.selectedSite ? node.id === this.selectedSite.id : false;
+    return this.selectedSite ? (node.accountId === this.selectedSite.accountId && node.siteId === this.selectedSite.siteId) : false;
   }
 
   onSearchInputKeyUp(): void {
@@ -119,7 +119,7 @@ export class SiteSelectionSidePanelComponent implements OnChanges {
     }
 
     const selectedNode = this.treeControl.dataNodes.find(
-      x => x.id === this.selectedSite.id,
+      x => x.accountId === this.selectedSite.accountId && x.siteId === this.selectedSite.siteId,
     );
 
     if (!selectedNode) {
@@ -159,7 +159,8 @@ export class SiteSelectionSidePanelComponent implements OnChanges {
 
   private transformer(node: Site, level: number): SiteFlatNode {
     return {
-      id: node.id,
+      accountId: node.accountId,
+      siteId: node.siteId,
       expandable: !!node.subGroups && node.subGroups.length > 0,
       name: node.name,
       level,

@@ -21,13 +21,14 @@ import {
   ChildConnectConfig,
   ChildPromisedApi,
   connectToChild,
+  Site,
+  SiteId,
 } from '@bloomreach/navapp-communication';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import { ConfigResource } from '../models/dto/config-resource.dto';
 import { NavItem } from '../models/dto/nav-item.dto';
-import { Site } from '../models/dto/site.dto';
 
 import { GlobalSettingsService } from './global-settings.service';
 
@@ -36,7 +37,7 @@ const filterOutEmptyArray = items => !!(Array.isArray(items) && items.length);
 interface Configuration {
   navItems: NavItem[];
   sites: Site[];
-  selectedSiteId: number;
+  selectedSiteId: SiteId;
 }
 
 @Injectable({
@@ -199,9 +200,9 @@ export class NavConfigService {
     return this.http.get<T>(url).toPromise();
   }
 
-  private findSite(sites: Site[], siteId: number): Site {
+  private findSite(sites: Site[], siteId: SiteId): Site {
     for (const site of sites) {
-      if (site.id === siteId) {
+      if (site.accountId === siteId.accountId && site.siteId === siteId.siteId) {
         return site;
       }
 

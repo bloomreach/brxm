@@ -33,16 +33,14 @@ describe('NavConfigService', () => {
   let navConfigService: NavConfigService;
   let globalSettingsService: GlobalSettingsService;
 
-  const loginResourcesMock = [];
-
   const globalSettingsServiceMock = globalSettings;
 
-  const selectedSiteId = 1;
+  const selectedSite = { accountId: 1, siteId: 2 };
 
   const childApiMock = jasmine.createSpyObj('childApi', {
     getNavItems: Promise.resolve(navConfig),
     getSites: Promise.resolve(mockSites),
-    getSelectedSite: Promise.resolve(selectedSiteId),
+    getSelectedSite: Promise.resolve(selectedSite),
   });
 
   const connectionMock = jasmine
@@ -91,7 +89,8 @@ describe('NavConfigService', () => {
         expect(items).toEqual(mockSites);
       });
       navConfigService.selectedSite$.subscribe(site => {
-        expect(site.id).toEqual(selectedSiteId);
+        expect(site.accountId).toEqual(1);
+        expect(site.siteId).toEqual(2);
       });
 
       httpTestingController.verify();

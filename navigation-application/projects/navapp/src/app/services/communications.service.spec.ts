@@ -67,9 +67,9 @@ describe('CommunicationsService', () => {
   ]);
 
   beforeEach(() => {
-    const parentApiMock = jasmine.createSpyObj('parentApi', {
+    const childApiMock = jasmine.createSpyObj('parentApi', {
       navigate: Promise.resolve(),
-      updateSite: Promise.resolve(),
+      updateSelectedSite: Promise.resolve(),
       logout: Promise.resolve(),
     });
 
@@ -78,22 +78,19 @@ describe('CommunicationsService', () => {
       new ClientApp('another-perspective'),
     ];
 
-    clientApps[0].api = { ...parentApiMock };
-    clientApps[1].api = { ...parentApiMock };
+    clientApps[0].api = { ...childApiMock };
+    delete clientApps[0].api.updateSelectedSite;
+    clientApps[1].api = { ...childApiMock };
 
-    clientAppServiceMock.getApp.and.returnValue(clientApps[0]);
-    clientAppServiceMock.activeApp = clientApps[0];
+    clientAppServiceMock.getApp.and.returnValue(clientApps[1]);
+    clientAppServiceMock.activeApp = clientApps[1];
     clientAppServiceMock.apps$ = of(clientApps);
-    clientAppServiceMock.appsWithSitesSupport = [
-      clientApps[0],
-      {
-        id: 'test2',
-        api: jasmine.createSpyObj('parentApi', {
-          navigate: Promise.resolve(),
-          updateSite: Promise.resolve(),
-        }),
-      },
-    ];
+
+    navConfigServiceMock.findNavItem.and.returnValue({
+      id: 'some-id',
+      appIframeUrl: 'some-perspective',
+      appPath: 'some-path',
+    });
 
     menuStateServiceMock.activeMenuItem$ = activeMenuItem$;
     activeMenuItem$.next({
@@ -137,25 +134,22 @@ describe('CommunicationsService', () => {
       }));
     });
 
-    describe('updateSite', () => {
+    describe('updateSelectedSite', () => {
       it('should get the client app and communicate the site id', () => {
-        communicationsService.updateSite(1337);
+        communicationsService.updateSelectedSite({ accountId: 10, siteId: 1337 });
         expect(
-          clientAppService.getApp('testId').api.updateSite,
-        ).toHaveBeenCalledWith(1337);
+          clientAppService.getApp('testId').api.updateSelectedSite,
+        ).toHaveBeenCalledWith({ accountId: 10, siteId: 1337 });
       });
 
       it('should trigger to all supporting client apps to update their site', fakeAsync(() => {
-        communicationsService.updateSite(1337);
+        communicationsService.updateSelectedSite({ accountId: 10, siteId: 1337 });
 
         tick();
 
         expect(
-          clientAppService.appsWithSitesSupport[0].api.updateSite,
+          clientApps[1].api.updateSelectedSite,
         ).toHaveBeenCalledTimes(1);
-        expect(
-          clientAppService.appsWithSitesSupport[1].api.updateSite,
-        ).toHaveBeenCalled();
       }));
     });
 

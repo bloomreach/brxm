@@ -44,12 +44,6 @@ export class ClientAppService {
     return this.allConnectionsEstablished.asObservable();
   }
 
-  get appsWithSitesSupport(): ClientApp[] {
-    const apps = this.apps.value;
-
-    return apps.filter(x => this.doesAppSupportSites(x));
-  }
-
   get activeApp(): ClientApp {
     const activeAppId = this.activeAppId.value;
 
@@ -142,6 +136,6 @@ export class ClientAppService {
   }
 
   private doesAppSupportSites(app: ClientApp): boolean {
-    return !!(app && app.api && app.api.updateSite);
+    return !!(app && app.api && app.api.updateSelectedSite);
   }
 }
