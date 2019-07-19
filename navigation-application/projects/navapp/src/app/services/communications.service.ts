@@ -15,10 +15,11 @@
  */
 
 import { Injectable } from '@angular/core';
-import { NavLocation, ParentApi } from '@bloomreach/navapp-communication';
+import { NavLocation, ParentApi, SiteId } from '@bloomreach/navapp-communication';
 import { Subject } from 'rxjs';
-import { map, takeUntil, tap } from 'rxjs/operators';
+import { takeUntil, tap } from 'rxjs/operators';
 
+import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { MenuItemLink } from '../main-menu/models/menu-item-link.model';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
@@ -31,7 +32,7 @@ import { OverlayService } from './overlay.service';
   providedIn: 'root',
 })
 export class CommunicationsService {
-  private appIds: string[] = [];
+  private apps: ClientApp[] = [];
   private activeMenuItem: MenuItemLink;
   private unsubscribe = new Subject();
 
@@ -43,10 +44,8 @@ export class CommunicationsService {
     private overlay: OverlayService,
   ) {
     clientAppService.apps$.pipe(
-      // url === id for client applications
-      map(apps => apps.map(x => x.url)),
       takeUntil(this.unsubscribe),
-    ).subscribe(appIds => (this.appIds = appIds));
+    ).subscribe(apps => (this.apps = apps));
 
     menuStateService.activeMenuItem$.pipe(
       takeUntil(this.unsubscribe),
@@ -64,22 +63,23 @@ export class CommunicationsService {
       navigate: (location: NavLocation) => {
         // We need to use caller's appId but instead (for first implementation) we just look for the first
         // app's id which contains the specified path
-        const appId = this.findAppId(location.path);
+        const app = this.findApp(location.path);
 
-        if (!appId) {
+        if (!app) {
           console.error(
             `Cannot find associated menu item for Navlocation:{${JSON.stringify(
               location,
             )}}`,
           );
+          return;
         }
 
-        this.menuStateService.activateMenuItem(appId, location.path);
+        this.menuStateService.activateMenuItem(app.id, location.path);
         this.breadcrumbsService.setSuffix(location.breadcrumbLabel);
 
         // Current app can be different in that moment it's better to use caller app's id
-        if (appId !== this.clientAppService.activeApp.id) {
-          this.navigate(appId, location.path);
+        if (app.id !== this.clientAppService.activeApp.id) {
+          this.navigate(app.id, location.path);
         }
       },
       updateNavLocation: (location: NavLocation) => {
@@ -118,19 +118,11 @@ export class CommunicationsService {
     return this.navigate(this.activeMenuItem.appId, this.activeMenuItem.appPath);
   }
 
-  updateSite(siteId: number): Promise<void[]> {
-    return this.clientAppService.activeApp.api.updateSite(siteId).then(() => {
-      const activeApp = this.clientAppService.activeApp;
-
-      const updatePromises = this.clientAppService.appsWithSitesSupport.map(
-        app => {
-          if (app === activeApp) {
-            return;
-          }
-
-          return app.api.updateSite();
-        },
-      );
+  updateSelectedSite(siteId: SiteId): Promise<void[]> {
+    return this.clientAppService.activeApp.api.updateSelectedSite(siteId).then(() => {
+      const updatePromises = this.apps
+        .filter(app => app.api.updateSelectedSite && app !== this.clientAppService.activeApp)
+        .map(app => app.api.updateSelectedSite());
 
       return Promise.all(updatePromises);
     });
@@ -142,9 +134,9 @@ export class CommunicationsService {
     );
   }
 
-  private findAppId(path: string): string {
-    return this.appIds.find(
-      appId => !!this.navConfigService.findNavItem(appId, path),
+  private findApp(path: string): ClientApp {
+    return this.apps.find(
+      app => !!this.navConfigService.findNavItem(app.id, path),
     );
   }
 }

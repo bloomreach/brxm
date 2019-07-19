@@ -56,55 +56,67 @@ export const navigationConfiguration: NavItem[] = apps.reduce((navItems, app) =>
 
 export const mockSites: Site[] = [
   {
-    id: 0x001,
+    siteId: -1,
+    accountId: 1,
     name: 'www.company.com',
     subGroups: [
       {
-        id: 0x011,
+        siteId: 1,
+        accountId: 1,
         name: 'UK & Germany',
         subGroups: [
           {
-            id: 0x111,
+            siteId: 2,
+            accountId: 1,
             name: 'Office UK',
           },
           {
-            id: 0x211,
+            siteId: 3,
+            accountId: 1,
             name: 'Office DE',
           },
         ],
       },
       {
-        id: 0x021,
+        siteId: 4,
+        accountId: 1,
         name: 'Europe',
         subGroups: [
           {
-            id: 0x121,
+            siteId: 5,
+            accountId: 1,
             name: 'Office UK',
           },
           {
-            id: 0x221,
+            siteId: 6,
+            accountId: 1,
             name: 'Office DE',
           },
           {
-            id: 0x321,
+            siteId: 7,
+            accountId: 1,
             name: 'Office FR',
           },
         ],
       },
       {
-        id: 0x031,
+        siteId: 8,
+        accountId: 1,
         name: 'All sites',
         subGroups: [
           {
-            id: 0x131,
+            siteId: 9,
+            accountId: 1,
             name: 'Office UK',
           },
           {
-            id: 0x231,
+            siteId: 10,
+            accountId: 1,
             name: 'Office DE',
           },
           {
-            id: 0x331,
+            siteId: 11,
+            accountId: 1,
             name: 'Office FR',
           },
         ],
@@ -112,97 +124,120 @@ export const mockSites: Site[] = [
     ],
   },
   {
-    id: 0x002,
+    siteId: -1,
+    accountId: 2,
     name: 'An example company that has a very long name and a subgroup with many items',
     subGroups: [
       {
-        id: 0x012,
+        siteId: 12,
+        accountId: 2,
         name: 'Sub company 001',
       },
       {
-        id: 0x022,
+        siteId: 13,
+        accountId: 2,
         name: 'Sub company 002',
       },
       {
-        id: 0x032,
+        siteId: 14,
+        accountId: 2,
         name: 'Sub company 003',
       },
       {
-        id: 0x042,
+        siteId: 15,
+        accountId: 2,
         name: 'Sub company 004',
       },
       {
-        id: 0x052,
+        siteId: 16,
+        accountId: 2,
         name: 'Sub company 005',
       },
       {
-        id: 0x062,
+        siteId: 17,
+        accountId: 2,
         name: 'Sub company 006',
       },
       {
-        id: 0x072,
+        siteId: 18,
+        accountId: 2,
         name: 'Sub company 007',
       },
       {
-        id: 0x082,
+        siteId: 19,
+        accountId: 2,
         name: 'Sub company 008',
       },
       {
-        id: 0x0A2,
+        siteId: 20,
+        accountId: 2,
         name: 'Sub company 009',
       },
       {
-        id: 0x0B2,
+        siteId: 21,
+        accountId: 2,
         name: 'Sub company 010',
       },
       {
-        id: 0x0C2,
+        siteId: 22,
+        accountId: 2,
         name: 'Sub company 011',
       },
       {
-        id: 0x0D2,
+        siteId: 23,
+        accountId: 2,
         name: 'Sub company 012',
       },
     ],
   },
   {
-    id: 0x003,
+    siteId: -1,
+    accountId: 3,
     name: 'Name\twith\ttabs',
   },
   {
-    id: 0x004,
+    siteId: -1,
+    accountId: 4,
     name: '٩(̾●̮̮̃̾•̃̾)۶',
   },
   {
-    id: 0x005,
+    siteId: -1,
+    accountId: 5,
     name: '°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸',
   },
   {
-    id: 0x006,
+    siteId: -1,
+    accountId: 6,
     name: '^⨀ᴥ⨀^',
   },
   {
-    id: 0x007,
+    siteId: -1,
+    accountId: 7,
     name: 'Name\twith\ttabs',
   },
   {
-    id: 0x008,
+    siteId: -1,
+    accountId: 8,
     name: 'myapp.com',
     subGroups: [
       {
-        id: 0x018,
+        siteId: 24,
+        accountId: 8,
         name: 'myapp.com.1',
         subGroups: [
           {
-            id: 0x118,
+            siteId: 25,
+            accountId: 8,
             name: 'myapp.com.1.1',
             subGroups: [
               {
-                id: 0x1118,
+                siteId: 26,
+                accountId: 8,
                 name: 'myapp.com.1.1.1',
                 subGroups: [
                   {
-                    id: 0x11118,
+                    siteId: 27,
+                    accountId: 8,
                     name: 'myapp.com.1.1.1.1',
                   },
                 ],

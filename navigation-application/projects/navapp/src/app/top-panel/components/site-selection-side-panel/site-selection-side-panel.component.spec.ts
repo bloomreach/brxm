@@ -20,9 +20,8 @@ import { FormsModule } from '@angular/forms';
 import { MatIconModule, MatTreeModule } from '@angular/material';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { Site } from '@bloomreach/navapp-communication';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
-
-import { Site } from '../../../models/dto/site.dto';
 
 import { SiteSelectionSidePanelComponent } from './site-selection-side-panel.component';
 
@@ -33,19 +32,23 @@ describe('SiteSelectionSidePanelComponent', () => {
 
   const mockSites: Site[] = [
     {
-      id: 1,
+      siteId: -1,
+      accountId: 1,
       name: 'www.company.com',
       subGroups: [
         {
-          id: 2,
+          siteId: 1,
+          accountId: 1,
           name: 'UK & Germany',
           subGroups: [
             {
-              id: 3,
+              siteId: 2,
+              accountId: 1,
               name: 'Office UK',
             },
             {
-              id: 4,
+              siteId: 3,
+              accountId: 1,
               name: 'Office DE',
             },
           ],
@@ -53,17 +56,25 @@ describe('SiteSelectionSidePanelComponent', () => {
       ],
     },
     {
-      id: 5,
+      siteId: -1,
+      accountId: 2,
       name:
         'An example company that has a very long name and a subgroup with many items',
       subGroups: [
         {
-          id: 6,
+          siteId: 4,
+          accountId: 2,
           name: 'Sub company 001',
         },
         {
-          id: 7,
+          siteId: 5,
+          accountId: 2,
           name: 'Sub company 002',
+        },
+        {
+          siteId: 6,
+          accountId: 2,
+          name: 'Sub company 003',
         },
       ],
     },
@@ -120,7 +131,11 @@ describe('SiteSelectionSidePanelComponent', () => {
 
   describe('the active node', () => {
     beforeEach(() => {
-      component.selectedSite = { id: 4, name: 'Office DE' };
+      component.selectedSite = {
+        siteId: 3,
+        accountId: 1,
+        name: 'Office DE',
+      };
       component.ngOnChanges({
         selectedSite: new SimpleChange(undefined, component.selectedSite, true),
       });

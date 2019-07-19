@@ -20,6 +20,7 @@ import {
   connectToParent,
   NavLocation,
   ParentConnectConfig,
+  SiteId,
 } from '@bloomreach/navapp-communication';
 import { CookieService } from 'ngx-cookie-service';
 import { ChildApi, ParentPromisedApi } from 'projects/navapp-communication/src/lib/api';
@@ -79,7 +80,7 @@ export class AppComponent implements OnInit {
         return this.selectedSiteId;
       };
 
-      methods.updateSite = (siteId?: number) => {
+      methods.updateSelectedSite = (siteId?: SiteId) => {
         this.selectedSiteId = siteId;
       };
     }
@@ -87,19 +88,23 @@ export class AppComponent implements OnInit {
     return methods;
   }
 
-  get selectedSiteId(): number {
-    let siteId = +this.cookiesService.get(SITE_COOKIE_NAME);
+  get selectedSiteId(): SiteId {
+    let [accountId, siteId] = this.cookiesService.get(SITE_COOKIE_NAME).split(',').map(x => +x);
 
-    if (!siteId) {
-      siteId = mockSites[0].id;
-      this.selectedSiteId = siteId;
+    if (!accountId || !siteId) {
+      const firstSite = mockSites[0];
+
+      accountId = firstSite.accountId;
+      siteId = firstSite.siteId;
+
+      this.selectedSiteId = { accountId, siteId };
     }
 
-    return siteId;
+    return { accountId, siteId };
   }
 
-  set selectedSiteId(value: number) {
-    this.cookiesService.set(SITE_COOKIE_NAME, value.toString());
+  set selectedSiteId(value: SiteId) {
+    this.cookiesService.set(SITE_COOKIE_NAME, `${value.accountId},${value.siteId}`);
   }
 
   ngOnInit(): void {

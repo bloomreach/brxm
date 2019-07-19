@@ -15,11 +15,11 @@
  */
 
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Site } from '@bloomreach/navapp-communication';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { ClientAppService } from '../../client-app/services/client-app.service';
-import { Site } from '../../models/dto/site.dto';
 import { CommunicationsService } from '../../services/communications.service';
 import { NavConfigService } from '../../services/nav-config.service';
 import { SiteSelectionSidePanelService } from '../services/site-selection-side-panel.service';
@@ -45,7 +45,7 @@ export class TopPanelComponent implements OnInit, OnDestroy {
   }
 
   set selectedSite(site: Site) {
-    this.communicationsService.updateSite(site.id).then(() => {
+    this.communicationsService.updateSelectedSite(site).then(() => {
       this.site = site;
       this.siteSelectionPanelService.close();
     });

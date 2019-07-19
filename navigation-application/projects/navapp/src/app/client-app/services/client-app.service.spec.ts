@@ -124,7 +124,7 @@ describe('ClientAppService', () => {
 
     describe('when connected', () => {
       const clientApiWithSitesSupport = {
-        updateSite: () => Promise.resolve(),
+        updateSelectedSite: () => Promise.resolve(),
       };
 
       beforeEach(() => {
@@ -150,16 +150,6 @@ describe('ClientAppService', () => {
         const actual = service.doesActiveAppSupportSites;
 
         expect(expected).toBe(actual);
-      });
-
-      it('should emit a list of apps which support sites', () => {
-        const app = new ClientApp('http://app2.com');
-        app.api = clientApiWithSitesSupport;
-
-        const expected = [app];
-        const actual = service.appsWithSitesSupport;
-
-        expect(expected).toEqual(actual);
       });
     });
   });
