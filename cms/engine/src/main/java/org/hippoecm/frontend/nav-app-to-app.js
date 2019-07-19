@@ -34,6 +34,10 @@
   // Implementation of the Child API
   Hippo.NavAppToApp = {
 
+    beforeNavigation: function() {
+      return Promise.resolve(true);
+    },
+
     navigate: function (location) {
       const perspectiveClassName = `.hippo-perspective-${location.path}perspective`;
       const perspective = document.querySelector(perspectiveClassName);
