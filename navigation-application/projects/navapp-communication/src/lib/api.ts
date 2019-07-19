@@ -60,24 +60,24 @@ export interface ChildApi {
   getConfig?: () => ChildConfig;
   getNavItems?: () => NavItem[];
   getSites?: () => Site[];
-  getSelectedSite?: () => SelectedSite;
+  getSelectedSite?: () => SiteId;
   beforeNavigation?: () => boolean;
   onUserActivity?: () => void;
   logout?: () => void;
   navigate?: (location: NavLocation) => void;
-  updateSelectedSite?: (site?: SelectedSite) => void;
+  updateSelectedSite?: (siteId?: SiteId) => void;
 }
 
 export interface ChildPromisedApi {
   getConfig?: () => Promise<ChildConfig>;
   getNavItems?: () => Promise<NavItem[]>;
   getSites?: () => Promise<Site[]>;
-  getSelectedSite?: () => Promise<SelectedSite>;
+  getSelectedSite?: () => Promise<SiteId>;
   beforeNavigation?: () => Promise<boolean>;
   onUserActivity?: () => Promise<void>;
   logout?: () => Promise<void>;
   navigate?: (location: NavLocation) => Promise<void>;
-  updateSelectedSite?: (site?: SelectedSite) => Promise<void>;
+  updateSelectedSite?: (siteId?: SiteId) => Promise<void>;
 }
 
 export interface NavItem {
@@ -96,14 +96,12 @@ export interface NavLocation {
   breadcrumbLabel?: string;
 }
 
-export interface Site {
-   siteId: number;
-   accountId: number;
-   name: string;
-   subGroups?: Site[];
- }
-
-export interface SelectedSite {
+export interface SiteId {
   siteId: number;
   accountId: number;
 }
+
+export interface Site extends SiteId {
+   name: string;
+   subGroups?: Site[];
+ }
