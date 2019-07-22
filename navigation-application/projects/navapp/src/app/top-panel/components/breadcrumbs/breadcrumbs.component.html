@@ -23,7 +23,8 @@
   <div *ngIf="last"
        (click)="onLastBreadcrumbClicked()"
        matRipple
-       class="entry last qa-breadcrumb-level-{{i + 1}} qa-breadcrumb-last">
+       class="entry last qa-breadcrumb-level-{{i + 1}} qa-breadcrumb-last"
+       [class.has-suffix]="suffix$ | async">
     <span>{{ breadcrumb }}</span>
   </div>
 </ng-template>

@@ -38,6 +38,10 @@
   &.last {
     cursor: pointer;
     opacity: 1;
+
+    &:not(.has-suffix) {
+      font-weight: $font-weight-semibold;
+    }
   }
 
   &.suffix {
