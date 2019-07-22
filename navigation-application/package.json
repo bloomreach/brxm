@@ -1,6 +1,6 @@
 {
   "name": "@bloomreach/navapp",
-  "version": "1.0.0-36",
+  "version": "1.0.0-37",
   "scripts": {
     "ng": "ng",
     "start": "ng serve navapp --public-host http://127.0.0.1:4200",
