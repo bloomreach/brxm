@@ -23,6 +23,7 @@ import { SharedModule } from '../shared/shared.module';
 
 import { ExpandableMenuItemComponent } from './components/expandable-menu-item/expandable-menu-item.component';
 import { ExpandableSubMenuItemComponent } from './components/expandable-sub-menu-item/expandable-sub-menu-item.component';
+import { HelpToolbarDrawerComponent } from './components/help-toolbar-drawer/help-toolbar-drawer.component';
 import { MainMenuComponent } from './components/main-menu.component';
 import { MenuDrawerComponent } from './components/menu-drawer/menu-drawer.component';
 import { MenuItemLinkComponent } from './components/menu-item-link/menu-item-link.component';
@@ -47,6 +48,7 @@ import { MenuStructureService } from './services/menu-structure.service';
     ExpandableSubMenuItemComponent,
     MenuItemLinkComponent,
     UserToolbarDrawerComponent,
+    HelpToolbarDrawerComponent,
   ],
   providers: [MenuStructureService, MenuBuilderService, MenuStateService],
   exports: [MainMenuComponent],
