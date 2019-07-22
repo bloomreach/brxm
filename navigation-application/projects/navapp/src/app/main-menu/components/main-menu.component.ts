@@ -35,6 +35,7 @@ import { MenuStateService } from '../services/menu-state.service';
 export class MainMenuComponent implements OnInit, OnDestroy {
   menuItems: MenuItem[] = [];
   userSettings: UserSettings;
+  isHelpToolbarOpened = false;
   isUserToolbarOpened = false;
 
   private homeMenuItem: MenuItemLink;
@@ -88,12 +89,27 @@ export class MainMenuComponent implements OnInit, OnDestroy {
 
   onMenuItemClick(event: MouseEvent, item: MenuItem): void {
     event.stopImmediatePropagation();
+    this.onClickedOutsideHelpToolbar();
+    this.onClickedOutsideUserToolbar();
     this.selectMenuItem(item);
+  }
+
+  onHelpMenuItemClick(event: MouseEvent): void {
+    event.stopImmediatePropagation();
+    this.menuStateService.closeDrawer();
+    this.onClickedOutsideUserToolbar();
+    this.selectHelpMenuItem();
   }
 
   onUserMenuItemClick(event: MouseEvent): void {
     event.stopImmediatePropagation();
+    this.menuStateService.closeDrawer();
+    this.onClickedOutsideHelpToolbar();
     this.selectUserMenuItem();
+  }
+
+  onClickedOutsideHelpToolbar(): void {
+    this.isHelpToolbarOpened = false;
   }
 
   onClickedOutsideUserToolbar(): void {
@@ -110,6 +126,10 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     if (item instanceof MenuItemContainer) {
       this.menuStateService.openDrawer(item);
     }
+  }
+
+  selectHelpMenuItem(): void {
+    this.isHelpToolbarOpened = true;
   }
 
   selectUserMenuItem(): void {

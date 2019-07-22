@@ -40,8 +40,10 @@
     <brna-top-level-menu-item caption="Help"
                               icon="help"
                               [collapsed]="collapsed"
+                              [pressed]="isHelpToolbarOpened"
                               [small]="true"
-                              [ngClass]="getQaClass('help')">
+                              [ngClass]="getQaClass('help')"
+                              (click)="onHelpMenuItemClick($event)">
     </brna-top-level-menu-item>
 
     <brna-top-level-menu-item caption="User account"
@@ -60,6 +62,9 @@
   </div>
 </div>
 <brna-menu-drawer *ngIf="isDrawerOpen" [config]="drawerMenuItem"></brna-menu-drawer>
+<brna-help-toolbar-drawer *ngIf="isHelpToolbarOpened"
+                          (clickOutside)="onClickedOutsideHelpToolbar()">
+</brna-help-toolbar-drawer>
 <brna-user-toolbar-drawer *ngIf="isUserToolbarOpened"
                           [config]="userSettings"
                           (clickOutside)="onClickedOutsideUserToolbar()">
