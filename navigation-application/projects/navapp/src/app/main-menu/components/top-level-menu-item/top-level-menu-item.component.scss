@@ -18,21 +18,21 @@
 @import 'mixins';
 
 @mixin showNormalIcon() {
-  .icon {
+  .mat-icon {
     display: block;
   }
 
-  .icon.active {
+  .mat-icon.active {
     display: none;
   }
 }
 
 @mixin showActiveIcon() {
-  .icon {
+  .mat-icon {
     display: none;
   }
 
-  .icon.active {
+  .mat-icon.active {
     display: block;
   }
 }
