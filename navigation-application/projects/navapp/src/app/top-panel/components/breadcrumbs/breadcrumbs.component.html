@@ -24,7 +24,8 @@
        (click)="onLastBreadcrumbClicked()"
        matRipple
        class="entry last qa-breadcrumb-level-{{i + 1}} qa-breadcrumb-last"
-       [class.has-suffix]="suffix$ | async">
+       [class.has-suffix]="suffix$ | async"
+       [class.single-crumb]="first && last">
     <span>{{ breadcrumb }}</span>
   </div>
 </ng-template>
