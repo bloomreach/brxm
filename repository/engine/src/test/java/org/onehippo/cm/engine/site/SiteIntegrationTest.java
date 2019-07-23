@@ -27,7 +27,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -38,6 +40,7 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import org.onehippo.cm.engine.ConfigurationContentService;
 import org.onehippo.cm.engine.autoexport.IsolatedRepository;
 import org.onehippo.cm.engine.autoexport.JcrRunner;
 import org.onehippo.cm.engine.autoexport.ModuleInfo;
@@ -217,7 +220,14 @@ public class SiteIntegrationTest {
 
         System.setProperty(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED, "false");
         final String fixtureName = "sites_before_cms";
-        final Fixture fixture = new Fixture(fixtureName);
+
+        final ImmutableSet<String> sharedClasses = ImmutableSet.of("org.onehippo.cm.engine.Configuration",
+                "org.hippoecm.repository.",
+                "org.apache.jackrabbit",
+                "org.onehippo.repository.",
+                "org.quartz.spi.",
+                "org.onehippo.cm.");
+        final Fixture fixture = new Fixture(fixtureName, sharedClasses);
 
         final HippoWebappContextRegistry hippoWebappContextRegistry = HippoWebappContextRegistry.get();
         try {
@@ -225,14 +235,20 @@ public class SiteIntegrationTest {
             fixture.test(session -> {
 
                 hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m2"));
-                hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m6"));
-                try {
-                    final Node m2node = session.getNode("/content/m2contentnode");
-                    if (m2node.hasNode("m6node")) {
-                        fail("Node '/content/m2contentnode/m6node' should not exist");
+                final HippoWebappContext m6App = createSiteApplicationContext(fixtureName, "m6");
+
+                try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(ConfigurationContentService.class).build()) {
+                    hippoWebappContextRegistry.register(m6App);
+                    try {
+                        final Node m2node = session.getNode("/content/m2contentnode");
+                        if (m2node.hasNode("m6node")) {
+                            fail("Node '/content/m2contentnode/m6node' should not exist");
+                        }
+                    } catch (PathNotFoundException ignore) {
+                        //Expected
                     }
-                } catch(PathNotFoundException ignore) {
-                    //Expected
+                    assertTrue(interceptor.messages().anyMatch(m -> m.equals("Incompatible content definition: /content/m2contentnode/m6node. Content definition " +
+                            "can be applied only if it's parent belongs to core or same extension")));
                 }
             });
         } finally {
@@ -293,9 +309,16 @@ public class SiteIntegrationTest {
 
         private final ModuleInfo[] modules;
         private final Path projectPath;
+        private Set<String> sharedClasses = new HashSet<>();
 
         public Fixture(final String fixtureName) throws IOException {
             this(new SiteModuleInfo(fixtureName));
+        }
+
+        public Fixture(final String fixtureName, final Set<String> sharedClasses) throws IOException {
+            this(new SiteModuleInfo(fixtureName));
+            if (sharedClasses != null)
+            this.sharedClasses.addAll(sharedClasses);
         }
 
         private Fixture(final ModuleInfo... modules) throws IOException {
@@ -333,9 +356,10 @@ public class SiteIntegrationTest {
                     additionalClasspathURLs.add(workingDirectory.toAbsolutePath().toUri().toURL());
                 }
 
+                this.sharedClasses.add("org.onehippo.cms7.services.");
                 repository =
                         new IsolatedRepository(folder.getRoot(), projectPath.toFile(), additionalClasspathURLs,
-                                ImmutableSet.of("org.onehippo.cms7.services."), false);
+                                this.sharedClasses, false);
 
                 repository.startRepository();
                 final Session session = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
