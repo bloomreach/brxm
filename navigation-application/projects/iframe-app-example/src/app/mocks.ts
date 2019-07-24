@@ -24,14 +24,14 @@ const apps = [
       'categories/all-category-pages',
       'seo',
       'audiences/merchandising-audiences',
-      'insights/opportunities/top-opportunities',
-      'insights/opportunities/improve-category-navigation',
     ],
   },
   {
     url: 'http://localhost:4201/brsm',
     paths: [
       'insights/product-a-b-testing',
+      'insights/opportunities/top-opportunities',
+      'insights/opportunities/improve-category-navigation',
       'insights/seo-analytics/overall-performance',
       'insights/seo-analytics/incremental',
       'insights/seo-analytics/targeted-pages/overview',
@@ -42,17 +42,20 @@ const apps = [
   },
 ];
 
-export const navigationConfiguration: NavItem[] = apps.reduce((navItems, app) => {
-  const appNavItems = app.paths.map(path => ({
-    id: path,
-    appIframeUrl: app.url,
-    appPath: path,
-  }));
+export const navigationConfiguration: NavItem[] = apps.reduce(
+  (navItems, app) => {
+    const appNavItems = app.paths.map(path => ({
+      id: path,
+      appIframeUrl: app.url,
+      appPath: path,
+    }));
 
-  navItems = navItems.concat(appNavItems);
+    navItems = navItems.concat(appNavItems);
 
-  return navItems;
-}, []);
+    return navItems;
+  },
+  [],
+);
 
 export const mockSites: Site[] = [
   {
@@ -126,7 +129,8 @@ export const mockSites: Site[] = [
   {
     siteId: -1,
     accountId: 2,
-    name: 'An example company that has a very long name and a subgroup with many items',
+    name:
+      'An example company that has a very long name and a subgroup with many items',
     subGroups: [
       {
         siteId: 12,
