@@ -15,7 +15,13 @@
  */
 
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, HostBinding, Input } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  HostBinding,
+  Input,
+  Output,
+} from '@angular/core';
 
 import { UserSettings } from '../../../models/dto/user-settings.dto';
 import { CommunicationsService } from '../../../services/communications.service';
@@ -40,6 +46,12 @@ export class UserToolbarDrawerComponent {
   @Input()
   config: UserSettings;
 
+  @Input()
+  userDrawerOpen: boolean;
+
+  @Output()
+  userDrawerOpenChange = new EventEmitter<boolean>();
+
   @HostBinding('@slideInOut')
   animate = true;
 
@@ -58,8 +70,10 @@ export class UserToolbarDrawerComponent {
   }
 
   logout(): void {
-    this.communicationService.logout().then(
-      () => window.location.reload(),
-    );
+    this.communicationService.logout().then(() => window.location.reload());
+  }
+
+  onClickedOutside(): void {
+    this.userDrawerOpenChange.emit(false);
   }
 }

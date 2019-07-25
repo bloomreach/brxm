@@ -15,7 +15,7 @@
  */
 
 import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { filter, first, switchMap, takeUntil } from 'rxjs/operators';
 
 import { ClientAppService } from '../../client-app/services/client-app.service';
@@ -89,31 +89,23 @@ export class MainMenuComponent implements OnInit, OnDestroy {
 
   onMenuItemClick(event: MouseEvent, item: MenuItem): void {
     event.stopImmediatePropagation();
-    this.onClickedOutsideHelpToolbar();
-    this.onClickedOutsideUserToolbar();
+    this.isHelpToolbarOpened = false;
+    this.isUserToolbarOpened = false;
     this.selectMenuItem(item);
   }
 
   onHelpMenuItemClick(event: MouseEvent): void {
     event.stopImmediatePropagation();
     this.menuStateService.closeDrawer();
-    this.onClickedOutsideUserToolbar();
-    this.selectHelpMenuItem();
+    this.isUserToolbarOpened = false;
+    this.isHelpToolbarOpened = true;
   }
 
   onUserMenuItemClick(event: MouseEvent): void {
     event.stopImmediatePropagation();
     this.menuStateService.closeDrawer();
-    this.onClickedOutsideHelpToolbar();
-    this.selectUserMenuItem();
-  }
-
-  onClickedOutsideHelpToolbar(): void {
     this.isHelpToolbarOpened = false;
-  }
-
-  onClickedOutsideUserToolbar(): void {
-    this.isUserToolbarOpened = false;
+    this.isUserToolbarOpened = true;
   }
 
   selectMenuItem(item: MenuItem): void {
@@ -126,14 +118,6 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     if (item instanceof MenuItemContainer) {
       this.menuStateService.openDrawer(item);
     }
-  }
-
-  selectHelpMenuItem(): void {
-    this.isHelpToolbarOpened = true;
-  }
-
-  selectUserMenuItem(): void {
-    this.isUserToolbarOpened = true;
   }
 
   isMenuItemActive(item: MenuItem): boolean {
@@ -149,22 +133,24 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   }
 
   private extractMenuItems(): void {
-    this.menuStateService.menu$.pipe(
-      takeUntil(this.unsubscribe),
-    ).subscribe(menuItems => {
-      this.homeMenuItem = menuItems[0] as MenuItemLink;
-      this.menuItems = menuItems.slice(1);
-    });
+    this.menuStateService.menu$
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(menuItems => {
+        this.homeMenuItem = menuItems[0] as MenuItemLink;
+        this.menuItems = menuItems.slice(1);
+      });
   }
 
   private activateHomeMenuItem(): void {
-    this.menuStateService.menu$.pipe(
-      takeUntil(this.unsubscribe),
-      switchMap(() => this.clientAppService.connectionEstablished$),
-      filter(app => app.id === this.homeMenuItem.appId),
-      first(),
-    ).subscribe(() => {
-      this.selectMenuItem(this.homeMenuItem);
-    });
+    this.menuStateService.menu$
+      .pipe(
+        takeUntil(this.unsubscribe),
+        switchMap(() => this.clientAppService.connectionEstablished$),
+        filter(app => app.id === this.homeMenuItem.appId),
+        first(),
+      )
+      .subscribe(() => {
+        this.selectMenuItem(this.homeMenuItem);
+      });
   }
 }
