@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,21 +14,17 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
+import { MenuItemLink } from './menu-item-link.model';
 
-import { AppSettings } from '../models/dto/app-settings.dto';
-import { GlobalSettings } from '../models/dto/global-settings.dto';
-import { UserSettings } from '../models/dto/user-settings.dto';
+export class MenuItemLinkMock extends MenuItemLink {
+  appId = 'testAppId';
+  appPath = 'testAppPath';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class GlobalSettingsService implements GlobalSettings {
-  appSettings: AppSettings;
-  userSettings: UserSettings;
-
-  constructor() {
-    const settings = (window as any).NavAppSettings;
-    Object.assign(this, settings);
+  constructor({
+    caption = 'testCaption',
+    icon = 'testIcon',
+    id = 'testId',
+  } = {}) {
+    super(id, caption, icon);
   }
 }
