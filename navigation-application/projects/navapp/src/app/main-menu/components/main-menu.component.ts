@@ -147,7 +147,6 @@ export class MainMenuComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribe),
         switchMap(() => this.clientAppService.connectionEstablished$),
         filter(app => app.id === this.homeMenuItem.appId),
-        first(),
       )
       .subscribe(() => {
         this.selectMenuItem(this.homeMenuItem);
