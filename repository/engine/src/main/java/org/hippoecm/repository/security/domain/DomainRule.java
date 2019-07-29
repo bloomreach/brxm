@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +44,7 @@ public class DomainRule implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(DomainRule.class);
 
-    private Set<QFacetRule> facetRules = new HashSet<QFacetRule>();
+    private Set<QFacetRule> facetRules = new HashSet<>();
     private String name;
     private String domainName;
     private transient int hash;
@@ -83,6 +82,7 @@ public class DomainRule implements Serializable {
                 }
             }
         }
+        facetRules = Collections.unmodifiableSet(facetRules);
         this.name = node.getName();
         this.domainName = node.getParent().getName();
     }
@@ -105,7 +105,7 @@ public class DomainRule implements Serializable {
      * Get the facet rules defining the domain rule
      */
     public Set<QFacetRule> getFacetRules() {
-        return Collections.unmodifiableSet(facetRules);
+        return facetRules;
     }
 
     /**
