@@ -113,11 +113,10 @@ export class NavConfigService {
 
         if (selectedSiteId) {
           const site = this.findSite(mergedSites, selectedSiteId);
-          this.selectedSite.next(site);
+          this.setSelectedSite(site);
         }
       });
     });
-
   }
 
   logout(): Promise<void[]> {
@@ -129,6 +128,10 @@ export class NavConfigService {
     const navItems = this.navItems.value;
 
     return navItems.find(x => x.appIframeUrl === iframeUrl && path.startsWith(x.appPath));
+  }
+
+  setSelectedSite(site: Site): void {
+    this.selectedSite.next(site);
   }
 
   private loginSilently(resource: string): Promise<boolean> {

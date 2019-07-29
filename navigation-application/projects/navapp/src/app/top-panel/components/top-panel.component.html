@@ -19,13 +19,8 @@
      matRipple
      (click)="onSiteSelectorClicked()"
      class="site-selector-value">
-  <ng-container *ngIf="selectedSite">
-    {{ selectedSite.name }}
+  <ng-container *ngIf="selectedSiteName$ | async as selectedSiteName">
+    {{ selectedSiteName }}
     <mat-icon svgIcon="arrow_drop_down"></mat-icon>
   </ng-container>
 </div>
-<div *ngIf="isSidePanelOpened && isSiteSelectionEnabled" (click)="onBackdropClicked()" class="backdrop"></div>
-<brna-site-selection-side-panel *ngIf="isSidePanelOpened"
-                                [sites]="sites$ | async"
-                                [(selectedSite)]="selectedSite">
-</brna-site-selection-side-panel>

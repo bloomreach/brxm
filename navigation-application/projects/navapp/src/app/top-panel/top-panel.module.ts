@@ -23,10 +23,10 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { SharedModule } from '../shared/shared.module';
 
 import { BreadcrumbsComponent } from './components/breadcrumbs/breadcrumbs.component';
-import { SiteSelectionSidePanelComponent } from './components/site-selection-side-panel/site-selection-side-panel.component';
+import { SiteSelectionComponent } from './components/site-selection/site-selection.component';
 import { TopPanelComponent } from './components/top-panel.component';
 import { BreadcrumbsService } from './services/breadcrumbs.service';
-import { SiteSelectionSidePanelService } from './services/site-selection-side-panel.service';
+import { RightSidePanelService } from './services/right-side-panel.service';
 
 @NgModule({
   imports: [
@@ -39,14 +39,9 @@ import { SiteSelectionSidePanelService } from './services/site-selection-side-pa
   declarations: [
     TopPanelComponent,
     BreadcrumbsComponent,
-    SiteSelectionSidePanelComponent,
+    SiteSelectionComponent,
   ],
-  providers: [
-    BreadcrumbsService,
-    SiteSelectionSidePanelService,
-  ],
-  exports: [
-    TopPanelComponent,
-  ],
+  providers: [BreadcrumbsService, RightSidePanelService],
+  exports: [TopPanelComponent, SiteSelectionComponent],
 })
 export class TopPanelModule {}

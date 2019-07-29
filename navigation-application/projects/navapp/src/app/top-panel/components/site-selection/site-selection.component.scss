@@ -23,11 +23,6 @@
   grid-template-rows: auto 1fr;
   height: 100%;
   min-width: $site-selection-side-panel-width;
-  overflow: hidden;
-  position: absolute;
-  right: 0;
-  top: 0;
-  z-index: 2;
 }
 
 .search-form {

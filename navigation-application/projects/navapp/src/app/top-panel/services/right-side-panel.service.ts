@@ -14,46 +14,22 @@
  * limitations under the License.
  */
 
-@import 'variables';
+import { Injectable } from '@angular/core';
+import { MatSidenav } from '@angular/material';
 
-:host,
-mat-sidenav-content,
-mat-sidenav-container {
-  height: 100%;
-}
+@Injectable()
+export class RightSidePanelService {
+  private sidenav: MatSidenav;
 
-mat-sidenav-content {
-  display: grid;
-  grid-template-areas:
-    'nav toolbar'
-    'nav main';
-  grid-template-columns: auto 1fr;
-  grid-template-rows: auto 1fr;
-  position: relative;
-}
+  setSidenav(sidenav: MatSidenav): void {
+    this.sidenav = sidenav;
+  }
 
-header {
-  grid-area: toolbar;
-  z-index: 1;
-}
+  open(): void {
+    this.sidenav.open();
+  }
 
-nav {
-  display: grid;
-  grid-area: nav;
-  z-index: 1;
-}
-
-main {
-  background: $white;
-  display: grid;
-  grid-area: main;
-  z-index: 0;
-}
-
-.overlay {
-  z-index: 3;
-
-  ~ main {
-    z-index: 4;
+  close(): void {
+    this.sidenav.close();
   }
 }
