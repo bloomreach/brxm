@@ -82,21 +82,26 @@ describe('NavConfigService', () => {
   });
 
   describe('initialization', () => {
-    it('should fetch resources', fakeAsync(() => {
+    let totalNavItems: navappCommunication.NavItem[];
+
+    beforeEach(fakeAsync(() => {
       const RESTNavItem = new NavItemMock({
         id: 'testItem',
         appIframeUrl: 'testurl',
         appPath: 'test path',
       });
 
-      const totalNavItems = navConfig.concat(RESTNavItem);
+      totalNavItems = navConfig.concat(RESTNavItem);
 
       navConfigService.init();
+
       tick();
 
       const req = httpTestingController.expectOne('testRESTurl');
       req.flush([RESTNavItem]);
+    }));
 
+    it('should fetch resources', () => {
       navConfigService.navItems$.subscribe(items => {
         expect(items).toEqual(totalNavItems);
       });
@@ -109,6 +114,51 @@ describe('NavConfigService', () => {
       });
 
       httpTestingController.verify();
-    }));
+    });
+
+    it('should find the nav item', () => {
+      const expected = new NavItemMock({
+        id: 'testItem',
+        appIframeUrl: 'testurl',
+        appPath: 'test path',
+      });
+
+      const actual = navConfigService.findNavItem('testurl', 'test path');
+
+      expect(actual).toEqual(expected);
+    });
+
+    it('should not find a nav item with unknown path', () => {
+      const actual = navConfigService.findNavItem(
+        'testurl',
+        'non existing path',
+      );
+
+      expect(actual).toBeUndefined();
+    });
+
+    it('should not find a nav item with unknown iframeUrl', () => {
+      const actual = navConfigService.findNavItem(
+        'unknownIframeUrl',
+        'test path',
+      );
+
+      expect(actual).toBeUndefined();
+    });
+
+    it('should set the selected site', () => {
+      const site = {
+        accountId: 1,
+        siteId: 10,
+        name: 'Some name',
+      };
+      let actual: navappCommunication.Site;
+
+      navConfigService.selectedSite$.subscribe(x => (actual = x));
+
+      navConfigService.setSelectedSite(site);
+
+      expect(actual).toEqual(site);
+    });
   });
 });

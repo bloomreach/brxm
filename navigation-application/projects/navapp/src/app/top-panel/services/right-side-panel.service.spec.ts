@@ -14,21 +14,30 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
+import { MatSidenav } from '@angular/material';
 
-@Injectable()
-export class SiteSelectionSidePanelService {
-  private opened = false;
+import { RightSidePanelService } from './right-side-panel.service';
 
-  get isOpened(): boolean {
-    return this.opened;
-  }
+describe('RightSidePanelService', () => {
+  let service: RightSidePanelService;
+  let sidenavMock: MatSidenav;
 
-  toggle(): void {
-    this.opened = !this.opened;
-  }
+  beforeEach(() => {
+    sidenavMock = jasmine.createSpyObj(['open', 'close']);
 
-  close(): void {
-    this.opened = false;
-  }
-}
+    service = new RightSidePanelService();
+    service.setSidenav(sidenavMock);
+  });
+
+  it('should call open method', () => {
+    service.open();
+
+    expect(sidenavMock.open).toHaveBeenCalled();
+  });
+
+  it('should call close method', () => {
+    service.close();
+
+    expect(sidenavMock.close).toHaveBeenCalled();
+  });
+});

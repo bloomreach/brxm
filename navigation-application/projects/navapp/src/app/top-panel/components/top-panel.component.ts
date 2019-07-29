@@ -14,71 +14,38 @@
  * limitations under the License.
  */
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Site } from '@bloomreach/navapp-communication';
-import { Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Component } from '@angular/core';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 import { ClientAppService } from '../../client-app/services/client-app.service';
-import { CommunicationsService } from '../../services/communications.service';
 import { NavConfigService } from '../../services/nav-config.service';
-import { SiteSelectionSidePanelService } from '../services/site-selection-side-panel.service';
+import { RightSidePanelService } from '../services/right-side-panel.service';
 
 @Component({
   selector: 'brna-top-panel',
   templateUrl: 'top-panel.component.html',
   styleUrls: ['top-panel.component.scss'],
 })
-export class TopPanelComponent implements OnInit, OnDestroy {
-  private site: Site;
-  private unsubscribe = new Subject();
+export class TopPanelComponent {
 
   constructor(
     private navConfigService: NavConfigService,
-    private siteSelectionPanelService: SiteSelectionSidePanelService,
     private clientAppService: ClientAppService,
-    private communicationsService: CommunicationsService,
+    private rightSidePanelService: RightSidePanelService,
   ) {}
 
-  get selectedSite(): Site {
-    return this.site;
-  }
-
-  set selectedSite(site: Site) {
-    this.communicationsService.updateSelectedSite(site).then(() => {
-      this.site = site;
-      this.siteSelectionPanelService.close();
-    });
-  }
-
-  get sites$(): Observable<Site[]> {
-    return this.navConfigService.sites$;
-  }
-
-  get isSidePanelOpened(): boolean {
-    return this.siteSelectionPanelService.isOpened;
+  get selectedSiteName$(): Observable<string> {
+    return this.navConfigService.selectedSite$.pipe(
+      map(x => x ? x.name : ''),
+    );
   }
 
   get isSiteSelectionEnabled(): boolean {
     return this.clientAppService.doesActiveAppSupportSites;
   }
 
-  ngOnInit(): void {
-    this.navConfigService.selectedSite$
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(selectedSite => (this.site = selectedSite));
-  }
-
-  ngOnDestroy(): void {
-    this.unsubscribe.next();
-    this.unsubscribe.complete();
-  }
-
   onSiteSelectorClicked(): void {
-    this.siteSelectionPanelService.toggle();
-  }
-
-  onBackdropClicked(): void {
-    this.siteSelectionPanelService.close();
+    this.rightSidePanelService.open();
   }
 }

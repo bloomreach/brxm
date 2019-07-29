@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-import { animate, style, transition, trigger } from '@angular/animations';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import {
   ChangeDetectionStrategy,
   Component,
-  EventEmitter,
-  HostBinding,
-  Input,
-  OnChanges,
-  Output,
+  OnDestroy,
+  OnInit,
 } from '@angular/core';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material';
 import { Site } from '@bloomreach/navapp-communication';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
+import { CommunicationsService } from '../../../services/communications.service';
+import { NavConfigService } from '../../../services/nav-config.service';
+import { RightSidePanelService } from '../../services/right-side-panel.service';
 
 interface SiteFlatNode {
   accountId: number;
@@ -37,35 +39,12 @@ interface SiteFlatNode {
 }
 
 @Component({
-  selector: 'brna-site-selection-side-panel',
-  templateUrl: 'site-selection-side-panel.component.html',
-  styleUrls: ['site-selection-side-panel.component.scss'],
-  animations: [
-    trigger('slideInOut', [
-      transition(':enter', [
-        style({ transform: 'translateX(100%)' }),
-        animate('300ms ease-in-out', style({ transform: 'translateX(0%)' })),
-      ]),
-      transition(':leave', [
-        animate('300ms ease-in-out', style({ transform: 'translateX(100%)' })),
-      ]),
-    ]),
-  ],
+  selector: 'brna-site-selection',
+  templateUrl: 'site-selection.component.html',
+  styleUrls: ['site-selection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SiteSelectionSidePanelComponent implements OnChanges {
-  @Input()
-  sites: Site[];
-
-  @Input()
-  selectedSite: Site;
-
-  @Output()
-  selectedSiteChange = new EventEmitter<Site>();
-
-  @HostBinding('@slideInOut')
-  animate = true;
-
+export class SiteSelectionComponent implements OnInit, OnDestroy {
   searchText = '';
   treeControl = new FlatTreeControl<SiteFlatNode>(
     node => node.level,
@@ -79,6 +58,16 @@ export class SiteSelectionSidePanelComponent implements OnChanges {
   );
   dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
+  private sites: Site[];
+  private selectedSite: Site;
+  private unsubscribe = new Subject();
+
+  constructor(
+    private navConfigService: NavConfigService,
+    private communicationsService: CommunicationsService,
+    private rightSidePanelService: RightSidePanelService,
+  ) {}
+
   get isNotFoundPanelVisible(): boolean {
     return (
       this.dataSource.data &&
@@ -87,8 +76,25 @@ export class SiteSelectionSidePanelComponent implements OnChanges {
     );
   }
 
-  ngOnChanges(changes): void {
-    this.updateDataSource();
+  ngOnInit(): void {
+    this.navConfigService.sites$.pipe(
+      takeUntil(this.unsubscribe),
+    ).subscribe(x => {
+      this.sites = x;
+      this.updateDataSource();
+    });
+
+    this.navConfigService.selectedSite$.pipe(
+      takeUntil(this.unsubscribe),
+    ).subscribe(x => {
+      this.selectedSite = x;
+      this.updateDataSource();
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   hasChild(index: number, node: SiteFlatNode): boolean {
@@ -96,7 +102,12 @@ export class SiteSelectionSidePanelComponent implements OnChanges {
   }
 
   onNodeClicked(node: SiteFlatNode): void {
-    this.selectedSiteChange.emit({ accountId: node.accountId, siteId: node.siteId, name: node.name });
+    const site = { accountId: node.accountId, siteId: node.siteId, name: node.name };
+
+    this.communicationsService.updateSelectedSite(site).then(() => {
+      this.navConfigService.setSelectedSite(site);
+      this.rightSidePanelService.close();
+    });
   }
 
   isActive(node: Site): boolean {

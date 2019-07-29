@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import { Component, HostBinding, OnInit } from '@angular/core';
+import { Component, HostBinding, OnInit, ViewChild } from '@angular/core';
+import { MatSidenav } from '@angular/material';
 import { Observable } from 'rxjs';
 
 import { ClientAppService } from './client-app/services/client-app.service';
 import { NavConfigService } from './services/nav-config.service';
 import { OverlayService } from './services/overlay.service';
+import { RightSidePanelService } from './top-panel/services/right-side-panel.service';
 
 @Component({
   selector: 'brna-root',
@@ -30,10 +32,14 @@ export class AppComponent implements OnInit {
   @HostBinding('class.mat-typography')
   typography = true;
 
+  @ViewChild(MatSidenav)
+  sidenav: MatSidenav;
+
   constructor(
     private navConfigService: NavConfigService,
     private clientAppService: ClientAppService,
     private overlayService: OverlayService,
+    private rightSidePanelService: RightSidePanelService,
   ) {}
 
   get isOverlayVisible$(): Observable<boolean> {
@@ -41,6 +47,7 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.rightSidePanelService.setSidenav(this.sidenav);
     this.navConfigService.init();
     this.clientAppService.init();
   }
