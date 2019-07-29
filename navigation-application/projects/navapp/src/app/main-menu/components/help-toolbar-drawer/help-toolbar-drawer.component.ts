@@ -15,7 +15,13 @@
  */
 
 import { animate, style, transition, trigger } from '@angular/animations';
-import { Component, HostBinding } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  HostBinding,
+  Input,
+  Output,
+} from '@angular/core';
 
 @Component({
   selector: 'brna-help-toolbar-drawer',
@@ -36,4 +42,14 @@ import { Component, HostBinding } from '@angular/core';
 export class HelpToolbarDrawerComponent {
   @HostBinding('@slideInOut')
   animate = true;
+
+  @Input()
+  helpDrawerOpen: boolean;
+
+  @Output()
+  helpDrawerOpenChange = new EventEmitter<boolean>();
+
+  onClickedOutside(): void {
+    this.helpDrawerOpenChange.emit(false);
+  }
 }

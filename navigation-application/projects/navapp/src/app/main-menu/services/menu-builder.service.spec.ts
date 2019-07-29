@@ -14,46 +14,56 @@
  * limitations under the License.
  */
 
-import { async } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 
-import { menuStructureMock, navConfig } from '../../test-mocks';
-import { MenuItemContainer } from '../models/menu-item-container.model';
+import { NavItemMock } from '../../models/dto/nav-item.mock';
+import { MenuItemContainerMock } from '../models/menu-item-container.mock';
+import { MenuItemLinkMock } from '../models/menu-item-link.mock';
 import { MenuItemLink } from '../models/menu-item-link.model';
 
 import { MenuBuilderService } from './menu-builder.service';
 import { MenuStructureService } from './menu-structure.service';
 
 describe('MenuBuilderService', () => {
-  const structureMock: MenuStructureService = {
-    getMenuStructure: () => menuStructureMock,
-  } as any;
+  let menuBuilderService: MenuBuilderService;
 
-  let service: MenuBuilderService;
+  const menuStructureServiceMock = jasmine.createSpyObj(
+    'MenuStructureService',
+    ['getMenuStructure', 'addExtension'],
+  );
 
-  beforeEach(async(() => {
-    service = new MenuBuilderService(structureMock);
-  }));
+  const menuItemsMock = [
+    new MenuItemLinkMock({ id: 'testNavItemId' }),
+    new MenuItemContainerMock({
+      caption: 'submenu',
+      children: [
+        new MenuItemLinkMock({ id: 'subitem1' }),
+        new MenuItemLinkMock({ id: 'subitem2' }),
+        new MenuItemLinkMock({ id: 'subitem3' }),
+      ],
+    }),
+  ];
+
+  const navItemsMock = [new NavItemMock()];
+
+  menuStructureServiceMock.getMenuStructure.and.returnValue(menuItemsMock);
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        MenuBuilderService,
+        { provide: MenuStructureService, useValue: menuStructureServiceMock },
+      ],
+    });
+
+    menuBuilderService = TestBed.get(MenuBuilderService);
+  });
 
   it('should get the filtered menu populated with app paths', () => {
-    const expected = (() => {
-      const subsubitem1 = new MenuItemLink('subsubitem1', 'Sub sub item 1');
-      subsubitem1.appId = 'iframe1-url';
-      subsubitem1.appPath = 'app-path-for-sub-sub-item1';
+    const actual = menuBuilderService.buildMenu(navItemsMock);
 
-      const subitem2 = new MenuItemLink('subitem2', 'Sub item 2');
-      subitem2.appId = 'iframe2-url';
-      subitem2.appPath = 'app-path-for-sub-item2';
-
-      return [
-        new MenuItemContainer('Item 2', [
-          new MenuItemContainer('Sub item 1', [subsubitem1]),
-          subitem2,
-        ]),
-      ];
-    })();
-
-    const actual = service.buildMenu(navConfig);
-
-    expect(actual).toEqual(expected);
+    expect((actual[0] as MenuItemLink).appId).toEqual(
+      navItemsMock[0].appIframeUrl,
+    );
   });
 });

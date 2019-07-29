@@ -61,11 +61,14 @@
     </div>
   </div>
 </div>
+
 <brna-menu-drawer *ngIf="isDrawerOpen" [config]="drawerMenuItem"></brna-menu-drawer>
+
 <brna-help-toolbar-drawer *ngIf="isHelpToolbarOpened"
-                          (clickOutside)="onClickedOutsideHelpToolbar()">
+                          [(helpDrawerOpen)]="isHelpToolbarOpened">
 </brna-help-toolbar-drawer>
+
 <brna-user-toolbar-drawer *ngIf="isUserToolbarOpened"
                           [config]="userSettings"
-                          (clickOutside)="onClickedOutsideUserToolbar()">
+                          [(userDrawerOpen)]="isUserToolbarOpened">
 </brna-user-toolbar-drawer>

@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
-import { AppSettings } from './dto/app-settings.dto';
-import { UserSettings } from './dto/user-settings.dto';
+import { NavItem } from '@bloomreach/navapp-communication';
 
-export class GlobalSettings {
-  userSettings: UserSettings;
-  appSettings: AppSettings;
+export class NavItemMock implements NavItem {
+  id = 'testNavItemId';
+  displayName = 'testDisplayName';
+  appIframeUrl = 'testUrl';
+  appPath = 'testPath';
+
+  constructor(initObject = {}) {
+    Object.keys(initObject).forEach(key => {
+      this[key] = initObject[key];
+    });
+  }
 }

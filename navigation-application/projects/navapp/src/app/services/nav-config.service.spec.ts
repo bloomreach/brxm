@@ -22,7 +22,8 @@ import {
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import * as navappCommunication from '@bloomreach/navapp-communication';
 
-import { globalSettings, mockSites, navConfig } from '../test-mocks';
+import { GlobalSettingsMock } from '../models/dto/global-settings.mock';
+import { NavItemMock } from '../models/dto/nav-item.mock';
 
 import { GlobalSettingsService } from './global-settings.service';
 import { NavConfigService } from './nav-config.service';
@@ -33,7 +34,21 @@ describe('NavConfigService', () => {
   let navConfigService: NavConfigService;
   let globalSettingsService: GlobalSettingsService;
 
-  const globalSettingsServiceMock = globalSettings;
+  const navConfig = [
+    new NavItemMock({ id: 'testId1' }),
+    new NavItemMock({ id: 'testId2' }),
+  ];
+
+  const mockSites: navappCommunication.Site[] = [
+    {
+      siteId: -1,
+      accountId: 1,
+      name: 'www.company.com',
+      subGroups: [],
+    },
+  ];
+
+  const globalSettingsServiceMock = new GlobalSettingsMock();
 
   const selectedSite = { accountId: 1, siteId: 2 };
 
@@ -64,16 +79,16 @@ describe('NavConfigService', () => {
     spyOnProperty(navappCommunication, 'connectToChild', 'get').and.returnValue(
       connectionMock,
     );
-
   });
 
   describe('initialization', () => {
     it('should fetch resources', fakeAsync(() => {
-      const RESTNavItem = {
+      const RESTNavItem = new NavItemMock({
         id: 'testItem',
         appIframeUrl: 'testurl',
         appPath: 'test path',
-      };
+      });
+
       const totalNavItems = navConfig.concat(RESTNavItem);
 
       navConfigService.init();

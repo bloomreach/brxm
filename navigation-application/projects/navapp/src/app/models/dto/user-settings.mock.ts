@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,21 +14,11 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
+import { UserSettings } from './user-settings.dto';
 
-import { AppSettings } from '../models/dto/app-settings.dto';
-import { GlobalSettings } from '../models/dto/global-settings.dto';
-import { UserSettings } from '../models/dto/user-settings.dto';
-
-@Injectable({
-  providedIn: 'root',
-})
-export class GlobalSettingsService implements GlobalSettings {
-  appSettings: AppSettings;
-  userSettings: UserSettings;
-
-  constructor() {
-    const settings = (window as any).NavAppSettings;
-    Object.assign(this, settings);
-  }
+export class UserSettingsMock implements UserSettings {
+  userName = 'testUserName';
+  email = 'test@gmail.com';
+  language = 'en';
+  timeZone = 'Europe/Amsterdam';
 }

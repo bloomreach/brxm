@@ -16,14 +16,14 @@
 
 import { TestBed } from '@angular/core/testing';
 
-import { globalSettings } from '../test-mocks';
+import { GlobalSettingsMock } from '../models/dto/global-settings.mock';
 
 import { GlobalSettingsService } from './global-settings.service';
 
 describe('GlobalSettingService', () => {
   let navAppSettingsService: GlobalSettingsService;
 
-  (window as any).NavAppSettings = globalSettings;
+  (window as any).NavAppSettings = new GlobalSettingsMock();
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -34,6 +34,6 @@ describe('GlobalSettingService', () => {
   });
 
   it('should take the settings object from the window', () => {
-    expect(navAppSettingsService.userSettings.userName).toEqual('Frank Zappa');
+    expect(navAppSettingsService.userSettings.userName).toEqual('testUserName');
   });
 });

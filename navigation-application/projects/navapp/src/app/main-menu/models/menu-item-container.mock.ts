@@ -14,21 +14,14 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
+import { MenuItemContainer } from './menu-item-container.model';
 
-import { AppSettings } from '../models/dto/app-settings.dto';
-import { GlobalSettings } from '../models/dto/global-settings.dto';
-import { UserSettings } from '../models/dto/user-settings.dto';
-
-@Injectable({
-  providedIn: 'root',
-})
-export class GlobalSettingsService implements GlobalSettings {
-  appSettings: AppSettings;
-  userSettings: UserSettings;
-
-  constructor() {
-    const settings = (window as any).NavAppSettings;
-    Object.assign(this, settings);
+export class MenuItemContainerMock extends MenuItemContainer {
+  constructor({
+    caption = 'testCaption',
+    children = [],
+    icon = 'testIcon',
+  } = {}) {
+    super(caption, children, icon);
   }
 }

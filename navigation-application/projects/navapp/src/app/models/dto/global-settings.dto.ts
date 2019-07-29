@@ -14,21 +14,10 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
+import { AppSettings } from './app-settings.dto';
+import { UserSettings } from './user-settings.dto';
 
-import { AppSettings } from '../models/dto/app-settings.dto';
-import { GlobalSettings } from '../models/dto/global-settings.dto';
-import { UserSettings } from '../models/dto/user-settings.dto';
-
-@Injectable({
-  providedIn: 'root',
-})
-export class GlobalSettingsService implements GlobalSettings {
-  appSettings: AppSettings;
+export interface GlobalSettings {
   userSettings: UserSettings;
-
-  constructor() {
-    const settings = (window as any).NavAppSettings;
-    Object.assign(this, settings);
-  }
+  appSettings: AppSettings;
 }

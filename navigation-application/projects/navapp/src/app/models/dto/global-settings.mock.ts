@@ -14,21 +14,13 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
+import { AppSettings } from './app-settings.dto';
+import { AppSettingsMock } from './app-settings.mock';
+import { GlobalSettings } from './global-settings.dto';
+import { UserSettings } from './user-settings.dto';
+import { UserSettingsMock } from './user-settings.mock';
 
-import { AppSettings } from '../models/dto/app-settings.dto';
-import { GlobalSettings } from '../models/dto/global-settings.dto';
-import { UserSettings } from '../models/dto/user-settings.dto';
-
-@Injectable({
-  providedIn: 'root',
-})
-export class GlobalSettingsService implements GlobalSettings {
-  appSettings: AppSettings;
-  userSettings: UserSettings;
-
-  constructor() {
-    const settings = (window as any).NavAppSettings;
-    Object.assign(this, settings);
-  }
+export class GlobalSettingsMock implements GlobalSettings {
+  userSettings = new UserSettingsMock() as UserSettings;
+  appSettings = new AppSettingsMock() as AppSettings;
 }

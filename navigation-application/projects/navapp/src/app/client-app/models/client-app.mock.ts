@@ -14,21 +14,15 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
+import { ChildPromisedApi } from '@bloomreach/navapp-communication';
 
-import { AppSettings } from '../models/dto/app-settings.dto';
-import { GlobalSettings } from '../models/dto/global-settings.dto';
-import { UserSettings } from '../models/dto/user-settings.dto';
+import { ClientApp } from './client-app.model';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class GlobalSettingsService implements GlobalSettings {
-  appSettings: AppSettings;
-  userSettings: UserSettings;
+export class ClientAppMock extends ClientApp {
+  id = 'testClientApp';
+  api: ChildPromisedApi = {};
 
-  constructor() {
-    const settings = (window as any).NavAppSettings;
-    Object.assign(this, settings);
+  constructor({ url = 'testClientApp' } = {}) {
+    super(url);
   }
 }
