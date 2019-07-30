@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.behaviors.IContextMenu;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 
 class MenuBar extends Panel implements MenuComponent {
 
@@ -87,7 +87,7 @@ class MenuBar extends Panel implements MenuComponent {
         @Override
         protected void populateItem(final Item<Component> item) {
             final Component component = item.getModelObject();
-            item.add(CssClass.append(cssClass));
+            item.add(ClassAttribute.append(cssClass));
             item.add(component);
         }
     }

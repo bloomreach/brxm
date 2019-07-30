@@ -42,7 +42,7 @@ import org.hippoecm.frontend.model.event.JcrEvent;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.skin.Icon;
@@ -77,26 +77,26 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
             required.setVisible(ValidatorUtils.hasRequiredValidator(field.getValidators()));
 
             final String name = cssClassName(field.getTypeDescriptor().getName());
-            add(CssClass.append("hippo-node-field-name-" + name));
+            add(ClassAttribute.append("hippo-node-field-name-" + name));
 
             final String type = cssClassName(field.getTypeDescriptor().getType());
-            add(CssClass.append("hippo-node-field-type-" + type));
+            add(ClassAttribute.append("hippo-node-field-type-" + type));
 
             if (field.isMultiple()) {
-                add(CssClass.append("hippo-node-field-multiple"));
+                add(ClassAttribute.append("hippo-node-field-multiple"));
             }
 
             if (field.isMandatory()) {
-                add(CssClass.append("hippo-node-field-mandatory"));
+                add(ClassAttribute.append("hippo-node-field-mandatory"));
             }
 
             if (field.isProtected()) {
-                add(CssClass.append("hippo-node-field-protected"));
+                add(ClassAttribute.append("hippo-node-field-protected"));
             }
 
             final List<String> superTypes = field.getTypeDescriptor().getSuperTypes();
             if (superTypes.contains("hippo:compound")) {
-                add(CssClass.append("hippo-editor-compound-field"));
+                add(ClassAttribute.append("hippo-editor-compound-field"));
             }
         }
     }

@@ -1,12 +1,12 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -31,7 +31,7 @@ import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.list.IListColumnProvider;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.skin.Icon;
 
 import static org.hippoecm.frontend.plugins.cms.browse.list.ImageSearchViewPlugin.Mode.LIST;
@@ -57,8 +57,8 @@ public final class ImageSearchViewPlugin extends SearchViewPlugin {
     public ImageSearchViewPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        add(CssClass.append("image-gallery"));
-        add(CssClass.append(ReadOnlyModel.of(() -> mode == LIST ? "image-gallery-list" : "image-gallery-thumbnails")));
+        add(ClassAttribute.append("image-gallery"));
+        add(ClassAttribute.append(ReadOnlyModel.of(() -> mode == LIST ? "image-gallery-list" : "image-gallery-thumbnails")));
 
         addButton(new GalleryModeButton("listButton", LIST, Icon.LIST_UL));
         addButton(new GalleryModeButton("thumbnailsButton", THUMBNAILS, Icon.THUMBNAILS));
@@ -106,7 +106,7 @@ public final class ImageSearchViewPlugin extends SearchViewPlugin {
             setOutputMarkupId(true);
 
             add(HippoIcon.fromSprite("icon", icon));
-            add(CssClass.append(ReadOnlyModel.of(() -> mode == activatedMode ? "gallery-mode-active" : "")));
+            add(ClassAttribute.append(ReadOnlyModel.of(() -> mode == activatedMode ? "gallery-mode-active" : "")));
         }
 
         @Override

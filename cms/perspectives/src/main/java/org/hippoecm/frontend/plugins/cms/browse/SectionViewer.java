@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ import org.hippoecm.frontend.model.IChangeListener;
 import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugins.cms.browse.model.BrowserSections;
 import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.ICardView;
 import org.hippoecm.frontend.widgets.AbstractView;
@@ -59,7 +59,7 @@ public class SectionViewer extends Panel implements ICardView {
         this.sections = sections;
 
         setOutputMarkupId(true);
-        add(CssClass.append("section-viewer"));
+        add(ClassAttribute.append("section-viewer"));
 
         final IDataProvider<String> sectionProvider = new IDataProvider<String>() {
 
@@ -105,7 +105,7 @@ public class SectionViewer extends Panel implements ICardView {
                 component.setOutputMarkupId(true);
                 component.setOutputMarkupPlaceholderTag(true);
                 item.add(component);
-                item.add(CssClass.append(ReadOnlyModel.of(() -> sections.isActive(section) ? "selected" : "unselected")));
+                item.add(ClassAttribute.append(ReadOnlyModel.of(() -> sections.isActive(section) ? "selected" : "unselected")));
             }
 
             @Override

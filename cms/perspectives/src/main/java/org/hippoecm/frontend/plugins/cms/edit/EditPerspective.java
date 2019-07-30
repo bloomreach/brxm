@@ -44,7 +44,7 @@ import org.hippoecm.frontend.editor.icon.EditorTabIconProvider;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderService;
@@ -71,8 +71,8 @@ public class EditPerspective extends Perspective {
     public EditPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        add(CssClass.append("hippo-editor"));
-        add(CssClass.append("qa-editor"));
+        add(ClassAttribute.append("hippo-editor"));
+        add(ClassAttribute.append("qa-editor"));
 
         feedback = new FeedbackPanel("feedback", message -> {
             final String serviceId = config.getString(RenderService.FEEDBACK);
@@ -86,7 +86,7 @@ public class EditPerspective extends Perspective {
             }
             return false;
         });
-        feedback.add(CssClass.append(new LoadableDetachableModel<String>() {
+        feedback.add(ClassAttribute.append(new LoadableDetachableModel<String>() {
             @Override
             protected String load() {
                 return feedback.anyMessage() ? "hippo-shown" : "hippo-hidden";

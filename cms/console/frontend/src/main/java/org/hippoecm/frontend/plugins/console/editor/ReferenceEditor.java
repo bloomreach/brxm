@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,7 +33,7 @@ import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
@@ -41,13 +41,13 @@ import org.slf4j.LoggerFactory;
 
 class ReferenceEditor extends Panel {
     private static final long serialVersionUID = 1L;
-    
+
     public static final Logger log = LoggerFactory.getLogger(ReferenceEditor.class);
 
     ReferenceEditor(String id, JcrPropertyModel propertyModel, final JcrPropertyValueModel<String> valueModel) {
         super(id, valueModel);
         setOutputMarkupId(true);
-        
+
         final ReferenceLink referenceLink = new ReferenceLink("reference-link", valueModel);
         add(referenceLink);
         try {
@@ -81,16 +81,16 @@ class ReferenceEditor extends Panel {
         private String linkText = null;
         private JcrNodeModel linkModel = null;
         private boolean isValidLink = false;
-        
+
         public ReferenceLink(String id, IModel<String> valueModel) {
             super(id, valueModel);
             load();
-            
+
             add(new Label("reference-link-text", new PropertyModel<String>(this, "linkText")));
             if(isValidLink())  {
-                add(CssClass.append("message"));
+                add(ClassAttribute.append("message"));
             } else {
-                add(CssClass.append("error"));
+                add(ClassAttribute.append("error"));
             }
         }
 

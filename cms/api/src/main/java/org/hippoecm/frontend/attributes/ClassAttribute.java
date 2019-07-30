@@ -13,26 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standards.list.resolvers;
+package org.hippoecm.frontend.attributes;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.model.IObservableModel;
 import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.model.SerializableSupplier;
+import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClassAppender;
 
 /**
  * Utility to set, add and remove CSS classes of Wicket components.
- *
- * @deprecated Use {@link ClassAttribute} instead
  */
-@Deprecated
-public class CssClass {
+public class ClassAttribute {
 
     private static final String CLASS_ATTRIBUTE = "class";
 
-    private CssClass() {
+    private ClassAttribute() {
     }
 
     public static AttributeModifier append(final String cssClass) {

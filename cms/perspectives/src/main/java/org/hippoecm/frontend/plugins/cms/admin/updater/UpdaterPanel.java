@@ -1,5 +1,5 @@
-/**
- * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+/*
+ * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.browse.tree.CmsJcrTree;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.standards.tree.icon.DefaultTreeNodeIconProvider;
 import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
@@ -110,7 +110,7 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
             super.populateTreeItem(item, level);
             final Component nodeLink = item.get("nodeLink");
             if (nodeLink != null) {
-                nodeLink.add(CssClass.append("node-link"));
+                nodeLink.add(ClassAttribute.append("node-link"));
             }
         }
 

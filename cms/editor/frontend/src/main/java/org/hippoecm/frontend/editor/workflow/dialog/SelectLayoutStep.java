@@ -32,7 +32,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.editor.layout.ILayoutDescriptor;
 import org.hippoecm.frontend.editor.layout.ILayoutProvider;
 import org.hippoecm.frontend.plugins.standards.image.CachingImage;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 
 public class SelectLayoutStep extends WizardStep {
 
@@ -79,7 +79,7 @@ public class SelectLayoutStep extends WizardStep {
                 link.add(new Label("layout", descriptor.getName()));
                 item.add(link);
 
-                item.add(CssClass.append((new LoadableDetachableModel<String>() {
+                item.add(ClassAttribute.append((new LoadableDetachableModel<String>() {
                     @Override
                     protected String load() {
                         return layout.equals(layoutModel.getObject()) ? "selected" : StringUtils.EMPTY;

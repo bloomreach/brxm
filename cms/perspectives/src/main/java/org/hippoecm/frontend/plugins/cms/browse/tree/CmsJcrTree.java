@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,8 +36,8 @@ import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.LabelTreeNode;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
+import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.skin.Icon;
@@ -112,7 +112,7 @@ public abstract class CmsJcrTree extends ContextMenuTree {
             nodeLink.add(TitleAttribute.append(titleModel));
         }
 
-        nodeLink.add(CssClass.append(new AbstractReadOnlyModel<String>() {
+        nodeLink.add(ClassAttribute.append(new AbstractReadOnlyModel<String>() {
             @Override
             public String getObject() {
                 // Embed node state for testing
