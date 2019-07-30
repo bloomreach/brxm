@@ -36,71 +36,67 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
+import org.hippoecm.frontend.plugins.gallery.util.ImageGalleryUtils;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ImageCropPlugin extends RenderPlugin<Node> {
 
-    private static final long serialVersionUID = 1L;
-
     private static final Logger log = LoggerFactory.getLogger(ImageCropPlugin.class);
 
     private static final CssResourceReference CROP_SKIN = new CssResourceReference(ImageCropPlugin.class, "crop-plugin.css");
 
-    public ImageCropPlugin(final IPluginContext context, IPluginConfig config) {
+    public ImageCropPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         final IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.EDIT);
-        final IModel<Node> jcrImageNodeModel = getModel();
-
         final GalleryProcessor processor = DefaultGalleryProcessor.getGalleryProcessor(context, getPluginConfig());
+        final IModel<Node> imageNodeModel = getModel();
+        final Node imageNode = imageNodeModel.getObject();
 
         boolean upscalingEnabled = false;
         boolean isOriginal = true;
-        boolean isOriginalImageWidthSmallerThanThumbWidth = false;
-        boolean isOriginalImageHeightSmallerThanThumbHeight = false;
+        boolean isOriginalImageWidthSmallerThanVariantWidth = false;
+        boolean isOriginalImageHeightSmallerThanVariantHeight = false;
         boolean areExceptionsThrown = false;
 
-        //Check if this is the original image
+        // Check if this is the original image
         try {
-            isOriginal = HippoGalleryNodeType.IMAGE_SET_ORIGINAL.equals(jcrImageNodeModel.getObject().getName());
+            isOriginal = ImageGalleryUtils.isOriginalImage(imageNode);
         } catch (RepositoryException e) {
             error(e);
             log.error("Cannot retrieve name of original image node", e);
             areExceptionsThrown = true;
         }
 
-        //Get dimensions of this thumbnail variant
+        // Get dimensions of this thumbnail variant
         try {
-            Dimension thumbnailDimension = processor.getDesiredResourceDimension(jcrImageNodeModel.getObject());
-            Node originalImageNode = getModelObject().getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
-            Dimension originalImageDimension = new Dimension(
-                    (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong(),
-                    (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong());
+            final Dimension variantDimension = processor.getDesiredResourceDimension(imageNode);
+            final Node originalImageNode = ImageGalleryUtils.getOriginalGalleryNode(imageNode);
+            final Dimension originalImageDimension = ImageGalleryUtils.getDimension(originalImageNode);
 
-            isOriginalImageWidthSmallerThanThumbWidth = thumbnailDimension.getWidth() > originalImageDimension.getWidth();
-            isOriginalImageHeightSmallerThanThumbHeight = thumbnailDimension.getHeight() > originalImageDimension.getHeight();
+            isOriginalImageWidthSmallerThanVariantWidth = variantDimension.getWidth() > originalImageDimension.getWidth();
+            isOriginalImageHeightSmallerThanVariantHeight = variantDimension.getHeight() > originalImageDimension.getHeight();
 
-            upscalingEnabled = processor.isUpscalingEnabled(jcrImageNodeModel.getObject());
+            upscalingEnabled = processor.isUpscalingEnabled(imageNode);
 
         } catch (RepositoryException | GalleryException | NullPointerException e) {
             error(e);
-            log.error("Cannot retrieve dimensions of original or thumbnail image", e);
+            log.error("Cannot retrieve dimensions of original or variant image", e);
             areExceptionsThrown = true;
         }
 
-        Label cropButton = new Label("crop-button", new StringResourceModel("crop-button-label", this));
+        final Label cropButton = new Label("crop-button", new StringResourceModel("crop-button-label", this));
         cropButton.setVisible(mode == IEditor.Mode.EDIT && !isOriginal);
 
 
         final boolean isUpdateDisabled =
                 isOriginal
                 || areExceptionsThrown
-                || (isOriginalImageWidthSmallerThanThumbWidth && !upscalingEnabled)
-                || (isOriginalImageHeightSmallerThanThumbHeight && !upscalingEnabled);
+                || (isOriginalImageWidthSmallerThanVariantWidth && !upscalingEnabled)
+                || (isOriginalImageHeightSmallerThanVariantHeight && !upscalingEnabled);
 
         if (mode == IEditor.Mode.EDIT) {
             if (!isUpdateDisabled) {
@@ -108,20 +104,26 @@ public class ImageCropPlugin extends RenderPlugin<Node> {
                 cropButton.add(new AjaxEventBehavior("click") {
                     @Override
                     protected void onEvent(final AjaxRequestTarget target) {
-                        IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-                        dialogService.show(new ImageCropEditorDialog(jcrImageNodeModel, processor, config, context));
+                        final IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
+                        dialogService.show(new ImageCropEditorDialog(imageNodeModel, processor, config, context));
                     }
                 });
             }
 
-            final String cropButtonClass = isUpdateDisabled ? "crop-button inactive" : "crop-button active";
-            cropButton.add(ClassAttribute.append(cropButtonClass));
+            cropButton.add(ClassAttribute.append(isUpdateDisabled
+                    ? "crop-button inactive"
+                    : "crop-button active"));
 
-            String buttonTipProperty =
-                    areExceptionsThrown ? "crop-button-tip-inactive-error" :
-                            isOriginalImageWidthSmallerThanThumbWidth && !upscalingEnabled ? "crop-button-tip-inactive-width" :
-                                    isOriginalImageHeightSmallerThanThumbHeight && !upscalingEnabled ? "crop-button-tip-inactive-height" :
-                                            "crop-button-tip";
+            final String buttonTipProperty;
+            if (areExceptionsThrown) {
+                buttonTipProperty = "crop-button-tip-inactive-error";
+            } else if(isOriginalImageWidthSmallerThanVariantWidth && !upscalingEnabled) {
+                buttonTipProperty = "crop-button-tip-inactive-width";
+            } else if (isOriginalImageHeightSmallerThanVariantHeight && !upscalingEnabled) {
+                buttonTipProperty = "crop-button-tip-inactive-height";
+            } else {
+                buttonTipProperty = "crop-button-tip";
+            }
 
             cropButton.add(TitleAttribute.append(new StringResourceModel(buttonTipProperty, this)));
         }

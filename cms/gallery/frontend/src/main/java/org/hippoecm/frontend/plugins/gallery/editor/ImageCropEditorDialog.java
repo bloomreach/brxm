@@ -58,6 +58,7 @@ import org.hippoecm.frontend.plugins.gallery.imageutil.ScaleImageOperation;
 import org.hippoecm.frontend.plugins.gallery.imageutil.ScalingParameters;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
+import org.hippoecm.frontend.plugins.gallery.util.ImageGalleryUtils;
 import org.hippoecm.frontend.plugins.jquery.upload.single.BinaryContentEventLogger;
 import org.hippoecm.frontend.plugins.standards.image.JcrImage;
 import org.hippoecm.frontend.resource.JcrResourceStream;
@@ -87,50 +88,46 @@ public class ImageCropEditorDialog extends Dialog<Node> {
 
     @SuppressWarnings("unused")
     private String region;
-    private GalleryProcessor galleryProcessor;
     private Dimension originalImageDimension;
     private Dimension configuredDimension;
     private Dimension thumbnailDimension;
     private float compressionQuality;
+
+    private final IPluginConfig config;
+    private final IPluginContext context;
+    private final GalleryProcessor galleryProcessor;
     private final ImageCropSettings cropSettings;
-    @SuppressWarnings("unused")
-    private IPluginConfig config;
-    @SuppressWarnings("unused")
-    private IPluginContext context;
 
     /**
      * A dialog to crop an image variant.
      *
-     * @param jcrImageNodeModel node where the variant to be cropped is stored.
+     * @param variantImageNodeModel node where the variant to be cropped is stored.
      * @param galleryProcessor with configuration for scaling parameters and dimensions.
      * @param config Config of the instantiating Plugin.
      * @param context Context of the instantiating Plugin.
      */
-    public ImageCropEditorDialog(final IModel<Node> jcrImageNodeModel, final GalleryProcessor galleryProcessor, final IPluginConfig config, final IPluginContext context) {
-        super(jcrImageNodeModel);
+    public ImageCropEditorDialog(final IModel<Node> variantImageNodeModel, final GalleryProcessor galleryProcessor,
+                                 final IPluginConfig config, final IPluginContext context) {
+        super(variantImageNodeModel);
 
         this.config = config;
         this.context = context;
+        this.galleryProcessor = galleryProcessor;
 
         setSize(DIALOG_SIZE);
         setTitleKey(DIALOG_TITLE);
 
-        this.galleryProcessor = galleryProcessor;
-        Node thumbnailImageNode = jcrImageNodeModel.getObject();
-
-        HiddenField<String> regionField = new HiddenField<>("region", new PropertyModel<>(this, "region"));
+        final HiddenField<String> regionField = new HiddenField<>("region", new PropertyModel<>(this, "region"));
         regionField.setOutputMarkupId(true);
         add(regionField);
 
+        final Node variantImageNode = variantImageNodeModel.getObject();
         Component originalImage, imgPreview;
         try {
-            Node originalImageNode = thumbnailImageNode.getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
-            originalImageDimension = new Dimension(
-                    (int)originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong(),
-                    (int)originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong()
-            );
+            final Node originalImageNode = ImageGalleryUtils.getOriginalGalleryNode(variantImageNode);
+            originalImageDimension = ImageGalleryUtils.getDimension(originalImageNode);
 
-            JcrNodeModel originalNodeModel = new JcrNodeModel(originalImageNode);
+            final JcrNodeModel originalNodeModel = new JcrNodeModel(originalImageNode);
             originalImage = new JcrImage("image", new JcrResourceStream(originalNodeModel));
             imgPreview = new JcrImage("imagepreview", new JcrResourceStream(originalNodeModel));
 
@@ -141,10 +138,10 @@ public class ImageCropEditorDialog extends Dialog<Node> {
             imgPreview = new EmptyPanel("imagepreview");
         }
 
-        WebMarkupContainer imagePreviewContainer = new WebMarkupContainer("previewcontainer");
+        final WebMarkupContainer imagePreviewContainer = new WebMarkupContainer("previewcontainer");
         imagePreviewContainer.setOutputMarkupId(true);
         try {
-            configuredDimension = galleryProcessor.getDesiredResourceDimension(thumbnailImageNode);
+            configuredDimension = galleryProcessor.getDesiredResourceDimension(variantImageNode);
             thumbnailDimension = ImageUtils.handleZeroDimension(originalImageDimension, configuredDimension);
 
             final double previewCropFactor = determinePreviewScalingFactor(thumbnailDimension.getWidth(), thumbnailDimension.getHeight());
@@ -161,9 +158,9 @@ public class ImageCropEditorDialog extends Dialog<Node> {
 
         boolean isUpscalingEnabled = true;
         try {
-            isUpscalingEnabled = galleryProcessor.isUpscalingEnabled(thumbnailImageNode);
+            isUpscalingEnabled = galleryProcessor.isUpscalingEnabled(variantImageNode);
         } catch (GalleryException | RepositoryException e) {
-            log.error("Cannot retrieve Upscaling configuration option", e);
+            log.error("Cannot retrieve upscaling configuration option", e);
             error(e);
         }
 
@@ -215,7 +212,7 @@ public class ImageCropEditorDialog extends Dialog<Node> {
 
         compressionQuality = 1.0f;
         try {
-            compressionQuality = galleryProcessor.getScalingParametersMap().get(thumbnailImageNode.getName()).getCompressionQuality();
+            compressionQuality = galleryProcessor.getScalingParametersMap().get(variantImageNode.getName()).getCompressionQuality();
         } catch (RepositoryException e) {
             log.info("Cannot retrieve compression quality.", e);
         }
@@ -223,7 +220,21 @@ public class ImageCropEditorDialog extends Dialog<Node> {
     }
 
     /**
-     * Execute the fitInView function on the clientside widget instance
+     * The {@link IPluginConfig} of the {@link ImageCropPlugin}.
+     */
+    protected IPluginConfig getPluginConfig() {
+        return config;
+    }
+
+    /**
+     * The {@link IPluginContext} of the {@link ImageCropPlugin}.
+     */
+    protected IPluginContext getPluginContext() {
+        return context;
+    }
+
+    /**
+     * Execute the fitInView function on the client-side widget instance
      */
     private void executeFitInView(final AjaxRequestTarget target, final ImageCropBehavior cropBehavior) {
         final String script = "fitInView(" + this.cropSettings.isFitView() + ")";
@@ -279,11 +290,11 @@ public class ImageCropEditorDialog extends Dialog<Node> {
     protected void onOk() {
         JSONObject jsonObject = JSONObject.fromObject(region);
 
-        final Rectangle cropArea = new Rectangle(jsonObject.getInt("left"), jsonObject.getInt("top"), 
+        final Rectangle cropArea = new Rectangle(jsonObject.getInt("left"), jsonObject.getInt("top"),
                 jsonObject.getInt("width"), jsonObject.getInt("height"));
-        
+
         try {
-            Node originalImageNode = getModelObject().getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
+            Node originalImageNode = ImageGalleryUtils.getOriginalGalleryNode(getModelObject());
             String mimeType = originalImageNode.getProperty(JcrConstants.JCR_MIMETYPE).getString();
             ImageReader reader = ImageUtils.getImageReader(mimeType);
             if (reader == null) {
@@ -300,7 +311,7 @@ public class ImageCropEditorDialog extends Dialog<Node> {
             BufferedImage original = reader.read(0);
             Dimension thumbnailDimension = galleryProcessor.getDesiredResourceDimension(getModelObject());
             Dimension dimension = ImageUtils.handleZeroDimension(cropArea.getSize(), thumbnailDimension);
-            final BufferedImage thumbnail = ImageUtils.scaleImage(original, cropArea, dimension, 
+            final BufferedImage thumbnail = ImageUtils.scaleImage(original, cropArea, dimension,
                     RenderingHints.VALUE_INTERPOLATION_BICUBIC, ImageUtils.isCropHighQuality(cropArea, reader));
             ByteArrayOutputStream bytes = ImageUtils.writeImage(writer, thumbnail, compressionQuality);
 
