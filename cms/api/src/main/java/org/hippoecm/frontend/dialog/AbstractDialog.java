@@ -62,7 +62,7 @@ import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.i18n.TranslatorUtils;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AjaxUpdatingWidget;
 import org.slf4j.Logger;
@@ -165,7 +165,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             super(id, filter);
             setOutputMarkupId(true);
 
-            add(CssClass.append(() -> hasFeedbackMessage() ? "feedback-enabled" : "feedback-disabled"));
+            add(ClassAttribute.append(() -> hasFeedbackMessage() ? "feedback-enabled" : "feedback-disabled"));
         }
 
         protected class ExceptionLabel extends Panel {
@@ -258,7 +258,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             protected void populateItem(final ListItem<ButtonWrapper> item) {
                 final Button button = item.getModelObject().getButton();
                 if (StringUtils.isNotEmpty(buttonCssClass)) {
-                    button.add(CssClass.append(buttonCssClass));
+                    button.add(ClassAttribute.append(buttonCssClass));
                 }
                 item.add(button);
             }

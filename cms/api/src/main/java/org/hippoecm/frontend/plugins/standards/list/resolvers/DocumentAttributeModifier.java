@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import javax.jcr.nodetype.NodeType;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeNameModel;
 import org.hippoecm.repository.HippoStdNodeType;
@@ -38,8 +40,8 @@ public class DocumentAttributeModifier extends AbstractNodeAttributeModifier {
     private static final String FOLDER_CSS_CLASS = "hippo-folder";
     private static final String DOCUMENT_CSS_CLASS = "hippo-document";
 
-    private static final AttributeModifier FOLDER_CLASS_APPENDER = CssClass.append(FOLDER_CSS_CLASS);
-    private static final AttributeModifier DOCUMENT_CLASS_APPENDER = CssClass.append(DOCUMENT_CSS_CLASS);
+    private static final AttributeModifier FOLDER_CLASS_APPENDER = ClassAttribute.append(FOLDER_CSS_CLASS);
+    private static final AttributeModifier DOCUMENT_CLASS_APPENDER = ClassAttribute.append(DOCUMENT_CSS_CLASS);
 
     private static final DocumentAttributeModifier INSTANCE = new DocumentAttributeModifier();
 

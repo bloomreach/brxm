@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,8 +57,8 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
+import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
@@ -95,7 +95,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
         container.setOutputMarkupId(true);
         add(container);
 
-        add(CssClass.append(ReadOnlyModel.of(() -> builderContext.hasFocus() ? "active" : StringUtils.EMPTY)));
+        add(ClassAttribute.append(ReadOnlyModel.of(() -> builderContext.hasFocus() ? "active" : StringUtils.EMPTY)));
 
         // add transitions from parent container
         container.add(new RefreshingView<ILayoutTransition>("transitions") {
@@ -142,7 +142,7 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
                 final String name = transition.getName();
                 final Icon icon = getTransitionIconByName(name);
 
-                link.add(CssClass.append(name));
+                link.add(ClassAttribute.append(name));
                 link.add(TitleAttribute.append(name));
                 link.add(HippoIcon.fromSprite("icon", icon));
                 item.add(link);

@@ -38,7 +38,7 @@ import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.widgets.AutoCompleteTextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +58,7 @@ public class NodeDialog extends Dialog<Node> {
     private final TextField<String> typeField;
     private final TextField<String> nameField;
 
-    
+
     public NodeDialog(IModelReference<Node> modelReference) {
         setTitle(Model.of("Add a new node"));
         setSize(DialogConstants.SMALL);
@@ -67,7 +67,7 @@ public class NodeDialog extends Dialog<Node> {
         final IModel<Node> nodeModel = modelReference.getModel();
         setModel(nodeModel);
 
-        getParent().add(CssClass.append("node-dialog"));
+        getParent().add(ClassAttribute.append("node-dialog"));
 
         // list defined child node names and types for automatic completion
         final Node node = nodeModel.getObject();

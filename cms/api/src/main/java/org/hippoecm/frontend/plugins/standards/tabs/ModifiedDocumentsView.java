@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.IPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.DocumentAttributeModifier;
 
 class ModifiedDocumentsView extends Panel implements IPagingDefinition {
@@ -61,14 +61,14 @@ class ModifiedDocumentsView extends Panel implements IPagingDefinition {
         dataTable = new ListDataTable<>("datatable", getTableDefinition(), this.provider, model -> {}, true, this);
         add(dataTable);
 
-        add(CssClass.append(new LoadableDetachableModel<String>() {
+        add(ClassAttribute.append(new LoadableDetachableModel<String>() {
             @Override
             protected String load() {
                 return ModifiedDocumentsView.this.provider.size() == 0 ? "hippo-empty" : "";
             }
         }));
 
-        add(CssClass.append("hippo-referring-documents"));
+        add(ClassAttribute.append("hippo-referring-documents"));
     }
 
     protected TableDefinition<Node> getTableDefinition() {

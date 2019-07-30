@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.plugins.yui.togglebehavior.ToggleBehavior;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
@@ -44,7 +44,7 @@ public class EditorPlugin extends RenderPlugin<Node> {
         add(new ToggleBehavior());
 
         final IModel<String> checkedInModel = ReadOnlyModel.of(() -> isCheckedIn() ? "checked-in" : "");
-        add(CssClass.append(checkedInModel));
+        add(ClassAttribute.append(checkedInModel));
 
         onModelChanged();
     }

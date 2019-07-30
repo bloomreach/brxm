@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.frontend.plugins.standards.list.resolvers;
+package org.hippoecm.frontend.attributes;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.behavior.AttributeAppender;
@@ -21,10 +21,7 @@ import org.apache.wicket.model.IModel;
 
 /**
  * Utility to set, add and remove title attributes of Wicket components.
- *
- * @deprecated Use {@link org.hippoecm.frontend.attributes.TitleAttribute} instead
  */
-@Deprecated
 public class TitleAttribute {
 
     private static final String TITLE_ATTRIBUTE = "title";

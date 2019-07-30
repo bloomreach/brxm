@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
+import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.onehippo.repository.util.JcrConstants;
@@ -50,7 +50,7 @@ public class UnlockPlugin extends RenderPlugin<Node> {
         }));
         label.setOutputMarkupId(true);
 
-        label.add(CssClass.append(ReadOnlyModel.of(() -> {
+        label.add(ClassAttribute.append(ReadOnlyModel.of(() -> {
             if (isLockable()) {
                 return isLocked() ? "dropdown-link-green" : "dropdown-link-red";
             }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -51,10 +51,10 @@ import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
 import org.hippoecm.frontend.plugins.standards.list.datatable.SortState;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractListAttributeModifier;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.EmptyRenderer;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.IListCellRenderer;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
+import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -111,20 +111,20 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
                 Revision revision = (Revision) model.getObject();
                 final Item item = super.newRowItem(id, index, model);
                 if (!revision.isEnabled()){
-                    item.add(CssClass.append("disabled"));
+                    item.add(ClassAttribute.append("disabled"));
                 }
                 return item;
             }
         };
         add(dataTable);
 
-        add(CssClass.append(new LoadableDetachableModel<String>() {
+        add(ClassAttribute.append(new LoadableDetachableModel<String>() {
             protected String load() {
                 return getRevisions().isEmpty() ? "hippo-empty" : "";
             }
         }));
 
-        add(CssClass.append("hippo-history-documents"));
+        add(ClassAttribute.append("hippo-history-documents"));
     }
 
     protected List<Revision> getRevisions() {
@@ -186,14 +186,14 @@ public class RevisionHistoryView extends Panel implements IPagingDefinition {
                 Revision revision = model.getObject();
                 StateIconAttributes attrs = new StateIconAttributes((JcrNodeModel) revision.getDocument());
                 AttributeModifier[] attributes = new AttributeModifier[2];
-                attributes[0] = CssClass.append(new PropertyModel<>(attrs, "cssClass"));
+                attributes[0] = ClassAttribute.append(new PropertyModel<>(attrs, "cssClass"));
                 attributes[1] = TitleAttribute.append(new PropertyModel<>(attrs, "summary"));
                 return attributes;
             }
 
             @Override
             public AttributeModifier[] getColumnAttributeModifiers() {
-                return new AttributeModifier[] { CssClass.append("icon-16") };
+                return new AttributeModifier[] { ClassAttribute.append("icon-16") };
             }
         });
         return column;

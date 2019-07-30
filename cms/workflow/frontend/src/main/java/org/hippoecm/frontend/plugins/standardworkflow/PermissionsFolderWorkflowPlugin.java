@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.CmsIcon;
@@ -263,7 +263,7 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
                     downLink.add(downIcon);
 
                     item.add(fragment);
-                    item.add(CssClass.append(
+                    item.add(ClassAttribute.append(
                         ReadOnlyModel.of(() -> (item.getIndex() & 1) == 1 ? "qfwli-even" : "qfwli-odd"))
                     );
                 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,8 +28,8 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
+import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
@@ -133,7 +133,7 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
             @Override
             protected void initialize() {
 
-                add(CssClass.append(new AbstractReadOnlyModel<String>() {
+                add(ClassAttribute.append(new AbstractReadOnlyModel<String>() {
                     @Override
                     public String getObject() {
                         return StdWorkflow.this.isEnabled() ? "icon-enabled" : "icon-disabled";
