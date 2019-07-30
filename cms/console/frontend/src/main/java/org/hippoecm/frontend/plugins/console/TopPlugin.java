@@ -18,13 +18,13 @@ package org.hippoecm.frontend.plugins.console;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.markup.html.WebComponent;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.hippoecm.frontend.attributes.StyleAttribute;
+import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.model.SystemInfoDataProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,7 +47,7 @@ public class TopPlugin extends RenderPlugin {
         final WebComponent toolbar = new WebComponent(BAR_STYLES);
         final String style = obtainBreadcrumbStyle(config);
         if (StringUtils.isNotBlank(style)) {
-            toolbar.add(AttributeModifier.replace("style", style));
+            toolbar.add(StyleAttribute.set(style));
         }
         add(toolbar);
     }
