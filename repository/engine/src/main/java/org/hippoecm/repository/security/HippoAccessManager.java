@@ -469,6 +469,23 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         return true;
     }
 
+    public Set<NodeId> getImplicitReads() {
+        return implicitReads;
+    }
+
+    public Set<QFacetRule> getFacetRules(final DomainRule domainRule) {
+        if (extendedFacetRules != null) {
+            final String domainRulePath = domainRule.getDomainName() + "/" + domainRule.getName();
+            final Collection<QFacetRule> extendedRules = extendedFacetRules.get(domainRulePath);
+            if (extendedRules != null) {
+                final Set<QFacetRule> facetRules = new HashSet<>(domainRule.getFacetRules());
+                facetRules.addAll(extendedRules);
+                return facetRules;
+            }
+        }
+        return domainRule.getFacetRules();
+    }
+
     //---------------------------------------- Methods ---------------------------------------------//
     /**
      * Check whether a user can read the node with the given id
@@ -676,19 +693,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             }
         }
         return isInDomain;
-    }
-
-    private Set<QFacetRule> getFacetRules(final DomainRule domainRule) {
-        if (extendedFacetRules != null) {
-            final String domainRulePath = domainRule.getDomainName() + "/" + domainRule.getName();
-            final Collection<QFacetRule> extendedRules = extendedFacetRules.get(domainRulePath);
-            if (extendedRules != null) {
-                final Set<QFacetRule> facetRules = new HashSet<>(domainRule.getFacetRules());
-                facetRules.addAll(extendedRules);
-                return facetRules;
-            }
-        }
-        return domainRule.getFacetRules();
     }
 
     /**

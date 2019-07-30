@@ -18,6 +18,8 @@ package org.hippoecm.repository;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryResult;
 
 import org.junit.After;
 import org.junit.Before;
@@ -66,15 +68,14 @@ public class ReferenceJcrPathAuthorizationImplicitReadTest extends AbstractRefer
     @Test
     public void implicit_read_access_to_ancestry_when_a_descendant_has_path_reference_access() throws Exception {
 
-
         assertNoReadAccess("/test", "bob");
 
-        Session bob = null;
         // set up authorization rules
         setAdminRoleOn("/test/folder/sub1", "bob", true);
 
         session.save();
 
+        Session bob = null;
         try {
             bob = loginUser("bob");
 
@@ -105,6 +106,58 @@ public class ReferenceJcrPathAuthorizationImplicitReadTest extends AbstractRefer
                 bob.logout();
             }
         }
+    }
+
+    /**
+     * When implicit read access is given to some ancestry of a certain path, this should be accounted for in the
+     * authorization query. For example when implicit read access is acquired on 'test' and 'folder'
+     * via jcr:path=/test/folder/sub1, then if the authorization query does not account for 'test' and 'folder' in its
+     * 'read cached bit set', then a path query on say "/jcr:root/test/folder/sub1" won't return any results since
+     * the hierarchy query is evaluated by requiring the authorization query to have access on 'test' and 'folder'
+     */
+    @Test
+    public void implicit_read_access_to_ancestry_is_accounted_for_in_authorization_query() throws Exception {
+
+        assertNoReadAccess("/test", "bob");
+
+        // set up authorization rules
+        setAdminRoleOn("/test/folder/sub1", "bob", true);
+        session.save();
+
+        Session bob = null;
+        try {
+            bob = loginUser("bob");
+
+            assertTrue(bob.nodeExists("/test"));
+
+
+            final String xpaths[] = {
+                    "/jcr:root/test",
+                    "/jcr:root/test/folder",
+                    "/jcr:root/test/folder/sub1",
+                    "/jcr:root/test/folder/sub1/sub1sub",
+                    "/jcr:root/test/folder/sub1//*",
+                    "//element(test, hippostd:folder)",
+                    "//element(folder, hippostd:folder)",
+                    "//element(sub1, hippostd:folder)",
+                    "//element(sub1sub, hippostd:folder)"
+            };
+
+            for (String xpath : xpaths) {
+                final Query query = bob.getWorkspace().getQueryManager()
+                        .createQuery(xpath, "xpath");
+                final QueryResult result = query.execute();
+
+                assertThat(result.getNodes().getSize())
+                        .as(String.format("expected to find 1 result but we didn't for query '%s'", xpath))
+                        .isEqualTo(1);
+            }
+        } finally {
+            if (bob != null) {
+                bob.logout();
+            }
+        }
+
     }
 
     /**

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,10 +18,8 @@ package org.hippoecm.repository.query.lucene;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.NamespaceException;
@@ -32,8 +30,10 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
+import javax.jcr.security.AccessControlManager;
 import javax.security.auth.Subject;
 
+import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
@@ -50,6 +50,7 @@ import org.apache.lucene.search.TermQuery;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.hippoecm.repository.security.AuthorizationFilterPrincipal;
 import org.hippoecm.repository.security.FacetAuthConstants;
+import org.hippoecm.repository.security.HippoAccessManager;
 import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.QFacetRule;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
@@ -140,19 +141,13 @@ public class AuthorizationQuery {
                                    final InternalHippoSession session,
                                    final ServicingIndexingConfiguration indexingConfig,
                                    final NamespaceMappings nsMappings,
-                                   final NodeTypeManager ntMgr) {
+                                   final NodeTypeManager ntMgr) throws RepositoryException {
 
-        Map<String, Collection<QFacetRule>> extendedFacetRules = new HashMap<String, Collection<QFacetRule>>();
-        for (AuthorizationFilterPrincipal afp : authorizationFilterPrincipals) {
-            final Map<String, Collection<QFacetRule>> facetRules = afp.getExpandedFacetRules(facetAuths);
-            for (Map.Entry<String, Collection<QFacetRule>> entry : facetRules.entrySet()) {
-                final String domainPath = entry.getKey();
-                if (!extendedFacetRules.containsKey(domainPath)) {
-                    extendedFacetRules.put(domainPath, new ArrayList<QFacetRule>());
-                }
-                extendedFacetRules.get(domainPath).addAll(entry.getValue());
-            }
+        final AccessControlManager accessControlManager = session.getAccessControlManager();
+        if (!(accessControlManager instanceof HippoAccessManager)) {
+            throw new RepositoryException("Expected HippoAccessManager");
         }
+        HippoAccessManager hippoAccessManager = (HippoAccessManager)accessControlManager;
 
         BooleanQuery authQuery = new BooleanQuery(true);
         for (final FacetAuthPrincipal facetAuthPrincipal : facetAuths) {
@@ -162,7 +157,7 @@ public class AuthorizationQuery {
             final Set<DomainRule> domainRules = facetAuthPrincipal.getRules();
             for (final DomainRule domainRule : domainRules) {
                 BooleanQuery facetQuery = new BooleanQuery(true);
-                for (final QFacetRule facetRule : getFacetRules(domainRule, extendedFacetRules)) {
+                for (final QFacetRule facetRule : hippoAccessManager.getFacetRules(domainRule)) {
                     Query q = getFacetRuleQuery(facetRule, userIds, memberships, facetAuthPrincipal.getRoles(), indexingConfig, nsMappings, session, ntMgr);
                     if (isNoHitsQuery(q)) {
                         log.debug("Found a no hits query in facetRule '{}'. Since facet rules are AND-ed with other " +
@@ -197,23 +192,20 @@ public class AuthorizationQuery {
             authQuery.add(new MatchAllDocsQuery(), Occur.MUST_NOT);
         }
 
+        // add the implicit reads query
+        final Set<NodeId> implicitReads = hippoAccessManager.getImplicitReads();
+        if (implicitReads.size() > 0) {
+            final BooleanQuery implicitReadsQuery = new BooleanQuery(true);
+            for (NodeId implicitRead : implicitReads) {
+                implicitReadsQuery.add(new TermQuery(new Term(FieldNames.UUID, implicitRead.toString())), Occur.SHOULD);
+            }
+            authQuery.add(implicitReadsQuery, Occur.SHOULD);
+        }
+
         log.debug("Authorization query is : " + authQuery);
         log.debug("Authorization query has {} clauses", authQuery.getClauses().length);
 
         return authQuery;
-    }
-
-    private Set<QFacetRule> getFacetRules(final DomainRule domainRule, Map<String, Collection<QFacetRule>> extendedFacetRules) {
-        if (extendedFacetRules != null) {
-            final String domainRulePath = domainRule.getDomainName() + "/" + domainRule.getName();
-            final Collection<QFacetRule> extendedRules = extendedFacetRules.get(domainRulePath);
-            if (extendedRules != null) {
-                final Set<QFacetRule> facetRules = new HashSet<QFacetRule>(domainRule.getFacetRules());
-                facetRules.addAll(extendedRules);
-                return facetRules;
-            }
-        }
-        return domainRule.getFacetRules();
     }
 
     private Query getFacetRuleQuery(final QFacetRule facetRule,
