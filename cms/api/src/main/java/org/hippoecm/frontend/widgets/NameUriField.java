@@ -121,7 +121,9 @@ public class NameUriField extends Panel {
                 return urlIsEditable;
             }
         };
-        newUrlComponent.add(ClassAttribute.append(ReadOnlyModel.of(() -> urlIsEditable ? "grayedin" : "grayedout")));
+        newUrlComponent.add(ClassAttribute.append(() -> urlIsEditable
+                ? "grayedin"
+                : "grayedout"));
         newUrlComponent.setOutputMarkupId(true);
         return newUrlComponent;
     }

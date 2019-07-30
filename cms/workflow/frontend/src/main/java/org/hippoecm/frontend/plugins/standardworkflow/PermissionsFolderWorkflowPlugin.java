@@ -55,13 +55,12 @@ import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.addon.workflow.WorkflowDialog;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.l10n.ResourceBundleModel;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.CmsIcon;
@@ -263,9 +262,9 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
                     downLink.add(downIcon);
 
                     item.add(fragment);
-                    item.add(ClassAttribute.append(
-                        ReadOnlyModel.of(() -> (item.getIndex() & 1) == 1 ? "qfwli-even" : "qfwli-odd"))
-                    );
+                    item.add(ClassAttribute.append(() -> (item.getIndex() & 1) == 1
+                            ? "qfwli-even"
+                            : "qfwli-odd"));
                 }
             };
 

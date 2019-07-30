@@ -38,6 +38,8 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
@@ -47,7 +49,6 @@ import org.hippoecm.frontend.editor.layout.ILayoutPad;
 import org.hippoecm.frontend.editor.layout.ILayoutTransition;
 import org.hippoecm.frontend.editor.layout.LayoutContext;
 import org.hippoecm.frontend.editor.layout.RenderContext;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IClusterControl;
@@ -57,8 +58,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaClusterConfig;
 import org.hippoecm.frontend.plugin.config.impl.JavaPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.attributes.ClassAttribute;
-import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
@@ -95,7 +94,9 @@ public class RenderPluginEditorPlugin extends RenderPlugin implements ILayoutAwa
         container.setOutputMarkupId(true);
         add(container);
 
-        add(ClassAttribute.append(ReadOnlyModel.of(() -> builderContext.hasFocus() ? "active" : StringUtils.EMPTY)));
+        add(ClassAttribute.append(() -> builderContext.hasFocus()
+                ? "active"
+                : StringUtils.EMPTY));
 
         // add transitions from parent container
         container.add(new RefreshingView<ILayoutTransition>("transitions") {

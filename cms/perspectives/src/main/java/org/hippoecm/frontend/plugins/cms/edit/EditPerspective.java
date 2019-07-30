@@ -86,12 +86,9 @@ public class EditPerspective extends Perspective {
             }
             return false;
         });
-        feedback.add(ClassAttribute.append(new LoadableDetachableModel<String>() {
-            @Override
-            protected String load() {
-                return feedback.anyMessage() ? "hippo-shown" : "hippo-hidden";
-            }
-        }));
+        feedback.add(ClassAttribute.append(() -> feedback.anyMessage()
+                ? "hippo-shown"
+                : "hippo-hidden"));
         feedback.setOutputMarkupId(true);
         feedback.setSortingComparator(new FeedbackMessageComparator());
         add(feedback);

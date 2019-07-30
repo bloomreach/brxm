@@ -49,12 +49,12 @@ public class CheckInOutPlugin extends RenderPlugin<Node> {
         }));
         label.setOutputMarkupId(true);
 
-        label.add(ClassAttribute.append(ReadOnlyModel.of(() -> {
+        label.add(ClassAttribute.append(() -> {
             if (isVersionable()) {
                 return isCheckedOut() ? "dropdown-link-green" : "dropdown-link-red";
             }
             return "dropdown-link-disabled";
-        })));
+        }));
         // set up link component
         link = new AjaxLink<Void>("link") {
 

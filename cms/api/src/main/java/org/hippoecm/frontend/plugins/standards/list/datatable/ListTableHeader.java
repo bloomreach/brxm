@@ -20,7 +20,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.markup.html.border.Border;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 
 public class ListTableHeader<T> extends Border {
@@ -34,17 +33,14 @@ public class ListTableHeader<T> extends Border {
         this.property = property;
         this.stateLocator = stateLocator;
 
-        add(ClassAttribute.append(new AbstractReadOnlyModel<String>() {
-            @Override
-            public String getObject() {
-                switch (getSortOrder()) {
-                    case ASCENDING:
-                        return "hippo-list-order-ascending";
-                    case DESCENDING:
-                        return "hippo-list-order-descending";
-                    default:
-                        return "hippo-list-order-none";
-                }
+        add(ClassAttribute.append(() -> {
+            switch (getSortOrder()) {
+                case ASCENDING:
+                    return "hippo-list-order-ascending";
+                case DESCENDING:
+                    return "hippo-list-order-descending";
+                default:
+                    return "hippo-list-order-none";
             }
         }));
 

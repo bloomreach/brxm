@@ -36,12 +36,11 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.model.IChangeListener;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugins.cms.browse.model.BrowserSections;
 import org.hippoecm.frontend.plugins.cms.browse.service.IBrowserSection;
-import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.ICardView;
 import org.hippoecm.frontend.widgets.AbstractView;
@@ -105,7 +104,9 @@ public class SectionViewer extends Panel implements ICardView {
                 component.setOutputMarkupId(true);
                 component.setOutputMarkupPlaceholderTag(true);
                 item.add(component);
-                item.add(ClassAttribute.append(ReadOnlyModel.of(() -> sections.isActive(section) ? "selected" : "unselected")));
+                item.add(ClassAttribute.append(() -> sections.isActive(section)
+                        ? "selected"
+                        : "unselected"));
             }
 
             @Override

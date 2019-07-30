@@ -22,7 +22,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.html.panel.Fragment;
@@ -31,6 +30,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.ContentDisposition;
 import org.apache.wicket.request.resource.IResource;
 import org.apache.wicket.resource.loader.ComponentStringResourceLoader;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.editor.compare.StreamComparer;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -83,11 +83,11 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
             if (doCompare) {
                 Fragment fragment = new Fragment("fragment", "compare", this);
                 Fragment baseFragment = createResourceFragment("base", baseModelRef.getModel());
-                baseFragment.add(new AttributeAppender("class", new Model<String>("hippo-diff-removed"), " "));
+                baseFragment.add(ClassAttribute.append("hippo-diff-removed"));
                 fragment.add(baseFragment);
 
                 Fragment currentFragment = createResourceFragment("current", getModel());
-                currentFragment.add(new AttributeAppender("class", new Model<String>("hippo-diff-added"), " "));
+                currentFragment.add(ClassAttribute.append("hippo-diff-added"));
                 fragment.add(currentFragment);
                 add(fragment);
             } else {

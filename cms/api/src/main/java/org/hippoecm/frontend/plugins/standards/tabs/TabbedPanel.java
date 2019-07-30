@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.WicketRuntimeException;
@@ -51,10 +52,11 @@ import org.apache.wicket.util.string.StringValue;
 import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.plugins.yui.layout.IWireframe;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
 import org.hippoecm.frontend.service.IconSize;
@@ -329,22 +331,16 @@ public class TabbedPanel extends WebMarkupContainer {
                 return "title";
             }
         }));
-        link.add(TitleAttribute.append(new LoadableDetachableModel<String>() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            protected String load() {
-                IModel<String> titleModel = tabModel.getObject().getTitle();
-                if (titleModel != null) {
-                    return titleModel.getObject();
-                }
-                return "";
-            }
+        link.add(TitleAttribute.append(() -> {
+            final IModel<String> titleModel = tabModel.getObject().getTitle();
+            return titleModel != null
+                ? titleModel.getObject()
+                : StringUtils.EMPTY;
         }));
 
         final String titleCssClass = tabModel.getObject().getTitleCssClass();
         if (titleCssClass != null) {
-            link.add(new AttributeAppender("class", Model.of(titleCssClass), " "));
+            link.add(ClassAttribute.append(titleCssClass));
         }
         container.add(link);
 

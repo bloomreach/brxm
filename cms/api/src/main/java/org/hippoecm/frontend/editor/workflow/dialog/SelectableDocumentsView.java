@@ -29,16 +29,14 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDat
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.IPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
-import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.RowSelector;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeIconAndStateRenderer;
 import org.hippoecm.frontend.service.IEditor;
@@ -80,27 +78,18 @@ public class SelectableDocumentsView extends Panel implements IPagingDefinition 
         }, true, this);
         dataTable.add(ClassAttribute.append(DocumentListColumn.DOCUMENT_LIST_CSS_CLASS));
 
-        dataTable.add(ClassAttribute.append(new AbstractReadOnlyModel<String>() {
-            @Override
-            public String getObject() {
-                return provider.size() > getPageSize() ? "hippo-paging" : "";
-            }
-        }));
+        dataTable.add(ClassAttribute.append(() -> provider.size() > getPageSize()
+                ? "hippo-paging"
+                : StringUtils.EMPTY));
 
         add(dataTable);
 
         add(actionContainer = new WebMarkupContainer("actions"));
 
         add(ClassAttribute.append("hippo-selectable-documents"));
-        add(ClassAttribute.append(new LoadableDetachableModel<String>() {
-            @Override
-            protected String load() {
-                if (SelectableDocumentsView.this.provider.size() == 0) {
-                    return "hippo-empty";
-                }
-                return "";
-            }
-        }));
+        add(ClassAttribute.append(() -> provider.size() == 0
+                ? "hippo-empty"
+                : StringUtils.EMPTY));
 
         AjaxLink selectAll = new AjaxLink("select-all") {
             @Override

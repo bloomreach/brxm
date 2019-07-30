@@ -18,6 +18,8 @@ package org.hippoecm.frontend.attributes;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.ReadOnlyModel;
+import org.hippoecm.frontend.model.SerializableSupplier;
 
 /**
  * Utility to set, add and remove title attributes of Wicket components.
@@ -35,6 +37,10 @@ public class TitleAttribute {
 
     public static AttributeAppender append(final IModel<String> titleModel) {
         return AttributeModifier.append(TITLE_ATTRIBUTE, titleModel);
+    }
+
+    public static AttributeModifier append(final SerializableSupplier<String> supplier) {
+        return append(ReadOnlyModel.of(supplier));
     }
 
     public static AttributeModifier set(final String title) {

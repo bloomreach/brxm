@@ -50,12 +50,12 @@ public class UnlockPlugin extends RenderPlugin<Node> {
         }));
         label.setOutputMarkupId(true);
 
-        label.add(ClassAttribute.append(ReadOnlyModel.of(() -> {
+        label.add(ClassAttribute.append(() -> {
             if (isLockable()) {
                 return isLocked() ? "dropdown-link-green" : "dropdown-link-red";
             }
             return "dropdown-link-disabled";
-        })));
+        }));
 
         // set up link component
         link = new AjaxLink<Void>("link") {

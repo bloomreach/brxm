@@ -29,14 +29,13 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.frontend.model.ReadOnlyModel;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.model.event.Observer;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.onehippo.cm.ConfigurationService;
@@ -74,12 +73,14 @@ public class AutoExportPlugin extends RenderPlugin<Node> {
         });
         label.setOutputMarkupId(true);
 
-        add(ClassAttribute.append(ReadOnlyModel.of(() -> {
+        add(ClassAttribute.append(() -> {
             if (!isExportAvailable()) {
                 return "auto-export-state-unavailable";
             }
-            return isExportEnabled() ? "auto-export-state-enabled" : "auto-export-state-disabled";
-        })));
+            return isExportEnabled()
+                    ? "auto-export-state-enabled"
+                    : "auto-export-state-disabled";
+        }));
 
         add(ClassAttribute.append("auto-export-dev-extension"));
 

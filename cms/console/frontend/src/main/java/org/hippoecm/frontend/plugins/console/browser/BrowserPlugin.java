@@ -384,8 +384,8 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                     new DialogLink("xml-export", new Model<>(getString("xml.export")), dialogFactory, getDialogService()));
             // xml export icon
             Label iconXmlExport = new Label("icon-xml-export", StringUtils.EMPTY);
-            iconXmlExport.add(ClassAttribute.append(new Model<>(FontAwesomeIcon.DOWNLOAD.cssClass())));
-            iconXmlExport.add(ClassAttribute.append(new Model<>("xml-export-icon")));
+            iconXmlExport.add(ClassAttribute.append(FontAwesomeIcon.DOWNLOAD.cssClass()));
+            iconXmlExport.add(ClassAttribute.append("xml-export-icon"));
             menuContainer.add(iconXmlExport);
             // xml import
             dialogFactory = new IDialogFactory() {
@@ -416,8 +416,8 @@ public class BrowserPlugin extends RenderPlugin<Node> {
                     new DialogLink("yaml-export", new Model<>(getString("yaml.export")), dialogFactory, getDialogService()));
             // yaml export icon
             Label iconYamlExport = new Label("icon-yaml-export", StringUtils.EMPTY);
-            iconYamlExport.add(ClassAttribute.append(new Model<>(FontAwesomeIcon.DOWNLOAD.cssClass())));
-            iconYamlExport.add(ClassAttribute.append(new Model<>("xml-export-icon")));
+            iconYamlExport.add(ClassAttribute.append(FontAwesomeIcon.DOWNLOAD.cssClass()));
+            iconYamlExport.add(ClassAttribute.append("xml-export-icon"));
             menuContainer.add(iconYamlExport);
 
             // yaml import
