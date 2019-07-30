@@ -151,11 +151,6 @@ public class Domains {
                 domainNode = domainIter.nextNode();
                 try {
                     domain = new Domain(domainNode);
-
-                    for (DomainRule domainRule : domain.getDomainRules()) {
-                        // give parent access for all authroles
-                    }
-
                     domains.add(domain);
                     log.debug("Added domain: {}", domain.getName());
                     log.trace("Added domain: {}", domain);
