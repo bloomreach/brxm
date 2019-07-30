@@ -115,7 +115,7 @@ export class CommunicationsService {
 
     this.breadcrumbsService.clearSuffix();
 
-    return this.navigate(this.activeMenuItem.appId, this.activeMenuItem.appPath);
+    return this.navigate(this.activeMenuItem.appId, `${this.activeMenuItem.appPath}/overview`);
   }
 
   updateSelectedSite(siteId: SiteId): Promise<void[]> {
