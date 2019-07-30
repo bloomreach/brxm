@@ -1,12 +1,12 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,26 +15,23 @@
  */
 package org.hippoecm.addon.workflow;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 
 class MenuAction extends Panel implements IContextMenu {
 
-    private static final long serialVersionUID = 1L;
+    private final MenuLink link;
 
-    private MenuLink link;
-    
-    public MenuAction(String id, final ActionDescription wf, final Form form) {
+    public MenuAction(final String id, final ActionDescription wf, final Form form) {
         super(id);
 
-        add(link = new MenuLink("link") {
-            private static final long serialVersionUID = 1L;
+        link = new MenuLink("link") {
 
             @Override
             public void onClick() {
@@ -61,25 +58,12 @@ class MenuAction extends Panel implements IContextMenu {
             public boolean isVisible() {
                 return wf.isVisible();
             }
-        });
+        };
+        add(link);
 
-        link.add(new AttributeAppender("class", new IModel() {
-            private static final long serialVersionUID = 1L;
-
-            public Object getObject() {
-                if (!wf.isEnabled()) {
-                    return "disabled";
-                }
-                return "";
-            }
-
-            public void setObject(Object object) {
-            }
-
-            public void detach() {
-            }
-            
-        }, " ") );
+        link.add(ClassAttribute.append(() -> !wf.isEnabled()
+                ? "disabled"
+                : StringUtils.EMPTY));
 
         Component fragment = wf.getFragment("text");
         if (fragment instanceof ActionDescription.ActionDisplay) {
@@ -87,8 +71,6 @@ class MenuAction extends Panel implements IContextMenu {
             link.add(fragment);
         } else if (fragment instanceof Fragment) {
             link.add(fragment);
-        } else {
-            // wf.setVisible(true);
         }
 
         fragment = wf.getFragment("icon");
@@ -100,7 +82,7 @@ class MenuAction extends Panel implements IContextMenu {
         }
     }
 
-    public void collapse(AjaxRequestTarget target) {
+    public void collapse(final AjaxRequestTarget target) {
     }
 
     /**
@@ -112,9 +94,6 @@ class MenuAction extends Panel implements IContextMenu {
      */
     @Override
     public boolean isVisible() {
-        if (link == null) {
-            return true;
-        }
-        return link.isVisible();
+        return link == null || link.isVisible();
     }
 }

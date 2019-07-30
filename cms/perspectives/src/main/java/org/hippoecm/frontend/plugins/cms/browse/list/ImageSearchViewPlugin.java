@@ -20,9 +20,10 @@ import java.util.List;
 
 import javax.jcr.Node;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.hippoecm.frontend.model.ReadOnlyModel;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.columns.FallbackImageGalleryListColumnProvider;
@@ -31,7 +32,6 @@ import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.list.IListColumnProvider;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
-import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.skin.Icon;
 
 import static org.hippoecm.frontend.plugins.cms.browse.list.ImageSearchViewPlugin.Mode.LIST;
@@ -58,7 +58,9 @@ public final class ImageSearchViewPlugin extends SearchViewPlugin {
         super(context, config);
 
         add(ClassAttribute.append("image-gallery"));
-        add(ClassAttribute.append(ReadOnlyModel.of(() -> mode == LIST ? "image-gallery-list" : "image-gallery-thumbnails")));
+        add(ClassAttribute.append(() -> mode == LIST
+                ? "image-gallery-list"
+                : "image-gallery-thumbnails"));
 
         addButton(new GalleryModeButton("listButton", LIST, Icon.LIST_UL));
         addButton(new GalleryModeButton("thumbnailsButton", THUMBNAILS, Icon.THUMBNAILS));
@@ -106,7 +108,9 @@ public final class ImageSearchViewPlugin extends SearchViewPlugin {
             setOutputMarkupId(true);
 
             add(HippoIcon.fromSprite("icon", icon));
-            add(ClassAttribute.append(ReadOnlyModel.of(() -> mode == activatedMode ? "gallery-mode-active" : "")));
+            add(ClassAttribute.append(() -> mode == activatedMode
+                    ? "gallery-mode-active"
+                    : StringUtils.EMPTY));
         }
 
         @Override

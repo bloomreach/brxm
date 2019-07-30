@@ -108,29 +108,24 @@ public class ImageRegeneratePlugin extends RenderPlugin {
                 }
             });
 
+            regenerateButton.add(ClassAttribute.append(() ->
+                    (isOriginal || areExceptionsThrown || !isModelModified.getObject())
+                            ? "regenerate-button inactive"
+                            : "regenerate-button active"));
 
-            regenerateButton.add(ClassAttribute.append(new LoadableDetachableModel<String>(){
-                private static final long serialVersionUID = 1L;
-                @Override
-                protected String load(){
-                   return (isOriginal || areExceptionsThrown || !isModelModified.getObject()) ? "regenerate-button inactive" : "regenerate-button active";
+
+            regenerateButton.add(TitleAttribute.append(() -> {
+                final String buttonTipProperty;
+                if (areExceptionsThrown) {
+                    buttonTipProperty = "regenerate-button-tip-inactive-error";
+                } else {
+                    buttonTipProperty = !isModelModified.getObject()
+                            ? "regenerate-button-tip-inactive-not-modified"
+                            : "regenerate-button-tip";
                 }
+
+                return new StringResourceModel(buttonTipProperty, ImageRegeneratePlugin.this).getString();
             }));
-
-
-            regenerateButton.add(TitleAttribute.append(new LoadableDetachableModel<String>() {
-                private static final long serialVersionUID = 1L;
-                @Override
-                protected String load() {
-                    String buttonTipProperty =
-                            areExceptionsThrown ? "regenerate-button-tip-inactive-error" :
-                                    !isModelModified.getObject() ? "regenerate-button-tip-inactive-not-modified" :
-                                            "regenerate-button-tip";
-
-                    return new StringResourceModel(buttonTipProperty, ImageRegeneratePlugin.this).getString();
-                }
-            }));
-
         }
 
         add(regenerateButton);

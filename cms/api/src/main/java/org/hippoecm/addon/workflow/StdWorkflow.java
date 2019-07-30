@@ -17,19 +17,18 @@ package org.hippoecm.addon.workflow;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.ResourceReference;
+import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.attributes.ClassAttribute;
-import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
@@ -133,12 +132,9 @@ public abstract class StdWorkflow<T extends Workflow> extends ActionDescription 
             @Override
             protected void initialize() {
 
-                add(ClassAttribute.append(new AbstractReadOnlyModel<String>() {
-                    @Override
-                    public String getObject() {
-                        return StdWorkflow.this.isEnabled() ? "icon-enabled" : "icon-disabled";
-                    }
-                }));
+                add(ClassAttribute.append(() -> StdWorkflow.this.isEnabled()
+                        ? "icon-enabled"
+                        : "icon-disabled"));
 
                 Component icon = getIcon(ICON_ID);
                 if (icon == null) {

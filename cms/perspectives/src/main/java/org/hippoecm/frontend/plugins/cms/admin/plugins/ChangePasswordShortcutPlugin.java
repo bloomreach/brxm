@@ -214,7 +214,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
 
             });
             feedback.setOutputMarkupId(true);
-            feedback.add(ClassAttribute.append(ReadOnlyModel.of(() -> feedbackLevel)));
+            feedback.add(ClassAttribute.append(() -> feedbackLevel));
 
             currentWidget = new PasswordWidget("current-password",
             PropertyModel.of(ChangePasswordShortcutPlugin.this, "currentPassword"),

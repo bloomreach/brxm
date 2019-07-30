@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.jcr.Node;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
@@ -61,13 +62,9 @@ class ModifiedDocumentsView extends Panel implements IPagingDefinition {
         dataTable = new ListDataTable<>("datatable", getTableDefinition(), this.provider, model -> {}, true, this);
         add(dataTable);
 
-        add(ClassAttribute.append(new LoadableDetachableModel<String>() {
-            @Override
-            protected String load() {
-                return ModifiedDocumentsView.this.provider.size() == 0 ? "hippo-empty" : "";
-            }
-        }));
-
+        add(ClassAttribute.append(() -> provider.size() == 0
+                ? "hippo-empty"
+                : StringUtils.EMPTY));
         add(ClassAttribute.append("hippo-referring-documents"));
     }
 

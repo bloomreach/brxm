@@ -18,13 +18,13 @@ package org.hippoecm.frontend.plugins.console.editor;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.event.IEvent;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.model.ReadOnlyModel;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.plugins.yui.togglebehavior.ToggleBehavior;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 
@@ -43,8 +43,9 @@ public class EditorPlugin extends RenderPlugin<Node> {
         add(editor);
         add(new ToggleBehavior());
 
-        final IModel<String> checkedInModel = ReadOnlyModel.of(() -> isCheckedIn() ? "checked-in" : "");
-        add(ClassAttribute.append(checkedInModel));
+        add(ClassAttribute.append(() -> isCheckedIn()
+                ? "checked-in"
+                : StringUtils.EMPTY));
 
         onModelChanged();
     }
