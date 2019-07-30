@@ -124,13 +124,6 @@ class ChannelService {
     if (this.SessionService.hasWriteAccess()) {
       this._augmentChannelWithPrototypeInfo();
     }
-
-    this.CmsService.publish('set-breadcrumb', this.channel.name);
-    const location = {
-      breadcrumbLabel: channel.name,
-      path: 'channelmanager',
-    };
-    this.ParentIframeCommunicationService.updateNavLocation(location);
   }
 
   _makeContextPrefix(contextPath) {
@@ -168,6 +161,12 @@ class ChannelService {
   }
 
   makeRenderPath(channelRelativePath) {
+    const location = {
+      breadcrumbLabel: this.channel.name,
+      path: `channelmanager/${this.channel.id}`,
+    };
+    this.ParentIframeCommunicationService.updateNavLocation(location);
+
     const path = this.PathService.concatPaths(this.getHomePageRenderPathInfo(), channelRelativePath);
 
     // let the HST know the host name of the rendered page via an internal query parameter

@@ -31,14 +31,6 @@
       this.selectedChannelId = null;
       this.perspectiveId = config.perspectiveId;
 
-      this.toolbar = new Hippo.ChannelManager.BreadcrumbToolbar({
-        id: 'hippo-channelmanager-breadcrumb',
-        layoutConfig: {
-          pack: 'left'
-        },
-        hidden: true
-      });
-
       Ext.apply(config, {
         id: 'rootPanel',
         layout: 'card',
@@ -59,6 +51,7 @@
       var self, channelSelectedHandler;
 
       self = this;
+      this.addEvents('navigate-to-channel-overview');
 
       // recalculate the ExtJs layout when the YUI layout manager fires a resize event
       this.on('afterlayout', function () {
@@ -70,18 +63,9 @@
       }, this, {single: true});
 
       this.on('afterrender', function () {
-        // render the toolbar as the first item in the footer
-        var hippoFooter = Ext.getDom('ft');
-        this.toolbar.render(hippoFooter, 0);
-
         // only show the channel manager breadcrumb when channel manager is active
         Hippo.Events.subscribe('CMSChannels', this._onActivate, this);
-        Hippo.Events.subscribe('CMSChannels-deactivated', this._onDeactivate, this);
-
-        // show the breadcrumb initially when needed
-        if (this.initialConfig.showBreadcrumbInitially) {
-          this._showBreadcrumb();
-        }
+        this.on('navigate-to-channel-overview', this._showChannelOverview, this);
       }, this, {single: true});
 
       // get all child components
@@ -124,91 +108,16 @@
     },
 
     _onActivate: function() {
-      this._showBreadcrumb();
       if (this._isChannelEditorShown()) {
         this.layout.activeItem.loadChannel();
       }
     },
 
-    _onDeactivate: function() {
-      this._hideBreadcrumb();
-    },
 
-    _initBreadcrumbAnimation: function () {
-      var toolbar, toolbarEl, toolbarWidth;
-
-      if (Ext.isDefined(this.hideBreadcrumbTask) && Ext.isDefined(this.showBreadcrumbTask)) {
-        return;
-      }
-
-      toolbar = this.toolbar;
-      toolbarEl = toolbar.getEl();
-
-      this.hideBreadcrumbOptions = {
-      };
-      this.hideBreadcrumbTask = new Ext.util.DelayedTask(function () {
-        toolbarWidth = toolbarEl.getWidth();
-        toolbarEl.setWidth(0, this.hideBreadcrumbOptions);
-      }, this);
-
-      this.showBreadcrumbOptions = {
-        callback: function () {
-          toolbarEl.setWidth('auto');
-        }
-      };
-      this.showBreadcrumbTask = new Ext.util.DelayedTask(function () {
-        toolbar.show();
-        if (toolbarWidth) {
-          toolbarEl.setWidth(toolbarWidth, this.showBreadcrumbOptions);
-        } else {
-          toolbarEl.setWidth('auto');
-        }
-      }, this);
-    },
-
-    _hideBreadcrumb: function () {
-      this._initBreadcrumbAnimation();
-      this._cancelBreadcrumbAction(this.showBreadcrumbTask, this.showBreadcrumbOptions);
-      this.toolbar.getEl().removeClass('hippo-breadcrumb-active');
-      this.hideBreadcrumbTask.delay(500);
-    },
-
-    _showBreadcrumb: function () {
-      this._initBreadcrumbAnimation();
-      this._cancelBreadcrumbAction(this.hideBreadcrumbTask, this.hideBreadcrumbOptions);
-      this.toolbar.getEl().addClass('hippo-breadcrumb-active');
-      this.showBreadcrumbTask.delay(0);
-    },
-
-    _cancelBreadcrumbAction: function(task, options) {
-      task.cancel();
-      if (options.anim) {
-        options.anim.stop();
-      }
-    },
 
     selectCard: function (itemId) {
-      while (this.toolbar.getBreadcrumbSize() > 0) {
-        this.toolbar.popItem();
-      }
 
-      this.toolbar.pushItem({
-        card: this.items.get(0),
-        click: function () {
-          Hippo.ChannelManager.ChannelEditor.Instance.closeChannel();
-          return false;
-        },
-        scope: this
-      });
       if ((typeof itemId !== 'undefined') && itemId !== 0) {
-        this.toolbar.pushItem({
-          card: this.items.get(itemId),
-          click: function () {
-            this.layout.setActiveItem(itemId);
-          },
-          scope: this
-        });
-
         this.layout.setActiveItem(itemId);
       } else {
         this.layout.setActiveItem(0);
@@ -220,13 +129,6 @@
     },
 
     _showChannelEditor: function () {
-      this.toolbar.pushItem({
-        card: this.items.get(1),
-        click: function () {
-          this.layout.setActiveItem(1);
-        },
-        scope: this
-      });
       this.layout.setActiveItem(1);
     },
 
