@@ -39,13 +39,25 @@
     },
 
     navigate: function (location) {
-      const perspectiveClassName = `.hippo-perspective-${location.path}perspective`;
-      const perspective = document.querySelector(perspectiveClassName);
-      if (perspective) {
-        perspective.click();
-        return Promise.resolve();
+      const pathElements = location.path.split('/');
+      const perspectiveIdentifier = pathElements.shift();
+      const perspectiveClassName = `.hippo-perspective-${perspectiveIdentifier}perspective`;
+      if (perspectiveIdentifier){
+        const perspective = document.querySelector(perspectiveClassName);
+        if (perspective) {
+          perspective.click();
+          const subPathIdentifier = pathElements.shift();
+          if (subPathIdentifier === 'overview'){
+            this.rootPanel = Ext.getCmp('rootPanel');
+            if (this.rootPanel){
+              this.rootPanel.fireEvent('navigate-to-channel-overview');
+            }
+          }
+          return Promise.resolve();
+        }
+        return Promise.reject(new Error(`${perspectiveClassName} not found`));
       }
-      return Promise.reject(new Error(`${perspectiveClassName} not found`));
+      return Promise.reject(new Error(`${location.path} is invalid`));
     },
 
     logout: function () {
@@ -71,3 +83,4 @@
     .catch(error => console.error(error));
 
 }());
+//# sourceURL=nav-app-to-app.js
