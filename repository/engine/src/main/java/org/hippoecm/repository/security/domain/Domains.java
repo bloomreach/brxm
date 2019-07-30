@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
  * The domain class holds all the {@link Domain}s and is used
  * the read the complete domain configuration from the JCR repository
  */
+// TODO is this class ever used??
 public class Domains {
 
     /** SVN id placeholder */
@@ -150,6 +151,11 @@ public class Domains {
                 domainNode = domainIter.nextNode();
                 try {
                     domain = new Domain(domainNode);
+
+                    for (DomainRule domainRule : domain.getDomainRules()) {
+                        // give parent access for all authroles
+                    }
+
                     domains.add(domain);
                     log.debug("Added domain: {}", domain.getName());
                     log.trace("Added domain: {}", domain);
