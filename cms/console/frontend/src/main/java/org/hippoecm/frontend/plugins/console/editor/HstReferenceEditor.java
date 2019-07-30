@@ -23,22 +23,20 @@ import javax.jcr.Value;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.hippoecm.frontend.attributes.StyleAttribute;
+import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
-import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class HstReferenceEditor extends Panel {
-    private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(HstReferenceEditor.class);
 
@@ -78,9 +76,8 @@ class HstReferenceEditor extends Panel {
     }
 
     private static class ReferenceLink extends AjaxLink<String> {
-        private static final long serialVersionUID = 1L;
 
-        @SuppressWarnings("unused")
+        @SuppressWarnings({"unused", "FieldCanBeLocal"})
         private String linkText;
         private JcrNodeModel linkModel;
         private final JcrPropertyModel propertyModel;
@@ -91,12 +88,9 @@ class HstReferenceEditor extends Panel {
 
             load();
             add(new Label("reference-link-text", new PropertyModel<String>(this, "linkText")));
-            add(new AttributeAppender("style", new AbstractReadOnlyModel<Object>() {
-                @Override
-                public Object getObject() {
-                    return !isValidLink() ? "color:blue" : "";
-                }
-            }, " "));
+            add(StyleAttribute.append(() -> !isValidLink()
+                    ? "color:blue"
+                    : StringUtils.EMPTY));
         }
 
         private void load() {
@@ -215,8 +209,8 @@ class HstReferenceEditor extends Panel {
             // second try: hst configuration nodes in any inheritsfrom hst:configuration group
             if (currentHstConfiguration.hasProperty(PROPERY_HST_INHERITSFROM)) {
                 final Value[] inheritFromPaths = currentHstConfiguration.getProperty(PROPERY_HST_INHERITSFROM).getValues();
-                for (Value inheritsFromPath : inheritFromPaths) {
-                    Node inheritedHstConfiguration = currentHstConfiguration.getNode(inheritsFromPath.getString());
+                for (final Value inheritsFromPath : inheritFromPaths) {
+                    final Node inheritedHstConfiguration = currentHstConfiguration.getNode(inheritsFromPath.getString());
                     templateNode = getConfigurationNode(inheritedHstConfiguration, relativePath);
                     if (templateNode != null) {
                         return templateNode;

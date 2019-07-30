@@ -30,9 +30,7 @@ import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormSubmitBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.behavior.Behavior;
-import org.apache.wicket.extensions.markup.html.tabs.ITab;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
@@ -43,19 +41,21 @@ import org.apache.wicket.markup.html.list.Loop;
 import org.apache.wicket.markup.html.list.LoopItem;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.repeater.AbstractRepeater;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.request.Request;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.string.StringValue;
-import org.apache.wicket.util.visit.IVisit;
 import org.apache.wicket.util.visit.IVisitor;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.attributes.StyleAttribute;
 import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
+import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.yui.layout.IWireframe;
 import org.hippoecm.frontend.plugins.yui.rightclick.RightClickBehavior;
@@ -65,13 +65,9 @@ import org.hippoecm.frontend.skin.Icon;
 
 public class TabbedPanel extends WebMarkupContainer {
 
-    private static final long serialVersionUID = 1L;
-
     abstract static class CloseLink<T> extends AbstractLink {
 
-        private static final long serialVersionUID = 1L;
-
-        public CloseLink(final String id, final IModel<T> model, Form form) {
+        public CloseLink(final String id, final IModel<T> model, final Form form) {
             super(id, model);
 
             if (form != null) {
@@ -91,7 +87,6 @@ public class TabbedPanel extends WebMarkupContainer {
                 });
             } else {
                 add(new AjaxEventBehavior("click") {
-
                     @Override
                     protected void onEvent(final AjaxRequestTarget target) {
                         collapseMenu(target);
@@ -102,11 +97,11 @@ public class TabbedPanel extends WebMarkupContainer {
         }
 
         private void collapseMenu(final AjaxRequestTarget target) {
-            IContextMenu parent = findParent(IContextMenu.class);
+            final IContextMenu parent = findParent(IContextMenu.class);
             if (parent != null) {
                 parent.collapse(target);
             } else {
-                IContextMenuManager manager = findParent(IContextMenuManager.class);
+                final IContextMenuManager manager = findParent(IContextMenuManager.class);
                 if (manager != null) {
                     manager.collapseAllContextMenus();
                 }
@@ -120,16 +115,17 @@ public class TabbedPanel extends WebMarkupContainer {
     public static final String TAB_PANEL_ID = "panel";
 
     private final TabsPlugin plugin;
-
-    private int maxTabLength = 12;
     private final List<TabsPlugin.Tab> tabs;
-    private MarkupContainer panelContainer;
-    private MarkupContainer tabsContainer;
-    private IconSize iconType = IconSize.M;
-    private transient boolean redraw = false;
-    private CardView cardView;
+    private final MarkupContainer panelContainer;
+    private final MarkupContainer tabsContainer;
+    private final CardView cardView;
 
-    public TabbedPanel(String id, TabsPlugin plugin, List<TabsPlugin.Tab> tabs, MarkupContainer tabsContainer) {
+    private IconSize iconType = IconSize.M;
+    private int maxTabLength = 12;
+
+    private transient boolean redraw = false;
+
+    public TabbedPanel(final String id, final TabsPlugin plugin, final List<TabsPlugin.Tab> tabs, final MarkupContainer tabsContainer) {
         super(id, new Model<>(-1));
 
         if (tabs == null) {
@@ -142,27 +138,19 @@ public class TabbedPanel extends WebMarkupContainer {
 
         setOutputMarkupId(true);
 
-        final IModel<Integer> tabCount = new AbstractReadOnlyModel<Integer>() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public Integer getObject() {
-                return TabbedPanel.this.tabs.size();
-            }
-        };
+        final IModel<Integer> tabCount = ReadOnlyModel.of(TabbedPanel.this.tabs::size);
 
         // add the loop used to generate tab names
         tabsContainer.add(new Loop("tabs", tabCount) {
-            private static final long serialVersionUID = 1L;
 
             @Override
-            protected void populateItem(LoopItem item) {
+            protected void populateItem(final LoopItem item) {
                 final int index = item.getIndex();
 
                 final WebMarkupContainer titleMarkupContainer = getTitleMarkupContainer(index);
                 item.add(titleMarkupContainer);
                 item.add(newBehavior(index));
-                TabsPlugin.Tab tab = getTabs().get(index);
+                final TabsPlugin.Tab tab = getTabs().get(index);
                 if (tab.isEditorTab()) {
                     final WebMarkupContainer menu = createContextMenu("contextMenu", index);
 
@@ -170,16 +158,22 @@ public class TabbedPanel extends WebMarkupContainer {
                     item.add(new RightClickBehavior(menu, item) {
 
                         @Override
-                        protected void respond(AjaxRequestTarget target) {
+                        protected void respond(final AjaxRequestTarget target) {
                             getContextmenu().setVisible(true);
                             target.add(getComponentToUpdate());
-                            IContextMenuManager menuManager = findParent(IContextMenuManager.class);
+                            final IContextMenuManager menuManager = findParent(IContextMenuManager.class);
                             if (menuManager != null) {
                                 menuManager.showContextMenu(this);
-                                StringValue x = RequestCycle.get().getRequest().getQueryParameters().getParameterValue(MOUSE_X_PARAM);
-                                StringValue y = RequestCycle.get().getRequest().getQueryParameters().getParameterValue(MOUSE_Y_PARAM);
-                                target.appendJavaScript(
-                                        "Hippo.ContextMenu.renderAtPosition('" + menu.getMarkupId() + "', " + x + ", " + y + ");");
+
+                                final Request request = RequestCycle.get().getRequest();
+                                final IRequestParameters queryParameters = request.getQueryParameters();
+                                final StringValue x = queryParameters.getParameterValue(MOUSE_X_PARAM);
+                                final StringValue y = queryParameters.getParameterValue(MOUSE_Y_PARAM);
+                                final String renderContextMenu = String.format(
+                                        "Hippo.ContextMenu.renderAtPosition('%s', %s, %s);",
+                                        menu.getMarkupId(), x, y);
+
+                                target.appendJavaScript(renderContextMenu);
                             }
                         }
                     });
@@ -188,7 +182,7 @@ public class TabbedPanel extends WebMarkupContainer {
             }
 
             @Override
-            protected LoopItem newItem(int iteration) {
+            protected LoopItem newItem(final int iteration) {
                 return newTabContainer(iteration);
             }
 
@@ -200,22 +194,22 @@ public class TabbedPanel extends WebMarkupContainer {
         add(panelContainer);
     }
 
-    protected WebMarkupContainer newPanelContainer(String id) {
-        WebMarkupContainer container = new WebMarkupContainer(id);
+    protected WebMarkupContainer newPanelContainer(final String id) {
+        final WebMarkupContainer container = new WebMarkupContainer(id);
         container.setOutputMarkupId(true);
         return container;
     }
 
-    private WebMarkupContainer createContextMenu(String contextMenu, final int index) {
+    private WebMarkupContainer createContextMenu(final String contextMenu, final int index) {
         final TabsPlugin.Tab tab = getTabs().get(index);
-        WebMarkupContainer menuContainer = new WebMarkupContainer(contextMenu);
+        final WebMarkupContainer menuContainer = new WebMarkupContainer(contextMenu);
         menuContainer.setOutputMarkupId(true);
         menuContainer.setVisible(false);
 
         menuContainer.add(new CloseLink<TabsPlugin.Tab>("editor-close", Model.of(tab), tab.getForm()) {
 
             @Override
-            protected void onClick(AjaxRequestTarget target) {
+            protected void onClick(final AjaxRequestTarget target) {
                 plugin.onClose(tab, target);
             }
 
@@ -224,7 +218,7 @@ public class TabbedPanel extends WebMarkupContainer {
         menuContainer.add(new CloseLink<Void>("editor-close-others", null, getPanelContainerForm()) {
 
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 //Create a copy so we won't run into ConcurrentModificationException
                 plugin.closeAll(tab, target);
             }
@@ -233,7 +227,7 @@ public class TabbedPanel extends WebMarkupContainer {
         menuContainer.add(new CloseLink<Void>("editor-close-all", null, getPanelContainerForm()) {
 
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 plugin.closeAll(null, target);
             }
         });
@@ -241,10 +235,10 @@ public class TabbedPanel extends WebMarkupContainer {
         menuContainer.add(new CloseLink<Void>("editor-close-unmodified", null, getPanelContainerForm()) {
 
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 //Create a copy so we won't run into ConcurrentModificationException
-                List<TabsPlugin.Tab> tabsCopy = new ArrayList<>(tabs);
-                for (TabsPlugin.Tab currentTab : tabsCopy) {
+                final List<TabsPlugin.Tab> tabsCopy = new ArrayList<>(tabs);
+                for (final TabsPlugin.Tab currentTab : tabsCopy) {
                     plugin.onCloseUnmodified(currentTab, target);
                 }
             }
@@ -256,10 +250,8 @@ public class TabbedPanel extends WebMarkupContainer {
 
     protected LoopItem newTabContainer(final int tabIndex) {
         return new LoopItem(tabIndex) {
-            private static final long serialVersionUID = 1L;
-
             @Override
-            protected void onComponentTag(ComponentTag tag) {
+            protected void onComponentTag(final ComponentTag tag) {
                 super.onComponentTag(tag);
                 String cssClass = tag.getAttribute("class");
                 if (cssClass == null) {
@@ -280,15 +272,15 @@ public class TabbedPanel extends WebMarkupContainer {
 
     // used by superclass to add title to the container
     protected WebMarkupContainer getTitleMarkupContainer(final int index) {
-        WebMarkupContainer container = new WebMarkupContainer("container", new Model<>(index));
+        final WebMarkupContainer container = new WebMarkupContainer("container", new Model<>(index));
         final TabsPlugin.Tab tab = getTabs().get(index);
         final IModel<TabsPlugin.Tab> tabModel = new Model<>(tab);
 
         if (tab.isEditorTab()) {
-            CloseLink closeLink = new CloseLink<TabsPlugin.Tab>("close", tabModel, tab.getForm()) {
+            final CloseLink closeLink = new CloseLink<TabsPlugin.Tab>("close", tabModel, tab.getForm()) {
 
                 @Override
-                protected void onClick(AjaxRequestTarget target) {
+                protected void onClick(final AjaxRequestTarget target) {
                     plugin.onClose(tab, target);
                 }
 
@@ -298,17 +290,15 @@ public class TabbedPanel extends WebMarkupContainer {
             final HippoIcon closeIcon = HippoIcon.fromSprite("close-icon", Icon.TIMES_CIRCLE);
             closeLink.add(closeIcon);
         } else {
-            EmptyPanel hidden = new EmptyPanel("close");
+            final EmptyPanel hidden = new EmptyPanel("close");
             hidden.setVisible(false);
             hidden.add(HippoIcon.fromSprite("close-icon", Icon.EMPTY));
             container.add(hidden);
         }
 
-        WebMarkupContainer link = new AjaxLink<TabsPlugin.Tab>("link", tabModel) {
-            private static final long serialVersionUID = 1L;
-
+        final WebMarkupContainer link = new AjaxLink<TabsPlugin.Tab>("link", tabModel) {
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 plugin.onSelect(getModelObject(), target);
             }
         };
@@ -320,22 +310,21 @@ public class TabbedPanel extends WebMarkupContainer {
         link.add(icon);
 
         link.add(new Label("title", new LoadableDetachableModel<String>() {
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected String load() {
-                IModel<String> titleModel = tabModel.getObject().getTitle();
+                final IModel<String> titleModel = tabModel.getObject().getTitle();
                 if (titleModel != null) {
                     return titleModel.getObject();
                 }
                 return "title";
             }
         }));
+
         link.add(TitleAttribute.append(() -> {
             final IModel<String> titleModel = tabModel.getObject().getTitle();
             return titleModel != null
-                ? titleModel.getObject()
-                : StringUtils.EMPTY;
+                    ? titleModel.getObject()
+                    : StringUtils.EMPTY;
         }));
 
         final String titleCssClass = tabModel.getObject().getTitleCssClass();
@@ -349,13 +338,10 @@ public class TabbedPanel extends WebMarkupContainer {
 
     protected Behavior newBehavior(final int tabIndex) {
         return new AjaxEventBehavior("click") {
-            private static final long serialVersionUID = 1L;
-
             @Override
-            protected void onEvent(AjaxRequestTarget target) {
+            protected void onEvent(final AjaxRequestTarget target) {
                 plugin.onSelect(tabs.get(tabIndex), target);
             }
-
         };
     }
 
@@ -363,7 +349,7 @@ public class TabbedPanel extends WebMarkupContainer {
         return null;
     }
 
-    public void setMaxTitleLength(int maxTitleLength) {
+    public void setMaxTitleLength(final int maxTitleLength) {
         this.maxTabLength = maxTitleLength;
     }
 
@@ -386,7 +372,7 @@ public class TabbedPanel extends WebMarkupContainer {
         redraw();
     }
 
-    public void render(PluginRequestTarget target) {
+    public void render(final PluginRequestTarget target) {
         cardView.onPopulate();
         if (redraw) {
             if (target != null) {
@@ -414,7 +400,7 @@ public class TabbedPanel extends WebMarkupContainer {
         return tabs;
     }
 
-    public void setSelectedTab(int index) {
+    public void setSelectedTab(final int index) {
         if (index >= tabs.size()) {
 //            panelContainer.replace(plugin.getEmptyPanel());
             return;
@@ -427,14 +413,12 @@ public class TabbedPanel extends WebMarkupContainer {
             return;
         }
 
-        ITab tab = tabs.get(index);
+        final TabsPlugin.Tab tab = tabs.get(index);
 
-        WebMarkupContainer panel = tab.getPanel(TAB_PANEL_ID);
-
+        final WebMarkupContainer panel = tab.getPanel(TAB_PANEL_ID);
         if (panel == null) {
             throw new WicketRuntimeException(
                     "ITab.getPanel() returned null. TabbedPanel [" + getPath() + "] ITab index [" + index + "]");
-
         }
 
         if (!panel.getId().equals(TAB_PANEL_ID)) {
@@ -442,7 +426,7 @@ public class TabbedPanel extends WebMarkupContainer {
                     "ITab.getPanel() returned a panel with invalid id [" + panel.getId() + "]. You must always return a panel with id equal to the provided panelId parameter. TabbedPanel [" + getPath() + "] ITab index [" + index + "]");
         }
 
-        cardView.select((TabsPlugin.Tab) tab);
+        cardView.select(tab);
 //        panelContainer.replace(panel);
     }
 
@@ -450,7 +434,7 @@ public class TabbedPanel extends WebMarkupContainer {
         return (Integer) getDefaultModelObject();
     }
 
-    public void setIconType(IconSize iconType) {
+    public void setIconType(final IconSize iconType) {
         this.iconType = iconType;
     }
 
@@ -461,23 +445,24 @@ public class TabbedPanel extends WebMarkupContainer {
     private static class CardView extends AbstractRepeater implements ICardView {
 
         private final List<TabsPlugin.Tab> tabs;
-        private Set<TabsPlugin.Tab> added = new HashSet<>();
-        private Set<TabsPlugin.Tab> removed = new HashSet<>();
+        private final Set<TabsPlugin.Tab> added = new HashSet<>();
+        private final Set<TabsPlugin.Tab> removed = new HashSet<>();
+
         private TabsPlugin.Tab selected;
         private int counter = 0;
         private boolean populated = false;
 
-        public CardView(final List<TabsPlugin.Tab> tabs) {
+        CardView(final List<TabsPlugin.Tab> tabs) {
             super("cards");
             this.tabs = tabs;
             setRenderBodyOnly(true);
         }
 
         @Override
-        public boolean isActive(Component component) {
+        public boolean isActive(final Component component) {
             Component container = component;
             if (selected != null) {
-                MarkupContainer selectedPanel = selected.getPanel(TAB_PANEL_ID);
+                final MarkupContainer selectedPanel = selected.getPanel(TAB_PANEL_ID);
                 while (container != null) {
                     if (container == selectedPanel) {
                         return true;
@@ -488,7 +473,7 @@ public class TabbedPanel extends WebMarkupContainer {
             return false;
         }
 
-        void select(TabsPlugin.Tab tabbie) {
+        void select(final TabsPlugin.Tab tabbie) {
             this.selected = tabbie;
         }
 
@@ -501,7 +486,7 @@ public class TabbedPanel extends WebMarkupContainer {
         }
 
         void addLast() {
-            TabsPlugin.Tab tabbie = tabs.get(tabs.size() - 1);
+            final TabsPlugin.Tab tabbie = tabs.get(tabs.size() - 1);
             if (removed.contains(tabbie)) {
                 removed.remove(tabbie);
             } else {
@@ -510,7 +495,7 @@ public class TabbedPanel extends WebMarkupContainer {
         }
 
         void addFirst() {
-            TabsPlugin.Tab tabbie = tabs.get(0);
+            final TabsPlugin.Tab tabbie = tabs.get(0);
             if (removed.contains(tabbie)) {
                 removed.remove(tabbie);
             } else {
@@ -518,24 +503,16 @@ public class TabbedPanel extends WebMarkupContainer {
             }
         }
 
-        protected ListItem<TabsPlugin.Tab> newItem(TabsPlugin.Tab tabbie) {
+        protected ListItem<TabsPlugin.Tab> newItem(final TabsPlugin.Tab tabbie) {
             return new ListItem<TabsPlugin.Tab>(counter++, new Model<>(tabbie)) {
                 {
-                    add(new AttributeAppender("style", new LoadableDetachableModel<Object>() {
-                        @Override
-                        protected Object load() {
-                            if (getModelObject() == selected) {
-                                return "display: block;";
-                            } else {
-                                return "display: none;";
-                            }
-                        }
-                    }, " "));
+                    add(StyleAttribute.append(() -> getModelObject() == selected
+                            ? "display: block"
+                            : "display: none"));
 
                     add(getModelObject().getPanel(TAB_PANEL_ID));
                     setOutputMarkupId(true);
                 }
-
             };
         }
 
@@ -543,7 +520,7 @@ public class TabbedPanel extends WebMarkupContainer {
         protected void onPopulate() {
             if (!populated) {
                 populated = true;
-                for (TabsPlugin.Tab tabbie : tabs) {
+                for (final TabsPlugin.Tab tabbie : tabs) {
                     add(newItem(tabbie));
                 }
                 added.clear();
@@ -565,9 +542,9 @@ public class TabbedPanel extends WebMarkupContainer {
                 public Component next() {
                     final TabsPlugin.Tab tabbie = upstream.next();
 
-                    Iterator<? extends Component> iterator = iterator();
+                    final Iterator<? extends Component> iterator = iterator();
                     while (iterator.hasNext()) {
-                        Component component = iterator.next();
+                        final Component component = iterator.next();
                         if (component.getDefaultModelObject() == tabbie) {
                             return component;
                         }
@@ -583,40 +560,50 @@ public class TabbedPanel extends WebMarkupContainer {
             };
         }
 
-        public void updateCards(AjaxRequestTarget target) {
-            for (TabsPlugin.Tab tabbie : added) {
-                ListItem<TabsPlugin.Tab> item = newItem(tabbie);
+        public void updateCards(final AjaxRequestTarget target) {
+            for (final TabsPlugin.Tab tabbie : added) {
+                final ListItem<TabsPlugin.Tab> item = newItem(tabbie);
                 add(item);
 
-                target.prependJavaScript(
+                final String addScript = String.format(
                         "var element = document.createElement('div');" +
-                                "element.setAttribute('id', '" + item.getMarkupId() + "');" +
-                                "Wicket.$('" + getParent().getMarkupId() + "').appendChild(element);");
+                                "element.setAttribute('id', '%s');" +
+                                "Wicket.$('%s').appendChild(element);",
+                        item.getMarkupId(), getParent().getMarkupId());
+
+                target.prependJavaScript(addScript);
                 target.add(item);
             }
+
             Iterator<Component> children = iterator();
             while (children.hasNext()) {
-                Component item = children.next();
+                final Component item = children.next();
                 if (removed.contains(item.getDefaultModelObject())) {
-                    target.appendJavaScript(
-                            "var element = Wicket.$('" + item.getMarkupId() + "');" +
+
+                    final String cleanupAndRemoveScript = String.format(
+                            "var element = Wicket.$('%s');" +
                                     "HippoAjax.cleanupElement(element);" +
-                                    "element.parentNode.removeChild(element);");
+                                    "element.parentNode.removeChild(element);",
+                            item.getMarkupId());
+
+                    target.appendJavaScript(cleanupAndRemoveScript);
                     children.remove();
                 }
             }
 
             children = iterator();
             while (children.hasNext()) {
-                Component item = children.next();
-                String display = "none";
-                if (item.getDefaultModelObject() == selected) {
-                    display = "block";
-                }
+                final Component item = children.next();
+                final String display = item.getDefaultModelObject() == selected
+                        ? "block"
+                        : "none";
 
-                target.appendJavaScript(
-                        "var element = Wicket.$('" + item.getMarkupId() + "');" +
-                                "element.setAttribute('style', 'display: " + display + ";');");
+                final String javascript = String.format(
+                        "var element = Wicket.$('%s');" +
+                                "element.setAttribute('style', 'display: %s;');",
+                        item.getMarkupId(), display);
+
+                target.appendJavaScript(javascript);
 
                 if (item.getDefaultModelObject() == selected) {
                     renderWireframes((MarkupContainer) item, target);
@@ -627,21 +614,18 @@ public class TabbedPanel extends WebMarkupContainer {
             removed.clear();
         }
 
-        void renderWireframes(MarkupContainer cont, final AjaxRequestTarget target) {
-            //Visit child components in order to find components that contain a {@link WireframeBehavior}.
-            cont.visitChildren(Component.class, new IVisitor<Component, Void>() {
-                public void component(Component component, IVisit<Void> visit) {
-                    for (Object behavior : component.getBehaviors()) {
-                        if (behavior instanceof IWireframe) {
-                            IWireframe wireframe = (IWireframe) behavior;
-                            wireframe.resize(target);
-                            visit.dontGoDeeper();
-                            return;
-                        }
+        void renderWireframes(final MarkupContainer cont, final AjaxRequestTarget target) {
+            // Visit child components in order to find components that contain a {@link WireframeBehavior}.
+            cont.visitChildren(Component.class, (IVisitor<Component, Void>) (component, visit) -> {
+                for (final Object behavior : component.getBehaviors()) {
+                    if (behavior instanceof IWireframe) {
+                        final IWireframe wireframe = (IWireframe) behavior;
+                        wireframe.resize(target);
+                        visit.dontGoDeeper();
+                        return;
                     }
                 }
             });
-
         }
 
     }

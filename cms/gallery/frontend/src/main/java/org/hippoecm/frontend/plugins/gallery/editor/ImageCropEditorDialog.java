@@ -36,17 +36,16 @@ import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.attributes.StyleAttribute;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -152,8 +151,8 @@ public class ImageCropEditorDialog extends Dialog<Node> {
             final double previewWidth = Math.floor(previewCropFactor * thumbnailDimension.getWidth());
             final double previewHeight = Math.floor(previewCropFactor * thumbnailDimension.getHeight());
 
-            imagePreviewContainer.add(new AttributeAppender("style", Model.of("width:" + previewWidth + "px"), ";"));
-            imagePreviewContainer.add(new AttributeAppender("style", Model.of("height:" + previewHeight + "px"), ";"));
+            imagePreviewContainer.add(StyleAttribute.append("width:" + previewWidth + "px"));
+            imagePreviewContainer.add(StyleAttribute.append("height:" + previewHeight + "px"));
 
         } catch (RepositoryException | GalleryException e) {
             log.error("Cannot retrieve thumbnail dimensions", e);
@@ -204,7 +203,7 @@ public class ImageCropEditorDialog extends Dialog<Node> {
         originalImage.setOutputMarkupId(true);
 
         add(originalImage);
-        imgPreview.add(new AttributeAppender("style", Model.of("position:absolute"), ";"));
+        imgPreview.add(StyleAttribute.append("position:absolute"));
         imagePreviewContainer.add(imgPreview);
         imagePreviewContainer.setVisible(cropSettings.isPreviewVisible());
         add(imagePreviewContainer);
