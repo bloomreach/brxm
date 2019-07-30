@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,8 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.math3.util.Pair;
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.NameParser;
 import org.apache.jackrabbit.spi.commons.conversion.NameResolver;
@@ -30,6 +32,8 @@ import org.apache.jackrabbit.spi.commons.namespace.SessionNamespaceResolver;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.FacetAuthConstants;
 import org.onehippo.repository.security.domain.FacetRule;
+
+import static org.hippoecm.repository.util.JcrUtils.getBooleanProperty;
 
 /**
  * The facet rule consist of a facet (property) and a value.
@@ -70,6 +74,11 @@ public class QFacetRule implements Serializable {
     private final String value;
 
     /**
+     * In case JcrConstants.JCR_PATH.equals(facet) is true, this returns the absolute path to the reference
+     */
+    private String pathReference;
+
+    /**
      * The Name representation of value to match the facet
      */
     private final Name valueName;
@@ -91,6 +100,7 @@ public class QFacetRule implements Serializable {
 
 
     public QFacetRule(FacetRule facetRule, NameResolver nameResolver) throws RepositoryException {
+        // TODO this is used by Session delegation but DOES not work for PropertyType.REFERENCE !! FIX??
         this.type = facetRule.getType();
         this.facet = facetRule.getFacet();
         this.facetName = nameResolver.getQName(facet);
@@ -108,10 +118,12 @@ public class QFacetRule implements Serializable {
     public QFacetRule(final Node node) throws RepositoryException {
         // get mandatory properties
         facet = node.getProperty(HippoNodeType.HIPPO_FACET).getString();
+
         // Set the JCR Name for the facet (string)
         facetName = NameParser.parse(facet, new SessionNamespaceResolver(node.getSession()), NameFactoryImpl.getInstance());
         equals = node.getProperty(HippoNodeType.HIPPO_EQUALS).getBoolean();
-        optional = node.getProperty(HippoNodeType.HIPPOSYS_FILTER).getBoolean();
+
+        optional = getBooleanProperty(node, HippoNodeType.HIPPOSYS_FILTER, false);
 
         int tmpType = PropertyType.valueFromName(node.getProperty(HippoNodeType.HIPPOSYS_TYPE).getString());
         String tmpValue = node.getProperty(HippoNodeType.HIPPOSYS_VALUE).getString();
@@ -124,13 +136,23 @@ public class QFacetRule implements Serializable {
         } else if (tmpType == PropertyType.REFERENCE) {
             // convert to a String matcher on UUID
             tmpType = PropertyType.STRING;
-            tmpValue = parseReferenceTypeValue(node);
+            final Pair<String, String> uuidAbsPath = parseReferenceTypeValue(node);
+            tmpValue = uuidAbsPath.getFirst();
+            pathReference = uuidAbsPath.getSecond();
         }
 
         // set final values
         type = tmpType;
         value = tmpValue;
         valueName = tmpName;
+
+    }
+
+    public boolean isHierarchicalWhiteListRule() {
+        if (JcrConstants.JCR_PATH.equals(facet) && equals) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -140,10 +162,11 @@ public class QFacetRule implements Serializable {
      * @return String the String representation of the UUID
      * @throws RepositoryException
      */
-    private String parseReferenceTypeValue(Node facetNode) throws RepositoryException {
+    private Pair<String, String> parseReferenceTypeValue(Node facetNode) throws RepositoryException {
         final String uuid;
-        String pathValue = facetNode.getProperty(HippoNodeType.HIPPOSYS_VALUE).getString();
-        String path = pathValue.startsWith("/") ? pathValue.substring(1) : pathValue;
+        final String pathValue = facetNode.getProperty(HippoNodeType.HIPPOSYS_VALUE).getString();
+        final String path = pathValue.startsWith("/") ? pathValue.substring(1) : pathValue;
+        final String absPath = "/" + path;
         if ("".equals(path)) {
             uuid = facetNode.getSession().getRootNode().getIdentifier();
         } else {
@@ -166,7 +189,7 @@ public class QFacetRule implements Serializable {
                 throw new FacetRuleReferenceNotFoundException(facetName, equals,  msg.toString(), e);
             }
         }
-        return uuid;
+        return new Pair<>(uuid, absPath);
 
     }
 
@@ -193,6 +216,15 @@ public class QFacetRule implements Serializable {
      */
     public String getValue() {
         return value;
+    }
+
+    /**
+     * The value of the *absolute* path reference in case {@link #getType()} equals PropertyType.REFERENCE and otherwise returns
+     * {@code null}
+     * @return the path reference
+     */
+    public String getPathReference() {
+        return pathReference;
     }
 
     /**
@@ -245,7 +277,13 @@ public class QFacetRule implements Serializable {
         } else {
             sb.append(" != ");
         }
-        sb.append(value).append("]");
+        sb.append(value);
+        if (pathReference != null) {
+            sb.append(", pathReference = ").append(pathReference);
+        }
+
+        sb.append("]");
+
         return sb.toString();
     }
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,12 +17,10 @@ package org.hippoecm.repository;
 
 import java.security.AccessControlException;
 
-import javax.jcr.Credentials;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
@@ -30,7 +28,6 @@ import org.hippoecm.repository.api.HippoNodeIterator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -38,7 +35,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
-public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
+public class ReferenceJcrPathAuthorizationTest extends AbstractReferenceJcrPathAuthorization {
 
     @Before
     public void setUp() throws Exception {
@@ -66,7 +63,7 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
         // bob can read and write to /test/folder and everything *below*
         final Node pathFacetRuleDomain = domains.addNode("pathFacetRuleDomain", "hipposys:domain");
         Node domainRule = pathFacetRuleDomain.addNode("read-all-nodes-test-folder-and-below", "hipposys:domainrule");
-        Node facetRule = domainRule.addNode("path-by-uuid", "hipposys:facetrule");
+        Node facetRule = domainRule.addNode("allow-by-path", "hipposys:facetrule");
         facetRule.setProperty("hipposys:equals", true);
         facetRule.setProperty("hipposys:facet", "jcr:path");
         facetRule.setProperty("hipposys:type", "Reference");
@@ -94,7 +91,7 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
         // thus not "hippo:authtestdocument"
         final Node pathFacetAndTypeRuleDomain = domains.addNode("pathFacetAndTypeRuleDomain", "hipposys:domain");
         domainRule = pathFacetAndTypeRuleDomain.addNode("read-folders-in-test-folder-and-below-type-hippostd-folder", "hipposys:domainrule");
-        facetRule = domainRule.addNode("path-by-uuid", "hipposys:facetrule");
+        facetRule = domainRule.addNode("allow-by-path", "hipposys:facetrule");
         facetRule.setProperty("hipposys:equals", true);
         facetRule.setProperty("hipposys:facet", "jcr:path");
         facetRule.setProperty("hipposys:type", "Reference");
@@ -107,7 +104,7 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
         facetRule.setProperty("hipposys:value", "hippostd:folder");
 
         domainRule = pathFacetAndTypeRuleDomain.addNode("read-folders-in-test-folder-and-below-type-test-document", "hipposys:domainrule");
-        facetRule = domainRule.addNode("path-by-uuid", "hipposys:facetrule");
+        facetRule = domainRule.addNode("allow-by-path", "hipposys:facetrule");
         facetRule.setProperty("hipposys:equals", true);
         facetRule.setProperty("hipposys:facet", "jcr:path");
         facetRule.setProperty("hipposys:type", "Reference");
@@ -322,26 +319,6 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
                 alice.logout();
             }
         }
-    }
-
-
-    private void createAdminAuthRole(final Node pathFacetRuleDomain, final String user) throws RepositoryException {
-        final Node bobIsAdmin = pathFacetRuleDomain.addNode(user, "hipposys:authrole");
-        bobIsAdmin.setProperty("hipposys:users", new String[]{ user });
-        bobIsAdmin.setProperty("hipposys:role", "admin");
-    }
-
-    private Node createUser(String name) throws RepositoryException {
-        final Node users = session.getNode("/hippo:configuration/hippo:users");
-        if (!users.hasNode(name)) {
-            final Node user = users.addNode(name, "hipposys:user");
-            user.setProperty("hipposys:password", "password");
-        }
-        return users;
-    }
-
-    private Session loginUser(String user) throws RepositoryException {
-        return server.login(new SimpleCredentials(user, "password".toCharArray()));
     }
 
     private void assumePreconditions() throws RepositoryException {
