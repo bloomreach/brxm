@@ -138,6 +138,18 @@ public class ReferenceJcrPathAuthorizationImplicitReadTest extends AbstractRefer
         assertNoReadAccess("/test", "bob");
     }
 
+    @Ignore("See REPO-2212")
+    @Test
+    public void deny_path_access_does_not_give_implicit_read_access_to_ancestors() throws Exception {
+        // set up authorization rules, give admin role but with 'equals' set to false for path "/test/folder/sub1"
+
+        setAdminRoleOn("/test/folder/sub1", "bob", false);
+
+        session.save();
+
+        assertNoReadAccess("/test", "bob");
+    }
+
     private boolean isAllowed(final String absPath, final String action, final Session user) throws RepositoryException {
         try {
             user.checkPermission(absPath, action);
