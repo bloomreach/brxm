@@ -39,13 +39,30 @@
     },
 
     navigate: function (location) {
-      const perspectiveClassName = `.hippo-perspective-${location.path}perspective`;
-      const perspective = document.querySelector(perspectiveClassName);
-      if (perspective) {
-        perspective.click();
-        return Promise.resolve();
+      const pathElements = location.path.split('/');
+      const perspectiveIdentifier = pathElements.shift();
+      const perspectiveClassName = `.hippo-perspective-${perspectiveIdentifier}perspective`;
+
+      if (!perspectiveIdentifier) {
+      	return Promise.reject(new Error(`${location.path} is invalid`));
       }
-      return Promise.reject(new Error(`${perspectiveClassName} not found`));
+
+      const perspective = document.querySelector(perspectiveClassName);
+      if (!perspective) {
+      	return Promise.reject(new Error(`${perspectiveClassName} not found`));
+      }
+
+      perspective.click();
+      const subPathIdentifier = pathElements.shift();
+
+      if (subPathIdentifier === 'overview') {
+        this.rootPanel = Ext.getCmp('rootPanel');
+        if (this.rootPanel){
+          this.rootPanel.fireEvent('navigate-to-channel-overview');
+        }
+      }
+
+      return Promise.resolve();
     },
 
     logout: function () {
@@ -71,3 +88,4 @@
     .catch(error => console.error(error));
 
 }());
+//# sourceURL=nav-app-to-app.js
