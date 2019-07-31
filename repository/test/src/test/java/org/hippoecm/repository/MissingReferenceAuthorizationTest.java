@@ -100,6 +100,8 @@ public class MissingReferenceAuthorizationTest extends RepositoryTestCase {
         }
     }
 
+    @Ignore("See REPO-2212 : It won't be allowed to have 'false' as a single facet " +
+            "rule in a domain for a path reference facet rule : In such cases, the entire domain will be dropped")
     @Test(expected = AccessControlException.class)
     public void one_false_missing_reference_in_facet_rule_domain_rule() throws Exception {
 
@@ -212,6 +214,9 @@ public class MissingReferenceAuthorizationTest extends RepositoryTestCase {
         }
     }
 
+
+    @Ignore("See REPO-2212 : It won't be allowed to have only equals =  'false' facet " +
+            "rules in a domain for a path references : In such cases, the entire domain will be dropped")
     @Test(expected = AccessControlException.class)
     public void only_false_missing_references_in_facet_rules_domain_rule() throws Exception {
 
