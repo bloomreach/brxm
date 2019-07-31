@@ -197,7 +197,7 @@ public class MissingReferenceAuthorizationTest extends RepositoryTestCase {
         // non existing reference. Result should be no read access below /test/folder
 
         final Node domainRule = testDomain.addNode("domainRule", "hipposys:domainrule");
-        createFacetRule(domainRule, "facetRule1", true, "jcr:path", "Reference", "/test/folder/non/existing/one");
+        createFacetRule(domainRule, "facetRule1", true, "jcr:path", "Reference", "/test/folder");
         createFacetRule(domainRule, "facetRule2", true, "jcr:path", "Reference", "/test/folder/non/existing/two");
         session.save();
 
