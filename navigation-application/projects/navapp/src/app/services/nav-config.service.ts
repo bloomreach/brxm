@@ -100,7 +100,10 @@ export class NavConfigService {
             result.mergedSites = result.mergedSites.concat(configuration.sites);
 
             if (configuration.selectedSiteId) {
-              result.selectedSiteId = configuration.selectedSiteId;
+              result.selectedSiteId = {
+                accountId: configuration.selectedSiteId.accountId,
+                siteId: configuration.selectedSiteId.siteId || -1,
+              };
             }
 
             return result;
