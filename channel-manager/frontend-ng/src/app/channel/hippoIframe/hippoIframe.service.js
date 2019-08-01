@@ -59,9 +59,9 @@ class HippoIframeService {
 
     if (angular.isString(channelRelativePath) // a null path means: reuse the current render path
       && this._isDifferentPage(initialRenderPath)) {
-      this.load(initialRenderPath);
+      return this.load(initialRenderPath);
     } else {
-      this.reload();
+      return this.reload();
     }
   }
 
@@ -92,6 +92,7 @@ class HippoIframeService {
       // value, we use jQuery's attr() method, which triggers a load of the specified src.
       this.iframeJQueryElement.attr('src', this.src);
     }
+    return this.$q.resolve();
   }
 
   getSrc() {

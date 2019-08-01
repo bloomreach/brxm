@@ -24,7 +24,6 @@ class ChannelService {
     ConfigService,
     FeedbackService,
     HstService,
-    ParentIframeCommunicationService,
     PathService,
     ProjectService,
     SessionService,
@@ -40,7 +39,6 @@ class ChannelService {
     this.ConfigService = ConfigService;
     this.FeedbackService = FeedbackService;
     this.HstService = HstService;
-    this.ParentIframeCommunicationService = ParentIframeCommunicationService;
     this.PathService = PathService;
     this.ProjectService = ProjectService;
     this.SessionService = SessionService;
@@ -161,11 +159,7 @@ class ChannelService {
   }
 
   makeRenderPath(channelRelativePath) {
-    const location = {
-      breadcrumbLabel: this.channel.name,
-      path: `channelmanager/${this.channel.id}`,
-    };
-    this.ParentIframeCommunicationService.updateNavLocation(location);
+
 
     const path = this.PathService.concatPaths(this.getHomePageRenderPathInfo(), channelRelativePath);
 
