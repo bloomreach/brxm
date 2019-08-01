@@ -113,9 +113,15 @@ export class CommunicationsService {
       return Promise.reject('There is no the selected menu item.');
     }
 
+    let path = this.activeMenuItem.appPath;
+
+    if (path === 'channelmanager') {
+      path += '/';
+    }
+
     this.breadcrumbsService.clearSuffix();
 
-    return this.navigate(this.activeMenuItem.appId, `${this.activeMenuItem.appPath}/overview`);
+    return this.navigate(this.activeMenuItem.appId, path);
   }
 
   updateSelectedSite(siteId: SiteId): Promise<void[]> {
