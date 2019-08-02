@@ -78,15 +78,14 @@ class HippoCmCtrl {
   _loadChannel(channelId, contextPath, hostGroup, branchId, initialPath) {
     if (!this.ChannelService.matchesChannel(channelId)) {
       this._initializeChannel(channelId, contextPath, hostGroup, branchId, initialPath)
-        .then(() => this._notifyParentIframe(this.ChannelService.channel))
+        .then(() => this._notifyParentIframe(this.ChannelService.channel));
     } else {
-      this.HippoIframeService.initializePath(initialPath).then(() => this._notifyParentIframe(this.ChannelService.channel)
-      )
+      this.HippoIframeService.initializePath(initialPath)
+        .then(() => this._notifyParentIframe(this.ChannelService.channel));
     }
-
   }
 
-  _notifyParentIframe(channel){
+  _notifyParentIframe(channel) {
     const location = {
       breadcrumbLabel: channel.name,
       path: `channelmanager/${channel.id}`,

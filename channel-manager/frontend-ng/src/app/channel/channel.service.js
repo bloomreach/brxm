@@ -159,8 +159,6 @@ class ChannelService {
   }
 
   makeRenderPath(channelRelativePath) {
-
-
     const path = this.PathService.concatPaths(this.getHomePageRenderPathInfo(), channelRelativePath);
 
     // let the HST know the host name of the rendered page via an internal query parameter

@@ -60,9 +60,8 @@ class HippoIframeService {
     if (angular.isString(channelRelativePath) // a null path means: reuse the current render path
       && this._isDifferentPage(initialRenderPath)) {
       return this.load(initialRenderPath);
-    } else {
-      return this.reload();
     }
+    return this.reload();
   }
 
   _isDifferentPage(renderPath) {

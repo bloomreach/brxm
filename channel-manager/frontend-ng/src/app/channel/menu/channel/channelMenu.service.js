@@ -264,8 +264,7 @@ class ChannelMenuService extends MenuService {
     this._closeEditors()
       .then(() => this._confirmDeleteChannel())
       .then(() => this._executeDeleteChannel())
-      .then(() => this.ParentIframeCommunicationService.updateNavLocation({path:'channelmanager'}));
-
+      .then(() => this.ParentIframeCommunicationService.updateNavLocation({ path: 'channelmanager' }));
   }
 
   _executeDeleteChannel() {
@@ -345,7 +344,7 @@ class ChannelMenuService extends MenuService {
     this.$state.go('hippo-cm')
       .then(() => {
         this.ChannelService.clearChannel();
-        this.ParentIframeCommunicationService.updateNavLocation({path:'channelmanager'});
+        this.ParentIframeCommunicationService.updateNavLocation({ path: 'channelmanager' });
         this.CmsService.publish('close-channel');
       });
   }
