@@ -25,8 +25,9 @@
   'use strict';
 
   // Implementation of the Child API
-  Hippo.subApp = {};
-
+  if (!Hippo.SubApp){
+    Hippo.SubApp = [];
+  }
   // Receiver object for the implementation of the Parent API
   Hippo.Cms = {
     showMask () {
@@ -51,7 +52,9 @@
     methods: Hippo.Cms,
   };
   window.bloomreach['navapp-communication'].connectToChild(subAppConnectConfig)
-    .then(childApi => Object.assign(Hippo.subApp, childApi))
+    .then(childApi => {
+      Object.assign(Hippo.SubApp['${iFrameElementId}'], childApi);
+    })
     .catch(error => console.error(error));
 
 }());

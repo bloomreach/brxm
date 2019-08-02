@@ -61,6 +61,13 @@
         }
       }
 
+      if (['projects','channelmanager'].includes(location.path)){
+        const subAppChildApi = Hippo.SubApp[`${location.path}-iframe`];
+        if (subAppChildApi){
+          subAppChildApi.navigate(location);
+        }
+      }
+
       return Promise.resolve();
     },
 
