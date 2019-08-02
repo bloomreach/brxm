@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,7 +78,9 @@
     },
 
     _connectToChild: function () {
-      window.Hippo.subApp = {};
+      if (!window.Hippo.SubApp){
+        window.Hippo.SubApp = [];
+      }
       window.Hippo.Cms = {};
 
       window.Hippo.Cms.showMask = function() {
@@ -104,7 +106,7 @@
         methods: window.Hippo.Cms
       };
       promise = window.bloomreach['navapp-communication'].connectToChild(subAppConnectConfig);
-      promise.then( function(childApi){Object.assign(Hippo.subApp, childApi);
+      promise.then( function(childApi){Object.assign(window.Hippo.SubApp.channelmanager-iframe, childApi);
       }, function(error){
         console.error(error);
       });
