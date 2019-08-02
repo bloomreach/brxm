@@ -53,9 +53,8 @@
       }
 
       perspective.click();
-      const subPathIdentifier = pathElements.shift();
 
-      if (subPathIdentifier === 'overview') {
+      if (location.path === 'channelmanager/') {
         this.rootPanel = Ext.getCmp('rootPanel');
         if (this.rootPanel){
           this.rootPanel.fireEvent('navigate-to-channel-overview');
