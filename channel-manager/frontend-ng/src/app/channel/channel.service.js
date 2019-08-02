@@ -24,7 +24,6 @@ class ChannelService {
     ConfigService,
     FeedbackService,
     HstService,
-    ParentIframeCommunicationService,
     PathService,
     ProjectService,
     SessionService,
@@ -40,7 +39,6 @@ class ChannelService {
     this.ConfigService = ConfigService;
     this.FeedbackService = FeedbackService;
     this.HstService = HstService;
-    this.ParentIframeCommunicationService = ParentIframeCommunicationService;
     this.PathService = PathService;
     this.ProjectService = ProjectService;
     this.SessionService = SessionService;
@@ -124,13 +122,6 @@ class ChannelService {
     if (this.SessionService.hasWriteAccess()) {
       this._augmentChannelWithPrototypeInfo();
     }
-
-    this.CmsService.publish('set-breadcrumb', this.channel.name);
-    const location = {
-      breadcrumbLabel: channel.name,
-      path: 'channelmanager',
-    };
-    this.ParentIframeCommunicationService.updateNavLocation(location);
   }
 
   _makeContextPrefix(contextPath) {
