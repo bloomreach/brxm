@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.query.QueryManager;
+import javax.jcr.query.QueryResult;
 
 import org.junit.After;
 import org.junit.Before;
@@ -28,6 +30,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -281,6 +284,148 @@ public class MissingReferenceAuthorizationTest extends RepositoryTestCase {
                 testSession.logout();
             }
         }
+    }
+
+    @Test
+    public void missing_reference_which_gets_added_later_on_results_in_read_access_for_user_session() throws Exception {
+
+
+        final Node domainRule = testDomain.addNode("domainRule", "hipposys:domainrule");
+        createFacetRule(domainRule, "facetRule1", true, "jcr:path", "Reference", "/test/folder/tobecreated");
+        session.save();
+
+        final String[] xpaths = {
+                "/jcr:root/test/folder/tobecreated",
+                "//element(folder)/tobecreated",
+                "//element(tobecreated)",
+        };
+
+
+        Session testSession = null;
+        try {
+            testSession = loginTestUser();
+
+            final Session modifier1 = session;
+            final Session modifier2 = testSession;
+
+            for (Session modifier : new Session[] {modifier1, modifier2}) {
+
+                if (modifier.getUserID().equals("testUser")) {
+                    // make first sure the 'testUser' gets access to '/test/folder' because otherwise it can't add
+                    // the folder 'tobecreated'
+                    final Node domainRule1 = testDomain.addNode("domainRule1", "hipposys:domainrule");
+                    createFacetRule(domainRule1, "facetRule1", true, "jcr:uuid", "Reference", "/test/folder");
+                    session.save();
+
+                    // reset the testsession
+                    testSession.logout();
+                    testSession = loginTestUser();
+                    modifier = testSession;
+                }
+
+                final QueryManager queryManager = testSession.getWorkspace().getQueryManager();
+
+                assertTrue(testSession.nodeExists("/test"));
+
+                assertFalse(testSession.nodeExists("/test/folder/tobecreated"));
+
+                for (String xpath : xpaths) {
+                    final QueryResult result = queryManager.createQuery(xpath, "xpath").execute();
+                    assertEquals(String.format("Xpath '%s' did not return expected result size", xpath),
+                            0L, result.getNodes().getSize());
+                }
+
+                // add 'tobecreated'
+                modifier.getNode("/test/folder").addNode("tobecreated", "hippostd:folder");
+
+                // new node not yet searchable
+                for (String xpath : xpaths) {
+                    final QueryResult result = queryManager.createQuery(xpath, "xpath").execute();
+                    assertEquals(0L, result.getNodes().getSize());
+                }
+                modifier.save();
+
+                // after creation and save, the node should be directly visible for the 'testSession'
+                assertTrue(testSession.nodeExists("/test/folder/tobecreated"));
+
+                for (String xpath : xpaths) {
+                    final QueryResult result = queryManager.createQuery(xpath, "xpath").execute();
+                    assertEquals(String.format("Xpath '%s' did not return expected result size", xpath),
+                            1L, result.getNodes().getSize());
+                }
+
+                modifier.getNode("/test/folder/tobecreated").remove();
+                modifier.save();
+
+                assertFalse(testSession.nodeExists("/test/folder/tobecreated"));
+
+                // of course no hits, just invoke so in case unexpected exceptions happen this test fails
+                for (String xpath : xpaths) {
+                    final QueryResult result = queryManager.createQuery(xpath, "xpath").execute();
+
+                    assertEquals(String.format("Xpath '%s' did not return expected result size", xpath),
+                            0L, result.getNodes().getSize());
+                }
+
+                // recreation should make the node available again after the other session saves it
+                modifier.getNode("/test/folder").addNode("tobecreated", "hippostd:folder");
+                modifier.save();
+
+                // after creation and save, the node should be directly visible for the 'testSession'
+                assertTrue(testSession.nodeExists("/test/folder/tobecreated"));
+
+                // the authorization query should have been updated with the new UUID for the new 'tobecreated' node!
+                for (String xpath : xpaths) {
+                    final QueryResult result = queryManager.createQuery(xpath, "xpath").execute();
+
+                    assertEquals(String.format("Xpath '%s' did not return expected result size", xpath),
+                            1L, result.getNodes().getSize());
+                }
+
+                // now a subtle one: We remove the node and add it again in two transactions without in between accessing
+                // 'testSession' : that should also work
+                modifier.getNode("/test/folder/tobecreated").remove();
+                modifier.save();
+
+                modifier.getNode("/test/folder").addNode("tobecreated", "hippostd:folder");
+                modifier.save();
+                assertTrue(testSession.nodeExists("/test/folder/tobecreated"));
+
+                for (String xpath : xpaths) {
+                    final QueryResult result = queryManager.createQuery(xpath, "xpath").execute();
+                    assertEquals(String.format("Xpath '%s' did not return expected result size", xpath),
+                            1L, result.getNodes().getSize());
+                }
+
+
+                // another subtle one: We remove the node and add it again in a single transaction. Then the 'testSession'
+                // should still be able to access the node
+                modifier.getNode("/test/folder/tobecreated").remove();
+                modifier.getNode("/test/folder").addNode("tobecreated", "hippostd:folder");
+                modifier.save();
+
+                assertTrue(testSession.nodeExists("/test/folder/tobecreated"));
+
+                for (String xpath : xpaths) {
+                    final QueryResult result = queryManager.createQuery(xpath, "xpath").execute();
+                    assertEquals(String.format("Xpath '%s' did not return expected result size", xpath),
+                            1L, result.getNodes().getSize());
+                }
+
+                modifier.getNode("/test/folder/tobecreated").remove();
+                modifier.save();
+            }
+
+        }  finally {
+            if (testSession != null) {
+                testSession.logout();
+            }
+        }
+    }
+
+    @Test
+    public void concurrent_remove_add_change_on_reference() throws Exception {
+        // TODO
     }
 
     private Session loginTestUser() throws RepositoryException {

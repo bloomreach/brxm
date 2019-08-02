@@ -56,6 +56,7 @@ import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.nodetype.NodeTypeConflictException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.observation.ObservationManagerImpl;
+import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.UserPrincipal;
@@ -76,6 +77,7 @@ import org.hippoecm.repository.dataprovider.MirrorNodeId;
 import org.hippoecm.repository.impl.NodeDecorator;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.HippoQueryHandler;
+import org.hippoecm.repository.security.HippoAccessManager;
 import org.hippoecm.repository.security.domain.QFacetRule;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.security.domain.FacetRule;
@@ -93,6 +95,8 @@ abstract class SessionImplHelper {
      * the user ID that was used to acquire this session
      */
     private String userId;
+
+    private long reInitCounter;
 
     NodeTypeRegistry ntReg;
     RepositoryImpl rep;
@@ -604,8 +608,21 @@ abstract class SessionImplHelper {
     }
 
     public AuthorizationQuery getAuthorizationQuery() {
-        if (authorizationQuery == null || NodeTypesChangeTracker.getChangesCounter() != nodeTypesChangeCounter) {
+
+        final AccessManager accessManager = this.context.getAccessManager();
+
+        if (!(accessManager instanceof HippoAccessManager)) {
+            throw new IllegalStateException("Expected HippoAccessManager");
+        }
+
+        final HippoAccessManager ham = (HippoAccessManager) accessManager;
+
+
+        if (authorizationQuery == null || NodeTypesChangeTracker.getChangesCounter() != nodeTypesChangeCounter
+                || ham.getReInitCounter() != reInitCounter) {
+
             nodeTypesChangeCounter = NodeTypesChangeTracker.getChangesCounter();
+            reInitCounter = ham.getReInitCounter();
             try {
                 final RepositoryImpl repository = (RepositoryImpl)context.getRepository();
                 HippoQueryHandler queryHandler = repository.getHippoQueryHandler(session.getWorkspace().getName());

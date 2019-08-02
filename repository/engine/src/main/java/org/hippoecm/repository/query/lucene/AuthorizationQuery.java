@@ -217,6 +217,17 @@ public class AuthorizationQuery {
                                     final InternalHippoSession session,
                                     final NodeTypeManager ntMgr) {
         String value = facetRule.getValue();
+
+        if (facetRule.isReferenceRule() && !facetRule.referenceExists()) {
+            if (facetRule.isEqual()) {
+                // non existing reference and equals says true, so no hits
+                return createNoHitsQuery();
+            } else {
+                // non existing reference and equals says false, so only hits
+                return new MatchAllDocsQuery();
+            }
+        }
+
         switch (facetRule.getType()) {
             case PropertyType.STRING:
                 Name facetName = facetRule.getFacetName();

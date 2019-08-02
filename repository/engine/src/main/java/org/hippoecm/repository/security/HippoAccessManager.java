@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -44,6 +45,8 @@ import javax.jcr.security.Privilege;
 import javax.security.auth.Subject;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.jackrabbit.commons.iterator.AccessControlPolicyIteratorAdapter;
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.id.ItemId;
@@ -63,6 +66,7 @@ import org.apache.jackrabbit.core.state.ItemStateListener;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
+import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
@@ -82,25 +86,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * HippoAccessManager based on facet authorization. A subject (user)
- * has a set of {@link FacetAuthPrincipal}s which hold the domain configuration
- * as defined by a set of {@link DomainRule}s, the roles the subject has
- * for the domain and the JCR permissions the subject has for the domain.
- *
- * For checking if a subject has specific permissions on a item (property), the permissions
- * of the subject on the parent node are checked.
- *
- * The HippoAccessManager also checks if the node is part of a hippo:document in
- * which case the hippo:document is also checked for permissions when the subject
- * does not have the correct permissions on the node itself. If the subject does
- * have the correct permissions on the hippo:document the permissions on the node
- * are granted.
- *
+ * HippoAccessManager based on facet authorization. A subject (user) has a set of {@link FacetAuthPrincipal}s which hold
+ * the domain configuration as defined by a set of {@link DomainRule}s, the roles the subject has for the domain and the
+ * JCR permissions the subject has for the domain.
+ * <p>
+ * For checking if a subject has specific permissions on a item (property), the permissions of the subject on the parent
+ * node are checked.
+ * <p>
+ * The HippoAccessManager also checks if the node is part of a hippo:document in which case the hippo:document is also
+ * checked for permissions when the subject does not have the correct permissions on the node itself. If the subject
+ * does have the correct permissions on the hippo:document the permissions on the node are granted.
  */
 public class HippoAccessManager implements AccessManager, AccessControlManager, ItemStateListener {
 
     /**
-     * Intermediate readAccess state for current thread {@link #canRead(NodeId)} processing
+     * Intermediate readAccess state for current thread {@link #canRead(NodeId)} processingCreatedDestroyedNodeIds
      */
     private final Set<NodeId> inprocessNodeReadAccess = new HashSet<>();
 
@@ -164,6 +164,29 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      */
     private HippoAccessCache readAccessCache;
     private Set<NodeId> implicitReads = new HashSet<>();
+    private long reInitCounter = 0;
+    private Map<String, List<QFacetRule>> missingReferences = new HashMap<>();
+
+    /**
+     * createdDestroyedNodeIds can be accessed concurrently hence use synchronized(createdDestroyedNodeIds) when using
+     * the left and right set. The left set contains the createdNodeIds and the right set contains the destroyedNodeIds
+     * which still need to be processed by this HippoAccessManager
+     */
+
+    private Pair<Set<NodeId>, Set<NodeId>> createdDestroyedNodeIds = new ImmutablePair<>(new HashSet<>(), new HashSet<>());
+
+    /**
+     * In general, if left or right set in createdDestroyedNodeIds is not empty, we process the created and/or destroyed
+     * node Ids synchronously during checkPermission / isGranted /canRead methods. *However*, if the
+     * createdDestroyedNodeIds exceed the PROCESS_CREATED_NODE_IDS_SYNC_LIMIT, we process it asynchronously. Note that
+     * we *never* process createdDestroyedNodeIds from the thread that triggered {@link #stateCreated(ItemState)} or
+     * {@link #stateDestroyed(ItemState)} since that thread should return as fast as possible from these methods (which
+     * is also the reason why we delay the processingCreatedDestroyedNodeIds of createdDestroyedNodeIds to the thread
+     * using the current session or until PROCESS_CREATED_NODE_IDS_SYNC_LIMIT is reached. We use
+     * PROCESS_CREATED_NODE_IDS_SYNC_LIMIT since we do not want possibly OOM if there are lots of unused/dorming JCR
+     * Sessions which would get too large createdNodeIds sets.
+     */
+    private final static int PROCESS_CREATED_NODE_IDS_SYNC_LIMIT = 1000;
 
     private WeakHashMap<HippoNodeId, Boolean> readVirtualAccessCache;
 
@@ -298,7 +321,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * @see AccessManager#close()
      */
     public synchronized void close() throws Exception {
-        
+
         // clear out all caches
         implicitReads.clear();
         readAccessCache.clear();
@@ -373,7 +396,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             return canRead((NodeId) id);
         }
 
-        // not a read, remove node from cache
+        // not a read, remove node from read cache since the action might change the read access for the node
         removeAccessFromCache((NodeId) id);
 
         return isGranted(hierMgr.getPath(id), permissions);
@@ -431,7 +454,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
     /**
      * Just forwards the call to <code>isGranted(Path,int)</code>
-     * @see HippoAccessManager#isGranted(Path,int)
+     * @see HippoAccessManager#isGranted(Path, int)
      * @see AccessManager#isGranted(Path, Name, int)
      */
 
@@ -465,12 +488,17 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      */
 
     public boolean canAccess(String workspaceName) throws NoSuchWorkspaceException, RepositoryException {
+        processCreatedDestroyedNodeIds();
         // no workspace restrictions yet
         return true;
     }
 
     public Set<NodeId> getImplicitReads() {
         return implicitReads;
+    }
+
+    public long getReInitCounter() {
+        return reInitCounter;
     }
 
     public Set<QFacetRule> getFacetRules(final DomainRule domainRule) {
@@ -489,6 +517,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     //---------------------------------------- Methods ---------------------------------------------//
     /**
      * Check whether a user can read the node with the given id
+     *
      * @param id the id of the node to check
      * @return true if the user is allowed to read the node
      * @throws RepositoryException
@@ -497,6 +526,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         if (isSystem) {
             return true;
         }
+
+        processCreatedDestroyedNodeIds();
 
         // check cache
         Boolean allowRead = getAccessFromCache(id);
@@ -559,8 +590,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                 log.info("DENIED read : {}", npRes.getJCRPath(hierMgr.getPath(id)));
             }
             return false;
-        }
-        finally {
+        } finally {
             inprocessNodeReadAccess.remove(id);
         }
     }
@@ -634,7 +664,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * domain rules. For each domain all the facet rules are checked.
      *
      * @param nodeState the state of the node to check
-     * @param fap the facet auth principal to check
+     * @param fap       the facet auth principal to check
      * @param checkRead
      * @return true if the node is in the domain of the facet auth
      * @throws RepositoryException
@@ -671,7 +701,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             if (allRulesMatched) {
                 // a match is found, don't check other domain rules;
                 isInDomain = true;
-                log.debug("Node :  {} found in domain {} match {}", nodeState.getId(),fap.getName(), domainRule);
+                log.debug("Node :  {} found in domain {} match {}", nodeState.getId(), fap.getName(), domainRule);
                 break;
             } else {
                 // check if node is part of a hippo:document
@@ -705,6 +735,18 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      */
     private boolean matchFacetRule(NodeState nodeState, QFacetRule facetRule) throws RepositoryException {
         log.trace("Checking node : {} for facet rule: {}", nodeState.getId(), facetRule);
+
+        if (facetRule.isReferenceRule() && !facetRule.referenceExists()) {
+            if (facetRule.isEqual()) {
+                log.trace("The reference '{}' does not (yet) exist. Since the facet rule indicates that it must be " +
+                        "equal, the result is that the nodeState does not match this facet rule");
+                return false;
+            } else {
+                log.trace("The reference '{}' does not (yet) exist. Since the facet rule indicates that it must be " +
+                        "not equal, the result is that the nodeState does match this facet rule");
+                return true;
+            }
+        }
 
         // is this a 'NodeType' facet rule?
         if (facetRule.getFacet().equalsIgnoreCase("nodetype")) {
@@ -767,7 +809,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             log.trace("Checking node : {} for matching jcr:path with : {}", nodeState.getId(), facetRule);
             try {
                 NodeState current = nodeState;
-                for (;;) {
+                for (; ; ) {
                     if (current.getNodeId().toString().equals(facetRule.getValue())) {
                         uuidMatch = true;
                         break;
@@ -835,7 +877,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     /**
      * Helper function to resolve the name of the node of the nodeState in the specified hierarchy manager.
      * @param nodeState
-     * @param hierMgr hierarchy manager to use for resolving the node name
+     * @param hierMgr   hierarchy manager to use for resolving the node name
      * @return the Name or null when the name can not be found.
      */
     private Name getNodeName(NodeState nodeState, HierarchyManager hierMgr) {
@@ -864,7 +906,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * instance of the node type (sub class)
      *
      * @param nodeState the node to check
-     * @param nodeType the node type name
+     * @param nodeType  the node type name
      * @return boolean
      * @throws NoSuchNodeTypeException
      */
@@ -913,7 +955,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * Check if a node matches the current QFacetRule based on a
      * check on the properties of the node.
      * @param nodeState the state of the node to check
-     * @param rule the facet rule to check
+     * @param rule      the facet rule to check
      * @return true if the node matches the facet rule
      * @throws RepositoryException
      * @see org.hippoecm.repository.security.domain.QFacetRule
@@ -1038,7 +1080,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     /**
      * Check if the node has a mixin type with a specific value
      * @param nodeState the node to check
-     * @param rule the mixin type to check for.
+     * @param rule      the mixin type to check for.
      * @return true if the node has the mixin type
      * @throws RepositoryException
      */
@@ -1174,7 +1216,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                 log.warn("ItemId '{}' points to a property which is not allowed", id);
                 return null;
             }
-            return (NodeState)itemState;
+            return (NodeState) itemState;
         } catch (NoSuchItemStateException e) {
             log.warn("Could not get item state for id '{}'", id, e);
             return null;
@@ -1307,12 +1349,45 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
     @Override
     public void stateCreated(final ItemState created) {
+        if (isSystem) {
+            return;
+        }
+
+        // since org.apache.jackrabbit.core.state.SessionItemStateManager.stateCreated() filters out 'node' states
+        // we have to listen to the created property states as well and then take the parent
+        final NodeId nodeId;
+        synchronized (createdDestroyedNodeIds) {
+            final Set<NodeId> createdNodeIds = createdDestroyedNodeIds.getLeft();
+            if (created.isNode()) {
+                nodeId = (NodeId) created.getId();
+                createdNodeIds.add(nodeId);
+
+            } else {
+                nodeId = created.getParentId();
+                if (nodeId == null) {
+                    // free floating property? Unlikely but java doc says created.getParentId() can return null
+                    return;
+                }
+                createdNodeIds.add(nodeId);
+            }
+
+            if (createdNodeIds.size() + createdDestroyedNodeIds.getRight().size() > PROCESS_CREATED_NODE_IDS_SYNC_LIMIT) {
+                log.debug("createdNodeIds exceeded the limit '{}' implying the created node ids will be processed " +
+                        "async instead of in process for the JCR Session to which the HippoAccessManager is tied");
+                //exceeding limit, process now async the createdNodeIds already
+                new Thread(() -> processCreatedDestroyedNodeIds()).start();
+            }
+        }
+
     }
 
     @Override
     public void stateModified(final ItemState modified) {
+        if (isSystem) {
+            return;
+        }
         if (modified.isNode()) {
-            removeAccessFromCache((NodeId)modified.getId());
+            removeAccessFromCache((NodeId) modified.getId());
         } else {
             removeAccessFromCache(modified.getParentId());
         }
@@ -1320,18 +1395,39 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
     @Override
     public void stateDestroyed(final ItemState destroyed) {
+        // opposed to stateCreated, for stateDestroyed the NodeStates are not filtered out
+        if (isSystem) {
+            return;
+        }
         if (destroyed.isNode()) {
             // first remove from implicitReads since implicitReads protects the item to be removed
             // from the read access cache
-            implicitReads.remove(destroyed.getId());
-            removeAccessFromCache((NodeId)destroyed.getId());
+
+            final NodeId id = (NodeId) destroyed.getId();
+            synchronized (createdDestroyedNodeIds) {
+                final Set<NodeId> createdNodeIds = createdDestroyedNodeIds.getLeft();
+                final boolean removed = createdNodeIds.remove(id);
+                if (removed) {
+                    log.trace("Don't need to process the removed id '{}' since it was created but not yet processed");
+                } else {
+                    createdDestroyedNodeIds.getRight().add(id);
+                }
+
+            }
+
+            // remove it from 'implicitReads' such that it also can get removed from the access cache
+            implicitReads.remove(id);
+            removeAccessFromCache(id);
         }
     }
 
     @Override
     public void stateDiscarded(final ItemState discarded) {
+        if (isSystem) {
+            return;
+        }
         if (discarded.isNode()) {
-            removeAccessFromCache((NodeId)discarded.getId());
+            removeAccessFromCache((NodeId) discarded.getId());
         }
     }
 
@@ -1457,7 +1553,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     }
 
     /**
-     * @see AccessControlManager#hasPrivileges(String,Privilege[])
+     * @see AccessControlManager#hasPrivileges(String, Privilege[])
      */
     public boolean hasPrivileges(String absPath, Privilege[] privileges) throws PathNotFoundException,
             RepositoryException {
@@ -1466,7 +1562,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
     /**
      * Check the privileges based on a absolute Path rather than a String representation of a Path
-     * @see AccessControlManager#hasPrivileges(String,Privilege[])
+     * @see AccessControlManager#hasPrivileges(String, Privilege[])
      */
     private boolean hasPrivileges(Path absPath, Privilege[] privileges) throws PathNotFoundException,
             RepositoryException {
@@ -1497,6 +1593,10 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         if (id instanceof HippoNodeId) {
             return canRead(id);
         }
+
+
+        processCreatedDestroyedNodeIds();
+
 
         NodeState nodeState;
         try {
@@ -1563,11 +1663,24 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         }
     }
 
+    private void reInitializeImplicitReadAccess() throws RepositoryException {
+        implicitReads.clear();
+        missingReferences.clear();
+        readAccessCache.clear();
+        initializeImplicitReadAccess();
+        reInitCounter++;
+    }
+
     private void initializeImplicitReadAccess(final DomainRule domainRule, final FacetAuthPrincipal fap) {
         // use the possibly extended facet rules!!
         final Set<QFacetRule> facetRules = getFacetRules(domainRule);
         for (QFacetRule qFacetRule : facetRules) {
             if (qFacetRule.isHierarchicalWhiteListRule()) {
+
+                if (qFacetRule.isReferenceRule() && !qFacetRule.referenceExists()) {
+                    missingReferences.computeIfAbsent(qFacetRule.getPathReference(), key -> new ArrayList<>()).add(qFacetRule);
+                }
+
                 final String path = qFacetRule.getPathReference();
                 if (path == null) {
                     continue;
@@ -1625,11 +1738,137 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         setReadAllowedAncestry(parentState);
     }
 
+    private void processCreatedDestroyedNodeIds() {
+        if (isSystem) {
+            return;
+        }
+        synchronized (createdDestroyedNodeIds) {
+
+            final Set<NodeId> createdNodeIds = createdDestroyedNodeIds.getLeft();
+            final Set<NodeId> destroyedNodeIds = createdDestroyedNodeIds.getRight();
+            if (createdNodeIds.size() == 0 && destroyedNodeIds.size() == 0) {
+                return;
+            }
+
+            // final array to be able to use the reInit var in lambda's
+            final boolean[] reInit = {false};
+
+            for (NodeId destroyedNodeId : destroyedNodeIds) {
+                final String destroyedUuid = destroyedNodeId.toString();
+                // go through all QFacetRule and every QFacetRule that has QFacetRule#isReferenceRule is true and
+                // has a value equal to destroyedUuid, should get from its value (or value(s) in future if we support
+                // wildcard path references) the destroyed UUID removed
+                final Set<FacetAuthPrincipal> faps = subject.getPrincipals(FacetAuthPrincipal.class);
+
+                // for every QFacetRule for the current user that is a 'reference rule' and the reference points to
+                // the removed node, remove the uuid from the value
+                faps.forEach(fap -> fap.getRules().forEach(domainRule -> {
+                    domainRule.getFacetRules().forEach(qFacetRule -> {
+                        if (qFacetRule.isReferenceRule() && destroyedUuid.equals(qFacetRule.getValue())) {
+                            log.debug("QFacetRule '{}' referenced removed node. Remove the value such that it " +
+                                    "becomes a 'missing reference' QFacetRule");
+                            qFacetRule.setUUIDReference(null);
+                            reInit[0] = true;
+                            missingReferences.computeIfAbsent(qFacetRule.getPathReference(), key -> new ArrayList<>()).add(qFacetRule);
+                        }
+                    });
+                }));
+            }
+
+            if (!createdNodeIds.isEmpty()) {
+
+                for (NodeId createdNodeId : createdNodeIds) {
+                    try {
+
+                        final String path = getPathWithoutAccessTest(createdNodeId);
+
+                        final List<QFacetRule> qFacetRules = missingReferences.get(path);
+
+                        if (qFacetRules != null && !qFacetRules.isEmpty()) {
+                            reInit[0] = true;
+                            for (QFacetRule qFacetRule : qFacetRules) {
+                                qFacetRule.setUUIDReference(UUID.fromString(createdNodeId.toString()));
+                            }
+                        }
+                    } catch (PathNotFoundException e) {
+                        log.debug("Created Node Id already removed again");
+                    } catch (RepositoryException | ItemStateException e) {
+                        log.error("Exception while processingCreatedDestroyedNodeIds createdNodeIds", e);
+                    }
+                }
+            }
+
+            createdNodeIds.clear();
+            destroyedNodeIds.clear();
+
+            if (reInit[0]) {
+                try {
+                    reInitializeImplicitReadAccess();
+                } catch (RepositoryException e) {
+                    log.error("Exception while initializing implicit read access", e);
+                }
+            }
+
+        }
+    }
+
+    /**
+     *    We need to find the path for {@code nodeId}. Unfortunately just using this:
+     *    <code>
+     *        <pre>
+     *              final Path path = hierMgr.getPath(createdNodeId);
+     *              final String pathString = npRes.getJCRPath(path);
+     *        </pre>
+     *    </code>
+     *    fails because the 'hierMgr.getPath' results in recursion because it uses
+     *    org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager#getCanonicalItemState(ItemId) which in turn
+     *    invokes accessManager.isGranted(id, AccessManager.READ) which triggers again processCreatedDestroyedNodeIds.
+     *    Just skipping the 'processCreatedDestroyedNodeIds' when recursion is detected is not possible since the
+     *    'processCreatedDestroyedNodeIds' can impact the 'read access' for newly created nodes.
+     *    Therefor, we have to resolve to the shared item state manager and resolve the path 'manually' instead of via
+     *    npRes.getJCRPath(path);
+     */
+    private String getPathWithoutAccessTest(final NodeId nodeId)
+            throws ItemStateException, NamespaceException, RepositoryException {
+
+        final StringBuilder pathBuilder = new StringBuilder();
+        final SharedItemStateManager sharedItemStateManager = itemMgr.getSharedItemStateManager();
+        final ItemState itemState = sharedItemStateManager.getItemState(nodeId);
+
+        if (itemState.getId().equals(rootNodeId)) {
+            return "";
+        }
+        if (!(itemState instanceof NodeState)) {
+            throw new RepositoryException("Expected Node for NodeId");
+        }
+        populatePath(pathBuilder, (NodeState) itemState, sharedItemStateManager);
+        return pathBuilder.toString();
+
+    }
+
+    private void populatePath(final StringBuilder pathBuilder, final NodeState nodeState, final SharedItemStateManager sharedItemStateManager)
+            throws ItemStateException, NamespaceException {
+
+        if (nodeState.getId().equals(rootNodeId)) {
+            return;
+        }
+        final NodeState parentState = (NodeState) sharedItemStateManager.getItemState(nodeState.getParentId());
+        final Name name = parentState.getChildNodeEntry(nodeState.getNodeId()).getName();
+
+        final String jcrName = npRes.getJCRName(name);
+        pathBuilder.insert(0, jcrName).insert(0, "/");
+
+        populatePath(pathBuilder, parentState, sharedItemStateManager);
+    }
 
     /**
      * @see AccessControlManager#getPrivileges(String)
      */
     public Privilege[] getPrivileges(String absPath) throws PathNotFoundException, RepositoryException {
+
+        if (!isSystem) {
+            processCreatedDestroyedNodeIds();
+        }
 
         NodeId id = getNodeId(npRes.getQPath(absPath));
         if (id == null) {
@@ -1655,7 +1894,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
     /**
      * Always return empty array of <code>AccessControlPolicy</code>
-     * 
+     *
      * @see AccessControlManager#getPolicies(String)
      */
     public AccessControlPolicy[] getPolicies(String absPath) throws PathNotFoundException, AccessDeniedException,
@@ -1668,7 +1907,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
     /**
      * Always return empty array of <code>AccessControlPolicy</code>
-     * 
+     *
      * @see AccessControlManager#getEffectivePolicies(String)
      */
     public AccessControlPolicy[] getEffectivePolicies(String absPath) throws PathNotFoundException,
@@ -1678,7 +1917,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
     /**
      * Always return <code>AccessControlPolicyIteratorAdapter.EMPTY</code>
-     * 
+     *
      * @see AccessControlManager#getApplicablePolicies(String)
      */
     public AccessControlPolicyIterator getApplicablePolicies(String absPath) throws PathNotFoundException,

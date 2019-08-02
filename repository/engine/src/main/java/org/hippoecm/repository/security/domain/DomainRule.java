@@ -68,18 +68,7 @@ public class DomainRule implements Serializable {
         while (iter.hasNext()) {
             Node child = iter.nextNode();
             if (child.getPrimaryNodeType().isNodeType(HippoNodeType.NT_FACETRULE)) {
-                try {
-                    facetRules.add(new QFacetRule(child));
-                } catch (FacetRuleReferenceNotFoundException e) {
-                    if (!e.isEquals()) {
-                        // the facet rule has hipposys:equals = false, and thus can be skipped from the
-                        // domain rule.
-                        log.info("Skipping facet rule '{}' : {}", child.getPath(), e.getMessage());
-                    } else {
-                        // bubble up because hipposys:equals = true implying the domain rule can never result in a match
-                        throw e;
-                    }
-                }
+                facetRules.add(new QFacetRule(child));
             }
         }
         facetRules = Collections.unmodifiableSet(facetRules);

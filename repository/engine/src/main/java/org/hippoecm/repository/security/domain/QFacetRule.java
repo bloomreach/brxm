@@ -16,6 +16,7 @@
 package org.hippoecm.repository.security.domain;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -32,6 +33,8 @@ import org.apache.jackrabbit.spi.commons.namespace.SessionNamespaceResolver;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.security.FacetAuthConstants;
 import org.onehippo.repository.security.domain.FacetRule;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.util.JcrUtils.getBooleanProperty;
 
@@ -46,6 +49,8 @@ import static org.hippoecm.repository.util.JcrUtils.getBooleanProperty;
  * has a mixin type of nodetype.
  */
 public class QFacetRule implements Serializable {
+
+    private final static Logger log = LoggerFactory.getLogger(QFacetRule.class);
 
     /**
      * Serial version id
@@ -71,10 +76,10 @@ public class QFacetRule implements Serializable {
     /**
      * The value to match the facet
      */
-    private final String value;
+    private String value;
 
     /**
-     * In case JcrConstants.JCR_PATH.equals(facet) is true, this returns the absolute path to the reference
+     * In case this rule is a Reference Rule, this returns the absolute path to the reference
      */
     private String pathReference;
 
@@ -155,6 +160,22 @@ public class QFacetRule implements Serializable {
         return false;
     }
 
+    public boolean isReferenceRule() {
+        return pathReference != null;
+    }
+
+    /**
+     *
+     */
+    public boolean referenceExists() {
+        if (!isReferenceRule()) {
+            throw new UnsupportedOperationException("referenceExists check should only be checked when " +
+                    "isReferenceRule() return true");
+        }
+        return value != null;
+    }
+
+
     /**
      * Parse the facet rule of type Reference. Try to find the UUID of the
      * value of the QFacetRule.
@@ -173,20 +194,10 @@ public class QFacetRule implements Serializable {
             try {
                 uuid = facetNode.getSession().getRootNode().getNode(path).getIdentifier();
             } catch (PathNotFoundException e) {
-                StringBuilder msg = new StringBuilder();
-                msg.append("Path not found for facetRule ");
-                msg.append("'").append(facetNode.getPath()).append("' : ");
-                msg.append("QFacetRule");
-                msg.append("(").append(facetNode.getProperty(HippoNodeType.HIPPOSYS_TYPE).getString()).append(")");
-                msg.append("[");
-                msg.append(facet);
-                if (equals) {
-                    msg.append(" == ");
-                } else {
-                    msg.append(" != ");
-                }
-                msg.append(pathValue).append("]");
-                throw new FacetRuleReferenceNotFoundException(facetName, equals,  msg.toString(), e);
+
+                log.info("Path not found for facetRule '{}'", facetNode.getPath());
+
+                return new Pair<>(null, absPath);
             }
         }
         return new Pair<>(uuid, absPath);
@@ -219,7 +230,21 @@ public class QFacetRule implements Serializable {
     }
 
     /**
-     * The value of the *absolute* path reference in case {@link #getType()} equals PropertyType.REFERENCE and otherwise returns
+     * A path reference gets translated to a UUID value, see {@link #parseReferenceTypeValue}. However, if the path
+     * reference does not (yet) existed during initialization, it can be set later on. Then {@link #setUUIDReference(UUID)}
+     * gets invoked (for all existing JCR Sessions containing this {@link QFacetRule}.
+     * @param reference the UUID to set
+     */
+    public void setUUIDReference(final UUID reference) {
+        if (reference == null) {
+            value = null;
+            return;
+        }
+        value = reference.toString();
+    }
+
+    /**
+     * The value of the *absolute* path reference in case JcrConstants.JCR_PATH.equals(facet) and otherwise returns
      * {@code null}
      * @return the path reference
      */
@@ -287,21 +312,19 @@ public class QFacetRule implements Serializable {
         return sb.toString();
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof QFacetRule)) {
-            return false;
-        }
-        QFacetRule other = (QFacetRule) obj;
-        return facet.equals(other.facet) && value.equals(other.value) && (equals == other.equals) && type == other.type && optional == other.optional;
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        final QFacetRule that = (QFacetRule) o;
+
+        if (type != that.type) return false;
+        if (optional != that.optional) return false;
+        if (equals != that.equals) return false;
+        if (facet != null ? !facet.equals(that.facet) : that.facet != null) return false;
+        return value != null ? value.equals(that.value) : that.value == null;
     }
 
     @Override
