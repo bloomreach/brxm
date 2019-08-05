@@ -95,8 +95,8 @@ public class SystemInfoDataProvider implements IDataProvider {
         nf.setMaximumFractionDigits(2);
         info.clear();
         info.put("Project version", getProjectVersion());
-        info.put("BloomReach Release version", getReleaseVersion());
-        info.put("BloomReach CMS version", getCMSVersion());
+        info.put("Bloomreach Release version", getReleaseVersion());
+        info.put("Bloomreach CMS version", getCMSVersion());
         info.put("Repository vendor", getRepositoryVendor());
         info.put("Repository version", getRepositoryVersion());
         info.put("Memory maximum", nf.format(((double) runtime.maxMemory()) / MB) + " MB");
