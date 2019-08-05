@@ -76,7 +76,7 @@ export interface ChildPromisedApi {
   beforeNavigation?: () => Promise<boolean>;
   onUserActivity?: () => Promise<void>;
   logout?: () => Promise<void>;
-  navigate?: (location: NavLocation) => Promise<void>;
+  navigate?: (location: NavLocation, flags?: { [key: string]: string | number }) => Promise<void>;
   updateSelectedSite?: (siteId?: SiteId) => Promise<void>;
 }
 
