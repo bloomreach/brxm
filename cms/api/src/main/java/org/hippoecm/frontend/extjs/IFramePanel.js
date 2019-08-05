@@ -106,7 +106,7 @@
         methods: window.Hippo.Cms
       };
       promise = window.bloomreach['navapp-communication'].connectToChild(subAppConnectConfig);
-      promise.then( function(childApi){Object.assign(window.Hippo.SubApp.channelmanager-iframe, childApi);
+      promise.then( function(childApi){Object.assign(window.Hippo.SubApp['channelmanager-iframe'], childApi);
       }, function(error){
         console.error(error);
       });
