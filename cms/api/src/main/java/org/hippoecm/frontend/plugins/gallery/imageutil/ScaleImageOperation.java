@@ -436,7 +436,7 @@ public class ScaleImageOperation extends AbstractImageOperation {
             if (cropping) {
                 final Dimension configuredDimension = new Dimension(width, height);
                 final Rectangle cropArea = calculateCropArea(originalWidth, originalHeight, width, height);
-                final Dimension targetDimension = ImageUtils.handleZeroDimension(cropArea.getSize(), configuredDimension);
+                final Dimension targetDimension = ImageUtils.normalizeDimension(cropArea.getSize(), configuredDimension);
                 imageToScale = ImageUtils.scaleImage(reader.read(0), cropArea, targetDimension,
                         RenderingHints.VALUE_INTERPOLATION_BICUBIC, ImageUtils.isCropHighQuality(cropArea, reader));
 
