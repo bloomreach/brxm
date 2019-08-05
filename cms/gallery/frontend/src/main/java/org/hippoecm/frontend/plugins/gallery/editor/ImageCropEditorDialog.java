@@ -142,7 +142,7 @@ public class ImageCropEditorDialog extends Dialog<Node> {
         imagePreviewContainer.setOutputMarkupId(true);
         try {
             configuredDimension = galleryProcessor.getDesiredResourceDimension(variantImageNode);
-            thumbnailDimension = ImageUtils.handleZeroDimension(originalImageDimension, configuredDimension);
+            thumbnailDimension = ImageUtils.normalizeDimension(originalImageDimension, configuredDimension);
 
             final double previewCropFactor = determinePreviewScalingFactor(thumbnailDimension.getWidth(), thumbnailDimension.getHeight());
             final double previewWidth = Math.floor(previewCropFactor * thumbnailDimension.getWidth());
@@ -305,15 +305,16 @@ public class ImageCropEditorDialog extends Dialog<Node> {
                 throw new GalleryException("Unsupported MIME type for writing: " + mimeType);
             }
 
-            Binary binary = originalImageNode.getProperty(JcrConstants.JCR_DATA).getBinary();
-            MemoryCacheImageInputStream imageInputStream = new MemoryCacheImageInputStream(binary.getStream());
+            final Binary binary = originalImageNode.getProperty(JcrConstants.JCR_DATA).getBinary();
+            final MemoryCacheImageInputStream imageInputStream = new MemoryCacheImageInputStream(binary.getStream());
             reader.setInput(imageInputStream);
-            BufferedImage original = reader.read(0);
-            Dimension thumbnailDimension = galleryProcessor.getDesiredResourceDimension(getModelObject());
-            Dimension dimension = ImageUtils.handleZeroDimension(cropArea.getSize(), thumbnailDimension);
-            final BufferedImage thumbnail = ImageUtils.scaleImage(original, cropArea, dimension,
+
+            final BufferedImage original = reader.read(0);
+            final Dimension variantDimension = galleryProcessor.getDesiredResourceDimension(getModelObject());
+            final Dimension dimension = ImageUtils.normalizeDimension(cropArea.getSize(), variantDimension);
+            final BufferedImage variantImage = ImageUtils.scaleImage(original, cropArea, dimension,
                     RenderingHints.VALUE_INTERPOLATION_BICUBIC, ImageUtils.isCropHighQuality(cropArea, reader));
-            ByteArrayOutputStream bytes = ImageUtils.writeImage(writer, thumbnail, compressionQuality);
+            final ByteArrayOutputStream bytes = ImageUtils.writeImage(writer, variantImage, compressionQuality);
 
             //CMS7-8544 Keep the scaling of the image when cropping, to avoid a resulting image with bigger size than the original
             InputStream stored = new ByteArrayInputStream(bytes.toByteArray());
@@ -339,7 +340,7 @@ public class ImageCropEditorDialog extends Dialog<Node> {
 
             BinaryContentEventLogger.fireBinaryChangedEvent(cropped, WORKFLOW_CATEGORY, INTERACTION_TYPE_IMAGE, ACTION_CROP);
         } catch (GalleryException | IOException | RepositoryException ex) {
-            log.error("Unable to create thumbnail image", ex);
+            log.error("Unable to crop image", ex);
             error(ex);
         }
     }

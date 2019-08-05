@@ -302,14 +302,14 @@ public class ImageUtils {
      * @param variant  dimension of the variant image
      * @return scaled dimension based on width or height value
      */
-    public static Dimension handleZeroDimension(final Dimension original, final Dimension variant) {
+    public static Dimension normalizeDimension(final Dimension original, final Dimension variant) {
         final Dimension normalized = new Dimension(variant);
         if (variant.height == 0) {
-            int height = (int) ((variant.getWidth() / original.getWidth()) * original.getHeight());
+            final int height = (int) ((variant.getWidth() / original.getWidth()) * original.getHeight());
             normalized.setSize(variant.width, height);
         }
         if (variant.width == 0) {
-            int width = (int) ((variant.getHeight() / original.getHeight()) * original.getWidth());
+            final int width = (int) ((variant.getHeight() / original.getHeight()) * original.getWidth());
             normalized.setSize(width, variant.height);
         }
         return normalized;
