@@ -92,7 +92,7 @@ export class CommunicationsService {
     };
   }
 
-  navigate(appId: string, path: string): Promise<void> {
+  navigate(appId: string, path: string, flags?: { [key: string]: string | number | boolean }): Promise<void> {
     const app = this.clientAppService.getApp(appId);
 
     if (!app) {
@@ -103,7 +103,7 @@ export class CommunicationsService {
       throw new Error(`The app with id="${appId}" is not connected to the nav app`);
     }
 
-    return app.api.navigate({ path }).then(() => {
+    return app.api.navigate({ path }, flags).then(() => {
       this.clientAppService.activateApplication(appId);
     });
   }
@@ -113,15 +113,10 @@ export class CommunicationsService {
       return Promise.reject('There is no the selected menu item.');
     }
 
-    let path = this.activeMenuItem.appPath;
-
-    if (path === 'channelmanager') {
-      path += '/';
-    }
-
     this.breadcrumbsService.clearSuffix();
 
-    return this.navigate(this.activeMenuItem.appId, path);
+    return this.navigate(this.activeMenuItem.appId, this.activeMenuItem.appPath
+      , {forceRefresh: true});
   }
 
   updateSelectedSite(siteId: SiteId): Promise<void[]> {
