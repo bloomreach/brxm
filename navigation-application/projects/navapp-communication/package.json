@@ -1,6 +1,6 @@
 {
   "name": "@bloomreach/navapp-communication",
-  "version": "1.0.0-11",
+  "version": "1.0.0-12",
   "peerDependencies": {
     "penpal": "^4.0.0"
   }
