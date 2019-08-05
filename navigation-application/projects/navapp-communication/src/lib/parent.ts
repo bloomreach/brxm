@@ -30,8 +30,8 @@ export function createProxies(methods: ChildApi): ChildApi {
     getNavItems(): NavItem[] {
       return methods.getNavItems();
     },
-    navigate(location: NavLocation): void {
-      return methods.navigate(location);
+    navigate(location: NavLocation, flags?: { [key: string]: string | number | boolean }): void {
+      return methods.navigate(location, flags);
     },
   };
 }

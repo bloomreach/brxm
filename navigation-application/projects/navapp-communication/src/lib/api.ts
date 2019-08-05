@@ -64,7 +64,7 @@ export interface ChildApi {
   beforeNavigation?: () => boolean;
   onUserActivity?: () => void;
   logout?: () => void;
-  navigate?: (location: NavLocation) => void;
+  navigate?: (location: NavLocation, flags?: { [key: string]: string | number | boolean }) => void;
   updateSelectedSite?: (siteId?: SiteId) => void;
 }
 
