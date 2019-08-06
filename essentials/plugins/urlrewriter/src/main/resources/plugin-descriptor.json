@@ -7,7 +7,7 @@
   "imageUrls": [
     "/essentials/feature/images/screenshots/urlrewriter01.png"
   ],
-  "documentationLink": "https://www.onehippo.org/library/enterprise/enterprise-features/url-rewriter/about-url-rewriter.html",
+  "documentationLink": "https://documentation.bloomreach.com/library/enterprise/enterprise-features/url-rewriter/about-url-rewriter.html",
   "packageFile": "/META-INF/urlrewriter_plugin_instructions.xml",
   "type": "feature",
   "vendor" : {

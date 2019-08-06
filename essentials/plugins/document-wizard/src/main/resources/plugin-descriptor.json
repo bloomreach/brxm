@@ -8,7 +8,7 @@
     "/essentials/feature/images/screenshots/documentwizard01.png",
     "/essentials/feature/images/screenshots/documentwizard02.png"
   ],
-  "documentationLink": "https://www.onehippo.org/library/concepts/plugins/dashboard-document-wizard/about.html",
+  "documentationLink": "https://documentation.bloomreach.com/library/concepts/plugins/dashboard-document-wizard/about.html",
   "hasConfiguration": true,
   "installWithParameters": false,
   "packageFile": "/META-INF/document_wizard_plugin_instructions.xml",

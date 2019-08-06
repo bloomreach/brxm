@@ -1,5 +1,5 @@
 # BloomReach Essentials
-BloomReach Essentials is for developers who want to setup a new [BloomReach CMS](https://www.onehippo.org) project. It enables
+BloomReach Essentials is for developers who want to setup a new [BloomReach CMS](https://documentation.bloomreach.com) project. It enables
 them to kickstart their project in a matter of minutes, to benefit from our best practices and to easily add Enterprise
 or community plugins.
 
@@ -28,7 +28,7 @@ mvn clean && mvn validate -Ppedantic
 ```
 
 ### Generate a new BloomReach project from the archetype:
-See the [Getting Started](https://www.onehippo.org/trails/getting-started/hippo-essentials-getting-started.html) page.
+See the [Getting Started](https://documentation.bloomreach.com/trails/getting-started/hippo-essentials-getting-started.html) page.
 
 ##Automatic Export
 
