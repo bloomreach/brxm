@@ -3,13 +3,13 @@
   "name": "Lucene Index Exporter",
   "icon": "/essentials/feature/luceneIndexExporter/index-exporter-icon.svg",
   "introduction": "The Lucene Index Exporter add-on adds the capability to export Lucene indices at run-time to your project.",
-  "description": "Please note that this component is a BloomReach Experience only component, it does not work in the community edition of Hippo CMS. Adding this component to the community version will convert your project to an Enterprise project and might result in unexpected and unsupported behaviour of the project if you do not have an Enterprise license.",
+  "description": "Please note that this component is a Bloomreach Experience only component, it does not work in the community edition of Hippo CMS. Adding this component to the community version will convert your project to an Enterprise project and might result in unexpected and unsupported behaviour of the project if you do not have an Enterprise license.",
   "documentationLink": "https://documentation.bloomreach.com/library/concepts/content-repository/lucene-export-explained.html",
   "installWithParameters": false,
   "packageFile": "/META-INF/indexexporter_plugin_instructions.xml",
   "type": "feature",
   "vendor": {
-    "name": "BloomReach",
+    "name": "Bloomreach",
     "url": "https://www.bloomreach.com"
   },
   "categories": {

@@ -3,7 +3,7 @@
   "name": "URL Rewriter",
   "icon": "/essentials/feature/images/generic-package.svg",
   "introduction": "The Enterprise URL Rewriter add-on adds the capability to manage URL rewriting rules in the CMS to your project.",
-  "description": "Please note that this component is a BloomReach Experience only component, it does not work in the community edition of Hippo CMS. Adding this component to the community version will convert your project to an Enterprise project and might result in unexpected and unsupported behaviour of the project if you do not have an Enterprise license.",
+  "description": "Please note that this component is a Bloomreach Experience only component, it does not work in the community edition of Hippo CMS. Adding this component to the community version will convert your project to an Enterprise project and might result in unexpected and unsupported behaviour of the project if you do not have an Enterprise license.",
   "imageUrls": [
     "/essentials/feature/images/screenshots/urlrewriter01.png"
   ],
@@ -11,7 +11,7 @@
   "packageFile": "/META-INF/urlrewriter_plugin_instructions.xml",
   "type": "feature",
   "vendor" : {
-    "name" : "BloomReach",
+    "name" : "Bloomreach",
     "url" : "https://www.bloomreach.com"
   },
   "categories": {

@@ -18,7 +18,7 @@
 <html>
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>BloomReach Essentials</title>
+  <title>Bloomreach Essentials</title>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/components/hippo-theme/dist/css/main.css?v=${project.version}"/>
   <link rel="stylesheet" href="${pageContext.request.contextPath}/components/angular-ui-tree/dist/angular-ui-tree.css?v=${project.version}"/>
   <script type="application/javascript">

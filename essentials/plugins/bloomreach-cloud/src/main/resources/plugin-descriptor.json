@@ -1,15 +1,15 @@
 {
   "id": "bloomreachCloud",
-  "name": "BloomReach Cloud",
+  "name": "Bloomreach Cloud",
   "icon": "/essentials/feature/bloomreachCloud/icon.png",
-  "introduction": "With the BloomReach Cloud feature, you set up a project for running on BloomReach Cloud.",
-  "description": "This feature triggers the installation of a collection of other plugins it depends on and configures the site for deployment to brCloud. Please note that this component is a BloomReach Experience only component. Adding this component to the community version might result in unexpected and unsupported behaviour of the project. ",
+  "introduction": "With the Bloomreach Cloud feature, you set up a project for running on Bloomreach Cloud.",
+  "description": "This feature triggers the installation of a collection of other plugins it depends on and configures the site for deployment to brCloud. Please note that this component is a Bloomreach Experience only component. Adding this component to the community version might result in unexpected and unsupported behaviour of the project. ",
   "documentationLink": "https://documentation.bloomreach.com/bloomreach-cloud/reference-documentation/introduction.html",
   "installWithParameters": false,
   "packageFile": "/META-INF/bloomreach_cloud_plugin_instructions.xml",
   "type": "feature",
   "vendor": {
-    "name": "BloomReach",
+    "name": "Bloomreach",
     "url": "https://www.bloomreach.com"
   },
   "categories": {
