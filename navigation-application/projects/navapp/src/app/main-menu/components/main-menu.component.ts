@@ -20,6 +20,7 @@ import { filter, first, switchMap, takeUntil } from 'rxjs/operators';
 
 import { ClientAppService } from '../../client-app/services/client-app.service';
 import { UserSettings } from '../../models/dto/user-settings.dto';
+import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { GlobalSettingsService } from '../../services/global-settings.service';
 import { QaHelperService } from '../../services/qa-helper.service';
 import { MenuItemContainer } from '../models/menu-item-container.model';
@@ -46,7 +47,12 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     private qaHelperService: QaHelperService,
     private clientAppService: ClientAppService,
     private settingsService: GlobalSettingsService,
+    private busyIndicatorService: BusyIndicatorService,
   ) {}
+
+  get isBusyIndicatorVisible(): boolean {
+    return this.busyIndicatorService.isVisible;
+  }
 
   get collapsed(): boolean {
     return this.menuStateService.isMenuCollapsed;
