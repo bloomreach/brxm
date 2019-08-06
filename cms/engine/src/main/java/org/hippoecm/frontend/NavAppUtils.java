@@ -80,7 +80,6 @@ final class NavAppUtils {
      */
     static boolean isNavAppHeaderItem(HeaderItem headerItem) {
         return headerItem instanceof NavAppBaseTagHeaderItem
-                || headerItem instanceof NavAppCssHeaderItem
                 || (headerItem instanceof FilteredHeaderItem && (NAVAPP_JAVASCRIPT_HEADER_ITEM.equals(((FilteredHeaderItem) headerItem).getFilterName())));
     }
 }

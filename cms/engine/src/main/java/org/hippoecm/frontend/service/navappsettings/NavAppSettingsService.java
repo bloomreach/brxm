@@ -142,7 +142,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         final String cmsLocation = String.format("%s%s", parentOrigin, contextPath);
 
         final URI brXmLocation = URI.create(cmsLocation);
-        final URI navAppLocation = URI.create(System.getProperty(NAVAPP_LOCATION_SYSTEM_PROPERTY, cmsLocation));
+        final URI navAppLocation = URI.create(System.getProperty(NAVAPP_LOCATION_SYSTEM_PROPERTY, cmsLocation+"/navapp"));
         final List<NavAppResource> navConfigResources = readNavConfigResources(cmsLocation);
         final List<NavAppResource> loginDomains = readResources(LOGIN_RESOURCES);
         final List<NavAppResource> logoutDomains = readResources(LOGOUT_RESOURCES);
