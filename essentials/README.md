@@ -1,5 +1,5 @@
 # BloomReach Essentials
-BloomReach Essentials is for developers who want to setup a new [BloomReach CMS](https://www.onehippo.org) project. It enables
+BloomReach Essentials is for developers who want to setup a new [BloomReach CMS](https://documentation.bloomreach.com) project. It enables
 them to kickstart their project in a matter of minutes, to benefit from our best practices and to easily add Enterprise
 or community plugins.
 
