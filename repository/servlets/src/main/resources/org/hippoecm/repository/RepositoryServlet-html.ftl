@@ -1,7 +1,7 @@
 <#ftl output_format="HTML">
 <!DOCTYPE html>
 <#--
-  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ ${response.setContentType("text/html;charset=UTF-8")}
 <html>
 
   <head>
-    <title>BloomReach Repository Browser</title>
+    <title>Bloomreach Repository Browser</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <style>
         * {font-family: tahoma, arial, helvetica, sans-serif;}
