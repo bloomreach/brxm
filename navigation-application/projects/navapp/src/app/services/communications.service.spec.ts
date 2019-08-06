@@ -124,7 +124,7 @@ describe('CommunicationsService', () => {
 
         expect(
           clientAppService.getApp('testId').api.navigate,
-        ).toHaveBeenCalledWith({ path: 'testPath' });
+        ).toHaveBeenCalledWith({ path: 'testPath' }, undefined);
 
         tick();
 
