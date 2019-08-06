@@ -16,7 +16,12 @@
 
 <div class="static-menu">
   <div class="progress-bar">
-    <mat-progress-bar *ngIf="isBusyIndicatorVisible" mode="indeterminate" color="accent"></mat-progress-bar>
+    <mat-progress-bar
+      *ngIf="isBusyIndicatorVisible"
+      mode="indeterminate"
+      color="accent"
+      class="qa-busy-indicator">
+    </mat-progress-bar>
   </div>
   <div class="top-elements">
     <brna-top-level-menu-item caption="Home"
