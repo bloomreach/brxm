@@ -15,7 +15,18 @@
  */
 
 (function NavappLoader() {
-  fetch('./filelist.json')
+  const navAppSettings = window.NavAppSettings;
+  let navAppLocation = '.';
+
+  if (
+    navAppSettings &&
+    navAppSettings.appSettings &&
+    navAppSettings.appSettings.navAppLocation
+  ) {
+    navAppLocation = navAppSettings.appSettings.navAppLocation;
+  }
+
+  fetch(`${navAppLocation}/filelist.json`)
     .then(response => response.json())
     .then(files => {
       const urls = Object.values(files);
@@ -25,7 +36,7 @@
         .forEach(url => {
           const linkTag = document.createElement('link');
           linkTag.rel = 'stylesheet';
-          linkTag.href = `./${url}`;
+          linkTag.href = `${navAppLocation}/${url}`;
           document.head.appendChild(linkTag);
         });
 
@@ -33,7 +44,7 @@
         .filter(url => url.endsWith('.js'))
         .forEach(url => {
           const scriptTag = document.createElement('script');
-          scriptTag.src = `./${url}`;
+          scriptTag.src = `${navAppLocation}/${url}`;
           document.body.appendChild(scriptTag);
         });
     });
