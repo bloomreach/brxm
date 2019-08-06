@@ -79,6 +79,7 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
     private IModel<String> title;
     private boolean isRendered;
     private boolean isActivated;
+    private boolean isMenuItem;
     private NavAppPerspective navAppPerspective;
 
     public Perspective(IPluginContext context, IPluginConfig config) {
@@ -96,7 +97,19 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
 
         add(CssClass.append("perspective"));
 
+        isMenuItem = isMenuItem(config);
+
         navAppPerspective = new NavAppPerspective(getClass());
+
+    }
+
+    /**
+     * See {@link org.hippoecm.frontend.navitems.PerspectiveStore}.
+     * @param config
+     * @return {@code true} if this perspective is a menu item, otherwise false
+     */
+    protected boolean isMenuItem(final IPluginConfig config) {
+        return "service.tab".equals(config.getString("wicket.id"));
     }
 
     public String getTitleCssClass() {
@@ -201,7 +214,9 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
      * When overiding, make sure to call super.onActivated() in order to keep the usage statistics working.
      */
     protected void onActivated() {
-        notifyParentIframe();
+        if (isMenuItem){
+            notifyParentIframe();
+        }
         if (StringUtils.isNotEmpty(eventId) && cmsEventNamesList.contains(eventId)) {
             final String event = EVENT_PARAM_CMS + StringUtils.capitalize(eventId);
             publishEvent(event);
