@@ -20,6 +20,7 @@ import {
   MatButtonModule,
   MatIconModule,
   MatIconRegistry,
+  MatProgressBarModule,
   MatRippleModule,
   MatSidenavModule,
   MatTreeModule,
@@ -33,6 +34,7 @@ import { DomSanitizer } from '@angular/platform-browser';
     MatButtonModule,
     MatTreeModule,
     MatSidenavModule,
+    MatProgressBarModule,
     HttpClientModule,
   ],
 })

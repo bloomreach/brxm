@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,38 +14,28 @@
  * limitations under the License.
  */
 
-@import 'variables';
-@import 'mixins';
+import { BusyIndicatorService } from './busy-indicator.service';
 
-:host {
-  display: grid;
-  position: relative;
-}
+describe('BusyIndicatorService', () => {
+  let service: BusyIndicatorService;
 
-.static-menu {
-  align-content: space-between;
-  background-color: $menu-bg;
-  display: grid;
-  font-size: 14px;
-  grid-template-rows: auto 1fr auto;
-}
+  beforeEach(() => {
+    service = new BusyIndicatorService();
+  });
 
-.progress-bar {
-  height: 4px;
-}
+  it('busy indicator should be hidden by default', () => {
+    expect(service.isVisible).toBeFalsy();
+  });
 
-.top-elements {
-  padding: 6px 0 10px 0;
-}
+  it('should show the busy indicator', () => {
+    service.show();
 
-.bottom-elements {
-  padding: 10px 0;
-}
+    expect(service.isVisible).toBeTruthy();
+  });
 
-.trigger {
-  cursor: pointer;
-  display: grid;
-  grid-template-columns: $menu-collapsed-width;
-  height: $menu-top-item-height;
-  place-items: center center;
-}
+  it('should hide the busy indicator', () => {
+    service.hide();
+
+    expect(service.isVisible).toBeFalsy();
+  });
+});

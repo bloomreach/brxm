@@ -14,38 +14,23 @@
  * limitations under the License.
  */
 
-@import 'variables';
-@import 'mixins';
+import { Injectable } from '@angular/core';
 
-:host {
-  display: grid;
-  position: relative;
-}
+@Injectable({
+  providedIn: 'root',
+})
+export class BusyIndicatorService {
+  private visible = false;
 
-.static-menu {
-  align-content: space-between;
-  background-color: $menu-bg;
-  display: grid;
-  font-size: 14px;
-  grid-template-rows: auto 1fr auto;
-}
+  get isVisible(): boolean {
+    return this.visible;
+  }
 
-.progress-bar {
-  height: 4px;
-}
+  show(): void {
+    this.visible = true;
+  }
 
-.top-elements {
-  padding: 6px 0 10px 0;
-}
-
-.bottom-elements {
-  padding: 10px 0;
-}
-
-.trigger {
-  cursor: pointer;
-  display: grid;
-  grid-template-columns: $menu-collapsed-width;
-  height: $menu-top-item-height;
-  place-items: center center;
+  hide(): void {
+    this.visible = false;
+  }
 }
