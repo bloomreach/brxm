@@ -36,6 +36,12 @@ export function createProxies(methods: ChildApi): ChildApi {
   };
 }
 
+/**
+ * Method to connect to a parent window.
+ *
+ * @param parentOrigin
+ * @param methods
+ */
 export function connectToParent({
   parentOrigin,
   methods = {},

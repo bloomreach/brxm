@@ -19,6 +19,12 @@ import Penpal from 'penpal';
 import { ChildConnectConfig, ChildPromisedApi, ParentApi } from './api';
 import { mergeIntersecting } from './utils';
 
+/**
+ * Method to connect to an application in an iframe window.
+ *
+ * @param iframe
+ * @param methods
+ */
 export function connectToChild({
   iframe,
   methods = {},
