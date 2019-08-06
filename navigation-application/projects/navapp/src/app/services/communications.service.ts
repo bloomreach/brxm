@@ -83,11 +83,16 @@ export class CommunicationsService {
         }
       },
       updateNavLocation: (location: NavLocation) => {
-        this.menuStateService.activateMenuItem(
-          this.clientAppService.activeApp.id,
-          location.path,
-        );
-        this.breadcrumbsService.setSuffix(location.breadcrumbLabel);
+        if (location.breadcrumbLabel) {
+          this.breadcrumbsService.setSuffix(location.breadcrumbLabel);
+        }
+        const pathElements = location.path.split('/');
+        if (pathElements.length > 0) {
+          this.menuStateService.activateMenuItem(
+            this.clientAppService.activeApp.id,
+            pathElements[0],
+          );
+        }
       },
     };
   }
