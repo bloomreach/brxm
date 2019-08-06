@@ -29,6 +29,9 @@
          can be here on level 'info' -->
     <Logger name="org.hippoecm.hst.core.container.DiagnosticReportingValve" level="info"/>
 
+    <!-- crisp-profile logging -->
+    <Logger additivity="false" name="org.onehippo.cms7.crisp.core.profile.ResourceResolverProfiler" level="info"/>
+
     <Logger name="freemarker" level="error"/>
     <Logger name="org.apache.cxf" level="error"/>
     <Logger name="javax.ws.rs.core" level="error"/>

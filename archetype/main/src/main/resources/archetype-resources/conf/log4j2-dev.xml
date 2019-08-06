@@ -33,6 +33,15 @@
       </Policies>
     </RollingFile>
 
+    <!-- crisp-profile.log -->
+    <RollingFile name="crisp-profile" fileName="${dollar}{sys:catalina.base}/logs/crisp-profile.log"
+                 filePattern="${dollar}{sys:catalina.base}/logs/crisp-profile.log.%d{yyyy-MM-dd}">
+      <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} %-5p %t %m%n"/>
+      <Policies>
+        <TimeBasedTriggeringPolicy/>
+      </Policies>
+    </RollingFile>
+
     <!-- console -->
     <Console name="console" target="SYSTEM_OUT">
       <PatternLayout pattern="%d{dd.MM.yyyy HH:mm:ss} %-5p %t [%C{1}.%M:%L] %m%n"/>
@@ -77,6 +86,11 @@
     <!-- DiagnosticReportingValve only logs when diagnostics enabled in hst:hosts config in repo hence
          can be here on level 'info' -->
     <Logger name="org.hippoecm.hst.core.container.DiagnosticReportingValve" level="info"/>
+
+    <!-- crisp-profile logging -->
+    <Logger additivity="false" name="org.onehippo.cms7.crisp.core.profile.ResourceResolverProfiler" level="info"/>
+      <AppenderRef ref="crisp-profile"/>
+    </Logger>
 
     <Logger name="freemarker" level="warn"/>
 
