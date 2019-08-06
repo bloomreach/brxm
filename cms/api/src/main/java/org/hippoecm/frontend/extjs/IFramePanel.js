@@ -81,6 +81,7 @@
       if (!window.Hippo.SubApp){
         window.Hippo.SubApp = [];
       }
+      window.Hippo.SubApp['channelmanager-iframe'] = {};
       window.Hippo.Cms = {};
 
       window.Hippo.Cms.showMask = function() {
