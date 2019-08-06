@@ -95,8 +95,8 @@ public class SystemInfoDataProvider implements IDataProvider {
         nf.setMaximumFractionDigits(2);
         info.clear();
         info.put("Project version", getProjectVersion());
-        info.put("BloomReach Release version", getReleaseVersion());
-        info.put("BloomReach CMS version", getCMSVersion());
+        info.put("Bloomreach Release version", getReleaseVersion());
+        info.put("Bloomreach CMS version", getCMSVersion());
         info.put("Repository vendor", getRepositoryVendor());
         info.put("Repository version", getRepositoryVersion());
         info.put("Memory maximum", nf.format(((double) runtime.maxMemory()) / MB) + " MB");
@@ -135,6 +135,7 @@ public class SystemInfoDataProvider implements IDataProvider {
                     return releaseVersion;
                 }
             }
+            return getCMSVersion();
         } catch (IOException iOException) {
             log.debug("Error occurred getting the cms release version from the webapp-manifest.", iOException);
         }
@@ -150,7 +151,7 @@ public class SystemInfoDataProvider implements IDataProvider {
         } catch (IOException iOException) {
             log.debug("Error occurred getting the project version from the webapp-manifest.", iOException);
         }
-        return "unknown";
+        return System.getProperty("project.version", "unknown");
     }
 
     public String getCMSVersion() {
