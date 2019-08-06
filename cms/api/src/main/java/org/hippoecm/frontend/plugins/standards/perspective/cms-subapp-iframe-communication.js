@@ -28,6 +28,8 @@
   if (!Hippo.SubApp){
     Hippo.SubApp = [];
   }
+  Hippo.SubApp['${iFrameElementId}'] = {};
+
   // Receiver object for the implementation of the Parent API
   Hippo.Cms = {
     showMask () {
