@@ -34,7 +34,6 @@ public class NavAppPanel extends Panel {
     static final String NAVAPP_JAVASCRIPT_HEADER_ITEM = "navapp-javascript-header-item";
 
     private final HeaderItem navAppBaseTagHeaderItem;
-    private final HeaderItem navAppCssHeaderItem;
 
     private final HeaderItem navAppJavascriptHeaderItem;
 
@@ -43,12 +42,10 @@ public class NavAppPanel extends Panel {
 
 
         final Function<String, ResourceReference> mapper = NavAppUtils.getMapper(navAppSettings.getAppSettings());
-        final Function<String, CssHeaderItem> toCssHeaderItem = mapper.andThen(CssHeaderItem::forReference);
         final Function<String, JavaScriptHeaderItem> toJsHeaderItem = mapper.andThen(JavaScriptHeaderItem::forReference);
         final NavAppJavascriptHeaderItem javascriptHeaderItem = new NavAppJavascriptHeaderItem(navAppSettings, toJsHeaderItem);
 
         this.navAppBaseTagHeaderItem = new NavAppBaseTagHeaderItem(navAppSettings.getAppSettings().getNavAppLocation());
-        this.navAppCssHeaderItem = new NavAppCssHeaderItem(toCssHeaderItem);
 
         // Put it in a filter header item so that it will render in the body instead of the head
         // The NavAppPanel.html must contain a wicket:container with the same id as this filtered header item.
@@ -59,7 +56,6 @@ public class NavAppPanel extends Panel {
     @Override
     public void renderHead(final IHeaderResponse response) {
         response.render(navAppBaseTagHeaderItem);
-        response.render(navAppCssHeaderItem);
         response.render(navAppJavascriptHeaderItem);
     }
 }

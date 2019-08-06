@@ -65,13 +65,7 @@ public class NavAppJavascriptHeaderItem extends HeaderItem {
     }
 
     private Stream<String> getJavascriptSrcTagNames() {
-        final List<String> javascriptResources = Arrays.asList("runtime.js", "es2015-polyfills.js", "polyfills.js", "main.js");
-        if (WebApplication.get().usesDevelopmentConfig()) {
-            return Stream.concat(
-                    javascriptResources.stream(),
-                    Stream.of("styles.js", "vendor.js"));
-        }
-        return javascriptResources.stream();
+        return Stream.of("loader.js");
     }
 
     private HeaderItem getNavAppSettingsHeaderItem(NavAppSettings navAppSettings) {
