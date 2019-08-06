@@ -26,8 +26,8 @@
   align-content: space-between;
   background-color: $menu-bg;
   display: grid;
-  grid-template-rows: auto 1fr auto;
   font-size: 14px;
+  grid-template-rows: auto 1fr auto;
 }
 
 .progress-bar {
