@@ -63,14 +63,14 @@ export interface ParentApi {
    * may use this method to make sure the browser URL and breadcrumbs label maintained by the nav-app are set appropriately.
    * These parameters may depend on application-internal state.
    *
-   * @param location
+   * @param location the NavLocation navigated to
    */
   updateNavLocation?: (location: NavLocation) => void;
   /**
    * Is called by an application to perform internal or cross-app navigation. It **does** trigger the nav-app to perform a
    * ‘beforeNavigate’ and ‘navigate’ to route to the provided location.
    *
-   * @param location
+   * @param location The NavLocation navigated to
    */
   navigate?: (location: NavLocation) => void;
   /**
@@ -142,8 +142,8 @@ export interface ChildApi {
    * (for example by clicking a button) but the url is absolutely the same it doesn’t lead to any transitions.
    * It’s an application’s responsibility to make a decision on how to handle this navigational call.
    *
-   * @param location
-   * @param flags
+   * @param location the NavLocation to navigate to
+   * @param flags TODO document
    */
   navigate?: (location: NavLocation, flags?: { [key: string]: string | number | boolean }) => void;
   /**
@@ -158,7 +158,7 @@ export interface ChildApi {
    * active app will first update its UI and cookie, and the consequent broadcast will cause all other brSM apps to
    * update their site state from the cookie that was just updated.
    *
-   * @param siteId
+   * @param siteId the selected SiteId
    */
   updateSelectedSite?: (siteId?: SiteId) => void;
 }
@@ -189,7 +189,8 @@ export interface NavItem {
   displayName?: string;
   /**
    * Absolute URL for loading the app which hosts this navigation item. navigation items with the same appBaseUrl value
-   * belong to the same app, and only one iframe is loaded for that app. The value of this field will be put into the src attribute of that iframe.
+   * belong to the same app, and only one iframe is loaded for that app. The value of this field will be put into the
+   * src attribute of that iframe.
    */
   appIframeUrl: string;
   /**
@@ -231,7 +232,7 @@ export interface NavLocation {
 export interface SiteId {
   /**
    * Identifier of a site group or a site.
-   * */
+   */
   siteId: number;
   /**
    * Identifier of the account.

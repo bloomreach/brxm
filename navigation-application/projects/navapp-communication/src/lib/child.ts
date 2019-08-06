@@ -22,8 +22,8 @@ import { mergeIntersecting } from './utils';
 /**
  * Method to connect to an application in an iframe window.
  *
- * @param iframe
- * @param methods
+ * @param iframe TODO doc or remove
+ * @param methods TODO doc or remove
  */
 export function connectToChild({
   iframe,
