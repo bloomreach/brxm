@@ -39,7 +39,7 @@ public class WebUtilsTest {
             "    \"/essentials/images/screenshots/documentwizard01.png\",\n" +
             "    \"/essentials/images/screenshots/documentwizard02.png\"\n" +
             "  ],\n" +
-            "  \"documentationLink\": \"http://www.onehippo.org/library/concepts/plugins/dashboard-document-wizard/about.html\",\n" +
+            "  \"documentationLink\": \"https://documentation.bloomreach.com/library/concepts/plugins/dashboard-document-wizard/about.html\",\n" +
             "  \"parameterServiceClass\": \"org.onehippo.cms7.essentials.plugins.docwiz.DocumentWizardParameterService\",\n" +
             "  \"restClasses\": [\n" +
             "    \"org.onehippo.cms7.essentials.plugins.docwiz.DocumentWizardResource\"\n" +
