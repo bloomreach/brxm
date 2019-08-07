@@ -20,11 +20,7 @@ import java.io.IOException;
 import java.security.AccessControlException;
 import java.security.Principal;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.concurrent.ScheduledExecutorService;
 
 import javax.jcr.AccessDeniedException;
@@ -36,7 +32,6 @@ import javax.jcr.Session;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.security.auth.Subject;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.RepositoryContext;
 import org.apache.jackrabbit.core.WorkspaceImpl;
@@ -45,11 +40,7 @@ import org.apache.jackrabbit.core.config.WorkspaceConfig;
 import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
 import org.apache.jackrabbit.core.observation.ObservationManagerImpl;
 import org.apache.jackrabbit.core.security.AccessManager;
-import org.apache.jackrabbit.core.security.AnonymousPrincipal;
-import org.apache.jackrabbit.core.security.SystemPrincipal;
-import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.apache.jackrabbit.core.security.authentication.AuthContext;
-import org.apache.jackrabbit.core.security.principal.AdminPrincipal;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
 import org.apache.jackrabbit.core.state.ItemStateListener;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
@@ -110,11 +101,6 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
             if (accessMgr instanceof ItemStateListener) {
                 context.getItemStateManager().addListener((ItemStateListener) accessMgr);
             }
-            // TODO HELPS BUT WHY?
-//            if (getUserId().equals("testUser")) {
-//                //System.out.println("TESTUSER");
-//                Thread.sleep(100);
-//            }
             accessMgr.init(ctx);
             return accessMgr;
         } catch (AccessDeniedException ex) {
@@ -123,35 +109,6 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
             String msg = "failed to instantiate AccessManager implementation: "+amConfig.getClassName();
             log.error(msg, ex);
             throw new RepositoryException(msg, ex);
-        }
-    }
-
-    private String getUserId() {
-        List<Principal> idPrincipals = new LinkedList<Principal>();
-        if (!subject.getPrincipals(SystemPrincipal.class).isEmpty()) {
-            Principal principal = subject.getPrincipals(SystemPrincipal.class).iterator().next();
-            idPrincipals.add(principal);
-        }
-        if (!subject.getPrincipals(AdminPrincipal.class).isEmpty()) {
-            Principal principal = subject.getPrincipals(AdminPrincipal.class).iterator().next();
-            idPrincipals.add(principal);
-        }
-        if (!subject.getPrincipals(UserPrincipal.class).isEmpty()) {
-            final Set<UserPrincipal> userPrincipals = subject.getPrincipals(UserPrincipal.class);
-            idPrincipals.addAll(userPrincipals);
-        }
-        if (!subject.getPrincipals(AnonymousPrincipal.class).isEmpty()) {
-            Principal principal = subject.getPrincipals(AnonymousPrincipal.class).iterator().next();
-            idPrincipals.add(principal);
-        }
-        if (idPrincipals.size() > 0) {
-            SortedSet<String> names = new TreeSet<String>();
-            for (Principal principal : idPrincipals) {
-                names.add(principal.getName());
-            }
-            return StringUtils.join(names, ',');
-        } else {
-           return "Unknown";
         }
     }
 
