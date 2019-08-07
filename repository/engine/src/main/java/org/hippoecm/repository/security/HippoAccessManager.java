@@ -177,19 +177,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
     private Pair<Set<NodeId>, Set<NodeId>> createdDestroyedNodeIds = new ImmutablePair<>(new HashSet<>(), new HashSet<>());
 
-    /**
-     * In general, if left or right set in createdDestroyedNodeIds is not empty, we process the created and/or destroyed
-     * node Ids synchronously during checkPermission / isGranted /canRead methods. *However*, if the
-     * createdDestroyedNodeIds exceed the PROCESS_CREATED_NODE_IDS_SYNC_LIMIT, we process it asynchronously. Note that
-     * we *never* process createdDestroyedNodeIds from the thread that triggered {@link #stateCreated(ItemState)} or
-     * {@link #stateDestroyed(ItemState)} since that thread should return as fast as possible from these methods (which
-     * is also the reason why we delay the processingCreatedDestroyedNodeIds of createdDestroyedNodeIds to the thread
-     * using the current session or until PROCESS_CREATED_NODE_IDS_SYNC_LIMIT is reached. We use
-     * PROCESS_CREATED_NODE_IDS_SYNC_LIMIT since we do not want possibly OOM if there are lots of unused/dorming JCR
-     * Sessions which would get too large createdNodeIds sets.
-     */
-    private final static int PROCESS_CREATED_NODE_IDS_SYNC_LIMIT = 1000;
-
     private WeakHashMap<HippoNodeId, Boolean> readVirtualAccessCache;
 
     private static final int DEFAULT_PERM_CACHE_SIZE = 20000;
@@ -1388,13 +1375,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                 }
                 createdNodeIds.add(nodeId);
             }
-
-            if (createdNodeIds.size() + createdDestroyedNodeIds.getRight().size() >= PROCESS_CREATED_NODE_IDS_SYNC_LIMIT) {
-                log.debug("createdNodeIds exceeded the limit '{}' implying the created node ids will be processed " +
-                        "async instead of in process for the JCR Session to which the HippoAccessManager is tied");
-                //exceeding limit, process now async the createdNodeIds already
-                new Thread(() -> processCreatedDestroyedNodeIds()).start();
-            }
         }
 
     }
@@ -1436,12 +1416,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                     createdDestroyedNodeIds.getRight().add(id);
                 }
 
-                if (createdNodeIds.size() + createdDestroyedNodeIds.getRight().size() >= PROCESS_CREATED_NODE_IDS_SYNC_LIMIT) {
-                    log.debug("createdNodeIds exceeded the limit '{}' implying the created node ids will be processed " +
-                            "async instead of in process for the JCR Session to which the HippoAccessManager is tied");
-                    //exceeding limit, process now async the createdNodeIds already
-                    new Thread(() -> processCreatedDestroyedNodeIds()).start();
-                }
             }
 
             // remove it from 'implicitReads' such that it also can get removed from the access cache
