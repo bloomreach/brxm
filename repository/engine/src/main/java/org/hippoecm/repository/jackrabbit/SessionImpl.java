@@ -85,10 +85,10 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implemen
                     this, subject, context.getHierarchyManager(), context.getPrivilegeManager(),
                     this, getWorkspace().getName(), context.getNodeTypeManager(), getItemStateManager());
             AccessManager accessMgr = amConfig.newInstance(AccessManager.class);
-            accessMgr.init(ctx);
             if (accessMgr instanceof ItemStateListener) {
                 context.getItemStateManager().addListener((ItemStateListener) accessMgr);
             }
+            accessMgr.init(ctx);
             return accessMgr;
         } catch (AccessDeniedException ex) {
             throw ex;
