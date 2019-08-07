@@ -60,6 +60,7 @@ import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.apache.jackrabbit.core.security.authorization.AccessControlProvider;
 import org.apache.jackrabbit.core.security.authorization.Permission;
 import org.apache.jackrabbit.core.security.authorization.WorkspaceAccessManager;
+import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.ItemStateListener;
@@ -100,7 +101,7 @@ import org.slf4j.LoggerFactory;
 public class HippoAccessManager implements AccessManager, AccessControlManager, ItemStateListener {
 
     /**
-     * Intermediate readAccess state for current thread {@link #canRead(NodeId)} processingCreatedDestroyedNodeIds
+     * Intermediate readAccess state for current thread {@link #canRead(NodeId)} processing
      */
     private final Set<NodeId> inprocessNodeReadAccess = new HashSet<>();
 
@@ -163,9 +164,10 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * The HippoAccessCache instance
      */
     private HippoAccessCache readAccessCache;
-    private Set<NodeId> implicitReads = new HashSet<>();
+
+    private Set<NodeId> implicitReads = new ConcurrentHashMap().newKeySet();
+
     private long reInitCounter = 0;
-    private Map<String, List<QFacetRule>> missingReferences = new HashMap<>();
 
     /**
      * createdDestroyedNodeIds can be accessed concurrently hence use synchronized(createdDestroyedNodeIds) when using
@@ -196,6 +198,11 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * Cache for determining if a type is a instance of another type
      */
     private final NodeTypeInstanceOfCache ntIOCache = NodeTypeInstanceOfCache.getInstance();
+
+    /**
+     * State of the accessManager
+     */
+    private volatile boolean initialized = false;
 
     /**
      * Flag whether current user is a regular user
@@ -237,6 +244,10 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * @see AccessManager#init(AMContext)
      */
     public void init(AMContext context) throws AccessDeniedException, Exception {
+
+        if (initialized) {
+            throw new IllegalStateException("already initialized");
+        }
 
         subject = context.getSubject();
         npRes = context.getNamePathResolver();
@@ -298,6 +309,9 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
         initializeImplicitReadAccess();
 
+        // we're done
+        initialized = true;
+
         log.info("Initialized HippoAccessManager for user {} with cache size {}", getUserIdAsString(), cacheSize);
     }
 
@@ -321,6 +335,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * @see AccessManager#close()
      */
     public synchronized void close() throws Exception {
+        checkInitialized();
+        initialized = false;
 
         // clear out all caches
         implicitReads.clear();
@@ -369,6 +385,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * @deprecated
      */
     public boolean isGranted(final ItemId id, final int permissions) throws RepositoryException {
+        checkInitialized();
 
         if (permissions != Permission.READ) {
             log.warn("isGranted(ItemId, int) is DEPRECATED!", new RepositoryException(
@@ -407,6 +424,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      */
 
     public boolean isGranted(final Path absPath, final int permissions) throws RepositoryException {
+        checkInitialized();
 
         if (!absPath.isAbsolute()) {
             throw new RepositoryException("Absolute path expected");
@@ -464,6 +482,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     }
 
     private boolean canRead(Path absPath) throws RepositoryException {
+        checkInitialized();
 
         // allow everything to the system user
         if (isSystem) {
@@ -599,6 +618,9 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         if (inprocessNodeReadAccess.contains(id)) {
             return Boolean.TRUE;
         }
+        if (implicitReads.contains(id)) {
+            return Boolean.TRUE;
+        }
         if (id instanceof HippoNodeId) {
             return readVirtualAccessCache.get(id);
         } else {
@@ -618,17 +640,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         if (id instanceof HippoNodeId) {
             readVirtualAccessCache.remove(id);
         } else {
-            // never remove from the implicitReads since for example jcr:setProperties action remove the
-            // item from the readAccessCache but this should never happen for implicit read access
-            if (!implicitReads.contains(id)) {
-                readAccessCache.remove(id);
-            }
+            readAccessCache.remove(id);
         }
-    }
-
-    private void addImplicitReadAccessToCache(final NodeId id) {
-        implicitReads.add(id);
-        addAccessToCache(id, true);
     }
 
     /**
@@ -870,7 +883,9 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         }
         String msg = "Node with id " + nodeState.getId() + " with status [" + nodeState.getStatus()
                 + "] not found in hierarchy manager or zombie hierarchy manager.";
-        log.warn(msg);
+        // due to concurrency it happen that we cannot find the node name since another jcr session might have removed the
+        // Node for the nodeState
+        log.info(msg);
         throw new ItemNotFoundException(msg);
     }
 
@@ -1218,7 +1233,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             }
             return (NodeState) itemState;
         } catch (NoSuchItemStateException e) {
-            log.warn("Could not get item state for id '{}'", id, e);
+            log.info("Could not get item state for id '{}', must have been removed already", id, e);
             return null;
         }
     }
@@ -1352,6 +1367,9 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         if (isSystem) {
             return;
         }
+        if (!initialized) {
+            log.info("States being created during initialization of this AccessManager");
+        }
 
         // since org.apache.jackrabbit.core.state.SessionItemStateManager.stateCreated() filters out 'node' states
         // we have to listen to the created property states as well and then take the parent
@@ -1371,7 +1389,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                 createdNodeIds.add(nodeId);
             }
 
-            if (createdNodeIds.size() + createdDestroyedNodeIds.getRight().size() > PROCESS_CREATED_NODE_IDS_SYNC_LIMIT) {
+            if (createdNodeIds.size() + createdDestroyedNodeIds.getRight().size() >= PROCESS_CREATED_NODE_IDS_SYNC_LIMIT) {
                 log.debug("createdNodeIds exceeded the limit '{}' implying the created node ids will be processed " +
                         "async instead of in process for the JCR Session to which the HippoAccessManager is tied");
                 //exceeding limit, process now async the createdNodeIds already
@@ -1399,6 +1417,11 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         if (isSystem) {
             return;
         }
+
+        if (!initialized) {
+            log.info("States being destroyed during initialization of this AccessManager");
+        }
+
         if (destroyed.isNode()) {
             // first remove from implicitReads since implicitReads protects the item to be removed
             // from the read access cache
@@ -1413,11 +1436,18 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                     createdDestroyedNodeIds.getRight().add(id);
                 }
 
+                if (createdNodeIds.size() + createdDestroyedNodeIds.getRight().size() >= PROCESS_CREATED_NODE_IDS_SYNC_LIMIT) {
+                    log.debug("createdNodeIds exceeded the limit '{}' implying the created node ids will be processed " +
+                            "async instead of in process for the JCR Session to which the HippoAccessManager is tied");
+                    //exceeding limit, process now async the createdNodeIds already
+                    new Thread(() -> processCreatedDestroyedNodeIds()).start();
+                }
             }
 
             // remove it from 'implicitReads' such that it also can get removed from the access cache
             implicitReads.remove(id);
             removeAccessFromCache(id);
+
         }
     }
 
@@ -1505,6 +1535,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * @see AccessControlManager#getSupportedPrivileges(String)
      */
     public Privilege[] getSupportedPrivileges(String absPath) throws PathNotFoundException, RepositoryException {
+        checkInitialized();
         checkValidNodePath(absPath);
         // return all known privileges everywhere.
         return currentPrivileges.values().toArray(new Privilege[currentPrivileges.size()]);
@@ -1514,6 +1545,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * @see AccessControlManager#privilegeFromName(String)
      */
     public Privilege privilegeFromName(String privilegeName) throws AccessControlException, RepositoryException {
+        checkInitialized();
 
         if (currentPrivileges.containsKey(privilegeName)) {
             return currentPrivileges.get(privilegeName);
@@ -1566,6 +1598,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      */
     private boolean hasPrivileges(Path absPath, Privilege[] privileges) throws PathNotFoundException,
             RepositoryException {
+        checkInitialized();
 
         // system session can do everything
         if (isSystem) {
@@ -1663,22 +1696,21 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         }
     }
 
-    private void reInitializeImplicitReadAccess() throws RepositoryException {
+    private synchronized void reInitializeImplicitReadAccess() throws RepositoryException {
         implicitReads.clear();
-        missingReferences.clear();
         readAccessCache.clear();
         initializeImplicitReadAccess();
         reInitCounter++;
     }
 
-    private void initializeImplicitReadAccess(final DomainRule domainRule, final FacetAuthPrincipal fap) {
+    private synchronized void initializeImplicitReadAccess(final DomainRule domainRule, final FacetAuthPrincipal fap) {
         // use the possibly extended facet rules!!
         final Set<QFacetRule> facetRules = getFacetRules(domainRule);
         for (QFacetRule qFacetRule : facetRules) {
             if (qFacetRule.isHierarchicalWhiteListRule()) {
 
                 if (qFacetRule.isReferenceRule() && !qFacetRule.referenceExists()) {
-                    missingReferences.computeIfAbsent(qFacetRule.getPathReference(), key -> new ArrayList<>()).add(qFacetRule);
+                    continue;
                 }
 
                 final String path = qFacetRule.getPathReference();
@@ -1730,7 +1762,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             // ancestry is already taken care off by another domain/facet rule
             return;
         }
-        addImplicitReadAccessToCache(parentId);
+        implicitReads.add(parentId);
         final NodeState parentState = getNodeStateQuietly(parentId);
         if (parentState == null) {
             return;
@@ -1750,6 +1782,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                 return;
             }
 
+            final long start = System.currentTimeMillis();
             // final array to be able to use the reInit var in lambda's
             final boolean[] reInit = {false};
 
@@ -1765,11 +1798,10 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                 faps.forEach(fap -> fap.getRules().forEach(domainRule -> {
                     domainRule.getFacetRules().forEach(qFacetRule -> {
                         if (qFacetRule.isReferenceRule() && destroyedUuid.equals(qFacetRule.getValue())) {
-                            log.debug("QFacetRule '{}' referenced removed node. Remove the value such that it " +
-                                    "becomes a 'missing reference' QFacetRule");
+                            log.info("QFacetRule '{}' referenced removed node. Remove the value such that it " +
+                                    "becomes a 'missing reference QFacetRule'", qFacetRule);
                             qFacetRule.setUUIDReference(null);
                             reInit[0] = true;
-                            missingReferences.computeIfAbsent(qFacetRule.getPathReference(), key -> new ArrayList<>()).add(qFacetRule);
                         }
                     });
                 }));
@@ -1782,22 +1814,28 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
                         final String path = getPathWithoutAccessTest(createdNodeId);
 
-                        final List<QFacetRule> qFacetRules = missingReferences.get(path);
+                        final Set<FacetAuthPrincipal> faps = subject.getPrincipals(FacetAuthPrincipal.class);
+                        faps.forEach(fap -> fap.getRules().forEach(domainRule -> {
+                            domainRule.getFacetRules().forEach(qFacetRule -> {
+                                if (qFacetRule.isReferenceRule() && path.equals(qFacetRule.getPathReference())) {
+                                    log.info("QFacetRule '{}' referenced node has been created. Set the value of the " +
+                                            "UUID on the QFacetRule", qFacetRule);
+                                    qFacetRule.setUUIDReference(UUID.fromString(createdNodeId.toString()));
+                                    reInit[0] = true;
+                                }
+                            });
+                        }));
 
-                        if (qFacetRules != null && !qFacetRules.isEmpty()) {
-                            reInit[0] = true;
-                            for (QFacetRule qFacetRule : qFacetRules) {
-                                qFacetRule.setUUIDReference(UUID.fromString(createdNodeId.toString()));
-                            }
-                        }
-                    } catch (PathNotFoundException e) {
+                    } catch (PathNotFoundException | ItemStateException e) {
                         log.debug("Created Node Id already removed again");
-                    } catch (RepositoryException | ItemStateException e) {
+                    } catch (RepositoryException e) {
                         log.error("Exception while processingCreatedDestroyedNodeIds createdNodeIds", e);
                     }
                 }
             }
 
+            final int numberCreated = createdNodeIds.size();
+            final int numberDestroyed = destroyedNodeIds.size();
             createdNodeIds.clear();
             destroyedNodeIds.clear();
 
@@ -1809,6 +1847,9 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                 }
             }
 
+            log.error("processing {} created nodes and {} destroyed nodes took {} ms to complete{}",
+                    numberCreated, numberDestroyed, System.currentTimeMillis() - start,
+                    reInit[0] ? ", including a reinitialization of implicit reads" : ".");
         }
     }
 
@@ -1847,13 +1888,23 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     }
 
     private void populatePath(final StringBuilder pathBuilder, final NodeState nodeState, final SharedItemStateManager sharedItemStateManager)
-            throws ItemStateException, NamespaceException {
+            throws ItemStateException, NamespaceException, PathNotFoundException {
 
         if (nodeState.getId().equals(rootNodeId)) {
             return;
         }
+        // item got its parent (concurrently) removed and is 'free floating'
+        if (nodeState.getParentId() == null) {
+            throw new PathNotFoundException("Cannot construct path since parent is null");
+        }
         final NodeState parentState = (NodeState) sharedItemStateManager.getItemState(nodeState.getParentId());
-        final Name name = parentState.getChildNodeEntry(nodeState.getNodeId()).getName();
+
+        final ChildNodeEntry childNodeEntry = parentState.getChildNodeEntry(nodeState.getNodeId());
+        if (childNodeEntry == null) {
+            // child has already been removed again (by other session)
+            throw new PathNotFoundException("Cannot construct path since node has been removed already");
+        }
+        final Name name = childNodeEntry.getName();
 
         final String jcrName = npRes.getJCRName(name);
         pathBuilder.insert(0, jcrName).insert(0, "/");
@@ -1865,6 +1916,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * @see AccessControlManager#getPrivileges(String)
      */
     public Privilege[] getPrivileges(String absPath) throws PathNotFoundException, RepositoryException {
+        checkInitialized();
 
         if (!isSystem) {
             processCreatedDestroyedNodeIds();
@@ -1899,6 +1951,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      */
     public AccessControlPolicy[] getPolicies(String absPath) throws PathNotFoundException, AccessDeniedException,
             RepositoryException {
+        checkInitialized();
         //checkPrivileges(absPath, PrivilegeRegistry.READ_AC);
 
         log.debug("Implementation does not provide applicable policies -> getPolicy() always returns an empty array.");
@@ -1922,6 +1975,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      */
     public AccessControlPolicyIterator getApplicablePolicies(String absPath) throws PathNotFoundException,
             AccessDeniedException, RepositoryException {
+        checkInitialized();
         //checkPrivileges(absPath, PrivilegeRegistry.READ_AC);
         log.debug("Implementation does not provide applicable policies -> returning empty iterator.");
         return AccessControlPolicyIteratorAdapter.EMPTY;
@@ -1934,6 +1988,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      */
     public void setPolicy(String absPath, AccessControlPolicy policy) throws PathNotFoundException,
             AccessControlException, AccessDeniedException, RepositoryException {
+        checkInitialized();
         //checkPrivileges(absPath, PrivilegeRegistry.MODIFY_AC);
         throw new AccessControlException("AccessControlPolicy " + policy + " cannot be applied.");
     }
@@ -1945,11 +2000,23 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      */
     public void removePolicy(String absPath, AccessControlPolicy policy) throws PathNotFoundException,
             AccessControlException, AccessDeniedException, RepositoryException {
+        checkInitialized();
         //checkPrivileges(absPath, PrivilegeRegistry.MODIFY_AC);
         throw new AccessControlException("No AccessControlPolicy has been set through this API -> Cannot be removed.");
     }
 
     //------------------------------ END ACCESS CONTROL MANAGER -------------------------------------------//
+
+    /**
+     * Check if this manager has been properly initialized.
+     *
+     * @throws IllegalStateException If this manager has not been properly initialized.
+     */
+    private void checkInitialized() {
+        if (!initialized) {
+            throw new IllegalStateException("not initialized");
+        }
+    }
 
     /**
      * Build a qualified path from the specified <code>absPath</code> and test
