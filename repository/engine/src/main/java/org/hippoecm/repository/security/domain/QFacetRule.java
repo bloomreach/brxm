@@ -16,13 +16,13 @@
 package org.hippoecm.repository.security.domain;
 
 import java.io.Serializable;
-import java.util.UUID;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.util.Pair;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.spi.Name;
@@ -172,7 +172,7 @@ public class QFacetRule implements Serializable {
             throw new UnsupportedOperationException("referenceExists check should only be checked when " +
                     "isReferenceRule() return true");
         }
-        return value != null;
+        return StringUtils.isNotEmpty(value);
     }
 
 
@@ -197,7 +197,7 @@ public class QFacetRule implements Serializable {
 
                 log.info("Path not found for facetRule '{}'", facetNode.getPath());
 
-                return new Pair<>(null, absPath);
+                return new Pair<>(StringUtils.EMPTY, absPath);
             }
         }
         return new Pair<>(uuid, absPath);
@@ -231,16 +231,12 @@ public class QFacetRule implements Serializable {
 
     /**
      * A path reference gets translated to a UUID value, see {@link #parseReferenceTypeValue}. However, if the path
-     * reference does not (yet) existed during initialization, it can be set later on. Then {@link #setUUIDReference(UUID)}
+     * reference does not (yet) existed during initialization, it can be set later on. Then {@link #setUUIDReference(String)}
      * gets invoked (for all existing JCR Sessions containing this {@link QFacetRule}.
      * @param reference the UUID to set
      */
-    public void setUUIDReference(final UUID reference) {
-        if (reference == null) {
-            value = null;
-            return;
-        }
-        value = reference.toString();
+    public void setUUIDReference(final String reference) {
+        value = reference;
     }
 
     /**

@@ -22,7 +22,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -44,9 +43,7 @@ import javax.jcr.security.AccessControlPolicyIterator;
 import javax.jcr.security.Privilege;
 import javax.security.auth.Subject;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.commons.iterator.AccessControlPolicyIteratorAdapter;
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.id.ItemId;
@@ -60,14 +57,12 @@ import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.apache.jackrabbit.core.security.authorization.AccessControlProvider;
 import org.apache.jackrabbit.core.security.authorization.Permission;
 import org.apache.jackrabbit.core.security.authorization.WorkspaceAccessManager;
-import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.ItemStateListener;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.PropertyState;
-import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.core.value.InternalValue;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.Path;
@@ -79,6 +74,8 @@ import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.hippoecm.repository.jackrabbit.HippoSessionItemStateManager;
+import org.hippoecm.repository.jackrabbit.HippoSharedItemStateManager;
+import org.hippoecm.repository.jackrabbit.QFacetRuleStateManager;
 import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.QFacetRule;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
@@ -125,6 +122,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      */
     private HippoSessionItemStateManager itemMgr;
 
+    private HippoSharedItemStateManager sharedItemMgr;
+
     /**
      * NodeTypeManager for resolving superclass node types
      */
@@ -169,13 +168,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
     private long reInitCounter = 0;
 
-    /**
-     * createdDestroyedNodeIds can be accessed concurrently hence use synchronized(createdDestroyedNodeIds) when using
-     * the left and right set. The left set contains the createdNodeIds and the right set contains the destroyedNodeIds
-     * which still need to be processed by this HippoAccessManager
-     */
-
-    private Pair<Set<NodeId>, Set<NodeId>> createdDestroyedNodeIds = new ImmutablePair<>(new HashSet<>(), new HashSet<>());
+    private long localCounter = 0;
 
     private WeakHashMap<HippoNodeId, Boolean> readVirtualAccessCache;
 
@@ -242,6 +235,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         if (context instanceof HippoAMContext) {
             ntMgr = ((HippoAMContext) context).getNodeTypeManager();
             itemMgr = (HippoSessionItemStateManager) ((HippoAMContext) context).getSessionItemStateManager();
+            sharedItemMgr = itemMgr.getSharedItemStateManager();
+            localCounter = sharedItemMgr.getQFacetRuleMonitor().getUpdateCounter();
         }
 
         hierMgr = itemMgr.getHierarchyMgr();
@@ -494,7 +489,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      */
 
     public boolean canAccess(String workspaceName) throws NoSuchWorkspaceException, RepositoryException {
-        processCreatedDestroyedNodeIds();
+        updateReferenceFacetRules();
         // no workspace restrictions yet
         return true;
     }
@@ -533,7 +528,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             return true;
         }
 
-        processCreatedDestroyedNodeIds();
+        updateReferenceFacetRules();
 
         // check cache
         Boolean allowRead = getAccessFromCache(id);
@@ -1351,32 +1346,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
     @Override
     public void stateCreated(final ItemState created) {
-        if (isSystem) {
-            return;
-        }
-        if (!initialized) {
-            log.info("States being created during initialization of this AccessManager");
-        }
-
-        // since org.apache.jackrabbit.core.state.SessionItemStateManager.stateCreated() filters out 'node' states
-        // we have to listen to the created property states as well and then take the parent
-        final NodeId nodeId;
-        synchronized (createdDestroyedNodeIds) {
-            final Set<NodeId> createdNodeIds = createdDestroyedNodeIds.getLeft();
-            if (created.isNode()) {
-                nodeId = (NodeId) created.getId();
-                createdNodeIds.add(nodeId);
-
-            } else {
-                nodeId = created.getParentId();
-                if (nodeId == null) {
-                    // free floating property? Unlikely but java doc says created.getParentId() can return null
-                    return;
-                }
-                createdNodeIds.add(nodeId);
-            }
-        }
-
     }
 
     @Override
@@ -1398,27 +1367,11 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             return;
         }
 
-        if (!initialized) {
-            log.info("States being destroyed during initialization of this AccessManager");
-        }
-
         if (destroyed.isNode()) {
             // first remove from implicitReads since implicitReads protects the item to be removed
             // from the read access cache
 
             final NodeId id = (NodeId) destroyed.getId();
-            synchronized (createdDestroyedNodeIds) {
-                final Set<NodeId> createdNodeIds = createdDestroyedNodeIds.getLeft();
-                final boolean removed = createdNodeIds.remove(id);
-                if (removed) {
-                    log.trace("Don't need to process the removed id '{}' since it was created but not yet processed");
-                } else {
-                    createdDestroyedNodeIds.getRight().add(id);
-                }
-
-            }
-
-            // remove it from 'implicitReads' such that it also can get removed from the access cache
             implicitReads.remove(id);
             removeAccessFromCache(id);
 
@@ -1601,9 +1554,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             return canRead(id);
         }
 
-
-        processCreatedDestroyedNodeIds();
-
+        updateReferenceFacetRules();
 
         NodeState nodeState;
         try {
@@ -1744,151 +1695,57 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         setReadAllowedAncestry(parentState);
     }
 
-    private void processCreatedDestroyedNodeIds() {
+    private void updateReferenceFacetRules() {
         if (isSystem) {
             return;
         }
-        synchronized (createdDestroyedNodeIds) {
 
-            final Set<NodeId> createdNodeIds = createdDestroyedNodeIds.getLeft();
-            final Set<NodeId> destroyedNodeIds = createdDestroyedNodeIds.getRight();
-            if (createdNodeIds.size() == 0 && destroyedNodeIds.size() == 0) {
-                return;
-            }
+        final QFacetRuleStateManager qFacetRuleStateManager = sharedItemMgr.getQFacetRuleMonitor();
 
-            final long start = System.currentTimeMillis();
-            // final array to be able to use the reInit var in lambda's
-            final boolean[] reInit = {false};
-
-            final Set<FacetAuthPrincipal> faps = subject.getPrincipals(FacetAuthPrincipal.class);
-
-            final Set<String> destroyedIds = new HashSet<>();
-
-            for (NodeId destroyedNodeId : destroyedNodeIds) {
-                destroyedIds.add(destroyedNodeId.toString());
-            }
-
-            // go through all QFacetRule and every QFacetRule that has QFacetRule#isReferenceRule is true and
-            // has a value equal to destroyedUuid, should get from its value (or value(s) in future if we support
-            // wildcard path references) the destroyed UUID removed
-
-            // for every QFacetRule for the current user that is a 'reference rule' and the reference points to
-            // the removed node, remove the uuid from the value
-            faps.forEach(fap -> fap.getRules().forEach(domainRule -> {
-                domainRule.getFacetRules().forEach(qFacetRule -> {
-                    if (qFacetRule.isReferenceRule() && destroyedIds.contains(qFacetRule.getValue())) {
-                        log.info("QFacetRule '{}' referenced removed node. Remove the value such that it " +
-                                "becomes a 'missing reference QFacetRule'", qFacetRule);
-                        qFacetRule.setUUIDReference(null);
-                        reInit[0] = true;
-                    }
-                });
-            }));
-
-            if (!createdNodeIds.isEmpty()) {
-
-
-                final Map<String, String> newPathUUIDMap = new HashMap<>();
-                for (NodeId createdNodeId : createdNodeIds) {
-                    try {
-                        final String path = getPathWithoutAccessTest(createdNodeId);
-                        newPathUUIDMap.put(path, createdNodeId.toString());
-                    } catch (PathNotFoundException | ItemStateException e) {
-                        log.debug("Created Node Id already removed again");
-                    } catch (RepositoryException e) {
-                        log.error("Exception while processingCreatedDestroyedNodeIds createdNodeIds", e);
-                    }
-                }
-
-                faps.forEach(fap -> fap.getRules().forEach(domainRule -> {
-                    domainRule.getFacetRules().forEach(qFacetRule -> {
-                        if (qFacetRule.isReferenceRule() && newPathUUIDMap.containsKey(qFacetRule.getPathReference())) {
-                            log.info("QFacetRule '{}' referenced node has been created. Set the value of the " +
-                                    "UUID on the QFacetRule", qFacetRule);
-                            qFacetRule.setUUIDReference(UUID.fromString(newPathUUIDMap.get(qFacetRule.getPathReference())));
-                            reInit[0] = true;
-                        }
-                    });
-                }));
-
-            }
-
-            final int numberCreated = createdNodeIds.size();
-            final int numberDestroyed = destroyedNodeIds.size();
-            createdNodeIds.clear();
-            destroyedNodeIds.clear();
-
-            if (reInit[0]) {
-                try {
-                    reInitializeImplicitReadAccess();
-                } catch (RepositoryException e) {
-                    log.error("Exception while initializing implicit read access", e);
-                }
-            }
-
-            log.info("processing {} created nodes and {} destroyed nodes took {} ms to complete{}",
-                    numberCreated, numberDestroyed, System.currentTimeMillis() - start,
-                    reInit[0] ? ", including a reinitialization of implicit reads" : ".");
-        }
-    }
-
-    /**
-     *    We need to find the path for {@code nodeId}. Unfortunately just using this:
-     *    <code>
-     *        <pre>
-     *              final Path path = hierMgr.getPath(createdNodeId);
-     *              final String pathString = npRes.getJCRPath(path);
-     *        </pre>
-     *    </code>
-     *    fails because the 'hierMgr.getPath' results in recursion because it uses
-     *    org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager#getCanonicalItemState(ItemId) which in turn
-     *    invokes accessManager.isGranted(id, AccessManager.READ) which triggers again processCreatedDestroyedNodeIds.
-     *    Just skipping the 'processCreatedDestroyedNodeIds' when recursion is detected is not possible since the
-     *    'processCreatedDestroyedNodeIds' can impact the 'read access' for newly created nodes.
-     *    Therefor, we have to resolve to the shared item state manager and resolve the path 'manually' instead of via
-     *    npRes.getJCRPath(path);
-     */
-    private String getPathWithoutAccessTest(final NodeId nodeId)
-            throws ItemStateException, NamespaceException, RepositoryException {
-
-        final StringBuilder pathBuilder = new StringBuilder();
-        final SharedItemStateManager sharedItemStateManager = itemMgr.getSharedItemStateManager();
-        final ItemState itemState = sharedItemStateManager.getItemState(nodeId);
-
-        if (itemState.getId().equals(rootNodeId)) {
-            return "";
-        }
-        if (!(itemState instanceof NodeState)) {
-            throw new RepositoryException("Expected Node for NodeId");
-        }
-        populatePath(pathBuilder, (NodeState) itemState, sharedItemStateManager);
-        return pathBuilder.toString();
-
-    }
-
-    private void populatePath(final StringBuilder pathBuilder, final NodeState nodeState, final SharedItemStateManager sharedItemStateManager)
-            throws ItemStateException, NamespaceException, PathNotFoundException {
-
-        if (nodeState.getId().equals(rootNodeId)) {
+        final long updateCounterSnapShot = qFacetRuleStateManager.getUpdateCounter();
+        if (localCounter == updateCounterSnapShot) {
             return;
         }
-        // item got its parent (concurrently) removed and is 'free floating'
-        if (nodeState.getParentId() == null) {
-            throw new PathNotFoundException("Cannot construct path since parent is null");
+
+        // final array to be able to use the reInit var in lambda's
+        final boolean[] reInit = {false};
+
+        final Set<FacetAuthPrincipal> faps = subject.getPrincipals(FacetAuthPrincipal.class);
+
+        faps.forEach(fap -> fap.getRules().forEach(domainRule -> {
+            domainRule.getFacetRules().forEach(qFacetRule -> {
+                if (qFacetRule.isReferenceRule()) {
+                    final String prevValue = qFacetRule.getValue();
+                    final String newUUID =  qFacetRuleStateManager.getUUID(qFacetRule.getPathReference());
+
+                    if (newUUID == null) {
+                        log.error("sharedItemMgr.getJcrPathUUIDReferences() expected to have a value for " +
+                                "qFacetRule with path reference '{}' but not present.", qFacetRule.getPathReference());
+                        return;
+                    }
+
+                    if (StringUtils.equals(prevValue, newUUID)) {
+                        return;
+                    }
+
+                    reInit[0] = true;
+                    qFacetRule.setUUIDReference(newUUID);
+
+                }
+            });
+        }));
+
+        localCounter = updateCounterSnapShot;
+
+        if (reInit[0]) {
+            try {
+                reInitializeImplicitReadAccess();
+            } catch (RepositoryException e) {
+                log.error("Exception while initializing implicit read access", e);
+            }
         }
-        final NodeState parentState = (NodeState) sharedItemStateManager.getItemState(nodeState.getParentId());
 
-        final ChildNodeEntry childNodeEntry = parentState.getChildNodeEntry(nodeState.getNodeId());
-        if (childNodeEntry == null) {
-            // child has already been removed again (by other session)
-            throw new PathNotFoundException("Cannot construct path since node has been removed already");
-        }
-        final Name name = childNodeEntry.getName();
 
-        final String jcrName = npRes.getJCRName(name);
-        pathBuilder.insert(0, jcrName).insert(0, "/");
-
-        populatePath(pathBuilder, parentState, sharedItemStateManager);
     }
 
     /**
@@ -1898,7 +1755,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         checkInitialized();
 
         if (!isSystem) {
-            processCreatedDestroyedNodeIds();
+            updateReferenceFacetRules();
         }
 
         NodeId id = getNodeId(npRes.getQPath(absPath));

@@ -48,7 +48,7 @@ public class HippoSessionItemStateManager extends SessionItemStateManager {
         }
     }
 
-    public SharedItemStateManager getSharedItemStateManager() {
+    public HippoSharedItemStateManager getSharedItemStateManager() {
         return localStateMgr.getSharedItemStateManager();
     }
 

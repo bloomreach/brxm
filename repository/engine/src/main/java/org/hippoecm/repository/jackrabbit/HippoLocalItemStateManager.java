@@ -604,8 +604,8 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
         return false;
     }
 
-    public SharedItemStateManager getSharedItemStateManager() {
-        return sharedStateMgr;
+    public HippoSharedItemStateManager getSharedItemStateManager() {
+        return (HippoSharedItemStateManager)sharedStateMgr;
     }
 
     class FilteredChangeLog extends ChangeLog {

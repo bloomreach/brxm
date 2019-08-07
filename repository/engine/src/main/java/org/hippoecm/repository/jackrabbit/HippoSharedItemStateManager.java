@@ -22,7 +22,10 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.jcr.NamespaceException;
+import javax.jcr.Node;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.ReferentialIntegrityException;
+import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 
 import org.apache.jackrabbit.core.cluster.ClusterException;
@@ -39,6 +42,7 @@ import org.apache.jackrabbit.core.observation.EventStateCollection;
 import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.state.ChangeLog;
+import org.apache.jackrabbit.core.state.ChildNodeEntry;
 import org.apache.jackrabbit.core.state.ISMLocking;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
@@ -54,6 +58,10 @@ import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.api.HippoNodeType.CONFIGURATION_PATH;
+import static org.hippoecm.repository.api.HippoNodeType.DOMAINS_PATH;
+import static org.hippoecm.repository.api.HippoNodeType.NT_FACETRULE;
+
 public class HippoSharedItemStateManager extends SharedItemStateManager {
 
     private static final Logger log = LoggerFactory.getLogger(HippoSharedItemStateManager.class);
@@ -62,16 +70,33 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
 
     private Name handleNodeName;
     private Name documentNodeName;
+    private NodeId rootNodeId;
     private NodeTypeRegistry nodeTypeRegistry;
 
     private Collection<WeakReference<HandleListener>> handleListeners = new CopyOnWriteArrayList<>();
+
+    private QFacetRuleStateManager qFacetRuleStateManager = new QFacetRuleStateManager();
 
     public HippoSharedItemStateManager(RepositoryImpl repository, PersistenceManager persistMgr, NodeId rootNodeId, NodeTypeRegistry ntReg, boolean usesReferences,
                                        ItemStateCacheFactory cacheFactory, ISMLocking locking, final NodeIdFactory nodeIdFactory) throws ItemStateException {
         super(persistMgr, rootNodeId, ntReg, usesReferences, cacheFactory, locking, nodeIdFactory);
         this.repository = repository;
+        this.rootNodeId = rootNodeId;
         this.nodeTypeRegistry = ntReg;
         super.setEventChannel(new DocumentChangeNotifyingEventChannelDecorator());
+
+    }
+
+    @Override
+    public void doPostInitialize() throws RepositoryException {
+
+        qFacetRuleStateManager.setSystemSession(getSystemSession());
+        qFacetRuleStateManager.visit("/" + CONFIGURATION_PATH + "/" + DOMAINS_PATH);
+
+    }
+
+    public QFacetRuleStateManager getQFacetRuleMonitor() {
+        return qFacetRuleStateManager;
     }
 
     @Override
@@ -293,4 +318,116 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
             }
         }
     }
+
+
+    @Override
+    public void stateModified(final ItemState modified) {
+        super.stateModified(modified);
+        // TODO
+    }
+
+    @Override
+    public void stateDiscarded(final ItemState discarded) {
+        super.stateDiscarded(discarded);
+        // TODO
+    }
+
+    @Override
+    public void stateCreated(ItemState created) {
+        super.stateCreated(created);
+
+
+        if (rootNodeId == null) {
+            // HSISM is being constructed still.
+            return;
+        }
+
+        if (getNamePathResolver() == null) {
+            // HSISM is being constructed still.
+            return;
+        }
+
+        if (!(created instanceof  NodeState)) {
+            return;
+        }
+
+        final NodeState createNodeState = (NodeState) created;
+        try {
+            if ((createNodeState).getNodeTypeName().equals(getNamePathResolver().getQName(NT_FACETRULE))) {
+                final String path = getPath(created);
+                final Node node = getSystemSession().getNode(path);
+                qFacetRuleStateManager.visit(node);
+                return;
+            }
+
+        } catch (RepositoryException | ItemStateException e) {
+            log.error("Exception while processing created state.", e);
+        }
+
+        try {
+            final String newPath = getPath(created);
+            qFacetRuleStateManager.processNewPath(newPath, created);
+
+
+        } catch (ItemStateException | NamespaceException | PathNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void stateDestroyed(final ItemState destroyed) {
+        super.stateDestroyed(destroyed);
+
+        if (rootNodeId == null) {
+            // HSISM is being constructed still.
+            return;
+        }
+
+        if (getNamePathResolver() == null) {
+            // HSISM is being constructed still.
+            return;
+        }
+
+        if (destroyed instanceof NodeState) {
+            final String destroyedId = destroyed.getId().toString();
+
+            qFacetRuleStateManager.processDestroyedId(destroyedId);
+
+        }
+    }
+
+    private String getPath(final ItemState created)
+            throws ItemStateException, NamespaceException, PathNotFoundException {
+        final StringBuilder pathBuilder = new StringBuilder();
+        populatePath(pathBuilder, (NodeState) created);
+        return pathBuilder.toString();
+    }
+
+    private void populatePath(final StringBuilder pathBuilder, final NodeState nodeState)
+            throws ItemStateException, NamespaceException, PathNotFoundException {
+
+        if (nodeState.getId().equals(rootNodeId)) {
+            return;
+        }
+        // item got its parent (concurrently) removed and is 'free floating'
+        if (nodeState.getParentId() == null) {
+            throw new PathNotFoundException("Cannot construct path since parent is null");
+        }
+        final NodeState parentState = (NodeState) getItemState(nodeState.getParentId());
+
+        final ChildNodeEntry childNodeEntry = parentState.getChildNodeEntry(nodeState.getNodeId());
+        if (childNodeEntry == null) {
+            // child has already been removed again (by other session)
+            throw new PathNotFoundException("Cannot construct path since node has been removed already");
+        }
+        final Name name = childNodeEntry.getName();
+
+        final String jcrName = getNamePathResolver().getJCRName(name);
+
+        pathBuilder.insert(0, jcrName).insert(0, "/");
+
+        populatePath(pathBuilder, parentState);
+    }
+
+
 }
