@@ -1760,52 +1760,57 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             // final array to be able to use the reInit var in lambda's
             final boolean[] reInit = {false};
 
-            for (NodeId destroyedNodeId : destroyedNodeIds) {
-                final String destroyedUuid = destroyedNodeId.toString();
-                // go through all QFacetRule and every QFacetRule that has QFacetRule#isReferenceRule is true and
-                // has a value equal to destroyedUuid, should get from its value (or value(s) in future if we support
-                // wildcard path references) the destroyed UUID removed
-                final Set<FacetAuthPrincipal> faps = subject.getPrincipals(FacetAuthPrincipal.class);
+            final Set<FacetAuthPrincipal> faps = subject.getPrincipals(FacetAuthPrincipal.class);
 
-                // for every QFacetRule for the current user that is a 'reference rule' and the reference points to
-                // the removed node, remove the uuid from the value
-                faps.forEach(fap -> fap.getRules().forEach(domainRule -> {
-                    domainRule.getFacetRules().forEach(qFacetRule -> {
-                        if (qFacetRule.isReferenceRule() && destroyedUuid.equals(qFacetRule.getValue())) {
-                            log.info("QFacetRule '{}' referenced removed node. Remove the value such that it " +
-                                    "becomes a 'missing reference QFacetRule'", qFacetRule);
-                            qFacetRule.setUUIDReference(null);
-                            reInit[0] = true;
-                        }
-                    });
-                }));
+            final Set<String> destroyedIds = new HashSet<>();
+
+            for (NodeId destroyedNodeId : destroyedNodeIds) {
+                destroyedIds.add(destroyedNodeId.toString());
             }
+
+            // go through all QFacetRule and every QFacetRule that has QFacetRule#isReferenceRule is true and
+            // has a value equal to destroyedUuid, should get from its value (or value(s) in future if we support
+            // wildcard path references) the destroyed UUID removed
+
+            // for every QFacetRule for the current user that is a 'reference rule' and the reference points to
+            // the removed node, remove the uuid from the value
+            faps.forEach(fap -> fap.getRules().forEach(domainRule -> {
+                domainRule.getFacetRules().forEach(qFacetRule -> {
+                    if (qFacetRule.isReferenceRule() && destroyedIds.contains(qFacetRule.getValue())) {
+                        log.info("QFacetRule '{}' referenced removed node. Remove the value such that it " +
+                                "becomes a 'missing reference QFacetRule'", qFacetRule);
+                        qFacetRule.setUUIDReference(null);
+                        reInit[0] = true;
+                    }
+                });
+            }));
 
             if (!createdNodeIds.isEmpty()) {
 
+
+                final Map<String, String> newPathUUIDMap = new HashMap<>();
                 for (NodeId createdNodeId : createdNodeIds) {
                     try {
-
                         final String path = getPathWithoutAccessTest(createdNodeId);
-
-                        final Set<FacetAuthPrincipal> faps = subject.getPrincipals(FacetAuthPrincipal.class);
-                        faps.forEach(fap -> fap.getRules().forEach(domainRule -> {
-                            domainRule.getFacetRules().forEach(qFacetRule -> {
-                                if (qFacetRule.isReferenceRule() && path.equals(qFacetRule.getPathReference())) {
-                                    log.info("QFacetRule '{}' referenced node has been created. Set the value of the " +
-                                            "UUID on the QFacetRule", qFacetRule);
-                                    qFacetRule.setUUIDReference(UUID.fromString(createdNodeId.toString()));
-                                    reInit[0] = true;
-                                }
-                            });
-                        }));
-
+                        newPathUUIDMap.put(path, createdNodeId.toString());
                     } catch (PathNotFoundException | ItemStateException e) {
                         log.debug("Created Node Id already removed again");
                     } catch (RepositoryException e) {
                         log.error("Exception while processingCreatedDestroyedNodeIds createdNodeIds", e);
                     }
                 }
+
+                faps.forEach(fap -> fap.getRules().forEach(domainRule -> {
+                    domainRule.getFacetRules().forEach(qFacetRule -> {
+                        if (qFacetRule.isReferenceRule() && newPathUUIDMap.containsKey(qFacetRule.getPathReference())) {
+                            log.info("QFacetRule '{}' referenced node has been created. Set the value of the " +
+                                    "UUID on the QFacetRule", qFacetRule);
+                            qFacetRule.setUUIDReference(UUID.fromString(newPathUUIDMap.get(qFacetRule.getPathReference())));
+                            reInit[0] = true;
+                        }
+                    });
+                }));
+
             }
 
             final int numberCreated = createdNodeIds.size();
@@ -1821,7 +1826,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                 }
             }
 
-            log.error("processing {} created nodes and {} destroyed nodes took {} ms to complete{}",
+            log.info("processing {} created nodes and {} destroyed nodes took {} ms to complete{}",
                     numberCreated, numberDestroyed, System.currentTimeMillis() - start,
                     reInit[0] ? ", including a reinitialization of implicit reads" : ".");
         }
