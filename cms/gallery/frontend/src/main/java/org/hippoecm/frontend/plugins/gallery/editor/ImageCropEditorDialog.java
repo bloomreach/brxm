@@ -177,14 +177,6 @@ public class ImageCropEditorDialog extends Dialog<Node> {
                 true,
                 thumbnailSize.getMarkupId(true));
 
-        if (configuredDimension.width > originalImageDimension.width || configuredDimension.height > originalImageDimension.height) {
-            final double cropFactor = determineScalingFactor(
-                    configuredDimension.getWidth(), configuredDimension.getHeight(),
-                    originalImageDimension.getWidth(), originalImageDimension.getHeight());
-            cropSettings.setInitialWidth((int)Math.floor(cropFactor * configuredDimension.getWidth()));
-            cropSettings.setInitialHeight((int)Math.floor(cropFactor * configuredDimension.getHeight()));
-        }
-
         final ImageCropBehavior imageCropBehavior = new ImageCropBehavior(cropSettings);
         final IModel<Boolean> fitViewModel = new PropertyModel<>(this.cropSettings, "fitView");
         final AjaxCheckBox fitViewCheckbox = new AjaxCheckBox("fit-view", fitViewModel) {

@@ -208,7 +208,7 @@ public class ImageUtils {
 
         return Scalr.resize(img, strategy.getScalrMethod(), Scalr.Mode.FIT_EXACT, targetWidth, targetHeight);
     }
-    
+
     /**
      * Returns a scaled instance of the provided {@link BufferedImage}.
      *
@@ -280,9 +280,9 @@ public class ImageUtils {
     }
 
     private static boolean invalidSizes(final Rectangle rectangle, final Dimension targetDimension) {
-        return rectangle.width <= 0 
-                || rectangle.height <= 0 
-                || targetDimension.width <= 0 
+        return rectangle.width <= 0
+                || rectangle.height <= 0
+                || targetDimension.width <= 0
                 || targetDimension.height <= 0;
     }
 
@@ -291,6 +291,35 @@ public class ImageUtils {
                 || rectangle.y != 0
                 || rectangle.width != original.getWidth()
                 || rectangle.height != original.getHeight();
+    }
+
+    /**
+     * Determine the scaling factor of an image, so that it fits within the max boundaries of
+     * the preview container (e.g. {@code #MAX_PREVIEW_WIDTH} by {@code #MAX_PREVIEW_HEIGHT}).
+     * @param width width of image
+     * @param height height of image
+     * @param maxWidth max width of image
+     * @param maxHeight max height of image
+     *
+     * @return the scaling factor of the image
+     */
+    public static double determineScalingFactor(final double width, final double height, final double maxWidth,
+                                                final double maxHeight) {
+        final double widthBasedScaling;
+        if (width > maxWidth) {
+            widthBasedScaling = maxWidth / width;
+        } else {
+            widthBasedScaling = 1D;
+        }
+
+        final double heightBasedScaling;
+        if (height > maxHeight) {
+            heightBasedScaling = maxHeight / height;
+        } else {
+            heightBasedScaling = 1D;
+        }
+
+        return Math.min(heightBasedScaling, widthBasedScaling);
     }
 
     /**
