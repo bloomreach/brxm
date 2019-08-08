@@ -40,4 +40,8 @@ public class ImageGalleryUtils {
     public static boolean isOriginalImage(final Node imageNode) throws RepositoryException {
         return HippoGalleryNodeType.IMAGE_SET_ORIGINAL.equals(imageNode.getName());
     }
+
+    public static void setImageFileName(final Node node, final String fileName) throws RepositoryException {
+        node.setProperty(HippoGalleryNodeType.IMAGE_SET_FILE_NAME, fileName);
+    }
 }

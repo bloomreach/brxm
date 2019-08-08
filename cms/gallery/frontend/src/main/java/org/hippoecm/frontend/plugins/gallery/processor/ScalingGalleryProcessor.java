@@ -30,7 +30,7 @@ import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.frontend.plugins.gallery.imageutil.ScaleImageOperation;
 import org.hippoecm.frontend.plugins.gallery.imageutil.ScalingParameters;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
-import org.hippoecm.repository.gallery.HippoGalleryNodeType;
+import org.hippoecm.frontend.plugins.gallery.util.ImageGalleryUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,7 +72,7 @@ public class ScalingGalleryProcessor extends AbstractGalleryProcessor {
      */
     @Override
     public void initGalleryNode(Node node, InputStream data, String mimeType, String fileName) throws RepositoryException {
-        node.setProperty(HippoGalleryNodeType.IMAGE_SET_FILE_NAME, fileName);
+        ImageGalleryUtils.setImageFileName(node, fileName);
     }
 
     /**
