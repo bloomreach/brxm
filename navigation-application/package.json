@@ -14,7 +14,8 @@
     "build:prod": "ng build --prod",
     "prerelease:navapp": "npm run lint && npm run test:single-run && npm run build:prod",
     "release:navapp": "release-it premajor",
-    "release:navapp-communication": "cd ./projects/navapp-communication && release-it premajor"
+    "release:navapp-communication": "cd ./projects/navapp-communication && release-it premajor",
+    "docs": "cd ./projects/navapp-communication && typedoc && minicat projects/navapp-communication/src/docs/typedoc.css >> docs/assets/css/main.css"
   },
   "browser": "dist/navapp/main.js",
   "files": [
@@ -63,6 +64,7 @@
     "karma-coverage-istanbul-reporter": "~2.0.1",
     "karma-jasmine": "~1.1.2",
     "karma-jasmine-html-reporter": "^0.2.2",
+    "minicat": "^1.0",
     "ng-packagr": "^4.2.0",
     "ngx-cookie-service": "^2.2.0",
     "protractor": "~5.4.0",
@@ -76,6 +78,7 @@
     "tsickle": "^0.34.0",
     "tslib": "^1.9.0",
     "tslint": "~5.11.0",
+    "typedoc": "^0.15.0",
     "typescript": "~3.2.2",
     "webpack-assets-manifest": "^3.1.1"
   }
