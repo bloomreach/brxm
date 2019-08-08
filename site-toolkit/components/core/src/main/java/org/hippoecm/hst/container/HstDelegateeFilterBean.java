@@ -583,7 +583,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         // CMS_REQUEST_RENDERING_MOUNT_ID in case the resolved mount is for a mount that does not have a channel
 
         final Mount mount = requestContext.getResolvedMount().getMount();
-        if (mount.isExplicit() && mount.getHstSite().getChannel() != null &&
+        if (mount.isExplicit() && mount.getHstSite() != null && mount.getHstSite().getChannel() != null &&
                 (resolvedSiteMapItem == null || !resolvedSiteMapItem.getHstSiteMapItem().isContainerResource())) {
 
             final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
