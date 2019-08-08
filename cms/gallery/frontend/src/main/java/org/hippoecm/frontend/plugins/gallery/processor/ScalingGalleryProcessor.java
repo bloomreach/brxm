@@ -50,7 +50,7 @@ public class ScalingGalleryProcessor extends AbstractGalleryProcessor {
     protected final Map<String, ScalingParameters> scalingParametersMap;
 
     public ScalingGalleryProcessor() {
-        scalingParametersMap = new HashMap<String, ScalingParameters>();
+        scalingParametersMap = new HashMap<>();
     }
 
     /**
@@ -81,8 +81,9 @@ public class ScalingGalleryProcessor extends AbstractGalleryProcessor {
      * original data is stored instead.
      */
     @Override
-    public void initGalleryResource(Node node, InputStream data, String mimeType, String fileName, Calendar lastModified)
-            throws RepositoryException {
+    public void initGalleryResource(final Node node, final InputStream data, final String mimeType,
+                                    final String fileName, final Calendar lastModified) throws RepositoryException {
+
         node.setProperty(JcrConstants.JCR_MIMETYPE, mimeType);
         node.setProperty(JcrConstants.JCR_LASTMODIFIED, lastModified);
 
