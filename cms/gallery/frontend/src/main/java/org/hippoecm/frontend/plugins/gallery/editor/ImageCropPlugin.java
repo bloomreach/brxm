@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,115 +20,115 @@ import java.awt.Dimension;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
+import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.gallery.imageutil.ScalingParameters;
 import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
+import org.hippoecm.frontend.plugins.gallery.util.ImageGalleryUtils;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ImageCropPlugin extends RenderPlugin<Node> {
 
-    private static final long serialVersionUID = 1L;
-
     private static final Logger log = LoggerFactory.getLogger(ImageCropPlugin.class);
 
     private static final CssResourceReference CROP_SKIN = new CssResourceReference(ImageCropPlugin.class, "crop-plugin.css");
+    private static final String CROP_BUTTON_ID = "crop-button";
 
-    public ImageCropPlugin(final IPluginContext context, IPluginConfig config) {
+    public ImageCropPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        final IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.EDIT);
-        final IModel<Node> jcrImageNodeModel = getModel();
+        add(isEditMode() ? createCropButton() : createHiddenButton());
+    }
 
-        final GalleryProcessor processor = DefaultGalleryProcessor.getGalleryProcessor(context, getPluginConfig());
+    private boolean isEditMode() {
+        final IEditor.Mode mode = IEditor.Mode.fromString(getPluginConfig().getString("mode"), IEditor.Mode.EDIT);
+        return mode == IEditor.Mode.EDIT;
+    }
 
-        boolean upscalingEnabled = false;
-        boolean isOriginal = true;
-        boolean isOriginalImageWidthSmallerThanThumbWidth = false;
-        boolean isOriginalImageHeightSmallerThanThumbHeight = false;
-        boolean areExceptionsThrown = false;
-
-        //Check if this is the original image
+    private Component createCropButton() {
+        final Node imageNode = getModelObject();
+        // Check if this is the original image
         try {
-            isOriginal = HippoGalleryNodeType.IMAGE_SET_ORIGINAL.equals(jcrImageNodeModel.getObject().getName());
+            if (ImageGalleryUtils.isOriginalImage(imageNode)) {
+                return createHiddenButton();
+            }
         } catch (RepositoryException e) {
             error(e);
-            log.error("Cannot retrieve name of original image node", e);
-            areExceptionsThrown = true;
+            log.error("Cannot retrieve original image node", e);
+            return createErrorButton();
         }
 
-        //Get dimensions of this thumbnail variant
+        final IPluginContext context = getPluginContext();
+        final IPluginConfig config = getPluginConfig();
+        final GalleryProcessor processor = DefaultGalleryProcessor.getGalleryProcessor(context, config);
         try {
-            Dimension thumbnailDimension = processor.getDesiredResourceDimension(jcrImageNodeModel.getObject());
-            Node originalImageNode = getModelObject().getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
-            Dimension originalImageDimension = new Dimension(
-                    (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong(),
-                    (int) originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong());
+            final Dimension variantDimension = processor.getDesiredResourceDimension(imageNode);
+            final Node originalImageNode = ImageGalleryUtils.getOriginalGalleryNode(imageNode);
+            final Dimension originalDimension = ImageGalleryUtils.getDimension(originalImageNode);
 
-            isOriginalImageWidthSmallerThanThumbWidth = thumbnailDimension.getWidth() > originalImageDimension.getWidth();
-            isOriginalImageHeightSmallerThanThumbHeight = thumbnailDimension.getHeight() > originalImageDimension.getHeight();
+            final ScalingParameters params = processor.getScalingParameters(imageNode);
+            if (params == null || !params.isUpscaling()) {
+                if (variantDimension.getWidth() > originalDimension.getWidth()) {
+                    return createDisabledButton("crop-button-tip-inactive-width");
+                }
 
-            upscalingEnabled = processor.isUpscalingEnabled(jcrImageNodeModel.getObject());
-
+                if (variantDimension.getHeight() > originalDimension.getHeight()) {
+                    return createDisabledButton("crop-button-tip-inactive-height");
+                }
+            }
         } catch (RepositoryException | GalleryException | NullPointerException e) {
             error(e);
-            log.error("Cannot retrieve dimensions of original or thumbnail image", e);
-            areExceptionsThrown = true;
+            log.error("Cannot retrieve dimensions of original or variant image", e);
+            return createErrorButton();
         }
 
-        Label cropButton = new Label("crop-button", new StringResourceModel("crop-button-label", this));
-        cropButton.setVisible(mode == IEditor.Mode.EDIT && !isOriginal);
-
-
-        final boolean isUpdateDisabled =
-                isOriginal
-                || areExceptionsThrown
-                || (isOriginalImageWidthSmallerThanThumbWidth && !upscalingEnabled)
-                || (isOriginalImageHeightSmallerThanThumbHeight && !upscalingEnabled);
-
-        if (mode == IEditor.Mode.EDIT) {
-            if (!isUpdateDisabled) {
-
-                cropButton.add(new AjaxEventBehavior("click") {
-                    @Override
-                    protected void onEvent(final AjaxRequestTarget target) {
-                        IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-                        dialogService.show(new ImageCropEditorDialog(jcrImageNodeModel, processor, config, context));
-                    }
-                });
+        final Component cropButton = createButton("crop-button-tip", "crop-button active");
+        cropButton.add(new AjaxEventBehavior("click") {
+            @Override
+            protected void onEvent(final AjaxRequestTarget target) {
+                final String serviceName = IDialogService.class.getName();
+                final IDialogService dialogService = context.getService(serviceName, IDialogService.class);
+                dialogService.show(new ImageCropEditorDialog(getModel(), processor, config, context));
             }
+        });
 
-            final String cropButtonClass = isUpdateDisabled ? "crop-button inactive" : "crop-button active";
+        return cropButton;
+    }
 
-            cropButton.add(new AttributeAppender("class", Model.of(cropButtonClass), " "));
+    private Component createErrorButton() {
+        return createDisabledButton("crop-button-tip-inactive-error");
+    }
 
-            String buttonTipProperty =
-                    areExceptionsThrown ? "crop-button-tip-inactive-error" :
-                            isOriginalImageWidthSmallerThanThumbWidth && !upscalingEnabled ? "crop-button-tip-inactive-width" :
-                                    isOriginalImageHeightSmallerThanThumbHeight && !upscalingEnabled ? "crop-button-tip-inactive-height" :
-                                            "crop-button-tip";
+    private Component createDisabledButton(final String titleKey) {
+        return createButton(titleKey, "crop-button inactive");
+    }
 
-            cropButton.add(TitleAttribute.append(new StringResourceModel(buttonTipProperty, this)));
-        }
+    private Component createButton(final String titleKey, final String cssClass) {
+        final Label label = new Label(CROP_BUTTON_ID, new StringResourceModel("crop-button-label", this));
+        label.add(TitleAttribute.append(new StringResourceModel(titleKey, this)));
+        label.add(ClassAttribute.append(cssClass));
+        return label;
+    }
 
-        add(cropButton);
+    private Component createHiddenButton() {
+        return new EmptyPanel(CROP_BUTTON_ID);
     }
 
     @Override

@@ -25,7 +25,7 @@ import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugins.reviewedactions.model.Revision;
 import org.hippoecm.frontend.plugins.reviewedactions.model.RevisionHistory;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
@@ -73,7 +73,7 @@ public class HistoryDialog extends Dialog<WorkflowDescriptor> {
             }
         });
 
-        add(CssClass.append("hippo-revision-history-dialog"));
+        add(ClassAttribute.append("hippo-revision-history-dialog"));
     }
 
     public IModel<String> getTitle() {

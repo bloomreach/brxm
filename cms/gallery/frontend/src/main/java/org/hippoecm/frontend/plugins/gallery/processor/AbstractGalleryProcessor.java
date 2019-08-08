@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -161,6 +161,7 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
      *
      * @throws RepositoryException when repository access failed.
      */
+    @Override
     public abstract void initGalleryResource(Node node, InputStream data, String mimeType, String fileName,
             Calendar lastModified) throws GalleryException, RepositoryException;
 
@@ -171,7 +172,11 @@ public abstract class AbstractGalleryProcessor implements GalleryProcessor {
      * @param node the hippo:resource node     *
      *
      * @throws RepositoryException when repository access failed.
+     *
+     * @deprecated Use {@link GalleryProcessor#getScalingParameters(Node)} instead
      */
+    @Deprecated
+    @Override
     public boolean isUpscalingEnabled(Node node) throws GalleryException, RepositoryException {
         return true;
     }
