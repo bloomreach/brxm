@@ -86,13 +86,10 @@ export class CommunicationsService {
         if (location.breadcrumbLabel) {
           this.breadcrumbsService.setSuffix(location.breadcrumbLabel);
         }
-        const pathElements = location.path.split('/');
-        if (pathElements.length > 0) {
-          this.menuStateService.activateMenuItem(
+        this.menuStateService.activateMenuItem(
             this.clientAppService.activeApp.id,
-            pathElements[0],
-          );
-        }
+            location.path,
+        );
       },
     };
   }
