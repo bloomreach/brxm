@@ -21,10 +21,10 @@
   bottom: 0;
   color: $menu-text-color;
   display: block;
-  height: 20%;
+  height: 160px;
   left: 100%;
   min-width: $menu-drawer-width;
-  padding: 0 10px 0 16px;
+  padding: 0 16px 0 16px;
   position: absolute;
   z-index: -1;
 }
@@ -34,12 +34,11 @@
   font-size: 20px;
   font-weight: $font-weight-semibold;
   margin: 0;
-  padding: 16px 16px 8px 0;
+  padding: 14px 16px 16px 0;
 }
 
 .content-wrapper {
   height: 100%;
-  padding-left: 16px;
 }
 
 .window-content-cover {
@@ -67,6 +66,10 @@
 
     &:active {
       color: $menu-text-color;
+    }
+
+    &:hover {
+      color: $white;
     }
   }
 

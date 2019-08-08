@@ -64,7 +64,7 @@ export interface ChildApi {
   beforeNavigation?: () => boolean;
   onUserActivity?: () => void;
   logout?: () => void;
-  navigate?: (location: NavLocation) => void;
+  navigate?: (location: NavLocation, flags?: { [key: string]: string | number | boolean }) => void;
   updateSelectedSite?: (siteId?: SiteId) => void;
 }
 
@@ -76,7 +76,7 @@ export interface ChildPromisedApi {
   beforeNavigation?: () => Promise<boolean>;
   onUserActivity?: () => Promise<void>;
   logout?: () => Promise<void>;
-  navigate?: (location: NavLocation) => Promise<void>;
+  navigate?: (location: NavLocation, flags?: { [key: string]: string | number | boolean }) => Promise<void>;
   updateSelectedSite?: (siteId?: SiteId) => Promise<void>;
 }
 
