@@ -226,13 +226,14 @@ public class ImageUtils {
      * or target height is 0 or less.
      */
     public static BufferedImage scaleImage(final BufferedImage original, final Rectangle rectangle,
-                                           final Dimension targetDimension, final Object hint, boolean highQuality) {
+                                           final Dimension targetDimension, final Object hint, final boolean highQuality) {
 
         if (invalidSizes(rectangle, targetDimension)) {
             return null;
         }
 
-        int type = (original.getTransparency() == Transparency.OPAQUE) ? BufferedImage.TYPE_INT_RGB
+        final int type = (original.getTransparency() == Transparency.OPAQUE)
+                ? BufferedImage.TYPE_INT_RGB
                 : BufferedImage.TYPE_INT_ARGB;
 
         BufferedImage result = original;
@@ -316,6 +317,60 @@ public class ImageUtils {
     }
 
     /**
+     * Determine the ratio by which the source dimensions should be multiplied to fit into the target dimensions.
+     *
+     * @param sourceWidth   The width of the source image
+     * @param sourceHeight  The height of the source image
+     * @param targetWidth   The width of the target image
+     * @param targetHeight  The height of the target image
+     *
+     * @return The resize ratio
+     */
+    public static double determineResizeRatio(final double sourceWidth, final double sourceHeight,
+                                              final int targetWidth, final int targetHeight) {
+        double widthRatio = 1;
+        if (targetWidth >= 1) {
+            widthRatio = targetWidth / sourceWidth;
+        }
+
+        double heightRatio = 1;
+        if (targetHeight >= 1) {
+            heightRatio = targetHeight / sourceHeight;
+        }
+
+        if (widthRatio == 1) {
+            return heightRatio;
+        } else if (heightRatio == 1) {
+            return widthRatio;
+        }
+
+        // If the image has to be scaled down we should return the largest negative ratio.
+        // If the image has to be scaled up, and we should take the smallest positive ratio.
+        // If it is unbounded upscaling, return the largest positive ratio.
+        if (!(targetWidth == 0 && targetHeight == 0) && (targetWidth == 0 || targetHeight == 0)) {
+            return Math.max(widthRatio, heightRatio);
+        } else {
+            return Math.min(widthRatio, heightRatio);
+        }
+    }
+
+    /**
+     * Returns a cropped instance of the {@link BufferedImage} provided by the {@link ImageReader}.
+     *
+     * @param reader            The original image
+     * @param cropArea          The rectangle used to crop the image
+     * @param targetDimension   The desired target dimension of the image
+     *
+     * @return a cropped version of the original image.
+     */
+    public static BufferedImage cropImage(final ImageReader reader, final Rectangle cropArea,
+                                          final Dimension targetDimension) throws IOException {
+        final BufferedImage original = reader.read(0);
+        final boolean highQuality = isCropHighQuality(cropArea, reader);
+        return scaleImage(original, cropArea, targetDimension, RenderingHints.VALUE_INTERPOLATION_BICUBIC, highQuality);
+    }
+
+    /**
      * Determine if high quality scaling can be performed based on the original and crop area dimensions.
      *
      * @param cropArea size of the area to keep after cropping
@@ -323,7 +378,7 @@ public class ImageUtils {
      * @return true if high quality cropping can be performed
      * @throws IOException when reading the original's sizes fails
      */
-    public static boolean isCropHighQuality(final Rectangle cropArea, final ImageReader reader) throws IOException {
+    private static boolean isCropHighQuality(final Rectangle cropArea, final ImageReader reader) throws IOException {
         return Math.min(cropArea.width / reader.getWidth(0), cropArea.height / reader.getHeight(0)) < 1.0;
     }
 
