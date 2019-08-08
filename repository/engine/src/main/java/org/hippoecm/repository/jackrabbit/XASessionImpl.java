@@ -98,10 +98,10 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
                     this, subject, context.getHierarchyManager(), context.getPrivilegeManager(),
                     this, getWorkspace().getName(), context.getNodeTypeManager(), getItemStateManager());
             AccessManager accessMgr = amConfig.newInstance(AccessManager.class);
+            accessMgr.init(ctx);
             if (accessMgr instanceof ItemStateListener) {
                 context.getItemStateManager().addListener((ItemStateListener) accessMgr);
             }
-            accessMgr.init(ctx);
             return accessMgr;
         } catch (AccessDeniedException ex) {
             throw ex;
