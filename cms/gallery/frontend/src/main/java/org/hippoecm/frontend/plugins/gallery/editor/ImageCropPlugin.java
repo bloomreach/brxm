@@ -20,12 +20,13 @@ import java.awt.Dimension;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxEventBehavior;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.model.IModel;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.attributes.ClassAttribute;
@@ -33,6 +34,7 @@ import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.gallery.imageutil.ScalingParameters;
 import org.hippoecm.frontend.plugins.gallery.model.DefaultGalleryProcessor;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
@@ -47,88 +49,86 @@ public class ImageCropPlugin extends RenderPlugin<Node> {
     private static final Logger log = LoggerFactory.getLogger(ImageCropPlugin.class);
 
     private static final CssResourceReference CROP_SKIN = new CssResourceReference(ImageCropPlugin.class, "crop-plugin.css");
+    private static final String CROP_BUTTON_ID = "crop-button";
 
     public ImageCropPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        final IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.EDIT);
-        final GalleryProcessor processor = DefaultGalleryProcessor.getGalleryProcessor(context, getPluginConfig());
-        final IModel<Node> imageNodeModel = getModel();
-        final Node imageNode = imageNodeModel.getObject();
+        add(isEditMode() ? createCropButton() : createHiddenButton());
+    }
 
-        boolean upscalingEnabled = false;
-        boolean isOriginal = true;
-        boolean isOriginalImageWidthSmallerThanVariantWidth = false;
-        boolean isOriginalImageHeightSmallerThanVariantHeight = false;
-        boolean areExceptionsThrown = false;
+    private boolean isEditMode() {
+        final IEditor.Mode mode = IEditor.Mode.fromString(getPluginConfig().getString("mode"), IEditor.Mode.EDIT);
+        return mode == IEditor.Mode.EDIT;
+    }
 
+    private Component createCropButton() {
+        final Node imageNode = getModelObject();
         // Check if this is the original image
         try {
-            isOriginal = ImageGalleryUtils.isOriginalImage(imageNode);
+            if (ImageGalleryUtils.isOriginalImage(imageNode)) {
+                return createHiddenButton();
+            }
         } catch (RepositoryException e) {
             error(e);
-            log.error("Cannot retrieve name of original image node", e);
-            areExceptionsThrown = true;
+            log.error("Cannot retrieve original image node", e);
+            return createErrorButton();
         }
 
-        // Get dimensions of this thumbnail variant
+        final IPluginContext context = getPluginContext();
+        final IPluginConfig config = getPluginConfig();
+        final GalleryProcessor processor = DefaultGalleryProcessor.getGalleryProcessor(context, config);
         try {
             final Dimension variantDimension = processor.getDesiredResourceDimension(imageNode);
             final Node originalImageNode = ImageGalleryUtils.getOriginalGalleryNode(imageNode);
-            final Dimension originalImageDimension = ImageGalleryUtils.getDimension(originalImageNode);
+            final Dimension originalDimension = ImageGalleryUtils.getDimension(originalImageNode);
 
-            isOriginalImageWidthSmallerThanVariantWidth = variantDimension.getWidth() > originalImageDimension.getWidth();
-            isOriginalImageHeightSmallerThanVariantHeight = variantDimension.getHeight() > originalImageDimension.getHeight();
+            final ScalingParameters params = processor.getScalingParameters(imageNode);
+            if (params == null || !params.isUpscaling()) {
+                if (variantDimension.getWidth() > originalDimension.getWidth()) {
+                    return createDisabledButton("crop-button-tip-inactive-width");
+                }
 
-            upscalingEnabled = processor.isUpscalingEnabled(imageNode);
-
+                if (variantDimension.getHeight() > originalDimension.getHeight()) {
+                    return createDisabledButton("crop-button-tip-inactive-height");
+                }
+            }
         } catch (RepositoryException | GalleryException | NullPointerException e) {
             error(e);
             log.error("Cannot retrieve dimensions of original or variant image", e);
-            areExceptionsThrown = true;
+            return createErrorButton();
         }
 
-        final Label cropButton = new Label("crop-button", new StringResourceModel("crop-button-label", this));
-        cropButton.setVisible(mode == IEditor.Mode.EDIT && !isOriginal);
-
-
-        final boolean isUpdateDisabled =
-                isOriginal
-                || areExceptionsThrown
-                || (isOriginalImageWidthSmallerThanVariantWidth && !upscalingEnabled)
-                || (isOriginalImageHeightSmallerThanVariantHeight && !upscalingEnabled);
-
-        if (mode == IEditor.Mode.EDIT) {
-            if (!isUpdateDisabled) {
-
-                cropButton.add(new AjaxEventBehavior("click") {
-                    @Override
-                    protected void onEvent(final AjaxRequestTarget target) {
-                        final IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
-                        dialogService.show(new ImageCropEditorDialog(imageNodeModel, processor, config, context));
-                    }
-                });
+        final Component cropButton = createButton("crop-button-tip", "crop-button active");
+        cropButton.add(new AjaxEventBehavior("click") {
+            @Override
+            protected void onEvent(final AjaxRequestTarget target) {
+                final String serviceName = IDialogService.class.getName();
+                final IDialogService dialogService = context.getService(serviceName, IDialogService.class);
+                dialogService.show(new ImageCropEditorDialog(getModel(), processor, config, context));
             }
+        });
 
-            cropButton.add(ClassAttribute.append(isUpdateDisabled
-                    ? "crop-button inactive"
-                    : "crop-button active"));
+        return cropButton;
+    }
 
-            final String buttonTipProperty;
-            if (areExceptionsThrown) {
-                buttonTipProperty = "crop-button-tip-inactive-error";
-            } else if(isOriginalImageWidthSmallerThanVariantWidth && !upscalingEnabled) {
-                buttonTipProperty = "crop-button-tip-inactive-width";
-            } else if (isOriginalImageHeightSmallerThanVariantHeight && !upscalingEnabled) {
-                buttonTipProperty = "crop-button-tip-inactive-height";
-            } else {
-                buttonTipProperty = "crop-button-tip";
-            }
+    private Component createErrorButton() {
+        return createDisabledButton("crop-button-tip-inactive-error");
+    }
 
-            cropButton.add(TitleAttribute.append(new StringResourceModel(buttonTipProperty, this)));
-        }
+    private Component createDisabledButton(final String titleKey) {
+        return createButton(titleKey, "crop-button inactive");
+    }
 
-        add(cropButton);
+    private Component createButton(final String titleKey, final String cssClass) {
+        final Label label = new Label(CROP_BUTTON_ID, new StringResourceModel("crop-button-label", this));
+        label.add(TitleAttribute.append(new StringResourceModel(titleKey, this)));
+        label.add(ClassAttribute.append(cssClass));
+        return label;
+    }
+
+    private Component createHiddenButton() {
+        return new EmptyPanel(CROP_BUTTON_ID);
     }
 
     @Override
