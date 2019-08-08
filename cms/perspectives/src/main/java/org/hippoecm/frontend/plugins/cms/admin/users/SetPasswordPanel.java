@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -72,7 +72,7 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
         form.add(new EqualPasswordInputValidator(passwordField, passwordCheckField));
 
         // add a button that can be used to submit the form via ajax
-        queue(new AjaxButton("set-button", form) {
+        final AjaxButton setButton = new AjaxButton("set-button", form) {
 
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
@@ -88,13 +88,16 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
                     log.error("Unable to set password for user '{}' : ", username, e);
                 }
             }
+
             @Override
             protected void onError(AjaxRequestTarget target, Form form) {
                 // make sure the feedback panel is shown
                 target.add(SetPasswordPanel.this);
             }
-        });
-
+        };
+        queue(setButton);
+        form.setDefaultButton(setButton);
+        
         // add a button that can be used to submit the form via ajax
         queue(new AjaxButton("cancel-button") {
 

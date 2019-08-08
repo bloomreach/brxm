@@ -36,6 +36,10 @@ class MenuAction extends Panel implements IContextMenu {
             @Override
             public void onClick() {
                 if (wf instanceof StdWorkflow) {
+                    final StdWorkflow stdWorkflow = (StdWorkflow) wf;
+                    if (form != null && form.hasError() && !stdWorkflow.invokeOnFormError()) {
+                        return;
+                    }
                     wf.invoke();
                 }
             }
@@ -45,7 +49,7 @@ class MenuAction extends Panel implements IContextMenu {
                 if (wf.isFormSubmitted()) {
                     return form;
                 } else {
-                    return  null;
+                    return null;
                 }
             }
 
@@ -67,7 +71,7 @@ class MenuAction extends Panel implements IContextMenu {
 
         Component fragment = wf.getFragment("text");
         if (fragment instanceof ActionDescription.ActionDisplay) {
-            ((ActionDescription.ActionDisplay)fragment).substantiate();
+            ((ActionDescription.ActionDisplay) fragment).substantiate();
             link.add(fragment);
         } else if (fragment instanceof Fragment) {
             link.add(fragment);
@@ -75,7 +79,7 @@ class MenuAction extends Panel implements IContextMenu {
 
         fragment = wf.getFragment("icon");
         if (fragment instanceof ActionDescription.ActionDisplay) {
-            ((ActionDescription.ActionDisplay)fragment).substantiate();
+            ((ActionDescription.ActionDisplay) fragment).substantiate();
             link.add(fragment);
         } else if (fragment instanceof Fragment) {
             link.add(fragment);
@@ -86,11 +90,9 @@ class MenuAction extends Panel implements IContextMenu {
     }
 
     /**
-     * {@inheritDoc}
-     * This visibility of this menu action is determined by checking the
-     * {@code link} visibility status witch in turn determines the visibility
-     * by checking the visibility of the {@link StdWorkflow} e.g. the workflow (action)
-     * itself.
+     * {@inheritDoc} This visibility of this menu action is determined by checking the {@code link} visibility status
+     * witch in turn determines the visibility by checking the visibility of the {@link StdWorkflow} e.g. the workflow
+     * (action) itself.
      */
     @Override
     public boolean isVisible() {
