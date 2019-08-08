@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,11 +36,11 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.NodeNameModel;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection;
@@ -50,7 +50,6 @@ import org.hippoecm.frontend.plugins.cms.widgets.SubmittingTextField;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserHelper;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.standards.search.GeneralSearchBuilder;
 import org.hippoecm.frontend.plugins.standards.search.TextSearchBuilder;
 import org.hippoecm.frontend.service.IconSize;
@@ -155,7 +154,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             }
 
         };
-        scopeContainer.add(CssClass.append(new SearchScopeModel(scopeLink)));
+        scopeContainer.add(ClassAttribute.append(new SearchScopeModel(scopeLink)));
         scopeLink.add(new Label("scope-label", new LoadableDetachableModel<String>() {
             @Override
             protected String load() {
@@ -185,13 +184,15 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
                 return hasSearchResult() && !rootModel.equals(folderService.getModel());
             }
         };
-        allContainer.add(CssClass.append(new SearchScopeModel(allLink)));
+        allContainer.add(ClassAttribute.append(new SearchScopeModel(allLink)));
         allContainer.add(allLink);
         form.add(allContainer);
 
         sectionTop = new WebMarkupContainer("section-top");
         sectionTop.setOutputMarkupId(true);
-        sectionTop.add(CssClass.append(ReadOnlyModel.of(() -> hasSearchResult() ? "search-result" : "")));
+        sectionTop.add(ClassAttribute.append(() -> hasSearchResult()
+                ? "search-result"
+                : StringUtils.EMPTY));
         sectionTop.add(form);
         add(sectionTop);
     }

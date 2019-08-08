@@ -16,20 +16,21 @@
 package org.hippoecm.frontend.editor.plugins.fieldhint;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.skin.Icon;
 
 public class FieldHint extends Panel {
     private static final String JS_TEMPLATE = "$('#%s').tooltip({ container: 'body', placement: 'auto' })";
-    private Component hint;
 
-    public FieldHint(String id, final IModel<String> model) {
+    private final Component hint;
+
+    public FieldHint(final String id, final IModel<String> model) {
         super(id);
 
         hint = createHint(model);
@@ -46,7 +47,7 @@ public class FieldHint extends Panel {
 
     /**
      * Create the hint component.
-     * 
+     *
      * @param model The hint model holding the message
      * @return Hint container
      */
@@ -58,7 +59,7 @@ public class FieldHint extends Panel {
 
         container.setOutputMarkupId(true);
         container.add(HippoIcon.fromSprite("hint-image", Icon.INFO_CIRCLE));
-        container.add(new AttributeAppender("title", model));
+        container.add(TitleAttribute.append(model));
 
         return container;
     }

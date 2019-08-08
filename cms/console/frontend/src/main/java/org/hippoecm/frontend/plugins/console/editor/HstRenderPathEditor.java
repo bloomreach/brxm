@@ -1,6 +1,5 @@
-package org.hippoecm.frontend.plugins.console.editor;
 /*
- *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,21 +13,27 @@ package org.hippoecm.frontend.plugins.console.editor;
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+package org.hippoecm.frontend.plugins.console.editor;
+
+import java.util.ArrayList;
+
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.plugins.console.icons.FontAwesomeIcon;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.jcr.*;
-import java.util.ArrayList;
 
 public class HstRenderPathEditor extends Panel {
 
@@ -80,15 +85,15 @@ public class HstRenderPathEditor extends Panel {
 
         switch (webFilePaths.size()) {
             case 0:
-                validationIcon.add(CssClass.append(FontAwesomeIcon.EXCLAMATION.cssClass() + " check-false"));
+                validationIcon.add(ClassAttribute.append(FontAwesomeIcon.EXCLAMATION.cssClass() + " check-false"));
                 validationIcon.add(TitleAttribute.append("Web File not found at this path."));
                 break;
             case 1:
-                validationIcon.add(CssClass.append(FontAwesomeIcon.CHECK.cssClass() + " check-ok"));
+                validationIcon.add(ClassAttribute.append(FontAwesomeIcon.CHECK.cssClass() + " check-ok"));
                 validationIcon.add(TitleAttribute.append("Web File Found at path " + webFilePaths.get(0)));
                 break;
             default:
-                validationIcon.add(CssClass.append(FontAwesomeIcon.CHECK.cssClass() + " check-ok"));
+                validationIcon.add(ClassAttribute.append(FontAwesomeIcon.CHECK.cssClass() + " check-ok"));
                 validationIcon.add(TitleAttribute.append("Web File Found at multiple paths: "
                         + StringUtils.join(webFilePaths, ", ")));
         }
