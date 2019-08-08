@@ -15,14 +15,6 @@
  */
 package org.hippoecm.hst.core.container;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,39 +26,8 @@ public class InitializationValve extends AbstractBaseOrderableValve {
 
     private static Logger log = LoggerFactory.getLogger(InitializationValve.class);
 
-    private Pattern[] searchEngineUserAgentPatterns;
-
-    public void setSearchEngineUserAgentPatterns(final String patternsInCSV) {
-        if (StringUtils.isBlank(patternsInCSV)) {
-            searchEngineUserAgentPatterns = new Pattern[0];
-        } else {
-            log.info("Setting search engine user agent patterns: '{}'.", patternsInCSV);
-            List<Pattern> patternsList = new ArrayList<>();
-
-            for (String regex : StringUtils.split(patternsInCSV, ",")) {
-                regex = regex.trim();
-
-                if (regex.isEmpty()) {
-                    continue;
-                }
-
-                try {
-                    Pattern pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-                    patternsList.add(pattern);
-                } catch (Exception e) {
-                    log.error("Invalid search engine user agent pattern: '{}'.", regex, e);
-                }
-            }
-
-            searchEngineUserAgentPatterns = patternsList.toArray(new Pattern[patternsList.size()]);
-        }
-    }
-
     @Override
     public void invoke(ValveContext context) throws ContainerException {
-        final boolean searchEngineRequest = isSearchEngineRequest(context.getServletRequest());
-        setSearchEngineRequest(searchEngineRequest);
-
         HstMutableRequestContext requestContext = (HstMutableRequestContext)context.getRequestContext();
         // because the requestContext can already have a jcr session (for example fetched during a SiteMapItemHandler or
         // during HstLinkProcessor pre processing, we explicitly set it to null in the HstMutableRequestContext to be
@@ -77,25 +38,5 @@ public class InitializationValve extends AbstractBaseOrderableValve {
 
         // continue
         context.invokeNext();
-    }
-
-    boolean isSearchEngineRequest(final HttpServletRequest servletRequest) {
-        if (searchEngineUserAgentPatterns.length != 0) {
-            final String userAgent = servletRequest.getHeader("User-Agent");
-
-            if (StringUtils.isNotBlank(userAgent)) {
-                for (Pattern pattern : searchEngineUserAgentPatterns) {
-                    final Matcher matcher = pattern.matcher(userAgent);
-
-                    if (matcher.find()) {
-                        log.debug("Detected a search engine request from '{}' by the pattern, '{}'.", userAgent,
-                                pattern);
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
     }
 }

@@ -493,4 +493,9 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
     public ContentTypes getContentTypes() {
         return context.getContentTypes();
     }
+
+    @Override
+    public boolean isSearchEngineRequest() {
+        return context.isSearchEngineRequest();
+    }
 }

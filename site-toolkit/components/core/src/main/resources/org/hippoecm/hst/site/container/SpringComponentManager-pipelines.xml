@@ -55,7 +55,6 @@
 
   <bean id="initializationValve" parent="abstractValve" class="org.hippoecm.hst.core.container.InitializationValve">
     <property name="valveName" value="initializationValve" />
-    <property name="searchEngineUserAgentPatterns" value="${seo.search.engine.user.agent.patterns}" />
   </bean>
 
   <bean id="cmsSecurityValve" parent="abstractValve" class="org.hippoecm.hst.core.container.CmsSecurityValve">

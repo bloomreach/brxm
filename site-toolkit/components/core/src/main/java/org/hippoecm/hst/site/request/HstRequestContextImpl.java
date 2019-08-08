@@ -53,6 +53,7 @@ import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HeadContributable;
 import org.hippoecm.hst.core.container.HstComponentWindowFilter;
 import org.hippoecm.hst.core.container.HstContainerURL;
@@ -78,6 +79,9 @@ import org.slf4j.LoggerFactory;
 public class HstRequestContextImpl implements HstMutableRequestContext {
 
     private final static Logger log = LoggerFactory.getLogger(HstRequestContextImpl.class);
+
+    private static final String IS_SEARCH_ENGINE_REQUEST_ATTR = HstRequestContextImpl.class.getName()
+            + ".isSearchEngineRequest";
 
     private final static HstParameterInfoProxyFactory HST_PARAMETER_INFO_PROXY_FACTORY = new HstParameterInfoProxyFactoryImpl();
 
@@ -606,6 +610,46 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
             log.debug("We did not find a direct mount for alias '{}'. Return null.", alias);
         }
         return mount;
+    }
+
+    @Override
+    public boolean isSearchEngineRequest() {
+        final Boolean searchEngineRequestFlag = (Boolean) getAttribute(IS_SEARCH_ENGINE_REQUEST_ATTR);
+
+        if (searchEngineRequestFlag != null) {
+            return searchEngineRequestFlag.booleanValue();
+        }
+
+        boolean requestFromSearchEngine = false;
+
+        final String userAgent = StringUtils.lowerCase(servletRequest.getHeader("User-Agent"));
+        final String[] defaultSeoUserAgentPatterns = containerConfiguration
+                .getStringArray(ContainerConstants.DEFAULT_SEO_SEARCH_ENGINE_USER_AGENT_PATTERNS);
+        final String[] extraSeoUserAgentPatterns = containerConfiguration
+                .getStringArray(ContainerConstants.EXTRA_SEO_SEARCH_ENGINE_USER_AGENT_PATTERNS);
+
+        if (defaultSeoUserAgentPatterns.length > 0 || extraSeoUserAgentPatterns.length > 0) {
+            for (String pattern : defaultSeoUserAgentPatterns) {
+                if (!pattern.isEmpty() && StringUtils.contains(userAgent, pattern)) {
+                    log.debug("Detected a search engine request from '{}' by the pattern, '{}'.", userAgent, pattern);
+                    requestFromSearchEngine = true;
+                    break;
+                }
+            }
+        }
+
+        if (!requestFromSearchEngine && extraSeoUserAgentPatterns.length > 0) {
+            for (String pattern : extraSeoUserAgentPatterns) {
+                if (!pattern.isEmpty() && StringUtils.contains(userAgent, pattern)) {
+                    log.debug("Detected a search engine request from '{}' by the pattern, '{}'.", userAgent, pattern);
+                    requestFromSearchEngine = true;
+                    break;
+                }
+            }
+        }
+
+        setAttribute(IS_SEARCH_ENGINE_REQUEST_ATTR, Boolean.valueOf(requestFromSearchEngine));
+        return requestFromSearchEngine;
     }
 
     private Mount lookupMount(String alias) {

@@ -642,7 +642,7 @@ public class AggregationValve extends AbstractBaseOrderableValve {
             return false;
         }
 
-        if (isSearchEngineRequest()) {
+        if (requestContext.isSearchEngineRequest()) {
             return false;
         }
 
