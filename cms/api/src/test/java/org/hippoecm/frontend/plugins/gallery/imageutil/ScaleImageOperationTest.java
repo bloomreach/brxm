@@ -17,26 +17,20 @@ package org.hippoecm.frontend.plugins.gallery.imageutil;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.CharEncoding;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.junit.Test;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -46,292 +40,132 @@ public class ScaleImageOperationTest {
 
     @Test
     public void scaleLandscapeImageInLandscapeBoundingBox() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-688x292.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(200, 100).build();
-        scaleOp.execute(data, "image/jpeg");
-        checkImageDimensions(scaleOp, "image/jpeg", 200, 84);
+        final ImageOperationResult result = scale("/test-688x292.jpg", "image/jpeg", 200, 100);
+
+        checkImageDimensions(result, "image/jpeg", 200, 84);
     }
 
     @Test
     public void scaleLandscapeImageInPortraitBoundingBox() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-688x292.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(100, 200).build();
-        scaleOp.execute(data, "image/jpeg");
-        checkImageDimensions(scaleOp, "image/jpeg", 100, 42);
+        final ImageOperationResult result = scale("/test-688x292.jpg", "image/jpeg", 100, 200);
+
+        checkImageDimensions(result, "image/jpeg", 100, 42);
     }
 
     @Test
     public void scalePortraitImageInLandscapeBoundingBox() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(200, 100).build();
-        scaleOp.execute(data, "image/jpeg");
-        checkImageDimensions(scaleOp, "image/jpeg", 88, 100);
+        final ImageOperationResult result = scale("/test-380x428.jpg", "image/jpeg", 200, 100);
+
+        checkImageDimensions(result, "image/jpeg", 88, 100);
     }
 
     @Test
     public void scalePortraitImageInPortraitBoundingBox() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(100, 200).build();
-        scaleOp.execute(data, "image/jpeg");
-        checkImageDimensions(scaleOp, "image/jpeg", 100, 112);
-    }
+        final ImageOperationResult result = scale("/test-380x428.jpg", "image/jpeg", 100, 200);
 
-    @Test
-    public void cropLandscapeImageInLandscapeBoundingBoxCutOffLeftRight() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-688x292.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(200, 100).cropping().build();
-        scaleOp.execute(data, "image/jpeg");
-        checkImageDimensions(scaleOp, "image/jpeg", 200, 100);
-    }
-
-    @Test
-    public void cropUpscaleLandscapeImageInLandscapeBoundingBoxCutOffLeftRight() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-688x292.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(580, 300).cropping().build();
-        scaleOp.execute(data, "image/jpeg");
-        checkImageDimensions(scaleOp, "image/jpeg", 580, 300);
-    }
-
-    @Test
-    public void cropLandscapeImageInLandscapeBoundingBoxCutOffTopBottom() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-688x292.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(500, 100).cropping().build();
-        scaleOp.execute(data, "image/jpeg");
-        checkImageDimensions(scaleOp, "image/jpeg", 500, 100);
-    }
-    @Test
-
-    public void cropUpscaleLandscapeImageInLandscapeBoundingBoxCutOffTopBottom() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-688x292.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(900, 300).cropping().build();
-        scaleOp.execute(data, "image/jpeg");
-        checkImageDimensions(scaleOp, "image/jpeg", 900, 300);
-    }
-
-    @Test
-    public void cropPortraitImageInPortraitBoundingBoxCutOffLeftRight() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(100, 200).cropping().build();
-        scaleOp.setCropping(true);
-        scaleOp.execute(data, "image/jpeg");
-        checkImageDimensions(scaleOp, "image/jpeg", 100, 200);
-    }
-
-    @Test
-    public void cropUpscalePortraitImageInPortraitBoundingBoxCutOffLeftRight() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(400, 600).cropping().build();
-        scaleOp.execute(data, "image/jpeg");
-        checkImageDimensions(scaleOp, "image/jpeg", 400, 600);
-    }
-
-    @Test
-    public void cropPortraitImageInPortraitBoundingBoxCutOffTopBottom() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(200, 200).cropping().build();
-        scaleOp.execute(data, "image/jpeg");
-        checkImageDimensions(scaleOp, "image/jpeg", 200, 200);
-    }
-
-    @Test
-    public void cropUpscalePortraitImageInPortraitBoundingBoxCutOffTopBottom() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(400, 400).cropping().build();
-        scaleOp.execute(data, "image/jpeg");
-        checkImageDimensions(scaleOp, "image/jpeg", 400, 400);
-    }
-
-    @Test
-    public void cropSquareImageInSquareBoundingBox() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-50x50.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(50, 50).cropping().build();
-        scaleOp.execute(data, "image/jpeg");
-        checkImageDimensions(scaleOp, "image/jpeg", 50, 50);
+        checkImageDimensions(result, "image/jpeg", 100, 112);
     }
 
     @Test
     public void scaleUp() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(500, 500).upscaling().build();
-        scaleOp.execute(data, "image/jpeg");
-        checkImageDimensions(scaleOp, "image/jpeg", 443, 500);
+        final ScalingParameters parameters = new ScalingParameters.Builder(500, 500).upscaling().build();
+        final ImageOperationResult result = scale("/test-380x428.jpg", "image/jpeg", parameters);
+
+        checkImageDimensions(result, "image/jpeg", 443, 500);
     }
 
     @Test
     public void scaleToOriginalDimensionsWhenBoundingBoxMatchesOriginalDimensions() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(380, 428).build();
-        scaleOp.execute(data, "image/jpeg");
-        checkImageDimensions(scaleOp, "image/jpeg", 380, 428);
+        final ImageOperationResult result = scale("/test-380x428.jpg", "image/jpeg", 380, 428);
+
+        checkImageDimensions(result, "image/jpeg", 380, 428);
     }
 
     @Test
     public void unboundedBoundingBoxPreservesOriginalData() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(0, 0).build();
-        scaleOp.execute(data, "image/jpeg");
-        InputStream original = getClass().getResourceAsStream("/test-380x428.jpg");
-        assertTrue("Original image data should be stored as-is", IOUtils.contentEquals(original, scaleOp.getScaledData()));
+        final ImageOperationResult result = scale("/test-380x428.jpg", "image/jpeg", 0, 0);
+
+        final InputStream original = readFile("/test-380x428.jpg");
+        assertTrue("Original image data should be stored as-is", IOUtils.contentEquals(original, result.getData()));
     }
 
     @Test
     public void unboundedBoundingBoxSetsOriginalWidthAndHeight() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(0, 0).build();
-        scaleOp.execute(data, "image/jpeg");
-        checkImageDimensions(scaleOp, "image/jpeg", 380, 428);
+        final ImageOperationResult result = scale("/test-380x428.jpg", "image/jpeg", 0, 0);
+
+        checkImageDimensions(result, "image/jpeg", 380, 428);
     }
 
     @Test
     public void scaleToOriginalDimensionsWhenScalingUpAndUpscalingIsDisabled() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(500, 500).build();
-        scaleOp.execute(data, "image/jpeg");
-        checkImageDimensions(scaleOp, "image/jpeg", 380, 428);
+        final ImageOperationResult result = scale("/test-380x428.jpg", "image/jpeg", 500, 500);
+
+        checkImageDimensions(result, "image/jpeg", 380, 428);
     }
 
     @Test
     public void ensureMinimumWidthOfOne() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-1x5000.png");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(60, 60).build();
-        scaleOp.execute(data, "image/png");
-        checkImageDimensions(scaleOp, "image/png", 1, 60);
+        final ImageOperationResult result = scale("/test-1x5000.png", "image/png", 60, 60);
+
+        checkImageDimensions(result, "image/png", 1, 60);
     }
 
     @Test
     public void ensureMinimumHeightOfOne() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-5000x1.png");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(60, 60).upscaling().build();
-        scaleOp.execute(data, "image/png");
-        checkImageDimensions(scaleOp, "image/png", 60, 1);
+        final ScalingParameters parameters = new ScalingParameters.Builder(60, 60).upscaling().build();
+        final ImageOperationResult result = scale("/test-5000x1.png", "image/png", parameters);
+
+        checkImageDimensions(result, "image/png", 60, 1);
     }
 
     @Test
     public void scaleGif() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-380x428.gif");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(200, 100).upscaling().build();
-        scaleOp.execute(data, "image/gif");
-        checkImageDimensions(scaleOp, "image/gif", 88, 100);
+        final ScalingParameters parameters = new ScalingParameters.Builder(200, 100).upscaling().build();
+        final ImageOperationResult result = scale("/test-380x428.gif", "image/gif", parameters);
+
+        checkImageDimensions(result, "image/gif", 88, 100);
     }
 
+    /**
+     * @deprecated This should be removed in v14
+     */
     @Test
-    public void scaleSvg() throws GalleryException {
-        InputStream data = getClass().getResourceAsStream("/test-SVG.svg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(200, 100).build();
-        scaleOp.execute(data, "image/svg+xml");
+    @Deprecated
+    public void scaleSvgWarnsAboutDeprecation() throws GalleryException {
+        final InputStream data = readFile("/test-SVG.svg");
+        final ScaleImageOperation scaleOp = createOperation(200, 100);
 
-        assertEquals(122, scaleOp.getScaledWidth());
-        assertEquals(100, scaleOp.getScaledHeight());
-    }
+        try (final Log4jInterceptor listener = Log4jInterceptor.onWarn().trap(ScaleImageOperation.class).build()) {
+            try {
+                final ImageOperationResult result = scaleOp.run(data, "image/svg+xml");
+                assertEquals(122, result.getWidth());
+                assertEquals(100, result.getHeight());
 
-    @Test
-    public void scaleSvgWithoutDimensionsInBoundingBox() throws GalleryException {
-        InputStream data = getClass().getResourceAsStream("/test-SVG-without-dimensions.svg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(200, 100).build();
-        scaleOp.execute(data, "image/svg+xml");
-
-        assertEquals(200, scaleOp.getScaledWidth());
-        assertEquals(100, scaleOp.getScaledHeight());
-    }
-
-    @Test
-    public void scaleSvgWithoutDimensionsAsOriginal() throws GalleryException {
-        InputStream data = getClass().getResourceAsStream("/test-SVG-without-dimensions.svg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(0, 0).build();
-        scaleOp.execute(data, "image/svg+xml");
-
-        assertEquals(0, scaleOp.getScaledWidth());
-        assertEquals(0, scaleOp.getScaledHeight());
-    }
-
-    @Test
-    public void scaleSvgAddsViewboxWhenMissing() throws GalleryException, IOException, ParserConfigurationException, SAXException {
-        InputStream data = getClass().getResourceAsStream("/test-SVG-without-viewbox.svg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(200, 100).build();
-        scaleOp.execute(data, "image/svg+xml");
-
-        InputStream scaledData = scaleOp.getScaledData();
-
-        // read svg
-        final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-        factory.setNamespaceAware(false);
-        factory.setValidating(false);
-        factory.setFeature("http://xml.org/sax/features/namespaces", false);
-        factory.setFeature("http://xml.org/sax/features/validation", false);
-        factory.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
-        factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-        final DocumentBuilder builder = factory.newDocumentBuilder();
-        final Document svgDocument = builder.parse(scaledData);
-        final Element svgElement = svgDocument.getDocumentElement();
-
-        assertEquals("SVG without a 'viewBox' attribute should have gotten one set to the original image size",
-                "0 0 178.0 145.0", svgElement.getAttribute("viewBox"));
-    }
-
-    @Test
-    public void scaleSvgRemovesDoctypeFromScaledImage() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-SVG.svg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(200, 100).build();
-
-        scaleOp.execute(data, "image/svg+xml");
-
-        final String scaledSvg = IOUtils.toString(scaleOp.getScaledData(), CharEncoding.UTF_8);
-        assertThat(scaledSvg, not(containsString("<!DOCTYPE")));
-    }
-
-    @Test
-    public void scaleSvgRemovesDoctypeFromOriginalImage() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-SVG.svg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(0, 0).build();
-
-        scaleOp.execute(data, "image/svg+xml");
-
-        final String scaledSvg = IOUtils.toString(scaleOp.getScaledData(), CharEncoding.UTF_8);
-        assertThat(scaledSvg, not(containsString("<!DOCTYPE")));
-    }
-
-    @Test
-    public void scaleSvgRemovesDoctypeFromInvalidSvg() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-SVG-invalid.svg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(0, 0).build();
-
-        scaleOp.execute(data, "image/svg+xml");
-
-        final String scaledSvg = IOUtils.toString(scaleOp.getScaledData(), CharEncoding.UTF_8);
-        assertThat(scaledSvg, not(containsString("<!DOCTYPE")));
-    }
-
-    @Test(expected = GalleryException.class)
-    public void scaleSvgRefusedInvalidDoctype() throws GalleryException {
-        InputStream data = getClass().getResourceAsStream("/test-SVG-invalid-doctype.svg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(0, 0).build();
-
-        scaleOp.execute(data, "image/svg+xml");
+            } finally {
+                assertThat(listener.messages().count(), equalTo(1L));
+                final Optional<String> first = listener.messages().findFirst();
+                assertTrue(first.isPresent());
+                assertTrue(first.get().contains("Deprecation:"));
+            }
+        }
     }
 
     @Test
     public void scaleJpgWithCompression() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation normalOp = new ScaleImageOperation.Builder(200, 100).build();
-        normalOp.execute(data, "image/jpeg");
+        final ScalingParameters parameters = new ScalingParameters.Builder(200, 100).compressionQuality(0.8f).build();
+        final ImageOperationResult result = scale("/test-380x428.jpg", "image/jpeg", parameters);
 
-        data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation compressedOp = new ScaleImageOperation.Builder(200, 100).compressionQuality(0.8f).build();
-        compressedOp.execute(data, "image/jpeg");
-        checkImageDimensions(compressedOp, "image/jpeg", 88, 100);
+        checkImageDimensions(result, "image/jpeg", 88, 100);
     }
 
     @Test
     public void compressedJpgIsSmaller() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation normalOp = new ScaleImageOperation.Builder(200, 100).build();
-        normalOp.execute(data, "image/jpeg");
-        byte[] normalData = IOUtils.toByteArray(normalOp.getScaledData());
+        final ImageOperationResult result = scale("/test-380x428.jpg", "image/jpeg", 200, 100);
+        final byte[] normalData = IOUtils.toByteArray(result.getData());
 
-        data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation compressedOp = new ScaleImageOperation.Builder(200, 100).compressionQuality(0.5f).build();
-        compressedOp.execute(data, "image/jpeg");
-        byte[] compressedData = IOUtils.toByteArray(compressedOp.getScaledData());
+        final ScalingParameters compressedParameters = new ScalingParameters.Builder(200, 100).compressionQuality(0.5f).build();
+        final ImageOperationResult compressedResult = scale("/test-380x428.jpg", "image/jpeg", compressedParameters);
+        final byte[] compressedData = IOUtils.toByteArray(compressedResult.getData());
 
         assertTrue("The compressed scaled image (" + compressedData.length + " bytes) "
                 + "should be smaller than the normal scaled image (" + normalData.length + " bytes)",
@@ -340,116 +174,128 @@ public class ScaleImageOperationTest {
 
     @Test
     public void compressionQualityHigherThanOne() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation normalOp = new ScaleImageOperation.Builder(200, 100).build();
-        normalOp.execute(data, "image/jpeg");
+        final ScalingParameters parameters = new ScalingParameters.Builder(200, 100).build();
+        final ImageOperationResult result = scale("/test-380x428.jpg", "image/jpeg", parameters);
 
-        data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation compressedOp = new ScaleImageOperation.Builder(200, 100).compressionQuality(100).build();
-        compressedOp.execute(data, "image/jpeg");
+        final ScalingParameters compressedParameters = new ScalingParameters.Builder(200, 100).compressionQuality(100).build();
+        final ImageOperationResult compressedResult = scale("/test-380x428.jpg", "image/jpeg", compressedParameters);
 
         assertTrue("Compression quality higher than 1 should be interpreted as 1",
-                IOUtils.contentEquals(normalOp.getScaledData(), compressedOp.getScaledData()));
+                IOUtils.contentEquals(result.getData(), compressedResult.getData()));
     }
 
     @Test
     public void compressionQualityLowerThanZero() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation normalOp = new ScaleImageOperation.Builder(200, 100).compressionQuality(0).build();
-        normalOp.execute(data, "image/jpeg");
+        final ScalingParameters parameters = new ScalingParameters.Builder(200, 100).compressionQuality(0).build();
+        final ImageOperationResult result = scale("/test-380x428.jpg", "image/jpeg", parameters);
 
-        data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation compressedOp = new ScaleImageOperation.Builder(200, 100).compressionQuality(-42).build();
-        compressedOp.execute(data, "image/jpeg");
+        final ScalingParameters compressedParameters = new ScalingParameters.Builder(200, 100).compressionQuality(-42).build();
+        final ImageOperationResult compressedResult = scale("/test-380x428.jpg", "image/jpeg", compressedParameters);
 
         assertTrue("Compression quality lower than 0 should be interpreted as 0",
-                IOUtils.contentEquals(normalOp.getScaledData(), compressedOp.getScaledData()));
+                IOUtils.contentEquals(result.getData(), compressedResult.getData()));
     }
 
     @Test
     public void upscalingBounded() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-380x428.gif");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(800, 600).upscaling().build();
-        scaleOp.execute(data, "image/gif");
-        checkImageDimensions(scaleOp, "image/gif", 532, 600);
+        final ScalingParameters parameters = new ScalingParameters.Builder(800, 600).upscaling().build();
+        final ImageOperationResult result = scale("/test-380x428.gif", "image/gif", parameters);
+
+        checkImageDimensions(result, "image/gif", 532, 600);
     }
 
     @Test
     public void upscalingUnboundedHeight() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-380x428.gif");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(760, 0).upscaling().build();
-        scaleOp.execute(data, "image/gif");
-        checkImageDimensions(scaleOp, "image/gif", 760, 856);
+        final ScalingParameters parameters = new ScalingParameters.Builder(760, 0).upscaling().build();
+        final ImageOperationResult result = scale("/test-380x428.gif", "image/gif", parameters);
+
+        checkImageDimensions(result, "image/gif", 760, 856);
     }
 
     @Test
     public void upscalingUnboundedWidth() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-380x428.gif");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(0, 856 ).upscaling().build();
-        scaleOp.execute(data, "image/gif");
-        checkImageDimensions(scaleOp, "image/gif", 760, 856);
+        final ScalingParameters parameters = new ScalingParameters.Builder(0, 856 ).upscaling().build();
+        final ImageOperationResult result = scale("/test-380x428.gif", "image/gif", parameters);
+
+        checkImageDimensions(result, "image/gif", 760, 856);
     }
 
     @Test
     public void upscalingUnboundedBothEdges() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-380x428.gif");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(0, 0).build();
-        scaleOp.execute(data, "image/gif");
-        checkImageDimensions(scaleOp, "image/gif", 380, 428);
+        final ImageOperationResult result = scale("/test-380x428.gif", "image/gif", 0, 0);
+
+        checkImageDimensions(result, "image/gif", 380, 428);
     }
 
     @Test
     public void calculateResizeRatio() {
-        final ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(0, 0).build();
-
-        double ratio = scaleOp.calculateResizeRatio(800, 600, 400, 500);
+        double ratio = createOperation(400, 500).calculateResizeRatio(800, 600);
         assertEquals("Resize ratio calculated by bounding-box limited width.", 0.5, ratio, 0.0);
 
-        ratio = scaleOp.calculateResizeRatio(800, 600, 700, 300);
+        ratio = createOperation(700, 300).calculateResizeRatio(800, 600);
         assertEquals("Resize ratio calculated by bounding-box limited height.", 0.5, ratio, 0.0);
 
-        ratio = scaleOp.calculateResizeRatio(800, 600, 400, 0);
+        ratio = createOperation(400, 0).calculateResizeRatio(800, 600);
         assertEquals("Resize ratio calculated by bounding-box width.", 0.5, ratio, 0.0);
 
-        ratio = scaleOp.calculateResizeRatio(800, 600, 0, 300);
+        ratio = createOperation(0, 300).calculateResizeRatio(800, 600);
         assertEquals("Resize ratio calculated by bounding-box height.", 0.5, ratio, 0.0);
 
-        ratio = scaleOp.calculateResizeRatio(800, 600, 1700, 1200);
+        ratio = createOperation(1700, 1200).calculateResizeRatio(800, 600);
         assertEquals("Resize ratio calculated by bounding-box height.", 2.0, ratio, 0.0);
 
-        ratio = scaleOp.calculateResizeRatio(800, 600, 1600, 1400);
+        ratio = createOperation(1600, 1400).calculateResizeRatio(800, 600);
         assertEquals("Resize ratio calculated by bounding-box width.", 2.0, ratio, 0.0);
     }
 
     @Test
     public void scaledImageDataWeightIsNotBiggerWhenScalingToOriginalDimensions() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(380, 428).build();
-        scaleOp.execute(data, "image/jpeg");
-        data = getClass().getResourceAsStream("/test-380x428.jpg");
-        assertTrue("Scaled image data weight is not higher when scaling to original dimensions",
-                IOUtils.toByteArray(scaleOp.getScaledData()).length <= IOUtils.toByteArray(data).length);
+        final ImageOperationResult result = scale("/test-380x428.jpg", "image/jpeg", 380, 428);
+
+        final InputStream inputStream = readFile("/test-380x428.jpg");
+        assertTrue("Scaled image weight is not higher when scaling to original dimensions",
+                IOUtils.toByteArray(result.getData()).length <= IOUtils.toByteArray(inputStream).length);
     }
 
     @Test
     public void scaledImageDataWeightIsNotBiggerWhenScalingToLargerDimensionsAndUpscalingIsDisabled() throws GalleryException, IOException {
-        InputStream data = getClass().getResourceAsStream("/test-380x428.jpg");
-        ScaleImageOperation scaleOp = new ScaleImageOperation.Builder(500, 500).build();
-        scaleOp.execute(data, "image/jpeg");
-        data = getClass().getResourceAsStream("/test-380x428.jpg");
-        assertTrue("Scaled image data weight is not higher when scaling to larger dimensions and upscaling is disabled",
-                IOUtils.toByteArray(scaleOp.getScaledData()).length <= IOUtils.toByteArray(data).length);
+        final ImageOperationResult result = scale("/test-380x428.jpg", "image/jpeg", 500, 500);
+
+        final InputStream inputStream = readFile("/test-380x428.jpg");
+        assertTrue("Scaled image weight is not higher when scaling to larger dimensions and upscaling is disabled",
+                IOUtils.toByteArray(result.getData()).length <= IOUtils.toByteArray(inputStream).length);
     }
 
-    private void checkImageDimensions(ScaleImageOperation scaleOp, String mimeType, int expectedWidth, int expectedHeight) throws IOException {
-        assertEquals(expectedWidth, scaleOp.getScaledWidth());
-        assertEquals(expectedHeight, scaleOp.getScaledHeight());
+    private static void checkImageDimensions(final ImageOperationResult result, final String mimeType,
+                                             final int expectedWidth, final int expectedHeight) throws IOException {
+        assertEquals(expectedWidth, result.getWidth());
+        assertEquals(expectedHeight, result.getHeight());
 
-        ImageReader reader = ImageIO.getImageReadersByMIMEType(mimeType).next();
-        try (ImageInputStream iis = ImageIO.createImageInputStream(scaleOp.getScaledData())) {
+        final ImageReader reader = ImageIO.getImageReadersByMIMEType(mimeType).next();
+        try (final ImageInputStream iis = ImageIO.createImageInputStream(result.getData())) {
             reader.setInput(iis);
-            assertEquals(scaleOp.getScaledWidth(), reader.getWidth(0));
-            assertEquals(scaleOp.getScaledHeight(), reader.getHeight(0));
+            assertEquals(result.getWidth(), reader.getWidth(0));
+            assertEquals(result.getHeight(), reader.getHeight(0));
         }
+    }
+
+    private static ImageOperationResult scale(final String inputFile, final String mimeType,
+                                              final int width, final int height) throws GalleryException {
+        return scale(inputFile, mimeType, new ScalingParameters.Builder(width, height).build());
+    }
+
+    private static ImageOperationResult scale(final String inputFile, final String mimeType,
+                                              final ScalingParameters parameters) throws GalleryException {
+        final InputStream data = readFile(inputFile);
+        final ImageOperation operation = new ScaleImageOperation(parameters);
+        return operation.run(data, mimeType);
+    }
+
+    private static InputStream readFile(final String filePath) {
+        return ScaleImageOperationTest.class.getResourceAsStream(filePath);
+    }
+
+    private static ScaleImageOperation createOperation(final int width, final int height) {
+        return new ScaleImageOperation(new ScalingParameters.Builder(width, height).build());
     }
 }
