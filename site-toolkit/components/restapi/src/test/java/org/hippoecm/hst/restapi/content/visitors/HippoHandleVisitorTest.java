@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.hippoecm.hst.restapi.content.visitors;
 
 import java.util.LinkedHashMap;
+import java.util.function.Consumer;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -26,6 +27,7 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
+import org.onehippo.repository.mock.MockSession;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.easymock.EasyMock.createNiceMock;
@@ -82,33 +84,17 @@ public class HippoHandleVisitorTest {
         final LinkedHashMap<String, Object> response = new LinkedHashMap<>();
 
 
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(HippoHandleVisitor.class).build()) {
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(HippoHandleVisitor.class).build()) {
             testedClass.visit(resourceContext, handleNode, response);
+            interceptor.messages().forEach(new Consumer<String>() {
+                @Override
+                public void accept(final String s) {
+                    System.out.println(s);
+                }
+            });
             assertTrue(interceptor.messages()
-                    .anyMatch(m -> m.equals("Hippo Handle node DocumentNode under path /DocumentNode does not have a variant node")));
+                    .anyMatch(m -> m.contains("Variant for handle '/DocumentNode'")));
         }
     }
-
-    @Test
-    public void visit_variant_is_not_published() throws RepositoryException {
-
-        final String documentNodeName = "DocumentNode";
-        MockNode rootNode = new MockNode(documentNodeName, "hippo:root");
-        MockNode handleNode = rootNode.addNode(documentNodeName, "hippo:handle");
-
-        final Node variantNode = handleNode.addNode(documentNodeName, "connect:documentation");
-        variantNode.setProperty(HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.UNPUBLISHED);
-
-        final ResourceContext resourceContext = createNiceMock(ResourceContext.class);
-        final LinkedHashMap<String, Object> response = new LinkedHashMap<>();
-
-
-        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(HippoHandleVisitor.class).build()) {
-            testedClass.visit(resourceContext, handleNode, response);
-            assertTrue(interceptor.messages()
-                    .anyMatch(m -> m.equals("Hippo Handle node DocumentNode under path /DocumentNode does not have a published variant node")));
-        }
-    }
-
 
 }
