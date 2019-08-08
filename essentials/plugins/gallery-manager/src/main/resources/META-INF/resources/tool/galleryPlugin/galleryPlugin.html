@@ -70,6 +70,8 @@
                         <th>Variant</th>
                         <th>Width</th>
                         <th>Height</th>
+                        <th>Upscaling</th>
+                        <th>Cropping</th>
                         <th class="table-action"></th>
                         <th class="table-action"></th>
                         <th class="table-action"></th>
@@ -80,6 +82,12 @@
                         <td class="text">{{variant.name}}</td>
                         <td class="text">{{dimension(variant.width)}}</td>
                         <td class="text">{{dimension(variant.height)}}</td>
+                        <td>
+                          <hippo-icon name="check-square" ng-show="variant.upscaling"></hippo-icon>
+                        </td>
+                        <td>
+                          <hippo-icon name="check-square" ng-show="variant.cropping"></hippo-icon>
+                        </td>
                         <td>
                             <hippo-icon name="search" ng-click="viewVariant(variant)"></hippo-icon>
                         </td>
@@ -162,6 +170,8 @@
                 <dd>{{dimension(variant.height)}}</dd>
                 <dt>Upscale</dt>
                 <dd>{{upscaling()}}</dd>
+                <dt>Upscale and crop</dt>
+                <dd>{{cropping()}}</dd>
                 <dt>Speed vs. quality</dt>
                 <dd>{{optimization()}}</dd>
                 <dt>JPEG quality</dt>
@@ -215,11 +225,22 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label for="upscaleOption" class="col-xs-3 control-label">Filling options</label>
+                        <div class="col-xs-9">
+                            <div class="checkbox">
+                                <label uib-tooltip="Originals that are smaller than the variant dimensions are enlarged to fit. This may deteriorate image quality."
+                                tooltip-placement="top" tooltip-trigger="mouseenter">
+                                    <input type="checkbox" id="upscaleOption" ng-model="variant.upscaling"> Upscale
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
                         <div class="col-xs-offset-3 col-sm-9">
                             <div class="checkbox">
-                                <label uib-tooltip="Checking 'upscale' allows the image processor to enlarge image variants beyond the original dimensions. This will deteriorate image quality and is therefore not recommended."
-                                tooltip-placement="top" tooltip-trigger="mouseenter">
-                                    <input type="checkbox" ng-model="variant.upscaling"> Upscale
+                                <label uib-tooltip="Crops the original to fill the variant dimensions. Only available when both width and height are specified."
+                                tooltip-placement="top" tooltip-trigger="mouseenter" ng-class="croppingDisabled()?'text-disabled':''">
+                                    <input type="checkbox" id="croppingOption" ng-model="variant.cropping" ng-disabled="croppingDisabled()"> Upscale and crop
                                 </label>
                             </div>
                         </div>
@@ -269,7 +290,7 @@
             <div class="modal-footer">
                 <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
                 <button class="btn btn-primary" type="submit" ng-click="save()"
-                        ng-disabled="!variantEditForm.$dirty || variantEditForm.$invalid">Save Changes</button>
+                        ng-disabled="!variantEditForm.$dirty || variantEditForm.$invalid">Save</button>
             </div>
         </form>
     </script>
