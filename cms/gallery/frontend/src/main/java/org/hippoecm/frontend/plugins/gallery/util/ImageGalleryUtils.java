@@ -16,10 +16,13 @@
 package org.hippoecm.frontend.plugins.gallery.util;
 
 import java.awt.Dimension;
+import java.io.InputStream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.jackrabbit.JcrConstants;
+import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 
 public class ImageGalleryUtils {
@@ -43,5 +46,12 @@ public class ImageGalleryUtils {
 
     public static void setImageFileName(final Node node, final String fileName) throws RepositoryException {
         node.setProperty(HippoGalleryNodeType.IMAGE_SET_FILE_NAME, fileName);
+    }
+
+    public static void saveImageNode(final Node node, final InputStream data, final int width, final int height)
+            throws RepositoryException {
+        node.setProperty(JcrConstants.JCR_DATA, ResourceHelper.getValueFactory(node).createBinary(data));
+        node.setProperty(HippoGalleryNodeType.IMAGE_WIDTH, width);
+        node.setProperty(HippoGalleryNodeType.IMAGE_HEIGHT, height);
     }
 }
