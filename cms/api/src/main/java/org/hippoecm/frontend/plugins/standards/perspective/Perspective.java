@@ -24,6 +24,7 @@ import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.PackageResource;
@@ -71,11 +72,10 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
     }
 
     private final String eventId;
-    private final IModel<String> title;
-
     private final String imageExtension;
     private final String fallbackImageExtension;
 
+    private IModel<String> title;
     private boolean isRendered;
     private boolean isActivated;
 
@@ -103,6 +103,14 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
     @Override
     public IModel<String> getTitle() {
         return title;
+    }
+
+    protected void setTitle(final IModel<String> title) {
+        this.title = title;
+    }
+
+    protected void setTitle(final String title) {
+        this.title = Model.of(title);
     }
 
     @Override
@@ -151,10 +159,6 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
         name.append('.').append(extension);
 
         return name.toString();
-    }
-
-    protected void setTitle(String title) {
-        this.title.setObject(title);
     }
 
     @Override
