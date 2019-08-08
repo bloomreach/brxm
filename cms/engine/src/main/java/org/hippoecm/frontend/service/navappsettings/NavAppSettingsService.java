@@ -45,8 +45,7 @@ import org.slf4j.LoggerFactory;
 
 public class NavAppSettingsService extends Plugin implements INavAppSettingsService {
 
-    private static final Logger log = LoggerFactory.getLogger(NavAppSettingsService.class);
-
+    public static final String JAR_PATH_PREFIX = "/navapp";
     static final String NAVAPP_LOCATION_SYSTEM_PROPERTY = "navapp.location";
 
     static final String NAV_CONFIG_RESOURCES = "navConfigResources";
@@ -56,7 +55,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     static final String RESOURCE_TYPE = "resource.type";
 
     static final String NAVIGATIONITEMS_ENDPOINT = "/ws/navigationitems";
-
+    private static final Logger log = LoggerFactory.getLogger(NavAppSettingsService.class);
     // To make unit testing easier (needs to be transient to prevent Wicket from serializing it.
     private final transient Supplier<PluginUserSession> pluginUserSessionSupplier;
 
@@ -142,7 +141,9 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         final String cmsLocation = String.format("%s%s", parentOrigin, contextPath);
 
         final URI brXmLocation = URI.create(cmsLocation);
-        final URI navAppLocation = URI.create(System.getProperty(NAVAPP_LOCATION_SYSTEM_PROPERTY, cmsLocation+"/navapp"));
+        final URI navAppLocation = URI.create(System.getProperty(NAVAPP_LOCATION_SYSTEM_PROPERTY, cmsLocation));
+        final URI navAppResourceLocation = navAppLocation.equals(URI.create(cmsLocation)) ?
+                URI.create(cmsLocation + JAR_PATH_PREFIX) : navAppLocation;
         final List<NavAppResource> navConfigResources = readNavConfigResources(cmsLocation);
         final List<NavAppResource> loginDomains = readResources(LOGIN_RESOURCES);
         final List<NavAppResource> logoutDomains = readResources(LOGOUT_RESOURCES);
@@ -157,6 +158,11 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
             @Override
             public URI getNavAppLocation() {
                 return navAppLocation;
+            }
+
+            @Override
+            public URI getNavAppResourceLocation() {
+                return navAppResourceLocation;
             }
 
             @Override

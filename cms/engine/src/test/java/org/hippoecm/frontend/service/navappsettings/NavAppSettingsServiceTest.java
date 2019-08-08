@@ -146,8 +146,9 @@ public class NavAppSettingsServiceTest {
     public void navapp_and_brxm_location_same_if_system_property_not_set() {
 
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
-        assertThat(navAppSettings.getAppSettings().getNavAppLocation(), is(URI.create(scheme + "://" + host + contextPath + "/navapp")));
+        assertThat(navAppSettings.getAppSettings().getNavAppLocation(), is(URI.create(scheme + "://" + host + contextPath)));
         assertThat(navAppSettings.getAppSettings().getBrXmLocation(), is(URI.create(scheme + "://" + host + contextPath)));
+        assertThat(navAppSettings.getAppSettings().getNavAppResourceLocation(), is(URI.create(scheme + "://" + host + contextPath + "/navapp")));
 
         testUserSettingsAssertions(navAppSettings.getUserSettings());
         testAppSettingsAssertions(navAppSettings.getAppSettings());
@@ -162,6 +163,7 @@ public class NavAppSettingsServiceTest {
 
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
         assertThat(navAppSettings.getAppSettings().getNavAppLocation(), is(navAppLocation));
+        assertThat(navAppSettings.getAppSettings().getNavAppResourceLocation(), is(navAppLocation));
         assertThat(navAppSettings.getAppSettings().getBrXmLocation(), is(URI.create(scheme + "://" + host + contextPath)));
 
         testUserSettingsAssertions(navAppSettings.getUserSettings());
