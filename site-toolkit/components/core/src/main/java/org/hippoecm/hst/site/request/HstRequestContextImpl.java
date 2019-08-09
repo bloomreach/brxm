@@ -633,7 +633,7 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
         }
 
         final String userAgent = StringUtils.lowerCase(servletRequest.getHeader("User-Agent"));
-        if (userAgent == null || StringUtils.isBlank(userAgent)) {
+        if (StringUtils.isBlank(userAgent)) {
             setAttribute(IS_SEARCH_ENGINE_OR_BOT_REQUEST_ATTR, false);
             return false;
         }
