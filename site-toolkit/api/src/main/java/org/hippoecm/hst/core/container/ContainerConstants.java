@@ -206,8 +206,8 @@ public interface ContainerConstants {
 
     String CMSSESSIONCONTEXT_BINDING_PATH = "_cmssessioncontext";
 
-    String DEFAULT_SEO_SEARCH_ENGINE_USER_AGENT_PATTERNS = "seo.search.engine.user.agent.patterns";
+    String DEFAULT_SEARCH_ENGINE_OR_BOT_USER_AGENT_PATTERNS = "search.engine.or.bot.user.agent.patterns";
 
-    String EXTRA_SEO_SEARCH_ENGINE_USER_AGENT_PATTERNS = "seo.search.engine.user.agent.patterns.extra";
+    String EXTRA_SEARCH_ENGINE_OR_BOT_USER_AGENT_PATTERNS = "search.engine.or.bot.user.agent.patterns.extra";
 
 }

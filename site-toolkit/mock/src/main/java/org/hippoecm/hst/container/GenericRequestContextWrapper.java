@@ -495,7 +495,7 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
     }
 
     @Override
-    public boolean isSearchEngineRequest() {
-        return context.isSearchEngineRequest();
+    public boolean isSearchEngineOrBotRequest() {
+        return context.isSearchEngineOrBotRequest();
     }
 }

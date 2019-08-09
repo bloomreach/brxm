@@ -16,6 +16,7 @@
 package org.hippoecm.hst.site.request;
 
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
@@ -34,6 +35,8 @@ import org.hippoecm.hst.platform.HstModelProvider;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * HstRequestContextComponentImpl
@@ -42,6 +45,7 @@ import org.onehippo.cms7.services.contenttype.ContentTypeService;
  */
 public class HstRequestContextComponentImpl implements HstRequestContextComponent {
 
+    final static Logger log = LoggerFactory.getLogger(HstRequestContextComponentImpl.class);
     protected Repository repository;
     protected ContextCredentialsProvider contextCredentialsProvider;
     protected ContainerConfiguration config;
@@ -53,6 +57,7 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
     private HstQueryManagerFactory hstQueryManagerFactory;
     private List<HstComponentWindowFilter> componentWindowFilters;
     private ContentTypeService contentTypeService;
+    private ConcurrentHashMap<String, Boolean> userAgents;
 
     public HstRequestContextComponentImpl(final Repository repository,
                                           final ContextCredentialsProvider contextCredentialsProvider,
@@ -64,10 +69,16 @@ public class HstRequestContextComponentImpl implements HstRequestContextComponen
         this.config = config;
         this.hstModelProvider = hstModelProvider;
         this.contentTypeService = contentTypeService;
+        userAgents = new ConcurrentHashMap<>();
     }
 
     public HstMutableRequestContext create() {
-        HstMutableRequestContext rc = new HstRequestContextImpl(repository, contextCredentialsProvider);
+        if (userAgents.size() > 10000) {
+            log.warn("Unexpected high number of different user agents detected and cached. Flushing all now to avoid " +
+                    "possible attack injecting many unique user agents (resulting finally in OOM)");
+            userAgents.clear();
+        }
+        HstMutableRequestContext rc = new HstRequestContextImpl(repository, contextCredentialsProvider, userAgents);
         rc.setContainerConfiguration(config);
         rc.setURLFactory(urlFactory);
         final HstModel hstModel = hstModelProvider.getHstModel();

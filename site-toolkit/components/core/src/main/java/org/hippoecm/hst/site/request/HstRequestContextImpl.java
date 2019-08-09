@@ -16,6 +16,7 @@
 package org.hippoecm.hst.site.request;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -26,6 +27,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 import javax.jcr.LoginException;
 import javax.jcr.Repository;
@@ -37,7 +40,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
@@ -80,8 +83,8 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
     private final static Logger log = LoggerFactory.getLogger(HstRequestContextImpl.class);
 
-    private static final String IS_SEARCH_ENGINE_REQUEST_ATTR = HstRequestContextImpl.class.getName()
-            + ".isSearchEngineRequest";
+    static final String IS_SEARCH_ENGINE_OR_BOT_REQUEST_ATTR = HstRequestContextImpl.class.getName()
+            + ".isSearchEngineOrBotRequest";
 
     private final static HstParameterInfoProxyFactory HST_PARAMETER_INFO_PROXY_FACTORY = new HstParameterInfoProxyFactoryImpl();
 
@@ -90,6 +93,8 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected HttpServletResponse servletResponse;
     protected Repository repository;
     protected ContextCredentialsProvider contextCredentialsProvider;
+    // maps user agents to whether they are a bot or not
+    protected final ConcurrentHashMap<String, Boolean> userAgentsBots;
     protected Session session;
     protected ResolvedMount resolvedMount;
     protected ResolvedSiteMapItem resolvedSiteMapItem;
@@ -132,12 +137,19 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     private Map<String, HeadContributable> headContributablesMap;
 
     public HstRequestContextImpl(Repository repository) {
-        this(repository, null);
+        this(repository, null, new ConcurrentHashMap<>());
     }
 
     public HstRequestContextImpl(Repository repository, ContextCredentialsProvider contextCredentialsProvider) {
+        this(repository, contextCredentialsProvider, new ConcurrentHashMap<>());
+    }
+
+    public HstRequestContextImpl(final Repository repository, final ContextCredentialsProvider contextCredentialsProvider,
+                                 final ConcurrentHashMap<String, Boolean> userAgents) {
+
         this.repository = repository;
         this.contextCredentialsProvider = contextCredentialsProvider;
+        this.userAgentsBots = userAgents;
     }
 
     @Override
@@ -613,42 +625,44 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     }
 
     @Override
-    public boolean isSearchEngineRequest() {
-        final Boolean searchEngineRequestFlag = (Boolean) getAttribute(IS_SEARCH_ENGINE_REQUEST_ATTR);
+    public boolean isSearchEngineOrBotRequest() {
+        final Boolean searchEngineRequestFlag = (Boolean) getAttribute(IS_SEARCH_ENGINE_OR_BOT_REQUEST_ATTR);
 
         if (searchEngineRequestFlag != null) {
             return searchEngineRequestFlag.booleanValue();
         }
 
-        boolean requestFromSearchEngine = false;
-
         final String userAgent = StringUtils.lowerCase(servletRequest.getHeader("User-Agent"));
-        final String[] defaultSeoUserAgentPatterns = containerConfiguration
-                .getStringArray(ContainerConstants.DEFAULT_SEO_SEARCH_ENGINE_USER_AGENT_PATTERNS);
-        final String[] extraSeoUserAgentPatterns = containerConfiguration
-                .getStringArray(ContainerConstants.EXTRA_SEO_SEARCH_ENGINE_USER_AGENT_PATTERNS);
-
-        if (defaultSeoUserAgentPatterns.length > 0 || extraSeoUserAgentPatterns.length > 0) {
-            for (String pattern : defaultSeoUserAgentPatterns) {
-                if (!pattern.isEmpty() && StringUtils.contains(userAgent, pattern)) {
-                    log.debug("Detected a search engine request from '{}' by the pattern, '{}'.", userAgent, pattern);
-                    requestFromSearchEngine = true;
-                    break;
-                }
-            }
+        if (userAgent == null || StringUtils.isBlank(userAgent)) {
+            setAttribute(IS_SEARCH_ENGINE_OR_BOT_REQUEST_ATTR, false);
+            return false;
         }
 
-        if (!requestFromSearchEngine && extraSeoUserAgentPatterns.length > 0) {
-            for (String pattern : extraSeoUserAgentPatterns) {
-                if (!pattern.isEmpty() && StringUtils.contains(userAgent, pattern)) {
-                    log.debug("Detected a search engine request from '{}' by the pattern, '{}'.", userAgent, pattern);
-                    requestFromSearchEngine = true;
-                    break;
-                }
-            }
-        }
+        final boolean requestFromSearchEngine = userAgentsBots.computeIfAbsent(userAgent, s -> {
 
-        setAttribute(IS_SEARCH_ENGINE_REQUEST_ATTR, Boolean.valueOf(requestFromSearchEngine));
+            final String[] defaultBotUserAgentPatterns = containerConfiguration
+                    .getStringArray(ContainerConstants.DEFAULT_SEARCH_ENGINE_OR_BOT_USER_AGENT_PATTERNS);
+
+            final String[] extraBotUserAgentPatterns = containerConfiguration
+                    .getStringArray(ContainerConstants.EXTRA_SEARCH_ENGINE_OR_BOT_USER_AGENT_PATTERNS);
+
+            final boolean isUserAgent = Stream.concat(Arrays.stream(defaultBotUserAgentPatterns), Arrays.stream(extraBotUserAgentPatterns))
+                    .anyMatch(pattern -> {
+                        if (StringUtils.isBlank(pattern)) {
+                            return false;
+                        }
+                        final boolean contains = StringUtils.contains(userAgent, pattern);
+                        if (contains) {
+                            log.debug("Detected a search engine request from '{}' by the pattern, '{}'.", userAgent, pattern);
+                        }
+                        return contains;
+                    });
+
+            return isUserAgent;
+        });
+
+
+        setAttribute(IS_SEARCH_ENGINE_OR_BOT_REQUEST_ATTR, Boolean.valueOf(requestFromSearchEngine));
         return requestFromSearchEngine;
     }
 

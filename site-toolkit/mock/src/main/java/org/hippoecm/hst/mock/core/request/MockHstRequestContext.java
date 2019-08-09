@@ -721,7 +721,7 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     }
 
     @Override
-    public boolean isSearchEngineRequest() {
+    public boolean isSearchEngineOrBotRequest() {
         return searchEngineRequest;
     }
 

@@ -31,6 +31,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import com.google.common.collect.Iterables;
 
+import static org.hippoecm.hst.site.request.HstRequestContextImpl.IS_SEARCH_ENGINE_OR_BOT_REQUEST_ATTR;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -164,7 +165,7 @@ public class TestHstRequestContextImpl {
                 new PropertiesConfiguration(TestHstRequestContextImpl.class.getResource(PROPS_RES_PATH)));
 
         final String[] defaultSeoUserAgentPatterns = containerConfiguration
-                .getStringArray(ContainerConstants.DEFAULT_SEO_SEARCH_ENGINE_USER_AGENT_PATTERNS);
+                .getStringArray(ContainerConstants.DEFAULT_SEARCH_ENGINE_OR_BOT_USER_AGENT_PATTERNS);
         assertNotNull(defaultSeoUserAgentPatterns);
         assertTrue(defaultSeoUserAgentPatterns.length > 0);
 
@@ -176,7 +177,7 @@ public class TestHstRequestContextImpl {
         }
 
         final String[] extraSeoUserAgentPatterns = containerConfiguration
-                .getStringArray(ContainerConstants.EXTRA_SEO_SEARCH_ENGINE_USER_AGENT_PATTERNS);
+                .getStringArray(ContainerConstants.EXTRA_SEARCH_ENGINE_OR_BOT_USER_AGENT_PATTERNS);
         assertNotNull(extraSeoUserAgentPatterns);
         // a property line with a blank after equal sign results in a String[] { "" }.
         assertEquals(1, extraSeoUserAgentPatterns.length);
@@ -239,15 +240,20 @@ public class TestHstRequestContextImpl {
         requestContext.setServletRequest(servletRequest);
 
         servletRequest.removeHeader("User-Agent");
-        assertFalse(requestContext.isSearchEngineRequest());
+        assertFalse(requestContext.isSearchEngineOrBotRequest());
+        requestContext.removeAttribute(IS_SEARCH_ENGINE_OR_BOT_REQUEST_ATTR);
         servletRequest.addHeader("User-Agent", "");
-        assertFalse(requestContext.isSearchEngineRequest());
+        assertFalse(requestContext.isSearchEngineOrBotRequest());
+        requestContext.removeAttribute(IS_SEARCH_ENGINE_OR_BOT_REQUEST_ATTR);
 
         for (String userAgent : COMMON_BROWSER_USER_AGENT_EXAMPLES) {
             servletRequest.removeHeader("User-Agent");
             servletRequest.addHeader("User-Agent", userAgent);
-            assertFalse(requestContext.isSearchEngineRequest());
+            assertFalse(String.format("Expected User-Agent '%s' to be a browser user agent, not a search engine or bot",
+                    userAgent), requestContext.isSearchEngineOrBotRequest());
+            requestContext.removeAttribute(IS_SEARCH_ENGINE_OR_BOT_REQUEST_ATTR);
         }
+        assertEquals(COMMON_BROWSER_USER_AGENT_EXAMPLES.length, requestContext.userAgentsBots.size());
     }
 
     @Test
@@ -260,8 +266,11 @@ public class TestHstRequestContextImpl {
         for (String userAgent : COMMON_SEARCH_ENGINE_USER_AGENT_EXAMPLES) {
             servletRequest.removeHeader("User-Agent");
             servletRequest.addHeader("User-Agent", userAgent);
-            assertTrue(requestContext.isSearchEngineRequest());
+            assertTrue(requestContext.isSearchEngineOrBotRequest());
+            requestContext.removeAttribute(IS_SEARCH_ENGINE_OR_BOT_REQUEST_ATTR);
         }
+
+        assertEquals(COMMON_SEARCH_ENGINE_USER_AGENT_EXAMPLES.length, requestContext.userAgentsBots.size());
     }
 
 }
