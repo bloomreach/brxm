@@ -26,7 +26,7 @@
 
   // Implementation of the Child API
   if (!Hippo.SubApp){
-    Hippo.SubApp = [];
+    Hippo.SubApp = {};
   }
   Hippo.SubApp['${iFrameElementId}'] = {};
 
