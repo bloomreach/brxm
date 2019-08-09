@@ -31,36 +31,50 @@
     return;
   }
 
-  // Implementation of the Child API
+  let openChannelManagerOverview = function () {
+    this.rootPanel = Ext.getCmp('rootPanel');
+    if (this.rootPanel) {
+      this.rootPanel.fireEvent('navigate-to-channel-overview');
+    }
+  };
+// Implementation of the Child API
   Hippo.NavAppToApp = {
 
-    beforeNavigation: function() {
+    beforeNavigation: function () {
       return Promise.resolve(true);
     },
 
-    navigate: function (location) {
+    navigate: function (location, flags) {
       const pathElements = location.path.split('/');
       const perspectiveIdentifier = pathElements.shift();
       const perspectiveClassName = `.hippo-perspective-${perspectiveIdentifier}perspective`;
 
       if (!perspectiveIdentifier) {
-      	return Promise.reject(new Error(`${location.path} is invalid`));
+        return Promise.reject(new Error(`${location.path} is invalid`));
       }
 
       const perspective = document.querySelector(perspectiveClassName);
       if (!perspective) {
-      	return Promise.reject(new Error(`${perspectiveClassName} not found`));
+        return Promise.reject(new Error(`${perspectiveClassName} not found`));
       }
 
       perspective.click();
 
-      if (location.path === 'channelmanager/') {
-        this.rootPanel = Ext.getCmp('rootPanel');
-        if (this.rootPanel){
-          this.rootPanel.fireEvent('navigate-to-channel-overview');
+      if (['channelmanager', 'projects'].includes(perspectiveIdentifier)) {
+        var location = {path: pathElements.join('/')}
+        if (flags && flags['forceRefresh']) {
+          if (perspectiveIdentifier === 'channelmanager'){
+            openChannelManagerOverview.call(this);
+          }
+          if (perspectiveIdentifier === 'projects'){
+            location.path = "/projects";
+          }
+        }
+        let childApi = Hippo.SubApp[perspectiveIdentifier+'-iframe'];
+        if (childApi){
+          childApi.navigate(location, flags);
         }
       }
-
       return Promise.resolve();
     },
 
@@ -83,7 +97,7 @@
   // Establish the connection
   window.bloomreach['navapp-communication']
     .connectToParent(parentConnectionConfig)
-    .then(parentApi =>  Object.assign(Hippo.AppToNavApp, parentApi))
+    .then(parentApi => Object.assign(Hippo.AppToNavApp, parentApi))
     .catch(error => console.error(error));
 
 }());
