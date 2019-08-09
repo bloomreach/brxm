@@ -114,6 +114,8 @@ public class MockHstRequestContext implements HstMutableRequestContext {
 
     private boolean disposed;
 
+    private boolean searchEngineRequest;
+
     public boolean isPreview() {
         checkStateValidity();
         return this.resolvedMount.getMount().isPreview();
@@ -716,6 +718,15 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     public ContentTypes getContentTypes() {
         checkStateValidity();
         return contentTypes;
+    }
+
+    @Override
+    public boolean isSearchEngineOrBotRequest() {
+        return searchEngineRequest;
+    }
+
+    public void setSearchEngineRequest(boolean searchEngineRequest) {
+        this.searchEngineRequest = searchEngineRequest;
     }
 
     private void checkStateValidity() {

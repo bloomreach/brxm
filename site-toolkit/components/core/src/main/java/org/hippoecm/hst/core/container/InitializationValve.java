@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,15 +16,18 @@
 package org.hippoecm.hst.core.container;
 
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * InitializationValve
  */
 public class InitializationValve extends AbstractBaseOrderableValve {
 
+    private static Logger log = LoggerFactory.getLogger(InitializationValve.class);
+
     @Override
-    public void invoke(ValveContext context) throws ContainerException
-    {
+    public void invoke(ValveContext context) throws ContainerException {
         HstMutableRequestContext requestContext = (HstMutableRequestContext)context.getRequestContext();
         // because the requestContext can already have a jcr session (for example fetched during a SiteMapItemHandler or
         // during HstLinkProcessor pre processing, we explicitly set it to null in the HstMutableRequestContext to be

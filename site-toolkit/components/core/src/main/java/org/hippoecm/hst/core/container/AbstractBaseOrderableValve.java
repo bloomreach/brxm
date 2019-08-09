@@ -61,7 +61,7 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
 
     protected final static Logger log = LoggerFactory.getLogger(AbstractBaseOrderableValve.class);
 
-    private final static String PAGE_INFO_CACHEABLE = PageInfoRenderingValve.class.getName() + ".pageInfoCacheable";
+    private static final String PAGE_INFO_CACHEABLE = PageInfoRenderingValve.class.getName() + ".pageInfoCacheable";
 
     protected ContainerConfiguration containerConfiguration;
     protected HstManager hstManager;
@@ -528,5 +528,4 @@ public abstract class AbstractBaseOrderableValve extends AbstractOrderableValve 
 
         return true;
     }
-
 }

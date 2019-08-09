@@ -16,7 +16,6 @@
 package org.hippoecm.hst.core.container;
 
 import org.hippoecm.hst.configuration.site.HstSite;
-import org.hippoecm.hst.container.site.HstSiteProvider;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 
@@ -207,5 +206,8 @@ public interface ContainerConstants {
 
     String CMSSESSIONCONTEXT_BINDING_PATH = "_cmssessioncontext";
 
+    String DEFAULT_SEARCH_ENGINE_OR_BOT_USER_AGENT_PATTERNS = "search.engine.or.bot.user.agent.patterns";
+
+    String EXTRA_SEARCH_ENGINE_OR_BOT_USER_AGENT_PATTERNS = "search.engine.or.bot.user.agent.patterns.extra";
 
 }
