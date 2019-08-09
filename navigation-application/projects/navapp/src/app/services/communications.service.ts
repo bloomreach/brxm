@@ -83,9 +83,7 @@ export class CommunicationsService {
         }
       },
       updateNavLocation: (location: NavLocation) => {
-        if (location.breadcrumbLabel) {
-          this.breadcrumbsService.setSuffix(location.breadcrumbLabel);
-        }
+        this.breadcrumbsService.setSuffix(location.breadcrumbLabel);
         this.menuStateService.activateMenuItem(
             this.clientAppService.activeApp.id,
             location.path,
