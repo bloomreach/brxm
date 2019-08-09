@@ -70,14 +70,16 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
       },
 
       _calculateScrollbarWidth: function() {
-        const box = document.createElement('div');
+        var box, width;
+
+        box = document.createElement('div');
         box.style.position = 'fixed';
         box.style.left = '0px';
         box.style.visibility = 'hidden';
         box.style.overflowY = 'scroll';
         document.body.appendChild(box);
 
-        const width = box.getBoundingClientRect().right;
+        width = box.getBoundingClientRect().right;
 
         document.body.removeChild(box);
 
