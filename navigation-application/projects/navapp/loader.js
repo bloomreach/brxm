@@ -16,17 +16,17 @@
 
 (function NavappLoader() {
   const navAppSettings = window.NavAppSettings;
-  let navAppLocation = '.';
+  let navAppResourceLocation = '.';
 
   if (
     navAppSettings &&
     navAppSettings.appSettings &&
     navAppSettings.appSettings.navAppLocation
   ) {
-    navAppLocation = navAppSettings.appSettings.navAppLocation;
+    navAppResourceLocation = navAppSettings.appSettings.navAppResourceLocation;
   }
 
-  fetch(`${navAppLocation}/filelist.json`)
+  fetch(`${navAppResourceLocation}/filelist.json`)
     .then(response => response.json())
     .then(files => {
       const urls = Object.values(files);
@@ -36,7 +36,7 @@
         .forEach(url => {
           const linkTag = document.createElement('link');
           linkTag.rel = 'stylesheet';
-          linkTag.href = `${navAppLocation}/${url}`;
+          linkTag.href = `${navAppResourceLocation}/${url}`;
           document.head.appendChild(linkTag);
         });
 
@@ -44,7 +44,7 @@
         .filter(url => url.endsWith('.js'))
         .forEach(url => {
           const scriptTag = document.createElement('script');
-          scriptTag.src = `${navAppLocation}/${url}`;
+          scriptTag.src = `${navAppResourceLocation}/${url}`;
           document.body.appendChild(scriptTag);
         });
     });
