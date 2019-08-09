@@ -52,7 +52,7 @@
   },
   "dependencies": {
     "@bloomreach/dragula": "3.7.2-br.3",
-    "@bloomreach/navapp-communication": "^1.0.0-6",
+    "@bloomreach/navapp-communication": "^1.0.0-14",
     "@mdi/font": "2.2.43",
     "@uirouter/angularjs": "1.0.15",
     "@uirouter/sticky-states": "1.5.0",
