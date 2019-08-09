@@ -43,6 +43,8 @@ public interface AppSettings {
      */
     URI getNavAppLocation();
 
+    URI getNavAppResourceLocation();
+
     /**
      * Returns the BR XM context path.
      *
