@@ -15,8 +15,10 @@
 import { connectToParent } from '@bloomreach/navapp-communication';
 
 class ParentIframeCommunicationService {
-  constructor() {
+  constructor(ChannelService) {
     'ngInject';
+
+    this.ChannelService = ChannelService;
   }
 
   get _parentIFrameConnection() {
@@ -43,7 +45,20 @@ class ParentIframeCommunicationService {
   _connectToParent() {
     const parentOrigin = window.location.origin;
     const methods = {
-      navigate() {
+      // eslint-disable-next-line no-unused-vars
+      navigate: (location, flags) => {
+        let updatedLocation = {};
+        if (this.ChannelService.channel && !(flags && flags.forceRefresh)) {
+          updatedLocation = {
+            breadcrumbLabel: this.ChannelService.channel.name,
+            path: `channelmanager/${this.ChannelService.channel.id}`,
+          };
+        } else {
+          updatedLocation = {
+            path: 'channelmanager/',
+          };
+        }
+        this.updateNavLocation(updatedLocation);
       },
     };
     const parentConnectConfig = { parentOrigin, methods };
