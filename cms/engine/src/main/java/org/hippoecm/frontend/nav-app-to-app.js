@@ -72,7 +72,7 @@
         }
         let childApi = Hippo.SubApp[perspectiveIdentifier+'-iframe'];
         if (childApi){
-          childApi.navigate(location, undefined);
+          childApi.navigate(location, flags);
         }
       }
       return Promise.resolve();
