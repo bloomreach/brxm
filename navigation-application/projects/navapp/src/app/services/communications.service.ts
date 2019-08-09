@@ -83,11 +83,11 @@ export class CommunicationsService {
         }
       },
       updateNavLocation: (location: NavLocation) => {
-        this.menuStateService.activateMenuItem(
-          this.clientAppService.activeApp.id,
-          location.path,
-        );
         this.breadcrumbsService.setSuffix(location.breadcrumbLabel);
+        this.menuStateService.activateMenuItem(
+            this.clientAppService.activeApp.id,
+            location.path,
+        );
       },
     };
   }
