@@ -65,8 +65,14 @@ public class ParametersInfoAnnotationUtils {
      */
     public static ParametersInfo getParametersInfoAnnotation(Class<?> componentClazz,
             ComponentConfiguration componentConfig) {
+        if (componentClazz == null) {
+            return getParametersInfoAnnotation(componentClazz,
+                    (componentConfig != null) ? componentConfig.getParametersInfoClassName() : null,
+                    Thread.currentThread().getContextClassLoader());
+        }
         return getParametersInfoAnnotation(componentClazz,
-                (componentConfig != null) ? componentConfig.getParametersInfoClassName() : null);
+                (componentConfig != null) ? componentConfig.getParametersInfoClassName() : null,
+                componentClazz.getClassLoader());
     }
 
     /**
@@ -91,7 +97,8 @@ public class ParametersInfoAnnotationUtils {
     public static ParametersInfo getParametersInfoAnnotation(final Class<?> componentClazz,
             HstComponentConfiguration componentConfig) {
         return getParametersInfoAnnotation(componentClazz,
-                (componentConfig != null) ? componentConfig.getParametersInfoClassName() : null);
+                (componentConfig != null) ? componentConfig.getParametersInfoClassName() : null,
+                (componentClazz == null) ? Thread.currentThread().getContextClassLoader() : componentClazz.getClassLoader());
     }
 
     /**
@@ -103,14 +110,15 @@ public class ParametersInfoAnnotationUtils {
         if (componentConfig != null) {
             Class<?> componentClazz = null;
 
+            final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
             try {
                 String componentClassName = componentConfig.getComponentClassName();
-                componentClazz = Thread.currentThread().getContextClassLoader().loadClass(componentClassName);
+                componentClazz = classLoader.loadClass(componentClassName);
             } catch (Exception e) {
                 log.warn("Component class not loadable: {}", componentClazz);
             }
 
-            return getParametersInfoAnnotation(componentClazz, componentConfig.getParametersInfoClassName());
+            return getParametersInfoAnnotation(componentClazz, componentConfig.getParametersInfoClassName(), classLoader);
         }
 
         return null;
@@ -161,7 +169,7 @@ public class ParametersInfoAnnotationUtils {
                         HstNodeTypes.COMPONENT_PROPERTY_PARAMETERSINFO_CLASSNAME, paramsInfoClassName, e);
             }
 
-            return getParametersInfoAnnotation(componentClazz, paramsInfoClassName);
+            return getParametersInfoAnnotation(componentClazz, paramsInfoClassName, Thread.currentThread().getContextClassLoader());
         }
 
         return null;
@@ -194,24 +202,50 @@ public class ParametersInfoAnnotationUtils {
             try {
                 componentClazz = classLoader.loadClass(componentClazzName);
             } catch (Exception e) {
-                log.warn("Component class not loadable: {}", componentClazzName);
+                // parametersInfoClassName can also be defined as hst property without hst component class
+                log.info("Component class not loadable: {}", componentClazzName);
             }
         }
 
-        return getParametersInfoAnnotation(componentClazz, parametersInfoClassName);
+        return getParametersInfoAnnotation(componentClazz, parametersInfoClassName, classLoader);
+    }
+
+    /**
+     * @deprecated Deprecated since since 13.4. Use {@link #getParametersInfoAnnotation(Class, String, ClassLoader)}
+     */
+    @Deprecated
+    public static ParametersInfo getParametersInfoAnnotation(final Class<?> componentClazz, final String parametersInfoClassName) {
+        if (componentClazz == null) {
+            return getParametersInfoAnnotation(componentClazz, parametersInfoClassName, Thread.currentThread().getContextClassLoader());
+        }
+        return getParametersInfoAnnotation(componentClazz, parametersInfoClassName, componentClazz.getClassLoader());
     }
 
     /**
      * Find the <code>ParametersInfo</code> annotation from the {@code componentClazz} or create one from {@code parametersInfoClassName}
      * if specified.
      * @param componentClazz component class
-     * @param parametersInfoClassName class name for <code>ParametersInfo</code> type
+     * @param parametersInfoClassName class name for <code>ParametersInfo</code> type or {@code null} in which case the
+     *                                componentClazz is scanned for the annotation {@link ParametersInfo}
+     * @param classLoader the classLoader to load parametersInfoClassName
      * @return the type of <code>ParametersInfo</code>
      */
-    public static ParametersInfo getParametersInfoAnnotation(final Class<?> componentClazz, final String parametersInfoClassName) {
+    public static ParametersInfo getParametersInfoAnnotation(final Class<?> componentClazz,
+                                                             final String parametersInfoClassName,
+                                                             final ClassLoader classLoader) {
         if (parametersInfoClassName != null && !parametersInfoClassName.isEmpty()) {
             try {
-                final Class<?> paramsInfoType = componentClazz.getClassLoader().loadClass(parametersInfoClassName);
+                final Class<?> paramsInfoType;
+                if (classLoader == null) {
+                    if (componentClazz == null) {
+                        log.error("Cannot load paramsInfoType if componentClazz and classLoader are both null");
+                        return null;
+                    }
+                    paramsInfoType = componentClazz.getClassLoader().loadClass(parametersInfoClassName);
+                } else {
+                    paramsInfoType = classLoader.loadClass(parametersInfoClassName);
+                }
+
                 return createDynamicParametersInfo(paramsInfoType);
             } catch (ClassNotFoundException e) {
                 log.warn("Cannot load parametersInfo class: {}", parametersInfoClassName, e);
