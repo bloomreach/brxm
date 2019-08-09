@@ -19,7 +19,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
@@ -44,7 +44,7 @@ import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.commons.lang.StringUtils.substringBefore;
+import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.hippoecm.hst.configuration.ConfigurationConstants.CDN_SUPPORTED_PIPELINES;
 import static org.hippoecm.hst.util.PathUtils.FULLY_QUALIFIED_URL_PREFIXES;
 
@@ -310,6 +310,10 @@ public class HstLinkImpl implements HstLink {
             if (requestContext.getRenderHost() != null && requestMount != mount) {
                 // the link is cross-domain, so set the render host if the render host is different than the current host
                 if (!isHostSame(requestContext.getRenderHost(), mount.getVirtualHost().getHostName())) {
+                    renderHost = mount.getVirtualHost().getHostName();
+                } else if (!StringUtils.equals(requestMount.getContextPath(), mount.getContextPath())) {
+                    // cross webapp link : Since the other webapp might not yet have an 'sso' in the channel mgr, we need
+                    // to include the renderHost
                     renderHost = mount.getVirtualHost().getHostName();
                 }
             } else if (!requestContext.isChannelManagerPreviewRequest()) {

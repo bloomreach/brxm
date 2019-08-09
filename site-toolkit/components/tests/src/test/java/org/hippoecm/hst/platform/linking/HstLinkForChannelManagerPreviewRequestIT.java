@@ -43,6 +43,8 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.Utilities;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -215,6 +217,7 @@ public class HstLinkForChannelManagerPreviewRequestIT extends AbstractHstLinkRew
         // decorated version' because we are in a cms request
         HstRequestContext requestContext = getRequestFromCms("cms.example.com", "/home", null, "localhost:8081");
         assertTrue(requestContext.isChannelManagerPreviewRequest());
+
         // assert that the match Mount is localhost
         assertEquals("Matched mount should be the renderHost mount", "localhost",
                 requestContext.getResolvedMount().getMount().getVirtualHost().getHostName());
@@ -222,20 +225,55 @@ public class HstLinkForChannelManagerPreviewRequestIT extends AbstractHstLinkRew
         ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
 
         Object newsBean = obm.getObject("/unittestcontent/documents/unittestsubproject/News/2008/SubNews1");
-        HstLink crossSiteNewsLinkToPreviewDecoratedMount = linkCreator.create((HippoBean) newsBean, requestContext);
+        HstLink crossChannelNewsLinkToPreviewDecoratedMount = linkCreator.create((HippoBean) newsBean, requestContext);
 
-        assertEquals("Expected a preview decorated mount", "preview",crossSiteNewsLinkToPreviewDecoratedMount.getMount().getType());
+        assertEquals("Expected a preview decorated mount", "preview",crossChannelNewsLinkToPreviewDecoratedMount.getMount().getType());
 
-        assertEquals("wrong link.getPath for News/2008/SubNews1 ", "news/2008/SubNews1.html", crossSiteNewsLinkToPreviewDecoratedMount.getPath());
+        assertEquals("wrong link.getPath for News/2008/SubNews1 ", "news/2008/SubNews1.html", crossChannelNewsLinkToPreviewDecoratedMount.getPath());
         assertEquals("Expected NO render_host paramater in relative URL since the current renderingHost is already the same (localhost)",
                 "/site/subsite/news/2008/SubNews1.html",
-                crossSiteNewsLinkToPreviewDecoratedMount.toUrlForm(requestContext, false));
+                crossChannelNewsLinkToPreviewDecoratedMount.toUrlForm(requestContext, false));
         // fully qualified links will still be relative!
         assertEquals("Expected NO render_host paramater in relative URL since the current renderingHost is already the same (localhost)",
                 "/site/subsite/news/2008/SubNews1.html",
-                crossSiteNewsLinkToPreviewDecoratedMount.toUrlForm(requestContext, true));
+                crossChannelNewsLinkToPreviewDecoratedMount.toUrlForm(requestContext, true));
     }
 
+    /**
+     * When the channel mgr opens a channel for webapp with context '/site', and in the channel a page is rendered
+     * containing a link (URL) to a document belonging to a different site webapp (eg '/site2'), then the URL must
+     * include the renderingHost in the querystring: The reason for this is that there might not yet have been an 'SSO
+     * handshake' between the CMS webapp and /site2 webapp. Having the 'renderingHost' in the querystring makes sure
+     * this 'SSO handshake' is taken care of when needed
+     */
+    @Test
+    public void cross_hst_webapp_links_container_rendering_host_in_URL() throws Exception {
+        HstRequestContext requestContext = getRequestFromCms("cms.example.com", "/home", null, "localhost:8081");
+        assertTrue(requestContext.isChannelManagerPreviewRequest());
+
+        // get a document from webapp site2
+        ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
+
+        Object newsBean = obm.getObject("/extracontent/documents/extraproject/News/News1");
+
+        HstLink crossSiteWebappNewsLinkToPreviewDecoratedMount = linkCreator.create((HippoBean) newsBean, requestContext);
+
+        // This is VERY delicate: Because the cross Webapp HST Model is a different one than the one for the CURRENT
+        // Request, the resolved MOUNT won't be a PREVIEW mount since the cross webapp HST Model is not decorated to
+        // be a 'decorated preview' model. I don't think this MATTERS.
+        assertEquals("Expected a LIVE decorated mount", "live",crossSiteWebappNewsLinkToPreviewDecoratedMount.getMount().getType());
+
+        assertEquals("wrong link.getPath for News/News1 ", "news/News1.html", crossSiteWebappNewsLinkToPreviewDecoratedMount.getPath());
+        assertEquals("Expected PRESENT render_host paramater in relative URL since the site webapp is " +
+                        "different than the webapp the link belongs to",
+                "/site2/extra/news/News1.html?org.hippoecm.hst.container.render_host=localhost",
+                crossSiteWebappNewsLinkToPreviewDecoratedMount.toUrlForm(requestContext, false));
+        // fully qualified links will still be relative!
+        assertEquals("Expected PRESENT render_host paramater in relative URL since the site webapp is " +
+                        "different than the webapp the link belongs to",
+                "/site2/extra/news/News1.html?org.hippoecm.hst.container.render_host=localhost",
+                crossSiteWebappNewsLinkToPreviewDecoratedMount.toUrlForm(requestContext, true));
+    }
 
     public HstRequestContext getRequestFromCms(final String hostAndPort,
                                                final String pathInfo,
