@@ -457,4 +457,10 @@ public interface HstRequestContext extends ModelContributable {
      */
     ContentTypes getContentTypes();
 
+    /**
+     * Return true if it was determined that the request comes from a search engine.
+     * @return true if it was determined that the request comes from a search engine
+     */
+    boolean isSearchEngineOrBotRequest();
+
 }

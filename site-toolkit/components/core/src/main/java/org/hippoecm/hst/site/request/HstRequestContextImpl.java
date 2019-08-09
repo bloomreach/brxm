@@ -16,6 +16,7 @@
 package org.hippoecm.hst.site.request;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -26,6 +27,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 import javax.jcr.LoginException;
 import javax.jcr.Repository;
@@ -37,7 +40,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
@@ -53,6 +56,7 @@ import org.hippoecm.hst.core.component.HstParameterInfoProxyFactory;
 import org.hippoecm.hst.core.component.HstParameterInfoProxyFactoryImpl;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConfiguration;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HeadContributable;
 import org.hippoecm.hst.core.container.HstComponentWindowFilter;
 import org.hippoecm.hst.core.container.HstContainerURL;
@@ -79,6 +83,9 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
 
     private final static Logger log = LoggerFactory.getLogger(HstRequestContextImpl.class);
 
+    static final String IS_SEARCH_ENGINE_OR_BOT_REQUEST_ATTR = HstRequestContextImpl.class.getName()
+            + ".isSearchEngineOrBotRequest";
+
     private final static HstParameterInfoProxyFactory HST_PARAMETER_INFO_PROXY_FACTORY = new HstParameterInfoProxyFactoryImpl();
 
     protected ServletContext servletContext;
@@ -86,6 +93,8 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     protected HttpServletResponse servletResponse;
     protected Repository repository;
     protected ContextCredentialsProvider contextCredentialsProvider;
+    // maps user agents to whether they are a bot or not
+    protected final ConcurrentHashMap<String, Boolean> userAgentsBots;
     protected Session session;
     protected ResolvedMount resolvedMount;
     protected ResolvedSiteMapItem resolvedSiteMapItem;
@@ -128,12 +137,19 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     private Map<String, HeadContributable> headContributablesMap;
 
     public HstRequestContextImpl(Repository repository) {
-        this(repository, null);
+        this(repository, null, new ConcurrentHashMap<>());
     }
 
     public HstRequestContextImpl(Repository repository, ContextCredentialsProvider contextCredentialsProvider) {
+        this(repository, contextCredentialsProvider, new ConcurrentHashMap<>());
+    }
+
+    public HstRequestContextImpl(final Repository repository, final ContextCredentialsProvider contextCredentialsProvider,
+                                 final ConcurrentHashMap<String, Boolean> userAgents) {
+
         this.repository = repository;
         this.contextCredentialsProvider = contextCredentialsProvider;
+        this.userAgentsBots = userAgents;
     }
 
     @Override
@@ -606,6 +622,48 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
             log.debug("We did not find a direct mount for alias '{}'. Return null.", alias);
         }
         return mount;
+    }
+
+    @Override
+    public boolean isSearchEngineOrBotRequest() {
+        final Boolean searchEngineRequestFlag = (Boolean) getAttribute(IS_SEARCH_ENGINE_OR_BOT_REQUEST_ATTR);
+
+        if (searchEngineRequestFlag != null) {
+            return searchEngineRequestFlag.booleanValue();
+        }
+
+        final String userAgent = StringUtils.lowerCase(servletRequest.getHeader("User-Agent"));
+        if (StringUtils.isBlank(userAgent)) {
+            setAttribute(IS_SEARCH_ENGINE_OR_BOT_REQUEST_ATTR, false);
+            return false;
+        }
+
+        final boolean requestFromSearchEngine = userAgentsBots.computeIfAbsent(userAgent, s -> {
+
+            final String[] defaultBotUserAgentPatterns = containerConfiguration
+                    .getStringArray(ContainerConstants.DEFAULT_SEARCH_ENGINE_OR_BOT_USER_AGENT_PATTERNS);
+
+            final String[] extraBotUserAgentPatterns = containerConfiguration
+                    .getStringArray(ContainerConstants.EXTRA_SEARCH_ENGINE_OR_BOT_USER_AGENT_PATTERNS);
+
+            final boolean isUserAgent = Stream.concat(Arrays.stream(defaultBotUserAgentPatterns), Arrays.stream(extraBotUserAgentPatterns))
+                    .anyMatch(pattern -> {
+                        if (StringUtils.isBlank(pattern)) {
+                            return false;
+                        }
+                        final boolean contains = StringUtils.contains(userAgent, pattern);
+                        if (contains) {
+                            log.debug("Detected a search engine request from '{}' by the pattern, '{}'.", userAgent, pattern);
+                        }
+                        return contains;
+                    });
+
+            return isUserAgent;
+        });
+
+
+        setAttribute(IS_SEARCH_ENGINE_OR_BOT_REQUEST_ATTR, Boolean.valueOf(requestFromSearchEngine));
+        return requestFromSearchEngine;
     }
 
     private Mount lookupMount(String alias) {

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -159,6 +159,7 @@
     <property name="valveName" value="aggregationValve" />
     <property name="asynchronousComponentWindowRendererMap" ref="asynchronousComponentWindowRendererMap" />
     <property name="componentWindowResponseAppenders" ref="defaultAggregationValveComposerComponentWindowResponseAppenders"/>
+    <property name="asyncComponentRenderingEnabled" value="${default.asynchronous.component.window.rendering.enabled}" />
   </bean>
 
   <bean id="selectiveRenderingAggregationValve" parent="aggregationValve"
