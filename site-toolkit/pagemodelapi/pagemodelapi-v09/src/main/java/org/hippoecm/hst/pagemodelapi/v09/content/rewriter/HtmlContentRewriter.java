@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -89,7 +89,12 @@ public class HtmlContentRewriter extends SimpleContentRewriter {
                             log.info("Could not create a link for '{}'.", documentPath);
                         }
                     }
-                    String rewrittenHref = hstLink.toUrlForm(requestContext, false);
+
+                    // use link model because the hst link we want is from the 'site mount' and not from the
+                    // 'page model api mount'
+                    final LinkModel linkModel = LinkModel.convert(hstLink, requestContext);
+
+                    String rewrittenHref = linkModel.getHref();
                     if (isNotEmpty(documentPathQueryString)) {
                         if (rewrittenHref.contains("?")) {
                             rewrittenHref += "&" + documentPathQueryString;
@@ -100,8 +105,7 @@ public class HtmlContentRewriter extends SimpleContentRewriter {
                     // override the href attr
                     setAttribute(anchorTag, "href", rewrittenHref);
 
-                    final String linkType = LinkModel.getLinkType(requestContext, hstLink);
-                    setAttribute(anchorTag, "data-type", linkType);
+                    setAttribute(anchorTag, "data-type", linkModel.getType());
                 }
             }
 
