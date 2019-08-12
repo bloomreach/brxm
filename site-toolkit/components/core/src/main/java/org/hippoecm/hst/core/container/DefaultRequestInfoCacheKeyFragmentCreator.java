@@ -28,11 +28,10 @@ import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.WebFileUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.webfiles.WebFileBundle;
+import org.onehippo.cms7.services.webfiles.WebFileException;
 import org.onehippo.cms7.services.webfiles.WebFilesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_BRANCH_ID;
 
 /**
  * Default {@link RequestInfoCacheKeyFragmentCreator} which takes all parts of the request to create a cachekey with.
@@ -106,7 +105,7 @@ public class DefaultRequestInfoCacheKeyFragmentCreator implements RequestInfoCac
             antiCacheValue = Optional.of(stringAntiCacheValue);
             webFilesAntiCacheValue = antiCacheValue;
             return antiCacheValue;
-        } catch (RepositoryException e) {
+        } catch (WebFileException | RepositoryException e) {
             if (log.isDebugEnabled()) {
                 log.warn("Cannot get anti-cache value. Use cache key without it.", e);
             } else {
