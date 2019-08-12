@@ -150,7 +150,8 @@ public class Domains {
             while (domainIter.hasNext()) {
                 domainNode = domainIter.nextNode();
                 try {
-                    domain = new Domain(domainNode);
+                    // TODO ever used?
+                    domain = new Domain(domainNode, null);
                     domains.add(domain);
                     log.debug("Added domain: {}", domain.getName());
                     log.trace("Added domain: {}", domain);

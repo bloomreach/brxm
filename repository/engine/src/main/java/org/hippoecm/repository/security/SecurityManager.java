@@ -380,7 +380,7 @@ public class SecurityManager implements HippoSecurityManager {
             NodeIterator nodeIter = result.getNodes();
             while (nodeIter.hasNext()) {
                 // the parent of the auth role node is the domain node
-                Domain domain = new Domain(nodeIter.nextNode().getParent());
+                Domain domain = new Domain(nodeIter.nextNode().getParent(), userId);
                 log.trace("Domain '{}' found for user: {}", domain.getName(), userId);
                 domains.add(domain);
             }
@@ -391,9 +391,9 @@ public class SecurityManager implements HippoSecurityManager {
     }
 
     /**
-     * Get the domains in which the group has a role.
+     * Get the domains for {@code userId} in which the group has a role.
      */
-    private Set<Domain> getDomainsForGroup(String rawGroupId, String providerId) throws RepositoryException {
+    private Set<Domain> getDomainsForGroup(String rawGroupId, String providerId, final String userId) throws RepositoryException {
         String groupId = NodeNameCodec.decode(sanitizeGroupId(rawGroupId, providerId));
 
         Set<Domain> domains = new HashSet<Domain>();
@@ -409,7 +409,7 @@ public class SecurityManager implements HippoSecurityManager {
             NodeIterator nodeIter = result.getNodes();
             while (nodeIter.hasNext()) {
                 // the parent of the auth role node is the domain node
-                Domain domain = new Domain(nodeIter.nextNode().getParent());
+                Domain domain = new Domain(nodeIter.nextNode().getParent(), userId);
                 log.trace("Domain '{}' found for group: {}", domain.getName(), groupId);
                 domains.add(domain);
             }
@@ -588,7 +588,7 @@ public class SecurityManager implements HippoSecurityManager {
         userDomains.addAll(getDomainsForUser(userId, providerId));
         for (Principal principal : principals) {
             if (principal instanceof GroupPrincipal) {
-                userDomains.addAll(getDomainsForGroup(principal.getName(), providerId));
+                userDomains.addAll(getDomainsForGroup(principal.getName(), providerId, userId));
             }
         }
 
@@ -677,6 +677,10 @@ public class SecurityManager implements HippoSecurityManager {
     }
 
     public AccessManager getAccessManager(Session session, AMContext amContext) throws RepositoryException {
+        // TODO Is this every used? Does not correctly register the AccessManager as listener!!
+        if (true) {
+            throw new UnsupportedOperationException("Not allowed to get the access manager  in Hippo Repository via this method");
+        }
         try {
             AccessManagerConfig amc = config.getAccessManagerConfig();
             AccessManager accessMgr;
