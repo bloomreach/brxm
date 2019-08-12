@@ -70,6 +70,9 @@ public class DefaultRequestInfoCacheKeyFragmentCreator implements RequestInfoCac
         // to make sure that in a FORWARDED request we do not get the same cached entry
         requestInfo.append(requestContext.getBaseURL().getPathInfo()).append(delim);
 
+        // Flag whether the request comes from search engine or bot.
+        requestInfo.append(requestContext.isSearchEngineOrBotRequest()).append(delim);
+
         return requestInfo.toString();
     }
 
