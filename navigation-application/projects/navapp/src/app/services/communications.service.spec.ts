@@ -192,7 +192,7 @@ describe('CommunicationsService', () => {
       });
 
       it('should show the busy indicator', () => {
-        service.logout()
+        service.logout();
 
         expect(busyIndicatorService.show).toHaveBeenCalled();
         expect(busyIndicatorService.hide).toHaveBeenCalled();
