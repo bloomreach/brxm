@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 (function () {
-  'use strict';
+  "use strict";
 
   Ext.ns('Hippo');
 
@@ -27,7 +27,7 @@
     previousLocation: null,
     resizeTask: null,
 
-    constructor (config) {
+    constructor: function (config) {
       this.frameId = Ext.id();
       this.hostToIFrame = Hippo.createMessageBus('host-to-iframe');
       this.iframeToHost = Hippo.createMessageBus('iframe-to-host');
@@ -64,7 +64,7 @@
       this.on('resize', this._onResize, this);
     },
 
-    _onFrameLoad () {
+    _onFrameLoad: function () {
       var frameWindow = this._getFrameWindow();
 
       if (frameWindow !== null) {
@@ -77,7 +77,7 @@
       this.fireEvent('locationchanged');
     },
 
-    _connectToChild () {
+    _connectToChild: function () {
       if (!window.Hippo.SubApp){
         window.Hippo.SubApp = {};
       }
@@ -114,7 +114,7 @@
       });
     },
 
-    _getFrameLocation () {
+    _getFrameLocation: function () {
       var frameDocument, href;
 
       frameDocument = this._getFrameDocument();
@@ -128,24 +128,24 @@
       return this._getFrameDom().src;
     },
 
-    _getFrameDocument () {
+    _getFrameDocument: function () {
       var frame = this._getFrame();
       return frame ? frame.contentDocument : null;
     },
 
-    _getFrame () {
+    _getFrame: function () {
       return document.getElementById(this.frameId);
     },
 
-    _getFrameDom () {
+    _getFrameDom: function () {
       return Ext.getDom(this.frameId);
     },
 
-    _onAfterRender () {
+    _onAfterRender: function () {
       Hippo.UserActivity.report();
     },
 
-    _onResize () {
+    _onResize: function () {
       // throttle the number of 'resize' events send to the iframe
       if (this.resizeTask === null) {
         this.resizeTask = new Ext.util.DelayedTask(this._doResize.createDelegate(this));
@@ -153,28 +153,28 @@
       this.resizeTask.delay(25);
     },
 
-    _doResize () {
+    _doResize: function () {
       this.hostToIFrame.publish('resize');
     },
 
-    setLocation (url) {
+    setLocation: function (url) {
       this.previousLocation = this.currentLocation;
       this._getFrameDom().src = url;
       this._connectToChild();
     },
 
-    _detachFrame () {
+    _detachFrame: function () {
       this.currentLocation = null;
       if (this.hostToIFrame) {
         this.hostToIFrame.unsubscribeAll();
       }
     },
 
-    getLocation () {
+    getLocation: function () {
       return this._getFrameLocation();
     },
 
-    goBack () {
+    goBack: function () {
       if (!Ext.isEmpty(this.previousLocation)) {
         this.setLocation(this.previousLocation);
         this.previousLocation = null;
@@ -183,23 +183,23 @@
       return false;
     },
 
-    getElement (id) {
+    getElement: function (id) {
       var frameDocument = this._getFrameDocument();
       return frameDocument ? frameDocument.getElementById(id) : null;
     },
 
-    getFrameElement () {
+    getFrameElement: function () {
       return Ext.getCmp(this.frameId).el;
     },
 
-    reload () {
+    reload: function () {
       var frameDocument = this._getFrameDocument();
       if (frameDocument) {
         frameDocument.location.reload(true);
       }
     },
 
-    createHeadFragment () {
+    createHeadFragment: function () {
       // create an object to add elements to the iframe head using a DOM document fragment when possible
 
       var self, frameDocument, documentFragment, api;
@@ -269,17 +269,17 @@
       return api;
     },
 
-    mask () {
+    mask: function () {
       this.el.mask();
       this.on('locationchanged', this.el.mask, this.el);
     },
 
-    unmask () {
+    unmask: function () {
       this.el.unmask();
       this.un('locationchanged', this.el.mask, this.el);
     },
 
-    getScrollPosition () {
+    getScrollPosition: function () {
       var frameWindow = this._getFrameWindow();
       if (frameWindow !== null) {
         return {
@@ -294,19 +294,19 @@
       }
     },
 
-    _getFrameWindow () {
+    _getFrameWindow: function () {
       var frame = this._getFrame();
       return frame ? frame.contentWindow : null;
     },
 
-    scrollBy (x, y) {
+    scrollBy: function (x, y) {
       var frameWindow = this._getFrameWindow();
       if (frameWindow !== null) {
         frameWindow.scrollBy(x, y);
       }
     },
 
-    getCookies () {
+    getCookies: function () {
       var result = {},
         frameDocument = this._getFrameDocument();
 
@@ -322,9 +322,10 @@
       }
 
       return result;
-    },
+    }
 
   });
 
   Ext.reg('Hippo.IFramePanel', Hippo.IFramePanel);
+
 }());
