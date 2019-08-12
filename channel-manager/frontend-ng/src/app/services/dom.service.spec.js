@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -83,14 +83,37 @@ describe('DomService', () => {
       DomService.addCssLinks(iframeWindow, [
         'testFile.css',
         'anotherFile.css',
-      ]);
+      ], 'css-class');
 
       const head = $j(iframeWindow.document).find('head');
       const links = $j(head).children('link');
+
       expect(links.length).toEqual(2);
+
       expect(links.eq(0).attr('href')).toContain('testFile.css');
       expect(links.eq(1).attr('href')).toContain('anotherFile.css');
+
+      expect(links.eq(0).attr('class')).toContain('css-class');
+      expect(links.eq(1).attr('class')).toContain('css-class');
+
       done();
+    });
+  });
+
+  describe('hasCssLink', () => {
+    it('returns false when a link is not present', (done) => {
+      testInIframe(iframeWindow => {
+        expect(DomService.hasCssLink(iframeWindow, 'css-class')).toBe(false);
+        done();
+      });
+    });
+
+    it('returns true when a link is present', (done) => {
+      testInIframe(iframeWindow => {
+         DomService.addCssLinks(iframeWindow, ['testFile.css'], 'css-class');
+         expect(DomService.hasCssLink(iframeWindow, 'css-class')).toBe(true);
+         done();
+      });
     });
   });
 

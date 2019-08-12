@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,6 +87,7 @@ describe('RenderingService', () => {
 
   describe('createOverlay', () => {
     beforeEach(() => {
+      spyOn(OverlayService, 'clear');
       spyOn(PageStructureService, 'clearParsedElements');
       spyOn(PageStructureService, 'attachEmbeddedLinks');
       spyOn(HstCommentsProcessorService, 'run');
@@ -95,13 +96,32 @@ describe('RenderingService', () => {
     });
 
     it('handles the loading of a new page', () => {
+      spyOn(DomService, 'hasCssLink').and.returnValue(false);
       spyOn(DomService, 'addCssLinks').and.returnValue($q.resolve());
 
       RenderingService.createOverlay();
       $rootScope.$digest();
 
-      expect(DomService.addCssLinks).toHaveBeenCalledWith(window, [jasmine.any(String)]);
+      expect(DomService.addCssLinks).toHaveBeenCalledWith(window, [jasmine.any(String)], 'hippo-css');
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
+      expect(OverlayService.clear).toHaveBeenCalled();
+      expect(HstCommentsProcessorService.run).toHaveBeenCalledWith(iframeDocument, jasmine.any(Function));
+      expect(PageStructureService.attachEmbeddedLinks).toHaveBeenCalled();
+      expect(RenderingService.updateDragDrop).toHaveBeenCalled();
+      expect(RenderingService.emitter.emit).toHaveBeenCalledWith('overlay-created');
+      expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
+    });
+
+    it('handles the reparsing of an existing page', () => {
+      spyOn(DomService, 'hasCssLink').and.returnValue(true);
+      spyOn(DomService, 'addCssLinks');
+
+      RenderingService.createOverlay();
+      $rootScope.$digest();
+
+      expect(DomService.addCssLinks).not.toHaveBeenCalled();
+      expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
+      expect(OverlayService.clear).toHaveBeenCalled();
       expect(HstCommentsProcessorService.run).toHaveBeenCalledWith(iframeDocument, jasmine.any(Function));
       expect(PageStructureService.attachEmbeddedLinks).toHaveBeenCalled();
       expect(RenderingService.updateDragDrop).toHaveBeenCalled();
@@ -110,12 +130,14 @@ describe('RenderingService', () => {
     });
 
     it('clears the parsed elements, then stops when loading the hippo-iframe CSS file throws an error', () => {
+      spyOn(DomService, 'hasCssLink').and.returnValue(false);
       spyOn(DomService, 'addCssLinks').and.returnValue($q.reject());
 
       RenderingService.createOverlay();
       $rootScope.$digest();
 
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
+      expect(OverlayService.clear).toHaveBeenCalled();
       expect(HstCommentsProcessorService.run).not.toHaveBeenCalled();
       expect(PageStructureService.attachEmbeddedLinks).not.toHaveBeenCalled();
       expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
@@ -130,6 +152,7 @@ describe('RenderingService', () => {
       $rootScope.$digest();
 
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
+      expect(OverlayService.clear).toHaveBeenCalled();
       expect(HstCommentsProcessorService.run).not.toHaveBeenCalled();
       expect(PageStructureService.attachEmbeddedLinks).not.toHaveBeenCalled();
       expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss?url';
 
 const OVERLAY_CREATED_EVENT_NAME = 'overlay-created';
+const INJECTED_CSS_CLASS = 'hippo-css';
 
 class RenderingService {
   constructor(
@@ -68,6 +69,7 @@ class RenderingService {
 
   createOverlay() {
     this.PageStructureService.clearParsedElements();
+    this.OverlayService.clear();
 
     return this._insertCss()
       .then(() => {
@@ -91,8 +93,13 @@ class RenderingService {
         // sometimes the iframe does not have a document, e.g. when viewing inline PDFs
         return this.$q.reject();
       }
+
       const iframeWindow = this.DomService.getIframeWindow(this.iframeJQueryElement);
-      return this.DomService.addCssLinks(iframeWindow, [hippoIframeCss]);
+      if (this.DomService.hasCssLink(iframeWindow, INJECTED_CSS_CLASS)) {
+        return this.$q.resolve();
+      }
+
+      return this.DomService.addCssLinks(iframeWindow, [hippoIframeCss], INJECTED_CSS_CLASS);
     } catch (e) {
       return this.$q.reject();
     }
