@@ -70,7 +70,7 @@
     <Logger name="org.hippoecm.hst.core.container.DiagnosticReportingValve" level="info"/>
 
     <!-- crisp-profile logging -->
-    <Logger additivity="false" name="org.onehippo.cms7.crisp.core.profile.ResourceResolverProfiler" level="info"/>
+    <Logger additivity="false" name="org.onehippo.cms7.crisp.core.profile.ResourceResolverProfiler" level="info">
       <AppenderRef ref="crisp-profile"/>
     </Logger>
 
