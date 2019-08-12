@@ -16,24 +16,26 @@
 
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { NavLocation } from '@bloomreach/navapp-communication';
-import { BehaviorSubject, of, ReplaySubject } from 'rxjs';
+import { of, ReplaySubject } from 'rxjs';
 
 import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
 
+import { BusyIndicatorService } from './busy-indicator.service';
 import { CommunicationsService } from './communications.service';
 import { NavConfigService } from './nav-config.service';
 import { OverlayService } from './overlay.service';
 
 describe('CommunicationsService', () => {
+  let service: CommunicationsService;
   let clientAppService: ClientAppService;
   let navConfigService: NavConfigService;
   let menuStateService: MenuStateService;
   let breadcrumbsService: BreadcrumbsService;
   let overlayService: OverlayService;
-  let communicationsService: CommunicationsService;
+  let busyIndicatorService: BusyIndicatorService;
 
   let clientApps: ClientApp[];
 
@@ -64,6 +66,11 @@ describe('CommunicationsService', () => {
   const breadcrumbsServiceMock = jasmine.createSpyObj('BreadcrumbsService', [
     'setSuffix',
     'clearSuffix',
+  ]);
+
+  const busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', [
+    'show',
+    'hide',
   ]);
 
   beforeEach(() => {
@@ -106,21 +113,23 @@ describe('CommunicationsService', () => {
         { provide: MenuStateService, useValue: menuStateServiceMock },
         { provide: BreadcrumbsService, useValue: breadcrumbsServiceMock },
         { provide: OverlayService, useValue: overlayServiceMock },
+        { provide: BusyIndicatorService, useValue: busyIndicatorServiceMock },
       ],
     });
 
+    service = TestBed.get(CommunicationsService);
     clientAppService = TestBed.get(ClientAppService);
     navConfigService = TestBed.get(NavConfigService);
     menuStateService = TestBed.get(MenuStateService);
     breadcrumbsService = TestBed.get(BreadcrumbsService);
     overlayService = TestBed.get(OverlayService);
-    communicationsService = TestBed.get(CommunicationsService);
+    busyIndicatorService = TestBed.get(BusyIndicatorService);
   });
 
   describe('client api methods', () => {
     describe('navigate', () => {
       it('should get the client app and communicate the Location to be navigated to', fakeAsync(() => {
-        communicationsService.navigate('testId', 'testPath');
+        service.navigate('testId', 'testPath');
 
         expect(
           clientAppService.getApp('testId').api.navigate,
@@ -132,18 +141,25 @@ describe('CommunicationsService', () => {
           'testId',
         );
       }));
+
+      it('should show the busy indicator', () => {
+        service.navigate('testId', 'testPath');
+
+        expect(busyIndicatorService.show).toHaveBeenCalled();
+        expect(busyIndicatorService.hide).toHaveBeenCalled();
+      });
     });
 
     describe('updateSelectedSite', () => {
       it('should get the client app and communicate the site id', () => {
-        communicationsService.updateSelectedSite({ accountId: 10, siteId: 1337 });
+        service.updateSelectedSite({ accountId: 10, siteId: 1337 });
         expect(
           clientAppService.getApp('testId').api.updateSelectedSite,
         ).toHaveBeenCalledWith({ accountId: 10, siteId: 1337 });
       });
 
       it('should trigger to all supporting client apps to update their site', fakeAsync(() => {
-        communicationsService.updateSelectedSite({ accountId: 10, siteId: 1337 });
+        service.updateSelectedSite({ accountId: 10, siteId: 1337 });
 
         tick();
 
@@ -151,18 +167,35 @@ describe('CommunicationsService', () => {
           clientApps[1].api.updateSelectedSite,
         ).toHaveBeenCalledTimes(1);
       }));
+
+      it('should show the busy indicator', () => {
+        service.updateSelectedSite({ accountId: 10, siteId: 1337 });
+
+        expect(busyIndicatorService.show).toHaveBeenCalled();
+        expect(busyIndicatorService.hide).toHaveBeenCalled();
+      });
     });
 
     describe('logout', () => {
-      it('should logout all apps', () => {
+      beforeAll(() => {
         clientAppServiceMock.logoutApps.and.returnValue(Promise.resolve());
-        communicationsService.logout()
+      });
+
+      it('should logout all apps', () => {
+        service.logout()
           .then(
             () => expect(navConfigService.logout).toHaveBeenCalled(),
           )
           .catch(
             () => fail('Expected navConfigService.logout to have been called'),
           );
+      });
+
+      it('should show the busy indicator', () => {
+        service.logout()
+
+        expect(busyIndicatorService.show).toHaveBeenCalled();
+        expect(busyIndicatorService.hide).toHaveBeenCalled();
       });
     });
   });
@@ -176,7 +209,7 @@ describe('CommunicationsService', () => {
           id: path,
         });
 
-        communicationsService.parentApiMethods.navigate({
+        service.parentApiMethods.navigate({
           path,
         });
 
@@ -194,7 +227,7 @@ describe('CommunicationsService', () => {
           id: path,
         });
 
-        communicationsService.parentApiMethods.navigate({
+        service.parentApiMethods.navigate({
           path,
         });
 
@@ -208,7 +241,7 @@ describe('CommunicationsService', () => {
         const path = 'some-perspective';
         spyOn(console, 'error');
         navConfigServiceMock.findNavItem.and.returnValue(undefined);
-        communicationsService.parentApiMethods.navigate({
+        service.parentApiMethods.navigate({
           path,
         });
 
@@ -223,7 +256,7 @@ describe('CommunicationsService', () => {
           path,
         };
 
-        communicationsService.parentApiMethods.updateNavLocation(location);
+        service.parentApiMethods.updateNavLocation(location);
 
         expect(menuStateService.activateMenuItem).toHaveBeenCalledWith(
           clientAppService.activeApp.id,
@@ -234,14 +267,14 @@ describe('CommunicationsService', () => {
 
     describe('.showMask', () => {
       it('should enable the overlay', () => {
-        communicationsService.parentApiMethods.showMask();
+        service.parentApiMethods.showMask();
         expect(overlayService.enable).toHaveBeenCalled();
       });
     });
 
     describe('.hideMask', () => {
       it('should disable the overlay', () => {
-        communicationsService.parentApiMethods.hideMask();
+        service.parentApiMethods.hideMask();
         expect(overlayService.disable).toHaveBeenCalled();
       });
     });
@@ -255,12 +288,12 @@ describe('CommunicationsService', () => {
     it('should be set from parent API navigate', () => {
       const path = 'some-perspective';
       const breadcrumbLabel = 'some breadcrumb label';
-      spyOn(communicationsService, 'navigate');
+      spyOn(service, 'navigate');
       navConfigServiceMock.findNavItem.and.returnValue({
         id: path,
       });
 
-      communicationsService.parentApiMethods.navigate({
+      service.parentApiMethods.navigate({
         path,
         breadcrumbLabel,
       });
@@ -272,7 +305,7 @@ describe('CommunicationsService', () => {
       const path = 'some-perspective';
       const breadcrumbLabel = 'some breadcrumb label';
 
-      communicationsService.parentApiMethods.updateNavLocation({
+      service.parentApiMethods.updateNavLocation({
         path,
         breadcrumbLabel,
       });
@@ -292,7 +325,7 @@ describe('CommunicationsService', () => {
     });
 
     it('should be cleared when navigated to the default page', () => {
-      communicationsService.navigateToDefaultPage();
+      service.navigateToDefaultPage();
 
       expect(breadcrumbsService.clearSuffix).toHaveBeenCalled();
     });
