@@ -110,21 +110,22 @@ public class QFacetRuleStateManager {
         @Override
         protected void entering(final Node node, final int level) throws RepositoryException {
 
-            final String facet = node.getProperty(HIPPO_FACET).getString();
-            if (node.isNodeType(NT_FACETRULE) && node.getProperty(HIPPOSYS_TYPE).getString().equals("Reference")
-                    && (facet.equals("jcr:path") || facet.equals("jcr:uuid"))) {
-                // collect value
-                final String path = node.getProperty(HIPPOSYS_VALUE).getString();
+            if (node.isNodeType(NT_FACETRULE)) {
+                final String facet = node.getProperty(HIPPO_FACET).getString();
+                if ("Reference".equals(node.getProperty(HIPPOSYS_TYPE).getString())
+                        && ("jcr:path".equals(facet) || "jcr:uuid".equals(facet))) {
+                    final String path = node.getProperty(HIPPOSYS_VALUE).getString();
 
-                facetRuleUuidsToRefPathMap.put(node.getIdentifier(), path);
+                    facetRuleUuidsToRefPathMap.put(node.getIdentifier(), path);
 
-                if (node.getSession().nodeExists(path)) {
-                    final Node referencee = node.getSession().getNode(path);
-                    final String identifier = referencee.getIdentifier();
-                    jcrPathToUUIDReferences.put(path, identifier);
-                    jcrUuidToPathReferences.put(identifier, path);
-                } else {
-                    jcrPathToUUIDReferences.put(path, StringUtils.EMPTY);
+                    if (node.getSession().nodeExists(path)) {
+                        final Node referencee = node.getSession().getNode(path);
+                        final String identifier = referencee.getIdentifier();
+                        jcrPathToUUIDReferences.put(path, identifier);
+                        jcrUuidToPathReferences.put(identifier, path);
+                    } else {
+                        jcrPathToUUIDReferences.put(path, StringUtils.EMPTY);
+                    }
                 }
             }
         }
