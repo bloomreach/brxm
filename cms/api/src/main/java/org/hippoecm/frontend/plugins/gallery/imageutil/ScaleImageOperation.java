@@ -178,25 +178,31 @@ public class ScaleImageOperation extends AbstractScaleImageOperation {
 
             final int originalWidth = reader.getWidth(0);
             final int originalHeight = reader.getHeight(0);
+            final long originalSize = tmpFile.length();
 
             if (isOriginalVariant()) {
                 setResult(new AutoDeletingTmpFileInputStream(tmpFile), originalWidth, originalHeight);
                 deleteTmpFile = false;
             } else {
                 synchronized (scalingLock) {
-                    final BufferedImage scaledImage = processImage(reader, originalWidth, originalHeight);
-                    final ByteArrayOutputStream scaledOutputStream = ImageUtils.writeImage(writer, scaledImage,
+                    final BufferedImage newImage = processImage(reader, originalWidth, originalHeight);
+                    final ByteArrayOutputStream newImageOutputStream = ImageUtils.writeImage(writer, newImage,
                             getParameters().getCompressionQuality());
 
+                    final int newWidth = newImage.getWidth();
+                    final int newHeight = newImage.getHeight();
+                    final int newSize = newImageOutputStream.size();
+
+                    final InputStream newData;
                     // if the scaled image dimensions equals to the original image dimensions and
                     // scaled image weight is bigger than the original image weight, use original image
-                    if (scaledImage.getWidth() == originalWidth && scaledImage.getHeight() == originalHeight
-                            && scaledOutputStream.toByteArray().length > IOUtils.toByteArray(dataInputStream).length) {
-                        setResult(new AutoDeletingTmpFileInputStream(tmpFile), scaledImage.getWidth(), scaledImage.getHeight());
+                    if (newWidth == originalWidth && newHeight == originalHeight && newSize > originalSize) {
+                        newData = new AutoDeletingTmpFileInputStream(tmpFile);
                         deleteTmpFile = false;
                     } else {
-                        setResult(new ByteArrayInputStream(scaledOutputStream.toByteArray()), scaledImage.getWidth(), scaledImage.getHeight());
+                        newData = new ByteArrayInputStream(newImageOutputStream.toByteArray());
                     }
+                    setResult(newData, newWidth, newHeight);
                 }
             }
         } finally {
