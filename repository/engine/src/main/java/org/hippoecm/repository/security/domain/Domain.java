@@ -96,11 +96,7 @@ public class Domain {
             Node child = iter.nextNode();
             try {
                 if (child.getPrimaryNodeType().isNodeType(HippoNodeType.NT_DOMAINRULE)) {
-                    try {
-                        domainRules.add(new DomainRule(child));
-                    } catch (FacetRuleReferenceNotFoundException e){
-                        log.info("Skipping domain rule '{}' because {}", child.getPath(), e.getMessage());
-                    }
+                    domainRules.add(new DomainRule(child));
                 } else if (child.getPrimaryNodeType().isNodeType(HippoNodeType.NT_AUTHROLE)) {
                     authRoles.add(new AuthRole(child));
                 } else {
