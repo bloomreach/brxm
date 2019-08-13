@@ -102,17 +102,17 @@ describe('DomService', () => {
 
   describe('hasCssLink', () => {
     it('returns false when a link is not present', (done) => {
-      testInIframe(iframeWindow => {
+      testInIframe((iframeWindow) => {
         expect(DomService.hasCssLink(iframeWindow, 'css-class')).toBe(false);
         done();
       });
     });
 
     it('returns true when a link is present', (done) => {
-      testInIframe(iframeWindow => {
-         DomService.addCssLinks(iframeWindow, ['testFile.css'], 'css-class');
-         expect(DomService.hasCssLink(iframeWindow, 'css-class')).toBe(true);
-         done();
+      testInIframe((iframeWindow) => {
+        DomService.addCssLinks(iframeWindow, ['testFile.css'], 'css-class');
+        expect(DomService.hasCssLink(iframeWindow, 'css-class')).toBe(true);
+        done();
       });
     });
   });

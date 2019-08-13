@@ -48,7 +48,7 @@ class DomService {
       const link = angular.element('<link>', {
         rel: 'stylesheet',
         href: file,
-        'class': cssClass,
+        class: cssClass,
       });
 
       // resolves relative path in order to use absolute one inside the iframe
