@@ -22,7 +22,6 @@ import javax.jcr.PathNotFoundException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.math3.util.Pair;
 import org.apache.jackrabbit.JcrConstants;
@@ -32,7 +31,6 @@ import org.apache.jackrabbit.spi.commons.conversion.NameResolver;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.apache.jackrabbit.spi.commons.namespace.SessionNamespaceResolver;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.security.FacetAuthConstants;
 import org.onehippo.repository.security.domain.FacetRule;
 import org.slf4j.Logger;
@@ -122,7 +120,7 @@ public class QFacetRule implements Serializable {
      * @param node
      * @throws RepositoryException
      */
-    public QFacetRule(final Node node, final String userId) throws RepositoryException {
+    public QFacetRule(final Node node) throws RepositoryException {
         // get mandatory properties
         facet = node.getProperty(HippoNodeType.HIPPO_FACET).getString();
 
@@ -143,7 +141,7 @@ public class QFacetRule implements Serializable {
         } else if (tmpType == PropertyType.REFERENCE) {
             // convert to a String matcher on UUID
             tmpType = PropertyType.STRING;
-            final Pair<String, String> uuidAbsPath = parseReferenceTypeValue(node, userId);
+            final Pair<String, String> uuidAbsPath = parseReferenceTypeValue(node);
             tmpValue = uuidAbsPath.getFirst();
             pathReference = uuidAbsPath.getSecond();
         }
@@ -185,21 +183,11 @@ public class QFacetRule implements Serializable {
      * @return String the String representation of the UUID
      * @throws RepositoryException
      */
-    private Pair<String, String> parseReferenceTypeValue(Node facetNode, final String userId) throws RepositoryException {
+    private Pair<String, String> parseReferenceTypeValue(Node facetNode) throws RepositoryException {
         final String uuid;
         final String pathValue = facetNode.getProperty(HippoNodeType.HIPPOSYS_VALUE).getString();
-
-        // replace potentially __user__ with the userId
-        final String expandedPathValue;
-        if (userId == null) {
-            expandedPathValue = pathValue;
-        } else {
-            expandedPathValue = RegExUtils.replaceAll(pathValue, FacetAuthConstants.EXPANDER_USER, NodeNameCodec.encode(userId, true));
-        }
-
-        final String path = expandedPathValue.startsWith("/") ? expandedPathValue.substring(1) : expandedPathValue;
+        final String path = pathValue.startsWith("/") ? pathValue.substring(1) : pathValue;
         final String absPath = "/" + path;
-
         if ("".equals(path)) {
             uuid = facetNode.getSession().getRootNode().getIdentifier();
         } else {

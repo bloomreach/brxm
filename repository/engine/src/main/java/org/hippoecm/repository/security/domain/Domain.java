@@ -84,7 +84,7 @@ public class Domain {
      * @param node the node holding the configuration
      * @throws RepositoryException
      */
-    public Domain(final Node node, final String userId) throws RepositoryException {
+    public Domain(final Node node) throws RepositoryException {
         if (node == null) {
             throw new IllegalArgumentException("Domain node cannot be null");
         }
@@ -96,7 +96,7 @@ public class Domain {
             Node child = iter.nextNode();
             try {
                 if (child.getPrimaryNodeType().isNodeType(HippoNodeType.NT_DOMAINRULE)) {
-                    domainRules.add(new DomainRule(child, userId));
+                    domainRules.add(new DomainRule(child));
                 } else if (child.getPrimaryNodeType().isNodeType(HippoNodeType.NT_AUTHROLE)) {
                     authRoles.add(new AuthRole(child));
                 } else {

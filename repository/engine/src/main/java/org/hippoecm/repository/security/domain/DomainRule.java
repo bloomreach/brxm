@@ -62,13 +62,13 @@ public class DomainRule implements Serializable {
      * @param node the node folding the domain rule configuration
      * @throws RepositoryException
      */
-    public DomainRule(Node node, final String userId) throws RepositoryException {
+    public DomainRule(Node node) throws RepositoryException {
         // loop over all the facet rules
         NodeIterator iter = node.getNodes();
         while (iter.hasNext()) {
             Node child = iter.nextNode();
             if (child.getPrimaryNodeType().isNodeType(HippoNodeType.NT_FACETRULE)) {
-                facetRules.add(new QFacetRule(child, userId));
+                facetRules.add(new QFacetRule(child));
             }
         }
         facetRules = Collections.unmodifiableSet(facetRules);

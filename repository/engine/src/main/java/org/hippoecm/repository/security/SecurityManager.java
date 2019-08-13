@@ -182,19 +182,19 @@ public class SecurityManager implements HippoSecurityManager {
                     throws RepositoryException {
 
                 CallbackHandler cbHandler = new CallbackHandlerImpl(credentials, session, principalProviderRegistry, adminId, anonymousId) {
-                        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-                            List<Callback> list = new LinkedList<Callback>();
-                            for(Callback callback : callbacks) {
-                                if (callback instanceof NameCallback ||
+                    public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+                        List<Callback> list = new LinkedList<Callback>();
+                        for(Callback callback : callbacks) {
+                            if (callback instanceof NameCallback ||
                                     callback instanceof PasswordCallback ||
                                     callback instanceof ImpersonationCallback ||
                                     callback instanceof RepositoryCallback ||
                                     callback instanceof CredentialsCallback) {
-                                    list.add(callback);
-                                }
+                                list.add(callback);
                             }
-                            super.handle(list.toArray(new Callback[list.size()]));
                         }
+                        super.handle(list.toArray(new Callback[list.size()]));
+                    }
                 };
 
                 if (isJAAS()) {
@@ -311,7 +311,7 @@ public class SecurityManager implements HippoSecurityManager {
 
             log.debug("Found provider: {} for authenticated user: {}", providerId, userId);
             creds.setAttribute("providerId", providerId);
-            
+
             HippoUserManager userMgr = (HippoUserManager)providers.get(providerId).getUserManager();
 
             // Check if user is active
@@ -380,7 +380,7 @@ public class SecurityManager implements HippoSecurityManager {
             NodeIterator nodeIter = result.getNodes();
             while (nodeIter.hasNext()) {
                 // the parent of the auth role node is the domain node
-                Domain domain = new Domain(nodeIter.nextNode().getParent(), userId);
+                Domain domain = new Domain(nodeIter.nextNode().getParent());
                 log.trace("Domain '{}' found for user: {}", domain.getName(), userId);
                 domains.add(domain);
             }
@@ -391,9 +391,9 @@ public class SecurityManager implements HippoSecurityManager {
     }
 
     /**
-     * Get the domains for {@code userId} in which the group has a role.
+     * Get the domains in which the group has a role.
      */
-    private Set<Domain> getDomainsForGroup(String rawGroupId, String providerId, final String userId) throws RepositoryException {
+    private Set<Domain> getDomainsForGroup(String rawGroupId, String providerId) throws RepositoryException {
         String groupId = NodeNameCodec.decode(sanitizeGroupId(rawGroupId, providerId));
 
         Set<Domain> domains = new HashSet<Domain>();
@@ -409,7 +409,7 @@ public class SecurityManager implements HippoSecurityManager {
             NodeIterator nodeIter = result.getNodes();
             while (nodeIter.hasNext()) {
                 // the parent of the auth role node is the domain node
-                Domain domain = new Domain(nodeIter.nextNode().getParent(), userId);
+                Domain domain = new Domain(nodeIter.nextNode().getParent());
                 log.trace("Domain '{}' found for group: {}", domain.getName(), groupId);
                 domains.add(domain);
             }
@@ -447,7 +447,7 @@ public class SecurityManager implements HippoSecurityManager {
         }
         return currentRoles;
     }
-    
+
     private Set<String> getPrivilegesForRole(String roleId) {
         Set<String> privileges = new HashSet<String>();
         Node roleNode;
@@ -475,7 +475,7 @@ public class SecurityManager implements HippoSecurityManager {
                         privileges.add("jcr:setProperties");
                         privileges.add("jcr:addChildNodes");
                         privileges.add("jcr:removeChildNodes");
-                        
+
                     } else {
                         privileges.add(privilege);
                     }
@@ -489,9 +489,9 @@ public class SecurityManager implements HippoSecurityManager {
         }
         return privileges;
     }
-    
+
     /**
-     * Sanitize the raw userId input according to the case sensitivity of the 
+     * Sanitize the raw userId input according to the case sensitivity of the
      * security provider.
      * @return the trimmed and if needed converted to lowercase userId
      */
@@ -515,12 +515,12 @@ public class SecurityManager implements HippoSecurityManager {
             } else {
                 return rawUserId.trim().toLowerCase();
             }
-            
+
         }
     }
 
     /**
-     * Sanitize the raw userId input according to the case sensitivity of the 
+     * Sanitize the raw userId input according to the case sensitivity of the
      * security provider.
      * @return the trimmed and if needed converted to lowercase groupId
      */
@@ -541,7 +541,7 @@ public class SecurityManager implements HippoSecurityManager {
             } else {
                 return rawGroupId.trim().toLowerCase();
             }
-            
+
         }
     }
 
@@ -560,9 +560,9 @@ public class SecurityManager implements HippoSecurityManager {
         }
 
         try {
-           assignUserPrincipals(principals, userId);
-           assignGroupPrincipals(principals, userId, providerId);
-           assignFacetAuthPrincipals(principals, userId, providerId);
+            assignUserPrincipals(principals, userId);
+            assignGroupPrincipals(principals, userId, providerId);
+            assignFacetAuthPrincipals(principals, userId, providerId);
         } catch(RepositoryException ex) {
             log.warn("unable to assign principals for user", ex);
         }
@@ -588,7 +588,7 @@ public class SecurityManager implements HippoSecurityManager {
         userDomains.addAll(getDomainsForUser(userId, providerId));
         for (Principal principal : principals) {
             if (principal instanceof GroupPrincipal) {
-                userDomains.addAll(getDomainsForGroup(principal.getName(), providerId, userId));
+                userDomains.addAll(getDomainsForGroup(principal.getName(), providerId));
             }
         }
 
@@ -672,15 +672,11 @@ public class SecurityManager implements HippoSecurityManager {
     public void close() {
     }
 
-   public AuthContext getAuthContext(Credentials credentials, Subject subject, String workspaceName) throws RepositoryException {
+    public AuthContext getAuthContext(Credentials credentials, Subject subject, String workspaceName) throws RepositoryException {
         return authCtxProvider.getAuthContext(credentials, subject, systemSession, principalProviderRegistry, null/*"admin"*/, /*"anonymous"*/null);
     }
 
     public AccessManager getAccessManager(Session session, AMContext amContext) throws RepositoryException {
-        // TODO Is this every used? Does not correctly register the AccessManager as listener!!
-        if (true) {
-            throw new UnsupportedOperationException("Not allowed to get the access manager  in Hippo Repository via this method");
-        }
         try {
             AccessManagerConfig amc = config.getAccessManagerConfig();
             AccessManager accessMgr;
