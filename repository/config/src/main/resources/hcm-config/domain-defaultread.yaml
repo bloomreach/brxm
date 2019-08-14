@@ -13,13 +13,13 @@ definitions:
           hipposys:value: /hippo:configuration/hippo:translations
       /hippo-derivatives:
         jcr:primaryType: hipposys:domainrule
-          /hippo-derivatives-and-descendants:
-            jcr:primaryType: hipposys:facetrule
-            hipposys:equals: true
-            hipposys:facet: jcr:path
-            hipposys:filter: false
-            hipposys:type: Reference
-            hipposys:value: /hippo:configuration/hippo:derivatives
+        /hippo-derivatives-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:filter: false
+          hipposys:type: Reference
+          hipposys:value: /hippo:configuration/hippo:derivatives
       /user-folders:
         jcr:primaryType: hipposys:domainrule
         /user-folder:
