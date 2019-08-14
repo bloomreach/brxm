@@ -96,6 +96,42 @@ definitions:
             hipposys:filter: false
             hipposys:type: Reference
             hipposys:value: /hippo:configuration/hippo:modules
+      # TODO rather replace 'everybody' with functional role 'workflow-user'
+      /hippo:configuration/hippo:domains/workflows:
+        jcr:primaryType: hipposys:domain
+        /workflows-domain:
+          jcr:primaryType: hipposys:domainrule
+          /workflow-and-descendants:
+            jcr:primaryType: hipposys:facetrule
+            hipposys:equals: true
+            hipposys:facet: jcr:path
+            hipposys:filter: false
+            hipposys:type: Reference
+            hipposys:value: /hippo:configuration/hippo:workflows
+      # TODO rather replace 'everybody' with functional role 'cms-user'
+      /hippo:configuration/hippo:domains/frontendconfig:
+        jcr:primaryType: hipposys:domain
+        /frontendconfig-domain:
+          jcr:primaryType: hipposys:domainrule
+          /frontendconfig-and-descendants:
+            jcr:primaryType: hipposys:facetrule
+            hipposys:equals: true
+            hipposys:facet: jcr:path
+            hipposys:filter: false
+            hipposys:type: Reference
+            hipposys:value: /hippo:configuration/hippo:frontend
+      # TODO rather replace 'everybody' with functional role 'cms-user'
+      /hippo:configuration/hippo:domains/hippo-namespaces:
+        jcr:primaryType: hipposys:domain
+        /hippo-namespaces-domain:
+          jcr:primaryType: hipposys:domainrule
+          /hippo-namespaces-and-descendants:
+            jcr:primaryType: hipposys:facetrule
+            hipposys:equals: true
+            hipposys:facet: jcr:path
+            hipposys:filter: false
+            hipposys:type: Reference
+            hipposys:value: /hippo:namespaces
       /readonly:
         jcr:primaryType: hipposys:authrole
         hipposys:groups: [everybody]

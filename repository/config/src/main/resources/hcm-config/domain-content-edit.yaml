@@ -1,0 +1,28 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/content-edit:
+      jcr:primaryType: hipposys:domain
+      /documents-domain:
+        jcr:primaryType: hipposys:domainrule
+        /content-documents-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:filter: false
+          hipposys:type: Reference
+          hipposys:value: /content
+        /if-holder:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: hippostd:holder
+          hipposys:filter: true
+          hipposys:type: String
+          hipposys:value: __user__
+      /editor:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [admin, editor]
+        hipposys:role: editor
+      /author:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [author]
+        hipposys:role: author
