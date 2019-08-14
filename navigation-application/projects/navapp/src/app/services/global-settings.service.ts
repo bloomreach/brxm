@@ -30,5 +30,9 @@ export class GlobalSettingsService implements GlobalSettings {
   constructor() {
     const settings = (window as any).NavAppSettings;
     Object.assign(this, settings);
+
+    if (!this.appSettings.iframesConnectionTimeout) {
+      this.appSettings.iframesConnectionTimeout = 30000;
+    }
   }
 }

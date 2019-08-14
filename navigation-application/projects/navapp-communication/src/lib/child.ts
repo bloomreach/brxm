@@ -22,9 +22,10 @@ import { mergeIntersecting } from './utils';
 export function connectToChild({
   iframe,
   methods = {},
+  timeout,
 }: ChildConnectConfig): Promise<ChildPromisedApi> {
   const proxies: ParentApi = {};
   const proxiedMethods = mergeIntersecting(methods, proxies);
 
-  return Penpal.connectToChild({ iframe, methods: proxiedMethods }).promise;
+  return Penpal.connectToChild({ iframe, methods: proxiedMethods, timeout }).promise;
 }
