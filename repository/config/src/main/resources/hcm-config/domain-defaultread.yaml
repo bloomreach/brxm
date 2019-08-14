@@ -20,9 +20,9 @@ definitions:
           hipposys:filter: false
           hipposys:type: Reference
           hipposys:value: /hippo:configuration/hippo:derivatives
-      /user-folders:
+      /users-folders:
         jcr:primaryType: hipposys:domainrule
-        /user-folder:
+        /users-folder:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: jcr:path
@@ -36,6 +36,16 @@ definitions:
           hipposys:filter: false
           hipposys:type: Name
           hipposys:value: hipposys:user
+      /groups-folder:
+        jcr:primaryType: hipposys:domainrule
+        /groups-folder:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          # only 'groups' and not descendants!
+          hipposys:facet: jcr:uuid
+          hipposys:filter: false
+          hipposys:type: Reference
+          hipposys:value: /hippo:configuration/hippo:groups
       /self:
         jcr:primaryType: hipposys:domainrule
         /match-nodename-with-username:
@@ -54,13 +64,6 @@ definitions:
           hipposys:value: hipposys:user
       /self-groups:
         jcr:primaryType: hipposys:domainrule
-        /type-hippo-group:
-          jcr:primaryType: hipposys:facetrule
-          hipposys:equals: true
-          hipposys:facet: nodetype
-          hipposys:filter: false
-          hipposys:type: Name
-          hipposys:value: hipposys:group
         /match-members-with-username:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
