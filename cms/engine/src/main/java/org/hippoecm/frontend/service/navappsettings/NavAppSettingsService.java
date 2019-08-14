@@ -53,6 +53,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     static final String LOGOUT_RESOURCES = "logoutResources";
     static final String RESOURCE_URL = "resource.url";
     static final String RESOURCE_TYPE = "resource.type";
+    static final String IFRAMES_CONNECTION_TIMEOUT = "iframesConnectionTimeout";
 
     static final String NAVIGATIONITEMS_ENDPOINT = "/ws/navigationitems";
     private static final Logger log = LoggerFactory.getLogger(NavAppSettingsService.class);
@@ -147,6 +148,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         final List<NavAppResource> navConfigResources = readNavConfigResources(cmsLocation);
         final List<NavAppResource> loginDomains = readResources(LOGIN_RESOURCES);
         final List<NavAppResource> logoutDomains = readResources(LOGOUT_RESOURCES);
+        final int iframesConnectionTimeout = readIframesConnectionTimeout();
 
         return new AppSettings() {
 
@@ -184,7 +186,16 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
             public List<NavAppResource> getLogoutResources() {
                 return logoutDomains;
             }
+
+            @Override
+            public int getIframesConnectionTimeout() {
+                return iframesConnectionTimeout;
+            }
         };
+    }
+
+    private int readIframesConnectionTimeout() {
+        return getPluginConfig().getInt(IFRAMES_CONNECTION_TIMEOUT, 30_000);
     }
 
     private List<NavAppResource> readNavConfigResources(String cmsLocation) {

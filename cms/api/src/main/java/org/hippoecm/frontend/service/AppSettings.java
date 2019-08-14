@@ -53,6 +53,13 @@ public interface AppSettings {
     String getContextPath();
 
     /**
+     * Returns the maximum number of milliseconds to wait for Iframes to connect before giving up.
+     *
+     * @return Iframe connection timeout in milliseconds
+     */
+    int getIframesConnectionTimeout();
+
+    /**
      * Returns list of resources that must be called by the navapp to retrieve menu related navigation items.
      *
      * @return list of nav config resources
