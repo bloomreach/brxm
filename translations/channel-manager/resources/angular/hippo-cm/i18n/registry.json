@@ -1172,6 +1172,16 @@
     "ERROR_SAVE_WITH_UNSUPPORTED_VALIDATOR" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "NONE_OPTION" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }

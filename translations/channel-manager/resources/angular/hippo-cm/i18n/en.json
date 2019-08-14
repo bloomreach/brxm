@@ -135,6 +135,7 @@
   "SUBPAGE_CHANNEL_SETTINGS_TITLE": "Settings of '{{channelName}}'",
   "CONFIRM_REQUEST_PUBLICATION_OF_DOCUMENT": "Request publication of '{{documentName}}'?",
   "EDIT_MENU": "Edit menu",
+  "NONE_OPTION": "None",
   "SELECT_DOCUMENT_LOCKED": "Cannot select document (component is locked)",
   "SELECT_DOCUMENT": "Select document",
   "PLACEHOLDER_SEARCH": "Search",
