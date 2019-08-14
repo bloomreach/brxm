@@ -11,7 +11,7 @@ definitions:
           hipposys:facet: jcr:path
           hipposys:filter: false
           hipposys:type: Reference
-          hipposys:value: /hippo:configuration/hippo:frontend
+          hipposys:value: /hippo:configuration/hippo:workflow
       /readonly:
         jcr:primaryType: hipposys:authrole
         hipposys:groups: [everybody]
