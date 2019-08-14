@@ -126,6 +126,7 @@ public class NavAppSettingsServiceTest {
         expect(config.getPluginConfigSet()).andReturn(Collections.emptySet());
         expect(config.containsKey(LOGIN_RESOURCES)).andStubReturn(false);
         expect(config.containsKey(LOGOUT_RESOURCES)).andStubReturn(false);
+        expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
         replay(config);
 
         this.navAppSettingsService = new NavAppSettingsService(context, config, () -> userSession);
@@ -181,6 +182,7 @@ public class NavAppSettingsServiceTest {
         expect(config.getPluginConfigSet()).andReturn(Stream.of(cfg1, cfg2).collect(toSet()));
         expect(config.containsKey(LOGIN_RESOURCES)).andStubReturn(false);
         expect(config.containsKey(LOGOUT_RESOURCES)).andStubReturn(false);
+        expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
         expect(cfg1.getString(NavAppSettingsService.RESOURCE_TYPE)).andReturn(ResourceType.IFRAME.name());
         expect(cfg1.getString(NavAppSettingsService.RESOURCE_URL)).andReturn("some-other-url1");
         expect(cfg2.getString(NavAppSettingsService.RESOURCE_TYPE)).andReturn(ResourceType.REST.name());
@@ -262,6 +264,7 @@ public class NavAppSettingsServiceTest {
 
         expect(config.containsKey(LOGOUT_RESOURCES)).andReturn(true);
         expect(config.getPluginConfig(LOGOUT_RESOURCES)).andReturn(config);
+        expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
 
         expect(config.getPluginConfigSet())
                 .andReturn(Stream.of(cfg1).collect(toSet()))
