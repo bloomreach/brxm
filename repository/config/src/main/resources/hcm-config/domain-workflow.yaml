@@ -1,9 +1,9 @@
 # TODO rather replace 'everybody' with functional role 'workflow-user'
 definitions:
   config:
-    /hippo:configuration/hippo:domains/workflow-read:
+    /hippo:configuration/hippo:domains/workflows-read:
       jcr:primaryType: hipposys:domain
-      /workflow-domain:
+      /workflows-domain:
         jcr:primaryType: hipposys:domainrule
         /workflow-and-descendants:
           jcr:primaryType: hipposys:facetrule
@@ -11,7 +11,7 @@ definitions:
           hipposys:facet: jcr:path
           hipposys:filter: false
           hipposys:type: Reference
-          hipposys:value: /hippo:configuration/hippo:workflow
+          hipposys:value: /hippo:configuration/hippo:workflows
       /readonly:
         jcr:primaryType: hipposys:authrole
         hipposys:groups: [everybody]
