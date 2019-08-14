@@ -57,8 +57,7 @@ public class DynamicDropdownFieldType extends PropertyFieldType {
     }
 
     private boolean isDefaultValueListProvider() {
-        return StringUtils.isBlank(valueListProvider) ||
-                StringUtils.equals(valueListProvider, "service.valuelist.default");
+        return StringUtils.isBlank(valueListProvider) || valueListProvider.equals("service.valuelist.default");
     }
 
     @Override
