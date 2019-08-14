@@ -25,6 +25,7 @@ import { MenuItemLink } from '../main-menu/models/menu-item-link.model';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
 
+import { BusyIndicatorService } from './busy-indicator.service';
 import { NavConfigService } from './nav-config.service';
 import { OverlayService } from './overlay.service';
 
@@ -42,6 +43,7 @@ export class CommunicationsService {
     private menuStateService: MenuStateService,
     private breadcrumbsService: BreadcrumbsService,
     private overlay: OverlayService,
+    private busyIndicatorService: BusyIndicatorService,
   ) {
     clientAppService.apps$.pipe(
       takeUntil(this.unsubscribe),
@@ -93,6 +95,7 @@ export class CommunicationsService {
   }
 
   navigate(appId: string, path: string, flags?: { [key: string]: string | number | boolean }): Promise<void> {
+    this.busyIndicatorService.show();
     const app = this.clientAppService.getApp(appId);
 
     if (!app) {
@@ -105,6 +108,7 @@ export class CommunicationsService {
 
     return app.api.navigate({ path }, flags).then(() => {
       this.clientAppService.activateApplication(appId);
+      this.busyIndicatorService.hide();
     });
   }
 
@@ -115,24 +119,27 @@ export class CommunicationsService {
 
     this.breadcrumbsService.clearSuffix();
 
-    return this.navigate(this.activeMenuItem.appId, this.activeMenuItem.appPath
-      , {forceRefresh: true});
+    return this.navigate(this.activeMenuItem.appId, this.activeMenuItem.appPath, {forceRefresh: true});
   }
 
-  updateSelectedSite(siteId: SiteId): Promise<void[]> {
+  updateSelectedSite(siteId: SiteId): Promise<void> {
+    this.busyIndicatorService.show();
+
     return this.clientAppService.activeApp.api.updateSelectedSite(siteId).then(() => {
       const updatePromises = this.apps
-        .filter(app => app.api.updateSelectedSite && app !== this.clientAppService.activeApp)
+        .filter(app => app.api && app.api.updateSelectedSite && app !== this.clientAppService.activeApp)
         .map(app => app.api.updateSelectedSite());
 
-      return Promise.all(updatePromises);
+      return Promise.all(updatePromises).then(() => this.busyIndicatorService.hide());
     });
   }
 
-  logout(): Promise<void[]> {
+  logout(): Promise<void> {
+    this.busyIndicatorService.show();
+
     return this.clientAppService.logoutApps().then(
       () => this.navConfigService.logout(),
-    );
+    ).then(() => this.busyIndicatorService.hide());
   }
 
   private findApp(path: string): ClientApp {
