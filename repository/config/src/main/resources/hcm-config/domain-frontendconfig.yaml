@@ -1,0 +1,17 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/frontendconfig-read:
+      jcr:primaryType: hipposys:domain
+      /frontendconfig-domain:
+        jcr:primaryType: hipposys:domainrule
+        /frontendconfig-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:filter: false
+          hipposys:type: Reference
+          hipposys:value: /hippo:configuration/hippo:frontend
+      /readonly:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [everybody]
+        hipposys:role: readonly
