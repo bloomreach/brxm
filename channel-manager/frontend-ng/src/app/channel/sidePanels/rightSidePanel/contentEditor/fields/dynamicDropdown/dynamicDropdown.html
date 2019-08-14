@@ -21,7 +21,9 @@
            ng-model="$ctrl.ngModel"
            ng-required="$ctrl.isRequired"
            md-no-asterisk>
-  <md-option ng-if="::$ctrl.showNone()">{{ ::'NONE_OPTION' | translate }}</md-option>
+  <md-option ng-if="::$ctrl.showNone()"
+             md-option-empty
+             value="">{{ ::'NONE_OPTION' | translate }}</md-option>
   <md-option ng-repeat="option in $ctrl.options"
              value="{{ ::option.key }}">
     {{ ::option.label }}
