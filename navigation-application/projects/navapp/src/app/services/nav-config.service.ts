@@ -134,9 +134,7 @@ export class NavConfigService {
   findNavItem(iframeUrl: string, path: string): NavItem {
     const navItems = this.navItems.value;
 
-    const relativePath = path.replace(/^(\/)/, '');
-
-    return navItems.find(x => x.appIframeUrl === iframeUrl && relativePath.startsWith(x.appPath));
+    return navItems.find(x => x.appIframeUrl === iframeUrl && path.startsWith(x.appPath));
   }
 
   setSelectedSite(site: Site): void {
