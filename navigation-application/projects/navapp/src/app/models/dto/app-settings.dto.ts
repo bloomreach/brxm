@@ -22,4 +22,5 @@ export interface AppSettings {
   navConfigResources: ConfigResource[];
   loginResources: string[];
   logoutResources: string[];
+  iframesConnectionTimeout: number;
 }

@@ -17,6 +17,7 @@
 export interface ChildConnectConfig {
   iframe: HTMLIFrameElement;
   methods?: ParentApi;
+  timeout?: number;
 }
 
 export interface ParentConnectConfig {
@@ -64,7 +65,7 @@ export interface ChildApi {
   beforeNavigation?: () => boolean;
   onUserActivity?: () => void;
   logout?: () => void;
-  navigate?: (location: NavLocation, flags?: { [key: string]: string | number | boolean }) => void;
+  navigate?: (location: NavLocation, flags?: NavigateFlags) => void;
   updateSelectedSite?: (siteId?: SiteId) => void;
 }
 
@@ -76,8 +77,12 @@ export interface ChildPromisedApi {
   beforeNavigation?: () => Promise<boolean>;
   onUserActivity?: () => Promise<void>;
   logout?: () => Promise<void>;
-  navigate?: (location: NavLocation, flags?: { [key: string]: string | number | boolean }) => Promise<void>;
+  navigate?: (location: NavLocation, flags?: NavigateFlags) => Promise<void>;
   updateSelectedSite?: (siteId?: SiteId) => Promise<void>;
+}
+
+export interface NavigateFlags {
+  [key: string]: string | number | boolean;
 }
 
 export interface NavItem {

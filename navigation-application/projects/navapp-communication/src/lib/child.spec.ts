@@ -32,6 +32,7 @@ describe('connectToChild', () => {
       methods: {
         navigate: () => {},
       },
+      timeout: 10000,
     };
 
     connectToChild(config);
@@ -50,6 +51,7 @@ describe('connectToChild', () => {
     expect(Penpal.connectToChild).toHaveBeenCalledWith({
       iframe,
       methods: {},
+      timeout: undefined,
     });
   });
 });

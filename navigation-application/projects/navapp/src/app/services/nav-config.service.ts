@@ -52,7 +52,7 @@ export class NavConfigService {
 
   constructor(
     private http: HttpClient,
-    private settingsService: GlobalSettingsService,
+    private settings: GlobalSettingsService,
     private rendererFactory: RendererFactory2,
     @Inject(DOCUMENT) private document,
   ) {
@@ -72,7 +72,7 @@ export class NavConfigService {
   }
 
   init(): Promise<void> {
-    const loginPromises = this.settingsService.appSettings.loginResources.map(
+    const loginPromises = this.settings.appSettings.loginResources.map(
       resource => this.loginSilently(resource),
     );
 
@@ -83,7 +83,7 @@ export class NavConfigService {
         throw new Error('failed to login');
       }
 
-      const configurationPromises = this.settingsService.appSettings.navConfigResources.map(
+      const configurationPromises = this.settings.appSettings.navConfigResources.map(
         resource => this.fetchConfiguration(resource),
       );
 
@@ -94,6 +94,10 @@ export class NavConfigService {
           selectedSiteId,
         } = configurations.reduce(
           (result, configuration) => {
+            if (!configuration) {
+              return result;
+            }
+
             result.mergedNavItems = result.mergedNavItems.concat(
               configuration.navItems,
             );
@@ -123,7 +127,7 @@ export class NavConfigService {
   }
 
   logout(): Promise<void[]> {
-    const logoutPromises = this.settingsService.appSettings.logoutResources.map(resource => this.logoutSilently(resource));
+    const logoutPromises = this.settings.appSettings.logoutResources.map(resource => this.logoutSilently(resource));
     return Promise.all(logoutPromises);
   }
 
@@ -144,7 +148,7 @@ export class NavConfigService {
   }
 
   private logoutSilently(resource: string): Promise<void> {
-    return this.fetchFromIframe(resource, api => Promise.resolve());
+    return this.fetchFromIframe(resource, () => Promise.resolve());
   }
 
   private fetchConfiguration(resource: ConfigResource): Promise<Configuration> {
@@ -153,13 +157,13 @@ export class NavConfigService {
         return this.fetchFromIframe(resource.url, child => {
           const communications: Promise<any>[] = [];
           communications.push(
-            child.getNavItems ? child.getNavItems() : Promise.resolve(),
+            child.getNavItems ? child.getNavItems() : Promise.resolve([]),
           );
           communications.push(
-            child.getSites ? child.getSites() : Promise.resolve(),
+            child.getSites ? child.getSites() : Promise.resolve([]),
           );
           communications.push(
-            child.getSelectedSite ? child.getSelectedSite() : Promise.resolve(),
+            child.getSelectedSite ? child.getSelectedSite() : Promise.resolve(undefined),
           );
 
           return Promise.all(communications).then(
@@ -197,10 +201,11 @@ export class NavConfigService {
 
     const config: ChildConnectConfig = {
       iframe,
+      timeout: this.settings.appSettings.iframesConnectionTimeout,
     };
 
     return connectToChild(config)
-      .then(fetcher)
+      .then(fetcher, () => undefined)
       .finally(() => this.renderer.removeChild(this.document.body, iframe));
   }
 

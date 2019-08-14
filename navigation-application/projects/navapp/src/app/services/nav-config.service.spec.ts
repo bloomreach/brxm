@@ -58,9 +58,7 @@ describe('NavConfigService', () => {
     getSelectedSite: Promise.resolve(selectedSite),
   });
 
-  const connectionMock = jasmine
-    .createSpy('connectToChild')
-    .and.returnValue(Promise.resolve(childApiMock));
+  const connectionMock = jasmine.createSpy('connectToChild');
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -81,10 +79,38 @@ describe('NavConfigService', () => {
     );
   });
 
-  describe('initialization', () => {
+  it('should gracefully handle the connection error', fakeAsync(() => {
+    // connectionMock.and.returnValue(Promise.reject()); generates an error
+    // workaround from https://github.com/jasmine/jasmine/issues/1590
+    connectionMock.and.callFake(() => Promise.reject());
+
+    const expectedNavItems = [
+      new NavItemMock({
+        id: 'testItem',
+        appIframeUrl: 'testurl',
+        appPath: 'test path',
+      }),
+    ];
+
+    navConfigService.navItems$.subscribe(x => {
+      expect(x).toEqual(expectedNavItems);
+    });
+    navConfigService.sites$.subscribe(x => {
+      expect(x).toEqual([]);
+    });
+    navConfigService.selectedSite$.subscribe(x => {
+      expect(x).toEqual(undefined);
+    });
+
+    httpTestingController.verify();
+  }));
+
+  describe('after initialization', () => {
     let totalNavItems: navappCommunication.NavItem[];
 
     beforeEach(fakeAsync(() => {
+      connectionMock.and.returnValue(Promise.resolve(childApiMock));
+
       const RESTNavItem = new NavItemMock({
         id: 'testItem',
         appIframeUrl: 'testurl',

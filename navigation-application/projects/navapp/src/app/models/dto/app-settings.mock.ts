@@ -31,6 +31,7 @@ export class AppSettingsMock implements AppSettings {
       url: 'testRESTurl',
     }) as ConfigResource,
   ];
+  iframesConnectionTimeout: 30000;
 
   loginResources = ['testLoginResource1', 'testLoginResource2'];
 
