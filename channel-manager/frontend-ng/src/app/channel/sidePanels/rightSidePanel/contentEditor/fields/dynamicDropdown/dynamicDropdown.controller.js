@@ -22,34 +22,16 @@ class DynamicDropdownFieldController {
   }
 
   $onInit() {
-    this.keys = [];
-    this.labels = [];
-    this._loadOptionsList();
-  }
-
-  optionValues() {
-    return this.keys;
-  }
-
-  optionDisplayValues(index) {
-    return this.labels[index];
+    this.options = [];
+    this._loadOptions();
   }
 
   showNone() {
     return this.showDefault && !this.isRequired;
   }
 
-  async _loadOptionsList() {
-    const document = await this._getValueList();
-
-    document.forEach((item) => {
-      this.keys.push(item.key);
-      this.labels.push(item.label);
-    });
-  }
-
-  _getValueList() {
-    return this.ContentService.getValueList(
+  async _loadOptions() {
+    this.options = await this.ContentService.getValueList(
       this.optionsSource,
       this.locale,
       this.sortComparator,

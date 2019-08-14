@@ -22,8 +22,8 @@
            ng-required="$ctrl.isRequired"
            md-no-asterisk>
   <md-option ng-if="::$ctrl.showNone()">{{ ::'NONE_OPTION' | translate }}</md-option>
-  <md-option ng-repeat="optionValue in $ctrl.optionValues()"
-             value="{{ optionValue }}">
-    {{ ::$ctrl.optionDisplayValues($index) }}
+  <md-option ng-repeat="option in $ctrl.options"
+             value="{{ ::option.key }}">
+    {{ ::option.label }}
   </md-option>
 </md-select>

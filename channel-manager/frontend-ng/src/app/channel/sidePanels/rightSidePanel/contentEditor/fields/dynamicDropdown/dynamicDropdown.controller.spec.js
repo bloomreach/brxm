@@ -50,25 +50,23 @@ describe('dynamicDropdown', () => {
   });
 
   describe('load options for dynamic dropdown field', () => {
-    it('loads option values correctly', () => {
+    it('loads options correctly', () => {
       const valueList = [{ key: 's', label: 'Ship' }, { key: 'b', label: 'Boat' }];
       ContentService.getValueList.and.returnValue($q.resolve(valueList));
 
       $ctrl.$onInit();
       $scope.$apply();
 
-      expect($ctrl.optionValues()).toEqual(['s', 'b']);
+      expect($ctrl.options).toEqual(valueList);
     });
 
-    it('loads option display values correctly', () => {
-      const valueList = [{ key: 's', label: 'Ship' }, { key: 'b', label: 'Boat' }];
-      ContentService.getValueList.and.returnValue($q.resolve(valueList));
+    it('shows zero options when loading fails', () => {
+      ContentService.getValueList.and.returnValue($q.reject());
 
       $ctrl.$onInit();
       $scope.$apply();
 
-      expect($ctrl.optionDisplayValues(0)).toEqual('Ship');
-      expect($ctrl.optionDisplayValues(1)).toEqual('Boat');
+      expect($ctrl.options).toEqual([]);
     });
   });
 });
