@@ -70,8 +70,8 @@
                         <th>Variant</th>
                         <th>Width</th>
                         <th>Height</th>
-                        <th>Upscaling</th>
-                        <th>Cropping</th>
+                        <th>Upscale</th>
+                        <th>Crop</th>
                         <th class="table-action"></th>
                         <th class="table-action"></th>
                         <th class="table-action"></th>
@@ -229,18 +229,14 @@
                         <div class="col-xs-9">
                             <div class="checkbox">
                                 <label uib-tooltip="Originals that are smaller than the variant dimensions are enlarged to fit. This may deteriorate image quality."
-                                tooltip-placement="top" tooltip-trigger="mouseenter">
-                                    <input type="checkbox" id="upscaleOption" ng-model="variant.upscaling"> Upscale
+                                tooltip-placement="right" tooltip-trigger="mouseenter" ng-class="upscalingDisabled()?'text-disabled':''">
+                                    <input type="checkbox" id="upscaleOption" ng-model="variant.upscaling" ng-disabled="upscalingDisabled()"> Upscale smaller images
                                 </label>
                             </div>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-xs-offset-3 col-sm-9">
                             <div class="checkbox">
-                                <label uib-tooltip="Crops the original to fill the variant dimensions. Only available when both width and height are specified."
-                                tooltip-placement="top" tooltip-trigger="mouseenter" ng-class="croppingDisabled()?'text-disabled':''">
-                                    <input type="checkbox" id="croppingOption" ng-model="variant.cropping" ng-disabled="croppingDisabled()"> Upscale and crop
+                                <label uib-tooltip="Scales and then crops the originals to completely fill the variant dimensions. Only available when both width and height are specified."
+                                tooltip-placement="right" tooltip-trigger="mouseenter" ng-class="croppingDisabled()?'text-disabled':''">
+                                    <input type="checkbox" id="croppingOption" ng-model="variant.cropping" ng-disabled="croppingDisabled()"> Crop images to fill dimensions
                                 </label>
                             </div>
                         </div>
