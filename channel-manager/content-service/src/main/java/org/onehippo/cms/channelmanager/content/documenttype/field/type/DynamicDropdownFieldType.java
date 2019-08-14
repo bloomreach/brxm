@@ -15,6 +15,7 @@
  */
 package org.onehippo.cms.channelmanager.content.documenttype.field.type;
 
+import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.onehippo.cms.channelmanager.content.document.model.FieldValue;
 import org.onehippo.cms.channelmanager.content.documenttype.field.FieldTypeContext;
@@ -87,7 +88,7 @@ public class DynamicDropdownFieldType extends PropertyFieldType {
     }
 
     public void setShowDefault(final String showDefault) {
-        this.showDefault = !StringUtils.equalsIgnoreCase(showDefault, "false");
+        this.showDefault = BooleanUtils.toBoolean(showDefault);
     }
 
     public String getSource() {
