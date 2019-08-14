@@ -114,7 +114,7 @@ public class Domains {
     /**
      * Get the set domains that a group has a role in as defined
      * in one of the AuthRoles of the domain
-     * @param userId the id of the user
+     * @param groupId the id of the user
      * @return the set with domains
      */
     public Set<Domain> getDomainsForGroup(String groupId) {
@@ -150,8 +150,7 @@ public class Domains {
             while (domainIter.hasNext()) {
                 domainNode = domainIter.nextNode();
                 try {
-                    // TODO ever used?
-                    domain = new Domain(domainNode, null);
+                    domain = new Domain(domainNode);
                     domains.add(domain);
                     log.debug("Added domain: {}", domain.getName());
                     log.trace("Added domain: {}", domain);
