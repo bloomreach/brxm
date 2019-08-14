@@ -68,23 +68,31 @@ class RenderingService {
   }
 
   createOverlay() {
+    if (this.creatingOverlay) {
+      return this.creatingOverlay;
+    }
+
     this.PageStructureService.clearParsedElements();
     this.OverlayService.clear();
 
-    return this._insertCss()
+    this.creatingOverlay = this._insertCss()
       .then(() => {
         this._parseHstComments();
         this.updateDragDrop();
         this._updateChannelIfSwitched();
         this._parseLinks();
+
         return this.emitter.emit(OVERLAY_CREATED_EVENT_NAME);
       })
       .finally(() => {
         this.HippoIframeService.signalPageLoadCompleted();
+        delete this.creatingOverlay;
       });
     // TODO: handle error.
     // show dialog explaining that for this channel, the CM can currently not be used,
     // and return to the channel overview upon confirming?
+
+    return this.creatingOverlay;
   }
 
   _insertCss() {

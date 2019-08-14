@@ -129,6 +129,19 @@ describe('RenderingService', () => {
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
 
+    it('prevents concurrent invocations', () => {
+      spyOn(DomService, 'hasCssLink').and.returnValue(false);
+      spyOn(DomService, 'addCssLinks').and.returnValue($q.resolve());
+
+      const promise1 = RenderingService.createOverlay();
+      const promise2 = RenderingService.createOverlay();
+      $rootScope.$digest();
+
+      expect(DomService.addCssLinks).toHaveBeenCalledTimes(1);
+      expect(HstCommentsProcessorService.run).toHaveBeenCalledTimes(1);
+      expect(promise1).toBe(promise2);
+    });
+
     it('clears the parsed elements, then stops when loading the hippo-iframe CSS file throws an error', () => {
       spyOn(DomService, 'hasCssLink').and.returnValue(false);
       spyOn(DomService, 'addCssLinks').and.returnValue($q.reject());
