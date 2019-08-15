@@ -51,10 +51,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.editor.crop.ImageCropBehavior;
 import org.hippoecm.frontend.plugins.gallery.editor.crop.ImageCropSettings;
-import org.hippoecm.frontend.plugins.gallery.imageutil.ImageOperation;
-import org.hippoecm.frontend.plugins.gallery.imageutil.ImageOperationResult;
 import org.hippoecm.frontend.plugins.gallery.imageutil.ImageUtils;
-import org.hippoecm.frontend.plugins.gallery.imageutil.ScaleImageOperationFactory;
 import org.hippoecm.frontend.plugins.gallery.imageutil.ScalingParameters;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
@@ -231,23 +228,19 @@ public class ImageCropEditorDialog extends Dialog<Node> {
                     ? parameters.getCompressionQuality()
                     : 1.0f;
 
-            final BufferedImage variantImage = ImageUtils.cropImage(reader, cropArea, targetDimension);
-            final ByteArrayOutputStream bytes = ImageUtils.writeImage(writer, variantImage, compressionQuality);
+            final BufferedImage originalImage = reader.read(0);
+            BufferedImage variantImage = ImageUtils.cropImage(originalImage, cropArea);
 
-            //CMS7-8544 Keep the scaling of the image when cropping, to avoid a resulting image with bigger size than the original
-            final InputStream stored = new ByteArrayInputStream(bytes.toByteArray());
             if (parameters == null) {
                 log.debug("No scaling parameters specified for {}, using original image", variantNode.getName());
-                saveImageNode(variantNode, stored, targetDimension);
             } else {
-                try {
-                    final ImageOperation operation = ScaleImageOperationFactory.getOperation(parameters, mimeType);
-                    final ImageOperationResult result = operation.run(stored, mimeType);
-                    saveImageNode(variantNode, result.getData(), targetDimension);
-                } catch (GalleryException e) {
-                    log.warn("Scaling failed, using original image instead", e);
-                }
+                // CMS7-8544 Keep the scaling of the image when cropping, to avoid a resulting image with bigger size
+                // than the original
+                variantImage = ImageUtils.scaleImage(variantImage, targetDimension.width, targetDimension.height,
+                        parameters.getStrategy());
             }
+            final ByteArrayOutputStream bytes = ImageUtils.writeImage(writer, variantImage, compressionQuality);
+            saveImageNode(variantNode, new ByteArrayInputStream(bytes.toByteArray()), targetDimension);
 
         } catch (GalleryException | IOException | RepositoryException ex) {
             log.error("Unable to crop image", ex);
