@@ -35,7 +35,8 @@ public class CropAndScaleImageOperation extends ScaleImageOperation {
         final Dimension variantDimension = new Dimension(params.getWidth(), params.getHeight());
         final Dimension targetDimension = ImageUtils.normalizeDimension(cropArea.getSize(), variantDimension);
 
-        final BufferedImage croppedImage = ImageUtils.cropImage(reader, cropArea, targetDimension);
+        final BufferedImage original = reader.read(0);
+        final BufferedImage croppedImage = ImageUtils.cropImage(original, cropArea);
         return ImageUtils.scaleImage(croppedImage, targetDimension.width, targetDimension.height, params.getStrategy());
     }
 

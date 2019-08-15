@@ -224,7 +224,11 @@ public class ImageUtils {
      *                     only when the {@code BILINEAR} hint is specified)
      * @return a scaled version of the original {@code BufferedImage}, or <code>null</code> if either the target width
      * or target height is 0 or less.
+     *
+     * @deprecated Use {@link #cropImage(BufferedImage, Rectangle)} combined with
+     *             {@link #scaleImage(BufferedImage, int, int, ScalingStrategy)} instead
      */
+    @Deprecated
     public static BufferedImage scaleImage(final BufferedImage original, final Rectangle rectangle,
                                            final Dimension targetDimension, final Object hint, final boolean highQuality) {
 
@@ -386,29 +390,17 @@ public class ImageUtils {
     /**
      * Returns a cropped instance of the {@link BufferedImage} provided by the {@link ImageReader}.
      *
-     * @param reader            The original image
-     * @param cropArea          The rectangle used to crop the image
-     * @param targetDimension   The desired target dimension of the image
+     * @param image     The original image
+     * @param cropArea  The rectangle used to crop the image
      *
      * @return a cropped version of the original image.
      */
-    public static BufferedImage cropImage(final ImageReader reader, final Rectangle cropArea,
-                                          final Dimension targetDimension) throws IOException {
-        final BufferedImage original = reader.read(0);
-        final boolean highQuality = isCropHighQuality(cropArea, reader);
-        return scaleImage(original, cropArea, targetDimension, RenderingHints.VALUE_INTERPOLATION_BICUBIC, highQuality);
-    }
+    public static BufferedImage cropImage(final BufferedImage image, final Rectangle cropArea) {
+        if (cropArea.width <= 0 || cropArea.height <= 0) {
+            return null;
+        }
 
-    /**
-     * Determine if high quality scaling can be performed based on the original and crop area dimensions.
-     *
-     * @param cropArea size of the area to keep after cropping
-     * @param reader   the original image
-     * @return true if high quality cropping can be performed
-     * @throws IOException when reading the original's sizes fails
-     */
-    private static boolean isCropHighQuality(final Rectangle cropArea, final ImageReader reader) throws IOException {
-        return Math.min(cropArea.width / reader.getWidth(0), cropArea.height / reader.getHeight(0)) < 1.0;
+        return Scalr.crop(image, cropArea.x, cropArea.y, cropArea.width, cropArea.height);
     }
 
     /**
