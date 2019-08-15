@@ -92,7 +92,7 @@ definitions:
           hipposys:value: /hippo:log
       /hippo-modules:
         jcr:primaryType: hipposys:domainrule
-        /type-modulefolder:
+        /modules-and-descendants:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: jcr:path
@@ -100,7 +100,7 @@ definitions:
           hipposys:type: Reference
           hipposys:value: /hippo:configuration/hippo:modules
       # TODO rather replace 'everybody' with functional role 'workflow-user'
-      /workflows:
+      /hippo-workflows:
         jcr:primaryType: hipposys:domainrule
         /workflow-and-descendants:
           jcr:primaryType: hipposys:facetrule
@@ -109,10 +109,20 @@ definitions:
           hipposys:filter: false
           hipposys:type: Reference
           hipposys:value: /hippo:configuration/hippo:workflows
-      # TODO rather replace 'everybody' with functional role 'cms-user'
-      /frontendconfig:
+      # TODO rather replace 'everybody' with functional role 'workflow-user'
+      /hippo-queries:
         jcr:primaryType: hipposys:domainrule
-        /frontendconfig-and-descendants:
+        /queries-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:filter: false
+          hipposys:type: Reference
+          hipposys:value: /hippo:configuration/hippo:queries
+      # TODO rather replace 'everybody' with functional role 'cms-user'
+      /hippo-frontend:
+        jcr:primaryType: hipposys:domainrule
+        /frontend-and-descendants:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: jcr:path
