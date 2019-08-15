@@ -1,8 +1,8 @@
 definitions:
   config:
-    /hippo:configuration/hippo:domains/content-drafts-readwrite:
+    /hippo:configuration/hippo:domains/document-draft-readwrite:
       jcr:primaryType: hipposys:domain
-      /documents-drafts-domain:
+      /document-draft-domain:
         jcr:primaryType: hipposys:domainrule
         /if-holder:
           jcr:primaryType: hipposys:facetrule
