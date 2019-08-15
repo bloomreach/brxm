@@ -14,24 +14,13 @@
  * limitations under the License.
  */
 
-import Penpal from 'penpal';
-
-import { ChildConnectConfig, ChildPromisedApi, ParentApi } from './api';
-import { mergeIntersecting } from './utils';
+/**
+ * CSS tweaks for the generated TypeDoc documentation.
+ */
 
 /**
- * Method to connect to an application in an iframe window.
- *
- * @param iframe TODO doc or remove
- * @param methods TODO doc or remove
+ * Remove the "Defined in" blocks
+ * @see https://github.com/TypeStrong/typedoc/issues/808
  */
-export function connectToChild({
-  iframe,
-  methods = {},
-  timeout,
-}: ChildConnectConfig): Promise<ChildPromisedApi> {
-  const proxies: ParentApi = {};
-  const proxiedMethods = mergeIntersecting(methods, proxies);
-
-  return Penpal.connectToChild({ iframe, methods: proxiedMethods, timeout }).promise;
-}
+.tsd-signatures { margin-bottom: 0 }
+.tsd-sources { display: none }
