@@ -16,8 +16,9 @@
 
 import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { filter, map, shareReplay, takeUntil } from 'rxjs/operators';
+import { filter, map, shareReplay, switchMap, takeUntil } from 'rxjs/operators';
 
+import { BootstrapService } from '../../services/bootstrap.service';
 import { NavConfigService } from '../../services/nav-config.service';
 import { MenuItemContainer } from '../models/menu-item-container.model';
 import { MenuItemLink } from '../models/menu-item-link.model';
@@ -27,7 +28,7 @@ import { MenuBuilderService } from './menu-builder.service';
 
 @Injectable()
 export class MenuStateService implements OnDestroy {
-  private readonly menusStream$: Observable<MenuItem[]>;
+  private readonly menuItems$: Observable<MenuItem[]>;
   private menu: MenuItem[];
   private activePath = new BehaviorSubject<MenuItem[]>([]);
   private collapsed = true;
@@ -37,13 +38,15 @@ export class MenuStateService implements OnDestroy {
   constructor(
     private menuBuilderService: MenuBuilderService,
     private navConfigService: NavConfigService,
+    private bootstrapService: BootstrapService,
   ) {
-    this.menusStream$ = navConfigService.navItems$.pipe(
+    this.menuItems$ = this.bootstrapService.bootstrappedSuccessful$.pipe(
+      switchMap(() => this.navConfigService.navItems$),
       map(navItems => this.menuBuilderService.buildMenu(navItems)),
       shareReplay(1),
     );
 
-    this.menusStream$.pipe(takeUntil(this.unsubscribe)).subscribe(menu => {
+    this.menuItems$.pipe(takeUntil(this.unsubscribe)).subscribe(menu => {
       if (this.menu && this.menu.length) {
         throw new Error(
           'Menu has changed. Rebuild breadcrumbs functionality must be implemented to prevent menu incorrect behavior issues.',
@@ -55,7 +58,7 @@ export class MenuStateService implements OnDestroy {
   }
 
   get menu$(): Observable<MenuItem[]> {
-    return this.menusStream$;
+    return this.menuItems$;
   }
 
   get activeMenuItem$(): Observable<MenuItemLink> {

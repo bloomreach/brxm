@@ -15,7 +15,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { NavLocation, ParentApi, SiteId } from '@bloomreach/navapp-communication';
+import { connectToChild, NavLocation, ParentApi, SiteId } from '@bloomreach/navapp-communication';
 import { Subject } from 'rxjs';
 import { takeUntil, tap } from 'rxjs/operators';
 
@@ -23,9 +23,12 @@ import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { MenuItemLink } from '../main-menu/models/menu-item-link.model';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
+import { Connection } from '../models/connection.model';
+import { FailedConnection } from '../models/failed-connection.model';
 import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
 
 import { BusyIndicatorService } from './busy-indicator.service';
+import { GlobalSettingsService } from './global-settings.service';
 import { NavConfigService } from './nav-config.service';
 import { OverlayService } from './overlay.service';
 
@@ -44,6 +47,7 @@ export class CommunicationsService {
     private breadcrumbsService: BreadcrumbsService,
     private overlay: OverlayService,
     private busyIndicatorService: BusyIndicatorService,
+    private settings: GlobalSettingsService,
   ) {
     clientAppService.apps$.pipe(
       takeUntil(this.unsubscribe),
@@ -140,6 +144,17 @@ export class CommunicationsService {
     return this.clientAppService.logoutApps().then(
       () => this.navConfigService.logout(),
     ).then(() => this.busyIndicatorService.hide());
+  }
+
+  connectToChild(appId: string, iframe: HTMLIFrameElement): Promise<void> {
+    return connectToChild({
+      iframe,
+      methods: this.parentApiMethods,
+      timeout: this.settings.appSettings.iframesConnectionTimeout,
+    }).then(
+      api => this.clientAppService.addConnection(new Connection(appId, api)),
+      error => this.clientAppService.addConnection(new FailedConnection(appId, error)),
+    );
   }
 
   private findApp(path: string): ClientApp {
