@@ -11,7 +11,11 @@ definitions:
           hipposys:filter: false
           hipposys:type: Reference
           hipposys:value: /content
-      /readonly:
+      /author:
         jcr:primaryType: hipposys:authrole
-        hipposys:groups: [editor, author]
-        hipposys:role: readonly
+        hipposys:groups: [author]
+        hipposys:role: author
+      /editor:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [editor]
+        hipposys:role: editor
