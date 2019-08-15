@@ -79,7 +79,7 @@ export class ClientAppService {
     const apps = this.apps.value;
     const app = apps.find(a => a.id === appId);
     if (!app) {
-      throw new Error(`The app with id = "${appId}" had not been found`);
+      throw new Error(`Unable to find the app with id = ${appId}`);
     }
 
     return app;
