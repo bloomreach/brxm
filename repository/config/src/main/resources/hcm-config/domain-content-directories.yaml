@@ -1,0 +1,24 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/content-directories:
+      jcr:primaryType: hipposys:domain
+      /content-folders-domain:
+        jcr:primaryType: hipposys:domainrule
+        /content-directory-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:filter: false
+          hipposys:type: Reference
+          hipposys:value: /content
+        /nodetype-hippostd-directory:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: nodetype
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hippostd:directory
+      /readwrite:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [editor, author]
+        hipposys:role: readwrite
