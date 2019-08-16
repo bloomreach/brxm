@@ -15,7 +15,7 @@
  */
 
 export class MenuItemLink {
-  appId: string;
+  appUrl: string;
   appPath: string;
 
   constructor(

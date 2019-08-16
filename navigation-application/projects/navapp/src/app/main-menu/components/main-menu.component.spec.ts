@@ -36,7 +36,7 @@ describe('MainMenuComponent', () => {
     new MenuItemLinkMock({ id: 'item1' }),
     new MenuItemLinkMock({ id: 'item2' }),
   ];
-  mockMenu[0].appId = 'homeAppId';
+  mockMenu[0].appUrl = 'homeAppId';
   mockMenu[0].appPath = 'homeAppPath';
   const menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
     'isMenuItemActive',

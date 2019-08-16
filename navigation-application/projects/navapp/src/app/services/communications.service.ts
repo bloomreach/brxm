@@ -53,7 +53,7 @@ export class CommunicationsService {
       tap(x => this.activeMenuItem = x),
     ).subscribe(activeMenuItem => {
       this.breadcrumbsService.clearSuffix();
-      this.navigate(activeMenuItem.appId, activeMenuItem.appPath);
+      this.navigate(activeMenuItem.appUrl, activeMenuItem.appPath);
     });
   }
 
@@ -118,7 +118,7 @@ export class CommunicationsService {
 
     this.breadcrumbsService.clearSuffix();
 
-    return this.navigate(this.activeMenuItem.appId, this.activeMenuItem.appPath, {forceRefresh: true});
+    return this.navigate(this.activeMenuItem.appUrl, this.activeMenuItem.appPath, {forceRefresh: true});
   }
 
   updateSelectedSite(siteId: SiteId): Promise<void> {

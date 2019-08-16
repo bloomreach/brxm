@@ -43,7 +43,7 @@ export class MenuBuilderService {
         this.menuStructureService.addExtension(item);
       }
       // One iframe per app is created so app's url can be used as an identifier
-      item.appId = navItem.appIframeUrl;
+      item.appUrl = navItem.appIframeUrl;
       item.appPath = navItem.appPath;
     });
   }
