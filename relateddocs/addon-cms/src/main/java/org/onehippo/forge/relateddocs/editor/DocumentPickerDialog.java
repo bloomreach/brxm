@@ -23,6 +23,7 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
@@ -137,7 +138,7 @@ public class DocumentPickerDialog extends Dialog<Node> {
                 }
             }
 
-            isLinkable = targetNode.isNodeType("mix:referenceable");
+            isLinkable = targetNode.isNodeType(JcrConstants.MIX_REFERENCEABLE);
             isLinkable = isLinkable
                     && !(targetNode.isNodeType(HippoNodeType.NT_DOCUMENT)
                     && targetNode.getParent().isNodeType(HippoNodeType.NT_HANDLE));
@@ -240,11 +241,11 @@ public class DocumentPickerDialog extends Dialog<Node> {
 
         try {
             if (uuid.equalsIgnoreCase(selectedNodeModel.getNode().getIdentifier())) {
-                error("You cannot add the same document as the related document!!");
+                error("You cannot add the same document as the related document");
                 return;
             }
-        } catch (RepositoryException re) {
-            log.error("Unable to get the UUID for the selected document", re);
+        } catch (RepositoryException e) {
+            log.error("Unable to get the UUID for the selected document", e);
         }
 
         collection.add(new RelatedDoc(selectedNodeModel));
