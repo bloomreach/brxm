@@ -29,16 +29,14 @@ import { ClientAppService } from '../../services/client-app.service';
 export class ClientAppContainerComponent implements OnInit, OnDestroy {
   private unsubscribe = new Subject();
 
-  apps: ClientApp[] = [];
+  urls: string[] = [];
 
   constructor(private clientAppService: ClientAppService) {}
 
   ngOnInit(): void {
-    this.clientAppService.apps$
+    this.clientAppService.urls$
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(apps => {
-        this.apps = apps;
-      });
+      .subscribe(x => this.urls = x);
   }
 
   ngOnDestroy(): void {
@@ -53,9 +51,5 @@ export class ClientAppContainerComponent implements OnInit, OnDestroy {
     }
 
     return activeApp.url === appURL;
-  }
-
-  trackByAppIdFn(index: number, app: ClientApp): string {
-    return app.url;
   }
 }

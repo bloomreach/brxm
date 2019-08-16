@@ -26,14 +26,19 @@ import { ClientApp } from '../models/client-app.model';
 
 @Injectable()
 export class ClientAppService {
-  private apps = new BehaviorSubject<ClientApp[]>([]);
+  private uniqueURLs = new BehaviorSubject<string[]>([]);
+  private connectedApps: ClientApp[] = [];
   private activeAppId = new BehaviorSubject<string>(undefined);
   private connections = new ReplaySubject<Connection>();
 
   constructor(private navConfigService: NavConfigService) {}
 
-  get apps$(): Observable<ClientApp[]> {
-    return this.apps.asObservable();
+  get urls$(): Observable<string[]> {
+    return this.uniqueURLs.asObservable();
+  }
+
+  get apps(): ClientApp[] {
+    return this.connectedApps;
   }
 
   get activeApp(): ClientApp {
@@ -55,14 +60,16 @@ export class ClientAppService {
   }
 
   init(): Promise<ClientApp[]> {
-    return this.navConfigService.navItems$.pipe(
+    this.navConfigService.navItems$.pipe(
       filter(x => x && x.length > 0),
       map(navItems => this.filterUniqueURLs(navItems)),
-      tap(uniqueURLs => this.apps.next(uniqueURLs.map(url => new ClientApp(url)))),
+    ).subscribe(x => this.uniqueURLs.next(x));
+
+    return this.uniqueURLs.pipe(
       switchMap(uniqueURLs => this.waitForConnections(uniqueURLs.length)),
       map(connections => this.discardFailedConnections(connections)),
       map(connections => connections.map(c => this.createClientApp(c))),
-      tap(apps => this.apps.next(apps)),
+      tap(apps => this.connectedApps = apps),
       first(),
     ).toPromise();
   }
@@ -72,22 +79,27 @@ export class ClientAppService {
   }
 
   addConnection(connection: Connection): void {
+    const uniqueURLs = this.uniqueURLs.value;
+
+    if (!uniqueURLs.includes(connection.appUrl) && !uniqueURLs.includes(`${connection.appUrl}/`)) {
+      console.error(`An attempt to register the connection to unknown url = ${connection.appUrl}`);
+      return;
+    }
+
     this.connections.next(connection);
   }
 
-  getApp(appId: string): ClientApp {
-    const apps = this.apps.value;
-    const app = apps.find(a => a.id === appId);
+  getApp(appUrl: string): ClientApp {
+    const app = this.connectedApps.find(x => x.url === appUrl);
     if (!app) {
-      throw new Error(`Unable to find the app with id = ${appId}`);
+      throw new Error(`Unable to find the app with id = ${appUrl}`);
     }
 
     return app;
   }
 
   logoutApps(): Promise<void[]> {
-    const apps = this.apps.value;
-    return Promise.all(apps.map(
+    return Promise.all(this.connectedApps.map(
       app => app.api.logout(),
     ));
   }
@@ -116,9 +128,6 @@ export class ClientAppService {
   }
 
   private createClientApp(connection: Connection): ClientApp {
-    const app = new ClientApp(connection.appId);
-    app.api = connection.api;
-
-    return app;
+    return new ClientApp(connection.appUrl, connection.api);
   }
 }

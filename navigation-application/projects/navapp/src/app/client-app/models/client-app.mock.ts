@@ -22,7 +22,7 @@ export class ClientAppMock extends ClientApp {
   id = 'testClientApp';
   api: ChildPromisedApi = {};
 
-  constructor({ url = 'testClientApp' } = {}) {
-    super(url);
+  constructor({ url = 'testClientApp', api = {} } = {}) {
+    super(url, api);
   }
 }

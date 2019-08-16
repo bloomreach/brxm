@@ -25,7 +25,6 @@ import {
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 import { CommunicationsService } from '../../../services/communications.service';
-import { ClientApp } from '../../models/client-app.model';
 
 @Component({
   selector: 'brna-client-app',
@@ -34,12 +33,12 @@ import { ClientApp } from '../../models/client-app.model';
 })
 export class ClientAppComponent implements OnInit, AfterViewInit {
   @Input()
-  app: ClientApp;
+  url: string;
 
   @ViewChild('iframe')
   iframe: ElementRef<HTMLIFrameElement>;
 
-  url: SafeResourceUrl;
+  safeUrl: SafeResourceUrl;
 
   constructor(
     private domSanitizer: DomSanitizer,
@@ -47,10 +46,10 @@ export class ClientAppComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    this.url = this.domSanitizer.bypassSecurityTrustResourceUrl(this.app.url);
+    this.safeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(this.url);
   }
 
   ngAfterViewInit(): void {
-    this.communicationsService.connectToChild(this.app.id, this.iframe.nativeElement);
+    this.communicationsService.connectToChild(this.iframe.nativeElement);
   }
 }
