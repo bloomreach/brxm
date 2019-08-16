@@ -87,7 +87,7 @@ public class DocumentPickerDialog extends Dialog<Node> {
                 String[] nodeTypes = clusterOptionConfig.getStringArray("nodetypes");
                 this.nodetypes.addAll(Arrays.asList(nodeTypes));
             }
-            if (nodetypes.size() == 0) {
+            if (nodetypes.isEmpty()) {
                 log.debug("No configuration specified for filtering on nodetypes. No filtering will take place.");
             }
         }
@@ -125,7 +125,7 @@ public class DocumentPickerDialog extends Dialog<Node> {
                 testNode = targetNode.getNode(targetNode.getName());
             }
 
-            if (nodetypes == null || nodetypes.size() == 0) {
+            if (nodetypes == null || nodetypes.isEmpty()) {
                 validType = true;
             }
             if (nodetypes != null) {
