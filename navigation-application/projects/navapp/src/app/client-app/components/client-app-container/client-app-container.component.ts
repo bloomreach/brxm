@@ -36,7 +36,7 @@ export class ClientAppContainerComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.clientAppService.urls$
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(x => this.urls = x);
+      .subscribe(urls => this.urls = urls);
   }
 
   ngOnDestroy(): void {

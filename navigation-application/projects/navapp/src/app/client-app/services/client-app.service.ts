@@ -29,7 +29,7 @@ export class ClientAppService {
   private uniqueURLs = new BehaviorSubject<string[]>([]);
   private connectedApps: ClientApp[] = [];
   private activeAppId = new BehaviorSubject<string>(undefined);
-  private connections = new ReplaySubject<Connection>();
+  private connection$ = new ReplaySubject<Connection>();
 
   constructor(private navConfigService: NavConfigService) {}
 
@@ -86,7 +86,7 @@ export class ClientAppService {
       return;
     }
 
-    this.connections.next(connection);
+    this.connection$.next(connection);
   }
 
   getApp(appUrl: string): ClientApp {
@@ -118,7 +118,7 @@ export class ClientAppService {
   }
 
   private waitForConnections(expectedNumber: number): Observable<Connection[]> {
-    return this.connections.pipe(
+    return this.connection$.pipe(
       bufferCount(expectedNumber),
     );
   }
