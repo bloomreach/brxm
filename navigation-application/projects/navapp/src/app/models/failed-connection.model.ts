@@ -18,9 +18,9 @@ import { Connection } from './connection.model';
 
 export class FailedConnection extends Connection {
   constructor(
-    public appId,
+    public appUrl,
     public reason,
   ) {
-    super(appId, undefined);
+    super(appUrl, undefined);
   }
 }
