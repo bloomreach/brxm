@@ -47,13 +47,12 @@ import org.onehippo.forge.relateddocs.RelatedDocCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author vijaykiran
- */
 public class DocumentPickerDialog extends Dialog<Node> {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentPickerDialog.class);
     protected static final String CLUSTER_OPTIONS = "cluster.options";
+    private static final String PICKER_CLUSTER_NAME_OPTION = "pickerClusterName";
+    private static final String PICKER_CLUSTER_NAME_DEFAULT = "cms-pickers/documents";
 
     private List<String> nodetypes = new ArrayList<>();
 
@@ -155,8 +154,8 @@ public class DocumentPickerDialog extends Dialog<Node> {
     protected Component createContentPanel(final String contentId) {
         final IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
                 IPluginConfigService.class);
-        final IClusterConfig template = pluginConfigService.getCluster("cms-pickers/documents");
-        //TODO: is this ok? IPluginConfig parameters = new JavaPluginConfig(config.getPluginConfig(CLUSTER_OPTIONS));
+        final String pickerClusterName = config.getString(PICKER_CLUSTER_NAME_OPTION, PICKER_CLUSTER_NAME_DEFAULT);
+        final IClusterConfig template = pluginConfigService.getCluster(pickerClusterName);
         control = context.newCluster(template, null);
 
         control.start();
