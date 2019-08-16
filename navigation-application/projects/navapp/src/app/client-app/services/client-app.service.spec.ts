@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-import { of } from 'rxjs';
+import { async, fakeAsync, tick } from '@angular/core/testing';
+import { ChildPromisedApi } from '@bloomreach/navapp-communication';
+import { of, Subject } from 'rxjs';
 
 import { createSpyObj } from '../../../test-utilities';
+import { Connection } from '../../models/connection.model';
 import { NavConfigService } from '../../services/nav-config.service';
 import { ClientApp } from '../models/client-app.model';
 
 import { ClientAppService } from './client-app.service';
 
 describe('ClientAppService', () => {
-  let navConfigService: NavConfigService;
   let service: ClientAppService;
 
   const navItemsMock = [
@@ -43,43 +45,99 @@ describe('ClientAppService', () => {
       path: 'some-path',
     },
   ];
+  const navItemsSubject = new Subject();
+
+  const navConfigServiceMock = {
+    navItems$: navItemsSubject,
+  } as any;
 
   beforeEach(() => {
-    navConfigService = createSpyObj([], {
-      navItems$: of(navItemsMock),
-    });
-
-    service = new ClientAppService(navConfigService);
+    service = new ClientAppService(navConfigServiceMock);
   });
 
   it('should exist', () => {
     expect(service).toBeDefined();
   });
 
-  it('should init', () => {
-    const expected = [
-      new ClientApp('http://app1.com'),
-      new ClientApp('http://app2.com'),
-    ];
-    let actual: ClientApp[];
+  it('should emit urls before initialization is complete', () => {
+    const expected = ['http://app1.com', 'http://app2.com'];
+    let actual: string[] = [];
 
-    service.apps$.subscribe(apps => (actual = apps));
+    service.urls$.subscribe(x => actual = x);
+
     service.init();
+
+    expect(actual).toEqual(actual);
+
+    navItemsSubject.next(navItemsMock);
 
     expect(actual).toEqual(expected);
   });
 
+  it('should trigger an error error when a connection with unknown url is added', () => {
+    spyOn(console, 'error');
+
+    service.init();
+    navItemsSubject.next(navItemsMock);
+
+    const badConnection = new Connection('http://suspect-site.com', {});
+
+    service.addConnection(badConnection);
+
+    expect(console.error).toHaveBeenCalledWith('An attempt to register the connection to unknown url = http://suspect-site.com');
+  });
+
+  it('should init', fakeAsync(() => {
+    const expected = [
+      new ClientApp('http://app1.com', {}),
+      new ClientApp('http://app2.com', {}),
+    ];
+    let actual: ClientApp[];
+
+    service.init().then(() => actual = service.apps);
+    navItemsSubject.next(navItemsMock);
+
+    service.addConnection(new Connection('http://app1.com', {}));
+    service.addConnection(new Connection('http://app2.com', {}));
+
+    tick();
+
+    expect(actual).toEqual(expected);
+  }));
+
   describe('when initialized', () => {
-    beforeEach(() => {
+    let clientApiWithSitesSupport: ChildPromisedApi;
+
+    beforeEach(async(() => {
+      clientApiWithSitesSupport = {
+        updateSelectedSite: () => Promise.resolve(),
+      };
+
       service.init();
+      navItemsSubject.next(navItemsMock);
+
+      service.addConnection(new Connection('http://app1.com', {}));
+      service.addConnection(new Connection('http://app2.com', clientApiWithSitesSupport));
+    }));
+
+    it('should return a list of connected apps', () => {
+      const expected = [
+        new ClientApp('http://app1.com', {}),
+        new ClientApp('http://app2.com', clientApiWithSitesSupport),
+      ];
+
+      const actual = service.apps;
+
+      expect(actual.length).toBe(2);
+      expect(expected).toEqual(actual);
     });
 
     it('should return an app by id', () => {
-      const expected = new ClientApp('http://app1.com');
+      const expected = new ClientApp('http://app1.com', {});
 
       const actual = service.getApp('http://app1.com');
 
-      expect(expected).toEqual(actual);
+      expect(actual).toEqual(expected);
     });
 
     it('should return undefined before some application has been activated', () => {
@@ -87,7 +145,7 @@ describe('ClientAppService', () => {
     });
 
     it('should return the active application', () => {
-      const expected = new ClientApp('http://app1.com');
+      const expected = new ClientApp('http://app1.com', {});
 
       service.activateApplication('http://app1.com');
 
@@ -96,15 +154,8 @@ describe('ClientAppService', () => {
       expect(actual).toEqual(expected);
     });
 
-    describe('when connected', () => {
-      const clientApiWithSitesSupport = {
-        updateSelectedSite: () => Promise.resolve(),
-      };
-
+    describe('when app is active', () => {
       beforeEach(() => {
-        service.addConnection('http://app1.com', {});
-        service.addConnection('http://app2.com', clientApiWithSitesSupport);
-
         service.activateApplication('http://app2.com');
       });
 

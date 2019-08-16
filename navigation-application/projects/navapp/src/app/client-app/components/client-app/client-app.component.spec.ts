@@ -26,16 +26,16 @@ describe('ClientAppComponent', () => {
   let component: ClientAppComponent;
   let fixture: ComponentFixture<ClientAppComponent>;
 
-  const clientAppService = jasmine.createSpyObj(['addConnection']);
-  const communicationsService = jasmine.createSpyObj('CommunicationsService', [
-    'parentApiMethods',
+  const clientAppServiceMock = jasmine.createSpyObj(['addConnection']);
+  const communicationsServiceMock = jasmine.createSpyObj('CommunicationsService', [
+    'connectToChild',
   ]);
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       providers: [
-        { provide: ClientAppService, useValue: clientAppService },
-        { provide: CommunicationsService, useValue: communicationsService },
+        { provide: ClientAppService, useValue: clientAppServiceMock },
+        { provide: CommunicationsService, useValue: communicationsServiceMock },
       ],
       declarations: [ClientAppComponent],
     });
@@ -44,7 +44,7 @@ describe('ClientAppComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ClientAppComponent);
     component = fixture.componentInstance;
-    component.app = new ClientApp('mytesturl');
+    component.url = 'mytesturl';
     fixture.detectChanges();
   });
 
