@@ -27,12 +27,12 @@ describe('ClientAppContainerComponent', () => {
   let component: ClientAppContainerComponent;
   let fixture: ComponentFixture<ClientAppContainerComponent>;
 
-  const testApp = new ClientApp('mytesturl');
-  const testApp2 = new ClientApp('mytesturl2');
+  const urls = ['mytesturl', 'mytesturl2'];
+  const activeApp = new ClientApp('mytesturl', {});
 
   const clientAppService = {
-    apps$: of([testApp, testApp2]),
-    activeApp$: of(testApp),
+    urls$: of(urls),
+    activeApp,
   };
 
   beforeEach(async(() => {
@@ -49,10 +49,10 @@ describe('ClientAppContainerComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create client app nodes and pass the app as input', () => {
+  it('should create client app nodes and pass the url as an input', () => {
     const el: HTMLElement = fixture.nativeElement;
     const clientApps = el.querySelectorAll('brna-client-app');
     expect(clientApps.length).toEqual(2);
-    expect((clientApps[0] as any).app).toBe(testApp);
+    expect((clientApps[0] as any).url).toBe('mytesturl');
   });
 });

@@ -16,9 +16,9 @@
 
 import { ChildPromisedApi } from '@bloomreach/navapp-communication';
 
-export class ClientApp {
+export class Connection {
   constructor(
-    public url: string,
+    public appUrl: string,
     public api: ChildPromisedApi,
   ) {}
 }

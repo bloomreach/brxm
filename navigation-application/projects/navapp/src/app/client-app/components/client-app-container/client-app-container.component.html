@@ -14,7 +14,7 @@
   limitations under the License.
   -->
 
-<brna-client-app *ngFor="let app of apps; trackBy: trackByAppIdFn"
-                 [app]="app"
-                 [class.hidden]="!isActive(app.url)">
+<brna-client-app *ngFor="let url of urls"
+                 [url]="url"
+                 [class.hidden]="!isActive(url)">
 </brna-client-app>

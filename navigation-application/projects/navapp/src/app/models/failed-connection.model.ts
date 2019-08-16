@@ -14,11 +14,13 @@
  * limitations under the License.
  */
 
-import { ChildPromisedApi } from '@bloomreach/navapp-communication';
+import { Connection } from './connection.model';
 
-export class ClientApp {
+export class FailedConnection extends Connection {
   constructor(
-    public url: string,
-    public api: ChildPromisedApi,
-  ) {}
+    public appUrl,
+    public reason,
+  ) {
+    super(appUrl, undefined);
+  }
 }

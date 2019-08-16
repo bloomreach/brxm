@@ -15,33 +15,30 @@
  */
 
 import { Injectable } from '@angular/core';
-import { ChildPromisedApi } from '@bloomreach/navapp-communication';
 import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { bufferCount, filter, first, map, switchMap, tap } from 'rxjs/operators';
 
+import { Connection } from '../../models/connection.model';
 import { NavItem } from '../../models/dto/nav-item.dto';
+import { FailedConnection } from '../../models/failed-connection.model';
 import { NavConfigService } from '../../services/nav-config.service';
 import { ClientApp } from '../models/client-app.model';
 
 @Injectable()
 export class ClientAppService {
-  private apps = new BehaviorSubject<ClientApp[]>([]);
+  private uniqueURLs = new BehaviorSubject<string[]>([]);
+  private connectedApps: ClientApp[] = [];
   private activeAppId = new BehaviorSubject<string>(undefined);
-  private connectionEstablished = new ReplaySubject<ClientApp>(1);
-  private allConnectionsEstablished = new ReplaySubject<void>(1);
+  private connection$ = new ReplaySubject<Connection>();
 
   constructor(private navConfigService: NavConfigService) {}
 
-  get apps$(): Observable<ClientApp[]> {
-    return this.apps.asObservable();
+  get urls$(): Observable<string[]> {
+    return this.uniqueURLs.asObservable();
   }
 
-  get connectionEstablished$(): Observable<ClientApp> {
-    return this.connectionEstablished.asObservable();
-  }
-
-  get allConnectionsEstablished$(): Observable<void> {
-    return this.allConnectionsEstablished.asObservable();
+  get apps(): ClientApp[] {
+    return this.connectedApps;
   }
 
   get activeApp(): ClientApp {
@@ -62,68 +59,49 @@ export class ClientAppService {
     return this.doesAppSupportSites(this.activeApp);
   }
 
-  init(): void {
-    this.navConfigService.navItems$
-      .pipe(
-        map(navItems => this.filterUniqueURLs(navItems)),
-        map(uniqueURLs => uniqueURLs.map(url => new ClientApp(url))),
-      )
-      .subscribe(apps => this.apps.next(apps));
+  init(): Promise<ClientApp[]> {
+    this.navConfigService.navItems$.pipe(
+      filter(x => x && x.length > 0),
+      map(navItems => this.filterUniqueURLs(navItems)),
+    ).subscribe(x => this.uniqueURLs.next(x));
+
+    return this.uniqueURLs.pipe(
+      switchMap(uniqueURLs => this.waitForConnections(uniqueURLs.length)),
+      map(connections => this.discardFailedConnections(connections)),
+      map(connections => connections.map(c => this.createClientApp(c))),
+      tap(apps => this.connectedApps = apps),
+      first(),
+    ).toPromise();
   }
 
   activateApplication(appId: string): void {
     this.activeAppId.next(appId);
   }
 
-  addConnection(appId: string, api: ChildPromisedApi): void {
-    this.updateApp(appId, api);
+  addConnection(connection: Connection): void {
+    const uniqueURLs = this.uniqueURLs.value;
 
-    this.connectionEstablished.next(this.getApp(appId));
+    if (!uniqueURLs.includes(connection.appUrl) && !uniqueURLs.includes(`${connection.appUrl}/`)) {
+      console.error(`An attempt to register the connection to unknown url = ${connection.appUrl}`);
+      return;
+    }
 
-    this.checkEstablishedConnections();
+    this.connection$.next(connection);
   }
 
-  getApp(appId: string): ClientApp {
-    const apps = this.apps.value;
-    const app = apps.find(a => a.id === appId);
+  getApp(appUrl: string): ClientApp {
+    const app = this.connectedApps.find(x => x.url === appUrl);
     if (!app) {
-      throw new Error(`There is no connection to an iframe with id = ${appId}`);
+      throw new Error(`Unable to find the app with id = ${appUrl}`);
     }
 
     return app;
   }
 
   logoutApps(): Promise<void[]> {
-    const apps = this.apps.value;
-    return Promise.all(apps.map(
+    return Promise.all(this.connectedApps.map(
       app => app.api.logout(),
     ));
-  }
-
-  private updateApp(appId: string, api: ChildPromisedApi): void {
-    const apps = this.apps.value;
-    const appToUpdateIndex = apps.findIndex(app => app.id === appId);
-
-    if (appToUpdateIndex === -1) {
-      return;
-    }
-
-    const updatedApp = new ClientApp(apps[appToUpdateIndex].url);
-    updatedApp.api = api;
-
-    apps[appToUpdateIndex] = updatedApp;
-
-    this.apps.next(apps);
-  }
-
-  private checkEstablishedConnections(): void {
-    const apps = this.apps.value;
-    const allConnected = apps.every(a => a.api !== undefined);
-
-    if (allConnected) {
-      this.allConnectionsEstablished.next();
-      this.allConnectionsEstablished.complete();
-    }
   }
 
   private filterUniqueURLs(navItems: NavItem[]): string[] {
@@ -137,5 +115,19 @@ export class ClientAppService {
 
   private doesAppSupportSites(app: ClientApp): boolean {
     return !!(app && app.api && app.api.updateSelectedSite);
+  }
+
+  private waitForConnections(expectedNumber: number): Observable<Connection[]> {
+    return this.connection$.pipe(
+      bufferCount(expectedNumber),
+    );
+  }
+
+  private discardFailedConnections(connections: Connection[]): Connection[] {
+    return connections.filter(c => !(c instanceof FailedConnection));
+  }
+
+  private createClientApp(connection: Connection): ClientApp {
+    return new ClientApp(connection.appUrl, connection.api);
   }
 }

@@ -17,7 +17,7 @@
 import { MenuItemLink } from './menu-item-link.model';
 
 export class MenuItemLinkMock extends MenuItemLink {
-  appId = 'testAppId';
+  appUrl = 'testAppId';
   appPath = 'testAppPath';
 
   constructor({

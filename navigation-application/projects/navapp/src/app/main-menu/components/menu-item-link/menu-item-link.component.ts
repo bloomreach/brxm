@@ -38,7 +38,7 @@ export class MenuItemLinkComponent {
     e.preventDefault();
 
     this.menuStateService.activateMenuItem(
-      this.config.appId,
+      this.config.appUrl,
       this.config.appPath,
     );
   }

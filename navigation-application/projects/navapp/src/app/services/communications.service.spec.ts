@@ -16,7 +16,7 @@
 
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { NavLocation } from '@bloomreach/navapp-communication';
-import { of, ReplaySubject } from 'rxjs';
+import { ReplaySubject } from 'rxjs';
 
 import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
@@ -81,8 +81,8 @@ describe('CommunicationsService', () => {
     });
 
     clientApps = [
-      new ClientApp('some-perspective'),
-      new ClientApp('another-perspective'),
+      new ClientApp('some-perspective', {}),
+      new ClientApp('another-perspective', {}),
     ];
 
     clientApps[0].api = { ...childApiMock };
@@ -91,7 +91,7 @@ describe('CommunicationsService', () => {
 
     clientAppServiceMock.getApp.and.returnValue(clientApps[1]);
     clientAppServiceMock.activeApp = clientApps[1];
-    clientAppServiceMock.apps$ = of(clientApps);
+    clientAppServiceMock.apps = clientApps;
 
     navConfigServiceMock.findNavItem.and.returnValue({
       id: 'some-id',
@@ -259,7 +259,7 @@ describe('CommunicationsService', () => {
         service.parentApiMethods.updateNavLocation(location);
 
         expect(menuStateService.activateMenuItem).toHaveBeenCalledWith(
-          clientAppService.activeApp.id,
+          clientAppService.activeApp.url,
           path,
         );
       });

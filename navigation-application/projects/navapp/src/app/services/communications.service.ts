@@ -15,7 +15,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { NavLocation, ParentApi, SiteId } from '@bloomreach/navapp-communication';
+import { connectToChild, NavLocation, ParentApi, SiteId } from '@bloomreach/navapp-communication';
 import { Subject } from 'rxjs';
 import { takeUntil, tap } from 'rxjs/operators';
 
@@ -23,9 +23,12 @@ import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { MenuItemLink } from '../main-menu/models/menu-item-link.model';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
+import { Connection } from '../models/connection.model';
+import { FailedConnection } from '../models/failed-connection.model';
 import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
 
 import { BusyIndicatorService } from './busy-indicator.service';
+import { GlobalSettingsService } from './global-settings.service';
 import { NavConfigService } from './nav-config.service';
 import { OverlayService } from './overlay.service';
 
@@ -33,7 +36,6 @@ import { OverlayService } from './overlay.service';
   providedIn: 'root',
 })
 export class CommunicationsService {
-  private apps: ClientApp[] = [];
   private activeMenuItem: MenuItemLink;
   private unsubscribe = new Subject();
 
@@ -44,17 +46,14 @@ export class CommunicationsService {
     private breadcrumbsService: BreadcrumbsService,
     private overlay: OverlayService,
     private busyIndicatorService: BusyIndicatorService,
+    private settings: GlobalSettingsService,
   ) {
-    clientAppService.apps$.pipe(
-      takeUntil(this.unsubscribe),
-    ).subscribe(apps => (this.apps = apps));
-
     menuStateService.activeMenuItem$.pipe(
       takeUntil(this.unsubscribe),
       tap(x => this.activeMenuItem = x),
     ).subscribe(activeMenuItem => {
       this.breadcrumbsService.clearSuffix();
-      this.navigate(activeMenuItem.appId, activeMenuItem.appPath);
+      this.navigate(activeMenuItem.appUrl, activeMenuItem.appPath);
     });
   }
 
@@ -63,7 +62,7 @@ export class CommunicationsService {
       showMask: () => this.overlay.enable(),
       hideMask: () => this.overlay.disable(),
       navigate: (location: NavLocation) => {
-        // We need to use caller's appId but instead (for first implementation) we just look for the first
+        // We need to use caller's appUrl but instead (for first implementation) we just look for the first
         // app's id which contains the specified path
         const app = this.findApp(location.path);
 
@@ -76,18 +75,18 @@ export class CommunicationsService {
           return;
         }
 
-        this.menuStateService.activateMenuItem(app.id, location.path);
+        this.menuStateService.activateMenuItem(app.url, location.path);
         this.breadcrumbsService.setSuffix(location.breadcrumbLabel);
 
         // Current app can be different in that moment it's better to use caller app's id
-        if (app.id !== this.clientAppService.activeApp.id) {
-          this.navigate(app.id, location.path);
+        if (app.url !== this.clientAppService.activeApp.url) {
+          this.navigate(app.url, location.path);
         }
       },
       updateNavLocation: (location: NavLocation) => {
         this.breadcrumbsService.setSuffix(location.breadcrumbLabel);
         this.menuStateService.activateMenuItem(
-            this.clientAppService.activeApp.id,
+            this.clientAppService.activeApp.url,
             location.path,
         );
       },
@@ -119,14 +118,14 @@ export class CommunicationsService {
 
     this.breadcrumbsService.clearSuffix();
 
-    return this.navigate(this.activeMenuItem.appId, this.activeMenuItem.appPath, {forceRefresh: true});
+    return this.navigate(this.activeMenuItem.appUrl, this.activeMenuItem.appPath, {forceRefresh: true});
   }
 
   updateSelectedSite(siteId: SiteId): Promise<void> {
     this.busyIndicatorService.show();
 
     return this.clientAppService.activeApp.api.updateSelectedSite(siteId).then(() => {
-      const updatePromises = this.apps
+      const updatePromises = this.clientAppService.apps
         .filter(app => app.api && app.api.updateSelectedSite && app !== this.clientAppService.activeApp)
         .map(app => app.api.updateSelectedSite());
 
@@ -142,9 +141,22 @@ export class CommunicationsService {
     ).then(() => this.busyIndicatorService.hide());
   }
 
+  connectToChild(iframe: HTMLIFrameElement): Promise<void> {
+    const appUrl = iframe.src;
+
+    return connectToChild({
+      iframe,
+      methods: this.parentApiMethods,
+      timeout: this.settings.appSettings.iframesConnectionTimeout,
+    }).then(
+      api => this.clientAppService.addConnection(new Connection(appUrl, api)),
+      error => this.clientAppService.addConnection(new FailedConnection(appUrl, error)),
+    );
+  }
+
   private findApp(path: string): ClientApp {
-    return this.apps.find(
-      app => !!this.navConfigService.findNavItem(app.id, path),
+    return this.clientAppService.apps.find(
+      app => !!this.navConfigService.findNavItem(app.url, path),
     );
   }
 }
