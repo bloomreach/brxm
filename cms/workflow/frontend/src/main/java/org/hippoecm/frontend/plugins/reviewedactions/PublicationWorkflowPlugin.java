@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -92,8 +92,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             @Override
             protected Dialog createRequestDialog() {
                 final IModel docName = getDocumentName();
-                final IModel<String> title = new StringResourceModel("depublish-title", PublicationWorkflowPlugin.this)
-                        .setParameters(docName);
+                final IModel<String> title = new StringResourceModel("depublish-title", PublicationWorkflowPlugin.this);
                 final IModel<String> message = new StringResourceModel("depublish-message", PublicationWorkflowPlugin.this)
                         .setParameters(docName);
                 return new DepublishDialog(this, getModel(), title, message, getEditorManager());
@@ -113,8 +112,7 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             @Override
             protected Dialog createRequestDialog() {
                 final IModel docName = getDocumentName();
-                final IModel<String> title = new StringResourceModel("depublish-title", PublicationWorkflowPlugin.this)
-                        .setParameters(docName);
+                final IModel<String> title = new StringResourceModel("depublish-title", PublicationWorkflowPlugin.this);
                 final IModel<String> message = new StringResourceModel("depublish-message", PublicationWorkflowPlugin.this)
                         .setParameters(docName);
                 return new DepublishDialog(this, getModel(), title, message, getEditorManager());
@@ -204,9 +202,10 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                             unpublished, jcrSession);
 
                     if (!referencesToUnpublishedDocuments.isEmpty()) {
-                        return new UnpublishedReferencesDialog(publishAction,
-                                new UnpublishedReferenceNodeProvider(referencesToUnpublishedDocuments),
-                                getEditorManager());
+                        final UnpublishedReferenceNodeProvider provider = new UnpublishedReferenceNodeProvider(referencesToUnpublishedDocuments);
+                        final IModel<String> publishNotification = new StringResourceModel("publish-message", PublicationWorkflowPlugin.this)
+                                .setParameters(getDocumentName());
+                        return new UnpublishedReferencesDialog(publishAction, provider, publishNotification, getEditorManager());
                     }
                 } catch (final RepositoryException e) {
                     log.error(e.getMessage());
@@ -234,8 +233,10 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                             unpublished, jcrSession);
 
                     if (!referencesToUnpublishedDocuments.isEmpty()) {
+                        final IModel<String> publishNotification = new StringResourceModel("publish-message", PublicationWorkflowPlugin.this)
+                                .setParameters(getDocumentName());
                         final UnpublishedReferenceNodeProvider provider = new UnpublishedReferenceNodeProvider(referencesToUnpublishedDocuments);
-                        return new UnpublishedReferencesDialog(this, provider, getEditorManager());
+                        return new UnpublishedReferencesDialog(this, provider, publishNotification, getEditorManager());
                     }
                 } catch (final RepositoryException e) {
                     log.error(e.getMessage());
