@@ -23,6 +23,7 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IModel;
@@ -47,13 +48,12 @@ import org.onehippo.forge.relateddocs.RelatedDocCollection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author vijaykiran
- */
 public class DocumentPickerDialog extends Dialog<Node> {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentPickerDialog.class);
     protected static final String CLUSTER_OPTIONS = "cluster.options";
+    private static final String PICKER_CLUSTER_NAME_OPTION = "pickerClusterName";
+    private static final String PICKER_CLUSTER_NAME_DEFAULT = "cms-pickers/documents";
 
     private List<String> nodetypes = new ArrayList<>();
 
@@ -88,7 +88,7 @@ public class DocumentPickerDialog extends Dialog<Node> {
                 String[] nodeTypes = clusterOptionConfig.getStringArray("nodetypes");
                 this.nodetypes.addAll(Arrays.asList(nodeTypes));
             }
-            if (nodetypes.size() == 0) {
+            if (nodetypes.isEmpty()) {
                 log.debug("No configuration specified for filtering on nodetypes. No filtering will take place.");
             }
         }
@@ -126,7 +126,7 @@ public class DocumentPickerDialog extends Dialog<Node> {
                 testNode = targetNode.getNode(targetNode.getName());
             }
 
-            if (nodetypes == null || nodetypes.size() == 0) {
+            if (nodetypes == null || nodetypes.isEmpty()) {
                 validType = true;
             }
             if (nodetypes != null) {
@@ -138,7 +138,7 @@ public class DocumentPickerDialog extends Dialog<Node> {
                 }
             }
 
-            isLinkable = targetNode.isNodeType("mix:referenceable");
+            isLinkable = targetNode.isNodeType(JcrConstants.MIX_REFERENCEABLE);
             isLinkable = isLinkable
                     && !(targetNode.isNodeType(HippoNodeType.NT_DOCUMENT)
                     && targetNode.getParent().isNodeType(HippoNodeType.NT_HANDLE));
@@ -155,8 +155,8 @@ public class DocumentPickerDialog extends Dialog<Node> {
     protected Component createContentPanel(final String contentId) {
         final IPluginConfigService pluginConfigService = context.getService(IPluginConfigService.class.getName(),
                 IPluginConfigService.class);
-        final IClusterConfig template = pluginConfigService.getCluster("cms-pickers/documents");
-        //TODO: is this ok? IPluginConfig parameters = new JavaPluginConfig(config.getPluginConfig(CLUSTER_OPTIONS));
+        final String pickerClusterName = config.getString(PICKER_CLUSTER_NAME_OPTION, PICKER_CLUSTER_NAME_DEFAULT);
+        final IClusterConfig template = pluginConfigService.getCluster(pickerClusterName);
         control = context.newCluster(template, null);
 
         control.start();
@@ -241,11 +241,11 @@ public class DocumentPickerDialog extends Dialog<Node> {
 
         try {
             if (uuid.equalsIgnoreCase(selectedNodeModel.getNode().getIdentifier())) {
-                error("You cannot add the same document as the related document!!");
+                error("You cannot add the same document as the related document");
                 return;
             }
-        } catch (RepositoryException re) {
-            log.error("Unable to get the UUID for the selected document", re);
+        } catch (RepositoryException e) {
+            log.error("Unable to get the UUID for the selected document", e);
         }
 
         collection.add(new RelatedDoc(selectedNodeModel));
