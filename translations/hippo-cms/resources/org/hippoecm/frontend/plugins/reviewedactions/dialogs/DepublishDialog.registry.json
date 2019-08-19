@@ -1,12 +1,8 @@
 {
   "bundleType" : "WICKET",
   "keyData" : {
-    "publish" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "title" : {
-      "status" : "UPDATED",
+    "depublish" : {
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
