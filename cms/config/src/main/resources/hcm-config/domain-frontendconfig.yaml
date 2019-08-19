@@ -1,0 +1,68 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/frontendconfig:
+      jcr:primaryType: hipposys:domain
+      /frontend-hierarchy-nodes:
+        jcr:primaryType: hipposys:domainrule
+        /frontend-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:filter: false
+          hipposys:type: Reference
+          hipposys:value: /hippo:configuration/hippo:frontend
+        /exclude-plugin:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: false
+          hipposys:facet: nodetype
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: frontend:plugin
+      /frontend-plugins:
+        jcr:primaryType: hipposys:domainrule
+        /frontend-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:filter: false
+          hipposys:type: Reference
+          hipposys:value: /hippo:configuration/hippo:frontend
+        /type-frontend-plugin:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:primaryType
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: frontend:plugin
+        /exclude-admin:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: false
+          hipposys:facet: plugin.class
+          hipposys:filter: false
+          hipposys:type: String
+          hipposys:value: org.hippoecm.frontend.plugins.cms.admin.AdminPerspective
+        /exclude-dev-perspective:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: false
+          hipposys:facet: cluster.name
+          hipposys:filter: true
+          hipposys:type: String
+          hipposys:value: cms-dev
+        /exclude-publishall:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: false
+          hipposys:facet: plugin.class
+          hipposys:filter: false
+          hipposys:type: String
+          hipposys:value: org.hippoecm.frontend.plugins.reviewedactions.PublishAllShortcutPlugin
+        /exclude-configuration-in-cms-tree:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: false
+          hipposys:facet: cluster.name
+          hipposys:filter: true
+          hipposys:type: String
+          hipposys:value: cms-tree-views/configuration
+      /readonly:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [everybody]
+        hipposys:role: readonly
