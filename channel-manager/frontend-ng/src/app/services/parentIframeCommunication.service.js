@@ -19,54 +19,32 @@ class ParentIframeCommunicationService {
     'ngInject';
 
     this.ChannelService = ChannelService;
-  }
 
-  get _parentIFrameConnection() {
-    return this.cms;
-  }
-
-  set _parentIFrameConnection(cms) {
-    this.cms = cms;
-  }
-
-  _callParent(callBack) {
-    if (!this._parentIFrameConnection) {
-      this._connectToParent()
-        .then((parentApi) => {
-          this._parentIFrameConnection = parentApi;
-          callBack.call();
-        })
-        .catch(error => console.log(error));
-    } else {
-      callBack.call();
-    }
-  }
-
-  _connectToParent() {
     const parentOrigin = window.location.origin;
     const methods = {
       // eslint-disable-next-line no-unused-vars
       navigate: (location, flags) => {
-        let updatedLocation = {};
-        if (this.ChannelService.channel && !(flags && flags.forceRefresh)) {
-          updatedLocation = {
-            breadcrumbLabel: this.ChannelService.channel.name,
-            path: `channelmanager/${this.ChannelService.channel.id}`,
-          };
-        } else {
-          updatedLocation = {
-            path: 'channelmanager/',
-          };
-        }
-        this.updateNavLocation(updatedLocation);
+        this.updateNavLocation(this._getLocation(flags));
       },
     };
-    const parentConnectConfig = { parentOrigin, methods };
-    return connectToParent(parentConnectConfig);
+    this.apiPromise = connectToParent({ parentOrigin, methods });
   }
 
   updateNavLocation(location) {
-    this._callParent(() => this._parentIFrameConnection.updateNavLocation(location).catch(err => console.error(err)));
+    this.apiPromise.then((api) => {
+      api.updateNavLocation(location)
+        .catch(error => console.error(error));
+    }).catch(error => console.error('Connection to parent failed', error));
+  }
+
+  _getLocation(flags) {
+    if (this.ChannelService.hasChannel() && !(flags && flags.forceRefresh)) {
+      return {
+        breadcrumbLabel: this.ChannelService.getName(),
+        path: `channelmanager/${this.ChannelService.getId()}`,
+      };
+    }
+    return { path: 'channelmanager' };
   }
 }
 
