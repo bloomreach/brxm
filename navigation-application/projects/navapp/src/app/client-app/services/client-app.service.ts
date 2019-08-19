@@ -81,10 +81,16 @@ export class ClientAppService {
   addConnection(connection: Connection): void {
     const uniqueURLs = this.uniqueURLs.value;
 
-    if (!uniqueURLs.includes(connection.appUrl) && !uniqueURLs.includes(`${connection.appUrl}/`)) {
+    const withoutTrailingSlash = connection.appUrl.replace(/\/$/, '');
+    const url = uniqueURLs.find(x => x === connection.appUrl || x === withoutTrailingSlash);
+
+    if (!url) {
       console.error(`An attempt to register the connection to unknown url = ${connection.appUrl}`);
       return;
     }
+
+    // Fix extra/missing trailing slash issue
+    connection.appUrl = url;
 
     this.connection$.next(connection);
   }
