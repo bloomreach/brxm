@@ -23,7 +23,6 @@ import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.math3.util.Pair;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.NameParser;
@@ -79,9 +78,14 @@ public class QFacetRule implements Serializable {
     private String value;
 
     /**
-     * In case this rule is a Reference Rule, this returns the absolute path to the reference
+     * If this rule is a Reference Rule
      */
-    private String pathReference;
+    private final boolean referenceRule;
+
+    /**
+     * In case this rule is a Reference Rule the UUID of the rule is needed to synchronize changes to the reference itself
+     */
+    private final String facetUUID;
 
     /**
      * The Name representation of value to match the facet
@@ -106,6 +110,8 @@ public class QFacetRule implements Serializable {
 
     public QFacetRule(FacetRule facetRule, NameResolver nameResolver) throws RepositoryException {
         // TODO this is used by Session delegation but DOES not work for PropertyType.REFERENCE !! FIX??
+        this.referenceRule = false;
+        this.facetUUID = null;
         this.type = facetRule.getType();
         this.facet = facetRule.getFacet();
         this.facetName = nameResolver.getQName(facet);
@@ -123,6 +129,7 @@ public class QFacetRule implements Serializable {
     public QFacetRule(final Node node) throws RepositoryException {
         // get mandatory properties
         facet = node.getProperty(HippoNodeType.HIPPO_FACET).getString();
+        facetUUID = node.getIdentifier();
 
         // Set the JCR Name for the facet (string)
         facetName = NameParser.parse(facet, new SessionNamespaceResolver(node.getSession()), NameFactoryImpl.getInstance());
@@ -133,17 +140,18 @@ public class QFacetRule implements Serializable {
         int tmpType = PropertyType.valueFromName(node.getProperty(HippoNodeType.HIPPOSYS_TYPE).getString());
         String tmpValue = node.getProperty(HippoNodeType.HIPPOSYS_VALUE).getString();
 
-        //NameResolver nRes = new ParsingNameResolver(NameFactoryImpl.getInstance(), new SessionNamespaceResolver(node.getSession()));
-        // if it's a name property set valueName
         Name tmpName = null;
-        if (tmpType == PropertyType.NAME && !tmpValue.equals(FacetAuthConstants.WILDCARD)) {
-            tmpName = NameParser.parse(tmpValue, new SessionNamespaceResolver(node.getSession()), NameFactoryImpl.getInstance());
-        } else if (tmpType == PropertyType.REFERENCE) {
+
+        referenceRule = tmpType == PropertyType.REFERENCE;
+        if (referenceRule) {
             // convert to a String matcher on UUID
             tmpType = PropertyType.STRING;
-            final Pair<String, String> uuidAbsPath = parseReferenceTypeValue(node);
-            tmpValue = uuidAbsPath.getFirst();
-            pathReference = uuidAbsPath.getSecond();
+            tmpValue = parseReferenceTypeValue(node);
+        } else
+            //NameResolver nRes = new ParsingNameResolver(NameFactoryImpl.getInstance(), new SessionNamespaceResolver(node.getSession()));
+            // if it's a name property set valueName
+            if (tmpType == PropertyType.NAME && !tmpValue.equals(FacetAuthConstants.WILDCARD)) {
+            tmpName = NameParser.parse(tmpValue, new SessionNamespaceResolver(node.getSession()), NameFactoryImpl.getInstance());
         }
 
         // set final values
@@ -161,7 +169,7 @@ public class QFacetRule implements Serializable {
     }
 
     public boolean isReferenceRule() {
-        return pathReference != null;
+        return referenceRule;
     }
 
     /**
@@ -183,11 +191,10 @@ public class QFacetRule implements Serializable {
      * @return String the String representation of the UUID
      * @throws RepositoryException
      */
-    private Pair<String, String> parseReferenceTypeValue(Node facetNode) throws RepositoryException {
+    private String parseReferenceTypeValue(Node facetNode) throws RepositoryException {
         final String uuid;
         final String pathValue = facetNode.getProperty(HippoNodeType.HIPPOSYS_VALUE).getString();
         final String path = pathValue.startsWith("/") ? pathValue.substring(1) : pathValue;
-        final String absPath = "/" + path;
         if ("".equals(path)) {
             uuid = facetNode.getSession().getRootNode().getIdentifier();
         } else {
@@ -197,11 +204,10 @@ public class QFacetRule implements Serializable {
 
                 log.info("Path not found for facetRule '{}'", facetNode.getPath());
 
-                return new Pair<>(StringUtils.EMPTY, absPath);
+                return StringUtils.EMPTY;
             }
         }
-        return new Pair<>(uuid, absPath);
-
+        return uuid;
     }
 
     /**
@@ -210,6 +216,14 @@ public class QFacetRule implements Serializable {
      */
     public String getFacet() {
         return facet;
+    }
+
+    /**
+     * Get the UUID of the facet rule itself
+     * @return the facet rule UUID
+     */
+    public String getFacetUUID() {
+        return facetUUID;
     }
 
     /**
@@ -231,21 +245,17 @@ public class QFacetRule implements Serializable {
 
     /**
      * A path reference gets translated to a UUID value, see {@link #parseReferenceTypeValue}. However, if the path
-     * reference does not (yet) existed during initialization, it can be set later on. Then {@link #setUUIDReference(String)}
+     * reference does not (yet) existed during initialization, it can be set later on. Then {@link #setUUIDValue(String)}
      * gets invoked (for all existing JCR Sessions containing this {@link QFacetRule}.
-     * @param reference the UUID to set
+     * @param value the UUID to set
+     * @throws UnsupportedOperationException when not a {{@link #isReferenceRule()}}
      */
-    public void setUUIDReference(final String reference) {
-        value = reference;
-    }
-
-    /**
-     * The value of the *absolute* path reference in case JcrConstants.JCR_PATH.equals(facet) and otherwise returns
-     * {@code null}
-     * @return the path reference
-     */
-    public String getPathReference() {
-        return pathReference;
+    public void setUUIDValue(final String value) {
+        if (!isReferenceRule()) {
+            throw new UnsupportedOperationException("Setting the UUID Value is only supported when " +
+                    "isReferenceRule() return true");
+        }
+        this.value = value;
     }
 
     /**
@@ -299,9 +309,6 @@ public class QFacetRule implements Serializable {
             sb.append(" != ");
         }
         sb.append(value);
-        if (pathReference != null) {
-            sb.append(", pathReference = ").append(pathReference);
-        }
 
         sb.append("]");
 

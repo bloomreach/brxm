@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -54,12 +54,12 @@ import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.core.state.StaleItemStateException;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.repository.api.HippoNodeType.CONFIGURATION_PATH;
-import static org.hippoecm.repository.api.HippoNodeType.DOMAINS_PATH;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_DOMAINSPATH;
 import static org.hippoecm.repository.api.HippoNodeType.NT_FACETRULE;
 
 public class HippoSharedItemStateManager extends SharedItemStateManager {
@@ -89,13 +89,22 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
 
     @Override
     public void doPostInitialize() throws RepositoryException {
+        final String SECURITY_CONFIG_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.SECURITY_PATH;
 
-        qFacetRuleStateManager.setSystemSession(getSystemSession());
-        qFacetRuleStateManager.visit("/" + CONFIGURATION_PATH + "/" + DOMAINS_PATH);
-
+        if (getSystemSession().nodeExists(SECURITY_CONFIG_PATH)) {
+            final Node securityFolderNode = getSystemSession().getNode(SECURITY_CONFIG_PATH);
+            /* TODO: fix documentation at https://documentation.bloomreach.com/library/concepts/security/repository-authorization-and-permissions.html
+                     the documentation says all SECURITY_CONFIG paths defaults are absolute (start *with* a slash),
+                     but actually they must be root relative (*without* a prefixing slash)
+             */
+            final String domainsPath = "/" + securityFolderNode.getProperty(HIPPO_DOMAINSPATH).getString();
+            if (getSystemSession().nodeExists(domainsPath)) {
+                qFacetRuleStateManager.visit(getSystemSession().getNode(domainsPath));
+            }
+        }
     }
 
-    public QFacetRuleStateManager getQFacetRuleMonitor() {
+    public QFacetRuleStateManager getQFacetRuleStateManager() {
         return qFacetRuleStateManager;
     }
 
@@ -133,7 +142,7 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
         }
 
         try {
-            Set<NodeState> handles = new HashSet<NodeState>();
+            Set<NodeState> handles = new HashSet<>();
             addHandles(changeLog.modifiedStates(), changeLog, handles);
             for (NodeState handleState : handles) {
                 for (WeakReference<HandleListener> reference : handleListeners) {
@@ -370,7 +379,7 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
 
 
         } catch (ItemStateException | NamespaceException | PathNotFoundException e) {
-            e.printStackTrace();
+            log.error("Exception while processing created state.", e);
         }
     }
 

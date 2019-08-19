@@ -96,7 +96,7 @@ abstract class SessionImplHelper {
      */
     private String userId;
 
-    private long reInitCounter;
+    private long implicitReadAccessUpdateCounter;
 
     NodeTypeRegistry ntReg;
     RepositoryImpl rep;
@@ -619,10 +619,10 @@ abstract class SessionImplHelper {
 
 
         if (authorizationQuery == null || NodeTypesChangeTracker.getChangesCounter() != nodeTypesChangeCounter
-                || ham.getReInitCounter() != reInitCounter) {
+                || ham.getImplictReadAccessUpdateCounter() != implicitReadAccessUpdateCounter) {
 
             nodeTypesChangeCounter = NodeTypesChangeTracker.getChangesCounter();
-            reInitCounter = ham.getReInitCounter();
+            implicitReadAccessUpdateCounter = ham.getImplictReadAccessUpdateCounter();
             try {
                 final RepositoryImpl repository = (RepositoryImpl)context.getRepository();
                 HippoQueryHandler queryHandler = repository.getHippoQueryHandler(session.getWorkspace().getName());

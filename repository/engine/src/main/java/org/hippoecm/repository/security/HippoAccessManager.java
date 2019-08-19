@@ -166,9 +166,9 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
     private Set<NodeId> implicitReads = new ConcurrentHashMap().newKeySet();
 
-    private long reInitCounter = 0;
+    private long implictReadAccessUpdateCounter = 0;
 
-    private long localCounter = 0;
+    private long referenceFacetRulesUpdateCounter = 0;
 
     private WeakHashMap<HippoNodeId, Boolean> readVirtualAccessCache;
 
@@ -236,7 +236,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             ntMgr = ((HippoAMContext) context).getNodeTypeManager();
             itemMgr = (HippoSessionItemStateManager) ((HippoAMContext) context).getSessionItemStateManager();
             sharedItemMgr = itemMgr.getSharedItemStateManager();
-            localCounter = sharedItemMgr.getQFacetRuleMonitor().getUpdateCounter();
+            referenceFacetRulesUpdateCounter = sharedItemMgr.getQFacetRuleStateManager().getUpdateCounter();
         }
 
         hierMgr = itemMgr.getHierarchyMgr();
@@ -498,8 +498,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         return implicitReads;
     }
 
-    public long getReInitCounter() {
-        return reInitCounter;
+    public long getImplictReadAccessUpdateCounter() {
+        return implictReadAccessUpdateCounter;
     }
 
     public Set<QFacetRule> getFacetRules(final DomainRule domainRule) {
@@ -1625,7 +1625,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         implicitReads.clear();
         readAccessCache.clear();
         initializeImplicitReadAccess();
-        reInitCounter++;
+        implictReadAccessUpdateCounter++;
     }
 
     private synchronized void initializeImplicitReadAccess(final DomainRule domainRule, final FacetAuthPrincipal fap) {
@@ -1638,41 +1638,27 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                     continue;
                 }
 
-                final String path = qFacetRule.getPathReference();
-                if (path == null) {
+                final NodeId nodeId = new NodeId(qFacetRule.getValue());
+
+                // apply implicit read access to ancestry of nodeId
+                final NodeState nodeState = getNodeStateQuietly(nodeId);
+                if (nodeState == null) {
                     continue;
                 }
-
-                final NodeId nodeId;
 
                 try {
-                    nodeId = getNodeId(npRes.getQPath(path));
-                } catch (Exception e) {
-                    log.error("Exception while trying to fetch nodeId for '{}'. ", path, e);
+                    if (!isNodeInDomain(nodeState, fap, true)) {
+                        log.debug("Do not give read access to ancestry since the referenced path is not included " +
+                                "in the domain due some other facet rule, and as a result, the ancestry should " +
+                                "not get implicit read access");
+                        continue;
+                    }
+                } catch (RepositoryException e) {
+                    log.error("Exception while testing itemState for '{}' was in domain.", nodeId, e);
                     continue;
                 }
 
-                if (nodeId != null) {
-                    // apply implicit read access to ancestry of nodeId
-                    final NodeState nodeState = getNodeStateQuietly(nodeId);
-                    if (nodeState == null) {
-                        continue;
-                    }
-
-                    try {
-                        if (!isNodeInDomain(nodeState, fap, true)) {
-                            log.debug("Do not give read access to ancestry since the referenced path is not included " +
-                                    "in the domain due some other facet rule, and as a result, the ancestry should " +
-                                    "not get implicit read access");
-                            continue;
-                        }
-                    } catch (RepositoryException e) {
-                        log.error("Exception while testing itemState for '{}' was in domain.", nodeId, e);
-                        continue;
-                    }
-
-                    setReadAllowedAncestry(nodeState);
-                }
+                setReadAllowedAncestry(nodeState);
             }
         }
     }
@@ -1700,10 +1686,10 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             return;
         }
 
-        final QFacetRuleStateManager qFacetRuleStateManager = sharedItemMgr.getQFacetRuleMonitor();
+        final QFacetRuleStateManager qFacetRuleStateManager = sharedItemMgr.getQFacetRuleStateManager();
 
-        final long updateCounterSnapShot = qFacetRuleStateManager.getUpdateCounter();
-        if (localCounter == updateCounterSnapShot) {
+        long updateCounterSnapShot = qFacetRuleStateManager.getUpdateCounter();
+        if (referenceFacetRulesUpdateCounter == updateCounterSnapShot) {
             return;
         }
 
@@ -1712,30 +1698,33 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
         final Set<FacetAuthPrincipal> faps = subject.getPrincipals(FacetAuthPrincipal.class);
 
-        faps.forEach(fap -> fap.getRules().forEach(domainRule -> {
-            domainRule.getFacetRules().forEach(qFacetRule -> {
-                if (qFacetRule.isReferenceRule()) {
-                    final String prevValue = qFacetRule.getValue();
-                    final String newUUID =  qFacetRuleStateManager.getUUID(qFacetRule.getPathReference());
+        do {
+            referenceFacetRulesUpdateCounter = updateCounterSnapShot;
 
-                    if (newUUID == null) {
-                        log.error("sharedItemMgr.getJcrPathUUIDReferences() expected to have a value for " +
-                                "qFacetRule with path reference '{}' but not present.", qFacetRule.getPathReference());
-                        return;
+            faps.forEach(fap -> fap.getRules().forEach(domainRule -> {
+                domainRule.getFacetRules().forEach(qFacetRule -> {
+                    if (qFacetRule.isReferenceRule()) {
+                        final String prevValue = qFacetRule.getValue();
+                        final String newUUID = qFacetRuleStateManager.getReferenceUUID(qFacetRule.getFacetUUID());
+
+                        if (newUUID == null) {
+                            log.error("sharedItemMgr.getJcrPathUUIDReferences() expected to have a value for " +
+                                    "qFacetRule with facetUUID '{}' but not present.", qFacetRule.getFacetUUID());
+                            return;
+                        }
+
+                        if (StringUtils.equals(prevValue, newUUID)) {
+                            return;
+                        }
+
+                        reInit[0] = true;
+                        qFacetRule.setUUIDValue(newUUID);
+
                     }
-
-                    if (StringUtils.equals(prevValue, newUUID)) {
-                        return;
-                    }
-
-                    reInit[0] = true;
-                    qFacetRule.setUUIDReference(newUUID);
-
-                }
-            });
-        }));
-
-        localCounter = updateCounterSnapShot;
+                });
+            }));
+            updateCounterSnapShot = qFacetRuleStateManager.getUpdateCounter();
+        } while (referenceFacetRulesUpdateCounter != updateCounterSnapShot);
 
         if (reInit[0]) {
             try {
