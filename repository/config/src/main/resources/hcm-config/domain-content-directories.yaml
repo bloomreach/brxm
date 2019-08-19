@@ -22,3 +22,11 @@ definitions:
         jcr:primaryType: hipposys:authrole
         hipposys:groups: [editor, author]
         hipposys:role: readwrite
+      /author:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [author]
+        hipposys:role: author
+      /editor:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [editor]
+        hipposys:role: editor
