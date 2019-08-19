@@ -1,0 +1,35 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/content:
+      jcr:primaryType: hipposys:domain
+      /content-domain:
+        jcr:primaryType: hipposys:domainrule
+        /content-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:filter: false
+          hipposys:type: Reference
+          hipposys:value: /content
+        /exclude-hippostd-folder:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: false
+          hipposys:facet: nodetype
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hippostd:folder
+        /exclude-hippostd-directory:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: false
+          hipposys:facet: nodetype
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hippostd:directory
+      /author:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [author]
+        hipposys:role: author
+      /editor:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: [editor]
+        hipposys:role: editor
