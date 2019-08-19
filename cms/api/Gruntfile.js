@@ -18,6 +18,7 @@
 var fs = require('fs');
 
 module.exports = function (grunt) {
+  const sass = require('node-sass');
 
   // load all grunt tasks automatically
   require('load-grunt-tasks')(grunt);
@@ -43,6 +44,7 @@ module.exports = function (grunt) {
       },
       sass: {
         options: {
+          implementation: sass,
           livereload: false
         },
         files: ['<%= build.src %>/**/*.scss'],
@@ -74,6 +76,7 @@ module.exports = function (grunt) {
     // Compile Sass to CSS.
     sass: {
       options: {
+        implementation: sass,
         outputStyle: 'expanded'
       },
       main: {
