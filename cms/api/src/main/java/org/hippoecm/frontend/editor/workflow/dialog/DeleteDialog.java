@@ -21,6 +21,7 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
@@ -39,6 +40,7 @@ public class DeleteDialog extends WorkflowDialog<WorkflowDescriptor> {
 
         setNotification(notification);
         setFocusOnCancel();
+        setOkLabel(new StringResourceModel("delete-action", this));
 
         add(ClassAttribute.append("hippo-delete-dialog"));
 
