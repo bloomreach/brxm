@@ -135,11 +135,12 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             protected Dialog createRequestDialog() {
                 final WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
                 try {
-                    final IModel<String> titleModel = new StringResourceModel("schedule-depublish-title", PublicationWorkflowPlugin.this)
+                    final IModel<String> titleModel = new StringResourceModel("schedule-depublish-title", PublicationWorkflowPlugin.this);
+                    final IModel<String> notification = new StringResourceModel("schedule-depublish-notification", PublicationWorkflowPlugin.this)
                             .setParameters(getDocumentName());
 
                     return new ScheduleDepublishDialog(this, new JcrNodeModel(wdm.getNode()),
-                            PropertyModel.of(this, "date"), titleModel, getEditorManager());
+                            PropertyModel.of(this, "date"), titleModel, notification, getEditorManager());
                 } catch (final RepositoryException e) {
                     log.warn("could not retrieve node for scheduling depublish", e);
                 }
@@ -167,10 +168,12 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             protected Dialog createRequestDialog() {
                 final WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
                 try {
-                    final IModel<String> titleModel = new StringResourceModel("schedule-depublish-title", PublicationWorkflowPlugin.this)
+                    final IModel<String> titleModel = new StringResourceModel("schedule-depublish-title", PublicationWorkflowPlugin.this);
+                    final IModel<String> notification = new StringResourceModel("schedule-depublish-notification", PublicationWorkflowPlugin.this)
                             .setParameters(getDocumentName());
+
                     return new ScheduleDepublishDialog(this, new JcrNodeModel(wdm.getNode()),
-                            PropertyModel.of(this, "date"), titleModel, getEditorManager());
+                            PropertyModel.of(this, "date"), titleModel, notification, getEditorManager());
                 } catch (final RepositoryException e) {
                     log.warn("could not retrieve node for scheduling depublish", e);
                 }
