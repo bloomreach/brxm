@@ -50,7 +50,11 @@ export class BootstrapService {
       this.navConfigService.init(),
       this.clientAppService.init(),
     ])).pipe(
-      catchError(error => throwError(`[NAVAPP] Bootstrap error: ${error}`)),
+      catchError(error => {
+        const message = typeof error === 'object' ? error.message : error;
+
+        return throwError(`[NAVAPP] Bootstrap error: ${message}`);
+      }),
       first(),
       tap(() => {
         this.bootstrappedSuccessful.next();
