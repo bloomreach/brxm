@@ -49,7 +49,7 @@ public class SchedulePublishDialog extends WorkflowDialog<Node> {
         setCssClass("hippo-workflow-dialog");
         setNotification(notification);
         setOkLabel(getString("schedule-action"));
-        setFocusOnCancel();
+        setFocusOnOk();
 
         final Map<String, Node> referringDocuments = getReferringDocuments((JcrNodeModel) nodeModel);
         final UnpublishedReferenceNodeProvider provider = new UnpublishedReferenceNodeProvider(referringDocuments);

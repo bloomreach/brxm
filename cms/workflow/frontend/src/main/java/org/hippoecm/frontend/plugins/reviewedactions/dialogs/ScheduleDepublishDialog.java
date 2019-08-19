@@ -39,7 +39,7 @@ public class ScheduleDepublishDialog extends WorkflowDialog<Node> {
         setCssClass("hippo-workflow-dialog");
         setNotification(notification);
         setOkLabel(getString("schedule-depublish-action"));
-        setFocusOnCancel();
+        setFocusOnOk();
 
         ReferringDocumentsProvider provider = new ReferringDocumentsProvider(nodeModel, false);
         add(new ReferringDocumentsView("refs", provider, editorMgr));
