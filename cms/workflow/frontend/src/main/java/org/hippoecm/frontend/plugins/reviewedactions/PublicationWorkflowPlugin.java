@@ -262,11 +262,12 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 final WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
                 try {
                     final Node unpublished = getVariant(wdm.getNode(), UNPUBLISHED);
-                    final IModel<String> titleModel = new StringResourceModel("schedule-publish-title", PublicationWorkflowPlugin.this)
+                    final IModel<String> titleModel = new StringResourceModel("schedule-publish-title", PublicationWorkflowPlugin.this);
+                    final IModel<String> notification = new StringResourceModel("schedule-publish-notification", PublicationWorkflowPlugin.this)
                             .setParameters(getDocumentName());
 
                     return new SchedulePublishDialog(this, new JcrNodeModel(unpublished),
-                            PropertyModel.of(this, "date"), titleModel, getEditorManager());
+                            PropertyModel.of(this, "date"), titleModel, notification, getEditorManager());
                 } catch (final RepositoryException ex) {
                     log.warn("could not retrieve node for scheduling publish", ex);
                 }
@@ -295,11 +296,12 @@ public class PublicationWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 final WorkflowDescriptorModel wdm = getModel();
                 try {
                     final Node unpublished = getVariant(wdm.getNode(), UNPUBLISHED);
-                    final IModel<String> titleModel = new StringResourceModel("schedule-publish-title", PublicationWorkflowPlugin.this)
+                    final IModel<String> titleModel = new StringResourceModel("schedule-publish-title", PublicationWorkflowPlugin.this);
+                    final IModel<String> notification = new StringResourceModel("schedule-publish-notification", PublicationWorkflowPlugin.this)
                             .setParameters(getDocumentName());
 
                     return new SchedulePublishDialog(this, new JcrNodeModel(unpublished),
-                            PropertyModel.of(this, "date"), titleModel, getEditorManager());
+                            PropertyModel.of(this, "date"), titleModel, notification, getEditorManager());
                 } catch (final RepositoryException ex) {
                     log.warn("could not retrieve node for scheduling publish", ex);
                 }

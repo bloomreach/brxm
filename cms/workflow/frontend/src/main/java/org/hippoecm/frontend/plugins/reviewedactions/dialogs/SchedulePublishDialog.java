@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,10 +43,12 @@ public class SchedulePublishDialog extends WorkflowDialog<Node> {
 
     public SchedulePublishDialog(final IWorkflowInvoker invoker, final IModel<Node> nodeModel,
                                  final IModel<Date> dateModel, final IModel<String> titleModel,
-                                 final IEditorManager editorMgr) {
+                                 final IModel<String> notification, final IEditorManager editorMgr) {
         super(invoker, nodeModel, titleModel);
 
         setCssClass("hippo-workflow-dialog");
+        setNotification(notification);
+        setOkLabel(getString("schedule-action"));
         setFocusOnCancel();
 
         Map<String, Node> referringDocuments = null;
@@ -58,7 +60,6 @@ public class SchedulePublishDialog extends WorkflowDialog<Node> {
         }
 
         final UnpublishedReferenceNodeProvider provider = new UnpublishedReferenceNodeProvider(referringDocuments);
-
         add(new UnpublishedReferencesView("links", provider, editorMgr));
 
         addOrReplace(new DatePickerComponent(Dialog.BOTTOM_LEFT_ID, dateModel, new ResourceModel("schedule-publish-text")));
