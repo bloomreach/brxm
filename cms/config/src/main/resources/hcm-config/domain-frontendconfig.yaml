@@ -41,13 +41,6 @@ definitions:
           hipposys:filter: false
           hipposys:type: String
           hipposys:value: org.hippoecm.frontend.plugins.cms.admin.AdminPerspective
-        /exclude-dev-perspective:
-          jcr:primaryType: hipposys:facetrule
-          hipposys:equals: false
-          hipposys:facet: cluster.name
-          hipposys:filter: true
-          hipposys:type: String
-          hipposys:value: cms-dev
         /exclude-publishall:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: false
