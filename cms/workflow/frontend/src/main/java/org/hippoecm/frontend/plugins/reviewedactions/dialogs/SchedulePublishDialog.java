@@ -58,7 +58,7 @@ public class SchedulePublishDialog extends WorkflowDialog<Node> {
         addOrReplace(new DatePickerComponent(Dialog.BOTTOM_LEFT_ID, dateModel, new ResourceModel("schedule-publish-text")));
     }
 
-    private Map<String, Node> getReferringDocuments(final JcrNodeModel nodeModel) {
+    private static Map<String, Node> getReferringDocuments(final JcrNodeModel nodeModel) {
         try {
             return WorkflowUtils.getReferencesToUnpublishedDocuments(nodeModel.getNode(), UserSession.get().getJcrSession());
         } catch (RepositoryException e) {
