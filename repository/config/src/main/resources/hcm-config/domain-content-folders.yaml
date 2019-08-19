@@ -4,7 +4,7 @@ definitions:
       jcr:primaryType: hipposys:domain
       /content-folders-domain:
         jcr:primaryType: hipposys:domainrule
-        /content-directory-and-descendants:
+        /content-and-descendants:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: jcr:path
