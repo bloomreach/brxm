@@ -19,7 +19,7 @@
 :host {
   display: block;
   font-size: $menu-drawer-font-size;
-  padding: 5px 0;
+  padding: 5px 10px 5px 0;
 
   &.active .menu-item-link {
     color: $menu-active-text-color;
