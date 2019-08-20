@@ -147,10 +147,7 @@ public class QFacetRule implements Serializable {
             // convert to a String matcher on UUID
             tmpType = PropertyType.STRING;
             tmpValue = parseReferenceTypeValue(node);
-        } else
-            //NameResolver nRes = new ParsingNameResolver(NameFactoryImpl.getInstance(), new SessionNamespaceResolver(node.getSession()));
-            // if it's a name property set valueName
-            if (tmpType == PropertyType.NAME && !tmpValue.equals(FacetAuthConstants.WILDCARD)) {
+        } else if (tmpType == PropertyType.NAME && !tmpValue.equals(FacetAuthConstants.WILDCARD)) {
             tmpName = NameParser.parse(tmpValue, new SessionNamespaceResolver(node.getSession()), NameFactoryImpl.getInstance());
         }
 
