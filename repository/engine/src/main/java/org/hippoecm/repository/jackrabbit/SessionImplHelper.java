@@ -617,12 +617,14 @@ abstract class SessionImplHelper {
 
         final HippoAccessManager ham = (HippoAccessManager) accessManager;
 
+        // potentially trigger the implicit read access cache to update
+        ham.updateReferenceFacetRules();
 
         if (authorizationQuery == null || NodeTypesChangeTracker.getChangesCounter() != nodeTypesChangeCounter
-                || ham.getImplictReadAccessUpdateCounter() != implicitReadAccessUpdateCounter) {
+                || ham.getImplicitReadAccessUpdateCounter() != implicitReadAccessUpdateCounter) {
 
             nodeTypesChangeCounter = NodeTypesChangeTracker.getChangesCounter();
-            implicitReadAccessUpdateCounter = ham.getImplictReadAccessUpdateCounter();
+            implicitReadAccessUpdateCounter = ham.getImplicitReadAccessUpdateCounter();
             try {
                 final RepositoryImpl repository = (RepositoryImpl)context.getRepository();
                 HippoQueryHandler queryHandler = repository.getHippoQueryHandler(session.getWorkspace().getName());

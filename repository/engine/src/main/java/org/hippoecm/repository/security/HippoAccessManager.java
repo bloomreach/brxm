@@ -166,7 +166,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
     private Set<NodeId> implicitReads = new ConcurrentHashMap().newKeySet();
 
-    private long implictReadAccessUpdateCounter = 0;
+    private long implicitReadAccessUpdateCounter = 0;
 
     private long referenceFacetRulesUpdateCounter = 0;
 
@@ -498,8 +498,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         return implicitReads;
     }
 
-    public long getImplictReadAccessUpdateCounter() {
-        return implictReadAccessUpdateCounter;
+    public long getImplicitReadAccessUpdateCounter() {
+        return implicitReadAccessUpdateCounter;
     }
 
     public Set<QFacetRule> getFacetRules(final DomainRule domainRule) {
@@ -700,6 +700,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                 break;
             } else {
                 // check if node is part of a hippo:document
+                // TODO delete below
                 NodeState docState = null;
                 try {
                     docState = getParentDoc(nodeState);
@@ -1625,7 +1626,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         implicitReads.clear();
         readAccessCache.clear();
         initializeImplicitReadAccess();
-        implictReadAccessUpdateCounter++;
+        implicitReadAccessUpdateCounter++;
     }
 
     private synchronized void initializeImplicitReadAccess(final DomainRule domainRule, final FacetAuthPrincipal fap) {
@@ -1681,7 +1682,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         setReadAllowedAncestry(parentState);
     }
 
-    private void updateReferenceFacetRules() {
+    public void updateReferenceFacetRules() {
         if (isSystem) {
             return;
         }
