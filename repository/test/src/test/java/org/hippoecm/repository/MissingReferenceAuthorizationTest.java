@@ -45,11 +45,14 @@ import static org.junit.Assert.assertTrue;
 
 public class MissingReferenceAuthorizationTest extends RepositoryTestCase {
 
+
     private Node testDomain;
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
+
+        removeDefaultReadForTest(session);
 
         // create content
         final Node root = session.getRootNode();
@@ -77,6 +80,11 @@ public class MissingReferenceAuthorizationTest extends RepositoryTestCase {
         authRole.setProperty("hipposys:users", new String[]{ "testUser" });
         authRole.setProperty("hipposys:role", "admin");
 
+        // give read access to only /test and no descendants
+        final Node domainRule1 = testDomain.addNode("read-to-test-node", "hipposys:domainrule");
+        createFacetRule(domainRule1, "match-test-node", true, "jcr:uuid", "Reference", "/test");
+        session.save();
+
         session.save();
     }
 
@@ -85,12 +93,25 @@ public class MissingReferenceAuthorizationTest extends RepositoryTestCase {
     public void tearDown() throws Exception {
         removeNode("/hippo:configuration/hippo:users/testUser");
         removeNode("/hippo:configuration/hippo:domains/testDomain");
+        restoreDefaultReadForTest(session);
         super.tearDown();
     }
 
 
+
+    private void removeDefaultReadForTest(final Session session) throws RepositoryException {
+        session.move("/hippo:configuration/hippo:domains/defaultread/test-domain", "/test-domain");
+        session.save();
+    }
+
+
+    private void restoreDefaultReadForTest(final Session session) throws RepositoryException {
+        session.move("/test-domain","/hippo:configuration/hippo:domains/defaultread/test-domain");
+        session.save();
+    }
+
     @Test(expected = AccessControlException.class)
-    public void one_true_missing_reference_in_facet_rule_domain_rule() throws Exception {
+    public void missing_reference_in_facet_rule_domain_rule_does_not_give_implicit_read_access_to_ancestors() throws Exception {
 
         // domain with single facet rule that has equals = true & non existing reference
         // should result in no read access below /test/folder
