@@ -38,6 +38,12 @@ definitions:
         jcr:primaryType: hipposys:authrole
         hipposys:groups: [editor, author]
         hipposys:role: readwrite
+      # even though no groups assigned, this is handy for downstream projects so not one specific downstream project has
+      # to create the 'readonly' authrole
+      /readonly:
+        jcr:primaryType: hipposys:authrole
+        hipposys:groups: []
+        hipposys:role: readonly
       /author:
         jcr:primaryType: hipposys:authrole
         hipposys:groups: [author]
