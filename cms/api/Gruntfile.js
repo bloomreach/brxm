@@ -15,10 +15,9 @@
  */
 'use strict';
 
-var fs = require('fs');
+const sass = require('node-sass');
 
 module.exports = function (grunt) {
-  const sass = require('node-sass');
 
   // load all grunt tasks automatically
   require('load-grunt-tasks')(grunt);
