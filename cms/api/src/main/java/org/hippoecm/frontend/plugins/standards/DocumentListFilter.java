@@ -44,17 +44,15 @@ public class DocumentListFilter implements IClusterable {
         String parent;
         String child;
         String documentType;
-        String targetState;
         boolean targetDisplay;
         String targetName;
 
-        FilterDefinition(String state, String path, String parent, String child, String documentType, String targetState, boolean targetDisplay, String targetName) {
+        FilterDefinition(String state, String path, String parent, String child, String documentType, boolean targetDisplay, String targetName) {
             this.state = state;
             this.path = path;
             this.parent = parent;
             this.child = child;
             this.documentType = documentType;
-            this.targetState = targetState;
             this.targetDisplay = targetDisplay;
             this.targetName = targetName;
         }
@@ -103,7 +101,6 @@ public class DocumentListFilter implements IClusterable {
                         filter.getString("parent", ""),
                         filter.getString("child", ""),
                         filter.getString("documentType", ""),
-                        filter.getString("target", ""),
                         filter.getBoolean("display"),
                         filter.getString("name", "")));
             }
@@ -114,8 +111,8 @@ public class DocumentListFilter implements IClusterable {
         if (log.isDebugEnabled()) {
             log.debug("Filter definitions are:");
             for (FilterDefinition def : filters) {
-                log.debug("  ({}, {}, {}, {}, {}, {}, {}, {})", def.state, def.path, def.parent, def.child,
-                        def.documentType, def.targetState, def.targetDisplay, def.targetName);
+                log.debug("  ({}, {}, {}, {}, {}, {}, {})", def.state, def.path, def.parent, def.child,
+                        def.documentType, def.targetDisplay, def.targetName);
             }
         }
     }
