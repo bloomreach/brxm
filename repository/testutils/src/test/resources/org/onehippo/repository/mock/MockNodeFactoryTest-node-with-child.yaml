@@ -1,0 +1,5 @@
+/nodeWithChild:
+  parentProperty: parentValue
+  /child:
+    jcr:uuid: 10065434-57ea-4153-8165-e7a22288c05d
+    childProperty: childValue

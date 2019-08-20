@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,14 @@ import javax.jcr.RepositoryException;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
+
+import org.onehippo.cm.model.impl.GroupImpl;
+import org.onehippo.cm.model.impl.ModuleImpl;
+import org.onehippo.cm.model.impl.ProjectImpl;
+import org.onehippo.cm.model.impl.definition.ContentDefinitionImpl;
+import org.onehippo.cm.model.parser.ContentSourceParser;
+import org.onehippo.cm.model.source.ResourceInputProvider;
+import org.onehippo.cm.model.source.Source;
 
 public class MockNodeFactory {
 
@@ -50,7 +58,7 @@ public class MockNodeFactory {
 
     /**
      * Creates a {@link MockNode} from system-view XML URL.
-     * 
+     *
      * @param resource
      * @return
      * @throws IOException
@@ -99,4 +107,65 @@ public class MockNodeFactory {
         mockNode.setProperty(xmlProperty.getName(), xmlProperty.getValue(), xmlProperty.getType());
     }
 
+    /**
+     * Creates a {@link MockNode} from YAML.
+     *
+     * @param resourceName the classpath resource name of the YAML file (e.g. "/com/example/file.yaml" for a file "file.yaml"
+     *                     located in the test resources package "com.example")
+     * @return the node representing the structure in the YAML file.
+     * @throws IOException when the YAML file cannot be read
+     * @throws RepositoryException when the node structure cannot be created
+     */
+    public static MockNode fromYaml(final String resourceName) throws IOException, RepositoryException {
+        final MockNode root = MockNode.root();
+        importYaml(resourceName, root);
+        return root;
+    }
+
+    public static MockNode fromYaml(final URL url) throws IOException, RepositoryException {
+        final MockNode root = MockNode.root();
+        importYaml(url, root);
+        return root;
+    }
+
+    /**
+     * Imports a {@link MockNode} defined in YAML below an existing mock node.
+     *
+     * @param resourceName the classpath resource name of the YAML file (e.g. "/com/example/file.yaml" for a file "file.yaml"
+     *                     located in the test resources package "com.example")
+     * @param parentNode the node to import the YAML nodes at
+     * @return the node representing the structure in the YAML file.
+     * @throws IOException when the YAML file cannot be read
+     * @throws RepositoryException when the node structure cannot be created
+     */
+    public static void importYaml(final String resourceName, final MockNode parentNode) throws IOException, RepositoryException {
+        final URL resource = MockNodeFactory.class.getResource(resourceName);
+        if (resource == null) {
+            throw new IOException("Resource not found: '" + resourceName + "'");
+        }
+        importYaml(resource, parentNode);
+    }
+
+    public static void importYaml(final URL resource, final MockNode parentNode) throws IOException, RepositoryException {
+        try (InputStream inputStream = resource.openStream()) {
+            final ContentSourceParser sourceParser = new ContentSourceParser(new MockResourceInputProvider());
+            final ModuleImpl module = new ModuleImpl("mock-module", new ProjectImpl("mock-project", new GroupImpl("mock-group")));
+            sourceParser.parse(inputStream, "/import", resource.toString(), module);
+            final ContentDefinitionImpl contentDefinition = module.getContentSources().iterator().next().getContentDefinition();
+            MockNodeImporter.importNode(contentDefinition.getNode(), parentNode);
+        }
+    }
+
+    private static class MockResourceInputProvider implements ResourceInputProvider {
+
+        @Override
+        public boolean hasResource(final Source source, final String resourcePath) {
+            return false;
+        }
+
+        @Override
+        public InputStream getResourceInputStream(final Source source, final String resourcePath) throws IOException {
+            throw new IOException("Mock YAML does not support links to resources");
+        }
+    }
 }
