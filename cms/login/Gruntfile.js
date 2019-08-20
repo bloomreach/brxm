@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -89,16 +89,7 @@ module.exports = function (grunt) {
           inline: false, // save all sourcemaps as separate files
         },
 
-        processors: [
-          autoprefixer({
-            browsers: [
-              'last 1 Chrome versions',
-              'last 1 Edge versions',
-              'last 1 Firefox versions',
-              'last 1 Safari versions',
-            ]
-          }),
-        ]
+        processors: [autoprefixer()]
       },
       dist: {
         src: '<%= build.skin %>/css/<%= build.file %>.css',
