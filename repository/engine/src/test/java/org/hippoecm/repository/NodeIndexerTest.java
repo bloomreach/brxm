@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,11 +49,15 @@ public class NodeIndexerTest extends RepositoryTestCase {
     };
 
     private Session userSession;
+    private Node defaultReadForTestNode;
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
+
+        removeDefaultReadForTestAndDescendants();
+        defaultReadForTestNode = addDefaultReadForTestNode();
 
         Node config = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
         Node domains = config.getNode(HippoNodeType.DOMAINS_PATH);
@@ -99,6 +103,9 @@ public class NodeIndexerTest extends RepositoryTestCase {
         }
 
         session.save();
+
+        restoreDefaultReadForTestAndDescendants();
+        defaultReadForTestNode.remove();
 
         super.tearDown();
     }
