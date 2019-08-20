@@ -3,8 +3,8 @@
   "license": "Apache-2.0",
   "private": true,
   "engines": {
-    "node": "12",
-    "npm": "6"
+    "node": ">=12",
+    "npm": ">=6"
   },
   "scripts": {
     "grunt": "grunt",
