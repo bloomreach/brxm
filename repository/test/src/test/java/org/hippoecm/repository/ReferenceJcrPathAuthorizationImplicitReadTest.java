@@ -36,6 +36,8 @@ public class ReferenceJcrPathAuthorizationImplicitReadTest extends AbstractRefer
     public void setUp() throws Exception {
         super.setUp();
 
+        removeDefaultReadForTestAndDescendants();
+
         // create users
         createUser("bob");
 
@@ -62,6 +64,8 @@ public class ReferenceJcrPathAuthorizationImplicitReadTest extends AbstractRefer
     public void tearDown() throws Exception {
         removeNode("/hippo:configuration/hippo:users/bob");
         removeNode("/hippo:configuration/hippo:domains/pathFacetRuleDomain");
+        restoreDefaultReadForTestAndDescendants();
+        session.save();
         super.tearDown();
     }
 

@@ -37,9 +37,14 @@ import static org.junit.Assume.assumeTrue;
 
 public class ReferenceJcrPathAuthorizationTest extends AbstractReferenceJcrPathAuthorization {
 
+    private Node defaultReadForTestNode;
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
+
+        removeDefaultReadForTestAndDescendants();
+        defaultReadForTestNode = addDefaultReadForTestNode();
 
         // create users
         createUser("bob");
@@ -130,6 +135,10 @@ public class ReferenceJcrPathAuthorizationTest extends AbstractReferenceJcrPathA
         removeNode("/hippo:configuration/hippo:domains/pathFacetRuleDomain");
         removeNode("/hippo:configuration/hippo:domains/doublePathFacetRuleDomain");
         removeNode("/hippo:configuration/hippo:domains/pathFacetAndTypeRuleDomain");
+
+        restoreDefaultReadForTestAndDescendants();
+        defaultReadForTestNode.remove();
+        session.save();
         super.tearDown();
     }
 

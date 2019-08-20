@@ -45,14 +45,15 @@ import static org.junit.Assert.assertTrue;
 
 public class MissingReferenceAuthorizationTest extends RepositoryTestCase {
 
-
     private Node testDomain;
+
+    private Node domainTestNode;
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
 
-        removeDefaultReadForTest(session);
+        removeDefaultReadForTestAndDescendants();
 
         // create content
         final Node root = session.getRootNode();
@@ -81,9 +82,7 @@ public class MissingReferenceAuthorizationTest extends RepositoryTestCase {
         authRole.setProperty("hipposys:role", "admin");
 
         // give read access to only /test and no descendants
-        final Node domainRule1 = testDomain.addNode("read-to-test-node", "hipposys:domainrule");
-        createFacetRule(domainRule1, "match-test-node", true, "jcr:uuid", "Reference", "/test");
-        session.save();
+        domainTestNode = addDefaultReadForTestNode();
 
         session.save();
     }
@@ -93,21 +92,10 @@ public class MissingReferenceAuthorizationTest extends RepositoryTestCase {
     public void tearDown() throws Exception {
         removeNode("/hippo:configuration/hippo:users/testUser");
         removeNode("/hippo:configuration/hippo:domains/testDomain");
-        restoreDefaultReadForTest(session);
+        restoreDefaultReadForTestAndDescendants();
+        domainTestNode.remove();
+        session.save();
         super.tearDown();
-    }
-
-
-
-    private void removeDefaultReadForTest(final Session session) throws RepositoryException {
-        session.move("/hippo:configuration/hippo:domains/defaultread/test-domain", "/test-domain");
-        session.save();
-    }
-
-
-    private void restoreDefaultReadForTest(final Session session) throws RepositoryException {
-        session.move("/test-domain","/hippo:configuration/hippo:domains/defaultread/test-domain");
-        session.save();
     }
 
     @Test(expected = AccessControlException.class)

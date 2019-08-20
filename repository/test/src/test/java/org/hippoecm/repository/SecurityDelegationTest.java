@@ -39,9 +39,13 @@ import static org.junit.Assert.assertEquals;
 
 public class SecurityDelegationTest extends RepositoryTestCase {
 
+    private Node defaultReadForTestNode;
     @Before
     public void setUp() throws Exception {
         super.setUp();
+
+        removeDefaultReadForTestAndDescendants();
+        defaultReadForTestNode = addDefaultReadForTestNode();
 
         // create users
         final Node users = session.getNode("/hippo:configuration/hippo:users");
@@ -59,6 +63,7 @@ public class SecurityDelegationTest extends RepositoryTestCase {
             wonderland.setProperty("creator", "carroll");
             wonderland.setProperty("type", "novel");
         }
+
 
         final Node domains = session.getNode("/hippo:configuration/hippo:domains");
         if (!domains.hasNode("alicesdomain")) {
@@ -103,7 +108,12 @@ public class SecurityDelegationTest extends RepositoryTestCase {
             domains.getNode("bobsdomain").remove();
         }
 
+        defaultReadForTestNode.remove();
+
         session.save();
+
+        restoreDefaultReadForTestAndDescendants();
+
         super.tearDown();
     }
 
