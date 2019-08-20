@@ -53,6 +53,7 @@ import static org.junit.Assert.fail;
 
 public class FacetedAuthorizationTest extends RepositoryTestCase {
 
+    Node testDataDomain;
     Node hipDocDomain;
     Node readDomain;
     Node writeDomain;
@@ -61,6 +62,10 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     Session userSession;
 
     // nodes that have to be cleaned up
+    private static final String DOMAIN_HANDLE_NODE = "test-domain-handle";
+    private static final String DOMAIN_TEST_DATA_NODE = "testdata";
+//    private static final String DOMAIN_HIPPO_UNSTRUCTURED_NODE = "test-domain-hippo-unstructured";
+    private static final String DOMAIN_NAVIGATION = "navigation";
     private static final String DOMAIN_DOC_NODE = "hippodocument";
     private static final String DOMAIN_READ_NODE = "readme";
     private static final String DOMAIN_WRITE_NODE= "writeme";
@@ -97,15 +102,14 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     }
 
     private void cleanupDomains(final Node domains) throws RepositoryException {
-        if (domains.hasNode(DOMAIN_DOC_NODE)) {
-            domains.getNode(DOMAIN_DOC_NODE).remove();
+
+        for (String domain : new String[]{DOMAIN_DOC_NODE, DOMAIN_READ_NODE, DOMAIN_WRITE_NODE, DOMAIN_NAVIGATION,
+                "defaultread/" + DOMAIN_HANDLE_NODE, "defaultread/" + DOMAIN_TEST_DATA_NODE }) {
+            if (domains.hasNode(domain)) {
+                domains.getNode(domain).remove();
+            }
         }
-        if (domains.hasNode(DOMAIN_READ_NODE)) {
-            domains.getNode(DOMAIN_READ_NODE).remove();
-        }
-        if (domains.hasNode(DOMAIN_WRITE_NODE)) {
-            domains.getNode(DOMAIN_WRITE_NODE).remove();
-        }
+
     }
 
     private void cleanupUserAndGroup(final Node users, final Node groups) throws RepositoryException {
@@ -181,6 +185,16 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     }
 
     private void createDomains(final Node domains) throws RepositoryException {
+
+        final Node defaultRead = session.getNode("/hippo:configuration/hippo:domains/defaultread");
+        testDataDomain = defaultRead.addNode(DOMAIN_TEST_DATA_NODE, "hipposys:domainrule");
+
+        final Node facetRule = testDataDomain.addNode("read-to-test-node", "hipposys:facetrule");
+        facetRule.setProperty("hipposys:equals", true);
+        facetRule.setProperty("hipposys:facet", "jcr:uuid");
+        facetRule.setProperty("hipposys:type", "Reference");
+        facetRule.setProperty("hipposys:value", "/testdata");
+
         // create hippodoc domain
         hipDocDomain = domains.addNode(DOMAIN_DOC_NODE, HippoNodeType.NT_DOMAIN);
         Node ar = hipDocDomain.addNode("readonly", HippoNodeType.NT_AUTHROLE);
@@ -193,7 +207,27 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         fr.setProperty(HippoNodeType.HIPPOSYS_VALUE, "hippo:testdocument");
         fr.setProperty(HippoNodeType.HIPPOSYS_TYPE, "Name");
 
+        // add default read for 'hippo:handle' and 'DOMAIN_NAVIGATION' since these tests rely on logic that
+        // handle and 'DOMAIN_NAVIGATION' nodes can be read
+        readDomain = domains.getNode("defaultread").addNode(DOMAIN_HANDLE_NODE, HippoNodeType.NT_DOMAINRULE);
+        fr = readDomain.addNode("match-handle-node", HippoNodeType.NT_FACETRULE);
+        fr.setProperty(HippoNodeType.HIPPO_FACET, "nodetype");
+        fr.setProperty(HippoNodeType.HIPPO_EQUALS, true);
+        fr.setProperty(HippoNodeType.HIPPOSYS_VALUE, "hippo:handle");
+        fr.setProperty(HippoNodeType.HIPPOSYS_TYPE, "String");
+
         // create read domain
+        readDomain = domains.addNode(DOMAIN_NAVIGATION, HippoNodeType.NT_DOMAIN);
+        ar = readDomain.addNode("readonly", HippoNodeType.NT_AUTHROLE);
+        ar.setProperty(HippoNodeType.HIPPO_ROLE, "readonly");
+        ar.setProperty(HippoNodeType.HIPPO_GROUPS, new String[]{"everybody"});
+        dr = readDomain.addNode("read-below-navigation", HippoNodeType.NT_DOMAINRULE);
+        fr = dr.addNode("read-below-navigation-rule", HippoNodeType.NT_FACETRULE);
+        fr.setProperty(HippoNodeType.HIPPO_FACET, "jcr:path");
+        fr.setProperty(HippoNodeType.HIPPOSYS_VALUE, "/navigation");
+        fr.setProperty(HippoNodeType.HIPPOSYS_TYPE, "Reference");
+        fr.setProperty(HippoNodeType.HIPPO_EQUALS, true);
+
         readDomain = domains.addNode(DOMAIN_READ_NODE, HippoNodeType.NT_DOMAIN);
         ar = readDomain.addNode("readonly", HippoNodeType.NT_AUTHROLE);
         ar.setProperty(HippoNodeType.HIPPO_ROLE, "readonly");
@@ -1013,7 +1047,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         queriesWithExpectedHitSizes.put("/jcr:root/testdata[nothing0/@authtest='nothing']/*[@authtest='nothing']/*", new Long[] {new Long(3), new Long(0)});
         queriesWithExpectedHitSizes.put("/jcr:root/testdata[readdoc0/@authtest='canread']/readdoc0/subread", new Long[] {new Long(1), new Long(1)});
 
-        // for query below, the userSession should be able to read /testdata/writedoc0/subread and /testdata/readdoc0/subread
+        // for query below, the userSession should be able to read /test/writedoc0/subread and /test/readdoc0/subread
         queriesWithExpectedHitSizes.put("/jcr:root/testdata[readdoc0/@authtest='canread']/*/subread", new Long[] {new Long(3), new Long(2)});
 
         queryAssertions(queriesWithExpectedHitSizes);
@@ -1038,7 +1072,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
 
         queriesWithExpectedHitSizes.put("/jcr:root/testdata/nothing0/*[../@authtest='nothing']", new Long[] {new Long(3), new Long(0)});
 
-        // for query below, the userSession should be able to read /testdata/writedoc0 and /testdata/readdoc0
+        // for query below, the userSession should be able to read /test/writedoc0 and /test/readdoc0
         queriesWithExpectedHitSizes.put("/jcr:root/testdata[readdoc0/@authtest='canread']/*/subread/..", new Long[] {new Long(3), new Long(2)});
 
         queryAssertions(queriesWithExpectedHitSizes);
