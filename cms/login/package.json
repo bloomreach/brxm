@@ -2,6 +2,12 @@
   "name": "hippo-cms-login",
   "license": "Apache-2.0",
   "private": true,
+  "browserslist": [
+    "last 1 Chrome versions",
+    "last 1 Edge versions",
+    "last 1 Firefox versions",
+    "last 1 Safari versions"
+  ],
   "engines": {
     "node": ">=12",
     "npm": ">=6"
@@ -18,7 +24,7 @@
     "open-sans-fontface": "github:FontFaceKit/open-sans#59493162b016dae6ef0d06693ccf3c93c1e96091"
   },
   "devDependencies": {
-    "autoprefixer": "9.3.1",
+    "autoprefixer": "9.6.1",
     "grunt": "1.0.4",
     "grunt-contrib-clean": "2.0.0",
     "grunt-contrib-copy": "1.0.0",
