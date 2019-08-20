@@ -45,6 +45,7 @@ public class SystemInfoDataProvider implements IDataProvider {
     private static final Logger log = LoggerFactory.getLogger(SystemInfoDataProvider.class);
 
     private final static double MB = (double) 1024 * 1024;
+    public static final String UNKNOWN = "unknown";
 
     public class SystemInfoDataEntry implements Map.Entry<String, String>, Serializable {
 
@@ -139,7 +140,7 @@ public class SystemInfoDataProvider implements IDataProvider {
         } catch (IOException iOException) {
             log.debug("Error occurred getting the cms release version from the webapp-manifest.", iOException);
         }
-        return "unknown";
+        return UNKNOWN;
     }
 
     public String getProjectVersion() {
@@ -151,7 +152,7 @@ public class SystemInfoDataProvider implements IDataProvider {
         } catch (IOException iOException) {
             log.debug("Error occurred getting the project version from the webapp-manifest.", iOException);
         }
-        return System.getProperty("project.version", "unknown");
+        return System.getProperty("project.version", UNKNOWN);
     }
 
     public String getCMSVersion() {
@@ -159,7 +160,7 @@ public class SystemInfoDataProvider implements IDataProvider {
         if (implVersion != null) {
             return implVersion;
         }
-        return "unknown";
+        return UNKNOWN;
     }
 
     private Manifest getWebAppManifest() throws IOException {
@@ -199,7 +200,7 @@ public class SystemInfoDataProvider implements IDataProvider {
         if (repository != null) {
             return repository.getDescriptor(Repository.REP_VERSION_DESC);
         } else {
-            return "unknown";
+            return UNKNOWN;
         }
     }
 
@@ -208,7 +209,7 @@ public class SystemInfoDataProvider implements IDataProvider {
         if (repository != null) {
             return repository.getDescriptor(Repository.REP_VENDOR_DESC);
         } else {
-            return "unknown";
+            return UNKNOWN;
         }
     }
 }
