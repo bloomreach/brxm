@@ -23,7 +23,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
-import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 
@@ -38,7 +37,6 @@ import org.apache.jackrabbit.core.id.PropertyId;
 import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.observation.EventStateCollection;
-import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.state.ChangeLog;
 import org.apache.jackrabbit.core.state.ISMLocking;
@@ -109,13 +107,6 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
     public void setEventChannel(final UpdateEventChannel upstream) {
         UpdateEventChannel eventChannel = new DocumentChangeNotifyingEventChannelDecorator(upstream);
         super.setEventChannel(eventChannel);
-    }
-
-    // FIXME: transactional update?
-
-    @Override
-    public void update(ChangeLog local, EventStateCollectionFactory factory) throws ReferentialIntegrityException, ItemStateException {
-        super.update(local, factory);
     }
 
     @Override
