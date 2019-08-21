@@ -1,13 +1,13 @@
 {
   "name": "@bloomreach/ui-extension",
   "version": "0.0.0",
-  "description": "BloomReach Open UI SDK",
+  "description": "Bloomreach Open UI SDK",
   "keywords": [
     "bloomreach",
     "sdk",
     "openui"
   ],
-  "author": "BloomReach B.V.",
+  "author": "Bloomreach B.V.",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",

@@ -1,7 +1,7 @@
 - module name: '@bloomreach/ui-extension@0.0.0'
   name: '@bloomreach/ui-extension'
   version: 0.0.0
-  description: BloomReach Open UI SDK
+  description: Bloomreach Open UI SDK
   copyright: ''
   licenses: Apache-2.0
   licenseFile: LICENSE
@@ -13,7 +13,7 @@
     Definitions.        'License' shall mean the terms and conditions for use,
     reproduction,       and distribution as defined by Sections 1 through 9 of
     this document.        'Licensor' shall mean the copyright owner or entity
-    authorized by       the copyright owner that is granting the License.       
+    authorized by       the copyright owner that is granting the License.
     'Legal Entity' shall mean the union of the acting entity and all       other
     entities that control, are controlled by, or are under common       control
     with that entity. For the purposes of this definition,       'control' means
@@ -30,14 +30,14 @@
     object code, generated documentation,       and conversions to other media
     types.        'Work' shall mean the work of authorship, whether in Source
     or       Object form, made available under the License, as indicated by
-    a       copyright notice that is included in or attached to the work      
+    a       copyright notice that is included in or attached to the work
     (an example is provided in the Appendix below).        'Derivative Works'
     shall mean any work, whether in Source or Object       form, that is based
     on (or derived from) the Work and for which the       editorial revisions,
     annotations, elaborations, or other modifications       represent, as a
     whole, an original work of authorship. For the purposes       of this
-    License, Derivative Works shall not include works that remain      
-    separable from, or merely link (or bind by name) to the interfaces of,      
+    License, Derivative Works shall not include works that remain
+    separable from, or merely link (or bind by name) to the interfaces of,
     the Work and Derivative Works thereof.        'Contribution' shall mean any
     work of authorship, including       the original version of the Work and any
     modifications or additions       to that Work or Derivative Works thereof,
@@ -113,9 +113,9 @@
     conditions.       Notwithstanding the above, nothing herein shall supersede
     or modify       the terms of any separate license agreement you may have
     executed       with Licensor regarding such Contributions.     6.
-    Trademarks. This License does not grant permission to use the trade      
-    names, trademarks, service marks, or product names of the Licensor,      
-    except as required for reasonable and customary use in describing the      
+    Trademarks. This License does not grant permission to use the trade
+    names, trademarks, service marks, or product names of the Licensor,
+    except as required for reasonable and customary use in describing the
     origin of the Work and reproducing the content of the NOTICE file.     7.
     Disclaimer of Warranty. Unless required by applicable law or       agreed to
     in writing, Licensor provides the Work (and each       Contributor provides
@@ -135,8 +135,8 @@
     inability to use the       Work (including but not limited to damages for
     loss of goodwill,       work stoppage, computer failure or malfunction, or
     any and all       other commercial damages or losses), even if such
-    Contributor       has been advised of the possibility of such damages.    
-    9. Accepting Warranty or Additional Liability. While redistributing      
+    Contributor       has been advised of the possibility of such damages.
+    9. Accepting Warranty or Additional Liability. While redistributing
     the Work or Derivative Works thereof, You may choose to offer,       and
     charge a fee for, acceptance of support, warranty, indemnity,       or other
     liability obligations and/or rights consistent with this       License.
@@ -145,7 +145,7 @@
     Contributor, and only if You agree to indemnify,       defend, and hold each
     Contributor harmless for any liability       incurred by, or claims asserted
     against, such Contributor by reason       of your accepting any such
-    warranty or additional liability.     END OF TERMS AND CONDITIONS    
+    warranty or additional liability.     END OF TERMS AND CONDITIONS
     APPENDIX: How to apply the Apache License to your work.        To apply the
     Apache License to your work, attach the following       boilerplate notice,
     with the fields enclosed by brackets '[]'       replaced with your own
