@@ -21,6 +21,7 @@ import {
   ChildConnectConfig,
   ChildPromisedApi,
   connectToChild,
+  NavItem,
   Site,
   SiteId,
 } from '@bloomreach/navapp-communication';
@@ -28,7 +29,6 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
 import { ConfigResource } from '../models/dto/config-resource.dto';
-import { NavItem } from '../models/dto/nav-item.dto';
 
 import { GlobalSettingsService } from './global-settings.service';
 

@@ -15,11 +15,11 @@
  */
 
 import { Injectable } from '@angular/core';
+import { NavItem } from '@bloomreach/navapp-communication';
 import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { bufferCount, filter, first, map, switchMap, tap } from 'rxjs/operators';
 
 import { Connection } from '../../models/connection.model';
-import { NavItem } from '../../models/dto/nav-item.dto';
 import { FailedConnection } from '../../models/failed-connection.model';
 import { NavConfigService } from '../../services/nav-config.service';
 import { ClientApp } from '../models/client-app.model';

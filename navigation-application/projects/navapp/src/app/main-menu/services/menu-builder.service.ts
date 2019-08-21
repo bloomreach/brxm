@@ -15,8 +15,8 @@
  */
 
 import { Injectable } from '@angular/core';
+import { NavItem } from '@bloomreach/navapp-communication';
 
-import { NavItem } from '../../models/dto/nav-item.dto';
 import { MenuItemContainer } from '../models/menu-item-container.model';
 import { MenuItemLink } from '../models/menu-item-link.model';
 import { MenuItem } from '../models/menu-item.model';
