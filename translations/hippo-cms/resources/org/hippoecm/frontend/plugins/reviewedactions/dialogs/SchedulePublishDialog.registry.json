@@ -4,6 +4,16 @@
     "schedule-publish-text" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "schedule-action" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
