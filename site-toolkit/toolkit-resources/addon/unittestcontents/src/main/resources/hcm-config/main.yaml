@@ -19,18 +19,8 @@ definitions:
         operation: add
         type: string
         value: [editor]
-    /hippo:configuration/hippo:domains/hippofolders/readonly:
+    /hippo:configuration/hippo:domains/folders/readonly:
       hipposys:groups:
         operation: add
         type: string
         value: [sitewriters]
-    /hippo:configuration/hippo:domains/preview-documents/readonly:
-      hipposys:groups:
-        operation: add
-        type: string
-        value: [previewusers]
-    /hippo:configuration/hippo:domains/live-documents/readonly:
-      hipposys:groups:
-        operation: add
-        type: string
-        value: [liveusers]

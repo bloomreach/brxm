@@ -22,8 +22,10 @@ import javax.jcr.Credentials;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.ws.rs.core.Response;
 
+import org.hippoecm.repository.util.Utilities;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -136,6 +138,13 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
         response = new MockHttpServletResponse();
 
         invokeJaxrsPipelineAsAdmin(request, response);
+
+
+        Repository repository = componentManager.getComponent(Repository.class.getName() + ".delegating");
+        Session admin = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
+
+        final String string = admin.getNode("/testcontent/documents/testproject/Products/HippoCMS/HippoCMS[2]/testproject:body").getProperty("hippostd:content").getString();
+
 
         assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
 
