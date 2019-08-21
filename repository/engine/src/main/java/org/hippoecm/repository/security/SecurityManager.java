@@ -462,19 +462,14 @@ public class SecurityManager implements HippoSecurityManager {
                     // FIXME: temp hack for aggregate privileges as defined in jsr-283, 6.11.1.2
                     String privilege = value.getString();
                     if ("jcr:write".equals(privilege)) {
-                        privileges.add("jcr:write");
-                        privileges.add("jcr:setProperties");
-                        privileges.add("jcr:addChildNodes");
-                        privileges.add("jcr:removeChildNodes");
+                        addWritePrivileges(privileges);
                     } else if ("jcr:all".equals(privilege)) {
                         privileges.add("jcr:read");
                         // jcr:acp
                         privileges.add("jcr:getAccessControlPolicy");
                         privileges.add("jcr:setAccessControlPolicy");
                         // jcr:wrte
-                        privileges.add("jcr:setProperties");
-                        privileges.add("jcr:addChildNodes");
-                        privileges.add("jcr:removeChildNodes");
+                        addWritePrivileges(privileges);
 
                     } else {
                         privileges.add(privilege);
@@ -488,6 +483,14 @@ public class SecurityManager implements HippoSecurityManager {
             log.error("Error while looking up role: " + roleId, e);
         }
         return privileges;
+    }
+
+    private void addWritePrivileges(final Set<String> privileges) {
+        privileges.add("jcr:write");
+        privileges.add("jcr:modifyProperties");
+        privileges.add("jcr:addChildNodes");
+        privileges.add("jcr:removeNode");
+        privileges.add("jcr:removeChildNodes");
     }
 
     /**

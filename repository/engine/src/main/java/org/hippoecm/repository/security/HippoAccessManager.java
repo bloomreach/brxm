@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -441,10 +441,10 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             privileges.add(privilegeFromName("jcr:removeChildNodes"));
         }
         if ((permissions & Permission.SET_PROPERTY) != 0) {
-            privileges.add(privilegeFromName("jcr:setProperties"));
+            privileges.add(privilegeFromName("jcr:modifyProperties"));
         }
         if ((permissions & Permission.REMOVE_PROPERTY) != 0) {
-            privileges.add(privilegeFromName("jcr:setProperties"));
+            privileges.add(privilegeFromName("jcr:modifyProperties"));
         }
         if (privileges.isEmpty()) {
             return true;
@@ -1585,7 +1585,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                             log.info("GRANT: " + priv.getName() + " to user " + getUserIdAsString() + " in domain " + fap + " for "
                                     + npRes.getJCRPath(absPath));
                         }
-                        if (priv.getName().equals("jcr:setProperties")) {
+                        if (priv.getName().equals("jcr:modifyProperties")) {
                             // because the action setProperties is checked, and a property change can result in
                             // read-access being changed, we need to remove the property from the read cache
                             removeAccessFromCache(id);
