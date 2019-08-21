@@ -4,13 +4,13 @@ definitions:
       jcr:primaryType: hipposys:domain
       /hippo-document:
         jcr:primaryType: hipposys:domainrule
-        /availability-live:
+        /availability-preview:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: hippo:availability
           hipposys:filter: true
           hipposys:type: String
-          hipposys:value: live
+          hipposys:value: preview
         /exclude-attic:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: false
