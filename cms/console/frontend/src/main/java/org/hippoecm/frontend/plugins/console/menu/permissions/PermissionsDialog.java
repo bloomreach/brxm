@@ -21,17 +21,15 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
-import javax.jcr.query.Query;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.Dialog;
+import org.hippoecm.repository.api.HippoSession;
+import org.onehippo.repository.security.Group;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,10 +43,10 @@ public class PermissionsDialog extends Dialog<Node> {
     public static final String READ_ACTION = "read";
     public static final String REMOVE_ACTION = "remove";
     public static final String ADD_NODE_ACTION = "add_node";
-    public static final String SET_PROPERTY_ACTION = "set_property";
+    public static final String MODIFY_PROPERTY_ACTION = "modify_property";
 
     public static final String[] JCR_ACTIONS = new String[]{READ_ACTION, REMOVE_ACTION, ADD_NODE_ACTION,
-            SET_PROPERTY_ACTION};
+            MODIFY_PROPERTY_ACTION};
 
     /**
      * Predefined jcr privileges
@@ -56,9 +54,10 @@ public class PermissionsDialog extends Dialog<Node> {
     public static final String READ_PRIVILEGE = "jcr:read";
     public static final String WRITE_PRIVILEGE = "jcr:write";
     public static final String ALL_PRIVILEGE = "jcr:all";
-    public static final String SET_PROPERTIES_PRIVILEGE = "jcr:setProperties";
+    public static final String MODIFY_PROPERTIES_PRIVILEGE = "jcr:modifyProperties";
     public static final String ADD_CHILD_PRIVILEGE = "jcr:addChildNodes";
     public static final String REMOVE_CHILD_PRIVILEGE = "jcr:removeChildNodes";
+    public static final String REMOVE_NODE = "jcr:removeNode";
 
     /**
      * Predefined hippo privileges
@@ -68,7 +67,7 @@ public class PermissionsDialog extends Dialog<Node> {
     public static final String ADMIN_PRIVILEGE = "hippo:admin";
 
     public static final String[] JCR_PRIVILEGES = new String[]{READ_PRIVILEGE, WRITE_PRIVILEGE, ALL_PRIVILEGE,
-            SET_PROPERTIES_PRIVILEGE, ADD_CHILD_PRIVILEGE, REMOVE_CHILD_PRIVILEGE, AUTHOR_PRIVILEGE, EDITOR_PRIVILEGE,
+            MODIFY_PROPERTIES_PRIVILEGE, ADD_CHILD_PRIVILEGE, REMOVE_CHILD_PRIVILEGE, REMOVE_NODE, AUTHOR_PRIVILEGE, EDITOR_PRIVILEGE,
             ADMIN_PRIVILEGE};
 
     private static final Logger log = LoggerFactory.getLogger(PermissionsDialog.class);
@@ -89,20 +88,15 @@ public class PermissionsDialog extends Dialog<Node> {
         add(allPrivilegesLabel);
         add(actionsLabel);
         add(privilegesLabel);
-        Session privSession = null;
         try {
             Node subject = nodeModel.getObject();
 
-            // FIXME: hardcoded workflowuser
-            privSession = subject.getSession().impersonate(new SimpleCredentials("workflowuser", new char[]{}));
-
-            String userID = subject.getSession().getUserID();
-            String[] memberships = getMemberships(privSession, userID);
             String[] actions = getAllowedActions(subject, JCR_ACTIONS);
             String[] roles = getAllowedActions(subject, JCR_PRIVILEGES);
 
-            usernameLabel.setDefaultModel(Model.of(userID));
-            membershipsLabel.setDefaultModel(Model.of(StringUtils.join(memberships, ", ")));
+            final HippoSession userSession = (HippoSession) subject.getSession();
+            usernameLabel.setDefaultModel(Model.of(userSession.getUserID()));
+            membershipsLabel.setDefaultModel(Model.of(StringUtils.join(getMemberships(userSession), ", ")));
             allActionsLabel.setDefaultModel(Model.of(StringUtils.join(JCR_ACTIONS, ", ")));
             allPrivilegesLabel.setDefaultModel(Model.of(StringUtils.join(JCR_PRIVILEGES, ", ")));
             actionsLabel.setDefaultModel(Model.of(StringUtils.join(actions, ", ")));
@@ -110,10 +104,6 @@ public class PermissionsDialog extends Dialog<Node> {
 
         } catch (RepositoryException ex) {
             actionsLabel.setDefaultModel(Model.of(ex.getClass().getName() + ": " + ex.getMessage()));
-        } finally {
-            if (privSession != null) {
-                privSession.logout();
-            }
         }
         setOkVisible(false);
         setFocusOnCancel();
@@ -139,26 +129,12 @@ public class PermissionsDialog extends Dialog<Node> {
         return list.toArray(new String[0]);
     }
 
-    private String[] getMemberships(Session session, String username) {
-        final String queryString = "//element(*, hipposys:group)[jcr:contains(@hipposysedit:members, '" + username
-                + "')]";
-        final String queryType = "xpath";
-        final List<String> list = new ArrayList<>();
-        try {
-            final Query query = session.getWorkspace().getQueryManager().createQuery(queryString, queryType);
-            final NodeIterator nodeIter = query.execute().getNodes();
-            log.debug("Number of memberships found with query '{}' : {}", queryString, nodeIter.getSize());
-            while (nodeIter.hasNext()) {
-                Node node = nodeIter.nextNode();
-                if (node != null) {
-                    list.add(node.getName());
-                }
-            }
-        } catch (RepositoryException e) {
-            log.error("Error executing query[" + queryString + "]", e);
+    private List<String> getMemberships(final HippoSession userSession) throws RepositoryException {
+        final List<String> memberships = new ArrayList<>();
+        for (Group group : userSession.getUser().getMemberships()) {
+            memberships.add(group.getId());
         }
-        Collections.sort(list);
-        return list.toArray(new String[0]);
+        return memberships;
     }
 
     public IModel<String> getTitle() {
