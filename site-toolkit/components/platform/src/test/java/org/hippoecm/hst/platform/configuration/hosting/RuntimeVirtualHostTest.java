@@ -16,6 +16,13 @@
 
 package org.hippoecm.hst.platform.configuration.hosting;
 
+import java.util.Arrays;
+import java.util.Collections;
+
+import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
+import org.hippoecm.hst.platform.configuration.RuntimeHstSiteMenuItemConfiguration;
+import org.junit.Test;
+
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -23,21 +30,12 @@ import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-import java.util.Arrays;
-import java.util.Collections;
-
-import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
-import org.hippoecm.hst.platform.configuration.RuntimeHstSiteMenuConfiguration;
-import org.hippoecm.hst.platform.configuration.RuntimeHstSiteMenuItemConfiguration;
-import org.junit.Test;
-
 public class RuntimeVirtualHostTest {
 
     @Test
     public void testSiteMenuItemConfiguration() {
-        final RuntimeHstSiteMenuConfiguration mockMenuConfiguration = createMock(RuntimeHstSiteMenuConfiguration.class);
-        final RuntimeHstSiteMenuItemConfiguration mockMenuItemConfiguration = createMock(RuntimeHstSiteMenuItemConfiguration.class);
-        final RuntimeHstSiteMenuItemConfiguration mockChildMenuItemConfiguration = createMock(RuntimeHstSiteMenuItemConfiguration.class);
+        final HstSiteMenuItemConfiguration mockMenuItemConfiguration = createMock(HstSiteMenuItemConfiguration.class);
+        final HstSiteMenuItemConfiguration mockChildMenuItemConfiguration = createMock(HstSiteMenuItemConfiguration.class);
 
         expect(mockChildMenuItemConfiguration.getChildItemConfigurations()).andReturn(Collections.emptyList());
         replay(mockChildMenuItemConfiguration);
@@ -46,7 +44,7 @@ public class RuntimeVirtualHostTest {
         replay(mockMenuItemConfiguration);
 
         final RuntimeHstSiteMenuItemConfiguration menuItemConfiguration = new RuntimeHstSiteMenuItemConfiguration(
-                mockMenuItemConfiguration, null, mockMenuConfiguration);
+                mockMenuItemConfiguration, null, null);
 
         final HstSiteMenuItemConfiguration childMenuItemConfiguration = menuItemConfiguration.getChildItemConfigurations().get(0);
 
