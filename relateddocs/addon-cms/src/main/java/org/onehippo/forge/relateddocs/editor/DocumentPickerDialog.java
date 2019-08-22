@@ -94,13 +94,21 @@ public class DocumentPickerDialog extends Dialog<Node> {
         }
 
         setOkEnabled(false);
-
         try {
-            uuid = model.getObject().getIdentifier();
-            if (uuid != null && !"".equals(uuid)) {
+            uuid = findHandleId(model);
+            if (selectedNode != null) {
+                // if dialog contains selected node and node is not equal to model
+                // (note: this can only happen if dialog adds support for "remembering" last selected node,
+                // currently, this will not happen because above support is missing):
+                if (!selectedNode.getObject().getIdentifier().equals(uuid)) {
+                    selectedNode = new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getNodeByIdentifier(uuid));
+                    setOkEnabled(true);
+                }
+            } else if (uuid != null) {
+                // make our current document as selected node, so we cannot add it as a reference to itself
                 selectedNode = new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getNodeByIdentifier(uuid));
-                setOkEnabled(true);
             }
+
         } catch (RepositoryException ex) {
             log.error(ex.getMessage());
         }
@@ -108,6 +116,25 @@ public class DocumentPickerDialog extends Dialog<Node> {
         setOutputMarkupId(true);
 
         add(createContentPanel("content"));
+    }
+
+    private String findHandleId(final IModel<Node> model) throws RepositoryException {
+        String uuid = null;
+        if (model == null) {
+            return uuid;
+        }
+        uuid = model.getObject().getIdentifier();
+        if (uuid != null) {
+            Node ourNode = ((UserSession) Session.get()).getJcrSession().getNodeByIdentifier(uuid);
+            // find handle:
+            while (ourNode != null && !ourNode.isNodeType(HippoNodeType.NT_HANDLE)) {
+                ourNode = ourNode.getParent();
+            }
+            if (ourNode != null) {
+                uuid = ourNode.getIdentifier();
+            }
+        }
+        return uuid;
     }
 
     protected boolean isValidSelection(final IModel targetModel) {
