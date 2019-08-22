@@ -66,7 +66,7 @@ public class RuntimeHstSiteMenuItemConfiguration extends GenericHstSiteMenuItemC
 
     @Override
     public String toString() {
-        return "RuntimePortMount{" + "delegatee=" + delegatee + '}';
+        return "RuntimeHstSiteMenuItemConfiguration{" + "delegatee=" + delegatee + '}';
     }
 
 }
