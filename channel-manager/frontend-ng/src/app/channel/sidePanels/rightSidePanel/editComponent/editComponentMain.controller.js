@@ -57,13 +57,25 @@ class EditComponentMainCtrl {
   $onInit() {
     this._overrideSelectDocumentHandler();
     this._offComponentMoved = this.ContainerService.onComponentMoved(() => this.ComponentEditor.updatePreview());
-    this._offOverlayCreated = this.RenderingService.onOverlayCreated(() => this.ComponentEditor.updatePreview());
+    this._offIframeLoad = this.$scope.$on('iframe-load', () => this._onIframeLoad());
   }
 
   $onDestroy() {
     this._restoreSelectDocumentHandler();
     this._offComponentMoved();
-    this._offOverlayCreated();
+    this._offIframeLoad();
+
+    if (this._offOverlayCreated) {
+      this._offOverlayCreated();
+    }
+  }
+
+  _onIframeLoad() {
+    this._offOverlayCreated = this.RenderingService.onOverlayCreated(() => {
+      this.ComponentEditor.updatePreview();
+      this._offOverlayCreated();
+      delete this._offOverlayCreated;
+    });
   }
 
   getPropertyGroups() {
