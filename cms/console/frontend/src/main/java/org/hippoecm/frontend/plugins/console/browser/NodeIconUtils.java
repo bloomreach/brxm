@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,19 +15,19 @@
  */
 package org.hippoecm.frontend.plugins.console.browser;
 
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.swing.tree.TreeNode;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.plugins.console.icons.IconLabel;
 import org.hippoecm.frontend.plugins.console.icons.JcrNodeIcon;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
-
-import javax.jcr.Node;
-import javax.jcr.RepositoryException;
-import javax.swing.tree.TreeNode;
 
 public final class NodeIconUtils {
 
@@ -57,7 +57,7 @@ public final class NodeIconUtils {
      */
     public static Component createJcrNodeIcon(final String id, final IModel<Node> model) {
         if (model != null) {
-            return createJcrNodeIcon(id, model.getObject());                
+            return createJcrNodeIcon(id, model.getObject());
         }
         return createJcrNodeIcon(id, (Node) null);
     }
@@ -76,7 +76,7 @@ public final class NodeIconUtils {
         }
 
         final Label icon = new Label(id, StringUtils.EMPTY);
-        icon.add(CssClass.append(JcrNodeIcon.getIconCssClass(node)));
+        icon.add(ClassAttribute.append(JcrNodeIcon.getIconCssClass(node)));
 
         final String tooltip = determineNodeTooltip(node);
         if (StringUtils.isNotBlank(tooltip)) {

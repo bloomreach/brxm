@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,20 +24,20 @@ import java.util.Set;
 
 import javax.jcr.Node;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IDetachable;
-import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.NodeNameModel;
@@ -218,36 +218,24 @@ public class BreadcrumbPlugin extends RenderPlugin<Node> {
                     }
 
                 }));
-                link.add(new AttributeAppender("title", new LoadableDetachableModel<String>() {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    protected String load() {
-                        return item.getModelObject().getName();
-                    }
-                }, " "));
+                link.add(TitleAttribute.append(() -> item.getModelObject().getName()));
 
                 link.setEnabled(item.getModelObject().enabled);
                 item.add(link);
+                item.add(ClassAttribute.append(() -> item.getModelObject().enabled
+                        ? "enabled"
+                        : "disabled"));
 
-                IModel<String> css = new LoadableDetachableModel<String>() {
-                    private static final long serialVersionUID = 1L;
-
-                    @Override
-                    protected String load() {
-                        String css = item.getModelObject().enabled ? "enabled" : "disabled";
-
-                        if (nodeitems.size() == 1) {
-                            css += " firstlast";
-                        } else if (item.getIndex() == 0) {
-                            css += " first";
-                        } else if (item.getIndex() == (nodeitems.size() - 1)) {
-                            css += " last";
-                        }
-                        return css;
+                item.add(ClassAttribute.append(() -> {
+                    if (nodeitems.size() == 1) {
+                        return "firstlast";
+                    } else if (item.getIndex() == 0) {
+                        return "first";
+                    } else if (item.getIndex() == (nodeitems.size() - 1)) {
+                        return "last";
                     }
-                };
-                item.add(new AttributeAppender("class", css, " "));
+                    return StringUtils.EMPTY;
+                }));
 
                 //CMS7-8008: Just show the last part of the breadcrumb
                 item.setVisible(item.getIndex() >= (nodeitems.size() - maxNumberOfCrumbs));

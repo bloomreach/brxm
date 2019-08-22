@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
 import org.apache.wicket.markup.ComponentTag;
-import org.hippoecm.frontend.model.ReadOnlyModel;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.columns.FallbackImageGalleryListColumnProvider;
@@ -38,7 +38,6 @@ import org.hippoecm.frontend.plugins.standards.list.DocumentsProvider;
 import org.hippoecm.frontend.plugins.standards.list.ExpandCollapseListingPlugin;
 import org.hippoecm.frontend.plugins.standards.list.IListColumnProvider;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.skin.DocumentListColumn;
 import org.hippoecm.frontend.skin.Icon;
 
@@ -60,8 +59,10 @@ public class ImageGalleryPlugin extends ExpandCollapseListingPlugin<Node> {
 
         setClassName(DocumentListColumn.DOCUMENT_LIST_CSS_CLASS);
 
-        add(CssClass.append("image-gallery"));
-        add(CssClass.append(ReadOnlyModel.of(() -> mode == LIST ? "image-gallery-list" : "image-gallery-thumbnails")));
+        add(ClassAttribute.append("image-gallery"));
+        add(ClassAttribute.append(() -> mode == LIST
+                ? "image-gallery-list"
+                : "image-gallery-thumbnails"));
 
         addButton(new GalleryModeButton("listButton", LIST, Icon.LIST_UL));
         addButton(new GalleryModeButton("thumbnailsButton", THUMBNAILS, Icon.THUMBNAILS));

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.apache.wicket.markup.html.panel.GenericPanel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.util.io.IClusterable;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 
 public abstract class BreadcrumbWidget<T> extends GenericPanel<List<IModel<T>>> {
 
@@ -38,7 +38,7 @@ public abstract class BreadcrumbWidget<T> extends GenericPanel<List<IModel<T>>> 
         super(id, model);
 
         setOutputMarkupId(true);
-        add(CssClass.append("hippo-breadcrumbs"));
+        add(ClassAttribute.append("hippo-breadcrumbs"));
 
         final BreadcrumbModel breadcrumbModel = new BreadcrumbModel();
         final ListView<Breadcrumb> breadCrumbs = new ListView<Breadcrumb>("crumbs", breadcrumbModel) {
@@ -49,7 +49,7 @@ public abstract class BreadcrumbWidget<T> extends GenericPanel<List<IModel<T>>> 
 
                 final String css = crumb.getCssClass();
                 if (StringUtils.isNotEmpty(css)) {
-                    item.add(CssClass.append(css));
+                    item.add(ClassAttribute.append(css));
                 }
             }
         };

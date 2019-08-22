@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,13 +16,13 @@
 package org.hippoecm.frontend.plugins.standards.list.datatable;
 
 import org.apache.wicket.markup.html.border.Border;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 
 public class TableHeader extends Border {
 
     public TableHeader(final String id, final String cssClass) {
         super(id);
 
-        add(CssClass.append(cssClass));
+        add(ClassAttribute.append(cssClass));
     }
 }

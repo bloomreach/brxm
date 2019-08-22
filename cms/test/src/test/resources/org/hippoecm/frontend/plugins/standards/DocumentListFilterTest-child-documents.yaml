@@ -1,0 +1,22 @@
+/test:
+  /content:
+    jcr:primaryType: hippostd:folder
+    /toBeShowed:
+      jcr:primaryType: hippo:handle
+      /toBeShowed:
+        jcr:primaryType: test:faqitem
+    /toBeHidden:
+      jcr:primaryType: hippo:handle
+      /toBeHidden:
+        jcr:primaryType: hippo:document
+  /plugin:
+    /filters:
+      jcr:primaryType: frontend:pluginconfig
+      /showFaqItemType:
+        jcr:primaryType: frontend:pluginconfig
+        documentType: test:faqitem
+        display: true
+      /hideDocuments:
+        jcr:primaryType: frontend:pluginconfig
+        child: hippo:handle
+        display: false
