@@ -106,7 +106,7 @@
 
     <!-- Project Dependencies -->
     <commons-collections.version>3.2.2</commons-collections.version>
-    <commons-beanutils.version>1.9.3</commons-beanutils.version>
+    <commons-beanutils.version>1.9.4</commons-beanutils.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-io.version>2.6</commons-io.version>
     <commons-proxy.version>1.0</commons-proxy.version>
@@ -134,7 +134,7 @@
     <yui.sources.version>1.01.12</yui.sources.version>
     <hippo.htmldiff.version>2.0.0</hippo.htmldiff.version>
     <hippo.jcrdiff.version>1.01.07</hippo.jcrdiff.version>
-    <hippo.ckeditor.version>4.11.2-h2</hippo.ckeditor.version>
+    <hippo.ckeditor.version>4.12.1-h1-SNAPSHOT</hippo.ckeditor.version>
 
     <jslint.plugin.version>1.0.1</jslint.plugin.version>
 

@@ -312,8 +312,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             protected IDialogService.Dialog createRequestDialog() {
                 IModel<String> message = new StringResourceModel("delete-message", DocumentWorkflowPlugin.this)
                         .setParameters(getDocumentName());
-                IModel<String> title = new StringResourceModel("delete-title", DocumentWorkflowPlugin.this)
-                        .setParameters(getDocumentName());
+                IModel<String> title = new StringResourceModel("delete-title", DocumentWorkflowPlugin.this);
                 return new DeleteDialog(title, getModel(), message, this, getEditorManager());
             }
 
@@ -341,8 +340,7 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             protected IDialogService.Dialog createRequestDialog() {
                 IModel<String> message = new StringResourceModel("delete-message", DocumentWorkflowPlugin.this)
                         .setParameters(getDocumentName());
-                IModel<String> title = new StringResourceModel("delete-title", DocumentWorkflowPlugin.this)
-                        .setParameters(getDocumentName());
+                IModel<String> title = new StringResourceModel("delete-title", DocumentWorkflowPlugin.this);
                 return new DeleteDialog(title, getModel(), message, this, getEditorManager());
             }
 

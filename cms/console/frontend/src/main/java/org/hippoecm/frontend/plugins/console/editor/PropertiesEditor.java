@@ -37,8 +37,8 @@ import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.plugins.console.behavior.OriginTitleBehavior;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
+import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.session.UserSession;
 import org.onehippo.cm.ConfigurationService;
 import org.onehippo.cm.model.ConfigurationModel;
@@ -233,7 +233,7 @@ public class PropertiesEditor extends DataView<Property> {
             }
         };
 
-        deleteLink.add(CssClass.set("property-remove"));
+        deleteLink.add(ClassAttribute.set("property-remove"));
         deleteLink.add(TitleAttribute.set(getString("property.remove")));
 
         return deleteLink;
