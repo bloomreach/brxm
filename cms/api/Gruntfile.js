@@ -15,7 +15,7 @@
  */
 'use strict';
 
-var fs = require('fs');
+const sass = require('node-sass');
 
 module.exports = function (grunt) {
 
@@ -43,6 +43,7 @@ module.exports = function (grunt) {
       },
       sass: {
         options: {
+          implementation: sass,
           livereload: false
         },
         files: ['<%= build.src %>/**/*.scss'],
@@ -74,6 +75,7 @@ module.exports = function (grunt) {
     // Compile Sass to CSS.
     sass: {
       options: {
+        implementation: sass,
         outputStyle: 'expanded'
       },
       main: {
