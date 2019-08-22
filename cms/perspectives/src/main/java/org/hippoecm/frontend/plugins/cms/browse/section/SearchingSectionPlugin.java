@@ -21,6 +21,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.query.QueryResult;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -35,6 +36,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.Strings;
+
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.l10n.ResourceBundleModel;
@@ -55,7 +57,9 @@ import org.hippoecm.frontend.plugins.standards.search.TextSearchBuilder;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.skin.Icon;
+
 import org.hippoecm.repository.api.HippoNodeType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,6 +72,8 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     private static final IModel<BrowserSearchResult> NO_RESULTS = new Model<>(null);
     private static final String RESULT_LIMIT_PROPERTY = "result.limit";
     private static final int DEFAULT_RESULT_LIMIT = 300;
+    private static final String WILDCARDED_MINIMAL_LENGTH_PROPERTY = "wildcarded.minimal.length";
+    private static final int UNCONFIGURED_WILDCARDED_MINIMAL_LENGTH = -1;
 
     private final FolderModelService folderService;
     private final DocumentCollection collection;
@@ -75,6 +81,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     private final String rootPath;
     private final IModel<Node> rootModel;
     private final int limit;
+    private final int wildcardedMinimalLength;
 
     private IModel<Node> scopeModel;
     private String query;
@@ -86,6 +93,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
         rootPath = config.getString("model.folder.root", "/");
         limit = config.getInt(RESULT_LIMIT_PROPERTY, DEFAULT_RESULT_LIMIT);
+        wildcardedMinimalLength = config.getInt(WILDCARDED_MINIMAL_LENGTH_PROPERTY, UNCONFIGURED_WILDCARDED_MINIMAL_LENGTH);
         rootModel = new JcrNodeModel(rootPath);
         scopeModel = new JcrNodeModel(rootPath);
 
@@ -216,6 +224,9 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
                 final TextSearchBuilder sb = new TextSearchBuilder(queryName);
                 sb.setScope(new String[]{scope});
                 sb.setWildcardSearch(true);
+                if (wildcardedMinimalLength != UNCONFIGURED_WILDCARDED_MINIMAL_LENGTH) {
+                    sb.setMinimalLength(wildcardedMinimalLength);
+                }
                 sb.setText(query);
                 sb.setIncludePrimaryTypes(getPluginConfig().getStringArray("nodetypes"));
                 sb.setLimit(limit);
