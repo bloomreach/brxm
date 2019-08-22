@@ -31,27 +31,18 @@ public class RuntimeHstSiteMenuItemConfiguration extends GenericHstSiteMenuItemC
     private final List<HstSiteMenuItemConfiguration> childrenSiteMenuItemConfigurations;
 
     public RuntimeHstSiteMenuItemConfiguration(final HstSiteMenuItemConfiguration delegatee,
-            final HstSiteMenuItemConfiguration parentSiteMenuItemConfiguration,
+            final RuntimeHstSiteMenuItemConfiguration parentSiteMenuItemConfiguration,
             final RuntimeHstSiteMenuConfiguration hstSiteMenuConfiguration) {
         super(delegatee);
         this.delegatee = delegatee;
         this.hstSiteMenuConfiguration = hstSiteMenuConfiguration;
 
-        if (parentSiteMenuItemConfiguration != null) {
-            if (parentSiteMenuItemConfiguration instanceof RuntimeHstSiteMenuItemConfiguration) {
-                this.parentSiteMenuItemConfiguration = parentSiteMenuItemConfiguration;
-            } else {
-                this.parentSiteMenuItemConfiguration = new RuntimeHstSiteMenuItemConfiguration(
-                        delegatee.getParentItemConfiguration(), null, hstSiteMenuConfiguration);
-            }
-        } else {
-            this.parentSiteMenuItemConfiguration = null;
-        }
+        this.parentSiteMenuItemConfiguration = parentSiteMenuItemConfiguration;
 
         final List<HstSiteMenuItemConfiguration> siteMenuItemConfigurations = new ArrayList<>();
         delegatee.getChildItemConfigurations().forEach(child -> {
             RuntimeHstSiteMenuItemConfiguration siteMenuItemConfiguration = new RuntimeHstSiteMenuItemConfiguration(
-                    child, parentSiteMenuItemConfiguration, hstSiteMenuConfiguration);
+                    child, this , hstSiteMenuConfiguration);
             siteMenuItemConfigurations.add(siteMenuItemConfiguration);
         });
 
