@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.container.HstComponentWindow;
@@ -39,11 +40,20 @@ public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel 
     private Map<String, Object> models;
     private Set<ComponentWindowModel> components;
 
+    @JsonInclude(Include.NON_NULL)
+    private final String xtype;
+
     public ComponentWindowModel(final HstComponentWindow window) {
         super(window.getReferenceNamespace());
         name = window.getName();
         componentClass = window.getComponentName();
-        type = window.getComponentInfo().getComponentType().toString();
+
+        final HstComponentConfiguration.Type componentType = window.getComponentInfo().getComponentType();
+        type = componentType.toString();
+        xtype = componentType.equals(HstComponentConfiguration.Type.CONTAINER_COMPONENT)
+                ? StringUtils.lowerCase(window.getComponent().getComponentConfiguration().getXType())
+                : null;
+
         label = window.getComponentInfo().getLabel();
 
         final Map<String, HstComponentWindow> childComponentWindows = window.getChildWindowMap();
@@ -76,6 +86,10 @@ public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel 
      */
     public String getType() {
         return type;
+    }
+
+    public String getXtype() {
+        return xtype;
     }
 
     /**
