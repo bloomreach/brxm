@@ -27,7 +27,7 @@
   <description>BloomReach CMS Project Archetype Parent</description>
 
   <artifactId>hippo-project-archetype-parent</artifactId>
-  <version>14.0.0-SNAPSHOT</version>
+  <version>14.0.0-securitydomain-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
@@ -98,11 +98,11 @@
               <phase>process-resources</phase>
               <configuration>
                 <target>
-                  <replace summary="true" failOnNoReplacements="true" token= "@project.version@" value="${project.version}" dir="${project.build.outputDirectory}/archetype-resources">
-                    <include name="pom.xml"/>
+                  <replace summary="true" failOnNoReplacements="true" token="@project.version@" value="${project.version}" dir="${project.build.outputDirectory}/archetype-resources">
+                    <include name="pom.xml" />
                   </replace>
-                  <replace token= "@release.essentials.version@" value="${release.essentials.version}" dir="${project.build.outputDirectory}/archetype-resources">
-                    <include name="pom.xml"/>
+                  <replace token="@release.essentials.version@" value="${release.essentials.version}" dir="${project.build.outputDirectory}/archetype-resources">
+                    <include name="pom.xml" />
                   </replace>
                 </target>
               </configuration>
@@ -122,10 +122,9 @@
                   <condition property="executableCommand" value="/c" else="-c">
                     <os family="windows" />
                   </condition>
-                  <exec dir="${project.build.directory}/test-classes/projects/gettingstarted/project/${gettingstarted.artifactId}"
-                        executable="${executableType}">
-                    <arg value="${executableCommand}"/>
-                    <arg value="mvn -Pdocker.build"/>
+                  <exec dir="${project.build.directory}/test-classes/projects/gettingstarted/project/${gettingstarted.artifactId}" executable="${executableType}">
+                    <arg value="${executableCommand}" />
+                    <arg value="mvn -Pdocker.build" />
                   </exec>
                 </target>
               </configuration>
@@ -145,11 +144,9 @@
                   <condition property="executableCommand" value="/c" else="-c">
                     <os family="windows" />
                   </condition>
-                  <exec dir="${project.build.directory}/test-classes/projects/gettingstarted/project/${gettingstarted.artifactId}"
-                        executable="${executableType}"
-                        spawn="true">
-                    <arg value="${executableCommand}"/>
-                    <arg value="mvn -Pdocker.run -Ddb.profile=h2"/>
+                  <exec dir="${project.build.directory}/test-classes/projects/gettingstarted/project/${gettingstarted.artifactId}" executable="${executableType}" spawn="true">
+                    <arg value="${executableCommand}" />
+                    <arg value="mvn -Pdocker.run -Ddb.profile=h2" />
                   </exec>
                 </target>
               </configuration>
@@ -169,12 +166,9 @@
                   <condition property="executableCommand" value="/c" else="-c">
                     <os family="windows" />
                   </condition>
-                  <junit printsummary="on"
-                         haltonfailure="no"
-                         failureProperty="test.failed"
-                         logfailedtests="true">
-                    <sysproperty key="docker.test.bootstrap.timeout" value="${docker.test.bootstrap.timeout}"/>
-                    <sysproperty key="docker.test.site.context.path" value="${site.webapp.context.path}"/>
+                  <junit printsummary="on" haltonfailure="no" failureProperty="test.failed" logfailedtests="true">
+                    <sysproperty key="docker.test.bootstrap.timeout" value="${docker.test.bootstrap.timeout}" />
+                    <sysproperty key="docker.test.site.context.path" value="${site.webapp.context.path}" />
                     <classpath id="classpath.test">
                       <pathelement location="${org.hamcrest:hamcrest-core:jar}" />
                       <pathelement location="${project.build.directory}/test-classes" />
@@ -185,12 +179,12 @@
                     </batchtest>
                   </junit>
                   <exec executable="${executableType}">
-                    <arg value="${executableCommand}"/>
-                    <arg value="docker kill $(docker ps -q --filter 'name=${docker.image.name}')"/>
+                    <arg value="${executableCommand}" />
+                    <arg value="docker kill $(docker ps -q --filter 'name=${docker.image.name}')" />
                   </exec>
                   <exec executable="${executableType}">
-                    <arg value="${executableCommand}"/>
-                    <arg value="docker rm $(docker ps -a -q --filter 'name=${docker.image.name}')"/>
+                    <arg value="${executableCommand}" />
+                    <arg value="docker rm $(docker ps -a -q --filter 'name=${docker.image.name}')" />
                   </exec>
                   <fail message="Test failure detected, check test results." if="test.failed" />
                 </target>
