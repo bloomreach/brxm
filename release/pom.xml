@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>hippo-cms7-release</artifactId>
-  <version>14.0.0-SNAPSHOT</version>
+  <version>14.0.0-securitydomain-SNAPSHOT</version>
 
   <name>Hippo CMS7 Release POM</name>
   <description>Hippo CMS7 Release POM</description>
@@ -50,10 +50,10 @@
     <hippo.addon-channel-manager.version>14.0.0-SNAPSHOT</hippo.addon-channel-manager.version>
     <hippo.addon-search-service.version>14.0.0-SNAPSHOT</hippo.addon-search-service.version>
     <hippo.commons.version>14.0.0-SNAPSHOT</hippo.commons.version>
-    <hippo.cms.version>14.0.0-SNAPSHOT</hippo.cms.version>
-    <hippo.hst.version>14.0.0-SNAPSHOT</hippo.hst.version>
+    <hippo.cms.version>14.0.0-securitydomain-SNAPSHOT</hippo.cms.version>
+    <hippo.hst.version>14.0.0-securitydomain-SNAPSHOT</hippo.hst.version>
     <hippo.packages.version>14.0.0-SNAPSHOT</hippo.packages.version>
-    <hippo.repository.version>14.0.0-SNAPSHOT</hippo.repository.version>
+    <hippo.repository.version>14.0.0-securitydomain-SNAPSHOT</hippo.repository.version>
     <hippo.services.version>14.0.0-SNAPSHOT</hippo.services.version>
     <hippo.services.autoreload.version>14.0.0-SNAPSHOT</hippo.services.autoreload.version>
     <hippo.services.contenttype.version>14.0.0-SNAPSHOT</hippo.services.contenttype.version>
@@ -117,7 +117,7 @@
     <docker.brxm.ajp.port>8009</docker.brxm.ajp.port>
 
     <!-- Extra JVM arguments to pass to brXM Docker container-->
-    <docker.brxm.jvm.args/>
+    <docker.brxm.jvm.args />
 
     <!-- Default connection details -->
     <docker.db.schema>${project.artifactId}</docker.db.schema>
@@ -134,7 +134,7 @@
     <docker.brxm.envRun.POSTGRES_DB_NAME>${docker.db.schema}</docker.brxm.envRun.POSTGRES_DB_NAME>
 
     <!-- Jackrabbit cluster node id can be set externally. -->
-    <docker.brxm.envRun.REPO_CLUSTER_NODE_ID/>
+    <docker.brxm.envRun.REPO_CLUSTER_NODE_ID />
 
     <docker.brxm.envRun.JAVA_OPTS>
       -Dproject.basedir=${docker.brxm.project.path}
@@ -1239,7 +1239,7 @@
                 </goals>
                 <configuration>
                   <target>
-                    <delete dir="${project.build.directory}/docker/${project.groupId}/${project.artifactId}/${project.version}" includeemptydirs="true"/>
+                    <delete dir="${project.build.directory}/docker/${project.groupId}/${project.artifactId}/${project.version}" includeemptydirs="true" />
                   </target>
                 </configuration>
               </execution>
@@ -1304,7 +1304,7 @@
         <docker.db.run.skip>true</docker.db.run.skip>
 
         <!-- COPY development artifacts for DEV image. Should be empty -->
-        <docker.brxm.copy.dev.libs.cmd></docker.brxm.copy.dev.libs.cmd>
+        <docker.brxm.copy.dev.libs.cmd />
 
         <!-- Default assembly used for building docker image -->
         <docker.dev.assembly.descriptor>${project.basedir}/src/main/docker/assembly/distribution-docker-dev.xml</docker.dev.assembly.descriptor>
@@ -1330,7 +1330,7 @@
                 </goals>
                 <configuration>
                   <target>
-                    <delete dir="${project.build.directory}/docker/${project.groupId}/${project.artifactId}/dev-${project.version}" includeemptydirs="true"/>
+                    <delete dir="${project.build.directory}/docker/${project.groupId}/${project.artifactId}/dev-${project.version}" includeemptydirs="true" />
                   </target>
                 </configuration>
               </execution>
