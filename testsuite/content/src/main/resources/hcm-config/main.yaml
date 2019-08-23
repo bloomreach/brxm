@@ -32,8 +32,7 @@ definitions:
         operation: add
         type: string
         value: [previewusers]
-    /hippo:configuration/hippo:domains/hippofolders/readonly:
-      hipposys:groups:
-        operation: add
-        type: string
-        value: [sitewriters]
+    /hippo:configuration/hippo:domains/content/sitewriter:
+      jcr:primaryType: hipposys:authrole
+      hipposys:groups: [sitewriters]
+      hipposys:role: readonly
