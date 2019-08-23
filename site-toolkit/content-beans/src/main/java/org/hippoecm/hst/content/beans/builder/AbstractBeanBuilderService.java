@@ -47,6 +47,7 @@ public abstract class AbstractBeanBuilderService {
         HIPPO_MIRROR("hippo:mirror"), //
         HIPPO_IMAGE("hippogallery:image"), //
         HIPPO_RESOURCE("hippo:resource"), //
+        HIPPO_COMPOUND("hippo:compound"), //
         CONTENT_BLOCKS("content:blocks"), //
         UNKNOWN("Unknown");
 
@@ -209,7 +210,13 @@ public abstract class AbstractBeanBuilderService {
         // if a document type doesn't match with any predefined document type, then
         // a content block definition check must be made to figure out whether the
         // document type is a content block
-        if (DocumentType.UNKNOWN == documentType && hasContentBlocks(contentTypeChild)) {
+        if (DocumentType.UNKNOWN == documentType) {
+            if (hasContentBlocks(contentTypeChild)) {
+                return DocumentType.CONTENT_BLOCKS;
+            } else {
+                log.warn("Type {} is undefined.", type);
+            }
+        } else if (DocumentType.HIPPO_COMPOUND == documentType) {
             return DocumentType.CONTENT_BLOCKS;
         }
 

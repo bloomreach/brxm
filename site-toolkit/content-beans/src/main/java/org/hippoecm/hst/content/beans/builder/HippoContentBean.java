@@ -51,11 +51,11 @@ public class HippoContentBean {
     private final List<HippoContentChildNode> children = new ArrayList<>();
     private final Set<String> superTypes = new HashSet<>();
 
-    public HippoContentBean(final String projectNamespace, final ContentType contentType) {
+    public HippoContentBean(final ContentType contentType) {
         this.contentType = contentType;
 
         final String originalName = contentType.getName();
-        name = extractName(originalName, projectNamespace);
+        name = extractName(originalName);
         if (name.indexOf(':') != -1) {
             final String[] fullName = PREFIX_SPLITTER.split(name);
             this.shortName = fullName[1];
@@ -69,16 +69,11 @@ public class HippoContentBean {
         processSupertypes();
     }
 
-    private String extractName(final String originalName, final String projectNamespace) {
+    private String extractName(final String originalName) {
         String myName = originalName;
         if (originalName.indexOf(',') != -1) {
             final String[] names = COMMA_SPLITTER.split(originalName);
             myName = names[0];
-            for (String n : names) {
-                if (n.startsWith(projectNamespace)) {
-                    myName = n;
-                }
-            }
         }
         return myName;
     }

@@ -19,10 +19,12 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import org.apache.commons.lang.time.DateUtils;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
 import org.hippoecm.hst.content.beans.standard.HippoResourceBean;
 import org.junit.Ignore;
@@ -66,6 +68,7 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
     private static final String LINK_COMPOUND_TYPE_METHOD_NAME = "getMirrorCompoundType";
     private static final String RESOURCE_COMPOUND_TYPE_METHOD_NAME = "getResourceCompoundType";
     private static final String RICH_TEXT_EDITOR_COMPOUND_TYPE_METHOD_NAME = "getRichTextEditorCompoundType";
+    private static final String CONTENT_BLOCKS_TYPE_METHOD_NAME = "getContentblocks";
 
     private DateFormat dateParser = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
 
@@ -350,6 +353,22 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         assertNotNull("The method '" + RESOURCE_COMPOUND_TYPE_METHOD_NAME + "' didn't return any value", hippoResourceBean);
 
         assertEquals("picture_thumbnail.jpeg", hippoResourceBean.getFilename());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testGetContentOfContentBlocksTypeWithoutContentBean() throws Exception {
+
+        Object generatedBean = getContentBean();
+
+        List<HippoDocument> htmlBlocks = callContentBeanMethod(generatedBean, CONTENT_BLOCKS_TYPE_METHOD_NAME, List.class);
+
+        assertNotNull("The method '" + CONTENT_BLOCKS_TYPE_METHOD_NAME + "' didn't return any value", htmlBlocks);
+
+        HippoDocument contentBlocksBean = htmlBlocks.get(0);
+        HippoHtml contentBlocksText = (HippoHtml) contentBlocksBean.getClass().getMethod("getText").invoke(contentBlocksBean);
+
+        assertEquals("Welcome Home!", contentBlocksText.getContent());
     }
 
 }

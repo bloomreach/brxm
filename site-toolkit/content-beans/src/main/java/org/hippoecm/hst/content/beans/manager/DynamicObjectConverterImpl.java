@@ -108,6 +108,11 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
                     // no exact match, try a fallback type
                     delegateeClass = getFallbackClass(jcrPrimaryNodeType, useNode);
                 }
+
+                if (isCompoundType(useNode)) {
+                    log.info("Creating the compound runtime bean for document type {}", jcrPrimaryNodeType);
+                    delegateeClass = createDynamicBeanDefinition(useNode);
+                }
             }
 
             if (delegateeClass != null) {

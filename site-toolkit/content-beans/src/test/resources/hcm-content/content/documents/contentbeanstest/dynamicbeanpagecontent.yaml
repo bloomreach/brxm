@@ -64,3 +64,9 @@
       jcr:encoding: UTF-8
       jcr:lastModified: 2008-03-26T12:03:00+01:00
       jcr:mimeType: application/vnd.hippo.blank
+    /contentbeanstest:contentblocks:
+      jcr:primaryType: contentbeanstest:htmlblock
+      /contentbeanstest:text:
+        jcr:primaryType: hippostd:html
+        hippostd:content: |-
+          Welcome Home!
