@@ -13,6 +13,9 @@
     "type": "git",
     "url": "https://code.onehippo.org/cms-community/bloomreach-spa-sdk"
   },
+  "bugs": {
+    "url": "https://issues.onehippo.com/projects/CMS/issues"
+  },
   "browser": "dist/spa-sdk.js",
   "module": "dist/spa-sdk.mjs",
   "es2015": "dist/spa-sdk.es6.mjs",
