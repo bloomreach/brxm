@@ -7,11 +7,10 @@ definitions:
   config:
     /hippo:configuration/hippo:modules/webfiles/hippo:moduleconfig:
       watchedModules: [repository-data/webfiles]
-    /hippo:configuration/hippo:domains/hippofolders/readonly:
-      hipposys:groups:
-        operation: add
-        type: string
-        value: [sitewriters]
+    /hippo:configuration/hippo:domains/content/sitewriter:
+      jcr:primaryType: hipposys:authrole
+      hipposys:groups: [sitewriters]
+      hipposys:role: readonly
     /hippo:configuration/hippo:domains/preview-documents/readonly:
       hipposys:groups:
         operation: add
