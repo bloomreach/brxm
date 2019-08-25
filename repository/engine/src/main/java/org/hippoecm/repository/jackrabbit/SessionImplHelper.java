@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -43,8 +43,6 @@ import javax.jcr.RepositoryException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
-import javax.jcr.security.AccessControlManager;
-import javax.jcr.security.Privilege;
 import javax.jcr.version.VersionException;
 import javax.security.auth.Subject;
 
@@ -56,7 +54,6 @@ import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.nodetype.NodeTypeConflictException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.observation.ObservationManagerImpl;
-import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.UserPrincipal;
@@ -103,6 +100,7 @@ abstract class SessionImplHelper {
     Subject subject;
     private InternalHippoSession session;
     SessionContext context;
+    private HippoAccessManager ham;
 
     /**
      * Local namespace mappings. Prefixes as keys and namespace URIs as values.
@@ -272,30 +270,15 @@ abstract class SessionImplHelper {
         namespaces.put(prefix, uri);
     }
 
-    private HashSet<Privilege> jcrPrivileges = new HashSet<Privilege>();
-    
     SessionImplHelper(InternalHippoSession session, RepositoryContext repositoryContext,
                       SessionContext sessionContext, Subject subject) throws RepositoryException {
         this.session = session;
         this.context = sessionContext;
         this.ntReg = repositoryContext.getNodeTypeRegistry();
         this.rep = (RepositoryImpl) repositoryContext.getRepository();
+        this.ham = session.getAccessControlManager();
         this.subject = subject;
         setUserId();
-        AccessControlManager acMgr = this.session.getAccessControlManager();
-        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_ADD_CHILD_NODES));
-        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_LIFECYCLE_MANAGEMENT));
-        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_LOCK_MANAGEMENT));
-        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_MODIFY_ACCESS_CONTROL));
-        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_MODIFY_PROPERTIES));
-        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_NODE_TYPE_MANAGEMENT));
-        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_READ));
-        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_READ_ACCESS_CONTROL));
-        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_REMOVE_CHILD_NODES));
-        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_REMOVE_NODE));
-        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_RETENTION_MANAGEMENT));
-        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_VERSION_MANAGEMENT));
-        jcrPrivileges.add(acMgr.privilegeFromName(Privilege.JCR_WRITE));
     }
 
     /**
@@ -356,30 +339,16 @@ abstract class SessionImplHelper {
         return Collections.unmodifiableSet(subject.getPrincipals());
     }
 
-    /**
-     * Before this method the JackRabbiit Session.checkPermission is called.
-     * That function checks the validity of absPath and the default JCR permissions:
-     * read, remove, add_node and set_property. So we don't have to check for those
-     * things again here.
-     * @param absPath
-     * @param actions
-     * @throws AccessControlException
-     * @throws RepositoryException
-     */
     public void checkPermission(String absPath, String actions) throws AccessControlException, RepositoryException {
-        AccessControlManager acMgr = session.getAccessControlManager();
+        if (!hasPermission(absPath, actions)) {
+            throw new AccessControlException("Privileges '" + actions + "' denied for " + absPath);
+        }
+    }
 
-        // build the set of actions to be checked
-        HashSet<Privilege> privileges = new HashSet<Privilege>();
-        for (String action : actions.split(",")) {
-            privileges.add(acMgr.privilegeFromName(action));
-        }
-        privileges.removeAll(jcrPrivileges);
-        if (privileges.size() > 0) {
-            if (!acMgr.hasPrivileges(absPath, privileges.toArray(new Privilege[privileges.size()]))) {
-                throw new AccessControlException("Privileges '" + actions + "' denied for " + absPath);
-            }
-        }
+    public boolean hasPermission(final String absPath, final String actions) throws RepositoryException {
+        // check sanity of this session
+        context.getSessionState().checkAlive();
+        return ham.hasPermission(absPath, actions);
     }
 
     abstract SessionItemStateManager getItemStateManager();
@@ -608,14 +577,6 @@ abstract class SessionImplHelper {
     }
 
     public AuthorizationQuery getAuthorizationQuery() {
-
-        final AccessManager accessManager = this.context.getAccessManager();
-
-        if (!(accessManager instanceof HippoAccessManager)) {
-            throw new IllegalStateException("Expected HippoAccessManager");
-        }
-
-        final HippoAccessManager ham = (HippoAccessManager) accessManager;
 
         // potentially trigger the implicit read access cache to update
         ham.updateReferenceFacetRules();

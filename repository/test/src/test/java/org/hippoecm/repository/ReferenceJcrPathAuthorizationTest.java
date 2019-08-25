@@ -28,6 +28,7 @@ import org.hippoecm.repository.api.HippoNodeIterator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.security.StandardPermissionNames;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -292,6 +293,13 @@ public class ReferenceJcrPathAuthorizationTest extends AbstractReferenceJcrPathA
                 fail("Permissions check failed: " + e);
             }
 
+            // alice is not authorized on "/test/folder/authDocument"
+            for (String privilege : StandardPermissionNames.JCR_ALL_PRIVILEGES) {
+                assertFalse(alice.hasPermission("/test/folder/authDocument", privilege));
+            }
+            assertFalse(alice.hasPermission("/test/folder/authDocument", String.join(",", StandardPermissionNames.JCR_ALL_PRIVILEGES)));
+
+            // alice is not allowed to read 'authDocument': expect AccessControlException
             alice.checkPermission("/test/folder/authDocument", "jcr:read");
 
         } finally {

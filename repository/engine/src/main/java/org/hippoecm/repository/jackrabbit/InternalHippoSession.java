@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,6 +34,7 @@ import org.apache.jackrabbit.spi.commons.conversion.IdentifierResolver;
 import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
+import org.hippoecm.repository.security.HippoAccessManager;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.xml.ImportContext;
 
@@ -62,6 +63,9 @@ public interface InternalHippoSession extends JackrabbitSession, NamespaceResolv
     NodeImpl getNodeById(NodeId id) throws ItemNotFoundException, RepositoryException;
 
     HierarchyManager getHierarchyManager();
+
+    @Override
+    HippoAccessManager getAccessControlManager() throws RepositoryException;
 
     ItemManager getItemManager();
 

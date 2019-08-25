@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import org.hippoecm.repository.security.domain.DomainRule;
 
 /**
  * The facet auth principal holding the domain rules, roles and
- * JCR permissions for a domain
+ * privileges for a domain
  */
 public class FacetAuthPrincipal implements Serializable, Principal {
 
@@ -52,31 +52,46 @@ public class FacetAuthPrincipal implements Serializable, Principal {
     private final Set<String> roles;
 
     /**
-     * The set of roles of the user for the domain
+     * The set of privileges of the user for the domain
      */
     private final Set<String> privileges;
 
 
     /**
-     * Creates a <code>UserPrincipal</code> with the given name.
+     * The set of privileges of the user for the domain with jcr:all and jcr:write replaced with their aggregate privileges
+     */
+    private final Set<String> resolvedPrivileges;
+
+
+    /**
+     * Creates a <code>FacetAuthPrincipal</code>.
      *
-     * @param facet
-     * @param values
-     * @param permissionss
+     * @param domain
+     * @param domainRules
+     * @param roles
+     * @param privileges
+     * @param resolvedPrivileges
      * @throws IllegalArgumentException if <code>name</code> is <code>null</code>.
      */
-    public FacetAuthPrincipal(String domain, Set<DomainRule> domainRules, Set<String> roles, Set<String> privileges) throws IllegalArgumentException {
+    public FacetAuthPrincipal(String domain, Set<DomainRule> domainRules, Set<String> roles, Set<String> privileges,
+                              Set<String> resolvedPrivileges) throws IllegalArgumentException {
         if (domain == null) {
-            throw new IllegalArgumentException("facet can not be null");
+            throw new IllegalArgumentException("domain can not be null");
         }
         if (domainRules == null){
-            throw new IllegalArgumentException("values can not be null");
+            throw new IllegalArgumentException("domainRules can not be null");
         }
         if (domainRules.size() == 0) {
-            throw new IllegalArgumentException("values must contain at least one values");
+            throw new IllegalArgumentException("domainRules must contain at least one value");
         }
         if (roles == null){
             throw new IllegalArgumentException("roles can not be null");
+        }
+        if (privileges == null){
+            throw new IllegalArgumentException("privileges can not be null");
+        }
+        if (resolvedPrivileges == null){
+            throw new IllegalArgumentException("resolvedPrivileges can not be null");
         }
 
         // assigning values
@@ -84,6 +99,7 @@ public class FacetAuthPrincipal implements Serializable, Principal {
         this.roles = Collections.unmodifiableSet(roles);
         this.rules = Collections.unmodifiableSet(domainRules);
         this.privileges = Collections.unmodifiableSet(privileges);
+        this.resolvedPrivileges = Collections.unmodifiableSet(resolvedPrivileges);
     }
 
 
@@ -111,6 +127,14 @@ public class FacetAuthPrincipal implements Serializable, Principal {
      */
     public Set<String> getPrivileges() {
         return privileges;
+    }
+
+    /**
+     * Get the set of resolved privileges with jcr:all and jcr:write replaced with their aggregate privileges
+     * @return the resolvedPrivileges the user has for the domain
+     */
+    public Set<String> getResolvedPrivileges() {
+        return resolvedPrivileges;
     }
 
     /**

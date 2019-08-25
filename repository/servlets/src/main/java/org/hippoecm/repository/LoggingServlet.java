@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,6 +38,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
+import org.onehippo.repository.security.StandardPermissionNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +60,7 @@ public class LoggingServlet extends HttpServlet {
 
     private static final String DEFAULT_REPOS = "vm://";
     private static final String DEFAULT_NODE = "////content/documents";
-    private static final String DEFAULT_PRIV = "hippo:admin";
+    private static final String DEFAULT_PRIV = StandardPermissionNames.HIPPO_ADMIN;
 
     private static final String LOG_LEVEL_PARAM_NAME = "ll";
 

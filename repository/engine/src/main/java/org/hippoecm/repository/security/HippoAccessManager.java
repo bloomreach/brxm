@@ -16,7 +16,9 @@
 package org.hippoecm.repository.security;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -24,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
@@ -32,6 +35,7 @@ import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeIterator;
@@ -80,6 +84,7 @@ import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.QFacetRule;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 import org.hippoecm.repository.security.principals.GroupPrincipal;
+import org.onehippo.repository.security.StandardPermissionNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,6 +111,11 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * Subject whose access rights this AccessManager should reflect
      */
     private Subject subject;
+
+    /**
+     * Session of subject whose access rights this AccessManager should reflect
+     */
+    private Session session;
 
     /**
      * hierarchy manager used for ACL-based access control model
@@ -204,6 +214,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
     private Map<String, Collection<QFacetRule>> extendedFacetRules;
 
+    private final PermissionManager permissionManager = PermissionManager.getInstance();
+
     /**
      * The logger
      */
@@ -230,6 +242,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         }
 
         subject = context.getSubject();
+        session = context.getSession();
         npRes = context.getNamePathResolver();
 
         if (context instanceof HippoAMContext) {
@@ -320,6 +333,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         checkInitialized();
         initialized = false;
 
+        subject = null;
+        session = null;
         // clear out all caches
         implicitReads.clear();
         readAccessCache.clear();
@@ -432,24 +447,28 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             }
         }
 
-        // translate permissions to privileges according to 6.11.1.4 of JSR-283
-        Set<Privilege> privileges = new HashSet<Privilege>();
+        // translate permissions to privileges according to JCR-284 6.16.2 of JSR-283
+        Set<String> privilegeNames = new HashSet<>();
         if ((permissions & Permission.ADD_NODE) != 0) {
-            privileges.add(privilegeFromName("jcr:addChildNodes"));
+            privilegeNames.add(StandardPermissionNames.JCR_ADD_CHILD_NODES);
         }
         if ((permissions & Permission.REMOVE_NODE) != 0) {
-            privileges.add(privilegeFromName("jcr:removeChildNodes"));
+            privilegeNames.add(StandardPermissionNames.JCR_REMOVE_CHILD_NODES);
         }
         if ((permissions & Permission.SET_PROPERTY) != 0) {
-            privileges.add(privilegeFromName("jcr:modifyProperties"));
+            privilegeNames.add(StandardPermissionNames.JCR_MODIFY_PROPERTIES);
         }
         if ((permissions & Permission.REMOVE_PROPERTY) != 0) {
-            privileges.add(privilegeFromName("jcr:modifyProperties"));
+            privilegeNames.add(StandardPermissionNames.JCR_MODIFY_PROPERTIES);
         }
-        if (privileges.isEmpty()) {
+        if (privilegeNames.isEmpty()) {
             return true;
         }
-        return hasPrivileges(absPath.getAncestor(1), privileges.toArray(new Privilege[privileges.size()]));
+        if (absPath.denotesRoot()) {
+            // standard actions must apply to the parent which root doesn't have
+            return false;
+        }
+        return hasPrivileges(absPath.getAncestor(1), privilegeNames);
     }
 
     /**
@@ -491,6 +510,62 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     public boolean canAccess(String workspaceName) throws NoSuchWorkspaceException, RepositoryException {
         updateReferenceFacetRules();
         // no workspace restrictions yet
+        return true;
+    }
+
+    /**
+     * Implementation of {@link Session#hasPermission(String, String)} and with support for checking standard
+     * jcr Privileges (by name), like {@link AccessControlManager#hasPrivileges(String, Privilege[])}, as well as any
+     * custom 'privilege'.
+     * @param absPath an absolute path.
+     * @param actions a comma separated list of action strings.
+     * @return <code>true</code> if this <code>Session</code> has permission to perform the specified actions at the
+     * specified <code>absPath</code>.
+     * @throws RepositoryException if an error occurs.
+     */
+    public boolean hasPermission(final String absPath, final String actions) throws RepositoryException {
+        // permission check/mapping logic copied from jackrabbit-core SessionImpl.hasPermssion(String, String)
+        Path path = npRes.getQPath(absPath).getNormalizedPath();
+        // test if path is absolute
+        if (!path.isAbsolute()) {
+            throw new RepositoryException("Absolute path expected. Was:" + absPath);
+        }
+        Set<String> permissionNames = permissionManager.getOrCreatePermissionNames(actions);
+        int permissions = 0;
+        if (permissionNames.remove(Session.ACTION_READ)) {
+            permissions |= Permission.READ;
+        }
+        if (permissionNames.remove(Session.ACTION_ADD_NODE)) {
+            permissions |= Permission.ADD_NODE;
+        }
+        if (permissionNames.remove(Session.ACTION_SET_PROPERTY)) {
+            permissions |= Permission.SET_PROPERTY;
+        }
+        if (permissionNames.remove(session.ACTION_REMOVE)) {
+            if (session.nodeExists(absPath)) {
+                permissions |= (session.propertyExists(absPath)) ?
+                        (Permission.REMOVE_NODE | Permission.REMOVE_PROPERTY) :
+                        Permission.REMOVE_NODE;
+            } else if (session.propertyExists(absPath)) {
+                permissions |= Permission.REMOVE_PROPERTY;
+            } else {
+                // item doesn't exist -> check both permissions
+                permissions = Permission.REMOVE_NODE | Permission.REMOVE_PROPERTY;
+            }
+        }
+        if (permissions > 0) {
+            try {
+                if (!isGranted(path, permissions)) {
+                    return false;
+                }
+            } catch (AccessDeniedException e) {
+                return false;
+            }
+        }
+        if (!permissionNames.isEmpty()) {
+            return hasPrivileges(path, permissionNames);
+        }
+
         return true;
     }
 
@@ -577,8 +652,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
             Set<FacetAuthPrincipal> faps = subject.getPrincipals(FacetAuthPrincipal.class);
             for (FacetAuthPrincipal fap : faps) {
-                Set<String> privs = fap.getPrivileges();
-                if (privs.contains("jcr:read")) {
+                Set<String> privs = fap.getResolvedPrivileges();
+                if (privs.contains(StandardPermissionNames.JCR_READ)) {
                     if (isNodeInDomain(nodeState, fap, true)) {
                         addAccessToCache(id, true);
                         return true;
@@ -734,12 +809,12 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
         if (facetRule.isReferenceRule() && !facetRule.referenceExists()) {
             if (facetRule.isEqual()) {
-                log.trace("The reference '{}' does not (yet) exist. Since the facet rule indicates that it must be " +
-                        "equal, the result is that the nodeState does not match this facet rule");
+                log.trace("The reference for facet rule '{}' does not (yet) exist. Since the facet rule indicates that it must be " +
+                        "equal, the result is that the nodeState does not match this facet rule", facetRule.getFacetUUID());
                 return false;
             } else {
-                log.trace("The reference '{}' does not (yet) exist. Since the facet rule indicates that it must be " +
-                        "not equal, the result is that the nodeState does match this facet rule");
+                log.trace("The reference for facet rule '{}' does not (yet) exist. Since the facet rule indicates that it must be " +
+                        "not equal, the result is that the nodeState does match this facet rule", facetRule.getFacetUUID());
                 return true;
             }
         }
@@ -1465,51 +1540,15 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     public Privilege[] getSupportedPrivileges(String absPath) throws PathNotFoundException, RepositoryException {
         checkInitialized();
         checkValidNodePath(absPath);
-        // return all known privileges everywhere.
-        return currentPrivileges.values().toArray(new Privilege[currentPrivileges.size()]);
+        return permissionManager.getCurrentPrivileges();
     }
 
     /**
      * @see AccessControlManager#privilegeFromName(String)
      */
-    public Privilege privilegeFromName(String privilegeName) throws AccessControlException, RepositoryException {
+    public Privilege privilegeFromName(String privilegeName) {
         checkInitialized();
-
-        if (currentPrivileges.containsKey(privilegeName)) {
-            return currentPrivileges.get(privilegeName);
-        }
-
-        currentPrivileges.put(privilegeName, new Privilege() {
-
-            private String name;
-
-            public Privilege[] getAggregatePrivileges() {
-                return new Privilege[0];
-            }
-
-            public Privilege[] getDeclaredAggregatePrivileges() {
-                return new Privilege[0];
-            }
-
-            public Privilege create(String name) {
-                this.name = name;
-                return this;
-            }
-
-            public String getName() {
-                return name;
-            }
-
-            public boolean isAbstract() {
-                return false;
-            }
-
-            public boolean isAggregate() {
-                return false;
-            }
-        }.create(privilegeName));
-
-        return currentPrivileges.get(privilegeName);
+        return permissionManager.getOrCreatePrivilege(privilegeName);
     }
 
     /**
@@ -1517,15 +1556,25 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      */
     public boolean hasPrivileges(String absPath, Privilege[] privileges) throws PathNotFoundException,
             RepositoryException {
-        return hasPrivileges(npRes.getQPath(absPath), privileges);
+        final Path path = npRes.getQPath(absPath).getNormalizedPath();
+        if (privileges == null) {
+            return hasPrivileges(path, Collections.emptySet());
+        }
+        Set<String> permissionNames = Arrays.stream(privileges).map(Privilege::getName).collect(Collectors.toCollection(HashSet::new));
+        // first resolve permissionNames with jcr:all and jcr:write replaced with their aggregate privileges
+        if (permissionNames.remove(StandardPermissionNames.JCR_WRITE)) {
+            permissionNames.addAll(StandardPermissionNames.JCR_WRITE_PRIVILEGES);
+        }
+        if (permissionNames.remove(StandardPermissionNames.JCR_ALL)) {
+            permissionNames.addAll(StandardPermissionNames.JCR_ALL_PRIVILEGES);
+        }
+        return hasPrivileges(path, permissionNames);
     }
 
     /**
-     * Check the privileges based on a absolute Path rather than a String representation of a Path
-     * @see AccessControlManager#hasPrivileges(String, Privilege[])
+     * Check the privileges based on a absolute Path rather than a String representation of a Path.
      */
-    private boolean hasPrivileges(Path absPath, Privilege[] privileges) throws PathNotFoundException,
-            RepositoryException {
+    private boolean hasPrivileges(final Path absPath, final Set<String> permissionNames) throws RepositoryException {
         checkInitialized();
 
         // system session can do everything
@@ -1534,7 +1583,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         }
 
         // user is always allowed to do nothing
-        if (privileges == null || privileges.length == 0) {
+        if (permissionNames.isEmpty()) {
             log.debug("No privileges to check for path: {}.", npRes.getJCRPath(absPath));
             return true;
         }
@@ -1547,9 +1596,14 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         }
 
         // fast track read check
-        if (privileges.length == 1 && "jcr:read".equals(privileges[0].getName())) {
-            return canRead(id);
+        if (permissionNames.remove(StandardPermissionNames.JCR_READ)) {
+            if (!canRead(id)) {
+                return false;
+            } else if (permissionNames.isEmpty()) {
+                return true;
+            }
         }
+
         // if virtual nodes can be read any operation on them is allowed
         if (id instanceof HippoNodeId) {
             return canRead(id);
@@ -1568,40 +1622,33 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             return true;
         }
 
-        for (Privilege priv : privileges) {
-            if (log.isDebugEnabled()) {
-                log.debug("Checking [{}] : {}", priv.getName(), npRes.getJCRPath(absPath));
-            }
-            boolean allowed = false;
-            for (FacetAuthPrincipal fap : subject.getPrincipals(FacetAuthPrincipal.class)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Checking [" + priv + "] : " + absPath + " against FacetAuthPrincipal: " + fap);
-                }
+        final boolean hasModifyPropertiesPrivilege = permissionNames.contains(StandardPermissionNames.JCR_MODIFY_PROPERTIES);
 
-                if (fap.getPrivileges().contains(priv.getName())) {
-                    if (isNodeInDomain(nodeState, fap, false)) {
-                        allowed = true;
-                        if (log.isInfoEnabled()) {
-                            log.info("GRANT: " + priv.getName() + " to user " + getUserIdAsString() + " in domain " + fap + " for "
-                                    + npRes.getJCRPath(absPath));
-                        }
-                        if (priv.getName().equals("jcr:modifyProperties")) {
-                            // because the action setProperties is checked, and a property change can result in
-                            // read-access being changed, we need to remove the property from the read cache
-                            removeAccessFromCache(id);
-                        }
-                        break;
-                    }
-                }
+        for (FacetAuthPrincipal fap : subject.getPrincipals(FacetAuthPrincipal.class)) {
+            if (log.isDebugEnabled()) {
+                log.debug("Checking [" + String.join(", ", permissionNames) + "] : " + absPath + " against FacetAuthPrincipal: " + fap);
             }
-            if (!allowed) {
-                if (log.isInfoEnabled()) {
-                    log.info("DENY: " + priv.getName() + " to user " + getUserIdAsString() + " for " + npRes.getJCRPath(absPath));
+            HashSet<String> intersection =
+                    permissionNames.stream().filter(p -> fap.getResolvedPrivileges().contains(p)).collect(Collectors.toCollection(HashSet::new));
+
+            if (!intersection.isEmpty() && isNodeInDomain(nodeState, fap, false)) {
+                log.info("GRANT: [" + String.join(" ,", intersection) + "] to user " + getUserIdAsString() + " in domain " + fap + " for "
+                        + npRes.getJCRPath(absPath));
+                permissionNames.removeAll(intersection);
+                if (permissionNames.isEmpty()) {
+                    if (hasModifyPropertiesPrivilege) {
+                        // because the jcr:modifyProperties is checked, and a property change can result in
+                        // read-access being changed, we need to remove the property from the read cache
+                        removeAccessFromCache(id);
+                    }
+                    return true;
                 }
-                return false;
             }
         }
-        return true;
+        if (log.isInfoEnabled()) {
+            log.info("DENY: [" + String.join(" ,", permissionNames) + "] to user " + getUserIdAsString() + " for " + npRes.getJCRPath(absPath));
+        }
+        return false;
     }
 
     /**
@@ -1612,8 +1659,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     private void initializeImplicitReadAccess() throws RepositoryException {
         final Set<FacetAuthPrincipal> faps = subject.getPrincipals(FacetAuthPrincipal.class);
         for (FacetAuthPrincipal fap : faps) {
-            final Set<String> privs = fap.getPrivileges();
-            if (!privs.contains("jcr:read")) {
+            final Set<String> privs = fap.getResolvedPrivileges();
+            if (!privs.contains(StandardPermissionNames.JCR_READ)) {
                 continue;
             }
             for (DomainRule domainRule : fap.getRules()) {
@@ -1744,9 +1791,11 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     public Privilege[] getPrivileges(String absPath) throws PathNotFoundException, RepositoryException {
         checkInitialized();
 
-        if (!isSystem) {
-            updateReferenceFacetRules();
+        if (isSystem) {
+            return getSupportedPrivileges(absPath);
         }
+
+        updateReferenceFacetRules();
 
         NodeId id = getNodeId(npRes.getQPath(absPath));
         if (id == null) {
@@ -1759,15 +1808,15 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             throw new PathNotFoundException("NodeState not found for id " + id + " path: " + absPath);
         }
 
-        Set<Privilege> privileges = new HashSet<Privilege>();
+        Set<Privilege> privileges = new HashSet<>();
         for (FacetAuthPrincipal fap : subject.getPrincipals(FacetAuthPrincipal.class)) {
             if (isNodeInDomain(nodeState, fap, false)) {
                 for (String privilegeName : fap.getPrivileges()) {
-                    privileges.add(privilegeFromName(privilegeName));
+                    privileges.add(permissionManager.getOrCreatePrivilege(privilegeName));
                 }
             }
         }
-        return privileges.toArray(new Privilege[privileges.size()]);
+        return privileges.toArray(new Privilege[0]);
     }
 
     /**

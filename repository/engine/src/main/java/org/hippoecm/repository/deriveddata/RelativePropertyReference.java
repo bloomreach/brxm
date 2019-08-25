@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -103,7 +103,7 @@ public class RelativePropertyReference extends PropertyReference {
             if (values != null && values.length > 0) {
                 if (!property.getValue().equals(values[0])) {
                     try {
-                        property.getSession().checkPermission(property.getPath(), Privilege.JCR_MODIFY_PROPERTIES);
+                        property.getSession().checkPermission(property.getParent().getPath(), Privilege.JCR_MODIFY_PROPERTIES);
                         property.setValue(values[0]);
                         pul.overwritten(values[0]);
                     } catch (AccessControlException ex) {
@@ -115,7 +115,7 @@ public class RelativePropertyReference extends PropertyReference {
                 }
             } else {
                 try {
-                    property.getSession().checkPermission(property.getPath(), Privilege.JCR_MODIFY_PROPERTIES);
+                    property.getSession().checkPermission(property.getParent().getPath(), Privilege.JCR_MODIFY_PROPERTIES);
                     property.remove();
                     pul.removed();
                 } catch (AccessControlException ex) {
@@ -138,7 +138,7 @@ public class RelativePropertyReference extends PropertyReference {
             }
             if (changed) {
                 try {
-                    property.getSession().checkPermission(property.getPath(), Privilege.JCR_MODIFY_PROPERTIES);
+                    property.getSession().checkPermission(property.getParent().getPath(), Privilege.JCR_MODIFY_PROPERTIES);
                     property.setValue(values);
                     pul.overwritten(values);
                 } catch (AccessControlException ex) {

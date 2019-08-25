@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ import org.apache.cxf.transport.http.DestinationRegistry;
 import org.apache.cxf.transport.http.HTTPTransportFactory;
 import org.apache.cxf.transport.servlet.ServletController;
 import org.apache.cxf.transport.servlet.servicelist.ServiceListGeneratorServlet;
+import org.onehippo.repository.security.StandardPermissionNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +82,7 @@ public final class RepositoryJaxrsService {
      * Hippo permission that can be used in combination with {@link AuthorizingRepositoryJaxrsInvoker} to enforce
      * additional authorization restrictions.
      */
-    public static final String HIPPO_REST_PERMISSION = "hippo:rest";
+    public static final String HIPPO_REST_PERMISSION = StandardPermissionNames.HIPPO_REST;
 
     private static RepositoryJaxrsService INSTANCE = new RepositoryJaxrsService();
     private static Bus bus;

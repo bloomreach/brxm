@@ -28,7 +28,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
 
-import javax.jcr.AccessDeniedException;
 import javax.jcr.Credentials;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -37,9 +36,11 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
+import javax.jcr.security.AccessControlManager;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -51,7 +52,6 @@ import org.apache.jackrabbit.api.security.principal.PrincipalIterator;
 import org.apache.jackrabbit.api.security.principal.PrincipalManager;
 import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.jackrabbit.core.RepositoryImpl;
-import org.apache.jackrabbit.core.config.AccessManagerConfig;
 import org.apache.jackrabbit.core.config.LoginModuleConfig;
 import org.apache.jackrabbit.core.config.SecurityConfig;
 import org.apache.jackrabbit.core.security.AMContext;
@@ -70,7 +70,6 @@ import org.apache.jackrabbit.core.security.authentication.RepositoryCallback;
 import org.apache.jackrabbit.core.security.principal.PrincipalProvider;
 import org.apache.jackrabbit.core.security.principal.PrincipalProviderRegistry;
 import org.apache.jackrabbit.core.security.principal.ProviderRegistryImpl;
-import org.apache.jackrabbit.core.security.simple.SimpleAccessManager;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.security.domain.Domain;
@@ -105,6 +104,7 @@ public class SecurityManager implements HippoSecurityManager {
     private SecurityConfig config;
     private boolean maintenanceMode;
     private PrincipalProviderRegistry principalProviderRegistry;
+    private PermissionManager permissionManager;
 
     private AuthContextProvider authCtxProvider;
 
@@ -115,6 +115,7 @@ public class SecurityManager implements HippoSecurityManager {
         rolesPath = configNode.getProperty(HippoNodeType.HIPPO_ROLESPATH).getString();
         domainsPath = configNode.getProperty(HippoNodeType.HIPPO_DOMAINSPATH).getString();
         SecurityProviderFactory spf = new SecurityProviderFactory(SECURITY_CONFIG_PATH, usersPath, groupsPath, rolesPath, domainsPath, maintenanceMode);
+        permissionManager = PermissionManager.getInstance();
 
         StringBuilder statement = new StringBuilder();
         statement.append("SELECT * FROM ").append(HippoNodeType.NT_SECURITYPROVIDER);
@@ -459,21 +460,7 @@ public class SecurityManager implements HippoSecurityManager {
             if (roleNode.hasProperty(HippoNodeType.HIPPO_PRIVILEGES)) {
                 Value[] values = roleNode.getProperty(HippoNodeType.HIPPO_PRIVILEGES).getValues();
                 for (Value value : values) {
-                    // FIXME: temp hack for aggregate privileges as defined in jsr-283, 6.11.1.2
-                    String privilege = value.getString();
-                    if ("jcr:write".equals(privilege)) {
-                        addWritePrivileges(privileges);
-                    } else if ("jcr:all".equals(privilege)) {
-                        privileges.add("jcr:read");
-                        // jcr:acp
-                        privileges.add("jcr:getAccessControlPolicy");
-                        privileges.add("jcr:setAccessControlPolicy");
-                        // jcr:wrte
-                        addWritePrivileges(privileges);
-
-                    } else {
-                        privileges.add(privilege);
-                    }
+                    privileges.add(value.getString());
                 }
             }
         } catch (PathNotFoundException e) {
@@ -483,14 +470,6 @@ public class SecurityManager implements HippoSecurityManager {
             log.error("Error while looking up role: " + roleId, e);
         }
         return privileges;
-    }
-
-    private void addWritePrivileges(final Set<String> privileges) {
-        privileges.add("jcr:write");
-        privileges.add("jcr:modifyProperties");
-        privileges.add("jcr:addChildNodes");
-        privileges.add("jcr:removeNode");
-        privileges.add("jcr:removeChildNodes");
     }
 
     /**
@@ -626,7 +605,9 @@ public class SecurityManager implements HippoSecurityManager {
 
             if (privileges.size() > 0 && domain.getDomainRules().size() > 0) {
                 // create and add facet auth principal
-                FacetAuthPrincipal fap = new FacetAuthPrincipal(domain.getName(), domain.getDomainRules(), roles, privileges);
+                FacetAuthPrincipal fap =
+                        new FacetAuthPrincipal(domain.getName(), domain.getDomainRules(), roles,
+                                privileges, permissionManager.getOrCreatePermissionNames(privileges));
                 principals.add(fap);
             }
         }
@@ -680,23 +661,11 @@ public class SecurityManager implements HippoSecurityManager {
     }
 
     public AccessManager getAccessManager(Session session, AMContext amContext) throws RepositoryException {
-        try {
-            AccessManagerConfig amc = config.getAccessManagerConfig();
-            AccessManager accessMgr;
-            if (amc == null) {
-                accessMgr = new SimpleAccessManager();
-            } else {
-                accessMgr = amc.newInstance(AccessManager.class);
-            }
-            accessMgr.init(amContext);
-            return accessMgr;
-        } catch (AccessDeniedException ade) {
-            throw ade;
-        } catch (Exception e) {
-            String msg = "Failed to instantiate AccessManager implementation";
-            log.error(msg, e);
-            throw new RepositoryException(msg, e);
+        AccessControlManager acm = session.getAccessControlManager();
+        if (acm instanceof AccessManager) {
+            return (AccessManager)acm;
         }
+        throw new UnsupportedRepositoryOperationException("AccessManager must be implemented by the AccessControlManager");
     }
 
     public PrincipalManager getPrincipalManager(Session session) throws RepositoryException {

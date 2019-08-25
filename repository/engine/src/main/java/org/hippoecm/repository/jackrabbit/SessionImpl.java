@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.security.auth.Subject;
 
@@ -49,6 +50,7 @@ import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.security.AuthorizationFilterPrincipal;
 import org.hippoecm.repository.security.HippoAMContext;
+import org.hippoecm.repository.security.HippoAccessManager;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.xml.DefaultContentHandler;
 import org.onehippo.repository.xml.ImportContext;
@@ -85,6 +87,9 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implemen
                     this, subject, context.getHierarchyManager(), context.getPrivilegeManager(),
                     this, getWorkspace().getName(), context.getNodeTypeManager(), getItemStateManager());
             AccessManager accessMgr = amConfig.newInstance(AccessManager.class);
+            if (!(accessMgr instanceof HippoAccessManager)) {
+                throw new UnsupportedRepositoryOperationException("AccessManager must be instanceof HippoAccessManager. Actual class: "+accessMgr.getClass().getName());
+            }
             accessMgr.init(ctx);
             if (accessMgr instanceof ItemStateListener) {
                 context.getItemStateManager().addListener((ItemStateListener) accessMgr);
@@ -101,23 +106,11 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implemen
 
     @Override
     public boolean hasPermission(final String absPath, final String actions) throws RepositoryException {
-        try {
-            return super.hasPermission(absPath, actions);
-        } catch (IllegalArgumentException ignore) {}
-        try {
-            helper.checkPermission(absPath, actions);
-            return true;
-        } catch (AccessControlException e) {
-            return false;
-        }
+        return helper.hasPermission(absPath, actions);
     }
 
     @Override
     public void checkPermission(String absPath, String actions) throws AccessControlException, RepositoryException {
-        try {
-            super.checkPermission(absPath, actions);
-        } catch(IllegalArgumentException ignore) {
-        }
         helper.checkPermission(absPath, actions);
     }
 
@@ -246,5 +239,10 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implemen
         LocalItemStateManager mgr = new HippoLocalItemStateManager(sharedStateMgr, context.getWorkspace(), context.getRepositoryContext().getItemStateCacheFactory(), attribute, ((RepositoryImpl)context.getRepository()).getNodeTypeRegistry(), ((RepositoryImpl)context.getRepository()).isStarted(), ((RepositoryImpl)context.getRepository()).getRootNodeId());
         sharedStateMgr.addListener(mgr);
         return mgr;
+    }
+
+    @Override
+    public HippoAccessManager getAccessControlManager() throws RepositoryException {
+        return (HippoAccessManager)super.getAccessControlManager();
     }
 }

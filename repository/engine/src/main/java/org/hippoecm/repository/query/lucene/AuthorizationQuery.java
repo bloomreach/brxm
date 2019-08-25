@@ -55,6 +55,7 @@ import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.QFacetRule;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 import org.hippoecm.repository.security.principals.GroupPrincipal;
+import org.onehippo.repository.security.StandardPermissionNames;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -151,7 +152,7 @@ public class AuthorizationQuery {
 
         BooleanQuery authQuery = new BooleanQuery(true);
         for (final FacetAuthPrincipal facetAuthPrincipal : facetAuths) {
-            if (!facetAuthPrincipal.getPrivileges().contains("jcr:read")) {
+            if (!facetAuthPrincipal.getResolvedPrivileges().contains(StandardPermissionNames.JCR_READ)) {
                 continue;
             }
             final Set<DomainRule> domainRules = facetAuthPrincipal.getRules();
