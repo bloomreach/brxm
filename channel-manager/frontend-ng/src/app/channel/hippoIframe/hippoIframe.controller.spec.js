@@ -206,7 +206,7 @@ describe('hippoIframeCtrl', () => {
     const listener = jasmine.createSpy('listener');
     spyOn(SpaService, 'detectSpa').and.returnValue(true);
 
-    $rootScope.$on('iframe-load', listener);
+    $rootScope.$on('hippo-iframe:load', listener);
     $ctrl.onLoad();
 
     expect(listener).toHaveBeenCalled();

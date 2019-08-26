@@ -109,7 +109,7 @@ class HippoIframeCtrl {
   }
 
   onLoad() {
-    this.$rootScope.$broadcast('iframe-load');
+    this.$rootScope.$broadcast('hippo-iframe:load');
 
     if (this.SpaService.detectSpa()) {
       this.SpaService.initSpa();

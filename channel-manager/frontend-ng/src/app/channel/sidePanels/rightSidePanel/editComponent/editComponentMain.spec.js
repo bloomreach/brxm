@@ -127,7 +127,7 @@ describe('EditComponentMainCtrl', () => {
       spyOn(RenderingService, 'onOverlayCreated').and.returnValue(unbind);
       $ctrl.$onInit();
 
-      $rootScope.$broadcast('iframe-load');
+      $rootScope.$broadcast('hippo-iframe:load');
     });
 
     it('redraws the preview of the component being edited', () => {
