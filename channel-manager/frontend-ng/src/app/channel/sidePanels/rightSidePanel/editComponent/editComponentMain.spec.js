@@ -17,6 +17,7 @@
 describe('EditComponentMainCtrl', () => {
   let $log;
   let $q;
+  let $rootScope;
   let $scope;
   let ChannelService;
   let CmsService;
@@ -36,13 +37,14 @@ describe('EditComponentMainCtrl', () => {
 
     inject((
       $componentController,
-      $rootScope,
+      _$rootScope_,
       _$log_,
       _$q_,
       _ContainerService_,
       _EditComponentService_,
       _RenderingService_,
     ) => {
+      $rootScope = _$rootScope_;
       $log = _$log_;
       $q = _$q_;
       ContainerService = _ContainerService_;
@@ -124,6 +126,8 @@ describe('EditComponentMainCtrl', () => {
       unbind = jasmine.createSpy('unbind');
       spyOn(RenderingService, 'onOverlayCreated').and.returnValue(unbind);
       $ctrl.$onInit();
+
+      $rootScope.$broadcast('hippo-iframe:load');
     });
 
     it('redraws the preview of the component being edited', () => {
@@ -131,6 +135,7 @@ describe('EditComponentMainCtrl', () => {
       onOverlayCreated();
 
       expect(ComponentEditor.updatePreview).toHaveBeenCalled();
+      expect(unbind).toHaveBeenCalled();
     });
 
     it('removes the "onOverlayCreated" event listener when destroyed', () => {
