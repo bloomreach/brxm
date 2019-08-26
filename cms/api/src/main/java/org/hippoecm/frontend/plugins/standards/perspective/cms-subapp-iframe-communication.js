@@ -39,8 +39,12 @@
       Hippo.AppToNavApp.hideMask();
     },
     updateNavLocation(location) {
-      Hippo.AppToNavApp.updateNavLocation(location);
-    },
+      Hippo.currentNavLocation = {
+        path: location.path,
+        breadcrumbLabel: location.breadcrumbLabel
+      };
+      Hippo.AppToNavApp.updateNavLocation(Hippo.currentNavLocation);
+    }
   };
 
   if (window.parent === window) { // cms is top window

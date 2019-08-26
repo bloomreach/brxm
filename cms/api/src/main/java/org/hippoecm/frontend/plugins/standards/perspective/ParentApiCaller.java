@@ -20,12 +20,8 @@ import java.util.function.Supplier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.onehippo.cms.json.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * This class modifies the dom to append javascript when
@@ -33,15 +29,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  */
 public class ParentApiCaller implements ParentApi {
 
+    public static final String JAVA_SCRIPT_TEMPLATE = "Hippo.updateNavLocation('%s')";
     private static final Logger log = LoggerFactory.getLogger(ParentApiCaller.class);
-    private static final String UPDATE_NAV_LOCATION = "updateNavLocation";
-    private static final String NAVIGATE = "navigate";
     private Supplier<IPartialPageRequestHandler> targetSupplier;
-    private final ObjectMapper mapper;
 
 
     public ParentApiCaller() {
-        mapper = Json.getMapper();
         setTargetSupplier(() -> RequestCycle.get().find(AjaxRequestTarget.class));
     }
 
@@ -52,28 +45,14 @@ public class ParentApiCaller implements ParentApi {
     }
 
     @Override
-    public void updateNavLocation(final NavLocation location) {
-        apply(UPDATE_NAV_LOCATION, location);
-    }
-
-    @Override
-    public void navigate(final NavLocation location) {
-        apply(NAVIGATE, location);
-    }
-
-
-    private void apply(String method, NavLocation location) {
+    public void updateNavLocation(final String path) {
         final IPartialPageRequestHandler target = targetSupplier.get();
         if (target != null) {
-            try {
-                target.appendJavaScript(getJavaScript(method, location));
-            } catch (JsonProcessingException e) {
-                log.warn("Could not marshall {navLocation:{}}", location);
-            }
+            target.appendJavaScript(getJavaScript(path));
         }
     }
 
-    private String getJavaScript(String method, NavLocation location) throws JsonProcessingException {
-        return String.format("Hippo.AppToNavApp && Hippo.AppToNavApp.%s(%s)", method, mapper.writeValueAsString(location));
+    private String getJavaScript(final String path) {
+        return String.format(JAVA_SCRIPT_TEMPLATE, path);
     }
 }
