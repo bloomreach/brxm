@@ -16,7 +16,9 @@
 package org.hippoecm.hst.component.support.forms;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +43,8 @@ public class FormField {
     private String label;
 
     private List<String> valueList = new ArrayList<>();
+
+    private Map<String, String> values = new HashMap<>();
 
     // error messages
     private List<String> messages = new ArrayList<>();
@@ -89,7 +93,7 @@ public class FormField {
 
     /**
      * Set all values for this field. Replaces existing values. Resets values if called with null.
-     *
+     * Note that it also resets all values returned by {@link #getValues()}
      * @param valueList the list of values for this field. May be null to clear existing values.
      */
     public void setValueList(final List<String> valueList) {
@@ -97,6 +101,10 @@ public class FormField {
             this.valueList = new ArrayList<>();
         } else {
             this.valueList = valueList;
+        }
+        values.clear();
+        for (String s : valueList) {
+            values.put(s,s);
         }
     }
 
@@ -110,6 +118,7 @@ public class FormField {
             return;
         }
         valueList.add(value);
+        values.put(value, value);
     }
 
     /**
@@ -123,6 +132,16 @@ public class FormField {
             return "";
         }
         return valueList.get(0);
+    }
+
+    /**
+     * A map that can be used in freemarker templates and/or jsp easily to be able to write something like:
+     * ${empty form.value['checkbox'].values["Red"] ? '':'checked="checked"'} in a form for example
+     * @return A map of the values where key and value are the same
+     */
+    @JsonIgnore
+    public Map<String, String> getValues() {
+        return values;
     }
 
     /**
