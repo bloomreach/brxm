@@ -17,7 +17,7 @@
 import { Injectable } from '@angular/core';
 import { NavItem } from '@bloomreach/navapp-communication';
 import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
-import { bufferCount, filter, first, map, switchMap, tap } from 'rxjs/operators';
+import { bufferCount, first, map, switchMap, tap } from 'rxjs/operators';
 
 import { Connection } from '../../models/connection.model';
 import { FailedConnection } from '../../models/failed-connection.model';
@@ -60,13 +60,12 @@ export class ClientAppService {
   }
 
   init(): Promise<ClientApp[]> {
-    this.navConfigService.navItems$.pipe(
-      filter(x => x && x.length > 0),
-      map(navItems => this.filterUniqueURLs(navItems)),
-    ).subscribe(x => this.uniqueURLs.next(x));
+    const navItems = this.navConfigService.navItems;
+    const uniqueURLs = this.filterUniqueURLs(navItems);
+    this.uniqueURLs.next(uniqueURLs);
 
     return this.uniqueURLs.pipe(
-      switchMap(uniqueURLs => this.waitForConnections(uniqueURLs.length)),
+      switchMap(urls => this.waitForConnections(urls.length)),
       map(connections => this.discardFailedConnections(connections)),
       map(connections => connections.map(c => this.createClientApp(c))),
       tap(apps => this.connectedApps = apps),

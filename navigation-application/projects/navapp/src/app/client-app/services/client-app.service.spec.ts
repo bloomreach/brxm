@@ -45,10 +45,9 @@ describe('ClientAppService', () => {
       path: 'some-path',
     },
   ];
-  const navItemsSubject = new Subject();
 
   const navConfigServiceMock = {
-    navItems$: navItemsSubject,
+    navItems: navItemsMock,
   } as any;
 
   beforeEach(() => {
@@ -59,26 +58,10 @@ describe('ClientAppService', () => {
     expect(service).toBeDefined();
   });
 
-  it('should emit urls before initialization is complete', () => {
-    const expected = ['http://app1.com', 'http://app2.com'];
-    let actual: string[] = [];
-
-    service.urls$.subscribe(x => actual = x);
-
-    service.init();
-
-    expect(actual).toEqual(actual);
-
-    navItemsSubject.next(navItemsMock);
-
-    expect(actual).toEqual(expected);
-  });
-
   it('should trigger an error error when a connection with unknown url is added', () => {
     spyOn(console, 'error');
 
     service.init();
-    navItemsSubject.next(navItemsMock);
 
     const badConnection = new Connection('http://suspect-site.com', {});
 
@@ -95,7 +78,6 @@ describe('ClientAppService', () => {
     let actual: ClientApp[];
 
     service.init().then(() => actual = service.apps);
-    navItemsSubject.next(navItemsMock);
 
     service.addConnection(new Connection('http://app1.com', {}));
     service.addConnection(new Connection('http://app2.com', {}));
@@ -114,7 +96,6 @@ describe('ClientAppService', () => {
       };
 
       service.init();
-      navItemsSubject.next(navItemsMock);
 
       service.addConnection(new Connection('http://app1.com', {}));
       service.addConnection(new Connection('http://app2.com', clientApiWithSitesSupport));

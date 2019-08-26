@@ -77,12 +77,8 @@ export class SiteSelectionComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.navConfigService.sites$.pipe(
-      takeUntil(this.unsubscribe),
-    ).subscribe(x => {
-      this.sites = x;
-      this.updateDataSource();
-    });
+    this.sites = this.navConfigService.sites;
+    this.updateDataSource();
 
     this.navConfigService.selectedSite$.pipe(
       takeUntil(this.unsubscribe),
