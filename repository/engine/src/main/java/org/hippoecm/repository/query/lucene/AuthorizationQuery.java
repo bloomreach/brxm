@@ -30,7 +30,6 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
-import javax.jcr.security.AccessControlManager;
 import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.id.NodeId;
@@ -48,10 +47,10 @@ import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
-import org.hippoecm.repository.security.AuthorizationFilterPrincipal;
 import org.hippoecm.repository.security.FacetAuthConstants;
 import org.hippoecm.repository.security.HippoAccessManager;
 import org.hippoecm.repository.security.domain.DomainRule;
+import org.hippoecm.repository.security.domain.FacetAuthDomain;
 import org.hippoecm.repository.security.domain.QFacetRule;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 import org.hippoecm.repository.security.principals.GroupPrincipal;
@@ -98,6 +97,7 @@ public class AuthorizationQuery {
 
 
     public AuthorizationQuery(final Subject subject,
+                              final FacetAuthPrincipal facetAuthPrincipal,
                               final NamespaceMappings nsMappings,
                               final ServicingIndexingConfiguration indexingConfig,
                               final NodeTypeManager ntMgr,
@@ -113,17 +113,16 @@ public class AuthorizationQuery {
             this.query = new BooleanQuery(true);
             this.query.add(new MatchAllDocsQuery(), Occur.MUST);
         } else {
-            final Set<String> memberships = new HashSet<String>();
+            final Set<String> memberships = new HashSet<>();
             for (GroupPrincipal groupPrincipal : subject.getPrincipals(GroupPrincipal.class)) {
                 memberships.add(groupPrincipal.getName());
             }
-            final Set<String> userIds = new HashSet<String>();
+            final Set<String> userIds = new HashSet<>();
             for (UserPrincipal userPrincipal : subject.getPrincipals(UserPrincipal.class)) {
                 userIds.add(userPrincipal.getName());
             }
             long start = System.currentTimeMillis();
-            this.query = initQuery(subject.getPrincipals(FacetAuthPrincipal.class),
-                    subject.getPrincipals(AuthorizationFilterPrincipal.class),
+            this.query = initQuery(facetAuthPrincipal,
                     userIds,
                     memberships,
                     (InternalHippoSession)session,
@@ -131,12 +130,11 @@ public class AuthorizationQuery {
                     nsMappings,
                     ntMgr);
 
-            log.info("Creating authorization query for user '{}' took {} ms. Query: {}", userId, String.valueOf(System.currentTimeMillis() - start), query);
+            log.info("Creating authorization query for user '{}' took {} ms. Query: {}", userId, (System.currentTimeMillis() - start), query);
         }
     }
 
-    private BooleanQuery initQuery(final Set<FacetAuthPrincipal> facetAuths,
-                                   final Set<AuthorizationFilterPrincipal> authorizationFilterPrincipals,
+    private BooleanQuery initQuery(final FacetAuthPrincipal facetAuthPrincipal,
                                    final Set<String> userIds,
                                    final Set<String> memberships,
                                    final InternalHippoSession session,
@@ -144,22 +142,18 @@ public class AuthorizationQuery {
                                    final NamespaceMappings nsMappings,
                                    final NodeTypeManager ntMgr) throws RepositoryException {
 
-        final AccessControlManager accessControlManager = session.getAccessControlManager();
-        if (!(accessControlManager instanceof HippoAccessManager)) {
-            throw new RepositoryException("Expected HippoAccessManager");
-        }
-        HippoAccessManager hippoAccessManager = (HippoAccessManager)accessControlManager;
+        final HippoAccessManager hippoAccessManager = session.getAccessControlManager();
 
         BooleanQuery authQuery = new BooleanQuery(true);
-        for (final FacetAuthPrincipal facetAuthPrincipal : facetAuths) {
-            if (!facetAuthPrincipal.getResolvedPrivileges().contains(StandardPermissionNames.JCR_READ)) {
+        for (final FacetAuthDomain facetAuthDomain : facetAuthPrincipal.getFacetAuthDomains()) {
+            if (!facetAuthDomain.getResolvedPrivileges().contains(StandardPermissionNames.JCR_READ)) {
                 continue;
             }
-            final Set<DomainRule> domainRules = facetAuthPrincipal.getRules();
+            final Set<DomainRule> domainRules = facetAuthDomain.getRules();
             for (final DomainRule domainRule : domainRules) {
                 BooleanQuery facetQuery = new BooleanQuery(true);
                 for (final QFacetRule facetRule : hippoAccessManager.getFacetRules(domainRule)) {
-                    Query q = getFacetRuleQuery(facetRule, userIds, memberships, facetAuthPrincipal.getRoles(), indexingConfig, nsMappings, session, ntMgr);
+                    Query q = getFacetRuleQuery(facetRule, userIds, memberships, facetAuthDomain.getRoles(), indexingConfig, nsMappings, session, ntMgr);
                     if (isNoHitsQuery(q)) {
                         log.debug("Found a no hits query in facetRule '{}'. Since facet rules are AND-ed with other " +
                                 "facet rules, we can short circuit the domain rule '{}' as it does not match any node.",

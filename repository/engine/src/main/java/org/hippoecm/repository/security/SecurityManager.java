@@ -73,6 +73,7 @@ import org.apache.jackrabbit.core.security.principal.ProviderRegistryImpl;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.security.domain.Domain;
+import org.hippoecm.repository.security.domain.FacetAuthDomain;
 import org.hippoecm.repository.security.group.DummyGroupManager;
 import org.hippoecm.repository.security.group.GroupManager;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
@@ -542,15 +543,15 @@ public class SecurityManager implements HippoSecurityManager {
         }
 
         try {
-            assignUserPrincipals(principals, userId);
+            assignUserPrincipal(principals, userId);
             assignGroupPrincipals(principals, userId, providerId);
-            assignFacetAuthPrincipals(principals, userId, providerId);
+            assignFacetAuthPrincipal(principals, userId, providerId);
         } catch(RepositoryException ex) {
             log.warn("unable to assign principals for user", ex);
         }
     }
 
-    private void assignUserPrincipals(Set<Principal> principals, String userId) {
+    private void assignUserPrincipal(Set<Principal> principals, String userId) {
         if(userId == null) {
             principals.add(new AnonymousPrincipal());
         } else {
@@ -564,7 +565,7 @@ public class SecurityManager implements HippoSecurityManager {
         }
     }
 
-    private void assignFacetAuthPrincipals(Set<Principal> principals, String userId, String providerId) throws RepositoryException {
+    private void assignFacetAuthPrincipal(Set<Principal> principals, String userId, String providerId) throws RepositoryException {
         // Find domains that the user is associated with
         Set<Domain> userDomains = new HashSet<Domain>();
         userDomains.addAll(getDomainsForUser(userId, providerId));
@@ -574,12 +575,14 @@ public class SecurityManager implements HippoSecurityManager {
             }
         }
 
+        HashSet<FacetAuthDomain> facetAuthDomains = new HashSet<>();
+
         // Add facet auth principals
         for (Domain domain : userDomains) {
 
             // get roles for a user for a domain
             log.debug("User {} has domain {}", userId, domain.getName());
-            Set<String> roles = new HashSet<String>();
+            Set<String> roles = new HashSet<>();
             roles.addAll(domain.getRolesForUser(userId));
             for (Principal principal : principals) {
                 if (principal instanceof GroupPrincipal) {
@@ -588,29 +591,29 @@ public class SecurityManager implements HippoSecurityManager {
             }
 
             // check for indirectly included roles
-            Set<String> includedRoles = new HashSet<String>();
+            Set<String> includedRoles = new HashSet<>();
             for (String roleId : roles) {
                 includedRoles.addAll(getRolesForRole(roleId));
             }
             roles.addAll(includedRoles);
 
-            log.info("User {} has roles {} for domain {} ", new Object[] { userId, roles, domain.getName() });
+            log.info("User {} has roles {} for domain {} ", userId, roles, domain.getName());
 
             // get all privileges associated with the roles
-            Set<String> privileges = new HashSet<String>();
+            Set<String> privileges = new HashSet<>();
             for (String roleId : roles) {
                 privileges.addAll(getPrivilegesForRole(roleId));
             }
-            log.info("User {} has privileges {} for domain {} ", new Object[] { userId, privileges, domain.getName() });
+            log.info("User {} has privileges {} for domain {} ", userId, privileges, domain.getName());
 
             if (privileges.size() > 0 && domain.getDomainRules().size() > 0) {
-                // create and add facet auth principal
-                FacetAuthPrincipal fap =
-                        new FacetAuthPrincipal(domain.getName(), domain.getDomainRules(), roles,
-                                privileges, permissionManager.getOrCreatePermissionNames(privileges));
-                principals.add(fap);
+                // create and add facet auth domain
+                FacetAuthDomain fad = new FacetAuthDomain(domain.getName(), domain.getDomainRules(), roles,
+                        privileges, permissionManager.getOrCreatePermissionNames(privileges));
+                facetAuthDomains.add(fad);
             }
         }
+        principals.add(new FacetAuthPrincipal(facetAuthDomains));
     }
 
     public String getUserID(Subject subject, String workspace) {

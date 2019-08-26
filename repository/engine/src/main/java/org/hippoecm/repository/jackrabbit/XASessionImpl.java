@@ -15,12 +15,8 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
-import java.io.File;
 import java.io.IOException;
 import java.security.AccessControlException;
-import java.security.Principal;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 
 import javax.jcr.AccessDeniedException;
@@ -29,27 +25,22 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.RepositoryContext;
 import org.apache.jackrabbit.core.WorkspaceImpl;
-import org.apache.jackrabbit.core.config.AccessManagerConfig;
 import org.apache.jackrabbit.core.config.WorkspaceConfig;
 import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
 import org.apache.jackrabbit.core.observation.ObservationManagerImpl;
 import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.security.authentication.AuthContext;
 import org.apache.jackrabbit.core.state.ItemStateCacheFactory;
-import org.apache.jackrabbit.core.state.ItemStateListener;
 import org.apache.jackrabbit.core.state.LocalItemStateManager;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
-import org.hippoecm.repository.security.AuthorizationFilterPrincipal;
-import org.hippoecm.repository.security.HippoAMContext;
 import org.hippoecm.repository.security.HippoAccessManager;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.xml.DefaultContentHandler;
@@ -68,12 +59,7 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
             throws AccessDeniedException, RepositoryException {
         super(repositoryContext, loginContext, wspConfig);
         namePathResolver = new HippoNamePathResolver(this, true);
-        helper = new SessionImplHelper(this, repositoryContext, context, subject) {
-            @Override
-            SessionItemStateManager getItemStateManager() {
-                return context.getItemStateManager();
-            }
-        };
+        helper = new SessionImplHelper(this, repositoryContext, context, subject);
         helper.init();
     }
 
@@ -81,40 +67,13 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
                                                                                                    RepositoryException {
         super(repositoryContext, subject, wspConfig);
         namePathResolver = new HippoNamePathResolver(this, true);
-        helper = new SessionImplHelper(this, repositoryContext, context, subject) {
-            @Override
-            SessionItemStateManager getItemStateManager() {
-                return context.getItemStateManager();
-            }
-        };
+        helper = new SessionImplHelper(this, repositoryContext, context, subject);
         helper.init();
     }
 
     @Override
     protected AccessManager createAccessManager(Subject subject) throws AccessDeniedException, RepositoryException {
-        AccessManagerConfig amConfig = context.getRepository().getConfig().getAccessManagerConfig();
-        try {
-            HippoAMContext ctx = new HippoAMContext(
-                    new File((context.getRepository()).getConfig().getHomeDir()),
-                    context.getRepositoryContext().getFileSystem(),
-                    this, subject, context.getHierarchyManager(), context.getPrivilegeManager(),
-                    this, getWorkspace().getName(), context.getNodeTypeManager(), getItemStateManager());
-            AccessManager accessMgr = amConfig.newInstance(AccessManager.class);
-            if (!(accessMgr instanceof HippoAccessManager)) {
-                throw new UnsupportedRepositoryOperationException("AccessManager must be instanceof HippoAccessManager. Actual class: "+accessMgr.getClass().getName());
-            }
-            accessMgr.init(ctx);
-            if (accessMgr instanceof ItemStateListener) {
-                context.getItemStateManager().addListener((ItemStateListener) accessMgr);
-            }
-            return accessMgr;
-        } catch (AccessDeniedException ex) {
-            throw ex;
-        } catch (Exception ex) {
-            String msg = "failed to instantiate AccessManager implementation: "+amConfig.getClassName();
-            log.error(msg, ex);
-            throw new RepositoryException(msg, ex);
-        }
+        return SessionImplHelper.createAccessManager(context, subject);
     }
 
     @Override
@@ -149,14 +108,6 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
         return helper.getUserID();
     }
 
-    /**
-     * Method to expose the authenticated users' principals
-     * @return Set An unmodifiable set containing the principals
-     */
-    public Set<Principal> getUserPrincipals() {
-        return helper.getUserPrincipals();
-    }
-    
     @Override
     public void logout() {
         helper.logout();
@@ -226,14 +177,7 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
 
     @Override
     public Session createDelegatedSession(final InternalHippoSession session, DomainRuleExtension... domainExtensions) throws RepositoryException {
-        String workspaceName = repositoryContext.getWorkspaceManager().getDefaultWorkspaceName();
-
-        final Set<Principal> principals = new HashSet<Principal>(subject.getPrincipals());
-        principals.add(new AuthorizationFilterPrincipal(helper.getFacetRules(domainExtensions)));
-        principals.addAll(session.getSubject().getPrincipals());
-
-        Subject newSubject = new Subject(subject.isReadOnly(), principals, subject.getPublicCredentials(), subject.getPrivateCredentials());
-        return repositoryContext.getWorkspaceManager().createSession(newSubject, workspaceName);
+        return helper.createDelegatedSession(session, domainExtensions);
     }
 
     @Override

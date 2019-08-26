@@ -15,22 +15,21 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.io.File;
 import java.security.AccessControlException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
+import javax.jcr.AccessDeniedException;
 import javax.jcr.Item;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
@@ -40,20 +39,23 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.lock.LockException;
 import javax.jcr.nodetype.ConstraintViolationException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.VersionException;
 import javax.security.auth.Subject;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.NodeImpl;
 import org.apache.jackrabbit.core.RepositoryContext;
+import org.apache.jackrabbit.core.config.AccessManagerConfig;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.nodetype.NodeTypeConflictException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.observation.ObservationManagerImpl;
+import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.UserPrincipal;
@@ -61,6 +63,7 @@ import org.apache.jackrabbit.core.security.principal.AdminPrincipal;
 import org.apache.jackrabbit.core.session.SessionContext;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateException;
+import org.apache.jackrabbit.core.state.ItemStateListener;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.SessionItemStateManager;
@@ -74,8 +77,12 @@ import org.hippoecm.repository.dataprovider.MirrorNodeId;
 import org.hippoecm.repository.impl.NodeDecorator;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.HippoQueryHandler;
+import org.hippoecm.repository.security.AuthorizationFilterPrincipal;
+import org.hippoecm.repository.security.HippoAMContext;
 import org.hippoecm.repository.security.HippoAccessManager;
+import org.hippoecm.repository.security.domain.FacetAuthDomain;
 import org.hippoecm.repository.security.domain.QFacetRule;
+import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.security.domain.FacetRule;
 import org.onehippo.repository.xml.EnhancedSystemViewImportHandler;
@@ -84,7 +91,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 
-abstract class SessionImplHelper {
+class SessionImplHelper {
 
     private static Logger log = LoggerFactory.getLogger(SessionImpl.class);
 
@@ -270,6 +277,38 @@ abstract class SessionImplHelper {
         namespaces.put(prefix, uri);
     }
 
+    static AccessManager createAccessManager(SessionContext context, Subject subject) throws AccessDeniedException, RepositoryException {
+
+        AccessManagerConfig amConfig = context.getRepository().getConfig().getAccessManagerConfig();
+        try {
+            HippoAMContext ctx = new HippoAMContext(
+                    new File((context.getRepository()).getConfig().getHomeDir()),
+                    context.getRepositoryContext().getFileSystem(),
+                    context.getSessionImpl(), subject, context.getHierarchyManager(), context.getPrivilegeManager(),
+                    context.getSessionImpl(), context.getWorkspace().getName(), context.getNodeTypeManager(), context.getItemStateManager());
+            AccessManager accessMgr = amConfig.newInstance(AccessManager.class);
+            if (!(accessMgr instanceof HippoAccessManager)) {
+                throw new UnsupportedRepositoryOperationException("AccessManager must be instanceof HippoAccessManager. Actual class: "+accessMgr.getClass().getName());
+            }
+            accessMgr.init(ctx);
+            context.getItemStateManager().addListener((ItemStateListener) accessMgr);
+            return accessMgr;
+        } catch (AccessDeniedException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            String msg = "failed to instantiate AccessManager implementation: "+amConfig.getClassName();
+            log.error(msg, ex);
+            throw new RepositoryException(msg, ex);
+        }
+    }
+
+    private static <T extends Principal> T getPrincipal(final Subject subject, Class<T> c) {
+        for (T principal : subject.getPrincipals(c)) {
+            return principal;
+        }
+        return null;
+    }
+
     SessionImplHelper(InternalHippoSession session, RepositoryContext repositoryContext,
                       SessionContext sessionContext, Subject subject) throws RepositoryException {
         this.session = session;
@@ -296,29 +335,23 @@ abstract class SessionImplHelper {
      * the first principal it can find, which can lead to strange "usernames"
      */
     protected void setUserId() {
-        List<Principal> idPrincipals = new LinkedList<Principal>();
-        if (!subject.getPrincipals(SystemPrincipal.class).isEmpty()) {
-            Principal principal = subject.getPrincipals(SystemPrincipal.class).iterator().next();
-            idPrincipals.add(principal);
+        TreeSet<String> principalIds = new TreeSet<>();
+        Principal principal = getPrincipal(subject, SystemPrincipal.class);
+        if (principal != null) {
+            principalIds.add(principal.getName());
         }
-        if (!subject.getPrincipals(AdminPrincipal.class).isEmpty()) {
-            Principal principal = subject.getPrincipals(AdminPrincipal.class).iterator().next();
-            idPrincipals.add(principal);
+        principal = getPrincipal(subject, AdminPrincipal.class);
+        if (principal != null) {
+            principalIds.add(principal.getName());
         }
-        if (!subject.getPrincipals(UserPrincipal.class).isEmpty()) {
-            final Set<UserPrincipal> userPrincipals = subject.getPrincipals(UserPrincipal.class);
-            idPrincipals.addAll(userPrincipals);
+        principalIds.addAll(subject.getPrincipals(UserPrincipal.class).stream()
+                .map(UserPrincipal::getName).collect(Collectors.toSet()));
+        principal = getPrincipal(subject, AnonymousPrincipal.class);
+        if (principal != null) {
+            principalIds.add(principal.getName());
         }
-        if (!subject.getPrincipals(AnonymousPrincipal.class).isEmpty()) {
-            Principal principal = subject.getPrincipals(AnonymousPrincipal.class).iterator().next();
-            idPrincipals.add(principal);
-        }
-        if (idPrincipals.size() > 0) {
-            SortedSet<String> names = new TreeSet<String>();
-            for (Principal principal : idPrincipals) {
-                names.add(principal.getName());
-            }
-            userId = StringUtils.join(names, ',');
+        if (!principalIds.isEmpty()) {
+            userId = String.join(",", principalIds);
         } else {
             userId = "Unknown";
         }
@@ -329,14 +362,6 @@ abstract class SessionImplHelper {
      */
     public String getUserID() {
         return userId;
-    }
-
-    /**
-     * Method to expose the authenticated users' principals
-     * @return Set An unmodifialble set containing the principals
-     */
-    public Set<Principal> getUserPrincipals() {
-        return Collections.unmodifiableSet(subject.getPrincipals());
     }
 
     public void checkPermission(String absPath, String actions) throws AccessControlException, RepositoryException {
@@ -351,7 +376,9 @@ abstract class SessionImplHelper {
         return ham.hasPermission(absPath, actions);
     }
 
-    abstract SessionItemStateManager getItemStateManager();
+    SessionItemStateManager getItemStateManager() {
+        return context.getItemStateManager();
+    }
 
 
     public static ObservationManagerImpl createObservationManager(SessionContext context, org.apache.jackrabbit.core.SessionImpl session, String wspName)
@@ -590,7 +617,12 @@ abstract class SessionImplHelper {
                 final RepositoryImpl repository = (RepositoryImpl)context.getRepository();
                 HippoQueryHandler queryHandler = repository.getHippoQueryHandler(session.getWorkspace().getName());
                 if (queryHandler != null) {
+                    FacetAuthPrincipal facetAuthPrincipal = getPrincipal(subject, FacetAuthPrincipal.class);
+                    if (facetAuthPrincipal == null) {
+                        facetAuthPrincipal = FacetAuthPrincipal.NO_AUTH_DOMAINS_PRINCIPAL;
+                    }
                     authorizationQuery = new AuthorizationQuery(context.getSessionImpl().getSubject(),
+                            facetAuthPrincipal,
                             queryHandler.getNamespaceMappings(),
                             queryHandler.getIndexingConfig(),
                             context.getNodeTypeManager(),
@@ -603,6 +635,36 @@ abstract class SessionImplHelper {
         }
 
         return authorizationQuery;
+    }
+
+    public Session createDelegatedSession(final InternalHippoSession session, DomainRuleExtension... domainExtensions) throws RepositoryException {
+        String workspaceName = context.getRepositoryContext().getWorkspaceManager().getDefaultWorkspaceName();
+
+        final Set<Principal> principals = new HashSet<>(subject.getPrincipals());
+        principals.addAll(session.getSubject().getPrincipals());
+
+        // collect combined set of FacetAuthDomains
+        HashSet<FacetAuthDomain> facetAuthDomains = new HashSet<>();
+        FacetAuthPrincipal facetAuthPrincipal = getPrincipal(subject, FacetAuthPrincipal.class);
+        if (facetAuthPrincipal != null) {
+            // collect current session FacetAuthDomains
+            facetAuthDomains.addAll(facetAuthPrincipal.getFacetAuthDomains());
+        }
+        facetAuthPrincipal = getPrincipal(session.getSubject(), FacetAuthPrincipal.class);
+        if (facetAuthPrincipal != null) {
+            // add other session FacetAuthDomains
+            facetAuthDomains.addAll(facetAuthPrincipal.getFacetAuthDomains());
+        }
+        // remove/replace FacetAuthPrincipal, if any, as there can only be one
+        principals.removeIf(p -> p instanceof FacetAuthPrincipal);
+        principals.add(new FacetAuthPrincipal(facetAuthDomains));
+
+        // remove/replace AuthorizationFilterPrincipal, if any, as there can only be one
+        principals.removeIf(p -> p instanceof AuthorizationFilterPrincipal);
+        principals.add(new AuthorizationFilterPrincipal(getFacetRules(domainExtensions)));
+
+        Subject newSubject = new Subject(subject.isReadOnly(), principals, subject.getPublicCredentials(), subject.getPrivateCredentials());
+        return context.getRepositoryContext().getWorkspaceManager().createSession(newSubject, workspaceName);
     }
 
 }

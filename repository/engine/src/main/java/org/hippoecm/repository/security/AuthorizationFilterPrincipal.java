@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,10 +23,15 @@ import java.util.Map;
 import java.util.Set;
 
 import org.hippoecm.repository.security.domain.DomainRule;
+import org.hippoecm.repository.security.domain.FacetAuthDomain;
 import org.hippoecm.repository.security.domain.QFacetRule;
-import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 
 public class AuthorizationFilterPrincipal implements Principal {
+
+    /**
+     * The name representing this principal, effectively the class name
+     */
+    private final String name = AuthorizationFilterPrincipal.class.getName();
 
     private final Map<String, Collection<QFacetRule>> facetRules;
 
@@ -36,15 +41,15 @@ public class AuthorizationFilterPrincipal implements Principal {
 
     @Override
     public String getName() {
-        return "authorization-filter";
+        return name;
     }
 
     public Map<String, Collection<QFacetRule>> getFacetRules() {
         return facetRules;
     }
 
-    public Map<String, Collection<QFacetRule>> getExpandedFacetRules(Set<FacetAuthPrincipal> faps) {
-        Map<String, Collection<QFacetRule>> expandedFacetRules = new HashMap<String, Collection<QFacetRule>>();
+    public Map<String, Collection<QFacetRule>> getExpandedFacetRules(Set<FacetAuthDomain> fads) {
+        Map<String, Collection<QFacetRule>> expandedFacetRules = new HashMap<>();
 
         final Map<String, Collection<QFacetRule>> facetRules = getFacetRules();
         for (Map.Entry<String, Collection<QFacetRule>> entry : facetRules.entrySet()) {
@@ -53,7 +58,7 @@ public class AuthorizationFilterPrincipal implements Principal {
                 continue;
             }
             if (!expandedFacetRules.containsKey(domainPath)) {
-                expandedFacetRules.put(domainPath, new ArrayList<QFacetRule>());
+                expandedFacetRules.put(domainPath, new ArrayList<>());
             }
             expandedFacetRules.get(domainPath).addAll(entry.getValue());
         }
@@ -73,17 +78,17 @@ public class AuthorizationFilterPrincipal implements Principal {
             final String domainRuleName = parts[1];
             final boolean matchDomainRule = !parts[1].equals("*");
 
-            for (FacetAuthPrincipal fap : faps) {
-                if (matchDomain && !fap.getName().equals(domainName)) {
+            for (FacetAuthDomain fad : fads) {
+                if (matchDomain && !fad.getDomainName().equals(domainName)) {
                     continue;
                 }
-                for (DomainRule domainRule : fap.getRules()) {
+                for (DomainRule domainRule : fad.getRules()) {
                     if (matchDomainRule && !domainRule.getName().equals(domainRuleName)) {
                         continue;
                     }
-                    String expandedPath = fap.getName() + "/" + domainRule.getName();
+                    String expandedPath = fad.getDomainName() + "/" + domainRule.getName();
                     if (!expandedFacetRules.containsKey(expandedPath)) {
-                        expandedFacetRules.put(expandedPath, new ArrayList<QFacetRule>());
+                        expandedFacetRules.put(expandedPath, new ArrayList<>());
                     }
                     expandedFacetRules.get(expandedPath).addAll(entry.getValue());
                 }
@@ -92,4 +97,19 @@ public class AuthorizationFilterPrincipal implements Principal {
         return expandedFacetRules;
     }
 
+    /**
+     * Enforce that only a single instance of AuthorizationFilterPrincipal can be contained within a set
+     * @param obj
+     * @return true when compared with any other AuthorizationFilterPrincipal instance, else false
+     */
+    final public boolean equals(Object obj) {
+        if (this == obj || obj instanceof AuthorizationFilterPrincipal) {
+            return true;
+        }
+        return false;
+    }
+
+    public int hashCode() {
+        return name.hashCode();
+    }
 }

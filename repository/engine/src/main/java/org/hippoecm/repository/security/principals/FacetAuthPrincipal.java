@@ -15,148 +15,89 @@
  */
 package org.hippoecm.repository.security.principals;
 
-import java.io.Serializable;
 import java.security.Principal;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
-import org.hippoecm.repository.security.domain.DomainRule;
+import org.hippoecm.repository.security.domain.FacetAuthDomain;
 
 /**
- * The facet auth principal holding the domain rules, roles and
- * privileges for a domain
+ * The facet auth principal holding all the {@link #getFacetAuthDomains() FacetAuthDomain}s for a user and their
+ * overall aggregated {@link #getResolvedPrivileges() resolved privileges}
  */
-public class FacetAuthPrincipal implements Serializable, Principal {
+public class FacetAuthPrincipal implements Principal {
 
-    /** SVN id placeholder */
+    public static final FacetAuthPrincipal NO_AUTH_DOMAINS_PRINCIPAL = new FacetAuthPrincipal(Collections.EMPTY_SET);
 
     /**
-     * Serial verion id
+     * The name representing this principal, effectively the class name
      */
-    private static final long serialVersionUID = 1L;
+    private final String name = FacetAuthPrincipal.class.getName();
 
     /**
-     * The name representing the domain
+     * The set of all UserDomains for the user
+     * @see FacetAuthDomain
      */
-    private final String name;
+    private final Set<FacetAuthDomain> facetAuthDomains;
 
     /**
-     * The set of domain rules for the domain
-     * @see DomainRule
-     */
-    private final Set<DomainRule> rules;
-
-    /**
-     * The set of roles of the user for the domain
-     */
-    private final Set<String> roles;
-
-    /**
-     * The set of privileges of the user for the domain
-     */
-    private final Set<String> privileges;
-
-
-    /**
-     * The set of privileges of the user for the domain with jcr:all and jcr:write replaced with their aggregate privileges
+     * The set of all the privileges of the user for all the domains with jcr:all and jcr:write replaced with their aggregate privileges
      */
     private final Set<String> resolvedPrivileges;
-
 
     /**
      * Creates a <code>FacetAuthPrincipal</code>.
      *
-     * @param domain
-     * @param domainRules
-     * @param roles
-     * @param privileges
-     * @param resolvedPrivileges
-     * @throws IllegalArgumentException if <code>name</code> is <code>null</code>.
+     * @param facetAuthDomains the FacetAuthDomains
+     * @throws IllegalArgumentException if <code>facetAuthDomains</code> is <code>null</code>.
      */
-    public FacetAuthPrincipal(String domain, Set<DomainRule> domainRules, Set<String> roles, Set<String> privileges,
-                              Set<String> resolvedPrivileges) throws IllegalArgumentException {
-        if (domain == null) {
-            throw new IllegalArgumentException("domain can not be null");
+    public FacetAuthPrincipal(final Set<FacetAuthDomain> facetAuthDomains) throws IllegalArgumentException {
+        if (facetAuthDomains == null) {
+            throw new IllegalArgumentException("facetAuthDomains can not be null");
         }
-        if (domainRules == null){
-            throw new IllegalArgumentException("domainRules can not be null");
-        }
-        if (domainRules.size() == 0) {
-            throw new IllegalArgumentException("domainRules must contain at least one value");
-        }
-        if (roles == null){
-            throw new IllegalArgumentException("roles can not be null");
-        }
-        if (privileges == null){
-            throw new IllegalArgumentException("privileges can not be null");
-        }
-        if (resolvedPrivileges == null){
-            throw new IllegalArgumentException("resolvedPrivileges can not be null");
-        }
-
-        // assigning values
-        this.name = domain;
-        this.roles = Collections.unmodifiableSet(roles);
-        this.rules = Collections.unmodifiableSet(domainRules);
-        this.privileges = Collections.unmodifiableSet(privileges);
+        this.facetAuthDomains = Collections.unmodifiableSet(facetAuthDomains);
+        HashSet<String> resolvedPrivileges = new HashSet<>();
+        facetAuthDomains.forEach(p -> resolvedPrivileges.addAll(p.getResolvedPrivileges()));
         this.resolvedPrivileges = Collections.unmodifiableSet(resolvedPrivileges);
     }
 
-
-
-
-    //------------------------------------------------------------< Principal >
     /**
      * {@inheritDoc}
      */
+    @Override
     public String getName() {
         return name;
     }
 
     /**
-     * Get the set of roles
-     * @return the roles the user has for the domain
+     * Get all {@link FacetAuthDomain}s for the user
+     * @return all FacetAuthDomains for the user
      */
-    public Set<String> getRoles() {
-        return roles;
+    public Set<FacetAuthDomain> getFacetAuthDomains() {
+        return facetAuthDomains;
     }
 
     /**
-     * Get the set of privileges
-     * @return the privileges the user has for the domain
-     */
-    public Set<String> getPrivileges() {
-        return privileges;
-    }
-
-    /**
-     * Get the set of resolved privileges with jcr:all and jcr:write replaced with their aggregate privileges
-     * @return the resolvedPrivileges the user has for the domain
+     * Get the set of all resolved privileges for the user with jcr:all and jcr:write replaced with their aggregate privileges
+     * @return the resolvedPrivileges for the user
      */
     public Set<String> getResolvedPrivileges() {
         return resolvedPrivileges;
     }
 
-    /**
-     * Get the set of domain rules defining the domain
-     * @return the domain rules defining the domain
-     */
-    public Set<DomainRule> getRules() {
-        return rules;
-    }
-
-
     public String toString() {
-        return ("FacetAuthPrincipal: " + name);
+        return name;
     }
 
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    /**
+     * Enforce that only a single instance of FacetAuthPrincipal can be contained within a set
+     * @param obj
+     * @return true when compared with any other FacetAuthPrincipal instance, else false
+     */
+    final public boolean equals(Object obj) {
+        if (this == obj || obj instanceof FacetAuthPrincipal) {
             return true;
-        }
-        if (obj instanceof FacetAuthPrincipal) {
-            FacetAuthPrincipal other = (FacetAuthPrincipal) obj;
-            return name.equals(other.name);
         }
         return false;
     }
