@@ -79,6 +79,7 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
     private IModel<String> title;
     private boolean isRendered;
     private boolean isActivated;
+    private boolean isMenuItem;
     private NavAppPerspective navAppPerspective;
 
     public Perspective(IPluginContext context, IPluginConfig config) {
@@ -96,8 +97,18 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
 
         add(CssClass.append("perspective"));
 
+        isMenuItem = isMenuItem(config);
+
         navAppPerspective = new NavAppPerspective(getClass());
 
+    }
+
+    /**
+     * @param config IPluginConfig
+     * @return {@code true} if this perspective is a menu item, otherwise false
+     */
+    protected boolean isMenuItem(final IPluginConfig config) {
+        return "service.tab".equals(config.getString("wicket.id"));
     }
 
     public String getTitleCssClass() {
@@ -199,13 +210,21 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
 
     /**
      * Hook called when the perspective is activated, i.e. transitions from inactive to active state.
-     * When overriding, make sure to call super.onActivated() in order to keep the usage statistics working.
+     * When overiding, make sure to call super.onActivated() in order to keep the usage statistics working.
      */
     protected void onActivated() {
+        if (isMenuItem){
+            notifyParentIframe();
+        }
         if (StringUtils.isNotEmpty(eventId) && cmsEventNamesList.contains(eventId)) {
             final String event = EVENT_PARAM_CMS + StringUtils.capitalize(eventId);
             publishEvent(event);
         }
+    }
+
+    private void notifyParentIframe() {
+        final ParentApi parentApi = new ParentApiCaller();
+        parentApi.updateNavLocation(navAppPerspective.getAppPath());
     }
 
     /**

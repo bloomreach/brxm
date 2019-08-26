@@ -93,7 +93,12 @@
       };
 
       window.Hippo.Cms.updateNavLocation = function(location){
-        window.Hippo.AppToNavApp.updateNavLocation(location);
+        var newLocation = {
+          path: location.path,
+          breadcrumbLabel: location.breadcrumbLabel
+        };
+        window.Hippo.currentNavLocation = newLocation;
+        window.Hippo.AppToNavApp.updateNavLocation(newLocation);
       };
 
       if (window.parent === window) { // cms is top window

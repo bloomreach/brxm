@@ -24,7 +24,5 @@ package org.hippoecm.frontend.plugins.standards.perspective;
  */
 public interface ParentApi {
 
-    void updateNavLocation(NavLocation location);
-
-    void navigate(NavLocation location);
+    void updateNavLocation(String path);
 }

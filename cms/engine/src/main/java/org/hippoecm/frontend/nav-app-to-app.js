@@ -31,6 +31,23 @@
     return;
   }
 
+  // This method is called whenever a Perspective is activated (see ParentApiCaller)
+  // The path is expected to be the appPath, which represents the identifier of a Perspective.
+  Hippo.updateNavLocation = function (path) {
+    if (!Hippo.currentNavLocation || Hippo.currentNavLocation.path.indexOf(path) < 0) {
+      // Hippo.currentNavLocation is undefined initially (after login). When the CMS activates the first
+      // perspective then it calls this method, so then we can set it with path and leave breadcrumb undefined.
+      //
+      // If currentNavLocation.path starts with path then a sub-app has already called changed the
+      // currentNavLocation and called AppToNavApp.updateNavLocation with it. (see cms-subapp-iframe-communication.js)
+      //
+      // In all other cases it means that the perspective changed to some other perspective so then we should
+      // change the currentLocation and inform the navapp about this
+      Hippo.currentNavLocation = {path};
+      Hippo.AppToNavApp.updateNavLocation(Hippo.currentNavLocation);
+    }
+  };
+
   let openChannelManagerOverview = function () {
     this.rootPanel = Ext.getCmp('rootPanel');
     if (this.rootPanel) {
@@ -63,15 +80,15 @@
       if (['channelmanager', 'projects'].includes(perspectiveIdentifier)) {
         var location = {path: pathElements.join('/')}
         if (flags && flags['forceRefresh']) {
-          if (perspectiveIdentifier === 'channelmanager'){
+          if (perspectiveIdentifier === 'channelmanager') {
             openChannelManagerOverview.call(this);
           }
-          if (perspectiveIdentifier === 'projects'){
-            location.path = "/projects";
+          if (perspectiveIdentifier === 'projects') {
+            location.path = '/projects';
           }
         }
-        let childApi = Hippo.SubApp[perspectiveIdentifier+'-iframe'];
-        if (childApi){
+        let childApi = Hippo.SubApp[perspectiveIdentifier + '-iframe'];
+        if (childApi) {
           childApi.navigate(location, flags);
         }
       }

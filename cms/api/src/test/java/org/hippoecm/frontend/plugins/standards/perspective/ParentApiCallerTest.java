@@ -36,43 +36,16 @@ public class ParentApiCallerTest {
     private IPartialPageRequestHandler handler;
 
     private final ParentApi parentApi = new ParentApiCaller().setTargetSupplier(() -> handler);
-    private NavLocation location;
-    private String locationString;
-
-    @Before
-    public void setUp() throws JsonProcessingException {
-        location = new NavLocation() {
-
-            @SuppressWarnings("unused")
-            @Override
-            public String getPath() {
-                return "path";
-            }
-
-            @SuppressWarnings("unused")
-            @Override
-            public String getBreadcrumbLabel() {
-                return "breadcrumbLabel";
-            }
-        };
-        locationString = Json.getMapper().writeValueAsString(location);
-    }
 
     @Test
     public void updateNavLocation() {
-        final String javascript = String.format("Hippo.AppToNavApp && Hippo.AppToNavApp.updateNavLocation(%s)", locationString);
+        String path="path";
+        final String javascript = String.format(ParentApiCaller.JAVA_SCRIPT_TEMPLATE, path);
         handler.appendJavaScript(javascript);
         replay(handler);
-        parentApi.updateNavLocation(location);
+        parentApi.updateNavLocation(path);
         verify(handler);
     }
 
-    @Test
-    public void navigate() {
-        final String javascript = String.format("Hippo.AppToNavApp && Hippo.AppToNavApp.navigate(%s)", locationString);
-        handler.appendJavaScript(javascript);
-        replay(handler);
-        parentApi.navigate(location);
-        verify(handler);
-    }
+
 }
