@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ public class ProjectsInstruction implements Instruction {
     private static final String WPM_WEBAPP_ARTIFACTID = "hippo-addon-wpm-camunda";
     private static final String ENTERPRISE_SERVICES_ARTIFACTID = "hippo-enterprise-services";
     private static final String WPM_WEBAPP_CONTEXT = "/bpm";
-    private static final String LOGGER_HST_BRANCH = "com.onehippo.cms7.hst.configuration.branch";
+    private static final String LOGGER_HST_BRANCH = "com.onehippo.cms.wpm.hst.configuration.branch";
     private static final String LOGGER_PROJECT = "com.onehippo.cms7.services.wpm.project";
     private static final MavenDependency DEPENDENCY_ENTERPRISE_SERVICES
             = new MavenDependency(ProjectService.GROUP_ID_ENTERPRISE, ENTERPRISE_SERVICES_ARTIFACTID);
