@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,12 +27,12 @@
                     imageSet: $scope.selectedImageSet,
                     updateImageMethods: $scope.updateImageMethods
                 };
-                $http.post($scope.endpoint, parameters).success(function (data) { });
+                $http.post($scope.endpoint, parameters).then(function (response) { });
             };
             $scope.identity = angular.identity; // for sorting the imageSets in the UI.
 
-            $http.get($scope.endpoint + "/imagesets").success(function (data) {
-                $scope.imageSets = data;
+            $http.get($scope.endpoint + "/imagesets").then(function (response) {
+                $scope.imageSets = response.data;
                 // check if we have custom image sets and preselect (first) one.
                 if ($scope.imageSets) {
                     for (var i = 0; i < $scope.imageSets.length; i++) {

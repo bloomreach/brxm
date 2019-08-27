@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -84,10 +84,10 @@
           $scope.isDraft = function (contentType) {
             return contentType.draftMode;
           };
-          essentialsContentTypeService.getContentTypes().success(function(contentTypes) {
-            $scope.documentTypes = contentTypes;
-            if (contentTypes) {
-              $scope.hasDraftDocuments = contentTypes.some(function(contentType) {
+          essentialsContentTypeService.getContentTypes().then(function(response) {
+            $scope.documentTypes = response.data;
+            if (response.data) {
+              $scope.hasDraftDocuments = response.data.some(function(contentType) {
                 return contentType.draftMode;
               });
             }

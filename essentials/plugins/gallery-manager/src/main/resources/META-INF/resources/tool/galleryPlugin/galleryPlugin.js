@@ -70,7 +70,7 @@
                     updateExisting: $scope.updateExisting
                 };
 
-                $http.post(resource, parameters).success(function () {
+                $http.post(resource, parameters).then(function () {
                     $uibModalInstance.close(prefix + ":" + $scope.name);
                 });
             };
@@ -89,7 +89,7 @@
                     imageVariantName: $scope.name,
                     selectedImageSet: $scope.imageSet.name
                 };
-                $http.post(resource, parameters).success(function () {
+                $http.post(resource, parameters).then(function () {
                     $uibModalInstance.close($scope.name);
                 });
             };
@@ -193,7 +193,7 @@
                 $scope.variant.translations.splice($scope.variant.translations.indexOf(translation), 1);
             };
             $scope.save = function() {
-                $http.post(resource, $scope.variant).success(function () {
+                $http.post(resource, $scope.variant).then(function () {
                     $uibModalInstance.close();
                 });
             };
@@ -207,7 +207,7 @@
 
             $scope.variant = variant;
             $scope.ok = function() {
-                $http.post(resource, variant).success(function () {
+                $http.post(resource, variant).then(function () {
                     $uibModalInstance.close();
                 });
             };
@@ -336,8 +336,8 @@
             };
 
             function loadImageSets(imageSetNameToSelect) {
-                return $http.get(endpoint).success(function (data) {
-                    $scope.imageSets = data;
+                return $http.get(endpoint).then(function (response) {
+                    $scope.imageSets = response.data;
 
                     if (!imageSetNameToSelect) {
                         if ($scope.selectedImageSet) {
