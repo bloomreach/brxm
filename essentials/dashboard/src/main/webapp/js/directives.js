@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -240,8 +240,8 @@
 
                     var ModalInstanceCtrl = function ($scope, $uibModalInstance, title) {
                         $scope.title = title;
-                        $http.get(window.SERVER_URL + '/essentials/rest/jcrbrowser/folders').success(function (data) {
-                            $scope.treeItems = data.items;
+                        $http.get(window.SERVER_URL + '/essentials/rest/jcrbrowser/folders').then(function (response) {
+                            $scope.treeItems = response.data.items;
                         });
                         $scope.ok = function () {
                             $uibModalInstance.close($scope.selected);
