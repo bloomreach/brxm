@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,14 +24,14 @@
             $scope.identity = angular.identity; // for sorting
 
             var loadTemplateQueries = function() {
-              $http.get($scope.endpoint + "/templatequeries").success(function (data) {
-                $scope.tplQueries = data;
+              $http.get($scope.endpoint + "/templatequeries").then(function (response) {
+                $scope.tplQueries = response.data;
               });
             };
 
             var generateTemplateQueries = function(parameters) {
               $http.post($scope.endpoint, parameters)
-                .success(function () {
+                .then(function () {
                   loadTemplateQueries();
                 });
             };

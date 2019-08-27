@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -64,12 +64,12 @@
             //############################################
             // INIT
             //############################################
-            essentialsContentTypeService.getContentTypes().success(function (data) {
-                $scope.documentTypes = data;
+            essentialsContentTypeService.getContentTypes().then(function (response) {
+                $scope.documentTypes = response.data;
             });
 
-            essentialsContentTypeService.getTemplateQueries().success(function (data) {
-                $scope.queries = data;
+            essentialsContentTypeService.getTemplateQueries().then(function (response) {
+                $scope.queries = response.data;
 
                 // Set default selection
                 angular.forEach($scope.queries, function(query) {
@@ -79,8 +79,8 @@
                 });
             });
 
-            essentialsContentTypeService.getContentTypeInstances('selection:valuelist').success(function (data) {
-                $scope.valueLists = data;
+            essentialsContentTypeService.getContentTypeInstances('selection:valuelist').then(function (response) {
+                $scope.valueLists = response.data;
             });
         })
 })();

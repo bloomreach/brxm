@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -73,16 +73,16 @@
                 });
 
                 $http.post(restEndpoint, $scope.documentTypes)
-                  .success(function () {
+                  .then(function () {
                     initDocTypes($scope.documentTypes, true);
-                }).error(function () {
+                }).catch(function () {
                     initDocTypes($scope.documentTypes, false);
                 });
             };
 
             $scope.reset = function() {
-                $http.get(restEndpoint).success(function (data) {
-                    initDocTypes(data, true);
+                $http.get(restEndpoint).then(function (response) {
+                    initDocTypes(response.data, true);
                     $scope.up = true;
                 });
             };
@@ -102,8 +102,8 @@
             };
 
             $scope.init = function () {
-                $http.get(restEndpoint + '/compounds').success(function (data) {
-                    $scope.compounds = data;
+                $http.get(restEndpoint + '/compounds').then(function (response) {
+                    $scope.compounds = response.data;
 
                     // create the compound map
                     $scope.compoundMap = {};

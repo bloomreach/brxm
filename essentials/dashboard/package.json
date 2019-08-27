@@ -12,27 +12,27 @@
     "npm": "6"
   },
   "dependencies": {
-    "angular": "1.5.11",
-    "angular-animate": "1.5.11",
-    "angular-aria": "1.5.11",
-    "angular-chosen-localytics": "1.6.0",
-    "angular-sanitize": "1.5.11",
-    "angular-ui-bootstrap": "2.5.0",
-    "angular-ui-router": "0.4.2",
-    "angular-ui-tree": "2.22.5",
-    "chosen-js": "1.7.0",
-    "@bloomreach/hippo-theme": "4.3.2",
-    "jquery": "3.2.1"
+    "@bloomreach/hippo-theme": "5.0.0",
+    "angular": "1.7.8",
+    "angular-animate": "1.7.8",
+    "angular-aria": "1.7.8",
+    "angular-chosen-localytics": "1.9.3",
+    "angular-sanitize": "1.7.8",
+    "angular-ui-bootstrap": "2.5.6",
+    "angular-ui-router": "1.0.22",
+    "angular-ui-tree": "2.22.6",
+    "chosen-js": "1.8.7",
+    "jquery": "^3.4.1"
   },
   "devDependencies": {
-    "angular-mocks": "1.5.11",
-    "grunt": "^1.0.3",
-    "grunt-contrib-clean": "1.1.0",
+    "angular-mocks": "1.7.8",
+    "grunt": "^1.0.4",
+    "grunt-contrib-clean": "2.0.0",
     "grunt-contrib-copy": "1.0.0",
-    "grunt-contrib-jshint": "1.1.0",
+    "grunt-contrib-jshint": "2.1.0",
     "grunt-contrib-watch": "^1.1.0",
     "jasmine-jquery": "2.1.1",
-    "load-grunt-tasks": "3.5.2",
-    "time-grunt": "1.4.0"
+    "load-grunt-tasks": "5.1.0",
+    "time-grunt": "2.0.0"
   }
 }

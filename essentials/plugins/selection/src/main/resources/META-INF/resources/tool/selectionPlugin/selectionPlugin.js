@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@
                     maxRows:        maxRows,
                     allowOrdering:  $scope.data.allowOrdering
                 };
-                $http.post(restEndpoint + '/addfield', payload).success(function () {
+                $http.post(restEndpoint + '/addfield', payload).then(function () {
                     resetAddFieldForm();
                     reloadSelectionFields($scope.data.selectedDocumentType);
                     $scope.fieldAdded = true;
@@ -70,7 +70,7 @@
                         });
                     }
                 });
-                $http.post(restEndpoint + '/spring', provisionedValueLists).success(function() {
+                $http.post(restEndpoint + '/spring', provisionedValueLists).then(function() {
                     loadProvisionedValueLists();
                 });
             };
@@ -99,8 +99,8 @@
             loadValueLists();
 
             $scope.documentTypes = [];
-            essentialsContentTypeService.getContentTypes().success(function (data){
-                $scope.documentTypes = data;
+            essentialsContentTypeService.getContentTypes().then(function (response){
+                $scope.documentTypes = response.data;
                 $scope.initializing = false;
 
                 // if there's only one selectable type, preselect it.
@@ -126,19 +126,19 @@
 
             // Helper functions
             function loadValueLists() {
-                essentialsContentTypeService.getContentTypeInstances('selection:valuelist').success(function (data) {
-                    $scope.valueLists = data;
+                essentialsContentTypeService.getContentTypeInstances('selection:valuelist').then(function (response) {
+                    $scope.valueLists = response.data;
 
                     loadProvisionedValueLists();
                 });
             }
             function loadProvisionedValueLists() {
                 if ($scope.valueLists.length > 0) {
-                    $http.get(restEndpoint + '/spring').success(function (oldProvisionedValueLists) {
+                    $http.get(restEndpoint + '/spring').then(function (response) {
                         var provisionedValueLists = [];
                         angular.forEach($scope.valueLists, function(valueList) {
                             var oldItem, newItem;
-                            angular.forEach(oldProvisionedValueLists, function(oldValueList) {
+                            angular.forEach(response.data, function(oldValueList) {
                                 if (oldValueList.path === valueList.jcrPath) {
                                     oldItem = oldValueList;
                                 }
@@ -166,8 +166,8 @@
             }
             function reloadSelectionFields(documentType) {
                 $scope.selectionFields = [];
-                $http.get(restEndpoint + '/fieldsfor/' + documentType.fullName).success(function (data) {
-                    $scope.selectionFields = data;
+                $http.get(restEndpoint + '/fieldsfor/' + documentType.fullName).then(function (response) {
+                    $scope.selectionFields = response.data;
                 });
             }
         })
