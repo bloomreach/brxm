@@ -14,25 +14,9 @@
  * limitations under the License.
  */
 
-/**
- * Main entry point of the spa-sdk library. Implements the public API defined in the
- * api module.
- * @module index
- * @see module:api
- */
-
-import { Configuration } from './api';
-import { buildModelUrl } from './url';
-
-export * from './api';
-
-/**
- * Initializes the page model.
- *
- * @param config configuration of the SPA integration with brXM.
- */
-export function initialize(config: Configuration): Promise<void> {
-  const url = buildModelUrl(config.request, config.options);
-  // TODO: fetch the page model using this URL and return a Page instance
-  return Promise.resolve();
+export function concatPaths(path1: string, path2: string) {
+  if (path1.endsWith('/')) {
+    return path2.startsWith('/') ? path1 + path2.substring(1) : path1 + path2;
+  }
+  return path2.startsWith('/') ? path1 + path2 : `${path1}/${path2}`;
 }

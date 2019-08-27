@@ -20,14 +20,24 @@
  */
 
 /**
+ * Configuration of the SPA SDK.
+ */
+export interface Configuration {
+  /**
+   * Current user's request.
+   */
+  request: Request;
+
+  /**
+   * Integration-related options.
+   */
+  options: Options;
+}
+
+/**
  * An HTTP request
  */
 export interface Request {
-  /**
-   * The hostname derived from the 'Host' HTTP header.
-   */
-  hostname: string;
-
   /**
    * The path part of the URL, including a query string if present.
    * For example: '/path/to/page?foo=1'.
@@ -38,4 +48,31 @@ export interface Request {
    * All request headers (including cookies).
    */
   headers?: Object;
+}
+
+/**
+ * Integration-related configuration options.
+ */
+export interface Options {
+  /**
+   * The URL prefix for requests to the live page model API.
+   * Some examples:
+   * - "http://localhost:8080/site/my-spa"
+   * - "http://www.my-spa.com"
+   */
+  livePrefix: string;
+
+  /**
+   * The URL prefix for requests to the preview page model API.
+   * Some examples:
+   * - "http://localhost:8080/site/_cmsinternal/my-spa"
+   * - "http://www.my-spa.com"
+   */
+  previewPrefix: string;
+
+  /**
+   * Optional custom suffix for requests to the page model API.
+   * The default suffix is '/resourceapi'.
+   */
+  apiSuffix?: string;
 }

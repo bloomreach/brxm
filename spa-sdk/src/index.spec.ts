@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-import { buildModelUrl } from './index';
+import { initialize } from './index';
 
-describe('buildModelUrl', () => {
+const options = {
+  livePrefix: 'http://localhost:8080/site/my-spa',
+  previewPrefix: 'http://localhost:8080/site/_cmsinternal/my-spa'
+};
+
+describe('initialize', () => {
   it('does nothing yet', () => {
-    expect(buildModelUrl({hostname: 'www.example.com', path: '/'})).toBe(null);
+    const request = { path: '/' };
+    expect(initialize({ request, options })).toBeDefined();
   });
 });
