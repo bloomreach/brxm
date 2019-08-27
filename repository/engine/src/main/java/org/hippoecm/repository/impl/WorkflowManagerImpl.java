@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -56,7 +56,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.api.HippoNodeType.CONFIGURATION_PATH;
 import static org.hippoecm.repository.api.HippoNodeType.WORKFLOWS_PATH;
-import static org.hippoecm.repository.api.HippoSession.NO_SYSTEM_IMPERSONATION;
 
 public class WorkflowManagerImpl implements WorkflowManager {
 
@@ -85,7 +84,6 @@ public class WorkflowManagerImpl implements WorkflowManager {
     public WorkflowManagerImpl(Session session) throws RepositoryException {
         this.userSession = session;
         SimpleCredentials workflowuser = new SimpleCredentials("workflowuser", new char[]{});
-        workflowuser.setAttribute(NO_SYSTEM_IMPERSONATION, Boolean.TRUE);
         this.workflowSession = session.impersonate(workflowuser);
         try {
             ((HippoSession) workflowSession).disableVirtualLayers();

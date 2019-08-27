@@ -537,11 +537,6 @@ public class SecurityManager implements HippoSecurityManager {
             providerId = (String) creds.getAttribute("providerId");
         }
 
-        // XXX: Fixme, why is this needed??
-        if (userId != null && userId.equals("system")) {
-            userId = null;
-        }
-
         try {
             assignUserPrincipal(principals, userId);
             assignGroupPrincipals(principals, userId, providerId);

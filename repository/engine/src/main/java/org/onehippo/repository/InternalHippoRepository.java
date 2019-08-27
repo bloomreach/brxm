@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.onehippo.repository;
 
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.hippoecm.repository.security.HippoSecurityManager;
@@ -46,4 +47,10 @@ public interface InternalHippoRepository extends Repository {
      * @return the HippoSecurityManager
      */
     HippoSecurityManager getHippoSecurityManager();
+
+    /**
+     * Create a system session for the default workspace.
+     * Caller must log out the returned session after use.
+     */
+    Session createSystemSession() throws RepositoryException;
 }

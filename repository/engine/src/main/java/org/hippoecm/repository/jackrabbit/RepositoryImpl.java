@@ -26,6 +26,7 @@ import javax.jcr.NamespaceException;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -239,6 +240,14 @@ public class RepositoryImpl extends ExtendedJackrabbitRepositoryImpl implements 
     @Override
     public HippoSecurityManager getHippoSecurityManager() {
         return (HippoSecurityManager) context.getSecurityManager();
+    }
+
+    @Override
+    public Session createSystemSession() throws RepositoryException {
+        Session systemSession = getRootSession(null);
+        synchronized (systemSession) {
+            return systemSession.impersonate(new SimpleCredentials("system", new char[]{}));
+        }
     }
 
     @Override

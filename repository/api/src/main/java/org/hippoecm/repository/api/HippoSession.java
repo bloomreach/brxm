@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.jcr.Credentials;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
@@ -43,17 +42,6 @@ import org.xml.sax.SAXException;
  * a HippoSession allowing access to the extensions to the JCR API.
  */
 public interface HippoSession extends Session {
-
-    /**
-     * By default a System Session when impersonating another user will always add the SystemPrincipal itself to the impersonated session.
-     * This has as 'side-effect' that it a System Session cannot be 'downgraded' to a normal user.
-     * This limitation or 'feature' will be removed in a next major release.
-     * Until then, the desired effect can be achieved by adding this attribute with any value (not null) on the SimpleCredentials
-     * parameter in a {@link Session#impersonate(Credentials)} call. If this attribute is defined, the SystemPrincipal will not be added
-     * to the impersonated session when using the System session to impersonate another session.
-     * @deprecated this attribute name and usage will be removed again when the limitation as described above has been fixed.
-     */
-    String NO_SYSTEM_IMPERSONATION = "org.hippoecm.repository.security.no-system-impersonation";
 
     /**
      * Convenience function to copy a node to a destination path in the same workspace.  Unlike the copy method in the javax.jcr.Workspace class,

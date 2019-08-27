@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -38,8 +38,6 @@ import org.apache.jackrabbit.core.security.authentication.RepositoryCallback;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.hippoecm.repository.api.HippoSession.NO_SYSTEM_IMPERSONATION;
 
 public class HippoLoginModule implements LoginModule {
 
@@ -102,7 +100,7 @@ public class HippoLoginModule implements LoginModule {
 
                 // system session impersonate
                 if (!impersonator.getPrincipals(SystemPrincipal.class).isEmpty()) {
-                    if (creds != null && creds.getAttribute(NO_SYSTEM_IMPERSONATION) != null) {
+                    if (creds != null && !"system".equals(userId)) {
                         log.debug("System session impersonating as {}", userId);
                         securityManager.assignPrincipals(principals, creds);
                     }
@@ -120,10 +118,16 @@ public class HippoLoginModule implements LoginModule {
                 }
 
                 Principal iup = impersonator.getPrincipals(UserPrincipal.class).iterator().next();
-                String impersonarorId = iup.getName();
-                // TODO: check somehow if the user is allowed to impersonate
+                String impersonatorId = iup.getName();
+                // check/deny impersonating system user
+                if (creds != null && "system".equals(creds.getUserID())) {
+                    log.info("Denied {} to impersonate system user which is only allowed for the system user itself.", impersonatorId);
+                    return false;
+                }
 
-                log.info("Impersonating as {} by {}", userId, impersonarorId);
+                // TODO: check somehow if the user is allowed to impersonate someone else
+
+                log.info("Impersonating as {} by {}", userId, impersonatorId);
                 securityManager.assignPrincipals(principals, creds);
 
                 return (validLogin = true);
@@ -134,6 +138,12 @@ public class HippoLoginModule implements LoginModule {
                 log.debug("Authenticated as Anonymous user.");
                 securityManager.assignPrincipals(principals, creds);
                 return (validLogin = true);
+            }
+
+            // deny login as system user
+            if ("system".equals(userId)) {
+                log.info("Login as system user not allowed");
+                return false;
             }
 
             // basic security check
