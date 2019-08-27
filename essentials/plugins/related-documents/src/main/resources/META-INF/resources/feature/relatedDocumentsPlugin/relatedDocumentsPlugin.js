@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,15 +32,15 @@
                         });
                     }
                 });
-                $http.post(essentialsRestService.baseUrl + '/related-documents', configuration).success(function () {
+                $http.post(essentialsRestService.baseUrl + '/related-documents', configuration).then(function () {
                     $scope.fieldsAdded = true;
                 });
             };
 
-            essentialsContentTypeService.getContentTypes().success(function (docTypes) {
+            essentialsContentTypeService.getContentTypes().then(function (response) {
                 // Filter out basedocument
                 $scope.documentTypes = [];
-                angular.forEach(docTypes, function(docType) {
+                angular.forEach(response.data, function(docType) {
                     if (docType.name !== 'basedocument') {
                         $scope.documentTypes.push(docType);
                     }
