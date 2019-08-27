@@ -15,15 +15,18 @@
  */
 
 import { HttpClientModule } from '@angular/common/http';
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ClientAppModule } from './client-app/client-app.module';
 import { MainMenuModule } from './main-menu/main-menu.module';
+import { NavConfigService } from './services/nav-config.service';
 import { SharedModule } from './shared/shared.module';
 import { TopPanelModule } from './top-panel/top-panel.module';
+
+const loadConfigurations = (navConfigService: NavConfigService) => () => navConfigService.init();
 
 @NgModule({
   imports: [
@@ -35,6 +38,14 @@ import { TopPanelModule } from './top-panel/top-panel.module';
     HttpClientModule,
     MainMenuModule,
     TopPanelModule,
+  ],
+  providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: loadConfigurations,
+      deps: [NavConfigService],
+      multi: true,
+    },
   ],
   declarations: [AppComponent],
   bootstrap: [AppComponent],

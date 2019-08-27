@@ -29,9 +29,9 @@ import { GlobalSettingsService } from './global-settings.service';
 import { NavConfigService } from './nav-config.service';
 
 describe('NavConfigService', () => {
+  let service: NavConfigService;
   let http: HttpClient;
   let httpTestingController: HttpTestingController;
-  let navConfigService: NavConfigService;
   let globalSettingsService: GlobalSettingsService;
 
   const navConfig = [
@@ -49,6 +49,10 @@ describe('NavConfigService', () => {
   ];
 
   const globalSettingsServiceMock = new GlobalSettingsMock();
+  globalSettingsServiceMock.appSettings.loginResources = [
+    'testLoginResource1',
+    'testLoginResource2',
+  ];
 
   const selectedSite = { accountId: 1, siteId: 2 };
 
@@ -71,7 +75,7 @@ describe('NavConfigService', () => {
 
     http = TestBed.get(HttpClient);
     httpTestingController = TestBed.get(HttpTestingController);
-    navConfigService = TestBed.get(NavConfigService);
+    service = TestBed.get(NavConfigService);
     globalSettingsService = TestBed.get(GlobalSettingsService);
 
     spyOnProperty(navappCommunication, 'connectToChild', 'get').and.returnValue(
@@ -79,11 +83,11 @@ describe('NavConfigService', () => {
     );
   });
 
-  it('should gracefully handle the connection error', fakeAsync(() => {
-    // connectionMock.and.returnValue(Promise.reject()); generates an error
-    // workaround from https://github.com/jasmine/jasmine/issues/1590
-    connectionMock.and.callFake(() => Promise.reject());
+  afterEach(() => {
+    httpTestingController.verify();
+  });
 
+  it('should gracefully handle the connection error', fakeAsync(() => {
     const expectedNavItems = [
       new NavItemMock({
         id: 'testItem',
@@ -92,17 +96,31 @@ describe('NavConfigService', () => {
       }),
     ];
 
-    navConfigService.navItems$.subscribe(x => {
-      expect(x).toEqual(expectedNavItems);
-    });
-    navConfigService.sites$.subscribe(x => {
-      expect(x).toEqual([]);
-    });
-    navConfigService.selectedSite$.subscribe(x => {
+    const returnValues = [
+      Promise.resolve({}), // login resource 1
+      Promise.resolve({}), // login resource 2
+      Promise.reject(), // iframe data extraction
+    ];
+
+    // connectionMock.and.returnValue(Promise.reject()); generates an error
+    // workaround from https://github.com/jasmine/jasmine/issues/1590
+    connectionMock.and.callFake(() => returnValues.shift());
+
+    service.init();
+
+    tick();
+
+    const request = httpTestingController.expectOne('testRESTurl');
+    request.flush(expectedNavItems);
+
+    tick();
+
+    expect(service.navItems).toEqual(expectedNavItems);
+    expect(service.sites).toEqual([]);
+
+    service.selectedSite$.subscribe(x => {
       expect(x).toEqual(undefined);
     });
-
-    httpTestingController.verify();
   }));
 
   describe('after initialization', () => {
@@ -119,7 +137,7 @@ describe('NavConfigService', () => {
 
       totalNavItems = navConfig.concat(RESTNavItem);
 
-      navConfigService.init();
+      service.init();
 
       tick();
 
@@ -128,13 +146,10 @@ describe('NavConfigService', () => {
     }));
 
     it('should fetch resources', () => {
-      navConfigService.navItems$.subscribe(items => {
-        expect(items).toEqual(totalNavItems);
-      });
-      navConfigService.sites$.subscribe(items => {
-        expect(items).toEqual(mockSites);
-      });
-      navConfigService.selectedSite$.subscribe(site => {
+      expect(service.navItems).toEqual(totalNavItems);
+      expect(service.sites).toEqual(mockSites);
+
+      service.selectedSite$.subscribe(site => {
         expect(site.accountId).toEqual(1);
         expect(site.siteId).toEqual(2);
       });
@@ -149,13 +164,13 @@ describe('NavConfigService', () => {
         appPath: 'test path',
       });
 
-      const actual = navConfigService.findNavItem('testurl', 'test path');
+      const actual = service.findNavItem('testurl', 'test path');
 
       expect(actual).toEqual(expected);
     });
 
     it('should not find a nav item with unknown path', () => {
-      const actual = navConfigService.findNavItem(
+      const actual = service.findNavItem(
         'testurl',
         'non existing path',
       );
@@ -164,7 +179,7 @@ describe('NavConfigService', () => {
     });
 
     it('should not find a nav item with unknown iframeUrl', () => {
-      const actual = navConfigService.findNavItem(
+      const actual = service.findNavItem(
         'unknownIframeUrl',
         'test path',
       );
@@ -180,9 +195,9 @@ describe('NavConfigService', () => {
       };
       let actual: navappCommunication.Site;
 
-      navConfigService.selectedSite$.subscribe(x => (actual = x));
+      service.selectedSite$.subscribe(x => (actual = x));
 
-      navConfigService.setSelectedSite(site);
+      service.setSelectedSite(site);
 
       expect(actual).toEqual(site);
     });

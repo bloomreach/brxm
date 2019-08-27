@@ -15,11 +15,10 @@
  */
 
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { ComponentFixture, fakeAsync, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, Subject } from 'rxjs';
 
 import { ClientAppService } from '../../client-app/services/client-app.service';
-import { BootstrapService } from '../../services/bootstrap.service';
 import { GlobalSettingsService } from '../../services/global-settings.service';
 import { QaHelperService } from '../../services/qa-helper.service';
 import { MenuItemLinkMock } from '../models/menu-item-link.mock';
@@ -32,17 +31,18 @@ describe('MainMenuComponent', () => {
   let fixture: ComponentFixture<MainMenuComponent>;
 
   let menuStateService: MenuStateService;
-  const mockMenu = [
+  const menuMock = [
     new MenuItemLinkMock({ id: 'item1' }),
     new MenuItemLinkMock({ id: 'item2' }),
   ];
-  mockMenu[0].appUrl = 'homeAppId';
-  mockMenu[0].appPath = 'homeAppPath';
+  menuMock[0].appUrl = 'homeAppId';
+  menuMock[0].appPath = 'homeAppPath';
   const menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
     'isMenuItemActive',
     'activateMenuItem',
   ]);
-  menuStateServiceMock.menu$ = of(mockMenu);
+  const menuSubject = new Subject();
+  menuStateServiceMock.menu$ = menuSubject;
 
   let qaHelperService: QaHelperService;
   const qaHelperServiceMock = {
@@ -59,11 +59,6 @@ describe('MainMenuComponent', () => {
     userSettings: {},
   };
 
-  const bootstrappedSuccessful$ = new Subject();
-  const bootstrapServiceMock = {
-    bootstrappedSuccessful$,
-  };
-
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [MainMenuComponent],
@@ -73,7 +68,6 @@ describe('MainMenuComponent', () => {
         { provide: QaHelperService, useValue: qaHelperServiceMock },
         { provide: ClientAppService, useValue: clientAppServiceMock },
         { provide: GlobalSettingsService, useValue: globalSettingsServiceMock },
-        { provide: BootstrapService, useValue: bootstrapServiceMock },
       ],
     });
 
@@ -94,13 +88,17 @@ describe('MainMenuComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should not activate until bootstrapping is finished', () => {
-    expect(menuStateServiceMock.activateMenuItem).not.toHaveBeenCalled();
+  it('should not activate the home menu element until menu is emitted', () => {
+    spyOn(component, 'selectMenuItem');
+
+    expect(component.selectMenuItem).not.toHaveBeenCalled();
   });
 
-  it('should activate the home menu item after bootstrapping', fakeAsync(() => {
-    bootstrappedSuccessful$.next();
+  it('should activate the home menu element when menu is emitted', () => {
+    spyOn(component, 'selectMenuItem');
 
-    expect(menuStateServiceMock.activateMenuItem).toHaveBeenCalledWith('homeAppId', 'homeAppPath');
-  }));
+    menuSubject.next(menuMock);
+
+    expect(component.selectMenuItem).toHaveBeenCalledWith(menuMock[0]);
+  });
 });

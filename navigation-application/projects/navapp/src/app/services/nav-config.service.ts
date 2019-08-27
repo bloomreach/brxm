@@ -32,8 +32,6 @@ import { ConfigResource } from '../models/dto/config-resource.dto';
 
 import { GlobalSettingsService } from './global-settings.service';
 
-const filterOutEmptyArray = items => !!(Array.isArray(items) && items.length);
-
 interface Configuration {
   navItems: NavItem[];
   sites: Site[];
@@ -46,8 +44,8 @@ interface Configuration {
 export class NavConfigService {
   private readonly renderer: Renderer2;
 
-  private navItems = new BehaviorSubject<NavItem[]>([]);
-  private sites = new BehaviorSubject<Site[]>([]);
+  private currentNavItems: NavItem[] = [];
+  private currentSites: Site[] = [];
   private selectedSite = new BehaviorSubject(undefined);
 
   constructor(
@@ -59,12 +57,12 @@ export class NavConfigService {
     this.renderer = this.rendererFactory.createRenderer(undefined, undefined);
   }
 
-  get navItems$(): Observable<NavItem[]> {
-    return this.navItems.asObservable().pipe(filter(filterOutEmptyArray));
+  get navItems(): NavItem[] {
+    return this.currentNavItems;
   }
 
-  get sites$(): Observable<Site[]> {
-    return this.sites.asObservable().pipe(filter(filterOutEmptyArray));
+  get sites(): Site[] {
+    return this.currentSites;
   }
 
   get selectedSite$(): Observable<Site> {
@@ -72,6 +70,33 @@ export class NavConfigService {
   }
 
   init(): Promise<void> {
+    return this.loginIfNecessary()
+      .then(() => this.fetchAndMergeConfigurations())
+      .then(({navItems, sites, selectedSiteId}) => {
+        this.currentNavItems = navItems;
+        this.currentSites = sites;
+
+        if (selectedSiteId) {
+          const selectedSite = this.findSite(sites, selectedSiteId);
+          this.setSelectedSite(selectedSite);
+        }
+      });
+  }
+
+  logout(): Promise<void[]> {
+    const logoutPromises = this.settings.appSettings.logoutResources.map(resource => this.logoutSilently(resource));
+    return Promise.all(logoutPromises);
+  }
+
+  findNavItem(iframeUrl: string, path: string): NavItem {
+    return this.currentNavItems.find(x => x.appIframeUrl === iframeUrl && path.startsWith(x.appPath));
+  }
+
+  setSelectedSite(site: Site): void {
+    this.selectedSite.next(site);
+  }
+
+  private loginIfNecessary(): Promise<void> {
     const loginPromises = this.settings.appSettings.loginResources.map(
       resource => this.loginSilently(resource),
     );
@@ -82,63 +107,7 @@ export class NavConfigService {
         // For now just throw an error, will be handled properly when we implement error handling and timeouts
         throw new Error('failed to login');
       }
-
-      const configurationPromises = this.settings.appSettings.navConfigResources.map(
-        resource => this.fetchConfiguration(resource),
-      );
-
-      return Promise.all(configurationPromises).then(configurations => {
-        const {
-          mergedNavItems,
-          mergedSites,
-          selectedSiteId,
-        } = configurations.reduce(
-          (result, configuration) => {
-            if (!configuration) {
-              return result;
-            }
-
-            result.mergedNavItems = result.mergedNavItems.concat(
-              configuration.navItems,
-            );
-            result.mergedSites = result.mergedSites.concat(configuration.sites);
-
-            if (configuration.selectedSiteId) {
-              result.selectedSiteId = {
-                accountId: configuration.selectedSiteId.accountId,
-                siteId: configuration.selectedSiteId.siteId || -1,
-              };
-            }
-
-            return result;
-          },
-          { mergedNavItems: [], mergedSites: [], selectedSiteId: undefined },
-        );
-
-        this.navItems.next(mergedNavItems);
-        this.sites.next(mergedSites);
-
-        if (selectedSiteId) {
-          const site = this.findSite(mergedSites, selectedSiteId);
-          this.setSelectedSite(site);
-        }
-      });
     });
-  }
-
-  logout(): Promise<void[]> {
-    const logoutPromises = this.settings.appSettings.logoutResources.map(resource => this.logoutSilently(resource));
-    return Promise.all(logoutPromises);
-  }
-
-  findNavItem(iframeUrl: string, path: string): NavItem {
-    const navItems = this.navItems.value;
-
-    return navItems.find(x => x.appIframeUrl === iframeUrl && path.startsWith(x.appPath));
-  }
-
-  setSelectedSite(site: Site): void {
-    this.selectedSite.next(site);
   }
 
   private loginSilently(resource: string): Promise<boolean> {
@@ -147,6 +116,14 @@ export class NavConfigService {
 
   private logoutSilently(resource: string): Promise<void> {
     return this.fetchFromIframe(resource, () => Promise.resolve());
+  }
+
+  private fetchAndMergeConfigurations(): Promise<Configuration> {
+    const configurationPromises = this.settings.appSettings.navConfigResources.map(
+      resource => this.fetchConfiguration(resource),
+    );
+
+    return Promise.all(configurationPromises).then(configurations => this.mergeConfigurations(configurations));
   }
 
   private fetchConfiguration(resource: ConfigResource): Promise<Configuration> {
@@ -183,6 +160,41 @@ export class NavConfigService {
           new Error(`Resource type ${resource.resourceType} is not supported`),
         );
     }
+  }
+
+  private mergeConfigurations(configurations: Configuration[]): Configuration {
+    const {
+      mergedNavItems,
+      mergedSites,
+      selectedSiteId,
+    } = configurations.reduce(
+      (result, configuration) => {
+        if (!configuration) {
+          return result;
+        }
+
+        result.mergedNavItems = result.mergedNavItems.concat(
+          configuration.navItems,
+        );
+        result.mergedSites = result.mergedSites.concat(configuration.sites);
+
+        if (configuration.selectedSiteId) {
+          result.selectedSiteId = {
+            accountId: configuration.selectedSiteId.accountId,
+            siteId: configuration.selectedSiteId.siteId || -1,
+          };
+        }
+
+        return result;
+      },
+      { mergedNavItems: [], mergedSites: [], selectedSiteId: undefined },
+    );
+
+    return {
+      navItems: mergedNavItems,
+      sites: mergedSites,
+      selectedSiteId,
+    };
   }
 
   private fetchFromIframe<T>(

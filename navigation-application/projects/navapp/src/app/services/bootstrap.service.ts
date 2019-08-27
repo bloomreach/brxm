@@ -15,11 +15,9 @@
  */
 
 import { Injectable } from '@angular/core';
-import { Observable, ReplaySubject, throwError } from 'rxjs';
-import { fromPromise } from 'rxjs/internal-compatibility';
-import { catchError, first, tap } from 'rxjs/operators';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
+import { MenuStateService } from '../main-menu/services/menu-state.service';
 
 import { NavConfigService } from './nav-config.service';
 
@@ -27,39 +25,19 @@ import { NavConfigService } from './nav-config.service';
   providedIn: 'root',
 })
 export class BootstrapService {
-  private bootstrapped = false;
-  private bootstrappedSuccessful = new ReplaySubject<void>(1);
-
   constructor(
     private navConfigService: NavConfigService,
     private clientAppService: ClientAppService,
+    private menuStateService: MenuStateService,
   ) {}
 
-  get bootstrappedSuccessful$(): Observable<void> {
-    return this.bootstrappedSuccessful.asObservable();
-  }
-
-  bootstrap(): Observable<void> {
-    if (this.bootstrapped) {
-      return;
-    }
-
-    this.bootstrapped = true;
-
-    return fromPromise(Promise.all([
-      this.navConfigService.init(),
-      this.clientAppService.init(),
-    ])).pipe(
-      catchError(error => {
+  bootstrap(): Promise<void> {
+    return this.clientAppService.init()
+      .then(() => this.menuStateService.init())
+      .catch(error => {
         const message = typeof error === 'object' ? error.message : error;
 
-        return throwError(`[NAVAPP] Bootstrap error: ${message}`);
-      }),
-      first(),
-      tap(() => {
-        this.bootstrappedSuccessful.next();
-        this.bootstrappedSuccessful.complete();
-      }),
-    ) as Observable<void>;
+        console.error(`[NAVAPP] Bootstrap error: ${message}`);
+      });
   }
 }

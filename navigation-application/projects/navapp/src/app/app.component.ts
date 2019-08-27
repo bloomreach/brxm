@@ -51,6 +51,6 @@ export class AppComponent implements OnInit {
 
     this.rightSidePanelService.setSidenav(this.sidenav);
 
-    this.bootstrapService.bootstrap().subscribe(() => this.busyIndicatorService.hide());
+    this.bootstrapService.bootstrap().then(() => this.busyIndicatorService.hide());
   }
 }

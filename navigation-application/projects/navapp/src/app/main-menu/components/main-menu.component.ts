@@ -16,11 +16,10 @@
 
 import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
-import { switchMap, takeUntil } from 'rxjs/operators';
+import { filter, takeUntil } from 'rxjs/operators';
 
 import { ClientAppService } from '../../client-app/services/client-app.service';
 import { UserSettings } from '../../models/dto/user-settings.dto';
-import { BootstrapService } from '../../services/bootstrap.service';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { GlobalSettingsService } from '../../services/global-settings.service';
 import { QaHelperService } from '../../services/qa-helper.service';
@@ -49,7 +48,6 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     private clientAppService: ClientAppService,
     private settingsService: GlobalSettingsService,
     private busyIndicatorService: BusyIndicatorService,
-    private bootstrapService: BootstrapService,
   ) {}
 
   get isBusyIndicatorVisible(): boolean {
@@ -142,7 +140,10 @@ export class MainMenuComponent implements OnInit, OnDestroy {
 
   private extractMenuItems(): void {
     this.menuStateService.menu$
-      .pipe(takeUntil(this.unsubscribe))
+      .pipe(
+        takeUntil(this.unsubscribe),
+        filter(x => x.length > 0),
+      )
       .subscribe(menuItems => {
         this.homeMenuItem = menuItems[0] as MenuItemLink;
         this.menuItems = menuItems.slice(1);
@@ -153,7 +154,6 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     this.menuStateService.menu$
       .pipe(
         takeUntil(this.unsubscribe),
-        switchMap(() => this.bootstrapService.bootstrappedSuccessful$),
       )
       .subscribe(() => {
         this.selectMenuItem(this.homeMenuItem);
