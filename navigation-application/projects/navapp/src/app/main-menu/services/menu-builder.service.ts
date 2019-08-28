@@ -42,16 +42,14 @@ export class MenuBuilderService {
         item = new MenuItemLink(navItem.id, navItem.displayName || navItem.id);
         this.menuStructureService.addExtension(item);
       }
-      // One iframe per app is created so app's url can be used as an identifier
-      item.appUrl = navItem.appIframeUrl;
-      item.appPath = navItem.appPath;
+      item.navItem = navItem;
     });
   }
 
   private removeEmptyLeaves(menu: MenuItem[]): MenuItem[] {
     return menu.filter(item => {
       if (item instanceof MenuItemLink) {
-        return !!item.appPath;
+        return !!item.navItem;
       }
 
       if (item instanceof MenuItemContainer) {

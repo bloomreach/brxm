@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,20 +14,4 @@
  * limitations under the License.
  */
 
-import { MenuItemLink } from './menu-item-link.model';
-
-export class MenuItemLinkMock extends MenuItemLink {
-  constructor({
-    caption = 'testCaption',
-    icon = 'testIcon',
-    id = 'testId',
-  } = {}) {
-    super(id, caption, icon);
-
-    this.navItem = {
-      id: 'some-id',
-      appIframeUrl: 'some/app/url',
-      appPath: 'app/path',
-    };
-  }
-}
+export class NavigationEvent {}

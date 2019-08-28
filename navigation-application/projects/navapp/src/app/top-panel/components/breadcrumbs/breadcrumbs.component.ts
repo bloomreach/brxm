@@ -18,7 +18,7 @@ import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { CommunicationsService } from '../../../services/communications.service';
+import { DeepLinkingService } from '../../../routing/deep-linking.service';
 import { BreadcrumbsService } from '../../services/breadcrumbs.service';
 
 @Component({
@@ -29,7 +29,7 @@ import { BreadcrumbsService } from '../../services/breadcrumbs.service';
 export class BreadcrumbsComponent {
   constructor(
     private breadcrumbsService: BreadcrumbsService,
-    private communicationService: CommunicationsService,
+    private deepLinkingService: DeepLinkingService,
   ) {}
 
   get breadcrumbs$(): Observable<string[]> {
@@ -45,6 +45,6 @@ export class BreadcrumbsComponent {
   }
 
   onLastBreadcrumbClicked(): void {
-    this.communicationService.navigateToDefaultPage();
+    this.deepLinkingService.navigateToDefaultCurrentAppPage();
   }
 }

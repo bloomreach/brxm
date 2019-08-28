@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
+import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ClientAppModule } from './client-app/client-app.module';
 import { MainMenuModule } from './main-menu/main-menu.module';
@@ -26,13 +26,12 @@ import { NavConfigService } from './services/nav-config.service';
 import { SharedModule } from './shared/shared.module';
 import { TopPanelModule } from './top-panel/top-panel.module';
 
-const loadConfigurations = (navConfigService: NavConfigService) => () => navConfigService.init();
+const loadNavItems = (navConfigService: NavConfigService) => () => navConfigService.init();
 
 @NgModule({
   imports: [
     BrowserModule,
     SharedModule,
-    AppRoutingModule,
     BrowserModule,
     ClientAppModule,
     HttpClientModule,
@@ -40,9 +39,11 @@ const loadConfigurations = (navConfigService: NavConfigService) => () => navConf
     TopPanelModule,
   ],
   providers: [
+    Location,
+    { provide: LocationStrategy, useClass: PathLocationStrategy },
     {
       provide: APP_INITIALIZER,
-      useFactory: loadConfigurations,
+      useFactory: loadNavItems,
       deps: [NavConfigService],
       multi: true,
     },

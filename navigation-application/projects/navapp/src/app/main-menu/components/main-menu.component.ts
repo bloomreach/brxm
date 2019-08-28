@@ -20,6 +20,7 @@ import { filter, takeUntil } from 'rxjs/operators';
 
 import { ClientAppService } from '../../client-app/services/client-app.service';
 import { UserSettings } from '../../models/dto/user-settings.dto';
+import { DeepLinkingService } from '../../routing/deep-linking.service';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { GlobalSettingsService } from '../../services/global-settings.service';
 import { QaHelperService } from '../../services/qa-helper.service';
@@ -48,6 +49,7 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     private clientAppService: ClientAppService,
     private settingsService: GlobalSettingsService,
     private busyIndicatorService: BusyIndicatorService,
+    private deepLinkingService: DeepLinkingService,
   ) {}
 
   get isBusyIndicatorVisible(): boolean {
@@ -71,12 +73,10 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     return this.collapsed;
   }
 
-  // Should be replaced with proper routing later
   ngOnInit(): void {
     this.userSettings = this.settingsService.userSettings;
 
     this.extractMenuItems();
-    this.activateHomeMenuItem();
   }
 
   ngOnDestroy(): void {
@@ -117,7 +117,7 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   selectMenuItem(item: MenuItem): void {
     this.isUserToolbarOpened = false;
     if (item instanceof MenuItemLink) {
-      this.menuStateService.activateMenuItem(item.appUrl, item.appPath);
+      this.deepLinkingService.navigateByAppUrl(item.navItem.appIframeUrl, item.navItem.appPath);
       return;
     }
 
@@ -139,24 +139,13 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   }
 
   private extractMenuItems(): void {
-    this.menuStateService.menu$
-      .pipe(
-        takeUntil(this.unsubscribe),
-        filter(x => x.length > 0),
-      )
-      .subscribe(menuItems => {
-        this.homeMenuItem = menuItems[0] as MenuItemLink;
-        this.menuItems = menuItems.slice(1);
-      });
-  }
+    const menu = this.menuStateService.menu;
 
-  private activateHomeMenuItem(): void {
-    this.menuStateService.menu$
-      .pipe(
-        takeUntil(this.unsubscribe),
-      )
-      .subscribe(() => {
-        this.selectMenuItem(this.homeMenuItem);
-      });
+    if (menu.length === 0) {
+      return;
+    }
+
+    this.homeMenuItem = menu[0] as MenuItemLink;
+    this.menuItems = menu.slice(1);
   }
 }

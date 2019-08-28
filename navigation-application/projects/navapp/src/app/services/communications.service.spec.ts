@@ -20,8 +20,7 @@ import { ReplaySubject } from 'rxjs';
 
 import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
-import { MenuStateService } from '../main-menu/services/menu-state.service';
-import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
+import { DeepLinkingService } from '../routing/deep-linking.service';
 
 import { BusyIndicatorService } from './busy-indicator.service';
 import { CommunicationsService } from './communications.service';
@@ -32,8 +31,6 @@ describe('CommunicationsService', () => {
   let service: CommunicationsService;
   let clientAppService: ClientAppService;
   let navConfigService: NavConfigService;
-  let menuStateService: MenuStateService;
-  let breadcrumbsService: BreadcrumbsService;
   let overlayService: OverlayService;
   let busyIndicatorService: BusyIndicatorService;
 
@@ -57,20 +54,14 @@ describe('CommunicationsService', () => {
     'logout',
   ]);
 
-  const menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
-    'setActiveItem',
-    'setActiveItemAndNavigate',
-    'activateMenuItem',
-  ]);
-
-  const breadcrumbsServiceMock = jasmine.createSpyObj('BreadcrumbsService', [
-    'setSuffix',
-    'clearSuffix',
-  ]);
-
   const busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', [
     'show',
     'hide',
+  ]);
+
+  const deepLinkingServiceMock = jasmine.createSpyObj('DeepLinkingService', [
+    'navigateByAppUrl',
+    'updateByAppUrl',
   ]);
 
   beforeEach(() => {
@@ -99,7 +90,6 @@ describe('CommunicationsService', () => {
       appPath: 'some-path',
     });
 
-    menuStateServiceMock.activeMenuItem$ = activeMenuItem$;
     activeMenuItem$.next({
       appId: 'testMenuItem',
       appPath: 'testpath',
@@ -110,46 +100,20 @@ describe('CommunicationsService', () => {
         CommunicationsService,
         { provide: ClientAppService, useValue: clientAppServiceMock },
         { provide: NavConfigService, useValue: navConfigServiceMock },
-        { provide: MenuStateService, useValue: menuStateServiceMock },
-        { provide: BreadcrumbsService, useValue: breadcrumbsServiceMock },
-        { provide: OverlayService, useValue: overlayServiceMock },
         { provide: BusyIndicatorService, useValue: busyIndicatorServiceMock },
+        { provide: OverlayService, useValue: overlayServiceMock },
+        { provide: DeepLinkingService, useValue: deepLinkingServiceMock },
       ],
     });
 
     service = TestBed.get(CommunicationsService);
     clientAppService = TestBed.get(ClientAppService);
     navConfigService = TestBed.get(NavConfigService);
-    menuStateService = TestBed.get(MenuStateService);
-    breadcrumbsService = TestBed.get(BreadcrumbsService);
     overlayService = TestBed.get(OverlayService);
     busyIndicatorService = TestBed.get(BusyIndicatorService);
   });
 
   describe('client api methods', () => {
-    describe('navigate', () => {
-      it('should get the client app and communicate the Location to be navigated to', fakeAsync(() => {
-        service.navigate('testId', 'testPath');
-
-        expect(
-          clientAppService.getApp('testId').api.navigate,
-        ).toHaveBeenCalledWith({ path: 'testPath' }, undefined);
-
-        tick();
-
-        expect(clientAppService.activateApplication).toHaveBeenCalledWith(
-          'testId',
-        );
-      }));
-
-      it('should show the busy indicator', () => {
-        service.navigate('testId', 'testPath');
-
-        expect(busyIndicatorService.show).toHaveBeenCalled();
-        expect(busyIndicatorService.hide).toHaveBeenCalled();
-      });
-    });
-
     describe('updateSelectedSite', () => {
       it('should get the client app and communicate the site id', () => {
         service.updateSelectedSite({ accountId: 10, siteId: 1337 });
@@ -211,30 +175,10 @@ describe('CommunicationsService', () => {
 
         service.parentApiMethods.navigate({
           path,
+          breadcrumbLabel: 'some breadcrumb label',
         });
 
-        expect(menuStateService.activateMenuItem).toHaveBeenCalledWith(
-          path,
-          path,
-        );
-      });
-
-      it('should select the associated menu item and navigate when the item is found', () => {
-        const path = 'some-perspective';
-        clientAppServiceMock.activeApp = clientApps[1];
-
-        navConfigServiceMock.findNavItem.and.returnValue({
-          id: path,
-        });
-
-        service.parentApiMethods.navigate({
-          path,
-        });
-
-        expect(menuStateService.activateMenuItem).toHaveBeenCalledWith(
-          path,
-          path,
-        );
+        expect(deepLinkingServiceMock.navigateByAppUrl).toHaveBeenCalled();
       });
 
       it('should log an error if the item is not found', () => {
@@ -250,7 +194,7 @@ describe('CommunicationsService', () => {
     });
 
     describe('.updateNavLocation', () => {
-      it('should select the associated menu item based on active app id and path', () => {
+      it('should update the location', () => {
         const path = 'test/path';
         const location: NavLocation = {
           path,
@@ -258,10 +202,7 @@ describe('CommunicationsService', () => {
 
         service.parentApiMethods.updateNavLocation(location);
 
-        expect(menuStateService.activateMenuItem).toHaveBeenCalledWith(
-          clientAppService.activeApp.url,
-          path,
-        );
+        expect(deepLinkingServiceMock.updateByAppUrl).toHaveBeenCalled();
       });
     });
 
@@ -277,57 +218,6 @@ describe('CommunicationsService', () => {
         service.parentApiMethods.hideMask();
         expect(overlayService.disable).toHaveBeenCalled();
       });
-    });
-  });
-
-  describe('breadcrumbs', () => {
-    beforeEach(() => {
-      (breadcrumbsService.clearSuffix as jasmine.Spy).calls.reset();
-    });
-
-    it('should be set from parent API navigate', () => {
-      const path = 'some-perspective';
-      const breadcrumbLabel = 'some breadcrumb label';
-      spyOn(service, 'navigate');
-      navConfigServiceMock.findNavItem.and.returnValue({
-        id: path,
-      });
-
-      service.parentApiMethods.navigate({
-        path,
-        breadcrumbLabel,
-      });
-
-      expect(breadcrumbsService.setSuffix).toHaveBeenCalledWith(breadcrumbLabel);
-    });
-
-    it('should be set from parent API updateNavLocation', () => {
-      const path = 'some-perspective';
-      const breadcrumbLabel = 'some breadcrumb label';
-
-      service.parentApiMethods.updateNavLocation({
-        path,
-        breadcrumbLabel,
-      });
-
-      expect(breadcrumbsService.setSuffix).toHaveBeenCalledWith(breadcrumbLabel);
-    });
-
-    it('should be cleared when a new active menu item is selected', () => {
-      (breadcrumbsService.clearSuffix as jasmine.Spy).calls.reset();
-
-      activeMenuItem$.next({
-        appId: 'testMenuItem',
-        appPath: 'testpath',
-      });
-
-      expect(breadcrumbsService.clearSuffix).toHaveBeenCalled();
-    });
-
-    it('should be cleared when navigated to the default page', () => {
-      service.navigateToDefaultPage();
-
-      expect(breadcrumbsService.clearSuffix).toHaveBeenCalled();
     });
   });
 });

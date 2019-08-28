@@ -58,6 +58,15 @@ export class AppComponent implements OnInit {
       navigate: (location: NavLocation) => {
         this.navigateCount += 1;
         this.navigatedTo = location.path;
+
+        if (this.navigatedTo === 'experience-manager/channel1') {
+          setTimeout(() => {
+            this.parent.updateNavLocation({
+              path: location.path,
+              breadcrumbLabel: 'Channel 1',
+            });
+          });
+        }
       },
       getNavItems: () => {
         return navigationConfiguration;

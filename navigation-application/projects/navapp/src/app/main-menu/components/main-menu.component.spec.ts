@@ -19,6 +19,10 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, Subject } from 'rxjs';
 
 import { ClientAppService } from '../../client-app/services/client-app.service';
+import { DeepLinkingService } from '../../routing/deep-linking.service';
+import { BootstrapService } from '../../services/bootstrap.service';
+import { BusyIndicatorService } from '../../services/busy-indicator.service';
+
 import { GlobalSettingsService } from '../../services/global-settings.service';
 import { QaHelperService } from '../../services/qa-helper.service';
 import { MenuItemLinkMock } from '../models/menu-item-link.mock';
@@ -35,14 +39,18 @@ describe('MainMenuComponent', () => {
     new MenuItemLinkMock({ id: 'item1' }),
     new MenuItemLinkMock({ id: 'item2' }),
   ];
-  menuMock[0].appUrl = 'homeAppId';
-  menuMock[0].appPath = 'homeAppPath';
-  const menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
-    'isMenuItemActive',
-    'activateMenuItem',
-  ]);
-  const menuSubject = new Subject();
-  menuStateServiceMock.menu$ = menuSubject;
+
+  menuMock[0].navItem = {
+    id: 'someId',
+    appIframeUrl: 'homeAppUrl',
+    appPath: 'homeAppPath',
+  };
+
+  const menuStateServiceMock = jasmine.createSpyObj('MenuStateService', {
+    menu: menuMock,
+    isMenuItemActive: undefined,
+    activateMenuItem: undefined,
+  });
 
   let qaHelperService: QaHelperService;
   const qaHelperServiceMock = {
@@ -59,6 +67,20 @@ describe('MainMenuComponent', () => {
     userSettings: {},
   };
 
+  const bootstrappedSuccessful$ = new Subject();
+  const bootstrapServiceMock = {
+    bootstrappedSuccessful$,
+  };
+
+  const busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', [
+    'show',
+    'hide',
+  ]);
+
+  const deepLinkingServiceMock = jasmine.createSpyObj('DeepLinkingService', [
+    'navigateByAppUrl',
+  ]);
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [MainMenuComponent],
@@ -68,6 +90,9 @@ describe('MainMenuComponent', () => {
         { provide: QaHelperService, useValue: qaHelperServiceMock },
         { provide: ClientAppService, useValue: clientAppServiceMock },
         { provide: GlobalSettingsService, useValue: globalSettingsServiceMock },
+        { provide: BootstrapService, useValue: bootstrapServiceMock },
+        { provide: BusyIndicatorService, useValue: busyIndicatorServiceMock },
+        { provide: DeepLinkingService, useValue: deepLinkingServiceMock },
       ],
     });
 
@@ -88,17 +113,17 @@ describe('MainMenuComponent', () => {
     expect(component).toBeTruthy();
   });
 
+  it('should navigate when menu item link is clicked', () => {
+    const menuItemLink = new MenuItemLinkMock();
+
+    component.selectMenuItem(menuItemLink);
+
+    expect(deepLinkingServiceMock.navigateByAppUrl).toHaveBeenCalledWith(menuItemLink.navItem.appIframeUrl, menuItemLink.navItem.appPath);
+  });
+
   it('should not activate the home menu element until menu is emitted', () => {
     spyOn(component, 'selectMenuItem');
 
     expect(component.selectMenuItem).not.toHaveBeenCalled();
-  });
-
-  it('should activate the home menu element when menu is emitted', () => {
-    spyOn(component, 'selectMenuItem');
-
-    menuSubject.next(menuMock);
-
-    expect(component.selectMenuItem).toHaveBeenCalledWith(menuMock[0]);
   });
 });

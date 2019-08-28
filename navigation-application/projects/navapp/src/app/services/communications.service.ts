@@ -16,16 +16,12 @@
 
 import { Injectable } from '@angular/core';
 import { connectToChild, NavLocation, ParentApi, SiteId } from '@bloomreach/navapp-communication';
-import { Subject } from 'rxjs';
-import { takeUntil, tap } from 'rxjs/operators';
 
 import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
-import { MenuItemLink } from '../main-menu/models/menu-item-link.model';
-import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { Connection } from '../models/connection.model';
 import { FailedConnection } from '../models/failed-connection.model';
-import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
+import { DeepLinkingService } from '../routing/deep-linking.service';
 
 import { BusyIndicatorService } from './busy-indicator.service';
 import { GlobalSettingsService } from './global-settings.service';
@@ -36,26 +32,14 @@ import { OverlayService } from './overlay.service';
   providedIn: 'root',
 })
 export class CommunicationsService {
-  private activeMenuItem: MenuItemLink;
-  private unsubscribe = new Subject();
-
   constructor(
     private navConfigService: NavConfigService,
     private clientAppService: ClientAppService,
-    private menuStateService: MenuStateService,
-    private breadcrumbsService: BreadcrumbsService,
+    private deepLinkingService: DeepLinkingService,
     private overlay: OverlayService,
     private busyIndicatorService: BusyIndicatorService,
     private settings: GlobalSettingsService,
-  ) {
-    menuStateService.activeMenuItem$.pipe(
-      takeUntil(this.unsubscribe),
-      tap(x => this.activeMenuItem = x),
-    ).subscribe(activeMenuItem => {
-      this.breadcrumbsService.clearSuffix();
-      this.navigate(activeMenuItem.appUrl, activeMenuItem.appPath);
-    });
-  }
+  ) {}
 
   get parentApiMethods(): ParentApi {
     return {
@@ -75,50 +59,22 @@ export class CommunicationsService {
           return;
         }
 
-        this.menuStateService.activateMenuItem(app.url, location.path);
-        this.breadcrumbsService.setSuffix(location.breadcrumbLabel);
-
-        // Current app can be different in that moment it's better to use caller app's id
-        if (app.url !== this.clientAppService.activeApp.url) {
-          this.navigate(app.url, location.path);
-        }
+        this.deepLinkingService.navigateByAppUrl(app.url, location.path, location.breadcrumbLabel);
       },
       updateNavLocation: (location: NavLocation) => {
-        this.breadcrumbsService.setSuffix(location.breadcrumbLabel);
-        this.menuStateService.activateMenuItem(
-            this.clientAppService.activeApp.url,
-            location.path,
+        const navItem = this.navConfigService.findNavItem(this.clientAppService.activeApp.url, location.path);
+        if (!navItem) {
+          console.error(`updateNavLocation was called with not allowed location url: '${location.path}'`);
+          return;
+        }
+
+        this.deepLinkingService.updateByAppUrl(
+          navItem.appIframeUrl,
+          location.path,
+          location.breadcrumbLabel,
         );
       },
     };
-  }
-
-  navigate(appId: string, path: string, flags?: { [key: string]: string | number | boolean }): Promise<void> {
-    this.busyIndicatorService.show();
-    const app = this.clientAppService.getApp(appId);
-
-    if (!app) {
-      throw new Error(`There is no app with id="${appId}"`);
-    }
-
-    if (!app.api) {
-      throw new Error(`The app with id="${appId}" is not connected to the nav app`);
-    }
-
-    return app.api.navigate({ path }, flags).then(() => {
-      this.clientAppService.activateApplication(appId);
-      this.busyIndicatorService.hide();
-    });
-  }
-
-  navigateToDefaultPage(): Promise<void> {
-    if (!this.activeMenuItem) {
-      return Promise.reject('There is no the selected menu item.');
-    }
-
-    this.breadcrumbsService.clearSuffix();
-
-    return this.navigate(this.activeMenuItem.appUrl, this.activeMenuItem.appPath, {forceRefresh: true});
   }
 
   updateSelectedSite(siteId: SiteId): Promise<void> {

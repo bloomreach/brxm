@@ -16,18 +16,16 @@
 
 import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { filter, map } from 'rxjs/operators';
 
 import { NavConfigService } from '../../services/nav-config.service';
 import { MenuItemContainer } from '../models/menu-item-container.model';
-import { MenuItemLink } from '../models/menu-item-link.model';
 import { MenuItem } from '../models/menu-item.model';
 
 import { MenuBuilderService } from './menu-builder.service';
 
 @Injectable()
 export class MenuStateService implements OnDestroy {
-  private readonly menuItems$ = new BehaviorSubject<MenuItem[]>([]);
+  private readonly menuItems: MenuItem[] = [];
   private activePath = new BehaviorSubject<MenuItem[]>([]);
   private collapsed = true;
   private currentDrawerMenuItem: MenuItemContainer;
@@ -36,23 +34,13 @@ export class MenuStateService implements OnDestroy {
   constructor(
     private menuBuilderService: MenuBuilderService,
     private navConfigService: NavConfigService,
-  ) {}
-
-  get menu$(): Observable<MenuItem[]> {
-    return this.menuItems$;
+  ) {
+    const navItems = this.navConfigService.navItems;
+    this.menuItems = this.menuBuilderService.buildMenu(navItems);
   }
 
-  get activeMenuItem$(): Observable<MenuItemLink> {
-    return this.activePath.pipe(
-      map(path => {
-        if (path.length === 0) {
-          return undefined;
-        }
-
-        return path[path.length - 1] as MenuItemLink;
-      }),
-      filter(breadcrumbs => !!breadcrumbs),
-    );
+  get menu(): MenuItem[] {
+    return this.menuItems;
   }
 
   get activePath$(): Observable<MenuItem[]> {
@@ -69,11 +57,6 @@ export class MenuStateService implements OnDestroy {
 
   get drawerMenuItem(): MenuItemContainer {
     return this.currentDrawerMenuItem;
-  }
-
-  init(): void {
-    const navItems = this.navConfigService.navItems;
-    this.menuItems$.next(this.menuBuilderService.buildMenu(navItems));
   }
 
   ngOnDestroy(): void {
@@ -113,7 +96,7 @@ export class MenuStateService implements OnDestroy {
     this.closeDrawer();
 
     const prevActivePath = this.activePath.value;
-    const activePath = this.buildActivePath(this.menuItems$.value, activeItemId);
+    const activePath = this.buildActivePath(this.menuItems, activeItemId);
 
     const arePathsEqual = prevActivePath &&
       prevActivePath.length === activePath.length &&
