@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
+import { NavItem } from '@bloomreach/navapp-communication';
+
 export class MenuItemLink {
-  appUrl: string;
-  appPath: string;
+  navItem: NavItem;
 
   constructor(
     public id: string,

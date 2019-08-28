@@ -14,14 +14,9 @@
  * limitations under the License.
  */
 
-import { ChildPromisedApi } from '@bloomreach/navapp-communication';
-
 import { ClientApp } from './client-app.model';
 
 export class ClientAppMock extends ClientApp {
-  id = 'testClientApp';
-  api: ChildPromisedApi = {};
-
   constructor({ url = 'testClientApp', api = {} } = {}) {
     super(url, api);
   }

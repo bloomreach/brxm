@@ -62,8 +62,6 @@ describe('MenuBuilderService', () => {
   it('should get the filtered menu populated with app paths', () => {
     const actual = menuBuilderService.buildMenu(navItemsMock);
 
-    expect((actual[0] as MenuItemLink).appUrl).toEqual(
-      navItemsMock[0].appIframeUrl,
-    );
+    expect((actual[0] as MenuItemLink).navItem).toEqual(navItemsMock[0]);
   });
 });

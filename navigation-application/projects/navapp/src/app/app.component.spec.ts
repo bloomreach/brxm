@@ -18,7 +18,6 @@ import { HttpClientModule } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ClientAppModule } from './client-app/client-app.module';
 import { MainMenuModule } from './main-menu/main-menu.module';
@@ -34,7 +33,6 @@ describe('AppComponent', () => {
     fixture = TestBed.configureTestingModule({
       imports: [
         RouterTestingModule,
-        AppRoutingModule,
         MainMenuModule,
         TopPanelModule,
         ClientAppModule,

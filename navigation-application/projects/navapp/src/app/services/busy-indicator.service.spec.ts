@@ -14,13 +14,23 @@
  * limitations under the License.
  */
 
+import { Subject } from 'rxjs';
+
+import { NavigationStartEvent } from '../routing/events/navigation-start.event';
+import { NavigationStopEvent } from '../routing/events/navigation-stop.event';
+
 import { BusyIndicatorService } from './busy-indicator.service';
 
 describe('BusyIndicatorService', () => {
   let service: BusyIndicatorService;
 
+  const events$ = new Subject();
+  const deepLinkingServiceMock = {
+    events$,
+  } as any;
+
   beforeEach(() => {
-    service = new BusyIndicatorService();
+    service = new BusyIndicatorService(deepLinkingServiceMock);
   });
 
   it('busy indicator should be hidden by default', () => {
@@ -37,5 +47,21 @@ describe('BusyIndicatorService', () => {
     service.hide();
 
     expect(service.isVisible).toBeFalsy();
+  });
+
+  it('should show the busy indicator when NavigationStartEvent event is emitted', () => {
+    spyOn(service, 'show');
+
+    events$.next(new NavigationStartEvent());
+
+    expect(service.show).toHaveBeenCalled();
+  });
+
+  it('should hide the busy indicator when NavigationStopEvent event is emitted', () => {
+    spyOn(service, 'hide');
+
+    events$.next(new NavigationStopEvent());
+
+    expect(service.hide).toHaveBeenCalled();
   });
 });

@@ -16,11 +16,27 @@
 
 import { Injectable } from '@angular/core';
 
+import { DeepLinkingService } from '../routing/deep-linking.service';
+import { NavigationStartEvent } from '../routing/events/navigation-start.event';
+import { NavigationStopEvent } from '../routing/events/navigation-stop.event';
+
 @Injectable({
   providedIn: 'root',
 })
 export class BusyIndicatorService {
   private visible = false;
+
+  constructor(deepLinkingService: DeepLinkingService) {
+    deepLinkingService.events$.subscribe(e => {
+      if (e instanceof NavigationStartEvent) {
+        this.show();
+      }
+
+      if (e instanceof NavigationStopEvent) {
+        this.hide();
+      }
+    });
+  }
 
   get isVisible(): boolean {
     return this.visible;

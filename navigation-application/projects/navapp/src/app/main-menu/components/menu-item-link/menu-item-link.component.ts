@@ -16,8 +16,8 @@
 
 import { Component, HostBinding, Input } from '@angular/core';
 
+import { DeepLinkingService } from '../../../routing/deep-linking.service';
 import { MenuItemLink } from '../../models/menu-item-link.model';
-import { MenuStateService } from '../../services/menu-state.service';
 
 @Component({
   selector: 'brna-menu-item-link',
@@ -32,14 +32,11 @@ export class MenuItemLinkComponent {
   @HostBinding('class.active')
   active = false;
 
-  constructor(private menuStateService: MenuStateService) {}
+  constructor(private deepLinkingService: DeepLinkingService) {}
 
   onClick(e: MouseEvent): void {
     e.preventDefault();
 
-    this.menuStateService.activateMenuItem(
-      this.config.appUrl,
-      this.config.appPath,
-    );
+    this.deepLinkingService.navigateByAppUrl(this.config.navItem.appIframeUrl, this.config.navItem.appPath);
   }
 }
