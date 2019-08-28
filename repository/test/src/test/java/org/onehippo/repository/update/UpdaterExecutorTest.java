@@ -46,7 +46,7 @@ public class UpdaterExecutorTest extends RepositoryTestCase {
         super.setUp();
         build(content, session);
         session.save();
-        systemSession = session; // ((InternalHippoRepository) RepositoryDecorator.unwrap(session.getRepository())).createSystemSession();
+        systemSession = ((InternalHippoRepository) RepositoryDecorator.unwrap(session.getRepository())).createSystemSession();
     }
 
     @Override
