@@ -14,22 +14,23 @@
  * limitations under the License.
  */
 
-import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 import { NavConfigService } from '../../services/nav-config.service';
 import { MenuItemContainer } from '../models/menu-item-container.model';
+import { MenuItemLink } from '../models/menu-item-link.model';
 import { MenuItem } from '../models/menu-item.model';
 
 import { MenuBuilderService } from './menu-builder.service';
 
 @Injectable()
-export class MenuStateService implements OnDestroy {
+export class MenuStateService {
   private readonly menuItems: MenuItem[] = [];
+  private readonly homeMenuItemLink: MenuItemLink;
   private activePath = new BehaviorSubject<MenuItem[]>([]);
   private collapsed = true;
   private currentDrawerMenuItem: MenuItemContainer;
-  private unsubscribe = new Subject();
 
   constructor(
     private menuBuilderService: MenuBuilderService,
@@ -37,10 +38,15 @@ export class MenuStateService implements OnDestroy {
   ) {
     const navItems = this.navConfigService.navItems;
     this.menuItems = this.menuBuilderService.buildMenu(navItems);
+    this.homeMenuItemLink = this.findHomeMenuItemLink(this.menuItems);
   }
 
   get menu(): MenuItem[] {
     return this.menuItems;
+  }
+
+  get homeMenuItem(): MenuItemLink {
+    return this.homeMenuItemLink;
   }
 
   get activePath$(): Observable<MenuItem[]> {
@@ -57,11 +63,6 @@ export class MenuStateService implements OnDestroy {
 
   get drawerMenuItem(): MenuItemContainer {
     return this.currentDrawerMenuItem;
-  }
-
-  ngOnDestroy(): void {
-    this.unsubscribe.next();
-    this.unsubscribe.complete();
   }
 
   activateMenuItem(appId: string, path: string): void {
@@ -128,5 +129,21 @@ export class MenuStateService implements OnDestroy {
 
       return activePath;
     }, []);
+  }
+
+  private findHomeMenuItemLink(menu: MenuItem[]): MenuItemLink {
+    if (menu.length === 0) {
+      return;
+    }
+
+    const firstMenuItem = menu[0];
+
+    if (firstMenuItem instanceof MenuItemLink) {
+      return firstMenuItem;
+    }
+
+    if (firstMenuItem instanceof MenuItemContainer) {
+      return this.findHomeMenuItemLink(firstMenuItem.children);
+    }
   }
 }

@@ -21,13 +21,14 @@ export class MenuItemLinkMock extends MenuItemLink {
     caption = 'testCaption',
     icon = 'testIcon',
     id = 'testId',
-  } = {}) {
-    super(id, caption, icon);
-
-    this.navItem = {
+    navItem = {
       id: 'some-id',
       appIframeUrl: 'some/app/url',
       appPath: 'app/path',
-    };
+    },
+  } = {}) {
+    super(id, caption, icon);
+
+    this.navItem = navItem;
   }
 }

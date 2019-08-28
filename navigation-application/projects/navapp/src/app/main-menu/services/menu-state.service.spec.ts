@@ -1,0 +1,181 @@
+/*
+ * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
+
+import { NavConfigService } from '../../services/nav-config.service';
+import { MenuItemContainer } from '../models/menu-item-container.model';
+import { MenuItemLinkMock } from '../models/menu-item-link.mock';
+
+import { MenuBuilderService } from './menu-builder.service';
+import { MenuStateService } from './menu-state.service';
+import { MenuStructureService } from './menu-structure.service';
+
+describe('MenuStateService', () => {
+  let service: MenuStateService;
+
+  const navConfigServiceMock = jasmine.createSpyObj('MenuStructureService', {
+    findNavItem: {
+      id: 'nav-item-2',
+      appIframeUrl: 'http://domain.com/iframe1/url',
+      appPath: 'app/path/to/page1',
+    },
+  });
+
+  const builtMenuMock = [
+    new MenuItemContainer(
+      'menu item 1',
+      [
+        new MenuItemLinkMock({
+          id: 'nav-item-1',
+          caption: 'menu link subitem 1',
+          navItem: {
+            id: 'nav-item-1',
+            appIframeUrl: 'http://domain.com/iframe1/url',
+            appPath: 'app/path/to/home',
+          },
+        }),
+        new MenuItemLinkMock({
+          id: 'nav-item-2',
+          caption: 'menu link subitem 2',
+          navItem: {
+            id: 'nav-item-2',
+            appIframeUrl: 'http://domain.com/iframe1/url',
+            appPath: 'app/path/to/page1',
+          },
+        }),
+      ],
+    ),
+    new MenuItemLinkMock({
+      id: 'nav-item-3',
+      caption: 'menu link 1',
+      navItem: {
+        id: 'nav-item-3',
+        appIframeUrl: 'http://domain.com/iframe2/url',
+        appPath: 'app/path/to/home',
+      },
+    }),
+  ] as any[];
+
+  const menuBuilderServiceMock = jasmine.createSpyObj('MenuBuilderService', {
+    buildMenu: builtMenuMock,
+  });
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      providers: [
+        MenuStateService,
+        { provide: NavConfigService, useValue: navConfigServiceMock },
+        { provide: MenuBuilderService, useValue: menuBuilderServiceMock },
+      ],
+    });
+
+    service = TestBed.get(MenuStateService);
+  });
+
+  it('should return the built menu', () => {
+    const expected = builtMenuMock;
+
+    const actual = service.menu;
+
+    expect(actual).toEqual(expected);
+  });
+
+  it('should return the found home menu item', () => {
+    const expected = builtMenuMock[0].children[0];
+
+    const actual = service.homeMenuItem;
+
+    expect(actual).toEqual(expected);
+  });
+
+  it('should update the active path when the menu item is activated', fakeAsync(() => {
+    const expected = [
+      builtMenuMock[0],
+      builtMenuMock[0].children[1],
+    ];
+
+    let actual: any;
+
+    service.activePath$.subscribe(x => actual = x);
+
+    service.activateMenuItem('http://domain.com/iframe1/url', 'app/path/to/page1');
+
+    tick();
+
+    expect(actual).toEqual(expected);
+  }));
+
+  it('should toggle the menu', () => {
+    expect(service.isMenuCollapsed).toBeTruthy();
+
+    service.toggle();
+
+    expect(service.isMenuCollapsed).toBeFalsy();
+
+    service.toggle();
+
+    expect(service.isMenuCollapsed).toBeTruthy();
+  });
+
+  it('should open the drawer', () => {
+    service.openDrawer(builtMenuMock[0]);
+
+    expect(service.isDrawerOpened).toBeTruthy();
+  });
+
+  it('should close the drawer', () => {
+    service.openDrawer(builtMenuMock[0]);
+
+    expect(service.isDrawerOpened).toBeTruthy();
+
+    service.closeDrawer();
+
+    expect(service.isDrawerOpened).toBeFalsy();
+  });
+
+  it('should return the drawer menu item', () => {
+    const expected = builtMenuMock[0];
+
+    service.openDrawer(builtMenuMock[0]);
+
+    expect(service.drawerMenuItem).toEqual(expected);
+  });
+
+  describe('when there is an active menu item', () => {
+    beforeEach(async(() => {
+      service.activateMenuItem('http://domain.com/iframe1/url', 'app/path/to/page1');
+    }));
+
+    it('should check for activeness positively the root active element', () => {
+      const actual = service.isMenuItemActive(builtMenuMock[0]);
+
+      expect(actual).toBeTruthy();
+    });
+
+    it('should check for activeness positively the child active element', () => {
+      const actual = service.isMenuItemActive(builtMenuMock[0].children[1]);
+
+      expect(actual).toBeTruthy();
+    });
+
+    it('should check for activeness negatively an inactive menu item', () => {
+      const actual = service.isMenuItemActive(builtMenuMock[1]);
+
+      expect(actual).toBeFalsy();
+    });
+  });
+});
