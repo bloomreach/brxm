@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -96,6 +96,11 @@ public class PageModelAggregationValve extends AggregationValve {
      * Page definition ID (from the configuration) metadata name.
      */
     private static final String PAGE_DEFINITION_ID_METADATA = "definitionId";
+
+    /**
+     * Preview mode meta-data name.
+     */
+    private static final String PAGE_PREVIEW_METADATA = "preview";
 
     /**
      * Maximum content reference level request parameter name.
@@ -270,6 +275,7 @@ public class PageModelAggregationValve extends AggregationValve {
         }
 
         aggregatedPageModel.setPageWindowModel(pageWindowModel);
+        addPreviewFlagToPageModel(aggregatedPageModel, requestContext);
         addLinksToPageModel(aggregatedPageModel);
 
         final int sortedComponentWindowsLen = sortedComponentWindows.length;
@@ -420,6 +426,12 @@ public class PageModelAggregationValve extends AggregationValve {
         }
 
         model.putMetadata(PARAMETERS_METADATA, paramsNode);
+    }
+
+    private void addPreviewFlagToPageModel(final AggregatedPageModel aggregatedPageModel, final HstRequestContext requestContext) {
+        if (requestContext.isChannelManagerPreviewRequest()) {
+            aggregatedPageModel.putMetadata(PAGE_PREVIEW_METADATA, true);
+        }
     }
 
     /**
