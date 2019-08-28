@@ -31,8 +31,12 @@ export * from './api';
  *
  * @param config configuration of the SPA integration with brXM.
  */
-export function initialize(config: Configuration): Promise<void> {
+export async function initialize(config: Configuration): Promise<void> {
   const url = buildPageModelUrl(config.request, config.options);
-  // TODO: fetch the page model using this URL and return a Page instance
-  return Promise.resolve();
+  const pageModel = await config.httpClient({
+    url,
+    method: 'get',
+    headers: config.request.headers,
+  });
+  // TODO: return a Page instance for the fetched model
 }

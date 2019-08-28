@@ -26,8 +26,25 @@ const options = {
 };
 
 describe('initialize', () => {
-  it('does nothing yet', () => {
+  it('fetches the page model', async () => {
+    const request = { path: '/', headers: { 'Cookie': 'JSESSIONID=1234' } };
+    const httpClient = jest.fn();
+
+    await initialize({ httpClient, request, options });
+
+    expect(httpClient).toHaveBeenCalledWith({
+      method: 'get',
+      url: 'http://localhost:8080/site/my-spa/resourceapi',
+      headers: { 'Cookie': 'JSESSIONID=1234' },
+    });
+  });
+
+  it('rejects when fetching the page model fails', () => {
     const request = { path: '/' };
-    expect(initialize({ request, options })).toBeDefined();
+    const error = Error('Failed to fetch page model data');
+    const httpClient = () => { throw error };
+
+    expect.assertions(1);
+    expect(initialize({ httpClient, request, options })).rejects.toBe(error)
   });
 });
