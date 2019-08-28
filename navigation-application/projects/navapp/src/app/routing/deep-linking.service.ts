@@ -250,6 +250,8 @@ export class DeepLinkingService implements OnDestroy {
   }
 
   private setBrowserUrl(url: string, state: { [key: string]: any }): void {
+    url = `/${trimLeadingSlash(url)}`;
+
     if (this.location.isCurrentPathEqualTo(url)) {
       this.location.replaceState(url, '', state);
     } else {
