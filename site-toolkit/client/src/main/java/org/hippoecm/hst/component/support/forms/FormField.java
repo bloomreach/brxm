@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,14 +97,14 @@ public class FormField {
      * @param valueList the list of values for this field. May be null to clear existing values.
      */
     public void setValueList(final List<String> valueList) {
-        if (valueList == null) {
-            this.valueList = new ArrayList<>();
-        } else {
-            this.valueList = valueList;
-        }
+        this.valueList.clear();
         values.clear();
-        for (String s : valueList) {
-            values.put(s,s);
+
+        if (valueList != null) {
+            for (String s : valueList) {
+                values.put(s, s);
+                this.valueList.add(s);
+            }
         }
     }
 
