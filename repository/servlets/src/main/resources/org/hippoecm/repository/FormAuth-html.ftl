@@ -1,7 +1,7 @@
 <#ftl output_format="HTML">
 <!DOCTYPE html>
 <#--
-  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ ${response.setContentType("text/html;charset=UTF-8")}
 
 <html>
 <head>
-  <title>BloomReach Repository Browser - Login</title>
+  <title>Bloomreach Repository Browser - Login</title>
   <link href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAA7lJREFUWAm9V2lI1EEUf7ua4dplh2WJlJ1CdApthxqUmUiXn4KSqOiAgqAo8EN+iiKCsOhDfYiig4guKDtIkA5UMBKygsLO1dZuK492t12333Ob+c/O7uYetQ9+zHtv3pv3Zv7zZuZvor+TCd05wDIgHxgFpANdgB14AVQC14CPwD+lxRjtEeANA79gcwzg5GKmfhjhMhBOYN2mA36rYskgE86PQwa3pHyl4RlNNCDVTmazO6Qd0d5wk+BvLIhnXgdMFoqedtiIN1S6tYZyi7zUf1Bf2edxe6ix3knnjo6hhpo8qTeYXWAPGGJwTk2Al32FNDOZu2ndjgu0chORyWSW+mDMi6edtGtNIf1oU/dAN0yLgNvBXIROJMAb7qZQYnk9tO/EGZo5zyJ1vTGd7U7aWGylD+/GKabPwfOK8ucKSjwzTmK/X+/W8vMRBWfnlP596fClWkq2fFfGmgh+vSIHsJwA1/kU2ZM59gktLe0j5UiYIcOSae32G5pLrwnwIWPQlvKHhhAFt6zUTJaUNsWTJzhSkf1YXoF8qemT1EXTrMZOlx0RMAmJZsrJe6B48CcOViU9JpwAH68+yhjTRAmJCUKMup0++7Pma8TQOjgBo3SGjlCXTjONQExL13e9EUMbhhPgi8VHLkd0m0/4i9bjEZxonYLRW06AbzUffWodKtiY2pbXSZr/J02WIifAV6qPWpsnEB8osVJdNd8pKjWqgspzApVS4fWa6NbFRClHw7xv6aInD62KK0+oVpH9WE6AHxPGRztVUUAuF9/v0dHBsizydvO4gviOcQhBb9mQXzLHZUdnxxAq3xiybKRdMOb+rZ/UUJurdVVosp8oap5Pv82Ab/PYbaOp1WajuYscuAnFheXnGCDcue6gPdtW4x2j2p+B3ZEAW0UhEuiA7i1QIvtePRtPNVVumja7hQamhi7P9m8OOrR7IJ2sKNGWnofaAtjkmEEYNVvu3guU+dmZTF7Knl5PBSte0qSpLkodbCany0vNL4nuXk+j6soF5HHrZSeG4M+7EOBXVti0E5a8KfX3XrQyH8szwo7+x3AR2mdApEFPw2cD4NJ8v0FWSxNi78TnAd5jVA/w8ypUMlxiZ4FZgKAlYFiv+rRDDrgV9T0gBtBbLksuL27TAZ4hH6/831AH/AR0KoTiCpCsdPC9sxyoUnT/lZ2P0Xnm6krwyhQDcaM5iMTvRDUJXkGj5OOQSg5ifNGS+BXvJKYiIJ8L6krYIceVshGNg4okcJrFn7IQ8ipwD7D+BrZbLK6dz8HeAAAAAElFTkSuQmCC" rel="icon" type="image/png" />
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <style type="text/css">
