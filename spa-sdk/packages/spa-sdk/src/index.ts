@@ -21,7 +21,8 @@
  * @see module:api
  */
 
-import { Configuration } from './api';
+import { Configuration, Page } from './api';
+import { createPage } from './page';
 import { buildPageModelUrl } from './url';
 
 export * from './api';
@@ -31,12 +32,12 @@ export * from './api';
  *
  * @param config configuration of the SPA integration with brXM.
  */
-export async function initialize(config: Configuration): Promise<void> {
+export async function initialize(config: Configuration): Promise<Page> {
   const url = buildPageModelUrl(config.request, config.options);
-  const pageModel = await config.httpClient({
+  const modelData = await config.httpClient({
     url,
     method: 'get',
     headers: config.request.headers,
   });
-  // TODO: return a Page instance for the fetched model
+  return createPage(modelData);
 }
