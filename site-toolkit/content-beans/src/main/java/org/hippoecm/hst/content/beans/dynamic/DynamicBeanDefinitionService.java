@@ -184,7 +184,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
      * @return Class definition
      */
     private BeanInfo generateBeanDefinition(final BeanInfo parentBeanInfo, final ContentType contentType) {
-        final HippoContentBean contentBean = new HippoContentBean(contentType);
+        final HippoContentBean contentBean = new HippoContentBean("", contentType);
 
         final DynamicBeanBuilder builder = new DynamicBeanBuilder(
                 DynamicBeanUtils.createJavaClassName(contentBean.getName()), parentBeanInfo.getBeanClass());
@@ -198,7 +198,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
 
         final Class<? extends HippoBean> generatedBean = builder.create();
         objectConverter.addBeanDefinition(contentBean.getName(), generatedBean);
-        log.info("Created dynamic bean {} from parent bean {}.", contentBean.getName(), parentBeanInfo.getBeanClass().getSimpleName());
+        log.info("Created dynamic bean {} from parent bean {}.", contentType.getName(), parentBeanInfo.getBeanClass().getSimpleName());
 
         return new BeanInfo(generatedBean, true);
     }

@@ -241,7 +241,7 @@ public class DynamicBeanBuilder {
     }
 
     void addBeanMethodContentBlocks(final String methodName, final String propertyName, final boolean multiple) {
-        addSimpleGetMethod(methodName, List.class, METHOD_GET_CHILD_BEANS_BY_NAME, propertyName);
+        addCollectionGetMethod(methodName, METHOD_GET_CHILD_BEANS_BY_NAME, HippoBean.class, propertyName);
     }
 
     void addBeanMethodInternalType(final String methodName, final Class<?> returnType, final String propertyName, final boolean multiple) {

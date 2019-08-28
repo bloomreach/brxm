@@ -48,7 +48,6 @@ public abstract class AbstractBeanBuilderService {
         HIPPO_MIRROR("hippo:mirror"), //
         HIPPO_IMAGE("hippogallery:image"), //
         HIPPO_RESOURCE("hippo:resource"), //
-        HIPPO_COMPOUND("hippo:compound"), //
         CONTENT_BLOCKS("content:blocks"), //
         UNKNOWN("Unknown");
 
@@ -220,8 +219,6 @@ public abstract class AbstractBeanBuilderService {
             } else {
                 log.warn("Type {} is undefined.", type);
             }
-        } else if (DocumentType.HIPPO_COMPOUND == documentType) {
-            return DocumentType.CONTENT_BLOCKS;
         }
 
         return documentType;

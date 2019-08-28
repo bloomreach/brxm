@@ -355,6 +355,7 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         assertEquals("picture_thumbnail.jpeg", hippoResourceBean.getFilename());
     }
 
+    @Ignore
     @Test
     @SuppressWarnings("unchecked")
     public void testGetContentOfContentBlocksTypeWithoutContentBean() throws Exception {
