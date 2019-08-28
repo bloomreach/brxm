@@ -563,7 +563,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         if (permissionNames.remove(Session.ACTION_SET_PROPERTY)) {
             permissions |= Permission.SET_PROPERTY;
         }
-        if (permissionNames.remove(session.ACTION_REMOVE)) {
+        if (permissionNames.remove(Session.ACTION_REMOVE)) {
             if (session.nodeExists(absPath)) {
                 permissions |= (session.propertyExists(absPath)) ?
                         (Permission.REMOVE_NODE | Permission.REMOVE_PROPERTY) :

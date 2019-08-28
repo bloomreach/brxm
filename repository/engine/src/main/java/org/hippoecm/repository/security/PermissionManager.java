@@ -29,9 +29,27 @@ import javax.jcr.security.Privilege;
 import org.apache.commons.lang3.StringUtils;
 import org.onehippo.repository.security.StandardPermissionNames;
 
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_ACTIONS;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_ADD_CHILD_NODES;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_ALL;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_ALL_PRIVILEGES;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_LIFECYCLE_MANAGEMENT;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_LOCK_MANAGEMENT;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_MODIFY_ACCESS_CONTROL;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_MODIFY_PROPERTIES;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_NODE_TYPE_MANAGEMENT;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_READ;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_READ_ACCESS_CONTROL;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_REMOVE_CHILD_NODES;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_REMOVE_NODE;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_RETENTION_MANAGEMENT;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_VERSION_MANAGEMENT;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_WRITE;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_WRITE_PRIVILEGES;
+
 /**
- * Internal {@link #getInstance() singleton} PermissionManager to get the predefined jcr and default custom privileges,
- * and dynamically created privileges, and the representing permission name(s) for them.
+ * Internal {@link #getInstance() singleton} and fully thread-safe PermissionManager to get the predefined jcr and
+ * default custom privileges, and dynamically created privileges, and the representing permission name(s) for them.
  * <p>
  * The jcr privileges are pre-registered for both their qualified and expanded JCR name, and for the aggregate privileges
  * {@link StandardPermissionNames#JCR_WRITE} and {@link StandardPermissionNames#JCR_ALL} all the permission names for
@@ -58,7 +76,7 @@ import org.onehippo.repository.security.StandardPermissionNames;
  * The currently registered privileges can be retrieved through {@link #getCurrentPrivileges()}
  * </p>
  * <p>
- * Registered privileges and permission names are kept/cached <em>forever</em>!
+ * Registered privileges and permission names are kept in memory for the life-span of this (singleton) instance!
  * </p>
  */
 class PermissionManager {
@@ -118,7 +136,7 @@ class PermissionManager {
 
     private static final PermissionManager INSTANCE = new PermissionManager();
 
-    public static final PermissionManager getInstance() {
+    static final PermissionManager getInstance() {
         return INSTANCE;
     }
 
@@ -127,64 +145,93 @@ class PermissionManager {
     private final Map<String, Privilege> currentPrivilegesMap = new ConcurrentHashMap<>();
 
     private PermissionManager() {
-        HashMap<String, Privilege> map = new HashMap<>();
-        Set<Privilege> privileges = new HashSet<>();
+        final HashMap<String, Privilege> privilegeMap = new HashMap<>();
 
-        privileges.add(addJcrPrivilege(StandardPermissionNames.JCR_MODIFY_PROPERTIES, Privilege.JCR_MODIFY_PROPERTIES, map));
-        privileges.add(addJcrPrivilege(StandardPermissionNames.JCR_ADD_CHILD_NODES, Privilege.JCR_ADD_CHILD_NODES, map));
-        privileges.add(addJcrPrivilege(StandardPermissionNames.JCR_REMOVE_NODE, Privilege.JCR_REMOVE_NODE, map));
-        privileges.add(addJcrPrivilege(StandardPermissionNames.JCR_REMOVE_CHILD_NODES, Privilege.JCR_REMOVE_CHILD_NODES, map));
+        final Set<Privilege> jcrWritePrivileges = new HashSet<>();
+        addAndColllectJcrPrivilege(JCR_MODIFY_PROPERTIES, Privilege.JCR_MODIFY_PROPERTIES, privilegeMap, jcrWritePrivileges);
+        addAndColllectJcrPrivilege(JCR_ADD_CHILD_NODES, Privilege.JCR_ADD_CHILD_NODES, privilegeMap, jcrWritePrivileges);
+        addAndColllectJcrPrivilege(JCR_REMOVE_NODE, Privilege.JCR_REMOVE_NODE, privilegeMap, jcrWritePrivileges);
+        addAndColllectJcrPrivilege(JCR_REMOVE_CHILD_NODES, Privilege.JCR_REMOVE_CHILD_NODES, privilegeMap, jcrWritePrivileges);
+        final Privilege jcrWritePrivilege = new PrivilegeImpl(JCR_WRITE, jcrWritePrivileges.toArray(new Privilege[0]));
 
-        final Privilege jcrWritePrivilege = new PrivilegeImpl(StandardPermissionNames.JCR_WRITE, privileges.toArray(new Privilege[0]));
-        map.put(StandardPermissionNames.JCR_WRITE, jcrWritePrivilege);
-        map.put(Privilege.JCR_WRITE, jcrWritePrivilege);
-        permissionsMap.put(StandardPermissionNames.JCR_WRITE, StandardPermissionNames.JCR_WRITE_PRIVILEGES);
-        permissionsMap.put(Privilege.JCR_WRITE, StandardPermissionNames.JCR_WRITE_PRIVILEGES);
+        privilegeMap.put(JCR_WRITE, jcrWritePrivilege);
+        privilegeMap.put(Privilege.JCR_WRITE, jcrWritePrivilege);
+        permissionsMap.put(JCR_WRITE, JCR_WRITE_PRIVILEGES);
+        permissionsMap.put(Privilege.JCR_WRITE, JCR_WRITE_PRIVILEGES);
 
-        privileges.clear();
-        privileges.add(jcrWritePrivilege);
-        privileges.add(addJcrPrivilege(StandardPermissionNames.JCR_READ, Privilege.JCR_READ, map));
-        privileges.add(addJcrPrivilege(StandardPermissionNames.JCR_READ_ACCESS_CONTROL, Privilege.JCR_READ_ACCESS_CONTROL, map));
-        privileges.add(addJcrPrivilege(StandardPermissionNames.JCR_MODIFY_ACCESS_CONTROL, Privilege.JCR_MODIFY_ACCESS_CONTROL, map));
-        privileges.add(addJcrPrivilege(StandardPermissionNames.JCR_LOCK_MANAGEMENT, Privilege.JCR_LOCK_MANAGEMENT, map));
-        privileges.add(addJcrPrivilege(StandardPermissionNames.JCR_VERSION_MANAGEMENT, Privilege.JCR_VERSION_MANAGEMENT, map));
-        privileges.add(addJcrPrivilege(StandardPermissionNames.JCR_NODE_TYPE_MANAGEMENT, Privilege.JCR_NODE_TYPE_MANAGEMENT, map));
-        privileges.add(addJcrPrivilege(StandardPermissionNames.JCR_RETENTION_MANAGEMENT, Privilege.JCR_RETENTION_MANAGEMENT, map));
-        privileges.add(addJcrPrivilege(StandardPermissionNames.JCR_LIFECYCLE_MANAGEMENT, Privilege.JCR_LIFECYCLE_MANAGEMENT, map));
+        final Set<Privilege> jcrAllPrivileges = new HashSet<>();
+        jcrAllPrivileges.add(jcrWritePrivilege);
+        addAndColllectJcrPrivilege(JCR_READ, Privilege.JCR_READ, privilegeMap, jcrAllPrivileges);
+        addAndColllectJcrPrivilege(JCR_READ_ACCESS_CONTROL, Privilege.JCR_READ_ACCESS_CONTROL, privilegeMap, jcrAllPrivileges);
+        addAndColllectJcrPrivilege(JCR_MODIFY_ACCESS_CONTROL, Privilege.JCR_MODIFY_ACCESS_CONTROL, privilegeMap, jcrAllPrivileges);
+        addAndColllectJcrPrivilege(JCR_LOCK_MANAGEMENT, Privilege.JCR_LOCK_MANAGEMENT, privilegeMap, jcrAllPrivileges);
+        addAndColllectJcrPrivilege(JCR_VERSION_MANAGEMENT, Privilege.JCR_VERSION_MANAGEMENT, privilegeMap, jcrAllPrivileges);
+        addAndColllectJcrPrivilege(JCR_NODE_TYPE_MANAGEMENT, Privilege.JCR_NODE_TYPE_MANAGEMENT, privilegeMap, jcrAllPrivileges);
+        addAndColllectJcrPrivilege(JCR_RETENTION_MANAGEMENT, Privilege.JCR_RETENTION_MANAGEMENT, privilegeMap, jcrAllPrivileges);
+        addAndColllectJcrPrivilege(JCR_LIFECYCLE_MANAGEMENT, Privilege.JCR_LIFECYCLE_MANAGEMENT, privilegeMap, jcrAllPrivileges);
+        final Privilege jcrAllPrivilege = new PrivilegeImpl(JCR_ALL, jcrAllPrivileges.toArray(new Privilege[0]));
 
-        final Privilege jcrAllPrivilege = new PrivilegeImpl(StandardPermissionNames.JCR_ALL, privileges.toArray(new Privilege[0]));
-        currentPrivilegesMap.put(StandardPermissionNames.JCR_ALL, jcrAllPrivilege);
+        currentPrivilegesMap.put(JCR_ALL, jcrAllPrivilege);
         currentPrivilegesMap.put(Privilege.JCR_ALL, jcrAllPrivilege);
-        permissionsMap.put(StandardPermissionNames.JCR_ALL, StandardPermissionNames.JCR_ALL_PRIVILEGES);
-        permissionsMap.put(Privilege.JCR_ALL, StandardPermissionNames.JCR_ALL_PRIVILEGES);
+        permissionsMap.put(JCR_ALL, JCR_ALL_PRIVILEGES);
+        permissionsMap.put(Privilege.JCR_ALL, JCR_ALL_PRIVILEGES);
 
         // seed default product privileges
-        addPrivilege(StandardPermissionNames.HIPPO_AUTHOR, currentPrivilegesMap);
-        addPrivilege(StandardPermissionNames.HIPPO_EDITOR, currentPrivilegesMap);
-        addPrivilege(StandardPermissionNames.HIPPO_ADMIN, currentPrivilegesMap);
-        addPrivilege(StandardPermissionNames.HIPPO_REST, currentPrivilegesMap);
+        addAndCollectPrivilege(StandardPermissionNames.HIPPO_AUTHOR, currentPrivilegesMap);
+        addAndCollectPrivilege(StandardPermissionNames.HIPPO_EDITOR, currentPrivilegesMap);
+        addAndCollectPrivilege(StandardPermissionNames.HIPPO_ADMIN, currentPrivilegesMap);
+        addAndCollectPrivilege(StandardPermissionNames.HIPPO_REST, currentPrivilegesMap);
 
-        map.putAll(currentPrivilegesMap);
-        standardPrivilegesMap = Collections.unmodifiableMap(map);
+        privilegeMap.putAll(currentPrivilegesMap);
+        standardPrivilegesMap = Collections.unmodifiableMap(privilegeMap);
 
-        StandardPermissionNames.JCR_ACTIONS.forEach(a -> permissionsMap.put(a, Collections.singleton(a)));
+        JCR_ACTIONS.forEach(action -> permissionsMap.put(action, Collections.singleton(action)));
     }
 
-    private Privilege addJcrPrivilege(final String privilegeName, final String expandedName, final Map<String, Privilege> privilegeMap) {
-        final Privilege privilege = addPrivilege(privilegeName, privilegeMap);
-        privilegeMap.put(expandedName, privilege);
-        permissionsMap.put(expandedName, Collections.singleton(privilegeName));
-        return privilege;
-    }
-
-    private Privilege addPrivilege(final String privilegeName, final Map<String, Privilege> privilegeMap) {
+    private void addAndColllectJcrPrivilege(final String privilegeName, final String expandedName,
+                                            final Map<String, Privilege> privilegeMap, final Set<Privilege> privilegeSet) {
         final Privilege privilege = new PrivilegeImpl(privilegeName);
-        privilegeMap.put(privilegeName, privilege);
         permissionsMap.put(privilegeName, Collections.singleton(privilegeName));
-        return privilege;
+        permissionsMap.put(expandedName, Collections.singleton(privilegeName));
+        privilegeMap.put(privilegeName, privilege);
+        privilegeMap.put(expandedName, privilege);
+        privilegeSet.add(privilege);
     }
 
-    public Privilege getOrCreatePrivilege(String privilegeName) {
+    private void addAndCollectPrivilege(final String privilegeName, final Map<String, Privilege> privilegeMap) {
+        final Privilege privilege = new PrivilegeImpl(privilegeName);
+        permissionsMap.put(privilegeName, Collections.singleton(privilegeName));
+        privilegeMap.put(privilegeName, privilege);
+    }
+
+    /**
+     * Thread-safe retrieval of a {@link Privilege} for a specific privilege name, which if needed is created on-the-fly.
+     * <p>
+     * Because privileges are immutable and kept in memory for the singleton life-span of the PermissionManager, always
+     * the same instance will be returned for the same privilege name, and therefore can be compared on object identity.
+     * </p>
+     * <p>
+     * Privilege names will first be trimmed, so "foo" will create/return the same (instance of) privilege as " foo ".
+     * </p>
+     * <p>
+     * Privilege names must be non-null, non-empty, not an empty string, and are not allowed to contain a comma (','),
+     * otherwise an IllegalArgumentException is throw.
+     * </p>
+     * <p>
+     * In addition, the standard JCR ACTION permission names are not allowed/supported and will also throw an
+     * IllegalArgumentException:
+     * </p>
+     * <u>
+     *     <li>{@link javax.jcr.Session#ACTION_READ} ("read")</li>
+     *     <li>{@link javax.jcr.Session#ACTION_ADD_NODE} ("add_node")</li>
+     *     <li>{@link javax.jcr.Session#ACTION_SET_PROPERTY} ("set_property")</li>
+     *     <li>{@link javax.jcr.Session#ACTION_REMOVE} ("remove")</li>
+     * </u>
+     * @param privilegeName the name of the privilege
+     * @return the privilege
+     * @throws IllegalArgumentException thrown when using an invalid or unsupported privilege name
+     */
+    Privilege getOrCreatePrivilege(String privilegeName) throws IllegalArgumentException {
         if (StringUtils.isBlank(privilegeName)) {
             throw new IllegalArgumentException("privilegeName cannot be null, empty or blank");
         }
@@ -198,7 +245,7 @@ class PermissionManager {
             if (privilegeName.contains(",")) {
                 throw new IllegalArgumentException("privilegeName cannot contain ',' character");
             }
-            if (StandardPermissionNames.JCR_ACTIONS.contains(trimmedName)) {
+            if (JCR_ACTIONS.contains(trimmedName)) {
                 throw new IllegalArgumentException("Standard JCR action " + trimmedName +" not allowed to create a Privilege");
             }
             privilege = currentPrivilegesMap.computeIfAbsent(privilegeName, PrivilegeImpl::new);
@@ -207,7 +254,28 @@ class PermissionManager {
         return privilege;
     }
 
-    public Set<String> getOrCreatePermissionNames(final String actionNames) {
+    /**
+     * Thread-safe retrieval of a set of permission names and/or privilege names as referenced in the provided string of
+     * actionName(s), separated by a comma (',').
+     * <p>
+     * For yet unknown <em>privilege</em> names, first a Privilege will be created on-the-fly through {@link #getOrCreatePrivilege(String)}.
+     * </p>
+     * <p>
+     * As the splitted list of 'names' is first trimmed, and the standard JCR ACTION permission names are pre-registered,
+     * none of the restrictions for {@link #getOrCreatePrivilege(String)} apply here, other than that the actionNames
+     * parameter itself must not be null (throws IllegalArgumentException otherwise).
+     * </p>
+     * <p>
+     *  A special case are the {@link StandardPermissionNames#JCR_WRITE} and {@link StandardPermissionNames#JCR_WRITE}
+     *  permission names: when requested those will be <em>replaced</em> will their set of aggregated privilege names
+     *  {@link StandardPermissionNames#JCR_WRITE_PRIVILEGES} and {@link StandardPermissionNames#JCR_ALL_PRIVILEGES},
+     *  <em>without</em> themselves (just because the current use-cases are more optimal that way).
+     * </p>
+     * @param actionNames one or more permission/privilege names, separated by comma ','
+     * @return the effective set of permission names for the provided actionNames
+     * @throws IllegalArgumentException in case the actionNames parameter is null
+     */
+    Set<String> getOrCreatePermissionNames(final String actionNames) {
         if (actionNames == null) {
             throw new IllegalArgumentException("actionNames cannot be null");
         }
@@ -220,7 +288,26 @@ class PermissionManager {
         return new HashSet<>(permissionNames);
     }
 
-    public Set<String> getOrCreatePermissionNames(final Set<String> actionNames) {
+    /**
+     * Thread-safe retrieval of a set of permission names and/or privilege names as referenced in the provided set of
+     * actionName(s).
+     * <p>
+     * For yet unknown <em>privilege</em> names, first a Privilege will be created on-the-fly through {@link #getOrCreatePrivilege(String)}.
+     * </p>
+     * <p>
+     * Standard JCR ACTION permission names are supported (pre-registered).
+     * </p>
+     * <p>
+     *  A special case are the {@link StandardPermissionNames#JCR_WRITE} and {@link StandardPermissionNames#JCR_WRITE}
+     *  permission names: when requested those will be <em>replaced</em> will their set of aggregated privilege names
+     *  {@link StandardPermissionNames#JCR_WRITE_PRIVILEGES} and {@link StandardPermissionNames#JCR_ALL_PRIVILEGES},
+     *  <em>without</em> themselves (just because the current use-cases are more optimal that way).
+     * </p>
+     * @param actionNames a set of zero or more permission/privilege names
+     * @return the effective set of permission names for the provided actionNames
+     * @throws IllegalArgumentException in case the actionNames parameter is null
+     */
+    Set<String> getOrCreatePermissionNames(final Set<String> actionNames) {
         if (actionNames == null) {
             throw new IllegalArgumentException("actionNames cannot be null");
         }
@@ -252,7 +339,11 @@ class PermissionManager {
         return permissionNames;
     }
 
-    public Privilege[] getCurrentPrivileges() {
+    /**
+     * Thread-safe retrieval of all the pre-registered and possible dynamically created {@link Privilege}s
+     * @return all the pre-registered and possible dynamically created {@link Privilege}s
+     */
+    Privilege[] getCurrentPrivileges() {
         return currentPrivilegesMap.values().toArray(new Privilege[0]);
     }
 }
