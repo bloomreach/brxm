@@ -41,6 +41,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.onehippo.cm.engine.ConfigurationContentService;
+import org.onehippo.cm.engine.ConfigurationServiceImpl;
 import org.onehippo.cm.engine.autoexport.IsolatedRepository;
 import org.onehippo.cm.engine.autoexport.JcrRunner;
 import org.onehippo.cm.engine.autoexport.ModuleInfo;
@@ -221,12 +222,7 @@ public class SiteIntegrationTest {
         System.setProperty(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED, "false");
         final String fixtureName = "sites_before_cms";
 
-        final ImmutableSet<String> sharedClasses = ImmutableSet.of("org.onehippo.cm.engine.Configuration",
-                "org.hippoecm.repository.",
-                "org.apache.jackrabbit",
-                "org.onehippo.repository.",
-                "org.quartz.spi.",
-                "org.onehippo.cm.");
+        final Set<String> sharedClasses = getSharedClasses();
         final Fixture fixture = new Fixture(fixtureName, sharedClasses);
 
         final HippoWebappContextRegistry hippoWebappContextRegistry = HippoWebappContextRegistry.get();
@@ -261,7 +257,9 @@ public class SiteIntegrationTest {
 
         System.setProperty(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED, "false");
         final String fixtureName = "sites_before_cms";
-        final Fixture fixture = new Fixture(fixtureName);
+
+        final Set<String> sharedClasses = getSharedClasses();
+        final Fixture fixture = new Fixture(fixtureName, sharedClasses);
 
         final HippoWebappContextRegistry hippoWebappContextRegistry = HippoWebappContextRegistry.get();
         try {
@@ -270,7 +268,9 @@ public class SiteIntegrationTest {
 
                 hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "m2"));
                 try {
-                    hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "namespace"));
+                    try (Log4jInterceptor ignored = Log4jInterceptor.onError().deny(ConfigurationServiceImpl.class).build()) {
+                        hippoWebappContextRegistry.register(createSiteApplicationContext(fixtureName, "namespace"));
+                    }
                     fail("Namespace definitions from site modules are not supported");
                 } catch(Exception ex) {
                     assertTrue(ex.getCause().getMessage().contains("Namespace definition can not be a part of site module"));
@@ -279,6 +279,15 @@ public class SiteIntegrationTest {
         } finally {
             hippoWebappContextRegistry.getEntries().forEach(e -> HippoWebappContextRegistry.get().unregister(e.getServiceObject()));
         }
+    }
+
+    private Set<String> getSharedClasses() {
+        return ImmutableSet.of("org.onehippo.cm.engine.Configuration",
+                "org.hippoecm.repository.",
+                "org.apache.jackrabbit",
+                "org.onehippo.repository.",
+                "org.quartz.spi.",
+                "org.onehippo.cm.");
     }
 
     public HippoWebappContext createSiteApplicationContext(final String fixtureName, final String siteName) throws MalformedURLException {
