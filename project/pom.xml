@@ -231,16 +231,6 @@
       </releases>
       <layout>default</layout>
     </pluginRepository>
-    <!-- Enterprise repo is needed here until community disclosure, but should be removed again. -->
-    <pluginRepository>
-      <id>hippo-maven2-enterprise</id>
-      <name>Hippo Enterprise Maven 2</name>
-      <url>https://maven.onehippo.com/maven2-enterprise</url>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-        <checksumPolicy>fail</checksumPolicy>
-      </releases>
-    </pluginRepository>
   </pluginRepositories>
 
   <dependencyManagement>
