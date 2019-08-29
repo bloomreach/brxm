@@ -228,7 +228,7 @@ export class DeepLinkingService implements OnDestroy {
 
     if (route.hasOwnProperty('redirectTo')) {
       const routesExceptCurrent = routes.filter(x => x.path !== route.path);
-      return this.matchRoute(route.redirectTo, routesExceptCurrent);
+      return this.matchRoute(route.redirectTo || '', routesExceptCurrent);
     }
 
     return [url, route];

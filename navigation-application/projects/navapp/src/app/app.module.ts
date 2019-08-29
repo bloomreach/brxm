@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
+import { APP_BASE_HREF, Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
@@ -41,6 +41,7 @@ const loadNavItems = (navConfigService: NavConfigService) => () => navConfigServ
   providers: [
     Location,
     { provide: LocationStrategy, useClass: PathLocationStrategy },
+    { provide: APP_BASE_HREF, useValue: window.location.origin },
     {
       provide: APP_INITIALIZER,
       useFactory: loadNavItems,
