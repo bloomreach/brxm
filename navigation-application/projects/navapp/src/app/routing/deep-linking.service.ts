@@ -107,12 +107,12 @@ export class DeepLinkingService implements OnDestroy {
   }
 
   navigateByAppUrl(appIframeUrl: string, appUrl: string, breadcrumbLabel?: string, flags?: NavigateFlags): void {
-    const browserUrl = this.convertAppUrlBrowserUrl(appIframeUrl, appUrl);
+    const browserUrl = this.convertAppUrlToBrowserUrl(appIframeUrl, appUrl);
     this.navigateByUrl(browserUrl, breadcrumbLabel, flags);
   }
 
   updateByAppUrl(appIframeUrl: string, appUrl: string, breadcrumbLabel?: string): void {
-    const browserUrl = this.convertAppUrlBrowserUrl(appIframeUrl, appUrl);
+    const browserUrl = this.convertAppUrlToBrowserUrl(appIframeUrl, appUrl);
 
     this.menuStateService.activateMenuItem(appIframeUrl, appUrl);
     this.breadcrumbsService.setSuffix(breadcrumbLabel);
@@ -208,14 +208,14 @@ export class DeepLinkingService implements OnDestroy {
     const routes: Route[] = navItems.map(navItem => {
 
       return {
-        path: this.convertAppUrlBrowserUrl(navItem.appIframeUrl, navItem.appPath),
+        path: this.convertAppUrlToBrowserUrl(navItem.appIframeUrl, navItem.appPath),
         navItem,
       };
     });
 
     const defaultRoute: Route = {
       path: '**',
-      redirectTo: this.homeUrl,
+      redirectTo: routes.length ? routes[0].path : '',
     };
 
     return routes.concat([defaultRoute]);
@@ -228,9 +228,9 @@ export class DeepLinkingService implements OnDestroy {
       return [undefined, undefined];
     }
 
-    if (route.redirectTo) {
+    if (route.hasOwnProperty('redirectTo')) {
       const routesExceptCurrent = routes.filter(x => x.path !== route.path);
-      return this.matchRoute(route.redirectTo, routesExceptCurrent);
+      return this.matchRoute(route.redirectTo || '', routesExceptCurrent);
     }
 
     return [url, route];
@@ -260,7 +260,7 @@ export class DeepLinkingService implements OnDestroy {
   }
 
   private convertBrowserUrlToAppUrl(browserUrl: string, matchedKnownNavItem: NavItem): string {
-    const knownBrowserUrl = this.convertAppUrlBrowserUrl(matchedKnownNavItem.appIframeUrl, matchedKnownNavItem.appPath);
+    const knownBrowserUrl = this.convertAppUrlToBrowserUrl(matchedKnownNavItem.appIframeUrl, matchedKnownNavItem.appPath);
 
     if (!browserUrl.startsWith(knownBrowserUrl)) {
       throw new Error(`Browser user ${browserUrl} and current nav item's url ${knownBrowserUrl} do not match`);
@@ -271,7 +271,7 @@ export class DeepLinkingService implements OnDestroy {
     return combinePathParts(matchedKnownNavItem.appPath, addon);
   }
 
-  private convertAppUrlBrowserUrl(appIframeUrl: string, appUrl: string): string {
+  private convertAppUrlToBrowserUrl(appIframeUrl: string, appUrl: string): string {
     const contextPath = trimSlashes(this.settings.appSettings.contextPath);
     const appBasePath = trimSlashes(new URL(appIframeUrl).pathname);
 
