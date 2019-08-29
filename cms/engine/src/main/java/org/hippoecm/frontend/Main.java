@@ -221,6 +221,9 @@ public class Main extends PluginApplication {
 
 //        getSessionSettings().setPageMapEvictionStrategy(new LeastRecentlyAccessedEvictionStrategy(1));
 
+        // LatestBundledJQueryResourceReference to be removed when upgrading to Wicket 8.x
+        getJavaScriptLibrarySettings().setJQueryReference(new LatestBundledJQueryResourceReference());
+
         getApplicationSettings().setPageExpiredErrorPage(PageExpiredErrorPage.class);
         try {
             String cfgParam = getConfigurationParameter(MAXUPLOAD_PARAM, null);
