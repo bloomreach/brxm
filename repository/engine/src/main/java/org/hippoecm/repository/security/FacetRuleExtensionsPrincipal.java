@@ -26,16 +26,16 @@ import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.FacetAuthDomain;
 import org.hippoecm.repository.security.domain.QFacetRule;
 
-public class AuthorizationFilterPrincipal implements Principal {
+public class FacetRuleExtensionsPrincipal implements Principal {
 
     /**
      * The name representing this principal, effectively the class name
      */
-    private final String name = AuthorizationFilterPrincipal.class.getName();
+    private final String name = FacetRuleExtensionsPrincipal.class.getName();
 
     private final Map<String, Collection<QFacetRule>> facetRuleExtensions;
 
-    public AuthorizationFilterPrincipal(final Map<String, Collection<QFacetRule>> facetRuleExtensions) {
+    public FacetRuleExtensionsPrincipal(final Map<String, Collection<QFacetRule>> facetRuleExtensions) {
         this.facetRuleExtensions = facetRuleExtensions;
     }
 
@@ -94,12 +94,12 @@ public class AuthorizationFilterPrincipal implements Principal {
     }
 
     /**
-     * Enforce that only a single instance of AuthorizationFilterPrincipal can be contained within a set
+     * Enforce that only a single instance of FacetRuleExtensionsPrincipal can be contained within a set
      * @param obj
-     * @return true when compared with any other AuthorizationFilterPrincipal instance, else false
+     * @return true when compared with any other FacetRuleExtensionsPrincipal instance, else false
      */
     final public boolean equals(Object obj) {
-        if (this == obj || obj instanceof AuthorizationFilterPrincipal) {
+        if (this == obj || obj instanceof FacetRuleExtensionsPrincipal) {
             return true;
         }
         return false;

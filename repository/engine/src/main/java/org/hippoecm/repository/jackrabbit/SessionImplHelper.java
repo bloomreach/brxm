@@ -77,7 +77,7 @@ import org.hippoecm.repository.dataprovider.MirrorNodeId;
 import org.hippoecm.repository.impl.NodeDecorator;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.HippoQueryHandler;
-import org.hippoecm.repository.security.AuthorizationFilterPrincipal;
+import org.hippoecm.repository.security.FacetRuleExtensionsPrincipal;
 import org.hippoecm.repository.security.HippoAMContext;
 import org.hippoecm.repository.security.HippoAccessManager;
 import org.hippoecm.repository.security.domain.FacetAuthDomain;
@@ -659,9 +659,9 @@ class SessionImplHelper {
         principals.removeIf(p -> p instanceof FacetAuthPrincipal);
         principals.add(new FacetAuthPrincipal(facetAuthDomains));
 
-        // remove/replace AuthorizationFilterPrincipal, if any, as there can only be one
-        principals.removeIf(p -> p instanceof AuthorizationFilterPrincipal);
-        principals.add(new AuthorizationFilterPrincipal(getFacetRules(domainExtensions)));
+        // remove/replace FacetRuleExtensionsPrincipal, if any, as there can only be one
+        principals.removeIf(p -> p instanceof FacetRuleExtensionsPrincipal);
+        principals.add(new FacetRuleExtensionsPrincipal(getFacetRules(domainExtensions)));
 
         Subject newSubject = new Subject(subject.isReadOnly(), principals, subject.getPublicCredentials(), subject.getPrivateCredentials());
         return context.getRepositoryContext().getWorkspaceManager().createSession(newSubject, workspaceName);

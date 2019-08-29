@@ -306,9 +306,9 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             cacheSize = DEFAULT_PERM_CACHE_SIZE;
         }
 
-        // fetch AuthorizationFilterPrincipal, if any
-        for (AuthorizationFilterPrincipal p : subject.getPrincipals(AuthorizationFilterPrincipal.class)) {
-            // there can only be one (see AuthorizationFilterPrincipal.equals()
+        // fetch FacetRuleExtensionsPrincipal, if any
+        for (FacetRuleExtensionsPrincipal p : subject.getPrincipals(FacetRuleExtensionsPrincipal.class)) {
+            // there can only be one (see FacetRuleExtensionsPrincipal.equals()
             initializeExtendedFacetRules(p);
         }
         readAccessCache = new HippoAccessCache(cacheSize);
@@ -323,10 +323,10 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     }
 
 
-    private void initializeExtendedFacetRules(final AuthorizationFilterPrincipal authorizationFilterPrincipal) {
+    private void initializeExtendedFacetRules(final FacetRuleExtensionsPrincipal facetRuleExtensionsPrincipal) {
         extendedFacetRules = new HashMap<>();
         final Set<FacetAuthDomain> facetAuthDomains = facetAuthPrincipal.getFacetAuthDomains();
-        final Map<String, Collection<QFacetRule>> facetRules = authorizationFilterPrincipal.getExpandedFacetRules(facetAuthDomains);
+        final Map<String, Collection<QFacetRule>> facetRules = facetRuleExtensionsPrincipal.getExpandedFacetRules(facetAuthDomains);
         for (Map.Entry<String, Collection<QFacetRule>> entry : facetRules.entrySet()) {
             final String domainPath = entry.getKey();
             if (!extendedFacetRules.containsKey(domainPath)) {
