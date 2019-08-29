@@ -91,10 +91,6 @@ export class DeepLinkingService implements OnDestroy {
     return this.events.asObservable();
   }
 
-  private get homeUrl(): string {
-    return this.settings.appSettings.homeUrl ? trimSlashes(this.settings.appSettings.homeUrl) : this.routes.length && this.routes[0].path;
-  }
-
   initialNavigation(): void {
     this.setUpLocationChangeListener();
     this.navigateByUrl(this.location.path(true));
@@ -205,17 +201,19 @@ export class DeepLinkingService implements OnDestroy {
   }
 
   private generateRoutes(navItems: NavItem[]): Route[] {
-    const routes: Route[] = navItems.map(navItem => {
+    const routes: Route[] = navItems.map(navItem => ({
+      path: this.convertAppUrlToBrowserUrl(navItem.appIframeUrl, navItem.appPath),
+      navItem,
+    }));
 
-      return {
-        path: this.convertAppUrlToBrowserUrl(navItem.appIframeUrl, navItem.appPath),
-        navItem,
-      };
-    });
+    const homeMenuItem = this.menuStateService.homeMenuItem;
+    const homeUrl = homeMenuItem ?
+      this.convertAppUrlToBrowserUrl(homeMenuItem.navItem.appIframeUrl, homeMenuItem.navItem.appPath) :
+      '';
 
     const defaultRoute: Route = {
       path: '**',
-      redirectTo: routes.length ? routes[0].path : '',
+      redirectTo: homeUrl,
     };
 
     return routes.concat([defaultRoute]);

@@ -72,6 +72,12 @@ describe('DeepLinkingService', () => {
   const menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
     'activateMenuItem',
   ]);
+  menuStateServiceMock.homeMenuItem = {
+    navItem: {
+      appIframeUrl: 'http://domain.com/iframe1/url',
+      appPath: 'app/path/to/home',
+    },
+  };
 
   const breadcrumbsServiceMock = jasmine.createSpyObj('BreadcrumbsService', [
     'setSuffix',
@@ -80,7 +86,6 @@ describe('DeepLinkingService', () => {
   const globalSettingsServiceMock = {
     appSettings: {
       contextPath: '/context/',
-      homeUrl: '/context/iframe1/url/app/path/to/home',
     },
   } as any;
 
