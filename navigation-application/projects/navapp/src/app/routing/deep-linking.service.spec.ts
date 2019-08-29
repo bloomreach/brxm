@@ -177,7 +177,7 @@ describe('DeepLinkingService', () => {
       expect(menuStateService.activateMenuItem).toHaveBeenCalledWith('http://domain.com/iframe1/url', 'app/path/to/page1/internal/page1');
       expect(breadcrumbsService.setSuffix).toHaveBeenCalledWith('some breadcrumb label');
       expect(location.go).toHaveBeenCalledWith(
-        'context/iframe1/url/app/path/to/page1/internal/page1',
+        '/context/iframe1/url/app/path/to/page1/internal/page1',
         '',
         { breadcrumbLabel: 'some breadcrumb label' },
       );
@@ -197,7 +197,7 @@ describe('DeepLinkingService', () => {
       expect(menuStateService.activateMenuItem).toHaveBeenCalledWith('http://domain.com/iframe2/url', 'another/app/path/to/home');
       expect(breadcrumbsService.setSuffix).toHaveBeenCalledWith('another breadcrumb label');
       expect(location.go).toHaveBeenCalledWith(
-        'context/iframe2/url/another/app/path/to/home',
+        '/context/iframe2/url/another/app/path/to/home',
         '',
         { breadcrumbLabel: 'another breadcrumb label', flags: '{"someFlag":true}' },
       );
@@ -214,7 +214,7 @@ describe('DeepLinkingService', () => {
       tick();
 
       expect(location.replaceState).toHaveBeenCalledWith(
-        'context/iframe1/url/app/path/to/home',
+        '/context/iframe1/url/app/path/to/home',
         '',
         { breadcrumbLabel: 'a breadcrumb label', flags: '{}' },
       );
