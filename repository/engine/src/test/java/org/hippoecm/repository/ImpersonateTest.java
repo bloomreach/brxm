@@ -31,6 +31,7 @@ import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class ImpersonateTest extends RepositoryTestCase {
@@ -116,6 +117,11 @@ public class ImpersonateTest extends RepositoryTestCase {
         try {
             assertEquals("system", systemSession.getUserID());
             Session userSession = systemSession.impersonate(new SimpleCredentials(TEST_USER_ID, TEST_USER_PASS.toCharArray()));
+
+            assertTrue(systemSession.hasPermission("/hippo:configuration/hippo:domains", Session.ACTION_READ));
+            assertFalse("test user should not have read access to hippo:domains",
+                    userSession.hasPermission("/hippo:configuration/hippo:domains", Session.ACTION_READ));
+
             String userId = userSession.getUserID();
             userSession.logout();
             assertEquals(TEST_USER_ID, userId);
@@ -164,4 +170,5 @@ public class ImpersonateTest extends RepositoryTestCase {
             assertFalse(object instanceof Session);
         }
     }
+
 }
