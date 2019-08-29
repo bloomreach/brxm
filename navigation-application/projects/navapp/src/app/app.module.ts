@@ -41,6 +41,7 @@ const loadNavItems = (navConfigService: NavConfigService) => () => navConfigServ
   providers: [
     Location,
     { provide: LocationStrategy, useClass: PathLocationStrategy },
+    { provide: APP_BASE_HREF, useValue: window.location.origin },
     {
       provide: APP_INITIALIZER,
       useFactory: loadNavItems,
