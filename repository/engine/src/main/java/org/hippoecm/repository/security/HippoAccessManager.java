@@ -124,11 +124,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     private FacetAuthPrincipal facetAuthPrincipal;
 
     /**
-     * The AuthorizationFilterPrincipal when using a delegated session
-     */
-    private AuthorizationFilterPrincipal authorizationFilterPrincipal;
-
-    /**
      * hierarchy manager used for ACL-based access control model
      */
     private HierarchyManager hierMgr;
@@ -311,14 +306,10 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             cacheSize = DEFAULT_PERM_CACHE_SIZE;
         }
 
-        authorizationFilterPrincipal = null;
         // fetch AuthorizationFilterPrincipal, if any
         for (AuthorizationFilterPrincipal p : subject.getPrincipals(AuthorizationFilterPrincipal.class)) {
             // there can only be one (see AuthorizationFilterPrincipal.equals()
-            authorizationFilterPrincipal = p;
-        }
-        if (authorizationFilterPrincipal != null) {
-            initializeExtendedFacetRules();
+            initializeExtendedFacetRules(p);
         }
         readAccessCache = new HippoAccessCache(cacheSize);
         readVirtualAccessCache = new WeakHashMap<>();
@@ -332,7 +323,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     }
 
 
-    private void initializeExtendedFacetRules() {
+    private void initializeExtendedFacetRules(final AuthorizationFilterPrincipal authorizationFilterPrincipal) {
         extendedFacetRules = new HashMap<>();
         final Set<FacetAuthDomain> facetAuthDomains = facetAuthPrincipal.getFacetAuthDomains();
         final Map<String, Collection<QFacetRule>> facetRules = authorizationFilterPrincipal.getExpandedFacetRules(facetAuthDomains);
@@ -355,7 +346,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         subject = null;
         session = null;
         facetAuthPrincipal = null;
-        authorizationFilterPrincipal = null;
 
         // clear out all caches
         implicitReads.clear();

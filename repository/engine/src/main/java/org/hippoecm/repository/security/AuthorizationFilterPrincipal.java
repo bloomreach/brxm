@@ -33,10 +33,10 @@ public class AuthorizationFilterPrincipal implements Principal {
      */
     private final String name = AuthorizationFilterPrincipal.class.getName();
 
-    private final Map<String, Collection<QFacetRule>> facetRules;
+    private final Map<String, Collection<QFacetRule>> facetRuleExtensions;
 
-    public AuthorizationFilterPrincipal(final Map<String, Collection<QFacetRule>> facetRules) {
-        this.facetRules = facetRules;
+    public AuthorizationFilterPrincipal(final Map<String, Collection<QFacetRule>> facetRuleExtensions) {
+        this.facetRuleExtensions = facetRuleExtensions;
     }
 
     @Override
@@ -44,15 +44,11 @@ public class AuthorizationFilterPrincipal implements Principal {
         return name;
     }
 
-    public Map<String, Collection<QFacetRule>> getFacetRules() {
-        return facetRules;
-    }
 
     public Map<String, Collection<QFacetRule>> getExpandedFacetRules(Set<FacetAuthDomain> fads) {
         Map<String, Collection<QFacetRule>> expandedFacetRules = new HashMap<>();
 
-        final Map<String, Collection<QFacetRule>> facetRules = getFacetRules();
-        for (Map.Entry<String, Collection<QFacetRule>> entry : facetRules.entrySet()) {
+        for (Map.Entry<String, Collection<QFacetRule>> entry : facetRuleExtensions.entrySet()) {
             final String domainPath = entry.getKey();
             if (domainPath.startsWith("*/") || domainPath.endsWith("/*")) {
                 continue;
@@ -63,7 +59,7 @@ public class AuthorizationFilterPrincipal implements Principal {
             expandedFacetRules.get(domainPath).addAll(entry.getValue());
         }
 
-        for (Map.Entry<String, Collection<QFacetRule>> entry : facetRules.entrySet()) {
+        for (Map.Entry<String, Collection<QFacetRule>> entry : facetRuleExtensions.entrySet()) {
             final String domainPath = entry.getKey();
             if (!domainPath.startsWith("*/") && !domainPath.endsWith("/*")) {
                 continue;
