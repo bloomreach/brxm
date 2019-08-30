@@ -21,6 +21,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 import { ClientAppModule } from './client-app/client-app.module';
+import { ErrorHandlingModule } from './error-handling/error-handling.module';
 import { MainMenuModule } from './main-menu/main-menu.module';
 import { NavConfigService } from './services/nav-config.service';
 import { SharedModule } from './shared/shared.module';
@@ -37,6 +38,7 @@ const loadNavItems = (navConfigService: NavConfigService) => () => navConfigServ
     HttpClientModule,
     MainMenuModule,
     TopPanelModule,
+    ErrorHandlingModule,
   ],
   providers: [
     Location,

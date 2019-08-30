@@ -91,6 +91,15 @@ export class DeepLinkingService implements OnDestroy {
     return this.events.asObservable();
   }
 
+  private get homeUrl(): string {
+    const homeMenuItem = this.menuStateService.homeMenuItem;
+    const homeUrl = homeMenuItem ?
+      this.convertAppUrlToBrowserUrl(homeMenuItem.navItem.appIframeUrl, homeMenuItem.navItem.appPath) :
+      '';
+
+    return homeUrl;
+  }
+
   initialNavigation(): void {
     this.setUpLocationChangeListener();
     this.navigateByUrl(this.location.path(true));
@@ -124,6 +133,10 @@ export class DeepLinkingService implements OnDestroy {
 
   navigateByUrl(url: string, breadcrumbLabel?: string, flags?: NavigateFlags): void {
     this.scheduleNavigation(url, NavigationTrigger.Imperative, { breadcrumbLabel }, { ...flags });
+  }
+
+  navigateToHome(): void {
+    this.navigateByUrl(this.homeUrl);
   }
 
   private setUpLocationChangeListener(): void {

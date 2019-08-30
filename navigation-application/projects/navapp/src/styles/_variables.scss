@@ -27,7 +27,7 @@ $blue-100: #94c9f7;
 $blue-200: #5faff5;
 $blue-300: #3399f2;
 $blue-400: #1785e6;
-$blue-500: #0877d1;
+$blue-500: #1ea7eb;
 $blue-600: #0465ba;
 $blue-700: #0259a6;
 $blue-800: #024e96;
@@ -120,7 +120,7 @@ $menu-icon-color: rgba(255, 255, 255, .7);
 $menu-title-text-color: rgba(255, 255, 255, 1);
 $menu-pressed-text-color: #fff;
 $menu-hover-text-color: $menu-bg;
-$menu-active-text-color: #1ea7eb;
+$menu-active-text-color: $blue-500;
 $menu-drawer-menu-hover-text-color: #fff;
 
 // Top panel
