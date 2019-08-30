@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -87,6 +87,7 @@ import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_S
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_TRIGGERS;
 import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_WORKFLOW_JOB;
 import static org.hippoecm.repository.util.JcrUtils.ALL_EVENTS;
+import static org.hippoecm.repository.util.JcrUtils.getBooleanProperty;
 import static org.quartz.SimpleTrigger.REPEAT_INDEFINITELY;
 
 
@@ -209,10 +210,10 @@ public class JCRJobStore implements JobStore {
     private boolean initializeTriggersOfJob(final Node jobNode) throws RepositoryException {
         boolean changes = false;
 
-        final boolean jobEnabled = JcrUtils.getBooleanProperty(jobNode, HIPPOSCHED_ENABLED, true);
+        final boolean jobEnabled = getBooleanProperty(jobNode, HIPPOSCHED_ENABLED, true);
         if (jobNode.hasNode(HIPPOSCHED_TRIGGERS)) {
             for (Node triggerNode : new NodeIterable(jobNode.getNode(HIPPOSCHED_TRIGGERS).getNodes())) {
-                final boolean triggerEnabled = JcrUtils.getBooleanProperty(triggerNode, HIPPOSCHED_ENABLED, true);
+                final boolean triggerEnabled = getBooleanProperty(triggerNode, HIPPOSCHED_ENABLED, true);
                 if (!isLocked(jobNode, triggerNode)) {
                     if (jobEnabled && triggerEnabled) {
                         changes |= initializeTrigger(triggerNode);
@@ -575,11 +576,11 @@ public class JCRJobStore implements JobStore {
         synchronized (session) {
             try {
                 for (Node triggerNode : getPendingTriggers(session, noLaterThan)) {
-                    if (!JcrUtils.getBooleanProperty(triggerNode, HIPPOSCHED_ENABLED, true)) {
+                    if (!getBooleanProperty(triggerNode, HIPPOSCHED_ENABLED, true)) {
                         continue;
                     }
                     final Node jobNode = triggerNode.getParent().getParent();
-                    if (!JcrUtils.getBooleanProperty(jobNode, HIPPOSCHED_ENABLED, true)) {
+                    if (!getBooleanProperty(jobNode, HIPPOSCHED_ENABLED, true)) {
                         continue;
                     }
                     LockResource lockResource = lock(jobNode, triggerNode);
@@ -591,7 +592,7 @@ public class JCRJobStore implements JobStore {
                                 if (triggers == null) {
                                     triggers = new ArrayList<>();
                                 }
-                                OperableTrigger trigger = createTriggerFromNode(triggerNode);
+                                final OperableTrigger trigger = createTriggerFromNode(triggerNode);
                                 trigger.getJobDataMap().put("lockResource", lockResource);
                                 triggers.add(trigger);
                                 if (--maxCount <= 0) {
@@ -674,6 +675,12 @@ public class JCRJobStore implements JobStore {
                             JcrUtils.ensureIsCheckedOut(jobNode.getParent());
                             jobNode.remove();
                             session.save();
+                        } else {
+                            // no next fire time, remove the next fire time so it won't come up from #getPendingTriggers
+                            if (triggerNode.hasProperty(HIPPOSCHED_NEXTFIRETIME)) {
+                                triggerNode.getProperty(HIPPOSCHED_NEXTFIRETIME).remove();
+                                session.save();
+                            }
                         }
                     }
                 } catch (ItemNotFoundException e) {
