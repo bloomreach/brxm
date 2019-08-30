@@ -133,3 +133,7 @@ $hippo-theme: mat-light-theme($hippo-primary, $hippo-accent, $hippo-warn);
 .mat-typography {
   color: rgba(0, 0, 0, .87);
 }
+
+.mat-flat-button > span {
+  letter-spacing: 1px;
+}
