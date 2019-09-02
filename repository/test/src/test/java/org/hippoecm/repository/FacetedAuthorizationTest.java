@@ -45,11 +45,14 @@ import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.security.domain.FacetRule;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
-import static javax.jcr.security.Privilege.JCR_WRITE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_ADD_CHILD_NODES;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_MODIFY_PROPERTIES;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_REMOVE_CHILD_NODES;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_REMOVE_NODE;
 
 public class FacetedAuthorizationTest extends RepositoryTestCase {
 
@@ -570,7 +573,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testAccessForChildNodeFollowsParent() throws RepositoryException {
+    public void testAccessForChildNodeOfDocument() throws RepositoryException {
         Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
         final Node handle = testData.addNode("doc", "hippo:handle");
         handle.addMixin("mix:referenceable");
@@ -578,22 +581,40 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
 
         Node doc = handle.addNode("doc", "hippo:authtestdocument");
         doc.addMixin("hippo:container");
-        final Node childNode = doc.addNode("link", "hippo:mirror");
-        childNode.setProperty("hippo:docbase", session.getRootNode().getIdentifier());
+        final Node childNode = doc.addNode("level1", "hippo:testcomposite");
+        childNode.addNode("level2", "hippo:testcomposite");
         session.save();
 
         Node userTestData = userSession.getRootNode().getNode(TEST_DATA_NODE);
-        try {
-            userTestData.getNode("doc/doc/link");
-            fail("User should not be able to read doc/doc/link");
-        } catch (PathNotFoundException expected) {}
+
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
 
         doc.setProperty("authtest", "canread");
         session.save();
 
-        userTestData = userSession.getRootNode().getNode(TEST_DATA_NODE);
-        assertTrue("User can still not read node while authorization was granted", userTestData.hasNode("doc/doc/link"));
-        userTestData.getNode("doc/doc/link");
+        // read should now be allowed to read 'doc/doc'
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
+
+        doc.setProperty("authtest", "canwrite");
+        session.save();
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+
+        // See JCR Spec 16.6.2 table: The Session Actions vs Privileges
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", JCR_MODIFY_PROPERTIES));
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/newprop", Session.ACTION_SET_PROPERTY));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_SET_PROPERTY));
+        // TODO REPO-1971 does below make sense? 'dummy' does not exist...
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/dummy", Session.ACTION_REMOVE));
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/dummy", JCR_REMOVE_NODE));
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", JCR_REMOVE_CHILD_NODES));
+
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/newnode", Session.ACTION_ADD_NODE));
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", JCR_ADD_CHILD_NODES));
+
+        userSession.getNode("/" + TEST_DATA_NODE + "/doc/doc").addNode("foo", "hippo:testcomposite");
+        userSession.save();
     }
 
     @Test
