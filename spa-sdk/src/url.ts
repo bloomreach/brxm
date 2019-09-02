@@ -45,11 +45,10 @@ function determinePreview(query: string) {
 function getChannelPath(path: string, query: string, mapping: PageModelUrlMapping) {
   const spaBasePath = mapping.spaBasePath || DEFAULT_SPA_BASE_PATH;
 
-  if (path.startsWith(spaBasePath)) {
-    return path.substring(spaBasePath.length);
-  } else {
+  if (!path.startsWith(spaBasePath)) {
     throw new Error(`Request path '${path}' does not start with SPA base path '${spaBasePath}'`);
   }
+  return path.substring(spaBasePath.length);
 }
 
 function removeTrailingSlash(path: string) {
