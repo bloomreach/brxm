@@ -11,20 +11,6 @@ definitions:
           hipposys:filter: false
           hipposys:type: Reference
           hipposys:value: /content
-        /exclude-hippostd-folder:
-          jcr:primaryType: hipposys:facetrule
-          hipposys:equals: false
-          hipposys:facet: nodetype
-          hipposys:filter: false
-          hipposys:type: Name
-          hipposys:value: hippostd:folder
-        /exclude-hippostd-directory:
-          jcr:primaryType: hipposys:facetrule
-          hipposys:equals: false
-          hipposys:facet: nodetype
-          hipposys:filter: false
-          hipposys:type: Name
-          hipposys:value: hippostd:directory
       /author:
         jcr:primaryType: hipposys:authrole
         hipposys:groups: [author]
