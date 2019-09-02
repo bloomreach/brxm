@@ -21,15 +21,18 @@
  * @see module:api
  */
 
-import { Request } from './api';
+import { Configuration } from './api';
+import { buildPageModelUrl } from './url';
 
 export * from './api';
 
 /**
- * TODO: add Typedoc
- * @param request
+ * Initializes the page model.
+ *
+ * @param config configuration of the SPA integration with brXM.
  */
-export function buildModelUrl(request: Request) {
-  // TODO: add Options parameter and return the right model URL.
-  return null;
+export function initialize(config: Configuration): Promise<void> {
+  const url = buildPageModelUrl(config.request, config.options);
+  // TODO: fetch the page model using this URL and return a Page instance
+  return Promise.resolve();
 }
