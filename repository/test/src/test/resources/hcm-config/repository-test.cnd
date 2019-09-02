@@ -23,6 +23,10 @@
 
 [hippo:ntunstructured] > nt:unstructured
 
+[hippo:testcomposite] > hippo:compound
++ * (hippo:testcomposite) = hippo:testcomposite
+- * (string)
+
 [hippo:testdocument] > hippo:document
 + * (nt:base) = hippo:ntunstructured multiple
 - * (Date)
