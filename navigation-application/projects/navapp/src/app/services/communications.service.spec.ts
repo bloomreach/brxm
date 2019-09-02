@@ -20,7 +20,7 @@ import { ReplaySubject } from 'rxjs';
 
 import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
-import { DeepLinkingService } from '../routing/deep-linking.service';
+import { DeepLinkingService } from '../deep-linking/deep-linking.service';
 
 import { BusyIndicatorService } from './busy-indicator.service';
 import { CommunicationsService } from './communications.service';
@@ -60,8 +60,8 @@ describe('CommunicationsService', () => {
   ]);
 
   const deepLinkingServiceMock = jasmine.createSpyObj('DeepLinkingService', [
-    'navigateByAppUrl',
-    'updateByAppUrl',
+    'navigateByNavLocation',
+    'updateByNavLocation',
   ]);
 
   beforeEach(() => {
@@ -178,18 +178,7 @@ describe('CommunicationsService', () => {
           breadcrumbLabel: 'some breadcrumb label',
         });
 
-        expect(deepLinkingServiceMock.navigateByAppUrl).toHaveBeenCalled();
-      });
-
-      it('should log an error if the item is not found', () => {
-        const path = 'some-perspective';
-        spyOn(console, 'error');
-        navConfigServiceMock.findNavItem.and.returnValue(undefined);
-        service.parentApiMethods.navigate({
-          path,
-        });
-
-        expect(console.error).toHaveBeenCalled();
+        expect(deepLinkingServiceMock.navigateByNavLocation).toHaveBeenCalled();
       });
     });
 
@@ -202,7 +191,7 @@ describe('CommunicationsService', () => {
 
         service.parentApiMethods.updateNavLocation(location);
 
-        expect(deepLinkingServiceMock.updateByAppUrl).toHaveBeenCalled();
+        expect(deepLinkingServiceMock.updateByNavLocation).toHaveBeenCalled();
       });
     });
 

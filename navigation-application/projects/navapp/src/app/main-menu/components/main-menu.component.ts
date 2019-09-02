@@ -16,11 +16,10 @@
 
 import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
 
 import { ClientAppService } from '../../client-app/services/client-app.service';
+import { DeepLinkingService } from '../../deep-linking/deep-linking.service';
 import { UserSettings } from '../../models/dto/user-settings.dto';
-import { DeepLinkingService } from '../../routing/deep-linking.service';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { GlobalSettingsService } from '../../services/global-settings.service';
 import { QaHelperService } from '../../services/qa-helper.service';
@@ -117,7 +116,7 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   selectMenuItem(item: MenuItem): void {
     this.isUserToolbarOpened = false;
     if (item instanceof MenuItemLink) {
-      this.deepLinkingService.navigateByAppUrl(item.navItem.appIframeUrl, item.navItem.appPath);
+      this.deepLinkingService.navigateByNavItem(item.navItem);
       return;
     }
 

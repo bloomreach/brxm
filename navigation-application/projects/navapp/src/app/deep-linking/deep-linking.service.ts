@@ -16,24 +16,20 @@
 
 import { Location } from '@angular/common';
 import { Injectable, OnDestroy } from '@angular/core';
-import { NavigateFlags, NavItem } from '@bloomreach/navapp-communication';
+import { NavigateFlags, NavItem, NavLocation } from '@bloomreach/navapp-communication';
 import { BehaviorSubject, Observable, of, Subject, Subscription, throwError } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
 import { finalize, map, skip, switchMap, tap } from 'rxjs/operators';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
-import { GlobalSettingsService } from '../services/global-settings.service';
 import { NavConfigService } from '../services/nav-config.service';
 import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
 
 import { NavigationStartEvent } from './events/navigation-start.event';
 import { NavigationStopEvent } from './events/navigation-stop.event';
 import { NavigationEvent } from './events/navigation.event';
-
-const trimLeadingSlash = (value: string) => value.replace(/^\//, '');
-const trimSlashes = (value: string) => trimLeadingSlash(value).replace(/\/$/, '');
-const combinePathParts = (...parts) => parts.filter(x => x.length > 0).join('/');
+import { UrlMapperService } from './url-mapper.service';
 
 interface Route {
   path: string;
@@ -49,26 +45,28 @@ enum NavigationTrigger {
 interface Navigation {
   url: string;
   navItem: NavItem;
-  appUrl: string;
+  appPathAddOn: string;
   clientAppFlags: NavigateFlags;
   state: { [key: string]: string };
   source: NavigationTrigger;
+  replaceState: boolean;
 }
 
 @Injectable({
   providedIn: 'root',
 })
 export class DeepLinkingService implements OnDestroy {
-  private routes: Route[] = [];
+  private readonly routes: Route[];
   private locationSubscription: Subscription;
   private readonly transitions = new Subject<Partial<Navigation>>();
   private readonly navigations = new BehaviorSubject<Navigation>({
     url: undefined,
     navItem: undefined,
-    appUrl: undefined,
+    appPathAddOn: '',
     clientAppFlags: {},
     state: {},
     source: NavigationTrigger.Imperative,
+    replaceState: false,
   });
   private events = new Subject<NavigationEvent>();
 
@@ -78,7 +76,7 @@ export class DeepLinkingService implements OnDestroy {
     private clientAppService: ClientAppService,
     private menuStateService: MenuStateService,
     private breadcrumbsService: BreadcrumbsService,
-    private settings: GlobalSettingsService,
+    private urlMapperService: UrlMapperService,
   ) {
     this.setupNavigations();
     this.processNavigations();
@@ -102,7 +100,10 @@ export class DeepLinkingService implements OnDestroy {
 
   initialNavigation(): void {
     this.setUpLocationChangeListener();
-    this.navigateByUrl(this.location.path(true));
+
+    const url = this.location.path(true);
+
+    this.scheduleNavigation(url, NavigationTrigger.Imperative, {}, {}, true);
   }
 
   ngOnDestroy(): void {
@@ -111,27 +112,48 @@ export class DeepLinkingService implements OnDestroy {
     }
   }
 
-  navigateByAppUrl(appIframeUrl: string, appUrl: string, breadcrumbLabel?: string, flags?: NavigateFlags): void {
-    const browserUrl = this.convertAppUrlToBrowserUrl(appIframeUrl, appUrl);
+  navigateByNavItem(navItem: NavItem, breadcrumbLabel?: string, flags?: NavigateFlags): void {
+    const browserUrl = this.urlMapperService.mapNavItemToBrowserUrl(navItem);
     this.navigateByUrl(browserUrl, breadcrumbLabel, flags);
   }
 
-  updateByAppUrl(appIframeUrl: string, appUrl: string, breadcrumbLabel?: string): void {
-    const browserUrl = this.convertAppUrlToBrowserUrl(appIframeUrl, appUrl);
+  navigateByNavLocation(navLocation: NavLocation): void {
+    let browserUrl: string;
 
-    this.menuStateService.activateMenuItem(appIframeUrl, appUrl);
-    this.breadcrumbsService.setSuffix(breadcrumbLabel);
+    try {
+      browserUrl = this.urlMapperService.mapNavLocationToBrowserUrl(navLocation, true)[0];
+    } catch (e) {
+      console.error(`An attempt to navigate was failed due to app path is not allowable: '${navLocation.path}'`);
+      return;
+    }
 
-    this.setBrowserUrl(browserUrl, { breadcrumbLabel });
+    this.navigateByUrl(browserUrl, navLocation.breadcrumbLabel);
+  }
+
+  updateByNavLocation(navLocation: NavLocation): void {
+    let browserUrl: string;
+    let navItem: NavItem;
+
+    try {
+      [browserUrl, navItem] = this.urlMapperService.mapNavLocationToBrowserUrl(navLocation, true);
+    } catch (e) {
+      console.error(`An attempt to update the app url was failed due to app path is not allowable: '${navLocation.path}'`);
+      return;
+    }
+
+    this.menuStateService.activateMenuItem(navItem.appIframeUrl, navItem.appPath);
+    this.breadcrumbsService.setSuffix(navLocation.breadcrumbLabel);
+
+    this.setBrowserUrl(browserUrl, { breadcrumbLabel: navLocation.breadcrumbLabel });
   }
 
   navigateToDefaultCurrentAppPage(): void {
-    const navigation = this.getLastNavigation();
+    const lastNavigation = this.getLastNavigation();
 
-    this.navigateByAppUrl(navigation.navItem.appIframeUrl, navigation.navItem.appPath);
+    this.navigateByNavItem(lastNavigation.navItem, '', { forceRefresh: true });
   }
 
-  navigateByUrl(url: string, breadcrumbLabel?: string, flags?: NavigateFlags): void {
+  private navigateByUrl(url: string, breadcrumbLabel?: string, flags?: NavigateFlags): void {
     this.scheduleNavigation(url, NavigationTrigger.Imperative, { breadcrumbLabel }, { ...flags });
   }
 
@@ -151,24 +173,29 @@ export class DeepLinkingService implements OnDestroy {
         delete change.state.flags;
       } catch {}
 
-      this.scheduleNavigation(change.url, NavigationTrigger.PopState, change.state, flags);
+      this.scheduleNavigation(change.url, NavigationTrigger.PopState, change.state || {}, flags);
     }) as any;
   }
 
   private setupNavigations(): void {
     this.transitions.pipe(
       tap(() => this.events.next(new NavigationStartEvent())),
-      map(t => ({ ...t, url: trimLeadingSlash(t.url) })),
       switchMap(t => {
-        const [matchedUrl, route] = this.matchRoute(t.url, this.routes);
+        const route = this.matchRoute(t.url, this.routes);
 
         if (!route) {
           return throwError(`Unknown url: ${t.url}`);
         }
 
-        return of({ ...t, url: matchedUrl, navItem: route.navItem });
+        if (!t.url.startsWith(route.path)) {
+          t.url = route.path;
+          t.state = {};
+        }
+
+        const appPathAddOn = t.url.slice(route.path.length);
+
+        return of({ ...t, navItem: route.navItem, appPathAddOn });
       }),
-      map(t => ({ ...t, appUrl: this.convertBrowserUrlToAppUrl(t.url, t.navItem) })),
       switchMap(t => {
         const appId = t.navItem.appIframeUrl;
         const app = this.clientAppService.getApp(appId);
@@ -181,7 +208,10 @@ export class DeepLinkingService implements OnDestroy {
           throwError(`The app with id="${appId}" is not connected to the nav app`);
         }
 
-        return fromPromise(app.api.navigate({ path: t.appUrl }, t.clientAppFlags)).pipe(
+        const appPath = this.urlMapperService.combinePathParts(t.navItem.appPath, t.appPathAddOn);
+        const appPathWithoutLeadingSlash = this.urlMapperService.trimLeadingSlash(appPath);
+
+        return fromPromise(app.api.navigate({ path: appPathWithoutLeadingSlash }, t.clientAppFlags)).pipe(
           map(() => t),
         );
       }),
@@ -204,7 +234,7 @@ export class DeepLinkingService implements OnDestroy {
 
         if (n.source === NavigationTrigger.Imperative) {
           n.state.flags = JSON.stringify(n.clientAppFlags);
-          this.setBrowserUrl(n.url, n.state);
+          this.setBrowserUrl(n.url, n.state, n.replaceState);
         }
 
         this.events.next(new NavigationStopEvent());
@@ -213,16 +243,46 @@ export class DeepLinkingService implements OnDestroy {
     );
   }
 
+  private scheduleNavigation(
+    url: string,
+    source: NavigationTrigger,
+    state: { [key: string]: string },
+    flags: NavigateFlags,
+    replaceState = false,
+  ): void {
+    this.transitions.next({
+      url,
+      state,
+      source,
+      clientAppFlags: flags,
+      replaceState,
+    });
+  }
+
+  private getLastNavigation(): Navigation {
+    return this.navigations.value;
+  }
+
+  private setBrowserUrl(url: string, state: { [key: string]: any }, replaceState = false): void {
+    if (!state.breadcrumbLabel) {
+      delete state.breadcrumbLabel;
+    }
+
+    if (this.location.isCurrentPathEqualTo(url) || replaceState) {
+      this.location.replaceState(url, '', state);
+    } else {
+      this.location.go(url, '', state);
+    }
+  }
+
   private generateRoutes(navItems: NavItem[]): Route[] {
     const routes: Route[] = navItems.map(navItem => ({
-      path: this.convertAppUrlToBrowserUrl(navItem.appIframeUrl, navItem.appPath),
+      path: this.urlMapperService.mapNavItemToBrowserUrl(navItem),
       navItem,
     }));
 
     const homeMenuItem = this.menuStateService.homeMenuItem;
-    const homeUrl = homeMenuItem ?
-      this.convertAppUrlToBrowserUrl(homeMenuItem.navItem.appIframeUrl, homeMenuItem.navItem.appPath) :
-      '';
+    const homeUrl = homeMenuItem ? this.urlMapperService.mapNavItemToBrowserUrl(homeMenuItem.navItem) : '';
 
     const defaultRoute: Route = {
       path: '**',
@@ -232,11 +292,11 @@ export class DeepLinkingService implements OnDestroy {
     return routes.concat([defaultRoute]);
   }
 
-  private matchRoute(url: string, routes: Route[]): [string, Route] {
+  private matchRoute(url: string, routes: Route[]): Route {
     const route = routes.find(x => url.startsWith(x.path) || x.path === '**');
 
     if (!route) {
-      return [undefined, undefined];
+      return;
     }
 
     if (route.hasOwnProperty('redirectTo')) {
@@ -244,48 +304,6 @@ export class DeepLinkingService implements OnDestroy {
       return this.matchRoute(route.redirectTo || '', routesExceptCurrent);
     }
 
-    return [url, route];
-  }
-
-  private scheduleNavigation(url: string, source: NavigationTrigger, state: { [key: string]: string }, flags: NavigateFlags): void {
-    this.transitions.next({
-      url,
-      state,
-      source,
-      clientAppFlags: flags,
-    });
-  }
-
-  private getLastNavigation(): Navigation {
-    return this.navigations.value;
-  }
-
-  private setBrowserUrl(url: string, state: { [key: string]: any }): void {
-    url = `/${trimLeadingSlash(url)}`;
-
-    if (this.location.isCurrentPathEqualTo(url)) {
-      this.location.replaceState(url, '', state);
-    } else {
-      this.location.go(url, '', state);
-    }
-  }
-
-  private convertBrowserUrlToAppUrl(browserUrl: string, matchedKnownNavItem: NavItem): string {
-    const knownBrowserUrl = this.convertAppUrlToBrowserUrl(matchedKnownNavItem.appIframeUrl, matchedKnownNavItem.appPath);
-
-    if (!browserUrl.startsWith(knownBrowserUrl)) {
-      throw new Error(`Browser user ${browserUrl} and current nav item's url ${knownBrowserUrl} do not match`);
-    }
-
-    const addon = browserUrl.slice(knownBrowserUrl.length + 1);
-
-    return combinePathParts(matchedKnownNavItem.appPath, addon);
-  }
-
-  private convertAppUrlToBrowserUrl(appIframeUrl: string, appUrl: string): string {
-    const contextPath = trimSlashes(this.settings.appSettings.contextPath);
-    const appBasePath = trimSlashes(new URL(appIframeUrl).pathname);
-
-    return combinePathParts(contextPath, appBasePath, appUrl);
+    return route;
   }
 }

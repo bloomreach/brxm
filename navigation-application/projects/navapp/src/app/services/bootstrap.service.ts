@@ -17,7 +17,7 @@
 import { Injectable } from '@angular/core';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
-import { DeepLinkingService } from '../routing/deep-linking.service';
+import { DeepLinkingService } from '../deep-linking/deep-linking.service';
 
 @Injectable({
   providedIn: 'root',
