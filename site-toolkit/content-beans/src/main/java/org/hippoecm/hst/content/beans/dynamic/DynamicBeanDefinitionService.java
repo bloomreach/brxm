@@ -184,7 +184,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
      * @return Class definition
      */
     private BeanInfo generateBeanDefinition(final BeanInfo parentBeanInfo, final ContentType contentType) {
-        final HippoContentBean contentBean = new HippoContentBean("", contentType);
+        final HippoContentBean contentBean = new HippoContentBean(contentType);
 
         final DynamicBeanBuilder builder = new DynamicBeanBuilder(
                 DynamicBeanUtils.createJavaClassName(contentBean.getName()), parentBeanInfo.getBeanClass());
@@ -193,12 +193,13 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
         generateMethodsByChildNodes(contentBean, builder);
         
         if(!builder.isMethodAdded() && !parentBeanInfo.isUpdated()) {
+            log.info("Bean {} is not enhanced because it doesn't have any missing methods.", parentBeanInfo.getBeanClass().getSimpleName());
             return parentBeanInfo;
         }
 
         final Class<? extends HippoBean> generatedBean = builder.create();
         objectConverter.addBeanDefinition(contentBean.getName(), generatedBean);
-        log.info("Created dynamic bean {} from parent bean {}.", contentType.getName(), parentBeanInfo.getBeanClass().getSimpleName());
+        log.info("Created dynamic bean {} from parent bean {}.", contentBean.getName(), parentBeanInfo.getBeanClass().getSimpleName());
 
         return new BeanInfo(generatedBean, true);
     }
@@ -295,18 +296,40 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
     }
 
     @Override
+    protected void addBeanMethodCompoundType(final String propertyName, final String methodName, final boolean multiple, final String type, final DynamicBeanBuilder builder) {
+        final Class<? extends HippoBean> generatedBeanDef = getOrCreateCompoundBean(type);
+        if (generatedBeanDef == null) {
+            return;
+        }
+
+        builder.addBeanMethodCompoundType(methodName, propertyName, multiple);
+    }
+
+    @Override
     protected void addCustomNodeType(final String propertyName, final String methodName, final boolean multiple, final String type, final DynamicBeanBuilder builder) {
+        final Class<? extends HippoBean> generatedBeanDef = getOrCreateCompoundBean(type);
+        if (generatedBeanDef == null) {
+            return;
+        }
+
+        builder.addBeanMethodInternalType(methodName, generatedBeanDef, propertyName, multiple);
+    }
+
+    private Class<? extends HippoBean> getOrCreateCompoundBean(final String type) {
         Class<? extends HippoBean> generatedBeanDef = objectConverter.getClassFor(type);
         if (generatedBeanDef == null) {
             //generate the bean class of the compound type
             final ContentType compoundContentType = objectConverter.getContentType(type);
+            if (compoundContentType == null) {
+                return null;
+            }
+
             final BeanInfo generatedBeanInfo = createCompoundBeanDef(null, compoundContentType);
             if (generatedBeanInfo == null) {
-                return;
+                return null;
             }
             generatedBeanDef = generatedBeanInfo.getBeanClass();
         }
-
-        builder.addBeanMethodInternalType(methodName, generatedBeanDef, propertyName, multiple);
+        return generatedBeanDef;
     }
 }

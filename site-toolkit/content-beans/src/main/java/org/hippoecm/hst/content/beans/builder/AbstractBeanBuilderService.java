@@ -48,6 +48,7 @@ public abstract class AbstractBeanBuilderService {
         HIPPO_MIRROR("hippo:mirror"), //
         HIPPO_IMAGE("hippogallery:image"), //
         HIPPO_RESOURCE("hippo:resource"), //
+        HIPPO_COMPOUND("hippo:compound"), //
         CONTENT_BLOCKS("content:blocks"), //
         UNKNOWN("Unknown");
 
@@ -171,6 +172,9 @@ public abstract class AbstractBeanBuilderService {
                 break;
             case CONTENT_BLOCKS:
                 addBeanMethodContentBlocks(propertyName, methodName, multiple, builder);
+                break;
+            case HIPPO_COMPOUND:
+                addBeanMethodCompoundType(propertyName, methodName, multiple, childNode.getContentType().getName(), builder);
                 break;
             default:
                 addCustomNodeType(propertyName, methodName, multiple, type, builder);
@@ -378,6 +382,17 @@ public abstract class AbstractBeanBuilderService {
      * @param builder {@link org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder}
      */
     protected abstract void addBeanMethodContentBlocks(String propertyName, String methodName, boolean multiple, DynamicBeanBuilder builder);
+
+    /**
+     * Adds a method to the bean which returns {@link org.hippoecm.hst.content.beans.standard.HippoCompound} object type
+     * 
+     * @param propertyName of the property type
+     * @param methodName of the method
+     * @param multiple whether a document property keeps multiple values or not
+     * @param type of the node
+     * @param builder {@link org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder}
+     */
+    protected abstract void addBeanMethodCompoundType(String propertyName, String methodName, boolean multiple, String type, DynamicBeanBuilder builder);
 
     /**
      * Adds a custom implementation if there isn't any matching object type for the child node
