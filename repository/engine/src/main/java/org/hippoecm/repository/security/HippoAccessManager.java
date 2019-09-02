@@ -785,8 +785,23 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                 log.debug("Node :  {} found in domain {} match {}", nodeState.getId(), fad.getDomainName(), domainRule);
                 break;
             } else {
-                // check if node is part of a hippo:document
-                // TODO delete below
+                // All the *READABLE* descendant nodes of a document (hippo:document below hippo:handle) for a
+                // user inherit the permissions from the hippo:document *except* the READ ACCESS. This way it is
+                // still possible to exclude read access to descendant nodes from documents for a user.
+                // Since the read access is never implicitly inherited (like write), the read access is also fully
+                // aligned with the authorization query which does not have any implicit read access knowledge either
+                if (checkRead) {
+                    // read access on 'document descendants' should be explicit via domain security and not like write
+                    // access sometimes implicit: check next domain rule
+                    continue;
+                }
+                // possibly give the permission inherited from an ancestor if the ancestor is a document with the
+                // same permissions. However if the nodeState is not *readable*, it will never get the permissions from
+                // the ancestor document.
+                if (!canRead(nodeState.getNodeId())) {
+                    // nodeState is not explicitly readable, continue to the next domainRule
+                    continue;
+                }
                 NodeState docState = null;
                 try {
                     docState = getParentDoc(nodeState);
@@ -794,13 +809,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                     log.error("Unable to retrieve parent state of node with id " + nodeState.getId(), e);
                 }
                 if (docState != null) {
-                    if (checkRead) {
-                        Boolean allowRead = getAccessFromCache(docState.getNodeId());
-                        if (allowRead != null) {
-                            return allowRead;
-                        }
-                    }
-                    return isNodeInDomain(docState, fad, checkRead);
+                    return isNodeInDomain(docState, fad, false);
                 }
             }
         }
