@@ -17,8 +17,12 @@
 import { initialize } from './index';
 
 const options = {
-  livePrefix: 'http://localhost:8080/site/my-spa',
-  previewPrefix: 'http://localhost:8080/site/_cmsinternal/my-spa'
+  live: {
+    apiBaseUrl: 'http://localhost:8080/site/my-spa',
+  },
+  preview: {
+    apiBaseUrl: 'http://localhost:8080/site/_cmsinternal/my-spa',
+  },
 };
 
 describe('initialize', () => {

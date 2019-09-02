@@ -13,55 +13,45 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Request, Options } from './api';
-import { concatPaths } from './path';
+import { Request, ApiUrlOptions, ApiUrlMapping } from './api';
 
+const DEFAULT_SPA_BASE_PATH = '/';
 const DEFAULT_API_SUFFIX = '/resourceapi';
 const PREVIEW_QUERY_PARAM = 'bloomreach-preview';
 
-export function buildModelUrl(request: Request, options: Options): string {
-  const path = getPath(request.path);
-  const query = getQuery(request.path);
+export function buildModelUrl(request: Request, options: ApiUrlOptions): string {
+  const [ path, query = '' ] = request.path.split('?', 2);
+  const isPreview = determinePreview(query);
 
-  const isPreview = determinePreview(path, query, options.previewPrefix);
+  const urlMapping = isPreview ? options.preview : options.live;
+  const channelPath = getChannelPath(path, query, urlMapping);
 
-  const prefix = isPreview ? options.previewPrefix : options.livePrefix;
-  const channelPath = getChannelPath(path, query, prefix);
-  const suffix = options.apiSuffix || DEFAULT_API_SUFFIX;
+  const apiBaseUrl = urlMapping.apiBaseUrl;
+  const apiSuffix = options.apiSuffix || DEFAULT_API_SUFFIX;
 
-  const base = concatPaths(prefix, channelPath);
-  let url = concatPaths(base, suffix);
+  let url = removeTrailingSlash(`${apiBaseUrl}${channelPath}`) + apiSuffix;
   if (query) {
     url += `?${query}`;
   }
   return url;
 }
 
-function getPath(requestPath: string): string {
-  const queryStart = requestPath.indexOf('?');
-  return queryStart < 0 ? requestPath : requestPath.substring(0, queryStart);
-}
-
-function getQuery(requestPath: string): string {
-  const queryStart = requestPath.indexOf('?');
-  return queryStart < 0 ? '' : requestPath.substring(queryStart + 1);
-}
-
-function determinePreview(path: string, query: string, previewPrefix: string) {
+function determinePreview(query: string) {
   const searchParams = new URLSearchParams(query);
   const previewParamValue = searchParams.get(PREVIEW_QUERY_PARAM);
-
-  return previewParamValue === 'true'
-    || (previewParamValue === null && path.startsWith(new URL(previewPrefix).pathname));
+  return previewParamValue === 'true';
 }
 
-function getChannelPath(path: string, query: string, apiUrl: string) {
-  const apiPath = new URL(apiUrl).pathname;
+function getChannelPath(path: string, query: string, mapping: ApiUrlMapping) {
+  const spaBasePath = mapping.spaBasePath || DEFAULT_SPA_BASE_PATH;
 
-  if (path.startsWith(apiPath)) {
-    return path.substring(apiPath.length);
+  if (path.startsWith(spaBasePath)) {
+    return path.substring(spaBasePath.length);
+  } else {
+    throw new Error(`Request path '${path}' does not start with SPA base path '${spaBasePath}'`);
   }
+}
 
-  // assume the SPA lives at "/" (e.g. "http://localhost:3000/"), so any path below it is relative in the channel
-  return path;
+function removeTrailingSlash(path: string) {
+  return path.endsWith('/') ? path.slice(0, -1) : path;
 }

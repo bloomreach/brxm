@@ -29,9 +29,9 @@ export interface Configuration {
   request: Request;
 
   /**
-   * Integration-related options.
+   * Options for generating the page model API URL.
    */
-  options: Options;
+  options: ApiUrlOptions;
 }
 
 /**
@@ -40,7 +40,7 @@ export interface Configuration {
 export interface Request {
   /**
    * The path part of the URL, including a query string if present.
-   * For example: '/path/to/page?foo=1'.
+   * For example: '/path/to/page?foo=1'. The path always starts with '/'.
    */
   path: string;
 
@@ -51,28 +51,40 @@ export interface Request {
 }
 
 /**
- * Integration-related configuration options.
+ * Configuration options for generating the page model API URL.
  */
-export interface Options {
-  /**
-   * The URL prefix for requests to the live page model API.
-   * Some examples:
-   * - "http://localhost:8080/site/my-spa"
-   * - "http://www.my-spa.com"
-   */
-  livePrefix: string;
+export interface ApiUrlOptions {
 
   /**
-   * The URL prefix for requests to the preview page model API.
-   * Some examples:
-   * - "http://localhost:8080/site/_cmsinternal/my-spa"
-   * - "http://www.my-spa.com"
+   * URL mapping for the live page model.
    */
-  previewPrefix: string;
+  live: ApiUrlMapping;
 
   /**
-   * Optional custom suffix for requests to the page model API.
+   * URL mapping for the preview page model.
+   */
+  preview: ApiUrlMapping;
+
+  /**
+   * Optional custom suffix for requests to the page model API. Must start with a slash.
    * The default suffix is '/resourceapi'.
    */
   apiSuffix?: string;
+}
+
+/**
+ * Mapping of the incoming HTTP request path to the URL of the page model API.
+ */
+export interface ApiUrlMapping {
+
+  /**
+   * Base path of the SPA. Everything after it will be interpreted as a route into the page model.
+   * The default base path is '/'.
+   */
+  spaBasePath?: string;
+
+  /**
+   * Base URL to fetch the page model from.
+   */
+  apiBaseUrl: string;
 }
