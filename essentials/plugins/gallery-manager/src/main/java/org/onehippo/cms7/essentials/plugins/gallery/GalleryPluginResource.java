@@ -383,6 +383,7 @@ public class GalleryPluginResource {
         processingNode.setProperty(HEIGHT, payload.getHeight());
         processingNode.setProperty(WIDTH, payload.getWidth());
         processingNode.setProperty(UPSCALING, payload.isUpscaling());
+        processingNode.setProperty("cropping", payload.isCropping());
         processingNode.setProperty("optimize", payload.getOptimize());
         processingNode.setProperty("compression", payload.getCompression());
     }
@@ -464,6 +465,7 @@ public class GalleryPluginResource {
                     model.setHeight(HippoNodeUtils.getLongProperty(processorVariant, HEIGHT, 0L).intValue());
                     model.setWidth(HippoNodeUtils.getLongProperty(processorVariant, WIDTH, 0L).intValue());
                     model.setUpscaling(HippoNodeUtils.getBooleanProperty(processorVariant, UPSCALING));
+                    model.setCropping(HippoNodeUtils.getBooleanProperty(processorVariant, "cropping"));
                     model.setOptimize(HippoNodeUtils.getStringProperty(processorVariant, "optimize", "quality"));
                     model.setCompression(HippoNodeUtils.getDoubleProperty(processorVariant, "compression", 1D));
                 }

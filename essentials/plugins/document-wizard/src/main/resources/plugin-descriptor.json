@@ -2,13 +2,13 @@
   "id": "documentWizardPlugin",
   "name": "Documents Wizard",
   "icon": "/essentials/feature/images/documents-wizard-plugin-icon.svg",
-  "introduction": "The Documents Wizard is a convenience feature to easily create new documents in the right folders in the BloomReach CMS while working in another part of the CMS.",
-  "description": "It provides a link that opens a dialog window where information for the document to be created can be entered. After clicking OK, the document will be created in the right folder. This feature wraps the BloomReach Dashboard Document Wizard plugin.",
+  "introduction": "The Documents Wizard is a convenience feature to easily create new documents in the right folders in the Bloomreach CMS while working in another part of the CMS.",
+  "description": "It provides a link that opens a dialog window where information for the document to be created can be entered. After clicking OK, the document will be created in the right folder. This feature wraps the Bloomreach Dashboard Document Wizard plugin.",
   "imageUrls": [
     "/essentials/feature/images/screenshots/documentwizard01.png",
     "/essentials/feature/images/screenshots/documentwizard02.png"
   ],
-  "documentationLink": "https://www.onehippo.org/library/concepts/plugins/dashboard-document-wizard/about.html",
+  "documentationLink": "https://documentation.bloomreach.com/library/concepts/plugins/dashboard-document-wizard/about.html",
   "hasConfiguration": true,
   "installWithParameters": false,
   "packageFile": "/META-INF/document_wizard_plugin_instructions.xml",
@@ -17,7 +17,7 @@
   ],
   "type": "feature",
   "vendor": {
-    "name": "BloomReach",
+    "name": "Bloomreach",
     "url": "https://www.bloomreach.com"
   },
   "categories": {

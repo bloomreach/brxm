@@ -112,6 +112,13 @@
                 };
                 return map[$scope.variant.upscaling];
             };
+            $scope.cropping = function() {
+                var map = {
+                    true: 'on',
+                    false: 'off'
+                };
+                return map[$scope.variant.cropping];
+            };
             $scope.optimization = function() {
                 var map = {
                     'quality': 'quality',
@@ -141,6 +148,16 @@
         .controller('GalleryManagerVariantEditModalCtrl', ['$scope', '$http', '$uibModalInstance', 'variant', 'resource',
             function($scope, $http, $uibModalInstance, variant, resource) {
 
+            $scope.$watch("variant.cropping", function (value) {
+                if (value) {
+                    $scope.variant.upscaling = true;
+                }
+            });
+            $scope.$watch("croppingDisabled()", function (value) {
+              if (value) {
+                $scope.variant.cropping = false;
+              }
+            });
             $scope.variant = angular.copy(variant);
             $scope.optimizeValues = [
                 { value: "quality", description: "quality" },
@@ -157,6 +174,15 @@
                 { value: 0.7, description: "medium" },
                 { value: 0.5, description: "low" }
             ];
+            $scope.upscalingDisabled = function() {
+                return $scope.variant.cropping;
+            };
+            $scope.croppingDisabled = function() {
+                return !($scope.variant.width 
+                  && parseInt($scope.variant.width) 
+                  && $scope.variant.height 
+                  && parseInt($scope.variant.height));
+            };
             $scope.addTranslation = function() {
                 $scope.variant.translations.push({
                     language: "",

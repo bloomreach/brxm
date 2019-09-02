@@ -6,11 +6,11 @@
   "imageUrls": [
     "/essentials/feature/images/screenshots/menu01.png"
   ],
-  "documentationLink": "https://www.onehippo.org/library/setup/hst-components/menu-component.html",
+  "documentationLink": "https://documentation.bloomreach.com/library/setup/hst-components/menu-component.html",
   "packageFile": "/META-INF/menu_instructions.xml",
   "type": "feature",
   "vendor": {
-    "name": "BloomReach",
+    "name": "Bloomreach",
     "url": "https://www.bloomreach.com"
   },
   "categories": {

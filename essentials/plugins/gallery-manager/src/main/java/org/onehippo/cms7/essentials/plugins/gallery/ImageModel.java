@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,13 +24,8 @@ import org.apache.commons.lang.StringUtils;
 
 import com.google.common.base.Strings;
 
-/**
- * @version "$Id$"
- */
 public class ImageModel implements Serializable {
 
-
-    private static final long serialVersionUID = 1L;
     private String prefix;
     private String type;
     private String path;
@@ -43,13 +38,13 @@ public class ImageModel implements Serializable {
     private String originalName = null;
     private boolean readOnly;
     private boolean upscaling;
+    private boolean cropping;
     private String optimize = "quality";
     private double compression = 1D;
     private List<TranslationModel> translations = new ArrayList<>();
 
     public ImageModel() {
     }
-
 
     public ImageModel(final String prefix) {
         this.prefix = prefix;
@@ -58,7 +53,6 @@ public class ImageModel implements Serializable {
         }
     }
 
-
     public ImageModel(final String prefix, final String name, final String parentNamespace, final int width, final int height) {
         this(prefix);
         this.width = width;
@@ -66,7 +60,6 @@ public class ImageModel implements Serializable {
         this.height = height;
         this.name = name;
     }
-
 
     public String getOptimize() {
         return optimize;
@@ -90,6 +83,14 @@ public class ImageModel implements Serializable {
 
     public void setUpscaling(final boolean upscaling) {
         this.upscaling = upscaling;
+    }
+
+    public boolean isCropping() {
+        return cropping;
+    }
+
+    public void setCropping(final boolean cropping) {
+        this.cropping = cropping;
     }
 
     public String getParentNamespace() {

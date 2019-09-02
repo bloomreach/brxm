@@ -5,7 +5,7 @@
   "introduction": "Provides a basic site structure for adding features, such as a basic sitemap, an empty menu and styling.",
   "type": "feature",
   "vendor": {
-    "name": "BloomReach",
+    "name": "Bloomreach",
     "url": "https://www.bloomreach.com"
   },
   "installWithParameters": false,

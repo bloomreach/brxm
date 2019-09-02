@@ -9,13 +9,13 @@
     "/essentials/tool/images/screenshots/selections02.png",
     "/essentials/tool/images/screenshots/selections03.png"
   ],
-  "documentationLink": "https://www.onehippo.org/library/concepts/plugins/selections/about.html",
+  "documentationLink": "https://documentation.bloomreach.com/library/concepts/plugins/selections/about.html",
   "restClasses": [
     "org.onehippo.cms7.essentials.plugins.selection.SelectionResource"
   ],
   "type": "tool",
   "vendor" : {
-    "name" : "BloomReach",
+    "name" : "Bloomreach",
     "url" : "https://www.bloomreach.com"
   },
   "categories": {

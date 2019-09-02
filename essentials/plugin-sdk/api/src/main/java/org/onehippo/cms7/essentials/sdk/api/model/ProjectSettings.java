@@ -131,7 +131,7 @@ public interface ProjectSettings {
     /**
      * Flag indicating if plugins pertaining to enterprise features should be displayed in the dashboard application.
      *
-     * Note that in order to *use* enterprise features successfully, you need access to BloomReach's enterprise maven
+     * Note that in order to *use* enterprise features successfully, you need access to Bloomreach's enterprise maven
      * repository.
      */
     boolean isEnterprise();
