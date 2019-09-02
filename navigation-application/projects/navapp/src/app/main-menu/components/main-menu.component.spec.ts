@@ -19,7 +19,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, Subject } from 'rxjs';
 
 import { ClientAppService } from '../../client-app/services/client-app.service';
-import { DeepLinkingService } from '../../routing/deep-linking.service';
+import { DeepLinkingService } from '../../deep-linking/deep-linking.service';
 import { BootstrapService } from '../../services/bootstrap.service';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 
@@ -78,7 +78,7 @@ describe('MainMenuComponent', () => {
   ]);
 
   const deepLinkingServiceMock = jasmine.createSpyObj('DeepLinkingService', [
-    'navigateByAppUrl',
+    'navigateByNavItem',
   ]);
 
   beforeEach(() => {
@@ -118,7 +118,7 @@ describe('MainMenuComponent', () => {
 
     component.selectMenuItem(menuItemLink);
 
-    expect(deepLinkingServiceMock.navigateByAppUrl).toHaveBeenCalledWith(menuItemLink.navItem.appIframeUrl, menuItemLink.navItem.appPath);
+    expect(deepLinkingServiceMock.navigateByNavItem).toHaveBeenCalledWith(menuItemLink.navItem);
   });
 
   it('should not activate the home menu element until menu is emitted', () => {

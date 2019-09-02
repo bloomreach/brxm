@@ -18,7 +18,7 @@ import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { DeepLinkingService } from '../../../routing/deep-linking.service';
+import { DeepLinkingService } from '../../../deep-linking/deep-linking.service';
 import { BreadcrumbsService } from '../../services/breadcrumbs.service';
 
 @Component({

@@ -16,9 +16,9 @@
 
 import { Injectable } from '@angular/core';
 
-import { DeepLinkingService } from '../routing/deep-linking.service';
-import { NavigationStartEvent } from '../routing/events/navigation-start.event';
-import { NavigationStopEvent } from '../routing/events/navigation-stop.event';
+import { DeepLinkingService } from '../deep-linking/deep-linking.service';
+import { NavigationStartEvent } from '../deep-linking/events/navigation-start.event';
+import { NavigationStopEvent } from '../deep-linking/events/navigation-stop.event';
 
 @Injectable({
   providedIn: 'root',

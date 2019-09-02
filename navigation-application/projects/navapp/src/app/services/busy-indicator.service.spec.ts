@@ -16,8 +16,8 @@
 
 import { Subject } from 'rxjs';
 
-import { NavigationStartEvent } from '../routing/events/navigation-start.event';
-import { NavigationStopEvent } from '../routing/events/navigation-stop.event';
+import { NavigationStartEvent } from '../deep-linking/events/navigation-start.event';
+import { NavigationStopEvent } from '../deep-linking/events/navigation-stop.event';
 
 import { BusyIndicatorService } from './busy-indicator.service';
 
