@@ -69,6 +69,7 @@
     <module>lucene-index-exporter</module>
     <module>enterprise-project</module>
     <module>crisp</module>
+    <module>install-all-plugins</module>
   </modules>
 
   <dependencyManagement>
