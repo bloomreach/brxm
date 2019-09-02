@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-import { ApiUrlOptions } from './api';
-import { buildModelUrl } from './url';
+import { PageModelUrlOptions } from './api';
+import { buildPageModelUrl } from './url';
 
 const DEFAULT_OPTIONS = {
   live: {
-    apiBaseUrl: 'http://localhost:8080/site/spa/',
+    pageModelBaseUrl: 'http://localhost:8080/site/spa/',
   },
   preview: {
-    apiBaseUrl: 'http://localhost:8080/site/_cmsinternal/spa/',
+    pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/spa/',
   },
 };
 
-function getModelUrl(path: string, options: ApiUrlOptions = DEFAULT_OPTIONS) {
+function getModelUrl(path: string, options: PageModelUrlOptions = DEFAULT_OPTIONS) {
   const request = { path };
-  return buildModelUrl(request, options);
+  return buildPageModelUrl(request, options);
 }
 
 describe('buildModelUrl', () => {
@@ -73,15 +73,16 @@ describe('buildModelUrl', () => {
     const options = {
       live: {
         spaBasePath: '/site/csr-spa',
-        apiBaseUrl: 'http://localhost:8080/site/csr-spa',
+        pageModelBaseUrl: 'http://localhost:8080/site/csr-spa',
       },
       preview: {
         spaBasePath: '/site/_cmsinternal/csr-spa',
-        apiBaseUrl: 'http://localhost:8080/site/_cmsinternal/csr-spa',
+        pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/csr-spa',
       },
     };
 
     expect(getModelUrl('/site/csr-spa', options)).toBe('http://localhost:8080/site/csr-spa/resourceapi');
+    expect(getModelUrl('/site/csr-spa/', options)).toBe('http://localhost:8080/site/csr-spa/resourceapi');
     expect(getModelUrl('/site/csr-spa/news', options)).toBe('http://localhost:8080/site/csr-spa/news/resourceapi');
     expect(getModelUrl('/site/_cmsinternal/csr-spa?bloomreach-preview=true', options))
       .toBe('http://localhost:8080/site/_cmsinternal/csr-spa/resourceapi?bloomreach-preview=true');
@@ -93,11 +94,11 @@ describe('buildModelUrl', () => {
     const options = {
       live: {
         spaBasePath: '/site/spa-',
-        apiBaseUrl: 'http://localhost:8080/site/spa-',
+        pageModelBaseUrl: 'http://localhost:8080/site/spa-',
       },
       preview: {
         spaBasePath: '/site/_cmsinternal/spa-',
-        apiBaseUrl: 'http://localhost:8080/site/_cmsinternal/spa-',
+        pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/spa-',
       },
     };
 
@@ -110,11 +111,11 @@ describe('buildModelUrl', () => {
     const options = {
       live: {
         spaBasePath: '/base',
-        apiBaseUrl: 'http://localhost:8080/site/spa',
+        pageModelBaseUrl: 'http://localhost:8080/site/spa',
       },
       preview: {
         spaBasePath: '/base',
-        apiBaseUrl: 'http://localhost:8080/site/_cmsinternal/spa',
+        pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/spa',
       },
     };
 
@@ -123,7 +124,7 @@ describe('buildModelUrl', () => {
   });
 
   it('uses a custom suffix when provided', () => {
-    const options = { ...DEFAULT_OPTIONS, apiSuffix: '/model' };
+    const options = { ...DEFAULT_OPTIONS, pageModelApiSuffix: '/model' };
     expect(getModelUrl('/', options)).toBe('http://localhost:8080/site/spa/model');
     expect(getModelUrl('/news', options)).toBe('http://localhost:8080/site/spa/news/model');
     expect(getModelUrl('/?bloomreach-preview=true', options))

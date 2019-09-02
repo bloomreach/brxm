@@ -13,21 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Request, ApiUrlOptions, ApiUrlMapping } from './api';
+import { Request, PageModelUrlOptions, PageModelUrlMapping } from './api';
 
 const DEFAULT_SPA_BASE_PATH = '/';
-const DEFAULT_API_SUFFIX = '/resourceapi';
+const DEFAULT_PAGE_MODEL_API_SUFFIX = '/resourceapi';
 const PREVIEW_QUERY_PARAM = 'bloomreach-preview';
 
-export function buildModelUrl(request: Request, options: ApiUrlOptions): string {
+export function buildPageModelUrl(request: Request, options: PageModelUrlOptions): string {
   const [ path, query = '' ] = request.path.split('?', 2);
   const isPreview = determinePreview(query);
 
   const urlMapping = isPreview ? options.preview : options.live;
   const channelPath = getChannelPath(path, query, urlMapping);
 
-  const apiBaseUrl = urlMapping.apiBaseUrl;
-  const apiSuffix = options.apiSuffix || DEFAULT_API_SUFFIX;
+  const apiBaseUrl = urlMapping.pageModelBaseUrl;
+  const apiSuffix = options.pageModelApiSuffix || DEFAULT_PAGE_MODEL_API_SUFFIX;
 
   let url = removeTrailingSlash(`${apiBaseUrl}${channelPath}`) + apiSuffix;
   if (query) {
@@ -42,7 +42,7 @@ function determinePreview(query: string) {
   return previewParamValue === 'true';
 }
 
-function getChannelPath(path: string, query: string, mapping: ApiUrlMapping) {
+function getChannelPath(path: string, query: string, mapping: PageModelUrlMapping) {
   const spaBasePath = mapping.spaBasePath || DEFAULT_SPA_BASE_PATH;
 
   if (path.startsWith(spaBasePath)) {

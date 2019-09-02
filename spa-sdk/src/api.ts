@@ -31,7 +31,7 @@ export interface Configuration {
   /**
    * Options for generating the page model API URL.
    */
-  options: ApiUrlOptions;
+  options: PageModelUrlOptions;
 }
 
 /**
@@ -51,31 +51,31 @@ export interface Request {
 }
 
 /**
- * Configuration options for generating the page model API URL.
+ * Configuration options for generating the page model URL.
  */
-export interface ApiUrlOptions {
+export interface PageModelUrlOptions {
 
   /**
    * URL mapping for the live page model.
    */
-  live: ApiUrlMapping;
+  live: PageModelUrlMapping;
 
   /**
    * URL mapping for the preview page model.
    */
-  preview: ApiUrlMapping;
+  preview: PageModelUrlMapping;
 
   /**
    * Optional custom suffix for requests to the page model API. Must start with a slash.
    * The default suffix is '/resourceapi'.
    */
-  apiSuffix?: string;
+  pageModelApiSuffix?: string;
 }
 
 /**
  * Mapping of the incoming HTTP request path to the URL of the page model API.
  */
-export interface ApiUrlMapping {
+export interface PageModelUrlMapping {
 
   /**
    * Base path of the SPA. Everything after it will be interpreted as a route into the page model.
@@ -86,5 +86,5 @@ export interface ApiUrlMapping {
   /**
    * Base URL to fetch the page model from.
    */
-  apiBaseUrl: string;
+  pageModelBaseUrl: string;
 }
