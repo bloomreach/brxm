@@ -16,7 +16,7 @@
 
 import { Component, Input } from '@angular/core';
 
-import { DeepLinkingService } from '../../routing/deep-linking.service';
+import { DeepLinkingService } from '../../deep-linking/deep-linking.service';
 
 @Component({
   selector: 'brna-error-page',
@@ -30,7 +30,7 @@ export class ErrorPageComponent {
   @Input()
   errorMessage: string;
 
-  constructor(private deepLinkingService: DeepLinkingService) {}
+  constructor(private deepLinkingService: DeepLinkingService) { }
 
   navigateToHome(): void {
     this.deepLinkingService.navigateToHome();

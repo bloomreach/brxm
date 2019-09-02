@@ -92,7 +92,7 @@ export class DeepLinkingService implements OnDestroy {
   private get homeUrl(): string {
     const homeMenuItem = this.menuStateService.homeMenuItem;
     const homeUrl = homeMenuItem ?
-      this.convertAppUrlToBrowserUrl(homeMenuItem.navItem.appIframeUrl, homeMenuItem.navItem.appPath) :
+      this.urlMapperService.mapNavItemToBrowserUrl(homeMenuItem.navItem) :
       '';
 
     return homeUrl;
@@ -153,12 +153,12 @@ export class DeepLinkingService implements OnDestroy {
     this.navigateByNavItem(lastNavigation.navItem, '', { forceRefresh: true });
   }
 
-  private navigateByUrl(url: string, breadcrumbLabel?: string, flags?: NavigateFlags): void {
-    this.scheduleNavigation(url, NavigationTrigger.Imperative, { breadcrumbLabel }, { ...flags });
-  }
-
   navigateToHome(): void {
     this.navigateByUrl(this.homeUrl);
+  }
+
+  private navigateByUrl(url: string, breadcrumbLabel?: string, flags?: NavigateFlags): void {
+    this.scheduleNavigation(url, NavigationTrigger.Imperative, { breadcrumbLabel }, { ...flags });
   }
 
   private setUpLocationChangeListener(): void {
@@ -171,7 +171,7 @@ export class DeepLinkingService implements OnDestroy {
       try {
         flags = JSON.parse(change.state.flags);
         delete change.state.flags;
-      } catch {}
+      } catch { }
 
       this.scheduleNavigation(change.url, NavigationTrigger.PopState, change.state || {}, flags);
     }) as any;
