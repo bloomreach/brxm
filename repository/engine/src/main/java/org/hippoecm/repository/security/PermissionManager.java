@@ -266,7 +266,7 @@ class PermissionManager {
      * parameter itself must not be null (throws IllegalArgumentException otherwise).
      * </p>
      * <p>
-     *  A special case are the {@link StandardPermissionNames#JCR_WRITE} and {@link StandardPermissionNames#JCR_WRITE}
+     *  A special case are the {@link StandardPermissionNames#JCR_WRITE} and {@link StandardPermissionNames#JCR_ALL}
      *  permission names: when requested those will be <em>replaced</em> will their set of aggregated privilege names
      *  {@link StandardPermissionNames#JCR_WRITE_PRIVILEGES} and {@link StandardPermissionNames#JCR_ALL_PRIVILEGES},
      *  <em>without</em> themselves (just because the current use-cases are more optimal that way).

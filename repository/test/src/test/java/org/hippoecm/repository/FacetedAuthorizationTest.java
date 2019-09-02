@@ -639,7 +639,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
 
         doc.setProperty("authtest", "canwrite");
         session.save();
-        assertTrue("jcr:write implies also read",
+        assertTrue("'canwrite' results in role 'readwrite' which implies also read",
                 userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
 
         // jcr:write *IS* inherited *only* to *READABLE* descendants of a document!
