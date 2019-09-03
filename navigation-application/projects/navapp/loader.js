@@ -26,6 +26,10 @@
     navAppResourceLocation = navAppSettings.appSettings.navAppResourceLocation;
   }
 
+  const baseTag = document.createElement('base');
+  baseTag.href = navAppResourceLocation;
+  document.head.appendChild(baseTag);
+
   fetch(`${navAppResourceLocation}/filelist.json`)
     .then(response => response.json())
     .then(files => {
