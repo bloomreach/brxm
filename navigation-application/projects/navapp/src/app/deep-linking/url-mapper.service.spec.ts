@@ -89,7 +89,7 @@ describe('UrlMapperService', () => {
   });
 
   it('should map nav item to the browser url', () => {
-    const expected = '/context-path/path/to/app/path/to/page?param1=value1#hash-data';
+    const expected = '/path/to/app/path/to/page?param1=value1#hash-data';
     const navItem: NavItem  = {
       id: 'some-id',
       appIframeUrl: 'https://iframe-domain.com/path/to/app',
@@ -102,7 +102,7 @@ describe('UrlMapperService', () => {
   });
 
   it('should map nav item to the browser url with stripped of "cms" path part from iframe url', () => {
-    const expected = '/context-path/path/to/app/path/to/page?param1=value1#hash-data';
+    const expected = '/path/to/app/path/to/page?param1=value1#hash-data';
     const navItem: NavItem  = {
       id: 'some-id',
       appIframeUrl: 'https://iframe-domain.com/cms/path/to/app',
@@ -115,7 +115,7 @@ describe('UrlMapperService', () => {
   });
 
   it('should map nav item to the browser url with stripped of "iframe" path part from iframe url', () => {
-    const expected = '/context-path/path/to/app/path/to/page?param1=value1#hash-data';
+    const expected = '/path/to/app/path/to/page?param1=value1#hash-data';
     const navItem: NavItem  = {
       id: 'some-id',
       appIframeUrl: 'https://iframe-domain.com/iframe/path/to/app',
@@ -128,7 +128,7 @@ describe('UrlMapperService', () => {
   });
 
   it('should map nav location to the browser url', () => {
-    const expected = ['/context-path/iframe1/url/app/path/to/page1/some/detailed/page?param1=value1#hash-data', navItemsMock[1]];
+    const expected = ['/iframe1/url/app/path/to/page1/some/detailed/page?param1=value1#hash-data', navItemsMock[1]];
     const navLocation: NavLocation  = {
       path: 'app/path/to/page1/some/detailed/page?param1=value1#hash-data',
     };
