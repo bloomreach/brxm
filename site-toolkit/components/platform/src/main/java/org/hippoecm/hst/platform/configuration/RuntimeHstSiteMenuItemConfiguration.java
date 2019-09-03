@@ -31,22 +31,18 @@ public class RuntimeHstSiteMenuItemConfiguration extends GenericHstSiteMenuItemC
     private final List<HstSiteMenuItemConfiguration> childrenSiteMenuItemConfigurations;
 
     public RuntimeHstSiteMenuItemConfiguration(final HstSiteMenuItemConfiguration delegatee,
+            final RuntimeHstSiteMenuItemConfiguration parentSiteMenuItemConfiguration,
             final RuntimeHstSiteMenuConfiguration hstSiteMenuConfiguration) {
         super(delegatee);
         this.delegatee = delegatee;
         this.hstSiteMenuConfiguration = hstSiteMenuConfiguration;
 
-        if (delegatee.getParentItemConfiguration() != null) {
-            parentSiteMenuItemConfiguration = new RuntimeHstSiteMenuItemConfiguration(
-                    delegatee.getParentItemConfiguration(), hstSiteMenuConfiguration);
-        } else {
-            parentSiteMenuItemConfiguration = null;
-        }
+        this.parentSiteMenuItemConfiguration = parentSiteMenuItemConfiguration;
 
         final List<HstSiteMenuItemConfiguration> siteMenuItemConfigurations = new ArrayList<>();
         delegatee.getChildItemConfigurations().forEach(child -> {
             RuntimeHstSiteMenuItemConfiguration siteMenuItemConfiguration = new RuntimeHstSiteMenuItemConfiguration(
-                    child, hstSiteMenuConfiguration);
+                    child, this , hstSiteMenuConfiguration);
             siteMenuItemConfigurations.add(siteMenuItemConfiguration);
         });
 
@@ -70,7 +66,7 @@ public class RuntimeHstSiteMenuItemConfiguration extends GenericHstSiteMenuItemC
 
     @Override
     public String toString() {
-        return "RuntimePortMount{" + "delegatee=" + delegatee + '}';
+        return "RuntimeHstSiteMenuItemConfiguration{" + "delegatee=" + delegatee + '}';
     }
 
 }

@@ -44,6 +44,7 @@ public abstract class AbstractBeanBuilderService {
         DOUBLE("Double"), //
         DOCBASE("Docbase"), //
         HIPPO_HTML("hippostd:html"), //
+        HIPPO_IMAGELINK("hippogallerypicker:imagelink"), //
         HIPPO_MIRROR("hippo:mirror"), //
         HIPPO_IMAGE("hippogallery:image"), //
         HIPPO_RESOURCE("hippo:resource"), //
@@ -158,6 +159,9 @@ public abstract class AbstractBeanBuilderService {
                 break;
             case HIPPO_MIRROR:
                 addBeanMethodHippoMirror(propertyName, methodName, multiple, builder);
+                break;
+            case HIPPO_IMAGELINK:
+                addBeanMethodImageLink(propertyName, methodName, multiple, builder);
                 break;
             case HIPPO_IMAGE:
                 addBeanMethodHippoImage(propertyName, methodName, multiple, builder);

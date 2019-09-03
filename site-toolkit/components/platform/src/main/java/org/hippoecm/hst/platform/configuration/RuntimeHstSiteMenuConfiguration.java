@@ -39,7 +39,7 @@ public class RuntimeHstSiteMenuConfiguration extends GenericHstSiteMenuConfigura
         final List<HstSiteMenuItemConfiguration> childrenSiteMenuItems = new ArrayList<>();
         delegatee.getSiteMenuConfigurationItems().forEach(child -> {
             RuntimeHstSiteMenuItemConfiguration siteMenuConfigurationItem = new RuntimeHstSiteMenuItemConfiguration(
-                    child, RuntimeHstSiteMenuConfiguration.this);
+                    child, null, RuntimeHstSiteMenuConfiguration.this);
             childrenSiteMenuItems.add(siteMenuConfigurationItem);
         });
 

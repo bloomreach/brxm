@@ -1,12 +1,12 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
@@ -67,7 +66,7 @@ class HippoBeanSerializer extends JsonSerializer<HippoBean> {
     private final List<MetadataDecorator> metadataDecorators;
 
     public HippoBeanSerializer(JsonSerializer<Object> beanSerializer,
-            final List<MetadataDecorator> metadataDecorators) {
+                               final List<MetadataDecorator> metadataDecorators) {
         this.beanSerializer = beanSerializer;
         this.metadataDecorators = metadataDecorators;
     }
@@ -131,7 +130,7 @@ class HippoBeanSerializer extends JsonSerializer<HippoBean> {
      * @param model MetadataContributable model
      */
     private void decorateContentMetadata(final HstRequestContext requestContext, final HippoBean contentBean,
-            MetadataContributable model) {
+                                         MetadataContributable model) {
         if (CollectionUtils.isEmpty(metadataDecorators)) {
             return;
         }
@@ -152,8 +151,7 @@ class HippoBeanSerializer extends JsonSerializer<HippoBean> {
             return;
         }
 
-        final Mount selfMount = requestContext.getResolvedMount().getMount();
-        final HstLink selfLink = requestContext.getHstLinkCreator().create(hippoBean.getNode(), selfMount);
+        final HstLink selfLink = requestContext.getHstLinkCreator().create(hippoBean.getNode(), requestContext);
         if (selfLink == null) {
             return;
         }
@@ -170,7 +168,7 @@ class HippoBeanSerializer extends JsonSerializer<HippoBean> {
      * @throws IOException if IO exception occurs
      */
     private void serializeBeanReference(final HippoBean bean, final JsonGenerator gen,
-            final String jsonPointerRepresentationId) throws IOException {
+                                        final String jsonPointerRepresentationId) throws IOException {
         gen.writeStartObject(bean);
         gen.writeStringField(CONTENT_JSON_POINTER_REFERENCE_PROP,
                 CONTENT_JSON_POINTER_PREFIX + jsonPointerRepresentationId);
