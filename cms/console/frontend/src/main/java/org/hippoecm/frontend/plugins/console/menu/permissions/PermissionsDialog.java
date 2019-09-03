@@ -30,7 +30,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.repository.api.HippoSession;
-import org.onehippo.repository.security.Group;
 import org.onehippo.repository.security.StandardPermissionNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,11 +109,7 @@ public class PermissionsDialog extends Dialog<Node> {
     }
 
     private Set<String> getMemberships(final HippoSession userSession) throws RepositoryException {
-        final Set<String> memberships = new TreeSet<>();
-        for (Group group : userSession.getUser().getMemberships()) {
-            memberships.add(group.getId());
-        }
-        return memberships;
+        return new TreeSet<>(userSession.getUser().getMemberships());
     }
 
     public IModel<String> getTitle() {
