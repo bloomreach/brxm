@@ -30,6 +30,11 @@
   <dependencies>
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-services</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>

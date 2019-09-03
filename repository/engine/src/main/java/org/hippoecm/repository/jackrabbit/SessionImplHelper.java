@@ -23,11 +23,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Item;
@@ -56,10 +55,7 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeConflictException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.observation.ObservationManagerImpl;
 import org.apache.jackrabbit.core.security.AccessManager;
-import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
-import org.apache.jackrabbit.core.security.UserPrincipal;
-import org.apache.jackrabbit.core.security.principal.AdminPrincipal;
 import org.apache.jackrabbit.core.session.SessionContext;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateException;
@@ -80,9 +76,14 @@ import org.hippoecm.repository.query.lucene.HippoQueryHandler;
 import org.hippoecm.repository.security.FacetRuleExtensionsPrincipal;
 import org.hippoecm.repository.security.HippoAMContext;
 import org.hippoecm.repository.security.HippoAccessManager;
+import org.hippoecm.repository.security.SubjectHelper;
 import org.hippoecm.repository.security.domain.FacetAuthDomain;
 import org.hippoecm.repository.security.domain.QFacetRule;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
+import org.hippoecm.repository.security.principals.UserPrincipal;
+import org.hippoecm.repository.security.service.SessionDelegateUserImpl;
+import org.onehippo.repository.security.SessionDelegateUser;
+import org.onehippo.repository.security.User;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.security.domain.FacetRule;
 import org.onehippo.repository.xml.EnhancedSystemViewImportHandler;
@@ -95,19 +96,13 @@ class SessionImplHelper {
 
     private static Logger log = LoggerFactory.getLogger(SessionImpl.class);
 
-    /**
-     * the user ID that was used to acquire this session
-     */
-    private String userId;
-
     private long implicitReadAccessUpdateCounter;
 
-    NodeTypeRegistry ntReg;
-    RepositoryImpl rep;
-    Subject subject;
-    private InternalHippoSession session;
-    SessionContext context;
-    private HippoAccessManager ham;
+    private final NodeTypeRegistry ntReg;
+    private final Subject subject;
+    private final InternalHippoSession session;
+    private final SessionContext context;
+    private final HippoAccessManager ham;
 
     /**
      * Local namespace mappings. Prefixes as keys and namespace URIs as values.
@@ -302,22 +297,13 @@ class SessionImplHelper {
         }
     }
 
-    private static <T extends Principal> T getPrincipal(final Subject subject, Class<T> c) {
-        for (T principal : subject.getPrincipals(c)) {
-            return principal;
-        }
-        return null;
-    }
-
     SessionImplHelper(InternalHippoSession session, RepositoryContext repositoryContext,
                       SessionContext sessionContext, Subject subject) throws RepositoryException {
         this.session = session;
         this.context = sessionContext;
         this.ntReg = repositoryContext.getNodeTypeRegistry();
-        this.rep = (RepositoryImpl) repositoryContext.getRepository();
         this.ham = session.getAccessControlManager();
         this.subject = subject;
-        setUserId();
     }
 
     /**
@@ -330,38 +316,8 @@ class SessionImplHelper {
         ((RepositoryImpl)context.getRepository()).initializeLocalItemStateManager(localISM, context.getSessionImpl(), subject);
     }
 
-    /**
-     * Override jackrabbits default userid, because it just uses
-     * the first principal it can find, which can lead to strange "usernames"
-     */
-    protected void setUserId() {
-        TreeSet<String> principalIds = new TreeSet<>();
-        Principal principal = getPrincipal(subject, SystemPrincipal.class);
-        if (principal != null) {
-            principalIds.add(principal.getName());
-        }
-        principal = getPrincipal(subject, AdminPrincipal.class);
-        if (principal != null) {
-            principalIds.add(principal.getName());
-        }
-        principalIds.addAll(subject.getPrincipals(UserPrincipal.class).stream()
-                .map(UserPrincipal::getName).collect(Collectors.toSet()));
-        principal = getPrincipal(subject, AnonymousPrincipal.class);
-        if (principal != null) {
-            principalIds.add(principal.getName());
-        }
-        if (!principalIds.isEmpty()) {
-            userId = String.join(",", principalIds);
-        } else {
-            userId = "Unknown";
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public String getUserID() {
-        return userId;
+    protected User getUser() {
+        return ham.getUser();
     }
 
     public void checkPermission(String absPath, String actions) throws AccessControlException, RepositoryException {
@@ -617,7 +573,7 @@ class SessionImplHelper {
                 final RepositoryImpl repository = (RepositoryImpl)context.getRepository();
                 HippoQueryHandler queryHandler = repository.getHippoQueryHandler(session.getWorkspace().getName());
                 if (queryHandler != null) {
-                    FacetAuthPrincipal facetAuthPrincipal = getPrincipal(subject, FacetAuthPrincipal.class);
+                    FacetAuthPrincipal facetAuthPrincipal = SubjectHelper.getFirstPrincipal(subject, FacetAuthPrincipal.class);
                     if (facetAuthPrincipal == null) {
                         facetAuthPrincipal = FacetAuthPrincipal.NO_AUTH_DOMAINS_PRINCIPAL;
                     }
@@ -626,8 +582,7 @@ class SessionImplHelper {
                             queryHandler.getNamespaceMappings(),
                             queryHandler.getIndexingConfig(),
                             context.getNodeTypeManager(),
-                            context.getSessionImpl(),
-                            userId);
+                            context.getSessionImpl());
                 }
             } catch (RepositoryException e) {
                 throw new RuntimeException(e);
@@ -637,20 +592,54 @@ class SessionImplHelper {
         return authorizationQuery;
     }
 
-    public Session createDelegatedSession(final InternalHippoSession session, DomainRuleExtension... domainExtensions) throws RepositoryException {
+    public Session createDelegatedSession(final InternalHippoSession session, final DomainRuleExtension... domainExtensions) throws RepositoryException {
         String workspaceName = context.getRepositoryContext().getWorkspaceManager().getDefaultWorkspaceName();
+
+        if (ham.isSystemUser()) {
+            throw new IllegalStateException("Cannot create a delegated session for the system user");
+        } else if (SubjectHelper.getFirstPrincipal(session.getSubject(), SystemPrincipal.class) != null) {
+            throw new IllegalStateException("Cannot create a delegated session with a system user session");
+        };
+
+        User currentUser = ham.getUser();
+        UserPrincipal sessionUserPrincipal = SubjectHelper.getFirstPrincipal(session.getSubject(), UserPrincipal.class);
+
+        if (currentUser == null) {
+            throw new IllegalStateException("Cannot create a delegated session for an anonymous user");
+        } else if (sessionUserPrincipal == null) {
+            throw new IllegalStateException("Cannot create a delegated session with an anonymous session");
+        };
+        if (currentUser instanceof SessionDelegateUser) {
+            throw new IllegalArgumentException("Current session is already delegated");
+        }
+        User sessionUser = sessionUserPrincipal.getUser();
 
         final Set<Principal> principals = new HashSet<>(subject.getPrincipals());
         principals.addAll(session.getSubject().getPrincipals());
 
+        // create SessionDelegateUser
+        LinkedHashSet<String> userIds = new LinkedHashSet<>();
+        userIds.add(currentUser.getId());
+        if (sessionUser instanceof SessionDelegateUser) {
+            userIds.addAll(((SessionDelegateUser)sessionUser).getIds());
+        } else {
+            userIds.add(sessionUser.getId());
+        }
+        HashSet<String> groupIds = new HashSet<>(currentUser.getMemberships());
+        groupIds.addAll(sessionUser.getMemberships());
+        SessionDelegateUser sessionDelegateUser = new SessionDelegateUserImpl(userIds, groupIds, currentUser);
+        // and replace current UserPrincipal
+        principals.removeIf(p -> p instanceof UserPrincipal);
+        principals.add(new UserPrincipal(sessionDelegateUser));
+
         // collect combined set of FacetAuthDomains
         HashSet<FacetAuthDomain> facetAuthDomains = new HashSet<>();
-        FacetAuthPrincipal facetAuthPrincipal = getPrincipal(subject, FacetAuthPrincipal.class);
+        FacetAuthPrincipal facetAuthPrincipal = SubjectHelper.getFirstPrincipal(subject, FacetAuthPrincipal.class);
         if (facetAuthPrincipal != null) {
             // collect current session FacetAuthDomains
             facetAuthDomains.addAll(facetAuthPrincipal.getFacetAuthDomains());
         }
-        facetAuthPrincipal = getPrincipal(session.getSubject(), FacetAuthPrincipal.class);
+        facetAuthPrincipal = SubjectHelper.getFirstPrincipal(session.getSubject(), FacetAuthPrincipal.class);
         if (facetAuthPrincipal != null) {
             // add other session FacetAuthDomains
             facetAuthDomains.addAll(facetAuthPrincipal.getFacetAuthDomains());

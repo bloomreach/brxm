@@ -18,6 +18,7 @@ package org.hippoecm.repository.query.lucene;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,8 +36,6 @@ import javax.security.auth.Subject;
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
-import org.apache.jackrabbit.core.security.SystemPrincipal;
-import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
@@ -53,8 +52,9 @@ import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.FacetAuthDomain;
 import org.hippoecm.repository.security.domain.QFacetRule;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
-import org.hippoecm.repository.security.principals.GroupPrincipal;
+import org.onehippo.repository.security.SessionDelegateUser;
 import org.onehippo.repository.security.StandardPermissionNames;
+import org.onehippo.repository.security.User;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,25 +101,32 @@ public class AuthorizationQuery {
                               final NamespaceMappings nsMappings,
                               final ServicingIndexingConfiguration indexingConfig,
                               final NodeTypeManager ntMgr,
-                              final Session session,
-                              final String userId) throws RepositoryException {
+                              final Session session) throws RepositoryException {
         // set the max clauses for booleans higher than the default 1024.
         BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
         if (!(session instanceof InternalHippoSession)) {
             throw new RepositoryException("Session is not an instance of o.a.j.core.SessionImpl");
         }
 
-        if (!subject.getPrincipals(SystemPrincipal.class).isEmpty()) {
+        InternalHippoSession internalSession = (InternalHippoSession)session;
+        User user = internalSession.getUser();
+        if (user != null && user.isSystemUser()) {
             this.query = new BooleanQuery(true);
             this.query.add(new MatchAllDocsQuery(), Occur.MUST);
         } else {
-            final Set<String> memberships = new HashSet<>();
-            for (GroupPrincipal groupPrincipal : subject.getPrincipals(GroupPrincipal.class)) {
-                memberships.add(groupPrincipal.getName());
-            }
-            final Set<String> userIds = new HashSet<>();
-            for (UserPrincipal userPrincipal : subject.getPrincipals(UserPrincipal.class)) {
-                userIds.add(userPrincipal.getName());
+            final Set<String> memberships;
+            final Set<String> userIds;
+            if (user != null) {
+                memberships = user.getMemberships();
+                if (user instanceof SessionDelegateUser) {
+                    userIds = ((SessionDelegateUser)user).getIds();
+                } else {
+                    userIds = new HashSet<>();
+                    userIds.add(user.getId());
+                }
+            } else {
+                memberships = Collections.EMPTY_SET;
+                userIds = Collections.EMPTY_SET;
             }
             long start = System.currentTimeMillis();
             this.query = initQuery(facetAuthPrincipal,
@@ -130,7 +137,7 @@ public class AuthorizationQuery {
                     nsMappings,
                     ntMgr);
 
-            log.info("Creating authorization query for user '{}' took {} ms. Query: {}", userId, (System.currentTimeMillis() - start), query);
+            log.info("Creating authorization query for user '{}' took {} ms. Query: {}", session.getUserID(), (System.currentTimeMillis() - start), query);
         }
     }
 

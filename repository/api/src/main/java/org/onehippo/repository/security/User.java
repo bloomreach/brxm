@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,8 +18,6 @@ package org.onehippo.repository.security;
 import java.util.Calendar;
 import java.util.Set;
 
-import javax.jcr.RepositoryException;
-
 /**
  * Represents a user in the repository.
  */
@@ -29,75 +27,69 @@ public interface User {
      * Get the id of the user.
      *
      * @return  the id of the user
-     * @throws RepositoryException
      */
-    String getId() throws RepositoryException;
+    String getId();
 
     /**
      * Whether this user is marked as a system user.
      *
      * @return  whether this user is marked as a system user.
-     * @throws RepositoryException
      */
-    boolean isSystemUser() throws RepositoryException;
+    boolean isSystemUser();
 
     /**
      * Whether this user is marked as active.
      *
      * @return  whether this user is marked as active.
-     * @throws RepositoryException
      */
-    boolean isActive() throws RepositoryException;
+    boolean isActive();
 
     /**
-     * Get the {@link Group}s this user is a member of.
+     * Get the immutable set of {@link Group#getId() Group identities} this user is a member of, which can be used to
+     * lookup the referenced {@link Group} object(s) through {@link SecurityService#getGroup(String)}.
      *
-     * @return the {@link Group}s this user is a member of.
-     * @throws RepositoryException
+     * @return the mutable set of {@link Group#getId() Group identities} this user is a member of.
      */
-    Iterable<Group> getMemberships() throws RepositoryException;
+    Set<String> getMemberships();
 
 
     /**
      * Get the first name property of this user.
      *
      * @return  the first name property of this user or {@code null} if not present
-     * @throws RepositoryException
      */
-    String getFirstName() throws RepositoryException;
+    String getFirstName();
 
     /**
      * Get the last name property of this user.
      *
      * @return  the last name property of this user or {@code null} if not present
-     * @throws RepositoryException
      */
-    String getLastName() throws RepositoryException;
-
+    String getLastName();
 
     /**
      * Get the email property of this user.
      *
      * @return  the email property of this user or {@code null} if not present
-     * @throws RepositoryException
      */
-    String getEmail() throws RepositoryException;
+    String getEmail();
 
     /**
      * Get the last login property of this user.
      *
      * @return  the last login property of this user or {@code null} if not present
-     * @throws RepositoryException
      */
-    Calendar getLastLogin() throws RepositoryException;
+    Calendar getLastLogin();
 
     /**
-     * Get an external user property by name.
+     * Get an additional user property by name.
+     * <p>
+     * Only single properties of type String, Boolean, Date, Double or Long are returned, while internal properties are hidden.
+     * </p>
      *
-     * @return  the external property of the user identified by {@code propertyName},
-     * or {@code null} if not present
-     * @throws RepositoryException
+     * @return  the additional property of the user identified by {@code propertyName},
+     * or {@code null} if not present/available
      */
-    String getProperty(String propertyName) throws RepositoryException;
+    String getProperty(String propertyName);
 
 }

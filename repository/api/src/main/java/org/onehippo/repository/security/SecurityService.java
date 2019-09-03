@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -48,9 +48,8 @@ public interface SecurityService {
      * @param offset  the start offset of the result; only has effect when value is larger than zero;
      *                defaults to no offset
      * @param limit  maximum size of the result; only has effect when value is larger than zero; defaults to no limit
-     * @throws RepositoryException
      */
-    Iterable<User> getUsers(long offset, long limit) throws RepositoryException;
+    Iterable<User> getUsers(long offset, long limit);
 
     /**
      * Get all the {@link Group}s in the repository.
@@ -59,9 +58,8 @@ public interface SecurityService {
      * @param offset  the start offset of the result; only has effect when value is larger than zero;
      *                defaults to no offset
      * @param limit  maximum size of the result; only has effect when value is larger than zero; defaults to no limit
-     * @throws RepositoryException
      */
-    Iterable<Group> getGroups(long offset, long limit) throws RepositoryException;
+    Iterable<Group> getGroups(long offset, long limit);
 
     /**
      * Check if the group with given {@code groupId} exists.

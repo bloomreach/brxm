@@ -412,7 +412,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                                      final String interaction, final String interactionId, final Throwable exception) {
             final String className = targetMethod != null ? targetMethod.getDeclaringClass().getName() : null;
             final String methodName = targetMethod != null ? targetMethod.getName() : null;
-            workflowLogger.logWorkflowStep(userSession.getUserID(), className,
+            workflowLogger.logWorkflowStep(userSession, className,
                     methodName, args, returnObject, subjectId, subjectPath, interaction, interactionId,
                     category, workflowName, exception);
         }

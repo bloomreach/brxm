@@ -26,7 +26,7 @@ import org.hippoecm.repository.security.domain.FacetAuthDomain;
  * The facet auth principal holding all the {@link #getFacetAuthDomains() FacetAuthDomain}s for a user and their
  * overall aggregated {@link #getResolvedPrivileges() resolved privileges}
  */
-public class FacetAuthPrincipal implements Principal {
+public final class FacetAuthPrincipal implements Principal {
 
     public static final FacetAuthPrincipal NO_AUTH_DOMAINS_PRINCIPAL = new FacetAuthPrincipal(Collections.EMPTY_SET);
 
@@ -96,13 +96,10 @@ public class FacetAuthPrincipal implements Principal {
      * @return true when compared with any other FacetAuthPrincipal instance, else false
      */
     final public boolean equals(Object obj) {
-        if (this == obj || obj instanceof FacetAuthPrincipal) {
-            return true;
-        }
-        return false;
+        return this == obj || obj instanceof FacetAuthPrincipal;
     }
 
     public int hashCode() {
-        return name.hashCode();
+        return this.getClass().hashCode();
     }
 }

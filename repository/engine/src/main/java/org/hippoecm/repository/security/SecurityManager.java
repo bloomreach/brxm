@@ -17,7 +17,6 @@ package org.hippoecm.repository.security;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -26,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.jcr.Credentials;
 import javax.jcr.Node;
@@ -58,7 +56,7 @@ import org.apache.jackrabbit.core.security.AMContext;
 import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.SecurityConstants;
-import org.apache.jackrabbit.core.security.UserPrincipal;
+import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.authentication.AuthContext;
 import org.apache.jackrabbit.core.security.authentication.AuthContextProvider;
 import org.apache.jackrabbit.core.security.authentication.CallbackHandlerImpl;
@@ -71,17 +69,19 @@ import org.apache.jackrabbit.core.security.principal.PrincipalProvider;
 import org.apache.jackrabbit.core.security.principal.PrincipalProviderRegistry;
 import org.apache.jackrabbit.core.security.principal.ProviderRegistryImpl;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.security.domain.Domain;
 import org.hippoecm.repository.security.domain.FacetAuthDomain;
 import org.hippoecm.repository.security.group.DummyGroupManager;
 import org.hippoecm.repository.security.group.GroupManager;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 import org.hippoecm.repository.security.principals.GroupPrincipal;
+import org.hippoecm.repository.security.principals.UserPrincipal;
 import org.hippoecm.repository.security.role.DummyRoleManager;
 import org.hippoecm.repository.security.role.RoleManager;
+import org.hippoecm.repository.security.service.UserImpl;
 import org.hippoecm.repository.security.user.DummyUserManager;
 import org.hippoecm.repository.security.user.HippoUserManager;
+import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -340,35 +340,9 @@ public class SecurityManager implements HippoSecurityManager {
     }
 
     /**
-     * Get the memberships for a user. See the {@link GroupManager#getMembershipIds(String)} for details.
-     *
-     *
-     * @param rawUserId the unparsed userId
-     * @return a set of Strings with the memberships or an empty set if no memberships are found.
-     */
-    private Set<String> getMemberships(String rawUserId, String providerId) {
-        try {
-            final String sanitizedUserId = sanitizeUserId(rawUserId, providerId);
-            if (providers.containsKey(providerId)) {
-                return providers.get(providerId).getGroupManager().getMembershipIds(sanitizedUserId);
-            } else {
-                return providers.get(INTERNAL_PROVIDER).getGroupManager().getMembershipIds(sanitizedUserId);
-            }
-        } catch (RepositoryException e) {
-            log.warn("Unable to get memberships for userId: " + rawUserId, e);
-            return null;
-        }
-    }
-
-    /**
      * Get the domains in which the user has a role.
-     * @param rawUserId the unparsed userId
      */
-    private Set<Domain> getDomainsForUser(String rawUserId, String providerId) throws RepositoryException {
-        if (rawUserId == null) {
-            return Collections.emptySet();
-        }
-        String userId = NodeNameCodec.decode(sanitizeUserId(rawUserId, providerId));
+    private Set<Domain> getDomainsForUser(final String userId) throws RepositoryException {
         Set<Domain> domains = new HashSet<>();
         StringBuilder statement = new StringBuilder();
         statement.append("SELECT * FROM ").append(HippoNodeType.NT_AUTHROLE);
@@ -395,10 +369,9 @@ public class SecurityManager implements HippoSecurityManager {
     /**
      * Get the domains in which the group has a role.
      */
-    private Set<Domain> getDomainsForGroup(String rawGroupId, String providerId) throws RepositoryException {
-        String groupId = NodeNameCodec.decode(sanitizeGroupId(rawGroupId, providerId));
+    private Set<Domain> getDomainsForGroup(final String groupId) throws RepositoryException {
 
-        Set<Domain> domains = new HashSet<Domain>();
+        Set<Domain> domains = new HashSet<>();
         StringBuilder statement = new StringBuilder();
         statement.append("SELECT * FROM ").append(HippoNodeType.NT_AUTHROLE);
         statement.append(" WHERE");
@@ -422,7 +395,7 @@ public class SecurityManager implements HippoSecurityManager {
     }
 
     private Set<String> getRolesForRole(String roleId) {
-        return getRolesForRole(roleId, new HashSet<String>());
+        return getRolesForRole(roleId, new HashSet<>());
     }
 
     private Set<String> getRolesForRole(String roleId, Set<String> currentRoles) {
@@ -451,7 +424,7 @@ public class SecurityManager implements HippoSecurityManager {
     }
 
     private Set<String> getPrivilegesForRole(String roleId) {
-        Set<String> privileges = new HashSet<String>();
+        Set<String> privileges = new HashSet<>();
         Node roleNode;
         log.trace("Looking for role: {} in path: {}", roleId, rolesPath);
         String path = rolesPath + "/" + roleId;
@@ -473,116 +446,72 @@ public class SecurityManager implements HippoSecurityManager {
         return privileges;
     }
 
-    /**
-     * Sanitize the raw userId input according to the case sensitivity of the
-     * security provider.
-     * @return the trimmed and if needed converted to lowercase userId
-     */
-    private String sanitizeUserId(String rawUserId, String providerId) throws RepositoryException {
-        if (rawUserId == null) {
-            return null;
-        }
-        if (providers.containsKey(providerId)) {
-            final HippoUserManager userManager = ((HippoUserManager)providers.get(providerId).getUserManager());
-            if (userManager.isCaseSensitive()) {
-                return rawUserId.trim();
-            } else if (userManager.isUserIdLowerCase()) {
-                return rawUserId.trim().toLowerCase();
-            } else {
-                return rawUserId.trim().toUpperCase();
-            }
-        } else {
-            // fallback to internal provider
-            if (((HippoUserManager)providers.get(INTERNAL_PROVIDER).getUserManager()).isCaseSensitive()) {
-                return rawUserId.trim();
-            } else {
-                return rawUserId.trim().toLowerCase();
-            }
-
-        }
-    }
-
-    /**
-     * Sanitize the raw userId input according to the case sensitivity of the
-     * security provider.
-     * @return the trimmed and if needed converted to lowercase groupId
-     */
-    private String sanitizeGroupId(String rawGroupId, String providerId) throws RepositoryException {
-        if (rawGroupId == null) {
-            return null;
-        }
-        if (providers.containsKey(providerId)) {
-            if (providers.get(providerId).getGroupManager().isCaseSensitive()) {
-                return rawGroupId.trim();
-            } else {
-                return rawGroupId.trim().toLowerCase();
-            }
-        } else {
-            // fallback to internal provider
-            if (providers.get(INTERNAL_PROVIDER).getGroupManager().isCaseSensitive()) {
-                return rawGroupId.trim();
-            } else {
-                return rawGroupId.trim().toLowerCase();
-            }
-
-        }
-    }
-
-    public void assignPrincipals(Set<Principal>principals, SimpleCredentials creds) {
-        String userId = null;
-        String providerId = null;
-
-        if (creds != null) {
-            userId = creds.getUserID();
-            providerId = (String) creds.getAttribute("providerId");
-        }
-
+    public void assignPrincipals(final Set<Principal>principals, final SimpleCredentials creds) throws RepositoryException {
         try {
-            assignUserPrincipal(principals, userId);
-            assignGroupPrincipals(principals, userId, providerId);
-            assignFacetAuthPrincipal(principals, userId, providerId);
-        } catch(RepositoryException ex) {
-            log.warn("unable to assign principals for user", ex);
-        }
-    }
+            String userId = null;
+            String providerId = null;
 
-    private void assignUserPrincipal(Set<Principal> principals, String userId) {
-        if(userId == null) {
-            principals.add(new AnonymousPrincipal());
-        } else {
-            principals.add(new UserPrincipal(userId));
-        }
-    }
-
-    private void assignGroupPrincipals(Set<Principal> principals, String userId, String providerId) {
-        for (String groupId : getMemberships(userId, providerId)) {
-            principals.add(new GroupPrincipal(groupId));
-        }
-    }
-
-    private void assignFacetAuthPrincipal(Set<Principal> principals, String userId, String providerId) throws RepositoryException {
-        // Find domains that the user is associated with
-        Set<Domain> userDomains = new HashSet<Domain>();
-        userDomains.addAll(getDomainsForUser(userId, providerId));
-        for (Principal principal : principals) {
-            if (principal instanceof GroupPrincipal) {
-                userDomains.addAll(getDomainsForGroup(principal.getName(), providerId));
+            if (creds != null) {
+                userId = creds.getUserID();
+                providerId = (String) creds.getAttribute("providerId");
             }
+
+            boolean anonymousUser;
+            Principal userPrincipal;
+            Set<String> groupIds;
+            if (userId != null) {
+                anonymousUser = false;
+                HippoUserManager userManager;
+                GroupManager groupManager;
+                if (providers.containsKey(providerId)) {
+                    userManager = ((HippoUserManager)providers.get(providerId).getUserManager());
+                    groupManager = providers.get(providerId).getGroupManager();
+                } else {
+                    // fallback to internal provider
+                    userManager = (HippoUserManager)providers.get(INTERNAL_PROVIDER).getUserManager();
+                    groupManager = providers.get(INTERNAL_PROVIDER).getGroupManager();
+                }
+                User user = new UserImpl(userManager.getUser(userId), groupManager);
+                userPrincipal = new UserPrincipal(user);
+                groupIds = user.getMemberships();
+            } else {
+                anonymousUser = true;
+                userPrincipal = new AnonymousPrincipal();
+                groupIds = providers.get(INTERNAL_PROVIDER).getGroupManager().getMembershipIds(null);
+            }
+            principals.add(userPrincipal);
+            for (String groupId : groupIds) {
+                principals.add(new GroupPrincipal(groupId));
+            }
+            principals.add(createFacetAuthPrincipal(userPrincipal.getName(), anonymousUser, groupIds));
+        } catch(RepositoryException ex) {
+            log.error("unable to assign principals for user", ex);
+            throw ex;
+        }
+    }
+
+    private FacetAuthPrincipal createFacetAuthPrincipal(final String userId, final boolean anonymousUser, final Set<String> groupIds) throws RepositoryException {
+        // Find domains that the user is associated with
+        Set<Domain> userDomains = new HashSet<>();
+        if (!anonymousUser) {
+            userDomains.addAll(getDomainsForUser(userId));
+        }
+        for (String groupId : groupIds) {
+            userDomains.addAll(getDomainsForGroup(groupId));
         }
 
         HashSet<FacetAuthDomain> facetAuthDomains = new HashSet<>();
 
-        // Add facet auth principals
         for (Domain domain : userDomains) {
 
             // get roles for a user for a domain
             log.debug("User {} has domain {}", userId, domain.getName());
             Set<String> roles = new HashSet<>();
-            roles.addAll(domain.getRolesForUser(userId));
-            for (Principal principal : principals) {
-                if (principal instanceof GroupPrincipal) {
-                    roles.addAll(domain.getRolesForGroup(principal.getName()));
-                }
+            if (!anonymousUser) {
+                roles.addAll(domain.getRolesForUser(userId));
+            }
+            for (String groupId : groupIds) {
+                roles.addAll(domain.getRolesForGroup(groupId));
             }
 
             // check for indirectly included roles
@@ -608,29 +537,22 @@ public class SecurityManager implements HippoSecurityManager {
                 facetAuthDomains.add(fad);
             }
         }
-        principals.add(new FacetAuthPrincipal(facetAuthDomains));
+        return new FacetAuthPrincipal(facetAuthDomains);
     }
 
-    public String getUserID(Subject subject, String workspace) {
-        String uid = null;
-        // if SimpleCredentials are present, the UserID can easily be retrieved.
-        Iterator creds = subject.getPublicCredentials(SimpleCredentials.class).iterator();
-        if (creds.hasNext()) {
-            SimpleCredentials sc = (SimpleCredentials) creds.next();
-            uid = sc.getUserID();
-            if (!subject.getPrincipals(FacetAuthPrincipal.class).isEmpty()) {
-                uid = uid + "-" + UUID.randomUUID().toString();
-            }
-        } else {
-            // assume that UserID and principal name
-            // are the same (not totally correct) and thus return the name
-            // of the first non-group principal.
-            for (Iterator it = subject.getPrincipals().iterator(); it.hasNext();) {
-                Principal p = (Principal) it.next();
-                // FIXME: dead code
-            }
+    public String getUserID(final Subject subject, final String workspace) {
+        Principal principal = SubjectHelper.getFirstPrincipal(subject, SystemPrincipal.class);
+        if (principal == null) {
+            principal = SubjectHelper.getFirstPrincipal(subject, UserPrincipal.class);
         }
-        return uid;
+        if (principal == null) {
+            principal = SubjectHelper.getFirstPrincipal(subject, AnonymousPrincipal.class);
+        }
+        if (principal != null) {
+            return principal.getName();
+        }
+        // unexpected...
+        return "<unknown>";
     }
 
     @Override

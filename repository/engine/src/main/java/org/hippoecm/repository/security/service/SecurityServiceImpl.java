@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,9 +16,7 @@
 package org.hippoecm.repository.security.service;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.NoSuchElementException;
 
 import javax.jcr.ItemNotFoundException;
@@ -26,7 +24,10 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.security.auth.Subject;
 
+import org.apache.jackrabbit.core.security.SystemPrincipal;
+import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.hippoecm.repository.security.HippoSecurityManager;
 import org.hippoecm.repository.security.group.GroupManager;
 import org.hippoecm.repository.security.user.HippoUserManager;
@@ -42,19 +43,21 @@ public final class SecurityServiceImpl implements SecurityService {
     private static final Logger log = LoggerFactory.getLogger(SecurityServiceImpl.class);
     private static final String INTERNAL_PROVIDER = "internal";
 
-    private final Session session;
-    private final HippoSecurityManager securityManager;
+    private final Session systemSession;
     private final HippoUserManager internalUserManager;
     private final GroupManager internalGroupManager;
 
-    private final Map<String, HippoUserManager> userManagers = new HashMap<String, HippoUserManager>(2);
-    private final Map<String, GroupManager> groupManagers = new HashMap<String, GroupManager>(2);
-
-    public SecurityServiceImpl(HippoSecurityManager securityManager, Session session) throws RepositoryException {
-        this.securityManager = securityManager;
-        this.session = session;
-        this.internalUserManager = securityManager.getUserManager(session, INTERNAL_PROVIDER);
-        this.internalGroupManager = securityManager.getGroupManager(session, INTERNAL_PROVIDER);
+    public SecurityServiceImpl(final HippoSecurityManager securityManager, final Session systemSession) throws RepositoryException {
+        if (systemSession instanceof InternalHippoSession) {
+            Subject subject = ((InternalHippoSession)systemSession).getSubject();
+            if (!subject.getPrincipals(SystemPrincipal.class).isEmpty()) {
+                this.systemSession = systemSession;
+                this.internalUserManager = securityManager.getUserManager(systemSession, INTERNAL_PROVIDER);
+                this.internalGroupManager = securityManager.getGroupManager(systemSession, INTERNAL_PROVIDER);
+                return;
+            }
+        }
+        throw new IllegalArgumentException("systemSession really must be a system session");
     }
 
     @Override
@@ -68,110 +71,104 @@ public final class SecurityServiceImpl implements SecurityService {
         if (node == null) {
             throw new ItemNotFoundException("No such user: " + userId);
         }
-        return new UserImpl(node, this);
+        return new UserImpl(node, internalGroupManager);
     }
 
     @Override
-    public Iterable<User> getUsers(final long offset, final long limit) throws RepositoryException {
-        return new Iterable<User>() {
-            @Override
-            public Iterator<User> iterator() {
-                try {
-                    return new Iterator<User>() {
+    public Iterable<User> getUsers(final long offset, final long limit) {
+        return () -> {
+            try {
+                return new Iterator<User>() {
 
-                        private final NodeIterator nodeIterator = internalUserManager.listUsers(offset, limit);
-                        private User next;
+                    private final NodeIterator nodeIterator = internalUserManager.listUsers(offset, limit);
+                    private User next;
 
-                        @Override
-                        public boolean hasNext() {
-                            fetchNext();
-                            return next != null;
+                    @Override
+                    public boolean hasNext() {
+                        fetchNext();
+                        return next != null;
+                    }
+
+                    @Override
+                    public User next() {
+                        fetchNext();
+                        if (next == null) {
+                            throw new NoSuchElementException();
                         }
+                        final User result = next;
+                        next = null;
+                        return result;
+                    }
 
-                        @Override
-                        public User next() {
-                            fetchNext();
-                            if (next == null) {
-                                throw new NoSuchElementException();
-                            }
-                            final User result = next;
-                            next = null;
-                            return result;
-                        }
+                    @Override
+                    public void remove() {
+                        throw new UnsupportedOperationException();
+                    }
 
-                        @Override
-                        public void remove() {
-                            throw new UnsupportedOperationException();
-                        }
-
-                        private void fetchNext() {
-                            while (next == null && nodeIterator.hasNext()) {
-                                final Node node = nodeIterator.nextNode();
-                                try {
-                                    next = new UserImpl(node, SecurityServiceImpl.this);
-                                } catch (RepositoryException e) {
-                                    log.warn("Failed to load next user in iterator: " + e);
-                                }
+                    private void fetchNext() {
+                        while (next == null && nodeIterator.hasNext()) {
+                            final Node node = nodeIterator.nextNode();
+                            try {
+                                next = new UserImpl(node, internalGroupManager);
+                            } catch (RepositoryException e) {
+                                log.warn("Failed to load next user in iterator: " + e);
                             }
                         }
-                    };
-                } catch (RepositoryException e) {
-                    log.error("Failed to initialize user iterator: " + e);
-                }
-                return Collections.<User>emptyList().iterator();
+                    }
+                };
+            } catch (RepositoryException e) {
+                log.error("Failed to initialize user iterator: " + e);
             }
+            return Collections.<User>emptyList().iterator();
         };
     }
 
     @Override
-    public Iterable<Group> getGroups(final long offset, final long limit) throws RepositoryException {
-        return new Iterable<Group>() {
-            @Override
-            public Iterator<Group> iterator() {
-                try {
-                    return new Iterator<Group>() {
+    public Iterable<Group> getGroups(final long offset, final long limit) {
+        return () -> {
+            try {
+                return new Iterator<Group>() {
 
-                        private final NodeIterator nodeIterator = internalGroupManager.listGroups(offset, limit);
-                        private Group next;
+                    private final NodeIterator nodeIterator = internalGroupManager.listGroups(offset, limit);
+                    private Group next;
 
-                        @Override
-                        public boolean hasNext() {
-                            fetchNext();
-                            return next != null;
+                    @Override
+                    public boolean hasNext() {
+                        fetchNext();
+                        return next != null;
+                    }
+
+                    @Override
+                    public Group next() {
+                        fetchNext();
+                        if (next == null) {
+                            throw new NoSuchElementException();
                         }
+                        final Group result = next;
+                        next = null;
+                        return result;
+                    }
 
-                        @Override
-                        public Group next() {
-                            fetchNext();
-                            if (next == null) {
-                                throw new NoSuchElementException();
-                            }
-                            final Group result = next;
-                            next = null;
-                            return result;
-                        }
+                    @Override
+                    public void remove() {
+                        throw new UnsupportedOperationException();
+                    }
 
-                        @Override
-                        public void remove() {
-                            throw new UnsupportedOperationException();
-                        }
-
-                        private void fetchNext() {
-                            while (next == null && nodeIterator.hasNext()) {
-                                final Node node = nodeIterator.nextNode();
-                                try {
-                                    next = new GroupImpl(node, SecurityServiceImpl.this);
-                                } catch (RepositoryException e) {
-                                    log.warn("Failed to load next group in iterator: " + e);
-                                }
+                    private void fetchNext() {
+                        while (next == null && nodeIterator.hasNext()) {
+                            final Node node = nodeIterator.nextNode();
+                            try {
+                                next = new GroupImpl(node, internalGroupManager);
+                            } catch (RepositoryException e) {
+                                log.warn("Failed to load next group in iterator: " + e);
                             }
                         }
-                    };
-                } catch (RepositoryException e) {
-                    log.error("Failed to initialize group iterator: " + e);
-                }
-                return Collections.<Group>emptyList().iterator();
+                    }
+                };
+            } catch (RepositoryException e) {
+                log.error("Failed to initialize group iterator: " + e);
             }
+            return Collections.<Group>emptyList().iterator();
         };
     }
 
@@ -186,43 +183,10 @@ public final class SecurityServiceImpl implements SecurityService {
         if (node == null) {
             throw new ItemNotFoundException("No such group: " + groupId);
         }
-        return new GroupImpl(node, this);
+        return new GroupImpl(node, internalGroupManager);
     }
 
-    GroupManager getInternalGroupManager() {
-        return internalGroupManager;
+    public void close() {
+        systemSession.logout();
     }
-
-    HippoUserManager getInternalUserManager() {
-        return internalUserManager;
-    }
-
-    GroupManager getGroupManager(final String providerId) throws RepositoryException {
-        if (providerId == null || providerId.equals(INTERNAL_PROVIDER)) {
-            return internalGroupManager;
-        }
-        if (groupManagers.containsKey(providerId)) {
-            return groupManagers.get(providerId);
-        }
-        final GroupManager groupManager = securityManager.getGroupManager(session, providerId);
-        if (groupManager != null) {
-            groupManagers.put(providerId, groupManager);
-        }
-        return groupManager;
-    }
-
-    HippoUserManager getUserManager(final String providerId) throws RepositoryException {
-        if (providerId == null || providerId.equals(INTERNAL_PROVIDER)) {
-            return internalUserManager;
-        }
-        if (userManagers.containsKey(providerId)) {
-            return userManagers.get(providerId);
-        }
-        final HippoUserManager userManager = securityManager.getUserManager(session, providerId);
-        if (userManager != null) {
-            userManagers.put(providerId, userManager);
-        }
-        return userManager;
-    }
-
 }

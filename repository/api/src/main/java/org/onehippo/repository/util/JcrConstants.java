@@ -55,6 +55,7 @@ public final class JcrConstants {
     public static final String JCR_LOCK_IS_DEEP = "jcr:lockIsDeep";
 
     public static final String JCR_UUID = "jcr:uuid";
+    public static final String JCR_PATH = "jcr:path";
 
     public static final String JCR_ROOT_VERSION = "jcr:rootVersion";
     public static final String JCR_BASE_VERSION = "jcr:baseVersion";

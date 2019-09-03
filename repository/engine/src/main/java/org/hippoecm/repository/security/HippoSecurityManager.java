@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,8 +42,9 @@ public interface HippoSecurityManager extends JackrabbitSecurityManager {
      * @param principals the Set to add the principals to. (pass by reference).
      * @param creds the credentials for the user. If creds.userId() returns null
      *              the user is treated as anonymous. 
+     * @throws RepositoryException
      */
-    void assignPrincipals(Set<Principal>principals, SimpleCredentials creds);
+    void assignPrincipals(Set<Principal>principals, SimpleCredentials creds) throws RepositoryException;
     
     /**
      * Try to authenticate the user. If the user exists in the repository it will

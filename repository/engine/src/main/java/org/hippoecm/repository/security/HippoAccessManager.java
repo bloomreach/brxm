@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.security;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -57,7 +58,6 @@ import org.apache.jackrabbit.core.security.AMContext;
 import org.apache.jackrabbit.core.security.AccessManager;
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
-import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.apache.jackrabbit.core.security.authorization.AccessControlProvider;
 import org.apache.jackrabbit.core.security.authorization.Permission;
 import org.apache.jackrabbit.core.security.authorization.WorkspaceAccessManager;
@@ -85,7 +85,10 @@ import org.hippoecm.repository.security.domain.FacetAuthDomain;
 import org.hippoecm.repository.security.domain.QFacetRule;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 import org.hippoecm.repository.security.principals.GroupPrincipal;
+import org.hippoecm.repository.security.principals.UserPrincipal;
+import org.onehippo.repository.security.SessionDelegateUser;
 import org.onehippo.repository.security.StandardPermissionNames;
+import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -211,6 +214,11 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     private boolean isSystem = false;
 
     /**
+     * The User when isUser==true.
+     */
+    private User user;
+
+    /**
      * The userIds of the logged in user
      */
     private List<String> userIds = new ArrayList<>();
@@ -259,37 +267,40 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         hierMgr = itemMgr.getHierarchyMgr();
         zombieHierMgr = itemMgr.getAtticAwareHierarchyMgr();
 
-        // Shortcuts for checks
-        isSystem = !subject.getPrincipals(SystemPrincipal.class).isEmpty();
-        isUser = !subject.getPrincipals(UserPrincipal.class).isEmpty();
-
-        // prefetch userId
-        userIds = new ArrayList<>();
-        if (isSystem) {
-            for (SystemPrincipal principal : subject.getPrincipals(SystemPrincipal.class)) {
-                userIds.add(principal.getName());
+        // Prefetch userIds and isSystem/isUser
+        // fetch SystemPrincipal, if any. There can only be one, see SystemPrincipal.equals()
+        Principal principal = SubjectHelper.getFirstPrincipal(subject, SystemPrincipal.class);
+        if (principal != null) {
+            isSystem = true;
+        } else {
+            // fetch UserPrincipal, if any. There can only be one, see UserPrincipal.equals()
+            principal = SubjectHelper.getFirstPrincipal(subject, UserPrincipal.class);
+            if (principal != null) {
+                isUser = true;
+                user = ((UserPrincipal)principal).getUser();
             }
-        } else if (isUser) {
-            for (UserPrincipal principal : subject.getPrincipals(UserPrincipal.class)) {
-                userIds.add(principal.getName());
+            else {
+                // fetch AnonymousPrincipal, if any. There can only be one, see AnonymousPrincipal.equals()
+                principal = SubjectHelper.getFirstPrincipal(subject, AnonymousPrincipal.class);
             }
-        } else if (!subject.getPrincipals(AnonymousPrincipal.class).isEmpty()) {
-            userIds.add(subject.getPrincipals(AnonymousPrincipal.class).iterator().next().getName());
         }
-        if (userIds.size() == 0) {
+        if (user != null && user instanceof SessionDelegateUser) {
+            userIds.addAll(((SessionDelegateUser)user).getIds());
+        } else if (principal != null) {
+            userIds.add(principal.getName());
+        } else {
             userIds.add("");
         }
 
-        // prefetch groupId's
+        // fetch groupId's
         for (GroupPrincipal gp : subject.getPrincipals(GroupPrincipal.class)) {
             groupIds.add(gp.getName());
         }
 
-        facetAuthPrincipal = FacetAuthPrincipal.NO_AUTH_DOMAINS_PRINCIPAL;
-        // prefetch FacetAuthPrincipal, if any
-        for (FacetAuthPrincipal p : subject.getPrincipals(FacetAuthPrincipal.class)) {
-            // there can only be one (see FacetAuthPrincipal.equals()
-            facetAuthPrincipal = p;
+        // fetch FacetAuthPrincipal, if any. There can only be one, see FacetAuthPrincipal.equals()
+        facetAuthPrincipal = SubjectHelper.getFirstPrincipal(subject, FacetAuthPrincipal.class);
+        if (facetAuthPrincipal == null) {
+            facetAuthPrincipal = FacetAuthPrincipal.NO_AUTH_DOMAINS_PRINCIPAL;
         }
 
         // cache root NodeId
@@ -306,11 +317,12 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             cacheSize = DEFAULT_PERM_CACHE_SIZE;
         }
 
-        // fetch FacetRuleExtensionsPrincipal, if any
-        for (FacetRuleExtensionsPrincipal p : subject.getPrincipals(FacetRuleExtensionsPrincipal.class)) {
-            // there can only be one (see FacetRuleExtensionsPrincipal.equals()
-            initializeExtendedFacetRules(p);
+        // fetch FacetRuleExtensionsPrincipal, if any. There can only be one, see FacetRuleExtensionsPrincipal.equals()
+        FacetRuleExtensionsPrincipal facetRuleExtensionsPrincipal = SubjectHelper.getFirstPrincipal(subject, FacetRuleExtensionsPrincipal.class);
+        if (facetRuleExtensionsPrincipal != null) {
+            initializeExtendedFacetRules(facetRuleExtensionsPrincipal);
         }
+
         readAccessCache = new HippoAccessCache(cacheSize);
         readVirtualAccessCache = new WeakHashMap<>();
 
@@ -321,7 +333,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
         log.info("Initialized HippoAccessManager for user {} with cache size {}", getUserIdAsString(), cacheSize);
     }
-
 
     private void initializeExtendedFacetRules(final FacetRuleExtensionsPrincipal facetRuleExtensionsPrincipal) {
         extendedFacetRules = new HashMap<>();
@@ -345,6 +356,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
         subject = null;
         session = null;
+        user = null;
         facetAuthPrincipal = null;
 
         // clear out all caches
@@ -360,6 +372,14 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
     private String getUserIdAsString() {
         return StringUtils.join(userIds, ',');
+    }
+
+    public boolean isSystemUser() {
+        return isSystem;
+    }
+
+    public User getUser() {
+        return user;
     }
 
     /**

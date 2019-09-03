@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -183,8 +183,12 @@ public class SessionDecorator implements XASession, HippoSession {
     }
 
     @Override
-    public User getUser() throws RepositoryException {
-        return getWorkspace().getSecurityService().getUser(getUserID());
+    public User getUser() throws ItemNotFoundException {
+        User user = getInternalHippoSession().getUser();
+        if (user == null) {
+            throw new ItemNotFoundException("User is not a repository user");
+        }
+        return user;
     }
 
     @Override

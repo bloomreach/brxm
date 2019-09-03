@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 package org.onehippo.repository.security;
 
 
-import javax.jcr.RepositoryException;
+import java.util.Set;
 
 /**
  * Represents a group of {@link User}s in the repository.
@@ -27,41 +27,43 @@ public interface Group {
      * Get the id of the group.
      *
      * @return  the id of the group
-     * @throws RepositoryException
      */
-    String getId() throws RepositoryException;
+    String getId();
 
     /**
-     * Get the members of this group.
+     * Get the immutable set of {@link User#getId() User identifiers} who are members of this group. which can be used
+     * to lookup the referenced {@link User} object(s) through {@link SecurityService#getUser(String)}.
+     * <p>
+     * Note: this set is lazy loaded, once.
+     * </p>
      *
-     * @return  the {@link User}s that are members of this group.
-     * @throws RepositoryException
+     * @return the {@link User#getId() User identifiers} who are members of this group
      */
-    Iterable<User> getMembers() throws RepositoryException;
+    Set<String> getMembers();
 
     /**
      * Get the description property of this group.
      *
      * @return  the description property of this group, or {@code null} if not present
-     * @throws RepositoryException
      */
-    String getDescription() throws RepositoryException;
+    String getDescription();
 
     /**
      * Whether this group is marked as a system group.
      *
      * @return  whether this group is a system group
-     * @throws RepositoryException
      */
-    boolean isSystemGroup() throws RepositoryException;
+    boolean isSystemGroup();
 
     /**
-     * Get an external group property by name.
+     * Get an additional group property by name.
+     * <p>
+     * Only single properties of type String, Boolean, Date, Double or Long are returned, while internal properties are hidden.
+     * </p>
      *
-     * @return  the external property of the group identified by {@code propertyName},
-     * or {@code null} if not present
-     * @throws RepositoryException
+     * @return  the additional property of the group identified by {@code propertyName},
+     * or {@code null} if not present/available
      */
-    String getProperty(String propertyName) throws RepositoryException;
+    String getProperty(String propertyName);
 
 }

@@ -52,7 +52,7 @@ public class QFacetRuleStateManager {
 
     public String getReferenceUUID(final String facetRuleUUID) {
         final String jcrPath = facetRuleUUIDToJcrPath.get(facetRuleUUID);
-        return jcrPathToJcrUUID.get(jcrPath);
+        return jcrPath != null ? jcrPathToJcrUUID.get(jcrPath) : null;
     }
 
     void visit(final Node node)  throws RepositoryException {

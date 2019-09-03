@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,11 +15,7 @@
  */
 package org.hippoecm.repository.util;
 
-import javax.jcr.Session;
-
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.junit.Test;
-import org.onehippo.repository.security.SecurityService;
 import org.onehippo.repository.security.User;
 
 import static org.easymock.EasyMock.createMock;
@@ -32,60 +28,37 @@ public class UserUtilsTest {
 
     @Test
     public void getUserNameNoFirstName() throws Exception {
-        final Session session = createMock(Session.class);
-        final HippoWorkspace workspace = createMock(HippoWorkspace.class);
-        final SecurityService securityService = createMock(SecurityService.class);
         final User user = createMock(User.class);
-
-        expect(session.getWorkspace()).andReturn(workspace);
-        expect(workspace.getSecurityService()).andReturn(securityService);
-        expect(securityService.getUser("admin")).andReturn(user);
         expect(user.getFirstName()).andReturn(null);
         expect(user.getLastName()).andReturn(" Doe ");
-        replay(session, workspace, securityService, user);
+        replay(user);
 
-        assertEquals(UserUtils.getUserName("admin", session).get(),"Doe");
-
-        verify(session, workspace, securityService, user);
+        assertEquals(UserUtils.getUserName(user).get(),"Doe");
+        verify(user);
     }
 
     @Test
     public void getUserNameNoLastName() throws Exception {
-        final Session session = createMock(Session.class);
-        final HippoWorkspace workspace = createMock(HippoWorkspace.class);
-        final SecurityService securityService = createMock(SecurityService.class);
         final User user = createMock(User.class);
 
-        expect(session.getWorkspace()).andReturn(workspace);
-        expect(workspace.getSecurityService()).andReturn(securityService);
-        expect(securityService.getUser("admin")).andReturn(user);
         expect(user.getFirstName()).andReturn(" John ");
         expect(user.getLastName()).andReturn(null);
-        replay(session, workspace, securityService, user);
+        replay(user);
 
-        assertEquals(UserUtils.getUserName("admin", session).get(),"John");
-
-        verify(session, workspace, securityService, user);
+        assertEquals(UserUtils.getUserName(user).get(),"John");
+        verify(user);
     }
 
     @Test
     public void getUserNameNoFirstAndLastName() throws Exception {
-        final Session session = createMock(Session.class);
-        final HippoWorkspace workspace = createMock(HippoWorkspace.class);
-        final SecurityService securityService = createMock(SecurityService.class);
         final User user = createMock(User.class);
-
-        expect(session.getWorkspace()).andReturn(workspace);
-        expect(workspace.getSecurityService()).andReturn(securityService);
-        expect(securityService.getUser("admin")).andReturn(user);
         expect(user.getFirstName()).andReturn(null);
         expect(user.getLastName()).andReturn(null);
         expect(user.getId()).andReturn("admin");
-        replay(session, workspace, securityService, user);
+        replay(user);
 
-        assertEquals(UserUtils.getUserName("admin", session).get(),"admin");
+        assertEquals(UserUtils.getUserName(user).get(),"admin");
 
-        verify(session, workspace, securityService, user);
+        verify(user);
     }
-
 }

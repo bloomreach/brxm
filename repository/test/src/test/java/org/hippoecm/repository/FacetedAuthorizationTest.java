@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -1471,7 +1471,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         final Session adminSession = userSession.impersonate(new SimpleCredentials("admin", "admin".toCharArray()));
         Session extendedSession = ((HippoSession) userSession).createSecurityDelegate(adminSession);
 
-        assertEquals("admin," + TEST_USER_ID, extendedSession.getUserID());
+        assertEquals(TEST_USER_ID + ",admin", extendedSession.getUserID());
 
         extendedSession.logout();
         adminSession.logout();

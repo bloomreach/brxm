@@ -298,6 +298,14 @@ public interface HippoNodeType {
     @SuppressWarnings("squid:S2068")
     public static final String HIPPO_PASSWORDLASTMODIFIED = "hipposys:passwordlastmodified";
 
+    public static final String HIPPOSYS_FIRSTNAME = "hipposys:firstname";
+
+    public static final String HIPPOSYS_LASTNAME = "hipposys:lastname";
+
+    public static final String HIPPOSYS_EMAIL = "hipposys:email";
+
+    public static final String HIPPOSYS_LASTLOGIN = "hipposys:lastlogin";
+
     public static final String HIPPO_PATH = "hipposysedit:path";
 
     public static final String HIPPO_PATHS = "hippo:paths";

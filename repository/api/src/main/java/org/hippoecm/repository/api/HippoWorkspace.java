@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,8 +17,6 @@ package org.hippoecm.repository.api;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Workspace;
-
-import org.onehippo.repository.security.SecurityService;
 
 /**
  * Any instance of a {@link Workspace} returned by a HippoRepository may be cast to a HippoWorkspace to expose some
@@ -41,13 +39,5 @@ public interface HippoWorkspace extends Workspace {
      * @throws javax.jcr.RepositoryException indicates an unspecified error from the repository
      */
     public HierarchyResolver getHierarchyResolver() throws RepositoryException;
-
-    /**
-     * The {@link SecurityService} allows you to access information about users in a system.
-     *
-     * @return the {@link SecurityService}
-     * @throws RepositoryException
-     */
-    public SecurityService getSecurityService() throws RepositoryException;
 
 }

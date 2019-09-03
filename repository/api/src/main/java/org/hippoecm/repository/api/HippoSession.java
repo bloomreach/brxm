@@ -183,11 +183,9 @@ public interface HippoSession extends Session {
 
     /**
      * Get the {@link User} object identified by this session's user id.
-     * @return  the {@link User} object identified by this session's user id.
-     * @throws ItemNotFoundException  if the user could not be found in the repository.
-     * @throws RepositoryException
+     * @return  the {@link User} object identified by this session's user id; null for system and anonymous sessions
      */
-    public User getUser() throws ItemNotFoundException, RepositoryException;
+    public User getUser() throws ItemNotFoundException;
 
     /**
      * Create a new Session that contains the union of access control rules

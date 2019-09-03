@@ -31,11 +31,11 @@ import javax.security.auth.spi.LoginModule;
 
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
-import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.apache.jackrabbit.core.security.authentication.CredentialsCallback;
 import org.apache.jackrabbit.core.security.authentication.ImpersonationCallback;
 import org.apache.jackrabbit.core.security.authentication.RepositoryCallback;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
+import org.hippoecm.repository.security.principals.UserPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,12 +112,12 @@ public class HippoLoginModule implements LoginModule {
                 }
 
                 // check for valid user
-                if (impersonator.getPrincipals(UserPrincipal.class).isEmpty()) {
+                Principal iup = SubjectHelper.getFirstPrincipal(impersonator, UserPrincipal.class);
+                if (iup == null) {
                     log.info("Denied unknown user impersonating as {}", userId);
                     return false;
                 }
 
-                Principal iup = impersonator.getPrincipals(UserPrincipal.class).iterator().next();
                 String impersonatorId = iup.getName();
                 // check/deny impersonating system user
                 if (creds != null && "system".equals(creds.getUserID())) {

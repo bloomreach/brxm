@@ -50,7 +50,6 @@ import javax.jcr.util.TraversingItemVisitor;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 
-import org.apache.jackrabbit.api.JackrabbitSession;
 import org.hippoecm.repository.HierarchyResolverImpl;
 import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoNode;
@@ -59,10 +58,6 @@ import org.hippoecm.repository.api.HippoVersionManager;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager;
-import org.hippoecm.repository.jackrabbit.RepositoryImpl;
-import org.hippoecm.repository.security.HippoSecurityManager;
-import org.hippoecm.repository.security.service.SecurityServiceImpl;
-import org.onehippo.repository.security.SecurityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
@@ -129,14 +124,6 @@ public class WorkspaceDecorator extends SessionBoundDecorator implements HippoWo
     @Override
     public HierarchyResolver getHierarchyResolver() throws RepositoryException {
         return new HierarchyResolverImpl();
-    }
-
-    @Override
-    public SecurityService getSecurityService() throws RepositoryException {
-        JackrabbitSession session = (JackrabbitSession) SessionDecorator.unwrap(this.session);
-        RepositoryImpl repository = (RepositoryImpl) session.getRepository();
-        HippoSecurityManager securityManager = (HippoSecurityManager) repository.getSecurityManager();
-        return new SecurityServiceImpl(securityManager, session);
     }
 
     @Override

@@ -26,7 +26,7 @@ import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.FacetAuthDomain;
 import org.hippoecm.repository.security.domain.QFacetRule;
 
-public class FacetRuleExtensionsPrincipal implements Principal {
+public final class FacetRuleExtensionsPrincipal implements Principal {
 
     /**
      * The name representing this principal, effectively the class name
@@ -99,13 +99,10 @@ public class FacetRuleExtensionsPrincipal implements Principal {
      * @return true when compared with any other FacetRuleExtensionsPrincipal instance, else false
      */
     final public boolean equals(Object obj) {
-        if (this == obj || obj instanceof FacetRuleExtensionsPrincipal) {
-            return true;
-        }
-        return false;
+        return this == obj || obj instanceof FacetRuleExtensionsPrincipal;
     }
 
     public int hashCode() {
-        return name.hashCode();
+        return this.getClass().hashCode();
     }
 }

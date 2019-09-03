@@ -234,7 +234,7 @@ public class SecurityDelegationTest extends RepositoryTestCase {
         Session delegateOne = alice.createSecurityDelegate(bob);
         assertEquals(alice.getUserID()+","+bob.getUserID(), delegateOne.getUserID());
         Session delegateTwo = bob.createSecurityDelegate(alice);
-        assertTrue(delegateOne.getUserID().equals(delegateTwo.getUserID()));
+        assertEquals(bob.getUserID()+","+alice.getUserID(), delegateTwo.getUserID());
     }
 
     @Test

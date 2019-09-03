@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ public class LogEventAction extends AbstractAction {
         final WorkflowContext context = this.getSCXMLWorkflowContext().getWorkflowContext();
         final WorkflowLogger logger = new WorkflowLogger(context.getInternalWorkflowSession());
         final Node subject = context.getSubject();
-        logger.logWorkflowStep(context.getUserIdentity(), null, eval(getActionexpr()), null, null,
+        logger.logWorkflowStep(context.getUserSession(), null, eval(getActionexpr()), null, null,
                 subject.getIdentifier(), subject.getPath(), context.getInteraction(), context.getInteractionId(),
                 null, null, null);
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import javax.jcr.version.Version;
 import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
-import org.onehippo.repository.security.SecurityService;
 import org.xml.sax.ContentHandler;
 
 /**
@@ -162,11 +161,6 @@ public class MockWorkspace implements HippoWorkspace {
 
     @Override
     public HierarchyResolver getHierarchyResolver() throws RepositoryException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public SecurityService getSecurityService() throws RepositoryException {
         throw new UnsupportedOperationException();
     }
 }
