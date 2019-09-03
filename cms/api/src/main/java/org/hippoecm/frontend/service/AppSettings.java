@@ -29,28 +29,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public interface AppSettings {
 
     /**
-     * Returns the location of the BR XM web application (the CMS).
+     * Returns {@code true} if the CMS is serving the Navigation Application resources and {@code false} otherwise
      *
-     * @return BR XM location
+     * @return if CMS is serving the navapp resources
      */
     @JsonIgnore
-    URI getBrXmLocation();
+    boolean isCmsServingNavAppResources();
 
     /**
      * Returns the location of the Navigation Application resources (like javascript, css, images).
      *
-     * @return navapp location
+     * @return navapp resource location
      */
-    URI getNavAppLocation();
-
     URI getNavAppResourceLocation();
-
-    /**
-     * Returns the BR XM context path.
-     *
-     * @return context path
-     */
-    String getContextPath();
 
     /**
      * Returns the maximum number of milliseconds to wait for Iframes to connect before giving up.

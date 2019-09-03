@@ -25,6 +25,7 @@ import java.util.function.Supplier;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.request.Request;
@@ -137,15 +138,18 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
 
     private AppSettings createAppSettings(Request request) {
 
-        final String parentOrigin = RequestUtils.getFarthestUrlPrefix(request);
-        final String contextPath = RequestUtils.getContextPath();
-        final String cmsLocation = String.format("%s%s", parentOrigin, contextPath);
+        final String farthestUrl = RequestUtils.getFarthestHomeUrl((HttpServletRequest) request.getContainerRequest());
 
-        final URI brXmLocation = URI.create(cmsLocation);
-        final URI navAppLocation = URI.create(System.getProperty(NAVAPP_LOCATION_SYSTEM_PROPERTY, cmsLocation));
-        final URI navAppResourceLocation = navAppLocation.equals(URI.create(cmsLocation)) ?
-                URI.create(cmsLocation + JAR_PATH_PREFIX) : navAppLocation;
-        final List<NavAppResource> navConfigResources = readNavConfigResources(cmsLocation);
+        final URI brXmLocation = URI.create(farthestUrl);
+        final URI navAppLocation = URI.create(System.getProperty(NAVAPP_LOCATION_SYSTEM_PROPERTY, farthestUrl));
+        final boolean cmsOriginOfNavAppResources = navAppLocation.equals(brXmLocation);
+        final URI navAppResourceLocation = cmsOriginOfNavAppResources ?
+                URI.create(farthestUrl + JAR_PATH_PREFIX) : navAppLocation;
+        // It is assumed that the web.xml contains a servlet mapping for /navapp and that
+        // the ResourceServlet is being used to serve the resources inside of that directory.
+        // When running mvn package the files needed for the navapp (and navigation-communication)
+        // are copied into  the target directory. See copy-files.js
+        final List<NavAppResource> navConfigResources = readNavConfigResources(farthestUrl);
         final List<NavAppResource> loginDomains = readResources(LOGIN_RESOURCES);
         final List<NavAppResource> logoutDomains = readResources(LOGOUT_RESOURCES);
         final int iframesConnectionTimeout = readIframesConnectionTimeout();
@@ -153,23 +157,13 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         return new AppSettings() {
 
             @Override
-            public URI getBrXmLocation() {
-                return brXmLocation;
-            }
-
-            @Override
-            public URI getNavAppLocation() {
-                return navAppLocation;
+            public boolean isCmsServingNavAppResources() {
+                return cmsOriginOfNavAppResources;
             }
 
             @Override
             public URI getNavAppResourceLocation() {
                 return navAppResourceLocation;
-            }
-
-            @Override
-            public String getContextPath() {
-                return contextPath;
             }
 
             @Override

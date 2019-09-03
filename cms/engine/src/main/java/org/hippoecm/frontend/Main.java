@@ -837,8 +837,12 @@ public class Main extends PluginApplication {
         return PluginUserSession.get().getApplicationName().equals("cms");
     }
 
-    private boolean hasNoIFrameParameter() {
-        return RequestUtils.getQueryParameterValue(CMS_AS_IFRAME_QUERY_PARAMETER).isNull();
+    public static boolean hasNoIFrameParameter() {
+        final RequestCycle requestCycle = RequestCycle.get();
+        if (requestCycle == null) {
+            return true;
+        }
+        return requestCycle.getRequest().getQueryParameters().getParameterValue(CMS_AS_IFRAME_QUERY_PARAMETER).isNull();
     }
 
 }

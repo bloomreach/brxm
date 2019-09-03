@@ -16,14 +16,13 @@
 package org.hippoecm.frontend.service;
 
 import org.apache.wicket.util.io.IClusterable;
+import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.session.PluginUserSession;
-import org.hippoecm.frontend.util.RequestUtils;
 
 import static org.hippoecm.frontend.Main.PLUGIN_APPLICATION_VALUE_CMS;
 
 public class NestedBrowserContextService implements INestedBrowserContextService, IClusterable {
 
-    public static final String IFRAME_REQUEST_PARAMETER_NAME = "iframe";
     private final boolean hidePerspectiveMenu;
 
     public NestedBrowserContextService(final boolean hidePerspectiveMenu) {
@@ -33,7 +32,7 @@ public class NestedBrowserContextService implements INestedBrowserContextService
     @Override
     public boolean showNavigationApplication() {
         return PluginUserSession.get().getApplicationName().equals(PLUGIN_APPLICATION_VALUE_CMS)
-                && RequestUtils.getQueryParameterValue(IFRAME_REQUEST_PARAMETER_NAME).isNull();
+                && Main.hasNoIFrameParameter();
     }
 
     @Override

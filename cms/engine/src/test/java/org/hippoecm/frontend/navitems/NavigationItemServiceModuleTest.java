@@ -90,12 +90,11 @@ public class NavigationItemServiceModuleTest {
         replay(queryResult);
 
         expect(sessionRequestProvider.getJcrSession(request)).andReturn(mockNode.getSession());
-        expect(sessionRequestProvider.getFarthestRequestHost(request)).andReturn("cms.test.com");
         expect(sessionRequestProvider.getLocale(request)).andReturn(Locale.getDefault());
         replay(sessionRequestProvider);
 
         expect(request.getHeader("X-Forwarded-Proto")).andReturn("https");
-        expect(request.getContextPath()).andReturn("/context-path");
+        expect(request.getHeader("X-Forwarded-Host")).andReturn("cms.test.com").times(2);
         replay(request);
 
         final List<NavigationItem> navigationItems = resource.getNavigationItems(request);
@@ -103,19 +102,19 @@ public class NavigationItemServiceModuleTest {
 
         final NavigationItem item1 = navigationItems.get(0);
         assertThat(item1.getId(), is("hippo-perspective-aperspective"));
-        assertThat(item1.getAppIframeUrl(), is("https://cms.test.com/context-path/?iframe"));
+        assertThat(item1.getAppIframeUrl(), is("https://cms.test.com/?iframe"));
         assertThat(item1.getAppPath(), is("a"));
         assertThat(item1.getDisplayName(), is(nullValue()));
 
         final NavigationItem item2 = navigationItems.get(1);
         assertThat(item2.getId(), is("hippo-perspective-b"));
-        assertThat(item1.getAppIframeUrl(), is("https://cms.test.com/context-path/?iframe"));
+        assertThat(item1.getAppIframeUrl(), is("https://cms.test.com/?iframe"));
         assertThat(item2.getAppPath(), is("b"));
         assertThat(item2.getDisplayName(), is(nullValue()));
 
         final NavigationItem item4 = navigationItems.get(2);
         assertThat(item4.getId(), is("hippo-perspective-displaynameperspective"));
-        assertThat(item4.getAppIframeUrl(), is("https://cms.test.com/context-path/?iframe"));
+        assertThat(item4.getAppIframeUrl(), is("https://cms.test.com/?iframe"));
         assertThat(item4.getAppPath(), is("displayname"));
         assertThat(item4.getDisplayName(), is("Dummy perspective"));
     }
@@ -135,7 +134,7 @@ public class NavigationItemServiceModuleTest {
         replay(sessionRequestProvider);
 
         expect(request.getHeader("X-Forwarded-Proto")).andReturn("https");
-        expect(request.getContextPath()).andReturn("/context-path");
+        expect(request.getHeader("X-Forwarded-Host")).andReturn("cms.test.com").times(2);
         replay(request);
 
         final List<NavigationItem> navigationItems = resource.getNavigationItems(request);
