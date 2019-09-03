@@ -40,7 +40,6 @@ public class NavAppBaseTagHeaderItem extends HeaderItem {
 
     @Override
     public void render(final Response response) {
-        StringHeaderItem.forString(String.format("<base href=%s/>", navAppLocation)).render(response);
-
+        StringHeaderItem.forString(String.format("<base href=%s>", navAppLocation)).render(response);
     }
 }

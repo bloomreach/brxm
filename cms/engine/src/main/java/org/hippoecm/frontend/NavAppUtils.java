@@ -46,30 +46,18 @@ final class NavAppUtils {
      */
     static Function<String, ResourceReference> getMapper(AppSettings appSettings) {
 
-        final Function<Url, UrlResourceReference> urlResourceReferenceFactory;
-        final String navAppResourcePrefix;
-        if (isCmsServingNavAppResources(appSettings)) {
-            // Will add anti-cache query parameter
-            urlResourceReferenceFactory = WebApplicationHelper::createUniqueUrlResourceReference;
-            // It is assumed that the web.xml contains a servlet mapping for /navapp and that
-            // the ResourceServlet is being used to serve the resources inside of that directory.
-            // When running mvn package the files needed for the navapp (and navigation-communication)
-            // are copied into  the target directory. See copy-files.js
-            navAppResourcePrefix = "navapp/";
-        } else {
-            urlResourceReferenceFactory = UrlResourceReference::new;
-            navAppResourcePrefix = "";
-        }
-
-        final URI navAppLocation = appSettings.getNavAppLocation();
-        final Function<String, Url> urlGenerator = resourceName -> Url.parse(String.format("%s/%s%s", navAppLocation, navAppResourcePrefix, resourceName));
+        final Function<Url, UrlResourceReference> urlResourceReferenceFactory = getUrlUrlResourceReferenceFunction(appSettings);
+        final URI navAppResourceLocation = appSettings.getNavAppResourceLocation();
+        final Function<String, Url> urlGenerator = resourceName -> Url.parse(String.format("%s/%s", navAppResourceLocation, resourceName));
         return urlGenerator.andThen(urlResourceReferenceFactory);
     }
 
-    private static boolean isCmsServingNavAppResources(AppSettings appSettings) {
-        // If these two URIs are the same then the resources are being served by
-        // the CMS itself.
-        return appSettings.getBrXmLocation().equals(appSettings.getNavAppLocation());
+    private static Function<Url, UrlResourceReference> getUrlUrlResourceReferenceFunction(final AppSettings appSettings) {
+        if (appSettings.isCmsServingNavAppResources()) {
+            // Will add anti-cache query parameter
+            return WebApplicationHelper::createUniqueUrlResourceReference;
+        }
+        return UrlResourceReference::new;
     }
 
     /**

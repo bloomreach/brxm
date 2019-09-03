@@ -45,7 +45,7 @@ public class NavAppPanel extends Panel {
         final Function<String, JavaScriptHeaderItem> toJsHeaderItem = mapper.andThen(JavaScriptHeaderItem::forReference);
         final NavAppJavascriptHeaderItem javascriptHeaderItem = new NavAppJavascriptHeaderItem(navAppSettings, toJsHeaderItem);
 
-        this.navAppBaseTagHeaderItem = new NavAppBaseTagHeaderItem(navAppSettings.getAppSettings().getNavAppLocation());
+        this.navAppBaseTagHeaderItem = new NavAppBaseTagHeaderItem(navAppSettings.getAppSettings().getNavAppResourceLocation());
 
         // Put it in a filter header item so that it will render in the body instead of the head
         // The NavAppPanel.html must contain a wicket:container with the same id as this filtered header item.

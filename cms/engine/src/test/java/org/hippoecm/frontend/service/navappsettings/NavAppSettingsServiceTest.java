@@ -26,7 +26,6 @@ import java.util.TimeZone;
 import java.util.stream.Stream;
 
 import javax.jcr.RepositoryException;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.wicket.ThreadContext;
@@ -55,8 +54,6 @@ import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reset;
 import static org.easymock.EasyMock.verify;
-import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -92,8 +89,6 @@ public class NavAppSettingsServiceTest {
     @Mock
     private WebApplication webApplication;
     @Mock
-    private ServletContext servletContext;
-    @Mock
     private HippoSession hippoSession;
     @Mock
     private User user;
@@ -105,7 +100,7 @@ public class NavAppSettingsServiceTest {
         replay(request);
 
         expect(servletRequest.getHeader("X-Forwarded-Proto")).andReturn(scheme);
-        expect(servletRequest.getHeader("X-Forwarded-Host")).andReturn(host);
+        expect(servletRequest.getHeader("X-Forwarded-Host")).andReturn(host).times(2);
         replay(servletRequest);
 
         expect(userSession.getJcrSession()).andReturn(hippoSession);
@@ -131,10 +126,6 @@ public class NavAppSettingsServiceTest {
 
         this.navAppSettingsService = new NavAppSettingsService(context, config, () -> userSession);
 
-        expect(webApplication.getServletContext()).andReturn(servletContext).anyTimes();
-        replay(webApplication);
-        expect(servletContext.getContextPath()).andReturn(contextPath).anyTimes();
-        replay(servletContext);
         ThreadContext.setApplication(webApplication);
     }
 
@@ -144,11 +135,17 @@ public class NavAppSettingsServiceTest {
     }
 
     @Test
-    public void navapp_and_brxm_location_same_if_system_property_not_set() {
+    public void cms_serves_navapp_resources_if_system_property_not_set() {
+
+        reset(servletRequest);
+        expect(servletRequest.getHeader("X-Forwarded-Proto")).andReturn(scheme);
+        expect(servletRequest.getHeader("X-Forwarded-Host")).andReturn(null).times(2);
+        expect(servletRequest.getHeader("Host")).andReturn(host).times(2);
+        expect(servletRequest.getContextPath()).andReturn("/context-path");
+        replay(servletRequest);
 
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
-        assertThat(navAppSettings.getAppSettings().getNavAppLocation(), is(URI.create(scheme + "://" + host + contextPath)));
-        assertThat(navAppSettings.getAppSettings().getBrXmLocation(), is(URI.create(scheme + "://" + host + contextPath)));
+        assertThat(navAppSettings.getAppSettings().isCmsServingNavAppResources(), is(true));
         assertThat(navAppSettings.getAppSettings().getNavAppResourceLocation(), is(URI.create(scheme + "://" + host + contextPath + "/navapp")));
 
         testUserSettingsAssertions(navAppSettings.getUserSettings());
@@ -157,15 +154,21 @@ public class NavAppSettingsServiceTest {
 
 
     @Test
-    public void navapp_and_brxm_location_different_if_system_property_set() {
+    public void cdn_serves_navapp_resources_if_system_property_set_to_external_cdn() {
+
+        reset(servletRequest);
+        expect(servletRequest.getHeader("X-Forwarded-Proto")).andReturn(scheme);
+        expect(servletRequest.getHeader("X-Forwarded-Host")).andReturn(null).times(2);
+        expect(servletRequest.getHeader("Host")).andReturn(host).times(2);
+        expect(servletRequest.getContextPath()).andReturn("/context-path");
+        replay(servletRequest);
 
         final URI navAppLocation = URI.create("https://www.abc.xy:1010/somewhere-far-away");
         System.setProperty(NavAppSettingsService.NAVAPP_LOCATION_SYSTEM_PROPERTY, navAppLocation.toString());
 
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
-        assertThat(navAppSettings.getAppSettings().getNavAppLocation(), is(navAppLocation));
         assertThat(navAppSettings.getAppSettings().getNavAppResourceLocation(), is(navAppLocation));
-        assertThat(navAppSettings.getAppSettings().getBrXmLocation(), is(URI.create(scheme + "://" + host + contextPath)));
+        assertThat(navAppSettings.getAppSettings().isCmsServingNavAppResources(), is(false));
 
         testUserSettingsAssertions(navAppSettings.getUserSettings());
         testAppSettingsAssertions(navAppSettings.getAppSettings());
@@ -175,6 +178,13 @@ public class NavAppSettingsServiceTest {
 
     @Test
     public void loads_extra_navcfg_resources_from_config() {
+
+        reset(servletRequest);
+        expect(servletRequest.getHeader("X-Forwarded-Proto")).andReturn(scheme);
+        expect(servletRequest.getHeader("X-Forwarded-Host")).andReturn(null).times(2);
+        expect(servletRequest.getHeader("Host")).andReturn(host).times(2);
+        expect(servletRequest.getContextPath()).andReturn("/context-path");
+        replay(servletRequest);
 
         reset(config);
         expect(config.containsKey(NAV_CONFIG_RESOURCES)).andStubReturn(true);
@@ -283,11 +293,11 @@ public class NavAppSettingsServiceTest {
 
         final List<NavAppResource> loginResources = navAppSettings.getAppSettings().getLoginResources();
         assertThat(loginResources.size(), is(1));
-        assertThat(loginResources.get(0).getResourceType(),is(ResourceType.IFRAME));
+        assertThat(loginResources.get(0).getResourceType(), is(ResourceType.IFRAME));
 
         final List<NavAppResource> logoutResources = navAppSettings.getAppSettings().getLogoutResources();
         assertThat(loginResources.size(), is(1));
-        assertThat(logoutResources.get(0).getResourceType(),is(ResourceType.REST));
+        assertThat(logoutResources.get(0).getResourceType(), is(ResourceType.REST));
 
         verify(config, cfg1, cfg2);
     }
@@ -301,7 +311,6 @@ public class NavAppSettingsServiceTest {
     }
 
     private void testAppSettingsAssertions(AppSettings appSettings) {
-        assertThat(appSettings.getContextPath(), is(contextPath));
         // First resource must always be present
         final List<NavAppResource> navConfigResources = appSettings.getNavConfigResources();
         assertThat(navConfigResources.get(0).getResourceType(), is(ResourceType.REST));

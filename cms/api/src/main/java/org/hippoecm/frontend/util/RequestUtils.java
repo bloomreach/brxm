@@ -19,13 +19,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.apache.wicket.WicketRuntimeException;
-import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
 import org.apache.wicket.request.Request;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
-import org.apache.wicket.util.string.StringValue;
 
 /**
  * Wicket {@link Request} related utilities.
@@ -47,6 +43,12 @@ public class RequestUtils {
      * If not set, {@link DEFAULT_HTTP_FORWARDED_FOR_HEADER} is used by default.
      */
     public static final String HTTP_FORWARDED_FOR_HEADER_PARAM = "http-forwarded-for-header";
+
+    /**
+     * The X-Forwarded-Host (XFH) header is a de-facto standard header for identifying the original host requested by
+     * the client in the Host HTTP request header.
+     */
+    private static final String X_FORWARDED_HOST = "X-Forwarded-Host";
 
     /*
      * Package protected for unit tests.
@@ -141,9 +143,6 @@ public class RequestUtils {
         return request.getScheme();
     }
 
-    public static String getFarthestRequestScheme(Request request) {
-        return getFarthestRequestScheme((HttpServletRequest) request.getContainerRequest());
-    }
 
     /**
      * Parse comma separated multiple header value and return an array if the header exists.
@@ -217,7 +216,7 @@ public class RequestUtils {
      * @return the farthest request host
      */
     public static String getFarthestRequestHost(HttpServletRequest request) {
-        String host = request.getHeader("X-Forwarded-Host");
+        String host = request.getHeader(X_FORWARDED_HOST);
 
         if (host != null) {
             String[] hosts = host.split(",");
@@ -252,40 +251,29 @@ public class RequestUtils {
         return getFarthestRequestScheme(httpServletRequest) + "://" + getFarthestRequestHost(httpServletRequest);
     }
 
-
     /**
-     * Returns a query parameter {@link StringValue} from the request associated with the current thread. The object
-     * will contain the query parameter value if it exists, otherwise it's contents will be {@code null}.
-     * Returns {@code null} if there is no request associated with the current thread.
+     * Returns the home url for the given request. The home url is the one that is mapped to the root of the application
+     * that is being requested. Usually this is the root of an application.
+     * The assumption is that every reverse proxy/load-balancer will set the X-Forwarded-Host header correctly, so that
+     * the application can generate the url as it was sent from a client's browser.
+     * <p>
+     * Suppose tomcat is running on 10.10.100.121:8080 and a war named cms is deployed in it and a reverse proxy is
+     * configured to map https://cms.example.com/ onto  http://10.10.100.121:8080/cms.
+     * Then the home urls are as follows:
+     * <br/>1) https://cms.example.com/dashboard     => https://cms.example.com
+     * <br/>2) http:10.10.100.121:8080/cms/dashboard => http://10.10.100.121:8080/cms
      *
-     * @param name name of query parameter
-     * @return value representation of the query parameter or {@code null}
+     * @param httpServletRequest a request
+     * @return "home" url
      */
-    public static StringValue getQueryParameterValue(String name) {
-        final RequestCycle requestCycle = RequestCycle.get();
-        return requestCycle == null ? null : requestCycle.getRequest().getQueryParameters().getParameterValue(name);
+    public static String getFarthestHomeUrl(final HttpServletRequest httpServletRequest) {
+        final String farthestRequestScheme = getFarthestRequestScheme(httpServletRequest);
+        final String farthestRequestHost = getFarthestRequestHost(httpServletRequest);
+        if (httpServletRequest.getHeader(X_FORWARDED_HOST) == null) {
+            final String contextPath = httpServletRequest.getContextPath();
+            return farthestRequestScheme + "://" + farthestRequestHost + contextPath;
+        }
+        return farthestRequestScheme + "://" + farthestRequestHost;
     }
 
-    /**
-     * Returns the context path of the CMS.
-     *
-     * @return the context path
-     * @throws WicketRuntimeException if there is no wicket WebApplication
-     */
-    public static String getContextPath() {
-        return WebApplication.get().getServletContext().getContextPath();
-    }
-
-    /**
-     * Returns the browser window.location of the cms as seen after logging in in the CMS.
-     *
-     * @param request the http request
-     * @return location of the CMS
-     * @throws WicketRuntimeException if there is no wicket WebApplication
-     */
-    public static String getCmsLocation(Request request) {
-        return String.format("%s%s",
-                getFarthestUrlPrefix(request),
-                getContextPath());
-    }
 }

@@ -38,10 +38,10 @@ public class NavAppUtilsTest {
 
         final AppSettings appSettings = EasyMock.createNiceMock(AppSettings.class);
 
-        final URI location = URI.create("http://cms.company-x.com");
+        final URI location = URI.create("http://cms.company-x.com/navapp");
 
-        expect(appSettings.getBrXmLocation()).andStubReturn(location);
-        expect(appSettings.getNavAppLocation()).andStubReturn(location);
+        expect(appSettings.isCmsServingNavAppResources()).andStubReturn(true);
+        expect(appSettings.getNavAppResourceLocation()).andStubReturn(location);
         replay(appSettings);
 
         final Function<String, ResourceReference> mapper = NavAppUtils.getMapper(appSettings);
@@ -57,8 +57,8 @@ public class NavAppUtilsTest {
         final URI brXmLocation = URI.create("http://cms.company-x.com");
         final URI navAppLocation = URI.create("http://cdn.bloomreach.com/navapp-cdn");
 
-        expect(appSettings.getBrXmLocation()).andStubReturn(brXmLocation);
-        expect(appSettings.getNavAppLocation()).andStubReturn(navAppLocation);
+        expect(appSettings.isCmsServingNavAppResources()).andStubReturn(false);
+        expect(appSettings.getNavAppResourceLocation()).andStubReturn(navAppLocation);
         replay(appSettings);
 
         final Function<String, ResourceReference> mapper = NavAppUtils.getMapper(appSettings);

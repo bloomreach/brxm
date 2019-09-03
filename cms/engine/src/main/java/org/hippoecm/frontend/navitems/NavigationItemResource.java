@@ -57,10 +57,8 @@ public final class NavigationItemResource {
     }
 
     private String getAppIframeUrl(HttpServletRequest request) {
-        final String scheme = RequestUtils.getFarthestRequestScheme(request);
-        final String requestHost = sessionRequestContextProvider.getFarthestRequestHost(request);
-        final String contextPath = request.getContextPath();
-        return String.format("%s://%s%s/?%s", scheme, requestHost, contextPath, Main.CMS_AS_IFRAME_QUERY_PARAMETER);
+        final String farthestUrl = RequestUtils.getFarthestHomeUrl(request);
+        return String.format("%s/?%s", farthestUrl, Main.CMS_AS_IFRAME_QUERY_PARAMETER);
     }
 
     private Locale getLocale(final HttpServletRequest request) {
