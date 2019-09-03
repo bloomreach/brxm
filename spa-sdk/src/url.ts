@@ -20,7 +20,7 @@ const DEFAULT_PAGE_MODEL_API_SUFFIX = '/resourceapi';
 const PREVIEW_QUERY_PARAM = 'bloomreach-preview';
 
 export function buildPageModelUrl(request: Request, options: PageModelUrlOptions): string {
-  const [ path, query = '' ] = request.path.split('?', 2);
+  const [path, query = ''] = request.path.split('?', 2);
   const isPreview = determinePreview(query);
 
   const urlMapping = isPreview ? options.preview : options.live;
