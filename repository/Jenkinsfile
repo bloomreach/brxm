@@ -13,5 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-cmsPipeline( mavenForkCount: '4' )
+// Disable parallel test execution for now, since HCM-279 seems to have broken it
+// mavenForkCount: '4'
+cmsPipeline(  )

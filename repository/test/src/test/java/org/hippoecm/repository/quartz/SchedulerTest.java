@@ -36,8 +36,10 @@ import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static junit.framework.Assert.fail;
+import static org.hippoecm.repository.quartz.HippoSchedJcrConstants.HIPPOSCHED_NEXTFIRETIME;
 
 public class SchedulerTest extends RepositoryTestCase {
 
@@ -71,9 +73,15 @@ public class SchedulerTest extends RepositoryTestCase {
         testJobInfo.setAttribute("foo", "bar");
         final RepositoryJobTrigger testJobTrigger = new RepositoryJobSimpleTrigger("test", new Date());
         scheduler.scheduleJob(testJobInfo, testJobTrigger);
+
         if (!waitUntilExecuted()) {
             fail("RepositoryJob not executed within 5 seconds");
         }
+
+        final String triggerNodePath = "/hippo:configuration/hippo:modules/scheduler/hippo:moduleconfig/default/test/hipposched:triggers/test";
+        assertFalse("The property {} should have been removed",
+                session.getNode(triggerNodePath).hasProperty(HIPPOSCHED_NEXTFIRETIME));
+
         if (failureMessage != null) {
             fail(failureMessage);
         }
@@ -87,6 +95,9 @@ public class SchedulerTest extends RepositoryTestCase {
             if (!waitUntilExecuted()) {
                 fail("RepositoryJob not executed within 5 seconds");
             }
+            final String triggerNodePath = "/hippo:configuration/hippo:modules/scheduler/hippo:moduleconfig/default/test/hipposched:triggers/test";
+            assertTrue("The property {} should not have been removed but set to new next fire time",
+                    session.getNode(triggerNodePath).hasProperty(HIPPOSCHED_NEXTFIRETIME));
         } finally {
             scheduler.deleteJob("test", "default");
         }
