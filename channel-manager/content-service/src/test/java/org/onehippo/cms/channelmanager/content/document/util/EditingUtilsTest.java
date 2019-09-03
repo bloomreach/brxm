@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,14 +26,11 @@ import javax.jcr.Session;
 
 import org.easymock.EasyMockRunner;
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onehippo.repository.security.SecurityService;
-import org.onehippo.repository.security.User;
 
 import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
@@ -202,44 +199,6 @@ public class EditingUtilsTest {
 
         hints.put("previewAvailable", Boolean.TRUE);
         assertTrue(EditingUtils.hasPreview(hints));
-    }
-
-    @Test
-    public void getUserNameNoFirstName() throws Exception {
-        final Session session = createMock(Session.class);
-        final HippoWorkspace workspace = createMock(HippoWorkspace.class);
-        final SecurityService securityService = createMock(SecurityService.class);
-        final User user = createMock(User.class);
-
-        expect(session.getWorkspace()).andReturn(workspace);
-        expect(workspace.getSecurityService()).andReturn(securityService);
-        expect(securityService.getUser("admin")).andReturn(user);
-        expect(user.getFirstName()).andReturn(null);
-        expect(user.getLastName()).andReturn(" Doe ");
-        replay(session, workspace, securityService, user);
-
-        assertThat(EditingUtils.getUserName("admin", session).get(), equalTo("Doe"));
-
-        verify(session, workspace, securityService, user);
-    }
-
-    @Test
-    public void getUserNameNoLastName() throws Exception {
-        final Session session = createMock(Session.class);
-        final HippoWorkspace workspace = createMock(HippoWorkspace.class);
-        final SecurityService securityService = createMock(SecurityService.class);
-        final User user = createMock(User.class);
-
-        expect(session.getWorkspace()).andReturn(workspace);
-        expect(workspace.getSecurityService()).andReturn(securityService);
-        expect(securityService.getUser("admin")).andReturn(user);
-        expect(user.getFirstName()).andReturn(" John ");
-        expect(user.getLastName()).andReturn(null);
-        replay(session, workspace, securityService, user);
-
-        assertThat(EditingUtils.getUserName("admin", session).get(), equalTo("John"));
-
-        verify(session, workspace, securityService, user);
     }
 
     @Test
