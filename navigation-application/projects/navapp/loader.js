@@ -21,7 +21,7 @@
   if (
     navAppSettings &&
     navAppSettings.appSettings &&
-    navAppSettings.appSettings.navAppLocation
+    navAppSettings.appSettings.navAppResourceLocation
   ) {
     navAppResourceLocation = navAppSettings.appSettings.navAppResourceLocation;
   }

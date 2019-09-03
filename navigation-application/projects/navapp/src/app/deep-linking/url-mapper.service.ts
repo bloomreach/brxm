@@ -37,10 +37,9 @@ export class UrlMapperService {
   ) {}
 
   mapNavItemToBrowserUrl(navItem: NavItem): string {
-    const contextPath = this.trimSlashes(this.settings.appSettings.contextPath);
     const appBasePath = this.normalizeAppIframeUrl(navItem.appIframeUrl);
 
-    return this.combinePathParts(contextPath, appBasePath, navItem.appPath);
+    return this.combinePathParts(appBasePath, navItem.appPath);
   }
 
   mapNavLocationToBrowserUrl(navLocation: NavLocation, useCurrentApp = false): [string, NavItem] {

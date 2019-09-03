@@ -29,7 +29,6 @@ describe('UrlMapperService', () => {
 
   const globalSettingsServiceMock = {
     appSettings: {
-      contextPath: '/context-path/',
     },
   } as any;
 

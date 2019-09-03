@@ -17,8 +17,7 @@
 import { ConfigResource } from './config-resource.dto';
 
 export interface AppSettings {
-  navAppLocation: string;
-  contextPath: string;
+  navAppResourceLocation: string;
   navConfigResources: ConfigResource[];
   loginResources: string[];
   logoutResources: string[];

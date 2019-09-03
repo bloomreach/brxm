@@ -19,8 +19,7 @@ import { ConfigResource } from './config-resource.dto';
 import { ConfigResourceMock } from './config-resource.mock';
 
 export class AppSettingsMock implements AppSettings {
-  navAppLocation = 'testLocation';
-  contextPath = 'testContextPath';
+  navAppResourceLocation = 'testLocation';
   navConfigResources = [
     new ConfigResourceMock({
       resourceType: 'IFRAME',
