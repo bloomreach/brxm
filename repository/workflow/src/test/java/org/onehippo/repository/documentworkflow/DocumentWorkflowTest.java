@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.onehippo.repository.documentworkflow;
 
+import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.Calendar;
 import java.util.Collections;
@@ -45,6 +46,7 @@ import org.onehippo.repository.scxml.SCXMLWorkflowExecutor;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
+import static org.junit.Assert.assertEquals;
 
 public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
 
@@ -1346,23 +1348,8 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         session.setPermissions(publishedVariant.getPath(), "hippo:editor", true);
 
         // editor, editing, live: requestDelete=false
-        assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
-                .status(true).isLive(true).previewAvailable(true).checkModified(false).editing()
-                .requestPublication(false).publish(false).requestDepublication(false).depublish(false)
-                .listVersions().requestDelete(false).copy()
-                .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
-                .reintegrateBranch(false).publishBranch(false).depublishBranch(true)
-                .hints());
-        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                .status().logEvent().editing().noRequest().noPublish().noDepublish().noVersioning().noTerminate().copyable()
-                .noBranchable().noCheckoutBranch().noRemoveBranch().noReintegrateBranch().noPublishBranch().canDepublishBranch()
-                .states()
-        );
-
-        session.setPermissions(folderNode.getPath(), "jcr:write", true);
-
-        // editor + writable containing folder, editing, live: requestDelete=false, terminateable=false
-        assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
+        final Map<String, Serializable> hintsNoJcrWriteOnFolder = wf.hints();
+        assertMatchingKeyValues(hintsNoJcrWriteOnFolder, HintsBuilder.build()
                 .status(true).isLive(true).previewAvailable(true).checkModified(false).editing()
                 .requestPublication(false).publish(false).requestDepublication(false).depublish(false)
                 .listVersions().requestDelete(false).terminateable(false).copy()
@@ -1374,6 +1361,15 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .noBranchable().noCheckoutBranch().noRemoveBranch().noReintegrateBranch().noPublishBranch().canDepublishBranch()
                 .states()
         );
+
+
+        session.setPermissions(folderNode.getPath(), "jcr:write", true);
+
+        Assertions.assertThat(wf.hints())
+                .isEqualTo(hintsNoJcrWriteOnFolder)
+                .as("Having jcr:write permissions on a folder should not in any way impact what an " +
+                        "editor/author are allowed to do on that folder: The role hippo:editor or hippo:author defines " +
+                        "that");
 
         session.setPermissions(publishedVariant.getPath(), "hippo:author", true);
 
