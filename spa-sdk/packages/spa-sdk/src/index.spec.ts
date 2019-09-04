@@ -28,7 +28,7 @@ const options = {
 describe('initialize', () => {
   it('fetches the page model', async () => {
     const request = { path: '/', headers: { 'Cookie': 'JSESSIONID=1234' } };
-    const httpClient = jest.fn(() => Promise.resolve({}));
+    const httpClient = jest.fn(() => Promise.resolve({ page: { type: 'COMPONENT' } }));
 
     await initialize({ httpClient, request, options });
 

@@ -21,9 +21,21 @@
  * @see module:api
  */
 
-import { Configuration, Page } from './api';
-import { createPage } from './page';
+import { Configuration } from './api';
 import { buildPageModelUrl } from './url';
+import {
+  ComponentFactory,
+  Component,
+  ContainerItemModel,
+  ContainerItem,
+  ContainerModel,
+  Container,
+  PageModel,
+  Page,
+  TYPE_COMPONENT,
+  TYPE_COMPONENT_CONTAINER_ITEM,
+  TYPE_COMPONENT_CONTAINER,
+} from './page';
 
 export * from './api';
 
@@ -34,10 +46,20 @@ export * from './api';
  */
 export async function initialize(config: Configuration): Promise<Page> {
   const url = buildPageModelUrl(config.request, config.options);
-  const modelData = await config.httpClient({
+  const factory = new ComponentFactory()
+    .register(TYPE_COMPONENT, (model, children) => new Component(model, children))
+    .register<ContainerModel, ContainerItem>(
+      TYPE_COMPONENT_CONTAINER,
+      (model, children) => new Container(model, children),
+    )
+    .register<ContainerItemModel>(TYPE_COMPONENT_CONTAINER_ITEM, model => new ContainerItem(model));
+
+  const pageModel = await config.httpClient({
     url,
     method: 'get',
     headers: config.request.headers,
-  });
-  return createPage(modelData);
+  }) as PageModel;
+  const root = factory.create(pageModel.page);
+
+  return new Page(pageModel, root);
 }
