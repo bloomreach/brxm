@@ -20,6 +20,7 @@ definitions:
           hipposys:filter: false
           hipposys:type: Reference
           hipposys:value: /hippo:configuration/hippo:derivatives
+      # read access to all user folders needed because the modify-user domain is not path based
       /users-folders:
         jcr:primaryType: hipposys:domainrule
         /users-folder:
@@ -36,22 +37,7 @@ definitions:
           hipposys:filter: false
           hipposys:type: Name
           hipposys:value: hipposys:user
-      /self:
-        jcr:primaryType: hipposys:domainrule
-        /match-nodename-with-username:
-          jcr:primaryType: hipposys:facetrule
-          hipposys:equals: true
-          hipposys:facet: nodename
-          hipposys:filter: false
-          hipposys:type: Name
-          hipposys:value: __user__
-        /type-hippo-user:
-          jcr:primaryType: hipposys:facetrule
-          hipposys:equals: true
-          hipposys:facet: nodetype
-          hipposys:filter: false
-          hipposys:type: Name
-          hipposys:value: hipposys:user
+      # TODO read access required by the CMS for any user (looking up things like password policy properties)
       /hippo-security-node:
         jcr:primaryType: hipposys:domainrule
         /security-node:
@@ -71,6 +57,7 @@ definitions:
           hipposys:filter: false
           hipposys:type: Reference
           hipposys:value: /hippo:log
+      # TODO who else than the system user really needs to read this?
       /hippo-modules:
         jcr:primaryType: hipposys:domainrule
         /modules-and-descendants:
