@@ -18,5 +18,22 @@
 package org.hippoecm.frontend.service;
 
 public enum ResourceType {
-    IFRAME, REST
+    /**
+     * Resources of this type will be loaded by javascript code in a hidden iframe
+     * and then communicated back by connecting to the parent via penpal using postmessage.
+     */
+    IFRAME,
+
+    /**
+     * Resources of this type should have an absolute url including a host name and scheme.
+     * The resources it provides can be acquired by calling this url directly.
+     */
+    REST,
+
+    /**
+     * Resources of this type should have an absolute url without a host name and scheme.
+     * The resources it provides can be acquired by first prefixing it with a scheme,
+     * host and optionally a path and then calling this url.
+     */
+    INTERNAL_REST,
 }
