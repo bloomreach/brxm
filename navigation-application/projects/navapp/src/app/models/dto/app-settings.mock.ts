@@ -34,9 +34,27 @@ export class AppSettingsMock implements AppSettings {
   ];
   iframesConnectionTimeout: 30000;
 
-  loginResources = ['testLoginResource1', 'testLoginResource2'];
+  loginResources = [
+    new ConfigResourceMock({
+      resourceType: 'IFRAME',
+      url: 'testLoginResource1',
+    }) as ConfigResource,
+    new ConfigResourceMock({
+      resourceType: 'IFRAME',
+      url: 'testLoginResource2',
+    }) as ConfigResource,
+  ];
 
-  logoutResources = ['testLogoutResource1', 'testLogoutResource2'];
+  logoutResources = [
+    new ConfigResourceMock({
+      resourceType: 'IFRAME',
+      url: 'testLogoutResource1',
+    }) as ConfigResource,
+    new ConfigResourceMock({
+      resourceType: 'IFRAME',
+      url: 'testLogoutResource2',
+    }) as ConfigResource,
+  ];
 
   constructor(initObject = {}) {
     Object.keys(initObject).forEach(key => {
