@@ -31,8 +31,19 @@ export class GlobalSettingsService implements GlobalSettings {
     const settings = (window as any).NavAppSettings;
     Object.assign(this, settings);
 
+    this.appSettings.navAppBasePath = this.extractBasePath();
+
     if (!this.appSettings.iframesConnectionTimeout) {
       this.appSettings.iframesConnectionTimeout = 30000;
     }
+  }
+
+  private extractBasePath(): string {
+    const initialPath = this.appSettings.initialPath || '/';
+    const href = window.location.href;
+    const fullPath = href.replace(window.location.origin, '');
+    const index = fullPath.indexOf(initialPath);
+
+    return fullPath.slice(0, index);
   }
 }

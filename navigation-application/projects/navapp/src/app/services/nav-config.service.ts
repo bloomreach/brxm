@@ -48,8 +48,6 @@ export class NavConfigService {
   private currentSites: Site[] = [];
   private selectedSite = new BehaviorSubject(undefined);
 
-  readonly navAppRoot: string;
-
   constructor(
     private http: HttpClient,
     private settings: GlobalSettingsService,
@@ -57,8 +55,6 @@ export class NavConfigService {
     @Inject(DOCUMENT) private document,
   ) {
     this.renderer = this.rendererFactory.createRenderer(undefined, undefined);
-    // TODO (meggermont): use property from appSettings to construct the navAppRoot and move it to GlobalSettings
-    this.navAppRoot = `${window.location.origin}${window.location.pathname}`.slice(0, -1);
   }
 
   get navItems(): NavItem[] {
@@ -76,7 +72,7 @@ export class NavConfigService {
   init(): Promise<void> {
     return this.loginIfNecessary()
       .then(() => this.fetchAndMergeConfigurations())
-      .then(({navItems, sites, selectedSiteId}) => {
+      .then(({ navItems, sites, selectedSiteId }) => {
         this.currentNavItems = navItems;
         this.currentSites = sites;
 
@@ -160,8 +156,9 @@ export class NavConfigService {
           selectedSiteId: undefined,
         }));
       case 'INTERNAL_REST':
-        return this.fetchFromREST<NavItem[]>(this.navAppRoot + resource.url).then(navItems => {
-          navItems.forEach(item => item.appIframeUrl = this.navAppRoot + item.appIframeUrl);
+        const basePath = this.settings.appSettings.navAppBasePath;
+        return this.fetchFromREST<NavItem[]>(basePath + resource.url).then(navItems => {
+          navItems.forEach(item => item.appIframeUrl = basePath + item.appIframeUrl);
           return {
             navItems,
             sites: [],
