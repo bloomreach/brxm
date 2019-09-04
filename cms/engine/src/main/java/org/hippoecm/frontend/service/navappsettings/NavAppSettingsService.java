@@ -25,7 +25,6 @@ import java.util.function.Supplier;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.request.Request;
@@ -39,14 +38,13 @@ import org.hippoecm.frontend.service.NavAppSettings;
 import org.hippoecm.frontend.service.ResourceType;
 import org.hippoecm.frontend.service.UserSettings;
 import org.hippoecm.frontend.session.PluginUserSession;
-import org.hippoecm.frontend.util.RequestUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NavAppSettingsService extends Plugin implements INavAppSettingsService {
 
-    public static final String JAR_PATH_PREFIX = "/navapp";
+    public static final String JAR_PATH_PREFIX = "navapp";
     static final String NAVAPP_LOCATION_SYSTEM_PROPERTY = "navapp.location";
 
     static final String NAV_CONFIG_RESOURCES = "navConfigResources";
@@ -76,7 +74,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     public NavAppSettings getNavAppSettings(final Request request) {
 
         final UserSettings userSettings = createUserSettings(pluginUserSessionSupplier.get());
-        final AppSettings appSettings = createAppSettings(request);
+        final AppSettings appSettings = createAppSettings();
 
         return new NavAppSettings() {
             @Override
@@ -136,20 +134,17 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         return null;
     }
 
-    private AppSettings createAppSettings(Request request) {
+    private AppSettings createAppSettings() {
 
-        final String farthestUrl = RequestUtils.getFarthestHomeUrl((HttpServletRequest) request.getContainerRequest());
-
-        final URI brXmLocation = URI.create(farthestUrl);
-        final URI navAppLocation = URI.create(System.getProperty(NAVAPP_LOCATION_SYSTEM_PROPERTY, farthestUrl));
-        final boolean cmsOriginOfNavAppResources = navAppLocation.equals(brXmLocation);
-        final URI navAppResourceLocation = cmsOriginOfNavAppResources ?
-                URI.create(farthestUrl + JAR_PATH_PREFIX) : navAppLocation;
+        final String navAppLocation = System.getProperty(NAVAPP_LOCATION_SYSTEM_PROPERTY, null);
+        final boolean cmsOriginOfNavAppResources = navAppLocation == null;
+        final URI navAppResourceLocation =
+                URI.create(cmsOriginOfNavAppResources ? JAR_PATH_PREFIX : navAppLocation);
         // It is assumed that the web.xml contains a servlet mapping for /navapp and that
         // the ResourceServlet is being used to serve the resources inside of that directory.
         // When running mvn package the files needed for the navapp (and navigation-communication)
         // are copied into  the target directory. See copy-files.js
-        final List<NavAppResource> navConfigResources = readNavConfigResources(farthestUrl);
+        final List<NavAppResource> navConfigResources = readNavConfigResources();
         final List<NavAppResource> loginDomains = readResources(LOGIN_RESOURCES);
         final List<NavAppResource> logoutDomains = readResources(LOGOUT_RESOURCES);
         final int iframesConnectionTimeout = readIframesConnectionTimeout();
@@ -192,9 +187,9 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         return getPluginConfig().getInt(IFRAMES_CONNECTION_TIMEOUT, 30_000);
     }
 
-    private List<NavAppResource> readNavConfigResources(String cmsLocation) {
+    private List<NavAppResource> readNavConfigResources() {
         final List<NavAppResource> resources = new ArrayList<>();
-        resources.add(createResource(URI.create(cmsLocation + NAVIGATIONITEMS_ENDPOINT), ResourceType.REST));
+        resources.add(createResource(URI.create(NAVIGATIONITEMS_ENDPOINT), ResourceType.INTERNAL_REST));
         resources.addAll(readResources(NAV_CONFIG_RESOURCES));
         return resources;
     }
