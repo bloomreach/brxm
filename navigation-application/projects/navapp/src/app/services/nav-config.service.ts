@@ -72,7 +72,7 @@ export class NavConfigService {
   init(): Promise<void> {
     return this.loginIfNecessary()
       .then(() => this.fetchAndMergeConfigurations())
-      .then(({navItems, sites, selectedSiteId}) => {
+      .then(({ navItems, sites, selectedSiteId }) => {
         this.currentNavItems = navItems;
         this.currentSites = sites;
 
@@ -155,6 +155,16 @@ export class NavConfigService {
           sites: [],
           selectedSiteId: undefined,
         }));
+      case 'INTERNAL_REST':
+        const basePath = this.settings.appSettings.navAppBasePath;
+        return this.fetchFromREST<NavItem[]>(basePath + resource.url).then(navItems => {
+          navItems.forEach(item => item.appIframeUrl = basePath + item.appIframeUrl);
+          return {
+            navItems,
+            sites: [],
+            selectedSiteId: undefined,
+          };
+        });
       default:
         return Promise.reject(
           new Error(`Resource type ${resource.resourceType} is not supported`),

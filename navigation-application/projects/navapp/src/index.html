@@ -34,7 +34,6 @@
           timeZone: 'Europe/Amsterdam',
         },
         appSettings: {
-          contextPath: '/',
           navAppResourceLocation: 'http://localhost:4200',
           loginResources: [],
           navConfigResources: [
@@ -46,6 +45,10 @@
               resourceType: 'REST',
               url: 'http://localhost:4201/assets/navitems.json',
             },
+            // {
+            //   resourceType: 'INTERNAL_REST',
+            //   url: '/ws/navitems',
+            // },
           ],
           iframesConnectionTimeout: 10000,
         },

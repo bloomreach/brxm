@@ -15,6 +15,6 @@
  */
 
 export interface ConfigResource {
-  resourceType: 'IFRAME' | 'REST';
+  resourceType: 'IFRAME' | 'REST' | 'INTERNAL_REST';
   url: string;
 }
