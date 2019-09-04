@@ -110,12 +110,12 @@ export class NavConfigService {
     });
   }
 
-  private loginSilently(resource: string): Promise<boolean> {
-    return this.fetchFromIframe(resource, api => Promise.resolve(api)).then(api => !!api);
+  private loginSilently(resource: ConfigResource): Promise<boolean> {
+    return this.fetchFromIframe(resource.url, api => Promise.resolve(api)).then(api => !!api);
   }
 
-  private logoutSilently(resource: string): Promise<void> {
-    return this.fetchFromIframe(resource, () => Promise.resolve());
+  private logoutSilently(resource: ConfigResource): Promise<void> {
+    return this.fetchFromIframe(resource.url, () => Promise.resolve());
   }
 
   private fetchAndMergeConfigurations(): Promise<Configuration> {

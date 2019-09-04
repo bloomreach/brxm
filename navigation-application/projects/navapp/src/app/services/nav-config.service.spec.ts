@@ -50,8 +50,8 @@ describe('NavConfigService', () => {
 
   const globalSettingsServiceMock = new GlobalSettingsMock();
   globalSettingsServiceMock.appSettings.loginResources = [
-    'testLoginResource1',
-    'testLoginResource2',
+    { url: 'testLoginResource1', resourceType: 'IFRAME' },
+    { url: 'testLoginResource2', resourceType: 'IFRAME' },
   ];
 
   const selectedSite = { accountId: 1, siteId: 2 };
