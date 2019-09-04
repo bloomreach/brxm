@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -67,9 +67,10 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.gallery.GalleryWorkflow;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
-import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.repository.security.StandardPermissionNames.HIPPO_AUTHOR;
 
 /**
  * Panel of a single file upload form, which is used to upload image to the gallery.
@@ -314,7 +315,7 @@ public abstract class GalleryUploadPanel extends Panel {
 
         try {
             Node folderNode = (Node) getDefaultModel().getObject();
-            if (folderNode != null && folderNode.getSession().hasPermission(folderNode.getPath(), JcrConstants.JCR_WRITE)) {
+            if (folderNode != null && folderNode.getSession().hasPermission(folderNode.getPath(), HIPPO_AUTHOR)) {
                 GalleryWorkflow workflow = (GalleryWorkflow) manager.getWorkflow("gallery", folderNode);
                 if (workflow != null) {
                     types = workflow.getGalleryTypes();
