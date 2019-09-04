@@ -19,7 +19,6 @@ package org.hippoecm.frontend;
 
 import java.util.function.Function;
 
-import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.HeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
@@ -33,8 +32,6 @@ public class NavAppPanel extends Panel {
 
     static final String NAVAPP_JAVASCRIPT_HEADER_ITEM = "navapp-javascript-header-item";
 
-    private final HeaderItem navAppBaseTagHeaderItem;
-
     private final HeaderItem navAppJavascriptHeaderItem;
 
     public NavAppPanel(String id, NavAppSettings navAppSettings) {
@@ -45,8 +42,6 @@ public class NavAppPanel extends Panel {
         final Function<String, JavaScriptHeaderItem> toJsHeaderItem = mapper.andThen(JavaScriptHeaderItem::forReference);
         final NavAppJavascriptHeaderItem javascriptHeaderItem = new NavAppJavascriptHeaderItem(navAppSettings, toJsHeaderItem);
 
-        this.navAppBaseTagHeaderItem = new NavAppBaseTagHeaderItem(navAppSettings.getAppSettings().getNavAppResourceLocation());
-
         // Put it in a filter header item so that it will render in the body instead of the head
         // The NavAppPanel.html must contain a wicket:container with the same id as this filtered header item.
         this.navAppJavascriptHeaderItem = new FilteredHeaderItem(javascriptHeaderItem, NAVAPP_JAVASCRIPT_HEADER_ITEM);
@@ -55,7 +50,6 @@ public class NavAppPanel extends Panel {
 
     @Override
     public void renderHead(final IHeaderResponse response) {
-        response.render(navAppBaseTagHeaderItem);
         response.render(navAppJavascriptHeaderItem);
     }
 }

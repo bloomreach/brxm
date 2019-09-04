@@ -67,7 +67,6 @@ final class NavAppUtils {
      * @return if the item belongs to the NavApp or not
      */
     static boolean isNavAppHeaderItem(HeaderItem headerItem) {
-        return headerItem instanceof NavAppBaseTagHeaderItem
-                || (headerItem instanceof FilteredHeaderItem && (NAVAPP_JAVASCRIPT_HEADER_ITEM.equals(((FilteredHeaderItem) headerItem).getFilterName())));
+        return headerItem instanceof FilteredHeaderItem && (NAVAPP_JAVASCRIPT_HEADER_ITEM.equals(((FilteredHeaderItem) headerItem).getFilterName()));
     }
 }

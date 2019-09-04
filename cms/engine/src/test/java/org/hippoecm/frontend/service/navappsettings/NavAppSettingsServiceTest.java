@@ -146,7 +146,7 @@ public class NavAppSettingsServiceTest {
 
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
         assertThat(navAppSettings.getAppSettings().isCmsServingNavAppResources(), is(true));
-        assertThat(navAppSettings.getAppSettings().getNavAppResourceLocation(), is(URI.create(scheme + "://" + host + contextPath + "/navapp")));
+        assertThat(navAppSettings.getAppSettings().getNavAppResourceLocation(), is(URI.create("navapp")));
 
         testUserSettingsAssertions(navAppSettings.getUserSettings());
         testAppSettingsAssertions(navAppSettings.getAppSettings());
@@ -313,8 +313,8 @@ public class NavAppSettingsServiceTest {
     private void testAppSettingsAssertions(AppSettings appSettings) {
         // First resource must always be present
         final List<NavAppResource> navConfigResources = appSettings.getNavConfigResources();
-        assertThat(navConfigResources.get(0).getResourceType(), is(ResourceType.REST));
-        assertThat(navConfigResources.get(0).getUrl(), is(URI.create(scheme + "://" + host + contextPath + NAVIGATIONITEMS_ENDPOINT)));
+        assertThat(navConfigResources.get(0).getResourceType(), is(ResourceType.INTERNAL_REST));
+        assertThat(navConfigResources.get(0).getUrl(), is(URI.create(NAVIGATIONITEMS_ENDPOINT)));
     }
 
 }
