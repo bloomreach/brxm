@@ -45,10 +45,10 @@ import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 
-import org.onehippo.repository.util.JcrConstants;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.repository.security.StandardPermissionNames.HIPPO_EDITOR;
 
 public abstract class DestinationDialog extends Dialog<Void> implements IWorkflowInvoker {
 
@@ -184,7 +184,7 @@ public abstract class DestinationDialog extends Dialog<Void> implements IWorkflo
         final String destinationPath = getDestinationPath();
         if (StringUtils.isNotBlank(destinationPath)) {
             try {
-                return UserSession.get().getJcrSession().hasPermission(destinationPath, JcrConstants.JCR_WRITE);
+                return UserSession.get().getJcrSession().hasPermission(destinationPath, HIPPO_EDITOR);
             } catch (RepositoryException ignore) {
             }
         }
