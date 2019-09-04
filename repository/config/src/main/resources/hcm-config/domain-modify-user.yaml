@@ -1,6 +1,6 @@
 definitions:
   config:
-    /hippo:configuration/hippo:domains/modify-user:
+    /hippo:configuration/hippo:domains/modify-self:
       jcr:primaryType: hipposys:domain
       /self:
         jcr:primaryType: hipposys:domainrule
