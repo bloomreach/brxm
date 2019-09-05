@@ -135,6 +135,7 @@
   "SUBPAGE_CHANNEL_SETTINGS_TITLE": "Instellingen van '{{channelName}}'",
   "CONFIRM_REQUEST_PUBLICATION_OF_DOCUMENT": "Publicatieaanvraag van '{{documentName}}'.",
   "EDIT_MENU": "Menu aanpassen",
+  "NONE_OPTION": "Geen",
   "SELECT_DOCUMENT_LOCKED": "Kan document niet selecteren (component is vergrendeld).",
   "SELECT_DOCUMENT": "Document selecteren",
   "PLACEHOLDER_SEARCH": "Zoeken",

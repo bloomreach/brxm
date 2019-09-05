@@ -143,17 +143,23 @@ definitions:
     : /fr:
         jcr:primaryType: hipposys:resourcebundle
         width.hint: En pixels
-        address: Adresse
-        map.canvas: Carte
         latitude: Latitude
-        markerCustomText: Marqueur texte personnalisé
-        mapType: Type de carte
+        mapOverlay.hint: Modifier les valeurs de la liste déroulante dans Documents
+          > administration > ouvrir le plan de la rue
         address.hint: L’adresse prévaut sur la longitude/latitude
-        map.size: Dimension de carte
         zoomFactor: Facteur zoom
-        map.options: Options de carte
         latitude.hint: Si le champ reste vide, une longitude/latitude par défaut est
           utilisée.
+        height: Hauteur
+        longitude: Longitude
+        address: Adresse
+        mapType.hint: Modifier les valeurs de la liste déroulante dans Documents >
+          administration > ouvrir le plan de la rue
+        map.canvas: Carte
+        markerCustomText: Marqueur texte personnalisé
+        mapType: Type de carte
+        map.size: Dimension de carte
+        map.options: Options de carte
         height.hint: En pixels. Le minimum est 250 pixels.
         showMarker#no: Pas de marqueur
         showMarker: Afficher le marqueur
@@ -164,5 +170,3 @@ definitions:
         location: Informations lieu
         showMarker#withCustomText: Sans texte personnalisé
         showMarker#withAddress: Sans adresse
-        height: Hauteur
-        longitude: Longitude

@@ -142,16 +142,20 @@ definitions:
     : /zh:
         jcr:primaryType: hipposys:resourcebundle
         width.hint: 单位为像素
-        address: 地址
-        map.canvas: 地图画布
         latitude: 纬度
+        mapOverlay.hint: 在“文档”>“管理”>“打开街道地图”中编辑下拉值
+        address.hint: 地址优先于经度/纬度
+        zoomFactor: 缩放系数
+        latitude.hint: 如果留空，则使用默认经度/纬度
+        height: 高度
+        longitude: 经度
+        address: 地址
+        mapType.hint: 在“文档”>“管理”>“打开街道地图”中编辑下拉值
+        map.canvas: 地图画布
         markerCustomText: 标记自定义文本
         mapType: 地图类型
-        address.hint: 地址优先于经度/纬度
         map.size: 地图大小
-        zoomFactor: 缩放系数
         map.options: 地图选项
-        latitude.hint: 如果留空，则使用默认经度/纬度
         height.hint: 单位为像素。最小值为 250 像素。
         showMarker#no: 无标记
         showMarker: 显示标记
@@ -162,5 +166,3 @@ definitions:
         location: 位置信息
         showMarker#withCustomText: 有自定义文本
         showMarker#withAddress: 有地址
-        height: 高度
-        longitude: 经度

@@ -2,14 +2,8 @@
   "bundleType" : "WICKET",
   "keyData" : {
     "cms-version-intro-label" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "repository.error" : {
       "status" : "CLEAN",
@@ -20,14 +14,8 @@
       "locales" : null
     },
     "page.title" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "access.denied" : {
       "status" : "CLEAN",
@@ -42,14 +30,8 @@
       "locales" : null
     },
     "terms-and-conditions-label" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "edition.label" : {
       "status" : "CLEAN",
@@ -76,14 +58,8 @@
       "locales" : null
     },
     "browser.unsupported.warning" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "cms-version-mitro-label" : {
       "status" : "CLEAN",
