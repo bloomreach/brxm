@@ -241,11 +241,13 @@ public class RichTextFieldTypeTest {
     public void exceptionWhileReading() throws Exception {
         final RichTextFieldType field = initField();
         field.setMinValues(0);
-        // make hippostd:content property multi-valued so reading it will throw an exception
+        // make hippostd:content property multi-valued : reading it will result via
+        // org.onehippo.cms.channelmanager.content.documenttype.field.type.RichTextFieldType.readValue() to have the
+        // default value 'null' be returned since JcrUtils handles the ValueFormatException (since 14.0.0)
         final Node value = addValue("");
         value.getProperty("hippostd:content").setValue(new String[]{"one", "two"});
 
-        assertWarningsLogged(1, RichTextFieldType.class, () -> assertFalse(field.readFrom(document).get().get(0).hasValue()));
+        assertNoWarningsLogged(() -> assertFalse(field.readFrom(document).get().get(0).hasValue()));
     }
 
     @Test
