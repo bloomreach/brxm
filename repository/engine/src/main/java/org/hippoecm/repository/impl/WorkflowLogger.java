@@ -23,16 +23,14 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.hippoecm.repository.api.ActionAware;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.jackrabbit.InternalHippoSession;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.repository.events.HippoWorkflowEvent;
-import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,16 +88,14 @@ public class WorkflowLogger {
     }
 
     private Boolean isSystemUser(final Session session) {
-        if (session instanceof InternalHippoSession) {
-            final InternalHippoSession internalHippoSession = (InternalHippoSession)session;
-            User user = internalHippoSession.getUser();
-            if (user != null) {
-                return user.isSystemUser();
-            } else {
-                return !internalHippoSession.getSubject().getPrincipals(SystemPrincipal.class).isEmpty();
+        if (session instanceof HippoSession) {
+            HippoSession hippoSession = (HippoSession)session;
+            try {
+                return hippoSession.getUser().isSystemUser();
+            } catch (RepositoryException ignore) {
             }
         }
-        return true;
+        return null;
     }
 
     private String getHandleUuid(final String subjectId) {

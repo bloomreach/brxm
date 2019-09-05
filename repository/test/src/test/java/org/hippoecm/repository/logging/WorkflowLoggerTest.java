@@ -18,8 +18,8 @@ package org.hippoecm.repository.logging;
 import org.easymock.Capture;
 import org.easymock.EasyMock;
 import org.hippoecm.repository.api.DocumentWorkflowAction;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.impl.WorkflowLogger;
-import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,14 +35,14 @@ public class WorkflowLoggerTest {
 
     private HippoEventBus eventBus;
     private WorkflowLogger workflowLogger;
-    private InternalHippoSession session;
+    private HippoSession session;
     private Capture<HippoWorkflowEvent> captured;
 
     @Before
-    public void createService() {
+    public void createService() throws Exception {
         eventBus = createNiceMock(HippoEventBus.class);
         HippoServiceRegistry.register(eventBus, HippoEventBus.class);
-        session = createNiceMock(InternalHippoSession.class);
+        session = createNiceMock(HippoSession.class);
         workflowLogger = new WorkflowLogger(session);
 
         final User user = createMock(User.class);

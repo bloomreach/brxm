@@ -183,7 +183,8 @@ public interface HippoSession extends Session {
 
     /**
      * Get the {@link User} object identified by this session's user id.
-     * @return  the {@link User} object identified by this session's user id; null for system and anonymous sessions
+     * @return  the {@link User} object identified by this session's user id.
+     * @throws ItemNotFoundException for system and anonymous sessions
      */
     public User getUser() throws ItemNotFoundException;
 
