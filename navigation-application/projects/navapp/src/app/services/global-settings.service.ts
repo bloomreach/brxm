@@ -40,10 +40,12 @@ export class GlobalSettingsService implements GlobalSettings {
 
   private extractBasePath(): string {
     const initialPath = this.appSettings.initialPath || '/';
-    const href = window.location.href;
-    const fullPath = href.replace(window.location.origin, '');
-    const index = fullPath.indexOf(initialPath);
-
-    return fullPath.slice(0, index);
+    const origin = window.location.origin;
+    const pathname = window.location.pathname.replace(/\/$/, '');
+    const fullPath = `${origin}${pathname}`;
+    if (initialPath === '/') {
+      return fullPath;
+    }
+    return fullPath.slice(0, fullPath.lastIndexOf(initialPath));
   }
 }
