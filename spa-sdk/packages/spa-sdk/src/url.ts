@@ -19,6 +19,10 @@ const DEFAULT_SPA_BASE_PATH = '/';
 const DEFAULT_PAGE_MODEL_API_SUFFIX = '/resourceapi';
 const PREVIEW_QUERY_PARAM = 'bloomreach-preview';
 
+export interface PageModelUrlBuilder {
+  (request: HttpRequest, options: PageModelUrlOptions): string;
+}
+
 export function buildPageModelUrl(request: HttpRequest, options: PageModelUrlOptions): string {
   const [path, query = ''] = request.path.split('?', 2);
   const isPreview = determinePreview(query);
