@@ -662,14 +662,8 @@
       }
     },
     "SUBPAGE_PAGE_PROPERTIES_LABEL_ASSIGN_NEW_TEMPLATE" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "SUBPAGE_PAGE_PROPERTIES_LABEL_PRIMARY_DOCUMENT" : {
       "status" : "CLEAN",
@@ -876,14 +870,8 @@
       "locales" : null
     },
     "DOCUMENT_NOT_PART_OF_PROJECT" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "ADD_TO_PROJECT" : {
       "status" : "CLEAN",
@@ -1174,14 +1162,8 @@
       "locales" : null
     },
     "NONE_OPTION" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }
