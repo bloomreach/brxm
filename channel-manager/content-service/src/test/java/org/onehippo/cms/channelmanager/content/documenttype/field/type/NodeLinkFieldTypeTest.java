@@ -23,6 +23,8 @@ import java.util.Optional;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import org.hippoecm.repository.api.HippoNodeType;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,8 +40,6 @@ import org.onehippo.repository.mock.MockNode;
 import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import com.fasterxml.jackson.databind.JsonNode;
 
 import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.expect;
@@ -194,10 +194,12 @@ public class NodeLinkFieldTypeTest {
     }
 
     @Test
-    public void readValueThrowsException() throws Exception {
+    public void readValue_for_get_property_with_exception_results_in_null_value() throws Exception {
         linkFieldType.setId("my:documentlink");
 
         final Node documentLinkNode = createMock(Node.class);
+        // as if the property exists
+        expect(documentLinkNode.hasProperty(anyString())).andReturn(true);
         expect(documentLinkNode.getProperty(anyString())).andThrow(new RepositoryException());
         expect(documentLinkNode.getPath()).andReturn("/my:documentlink");
         replayAll();

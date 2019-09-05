@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.easymock.EasyMock;
 import org.junit.Test;
 import org.onehippo.repository.mock.MockNode;
 
+import static org.easymock.EasyMock.anyString;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -63,6 +64,7 @@ public class JcrMultipleStringReaderTest {
     @Test
     public void readProblem() throws RepositoryException {
         final Node node = EasyMock.createMock(Node.class);
+        expect(node.hasProperty(anyString())).andReturn(true);
         expect(node.getProperty("prop")).andThrow(new RepositoryException());
         expect(node.getPath()).andReturn("/");
         replay(node);
