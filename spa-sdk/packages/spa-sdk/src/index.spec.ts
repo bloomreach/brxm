@@ -14,37 +14,65 @@
  * limitations under the License.
  */
 
-import { initialize } from './index';
-
-const options = {
-  live: {
-    pageModelBaseUrl: 'http://localhost:8080/site/my-spa',
-  },
-  preview: {
-    pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/my-spa',
-  },
-};
+import { default as model } from './index.fixture.json';
+import { initialize, Container, Page, TYPE_CONTAINER_BOX } from './index';
 
 describe('initialize', () => {
-  it('fetches the page model', async () => {
-    const request = { path: '/', headers: { 'Cookie': 'JSESSIONID=1234' } };
-    const httpClient = jest.fn(() => Promise.resolve({ page: { type: 'COMPONENT' } }));
+  let page: Page;
 
-    await initialize({ httpClient, request, options });
-
-    expect(httpClient).toHaveBeenCalledWith({
-      method: 'get',
-      url: 'http://localhost:8080/site/my-spa/resourceapi',
-      headers: { 'Cookie': 'JSESSIONID=1234' },
+  beforeEach(async () => {
+    page = await initialize({
+      request: { path: '/' },
+      options: {
+        live: {
+          pageModelBaseUrl: 'http://localhost:8080/site/my-spa',
+        },
+        preview: {
+          pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/my-spa',
+        },
+      },
+      httpClient: jest.fn(() => Promise.resolve(model)),
     });
   });
 
-  it('rejects when fetching the page model fails', () => {
-    const request = { path: '/' };
-    const error = Error('Failed to fetch page model data');
-    const httpClient = () => { throw error };
+  it('should be a page entity', async () => {
+    expect(page.getTitle()).toBe('Homepage');
+  });
 
-    expect.assertions(1);
-    expect(initialize({ httpClient, request, options })).rejects.toBe(error)
+  it('should contain a root component', async () => {
+    const root = page.getComponent();
+    expect(root!.getName()).toBe('test');
+    expect(root!.getParameters()).toEqual({});
+  });
+
+  it('should contain a main component', async () => {
+    const main = page.getComponent<Container>('main');
+
+    expect(main).toBeDefined();
+    expect(main!.getName()).toBe('main');
+    expect(main!.getType()).toBe(TYPE_CONTAINER_BOX);
+    expect(main!.getParameters()).toEqual({});
+  });
+
+  it('should contain two banners', async () => {
+    const main = page.getComponent<Container>('main');
+    const children = main!.getChildren();
+
+    expect(children.length).toBe(2);
+
+    const [banner0, banner1] = children;
+
+    expect(banner0.getName()).toBe('banner');
+    expect(banner0.getType()).toBe('Banner');
+    expect(banner0.isHidden()).toBe(false);
+    expect(banner0.getParameters()).toEqual({ document: 'banners/banner1' });
+
+    expect(banner1.getName()).toBe('banner1');
+    expect(banner1.getType()).toBe('Banner');
+    expect(banner1.isHidden()).toBe(true);
+    expect(banner1.getParameters()).toEqual({ document: 'banners/banner2' });
+
+    expect(page.getComponent('main', 'banner')).toBe(banner0);
+    expect(page.getComponent('main', 'banner1')).toBe(banner1);
   });
 });

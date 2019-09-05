@@ -21,7 +21,7 @@
  * @see module:api
  */
 
-import { Configuration } from './api';
+import { initialize as baseInitialize } from './initialize';
 import { buildPageModelUrl } from './url';
 import {
   ComponentFactory,
@@ -30,36 +30,37 @@ import {
   ContainerItem,
   ContainerModel,
   Container,
-  PageModel,
-  Page,
   TYPE_COMPONENT,
   TYPE_COMPONENT_CONTAINER_ITEM,
   TYPE_COMPONENT_CONTAINER,
 } from './page';
 
-export * from './api';
+const componentFactory = new ComponentFactory()
+  .register(TYPE_COMPONENT, (model, children) => new Component(model, children))
+  .register<ContainerModel, ContainerItem>(
+    TYPE_COMPONENT_CONTAINER,
+    (model, children) => new Container(model, children),
+  )
+  .register<ContainerItemModel>(TYPE_COMPONENT_CONTAINER_ITEM, model => new ContainerItem(model));
 
 /**
  * Initializes the page model.
  *
- * @param config configuration of the SPA integration with brXM.
+ * @param config Configuration of the SPA integration with brXM.
  */
-export async function initialize(config: Configuration): Promise<Page> {
-  const url = buildPageModelUrl(config.request, config.options);
-  const factory = new ComponentFactory()
-    .register(TYPE_COMPONENT, (model, children) => new Component(model, children))
-    .register<ContainerModel, ContainerItem>(
-      TYPE_COMPONENT_CONTAINER,
-      (model, children) => new Container(model, children),
-    )
-    .register<ContainerItemModel>(TYPE_COMPONENT_CONTAINER_ITEM, model => new ContainerItem(model));
-
-  const pageModel = await config.httpClient({
-    url,
-    method: 'get',
-    headers: config.request.headers,
-  }) as PageModel;
-  const root = factory.create(pageModel.page);
-
-  return new Page(pageModel, root);
-}
+export const initialize = baseInitialize.bind(null, buildPageModelUrl, componentFactory);
+export * from './api';
+export {
+  Component,
+  ContainerItem,
+  Container,
+  Page,
+  TYPE_COMPONENT,
+  TYPE_COMPONENT_CONTAINER_ITEM,
+  TYPE_COMPONENT_CONTAINER,
+  TYPE_CONTAINER_BOX,
+  TYPE_CONTAINER_INLINE,
+  TYPE_CONTAINER_NO_MARKUP,
+  TYPE_CONTAINER_ORDERED_LIST,
+  TYPE_CONTAINER_UNORDERED_LIST,
+} from './page';

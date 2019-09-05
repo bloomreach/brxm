@@ -1,0 +1,44 @@
+{
+  "page": {
+    "name": "test",
+    "type": "COMPONENT",
+    "components": [
+      {
+        "name": "main",
+        "type": "CONTAINER_COMPONENT",
+        "xtype": "hst.vbox",
+        "components": [
+          {
+            "name": "banner",
+            "label": "Banner",
+            "type": "CONTAINER_ITEM_COMPONENT",
+            "_meta": {
+              "paramsInfo": {
+                "document": "banners/banner1"
+              },
+              "params": {
+                "com.onehippo.cms7.targeting.TargetingParameterUtil.hide": "off"
+              }
+            }
+          },
+          {
+            "name": "banner1",
+            "label": "Banner",
+            "type": "CONTAINER_ITEM_COMPONENT",
+            "_meta": {
+              "paramsInfo": {
+                "document": "banners/banner2"
+              },
+              "params": {
+                "com.onehippo.cms7.targeting.TargetingParameterUtil.hide": "on"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "_meta": {
+      "pageTitle": "Homepage"
+    }
+  }
+}
