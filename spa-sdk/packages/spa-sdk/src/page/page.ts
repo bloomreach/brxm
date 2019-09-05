@@ -56,7 +56,7 @@ export interface Page {
    * @param componentNames the names of the component and its parents.
    * @return The component, or null if no such component exists.
    */
-  getComponent(...componentNames: string[]): Component | undefined;
+  getComponent<T extends Component>(...componentNames: string[]): T | undefined;
 
   /**
    * Returns the title of the page, if configured.

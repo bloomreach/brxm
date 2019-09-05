@@ -61,7 +61,7 @@ export interface Component {
    * Look up for a nested component.
    * @param componentNames A lookup path.
    */
-  getComponent(...componentNames: string[]): Component | undefined;
+  getComponent<T extends Component>(...componentNames: string[]): T | undefined;
 }
 
 export class Component implements Component {
