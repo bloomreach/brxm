@@ -30,7 +30,7 @@ describe('ContainerItem', () => {
       const containerItem = new ContainerItem({
         type: TYPE_COMPONENT_CONTAINER_ITEM,
         _meta: {
-          paramsInfo: { 'com.onehippo.cms7.targeting.TargetingParameterUtil.hide': 'on' },
+          params: { 'com.onehippo.cms7.targeting.TargetingParameterUtil.hide': 'on' },
         },
       });
 
@@ -41,14 +41,18 @@ describe('ContainerItem', () => {
       const containerItem1 = new ContainerItem({
         type: TYPE_COMPONENT_CONTAINER_ITEM,
         _meta: {
-          paramsInfo: { 'com.onehippo.cms7.targeting.TargetingParameterUtil.hide': 'off' },
+          params: { 'com.onehippo.cms7.targeting.TargetingParameterUtil.hide': 'off' },
         },
       });
 
-      const containerItem2 = new ContainerItem({ type: TYPE_COMPONENT_CONTAINER_ITEM, _meta: { paramsInfo: {} } });
+      const containerItem2 = new ContainerItem({ type: TYPE_COMPONENT_CONTAINER_ITEM, _meta: { params: {} } });
+      const containerItem3 = new ContainerItem({ type: TYPE_COMPONENT_CONTAINER_ITEM, _meta: { } });
+      const containerItem4 = new ContainerItem({ type: TYPE_COMPONENT_CONTAINER_ITEM });
 
       expect(containerItem1.isHidden()).toBe(false);
       expect(containerItem2.isHidden()).toBe(false);
+      expect(containerItem3.isHidden()).toBe(false);
+      expect(containerItem4.isHidden()).toBe(false);
     });
   });
 

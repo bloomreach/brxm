@@ -33,7 +33,8 @@ export interface ContainerItemParameters extends ComponentParameters {
  * Meta-data of a container item.
  */
 export interface ContainerItemMeta extends ComponentMeta {
-  paramsInfo?: ContainerItemParameters;
+  params?: ContainerItemParameters;
+  paramsInfo?: ComponentParameters;
 }
 
 /**
@@ -76,7 +77,7 @@ export class ContainerItem extends Component implements ContainerItem {
   }
 
   isHidden() {
-    return this.getParameters()[PARAMETER_HIDDEN] === 'on';
+    return !!(this.model._meta && this.model._meta.params && this.model._meta.params[PARAMETER_HIDDEN] === 'on');
   }
 
   getParameters(): ContainerItemParameters {
