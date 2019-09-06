@@ -33,7 +33,7 @@
 
     <hippo.configuration-management.version>1.6.7-SNAPSHOT</hippo.configuration-management.version>
 
-    <commons-io.version>2.5</commons-io.version>
+    <commons-io.version>2.6</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
     <commons-csv.version>1.4</commons-csv.version>
     <json-lib.version>2.4</json-lib.version>
