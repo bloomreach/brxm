@@ -15,22 +15,55 @@
  */
 
 import { Component, TYPE_COMPONENT } from './component';
+import { ContentRepository } from './content-repository';
+import { Content } from './content';
 import { Page } from './page';
 
 describe('Page', () => {
   let root: Component;
+  let content: ContentRepository;
 
   beforeEach(() => {
     root = new Component({ type: TYPE_COMPONENT });
+    content = new Map();
+
     jest.spyOn(root, 'getComponent');
+    jest.spyOn(content, 'get');
   });
 
   describe('getComponent', () => {
     it('should forward a call to the root component', () => {
-      const page = new Page({ page: { type: TYPE_COMPONENT } }, root);
+      const page = new Page({ page: { type: TYPE_COMPONENT } }, root, content);
       page.getComponent('a', 'b');
 
       expect(root.getComponent).toBeCalledWith('a', 'b');
+    });
+  });
+
+  describe('getContent', () => {
+    let page: Page;
+
+    beforeEach(() => {
+      page = new Page({ page: { type: TYPE_COMPONENT } }, root, content);
+    });
+
+    it('should resolve a reference', () => {
+      page.getContent({ $ref: '/content/some-content' });
+
+      expect(content.get).toBeCalledWith('some-content');
+    });
+
+    it('should pass a string reference directly', () => {
+      page.getContent('content-reference');
+
+      expect(content.get).toBeCalledWith('content-reference');
+    });
+
+    it('should return a content', () => {
+      const someContent = new Content({ id: 'some-id', name: 'some-name' });
+      content.set('some-content', someContent);
+
+      expect(page.getContent('some-content')).toBe(someContent);
     });
   });
 
@@ -44,14 +77,15 @@ describe('Page', () => {
           },
         },
         root,
+        content,
       );
 
       expect(page.getTitle()).toBe('something');
     });
 
     it('should return an undefined value', () => {
-      const page1 = new Page({ page: { type: TYPE_COMPONENT, _meta: {} } }, root);
-      const page2 = new Page({ page: { type: TYPE_COMPONENT } }, root);
+      const page1 = new Page({ page: { type: TYPE_COMPONENT, _meta: {} } }, root, content);
+      const page2 = new Page({ page: { type: TYPE_COMPONENT } }, root, content);
 
       expect(page1.getTitle()).toBeUndefined();
       expect(page2.getTitle()).toBeUndefined();

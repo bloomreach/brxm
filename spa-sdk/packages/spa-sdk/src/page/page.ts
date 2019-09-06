@@ -15,6 +15,9 @@
  */
 
 import { Component, ComponentMeta, ComponentModel } from './component';
+import { ContentModel, Content } from './content';
+import { ContentRepository } from './content-repository';
+import { Reference, isReference } from './reference';
 
 /**
  * Meta-data of a page root component.
@@ -42,6 +45,7 @@ export interface PageMeta {
  */
 export interface PageModel {
   _meta?: PageMeta;
+  content?: { [reference: string]: ContentModel };
   page: RootModel;
 }
 
@@ -59,6 +63,13 @@ export interface Page {
   getComponent<T extends Component>(...componentNames: string[]): T | undefined;
 
   /**
+   * Gets a content entity used in the page.
+   * @param reference The reference to the content entity. It can be an object containing
+   * [RFC-6901](https://tools.ietf.org/html/rfc6901) JSON Pointer.
+   */
+  getContent(reference: Reference | string): Content;
+
+  /**
    * Returns the title of the page, if configured.
    * @returns the title of the page, or `undefined` if not configured.
    */
@@ -66,10 +77,26 @@ export interface Page {
 }
 
 export class Page implements Page {
-  constructor(private model: PageModel, protected root: Component) {}
+  constructor(
+    protected model: PageModel,
+    protected root: Component,
+    protected content: ContentRepository,
+  ) {}
+
+  private getContentReference(reference: Reference) {
+    return  reference.$ref.split('/', 3)[2] || '';
+  }
 
   getComponent(...componentNames: string[]) {
     return this.root.getComponent(...componentNames);
+  }
+
+  getContent(reference: Reference | string) {
+    const contentReference = isReference(reference)
+      ? this.getContentReference(reference)
+      : reference;
+
+    return this.content.get(contentReference);
   }
 
   getTitle(): string | undefined {
