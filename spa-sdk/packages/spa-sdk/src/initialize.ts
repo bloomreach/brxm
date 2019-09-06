@@ -15,7 +15,7 @@
  */
 
 import { Configuration } from './api';
-import { ComponentFactory, PageModel, Page } from './page';
+import { ComponentFactory, ContentFactory, Content, PageModel, Page } from './page';
 import { PageModelUrlBuilder } from './url';
 
 /**
@@ -23,11 +23,13 @@ import { PageModelUrlBuilder } from './url';
  *
  * @param modelUrlBuilder Function generating an API URL based on the current request.
  * @param componentFactory Factory to produce component entities.
+ * @param contentFactory Factory to produce content entities.
  * @param config Configuration of the SPA integration with brXM.
  */
 export async function initialize(
   modelUrlBuilder: PageModelUrlBuilder,
   componentFactory: ComponentFactory,
+  contentFactory: ContentFactory,
   config: Configuration,
 ): Promise<Page> {
   const url = modelUrlBuilder(config.request, config.options);
@@ -37,6 +39,12 @@ export async function initialize(
     headers: config.request.headers,
   });
   const root = componentFactory.create(model.page);
+  const content = new Map<string, Content>();
 
-  return new Page(model, root);
+  if (model.content) {
+    Object.entries(model.content)
+      .forEach(([alias, model]) => content.set(alias, contentFactory(model)));
+  }
+
+  return new Page(model, root, content);
 }

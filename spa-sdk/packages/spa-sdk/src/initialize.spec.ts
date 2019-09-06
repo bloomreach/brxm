@@ -16,10 +16,13 @@
 
 import { HttpClient } from './api';
 import { initialize } from './initialize';
-import { ComponentFactory, Component, Page } from './page';
+import { ComponentFactory, Component, Page, ContentFactory, Content } from './page';
 import { PageModelUrlBuilder } from './url';
 
 const model = {
+  content: {
+    someContent: { id: 'content-id', name: 'content-name' },
+  },
   page: {},
 };
 const options = {
@@ -36,27 +39,28 @@ const request = {
 };
 
 describe('initialize', () => {
-  let factory: ComponentFactory;
+  let componentFactory: ComponentFactory;
+  let contentFactory: ContentFactory;
   let httpClient: HttpClient;
   let modelUrlBuilder: PageModelUrlBuilder;
+  let page: Page;
 
-  beforeEach(() => {
-    factory = new ComponentFactory();
+  beforeEach(async () => {
+    componentFactory = new ComponentFactory();
+    contentFactory = jest.fn(model => new Content(model));
     httpClient = jest.fn(async () => model);
     modelUrlBuilder = jest.fn(() => 'http://example.com');
 
-    factory.create = jest.fn(model => new Component(model));
+    componentFactory.create = jest.fn(model => new Component(model));
+
+    page = await initialize(modelUrlBuilder, componentFactory, contentFactory, { httpClient, options, request });
   });
 
-  it('should generate a URL', async () => {
-    await initialize(modelUrlBuilder, factory, { httpClient, options, request });
-
+  it('should generate a URL', () => {
     expect(modelUrlBuilder).toBeCalledWith(request, options);
   });
 
-  it('should request a page model', async () => {
-    await initialize(modelUrlBuilder, factory, { httpClient, options, request });
-
+  it('should request a page model', () => {
     expect(httpClient).toBeCalledWith({
       url: 'http://example.com',
       method: 'get',
@@ -64,22 +68,22 @@ describe('initialize', () => {
     });
   });
 
-  it('should create a root component', async () => {
-    await initialize(modelUrlBuilder, factory, { httpClient, options, request });
-
-    expect(factory.create).toBeCalledWith(model.page);
+  it('should create a root component', () => {
+    expect(componentFactory.create).toBeCalledWith(model.page);
   });
 
-  it('should return a page instance', async () => {
-    const page = await initialize(modelUrlBuilder, factory, { httpClient, options, request });
-
+  it('should return a page instance', () => {
     expect(page).toBeInstanceOf(Page);
+  });
+
+  it('should create a content instance', () => {
+    expect(contentFactory).toBeCalledWith(model.content.someContent);
   });
 
   it('should reject a promise when fetching the page model fails', () => {
     const error = new Error('Failed to fetch page model data');
     const httpClient = () => { throw error; };
-    const promise = initialize(modelUrlBuilder, factory, { httpClient, request, options });
+    const promise = initialize(modelUrlBuilder, componentFactory, contentFactory, { httpClient, request, options });
 
     expect.assertions(1);
     expect(promise).rejects.toBe(error);
