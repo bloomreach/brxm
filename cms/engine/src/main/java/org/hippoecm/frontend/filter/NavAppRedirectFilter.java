@@ -34,7 +34,10 @@ import org.hippoecm.frontend.Main;
 
 public class NavAppRedirectFilter implements Filter {
 
+    public static final String INITIAL_PATH_QUERY_PARAMETER = "initialPath";
+
     private static final String HTTP_METHOD_GET = "GET";
+
     private static final List<String> WHITE_LISTED_PATH_PREFIXES = Arrays.asList(
             "/angular",
             "/auth",
@@ -47,6 +50,7 @@ public class NavAppRedirectFilter implements Filter {
             "/wicket",
             "/ws"
     );
+
 
     @Override
     public void init(FilterConfig filterConfig) {
@@ -71,7 +75,7 @@ public class NavAppRedirectFilter implements Filter {
         if (isWhiteListed(request)) {
             chain.doFilter(request, response);
         } else {
-            response.sendRedirect("./?initialPath=" + getPathAfterContextPath(request));
+            response.sendRedirect(String.format("./?%s=%s", INITIAL_PATH_QUERY_PARAMETER,getPathAfterContextPath(request)));
         }
     }
 
