@@ -297,7 +297,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
 
     @Override
     protected void addBeanMethodCompoundType(final String propertyName, final String methodName, final boolean multiple, final String type, final DynamicBeanBuilder builder) {
-        final Class<? extends HippoBean> generatedBeanDef = getOrCreateCompoundBean(type);
+        final Class<? extends HippoBean> generatedBeanDef = getOrCreateCustomBean(type);
         if (generatedBeanDef == null) {
             return;
         }
@@ -307,7 +307,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
 
     @Override
     protected void addCustomNodeType(final String propertyName, final String methodName, final boolean multiple, final String type, final DynamicBeanBuilder builder) {
-        final Class<? extends HippoBean> generatedBeanDef = getOrCreateCompoundBean(type);
+        final Class<? extends HippoBean> generatedBeanDef = getOrCreateCustomBean(type);
         if (generatedBeanDef == null) {
             return;
         }
@@ -315,10 +315,10 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
         builder.addBeanMethodInternalType(methodName, generatedBeanDef, propertyName, multiple);
     }
 
-    private Class<? extends HippoBean> getOrCreateCompoundBean(final String type) {
+    private Class<? extends HippoBean> getOrCreateCustomBean(final String type) {
         Class<? extends HippoBean> generatedBeanDef = objectConverter.getClassFor(type);
         if (generatedBeanDef == null) {
-            //generate the bean class of the compound type
+            // Custom generic bean should be created because the document type doesn't exist in objectConverter
             final ContentType compoundContentType = objectConverter.getContentType(type);
             if (compoundContentType == null) {
                 return null;
