@@ -246,9 +246,9 @@ public class DynamicBeanBuilder {
 
     void addBeanMethodCompoundType(final String methodName, final String propertyName, final boolean multiple) {
         if (multiple) {
-            addSimpleGetMethod(methodName, List.class, METHOD_GET_CHILD_BEANS_BY_NAME, propertyName);            
+            addCollectionGetMethod(methodName, METHOD_GET_CHILD_BEANS_BY_NAME, HippoCompound.class, propertyName);
         } else {
-            addHippoTypeGetMethod(methodName, METHOD_GET_BEAN, HippoBean.class, propertyName);
+            addHippoTypeGetMethod(methodName, METHOD_GET_BEAN, HippoCompound.class, propertyName);
         }
     }
 
