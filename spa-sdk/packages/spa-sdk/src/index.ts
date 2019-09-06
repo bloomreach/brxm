@@ -30,11 +30,14 @@ import {
   ContainerItem,
   ContainerModel,
   Container,
+  ContentModel,
+  Content,
   TYPE_COMPONENT,
   TYPE_COMPONENT_CONTAINER_ITEM,
   TYPE_COMPONENT_CONTAINER,
 } from './page';
 
+const contentFactory = (model: ContentModel) => new Content(model);
 const componentFactory = new ComponentFactory()
   .register(TYPE_COMPONENT, (model, children) => new Component(model, children))
   .register<ContainerModel, ContainerItem>(
@@ -48,7 +51,7 @@ const componentFactory = new ComponentFactory()
  *
  * @param config Configuration of the SPA integration with brXM.
  */
-export const initialize = initializePageModel.bind(null, buildPageModelUrl, componentFactory);
+export const initialize = initializePageModel.bind(null, buildPageModelUrl, componentFactory, contentFactory);
 export * from './api';
 export {
   Component,

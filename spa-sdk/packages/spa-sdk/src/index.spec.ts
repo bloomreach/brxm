@@ -75,4 +75,17 @@ describe('initialize', () => {
     expect(page.getComponent('main', 'banner')).toBe(banner0);
     expect(page.getComponent('main', 'banner1')).toBe(banner1);
   });
+
+  it('should resolve content references', async () => {
+    const banner0 = page.getComponent('main', 'banner');
+    const document0 = page.getContent(banner0!.getModels().document);
+
+    const banner1 = page.getComponent('main', 'banner1');
+    const document1 = page.getContent(banner1!.getModels().document);
+
+    expect(document0).toBeDefined();
+    expect(document0!.getName()).toBe('banner1');
+    expect(document1).toBeDefined();
+    expect(document1!.getName()).toBe('banner2');
+  });
 });

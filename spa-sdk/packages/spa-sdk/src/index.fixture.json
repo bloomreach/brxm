@@ -1,4 +1,18 @@
 {
+  "content": {
+    "u895fb1b6410d497298946b6a06d2b361": {
+      "id": "895fb1b6-410d-4972-9894-6b6a06d2b361",
+      "localeString": "en",
+      "name": "banner1",
+      "title": "Sample banner"
+    },
+    "u9a3f1f5c530243c49bec584e810ffa2f": {
+      "id": "9a3f1f5c-5302-43c4-9bec-584e810ffa2f",
+      "localeString": "en",
+      "name": "banner2",
+      "title": "Sample banner 2"
+    }
+  },
   "page": {
     "name": "test",
     "type": "COMPONENT",
@@ -12,6 +26,11 @@
             "name": "banner",
             "label": "Banner",
             "type": "CONTAINER_ITEM_COMPONENT",
+            "models": {
+              "document": {
+                "$ref": "/content/u895fb1b6410d497298946b6a06d2b361"
+              }
+            },
             "_meta": {
               "paramsInfo": {
                 "document": "banners/banner1"
@@ -25,6 +44,11 @@
             "name": "banner1",
             "label": "Banner",
             "type": "CONTAINER_ITEM_COMPONENT",
+            "models": {
+              "document": {
+                "$ref": "/content/u9a3f1f5c530243c49bec584e810ffa2f"
+              }
+            },
             "_meta": {
               "paramsInfo": {
                 "document": "banners/banner2"
