@@ -17,6 +17,20 @@
 import { Component, TYPE_COMPONENT } from './component';
 
 describe('Component', () => {
+  describe('getModels', () => {
+    it('should return models object', () => {
+      const component = new Component({ type: TYPE_COMPONENT, models: { a: 1, b: 2 } });
+
+      expect(component.getModels()).toEqual({ a: 1, b: 2 });
+    });
+
+    it('should return empty object', () => {
+      const component = new Component({ type: TYPE_COMPONENT });
+
+      expect(component.getModels()).toEqual({});
+    });
+  });
+
   describe('getName', () => {
     it('should return a name', () => {
       const component = new Component({ type: TYPE_COMPONENT, name: 'something' });

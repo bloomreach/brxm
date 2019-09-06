@@ -33,11 +33,16 @@ export interface ComponentMeta {
   params?: ComponentParameters;
 }
 
+interface Models {
+  [model: string]: any;
+}
+
 /**
  * Model of a component.
  */
 export interface ComponentModel {
   _meta?: ComponentMeta;
+  models?: Models;
   name?: string;
   type: typeof TYPE_COMPONENT | string;
   components?: ComponentModel[];
@@ -47,6 +52,11 @@ export interface ComponentModel {
  * A component in the current page.
  */
 export interface Component {
+  /**
+   * Returns map of models.
+   */
+  getModels(): Models;
+
   /**
    * @return The name of this component.
    */
@@ -66,6 +76,10 @@ export interface Component {
 
 export class Component implements Component {
   constructor(protected model: ComponentModel, protected children: Component[] = []) {}
+
+  getModels() {
+    return this.model.models || {};
+  }
 
   getName() {
     return this.model.name || '';
