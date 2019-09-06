@@ -98,42 +98,44 @@
         </executions>
       </plugin>
       <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
+        <artifactId>maven-antrun-plugin</artifactId>
         <executions>
           <execution>
-            <id>copy-package-json-to-target</id>
-            <phase>prepare-package</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
+            <id>copy-src-to-target</id>
+            <phase>validate</phase>
             <configuration>
-              <outputDirectory>${basedir}/target/classes</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${basedir}</directory>
-                  <includes>
-                    <include>package.json</include>
-                  </includes>
-                  <filtering>false</filtering>
-                </resource>
-              </resources>
+              <target>
+                <copy todir="${project.build.directory}/classes/sdk/src">
+                  <fileset dir="${project.basedir}">
+                    <include name="examples/**"/>
+                    <include name="packages/**"/>
+                    <include name="LICENSE"/>
+                    <include name="NOTICE"/>
+                    <include name="package.json"/>
+                    <include name="yarn.lock"/>
+                    <include name="tsconfig.json"/>
+                    <include name="tslint.json"/>
+                  </fileset>
+                </copy>
+              </target>
             </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
           </execution>
           <execution>
             <id>copy-dist-to-target</id>
             <phase>prepare-package</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
             <configuration>
-              <outputDirectory>${basedir}/target/classes/dist</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>dist</directory>
-                  <filtering>false</filtering>
-                </resource>
-              </resources>
+              <target>
+                <copy todir="${project.build.directory}/classes/sdk/dist/spa-sdk">
+                  <fileset dir="${project.basedir}/packages/spa-sdk/dist"/>
+                </copy>
+              </target>
             </configuration>
+            <goals>
+              <goal>run</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
