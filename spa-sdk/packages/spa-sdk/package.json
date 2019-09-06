@@ -1,9 +1,6 @@
 {
-  "private": true,
-  "workspaces": [
-    "packages/*",
-    "examples/*"
-  ],
+  "name": "@bloomreach/spa-sdk",
+  "version": "0.0.0",
   "description": "Bloomreach SPA SDK",
   "keywords": [
     "bloomreach",
@@ -14,16 +11,47 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "https://code.onehippo.org/cms-community/bloomreach-spa-sdk"
+    "url": "https://code.onehippo.org/cms-community/bloomreach-spa-sdk",
+    "directory": "packages/spa-sdk"
   },
   "bugs": {
     "url": "https://issues.onehippo.com/projects/CMS/issues"
   },
+  "browser": "dist/spa-sdk.js",
+  "module": "dist/spa-sdk.mjs",
+  "es2015": "dist/spa-sdk.es6.mjs",
+  "types": "dist/spa-sdk.d.ts",
+  "files": [
+    "dist/"
+  ],
   "scripts": {
-    "build": "yarn workspaces run build",
-    "lint": "yarn workspaces run lint",
-    "test": "yarn workspaces run test",
-    "docs": "yarn workspaces run docs"
+    "build": "rollup -c rollup.config.js",
+    "lint": "tslint --project .",
+    "test": "jest",
+    "docs": "typedoc && minicat src/docs/typedoc.css >> docs/assets/css/main.css"
+  },
+  "jest": {
+    "testEnvironment": "jsdom",
+    "coverageDirectory": "./coverage",
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "src/**/*.ts"
+    ],
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.ts$": "ts-jest"
+    },
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "tsconfig.json"
+      }
+    },
+    "testMatch": [
+      "**/?(*.)spec.ts"
+    ]
   },
   "devDependencies": {
     "@babel/core": "^7.0",

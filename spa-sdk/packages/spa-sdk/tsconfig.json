@@ -1,0 +1,25 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./src"
+  },
+  "types": [
+    "jest"
+  ],
+  "include": [
+    "**/*.ts"
+  ],
+  "typedocOptions": {
+    "exclude": "!**/+(api|index).ts",
+    "excludeExternals": true,
+    "excludePrivate": true,
+    "excludeProtected": true,
+    "hideGenerator": true,
+    "mode": "file",
+    "out": "docs",
+    "readme": "src/docs/index.md"
+  }
+}
