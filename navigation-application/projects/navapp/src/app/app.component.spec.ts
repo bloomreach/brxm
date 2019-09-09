@@ -19,6 +19,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 
 import { AppComponent } from './app.component';
+import { BootstrapModule } from './bootstrap/bootstrap.module';
 import { ClientAppModule } from './client-app/client-app.module';
 import { MainMenuModule } from './main-menu/main-menu.module';
 import { NavConfigService } from './services/nav-config.service';
@@ -40,6 +41,7 @@ describe('AppComponent', () => {
         HttpClientModule,
         SharedModule,
         TopPanelModule,
+        BootstrapModule,
       ],
       declarations: [AppComponent],
       providers: [NavConfigService],

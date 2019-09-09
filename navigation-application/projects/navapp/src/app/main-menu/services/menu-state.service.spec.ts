@@ -84,6 +84,7 @@ describe('MenuStateService', () => {
     });
 
     service = TestBed.get(MenuStateService);
+    service.init();
   });
 
   it('should return the built menu', () => {
