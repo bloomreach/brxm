@@ -26,9 +26,9 @@
   ],
   "scripts": {
     "build": "rollup -c rollup.config.js",
+    "docs": "typedoc && minicat src/docs/typedoc.css >> docs/assets/css/main.css",
     "lint": "tslint --project .",
-    "test": "jest",
-    "docs": "typedoc && minicat src/docs/typedoc.css >> docs/assets/css/main.css"
+    "test": "jest"
   },
   "jest": {
     "testEnvironment": "jsdom",

@@ -1,7 +1,8 @@
 {
   "private": true,
   "workspaces": [
-    "packages/*",
+    "packages/spa-sdk",
+    "packages/react-sdk",
     "examples/*"
   ],
   "description": "Bloomreach SPA SDK",
@@ -21,9 +22,9 @@
   },
   "scripts": {
     "build": "yarn workspaces run build",
+    "docs": "yarn workspaces run docs",
     "lint": "yarn workspaces run lint",
-    "test": "yarn workspaces run test",
-    "docs": "yarn workspaces run docs"
+    "test": "yarn workspaces run test"
   },
   "devDependencies": {
     "@babel/core": "^7.5",
