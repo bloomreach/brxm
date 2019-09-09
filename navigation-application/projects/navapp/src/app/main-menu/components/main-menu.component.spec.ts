@@ -15,14 +15,14 @@
  */
 
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { of, Subject } from 'rxjs';
 
+import { APP_BOOTSTRAPPED } from '../../bootstrap/app-bootstrapped';
+import { BootstrapService } from '../../bootstrap/bootstrap.service';
 import { ClientAppService } from '../../client-app/services/client-app.service';
 import { DeepLinkingService } from '../../deep-linking/deep-linking.service';
-import { BootstrapService } from '../../services/bootstrap.service';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
-
 import { GlobalSettingsService } from '../../services/global-settings.service';
 import { QaHelperService } from '../../services/qa-helper.service';
 import { MenuItemLinkMock } from '../models/menu-item-link.mock';
@@ -47,10 +47,10 @@ describe('MainMenuComponent', () => {
   };
 
   const menuStateServiceMock = jasmine.createSpyObj('MenuStateService', {
-    menu: menuMock,
     isMenuItemActive: undefined,
     activateMenuItem: undefined,
   });
+  menuStateServiceMock.menu = menuMock;
 
   let qaHelperService: QaHelperService;
   const qaHelperServiceMock = {
@@ -81,7 +81,14 @@ describe('MainMenuComponent', () => {
     'navigateByNavItem',
   ]);
 
+  let appBootstrappedResolve: () => void;
+  let appBootstrappedMock: Promise<void>;
+
   beforeEach(() => {
+    appBootstrappedMock = new Promise<void>((resolve, reject) => {
+      appBootstrappedResolve = resolve;
+    });
+
     TestBed.configureTestingModule({
       declarations: [MainMenuComponent],
       schemas: [NO_ERRORS_SCHEMA],
@@ -93,6 +100,7 @@ describe('MainMenuComponent', () => {
         { provide: BootstrapService, useValue: bootstrapServiceMock },
         { provide: BusyIndicatorService, useValue: busyIndicatorServiceMock },
         { provide: DeepLinkingService, useValue: deepLinkingServiceMock },
+        { provide: APP_BOOTSTRAPPED, useValue: appBootstrappedMock },
       ],
     });
 
@@ -113,17 +121,35 @@ describe('MainMenuComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should navigate when menu item link is clicked', () => {
-    const menuItemLink = new MenuItemLinkMock();
-
-    component.selectMenuItem(menuItemLink);
-
-    expect(deepLinkingServiceMock.navigateByNavItem).toHaveBeenCalledWith(menuItemLink.navItem);
+  it('should return empty menu until app is bootstrapped', () => {
+    expect(component.menuItems).toEqual([]);
   });
 
-  it('should not activate the home menu element until menu is emitted', () => {
-    spyOn(component, 'selectMenuItem');
+  it('should extract menu items when the app is bootstrapped', fakeAsync(() => {
+    appBootstrappedResolve();
 
-    expect(component.selectMenuItem).not.toHaveBeenCalled();
+    tick();
+
+    expect(component.menuItems).toEqual(menuMock.slice(1));
+  }));
+
+  describe('when the app is bootstrapped', () => {
+    beforeEach(async(() => {
+      appBootstrappedResolve();
+    }));
+
+    it('should navigate when menu item link is clicked', () => {
+      const menuItemLink = new MenuItemLinkMock();
+
+      component.selectMenuItem(menuItemLink);
+
+      expect(deepLinkingServiceMock.navigateByNavItem).toHaveBeenCalledWith(menuItemLink.navItem);
+    });
+
+    it('should not activate the home menu element until menu is emitted', () => {
+      spyOn(component, 'selectMenuItem');
+
+      expect(component.selectMenuItem).not.toHaveBeenCalled();
+    });
   });
 });

@@ -18,8 +18,6 @@ import { Component, HostBinding, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material';
 import { Observable } from 'rxjs';
 
-import { BootstrapService } from './services/bootstrap.service';
-import { BusyIndicatorService } from './services/busy-indicator.service';
 import { OverlayService } from './services/overlay.service';
 import { RightSidePanelService } from './top-panel/services/right-side-panel.service';
 
@@ -38,8 +36,6 @@ export class AppComponent implements OnInit {
   constructor(
     private overlayService: OverlayService,
     private rightSidePanelService: RightSidePanelService,
-    private busyIndicatorService: BusyIndicatorService,
-    private bootstrapService: BootstrapService,
   ) {}
 
   get isOverlayVisible$(): Observable<boolean> {
@@ -47,10 +43,6 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.busyIndicatorService.show();
-
     this.rightSidePanelService.setSidenav(this.sidenav);
-
-    this.bootstrapService.bootstrap().then(() => this.busyIndicatorService.hide());
   }
 }

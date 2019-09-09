@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import { Component, HostBinding, OnDestroy, OnInit } from '@angular/core';
+import { Component, HostBinding, Inject, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 
+import { APP_BOOTSTRAPPED } from '../../bootstrap/app-bootstrapped';
 import { ClientAppService } from '../../client-app/services/client-app.service';
 import { DeepLinkingService } from '../../deep-linking/deep-linking.service';
 import { UserSettings } from '../../models/dto/user-settings.dto';
@@ -49,6 +50,7 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     private settingsService: GlobalSettingsService,
     private busyIndicatorService: BusyIndicatorService,
     private deepLinkingService: DeepLinkingService,
+    @Inject(APP_BOOTSTRAPPED) private appBootstrapped: Promise<void>,
   ) {}
 
   get isBusyIndicatorVisible(): boolean {
@@ -75,7 +77,7 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.userSettings = this.settingsService.userSettings;
 
-    this.extractMenuItems();
+    this.appBootstrapped.then(() => this.extractMenuItems());
   }
 
   ngOnDestroy(): void {

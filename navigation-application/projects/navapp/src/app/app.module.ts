@@ -16,18 +16,16 @@
 
 import { APP_BASE_HREF, Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
-import { APP_INITIALIZER, NgModule } from '@angular/core';
+import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
+import { BootstrapModule } from './bootstrap/bootstrap.module';
 import { ClientAppModule } from './client-app/client-app.module';
 import { ErrorHandlingModule } from './error-handling/error-handling.module';
 import { MainMenuModule } from './main-menu/main-menu.module';
-import { NavConfigService } from './services/nav-config.service';
 import { SharedModule } from './shared/shared.module';
 import { TopPanelModule } from './top-panel/top-panel.module';
-
-const loadNavItems = (navConfigService: NavConfigService) => () => navConfigService.init();
 
 @NgModule({
   imports: [
@@ -39,17 +37,12 @@ const loadNavItems = (navConfigService: NavConfigService) => () => navConfigServ
     MainMenuModule,
     TopPanelModule,
     ErrorHandlingModule,
+    BootstrapModule,
   ],
   providers: [
     Location,
     { provide: LocationStrategy, useClass: PathLocationStrategy },
     { provide: APP_BASE_HREF, useValue: window.location.origin },
-    {
-      provide: APP_INITIALIZER,
-      useFactory: loadNavItems,
-      deps: [NavConfigService],
-      multi: true,
-    },
   ],
   declarations: [AppComponent],
   bootstrap: [AppComponent],

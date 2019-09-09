@@ -26,8 +26,8 @@ import { MenuBuilderService } from './menu-builder.service';
 
 @Injectable()
 export class MenuStateService {
-  private readonly menuItems: MenuItem[] = [];
-  private readonly homeMenuItemLink: MenuItemLink;
+  private menuItems: MenuItem[] = [];
+  private homeMenuItemLink: MenuItemLink;
   private activePath = new BehaviorSubject<MenuItem[]>([]);
   private collapsed = true;
   private currentDrawerMenuItem: MenuItemContainer;
@@ -35,11 +35,7 @@ export class MenuStateService {
   constructor(
     private menuBuilderService: MenuBuilderService,
     private navConfigService: NavConfigService,
-  ) {
-    const navItems = this.navConfigService.navItems;
-    this.menuItems = this.menuBuilderService.buildMenu(navItems);
-    this.homeMenuItemLink = this.findHomeMenuItemLink(this.menuItems);
-  }
+  ) {}
 
   get menu(): MenuItem[] {
     return this.menuItems;
@@ -63,6 +59,12 @@ export class MenuStateService {
 
   get drawerMenuItem(): MenuItemContainer {
     return this.currentDrawerMenuItem;
+  }
+
+  init(): void {
+    const navItems = this.navConfigService.navItems;
+    this.menuItems = this.menuBuilderService.buildMenu(navItems);
+    this.homeMenuItemLink = this.findHomeMenuItemLink(this.menuItems);
   }
 
   activateMenuItem(appId: string, path: string): void {

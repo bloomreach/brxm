@@ -56,7 +56,7 @@ interface Navigation {
   providedIn: 'root',
 })
 export class DeepLinkingService implements OnDestroy {
-  private readonly routes: Route[];
+  private routes: Route[];
   private locationSubscription: Subscription;
   private readonly transitions = new Subject<Partial<Navigation>>();
   private readonly navigations = new BehaviorSubject<Navigation>({
@@ -80,9 +80,6 @@ export class DeepLinkingService implements OnDestroy {
   ) {
     this.setupNavigations();
     this.processNavigations();
-
-    const navItems = this.navConfigService.navItems;
-    this.routes = this.generateRoutes(navItems);
   }
 
   get events$(): Observable<NavigationEvent> {
@@ -99,6 +96,9 @@ export class DeepLinkingService implements OnDestroy {
   }
 
   initialNavigation(): void {
+    const navItems = this.navConfigService.navItems;
+    this.routes = this.generateRoutes(navItems);
+
     this.setUpLocationChangeListener();
 
     const url = this.location.path(true);
