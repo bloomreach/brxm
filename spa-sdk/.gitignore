@@ -1,7 +1,7 @@
-/node
-/node_modules
-/target
-/packages/*/coverage
-/packages/*/dist
-/packages/*/docs
-/packages/*/node_modules
+/node/
+/node_modules/
+/target/
+/packages/*/coverage/
+/packages/*/dist/
+/packages/*/docs/
+/packages/*/node_modules/
