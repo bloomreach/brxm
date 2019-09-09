@@ -65,8 +65,8 @@ export class MenuStructureService {
     const categories = new MenuItemContainer(
       'Categories',
       [
-        new MenuItemLink('categories/category-ranking', 'Category ranking'),
         new MenuItemLink('categories/all-category-pages', 'All category pages'),
+        new MenuItemLink('categories/category-ranking', 'Category ranking'),
         new MenuItemLink('categories/category-ranking-diagnostics', 'Category Ranking Diagnostics'),
         new MenuItemLink('categories/category-facets-ranking', 'Category Facets'),
         new MenuItemLink('categories/category-banners', 'Category banners'),
