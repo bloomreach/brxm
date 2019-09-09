@@ -1,14 +1,11 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "esModuleInterop": true,
-    "suppressImplicitAnyIndexErrors": true,
     "allowSyntheticDefaultImports": true,
-    "baseUrl": "./src"
+    "baseUrl": "./src",
+    "esModuleInterop": true,
+    "suppressImplicitAnyIndexErrors": true
   },
-  "types": [
-    "jest"
-  ],
   "include": [
     "**/*.ts"
   ],
@@ -21,5 +18,8 @@
     "mode": "file",
     "out": "docs",
     "readme": "src/docs/index.md"
-  }
+  },
+  "types": [
+    "jest"
+  ]
 }

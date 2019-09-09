@@ -1,21 +1,21 @@
 {
   "compilerOptions": {
-    "target": "es6",
-    "module": "es6",
-    "moduleResolution": "node",
-    "sourceMap": true,
     "lib": [
       "es5",
       "es6",
       "dom"
     ],
-    "strict": true
+    "module": "es6",
+    "moduleResolution": "node",
+    "sourceMap": true,
+    "strict": true,
+    "target": "es6"
   },
-  "typeRoots": [
-    "node_modules/@types"
-  ],
   "exclude": [
     "node_modules",
     "**/*.spec.ts"
+  ],
+  "typeRoots": [
+    "node_modules/@types"
   ]
 }
