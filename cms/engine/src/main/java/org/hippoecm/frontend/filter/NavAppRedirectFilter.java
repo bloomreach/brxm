@@ -19,7 +19,10 @@ package org.hippoecm.frontend.filter;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -31,6 +34,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.frontend.Main;
+
+import static java.util.stream.Collectors.joining;
 
 public class NavAppRedirectFilter implements Filter {
 
@@ -77,7 +82,13 @@ public class NavAppRedirectFilter implements Filter {
         if (isWhiteListed(request)) {
             chain.doFilter(request, response);
         } else {
-            response.sendRedirect(String.format("./?%s=%s", INITIAL_PATH_QUERY_PARAMETER, getPathAfterContextPath(request)));
+            final Map<String, String[]> parameterMap = new HashMap<>(request.getParameterMap());
+            parameterMap.put(INITIAL_PATH_QUERY_PARAMETER, new String[]{getPathAfterContextPath(request)});
+            final String queryParameters = parameterMap.entrySet().stream()
+                    .flatMap(entry -> Stream.of(entry.getValue()).map(value -> String.join("=", entry.getKey(), value)))
+                    .collect(joining("&", "?", ""));
+            final String redirectUrl = String.format("./%s", queryParameters);
+            response.sendRedirect(redirectUrl);
         }
     }
 
