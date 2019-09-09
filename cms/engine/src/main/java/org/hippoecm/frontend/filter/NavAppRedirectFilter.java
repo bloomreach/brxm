@@ -45,6 +45,7 @@ public class NavAppRedirectFilter implements Filter {
             "/console",
             "/navapp",
             "/ping",
+            "/repository",
             "/site",
             "/skin",
             "/wicket",
@@ -75,7 +76,7 @@ public class NavAppRedirectFilter implements Filter {
         if (isWhiteListed(request)) {
             chain.doFilter(request, response);
         } else {
-            response.sendRedirect(String.format("./?%s=%s", INITIAL_PATH_QUERY_PARAMETER,getPathAfterContextPath(request)));
+            response.sendRedirect(String.format("./?%s=%s", INITIAL_PATH_QUERY_PARAMETER, getPathAfterContextPath(request)));
         }
     }
 
