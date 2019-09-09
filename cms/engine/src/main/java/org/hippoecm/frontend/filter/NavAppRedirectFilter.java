@@ -43,6 +43,7 @@ public class NavAppRedirectFilter implements Filter {
             "/auth",
             "/ckeditor",
             "/console",
+            "/logging",
             "/navapp",
             "/ping",
             "/repository",
