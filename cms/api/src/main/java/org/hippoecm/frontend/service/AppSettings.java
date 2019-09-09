@@ -29,6 +29,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public interface AppSettings {
 
     /**
+     * Returns the path that the navapp should navigate to after the navapp has been fully initialized.
+     *
+     * @return initial path
+     */
+    String getInitialPath();
+
+    /**
      * Returns {@code true} if the CMS is serving the Navigation Application resources and {@code false} otherwise
      *
      * @return if CMS is serving the navapp resources

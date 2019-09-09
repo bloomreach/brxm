@@ -31,8 +31,11 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.wicket.ThreadContext;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.request.IRequestParameters;
+import org.apache.wicket.util.string.StringValue;
 import org.easymock.EasyMockRunner;
 import org.easymock.Mock;
+import org.hippoecm.frontend.filter.NavAppRedirectFilter;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.AppSettings;
@@ -72,6 +75,8 @@ public class NavAppSettingsServiceTest {
     @Mock
     private ServletWebRequest request;
     @Mock
+    private IRequestParameters parameters;
+    @Mock
     private HttpServletRequest servletRequest;
     @Mock
     private PluginUserSession userSession;
@@ -97,7 +102,11 @@ public class NavAppSettingsServiceTest {
     public void setUp() throws RepositoryException {
 
         expect(request.getContainerRequest()).andReturn(servletRequest).anyTimes();
+        expect(request.getQueryParameters()).andStubReturn(parameters);
         replay(request);
+        expect(parameters.getParameterValue(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER))
+                .andStubReturn(StringValue.valueOf((String) null));
+        replay(parameters);
 
         expect(servletRequest.getHeader("X-Forwarded-Proto")).andReturn(scheme);
         expect(servletRequest.getHeader("X-Forwarded-Host")).andReturn(host).times(2);
@@ -302,6 +311,17 @@ public class NavAppSettingsServiceTest {
         verify(config, cfg1, cfg2);
     }
 
+    @Test
+    public void initial_path_is_set() {
+        reset(parameters);
+        final String someInitialPath = "a/b/c?x=y&p=q";
+        expect(parameters.getParameterValue(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER))
+                .andReturn(StringValue.valueOf(someInitialPath));
+        replay(parameters);
+        final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
+        assertThat(navAppSettings.getAppSettings().getInitialPath(), is(someInitialPath));
+    }
+
 
     private void testUserSettingsAssertions(UserSettings userSettings) {
         assertThat(userSettings.getUserName(), is("userName"));
@@ -315,6 +335,7 @@ public class NavAppSettingsServiceTest {
         final List<NavAppResource> navConfigResources = appSettings.getNavConfigResources();
         assertThat(navConfigResources.get(0).getResourceType(), is(ResourceType.INTERNAL_REST));
         assertThat(navConfigResources.get(0).getUrl(), is(URI.create(NAVIGATIONITEMS_ENDPOINT)));
+        assertThat(appSettings.getInitialPath(), is("/"));
     }
 
 }

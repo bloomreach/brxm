@@ -28,6 +28,8 @@ import javax.jcr.Session;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.request.Request;
+import org.apache.wicket.util.string.StringValue;
+import org.hippoecm.frontend.filter.NavAppRedirectFilter;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -44,7 +46,7 @@ import org.slf4j.LoggerFactory;
 
 public class NavAppSettingsService extends Plugin implements INavAppSettingsService {
 
-    public static final String JAR_PATH_PREFIX = "navapp";
+    private static final String JAR_PATH_PREFIX = "navapp";
     static final String NAVAPP_LOCATION_SYSTEM_PROPERTY = "navapp.location";
 
     static final String NAV_CONFIG_RESOURCES = "navConfigResources";
@@ -74,7 +76,8 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     public NavAppSettings getNavAppSettings(final Request request) {
 
         final UserSettings userSettings = createUserSettings(pluginUserSessionSupplier.get());
-        final AppSettings appSettings = createAppSettings();
+        final StringValue initialPath = request.getQueryParameters().getParameterValue(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER);
+        final AppSettings appSettings = createAppSettings(initialPath.toString("/"));
 
         return new NavAppSettings() {
             @Override
@@ -134,7 +137,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         return null;
     }
 
-    private AppSettings createAppSettings() {
+    private AppSettings createAppSettings(String initialPath) {
 
         final String navAppLocation = System.getProperty(NAVAPP_LOCATION_SYSTEM_PROPERTY, null);
         final boolean cmsOriginOfNavAppResources = navAppLocation == null;
@@ -150,6 +153,11 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         final int iframesConnectionTimeout = readIframesConnectionTimeout();
 
         return new AppSettings() {
+
+            @Override
+            public String getInitialPath() {
+                return initialPath;
+            }
 
             @Override
             public boolean isCmsServingNavAppResources() {
