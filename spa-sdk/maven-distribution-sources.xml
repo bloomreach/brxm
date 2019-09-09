@@ -37,6 +37,16 @@
       </includes>
     </fileSet>
     <fileSet>
+      <directory>packages/react-sdk</directory>
+      <outputDirectory>packages/react-sdk</outputDirectory>
+      <includes>
+        <include>babel.config.js</include>
+        <include>package.json</include>
+        <include>rollup.config.js</include>
+        <include>src/**</include>
+      </includes>
+    </fileSet>
+    <fileSet>
       <directory>.</directory>
       <includes>
         <include>package.json</include>
