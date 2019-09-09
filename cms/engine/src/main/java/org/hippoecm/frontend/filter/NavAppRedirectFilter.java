@@ -43,7 +43,7 @@ public class NavAppRedirectFilter implements Filter {
 
     private static final String HTTP_METHOD_GET = "GET";
 
-    private static final List<String> WHITE_LISTED_PATH_PREFIXES = Arrays.asList(
+    static final List<String> WHITE_LISTED_PATH_PREFIXES = Arrays.asList(
             "/angular",
             "/auth",
             "/ckeditor",
@@ -85,7 +85,14 @@ public class NavAppRedirectFilter implements Filter {
             final Map<String, String[]> parameterMap = new HashMap<>(request.getParameterMap());
             parameterMap.put(INITIAL_PATH_QUERY_PARAMETER, new String[]{getPathAfterContextPath(request)});
             final String queryParameters = parameterMap.entrySet().stream()
-                    .flatMap(entry -> Stream.of(entry.getValue()).map(value -> String.join("=", entry.getKey(), value)))
+                    .flatMap(entry -> {
+                        final String[] values = entry.getValue();
+                        final String key = entry.getKey();
+                        if (values == null || values.length == 0) {
+                            return Stream.of(key);
+                        }
+                        return Stream.of(entry.getValue()).map(value -> String.join("=", key, value));
+                    })
                     .collect(joining("&", "?", ""));
             final String redirectUrl = String.format("./%s", queryParameters);
             response.sendRedirect(redirectUrl);

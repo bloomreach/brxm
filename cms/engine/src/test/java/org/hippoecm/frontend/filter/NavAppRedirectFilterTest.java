@@ -38,7 +38,9 @@ import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(EasyMockRunner.class)
@@ -57,6 +59,56 @@ public class NavAppRedirectFilterTest {
     @Before
     public void setUp() {
         filter = new NavAppRedirectFilter();
+    }
+
+    @Test
+    public void urls_with_put_method_dont_redirect() throws IOException, ServletException {
+
+        expect(request.getMethod()).andReturn("PUT");
+        replay(request);
+
+        chain.doFilter(request, response);
+        expectLastCall();
+        replay(chain);
+
+        filter.doFilter(request, response, chain);
+
+        verify(request, chain);
+    }
+
+    @Test
+    public void urls_with_iframe_query_param_dont_redirect() throws IOException, ServletException {
+
+        expect(request.getMethod()).andReturn("GET");
+        expect(request.getParameter(Main.CMS_AS_IFRAME_QUERY_PARAMETER)).andReturn("");
+        replay(request);
+
+        chain.doFilter(request, response);
+        expectLastCall();
+        replay(chain);
+
+        filter.doFilter(request, response, chain);
+
+        verify(request, chain);
+    }
+
+
+    @Test
+    public void urls_with_whitelisted_path_dont_redirect() throws IOException, ServletException {
+
+        expect(request.getMethod()).andReturn("GET");
+        expect(request.getParameter(Main.CMS_AS_IFRAME_QUERY_PARAMETER)).andReturn(null);
+        expect(request.getRequestURI()).andReturn("/foo" + NavAppRedirectFilter.WHITE_LISTED_PATH_PREFIXES.get(0));
+        expect(request.getContextPath()).andReturn("/foo");
+        replay(request);
+
+        chain.doFilter(request, response);
+        expectLastCall();
+        replay(chain);
+
+        filter.doFilter(request, response, chain);
+
+        verify(request, chain);
     }
 
     @Test
@@ -85,6 +137,36 @@ public class NavAppRedirectFilterTest {
         assertThat(capturedLocation, containsString("bar=baz"));
         assertThat(capturedLocation, containsString("qux=0"));
         assertThat(capturedLocation, containsString("qux=1"));
+        assertThat(capturedLocation, containsString(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER + "=" + path));
+    }
+
+
+    @Test
+    public void redirect_can_handle_query_parameters_without_values() throws IOException, ServletException {
+
+        final String path = "/path";
+        final Map<String, String[]> parameterMap = new HashMap<>();
+        parameterMap.put("bar", new String[0]);
+        parameterMap.put("qux", null);
+
+        expect(request.getMethod()).andReturn("GET");
+        expect(request.getParameter(Main.CMS_AS_IFRAME_QUERY_PARAMETER)).andReturn(null);
+        expect(request.getContextPath()).andReturn("/foo").times(2);
+        expect(request.getRequestURI()).andReturn("/foo" + path).times(2);
+        expect(request.getParameterMap()).andReturn(parameterMap);
+        replay(request);
+
+        final Capture<String> location = Capture.newInstance();
+        response.sendRedirect(capture(location));
+        expectLastCall();
+        replay(response);
+
+        filter.doFilter(request, response, chain);
+
+        final String capturedLocation = location.getValue();
+        assertThat(capturedLocation.chars().filter(c -> c == '&').count(), is(2L));
+        assertThat(capturedLocation, containsString("bar"));
+        assertThat(capturedLocation, containsString("qux"));
         assertThat(capturedLocation, containsString(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER + "=" + path));
     }
 }
