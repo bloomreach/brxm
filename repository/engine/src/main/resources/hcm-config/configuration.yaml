@@ -41,7 +41,7 @@ definitions:
               hipposys:value: '*'
           /admin:
             jcr:primaryType: hipposys:authrole
-            hipposys:groups: [admin]
+            hipposys:userrole: xm-admin
             hipposys:role: admin
       /hippo:security:
         jcr:primaryType: hipposys:securityfolder
@@ -49,6 +49,7 @@ definitions:
         hipposys:groupspath: hippo:configuration/hippo:groups
         hipposys:rolespath: hippo:configuration/hippo:roles
         hipposys:userspath: hippo:configuration/hippo:users
+        hipposys:userrolespath: hippo:configuration/hippo:userroles
         /internal:
           jcr:primaryType: hipposys:securityprovider
           hipposys:classname: org.hippoecm.repository.security.RepositorySecurityProvider
@@ -75,6 +76,9 @@ definitions:
             .meta:category: system
           hipposys:previouspasswords:
             .meta:category: system
+          hipposys:userroles:
+            .meta:category: system
+            value: [xm-admin]
         /workflowuser:
           jcr:primaryType: hipposys:user
           hipposys:active: true
@@ -87,6 +91,9 @@ definitions:
             .meta:category: system
           hipposys:previouspasswords:
             .meta:category: system
+          hipposys:userroles:
+            .meta:category: system
+            value: [xm-admin]
       /hippo:groups:
         jcr:primaryType: hipposys:groupfolder
         .meta:residual-child-node-category: system
@@ -94,7 +101,10 @@ definitions:
           jcr:primaryType: hipposys:group
           hipposys:members:
             .meta:category: system
-            value: [admin, workflowuser]
+            value: []
+          hipposys:userroles:
+            .meta:category: system
+            value: [xm-admin]
           hipposys:securityprovider: internal
       /hippo:roles:
         jcr:primaryType: hipposys:rolefolder
@@ -103,6 +113,12 @@ definitions:
           jcr:primaryType: hipposys:role
           hipposys:privileges: ['jcr:all', 'hippo:admin']
           hipposys:roles: [editor]
+      /hippo:userroles:
+        jcr:primaryType: hipposys:userrolefolder
+        .meta:residual-child-node-category: system
+        /xm-admin:
+          jcr:primaryType: hipposys:userrole
+          hipposys:system: true
       /hippo:frontend:
         jcr:primaryType: hipposys:applicationfolder
       /hippo:modules:

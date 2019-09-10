@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,8 +21,6 @@ import javax.jcr.Session;
 import org.apache.jackrabbit.api.security.user.UserManager;
 import org.hippoecm.repository.security.group.DummyGroupManager;
 import org.hippoecm.repository.security.group.GroupManager;
-import org.hippoecm.repository.security.role.DummyRoleManager;
-import org.hippoecm.repository.security.role.RoleManager;
 import org.hippoecm.repository.security.user.DummyUserManager;
 import org.hippoecm.repository.security.user.HippoUserManager;
 
@@ -30,7 +28,6 @@ public abstract class AbstractSecurityProvider implements SecurityProvider {
 
     protected UserManager userManager = new DummyUserManager();
     protected GroupManager groupManager = new DummyGroupManager();
-    protected RoleManager roleManager = new DummyRoleManager();
 
     public void remove() {
     }
@@ -41,10 +38,6 @@ public abstract class AbstractSecurityProvider implements SecurityProvider {
 
     public GroupManager getGroupManager() {
         return groupManager;
-    }
-
-    public RoleManager getRoleManager() {
-        return roleManager;
     }
 
     public UserManager getUserManager(Session session) throws RepositoryException {

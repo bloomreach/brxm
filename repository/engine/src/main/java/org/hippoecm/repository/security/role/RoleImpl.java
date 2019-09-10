@@ -18,12 +18,28 @@ package org.hippoecm.repository.security.role;
 import java.util.Set;
 
 /**
- * A data access role possibly holding and representing a set of fine-grained privilege names
+ * Implementation of a {@link Role}
  */
-public interface Role extends AbstractRole {
-    /**
-     * The set of fine-grained privileges represented by this role
-     * @return the fine-grained privileges of this role
-     */
-    Set<String> getPrivileges();
+class RoleImpl extends UserRoleImpl implements Role {
+    private final Set<String> privileges;
+
+    RoleImpl(final String name, final boolean system, final Set<String> roles, final Set<String> privileges) {
+        super(name, system, roles);
+        this.privileges = privileges;
+    }
+
+    @Override
+    public Set<String> getPrivileges() {
+        return privileges;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return obj instanceof RoleImpl && getName().equals(((RoleImpl)obj).getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return getName().hashCode();
+    }
 }

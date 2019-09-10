@@ -35,7 +35,7 @@ import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.security.HippoAccessManager;
-import org.onehippo.repository.security.User;
+import org.onehippo.repository.security.SessionUser;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.xml.ImportContext;
 
@@ -47,7 +47,9 @@ public interface InternalHippoSession extends JackrabbitSession, NamespaceResolv
 
     Subject getSubject();
 
-    User getUser();
+    SessionUser getUser();
+
+    boolean isSystemUser();
 
     NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws RepositoryException;
 

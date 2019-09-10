@@ -13,17 +13,26 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.security.role;
+package org.onehippo.repository.security;
 
 import java.util.Set;
 
+import org.hippoecm.repository.api.HippoSession;
+
 /**
- * A data access role possibly holding and representing a set of fine-grained privilege names
+ * A SessionUser provides the <em>resolved</em> User Role names for a logged in user.
  */
-public interface Role extends AbstractRole {
+public interface SessionUser extends User {
+
     /**
-     * The set of fine-grained privileges represented by this role
-     * @return the fine-grained privileges of this role
+     * Get the resolved user role names assigned for this logged in user
+     * <p>
+     * The user role names are resolved (which may drop non-existing user role names), and includes possible implied
+     * user roles names.
+     * </p>
+     * @see HippoSession#getUser()
+     * @return the resolved user role names assigned to the logged in user
      */
-    Set<String> getPrivileges();
+    @Override
+    Set<String> getUserRoles();
 }

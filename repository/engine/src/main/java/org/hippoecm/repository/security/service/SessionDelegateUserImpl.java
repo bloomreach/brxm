@@ -22,31 +22,41 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.onehippo.repository.security.SessionDelegateUser;
-import org.onehippo.repository.security.User;
+import org.onehippo.repository.security.SessionUser;
 
 public class SessionDelegateUserImpl implements SessionDelegateUser {
 
     private final String id;
     private final Set<String> memberships;
     private final Set<String> userIds;
-    private final User delegateUser;
+    private final Set<String> userRoles;
+    private final SessionUser delegateUser;
 
-    public SessionDelegateUserImpl(final Set<String> ids, final Set<String> memberships, final User delegateUser) {
-        if (ids == null) {
-            throw new IllegalArgumentException("ids cannot be null");
-        }
-        if (ids.size() != 2) {
-            throw new IllegalArgumentException("ids must and may only contain two elements");
-        }
-        if (memberships == null) {
-            throw new IllegalArgumentException("memberships cannot be null");
-        }
+    public SessionDelegateUserImpl(final SessionUser delegateUser, final SessionUser delegatedUser) {
         if (delegateUser == null) {
             throw new IllegalArgumentException("delegateUser cannot be null");
         }
-        this.id = String.join(",", ids);
-        this.userIds = Collections.unmodifiableSet(new LinkedHashSet<>(ids));
-        this.memberships = Collections.unmodifiableSet(new HashSet<>(memberships));
+        if (delegatedUser == null) {
+            throw new IllegalArgumentException("delegatedUser cannot be null");
+        }
+        if (delegateUser instanceof SessionDelegateUser) {
+            throw new IllegalArgumentException("delegateUser cannot be a SessionDelegateUser itself");
+        }
+        final LinkedHashSet<String> mutableIds = new LinkedHashSet<>();
+        mutableIds.add(delegateUser.getId());
+        if (delegatedUser instanceof SessionDelegateUser) {
+            mutableIds.addAll(((SessionDelegateUser)delegatedUser).getIds());
+        } else {
+            mutableIds.add(delegatedUser.getId());
+        }
+        this.id = String.join(",", mutableIds);
+        this.userIds = Collections.unmodifiableSet(mutableIds);
+        final HashSet<String> mutableMemberships = new HashSet<>(delegateUser.getMemberships());
+        mutableMemberships.addAll(delegatedUser.getMemberships());
+        this.memberships = Collections.unmodifiableSet(mutableMemberships);
+        final HashSet<String> mutableUserRoles = new HashSet<>(delegateUser.getUserRoles());
+        mutableUserRoles.addAll(delegatedUser.getUserRoles());
+        userRoles = Collections.unmodifiableSet(mutableUserRoles);
         this.delegateUser = delegateUser;
     }
 
@@ -95,11 +105,17 @@ public class SessionDelegateUserImpl implements SessionDelegateUser {
         return memberships;
     }
 
+    @Override
+    public Set<String> getUserRoles() {
+        return userRoles;
+    }
+
     public Set<String> getIds() {
         return userIds;
     }
 
-    public User getDelegateUser() {
+    @Override
+    public SessionUser getDelegateUser() {
         return delegateUser;
     }
 

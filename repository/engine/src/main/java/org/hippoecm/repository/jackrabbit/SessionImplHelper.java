@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -55,7 +54,6 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeConflictException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.observation.ObservationManagerImpl;
 import org.apache.jackrabbit.core.security.AccessManager;
-import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.session.SessionContext;
 import org.apache.jackrabbit.core.state.ItemState;
 import org.apache.jackrabbit.core.state.ItemStateException;
@@ -83,7 +81,7 @@ import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 import org.hippoecm.repository.security.principals.UserPrincipal;
 import org.hippoecm.repository.security.service.SessionDelegateUserImpl;
 import org.onehippo.repository.security.SessionDelegateUser;
-import org.onehippo.repository.security.User;
+import org.onehippo.repository.security.SessionUser;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.security.domain.FacetRule;
 import org.onehippo.repository.xml.EnhancedSystemViewImportHandler;
@@ -316,8 +314,12 @@ class SessionImplHelper {
         ((RepositoryImpl)context.getRepository()).initializeLocalItemStateManager(localISM, context.getSessionImpl(), subject);
     }
 
-    protected User getUser() {
+    protected SessionUser getUser() {
         return ham.getUser();
+    }
+
+    public boolean isSystemUser() {
+        return ham.isSystemUser();
     }
 
     public void checkPermission(String absPath, String actions) throws AccessControlException, RepositoryException {
@@ -597,37 +599,27 @@ class SessionImplHelper {
 
         if (ham.isSystemUser()) {
             throw new IllegalStateException("Cannot create a delegated session for the system user");
-        } else if (SubjectHelper.getFirstPrincipal(session.getSubject(), SystemPrincipal.class) != null) {
+        } else if (session.isSystemUser()) {
             throw new IllegalStateException("Cannot create a delegated session with a system user session");
         };
 
-        User currentUser = ham.getUser();
-        UserPrincipal sessionUserPrincipal = SubjectHelper.getFirstPrincipal(session.getSubject(), UserPrincipal.class);
+        SessionUser currentUser = ham.getUser();
+        SessionUser sessionUser = session.getUser();
 
         if (currentUser == null) {
             throw new IllegalStateException("Cannot create a delegated session for an anonymous user");
-        } else if (sessionUserPrincipal == null) {
+        } else if (sessionUser == null) {
             throw new IllegalStateException("Cannot create a delegated session with an anonymous session");
         };
         if (currentUser instanceof SessionDelegateUser) {
             throw new IllegalArgumentException("Current session is already delegated");
         }
-        User sessionUser = sessionUserPrincipal.getUser();
 
         final Set<Principal> principals = new HashSet<>(subject.getPrincipals());
         principals.addAll(session.getSubject().getPrincipals());
 
         // create SessionDelegateUser
-        LinkedHashSet<String> userIds = new LinkedHashSet<>();
-        userIds.add(currentUser.getId());
-        if (sessionUser instanceof SessionDelegateUser) {
-            userIds.addAll(((SessionDelegateUser)sessionUser).getIds());
-        } else {
-            userIds.add(sessionUser.getId());
-        }
-        HashSet<String> groupIds = new HashSet<>(currentUser.getMemberships());
-        groupIds.addAll(sessionUser.getMemberships());
-        SessionDelegateUser sessionDelegateUser = new SessionDelegateUserImpl(userIds, groupIds, currentUser);
+        SessionDelegateUser sessionDelegateUser = new SessionDelegateUserImpl(currentUser, sessionUser);
         // and replace current UserPrincipal
         principals.removeIf(p -> p instanceof UserPrincipal);
         principals.add(new UserPrincipal(sessionDelegateUser));

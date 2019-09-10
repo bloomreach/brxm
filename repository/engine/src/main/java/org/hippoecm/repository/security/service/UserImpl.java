@@ -18,7 +18,10 @@ package org.hippoecm.repository.security.service;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -41,8 +44,12 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PASSKEY;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PASSWORD;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PASSWORDLASTMODIFIED;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_SYSTEM;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_USERROLES;
 
-public final class UserImpl extends AbstractSecurityNodeInfo implements User {
+/**
+ * Implementation of a {@link User}, using lazy loading of its {@link GroupManager#getMembershipIds(String) group memberships}.
+ */
+public class UserImpl extends AbstractSecurityNodeInfo implements User {
 
     private static final Set<String> PROTECTED_PROPERTY_NAMES = ImmutableSet.of(
             HIPPO_PASSWORD,
@@ -56,9 +63,15 @@ public final class UserImpl extends AbstractSecurityNodeInfo implements User {
     private final String id;
     private final HashMap<String, Object> properties = new HashMap<>();
     private Set<String> groupIds;
+    private final Set<String> userRoles;
     private GroupManager groupManager;
 
     public UserImpl(final Node node, final GroupManager groupManager) throws RepositoryException {
+        this(node, groupManager, userRoles -> userRoles.size() == 0 ? Collections.emptySet() : new HashSet<>(userRoles));
+    }
+
+    protected UserImpl(final Node node, final GroupManager groupManager,
+                       final Function<List<String>, Set<String>> rolesResolver) throws RepositoryException {
         this.id = NodeNameCodec.decode(node.getName());
         // load and store the String value of all node properties which are:
         // - not multiple value
@@ -73,6 +86,9 @@ public final class UserImpl extends AbstractSecurityNodeInfo implements User {
         properties.put(HIPPO_SYSTEM, JcrUtils.getBooleanProperty(node, HIPPO_SYSTEM, false));
         properties.put(HIPPO_ACTIVE, JcrUtils.getBooleanProperty(node, HIPPO_ACTIVE, true));
         properties.put(HIPPO_LASTLOGIN, JcrUtils.getDateProperty(node, HIPPO_LASTLOGIN, null));
+        userRoles = rolesResolver
+                .andThen(Collections::unmodifiableSet)
+                .apply(JcrUtils.getStringListProperty(node, HIPPO_USERROLES, Collections.emptyList()));
         this.groupManager = groupManager;
     }
 
@@ -136,6 +152,11 @@ public final class UserImpl extends AbstractSecurityNodeInfo implements User {
             }
         }
         return groupIds;
+    }
+
+    @Override
+    public Set<String> getUserRoles() {
+        return userRoles;
     }
 
     @Override

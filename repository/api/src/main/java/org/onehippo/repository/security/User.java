@@ -52,6 +52,14 @@ public interface User {
      */
     Set<String> getMemberships();
 
+    /**
+     * Get the directly assigned user role names for this user.
+     * <p>
+     * The user role names are <em>not</em> resolved, nor include possible implied user roles names
+     * </p>
+     * @return the directly assigned user role names
+     */
+    Set<String> getUserRoles();
 
     /**
      * Get the first name property of this user.

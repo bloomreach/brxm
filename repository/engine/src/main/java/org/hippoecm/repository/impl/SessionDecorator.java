@@ -70,7 +70,7 @@ import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.deriveddata.DerivedDataEngine;
 import org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
-import org.onehippo.repository.security.User;
+import org.onehippo.repository.security.SessionUser;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.xml.ContentResourceLoader;
 import org.onehippo.repository.xml.DereferencedSysViewSAXEventGenerator;
@@ -183,12 +183,28 @@ public class SessionDecorator implements XASession, HippoSession {
     }
 
     @Override
-    public User getUser() throws ItemNotFoundException {
-        User user = getInternalHippoSession().getUser();
+    public boolean isSystemUser() {
+        return getInternalHippoSession().isSystemUser();
+    }
+
+    @Override
+    public boolean isAnonymousUser() {
+        return getInternalHippoSession().getUser() == null && !getInternalHippoSession().isSystemUser();
+    }
+
+    @Override
+    public SessionUser getUser() throws ItemNotFoundException {
+        SessionUser user = getInternalHippoSession().getUser();
         if (user == null) {
             throw new ItemNotFoundException("User is not a repository user");
         }
         return user;
+    }
+
+    @Override
+    public boolean isUserInRole(final String userRoleName) {
+        SessionUser user = getInternalHippoSession().getUser();
+        return isSystemUser() || (user != null && user.getUserRoles().contains(userRoleName));
     }
 
     @Override

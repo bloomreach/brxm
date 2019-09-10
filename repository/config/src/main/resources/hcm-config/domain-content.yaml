@@ -13,16 +13,15 @@ definitions:
           hipposys:value: /content
       /author:
         jcr:primaryType: hipposys:authrole
-        hipposys:groups: [author]
+        hipposys:userrole: xm-content-author
         hipposys:role: author
       /editor:
         jcr:primaryType: hipposys:authrole
-        hipposys:groups: [editor]
+        hipposys:userrole: xm-content-editor
         hipposys:role: editor
-      # even though no groups assigned, this is handy for downstream projects so not one specific downstream project has
-      # to create the 'readonly' authrole
+      # even though the userrole xm-content-reader isn't assigned by default, this is handy for downstream projects
+      # needing it, which now only needs to be assigned to a specific group/user
       /readonly:
         jcr:primaryType: hipposys:authrole
-        hipposys:groups: []
-        hipposys:users: []
+        hipposys:userrole: xm-content-reader
         hipposys:role: readonly

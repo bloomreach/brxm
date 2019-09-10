@@ -47,7 +47,7 @@ import org.apache.jackrabbit.rmi.client.ClientSession;
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.decorating.remote.RemoteServicingSession;
-import org.onehippo.repository.security.User;
+import org.onehippo.repository.security.SessionUser;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.xml.ContentResourceLoader;
 import org.onehippo.repository.xml.ImportResult;
@@ -147,7 +147,22 @@ public class ClientServicingSession extends ClientSession implements HippoSessio
     }
 
     @Override
-    public User getUser() throws ItemNotFoundException {
+    public boolean isSystemUser() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isAnonymousUser() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public SessionUser getUser() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isUserInRole(final String userRoleName) {
         throw new UnsupportedOperationException();
     }
 

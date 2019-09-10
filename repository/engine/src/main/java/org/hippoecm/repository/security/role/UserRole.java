@@ -15,15 +15,12 @@
  */
 package org.hippoecm.repository.security.role;
 
-import java.util.Set;
+import org.onehippo.repository.security.User;
+import org.onehippo.repository.security.Group;
 
 /**
- * A data access role possibly holding and representing a set of fine-grained privilege names
+ * A named functional role to be held or performed by a {@link User} or {@link Group} of users.
+ * @see User#getUserRoles()
  */
-public interface Role extends AbstractRole {
-    /**
-     * The set of fine-grained privileges represented by this role
-     * @return the fine-grained privileges of this role
-     */
-    Set<String> getPrivileges();
+public interface UserRole extends AbstractRole {
 }

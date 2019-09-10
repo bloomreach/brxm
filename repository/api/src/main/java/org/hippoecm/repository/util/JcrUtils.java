@@ -20,7 +20,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -177,7 +179,7 @@ public class JcrUtils {
     }
 
     /**
-     * Returns the multiple string property value at <code>relPath</code> from <code>baseNode</code> or <code>defaultValue</code>
+     * Returns the multiple string property values at <code>relPath</code> from <code>baseNode</code> or <code>defaultValue</code>
      * if no such property exists.
      *
      * @param baseNode     existing node that should be the base for the relative path
@@ -194,6 +196,33 @@ public class JcrUtils {
                 final String[] result = new String[values.length];
                 for (int i = 0; i < values.length; i++) {
                     result[i] = values[i].getString();
+                }
+                return result;
+            }
+        } catch (PathNotFoundException | ValueFormatException ignore) {
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Returns the multiple string property values at <code>relPath</code> from <code>baseNode</code> or <code>defaultValue</code>
+     * if no such property exists.
+     *
+     * @param baseNode     existing node that should be the base for the relative path
+     * @param relPath      relative path to the property to get
+     * @param defaultValue default value to return when the property does not exist
+     * @return the multiple string property value at <code>relPath</code> from <code>baseNode</code> or <code>defaultValue</code>
+     * if no such property exists
+     * @throws RepositoryException in case of exception accessing the Repository
+     */
+    public static List<String> getStringListProperty(final Node baseNode, final String relPath,
+                                                     final List<String> defaultValue) throws RepositoryException {
+        try {
+            if (baseNode.hasProperty(relPath)) {
+                final Value[] values = baseNode.getProperty(relPath).getValues();
+                final ArrayList<String> result = new ArrayList<>(values.length);
+                for (final Value value : values) {
+                    result.add(value.getString());
                 }
                 return result;
             }

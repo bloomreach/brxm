@@ -18,19 +18,14 @@ package org.hippoecm.repository;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.Set;
 
 import javax.jcr.Node;
-import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.NodeNameCodec;
-import org.hippoecm.repository.impl.RepositoryDecorator;
-import org.hippoecm.repository.security.service.SecurityServiceImpl;
 import org.junit.After;
 import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.onehippo.repository.InternalHippoRepository;
 import org.onehippo.repository.security.Group;
 import org.onehippo.repository.security.SecurityService;
 import org.onehippo.repository.security.User;
@@ -53,7 +48,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.onehippo.repository.util.JcrConstants.JCR_PATH;
 import static org.onehippo.repository.util.JcrConstants.JCR_PRIMARY_TYPE;
 import static org.onehippo.repository.util.JcrConstants.JCR_UUID;
@@ -77,18 +71,6 @@ public class SecurityServiceTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testSecurityServiceRequiresSystemSession() throws Exception {
-        InternalHippoRepository internalRepository = (InternalHippoRepository) RepositoryDecorator.unwrap(server.getRepository());
-        try {
-            new SecurityServiceImpl(internalRepository.getHippoSecurityManager(), session);
-            fail("creating a SecurityServiceImpl should require a system session");
-        } catch (IllegalArgumentException e) {
-            assertEquals("systemSession really must be a system session", e.getMessage());
-        }
-        new SecurityServiceImpl(internalRepository.getHippoSecurityManager(), internalRepository.createSystemSession()).close();
-    }
-
-    @Test
     public void testGetUser() throws Exception {
         final SecurityService securityService = HippoServiceRegistry.getService(SecurityService.class);
         assertEquals(session.getUserID(), securityService.getUser(session.getUserID()).getId());
@@ -96,25 +78,10 @@ public class SecurityServiceTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testGetMemberships() throws Exception {
-        final Set<String> memberships = ((HippoSession) session).getUser().getMemberships();
-        assertTrue(memberships.contains("everybody"));
-        assertTrue(memberships.contains("admin"));
-    }
-
-    @Test
     public void testGetGroup() throws Exception {
         final SecurityService securityService = HippoServiceRegistry.getService(SecurityService.class);
         assertTrue(securityService.hasGroup("admin"));
         assertNotNull(securityService.getGroup("admin"));
-    }
-
-    @Test
-    public void testGetMembers() throws Exception {
-        final SecurityService securityService = HippoServiceRegistry.getService(SecurityService.class);
-        final Group group = securityService.getGroup("admin");
-        final Set<String> members = group.getMembers();
-        assertTrue(members.contains("admin"));
     }
 
     @Test

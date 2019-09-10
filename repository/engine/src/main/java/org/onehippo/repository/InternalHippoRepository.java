@@ -18,9 +18,9 @@ package org.onehippo.repository;
 
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
+import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.hippoecm.repository.security.HippoSecurityManager;
 import org.onehippo.repository.journal.ExternalRepositorySyncRevisionService;
 
@@ -52,5 +52,5 @@ public interface InternalHippoRepository extends Repository {
      * Create a system session for the default workspace.
      * Caller must log out the returned session after use.
      */
-    Session createSystemSession() throws RepositoryException;
+    InternalHippoSession createSystemSession() throws RepositoryException;
 }

@@ -18,23 +18,23 @@ package org.onehippo.repository.security;
 import java.util.Set;
 
 /**
- * User wrapping another user for SessionDelegation, having a "," concatenated {@link #getId()} and a merged
+ * SessionUser wrapping another SessionUser for SessionDelegation, having a "," concatenated {@link #getId()} and a merged
  * {@link #getMemberships()}.
  * <p>
- * The underlying (delegate) user can be retrieved through {@link #getDelegateUser()}.
+ * The underlying (delegate) {@link SessionUser} can be retrieved through {@link #getDelegateUser()}.
  * </p>
  * <p>
- * A set of the original (two) individual user ids can be retrieved through {@link #getIds()}.
+ * A set of the original individual user ids can be retrieved through {@link #getIds()}.
  * </p>
  * <p>
  * Both {@link #isSystemUser()} and {@link #isActive()} will always return false because this does not represent an
  * actual repository user.
  * </p>
  * <p>
- * All other {@link User} methods are overriden to always return null.
+ * All other {@link User} (not the {@link SessionUser} methods are overridden to always return null.
  * </p>
  */
-public interface SessionDelegateUser extends User {
+public interface SessionDelegateUser extends SessionUser {
     Set<String> getIds();
-    User getDelegateUser();
+    SessionUser getDelegateUser();
 }

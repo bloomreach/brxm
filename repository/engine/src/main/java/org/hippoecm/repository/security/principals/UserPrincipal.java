@@ -17,10 +17,11 @@ package org.hippoecm.repository.security.principals;
 
 import java.security.Principal;
 
+import org.onehippo.repository.security.SessionUser;
 import org.onehippo.repository.security.User;
 
 /**
- * A principal wrapping a {@link User} with {@link #getName()} delegated to {@link User#getId()}.
+ * A principal wrapping a {@link SessionUser} with {@link #getName()} delegated to {@link User#getId()}.
  * <p>
  * A UserPrincipal compares equal to any other instance of UserPrincipal: only one instance can be contained
  * in a set.
@@ -31,9 +32,9 @@ import org.onehippo.repository.security.User;
  */
 public final class UserPrincipal implements Principal {
 
-    private final User user;
+    private final SessionUser user;
 
-    public UserPrincipal(final User user) {
+    public UserPrincipal(final SessionUser user) {
         if (user == null) {
             throw new IllegalArgumentException("user can not be null");
         }
@@ -48,7 +49,7 @@ public final class UserPrincipal implements Principal {
         return user.getId();
     }
 
-    public User getUser() {
+    public SessionUser getUser() {
         return user;
     }
 

@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.security;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.HashSet;
 import java.util.Map;
@@ -94,8 +95,7 @@ public class HippoLoginModule implements LoginModule {
             if (impersonator != null) {
                 // anonymous cannot impersonate
                 if (!impersonator.getPrincipals(AnonymousPrincipal.class).isEmpty()) {
-                    log.info("Denied Anonymous impersonating as {}", userId);
-                    return false;
+                    throw new LoginException("Denied Anonymous impersonating as " + userId);
                 }
 
                 // system session impersonate
@@ -114,15 +114,14 @@ public class HippoLoginModule implements LoginModule {
                 // check for valid user
                 Principal iup = SubjectHelper.getFirstPrincipal(impersonator, UserPrincipal.class);
                 if (iup == null) {
-                    log.info("Denied unknown user impersonating as {}", userId);
-                    return false;
+                    throw new LoginException("Denied unknown user impersonating as " + userId);
                 }
 
                 String impersonatorId = iup.getName();
                 // check/deny impersonating system user
                 if (creds != null && "system".equals(creds.getUserID())) {
-                    log.info("Denied {} to impersonate system user which is only allowed for the system user itself.", impersonatorId);
-                    return false;
+                    throw new LoginException("Denied " + impersonatorId +
+                            " to impersonate system user which is only allowed for the system user itself.");
                 }
 
                 // TODO: check somehow if the user is allowed to impersonate someone else
@@ -166,13 +165,10 @@ public class HippoLoginModule implements LoginModule {
                 principals.clear();
                 UnsuccessfulAuthenticationHandler.handle(authenticationStatus, userId);
             }
-        } catch (ClassCastException e) {
+        } catch (LoginException e) {
             log.error("Error during login", e);
-            throw new LoginException(e.getMessage());
-        } catch (RepositoryException e) {
-            log.error("Error during login", e);
-            throw new LoginException(e.getMessage());
-        } catch (java.io.IOException e) {
+            throw e;
+        } catch (ClassCastException|RepositoryException|IOException e) {
             log.error("Error during login", e);
             throw new LoginException(e.getMessage());
         } catch (UnsupportedCallbackException e) {

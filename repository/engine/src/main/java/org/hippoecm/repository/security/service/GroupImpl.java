@@ -17,6 +17,7 @@ package org.hippoecm.repository.security.service;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.jcr.Node;
@@ -33,6 +34,7 @@ import com.google.common.collect.ImmutableSet;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_DESCRIPTION;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_SYSTEM;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_USERROLES;
 
 public final class GroupImpl extends AbstractSecurityNodeInfo implements Group {
 
@@ -41,6 +43,7 @@ public final class GroupImpl extends AbstractSecurityNodeInfo implements Group {
     private final String id;
     private final HashMap<String, Object> properties = new HashMap<>();
     private Set<String> userIds;
+    private final Set<String> userRoles;
 
     GroupImpl(final Node node, final GroupManager groupManager) throws RepositoryException {
         this.id = NodeNameCodec.decode(node.getName());
@@ -56,6 +59,7 @@ public final class GroupImpl extends AbstractSecurityNodeInfo implements Group {
         // load and store the non-string type values for predefined/interface properties
         properties.put(HIPPO_SYSTEM, JcrUtils.getBooleanProperty(node, HIPPO_SYSTEM, false));
         userIds = Collections.unmodifiableSet(groupManager.getMembers(node));
+        userRoles = Collections.unmodifiableSet(new HashSet<>(JcrUtils.getStringListProperty(node, HIPPO_USERROLES, Collections.emptyList())));
     }
 
     protected Set<String> getProtectedPropertyNames() {
@@ -80,6 +84,11 @@ public final class GroupImpl extends AbstractSecurityNodeInfo implements Group {
     @Override
     public Set<String> getMembers() {
         return userIds;
+    }
+
+    @Override
+    public Set<String> getUserRoles() {
+        return userRoles;
     }
 
     @Override

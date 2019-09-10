@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,73 +15,67 @@
  */
 package org.hippoecm.repository.security.domain;
 
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Value;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.util.JcrUtils;
+
+import com.google.common.collect.ImmutableSet;
 
 /**
- * A auth role defines which users and groups have a specific role
- * in a domain. The roles are defined a in {@link Role}
+ * A auth role defines which users and/or groups and/or user role have a specific role
+ * in a domain.
  */
 public class AuthRole {
 
-    /** SVN id placeholder */
+    /**
+     * The AuthRole name (identifier within the containing Domain)
+     */
+    private final String name;
 
     /**
      * The role id
-     * @see Role
      */
     private final String role;
 
     /**
+     * The userRole id
+     */
+    private final String userRole;
+
+    /**
      * A set holding the group ids belonging to the auth role
      */
-    private Set<String> groups = new HashSet<String>();
+    private final Set<String> groups;
 
     /**
      * A set holding the user ids belonging to the auth role
      */
-    private Set<String> users = new HashSet<String>();
-
-    /**
-     * The hash code
-     */
-    private transient int hash;
-
+    private final Set<String> users;
 
     /**
      * Initialize the auth role from the configuration node. The initialization
-     * does not check if roles, users and group do actually exist.
+     * does not check if roles, userRole, users and groups actually exist.
      * @param node the node holding the configuration
-     * @throws RepositoryException
+     * @throws RepositoryException -
      */
     public AuthRole(final Node node) throws RepositoryException {
         if (node == null) {
             throw new IllegalArgumentException("AuthRole node cannot be null");
         }
+        name = NodeNameCodec.decode(node.getName());
         role = node.getProperty(HippoNodeType.HIPPO_ROLE).getString();
-        if (node.hasProperty(HippoNodeType.HIPPO_USERS)) {
-            Value[] values = node.getProperty(HippoNodeType.HIPPO_USERS).getValues();
-            for (Value value : values) {
-                users.add(value.getString());
-            }
-        }
-        if (node.hasProperty(HippoNodeType.HIPPO_GROUPS)) {
-            Value[] values = node.getProperty(HippoNodeType.HIPPO_GROUPS).getValues();
-            for (Value value : values) {
-                groups.add(value.getString());
-            }
-        }
+        userRole = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_USERROLE, null);
+        users = ImmutableSet.copyOf(JcrUtils.getMultipleStringProperty(node, HippoNodeType.HIPPO_USERS, new String[0]));
+        groups = ImmutableSet.copyOf(JcrUtils.getMultipleStringProperty(node, HippoNodeType.HIPPO_GROUPS, new String[0]));
     }
 
     /**
-     * Check if a user with the given user id has the role
+     * Check if a user with the given user id has the
      * @param userId the id of the user
      * @return true if the user has the role
      */
@@ -99,7 +93,15 @@ public class AuthRole {
     }
 
     /**
-     * Get the role id belonging to the role
+     * Get the identifying name (within the domain) for the AuthRole
+     * @return
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * Get the role id
      * @return the role id
      */
     public String getRole() {
@@ -107,19 +109,27 @@ public class AuthRole {
     }
 
     /**
-     * Get the set of user ids that have the current role
-     * @return the set of user ids
+     * Get the userRole id for the role
+     * @return the userRole, may be null
      */
-    public Set<String> getUsers() {
-        return Collections.unmodifiableSet(users);
+    public String getUserRole() {
+        return userRole;
     }
 
     /**
-     * Get the set of group ids that have the current role
+     * Get the set of user ids for the role
+     * @return the set of user ids
+     */
+    public Set<String> getUsers() {
+        return users;
+    }
+
+    /**
+     * Get the set of group ids for the role
      * @return the set of group ids
      */
     public Set<String> getGroups() {
-        return Collections.unmodifiableSet(groups);
+        return groups;
     }
 
     /**
@@ -131,9 +141,14 @@ public class AuthRole {
         Set<String> us = getUsers();
         Set<String> gs = getGroups();
         sb.append("AuthRole : ");
+        sb.append(name);
         sb.append(" [Role: ");
         sb.append(role);
         sb.append("]");
+        if (userRole != null) {
+            sb.append(" UserRole: ");
+            sb.append(userRole);
+        }
         sb.append(" Users: [");
         for (String name : us) {
             if (!first) {
@@ -162,35 +177,13 @@ public class AuthRole {
      * {@inheritDoc}
      */
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof AuthRole)) {
-            return false;
-        }
-        AuthRole other = (AuthRole) obj;
-        if (!role.equals(other.getRole())) {
-            return false;
-        }
-        if (users.size() != other.getUsers().size() || !users.containsAll(other.getUsers())) {
-            return false;
-        }
-        if (groups.size() != other.getGroups().size() || !groups.containsAll(other.getGroups())) {
-            return false;
-        }
-        return true;
+        return obj instanceof AuthRole && getName().equals(((AuthRole)obj).getName());
     }
 
     /**
      * {@inheritDoc}
      */
     public int hashCode() {
-        if (hash == 0) {
-            hash = this.toString().hashCode();
-        }
-        return hash;
+        return getName().hashCode();
     }
 }

@@ -149,6 +149,10 @@ public interface HippoNodeType {
 
     public static final String NT_TEMPLATETYPE = "hipposysedit:templatetype";
 
+    public static final String NT_USERROLE = "hipposys:userrole";
+
+    public static final String NT_USERROLEFOLDER = "hipposys:userrolefolder";
+
     /**
      * @deprecated since REPO 4.0.0 (CMS 11.0)
      */
@@ -351,6 +355,12 @@ public interface HippoNodeType {
     public static final String HIPPO_SUPERTYPE = "hipposysedit:supertype";
 
     public static final String HIPPO_TEMPLATE = "hipposysedit:template";
+
+    public static final String HIPPO_USERROLE = "hipposys:userrole";
+
+    public static final String HIPPO_USERROLES = "hipposys:userroles";
+
+    public static final String HIPPO_USERROLESPATH = "hipposys:userrolespath";
 
     /**
      * @deprecated since REPO 4.0.0 (CMS 11.0)

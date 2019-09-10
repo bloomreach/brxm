@@ -25,6 +25,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,13 +48,6 @@ public class DomainRule implements Serializable {
     private Set<QFacetRule> facetRules = new HashSet<>();
     private String name;
     private String domainName;
-    private transient int hash;
-
-    public DomainRule(String name, String domainName, Set<QFacetRule> facetRules) {
-        this.name = name;
-        this.domainName = domainName;
-        this.facetRules = facetRules;
-    }
 
     /**
      * Instantiate the domain rule with the given configuration node. If
@@ -72,7 +66,7 @@ public class DomainRule implements Serializable {
             }
         }
         facetRules = Collections.unmodifiableSet(facetRules);
-        this.name = node.getName();
+        this.name = NodeNameCodec.decode(node.getName());
         this.domainName = node.getParent().getName();
     }
 
@@ -104,6 +98,7 @@ public class DomainRule implements Serializable {
         StringBuilder sb = new StringBuilder();
         Set<QFacetRule> fr = getFacetRules();
         sb.append("DomainRule: ");
+        sb.append(name);
         sb.append("\r\n");
         for (QFacetRule rule : fr) {
             sb.append("  ");
@@ -117,29 +112,13 @@ public class DomainRule implements Serializable {
      * {@inheritDoc}
      */
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof DomainRule)) {
-            return false;
-        }
-        DomainRule other = (DomainRule) obj;
-        if (facetRules.size() != other.getFacetRules().size() || !facetRules.containsAll(other.getFacetRules())) {
-            return false;
-        }
-        return true;
+        return obj instanceof DomainRule && getName().equals(((DomainRule)obj).getName());
     }
 
     /**
      * {@inheritDoc}
      */
     public int hashCode() {
-        if (hash == 0) {
-            hash = this.toString().hashCode();
-        }
-        return hash;
+        return name.hashCode();
     }
 }
