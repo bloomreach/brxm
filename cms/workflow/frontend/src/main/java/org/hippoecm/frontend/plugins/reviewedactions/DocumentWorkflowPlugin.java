@@ -68,7 +68,6 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
     public static final String DELETE = "delete";
 
     private StdWorkflow deleteAction;
-    private StdWorkflow requestDeleteAction;
     private StdWorkflow renameAction;
     private StdWorkflow copyAction;
     private StdWorkflow moveAction;
@@ -325,35 +324,6 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-        add(requestDeleteAction = new StdWorkflow("requestDelete", new StringResourceModel("request-delete", this), context, getModel()) {
-
-            @Override
-            public String getSubMenu() {
-                return DOCUMENT;
-            }
-
-            @Override
-            protected Component getIcon(final String id) {
-                return HippoIcon.fromSprite(id, Icon.TIMES);
-            }
-
-            @Override
-            protected IDialogService.Dialog createRequestDialog() {
-                IModel<String> message = new StringResourceModel("delete-message", DocumentWorkflowPlugin.this)
-                        .setParameters(getDocumentName());
-                IModel<String> title = new StringResourceModel("delete-title", DocumentWorkflowPlugin.this)
-                        .setParameters(getDocumentName());
-                return new DeleteDialog(title, getModel(), message, this, getEditorManager());
-            }
-
-            @Override
-            protected String execute(Workflow wf) throws Exception {
-                DocumentWorkflow workflow = (DocumentWorkflow) wf;
-                workflow.requestDeletion();
-                return null;
-            }
-        });
-
         add(whereUsedAction = new StdWorkflow("where-used", new StringResourceModel("where-used-label", this), context, getModel()) {
 
             @Override
@@ -403,11 +373,6 @@ public class DocumentWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         });
 
         Map<String, Serializable> info = getHints();
-        if (!info.containsKey(DELETE)) {
-            hideOrDisable(info, "requestDelete", requestDeleteAction);
-        } else {
-            requestDeleteAction.setVisible(false);
-        }
         hideOrDisable(info, DELETE, deleteAction);
         hideOrDisable(info, "rename", renameAction);
         hideOrDisable(info, "move", moveAction);
