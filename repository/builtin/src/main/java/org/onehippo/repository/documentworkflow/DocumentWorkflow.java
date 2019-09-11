@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -82,19 +82,6 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
 
 
     // Operations previously provided through BasicReviewedActionsWorkflow, now provided on Document handle level
-
-    /**
-     * Request deletion of this document.
-     *
-     * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
-     * @throws MappingException    indicates that the work-flow call failed because of configuration problems
-     * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the
-     *                             repository
-     * @throws RemoteException     indicates that the work-flow call failed because of a connection problem with the
-     *                             repository
-     */
-    void requestDeletion()
-            throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * Request depublication of this document.

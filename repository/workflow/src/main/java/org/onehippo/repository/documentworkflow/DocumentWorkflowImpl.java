@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -56,7 +56,6 @@ import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayload
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.TARGET_DOCUMENT;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.DocumentPayloadKey.VERSION;
 import static org.hippoecm.repository.api.DocumentWorkflowAction.checkModified;
-import static org.hippoecm.repository.api.DocumentWorkflowAction.requestDelete;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 /**
@@ -232,13 +231,6 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     @Override
     public Document disposeEditableInstance() throws WorkflowException, RepositoryException {
         return (Document) triggerAction(DocumentWorkflowAction.disposeEditableInstance());
-    }
-
-    // BasicReviewedActionsWorkflow implementation
-
-    @Override
-    public void requestDeletion() throws WorkflowException {
-        triggerAction(requestDelete());
     }
 
     @Override
