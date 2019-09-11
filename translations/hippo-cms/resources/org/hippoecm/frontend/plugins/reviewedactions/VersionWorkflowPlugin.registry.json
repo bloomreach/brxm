@@ -24,6 +24,10 @@
     "created-for-branch" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "cancel" : {
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }

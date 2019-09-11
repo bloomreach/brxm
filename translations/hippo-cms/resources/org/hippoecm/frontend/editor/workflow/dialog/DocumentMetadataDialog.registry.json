@@ -22,12 +22,14 @@
       "locales" : null
     },
     "document-info" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "document-names" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "lastmodificationdate" : {
       "status" : "CLEAN",
@@ -42,6 +44,10 @@
       "locales" : null
     },
     "publicationdate" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "document-path" : {
       "status" : "CLEAN",
       "locales" : null
     }

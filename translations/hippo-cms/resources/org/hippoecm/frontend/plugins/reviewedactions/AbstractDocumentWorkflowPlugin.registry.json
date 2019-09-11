@@ -148,6 +148,18 @@
     "request-depublication-label" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "publish-message" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "schedule-depublish-notification" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "schedule-publish-notification" : {
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }

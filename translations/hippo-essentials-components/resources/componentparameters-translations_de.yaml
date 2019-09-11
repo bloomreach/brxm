@@ -143,17 +143,23 @@ definitions:
     : /de:
         jcr:primaryType: hipposys:resourcebundle
         width.hint: In Pixeln
-        address: Adresse
-        map.canvas: Map Canvas
         latitude: Breite
-        markerCustomText: Markierung benutzerdefinierter Text
-        mapType: Kartentyp
+        mapOverlay.hint: Dropdownwerte in Dokumenten bearbeiten > Verwaltung > Stadtplan
+          öffnen
         address.hint: Die Adresse hat Vorrang vor Längengrad / Breitengrad.
-        map.size: Kartengröße
         zoomFactor: Vergrößerungsfaktor
-        map.options: Kartenoptionen
         latitude.hint: Wenn dieser Eintrag leer bleibt, wird der Standardlängengrad/-breitengrad
           verwendet
+        height: Höhe
+        longitude: Länge
+        address: Adresse
+        mapType.hint: Dropdownwerte in Dokumenten bearbeiten > Verwaltung > Stadtplan
+          öffnen
+        map.canvas: Map Canvas
+        markerCustomText: Markierung benutzerdefinierter Text
+        mapType: Kartentyp
+        map.size: Kartengröße
+        map.options: Kartenoptionen
         height.hint: In Pixeln. Mindestens 250 Pixel.
         showMarker#no: Keine Markierung
         showMarker: Markierung anzeigen
@@ -164,5 +170,3 @@ definitions:
         location: Standortinformationen
         showMarker#withCustomText: Breite benutzerdefinierter Text
         showMarker#withAddress: Breite Adresse
-        height: Höhe
-        longitude: Länge
