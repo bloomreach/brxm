@@ -18,7 +18,7 @@ import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 
-import { DeepLinkingService } from '../../deep-linking/deep-linking.service';
+import { NavigationService } from '../../services/navigation.service';
 
 import { ErrorPageComponent } from './error-page.component';
 
@@ -27,7 +27,7 @@ describe('ErrorPageComponent', () => {
   let fixture: ComponentFixture<ErrorPageComponent>;
   let de: DebugElement;
 
-  const deepLinkingServiceMock = jasmine.createSpyObj('DeepLinkingService', [
+  const navigationServiceMock = jasmine.createSpyObj('NavigationService', [
     'navigateToHome',
   ]);
 
@@ -36,7 +36,7 @@ describe('ErrorPageComponent', () => {
       declarations: [ErrorPageComponent],
       schemas: [NO_ERRORS_SCHEMA],
       providers: [
-        { provide: DeepLinkingService, useValue: deepLinkingServiceMock },
+        { provide: NavigationService, useValue: navigationServiceMock },
       ],
     });
 
@@ -55,6 +55,6 @@ describe('ErrorPageComponent', () => {
 
     goToHomeButton.triggerEventHandler('click', {});
 
-    expect(deepLinkingServiceMock.navigateToHome).toHaveBeenCalled();
+    expect(navigationServiceMock.navigateToHome).toHaveBeenCalled();
   });
 });

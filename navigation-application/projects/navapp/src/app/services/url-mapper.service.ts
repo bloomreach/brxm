@@ -18,11 +18,11 @@ import { Injectable } from '@angular/core';
 import { NavItem, NavLocation } from '@bloomreach/navapp-communication';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
-import { GlobalSettingsService } from '../services/global-settings.service';
-import { NavConfigService } from '../services/nav-config.service';
+
+import { GlobalSettingsService } from './global-settings.service';
+import { NavConfigService } from './nav-config.service';
 
 const pathPartsToStripOffFromIframeUrl = [
-  'cms',
   'iframe',
 ];
 
@@ -34,7 +34,7 @@ export class UrlMapperService {
     private settings: GlobalSettingsService,
     private navConfigService: NavConfigService,
     private clientAppService: ClientAppService,
-  ) {}
+  ) { }
 
   mapNavItemToBrowserUrl(navItem: NavItem): string {
     const appBasePath = this.normalizeAppIframeUrl(navItem.appIframeUrl);
@@ -46,7 +46,7 @@ export class UrlMapperService {
     const activeAppUrl = this.clientAppService.activeApp.url;
 
     const appPathPredicate = (x: NavItem) => navLocation.path.startsWith(x.appPath);
-    const appUrlAndAppPathPredicate = (x: NavItem) => x.appIframeUrl === activeAppUrl &&  appPathPredicate(x);
+    const appUrlAndAppPathPredicate = (x: NavItem) => x.appIframeUrl === activeAppUrl && appPathPredicate(x);
 
     const navItem = this.navConfigService.navItems.find(x => {
       return useCurrentApp ? appUrlAndAppPathPredicate(x) : appPathPredicate(x);

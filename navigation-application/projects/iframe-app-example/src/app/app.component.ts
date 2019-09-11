@@ -25,7 +25,7 @@ import {
 import { CookieService } from 'ngx-cookie-service';
 import { ChildApi, ParentPromisedApi } from 'projects/navapp-communication/src/lib/api';
 
-import { mockSites, navigationConfiguration } from './mocks';
+import { mockNavItems, mockSites } from './mocks';
 
 const SITE_COOKIE_NAME = 'EXAMPLE_APP_SITE_ID';
 
@@ -47,7 +47,7 @@ export class AppComponent implements OnInit {
   constructor(
     private location: Location,
     private cookiesService: CookieService,
-  ) {}
+  ) { }
 
   get isBrSmMock(): boolean {
     return this.location.path() === '/brsm';
@@ -69,7 +69,7 @@ export class AppComponent implements OnInit {
         }
       },
       getNavItems: () => {
-        return navigationConfiguration;
+        return mockNavItems;
       },
       logout: () => {
         if (this.navigateCount % 2) {

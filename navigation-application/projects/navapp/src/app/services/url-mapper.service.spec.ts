@@ -19,9 +19,9 @@ import { NavItem, NavLocation } from '@bloomreach/navapp-communication';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { NavItemMock } from '../models/dto/nav-item.mock';
-import { GlobalSettingsService } from '../services/global-settings.service';
-import { NavConfigService } from '../services/nav-config.service';
 
+import { GlobalSettingsService } from './global-settings.service';
+import { NavConfigService } from './nav-config.service';
 import { UrlMapperService } from './url-mapper.service';
 
 describe('UrlMapperService', () => {
@@ -90,7 +90,7 @@ describe('UrlMapperService', () => {
 
   it('should map nav item to the browser url', () => {
     const expected = '/path/to/app/path/to/page?param1=value1#hash-data';
-    const navItem: NavItem  = {
+    const navItem: NavItem = {
       id: 'some-id',
       appIframeUrl: 'https://iframe-domain.com/path/to/app',
       appPath: 'path/to/page?param1=value1#hash-data',
@@ -101,22 +101,9 @@ describe('UrlMapperService', () => {
     expect(actual).toBe(expected);
   });
 
-  it('should map nav item to the browser url with stripped of "cms" path part from iframe url', () => {
-    const expected = '/path/to/app/path/to/page?param1=value1#hash-data';
-    const navItem: NavItem  = {
-      id: 'some-id',
-      appIframeUrl: 'https://iframe-domain.com/cms/path/to/app',
-      appPath: 'path/to/page?param1=value1#hash-data',
-    };
-
-    const actual = service.mapNavItemToBrowserUrl(navItem);
-
-    expect(actual).toBe(expected);
-  });
-
   it('should map nav item to the browser url with stripped of "iframe" path part from iframe url', () => {
     const expected = '/path/to/app/path/to/page?param1=value1#hash-data';
-    const navItem: NavItem  = {
+    const navItem: NavItem = {
       id: 'some-id',
       appIframeUrl: 'https://iframe-domain.com/iframe/path/to/app',
       appPath: 'path/to/page?param1=value1#hash-data',
@@ -129,7 +116,7 @@ describe('UrlMapperService', () => {
 
   it('should map nav location to the browser url', () => {
     const expected = ['/iframe1/url/app/path/to/page1/some/detailed/page?param1=value1#hash-data', navItemsMock[1]];
-    const navLocation: NavLocation  = {
+    const navLocation: NavLocation = {
       path: 'app/path/to/page1/some/detailed/page?param1=value1#hash-data',
     };
 

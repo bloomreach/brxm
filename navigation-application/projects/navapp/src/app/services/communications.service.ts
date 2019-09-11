@@ -18,13 +18,13 @@ import { Injectable } from '@angular/core';
 import { connectToChild, NavLocation, ParentApi, SiteId } from '@bloomreach/navapp-communication';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
-import { DeepLinkingService } from '../deep-linking/deep-linking.service';
 import { Connection } from '../models/connection.model';
 import { FailedConnection } from '../models/failed-connection.model';
 
 import { BusyIndicatorService } from './busy-indicator.service';
 import { GlobalSettingsService } from './global-settings.service';
 import { NavConfigService } from './nav-config.service';
+import { NavigationService } from './navigation.service';
 import { OverlayService } from './overlay.service';
 
 @Injectable({
@@ -34,21 +34,21 @@ export class CommunicationsService {
   constructor(
     private navConfigService: NavConfigService,
     private clientAppService: ClientAppService,
-    private deepLinkingService: DeepLinkingService,
     private overlay: OverlayService,
     private busyIndicatorService: BusyIndicatorService,
     private settings: GlobalSettingsService,
-  ) {}
+    private navigationService: NavigationService,
+  ) { }
 
   get parentApiMethods(): ParentApi {
     return {
       showMask: () => this.overlay.enable(),
       hideMask: () => this.overlay.disable(),
       navigate: (location: NavLocation) => {
-        this.deepLinkingService.navigateByNavLocation(location);
+        this.navigationService.navigateByNavLocation(location);
       },
       updateNavLocation: (location: NavLocation) => {
-        this.deepLinkingService.updateByNavLocation(location);
+        this.navigationService.updateByNavLocation(location);
       },
     };
   }

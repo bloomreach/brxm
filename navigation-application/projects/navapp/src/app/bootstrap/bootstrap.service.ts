@@ -17,8 +17,8 @@
 import { Injectable } from '@angular/core';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
-import { DeepLinkingService } from '../deep-linking/deep-linking.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
+import { NavigationService } from '../services/navigation.service';
 
 @Injectable({
   providedIn: 'root',
@@ -27,13 +27,13 @@ export class BootstrapService {
   constructor(
     private clientAppService: ClientAppService,
     private menuStateService: MenuStateService,
-    private deepLinkingService: DeepLinkingService,
-  ) {}
+    private navigationService: NavigationService,
+  ) { }
 
   bootstrap(): Promise<void> {
     return this.clientAppService.init()
       .then(() => this.menuStateService.init())
-      .then(() => this.deepLinkingService.initialNavigation())
+      .then(() => this.navigationService.initialNavigation())
       .catch(error => {
         const message = typeof error === 'object' ? error.message : error;
 

@@ -17,9 +17,8 @@
 import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
-import { DeepLinkingService } from '../deep-linking/deep-linking.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
-import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
+import { NavigationService } from '../services/navigation.service';
 
 import { BootstrapService } from './bootstrap.service';
 
@@ -38,10 +37,10 @@ describe('BootstrapService', () => {
     }),
   });
 
-  let deepLinkingServiceInitialNavigationResolve: () => void;
-  const deepLinkingServiceMock = jasmine.createSpyObj('BreadcrumbsService', {
+  let navigationServiceInitialNavigationResolve: () => void;
+  const navigationServiceMock = jasmine.createSpyObj('BreadcrumbsService', {
     initialNavigation: new Promise(r => {
-      deepLinkingServiceInitialNavigationResolve = r;
+      navigationServiceInitialNavigationResolve = r;
     }),
   });
 
@@ -55,7 +54,7 @@ describe('BootstrapService', () => {
         BootstrapService,
         { provide: ClientAppService, useValue: clientAppServiceMock },
         { provide: MenuStateService, useValue: menuStateServiceMock },
-        { provide: DeepLinkingService, useValue: deepLinkingServiceMock },
+        { provide: NavigationService, useValue: navigationServiceMock },
       ],
     });
 
@@ -69,7 +68,7 @@ describe('BootstrapService', () => {
 
     expect(clientAppServiceMock.init).toHaveBeenCalled();
     expect(menuStateServiceMock.init).not.toHaveBeenCalled();
-    expect(deepLinkingServiceMock.initialNavigation).not.toHaveBeenCalled();
+    expect(navigationServiceMock.initialNavigation).not.toHaveBeenCalled();
   }));
 
   it('should print an error in the console', fakeAsync(() => {
@@ -96,7 +95,7 @@ describe('BootstrapService', () => {
 
     it('should call MenuStateService:init()', () => {
       expect(menuStateServiceMock.init).toHaveBeenCalled();
-      expect(deepLinkingServiceMock.initialNavigation).not.toHaveBeenCalled();
+      expect(navigationServiceMock.initialNavigation).not.toHaveBeenCalled();
     });
 
     describe('when MenuStateService is initialized', () => {
@@ -104,13 +103,13 @@ describe('BootstrapService', () => {
         menuStateServiceInitResolve();
       }));
 
-      it('should call DeepLinkingService:initialNavigation()', () => {
-        expect(deepLinkingServiceMock.initialNavigation).toHaveBeenCalled();
+      it('should call NavigationService:initialNavigation()', () => {
+        expect(navigationServiceMock.initialNavigation).toHaveBeenCalled();
       });
 
       describe('after initial navigation', () => {
         beforeEach(async(() => {
-          deepLinkingServiceInitialNavigationResolve();
+          navigationServiceInitialNavigationResolve();
         }));
 
         it('should resolve the promise', () => {

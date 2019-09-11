@@ -21,9 +21,9 @@ import { of, Subject } from 'rxjs';
 import { APP_BOOTSTRAPPED } from '../../bootstrap/app-bootstrapped';
 import { BootstrapService } from '../../bootstrap/bootstrap.service';
 import { ClientAppService } from '../../client-app/services/client-app.service';
-import { DeepLinkingService } from '../../deep-linking/deep-linking.service';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { GlobalSettingsService } from '../../services/global-settings.service';
+import { NavigationService } from '../../services/navigation.service';
 import { QaHelperService } from '../../services/qa-helper.service';
 import { MenuItemLinkMock } from '../models/menu-item-link.mock';
 import { MenuStateService } from '../services/menu-state.service';
@@ -77,7 +77,7 @@ describe('MainMenuComponent', () => {
     'hide',
   ]);
 
-  const deepLinkingServiceMock = jasmine.createSpyObj('DeepLinkingService', [
+  const navigationServiceMock = jasmine.createSpyObj('NavigationService', [
     'navigateByNavItem',
   ]);
 
@@ -99,7 +99,7 @@ describe('MainMenuComponent', () => {
         { provide: GlobalSettingsService, useValue: globalSettingsServiceMock },
         { provide: BootstrapService, useValue: bootstrapServiceMock },
         { provide: BusyIndicatorService, useValue: busyIndicatorServiceMock },
-        { provide: DeepLinkingService, useValue: deepLinkingServiceMock },
+        { provide: NavigationService, useValue: navigationServiceMock },
         { provide: APP_BOOTSTRAPPED, useValue: appBootstrappedMock },
       ],
     });
@@ -143,7 +143,7 @@ describe('MainMenuComponent', () => {
 
       component.selectMenuItem(menuItemLink);
 
-      expect(deepLinkingServiceMock.navigateByNavItem).toHaveBeenCalledWith(menuItemLink.navItem);
+      expect(navigationServiceMock.navigateByNavItem).toHaveBeenCalledWith(menuItemLink.navItem);
     });
 
     it('should not activate the home menu element until menu is emitted', () => {

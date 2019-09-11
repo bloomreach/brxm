@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import {
@@ -156,7 +156,7 @@ export class NavConfigService {
           selectedSiteId: undefined,
         }));
       case 'INTERNAL_REST':
-        const basePath = this.settings.appSettings.navAppBasePath;
+        const basePath = this.settings.appSettings.navAppBaseURL;
         return this.fetchFromREST<NavItem[]>(basePath + resource.url).then(navItems => {
           navItems.forEach(item => item.appIframeUrl = basePath + item.appIframeUrl);
           return {

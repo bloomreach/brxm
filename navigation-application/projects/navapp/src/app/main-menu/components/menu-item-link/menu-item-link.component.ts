@@ -16,7 +16,7 @@
 
 import { Component, HostBinding, Input } from '@angular/core';
 
-import { DeepLinkingService } from '../../../deep-linking/deep-linking.service';
+import { NavigationService } from '../../../services/navigation.service';
 import { MenuItemLink } from '../../models/menu-item-link.model';
 
 @Component({
@@ -32,11 +32,11 @@ export class MenuItemLinkComponent {
   @HostBinding('class.active')
   active = false;
 
-  constructor(private deepLinkingService: DeepLinkingService) {}
+  constructor(private navigationService: NavigationService) { }
 
   onClick(e: MouseEvent): void {
     e.preventDefault();
 
-    this.deepLinkingService.navigateByNavItem(this.config.navItem);
+    this.navigationService.navigateByNavItem(this.config.navItem);
   }
 }
