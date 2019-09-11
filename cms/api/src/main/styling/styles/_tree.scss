@@ -23,10 +23,6 @@
     padding: 4px 0 4px 0;
     white-space: nowrap;
 
-    // Set to relative to allow highlight-widget to go under
-    position: relative;
-    z-index: 2;
-
     // Make the rows expand so it will activate the scrolling of the .hippotree div
     .row {
       align-items: stretch;
