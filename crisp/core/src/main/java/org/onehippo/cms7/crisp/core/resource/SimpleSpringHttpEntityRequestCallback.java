@@ -42,17 +42,14 @@ class SimpleSpringHttpEntityRequestCallback extends SimpleSpringAcceptHeaderRequ
 
     private final HttpEntity<?> requestEntity;
 
-    SimpleSpringHttpEntityRequestCallback(Object requestBody, List<HttpMessageConverter<?>> messageConverters) {
-        this(requestBody, messageConverters, null);
+    SimpleSpringHttpEntityRequestCallback(HttpEntity<?> httpEntity, List<HttpMessageConverter<?>> messageConverters) {
+        this(httpEntity, messageConverters, null);
     }
 
-    SimpleSpringHttpEntityRequestCallback(Object requestBody, List<HttpMessageConverter<?>> messageConverters, Type responseType) {
+    SimpleSpringHttpEntityRequestCallback(HttpEntity<?> httpEntity, List<HttpMessageConverter<?>> messageConverters, Type responseType) {
         super(responseType, messageConverters);
-        if (requestBody instanceof HttpEntity) {
-            this.requestEntity = (HttpEntity<?>) requestBody;
-        }
-        else if (requestBody != null) {
-            this.requestEntity = new HttpEntity<Object>(requestBody);
+        if (httpEntity != null ) {
+            this.requestEntity = httpEntity;
         }
         else {
             this.requestEntity = HttpEntity.EMPTY;

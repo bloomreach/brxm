@@ -42,6 +42,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RequestCallback;
 import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestClientException;
@@ -167,9 +169,9 @@ public abstract class AbstractRestTemplateResourceResolver extends AbstractHttpR
             RestTemplate restTemplate = getRestTemplate();
             RequestCallback requestCallback = null;
 
-            final Object requestObject = getRequestEntityObject(exchangeHint);
-            if (requestObject != null) {
-                requestCallback = new SimpleSpringHttpEntityRequestCallback(requestObject, restTemplate.getMessageConverters());
+            final HttpEntity<?> requestEntity = getRequestEntityObject(exchangeHint);
+            if (requestEntity != null) {
+                requestCallback = new SimpleSpringHttpEntityRequestCallback(requestEntity, restTemplate.getMessageConverters());
             }
 
             binary =
@@ -276,29 +278,14 @@ public abstract class AbstractRestTemplateResourceResolver extends AbstractHttpR
      * @param exchangeHint exchange hint
      * @return a request entity object, which needs to be understood by Spring RestTemplate, from the {@code exchangeHint}
      */
-    protected Object getRequestEntityObject(ExchangeHint exchangeHint) {
+    protected HttpEntity getRequestEntityObject(ExchangeHint exchangeHint) {
         if (exchangeHint == null) {
             return null;
         }
 
         final Map<String, List<String>> requestHeaders = exchangeHint.getRequestHeaders();
-        final Object requestBody = exchangeHint.getRequestBody();
-        final Object requestEntity = exchangeHint.getRequest();
-
-        final int headerKeyCount = (requestHeaders != null) ? requestHeaders.size() : 0;
-
-        if (headerKeyCount > 0 || requestBody != null) {
-            HttpHeaders headers = null;
-
-            if (headerKeyCount > 0) {
-                headers = new HttpHeaders();
-                headers.putAll(requestHeaders);
-            }
-
-            return new HttpEntity<>(requestBody, headers);
-        }
-
-        return requestEntity;
+        final MultiValueMap<String, String> headers = new LinkedMultiValueMap<>(requestHeaders);
+        return new HttpEntity<>(exchangeHint.getRequestBody(), headers);
     }
 
     /**

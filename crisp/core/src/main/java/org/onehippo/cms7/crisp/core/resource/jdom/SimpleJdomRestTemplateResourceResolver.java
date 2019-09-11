@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import org.onehippo.cms7.crisp.api.resource.Binary;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceException;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestClientException;
@@ -42,16 +43,16 @@ public class SimpleJdomRestTemplateResourceResolver extends AbstractJdomRestTemp
     public Resource resolve(String absPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint) throws ResourceException {
         try {
             final HttpMethod httpMethod = (exchangeHint != null) ? HttpMethod.resolve(exchangeHint.getMethodName()) : HttpMethod.GET;
-            final Object requestObject = getRequestEntityObject(exchangeHint);
+            final HttpEntity<?> requestEntity = getRequestEntityObject(exchangeHint);
 
             RestTemplate restTemplate = getRestTemplate();
             ResponseEntity<ByteArrayResource> result;
 
             if (HttpMethod.POST.equals(httpMethod)) {
-                result = restTemplate.postForEntity(getBaseResourceURI(absPath), requestObject,
+                result = restTemplate.postForEntity(getBaseResourceURI(absPath), requestEntity,
                         ByteArrayResource.class, pathVariables);
             } else {
-                result = restTemplate.getForEntity(getBaseResourceURI(absPath),
+                result = restTemplate.exchange(getBaseResourceURI(absPath), httpMethod, requestEntity,
                         ByteArrayResource.class, pathVariables);
             }
 
