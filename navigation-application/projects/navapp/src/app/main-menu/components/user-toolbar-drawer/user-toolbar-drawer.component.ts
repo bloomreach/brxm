@@ -65,11 +65,8 @@ export class UserToolbarDrawerComponent {
     return this.config.email || '';
   }
 
-  get loginUrl(): string {
-    return window.location.href;
-  }
-
-  logout(): void {
+  logout(event: Event): void {
+    event.preventDefault();
     this.communicationService.logout().then(() => window.location.reload());
   }
 
