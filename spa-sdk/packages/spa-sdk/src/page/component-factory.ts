@@ -78,7 +78,7 @@ export class ComponentFactory {
   private buildComponent(model: ComponentModel, children: Component[]) {
     const builder = this.mapping.get(model.type);
     if (!builder) {
-      throw new Error(`Not supported component type: '${model.type}'.`);
+      throw new Error(`Unsupported component type: '${model.type}'.`);
     }
 
     return builder(model, children);
