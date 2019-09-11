@@ -15,16 +15,22 @@
  */
 package org.hippoecm.repository.security.service;
 
-import java.util.List;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.security.group.GroupManager;
+import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.repository.security.SessionUser;
 import org.onehippo.repository.security.User;
+
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_USERROLES;
 
 /**
  * Implementation of a {@link SessionUser} representing a logged in user, with its <em>effective</em>
@@ -33,8 +39,20 @@ import org.onehippo.repository.security.User;
  */
 public class SessionUserImpl extends UserImpl implements SessionUser {
 
-    public SessionUserImpl(final Node node, final GroupManager groupManager,
-                           final Function<List<String>, Set<String>> userRolesResolver) throws RepositoryException {
-        super(node, groupManager, userRolesResolver);
+    public SessionUserImpl(final Node userNode, final GroupManager groupManager,
+                           final Function<Set<String>, Set<String>> userRolesResolver) throws RepositoryException {
+        super(userNode, groupManager, userRolesResolver);
     }
+
+
+    protected void collectUserRolesAndGroups(final Node userNode, final GroupManager groupManager,
+                                             final HashSet<String> userRoles, final HashSet<String> groups)
+            throws RepositoryException {
+        userRoles.addAll(collectUserRoles(userNode));
+        for (Node groupNode : new NodeIterable(groupManager.getMemberships(getId()))) {
+            userRoles.addAll(JcrUtils.getStringListProperty(groupNode, HIPPO_USERROLES, Collections.emptyList()));
+            groups.add(NodeNameCodec.decode(groupNode.getName()));
+        }
+    }
+
 }

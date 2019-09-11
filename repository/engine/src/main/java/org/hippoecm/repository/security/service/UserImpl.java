@@ -62,34 +62,49 @@ public class UserImpl extends AbstractSecurityNodeInfo implements User {
 
     private final String id;
     private final HashMap<String, Object> properties = new HashMap<>();
-    private Set<String> groupIds;
+    private final Set<String> groups;
     private final Set<String> userRoles;
-    private GroupManager groupManager;
 
     public UserImpl(final Node node, final GroupManager groupManager) throws RepositoryException {
-        this(node, groupManager, userRoles -> userRoles.size() == 0 ? Collections.emptySet() : new HashSet<>(userRoles));
+        // use a pass-through rolesResolver (no resolving) for normal Users
+        this(node, groupManager, userRoles -> userRoles);
     }
 
-    protected UserImpl(final Node node, final GroupManager groupManager,
-                       final Function<List<String>, Set<String>> rolesResolver) throws RepositoryException {
-        this.id = NodeNameCodec.decode(node.getName());
+    protected UserImpl(final Node userNode, final GroupManager groupManager,
+                       final Function<Set<String>, Set<String>> rolesResolver) throws RepositoryException {
+        this.id = NodeNameCodec.decode(userNode.getName());
         // load and store the String value of all node properties which are:
         // - not multiple value
         // - of type String|Boolean}Date|Double|Long
         // - and not skipped (either to be hidden, or to be loaded with the predefined/interface non-String value below)
-        for (Property p : new PropertyIterable(node.getProperties())) {
+        for (Property p : new PropertyIterable(userNode.getProperties())) {
             if (isInfoProperty(p)) {
                 properties.put(p.getName(), p.getString());
             }
         }
         // load and store the non-string type values for predefined/interface properties
-        properties.put(HIPPO_SYSTEM, JcrUtils.getBooleanProperty(node, HIPPO_SYSTEM, false));
-        properties.put(HIPPO_ACTIVE, JcrUtils.getBooleanProperty(node, HIPPO_ACTIVE, true));
-        properties.put(HIPPO_LASTLOGIN, JcrUtils.getDateProperty(node, HIPPO_LASTLOGIN, null));
-        userRoles = rolesResolver
-                .andThen(Collections::unmodifiableSet)
-                .apply(JcrUtils.getStringListProperty(node, HIPPO_USERROLES, Collections.emptyList()));
-        this.groupManager = groupManager;
+        properties.put(HIPPO_SYSTEM, JcrUtils.getBooleanProperty(userNode, HIPPO_SYSTEM, false));
+        properties.put(HIPPO_ACTIVE, JcrUtils.getBooleanProperty(userNode, HIPPO_ACTIVE, true));
+        properties.put(HIPPO_LASTLOGIN, JcrUtils.getDateProperty(userNode, HIPPO_LASTLOGIN, null));
+
+        final HashSet<String> collectedUserRoles = new HashSet<>();
+        final HashSet<String> collectedGroups = new HashSet<>();
+        // load and store the user roles and groups (memberships) for the user
+        collectUserRolesAndGroups(userNode, groupManager, collectedUserRoles, collectedGroups);
+
+        this.userRoles = rolesResolver.andThen(Collections::unmodifiableSet).apply(collectedUserRoles);
+        this.groups = Collections.unmodifiableSet(collectedGroups);
+    }
+
+    protected List<String> collectUserRoles(final Node userNode) throws RepositoryException {
+        return JcrUtils.getStringListProperty(userNode, HIPPO_USERROLES, Collections.emptyList());
+    }
+
+    protected void collectUserRolesAndGroups(final Node userNode, final GroupManager groupManager,
+                                                        final HashSet<String> userRoles, final HashSet<String> groups)
+            throws RepositoryException {
+        userRoles.addAll(collectUserRoles(userNode));
+        groups.addAll(groupManager.getMembershipIds(getId()));
     }
 
     protected Set<String> getProtectedPropertyNames() {
@@ -139,19 +154,7 @@ public class UserImpl extends AbstractSecurityNodeInfo implements User {
 
     @Override
     public Set<String> getMemberships() {
-        if (groupIds == null) {
-            if (groupManager != null) {
-                try {
-                    groupIds = Collections.unmodifiableSet(groupManager.getMembershipIds(id));
-                } catch (RepositoryException ignore) {
-                    groupIds = Collections.emptySet();
-                }
-                groupManager = null;
-            } else {
-                groupIds = Collections.emptySet();
-            }
-        }
-        return groupIds;
+        return groups;
     }
 
     @Override

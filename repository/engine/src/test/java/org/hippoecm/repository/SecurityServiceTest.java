@@ -187,15 +187,13 @@ public class SecurityServiceTest extends RepositoryTestCase {
                     .as("User roles via SecurityService should be updated to new value")
                     .containsOnly("xm-admin");
 
-            assertThat(((HippoSession)newSession).getUser().getUserRoles())
-                    .as("Existing session user roles should not have changed")
-                    .containsOnly("xm-admin", "xm-content-reader");
-
-
             newSession.logout();
 
             newSession = server.login(CREDENTIALS);
 
+            assertThat(((HippoSession)newSession).getUser().getUserRoles())
+                    .as("Existing session user roles should not have changed")
+                    .containsOnly("xm-admin", "xm-content-editor", "xm-content-author", "xm-content-reader");
 
             assertThat(securityService.getUser(session.getUserID()).getUserRoles())
                     .as("Security Service should not give user roles from Group back but only the explicitly " +
