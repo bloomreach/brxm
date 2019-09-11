@@ -21,7 +21,7 @@
  * @see module:api
  */
 
-import { initialize as baseInitialize } from './initialize';
+import { initialize as initializePageModel } from './initialize';
 import { buildPageModelUrl } from './url';
 import {
   ComponentFactory,
@@ -48,7 +48,7 @@ const componentFactory = new ComponentFactory()
  *
  * @param config Configuration of the SPA integration with brXM.
  */
-export const initialize = baseInitialize.bind(null, buildPageModelUrl, componentFactory);
+export const initialize = initializePageModel.bind(null, buildPageModelUrl, componentFactory);
 export * from './api';
 export {
   Component,
