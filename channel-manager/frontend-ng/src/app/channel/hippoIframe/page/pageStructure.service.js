@@ -47,12 +47,14 @@ class PageStructureService {
     this.PageMetaDataService = PageMetaDataService;
 
     this.changeListeners = [];
+    this.embeddedLinks = [];
     this.clearParsedElements();
   }
 
   clearParsedElements() {
+    this.embeddedLinks.splice(0)
+      .forEach(element => element.getBoxElement().remove());
     this.containers = [];
-    this.embeddedLinks = [];
     this.headContributions = [];
     this.PageMetaDataService.clear();
     this._notifyChangeListeners();

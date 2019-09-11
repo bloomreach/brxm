@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,10 +37,11 @@ class PageNewCtrl {
 
   $onInit() {
     this.errorMap = {
-      ITEM_ALREADY_LOCKED: 'ERROR_PAGE_LOCKED_BY',
-      ITEM_NOT_IN_PREVIEW: 'ERROR_PAGE_PARENT_MISSING',
-      ITEM_NAME_NOT_UNIQUE: 'ERROR_PAGE_PATH_EXISTS',
       INVALID_PATH_INFO: 'ERROR_PAGE_PATH_INVALID',
+      ITEM_ALREADY_LOCKED: 'ERROR_PAGE_LOCKED_BY',
+      ITEM_EXISTS_OUTSIDE_WORKSPACE: 'ERROR_PAGE_PATH_EXISTS',
+      ITEM_NAME_NOT_UNIQUE: 'ERROR_PAGE_PATH_EXISTS',
+      ITEM_NOT_IN_PREVIEW: 'ERROR_PAGE_PARENT_MISSING',
     };
     this.illegalCharacters = '/ :';
     this.illegalCharactersMessage = this.$translate.instant('VALIDATION_ILLEGAL_CHARACTERS',

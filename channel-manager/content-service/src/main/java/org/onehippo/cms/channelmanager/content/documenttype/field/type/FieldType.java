@@ -44,6 +44,7 @@ public interface FieldType {
         RADIO_GROUP,
         BOOLEAN_RADIO_GROUP,
         STATIC_DROPDOWN,
+        DYNAMIC_DROPDOWN,
         HTML,
         CHOICE, // "content blocks"
         COMPOUND,
