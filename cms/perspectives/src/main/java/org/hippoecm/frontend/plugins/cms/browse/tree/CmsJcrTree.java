@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -168,8 +168,8 @@ public abstract class CmsJcrTree extends ContextMenuTree {
         protected void onComponentTag(final ComponentTag tag) {
             super.onComponentTag(tag);
 
-            final Icon icon = node.isLeaf() ? Icon.BULLET :
-                    isExpanded(node) ? Icon.CARET_DOWN : Icon.CARET_RIGHT;
+            final Icon icon = node.isLeaf() ? Icon.EMPTY :
+                    isExpanded(node) ? Icon.CHEVRON_DOWN : Icon.CHEVRON_RIGHT;
             final String cssClassOuter = isNodeLast() ? "junction-last" : "junction";
 
             final Response response = RequestCycle.get().getResponse();
