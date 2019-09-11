@@ -14,8 +14,12 @@
 
 .hippo-toolbar-menu-item {
   background-color: $hippo-menu-bgcolor;
+  border-radius: 4px;
+
+  // copied from Material Design: $whiteframe-shadow-8dp
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+
   min-width: 80px;
-  font-size: $hippo-menu-fontsize;
   padding: 6px 0;
   z-index: 1;
 
@@ -25,9 +29,9 @@
 
     .hippo-toolbar-menu-item-button {
       display: block;
-      width: auto;
-      padding: 6px 12px;
+      padding: 8px 16px;
       white-space: nowrap;
+      width: auto;
     }
 
     a.hippo-toolbar-menu-item-button {
@@ -42,11 +46,10 @@
 
     &:hover a.hippo-toolbar-menu-item-button {
       background-color: $hippo-menu-enabled-hover-bgcolor;
-      color: $hippo-menu-enabled-hover-color;
-      
+
       &.disabled {
-        color: $hippo-menu-disabled-color !important;
         background-color: transparent;
+        color: $hippo-menu-disabled-color !important;
       }
     }
 
@@ -57,9 +60,9 @@
 
     .hippo-toolbar-menu-item-button-icon {
       display: inline-flex;
+      padding-right: 6px;
       position: relative;
       top: 1px;
-      padding-right: 6px;
     }
 
     .hippo-toolbar-menu-item-button-icon + .hippo-toolbar-menu-item-button-label {
@@ -73,23 +76,23 @@
 
     // Give an otherwise empty context menu a bit of space for a clearer message
     &:only-child {
-      padding: 12px 8px;
       display: flex;
+      padding: 12px 8px;
     }
   }
 }
 
 #context-menu-container {
-  text-align: left;
-  position: absolute;
-  z-index: 10000;
   left: -1000px;
+  position: absolute;
+  text-align: left;
   top: -1000px;
+  z-index: 10000;
 }
 
 .scrollable-context-menu {
+  display: block;
   height: calc(100vh - #{$top-bar-height} - #{$bottom-bar-height});
   overflow-x: hidden;
   overflow-y: auto;
-  display: block;
 }

@@ -191,12 +191,10 @@ $validation-message-color:           $danger;
 $ckeditor-toolbar-bgcolor:           $lightest-shade;
 
 // Hippo dropdown/context menu
-$hippo-menu-fontsize:                $font-size-base;
-$hippo-menu-bgcolor:                 $light-shade;
-$hippo-menu-enabled-color:           $darkest-shade;
-$hippo-menu-enabled-hover-color:     $primary;
-$hippo-menu-enabled-hover-bgcolor:   $lightest-shade;
-$hippo-menu-disabled-color:          $dark-shade;
+$hippo-menu-bgcolor:                 $white;
+$hippo-menu-enabled-color:           $gray87;
+$hippo-menu-enabled-hover-bgcolor:   $gray5;
+$hippo-menu-disabled-color:          $gray38;
 
 // Form elements
 $forms-disabled-color:               $dark-shade;
