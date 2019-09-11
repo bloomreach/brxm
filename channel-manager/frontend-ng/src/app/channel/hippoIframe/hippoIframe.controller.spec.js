@@ -202,6 +202,16 @@ describe('hippoIframeCtrl', () => {
     expect(RenderingService.createOverlay).toHaveBeenCalled();
   });
 
+  it('triggers an event when page is loaded', () => {
+    const listener = jasmine.createSpy('listener');
+    spyOn(SpaService, 'detectSpa').and.returnValue(true);
+
+    $rootScope.$on('hippo-iframe:load', listener);
+    $ctrl.onLoad();
+
+    expect(listener).toHaveBeenCalled();
+  });
+
   it('initializes the SPA when a SPA is detected', () => {
     spyOn(SpaService, 'detectSpa').and.returnValue(true);
     spyOn(SpaService, 'initSpa');

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -82,10 +82,10 @@
         handler: this.close
       });
 
-      this.saveCloseButton = new Ext.Button({
+      this.doneButton = new Ext.Button({
         xtype: 'button',
-        cls: 'btn btn-default qa-save-close-button',
-        text: Hippo.ChannelManager.ChannelEditor.Resources['properties-window-button-save-close'],
+        cls: 'btn btn-default qa-done-button',
+        text: Hippo.ChannelManager.ChannelEditor.Resources['properties-window-button-done'],
         scope: this,
         handler: function () {
           this.componentPropertiesPanel.saveAll(false).then(this.close.bind(this));
@@ -100,9 +100,9 @@
         buttons: [
           this.deleteComponentButton,
           {xtype: 'tbfill'},
-          this.saveButton,
           this.closeButton,
-          this.saveCloseButton
+          this.saveButton,
+          this.doneButton
         ]
       }));
     },
@@ -161,7 +161,6 @@
       }
 
       this.saveButton.setDisabled(disableSaveButton);
-      this.saveCloseButton.setDisabled(disableSaveButton);
     },
 
     showComponent: function (component, container, page) {

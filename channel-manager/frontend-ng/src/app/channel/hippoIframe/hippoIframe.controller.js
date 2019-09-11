@@ -19,6 +19,7 @@ import './hippoIframe.scss';
 class HippoIframeCtrl {
   constructor(
     $element,
+    $rootScope,
     CmsService,
     ComponentRenderingService,
     ContainerService,
@@ -38,6 +39,7 @@ class HippoIframeCtrl {
 
     this.$element = $element;
 
+    this.$rootScope = $rootScope;
     this.CmsService = CmsService;
     this.ComponentRenderingService = ComponentRenderingService;
     this.ContainerService = ContainerService;
@@ -107,6 +109,8 @@ class HippoIframeCtrl {
   }
 
   onLoad() {
+    this.$rootScope.$broadcast('hippo-iframe:load');
+
     if (this.SpaService.detectSpa()) {
       this.SpaService.initSpa();
     } else {

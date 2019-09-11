@@ -126,6 +126,22 @@
       </md-option>
     </md-select>
 
+    <dynamic-dropdown ng-switch-when="DYNAMIC_DROPDOWN"
+                 field-type="::$ctrl.fieldType.type"
+                 locale="::$ctrl.locale"
+                 name="::$ctrl.getFieldName($index)"
+                 ng-change="$ctrl.valueChanged()"
+                 on-field-blur="$ctrl.blurPrimitive($event)"
+                 on-field-focus="$ctrl.focusPrimitive($event)"
+                 ng-model="fieldValue.value"
+                 options-source="::$ctrl.fieldType.source"
+                 show-default="::$ctrl.fieldType.showDefault"
+                 sort-comparator="::$ctrl.fieldType.sortComparator"
+                 sort-by="::$ctrl.fieldType.sortBy"
+                 sort-order="::$ctrl.fieldType.sortOrder"
+                 is-required="::$ctrl.fieldType.required">
+    </dynamic-dropdown>
+
     <radio-group ng-switch-when="RADIO_GROUP"
                  field-type="::$ctrl.fieldType.type"
                  locale="::$ctrl.locale"

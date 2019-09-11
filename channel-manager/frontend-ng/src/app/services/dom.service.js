@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,11 +43,12 @@ class DomService {
     return iframeJQueryElement.contents()[0];
   }
 
-  addCssLinks(window, files) {
+  addCssLinks(window, files, cssClass) {
     return this.$q.all(files.map(file => this.$q((resolve, reject) => {
       const link = angular.element('<link>', {
         rel: 'stylesheet',
         href: file,
+        class: cssClass,
       });
 
       // resolves relative path in order to use absolute one inside the iframe
@@ -56,6 +57,13 @@ class DomService {
         .on('error', () => this.$rootScope.$apply(reject))
         .appendTo(angular.element('head', window.document));
     })));
+  }
+
+  hasCssLink(window, cssClass) {
+    if (!window.document || !window.document.head) {
+      return false;
+    }
+    return window.document.head.getElementsByClassName(cssClass).length > 0;
   }
 
   addScript(window, url) {
