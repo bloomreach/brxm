@@ -21,9 +21,9 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.extensions.ajax.markup.html.repeater.data.table.AjaxFallbackHeadersToolbar;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
@@ -36,10 +36,10 @@ import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -233,28 +233,26 @@ public class ListDataTable<T> extends DataTable<T, String> {
     }
 
     @Override
-    protected Item<T> newRowItem(final String id, int index, final IModel<T> model) {
+    protected Item<T> newRowItem(final String id, final int index, final IModel<T> model) {
         final OddEvenItem<T> item = new OddEvenItem<>(id, index, model);
         item.setOutputMarkupId(true);
 
-        item.add(new AttributeAppender("class", new LoadableDetachableModel<String>() {
-            @Override
-            protected String load() {
-                IModel selected = ListDataTable.this.getDefaultModel();
-                if (selected != null && selected.equals(model)) {
-                    if (scrollSelectedIntoView) {
-                        AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
-                        if (target != null) {
-                            target.appendJavaScript("document.getElementById('" + item.getMarkupId()
-                                    + "').scrollIntoView(" + scrollSelectedTopAlign + ");");
-                        }
+        item.add(ClassAttribute.append(() -> {
+            final IModel selected = ListDataTable.this.getDefaultModel();
+            if (selected != null && selected.equals(model)) {
+                if (scrollSelectedIntoView) {
+                    final AjaxRequestTarget target = RequestCycle.get().find(AjaxRequestTarget.class);
+                    if (target != null) {
+                        target.appendJavaScript(
+                                String.format("document.getElementById('%s').scrollIntoView(%s);",
+                                        item.getMarkupId(), scrollSelectedTopAlign));
                     }
-                    return "hippo-list-selected";
-                } else {
-                    return null;
                 }
+                return "hippo-list-selected";
+            } else {
+                return StringUtils.EMPTY;
             }
-        }, " "));
+        }));
 
         if (context != null && model instanceof IObservable) {
             IObserver observer = newObserver(item, model);

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.skin.Icon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -191,9 +191,9 @@ public class ContextMenuTree extends DefaultAbstractTree {
             item.add(contextLink);
         }
 
-        item.add(CssClass.append("row"));
+        item.add(ClassAttribute.append("row"));
         if (getTreeState().isNodeSelected(node)) {
-            item.add(CssClass.append("row-selected"));
+            item.add(ClassAttribute.append("row-selected"));
         }
     }
 

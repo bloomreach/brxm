@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,17 +18,17 @@ package org.hippoecm.frontend.plugins.console.icons;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 
 public class IconLabel extends Label {
 
     public IconLabel(final String id, final IModel<String> cssClassModel) {
         super(id, StringUtils.EMPTY);
-        add(CssClass.append(cssClassModel));
+        add(ClassAttribute.append(cssClassModel));
     }
 
     public IconLabel(final String id, final String cssClass) {
         super(id, StringUtils.EMPTY);
-        add(CssClass.append(cssClass));
+        add(ClassAttribute.append(cssClass));
     }
 }

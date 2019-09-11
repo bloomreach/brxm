@@ -25,12 +25,11 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
+import org.hippoecm.frontend.attributes.StyleAttribute;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.hippoecm.repository.PasswordHelper;
@@ -41,23 +40,23 @@ import com.google.common.base.Strings;
 
 public class PasswordHashEditor extends Panel {
 
-    public static final String CHARACTERS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-
-    private static final long serialVersionUID = 1L;
-
     private static final Logger log = LoggerFactory.getLogger(PasswordHashEditor.class);
 
-    private static Random rnd = new SecureRandom();
+    public static final String CHARACTERS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+
+    private static final Random RND = new SecureRandom();
 
     private final int passwordLength;
     private final TextFieldWidget passwordField;
 
-    public PasswordHashEditor(String id, final int passwordLength, JcrPropertyModel propertyModel, IModel<String> valueModel) {
+    public PasswordHashEditor(final String id, final int passwordLength, final JcrPropertyModel propertyModel,
+                              final IModel<String> valueModel) {
         super(id);
         this.passwordLength = passwordLength;
         setOutputMarkupId(true);
         // generate link:
-        final PasswordGenerateLink generateLink = new PasswordGenerateLink("password-generate-link", propertyModel, valueModel);
+        final PasswordGenerateLink generateLink = new PasswordGenerateLink("password-generate-link", propertyModel,
+                valueModel);
         add(generateLink);
         // hash link
         final PasswordHashLink hashLink = new PasswordHashLink("password-hash-link", propertyModel, valueModel);
@@ -79,21 +78,15 @@ public class PasswordHashEditor extends Panel {
     }
 
     private class PasswordGenerateLink extends AjaxLink<String> {
-        private static final long serialVersionUID = 1L;
         private String linkText;
         private final JcrPropertyModel propertyModel;
 
-        public PasswordGenerateLink(final String id, final JcrPropertyModel propertyModel, final IModel<String> valueModel) {
+        PasswordGenerateLink(final String id, final JcrPropertyModel propertyModel, final IModel<String> valueModel) {
             super(id, valueModel);
             this.propertyModel = propertyModel;
             linkText = "Generate random password";
             add(new Label("password-generate-link-text", new PropertyModel<String>(this, "linkText")));
-            add(new AttributeAppender("style", new AbstractReadOnlyModel<Object>() {
-                @Override
-                public Object getObject() {
-                    return "color:blue";
-                }
-            }, " "));
+            add(StyleAttribute.append("color:blue"));
         }
 
         @Override
@@ -120,21 +113,15 @@ public class PasswordHashEditor extends Panel {
     }
 
     private class PasswordHashLink extends AjaxLink<String> {
-        private static final long serialVersionUID = 1L;
         private String linkText;
         private final JcrPropertyModel propertyModel;
 
-        public PasswordHashLink(final String id, final JcrPropertyModel propertyModel, final IModel<String> valueModel) {
+        PasswordHashLink(final String id, final JcrPropertyModel propertyModel, final IModel<String> valueModel) {
             super(id, valueModel);
             this.propertyModel = propertyModel;
             linkText = "Hash password";
             add(new Label("password-hash-link-text", new PropertyModel<String>(this, "linkText")));
-            add(new AttributeAppender("style", new AbstractReadOnlyModel<Object>() {
-                @Override
-                public Object getObject() {
-                    return "color:blue";
-                }
-            }, " "));
+            add(StyleAttribute.append("color:blue"));
         }
 
         @Override
@@ -175,7 +162,7 @@ public class PasswordHashEditor extends Panel {
     private static String genPassword(final int len) {
         final char[] password = new char[len];
         for (int i = 0; i < len; i++) {
-            password[i] = CHARACTERS.charAt(rnd.nextInt(CHARACTERS.length()));
+            password[i] = CHARACTERS.charAt(RND.nextInt(CHARACTERS.length()));
         }
         return new String(password);
     }

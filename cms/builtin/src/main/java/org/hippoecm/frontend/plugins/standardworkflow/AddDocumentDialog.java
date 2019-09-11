@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.i18n.types.SortedTypeChoiceRenderer;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.plugins.standardworkflow.components.LanguageField;
 import org.hippoecm.frontend.plugins.standardworkflow.validators.AddDocumentValidator;
 import org.hippoecm.frontend.translation.ILocaleProvider;
@@ -119,7 +119,7 @@ public class AddDocumentDialog extends WorkflowDialog<AddDocumentArguments> {
 
         add(new AddDocumentValidator(this, nameUriContainer, workflowDescriptorModel));
 
-        add(CssClass.append("add-document-dialog"));
+        add(ClassAttribute.append("add-document-dialog"));
 
         setSize(DialogConstants.MEDIUM_AUTO);
     }

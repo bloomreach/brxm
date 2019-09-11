@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,40 +27,43 @@ import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
 import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.frontend.dialog.Dialog;
-import org.hippoecm.frontend.editor.workflow.model.ReferringDocumentsProvider;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.reviewedactions.UnpublishedReferenceNodeProvider;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SchedulePublishDialog extends WorkflowDialog<Node> {
 
-    private static final Logger log = LoggerFactory.getLogger(ReferringDocumentsProvider.class);
+    private static final Logger log = LoggerFactory.getLogger(SchedulePublishDialog.class);
 
 
     public SchedulePublishDialog(final IWorkflowInvoker invoker, final IModel<Node> nodeModel,
                                  final IModel<Date> dateModel, final IModel<String> titleModel,
-                                 final IEditorManager editorMgr) {
+                                 final IModel<String> notification, final IEditorManager editorMgr) {
         super(invoker, nodeModel, titleModel);
 
         setCssClass("hippo-workflow-dialog");
-        setFocusOnCancel();
+        setNotification(notification);
+        setOkLabel(getString("schedule-action"));
+        setFocusOnOk();
 
-        Map<String, Node> referringDocuments = null;
-        try {
-            referringDocuments = WorkflowUtils.getReferencesToUnpublishedDocuments(((JcrNodeModel) nodeModel).getNode(), UserSession.get().getJcrSession());;
-        } catch (RepositoryException e) {
-            log.error(e.getMessage());
-            referringDocuments = Collections.emptyMap();
-        }
-
+        final Map<String, Node> referringDocuments = getReferringDocuments((JcrNodeModel) nodeModel);
         final UnpublishedReferenceNodeProvider provider = new UnpublishedReferenceNodeProvider(referringDocuments);
-
         add(new UnpublishedReferencesView("links", provider, editorMgr));
 
         addOrReplace(new DatePickerComponent(Dialog.BOTTOM_LEFT_ID, dateModel, new ResourceModel("schedule-publish-text")));
+    }
+
+    private static Map<String, Node> getReferringDocuments(final JcrNodeModel nodeModel) {
+        try {
+            return WorkflowUtils.getReferencesToUnpublishedDocuments(nodeModel.getNode(), UserSession.get().getJcrSession());
+        } catch (RepositoryException e) {
+            log.warn("Failed to get referring documents of '{}'", JcrUtils.getNodePathQuietly(nodeModel.getObject()), e);
+        }
+        return Collections.emptyMap();
     }
 }

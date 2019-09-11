@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,11 +26,12 @@ import javax.jcr.RepositoryException;
 
 import org.apache.jackrabbit.JcrConstants;
 import org.hippoecm.frontend.editor.plugins.resource.MimeTypeHelper;
-import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
-import org.hippoecm.frontend.plugins.gallery.imageutil.ScaleImageOperation;
+import org.hippoecm.frontend.plugins.gallery.imageutil.ImageOperation;
+import org.hippoecm.frontend.plugins.gallery.imageutil.ImageOperationResult;
+import org.hippoecm.frontend.plugins.gallery.imageutil.ScaleImageOperationFactory;
 import org.hippoecm.frontend.plugins.gallery.imageutil.ScalingParameters;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
-import org.hippoecm.repository.gallery.HippoGalleryNodeType;
+import org.hippoecm.frontend.plugins.gallery.util.ImageGalleryUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,7 +43,6 @@ import org.slf4j.LoggerFactory;
 public class ScalingGalleryProcessor extends AbstractGalleryProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(ScalingGalleryProcessor.class);
-    private static final long serialVersionUID = 1L;
 
     /**
      * Map of JCR node names to scaling parameters.
@@ -50,7 +50,7 @@ public class ScalingGalleryProcessor extends AbstractGalleryProcessor {
     protected final Map<String, ScalingParameters> scalingParametersMap;
 
     public ScalingGalleryProcessor() {
-        scalingParametersMap = new HashMap<String, ScalingParameters>();
+        scalingParametersMap = new HashMap<>();
     }
 
     /**
@@ -72,7 +72,7 @@ public class ScalingGalleryProcessor extends AbstractGalleryProcessor {
      */
     @Override
     public void initGalleryNode(Node node, InputStream data, String mimeType, String fileName) throws RepositoryException {
-        node.setProperty(HippoGalleryNodeType.IMAGE_SET_FILE_NAME, fileName);
+        ImageGalleryUtils.setImageFileName(node, fileName);
     }
 
     /**
@@ -81,64 +81,67 @@ public class ScalingGalleryProcessor extends AbstractGalleryProcessor {
      * original data is stored instead.
      */
     @Override
-    public void initGalleryResource(Node node, InputStream data, String mimeType, String fileName, Calendar lastModified)
-            throws RepositoryException {
+    public void initGalleryResource(final Node node, final InputStream data, final String mimeType,
+                                    final String fileName, final Calendar lastModified) throws RepositoryException {
+
         node.setProperty(JcrConstants.JCR_MIMETYPE, mimeType);
         node.setProperty(JcrConstants.JCR_LASTMODIFIED, lastModified);
 
-        InputStream stored = data;
-        int width = 0;
-        int height = 0;
-
-        if (MimeTypeHelper.isImageMimeType(mimeType)) {
-            final String nodeName = node.getName();
-            final ScalingParameters p = scalingParametersMap.get(nodeName);
-            if (p != null) {
-                try {
-                    final ScaleImageOperation scaleOperation = new ScaleImageOperation(p.getWidth(), p.getHeight(),
-                            p.getUpscaling(), p.getStrategy(), p.getCompressionQuality());
-
-                    scaleOperation.execute(data, mimeType);
-
-                    stored = scaleOperation.getScaledData();
-                    width = scaleOperation.getScaledWidth();
-                    height = scaleOperation.getScaledHeight();
-                } catch (GalleryException e) {
-                    log.warn("Scaling failed, using original image instead", e);
-                }
-            } else {
-                log.debug("No scaling parameters specified for {}, using original image", nodeName);
-            }
-        } else {
+        if (!MimeTypeHelper.isImageMimeType(mimeType)) {
             log.debug("Unknown image MIME type: {}, using raw data", mimeType);
+            ImageGalleryUtils.saveImageNode(node, data, 0, 0);
+            return;
         }
 
-        node.setProperty(JcrConstants.JCR_DATA, ResourceHelper.getValueFactory(node).createBinary(stored));
-        node.setProperty(HippoGalleryNodeType.IMAGE_WIDTH, width);
-        node.setProperty(HippoGalleryNodeType.IMAGE_HEIGHT, height);
+        final ScalingParameters parameters = getScalingParameters(node);
+        if (parameters == null) {
+            log.debug("No scaling parameters specified for {}, using original image", node.getName());
+            ImageGalleryUtils.saveImageNode(node, data, 0, 0);
+            return;
+        }
+
+        try {
+            final ImageOperation operation = ScaleImageOperationFactory.getOperation(parameters, mimeType);
+            final ImageOperationResult result = operation.run(data, mimeType);
+            ImageGalleryUtils.saveImageNode(node, result.getData(), result.getWidth(), result.getHeight());
+        } catch (GalleryException e) {
+            log.warn("Scaling failed, using original image instead", e);
+            ImageGalleryUtils.saveImageNode(node, data, 0, 0);
+        }
     }
 
-    public Dimension getDesiredResourceDimension(Node resource) throws GalleryException, RepositoryException {
-        String nodeName = resource.getName();
-        ScalingParameters scaleOperation = scalingParametersMap.get(nodeName);
-        if (scaleOperation != null) {
-            int width = scaleOperation.getWidth();
-            int height = scaleOperation.getHeight();
-            return new Dimension(width, height);
+    public Dimension getDesiredResourceDimension(final Node resource) throws GalleryException, RepositoryException {
+        final String nodeName = resource.getName();
+        final ScalingParameters parameters = scalingParametersMap.get(nodeName);
+        if (parameters != null) {
+            return new Dimension(parameters.getWidth(), parameters.getHeight());
         } else {
             log.warn("No scaling parameters found for: {}.",nodeName);
             return null;
         }
     }
 
-    public boolean isUpscalingEnabled(Node resource) throws GalleryException, RepositoryException {
-        String nodeName = resource.getName();
-        ScalingParameters scaleOperation = scalingParametersMap.get(nodeName);
-        return scaleOperation == null || scaleOperation.getUpscaling();
+    @Override
+    public boolean isUpscalingEnabled(final Node node) throws GalleryException, RepositoryException {
+        final String nodeName = node.getName();
+        final ScalingParameters parameters = scalingParametersMap.get(nodeName);
+        return parameters == null || parameters.isUpscaling();
     }
 
     @Override
     public Map<String, ScalingParameters> getScalingParametersMap() {
         return scalingParametersMap;
+    }
+
+    @Override
+    public ScalingParameters getScalingParameters(final Node variantNode) {
+        final String nodeName;
+        try {
+            nodeName = variantNode.getName();
+            return scalingParametersMap.getOrDefault(nodeName, null);
+        } catch (RepositoryException e) {
+            log.warn("Unable to get image variant name for retrieving the scaling parameters", e);
+            return null;
+        }
     }
 }
