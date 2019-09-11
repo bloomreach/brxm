@@ -15,7 +15,7 @@
 // Bloomreach primary colors
 $bluePrimary:                                 #147ac8;
 $blueLight:                                   rgba($bluePrimary, 0.1);
-$blueLightSolid:                              #e5f6f3;
+$blueLightSolid:                              #e7f1f9;
 $blueDark:                                    #1265b3;
 $orangePrimary:                               #ff751a;
 $orangeLight:                                 #ffdfce;
@@ -34,9 +34,11 @@ $cyan:                                        #0097a7;
 $indigo:                                      #303f9f;
 $purple:                                      #7b1fa2;
 
-// Bloomreach grays
+// Bloomreach grays.
+// "solid" means: same color without alpha channel as if rendered on a white background.
 $black:                                       #000000;
 $gray5:                                       rgba(0, 0, 0, .05);
+$gray5Solid:                                  #f2f2f2;
 $gray12:                                      rgba(0, 0, 0, .12);
 $grayLightSolid:                              #f5f5f5;
 $gray38:                                      rgba(0, 0, 0, .38);

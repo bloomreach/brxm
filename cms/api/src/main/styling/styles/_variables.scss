@@ -23,10 +23,6 @@ $images_legacy:                      "../../images";
 $OpenSansPath:                       "../fonts/open-sans";
 
 // Font sizes
-// If we define a font-size on the body element that is uneven, Firefox will render certain SVG images blurry unless
-// the font-size of a container element (not yet sure which ones specifically apart from the divs in the tree) is an
-// even number of px.
-$font-size-svg-fix:                  12px;
 $font-size-extjs:                    12px;
 
 // Line height
@@ -154,11 +150,11 @@ $image-gallery-thumbnail-padding:    12px;
 $image-gallery-thumbnail-item-width: 200px;
 
 // Tree
-$tree-caret-color:                   $darker-shade;
-$tree-junction-color:                $darkest-shade;
-$tree-folder-color:                  $dark-shade;
-$tree-hover-color:                   $primary;
-$tree-text-color:                    $darkest-shade;
+$tree-junction-color:                $gray60;
+$tree-folder-color:                  $gray60;
+$tree-hover-color:                   $gray87;
+$tree-hover-background-color:        $gray5;
+$tree-selected-font-weight:          600;
 
 // Editor
 $editor-bgcolor:                     $lightest-shade;
