@@ -19,7 +19,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.FeedbackPanel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.dialog.Dialog;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.repository.api.WorkflowException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +50,7 @@ public class WorkflowDialog<T> extends Dialog<T> {
         setCssClass("hippo-workflow-dialog");
 
         notification = new Label("notification");
-        notification.add(CssClass.append("notification"));
+        notification.add(ClassAttribute.append("notification"));
         // Hide notification label by default until a model is set by calling #setNotification
         notification.setVisible(false);
         add(notification);

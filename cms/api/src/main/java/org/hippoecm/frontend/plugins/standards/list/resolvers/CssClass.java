@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,17 @@ package org.hippoecm.frontend.plugins.standards.list.resolvers;
 
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.model.IObservableModel;
 import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.model.SerializableSupplier;
 
 /**
  * Utility to set, add and remove CSS classes of Wicket components.
+ *
+ * @deprecated Use {@link ClassAttribute} instead
  */
+@Deprecated
 public class CssClass {
 
     private static final String CLASS_ATTRIBUTE = "class";

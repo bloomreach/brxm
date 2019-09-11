@@ -27,12 +27,11 @@ import org.apache.wicket.markup.html.form.validation.IFormValidator;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.ResourceModel;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.editor.layout.ILayoutDescriptor;
 import org.hippoecm.frontend.editor.layout.ILayoutProvider;
 import org.hippoecm.frontend.plugins.standards.image.CachingImage;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 
 public class SelectLayoutStep extends WizardStep {
 
@@ -79,12 +78,9 @@ public class SelectLayoutStep extends WizardStep {
                 link.add(new Label("layout", descriptor.getName()));
                 item.add(link);
 
-                item.add(CssClass.append((new LoadableDetachableModel<String>() {
-                    @Override
-                    protected String load() {
-                        return layout.equals(layoutModel.getObject()) ? "selected" : StringUtils.EMPTY;
-                    }
-                })));
+                item.add(ClassAttribute.append(() -> layout.equals(layoutModel.getObject())
+                        ? "selected"
+                        : StringUtils.EMPTY));
             }
         });
     }

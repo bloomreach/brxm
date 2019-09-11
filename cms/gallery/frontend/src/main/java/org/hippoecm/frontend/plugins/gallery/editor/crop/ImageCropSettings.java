@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,20 +18,19 @@ package org.hippoecm.frontend.plugins.gallery.editor.crop;
 
 import java.awt.Dimension;
 
+import org.hippoecm.frontend.plugins.gallery.imageutil.ImageUtils;
 import org.hippoecm.frontend.plugins.yui.widget.WidgetSettings;
-
 
 public class ImageCropSettings extends WidgetSettings {
 
     private static final int MAX_PREVIEW_RESOLUTION = 1600;
-    private static final long serialVersionUID = 1L;
     static final String FIXED_NONE = "";
     static final String FIXED_BOTH = "both";
     static final String FIXED_WIDTH = "width";
     static final String FIXED_HEIGHT = "height";
     private String regionInputId;
     private String imagePreviewContainerId;
-    
+
     private int initialX = 10;
     private int initialY = 10;
     private int initialWidth = 100;
@@ -43,7 +42,7 @@ public class ImageCropSettings extends WidgetSettings {
     private int originalHeight;
     private int thumbnailWidth;
     private int thumbnailHeight;
-    
+
     private boolean upscalingEnabled;
     private boolean previewVisible;
     private boolean status;
@@ -55,8 +54,10 @@ public class ImageCropSettings extends WidgetSettings {
     private String fixedDimension = FIXED_NONE;
     private String thumbnailSizeLabelId = "";
 
-    public ImageCropSettings(String regionInputId, String imagePreviewContainerId, Dimension originalImageDimension,
-                             Dimension configuredDimension, Dimension thumbnailDimension, boolean upscalingEnabled, boolean fitView) {
+    public ImageCropSettings(final String regionInputId, final String imagePreviewContainerId,
+                             final Dimension originalImageDimension, final Dimension configuredDimension,
+                             final Dimension thumbnailDimension, final boolean upscalingEnabled,
+                             final boolean fitView) {
         this.regionInputId = regionInputId;
         this.imagePreviewContainerId = imagePreviewContainerId;
 
@@ -96,14 +97,24 @@ public class ImageCropSettings extends WidgetSettings {
                 this.minimumHeight = (int) configuredDimension.getHeight();
             }
         }
+
+        if (configuredDimension.width > originalImageDimension.width || configuredDimension.height > originalImageDimension.height) {
+            final double cropFactor = ImageUtils.determineScalingFactor(
+                    configuredDimension.width, configuredDimension.height,
+                    originalImageDimension.width, originalImageDimension.height
+            );
+
+            this.initialWidth = (int) Math.floor(cropFactor * configuredDimension.getWidth());
+            this.initialHeight = (int) Math.floor(cropFactor * configuredDimension.getHeight());
+        }
     }
 
-    public ImageCropSettings(String regionInputId, String imagePreviewContainerId, Dimension originalImageDimension,
-                             Dimension configuredDimension, Dimension thumbnailDimension, boolean upscalingEnabled, boolean fitView,
-                             String thumbnailSizeLabelId) {
-    	this(regionInputId, imagePreviewContainerId, originalImageDimension, configuredDimension, thumbnailDimension, 
+    public ImageCropSettings(final String regionInputId, final String imagePreviewContainerId, final Dimension originalImageDimension,
+                             final Dimension configuredDimension, final Dimension thumbnailDimension, final boolean upscalingEnabled, final boolean fitView,
+                             final String thumbnailSizeLabelId) {
+    	this(regionInputId, imagePreviewContainerId, originalImageDimension, configuredDimension, thumbnailDimension,
                 upscalingEnabled, fitView);
-    	
+
         this.thumbnailSizeLabelId = thumbnailSizeLabelId;
     }
 
@@ -111,7 +122,7 @@ public class ImageCropSettings extends WidgetSettings {
         return regionInputId;
     }
 
-    public void setRegionInputId(String regionInputId) {
+    public void setRegionInputId(final String regionInputId) {
         this.regionInputId = regionInputId;
     }
 
@@ -119,7 +130,7 @@ public class ImageCropSettings extends WidgetSettings {
         return imagePreviewContainerId;
     }
 
-    public void setImagePreviewContainerId(String imagePreviewContainerId) {
+    public void setImagePreviewContainerId(final String imagePreviewContainerId) {
         this.imagePreviewContainerId = imagePreviewContainerId;
     }
 
@@ -127,7 +138,7 @@ public class ImageCropSettings extends WidgetSettings {
         return initialX;
     }
 
-    public void setInitialX(int initialX) {
+    public void setInitialX(final int initialX) {
         this.initialX = initialX;
     }
 
@@ -135,7 +146,7 @@ public class ImageCropSettings extends WidgetSettings {
         return initialY;
     }
 
-    public void setInitialY(int initialY) {
+    public void setInitialY(final int initialY) {
         this.initialY = initialY;
     }
 
@@ -159,7 +170,7 @@ public class ImageCropSettings extends WidgetSettings {
         return minimumWidth;
     }
 
-    public void setMinimumWidth(int minimumWidth) {
+    public void setMinimumWidth(final int minimumWidth) {
         this.minimumWidth = minimumWidth;
     }
 
@@ -167,7 +178,7 @@ public class ImageCropSettings extends WidgetSettings {
         return minimumHeight;
     }
 
-    public void setMinimumHeight(int minimumHeight) {
+    public void setMinimumHeight(final int minimumHeight) {
         this.minimumHeight = minimumHeight;
     }
 
@@ -175,7 +186,7 @@ public class ImageCropSettings extends WidgetSettings {
         return originalWidth;
     }
 
-    public void setOriginalWidth(int originalWidth) {
+    public void setOriginalWidth(final int originalWidth) {
         this.originalWidth = originalWidth;
     }
 
@@ -183,7 +194,7 @@ public class ImageCropSettings extends WidgetSettings {
         return originalHeight;
     }
 
-    public void setOriginalHeight(int originalHeight) {
+    public void setOriginalHeight(final int originalHeight) {
         this.originalHeight = originalHeight;
     }
 
@@ -191,7 +202,7 @@ public class ImageCropSettings extends WidgetSettings {
         return thumbnailWidth;
     }
 
-    public void setThumbnailWidth(int thumbnailWidth) {
+    public void setThumbnailWidth(final int thumbnailWidth) {
         this.thumbnailWidth = thumbnailWidth;
     }
 
@@ -199,7 +210,7 @@ public class ImageCropSettings extends WidgetSettings {
         return thumbnailHeight;
     }
 
-    public void setThumbnailHeight(int thumbnailHeight) {
+    public void setThumbnailHeight(final int thumbnailHeight) {
         this.thumbnailHeight = thumbnailHeight;
     }
 
@@ -207,7 +218,7 @@ public class ImageCropSettings extends WidgetSettings {
         return upscalingEnabled;
     }
 
-    public void setUpscalingEnabled(boolean upscalingEnabled) {
+    public void setUpscalingEnabled(final boolean upscalingEnabled) {
         this.upscalingEnabled = upscalingEnabled;
     }
 
@@ -215,7 +226,7 @@ public class ImageCropSettings extends WidgetSettings {
         return previewVisible;
     }
 
-    public void setPreviewVisible(boolean previewVisible) {
+    public void setPreviewVisible(final boolean previewVisible) {
         this.previewVisible = previewVisible;
     }
 
@@ -223,7 +234,7 @@ public class ImageCropSettings extends WidgetSettings {
         return status;
     }
 
-    public void setStatus(boolean status) {
+    public void setStatus(final boolean status) {
         this.status = status;
     }
 
@@ -231,7 +242,7 @@ public class ImageCropSettings extends WidgetSettings {
     	return fixedDimension;
     }
 
-    public void setFixedDimension(String fixedDimension) {
+    public void setFixedDimension(final String fixedDimension) {
     	this.fixedDimension = fixedDimension;
     }
 
@@ -239,7 +250,7 @@ public class ImageCropSettings extends WidgetSettings {
     	return thumbnailSizeLabelId;
     }
 
-    public void setThumbnailSizeLabelId(String thumbnailSizeLabelId){
+    public void setThumbnailSizeLabelId(final String thumbnailSizeLabelId){
     	this.thumbnailSizeLabelId = thumbnailSizeLabelId;
     }
 

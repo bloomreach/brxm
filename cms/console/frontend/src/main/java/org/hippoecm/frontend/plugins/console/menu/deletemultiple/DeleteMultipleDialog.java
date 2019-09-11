@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,7 +32,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNodeProvider;
 import org.hippoecm.frontend.plugins.console.NodeModelReference;
 import org.hippoecm.frontend.plugins.console.tree.StyledTreeNode;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +54,7 @@ public class DeleteMultipleDialog extends Dialog<Node> {
     public DeleteMultipleDialog(final NodeModelReference modelReference) {
         setTitle(Model.of("Delete multiple nodes"));
         setSize(SIZE);
-        
+
         this.modelReference = modelReference;
         selectedModel = modelReference.getModel();
 

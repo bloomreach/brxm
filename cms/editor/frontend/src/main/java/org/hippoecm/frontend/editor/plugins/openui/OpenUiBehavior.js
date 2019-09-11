@@ -51,17 +51,15 @@ window.OpenUi = new class {
   }
 
   _destroyConnectionWhenIframeDies(connection, openUiParent) {
-    HippoAjax.registerDestroyFunction(connection.iframe, () => {
-      try {
-        connection.emitter.clearListeners();
-        connection.destroy();
-      } catch (error) {
-        if (error.code !== Penpal.ERR_CONNECTION_DESTROYED) {
-          console.warn('Unexpected error while destroying connection with document field extension:', error);
-        }
-      } finally {
-        openUiParent.onDestroy();
+    connection.promise.catch(error => {
+      if (error.code !== Penpal.ERR_CONNECTION_DESTROYED) {
+        console.warn('Unexpected error while destroying Penpal connection:', error);
       }
+    });
+    HippoAjax.registerDestroyFunction(connection.iframe, () => {
+      connection.emitter.clearListeners();
+      connection.destroy();
+      openUiParent.onDestroy();
     });
   }
 
