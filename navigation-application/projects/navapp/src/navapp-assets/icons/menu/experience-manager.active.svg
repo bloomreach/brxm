@@ -18,11 +18,10 @@
 	 viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
 <style type="text/css">
 	.st0{fill:#00B5E2;}
-	.st1{fill:#FFFFFF;}
 </style>
 <g>
 	<path class="st0" d="M25,4.5c11.3,0,20.5,9.2,20.5,20.5S36.3,45.5,25,45.5S4.5,36.3,4.5,25S13.7,4.5,25,4.5 M25,0
 		C11.2,0,0,11.2,0,25s11.2,25,25,25s25-11.2,25-25S38.8,0,25,0L25,0z"/>
-	<polygon class="st1" points="31.8,25 21.6,31.8 21.6,18.2 31.8,25 	"/>
+	<polygon points="31.8,25 21.6,31.8 21.6,18.2 31.8,25 	"/>
 </g>
 </svg>

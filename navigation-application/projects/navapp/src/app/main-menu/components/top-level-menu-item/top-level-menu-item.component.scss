@@ -91,14 +91,23 @@
       opacity: 1;
     }
 
-    .mat-icon,
+    .mat-icon {
+      color: $menu-icon-active-secondary-color;
+      transition: color 300ms;
+    }
+
     .caption {
       color: $menu-active-text-color;
       transition: color 300ms;
     }
 
     &:hover {
-      @include showNormalIcon;
+      @include showActiveIcon;
+
+      .mat-icon,
+      .caption {
+        color: $menu-hover-text-color;
+      }
     }
   }
 
