@@ -1,6 +1,6 @@
 # Developer documentation
 
-This document summarizes information relevant to BloomReach Open UI SDK developers.
+This document summarizes information relevant to Bloomreach Open UI SDK developers.
 
 ## Prerequisites
 

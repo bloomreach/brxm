@@ -26,7 +26,7 @@
 
   <groupId>org.onehippo</groupId>
   <artifactId>ui-extension</artifactId>
-  <name>BloomReach Open UI SDK</name>
+  <name>Bloomreach Open UI SDK</name>
   <version>14.0.0-SNAPSHOT</version>
 
   <inceptionYear>2018</inceptionYear>
@@ -181,9 +181,6 @@
                 <exclude>src/docs/*.md</exclude>
 
                 <!-- Generated or pulled-in files which are not cleaned up -->
-                <exclude>node_modules/**/*</exclude>
-                <exclude>ui-extension/coverage/**/*</exclude>
-                <exclude>target/**/*</exclude>
                 <exclude>**/ADDITIONAL-LICENSES.yml</exclude>
               </excludes>
             </configuration>
