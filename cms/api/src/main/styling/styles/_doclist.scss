@@ -16,8 +16,8 @@ $doclist-icon-shift-right: 2px;
 
 .hippo-list-documents {
   background-color: $body-bg;
-  border-width: 0;
   border-collapse: collapse;
+  border-width: 0;
   width: 100%;
 
   // keep the styling that affect width in sync in the thead and tbody to ensure correctly aligned table headers
