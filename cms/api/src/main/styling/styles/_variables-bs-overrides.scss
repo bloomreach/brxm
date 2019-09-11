@@ -1,4 +1,4 @@
-// Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ $font-family-base: "Open Sans", $font-family-sans-serif;
 /* No need for a serif font in the CMS UI */
 $font-family-serif: $font-family-base;
 
-$font-size-base: 13px;
+$font-size-base: 14px;
 $font-size-large: ceil(($font-size-base * 1.10)); // ~15px
 $font-size-small: ceil(($font-size-base * 0.85)); // ~12px
 $font-size-tiny: ceil(($font-size-base * 0.75)); // ~10px
