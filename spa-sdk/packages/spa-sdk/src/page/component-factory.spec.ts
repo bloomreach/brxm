@@ -69,7 +69,7 @@ describe('ComponentFactory', () => {
       expect(root.getComponent('a', 'b')).toBeUndefined();
 
       const c = root.getComponent('b', 'c');
-      expect(c).not.toBeUndefined();
+      expect(c).toBeDefined();
       expect(c!.getName()).toBe('c');
     });
   });

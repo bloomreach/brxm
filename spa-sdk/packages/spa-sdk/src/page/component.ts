@@ -75,7 +75,7 @@ export class Component implements Component {
     return this.model._meta && this.model._meta.params || {};
   }
 
-  getComponent(...componentNames: string[]): Component | undefined {
+  getComponent(...componentNames: string[]) {
     // tslint:disable-next-line:no-this-assignment
     let component: Component | undefined = this;
 

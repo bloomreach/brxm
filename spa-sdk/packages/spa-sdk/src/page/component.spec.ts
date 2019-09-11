@@ -67,11 +67,17 @@ describe('Component', () => {
         ]),
       ]);
 
-      expect(root.getComponent('a')).not.toBeNull();
+      expect(root.getComponent('a')).toBeDefined();
       expect(root.getComponent('a')!.getName()).toBe('a');
 
-      expect(root.getComponent('b', 'c')).not.toBeNull();
+      expect(root.getComponent('b', 'c')).toBeDefined();
       expect(root.getComponent('b', 'c')!.getName()).toBe('c');
+    });
+
+    it('should not find a child component', () => {
+      const component = new Component({ type: TYPE_COMPONENT });
+
+      expect(component.getComponent('a', 'b')).toBeUndefined();
     });
   });
 });
