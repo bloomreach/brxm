@@ -98,6 +98,7 @@ public class SecurityManager implements HippoSecurityManager {
 
     private String domainsPath;
 
+    // initial JR system session, not impersonated, never logout
     private Session systemSession;
     private final Map<String, SecurityProvider> providers = new LinkedHashMap<>();
     private String adminID;
@@ -527,7 +528,6 @@ public class SecurityManager implements HippoSecurityManager {
         rolesModel.close();
         userRolesModel = null;
         rolesModel = null;
-        systemSession = null;
     }
 
     public AuthContext getAuthContext(Credentials credentials, Subject subject, String workspaceName) throws RepositoryException {
