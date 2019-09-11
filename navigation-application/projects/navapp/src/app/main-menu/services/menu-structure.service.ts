@@ -67,8 +67,8 @@ export class MenuStructureService {
       [
         new MenuItemLink('categories/category-ranking', 'Category ranking'),
         new MenuItemLink('categories/all-category-pages', 'All category pages'),
-        new MenuItemLink('categories/category-ranking-diagnostics', 'Category Ranking Diagnostics'),
-        new MenuItemLink('categories/category-facets-ranking', 'Category Facets'),
+        new MenuItemLink('categories/category-ranking-diagnostics', 'Category ranking diagnostics'),
+        new MenuItemLink('categories/category-facets-ranking', 'Category facets'),
         new MenuItemLink('categories/category-banners', 'Category banners'),
       ],
       'categories',
@@ -157,7 +157,7 @@ export class MenuStructureService {
         // Will be split into: Buzz, My documents, Team documents and Totals
         new MenuItemLink(
           'hippo-perspective-reportsperspective',
-          'Content Reports',
+          'Content reports',
         ),
       ],
       'insights',
@@ -185,7 +185,7 @@ export class MenuStructureService {
         new MenuItemLink('setup/pixel', 'Pixel'),
         new MenuItemLink('setup/feed', 'Feed'),
         new MenuItemContainer('User management', [
-          new MenuItemLink('setup/user-management/sm-users', 'SM Users'),
+          new MenuItemLink('setup/user-management/sm-users', 'SM users'),
         ]),
         new MenuItemLink('hippo-perspective-adminperspective', 'System'),
         new MenuItemLink('hippo-perspective-formdataperspective', 'Formdata'),
