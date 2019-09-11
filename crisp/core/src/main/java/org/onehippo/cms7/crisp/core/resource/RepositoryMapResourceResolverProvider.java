@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,9 +29,12 @@ import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrLookup;
 import org.apache.commons.lang3.text.StrSubstitutor;
+import org.hippoecm.hst.platform.HstModelProvider;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.crisp.api.CrispConstants;
 import org.onehippo.cms7.crisp.api.resource.ResourceResolver;
@@ -48,6 +51,8 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.util.InMemoryResource;
+
+import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 /**
  * Extending {@link MapResourceResolverProvider} to filling in the internal <code>Map</code> of pairs of <strong>resource space</strong>
@@ -239,11 +244,13 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
             }
 
             final Node resourceReesolverContainerNode = session.getNode(resourceResolverContainerConfigPath);
+            final String webappName = getWebappName();
 
             Node resourceResolverNode;
             String resourceSpace;
             Set<String> resourceSpaceNames = new HashSet<>();
             String beanDef;
+            String[] siteScopes;
             String[] propNames;
             String[] propValues;
             AbstractApplicationContext newChildContext;
@@ -253,6 +260,12 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
             for (Map.Entry<String, Node> entry : getResolverResolverConfigNodesMap(resourceReesolverContainerNode).entrySet()) {
                 resourceSpace = entry.getKey();
                 resourceResolverNode = entry.getValue();
+
+                siteScopes = JcrUtils.getMultipleStringProperty(resourceResolverNode, CrispConstants.SITE_SCOPES, null);
+
+                if (siteScopes != null && isNotEmpty(webappName) && !ArrayUtils.contains(siteScopes, webappName)) {
+                    continue;
+                }
 
                 beanDef = JcrUtils.getStringProperty(resourceResolverNode,
                         CrispConstants.BEAN_DEFINITION, null);
@@ -299,6 +312,23 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
         }
 
         return inited;
+    }
+
+    /**
+     * Get a web application name we're running at
+     * @return Web application name. For CMS or PLATFORM types of applications the 'platform' name is always used.
+     */
+    private String getWebappName() {
+        HstModelProvider hstModelProvider;
+        if (HstServices.getComponentManager() != null &&
+                (hstModelProvider = HstServices.getComponentManager().getComponent(HstModelProvider.class)) != null) {
+            final String configurationRootPath = hstModelProvider.getHstModel().getConfigurationRootPath();
+            //Extract site name and return it as a value
+            return StringUtils.substringAfterLast(configurationRootPath, ":");
+        }
+
+        //Probably not platform/cms or site app type?
+        return null;
     }
 
     /**

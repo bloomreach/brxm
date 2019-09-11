@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -83,6 +83,12 @@ public class CrispConstants {
      * as variables in the value of {@link #BEAN_DEFINITION} property.
      */
     public static final String PROP_NAMES = "crisp:propnames";
+
+    /**
+     * Property name of a CRISP ResourceResolver configuration node, defines a resource scope
+     * Valid values are - platform (for CMS & PLATFORM app types) and site name.
+     */
+    public static final String SITE_SCOPES = "crisp:sitescopes";
 
     /**
      * Property name of a CRISP ResourceResolver configuration node, containing property values that can be used
