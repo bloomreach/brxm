@@ -105,12 +105,12 @@
 .hi-file-text,
 .hi-folder,
 .hi-custom-node-type {
-  color: $primary;
+  color: $gray60;
 }
 
 @each $type in $mimetypes {
   .hi-mimetype-#{$type} {
-    color: $primary;
+    color: $gray60;
     fill: $white;
 
     .hippo-list-selected & {
