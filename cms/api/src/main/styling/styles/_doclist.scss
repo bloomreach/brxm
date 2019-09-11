@@ -173,7 +173,7 @@ $doclist-icon-shift-right: 2px;
         padding-bottom: ceil(($doclist-head-height - $line-height-computed) / 2);
 
         &:hover {
-          color: $primary;
+          color: $doclist-head-hover-color;
         }
 
         // align the background image of the icon column header with the icons in the body
@@ -274,23 +274,9 @@ $doclist-icon-shift-right: 2px;
     }
 
     .hippo-list-selected {
-
-      border-top-color: transparent;
       background-color: $doclist-row-selected-bgcolor;
-      color: $doclist-row-selected-color;
-
-      svg.hi, .hi-stack > svg:first-child {
-        color: $doclist-row-selected-color;
-      }
-
-      .doclisting-icon {
-        .hi-minus-circle,
-        .hi-check-circle,
-        .hi-exclamation-triangle {
-          color: $primary;
-          fill: $doclist-row-selected-color;
-        }
-      }
+      border-top-color: transparent;
+      font-weight: 600;
 
       + tr {
         border-top-color: transparent;
@@ -386,7 +372,7 @@ $doclist-icon-shift-right: 2px;
     }
 
     &:hover .hi {
-      color: $primary;
+      color: $gray87;
     }
   }
 }
