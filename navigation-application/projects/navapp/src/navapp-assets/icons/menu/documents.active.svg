@@ -18,13 +18,12 @@
 	 viewBox="0 0 50 50" style="enable-background:new 0 0 50 50;" xml:space="preserve">
 <style type="text/css">
 	.st0{fill:#00B5E2;}
-	.st1{fill:#FFFFFF;}
 </style>
 <g>
-	<rect x="13.7" y="17.6" class="st1" width="9.8" height="2"/>
-	<rect x="13.7" y="24.5" class="st1" width="17.6" height="2"/>
-	<rect x="13.7" y="31.4" class="st1" width="17.6" height="2"/>
-	<rect x="13.7" y="38.2" class="st1" width="17.6" height="2"/>
+	<rect x="13.7" y="17.6" width="9.8" height="2"/>
+	<rect x="13.7" y="24.5" width="17.6" height="2"/>
+	<rect x="13.7" y="31.4" width="17.6" height="2"/>
+	<rect x="13.7" y="38.2" width="17.6" height="2"/>
 	<path class="st0" d="M46.1,0H7.8v4.9H3.9V50h37.3v-3.9h4.9V0z M7.8,46.1V8.8h19.6v9.8h9.8v27.5H7.8z M44.1,44.1h-2.9V16.7L29.4,4.9
 		H9.8V2h34.3V44.1z"/>
 </g>
