@@ -24,7 +24,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.dialog.Dialog;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.repository.api.WorkflowException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +54,7 @@ public abstract class AbstractWorkflowDialog<T> extends Dialog<T> {
             notification.setVisible(false);
         }
         add(notification);
-        notification.add(CssClass.append("notification"));
+        notification.add(ClassAttribute.append("notification"));
     }
 
     @Override

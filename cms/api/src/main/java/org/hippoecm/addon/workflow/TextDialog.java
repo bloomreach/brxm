@@ -19,7 +19,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.widgets.TextAreaWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,7 @@ public abstract class TextDialog extends Dialog implements IWorkflowInvoker {
 
         final TextAreaWidget textfield;
         add(textfield = new TextAreaWidget("value", textModel));
-        textfield.addBehaviourOnFormComponent(CssClass.append("text-dialog-textarea"));
+        textfield.addBehaviourOnFormComponent(ClassAttribute.append("text-dialog-textarea"));
         setFocus(textfield.getFocusComponent());
     }
 

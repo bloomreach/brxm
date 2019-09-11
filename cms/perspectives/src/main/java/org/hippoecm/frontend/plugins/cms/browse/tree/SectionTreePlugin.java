@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.form.DropDownChoice;
@@ -37,7 +36,7 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -105,7 +104,7 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
         super(context, config);
 
         setOutputMarkupId(true);
-        add(new AttributeAppender("class", Model.of("section-viewer"), " "));
+        add(ClassAttribute.append("section-viewer"));
 
         final List<String> headers = Arrays.asList(config.getStringArray("headers"));
         final List<String> extensions = Arrays.asList(config.getStringArray(RenderService.EXTENSIONS_ID));
@@ -139,12 +138,9 @@ public class SectionTreePlugin extends ListRenderService implements IPlugin {
                     item.add(new EmptyPanel("id"));
                 }
 
-                item.add(new AttributeAppender("class", new AbstractReadOnlyModel<String>() {
-                    @Override
-                    public String getObject() {
-                        return section.focused ? "selected" : "unselected";
-                    }
-                }, " "));
+                item.add(ClassAttribute.append(() -> section.focused
+                        ? "selected"
+                        : "unselected"));
 
             }
         });

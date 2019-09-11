@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.model.ReadOnlyModel;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.repository.api.StringCodec;
 
 public class NameUriField extends Panel {
@@ -121,7 +121,9 @@ public class NameUriField extends Panel {
                 return urlIsEditable;
             }
         };
-        newUrlComponent.add(CssClass.append(ReadOnlyModel.of(() -> urlIsEditable ? "grayedin" : "grayedout")));
+        newUrlComponent.add(ClassAttribute.append(() -> urlIsEditable
+                ? "grayedin"
+                : "grayedout"));
         newUrlComponent.setOutputMarkupId(true);
         return newUrlComponent;
     }

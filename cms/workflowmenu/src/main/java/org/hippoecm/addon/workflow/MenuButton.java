@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,13 +23,12 @@ import org.apache.wicket.WicketRuntimeException;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.link.AbstractLink;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.behaviors.EventStoppingDecorator;
 import org.hippoecm.frontend.behaviors.IContextMenu;
 import org.hippoecm.frontend.behaviors.IContextMenuManager;
@@ -38,31 +37,29 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.skin.Icon;
+import org.hippoecm.repository.api.HippoNodeType;
 
 class MenuButton extends Panel implements IContextMenu {
 
-    private static final long serialVersionUID = 1L;
+    private final MenuList content;
 
-    private MenuList content;
-
-    MenuButton(String id, String name, final MenuHierarchy menu, IPluginConfig config) {
+    MenuButton(final String id, final String name, final MenuHierarchy menu, final IPluginConfig config) {
         this(id, name, menu, null, config);
     }
 
-    public MenuButton(final String item, final String key, final List<MenuDescription> menuDescriptions, Form form, IPluginConfig config) {
+    public MenuButton(final String item, final String key, final List<MenuDescription> menuDescriptions, final Form form, final IPluginConfig config) {
         this(item, key, new MenuHierarchy(form, config), menuDescriptions, config);
     }
 
-    MenuButton(String id, String name, final MenuHierarchy menu, final List<MenuDescription> descriptions, IPluginConfig config) {
+    MenuButton(final String id, final String name, final MenuHierarchy menu, final List<MenuDescription> descriptions, final IPluginConfig config) {
         super(id);
         setOutputMarkupId(true);
         add(content = new MenuList("item", menu, config));
         content.setOutputMarkupId(true);
         content.setVisible(false);
 
-        AbstractLink link;
+        final AbstractLink link;
         add(link = new AjaxLink("link") {
-            private static final long serialVersionUID = 1L;
 
             @Override
             protected void updateAjaxAttributes(final AjaxRequestAttributes attributes) {
@@ -73,9 +70,9 @@ class MenuButton extends Panel implements IContextMenu {
             void updateContent() {
                 if (descriptions != null) {
                     menu.clear();
-                    MenuVisitor visitor = new MenuVisitor(menu, "list");
-                    for (MenuDescription description : descriptions) {
-                        MarkupContainer descriptionContent = description.getContent();
+                    final MenuVisitor visitor = new MenuVisitor(menu, "list");
+                    for (final MenuDescription description : descriptions) {
+                        final MarkupContainer descriptionContent = description.getContent();
                         if (descriptionContent != null) {
                             descriptionContent.visitChildren(Panel.class, visitor);
                         }
@@ -86,30 +83,31 @@ class MenuButton extends Panel implements IContextMenu {
             }
 
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 content.setVisible(!content.isVisible());
                 target.add(MenuButton.this);
                 if (content.isVisible()) {
                     updateContent();
-                    IContextMenuManager manager = getContextMenuManager();
+                    final IContextMenuManager manager = getContextMenuManager();
                     manager.showContextMenu(MenuButton.this);
                 }
             }
         });
 
-        link.add(new AttributeAppender("class", new AbstractReadOnlyModel<String>() {
-            @Override
-            public String getObject() {
-                return content.isVisible() ? "menu-item-active" : "menu-item-inactive";
-            }
-        }, " "));
+        link.add(ClassAttribute.append(() -> content.isVisible()
+                ? "menu-item-active"
+                : "menu-item-inactive"));
 
         Component label = null;
         if (descriptions != null) {
             label = descriptions.get(0).getLabel();
         }
         if (label == null) {
-            link.add(new Label("label", new ResourceBundleModel("hippo:workflows", name, name)));
+            final IModel<String> labelModel = new ResourceBundleModel
+                    .Builder(HippoNodeType.WORKFLOWS_PATH, name)
+                    .defaultValue(name)
+                    .build();
+            link.add(new Label("label", labelModel));
         } else {
             if (!"label".equals(label.getId())) {
                 throw new WicketRuntimeException("Menu label component doesn't have correct id.  Should be 'label', but was '" + label.getId() + "'");
@@ -124,7 +122,7 @@ class MenuButton extends Panel implements IContextMenu {
         return findParent(IContextMenuManager.class);
     }
 
-    public void collapse(AjaxRequestTarget target) {
+    public void collapse(final AjaxRequestTarget target) {
         if (content.isVisible()) {
             content.setVisible(false);
             if (target != null) {

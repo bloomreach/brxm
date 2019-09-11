@@ -28,8 +28,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.hippoecm.frontend.model.ReadOnlyModel;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.TypeException;
@@ -261,7 +260,9 @@ public class FieldEditor extends Panel {
     }
 
     private void addCheckBoxCssClass(final Label label, final CheckBox checkBox) {
-        label.add(CssClass.append(ReadOnlyModel.of(() -> checkBox.isEnabled() ? "" : "disabled")));
+        label.add(ClassAttribute.append(() -> checkBox.isEnabled()
+                ? StringUtils.EMPTY
+                : "disabled"));
     }
 
     class LockedTextField<T> extends TextField<T> implements IAjaxIndicatorAware {

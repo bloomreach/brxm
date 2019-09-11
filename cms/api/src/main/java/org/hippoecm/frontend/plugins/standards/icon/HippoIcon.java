@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ import org.hippoecm.frontend.plugins.standards.image.CachedJcrImage;
 import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.plugins.standards.image.InlineSvg;
 import org.hippoecm.frontend.plugins.standards.image.JcrImage;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.resource.JcrResourceStream;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.skin.CmsIcon;
@@ -346,7 +346,7 @@ public abstract class HippoIcon extends Panel {
             } else {
                 fragment = new Fragment (WICKET_ID_CONTAINER, WICKET_FRAGMENT_IMAGE, this);
                 final Image image = new CachingImage(WICKET_ID_IMAGE, icon);
-                image.add(CssClass.append(getExtraCssClasses()));
+                image.add(ClassAttribute.append(getExtraCssClasses()));
 
                 fragment.add(image);
 
@@ -372,7 +372,7 @@ public abstract class HippoIcon extends Panel {
             setRenderBodyOnly(true);
 
             final CachedJcrImage streamIcon = new CachedJcrImage("streamIcon", getIcon(), width, height);
-            streamIcon.add(CssClass.append(getExtraCssClasses()));
+            streamIcon.add(ClassAttribute.append(getExtraCssClasses()));
             add(streamIcon);
         }
     }

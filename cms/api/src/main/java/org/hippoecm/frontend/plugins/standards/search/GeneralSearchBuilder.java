@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,6 +38,8 @@ public class GeneralSearchBuilder {
     private static final Logger log = LoggerFactory.getLogger(GeneralSearchBuilder.class);
 
     private static final String DEFAULT_IGNORED_CHARS = "&|!(){}[]^\"~*?:\\";
+    private static final int DEFAULT_MINIMAL_LENGTH = 3;
+
     static final char MINUS_SIGN = '-';
 
     private String text = StringUtils.EMPTY;
@@ -47,7 +49,7 @@ public class GeneralSearchBuilder {
     private String[] excludedPrimaryTypes = ArrayUtils.EMPTY_STRING_ARRAY;
     private boolean wildcardSearch;
     private int limit = -1;
-    private int minimalLength = 3;
+    private int minimalLength = DEFAULT_MINIMAL_LENGTH;
     private final String queryName;
 
     public static final String TEXT_QUERY_NAME = "text";
@@ -106,10 +108,21 @@ public class GeneralSearchBuilder {
         return text.trim();
     }
 
+    /**
+     * Set the minimal length a search term must have before wildcarding is applied.
+     */
     public void setMinimalLength(final int minimalLength) {
+        if (minimalLength < DEFAULT_MINIMAL_LENGTH) {
+            log.error("Given minimal length {} for wildcarded search is lower than {} which is not allowed. Keeping it at {}.",
+                    minimalLength, DEFAULT_MINIMAL_LENGTH, this.minimalLength);
+            return;
+        }
         this.minimalLength = minimalLength;
     }
 
+    /**
+     * Get the minimal lentgh a search term must have before wildcarding is applied.
+     */
     protected int getMinimalLength() {
         return minimalLength;
     }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
+import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -49,12 +49,12 @@ public class CheckInOutPlugin extends RenderPlugin<Node> {
         }));
         label.setOutputMarkupId(true);
 
-        label.add(CssClass.append(ReadOnlyModel.of(() -> {
+        label.add(ClassAttribute.append(() -> {
             if (isVersionable()) {
                 return isCheckedOut() ? "dropdown-link-green" : "dropdown-link-red";
             }
             return "dropdown-link-disabled";
-        })));
+        }));
         // set up link component
         link = new AjaxLink<Void>("link") {
 

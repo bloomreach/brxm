@@ -27,10 +27,10 @@ import java.util.Collection;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.HttpMethod;
 
 import org.apache.wicket.RestartResponseException;
 import org.apache.wicket.core.request.handler.IPageRequestHandler;
-import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.IRequestHandler;
 import org.apache.wicket.request.component.IRequestablePage;
@@ -43,6 +43,8 @@ import org.apache.wicket.util.string.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.commons.lang3.StringUtils.substringAfter;
+import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.hippoecm.frontend.util.RequestUtils.getFarthestRequestScheme;
 
 /**
@@ -67,41 +69,17 @@ import static org.hippoecm.frontend.util.RequestUtils.getFarthestRequestScheme;
  * <p>
  * <h3>Configuration</h3>
  * <p>
- * A missing {@code Origin} HTTP header is (by default) handled as if it were a good request and
- * accepted. You can {@link #setNoOriginAction(CsrfAction) configure the specific action} to a
- * different value, suppressing or aborting the request when the {@code Origin} HTTP header is
+ * A missing {@code Origin} HTTP header is (by default) aborted for action (POST, DELETE, PUT, PATCH) requests.
+ * You can {@link #setNoOriginAction(CsrfAction) configure the specific action} to a
+ * different value, suppressing or allowing the request when the {@code Origin} HTTP header is
  * missing.
  * <p>
- * When the {@code Origin} HTTP header is present and has the value {@code null} it is considered to
- * be from a "privacy-sensitive" context and will trigger the conflicting origin action. You can
- * customize what happens in those actions by overriding the respective {@code onXXXX} methods.
- * <p>
- * When the {@code Origin} HTTP header is present but doesn't match the requested URL this listener
- * will by default throw a HTTP error ( {@code 400 BAD REQUEST}) and abort the request. You can
+ * When the {@code Origin} HTTP header doesn't match the requested URL this listener
+ * will by default throw a HTTP error ( {@code 400 BAD REQUEST}) for action requests and abort the request. You can
  * {@link #setConflictingOriginAction(CsrfAction) configure} this specific action.
  * <p>
  * When you want to accept certain cross domain request from a range of hosts, you can
  * {@link #addAcceptedOrigin(String) whitelist those domains}.
- * <p>
- * You can {@link #isEnabled() enable or disable} this listener by overriding {@link #isEnabled()}.
- * <p>
- * You can {@link #isChecked(IRequestablePage) customize} whether a particular page should be
- * checked for CSRF requests. For example you can skip checking pages that have a
- * {@code @NoCsrfCheck} annotation, or only those pages that extend your base secure page class. For
- * example:
- *
- * <pre>
- * &#064;Override
- * protected boolean isChecked(IRequestablePage requestedPage)
- * {
- * 	return requestedPage.getPage() instanceof SecurePage;
- * }
- * </pre>
- * <p>
- * You can also tweak the request handlers that are checked. The CSRF prevention request cycle
- * listener checks only action handlers, not render handlers. Override
- * {@link #isChecked(IRequestHandler)} to customize this behavior.
- * </p>
  * <p>
  * You can override the default actions that are performed by overriding the event handlers for
  * them:
@@ -160,9 +138,9 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
     }
 
     /**
-     * Action to perform when no Origin header is present in the request.
+     * Action to perform when no Origin header is present in the request. Default is ABORT
      */
-    private CsrfAction noOriginAction = CsrfAction.ALLOW;
+    private CsrfAction noOriginAction = CsrfAction.ABORT;
 
     /**
      * Action to perform when a conflicing Origin header is found.
@@ -179,7 +157,7 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
      * The error message to report when the action to take for a CSRF request is {@code ERROR}.
      * Default {@code "Origin does not correspond to request"}.
      */
-    private String errorMessage = "Origin does not correspond to request";
+    private String errorMessage = "Origin and Referer header are null or do not correspond to request origin.";
 
     /**
      * A white list of accepted origins (host names/domain names) presented as
@@ -283,86 +261,64 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
         }
     }
 
-    /**
-     * Dynamic override for enabling/disabling the CSRF detection. Might be handy for specific
-     * tenants in a multi-tenant application. When false, the CSRF detection is not performed for
-     * the running request. Default {@code true}
-     *
-     * @return {@code true} when the CSRF checks need to be performed.
-     */
-    protected boolean isEnabled()
-    {
-        return true;
-    }
-
-    /**
-     * Override to limit whether the request to the specific page should be checked for a possible
-     * CSRF attack.
-     *
-     * @param targetedPage
-     *            the page that is the target for the action
-     * @return {@code true} when the request to the page should be checked for CSRF issues.
-     */
-    protected boolean isChecked(IRequestablePage targetedPage)
-    {
-        return true;
-    }
-
-    /**
-     * Override to change the request handler types that are checked. Currently only action handlers
-     * (form submits, link clicks, AJAX events) are checked for a matching Origin HTTP header.
-     *
-     * @param handler
-     *            the handler that is currently processing
-     * @return true when the Origin HTTP header should be checked for this {@code handler}
-     */
-    protected boolean isChecked(IRequestHandler handler)
-    {
-        return handler instanceof IPageRequestHandler &&
-                !(handler instanceof RenderPageRequestHandler);
-    }
-
     @Override
     public void onRequestHandlerResolved(RequestCycle cycle, IRequestHandler handler)
     {
-        if (!isEnabled())
-        {
-            log.trace("CSRF listener is disabled, no checks performed");
-            return;
-        }
 
-        // check if the request is targeted at a page
-        if (isChecked(handler))
-        {
+        HttpServletRequest containerRequest = (HttpServletRequest)cycle.getRequest()
+                .getContainerRequest();
+
+        // CsrfPreventionRequestCycleListener#abortHandler triggers RequestCycle.execute() to execute this code again
+        // but this time with a error handler which is not an instance of IPageRequestHandler
+        if (isActionRequest(containerRequest) && handler instanceof IPageRequestHandler) {
             IPageRequestHandler prh = (IPageRequestHandler)handler;
             IRequestablePage targetedPage = prh.getPage();
-            HttpServletRequest containerRequest = (HttpServletRequest)cycle.getRequest()
-                    .getContainerRequest();
             String origin = containerRequest.getHeader("Origin");
 
-            // Check if the page should be CSRF protected
-            if (isChecked(targetedPage))
-            {
-                // if so check the Origin HTTP header
-                checkOrigin(containerRequest, origin, targetedPage);
+            // if so check the Origin HTTP header and if the Origin header is missing, check the referer
+            if (origin == null) {
+                log.debug("'Origin' header missing, use 'Referer' header as recommended fallback by OWASP");
+                final String referer = containerRequest.getHeader("Referer");
+                if (referer != null) {
+                    final String scheme = substringBefore(referer, "://");
+                    // host possibly including port
+                    final String host = substringBefore(substringAfter(referer,scheme + "://"), "/");
+                    origin = scheme + "://" + host;
+                }
             }
-            else
-            {
-                log.debug("Targeted page {} was opted out of the CSRF origin checks, allowed",
-                        targetedPage.getClass().getName());
-                allowHandler(containerRequest, origin, targetedPage);
-            }
-        }
-        else
-        {
-            if (log.isTraceEnabled())
-                log.trace("Resolved handler {} doesn't target a page, no CSRF check performed",
-                        handler.getClass().getName());
+            checkOrigin(containerRequest, origin, targetedPage);
+
+        } else {
+            log.trace("Request is not an action request so no Origin/Referer header check required");
         }
     }
 
+    private boolean isActionRequest(final HttpServletRequest containerRequest) {
+        final String method = containerRequest.getMethod();
+
+        if (HttpMethod.GET.equals(method)) {
+            return false;
+        }
+        if (HttpMethod.POST.equals(method)) {
+            return true;
+        }
+
+        if (HttpMethod.PUT.equals(method)) {
+            return true;
+        }
+        if (HttpMethod.DELETE.equals(method)) {
+            return true;
+        }
+        if (HttpMethod.PATCH.equals(method)) {
+            return true;
+        }
+        // OPTIONS, HEAD
+        return false;
+    }
+
     /**
-     * Performs the check of the {@code Origin} header that is targeted at the {@code page}.
+     * Performs the check of the Origin, where the Origin can be from the {@code Origin} header
+     * or if the {@code Origin} is missing the {@code Referer} header.
      *
      * @param request
      *            the current container request
@@ -375,7 +331,7 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
     {
         if (origin == null || origin.isEmpty())
         {
-            log.debug("Origin-header not present in request, {}", noOriginAction);
+            log.debug("'Origin' nor 'Referer' header present in request, {}", noOriginAction);
             switch (noOriginAction)
             {
                 case ALLOW :
@@ -402,8 +358,8 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
         // check if the origin HTTP header matches the request URI
         if (!isLocalOrigin(request, origin))
         {
-            log.info("Origin-header '{}' conflicts with request host '{}' : {}",
-                    getOriginHeaderOrigin(origin), getLocationHeaderOrigin(request),  conflictingOriginAction);
+            log.info("'Origin' or 'Referer' header '{}' conflicts with request host '{}' : {}",
+                    origin, getLocationHeaderOrigin(request),  conflictingOriginAction);
             switch (conflictingOriginAction)
             {
                 case ALLOW :
@@ -443,7 +399,7 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
                 if (originHost.equalsIgnoreCase(whitelistedOrigin) ||
                         originHost.endsWith("." + whitelistedOrigin))
                 {
-                    log.trace("Origin {} matched whitelisted origin {}, request accepted", origin,
+                    log.trace("Origin or Referer {} matched whitelisted origin {}, request accepted", origin,
                             whitelistedOrigin);
                     return true;
                 }
@@ -464,14 +420,13 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
      *
      * @param containerRequest
      *            the current container request
-     * @param originHeader
+     * @param origin
      *            the contents of the {@code Origin} HTTP header
      * @return {@code true} when the origin of the request matches the {@code Origin} HTTP header
      */
-    private boolean isLocalOrigin(HttpServletRequest containerRequest, String originHeader)
+    private boolean isLocalOrigin(HttpServletRequest containerRequest, String origin)
     {
         // Make comparable strings from Origin and Location
-        String origin = getOriginHeaderOrigin(originHeader);
         if (origin == null)
             return false;
 
@@ -480,73 +435,11 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
             return false;
 
         final boolean isLocal = origin.equalsIgnoreCase(request);
-        if (!isLocal && originHeader.startsWith("https:") && !request.startsWith("https:")) {
-            log.warn("Origin starts with https: but request starts with http:. If you are running behind a proxy, make " +
+        if (!isLocal && origin.startsWith("https:") && !request.startsWith("https:")) {
+            log.warn("Origin or Referer starts with https: but request starts with http:. If you are running behind a proxy, make " +
                     "sure to set 'X-Forwarded-Proto: https' in the proxy");
         }
         return isLocal;
-    }
-
-    /**
-     * Creates a RFC-6454 comparable origin from the {@code origin} string.
-     *
-     * @param origin
-     *            the contents of the Origin HTTP header
-     * @return only the scheme://host[:port] part, or {@code null} when the origin string is not
-     *         compliant
-     */
-    private String getOriginHeaderOrigin(String origin)
-    {
-        // the request comes from a privacy sensitive context, flag as non-local origin. If
-        // alternative action is required, an implementor can override any of the onAborted,
-        // onSuppressed or onAllowed and implement such needed action.
-
-        if ("null".equals(origin))
-            return null;
-
-        StringBuilder target = new StringBuilder();
-
-        try
-        {
-            URI originUri = new URI(origin);
-            String scheme = originUri.getScheme();
-            if (scheme == null)
-            {
-                return null;
-            }
-            else
-            {
-                scheme = scheme.toLowerCase(Locale.ENGLISH);
-            }
-
-            target.append(scheme);
-            target.append("://");
-
-            String host = originUri.getHost();
-            if (host == null)
-            {
-                return null;
-            }
-            target.append(host);
-
-            int port = originUri.getPort();
-            boolean portIsSpecified = port != -1;
-            boolean isAlternateHttpPort = "http".equals(scheme) && port != 80;
-            boolean isAlternateHttpsPort = "https".equals(scheme) && port != 443;
-
-            if (portIsSpecified && (isAlternateHttpPort || isAlternateHttpsPort))
-            {
-                target.append(':');
-                target.append(port);
-            }
-            log.debug("Origin : {}", target.toString());
-            return target.toString();
-        }
-        catch (URISyntaxException e)
-        {
-            log.debug("Invalid Origin header provided: {}, marked conflicting", origin);
-            return null;
-        }
     }
 
     /**
@@ -596,14 +489,6 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
         }
         target.append(host);
 
-        int port = request.getServerPort();
-        if ("http".equals(scheme) && port != 80 || "https".equals(scheme) && port != 443)
-        {
-            target.append(':');
-            target.append(port);
-        }
-        log.debug("Host '{}' from request.serverName is used because no 'Host' or 'X-Forwarded-Host' header found. " +
-                "Return location '{}'", target.toString());
         return target.toString();
     }
 
@@ -624,7 +509,7 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
         onWhitelisted(request, origin, page);
         if (log.isDebugEnabled())
         {
-            log.debug("CSRF Origin {} was whitelisted, allowed for page {}", origin,
+            log.debug("CSRF Origin or Referer {} was whitelisted, allowed for page {}", origin,
                     page.getClass().getName());
         }
     }
@@ -767,7 +652,7 @@ public class CsrfPreventionRequestCycleListener extends AbstractRequestCycleList
     private void abortHandler(HttpServletRequest request, String origin, IRequestablePage page)
     {
         onAborted(request, origin, page);
-        log.info("Possible CSRF attack, client request location: {}, Origin: {}, action: aborted with error {} {}",
+        log.debug("Possible CSRF attack, client request location: {}, Origin: {}, action: aborted with error {} {}",
                 new Object[] {getLocationHeaderOrigin(request), origin, errorCode, errorMessage });
         throw new AbortWithHttpErrorCodeException(errorCode, errorMessage);
     }

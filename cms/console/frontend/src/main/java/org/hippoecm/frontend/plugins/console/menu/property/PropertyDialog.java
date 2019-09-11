@@ -56,8 +56,8 @@ import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ReadOnlyModel;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.TitleAttribute;
+import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AutoCompleteTextFieldWidget;
 import org.slf4j.Logger;
@@ -101,13 +101,13 @@ public class PropertyDialog extends Dialog<Node> {
 
     public PropertyDialog(IModelReference<Node> modelReference) {
         setTitle(Model.of("Add a new property"));
-        
+
         setSize(SIZE);
 
         this.modelReference = modelReference;
         final IModel<Node> model = modelReference.getModel();
 
-        getParent().add(CssClass.append("property-dialog"));
+        getParent().add(ClassAttribute.append("property-dialog"));
 
         // list defined properties for automatic completion
         choiceModel = new LoadableDetachableModel<Map<String, List<PropertyDefinition>>>() {

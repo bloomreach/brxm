@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import org.apache.wicket.markup.html.form.FormComponent;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.addon.workflow.FutureDateValidator;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.plugins.yui.datetime.YuiDateTimeField;
 
 public class DatePickerComponent extends Panel {
@@ -31,7 +31,7 @@ public class DatePickerComponent extends Panel {
         super(id);
 
         add(new Label("question", label));
-        add(CssClass.append("date-picker-container"));
+        add(ClassAttribute.append("date-picker-container"));
 
         Calendar minimum = Calendar.getInstance();
         minimum.setTime(dateModel.getObject());
