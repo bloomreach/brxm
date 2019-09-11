@@ -143,17 +143,22 @@ definitions:
     : /nl:
         jcr:primaryType: hipposys:resourcebundle
         width.hint: In pixels
-        address: Adres
-        map.canvas: Canvas
         latitude: Breedtegraad
-        markerCustomText: Aangepaste tekst marker
-        mapType: Type kaart
+        mapOverlay.hint: Keuzelijstwaarden bewerken in Documenten > Beheer > Kaart
+          openen
         address.hint: Adres heeft voorrang op de lengtegraad/breedtegraad
-        map.size: Formaat kaart
         zoomFactor: Zoomfactor
-        map.options: Kaartopties
         latitude.hint: Indien leeg worden de standaardwaarden voor lengtegraad/breedtegraad
           gebruikt
+        height: Hoogte
+        longitude: Lengtegraad
+        address: Adres
+        mapType.hint: Keuzelijstwaarden bewerken in Documenten > Beheer > Kaart openen
+        map.canvas: Canvas
+        markerCustomText: Aangepaste tekst marker
+        mapType: Type kaart
+        map.size: Formaat kaart
+        map.options: Kaartopties
         height.hint: In pixels. De minimumwaarde is 250 pixels.
         showMarker#no: Geen marker
         showMarker: Marker weergeven
@@ -164,5 +169,3 @@ definitions:
         location: Locatiegegevens
         showMarker#withCustomText: Met aangepaste tekst
         showMarker#withAddress: Met adres
-        height: Hoogte
-        longitude: Lengtegraad

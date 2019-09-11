@@ -143,16 +143,22 @@ definitions:
     : /es:
         jcr:primaryType: hipposys:resourcebundle
         width.hint: En píxeles
-        address: Dirección
-        map.canvas: Map Canvas
         latitude: Latitud
+        mapOverlay.hint: Edite los valores desplegables en Documentos > administración
+          > abrir mapa de calles
+        address.hint: La dirección prevalece sobre la longitud / latitud
+        zoomFactor: Factor de zoom
+        latitude.hint: Si está en blanco, se utilizan la longitud / latitud predeterminadas
+        height: Altura
+        longitude: Longitud
+        address: Dirección
+        mapType.hint: Edite los valores desplegables en Documentos > administración
+          > abrir mapa de calles
+        map.canvas: Map Canvas
         markerCustomText: Texto personalizado del marcador
         mapType: Tipo de mapa
-        address.hint: La dirección prevalece sobre la longitud / latitud
         map.size: Tamaño del mapa
-        zoomFactor: Factor de zoom
         map.options: Opciones del mapa
-        latitude.hint: Si está en blanco, se utilizan la longitud / latitud predeterminadas
         height.hint: En píxeles. El mínimo es 250 píxeles.
         showMarker#no: Sin marcador
         showMarker: Mostrar marcador
@@ -163,5 +169,3 @@ definitions:
         location: Información de ubicación
         showMarker#withCustomText: Con texto personalizado
         showMarker#withAddress: Con dirección
-        height: Altura
-        longitude: Longitud

@@ -80,6 +80,10 @@
     "properties-form-no-properties" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "properties-window-button-done" : {
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }

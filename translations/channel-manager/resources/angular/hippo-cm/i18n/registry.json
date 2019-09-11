@@ -870,14 +870,8 @@
       "locales" : null
     },
     "DOCUMENT_NOT_PART_OF_PROJECT" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "ADD_TO_PROJECT" : {
       "status" : "CLEAN",
@@ -1164,6 +1158,10 @@
       "locales" : null
     },
     "ERROR_SAVE_WITH_UNSUPPORTED_VALIDATOR" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "NONE_OPTION" : {
       "status" : "CLEAN",
       "locales" : null
     }

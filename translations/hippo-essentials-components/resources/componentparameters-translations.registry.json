@@ -460,6 +460,14 @@
     "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsNewsComponentInfo/documentTypes.hint" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsOpenStreetMapComponentInfo/mapOverlay.hint" : {
+      "status" : "CLEAN",
+      "locales" : null
+    },
+    "hippo:hst.componentparameters.org.onehippo.cms7.essentials.components.info.EssentialsOpenStreetMapComponentInfo/mapType.hint" : {
+      "status" : "CLEAN",
+      "locales" : null
     }
   }
 }
