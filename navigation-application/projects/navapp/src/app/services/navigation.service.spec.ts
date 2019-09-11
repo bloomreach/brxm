@@ -22,14 +22,14 @@ import { ClientAppMock } from '../client-app/models/client-app.mock';
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { NavItemMock } from '../models/dto/nav-item.mock';
-import { NavConfigService } from '../services/nav-config.service';
 import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
 
-import { DeepLinkingService } from './deep-linking.service';
+import { NavConfigService } from './nav-config.service';
+import { NavigationService } from './navigation.service';
 import { UrlMapperService } from './url-mapper.service';
 
-describe('DeepLinkingService', () => {
-  let service: DeepLinkingService;
+describe('NavigationService', () => {
+  let service: NavigationService;
 
   const locationMock = jasmine.createSpyObj('Location', [
     'path',
@@ -110,7 +110,7 @@ describe('DeepLinkingService', () => {
 
     TestBed.configureTestingModule({
       providers: [
-        DeepLinkingService,
+        NavigationService,
         { provide: Location, useValue: locationMock },
         { provide: NavConfigService, useValue: navConfigServiceMock },
         { provide: ClientAppService, useValue: clientAppServiceMock },
@@ -120,7 +120,7 @@ describe('DeepLinkingService', () => {
       ],
     });
 
-    service = TestBed.get(DeepLinkingService);
+    service = TestBed.get(NavigationService);
   });
 
   describe('initialNavigation', () => {

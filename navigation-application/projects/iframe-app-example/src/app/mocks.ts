@@ -16,46 +16,73 @@
 
 import { NavItem, Site } from '@bloomreach/navapp-communication';
 
-const apps = [
+export const mockNavItems: NavItem[] = [
   {
-    url: 'http://localhost:4201',
-    paths: [
-      'categories/category-ranking',
-      'categories/all-category-pages',
-      'seo',
-      'audiences/merchandising-audiences',
-    ],
+    id: 'categories/category-ranking',
+    appIframeUrl: 'http://localhost:4201',
+    appPath: 'categories/category-ranking',
   },
   {
-    url: 'http://localhost:4201/brsm',
-    paths: [
-      'insights/product-a-b-testing',
-      'insights/opportunities/top-opportunities',
-      'insights/opportunities/improve-category-navigation',
-      'insights/seo-analytics/overall-performance',
-      'insights/seo-analytics/incremental',
-      'insights/seo-analytics/targeted-pages/overview',
-      'insights/seo-analytics/targeted-pages/top-performing-pages',
-      'insights/seo-analytics/generated-pages/overview',
-      'insights/seo-analytics/generated-pages/top-performing-pages',
-    ],
+    id: 'categories/all-category-pages',
+    appIframeUrl: 'http://localhost:4201',
+    appPath: 'categories/all-category-pages',
+  },
+  {
+    id: 'seo',
+    appIframeUrl: 'http://localhost:4201',
+    appPath: 'seo',
+  },
+  {
+    id: 'audiences/merchandising-audiences',
+    appIframeUrl: 'http://localhost:4201',
+    appPath: 'audiences/merchandising-audiences',
+  },
+  {
+    id: 'insights/product-a-b-testing',
+    appIframeUrl: 'http://localhost:4201',
+    appPath: 'insights/product-a-b-testing',
+  },
+  {
+    id: 'insights/opportunities/top-opportunities',
+    appIframeUrl: 'http://localhost:4201',
+    appPath: 'insights/opportunities/top-opportunities',
+  },
+  {
+    id: 'insights/opportunities/improve-category-navigation',
+    appIframeUrl: 'http://localhost:4201',
+    appPath: 'insights/opportunities/improve-category-navigation',
+  },
+  {
+    id: 'insights/seo-analytics/overall-performance',
+    appIframeUrl: 'http://localhost:4201',
+    appPath: 'insights/seo-analytics/overall-performance',
+  },
+  {
+    id: 'insights/seo-analytics/incremental',
+    appIframeUrl: 'http://localhost:4201',
+    appPath: 'insights/seo-analytics/incremental',
+  },
+  {
+    id: 'insights/seo-analytics/targeted-pages/overview',
+    appIframeUrl: 'http://localhost:4201',
+    appPath: 'insights/seo-analytics/targeted-pages/overview',
+  },
+  {
+    id: 'insights/seo-analytics/targeted-pages/top-performing-pages',
+    appIframeUrl: 'http://localhost:4201',
+    appPath: 'insights/seo-analytics/targeted-pages/top-performing-pages',
+  },
+  {
+    id: 'insights/seo-analytics/generated-pages/overview',
+    appIframeUrl: 'http://localhost:4201',
+    appPath: 'insights/seo-analytics/generated-pages/overview',
+  },
+  {
+    id: 'insights/seo-analytics/generated-pages/top-performing-pages',
+    appIframeUrl: 'http://localhost:4201/brsm',
+    appPath: 'insights/seo-analytics/generated-pages/top-performing-pages',
   },
 ];
-
-export const navigationConfiguration: NavItem[] = apps.reduce(
-  (navItems, app) => {
-    const appNavItems = app.paths.map(path => ({
-      id: path,
-      appIframeUrl: app.url,
-      appPath: path,
-    }));
-
-    navItems = navItems.concat(appNavItems);
-
-    return navItems;
-  },
-  [],
-);
 
 export const mockSites: Site[] = [
   {

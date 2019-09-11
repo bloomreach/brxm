@@ -20,7 +20,7 @@ import { ConfigResourceMock } from './config-resource.mock';
 
 export class AppSettingsMock implements AppSettings {
   initialPath = 'initial/path';
-  navAppBasePath = 'navAppRoot';
+  navAppBaseURL = 'navAppRoot';
   navAppResourceLocation = 'testLocation';
   navConfigResources = [
     new ConfigResourceMock({

@@ -20,11 +20,11 @@ import { ReplaySubject } from 'rxjs';
 
 import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
-import { DeepLinkingService } from '../deep-linking/deep-linking.service';
 
 import { BusyIndicatorService } from './busy-indicator.service';
 import { CommunicationsService } from './communications.service';
 import { NavConfigService } from './nav-config.service';
+import { NavigationService } from './navigation.service';
 import { OverlayService } from './overlay.service';
 
 describe('CommunicationsService', () => {
@@ -59,7 +59,7 @@ describe('CommunicationsService', () => {
     'hide',
   ]);
 
-  const deepLinkingServiceMock = jasmine.createSpyObj('DeepLinkingService', [
+  const navigationServiceMock = jasmine.createSpyObj('NavigationService', [
     'navigateByNavLocation',
     'updateByNavLocation',
   ]);
@@ -102,7 +102,7 @@ describe('CommunicationsService', () => {
         { provide: NavConfigService, useValue: navConfigServiceMock },
         { provide: BusyIndicatorService, useValue: busyIndicatorServiceMock },
         { provide: OverlayService, useValue: overlayServiceMock },
-        { provide: DeepLinkingService, useValue: deepLinkingServiceMock },
+        { provide: NavigationService, useValue: navigationServiceMock },
       ],
     });
 
@@ -178,7 +178,7 @@ describe('CommunicationsService', () => {
           breadcrumbLabel: 'some breadcrumb label',
         });
 
-        expect(deepLinkingServiceMock.navigateByNavLocation).toHaveBeenCalled();
+        expect(navigationServiceMock.navigateByNavLocation).toHaveBeenCalled();
       });
     });
 
@@ -191,7 +191,7 @@ describe('CommunicationsService', () => {
 
         service.parentApiMethods.updateNavLocation(location);
 
-        expect(deepLinkingServiceMock.updateByNavLocation).toHaveBeenCalled();
+        expect(navigationServiceMock.updateByNavLocation).toHaveBeenCalled();
       });
     });
 

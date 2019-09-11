@@ -34,14 +34,19 @@ const appInitializer = (
   navConfigService: NavConfigService,
   bootstrapService: BootstrapService,
   busyIndicatorService: BusyIndicatorService,
-) => () => loadNavItems(navConfigService).then(() => setTimeout(() => {
-  busyIndicatorService.show();
+) => {
+  return () => {
+    return loadNavItems(navConfigService)
+      .then(() => setTimeout(() => {
+        busyIndicatorService.show();
 
-  bootstrapService.bootstrap().then(() => {
-    busyIndicatorService.hide();
-    bootstrapResolve();
-  }).catch(bootstrapReject);
-}));
+        bootstrapService.bootstrap().then(() => {
+          busyIndicatorService.hide();
+          bootstrapResolve();
+        }).catch(bootstrapReject);
+      }));
+  };
+};
 
 @NgModule({
   providers: [
@@ -57,4 +62,4 @@ const appInitializer = (
     },
   ],
 })
-export class BootstrapModule {}
+export class BootstrapModule { }

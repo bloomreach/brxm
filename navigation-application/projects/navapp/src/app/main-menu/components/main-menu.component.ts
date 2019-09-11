@@ -18,11 +18,10 @@ import { Component, HostBinding, Inject, OnDestroy, OnInit } from '@angular/core
 import { Subject } from 'rxjs';
 
 import { APP_BOOTSTRAPPED } from '../../bootstrap/app-bootstrapped';
-import { ClientAppService } from '../../client-app/services/client-app.service';
-import { DeepLinkingService } from '../../deep-linking/deep-linking.service';
 import { UserSettings } from '../../models/dto/user-settings.dto';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { GlobalSettingsService } from '../../services/global-settings.service';
+import { NavigationService } from '../../services/navigation.service';
 import { QaHelperService } from '../../services/qa-helper.service';
 import { MenuItemContainer } from '../models/menu-item-container.model';
 import { MenuItemLink } from '../models/menu-item-link.model';
@@ -46,12 +45,11 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   constructor(
     private menuStateService: MenuStateService,
     private qaHelperService: QaHelperService,
-    private clientAppService: ClientAppService,
     private settingsService: GlobalSettingsService,
     private busyIndicatorService: BusyIndicatorService,
-    private deepLinkingService: DeepLinkingService,
+    private navigationService: NavigationService,
     @Inject(APP_BOOTSTRAPPED) private appBootstrapped: Promise<void>,
-  ) {}
+  ) { }
 
   get isBusyIndicatorVisible(): boolean {
     return this.busyIndicatorService.isVisible;
@@ -118,7 +116,7 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   selectMenuItem(item: MenuItem): void {
     this.isUserToolbarOpened = false;
     if (item instanceof MenuItemLink) {
-      this.deepLinkingService.navigateByNavItem(item.navItem);
+      this.navigationService.navigateByNavItem(item.navItem);
       return;
     }
 

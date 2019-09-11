@@ -23,12 +23,13 @@ import { finalize, map, skip, switchMap, tap } from 'rxjs/operators';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
-import { NavConfigService } from '../services/nav-config.service';
 import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
 
 import { NavigationStartEvent } from './events/navigation-start.event';
 import { NavigationStopEvent } from './events/navigation-stop.event';
 import { NavigationEvent } from './events/navigation.event';
+import { GlobalSettingsService } from './global-settings.service';
+import { NavConfigService } from './nav-config.service';
 import { UrlMapperService } from './url-mapper.service';
 
 interface Route {
@@ -55,7 +56,7 @@ interface Navigation {
 @Injectable({
   providedIn: 'root',
 })
-export class DeepLinkingService implements OnDestroy {
+export class NavigationService implements OnDestroy {
   private routes: Route[];
   private locationSubscription: Subscription;
   private readonly transitions = new Subject<Partial<Navigation>>();
@@ -77,6 +78,7 @@ export class DeepLinkingService implements OnDestroy {
     private menuStateService: MenuStateService,
     private breadcrumbsService: BreadcrumbsService,
     private urlMapperService: UrlMapperService,
+    private globalSettingsService: GlobalSettingsService,
   ) {
     this.setupNavigations();
     this.processNavigations();
@@ -101,7 +103,9 @@ export class DeepLinkingService implements OnDestroy {
 
     this.setUpLocationChangeListener();
 
-    const url = this.location.path(true);
+    const baseUrl = this.globalSettingsService.appSettings.navAppBaseURL;
+    const basePath = new URL(baseUrl).pathname;
+    const url = `${basePath}${this.globalSettingsService.appSettings.initialPath}`;
 
     this.scheduleNavigation(url, NavigationTrigger.Imperative, {}, {}, true);
   }

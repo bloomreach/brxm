@@ -16,8 +16,8 @@
 
 import { Subject } from 'rxjs';
 
-import { NavigationStartEvent } from '../deep-linking/events/navigation-start.event';
-import { NavigationStopEvent } from '../deep-linking/events/navigation-stop.event';
+import { NavigationStartEvent } from './events/navigation-start.event';
+import { NavigationStopEvent } from './events/navigation-stop.event';
 
 import { BusyIndicatorService } from './busy-indicator.service';
 
@@ -25,12 +25,12 @@ describe('BusyIndicatorService', () => {
   let service: BusyIndicatorService;
 
   const events$ = new Subject();
-  const deepLinkingServiceMock = {
+  const navigationServiceMock = {
     events$,
   } as any;
 
   beforeEach(() => {
-    service = new BusyIndicatorService(deepLinkingServiceMock);
+    service = new BusyIndicatorService(navigationServiceMock);
   });
 
   it('busy indicator should be hidden by default', () => {

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { Location } from '@angular/common';
 import { Injectable } from '@angular/core';
 
 import { AppSettings } from '../models/dto/app-settings.dto';
@@ -31,21 +32,16 @@ export class GlobalSettingsService implements GlobalSettings {
     const settings = (window as any).NavAppSettings;
     Object.assign(this, settings);
 
-    this.appSettings.navAppBasePath = this.extractBasePath();
+    this.appSettings.navAppBaseURL = this.extractBaseURL();
 
     if (!this.appSettings.iframesConnectionTimeout) {
       this.appSettings.iframesConnectionTimeout = 30000;
     }
   }
 
-  private extractBasePath(): string {
-    const initialPath = this.appSettings.initialPath || '/';
-    const origin = window.location.origin;
-    const pathname = window.location.pathname.replace(/\/$/, '');
-    const fullPath = `${origin}${pathname}`;
-    if (initialPath === '/') {
-      return fullPath;
-    }
-    return fullPath.slice(0, fullPath.lastIndexOf(initialPath));
+  private extractBaseURL(): string {
+    const pathname = Location.stripTrailingSlash(window.location.pathname);
+    const fullPath = `${window.location.origin}${pathname}`;
+    return fullPath;
   }
 }
