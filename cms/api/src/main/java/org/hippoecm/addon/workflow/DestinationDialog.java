@@ -48,6 +48,7 @@ import org.hippoecm.frontend.widgets.TextFieldWidget;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.repository.security.StandardPermissionNames.HIPPO_AUTHOR;
 import static org.onehippo.repository.security.StandardPermissionNames.HIPPO_EDITOR;
 
 public abstract class DestinationDialog extends Dialog<Void> implements IWorkflowInvoker {
@@ -184,7 +185,7 @@ public abstract class DestinationDialog extends Dialog<Void> implements IWorkflo
         final String destinationPath = getDestinationPath();
         if (StringUtils.isNotBlank(destinationPath)) {
             try {
-                return UserSession.get().getJcrSession().hasPermission(destinationPath, HIPPO_EDITOR);
+                return UserSession.get().getJcrSession().hasPermission(destinationPath, HIPPO_AUTHOR);
             } catch (RepositoryException ignore) {
             }
         }
