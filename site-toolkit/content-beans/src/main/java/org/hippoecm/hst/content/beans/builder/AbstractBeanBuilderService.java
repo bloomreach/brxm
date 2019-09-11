@@ -217,8 +217,12 @@ public abstract class AbstractBeanBuilderService {
         // if a document type doesn't match with any predefined document type, then
         // a content block definition check must be made to figure out whether the
         // document type is a content block
-        if (DocumentType.UNKNOWN == documentType && hasContentBlocks(contentTypeChild)) {
-            return DocumentType.CONTENT_BLOCKS;
+        if (DocumentType.UNKNOWN == documentType) {
+            if (hasContentBlocks(contentTypeChild)) {
+                return DocumentType.CONTENT_BLOCKS;
+            } else {
+                log.warn("Type {} is undefined.", type);
+            }
         }
 
         return documentType;
