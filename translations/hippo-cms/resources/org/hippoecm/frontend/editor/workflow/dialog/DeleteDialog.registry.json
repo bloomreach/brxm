@@ -1,0 +1,9 @@
+{
+  "bundleType" : "WICKET",
+  "keyData" : {
+    "delete-action" : {
+      "status" : "CLEAN",
+      "locales" : null
+    }
+  }
+}
