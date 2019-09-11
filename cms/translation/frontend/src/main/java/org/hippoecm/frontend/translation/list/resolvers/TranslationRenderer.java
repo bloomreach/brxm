@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,13 +19,12 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.image.Image;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.DataView;
-import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.AbstractNodeRenderer;
@@ -91,7 +90,7 @@ public class TranslationRenderer extends AbstractNodeRenderer {
                     HippoLocale itemLocale = item.getModelObject();
                     Image img = new CachingImage("img", itemLocale.getIcon(IconSize.M, LocaleState.EXISTS));
                     if (itemLocale.getName().equals(locale)) {
-                        img.add(new AttributeAppender("class", Model.of("hippo-translation-current"), " "));
+                        img.add(ClassAttribute.append("hippo-translation-current"));
                     }
                     item.add(img);
                 }

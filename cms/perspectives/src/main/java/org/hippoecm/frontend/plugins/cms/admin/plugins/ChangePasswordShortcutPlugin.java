@@ -46,7 +46,7 @@ import org.hippoecm.frontend.plugins.cms.admin.password.validation.PasswordValid
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.PasswordWidget;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.LoginException;
 import org.hippoecm.frontend.session.UserSession;
@@ -214,7 +214,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
 
             });
             feedback.setOutputMarkupId(true);
-            feedback.add(CssClass.append(ReadOnlyModel.of(() -> feedbackLevel)));
+            feedback.add(ClassAttribute.append(() -> feedbackLevel));
 
             currentWidget = new PasswordWidget("current-password",
             PropertyModel.of(ChangePasswordShortcutPlugin.this, "currentPassword"),
