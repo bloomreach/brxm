@@ -65,7 +65,7 @@ export interface Page {
   /**
    * Gets a content used in the page.
    * @param reference The reference to the content. It can be an object containing
-   * [RFC-6901](https://tools.ietf.org/html/rfc6901) JSON Pointer.
+   * an [RFC-6901](https://tools.ietf.org/html/rfc6901) JSON Pointer.
    */
   getContent(reference: Reference | string): Content;
 
@@ -83,7 +83,7 @@ export class Page implements Page {
     protected content: ContentMap,
   ) {}
 
-  private getContentReference(reference: Reference) {
+  private static getContentReference(reference: Reference) {
     return  reference.$ref.split('/', 3)[2] || '';
   }
 
@@ -93,7 +93,7 @@ export class Page implements Page {
 
   getContent(reference: Reference | string) {
     const contentReference = isReference(reference)
-      ? this.getContentReference(reference)
+      ? Page.getContentReference(reference)
       : reference;
 
     return this.content.get(contentReference);
