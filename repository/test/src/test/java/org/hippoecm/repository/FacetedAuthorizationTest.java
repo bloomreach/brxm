@@ -93,6 +93,8 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         Node users = config.getNode(HippoNodeType.USERS_PATH);
         Node groups = config.getNode(HippoNodeType.GROUPS_PATH);
 
+        groups.getNode("admin").setProperty("hipposys:members", new String[]{});
+
         cleanupDomains(domains);
 
         cleanupUserAndGroup(users, groups);
@@ -146,6 +148,11 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         Node domains = config.getNode(HippoNodeType.DOMAINS_PATH);
         Node users = config.getNode(HippoNodeType.USERS_PATH);
         Node groups = config.getNode(HippoNodeType.GROUPS_PATH);
+        /*   Temporarily adding admin user to admin group to pass the
+             testDelegatedSessionWithWildcardDomainRuleExtension() and
+             testDelegatedSessionWithNamedDomainRuleExtension() tests
+         */
+        groups.getNode("admin").setProperty("hipposys:members", new String[]{"admin"});
 
         // create test user
         createUserAndGroup(users, groups);

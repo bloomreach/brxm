@@ -4,7 +4,8 @@ definitions:
       jcr:primaryType: hipposys:domain
       /readwrite:
         jcr:primaryType: hipposys:authrole
-        hipposys:groups: [editor, author]
+        # TODO: shouldn't this require a separate/dedicated userrole like xm-user (logged in user?)
+        hipposys:userrole: xm-content-author
         hipposys:role: readwrite
       /autoexportconfig:
         jcr:primaryType: hipposys:domainrule

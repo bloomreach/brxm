@@ -42,7 +42,7 @@ import org.apache.jackrabbit.core.state.SessionItemStateManager;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.security.HippoAccessManager;
-import org.onehippo.repository.security.User;
+import org.onehippo.repository.security.SessionUser;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.xml.DefaultContentHandler;
 import org.onehippo.repository.xml.ImportContext;
@@ -97,8 +97,13 @@ public class SessionImpl extends org.apache.jackrabbit.core.SessionImpl implemen
     }
 
     @Override
-    public User getUser() {
+    public SessionUser getUser() {
         return helper.getUser();
+    }
+
+    @Override
+    public boolean isSystemUser() {
+        return helper.isSystemUser();
     }
 
     @Override

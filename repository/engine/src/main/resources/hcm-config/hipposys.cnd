@@ -153,6 +153,7 @@
 - hipposys:email (string)
 - hipposys:previouspasswords (string) multiple
 - hipposys:passwordlastmodified (date)
+- hipposys:userroles (string) multiple
 
 [hipposys:externaluser] > hipposys:user
 - hipposys:lastsync (date)
@@ -164,6 +165,7 @@
 - hipposys:members (string) multiple
 - hipposys:groups (string) multiple
 - hipposys:description (string)
+- hipposys:userroles (string) multiple
 
 [hipposys:externalgroup] > hipposys:group
 - hipposys:syncdate (date)
@@ -172,9 +174,14 @@
 [hipposys:role] > nt:base
 - hipposys:privileges (string) multiple
 - hipposys:roles (string) multiple
-- hipposys:jcrread (boolean)
-- hipposys:jcrwrite (boolean)
-- hipposys:jcrremove (boolean)
+- hipposys:jcrread (boolean) // obsolete, never used
+- hipposys:jcrwrite (boolean) // obsolete, never used
+- hipposys:jcrremove (boolean) // obsolete, never used
+
+[hipposys:userrole] > nt:base
+- hipposys:system (boolean)
+- hipposys:userroles (string) multiple
+- hipposys:description (string)
 
 [hipposys:externalrole] > hipposys:role
 - hipposys:securityprovider (string) = 'internal' mandatory autocreated
@@ -182,6 +189,7 @@
 [hipposys:authrole] > nt:base
 - hipposys:users (string) multiple
 - hipposys:groups (string) multiple
+- hipposys:userrole (string)
 - hipposys:role (string) mandatory
 - hipposys:description (string)
 
@@ -227,6 +235,9 @@
 [hipposys:rolefolder] > nt:base
 + * (hipposys:role) = hipposys:role
 
+[hipposys:userrolefolder] > nt:base
++ * (hipposys:userrole) = hipposys:userrole
+
 [hipposys:domainfolder] > nt:base
 + * (hipposys:domain) = hipposys:domain
 
@@ -234,6 +245,7 @@
 - hipposys:userspath (string) mandatory
 - hipposys:groupspath (string) mandatory
 - hipposys:rolespath (string) mandatory
+- hipposys:userrolespath (string) mandatory
 - hipposys:domainspath (string) mandatory
 - hipposys:passwordmaxagedays (double)
 - hipposys:passwordmaxagedays (long)
@@ -305,6 +317,7 @@
 + hippo:temporary (hipposys:temporaryfolder) = hipposys:temporaryfolder autocreated
 + hippo:users (hipposys:userfolder) = hipposys:userfolder
 + hippo:roles (hipposys:rolefolder) = hipposys:rolefolder
++ hippo:userroles (hipposys:userrolefolder) = hipposys:userrolefolder
 + hippo:groups (hipposys:groupfolder) = hipposys:groupfolder
 + hippo:domains (hipposys:domainfolder) = hipposys:domainfolder
 + hippo:derivatives (hipposys:derivativesfolder) = hipposys:derivativesfolder autocreated mandatory

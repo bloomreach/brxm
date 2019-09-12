@@ -87,8 +87,8 @@ import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 import org.hippoecm.repository.security.principals.GroupPrincipal;
 import org.hippoecm.repository.security.principals.UserPrincipal;
 import org.onehippo.repository.security.SessionDelegateUser;
+import org.onehippo.repository.security.SessionUser;
 import org.onehippo.repository.security.StandardPermissionNames;
-import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -216,7 +216,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     /**
      * The User when isUser==true.
      */
-    private User user;
+    private SessionUser user;
 
     /**
      * The userIds of the logged in user
@@ -378,7 +378,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         return isSystem;
     }
 
-    public User getUser() {
+    public SessionUser getUser() {
         return user;
     }
 

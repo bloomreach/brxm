@@ -42,6 +42,15 @@ public interface Group {
     Set<String> getMembers();
 
     /**
+     * Get the directly assigned user role names for this group.
+     * <p>
+     * The user role names are <em>not</em> resolved, nor include possible implied user roles names
+     * </p>
+     * @return the directly assigned user role names
+     */
+    Set<String> getUserRoles();
+
+    /**
      * Get the description property of this group.
      *
      * @return  the description property of this group, or {@code null} if not present

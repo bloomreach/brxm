@@ -18,12 +18,24 @@ package org.hippoecm.repository.security.role;
 import java.util.Set;
 
 /**
- * A data access role possibly holding and representing a set of fine-grained privilege names
+ * Base interface for {@link Role} and {@link UserRole}
  */
-public interface Role extends AbstractRole {
+public interface AbstractRole {
     /**
-     * The set of fine-grained privileges represented by this role
-     * @return the fine-grained privileges of this role
+     * The name of the role
+     * @return The name of the role
      */
-    Set<String> getPrivileges();
+    String getName();
+
+    /**
+     * Indicator if the role is used or reserved for system purposes.
+     * @return true if this is a system role, false otherwise
+     */
+    boolean isSystem();
+
+    /**
+     * The same of role names which are implied (included or merged) with this role.
+     * @return the set of other role names to implied by this role.
+     */
+    Set<String> getRoles();
 }

@@ -17,6 +17,7 @@ package org.hippoecm.repository.security;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -25,17 +26,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.jcr.Credentials;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.UnsupportedRepositoryOperationException;
-import javax.jcr.Value;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.jcr.security.AccessControlManager;
@@ -68,7 +68,9 @@ import org.apache.jackrabbit.core.security.authentication.RepositoryCallback;
 import org.apache.jackrabbit.core.security.principal.PrincipalProvider;
 import org.apache.jackrabbit.core.security.principal.PrincipalProviderRegistry;
 import org.apache.jackrabbit.core.security.principal.ProviderRegistryImpl;
+import org.apache.jackrabbit.util.ISO9075;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.security.domain.Domain;
 import org.hippoecm.repository.security.domain.FacetAuthDomain;
 import org.hippoecm.repository.security.group.DummyGroupManager;
@@ -76,12 +78,13 @@ import org.hippoecm.repository.security.group.GroupManager;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 import org.hippoecm.repository.security.principals.GroupPrincipal;
 import org.hippoecm.repository.security.principals.UserPrincipal;
-import org.hippoecm.repository.security.role.DummyRoleManager;
-import org.hippoecm.repository.security.role.RoleManager;
-import org.hippoecm.repository.security.service.UserImpl;
+import org.hippoecm.repository.security.role.Role;
+import org.hippoecm.repository.security.role.RolesModel;
+import org.hippoecm.repository.security.role.UserRolesModel;
+import org.hippoecm.repository.security.service.SessionUserImpl;
 import org.hippoecm.repository.security.user.DummyUserManager;
 import org.hippoecm.repository.security.user.HippoUserManager;
-import org.onehippo.repository.security.User;
+import org.onehippo.repository.security.SessionUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,27 +96,28 @@ public class SecurityManager implements HippoSecurityManager {
 
     private static final Logger log = LoggerFactory.getLogger(SecurityManager.class);
 
-    private String usersPath;
-    private String groupsPath;
-    private String rolesPath;
     private String domainsPath;
 
+    // initial JR system session, not impersonated, never logout
     private Session systemSession;
-    private final Map<String, SecurityProvider> providers = new LinkedHashMap<String, SecurityProvider>();
+    private final Map<String, SecurityProvider> providers = new LinkedHashMap<>();
     private String adminID;
     private String anonymID;
     private SecurityConfig config;
     private boolean maintenanceMode;
     private PrincipalProviderRegistry principalProviderRegistry;
     private PermissionManager permissionManager;
+    private RolesModel rolesModel;
+    private UserRolesModel userRolesModel;
 
     private AuthContextProvider authCtxProvider;
 
     public void configure() throws RepositoryException {
-        Node configNode = systemSession.getRootNode().getNode(SECURITY_CONFIG_PATH);
-        usersPath = configNode.getProperty(HippoNodeType.HIPPO_USERSPATH).getString();
-        groupsPath = configNode.getProperty(HippoNodeType.HIPPO_GROUPSPATH).getString();
-        rolesPath = configNode.getProperty(HippoNodeType.HIPPO_ROLESPATH).getString();
+        final Node configNode = systemSession.getRootNode().getNode(SECURITY_CONFIG_PATH);
+        final String usersPath = configNode.getProperty(HippoNodeType.HIPPO_USERSPATH).getString();
+        final String groupsPath = configNode.getProperty(HippoNodeType.HIPPO_GROUPSPATH).getString();
+        final String rolesPath = configNode.getProperty(HippoNodeType.HIPPO_ROLESPATH).getString();
+        final String userRolesPath = configNode.getProperty(HippoNodeType.HIPPO_USERROLESPATH).getString();
         domainsPath = configNode.getProperty(HippoNodeType.HIPPO_DOMAINSPATH).getString();
         SecurityProviderFactory spf = new SecurityProviderFactory(SECURITY_CONFIG_PATH, usersPath, groupsPath, rolesPath, domainsPath, maintenanceMode);
         permissionManager = PermissionManager.getInstance();
@@ -153,6 +157,9 @@ public class SecurityManager implements HippoSecurityManager {
         if (providers.size() == 0) {
             log.error("No security providers found: login will not be possible!");
         }
+        // the following must be done after the above configuration: only from here on session.impersonate is possible!
+        rolesModel = new RolesModel(systemSession, "/"+rolesPath);
+        userRolesModel = new UserRolesModel(systemSession, "/"+userRolesPath);
     }
 
     class HippoJAASAuthContext extends JAASAuthContext {
@@ -340,113 +347,62 @@ public class SecurityManager implements HippoSecurityManager {
     }
 
     /**
-     * Get the domains in which the user has a role.
+     * Get the applicable domains for the user.
      */
-    private Set<Domain> getDomainsForUser(final String userId) throws RepositoryException {
+    private Set<Domain> getDomains(final String user, final boolean anonymousUser, final Set<String> groups,
+                                   final Set<String> userRoles) {
         Set<Domain> domains = new HashSet<>();
-        StringBuilder statement = new StringBuilder();
-        statement.append("SELECT * FROM ").append(HippoNodeType.NT_AUTHROLE);
-        statement.append(" WHERE");
-        statement.append(" jcr:path LIKE '/").append(domainsPath).append("/%").append("'");
-        statement.append(" AND ");
-        statement.append(HippoNodeType.HIPPO_USERS).append(" = '").append(userId.replace("'", "''")).append("'");
-        try {
-            Query q = systemSession.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.SQL);
-            QueryResult result = q.execute();
-            NodeIterator nodeIter = result.getNodes();
-            while (nodeIter.hasNext()) {
-                // the parent of the auth role node is the domain node
-                Domain domain = new Domain(nodeIter.nextNode().getParent());
-                log.trace("Domain '{}' found for user: {}", domain.getName(), userId);
-                domains.add(domain);
-            }
-        } catch (RepositoryException e) {
-            log.error("Error while searching for domains for user: " + userId, e);
+        StringBuilder xpath = new StringBuilder("/jcr:root/");
+        xpath.append(domainsPath);
+        xpath.append("//element(*, ").append(HippoNodeType.NT_AUTHROLE).append(")[");
+        boolean hasFilter = false;
+        if (!anonymousUser) {
+            hasFilter = true;
+            xpath.append("@").append(HippoNodeType.HIPPO_USERS).append(" = '");
+            xpath.append(ISO9075.encode(NodeNameCodec.encode(user, true))).append("'");
         }
-        return domains;
-    }
-
-    /**
-     * Get the domains in which the group has a role.
-     */
-    private Set<Domain> getDomainsForGroup(final String groupId) throws RepositoryException {
-
-        Set<Domain> domains = new HashSet<>();
-        StringBuilder statement = new StringBuilder();
-        statement.append("SELECT * FROM ").append(HippoNodeType.NT_AUTHROLE);
-        statement.append(" WHERE");
-        statement.append(" jcr:path LIKE '/").append(domainsPath).append("/%").append("'");
-        statement.append(" AND ");
-        statement.append(HippoNodeType.HIPPO_GROUPS).append(" = '").append(groupId.replaceAll("'", "''")).append("'");
-        try {
-            Query q = systemSession.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.SQL);
-            QueryResult result = q.execute();
-            NodeIterator nodeIter = result.getNodes();
-            while (nodeIter.hasNext()) {
-                // the parent of the auth role node is the domain node
-                Domain domain = new Domain(nodeIter.nextNode().getParent());
-                log.trace("Domain '{}' found for group: {}", domain.getName(), groupId);
-                domains.add(domain);
+        for (String group : groups) {
+            if (hasFilter) {
+                xpath.append(" or ");
+            } else {
+                hasFilter = true;
             }
-        } catch (RepositoryException e) {
-            log.error("Error while searching for domains for group: " + groupId, e);
+            xpath.append("@").append(HippoNodeType.HIPPO_GROUPS).append(" = '");
+            xpath.append(ISO9075.encode(NodeNameCodec.encode(group, true))).append("'");
         }
-        return domains;
-    }
-
-    private Set<String> getRolesForRole(String roleId) {
-        return getRolesForRole(roleId, new HashSet<>());
-    }
-
-    private Set<String> getRolesForRole(String roleId, Set<String> currentRoles) {
-        Node roleNode;
-        log.trace("Looking for role: {} in path: {}", roleId, rolesPath);
-        String path = rolesPath + "/" + roleId;
-        try {
-            roleNode = systemSession.getRootNode().getNode(path);
-            log.trace("Found role node: {}", roleNode.getName());
-            if (roleNode.hasProperty(HippoNodeType.HIPPO_ROLES)) {
-                Value[] values = roleNode.getProperty(HippoNodeType.HIPPO_ROLES).getValues();
-                for (Value value : values) {
-                    if (!currentRoles.contains(value.getString())) {
-                        currentRoles.add(value.getString());
-                        currentRoles.addAll(getRolesForRole( value.getString(), currentRoles));
+        for (String userRole : userRoles) {
+            if (hasFilter) {
+                xpath.append(" or ");
+            } else {
+                hasFilter = true;
+            }
+            xpath.append("@").append(HippoNodeType.HIPPO_USERROLE).append(" = '");
+            xpath.append(ISO9075.encode(NodeNameCodec.encode(userRole, true))).append("'");
+        }
+        xpath.append("]");
+        if (hasFilter) {
+            try {
+                Query q = systemSession.getWorkspace().getQueryManager().createQuery(xpath.toString(), Query.XPATH);
+                QueryResult result = q.execute();
+                NodeIterator nodeIter = result.getNodes();
+                Set<String> domainIds = new HashSet<>();
+                while (nodeIter.hasNext()) {
+                    // the parent of the auth role node is the domain node
+                    Node domainNode = nodeIter.nextNode().getParent();
+                    if (domainIds.add(domainNode.getIdentifier())) {
+                        Domain domain = new Domain(domainNode);
+                        log.trace("Domain '{}' found for user: {}", domain.getName(), user);
+                        domains.add(domain);
                     }
                 }
+            } catch (RepositoryException e) {
+                log.error("Error while searching for domains for user: " + user, e);
             }
-        } catch (PathNotFoundException e) {
-            // log at info level instead of warn, this occurs a lot during unit tests
-            log.info("Role not found: {}", roleId);
-        } catch (RepositoryException e) {
-            log.error("Error while looking up role: " + roleId, e);
         }
-        return currentRoles;
+        return domains;
     }
 
-    private Set<String> getPrivilegesForRole(String roleId) {
-        Set<String> privileges = new HashSet<>();
-        Node roleNode;
-        log.trace("Looking for role: {} in path: {}", roleId, rolesPath);
-        String path = rolesPath + "/" + roleId;
-        try {
-            roleNode = systemSession.getRootNode().getNode(path);
-            log.trace("Found role node: {}", roleNode.getName());
-            if (roleNode.hasProperty(HippoNodeType.HIPPO_PRIVILEGES)) {
-                Value[] values = roleNode.getProperty(HippoNodeType.HIPPO_PRIVILEGES).getValues();
-                for (Value value : values) {
-                    privileges.add(value.getString());
-                }
-            }
-        } catch (PathNotFoundException e) {
-            // log at info level instead of warn, this occurs a lot during unit tests
-            log.info("Role not found: {}", roleId);
-        } catch (RepositoryException e) {
-            log.error("Error while looking up role: " + roleId, e);
-        }
-        return privileges;
-    }
-
-    public void assignPrincipals(final Set<Principal>principals, final SimpleCredentials creds) throws RepositoryException {
+    public void assignPrincipals(final Set<Principal> principals, final SimpleCredentials creds) throws RepositoryException {
         try {
             String userId = null;
             String providerId = null;
@@ -459,6 +415,8 @@ public class SecurityManager implements HippoSecurityManager {
             boolean anonymousUser;
             Principal userPrincipal;
             Set<String> groupIds;
+            Set<String> userRoles;
+
             if (userId != null) {
                 anonymousUser = false;
                 HippoUserManager userManager;
@@ -471,11 +429,14 @@ public class SecurityManager implements HippoSecurityManager {
                     userManager = (HippoUserManager)providers.get(INTERNAL_PROVIDER).getUserManager();
                     groupManager = providers.get(INTERNAL_PROVIDER).getGroupManager();
                 }
-                User user = new UserImpl(userManager.getUser(userId), groupManager);
+                SessionUser user = new SessionUserImpl(userManager.getUser(userId), groupManager,
+                        roleNames -> userRolesModel.resolveRoleNames(roleNames));
+                userRoles = user.getUserRoles();
                 userPrincipal = new UserPrincipal(user);
                 groupIds = user.getMemberships();
             } else {
                 anonymousUser = true;
+                userRoles = Collections.emptySet();
                 userPrincipal = new AnonymousPrincipal();
                 groupIds = providers.get(INTERNAL_PROVIDER).getGroupManager().getMembershipIds(null);
             }
@@ -483,51 +444,40 @@ public class SecurityManager implements HippoSecurityManager {
             for (String groupId : groupIds) {
                 principals.add(new GroupPrincipal(groupId));
             }
-            principals.add(createFacetAuthPrincipal(userPrincipal.getName(), anonymousUser, groupIds));
+            principals.add(createFacetAuthPrincipal(userPrincipal.getName(), anonymousUser, groupIds, userRoles));
         } catch(RepositoryException ex) {
             log.error("unable to assign principals for user", ex);
             throw ex;
         }
     }
 
-    private FacetAuthPrincipal createFacetAuthPrincipal(final String userId, final boolean anonymousUser, final Set<String> groupIds) throws RepositoryException {
+    private FacetAuthPrincipal createFacetAuthPrincipal(final String userId, final boolean anonymousUser,
+                                                        final Set<String> groupIds, final Set<String> userRoles) {
         // Find domains that the user is associated with
-        Set<Domain> userDomains = new HashSet<>();
-        if (!anonymousUser) {
-            userDomains.addAll(getDomainsForUser(userId));
-        }
-        for (String groupId : groupIds) {
-            userDomains.addAll(getDomainsForGroup(groupId));
-        }
+        Set<Domain> domains = getDomains(userId, anonymousUser, groupIds, userRoles);
 
         HashSet<FacetAuthDomain> facetAuthDomains = new HashSet<>();
 
-        for (Domain domain : userDomains) {
+        for (Domain domain : domains) {
 
             // get roles for a user for a domain
             log.debug("User {} has domain {}", userId, domain.getName());
-            Set<String> roles = new HashSet<>();
+            final Set<String> roleNames = new HashSet<>();
             if (!anonymousUser) {
-                roles.addAll(domain.getRolesForUser(userId));
+                roleNames.addAll(domain.getRolesForUser(userId));
             }
-            for (String groupId : groupIds) {
-                roles.addAll(domain.getRolesForGroup(groupId));
+            for (final String groupName : groupIds) {
+                roleNames.addAll(domain.getRolesForGroup(groupName));
             }
-
-            // check for indirectly included roles
-            Set<String> includedRoles = new HashSet<>();
-            for (String roleId : roles) {
-                includedRoles.addAll(getRolesForRole(roleId));
+            for (final String userRoleName : userRoles) {
+                roleNames.addAll(domain.getRolesForUserRole(userRoleName));
             }
-            roles.addAll(includedRoles);
+            Set<Role> resolvedRoles = rolesModel.resolveRoles(roleNames);
+            Set<String> roles = resolvedRoles.stream().map(role -> role.getName()).collect(Collectors.toSet());
+            Set<String> privileges = new HashSet<>();
+            resolvedRoles.forEach(role -> privileges.addAll(role.getPrivileges()));
 
             log.info("User {} has roles {} for domain {} ", userId, roles, domain.getName());
-
-            // get all privileges associated with the roles
-            Set<String> privileges = new HashSet<>();
-            for (String roleId : roles) {
-                privileges.addAll(getPrivilegesForRole(roleId));
-            }
             log.info("User {} has privileges {} for domain {} ", userId, privileges, domain.getName());
 
             if (privileges.size() > 0 && domain.getDomainRules().size() > 0) {
@@ -574,6 +524,10 @@ public class SecurityManager implements HippoSecurityManager {
     }
 
     public void close() {
+        userRolesModel.close();
+        rolesModel.close();
+        userRolesModel = null;
+        rolesModel = null;
     }
 
     public AuthContext getAuthContext(Credentials credentials, Subject subject, String workspaceName) throws RepositoryException {
@@ -661,7 +615,6 @@ public class SecurityManager implements HippoSecurityManager {
     class SimpleSecurityProvider implements SecurityProvider {
         private UserManager userManager = new DummyUserManager();
         private GroupManager groupManager = new DummyGroupManager();
-        private RoleManager roleManager = new DummyRoleManager();
         public void init(SecurityProviderContext context) throws RepositoryException {
         }
         public void sync() {
@@ -674,10 +627,6 @@ public class SecurityManager implements HippoSecurityManager {
         public GroupManager getGroupManager() throws RepositoryException {
             return groupManager;
         }
-        public RoleManager getRoleManager() throws RepositoryException {
-            return roleManager;
-        }
-
         @Override
         public UserManager getUserManager(final Session session) throws RepositoryException {
             return userManager;

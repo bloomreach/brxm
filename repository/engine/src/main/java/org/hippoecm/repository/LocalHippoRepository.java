@@ -294,7 +294,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         if (configurationService != null) {
             HippoServiceRegistry.register(configurationService, ConfigurationService.class, InternalConfigurationService.class);
         }
-        securityService = new SecurityServiceImpl(jackrabbitRepository.getHippoSecurityManager(), jackrabbitRepository.createSystemSession());
+        securityService = new SecurityServiceImpl(jackrabbitRepository);
         HippoServiceRegistry.register(securityService, SecurityService.class);
     }
 

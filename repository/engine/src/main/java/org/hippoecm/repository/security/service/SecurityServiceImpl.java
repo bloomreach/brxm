@@ -23,14 +23,11 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
-import javax.security.auth.Subject;
 
-import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
-import org.hippoecm.repository.security.HippoSecurityManager;
 import org.hippoecm.repository.security.group.GroupManager;
 import org.hippoecm.repository.security.user.HippoUserManager;
+import org.onehippo.repository.InternalHippoRepository;
 import org.onehippo.repository.security.Group;
 import org.onehippo.repository.security.SecurityService;
 import org.onehippo.repository.security.User;
@@ -43,21 +40,14 @@ public final class SecurityServiceImpl implements SecurityService {
     private static final Logger log = LoggerFactory.getLogger(SecurityServiceImpl.class);
     private static final String INTERNAL_PROVIDER = "internal";
 
-    private final Session systemSession;
+    private final InternalHippoSession systemSession;
     private final HippoUserManager internalUserManager;
     private final GroupManager internalGroupManager;
 
-    public SecurityServiceImpl(final HippoSecurityManager securityManager, final Session systemSession) throws RepositoryException {
-        if (systemSession instanceof InternalHippoSession) {
-            Subject subject = ((InternalHippoSession)systemSession).getSubject();
-            if (!subject.getPrincipals(SystemPrincipal.class).isEmpty()) {
-                this.systemSession = systemSession;
-                this.internalUserManager = securityManager.getUserManager(systemSession, INTERNAL_PROVIDER);
-                this.internalGroupManager = securityManager.getGroupManager(systemSession, INTERNAL_PROVIDER);
-                return;
-            }
-        }
-        throw new IllegalArgumentException("systemSession really must be a system session");
+    public SecurityServiceImpl(final InternalHippoRepository repository) throws RepositoryException {
+        this.systemSession = repository.createSystemSession();
+        this.internalUserManager = repository.getHippoSecurityManager().getUserManager(systemSession, INTERNAL_PROVIDER);
+        this.internalGroupManager = repository.getHippoSecurityManager().getGroupManager(systemSession, INTERNAL_PROVIDER);
     }
 
     @Override

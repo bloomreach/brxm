@@ -40,7 +40,7 @@ import javax.transaction.xa.XAResource;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoSession;
-import org.onehippo.repository.security.User;
+import org.onehippo.repository.security.SessionUser;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.xml.ContentResourceLoader;
 import org.onehippo.repository.xml.ImportResult;
@@ -394,7 +394,22 @@ public class MockSession implements HippoSession {
     }
 
     @Override
-    public User getUser() throws ItemNotFoundException {
+    public boolean isSystemUser() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isAnonymousUser() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public SessionUser getUser() throws ItemNotFoundException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isUserInRole(final String userRoleName) {
         throw new UnsupportedOperationException();
     }
 

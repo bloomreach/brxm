@@ -5,4 +5,7 @@ definitions:
       hipposys:members:
         .meta:category: system
         value: []
+      hipposys:userroles:
+        .meta:category: system
+        value: [xm-content-author]
       hipposys:securityprovider: internal

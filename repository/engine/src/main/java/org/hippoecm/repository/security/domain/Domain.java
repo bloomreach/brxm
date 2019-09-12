@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A Domain holds a set of {@link DomainRule}s that define the domain.
  * The DomainRule must be merged together with ORs. The domain also holds
- * the {@link AuthRole}s which define which users and group has a given
+ * the {@link AuthRole}s which define which users and/or groups and/or user role has a given
  * role in the domain.
  *
  * In JCR:
@@ -48,10 +48,8 @@ import org.slf4j.LoggerFactory;
  */
 public class Domain {
 
-    /** SVN id placeholder */
-
     /**
-     * The name of the domain
+     * The name of the domain, unique within its domain folder
      */
     private final String name;
 
@@ -59,23 +57,18 @@ public class Domain {
      * The set of domain rules defining the domain
      * @see DomainRule
      */
-    private Set<DomainRule> domainRules = new HashSet<DomainRule>();
+    private final Set<DomainRule> domainRules;
 
     /**
      * The set of auth roles defining who has which role in the domain
      * @see AuthRole
      */
-    private Set<AuthRole> authRoles = new HashSet<AuthRole>();
-
-    /**
-     * The hash code
-     */
-    private transient int hash;
+    private final Set<AuthRole> authRoles;
 
     /**
      * Logger
      */
-    static final Logger log = LoggerFactory.getLogger(Domain.class);
+    private static final Logger log = LoggerFactory.getLogger(Domain.class);
 
     /**
      * Initialize the Domain from the node in the repository. On initialization
@@ -89,6 +82,9 @@ public class Domain {
             throw new IllegalArgumentException("Domain node cannot be null");
         }
         name = node.getName();
+
+        HashSet<DomainRule> domainRules = new HashSet<>();
+        HashSet<AuthRole> authRoles = new HashSet<>();
 
         // loop over all the facetrules and authroles
         NodeIterator iter = node.getNodes();
@@ -110,6 +106,8 @@ public class Domain {
                 }
             }
         }
+        this.domainRules = Collections.unmodifiableSet(domainRules);
+        this.authRoles = Collections.unmodifiableSet(authRoles);
     }
 
     /**
@@ -117,7 +115,7 @@ public class Domain {
      * @return the set of domain rules
      */
     public Set<DomainRule> getDomainRules() {
-        return Collections.unmodifiableSet(domainRules);
+        return domainRules;
     }
 
     /**
@@ -125,7 +123,7 @@ public class Domain {
      * @return the set of auth roles
      */
     public Set<AuthRole> getAuthRoles() {
-        return Collections.unmodifiableSet(authRoles);
+        return authRoles;
     }
 
     /**
@@ -135,7 +133,7 @@ public class Domain {
      */
     public Set<String> getRolesForUser(String userId) {
         Set<AuthRole> ars = getAuthRoles();
-        Set<String> roles = new HashSet<String>();
+        Set<String> roles = new HashSet<>();
         for (AuthRole ar : ars) {
             if (ar.hasUser(userId)) {
                 roles.add(ar.getRole());
@@ -151,7 +149,7 @@ public class Domain {
      */
     public Set<String> getRolesForGroup(String groupId) {
         Set<AuthRole> ars = getAuthRoles();
-        Set<String> roles = new HashSet<String>();
+        Set<String> roles = new HashSet<>();
         for (AuthRole ar : ars) {
             if (ar.hasGroup(groupId)) {
                 roles.add(ar.getRole());
@@ -161,7 +159,23 @@ public class Domain {
     }
 
     /**
-     * Get the name of the domain
+     * Get the roles the user role with userRoleId has in the domain
+     * @param userRoleId the id of the user role
+     * @return the roles the user role has in the domain
+     */
+    public Set<String> getRolesForUserRole(String userRoleId) {
+        Set<AuthRole> ars = getAuthRoles();
+        Set<String> roles = new HashSet<>();
+        for (AuthRole ar : ars) {
+            if (userRoleId.equals(ar.getUserRole())) {
+                roles.add(ar.getRole());
+            }
+        }
+        return roles;
+    }
+
+    /**
+     * Get the name of the domain, unique within its domain folder
      * @return the domain name
      */
     public String getName() {
@@ -194,35 +208,13 @@ public class Domain {
      * {@inheritDoc}
      */
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof Domain)) {
-            return false;
-        }
-        Domain other = (Domain) obj;
-        if (!name.equals(other.getName())) {
-            return false;
-        }
-        if (authRoles.size() != other.getAuthRoles().size() || !authRoles.containsAll(other.getAuthRoles())) {
-            return false;
-        }
-        if (domainRules.size() != other.getDomainRules().size() || !domainRules.containsAll(other.getDomainRules())) {
-            return false;
-        }
-        return true;
+        return obj instanceof Domain && getName().equals(((Domain)obj).getName());
     }
 
     /**
      * {@inheritDoc}
      */
     public int hashCode() {
-        if (hash == 0) {
-            hash = this.toString().hashCode();
-        }
-        return hash;
+        return getName().hashCode();
     }
 }

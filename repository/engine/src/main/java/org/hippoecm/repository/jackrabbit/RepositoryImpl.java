@@ -243,10 +243,10 @@ public class RepositoryImpl extends ExtendedJackrabbitRepositoryImpl implements 
     }
 
     @Override
-    public Session createSystemSession() throws RepositoryException {
+    public InternalHippoSession createSystemSession() throws RepositoryException {
         Session systemSession = getRootSession(null);
         synchronized (systemSession) {
-            return systemSession.impersonate(new SimpleCredentials("system", new char[]{}));
+            return (InternalHippoSession)systemSession.impersonate(new SimpleCredentials("system", new char[0]));
         }
     }
 

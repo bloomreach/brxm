@@ -26,7 +26,7 @@ import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.repository.events.HippoWorkflowEvent;
-import org.onehippo.repository.security.User;
+import org.onehippo.repository.security.SessionUser;
 
 import static org.junit.Assert.assertEquals;
 import static org.easymock.EasyMock.*;
@@ -45,7 +45,7 @@ public class WorkflowLoggerTest {
         session = createNiceMock(HippoSession.class);
         workflowLogger = new WorkflowLogger(session);
 
-        final User user = createMock(User.class);
+        final SessionUser user = createMock(SessionUser.class);
         expect(user.isSystemUser()).andReturn(false);
         expect(session.getUser()).andReturn(user);
         expect(session.getUserID()).andReturn("userName");

@@ -124,13 +124,7 @@ public class FacetAuthDomain {
     }
 
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj instanceof FacetAuthDomain) {
-            return domainName.equals(((FacetAuthDomain)obj).domainName);
-        }
-        return false;
+        return obj instanceof FacetAuthDomain && getDomainName().equals(((FacetAuthDomain)obj).getDomainName());
     }
 
     public int hashCode() {
