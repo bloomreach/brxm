@@ -1,9 +1,9 @@
 definitions:
   config:
-    /hippo:configuration/hippo:users/configuser:
+    /hippo:configuration/hippo:users/liveuser:
       jcr:primaryType: hipposys:user
       hipposys:active: true
       hipposys:passkey: jvm://
-      hipposys:password: configuserpass
+      hipposys:userroles: [xm-live-documents-reader]
       hipposys:securityprovider: internal
       hipposys:system: true

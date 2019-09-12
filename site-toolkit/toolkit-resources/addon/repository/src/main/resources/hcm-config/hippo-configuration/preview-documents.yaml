@@ -35,5 +35,5 @@ definitions:
           hipposys:value: draft
       /readonly:
         jcr:primaryType: hipposys:authrole
-        hipposys:groups: []
+        hipposys:userrole: xm-preview-documents-reader
         hipposys:role: readonly

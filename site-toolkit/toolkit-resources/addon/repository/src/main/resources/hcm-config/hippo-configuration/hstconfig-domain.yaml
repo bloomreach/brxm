@@ -4,7 +4,7 @@ definitions:
       jcr:primaryType: hipposys:domain
       /readwrite:
         jcr:primaryType: hipposys:authrole
-        hipposys:groups: [webmaster]
+        hipposys:userrole: xm-webmaster
         hipposys:role: readwrite
       /hst-descriptive:
         jcr:primaryType: hipposys:domainrule

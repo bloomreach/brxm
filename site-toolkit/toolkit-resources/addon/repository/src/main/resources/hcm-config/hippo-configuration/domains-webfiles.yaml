@@ -4,7 +4,7 @@ definitions:
       jcr:primaryType: hipposys:domain
       /readonly:
         jcr:primaryType: hipposys:authrole
-        hipposys:groups: [liveusers, previewusers, sitewriters, webmaster]
+        hipposys:userrole: xm-site-reader
         hipposys:role: readonly
       /webfiles-domain:
         jcr:primaryType: hipposys:domainrule

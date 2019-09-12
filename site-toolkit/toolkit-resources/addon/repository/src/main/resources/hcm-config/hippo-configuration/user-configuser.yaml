@@ -1,9 +1,9 @@
 definitions:
   config:
-    /hippo:configuration/hippo:users/sitewriter:
+    /hippo:configuration/hippo:users/configuser:
       jcr:primaryType: hipposys:user
       hipposys:active: true
       hipposys:passkey: jvm://
-      hipposys:password: sitewriterpass
+      hipposys:userroles: [xm-read-everywhere]
       hipposys:securityprovider: internal
       hipposys:system: true

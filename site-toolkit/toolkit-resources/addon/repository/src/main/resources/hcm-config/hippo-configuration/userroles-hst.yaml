@@ -1,0 +1,22 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:userroles:
+      /xm-site-writer:
+        jcr:primaryType: hipposys:userrole
+        hipposys:userroles: [xm-site-reader]
+        hipposys:system: true
+      /xm-live-documents-reader:
+        jcr:primaryType: hipposys:userrole
+        hipposys:userroles: [xm-site-reader]
+        hipposys:system: true
+      /xm-preview-documents-reader:
+        jcr:primaryType: hipposys:userrole
+        hipposys:userroles: [xm-site-reader]
+        hipposys:system: true
+      /xm-webmaster:
+        jcr:primaryType: hipposys:userrole
+        hipposys:userroles: [xm-site-reader]
+        hipposys:system: true
+      /xm-site-reader:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
