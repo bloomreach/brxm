@@ -162,4 +162,8 @@ export class AppComponent implements OnInit {
       console.log(`Successfully navigated to ${path} page.`);
     });
   }
+
+  requestLogout(): void {
+    this.parent.requestLogout().then(() => console.log('logout succesfull'));
+  }
 }
