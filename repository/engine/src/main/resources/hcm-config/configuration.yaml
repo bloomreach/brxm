@@ -43,6 +43,10 @@ definitions:
             jcr:primaryType: hipposys:authrole
             hipposys:userrole: xm-admin
             hipposys:role: admin
+          /readonly:
+            jcr:primaryType: hipposys:authrole
+            hipposys:userrole: xm-read-everywhere
+            hipposys:role: readonly
       /hippo:security:
         jcr:primaryType: hipposys:securityfolder
         hipposys:domainspath: hippo:configuration/hippo:domains
@@ -117,6 +121,9 @@ definitions:
         jcr:primaryType: hipposys:userrolefolder
         .meta:residual-child-node-category: system
         /xm-admin:
+          jcr:primaryType: hipposys:userrole
+          hipposys:system: true
+        /xm-read-everywhere:
           jcr:primaryType: hipposys:userrole
           hipposys:system: true
       /hippo:frontend:
