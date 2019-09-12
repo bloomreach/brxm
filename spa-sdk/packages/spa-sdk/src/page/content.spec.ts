@@ -15,6 +15,7 @@
  */
 
 import { Content } from './content';
+import { Meta, META_POSITION_BEGIN } from './meta';
 
 describe('Content', () => {
   describe('getId', () => {
@@ -36,6 +37,15 @@ describe('Content', () => {
       const content = new Content({ id: 'some-id', name: 'some-name' });
 
       expect(content.getLocale()).toBeUndefined();
+    });
+  });
+
+  describe('getMeta', () => {
+    it('should return a meta-data array', () => {
+      const meta = new Meta({ data: '', type: 'comment' }, META_POSITION_BEGIN);
+      const content = new Content({ id: 'some-id', name: 'some-name' }, [meta]);
+
+      expect(content.getMeta()).toEqual([meta]);
     });
   });
 

@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
+import { MetaCollectionModel, Meta } from './meta';
+
 /**
  * Model of a content item.
  */
 export interface ContentModel {
+  _meta?: MetaCollectionModel;
   id: string;
   localeString?: string;
   name: string;
@@ -39,6 +42,11 @@ export interface Content {
   getLocale(): string | undefined;
 
   /**
+   * Returns the content meta-data collection.
+   */
+  getMeta(): Meta[];
+
+  /**
    * Returns the content name.
    */
   getName(): string;
@@ -49,8 +57,8 @@ export interface Content {
   getData(): ContentModel;
 }
 
-export class Content {
-  constructor(protected model: ContentModel) {}
+export class Content implements Content {
+  constructor(protected model: ContentModel, protected meta: Meta[] = []) {}
 
   getId() {
     return this.model.id;
@@ -58,6 +66,10 @@ export class Content {
 
   getLocale() {
     return this.model.localeString;
+  }
+
+  getMeta() {
+    return this.meta;
   }
 
   getName() {
