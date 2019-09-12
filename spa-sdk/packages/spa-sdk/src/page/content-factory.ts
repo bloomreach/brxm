@@ -16,6 +16,8 @@
 
 import { ContentModel, Content } from './content';
 
+type ContentBuilder = (model: ContentModel) => Content;
+
 /**
  * The factory to produce content entities out of the content models.
  */
@@ -28,7 +30,9 @@ export interface ContentFactory {
 }
 
 export class ContentFactory {
+  constructor(private builder: ContentBuilder) {}
+
   create(model: ContentModel) {
-    return new Content(model);
+    return this.builder(model);
   }
 }

@@ -4,13 +4,29 @@
       "id": "895fb1b6-410d-4972-9894-6b6a06d2b361",
       "localeString": "en",
       "name": "banner1",
-      "title": "Sample banner"
+      "title": "Sample banner",
+      "_meta": {
+        "beginNodeSpan": [
+          {
+            "type": "comment",
+            "data": "<!--{\"HST-Type\":\"MANAGE_CONTENT_LINK\",\"uuid\":\"895fb1b6-410d-4972-9894-6b6a06d2b361\"}-->"
+          }
+        ]
+      }
     },
     "u9a3f1f5c530243c49bec584e810ffa2f": {
       "id": "9a3f1f5c-5302-43c4-9bec-584e810ffa2f",
       "localeString": "en",
       "name": "banner2",
-      "title": "Sample banner 2"
+      "title": "Sample banner 2",
+      "_meta": {
+        "beginNodeSpan": [
+          {
+            "type": "comment",
+            "data": "<!--{\"HST-Type\":\"MANAGE_CONTENT_LINK\",\"uuid\":\"9a3f1f5c-5302-43c4-9bec-584e810ffa2f\"}-->"
+          }
+        ]
+      }
     }
   },
   "page": {
@@ -37,7 +53,19 @@
               },
               "params": {
                 "com.onehippo.cms7.targeting.TargetingParameterUtil.hide": "off"
-              }
+              },
+              "beginNodeSpan": [
+                {
+                  "type": "comment",
+                  "data": "<!-- { \"HST-Label\":\"Banner\", \"HST-LastModified\":\"1568281400490\", \"uuid\":\"03c65ab8-06cc-47d3-b6bd-adc928937c8d\", \"HST-Type\":\"CONTAINER_ITEM_COMPONENT\", \"refNS\":\"r3_r1_r1_r1\", \"url\":\"/site/_cmsinternal/spa-csr/resourceapi?_hn:type=component-rendering&_hn:ref=r3_r1_r1_r1&org.hippoecm.hst.container.render_host=127.0.0.1\", \"HST-Render-Variant\":\"\"} -->"
+                }
+              ],
+              "endNodeSpan": [
+                {
+                  "type": "comment",
+                  "data": "<!-- { \"uuid\":\"03c65ab8-06cc-47d3-b6bd-adc928937c8d\", \"HST-End\":\"true\"} -->"
+                }
+              ]
             }
           },
           {
@@ -55,13 +83,35 @@
               },
               "params": {
                 "com.onehippo.cms7.targeting.TargetingParameterUtil.hide": "on"
-              }
+              },
+              "beginNodeSpan": [
+                {
+                  "type": "comment",
+                  "data": "<!-- { \"HST-Label\":\"Banner\", \"HST-LastModified\":\"1568281400490\", \"uuid\":\"1f409759-ee0e-46eb-a65f-d73a507f6463\", \"HST-Type\":\"CONTAINER_ITEM_COMPONENT\", \"refNS\":\"r3_r1_r1_r2\", \"url\":\"/site/_cmsinternal/spa-csr/resourceapi?_hn:type=component-rendering&_hn:ref=r3_r1_r1_r2&org.hippoecm.hst.container.render_host=127.0.0.1\", \"HST-Render-Variant\":\"\"} -->"
+                }
+              ],
+              "endNodeSpan": [
+                {
+                  "type": "comment",
+                  "data": "<!-- { \"uuid\":\"1f409759-ee0e-46eb-a65f-d73a507f6463\", \"HST-End\":\"true\"} -->"
+                }
+              ]
             }
           }
         ]
       }
     ],
     "_meta": {
+      "endNodeSpan": [
+        {
+          "type": "comment",
+          "data": "<!-- { \"HST-Path-Info\":\"\", \"HST-Context-Path\":\"/site\", \"HST-Site-Id\":\"7b1539a1-18ad-4523-b7d5-878b0c03600c\", \"HST-Sitemap-Id\":\"381a7d3b-4f3c-4187-ba81-dcafb9bcf6fc\", \"HST-Mount-Id\":\"76e65e84-b0b2-4676-8ec0-9893273020de\", \"HST-Site-HasPreviewConfig\":\"true\", \"HST-Page-Id\":\"32c9afd2-fd32-4f8e-ae38-7e031c85f47c\", \"HST-SitemapItem-Id\":\"209551ae-27f2-4213-8196-14c8957a6d58\", \"HST-Type\":\"PAGE-META-DATA\", \"HST-Channel-Id\":\"spa-csr-preview\", \"HST-Page-Editable\":\"true\", \"HST-Render-Variant\":\"hippo-default\"} -->"
+        },
+        {
+          "type": "comment",
+          "data": "<!-- {\"HST-Type\":\"PAGE-META-DATA\",\"HST-Page-Request-Variants\":{}} -->"
+        }
+      ],
       "pageTitle": "Homepage"
     }
   }

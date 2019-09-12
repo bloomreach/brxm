@@ -18,15 +18,20 @@ import { ContentFactory } from './content-factory';
 import { Content } from './content';
 
 describe('ContentFactory', () => {
+  const builder = jest.fn(model => new Content(model));
   let contentFactory: ContentFactory;
 
   beforeEach(() => {
-    contentFactory = new ContentFactory();
+    contentFactory = new ContentFactory(builder);
+    builder.mockClear();
   });
 
   describe('create', () => {
     it('should return a content item instance', () => {
-      expect(contentFactory.create({ id: 'some-id', name: 'some-name' })).toBeInstanceOf(Content);
+      const model = { id: 'some-id', name: 'some-name' };
+      contentFactory.create(model);
+
+      expect(builder).toBeCalledWith(model);
     });
   });
 });

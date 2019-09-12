@@ -15,7 +15,7 @@
  */
 
 import { default as model } from './index.fixture.json';
-import { initialize, Container, Page, TYPE_CONTAINER_BOX } from './index';
+import { initialize, Container, Page, META_POSITION_BEGIN, META_POSITION_END, TYPE_CONTAINER_BOX } from './index';
 
 describe('initialize', () => {
   let page: Page;
@@ -35,17 +35,29 @@ describe('initialize', () => {
     });
   });
 
-  it('should be a page entity', async () => {
+  it('should be a page entity', () => {
     expect(page.getTitle()).toBe('Homepage');
   });
 
-  it('should contain a root component', async () => {
+  it('should contain a root component', () => {
     const root = page.getComponent();
     expect(root!.getName()).toBe('test');
     expect(root!.getParameters()).toEqual({});
   });
 
-  it('should contain a main component', async () => {
+  it('should contain page meta-data', () => {
+    const [meta1, meta2] = page.getComponent()!.getMeta();
+
+    expect(meta1).toBeDefined();
+    expect(meta1.getPosition()).toBe(META_POSITION_END);
+    expect(JSON.parse(meta1.getData())).toMatchObject({ 'HST-Channel-Id': 'spa-csr-preview' });
+
+    expect(meta2).toBeDefined();
+    expect(meta2.getPosition()).toBe(META_POSITION_END);
+    expect(JSON.parse(meta2.getData())).toMatchObject({ 'HST-Type': 'PAGE-META-DATA' });
+  });
+
+  it('should contain a main component', () => {
     const main = page.getComponent<Container>('main');
 
     expect(main).toBeDefined();
@@ -54,7 +66,7 @@ describe('initialize', () => {
     expect(main!.getParameters()).toEqual({});
   });
 
-  it('should contain two banners', async () => {
+  it('should contain two banners', () => {
     const main = page.getComponent<Container>('main');
     const children = main!.getChildren();
 
@@ -76,7 +88,19 @@ describe('initialize', () => {
     expect(page.getComponent('main', 'banner1')).toBe(banner1);
   });
 
-  it('should resolve content references', async () => {
+  it('should contain components meta-data', () => {
+    const [meta1, meta2] = page.getComponent('main', 'banner')!.getMeta();
+
+    expect(meta1).toBeDefined();
+    expect(meta1.getPosition()).toBe(META_POSITION_BEGIN);
+    expect(JSON.parse(meta1.getData())).toMatchObject({ 'HST-Label': 'Banner' });
+
+    expect(meta2).toBeDefined();
+    expect(meta2.getPosition()).toBe(META_POSITION_END);
+    expect(JSON.parse(meta2.getData())).toMatchObject({ 'HST-End': 'true' });
+  });
+
+  it('should resolve content references', () => {
     const banner0 = page.getComponent('main', 'banner');
     const document0 = page.getContent(banner0!.getModels().document);
 
@@ -87,5 +111,15 @@ describe('initialize', () => {
     expect(document0!.getName()).toBe('banner1');
     expect(document1).toBeDefined();
     expect(document1!.getName()).toBe('banner2');
+  });
+
+  it('should contain content meta-data', () => {
+    const banner0 = page.getComponent('main', 'banner');
+    const document0 = page.getContent(banner0!.getModels().document);
+    const [meta] = document0!.getMeta();
+
+    expect(meta).toBeDefined();
+    expect(meta.getPosition()).toBe(META_POSITION_BEGIN);
+    expect(JSON.parse(meta.getData())).toMatchObject({ 'HST-Type': 'MANAGE_CONTENT_LINK' });
   });
 });

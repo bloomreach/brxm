@@ -15,7 +15,7 @@
  */
 
 import { Spa } from './spa';
-import { ComponentFactory, Component, Page, ContentFactory, ContentMap, Content, MetaFactory } from './page';
+import { ComponentFactory, Component, Page, ContentFactory, ContentMap, MetaFactory } from './page';
 import { PageModelUrlBuilder } from './url';
 
 const model = {
@@ -51,7 +51,7 @@ describe('Spa', () => {
 
   beforeEach(() => {
     componentFactory = new ComponentFactory();
-    contentFactory = new ContentFactory();
+    contentFactory = new ContentFactory(jest.fn());
     content = new Map();
     metaFactory = new MetaFactory();
     pageModelUrlBuilder = jest.fn(() => 'http://example.com');

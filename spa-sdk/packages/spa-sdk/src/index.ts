@@ -21,7 +21,7 @@
  * @see module:api
  */
 
-import { initialize as initializePageModel } from './initialize';
+import { Spa } from './spa';
 import { buildPageModelUrl } from './url';
 import {
   ComponentFactory,
@@ -31,32 +31,61 @@ import {
   ContainerModel,
   Container,
   ContentFactory,
+  Content,
+  MetaComment,
+  MetaFactory,
   TYPE_COMPONENT,
   TYPE_COMPONENT_CONTAINER_ITEM,
   TYPE_COMPONENT_CONTAINER,
+  TYPE_META_COMMENT,
 } from './page';
 
-const contentFactory = new ContentFactory();
+const metaFactory = new MetaFactory()
+  .register(TYPE_META_COMMENT, (model, position) => new MetaComment(model, position));
+
+const contentFactory = new ContentFactory(model => new Content(model, metaFactory.create(model._meta)));
+
 const componentFactory = new ComponentFactory()
-  .register(TYPE_COMPONENT, (model, children) => new Component(model, children))
+  .register(
+    TYPE_COMPONENT,
+    (model, children) => new Component(model, children, metaFactory.create(model._meta)),
+  )
   .register<ContainerModel, ContainerItem>(
     TYPE_COMPONENT_CONTAINER,
-    (model, children) => new Container(model, children),
+    (model, children) => new Container(model, children, metaFactory.create(model._meta)),
   )
-  .register<ContainerItemModel>(TYPE_COMPONENT_CONTAINER_ITEM, model => new ContainerItem(model));
+  .register<ContainerItemModel>(
+    TYPE_COMPONENT_CONTAINER_ITEM,
+    model => new ContainerItem(model, metaFactory.create(model._meta)),
+  );
 
 /**
  * Initializes the page model.
  *
  * @param config Configuration of the SPA integration with brXM.
  */
-export const initialize = initializePageModel.bind(null, buildPageModelUrl, componentFactory, contentFactory);
+export const initialize = (() => {
+  const spa = new Spa(
+    buildPageModelUrl,
+    componentFactory,
+    contentFactory,
+    metaFactory,
+    new Map<string, Content>(),
+  );
+
+  return spa.initialize.bind(spa);
+})();
+
 export * from './api';
 export {
   Component,
   ContainerItem,
   Container,
+  MetaComment,
+  Meta,
   Page,
+  META_POSITION_BEGIN,
+  META_POSITION_END,
   TYPE_COMPONENT,
   TYPE_COMPONENT_CONTAINER_ITEM,
   TYPE_COMPONENT_CONTAINER,
@@ -65,4 +94,5 @@ export {
   TYPE_CONTAINER_NO_MARKUP,
   TYPE_CONTAINER_ORDERED_LIST,
   TYPE_CONTAINER_UNORDERED_LIST,
+  TYPE_META_COMMENT,
 } from './page';
