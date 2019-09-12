@@ -52,5 +52,5 @@ definitions:
           hipposys:value: draft
       /readonly:
         jcr:primaryType: hipposys:authrole
-        hipposys:groups: [liveusers]
+        hipposys:userrole: xm-live-documents-reader
         hipposys:role: readonly
