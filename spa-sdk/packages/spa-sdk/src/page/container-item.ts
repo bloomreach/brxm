@@ -15,6 +15,7 @@
  */
 
 import { Component, ComponentMeta, ComponentModel, ComponentParameters } from './component';
+import { Meta } from './meta';
 
 /**
  * Container item type.
@@ -68,8 +69,8 @@ export interface ContainerItem extends Component {
 }
 
 export class ContainerItem extends Component implements ContainerItem {
-  constructor(protected model: ContainerItemModel) {
-    super(model);
+  constructor(protected model: ContainerItemModel, meta: Meta[] = []) {
+    super(model, [], meta);
   }
 
   getType() {

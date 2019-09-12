@@ -27,7 +27,7 @@ describe('Container', () => {
 
   describe('getType', () => {
     it('should return a type', () => {
-      const container = new Container({ type: TYPE_COMPONENT_CONTAINER, xtype: TYPE_CONTAINER_BOX }, []);
+      const container = new Container({ type: TYPE_COMPONENT_CONTAINER, xtype: TYPE_CONTAINER_BOX });
 
       expect(container.getType()).toBe(TYPE_CONTAINER_BOX);
     });

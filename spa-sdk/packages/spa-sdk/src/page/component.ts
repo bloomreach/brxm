@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { MetaCollectionModel, Meta } from './meta';
+
 /**
  * Generic component type.
  */
@@ -29,7 +31,7 @@ export interface ComponentParameters {
 /**
  * Meta-data of a component.
  */
-export interface ComponentMeta {
+export interface ComponentMeta extends MetaCollectionModel {
   params?: ComponentParameters;
 }
 
@@ -53,6 +55,11 @@ export interface ComponentModel {
  */
 export interface Component {
   /**
+   * Returns component meta-data collection.
+   */
+  getMeta(): Meta[];
+
+  /**
    * Returns map of models.
    */
   getModels(): Models;
@@ -75,7 +82,15 @@ export interface Component {
 }
 
 export class Component implements Component {
-  constructor(protected model: ComponentModel, protected children: Component[] = []) {}
+  constructor(
+    protected model: ComponentModel,
+    protected children: Component[] = [],
+    protected meta: Meta[] = [],
+  ) {}
+
+  getMeta() {
+    return this.meta;
+  }
 
   getModels() {
     return this.model.models || {};

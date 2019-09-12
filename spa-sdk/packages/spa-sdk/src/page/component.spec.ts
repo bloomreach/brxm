@@ -15,8 +15,18 @@
  */
 
 import { Component, TYPE_COMPONENT } from './component';
+import { Meta, META_POSITION_BEGIN } from './meta';
 
 describe('Component', () => {
+  describe('getMeta', () => {
+    it('should return a meta-data array', () => {
+      const meta = new Meta({ data: '', type: 'comment' }, META_POSITION_BEGIN);
+      const component = new Component({ type: TYPE_COMPONENT }, [], [meta]);
+
+      expect(component.getMeta()).toEqual([meta]);
+    });
+  });
+
   describe('getModels', () => {
     it('should return models object', () => {
       const component = new Component({ type: TYPE_COMPONENT, models: { a: 1, b: 2 } });

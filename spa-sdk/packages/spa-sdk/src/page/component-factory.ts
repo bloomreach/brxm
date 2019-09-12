@@ -46,7 +46,7 @@ export class ComponentFactory {
   }
 
   /**
-   * Produces a component based on the model
+   * Produces a component based on the model.
    * @param model The component model.
    */
   create(model: ComponentModel) {
