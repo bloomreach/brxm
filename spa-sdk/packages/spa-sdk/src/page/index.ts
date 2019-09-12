@@ -21,4 +21,7 @@ export * from './container';
 export * from './content-factory';
 export * from './content-map';
 export * from './content';
+export * from './meta-comment';
+export * from './meta-factory';
+export * from './meta';
 export * from './page';
