@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import javax.jcr.Value;
 import javax.xml.bind.JAXBException;
 
 import org.junit.Test;
+import org.onehippo.cm.model.path.JcrPaths;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -38,46 +39,86 @@ import static org.junit.Assert.assertTrue;
 public class MockNodeFactoryTest {
 
     @Test(expected = IOException.class)
-    public void resourceDoesNotExist() throws RepositoryException, JAXBException, IOException {
+    public void xmlResourceDoesNotExist() throws RepositoryException, JAXBException, IOException {
         MockNodeFactory.fromXml("/no/such/resource.xml");
     }
 
-    @Test
-    public void emptyNode() throws JAXBException, IOException, RepositoryException {
-        MockNode root = MockNodeFactory.fromXml(getClass().getResource("MockNodeFactoryTest-empty-node.xml"));
+    @Test(expected = IOException.class)
+    public void yamlResourceDoesNotExist() throws RepositoryException, IOException {
+        MockNodeFactory.fromYaml("/no/such/resource.yaml");
+    }
 
+    @Test
+    public void xmlEmptyNode() throws JAXBException, IOException, RepositoryException {
+        final MockNode root = MockNodeFactory.fromXml(getClass().getResource("MockNodeFactoryTest-empty-node.xml"));
         assertEquals("", root.getName());
         assertEquals("/", root.getPath());
         assertEquals("nt:unstructured", root.getPrimaryNodeType().getName());
     }
 
     @Test
-    public void stringProperty() throws JAXBException, IOException, RepositoryException {
-        MockNode root = MockNodeFactory.fromXml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-properties.xml");
-
-        Property property = root.getProperty("stringProperty");
-        assertFalse(property.isMultiple());
-        assertEquals("aaa", property.getString());
-        assertEquals("/stringProperty", property.getPath());
+    public void yamlEmptyNode() throws IOException, RepositoryException {
+        final MockNode root = MockNodeFactory.fromYaml(getClass().getResource("MockNodeFactoryTest-empty-node.yaml"));
+        final MockNode node = root.getNode("empty");
+        assertEquals("empty", node.getName());
+        assertEquals("/empty", node.getPath());
+        assertEquals("nt:base", node.getPrimaryNodeType().getName());
     }
 
     @Test
-    public void stringPropertyNotMultiple() throws JAXBException, IOException, RepositoryException {
-        MockNode root = MockNodeFactory.fromXml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-properties.xml");
+    public void xmlStringProperty() throws JAXBException, IOException, RepositoryException {
+        final MockNode root = MockNodeFactory.fromXml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-properties.xml");
+        assertStringProperty(root);
+    }
 
-        Property property = root.getProperty("stringPropertyNotMultiple");
+    @Test
+    public void yamlStringProperty() throws IOException, RepositoryException {
+        final MockNode root = MockNodeFactory.fromYaml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-properties.yaml");
+        assertStringProperty(root.getNode("nodeWithProperties"));
+    }
+
+    private void assertStringProperty(final MockNode node) throws RepositoryException {
+        Property property = node.getProperty("stringProperty");
         assertFalse(property.isMultiple());
-        assertEquals("/stringPropertyNotMultiple", property.getPath());
+        assertEquals("aaa", property.getString());
+        assertPathBelow(node, "stringProperty", property.getPath());
+    }
+
+    @Test
+    public void xmlStringPropertyNotMultiple() throws JAXBException, IOException, RepositoryException {
+        final MockNode root = MockNodeFactory.fromXml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-properties.xml");
+        assertStringPropertyNotMultiple(root);
+    }
+
+    @Test
+    public void yamlStringPropertyNotMultiple() throws JAXBException, IOException, RepositoryException {
+        final MockNode root = MockNodeFactory.fromYaml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-properties.yaml");
+        assertStringPropertyNotMultiple(root.getNode("nodeWithProperties"));
+    }
+
+    private void assertStringPropertyNotMultiple(final MockNode node) throws RepositoryException {
+        Property property = node.getProperty("stringPropertyNotMultiple");
+        assertFalse(property.isMultiple());
+        assertPathBelow(node, "stringPropertyNotMultiple", property.getPath());
         assertEquals("bbb", property.getString());
     }
 
     @Test
-    public void multipleStringProperty() throws JAXBException, IOException, RepositoryException {
-        MockNode root = MockNodeFactory.fromXml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-properties.xml");
+    public void xmlMultipleStringProperty() throws JAXBException, IOException, RepositoryException {
+        final MockNode root = MockNodeFactory.fromXml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-properties.xml");
+        assertMultipleStringProperty(root);
+    }
 
-        Property property = root.getProperty("multipleStringProperty");
+    @Test
+    public void yamlMultipleStringProperty() throws JAXBException, IOException, RepositoryException {
+        final MockNode root = MockNodeFactory.fromYaml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-properties.yaml");
+        assertMultipleStringProperty(root.getNode("nodeWithProperties"));
+    }
+
+    private void assertMultipleStringProperty(final MockNode node) throws RepositoryException {
+        Property property = node.getProperty("multipleStringProperty");
         assertTrue(property.isMultiple());
-        assertEquals("/multipleStringProperty", property.getPath());
+        assertPathBelow(node, "multipleStringProperty", property.getPath());
 
         Value[] expected = new MockValue[2];
         expected[0] = new MockValue(PropertyType.STRING, "ccc");
@@ -86,12 +127,21 @@ public class MockNodeFactoryTest {
     }
 
     @Test
-    public void multipleStringPropertyWithOneValue() throws JAXBException, IOException, RepositoryException {
-        MockNode root = MockNodeFactory.fromXml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-properties.xml");
+    public void xmlMultipleStringPropertyWithOneValue() throws JAXBException, IOException, RepositoryException {
+        final MockNode root = MockNodeFactory.fromXml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-properties.xml");
+        assertMultipleStringPropertyWithOneValue(root);
+    }
 
-        Property property = root.getProperty("multipleStringPropertyWithOneValue");
+    @Test
+    public void yamlMultipleStringPropertyWithOneValue() throws IOException, RepositoryException {
+        final MockNode root = MockNodeFactory.fromYaml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-properties.yaml");
+        assertMultipleStringPropertyWithOneValue(root.getNode("nodeWithProperties"));
+    }
+
+    private void assertMultipleStringPropertyWithOneValue(final MockNode node) throws RepositoryException {
+        Property property = node.getProperty("multipleStringPropertyWithOneValue");
         assertTrue(property.isMultiple());
-        assertEquals("/multipleStringPropertyWithOneValue", property.getPath());
+        assertPathBelow(node, "multipleStringPropertyWithOneValue", property.getPath());
 
         Value[] expected = new MockValue[1];
         expected[0] = new MockValue(PropertyType.STRING, "eee");
@@ -99,66 +149,93 @@ public class MockNodeFactoryTest {
     }
 
     @Test
-    public void nodeWithChild() throws JAXBException, IOException, RepositoryException {
-        MockNode root = MockNodeFactory.fromXml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-child.xml");
+    public void xmlNodeWithChild() throws JAXBException, IOException, RepositoryException {
+        final MockNode root = MockNodeFactory.fromXml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-child.xml");
+        assertNodeWithChild(root);
+    }
 
-        Property parentProperty = root.getProperty("parentProperty");
+    @Test
+    public void yamlNodeWithChild() throws IOException, RepositoryException {
+        final MockNode root = MockNodeFactory.fromYaml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-child.yaml");
+        assertNodeWithChild(root.getNode("nodeWithChild"));
+    }
+
+    private void assertNodeWithChild(final MockNode node) throws RepositoryException {
+        Property parentProperty = node.getProperty("parentProperty");
         assertFalse(parentProperty.isMultiple());
-        assertEquals("/parentProperty", parentProperty.getPath());
+        assertPathBelow(node, "parentProperty", parentProperty.getPath());
         assertEquals("parentValue", parentProperty.getValue().getString());
 
-        assertTrue(root.hasNode("child"));
+        assertTrue(node.hasNode("child"));
 
-        Node child = root.getNode("child");
+        Node child = node.getNode("child");
         assertEquals("child", child.getName());
-        assertEquals("/child", child.getPath());
-        assertEquals(root, child.getParent());
+        assertPathBelow(node, "child", child.getPath());
+        assertEquals(node, child.getParent());
         assertEquals("10065434-57ea-4153-8165-e7a22288c05d", child.getIdentifier());
         assertTrue(child.hasProperties());
         assertTrue(child.hasProperty("childProperty"));
 
         Property childProperty = child.getProperty("childProperty");
         assertFalse(childProperty.isMultiple());
-        assertEquals("/child/childProperty", childProperty.getPath());
+        assertPathBelow(node, "child/childProperty", childProperty.getPath());
         assertEquals("childValue", childProperty.getString());
     }
 
     @Test
-    public void nodeWithChildren() throws JAXBException, IOException, RepositoryException {
-        MockNode root = MockNodeFactory.fromXml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-children.xml");
+    public void xmlNodeWithChildren() throws JAXBException, IOException, RepositoryException {
+        final MockNode root = MockNodeFactory.fromXml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-children.xml");
+        assertNodeWithChildren(root);
+    }
 
-        assertTrue(root.hasNode("child1"));
-        assertTrue(root.hasNode("child2"));
+    @Test
+    public void yamlNodeWithChildren() throws IOException, RepositoryException {
+        final MockNode root = MockNodeFactory.fromYaml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-children.yaml");
+        assertNodeWithChildren(root.getNode("nodeWithChildren"));
+    }
 
-        Node firstChild = root.getNode("child1");
+    private void assertNodeWithChildren(final MockNode node) throws RepositoryException {
+        assertTrue(node.hasNode("child1"));
+        assertTrue(node.hasNode("child2"));
+
+        Node firstChild = node.getNode("child1");
         assertEquals("child1", firstChild.getName());
-        assertEquals("/child1", firstChild.getPath());
-        assertEquals(root, firstChild.getParent());
+        assertPathBelow(node, "child1", firstChild.getPath());
+        assertEquals(node, firstChild.getParent());
         assertTrue(firstChild.hasProperties());
         assertTrue(firstChild.hasProperty("childProperty"));
 
         Property firstChildProperty = firstChild.getProperty("childProperty");
         assertFalse(firstChildProperty.isMultiple());
-        assertEquals("/child1/childProperty", firstChildProperty.getPath());
+        assertPathBelow(node, "child1/childProperty", firstChildProperty.getPath());
         assertEquals("value1", firstChildProperty.getString());
 
-        Node secondChild = root.getNode("child2");
+        Node secondChild = node.getNode("child2");
         assertEquals("child2", secondChild.getName());
-        assertEquals("/child2", secondChild.getPath());
-        assertEquals(root, secondChild.getParent());
+        assertPathBelow(node, "child2", secondChild.getPath());
+        assertEquals(node, secondChild.getParent());
         assertTrue(secondChild.hasProperties());
         assertTrue(secondChild.hasProperty("childProperty"));
 
         Property secondChildProperty = secondChild.getProperty("childProperty");
         assertFalse(secondChildProperty.isMultiple());
-        assertEquals("/child2/childProperty", secondChildProperty.getPath());
+        assertPathBelow(node, "child2/childProperty", secondChildProperty.getPath());
         assertEquals("value2", secondChildProperty.getString());
     }
 
     @Test
-    public void nodeIteratorReturnsAllChildren() throws JAXBException, IOException, RepositoryException {
-        MockNode root = MockNodeFactory.fromXml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-children.xml");
+    public void xmlNodeIteratorReturnsAllChildren() throws JAXBException, IOException, RepositoryException {
+        final MockNode root = MockNodeFactory.fromXml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-children.xml");
+        assertNodeIteratorReturnsAllChildren(root);
+    }
 
+    @Test
+    public void yamlNodeIteratorReturnsAllChildren() throws IOException, RepositoryException {
+        final MockNode root = MockNodeFactory.fromYaml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-children.yaml");
+        assertNodeIteratorReturnsAllChildren(root.getNode("nodeWithChildren"));
+    }
+
+    private void assertNodeIteratorReturnsAllChildren(final MockNode root) throws RepositoryException {
         NodeIterator iterator = root.getNodes();
 
         List<String> expectedNodeNames = new ArrayList<>(2);
@@ -176,4 +253,26 @@ public class MockNodeFactoryTest {
         assertFalse(iterator.hasNext());
     }
 
+    @Test(expected = RepositoryException.class)
+    public void importAtNodeWithChildren() throws IOException, RepositoryException {
+        final MockNode root = MockNodeFactory.fromYaml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-child.yaml");
+        MockNodeFactory.importYaml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-child.yaml", root);
+    }
+
+    @Test
+    public void importAdditionalNodes() throws IOException, RepositoryException {
+        final MockNode root = MockNodeFactory.fromYaml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-child.yaml");
+        final MockNode child = root.getNode("nodeWithChild/child");
+        MockNodeFactory.importYaml("/org/onehippo/repository/mock/MockNodeFactoryTest-node-with-children.yaml", child);
+
+        assertEquals(1, child.getNodes().getSize());
+        assertEquals(2, child.getNode("nodeWithChildren").getNodes().getSize());
+        assertTrue(child.hasNode("nodeWithChildren/child1"));
+        assertTrue(child.hasNode("nodeWithChildren/child2"));
+    }
+
+    private static void assertPathBelow(final Node base, final String expectedRelPath, String actualAbsPath) throws RepositoryException {
+        final String expectedAbsPath = JcrPaths.getPath(base.getPath(), expectedRelPath).toString();
+        assertEquals(expectedAbsPath, actualAbsPath);
+    }
 }
