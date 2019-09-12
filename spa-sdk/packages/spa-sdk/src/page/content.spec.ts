@@ -19,33 +19,39 @@ import { Content } from './content';
 describe('Content', () => {
   describe('getId', () => {
     it('should return a content id', () => {
-      const container = new Content({ id: 'some-id', name: 'some-name' });
+      const content = new Content({ id: 'some-id', name: 'some-name' });
 
-      expect(container.getId()).toBe('some-id');
+      expect(content.getId()).toBe('some-id');
     });
   });
 
   describe('getLocale', () => {
     it('should return a content locale', () => {
-      const container = new Content({ id: 'some-id', name: 'some-name', localeString: 'some-locale' });
+      const content = new Content({ id: 'some-id', name: 'some-name', localeString: 'some-locale' });
 
-      expect(container.getLocale()).toBe('some-locale');
+      expect(content.getLocale()).toBe('some-locale');
+    });
+
+    it('should return undefined when there is no locale', () => {
+      const content = new Content({ id: 'some-id', name: 'some-name' });
+
+      expect(content.getLocale()).toBeUndefined();
     });
   });
 
   describe('getName', () => {
     it('should return a content name', () => {
-      const container = new Content({ id: 'some-id', name: 'some-name' });
+      const content = new Content({ id: 'some-id', name: 'some-name' });
 
-      expect(container.getName()).toBe('some-name');
+      expect(content.getName()).toBe('some-name');
     });
   });
 
   describe('getData', () => {
     it('should return a content data', () => {
-      const container = new Content({ id: 'some-id', name: 'some-name' });
+      const content = new Content({ id: 'some-id', name: 'some-name' });
 
-      expect(container.getData()).toEqual({ id: 'some-id', name: 'some-name' });
+      expect(content.getData()).toEqual({ id: 'some-id', name: 'some-name' });
     });
   });
 });

@@ -15,7 +15,7 @@
  */
 
 /**
- * Model of a content entity.
+ * Model of a content.
  */
 export interface ContentModel {
   id: string;
@@ -25,11 +25,11 @@ export interface ContentModel {
 }
 
 /**
- * The content entity used on the page.
+ * Content used on the page.
  */
 export interface Content {
   /**
-   * Returns the content enity id.
+   * Returns the content id.
    */
   getId(): string;
 
@@ -39,12 +39,12 @@ export interface Content {
   getLocale(): string | undefined;
 
   /**
-   * Returns the content entity name.
+   * Returns the content name.
    */
   getName(): string;
 
   /**
-   * Returns the content entity data as it is returned in the Page Model API.
+   * Returns the content data as it is returned in the Page Model API.
    */
   getData(): ContentModel;
 }
