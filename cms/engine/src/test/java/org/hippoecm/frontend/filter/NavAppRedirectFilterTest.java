@@ -41,6 +41,7 @@ import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertThat;
 
 @RunWith(EasyMockRunner.class)
@@ -121,8 +122,8 @@ public class NavAppRedirectFilterTest {
 
         expect(request.getMethod()).andReturn("GET");
         expect(request.getParameter(Main.CMS_AS_IFRAME_QUERY_PARAMETER)).andReturn(null);
-        expect(request.getContextPath()).andReturn("/foo").times(2);
-        expect(request.getRequestURI()).andReturn("/foo" + path).times(2);
+        expect(request.getContextPath()).andStubReturn("/foo");
+        expect(request.getRequestURI()).andStubReturn("/foo" + path);
         expect(request.getParameterMap()).andReturn(parameterMap);
         replay(request);
 
@@ -134,6 +135,7 @@ public class NavAppRedirectFilterTest {
         filter.doFilter(request, response, chain);
 
         final String capturedLocation = location.getValue();
+        assertThat(capturedLocation, startsWith("./?"));
         assertThat(capturedLocation, containsString("bar=baz"));
         assertThat(capturedLocation, containsString("qux=0"));
         assertThat(capturedLocation, containsString("qux=1"));
@@ -151,8 +153,8 @@ public class NavAppRedirectFilterTest {
 
         expect(request.getMethod()).andReturn("GET");
         expect(request.getParameter(Main.CMS_AS_IFRAME_QUERY_PARAMETER)).andReturn(null);
-        expect(request.getContextPath()).andReturn("/foo").times(2);
-        expect(request.getRequestURI()).andReturn("/foo" + path).times(2);
+        expect(request.getContextPath()).andStubReturn("/foo");
+        expect(request.getRequestURI()).andStubReturn("/foo" + path);
         expect(request.getParameterMap()).andReturn(parameterMap);
         replay(request);
 
@@ -164,9 +166,71 @@ public class NavAppRedirectFilterTest {
         filter.doFilter(request, response, chain);
 
         final String capturedLocation = location.getValue();
+        assertThat(capturedLocation, startsWith("./?"));
         assertThat(capturedLocation.chars().filter(c -> c == '&').count(), is(2L));
         assertThat(capturedLocation, containsString("bar"));
         assertThat(capturedLocation, containsString("qux"));
         assertThat(capturedLocation, containsString(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER + "=" + path));
     }
+
+    @Test
+    public void redirect_can_handle_sub_paths() throws IOException, ServletException {
+
+        final String path = "/x/y/z";
+        final Map<String, String[]> parameterMap = new HashMap<>();
+        parameterMap.put("bar", new String[]{"baz"});
+        parameterMap.put("qux", new String[]{"0", "1"});
+
+        expect(request.getMethod()).andReturn("GET");
+        expect(request.getParameter(Main.CMS_AS_IFRAME_QUERY_PARAMETER)).andReturn(null);
+        expect(request.getContextPath()).andStubReturn("/foo");
+        expect(request.getRequestURI()).andStubReturn("/foo" + path);
+        expect(request.getParameterMap()).andReturn(parameterMap);
+        replay(request);
+
+        final Capture<String> location = Capture.newInstance();
+        response.sendRedirect(capture(location));
+        expectLastCall();
+        replay(response);
+
+        filter.doFilter(request, response, chain);
+
+        final String capturedLocation = location.getValue();
+        assertThat(capturedLocation, startsWith("./../../?"));
+        assertThat(capturedLocation, containsString("bar=baz"));
+        assertThat(capturedLocation, containsString("qux=0"));
+        assertThat(capturedLocation, containsString("qux=1"));
+        assertThat(capturedLocation, containsString(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER + "=" + path));
+    }
+
+    @Test
+    public void redirect_can_handle_sub_paths_with_empty_context_path() throws IOException, ServletException {
+
+        final String path = "/x/y/z";
+        final Map<String, String[]> parameterMap = new HashMap<>();
+        parameterMap.put("bar", new String[]{"baz"});
+        parameterMap.put("qux", new String[]{"0", "1"});
+
+        expect(request.getMethod()).andReturn("GET");
+        expect(request.getParameter(Main.CMS_AS_IFRAME_QUERY_PARAMETER)).andReturn(null);
+        expect(request.getContextPath()).andStubReturn("");
+        expect(request.getRequestURI()).andStubReturn(path);
+        expect(request.getParameterMap()).andReturn(parameterMap);
+        replay(request);
+
+        final Capture<String> location = Capture.newInstance();
+        response.sendRedirect(capture(location));
+        expectLastCall();
+        replay(response);
+
+        filter.doFilter(request, response, chain);
+
+        final String capturedLocation = location.getValue();
+        assertThat(capturedLocation, startsWith("./../../?"));
+        assertThat(capturedLocation, containsString("bar=baz"));
+        assertThat(capturedLocation, containsString("qux=0"));
+        assertThat(capturedLocation, containsString("qux=1"));
+        assertThat(capturedLocation, containsString(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER + "=" + path));
+    }
+
 }
