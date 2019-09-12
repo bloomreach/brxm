@@ -17,6 +17,7 @@
 import { Component, TYPE_COMPONENT } from './component';
 import { ContentMap } from './content-map';
 import { Content } from './content';
+import { Meta, META_POSITION_BEGIN } from './meta';
 import { Page } from './page';
 
 describe('Page', () => {
@@ -64,6 +65,15 @@ describe('Page', () => {
       content.set('some-content', someContent);
 
       expect(page.getContent('some-content')).toBe(someContent);
+    });
+  });
+
+  describe('getMeta', () => {
+    it('should return a meta-data array', () => {
+      const meta = new Meta({ data: '', type: 'comment' }, META_POSITION_BEGIN);
+      const page = new Page({ page: { type: TYPE_COMPONENT } }, root, content, [meta]);
+
+      expect(page.getMeta()).toEqual([meta]);
     });
   });
 

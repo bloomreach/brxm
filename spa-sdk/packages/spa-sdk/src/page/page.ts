@@ -17,6 +17,7 @@
 import { Component, ComponentMeta, ComponentModel } from './component';
 import { ContentModel, Content } from './content';
 import { ContentMap } from './content-map';
+import { MetaCollectionModel, Meta } from './meta';
 import { Reference, isReference } from './reference';
 
 /**
@@ -36,7 +37,7 @@ export interface RootModel extends ComponentModel {
 /**
  * Meta-data of a page.
  */
-export interface PageMeta {
+export interface PageMeta extends MetaCollectionModel {
   preview?: boolean;
 }
 
@@ -70,6 +71,11 @@ export interface Page {
   getContent(reference: Reference | string): Content;
 
   /**
+   * Returns page meta-data collection.
+   */
+  getMeta(): Meta[];
+
+  /**
    * Returns the title of the page, if configured.
    * @returns the title of the page, or `undefined` if not configured.
    */
@@ -81,6 +87,7 @@ export class Page implements Page {
     protected model: PageModel,
     protected root: Component,
     protected content: ContentMap,
+    protected meta: Meta[] = [],
   ) {}
 
   private static getContentReference(reference: Reference) {
@@ -97,6 +104,10 @@ export class Page implements Page {
       : reference;
 
     return this.content.get(contentReference);
+  }
+
+  getMeta() {
+    return this.meta;
   }
 
   getTitle() {
