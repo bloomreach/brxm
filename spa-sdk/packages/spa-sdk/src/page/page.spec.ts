@@ -15,13 +15,13 @@
  */
 
 import { Component, TYPE_COMPONENT } from './component';
-import { ContentRepository } from './content-repository';
+import { ContentMap } from './content-map';
 import { Content } from './content';
 import { Page } from './page';
 
 describe('Page', () => {
   let root: Component;
-  let content: ContentRepository;
+  let content: ContentMap;
 
   beforeEach(() => {
     root = new Component({ type: TYPE_COMPONENT });

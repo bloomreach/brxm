@@ -17,19 +17,19 @@
 import { Content } from './content';
 
 /**
- * The repository holding content entities.
+ * The map holding content objects.
  */
-export interface ContentRepository {
+export interface ContentMap {
   /**
-   * Gets a content entity by a reference.
+   * Gets a content by a reference.
    * @param reference The reference to a content.
    */
   get(reference: string): Content | undefined;
 
   /**
-   * Puts a content entity under a reference.
+   * Puts a content under a reference.
    * @param reference The reference to a content.
-   * @param content The content entity.
+   * @param content The content.
    */
   set(reference: string, content: Content): void;
 }

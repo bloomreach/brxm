@@ -19,6 +19,6 @@ export * from './component';
 export * from './container-item';
 export * from './container';
 export * from './content-factory';
-export * from './content-repository';
+export * from './content-map';
 export * from './content';
 export * from './page';

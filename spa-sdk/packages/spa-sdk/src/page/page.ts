@@ -16,7 +16,7 @@
 
 import { Component, ComponentMeta, ComponentModel } from './component';
 import { ContentModel, Content } from './content';
-import { ContentRepository } from './content-repository';
+import { ContentMap } from './content-map';
 import { Reference, isReference } from './reference';
 
 /**
@@ -63,8 +63,8 @@ export interface Page {
   getComponent<T extends Component>(...componentNames: string[]): T | undefined;
 
   /**
-   * Gets a content entity used in the page.
-   * @param reference The reference to the content entity. It can be an object containing
+   * Gets a content used in the page.
+   * @param reference The reference to the content. It can be an object containing
    * [RFC-6901](https://tools.ietf.org/html/rfc6901) JSON Pointer.
    */
   getContent(reference: Reference | string): Content;
@@ -80,7 +80,7 @@ export class Page implements Page {
   constructor(
     protected model: PageModel,
     protected root: Component,
-    protected content: ContentRepository,
+    protected content: ContentMap,
   ) {}
 
   private getContentReference(reference: Reference) {
