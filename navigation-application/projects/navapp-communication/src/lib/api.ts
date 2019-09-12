@@ -89,6 +89,7 @@ export interface ParentApi {
    */
   onUserActivity?: () => void;
   onSessionExpired?: () => void;
+  requestLogout?: () => void;
 }
 
 export interface ParentPromisedApi {
@@ -99,6 +100,7 @@ export interface ParentPromisedApi {
   hideMask?: () => Promise<void>;
   onUserActivity?: () => Promise<void>;
   onSessionExpired?: () => Promise<void>;
+  requestLogout?: () => Promise<void>;
 }
 
 export interface ChildApi {
@@ -249,11 +251,11 @@ export interface Site extends SiteId {
   /**
    * Name of the site, to be used for displaying the drop-down option.
    */
-   name: string;
+  name: string;
   /**
    * Optional field for grouping sub-sites (2nd and 3rd level nesting). Nav-app will ignore deeper nesting levels,
    * because there is no design on how to display them to the user. When selecting a Site, nav-app shall **not** include
    * this field in the object passed to the app(s).
    */
-   subGroups?: Site[];
- }
+  subGroups?: Site[];
+}
