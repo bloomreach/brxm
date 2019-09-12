@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import java.util.stream.Stream;
 
 import javax.servlet.Filter;
@@ -35,6 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.hippoecm.frontend.Main;
 
+import static java.util.Collections.nCopies;
 import static java.util.stream.Collectors.joining;
 
 public class NavAppRedirectFilter implements Filter {
@@ -82,21 +84,35 @@ public class NavAppRedirectFilter implements Filter {
         if (isWhiteListed(request)) {
             chain.doFilter(request, response);
         } else {
-            final Map<String, String[]> parameterMap = new HashMap<>(request.getParameterMap());
-            parameterMap.put(INITIAL_PATH_QUERY_PARAMETER, new String[]{getPathAfterContextPath(request)});
-            final String queryParameters = parameterMap.entrySet().stream()
-                    .flatMap(entry -> {
-                        final String[] values = entry.getValue();
-                        final String key = entry.getKey();
-                        if (values == null || values.length == 0) {
-                            return Stream.of(key);
-                        }
-                        return Stream.of(entry.getValue()).map(value -> String.join("=", key, value));
-                    })
-                    .collect(joining("&", "?", ""));
-            final String redirectUrl = String.format("./%s", queryParameters);
+            final String relativePath = getRelativePath(request);
+            final String queryParameters = getQueryParameterString(request);
+            final String redirectUrl = "./" + relativePath + queryParameters;
             response.sendRedirect(redirectUrl);
         }
+    }
+
+    private String getRelativePath(HttpServletRequest request) {
+        final String[] segments = getPathAfterContextPath(request).split("/");
+        final int dirsUp = Math.max(segments.length - 2, 0);
+        final StringJoiner stringJoiner = new StringJoiner("/", "", "/");
+        stringJoiner.setEmptyValue("");
+        nCopies(dirsUp, "..").forEach(stringJoiner::add);
+        return stringJoiner.toString();
+    }
+
+    private String getQueryParameterString(HttpServletRequest request) {
+        final Map<String, String[]> parameterMap = new HashMap<>(request.getParameterMap());
+        parameterMap.put(INITIAL_PATH_QUERY_PARAMETER, new String[]{getPathAfterContextPath(request)});
+        return parameterMap.entrySet().stream()
+                .flatMap(entry -> {
+                    final String[] values = entry.getValue();
+                    final String key = entry.getKey();
+                    if (values == null || values.length == 0) {
+                        return Stream.of(key);
+                    }
+                    return Stream.of(entry.getValue()).map(value -> String.join("=", key, value));
+                })
+                .collect(joining("&", "?", ""));
     }
 
     private boolean isWhiteListed(HttpServletRequest request) {
