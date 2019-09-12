@@ -99,7 +99,7 @@ export class Page implements Page {
     return this.content.get(contentReference);
   }
 
-  getTitle(): string | undefined {
+  getTitle() {
     return this.model.page._meta && this.model.page._meta.pageTitle;
   }
 }
