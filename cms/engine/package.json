@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "@bloomreach/navapp": "^1.0.0-56",
-    "@bloomreach/navapp-communication": "^1.0.0-20",
+    "@bloomreach/navapp-communication": "^1.0.0-21",
     "penpal": "^4.0.0"
   },
   "devDependencies": {
