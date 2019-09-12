@@ -69,7 +69,6 @@ export const initialize = (() => {
     buildPageModelUrl,
     componentFactory,
     contentFactory,
-    metaFactory,
     new Map<string, Content>(),
   );
 

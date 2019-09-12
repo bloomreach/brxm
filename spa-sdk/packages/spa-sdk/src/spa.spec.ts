@@ -15,7 +15,7 @@
  */
 
 import { Spa } from './spa';
-import { ComponentFactory, Component, Page, ContentFactory, ContentMap, MetaFactory } from './page';
+import { ComponentFactory, Component, Page, ContentFactory, ContentMap } from './page';
 import { PageModelUrlBuilder } from './url';
 
 const model = {
@@ -45,7 +45,6 @@ describe('Spa', () => {
   let componentFactory: ComponentFactory;
   let contentFactory: ContentFactory;
   let content: ContentMap;
-  let metaFactory: MetaFactory;
   let pageModelUrlBuilder: PageModelUrlBuilder;
   let spa: Spa;
 
@@ -53,14 +52,12 @@ describe('Spa', () => {
     componentFactory = new ComponentFactory();
     contentFactory = new ContentFactory(jest.fn());
     content = new Map();
-    metaFactory = new MetaFactory();
     pageModelUrlBuilder = jest.fn(() => 'http://example.com');
 
     componentFactory.create = jest.fn(model => new Component(model));
-    metaFactory.create = jest.fn(() => []);
     spyOn(contentFactory, 'create');
 
-    spa = new Spa(pageModelUrlBuilder, componentFactory, contentFactory, metaFactory, content);
+    spa = new Spa(pageModelUrlBuilder, componentFactory, contentFactory, content);
   });
 
   describe('initialize', () => {
@@ -93,10 +90,6 @@ describe('Spa', () => {
 
     it('should create a content instance', () => {
       expect(contentFactory.create).toBeCalledWith(model.content.someContent);
-    });
-
-    it('should create a meta collection', () => {
-      expect(metaFactory.create).toBeCalledWith(model._meta);
     });
 
     it('should reject a promise when fetching the page model fails', () => {

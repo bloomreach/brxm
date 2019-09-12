@@ -15,7 +15,7 @@
  */
 
 import { Configuration } from './api';
-import { ComponentFactory, ContentFactory, ContentMap, MetaFactory, PageModel, Page } from './page';
+import { ComponentFactory, ContentFactory, ContentMap, PageModel, Page } from './page';
 import { PageModelUrlBuilder } from './url';
 
 /**
@@ -26,14 +26,12 @@ export class Spa {
    * @param pageModelUrlBuilder Function generating an API URL based on the current request.
    * @param componentFactory Factory to produce component entities.
    * @param contentFactory Factory to produce content entities.
-   * @param metaFactory Factory to produce the page meta-data.
    * @param content Content storage.
    */
   constructor(
     private pageModelUrlBuilder: PageModelUrlBuilder,
     private componentFactory: ComponentFactory,
     private contentFactory: ContentFactory,
-    private metaFactory: MetaFactory,
     protected content: ContentMap,
   ) {}
 
@@ -45,10 +43,6 @@ export class Spa {
       method: 'get',
       headers: config.request.headers,
     });
-  }
-
-  private initializeMeta(model: PageModel) {
-    return this.metaFactory.create(model._meta);
   }
 
   private initializeRoot(model: PageModel) {
@@ -73,10 +67,9 @@ export class Spa {
    */
   async initialize(config: Configuration) {
     const model = await this.fetchModel(config);
-    const meta = this.initializeMeta(model);
     const root = this.initializeRoot(model);
     this.initializeContent(model);
 
-    return new Page(model, root, this.content, meta);
+    return new Page(model, root, this.content);
   }
 }
