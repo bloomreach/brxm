@@ -49,7 +49,6 @@ definitions:
             hipposys:role: readonly
       /hippo:security:
         jcr:primaryType: hipposys:securityfolder
-        hipposys:domainspath: hippo:configuration/hippo:domains
         hipposys:groupspath: hippo:configuration/hippo:groups
         hipposys:rolespath: hippo:configuration/hippo:roles
         hipposys:userspath: hippo:configuration/hippo:users

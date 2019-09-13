@@ -18,11 +18,13 @@ package org.hippoecm.repository.jackrabbit;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.util.TraversingItemVisitor;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.core.state.ItemState;
+import org.hippoecm.repository.security.domain.Domain;
+import org.hippoecm.repository.security.domain.QFacetRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,15 +32,15 @@ import static javax.jcr.PropertyType.TYPENAME_REFERENCE;
 import static org.apache.jackrabbit.JcrConstants.JCR_PATH;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_TYPE;
-import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_VALUE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_FACET;
+import static org.hippoecm.repository.api.HippoNodeType.NT_DOMAIN;
+import static org.hippoecm.repository.api.HippoNodeType.NT_DOMAINFOLDER;
+import static org.hippoecm.repository.api.HippoNodeType.NT_DOMAINRULE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_FACETRULE;
 
 public class QFacetRuleStateManager {
 
     private final static Logger log = LoggerFactory.getLogger(QFacetRuleStateManager.class);
-
-    private final FacetRuleJcrPathVisitor facetRuleJcrPathVisitor = new FacetRuleJcrPathVisitor();
 
     private volatile long updateCounter = 0;
 
@@ -53,10 +55,6 @@ public class QFacetRuleStateManager {
     public String getReferenceUUID(final String facetRuleUUID) {
         final String jcrPath = facetRuleUUIDToJcrPath.get(facetRuleUUID);
         return jcrPath != null ? jcrPathToJcrUUID.get(jcrPath) : null;
-    }
-
-    void visit(final Node node)  throws RepositoryException {
-        facetRuleJcrPathVisitor.visit(node);
     }
 
     void processNewPath(final String newPath, final ItemState created) {
@@ -76,40 +74,63 @@ public class QFacetRuleStateManager {
             // the same path. This may keep now 'unused' reference<->uuid entries, but this should be neglectable.
             updateCounter++;
         } else {
-            final String path = jcrUUIDToJcrPath.get(destroyedId);
+            final String path = jcrUUIDToJcrPath.remove(destroyedId);
             if (path != null) {
                 // path reference destroyed
                 jcrPathToJcrUUID.put(path, StringUtils.EMPTY);
-                jcrUUIDToJcrPath.remove(destroyedId);
                 updateCounter++;
             }
         }
     }
 
-    final private class FacetRuleJcrPathVisitor extends TraversingItemVisitor.Default {
-
-        @Override
-        protected void entering(final Node node, final int level) throws RepositoryException {
-
-            if (node.isNodeType(NT_FACETRULE)) {
-                final String facet = node.getProperty(HIPPO_FACET).getString();
-                if (TYPENAME_REFERENCE.equals(node.getProperty(HIPPOSYS_TYPE).getString())
-                        && (JCR_PATH.equals(facet) || JCR_UUID.equals(facet))) {
-                    final String path = node.getProperty(HIPPOSYS_VALUE).getString();
-
-                    facetRuleUUIDToJcrPath.put(node.getIdentifier(), path);
-
-                    if (node.getSession().nodeExists(path)) {
-                        final Node referencee = node.getSession().getNode(path);
-                        final String identifier = referencee.getIdentifier();
-                        jcrPathToJcrUUID.put(path, identifier);
-                        jcrUUIDToJcrPath.put(identifier, path);
-                    } else {
-                        jcrPathToJcrUUID.put(path, StringUtils.EMPTY);
+    void processDomainFolder(final Node domainFolderNode) throws RepositoryException {
+        if (Domain.isValidDomainFolderLocation(domainFolderNode)) {
+            for (NodeIterator domainNodes = domainFolderNode.getNodes(); domainNodes.hasNext();) {
+                final Node domainNode = domainNodes.nextNode();
+                if (domainNode.isNodeType(NT_DOMAIN)) {
+                    for (NodeIterator facetRuleNodes = domainFolderNode.getNodes(); facetRuleNodes.hasNext();) {
+                        final Node facetRuleNode = facetRuleNodes.nextNode();
+                        if (facetRuleNode.isNodeType(NT_FACETRULE)) {
+                            processFacetRuleJcrPath(facetRuleNode);
+                        }
                     }
-                    updateCounter++;
                 }
             }
+        } else if (log.isWarnEnabled()) {
+            log.warn("Skipping domain folder in not-supported location: {}",domainFolderNode.getPath());
+        }
+    }
+
+    void processFacetRule(final Node facetRuleNode) throws RepositoryException {
+        if (facetRuleNode.getDepth() > 4 &&
+                facetRuleNode.getParent().isNodeType(NT_DOMAINRULE) &&
+                facetRuleNode.getParent().getParent().isNodeType(NT_DOMAIN) &&
+                facetRuleNode.getParent().getParent().getParent().isNodeType(NT_DOMAINFOLDER) &&
+                Domain.isValidDomainFolderLocation(facetRuleNode.getParent().getParent())) {
+            processFacetRuleJcrPath(facetRuleNode);
+        } else if (log.isWarnEnabled()) {
+            log.warn("Skipping facet rule in not-supported location: {}",facetRuleNode.getPath());
+        }
+    }
+
+    private void processFacetRuleJcrPath(final Node facetRuleNode) throws RepositoryException {
+        final String facet = facetRuleNode.getProperty(HIPPO_FACET).getString();
+        if (TYPENAME_REFERENCE.equals(facetRuleNode.getProperty(HIPPOSYS_TYPE).getString())
+                && (JCR_PATH.equals(facet) || JCR_UUID.equals(facet))) {
+
+            final String path = QFacetRule.getFullyQualifiedPath(facetRuleNode);
+
+            facetRuleUUIDToJcrPath.put(facetRuleNode.getIdentifier(), path);
+
+            if (facetRuleNode.getSession().nodeExists(path)) {
+                final Node referencee = facetRuleNode.getSession().getNode(path);
+                final String identifier = referencee.getIdentifier();
+                jcrPathToJcrUUID.put(path, identifier);
+                jcrUUIDToJcrPath.put(identifier, path);
+            } else {
+                jcrPathToJcrUUID.put(path, StringUtils.EMPTY);
+            }
+            updateCounter++;
         }
     }
 }

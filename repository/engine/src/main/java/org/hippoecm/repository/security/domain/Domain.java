@@ -18,6 +18,7 @@ package org.hippoecm.repository.security.domain;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -26,6 +27,8 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.api.HippoNodeType.NT_FEDERATEDDOMAINFOLDER;
 
 /**
  * A Domain holds a set of {@link DomainRule}s that define the domain.
@@ -49,9 +52,14 @@ import org.slf4j.LoggerFactory;
 public class Domain {
 
     /**
-     * The name of the domain, unique within its domain folder
+     * The name of the domain
      */
     private final String name;
+
+    /**
+     * The identifying path of the domain
+     */
+    private final String path;
 
     /**
      * The set of domain rules defining the domain
@@ -70,6 +78,49 @@ public class Domain {
      */
     private static final Logger log = LoggerFactory.getLogger(Domain.class);
 
+    private static final String QUALIFIED_CONFIGURATION_PATH = "/" + HippoNodeType.CONFIGURATION_PATH;
+
+    private static final String CONFIGURATION_FOLDER_PATH = QUALIFIED_CONFIGURATION_PATH + "/";
+
+    /**
+     * Checks if the provided domain folder node its primary type is hipposys:domainfolder and
+     * in that case is not directly below /hippo:configuration.
+     * @return true if the domain folder node its primary type is hipposys:domainfolder and is not directly below
+     * /hippo:configuration
+     * @throws RepositoryException if something goes wrong
+     */
+    public static boolean isInValidStandardDomainFolderLocation(final Node domainFolder)
+            throws RepositoryException {
+        return HippoNodeType.NT_DOMAINFOLDER.equals(domainFolder.getPrimaryNodeType().getName()) &&
+                (domainFolder.getDepth() != 2 ||
+                        !QUALIFIED_CONFIGURATION_PATH.equals(domainFolder.getParent().getPath()));
+    }
+
+    /**
+     * Checks if the provided domain folder node is of type hipposys:federateddomainfolder and
+     * in that case is not directly below the jcr:root and neither below /hippo:configuration
+     * @return true if the domain folder node is of type hipposys:federateddomainfolder and is not directly below
+     * the jcr:root and neither below /hippo:configuration
+     * @throws RepositoryException if something goes wrong
+     */
+    public static boolean isInValidFederatedDomainFolderLocation(final Node domainFolder)
+            throws RepositoryException {
+        return domainFolder.isNodeType(HippoNodeType.NT_FEDERATEDDOMAINFOLDER) &&
+                (domainFolder.getDepth() == 1 || domainFolder.getPath().startsWith(CONFIGURATION_FOLDER_PATH));
+    }
+
+    /**
+     * Checks if the provided domain folder is in a valid location, if both
+     * {@link #isInValidStandardDomainFolderLocation(Node)} and {@link #isInValidFederatedDomainFolderLocation(Node)}
+     * returning false
+     * @param domainFolder domainFolder
+     * @return true if domainFolder is in a valid location
+     * @throws RepositoryException if something is wrong
+     */
+    public static boolean isValidDomainFolderLocation(final Node domainFolder) throws RepositoryException {
+        return !isInValidStandardDomainFolderLocation(domainFolder) && !isInValidFederatedDomainFolderLocation(domainFolder);
+    }
+
     /**
      * Initialize the Domain from the node in the repository. On initialization
      * all domain rules and including facet rules as wel as all auth roles are
@@ -82,6 +133,7 @@ public class Domain {
             throw new IllegalArgumentException("Domain node cannot be null");
         }
         name = node.getName();
+        path = node.getPath();
 
         HashSet<DomainRule> domainRules = new HashSet<>();
         HashSet<AuthRole> authRoles = new HashSet<>();
@@ -91,21 +143,42 @@ public class Domain {
         while (iter.hasNext()) {
             Node child = iter.nextNode();
             try {
-                if (child.getPrimaryNodeType().isNodeType(HippoNodeType.NT_DOMAINRULE)) {
+                if (child.isNodeType(HippoNodeType.NT_DOMAINRULE)) {
                     domainRules.add(new DomainRule(child));
-                } else if (child.getPrimaryNodeType().isNodeType(HippoNodeType.NT_AUTHROLE)) {
+                } else if (child.isNodeType(HippoNodeType.NT_AUTHROLE)) {
                     authRoles.add(new AuthRole(child));
                 } else {
                     log.warn("Unknown domain config node '{}' found in '{}' ", child.getName(), node.getPath());
                 }
             } catch (RepositoryException e) {
+                // Other domain rules can still be valid for the domain
                 if (log.isDebugEnabled()) {
                     log.warn("Unable to add DomainRule '{}'", child.getPath(), e);
                 } else {
                     log.warn("Unable to add DomainRule '{}' : {}", child.getPath(), e.getMessage());
                 }
+            } catch (InvalidDomainException e) {
+                log.error("Skipping invalid domain rule '{}': {}", child.getPath(), e.getMessage());
             }
         }
+
+        if (domainRules.isEmpty()) {
+            throw new InvalidDomainException(String.format("Invalid domain '%s': a domain requires at least one valid domain rule", node.getPath()));
+        }
+        if (node.getParent().isNodeType(NT_FEDERATEDDOMAINFOLDER)) {
+
+            // then every domain below the federateddomainfolder MUST have at least one hierarchical whitelist constraint
+            for (DomainRule domainRule : domainRules) {
+                boolean validFederatedDomain = domainRule.getFacetRules().stream().anyMatch(QFacetRule::isHierarchicalWhiteListRule);
+                if (!validFederatedDomain) {
+                    throw new InvalidDomainException(String.format("Invalid federated domain '%s' since every " +
+                                    "domain in a federated domain requires at least 1 hierchical constrained confining the " +
+                                    "domain to nodes which are children of the parent of the hipposys:federateddomainfolder",
+                            node.getPath()));
+                }
+            }
+        }
+
         this.domainRules = Collections.unmodifiableSet(domainRules);
         this.authRoles = Collections.unmodifiableSet(authRoles);
     }
@@ -132,14 +205,10 @@ public class Domain {
      * @return the roles the user has in the domain
      */
     public Set<String> getRolesForUser(String userId) {
-        Set<AuthRole> ars = getAuthRoles();
-        Set<String> roles = new HashSet<>();
-        for (AuthRole ar : ars) {
-            if (ar.hasUser(userId)) {
-                roles.add(ar.getRole());
-            }
-        }
-        return roles;
+        return getAuthRoles().stream()
+                .filter(ar -> ar.hasUser(userId))
+                .map(AuthRole::getRole)
+                .collect(Collectors.toCollection(HashSet::new));
     }
 
     /**
@@ -148,14 +217,10 @@ public class Domain {
      * @return the roles the groups has in the domain
      */
     public Set<String> getRolesForGroup(String groupId) {
-        Set<AuthRole> ars = getAuthRoles();
-        Set<String> roles = new HashSet<>();
-        for (AuthRole ar : ars) {
-            if (ar.hasGroup(groupId)) {
-                roles.add(ar.getRole());
-            }
-        }
-        return roles;
+        return getAuthRoles().stream()
+                .filter(ar -> ar.hasGroup(groupId))
+                .map(AuthRole::getRole)
+                .collect(Collectors.toCollection(HashSet::new));
     }
 
     /**
@@ -164,14 +229,10 @@ public class Domain {
      * @return the roles the user role has in the domain
      */
     public Set<String> getRolesForUserRole(String userRoleId) {
-        Set<AuthRole> ars = getAuthRoles();
-        Set<String> roles = new HashSet<>();
-        for (AuthRole ar : ars) {
-            if (userRoleId.equals(ar.getUserRole())) {
-                roles.add(ar.getRole());
-            }
-        }
-        return roles;
+        return getAuthRoles().stream()
+                .filter(ar -> userRoleId.equals(ar.getUserRole()))
+                .map(AuthRole::getRole)
+                .collect(Collectors.toCollection(HashSet::new));
     }
 
     /**
@@ -183,6 +244,14 @@ public class Domain {
     }
 
     /**
+     * Get the identifying path of the domain
+     * @return the identifying domain path
+     */
+    public String getPath() {
+        return path;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public String toString() {
@@ -190,7 +259,7 @@ public class Domain {
         Set<DomainRule> drs = getDomainRules();
         Set<AuthRole> ars = getAuthRoles();
         sb.append("Domain: ");
-        sb.append(name);
+        sb.append(path);
         sb.append("\r\n");
         sb.append("-------");
         sb.append("\r\n");
@@ -208,13 +277,13 @@ public class Domain {
      * {@inheritDoc}
      */
     public boolean equals(Object obj) {
-        return obj instanceof Domain && getName().equals(((Domain)obj).getName());
+        return obj instanceof Domain && getPath().equals(((Domain)obj).getPath());
     }
 
     /**
      * {@inheritDoc}
      */
     public int hashCode() {
-        return getName().hashCode();
+        return getPath().hashCode();
     }
 }

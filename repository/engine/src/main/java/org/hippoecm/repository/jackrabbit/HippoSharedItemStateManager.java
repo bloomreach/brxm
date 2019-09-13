@@ -23,8 +23,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.Workspace;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
 
 import org.apache.jackrabbit.core.cluster.ClusterException;
 import org.apache.jackrabbit.core.cluster.Update;
@@ -49,12 +53,11 @@ import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.repository.api.HippoNodeType.HIPPO_DOMAINSPATH;
+import static org.hippoecm.repository.api.HippoNodeType.NT_DOMAINFOLDER;
 import static org.hippoecm.repository.api.HippoNodeType.NT_FACETRULE;
 
 public class HippoSharedItemStateManager extends SharedItemStateManager {
@@ -82,19 +85,14 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
 
     }
 
-    @Override
-    public void doPostInitialize() throws RepositoryException {
-        final String SECURITY_CONFIG_PATH = "/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.SECURITY_PATH;
-
-        if (getSystemSession().nodeExists(SECURITY_CONFIG_PATH)) {
-            final Node securityFolderNode = getSystemSession().getNode(SECURITY_CONFIG_PATH);
-            /* TODO: fix documentation at https://documentation.bloomreach.com/library/concepts/security/repository-authorization-and-permissions.html
-                     the documentation says all SECURITY_CONFIG paths defaults are absolute (start *with* a slash),
-                     but actually they must be root relative (*without* a prefixing slash)
-             */
-            final String domainsPath = "/" + securityFolderNode.getProperty(HIPPO_DOMAINSPATH).getString();
-            if (getSystemSession().nodeExists(domainsPath)) {
-                qFacetRuleStateManager.visit(getSystemSession().getNode(domainsPath));
+    public void doPostInitializeWorkspaceInfo() throws RepositoryException {
+        final Workspace workspace = getSystemSession().getWorkspace();
+        if (workspace.getNodeTypeManager().hasNodeType(NT_DOMAINFOLDER)) {
+            // not a new repository, NT_DOMAINFOLDER was loaded before
+            final QueryManager queryManager = workspace.getQueryManager();
+            final Query query = queryManager.createQuery("//element(*," + NT_DOMAINFOLDER+ ")", Query.XPATH);
+            for (NodeIterator nodes = query.execute().getNodes(); nodes.hasNext();) {
+                getQFacetRuleStateManager().processDomainFolder(nodes.nextNode());
             }
         }
     }
@@ -320,13 +318,33 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
     @Override
     public void stateModified(final ItemState modified) {
         super.stateModified(modified);
-        // TODO
+
+        if (rootNodeId == null) {
+            // HSISM is being constructed still.
+            return;
+        }
+
+        if (getNamePathResolver() == null) {
+            // HSISM is being constructed still.
+            return;
+        }
+
+        ItemId nodeId = modified.isNode() ? modified.getId() : modified.getParentId();
+
+        try {
+            final Node node = getSystemSession().getNodeByIdentifier(nodeId.toString());
+            if (node.isNodeType(NT_FACETRULE)) {
+                qFacetRuleStateManager.processFacetRule(node);
+            }
+        } catch (RepositoryException e) {
+            log.error("Exception while processing modified state.", e);
+        }
     }
 
     @Override
     public void stateDiscarded(final ItemState discarded) {
         super.stateDiscarded(discarded);
-        // TODO
+        // no post processing needed
     }
 
     @Override
@@ -344,19 +362,17 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
             return;
         }
 
-        if (!(created instanceof  NodeState)) {
+        if (!(created.isNode())) {
             return;
         }
 
         try {
             final Node node = getSystemSession().getNodeByIdentifier(created.getId().toString());
-            if (node.getPrimaryNodeType().getName().equals(NT_FACETRULE)) {
-                qFacetRuleStateManager.visit(node);
-                return;
+            if (node.isNodeType(NT_FACETRULE)) {
+                qFacetRuleStateManager.processFacetRule(node);
             } else {
                 qFacetRuleStateManager.processNewPath(node.getPath(), created);
             }
-
         } catch (RepositoryException e) {
             log.error("Exception while processing created state.", e);
         }
@@ -376,7 +392,7 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
             return;
         }
 
-        if (destroyed instanceof NodeState) {
+        if (destroyed.isNode()) {
             final String destroyedId = destroyed.getId().toString();
 
             qFacetRuleStateManager.processDestroyedId(destroyedId);

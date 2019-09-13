@@ -73,11 +73,13 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.security.domain.Domain;
 import org.hippoecm.repository.security.domain.FacetAuthDomain;
+import org.hippoecm.repository.security.domain.InvalidDomainException;
 import org.hippoecm.repository.security.group.DummyGroupManager;
 import org.hippoecm.repository.security.group.GroupManager;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 import org.hippoecm.repository.security.principals.GroupPrincipal;
 import org.hippoecm.repository.security.principals.UserPrincipal;
+import org.hippoecm.repository.security.role.AbstractRole;
 import org.hippoecm.repository.security.role.Role;
 import org.hippoecm.repository.security.role.RolesModel;
 import org.hippoecm.repository.security.role.UserRolesModel;
@@ -88,15 +90,17 @@ import org.onehippo.repository.security.SessionUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.api.HippoNodeType.CONFIGURATION_PATH;
+import static org.hippoecm.repository.api.HippoNodeType.DOMAINS_PATH;
+
 public class SecurityManager implements HippoSecurityManager {
 
     // TODO: this string is matched as node name in the repository.
     public static final String INTERNAL_PROVIDER = "internal";
-    public static final String SECURITY_CONFIG_PATH = HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.SECURITY_PATH;
+    public static final String SECURITY_CONFIG_PATH = CONFIGURATION_PATH + "/" + HippoNodeType.SECURITY_PATH;
+    private static final String QUALIFIED_CONFIGURATION_PATH = "/" + CONFIGURATION_PATH;
 
     private static final Logger log = LoggerFactory.getLogger(SecurityManager.class);
-
-    private String domainsPath;
 
     // initial JR system session, not impersonated, never logout
     private Session systemSession;
@@ -118,8 +122,8 @@ public class SecurityManager implements HippoSecurityManager {
         final String groupsPath = configNode.getProperty(HippoNodeType.HIPPO_GROUPSPATH).getString();
         final String rolesPath = configNode.getProperty(HippoNodeType.HIPPO_ROLESPATH).getString();
         final String userRolesPath = configNode.getProperty(HippoNodeType.HIPPO_USERROLESPATH).getString();
-        domainsPath = configNode.getProperty(HippoNodeType.HIPPO_DOMAINSPATH).getString();
-        SecurityProviderFactory spf = new SecurityProviderFactory(SECURITY_CONFIG_PATH, usersPath, groupsPath, rolesPath, domainsPath, maintenanceMode);
+        SecurityProviderFactory spf = new SecurityProviderFactory(SECURITY_CONFIG_PATH, usersPath, groupsPath, rolesPath,
+                CONFIGURATION_PATH + "/" + DOMAINS_PATH, maintenanceMode);
         permissionManager = PermissionManager.getInstance();
 
         StringBuilder statement = new StringBuilder();
@@ -352,9 +356,10 @@ public class SecurityManager implements HippoSecurityManager {
     private Set<Domain> getDomains(final String user, final boolean anonymousUser, final Set<String> groups,
                                    final Set<String> userRoles) {
         Set<Domain> domains = new HashSet<>();
-        StringBuilder xpath = new StringBuilder("/jcr:root/");
-        xpath.append(domainsPath);
-        xpath.append("//element(*, ").append(HippoNodeType.NT_AUTHROLE).append(")[");
+        StringBuilder xpath =
+                new StringBuilder("//element(*,").append(HippoNodeType.NT_DOMAINFOLDER)
+                        .append(")/element(*,").append(HippoNodeType.NT_DOMAIN)
+                        .append(")/element(*,").append(HippoNodeType.NT_AUTHROLE).append(")[");
         boolean hasFilter = false;
         if (!anonymousUser) {
             hasFilter = true;
@@ -385,14 +390,35 @@ public class SecurityManager implements HippoSecurityManager {
                 Query q = systemSession.getWorkspace().getQueryManager().createQuery(xpath.toString(), Query.XPATH);
                 QueryResult result = q.execute();
                 NodeIterator nodeIter = result.getNodes();
-                Set<String> domainIds = new HashSet<>();
+                Set<String> skippedStandardDomainFoldersInNotStandardLocation = new HashSet<>();
+                Set<String> skippedFederatedDomainFoldersInNotSupportedLocation = new HashSet<>();
                 while (nodeIter.hasNext()) {
                     // the parent of the auth role node is the domain node
                     Node domainNode = nodeIter.nextNode().getParent();
-                    if (domainIds.add(domainNode.getIdentifier())) {
+                    Node domainFolderNode = domainNode.getParent();
+                    if (Domain.isInValidStandardDomainFolderLocation(domainFolderNode)) {
+                        skippedStandardDomainFoldersInNotStandardLocation.add(domainFolderNode.getPath());
+                        continue;
+                    } else if (Domain.isInValidFederatedDomainFolderLocation(domainFolderNode)) {
+                        skippedFederatedDomainFoldersInNotSupportedLocation.add(domainFolderNode.getPath());
+                        continue;
+                    }
+                    try {
                         Domain domain = new Domain(domainNode);
                         log.trace("Domain '{}' found for user: {}", domain.getName(), user);
                         domains.add(domain);
+                    } catch (InvalidDomainException e) {
+                        log.error("Skipping invalid domain : {}", e.toString());
+                    }
+                }
+                if (log.isWarnEnabled()) {
+                    if (!skippedStandardDomainFoldersInNotStandardLocation.isEmpty()) {
+                        log.warn("Skipped all domains found in not-standard domain folder location(s): [{}]",
+                                String.join(", ", skippedStandardDomainFoldersInNotStandardLocation));
+                    }
+                    if (!skippedFederatedDomainFoldersInNotSupportedLocation.isEmpty()) {
+                        log.warn("Skipped all domains found in not-supported federated domain folder location(s): [{}]",
+                                String.join(", ", skippedFederatedDomainFoldersInNotSupportedLocation));
                     }
                 }
             } catch (RepositoryException e) {
@@ -473,7 +499,7 @@ public class SecurityManager implements HippoSecurityManager {
                 roleNames.addAll(domain.getRolesForUserRole(userRoleName));
             }
             Set<Role> resolvedRoles = rolesModel.resolveRoles(roleNames);
-            Set<String> roles = resolvedRoles.stream().map(role -> role.getName()).collect(Collectors.toSet());
+            Set<String> roles = resolvedRoles.stream().map(AbstractRole::getName).collect(Collectors.toSet());
             Set<String> privileges = new HashSet<>();
             resolvedRoles.forEach(role -> privileges.addAll(role.getPrivileges()));
 
@@ -482,9 +508,13 @@ public class SecurityManager implements HippoSecurityManager {
 
             if (privileges.size() > 0 && domain.getDomainRules().size() > 0) {
                 // create and add facet auth domain
-                FacetAuthDomain fad = new FacetAuthDomain(domain.getName(), domain.getDomainRules(), roles,
-                        privileges, permissionManager.getOrCreatePermissionNames(privileges));
-                facetAuthDomains.add(fad);
+                FacetAuthDomain fad =
+                        new FacetAuthDomain(domain, roles, privileges,
+                                permissionManager.getOrCreatePermissionNames(privileges));
+                if (!facetAuthDomains.add(fad)) {
+                    log.error("FacetAuthDomain '{}' is not added because already present in set. This should never happen " +
+                            "meaning that FacetAuthDomain has an incorrect #equals implementation", fad);
+                }
             }
         }
         return new FacetAuthPrincipal(facetAuthDomains);

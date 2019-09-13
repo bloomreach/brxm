@@ -64,6 +64,8 @@ public interface HippoNodeType {
 
     public static final String NT_DOMAINFOLDER = "hipposys:domainfolder";
 
+    public static final String NT_FEDERATEDDOMAINFOLDER = "hipposys:federateddomainfolder";
+
     public static final String NT_DOMAINRULE = "hipposys:domainrule";
 
     public static final String NT_EXTERNALGROUP = "hipposys:externalgroup";
@@ -232,8 +234,6 @@ public interface HippoNodeType {
 
     public static final String HIPPO_DOCBASE = "hippo:docbase";
 
-    public static final String HIPPO_DOMAINSPATH = "hipposys:domainspath";
-
     public static final String HIPPO_EQUALS = "hipposys:equals";
 
     public static final String HIPPO_CMS_ONLY = "hipposys:cmsonly";
@@ -245,6 +245,8 @@ public interface HippoNodeType {
     public static final String HIPPO_FILENAME = "hippo:filename";
 
     public static final String HIPPO_GROUPS = "hipposys:groups";
+
+    public static final String HIPPO_USERS = "hipposys:users";
 
     public static final String HIPPO_GROUPSPATH = "hipposys:groupspath";
 
@@ -378,8 +380,6 @@ public interface HippoNodeType {
     public static final String HIPPO_TYPES = "hipposys:types";
 
     public static final String HIPPO_URI = "hipposysedit:uri";
-
-    public static final String HIPPO_USERS = "hipposys:users";
 
     public static final String HIPPO_USERSPATH = "hipposys:userspath";
 

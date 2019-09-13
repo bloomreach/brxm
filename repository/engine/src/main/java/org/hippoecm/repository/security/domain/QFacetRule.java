@@ -35,6 +35,7 @@ import org.onehippo.repository.security.domain.FacetRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.api.HippoNodeType.NT_FEDERATEDDOMAINFOLDER;
 import static org.hippoecm.repository.util.JcrUtils.getBooleanProperty;
 
 /**
@@ -127,6 +128,7 @@ public class QFacetRule implements Serializable {
      * @throws RepositoryException
      */
     public QFacetRule(final Node node) throws RepositoryException {
+
         // get mandatory properties
         facet = node.getProperty(HippoNodeType.HIPPO_FACET).getString();
         facetUUID = node.getIdentifier();
@@ -188,23 +190,37 @@ public class QFacetRule implements Serializable {
      * @return String the String representation of the UUID
      * @throws RepositoryException
      */
-    private String parseReferenceTypeValue(Node facetNode) throws RepositoryException {
-        final String uuid;
-        final String pathValue = facetNode.getProperty(HippoNodeType.HIPPOSYS_VALUE).getString();
-        final String path = pathValue.startsWith("/") ? pathValue.substring(1) : pathValue;
-        if ("".equals(path)) {
-            uuid = facetNode.getSession().getRootNode().getIdentifier();
-        } else {
-            try {
-                uuid = facetNode.getSession().getRootNode().getNode(path).getIdentifier();
-            } catch (PathNotFoundException e) {
-
-                log.info("Path not found for facetRule '{}'", facetNode.getPath());
-
-                return StringUtils.EMPTY;
-            }
+    private String parseReferenceTypeValue(final Node facetNode) throws RepositoryException {
+        final String fullyQualifiedPath  = getFullyQualifiedPath(facetNode);
+        try {
+            return facetNode.getSession().getNode(fullyQualifiedPath).getIdentifier();
+        } catch (PathNotFoundException e) {
+            log.info("Path not found for facetRule '{}'", facetNode.getPath());
+            return StringUtils.EMPTY;
         }
-        return uuid;
+    }
+
+    /**
+     * Facet rules located below a federated domain have as 'root scope' the parent of the domain folder: federated
+     * domains have sandboxed values for the jcr:path/jcr:uuid
+     * @param facetNode the node of type {@link HippoNodeType#NT_FACETRULE}
+     * @return the fully qualified path starting with '/'
+     */
+    public static String getFullyQualifiedPath(final Node facetNode) throws RepositoryException {
+
+        final Node domainsFolder = facetNode.getParent().getParent().getParent();
+        final String pathValue = facetNode.getProperty(HippoNodeType.HIPPOSYS_VALUE).getString();
+        if (domainsFolder.isNodeType(NT_FEDERATEDDOMAINFOLDER)) {
+            if (pathValue.startsWith("/")) {
+                return domainsFolder.getParent().getPath() + (pathValue.equals("/") ? "" : pathValue);
+            }
+            return domainsFolder.getParent().getPath() + "/" + pathValue;
+        } else {
+            if (pathValue.startsWith("/")) {
+                return pathValue;
+            }
+            return "/" + pathValue;
+        }
     }
 
     /**

@@ -61,7 +61,7 @@ public class DomainRule implements Serializable {
         NodeIterator iter = node.getNodes();
         while (iter.hasNext()) {
             Node child = iter.nextNode();
-            if (child.getPrimaryNodeType().isNodeType(HippoNodeType.NT_FACETRULE)) {
+            if (child.isNodeType(HippoNodeType.NT_FACETRULE)) {
                 facetRules.add(new QFacetRule(child));
             }
         }

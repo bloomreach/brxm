@@ -241,12 +241,16 @@
 [hipposys:domainfolder] > nt:base
 + * (hipposys:domain) = hipposys:domain
 
+// federateddomainfolder nodes can be located outside the /hippo:configuration/hippo:domains and are loaded into the
+// domain security model as normal domains
+[hipposys:federateddomainfolder] > hipposys:domainfolder
+
 [hipposys:securityfolder] > nt:base
 - hipposys:userspath (string) mandatory
 - hipposys:groupspath (string) mandatory
 - hipposys:rolespath (string) mandatory
 - hipposys:userrolespath (string) mandatory
-- hipposys:domainspath (string) mandatory
+- hipposys:domainspath (string) // obsolete, no longer used
 - hipposys:passwordmaxagedays (double)
 - hipposys:passwordmaxagedays (long)
 + hipposys:accessmanager (hipposys:accessmanager) = hipposys:accessmanager

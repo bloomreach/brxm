@@ -341,6 +341,13 @@ public class RepositoryImpl extends ExtendedJackrabbitRepositoryImpl implements 
         }
 
         @Override
+        protected void doPostInitialize() throws RepositoryException {
+            super.doPostInitialize();
+            // at this point the SearchManager has been initialize, e.g. allowing to use queries
+            ((HippoSharedItemStateManager)getItemStateProvider()).doPostInitializeWorkspaceInfo();
+        }
+
+        @Override
         protected SearchManager getSearchManager() throws RepositoryException {
             if (!isInitialized()) {
                 throw new IllegalStateException("workspace '" + getName()

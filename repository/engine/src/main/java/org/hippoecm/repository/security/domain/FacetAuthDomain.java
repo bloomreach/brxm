@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,11 @@ public class FacetAuthDomain {
     private final String domainName;
 
     /**
+     * The identifying path of the domain
+     */
+    private final String domainPath;
+
+    /**
      * The set of domain rules for the domain
      * @see DomainRule
      */
@@ -49,16 +54,13 @@ public class FacetAuthDomain {
      */
     private final Set<String> resolvedPrivileges;
 
-    public FacetAuthDomain(final String domainName, final Set<DomainRule> domainRules, final Set<String> roles,
-                           final Set<String> privileges, Set<String> resolvedPrivileges) throws IllegalArgumentException {
-        if (domainName == null) {
-            throw new IllegalArgumentException("domainName can not be null");
+    public FacetAuthDomain(final Domain domain, final Set<String> roles, final Set<String> privileges,
+                           Set<String> resolvedPrivileges) throws IllegalArgumentException {
+        if (domain == null) {
+            throw new IllegalArgumentException("domain can not be null");
         }
-        if (domainRules == null){
-            throw new IllegalArgumentException("domainRules can not be null");
-        }
-        if (domainRules.size() == 0) {
-            throw new IllegalArgumentException("domainRules must contain at least one value");
+        if (domain.getDomainRules().size() == 0) {
+            throw new IllegalArgumentException("domain must contain at least one domainRule");
         }
         if (roles == null){
             throw new IllegalArgumentException("roles can not be null");
@@ -71,9 +73,10 @@ public class FacetAuthDomain {
         }
 
         // assigning values
-        this.domainName = domainName;
+        this.domainName = domain.getName();
+        this.domainPath = domain.getPath();
         this.roles = Collections.unmodifiableSet(roles);
-        this.rules = Collections.unmodifiableSet(domainRules);
+        this.rules = Collections.unmodifiableSet(domain.getDomainRules());
         this.privileges = Collections.unmodifiableSet(privileges);
         this.resolvedPrivileges = Collections.unmodifiableSet(resolvedPrivileges);
     }
@@ -84,6 +87,14 @@ public class FacetAuthDomain {
      */
     public String getDomainName() {
         return domainName;
+    }
+
+    /**
+     * Get the identifying path of the domain
+     * @return the path of the domain
+     */
+    public String getDomainPath() {
+        return domainPath;
     }
 
     /**
@@ -120,14 +131,14 @@ public class FacetAuthDomain {
 
 
     public String toString() {
-        return ("UserDomain: " + domainName);
+        return ("UserDomain: " + domainPath);
     }
 
     public boolean equals(Object obj) {
-        return obj instanceof FacetAuthDomain && getDomainName().equals(((FacetAuthDomain)obj).getDomainName());
+        return obj instanceof FacetAuthDomain && domainPath.equals(((FacetAuthDomain)obj).domainPath);
     }
 
     public int hashCode() {
-        return domainName.hashCode();
+        return domainPath.hashCode();
     }
 }
