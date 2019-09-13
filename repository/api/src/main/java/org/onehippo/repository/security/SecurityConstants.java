@@ -42,4 +42,10 @@ public final class SecurityConstants {
      */
     public static final String USERROLE_CONTENT_EDITOR = "xm-content-editor";
 
+    /**
+     * The user role representing a (system) user which need read access everywhere, for example the user that needs to
+     * read all kind of configuration but never modify it.
+     * For this, the everywhere domain grants the authrole readonly to users with this userrole.
+     */
+    public static final String USERROLE_READ_EVERYWHERE = "xm-read-everywhere";
 }
