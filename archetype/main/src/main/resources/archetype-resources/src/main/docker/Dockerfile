@@ -26,7 +26,7 @@ ENV MYSQL_DB_PORT 3306
 ENV MYSQL_DB_USER ${docker.db.username}
 ENV MYSQL_DB_PASSWORD ${docker.db.password}
 ENV MYSQL_DB_NAME ${docker.db.schema}
-ENV MYSQL_DB_DRIVER com.mysql.jdbc.Driver
+ENV MYSQL_DB_DRIVER com.mysql.cj.jdbc.Driver
 
 # Default postgres variables
 ENV POSTGRES_DB_HOST postgres
