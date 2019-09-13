@@ -18,14 +18,13 @@ package org.hippoecm.repository.jackrabbit;
 import java.io.File;
 import java.security.AccessControlException;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Item;
@@ -71,10 +70,10 @@ import org.hippoecm.repository.dataprovider.MirrorNodeId;
 import org.hippoecm.repository.impl.NodeDecorator;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.query.lucene.HippoQueryHandler;
-import org.hippoecm.repository.security.FacetRuleExtensionsPrincipal;
 import org.hippoecm.repository.security.HippoAMContext;
 import org.hippoecm.repository.security.HippoAccessManager;
 import org.hippoecm.repository.security.SubjectHelper;
+import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.FacetAuthDomain;
 import org.hippoecm.repository.security.domain.QFacetRule;
 import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
@@ -548,19 +547,6 @@ class SessionImplHelper {
         }
     }
 
-    public Map<String, Collection<QFacetRule>> getFacetRules(DomainRuleExtension[] domainRuleExtensions) throws RepositoryException {
-        Map<String, Collection<QFacetRule>> extendedFacetRules = new HashMap<String, Collection<QFacetRule>>();
-        for (DomainRuleExtension domainRuleExtension : domainRuleExtensions) {
-            final String domainRulePath = domainRuleExtension.getDomainName() + "/" + domainRuleExtension.getDomainRuleName();
-            final Collection<QFacetRule> facetRules = new ArrayList<QFacetRule>();
-            for (FacetRule facetRule : domainRuleExtension.getFacetRules()) {
-                facetRules.add(new QFacetRule(facetRule, context));
-            }
-            extendedFacetRules.put(domainRulePath, facetRules);
-        }
-        return extendedFacetRules;
-    }
-
     public AuthorizationQuery getAuthorizationQuery() {
 
         // potentially trigger the implicit read access cache to update
@@ -636,16 +622,73 @@ class SessionImplHelper {
             // add other session FacetAuthDomains
             facetAuthDomains.addAll(facetAuthPrincipal.getFacetAuthDomains());
         }
+        applyDomainRuleExtensions(facetAuthDomains, domainExtensions);
+
         // remove/replace FacetAuthPrincipal, if any, as there can only be one
         principals.removeIf(p -> p instanceof FacetAuthPrincipal);
         principals.add(new FacetAuthPrincipal(facetAuthDomains));
-
-        // remove/replace FacetRuleExtensionsPrincipal, if any, as there can only be one
-        principals.removeIf(p -> p instanceof FacetRuleExtensionsPrincipal);
-        principals.add(new FacetRuleExtensionsPrincipal(getFacetRules(domainExtensions)));
 
         Subject newSubject = new Subject(subject.isReadOnly(), principals, subject.getPublicCredentials(), subject.getPrivateCredentials());
         return context.getRepositoryContext().getWorkspaceManager().createSession(newSubject, workspaceName);
     }
 
+    private void applyDomainRuleExtensions(final HashSet<FacetAuthDomain> fads,
+                                           final DomainRuleExtension[] domainRuleExtensions)
+            throws RepositoryException {
+        Map<String, Map<String, Set<QFacetRule>>> domainExtensionsMap = new HashMap<>();
+        for (DomainRuleExtension domainExtension : domainRuleExtensions) {
+            Map<String, Set<QFacetRule>> ruleExtension =
+                    domainExtensionsMap.computeIfAbsent(domainExtension.getDomainName(), k -> new HashMap<>());
+            Set<QFacetRule> facetRules =
+                    ruleExtension.computeIfAbsent(domainExtension.getDomainRuleName(), k -> new HashSet<>());
+            for (FacetRule facetRule : domainExtension.getFacetRules()) {
+                facetRules.add(new QFacetRule(facetRule, context));
+            }
+        }
+
+        Set<FacetAuthDomain> updatedFads = new HashSet<>();
+        for (FacetAuthDomain fad : fads) {
+            HashSet<DomainRule> domainRules = new HashSet<>(fad.getRules());
+            boolean updated = applyDomainRuleExtensions(domainRules, domainExtensionsMap.get("*"));
+            if (applyDomainRuleExtensions(domainRules, domainExtensionsMap.get(fad.getDomainName()))) {
+                updated = true;
+            }
+            if (updated) {
+                FacetAuthDomain updatedFad =
+                        new FacetAuthDomain(fad.getDomainName(), fad.getDomainPath(), domainRules, fad.getRoles(),
+                                fad.getPrivileges(), fad.getResolvedPrivileges());
+                updatedFads.add(updatedFad);
+            }
+        }
+        if (!updatedFads.isEmpty()) {
+            fads.removeAll(updatedFads);
+            fads.addAll(updatedFads);
+        }
+    }
+
+    private boolean applyDomainRuleExtensions(final HashSet<DomainRule> domainRules,
+                                              final Map<String, Set<QFacetRule>> ruleExtensionsMap) {
+        boolean applied = false;
+        if (ruleExtensionsMap != null) {
+            for (DomainRule domainRule : domainRules) {
+                Set<QFacetRule> facetRules = ruleExtensionsMap.get(domainRule.getName());
+                if (facetRules != null && !facetRules.isEmpty()) {
+                    domainRules.remove(domainRule);
+                    domainRules.add(new DomainRule(domainRule, facetRules));
+                    applied = true;
+                    break;
+                }
+            }
+            final Set<QFacetRule> facetRules = ruleExtensionsMap.get("*");
+            if (facetRules != null && !facetRules.isEmpty()) {
+                Set<DomainRule> extendedDomainRules = domainRules.stream()
+                        .map(r -> new DomainRule(r, facetRules))
+                        .collect(Collectors.toSet());
+                domainRules.clear();
+                domainRules.addAll(extendedDomainRules);
+                applied = true;
+            }
+        }
+        return applied;
+    }
 }

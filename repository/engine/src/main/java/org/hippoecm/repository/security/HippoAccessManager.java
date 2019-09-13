@@ -18,9 +18,7 @@ package org.hippoecm.repository.security;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -226,8 +224,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     private final List<String> groupIds = new ArrayList<>();
     private final List<String> currentDomainRoleIds = new ArrayList<>();
 
-    private Map<String, Collection<QFacetRule>> extendedFacetRules;
-
     private final PermissionManager permissionManager = PermissionManager.getInstance();
 
     /**
@@ -317,12 +313,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             cacheSize = DEFAULT_PERM_CACHE_SIZE;
         }
 
-        // fetch FacetRuleExtensionsPrincipal, if any. There can only be one, see FacetRuleExtensionsPrincipal.equals()
-        FacetRuleExtensionsPrincipal facetRuleExtensionsPrincipal = SubjectHelper.getFirstPrincipal(subject, FacetRuleExtensionsPrincipal.class);
-        if (facetRuleExtensionsPrincipal != null) {
-            initializeExtendedFacetRules(facetRuleExtensionsPrincipal);
-        }
-
         readAccessCache = new HippoAccessCache(cacheSize);
         readVirtualAccessCache = new WeakHashMap<>();
 
@@ -332,19 +322,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         initialized = true;
 
         log.info("Initialized HippoAccessManager for user {} with cache size {}", getUserIdAsString(), cacheSize);
-    }
-
-    private void initializeExtendedFacetRules(final FacetRuleExtensionsPrincipal facetRuleExtensionsPrincipal) {
-        extendedFacetRules = new HashMap<>();
-        final Set<FacetAuthDomain> facetAuthDomains = facetAuthPrincipal.getFacetAuthDomains();
-        final Map<String, Collection<QFacetRule>> facetRules = facetRuleExtensionsPrincipal.getExpandedFacetRules(facetAuthDomains);
-        for (Map.Entry<String, Collection<QFacetRule>> entry : facetRules.entrySet()) {
-            final String domainPath = entry.getKey();
-            if (!extendedFacetRules.containsKey(domainPath)) {
-                extendedFacetRules.put(domainPath, new ArrayList<>());
-            }
-            extendedFacetRules.get(domainPath).addAll(entry.getValue());
-        }
     }
 
     /**
@@ -609,19 +586,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         return implicitReadAccessUpdateCounter;
     }
 
-    public Set<QFacetRule> getFacetRules(final DomainRule domainRule) {
-        if (extendedFacetRules != null) {
-            final String domainRulePath = domainRule.getDomainName() + "/" + domainRule.getName();
-            final Collection<QFacetRule> extendedRules = extendedFacetRules.get(domainRulePath);
-            if (extendedRules != null) {
-                final Set<QFacetRule> facetRules = new HashSet<>(domainRule.getFacetRules());
-                facetRules.addAll(extendedRules);
-                return facetRules;
-            }
-        }
-        return domainRule.getFacetRules();
-    }
-
     //---------------------------------------- Methods ---------------------------------------------//
     /**
      * Check whether a user can read the node with the given id
@@ -786,7 +750,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             boolean allRulesMatched = true;
 
             // no facet rules means no match
-            final Set<QFacetRule> facetRules = getFacetRules(domainRule);
+            final Set<QFacetRule> facetRules = domainRule.getFacetRules();
             if (facetRules.isEmpty()) {
                 allRulesMatched = false;
                 log.debug("No facet rules found for : {} in domain rule: {}", nodeState.getId(), domainRule);
@@ -1720,9 +1684,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     }
 
     private synchronized void initializeImplicitReadAccess(final DomainRule domainRule, final FacetAuthDomain fad) {
-        // use the possibly extended facet rules!!
-        final Set<QFacetRule> facetRules = getFacetRules(domainRule);
-        for (QFacetRule qFacetRule : facetRules) {
+        for (QFacetRule qFacetRule : domainRule.getFacetRules()) {
             if (qFacetRule.isHierarchicalWhiteListRule()) {
 
                 if (qFacetRule.isReferenceRule() && !qFacetRule.referenceExists()) {

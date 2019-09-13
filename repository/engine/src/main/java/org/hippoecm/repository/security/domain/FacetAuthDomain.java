@@ -54,13 +54,20 @@ public class FacetAuthDomain {
      */
     private final Set<String> resolvedPrivileges;
 
-    public FacetAuthDomain(final Domain domain, final Set<String> roles, final Set<String> privileges,
-                           Set<String> resolvedPrivileges) throws IllegalArgumentException {
-        if (domain == null) {
-            throw new IllegalArgumentException("domain can not be null");
+    public FacetAuthDomain(final String domainName, final String domainPath, final Set<DomainRule> domainRules,
+                           final Set<String> roles, final Set<String> privileges, Set<String> resolvedPrivileges)
+            throws IllegalArgumentException {
+        if (domainName == null) {
+            throw new IllegalArgumentException("domainName can not be null");
         }
-        if (domain.getDomainRules().size() == 0) {
-            throw new IllegalArgumentException("domain must contain at least one domainRule");
+        if (domainPath == null) {
+            throw new IllegalArgumentException("domainPath can not be null");
+        }
+        if (domainRules == null){
+            throw new IllegalArgumentException("domainRules can not be null");
+        }
+        if (domainRules.size() == 0) {
+            throw new IllegalArgumentException("domainRules must contain at least one value");
         }
         if (roles == null){
             throw new IllegalArgumentException("roles can not be null");
@@ -73,10 +80,10 @@ public class FacetAuthDomain {
         }
 
         // assigning values
-        this.domainName = domain.getName();
-        this.domainPath = domain.getPath();
+        this.domainName = domainName;
+        this.domainPath = domainPath;
         this.roles = Collections.unmodifiableSet(roles);
-        this.rules = Collections.unmodifiableSet(domain.getDomainRules());
+        this.rules = Collections.unmodifiableSet(domainRules);
         this.privileges = Collections.unmodifiableSet(privileges);
         this.resolvedPrivileges = Collections.unmodifiableSet(resolvedPrivileges);
     }
@@ -135,7 +142,7 @@ public class FacetAuthDomain {
     }
 
     public boolean equals(Object obj) {
-        return obj instanceof FacetAuthDomain && domainPath.equals(((FacetAuthDomain)obj).domainPath);
+        return obj instanceof FacetAuthDomain && domainPath.equals(((FacetAuthDomain)obj).getDomainPath());
     }
 
     public int hashCode() {

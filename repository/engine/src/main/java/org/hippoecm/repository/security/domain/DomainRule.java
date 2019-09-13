@@ -45,9 +45,22 @@ public class DomainRule implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(DomainRule.class);
 
-    private Set<QFacetRule> facetRules = new HashSet<>();
-    private String name;
-    private String domainName;
+    private final Set<QFacetRule> facetRules;
+    private final String name;
+    private final String domainName;
+
+    /**
+     * Instantiate a domain rule based on another domain rule with extra facet rules
+     * @param other another domain rule
+     * @param extensionFacetRules extra facet rules
+     */
+    public DomainRule(DomainRule other, Set<QFacetRule> extensionFacetRules) {
+        HashSet<QFacetRule> combinedFacetRules = new HashSet<>(other.getFacetRules());
+        combinedFacetRules.addAll(extensionFacetRules);
+        facetRules = Collections.unmodifiableSet(combinedFacetRules);
+        name = other.getName();
+        domainName = other.getDomainName();
+    }
 
     /**
      * Instantiate the domain rule with the given configuration node. If
@@ -59,13 +72,14 @@ public class DomainRule implements Serializable {
     public DomainRule(Node node) throws RepositoryException {
         // loop over all the facet rules
         NodeIterator iter = node.getNodes();
+        HashSet<QFacetRule> collectedFacetRules = new HashSet<>();
         while (iter.hasNext()) {
             Node child = iter.nextNode();
             if (child.isNodeType(HippoNodeType.NT_FACETRULE)) {
-                facetRules.add(new QFacetRule(child));
+                collectedFacetRules.add(new QFacetRule(child));
             }
         }
-        facetRules = Collections.unmodifiableSet(facetRules);
+        facetRules = Collections.unmodifiableSet(collectedFacetRules);
         this.name = NodeNameCodec.decode(node.getName());
         this.domainName = node.getParent().getName();
     }

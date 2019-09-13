@@ -125,8 +125,8 @@ public class AuthorizationQuery {
                     userIds.add(user.getId());
                 }
             } else {
-                memberships = Collections.EMPTY_SET;
-                userIds = Collections.EMPTY_SET;
+                memberships = Collections.emptySet();
+                userIds = Collections.emptySet();
             }
             long start = System.currentTimeMillis();
             this.query = initQuery(facetAuthPrincipal,
@@ -159,7 +159,7 @@ public class AuthorizationQuery {
             final Set<DomainRule> domainRules = facetAuthDomain.getRules();
             for (final DomainRule domainRule : domainRules) {
                 BooleanQuery facetQuery = new BooleanQuery(true);
-                for (final QFacetRule facetRule : hippoAccessManager.getFacetRules(domainRule)) {
+                for (final QFacetRule facetRule : domainRule.getFacetRules()) {
                     Query q = getFacetRuleQuery(facetRule, userIds, memberships, facetAuthDomain.getRoles(), indexingConfig, nsMappings, session, ntMgr);
                     if (isNoHitsQuery(q)) {
                         log.debug("Found a no hits query in facetRule '{}'. Since facet rules are AND-ed with other " +
@@ -181,7 +181,7 @@ public class AuthorizationQuery {
                     // directly return the BooleanQuery that only contains the MatchAllDocsQuery : This is more efficient
                     return facetQuery;
                 } else if (facetQuery.getClauses().length == 1 && isNoHitsQuery(facetQuery.getClauses()[0].getQuery())) {
-                    log.debug("No hits query does not add any new information for the authorization query '{}' so far " +
+                    log.debug("No hits query does not add any new information for the authorization query so far " +
                             "since gets OR-ed. Hence can be skipped.");
                 } else {
                     authQuery.add(facetQuery, Occur.SHOULD);

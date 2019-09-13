@@ -502,8 +502,8 @@ public class SecurityManager implements HippoSecurityManager {
             if (privileges.size() > 0 && domain.getDomainRules().size() > 0) {
                 // create and add facet auth domain
                 FacetAuthDomain fad =
-                        new FacetAuthDomain(domain, roles, privileges,
-                                permissionManager.getOrCreatePermissionNames(privileges));
+                        new FacetAuthDomain(domain.getName(), domain.getPath(), domain.getDomainRules(), roles,
+                                privileges, permissionManager.getOrCreatePermissionNames(privileges));
                 if (!facetAuthDomains.add(fad)) {
                     log.error("FacetAuthDomain '{}' is not added because already present in set. This should never happen " +
                             "meaning that FacetAuthDomain has an incorrect #equals implementation", fad);
