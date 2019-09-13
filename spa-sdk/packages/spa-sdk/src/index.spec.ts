@@ -50,11 +50,11 @@ describe('initialize', () => {
 
     expect(meta1).toBeDefined();
     expect(meta1.getPosition()).toBe(META_POSITION_END);
-    expect(JSON.parse(meta1.getData())).toMatchObject({ 'HST-Channel-Id': 'spa-csr-preview' });
+    expect(JSON.parse(meta1.getData())).toMatchSnapshot();
 
     expect(meta2).toBeDefined();
     expect(meta2.getPosition()).toBe(META_POSITION_END);
-    expect(JSON.parse(meta2.getData())).toMatchObject({ 'HST-Type': 'PAGE-META-DATA' });
+    expect(JSON.parse(meta2.getData())).toMatchSnapshot();
   });
 
   it('should contain a main component', () => {
@@ -93,11 +93,11 @@ describe('initialize', () => {
 
     expect(meta1).toBeDefined();
     expect(meta1.getPosition()).toBe(META_POSITION_BEGIN);
-    expect(JSON.parse(meta1.getData())).toMatchObject({ 'HST-Label': 'Banner' });
+    expect(JSON.parse(meta1.getData())).toMatchSnapshot();
 
     expect(meta2).toBeDefined();
     expect(meta2.getPosition()).toBe(META_POSITION_END);
-    expect(JSON.parse(meta2.getData())).toMatchObject({ 'HST-End': 'true' });
+    expect(JSON.parse(meta2.getData())).toMatchSnapshot();
   });
 
   it('should resolve content references', () => {
@@ -120,6 +120,6 @@ describe('initialize', () => {
 
     expect(meta).toBeDefined();
     expect(meta.getPosition()).toBe(META_POSITION_BEGIN);
-    expect(JSON.parse(meta.getData())).toMatchObject({ 'HST-Type': 'MANAGE_CONTENT_LINK' });
+    expect(JSON.parse(meta.getData())).toMatchSnapshot();
   });
 });
