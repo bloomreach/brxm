@@ -565,12 +565,8 @@ class SessionImplHelper {
                     if (facetAuthPrincipal == null) {
                         facetAuthPrincipal = FacetAuthPrincipal.NO_AUTH_DOMAINS_PRINCIPAL;
                     }
-                    authorizationQuery = new AuthorizationQuery(context.getSessionImpl().getSubject(),
-                            facetAuthPrincipal,
-                            queryHandler.getNamespaceMappings(),
-                            queryHandler.getIndexingConfig(),
-                            context.getNodeTypeManager(),
-                            context.getSessionImpl());
+                    authorizationQuery = new AuthorizationQuery(facetAuthPrincipal, queryHandler.getNamespaceMappings(),
+                            queryHandler.getIndexingConfig(),  context.getNodeTypeManager(), context.getSessionImpl());
                 }
             } catch (RepositoryException e) {
                 throw new RuntimeException(e);

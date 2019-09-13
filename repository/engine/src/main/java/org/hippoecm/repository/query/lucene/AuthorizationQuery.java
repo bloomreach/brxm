@@ -31,7 +31,6 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
-import javax.security.auth.Subject;
 
 import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
@@ -96,8 +95,7 @@ public class AuthorizationQuery {
     private final BooleanQuery query;
 
 
-    public AuthorizationQuery(final Subject subject,
-                              final FacetAuthPrincipal facetAuthPrincipal,
+    public AuthorizationQuery(final FacetAuthPrincipal facetAuthPrincipal,
                               final NamespaceMappings nsMappings,
                               final ServicingIndexingConfiguration indexingConfig,
                               final NodeTypeManager ntMgr,
