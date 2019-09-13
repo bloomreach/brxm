@@ -79,5 +79,8 @@
     "tslint-loader": "^3.5",
     "typedoc": "^0.15.0",
     "typescript": "^3.6"
+  },
+  "dependencies": {
+    "emittery": "^0.4"
   }
 }
