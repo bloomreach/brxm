@@ -150,7 +150,7 @@
   - hipposys:passwordmaxagedays (double)
   - hipposys:userspath (string) mandatory
   - hipposys:passwordmaxagedays (long)
-  - hipposys:domainspath (string) mandatory
+  - hipposys:domainspath (string) // obsolete
   + * (hipposys:securityprovider) = hipposys:securityprovider
   + hipposys:accessmanager (hipposys:accessmanager) = hipposys:accessmanager
 
