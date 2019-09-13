@@ -446,10 +446,13 @@
 [hst:blueprints] > nt:base, mix:referenceable
 + * (hst:blueprint)
 
+[hst:domainfolder] > hipposys:federateddomainfolder
+
 [hst:hst] > nt:base, mix:referenceable
 + hst:configurations (hst:configurations) = hst:configurations version
 + hst:hosts (hst:virtualhosts) = hst:virtualhosts version
 + hst:blueprints (hst:blueprints) = hst:blueprints version
++ hst:domains (hst:domainfolder) = hst:domainfolder
 + * (hst:sites) = hst:sites version
 
 // the hst nodetype for the contentmount's: this nodetype is for content sharing between subsites

@@ -28,3 +28,32 @@ definitions:
       /hst:sites:
         .meta:residual-child-node-category: content
         jcr:primaryType: hst:sites
+      /hst:domains:
+        jcr:primaryType: hst:domainfolder
+        # TODO should residual nodes be system?
+        .meta:residual-child-node-category: system
+        /hstconfig:
+          jcr:primaryType: hipposys:domain
+          /readwrite:
+            jcr:primaryType: hipposys:authrole
+            # TODO should the 'userrole' be system?
+            hipposys:userrole: xm-webmaster
+            hipposys:role: readwrite
+          /hstconfig:
+            jcr:primaryType: hipposys:domainrule
+            /hstconfig-and-descendants:
+              jcr:primaryType: hipposys:facetrule
+              hipposys:equals: true
+              hipposys:facet: jcr:path
+              hipposys:filter: false
+              hipposys:type: Reference
+              hipposys:value: /
+            /exclude-hst-domains-and-descendants:
+              jcr:primaryType: hipposys:facetrule
+              hipposys:equals: false
+              hipposys:facet: jcr:path
+              hipposys:filter: false
+              hipposys:type: Reference
+              hipposys:value: /hst:domains
+
+
