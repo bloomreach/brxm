@@ -180,6 +180,7 @@
                 <exclude>.*</exclude>
                 <exclude>DEVELOPER.md</exclude>
                 <exclude>yarn.lock</exclude>
+                <exclude>packages/spa-sdk/src/__snapshots__/*.snap</exclude>
                 <exclude>packages/spa-sdk/src/docs/*.md</exclude>
                 <exclude>packages/spa-sdk/.*</exclude>
                 <exclude>examples/*/.env</exclude>
