@@ -49,10 +49,6 @@ definitions:
             hipposys:role: readonly
       /hippo:security:
         jcr:primaryType: hipposys:securityfolder
-        hipposys:groupspath: hippo:configuration/hippo:groups
-        hipposys:rolespath: hippo:configuration/hippo:roles
-        hipposys:userspath: hippo:configuration/hippo:users
-        hipposys:userrolespath: hippo:configuration/hippo:userroles
         /internal:
           jcr:primaryType: hipposys:securityprovider
           hipposys:classname: org.hippoecm.repository.security.RepositorySecurityProvider

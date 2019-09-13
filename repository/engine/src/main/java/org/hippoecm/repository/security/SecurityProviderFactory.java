@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,22 +23,18 @@ import javax.jcr.SimpleCredentials;
 import javax.jcr.ValueFormatException;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.repository.security.SecurityConstants;
 
 public class SecurityProviderFactory {
 
-    private final String securityPath;
-    private final String usersPath;
-    private final String groupsPath;
-    private final String rolesPath;
-    private final String domainsPath;
+    private final String securityPath = SecurityConstants.CONFIG_SECURITY_PATH.substring(1);
+    private final String usersPath = SecurityConstants.CONFIG_USERS_PATH.substring(1);
+    private final String groupsPath = SecurityConstants.CONFIG_GROUPS_PATH.substring(1);
+    private final String rolesPath = SecurityConstants.CONFIG_ROLES_PATH.substring(1);
+    private final String domainsPath = SecurityConstants.CONFIG_DOMAINS_PATH.substring(1);
     private boolean isMaintenance = false;
 
-    public SecurityProviderFactory(String securityPath, String usersPath, String groupsPath, String rolesPath, String domainsPath, boolean isMaintenance) {
-        this.securityPath = securityPath;
-        this.usersPath = usersPath;
-        this.groupsPath = groupsPath;
-        this.rolesPath = rolesPath;
-        this.domainsPath = domainsPath;
+    public SecurityProviderFactory(boolean isMaintenance) {
         this.isMaintenance = isMaintenance;
     }
 

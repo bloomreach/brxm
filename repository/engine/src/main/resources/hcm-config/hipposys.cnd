@@ -246,10 +246,9 @@
 [hipposys:federateddomainfolder] > hipposys:domainfolder
 
 [hipposys:securityfolder] > nt:base
-- hipposys:userspath (string) mandatory
-- hipposys:groupspath (string) mandatory
-- hipposys:rolespath (string) mandatory
-- hipposys:userrolespath (string) mandatory
+- hipposys:userspath (string) // obsolete, no longer user
+- hipposys:groupspath (string) // obsolete, no longer used
+- hipposys:rolespath (string) // obsolete, no longer used
 - hipposys:domainspath (string) // obsolete, no longer used
 - hipposys:passwordmaxagedays (double)
 - hipposys:passwordmaxagedays (long)

@@ -15,10 +15,24 @@
  */
 package org.onehippo.repository.security;
 
+import org.hippoecm.repository.api.HippoNodeType;
+
 public final class SecurityConstants {
 
     private SecurityConstants() {
     }
+
+    public static final String CONFIGURATION_FOLDER_PATH = "/" + HippoNodeType.CONFIGURATION_PATH;
+    public static final String CONFIGURATION_FOLDER_PATH_PREFIX = CONFIGURATION_FOLDER_PATH + "/";
+
+    // Standard /hippo:configuration security folder locations
+
+    public static final String CONFIG_DOMAINS_PATH = CONFIGURATION_FOLDER_PATH_PREFIX + HippoNodeType.DOMAINS_PATH;
+    public static final String CONFIG_GROUPS_PATH = CONFIGURATION_FOLDER_PATH_PREFIX + HippoNodeType.GROUPS_PATH;
+    public static final String CONFIG_ROLES_PATH = CONFIGURATION_FOLDER_PATH_PREFIX + HippoNodeType.ROLES_PATH;
+    public static final String CONFIG_SECURITY_PATH = CONFIGURATION_FOLDER_PATH_PREFIX + HippoNodeType.SECURITY_PATH;
+    public static final String CONFIG_USERROLES_PATH = CONFIGURATION_FOLDER_PATH_PREFIX + HippoNodeType.USERROLES_PATH;
+    public static final String CONFIG_USERS_PATH = CONFIGURATION_FOLDER_PATH_PREFIX + HippoNodeType.USERS_PATH;
 
     // Standard system user roles
 

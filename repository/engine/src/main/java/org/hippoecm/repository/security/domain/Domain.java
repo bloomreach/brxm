@@ -29,6 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.api.HippoNodeType.NT_FEDERATEDDOMAINFOLDER;
+import static org.onehippo.repository.security.SecurityConstants.CONFIGURATION_FOLDER_PATH;
+import static org.onehippo.repository.security.SecurityConstants.CONFIGURATION_FOLDER_PATH_PREFIX;
 
 /**
  * A Domain holds a set of {@link DomainRule}s that define the domain.
@@ -78,10 +80,6 @@ public class Domain {
      */
     private static final Logger log = LoggerFactory.getLogger(Domain.class);
 
-    private static final String QUALIFIED_CONFIGURATION_PATH = "/" + HippoNodeType.CONFIGURATION_PATH;
-
-    private static final String CONFIGURATION_FOLDER_PATH = QUALIFIED_CONFIGURATION_PATH + "/";
-
     /**
      * Checks if the provided domain folder node its primary type is hipposys:domainfolder and
      * in that case is not directly below /hippo:configuration.
@@ -93,7 +91,7 @@ public class Domain {
             throws RepositoryException {
         return HippoNodeType.NT_DOMAINFOLDER.equals(domainFolder.getPrimaryNodeType().getName()) &&
                 (domainFolder.getDepth() != 2 ||
-                        !QUALIFIED_CONFIGURATION_PATH.equals(domainFolder.getParent().getPath()));
+                        !CONFIGURATION_FOLDER_PATH.equals(domainFolder.getParent().getPath()));
     }
 
     /**
@@ -106,7 +104,7 @@ public class Domain {
     public static boolean isInValidFederatedDomainFolderLocation(final Node domainFolder)
             throws RepositoryException {
         return domainFolder.isNodeType(HippoNodeType.NT_FEDERATEDDOMAINFOLDER) &&
-                (domainFolder.getDepth() == 1 || domainFolder.getPath().startsWith(CONFIGURATION_FOLDER_PATH));
+                (domainFolder.getDepth() == 1 || domainFolder.getPath().startsWith(CONFIGURATION_FOLDER_PATH_PREFIX));
     }
 
     /**

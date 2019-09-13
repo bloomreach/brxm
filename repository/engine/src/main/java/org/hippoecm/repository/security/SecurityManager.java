@@ -90,15 +90,14 @@ import org.onehippo.repository.security.SessionUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.repository.api.HippoNodeType.CONFIGURATION_PATH;
-import static org.hippoecm.repository.api.HippoNodeType.DOMAINS_PATH;
+import static org.onehippo.repository.security.SecurityConstants.CONFIG_SECURITY_PATH;
+import static org.onehippo.repository.security.SecurityConstants.CONFIG_ROLES_PATH;
+import static org.onehippo.repository.security.SecurityConstants.CONFIG_USERROLES_PATH;
 
 public class SecurityManager implements HippoSecurityManager {
 
     // TODO: this string is matched as node name in the repository.
     public static final String INTERNAL_PROVIDER = "internal";
-    public static final String SECURITY_CONFIG_PATH = CONFIGURATION_PATH + "/" + HippoNodeType.SECURITY_PATH;
-    private static final String QUALIFIED_CONFIGURATION_PATH = "/" + CONFIGURATION_PATH;
 
     private static final Logger log = LoggerFactory.getLogger(SecurityManager.class);
 
@@ -117,19 +116,13 @@ public class SecurityManager implements HippoSecurityManager {
     private AuthContextProvider authCtxProvider;
 
     public void configure() throws RepositoryException {
-        final Node configNode = systemSession.getRootNode().getNode(SECURITY_CONFIG_PATH);
-        final String usersPath = configNode.getProperty(HippoNodeType.HIPPO_USERSPATH).getString();
-        final String groupsPath = configNode.getProperty(HippoNodeType.HIPPO_GROUPSPATH).getString();
-        final String rolesPath = configNode.getProperty(HippoNodeType.HIPPO_ROLESPATH).getString();
-        final String userRolesPath = configNode.getProperty(HippoNodeType.HIPPO_USERROLESPATH).getString();
-        SecurityProviderFactory spf = new SecurityProviderFactory(SECURITY_CONFIG_PATH, usersPath, groupsPath, rolesPath,
-                CONFIGURATION_PATH + "/" + DOMAINS_PATH, maintenanceMode);
+        SecurityProviderFactory spf = new SecurityProviderFactory(maintenanceMode);
         permissionManager = PermissionManager.getInstance();
 
         StringBuilder statement = new StringBuilder();
         statement.append("SELECT * FROM ").append(HippoNodeType.NT_SECURITYPROVIDER);
         statement.append(" WHERE");
-        statement.append(" jcr:path LIKE '/").append(SECURITY_CONFIG_PATH).append("/%").append("'");
+        statement.append(" jcr:path LIKE '").append(CONFIG_SECURITY_PATH).append("/%").append("'");
         Query q = systemSession.getWorkspace().getQueryManager().createQuery(statement.toString(), Query.SQL);
         QueryResult result = q.execute();
         NodeIterator providerIter = result.getNodes();
@@ -162,8 +155,8 @@ public class SecurityManager implements HippoSecurityManager {
             log.error("No security providers found: login will not be possible!");
         }
         // the following must be done after the above configuration: only from here on session.impersonate is possible!
-        rolesModel = new RolesModel(systemSession, "/"+rolesPath);
-        userRolesModel = new UserRolesModel(systemSession, "/"+userRolesPath);
+        rolesModel = new RolesModel(systemSession, CONFIG_ROLES_PATH);
+        userRolesModel = new UserRolesModel(systemSession, CONFIG_USERROLES_PATH);
     }
 
     class HippoJAASAuthContext extends JAASAuthContext {
