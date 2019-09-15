@@ -244,6 +244,14 @@ public class DynamicBeanBuilder {
         addCollectionGetMethod(methodName, METHOD_GET_CHILD_BEANS_BY_NAME, HippoBean.class, propertyName);
     }
 
+    void addBeanMethodCompoundType(final String methodName, final String propertyName, final boolean multiple) {
+        if (multiple) {
+            addCollectionGetMethod(methodName, METHOD_GET_CHILD_BEANS_BY_NAME, HippoCompound.class, propertyName);
+        } else {
+            addHippoTypeGetMethod(methodName, METHOD_GET_BEAN, HippoCompound.class, propertyName);
+        }
+    }
+
     void addBeanMethodInternalType(final String methodName, final Class<?> returnType, final String propertyName, final boolean multiple) {
         if (multiple) {
             addCollectionGetMethod(methodName, METHOD_GET_CHILD_BEANS_BY_NAME, returnType, propertyName);

@@ -220,6 +220,14 @@ definitions:
             hipposysedit:path: contentbeanstest:longTypeField2
             hipposysedit:primary: false
             hipposysedit:type: Long
+          /contentblocks:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: true
+            hipposysedit:ordered: true
+            hipposysedit:path: contentbeanstest:contentblocks
+            hipposysedit:primary: false
+            hipposysedit:type: hippo:compound
       /hipposysedit:prototypes:
         jcr:primaryType: hipposysedit:prototypeset
         /hipposysedit:prototype:

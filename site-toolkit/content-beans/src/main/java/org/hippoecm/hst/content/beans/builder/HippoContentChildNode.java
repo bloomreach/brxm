@@ -30,11 +30,6 @@ public class HippoContentChildNode {
     private final String shortName;
     private final String name;
     private final boolean multiple;
-
-    public String getType() {
-        return type;
-    }
-
     private final String type;
     private final String cmsType;
 
@@ -52,6 +47,10 @@ public class HippoContentChildNode {
         this.type = contentType.getEffectiveType();
         this.cmsType = contentType.getItemType();
         this.multiple = contentType.isMultiple();
+    }
+
+    public String getType() {
+        return type;
     }
 
     public String getCmsType() {

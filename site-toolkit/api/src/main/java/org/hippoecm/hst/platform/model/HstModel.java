@@ -31,6 +31,11 @@ public interface HstModel {
     boolean isHstConfigurationNodesLoaded();
 
     /**
+     * @return Hst model JCR root path
+     */
+    String getConfigurationRootPath();
+
+    /**
      * @return the {@link ComponentManager} for this specific {@link HstModel}
      */
     ComponentManager getComponentManager();

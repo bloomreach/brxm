@@ -44,3 +44,8 @@
 
 [contentbeanstest:dynamicsubdocument] > hippostd:relaxed, hippotranslation:translated, contentbeanstest:dynamicdocument
   orderable
+
+[contentbeanstest:htmlblock] > hippo:compound, hippostd:relaxed
+
+[contentbeanstest:contentblocks] > hippo:compound, hippostd:relaxed
+  orderable
