@@ -15,7 +15,7 @@ definitions:
         hipposys:system: true
       /xm-webmaster:
         jcr:primaryType: hipposys:userrole
-        hipposys:userroles: [xm-site-reader]
+        hipposys:userroles: [xm-content-reader, xm-site-reader]
         hipposys:system: true
       /xm-site-reader:
         jcr:primaryType: hipposys:userrole
