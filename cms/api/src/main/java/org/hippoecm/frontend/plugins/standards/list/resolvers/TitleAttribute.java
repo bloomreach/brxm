@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,10 @@ import org.apache.wicket.model.IModel;
 
 /**
  * Utility to set, add and remove title attributes of Wicket components.
+ *
+ * @deprecated Use {@link org.hippoecm.frontend.attributes.TitleAttribute} instead
  */
+@Deprecated
 public class TitleAttribute {
 
     private static final String TITLE_ATTRIBUTE = "title";

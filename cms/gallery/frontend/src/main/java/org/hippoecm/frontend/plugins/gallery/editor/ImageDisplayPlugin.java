@@ -1,12 +1,12 @@
 /*
  *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -22,13 +22,13 @@ import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.ContentDisposition;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.editor.compare.StreamComparer;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -82,11 +82,11 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
             if (doCompare) {
                 Fragment fragment = new Fragment("fragment", "compare", this);
                 Fragment baseFragment = createResourceFragment("base", baseModelRef.getModel(), config);
-                baseFragment.add(new AttributeAppender("class", new Model<String>("hippo-diff-removed"), " "));
+                baseFragment.add(ClassAttribute.append("hippo-diff-removed"));
                 fragment.add(baseFragment);
 
                 Fragment currentFragment = createResourceFragment("current", getModel(), config);
-                currentFragment.add(new AttributeAppender("class", new Model<String>("hippo-diff-added"), " "));
+                currentFragment.add(ClassAttribute.append("hippo-diff-added"));
                 fragment.add(currentFragment);
                 add(fragment);
             } else {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,22 +18,27 @@ package org.hippoecm.frontend.plugins.reviewedactions.dialogs;
 import javax.jcr.Node;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDataProvider;
-import org.hippoecm.addon.workflow.WorkflowDialog;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.addon.workflow.IWorkflowInvoker;
+import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.repository.api.WorkflowDescriptor;
 
 public class UnpublishedReferencesDialog extends WorkflowDialog<WorkflowDescriptor> {
 
-    public UnpublishedReferencesDialog(final IWorkflowInvoker invoker, final ISortableDataProvider<Node, String> provider,
+    public UnpublishedReferencesDialog(final IWorkflowInvoker invoker,
+                                       final ISortableDataProvider<Node, String> provider,
+                                       final IModel<String> notification,
                                        final IEditorManager mgr) {
         super(invoker);
 
         setOutputMarkupId(true);
 
+        setNotification(notification);
         setTitleKey("title");
         setCssClass("hippo-workflow-dialog");
         setOkLabel(getString("publish"));
+        setFocusOnOk();
 
         add(new UnpublishedReferencesView("docsview", provider, mgr));
     }

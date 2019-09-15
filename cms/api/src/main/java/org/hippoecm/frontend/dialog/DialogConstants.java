@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,8 +28,12 @@ public interface DialogConstants {
 
     IValueMap SMALL = new ValueMap("width=380,height=250").makeImmutable();
     IValueMap SMALL_AUTO = new ValueMap("width=380,height=auto").makeImmutable();
+    IValueMap SMALL_RELATIVE = new ValueMap("width=60%,height=60%").makeImmutable();
     IValueMap MEDIUM = new ValueMap("width=475,height=375").makeImmutable();
     IValueMap MEDIUM_AUTO = new ValueMap("width=475,height=auto").makeImmutable();
+    IValueMap MEDIUM_RELATIVE = new ValueMap("width=75%,height=75%").makeImmutable();
     IValueMap LARGE = new ValueMap("width=855,height=450").makeImmutable();
     IValueMap LARGE_AUTO = new ValueMap("width=855,height=auto").makeImmutable();
+    IValueMap LARGE_RELATIVE = new ValueMap("width=90%,height=90%").makeImmutable();
+
 }

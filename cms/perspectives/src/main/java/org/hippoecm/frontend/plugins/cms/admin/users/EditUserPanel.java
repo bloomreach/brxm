@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -73,7 +73,7 @@ public class EditUserPanel extends AdminBreadCrumbPanel {
         form.add(new DropDownChoice<>("provider", getAvailableSecurityProviders()));
 
         // add a button that can be used to submit the form via ajax
-        form.add(new AjaxButton("save-button", form) {
+        final AjaxButton saveButton = new AjaxButton("save-button", form) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 final User user = model.getObject();
@@ -89,12 +89,15 @@ public class EditUserPanel extends AdminBreadCrumbPanel {
                     log.error("Unable to save user '{}' : ", username, e);
                 }
             }
+
             @Override
             protected void onError(AjaxRequestTarget target, Form form) {
                 // make sure the feedback panel is shown
                 target.add(EditUserPanel.this);
             }
-        });
+        };
+        form.add(saveButton);
+        form.setDefaultButton(saveButton);
 
         // add a cancel/back button
         form.add(new AjaxButton("cancel-button") {

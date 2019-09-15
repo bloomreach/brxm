@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.types.IFieldDescriptor;
@@ -80,21 +80,21 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
             }
 
             final String name = cssClassName(field.getTypeDescriptor().getName());
-            add(CssClass.append("hippo-property-field-name-" + name));
+            add(ClassAttribute.append("hippo-property-field-name-" + name));
 
             final String type = cssClassName(field.getTypeDescriptor().getType());
-            add(CssClass.append("hippo-property-field-type-" + type));
+            add(ClassAttribute.append("hippo-property-field-type-" + type));
 
             if (field.isMultiple()) {
-                add(CssClass.append("hippo-property-field-multiple"));
+                add(ClassAttribute.append("hippo-property-field-multiple"));
             }
 
             if (field.isMandatory()) {
-                add(CssClass.append("hippo-property-field-mandatory"));
+                add(ClassAttribute.append("hippo-property-field-mandatory"));
             }
 
             if (field.isProtected()) {
-                add(CssClass.append("hippo-property-field-protected"));
+                add(ClassAttribute.append("hippo-property-field-protected"));
             }
         }
     }

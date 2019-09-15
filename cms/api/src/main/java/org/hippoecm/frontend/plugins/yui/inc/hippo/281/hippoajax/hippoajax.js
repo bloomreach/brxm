@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,40 +59,31 @@ if (!YAHOO.hippo.HippoAjax) { // Ensure only one hippo ajax exists
       },
 
       getScrollbarWidth: function () {
-        var inner, outer, w1, w2;
-
         if (this._scrollbarWidth === null) {
-          inner = document.createElement('p');
-          inner.style.width = "100%";
-          inner.style.height = "200px";
-
-          outer = document.createElement('div');
-          outer.style.position = "absolute";
-          outer.style.top = "0px";
-          outer.style.left = "0px";
-          outer.style.visibility = "hidden";
-          outer.style.width = "200px";
-          outer.style.height = "150px";
-          outer.style.overflow = "hidden";
-          outer.appendChild(inner);
-
-          document.body.appendChild(outer);
-          w1 = inner.offsetWidth;
-          outer.style.overflow = 'scroll';
-          w2 = inner.offsetWidth;
-          if (w1 === w2) {
-            w2 = outer.clientWidth;
-          }
-
-          document.body.removeChild(outer);
-
-          this._scrollbarWidth = w1 - w2;
+          this._scrollbarWidth = this._calculateScrollbarWidth();
         }
         return this._scrollbarWidth;
       },
 
       getScrollbarHeight: function () {
         return this.getScrollbarWidth();
+      },
+
+      _calculateScrollbarWidth: function() {
+        var box, width;
+
+        box = document.createElement('div');
+        box.style.position = 'fixed';
+        box.style.left = '0px';
+        box.style.visibility = 'hidden';
+        box.style.overflowY = 'scroll';
+        document.body.appendChild(box);
+
+        width = box.getBoundingClientRect().right;
+
+        document.body.removeChild(box);
+
+        return width;
       },
 
       registerDestroyFunction: function (el, func, context, args) {

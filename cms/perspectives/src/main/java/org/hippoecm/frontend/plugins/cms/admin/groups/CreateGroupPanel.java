@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ public class CreateGroupPanel extends AdminBreadCrumbPanel {
 
         form.add(new TextField("description"));
 
-        form.add(new AjaxButton("create-button", form) {
+        final AjaxButton createButton = new AjaxButton("create-button", form) {
             @Override
             protected void onSubmit(AjaxRequestTarget target, Form form) {
                 final Group group = groupModel.getGroup();
@@ -77,12 +77,15 @@ public class CreateGroupPanel extends AdminBreadCrumbPanel {
                     log.error("Unable to create group '{}' : ", groupName, e);
                 }
             }
+
             @Override
             protected void onError(AjaxRequestTarget target, Form form) {
                 // make sure the feedback panel is shown
                 target.add(CreateGroupPanel.this);
             }
-        });
+        };
+        form.add(createButton);
+        form.setDefaultButton(createButton);
 
         // add a button that can be used to submit the form via ajax
         form.add(new AjaxButton("cancel-button") {

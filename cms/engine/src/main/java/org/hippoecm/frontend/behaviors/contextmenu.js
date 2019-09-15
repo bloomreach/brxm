@@ -17,6 +17,7 @@
 (function () {
   'use strict';
 
+  const MACOS_HIDDEN_SCROLLBARS_MARGIN = 8;
   var TOP_BAR_HEIGHT = 41,
     BOTTOM_BAR_HEIGHT = 40,
     CONTEXT_LINK_SIZE = 16;
@@ -31,46 +32,7 @@
 
   window.Hippo = window.Hippo || {};
 
-  Hippo.Set = function () {
-    this.entries = [];
-  };
-
-  Hippo.Set.prototype = {
-    add: function (entry) {
-      this.entries.push(entry);
-    },
-
-    remove: function (entry) {
-      if (this.entries.length === 0) {
-        return null;
-      }
-
-      var index = this._getIndex(entry);
-      if (index >= 0) {
-        var part1 = this.entries.slice(0, index);
-        var part2 = this.entries.slice(index + 1);
-
-        this.entries = part1.concat(part2);
-        return index;
-      }
-      return null;
-    },
-
-    contains: function (entry) {
-      return this._getIndex(entry) >= 0;
-    },
-
-    _getIndex: function (entry) {
-      for (var i = 0; i < this.entries.length; i++) {
-        if (this.entries[i] === entry) {
-          return i;
-        }
-      }
-      return -1;
-    }
-  };
-
-  var menus = new Hippo.Set();
+  const menus = new Set();
 
   Hippo.ContextMenu = {
     currentContextLink: null,
@@ -91,7 +53,7 @@
   };
 
   Hippo.ContextMenu.hide = function (id) {
-    menus.remove(id);
+    menus.delete(id);
     var YUID = YAHOO.util.Dom;
     var el = YUID.get('context-menu-container');
     el.innerHTML = '';
@@ -99,7 +61,7 @@
   };
 
   Hippo.ContextMenu.isShown = function (id) {
-    return menus.contains(id);
+    return menus.has(id);
   };
 
   Hippo.ContextMenu.renderInTree = function (id) {
@@ -191,7 +153,15 @@
       var layout = YUID.getAncestorByClassName(el, 'section-center');
 
       if (layout.scrollHeight > layout.clientHeight) {
-        myX -= (YAHOO.hippo.HippoAjax.getScrollbarWidth() - 4);
+        const scrollbarWidth = YAHOO.hippo.HippoAjax.getScrollbarWidth();
+        // CMS-12043 By default, MacOS will only render scrollbars when the user is scrolling and those scrollbars are
+        // overlayed so they don't take up space and don't push other content to the side. Because of this, we need to
+        // push the context-menu-link ourselves to prevent it from being hidden below the scrollbar.
+        if (scrollbarWidth === 0) {
+          myX -= MACOS_HIDDEN_SCROLLBARS_MARGIN;
+        } else {
+          myX -= (scrollbarWidth - 4);
+        }
       }
 
       return [myX, myY];
