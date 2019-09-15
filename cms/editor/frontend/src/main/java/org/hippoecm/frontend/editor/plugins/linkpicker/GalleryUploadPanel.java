@@ -33,7 +33,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.markup.html.form.Form;
@@ -41,10 +40,10 @@ import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.i18n.TranslatorUtils;
 import org.hippoecm.frontend.i18n.types.TypeChoiceRenderer;
@@ -187,7 +186,7 @@ public abstract class GalleryUploadPanel extends Panel {
         HttpServletRequest httpServletReq = (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
         String ua = httpServletReq.getHeader("User-Agent");
         if (ua.contains("Macintosh")) {
-            uploadButton.add(new AttributeAppender("class", new Model<>("upload-button-osx")));
+            uploadButton.add(ClassAttribute.append("upload-button-osx"));
         }
     }
 

@@ -1,12 +1,12 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -29,16 +29,14 @@ import org.apache.wicket.extensions.markup.html.repeater.data.table.ISortableDat
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.plugins.standards.list.ListColumn;
 import org.hippoecm.frontend.plugins.standards.list.TableDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.IPagingDefinition;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable;
 import org.hippoecm.frontend.plugins.standards.list.datatable.ListDataTable.TableSelectionListener;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.RowSelector;
 import org.hippoecm.frontend.plugins.standards.list.resolvers.TypeIconAndStateRenderer;
 import org.hippoecm.frontend.service.IEditor;
@@ -78,29 +76,20 @@ public class SelectableDocumentsView extends Panel implements IPagingDefinition 
             public void selectionChanged(IModel model) {
             }
         }, true, this);
-        dataTable.add(CssClass.append(DocumentListColumn.DOCUMENT_LIST_CSS_CLASS));
+        dataTable.add(ClassAttribute.append(DocumentListColumn.DOCUMENT_LIST_CSS_CLASS));
 
-        dataTable.add(CssClass.append(new AbstractReadOnlyModel<String>() {
-            @Override
-            public String getObject() {
-                return provider.size() > getPageSize() ? "hippo-paging" : "";
-            }
-        }));
+        dataTable.add(ClassAttribute.append(() -> provider.size() > getPageSize()
+                ? "hippo-paging"
+                : StringUtils.EMPTY));
 
         add(dataTable);
 
         add(actionContainer = new WebMarkupContainer("actions"));
 
-        add(CssClass.append("hippo-selectable-documents"));
-        add(CssClass.append(new LoadableDetachableModel<String>() {
-            @Override
-            protected String load() {
-                if (SelectableDocumentsView.this.provider.size() == 0) {
-                    return "hippo-empty";
-                }
-                return "";
-            }
-        }));
+        add(ClassAttribute.append("hippo-selectable-documents"));
+        add(ClassAttribute.append(() -> provider.size() == 0
+                ? "hippo-empty"
+                : StringUtils.EMPTY));
 
         AjaxLink selectAll = new AjaxLink("select-all") {
             @Override

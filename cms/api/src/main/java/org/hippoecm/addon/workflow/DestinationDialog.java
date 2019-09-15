@@ -39,7 +39,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.session.UserSession;
@@ -215,7 +215,7 @@ public abstract class DestinationDialog extends Dialog<Void> implements IWorkflo
         QuestionPanel(final String id, final IModel<String> question, final IModel<String> answer) {
             super(id);
 
-            add(CssClass.append("question-answer"));
+            add(ClassAttribute.append("question-answer"));
             add(new Label("question", question));
             add(new TextFieldWidget("answer", answer));
         }

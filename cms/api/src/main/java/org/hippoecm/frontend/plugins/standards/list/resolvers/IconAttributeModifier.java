@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.hippoecm.frontend.plugins.standards.list.resolvers;
 
 import org.apache.wicket.AttributeModifier;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 
 public class IconAttributeModifier extends AbstractNodeAttributeModifier {
 
@@ -23,7 +24,7 @@ public class IconAttributeModifier extends AbstractNodeAttributeModifier {
 
     @Override
     public AttributeModifier getColumnAttributeModifier() {
-        return CssClass.append("icon-16");
+        return ClassAttribute.append("icon-16");
     }
 
 }

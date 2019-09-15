@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.query.QueryResult;
 
 import org.apache.commons.lang.StringUtils;
+
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
@@ -35,12 +36,13 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.Strings;
+
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.NodeNameModel;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.model.DocumentCollection;
@@ -50,13 +52,14 @@ import org.hippoecm.frontend.plugins.cms.widgets.SubmittingTextField;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserHelper;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.standards.search.GeneralSearchBuilder;
 import org.hippoecm.frontend.plugins.standards.search.TextSearchBuilder;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.skin.Icon;
+
 import org.hippoecm.repository.api.HippoNodeType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,6 +72,8 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     private static final IModel<BrowserSearchResult> NO_RESULTS = new Model<>(null);
     private static final String RESULT_LIMIT_PROPERTY = "result.limit";
     private static final int DEFAULT_RESULT_LIMIT = 300;
+    private static final String WILDCARDED_MINIMAL_LENGTH_PROPERTY = "wildcarded.minimal.length";
+    private static final int UNCONFIGURED_WILDCARDED_MINIMAL_LENGTH = -1;
 
     private final FolderModelService folderService;
     private final DocumentCollection collection;
@@ -76,6 +81,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
     private final String rootPath;
     private final IModel<Node> rootModel;
     private final int limit;
+    private final int wildcardedMinimalLength;
 
     private IModel<Node> scopeModel;
     private String query;
@@ -87,6 +93,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
         rootPath = config.getString("model.folder.root", "/");
         limit = config.getInt(RESULT_LIMIT_PROPERTY, DEFAULT_RESULT_LIMIT);
+        wildcardedMinimalLength = config.getInt(WILDCARDED_MINIMAL_LENGTH_PROPERTY, UNCONFIGURED_WILDCARDED_MINIMAL_LENGTH);
         rootModel = new JcrNodeModel(rootPath);
         scopeModel = new JcrNodeModel(rootPath);
 
@@ -155,7 +162,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
             }
 
         };
-        scopeContainer.add(CssClass.append(new SearchScopeModel(scopeLink)));
+        scopeContainer.add(ClassAttribute.append(new SearchScopeModel(scopeLink)));
         scopeLink.add(new Label("scope-label", new LoadableDetachableModel<String>() {
             @Override
             protected String load() {
@@ -185,13 +192,15 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
                 return hasSearchResult() && !rootModel.equals(folderService.getModel());
             }
         };
-        allContainer.add(CssClass.append(new SearchScopeModel(allLink)));
+        allContainer.add(ClassAttribute.append(new SearchScopeModel(allLink)));
         allContainer.add(allLink);
         form.add(allContainer);
 
         sectionTop = new WebMarkupContainer("section-top");
         sectionTop.setOutputMarkupId(true);
-        sectionTop.add(CssClass.append(ReadOnlyModel.of(() -> hasSearchResult() ? "search-result" : "")));
+        sectionTop.add(ClassAttribute.append(() -> hasSearchResult()
+                ? "search-result"
+                : StringUtils.EMPTY));
         sectionTop.add(form);
         add(sectionTop);
     }
@@ -215,6 +224,9 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
                 final TextSearchBuilder sb = new TextSearchBuilder(queryName);
                 sb.setScope(new String[]{scope});
                 sb.setWildcardSearch(true);
+                if (wildcardedMinimalLength != UNCONFIGURED_WILDCARDED_MINIMAL_LENGTH) {
+                    sb.setMinimalLength(wildcardedMinimalLength);
+                }
                 sb.setText(query);
                 sb.setIncludePrimaryTypes(getPluginConfig().getStringArray("nodetypes"));
                 sb.setLimit(limit);

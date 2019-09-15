@@ -1,12 +1,12 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,10 +24,9 @@ import java.util.Set;
 import javax.jcr.Item;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.compare.IComparer;
 import org.hippoecm.frontend.model.AbstractProvider;
@@ -125,8 +124,8 @@ public class ComparingController<P extends Item, C extends IModel> implements ID
                 IClusterControl newTemplate = factory.newTemplate(config.getString("new"), IEditor.Mode.VIEW, newModel);
                 newFir = new FieldItem<C>(sc, newModel, null, newTemplate, null);
 
-                get("old").add(new AttributeAppender("class", new Model("hippo-diff-removed"), " "));
-                get("new").add(new AttributeAppender("class", new Model("hippo-diff-added"), " "));
+                get("old").add(ClassAttribute.append("hippo-diff-removed"));
+                get("new").add(ClassAttribute.append("hippo-diff-added"));
 
             } else {
                 addExtensionPoint("cmp");
@@ -153,7 +152,7 @@ public class ComparingController<P extends Item, C extends IModel> implements ID
                 cmpTpl.start();
 
                 Component component = get("cmp");
-                component.add(new AttributeAppender("class", new Model(cssClass), " "));
+                component.add(ClassAttribute.append(cssClass));
             }
         }
 
