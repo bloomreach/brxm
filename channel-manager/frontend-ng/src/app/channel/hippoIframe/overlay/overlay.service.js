@@ -195,6 +195,12 @@ class OverlayService {
     this._tidyOverlay(currentOverlayElements);
   }
 
+  clear() {
+    if (this.overlay) {
+      this.overlay.empty();
+    }
+  }
+
   attachComponentMouseDown(callback) {
     this.componentMouseDownCallback = callback;
   }

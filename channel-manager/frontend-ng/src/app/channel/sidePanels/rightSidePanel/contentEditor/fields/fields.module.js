@@ -18,6 +18,7 @@ import choiceFieldComponent from './choiceField/choiceField.component';
 import ckeditorModule from './ckeditor/ckeditor.module';
 import compoundFieldComponent from './compoundField/compoundField.component';
 import documentFieldsComponent from './documentFields/documentFields.component';
+import dynamicDropdownFieldComponent from './dynamicDropdown/dynamicDropdown.component';
 import fieldService from './field.service';
 import imageLinkComponent from './imageLink/imageLink.component';
 import openuiStringFieldComponent from './openuiStringField/openuiStringField.component';
@@ -33,6 +34,7 @@ const fieldsModule = angular
   .component('choiceField', choiceFieldComponent)
   .component('compoundField', compoundFieldComponent)
   .component('documentFields', documentFieldsComponent)
+  .component('dynamicDropdown', dynamicDropdownFieldComponent)
   .component('imageLink', imageLinkComponent)
   .component('openuiStringField', openuiStringFieldComponent)
   .component('primitiveField', primitiveFieldComponent)

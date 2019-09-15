@@ -150,7 +150,7 @@ describe('OverlayService', () => {
     expect(disconnect).toHaveBeenCalled();
   });
 
-  it('deletes iframe referrence on iframe unload', async () => {
+  it('deletes iframe reference on iframe unload', async () => {
     await loadIframeFixture();
     spyOn($rootScope, '$apply').and.callFake((callback) => {
       callback();
@@ -225,6 +225,20 @@ describe('OverlayService', () => {
     expect(iframe('.hippo-overlay > .hippo-overlay-element-container').length).toBe(6);
     expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
     expect(iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link').length).toBe(15);
+  });
+
+  describe('clear', () => {
+    it('does not throw errors before init', () => {
+      expect(() => OverlayService.clear()).not.toThrow();
+    });
+
+    it('removes all overlay elements', async () => {
+      await loadIframeFixture();
+
+      OverlayService.clear();
+
+      expect(iframe('.hippo-overlay').children().length).toBe(0);
+    });
   });
 
   describe('selected component highlighting', () => {
