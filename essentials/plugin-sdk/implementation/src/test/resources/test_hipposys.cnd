@@ -145,12 +145,12 @@
   + hipposys:groupprovider (hipposys:groupprovider) = hipposys:groupprovider
 
 [hipposys:securityfolder] > nt:base
-  - hipposys:rolespath (string) mandatory
-  - hipposys:groupspath (string) mandatory
-  - hipposys:passwordmaxagedays (double)
-  - hipposys:userspath (string) mandatory
-  - hipposys:passwordmaxagedays (long)
+  - hipposys:rolespath (string) // obsolete
+  - hipposys:groupspath (string) // obsolete
+  - hipposys:userspath (string) // obsolete
   - hipposys:domainspath (string) // obsolete
+  - hipposys:passwordmaxagedays (double)
+  - hipposys:passwordmaxagedays (long)
   + * (hipposys:securityprovider) = hipposys:securityprovider
   + hipposys:accessmanager (hipposys:accessmanager) = hipposys:accessmanager
 
