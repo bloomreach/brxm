@@ -66,16 +66,16 @@ $dashboard-header-height:            $top-bar-height;
 $modal-mask-opacity:                 0.5;
 $modal-border-color:                 transparent;
 $modal-border-width:                 3px;
-$modal-header-color:                 $darker-shade;
-$modal-header-bgcolor:               $light-shade;
-$modal-header-font-size:             15px;
-$modal-header-height:                41px;
+$modal-header-color:                 $gray87;
+$modal-header-bgcolor:               $grayLightSolid;
+$modal-header-font-size:             16px;
+$modal-header-height:                47px;
 $modal-header-padding:               16px;
 $modal-body-top-padding:             12px;
 $modal-body-padding:                 16px;
 $modal-footer-padding:               16px;
 $modal-footer-height:                48px;
-$modal-bgcolor:                      $lightest-shade;
+$modal-bgcolor:                      $grayLightSolid;
 
 // Hippo logo
 $hippo-logo-width:                   $main-menu-width;
@@ -248,12 +248,13 @@ $dashboard-panel-header-color:       $darkest-shade;
 $dashboard-gotolink-icon-color:      $brand-primary;
 
 // Picker
-$picker-section-selection-bgcolor:  $lighter-shade;
+$picker-topbar-bottom-border-color: $grayLightSolid;
+$picker-section-selection-bgcolor:  $grayLightSolid;
 $picker-section-top-bgcolor:        $white;
 $picker-section-center-bgcolor:     $white;
 $picker-section-selection-border:   1px solid $light-gray;
 $picker-section-view-border:        1px solid $light-shade;
-$picker-doclist-head-bgcolor:       $lighter-shade;
+$picker-doclist-head-bgcolor:       $grayLightSolid;
 
 $reorder-border-color:              $light-gray;
 $reorder-selected-bgcolor:          $primary;
