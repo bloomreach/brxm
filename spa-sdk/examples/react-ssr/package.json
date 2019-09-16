@@ -20,6 +20,8 @@
   "scripts": {
     "dev": "node server.js",
     "build": "next build",
-    "start": "NODE_ENV=production node server.js"
+    "lint": "echo lint not yet implemented for example-react-ssr",
+    "start": "NODE_ENV=production node server.js",
+    "test": "echo test not yet implemented for example-react-ssr"
   }
 }

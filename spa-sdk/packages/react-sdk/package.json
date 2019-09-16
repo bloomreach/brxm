@@ -36,6 +36,7 @@
   "main": "dist/bloomreach-experience-react-sdk.js",
   "scripts": {
     "build": "rollup -c rollup.config.js",
-    "lint": "echo lint not yet implemented for react-sdk"
+    "lint": "echo lint not yet implemented for react-sdk",
+    "test": "echo test not yet implemented for react-sdk"
   }
 }

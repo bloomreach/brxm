@@ -16,7 +16,8 @@
     "dev": "react-scripts start",
     "lint": "eslint --ext js,ts,tsx src",
     "start": "node server.js",
-    "test": "react-scripts test"
+    "test": "CI=true react-scripts test",
+    "test:watch": "react-scripts test"
   },
   "eslintConfig": {
     "extends": "react-app"
