@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 package org.hippoecm.frontend.plugins.gallery.editor;
 
 import java.awt.Dimension;
-import java.awt.RenderingHints;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -35,33 +35,30 @@ import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.HiddenField;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.util.value.ValueMap;
+import org.hippoecm.frontend.attributes.StyleAttribute;
 import org.hippoecm.frontend.dialog.Dialog;
-import org.hippoecm.frontend.editor.plugins.resource.ResourceHelper;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.gallery.editor.crop.ImageCropBehavior;
 import org.hippoecm.frontend.plugins.gallery.editor.crop.ImageCropSettings;
 import org.hippoecm.frontend.plugins.gallery.imageutil.ImageUtils;
-import org.hippoecm.frontend.plugins.gallery.imageutil.ScaleImageOperation;
 import org.hippoecm.frontend.plugins.gallery.imageutil.ScalingParameters;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryException;
 import org.hippoecm.frontend.plugins.gallery.model.GalleryProcessor;
+import org.hippoecm.frontend.plugins.gallery.util.ImageGalleryUtils;
 import org.hippoecm.frontend.plugins.jquery.upload.single.BinaryContentEventLogger;
 import org.hippoecm.frontend.plugins.standards.image.JcrImage;
 import org.hippoecm.frontend.resource.JcrResourceStream;
-import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,118 +75,89 @@ public class ImageCropEditorDialog extends Dialog<Node> {
     private static final IValueMap DIALOG_SIZE = new ValueMap("width=855,height=565").makeImmutable();
     private static final String DIALOG_TITLE = "edit-image-dialog-title";
 
-    private static final int MAX_PREVIEW_WIDTH = 200;
-    private static final int MAX_PREVIEW_HEIGHT = 300;
-
     private static final String WORKFLOW_CATEGORY = "cms";
     private static final String INTERACTION_TYPE_IMAGE = "image";
     private static final String ACTION_CROP = "crop";
 
     @SuppressWarnings("unused")
     private String region;
-    private GalleryProcessor galleryProcessor;
     private Dimension originalImageDimension;
     private Dimension configuredDimension;
-    private Dimension thumbnailDimension;
-    private float compressionQuality;
+    private Dimension previewDimension;
+
+    private final IPluginConfig config;
+    private final IPluginContext context;
+    private final GalleryProcessor galleryProcessor;
     private final ImageCropSettings cropSettings;
-    @SuppressWarnings("unused")
-    private IPluginConfig config;
-    @SuppressWarnings("unused")
-    private IPluginContext context;
+    private JcrNodeModel originalNodeModel;
 
     /**
      * A dialog to crop an image variant.
      *
-     * @param jcrImageNodeModel node where the variant to be cropped is stored.
+     * @param variantImageNodeModel node where the variant to be cropped is stored.
      * @param galleryProcessor with configuration for scaling parameters and dimensions.
      * @param config Config of the instantiating Plugin.
      * @param context Context of the instantiating Plugin.
      */
-    public ImageCropEditorDialog(final IModel<Node> jcrImageNodeModel, final GalleryProcessor galleryProcessor, final IPluginConfig config, final IPluginContext context) {
-        super(jcrImageNodeModel);
+    public ImageCropEditorDialog(final IModel<Node> variantImageNodeModel, final GalleryProcessor galleryProcessor,
+                                 final IPluginConfig config, final IPluginContext context) {
+        super(variantImageNodeModel);
 
         this.config = config;
         this.context = context;
+        this.galleryProcessor = galleryProcessor;
 
         setSize(DIALOG_SIZE);
         setTitleKey(DIALOG_TITLE);
 
-        this.galleryProcessor = galleryProcessor;
-        Node thumbnailImageNode = jcrImageNodeModel.getObject();
-
-        HiddenField<String> regionField = new HiddenField<>("region", new PropertyModel<>(this, "region"));
+        final HiddenField<String> regionField = new HiddenField<>("region", new PropertyModel<>(this, "region"));
         regionField.setOutputMarkupId(true);
         add(regionField);
 
-        Component originalImage, imgPreview;
+        final Node variantImageNode = getModelObject();
+        final Node originalImageNode;
         try {
-            Node originalImageNode = thumbnailImageNode.getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
-            originalImageDimension = new Dimension(
-                    (int)originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_WIDTH).getLong(),
-                    (int)originalImageNode.getProperty(HippoGalleryNodeType.IMAGE_HEIGHT).getLong()
-            );
-
-            JcrNodeModel originalNodeModel = new JcrNodeModel(originalImageNode);
-            originalImage = new JcrImage("image", new JcrResourceStream(originalNodeModel));
-            imgPreview = new JcrImage("imagepreview", new JcrResourceStream(originalNodeModel));
-
+            originalImageNode = ImageGalleryUtils.getOriginalGalleryNode(variantImageNode);
+            originalNodeModel = new JcrNodeModel(originalImageNode);
+            originalImageDimension = ImageGalleryUtils.getDimension(originalImageNode);
         } catch (RepositoryException e) {
             log.error("Cannot retrieve original image", e);
             error(e);
-            originalImage = new EmptyPanel("image");
-            imgPreview = new EmptyPanel("imagepreview");
+            originalNodeModel = null;
         }
 
-        WebMarkupContainer imagePreviewContainer = new WebMarkupContainer("previewcontainer");
-        imagePreviewContainer.setOutputMarkupId(true);
+        final Component originalImage = originalNodeModel != null
+                ? new JcrImage("image", new JcrResourceStream(originalNodeModel))
+                : new EmptyPanel("image");
+        originalImage.setOutputMarkupId(true);
+        add(originalImage);
+
+        final ImagePreviewComponent previewImage = new ImagePreviewComponent("previewcontainer", originalNodeModel);
         try {
-            configuredDimension = galleryProcessor.getDesiredResourceDimension(thumbnailImageNode);
-            thumbnailDimension = handleZeroValueInDimension(originalImageDimension, configuredDimension);
-
-            final double previewCropFactor = determinePreviewScalingFactor(thumbnailDimension.getWidth(), thumbnailDimension.getHeight());
-            final double previewWidth = Math.floor(previewCropFactor * thumbnailDimension.getWidth());
-            final double previewHeight = Math.floor(previewCropFactor * thumbnailDimension.getHeight());
-
-            imagePreviewContainer.add(new AttributeAppender("style", Model.of("width:" + previewWidth + "px"), ";"));
-            imagePreviewContainer.add(new AttributeAppender("style", Model.of("height:" + previewHeight + "px"), ";"));
-
+            configuredDimension = galleryProcessor.getDesiredResourceDimension(variantImageNode);
+            previewDimension = ImageUtils.normalizeDimension(originalImageDimension, configuredDimension);
+            previewImage.setDimension(previewDimension);
         } catch (RepositoryException | GalleryException e) {
-            log.error("Cannot retrieve thumbnail dimensions", e);
+            log.error("Cannot retrieve preview dimensions", e);
             error(e);
         }
 
-        boolean isUpscalingEnabled = true;
-        try {
-            isUpscalingEnabled = galleryProcessor.isUpscalingEnabled(thumbnailImageNode);
-        } catch (GalleryException | RepositoryException e) {
-            log.error("Cannot retrieve Upscaling configuration option", e);
-            error(e);
-        }
-
-        Label thumbnailSize = new Label("thumbnail-size", new StringResourceModel("thumbnail-size", this));
+        final Label thumbnailSize = new Label("thumbnail-size", new StringResourceModel("thumbnail-size", this));
         thumbnailSize.setOutputMarkupId(true);
         add(thumbnailSize);
-        //
+
+        final ScalingParameters parameters = galleryProcessor.getScalingParameters(variantImageNode);
         cropSettings = new ImageCropSettings(regionField.getMarkupId(),
-                imagePreviewContainer.getMarkupId(),
+                previewImage.getMarkupId(),
                 originalImageDimension,
                 configuredDimension,
-                thumbnailDimension,
-                isUpscalingEnabled,
-                false,
+                previewDimension,
+                parameters != null && parameters.isUpscaling(),
+                true,
                 thumbnailSize.getMarkupId(true));
 
-        if (configuredDimension.width > originalImageDimension.width || configuredDimension.height > originalImageDimension.height) {
-            final double cropFactor = determineScalingFactor(
-                    configuredDimension.getWidth(), configuredDimension.getHeight(),
-                    originalImageDimension.getWidth(), originalImageDimension.getHeight());
-            cropSettings.setInitialWidth((int)Math.floor(cropFactor * configuredDimension.getWidth()));
-            cropSettings.setInitialHeight((int)Math.floor(cropFactor * configuredDimension.getHeight()));
-        }
-
         final ImageCropBehavior imageCropBehavior = new ImageCropBehavior(cropSettings);
-        final IModel<Boolean> fitViewModel = new PropertyModel<>(this.cropSettings, "fitView");
+        final IModel<Boolean> fitViewModel = new PropertyModel<>(cropSettings, "fitView");
         final AjaxCheckBox fitViewCheckbox = new AjaxCheckBox("fit-view", fitViewModel) {
             @Override
             protected void onUpdate(AjaxRequestTarget target) {
@@ -200,146 +168,82 @@ public class ImageCropEditorDialog extends Dialog<Node> {
         add(fitViewCheckbox);
 
         originalImage.add(imageCropBehavior);
-        originalImage.setOutputMarkupId(true);
-
-        add(originalImage);
-        imgPreview.add(new AttributeAppender("style", Model.of("position:absolute"), ";"));
-        imagePreviewContainer.add(imgPreview);
-        imagePreviewContainer.setVisible(cropSettings.isPreviewVisible());
-        add(imagePreviewContainer);
+        previewImage.setVisible(cropSettings.isPreviewVisible());
+        add(previewImage);
 
         add(new Label("preview-description", cropSettings.isPreviewVisible() ?
                 new StringResourceModel("preview-description-enabled", this) :
                 new StringResourceModel("preview-description-disabled", this))
         );
-
-        compressionQuality = 1.0f;
-        try {
-            compressionQuality = galleryProcessor.getScalingParametersMap().get(thumbnailImageNode.getName()).getCompressionQuality();
-        } catch (RepositoryException e) {
-            log.info("Cannot retrieve compression quality.", e);
-        }
-
     }
 
     /**
-     * Execute the fitInView function on the clientside widget instance
+     * The {@link IPluginConfig} of the {@link ImageCropPlugin}.
+     */
+    protected IPluginConfig getPluginConfig() {
+        return config;
+    }
+
+    /**
+     * The {@link IPluginContext} of the {@link ImageCropPlugin}.
+     */
+    protected IPluginContext getPluginContext() {
+        return context;
+    }
+
+    /**
+     * Execute the fitInView function on the client-side widget instance
      */
     private void executeFitInView(final AjaxRequestTarget target, final ImageCropBehavior cropBehavior) {
-        final String script = "fitInView(" + this.cropSettings.isFitView() + ")";
+        final String script = "fitInView(" + cropSettings.isFitView() + ")";
         target.appendJavaScript(cropBehavior.execWidgetFunction(script));
-    }
-
-    /**
-     * Determine the scaling factor of the preview image, so that it fits within the max boundaries of
-     * the preview container (e.g. {@code #MAX_PREVIEW_WIDTH} by {@code #MAX_PREVIEW_HEIGHT}).
-     *
-     * @param previewWidth width of preview image
-     * @param previewHeight height of preview image
-     * @return the scaling factor of the preview image
-     */
-    private double determinePreviewScalingFactor(final double previewWidth, final double previewHeight) {
-        return determineScalingFactor(previewWidth, previewHeight, MAX_PREVIEW_WIDTH, MAX_PREVIEW_HEIGHT);
-    }
-
-    /**
-     * Determine the scaling factor of the preview image, so that it fits within the max boundaries of
-     * the preview container (e.g. {@code #MAX_PREVIEW_WIDTH} by {@code #MAX_PREVIEW_HEIGHT}).
-     * @param width width of image
-     * @param height height of image
-     * @param maxWidth max width of image
-     * @param maxHeight max height of image
-     * @return the scaling factor of the preview image
-     */
-    private double determineScalingFactor(final double width, final double height, final double maxWidth, final double maxHeight) {
-
-        final double widthBasedScaling;
-        if (width > maxWidth) {
-            widthBasedScaling = maxWidth / width;
-        } else {
-            widthBasedScaling = 1D;
-        }
-
-        final double heightBasedScaling;
-
-        if (height > maxHeight) {
-            heightBasedScaling = maxHeight / height;
-        } else {
-            heightBasedScaling = 1D;
-        }
-
-        if (heightBasedScaling < widthBasedScaling) {
-            return heightBasedScaling;
-        } else {
-            return widthBasedScaling;
-        }
     }
 
     @Override
     protected void onOk() {
-        JSONObject jsonObject = JSONObject.fromObject(region);
-
-        int top = jsonObject.getInt("top");
-        int height = jsonObject.getInt("height");
-        int left = jsonObject.getInt("left");
-        int width = jsonObject.getInt("width");
         try {
-            Node originalImageNode = getModelObject().getParent().getNode(HippoGalleryNodeType.IMAGE_SET_ORIGINAL);
-            String mimeType = originalImageNode.getProperty(JcrConstants.JCR_MIMETYPE).getString();
-            ImageReader reader = ImageUtils.getImageReader(mimeType);
+            final Node variantNode = getModelObject();
+            final Node originalImageNode = ImageGalleryUtils.getOriginalGalleryNode(variantNode);
+
+            final String mimeType = originalImageNode.getProperty(JcrConstants.JCR_MIMETYPE).getString();
+            final ImageReader reader = ImageUtils.getImageReader(mimeType);
             if (reader == null) {
                 throw new GalleryException("Unsupported MIME type for reading: " + mimeType);
             }
-            ImageWriter writer = ImageUtils.getImageWriter(mimeType);
+
+            final Binary binary = originalImageNode.getProperty(JcrConstants.JCR_DATA).getBinary();
+            final MemoryCacheImageInputStream imageInputStream = new MemoryCacheImageInputStream(binary.getStream());
+            reader.setInput(imageInputStream);
+
+            final ImageWriter writer = ImageUtils.getImageWriter(mimeType);
             if (writer == null) {
                 throw new GalleryException("Unsupported MIME type for writing: " + mimeType);
             }
 
-            Binary binary = originalImageNode.getProperty(JcrConstants.JCR_DATA).getBinary();
-            MemoryCacheImageInputStream imageInputStream = new MemoryCacheImageInputStream(binary.getStream());
-            reader.setInput(imageInputStream);
-            BufferedImage original = reader.read(0);
-            Dimension thumbnailDimension = galleryProcessor.getDesiredResourceDimension(getModelObject());
-            Dimension dimension = handleZeroValueInDimension(new Dimension(width, height), thumbnailDimension);
-            Object hints;
-            boolean highQuality;
-            if (Math.min(width / reader.getWidth(0), height / reader.getHeight(0)) < 1.0) {
-                hints = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
-                highQuality = true;
+            final Rectangle cropArea = getRectangleFromJSON(region);
+            final Dimension variantDimension = galleryProcessor.getDesiredResourceDimension(variantNode);
+            final Dimension targetDimension  = ImageUtils.normalizeDimension(cropArea.getSize(), variantDimension);
+            final ScalingParameters parameters = galleryProcessor.getScalingParameters(variantNode);
+            final float compressionQuality = parameters != null
+                    ? parameters.getCompressionQuality()
+                    : 1.0f;
+
+            final BufferedImage originalImage = reader.read(0);
+            BufferedImage variantImage = ImageUtils.cropImage(originalImage, cropArea);
+
+            if (parameters == null) {
+                log.debug("No scaling parameters specified for {}, using original image", variantNode.getName());
             } else {
-                hints = RenderingHints.VALUE_INTERPOLATION_BICUBIC;
-                highQuality = false;
+                // CMS7-8544 Keep the scaling of the image when cropping, to avoid a resulting image with bigger size
+                // than the original
+                variantImage = ImageUtils.scaleImage(variantImage, targetDimension.width, targetDimension.height,
+                        parameters.getStrategy());
             }
-            BufferedImage thumbnail = ImageUtils.scaleImage(original, left, top, width, height,
-                    (int)dimension.getWidth(), (int)dimension.getHeight(), hints, highQuality);
-            ByteArrayOutputStream bytes = ImageUtils.writeImage(writer, thumbnail, compressionQuality);
+            final ByteArrayOutputStream bytes = ImageUtils.writeImage(writer, variantImage, compressionQuality);
+            saveImageNode(variantNode, new ByteArrayInputStream(bytes.toByteArray()), targetDimension);
 
-            //CMS7-8544 Keep the scaling of the image when cropping, to avoid a resulting image with bigger size than the original
-            InputStream stored = new ByteArrayInputStream(bytes.toByteArray());
-            final ScalingParameters parameters = galleryProcessor.getScalingParametersMap().get(getModelObject().getName());
-            if (parameters != null) {
-                try {
-                    final ScaleImageOperation scaleOperation = new ScaleImageOperation(parameters.getWidth(), parameters.getHeight(),
-                            parameters.getUpscaling(), parameters.getStrategy(), parameters.getCompressionQuality());
-                    scaleOperation.execute(stored, mimeType);
-                    stored = scaleOperation.getScaledData();
-                } catch (GalleryException e) {
-                    log.warn("Scaling failed, using original image instead", e);
-                }
-            } else {
-                log.debug("No scaling parameters specified for {}, using original image", galleryProcessor.getScalingParametersMap().get(getModelObject().getName()));
-            }
-
-            final Node cropped = getModelObject();
-            cropped.setProperty(JcrConstants.JCR_DATA, ResourceHelper.getValueFactory(cropped).createBinary(stored));
-            cropped.setProperty(JcrConstants.JCR_LASTMODIFIED, Calendar.getInstance());
-            cropped.setProperty(HippoGalleryNodeType.IMAGE_WIDTH, dimension.getWidth());
-            cropped.setProperty(HippoGalleryNodeType.IMAGE_HEIGHT, dimension.getHeight());
-            cropped.getSession().save();
-
-            BinaryContentEventLogger.fireBinaryChangedEvent(cropped, WORKFLOW_CATEGORY, INTERACTION_TYPE_IMAGE, ACTION_CROP);
         } catch (GalleryException | IOException | RepositoryException ex) {
-            log.error("Unable to create thumbnail image", ex);
+            log.error("Unable to crop image", ex);
             error(ex);
         }
     }
@@ -347,29 +251,71 @@ public class ImageCropEditorDialog extends Dialog<Node> {
     @Override
     protected boolean isFullscreenEnabled() {
         return true;
-
     }
 
-    /**
-     * If height or width in the thumbnailDimension is equal to 0 it is a special case.
-     * The value 0 represents a value that according to the dimension of the original image.
-     * <p>
-     * With this function a new dimension is created according to the original dimension
-     *
-     * @param originalDimension  dimension of the original image
-     * @param thumbnailDimension dimension of the thumbnail image
-     * @return scaled dimension based on width or height value
-     */
-    private Dimension handleZeroValueInDimension(Dimension originalDimension, Dimension thumbnailDimension) {
-        Dimension normalized = new Dimension(thumbnailDimension);
-        if (thumbnailDimension.height == 0) {
-            int height = (int)((thumbnailDimension.getWidth() / originalDimension.getWidth()) * originalDimension.getHeight());
-            normalized.setSize(thumbnailDimension.width, height);
+    @Override
+    protected void onDetach() {
+        if (originalNodeModel != null) {
+            originalNodeModel.detach();
         }
-        if (thumbnailDimension.width == 0) {
-            int width = (int)((thumbnailDimension.getHeight() / originalDimension.getHeight()) * originalDimension.getWidth());
-            normalized.setSize(width, thumbnailDimension.height);
+        super.onDetach();
+    }
+
+    private static void saveImageNode(final Node node, final InputStream inputStream, final Dimension dimension)
+            throws RepositoryException {
+
+        ImageGalleryUtils.saveImageNode(node, inputStream, dimension.width, dimension.height);
+        node.setProperty(JcrConstants.JCR_LASTMODIFIED, Calendar.getInstance());
+        node.getSession().save();
+
+        BinaryContentEventLogger.fireBinaryChangedEvent(node, WORKFLOW_CATEGORY, INTERACTION_TYPE_IMAGE, ACTION_CROP);
+    }
+
+    private static Rectangle getRectangleFromJSON(final String jsonString) {
+        final JSONObject json = JSONObject.fromObject(jsonString);
+        return new Rectangle(json.getInt("left"), json.getInt("top"), json.getInt("width"), json.getInt("height"));
+    }
+
+    private static class ImagePreviewComponent extends WebMarkupContainer {
+
+        private static final int MAX_PREVIEW_WIDTH = 200;
+        private static final int MAX_PREVIEW_HEIGHT = 300;
+
+        ImagePreviewComponent(final String id, final JcrNodeModel imageNodeModel) {
+            super(id);
+
+            setOutputMarkupId(true);
+
+            if (imageNodeModel == null) {
+                add(new EmptyPanel("imagepreview"));
+            } else {
+                final Component previewImage = new JcrImage("imagepreview", new JcrResourceStream(imageNodeModel));
+                previewImage.add(StyleAttribute.append("position:absolute"));
+                add(previewImage);
+            }
         }
-        return normalized;
+
+        void setDimension(final Dimension dimension) {
+            final double width = dimension.getWidth();
+            final double height = dimension.getHeight();
+            final double previewCropFactor = ImagePreviewComponent.determinePreviewScalingFactor(width, height);
+            final double previewWidth = Math.floor(previewCropFactor * width);
+            final double previewHeight = Math.floor(previewCropFactor * height);
+
+            add(StyleAttribute.append("width:" + previewWidth + "px"));
+            add(StyleAttribute.append("height:" + previewHeight + "px"));
+        }
+
+        /**
+         * Determine the scaling factor of the preview image, so that it fits within the max boundaries of
+         * the preview container (e.g. {@code #MAX_PREVIEW_WIDTH} by {@code #MAX_PREVIEW_HEIGHT}).
+         *
+         * @param previewWidth width of preview image
+         * @param previewHeight height of preview image
+         * @return the scaling factor of the preview image
+         */
+        private static double determinePreviewScalingFactor(final double previewWidth, final double previewHeight) {
+            return ImageUtils.determineScalingFactor(previewWidth, previewHeight, MAX_PREVIEW_WIDTH, MAX_PREVIEW_HEIGHT);
+        }
     }
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,8 +20,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.ISortStateLocator;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.markup.html.border.Border;
-import org.apache.wicket.model.AbstractReadOnlyModel;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 
 public class ListTableHeader<T> extends Border {
 
@@ -34,17 +33,14 @@ public class ListTableHeader<T> extends Border {
         this.property = property;
         this.stateLocator = stateLocator;
 
-        add(CssClass.append(new AbstractReadOnlyModel<String>() {
-            @Override
-            public String getObject() {
-                switch (getSortOrder()) {
-                    case ASCENDING:
-                        return "hippo-list-order-ascending";
-                    case DESCENDING:
-                        return "hippo-list-order-descending";
-                    default:
-                        return "hippo-list-order-none";
-                }
+        add(ClassAttribute.append(() -> {
+            switch (getSortOrder()) {
+                case ASCENDING:
+                    return "hippo-list-order-ascending";
+                case DESCENDING:
+                    return "hippo-list-order-descending";
+                default:
+                    return "hippo-list-order-none";
             }
         }));
 

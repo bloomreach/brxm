@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -136,6 +136,7 @@ public class JcrSessionModel extends LoadableDetachableModel<Session> {
             session = login(credentials);
             if (isSystemUser(session)) {
                 logHippoEvent(true, credentials.getUsername(), "system user", false);
+                session.logout();
                 return null;
             }
             logHippoEvent(true, credentials.getUsername(), "login successful", true);
