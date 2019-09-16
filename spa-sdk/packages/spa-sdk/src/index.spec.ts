@@ -18,10 +18,10 @@ import { initialize } from './index';
 
 const options = {
   live: {
-    apiBaseUrl: 'http://localhost:8080/site/my-spa',
+    pageModelBaseUrl: 'http://localhost:8080/site/my-spa',
   },
   preview: {
-    apiBaseUrl: 'http://localhost:8080/site/_cmsinternal/my-spa',
+    pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/my-spa',
   },
 };
 
