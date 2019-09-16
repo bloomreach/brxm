@@ -367,8 +367,11 @@ public class PluginUserSession extends UserSession {
 
     protected void checkApplicationPermission(final Session jcrSession) throws LoginException {
         final String applicationName = getApplicationName(jcrSession);
-        final IPluginConfigService application = getApplicationFactory(jcrSession).getApplication(applicationName);
-        if (!application.checkPermission(jcrSession)) {
+        final HippoSession hippoSession = (HippoSession)jcrSession;
+        final String applicationUserRole = "xm-"+applicationName+"-user";
+        if (!hippoSession.isUserInRole(applicationUserRole)) {
+            log.info("Permission denied to user '{}' on application {}: requires user role {}",
+                    hippoSession.getUserID(), applicationName, applicationUserRole);
             throw new LoginException(Cause.ACCESS_DENIED);
         }
     }

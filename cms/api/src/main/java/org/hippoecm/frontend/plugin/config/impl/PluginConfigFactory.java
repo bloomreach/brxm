@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,8 +16,6 @@
 package org.hippoecm.frontend.plugin.config.impl;
 
 import java.util.List;
-
-import javax.jcr.Session;
 
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
@@ -51,11 +49,6 @@ public class PluginConfigFactory implements IPluginConfigService {
 
     public IClusterConfig getCluster(String key) {
         return pluginConfigService.getCluster(key);
-    }
-
-    @Override
-    public boolean checkPermission(final Session session) {
-        return true;
     }
 
     public IClusterConfig getDefaultCluster() {

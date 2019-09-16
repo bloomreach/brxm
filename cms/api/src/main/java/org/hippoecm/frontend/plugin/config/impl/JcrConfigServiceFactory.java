@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugin.config.impl;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
@@ -27,9 +26,7 @@ import org.slf4j.LoggerFactory;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
-import java.security.AccessControlException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -115,24 +112,6 @@ public class JcrConfigServiceFactory implements IPluginConfigService {
             log.error("Could not determine whether save on exit is enabled.  Defaulting to true, save pending changes when session expires.", re);
         }
         return true;
-    }
-
-    @Override
-    public boolean checkPermission(Session session) {
-        try {
-            final String aclPrivilege = JcrUtils.getStringProperty(model.getNode(), PRIVILEGES_CONFIGURATION_PARAM, null);
-            final String aclPrivilegePath = JcrUtils.getStringProperty(model.getNode(), PRIVILEGES_PATH_CONFIGURATION_PARAM, null);
-            if (!StringUtils.isBlank(aclPrivilege) && !StringUtils.isBlank(aclPrivilegePath)) {
-                session.checkPermission(aclPrivilegePath, aclPrivilege);
-            }
-            return true;
-        } catch (AccessControlException e) {
-            log.info("Permission denied to user {} on application {}", session.getUserID(), JcrUtils.getNodeNameQuietly(model.getNode()));
-            return false;
-        } catch (RepositoryException e) {
-            log.error("Failed to check application permission", e);
-            return false;
-        }
     }
 
     public IClusterConfig getDefaultCluster() {
