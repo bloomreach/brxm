@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-import { PageModelUrlOptions } from './api';
-import { buildPageModelUrl } from './url';
+import { PageModelUrlOptions, buildPageModelUrl } from './url';
 
 const DEFAULT_OPTIONS = {
   live: {

@@ -14,12 +14,50 @@
  * limitations under the License.
  */
 
-import { PageModelUrlOptions, PageModelUrlMapping } from './api';
 import { HttpRequest } from './http';
 
 const DEFAULT_SPA_BASE_PATH = '/';
 const DEFAULT_PAGE_MODEL_API_SUFFIX = '/resourceapi';
 const PREVIEW_QUERY_PARAM = 'bloomreach-preview';
+
+/**
+ * Configuration options for generating the page model URL.
+ */
+export interface PageModelUrlOptions {
+
+  /**
+   * URL mapping for the live page model.
+   */
+  live: PageModelUrlMapping;
+
+  /**
+   * URL mapping for the preview page model.
+   */
+  preview: PageModelUrlMapping;
+
+  /**
+   * Optional custom suffix for requests to the page model API. Must start with a slash.
+   * The default suffix is '/resourceapi'.
+   */
+  pageModelApiSuffix?: string;
+}
+
+/**
+ * Mapping of the incoming HTTP request path to the URL of the page model API.
+ */
+interface PageModelUrlMapping {
+
+  /**
+   * Base path of the SPA. Everything after it will be interpreted as a route into the page model.
+   * The default base path is '/'.
+   */
+  spaBasePath?: string;
+
+  /**
+   * Base URL to fetch the page model from.
+   */
+  pageModelBaseUrl: string;
+}
 
 export interface PageModelUrlBuilder {
   (request: HttpRequest, options: PageModelUrlOptions): string;
