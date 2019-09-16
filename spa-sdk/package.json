@@ -22,7 +22,7 @@
   },
   "scripts": {
     "build": "yarn workspaces run build",
-    "clean": "del-cli target node_modules packages/*/node_modules packages/*/dist examples/*/node_modules examples/*/build examples/*/.next",
+    "clean": "del-cli target node_modules packages/*/node_modules packages/*/dist packages/*/coverage packages/*/docs examples/*/node_modules examples/*/build examples/*/.next",
     "docs": "yarn workspaces run docs",
     "lint": "yarn workspaces run lint",
     "test": "yarn workspaces run test",
