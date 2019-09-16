@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
+import { Page, ComponentModel } from './page';
+
 export interface Events {
-  'cms.update': UpdateEvent;
+  'cms.update': CmsUpdateEvent;
   'page.ready': PageReadyEvent;
 }
 
 /**
  * Channel Manager component update event.
  */
-interface UpdateEvent {
+export interface CmsUpdateEvent {
   /**
    * Component's id.
    */
-  id: string;
+  id: ComponentModel['id'];
 
   /**
    * Updated component's properties.
@@ -37,4 +39,4 @@ interface UpdateEvent {
 /**
  * SPA page rendered event.
  */
-interface PageReadyEvent {}
+export interface PageReadyEvent {}
