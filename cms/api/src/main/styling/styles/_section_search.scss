@@ -1,4 +1,4 @@
-// Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,14 +17,21 @@
   box-sizing: border-box;
 
   > input {
-    width: 100%;
-    box-sizing: border-box;
     border: 1px solid $search-input-border-color;
     border-radius: 4px;
-    height: 25px;
-    padding-left: 7px;
-    padding-right: 22px;
-    padding-bottom: 1px;
+    box-sizing: border-box;
+    height: 36px;
+    padding-left: 8px;
+    padding-right: 24px;
+    width: 100%;
+
+    &:focus {
+      border-color: $search-input-active-color;
+    }
+
+    &::placeholder {
+      color: $search-input-placeholder-color;
+    }
 
     // Hide Edge custom clear button
     &::-ms-clear {
@@ -48,33 +55,50 @@
 }
 
 .section-search-scopes {
-  width: 100%;
   box-sizing: border-box;
-  @include clearfix();
+  display: flex;
+  max-width: 100%;
+  user-select: none;
+  width: 100%;
 
   .hippo-search-active-scope,
   .hippo-search-inactive-scope {
-    float: left;
-    border-radius: 4px;
-    padding: 4px;
+    align-items: stretch;
+    display: flex;
+    flex-grow: 0;
     margin-top: 4px;
-    font-size: 11px;
 
     &:not(:last-child) {
       margin-right: 8px;
     }
+
+    a {
+      border-radius: 4px;
+      border-style: solid;
+      border-width: 1px;
+      padding: 4px 8px;
+    }
   }
 
   .hippo-search-active-scope {
-    background-color: $search-scope-active-bgcolor;
+    font-weight: 600;
+
+    a {
+      background-color: $search-scope-active-bgcolor;
+      border-color: $search-scope-active-bgcolor;
+      color: $search-scope-active-color;
+      text-decoration: none;
+    }
   }
 
   .hippo-search-inactive-scope a {
-    text-decoration: none;
+    border-color: $search-scope-inactive-border-color;
     color: $search-scope-inactive-color;
+    text-decoration: none;
 
     &:hover {
-      color: $primary;
+      background-color: $search-scope-active-bgcolor;
+      border-color: $search-scope-active-bgcolor;
     }
   }
 }
