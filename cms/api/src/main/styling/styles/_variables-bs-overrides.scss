@@ -78,7 +78,7 @@ $border-radius-large: 0;
 $border-radius-small: 0;
 
 // Allows for customizing button radius independently from global border radius
-$btn-border-radius-base: 5px;
+$btn-border-radius-base: 4px;
 
 //== Tables
 //
@@ -103,8 +103,8 @@ $table-border-color: $light-gray;
 // //## For each of Bootstrap's buttons, define text, background and border color.
 
 $btn-default-color: $text-color;
-$btn-default-bg: $white;
-$btn-default-border: $light-gray;
+$btn-default-bg: transparent;
+$btn-default-border: $gray38;
 
 $btn-primary-color: $white;
 $btn-primary-bg: $primary;
