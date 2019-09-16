@@ -1,0 +1,30 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:userroles:
+      /xm-cms-user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+      /xm-console-user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+    /hippo:configuration/hippo:users/admin:
+      hipposys:userroles:
+        operation: add
+        value: [xm-cms-user, xm-console-user]
+    /hippo:configuration/hippo:groups:
+      /admin:
+        hipposys:userroles:
+          operation: add
+          value: [xm-cms-user, xm-console-user]
+      /author:
+        hipposys:userroles:
+          operation: add
+          value: [xm-cms-user]
+      /editor:
+        hipposys:userroles:
+          operation: add
+          value: [xm-cms-user]
+      /webmaster:
+        hipposys:userroles:
+          operation: add
+          value: [xm-cms-user]
