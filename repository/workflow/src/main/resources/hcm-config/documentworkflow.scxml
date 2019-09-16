@@ -960,11 +960,6 @@
           </if>
         </onentry>
 
-        <!-- target-less transition to create a delete request -->
-        <transition event="requestDelete">
-          <hippo:workflowRequest type="delete" contextVariantExpr="deleteSource"/>
-        </transition>
-
         <!-- transition to delete the current document and go to final state terminated -->
         <transition event="delete" target="terminated">
           <hippo:archiveDocument/>
