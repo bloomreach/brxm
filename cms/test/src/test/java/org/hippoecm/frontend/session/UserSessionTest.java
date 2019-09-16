@@ -39,7 +39,7 @@ public class UserSessionTest extends PluginTest {
     @Test
     public void testSaveOnLogout() throws Exception {
 
-        PluginUserSession userSession = new PluginUserSession(RequestCycle.get().getRequest());
+        PluginUserSession userSession = new AccessiblePluginUserSession(RequestCycle.get().getRequest());
         userSession.login(credentials);
 
         javax.jcr.Session jcrSession = userSession.getJcrSession();
@@ -64,7 +64,7 @@ public class UserSessionTest extends PluginTest {
         session.getNode("/config/test-app").setProperty("frontend:saveonexit", false);
         session.save();
 
-        PluginUserSession userSession = new PluginUserSession(RequestCycle.get().getRequest());
+        PluginUserSession userSession = new AccessiblePluginUserSession(RequestCycle.get().getRequest());
         userSession.login(credentials);
 
         javax.jcr.Session jcrSession = userSession.getJcrSession();
@@ -81,7 +81,7 @@ public class UserSessionTest extends PluginTest {
     @Test
     public void assert_jcr_session_gets_logged_out_during_serialization() throws Exception {
 
-        PluginUserSession userSession = new PluginUserSession(RequestCycle.get().getRequest());
+        PluginUserSession userSession = new AccessiblePluginUserSession(RequestCycle.get().getRequest());
         userSession.login(credentials);
 
         javax.jcr.Session jcrSession = userSession.getJcrSession();
@@ -97,7 +97,7 @@ public class UserSessionTest extends PluginTest {
 
     @Test
     public void assert_jcr_session_is_new_one_and_live_after_deserialization() throws Exception {
-        PluginUserSession userSession = new PluginUserSession(RequestCycle.get().getRequest());
+        PluginUserSession userSession = new AccessiblePluginUserSession(RequestCycle.get().getRequest());
         userSession.login(credentials);
 
         javax.jcr.Session jcrSession = userSession.getJcrSession();
@@ -111,7 +111,7 @@ public class UserSessionTest extends PluginTest {
         InputStream bis = new ByteArrayInputStream(bos.toByteArray());
         ObjectInputStream in = new ObjectInputStream(bis);
 
-        PluginUserSession deserUserSession = (PluginUserSession) in.readObject();
+        AccessiblePluginUserSession deserUserSession = (AccessiblePluginUserSession) in.readObject();
         javax.jcr.Session deserJcrSession = deserUserSession.getJcrSession();
 
         assertTrue(deserJcrSession.isLive());
