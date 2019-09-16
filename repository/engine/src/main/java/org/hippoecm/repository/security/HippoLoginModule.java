@@ -165,9 +165,6 @@ public class HippoLoginModule implements LoginModule {
                 principals.clear();
                 UnsuccessfulAuthenticationHandler.handle(authenticationStatus, userId);
             }
-        } catch (LoginException e) {
-            log.error("Error during login", e);
-            throw e;
         } catch (ClassCastException|RepositoryException|IOException e) {
             log.error("Error during login", e);
             throw new LoginException(e.getMessage());
