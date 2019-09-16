@@ -47,6 +47,26 @@ describe('Component', () => {
     });
   });
 
+  describe('getModelUrl', () => {
+    it('should return a model url', () => {
+      const component = new Component({
+        id: 'id',
+        type: TYPE_COMPONENT,
+        _links: { componentRendering: { href: 'url' } },
+      });
+
+      expect(component.getModelUrl()).toBe('url');
+    });
+
+    it('should return undefined when a model url is missing', () => {
+      const component1 = new Component({ id: 'id', type: TYPE_COMPONENT });
+      const component2 = new Component({ id: 'id', type: TYPE_COMPONENT, _links: {} });
+
+      expect(component1.getModelUrl()).toBeUndefined();
+      expect(component2.getModelUrl()).toBeUndefined();
+    });
+  });
+
   describe('getName', () => {
     it('should return a name', () => {
       const component = new Component({ id: 'id', type: TYPE_COMPONENT, name: 'something' });

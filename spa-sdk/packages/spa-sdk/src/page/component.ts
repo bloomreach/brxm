@@ -39,11 +39,16 @@ interface Models {
   [model: string]: any;
 }
 
+interface Links {
+  componentRendering?: { href: string };
+}
+
 /**
  * Model of a component.
  */
 export interface ComponentModel {
   _meta?: ComponentMeta;
+  _links?: Links;
   id: string;
   models?: Models;
   name?: string;
@@ -64,6 +69,11 @@ export interface Component {
    * Returns map of models.
    */
   getModels(): Models;
+
+  /**
+   * Returns a link to the partial component model.
+   */
+  getModelUrl(): string | undefined;
 
   /**
    * @return The name of this component.
@@ -102,6 +112,10 @@ export class Component implements Component {
 
   getModels() {
     return this.model.models || {};
+  }
+
+  getModelUrl() {
+    return this.model._links && this.model._links.componentRendering && this.model._links.componentRendering.href;
   }
 
   getName() {
