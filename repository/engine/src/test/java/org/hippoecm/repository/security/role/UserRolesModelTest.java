@@ -40,7 +40,6 @@ public class UserRolesModelTest extends RepositoryTestCase {
     private static String TEST_USERROLES_PATH = "/test/"+HIPPO_USERROLES;
 
     private InternalHippoRepository internalHippoRepository;
-    private Session systemSession;
     private UserRolesModel model;
 
     @Override
@@ -87,8 +86,9 @@ public class UserRolesModelTest extends RepositoryTestCase {
     @Test
     public void testModelSyncOnJcrEvents() throws Exception {
         removeTestUserRoles();
-        systemSession = internalHippoRepository.createSystemSession();
+        Session systemSession = internalHippoRepository.createSystemSession();
         model = new UserRolesModel(systemSession, TEST_USERROLES_PATH);
+        systemSession.logout();
         assertNull(model.getRole(USERROLE_ADMIN));
         setupTestUserRoles();
         Thread.sleep((100));

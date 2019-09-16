@@ -204,6 +204,8 @@ public class SecurityServiceTest extends RepositoryTestCase {
                     .as("Admin session should now have the (expanded) roles from group editor")
                     .containsOnly("xm-admin", "xm-content-reader", "xm-content-author", "xm-content-editor");
 
+            newSession.logout();
+
         } finally {
 
             adminNode.setProperty(HIPPO_USERROLES, originalAdminRoles);
