@@ -61,5 +61,11 @@
     "tslint-loader": "^3.5",
     "typedoc": "^0.15.0",
     "typescript": "^3.6"
-  }
+  },
+  "browserslist": [
+    "last 1 chrome version",
+    "last 1 firefox version",
+    "last 1 safari version",
+    "last 1 edge version"
+  ]
 }
