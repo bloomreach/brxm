@@ -22,6 +22,7 @@
   },
   "scripts": {
     "build": "yarn workspaces run build",
+    "clean": "del-cli target node_modules packages/*/node_modules packages/*/dist examples/*/node_modules examples/*/build examples/*/.next",
     "docs": "yarn workspaces run docs",
     "lint": "yarn workspaces run lint",
     "test": "yarn workspaces run test",
@@ -42,6 +43,7 @@
     "@types/react-router-dom": "^4.3.5",
     "babel-loader": "^8.0",
     "babel-plugin-transform-async-to-promises": "^0.8",
+    "del-cli": "^3.0.0",
     "jest": "^24.0",
     "js-beautify": "^1.0",
     "minicat": "^1.0",
