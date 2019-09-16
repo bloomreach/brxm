@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,12 +15,16 @@
  */
 package org.hippoecm.frontend.util;
 
+import java.util.Optional;
+
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
+import org.apache.wicket.request.IRequestCycle;
 import org.apache.wicket.request.Request;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
 
 /**
@@ -252,28 +256,22 @@ public class RequestUtils {
     }
 
     /**
-     * Returns the home url for the given request. The home url is the one that is mapped to the root of the application
-     * that is being requested. Usually this is the root of an application.
-     * The assumption is that every reverse proxy/load-balancer will set the X-Forwarded-Host header correctly, so that
-     * the application can generate the url as it was sent from a client's browser.
-     * <p>
-     * Suppose tomcat is running on 10.10.100.121:8080 and a war named cms is deployed in it and a reverse proxy is
-     * configured to map https://cms.example.com/ onto  http://10.10.100.121:8080/cms.
-     * Then the home urls are as follows:
-     * <br/>1) https://cms.example.com/dashboard     => https://cms.example.com
-     * <br/>2) http:10.10.100.121:8080/cms/dashboard => http://10.10.100.121:8080/cms
+     * Returns {@code true} if a user is logged in for the current request and {@code false} if not or if there is no
+     * http session for the current request. This method uses the {@link RequestCycle} from Wicket and assumes that
+     * the request (if present) can be cast to a {@link ServletWebRequest}.
      *
-     * @param httpServletRequest a request
-     * @return "home" url
+     * @param requestCycle the wicket request cycle
+     * @return if the user is logged in for the current request
      */
-    public static String getFarthestHomeUrl(final HttpServletRequest httpServletRequest) {
-        final String farthestRequestScheme = getFarthestRequestScheme(httpServletRequest);
-        final String farthestRequestHost = getFarthestRequestHost(httpServletRequest);
-        if (httpServletRequest.getHeader(X_FORWARDED_HOST) == null) {
-            final String contextPath = httpServletRequest.getContextPath();
-            return farthestRequestScheme + "://" + farthestRequestHost + contextPath;
-        }
-        return farthestRequestScheme + "://" + farthestRequestHost;
+    public static boolean isUserLoggedIn(IRequestCycle requestCycle) {
+        return Optional
+                .ofNullable(requestCycle)
+                .map(cycle ->
+                        (ServletWebRequest) cycle.getRequest())
+                .map(servletWebRequest ->
+                        servletWebRequest.getContainerRequest().getSession(false))
+                .map(session ->
+                        session.getAttribute("hippo:username") != null)
+                .orElse(false);
     }
-
 }
