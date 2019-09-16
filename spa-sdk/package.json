@@ -25,7 +25,8 @@
     "docs": "yarn workspaces run docs",
     "lint": "yarn workspaces run lint",
     "test": "yarn workspaces run test",
-    "start:example-react-csr": "yarn workspace @bloomreach/example-react-csr start"
+    "start:example-react-csr": "yarn workspace @bloomreach/example-react-csr start",
+    "start:example-react-ssr": "yarn workspace @bloomreach/example-react-ssr start"
   },
   "devDependencies": {
     "@babel/core": "^7.6",

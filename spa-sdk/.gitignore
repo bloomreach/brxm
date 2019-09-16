@@ -5,3 +5,4 @@ node_modules/
 /packages/*/dist/
 /packages/*/docs/
 /examples/*/build/
+/examples/*/.next/
