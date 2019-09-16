@@ -1,0 +1,24 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/modify-self:
+      jcr:primaryType: hipposys:domain
+      /self:
+        jcr:primaryType: hipposys:domainrule
+        /match-nodename-with-username:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: nodename
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: __user__
+        /type-hippo-user:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: nodetype
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposys:user
+      /modify:
+        jcr:primaryType: hipposys:authrole
+        hipposys:userrole: xm-cms-user
+        hipposys:role: modify
