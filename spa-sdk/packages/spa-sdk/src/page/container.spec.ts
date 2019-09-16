@@ -19,7 +19,7 @@ import { Container, TYPE_COMPONENT_CONTAINER, TYPE_CONTAINER_BOX } from './conta
 describe('Container', () => {
   describe('getChildren', () => {
     it('should return children', () => {
-      const container = new Container({ type: TYPE_COMPONENT_CONTAINER, xtype: TYPE_CONTAINER_BOX }, []);
+      const container = new Container({ id: 'id', type: TYPE_COMPONENT_CONTAINER, xtype: TYPE_CONTAINER_BOX }, []);
 
       expect(container.getChildren()).toEqual([]);
     });
@@ -27,7 +27,7 @@ describe('Container', () => {
 
   describe('getType', () => {
     it('should return a type', () => {
-      const container = new Container({ type: TYPE_COMPONENT_CONTAINER, xtype: TYPE_CONTAINER_BOX });
+      const container = new Container({ id: 'id', type: TYPE_COMPONENT_CONTAINER, xtype: TYPE_CONTAINER_BOX });
 
       expect(container.getType()).toBe(TYPE_CONTAINER_BOX);
     });

@@ -24,7 +24,7 @@ describe('Page', () => {
   let content: ContentMap;
 
   beforeEach(() => {
-    root = new Component({ type: TYPE_COMPONENT });
+    root = new Component({ id: 'id', type: TYPE_COMPONENT });
     content = new Map();
 
     jest.spyOn(root, 'getComponent');
@@ -33,7 +33,7 @@ describe('Page', () => {
 
   describe('getComponent', () => {
     it('should forward a call to the root component', () => {
-      const page = new Page({ page: { type: TYPE_COMPONENT } }, root, content);
+      const page = new Page({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content);
       page.getComponent('a', 'b');
 
       expect(root.getComponent).toBeCalledWith('a', 'b');
@@ -44,7 +44,7 @@ describe('Page', () => {
     let page: Page;
 
     beforeEach(() => {
-      page = new Page({ page: { type: TYPE_COMPONENT } }, root, content);
+      page = new Page({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content);
     });
 
     it('should resolve a reference', () => {
@@ -72,6 +72,7 @@ describe('Page', () => {
       const page = new Page(
         {
           page: {
+            id: 'id',
             type: TYPE_COMPONENT,
             _meta: { pageTitle: 'something' },
           },
@@ -84,8 +85,8 @@ describe('Page', () => {
     });
 
     it('should return an undefined value', () => {
-      const page1 = new Page({ page: { type: TYPE_COMPONENT, _meta: {} } }, root, content);
-      const page2 = new Page({ page: { type: TYPE_COMPONENT } }, root, content);
+      const page1 = new Page({ page: { id: 'id', type: TYPE_COMPONENT, _meta: {} } }, root, content);
+      const page2 = new Page({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content);
 
       expect(page1.getTitle()).toBeUndefined();
       expect(page2.getTitle()).toBeUndefined();

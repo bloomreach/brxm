@@ -19,7 +19,7 @@ import { ContainerItem, TYPE_COMPONENT_CONTAINER_ITEM } from './container-item';
 describe('ContainerItem', () => {
   describe('getType', () => {
     it('should return a type', () => {
-      const containerItem = new ContainerItem({ type: TYPE_COMPONENT_CONTAINER_ITEM, label: 'Banner' });
+      const containerItem = new ContainerItem({ id: 'id', type: TYPE_COMPONENT_CONTAINER_ITEM, label: 'Banner' });
 
       expect(containerItem.getType()).toBe('Banner');
     });
@@ -28,6 +28,7 @@ describe('ContainerItem', () => {
   describe('isHidden', () => {
     it('should be hidden', () => {
       const containerItem = new ContainerItem({
+        id: 'id',
         type: TYPE_COMPONENT_CONTAINER_ITEM,
         _meta: {
           params: { 'com.onehippo.cms7.targeting.TargetingParameterUtil.hide': 'on' },
@@ -39,15 +40,20 @@ describe('ContainerItem', () => {
 
     it('should not be hidden', () => {
       const containerItem1 = new ContainerItem({
+        id: 'id',
         type: TYPE_COMPONENT_CONTAINER_ITEM,
         _meta: {
           params: { 'com.onehippo.cms7.targeting.TargetingParameterUtil.hide': 'off' },
         },
       });
 
-      const containerItem2 = new ContainerItem({ type: TYPE_COMPONENT_CONTAINER_ITEM, _meta: { params: {} } });
-      const containerItem3 = new ContainerItem({ type: TYPE_COMPONENT_CONTAINER_ITEM, _meta: { } });
-      const containerItem4 = new ContainerItem({ type: TYPE_COMPONENT_CONTAINER_ITEM });
+      const containerItem2 = new ContainerItem({
+        id: 'id',
+        type: TYPE_COMPONENT_CONTAINER_ITEM,
+        _meta: { params: {} },
+      });
+      const containerItem3 = new ContainerItem({ id: 'id', type: TYPE_COMPONENT_CONTAINER_ITEM, _meta: { } });
+      const containerItem4 = new ContainerItem({ id: 'id', type: TYPE_COMPONENT_CONTAINER_ITEM });
 
       expect(containerItem1.isHidden()).toBe(false);
       expect(containerItem2.isHidden()).toBe(false);
@@ -59,6 +65,7 @@ describe('ContainerItem', () => {
   describe('getParameters', () => {
     it('should return parameters', () => {
       const containerItem = new ContainerItem({
+        id: 'id',
         type: TYPE_COMPONENT_CONTAINER_ITEM,
         _meta: {
           paramsInfo: { a: '1', b: '2' },
@@ -69,8 +76,8 @@ describe('ContainerItem', () => {
     });
 
     it('should return an empty object', () => {
-      const containerItem1 = new ContainerItem({ type: TYPE_COMPONENT_CONTAINER_ITEM, _meta: {} });
-      const containerItem2 = new ContainerItem({ type: TYPE_COMPONENT_CONTAINER_ITEM });
+      const containerItem1 = new ContainerItem({ id: 'id', type: TYPE_COMPONENT_CONTAINER_ITEM, _meta: {} });
+      const containerItem2 = new ContainerItem({ id: 'id', type: TYPE_COMPONENT_CONTAINER_ITEM });
 
       expect(containerItem1.getParameters()).toEqual({});
       expect(containerItem2.getParameters()).toEqual({});

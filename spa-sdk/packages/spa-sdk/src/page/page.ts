@@ -60,6 +60,7 @@ export interface Page {
    * @param componentNames the names of the component and its parents.
    * @return The component, or `undefined` if no such component exists.
    */
+  getComponent<T extends Component>(): T;
   getComponent<T extends Component>(...componentNames: string[]): T | undefined;
 
   /**
@@ -87,6 +88,8 @@ export class Page implements Page {
     return  reference.$ref.split('/', 3)[2] || '';
   }
 
+  getComponent<T extends Component>(): T;
+  getComponent<T extends Component>(...componentNames: string[]): T | undefined;
   getComponent(...componentNames: string[]) {
     return this.root.getComponent(...componentNames);
   }

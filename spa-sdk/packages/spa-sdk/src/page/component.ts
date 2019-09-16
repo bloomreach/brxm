@@ -44,6 +44,7 @@ interface Models {
  */
 export interface ComponentModel {
   _meta?: ComponentMeta;
+  id: string;
   models?: Models;
   name?: string;
   type: typeof TYPE_COMPONENT | string;
@@ -75,10 +76,17 @@ export interface Component {
   getParameters(): ComponentParameters;
 
   /**
-   * Look up for a nested component.
+   * Looks up for a nested component.
    * @param componentNames A lookup path.
    */
+  getComponent<T extends Component>(): T;
   getComponent<T extends Component>(...componentNames: string[]): T | undefined;
+
+  /**
+   * Looks up for a nested component by its id.
+   * @param id A component id.
+   */
+  getComponentById<T extends Component>(id: string): T | undefined;
 }
 
 export class Component implements Component {
@@ -104,6 +112,8 @@ export class Component implements Component {
     return this.model._meta && this.model._meta.params || {};
   }
 
+  getComponent<T extends Component>(): T;
+  getComponent<T extends Component>(...componentNames: string[]): T | undefined;
   getComponent(...componentNames: string[]) {
     // tslint:disable-next-line:no-this-assignment
     let component: Component | undefined = this;
@@ -114,5 +124,19 @@ export class Component implements Component {
     }
 
     return component;
+  }
+
+  getComponentById(id: string) {
+    const queue = [this as Component];
+
+    while (queue.length) {
+      const component = queue.shift()!;
+
+      if (component.model.id === id) {
+        return component;
+      }
+
+      queue.push(...component.children);
+    }
   }
 }

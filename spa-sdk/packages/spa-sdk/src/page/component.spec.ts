@@ -21,13 +21,13 @@ describe('Component', () => {
   describe('getMeta', () => {
     it('should return a meta-data array', () => {
       const meta = new Meta({ data: '', type: 'comment' }, META_POSITION_BEGIN);
-      const component = new Component({ type: TYPE_COMPONENT }, [], [meta]);
+      const component = new Component({ id: 'id', type: TYPE_COMPONENT }, [], [meta]);
 
       expect(component.getMeta()).toEqual([meta]);
     });
 
     it('should return an empty array', () => {
-      const component = new Component({ type: TYPE_COMPONENT });
+      const component = new Component({ id: 'id', type: TYPE_COMPONENT });
 
       expect(component.getMeta()).toEqual([]);
     });
@@ -35,13 +35,13 @@ describe('Component', () => {
 
   describe('getModels', () => {
     it('should return models object', () => {
-      const component = new Component({ type: TYPE_COMPONENT, models: { a: 1, b: 2 } });
+      const component = new Component({ id: 'id', type: TYPE_COMPONENT, models: { a: 1, b: 2 } });
 
       expect(component.getModels()).toEqual({ a: 1, b: 2 });
     });
 
     it('should return empty object', () => {
-      const component = new Component({ type: TYPE_COMPONENT });
+      const component = new Component({ id: 'id', type: TYPE_COMPONENT });
 
       expect(component.getModels()).toEqual({});
     });
@@ -49,13 +49,13 @@ describe('Component', () => {
 
   describe('getName', () => {
     it('should return a name', () => {
-      const component = new Component({ type: TYPE_COMPONENT, name: 'something' });
+      const component = new Component({ id: 'id', type: TYPE_COMPONENT, name: 'something' });
 
       expect(component.getName()).toBe('something');
     });
 
     it('should return an empty string', () => {
-      const component = new Component({ type: TYPE_COMPONENT });
+      const component = new Component({ id: 'id', type: TYPE_COMPONENT });
 
       expect(component.getName()).toBe('');
     });
@@ -64,6 +64,7 @@ describe('Component', () => {
   describe('getParameters', () => {
     it('should return parameters', () => {
       const component = new Component({
+        id: 'id',
         type: TYPE_COMPONENT,
         _meta: {
           params: { a: '1', b: '2' },
@@ -74,8 +75,8 @@ describe('Component', () => {
     });
 
     it('should return an empty object', () => {
-      const component1 = new Component({ type: TYPE_COMPONENT });
-      const component2 = new Component({ type: TYPE_COMPONENT, _meta: {} });
+      const component1 = new Component({ id: 'id', type: TYPE_COMPONENT });
+      const component2 = new Component({ id: 'id', type: TYPE_COMPONENT, _meta: {} });
 
       expect(component1.getParameters()).toEqual({});
       expect(component2.getParameters()).toEqual({});
@@ -84,16 +85,16 @@ describe('Component', () => {
 
   describe('getComponent', () => {
     it('should return a reference to itself', () => {
-      const component = new Component({ type: TYPE_COMPONENT });
+      const component = new Component({ id: 'id', type: TYPE_COMPONENT });
 
       expect(component.getComponent()).toBe(component);
     });
 
     it('should find a child component', () => {
-      const root = new Component({ type: TYPE_COMPONENT }, [
-        new Component({ type: TYPE_COMPONENT, name: 'a' }),
-        new Component({ type: TYPE_COMPONENT, name: 'b' }, [
-          new Component({ type: TYPE_COMPONENT, name: 'c' }),
+      const root = new Component({ id: 'root-component', type: TYPE_COMPONENT }, [
+        new Component({ id: 'a-component', type: TYPE_COMPONENT, name: 'a' }),
+        new Component({ id: 'b-component', type: TYPE_COMPONENT, name: 'b' }, [
+          new Component({ id: 'c-component', type: TYPE_COMPONENT, name: 'c' }),
         ]),
       ]);
 
@@ -105,9 +106,32 @@ describe('Component', () => {
     });
 
     it('should not find a child component', () => {
-      const component = new Component({ type: TYPE_COMPONENT });
+      const component = new Component({ id: 'id', type: TYPE_COMPONENT });
 
       expect(component.getComponent('a', 'b')).toBeUndefined();
+    });
+  });
+
+  describe('getComponentById', () => {
+    it('should find a component by id', () => {
+      const root = new Component({ id: 'root-component', type: TYPE_COMPONENT }, [
+        new Component({ id: 'a-component', type: TYPE_COMPONENT, name: 'a' }),
+        new Component({ id: 'b-component', type: TYPE_COMPONENT, name: 'b' }, [
+          new Component({ id: 'c-component', type: TYPE_COMPONENT, name: 'c' }),
+        ]),
+      ]);
+
+      expect(root.getComponentById('a-component')).toBeDefined();
+      expect(root.getComponentById('a-component')!.getName()).toBe('a');
+
+      expect(root.getComponentById('c-component')).toBeDefined();
+      expect(root.getComponentById('c-component')!.getName()).toBe('c');
+    });
+
+    it('should return undefined when a component does not exist', () => {
+      const component = new Component({ id: 'id', type: TYPE_COMPONENT });
+
+      expect(component.getComponentById('a')).toBeUndefined();
     });
   });
 });

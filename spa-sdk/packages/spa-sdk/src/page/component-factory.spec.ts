@@ -22,30 +22,30 @@ describe('ComponentFactory', () => {
     it('should provide a fluent interface', () => {
       const factory = new ComponentFactory();
 
-      expect(factory.register('something', () => new Component({ type: 'something' }))).toBe(factory);
+      expect(factory.register('something', () => new Component({ id: 'id', type: 'something' }))).toBe(factory);
     });
   });
 
   describe('create', () => {
     it('should call a registered builder', () => {
-      const builder1 = jest.fn(() => new Component({ type: '1' }));
-      const builder2 = jest.fn(() => new Component({ type: '2' }));
+      const builder1 = jest.fn(() => new Component({ id: 'id1', type: '1' }));
+      const builder2 = jest.fn(() => new Component({ id: 'id2', type: '2' }));
       const factory = new ComponentFactory()
         .register('type1', builder1)
         .register('type2', builder2);
 
-      factory.create({ type: 'type1', name: 'Component 1' });
-      factory.create({ type: 'type2', name: 'Component 2' });
+      factory.create({ id: 'id1', type: 'type1', name: 'Component 1' });
+      factory.create({ id: 'id2', type: 'type2', name: 'Component 2' });
 
-      expect(builder1).toBeCalledWith({ type: 'type1', name: 'Component 1' }, []);
-      expect(builder2).toBeCalledWith({ type: 'type2', name: 'Component 2' }, []);
+      expect(builder1).toBeCalledWith({ id: 'id1', type: 'type1', name: 'Component 1' }, []);
+      expect(builder2).toBeCalledWith({ id: 'id2', type: 'type2', name: 'Component 2' }, []);
     });
 
     it('should throw an exception on unknown component type', () => {
       const factory = new ComponentFactory()
         .register('type0', model => new Component(model));
 
-      expect(() => factory.create({ type: 'type1', name: 'Component 1' })).toThrowError();
+      expect(() => factory.create({ id: 'id1', type: 'type1', name: 'Component 1' })).toThrowError();
     });
 
     it('should produce a tree structure', () => {
@@ -54,14 +54,16 @@ describe('ComponentFactory', () => {
         .register('type', builder);
 
       const root = factory.create({
+        id: 'id',
         type: 'type',
         components: [
-          { type: 'type', name: 'a' },
-          { type: 'type',
+          { id: 'id-a', type: 'type', name: 'a' },
+          { id: 'id-b',
+            type: 'type',
             name: 'b',
             components: [
-              { type: 'type', name: 'c' },
-              { type: 'type', name: 'd' },
+              { id: 'id-c', type: 'type', name: 'c' },
+              { id: 'id-d', type: 'type', name: 'd' },
             ] },
         ],
       });
