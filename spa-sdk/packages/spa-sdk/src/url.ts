@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { HttpRequest, PageModelUrlOptions, PageModelUrlMapping } from './api';
+
+import { PageModelUrlOptions, PageModelUrlMapping } from './api';
+import { HttpRequest } from './http';
 
 const DEFAULT_SPA_BASE_PATH = '/';
 const DEFAULT_PAGE_MODEL_API_SUFFIX = '/resourceapi';

@@ -19,6 +19,9 @@
  * @module api
  */
 
+import { HttpClient, HttpRequest } from './http';
+import { PageModel } from './page';
+
 /**
  * Configuration of the SPA SDK.
  */
@@ -26,7 +29,7 @@ export interface Configuration {
   /**
    * HTTP client that will be used to fetch the page model.
    */
-  httpClient: HttpClient;
+  httpClient: HttpClient<PageModel>;
 
   /**
    * Current user's request.
@@ -37,60 +40,6 @@ export interface Configuration {
    * Options for generating the page model API URL.
    */
   options: PageModelUrlOptions;
-}
-
-/**
- * Fetches the page model data.
- */
-export type HttpClient = (config: HttpClientConfig) => Promise<any>;
-
-/**
- * Configuration of an HTTP client call.
- */
-export type HttpClientConfig = {
-  /**
-   * HTTP request method.
-   */
-  method: 'get' | 'post',
-
-  /**
-   * The URL to send the HTTP request to.
-   */
-  url: string,
-
-  /**
-   * Optional: the headers to send with the HTTP request.
-   */
-  headers?: HttpHeaders,
-
-  /**
-   * Optional: the data to send with the HTTP request.
-   * Will only be provided when the 'method' is 'post'.
-   */
-  data?: any;
-};
-
-/**
- * Map of HTTP headers.
- */
-export type HttpHeaders = {
-  [name: string]: string;
-};
-
-/**
- * An HTTP request
- */
-export interface HttpRequest {
-  /**
-   * The path part of the URL, including a query string if present.
-   * For example: '/path/to/page?foo=1'. The path always starts with '/'.
-   */
-  path: string;
-
-  /**
-   * All request headers (including cookies).
-   */
-  headers?: HttpHeaders;
 }
 
 /**
