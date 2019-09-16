@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.plugins.yui.datetime.YuiDateTimeField;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.ServiceTracker;
@@ -135,7 +135,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
                     notification.setVisible(false);
                 }
                 add(notification);
-                notification.add(CssClass.append("notification"));
+                notification.add(ClassAttribute.append("notification"));
                 init();
             }
 
@@ -244,7 +244,7 @@ public abstract class CompatibilityWorkflowPlugin<T extends Workflow> extends Re
 
                 final TextAreaWidget textfield;
                 add(textfield = new TextAreaWidget("value", textModel));
-                textfield.addBehaviourOnFormComponent(CssClass.append("text-dialog-textarea"));
+                textfield.addBehaviourOnFormComponent(ClassAttribute.append("text-dialog-textarea"));
                 setFocus(textfield.getFocusComponent());
             }
 

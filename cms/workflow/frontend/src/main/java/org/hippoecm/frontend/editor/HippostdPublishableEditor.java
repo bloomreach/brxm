@@ -673,20 +673,30 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
     @Override
     public void refresh() {
-        final IModel<Node> handle = getModel();
+        final IModel<Node> handleModel = getModel();
+        final Node handle = handleModel.getObject();
+
+        if (handle == null) {
+            try {
+                close();
+            } catch (EditorException e) {
+                log.warn("Could not close editor for removed handle");
+            }
+            return;
+        }
 
         try {
-            if (handle.getObject() == null || isBranchDeleted(handle.getObject())) {
+            if (isBranchDeleted(handle)) {
                 close();
             }
         } catch (EditorException e) {
-            log.error("Could not close editor for removed handle or deleted branch");
+            log.warn("Could not close editor for deleted branch");
             return;
         }
 
         // verify that a document exists, i.e. the document has not been deleted
         try {
-            final Mode newMode = getMode(handle, branchIdModel.getBranchId());
+            final Mode newMode = getMode(handleModel, branchIdModel.getBranchId());
             if (newMode != super.getMode()) {
                 super.setMode(newMode);
             } else {

@@ -1,5 +1,5 @@
-/**
- * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+/*
+ * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,33 +15,29 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.updater;
 
-import org.apache.wicket.AttributeModifier;
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.html.form.Radio;
 import org.apache.wicket.markup.html.form.RadioGroup;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.attributes.StyleAttribute;
 
 public abstract class RadioLabelledInputFieldTableRow extends LabelledInputFieldTableRow {
 
-    public RadioLabelledInputFieldTableRow(String id, RadioGroup<String> radios, final IModel<String> labelModel, final IModel<String> inputModel) {
+    public RadioLabelledInputFieldTableRow(final String id, final RadioGroup<String> radios,
+                                           final IModel<String> labelModel, final IModel<String> inputModel) {
         super(id, labelModel, inputModel);
-        add(new Radio<String>("radio", new Model<String>(id)) {
+
+        add(new Radio<String>("radio", new Model<>(id)) {
             @Override
             public boolean isVisible() {
                 return isRadioVisible();
             }
         });
 
-        label.add(new AttributeModifier("style", new AbstractReadOnlyModel<String>() {
-            @Override
-            public String getObject() {
-                if (isRadioVisible()) {
-                    return "padding-left: 5px;";
-                }
-                return "";
-            }
-        }));
+        label.add(StyleAttribute.set(() -> isRadioVisible()
+                ? "padding-left: 5px;"
+                : StringUtils.EMPTY));
     }
 
     protected abstract boolean isRadioVisible();

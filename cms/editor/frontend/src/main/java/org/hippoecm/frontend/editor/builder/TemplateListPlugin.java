@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,14 +35,14 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.ResourceModel;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
+import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.model.event.IEvent;
 import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
@@ -50,7 +50,6 @@ import org.hippoecm.frontend.model.nodetypes.JcrNodeTypeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -307,12 +306,9 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                 protected void populateItem(ListItem<Section> item) {
                     final Section section = item.getModelObject();
 
-                    item.add(CssClass.append(new AbstractReadOnlyModel<String>() {
-                        @Override
-                        public String getObject() {
-                            return active == section ? "category-selected" : StringUtils.EMPTY;
-                        }
-                    }));
+                    item.add(ClassAttribute.append(() -> active == section
+                            ? "category-selected"
+                            : StringUtils.EMPTY));
 
                     MarkupContainer container = new WebMarkupContainer("container") {
                         @Override
@@ -333,18 +329,15 @@ public class TemplateListPlugin extends RenderPlugin<ITypeDescriptor> {
                         }
                     };
                     link.add(new Label("category", section.getTitleModel()));
-                    link.add(CssClass.append(new LoadableDetachableModel<String>() {
-                        @Override
-                        protected String load() {
-                            return active == section ? "focus" : StringUtils.EMPTY;
-                        }
-                    }));
-                    link.add(HippoIcon.fromSprite("categoryIcon", new AbstractReadOnlyModel<Icon>() {
-                        @Override
-                        public Icon getObject() {
-                            return active == section ? Icon.CARET_DOWN : Icon.CARET_RIGHT;
-                        }
-                    }, IconSize.S));
+                    link.add(ClassAttribute.append(() -> active == section
+                            ? "focus"
+                            : StringUtils.EMPTY));
+
+
+                    final ReadOnlyModel<Icon> iconModel = ReadOnlyModel.of(() -> active == section
+                            ? Icon.CARET_DOWN
+                            : Icon.CARET_RIGHT);
+                    link.add(HippoIcon.fromSprite("categoryIcon", iconModel, IconSize.S));
                     item.add(link);
                 }
             });

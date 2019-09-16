@@ -26,6 +26,7 @@ import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
 import javax.jcr.version.Version;
 
+import org.apache.wicket.Component;
 import org.apache.wicket.migrate.StringResourceModelMigration;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
@@ -42,10 +43,12 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.reviewedactions.dialogs.HistoryDialog;
 import org.hippoecm.frontend.plugins.standards.datetime.DateTimePrinter;
+import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.Workflow;
@@ -56,8 +59,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class VersionWorkflowPlugin extends RenderPlugin {
-
-    private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(VersionWorkflowPlugin.class);
 
@@ -195,8 +196,32 @@ public class VersionWorkflowPlugin extends RenderPlugin {
                 return null;
             }
         });
-    }
 
+        add(new StdWorkflow("cancel", new StringResourceModel("cancel", this), context, getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "top";
+            }
+
+            @Override
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.TIMES_CIRCLE);
+            }
+
+            @Override
+            public boolean isFormSubmitted() {
+                return true;
+            }
+
+            @Override
+            public String execute(Workflow wf) throws Exception {
+                IEditor editor = getEditor();
+                editor.close();
+                return null;
+            }
+        });
+    }
 
     private String getRevisionBranchName() {
         try {
@@ -207,13 +232,12 @@ public class VersionWorkflowPlugin extends RenderPlugin {
         }
     }
 
-
     private String getBranchInfo(final IPluginContext context, final Function<BranchIdModel, String> function) {
         final BranchIdModel branchIdModel = getBranchIdModel(context);
         return function.apply(branchIdModel);
     }
 
-    private BranchIdModel getBranchIdModel(final IPluginContext context)  {
+    private BranchIdModel getBranchIdModel(final IPluginContext context) {
         final DocumentWorkflow documentWorkflow = getDocumentWorkflow();
         try {
             final String identifier = documentWorkflow.getNode().getIdentifier();
@@ -244,5 +268,4 @@ public class VersionWorkflowPlugin extends RenderPlugin {
         IPluginContext context = getPluginContext();
         return getPluginContext().getService(context.getReference(editor).getServiceId(), IRenderService.class);
     }
-
 }
