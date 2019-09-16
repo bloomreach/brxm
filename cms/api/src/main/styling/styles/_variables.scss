@@ -111,15 +111,18 @@ $sections-select-height:             $top-bar-height;
 $sections-top-height:                40px;
 $sections-top-search-result-height:  64px;
 $sections-bottom-height:             41px;
-$sections-border-color:              $light-shade;
 $sections-top-bgcolor:               $white;
 
 // Section search
-$search-input-border-color:          $light-shade;
-$search-input-icon-color:            $darker-shade;
-$search-input-icon-hover-color:      $primary;
-$search-scope-active-bgcolor:        $light-shade;
-$search-scope-inactive-color:        $darkest-shade;
+$search-input-border-color:          $gray60;
+$search-input-placeholder-color:     $gray60;
+$search-input-active-color:          $gray87;
+$search-input-icon-color:            $gray60;
+$search-input-icon-hover-color:      $gray87;
+$search-scope-active-bgcolor:        $blueLightSolid;
+$search-scope-active-color:          $gray87;
+$search-scope-inactive-color:        $gray87;
+$search-scope-inactive-border-color: $gray38;
 
 // Section add root
 $add-root-folder-hover-color:        $lightest-shade;
