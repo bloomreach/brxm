@@ -21,6 +21,7 @@
  * @see module:api
  */
 
+import { Typed } from 'emittery';
 import { Spa } from './spa';
 import { buildPageModelUrl } from './url';
 import {
@@ -69,13 +70,12 @@ export const initialize = (() => {
     buildPageModelUrl,
     componentFactory,
     contentFactory,
-    new Map<string, Content>(),
+    new Typed(),
   );
 
   return spa.initialize.bind(spa);
 })();
 
-export * from './api';
 export {
   Component,
   ContainerItem,

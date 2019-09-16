@@ -14,8 +14,10 @@
  * limitations under the License.
  */
 
+import { Typed } from 'emittery';
+import { Events } from './events';
+import { ComponentFactory, Component, Page, ContentFactory, Content, TYPE_COMPONENT } from './page';
 import { Spa } from './spa';
-import { ComponentFactory, Component, Page, ContentFactory, ContentMap } from './page';
 import { PageModelUrlBuilder } from './url';
 
 const model = {
@@ -23,7 +25,13 @@ const model = {
   content: {
     someContent: { id: 'content-id', name: 'content-name' },
   },
-  page: {},
+  page: {
+    id: 'page-id',
+    type: TYPE_COMPONENT,
+    _links: {
+      componentRendering: { href: 'some-url' },
+    },
+  },
 };
 const config = {
   httpClient: jest.fn(async () => model),
@@ -44,20 +52,20 @@ const config = {
 describe('Spa', () => {
   let componentFactory: ComponentFactory;
   let contentFactory: ContentFactory;
-  let content: ContentMap;
+  let eventBus: Typed<Events>;
   let pageModelUrlBuilder: PageModelUrlBuilder;
   let spa: Spa;
 
   beforeEach(() => {
     componentFactory = new ComponentFactory();
     contentFactory = new ContentFactory(jest.fn());
-    content = new Map();
+    eventBus = new Typed<Events>();
     pageModelUrlBuilder = jest.fn(() => 'http://example.com');
 
     componentFactory.create = jest.fn(model => new Component(model));
     spyOn(contentFactory, 'create');
 
-    spa = new Spa(pageModelUrlBuilder, componentFactory, contentFactory, content);
+    spa = new Spa(pageModelUrlBuilder, componentFactory, contentFactory, eventBus);
   });
 
   describe('initialize', () => {
@@ -65,6 +73,7 @@ describe('Spa', () => {
 
     beforeEach(async () => {
       config.httpClient.mockClear();
+      spyOn(eventBus, 'on');
       page = await spa.initialize(config);
     });
 
@@ -92,13 +101,57 @@ describe('Spa', () => {
       expect(contentFactory.create).toBeCalledWith(model.content.someContent);
     });
 
+    it('should subscribe for cms.update event', () => {
+      expect(eventBus.on).toBeCalledWith('cms.update', expect.any(Function));
+    });
+
     it('should reject a promise when fetching the page model fails', () => {
       const error = new Error('Failed to fetch page model data');
-      config.httpClient.mockImplementation(() => { throw error; });
+      config.httpClient.mockImplementationOnce(() => { throw error; });
       const promise = spa.initialize(config);
 
       expect.assertions(1);
       expect(promise).rejects.toBe(error);
+    });
+  });
+
+  describe('onCmsUpdate', () => {
+    beforeEach(async () => {
+      spyOn(eventBus, 'emit');
+      await spa.initialize(config);
+
+      jest.clearAllMocks();
+    });
+
+    it('should not proceed if a component does not exist', async () => {
+      await eventBus.emitSerial('cms.update', { id: 'some-component', properties: {} });
+
+      expect(config.httpClient).not.toBeCalled();
+      expect(eventBus.emit).not.toBeCalled();
+    });
+
+    describe('on component update', () => {
+      beforeEach(() => eventBus.emitSerial('cms.update', { id: 'page-id', properties: { a: 'b' } }));
+
+      it('should request a component model', () => {
+        expect(config.httpClient).toBeCalledWith({
+          url: 'some-url',
+          method: 'post',
+          data: { a: 'b' },
+        });
+      });
+
+      it('should create a component', () => {
+        expect(componentFactory.create).toBeCalledWith(model.page);
+      });
+
+      it('should create a content instance', () => {
+        expect(contentFactory.create).toBeCalledWith(model.content.someContent);
+      });
+
+      it('should emit page.update event', () => {
+        expect(eventBus.emit).toBeCalledWith('page.update', { page: expect.any(Page) });
+      });
     });
   });
 });

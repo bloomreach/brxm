@@ -18,6 +18,7 @@ import { Page, ComponentModel } from './page';
 
 export interface Events {
   'cms.update': CmsUpdateEvent;
+  'page.update': PageUpdateEvent;
   'page.ready': PageReadyEvent;
 }
 
@@ -34,6 +35,16 @@ export interface CmsUpdateEvent {
    * Updated component's properties.
    */
   properties: object;
+}
+
+/**
+ * Page model update event.
+ */
+export interface PageUpdateEvent {
+  /**
+   * Updated part of the page model.
+   */
+  page: Page;
 }
 
 /**

@@ -14,9 +14,31 @@
  * limitations under the License.
  */
 
-import { Configuration } from './api';
-import { ComponentFactory, ContentFactory, ContentMap, PageModel, Page } from './page';
-import { PageModelUrlBuilder } from './url';
+import { Typed } from 'emittery';
+import { Events, CmsUpdateEvent } from './events';
+import { HttpClient, HttpRequest } from './http';
+import { ComponentFactory, ContentFactory, Content, PageModel, Page } from './page';
+import { PageModelUrlBuilder, PageModelUrlOptions } from './url';
+
+/**
+ * Configuration of the SPA SDK.
+ */
+export interface Configuration {
+  /**
+   * HTTP client that will be used to fetch the page model.
+   */
+  httpClient: HttpClient<PageModel>;
+
+  /**
+   * Current user's request.
+   */
+  request: HttpRequest;
+
+  /**
+   * Options for generating the page model API URL.
+   */
+  options: PageModelUrlOptions;
+}
 
 /**
  * SPA entry point interacting with the Channel Manager and the Page Model API.
@@ -26,16 +48,16 @@ export class Spa {
    * @param pageModelUrlBuilder Function generating an API URL based on the current request.
    * @param componentFactory Factory to produce component entities.
    * @param contentFactory Factory to produce content entities.
-   * @param content Content storage.
+   * @param eventBus Event bus to exchange data between submodules.
    */
   constructor(
     private pageModelUrlBuilder: PageModelUrlBuilder,
     private componentFactory: ComponentFactory,
     private contentFactory: ContentFactory,
-    protected content: ContentMap,
+    protected eventBus: Typed<Events>,
   ) {}
 
-  private async fetchModel(config: Configuration): Promise<PageModel> {
+  private async fetchPageModel(config: Configuration) {
     const url = this.pageModelUrlBuilder(config.request, config.options);
 
     return await config.httpClient({
@@ -45,20 +67,50 @@ export class Spa {
     });
   }
 
+  private async fetchComponentModel(config: Configuration, page: Page, id: string, properties: object) {
+    const root = page.getComponent();
+    const component = root.getComponentById(id);
+    const url = component && component.getModelUrl();
+    if (!url) {
+      return;
+    }
+
+    return await config.httpClient({
+      url,
+      data: properties,
+      method: 'post',
+    });
+  }
+
   private initializeRoot(model: PageModel) {
     return this.componentFactory.create(model.page);
   }
 
   private initializeContent(model: PageModel) {
-    if (!model.content) {
+    return new Map<string, Content>(
+      Object.entries(model.content || {})
+        .map(([alias, model]) => [
+          alias,
+          this.contentFactory.create(model),
+        ]),
+    );
+  }
+
+  private initializePage(model: PageModel) {
+    return new Page(
+      model,
+      this.initializeRoot(model),
+      this.initializeContent(model),
+    );
+  }
+
+  protected async onCmsUpdate(config: Configuration, page: Page, event: CmsUpdateEvent) {
+    const model = await this.fetchComponentModel(config, page, event.id, event.properties);
+    if (!model) {
       return;
     }
 
-    Object.entries(model.content)
-      .forEach(([alias, model]) => this.content.set(
-        alias,
-        this.contentFactory.create(model),
-      ));
+    this.eventBus.emit('page.update', { page: this.initializePage(model) });
   }
 
   /**
@@ -66,10 +118,11 @@ export class Spa {
    * @param config Configuration of the SPA integration with brXM.
    */
   async initialize(config: Configuration) {
-    const model = await this.fetchModel(config);
-    const root = this.initializeRoot(model);
-    this.initializeContent(model);
+    const model = await this.fetchPageModel(config);
+    const page = this.initializePage(model);
 
-    return new Page(model, root, this.content);
+    this.eventBus.on('cms.update', this.onCmsUpdate.bind(this, config, page));
+
+    return page;
   }
 }
