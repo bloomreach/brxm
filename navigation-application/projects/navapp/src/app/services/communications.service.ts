@@ -32,6 +32,7 @@ import { OverlayService } from './overlay.service';
 })
 export class CommunicationsService {
   constructor(
+    private globalSettingsService: GlobalSettingsService,
     private navConfigService: NavConfigService,
     private clientAppService: ClientAppService,
     private overlay: OverlayService,
@@ -47,6 +48,16 @@ export class CommunicationsService {
       navigate: (location: NavLocation) => this.navigationService.navigateByNavLocation(location),
       updateNavLocation: (location: NavLocation) => this.navigationService.updateByNavLocation(location),
       onError: (clientError: ClientError) => this.handleClientError(clientError),
+      onSessionExpired: () => {
+        return this.logout()
+          .then(() => {
+            this.reload();
+          })
+          .catch(error => {
+            console.error(error);
+            this.reload();
+          });
+      },
     };
   }
 
@@ -86,4 +97,10 @@ export class CommunicationsService {
   private handleClientError(clientError: ClientError): void {
     // TODO: delegate the error service
   }
+
+  private reload(): void {
+    const newLocation = `${this.globalSettingsService.appSettings.navAppBaseURL}/`;
+    window.location.replace(newLocation);
+  }
+
 }
