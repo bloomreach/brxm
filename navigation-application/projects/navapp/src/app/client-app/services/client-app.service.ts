@@ -15,8 +15,9 @@
  */
 
 import { Injectable } from '@angular/core';
-import { NavItem } from '@bloomreach/navapp-communication';
+import { ChildConfig, NavItem } from '@bloomreach/navapp-communication';
 import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
+import { fromPromise } from 'rxjs/internal-compatibility';
 import { bufferCount, first, map, switchMap, tap } from 'rxjs/operators';
 
 import { Connection } from '../../models/connection.model';
@@ -24,10 +25,15 @@ import { FailedConnection } from '../../models/failed-connection.model';
 import { NavConfigService } from '../../services/nav-config.service';
 import { ClientApp } from '../models/client-app.model';
 
+interface ClientAppWithConfig {
+  app: ClientApp;
+  config: ChildConfig;
+}
+
 @Injectable()
 export class ClientAppService {
   private uniqueURLs = new BehaviorSubject<string[]>([]);
-  private connectedApps: ClientApp[] = [];
+  private connectedApps: Map<string, ClientAppWithConfig> = new Map<string, ClientAppWithConfig>();
   private activeAppId = new BehaviorSubject<string>(undefined);
   private connection$ = new ReplaySubject<Connection>();
 
@@ -38,7 +44,7 @@ export class ClientAppService {
   }
 
   get apps(): ClientApp[] {
-    return this.connectedApps;
+    return Array.from(this.connectedApps.values()).map(c => c.app);
   }
 
   get activeApp(): ClientApp {
@@ -48,18 +54,20 @@ export class ClientAppService {
       return undefined;
     }
 
-    try {
-      return this.getApp(activeAppId);
-    } catch {
-      throw new Error(`Unable to find the active app with id = ${activeAppId}`);
-    }
+    return this.getApp(activeAppId);
   }
 
   get doesActiveAppSupportSites(): boolean {
+    const activeApp = this.activeApp;
+
+    if (!activeApp) {
+      return false;
+    }
+
     return this.doesAppSupportSites(this.activeApp);
   }
 
-  init(): Promise<ClientApp[]> {
+  init(): Promise<void> {
     const navItems = this.navConfigService.navItems;
     const uniqueURLs = this.filterUniqueURLs(navItems);
     this.uniqueURLs.next(uniqueURLs);
@@ -68,12 +76,17 @@ export class ClientAppService {
       switchMap(urls => this.waitForConnections(urls.length)),
       map(connections => this.discardFailedConnections(connections)),
       map(connections => connections.map(c => this.createClientApp(c))),
-      tap(apps => this.connectedApps = apps),
+      switchMap(apps => fromPromise(this.fetchAppConfigs(apps))),
+      tap(appsWithConfigs => appsWithConfigs.forEach(awc => this.connectedApps.set(awc.app.url, awc))),
       first(),
-    ).toPromise();
+    ).toPromise() as Promise<any>;
   }
 
   activateApplication(appId: string): void {
+    if (!this.connectedApps.has(appId)) {
+      throw new Error(`An attempt to active unknown app '${appId}'`);
+    }
+
     this.activeAppId.next(appId);
   }
 
@@ -95,16 +108,25 @@ export class ClientAppService {
   }
 
   getApp(appUrl: string): ClientApp {
-    const app = this.connectedApps.find(x => x.url === appUrl);
+    const app = this.connectedApps.has(appUrl);
     if (!app) {
       throw new Error(`Unable to find the app with id = ${appUrl}`);
     }
 
-    return app;
+    return this.connectedApps.get(appUrl).app;
+  }
+
+  getAppConfig(appUrl: string): ChildConfig {
+    const app = this.connectedApps.has(appUrl);
+    if (!app) {
+      throw new Error(`Unable to find the app with id = ${appUrl}`);
+    }
+
+    return this.connectedApps.get(appUrl).config;
   }
 
   logoutApps(): Promise<void[]> {
-    return Promise.all(this.connectedApps.map(
+    return Promise.all(this.apps.map(
       app => app.api.logout(),
     ));
   }
@@ -119,13 +141,41 @@ export class ClientAppService {
   }
 
   private doesAppSupportSites(app: ClientApp): boolean {
-    return !!(app && app.api && app.api.updateSelectedSite);
+    return this.getAppConfig(app.url).showSiteDropdown || false;
   }
 
   private waitForConnections(expectedNumber: number): Observable<Connection[]> {
     return this.connection$.pipe(
       bufferCount(expectedNumber),
     );
+  }
+
+  private fetchAppConfigs(apps: ClientApp[]): Promise<ClientAppWithConfig[]> {
+    const configPromises: Promise<ClientAppWithConfig>[] = [];
+
+    const fetchConfig = (app: ClientApp) => this.fetchAppConfig(app).then(config => ({ app, config }));
+
+    apps.forEach(app => configPromises.push(fetchConfig(app)));
+
+    return Promise.all(configPromises);
+  }
+
+  private fetchAppConfig(app: ClientApp): Promise<ChildConfig> {
+    return app.api.getConfig ?
+      app.api.getConfig().then(config => {
+        if (!config) {
+          console.warn(`[NAVAPP] The app '${app.url}' return an empty config.`);
+          config = {} as ChildConfig;
+        }
+
+        if (!config.apiVersion) {
+          console.warn(`[NAVAPP] The app '${app.url}' returned a config with an empty version.`);
+          config.apiVersion = 'unknown';
+        }
+
+        return config;
+      }) :
+      Promise.resolve({ apiVersion: 'unknown' } as ChildConfig);
   }
 
   private discardFailedConnections(connections: Connection[]): Connection[] {

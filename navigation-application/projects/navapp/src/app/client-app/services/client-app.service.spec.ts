@@ -87,23 +87,58 @@ describe('ClientAppService', () => {
     expect(actual).toEqual(expected);
   }));
 
+  describe('before initialized', () => {
+    it('should emit an empty array of urls', () => {
+      const expected: string[] = [];
+
+      let actual: string[];
+
+      service.urls$.subscribe(urls => actual = urls);
+
+      expect(actual).toEqual(expected);
+    });
+
+    it('doesActiveAppSupportSites should return false', () => {
+      const actual = service.doesActiveAppSupportSites;
+
+      expect(actual).toBeFalsy();
+    });
+  });
+
   describe('when initialized', () => {
+    let clientApiWithoutSitesSupport: ChildPromisedApi;
     let clientApiWithSitesSupport: ChildPromisedApi;
 
     beforeEach(async(() => {
+      clientApiWithoutSitesSupport = {
+        getConfig: () => Promise.resolve({ apiVersion: '1.0.0', showSiteDropdown: false }),
+      };
+
       clientApiWithSitesSupport = {
-        updateSelectedSite: () => Promise.resolve(),
+        getConfig: () => Promise.resolve({ apiVersion: '1.0.0', showSiteDropdown: true }),
       };
 
       service.init();
 
-      service.addConnection(new Connection('http://app1.com', {}));
+      service.addConnection(new Connection('http://app1.com', clientApiWithoutSitesSupport));
       service.addConnection(new Connection('http://app2.com', clientApiWithSitesSupport));
     }));
 
+    it('should throw an exception if it attempts to activate an unknown app', () => {
+      expect(() => service.activateApplication('https://unknown-app-id.com')).toThrow();
+    });
+
+    it('should throw an exception if it attempts to get an unknown app', () => {
+      expect(() => service.getApp('https://unknown-app-id.com')).toThrow();
+    });
+
+    it('should throw an exception if it attempts to get config of an unknown app', () => {
+      expect(() => service.getAppConfig('https://unknown-app-id.com')).toThrow();
+    });
+
     it('should return a list of connected apps', () => {
       const expected = [
-        new ClientApp('http://app1.com', {}),
+        new ClientApp('http://app1.com', clientApiWithoutSitesSupport),
         new ClientApp('http://app2.com', clientApiWithSitesSupport),
       ];
 
@@ -114,7 +149,7 @@ describe('ClientAppService', () => {
     });
 
     it('should return an app by id', () => {
-      const expected = new ClientApp('http://app1.com', {});
+      const expected = new ClientApp('http://app1.com', clientApiWithoutSitesSupport);
 
       const actual = service.getApp('http://app1.com');
 
@@ -126,7 +161,7 @@ describe('ClientAppService', () => {
     });
 
     it('should return the active application', () => {
-      const expected = new ClientApp('http://app1.com', {});
+      const expected = new ClientApp('http://app1.com', clientApiWithoutSitesSupport);
 
       service.activateApplication('http://app1.com');
 

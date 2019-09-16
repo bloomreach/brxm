@@ -28,6 +28,7 @@ import { ChildApi, ParentPromisedApi } from 'projects/navapp-communication/src/l
 import { mockNavItems, mockSites } from './mocks';
 
 const SITE_COOKIE_NAME = 'EXAMPLE_APP_SITE_ID';
+const NAVAPP_COMMUNICATION_IMPLEMENTATION_API_VERSION = '1.0.0';
 
 @Component({
   selector: 'app-root',
@@ -55,6 +56,10 @@ export class AppComponent implements OnInit {
 
   get childApiMethods(): ChildApi {
     const methods: ChildApi = {
+      getConfig: () => ({
+        apiVersion: NAVAPP_COMMUNICATION_IMPLEMENTATION_API_VERSION,
+        showSiteDropdown: false,
+      }),
       navigate: (location: NavLocation) => {
         this.navigateCount += 1;
         this.navigatedTo = location.path;
@@ -81,6 +86,11 @@ export class AppComponent implements OnInit {
     };
 
     if (this.isBrSmMock) {
+      methods.getConfig = () => ({
+        apiVersion: NAVAPP_COMMUNICATION_IMPLEMENTATION_API_VERSION,
+        showSiteDropdown: true,
+      });
+
       methods.getSites = () => {
         return mockSites;
       };
