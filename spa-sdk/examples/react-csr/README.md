@@ -4,12 +4,7 @@ Example client-side React app using the BloomReach Experience SDK for React. The
 
 ## Install and run
 
-First, download and install the [BloomReach SPA demo project](https://github.com/onehippo/hippo-demo-spa-integration)
-by following the instructions in the *Build Demo CMS project* section of the above link. Then run it by following the 
-instructions in *Run Demo CMS project*.
-
-Next, install the [UrlRewriter](https://documentation.bloomreach.com/library/enterprise/enterprise-features/url-rewriter/installation.html)
-and configure that according to [this document](https://documentation.bloomreach.com/library/concepts/spa-plus/url-rewriter-rules.html).
+__TODO__: Start the BRX example Docker image
 
 Then, customize `.env` file to contain a correct [PUBLIC_URL](https://create-react-app.dev/docs/using-the-public-folder) path, for example:
 ```
