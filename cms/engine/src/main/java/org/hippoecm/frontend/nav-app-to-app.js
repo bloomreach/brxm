@@ -114,7 +114,12 @@
   // Establish the connection
   window.bloomreach['navapp-communication']
     .connectToParent(parentConnectionConfig)
-    .then(parentApi => Object.assign(Hippo.AppToNavApp, parentApi))
+    .then(parentApi => {
+      Object.assign(Hippo.AppToNavApp, parentApi);
+      Hippo.UserActivity.onInactive(() => {
+        parentApi.onSessionExpired();
+     })
+    })
     .catch(error => console.error(error));
 
 }());
