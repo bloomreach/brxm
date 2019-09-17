@@ -21,6 +21,8 @@ import {
   ParentPromisedApi,
 } from './api';
 
+export const DEFAULT_COMMUNICATION_TIMEOUT = 300000; // 5 minutes
+
 export function mergeIntersecting(obj1: object, obj2: object): object {
   const intersection = Object.keys(obj1).reduce((obj, key) => {
     if (key in obj2) {

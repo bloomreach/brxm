@@ -22,11 +22,12 @@ import {
   ParentConnectConfig,
   ParentPromisedApi,
 } from './api';
+import { DEFAULT_COMMUNICATION_TIMEOUT } from './utils';
 
 export async function wrapWithTimeout(api: ChildApi): Promise<ChildPromisedApi> {
   let communicationTimeout: number;
 
-  if (api && api.getConfig) {
+  if (api.getConfig) {
     const config = await api.getConfig();
     communicationTimeout = config.communicationTimeout;
   }
@@ -38,7 +39,7 @@ export async function wrapWithTimeout(api: ChildApi): Promise<ChildPromisedApi> 
         return new Promise(async (resolve, reject) => {
           const timer = setTimeout(() => {
             reject(`${methodName} call timed out`);
-          }, communicationTimeout);
+          }, communicationTimeout || DEFAULT_COMMUNICATION_TIMEOUT);
 
           try {
             const value = await api[methodName](args);
