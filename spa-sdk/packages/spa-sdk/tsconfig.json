@@ -1,13 +1,12 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.lib.json",
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
     "baseUrl": "./src",
-    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
     "suppressImplicitAnyIndexErrors": true
   },
   "include": [
-    "**/*.ts"
+    "src"
   ],
   "typedocOptions": {
     "exclude": "!**/+(api|index).ts",

@@ -1,16 +1,11 @@
 {
   "compilerOptions": {
-    "lib": [
-      "es5",
-      "es6",
-      "dom"
-    ],
-    "module": "es6",
+    "baseUrl": ".",
     "moduleResolution": "node",
+    "esModuleInterop": true,
     "resolveJsonModule": true,
-    "sourceMap": true,
     "strict": true,
-    "target": "es6"
+    "sourceMap": true
   },
   "exclude": [
     "node_modules",
