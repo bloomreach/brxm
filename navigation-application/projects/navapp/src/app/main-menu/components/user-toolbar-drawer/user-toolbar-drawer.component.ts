@@ -67,7 +67,7 @@ export class UserToolbarDrawerComponent {
 
   logout(event: Event): void {
     event.preventDefault();
-    this.communicationService.logout('');
+    this.communicationService.logout('UserLoggedOut');
   }
 
   onClickedOutside(): void {
