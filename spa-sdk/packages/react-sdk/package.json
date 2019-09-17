@@ -28,7 +28,7 @@
     "build": "rollup -c rollup.config.js",
     "dev": "rollup -cw rollup.config.js",
     "lint": "echo lint not yet implemented for react-sdk",
-    "test": "echo test not yet implemented for react-sdk"
+    "test": "jest"
   },
   "dependencies": {
     "@bloomreach/spa-sdk": "^14.0.0"
@@ -41,7 +41,13 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.5",
     "@babel/preset-env": "^7.6",
     "@babel/preset-react": "^7.0",
+    "@types/enzyme": "^3.10.3",
     "babel-plugin-transform-async-to-promises": "^0.8",
+    "enzyme": "^3.10.0",
+    "enzyme-adapter-react-16": "^1.14.0",
+    "jest": "^24.9.0",
+    "jest-environment-enzyme": "^7.1.1",
+    "jest-enzyme": "^7.1.1",
     "react": "^16.9",
     "rollup": "^1.21",
     "rollup-plugin-babel": "^4.3",
@@ -49,5 +55,11 @@
     "rollup-plugin-terser": "^5.1",
     "rollup-plugin-typescript2": "^0.24.2",
     "typescript": "^3.6.3"
+  },
+  "jest": {
+    "setupFilesAfterEnv": [
+      "jest-enzyme"
+    ],
+    "testEnvironment": "enzyme"
   }
 }
