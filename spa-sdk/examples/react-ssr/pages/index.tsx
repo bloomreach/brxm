@@ -17,10 +17,7 @@
 import { NextPage } from 'next';
 import getConfig from 'next/config';
 
-import { sdk } from '@bloomreach/react-sdk';
-
-// TODO: Here to validate the setup
-sdk();
+import { BrPage } from '@bloomreach/react-sdk';
 
 const { publicRuntimeConfig } = getConfig();
 const brOrigin = new URL(publicRuntimeConfig.brOrigin);
@@ -41,7 +38,7 @@ const cmsUrls = {
 const componentDefinitions = {};
 
 const Home: NextPage<{ pageModel: any }> = ({pageModel}) => (
-    <div id="br-page">
+    <BrPage>
       <div id='header'>
         <nav className='navbar navbar-expand-md navbar-dark bg-dark'>
           <span className='navbar-brand'>Server-side React Demo</span>
@@ -59,7 +56,7 @@ const Home: NextPage<{ pageModel: any }> = ({pageModel}) => (
         cmsUrls: <pre>{JSON.stringify(cmsUrls, null, 2)}</pre>
         pageModel: <pre>{JSON.stringify(pageModel, null, 2)}</pre>
       </div>
-    </div>
+    </BrPage>
 );
 
 Home.getInitialProps = async ({ req, asPath }) => {

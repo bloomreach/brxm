@@ -14,10 +14,12 @@
  * limitations under the License.
  */
 
-import { initialize } from '@bloomreach/spa-sdk';
+import React from 'react';
 
-export * from './BrPage';
-
-export function sdk() {
-  console.log('Got a configuration interface from spa-sdk', initialize);
-}
+export class BrPage extends React.Component {
+  render () {
+    return <div className="br-page">
+      { this.props.children }
+    </div>;
+  }
+};

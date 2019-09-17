@@ -16,6 +16,8 @@
 
  import React from 'react';
 
+ import { BrPage } from '@bloomreach/react-sdk';
+
  const BR_ORIGIN = new URL(process.env.REACT_APP_BR_ORIGIN!);
  const BR_CONTEXT_PATH = process.env.REACT_APP_BR_CONTEXT_PATH;
  const BR_CHANNEL_PATH = process.env.REACT_APP_BR_CHANNEL_PATH;
@@ -35,7 +37,7 @@
 
 const App: React.FC = () => {
   return (
-    <div id="br-page">
+    <BrPage>
       <div id="header">
         <nav className="navbar navbar-expand-md navbar-dark bg-dark">
           <span className="navbar-brand">Client-side React Demo</span>
@@ -57,7 +59,7 @@ const App: React.FC = () => {
         Render Container here<br/>
         cmsUrls: <pre>{JSON.stringify(cmsUrls, null, 2)}</pre>
       </div>
-    </div>
+    </BrPage>
   );
 };
 

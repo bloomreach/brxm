@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
-import { initialize } from '@bloomreach/spa-sdk';
+import React from 'react';
+import { shallow } from 'enzyme';
 
-export * from './BrPage';
+import { BrPage } from './BrPage';
 
-export function sdk() {
-  console.log('Got a configuration interface from spa-sdk', initialize);
-}
+describe('BrPage', function() {
+  it('should render without throwing an error', function() {
+    expect(shallow(<BrPage/>).contains(<div className="br-page"></div>)).toBe(true);
+  });
+
+  it('should render children', function() {
+    expect(shallow(<BrPage>children</BrPage>).contains(<div className="br-page">children</div>)).toBe(true);
+  });
+});
