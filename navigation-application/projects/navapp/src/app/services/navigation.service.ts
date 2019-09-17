@@ -19,7 +19,7 @@ import { Injectable, OnDestroy } from '@angular/core';
 import { NavigateFlags, NavItem, NavLocation } from '@bloomreach/navapp-communication';
 import { BehaviorSubject, Observable, of, Subject, Subscription, throwError } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
-import { finalize, map, skip, switchMap, tap } from 'rxjs/operators';
+import { catchError, skip, switchMap, tap } from 'rxjs/operators';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
@@ -51,7 +51,11 @@ interface Navigation {
   state: { [key: string]: string };
   source: NavigationTrigger;
   replaceState: boolean;
+  resolve: () => void;
+  reject: (reason?: any) => void;
 }
+
+type Transition = Partial<Navigation>;
 
 @Injectable({
   providedIn: 'root',
@@ -59,7 +63,7 @@ interface Navigation {
 export class NavigationService implements OnDestroy {
   private routes: Route[];
   private locationSubscription: Subscription;
-  private readonly transitions = new Subject<Partial<Navigation>>();
+  private readonly transitions = new Subject<Transition | Error>();
   private readonly navigations = new BehaviorSubject<Navigation>({
     url: undefined,
     navItem: undefined,
@@ -68,6 +72,8 @@ export class NavigationService implements OnDestroy {
     state: {},
     source: NavigationTrigger.Imperative,
     replaceState: false,
+    resolve: undefined,
+    reject: undefined,
   });
   private events = new Subject<NavigationEvent>();
 
@@ -97,7 +103,7 @@ export class NavigationService implements OnDestroy {
     return homeUrl;
   }
 
-  initialNavigation(): void {
+  initialNavigation(): Promise<void> {
     const navItems = this.navConfigService.navItems;
     this.routes = this.generateRoutes(navItems);
 
@@ -107,7 +113,7 @@ export class NavigationService implements OnDestroy {
     const basePath = new URL(baseUrl).pathname;
     const url = `${basePath}${this.globalSettingsService.appSettings.initialPath}`;
 
-    this.scheduleNavigation(url, NavigationTrigger.Imperative, {}, {}, true);
+    return this.scheduleNavigation(url, NavigationTrigger.Imperative, {}, {}, true);
   }
 
   ngOnDestroy(): void {
@@ -116,12 +122,12 @@ export class NavigationService implements OnDestroy {
     }
   }
 
-  navigateByNavItem(navItem: NavItem, breadcrumbLabel?: string, flags?: NavigateFlags): void {
+  navigateByNavItem(navItem: NavItem, breadcrumbLabel?: string, flags?: NavigateFlags): Promise<void> {
     const browserUrl = this.urlMapperService.mapNavItemToBrowserUrl(navItem);
-    this.navigateByUrl(browserUrl, breadcrumbLabel, flags);
+    return this.navigateByUrl(browserUrl, breadcrumbLabel, flags);
   }
 
-  navigateByNavLocation(navLocation: NavLocation): void {
+  navigateByNavLocation(navLocation: NavLocation): Promise<void> {
     let browserUrl: string;
 
     try {
@@ -131,7 +137,7 @@ export class NavigationService implements OnDestroy {
       return;
     }
 
-    this.navigateByUrl(browserUrl, navLocation.breadcrumbLabel);
+    return this.navigateByUrl(browserUrl, navLocation.breadcrumbLabel);
   }
 
   updateByNavLocation(navLocation: NavLocation): void {
@@ -151,18 +157,18 @@ export class NavigationService implements OnDestroy {
     this.setBrowserUrl(browserUrl, { breadcrumbLabel: navLocation.breadcrumbLabel });
   }
 
-  navigateToDefaultCurrentAppPage(): void {
+  navigateToDefaultCurrentAppPage(): Promise<void> {
     const lastNavigation = this.getLastNavigation();
 
-    this.navigateByNavItem(lastNavigation.navItem, '', { forceRefresh: true });
+    return this.navigateByNavItem(lastNavigation.navItem, '', { forceRefresh: true });
   }
 
-  navigateToHome(): void {
-    this.navigateByUrl(this.homeUrl);
+  navigateToHome(): Promise<void> {
+    return this.navigateByUrl(this.homeUrl);
   }
 
-  private navigateByUrl(url: string, breadcrumbLabel?: string, flags?: NavigateFlags): void {
-    this.scheduleNavigation(url, NavigationTrigger.Imperative, { breadcrumbLabel }, { ...flags });
+  private navigateByUrl(url: string, breadcrumbLabel?: string, flags?: NavigateFlags): Promise<void> {
+    return this.scheduleNavigation(url, NavigationTrigger.Imperative, { breadcrumbLabel }, { ...flags });
   }
 
   private setUpLocationChangeListener(): void {
@@ -184,43 +190,26 @@ export class NavigationService implements OnDestroy {
   private setupNavigations(): void {
     this.transitions.pipe(
       tap(() => this.events.next(new NavigationStartEvent())),
-      switchMap(t => {
-        const route = this.matchRoute(t.url, this.routes);
+      switchMap((t: Transition) => this.processTransition(t).pipe(
+        catchError(error => {
+          // Always resolve a promise (for now) to overcome consequent problems of handling promise rejection
+          // t.reject(error);
+          t.resolve();
 
-        if (!route) {
-          return throwError(`Unknown url: ${t.url}`);
-        }
+          const message = typeof error === 'object' ? error.message : error;
 
-        if (!t.url.startsWith(route.path)) {
-          t.url = route.path;
-          t.state = {};
-        }
+          return of(new Error(message));
+        }),
+      )),
+      tap(() => this.events.next(new NavigationStopEvent())),
+    ).subscribe((t: Navigation | Error) => {
+      if (t instanceof Error) {
+        console.error('[NAVAPP] An error occurred during navigation:', t.message);
+        return;
+      }
 
-        const appPathAddOn = t.url.slice(route.path.length);
-
-        return of({ ...t, navItem: route.navItem, appPathAddOn });
-      }),
-      switchMap(t => {
-        const appId = t.navItem.appIframeUrl;
-        const app = this.clientAppService.getApp(appId);
-
-        if (!app) {
-          throwError(`There is no app with id="${appId}"`);
-        }
-
-        if (!app.api) {
-          throwError(`The app with id="${appId}" is not connected to the nav app`);
-        }
-
-        const appPath = this.urlMapperService.combinePathParts(t.navItem.appPath, t.appPathAddOn);
-        const appPathWithoutLeadingSlash = this.urlMapperService.trimLeadingSlash(appPath);
-
-        return fromPromise(app.api.navigate({ path: appPathWithoutLeadingSlash }, t.clientAppFlags)).pipe(
-          map(() => t),
-        );
-      }),
-      finalize(() => this.events.next(new NavigationStopEvent())),
-    ).subscribe(t => this.navigations.next(t as Navigation));
+      this.navigations.next(t as Navigation);
+    });
   }
 
   private processNavigations(): void {
@@ -241,6 +230,7 @@ export class NavigationService implements OnDestroy {
           this.setBrowserUrl(n.url, n.state, n.replaceState);
         }
 
+        n.resolve();
         this.events.next(new NavigationStopEvent());
       },
       e => console.warn(`Unhandled Navigation Error: ${e}`),
@@ -253,14 +243,71 @@ export class NavigationService implements OnDestroy {
     state: { [key: string]: string },
     flags: NavigateFlags,
     replaceState = false,
-  ): void {
+  ): Promise<void> {
+    let resolve: () => void;
+    let reject: () =>  void;
+
+    const promise = new Promise<void>((res, rej) => {
+      resolve = res;
+      reject = rej;
+    });
+
     this.transitions.next({
       url,
       state,
       source,
       clientAppFlags: flags,
       replaceState,
+      resolve,
+      reject,
     });
+
+    return promise;
+  }
+
+  private processTransition(transition: Transition): Observable<Navigation> {
+    return of(transition).pipe(
+      // Resolving the url
+      switchMap((t: Transition) => {
+        const route = this.matchRoute(t.url, this.routes);
+
+        if (!route) {
+          return throwError(`Unknown url: ${t.url}`);
+        }
+
+        if (!t.url.startsWith(route.path)) {
+          t.url = route.path;
+          t.state = {};
+        }
+
+        const appPathAddOn = t.url.slice(route.path.length);
+
+        return of({ ...t, navItem: route.navItem, appPathAddOn });
+      }),
+      // Client navigation
+      switchMap(t => {
+        const appId = t.navItem.appIframeUrl;
+        const app = this.clientAppService.getApp(appId);
+
+        if (!app) {
+          throwError(`There is no app with id="${appId}"`);
+        }
+
+        if (!app.api) {
+          throwError(`The app with id="${appId}" is not connected to the nav app`);
+        }
+
+        const appPath = this.urlMapperService.combinePathParts(t.navItem.appPath, t.appPathAddOn);
+        const appPathWithoutLeadingSlash = this.urlMapperService.trimLeadingSlash(appPath);
+
+        const navigatePromise = app.api.navigate(
+          { path: appPathWithoutLeadingSlash },
+          t.clientAppFlags,
+        ).then(() => t as Navigation);
+
+        return fromPromise(navigatePromise);
+      }),
+    );
   }
 
   private getLastNavigation(): Navigation {
