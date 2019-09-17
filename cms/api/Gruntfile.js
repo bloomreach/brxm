@@ -117,16 +117,6 @@ module.exports = function (grunt) {
       }
     },
 
-    // Lint the css output
-    csslint: {
-      main: {
-        options: {
-          csslintrc: '.csslintrc'
-        },
-        src: ['<%= build.tmp %>/css/<%= build.file %>.css']
-      }
-    },
-
     // Minify CSS files
     cssmin: {
       options: {
