@@ -146,19 +146,6 @@ public class ImpersonateTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testAnonymousCannotImpersonateAnyone() throws RepositoryException {
-        // setup anonymous session
-        Session anonymousSession = server.login();
-        try {
-            anonymousSession.impersonate(new SimpleCredentials("admin", new char[] {}));
-            fail("User anonymous should not be allowed to impersonate.");
-        } catch (LoginException ignore) {
-        } finally {
-            anonymousSession.logout();
-        }
-    }
-
-    @Test
     public void testIssueRootSessionOnCredentials() throws RepositoryException {
         SimpleCredentials creds = new SimpleCredentials("nono", "blabla".toCharArray());
         try {

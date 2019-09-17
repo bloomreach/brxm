@@ -17,7 +17,6 @@ package org.hippoecm.repository.security;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -29,6 +28,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.jcr.Credentials;
+import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.Repository;
@@ -54,7 +54,6 @@ import org.apache.jackrabbit.core.config.LoginModuleConfig;
 import org.apache.jackrabbit.core.config.SecurityConfig;
 import org.apache.jackrabbit.core.security.AMContext;
 import org.apache.jackrabbit.core.security.AccessManager;
-import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.SecurityConstants;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.authentication.AuthContext;
@@ -76,8 +75,6 @@ import org.hippoecm.repository.security.domain.FacetAuthDomain;
 import org.hippoecm.repository.security.domain.InvalidDomainException;
 import org.hippoecm.repository.security.group.DummyGroupManager;
 import org.hippoecm.repository.security.group.GroupManager;
-import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
-import org.hippoecm.repository.security.principals.GroupPrincipal;
 import org.hippoecm.repository.security.principals.UserPrincipal;
 import org.hippoecm.repository.security.role.AbstractRole;
 import org.hippoecm.repository.security.role.Role;
@@ -104,8 +101,6 @@ public class SecurityManager implements HippoSecurityManager {
     // initial JR system session, not impersonated, never logout
     private Session systemSession;
     private final Map<String, SecurityProvider> providers = new LinkedHashMap<>();
-    private String adminID;
-    private String anonymID;
     private SecurityConfig config;
     private boolean maintenanceMode;
     private PrincipalProviderRegistry principalProviderRegistry;
@@ -189,7 +184,7 @@ public class SecurityManager implements HippoSecurityManager {
 
                 CallbackHandler cbHandler = new CallbackHandlerImpl(credentials, session, principalProviderRegistry, adminId, anonymousId) {
                     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-                        List<Callback> list = new LinkedList<Callback>();
+                        List<Callback> list = new LinkedList<>();
                         for(Callback callback : callbacks) {
                             if (callback instanceof NameCallback ||
                                     callback instanceof PasswordCallback ||
@@ -224,26 +219,11 @@ public class SecurityManager implements HippoSecurityManager {
 
         Properties[] moduleConfig = authCtxProvider.getModuleConfig();
 
-        // retrieve default-ids (admin and anomymous) from login-module-configuration.
+        // check for maintenanceMode (default false) override setting in login-module-configuration.
         for (final Properties aModuleConfig : moduleConfig) {
-            if (aModuleConfig.containsKey(LoginModuleConfig.PARAM_ADMIN_ID)) {
-                adminID = aModuleConfig.getProperty(LoginModuleConfig.PARAM_ADMIN_ID);
-            }
-            if (aModuleConfig.containsKey(LoginModuleConfig.PARAM_ANONYMOUS_ID)) {
-                anonymID = aModuleConfig.getProperty(LoginModuleConfig.PARAM_ANONYMOUS_ID);
-            }
             if (aModuleConfig.containsKey("maintenanceMode")) {
                 maintenanceMode = Boolean.parseBoolean(aModuleConfig.getProperty("maintenanceMode"));
             }
-        }
-        // fallback:
-        if (adminID == null) {
-            log.debug("No adminID defined in LoginModule/JAAS config -> using default.");
-            adminID = SecurityConstants.ADMIN_ID;
-        }
-        if (anonymID == null) {
-            log.debug("No anonymousID defined in LoginModule/JAAS config -> using default.");
-            anonymID = SecurityConstants.ANONYMOUS_ID;
         }
 
         principalProviderRegistry = new ProviderRegistryImpl(new DefaultPrincipalProvider());
@@ -346,134 +326,107 @@ public class SecurityManager implements HippoSecurityManager {
     /**
      * Get the applicable domains for the user.
      */
-    private Set<Domain> getDomains(final String user, final boolean anonymousUser, final Set<String> groups,
-                                   final Set<String> userRoles) {
+    private Set<Domain> getDomains(final String user, final Set<String> groups, final Set<String> userRoles) {
         Set<Domain> domains = new HashSet<>();
         StringBuilder xpath =
                 new StringBuilder("//element(*,").append(HippoNodeType.NT_DOMAINFOLDER)
                         .append(")/element(*,").append(HippoNodeType.NT_DOMAIN)
                         .append(")/element(*,").append(HippoNodeType.NT_AUTHROLE).append(")[");
-        boolean hasFilter = false;
-        if (!anonymousUser) {
-            hasFilter = true;
-            xpath.append("@").append(HippoNodeType.HIPPO_USERS).append(" = '");
-            xpath.append(ISO9075.encode(NodeNameCodec.encode(user, true))).append("'");
-        }
+
+        // filter user
+        xpath.append("@").append(HippoNodeType.HIPPO_USERS).append(" = '");
+        xpath.append(ISO9075.encode(NodeNameCodec.encode(user, true))).append("'");
+        // filter groups
         for (String group : groups) {
-            if (hasFilter) {
-                xpath.append(" or ");
-            } else {
-                hasFilter = true;
-            }
-            xpath.append("@").append(HippoNodeType.HIPPO_GROUPS).append(" = '");
+            xpath.append(" or @").append(HippoNodeType.HIPPO_GROUPS).append(" = '");
             xpath.append(ISO9075.encode(NodeNameCodec.encode(group, true))).append("'");
         }
+        // filter user roles
         for (String userRole : userRoles) {
-            if (hasFilter) {
-                xpath.append(" or ");
-            } else {
-                hasFilter = true;
-            }
-            xpath.append("@").append(HippoNodeType.HIPPO_USERROLE).append(" = '");
+            xpath.append(" or @").append(HippoNodeType.HIPPO_USERROLE).append(" = '");
             xpath.append(ISO9075.encode(NodeNameCodec.encode(userRole, true))).append("'");
         }
         xpath.append("]");
-        if (hasFilter) {
-            try {
-                Query q = systemSession.getWorkspace().getQueryManager().createQuery(xpath.toString(), Query.XPATH);
-                QueryResult result = q.execute();
-                NodeIterator nodeIter = result.getNodes();
-                Set<String> skippedStandardDomainFoldersInNotStandardLocation = new HashSet<>();
-                Set<String> skippedFederatedDomainFoldersInNotSupportedLocation = new HashSet<>();
-                while (nodeIter.hasNext()) {
-                    // the parent of the auth role node is the domain node
-                    Node domainNode = nodeIter.nextNode().getParent();
-                    Node domainFolderNode = domainNode.getParent();
-                    if (Domain.isInValidStandardDomainFolderLocation(domainFolderNode)) {
-                        skippedStandardDomainFoldersInNotStandardLocation.add(domainFolderNode.getPath());
-                        continue;
-                    } else if (Domain.isInValidFederatedDomainFolderLocation(domainFolderNode)) {
-                        skippedFederatedDomainFoldersInNotSupportedLocation.add(domainFolderNode.getPath());
-                        continue;
-                    }
-                    try {
-                        Domain domain = new Domain(domainNode);
-                        log.trace("Domain '{}' found for user: {}", domain.getName(), user);
-                        domains.add(domain);
-                    } catch (InvalidDomainException e) {
-                        log.error("Skipping invalid domain : {}", e.toString());
-                    }
+        try {
+            Query q = systemSession.getWorkspace().getQueryManager().createQuery(xpath.toString(), Query.XPATH);
+            QueryResult result = q.execute();
+            NodeIterator nodeIter = result.getNodes();
+            Set<String> skippedStandardDomainFoldersInNotStandardLocation = new HashSet<>();
+            Set<String> skippedFederatedDomainFoldersInNotSupportedLocation = new HashSet<>();
+            while (nodeIter.hasNext()) {
+                // the parent of the auth role node is the domain node
+                Node domainNode = nodeIter.nextNode().getParent();
+                Node domainFolderNode = domainNode.getParent();
+                if (Domain.isInValidStandardDomainFolderLocation(domainFolderNode)) {
+                    skippedStandardDomainFoldersInNotStandardLocation.add(domainFolderNode.getPath());
+                    continue;
+                } else if (Domain.isInValidFederatedDomainFolderLocation(domainFolderNode)) {
+                    skippedFederatedDomainFoldersInNotSupportedLocation.add(domainFolderNode.getPath());
+                    continue;
                 }
-                if (log.isWarnEnabled()) {
-                    if (!skippedStandardDomainFoldersInNotStandardLocation.isEmpty()) {
-                        log.warn("Skipped all domains found in not-standard domain folder location(s): [{}]",
-                                String.join(", ", skippedStandardDomainFoldersInNotStandardLocation));
-                    }
-                    if (!skippedFederatedDomainFoldersInNotSupportedLocation.isEmpty()) {
-                        log.warn("Skipped all domains found in not-supported federated domain folder location(s): [{}]",
-                                String.join(", ", skippedFederatedDomainFoldersInNotSupportedLocation));
-                    }
+                try {
+                    Domain domain = new Domain(domainNode);
+                    log.trace("Domain '{}' found for user: {}", domain.getName(), user);
+                    domains.add(domain);
+                } catch (InvalidDomainException e) {
+                    log.error("Skipping invalid domain : {}", e.toString());
                 }
-            } catch (RepositoryException e) {
-                log.error("Error while searching for domains for user: " + user, e);
             }
+            if (log.isWarnEnabled()) {
+                if (!skippedStandardDomainFoldersInNotStandardLocation.isEmpty()) {
+                    log.warn("Skipped all domains found in not-standard domain folder location(s): [{}]",
+                            String.join(", ", skippedStandardDomainFoldersInNotStandardLocation));
+                }
+                if (!skippedFederatedDomainFoldersInNotSupportedLocation.isEmpty()) {
+                    log.warn("Skipped all domains found in not-supported federated domain folder location(s): [{}]",
+                            String.join(", ", skippedFederatedDomainFoldersInNotSupportedLocation));
+                }
+            }
+        } catch (RepositoryException e) {
+            log.error("Error while searching for domains for user: " + user, e);
         }
         return domains;
     }
 
     public void assignPrincipals(final Set<Principal> principals, final SimpleCredentials creds) throws RepositoryException {
         try {
-            String userId = null;
-            String providerId = null;
-
-            if (creds != null) {
-                userId = creds.getUserID();
-                providerId = (String) creds.getAttribute("providerId");
+            if (creds == null || creds.getUserID() == null || SecurityConstants.ANONYMOUS_ID.equals(creds.getUserID())) {
+                throw new LoginException("Anonymous user not supported!");
             }
 
-            boolean anonymousUser;
             Principal userPrincipal;
             Set<String> groupIds;
             Set<String> userRoles;
 
-            if (userId != null) {
-                anonymousUser = false;
-                HippoUserManager userManager;
-                GroupManager groupManager;
-                if (providers.containsKey(providerId)) {
-                    userManager = ((HippoUserManager)providers.get(providerId).getUserManager());
-                    groupManager = providers.get(providerId).getGroupManager();
-                } else {
-                    // fallback to internal provider
-                    userManager = (HippoUserManager)providers.get(INTERNAL_PROVIDER).getUserManager();
-                    groupManager = providers.get(INTERNAL_PROVIDER).getGroupManager();
-                }
-                SessionUser user = new SessionUserImpl(userManager.getUser(userId), groupManager,
-                        roleNames -> userRolesModel.resolveRoleNames(roleNames));
-                userRoles = user.getUserRoles();
-                userPrincipal = new UserPrincipal(user);
-                groupIds = user.getMemberships();
+            HippoUserManager userManager;
+            GroupManager groupManager;
+
+            String userId = creds.getUserID();
+            String providerId = (String) creds.getAttribute("providerId");
+            if (providers.containsKey(providerId)) {
+                userManager = ((HippoUserManager)providers.get(providerId).getUserManager());
+                groupManager = providers.get(providerId).getGroupManager();
             } else {
-                anonymousUser = true;
-                userRoles = Collections.emptySet();
-                userPrincipal = new AnonymousPrincipal();
-                groupIds = providers.get(INTERNAL_PROVIDER).getGroupManager().getMembershipIds(null);
+                // fallback to internal provider
+                userManager = (HippoUserManager)providers.get(INTERNAL_PROVIDER).getUserManager();
+                groupManager = providers.get(INTERNAL_PROVIDER).getGroupManager();
             }
+            SessionUser user = new SessionUserImpl(userManager.getUser(userId), groupManager,
+                    roleNames -> userRolesModel.resolveRoleNames(roleNames));
+            userRoles = user.getUserRoles();
+            groupIds = user.getMemberships();
+            userPrincipal = new UserPrincipal(user, getFacetAuthDomains(user.getId(), groupIds, userRoles));
             principals.add(userPrincipal);
-            for (String groupId : groupIds) {
-                principals.add(new GroupPrincipal(groupId));
-            }
-            principals.add(createFacetAuthPrincipal(userPrincipal.getName(), anonymousUser, groupIds, userRoles));
         } catch(RepositoryException ex) {
             log.error("unable to assign principals for user", ex);
             throw ex;
         }
     }
 
-    private FacetAuthPrincipal createFacetAuthPrincipal(final String userId, final boolean anonymousUser,
-                                                        final Set<String> groupIds, final Set<String> userRoles) {
+    private Set<FacetAuthDomain> getFacetAuthDomains(final String userId, final Set<String> groupIds,
+                                                        final Set<String> userRoles) {
         // Find domains that the user is associated with
-        Set<Domain> domains = getDomains(userId, anonymousUser, groupIds, userRoles);
+        Set<Domain> domains = getDomains(userId, groupIds, userRoles);
 
         HashSet<FacetAuthDomain> facetAuthDomains = new HashSet<>();
 
@@ -482,9 +435,7 @@ public class SecurityManager implements HippoSecurityManager {
             // get roles for a user for a domain
             log.debug("User {} has domain {}", userId, domain.getName());
             final Set<String> roleNames = new HashSet<>();
-            if (!anonymousUser) {
-                roleNames.addAll(domain.getRolesForUser(userId));
-            }
+            roleNames.addAll(domain.getRolesForUser(userId));
             for (final String groupName : groupIds) {
                 roleNames.addAll(domain.getRolesForGroup(groupName));
             }
@@ -510,16 +461,13 @@ public class SecurityManager implements HippoSecurityManager {
                 }
             }
         }
-        return new FacetAuthPrincipal(facetAuthDomains);
+        return facetAuthDomains;
     }
 
     public String getUserID(final Subject subject, final String workspace) {
         Principal principal = SubjectHelper.getFirstPrincipal(subject, SystemPrincipal.class);
         if (principal == null) {
             principal = SubjectHelper.getFirstPrincipal(subject, UserPrincipal.class);
-        }
-        if (principal == null) {
-            principal = SubjectHelper.getFirstPrincipal(subject, AnonymousPrincipal.class);
         }
         if (principal != null) {
             return principal.getName();

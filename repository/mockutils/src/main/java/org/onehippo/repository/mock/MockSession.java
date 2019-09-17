@@ -399,11 +399,6 @@ public class MockSession implements HippoSession {
     }
 
     @Override
-    public boolean isAnonymousUser() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public SessionUser getUser() throws ItemNotFoundException {
         throw new UnsupportedOperationException();
     }

@@ -188,11 +188,6 @@ public class SessionDecorator implements XASession, HippoSession {
     }
 
     @Override
-    public boolean isAnonymousUser() {
-        return getInternalHippoSession().getUser() == null && !getInternalHippoSession().isSystemUser();
-    }
-
-    @Override
     public SessionUser getUser() throws ItemNotFoundException {
         SessionUser user = getInternalHippoSession().getUser();
         if (user == null) {
@@ -203,8 +198,7 @@ public class SessionDecorator implements XASession, HippoSession {
 
     @Override
     public boolean isUserInRole(final String userRoleName) {
-        SessionUser user = getInternalHippoSession().getUser();
-        return isSystemUser() || (user != null && user.getUserRoles().contains(userRoleName));
+        return isSystemUser() || getInternalHippoSession().getUser().getUserRoles().contains(userRoleName);
     }
 
     @Override

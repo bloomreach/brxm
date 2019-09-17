@@ -54,7 +54,6 @@ import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.id.PropertyId;
 import org.apache.jackrabbit.core.security.AMContext;
 import org.apache.jackrabbit.core.security.AccessManager;
-import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.authorization.AccessControlProvider;
 import org.apache.jackrabbit.core.security.authorization.Permission;
@@ -81,17 +80,14 @@ import org.hippoecm.repository.jackrabbit.QFacetRuleStateManager;
 import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.FacetAuthDomain;
 import org.hippoecm.repository.security.domain.QFacetRule;
-import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
-import org.hippoecm.repository.security.principals.GroupPrincipal;
 import org.hippoecm.repository.security.principals.UserPrincipal;
 import org.onehippo.repository.security.SessionDelegateUser;
-import org.onehippo.repository.security.SessionUser;
 import org.onehippo.repository.security.StandardPermissionNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * HippoAccessManager based on facet authorization. A subject (user) has a {@link FacetAuthPrincipal}s which hold
+ * HippoAccessManager based on facet authorization. A regular user subject has a {@link UserPrincipal} which hold
  * a set of {@link FacetAuthDomain} configurations as defined by a set of {@link DomainRule}s, the roles the subject has
  * for the domain and the JCR permissions the subject has for the domain.
  * <p>
@@ -118,11 +114,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * Session of subject whose access rights this AccessManager should reflect
      */
     private Session session;
-
-    /**
-     * Wrapper principal from the subject holding all FacetAllPrincipal for this user
-     */
-    private FacetAuthPrincipal facetAuthPrincipal;
 
     /**
      * hierarchy manager used for ACL-based access control model
@@ -202,27 +193,26 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     private volatile boolean initialized = false;
 
     /**
-     * Flag whether current user is a regular user
+     * Flag whether current user is a regular user, effectively: !isSystem
      */
     private boolean isUser = false;
 
     /**
-     * Flag whether the current user is a system user
+     * Flag whether the current user is a system user, effectively !isUser
      */
     private boolean isSystem = false;
 
     /**
-     * The User when isUser==true.
+     * The UserPrincipal when isUser==true.
      */
-    private SessionUser user;
+    private UserPrincipal userPrincipal;
 
     /**
      * The userIds of the logged in user
      */
     private List<String> userIds = new ArrayList<>();
 
-    private final List<String> groupIds = new ArrayList<>();
-    private final List<String> currentDomainRoleIds = new ArrayList<>();
+    private Set<String> groupIds = Collections.emptySet();
 
     private final PermissionManager permissionManager = PermissionManager.getInstance();
 
@@ -273,30 +263,21 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             principal = SubjectHelper.getFirstPrincipal(subject, UserPrincipal.class);
             if (principal != null) {
                 isUser = true;
-                user = ((UserPrincipal)principal).getUser();
+                userPrincipal = (UserPrincipal)principal;
             }
             else {
-                // fetch AnonymousPrincipal, if any. There can only be one, see AnonymousPrincipal.equals()
-                principal = SubjectHelper.getFirstPrincipal(subject, AnonymousPrincipal.class);
+                throw new AccessDeniedException("Anonymous user is not supported");
             }
         }
-        if (user != null && user instanceof SessionDelegateUser) {
-            userIds.addAll(((SessionDelegateUser)user).getIds());
-        } else if (principal != null) {
-            userIds.add(principal.getName());
+
+        if (isUser && userPrincipal.getUser() instanceof SessionDelegateUser) {
+            userIds.addAll(((SessionDelegateUser)userPrincipal.getUser()).getIds());
         } else {
-            userIds.add("");
+            userIds.add(principal.getName());
         }
 
-        // fetch groupId's
-        for (GroupPrincipal gp : subject.getPrincipals(GroupPrincipal.class)) {
-            groupIds.add(gp.getName());
-        }
-
-        // fetch FacetAuthPrincipal, if any. There can only be one, see FacetAuthPrincipal.equals()
-        facetAuthPrincipal = SubjectHelper.getFirstPrincipal(subject, FacetAuthPrincipal.class);
-        if (facetAuthPrincipal == null) {
-            facetAuthPrincipal = FacetAuthPrincipal.NO_AUTH_DOMAINS_PRINCIPAL;
+        if (isUser) {
+            groupIds = userPrincipal.getUser().getMemberships();
         }
 
         // cache root NodeId
@@ -327,22 +308,19 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     /**
      * @see AccessManager#close()
      */
-    public synchronized void close() throws Exception {
+    public synchronized void close() {
         checkInitialized();
         initialized = false;
 
         subject = null;
         session = null;
-        user = null;
-        facetAuthPrincipal = null;
+        userPrincipal = null;
 
         // clear out all caches
         implicitReads.clear();
         readAccessCache.clear();
         readVirtualAccessCache.clear();
         //requestItemStateCache.clear();
-        groupIds.clear();
-        currentDomainRoleIds.clear();
 
         log.info("Closed HippoAccessManager for user " + getUserIdAsString());
     }
@@ -355,8 +333,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         return isSystem;
     }
 
-    public SessionUser getUser() {
-        return user;
+    public UserPrincipal getUserPrincipal() {
+        return userPrincipal;
     }
 
     /**
@@ -646,7 +624,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                 }
             }
 
-            for (FacetAuthDomain fad : facetAuthPrincipal.getFacetAuthDomains()) {
+            for (FacetAuthDomain fad : userPrincipal.getFacetAuthDomains()) {
                 Set<String> privs = fad.getResolvedPrivileges();
                 if (privs.contains(StandardPermissionNames.JCR_READ)) {
                     if (isNodeInDomain(nodeState, fad, true)) {
@@ -741,9 +719,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         log.trace("Checking if node : {} is in domain of {}", nodeState.getId(), fad);
         boolean isInDomain = false;
 
-        currentDomainRoleIds.clear();
-        currentDomainRoleIds.addAll(fad.getRoles());
-
         // check is node matches ONE of the domain rules
         for (DomainRule domainRule : fad.getRules()) {
 
@@ -757,7 +732,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             }
             // check if node matches ALL of the facet rules
             for (QFacetRule facetRule : facetRules) {
-                if (!matchFacetRule(nodeState, facetRule)) {
+                if (!matchFacetRule(nodeState, facetRule, fad)) {
                     allRulesMatched = false;
                     log.trace("Rule doesn't match for : {} facet rule: {}", nodeState.getId(), facetRule);
                     break;
@@ -804,11 +779,12 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * Check if a node matches the current QFacetRule
      * @param nodeState the state of the node to check
      * @param facetRule the facet rule to check
+     * @param fad the FacetAuthDomain of the facet rule
      * @return true if the node matches the facet rule
      * @throws RepositoryException
      * @see org.hippoecm.repository.security.domain.QFacetRule
      */
-    private boolean matchFacetRule(NodeState nodeState, QFacetRule facetRule) throws RepositoryException {
+    private boolean matchFacetRule(final NodeState nodeState, final QFacetRule facetRule, final FacetAuthDomain fad) throws RepositoryException {
         log.trace("Checking node : {} for facet rule: {}", nodeState.getId(), facetRule);
 
         if (facetRule.isReferenceRule() && !facetRule.referenceExists()) {
@@ -920,7 +896,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         }
 
         // check if node has the required property value
-        if (matchPropertyWithFacetRule(nodeState, facetRule)) {
+        if (matchPropertyWithFacetRule(nodeState, facetRule, fad)) {
             log.trace("Found match : {} for facetVal: {}", nodeState.getId(), facetRule);
             return true;
         }
@@ -1033,11 +1009,12 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * check on the properties of the node.
      * @param nodeState the state of the node to check
      * @param rule      the facet rule to check
+     * @param fad       the facet auth domain of the facet rule
      * @return true if the node matches the facet rule
      * @throws RepositoryException
      * @see org.hippoecm.repository.security.domain.QFacetRule
      */
-    private boolean matchPropertyWithFacetRule(NodeState nodeState, QFacetRule rule) throws RepositoryException {
+    private boolean matchPropertyWithFacetRule(final NodeState nodeState, final QFacetRule rule, final FacetAuthDomain fad) throws RepositoryException {
 
         boolean match = false;
 
@@ -1127,7 +1104,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                     }
                 }
                 if (FacetAuthConstants.EXPANDER_ROLE.equals(rule.getValue())) {
-                    if (isUser && currentDomainRoleIds.contains(iVal.getString())) {
+                    if (isUser && fad.getRoles().contains(iVal.getString())) {
                         match = true;
                         break;
                     }
@@ -1626,13 +1603,13 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             return true;
         }
 
-        if (!facetAuthPrincipal.getResolvedPrivileges().containsAll(permissionNames)) {
+        if (!userPrincipal.getResolvedPrivileges().containsAll(permissionNames)) {
             // requesting more permissions than the user has overall, fail fast
             return false;
         }
         final boolean hasModifyPropertiesPrivilege = permissionNames.contains(StandardPermissionNames.JCR_MODIFY_PROPERTIES);
 
-        for (FacetAuthDomain fad : facetAuthPrincipal.getFacetAuthDomains()) {
+        for (FacetAuthDomain fad : userPrincipal.getFacetAuthDomains()) {
             if (log.isDebugEnabled()) {
                 log.debug("Checking [" + String.join(", ", permissionNames) + "] : " + absPath + " against FacetAuthDomain: " + fad);
             }
@@ -1665,7 +1642,11 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * /a/b/c, that the users get implicit read access for /a/b.
      */
     private void initializeImplicitReadAccess() throws RepositoryException {
-        for (FacetAuthDomain fad : facetAuthPrincipal.getFacetAuthDomains()) {
+        if (isSystemUser()) {
+            return;
+        }
+
+        for (FacetAuthDomain fad : userPrincipal.getFacetAuthDomains()) {
             final Set<String> privs = fad.getResolvedPrivileges();
             if (!privs.contains(StandardPermissionNames.JCR_READ)) {
                 continue;
@@ -1749,7 +1730,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         // final array to be able to use the reInit var in lambda's
         final boolean[] reInit = {false};
 
-        final Set<FacetAuthDomain> fads = facetAuthPrincipal.getFacetAuthDomains();
+        final Set<FacetAuthDomain> fads = userPrincipal.getFacetAuthDomains();
 
         do {
             referenceFacetRulesUpdateCounter = updateCounterSnapShot;
@@ -1814,7 +1795,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         }
 
         Set<Privilege> privileges = new HashSet<>();
-        for (FacetAuthDomain fad : facetAuthPrincipal.getFacetAuthDomains()) {
+        for (FacetAuthDomain fad : userPrincipal.getFacetAuthDomains()) {
             if (isNodeInDomain(nodeState, fad, false)) {
                 for (String privilegeName : fad.getPrivileges()) {
                     privileges.add(permissionManager.getOrCreatePrivilege(privilegeName));

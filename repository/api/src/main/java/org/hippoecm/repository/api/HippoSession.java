@@ -189,22 +189,16 @@ public interface HippoSession extends Session {
     boolean isSystemUser();
 
     /**
-     * If this is a session for an anonymous user
-     * @return true if this is a session for an anoynmous
-     */
-    boolean isAnonymousUser();
-
-    /**
      * Get the {@link User} object identified by this session's user id.
      * @return  the {@link User} object identified by this session's user id.
-     * @throws ItemNotFoundException for system and anonymous sessions
+     * @throws ItemNotFoundException for system sessions
      */
     SessionUser getUser() throws ItemNotFoundException;
 
     /**
      * Check if a user has the specified userRole assigned, or is implied by one of the userRoles assigned.
      * <p>
-     *  For a {@link #isSystemUser()} this always returns true; for a {@link #isAnonymousUser()} this always returns false.
+     *  For a {@link #isSystemUser()} this always returns true.
      * </p>
      * @param userRoleName the user role name to check
      * @return true if the user has the specified directly or indirectly assigned

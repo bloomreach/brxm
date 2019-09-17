@@ -31,6 +31,7 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
+import org.apache.jackrabbit.core.security.SecurityConstants;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
 import org.apache.jackrabbit.core.security.authentication.CredentialsCallback;
 import org.apache.jackrabbit.core.security.authentication.ImpersonationCallback;
@@ -90,6 +91,11 @@ public class HippoLoginModule implements LoginModule {
             } catch(UnsupportedCallbackException ignored) {
             }
 
+            if (userId == null || "".equals(userId) || SecurityConstants.ANONYMOUS_ID.equals(userId)) {
+                log.info("Login as anonymous user not allowed");
+                return false;
+            }
+
             // check for impersonation
             Subject impersonator = impersonationCallback.getImpersonator();
             if (impersonator != null) {
@@ -119,7 +125,7 @@ public class HippoLoginModule implements LoginModule {
 
                 String impersonatorId = iup.getName();
                 // check/deny impersonating system user
-                if (creds != null && "system".equals(creds.getUserID())) {
+                if ("system".equals(userId)) {
                     throw new LoginException("Denied " + impersonatorId +
                             " to impersonate system user which is only allowed for the system user itself.");
                 }
@@ -130,13 +136,10 @@ public class HippoLoginModule implements LoginModule {
                 securityManager.assignPrincipals(principals, creds);
 
                 return (validLogin = true);
-            }
 
-            // check for anonymous login
-            if (creds == null || creds.getUserID() == null) {
-                log.debug("Authenticated as Anonymous user.");
-                securityManager.assignPrincipals(principals, creds);
-                return (validLogin = true);
+            } else if (creds == null) {
+                log.info("Login without credentials not allowed");
+                return false;
             }
 
             // deny login as system user
@@ -146,8 +149,8 @@ public class HippoLoginModule implements LoginModule {
             }
 
             // basic security check
-            if ("".equals(userId) || creds.getPassword() == null || creds.getPassword().length == 0) {
-                log.debug("Empty username or password not allowed.");
+            if (creds.getPassword() == null || creds.getPassword().length == 0) {
+                log.debug("Login without password not allowed.");
                 return false;
             }
 

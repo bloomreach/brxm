@@ -154,11 +154,6 @@ public class ClientServicingXASession extends ClientSession implements HippoSess
     }
 
     @Override
-    public boolean isAnonymousUser() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public SessionUser getUser() {
         throw new UnsupportedOperationException();
     }

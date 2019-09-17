@@ -50,7 +50,6 @@ import org.hippoecm.repository.security.HippoAccessManager;
 import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.FacetAuthDomain;
 import org.hippoecm.repository.security.domain.QFacetRule;
-import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
 import org.onehippo.repository.security.SessionDelegateUser;
 import org.onehippo.repository.security.StandardPermissionNames;
 import org.onehippo.repository.security.User;
@@ -95,7 +94,7 @@ public class AuthorizationQuery {
     private final BooleanQuery query;
 
 
-    public AuthorizationQuery(final FacetAuthPrincipal facetAuthPrincipal,
+    public AuthorizationQuery(final Set<FacetAuthDomain> facetAuthDomains,
                               final NamespaceMappings nsMappings,
                               final ServicingIndexingConfiguration indexingConfig,
                               final NodeTypeManager ntMgr,
@@ -127,7 +126,7 @@ public class AuthorizationQuery {
                 userIds = Collections.emptySet();
             }
             long start = System.currentTimeMillis();
-            this.query = initQuery(facetAuthPrincipal,
+            this.query = initQuery(facetAuthDomains,
                     userIds,
                     memberships,
                     (InternalHippoSession)session,
@@ -139,7 +138,7 @@ public class AuthorizationQuery {
         }
     }
 
-    private BooleanQuery initQuery(final FacetAuthPrincipal facetAuthPrincipal,
+    private BooleanQuery initQuery(final Set<FacetAuthDomain> facetAuthDomains,
                                    final Set<String> userIds,
                                    final Set<String> memberships,
                                    final InternalHippoSession session,
@@ -150,7 +149,7 @@ public class AuthorizationQuery {
         final HippoAccessManager hippoAccessManager = session.getAccessControlManager();
 
         BooleanQuery authQuery = new BooleanQuery(true);
-        for (final FacetAuthDomain facetAuthDomain : facetAuthPrincipal.getFacetAuthDomains()) {
+        for (final FacetAuthDomain facetAuthDomain : facetAuthDomains) {
             if (!facetAuthDomain.getResolvedPrivileges().contains(StandardPermissionNames.JCR_READ)) {
                 continue;
             }
