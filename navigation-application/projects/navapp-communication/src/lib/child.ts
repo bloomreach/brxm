@@ -16,8 +16,10 @@
 
 import Penpal from 'penpal';
 
-import { ChildConnectConfig, ChildPromisedApi, ParentApi } from './api';
-import { mergeIntersecting } from './utils';
+import {
+  ChildConnectConfig,
+  ChildPromisedApi,
+} from './api';
 
 /**
  * Method to connect to an application in an iframe window.
@@ -27,11 +29,8 @@ import { mergeIntersecting } from './utils';
  */
 export function connectToChild({
   iframe,
-  methods = {},
+  methods,
   timeout,
 }: ChildConnectConfig): Promise<ChildPromisedApi> {
-  const proxies: ParentApi = {};
-  const proxiedMethods = mergeIntersecting(methods, proxies);
-
-  return Penpal.connectToChild({ iframe, methods: proxiedMethods, timeout }).promise;
+  return Penpal.connectToChild({ iframe, methods, timeout }).promise;
 }

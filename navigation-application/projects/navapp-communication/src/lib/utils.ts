@@ -14,6 +14,13 @@
  * limitations under the License.
  */
 
+import {
+  ChildApi,
+  ChildPromisedApi,
+  ParentApi,
+  ParentPromisedApi,
+} from './api';
+
 export function mergeIntersecting(obj1: object, obj2: object): object {
   const intersection = Object.keys(obj1).reduce((obj, key) => {
     if (key in obj2) {

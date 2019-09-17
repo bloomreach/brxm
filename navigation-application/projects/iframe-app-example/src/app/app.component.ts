@@ -17,13 +17,14 @@
 import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {
+  ChildApi,
   connectToParent,
   NavLocation,
   ParentConnectConfig,
+  ParentPromisedApi,
   SiteId,
 } from '@bloomreach/navapp-communication';
 import { CookieService } from 'ngx-cookie-service';
-import { ChildApi, ParentPromisedApi } from 'projects/navapp-communication/src/lib/api';
 
 import { mockNavItems, mockSites } from './mocks';
 
@@ -59,6 +60,7 @@ export class AppComponent implements OnInit {
       getConfig: () => ({
         apiVersion: NAVAPP_COMMUNICATION_IMPLEMENTATION_API_VERSION,
         showSiteDropdown: false,
+        communicationTimeout: 1000,
       }),
       navigate: (location: NavLocation) => {
         this.navigateCount += 1;
@@ -74,7 +76,11 @@ export class AppComponent implements OnInit {
         }
       },
       getNavItems: () => {
-        return mockNavItems;
+        return new Promise((resolve, reject) => {
+          setTimeout(() => {
+            resolve(mockNavItems);
+          }, 1);
+        });
       },
       logout: () => {
         if (this.navigateCount % 2) {

@@ -18,24 +18,41 @@ import Penpal from 'penpal';
 
 import {
   ChildApi,
-  NavItem,
-  NavLocation,
+  ChildPromisedApi,
   ParentConnectConfig,
   ParentPromisedApi,
 } from './api';
-import { mergeIntersecting } from './utils';
 
-export function createProxies(methods: ChildApi): ChildApi {
-  return {
-    getNavItems(): NavItem[] {
-      return methods.getNavItems();
-    },
-    navigate(location: NavLocation, flags?: { [key: string]: string | number | boolean }): void {
-      return methods.navigate(location, flags);
-    },
-  };
+export async function wrapWithTimeout(api: ChildApi): Promise<ChildPromisedApi> {
+  let communicationTimeout: number;
+
+  if (api && api.getConfig) {
+    const config = await api.getConfig();
+    communicationTimeout = config.communicationTimeout;
+  }
+
+  return Object
+    .keys(api)
+    .reduce((wrappedApi, methodName) => {
+      wrappedApi[methodName] = (...args) => {
+        return new Promise(async (resolve, reject) => {
+          const timer = setTimeout(() => {
+            reject(`${methodName} call timed out`);
+          }, communicationTimeout);
+
+          try {
+            const value = await api[methodName](args);
+            clearTimeout(timer);
+            resolve(value);
+          } catch (error) {
+            reject(error);
+          }
+        });
+      };
+
+      return wrappedApi;
+    }, {});
 }
-
 /**
  * Method to connect to a parent window.
  *
@@ -44,11 +61,8 @@ export function createProxies(methods: ChildApi): ChildApi {
  */
 export function connectToParent({
   parentOrigin,
-  methods = {},
+  methods,
 }: ParentConnectConfig): Promise<ParentPromisedApi> {
-  const proxies: ChildApi = createProxies(methods);
-  const proxiedMethods = mergeIntersecting(methods, proxies);
-
-  return Penpal.connectToParent({ parentOrigin, methods: proxiedMethods })
-    .promise;
+  return wrapWithTimeout(methods)
+    .then(proxyMethods => Penpal.connectToParent({ parentOrigin, methods: proxyMethods }).promise);
 }
