@@ -17,6 +17,11 @@
 import { NextPage } from 'next';
 import getConfig from 'next/config';
 
+import { sdk } from '@bloomreach/react-sdk';
+
+// TODO: Here to validate the setup
+sdk();
+
 const { publicRuntimeConfig } = getConfig();
 const brOrigin = new URL(publicRuntimeConfig.brOrigin);
 

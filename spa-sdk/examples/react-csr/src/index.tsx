@@ -22,8 +22,12 @@ import {
   Route,
   Switch,
 } from 'react-router-dom';
+import { sdk } from '@bloomreach/react-sdk';
 
 import App from './App';
+
+// TODO: Here to validate the setup
+sdk();
 
 ReactDOM.render(
   <BrowserRouter>
