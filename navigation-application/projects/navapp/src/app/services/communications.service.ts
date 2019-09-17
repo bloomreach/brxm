@@ -15,7 +15,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { connectToChild, NavLocation, ParentApi, SiteId } from '@bloomreach/navapp-communication';
+import { ClientError, connectToChild, NavLocation, ParentApi, SiteId } from '@bloomreach/navapp-communication';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { Connection } from '../models/connection.model';
@@ -44,12 +44,9 @@ export class CommunicationsService {
     return {
       showMask: () => this.overlay.enable(),
       hideMask: () => this.overlay.disable(),
-      navigate: (location: NavLocation) => {
-        this.navigationService.navigateByNavLocation(location);
-      },
-      updateNavLocation: (location: NavLocation) => {
-        this.navigationService.updateByNavLocation(location);
-      },
+      navigate: (location: NavLocation) => this.navigationService.navigateByNavLocation(location),
+      updateNavLocation: (location: NavLocation) => this.navigationService.updateByNavLocation(location),
+      onError: (clientError: ClientError) => this.handleClientError(clientError),
     };
   }
 
@@ -84,5 +81,9 @@ export class CommunicationsService {
       api => this.clientAppService.addConnection(new Connection(appUrl, api)),
       error => this.clientAppService.addConnection(new FailedConnection(appUrl, error)),
     );
+  }
+
+  private handleClientError(clientError: ClientError): void {
+    // TODO: delegate the error service
   }
 }
