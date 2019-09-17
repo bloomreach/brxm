@@ -110,6 +110,7 @@ import org.onehippo.cms7.services.cmscontext.CmsContextServiceImpl;
 import org.onehippo.cms7.services.cmscontext.CmsInternalCmsContextService;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.observation.CmsEventDispatcherService;
+import org.onehippo.repository.security.JvmCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -653,6 +654,9 @@ public class Main extends PluginApplication {
 
 
     public UserCredentials getFallbackCredentials() {
+        if (repositoryFallbackUsername == null || repositoryFallbackPassword == null) {
+            return new UserCredentials(JvmCredentials.getCredentials(UserCredentials.FRONTEND_SYSTEM_USER_ID));
+        }
         return new UserCredentials(repositoryFallbackUsername, repositoryFallbackPassword);
     }
 
