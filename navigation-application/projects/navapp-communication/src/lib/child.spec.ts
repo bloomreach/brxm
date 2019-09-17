@@ -30,28 +30,12 @@ describe('connectToChild', () => {
     const config = {
       iframe,
       methods: {
-        navigate: () => {},
+        navigate: () => { },
       },
       timeout: 10000,
     };
 
     connectToChild(config);
     expect(Penpal.connectToChild).toHaveBeenCalledWith(config);
-  });
-
-  it('should default the config methods to an empty object', () => {
-    const iframe = document.createElement('iframe');
-    iframe.src = 'about:blank';
-
-    const config = {
-      iframe,
-    };
-
-    connectToChild(config);
-    expect(Penpal.connectToChild).toHaveBeenCalledWith({
-      iframe,
-      methods: {},
-      timeout: undefined,
-    });
   });
 });

@@ -100,7 +100,7 @@
     "object-literal-shorthand": true,
     "one-variable-per-declaration": [true, "ignore-for-loop"],
     "prefer-template": true,
-    "space-before-function-paren": [true, "never"],
+    "space-before-function-paren": [true, { "anonymous": "always", "named": "never", "asyncArrow": "always" }],
     "space-within-parens": [true, 0],
     "no-irregular-whitespace": true,
     "new-parens": true,

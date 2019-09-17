@@ -15,70 +15,87 @@
  */
 
 import Penpal from 'penpal';
+import { NavItemMock } from 'projects/navapp/src/app/models/dto/nav-item.mock';
 
-import { connectToParent, createProxies } from './parent';
+import { ChildApi, ChildConfig, NavItem } from './api';
+import { connectToParent, wrapWithTimeout } from './parent';
 
 describe('connectToParent', () => {
+  const navItemsMock = [
+    new NavItemMock(),
+    new NavItemMock(),
+  ];
+
   beforeEach(() => {
-    spyOn(Penpal, 'connectToParent').and.callThrough();
+    spyOn(Penpal, 'connectToParent').and.returnValue({ promise: Promise.resolve() });
   });
 
-  it('should pass config to penpal connectToParent', () => {
-    const parentOrigin = 'about:blank';
-    const methods = {
-      logout: () => {},
-    };
-
-    const config = {
-      parentOrigin,
-      methods,
-    };
-
-    connectToParent(config);
-    expect(Penpal.connectToParent).toHaveBeenCalledWith(config);
-  });
-
-  it('should default the config methods to an empty object', () => {
+  it('should pass the config methods to penpal', async () => {
     const parentOrigin = 'about:blank';
     const config = {
       parentOrigin,
+      methods: {},
     };
 
-    connectToParent(config);
+    await connectToParent(config);
+
     expect(Penpal.connectToParent).toHaveBeenCalledWith({
       parentOrigin,
       methods: {},
     });
   });
 
-  it('should proxy methods', () => {
-    const methods = {
-      navigate: jasmine.createSpy('navigate'),
-      getNavItems: jasmine.createSpy('getNavItems'),
+  it('should wrap provided api in promises if timeout value is provided', async () => {
+    const api: ChildApi = {
+      getConfig: (): ChildConfig => ({
+        communicationTimeout: 100,
+      }),
+      getNavItems: (): NavItem[] => navItemsMock,
     };
-    const proxies = createProxies(methods);
 
-    proxies.getNavItems();
-    proxies.navigate({ path: 'test' });
-
-    expect(proxies.navigate).not.toBe(methods.navigate);
-
-    expect(methods.navigate).toHaveBeenCalled();
-    expect(methods.getNavItems).toHaveBeenCalled();
+    const promisedApi = await wrapWithTimeout(api);
+    const navItems = await promisedApi.getNavItems();
+    expect(navItems).toEqual(navItemsMock);
   });
 
-  it('should pass proxied methods if available', () => {
-    const parentOrigin = 'about:blank';
-    const methods = {
-      navigate: () => {},
-    };
-    const config = {
-      parentOrigin,
-      methods,
+  it('wrapped api methods should reject after timeout', async () => {
+    const api: ChildApi = {
+      getConfig: (): ChildConfig => ({
+        communicationTimeout: 100,
+      }),
+      navigate: (): Promise<void> => new Promise(resolve => {
+        setTimeout(resolve, 101);
+      }),
     };
 
-    connectToParent(config);
-    expect(Penpal.connectToParent).toHaveBeenCalled();
-    expect(Penpal.connectToParent).not.toHaveBeenCalledWith(config); // So therefore the proxy is called.
+    const promisedApi = await wrapWithTimeout(api);
+
+    try {
+      await promisedApi.navigate({ path: 'test' });
+    } catch (err) {
+      // Error should be thrown because of timeout, so all is good
+      return;
+    }
+
+    throw new Error('Promise should have been rejected because of timeout');
   });
+
+  it('wrapped api methods should pass be able to get rejected', async () => {
+    const errorMessage = 'Throwing error from method';
+    const api: ChildApi = {
+      getConfig: (): ChildConfig => ({
+        communicationTimeout: 100,
+      }),
+      navigate: (): Promise<void> => Promise.reject(errorMessage),
+    };
+
+    const promisedApi = await wrapWithTimeout(api);
+
+    try {
+      await promisedApi.navigate({ path: 'test' });
+    } catch (err) {
+      expect(err).toEqual(errorMessage);
+    }
+  });
+
 });
