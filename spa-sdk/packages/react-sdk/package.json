@@ -27,7 +27,7 @@
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "dev": "rollup -cw rollup.config.js",
-    "lint": "echo lint not yet implemented for react-sdk",
+    "lint": "tslint --project .",
     "test": "jest"
   },
   "dependencies": {
@@ -41,20 +41,24 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.5",
     "@babel/preset-env": "^7.6",
     "@babel/preset-react": "^7.0",
-    "@types/enzyme": "^3.10.3",
+    "@types/enzyme": "^3.10",
     "babel-plugin-transform-async-to-promises": "^0.8",
-    "enzyme": "^3.10.0",
+    "enzyme": "^3.0",
     "enzyme-adapter-react-16": "^1.14.0",
-    "jest": "^24.9.0",
-    "jest-environment-enzyme": "^7.1.1",
-    "jest-enzyme": "^7.1.1",
+    "jest": "^24.0",
+    "jest-environment-enzyme": "^7.1",
+    "jest-enzyme": "^7.1",
     "react": "^16.9",
     "rollup": "^1.21",
     "rollup-plugin-babel": "^4.3",
-    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-dts": "^1.1.7",
+    "rollup-plugin-node-resolve": "^5.0",
     "rollup-plugin-terser": "^5.1",
-    "rollup-plugin-typescript2": "^0.24.2",
-    "typescript": "^3.6.3"
+    "rollup-plugin-typescript2": "^0.24",
+    "tslint": "^5.0",
+    "tslint-config-airbnb": "^5.0",
+    "tslint-react": "^4.0",
+    "typescript": "^3.6"
   },
   "jest": {
     "setupFilesAfterEnv": [

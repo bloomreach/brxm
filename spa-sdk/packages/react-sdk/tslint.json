@@ -1,0 +1,6 @@
+{
+  "extends": ["../../tslint.json", "tslint-react"],
+  "rules": {
+    "import-name": false
+  }
+}

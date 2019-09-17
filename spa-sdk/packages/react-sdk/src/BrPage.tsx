@@ -18,8 +18,8 @@ import React from 'react';
 
 export class BrPage extends React.Component {
   render () {
-    return <div className="br-page">
-      { this.props.children }
-    </div>;
+    return (
+      <div className="br-page">{this.props.children}</div>
+    );
   }
-};
+}
