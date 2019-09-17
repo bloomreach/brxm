@@ -16,6 +16,7 @@
 'use strict';
 
 const sass = require('node-sass');
+const stylelintFormatter = require('stylelint-formatter-pretty');
 
 module.exports = function (grunt) {
 
@@ -47,7 +48,7 @@ module.exports = function (grunt) {
           livereload: false
         },
         files: ['<%= build.src %>/**/*.scss'],
-        tasks: ['sass', 'autoprefixer', 'csslint', 'concat:css', 'clean:tmp']
+        tasks: ['stylelint', 'sass', 'autoprefixer', 'concat:css', 'clean:tmp']
       },
       reloadCompiledCss: {
         files: ['<%= build.skin %>/**/*.css']
@@ -70,6 +71,16 @@ module.exports = function (grunt) {
         files: ['<%= build.svgsprite %>'],
         tasks: ['newer:svgstore']
       },
+    },
+
+    // Lint sass files
+    stylelint: {
+      options: {
+        formatter: stylelintFormatter,
+      },
+      src: [
+        '<%= build.src %>/**/*.scss',
+      ]
     },
 
     // Compile Sass to CSS.
@@ -287,10 +298,10 @@ module.exports = function (grunt) {
   // build theme
   grunt.registerTask('build', 'Build the theme', [
     'clean:copies',
+    'stylelint',
     'sass',
     'svgstore',
     'autoprefixer',
-    'csslint',
     'concat',
     'uglify',
     'cssmin:theme',
