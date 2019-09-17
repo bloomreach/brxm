@@ -10,12 +10,26 @@
   "author": "Bloomreach B.V.",
   "license": "Apache-2.0",
   "repository": {
-    "url": "https://code.onehippo.org/cms-community/bloomreach-spa-sdk",
     "type": "git",
+    "url": "https://code.onehippo.org/cms-community/bloomreach-spa-sdk",
     "directory": "packages/react-sdk"
   },
-  "bugs": "https://issues.onehippo.com/projects/CMS",
-  "homepage": "https://code.onehippo.org/cms-community/bloomreach-spa-sdk",
+  "bugs": {
+    "url": "https://issues.onehippo.com/projects/CMS/issues"
+  },
+  "browser": "dist/react-sdk.js",
+  "module": "dist/react-sdk.mjs",
+  "es2015": "dist/react-sdk.es6.mjs",
+  "types": "dist/react-sdk.d.ts",
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "build": "rollup -c rollup.config.js",
+    "dev": "rollup -cw rollup.config.js",
+    "lint": "echo lint not yet implemented for react-sdk",
+    "test": "echo test not yet implemented for react-sdk"
+  },
   "dependencies": {
     "@bloomreach/spa-sdk": "^14.0.0"
   },
@@ -31,12 +45,9 @@
     "react": "^16.9",
     "rollup": "^1.21",
     "rollup-plugin-babel": "^4.3",
-    "rollup-plugin-terser": "^5.1"
-  },
-  "main": "dist/bloomreach-experience-react-sdk.js",
-  "scripts": {
-    "build": "rollup -c rollup.config.js",
-    "lint": "echo lint not yet implemented for react-sdk",
-    "test": "echo test not yet implemented for react-sdk"
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-terser": "^5.1",
+    "rollup-plugin-typescript2": "^0.24.2",
+    "typescript": "^3.6.3"
   }
 }

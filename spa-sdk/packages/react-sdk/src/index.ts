@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { Configuration } from '@bloomreach/spa-sdk';
+import { initialize } from '@bloomreach/spa-sdk';
 
 export function sdk() {
-  console.log('Got a configuration interface from spa-sdk', Configuration);
+  console.log('Got a configuration interface from spa-sdk', initialize);
 }

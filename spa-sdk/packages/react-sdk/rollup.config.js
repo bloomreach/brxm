@@ -16,35 +16,80 @@
 
 /* eslint-disable import/no-extraneous-dependencies */
 import babel from 'rollup-plugin-babel';
+import dts from 'rollup-plugin-dts';
 import { terser } from 'rollup-plugin-terser';
+import typescript2 from 'rollup-plugin-typescript2';
+import resolve from 'rollup-plugin-node-resolve';
+
+const external = (id) => {
+  return !id.startsWith('@bloomreach/');
+};
+
+const terserConfig = {
+  ecma: 5,
+  mangle: false,
+  compress: false,
+  output: {
+    beautify: true,
+    comments: false,
+  },
+  sourcemap: true,
+};
 
 export default [
   {
-    input: 'src/index.js',
+    input: 'src/index.ts',
     output: [
       {
         exports: 'named',
-        file: 'dist/bloomreach-experience-react-sdk.js',
+        file: 'dist/react-sdk.js',
         format: 'umd',
         name: 'BloomreachReactSdk',
         sourcemap: true,
-        sourcemapFile: 'dist/bloomreach-experience-react-sdk.js.map',
+        sourcemapFile: 'dist/react-sdk.js.map',
+        globals: {
+          react: 'React',
+        },
+      },
+      {
+        file: 'dist/react-sdk.mjs',
+        format: 'esm',
         globals: {
           react: 'React',
         },
       },
     ],
+    external,
     plugins: [
-      babel({ extensions: ['.js'] }),
-      terser({
-        ecma: 5,
-        mangle: false,
-        compress: false,
-        output: {
-          beautify: true,
-          comments: false,
-        },
-      }),
+      resolve(),
+      typescript2(),
+      babel({ extensions: ['.ts'] }),
+      terser(terserConfig),
     ],
   },
+
+  {
+    input: 'src/index.ts',
+    output: [{
+      file: 'dist/react-sdk.es6.mjs',
+      format: 'esm',
+    }],
+    external,
+    plugins: [
+      resolve(),
+      typescript2(),
+      terser(terserConfig)
+    ],
+  },
+
+  {
+    input: 'src/index.ts',
+    output: [
+      {
+        file: 'dist/react-sdk.d.ts',
+        format: 'es',
+      },
+    ],
+    plugins: [ dts() ],
+  }
 ];
