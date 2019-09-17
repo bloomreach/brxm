@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { DOCUMENT } from '@angular/common';
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { NavLocation } from '@bloomreach/navapp-communication';
 import { ReplaySubject } from 'rxjs';
@@ -64,6 +65,10 @@ describe('CommunicationsService', () => {
     'updateByNavLocation',
   ]);
 
+  const locationMock = jasmine.createSpyObj('Location', [
+    'replace',
+  ]);
+
   beforeEach(() => {
     const childApiMock = jasmine.createSpyObj('parentApi', {
       navigate: Promise.resolve(),
@@ -103,6 +108,7 @@ describe('CommunicationsService', () => {
         { provide: BusyIndicatorService, useValue: busyIndicatorServiceMock },
         { provide: OverlayService, useValue: overlayServiceMock },
         { provide: NavigationService, useValue: navigationServiceMock },
+        { provide: DOCUMENT, useValue: { location: locationMock }  },
       ],
     });
 
@@ -143,24 +149,20 @@ describe('CommunicationsService', () => {
     describe('logout', () => {
       beforeAll(() => {
         clientAppServiceMock.logoutApps.and.returnValue(Promise.resolve());
+        navConfigServiceMock.logout.and.returnValue(Promise.resolve());
       });
-
-      it('should logout all apps', () => {
-        service.logout()
-          .then(
-            () => expect(navConfigService.logout).toHaveBeenCalled(),
-          )
-          .catch(
-            () => fail('Expected navConfigService.logout to have been called'),
-          );
-      });
-
-      it('should show the busy indicator', () => {
-        service.logout();
-
+      it('should replace the browser location', fakeAsync(() => {
+        let url: string;
+        locationMock.replace.and.callFake((urlFromCall: string) => {
+          url = urlFromCall;
+        });
+        service.logout('testMessageKey');
+        tick(1);
         expect(busyIndicatorService.show).toHaveBeenCalled();
         expect(busyIndicatorService.hide).toHaveBeenCalled();
-      });
+        expect(locationMock.replace).toHaveBeenCalled();
+        expect(url).toContain('loginmessage=testMessageKey');
+      }));
     });
   });
 
@@ -207,6 +209,20 @@ describe('CommunicationsService', () => {
         service.parentApiMethods.hideMask();
         expect(overlayService.disable).toHaveBeenCalled();
       });
+    });
+
+    describe('.onSessionExpired', () => {
+      it('should replace document location, even if logout fails', fakeAsync(() => {
+
+        clientAppServiceMock.logoutApps.and.returnValue(Promise.resolve());
+        navConfigServiceMock.logout.and.returnValue(Promise.reject('fake a failing silent logout'));
+
+        service.parentApiMethods.onSessionExpired();
+        tick(1);
+        expect(busyIndicatorService.show).toHaveBeenCalled();
+        expect(busyIndicatorService.hide).toHaveBeenCalled();
+        expect(locationMock.replace).toHaveBeenCalled();
+      }));
     });
   });
 });

@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
+import { Inject, Injectable } from '@angular/core';
 import { ClientError, connectToChild, NavLocation, ParentApi, SiteId } from '@bloomreach/navapp-communication';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
@@ -32,12 +33,14 @@ import { OverlayService } from './overlay.service';
 })
 export class CommunicationsService {
   constructor(
+    private globalSettingsService: GlobalSettingsService,
     private navConfigService: NavConfigService,
     private clientAppService: ClientAppService,
     private overlay: OverlayService,
     private busyIndicatorService: BusyIndicatorService,
     private settings: GlobalSettingsService,
     private navigationService: NavigationService,
+    @Inject(DOCUMENT) private document: Document,
   ) { }
 
   get parentApiMethods(): ParentApi {
@@ -47,6 +50,7 @@ export class CommunicationsService {
       navigate: (location: NavLocation) => this.navigationService.navigateByNavLocation(location),
       updateNavLocation: (location: NavLocation) => this.navigationService.updateByNavLocation(location),
       onError: (clientError: ClientError) => this.handleClientError(clientError),
+      onSessionExpired: () => this.logout('SessionExpiredError'),
     };
   }
 
@@ -62,12 +66,16 @@ export class CommunicationsService {
     });
   }
 
-  logout(): Promise<void> {
+  logout(loginMessageKey: string): void {
     this.busyIndicatorService.show();
-
-    return this.clientAppService.logoutApps().then(
-      () => this.navConfigService.logout(),
-    ).then(() => this.busyIndicatorService.hide());
+    this.clientAppService.logoutApps()
+      .then(() => this.navConfigService.logout())
+      .catch(error => console.log(error))
+      .finally(() => {
+        this.busyIndicatorService.hide();
+        const newLocation = `${this.globalSettingsService.appSettings.navAppBaseURL}/?loginmessage=${loginMessageKey}`;
+        this.document.location.replace(newLocation);
+      });
   }
 
   connectToChild(iframe: HTMLIFrameElement): Promise<void> {
