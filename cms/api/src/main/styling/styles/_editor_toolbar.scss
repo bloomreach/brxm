@@ -71,18 +71,6 @@
         }
       }
 
-      .menu-item-active {
-        color: $editor-toolbar-active-color;
-      }
-
-      .menu-item-active svg {
-        color: $editor-toolbar-active-color;
-      }
-
-      .menu-item-inactive svg {
-        color: $editor-toolbar-color;
-      }
-
       // Buttons like 'Edit' & 'Save'
       .menu-action {
         display: block;
@@ -153,6 +141,14 @@
         display: block; // Needed for background color to fill the complete button
         background-color: $editor-toolbar-active-bgcolor;
         color: $editor-toolbar-active-color;
+      }
+
+      .menu-item-active svg {
+        color: $editor-toolbar-active-color;
+      }
+
+      .menu-item-inactive svg {
+        color: $editor-toolbar-color;
       }
 
       // Dropdown wrapper element

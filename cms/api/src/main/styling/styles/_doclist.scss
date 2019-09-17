@@ -185,7 +185,9 @@ $doclist-icon-shift-right: 2px;
 
         // align the background image of the icon column header with the icons in the body
         &.doclisting-icon {
-          background-position: top ($doclist-padding-icon + 1) left ($doclist-padding-icon + $doclist-icon-shift-right + 8);
+          background-position:
+            top ($doclist-padding-icon + 1)
+            left ($doclist-padding-icon + $doclist-icon-shift-right + 8);
         }
       }
 
