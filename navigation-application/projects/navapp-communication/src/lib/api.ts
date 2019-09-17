@@ -20,7 +20,8 @@ export interface ChildConnectConfig {
    */
   iframe: HTMLIFrameElement;
   /**
-   * The methods that a child can call in the parent window. This is specified in the API exposed by the parent window. See [[ParentApi]].
+   * The methods that a child can call in the parent window. This is specified in the API exposed by the parent window.
+   * See [[ParentApi]].
    */
   methods?: ParentApi;
   timeout?: number;
@@ -60,24 +61,24 @@ export interface ParentApi {
   /** Get the current parent config. */
   getConfig?: () => (ParentConfig | Promise<ParentConfig>);
   /**
-   * Is called by an application when the application performs internal navigation. updateNavLocation **does not** trigger
-   * a subsequent navigate callback. Also, upon navigating to a new state (see navigate callback above), an application
-   * may use this method to make sure the browser URL and breadcrumbs label maintained by the nav-app are set appropriately.
-   * These parameters may depend on application-internal state.
+   * Is called by an application when the application performs internal navigation. updateNavLocation **does not**
+   * trigger a subsequent navigate callback. Also, upon navigating to a new state (see navigate callback above), an
+   * application may use this method to make sure the browser URL and breadcrumbs label maintained by the nav-app are
+   * set appropriately. These parameters may depend on application-internal state.
    *
    * @param location the NavLocation navigated to
    */
   updateNavLocation?: (location: NavLocation) => (void | Promise<void>);
   /**
-   * Is called by an application to perform internal or cross-app navigation. It **does** trigger the nav-app to perform a
-   * ‘beforeNavigate’ and ‘navigate’ to route to the provided location.
+   * Is called by an application to perform internal or cross-app navigation. It **does** trigger the nav-app to
+   * perform a ‘beforeNavigate’ and ‘navigate’ to route to the provided location.
    *
    * @param location The NavLocation navigated to
    */
   navigate?: (location: NavLocation) => (void | Promise<void>);
   /**
-   * Is called by an application when it needs to cover the nav-app’s UI surface with a mask to prevent user interactions
-   * for example because the user input is needed for a dialog.
+   * Is called by an application when it needs to cover the nav-app’s UI surface with a mask to prevent user
+   * interactions for example because the user input is needed for a dialog.
    */
   showMask?: () => (void | Promise<void>);
   /**
@@ -89,8 +90,21 @@ export interface ParentApi {
    * applications to prevent session expiration.
    */
   onUserActivity?: () => (void | Promise<void>);
+  /**
+   * Is called by an application when it detects that it's internal session has expired.
+   */
   onSessionExpired?: () => (void | Promise<void>);
+  /**
+   * is called by an application if it detects that, for some reason, the user session has expired for that
+   * application. This would result in the nav-app calling ‘logout’ on all child applications as if the user had
+   * initiated logout himself.
+   */
   requestLogout?: () => (void | Promise<void>);
+  /**
+   * Pass on an error that occurred on the client side.
+   * @param clientError object containing info about the error
+   */
+  onError?: (clientError: ClientError) => (void | Promise<void>);
 }
 
 export interface ParentPromisedApi {
@@ -102,6 +116,7 @@ export interface ParentPromisedApi {
   onUserActivity?: () => Promise<void>;
   onSessionExpired?: () => Promise<void>;
   requestLogout?: () => Promise<void>;
+  onError?: (clientError: ClientError) => Promise<void>;
 }
 
 export interface ChildApi {
@@ -127,9 +142,9 @@ export interface ChildApi {
   /**
    * Fired before nav-app initiates a navigation action which will leave the current location, this event allows
    * applications to clean up location-specific state (such as dirty forms) if necessary. The callback is responsible
-   * to resolve the Promise before nav-app can continue. When the application is good to “leave”, it resolves the Promise
-   * with a value of `true`. In order to prevent leaving the current location, the application should resolve the Promise
-   * with a value of `false`.
+   * to resolve the Promise before nav-app can continue. When the application is good to “leave”, it resolves the
+   * Promise with a value of `true`. In order to prevent leaving the current location, the application should resolve
+   * the Promise with a value of `false`.
    */
   beforeNavigation?: () => (boolean | Promise<boolean>);
   /**
@@ -153,14 +168,14 @@ export interface ChildApi {
   /**
    * Sets the accountId (merchantId) and siteId (siteGroupId) to work with. Site selection is intentionally separated
    * from navigation since it represents an additional dimension in the navigation process to cover brSM needs.
-   * When a user selects a site, nav-app will call this callback for the active app first, which can update the site and
-   * the corresponding cookie and then resolves the promise, then the nav-app broadcast to all apps to update the site.
-   * Nav-app will only wait for the Promise of the currently active app to resolve before updating the UI to display the
-   * newly selected site. The selectSite should update the site state in the child UI based on whether the selectSite is
-   * passed a site object. If a site object is passed the child UI is updated to that site object and **the cookie is
-   * updated** to reflect the new site, if no site object is passed, **the site is updated from the cookie**. This way the
-   * active app will first update its UI and cookie, and the consequent broadcast will cause all other brSM apps to
-   * update their site state from the cookie that was just updated.
+   * When a user selects a site, nav-app will call this callback for the active app first, which can update the site
+   * and the corresponding cookie and then resolves the promise, then the nav-app broadcast to all apps to update the
+   * site. Nav-app will only wait for the Promise of the currently active app to resolve before updating the UI to
+   * display the newly selected site. The selectSite should update the site state in the child UI based on whether the
+   * selectSite is passed a site object. If a site object is passed the child UI is updated to that site object and
+   * the cookie is updated to reflect the new site, if no site object is passed, the site is updated from the
+   * cookie. This way the active app will first update its UI and cookie, and the consequent broadcast will cause all
+   * other brSM apps to update their site state from the cookie that was just updated.
    *
    * @param siteId the selected SiteId
    */
@@ -186,8 +201,9 @@ export interface NavigateFlags {
 export interface NavItem {
   /**
    * Unique identifier for the navigation item. Uniqueness should be taken care of by a unique application-prefix,
-   * followed by a suffix unique within that application. Non-unique navigation items will be dropped at registration time.
-   * navigationItems with id unknown to the nav-app will be put in a “Extensions” menu item (sorted by their displayName).
+   * followed by a suffix unique within that application. Non-unique navigation items will be dropped at registration
+   * time. navigationItems with id unknown to the nav-app will be put in a “Extensions” menu item (sorted by their
+   * displayName).
    */
   id: string;
   /**
@@ -203,11 +219,11 @@ export interface NavItem {
   appIframeUrl: string;
   /**
    * Field expressing the navigation item’s path inside the app referred to by the appBaseUrl field. This value has no
-   * meaning to nav-app, it is used to pass to the corresponding app in order to navigate to the desired path/route/location.
-   * Also, when an app signals that it has internally navigated to a different location, the navigation application
-   * compares that path to the path of all navigation items for that application, in order to update which navigation
-   * item is currently active. The path value must be unique across all navigation items for a given
-   * application (identified by appBaseUrl), AND for all navigation items of an application, no path can be a
+   * meaning to nav-app, it is used to pass to the corresponding app in order to navigate to the desired
+   * path/route/location. Also, when an app signals that it has internally navigated to a different location, the
+   * navigation application compares that path to the path of all navigation items for that application, in order to
+   * update which navigation item is currently active. The path value must be unique across all navigation items for a
+   * given application (identified by appBaseUrl), AND for all navigation items of an application, no path can be a
    * prefix-match (startsWith) of another path.
    */
   appPath: string;
@@ -217,8 +233,8 @@ export interface NavLocation {
   /** Value of the ‘path’ field of the selected navigation item. */
   path: string;
   /**
-   * Optional: The prefix to the path. It equals a appBaseUrl.pathname of some navigation items. Can be used to identify,
-   * in combination with path, the navigation item to navigate to.
+   * Optional: The prefix to the path. It equals a appBaseUrl.pathname of some navigation items. Can be used to
+   * identify, in combination with path, the navigation item to navigate to.
    */
   pathPrefix?: string;
   /** Optional: Suffix of the browser URL, starting after the closest matching navigation item path from a navigation item,
@@ -259,4 +275,43 @@ export interface Site extends SiteId {
    * this field in the object passed to the app(s).
    */
   subGroups?: Site[];
+}
+
+export enum ClientErrorCodes {
+  /**
+   * This code should be used if it’s impossible to determine an error. The navapp shows something like
+   * “Something went wrong” without additional description in that case.
+   */
+  UnknownError = 0,
+  /**
+   * This can be used if the client app wants to reject an api call from the parent.
+   */
+  GenericCommunicationError,
+  /**
+   * This code should be used if SPA receives 403 HTTP error while attempting to access the server side.
+   */
+  NotAuthorizedError = 403,
+  /**
+   * This code should be used If the appPath provided through navigate call is impossible to recognise.
+   */
+  PageNotFoundError = 404,
+  /**
+   * This code should be used if some internal error occurred on the server side.
+   */
+  InternalError = 500,
+  /**
+   * This code should be used if SPA receives 500 (or similar) HTTP errors while attempting to access the server side.
+   */
+  UnableToConnectToServerError,
+}
+
+export interface ClientError {
+  /**
+   * Predefined error code from the error constants
+   */
+  errorCode: ClientErrorCodes;
+  /**
+   * Human readable message that can be displayed to the user
+   */
+  message?: string;
 }
