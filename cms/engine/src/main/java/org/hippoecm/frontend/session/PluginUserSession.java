@@ -565,7 +565,7 @@ public class PluginUserSession extends UserSession {
         String applicationName;
         String userID = session.getUserID();
 
-        if (StringUtils.isEmpty(userID) || userID.equalsIgnoreCase("anonymous")) {
+        if (StringUtils.isEmpty(userID) || userID.equals(UserCredentials.FRONTEND_SYSTEM_USER_ID)) {
             applicationName = "login";
         } else {
             applicationName = PluginApplication.get().getPluginApplicationName();
