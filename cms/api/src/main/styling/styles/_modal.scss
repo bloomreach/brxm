@@ -184,7 +184,6 @@
   .hippo-window-buttons {
     bottom: 0;
     right: 0;
-
     display: inline;
     padding-right: 16px;
     padding-top: 12px;
@@ -213,7 +212,6 @@
   .hippo-window-buttons {
     bottom: 0;
     right: 0;
-
     display: inline-block;
     align-self: center;
     position: relative;
@@ -355,9 +353,11 @@
       .hippo-list-paging .paging-label {
         padding-right: 16px;
       }
+
       .hippo-list-documents > tbody > tr > td {
         padding-left: 12px;
       }
+
       .hippo-list-documents:not(.hippo-paging) {
         margin-bottom: 41px;
         border-bottom: 1px solid $light-shade;
@@ -456,12 +456,14 @@
   .hippo-dialog-type,
   .hippo-dialog-alt {
     display: flex;
+
     label {
       line-height: 24px;
     }
   }
 
-  .hippo-dialog-type, .hippo-dialog-align {
+  .hippo-dialog-type,
+  .hippo-dialog-align {
     margin-right: 16px;
   }
 
@@ -487,6 +489,7 @@
   input {
     margin-right: 8px;
     min-width: 64px;
+
     &:last-child {
       margin-right: 0;
     }
@@ -494,10 +497,11 @@
 }
 
 /* Windows */
+
 /* ================================================ */
 .hippo-window,
 .hippo-window .hippo-root {
-  background: none
+  background: none;
 }
 
 .hippo-window .hippo-root table.modal-contents {
@@ -508,7 +512,8 @@
   padding: 2px 5px 2px 5px;
 }
 
-.hippo-window h1, .hippo-window h1 {
+.hippo-window h1,
+.hippo-window h1 {
   margin-bottom: 10px;
   font-size: 16px;
 }
@@ -539,6 +544,7 @@ table.hippo-window-form {
 
 .hippo-window-form.no-left-padding {
   padding-left: 0;
+
   td {
     padding-left: 0;
   }
@@ -565,7 +571,7 @@ table.hippo-window-form {
   margin: 11px;
   padding: 12px;
   text-align: center;
-  background:  $warning-light;
+  background: $warning-light;
   border: 1px solid $warning;
 }
 
@@ -588,11 +594,11 @@ table.hippo-window-form {
 }
 
 .hippo-window-dialog-question {
-  font-weight: bold
+  font-weight: bold;
 }
 
 .hippo-root div.wicket-modal .w_content_3 {
-  border: none
+  border: none;
 }
 
 .hippo-root div.wicket-modal .w_content_2 {
@@ -601,7 +607,9 @@ table.hippo-window-form {
 
 // copied from hippo-modal.css
 
-.hippo-root div.modal_fullscreen .w_top_1, .hippo-root div.modal_fullscreen .w_bottom_1, .hippo-root div.modal_fullscreen .w_caption {
+.hippo-root div.modal_fullscreen .w_top_1,
+.hippo-root div.modal_fullscreen .w_bottom_1,
+.hippo-root div.modal_fullscreen .w_caption {
   display: none;
 }
 
@@ -661,7 +669,7 @@ table.hippo-window-form {
 }
 
 .hippo-history-documents .hippo-revision-history tbody tr.disabled td {
-  opacity: 0.5;
+  opacity: .5;
   cursor: not-allowed;
 }
 
@@ -690,6 +698,7 @@ table.hippo-window-form {
         line-height: $doclist-paging-button-size - 2;
         text-align: center;
         border: 1px solid transparent;
+
         &:hover {
           text-decoration: none;
         }
@@ -701,6 +710,7 @@ table.hippo-window-form {
         border-radius: 2px;
         color: $text-color;
         display: inline-block;
+
         &:hover {
           color: $doclist-paging-button-hover-color;
           background-color: $doclist-paging-button-hover-fill;

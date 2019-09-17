@@ -61,6 +61,7 @@ $doclist-icon-shift-right: 2px;
           top: -2px;
           left: -2px;
         }
+
         .hi-exclamation-triangle {
           left: -2px;
         }
@@ -69,6 +70,7 @@ $doclist-icon-shift-right: 2px;
 
     &.doclisting-lastmodified-by {
       @include fixed-width(120px);
+
       &:last-child {
         @include fixed-width(200px);
       }
@@ -76,6 +78,7 @@ $doclist-icon-shift-right: 2px;
 
     &.doclisting-mimetype {
       @include fixed-width(130px);
+
       span {
         @include truncate();
       }
@@ -96,6 +99,7 @@ $doclist-icon-shift-right: 2px;
 
     &.doclisting-selector {
       @include fixed-width(19px);
+
       span {
         display: flex;
         justify-content: center;
@@ -118,17 +122,19 @@ $doclist-icon-shift-right: 2px;
       .state-new {
         background: url("#{$images}/icons/state-offline-tiny.svg") no-repeat left;
       }
+
       .state-live {
         background: url("#{$images}/icons/state-live-tiny.svg") no-repeat left;
       }
+
       .state-changed {
         background: url("#{$images}/icons/state-changed-tiny.svg") no-repeat left;
       }
-
     }
 
     &.doclisting-translations {
       @include fixed-width(120px);
+
       padding-top: 0;
       padding-bottom: 0;
 
@@ -138,6 +144,7 @@ $doclist-icon-shift-right: 2px;
         align-items: center;
         list-style-type: none;
       }
+
       .hippo-translation-doclisting > ul > li {
         display: block;
         padding-right: 8px;
@@ -209,12 +216,14 @@ $doclist-icon-shift-right: 2px;
 
       .doclisting-icon {
         background: no-repeat 50% 50%;
+
         > span {
           background: none;
         }
 
         &.hippo-list-order-none {
           background-image: url("#{$images}/icons/stateorder-none.svg");
+
           &:hover {
             background-image: url("#{$images}/icons/stateorder-hover.svg");
           }
@@ -254,6 +263,7 @@ $doclist-icon-shift-right: 2px;
         // ensure icons smaller than 32px are centered in a 32x32px box
         &.doclisting-icon span {
           @include fixed-height(32px);
+
           display: flex;
           justify-content: center;
           align-items: center;
@@ -288,7 +298,6 @@ $doclist-icon-shift-right: 2px;
     height: $doclist-foot-height;
 
     &.hippo-list-paging {
-
       > td {
         position: relative;
 
@@ -312,6 +321,7 @@ $doclist-icon-shift-right: 2px;
               line-height: $doclist-paging-button-size - 2;
               text-align: center;
               border: 1px solid transparent;
+
               &:hover {
                 text-decoration: none;
               }
@@ -323,6 +333,7 @@ $doclist-icon-shift-right: 2px;
               border-radius: 2px;
               color: $text-color;
               display: inline-block;
+
               &:hover {
                 color: $doclist-paging-button-hover-color;
                 background-color: $doclist-paging-button-hover-fill;
@@ -382,6 +393,7 @@ $doclist-icon-shift-right: 2px;
   .paging-navigator .goto a {
     display: none;
   }
+
   .paging-label {
     visibility: hidden;
   }

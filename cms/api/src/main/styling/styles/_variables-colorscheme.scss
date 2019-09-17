@@ -14,7 +14,7 @@
 
 // Bloomreach primary colors
 $bluePrimary:                                 #147ac8;
-$blueLight:                                   rgba($bluePrimary, 0.1);
+$blueLight:                                   rgba($bluePrimary, .1);
 $blueLightSolid:                              #e7f1f9;
 $blueDark:                                    #1265b3;
 $orangePrimary:                               #ff751a;
@@ -36,15 +36,15 @@ $purple:                                      #7b1fa2;
 
 // Bloomreach grays.
 // "solid" means: same color without alpha channel as if rendered on a white background.
-$black:                                       #000000;
+$black:                                       #000;
 $gray5:                                       rgba(0, 0, 0, .05);
 $gray5Solid:                                  #f2f2f2;
 $gray12:                                      rgba(0, 0, 0, .12);
 $grayLightSolid:                              #f5f5f5;
 $gray38:                                      rgba(0, 0, 0, .38);
-$gray60:                                      rgba(0, 0, 0, .60);
+$gray60:                                      rgba(0, 0, 0, .6);
 $gray87:                                      rgba(0, 0, 0, .87);
-$white:                                       #ffffff;
+$white:                                       #fff;
 
 // Legacy grays
 $darkest-shade:                               #22272f;
@@ -75,9 +75,9 @@ $info-shaded:                                 #aebecc;
 $warning-shaded:                              #ccc8ae;
 $danger-shaded:                               #ccaeae;
 
-$diff-added:                                  #ccffcc;
+$diff-added:                                  #cfc;
 $diff-added-border:                           $diff-added;
 $diff-removed:                                #fdc6c6;
 $diff-removed-border:                         $diff-removed;
 $diff-changed:                                #d9edff;
-$diff-changed-border:                         #000099;
+$diff-changed-border:                         #009;

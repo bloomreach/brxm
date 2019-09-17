@@ -17,6 +17,7 @@
   background: $editor-bgcolor;
   display: flex;
   flex-direction: column;
+
   @include fixed-height(100%);
 
   .hippo-editor-body {
@@ -45,7 +46,7 @@
     width: 30%;
     float: right;
   }
-  
+
   .col30left {
     padding-right: 16px;
     width: 30%;
@@ -76,7 +77,7 @@
     float: left;
   }
 
-  
+
   .col20,
   .col20right,
   .col30,
@@ -86,6 +87,7 @@
   .col70right,
   .col80 {
     box-sizing: border-box;
+
     > .even:last-child,
     > .odd:last-child {
       .hippo-editor-compound-field > .hippo-editor-field:last-child {
@@ -110,6 +112,7 @@
 
 .hippo-editor-field {
   margin-bottom: 32px;
+
   @include clearfix();
 
   .dialog-link,
@@ -260,7 +263,7 @@
 
   .add-16:hover {
     border: 1px solid $lighter-shade;
-    background-color: $white
+    background-color: $white;
   }
 }
 
@@ -270,7 +273,7 @@
   position: absolute;
   right: 0;
   top: 0;
-  
+
   .hippo-editor-field-subfield:hover > & {
     opacity: 1;
   }
@@ -282,14 +285,15 @@
   .hi {
     color: $dark-gray;
   }
-  
+
   a[href] .hi {
     color: $darkest-shade;
+
     &.hi-times {
       color: $danger;
     }
   }
-  
+
   a:active,
   a:hover {
     text-decoration: none;
@@ -343,6 +347,7 @@
     background-color: $lightest-shade;
     color: $darkest-shade;
     line-height: 16px;
+
     &:link,
     &:hover {
       text-decoration: none;
@@ -373,7 +378,7 @@
 .invalid {
   > .hippo-editor-field {
     margin-bottom: 32px;
-    
+
     > .hippo-editor-field-title {
       color: $validation-title-color !important;
     }
@@ -407,7 +412,7 @@
   height: 100%;
   left: 0;
   margin: 0;
-  opacity: 0.6;
+  opacity: .6;
   padding: 0;
   position: absolute;
   top: 0;
@@ -420,7 +425,7 @@
   overflow: visible;
 }
 
-.column-wrapper:after {
+.column-wrapper::after {
   content: "";
   display: table;
   clear: both;

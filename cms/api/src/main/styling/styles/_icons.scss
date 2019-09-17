@@ -27,14 +27,17 @@
   height: 10px;
   width: 10px;
 }
+
 .hi-m {
   height: 16px;
   width: 16px;
 }
+
 .hi-l {
   height: 32px;
   width: 32px;
 }
+
 .hi-xl {
   height: 48px;
   width: 48px;
@@ -132,7 +135,8 @@
   color: $black;
 }
 
-.hi-minus-circle, .hi-times-circle {
+.hi-minus-circle,
+.hi-times-circle {
   color: $white;
   fill: $danger;
 }
@@ -238,7 +242,7 @@
 
   .hi-overlay-plus {
     color: $white;
-    fill: $hippo-menu-disabled-color
+    fill: $hippo-menu-disabled-color;
   }
 }
 
@@ -249,4 +253,3 @@
 svg use {
   pointer-events: none;
 }
-
