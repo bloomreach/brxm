@@ -64,8 +64,6 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onehippo.repository.security.StandardPermissionNames.HIPPO_AUTHOR;
-
 public class FolderTreePlugin extends RenderPlugin {
     static final Logger log = LoggerFactory.getLogger(FolderTreePlugin.class);
 
@@ -87,9 +85,6 @@ public class FolderTreePlugin extends RenderPlugin {
             final Session session = getSession().getJcrSession();
             if (!session.itemExists(startingPath)) {
                 log.warn("The configured path '{}' does not exist. Please check the configuration", startingPath);
-                canAccessPath = false;
-            } else if (!session.hasPermission(startingPath, HIPPO_AUTHOR)) {
-                log.warn("User '{} is unauthorized to read at the configured path '{}'", session.getUserID(), startingPath);
                 canAccessPath = false;
             }
         } catch (RepositoryException exception) {
