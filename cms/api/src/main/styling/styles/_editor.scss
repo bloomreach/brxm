@@ -437,6 +437,23 @@
   height: 100%;
 }
 
+.browse-perspective-center-body .tabpanel {
+  animation: jump .3s infinite alternate ease-out;
+  background-image: url("#{$images}/logo/logo.svg");
+  background-repeat: no-repeat;
+  background-size: 100px 60px;
+}
+
+@keyframes jump {
+  from {
+    background-position: center bottom -9px;
+  }
+
+  to {
+    background-position: center bottom 16px;
+  }
+}
+
 .hippo-editor-field-value-container {
   line-height: normal;
   overflow: hidden;
