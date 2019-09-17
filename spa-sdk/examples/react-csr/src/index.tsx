@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
-import { initialize } from './index';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import {
+  BrowserRouter,
+  Redirect,
+  Route,
+  Switch,
+} from 'react-router-dom';
 
-const options = {
-  live: {
-    pageModelBaseUrl: 'http://localhost:8080/site/my-spa',
-  },
-  preview: {
-    pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/my-spa',
-  },
-};
+import App from './App';
 
-describe('initialize', () => {
-  it('does nothing yet', () => {
-    const request = { path: '/' };
-    expect(initialize({ request, options })).toBeDefined();
-  });
-});
+ReactDOM.render(
+  <BrowserRouter>
+    <Switch>
+      <Route path="/(.*)" component={App} />
+      <Redirect to="/" />
+    </Switch>
+  </BrowserRouter>,
+  document.getElementById('root'),
+);

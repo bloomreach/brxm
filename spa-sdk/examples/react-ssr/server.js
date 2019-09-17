@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-import { initialize } from './index';
+const next = require('next');
+const { createServer } = require('http');
+const routes = require('./routes');
 
-const options = {
-  live: {
-    pageModelBaseUrl: 'http://localhost:8080/site/my-spa',
-  },
-  preview: {
-    pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/my-spa',
-  },
-};
+const app = next({
+  dev: process.env.NODE_ENV !== 'production',
+  // dir: './src',
+});
+const handler = routes.getRequestHandler(app);
 
-describe('initialize', () => {
-  it('does nothing yet', () => {
-    const request = { path: '/' };
-    expect(initialize({ request, options })).toBeDefined();
-  });
+app.prepare().then(() => {
+  createServer(handler).listen(process.env.PORT || 3000);
 });

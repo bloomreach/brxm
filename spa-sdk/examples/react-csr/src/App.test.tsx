@@ -14,20 +14,12 @@
  * limitations under the License.
  */
 
-import { initialize } from './index';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
 
-const options = {
-  live: {
-    pageModelBaseUrl: 'http://localhost:8080/site/my-spa',
-  },
-  preview: {
-    pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/my-spa',
-  },
-};
-
-describe('initialize', () => {
-  it('does nothing yet', () => {
-    const request = { path: '/' };
-    expect(initialize({ request, options })).toBeDefined();
-  });
+it('renders without crashing', () => {
+  const div = document.createElement('div');
+  ReactDOM.render(<App />, div);
+  ReactDOM.unmountComponentAtNode(div);
 });

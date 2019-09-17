@@ -14,20 +14,17 @@
  * limitations under the License.
  */
 
-import { initialize } from './index';
+const dotenv = require('dotenv').config();
 
-const options = {
-  live: {
-    pageModelBaseUrl: 'http://localhost:8080/site/my-spa',
-  },
-  preview: {
-    pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/my-spa',
+if (dotenv.error) {
+  throw dotenv.error;
+}
+
+module.exports = {
+  assetPrefix: process.env.PUBLIC_URL || '/',
+  publicRuntimeConfig: {
+    brOrigin: process.env.BR_ORIGIN,
+    brContextPath: process.env.BR_CONTEXT_PATH,
+    brChannelPath: process.env.BR_CHANNEL_PATH,
   },
 };
-
-describe('initialize', () => {
-  it('does nothing yet', () => {
-    const request = { path: '/' };
-    expect(initialize({ request, options })).toBeDefined();
-  });
-});

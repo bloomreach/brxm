@@ -1,0 +1,27 @@
+{
+  "name": "@bloomreach/example-react-ssr",
+  "version": "14.0.0",
+  "description": "Example server-side rendered React App for the Bloomreach Experience SPA SDK",
+  "private": true,
+  "author": "Bloomreach B.V.",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@bloomreach/react-sdk": "14.0.0",
+    "next": "^9.0.5",
+    "next-routes": "^1.4.2",
+    "react": "^16.9",
+    "react-dom": "^16.9"
+  },
+  "devDependencies": {
+    "@types/node": "^12.0",
+    "@types/react": "^16.9",
+    "@types/react-dom": "^16.9"
+  },
+  "scripts": {
+    "dev": "node server.js",
+    "build": "next build",
+    "lint": "echo lint not yet implemented for example-react-ssr",
+    "start": "NODE_ENV=production node server.js",
+    "test": "echo test not yet implemented for example-react-ssr"
+  }
+}

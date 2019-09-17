@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-import { initialize } from './index';
+const express = require('express');
+const path = require('path');
+const port = process.env.PORT || 3000;
+const app = express();
 
-const options = {
-  live: {
-    pageModelBaseUrl: 'http://localhost:8080/site/my-spa',
-  },
-  preview: {
-    pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/my-spa',
-  },
-};
+app.use(express.static(path.join(__dirname, 'build')));
 
-describe('initialize', () => {
-  it('does nothing yet', () => {
-    const request = { path: '/' };
-    expect(initialize({ request, options })).toBeDefined();
-  });
+app.get('/*', function (req, res) {
+  res.sendFile(path.join(__dirname, 'build', 'index.html'));
 });
+
+app.listen(port);

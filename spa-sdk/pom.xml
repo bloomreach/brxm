@@ -137,6 +137,24 @@
               <directory>packages/spa-sdk/node_modules</directory>
             </fileset>
             <fileset>
+              <directory>packages/react-sdk/dist</directory>
+            </fileset>
+            <fileset>
+              <directory>packages/react-sdk/node_modules</directory>
+            </fileset>
+            <fileset>
+              <directory>examples/react-csr/node_modules</directory>
+            </fileset>
+            <fileset>
+              <directory>examples/react-ssr/node_modules</directory>
+            </fileset>
+            <fileset>
+              <directory>examples/react-csr/build</directory>
+            </fileset>
+            <fileset>
+              <directory>examples/react-ssr/.next</directory>
+            </fileset>
+            <fileset>
               <directory>node</directory>
             </fileset>
             <fileset>
@@ -164,6 +182,8 @@
                 <exclude>yarn.lock</exclude>
                 <exclude>packages/spa-sdk/src/docs/*.md</exclude>
                 <exclude>packages/spa-sdk/.*</exclude>
+                <exclude>examples/*/.env</exclude>
+                <exclude>examples/react-ssr/next-env.d.ts</exclude>
                 <exclude>**/ADDITIONAL-LICENSES.yml</exclude>
               </excludes>
             </configuration>

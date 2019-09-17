@@ -1,7 +1,8 @@
 /node/
-/node_modules/
+node_modules/
 /target/
 /packages/*/coverage/
 /packages/*/dist/
 /packages/*/docs/
-/packages/*/node_modules/
+/examples/*/build/
+/examples/*/.next/

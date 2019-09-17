@@ -20,15 +20,15 @@
     "@bloomreach/spa-sdk": "^14.0.0"
   },
   "peerDependencies": {
-    "react": "^16.2.0"
+    "react": "^16.9"
   },
   "devDependencies": {
-    "@babel/core": "^7.5",
+    "@babel/core": "^7.6",
     "@babel/plugin-proposal-object-rest-spread": "^7.5",
     "@babel/preset-env": "^7.6",
     "@babel/preset-react": "^7.0",
     "babel-plugin-transform-async-to-promises": "^0.8",
-    "react": "^16.8",
+    "react": "^16.9",
     "rollup": "^1.21",
     "rollup-plugin-babel": "^4.3",
     "rollup-plugin-terser": "^5.1"
@@ -36,6 +36,7 @@
   "main": "dist/bloomreach-experience-react-sdk.js",
   "scripts": {
     "build": "rollup -c rollup.config.js",
-    "lint": "echo lint not yet implemented for react-sdk"
+    "lint": "echo lint not yet implemented for react-sdk",
+    "test": "echo test not yet implemented for react-sdk"
   }
 }
