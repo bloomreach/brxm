@@ -21,7 +21,6 @@
   height: $editor-toolbar-height;
 
   .hippo-toolbar-section {
-
     > li {
       float: left;
       height: $editor-toolbar-height;
@@ -31,6 +30,7 @@
           margin-left: 20px;
           padding-left: 12px;
         }
+
         .hippo-toolbar-menu-item {
           margin-left: 20px;
         }
@@ -50,6 +50,7 @@
           &.menu-action .menu-action-text,
           &.hippo-toolbar-section-button {
             color: $editor-toolbar-hover-color;
+
             svg {
               color: $editor-toolbar-hover-color;
 
@@ -61,6 +62,7 @@
 
             &.menu-item-active {
               color: $editor-toolbar-active-color;
+
               svg {
                 color: $editor-toolbar-active-color;
               }
@@ -100,7 +102,7 @@
             position: relative;
             top: 1px;
             color: $editor-toolbar-color;
-            
+
             &.hi-times-circle {
               color: $white;
               fill: $editor-toolbar-color;
@@ -125,12 +127,12 @@
           position: relative;
           top: 11px;
 
-          >.menu-action-text {
+          > .menu-action-text {
             vertical-align: top;
           }
 
           // Language dropdown button
-          >.menu-action-icon {
+          > .menu-action-icon {
             display: inline-flex;
             position: relative;
             top: 2px;
@@ -160,7 +162,6 @@
         .hippo-toolbar-menu-item {
           // Draw dropdown menu over border of info panel
           z-index: 3;
-
           position: absolute;
 
           > li {
@@ -195,10 +196,10 @@
 .hippo-editor-toolbar .hippo-toolbar-section {
   div.hippo-toolbar-two-col ul.hippo-toolbar-menu-item,
   div.hippo-toolbar-three-col ul.hippo-toolbar-menu-item {
-    overflow:hidden;
+    overflow: hidden;
 
     > li {
-      float:left;
+      float: left;
       clear: none;
       margin-right: 0;
     }
@@ -233,7 +234,7 @@
   margin-bottom: 1px;
 
   // Draw the bottom border using :after, otherwise it will not completely cover the left border
-  &:after {
+  &::after {
     content: "";
     border-bottom: 1px solid mix($warning-light, $dark-gray);
     left: 0;
@@ -249,6 +250,7 @@
     &:first-child {
       padding-top: 10px;
     }
+
     &:last-child {
       padding-bottom: 10px;
     }

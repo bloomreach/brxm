@@ -35,7 +35,7 @@
     line-height: $forms-select-height;
     width: 24px;
 
-    &:after {
+    &::after {
       border-color: $forms-select-arrow-color transparent;
       border-width: 6px;
     }
@@ -47,7 +47,7 @@
   }
 
   .selectric-hover & {
-    .button:after {
+    .button::after {
       border-color: $forms-select-arrow-hover-color transparent;
     }
   }
@@ -89,6 +89,7 @@
 
 select {
   cursor: pointer;
+
   &[disabled] {
     cursor: auto;
     color: $forms-disabled-color;

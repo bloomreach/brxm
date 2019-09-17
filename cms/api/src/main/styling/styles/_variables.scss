@@ -35,8 +35,8 @@ $top-bar-bottom-border:              1px solid $light-shade;
 $menu-padding-top-bottom:            8px;
 
 // Shadows (copied from Material Design)
-$whiteframe-shadow-8dp:  0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
-$whiteframe-shadow-24dp: 0px 11px 15px -7px rgba(0, 0, 0, 0.2), 0px 24px 38px 3px rgba(0, 0, 0, 0.14), 0px 9px 46px 8px rgba(0, 0, 0, 0.12);
+$whiteframe-shadow-8dp:  0 5px 5px -3px rgba(0, 0, 0, .2), 0 8px 10px 1px rgba(0, 0, 0, .14), 0 3px 14px 2px rgba(0, 0, 0, .12);
+$whiteframe-shadow-24dp: 0 11px 15px -7px rgba(0, 0, 0, .2), 0 24px 38px 3px rgba(0, 0, 0, .14), 0 9px 46px 8px rgba(0, 0, 0, .12);
 
 // Main menu
 $main-menu-width:                    64px;
@@ -56,14 +56,14 @@ $user-menu-width:                    $main-menu-width;
 $user-menu-height:                   70px;
 $user-menu-bgcolor:                  $main-menu-bgcolor;
 $user-menu-current-user-color:       $lighter-shade;
-$user-menu-popup-border:             rgba(0,0,0,0.3);
+$user-menu-popup-border:             rgba(0, 0, 0, .3);
 $user-menu-popup-background:         $white;
 
 // Dashboard
 $dashboard-header-height:            $top-bar-height;
 
 // Modal
-$modal-mask-opacity:                 0.5;
+$modal-mask-opacity:                 .5;
 $modal-border-color:                 transparent;
 $modal-border-width:                 3px;
 $modal-header-color:                 $gray87;
@@ -276,7 +276,6 @@ $file-upload-stripe-bg:             $lighter-shade;
 $permissions-workflow-border:       $modal-border-color;
 $permissions-workflow-separator:    $light-shade;
 
-
 // supported mimetypes that have a specific icon
 $mimetypes: (
   audio
@@ -294,4 +293,3 @@ $mimetypes: (
   xls xlsx
   zip
 );
-

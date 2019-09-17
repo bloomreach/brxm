@@ -1,4 +1,4 @@
-// Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@
 
 .fileinput-button .ellipsis {
   max-width: 500px;
-  padding-left: 0.5em;
+  padding-left: .5em;
   display: inline-block;
   overflow: hidden;
   white-space: nowrap;
@@ -38,7 +38,8 @@
   vertical-align: middle;
 }
 
-.fileinput-buttons, .progress-extended {
+.fileinput-buttons,
+.progress-extended {
   margin-bottom: 5px;
 }
 
@@ -116,6 +117,7 @@
 .fileupload-listing-files .controls {
   width: 35px;
   text-align: center;
+
   .remove {
     cursor: pointer;
   }

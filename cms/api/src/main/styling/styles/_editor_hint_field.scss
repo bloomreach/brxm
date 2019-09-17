@@ -16,14 +16,12 @@
   position: relative;
   top: 2px;
   height: 16px;
-
   text-decoration: none;
 
-  &:after {
+  &::after {
     content: ' ';
     display: block;
     clear: both;
-
     visibility: hidden;
     font-size: 0;
     height: 0;

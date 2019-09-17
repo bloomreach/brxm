@@ -27,7 +27,7 @@
   margin-bottom: 1px;
 
   // Draw the bottom border using :after, otherwise it will not completely cover the left border
-  &:after {
+  &::after {
     content: "";
     border-bottom: 1px solid mix($feedback-error-color, $dark-gray);
     left: 0;
@@ -43,6 +43,7 @@
     &:first-child {
       padding-top: 10px;
     }
+
     &:last-child {
       padding-bottom: 10px;
     }

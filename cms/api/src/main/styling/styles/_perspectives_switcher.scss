@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -33,7 +33,8 @@
         color: $main-menu-text-color;
         line-height: normal;
 
-        img, svg {
+        img,
+        svg {
           display: block;
           margin-left: auto;
           margin-right: auto;
@@ -65,8 +66,10 @@
   .selected {
     border-left: $main-menu-border-size solid $main-menu-selected-border-color;
     border-right: $main-menu-border-size solid $main-menu-selected-bgcolor;
+
     div {
       background-color: $main-menu-selected-bgcolor;
+
       a {
         color: $main-menu-selected-text-color;
 
