@@ -60,6 +60,15 @@
   > img:not(:first-child) {
     position: absolute;
   }
+
+  // Shift stacked translation flags a bit
+  > .hi-folder + img,
+  > .hi-folder-open + img {
+    bottom: -1px;
+    left: auto;
+    right: -1px;
+    top: auto;
+  }
 }
 
 // Stack positions
@@ -91,17 +100,6 @@
 
 .hi-right {
   right: 0;
-}
-
-// Shift stacked translation flags a bit
-.hi-stack {
-  > .hi-folder + img,
-  > .hi-folder-open + img {
-    bottom: -1px;
-    left: auto;
-    right: -1px;
-    top: auto;
-  }
 }
 
 // Default colors of shapes in icons
@@ -249,7 +247,7 @@
 // This was previously a IE11 fix for CMS7-8642: IE11 becomes unresponsive after opening/closing several documents
 // In Edge this should no longer be required, but it actually resolves the issue when icons are used in links
 // (like the tree context-menu button) and can only be clicked at certain points of the icon.
-// For more information see https://connect.microsoft.com/IE/feedback/details/796745/mouse-events-are-not-delivered-at-all-anymore-when-inside-an-svg-a-use-is-removed-from-the-dom
+// For more information see https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/205775/
 svg use {
   pointer-events: none;
 }

@@ -99,10 +99,8 @@
       }
     }
   }
-}
 
-// highlight selected tab
-.hippo-tabs-documents {
+  // highlight selected tab
   .selected:hover,
   .selected {
     border-right-color: $document-tab-selected-bgcolor;
