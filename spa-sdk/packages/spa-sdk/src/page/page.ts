@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
+import { Typed } from 'emittery';
 import { Component, ComponentMeta, ComponentModel } from './component';
 import { ContentModel, Content } from './content';
 import { ContentMap } from './content-map';
+import { Events, PageUpdateEvent } from '../events';
 import { Reference, isReference } from './reference';
 
 /**
@@ -82,7 +84,14 @@ export class Page implements Page {
     protected model: PageModel,
     protected root: Component,
     protected content: ContentMap,
-  ) {}
+    eventBus: Typed<Events>,
+  ) {
+    eventBus.on('page.update', this.onPageUpdate.bind(this));
+  }
+
+  protected onPageUpdate(event: PageUpdateEvent) {
+    event.page.content.forEach((content, reference) => this.content.set(reference, content));
+  }
 
   private static getContentReference(reference: Reference) {
     return  reference.$ref.split('/', 3)[2] || '';

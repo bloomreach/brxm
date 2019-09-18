@@ -19,7 +19,7 @@ import { Content } from './content';
 /**
  * The map holding content objects.
  */
-export interface ContentMap {
+export interface ContentMap extends Map<string, Content> {
   /**
    * Gets a content item by a reference.
    * @param reference The reference to a content item.
@@ -31,5 +31,5 @@ export interface ContentMap {
    * @param reference The reference to a content item.
    * @param content The content.
    */
-  set(reference: string, content: Content): void;
+  set(reference: string, content: Content): this;
 }

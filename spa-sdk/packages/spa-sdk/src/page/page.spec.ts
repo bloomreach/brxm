@@ -14,18 +14,22 @@
  * limitations under the License.
  */
 
+import { Typed } from 'emittery';
 import { Component, TYPE_COMPONENT } from './component';
 import { ContentMap } from './content-map';
 import { Content } from './content';
+import { Events } from '../events';
 import { Page } from './page';
 
 describe('Page', () => {
-  let root: Component;
   let content: ContentMap;
+  let eventBus: Typed<Events>;
+  let root: Component;
 
   beforeEach(() => {
-    root = new Component({ id: 'id', type: TYPE_COMPONENT });
     content = new Map();
+    eventBus = new Typed<Events>();
+    root = new Component({ id: 'id', type: TYPE_COMPONENT });
 
     jest.spyOn(root, 'getComponent');
     jest.spyOn(content, 'get');
@@ -33,7 +37,7 @@ describe('Page', () => {
 
   describe('getComponent', () => {
     it('should forward a call to the root component', () => {
-      const page = new Page({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content);
+      const page = new Page({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus);
       page.getComponent('a', 'b');
 
       expect(root.getComponent).toBeCalledWith('a', 'b');
@@ -44,7 +48,7 @@ describe('Page', () => {
     let page: Page;
 
     beforeEach(() => {
-      page = new Page({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content);
+      page = new Page({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus);
     });
 
     it('should resolve a reference', () => {
@@ -79,17 +83,32 @@ describe('Page', () => {
         },
         root,
         content,
+        eventBus,
       );
 
       expect(page.getTitle()).toBe('something');
     });
 
     it('should return an undefined value', () => {
-      const page1 = new Page({ page: { id: 'id', type: TYPE_COMPONENT, _meta: {} } }, root, content);
-      const page2 = new Page({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content);
+      const page1 = new Page({ page: { id: 'id', type: TYPE_COMPONENT, _meta: {} } }, root, content, eventBus);
+      const page2 = new Page({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus);
 
       expect(page1.getTitle()).toBeUndefined();
       expect(page2.getTitle()).toBeUndefined();
+    });
+  });
+
+  describe('onPageUpdate', () => {
+    it('should update content on page.update event', async () => {
+      const model = { page: { id: 'id', type: TYPE_COMPONENT } };
+      const page = new Page(model, root, content, eventBus);
+      const someContent = new Content({ id: 'some-id', name: 'some-name' });
+
+      expect(page.getContent('some-content')).toBeUndefined();
+      await eventBus.emitSerial('page.update', {
+        page: new Page(model, root, new Map([['some-content', someContent]]), eventBus),
+      });
+      expect(page.getContent('some-content')).toBe(someContent);
     });
   });
 });
