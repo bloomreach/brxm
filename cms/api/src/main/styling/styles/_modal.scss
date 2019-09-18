@@ -129,10 +129,6 @@
       padding: 0;
     }
 
-    .label {
-      padding: 0 0 5px 0;
-    }
-
     .input-row {
       padding: 0 0 16px 0;
 
@@ -158,26 +154,6 @@
       textarea {
         width: 100%;
       }
-    }
-
-    input,
-    select,
-    textarea {
-      border: 1px solid $light-gray;
-    }
-
-    input,
-    select {
-      flex-grow: 1;
-      height: 30px;
-    }
-
-    input {
-      padding: 0 8px 0 8px;
-    }
-
-    textarea {
-      padding: 8px;
     }
   }
 
@@ -406,12 +382,14 @@
 }
 
 // Picker dialog
+$picker-height: 450px;
+
 .hippo-picker {
-  height: 356px;
+  height: $picker-height;
 }
 
 .hippo-picker-list-details {
-  height: 356px;
+  height: $picker-height;
   margin-left: 0;
   background: $white;
   width: auto;
