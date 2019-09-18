@@ -42,7 +42,13 @@ public class SimpleJdomRestTemplateResourceResolver extends AbstractJdomRestTemp
     @Override
     public Resource resolve(String absPath, Map<String, Object> pathVariables, ExchangeHint exchangeHint) throws ResourceException {
         try {
-            final HttpMethod httpMethod = (exchangeHint != null) ? HttpMethod.resolve(exchangeHint.getMethodName()) : HttpMethod.GET;
+            final String methodName = (exchangeHint != null) ? exchangeHint.getMethodName() : null;
+            final HttpMethod httpMethod = (methodName != null && !methodName.isEmpty()) ? HttpMethod.resolve(methodName)
+                    : HttpMethod.GET;
+            if (httpMethod == null) {
+                throw new ResourceException("Invalid HTTP Method name: " + methodName);
+            }
+
             final HttpEntity<?> requestEntity = getRequestEntityObject(exchangeHint);
 
             RestTemplate restTemplate = getRestTemplate();

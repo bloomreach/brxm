@@ -319,12 +319,14 @@ public class RepositoryMapResourceResolverProvider extends MapResourceResolverPr
      * @return Web application name. For CMS or PLATFORM types of applications the 'platform' name is always used.
      */
     private String getWebappName() {
-        HstModelProvider hstModelProvider;
-        if (HstServices.getComponentManager() != null &&
-                (hstModelProvider = HstServices.getComponentManager().getComponent(HstModelProvider.class)) != null) {
-            final String configurationRootPath = hstModelProvider.getHstModel().getConfigurationRootPath();
-            //Extract site name and return it as a value
-            return StringUtils.substringAfterLast(configurationRootPath, ":");
+        if (HstServices.isAvailable()) {
+            final HstModelProvider hstModelProvider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+
+            if (hstModelProvider != null) {
+                final String configurationRootPath = hstModelProvider.getHstModel().getConfigurationRootPath();
+                //Extract site name and return it as a value
+                return StringUtils.substringAfterLast(configurationRootPath, ":");
+            }
         }
 
         //Probably not platform/cms or site app type?

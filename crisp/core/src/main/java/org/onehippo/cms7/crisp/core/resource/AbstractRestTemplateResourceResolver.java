@@ -160,10 +160,11 @@ public abstract class AbstractRestTemplateResourceResolver extends AbstractHttpR
         Binary binary = null;
 
         try {
-            HttpMethod httpMethod = (exchangeHint != null) ? HttpMethod.resolve(exchangeHint.getMethodName()) : null;
-
+            final String methodName = (exchangeHint != null) ? exchangeHint.getMethodName() : null;
+            final HttpMethod httpMethod = (methodName != null && !methodName.isEmpty()) ? HttpMethod.resolve(methodName)
+                    : HttpMethod.GET;
             if (httpMethod == null) {
-                httpMethod = HttpMethod.GET;
+                throw new ResourceException("Invalid HTTP Method name: " + methodName);
             }
 
             RestTemplate restTemplate = getRestTemplate();
