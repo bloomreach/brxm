@@ -77,7 +77,7 @@ describe('initialize', () => {
     expect(page).toBeInstanceOf(Page);
   });
 
-  it('should create a content instance', () => {
+  it('should create a content item instance', () => {
     expect(contentFactory.create).toBeCalledWith(model.content.someContent);
   });
 

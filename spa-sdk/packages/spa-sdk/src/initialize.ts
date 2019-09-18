@@ -23,7 +23,7 @@ import { PageModelUrlBuilder } from './url';
  *
  * @param modelUrlBuilder Function generating an API URL based on the current request.
  * @param componentFactory Factory to produce component entities.
- * @param contentFactory Factory to produce content entities.
+ * @param contentFactory Factory to produce content items.
  * @param config Configuration of the SPA integration with brXM.
  */
 export async function initialize(

@@ -21,14 +21,14 @@ import { Content } from './content';
  */
 export interface ContentMap {
   /**
-   * Gets a content by a reference.
-   * @param reference The reference to a content.
+   * Gets a content item by a reference.
+   * @param reference The reference to a content item.
    */
   get(reference: string): Content | undefined;
 
   /**
-   * Puts a content under a reference.
-   * @param reference The reference to a content.
+   * Puts a content item under a reference.
+   * @param reference The reference to a content item.
    * @param content The content.
    */
   set(reference: string, content: Content): void;

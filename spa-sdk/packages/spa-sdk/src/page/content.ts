@@ -15,7 +15,7 @@
  */
 
 /**
- * Model of a content.
+ * Model of a content item.
  */
 export interface ContentModel {
   id: string;

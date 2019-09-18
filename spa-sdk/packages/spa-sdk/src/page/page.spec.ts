@@ -59,7 +59,7 @@ describe('Page', () => {
       expect(content.get).toBeCalledWith('content-reference');
     });
 
-    it('should return a content', () => {
+    it('should return a content item', () => {
       const someContent = new Content({ id: 'some-id', name: 'some-name' });
       content.set('some-content', someContent);
 

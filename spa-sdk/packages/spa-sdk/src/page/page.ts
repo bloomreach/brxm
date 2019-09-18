@@ -63,7 +63,7 @@ export interface Page {
   getComponent<T extends Component>(...componentNames: string[]): T | undefined;
 
   /**
-   * Gets a content used in the page.
+   * Gets a content item used in the page.
    * @param reference The reference to the content. It can be an object containing
    * an [RFC-6901](https://tools.ietf.org/html/rfc6901) JSON Pointer.
    */

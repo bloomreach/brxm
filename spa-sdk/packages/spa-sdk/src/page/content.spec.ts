@@ -18,7 +18,7 @@ import { Content } from './content';
 
 describe('Content', () => {
   describe('getId', () => {
-    it('should return a content id', () => {
+    it('should return a content item id', () => {
       const content = new Content({ id: 'some-id', name: 'some-name' });
 
       expect(content.getId()).toBe('some-id');
@@ -26,7 +26,7 @@ describe('Content', () => {
   });
 
   describe('getLocale', () => {
-    it('should return a content locale', () => {
+    it('should return a content item locale', () => {
       const content = new Content({ id: 'some-id', name: 'some-name', localeString: 'some-locale' });
 
       expect(content.getLocale()).toBe('some-locale');
@@ -40,7 +40,7 @@ describe('Content', () => {
   });
 
   describe('getName', () => {
-    it('should return a content name', () => {
+    it('should return a content item name', () => {
       const content = new Content({ id: 'some-id', name: 'some-name' });
 
       expect(content.getName()).toBe('some-name');
@@ -48,7 +48,7 @@ describe('Content', () => {
   });
 
   describe('getData', () => {
-    it('should return a content data', () => {
+    it('should return a content item data', () => {
       const content = new Content({ id: 'some-id', name: 'some-name' });
 
       expect(content.getData()).toEqual({ id: 'some-id', name: 'some-name' });
