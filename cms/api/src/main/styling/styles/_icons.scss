@@ -52,6 +52,17 @@
   display: inline-block;
   position: relative;
 
+  // Shift stacked translation flags right of the folder icon
+  &.hi-translation {
+    width: 36px;
+
+    img {
+      position: relative;
+      left: 21px;
+      bottom: 3px;
+    }
+  }
+
   > .hi {
     vertical-align: baseline;
   }
@@ -59,15 +70,6 @@
   > .hi:not(:first-child),
   > img:not(:first-child) {
     position: absolute;
-  }
-
-  // Shift stacked translation flags a bit
-  > .hi-folder + img,
-  > .hi-folder-open + img {
-    bottom: -1px;
-    left: auto;
-    right: -1px;
-    top: auto;
   }
 }
 
