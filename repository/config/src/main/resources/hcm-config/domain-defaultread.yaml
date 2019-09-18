@@ -20,33 +20,6 @@ definitions:
           hipposys:filter: false
           hipposys:type: Reference
           hipposys:value: /hippo:configuration/hippo:derivatives
-      # read access to all user folders needed because the modify-user domain is not path based
-      /users-folders:
-        jcr:primaryType: hipposys:domainrule
-        /users-folder:
-          jcr:primaryType: hipposys:facetrule
-          hipposys:equals: true
-          hipposys:facet: jcr:path
-          hipposys:filter: false
-          hipposys:type: Reference
-          hipposys:value: /hippo:configuration/hippo:users
-        /exclude-users:
-          jcr:primaryType: hipposys:facetrule
-          hipposys:equals: false
-          hipposys:facet: nodetype
-          hipposys:filter: false
-          hipposys:type: Name
-          hipposys:value: hipposys:user
-      # TODO read access required by the CMS for any user (looking up things like password policy properties)
-      /hippo-security-node:
-        jcr:primaryType: hipposys:domainrule
-        /security-node:
-          jcr:primaryType: hipposys:facetrule
-          hipposys:equals: true
-          hipposys:facet: jcr:uuid
-          hipposys:filter: false
-          hipposys:type: Reference
-          hipposys:value: /hippo:configuration/hippo:security
       # TODO shouldn't hippolog be for cms users only?
       /domain-hippolog:
         jcr:primaryType: hipposys:domainrule
@@ -67,36 +40,6 @@ definitions:
           hipposys:filter: false
           hipposys:type: Reference
           hipposys:value: /hippo:configuration/hippo:modules
-      # TODO rather replace 'everybody' with functional role 'workflow-user'
-      /hippo-workflows:
-        jcr:primaryType: hipposys:domainrule
-        /workflow-and-descendants:
-          jcr:primaryType: hipposys:facetrule
-          hipposys:equals: true
-          hipposys:facet: jcr:path
-          hipposys:filter: false
-          hipposys:type: Reference
-          hipposys:value: /hippo:configuration/hippo:workflows
-      # TODO rather replace 'everybody' with functional role 'workflow-user'
-      /hippo-queries:
-        jcr:primaryType: hipposys:domainrule
-        /queries-and-descendants:
-          jcr:primaryType: hipposys:facetrule
-          hipposys:equals: true
-          hipposys:facet: jcr:path
-          hipposys:filter: false
-          hipposys:type: Reference
-          hipposys:value: /hippo:configuration/hippo:queries
-      # TODO rather replace 'everybody' with functional role 'cms-user'
-      /hippo-namespaces:
-        jcr:primaryType: hipposys:domainrule
-        /hippo-namespaces-and-descendants:
-          jcr:primaryType: hipposys:facetrule
-          hipposys:equals: true
-          hipposys:facet: jcr:path
-          hipposys:filter: false
-          hipposys:type: Reference
-          hipposys:value: /hippo:namespaces
       /readonly:
         jcr:primaryType: hipposys:authrole
         hipposys:groups: [everybody]
