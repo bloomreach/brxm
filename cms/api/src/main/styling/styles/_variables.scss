@@ -93,20 +93,17 @@ $hippo-logo-bgcolor:                 $main-menu-bgcolor;
 $hippo-dev-extensions-bgcolor:       $lighter-shade;
 
 // Footer
-$footer-bgcolor:                     $light-shade;
+$footer-bgcolor:                     $grayLightSolid;
 $footer-height:                      40px;
 
 // Document tabs
 $document-tab-width:                 250px;
 $document-tab-height:                $footer-height;
-$document-tab-hover-bgcolor:         $light-shade;
 $document-tab-hover-close-color:     $black;
-$document-tab-selected-bgcolor:      $lightest-shade;
-$document-tab-font-size:             $font-size-small;
-$document-tab-title-color:           $darkest-shade;
-$document-tab-border-color:          $dark-gray;
-$document-tab-close-color:           $dark-gray;
-$document-tab-close-hover-color:     $primary;
+$document-tab-title-color:           $gray60;
+$document-tab-border-color:          $gray12;
+$document-tab-close-color:           $gray60;
+$document-tab-close-hover-color:     $gray87;
 
 // TabsPlugin Document switcher
 $tab-width:                          $document-tab-width;
