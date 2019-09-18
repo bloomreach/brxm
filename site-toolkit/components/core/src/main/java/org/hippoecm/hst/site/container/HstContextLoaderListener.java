@@ -102,7 +102,7 @@ public class HstContextLoaderListener implements ServletContextListener {
         siteConfigurer = new DefaultHstSiteConfigurer();
         ((DefaultHstSiteConfigurer) siteConfigurer).setServletContext(webappContext.getServletContext());
         try {
-            siteConfigurer.initialize(hstModelRegistry);
+            siteConfigurer.initialize(hstModelRegistry, webappContext.getType());
         } catch (ContainerException e) {
             log.error("Error occurred while initializing HstSiteConfigurer.", e);
         }

@@ -19,6 +19,7 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import javax.servlet.ServletConfig;
@@ -44,8 +45,11 @@ import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.util.ServletConfigUtils;
+import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.cms7.services.context.HippoWebappContext.CMS_OR_PLATFORM;
 
 /**
  * DefaultHstSiteConfigurer, implementing {@link HstSiteConfigurer}.
@@ -124,6 +128,8 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
 
     private static final String HST_CONFIG_ENV_PROPERTIES = "${catalina.base}/conf/hst.properties";
 
+    private static final String PLATFORM_CONFIG_ENV_PROPERTIES = "${catalina.base}/conf/platform.properties";
+
     private static final String HST_CONFIGURATION_REFRESH_DELAY_PARAM = "hst-config-refresh-delay";
 
     private static final String FORCEFUL_REINIT_PARAM = "forceful.reinit";
@@ -172,7 +178,7 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
     }
 
     @Override
-    public void initialize(final HstModelRegistry hstModelRegistry) throws ContainerException {
+    public void initialize(final HstModelRegistry hstModelRegistry, final HippoWebappContext.Type webappType) throws ContainerException {
         if (getServletContext() == null) {
             throw new ContainerException("No ServletContext available.");
         }
@@ -192,7 +198,14 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
         lazyHstConfigurationLoading = BooleanUtils.toBoolean(getConfigOrContextInitParameter(HST_LAZY_HST_CONFIGURATION_LOADING_PARAM, "false"));
 
         hstSystemPropertiesOverride = BooleanUtils.toBoolean(getConfigOrContextInitParameter(HST_SYSTEM_PROPERTIES_OVERRIDE_PARAM, "true"));
-        hstConfigEnvProperties = getConfigOrContextInitParameter(HST_CONFIG_ENV_PROPERTIES_PARAM, HST_CONFIG_ENV_PROPERTIES);
+
+        // if we're configuring the platform or CMS, default to a different external properties file than for sites
+        if (CMS_OR_PLATFORM.contains(webappType)) {
+            hstConfigEnvProperties = getConfigOrContextInitParameter(HST_CONFIG_ENV_PROPERTIES_PARAM, PLATFORM_CONFIG_ENV_PROPERTIES);
+        }
+        else {
+            hstConfigEnvProperties = getConfigOrContextInitParameter(HST_CONFIG_ENV_PROPERTIES_PARAM, HST_CONFIG_ENV_PROPERTIES);
+        }
 
         configurationRefreshDelay = NumberUtils.toLong(getConfigOrContextInitParameter(HST_CONFIGURATION_REFRESH_DELAY_PARAM, null), DEFAULT_CONFIGURATION_REFRESH_DELAY);
         this.configuration = getConfiguration();
@@ -438,7 +451,7 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
         {
             Configuration config = loadConfigurationFromProperties(getResourceFile(hstConfigEnvProperties, true));
             if (config != null) {
-                log.info("Adding Configurarion file to HST Configuration: {}", fileParam);
+                log.info("Adding Configuration file to HST Configuration: {}", fileParam);
                 configs.add(config);
             }
         }

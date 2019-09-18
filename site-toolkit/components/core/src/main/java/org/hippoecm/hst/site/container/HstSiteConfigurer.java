@@ -19,6 +19,7 @@ import java.io.Serializable;
 
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
+import org.onehippo.cms7.services.context.HippoWebappContext;
 
 /**
  * HST Site Configurer which loads configuration and initialize/destroy HST container.
@@ -63,7 +64,7 @@ public interface HstSiteConfigurer extends Serializable {
      * @param hstModelRegistry where to register the hstModel for this site
      * @throws ContainerException if fails to load and initialize
      */
-    void initialize(final HstModelRegistry hstModelRegistry) throws ContainerException;
+    void initialize(final HstModelRegistry hstModelRegistry, final HippoWebappContext.Type webappType) throws ContainerException;
 
     /**
      * Destroys HST Container.
