@@ -43,7 +43,7 @@ export async function initialize(
 
   if (model.content) {
     Object.entries(model.content)
-      .forEach(([alias, model]) => content.set(alias, contentFactory(model)));
+      .forEach(([alias, model]) => content.set(alias, contentFactory.create(model)));
   }
 
   return new Page(model, root, content);

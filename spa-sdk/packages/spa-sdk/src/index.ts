@@ -30,14 +30,13 @@ import {
   ContainerItem,
   ContainerModel,
   Container,
-  ContentModel,
-  Content,
+  ContentFactory,
   TYPE_COMPONENT,
   TYPE_COMPONENT_CONTAINER_ITEM,
   TYPE_COMPONENT_CONTAINER,
 } from './page';
 
-const contentFactory = (model: ContentModel) => new Content(model);
+const contentFactory = new ContentFactory();
 const componentFactory = new ComponentFactory()
   .register(TYPE_COMPONENT, (model, children) => new Component(model, children))
   .register<ContainerModel, ContainerItem>(

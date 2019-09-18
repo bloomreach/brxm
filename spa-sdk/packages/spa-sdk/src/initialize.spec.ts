@@ -47,11 +47,12 @@ describe('initialize', () => {
 
   beforeEach(async () => {
     componentFactory = new ComponentFactory();
-    contentFactory = jest.fn(model => new Content(model));
+    contentFactory = new ContentFactory();
     httpClient = jest.fn(async () => model);
     modelUrlBuilder = jest.fn(() => 'http://example.com');
 
     componentFactory.create = jest.fn(model => new Component(model));
+    spyOn(contentFactory, 'create');
 
     page = await initialize(modelUrlBuilder, componentFactory, contentFactory, { httpClient, options, request });
   });
@@ -77,7 +78,7 @@ describe('initialize', () => {
   });
 
   it('should create a content instance', () => {
-    expect(contentFactory).toBeCalledWith(model.content.someContent);
+    expect(contentFactory.create).toBeCalledWith(model.content.someContent);
   });
 
   it('should reject a promise when fetching the page model fails', () => {

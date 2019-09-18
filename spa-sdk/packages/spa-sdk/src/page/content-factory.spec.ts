@@ -14,21 +14,19 @@
  * limitations under the License.
  */
 
-import { ContentModel, Content } from './content';
+import { ContentFactory } from './content-factory';
+import { Content } from './content';
 
-/**
- * The factory to produce content entities out of the content models.
- */
-export interface ContentFactory {
-  /**
-   * Creates a content item from the given model.
-   * @param model The content item model.
-   */
-  create(model: ContentModel): Content;
-}
+describe('ContentFactory', () => {
+  let contentFactory: ContentFactory;
 
-export class ContentFactory {
-  create(model: ContentModel) {
-    return new Content(model);
-  }
-}
+  beforeEach(() => {
+    contentFactory = new ContentFactory();
+  });
+
+  describe('create', () => {
+    it('should return a content item instance', () => {
+      expect(contentFactory.create({ id: 'some-id', name: 'some-name' })).toBeInstanceOf(Content);
+    });
+  });
+});
