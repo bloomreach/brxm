@@ -51,7 +51,7 @@
   .odd {
     margin-bottom: 18px;
     padding-bottom: 18px;
-    border-bottom: 1px solid $light-gray;
+    border-bottom: 1px solid $gray12;
 
     &:last-child,
     .even,
@@ -72,6 +72,9 @@
   }
 
   .hippo-editor-compound-field {
+    border: 1px solid $gray12;
+    border-radius: $editor-field-border-radius;
+
     .even,
     .odd {
       margin-bottom: 16px;
@@ -86,7 +89,7 @@
 
       > .hippo-editor-field-subfield {
         border: none;
-        border-bottom: 1px solid $editor-subfield-border;
+        border-bottom: 1px solid $gray12;
         padding-bottom: 8px;
 
         &:last-child {

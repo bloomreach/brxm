@@ -225,7 +225,7 @@
   margin: 0 -8px;
 
   .hippo-editor-compound-field {
-    margin: 0;
+    margin: 0 0 16px 0;
   }
 
   > .hippo-editor-field {
@@ -239,13 +239,17 @@
       margin-bottom: 8px;
     }
 
-    > .hippo-editor-field-subfield > .hippo-editor-field-subfield-controls {
-      padding: 0;
-    }
-
     > .hippo-editor-field-subfield {
       padding-bottom: 4px;
       padding-top: 8px;
+
+      &:not(:last-child) {
+        border-bottom: 1px solid $gray12;
+      }
+
+      > .hippo-editor-field-subfield-controls {
+        padding: 0;
+      }
     }
   }
 }
@@ -490,4 +494,9 @@
   line-height: normal;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+// ensure that reorder arrows are visible when content block title is not shown
+.content-block-title {
+  min-height: 8px;
 }
