@@ -30,6 +30,10 @@
 
     $modal-select-height: 32px;
 
+    .selectric-wrapper {
+      margin-top: 4px;
+    }
+
     .selectric {
       border: 1px solid $gray60;
       height: $modal-select-height;
