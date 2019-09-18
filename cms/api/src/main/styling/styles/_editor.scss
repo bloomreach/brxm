@@ -148,8 +148,20 @@
     border: 1px solid $editor-subfield-border;
     border-radius: $editor-field-border-radius;
     height: 32px;
+    overflow: hidden;
     padding-left: 8px;
     padding-right: 8px;
+
+    &[multiple] {
+      height: initial;
+      max-height: 200px;
+      padding-left: 0;
+      padding-right: 0;
+
+      option {
+        padding: 4px 8px;
+      }
+    }
   }
 
   .hippo-editor-field-boolean {
@@ -174,6 +186,16 @@
     width: 100%;
   }
 
+  .radiogroup {
+    &.horizontal li:not(:last-child) {
+      margin-right: 16px;
+    }
+
+    &.vertical li:not(:last-child) {
+      margin-bottom: 4px;
+    }
+  }
+
   .hippo-editor-field-textarea {
     line-height: 1.6em;
   }
@@ -191,6 +213,11 @@
     border: none;
     display: block;
     width: 100%;
+  }
+
+  .mirrortemplate_buttons {
+    display: inline-block;
+    padding-top: 4px;
   }
 }
 
@@ -249,10 +276,6 @@
   .hippo-editor-field-title {
     font-size: 14px;
     margin-bottom: 4px;
-
-    + .hippo-hint-field {
-      top: -1px;
-    }
   }
 
   .hippo-editor-field-subfield-input {
