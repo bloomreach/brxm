@@ -24,14 +24,21 @@ import {
 } from './api';
 import { DEFAULT_COMMUNICATION_TIMEOUT } from './utils';
 
-export async function wrapWithTimeout(api: ChildApi): Promise<ChildPromisedApi> {
-  let communicationTimeout: number;
+export async function getTimeoutValue(api: ChildApi): Promise<number> {
+  let timeout = DEFAULT_COMMUNICATION_TIMEOUT;
 
   if (api.getConfig) {
     const config = await api.getConfig();
-    communicationTimeout = config.communicationTimeout;
+
+    if (config.communicationTimeout) {
+      timeout = config.communicationTimeout;
+    }
   }
 
+  return timeout;
+}
+
+export async function wrapWithTimeout(api: ChildApi, timeout: number): Promise<ChildPromisedApi> {
   return Object
     .keys(api)
     .reduce((wrappedApi, methodName) => {
@@ -39,7 +46,7 @@ export async function wrapWithTimeout(api: ChildApi): Promise<ChildPromisedApi> 
         return new Promise(async (resolve, reject) => {
           const timer = setTimeout(() => {
             reject(`${methodName} call timed out`);
-          }, communicationTimeout || DEFAULT_COMMUNICATION_TIMEOUT);
+          }, timeout);
 
           try {
             const value = await api[methodName](...args);
@@ -60,10 +67,11 @@ export async function wrapWithTimeout(api: ChildApi): Promise<ChildPromisedApi> 
  * @param parentOrigin TODO document or remove
  * @param methods TODO document or remove
  */
-export function connectToParent({
+export async function connectToParent({
   parentOrigin,
   methods,
 }: ParentConnectConfig): Promise<ParentPromisedApi> {
-  return wrapWithTimeout(methods)
-    .then(proxyMethods => Penpal.connectToParent({ parentOrigin, methods: proxyMethods }).promise);
+  const timeout = await getTimeoutValue(methods);
+  const proxyMethods = await wrapWithTimeout(methods, timeout);
+  return Penpal.connectToParent({ parentOrigin, methods: proxyMethods }).promise;
 }

@@ -18,7 +18,8 @@ import Penpal from 'penpal';
 import { NavItemMock } from 'projects/navapp/src/app/models/dto/nav-item.mock';
 
 import { ChildApi, ChildConfig, NavItem } from './api';
-import { connectToParent, wrapWithTimeout } from './parent';
+import { connectToParent, getTimeoutValue, wrapWithTimeout } from './parent';
+import { DEFAULT_COMMUNICATION_TIMEOUT } from './utils';
 
 describe('connectToParent', () => {
   const navItemsMock = [
@@ -30,72 +31,92 @@ describe('connectToParent', () => {
     spyOn(Penpal, 'connectToParent').and.returnValue({ promise: Promise.resolve() });
   });
 
-  it('should pass the config methods to penpal', async () => {
-    const parentOrigin = 'about:blank';
-    const config = {
-      parentOrigin,
-      methods: {},
-    };
+  describe('connectToParent', () => {
+    it('should pass the config methods to penpal', async () => {
+      const parentOrigin = 'about:blank';
+      const config = {
+        parentOrigin,
+        methods: {},
+      };
 
-    await connectToParent(config);
+      await connectToParent(config);
 
-    expect(Penpal.connectToParent).toHaveBeenCalledWith({
-      parentOrigin,
-      methods: {},
+      expect(Penpal.connectToParent).toHaveBeenCalledWith({
+        parentOrigin,
+        methods: {},
+      });
     });
   });
 
-  it('should wrap provided api in promises if timeout value is provided', async () => {
-    const api: ChildApi = {
-      getConfig: (): ChildConfig => ({
-        communicationTimeout: 100,
-      }),
-      getNavItems: (): NavItem[] => navItemsMock,
-    };
+  describe('getTimeout', () => {
+    it('should use the default timeout if config is not retrievable', async () => {
+      const api: ChildApi = {};
+      const timeout = await getTimeoutValue(api);
+      expect(timeout).toEqual(DEFAULT_COMMUNICATION_TIMEOUT);
+    });
 
-    const promisedApi = await wrapWithTimeout(api);
-    const navItems = await promisedApi.getNavItems();
-    expect(navItems).toEqual(navItemsMock);
+    it('should use the default timeout if timeout is not provided', async () => {
+      const api: ChildApi = {
+        getConfig: (): ChildConfig => ({}),
+      };
+      const timeout = await getTimeoutValue(api);
+      expect(timeout).toEqual(DEFAULT_COMMUNICATION_TIMEOUT);
+    });
+
+    it('should use the provided timeout value if provided', async () => {
+      const api: ChildApi = {
+        getConfig: (): ChildConfig => ({
+          communicationTimeout: 100,
+        }),
+      };
+      const timeout = await getTimeoutValue(api);
+      expect(timeout).toEqual(100);
+    });
   });
 
-  it('wrapped api methods should reject after timeout', async () => {
-    const api: ChildApi = {
-      getConfig: (): ChildConfig => ({
-        communicationTimeout: 100,
-      }),
-      navigate: (): Promise<void> => new Promise(resolve => {
-        setTimeout(resolve, 101);
-      }),
-    };
+  describe('wrapWithTimeout', () => {
+    it('should wrap provided api in promises if timeout value is provided', async () => {
+      const api: ChildApi = {
+        getNavItems: (): NavItem[] => navItemsMock,
+      };
 
-    const promisedApi = await wrapWithTimeout(api);
+      const promisedApi = await wrapWithTimeout(api, 1);
+      const navItems = await promisedApi.getNavItems();
+      expect(navItems).toEqual(navItemsMock);
+    });
 
-    try {
-      await promisedApi.navigate({ path: 'test' });
-    } catch (err) {
-      // Error should be thrown because of timeout, so all is good
-      return;
-    }
+    it('wrapped api methods should reject after timeout', async () => {
+      const api: ChildApi = {
+        navigate: (): Promise<void> => new Promise(resolve => {
+          setTimeout(resolve, 101);
+        }),
+      };
 
-    throw new Error('Promise should have been rejected because of timeout');
+      const promisedApi = await wrapWithTimeout(api, 100);
+
+      try {
+        await promisedApi.navigate({ path: 'test' });
+      } catch (err) {
+        // Error should be thrown because of timeout, so all is good
+        return;
+      }
+
+      throw new Error('Promise should have been rejected because of timeout');
+    });
+
+    it('wrapped api methods should pass be able to get rejected', async () => {
+      const errorMessage = 'Throwing error from method';
+      const api: ChildApi = {
+        navigate: (): Promise<void> => Promise.reject(errorMessage),
+      };
+
+      const promisedApi = await wrapWithTimeout(api, 100);
+
+      try {
+        await promisedApi.navigate({ path: 'test' });
+      } catch (err) {
+        expect(err).toEqual(errorMessage);
+      }
+    });
   });
-
-  it('wrapped api methods should pass be able to get rejected', async () => {
-    const errorMessage = 'Throwing error from method';
-    const api: ChildApi = {
-      getConfig: (): ChildConfig => ({
-        communicationTimeout: 100,
-      }),
-      navigate: (): Promise<void> => Promise.reject(errorMessage),
-    };
-
-    const promisedApi = await wrapWithTimeout(api);
-
-    try {
-      await promisedApi.navigate({ path: 'test' });
-    } catch (err) {
-      expect(err).toEqual(errorMessage);
-    }
-  });
-
 });
