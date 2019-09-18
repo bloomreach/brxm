@@ -46,6 +46,7 @@
           id: this.frameId,
           autoEl: {
             tag: 'iframe',
+            'class': 'channelmanager-iframe',
             frameborder: 0,
             src: config.url || 'about:blank'
           },
@@ -78,45 +79,7 @@
     },
 
     _connectToChild: function () {
-      if (!window.Hippo.SubApp){
-        window.Hippo.SubApp = {};
-      }
-      window.Hippo.SubApp['channelmanager-iframe'] = {};
-      window.Hippo.Cms = {};
-
-      window.Hippo.Cms.showMask = function() {
-        window.Hippo.AppToNavApp.showMask();
-      };
-
-      window.Hippo.Cms.hideMask = function() {
-        window.Hippo.AppToNavApp.hideMask();
-      };
-
-      window.Hippo.Cms.updateNavLocation = function(location){
-        var newLocation = {
-          path: location.path,
-          breadcrumbLabel: location.breadcrumbLabel
-        };
-        window.Hippo.currentNavLocation = newLocation;
-        window.Hippo.AppToNavApp.updateNavLocation(newLocation);
-      };
-
-      if (window.parent === window) { // cms is top window
-        return;
-      }
-      var iFrameElement, subAppConnectConfig, promise;
-      iFrameElement = this._getFrame(); // get iframe element of perspective
-      // Config object sent to subapp when connecting.
-      subAppConnectConfig = {
-        iframe: iFrameElement,
-        methods: window.Hippo.Cms
-      };
-      promise = window.bloomreach['navapp-communication']
-        .connectToChild(subAppConnectConfig);
-      promise.then( function(childApi){Object.assign(window.Hippo.SubApp['channelmanager-iframe'], childApi);
-      }, function(error){
-        console.error(error);
-      });
+      window.Hippo.iframeConnections.registerIframe(this._getFrame());
     },
 
     _getFrameLocation: function () {

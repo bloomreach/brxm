@@ -80,6 +80,7 @@ public class CmsSubAppIFrameCommunicationBehavior extends Behavior {
                     super.onComponentTag(tag);
                     tag.put("src", CmsSubAppIFrameCommunicationBehavior.this.iFrameElementSrc);
                     tag.put("id", CmsSubAppIFrameCommunicationBehavior.this.iFrameElementId);
+                    tag.put("class", CmsSubAppIFrameCommunicationBehavior.this.iFrameElementId);
                 }
             });
         }
