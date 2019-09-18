@@ -430,16 +430,16 @@ $picker-height: 450px;
 
 .hippo-picker-properties {
   align-items: center;
+  background-color: $grayLightSolid;
   clear: both;
   height: 48px;
   padding: 0 16px;
   margin-top: 0;
-  border-bottom: 1px solid $gray12;
   display: flex;
 
   label {
     display: flex;
-    margin-right: 4px;
+    margin-right: 8px;
     white-space: nowrap;
   }
 
@@ -449,7 +449,9 @@ $picker-height: 450px;
 
     input {
       flex: 1 1 auto;
-      border: 1px solid $light-shade;
+      border: 1px solid $editor-subfield-border;
+      border-radius: $editor-field-border-radius;
+      height: 26px;
       padding: 2px 4px;
     }
   }
