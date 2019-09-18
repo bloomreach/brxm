@@ -14,28 +14,10 @@
 
 .hippo-hint-field {
   position: relative;
-  top: 2px;
-  height: 16px;
-  text-decoration: none;
+  top: -1px;
 
-  &::after {
-    content: ' ';
-    display: block;
-    clear: both;
-    visibility: hidden;
-    font-size: 0;
-    height: 0;
-  }
-
-  &__icon {
-    display: inline-block;
-    height: 16px;
-    vertical-align: top;
-    position: relative;
-
-    .hi {
-      color: $editor-field-title-color;
-      fill: $editor-field-title-color;
-    }
+  .hi {
+    color: $editor-field-title-color;
+    fill: $editor-field-title-color;
   }
 }
