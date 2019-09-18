@@ -15,6 +15,8 @@
  */
 package org.onehippo.cms7.services.context;
 
+import java.util.EnumSet;
+
 import javax.servlet.ServletContext;
 
 public final class HippoWebappContext {
@@ -24,7 +26,9 @@ public final class HippoWebappContext {
         CMS,
         SITE,
         OTHER
-    };
+    }
+
+    public static final EnumSet<Type> CMS_OR_PLATFORM = EnumSet.of(Type.CMS, Type.PLATFORM);
 
     private final Type type;
     private final ServletContext servletContext;
