@@ -465,6 +465,7 @@ $picker-height: 450px;
   .hippo-dialog-type,
   .hippo-dialog-alt {
     display: flex;
+    align-items: center;
 
     label {
       line-height: 24px;
@@ -478,7 +479,10 @@ $picker-height: 450px;
 
   .hippo-dialog-type select,
   .hippo-dialog-align select {
-    margin-top: 4px;
+    border: 1px solid $editor-subfield-border;
+    background-color: transparent;
+    border-radius: $editor-field-border-radius;
+    height: 32px;
   }
 
   .hippo-dialog-alt,

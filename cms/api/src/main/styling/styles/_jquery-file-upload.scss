@@ -18,6 +18,10 @@
   flex-wrap: nowrap;
 }
 
+.fileupload-buttonbar .btn {
+  margin-bottom: 0 !important;
+}
+
 .fileupload-buttonbar .fileinput-button input {
   width: 100%;
   height: 100%;
