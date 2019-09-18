@@ -24,44 +24,6 @@
 (function () {
   'use strict';
 
-  // Implementation of the Child API
-  if (!Hippo.SubApp){
-    Hippo.SubApp = {};
-  }
-  Hippo.SubApp['${iFrameElementId}'] = {};
-
-  // Receiver object for the implementation of the Parent API
-  Hippo.Cms = {
-    showMask () {
-      Hippo.AppToNavApp.showMask();
-    },
-    hideMask () {
-      Hippo.AppToNavApp.hideMask();
-    },
-    updateNavLocation(location) {
-      Hippo.currentNavLocation = {
-        path: location.path,
-        breadcrumbLabel: location.breadcrumbLabel
-      };
-      Hippo.AppToNavApp.updateNavLocation(Hippo.currentNavLocation);
-    }
-  };
-
-  if (window.parent === window) { // cms is top window
-    return;
-  }
-
-  const iFrameElement = window.document.getElementById('${iFrameElementId}'); // get iframe element of perspective
-  // Config object sent to subapp when connecting.
-  const subAppConnectConfig = {
-    iframe: iFrameElement,
-    methods: Hippo.Cms,
-  };
-  window.bloomreach['navapp-communication'].connectToChild(subAppConnectConfig)
-    .then(childApi => {
-      Object.assign(Hippo.SubApp['${iFrameElementId}'], childApi);
-    })
-    .catch(error => console.error(error));
-
+  Hippo.iframeConnections.registerIframe(window.document.getElementById('${iFrameElementId}'));
 }());
 //# sourceURL=cms-subapp-iframe-communication.js
