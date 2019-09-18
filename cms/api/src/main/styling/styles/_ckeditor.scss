@@ -23,18 +23,18 @@
 
 // override default CKEditor styling
 .hippo-root {
-
   // use same border color as other fields
-  .cke,
-  .cke_top,
-  .cke_bottom {
+  .cke {
     border-color: $editor-subfield-border;
+    border-radius: $editor-field-border-radius;
+    overflow: hidden; // prevent background-color bleeding over rounded corners
   }
 
   // use custom background color and fonts in the toolbars
   .cke_top,
   .cke_bottom {
     background: $ckeditor-toolbar-bgcolor;
+    border-color: $gray12;
 
     * {
       font-family: $font-family-base;

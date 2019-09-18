@@ -175,15 +175,17 @@ $tree-hover-background-color:        $gray5;
 $tree-selected-font-weight:          600;
 
 // Editor
-$editor-bgcolor:                     $lightest-shade;
-$editor-color:                       $darkest-shade;
+$editor-bgcolor:                     $grayLightSolid;
 $editor-body-border-color:           $light-shade;
+$editor-field-border-radius:         4px;
 $editor-subfield-bg:                 $white;
-$editor-field-title-color:           $darker-shade;
-$editor-subfield-border:             $light-gray;
-$editor-compound-field-border:       $light-gray;
+$editor-field-title-color:           $gray60;
+$editor-subfield-border:             $gray60;
+$editor-subfield-in-compound-border: $gray12;
+$editor-compound-field-color:        $gray87;
+$editor-compound-field-border:       $gray12;
 $editor-padding:                     32px;
-$editor-field-bgs:                   ($lighter-shade, $light-shade, $light-gray, $dark-gray, $dark-shade);
+$editor-field-bgs:                   (transparent, $lighter-shade, $light-shade, $light-gray, $dark-gray);
 
 // Editor preview
 $editor-preview-field-bgcolor:       $lightest-shade;
@@ -205,7 +207,7 @@ $validation-border:                  $danger;
 $validation-message-color:           $danger;
 
 // CKEditor
-$ckeditor-toolbar-bgcolor:           $lightest-shade;
+$ckeditor-toolbar-bgcolor:           $gray5;
 
 // Hippo dropdown/context menu
 $hippo-menu-bgcolor:                 $white;
@@ -229,7 +231,6 @@ $forms-select-items-hover-bgcolor:   $gray5;
 $datepicker-fontsize:                13px;
 $datepicker-button-bgcolor:          $lighter-shade;
 $datepicker-button-border:           $light-gray;
-$datepicker-button-border-radius:    3px;
 
 // Hippo icon default colors
 $hippo-icon-delete-enabled:          $danger;
