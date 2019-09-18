@@ -22,8 +22,8 @@
  */
 
 import { Typed } from 'emittery';
-import { Spa } from './spa';
-import { buildPageModelUrl } from './url';
+import { Events } from './events';
+import { Cms, Window } from './cms';
 import {
   ComponentFactory,
   Component,
@@ -40,12 +40,16 @@ import {
   TYPE_COMPONENT_CONTAINER,
   TYPE_META_COMMENT,
 } from './page';
+import { Spa } from './spa';
+import { buildPageModelUrl } from './url';
+
+declare const window: Window | undefined;
+
+const eventBus = new Typed<Events>();
 
 const metaFactory = new MetaFactory()
   .register(TYPE_META_COMMENT, (model, position) => new MetaComment(model, position));
-
 const contentFactory = new ContentFactory(model => new Content(model, metaFactory.create(model._meta)));
-
 const componentFactory = new ComponentFactory()
   .register(
     TYPE_COMPONENT,
@@ -57,30 +61,30 @@ const componentFactory = new ComponentFactory()
   )
   .register<ContainerItemModel>(
     TYPE_COMPONENT_CONTAINER_ITEM,
-    model => new ContainerItem(model, metaFactory.create(model._meta)),
+    model => new ContainerItem(model, eventBus, metaFactory.create(model._meta)),
   );
+
+const cms = new Cms(eventBus, window);
+const spa = new Spa(buildPageModelUrl, componentFactory, contentFactory, eventBus, cms);
 
 /**
  * Initializes the page model.
  *
  * @param config Configuration of the SPA integration with brXM.
  */
-export const initialize = (() => {
-  const spa = new Spa(
-    buildPageModelUrl,
-    componentFactory,
-    contentFactory,
-    new Typed(),
-  );
+export const initialize = spa.initialize.bind(spa);
 
-  return spa.initialize.bind(spa);
-})();
+/**
+ * Destroys the integration with the SPA page.
+ * @param page Page instance to destroy.
+ */
+export const destroy = spa.destroy.bind(spa);
 
 export {
   Component,
   ContainerItem,
   Container,
-  MetaComment,
+  Content,
   Meta,
   Page,
   META_POSITION_BEGIN,

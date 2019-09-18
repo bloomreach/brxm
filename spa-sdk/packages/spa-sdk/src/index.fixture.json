@@ -30,21 +30,29 @@
     }
   },
   "page": {
+    "id": "r1",
     "name": "test",
     "type": "COMPONENT",
     "components": [
       {
+        "id": "r1_r1",
         "name": "main",
         "type": "CONTAINER_COMPONENT",
         "xtype": "hst.vbox",
         "components": [
           {
+            "id": "r1_r1_r1",
             "name": "banner",
             "label": "Banner",
             "type": "CONTAINER_ITEM_COMPONENT",
             "models": {
               "document": {
                 "$ref": "/content/u895fb1b6410d497298946b6a06d2b361"
+              }
+            },
+            "_links": {
+              "componentRendering": {
+                "href": "/site/_cmsinternal/spa-csr/resourceapi?_hn:type=component-rendering&_hn:ref=r1_r1_r1&org.hippoecm.hst.container.render_host=127.0.0.1"
               }
             },
             "_meta": {
@@ -69,12 +77,18 @@
             }
           },
           {
+            "id": "r1_r1_r2",
             "name": "banner1",
             "label": "Banner",
             "type": "CONTAINER_ITEM_COMPONENT",
             "models": {
               "document": {
                 "$ref": "/content/u9a3f1f5c530243c49bec584e810ffa2f"
+              }
+            },
+            "_links": {
+              "componentRendering": {
+                "href": "/site/_cmsinternal/spa-csr/resourceapi?_hn:type=component-rendering&_hn:ref=r1_r1_r2&org.hippoecm.hst.container.render_host=127.0.0.1"
               }
             },
             "_meta": {
@@ -101,6 +115,11 @@
         ]
       }
     ],
+    "_links": {
+      "componentRendering": {
+        "href": "/site/_cmsinternal/spa-csr/resourceapi?_hn:type=component-rendering&_hn:ref=r1&org.hippoecm.hst.container.render_host=127.0.0.1"
+      }
+    },
     "_meta": {
       "endNodeSpan": [
         {

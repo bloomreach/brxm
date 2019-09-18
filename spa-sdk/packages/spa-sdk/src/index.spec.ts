@@ -15,13 +15,29 @@
  */
 
 import { default as model } from './index.fixture.json';
-import { initialize, Container, Page, META_POSITION_BEGIN, META_POSITION_END, TYPE_CONTAINER_BOX } from './index';
+import {
+  destroy,
+  initialize,
+  Container,
+  ContainerItem,
+  Page,
+  META_POSITION_BEGIN,
+  META_POSITION_END,
+  TYPE_CONTAINER_BOX,
+} from './index';
+import { Window } from './cms';
+import { PageModel } from './page';
+
+declare const window: Window;
 
 describe('initialize', () => {
   let page: Page;
+  const httpClient = jest.fn(async () => model as unknown as PageModel);
 
   beforeEach(async () => {
+    httpClient.mockClear();
     page = await initialize({
+      httpClient,
       request: { path: '/' },
       options: {
         live: {
@@ -31,8 +47,13 @@ describe('initialize', () => {
           pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/my-spa',
         },
       },
-      httpClient: jest.fn(() => Promise.resolve(model)),
     });
+
+    window.SPA!.init({ sync: jest.fn() });
+  });
+
+  afterEach(() => {
+    destroy(page);
   });
 
   it('should be a page entity', () => {
@@ -121,5 +142,28 @@ describe('initialize', () => {
     expect(meta).toBeDefined();
     expect(meta.getPosition()).toBe(META_POSITION_BEGIN);
     expect(JSON.parse(meta.getData())).toMatchSnapshot();
+  });
+
+  it('should react on a component rendering', async () => {
+    const banner0 = page.getComponent('main', 'banner') as ContainerItem;
+    const banner1 = page.getComponent('main', 'banner1') as ContainerItem;
+    const listener0 = jest.fn();
+    const listener1 = jest.fn();
+
+    httpClient.mockClear();
+    banner0.on('update', listener0);
+    banner1.on('update', listener1);
+
+    httpClient.mockImplementationOnce(async () => ({
+      ...model,
+      page: model.page.components[0].components[0],
+    }));
+
+    window.SPA!.renderComponent('r1_r1_r1', {});
+    await new Promise(resolve => process.nextTick(resolve));
+
+    expect(httpClient).toBeCalledWith(expect.objectContaining({ url: banner0.getModelUrl() }));
+    expect(listener0).toBeCalled();
+    expect(listener1).not.toBeCalled();
   });
 });
