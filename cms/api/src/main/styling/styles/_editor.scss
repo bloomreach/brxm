@@ -115,14 +115,12 @@
 
   .dialog-link,
   .hippo-editor-field-textarea,
-  select,
   .hippo-editor-field-value-container,
   .yui-date-time-field input {
     background-color: $editor-subfield-bg;
     border: 1px solid $editor-subfield-border;
     border-radius: $editor-field-border-radius;
     box-sizing: border-box;
-    font-size: 13px;
     padding: 8px;
 
     .hippo-editor-large & {
@@ -143,6 +141,15 @@
 
   input[type="checkbox"] {
     width: auto;
+  }
+
+  select {
+    background: none;
+    border: 1px solid $editor-subfield-border;
+    border-radius: $editor-field-border-radius;
+    height: 32px;
+    padding-left: 8px;
+    padding-right: 8px;
   }
 
   .hippo-editor-field-boolean {
