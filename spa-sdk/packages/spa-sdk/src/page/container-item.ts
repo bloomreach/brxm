@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
+import { Typed } from 'emittery';
 import { Component, ComponentMeta, ComponentModel, ComponentParameters } from './component';
+import { EmitterMixin, Emitter } from '../emitter';
+import { Events, PageUpdateEvent } from '../events';
 import { Meta } from './meta';
 
 /**
@@ -48,9 +51,18 @@ export interface ContainerItemModel extends ComponentModel {
 }
 
 /**
+ * Container item update event.
+ */
+export interface ContainerItemUpdateEvent {}
+
+interface ContainerItemEvents {
+  update: ContainerItemUpdateEvent;
+}
+
+/**
  * A component that can be configured in the UI.
  */
-export interface ContainerItem extends Component {
+export interface ContainerItem extends Component, Emitter<ContainerItemEvents> {
   /**
    * Returns the type of a container item. The available types depend on which
    * container items have been configured in the backend.
@@ -68,9 +80,20 @@ export interface ContainerItem extends Component {
   isHidden(): boolean;
 }
 
-export class ContainerItem extends Component implements ContainerItem {
-  constructor(protected model: ContainerItemModel, meta: Meta[] = []) {
+export class ContainerItem extends EmitterMixin<ContainerItemEvents>(Component) implements ContainerItem {
+  constructor(protected model: ContainerItemModel, eventBus: Typed<Events>, meta: Meta[] = []) {
     super(model, [], meta);
+    eventBus.on('page.update', this.onPageUpdate.bind(this));
+  }
+
+  protected onPageUpdate(event: PageUpdateEvent) {
+    const component = event.page.getComponent();
+    if (!(component instanceof ContainerItem) || component === this || component.getId() !== this.getId()) {
+      return;
+    }
+
+    this.meta = component.getMeta();
+    this.emit('update', {});
   }
 
   getType() {

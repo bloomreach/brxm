@@ -106,6 +106,10 @@ export class Component implements Component {
     protected meta: Meta[] = [],
   ) {}
 
+  protected getId() {
+    return this.model.id;
+  }
+
   getMeta() {
     return this.meta;
   }
