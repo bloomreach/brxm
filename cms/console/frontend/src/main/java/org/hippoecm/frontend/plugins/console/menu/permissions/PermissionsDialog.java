@@ -57,16 +57,44 @@ public class PermissionsDialog extends Dialog<Node> {
 
     private final IModel<String> selectedUserModel;
     private final Label membershipsLabel;
+    private final Label userRolesLabel;
     private final Label actionsLabel;
     private final Label privilegesLabel;
-    private final Label allPrivilegesLabel;
+    private final Label exception;
 
     public PermissionsDialog(final PermissionsPlugin plugin) {
         setSize(DialogConstants.LARGE_AUTO);
         setModel(plugin.getModel());
 
-        selectedUserModel = Model.of("admin");
+        selectedUserModel = Model.of("<<unknown>>");
 
+        membershipsLabel = new Label("memberships", "None");
+        membershipsLabel.setOutputMarkupId(true);
+        add(membershipsLabel);
+
+        userRolesLabel = new Label("userRoles", "None");
+        userRolesLabel.setOutputMarkupId(true);
+        add(userRolesLabel);
+
+        actionsLabel = new Label("actions", "None");
+        actionsLabel.setOutputMarkupId(true);
+        add(actionsLabel);
+
+        privilegesLabel = new Label("privileges", "None");
+        privilegesLabel.setOutputMarkupId(true);
+        add(privilegesLabel);
+
+        exception = new Label("exception", "None");
+        exception.setOutputMarkupId(true);
+        add(exception);
+
+        final Node subject = getModelObject();
+        try {
+            final Session jcrSession = subject.getSession();
+            selectedUserModel.setObject(jcrSession.getUserID());
+        } catch (RepositoryException e) {
+            log.error("Could not set selected user", e);
+        }
         final SecurityService securityService = HippoServiceRegistry.getService(SecurityService.class);
         final List<String> userIDs = new ArrayList<>();
         final Iterable<User> users = securityService.getUsers(0, 0);
@@ -82,35 +110,16 @@ public class PermissionsDialog extends Dialog<Node> {
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
                 loadPermissions();
-                target.add(membershipsLabel, allPrivilegesLabel, actionsLabel, privilegesLabel);
+                target.add(membershipsLabel, userRolesLabel, actionsLabel, privilegesLabel, exception);
             }
         });
         add(userDropDown);
-
-        membershipsLabel = new Label("memberships", "None");
-        membershipsLabel.setOutputMarkupId(true);
-        add(membershipsLabel);
-
-        final Label allActionsLabel = new Label("all-actions", "None");
-        allActionsLabel.setDefaultModel(Model.of(StringUtils.join(JCR_ACTIONS, ", ")));
-        add(allActionsLabel);
-
-        allPrivilegesLabel = new Label("all-privileges", "None");
-        allPrivilegesLabel.setOutputMarkupId(true);
-        add(allPrivilegesLabel);
-
-        actionsLabel = new Label("actions", "None");
-        actionsLabel.setOutputMarkupId(true);
-        add(actionsLabel);
-
-        privilegesLabel = new Label("privileges", "None");
-        privilegesLabel.setOutputMarkupId(true);
-        add(privilegesLabel);
 
         loadPermissions();
 
         setOkVisible(false);
         setFocusOnCancel();
+
     }
 
     private void loadPermissions() {
@@ -131,16 +140,38 @@ public class PermissionsDialog extends Dialog<Node> {
                 privileges.removeAll(JCR_ALL_PRIVILEGES);
                 privileges.remove(JCR_WRITE);
             }
-            final Set<String> supportedPrivileges = getSupportedPrivileges(subjectPath, selectedUserJcrSession);
             final Set<String> actions = getAllowedActions(subjectPath, selectedUserJcrSession, JCR_ACTIONS);
+            final Set<String> userRoles = selectedUserJcrSession.getUser().getUserRoles();
+            if (userRoles.isEmpty()) {
+                userRolesLabel.setDefaultModel(Model.of("<<none>>"));
+            } else {
+                userRolesLabel.setDefaultModel(Model.of(StringUtils.join(userRoles, ", ")));
+            }
 
-            membershipsLabel.setDefaultModel(Model.of(StringUtils.join(getMemberships(selectedUserJcrSession), ", ")));
-            allPrivilegesLabel.setDefaultModel(Model.of(StringUtils.join(supportedPrivileges, ", ")));
-            actionsLabel.setDefaultModel(Model.of(StringUtils.join(actions, ", ")));
-            privilegesLabel.setDefaultModel(Model.of(StringUtils.join(privileges, ", ")));
-
+            final Set<String> memberships = getMemberships(selectedUserJcrSession);
+            if (memberships.isEmpty()) {
+                membershipsLabel.setDefaultModel(Model.of("<<none>>"));
+            } else {
+                membershipsLabel.setDefaultModel(Model.of(StringUtils.join(memberships, ", ")));
+            }
+            if (actions.isEmpty()) {
+                actionsLabel.setDefaultModel(Model.of("<<none>>"));
+            } else {
+                actionsLabel.setDefaultModel(Model.of(StringUtils.join(actions, ", ")));
+            }
+            if (privileges.isEmpty()) {
+                privilegesLabel.setDefaultModel(Model.of("<<none>>"));
+            } else {
+                privilegesLabel.setDefaultModel(Model.of(StringUtils.join(privileges, ", ")));
+            }
+            exception.setDefaultModel(Model.of(""));
         } catch (RepositoryException ex) {
-            actionsLabel.setDefaultModel(Model.of(ex.getClass().getName() + ": " + ex.getMessage()));
+            userRolesLabel.setDefaultModel(Model.of(""));
+            membershipsLabel.setDefaultModel(Model.of(""));
+            actionsLabel.setDefaultModel(Model.of(""));
+            privilegesLabel.setDefaultModel(Model.of(""));
+
+            exception.setDefaultModel(Model.of(String.format("Exception happened: '%s': %s ", ex.getClass().getName(), ex.getMessage())));
         } finally {
             if (selectedUserJcrSession != null) {
                 selectedUserJcrSession.logout();
@@ -165,11 +196,6 @@ public class PermissionsDialog extends Dialog<Node> {
                 .collect(Collectors.toCollection(TreeSet::new));
     }
 
-    private static Set<String> getSupportedPrivileges(final String nodePath, final Session session) throws RepositoryException {
-        return Arrays.stream(session.getAccessControlManager().getSupportedPrivileges(nodePath))
-                .map(Privilege::getName)
-                .collect(Collectors.toCollection(TreeSet::new));
-    }
 
     private static Set<String> getMemberships(final HippoSession userSession) throws RepositoryException {
         return new TreeSet<>(userSession.getUser().getMemberships());
