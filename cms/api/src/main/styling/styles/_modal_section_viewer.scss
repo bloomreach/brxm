@@ -25,8 +25,31 @@
 
   .section-selection {
     background-color: $picker-section-selection-bgcolor;
-    border-right: $picker-section-selection-border;
-    border-bottom-color: $picker-topbar-bottom-border-color;
+    border-right-color: $picker-section-selection-bgcolor;
+    border-bottom: none;
+
+    $modal-select-height: 32px;
+
+    .selectric {
+      border: 1px solid $gray60;
+      height: $modal-select-height;
+
+      .label {
+        font-size: 16px;
+        line-height: $modal-select-height;
+      }
+
+      .button {
+        height: $modal-select-height;
+        line-height: $modal-select-height;
+      }
+    }
+
+    .selectric-hover .selectric,
+    .selectric-open .selectric {
+      background-color: transparent;
+      border-color: $gray87;
+    }
   }
 
   .section-top {
@@ -35,5 +58,9 @@
 
   .section-view.selected {
     background-color: $picker-section-center-bgcolor;
+  }
+
+  .section-search-input input {
+    height: 32px;
   }
 }
