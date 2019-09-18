@@ -42,7 +42,7 @@ export async function wrapWithTimeout(api: ChildApi): Promise<ChildPromisedApi> 
           }, communicationTimeout || DEFAULT_COMMUNICATION_TIMEOUT);
 
           try {
-            const value = await api[methodName](args);
+            const value = await api[methodName](...args);
             clearTimeout(timer);
             resolve(value);
           } catch (error) {
