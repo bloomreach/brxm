@@ -96,5 +96,10 @@
       background-color: $search-scope-active-bgcolor;
       border-color: $search-scope-active-bgcolor;
     }
+
+    &:active {
+      background-color: darken($search-scope-active-bgcolor, 10%);
+      border-color: darken($search-scope-active-bgcolor, 10%);
+    }
   }
 }
