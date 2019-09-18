@@ -14,7 +14,6 @@
 
 .section-search-input {
   box-sizing: border-box;
-  margin-bottom: 4px;
   width: 100%;
 
   > input {
@@ -63,6 +62,10 @@
   > :first-child {
     margin-right: 4px;
     overflow: hidden;
+  }
+
+  > div {
+    margin-top: 4px;
   }
 
   a {
