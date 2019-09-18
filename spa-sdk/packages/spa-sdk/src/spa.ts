@@ -15,9 +15,10 @@
  */
 
 import { Typed } from 'emittery';
+import { Cms } from './cms';
+import { ComponentFactory, ContentFactory, Content, PageModel, Page } from './page';
 import { Events, CmsUpdateEvent } from './events';
 import { HttpClient, HttpRequest } from './http';
-import { ComponentFactory, ContentFactory, Content, PageModel, Page } from './page';
 import { PageModelUrlBuilder, PageModelUrlOptions } from './url';
 
 /**
@@ -44,18 +45,24 @@ export interface Configuration {
  * SPA entry point interacting with the Channel Manager and the Page Model API.
  */
 export class Spa {
+  private pages = new Map<Page, Configuration>();
+
   /**
    * @param pageModelUrlBuilder Function generating an API URL based on the current request.
    * @param componentFactory Factory to produce component entities.
    * @param contentFactory Factory to produce content entities.
    * @param eventBus Event bus to exchange data between submodules.
+   * @param cms Cms integration instance.
    */
   constructor(
     private pageModelUrlBuilder: PageModelUrlBuilder,
     private componentFactory: ComponentFactory,
     private contentFactory: ContentFactory,
     protected eventBus: Typed<Events>,
-  ) {}
+    protected cms: Cms,
+  ) {
+    this.onCmsUpdate = this.onCmsUpdate.bind(this);
+  }
 
   private async fetchPageModel(config: Configuration) {
     const url = this.pageModelUrlBuilder(config.request, config.options);
@@ -101,16 +108,19 @@ export class Spa {
       model,
       this.initializeRoot(model),
       this.initializeContent(model),
+      this.eventBus,
     );
   }
 
-  protected async onCmsUpdate(config: Configuration, page: Page, event: CmsUpdateEvent) {
-    const model = await this.fetchComponentModel(config, page, event.id, event.properties);
-    if (!model) {
-      return;
-    }
+  protected async onCmsUpdate(event: CmsUpdateEvent) {
+    this.pages.forEach(async (config, page) => {
+      const model = await this.fetchComponentModel(config, page, event.id, event.properties);
+      if (!model) {
+        return;
+      }
 
-    this.eventBus.emit('page.update', { page: this.initializePage(model) });
+      this.eventBus.emit('page.update', { page: this.initializePage(model) });
+    });
   }
 
   /**
@@ -118,11 +128,29 @@ export class Spa {
    * @param config Configuration of the SPA integration with brXM.
    */
   async initialize(config: Configuration) {
+    this.cms.initialize();
+
     const model = await this.fetchPageModel(config);
     const page = this.initializePage(model);
 
-    this.eventBus.on('cms.update', this.onCmsUpdate.bind(this, config, page));
+    if (!this.pages.size) {
+      this.eventBus.on('cms.update', this.onCmsUpdate);
+    }
+
+    this.pages.set(page, config);
 
     return page;
+  }
+
+  /**
+   * Destroys the integration with the SPA page.
+   * @param page Page instance to destroy.
+   */
+  destroy(page: Page) {
+    this.pages.delete(page);
+
+    if (!this.pages.size) {
+      this.eventBus.off('cms.update', this.onCmsUpdate);
+    }
   }
 }

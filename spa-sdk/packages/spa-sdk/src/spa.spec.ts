@@ -16,9 +16,10 @@
 
 import { Typed } from 'emittery';
 import { Events } from './events';
+import { Cms } from './cms';
 import { ComponentFactory, Component, Page, ContentFactory, Content, TYPE_COMPONENT } from './page';
-import { Spa } from './spa';
 import { PageModelUrlBuilder } from './url';
+import { Spa } from './spa';
 
 const model = {
   _meta: {},
@@ -50,6 +51,7 @@ const config = {
 };
 
 describe('Spa', () => {
+  let cms: Cms;
   let componentFactory: ComponentFactory;
   let contentFactory: ContentFactory;
   let eventBus: Typed<Events>;
@@ -57,24 +59,31 @@ describe('Spa', () => {
   let spa: Spa;
 
   beforeEach(() => {
+    eventBus = new Typed<Events>();
+    cms = new Cms(eventBus);
     componentFactory = new ComponentFactory();
     contentFactory = new ContentFactory(jest.fn());
-    eventBus = new Typed<Events>();
     pageModelUrlBuilder = jest.fn(() => 'http://example.com');
 
+    cms.initialize = jest.fn();
     componentFactory.create = jest.fn(model => new Component(model));
     spyOn(contentFactory, 'create');
 
-    spa = new Spa(pageModelUrlBuilder, componentFactory, contentFactory, eventBus);
+    spa = new Spa(pageModelUrlBuilder, componentFactory, contentFactory, eventBus, cms);
   });
 
   describe('initialize', () => {
     let page: Page;
+    let on: jasmine.Spy;
 
     beforeEach(async () => {
       config.httpClient.mockClear();
-      spyOn(eventBus, 'on');
+      on = spyOn(eventBus, 'on');
       page = await spa.initialize(config);
+    });
+
+    it('should initialize a CMS integration', () => {
+      expect(cms.initialize).toBeCalled();
     });
 
     it('should generate a URL', () => {
@@ -103,6 +112,13 @@ describe('Spa', () => {
 
     it('should subscribe for cms.update event', () => {
       expect(eventBus.on).toBeCalledWith('cms.update', expect.any(Function));
+    });
+
+    it('should not subscribe for cms.update event twice', async () => {
+      on.calls.reset();
+      await spa.initialize(config);
+
+      expect(eventBus.on).not.toBeCalledWith('cms.update', expect.anything());
     });
 
     it('should reject a promise when fetching the page model fails', () => {
@@ -152,6 +168,37 @@ describe('Spa', () => {
       it('should emit page.update event', () => {
         expect(eventBus.emit).toBeCalledWith('page.update', { page: expect.any(Page) });
       });
+    });
+  });
+
+  describe('destroy', () => {
+    it('should not emit page.update event after destroy', async () => {
+      const page = await spa.initialize(config);
+      spa.destroy(page);
+
+      spyOn(eventBus, 'emit');
+      await eventBus.emitSerial('cms.update', { id: 'page-id', properties: { a: 'b' } });
+
+      expect(eventBus.emit).not.toBeCalledWith('page.update', expect.anything());
+    });
+
+    it('should unsubscribe from cms.update event', async () => {
+      spyOn(eventBus, 'off');
+
+      const page = await spa.initialize(config);
+      spa.destroy(page);
+
+      expect(eventBus.off).toBeCalledWith('cms.update', expect.any(Function));
+    });
+
+    it('should not unsubscribe from cms.update event when there are pages left', async () => {
+      spyOn(eventBus, 'off');
+
+      const page1 = await spa.initialize(config);
+      const page2 = await spa.initialize(config);
+      spa.destroy(page1);
+
+      expect(eventBus.off).not.toBeCalledWith('cms.update', expect.anything());
     });
   });
 });
