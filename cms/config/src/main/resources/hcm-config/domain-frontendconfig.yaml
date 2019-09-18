@@ -55,7 +55,61 @@ definitions:
           hipposys:filter: true
           hipposys:type: String
           hipposys:value: cms-tree-views/configuration
+      # read access to all user folders needed because the modify-self domain is not path based
+      /hippo-namespaces:
+        jcr:primaryType: hipposys:domainrule
+        /hippo-namespaces-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:filter: false
+          hipposys:type: Reference
+          hipposys:value: /hippo:namespaces
+      /hippo-queries:
+        jcr:primaryType: hipposys:domainrule
+        /queries-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:filter: false
+          hipposys:type: Reference
+          hipposys:value: /hippo:configuration/hippo:queries
+      # TODO read access required by the *CMS* for any user (looking up things like password policy properties)
+      /hippo-security-node:
+        jcr:primaryType: hipposys:domainrule
+        /security-node:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:uuid
+          hipposys:filter: false
+          hipposys:type: Reference
+          hipposys:value: /hippo:configuration/hippo:security
+      /hippo-workflows:
+        jcr:primaryType: hipposys:domainrule
+        /workflow-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:filter: false
+          hipposys:type: Reference
+          hipposys:value: /hippo:configuration/hippo:workflows
+      /users-folders:
+        jcr:primaryType: hipposys:domainrule
+        /users-folder:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:filter: false
+          hipposys:type: Reference
+          hipposys:value: /hippo:configuration/hippo:users
+        /exclude-users:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: false
+          hipposys:facet: nodetype
+          hipposys:filter: false
+          hipposys:type: Name
+          hipposys:value: hipposys:user
       /readonly:
         jcr:primaryType: hipposys:authrole
-        hipposys:groups: [everybody]
+        hipposys:userrole: xm-frontendconfig-reader
         hipposys:role: readonly

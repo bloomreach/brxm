@@ -1,12 +1,17 @@
 definitions:
   config:
     /hippo:configuration/hippo:userroles:
+      /xm-frontendconfig-reader:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
       /xm-cms-user:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:userroles: [xm-frontendconfig-reader]
       /xm-console-user:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:userroles: [xm-frontendconfig-reader]
     /hippo:configuration/hippo:users/admin:
       hipposys:userroles:
         operation: add
