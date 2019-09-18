@@ -130,6 +130,11 @@
       padding: 0;
     }
 
+    .label {
+      color: $editor-field-title-color;
+      margin-bottom: $editor-field-title-bottom-margin;
+    }
+
     .input-row {
       padding: 0 0 16px 0;
 
@@ -155,6 +160,27 @@
       textarea {
         width: 100%;
       }
+    }
+
+    input,
+    select,
+    textarea {
+      border: 1px solid $editor-subfield-border;
+      border-radius: $editor-field-border-radius;
+    }
+
+    input,
+    select {
+      flex-grow: 1;
+      height: 30px;
+    }
+
+    input {
+      padding: 0 8px 0 8px;
+    }
+
+    textarea {
+      padding: 8px;
     }
   }
 
