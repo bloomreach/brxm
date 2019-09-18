@@ -742,6 +742,10 @@ table.hippo-window-form {
     display: block;
     box-sizing: border-box;
 
+    td {
+      padding-bottom: 4px;
+    }
+
     td:not(:first-child) {
       padding-left: 8px;
     }
