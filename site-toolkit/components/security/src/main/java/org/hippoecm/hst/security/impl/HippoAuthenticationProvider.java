@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -89,7 +89,7 @@ public class HippoAuthenticationProvider extends JcrAuthenticationProvider {
     
     @Override
     protected Set<String> getRoleNamesOfUser(String username) throws LoginException, RepositoryException {
-        Set<String> roleNameSet = null;
+        Set<String> roleNameSet;
         Session session = null;
         
         try {
@@ -120,12 +120,13 @@ public class HippoAuthenticationProvider extends JcrAuthenticationProvider {
             result = q.execute();
             nodeIt = result.getNodes();
             
-            roleNameSet = new HashSet<String>();
+            roleNameSet = new HashSet<>();
             
             while (nodeIt.hasNext()) {
                 String roleName = nodeIt.nextNode().getProperty("hipposys:role").getString();
                 roleNameSet.add(roleName);
             }
+            return roleNameSet;
         } finally {
             if (session != null) {
                 try {
@@ -134,12 +135,6 @@ public class HippoAuthenticationProvider extends JcrAuthenticationProvider {
                 }
             }
         }
-        
-        if (roleNameSet == null) {
-            roleNameSet = Collections.emptySet();
-        }
-        
-        return roleNameSet;
     }
     
 }
