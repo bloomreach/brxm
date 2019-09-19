@@ -612,7 +612,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", JCR_MODIFY_PROPERTIES));
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/newprop", Session.ACTION_SET_PROPERTY));
         assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/newprop", Session.ACTION_SET_PROPERTY));
-        // TODO REPO-1971 does below make sense? 'dummy' does not exist...
+        // see REPO-1971 ('dummy' does not exist)
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/dummy", Session.ACTION_REMOVE));
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/dummy", JCR_REMOVE_NODE));
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", JCR_REMOVE_CHILD_NODES));
@@ -634,8 +634,8 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/newprop", Session.ACTION_SET_PROPERTY));
         assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/newprop", Session.ACTION_SET_PROPERTY));
         assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/dummy", Session.ACTION_REMOVE));
-        // TODO REPO-1971 does below make sense? 'dummy' does not exist...
-        assertTrue("REPO-1971 remove on non-existing document is allowed?",
+        // see REPO-1971 ('dummy' does not exist)
+        assertTrue("REPO-1971 remove on non-existing document is allowed",
                 userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/dummy", JCR_REMOVE_NODE));
         assertFalse("REPO-1971 'level1/level2' does exist and should not be allowed to be removed by the userSession",
                 userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2", JCR_REMOVE_NODE));
@@ -658,8 +658,8 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         assertTrue("user should have write access to properties of document",
                 userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/newprop", Session.ACTION_SET_PROPERTY));
         assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/dummy", Session.ACTION_REMOVE));
-        // TODO REPO-1971 does below make sense? 'dummy' does not exist...
-        assertTrue("REPO-1971 remove on non-existing document is allowed?",
+        // see REPO-1971 ('dummy' does not exist)
+        assertTrue("REPO-1971 remove on non-existing document is allowed",
                 userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/dummy", JCR_REMOVE_NODE));
         assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2", JCR_REMOVE_NODE));
         assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1", JCR_REMOVE_CHILD_NODES));
@@ -678,8 +678,8 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1", JCR_MODIFY_PROPERTIES));
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/newprop", Session.ACTION_SET_PROPERTY));
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/dummy", Session.ACTION_REMOVE));
-        // TODO REPO-1971 does below make sense? 'dummy' does not exist...
-        assertTrue("REPO-1971 remove on non-existing document is allowed?",
+        // see REPO-1971 ('dummy' does not exist)
+        assertTrue("REPO-1971 remove on non-existing document is allowed",
                 userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/dummy", JCR_REMOVE_NODE));
         assertFalse("'level2' node is still not readable and thus should not inherit jcr:write",
                 userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2", JCR_REMOVE_NODE));
@@ -699,8 +699,8 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2", JCR_MODIFY_PROPERTIES));
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2/newprop", Session.ACTION_SET_PROPERTY));
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2/dummy", Session.ACTION_REMOVE));
-        // TODO REPO-1971 does below make sense? 'dummy' does not exist...
-        assertTrue("REPO-1971 remove on non-existing document is allowed?",
+        // see REPO-1971 ('dummy' does not exist)
+        assertTrue("REPO-1971 remove on non-existing document is allowed",
                 userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2/dummy", JCR_REMOVE_NODE));
         assertTrue("'level2' node is still not readable and thus should not inherit jcr:write",
                 userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2", JCR_REMOVE_NODE));

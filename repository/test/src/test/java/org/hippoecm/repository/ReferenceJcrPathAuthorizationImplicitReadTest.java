@@ -98,8 +98,8 @@ public class ReferenceJcrPathAuthorizationImplicitReadTest extends AbstractRefer
             bob.checkPermission("/test/folder/sub1", "jcr:read");
             bob.checkPermission("/test/folder/sub1", "jcr:write");
 
-            bob.checkPermission("/test/folder/sub1sub", "jcr:read");
-            bob.checkPermission("/test/folder/sub1sub", "jcr:write");
+            bob.checkPermission("/test/folder/sub1/sub1sub", "jcr:read");
+            bob.checkPermission("/test/folder/sub1/sub1sub", "jcr:write");
 
             assertThat(isAllowed("/test/folder/sub2", "jcr:read", bob))
                     .as("bob should not have read access on sub2")
