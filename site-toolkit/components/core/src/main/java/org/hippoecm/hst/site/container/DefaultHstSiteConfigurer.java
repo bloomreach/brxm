@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
 
 import javax.servlet.ServletConfig;
@@ -152,7 +151,8 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
 
     private boolean lazyHstConfigurationLoading = false;
 
-    private String hstConfigEnvProperties = HST_CONFIG_ENV_PROPERTIES;
+    // This cannot be accurately determined until after setHippoWebappContext() is called
+    private String hstConfigEnvProperties;
 
     // -------------------------------------------------------------------
     // I N I T I A L I Z A T I O N
@@ -164,21 +164,35 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
 
     private ServletContext servletContext;
 
+    private HippoWebappContext webappContext;
+
     private HstModelRegistry hstModelRegistry;
 
     public DefaultHstSiteConfigurer() {
     }
 
-    public ServletContext getServletContext() {
+    private ServletContext getServletContext() {
         return servletContext;
     }
 
-    public void setServletContext(ServletContext servletContext) {
-        this.servletContext = servletContext;
+    protected void setHippoWebappContext(HippoWebappContext webappContext) {
+        if (webappContext == null) {
+            throw new IllegalArgumentException("The HippoWebappContext must not be null!");
+        }
+
+        this.servletContext = webappContext.getServletContext();
+
+        // if we're configuring the platform or CMS, default to a different external properties file than for sites
+        if (CMS_OR_PLATFORM.contains(webappContext.getType())) {
+            hstConfigEnvProperties = getConfigOrContextInitParameter(HST_CONFIG_ENV_PROPERTIES_PARAM, PLATFORM_CONFIG_ENV_PROPERTIES);
+        }
+        else {
+            hstConfigEnvProperties = getConfigOrContextInitParameter(HST_CONFIG_ENV_PROPERTIES_PARAM, HST_CONFIG_ENV_PROPERTIES);
+        }
     }
 
     @Override
-    public void initialize(final HstModelRegistry hstModelRegistry, final HippoWebappContext.Type webappType) throws ContainerException {
+    public void initialize(final HstModelRegistry hstModelRegistry) throws ContainerException {
         if (getServletContext() == null) {
             throw new ContainerException("No ServletContext available.");
         }
@@ -198,14 +212,6 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
         lazyHstConfigurationLoading = BooleanUtils.toBoolean(getConfigOrContextInitParameter(HST_LAZY_HST_CONFIGURATION_LOADING_PARAM, "false"));
 
         hstSystemPropertiesOverride = BooleanUtils.toBoolean(getConfigOrContextInitParameter(HST_SYSTEM_PROPERTIES_OVERRIDE_PARAM, "true"));
-
-        // if we're configuring the platform or CMS, default to a different external properties file than for sites
-        if (CMS_OR_PLATFORM.contains(webappType)) {
-            hstConfigEnvProperties = getConfigOrContextInitParameter(HST_CONFIG_ENV_PROPERTIES_PARAM, PLATFORM_CONFIG_ENV_PROPERTIES);
-        }
-        else {
-            hstConfigEnvProperties = getConfigOrContextInitParameter(HST_CONFIG_ENV_PROPERTIES_PARAM, HST_CONFIG_ENV_PROPERTIES);
-        }
 
         configurationRefreshDelay = NumberUtils.toLong(getConfigOrContextInitParameter(HST_CONFIGURATION_REFRESH_DELAY_PARAM, null), DEFAULT_CONFIGURATION_REFRESH_DELAY);
         this.configuration = getConfiguration();

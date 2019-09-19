@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,8 +27,8 @@ import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.springframework.core.io.FileSystemResourceLoader;
-import org.springframework.mock.web.MockServletConfig;
 import org.springframework.mock.web.MockServletContext;
 
 
@@ -46,6 +46,10 @@ public class TestDefaultHstSiteConfigurer {
             "default.site.name = test-hst-config-project-env\n"
             + "default.site.env.alias = test-hst-env";
 
+    private static final String SIMPLE_PROPS_PLATFORM_ENV_CONF =
+            "default.site.name = test-hst-config-project-env\n"
+                    + "default.site.env.alias = test-hst-platform";
+
     private static final String SIMPLE_XMLCONF_1 =
         "<?xml version='1.0'?>\n" +
         "<configuration>\n" +
@@ -53,6 +57,7 @@ public class TestDefaultHstSiteConfigurer {
         "  <properties fileName='${currentWorkingDirectory}/target/test-hst-config-1.properties'/>" +
         "</configuration>";
 
+    private HippoWebappContext webappContext = null;
     private MockServletContext servletContext = null;
 
     @Before
@@ -60,10 +65,12 @@ public class TestDefaultHstSiteConfigurer {
         FileUtils.writeStringToFile(new File("target/test-hst-config-1.properties"), SIMPLE_PROPS_1, "utf-8");
         FileUtils.writeStringToFile(new File("target/test-hst-config-2.properties"), SIMPLE_PROPS_2, "utf-8");
         FileUtils.writeStringToFile(new File("target/conf/hst.properties"), SIMPLE_PROPS_ENV_CONF, "utf-8");
+        FileUtils.writeStringToFile(new File("target/conf/platform.properties"), SIMPLE_PROPS_PLATFORM_ENV_CONF, "utf-8");
         FileUtils.writeStringToFile(new File("target/test-hst-config-1.xml"), SIMPLE_XMLCONF_1, "utf-8");
         System.setProperty("currentWorkingDirectory", new File("").getCanonicalPath());
         System.setProperty("test.xml.config.foo", "bar");
         servletContext = new MockServletContext("target", new FileSystemResourceLoader());
+        webappContext = new HippoWebappContext(HippoWebappContext.Type.SITE, servletContext);
     }
 
     @After
@@ -73,6 +80,7 @@ public class TestDefaultHstSiteConfigurer {
             FileUtils.deleteQuietly(new File("target/test-hst-config-2.properties"));
             FileUtils.deleteQuietly(new File("target/test-hst-config-3.properties"));
             FileUtils.deleteQuietly(new File("target/conf/hst.properties"));
+            FileUtils.deleteQuietly(new File("target/conf/platform.properties"));
             FileUtils.deleteQuietly(new File("target/test-hst-config-1.xml"));
         } finally {
             System.clearProperty("currentWorkingDirectory");
@@ -176,6 +184,23 @@ public class TestDefaultHstSiteConfigurer {
     }
 
     @Test
+    public void testCheckCompositeConfigurationOverridenByPlatformEnvProperties() throws Exception {
+        servletContext.addInitParameter(HstSiteConfigurer.HST_CONFIG_PROPERTIES_PARAM, "/test-hst-config-1.properties");
+        System.setProperty("catalina.base", new File("target").getCanonicalPath());
+
+        // This test variant simulates the hst-platform context, which uses a different default env config file
+        webappContext = new HippoWebappContext(HippoWebappContext.Type.PLATFORM, servletContext);
+        DefaultHstSiteConfigurer hstSiteConfigurer = createHstSiteConfigurer();
+        Configuration configuration = hstSiteConfigurer.getConfiguration();
+        try {
+            System.setProperty("catalina.base", "");
+            assertEquals("test-hst-platform", configuration.getString("default.site.env.alias"));
+        } finally {
+            System.clearProperty("catalina.base");
+        }
+    }
+
+    @Test
     public void testCheckCompositeConfigurationOverridenByContextProperties() throws Exception {
         servletContext.addInitParameter(HstSiteConfigurer.HST_CONFIG_PROPERTIES_PARAM, "/test-hst-config-2.properties");
         DefaultHstSiteConfigurer hstSiteConfigurer = createHstSiteConfigurer();
@@ -230,7 +255,7 @@ public class TestDefaultHstSiteConfigurer {
 
     private DefaultHstSiteConfigurer createHstSiteConfigurer() {
         DefaultHstSiteConfigurer hstSiteConfigurer = new DefaultHstSiteConfigurer();
-        hstSiteConfigurer.setServletContext(servletContext);
+        hstSiteConfigurer.setHippoWebappContext(webappContext);
         return hstSiteConfigurer;
     }
 }
