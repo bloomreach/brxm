@@ -28,14 +28,19 @@
 
 .error-code {
   color: $blue-500;
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
   padding-top: 25px;
 }
 
 .error-message {
-  font-size: 25px;
+  font-size: 30px;
   font-weight: 600;
+  padding-top: 20px;
+}
+
+.error-description {
+  font-size: 22px;
   padding-top: 20px;
 }
 

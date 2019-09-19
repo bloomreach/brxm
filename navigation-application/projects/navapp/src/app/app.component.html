@@ -27,6 +27,7 @@
       <brna-main-menu></brna-main-menu>
     </nav>
     <main>
+      <brna-error-page *ngIf="error" [error]="error"></brna-error-page>
       <brna-client-app-container></brna-client-app-container>
     </main>
   </mat-sidenav-content>

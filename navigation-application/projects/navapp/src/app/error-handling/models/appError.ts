@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,17 +14,12 @@
  * limitations under the License.
  */
 
-import { NavItem } from '@bloomreach/navapp-communication';
-
-export class NavItemMock implements NavItem {
-  id = 'testNavItemId';
-  displayName = 'testDisplayName';
-  appIframeUrl = 'https://test.url';
-  appPath = 'testPath';
-
-  constructor(initObject = {}) {
-    Object.keys(initObject).forEach(key => {
-      this[key] = initObject[key];
-    });
+export class AppError extends Error {
+  constructor(
+    public code: number,
+    message: string,
+    public description?: string,
+  ) {
+    super(message);
   }
 }

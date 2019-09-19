@@ -14,15 +14,21 @@
  * limitations under the License.
  */
 
+import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 
 import { MaterialModule } from '../shared/material/material.module';
 
 import { ErrorPageComponent } from './components/error-page.component';
+import { ErrorHandlingService } from './services/error-handling.service';
 
 @NgModule({
   imports: [
+    CommonModule,
     MaterialModule,
+  ],
+  providers: [
+    ErrorHandlingService,
   ],
   declarations: [ErrorPageComponent],
   exports: [ErrorPageComponent],

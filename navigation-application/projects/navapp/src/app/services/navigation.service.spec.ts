@@ -20,6 +20,7 @@ import { NavItem, NavLocation } from '@bloomreach/navapp-communication';
 
 import { ClientAppMock } from '../client-app/models/client-app.mock';
 import { ClientAppService } from '../client-app/services/client-app.service';
+import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { NavItemMock } from '../models/dto/nav-item.mock';
 import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
@@ -85,6 +86,10 @@ describe('NavigationService', () => {
     'trimLeadingSlash',
   ]);
 
+  const errorHandlingServiceMock = jasmine.createSpyObj('ErrorHandlingService', [
+    'clearError',
+  ]);
+
   let locationChangeFunction: (value: PopStateEvent) => undefined;
 
   let childApi: any;
@@ -117,15 +122,23 @@ describe('NavigationService', () => {
         { provide: MenuStateService, useValue: menuStateServiceMock },
         { provide: BreadcrumbsService, useValue: breadcrumbsServiceMock },
         { provide: UrlMapperService, useValue: urlMapperServiceMock },
+        { provide: ErrorHandlingService, useValue: errorHandlingServiceMock },
       ],
     });
 
     service = TestBed.get(NavigationService);
   });
 
+  it('should not clear the app error during initial navigation', fakeAsync(() => {
+    service.initialNavigation();
+
+    tick();
+
+    expect(errorHandlingServiceMock.clearError).not.toHaveBeenCalled();
+  }));
+
   describe('initialNavigation', () => {
     beforeEach(async(() => {
-      locationMock.path.and.returnValue('/iframe1/url/app/path/to/home');
       service.initialNavigation();
     }));
 
@@ -149,6 +162,14 @@ describe('NavigationService', () => {
       childApi.navigate.calls.reset();
       menuStateServiceMock.activateMenuItem.calls.reset();
       breadcrumbsServiceMock.setSuffix.calls.reset();
+    }));
+
+    it('should clear the app error during navigation', fakeAsync(() => {
+      service.navigateByNavItem(new NavItemMock(), 'some breadcrumb label');
+
+      tick();
+
+      expect(errorHandlingServiceMock.clearError).toHaveBeenCalled();
     }));
 
     it('should navigate by a nav item ', fakeAsync(() => {

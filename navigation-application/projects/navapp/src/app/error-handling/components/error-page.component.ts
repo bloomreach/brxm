@@ -17,6 +17,7 @@
 import { Component, Input } from '@angular/core';
 
 import { NavigationService } from '../../services/navigation.service';
+import { AppError } from '../models/appError';
 
 @Component({
   selector: 'brna-error-page',
@@ -25,10 +26,7 @@ import { NavigationService } from '../../services/navigation.service';
 })
 export class ErrorPageComponent {
   @Input()
-  errorCode: number;
-
-  @Input()
-  errorMessage: string;
+  error: AppError;
 
   constructor(private navigationService: NavigationService) { }
 

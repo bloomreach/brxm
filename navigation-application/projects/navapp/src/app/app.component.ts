@@ -18,6 +18,8 @@ import { Component, HostBinding, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material';
 import { Observable } from 'rxjs';
 
+import { AppError } from './error-handling/models/appError';
+import { ErrorHandlingService } from './error-handling/services/error-handling.service';
 import { OverlayService } from './services/overlay.service';
 import { RightSidePanelService } from './top-panel/services/right-side-panel.service';
 
@@ -36,10 +38,15 @@ export class AppComponent implements OnInit {
   constructor(
     private overlayService: OverlayService,
     private rightSidePanelService: RightSidePanelService,
+    private errorHandlingService: ErrorHandlingService,
   ) {}
 
   get isOverlayVisible$(): Observable<boolean> {
     return this.overlayService.visible$;
+  }
+
+  get error(): AppError {
+    return this.errorHandlingService.currentError;
   }
 
   ngOnInit(): void {
