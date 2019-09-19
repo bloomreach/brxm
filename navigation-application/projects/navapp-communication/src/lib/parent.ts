@@ -64,8 +64,8 @@ export async function wrapWithTimeout(api: ChildApi, timeout: number): Promise<C
 /**
  * Method to connect to a parent window.
  *
- * @param parentOrigin TODO document or remove
- * @param methods TODO document or remove
+ * @param parentOrigin the origin should match the parent origin or a connection wont be allowed
+ * @param methods the api that the child app exposes to the parent
  */
 export async function connectToParent({
   parentOrigin,
