@@ -6,5 +6,15 @@
       <outputDirectory>conf</outputDirectory>
       <destName>log4j2.xml</destName>
     </file>
+    <file>
+      <source>conf/platform-dev.properties</source>
+      <outputDirectory>conf</outputDirectory>
+      <destName>platform.properties</destName>
+    </file>
+    <file>
+      <source>conf/hst-dev.properties</source>
+      <outputDirectory>conf</outputDirectory>
+      <destName>hst.properties</destName>
+    </file>
   </files>
 </component>
