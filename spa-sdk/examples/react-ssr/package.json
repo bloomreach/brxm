@@ -6,7 +6,7 @@
   "author": "Bloomreach B.V.",
   "license": "Apache-2.0",
   "dependencies": {
-    "@bloomreach/react-sdk": "14.0.0",
+    "@bloomreach/react-sdk": "^14.0",
     "next": "^9.0.5",
     "next-routes": "^1.4.2",
     "react": "^16.9",
