@@ -22,6 +22,7 @@ import { fromPromise } from 'rxjs/internal-compatibility';
 import { catchError, skip, switchMap, tap } from 'rxjs/operators';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
+import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
 
@@ -85,6 +86,7 @@ export class NavigationService implements OnDestroy {
     private breadcrumbsService: BreadcrumbsService,
     private urlMapperService: UrlMapperService,
     private globalSettingsService: GlobalSettingsService,
+    private errorHandlingService: ErrorHandlingService,
   ) {
     this.setupNavigations();
     this.processNavigations();
@@ -168,6 +170,8 @@ export class NavigationService implements OnDestroy {
   }
 
   private navigateByUrl(url: string, breadcrumbLabel?: string, flags?: NavigateFlags): Promise<void> {
+    this.errorHandlingService.clearError();
+
     return this.scheduleNavigation(url, NavigationTrigger.Imperative, { breadcrumbLabel }, { ...flags });
   }
 

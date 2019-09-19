@@ -1,0 +1,74 @@
+/*
+ * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { Injectable } from '@angular/core';
+import { ClientErrorCodes } from '@bloomreach/navapp-communication';
+import { Subject } from 'rxjs';
+
+import { AppError } from '../models/appError';
+
+@Injectable()
+export class ErrorHandlingService {
+  private error: AppError;
+
+  get currentError(): AppError {
+    return this.error;
+  }
+
+  setError(error: AppError): void {
+    this.error = error;
+  }
+
+  setClientError(errorCode: ClientErrorCodes, message?: string): void {
+    const error = new AppError(
+      this.mapClientErrorCodeToHttpErrorCode(errorCode),
+      this.mapClientErrorCodeToText(errorCode),
+      message,
+    );
+
+    this.error = error;
+  }
+
+  clearError(): void {
+    this.error = undefined;
+  }
+
+  private mapClientErrorCodeToHttpErrorCode(code: ClientErrorCodes): number {
+    switch (code) {
+      case ClientErrorCodes.NotAuthorizedError:
+        return 403;
+
+      case ClientErrorCodes.PageNotFoundError:
+        return 404;
+
+      default:
+        return 500;
+    }
+  }
+
+  private mapClientErrorCodeToText(code: ClientErrorCodes): string {
+    switch (code) {
+      case ClientErrorCodes.NotAuthorizedError:
+        return 'Not authorized';
+
+      case ClientErrorCodes.PageNotFoundError:
+        return 'Page is not found';
+
+      default:
+        return 'Something went wrong';
+    }
+  }
+}
