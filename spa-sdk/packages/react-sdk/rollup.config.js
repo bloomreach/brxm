@@ -32,7 +32,7 @@ export default [
         format: 'umd',
         name: 'BloomreachReactSdk',
         sourcemap: true,
-        sourcemapFile: 'dist/react-sdk.js.map',
+        sourcemapExcludeSources: true,
         globals: {
           react: 'React',
           '@bloomreach/spa-sdk': 'BloomreachSpaSdk',

@@ -6,5 +6,5 @@
     "beautify": true,
     "comments": false
   },
-  "sourcemap": false
+  "sourcemap": true
 }

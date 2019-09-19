@@ -29,6 +29,8 @@ export default [
         file: 'dist/spa-sdk.js',
         format: 'umd',
         name: 'BloomreachSpaSdk',
+        sourcemap: true,
+        sourcemapExcludeSources: true,
       },
       {
         file: 'dist/spa-sdk.mjs',
