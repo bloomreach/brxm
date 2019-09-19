@@ -139,13 +139,6 @@ public class TestHippoDocumentContentResource extends AbstractTestContentResourc
 
         invokeJaxrsPipelineAsAdmin(request, response);
 
-
-        Repository repository = componentManager.getComponent(Repository.class.getName() + ".delegating");
-        Session admin = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
-
-        final String string = admin.getNode("/testcontent/documents/testproject/Products/HippoCMS/HippoCMS[2]/testproject:body").getProperty("hippostd:content").getString();
-
-
         assertEquals(Response.Status.Family.SUCCESSFUL, Response.Status.fromStatusCode(response.getStatus()).getFamily());
 
         assertWithPreviewUserContentContains("/testcontent/documents/testproject/Products/HippoCMS/HippoCMS/testproject:body",
