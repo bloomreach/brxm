@@ -57,7 +57,9 @@ describe('connectToParent', () => {
 
     it('should use the default timeout if timeout is not provided', async () => {
       const api: ChildApi = {
-        getConfig: (): ChildConfig => ({}),
+        getConfig: (): ChildConfig => ({
+          apiVersion: '1.0.0',
+        }),
       };
       const timeout = await getTimeoutValue(api);
       expect(timeout).toEqual(DEFAULT_COMMUNICATION_TIMEOUT);
@@ -66,6 +68,7 @@ describe('connectToParent', () => {
     it('should use the provided timeout value if provided', async () => {
       const api: ChildApi = {
         getConfig: (): ChildConfig => ({
+          apiVersion: '1.0.0',
           communicationTimeout: 100,
         }),
       };

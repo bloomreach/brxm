@@ -177,7 +177,7 @@ describe('NavigationService', () => {
         appIframeUrl: 'http://domain.com/iframe1/url',
         appPath: 'app/path/to/page1',
       });
-      const flags = { someFlag: true };
+      const flags = { forceRefresh: false };
 
       service.navigateByNavItem(navItem, 'some breadcrumb label', flags);
 
@@ -186,7 +186,7 @@ describe('NavigationService', () => {
       expect(locationMock.go).toHaveBeenCalledWith(
         '/iframe1/url/app/path/to/page1',
         '',
-        { breadcrumbLabel: 'some breadcrumb label', flags: '{"someFlag":true}' },
+        { breadcrumbLabel: 'some breadcrumb label', flags: '{"forceRefresh":false}' },
       );
     }));
 

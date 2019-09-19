@@ -24,8 +24,10 @@ import {
 /**
  * Method to connect to an application in an iframe window.
  *
- * @param iframe TODO doc or remove
- * @param methods TODO doc or remove
+ * @param iframe The iframe element that should contain another instance of the navigation
+ *               communication library looking to connect
+ * @param methods The api the parent exposes to the child
+ * @param timeout The time in ms after which an error will be thrown if the child has failed to connect
  */
 export function connectToChild({
   iframe,

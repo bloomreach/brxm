@@ -14,9 +14,15 @@
  * limitations under the License.
  */
 
+/**
+ * ChildConnectConfig is passed to the communication library by the navigation application
+ * It provides the configuration and times out when not successful
+ * Provide a set of methods to the application
+ */
 export interface ChildConnectConfig {
   /**
-   * The html iframe element that penpal should use to see if that iframe’s window has a penpal instance to connect to.
+   * The html iframe element that penpal will use to see if that iframe’s window has a penpal instance to connect to.
+   * TODO: Add description
    */
   iframe: HTMLIFrameElement;
   /**
@@ -24,13 +30,17 @@ export interface ChildConnectConfig {
    * See [[ParentApi]].
    */
   methods?: ParentApi;
+
+  /**
+   * The time in ms after which an error will be thrown if the child has failed to connect
+   */
   timeout?: number;
 }
 
 export interface ParentConnectConfig {
   /**
    * A required string to whitelist the parent origin to form a connection with.
-   * This origin is assumed to be provided to an app via the SSO solution **(specifics are still unclear)**.
+   * This origin is assumed to be provided to an app via the SSO solution **TODO (specifics are still unclear)**.
    */
   parentOrigin: string;
   /**
@@ -40,20 +50,32 @@ export interface ParentConnectConfig {
 }
 
 export interface ParentConfig {
-  /** The exact API version nav-app implements. */
+  /**
+   * The API version the nav-app implements.
+   * The version is formatted following the semantic versioning specification https://semver.org/
+   */
   apiVersion: string;
+  /** Object containing user settings such as username, language and timezone */
+  userSettings: UserSettings;
+}
+
+interface UserSettings {
   /** The human-readable name of the user currently logged in. */
   username: string;
   /** The language the user specified at login. If the app supports that language, it should render its labels in that language. */
+  /* TODO describe format, should be locale object? */
   language: string;
   /** The time zone the user specified at login. Where applicable, the app should display its date fields using that time zone. */
+  /* TODO describe format */
   timezone: string;
 }
 
 export interface ChildConfig {
   /** The exact API version the application implements. */
-  apiVersion?: string;
+  apiVersion: string;
+  /** Whether to show the site selection dropdown when this client app is active */
   showSiteDropdown?: boolean;
+  /** The time in ms after which a method promise will be rejected if it has failed to resolve or reject */
   communicationTimeout?: number;
 }
 
@@ -70,9 +92,9 @@ export interface ParentApi {
    */
   updateNavLocation?: (location: NavLocation) => (void | Promise<void>);
   /**
-   * Is called by an application to perform internal or cross-app navigation. It **does** trigger the nav-app to
-   * perform a ‘beforeNavigate’ and ‘navigate’ to route to the provided location.
-   *
+   * Is called by an application to perform internal or cross-app navigation. It **does** trigger the nav-app to perform a
+   * ‘beforeNavigate’ and ‘navigate’ to route to the provided location.
+   * **Do not set locations to other applications for navigation **
    * @param location The NavLocation navigated to
    */
   navigate?: (location: NavLocation) => (void | Promise<void>);
@@ -95,12 +117,6 @@ export interface ParentApi {
    */
   onSessionExpired?: () => (void | Promise<void>);
   /**
-   * is called by an application if it detects that, for some reason, the user session has expired for that
-   * application. This would result in the nav-app calling ‘logout’ on all child applications as if the user had
-   * initiated logout himself.
-   */
-  requestLogout?: () => (void | Promise<void>);
-  /**
    * Pass on an error that occurred on the client side.
    * @param clientError object containing info about the error
    */
@@ -115,7 +131,6 @@ export interface ParentPromisedApi {
   hideMask?: () => Promise<void>;
   onUserActivity?: () => Promise<void>;
   onSessionExpired?: () => Promise<void>;
-  requestLogout?: () => Promise<void>;
   onError?: (clientError: ClientError) => Promise<void>;
 }
 
@@ -140,13 +155,24 @@ export interface ChildApi {
    */
   getSelectedSite?: () => (SiteId | Promise<SiteId>);
   /**
-   * Fired before nav-app initiates a navigation action which will leave the current location, this event allows
-   * applications to clean up location-specific state (such as dirty forms) if necessary. The callback is responsible
-   * to resolve the Promise before nav-app can continue. When the application is good to “leave”, it resolves the
-   * Promise with a value of `true`. In order to prevent leaving the current location, the application should resolve
-   * the Promise with a value of `false`.
+   * Fired before nav-app initiates a navigation action which will leave the current location,
+   * this event allows applications to clean up location-specific state (such as dirty forms)
+   * if necessary.
+   * The callback is responsible to resolve the Promise before nav-app can continue.
+   * When the application is good to “leave”, it resolves the Promise.
+   * In order to prevent leaving the current location, the application should reject the Promise
    */
-  beforeNavigation?: () => (boolean | Promise<boolean>);
+  beforeNavigation?: () => (void | Promise<void>);
+
+  /**
+   * Fired before nav-app initiates a logout broadcast, this event allows applications to clean up
+   * location-specific state (such as dirty forms) if necessary.
+   * The callback is responsible to resolve the Promise before nav-app can continue.
+   * When the application is good to “logout”, it resolves the Promise.
+   * In order to prevent the logout process, the application should reject the Promise.
+   */
+  beforeLogout?: () => (void | Promise<void>);
+
   /**
    * Called to notify the child app that the user is still active to prevent logging out the user in one app while the
    * user is active in another app.
@@ -154,6 +180,7 @@ export interface ChildApi {
   onUserActivity?: () => (void | Promise<void>);
   /**
    * Called to let the child app initiate their logout process.
+   * TODO: What is the use-case for logout? Is this method required?
    */
   logout?: () => (void | Promise<void>);
   /**
@@ -162,7 +189,7 @@ export interface ChildApi {
    * It’s an application’s responsibility to make a decision on how to handle this navigational call.
    *
    * @param location the NavLocation to navigate to
-   * @param flags TODO document
+   * @param flags optional navigation flags to be passed to the client app
    */
   navigate?: (location: NavLocation, flags?: NavigateFlags) => (void | Promise<void>);
   /**
@@ -195,7 +222,10 @@ export interface ChildPromisedApi {
 }
 
 export interface NavigateFlags {
-  [key: string]: string | number | boolean;
+  /**
+   * Passed the client app should navigate to its default ‘home’ route
+   */
+  forceRefresh?: boolean;
 }
 
 export interface NavItem {
@@ -237,16 +267,6 @@ export interface NavLocation {
    * identify, in combination with path, the navigation item to navigate to.
    */
   pathPrefix?: string;
-  /** Optional: Suffix of the browser URL, starting after the closest matching navigation item path from a navigation item,
-   * up to and not including the search. To be used to give optional additional information to an app for its router.
-   * The application could interpret the value of this field (which may be an empty string) to navigate to the correct
-   * “sub-state” of the specified navigation item.
-   */
-  pathSuffix?: string;
-  /** Optional: Any query parameters found in the browser URL. */
-  search?: string;
-  /** Optional: Any hash found in the browser URL. */
-  hash?: string;
   /** Optional: This field is only used when an application updates the nav-app location. It may choose to specify
    * a (translated, where appropriate) label nav-app should append to its breadcrumbs.
    */
