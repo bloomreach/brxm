@@ -25,6 +25,12 @@ describe('Component', () => {
 
       expect(component.getMeta()).toEqual([meta]);
     });
+
+    it('should return an empty array', () => {
+      const component = new Component({ type: TYPE_COMPONENT });
+
+      expect(component.getMeta()).toEqual([]);
+    });
   });
 
   describe('getModels', () => {
