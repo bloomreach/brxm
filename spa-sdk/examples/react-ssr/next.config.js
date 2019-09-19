@@ -27,4 +27,9 @@ module.exports = {
     brContextPath: process.env.BR_CONTEXT_PATH,
     brChannelPath: process.env.BR_CHANNEL_PATH,
   },
+  webpack: (config, options) => {
+    // TODO: 'import' statements in .mjs don't work in the Webpack build at the moment
+    config.resolve.mainFields = ['browser'];
+    return config;
+  },
 };
