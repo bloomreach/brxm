@@ -18,7 +18,6 @@ import babel from 'rollup-plugin-babel';
 import dts from 'rollup-plugin-dts';
 import { terser } from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
-import pkg from './package.json';
 
 export default [
   {
@@ -28,16 +27,12 @@ export default [
         exports: 'named',
         file: 'dist/spa-sdk.js',
         format: 'umd',
-        name: 'spa',
+        name: 'BloomreachSpaSdk',
       },
       {
         file: 'dist/spa-sdk.mjs',
         format: 'esm',
       },
-    ],
-    external: [
-      ...Object.keys(pkg.dependencies || {}),
-      ...Object.keys(pkg.peerDependencies || {}),
     ],
     plugins: [
       typescript({ cacheRoot: './node_modules/.cache/rpt2' }),
@@ -61,10 +56,6 @@ export default [
       file: 'dist/spa-sdk.es6.mjs',
       format: 'esm',
     }],
-    external: [
-      ...Object.keys(pkg.dependencies || {}),
-      ...Object.keys(pkg.peerDependencies || {}),
-    ],
     plugins: [
       typescript({ cacheRoot: './node_modules/.cache/rpt2' }),
       terser({

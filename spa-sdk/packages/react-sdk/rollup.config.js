@@ -19,17 +19,7 @@ import babel from 'rollup-plugin-babel';
 import dts from 'rollup-plugin-dts';
 import { terser } from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
-import resolve from 'rollup-plugin-node-resolve';
 import pkg from './package.json';
-
-const allDeps = [...Object.keys(pkg.dependencies || {}), ...Object.keys(pkg.peerDependencies || {})];
-
-const external = (id) => {
-  if (id.startsWith('@bloomreach/')) {
-    return false;
-  }
-  return allDeps.includes(id);
-};
 
 const terserConfig = {
   ecma: 5,
@@ -41,6 +31,7 @@ const terserConfig = {
   },
   sourcemap: true,
 };
+
 
 export default [
   {
@@ -55,6 +46,7 @@ export default [
         sourcemapFile: 'dist/react-sdk.js.map',
         globals: {
           react: 'React',
+          '@bloomreach/spa-sdk': 'BloomreachSpaSdk',
         },
       },
       {
@@ -62,12 +54,15 @@ export default [
         format: 'esm',
         globals: {
           react: 'React',
+          '@bloomreach/spa-sdk': 'BloomreachSpaSdk',
         },
       },
     ],
-    external,
+    external: [
+      ...Object.keys(pkg.dependencies || {}),
+      ...Object.keys(pkg.peerDependencies || {}),
+    ],
     plugins: [
-      resolve(),
       typescript({ cacheRoot: './node_modules/.cache/rpt2' }),
       babel({ extensions: ['.ts'] }),
       terser(terserConfig),
@@ -80,9 +75,11 @@ export default [
       file: 'dist/react-sdk.es6.mjs',
       format: 'esm',
     }],
-    external,
+    external: [
+      ...Object.keys(pkg.dependencies || {}),
+      ...Object.keys(pkg.peerDependencies || {}),
+    ],
     plugins: [
-      resolve(),
       typescript({ cacheRoot: './node_modules/.cache/rpt2' }),
       terser(terserConfig)
     ],
