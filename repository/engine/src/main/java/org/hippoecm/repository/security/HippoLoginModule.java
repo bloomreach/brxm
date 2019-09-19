@@ -30,6 +30,8 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.SecurityConstants;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
@@ -91,7 +93,7 @@ public class HippoLoginModule implements LoginModule {
             } catch(UnsupportedCallbackException ignored) {
             }
 
-            if (userId == null || "".equals(userId) || SecurityConstants.ANONYMOUS_ID.equals(userId)) {
+            if (StringUtils.isEmpty(userId) || SecurityConstants.ANONYMOUS_ID.equals(userId)) {
                 log.info("Login as anonymous user not allowed");
                 return false;
             }
@@ -149,7 +151,7 @@ public class HippoLoginModule implements LoginModule {
             }
 
             // basic security check
-            if (creds.getPassword() == null || creds.getPassword().length == 0) {
+            if (ArrayUtils.isEmpty(creds.getPassword()) && creds.getAttribute("providerId") == null) {
                 log.debug("Login without password not allowed.");
                 return false;
             }

@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -281,14 +281,32 @@ public class SecurityManager implements HippoSecurityManager {
             } else {
                 // loop over providers and try to authenticate.
                 boolean authenticated = false;
-                for(Iterator<String> iter = providers.keySet().iterator(); iter.hasNext();) {
-                    providerId = iter.next();
-                    log.debug("Trying to authenticate user {} with provider {}", userId, providerId);
-                    if (((HippoUserManager)providers.get(providerId).getUserManager()).authenticate(creds)) {
-                        authenticated = true;
-                        break;
+
+                //Firstly, check if credentials object already contains providerId
+                final String credentialsProviderId = (String) creds.getAttribute("providerId");
+                if (credentialsProviderId != null) {
+                    //If so, try to authenticate using selected provider
+                    providerId = credentialsProviderId;
+                    if (providers.containsKey(providerId)) {
+                        log.debug("Trying to authenticate user {} with provider {}", userId, providerId);
+                        if (((HippoUserManager)providers.get(providerId).getUserManager()).authenticate(creds)) {
+                            authenticated = true;
+                        }
+                    } else {
+                        log.debug("The specified provider in credentials object {} does not exist", providerId);
+                        return AuthenticationStatus.FAILED;
+                    }
+                } else {
+                    for(Iterator<String> iter = providers.keySet().iterator(); iter.hasNext();) {
+                        providerId = iter.next();
+                        log.debug("Trying to authenticate user {} with provider {}", userId, providerId);
+                        if (((HippoUserManager)providers.get(providerId).getUserManager()).authenticate(creds)) {
+                            authenticated = true;
+                            break;
+                        }
                     }
                 }
+
                 if (!authenticated) {
                     log.debug("No provider found or invalid username and password: {}", userId);
                     return AuthenticationStatus.FAILED;
@@ -296,7 +314,9 @@ public class SecurityManager implements HippoSecurityManager {
             }
 
             log.debug("Found provider: {} for authenticated user: {}", providerId, userId);
-            creds.setAttribute("providerId", providerId);
+            if (creds.getAttribute("providerId") == null) {
+                creds.setAttribute("providerId", providerId);
+            }
 
             HippoUserManager userMgr = (HippoUserManager)providers.get(providerId).getUserManager();
 
