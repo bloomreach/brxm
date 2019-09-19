@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-import { DOCUMENT } from '@angular/common';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { NavLocation } from '@bloomreach/navapp-communication';
 import { ReplaySubject } from 'rxjs';
 
+import { ClientErrorCodes } from '../../../../navapp-communication/src/lib/api';
 import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
 
 import { BusyIndicatorService } from './busy-indicator.service';
 import { CommunicationsService } from './communications.service';
+import { LogoutService } from './logout.service';
 import { NavConfigService } from './nav-config.service';
 import { NavigationService } from './navigation.service';
 import { OverlayService } from './overlay.service';
@@ -50,11 +52,6 @@ describe('CommunicationsService', () => {
     'logoutApps',
   ]);
 
-  const navConfigServiceMock = jasmine.createSpyObj('NavConfigService', [
-    'findNavItem',
-    'logout',
-  ]);
-
   const busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', [
     'show',
     'hide',
@@ -65,8 +62,8 @@ describe('CommunicationsService', () => {
     'updateByNavLocation',
   ]);
 
-  const locationMock = jasmine.createSpyObj('Location', [
-    'replace',
+  const logoutServiceMock = jasmine.createSpyObj('LogoutService', [
+    'logout',
   ]);
 
   beforeEach(() => {
@@ -89,26 +86,22 @@ describe('CommunicationsService', () => {
     clientAppServiceMock.activeApp = clientApps[1];
     clientAppServiceMock.apps = clientApps;
 
-    navConfigServiceMock.findNavItem.and.returnValue({
-      id: 'some-id',
-      appIframeUrl: 'some-perspective',
-      appPath: 'some-path',
-    });
-
     activeMenuItem$.next({
       appId: 'testMenuItem',
       appPath: 'testpath',
     });
 
     TestBed.configureTestingModule({
+      imports: [
+        HttpClientTestingModule,
+      ],
       providers: [
         CommunicationsService,
-        { provide: ClientAppService, useValue: clientAppServiceMock },
-        { provide: NavConfigService, useValue: navConfigServiceMock },
         { provide: BusyIndicatorService, useValue: busyIndicatorServiceMock },
-        { provide: OverlayService, useValue: overlayServiceMock },
+        { provide: ClientAppService, useValue: clientAppServiceMock },
+        { provide: LogoutService, useValue: logoutServiceMock },
         { provide: NavigationService, useValue: navigationServiceMock },
-        { provide: DOCUMENT, useValue: { location: locationMock }  },
+        { provide: OverlayService, useValue: overlayServiceMock },
       ],
     });
 
@@ -146,34 +139,12 @@ describe('CommunicationsService', () => {
       });
     });
 
-    describe('logout', () => {
-      beforeAll(() => {
-        clientAppServiceMock.logoutApps.and.returnValue(Promise.resolve());
-        navConfigServiceMock.logout.and.returnValue(Promise.resolve());
-      });
-      it('should replace the browser location', fakeAsync(() => {
-        let url: string;
-        locationMock.replace.and.callFake((urlFromCall: string) => {
-          url = urlFromCall;
-        });
-        service.logout('testMessageKey');
-        tick(1);
-        expect(busyIndicatorService.show).toHaveBeenCalled();
-        expect(busyIndicatorService.hide).toHaveBeenCalled();
-        expect(locationMock.replace).toHaveBeenCalled();
-        expect(url).toContain('loginmessage=testMessageKey');
-      }));
-    });
   });
 
   describe('parent api methods', () => {
     describe('.navigate', () => {
       it('should select the associated menu item when the item is found', () => {
         const path = 'some-perspective';
-
-        navConfigServiceMock.findNavItem.and.returnValue({
-          id: path,
-        });
 
         service.parentApiMethods.navigate({
           path,
@@ -212,17 +183,28 @@ describe('CommunicationsService', () => {
     });
 
     describe('.onSessionExpired', () => {
-      it('should replace document location, even if logout fails', fakeAsync(() => {
-
-        clientAppServiceMock.logoutApps.and.returnValue(Promise.resolve());
-        navConfigServiceMock.logout.and.returnValue(Promise.reject('fake a failing silent logout'));
-
+      it('should call logout when onSessionExpired is invoked', fakeAsync(() => {
         service.parentApiMethods.onSessionExpired();
         tick(1);
-        expect(busyIndicatorService.show).toHaveBeenCalled();
-        expect(busyIndicatorService.hide).toHaveBeenCalled();
-        expect(locationMock.replace).toHaveBeenCalled();
+        expect(logoutServiceMock.logout).toHaveBeenCalled();
       }));
+    });
+
+    describe('.onError', () => {
+      it('should logout if not authorized', () => {
+        const errorCode = ClientErrorCodes.NotAuthorizedError;
+        service.parentApiMethods.onError({ errorCode });
+        expect(logoutServiceMock.logout).toHaveBeenCalledWith(errorCode.toString());
+      });
+      it('should not logout on any other client errors', () => {
+        logoutServiceMock.logout.calls.reset();
+        Object.keys(ClientErrorCodes)
+          .map(code => ClientErrorCodes[code])
+          .filter(errorCode => ClientErrorCodes.NotAuthorizedError !== errorCode)
+          .forEach(errorCode =>
+            service.parentApiMethods.onError({ errorCode, message: 'some other client error' }));
+        expect(logoutServiceMock.logout.calls.count()).toBe(0);
+      });
     });
   });
 });

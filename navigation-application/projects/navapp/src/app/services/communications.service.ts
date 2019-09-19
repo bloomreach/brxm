@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import { DOCUMENT } from '@angular/common';
-import { Inject, Injectable } from '@angular/core';
-import { ClientError, connectToChild, NavLocation, ParentApi, SiteId } from '@bloomreach/navapp-communication';
+import { Injectable } from '@angular/core';
+import {
+  ClientError, ClientErrorCodes, connectToChild, NavLocation, ParentApi, SiteId,
+} from '@bloomreach/navapp-communication';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { Connection } from '../models/connection.model';
@@ -24,7 +25,7 @@ import { FailedConnection } from '../models/failed-connection.model';
 
 import { BusyIndicatorService } from './busy-indicator.service';
 import { GlobalSettingsService } from './global-settings.service';
-import { NavConfigService } from './nav-config.service';
+import { LogoutService } from './logout.service';
 import { NavigationService } from './navigation.service';
 import { OverlayService } from './overlay.service';
 
@@ -33,15 +34,14 @@ import { OverlayService } from './overlay.service';
 })
 export class CommunicationsService {
   constructor(
-    private globalSettingsService: GlobalSettingsService,
-    private navConfigService: NavConfigService,
-    private clientAppService: ClientAppService,
-    private overlay: OverlayService,
     private busyIndicatorService: BusyIndicatorService,
-    private settings: GlobalSettingsService,
+    private clientAppService: ClientAppService,
+    private logoutService: LogoutService,
     private navigationService: NavigationService,
-    @Inject(DOCUMENT) private document: Document,
-  ) { }
+    private overlay: OverlayService,
+    private settings: GlobalSettingsService,
+  ) {
+  }
 
   get parentApiMethods(): ParentApi {
     return {
@@ -49,8 +49,8 @@ export class CommunicationsService {
       hideMask: () => this.overlay.disable(),
       navigate: (location: NavLocation) => this.navigationService.navigateByNavLocation(location),
       updateNavLocation: (location: NavLocation) => this.navigationService.updateByNavLocation(location),
-      onError: (clientError: ClientError) => this.handleClientError(clientError),
-      onSessionExpired: () => this.logout('SessionExpiredError'),
+      onError: (clientError: ClientError) => this.onClientError(clientError),
+      onSessionExpired: () => this.logoutService.logout('SessionExpired'),
     };
   }
 
@@ -66,18 +66,6 @@ export class CommunicationsService {
     });
   }
 
-  logout(loginMessageKey: string): void {
-    this.busyIndicatorService.show();
-    this.clientAppService.logoutApps()
-      .then(() => this.navConfigService.logout())
-      .catch(error => console.log(error))
-      .finally(() => {
-        this.busyIndicatorService.hide();
-        const newLocation = `${this.globalSettingsService.appSettings.navAppBaseURL}/?loginmessage=${loginMessageKey}`;
-        this.document.location.replace(newLocation);
-      });
-  }
-
   connectToChild(iframe: HTMLIFrameElement): Promise<void> {
     const appUrl = iframe.src;
 
@@ -91,7 +79,20 @@ export class CommunicationsService {
     );
   }
 
-  private handleClientError(clientError: ClientError): void {
-    // TODO: delegate the error service
+  private onClientError(clientError: ClientError): void {
+    // TODO delegate to errorService
+    const errorCode = clientError.errorCode;
+    switch (errorCode) {
+      case ClientErrorCodes.NotAuthorizedError:
+        this.logoutService.logout(errorCode.toString());
+        break;
+      case ClientErrorCodes.UnknownError:
+      case ClientErrorCodes.GenericCommunicationError:
+      case ClientErrorCodes.PageNotFoundError:
+      case ClientErrorCodes.InternalError:
+      case ClientErrorCodes.UnableToConnectToServerError:
+        console.log(`Client error: code = ${ClientErrorCodes[clientError.errorCode]}, message = ${clientError.message}`);
+        break;
+    }
   }
 }
