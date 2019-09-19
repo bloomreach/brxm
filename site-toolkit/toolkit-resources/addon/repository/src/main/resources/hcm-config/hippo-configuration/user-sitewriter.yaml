@@ -4,6 +4,6 @@ definitions:
       jcr:primaryType: hipposys:user
       hipposys:active: true
       hipposys:passkey: jvm://
-      hipposys:userroles: [xm-site-writer]
+      hipposys:userroles: [xm-hst-formdata-writer]
       hipposys:securityprovider: internal
       hipposys:system: true

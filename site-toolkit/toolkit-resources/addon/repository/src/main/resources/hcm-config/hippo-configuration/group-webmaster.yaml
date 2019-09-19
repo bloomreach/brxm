@@ -5,5 +5,5 @@ definitions:
       hipposys:members:
         .meta:category: system
         value: []
-      hipposys:userroles: [xm-webmaster]
+      hipposys:userroles: [xm-hst-config-writer]
       hipposys:securityprovider: internal
