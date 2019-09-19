@@ -23,10 +23,19 @@ export type Emitter<T> = Pick<Typed<T>, 'on' | 'off'>;
 // tslint:disable-next-line:function-name variable-name
 export function EmitterMixin<T extends Events>(Super: Constructor) {
   return class EmitterMixin extends Super implements Emitter<T> {
-    private emitter = new Typed<T>();
+    /**
+     * @todo should be private
+     * @see https://github.com/Microsoft/TypeScript/issues/17293
+     */
+    /* private */ emitter = new Typed<T>();
 
     on = this.emitter.on.bind(this.emitter);
     off = this.emitter.off.bind(this.emitter);
-    protected emit = this.emitter.emit.bind(this.emitter);
+
+    /**
+     * @todo should be private
+     * @see https://github.com/Microsoft/TypeScript/issues/17293
+     */
+    /* protected */ emit = this.emitter.emit.bind(this.emitter);
   };
 }
