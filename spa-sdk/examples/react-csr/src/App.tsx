@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
- import React from 'react';
+import React from 'react';
 
- import { BrPage } from '@bloomreach/react-sdk';
+import { BrPage } from '@bloomreach/react-sdk';
 
- const BR_ORIGIN = new URL(process.env.REACT_APP_BR_ORIGIN!);
- const BR_CONTEXT_PATH = process.env.REACT_APP_BR_CONTEXT_PATH;
- const BR_CHANNEL_PATH = process.env.REACT_APP_BR_CHANNEL_PATH;
+const BR_ORIGIN = new URL(process.env.REACT_APP_BR_ORIGIN!);
+const BR_CONTEXT_PATH = process.env.REACT_APP_BR_CONTEXT_PATH;
+const BR_CHANNEL_PATH = process.env.REACT_APP_BR_CHANNEL_PATH;
 
- const urlConfig = {
-   scheme: BR_ORIGIN.protocol.slice(0, -1),
-   hostname: BR_ORIGIN.hostname,
-   port: BR_ORIGIN.port,
-   contextPath: BR_CONTEXT_PATH,
-   channelPath: BR_CHANNEL_PATH
- };
+const urlConfig = {
+  scheme: BR_ORIGIN.protocol.slice(0, -1),
+  hostname: BR_ORIGIN.hostname,
+  port: BR_ORIGIN.port,
+  contextPath: BR_CONTEXT_PATH,
+  channelPath: BR_CHANNEL_PATH
+};
 
- const cmsUrls = {
-   preview: urlConfig,
-   live: urlConfig
- };
+const cmsUrls = {
+  preview: urlConfig,
+  live: urlConfig
+};
 
 const App: React.FC = () => {
   return (
