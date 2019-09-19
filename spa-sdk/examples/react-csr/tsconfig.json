@@ -1,8 +1,22 @@
 {
-  "extends": "../../tsconfig.app.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "jsx": "react",
-    "allowSyntheticDefaultImports": true
+    "target": "esnext",
+    "module": "esnext",
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+
+    "allowJs": true,
+    "jsx": "react",                           // Enable JSX and output .js with React.createElement()
+    "noEmit": true,
+    "isolatedModules": true,                  // Transpile each file as a separate module
+
+    "allowSyntheticDefaultImports": true,     // Allow default imports from modules with no default export
+    "skipLibCheck": true,                     // Skip type checking of all declaration files
+    "forceConsistentCasingInFileNames": true  // Disallow inconsistently-cased references to the same file
   },
   "include": [
     "src"

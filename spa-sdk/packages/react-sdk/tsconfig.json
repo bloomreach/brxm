@@ -1,8 +1,16 @@
 {
-  "extends": "../../tsconfig.lib.json",
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "baseUrl": "./src",
-    "jsx": "react"
+    "target": "es6",
+    "module": "es6",
+    "lib": [
+      "es5",
+      "es6",
+      "dom"
+    ],
+
+    "jsx": "react",     // Enable JSX and output .js with React.createElement()
+    "baseUrl": "./src"  // Base directory to resolve non-absolute module names
   },
   "include": [
     "src"
