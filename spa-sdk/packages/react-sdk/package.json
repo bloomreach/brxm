@@ -53,12 +53,14 @@
     "rollup-plugin-babel": "^4.3",
     "rollup-plugin-terser": "^5.1",
     "rollup-plugin-typescript2": "^0.24",
+    "ts-jest": "^24.0",
     "tslint": "^5.0",
     "tslint-config-airbnb": "^5.0",
     "tslint-react": "^4.0",
     "typescript": "^3.6"
   },
   "jest": {
+    "preset": "ts-jest",
     "setupFilesAfterEnv": [
       "jest-enzyme"
     ],

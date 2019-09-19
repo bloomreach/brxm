@@ -12,7 +12,8 @@
     "allowSyntheticDefaultImports": true,
     "suppressImplicitAnyIndexErrors": true,
     "declaration": true,
-    "declarationDir": "./dist"
+    "declarationDir": "./dist",
+    "composite": true
   },
   "include": [
     "src"
