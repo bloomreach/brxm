@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -44,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import static java.nio.file.StandardOpenOption.*;
 import static org.onehippo.cms7.essentials.plugin.sdk.utils.EssentialsFileUtils.nativePath;
 
 @Service
@@ -242,6 +245,37 @@ public class ProjectServiceImpl implements ProjectService {
         final File[] log4j2Files = getConfDirPath().toFile().listFiles(log4j2Filter);
 
         return log4j2Files != null ? Arrays.asList(log4j2Files) : Collections.emptyList();
+    }
+
+    @Override
+    public boolean appendResource(final String resourcePath, final String targetLocation, final Map<String, Object> placeholderData,
+                                final boolean isBinary) {
+        final String destinationPath = TemplateUtils.replaceTemplateData(targetLocation, placeholderData);
+
+        try (final InputStream stream = getClass().getResourceAsStream(resourcePath);
+             final OutputStream outputStream = Files.newOutputStream(Paths.get(destinationPath), CREATE, APPEND);
+             final OutputStreamWriter writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)) {
+
+            if (stream == null) {
+                log.error("Failed to access resource '{}'.", resourcePath);
+                return false;
+            }
+
+            // replace file placeholders if needed:
+            if (isBinary) {
+                IOUtils.copy(stream, outputStream);
+            } else {
+                final String content = GlobalUtils.readStreamAsText(stream);
+                final String replacedData = TemplateUtils.replaceTemplateData(content, placeholderData);
+
+                IOUtils.write(replacedData, writer);
+            }
+            log.info("Appended data from '{}' to '{}'.", resourcePath, destinationPath);
+        } catch (IOException e) {
+            log.error("Failed to append data from '{}' to '{}'.", resourcePath, destinationPath, e);
+            return false;
+        }
+        return true;
     }
 
     @Override
