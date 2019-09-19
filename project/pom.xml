@@ -1063,6 +1063,7 @@
                         <!--Provided dependencies-->
                         <exclude>javax.activation:activation</exclude>
                         <exclude>com.sun.activation:javax.activation</exclude>
+                        <exclude>com.sun.activation:jakarta.activation</exclude>
                         <exclude>javax.servlet:javax.servlet-api</exclude>
                         <exclude>org.apache.geronimo.specs:geronimo-jta_1.1_spec</exclude>
                         <exclude>javax.jcr:jcr</exclude>
