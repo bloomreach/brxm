@@ -116,11 +116,19 @@ describe('ContainerItem', () => {
     let containerItem2: ContainerItem;
 
     beforeEach(() => {
-      containerItem1 = new ContainerItem({ id: 'id1', type: TYPE_COMPONENT_CONTAINER_ITEM }, eventBus, meta1);
-      containerItem2 = new ContainerItem({ id: 'id2', type: TYPE_COMPONENT_CONTAINER_ITEM }, eventBus, meta2);
+      containerItem1 = new ContainerItem(
+        { id: 'id1', type: TYPE_COMPONENT_CONTAINER_ITEM, label: 'a' },
+        eventBus,
+        meta1,
+      );
+      containerItem2 = new ContainerItem(
+        { id: 'id2', type: TYPE_COMPONENT_CONTAINER_ITEM, label: 'b' },
+        eventBus,
+        meta2,
+      );
     });
 
-    it('should not update a meta-data if it is not the same container item', async () => {
+    it('should not update a container item if it is not the same container item', async () => {
       await eventBus.emitSerial('page.update', {
         page: new Page(
           { page: { id: 'id2', type: TYPE_COMPONENT_CONTAINER_ITEM } },
@@ -131,6 +139,7 @@ describe('ContainerItem', () => {
       });
 
       expect(containerItem1.getMeta()).toBe(meta1);
+      expect(containerItem1.getType()).toBe('a');
     });
 
     it('should update a meta-data on page.update event', async () => {
@@ -144,6 +153,19 @@ describe('ContainerItem', () => {
       });
 
       expect(containerItem1.getMeta()).toBe(meta2);
+    });
+
+    it('should update a model on page.update event', async () => {
+      await eventBus.emitSerial('page.update', {
+        page: new Page(
+          { page: { id: 'id1', type: TYPE_COMPONENT_CONTAINER_ITEM } },
+          new ContainerItem({ id: 'id1', type: TYPE_COMPONENT_CONTAINER_ITEM, label: 'b' }, eventBus, meta2),
+          new Map(),
+          eventBus,
+        ),
+      });
+
+      expect(containerItem1.getType()).toBe('b');
     });
 
     it('should emit an update event', async () => {

@@ -92,7 +92,8 @@ export class ContainerItem extends EmitterMixin<ContainerItemEvents>(Component) 
       return;
     }
 
-    this.meta = component.getMeta();
+    this.meta = component.meta;
+    this.model = component.model;
     this.emit('update', {});
   }
 
