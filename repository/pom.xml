@@ -381,9 +381,14 @@
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
           </exclusion>
+          <!-- javax.activation packages are provided by the JRE 8, so we don't want them again under any sneaky artifact renames -->
           <exclusion>
             <groupId>com.sun.activation</groupId>
             <artifactId>javax.activation</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>com.sun.activation</groupId>
+            <artifactId>jakarta.activation</artifactId>
           </exclusion>
 
           <!-- New in Tika 1.22 -->
