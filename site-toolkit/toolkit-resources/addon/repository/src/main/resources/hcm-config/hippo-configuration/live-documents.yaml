@@ -1,6 +1,6 @@
 definitions:
   config:
-    /hippo:configuration/hippo:domains/live-documents:
+    /hippo:configuration/hippo:domains/hst-live-documents:
       jcr:primaryType: hipposys:domain
       /hippo-document:
         jcr:primaryType: hipposys:domainrule
