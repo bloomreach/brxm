@@ -8,9 +8,8 @@
       "es6",
       "dom"
     ],
-
-    "jsx": "react",     // Enable JSX and output .js with React.createElement()
-    "baseUrl": "./src"  // Base directory to resolve non-absolute module names
+    "jsx": "react",
+    "baseUrl": "./src"
   },
   "include": [
     "src"

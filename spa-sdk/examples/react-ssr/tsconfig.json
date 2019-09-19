@@ -8,15 +8,13 @@
       "dom.iterable",
       "esnext"
     ],
-
     "allowJs": true,
-    "jsx": "preserve",                          // Enable JSX and preserve file extension (.jsx) (will be processed by babel)
+    "jsx": "preserve",
     "noEmit": true,
-    "isolatedModules": true,                    // Transpile each file as a separate module
-
+    "isolatedModules": true,
     "strict": false,
-    "skipLibCheck": true,                       // Skip type checking of all declaration files
-    "forceConsistentCasingInFileNames": true    // Disallow inconsistently-cased references to the same file
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
   },
   "include": [
     "next-env.d.ts",

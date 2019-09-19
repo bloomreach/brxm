@@ -8,10 +8,9 @@
       "es6",
       "dom"
     ],
-
-    "baseUrl": "./src",                     // Base directory to resolve non-absolute module names
-    "allowSyntheticDefaultImports": true,   // Allow default imports from modules with no default export
-    "suppressImplicitAnyIndexErrors": true  // Suppress --noImplicitAny errors for indexing objects lacking index signatures
+    "baseUrl": "./src",
+    "allowSyntheticDefaultImports": true,
+    "suppressImplicitAnyIndexErrors": true
   },
   "include": [
     "src"
