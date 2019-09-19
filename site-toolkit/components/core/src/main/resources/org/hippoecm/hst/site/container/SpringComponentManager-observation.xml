@@ -247,6 +247,8 @@
               <value>hipposys:domainfolder</value>
               <value>hipposys:role</value>
               <value>hipposys:rolefolder</value>
+              <value>hipposys:userrole</value>
+              <value>hipposys:userrolefolder</value>
               <value>hipposys:group</value>
               <value>hipposys:groupfolder</value>
               <value>hipposys:externalgroup</value>
