@@ -18,6 +18,7 @@ import babel from 'rollup-plugin-babel';
 import dts from 'rollup-plugin-dts';
 import { terser } from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
+import minifyOptions from '../../terser.json';
 
 export default [
   {
@@ -37,16 +38,7 @@ export default [
     plugins: [
       typescript({ cacheRoot: './node_modules/.cache/rpt2' }),
       babel({ extensions: ['.ts'] }),
-      terser({
-        ecma: 5,
-        mangle: false,
-        compress: false,
-        output: {
-          beautify: true,
-          comments: false,
-        },
-        sourcemap: false,
-      })
+      terser(minifyOptions)
     ],
   },
 
@@ -58,16 +50,7 @@ export default [
     }],
     plugins: [
       typescript({ cacheRoot: './node_modules/.cache/rpt2' }),
-      terser({
-        ecma: 5,
-        mangle: false,
-        compress: false,
-        output: {
-          beautify: true,
-          comments: false,
-        },
-        sourcemap: false,
-      })
+      terser(minifyOptions)
     ],
   },
 
