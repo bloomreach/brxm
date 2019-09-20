@@ -1042,9 +1042,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                 return !match;
             }
         }
-        else if (rule.getFacetName().equals(NameConstants.JCR_UUID)) {
-            return nodeState.getNodeId().toString().equals(rule.getValue()) ? rule.isEqual() : !rule.isEqual();
-        }
 
         // the hierarchy manager is attic aware. The property can also be in the removed properties
         if (!nodeState.hasPropertyName(rule.getFacetName())
