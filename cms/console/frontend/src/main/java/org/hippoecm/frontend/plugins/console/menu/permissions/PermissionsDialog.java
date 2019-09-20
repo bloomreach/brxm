@@ -19,27 +19,33 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
-import javax.jcr.security.Privilege;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.basic.MultiLineLabel;
 import org.apache.wicket.markup.html.form.DropDownChoice;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.security.HippoAccessManager;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.security.DomainInfoPrivilege;
 import org.onehippo.repository.security.SecurityService;
 import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
@@ -59,7 +65,8 @@ public class PermissionsDialog extends Dialog<Node> {
     private final Label membershipsLabel;
     private final Label userRolesLabel;
     private final Label actionsLabel;
-    private final Label privilegesLabel;
+    private final MultiLineLabel privilegesLabel;
+    private String multiLinePrivileges;
     private final Label exception;
 
     public PermissionsDialog(final PermissionsPlugin plugin) {
@@ -80,7 +87,7 @@ public class PermissionsDialog extends Dialog<Node> {
         actionsLabel.setOutputMarkupId(true);
         add(actionsLabel);
 
-        privilegesLabel = new Label("privileges", "None");
+        privilegesLabel = new MultiLineLabel("privileges",  new PropertyModel<String>(this, "multiLinePrivileges"));
         privilegesLabel.setOutputMarkupId(true);
         add(privilegesLabel);
 
@@ -132,12 +139,12 @@ public class PermissionsDialog extends Dialog<Node> {
 
             // getPrivileges() must be called before getSupportedPrivileges() to ensure they are all 'loaded'
             final String subjectPath = subject.getPath();
-            final Set<String> privileges = getPrivileges(subjectPath, selectedUserJcrSession);
-            if (privileges.contains(JCR_WRITE)) {
-                privileges.removeAll(JCR_WRITE_PRIVILEGES);
+            final SortedMap<String, DomainInfoPrivilege> privileges = getPrivileges(subjectPath, selectedUserJcrSession);
+            if (privileges.containsKey(JCR_WRITE)) {
+                JCR_WRITE_PRIVILEGES.forEach(s -> privileges.remove(s));
             }
-            if (privileges.contains(JCR_ALL)) {
-                privileges.removeAll(JCR_ALL_PRIVILEGES);
+            if (privileges.containsKey(JCR_ALL)) {
+                JCR_ALL_PRIVILEGES.forEach(s -> privileges.remove(s));
                 privileges.remove(JCR_WRITE);
             }
             final Set<String> actions = getAllowedActions(subjectPath, selectedUserJcrSession, JCR_ACTIONS);
@@ -159,11 +166,22 @@ public class PermissionsDialog extends Dialog<Node> {
             } else {
                 actionsLabel.setDefaultModel(Model.of(StringUtils.join(actions, ", ")));
             }
+
             if (privileges.isEmpty()) {
-                privilegesLabel.setDefaultModel(Model.of("<<none>>"));
+                multiLinePrivileges = "<<none>>";
             } else {
-                privilegesLabel.setDefaultModel(Model.of(StringUtils.join(privileges, ", ")));
+
+                final StringBuilder builder = new StringBuilder();
+                privileges.forEach((name, domainInfoPrivilege) -> {
+                    builder.append("\n").append(name).append(" : ");
+                    domainInfoPrivilege.getDomainsProvidingPrivilege().stream()
+                            .forEach(domainPath -> builder.append("\n\t").append("domain: ").append(domainPath));
+
+                });
+
+                multiLinePrivileges = builder.toString();
             }
+
             exception.setDefaultModel(Model.of(""));
         } catch (RepositoryException ex) {
             userRolesLabel.setDefaultModel(Model.of(""));
@@ -190,10 +208,23 @@ public class PermissionsDialog extends Dialog<Node> {
         return allowedActions;
     }
 
-    private static Set<String> getPrivileges(final String nodePath, final Session session) throws RepositoryException {
-        return Arrays.stream(session.getAccessControlManager().getPrivileges(nodePath))
-                .map(Privilege::getName)
-                .collect(Collectors.toCollection(TreeSet::new));
+    private static SortedMap<String, DomainInfoPrivilege> getPrivileges(final String nodePath, final Session session) throws RepositoryException {
+        final DomainInfoPrivilege[] domainInfoPrivileges = ((HippoAccessManager) session.getAccessControlManager()).getPrivileges(nodePath);
+        return privilegesToSortedMap(domainInfoPrivileges);
+
+
+    }
+
+    static SortedMap<String, DomainInfoPrivilege> privilegesToSortedMap(final DomainInfoPrivilege[] domainInfoPrivileges) {
+        // there will never be two DomainInfoPrivilege with the same getName hence duplicate key merge exception won't happen
+        return Arrays.stream(domainInfoPrivileges).collect(Collectors.toMap(
+                DomainInfoPrivilege::getName,
+                Function.identity(),
+                (priv1, priv2) -> {
+                    throw new IllegalStateException(String.format("Found two DomainInfoPrivilege objects with same name '%s' which " +
+                            "should never be possible from HippoAccessManager#getPrivileges()", priv1.getName()));
+                },
+                () -> new TreeMap<>()));
     }
 
 
