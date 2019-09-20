@@ -67,7 +67,7 @@ export interface ContainerItem extends Component, Emitter<ContainerItemEvents> {
    * Returns the type of a container item. The available types depend on which
    * container items have been configured in the backend.
    *
-   * @return the type of a container item (e.g. "Banner").
+   * @return The type of a container item (e.g. "Banner").
    */
   getType(): string | undefined;
 
@@ -75,7 +75,7 @@ export interface ContainerItem extends Component, Emitter<ContainerItemEvents> {
    * Returns whether the component should not render anything.
    * Hiding components is only possible with the Relevance feature.
    *
-   * @return whether the component is hidden or not.
+   * @return Whether the component is hidden or not.
    */
   isHidden(): boolean;
 }

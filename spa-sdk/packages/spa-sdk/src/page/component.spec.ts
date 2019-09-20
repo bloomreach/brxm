@@ -47,7 +47,7 @@ describe('Component', () => {
     });
   });
 
-  describe('getModelUrl', () => {
+  describe('getUrl', () => {
     it('should return a model url', () => {
       const component = new Component({
         id: 'id',
@@ -55,15 +55,15 @@ describe('Component', () => {
         _links: { componentRendering: { href: 'url' } },
       });
 
-      expect(component.getModelUrl()).toBe('url');
+      expect(component.getUrl()).toBe('url');
     });
 
     it('should return undefined when a model url is missing', () => {
       const component1 = new Component({ id: 'id', type: TYPE_COMPONENT });
       const component2 = new Component({ id: 'id', type: TYPE_COMPONENT, _links: {} });
 
-      expect(component1.getModelUrl()).toBeUndefined();
-      expect(component2.getModelUrl()).toBeUndefined();
+      expect(component1.getUrl()).toBeUndefined();
+      expect(component2.getUrl()).toBeUndefined();
     });
   });
 

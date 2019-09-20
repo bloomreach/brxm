@@ -56,7 +56,7 @@ export interface Container extends Component {
   getType(): ContainerType;
 
   /**
-   * Returns children of a container.
+   * @return The children of a container.
    */
   getChildren(): ContainerItem[];
 }

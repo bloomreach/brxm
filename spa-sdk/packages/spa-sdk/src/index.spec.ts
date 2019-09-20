@@ -162,7 +162,7 @@ describe('initialize', () => {
     window.SPA!.renderComponent('r1_r1_r1', {});
     await new Promise(resolve => process.nextTick(resolve));
 
-    expect(httpClient).toBeCalledWith(expect.objectContaining({ url: banner0.getModelUrl() }));
+    expect(httpClient).toBeCalledWith(expect.objectContaining({ url: banner0.getUrl() }));
     expect(listener0).toBeCalled();
     expect(listener1).not.toBeCalled();
   });

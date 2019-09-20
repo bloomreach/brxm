@@ -73,7 +73,7 @@ export interface Component {
   /**
    * @return The link to the partial component model.
    */
-  getModelUrl(): string | undefined;
+  getUrl(): string | undefined;
 
   /**
    * @return The name of this component.
@@ -118,7 +118,7 @@ export class Component implements Component {
     return this.model.models || {};
   }
 
-  getModelUrl() {
+  getUrl() {
     return this.model._links && this.model._links.componentRendering && this.model._links.componentRendering.href;
   }
 

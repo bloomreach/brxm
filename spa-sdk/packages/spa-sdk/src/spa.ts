@@ -77,7 +77,7 @@ export class Spa {
   private async fetchComponentModel(config: Configuration, page: Page, id: string, properties: object) {
     const root = page.getComponent();
     const component = root.getComponentById(id);
-    const url = component && component.getModelUrl();
+    const url = component && component.getUrl();
     if (!url) {
       return;
     }
