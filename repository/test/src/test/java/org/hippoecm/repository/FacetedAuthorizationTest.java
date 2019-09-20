@@ -17,8 +17,10 @@ package org.hippoecm.repository;
 
 import java.security.AccessControlException;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeSet;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
@@ -37,22 +39,33 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.security.HippoAccessManager;
+import org.hippoecm.repository.util.JcrUtils;
+import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.onehippo.repository.security.DomainInfoPrivilege;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.security.domain.FacetRule;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hippoecm.repository.api.HippoNodeType.CONFIGURATION_PATH;
+import static org.hippoecm.repository.api.HippoNodeType.DOMAINS_PATH;
+import static org.hippoecm.repository.api.HippoNodeType.GROUPS_PATH;
+import static org.hippoecm.repository.api.HippoNodeType.USERS_PATH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.onehippo.repository.security.StandardPermissionNames.JCR_ADD_CHILD_NODES;
 import static org.onehippo.repository.security.StandardPermissionNames.JCR_MODIFY_PROPERTIES;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_READ;
 import static org.onehippo.repository.security.StandardPermissionNames.JCR_REMOVE_CHILD_NODES;
 import static org.onehippo.repository.security.StandardPermissionNames.JCR_REMOVE_NODE;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_WRITE;
 
 public class FacetedAuthorizationTest extends RepositoryTestCase {
 
@@ -62,7 +75,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     Node writeDomain;
     Node testUser;
 
-    Session userSession;
+    HippoSession userSession;
 
     // nodes that have to be cleaned up
     private static final String DOMAIN_HANDLE_NODE = "test-domain-handle";
@@ -88,10 +101,10 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         SET_PROPERTY_ACTION };
 
     public void cleanup() throws RepositoryException {
-        Node config = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
-        Node domains = config.getNode(HippoNodeType.DOMAINS_PATH);
-        Node users = config.getNode(HippoNodeType.USERS_PATH);
-        Node groups = config.getNode(HippoNodeType.GROUPS_PATH);
+        Node config = session.getRootNode().getNode(CONFIGURATION_PATH);
+        Node domains = config.getNode(DOMAINS_PATH);
+        Node users = config.getNode(USERS_PATH);
+        Node groups = config.getNode(GROUPS_PATH);
 
         groups.getNode("admin").setProperty("hipposys:members", new String[]{});
 
@@ -144,10 +157,10 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         super.setUp();
 
         cleanup();
-        Node config = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
-        Node domains = config.getNode(HippoNodeType.DOMAINS_PATH);
-        Node users = config.getNode(HippoNodeType.USERS_PATH);
-        Node groups = config.getNode(HippoNodeType.GROUPS_PATH);
+        Node config = session.getRootNode().getNode(CONFIGURATION_PATH);
+        Node domains = config.getNode(DOMAINS_PATH);
+        Node users = config.getNode(USERS_PATH);
+        Node groups = config.getNode(GROUPS_PATH);
         /*   Temporarily adding admin user to admin group to pass the
              testDelegatedSessionWithWildcardDomainRuleExtension() and
              testDelegatedSessionWithNamedDomainRuleExtension() tests
@@ -182,7 +195,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         session.refresh(false);
 
         // setup user session
-        userSession = server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+        userSession = (HippoSession)server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
     }
 
     private void createUserAndGroup(final Node users, final Node groups) throws RepositoryException {
@@ -579,6 +592,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         assertEquals(accessibleDocId, userTestData.getNode("doc/doc").getIdentifier());
     }
 
+
     @Test
     public void testAccessForChildNodeOfDocument() throws RepositoryException {
         Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
@@ -591,8 +605,6 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         final Node childNode = doc.addNode("level1", "hippo:testcomposite");
         childNode.addNode("level2", "hippo:testcomposite");
         session.save();
-
-        Node userTestData = userSession.getRootNode().getNode(TEST_DATA_NODE);
 
         assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
         assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
@@ -619,7 +631,6 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
 
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/newnode", Session.ACTION_ADD_NODE));
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", JCR_ADD_CHILD_NODES));
-
         userSession.getNode("/" + TEST_DATA_NODE + "/doc/doc").addNode("foo", "hippo:testcomposite");
         userSession.save();
 
@@ -711,6 +722,153 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     }
 
     @Test
+    public void test_privileges_on_abs_path() throws RepositoryException {
+        final String everywhereDomainPath = "/" + CONFIGURATION_PATH + "/" + DOMAINS_PATH + "/everywhere";
+        Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
+        final Node handle = testData.addNode("doc", "hippo:handle");
+        handle.addMixin("mix:referenceable");
+        Node doc = handle.addNode("doc", "hippo:authtestdocument");
+
+        session.save();
+
+        {
+            // privileges for admin
+            final TreeSet<DomainInfoPrivilege> set = getPrivilegesSortedByName(session, "/" + TEST_DATA_NODE + "/doc/doc");
+            assertThat(set)
+                    .as("Expected read privilege from ")
+                    .hasSize(5);
+
+            final TreeSet<String> expectedPermissions = new TreeSet<>();
+            for (String permissions : new String[]{"hippo:admin", "hippo:author", "hippo:editor", "jcr:all", "jcr:read"}) {
+                expectedPermissions.add(permissions);
+            }
+
+            DomainInfoPrivilege current;
+            while ((current = set.pollFirst()) != null) {
+                final String expectedPermission = expectedPermissions.pollFirst();
+                assertThat(current.getName())
+                        .as("Expected '%s' privilege but was '%s'", expectedPermission, current.getName())
+                        .isEqualTo(expectedPermission);
+
+                assertThat(current.getDomainsProvidingPrivilege())
+                        .as("Expected everywhere domain '%s' also giving '%s' privilege but was domain(s) '%s'",
+                                everywhereDomainPath, current.getName(), current.getDomainsProvidingPrivilege())
+                        .containsExactly(everywhereDomainPath);
+            }
+
+
+        }
+        assertThat(getPrivileges(userSession, "/" + TEST_DATA_NODE + "/doc/doc"))
+                .as("Expected no single privilege for usersSession")
+                .isEmpty();
+
+
+        doc.setProperty("authtest", "canread");
+        session.save();
+
+        {
+            final DomainInfoPrivilege[] privileges = getPrivileges(userSession, "/" + TEST_DATA_NODE + "/doc/doc");
+            assertThat(privileges)
+                    .as("Expected read privilege from ")
+                    .hasSize(1);
+            assertThat(privileges[0].getName())
+                    .as("Expected jcr:read privilege")
+                    .isEqualTo(JCR_READ);
+
+            assertThat(privileges[0].getDomainsProvidingPrivilege())
+                    .as("Expected read domain '%s' giving jcr:read privilege but was domain '%s'",
+                            readDomain.getPath(), privileges[0].getDomainsProvidingPrivilege().first())
+                    .containsExactly(readDomain.getPath());
+        }
+
+        doc.setProperty("authtest", "canwrite");
+        session.save();
+
+        {
+            final TreeSet<DomainInfoPrivilege> set = getPrivilegesSortedByName(userSession, "/" + TEST_DATA_NODE + "/doc/doc");
+
+            assertThat(set)
+                    .as("Expected privileges jcr:read and jcr:write")
+                    .hasSize(2);
+
+            final DomainInfoPrivilege first = set.pollFirst();
+            assertThat(first.getName())
+                    .as("Expected jcr:read as the first element in the sorted set")
+                    .isEqualTo(JCR_READ);
+            assertThat(first.getDomainsProvidingPrivilege())
+                    .as("Expected write domain '%s' giving jcr:read privilege but was domain(s) '%s'",
+                            writeDomain.getPath(), first.getDomainsProvidingPrivilege())
+                    .containsExactly(writeDomain.getPath());
+
+            final DomainInfoPrivilege second = set.pollFirst();
+            assertThat(second.getName())
+                    .as("Expected jcr:write as the second element in the sorted set")
+                    .isEqualTo(JCR_WRITE);
+            assertThat(second.getDomainsProvidingPrivilege())
+                    .as("Expected write domain '%s' giving jcr:write privilege but was domain(s) '%s'",
+                            writeDomain.getPath(), second.getDomainsProvidingPrivilege())
+                    .containsExactly(writeDomain.getPath());
+        }
+
+        // VERY Specific use case now : If we copy the 'writeDomain' to a second domain, and log in a new user session
+        // we expect that we get the exact same privileges as above BUT this time, the domains providing the privilege
+        // should also include the copied domain!
+
+        final String writeDomainPath2 = writeDomain.getPath() + "2";
+        JcrUtils.copy(session, writeDomain.getPath(), writeDomainPath2);
+        session.save();
+
+        userSession.logout();
+        userSession = (HippoSession)server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+
+        try {
+            {
+                final TreeSet<DomainInfoPrivilege> set = getPrivilegesSortedByName(userSession, "/" + TEST_DATA_NODE + "/doc/doc");
+
+                assertThat(set)
+                        .as("Expected privileges jcr:read and jcr:write")
+                        .hasSize(2);
+
+                final DomainInfoPrivilege first = set.pollFirst();
+                assertThat(first.getName())
+                        .as("Expected jcr:read as the first element in the sorted set")
+                        .isEqualTo(JCR_READ);
+                assertThat(first.getDomainsProvidingPrivilege())
+                        .as("Expected domain '%s' and '%s' giving jcr:read privilege but was domain(s) '%s'",
+                                writeDomain.getPath(), writeDomainPath2, first.getDomainsProvidingPrivilege())
+                        .containsExactly(writeDomain.getPath(), writeDomainPath2);
+
+                final DomainInfoPrivilege second = set.pollFirst();
+                assertThat(second.getName())
+                        .as("Expected jcr:write as the second element in the sorted set")
+                        .isEqualTo(JCR_WRITE);
+                assertThat(second.getDomainsProvidingPrivilege())
+                        .as("Expected domain '%s' and '%s' giving jcr:write privilege but was domain(s) '%s'",
+                                writeDomain.getPath(), writeDomainPath2, second.getDomainsProvidingPrivilege())
+                        .containsExactly(writeDomain.getPath(), writeDomainPath2);
+            }
+        } finally {
+            // cleanup the second domain
+            session.getNode(writeDomainPath2).remove();
+            session.save();
+        }
+
+    }
+
+    @NotNull
+    private TreeSet<DomainInfoPrivilege> getPrivilegesSortedByName(final Session userSession, final String absPath) throws RepositoryException {
+
+        final DomainInfoPrivilege[] privileges = getPrivileges(userSession, absPath);
+        TreeSet<DomainInfoPrivilege> set = new TreeSet<>(Comparator.comparing(DomainInfoPrivilege::getName));
+        Arrays.stream(privileges).forEach(domainInfoPrivilege -> set.add(domainInfoPrivilege));
+        return set;
+    }
+
+    private DomainInfoPrivilege[] getPrivileges(final Session session, final String absPath) throws RepositoryException {
+        return ((HippoAccessManager) session.getAccessControlManager()).getPrivileges(absPath);
+    }
+
+    @Test
     public void testNodenameExpanders() throws RepositoryException {
 
         // count the number of docs in resultset before new doc is added:
@@ -758,7 +916,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
 
         // setup CLEAN user session
         userSession.logout();
-        userSession = server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+        userSession = (HippoSession) server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
 
         {
             Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
@@ -795,7 +953,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
 
         // setup user session
         userSession.logout();
-        userSession = server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+        userSession = (HippoSession) server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
 
         assertTrue(userSession.getRootNode().getNode(TEST_DATA_NODE).hasNode("readable"));
 
@@ -1228,7 +1386,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         session.save();
 
         userSession.logout();
-        userSession = server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+        userSession = (HippoSession) server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
 
         QueryManager queryManager = userSession.getWorkspace().getQueryManager();
         Query query = queryManager.createQuery("//element(*,hippo:authtestdocument) order by @jcr:score", Query.XPATH);

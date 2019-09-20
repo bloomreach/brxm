@@ -19,6 +19,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -81,6 +82,7 @@ import org.hippoecm.repository.security.domain.DomainRule;
 import org.hippoecm.repository.security.domain.FacetAuthDomain;
 import org.hippoecm.repository.security.domain.QFacetRule;
 import org.hippoecm.repository.security.principals.UserPrincipal;
+import org.onehippo.repository.security.DomainInfoPrivilege;
 import org.onehippo.repository.security.SessionDelegateUser;
 import org.onehippo.repository.security.StandardPermissionNames;
 import org.slf4j.Logger;
@@ -1576,11 +1578,11 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             return true;
         }
 
-        // fast track read check
-        if (permissionNames.remove(StandardPermissionNames.JCR_READ)) {
-            if (!canRead(id)) {
+            // fast track read check
+            if (permissionNames.remove(StandardPermissionNames.JCR_READ)) {
+                if (!canRead(id)) {
                 return false;
-            } else if (permissionNames.isEmpty()) {
+                } else if (permissionNames.isEmpty()) {
                 return true;
             }
         }
@@ -1627,9 +1629,9 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                         removeAccessFromCache(id);
                     }
                     return true;
+                    }
                 }
             }
-        }
         if (log.isInfoEnabled()) {
             log.info("DENY: [" + String.join(" ,", permissionNames) + "] to user " + getUserIdAsString() + " for " + npRes.getJCRPath(absPath));
         }
@@ -1772,13 +1774,21 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     }
 
     /**
+     * <p>
+     *     Instead of returning an arrays of {@link Privilege}s like {@link AccessControlManager#getPrivileges(String)}
+     *     does, we return an array of {@link DomainInfoPrivilege}s. A {@link DomainInfoPrivilege} is just a thin wrapper
+     *     for a {@link Privilege} but also provides information from which security domain(s) the {@link Privilege} is
+     *     coming from. Since multiple domains can provide one single {@link Privilege} for a {@link javax.jcr.Node}, the
+     *     {@link DomainInfoPrivilege#getDomainsProvidingPrivilege()} returns a set.
+     * </p>
      * @see AccessControlManager#getPrivileges(String)
      */
-    public Privilege[] getPrivileges(String absPath) throws PathNotFoundException, RepositoryException {
+    public DomainInfoPrivilege[] getPrivileges(String absPath) throws RepositoryException {
         checkInitialized();
 
         if (isSystem) {
-            return getSupportedPrivileges(absPath);
+            return Arrays.stream(getSupportedPrivileges(absPath)).map(privilege ->
+                    new DomainInfoPrivilege(privilege)).collect(Collectors.toList()).toArray(new DomainInfoPrivilege[0]);
         }
 
         updateReferenceFacetRules();
@@ -1794,15 +1804,17 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             throw new PathNotFoundException("NodeState not found for id " + id + " path: " + absPath);
         }
 
-        Set<Privilege> privileges = new HashSet<>();
+        Map<String, DomainInfoPrivilege> privileges = new HashMap<>();
         for (FacetAuthDomain fad : userPrincipal.getFacetAuthDomains()) {
             if (isNodeInDomain(nodeState, fad, false)) {
                 for (String privilegeName : fad.getPrivileges()) {
-                    privileges.add(permissionManager.getOrCreatePrivilege(privilegeName));
+                    final DomainInfoPrivilege domainInfoPrivilege = privileges
+                            .computeIfAbsent(privilegeName, priv -> new DomainInfoPrivilege(permissionManager.getOrCreatePrivilege(priv)));
+                    domainInfoPrivilege.addDomainProvidingPrivilege(fad.getDomainPath());
                 }
             }
         }
-        return privileges.toArray(new Privilege[0]);
+        return privileges.values().toArray(new DomainInfoPrivilege[0]);
     }
 
     /**
