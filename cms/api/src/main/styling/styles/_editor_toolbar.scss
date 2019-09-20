@@ -15,7 +15,6 @@
 .hippo-toolbar-menu {
   align-items: center;
   box-sizing: border-box;
-  border-left: 8px solid $editor-toolbar-border-color;
   border-bottom: 1px solid $gray12;
   background-color: $editor-toolbar-bgcolor;
   display: flex;
@@ -144,22 +143,8 @@
   display: block;
   width: 100%;
   box-sizing: border-box;
-  border-left: 8px solid mix($warning-light, $dark-gray);
   background-color: $warning-light;
   float: left;
-
-  // This margin creates a pixel of space for the bottom border
-  margin-bottom: 1px;
-
-  // Draw the bottom border using :after, otherwise it will not completely cover the left border
-  &::after {
-    content: "";
-    border-bottom: 1px solid mix($warning-light, $dark-gray);
-    left: 0;
-    position: absolute;
-    width: 100%;
-    z-index: 1;
-  }
 
   ul > li {
     padding: 8px 8px 0 32px;

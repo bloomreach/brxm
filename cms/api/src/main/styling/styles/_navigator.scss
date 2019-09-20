@@ -29,12 +29,15 @@
 }
 
 .navigator-center-body .hippo-list-documents {
-  > thead {
-    border-left: 1px solid $doclist-head-border-color;
-  }
-
   > tbody {
-    border-left: 1px solid $doclist-body-border-color;
     width: auto !important;
+  }
+}
+
+.yui-resize-handle {
+  border-right: 1px solid $gray60Solid;
+
+  &:hover {
+    border-color: $gray87;
   }
 }
