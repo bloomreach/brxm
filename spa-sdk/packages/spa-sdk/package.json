@@ -17,10 +17,10 @@
   "bugs": {
     "url": "https://issues.onehippo.com/projects/CMS/issues"
   },
-  "browser": "dist/spa-sdk.js",
-  "module": "dist/spa-sdk.mjs",
-  "es2015": "dist/spa-sdk.es6.mjs",
-  "types": "dist/spa-sdk.d.ts",
+  "browser": "dist/index.js",
+  "module": "dist/index.mjs",
+  "es2015": "dist/index.es6.mjs",
+  "types": "dist/index.d.ts",
   "files": [
     "dist/"
   ],
@@ -69,7 +69,6 @@
     "minicat": "^1.0",
     "rollup": "^1.21",
     "rollup-plugin-babel": "^4.3",
-    "rollup-plugin-dts": "^1.1.7",
     "rollup-plugin-terser": "^5.1",
     "rollup-plugin-typescript2": "^0.24",
     "ts-jest": "^24.0",

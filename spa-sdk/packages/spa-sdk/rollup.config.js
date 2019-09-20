@@ -15,7 +15,6 @@
  */
 
 import babel from 'rollup-plugin-babel';
-import dts from 'rollup-plugin-dts';
 import { terser } from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
 import minifyOptions from '../../terser.json';
@@ -26,19 +25,22 @@ export default [
     output: [
       {
         exports: 'named',
-        file: 'dist/spa-sdk.js',
+        file: 'dist/index.js',
         format: 'umd',
         name: 'BloomreachSpaSdk',
         sourcemap: true,
         sourcemapExcludeSources: true,
       },
       {
-        file: 'dist/spa-sdk.mjs',
+        file: 'dist/index.mjs',
         format: 'esm',
       },
     ],
     plugins: [
-      typescript({ cacheRoot: './node_modules/.cache/rpt2' }),
+      typescript({
+        cacheRoot: './node_modules/.cache/rpt2',
+        useTsconfigDeclarationDir: true,
+      }),
       babel({ extensions: ['.ts'] }),
       terser(minifyOptions)
     ],
@@ -47,23 +49,19 @@ export default [
   {
     input: 'src/index.ts',
     output: [{
-      file: 'dist/spa-sdk.es6.mjs',
+      file: 'dist/index.es6.mjs',
       format: 'esm',
     }],
     plugins: [
-      typescript({ cacheRoot: './node_modules/.cache/rpt2' }),
+      typescript({
+        cacheRoot: './node_modules/.cache/rpt2',
+        tsconfigOverride: {
+          compilerOptions: {
+            declaration: false,
+          }
+        },
+      }),
       terser(minifyOptions)
     ],
   },
-
-  {
-    input: 'src/index.ts',
-    output: [
-      {
-        file: 'dist/spa-sdk.d.ts',
-        format: 'es',
-      },
-    ],
-    plugins: [ dts() ],
-  }
 ];
