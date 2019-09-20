@@ -180,6 +180,7 @@
         .map(selector => $(selector).height())
         .reduce((x, y) => x + y);
       this.content.style.height = `calc(${this.settings.height}vh - ${dialogBoundaryHeight}px)`;
+      this.content.classList.add('hippo-dialog-relative');
       this.center();
     }
   };

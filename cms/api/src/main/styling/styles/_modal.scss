@@ -412,15 +412,15 @@
   }
 }
 
-// Picker dialog
-$picker-height: 450px;
+// Fixed-size picker dialog
+$fixed-picker-height: 450px;
 
 .hippo-picker {
-  height: $picker-height;
+  height: $fixed-picker-height;
 }
 
 .hippo-picker-list-details {
-  height: $picker-height;
+  height: $fixed-picker-height;
   margin-left: 0;
   background: $white;
   width: auto;
@@ -489,6 +489,30 @@ $picker-height: 450px;
   .hippo-dialog-alt .text-input,
   .hippo-dialog-alt .text-input input {
     flex: 1 0 auto;
+  }
+}
+
+// Relative-size picker dialog
+.hippo-dialog-relative {
+  .hippo-dialog-center {
+    display: flex;
+    flex-direction: column;
+
+    > div:last-child {
+      flex: 1;
+    }
+
+    .hippo-picker-tree {
+      min-width: 230px;
+      width: 25%;
+    }
+  }
+
+  .hippo-picker,
+  .hippo-picker-list-details,
+  .hippo-picker-list-details > div,
+  .hippo-list-documents {
+    height: 100%;
   }
 }
 
