@@ -15,7 +15,8 @@
  */
 
 import { Typed } from 'emittery';
-import { ContainerItemImpl, ContainerItem, TYPE_COMPONENT_CONTAINER_ITEM } from './container-item';
+import { ComponentImpl } from './component';
+import { ContainerItemImpl, ContainerItem, isContainerItem, TYPE_COMPONENT_CONTAINER_ITEM } from './container-item';
 import { Events } from '../events';
 import { Meta } from './meta';
 import { PageImpl } from './page';
@@ -189,5 +190,20 @@ describe('ContainerItemImpl', () => {
 
       expect(listener).toBeCalledWith({});
     });
+  });
+});
+
+describe('isContainerItem', () => {
+  it('should return true', () => {
+    const containerItem = new ContainerItemImpl({ id: 'id', type: TYPE_COMPONENT_CONTAINER_ITEM }, new Typed<Events>());
+
+    expect(isContainerItem(containerItem)).toBe(true);
+  });
+
+  it('should return false', () => {
+    const component = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT_CONTAINER_ITEM });
+
+    expect(isContainerItem(undefined)).toBe(false);
+    expect(isContainerItem(component)).toBe(false);
   });
 });

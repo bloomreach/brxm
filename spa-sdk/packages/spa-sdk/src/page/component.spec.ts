@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ComponentImpl, TYPE_COMPONENT } from './component';
+import { ComponentImpl, isComponent, TYPE_COMPONENT } from './component';
 import { MetaImpl, META_POSITION_BEGIN } from './meta';
 
 describe('ComponentImpl', () => {
@@ -161,5 +161,18 @@ describe('ComponentImpl', () => {
 
       expect(component.getComponentById('a')).toBeUndefined();
     });
+  });
+});
+
+describe('isComponent', () => {
+  it('should return true', () => {
+    const containerItem = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT });
+
+    expect(isComponent(containerItem)).toBe(true);
+  });
+
+  it('should return false', () => {
+    expect(isComponent(undefined)).toBe(false);
+    expect(isComponent({})).toBe(false);
   });
 });

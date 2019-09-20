@@ -78,3 +78,11 @@ export class ContainerImpl extends ComponentImpl implements Container {
     return this.model.xtype;
   }
 }
+
+/**
+ * Checks whether a value is a container.
+ * @param value The value to check.
+ */
+export function isContainer(value: any): value is Container {
+  return value instanceof ContainerImpl;
+}

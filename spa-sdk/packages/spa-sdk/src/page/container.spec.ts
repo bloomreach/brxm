@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { ContainerImpl, TYPE_COMPONENT_CONTAINER, TYPE_CONTAINER_BOX } from './container';
+import { ComponentImpl } from './component';
+import { ContainerImpl, isContainer, TYPE_COMPONENT_CONTAINER, TYPE_CONTAINER_BOX } from './container';
 
 describe('ContainerImpl', () => {
   describe('getChildren', () => {
@@ -31,5 +32,20 @@ describe('ContainerImpl', () => {
 
       expect(container.getType()).toBe(TYPE_CONTAINER_BOX);
     });
+  });
+});
+
+describe('isContainer', () => {
+  it('should return true', () => {
+    const container = new ContainerImpl({ id: 'id', type: TYPE_COMPONENT_CONTAINER, xtype: TYPE_CONTAINER_BOX });
+
+    expect(isContainer(container)).toBe(true);
+  });
+
+  it('should return false', () => {
+    const component = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT_CONTAINER });
+
+    expect(isContainer(undefined)).toBe(false);
+    expect(isContainer(component)).toBe(false);
   });
 });

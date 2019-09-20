@@ -173,3 +173,11 @@ export class ComponentImpl implements Component {
     }
   }
 }
+
+/**
+ * Checks whether a value is a component.
+ * @param value The value to check.
+ */
+export function isComponent(value: any): value is Component {
+  return value instanceof ComponentImpl;
+}

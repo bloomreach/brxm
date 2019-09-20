@@ -112,3 +112,11 @@ export class ContainerItemImpl
     return this.model._meta && this.model._meta.paramsInfo || {};
   }
 }
+
+/**
+ * Checks whether a value is a container item.
+ * @param value The value to check.
+ */
+export function isContainerItem(value: any): value is ContainerItem {
+  return value instanceof ContainerItemImpl;
+}
