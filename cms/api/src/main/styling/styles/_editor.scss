@@ -123,6 +123,11 @@
     box-sizing: border-box;
     padding: 8px;
 
+    &:focus-within {
+      border-color: $bluePrimary;
+      box-shadow: 0 0 0 1px $bluePrimary;
+    }
+
     .hippo-editor-large & {
       font-size: 26px;
     }
@@ -151,6 +156,11 @@
     overflow: hidden;
     padding-left: 8px;
     padding-right: 8px;
+
+    &:focus {
+      border-color: $bluePrimary;
+      box-shadow: 0 0 0 1px $bluePrimary;
+    }
 
     &[multiple] {
       height: initial;

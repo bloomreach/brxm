@@ -32,6 +32,11 @@
     box-sizing: border-box;
     font-size: 13px;
     padding: 8px;
+
+    &:focus-within {
+      border-color: $bluePrimary;
+      box-shadow: 0 0 0 1px $bluePrimary;
+    }
   }
 }
 
