@@ -134,8 +134,8 @@ public class StandardAndFederatedDomainSecurityTest extends RepositoryTestCase {
             intranetuser = server.login(new SimpleCredentials("intranetuser", "password".toCharArray()));
 
             assertThat(interceptor.messages())
-                    .containsOnlyOnce(("Skipped all domains found in not-standard domain folder location(s): [/test/standard-domains]"))
-                    .as("Expected specific WARN message about skipping not-standard domain folder location");
+                    .as("Expected specific WARN message about skipping not-standard domain folder location")
+                    .containsOnlyOnce(("Skipped all domains found in not-standard domain folder location(s): [/test/standard-domains]"));
 
         } finally {
             session.getNode("/test/standard-domains").remove();
@@ -157,8 +157,8 @@ public class StandardAndFederatedDomainSecurityTest extends RepositoryTestCase {
             intranetuser = server.login(new SimpleCredentials("intranetuser", "password".toCharArray()));
 
             assertThat(interceptor.messages())
-                    .containsOnlyOnce(("Skipped all domains found in not-supported federated domain folder location(s): [/intranet-domains]"))
-                    .as("Expected specific WARN message about skipping not-supported federated domain folder location");
+                    .as("Expected specific WARN message about skipping not-supported federated domain folder location")
+                    .containsOnlyOnce(("Skipped all domains found in not-supported federated domain folder location(s): [/intranet-domains]"));
 
         } finally {
             session.move("/intranet-domains", "/test/intranet/intranet-domains");
@@ -208,8 +208,8 @@ public class StandardAndFederatedDomainSecurityTest extends RepositoryTestCase {
             intranetuser = server.login(new SimpleCredentials("intranetuser", "password".toCharArray()));
 
             assertThat(interceptor.messages())
-                    .containsOnlyOnce(("Skipped all domains found in not-supported federated domain folder location(s): [/hippo:configuration/hippo:domains]"))
-                    .as("Expected specific WARN message about skipping not-supported federated domain folder location");
+                    .as("Expected specific WARN message about skipping not-supported federated domain folder location")
+                    .containsOnlyOnce(("Skipped all domains found in not-supported federated domain folder location(s): [/hippo:configuration/hippo:domains]"));
 
         } finally {
             session.move("/hippo:configuration/hippo:domains", "/test/intranet/intranet-domains");
@@ -353,8 +353,8 @@ public class StandardAndFederatedDomainSecurityTest extends RepositoryTestCase {
             assertFalse(intranetuser.hasPermission("/test/extranet", JCR_READ));
 
             assertThat(interceptor.getEvents().size())
-                    .isEqualTo(0)
-                    .as("Expected no error logs for non-existing jcr:path Reference facet rule");
+                    .as("Expected no error logs for non-existing jcr:path Reference facet rule")
+                    .isEqualTo(0);
 
         } finally {
             if (intranetuser != null) {
