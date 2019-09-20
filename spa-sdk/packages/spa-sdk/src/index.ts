@@ -35,12 +35,13 @@ import {
   Content,
   MetaComment,
   MetaFactory,
+  Page,
   TYPE_COMPONENT,
   TYPE_COMPONENT_CONTAINER_ITEM,
   TYPE_COMPONENT_CONTAINER,
   TYPE_META_COMMENT,
 } from './page';
-import { Spa } from './spa';
+import { Configuration, Spa } from './spa';
 import { buildPageModelUrl } from './url';
 
 declare const window: Window | undefined;
@@ -72,13 +73,17 @@ const spa = new Spa(buildPageModelUrl, componentFactory, contentFactory, eventBu
  *
  * @param config Configuration of the SPA integration with brXM.
  */
-export const initialize = spa.initialize.bind(spa);
+export function initialize(config: Configuration): Promise<Page> {
+  return spa.initialize(config);
+}
 
 /**
  * Destroys the integration with the SPA page.
  * @param page Page instance to destroy.
  */
-export const destroy = spa.destroy.bind(spa);
+export function destroy(page: Page) {
+  return spa.destroy(page);
+}
 
 export {
   Component,
