@@ -31,13 +31,13 @@ definitions:
       /hst:domains:
         jcr:primaryType: hst:domainfolder
         .meta:residual-child-node-category: system
-        /this-hstconfig:
+        /hstconfig:
           jcr:primaryType: hipposys:domain
           /readwrite:
             jcr:primaryType: hipposys:authrole
             hipposys:userrole: xm-hst-config-writer
             hipposys:role: readwrite
-          /this-hstconfig:
+          /hstconfig:
             jcr:primaryType: hipposys:domainrule
             /hstconfig-and-descendants:
               jcr:primaryType: hipposys:facetrule
