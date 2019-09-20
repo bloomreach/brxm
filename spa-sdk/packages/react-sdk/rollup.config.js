@@ -16,7 +16,6 @@
 
 /* eslint-disable import/no-extraneous-dependencies */
 import babel from 'rollup-plugin-babel';
-import dts from 'rollup-plugin-dts';
 import { terser } from 'rollup-plugin-terser';
 import typescript from 'rollup-plugin-typescript2';
 import pkg from './package.json';
@@ -28,7 +27,7 @@ export default [
     output: [
       {
         exports: 'named',
-        file: 'dist/react-sdk.js',
+        file: 'dist/index.js',
         format: 'umd',
         name: 'BloomreachReactSdk',
         sourcemap: true,
@@ -39,7 +38,7 @@ export default [
         },
       },
       {
-        file: 'dist/react-sdk.mjs',
+        file: 'dist/index.mjs',
         format: 'esm',
         globals: {
           react: 'React',
@@ -52,7 +51,10 @@ export default [
       ...Object.keys(pkg.peerDependencies || {}),
     ],
     plugins: [
-      typescript({ cacheRoot: './node_modules/.cache/rpt2' }),
+      typescript({
+        cacheRoot: './node_modules/.cache/rpt2',
+        useTsconfigDeclarationDir: true,
+      }),
       babel({ extensions: ['.ts'] }),
       terser(minifyOptions),
     ],
@@ -61,7 +63,7 @@ export default [
   {
     input: 'src/index.ts',
     output: [{
-      file: 'dist/react-sdk.es6.mjs',
+      file: 'dist/index.es6.mjs',
       format: 'esm',
     }],
     external: [
@@ -69,19 +71,15 @@ export default [
       ...Object.keys(pkg.peerDependencies || {}),
     ],
     plugins: [
-      typescript({ cacheRoot: './node_modules/.cache/rpt2' }),
+      typescript({
+        cacheRoot: './node_modules/.cache/rpt2',
+        tsconfigOverride: {
+          compilerOptions: {
+            declaration: false,
+          }
+        },
+      }),
       terser(minifyOptions)
     ],
   },
-
-  {
-    input: 'src/index.ts',
-    output: [
-      {
-        file: 'dist/react-sdk.d.ts',
-        format: 'es',
-      },
-    ],
-    plugins: [ dts() ],
-  }
 ];

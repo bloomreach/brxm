@@ -9991,13 +9991,6 @@ rollup-plugin-babel@^4.3:
     "@babel/helper-module-imports" "^7.0.0"
     rollup-pluginutils "^2.8.1"
 
-rollup-plugin-dts@^1.1.7:
-  version "1.1.7"
-  resolved "https://registry.yarnpkg.com/rollup-plugin-dts/-/rollup-plugin-dts-1.1.7.tgz#b823295b1b9ffb1f358456c3e669eefa2562437e"
-  integrity sha512-a0Td+PHzfxuFVFTNwA0OPiWf6b8JPpLoutKld3Jc/JaGNlXmfFMQ8AxmK+ScQ/kPcfnjVivZpxw2XpkENzginA==
-  optionalDependencies:
-    "@babel/code-frame" "^7.5.5"
-
 rollup-plugin-terser@^5.1:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/rollup-plugin-terser/-/rollup-plugin-terser-5.1.2.tgz#3e41256205cb75f196fc70d4634227d1002c255c"

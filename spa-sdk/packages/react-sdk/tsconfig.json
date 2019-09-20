@@ -9,7 +9,9 @@
       "dom"
     ],
     "jsx": "react",
-    "baseUrl": "./src"
+    "baseUrl": "./src",
+    "declaration": true,
+    "declarationDir": "./dist"
   },
   "include": [
     "src"
