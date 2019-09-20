@@ -427,6 +427,7 @@
       .cke,
       select {
         border-color: $validation-border !important;
+        box-shadow: none;
       }
     }
   }
