@@ -36,6 +36,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.api.HippoNodeType.NT_FEDERATEDDOMAINFOLDER;
+import static org.hippoecm.repository.security.domain.QFacetRule.FacetRuleType.JCR_PATH;
+import static org.hippoecm.repository.security.domain.QFacetRule.FacetRuleType.JCR_PRIMARYTYPE;
+import static org.hippoecm.repository.security.domain.QFacetRule.FacetRuleType.JCR_UUID;
+import static org.hippoecm.repository.security.domain.QFacetRule.FacetRuleType.NODENAME;
+import static org.hippoecm.repository.security.domain.QFacetRule.FacetRuleType.NODETYPE;
+import static org.hippoecm.repository.security.domain.QFacetRule.FacetRuleType.OTHER;
 import static org.hippoecm.repository.util.JcrUtils.getBooleanProperty;
 
 /**
@@ -108,6 +114,16 @@ public class QFacetRule implements Serializable {
      */
     private transient int hash;
 
+    private final FacetRuleType facetRuleType;
+
+    public enum FacetRuleType {
+        NODETYPE,
+        NODENAME,
+        JCR_UUID,
+        JCR_PATH,
+        JCR_PRIMARYTYPE,
+        OTHER
+    }
 
     public QFacetRule(FacetRule facetRule, NameResolver nameResolver) throws RepositoryException {
         // TODO this is used by Session delegation but DOES not work for PropertyType.REFERENCE !! FIX??
@@ -115,6 +131,7 @@ public class QFacetRule implements Serializable {
         this.facetUUID = null;
         this.type = facetRule.getType();
         this.facet = facetRule.getFacet();
+        facetRuleType = getFacetRuleTye(facet);
         this.facetName = nameResolver.getQName(facet);
         this.value = facetRule.getValue();
         this.valueName = nameResolver.getQName(value);
@@ -131,6 +148,9 @@ public class QFacetRule implements Serializable {
 
         // get mandatory properties
         facet = node.getProperty(HippoNodeType.HIPPO_FACET).getString();
+
+        facetRuleType = getFacetRuleTye(facet);
+
         facetUUID = node.getIdentifier();
 
         // Set the JCR Name for the facet (string)
@@ -160,6 +180,22 @@ public class QFacetRule implements Serializable {
 
     }
 
+    private FacetRuleType getFacetRuleTye(final String facet) {
+        if (facet.equalsIgnoreCase("nodetype")) {
+            return NODETYPE;
+        } else if (facet.equalsIgnoreCase("nodename")) {
+            return NODENAME;
+        } else if  (facet.equalsIgnoreCase("jcr:uuid")) {
+            return JCR_UUID;
+        } else if (facet.equalsIgnoreCase("jcr:path")) {
+            return JCR_PATH;
+        } else if (facet.equalsIgnoreCase("jcr:primaryType")) {
+            return JCR_PRIMARYTYPE;
+        } else {
+            return  OTHER;
+        }
+    }
+
     public boolean isHierarchicalWhiteListRule() {
         if (JcrConstants.JCR_PATH.equals(facet) && equals) {
             return true;
@@ -169,6 +205,10 @@ public class QFacetRule implements Serializable {
 
     public boolean isReferenceRule() {
         return referenceRule;
+    }
+
+    public FacetRuleType getFacetRuleType() {
+        return facetRuleType;
     }
 
     /**

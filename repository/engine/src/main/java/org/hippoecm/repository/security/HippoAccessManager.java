@@ -88,6 +88,12 @@ import org.onehippo.repository.security.StandardPermissionNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.security.domain.QFacetRule.FacetRuleType.JCR_PATH;
+import static org.hippoecm.repository.security.domain.QFacetRule.FacetRuleType.JCR_PRIMARYTYPE;
+import static org.hippoecm.repository.security.domain.QFacetRule.FacetRuleType.JCR_UUID;
+import static org.hippoecm.repository.security.domain.QFacetRule.FacetRuleType.NODENAME;
+import static org.hippoecm.repository.security.domain.QFacetRule.FacetRuleType.NODETYPE;
+
 /**
  * HippoAccessManager based on facet authorization. A regular user subject has a {@link UserPrincipal} which hold
  * a set of {@link FacetAuthDomain} configurations as defined by a set of {@link DomainRule}s, the roles the subject has
@@ -801,8 +807,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             }
         }
 
-        // is this a 'NodeType' facet rule?
-        if (facetRule.getFacet().equalsIgnoreCase("nodetype")) {
+        if (facetRule.getFacetRuleType() == NODETYPE) {
             boolean match = false;
             log.trace("Checking node : {} for nodeType: {}", nodeState.getId(), facetRule);
             if (isInstanceOfType(nodeState, facetRule.getValue())) {
@@ -819,8 +824,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             }
         }
 
-        // is this a 'NodeName' facet rule?
-        if (facetRule.getFacet().equalsIgnoreCase("nodename")) {
+        if (facetRule.getFacetRuleType() == NODENAME) {
             boolean match = false;
             if (facetRule.getType() == PropertyType.NAME) {
                 log.trace("Checking node : {} for nodename: {}", nodeState.getNodeId(), facetRule);
@@ -844,7 +848,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             }
         }
 
-        if (NameConstants.JCR_UUID.equals(facetRule.getFacetName())) {
+        if (facetRule.getFacetRuleType() == JCR_UUID) {
             boolean uuidMatch = false;
             log.trace("Checking node : {} for matching jcr:uuid with : {}", nodeState.getId(), facetRule);
             if (nodeState.getNodeId().toString().equals(facetRule.getValue())) {
@@ -857,7 +861,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             }
         }
 
-        if (NameConstants.JCR_PATH.equals(facetRule.getFacetName())) {
+        if (facetRule.getFacetRuleType() == JCR_PATH) {
             boolean uuidMatch = false;
             log.trace("Checking node : {} for matching jcr:path with : {}", nodeState.getId(), facetRule);
             try {
@@ -1021,7 +1025,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         boolean match = false;
 
         // jcr:primaryType isn't really a property
-        if (rule.getFacetName().equals(NameConstants.JCR_PRIMARYTYPE)) {
+        if (rule.getFacetRuleType() == JCR_PRIMARYTYPE) {
             // WILDCARD match, jcr:primaryType == *
             if (FacetAuthConstants.WILDCARD.equals(rule.getValue())) {
                 match = true;
