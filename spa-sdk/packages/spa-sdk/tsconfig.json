@@ -18,11 +18,12 @@
     "src"
   ],
   "typedocOptions": {
-    "exclude": "!**/+(api|index).ts",
     "excludeExternals": true,
+    "excludeNotExported": true,
     "excludePrivate": true,
     "excludeProtected": true,
     "hideGenerator": true,
+    "includeDeclarations": true,
     "mode": "file",
     "out": "docs",
     "readme": "src/docs/index.md"
