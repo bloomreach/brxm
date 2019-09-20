@@ -13,119 +13,50 @@
 // limitations under the License.
 
 .hippo-toolbar-menu {
+  align-items: center;
   box-sizing: border-box;
   border-left: 8px solid $editor-toolbar-border-color;
   border-bottom: 1px solid $gray12;
   background-color: $editor-toolbar-bgcolor;
-  float: left;
-  width: 100%;
+  display: flex;
   height: $editor-toolbar-height;
 
+  &:first-child {
+    padding-left: 24px;
+  }
+
   .hippo-toolbar-section {
+    display: flex;
+    align-items: center;
+
     > li {
-      float: left;
-      height: $editor-toolbar-height;
+      align-items: center;
+      display: flex;
 
-      &:first-child > span {
-        > a {
-          margin-left: 20px;
-          padding-left: 12px;
-        }
-
-        .hippo-toolbar-menu-item {
-          margin-left: 20px;
-        }
-      }
-
-      > span > a {
-        color: $editor-toolbar-color;
-        text-decoration: none;
-        padding-left: 12px;
+      &:not(:last-child) {
         padding-right: 8px;
-        font-size: $editor-toolbar-fontsize;
       }
 
-      &.menu-item:hover {
-        a {
-          &.menu-action .menu-action-icon,
-          &.menu-action .menu-action-text,
-          &.hippo-toolbar-section-button {
-            color: $editor-toolbar-hover-color;
-
-            svg {
-              color: $editor-toolbar-hover-color;
-
-              &.hi-times-circle {
-                color: $white;
-                fill: $editor-toolbar-hover-color;
-              }
-            }
-
-            &.menu-item-active {
-              color: $editor-toolbar-active-color;
-
-              svg {
-                color: $editor-toolbar-active-color;
-              }
-            }
-          }
-        }
-      }
-
-      // Buttons like 'Edit' & 'Save'
-      .menu-action {
-        display: block;
-        height: $editor-toolbar-height;
-
-        > span {
-          float: left;
-          display: inline-flex;
-        }
-
-        .menu-action-icon {
-          position: relative;
-          top: 11px;
-          padding-right: 6px;
-
-          svg {
-            position: relative;
-            top: 1px;
-            color: $editor-toolbar-color;
-
-            &.hi-times-circle {
-              color: $white;
-              fill: $editor-toolbar-color;
-            }
-          }
-        }
-
-        .menu-action-text {
-          position: relative;
-          top: 11px;
-        }
-      }
-
-      // Dropdown buttons like 'Publication'
+      // Dropdown buttons like 'Publication' get "btn btn-default" classes, which we tweak a little here
       .hippo-toolbar-section-button {
-        display: block;
-        height: $editor-toolbar-height;
-        padding-right: 12px;
+        // No borders
+        border: none;
 
+        // Compensate for missing top and bottom border by increasing the padding so the total height remains the same
+        padding-top: 9px;
+        padding-bottom: 9px;
+
+        &:active {
+          background-color: $gray5 !important;
+        }
+
+        // Language dropdown button
         > span {
-          float: left;
-          position: relative;
-          top: 11px;
+          display: flex;
+          align-items: center;
 
-          > .menu-action-text {
-            vertical-align: top;
-          }
-
-          // Language dropdown button
-          > .menu-action-icon {
-            display: inline-flex;
-            position: relative;
-            top: 2px;
-            padding-right: 4px;
+          img {
+            margin-right: 4px;
           }
         }
 
@@ -139,17 +70,7 @@
 
       // Dropdown is shown
       .menu-item-active {
-        display: block; // Needed for background color to fill the complete button
-        background-color: $editor-toolbar-active-bgcolor;
-        color: $editor-toolbar-active-color;
-      }
-
-      .menu-item-active svg {
-        color: $editor-toolbar-active-color;
-      }
-
-      .menu-item-inactive svg {
-        color: $editor-toolbar-color;
+        background-color: $gray5;
       }
 
       // Dropdown wrapper element
