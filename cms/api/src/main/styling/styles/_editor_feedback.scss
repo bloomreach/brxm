@@ -15,25 +15,11 @@
 .hippo-editor-feedback {
   width: 100%;
   box-sizing: border-box;
-  border-left: 8px solid mix($feedback-error-color, $dark-gray);
   background-color: $feedback-error-color;
   float: left;
 
   &.hippo-hidden {
     display: none;
-  }
-
-  // This margin creates a pixel of space for the bottom border
-  margin-bottom: 1px;
-
-  // Draw the bottom border using :after, otherwise it will not completely cover the left border
-  &::after {
-    content: "";
-    border-bottom: 1px solid mix($feedback-error-color, $dark-gray);
-    left: 0;
-    position: absolute;
-    width: 100%;
-    z-index: 1;
   }
 
   ul > li {
