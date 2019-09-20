@@ -132,18 +132,20 @@
     }
   }
 
+  Hippo.showMask = function() {
+    return Hippo.iframeConnections
+      .getParentConnection()
+      .then(cmsToNavApp => cmsToNavApp.showMask());
+  };
+
+  Hippo.hideMask = function() {
+    return Hippo.iframeConnections
+      .getParentConnection()
+      .then(cmsToNavApp => cmsToNavApp.hideMask());
+  };
+
   // Receiver object for the implementation of the Parent API
   const subAppToCms = {
-    showMask() {
-      return Hippo.iframeConnections
-        .getParentConnection()
-        .then(cmsToNavApp => cmsToNavApp.showMask());
-    },
-    hideMask() {
-      return Hippo.iframeConnections
-        .getParentConnection()
-        .then(cmsToNavApp => cmsToNavApp.hideMask());
-    },
     updateNavLocation(location) {
       Hippo.currentNavLocation = {
         path: location.path,
@@ -156,13 +158,18 @@
           cmsToNavApp.updateNavLocation(Hippo.currentNavLocation),
         );
     },
+    showMask() {
+      return Hippo.showMask();
+    } ,
+    hideMask() {
+      return Hippo.hideMask();
+    } ,
   };
 
   const navAppToCms = {
     beforeNavigation() {
       return Promise.resolve(true);
     },
-
     navigate(location, flags) {
       const pathElements = location.path.split('/');
       const perspectiveIdentifier = pathElements.shift();
