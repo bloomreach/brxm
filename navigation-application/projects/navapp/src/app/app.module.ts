@@ -31,7 +31,6 @@ import { TopPanelModule } from './top-panel/top-panel.module';
   imports: [
     BrowserModule,
     SharedModule,
-    BrowserModule,
     ClientAppModule,
     HttpClientModule,
     MainMenuModule,
