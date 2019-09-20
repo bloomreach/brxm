@@ -182,7 +182,7 @@ $editor-subfield-border:             $gray60;
 $editor-subfield-in-compound-border: $gray12;
 $editor-compound-field-color:        $gray87;
 $editor-compound-field-border:       $gray12;
-$editor-padding:                     32px;
+$editor-padding:                     24px;
 $editor-field-bgs:                   (transparent, $lighter-shade, $light-shade, $light-gray, $dark-gray);
 
 // Editor preview
@@ -195,9 +195,6 @@ $editor-toolbar-border-color:        $dark-gray;
 $editor-toolbar-fontsize:            15px;
 $editor-toolbar-height:              $top-bar-height;
 $editor-toolbar-color:               $darker-shade;
-$editor-toolbar-hover-color:         $primary;
-$editor-toolbar-active-color:        $darker-shade;
-$editor-toolbar-active-bgcolor:      $lightest-shade;
 
 // Editor validation
 $validation-title-color:             $danger;
