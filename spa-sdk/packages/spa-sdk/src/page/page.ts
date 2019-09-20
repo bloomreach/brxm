@@ -73,8 +73,7 @@ export interface Page {
   getContent(reference: Reference | string): Content;
 
   /**
-   * Returns the title of the page, if configured.
-   * @returns the title of the page, or `undefined` if not configured.
+   * @return The title of the page, or `undefined` if not configured.
    */
   getTitle(): string | undefined;
 }

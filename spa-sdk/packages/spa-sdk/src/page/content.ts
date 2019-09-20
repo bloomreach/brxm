@@ -32,27 +32,27 @@ export interface ContentModel {
  */
 export interface Content {
   /**
-   * Returns the content id.
+   * @return The content id.
    */
   getId(): string;
 
   /**
-   * Returns the content locale.
+   * @return The content locale.
    */
   getLocale(): string | undefined;
 
   /**
-   * Returns the content meta-data collection.
+   * @return The content meta-data collection.
    */
   getMeta(): Meta[];
 
   /**
-   * Returns the content name.
+   * @return The content name.
    */
   getName(): string;
 
   /**
-   * Returns the content data as it is returned in the Page Model API.
+   * @return The content data as it is returned in the Page Model API.
    */
   getData(): ContentModel;
 }

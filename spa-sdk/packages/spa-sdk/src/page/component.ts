@@ -61,17 +61,17 @@ export interface ComponentModel {
  */
 export interface Component {
   /**
-   * Returns component meta-data collection.
+   * @return The component meta-data collection.
    */
   getMeta(): Meta[];
 
   /**
-   * Returns map of models.
+   * @return The map of models.
    */
   getModels(): Models;
 
   /**
-   * Returns a link to the partial component model.
+   * @return The link to the partial component model.
    */
   getModelUrl(): string | undefined;
 

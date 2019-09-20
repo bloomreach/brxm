@@ -35,17 +35,17 @@ export interface MetaCollectionModel {
  */
 export interface Meta<T extends MetaType = MetaType> {
   /**
-   * Returns meta-data.
+   * @return The meta-data.
    */
   getData(): string;
 
   /**
-   * Returns meta-data type.
+   * @return The meta-data type.
    */
   getType(): T;
 
   /**
-   * Returns meta-data position relative to the related element.
+   * @return The meta-data position relative to the related element.
    */
   getPosition(): MetaPosition;
 }
