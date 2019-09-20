@@ -15,7 +15,7 @@
  */
 
 import { Typed } from 'emittery';
-import { Component, ComponentMeta, ComponentModel } from './component';
+import { ComponentMeta, ComponentModel, Component } from './component';
 import { ContentModel, Content } from './content';
 import { ContentMap } from './content-map';
 import { Events, PageUpdateEvent } from '../events';
@@ -70,7 +70,7 @@ export interface Page {
    * @param reference The reference to the content. It can be an object containing
    * an [RFC-6901](https://tools.ietf.org/html/rfc6901) JSON Pointer.
    */
-  getContent(reference: Reference | string): Content;
+  getContent(reference: Reference | string): Content | undefined;
 
   /**
    * @return The title of the page, or `undefined` if not configured.
@@ -78,7 +78,7 @@ export interface Page {
   getTitle(): string | undefined;
 }
 
-export class Page implements Page {
+export class PageImpl implements Page {
   constructor(
     protected model: PageModel,
     protected root: Component,
@@ -89,7 +89,9 @@ export class Page implements Page {
   }
 
   protected onPageUpdate(event: PageUpdateEvent) {
-    event.page.content.forEach((content, reference) => this.content.set(reference, content));
+    if (event.page instanceof PageImpl) {
+      event.page.content.forEach((content, reference) => this.content.set(reference, content));
+    }
   }
 
   private static getContentReference(reference: Reference) {
@@ -104,7 +106,7 @@ export class Page implements Page {
 
   getContent(reference: Reference | string) {
     const contentReference = isReference(reference)
-      ? Page.getContentReference(reference)
+      ? PageImpl.getContentReference(reference)
       : reference;
 
     return this.content.get(contentReference);

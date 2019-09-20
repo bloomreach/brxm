@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Meta } from './meta';
+import { MetaImpl } from './meta';
 
 export const TYPE_META_COMMENT = 'comment';
 const HTML_COMMENT = /<!--\s*(.*?)\s*-->/;
@@ -22,7 +22,7 @@ const HTML_COMMENT = /<!--\s*(.*?)\s*-->/;
 /**
  * Meta information stored in HST-comments.
  */
-export class MetaComment extends Meta<typeof TYPE_META_COMMENT> {
+export class MetaComment extends MetaImpl<typeof TYPE_META_COMMENT> {
   getData() {
     const data = super.getData();
     const [, payload = data] = data.match(HTML_COMMENT) || [];

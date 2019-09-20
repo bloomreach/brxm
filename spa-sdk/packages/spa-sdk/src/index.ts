@@ -26,13 +26,14 @@ import { Events } from './events';
 import { Cms, Window } from './cms';
 import {
   ComponentFactory,
-  Component,
+  ComponentImpl,
+  ContainerItemImpl,
   ContainerItemModel,
   ContainerItem,
+  ContainerImpl,
   ContainerModel,
-  Container,
-  ContentFactory,
-  Content,
+  ContentFactoryImpl,
+  ContentImpl,
   MetaComment,
   MetaFactory,
   Page,
@@ -50,19 +51,19 @@ const eventBus = new Typed<Events>();
 
 const metaFactory = new MetaFactory()
   .register(TYPE_META_COMMENT, (model, position) => new MetaComment(model, position));
-const contentFactory = new ContentFactory(model => new Content(model, metaFactory.create(model._meta)));
+const contentFactory = new ContentFactoryImpl(model => new ContentImpl(model, metaFactory.create(model._meta)));
 const componentFactory = new ComponentFactory()
   .register(
     TYPE_COMPONENT,
-    (model, children) => new Component(model, children, metaFactory.create(model._meta)),
+    (model, children) => new ComponentImpl(model, children, metaFactory.create(model._meta)),
   )
   .register<ContainerModel, ContainerItem>(
     TYPE_COMPONENT_CONTAINER,
-    (model, children) => new Container(model, children, metaFactory.create(model._meta)),
+    (model, children) => new ContainerImpl(model, children, metaFactory.create(model._meta)),
   )
   .register<ContainerItemModel>(
     TYPE_COMPONENT_CONTAINER_ITEM,
-    model => new ContainerItem(model, eventBus, metaFactory.create(model._meta)),
+    model => new ContainerItemImpl(model, eventBus, metaFactory.create(model._meta)),
   );
 
 const cms = new Cms(eventBus, window);

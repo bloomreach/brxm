@@ -61,6 +61,11 @@ export interface ComponentModel {
  */
 export interface Component {
   /**
+   * @return The component id.
+   */
+  getId(): string;
+
+  /**
    * @return The component meta-data collection.
    */
   getMeta(): Meta[];
@@ -86,27 +91,32 @@ export interface Component {
   getParameters(): ComponentParameters;
 
   /**
+   * @return The direct children of the component.
+   */
+  getChildren(): Component[];
+
+  /**
    * Looks up for a nested component.
    * @param componentNames A lookup path.
    */
-  getComponent<T extends Component>(): T;
-  getComponent<T extends Component>(...componentNames: string[]): T | undefined;
+  getComponent<U extends Component>(): this;
+  getComponent<U extends Component>(...componentNames: string[]): U | undefined;
 
   /**
    * Looks up for a nested component by its id.
    * @param id A component id.
    */
-  getComponentById<T extends Component>(id: string): T | undefined;
+  getComponentById<U extends Component>(id: string): U | this | undefined;
 }
 
-export class Component implements Component {
+export class ComponentImpl implements Component {
   constructor(
     protected model: ComponentModel,
     protected children: Component[] = [],
     protected meta: Meta[] = [],
   ) {}
 
-  protected getId() {
+  getId() {
     return this.model.id;
   }
 
@@ -130,31 +140,36 @@ export class Component implements Component {
     return this.model._meta && this.model._meta.params || {};
   }
 
-  getComponent<T extends Component>(): T;
-  getComponent<T extends Component>(...componentNames: string[]): T | undefined;
+  getChildren() {
+    return this.children;
+  }
+
+  getComponent<U extends Component>(): this;
+  getComponent<U extends Component>(...componentNames: string[]): U | undefined;
   getComponent(...componentNames: string[]) {
     // tslint:disable-next-line:no-this-assignment
     let component: Component | undefined = this;
 
     while (componentNames.length && component) {
       const name = componentNames.shift()!;
-      component = component.children.find(component => component.getName() === name);
+      component = component.getChildren().find(component => component.getName() === name);
     }
 
     return component;
   }
 
+  getComponentById<U extends Component>(id: string): U | this | undefined;
   getComponentById(id: string) {
     const queue = [this as Component];
 
     while (queue.length) {
       const component = queue.shift()!;
 
-      if (component.model.id === id) {
+      if (component.getId() === id) {
         return component;
       }
 
-      queue.push(...component.children);
+      queue.push(...component.getChildren());
     }
   }
 }

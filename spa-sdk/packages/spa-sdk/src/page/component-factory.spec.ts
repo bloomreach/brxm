@@ -15,21 +15,21 @@
  */
 
 import { ComponentFactory } from './component-factory';
-import { ComponentModel, Component } from './component';
+import { ComponentImpl, ComponentModel, Component } from './component';
 
 describe('ComponentFactory', () => {
   describe('register', () => {
     it('should provide a fluent interface', () => {
       const factory = new ComponentFactory();
 
-      expect(factory.register('something', () => new Component({ id: 'id', type: 'something' }))).toBe(factory);
+      expect(factory.register('something', () => new ComponentImpl({ id: 'id', type: 'something' }))).toBe(factory);
     });
   });
 
   describe('create', () => {
     it('should call a registered builder', () => {
-      const builder1 = jest.fn(() => new Component({ id: 'id1', type: '1' }));
-      const builder2 = jest.fn(() => new Component({ id: 'id2', type: '2' }));
+      const builder1 = jest.fn(() => new ComponentImpl({ id: 'id1', type: '1' }));
+      const builder2 = jest.fn(() => new ComponentImpl({ id: 'id2', type: '2' }));
       const factory = new ComponentFactory()
         .register('type1', builder1)
         .register('type2', builder2);
@@ -43,13 +43,13 @@ describe('ComponentFactory', () => {
 
     it('should throw an exception on unknown component type', () => {
       const factory = new ComponentFactory()
-        .register('type0', model => new Component(model));
+        .register('type0', model => new ComponentImpl(model));
 
       expect(() => factory.create({ id: 'id1', type: 'type1', name: 'Component 1' })).toThrowError();
     });
 
     it('should produce a tree structure', () => {
-      const builder = jest.fn((model: ComponentModel, children: Component[]) => new Component(model, children));
+      const builder = jest.fn((model: ComponentModel, children: Component[]) => new ComponentImpl(model, children));
       const factory = new ComponentFactory()
         .register('type', builder);
 

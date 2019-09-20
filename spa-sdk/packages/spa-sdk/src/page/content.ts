@@ -57,7 +57,7 @@ export interface Content {
   getData(): ContentModel;
 }
 
-export class Content implements Content {
+export class ContentImpl implements Content {
   constructor(protected model: ContentModel, protected meta: Meta[] = []) {}
 
   getId() {

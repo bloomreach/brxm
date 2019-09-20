@@ -29,7 +29,7 @@ export interface ContentFactory {
   create(model: ContentModel): Content;
 }
 
-export class ContentFactory {
+export class ContentFactoryImpl {
   constructor(private builder: ContentBuilder) {}
 
   create(model: ContentModel) {

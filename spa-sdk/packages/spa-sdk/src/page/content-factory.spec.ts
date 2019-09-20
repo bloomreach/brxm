@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-import { ContentFactory } from './content-factory';
-import { Content } from './content';
+import { ContentFactoryImpl, ContentFactory } from './content-factory';
+import { ContentImpl } from './content';
 
-describe('ContentFactory', () => {
-  const builder = jest.fn(model => new Content(model));
+describe('ContentFactoryImpl', () => {
+  const builder = jest.fn(model => new ContentImpl(model));
   let contentFactory: ContentFactory;
 
   beforeEach(() => {
-    contentFactory = new ContentFactory(builder);
+    contentFactory = new ContentFactoryImpl(builder);
     builder.mockClear();
   });
 

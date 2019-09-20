@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, ComponentModel } from './component';
+import { ComponentModel, Component } from './component';
 
 interface Task {
   model: ComponentModel;

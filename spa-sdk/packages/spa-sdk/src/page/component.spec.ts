@@ -14,20 +14,28 @@
  * limitations under the License.
  */
 
-import { Component, TYPE_COMPONENT } from './component';
-import { Meta, META_POSITION_BEGIN } from './meta';
+import { ComponentImpl, TYPE_COMPONENT } from './component';
+import { MetaImpl, META_POSITION_BEGIN } from './meta';
 
-describe('Component', () => {
+describe('ComponentImpl', () => {
+  describe('getId', () => {
+    it('should return a component id', () => {
+      const component = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT });
+
+      expect(component.getId()).toBe('id');
+    });
+  });
+
   describe('getMeta', () => {
     it('should return a meta-data array', () => {
-      const meta = new Meta({ data: '', type: 'comment' }, META_POSITION_BEGIN);
-      const component = new Component({ id: 'id', type: TYPE_COMPONENT }, [], [meta]);
+      const meta = new MetaImpl({ data: '', type: 'comment' }, META_POSITION_BEGIN);
+      const component = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT }, [], [meta]);
 
       expect(component.getMeta()).toEqual([meta]);
     });
 
     it('should return an empty array', () => {
-      const component = new Component({ id: 'id', type: TYPE_COMPONENT });
+      const component = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT });
 
       expect(component.getMeta()).toEqual([]);
     });
@@ -35,13 +43,13 @@ describe('Component', () => {
 
   describe('getModels', () => {
     it('should return models object', () => {
-      const component = new Component({ id: 'id', type: TYPE_COMPONENT, models: { a: 1, b: 2 } });
+      const component = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT, models: { a: 1, b: 2 } });
 
       expect(component.getModels()).toEqual({ a: 1, b: 2 });
     });
 
     it('should return empty object', () => {
-      const component = new Component({ id: 'id', type: TYPE_COMPONENT });
+      const component = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT });
 
       expect(component.getModels()).toEqual({});
     });
@@ -49,7 +57,7 @@ describe('Component', () => {
 
   describe('getUrl', () => {
     it('should return a model url', () => {
-      const component = new Component({
+      const component = new ComponentImpl({
         id: 'id',
         type: TYPE_COMPONENT,
         _links: { componentRendering: { href: 'url' } },
@@ -59,8 +67,8 @@ describe('Component', () => {
     });
 
     it('should return undefined when a model url is missing', () => {
-      const component1 = new Component({ id: 'id', type: TYPE_COMPONENT });
-      const component2 = new Component({ id: 'id', type: TYPE_COMPONENT, _links: {} });
+      const component1 = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT });
+      const component2 = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT, _links: {} });
 
       expect(component1.getUrl()).toBeUndefined();
       expect(component2.getUrl()).toBeUndefined();
@@ -69,13 +77,13 @@ describe('Component', () => {
 
   describe('getName', () => {
     it('should return a name', () => {
-      const component = new Component({ id: 'id', type: TYPE_COMPONENT, name: 'something' });
+      const component = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT, name: 'something' });
 
       expect(component.getName()).toBe('something');
     });
 
     it('should return an empty string', () => {
-      const component = new Component({ id: 'id', type: TYPE_COMPONENT });
+      const component = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT });
 
       expect(component.getName()).toBe('');
     });
@@ -83,7 +91,7 @@ describe('Component', () => {
 
   describe('getParameters', () => {
     it('should return parameters', () => {
-      const component = new Component({
+      const component = new ComponentImpl({
         id: 'id',
         type: TYPE_COMPONENT,
         _meta: {
@@ -95,8 +103,8 @@ describe('Component', () => {
     });
 
     it('should return an empty object', () => {
-      const component1 = new Component({ id: 'id', type: TYPE_COMPONENT });
-      const component2 = new Component({ id: 'id', type: TYPE_COMPONENT, _meta: {} });
+      const component1 = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT });
+      const component2 = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT, _meta: {} });
 
       expect(component1.getParameters()).toEqual({});
       expect(component2.getParameters()).toEqual({});
@@ -105,16 +113,16 @@ describe('Component', () => {
 
   describe('getComponent', () => {
     it('should return a reference to itself', () => {
-      const component = new Component({ id: 'id', type: TYPE_COMPONENT });
+      const component = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT });
 
       expect(component.getComponent()).toBe(component);
     });
 
     it('should find a child component', () => {
-      const root = new Component({ id: 'root-component', type: TYPE_COMPONENT }, [
-        new Component({ id: 'a-component', type: TYPE_COMPONENT, name: 'a' }),
-        new Component({ id: 'b-component', type: TYPE_COMPONENT, name: 'b' }, [
-          new Component({ id: 'c-component', type: TYPE_COMPONENT, name: 'c' }),
+      const root = new ComponentImpl({ id: 'root-component', type: TYPE_COMPONENT }, [
+        new ComponentImpl({ id: 'a-component', type: TYPE_COMPONENT, name: 'a' }),
+        new ComponentImpl({ id: 'b-component', type: TYPE_COMPONENT, name: 'b' }, [
+          new ComponentImpl({ id: 'c-component', type: TYPE_COMPONENT, name: 'c' }),
         ]),
       ]);
 
@@ -126,7 +134,7 @@ describe('Component', () => {
     });
 
     it('should not find a child component', () => {
-      const component = new Component({ id: 'id', type: TYPE_COMPONENT });
+      const component = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT });
 
       expect(component.getComponent('a', 'b')).toBeUndefined();
     });
@@ -134,10 +142,10 @@ describe('Component', () => {
 
   describe('getComponentById', () => {
     it('should find a component by id', () => {
-      const root = new Component({ id: 'root-component', type: TYPE_COMPONENT }, [
-        new Component({ id: 'a-component', type: TYPE_COMPONENT, name: 'a' }),
-        new Component({ id: 'b-component', type: TYPE_COMPONENT, name: 'b' }, [
-          new Component({ id: 'c-component', type: TYPE_COMPONENT, name: 'c' }),
+      const root = new ComponentImpl({ id: 'root-component', type: TYPE_COMPONENT }, [
+        new ComponentImpl({ id: 'a-component', type: TYPE_COMPONENT, name: 'a' }),
+        new ComponentImpl({ id: 'b-component', type: TYPE_COMPONENT, name: 'b' }, [
+          new ComponentImpl({ id: 'c-component', type: TYPE_COMPONENT, name: 'c' }),
         ]),
       ]);
 
@@ -149,7 +157,7 @@ describe('Component', () => {
     });
 
     it('should return undefined when a component does not exist', () => {
-      const component = new Component({ id: 'id', type: TYPE_COMPONENT });
+      const component = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT });
 
       expect(component.getComponentById('a')).toBeUndefined();
     });

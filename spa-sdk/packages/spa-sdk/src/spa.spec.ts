@@ -17,7 +17,7 @@
 import { Typed } from 'emittery';
 import { Events } from './events';
 import { Cms } from './cms';
-import { ComponentFactory, Component, Page, ContentFactory, Content, TYPE_COMPONENT } from './page';
+import { ComponentFactory, ComponentImpl, ContentFactory, ContentFactoryImpl, PageImpl, Page, TYPE_COMPONENT } from './page';
 import { PageModelUrlBuilder } from './url';
 import { Spa } from './spa';
 
@@ -62,11 +62,11 @@ describe('Spa', () => {
     eventBus = new Typed<Events>();
     cms = new Cms(eventBus);
     componentFactory = new ComponentFactory();
-    contentFactory = new ContentFactory(jest.fn());
+    contentFactory = new ContentFactoryImpl(jest.fn());
     pageModelUrlBuilder = jest.fn(() => 'http://example.com');
 
     cms.initialize = jest.fn();
-    componentFactory.create = jest.fn(model => new Component(model));
+    componentFactory.create = jest.fn(model => new ComponentImpl(model));
     spyOn(contentFactory, 'create');
 
     spa = new Spa(pageModelUrlBuilder, componentFactory, contentFactory, eventBus, cms);
@@ -103,7 +103,7 @@ describe('Spa', () => {
     });
 
     it('should return a page instance', () => {
-      expect(page).toBeInstanceOf(Page);
+      expect(page).toBeInstanceOf(PageImpl);
     });
 
     it('should create a content instance', () => {
@@ -166,7 +166,7 @@ describe('Spa', () => {
       });
 
       it('should emit page.update event', () => {
-        expect(eventBus.emit).toBeCalledWith('page.update', { page: expect.any(Page) });
+        expect(eventBus.emit).toBeCalledWith('page.update', { page: expect.any(PageImpl) });
       });
     });
   });

@@ -15,12 +15,12 @@
  */
 
 import { Typed } from 'emittery';
-import { ContainerItem, TYPE_COMPONENT_CONTAINER_ITEM } from './container-item';
+import { ContainerItemImpl, ContainerItem, TYPE_COMPONENT_CONTAINER_ITEM } from './container-item';
 import { Events } from '../events';
 import { Meta } from './meta';
-import { Page } from './page';
+import { PageImpl } from './page';
 
-describe('ContainerItem', () => {
+describe('ContainerItemImpl', () => {
   let eventBus: Typed<Events>;
 
   beforeEach(() => {
@@ -29,7 +29,7 @@ describe('ContainerItem', () => {
 
   describe('getType', () => {
     it('should return a type', () => {
-      const containerItem = new ContainerItem(
+      const containerItem = new ContainerItemImpl(
         { id: 'id', type: TYPE_COMPONENT_CONTAINER_ITEM, label: 'Banner' },
         eventBus,
       );
@@ -40,7 +40,7 @@ describe('ContainerItem', () => {
 
   describe('isHidden', () => {
     it('should be hidden', () => {
-      const containerItem = new ContainerItem(
+      const containerItem = new ContainerItemImpl(
         {
           id: 'id',
           type: TYPE_COMPONENT_CONTAINER_ITEM,
@@ -55,7 +55,7 @@ describe('ContainerItem', () => {
     });
 
     it('should not be hidden', () => {
-      const containerItem1 = new ContainerItem(
+      const containerItem1 = new ContainerItemImpl(
         {
           id: 'id',
           type: TYPE_COMPONENT_CONTAINER_ITEM,
@@ -66,7 +66,7 @@ describe('ContainerItem', () => {
         eventBus,
       );
 
-      const containerItem2 = new ContainerItem(
+      const containerItem2 = new ContainerItemImpl(
         {
           id: 'id',
           type: TYPE_COMPONENT_CONTAINER_ITEM,
@@ -74,8 +74,11 @@ describe('ContainerItem', () => {
         },
         eventBus,
       );
-      const containerItem3 = new ContainerItem({ id: 'id', type: TYPE_COMPONENT_CONTAINER_ITEM, _meta: { } }, eventBus);
-      const containerItem4 = new ContainerItem({ id: 'id', type: TYPE_COMPONENT_CONTAINER_ITEM }, eventBus);
+      const containerItem3 = new ContainerItemImpl(
+        { id: 'id', type: TYPE_COMPONENT_CONTAINER_ITEM, _meta: { } },
+        eventBus,
+      );
+      const containerItem4 = new ContainerItemImpl({ id: 'id', type: TYPE_COMPONENT_CONTAINER_ITEM }, eventBus);
 
       expect(containerItem1.isHidden()).toBe(false);
       expect(containerItem2.isHidden()).toBe(false);
@@ -86,7 +89,7 @@ describe('ContainerItem', () => {
 
   describe('getParameters', () => {
     it('should return parameters', () => {
-      const containerItem = new ContainerItem(
+      const containerItem = new ContainerItemImpl(
         {
           id: 'id',
           type: TYPE_COMPONENT_CONTAINER_ITEM,
@@ -101,8 +104,11 @@ describe('ContainerItem', () => {
     });
 
     it('should return an empty object', () => {
-      const containerItem1 = new ContainerItem({ id: 'id', type: TYPE_COMPONENT_CONTAINER_ITEM, _meta: {} }, eventBus);
-      const containerItem2 = new ContainerItem({ id: 'id', type: TYPE_COMPONENT_CONTAINER_ITEM }, eventBus);
+      const containerItem1 = new ContainerItemImpl(
+        { id: 'id', type: TYPE_COMPONENT_CONTAINER_ITEM, _meta: {} },
+        eventBus,
+      );
+      const containerItem2 = new ContainerItemImpl({ id: 'id', type: TYPE_COMPONENT_CONTAINER_ITEM }, eventBus);
 
       expect(containerItem1.getParameters()).toEqual({});
       expect(containerItem2.getParameters()).toEqual({});
@@ -116,12 +122,12 @@ describe('ContainerItem', () => {
     let containerItem2: ContainerItem;
 
     beforeEach(() => {
-      containerItem1 = new ContainerItem(
+      containerItem1 = new ContainerItemImpl(
         { id: 'id1', type: TYPE_COMPONENT_CONTAINER_ITEM, label: 'a' },
         eventBus,
         meta1,
       );
-      containerItem2 = new ContainerItem(
+      containerItem2 = new ContainerItemImpl(
         { id: 'id2', type: TYPE_COMPONENT_CONTAINER_ITEM, label: 'b' },
         eventBus,
         meta2,
@@ -130,7 +136,7 @@ describe('ContainerItem', () => {
 
     it('should not update a container item if it is not the same container item', async () => {
       await eventBus.emitSerial('page.update', {
-        page: new Page(
+        page: new PageImpl(
           { page: { id: 'id2', type: TYPE_COMPONENT_CONTAINER_ITEM } },
           containerItem2,
           new Map(),
@@ -144,9 +150,9 @@ describe('ContainerItem', () => {
 
     it('should update a meta-data on page.update event', async () => {
       await eventBus.emitSerial('page.update', {
-        page: new Page(
+        page: new PageImpl(
           { page: { id: 'id1', type: TYPE_COMPONENT_CONTAINER_ITEM } },
-          new ContainerItem({ id: 'id1', type: TYPE_COMPONENT_CONTAINER_ITEM }, eventBus, meta2),
+          new ContainerItemImpl({ id: 'id1', type: TYPE_COMPONENT_CONTAINER_ITEM }, eventBus, meta2),
           new Map(),
           eventBus,
         ),
@@ -157,9 +163,9 @@ describe('ContainerItem', () => {
 
     it('should update a model on page.update event', async () => {
       await eventBus.emitSerial('page.update', {
-        page: new Page(
+        page: new PageImpl(
           { page: { id: 'id1', type: TYPE_COMPONENT_CONTAINER_ITEM } },
-          new ContainerItem({ id: 'id1', type: TYPE_COMPONENT_CONTAINER_ITEM, label: 'b' }, eventBus, meta2),
+          new ContainerItemImpl({ id: 'id1', type: TYPE_COMPONENT_CONTAINER_ITEM, label: 'b' }, eventBus, meta2),
           new Map(),
           eventBus,
         ),
@@ -173,9 +179,9 @@ describe('ContainerItem', () => {
       containerItem1.on('update', listener);
 
       await eventBus.emitSerial('page.update', {
-        page: new Page(
+        page: new PageImpl(
           { page: { id: 'id1', type: TYPE_COMPONENT_CONTAINER_ITEM } },
-          new ContainerItem({ id: 'id1', type: TYPE_COMPONENT_CONTAINER_ITEM }, eventBus, meta2),
+          new ContainerItemImpl({ id: 'id1', type: TYPE_COMPONENT_CONTAINER_ITEM }, eventBus, meta2),
           new Map(),
           eventBus,
         ),

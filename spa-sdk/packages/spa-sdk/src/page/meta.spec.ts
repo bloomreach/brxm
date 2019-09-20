@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { Meta, META_POSITION_BEGIN } from './meta';
+import { MetaImpl, Meta, META_POSITION_BEGIN } from './meta';
 
-describe('Meta', () => {
+describe('MetaImpl', () => {
   let meta: Meta;
 
   beforeEach(() => {
-    meta = new Meta({ data: 'some-data', type: 'some-type' }, META_POSITION_BEGIN);
+    meta = new MetaImpl({ data: 'some-data', type: 'some-type' }, META_POSITION_BEGIN);
   });
 
   describe('getData', () => {

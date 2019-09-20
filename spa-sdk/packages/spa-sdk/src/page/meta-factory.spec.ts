@@ -15,7 +15,7 @@
  */
 
 import { MetaFactory } from './meta-factory';
-import { Meta, META_POSITION_BEGIN, META_POSITION_END } from './meta';
+import { MetaImpl, META_POSITION_BEGIN, META_POSITION_END } from './meta';
 
 describe('MetaFactory', () => {
   describe('register', () => {
@@ -24,14 +24,14 @@ describe('MetaFactory', () => {
 
       expect(factory.register(
         'something',
-        () => new Meta({ data: 'something', type: 'something' }, META_POSITION_BEGIN),
+        () => new MetaImpl({ data: 'something', type: 'something' }, META_POSITION_BEGIN),
       )).toBe(factory);
     });
   });
 
   describe('create', () => {
-    const builder1 = jest.fn((model, position) => new Meta(model, position));
-    const builder2 = jest.fn((model, position) => new Meta(model, position));
+    const builder1 = jest.fn((model, position) => new MetaImpl(model, position));
+    const builder2 = jest.fn((model, position) => new MetaImpl(model, position));
     const factory = new MetaFactory()
       .register('type1', builder1)
       .register('type2', builder2);

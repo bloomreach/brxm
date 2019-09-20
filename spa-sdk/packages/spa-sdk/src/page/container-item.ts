@@ -15,7 +15,7 @@
  */
 
 import { Typed } from 'emittery';
-import { Component, ComponentMeta, ComponentModel, ComponentParameters } from './component';
+import { ComponentImpl, ComponentMeta, ComponentModel, ComponentParameters, Component } from './component';
 import { EmitterMixin, Emitter } from '../emitter';
 import { Events, PageUpdateEvent } from '../events';
 import { Meta } from './meta';
@@ -80,7 +80,10 @@ export interface ContainerItem extends Component, Emitter<ContainerItemEvents> {
   isHidden(): boolean;
 }
 
-export class ContainerItem extends EmitterMixin<ContainerItemEvents>(Component) implements ContainerItem {
+export class ContainerItemImpl
+  extends EmitterMixin<typeof ComponentImpl, ContainerItemEvents>(ComponentImpl)
+  implements ContainerItem
+{
   constructor(protected model: ContainerItemModel, eventBus: Typed<Events>, meta: Meta[] = []) {
     super(model, [], meta);
     eventBus.on('page.update', this.onPageUpdate.bind(this));
@@ -88,7 +91,7 @@ export class ContainerItem extends EmitterMixin<ContainerItemEvents>(Component) 
 
   protected onPageUpdate(event: PageUpdateEvent) {
     const component = event.page.getComponent();
-    if (!(component instanceof ContainerItem) || component === this || component.getId() !== this.getId()) {
+    if (!(component instanceof ContainerItemImpl) || component === this || component.getId() !== this.getId()) {
       return;
     }
 

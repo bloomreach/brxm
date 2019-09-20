@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, ComponentModel } from './component';
+import { ComponentImpl, ComponentModel, Component } from './component';
 import { ContainerItem } from './container-item';
 import { Meta } from './meta';
 
@@ -61,7 +61,7 @@ export interface Container extends Component {
   getChildren(): ContainerItem[];
 }
 
-export class Container extends Component implements Container {
+export class ContainerImpl extends ComponentImpl implements Container {
   constructor(
     protected model: ContainerModel,
     protected children: ContainerItem[] = [],

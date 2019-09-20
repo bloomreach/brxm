@@ -16,18 +16,18 @@
 
 import { Events, Typed } from 'emittery';
 
-type Constructor = new (...args: any) => any;
+type Constructor = new (...args: any[]) => any;
 
 export type Emitter<T> = Pick<Typed<T>, 'on' | 'off'>;
 
 // tslint:disable-next-line:function-name variable-name
-export function EmitterMixin<T extends Events>(Super: Constructor) {
-  return class EmitterMixin extends Super implements Emitter<T> {
+export function EmitterMixin<T extends Constructor, U extends Events>(Super: T) {
+  return class EmitterMixin extends Super implements Emitter<U> {
     /**
      * @todo should be private
      * @see https://github.com/Microsoft/TypeScript/issues/17293
      */
-    /* private */ emitter = new Typed<T>();
+    /* private */ emitter = new Typed<U>();
 
     on = this.emitter.on.bind(this.emitter);
     off = this.emitter.off.bind(this.emitter);

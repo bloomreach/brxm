@@ -50,7 +50,7 @@ export interface Meta<T extends MetaType = MetaType> {
   getPosition(): MetaPosition;
 }
 
-export class Meta<T extends MetaType = MetaType> implements Meta {
+export class MetaImpl<T extends MetaType = MetaType> implements Meta {
   constructor(protected model: MetaModel<T>, protected position: MetaPosition) {}
 
   getData() {

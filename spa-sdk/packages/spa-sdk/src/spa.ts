@@ -16,7 +16,7 @@
 
 import { Typed } from 'emittery';
 import { Cms } from './cms';
-import { ComponentFactory, ContentFactory, Content, PageModel, Page } from './page';
+import { ComponentFactory, ContentFactory, Content, PageModel, PageImpl, Page } from './page';
 import { Events, CmsUpdateEvent } from './events';
 import { HttpClient, HttpRequest } from './http';
 import { PageModelUrlBuilder, PageModelUrlOptions } from './url';
@@ -104,7 +104,7 @@ export class Spa {
   }
 
   private initializePage(model: PageModel) {
-    return new Page(
+    return new PageImpl(
       model,
       this.initializeRoot(model),
       this.initializeContent(model),
@@ -127,7 +127,7 @@ export class Spa {
    * Intitializes the SPA.
    * @param config Configuration of the SPA integration with brXM.
    */
-  async initialize(config: Configuration) {
+  async initialize(config: Configuration): Promise<Page> {
     this.cms.initialize();
 
     const model = await this.fetchPageModel(config);

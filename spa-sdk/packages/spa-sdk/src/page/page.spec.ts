@@ -15,13 +15,13 @@
  */
 
 import { Typed } from 'emittery';
-import { Component, TYPE_COMPONENT } from './component';
+import { ComponentImpl, Component, TYPE_COMPONENT } from './component';
 import { ContentMap } from './content-map';
-import { Content } from './content';
+import { ContentImpl } from './content';
 import { Events } from '../events';
-import { Page } from './page';
+import { PageImpl, Page } from './page';
 
-describe('Page', () => {
+describe('PageImpl', () => {
   let content: ContentMap;
   let eventBus: Typed<Events>;
   let root: Component;
@@ -29,7 +29,7 @@ describe('Page', () => {
   beforeEach(() => {
     content = new Map();
     eventBus = new Typed<Events>();
-    root = new Component({ id: 'id', type: TYPE_COMPONENT });
+    root = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT });
 
     jest.spyOn(root, 'getComponent');
     jest.spyOn(content, 'get');
@@ -37,7 +37,7 @@ describe('Page', () => {
 
   describe('getComponent', () => {
     it('should forward a call to the root component', () => {
-      const page = new Page({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus);
+      const page = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus);
       page.getComponent('a', 'b');
 
       expect(root.getComponent).toBeCalledWith('a', 'b');
@@ -48,7 +48,7 @@ describe('Page', () => {
     let page: Page;
 
     beforeEach(() => {
-      page = new Page({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus);
+      page = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus);
     });
 
     it('should resolve a reference', () => {
@@ -64,7 +64,7 @@ describe('Page', () => {
     });
 
     it('should return a content item', () => {
-      const someContent = new Content({ id: 'some-id', name: 'some-name' });
+      const someContent = new ContentImpl({ id: 'some-id', name: 'some-name' });
       content.set('some-content', someContent);
 
       expect(page.getContent('some-content')).toBe(someContent);
@@ -73,7 +73,7 @@ describe('Page', () => {
 
   describe('getTitle', () => {
     it('should return a page title', () => {
-      const page = new Page(
+      const page = new PageImpl(
         {
           page: {
             id: 'id',
@@ -90,8 +90,8 @@ describe('Page', () => {
     });
 
     it('should return an undefined value', () => {
-      const page1 = new Page({ page: { id: 'id', type: TYPE_COMPONENT, _meta: {} } }, root, content, eventBus);
-      const page2 = new Page({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus);
+      const page1 = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT, _meta: {} } }, root, content, eventBus);
+      const page2 = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus);
 
       expect(page1.getTitle()).toBeUndefined();
       expect(page2.getTitle()).toBeUndefined();
@@ -101,12 +101,12 @@ describe('Page', () => {
   describe('onPageUpdate', () => {
     it('should update content on page.update event', async () => {
       const model = { page: { id: 'id', type: TYPE_COMPONENT } };
-      const page = new Page(model, root, content, eventBus);
-      const someContent = new Content({ id: 'some-id', name: 'some-name' });
+      const page = new PageImpl(model, root, content, eventBus);
+      const someContent = new ContentImpl({ id: 'some-id', name: 'some-name' });
 
       expect(page.getContent('some-content')).toBeUndefined();
       await eventBus.emitSerial('page.update', {
-        page: new Page(model, root, new Map([['some-content', someContent]]), eventBus),
+        page: new PageImpl(model, root, new Map([['some-content', someContent]]), eventBus),
       });
       expect(page.getContent('some-content')).toBe(someContent);
     });

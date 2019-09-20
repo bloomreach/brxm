@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { Content } from './content';
-import { Meta, META_POSITION_BEGIN } from './meta';
+import { ContentImpl } from './content';
+import { MetaImpl, META_POSITION_BEGIN } from './meta';
 
-describe('Content', () => {
+describe('ContentImpl', () => {
   describe('getId', () => {
     it('should return a content item id', () => {
-      const content = new Content({ id: 'some-id', name: 'some-name' });
+      const content = new ContentImpl({ id: 'some-id', name: 'some-name' });
 
       expect(content.getId()).toBe('some-id');
     });
@@ -28,13 +28,13 @@ describe('Content', () => {
 
   describe('getLocale', () => {
     it('should return a content item locale', () => {
-      const content = new Content({ id: 'some-id', name: 'some-name', localeString: 'some-locale' });
+      const content = new ContentImpl({ id: 'some-id', name: 'some-name', localeString: 'some-locale' });
 
       expect(content.getLocale()).toBe('some-locale');
     });
 
     it('should return undefined when there is no locale', () => {
-      const content = new Content({ id: 'some-id', name: 'some-name' });
+      const content = new ContentImpl({ id: 'some-id', name: 'some-name' });
 
       expect(content.getLocale()).toBeUndefined();
     });
@@ -42,8 +42,8 @@ describe('Content', () => {
 
   describe('getMeta', () => {
     it('should return a meta-data array', () => {
-      const meta = new Meta({ data: '', type: 'comment' }, META_POSITION_BEGIN);
-      const content = new Content({ id: 'some-id', name: 'some-name' }, [meta]);
+      const meta = new MetaImpl({ data: '', type: 'comment' }, META_POSITION_BEGIN);
+      const content = new ContentImpl({ id: 'some-id', name: 'some-name' }, [meta]);
 
       expect(content.getMeta()).toEqual([meta]);
     });
@@ -51,7 +51,7 @@ describe('Content', () => {
 
   describe('getName', () => {
     it('should return a content item name', () => {
-      const content = new Content({ id: 'some-id', name: 'some-name' });
+      const content = new ContentImpl({ id: 'some-id', name: 'some-name' });
 
       expect(content.getName()).toBe('some-name');
     });
@@ -59,7 +59,7 @@ describe('Content', () => {
 
   describe('getData', () => {
     it('should return a content item data', () => {
-      const content = new Content({ id: 'some-id', name: 'some-name' });
+      const content = new ContentImpl({ id: 'some-id', name: 'some-name' });
 
       expect(content.getData()).toEqual({ id: 'some-id', name: 'some-name' });
     });
