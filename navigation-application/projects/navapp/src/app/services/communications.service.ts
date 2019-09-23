@@ -20,6 +20,7 @@ import {
 } from '@bloomreach/navapp-communication';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
+import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { Connection } from '../models/connection.model';
 import { FailedConnection } from '../models/failed-connection.model';
 
@@ -40,6 +41,7 @@ export class CommunicationsService {
     private navigationService: NavigationService,
     private overlay: OverlayService,
     private settings: GlobalSettingsService,
+    private errorHandlingService: ErrorHandlingService,
   ) {
   }
 
@@ -75,7 +77,13 @@ export class CommunicationsService {
       timeout: this.settings.appSettings.iframesConnectionTimeout,
     }).then(
       api => this.clientAppService.addConnection(new Connection(appUrl, api)),
-      error => this.clientAppService.addConnection(new FailedConnection(appUrl, error)),
+      error => {
+        this.errorHandlingService.setClientError(
+          ClientErrorCodes.UnableToConnectToServerError,
+          `Client connection timed out: ${iframe.src}`,
+        );
+        return this.clientAppService.addConnection(new FailedConnection(appUrl, error));
+      },
     );
   }
 
