@@ -56,3 +56,11 @@ export class MetaImpl<T extends MetaType = MetaType> implements Meta {
     return this.position;
   }
 }
+
+/**
+ * Checks whether a value is a meta-data object.
+ * @param value The value to check.
+ */
+export function isMeta(value: any): value is Meta {
+  return value instanceof MetaImpl;
+}

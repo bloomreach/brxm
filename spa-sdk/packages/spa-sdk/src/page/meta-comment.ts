@@ -32,3 +32,11 @@ export class MetaCommentImpl extends MetaImpl<typeof TYPE_META_COMMENT> implemen
     return payload;
   }
 }
+
+/**
+ * Checks whether a value is a meta-data comment.
+ * @param value The value to check.
+ */
+export function isMetaComment(value: any): value is MetaComment {
+  return value instanceof MetaCommentImpl;
+}
