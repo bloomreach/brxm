@@ -901,6 +901,25 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             }
         }
 
+        if (facetRule.getFacetRuleType() == JCR_PRIMARYTYPE) {
+            final boolean match;
+            // WILDCARD match, jcr:primaryType == *
+            if (FacetAuthConstants.WILDCARD.equals(facetRule.getValue())) {
+                match = true;
+            } else if (nodeState.getNodeTypeName().equals(facetRule.getValueName())) {
+                match = true;
+            } else {
+                match = false;
+            }
+
+            // invert match on inequality
+            if (facetRule.isEqual()) {
+                return match;
+            } else {
+                return !match;
+            }
+        }
+
         // check if node has the required property value
         if (matchPropertyWithFacetRule(nodeState, facetRule, fad)) {
             log.trace("Found match : {} for facetVal: {}", nodeState.getId(), facetRule);
@@ -1023,25 +1042,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     private boolean matchPropertyWithFacetRule(final NodeState nodeState, final QFacetRule rule, final FacetAuthDomain fad) throws RepositoryException {
 
         boolean match = false;
-
-        // jcr:primaryType isn't really a property
-        if (rule.getFacetRuleType() == JCR_PRIMARYTYPE) {
-            // WILDCARD match, jcr:primaryType == *
-            if (FacetAuthConstants.WILDCARD.equals(rule.getValue())) {
-                match = true;
-            } else if (nodeState.getNodeTypeName().equals(rule.getValueName())) {
-                match = true;
-            } else {
-                match = false;
-            }
-
-            // invert match on inequality
-            if (rule.isEqual()) {
-                return match;
-            } else {
-                return !match;
-            }
-        }
 
         // the hierarchy manager is attic aware. The property can also be in the removed properties
         if (!nodeState.hasPropertyName(rule.getFacetName())
