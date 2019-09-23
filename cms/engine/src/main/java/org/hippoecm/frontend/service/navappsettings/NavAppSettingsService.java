@@ -20,11 +20,9 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.TimeZone;
 import java.util.function.Supplier;
 
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.request.Request;
@@ -41,6 +39,7 @@ import org.hippoecm.frontend.service.ResourceType;
 import org.hippoecm.frontend.service.UserSettings;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.repository.api.HippoSession;
+import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,48 +92,23 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     }
 
     private UserSettings createUserSettings(final PluginUserSession userSession) {
-
+        final HippoSession hippoSession = (HippoSession) userSession.getJcrSession();
         final String userName = userSession.getUserName();
-        final String email = getEmail(userSession);
-        final String language = userSession.getLocale().getLanguage();
-        final TimeZone timeZone = userSession.getTimeZone();
-
-        return new UserSettings() {
-
-            @Override
-            public String getUserName() {
-                return userName;
-            }
-
-            @Override
-            public String getEmail() {
-                return email;
-            }
-
-            @Override
-            public String getLanguage() {
-                return language;
-            }
-
-            @Override
-            public TimeZone getTimeZone() {
-                return timeZone;
-            }
-        };
-    }
-
-    private String getEmail(final PluginUserSession userSession) {
-        final Session session = userSession.getJcrSession();
-        if (session instanceof HippoSession) {
-            final HippoSession hippoSession = (HippoSession) session;
-            try {
-                return hippoSession.getUser().getEmail();
-            } catch (RepositoryException e) {
-                log.error("Failed to get user email", e);
-                return null;
-            }
+        final UserSettingsBuilder userSettingsBuilder =
+                new UserSettingsBuilder()
+                        .timeZone(userSession.getTimeZone())
+                        .language(userSession.getLocale().getLanguage())
+                        .userName(userName);
+        try {
+            final User user = hippoSession.getUser();
+            userSettingsBuilder
+                    .email(user.getEmail())
+                    .firstName(user.getFirstName())
+                    .lastName(user.getLastName());
+        } catch (RepositoryException e) {
+            log.error("Could not read properties of user with username {}", userName, e);
         }
-        return null;
+        return userSettingsBuilder.build();
     }
 
     private AppSettings createAppSettings(String initialPath) {
