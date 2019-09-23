@@ -38,6 +38,7 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.RowIterator;
 import javax.jcr.security.Privilege;
 
+import org.apache.jackrabbit.core.query.lucene.DecimalField;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -756,6 +757,19 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
         assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
 
+        // assert search (and thus authorization query) also works
+        final Query query = userSession.getWorkspace().getQueryManager()
+                .createQuery("//element(*, hippo:authtestdocument)[@authtest = 'true']", "xpath");
+
+        final NodeIterator result = query.execute().getNodes();
+        assertThat(result.getSize()).isEqualTo(1);
+        assertThat(result.nextNode().getPath()).isEqualTo(doc.getPath());
+
+        // query on true instead of 'true' does not work (did not invest the reason but does not relate to authorization)
+
+        assertThat(userSession.getWorkspace().getQueryManager()
+                .createQuery("//element(*, hippo:authtestdocument)[@authtest = true]", "xpath")
+                .execute().getNodes().getSize()).isEqualTo(0);
     }
 
     @Test
@@ -791,6 +805,17 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
         assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
 
+        // assert search (and thus authorization query) also works
+        // both 10 and '10' works for long
+        for (String value : new String[]{ "'10'", "10"} ) {
+            final Query query = userSession.getWorkspace().getQueryManager()
+                    .createQuery("//element(*, hippo:authtestdocument)[@authtest = " + value + "]", "xpath");
+
+            final NodeIterator result = query.execute().getNodes();
+            assertThat(result.getSize()).isEqualTo(1);
+            assertThat(result.nextNode().getPath()).isEqualTo(doc.getPath());
+        }
+
     }
 
     @Test
@@ -825,10 +850,22 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
         assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
 
+        // assert search (and thus authorization query) also works
+        // both 10.23 and '10.23' works for long
+        for (String value : new String[]{ "'10.23'", "10.23"} ) {
+            final Query query = userSession.getWorkspace().getQueryManager()
+                    .createQuery("//element(*, hippo:authtestdocument)[@authtest = " + value + "]", "xpath");
+
+            final NodeIterator result = query.execute().getNodes();
+            assertThat(result.getSize()).isEqualTo(1);
+            assertThat(result.nextNode().getPath()).isEqualTo(doc.getPath());
+        }
+
     }
 
     @Test
-    public void test_FacetRule_on_BigDecimal_Property_works() throws RepositoryException {
+    public void test_FacetRule_on_BigDecimal_Property_works_in_authorization_but_NOT_in_query_hence_not_fully_supported()
+            throws RepositoryException {
 
         final Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
         final Node handle = testData.addNode("doc", "hippo:handle");
@@ -859,10 +896,27 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
         assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
 
+        // assert search (and thus authorization query) does NOT work
+        for (String value : new String[]{ "'325234.324'", "325234.324", "'" + DecimalField.decimalToString(new BigDecimal(325234.324)) + "'" } ) {
+            final Query query = userSession.getWorkspace().getQueryManager()
+                    .createQuery("//element(*, hippo:authtestdocument)[@authtest = " + value + "]", "xpath");
+
+            final NodeIterator result = query.execute().getNodes();
+            assertThat(result.getSize()).isEqualTo(0);
+        }
+
+        // now assert that the ADMIN session actually DOES have a search result : this is because the authorization query
+        // for ADMIN is just a match-all query
+        final String value = DecimalField.decimalToString(new BigDecimal(325234.324));
+        final String xpath = "//element(*, hippo:authtestdocument)[@authtest = '" + value + "']";
+        final Query query = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath");
+
+        final NodeIterator result = query.execute().getNodes();
+        assertThat(result.getSize()).isEqualTo(1);
     }
 
     @Test
-    public void test_FacetRule_on_Date_Property_works() throws RepositoryException {
+    public void test_FacetRule_on_Date_Property_works_but_NOT_in_query_hence_not_fully_supported() throws RepositoryException {
 
         final Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
         final Node handle = testData.addNode("doc", "hippo:handle");
@@ -889,12 +943,29 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
 
         session.save();
         userSession.logout();
-        userSession = (HippoSession)server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+        userSession = (HippoSession) server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
 
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
         assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
 
+        // assert search (and thus authorization query) does NOT work
+        final String value = "xs:dateTime('" + session.getValueFactory().createValue(date).getString() + "')";
+        final String xpath = "//element(*, hippo:authtestdocument)[@authtest = " + value + "]";
+        final Query query = userSession.getWorkspace().getQueryManager()
+                .createQuery(xpath, "xpath");
+
+        final NodeIterator result = query.execute().getNodes();
+        assertThat(result.getSize()).isEqualTo(0);
+
+        // now assert that the ADMIN session actually DOES have a search result : this is because the authorization query
+        // for ADMIN is just a match-all query
+        final Query queryAdmin = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath");
+
+        final NodeIterator resultAdmin = queryAdmin.execute().getNodes();
+        assertThat(resultAdmin.getSize()).isEqualTo(1);
+        assertThat(resultAdmin.nextNode().getPath()).isEqualTo(doc.getPath());
     }
+
 
     @Test
     public void test_privileges_on_abs_path() throws RepositoryException {
