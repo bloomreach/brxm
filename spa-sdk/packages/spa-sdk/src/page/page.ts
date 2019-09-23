@@ -76,6 +76,11 @@ export interface Page {
    * @return The title of the page, or `undefined` if not configured.
    */
   getTitle(): string | undefined;
+
+  /**
+   * Synchronizes the CMS integration state.
+   */
+  sync(): void;
 }
 
 export class PageImpl implements Page {
@@ -83,7 +88,7 @@ export class PageImpl implements Page {
     protected model: PageModel,
     protected root: Component,
     protected content: ContentMap,
-    eventBus: Typed<Events>,
+    private eventBus: Typed<Events>,
   ) {
     eventBus.on('page.update', this.onPageUpdate.bind(this));
   }
@@ -114,5 +119,9 @@ export class PageImpl implements Page {
 
   getTitle() {
     return this.model.page._meta && this.model.page._meta.pageTitle;
+  }
+
+  sync() {
+    this.eventBus.emit('page.ready', {});
   }
 }
