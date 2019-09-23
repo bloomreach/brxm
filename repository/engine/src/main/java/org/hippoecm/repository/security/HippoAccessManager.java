@@ -1093,6 +1093,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                     match = true;
                     break;
                 }
+            } else if (iVal.getType() == PropertyType.BINARY) {
+                return false;
             } else {
                 log.trace("Checking facet rule for String comparison: {} (string) -> {}", rule, iVal.getString());
 
