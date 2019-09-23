@@ -15,6 +15,7 @@
  */
 
 import React from 'react';
+import { RouteComponentProps } from 'react-router-dom';
 
 import { BrPage } from '@bloomreach/react-sdk';
 
@@ -35,9 +36,28 @@ const cmsUrls = {
   live: urlConfig
 };
 
-const App: React.FC = () => {
+const config = {
+  httpClient: (httpConfig: any) => fetch(httpConfig.url),
+  options: {
+    live: {
+      pageModelBaseUrl: 'http://localhost:9080/site/spa-csr',
+    },
+    preview: {
+      pageModelBaseUrl: 'http://localhost:9080/site/_cmsinternal/spa-csr',
+    },
+  },
+  request: {
+    path: '/',
+    // TODO: set real cookie
+    headers: { Cookie: 'JSESSIONID=4268ACF1D9BAA60C10BFC9041C873047' },
+  },
+};
+
+const App: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
+  config.request.path = props.location.pathname;
+
   return (
-    <BrPage>
+    <BrPage configuration={config}>
       <div id="header">
         <nav className="navbar navbar-expand-md navbar-dark bg-dark">
           <span className="navbar-brand">Client-side React Demo</span>

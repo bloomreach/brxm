@@ -37,8 +37,28 @@ const cmsUrls = {
 
 const componentDefinitions = {};
 
-const Home: NextPage<{ pageModel: any }> = ({pageModel}) => (
-    <BrPage>
+const config = {
+  httpClient: (httpConfig: any) => fetch(httpConfig.url),
+  options: {
+    live: {
+      pageModelBaseUrl: 'http://localhost:9080/site/spa-csr',
+    },
+    preview: {
+      pageModelBaseUrl: 'http://localhost:9080/site/_cmsinternal/spa-csr',
+    },
+  },
+  request: {
+    path: '/',
+    // TODO: set real cookie
+    headers: { Cookie: 'JSESSIONID=4268ACF1D9BAA60C10BFC9041C873047' },
+  },
+};
+
+const Home: NextPage<{ request: any }> = ({request}) => {
+  config.request.path = request.path;
+
+  return (
+    <BrPage configuration={config}>
       <div id='header'>
         <nav className='navbar navbar-expand-md navbar-dark bg-dark'>
           <span className='navbar-brand'>Server-side React Demo</span>
@@ -54,14 +74,15 @@ const Home: NextPage<{ pageModel: any }> = ({pageModel}) => (
       <div className='container marketing'>
         Render Container here<br/>
         cmsUrls: <pre>{JSON.stringify(cmsUrls, null, 2)}</pre>
-        pageModel: <pre>{JSON.stringify(pageModel, null, 2)}</pre>
+        request: <pre>{JSON.stringify(request, null, 2)}</pre>
       </div>
     </BrPage>
-);
+  );
+};
 
 Home.getInitialProps = async ({ req, asPath }) => {
   return {
-    pageModel: {
+    request: {
       host: req!.headers.host,
       path: asPath,
     }
