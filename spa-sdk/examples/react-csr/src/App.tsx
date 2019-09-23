@@ -15,11 +15,12 @@
  */
 
 import React from 'react';
+import axios from 'axios';
 import { RouteComponentProps } from 'react-router-dom';
 import { BrPage } from '@bloomreach/react-sdk';
 
 const config = {
-  httpClient: (httpConfig: any) => fetch(httpConfig.url),
+  httpClient: axios.request,
   options: {
     live: {
       pageModelBaseUrl: process.env.REACT_APP_BR_URL_LIVE!,

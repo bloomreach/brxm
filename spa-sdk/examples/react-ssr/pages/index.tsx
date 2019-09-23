@@ -15,6 +15,7 @@
  */
 
 import React from 'react';
+import axios from 'axios';
 import { NextPageContext } from 'next';
 // tslint:disable-next-line:import-name
 import getConfig from 'next/config';
@@ -22,7 +23,7 @@ import { BrPage } from '@bloomreach/react-sdk';
 
 const { publicRuntimeConfig } = getConfig();
 const config = {
-  httpClient: (httpConfig: any) => fetch(httpConfig.url),
+  httpClient: axios.request,
   options: {
     live: {
       pageModelBaseUrl: publicRuntimeConfig.brUrlLive,

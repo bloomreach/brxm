@@ -7,6 +7,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@bloomreach/react-sdk": "^14.0",
+    "axios": "^0.19",
     "next": "^9.0.5",
     "next-routes": "^1.4.2",
     "react": "^16.9",

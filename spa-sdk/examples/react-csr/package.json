@@ -5,6 +5,7 @@
   "private": true,
   "dependencies": {
     "@bloomreach/react-sdk": "^14.0",
+    "axios": "^0.19",
     "react": "^16.9",
     "react-dom": "^16.9",
     "react-router-dom": "^5.0.1",
