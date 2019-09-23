@@ -66,7 +66,7 @@ const componentFactory = new ComponentFactory()
     model => new ContainerItemImpl(model, eventBus, metaFactory.create(model._meta)),
   );
 
-const cms = new Cms(eventBus, window);
+const cms = new Cms(eventBus, typeof window === 'undefined' ? undefined : window);
 const spa = new Spa(buildPageModelUrl, componentFactory, contentFactory, eventBus, cms);
 
 /**
