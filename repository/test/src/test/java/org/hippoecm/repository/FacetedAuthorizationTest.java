@@ -726,7 +726,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     }
 
     @Test
-    public void test_FacetRule_on_Boolean_Property_worksn() throws RepositoryException {
+    public void test_FacetRule_on_Boolean_Property_works() throws RepositoryException {
 
         final Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
         final Node handle = testData.addNode("doc", "hippo:handle");
