@@ -15,8 +15,10 @@
  */
 package org.hippoecm.repository;
 
+import java.math.BigDecimal;
 import java.security.AccessControlException;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +28,7 @@ import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -719,6 +722,178 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
 
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2/newnode", Session.ACTION_ADD_NODE));
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2", JCR_ADD_CHILD_NODES));
+    }
+
+    @Test
+    public void test_FacetRule_on_Boolean_Property_worksn() throws RepositoryException {
+
+        final Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
+        final Node handle = testData.addNode("doc", "hippo:handle");
+        handle.addMixin("mix:referenceable");
+        final Node doc = handle.addNode("doc", "hippo:authtestdocument");
+        doc.setProperty("authtest", Boolean.TRUE);
+
+        assertThat(doc.getProperty("authtest").getType()).isEqualTo(PropertyType.BOOLEAN);
+
+        session.save();
+
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
+
+        final Node authtestReadRule = readDomain.getNode("authtest-read/authtest-read-rule");
+
+        final Property authtest = authtestReadRule.setProperty(HippoNodeType.HIPPOSYS_VALUE, Boolean.TRUE);
+
+        assertThat(authtest.getType())
+                .as("The hipposys:value is always expressed as a String, even if a Boolean is supplied")
+                .isEqualTo(PropertyType.STRING);
+        assertThat(authtest.getString()).isEqualTo("true");
+
+        session.save();
+        userSession.logout();
+        userSession = (HippoSession)server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
+
+    }
+
+    @Test
+    public void test_FacetRule_on_Long_Property_works() throws RepositoryException {
+
+        final Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
+        final Node handle = testData.addNode("doc", "hippo:handle");
+        handle.addMixin("mix:referenceable");
+        final Node doc = handle.addNode("doc", "hippo:authtestdocument");
+        // set a Long value
+        doc.setProperty("authtest", 10L);
+
+        assertThat(doc.getProperty("authtest").getType()).isEqualTo(PropertyType.LONG);
+
+        session.save();
+
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
+
+        final Node authtestReadRule = readDomain.getNode("authtest-read/authtest-read-rule");
+
+        final Property authtest = authtestReadRule.setProperty(HippoNodeType.HIPPOSYS_VALUE, 10L);
+
+        assertThat(authtest.getType())
+                .as("The hipposys:value is always expressed as a String, even if a Long is supplied")
+                .isEqualTo(PropertyType.STRING);
+        assertThat(authtest.getString()).isEqualTo("10");
+
+        session.save();
+        userSession.logout();
+        userSession = (HippoSession)server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
+
+    }
+
+    @Test
+    public void test_FacetRule_on_Double_Property_works() throws RepositoryException {
+
+        final Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
+        final Node handle = testData.addNode("doc", "hippo:handle");
+        handle.addMixin("mix:referenceable");
+        final Node doc = handle.addNode("doc", "hippo:authtestdocument");
+        doc.setProperty("authtest", 10.23);
+
+        assertThat(doc.getProperty("authtest").getType()).isEqualTo(PropertyType.DOUBLE);
+
+        session.save();
+
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
+
+        final Node authtestReadRule = readDomain.getNode("authtest-read/authtest-read-rule");
+
+        final Property authtest = authtestReadRule.setProperty(HippoNodeType.HIPPOSYS_VALUE, 10.23);
+
+        assertThat(authtest.getType())
+                .as("The hipposys:value is always expressed as a String, even if a Double is supplied")
+                .isEqualTo(PropertyType.STRING);
+        assertThat(authtest.getString()).isEqualTo("10.23");
+
+        session.save();
+        userSession.logout();
+        userSession = (HippoSession)server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
+
+    }
+
+    @Test
+    public void test_FacetRule_on_BigDecimal_Property_works() throws RepositoryException {
+
+        final Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
+        final Node handle = testData.addNode("doc", "hippo:handle");
+        handle.addMixin("mix:referenceable");
+        final Node doc = handle.addNode("doc", "hippo:authtestdocument");
+        final BigDecimal bigDecimal = new BigDecimal(325234.324);
+        doc.setProperty("authtest", bigDecimal);
+
+        assertThat(doc.getProperty("authtest").getType()).isEqualTo(PropertyType.DECIMAL);
+
+        session.save();
+
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
+
+        final Node authtestReadRule = readDomain.getNode("authtest-read/authtest-read-rule");
+
+        final Property authtest = authtestReadRule.setProperty(HippoNodeType.HIPPOSYS_VALUE, bigDecimal);
+
+        assertThat(authtest.getType())
+                .as("The hipposys:value is always expressed as a String, even if a BigDecimal is supplied")
+                .isEqualTo(PropertyType.STRING);
+
+        session.save();
+        userSession.logout();
+        userSession = (HippoSession)server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
+
+    }
+
+    @Test
+    public void test_FacetRule_on_Date_Property_works() throws RepositoryException {
+
+        final Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
+        final Node handle = testData.addNode("doc", "hippo:handle");
+        handle.addMixin("mix:referenceable");
+        final Node doc = handle.addNode("doc", "hippo:authtestdocument");
+        final Calendar date = Calendar.getInstance();
+
+        doc.setProperty("authtest", date);
+
+        assertThat(doc.getProperty("authtest").getType()).isEqualTo(PropertyType.DATE);
+
+        session.save();
+
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
+
+        final Node authtestReadRule = readDomain.getNode("authtest-read/authtest-read-rule");
+
+        final Property authtest = authtestReadRule.setProperty(HippoNodeType.HIPPOSYS_VALUE, date);
+
+        assertThat(authtest.getType())
+                .as("The hipposys:value is always expressed as a String, even if a Date is supplied")
+                .isEqualTo(PropertyType.STRING);
+
+        session.save();
+        userSession.logout();
+        userSession = (HippoSession)server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
+
     }
 
     @Test

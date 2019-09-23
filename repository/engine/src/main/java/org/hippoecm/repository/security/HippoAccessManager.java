@@ -1085,13 +1085,16 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         InternalValue[] iVals = state.getValues();
 
         for (InternalValue iVal : iVals) {
-            // types must match
-            if (iVal.getType() != rule.getType()) {
-                continue;
-            }
 
-            if (iVal.getType() == PropertyType.STRING) {
-                log.trace("Checking facet rule: {} (string) -> {}", rule, iVal.getString());
+            if (iVal.getType() == PropertyType.NAME) {
+                log.trace("Checking facet rule: {} (name) -> {}", rule, iVal.getName());
+
+                if (iVal.getName().equals(rule.getValueName())) {
+                    match = true;
+                    break;
+                }
+            } else {
+                log.trace("Checking facet rule for String comparison: {} (string) -> {}", rule, iVal.getString());
 
                 // expander matches
                 if (FacetAuthConstants.EXPANDER_USER.equals(rule.getValue())) {
@@ -1117,14 +1120,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                     match = true;
                     break;
                 }
-            } else if (iVal.getType() == PropertyType.NAME) {
-                log.trace("Checking facet rule: {} (name) -> {}", rule, iVal.getName());
-
-                if (iVal.getName().equals(rule.getValueName())) {
-                    match = true;
-                    break;
-                }
             }
+
         }
         if (rule.isEqual()) {
             return match;

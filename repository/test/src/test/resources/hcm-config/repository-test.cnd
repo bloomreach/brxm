@@ -36,7 +36,7 @@
 
 [hippo:authtestdocument] > hippo:document
 - hippo:linkto (reference)
-- *
+- * (undefined)
 - * multiple
 + * (nt:base) = hippo:authtestdocument multiple
 
