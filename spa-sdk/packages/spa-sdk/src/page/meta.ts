@@ -33,16 +33,11 @@ export interface MetaCollectionModel {
 /**
  * Meta information describing a part of the page.
  */
-export interface Meta<T extends MetaType = MetaType> {
+export interface Meta {
   /**
    * @return The meta-data.
    */
   getData(): string;
-
-  /**
-   * @return The meta-data type.
-   */
-  getType(): T;
 
   /**
    * @return The meta-data position relative to the related element.
@@ -55,10 +50,6 @@ export class MetaImpl<T extends MetaType = MetaType> implements Meta {
 
   getData() {
     return this.model.data;
-  }
-
-  getType() {
-    return this.model.type;
   }
 
   getPosition() {

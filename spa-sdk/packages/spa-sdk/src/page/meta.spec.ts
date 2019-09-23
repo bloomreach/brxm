@@ -29,12 +29,6 @@ describe('MetaImpl', () => {
     });
   });
 
-  describe('getType', () => {
-    it('should return a meta type', () => {
-      expect(meta.getType()).toBe('some-type');
-    });
-  });
-
   describe('getPosition', () => {
     it('should return a position', () => {
       expect(meta.getPosition()).toBe(META_POSITION_BEGIN);

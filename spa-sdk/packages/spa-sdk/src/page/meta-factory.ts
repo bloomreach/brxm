@@ -16,7 +16,7 @@
 
 import { MetaCollectionModel, MetaModel, MetaPosition, MetaType, Meta, META_POSITION_BEGIN, META_POSITION_END } from './meta';
 
-type MetaBuilder<T extends MetaType> = (model: MetaModel<T>, position: MetaPosition) => Meta<T>;
+type MetaBuilder<T extends MetaType> = (model: MetaModel<T>, position: MetaPosition) => Meta;
 
 /**
  * The factory to produce meta-data collection from the page model meta-data.
