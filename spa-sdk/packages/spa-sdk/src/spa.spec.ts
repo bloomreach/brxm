@@ -35,7 +35,7 @@ const model = {
   },
 };
 const config = {
-  httpClient: jest.fn(async () => model),
+  httpClient: jest.fn(async () => ({ data: model })),
   options: {
     live: {
       pageModelBaseUrl: 'http://localhost:8080/site/my-spa',

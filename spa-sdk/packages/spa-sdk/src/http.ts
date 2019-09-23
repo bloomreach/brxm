@@ -17,7 +17,7 @@
 /**
  * Fetches the page model data.
  */
-export type HttpClient<T> = (config: HttpClientConfig) => Promise<T>;
+export type HttpClient<T> = (config: HttpClientConfig) => Promise<HttpResponse<T>>;
 
 /**
  * Configuration of an HTTP client call.
@@ -66,4 +66,14 @@ export interface HttpRequest {
    * All request headers (including cookies).
    */
   headers?: HttpHeaders;
+}
+
+/**
+ * An HTTP response.
+ */
+export interface HttpResponse<T> {
+  /**
+   * The data returned in the response.
+   */
+  data: T;
 }

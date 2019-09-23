@@ -32,7 +32,7 @@ declare const window: Window;
 
 describe('initialize', () => {
   let page: Page;
-  const httpClient = jest.fn(async () => model as unknown as PageModel);
+  const httpClient = jest.fn(async () => ({ data: model as unknown as PageModel }));
 
   beforeEach(async () => {
     httpClient.mockClear();
@@ -155,8 +155,10 @@ describe('initialize', () => {
     banner1.on('update', listener1);
 
     httpClient.mockImplementationOnce(async () => ({
-      ...model,
-      page: model.page.components[0].components[0],
+      data: {
+        ...model,
+        page: model.page.components[0].components[0],
+      },
     }));
 
     window.SPA!.renderComponent('r1_r1_r1', {});

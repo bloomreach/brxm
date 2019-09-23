@@ -66,12 +66,13 @@ export class Spa {
 
   private async fetchPageModel(config: Configuration) {
     const url = this.pageModelUrlBuilder(config.request, config.options);
-
-    return await config.httpClient({
+    const response = await config.httpClient({
       url,
       method: 'get',
       headers: config.request.headers,
     });
+
+    return response.data;
   }
 
   private async fetchComponentModel(config: Configuration, page: Page, id: string, properties: object) {
@@ -82,11 +83,13 @@ export class Spa {
       return;
     }
 
-    return await config.httpClient({
+    const response = await config.httpClient({
       url,
       data: properties,
       method: 'post',
     });
+
+    return response.data;
   }
 
   private initializeRoot(model: PageModel) {
