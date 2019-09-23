@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-import { MetaComment } from './meta-comment';
+import { MetaCommentImpl } from './meta-comment';
 import { META_POSITION_BEGIN } from './meta';
 
-describe('MetaComment', () => {
+describe('MetaCommentImpl', () => {
   describe('getData', () => {
     it('should return a data from the HTML-comment', () => {
-      const meta = new MetaComment({ data: '<!-- something -->', type: 'comment' }, META_POSITION_BEGIN);
+      const meta = new MetaCommentImpl({ data: '<!-- something -->', type: 'comment' }, META_POSITION_BEGIN);
       expect(meta.getData()).toBe('something');
     });
 
     it('should fallback to the model data on invalid HTML-comment', () => {
-      const meta = new MetaComment({ data: '<!-- something', type: 'comment' }, META_POSITION_BEGIN);
+      const meta = new MetaCommentImpl({ data: '<!-- something', type: 'comment' }, META_POSITION_BEGIN);
       expect(meta.getData()).toBe('<!-- something');
     });
   });

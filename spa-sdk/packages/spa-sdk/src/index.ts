@@ -34,7 +34,7 @@ import {
   ContainerModel,
   ContentFactoryImpl,
   ContentImpl,
-  MetaComment,
+  MetaCommentImpl,
   MetaFactory,
   Page,
   TYPE_COMPONENT,
@@ -50,7 +50,7 @@ declare const window: Window | undefined;
 const eventBus = new Typed<Events>();
 
 const metaFactory = new MetaFactory()
-  .register(TYPE_META_COMMENT, (model, position) => new MetaComment(model, position));
+  .register(TYPE_META_COMMENT, (model, position) => new MetaCommentImpl(model, position));
 const contentFactory = new ContentFactoryImpl(model => new ContentImpl(model, metaFactory.create(model._meta)));
 const componentFactory = new ComponentFactory()
   .register(
@@ -91,6 +91,7 @@ export {
   ContainerItem,
   Container,
   Content,
+  MetaComment,
   Meta,
   Page,
   isComponent,
