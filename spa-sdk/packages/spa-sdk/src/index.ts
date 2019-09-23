@@ -86,6 +86,7 @@ export function destroy(page: Page) {
   return spa.destroy(page);
 }
 
+export { Configuration } from './spa';
 export {
   Component,
   ContainerItem,
