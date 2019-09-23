@@ -27,7 +27,6 @@
   ],
   "scripts": {
     "build": "rollup -c rollup.config.js",
-    "dev": "rollup -cw rollup.config.js",
     "lint": "tslint --project .",
     "test": "jest --coverage"
   },
