@@ -122,6 +122,8 @@ public class NavAppSettingsServiceTest {
         replay(hippoSession);
 
         expect(user.getEmail()).andReturn("email");
+        expect(user.getFirstName()).andReturn("firstname");
+        expect(user.getLastName()).andReturn("lastname");
         replay(user);
 
         expect(config.getString(INavAppSettingsService.SERVICE_ID, INavAppSettingsService.SERVICE_ID)).andReturn(null);
@@ -324,7 +326,7 @@ public class NavAppSettingsServiceTest {
 
 
     private void testUserSettingsAssertions(UserSettings userSettings) {
-        assertThat(userSettings.getUserName(), is("userName"));
+        assertThat(userSettings.getUserName(), is("firstname lastname"));
         assertThat(userSettings.getLanguage(), is(Locale.CANADA.getLanguage()));
         assertThat(userSettings.getTimeZone(), is(TimeZone.getDefault()));
         assertThat(userSettings.getEmail(), is("email"));
