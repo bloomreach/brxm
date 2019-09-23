@@ -14,79 +14,59 @@
  * limitations under the License.
  */
 
-import { NextPage } from 'next';
+import React from 'react';
+import { NextPageContext } from 'next';
+// tslint:disable-next-line:import-name
 import getConfig from 'next/config';
-
 import { BrPage } from '@bloomreach/react-sdk';
 
 const { publicRuntimeConfig } = getConfig();
-const brOrigin = new URL(publicRuntimeConfig.brOrigin);
-
-const urlConfig = {
-  scheme: brOrigin.protocol.slice(0, -1),
-  hostname: brOrigin.hostname,
-  port: brOrigin.port,
-  contextPath: publicRuntimeConfig.brContextPath,
-  channelPath: publicRuntimeConfig.brChannelPath,
-};
-
-const cmsUrls = {
-  preview: urlConfig,
-  live: urlConfig,
-};
-
-const componentDefinitions = {};
-
 const config = {
   httpClient: (httpConfig: any) => fetch(httpConfig.url),
   options: {
     live: {
-      pageModelBaseUrl: 'http://localhost:9080/site/spa-csr',
+      pageModelBaseUrl: publicRuntimeConfig.brUrlLive,
+      spaBasePath: publicRuntimeConfig.spaBasePathLive,
     },
     preview: {
-      pageModelBaseUrl: 'http://localhost:9080/site/_cmsinternal/spa-csr',
+      pageModelBaseUrl: publicRuntimeConfig.brUrlPreview,
+      spaBasePath: publicRuntimeConfig.spaBasePathPreview,
     },
   },
-  request: {
-    path: '/',
-    // TODO: set real cookie
-    headers: { Cookie: 'JSESSIONID=4268ACF1D9BAA60C10BFC9041C873047' },
-  },
 };
 
-const Home: NextPage<{ request: any }> = ({request}) => {
-  config.request.path = request.path;
+interface IndexProps {
+  request: any;
+}
 
-  return (
-    <BrPage configuration={config}>
-      <div id='header'>
-        <nav className='navbar navbar-expand-md navbar-dark bg-dark'>
-          <span className='navbar-brand'>Server-side React Demo</span>
-          <button className='navbar-toggler' type='button' data-toggle='collapse' data-target='#navbarCollapse'
-                  aria-controls='navbarCollapse' aria-expanded='false' aria-label='Toggle navigation'>
-            <span className='navbar-toggler-icon' />
-          </button>
-          <div className='collapse navbar-collapse' id='navbarCollapse'>
-            Render Menu
-          </div>
-        </nav>
-      </div>
-      <div className='container marketing'>
-        Render Container here<br/>
-        cmsUrls: <pre>{JSON.stringify(cmsUrls, null, 2)}</pre>
-        request: <pre>{JSON.stringify(request, null, 2)}</pre>
-      </div>
-    </BrPage>
-  );
-};
+interface IndexState {}
 
-Home.getInitialProps = async ({ req, asPath }) => {
-  return {
-    request: {
-      host: req!.headers.host,
-      path: asPath,
-    }
-  };
-};
+export default class Index extends React.Component<IndexProps, IndexState> {
+  static async getInitialProps({ req: request }: NextPageContext) {
+    return { request };
+  }
 
-export default Home;
+  render() {
+    return (
+      <BrPage configuration={{ ...config, request: this.props.request }} mapping={{}}>
+        <div id='header'>
+          <nav className='navbar navbar-expand-md navbar-dark bg-dark'>
+            <span className='navbar-brand'>Server-side React Demo</span>
+            <button className='navbar-toggler' type='button' data-toggle='collapse' data-target='#navbar-collapse'
+                    aria-controls='navbar-collapse' aria-expanded='false' aria-label='Toggle navigation'>
+              <span className='navbar-toggler-icon' />
+            </button>
+            <div className='collapse navbar-collapse' id='navbar-collapse'>
+              Render Menu
+            </div>
+          </nav>
+        </div>
+        <div className='container marketing'>
+          Render Container here<br/>
+          cmsUrls: <pre>{JSON.stringify(config, null, 2)}</pre>
+          request: <pre>{JSON.stringify(this.props.request, null, 2)}</pre>
+        </div>
+      </BrPage>
+    );
+  }
+}

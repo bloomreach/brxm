@@ -23,8 +23,9 @@ if (dotenv.error) {
 module.exports = {
   assetPrefix: process.env.PUBLIC_URL || '/',
   publicRuntimeConfig: {
-    brOrigin: process.env.BR_ORIGIN,
-    brContextPath: process.env.BR_CONTEXT_PATH,
-    brChannelPath: process.env.BR_CHANNEL_PATH,
+    brUrlLive: process.env.BR_URL_LIVE,
+    spaBasePathLive: process.env.SPA_BASE_PATH_LIVE,
+    brUrlPreview: process.env.BR_URL_PREVIEW,
+    spaBasePathPreview: process.env.SPA_BASE_PATH_PREVIEW,
   },
 };
