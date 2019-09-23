@@ -116,7 +116,7 @@ public class QFacetRuleStateManager {
     private void processFacetRuleJcrPath(final Node facetRuleNode) throws RepositoryException {
         final String facet = facetRuleNode.getProperty(HIPPO_FACET).getString();
         if (TYPENAME_REFERENCE.equals(facetRuleNode.getProperty(HIPPOSYS_TYPE).getString())
-                && (JCR_PATH.equals(facet) || JCR_UUID.equals(facet))) {
+                && (JCR_PATH.equalsIgnoreCase(facet) || JCR_UUID.equalsIgnoreCase(facet))) {
 
             final String path = QFacetRule.getFullyQualifiedPath(facetRuleNode);
 

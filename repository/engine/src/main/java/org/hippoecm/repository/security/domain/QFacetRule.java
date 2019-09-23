@@ -131,7 +131,7 @@ public class QFacetRule implements Serializable {
         this.facetUUID = null;
         this.type = facetRule.getType();
         this.facet = facetRule.getFacet();
-        facetRuleType = getFacetRuleTye(facet);
+        facetRuleType = getFacetRuleType(facet);
         this.facetName = nameResolver.getQName(facet);
         this.value = facetRule.getValue();
         this.valueName = nameResolver.getQName(value);
@@ -149,7 +149,7 @@ public class QFacetRule implements Serializable {
         // get mandatory properties
         facet = node.getProperty(HippoNodeType.HIPPO_FACET).getString();
 
-        facetRuleType = getFacetRuleTye(facet);
+        facetRuleType = getFacetRuleType(facet);
 
         facetUUID = node.getIdentifier();
 
@@ -180,7 +180,7 @@ public class QFacetRule implements Serializable {
 
     }
 
-    private FacetRuleType getFacetRuleTye(final String facet) {
+    private FacetRuleType getFacetRuleType(final String facet) {
         if (facet.equalsIgnoreCase("nodetype")) {
             return NODETYPE;
         } else if (facet.equalsIgnoreCase("nodename")) {

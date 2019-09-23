@@ -1744,8 +1744,10 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                         final String newUUID = qFacetRuleStateManager.getReferenceUUID(qFacetRule.getFacetUUID());
 
                         if (newUUID == null) {
-                            log.error("sharedItemMgr.getJcrPathUUIDReferences() expected to have a value for " +
-                                    "qFacetRule with facetUUID '{}' but not present.", qFacetRule.getFacetUUID());
+                            // Facet rule itself was deleted, otherwise an StringUtils.EMPTY would be returned!
+                            // This is an 'unhandled' scenario for a logged in user, just as we don't cater for
+                            // newly added facet rules.
+                            // So, we're simply going to ignore this.
                             return;
                         }
 
