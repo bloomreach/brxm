@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
  * <p>In case the custom message is provided, a service unavailable error (503) is returned</p>
  * <p>For performing the check a repository username and optionally a password are needed. Without a password
  * (preferred) the repository user account must be jvm:// login enabled.</p>
- * <p>By default, if no username is configured, the builtin jvm:// enabled "statususer" will be used.</p>
+ * <p>By default, if no username is configured, the builtin jvm:// enabled "ping-user" will be used.</p>
  * <p><em>Note: Using the anonymous username is no longer support as of v14.0!</em></p>
  * <p>To enable the servlet add the following to your web.xml:
  * <pre>{@code
@@ -68,7 +68,7 @@ import org.slf4j.LoggerFactory;
  *   </init-param>
  *   <init-param>
  *     <param-name>check-username</param-name>
- *     <param-value>statususer</param-value>
+ *     <param-value>ping-user</param-value>
  *   </init-param>
  *   <init-param>
  *     <param-name>check-password</param-name>
@@ -119,7 +119,7 @@ public class PingServlet extends HttpServlet {
      * Default values
      */
     private static final String DEFAULT_REPOSITORY_ADDRESS = "vm://";
-    private static final String DEFAULT_USERNAME = "statususer";
+    static final String DEFAULT_USER_ID = "ping-user";
     private static final String DEFAULT_PASSWORD = "";
     private static final String DEFAULT_NODE = "";
     private static final String DEFAULT_WRITE_ENABLE = "false";
@@ -148,7 +148,7 @@ public class PingServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         repositoryLocation = getParameter(config, REPOSITORY_ADDRESS_PARAM, DEFAULT_REPOSITORY_ADDRESS);
-        username = getParameter(config, USERNAME_PARAM, DEFAULT_USERNAME);
+        username = getParameter(config, USERNAME_PARAM, DEFAULT_USER_ID);
         if ("anoynymous".equals(username)) {
             throw new ServletException("Anonymous user is no longer supported!");
         }

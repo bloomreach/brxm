@@ -93,7 +93,7 @@ definitions:
           hipposys:userroles:
             .meta:category: system
             value: [xm-admin]
-        /statususer:
+        /ping-user:
           jcr:primaryType: hipposys:user
           hipposys:active: true
           hipposys:passkey: jvm://

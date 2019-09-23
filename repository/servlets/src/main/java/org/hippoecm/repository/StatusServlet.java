@@ -42,7 +42,7 @@ public class StatusServlet extends HttpServlet {
 
     public static final String REPOSITORY_ADDRESS_PARAM = "repository-address";
     public static final String DEFAULT_REPOSITORY_ADDRESS = "vm://";
-    public static final String STATUS_USERNAME = "statususer";
+    static final String PING_USER_ID = PingServlet.DEFAULT_USER_ID;
 
     String repositoryLocation;
 
@@ -178,7 +178,7 @@ public class StatusServlet extends HttpServlet {
         try {
             if(hippoRepository != null) {
                 try {
-                    Session session = hippoRepository.login(JvmCredentials.getCredentials(STATUS_USERNAME));
+                    Session session = hippoRepository.login(JvmCredentials.getCredentials(PING_USER_ID));
                     if(session.isLive()) {
                         writer.println("Repository online and accessible");
                     }
