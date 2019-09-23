@@ -16,8 +16,5 @@
 
 import { initialize } from '@bloomreach/spa-sdk';
 
-export * from './BrPage';
+export * from './page/BrPage';
 
-export function sdk() {
-  console.log('Got a configuration interface from spa-sdk', initialize);
-}
