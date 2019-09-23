@@ -14,4 +14,6 @@
  * limitations under the License.
  */
 
-export { BrPage } from './page';
+export * from './BrPage';
+export * from './MappingContext';
+export * from './PageContext';

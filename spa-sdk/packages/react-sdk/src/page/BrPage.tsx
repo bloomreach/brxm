@@ -15,52 +15,80 @@
  */
 
 import React from 'react';
-
-import { destroy, initialize, Page } from '@bloomreach/spa-sdk';
-
-interface ComponentMapping {
-  [key: string]: typeof React.Component;
-}
+import { initialize, destroy, Configuration, Page, META_POSITION_BEGIN, META_POSITION_END } from '@bloomreach/spa-sdk';
+import { Meta } from '../meta';
+import { MappingContext } from './MappingContext';
+import { PageContext } from './PageContext';
 
 interface BrPageProps {
-  configuration: any;
-  mapping?: ComponentMapping;
+  configuration: Configuration;
+  mapping: React.ContextType<typeof MappingContext>;
 }
 
 interface BrPageState {
-  page: Page;
+  page?: Page;
 }
 
 export class BrPage extends React.Component<BrPageProps, BrPageState> {
-  private cms: any; // TODO: replace with real CMS
+  constructor(props: BrPageProps) {
+    super(props);
 
-  async componentDidMount() {
-    if (!this.state || !this.state.page) {
-      const page = await initialize(this.props.configuration);
-      this.setState({ page });
+    this.state = {};
+  }
+
+  componentDidMount() {
+    this.initializePage();
+  }
+
+  componentDidUpdate(prevProps: BrPageProps, prevState: BrPageState) {
+    if (this.props.configuration !== prevProps.configuration) {
+      this.destroyPage();
+      this.initializePage();
+    }
+
+    if (this.state.page && this.state.page !== prevState.page) {
+      this.state.page.sync();
     }
   }
 
-  async componentDidUpdate(prevProps: BrPageProps, prevState: BrPageState) {
-    const config = this.props.configuration;
-    if (config.request.path !== prevProps.configuration.request.path) {
-      if (this.state.page) {
-        destroy(this.state.page);
-      }
+  componentWillUnmount() {
+    this.destroyPage();
+  }
 
-      const page = await initialize(config);
-      this.setState({ page });
+  private async initializePage() {
+    const page = await initialize(this.props.configuration);
+    this.setState({ page });
+  }
+
+  private destroyPage() {
+    if (!this.state.page) {
+      return;
     }
 
-    const prevPage = prevState && prevState.page || null;
-    if (this.state.page !== prevPage && this.cms) {
-      this.cms.createOverlay();
-    }
+    destroy(this.state.page);
   }
 
   render () {
+    if (!this.state.page) {
+      return null;
+    }
+
     return (
-      <div className="br-page">{this.props.children}</div>
+      <MappingContext.Provider value={this.props.mapping}>
+        <PageContext.Provider value={this.state.page}>
+          {this.renderMeta(META_POSITION_BEGIN)}
+          {this.props.children}
+          {this.renderMeta(META_POSITION_END)}
+        </PageContext.Provider>
+      </MappingContext.Provider>
     );
+  }
+
+  private renderMeta(position: typeof META_POSITION_BEGIN | typeof META_POSITION_END) {
+    return this.state.page!.getComponent()
+      .getMeta()
+      .filter(meta => position === meta.getPosition())
+      // tslint:disable-next-line:jsx-key
+      .map(meta => <Meta meta={meta} />);
   }
 }
