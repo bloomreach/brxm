@@ -16,71 +16,51 @@
 
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-
 import { BrPage } from '@bloomreach/react-sdk';
-
-const BR_ORIGIN = new URL(process.env.REACT_APP_BR_ORIGIN!);
-const BR_CONTEXT_PATH = process.env.REACT_APP_BR_CONTEXT_PATH;
-const BR_CHANNEL_PATH = process.env.REACT_APP_BR_CHANNEL_PATH;
-
-const urlConfig = {
-  scheme: BR_ORIGIN.protocol.slice(0, -1),
-  hostname: BR_ORIGIN.hostname,
-  port: BR_ORIGIN.port,
-  contextPath: BR_CONTEXT_PATH,
-  channelPath: BR_CHANNEL_PATH
-};
-
-const cmsUrls = {
-  preview: urlConfig,
-  live: urlConfig
-};
 
 const config = {
   httpClient: (httpConfig: any) => fetch(httpConfig.url),
   options: {
     live: {
-      pageModelBaseUrl: 'http://localhost:9080/site/spa-csr',
+      pageModelBaseUrl: process.env.REACT_APP_BR_URL_LIVE!,
+      spaBasePath: process.env.REACT_APP_SPA_BASE_PATH_LIVE,
     },
     preview: {
-      pageModelBaseUrl: 'http://localhost:9080/site/_cmsinternal/spa-csr',
+      pageModelBaseUrl: process.env.REACT_APP_BR_URL_PREVIEW!,
+      spaBasePath: process.env.REACT_APP_SPA_BASE_PATH_PREVIEW,
     },
   },
-  request: {
-    path: '/',
-    // TODO: set real cookie
-    headers: { Cookie: 'JSESSIONID=4268ACF1D9BAA60C10BFC9041C873047' },
-  },
 };
 
-const App: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
-  config.request.path = props.location.pathname;
-
+export default function App(props: RouteComponentProps) {
   return (
-    <BrPage configuration={config}>
-      <div id="header">
-        <nav className="navbar navbar-expand-md navbar-dark bg-dark">
-          <span className="navbar-brand">Client-side React Demo</span>
-          <button type="button"
-            className="navbar-toggler"
-            data-toggle="collapse"
-            data-target="#navbarCollapse"
-            aria-controls="navbarCollapse"
-            aria-expanded="false"
-            aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon" />
-          </button>
-          <div className="collapse navbar-collapse" id="navbarCollapse">
-            Render Menu here
-          </div>
-        </nav>
-      </div>
-      <div className="container marketing">
-        Render Container here<br/>
-        cmsUrls: <pre>{JSON.stringify(cmsUrls, null, 2)}</pre>
-      </div>
+      <BrPage configuration={{
+        ...config,
+        request: {
+          path: `${props.location.pathname}${props.location.search}`
+        },
+      }} mapping={{}}>
+        <div id="header">
+          <nav className="navbar navbar-expand-md navbar-dark bg-dark">
+            <span className="navbar-brand">Client-side React Demo</span>
+            <button type="button"
+              className="navbar-toggler"
+              data-toggle="collapse"
+              data-target="#navbarCollapse"
+              aria-controls="navbarCollapse"
+              aria-expanded="false"
+              aria-label="Toggle navigation">
+              <span className="navbar-toggler-icon" />
+            </button>
+            <div className="collapse navbar-collapse" id="navbarCollapse">
+              Render Menu here
+            </div>
+          </nav>
+        </div>
+        <div className="container marketing">
+          Render Container here<br/>
+          cmsUrls: <pre>{JSON.stringify(config, null, 2)}</pre>
+        </div>
     </BrPage>
   );
-};
-
-export default App;
+}
