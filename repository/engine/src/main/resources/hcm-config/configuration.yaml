@@ -93,6 +93,12 @@ definitions:
           hipposys:userroles:
             .meta:category: system
             value: [xm-admin]
+        /statususer:
+          jcr:primaryType: hipposys:user
+          hipposys:active: true
+          hipposys:passkey: jvm://
+          hipposys:securityprovider: internal
+          hipposys:system: true
       /hippo:groups:
         jcr:primaryType: hipposys:groupfolder
         .meta:residual-child-node-category: system
