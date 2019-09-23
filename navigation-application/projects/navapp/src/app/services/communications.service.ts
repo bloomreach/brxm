@@ -19,6 +19,7 @@ import {
   ClientError, ClientErrorCodes, connectToChild, NavLocation, ParentApi, SiteId,
 } from '@bloomreach/navapp-communication';
 
+import { version } from '../../../../../package.json';
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { Connection } from '../models/connection.model';
 import { FailedConnection } from '../models/failed-connection.model';
@@ -45,6 +46,10 @@ export class CommunicationsService {
 
   get parentApiMethods(): ParentApi {
     return {
+      getConfig: () => ({
+        apiVersion: version,
+        userSettings: this.settings.userSettings,
+      }),
       showMask: () => this.overlay.enable(),
       hideMask: () => this.overlay.disable(),
       navigate: (location: NavLocation) => this.navigationService.navigateByNavLocation(location),

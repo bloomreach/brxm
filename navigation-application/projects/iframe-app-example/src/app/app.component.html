@@ -17,6 +17,7 @@
 <h1>Number of times navigated {{ navigateCount }}</h1>
 <h2>It was navigated to "{{ navigatedTo }}"</h2>
 <h3>The button was clicked {{ buttonClicked }} times.</h3>
+<h3 *ngIf="parentApiVersion">The parent api version is {{ parentApiVersion }}</h3>
 <h3 *ngIf="isBrSmMock">
   The selected accountId = {{ selectedSiteId ? selectedSiteId.accountId : 'not provided' }}
   and siteId = "{{ selectedSiteId ? selectedSiteId.siteId : 'not provided' }}".
