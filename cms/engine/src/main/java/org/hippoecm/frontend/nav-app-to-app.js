@@ -85,7 +85,11 @@
         () => {
           this.parentConnection = this.navAppCommunication.connectToParent(
             parentConnectionConfig,
-          );
+          ).then(parentApi => {
+            Hippo.UserActivity.onInactive(() => {
+              parentApi.onSessionExpired();
+            });
+          });
           return this.parentConnection;
         },
         e => e,

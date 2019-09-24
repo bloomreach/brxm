@@ -15,14 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.cms.logout;
 
-import java.util.Map;
-import java.util.TreeMap;
-
 import org.apache.wicket.Component;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
-import org.apache.wicket.util.template.PackageTextTemplate;
 import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.NavAppToAppHeaderItem;
 import org.hippoecm.frontend.service.ILogoutService;
@@ -35,18 +30,16 @@ import org.slf4j.LoggerFactory;
  */
 public class ActiveLogoutPlugin extends Component {
 
-    private static final String ACTIVE_LOGOUT_JS = "active-logout.js";
-
     private static final Logger log = LoggerFactory.getLogger(ActiveLogoutPlugin.class);
 
     private final int maxInactiveIntervalMinutes;
     private final LogoutBehavior logoutBehavior;
 
     /**
-     * @param id the Wicket ID of this component
+     * @param id                         the Wicket ID of this component
      * @param maxInactiveIntervalMinutes the number of minutes a user has to be inactive before being logged out.
-     *        A value of zero or less means means 'infinite' and will disable the active logout.
-     * @param logoutService the service to use for logging out a user.
+     *                                   A value of zero or less means means 'infinite' and will disable the active logout.
+     * @param logoutService              the service to use for logging out a user.
      */
     public ActiveLogoutPlugin(final String id, final int maxInactiveIntervalMinutes, final ILogoutService logoutService) {
         super(id);
@@ -71,7 +64,6 @@ public class ActiveLogoutPlugin extends Component {
 
         if (isActive()) {
             log.info("Inactive user sessions will be logged out automatically after {}", Duration.minutes(maxInactiveIntervalMinutes));
-            header.render(OnLoadHeaderItem.forScript(createActiveLogoutScript()));
         } else {
             log.info("Inactive user sessions will not be logged out automatically");
         }
@@ -80,15 +72,6 @@ public class ActiveLogoutPlugin extends Component {
     @Override
     protected void onRender() {
         // nothing to render
-    }
-
-    private String createActiveLogoutScript() {
-        final Map<String, String> scriptParams = new TreeMap<>();
-        scriptParams.put("logoutCallbackUrl", getLogoutCallbackUrl());
-
-        @SuppressWarnings("squid:S2095")
-        final PackageTextTemplate activeLogoutJs = new PackageTextTemplate(ActiveLogoutPlugin.class, ACTIVE_LOGOUT_JS);
-        return activeLogoutJs.asString(scriptParams);
     }
 
     private String getLogoutCallbackUrl() {
