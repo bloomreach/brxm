@@ -25,53 +25,75 @@ import { LogoutService } from './logout.service';
 import { NavConfigService } from './nav-config.service';
 
 describe('LogoutService', () => {
+  let logoutService: LogoutService;
+  let clientAppService: ClientAppService;
+  let busyIndicatorService: BusyIndicatorService;
+  let globalSettingsService: GlobalSettingsService;
+  let navConfigService: NavConfigService;
+
+  const clientAppServiceMock = jasmine.createSpyObj('ClientAppService', {
+    logoutApps: Promise.resolve(),
+  });
 
   const busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', [
     'show',
     'hide',
   ]);
-  const navConfigServiceMock = jasmine.createSpyObj('NavConfigService', [
-    'logout',
-  ]);
-  const clientAppServiceMock = jasmine.createSpyObj('ClientAppService', [
-    'logoutApps',
-  ]);
+
+  const navConfigServiceMock = jasmine.createSpyObj('NavConfigService', {
+    logout: Promise.resolve(),
+  });
+
+  const navAppBaseURL = '/foo';
+
+  const globalSettingsServiceMock = {
+    appSettings: {
+      navAppBaseURL,
+    },
+  };
+
   const locationMock = jasmine.createSpyObj('location', [
     'replace',
   ]);
-  const navAppBaseURL = '/foo';
+
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         { provide: BusyIndicatorService, useValue: busyIndicatorServiceMock },
         { provide: ClientAppService, useValue: clientAppServiceMock },
         { provide: DOCUMENT, useValue: { location: locationMock } },
-        { provide: GlobalSettingsService, useValue: { appSettings: { navAppBaseURL } } },
+        { provide: GlobalSettingsService, useValue: globalSettingsServiceMock },
         { provide: NavConfigService, useValue: navConfigServiceMock },
       ],
     });
+
+    logoutService = TestBed.get(LogoutService);
+    clientAppService = TestBed.get(ClientAppService);
+    busyIndicatorService = TestBed.get(BusyIndicatorService);
+    globalSettingsService = TestBed.get(GlobalSettingsService);
+    navConfigService = TestBed.get(NavConfigService);
   });
 
-  function expectBusyAndReplaceCalled(clientAppLogoutPromise: Promise<void>, silentLogoutPromise: Promise<void>): void {
-
-    clientAppServiceMock.logoutApps.and.returnValue(clientAppLogoutPromise);
-    navConfigServiceMock.logout.and.returnValue(silentLogoutPromise);
-
+  it('should be replace location even on silent logout rejections', fakeAsync(() => {
     const loginMessageKey = 'bar';
-    const service = TestBed.get(LogoutService);
-    service.logout(loginMessageKey);
+
+    logoutService.logout(loginMessageKey);
     tick(1);
 
-    expect(busyIndicatorServiceMock.show).toHaveBeenCalled();
-    expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
+    expect(busyIndicatorService.show).toHaveBeenCalled();
+    expect(busyIndicatorService.hide).toHaveBeenCalled();
     expect(locationMock.replace).toHaveBeenCalledWith(`${navAppBaseURL}/?loginmessage=${loginMessageKey}`);
-  }
-
-  it('should be replace location even on silent logout rejections', fakeAsync(() => {
-    expectBusyAndReplaceCalled(Promise.resolve(), Promise.reject());
   }));
 
   it('should be replace location even on client logout rejections', fakeAsync(() => {
-    expectBusyAndReplaceCalled(Promise.reject(), Promise.resolve());
+    clientAppServiceMock.logoutApps.and.returnValue(Promise.reject());
+    const loginMessageKey = 'bar';
+
+    logoutService.logout(loginMessageKey);
+    tick(1);
+
+    expect(busyIndicatorService.show).toHaveBeenCalled();
+    expect(busyIndicatorService.hide).toHaveBeenCalled();
+    expect(locationMock.replace).toHaveBeenCalledWith(`${navAppBaseURL}/?loginmessage=${loginMessageKey}`);
   }));
 });

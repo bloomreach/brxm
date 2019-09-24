@@ -38,9 +38,9 @@ export class LogoutService {
 
   logout(loginMessageKey: string): void {
     this.busyIndicatorService.show();
+
     this.clientAppService.logoutApps()
       .then(() => this.navConfigService.logout())
-      .catch(error => console.error(error))
       .finally(() => {
         this.busyIndicatorService.hide();
         const loginLocation = this.getLoginLocation(loginMessageKey);

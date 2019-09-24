@@ -14,39 +14,40 @@
  * limitations under the License.
  */
 
-import { HttpClientModule } from '@angular/common/http';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { RouterTestingModule } from '@angular/router/testing';
+import { of } from 'rxjs';
 
 import { AppComponent } from './app.component';
-import { BootstrapModule } from './bootstrap/bootstrap.module';
-import { ClientAppModule } from './client-app/client-app.module';
-import { ErrorHandlingModule } from './error-handling/error-handling.module';
-import { MainMenuModule } from './main-menu/main-menu.module';
-import { NavConfigService } from './services/nav-config.service';
-import { SharedModule } from './shared/shared.module';
-import { TopPanelModule } from './top-panel/top-panel.module';
+import { ErrorHandlingService } from './error-handling/services/error-handling.service';
+import { OverlayService } from './services/overlay.service';
+import { RightSidePanelService } from './top-panel/services/right-side-panel.service';
 
 describe('AppComponent', () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
 
+  const overlayServiceMock = {
+    visible$: of(false),
+  };
+
+  const rightSidePanelServiceMock = jasmine.createSpyObj('RightSidePanelService', [
+    'setSideNav',
+  ]);
+
+  const errorHandlingServiceMock = {
+    currentError: {},
+  };
+
   beforeEach(() => {
     fixture = TestBed.configureTestingModule({
-      imports: [
-        RouterTestingModule,
-        MainMenuModule,
-        TopPanelModule,
-        ClientAppModule,
-        TopPanelModule,
-        HttpClientModule,
-        SharedModule,
-        TopPanelModule,
-        BootstrapModule,
-        ErrorHandlingModule,
-      ],
       declarations: [AppComponent],
-      providers: [NavConfigService],
+      providers: [
+        { provide: OverlayService, useValue: overlayServiceMock },
+        { provide: RightSidePanelService, useValue: rightSidePanelServiceMock },
+        { provide: ErrorHandlingService, useValue: errorHandlingServiceMock },
+      ],
+      schemas: [NO_ERRORS_SCHEMA],
     }).createComponent(AppComponent);
 
     fixture = TestBed.createComponent(AppComponent);

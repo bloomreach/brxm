@@ -17,7 +17,6 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { CommunicationsService } from '../../../services/communications.service';
-import { ClientApp } from '../../models/client-app.model';
 import { ClientAppService } from '../../services/client-app.service';
 
 import { ClientAppComponent } from './client-app.component';
@@ -44,7 +43,7 @@ describe('ClientAppComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ClientAppComponent);
     component = fixture.componentInstance;
-    component.url = 'mytesturl';
+    component.url = '';
     fixture.detectChanges();
   });
 
