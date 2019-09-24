@@ -127,6 +127,7 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
 
     private static final String HST_CONFIG_ENV_PROPERTIES = "${catalina.base}/conf/hst.properties";
 
+    // We now maintain a separate default environment config file for CMS/platform vs. sites
     private static final String PLATFORM_CONFIG_ENV_PROPERTIES = "${catalina.base}/conf/platform.properties";
 
     private static final String HST_CONFIGURATION_REFRESH_DELAY_PARAM = "hst-config-refresh-delay";
@@ -168,18 +169,12 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
 
     private HstModelRegistry hstModelRegistry;
 
-    public DefaultHstSiteConfigurer() {
-    }
-
-    private ServletContext getServletContext() {
-        return servletContext;
-    }
-
-    protected void setHippoWebappContext(HippoWebappContext webappContext) {
+    public DefaultHstSiteConfigurer(final HippoWebappContext webappContext) {
         if (webappContext == null) {
             throw new IllegalArgumentException("The HippoWebappContext must not be null!");
         }
 
+        this.webappContext = webappContext;
         this.servletContext = webappContext.getServletContext();
 
         // if we're configuring the platform or CMS, default to a different external properties file than for sites
@@ -189,6 +184,10 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
         else {
             hstConfigEnvProperties = getConfigOrContextInitParameter(HST_CONFIG_ENV_PROPERTIES_PARAM, HST_CONFIG_ENV_PROPERTIES);
         }
+    }
+
+    private ServletContext getServletContext() {
+        return servletContext;
     }
 
     @Override

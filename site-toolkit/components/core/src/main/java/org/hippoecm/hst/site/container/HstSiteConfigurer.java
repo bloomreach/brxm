@@ -19,7 +19,6 @@ import java.io.Serializable;
 
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
-import org.onehippo.cms7.services.context.HippoWebappContext;
 
 /**
  * HST Site Configurer which loads configuration and initialize/destroy HST container.

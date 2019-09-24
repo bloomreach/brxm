@@ -99,8 +99,7 @@ public class HstContextLoaderListener implements ServletContextListener {
     }
 
     protected void configureHstSite(final HstModelRegistry hstModelRegistry) {
-        siteConfigurer = new DefaultHstSiteConfigurer();
-        ((DefaultHstSiteConfigurer) siteConfigurer).setHippoWebappContext(webappContext);
+        siteConfigurer = new DefaultHstSiteConfigurer(webappContext);
         try {
             siteConfigurer.initialize(hstModelRegistry);
         } catch (ContainerException e) {

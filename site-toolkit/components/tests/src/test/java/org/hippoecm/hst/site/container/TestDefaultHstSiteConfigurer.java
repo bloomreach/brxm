@@ -254,8 +254,7 @@ public class TestDefaultHstSiteConfigurer {
     }
 
     private DefaultHstSiteConfigurer createHstSiteConfigurer() {
-        DefaultHstSiteConfigurer hstSiteConfigurer = new DefaultHstSiteConfigurer();
-        hstSiteConfigurer.setHippoWebappContext(webappContext);
+        DefaultHstSiteConfigurer hstSiteConfigurer = new DefaultHstSiteConfigurer(webappContext);
         return hstSiteConfigurer;
     }
 }
