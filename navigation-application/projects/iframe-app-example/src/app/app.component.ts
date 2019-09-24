@@ -45,6 +45,7 @@ export class AppComponent implements OnInit {
   buttonClicked = 0;
   parent: ParentPromisedApi;
   overlaid = false;
+  parentApiVersion: string;
 
   constructor(
     private location: Location,
@@ -143,7 +144,14 @@ export class AppComponent implements OnInit {
       methods: this.childApiMethods,
     };
 
-    connectToParent(config).then(parent => (this.parent = parent));
+    connectToParent(config)
+      .then(parent => (this.parent = parent))
+      .then(parent => {
+        if (parent.getConfig) {
+          this.parent.getConfig()
+            .then(parentConfig => this.parentApiVersion = parentConfig.apiVersion);
+        }
+      });
   }
 
   onButtonClicked(): void {
