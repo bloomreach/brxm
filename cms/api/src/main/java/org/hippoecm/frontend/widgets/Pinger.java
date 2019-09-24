@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,8 +23,10 @@ import org.apache.wicket.ajax.attributes.AjaxRequestAttributes;
 import org.apache.wicket.ajax.json.JSONException;
 import org.apache.wicket.ajax.json.JSONObject;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.useractivity.UserActivityHeaderItem;
+import org.hippoecm.frontend.util.RequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +43,7 @@ public class Pinger extends Label {
     /**
      * Starts a default ping wicket components which uses a default frequency between ping intervals.
      * After the elapse of each interval a roundtrip to the server is made using an Ajax call.
+     *
      * @param id the wicket id to use
      * @deprecated use {@link #every(Duration)} with a duration of 20 seconds.
      */
@@ -53,6 +56,7 @@ public class Pinger extends Label {
      * Starts a default ping wicket components which uses the indicated duration between ping intervals.
      * After the elapse of each interval a roundtrip to the server is made using an Ajax call.
      * When the duration is negative, this wicket component behaves like a plain Label widget.
+     *
      * @param id       the wicket id to use
      * @param interval the time to wait between ping intervals
      * @deprecated @deprecated use {@link #every(Duration)
@@ -92,12 +96,14 @@ public class Pinger extends Label {
 
         public PingBehavior(Duration duration) {
             super(duration);
-            log.info("Pinger interval: {}", duration.toString());
+            log.info("Pinger interval: {}", duration);
         }
 
         @Override
         protected void onTimer(AjaxRequestTarget target) {
-            target.add(getComponent());
+            if (RequestUtils.isUserLoggedIn(RequestCycle.get())) {
+                target.add(getComponent());
+            }
         }
 
         @Override
