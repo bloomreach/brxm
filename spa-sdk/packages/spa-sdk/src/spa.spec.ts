@@ -38,10 +38,11 @@ const config = {
   httpClient: jest.fn(async () => ({ data: model })),
   options: {
     live: {
-      pageModelBaseUrl: 'http://localhost:8080/site/my-spa',
+      pageModelBaseUrl: 'http://localhost:8080/site/my-spa/resourceapi',
     },
     preview: {
-      pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/my-spa',
+      pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/my-spa/resourceapi',
+      spaBasePath: '/site/_cmsinternal/my-spa',
     },
   },
   request: {

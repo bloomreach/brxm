@@ -14,119 +14,114 @@
  * limitations under the License.
  */
 
-import { PageModelUrlOptions, buildPageModelUrl } from './url';
-
-const DEFAULT_OPTIONS = {
-  live: {
-    pageModelBaseUrl: 'http://localhost:8080/site/spa/',
-  },
-  preview: {
-    pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/spa/',
-  },
-};
-
-function getModelUrl(path: string, options: PageModelUrlOptions = DEFAULT_OPTIONS) {
-  const request = { path };
-  return buildPageModelUrl(request, options);
-}
+import { buildPageModelUrl } from './url';
 
 describe('buildModelUrl', () => {
-  it('creates a live URL for the home page', () => {
-    expect(getModelUrl('/')).toBe('http://localhost:8080/site/spa/resourceapi');
+  it.each`
+    path        | expected
+    ${'/'}      | ${'http://localhost:8080/site/spa/resourceapi/'}
+    ${'/news'}  | ${'http://localhost:8080/site/spa/resourceapi/news'}
+    ${'/news/'} | ${'http://localhost:8080/site/spa/resourceapi/news/'}
+    ${'/news/2019/foo.html'}                         | ${'http://localhost:8080/site/spa/resourceapi/news/2019/foo.html'}
+    ${'/?bloomreach-preview=true'}                   | ${'http://localhost:8080/site/_cmsinternal/spa/resourceapi/?bloomreach-preview=true'}
+    ${'/?foo=bar&bloomreach-preview=true'}           | ${'http://localhost:8080/site/_cmsinternal/spa/resourceapi/?foo=bar&bloomreach-preview=true'}
+    ${'/news?bloomreach-preview=true'}               | ${'http://localhost:8080/site/_cmsinternal/spa/resourceapi/news?bloomreach-preview=true'}
+    ${'/news?foo=bar&bloomreach-preview=true'}       | ${'http://localhost:8080/site/_cmsinternal/spa/resourceapi/news?foo=bar&bloomreach-preview=true'}
+    ${'/news/?bloomreach-preview=true'}              | ${'http://localhost:8080/site/_cmsinternal/spa/resourceapi/news/?bloomreach-preview=true'}
+    ${'/news/2019/foo.html?bloomreach-preview=true'} | ${'http://localhost:8080/site/_cmsinternal/spa/resourceapi/news/2019/foo.html?bloomreach-preview=true'}
+  `('should create a URL based on mapping for "$path"', ({ path, expected }) => {
+    const options = {
+      live: {
+        pageModelBaseUrl: 'http://localhost:8080/site/spa/resourceapi',
+      },
+      preview: {
+        pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/spa/resourceapi',
+      },
+    };
+
+    expect(buildPageModelUrl({ path }, options)).toBe(expected);
   });
 
-  it('creates a live URL for the route "/news"', () => {
-    expect(getModelUrl('/news')).toBe('http://localhost:8080/site/spa/news/resourceapi');
-    expect(getModelUrl('/news/')).toBe('http://localhost:8080/site/spa/news/resourceapi');
-  });
-
-  it('creates a live URL for the page "/news/2019/foo.html"', () => {
-    expect(getModelUrl('/news/2019/foo.html'))
-      .toBe('http://localhost:8080/site/spa/news/2019/foo.html/resourceapi');
-  });
-
-  it('creates a preview URL for the home page', () => {
-    expect(getModelUrl('/?bloomreach-preview=true'))
-      .toBe('http://localhost:8080/site/_cmsinternal/spa/resourceapi?bloomreach-preview=true');
-    expect(getModelUrl('/?foo=bar&bloomreach-preview=true'))
-      .toBe('http://localhost:8080/site/_cmsinternal/spa/resourceapi?foo=bar&bloomreach-preview=true');
-  });
-
-  it('creates a preview URL for the route "/news"', () => {
-    expect(getModelUrl('/news?bloomreach-preview=true'))
-      .toBe('http://localhost:8080/site/_cmsinternal/spa/news/resourceapi?bloomreach-preview=true');
-
-    expect(getModelUrl('/news?foo=bar&bloomreach-preview=true'))
-      .toBe('http://localhost:8080/site/_cmsinternal/spa/news/resourceapi?foo=bar&bloomreach-preview=true');
-
-    expect(getModelUrl('/news/?bloomreach-preview=true'))
-      .toBe('http://localhost:8080/site/_cmsinternal/spa/news/resourceapi?bloomreach-preview=true');
-  });
-
-  it('creates a preview URL for the page "/news/2019/foo.html"', () => {
-    expect(getModelUrl('/news/2019/foo.html?bloomreach-preview=true'))
-      .toBe('http://localhost:8080/site/_cmsinternal/spa/news/2019/foo.html/resourceapi?bloomreach-preview=true');
-  });
-
-  it('uses the channel path relative to the SPA base URL', () => {
+  it.each`
+    path                    | expected
+    ${'/site/csr-spa'}      | ${'http://localhost:8080/site/csr-spa/resourceapi'}
+    ${'/site/csr-spa/'}     | ${'http://localhost:8080/site/csr-spa/resourceapi/'}
+    ${'/site/csr-spa/news'} | ${'http://localhost:8080/site/csr-spa/resourceapi/news'}
+    ${'/site/_cmsinternal/csr-spa?bloomreach-preview=true'}      | ${'http://localhost:8080/site/_cmsinternal/csr-spa/resourceapi?bloomreach-preview=true'}
+    ${'/site/_cmsinternal/csr-spa/news?bloomreach-preview=true'} | ${'http://localhost:8080/site/_cmsinternal/csr-spa/resourceapi/news?bloomreach-preview=true'}
+  `('should use the channel path relative to the SPA base URL for "$path"', ({ path, expected }) => {
     const options = {
       live: {
         spaBasePath: '/site/csr-spa',
-        pageModelBaseUrl: 'http://localhost:8080/site/csr-spa',
+        pageModelBaseUrl: 'http://localhost:8080/site/csr-spa/resourceapi',
       },
       preview: {
         spaBasePath: '/site/_cmsinternal/csr-spa',
-        pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/csr-spa',
+        pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/csr-spa/resourceapi',
       },
     };
 
-    expect(getModelUrl('/site/csr-spa', options)).toBe('http://localhost:8080/site/csr-spa/resourceapi');
-    expect(getModelUrl('/site/csr-spa/', options)).toBe('http://localhost:8080/site/csr-spa/resourceapi');
-    expect(getModelUrl('/site/csr-spa/news', options)).toBe('http://localhost:8080/site/csr-spa/news/resourceapi');
-    expect(getModelUrl('/site/_cmsinternal/csr-spa?bloomreach-preview=true', options))
-      .toBe('http://localhost:8080/site/_cmsinternal/csr-spa/resourceapi?bloomreach-preview=true');
-    expect(getModelUrl('/site/_cmsinternal/csr-spa/news?bloomreach-preview=true', options))
-      .toBe('http://localhost:8080/site/_cmsinternal/csr-spa/news/resourceapi?bloomreach-preview=true');
+    expect(buildPageModelUrl({ path }, options)).toBe(expected);
   });
 
-  it('can use an SPA base path that matches the start of routes', () => {
+  it.each`
+    path                | expected
+    ${'/site/spa-news'} | ${'http://localhost:8080/site/resourceapi/news'}
+    ${'/site/_cmsinternal/spa-news?bloomreach-preview=true'} | ${'http://localhost:8080/site/_cmsinternal/resourceapi/news?bloomreach-preview=true'}
+  `('should use an SPA base path that matches the start of "$path"', ({ path, expected }) => {
     const options = {
       live: {
         spaBasePath: '/site/spa-',
-        pageModelBaseUrl: 'http://localhost:8080/site/spa-',
+        pageModelBaseUrl: 'http://localhost:8080/site/resourceapi/',
       },
       preview: {
         spaBasePath: '/site/_cmsinternal/spa-',
-        pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/spa-',
+        pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/resourceapi/',
       },
     };
 
-    expect(getModelUrl('/site/spa-news', options)).toBe('http://localhost:8080/site/spa-news/resourceapi');
-    expect(getModelUrl('/site/_cmsinternal/spa-news?bloomreach-preview=true', options))
-      .toBe('http://localhost:8080/site/_cmsinternal/spa-news/resourceapi?bloomreach-preview=true');
+    expect(buildPageModelUrl({ path }, options)).toBe(expected);
   });
 
-  it('throws an error when the request path does not start with the SPA base path', () => {
+  it.each`
+    base       | path
+    ${'/base'} | ${'/other/path'}
+  `(
+    'should throw an error because the request path "$path" does not start with the SPA base path "$base"',
+    ({ base, path }) => {
+      const options = {
+        live: {
+          spaBasePath: base,
+          pageModelBaseUrl: 'http://localhost:8080/site/spa',
+        },
+        preview: {
+          spaBasePath: base,
+          pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/spa/resourceapi',
+        },
+      };
+
+      expect(() => buildPageModelUrl({ path }, options))
+        .toThrow(`Request path '${path}' does not start with SPA base path '${base}'`);
+    },
+  );
+
+  it.each`
+    path        | suffix     | expected
+    ${'/'}      | ${'model'} | ${'http://localhost:8080/site/spa/resourceapi/model'}
+    ${'/news/'} | ${'model'} | ${'http://localhost:8080/site/spa/resourceapi/news/model'}
+    ${'/?bloomreach-preview=true'} | ${'something'} | ${'http://localhost:8080/site/_cmsinternal/spa/resourceapi/something?bloomreach-preview=true'}
+  `('should use "$suffix" as a custom suffix for "$path"', ({ path, suffix, expected }) => {
     const options = {
       live: {
-        spaBasePath: '/base',
-        pageModelBaseUrl: 'http://localhost:8080/site/spa',
+        pageModelBaseUrl: 'http://localhost:8080/site/spa/resourceapi',
+        pageModelUrlSuffix: suffix,
       },
       preview: {
-        spaBasePath: '/base',
-        pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/spa',
+        pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/spa/resourceapi',
+        pageModelUrlSuffix: suffix,
       },
     };
 
-    expect(() => getModelUrl('/other/path', options))
-      .toThrow('Request path \'/other/path\' does not start with SPA base path \'/base\'');
-  });
-
-  it('uses a custom suffix when provided', () => {
-    const options = { ...DEFAULT_OPTIONS, pageModelApiSuffix: '/model' };
-    expect(getModelUrl('/', options)).toBe('http://localhost:8080/site/spa/model');
-    expect(getModelUrl('/news', options)).toBe('http://localhost:8080/site/spa/news/model');
-    expect(getModelUrl('/?bloomreach-preview=true', options))
-      .toBe('http://localhost:8080/site/_cmsinternal/spa/model?bloomreach-preview=true');
+    expect(buildPageModelUrl({ path }, options)).toBe(expected);
   });
 });
