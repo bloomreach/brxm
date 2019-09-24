@@ -220,6 +220,12 @@
       // See http://api.jquery.com/jquery.ajax/
       return jQuery.ajax('${logoutCallbackUrl}');
     },
+
+    onUserActivity() {
+      Hippo.UserActivity.report();
+      return Promise.resolve();
+    }
+
   };
 
   window.bloomreach = window.bloomreach || {};
