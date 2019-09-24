@@ -55,18 +55,14 @@ describe('Cms', () => {
   });
 
   describe('onInit', () => {
-    const sync = jest.fn();
-
-    beforeEach(() => {
-      sync.mockClear();
-
+    it('should process postponed events on initialization', async () => {
+      const sync = jest.fn();
       cms.initialize();
-      window.SPA!.init({ sync });
-    });
-
-    it('should call sync on page.ready event', async () => {
       await eventBus.emit('page.ready', {});
 
+      expect.assertions(2);
+      expect(sync).not.toHaveBeenCalled();
+      window.SPA!.init({ sync });
       expect(sync).toHaveBeenCalled();
     });
   });
@@ -82,6 +78,17 @@ describe('Cms', () => {
         id: 'some-id',
         properties: { property: 'value' },
       });
+    });
+  });
+
+  describe('sync', () => {
+    it('should call sync on page.ready event', async () => {
+      const sync = jest.fn();
+      cms.initialize();
+      window.SPA!.init({ sync });
+      await eventBus.emit('page.ready', {});
+
+      expect(sync).toHaveBeenCalled();
     });
   });
 });

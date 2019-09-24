@@ -44,12 +44,33 @@ export interface Cms {
 }
 
 export class Cms implements Cms {
+  private api?: CmsApi;
+  private postponed: Function[] = [];
+
   constructor(protected eventBus: Typed<Events>, protected window?: Window) {}
 
+  private async flush() {
+    this.postponed
+      .splice(0)
+      .forEach(task => task());
+  }
+
+  private postpone<T extends (...args: any[]) => any>(task: T) {
+    return (...args: Parameters<T>) => {
+      if (this.api) {
+        return task.apply(this, args);
+      }
+
+      this.postponed.push(task.bind(this, ...args));
+    };
+  }
+
   initialize() {
-    if (!this.window || this.window.SPA) {
+    if (this.api || !this.window || this.window.SPA) {
       return;
     }
+
+    this.eventBus.on('page.ready', this.postpone(this.sync));
 
     this.window.SPA = {
       init: this.onInit.bind(this),
@@ -58,10 +79,15 @@ export class Cms implements Cms {
   }
 
   protected onInit(api: CmsApi) {
-    this.eventBus.on('page.ready', api.sync.bind(api));
+    this.api = api;
+    this.flush();
   }
 
   protected onRenderComponent(id: string, properties: object) {
     this.eventBus.emit('cms.update', { id, properties });
+  }
+
+  protected sync() {
+    this.api!.sync();
   }
 }
