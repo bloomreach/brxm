@@ -19,6 +19,18 @@ definitions:
         jcr:primaryType: hipposys:userrole
         hipposys:userroles: [xm-hst-user]
         hipposys:system: true
+      /xm-channel-admin:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
       /xm-hst-config-writer:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+    /hippo:configuration/hippo:users/admin:
+      hipposys:userroles:
+        operation: add
+        value: [xm-channel-admin]
+    /hippo:configuration/hippo:groups:
+      /admin:
+        hipposys:userroles:
+          operation: add
+          value: [xm-channel-admin]

@@ -37,6 +37,7 @@ definitions:
             jcr:primaryType: hipposys:authrole
             hipposys:groups: []
             hipposys:role: channel-admin
+            hipposys:userrole: xm-channel-admin
             hipposys:users: []
           /readwrite:
             jcr:primaryType: hipposys:authrole
