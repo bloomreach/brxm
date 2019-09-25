@@ -4,7 +4,7 @@ definitions:
       jcr:primaryType: hipposys:resourcebundles
       /en:
         jcr:primaryType: hipposys:resourcebundle
-        section-configuration: Document Types
+        section-configuration: Document types
         section-documents: Documents
         section-files: Assets
         section-images: Images

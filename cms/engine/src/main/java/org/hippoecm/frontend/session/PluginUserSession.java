@@ -339,7 +339,13 @@ public class PluginUserSession extends UserSession {
             throw new LoginException(Cause.ACCESS_DENIED);
         }
 
-        checkApplicationPermission(jcrSession);
+        try {
+            checkApplicationPermission(jcrSession);
+        } catch (LoginException e) {
+            // make sure to cleanup the session
+            jcrSession.logout();
+            throw e;
+        }
 
         IModel<Session> oldModel = jcrSessionModel;
         jcrSessionModel = sessionModel;
