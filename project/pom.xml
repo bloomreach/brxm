@@ -1116,6 +1116,9 @@
                         <exclude>org.apache.geronimo.specs:geronimo-jta_1.1_spec</exclude>
                         <exclude>javax.jcr:jcr</exclude>
                         <exclude>javax.mail:mail</exclude>
+                        <exclude>com.sun.mail:javax.mail</exclude>
+                        <exclude>com.sun.mail:jakarta.mail</exclude>
+                        <exclude>jakarta.mail:jakarta.mail-api</exclude>
                         <exclude>org.slf4j:slf4j-api</exclude>
 
                         <!-- Banned dependencies -->
