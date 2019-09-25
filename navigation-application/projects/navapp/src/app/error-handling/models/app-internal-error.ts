@@ -14,23 +14,15 @@
  * limitations under the License.
  */
 
-import { Component, Input } from '@angular/core';
+import { AppError } from './app-error';
+import { AppErrorCodes } from './app-error-codes';
 
-import { NavigationService } from '../../services/navigation.service';
-import { AppError } from '../models/app-error';
+export class InternalError extends AppError {
+  constructor(publicDescription?: string, internalDescription?: string) {
+    super(AppErrorCodes.Internal, 'Something went wrong', publicDescription, internalDescription || publicDescription);
 
-@Component({
-  selector: 'brna-error-page',
-  templateUrl: 'error-page.component.html',
-  styleUrls: ['error-page.component.scss'],
-})
-export class ErrorPageComponent {
-  @Input()
-  error: AppError;
-
-  constructor(private navigationService: NavigationService) { }
-
-  navigateToHome(): void {
-    this.navigationService.navigateToHome();
+    Object.setPrototypeOf(this, InternalError.prototype);
+    this.stack = this.getStack();
+    this.name = 'InternalError';
   }
 }

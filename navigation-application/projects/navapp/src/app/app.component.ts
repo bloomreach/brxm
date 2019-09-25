@@ -18,7 +18,7 @@ import { Component, HostBinding, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material';
 import { Observable } from 'rxjs';
 
-import { AppError } from './error-handling/models/appError';
+import { AppError } from './error-handling/models/app-error';
 import { ErrorHandlingService } from './error-handling/services/error-handling.service';
 import { OverlayService } from './services/overlay.service';
 import { RightSidePanelService } from './top-panel/services/right-side-panel.service';

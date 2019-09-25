@@ -20,6 +20,8 @@ import { NavItem, NavLocation } from '@bloomreach/navapp-communication';
 
 import { ClientAppMock } from '../client-app/models/client-app.mock';
 import { ClientAppService } from '../client-app/services/client-app.service';
+import { InternalError } from '../error-handling/models/app-internal-error';
+import { NotFoundError } from '../error-handling/models/not-found-error';
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { NavItemMock } from '../models/dto/nav-item.mock';
@@ -88,6 +90,9 @@ describe('NavigationService', () => {
 
   const errorHandlingServiceMock = jasmine.createSpyObj('ErrorHandlingService', [
     'clearError',
+    'setError',
+    'setNotFoundError',
+    'setInternalError',
   ]);
 
   let locationChangeFunction: (value: PopStateEvent) => undefined;
@@ -162,14 +167,6 @@ describe('NavigationService', () => {
       childApi.navigate.calls.reset();
       menuStateServiceMock.activateMenuItem.calls.reset();
       breadcrumbsServiceMock.setSuffix.calls.reset();
-    }));
-
-    it('should clear the app error during navigation', fakeAsync(() => {
-      service.navigateByNavItem(new NavItemMock(), 'some breadcrumb label');
-
-      tick();
-
-      expect(errorHandlingServiceMock.clearError).toHaveBeenCalled();
     }));
 
     it('should navigate by a nav item ', fakeAsync(() => {
@@ -290,5 +287,97 @@ describe('NavigationService', () => {
       expect(locationMock.replaceState).not.toHaveBeenCalled();
       expect(locationMock.go).not.toHaveBeenCalled();
     }));
+
+    describe('errors handling', () => {
+      it('should clear the app error during navigation', fakeAsync(() => {
+        service.navigateByNavItem(new NavItemMock(), 'some breadcrumb label');
+
+        tick();
+
+        expect(errorHandlingServiceMock.clearError).toHaveBeenCalled();
+      }));
+
+      it('should clear the app error on a pop state event', () => {
+        const urlChangeEvent: PopStateEvent = {
+          url: 'some/url',
+          state: {},
+        };
+
+        locationChangeFunction(urlChangeEvent);
+
+        expect(errorHandlingServiceMock.clearError).toHaveBeenCalled();
+      });
+
+      it('should set the error when path provided to NavLocation is not recognised', () => {
+        urlMapperServiceMock.mapNavLocationToBrowserUrl.and.callFake(() => { throw new Error(); });
+
+        const navLocation: NavLocation = {
+          path: 'unknown/path',
+          breadcrumbLabel: 'another breadcrumb label',
+        };
+
+        service.navigateByNavLocation(navLocation);
+
+        expect(errorHandlingServiceMock.setNotFoundError).toHaveBeenCalledWith(
+          undefined,
+          'An attempt to navigate was failed due to app path is not allowable: \'unknown/path\'',
+        );
+      });
+
+      it('should set the error when path provided to updateByNavLocation is not recognised', () => {
+        urlMapperServiceMock.mapNavLocationToBrowserUrl.and.callFake(() => { throw new Error(); });
+
+        const navLocation: NavLocation = {
+          path: 'unknown/path',
+          breadcrumbLabel: 'another breadcrumb label',
+        };
+
+        service.updateByNavLocation(navLocation);
+
+        expect(errorHandlingServiceMock.setNotFoundError).toHaveBeenCalledWith(
+          undefined,
+          'An attempt to update the app url was failed due to app path is not allowable: \'unknown/path\'',
+        );
+      });
+
+      it('should set the error when it is impossible to retrieve the app', fakeAsync(() => {
+        const expectedError = new NotFoundError();
+
+        clientAppServiceMock.getApp.and.returnValue(undefined);
+
+        service.navigateByNavItem(new NavItemMock());
+
+        tick();
+
+        expect(errorHandlingServiceMock.setError).toHaveBeenCalledWith(expectedError);
+      }));
+
+      it('should set the error when there is undefined api in the app', fakeAsync(() => {
+        const expectedError = new InternalError();
+
+        const app = new ClientAppMock();
+        app.api = undefined;
+
+        clientAppServiceMock.getApp.and.returnValue(app);
+
+        service.navigateByNavItem(new NavItemMock());
+
+        tick();
+
+        expect(errorHandlingServiceMock.setError).toHaveBeenCalledWith(expectedError);
+      }));
+
+      it('should set the error when some unexpected error occurred during navigation', fakeAsync(() => {
+        clientAppServiceMock.getApp.and.returnValue(new ClientAppMock({
+          api: {},
+        }));
+
+        service.navigateByNavItem(new NavItemMock());
+
+        tick();
+
+        expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(undefined, 'app.api.navigate is not a function');
+      }));
+    });
   });
 });
