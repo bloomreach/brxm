@@ -88,7 +88,6 @@ export class BrPage extends React.Component<BrPageProps, BrPageState> {
     return this.state.page!.getComponent()
       .getMeta()
       .filter(meta => position === meta.getPosition())
-      // tslint:disable-next-line:jsx-key
-      .map(meta => <Meta meta={meta} />);
+      .map((meta, index) => <Meta key={index} meta={meta} />);
   }
 }
