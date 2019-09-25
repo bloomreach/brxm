@@ -33,6 +33,11 @@ definitions:
         .meta:residual-child-node-category: system
         /hstconfig:
           jcr:primaryType: hipposys:domain
+          /channel-admin:
+            jcr:primaryType: hipposys:authrole
+            hipposys:groups: []
+            hipposys:role: channel-admin
+            hipposys:users: []
           /readwrite:
             jcr:primaryType: hipposys:authrole
             hipposys:userrole: xm-hst-config-writer

@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.security.RolesAllowed;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
@@ -52,8 +51,8 @@ import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.BeforeChannelDeleteEventImpl;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.IgnoreLock;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
-import org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.hst.platform.model.HstModel;
@@ -64,9 +63,10 @@ import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel.CHANNEL_MANAGER_ADMIN_ROLE;
-import static org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel.CHANNEL_WEBMASTER_ROLE;
+import static org.hippoecm.hst.pagecomposer.jaxrs.api.SecurityConstants.CHANNEL_ADMIN_PRIVILEGE_NAME;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.HstConfigurationServiceImpl.PREVIEW_SUFFIX;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_READ;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_WRITE;
 
 @Path("/rep:root/")
 public class RootResource extends AbstractConfigResource implements ComponentManagerAware {
@@ -75,14 +75,9 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     private boolean isCrossChannelPageCopySupported;
 
     private ChannelService channelService;
-    private SecurityModel securityModel;
 
     public void setChannelService(final ChannelService channelService) {
         this.channelService = channelService;
-    }
-
-    public void setSecurityModel(final SecurityModel securityModel) {
-        this.securityModel = securityModel;
     }
 
     @Override
@@ -191,7 +186,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @DELETE
     @Path("/channels/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed(CHANNEL_MANAGER_ADMIN_ROLE)
+    @PrivilegesAllowed(CHANNEL_ADMIN_PRIVILEGE_NAME)
     public Response deleteChannel(@HeaderParam("hostGroup") final String hostGroup,
                                   @PathParam("id") String channelId) {
         if (StringUtils.endsWith(channelId, PREVIEW_SUFFIX)) {
@@ -240,7 +235,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
                                     @Context HttpServletRequest servletRequest,
                                     @PathParam("renderingHost") String renderingHost,
                                     @PathParam("mountId") String mountId) {
-        HttpSession session = servletRequest.getSession(true);
+        final HttpSession session = servletRequest.getSession(true);
 
 
         final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
@@ -255,10 +250,32 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
         final boolean isChannelDeletionSupported = isChannelDeletionSupported(mountId, hostGroup);
         final boolean isConfigurationLocked = isConfigurationLocked(mountId, hostGroup);
         try {
-            final boolean hasAdminRole = securityModel.isUserInRole(requestContext.getSession(), CHANNEL_MANAGER_ADMIN_ROLE);
-            final boolean isWebmaster = securityModel.isUserInRole(requestContext.getSession(), CHANNEL_WEBMASTER_ROLE);
-            final boolean canDeleteChannel = isChannelDeletionSupported && hasAdminRole && !isConfigurationLocked;
-            final boolean canManageChanges = hasAdminRole && !isConfigurationLocked;
+
+            final Session jcrSession = requestContext.getSession();
+
+            final boolean isWebmaster;
+            final boolean isChannelAdmin;
+
+            // JCR_WRITE does not automatically imply JCR_READ but both are needed for webmasters or channel admins
+            // CHANNEL_ADMIN_PRIVILEGE_NAME does automatically inherity jcr:read and jcr:write, see roles-hst.yaml
+            final String webmasterPermissions = JCR_READ + "," + JCR_WRITE;
+
+            final String liveConfigPath = getPageComposerContextService().getEditingLiveConfigurationPath();
+            if (getPageComposerContextService().hasPreviewConfiguration()) {
+                final String previewConfigPath = getPageComposerContextService().getEditingPreviewConfigurationPath();
+                isWebmaster = jcrSession.hasPermission(liveConfigPath, webmasterPermissions)
+                        && jcrSession.hasPermission(previewConfigPath, webmasterPermissions);
+
+                isChannelAdmin = isWebmaster && jcrSession.hasPermission(liveConfigPath, CHANNEL_ADMIN_PRIVILEGE_NAME)
+                        && jcrSession.hasPermission(previewConfigPath, CHANNEL_ADMIN_PRIVILEGE_NAME);
+            } else {
+                isWebmaster = jcrSession.hasPermission(liveConfigPath, webmasterPermissions);
+                isChannelAdmin = isWebmaster && jcrSession.hasPermission(liveConfigPath, CHANNEL_ADMIN_PRIVILEGE_NAME);
+            }
+
+
+            final boolean canDeleteChannel = isChannelDeletionSupported && isChannelAdmin && !isConfigurationLocked;
+            final boolean canManageChanges = isChannelAdmin && !isConfigurationLocked;
 
             HandshakeResponse response = new HandshakeResponse();
             response.setCanWrite(isWebmaster);
