@@ -89,6 +89,7 @@
             Hippo.UserActivity.onInactive(() => {
               parentApi.onSessionExpired();
             });
+            return parentApi;
           });
           return this.parentConnection;
         },
