@@ -22,6 +22,7 @@ import { ReplaySubject } from 'rxjs';
 import { ClientErrorCodes } from '../../../../navapp-communication/src/lib/api';
 import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
+import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 
 import { BusyIndicatorService } from './busy-indicator.service';
 import { CommunicationsService } from './communications.service';
@@ -66,6 +67,10 @@ describe('CommunicationsService', () => {
     'logout',
   ]);
 
+  const errorHandlingServiceMock = jasmine.createSpyObj('ErrorHandlingService', [
+    'setClientError',
+  ]);
+
   beforeEach(() => {
     const childApiMock = jasmine.createSpyObj('parentApi', {
       navigate: Promise.resolve(),
@@ -102,6 +107,7 @@ describe('CommunicationsService', () => {
         { provide: LogoutService, useValue: logoutServiceMock },
         { provide: NavigationService, useValue: navigationServiceMock },
         { provide: OverlayService, useValue: overlayServiceMock },
+        { provide: ErrorHandlingService, useValue: errorHandlingServiceMock },
       ],
     });
 
