@@ -28,16 +28,16 @@ import {
 import { Window } from './cms';
 import { PageModel } from './page';
 
-declare const window: Window;
-
 describe('initialize', () => {
   let page: Page;
   const httpClient = jest.fn(async () => ({ data: model as unknown as PageModel }));
+  const window: Window = {};
 
   beforeEach(async () => {
     httpClient.mockClear();
     page = await initialize({
       httpClient,
+      window,
       request: { path: '/' },
       options: {
         live: {

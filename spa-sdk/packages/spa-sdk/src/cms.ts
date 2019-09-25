@@ -17,10 +17,13 @@
 import { Typed } from 'emittery';
 import { Events } from './events';
 
+const GLOBAL_WINDOW = typeof window === 'undefined' ? undefined : window;
+
 /**
  * Channel Manager SPA window.
  */
 export interface Window {
+  [property: string]: any;
   SPA?: SpaApi;
 }
 
@@ -39,15 +42,17 @@ interface CmsApi {
 export interface Cms {
   /**
    * Initializes integration with the CMS.
+   * @param window The window reference for the CMS integration.
+   * By default the global window object will be used.
    */
-  initialize(): void;
+  initialize(window?: Window): void;
 }
 
 export class Cms implements Cms {
   private api?: CmsApi;
   private postponed: Function[] = [];
 
-  constructor(protected eventBus: Typed<Events>, protected window?: Window) {}
+  constructor(protected eventBus: Typed<Events>) {}
 
   private async flush() {
     this.postponed
@@ -65,14 +70,14 @@ export class Cms implements Cms {
     };
   }
 
-  initialize() {
-    if (this.api || !this.window || this.window.SPA) {
+  initialize(window: Window | undefined = GLOBAL_WINDOW) {
+    if (this.api || !window || window.SPA) {
       return;
     }
 
     this.eventBus.on('page.ready', this.postpone(this.sync));
 
-    this.window.SPA = {
+    window.SPA = {
       init: this.onInit.bind(this),
       renderComponent: this.onRenderComponent.bind(this),
     };

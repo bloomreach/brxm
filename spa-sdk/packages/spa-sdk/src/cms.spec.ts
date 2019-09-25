@@ -27,26 +27,24 @@ describe('Cms', () => {
     eventBus = new Typed<Events>();
     window = {};
 
-    cms = new Cms(eventBus, window);
+    cms = new Cms(eventBus);
   });
 
   describe('initialize', () => {
     it('should not fail if there is no window object', () => {
-      const cms = new Cms(eventBus);
-
       expect(() => cms.initialize()).not.toThrow();
     });
 
     it('should not initialize an SPA object if there is already one', () => {
       const spa: any = {};
-      window.SPA = spa;
-      cms.initialize();
+      const window = { SPA: spa };
+      cms.initialize(window);
 
       expect(window.SPA).toBe(spa);
     });
 
     it('should initialize an SPA object', () => {
-      cms.initialize();
+      cms.initialize(window);
 
       expect(window.SPA).toBeDefined();
       expect(window.SPA).toHaveProperty('init');
@@ -57,7 +55,7 @@ describe('Cms', () => {
   describe('onInit', () => {
     it('should process postponed events on initialization', async () => {
       const sync = jest.fn();
-      cms.initialize();
+      cms.initialize(window);
       await eventBus.emit('page.ready', {});
 
       expect.assertions(2);
@@ -68,9 +66,8 @@ describe('Cms', () => {
   });
 
   describe('onRenderComponent', () => {
-    beforeEach(() => cms.initialize());
-
     it('should emit cms.update on render component call', () => {
+      cms.initialize(window);
       spyOn(eventBus, 'emit');
       window.SPA!.renderComponent('some-id', { property: 'value' });
 
@@ -84,7 +81,7 @@ describe('Cms', () => {
   describe('sync', () => {
     it('should call sync on page.ready event', async () => {
       const sync = jest.fn();
-      cms.initialize();
+      cms.initialize(window);
       window.SPA!.init({ sync });
       await eventBus.emit('page.ready', {});
 

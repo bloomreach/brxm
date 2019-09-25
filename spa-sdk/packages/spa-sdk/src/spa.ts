@@ -15,7 +15,7 @@
  */
 
 import { Typed } from 'emittery';
-import { Cms } from './cms';
+import { Cms, Window } from './cms';
 import { ComponentFactory, ContentFactory, Content, PageModel, PageImpl, Page } from './page';
 import { Events, CmsUpdateEvent } from './events';
 import { HttpClient, HttpRequest } from './http';
@@ -39,6 +39,12 @@ export interface Configuration {
    * Options for generating the page model API URL.
    */
   options: PageModelUrlOptions;
+
+  /**
+   * The window reference for the CMS integration.
+   * By default the global window object will be used.
+   */
+  window?: Window;
 }
 
 /**
@@ -131,7 +137,7 @@ export class Spa {
    * @param config Configuration of the SPA integration with brXM.
    */
   async initialize(config: Configuration): Promise<Page> {
-    this.cms.initialize();
+    this.cms.initialize(config.window);
 
     const model = await this.fetchPageModel(config);
     const page = this.initializePage(model);

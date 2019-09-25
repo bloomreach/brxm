@@ -23,7 +23,7 @@
 
 import { Typed } from 'emittery';
 import { Events } from './events';
-import { Cms, Window } from './cms';
+import { Cms } from './cms';
 import {
   ComponentFactory,
   ComponentImpl,
@@ -45,8 +45,6 @@ import {
 import { Configuration, Spa } from './spa';
 import { buildPageModelUrl } from './url';
 
-declare const window: Window | undefined;
-
 const eventBus = new Typed<Events>();
 
 const metaFactory = new MetaFactory()
@@ -66,7 +64,7 @@ const componentFactory = new ComponentFactory()
     model => new ContainerItemImpl(model, eventBus, metaFactory.create(model._meta)),
   );
 
-const cms = new Cms(eventBus, typeof window === 'undefined' ? undefined : window);
+const cms = new Cms(eventBus);
 const spa = new Spa(buildPageModelUrl, componentFactory, contentFactory, eventBus, cms);
 
 /**
