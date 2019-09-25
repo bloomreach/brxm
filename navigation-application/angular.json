@@ -120,7 +120,8 @@
               "projects/navapp/tsconfig.spec.json"
             ],
             "exclude": [
-              "**/node_modules/**"
+              "**/node_modules/**",
+              "./package.json"
             ]
           }
         }
