@@ -1,19 +1,11 @@
 {
   "bundleType" : "WICKET",
   "keyData" : {
-    "live-link" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "unavailable" : {
       "status" : "CLEAN",
       "locales" : null
     },
     "label" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "preview-link" : {
       "status" : "CLEAN",
       "locales" : null
     }
