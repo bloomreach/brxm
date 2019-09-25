@@ -46,7 +46,7 @@ definitions:
             hipposys:groups: []
             hipposys:users: []
           /channel-webviewer:
-            hipposys:role: channel-web-author
+            hipposys:role: channel-webviewer
             jcr:primaryType: hipposys:authrole
             hipposys:userrole: xm-channel-webviewer
             hipposys:groups: []

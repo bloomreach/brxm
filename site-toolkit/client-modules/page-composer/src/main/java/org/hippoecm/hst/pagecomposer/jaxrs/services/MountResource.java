@@ -78,6 +78,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
 import static org.hippoecm.hst.pagecomposer.jaxrs.api.SecurityConstants.CHANNEL_ADMIN_PRIVILEGE_NAME;
 import static org.hippoecm.hst.pagecomposer.jaxrs.api.SecurityConstants.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
+import static org.hippoecm.hst.pagecomposer.jaxrs.api.SecurityConstants.CHANNEL_WEB_VIEWER_PRIVILEGE_NAME;
 
 @Path("/hst:mount/")
 public class MountResource extends AbstractConfigResource {
@@ -139,7 +140,7 @@ public class MountResource extends AbstractConfigResource {
     @GET
     @Path("/toolkit/")
     @Produces(MediaType.APPLICATION_JSON)
-    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
+    @PrivilegesAllowed(CHANNEL_WEB_VIEWER_PRIVILEGE_NAME)
     public Response getToolkitRepresentation() {
         final Mount editingMount = getPageComposerContextService().getEditingMount();
         ToolkitRepresentation toolkitRepresentation = new ToolkitRepresentation().represent(editingMount);
