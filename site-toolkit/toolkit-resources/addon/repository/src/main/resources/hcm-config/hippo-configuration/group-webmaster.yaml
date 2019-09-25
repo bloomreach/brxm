@@ -1,9 +1,0 @@
-definitions:
-  config:
-    /hippo:configuration/hippo:groups/webmaster:
-      jcr:primaryType: hipposys:group
-      hipposys:members:
-        .meta:category: system
-        value: []
-      hipposys:userroles: [xm-hst-config-writer]
-      hipposys:securityprovider: internal

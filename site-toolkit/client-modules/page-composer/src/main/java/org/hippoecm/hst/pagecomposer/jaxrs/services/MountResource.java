@@ -77,6 +77,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH
 import static org.hippoecm.hst.configuration.HstNodeTypes.BRANCH_PROPERTY_BRANCH_OF;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_BRANCH;
 import static org.hippoecm.hst.pagecomposer.jaxrs.api.SecurityConstants.CHANNEL_ADMIN_PRIVILEGE_NAME;
+import static org.hippoecm.hst.pagecomposer.jaxrs.api.SecurityConstants.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 
 @Path("/hst:mount/")
 public class MountResource extends AbstractConfigResource {
@@ -115,6 +116,7 @@ public class MountResource extends AbstractConfigResource {
     @GET
     @Path("/pagemodel/{pageId}/")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response getPageModelRepresentation(@PathParam("pageId") String pageId) {
         try {
             final HstSite editingPreviewHstSite = getPageComposerContextService().getEditingPreviewSite();
@@ -137,6 +139,7 @@ public class MountResource extends AbstractConfigResource {
     @GET
     @Path("/toolkit/")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response getToolkitRepresentation() {
         final Mount editingMount = getPageComposerContextService().getEditingMount();
         ToolkitRepresentation toolkitRepresentation = new ToolkitRepresentation().represent(editingMount);
@@ -147,6 +150,7 @@ public class MountResource extends AbstractConfigResource {
     @GET
     @Path("/prototypepages")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response getPrototypePages() {
         final HstSite editingPreviewSite = getPageComposerContextService().getEditingPreviewSite();
         PrototypesRepresentation prototypePagesRepresentation = new PrototypesRepresentation().represent(editingPreviewSite,
@@ -158,6 +162,7 @@ public class MountResource extends AbstractConfigResource {
     @GET
     @Path("/newpagemodel")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response getNewPageModel(@QueryParam("mountId") final String mountId) {
         final Mount mount;
         if (mountId == null) {
@@ -198,6 +203,7 @@ public class MountResource extends AbstractConfigResource {
     @GET
     @Path("/userswithchanges/")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_ADMIN_PRIVILEGE_NAME)
     public Response getUsersWithChanges() {
         final Set<String> changedBySet = getPageComposerContextService().getEditingPreviewChannel().getChangedBySet();
         List<UserRepresentation> usersWithChanges = new ArrayList<>(changedBySet.size());
@@ -220,6 +226,7 @@ public class MountResource extends AbstractConfigResource {
     @POST
     @Path("/edit/")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response startEdit() {
         final PageComposerContextService pageComposerContextService = getPageComposerContextService();
         final HstRequestContext requestContext = pageComposerContextService.getRequestContext();
@@ -308,6 +315,7 @@ public class MountResource extends AbstractConfigResource {
     @POST
     @Path("/discard/")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response discardChanges() {
         return discardChangesOfCurrentUser();
     }
@@ -333,6 +341,7 @@ public class MountResource extends AbstractConfigResource {
     @POST
     @Path("/publish/")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response publish() {
         if (!getPageComposerContextService().hasPreviewConfiguration()) {
             return cannotPublishNotPreviewSite();
@@ -415,6 +424,7 @@ public class MountResource extends AbstractConfigResource {
     @POST
     @Path("/documents/{docType}")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response getDocumentsByType(@PathParam("docType") String docType) {
 
         final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
@@ -465,6 +475,7 @@ public class MountResource extends AbstractConfigResource {
     @POST
     @Path("/deletepreview/")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_ADMIN_PRIVILEGE_NAME)
     public Response deletePreview() {
         final PageComposerContextService context = getPageComposerContextService();
         final Channel channel = context.getEditingPreviewChannel();

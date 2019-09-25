@@ -3,5 +3,12 @@ definitions:
     /hippo:configuration/hippo:roles:
       /channel-admin:
         jcr:primaryType: hipposys:role
-        hipposys:privileges: ['hippo:channelAdmin']
-        hipposys:roles: [readwrite]
+        hipposys:privileges: ['hippo:channel-admin']
+        hipposys:roles: [channel-webmaster]
+      /channel-webmaster:
+        jcr:primaryType: hipposys:role
+        hipposys:privileges: ['hippo:channel-webmaster']
+        hipposys:roles: [readwrite, channel-webviewer]
+      /channel-webviewer:
+        jcr:primaryType: hipposys:role
+        hipposys:privileges: ['hippo:channel-webviewer']

@@ -21,8 +21,13 @@ definitions:
         hipposys:system: true
       /xm-channel-admin:
         jcr:primaryType: hipposys:userrole
+        hipposys:userroles: [xm-channel-webmaster]
         hipposys:system: true
-      /xm-hst-config-writer:
+      /xm-channel-webmaster:
+        jcr:primaryType: hipposys:userrole
+        hipposys:userroles: [xm-channel-webviewer]
+        hipposys:system: true
+      /xm-channel-webviewer:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
     /hippo:configuration/hippo:users/admin:
@@ -34,3 +39,21 @@ definitions:
         hipposys:userroles:
           operation: add
           value: [xm-channel-admin]
+      # By default editor group is channel web author giving them access to the preview of the channel mgr
+      /editor:
+        hipposys:userroles:
+          operation: add
+          value: [xm-channel-webviewer]
+      # By default author group is channel web author giving them access to the preview of the channel mgr
+      /author:
+        hipposys:userroles:
+          operation: add
+          value: [xm-channel-webviewer]
+      # By default webmaster group is channel webmaster allowing them to modify hst configuration
+      /webmaster:
+        jcr:primaryType: hipposys:group
+        hipposys:members:
+          .meta:category: system
+          value: []
+        hipposys:userroles: [xm-channel-webmaster]
+        hipposys:securityprovider: internal

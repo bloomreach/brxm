@@ -1,5 +1,5 @@
 /*
-*  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+*  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -64,6 +64,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.pagecomposer.jaxrs.api.SecurityConstants.CHANNEL_ADMIN_PRIVILEGE_NAME;
+import static org.hippoecm.hst.pagecomposer.jaxrs.api.SecurityConstants.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
+import static org.hippoecm.hst.pagecomposer.jaxrs.api.SecurityConstants.CHANNEL_WEB_VIEWER_PRIVILEGE_NAME;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.HstConfigurationServiceImpl.PREVIEW_SUFFIX;
 import static org.onehippo.repository.security.StandardPermissionNames.JCR_READ;
 import static org.onehippo.repository.security.StandardPermissionNames.JCR_WRITE;
@@ -92,6 +94,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
      */
     @GET
     @Path("/channels")
+    @PrivilegesAllowed(CHANNEL_WEB_VIEWER_PRIVILEGE_NAME)
     public Response getChannels(@HeaderParam("hostGroup") final String hostGroup,
                                 @QueryParam("previewConfigRequired") final boolean previewConfigRequired,
                                 @QueryParam("workspaceRequired") final boolean workspaceRequired,
@@ -114,6 +117,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @GET
     @Path("/channels/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEB_VIEWER_PRIVILEGE_NAME)
     public Response getChannel(@HeaderParam("contextPath") final String contextPath,
                                @HeaderParam("hostGroup") final String hostGroup,
                                @PathParam("id") String channelId) {
@@ -145,6 +149,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @GET
     @Path("/channels/{id}/info")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEB_VIEWER_PRIVILEGE_NAME)
     public Response getChannelInfoDescription(@HeaderParam("hostGroup") final String hostGroup,
                                               @PathParam("id") String channelId, @QueryParam("locale") String locale) {
         if (StringUtils.isEmpty(locale)) {
@@ -168,6 +173,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @Path("/channels/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response saveChannel(@HeaderParam("hostGroup") final String hostGroup,
                                 @PathParam("id") final String channelId,
                                 final Channel channel) {
@@ -231,6 +237,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @GET
     @Path("/composermode/{renderingHost}/{mountId}")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response composerModeGet(@HeaderParam("hostGroup") final String hostGroup,
                                     @Context HttpServletRequest servletRequest,
                                     @PathParam("renderingHost") String renderingHost,
@@ -305,6 +312,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @GET
     @Path("/previewmode/{renderingHost}/")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEB_VIEWER_PRIVILEGE_NAME)
     public Response previewMode(@Context HttpServletRequest servletRequest,
                                 @PathParam("renderingHost") String renderingHost) {
         HttpSession session = servletRequest.getSession(true);
@@ -321,6 +329,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @POST
     @Path("/setvariant/{variantId}/")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEB_VIEWER_PRIVILEGE_NAME)
     public Response setVariant(@Context HttpServletRequest servletRequest, @PathParam("variantId") String variant) {
         final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(servletRequest.getSession());
         cmsSessionContext.getContextPayload().put(ContainerConstants.RENDER_VARIANT, variant);
@@ -332,6 +341,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @POST
     @Path("/clearvariant/")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEB_VIEWER_PRIVILEGE_NAME)
     public Response clearVariant(@Context HttpServletRequest servletRequest) {
         final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(servletRequest.getSession());
         cmsSessionContext.getContextPayload().remove(ContainerConstants.RENDER_VARIANT);

@@ -17,6 +17,10 @@ package org.hippoecm.hst.pagecomposer.jaxrs.api;
 
 public class SecurityConstants {
 
-   public final static String CHANNEL_ADMIN_PRIVILEGE_NAME =  "hippo:channelAdmin";
+    public final static String CHANNEL_ADMIN_PRIVILEGE_NAME = "hippo:channel-admin";
+
+    public final static String CHANNEL_WEBMASTER_PRIVILEGE_NAME = "hippo:channel-webmaster";
+
+    public final static String CHANNEL_WEB_VIEWER_PRIVILEGE_NAME = "hippo:channel-webviewer";
 
 }

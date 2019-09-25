@@ -35,14 +35,22 @@ definitions:
           jcr:primaryType: hipposys:domain
           /channel-admin:
             jcr:primaryType: hipposys:authrole
-            hipposys:groups: []
             hipposys:role: channel-admin
             hipposys:userrole: xm-channel-admin
+            hipposys:groups: []
             hipposys:users: []
-          /readwrite:
+          /channel-webmaster:
+            hipposys:role: channel-webmaster
             jcr:primaryType: hipposys:authrole
-            hipposys:userrole: xm-hst-config-writer
-            hipposys:role: readwrite
+            hipposys:userrole: xm-channel-webmaster
+            hipposys:groups: []
+            hipposys:users: []
+          /channel-webviewer:
+            hipposys:role: channel-web-author
+            jcr:primaryType: hipposys:authrole
+            hipposys:userrole: xm-channel-webviewer
+            hipposys:groups: []
+            hipposys:users: []
           /hstconfig:
             jcr:primaryType: hipposys:domainrule
             /hstconfig-and-descendants:
