@@ -18,7 +18,7 @@ import { ClientErrorCodes } from '@bloomreach/navapp-communication';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { AppError } from '../models/appError';
+import { AppError } from '../models/app-error';
 
 import { ErrorHandlingService } from './error-handling.service';
 

@@ -22,6 +22,9 @@ import { fromPromise } from 'rxjs/internal-compatibility';
 import { catchError, skip, switchMap, tap } from 'rxjs/operators';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
+import { AppError } from '../error-handling/models/app-error';
+import { InternalError } from '../error-handling/models/app-internal-error';
+import { NotFoundError } from '../error-handling/models/not-found-error';
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
@@ -135,7 +138,11 @@ export class NavigationService implements OnDestroy {
     try {
       browserUrl = this.urlMapperService.mapNavLocationToBrowserUrl(navLocation, true)[0];
     } catch (e) {
-      console.error(`An attempt to navigate was failed due to app path is not allowable: '${navLocation.path}'`);
+      this.errorHandlingService.setNotFoundError(
+        undefined,
+        `An attempt to navigate was failed due to app path is not allowable: '${navLocation.path}'`,
+      );
+
       return;
     }
 
@@ -149,7 +156,11 @@ export class NavigationService implements OnDestroy {
     try {
       [browserUrl, navItem] = this.urlMapperService.mapNavLocationToBrowserUrl(navLocation, true);
     } catch (e) {
-      console.error(`An attempt to update the app url was failed due to app path is not allowable: '${navLocation.path}'`);
+      this.errorHandlingService.setNotFoundError(
+        undefined,
+        `An attempt to update the app url was failed due to app path is not allowable: '${navLocation.path}'`,
+      );
+
       return;
     }
 
@@ -181,6 +192,8 @@ export class NavigationService implements OnDestroy {
     }
 
     this.locationSubscription = this.location.subscribe(change => {
+      this.errorHandlingService.clearError();
+
       let flags = {};
       try {
         flags = JSON.parse(change.state.flags);
@@ -199,16 +212,24 @@ export class NavigationService implements OnDestroy {
           // Always resolve a promise (for now) to overcome consequent problems of handling promise rejection
           // t.reject(error);
           t.resolve();
+          if (typeof error === 'string') {
+            error = new InternalError(undefined, error);
+          }
 
-          const message = typeof error === 'object' ? error.message : error;
-
-          return of(new Error(message));
+          return of(error);
         }),
       )),
       tap(() => this.events.next(new NavigationStopEvent())),
     ).subscribe((t: Navigation | Error) => {
+      if (t instanceof AppError) {
+        this.errorHandlingService.setError(t);
+
+        return;
+      }
+
       if (t instanceof Error) {
-        console.error('[NAVAPP] An error occurred during navigation:', t.message);
+        this.errorHandlingService.setInternalError(undefined, t.message);
+
         return;
       }
 
@@ -237,7 +258,7 @@ export class NavigationService implements OnDestroy {
         n.resolve();
         this.events.next(new NavigationStopEvent());
       },
-      e => console.warn(`Unhandled Navigation Error: ${e}`),
+      e => console.error(`Unhandled Navigation Error: ${e}`),
     );
   }
 
@@ -276,7 +297,7 @@ export class NavigationService implements OnDestroy {
         const route = this.matchRoute(t.url, this.routes);
 
         if (!route) {
-          return throwError(`Unknown url: ${t.url}`);
+          return throwError(new NotFoundError(`Unknown url: ${t.url}`));
         }
 
         if (!t.url.startsWith(route.path)) {
@@ -294,11 +315,17 @@ export class NavigationService implements OnDestroy {
         const app = this.clientAppService.getApp(appId);
 
         if (!app) {
-          throwError(`There is no app with id="${appId}"`);
+          return throwError(new NotFoundError(
+            undefined,
+            `There is no app with id="${appId}"`,
+          ));
         }
 
         if (!app.api) {
-          throwError(`The app with id="${appId}" is not connected to the nav app`);
+          return throwError(new InternalError(
+            undefined,
+            `The app with id="${appId}" is not connected to the nav app`,
+          ));
         }
 
         const appPath = this.urlMapperService.combinePathParts(t.navItem.appPath, t.appPathAddOn);

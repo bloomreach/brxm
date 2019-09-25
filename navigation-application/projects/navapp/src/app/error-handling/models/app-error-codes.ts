@@ -14,23 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, Input } from '@angular/core';
-
-import { NavigationService } from '../../services/navigation.service';
-import { AppError } from '../models/app-error';
-
-@Component({
-  selector: 'brna-error-page',
-  templateUrl: 'error-page.component.html',
-  styleUrls: ['error-page.component.scss'],
-})
-export class ErrorPageComponent {
-  @Input()
-  error: AppError;
-
-  constructor(private navigationService: NavigationService) { }
-
-  navigateToHome(): void {
-    this.navigationService.navigateToHome();
-  }
+export enum AppErrorCodes {
+  NotFound = 404,
+  Internal = 500,
 }

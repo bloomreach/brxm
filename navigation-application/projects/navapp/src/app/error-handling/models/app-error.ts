@@ -14,23 +14,28 @@
  * limitations under the License.
  */
 
-import { Component, Input } from '@angular/core';
+export class AppError extends Error {
+  constructor(
+    public code: number,
+    message: string,
+    public description?: string,
+    public internalDescription?: string,
+  ) {
+    super(message);
 
-import { NavigationService } from '../../services/navigation.service';
-import { AppError } from '../models/app-error';
+    Object.setPrototypeOf(this, AppError.prototype);
+    this.stack = this.getStack();
+    this.name = 'AppError';
+  }
 
-@Component({
-  selector: 'brna-error-page',
-  templateUrl: 'error-page.component.html',
-  styleUrls: ['error-page.component.scss'],
-})
-export class ErrorPageComponent {
-  @Input()
-  error: AppError;
+  toString(): string {
+    return `${this.name}: ${this.message}: ${this.description}: ${this.internalDescription}`;
+  }
 
-  constructor(private navigationService: NavigationService) { }
+  getStack(): string {
+    const stack = (new Error()).stack.split('\n');
 
-  navigateToHome(): void {
-    this.navigationService.navigateToHome();
+    // Skip internal stack entries
+    return stack.slice(3).join('\n');
   }
 }

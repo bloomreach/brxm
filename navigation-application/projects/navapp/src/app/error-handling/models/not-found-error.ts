@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-export class AppError extends Error {
-  constructor(
-    public code: number,
-    message: string,
-    public description?: string,
-  ) {
-    super(message);
+import { AppError } from './app-error';
+import { AppErrorCodes } from './app-error-codes';
+
+export class NotFoundError extends AppError {
+  constructor(publicDescription?: string, internalDescription?: string) {
+    super(AppErrorCodes.NotFound, 'Page not found', publicDescription, internalDescription || publicDescription);
+
+    Object.setPrototypeOf(this, NotFoundError.prototype);
+    this.stack = this.getStack();
+    this.name = 'NotFoundError';
   }
 }
