@@ -86,10 +86,12 @@
           this.parentConnection = this.navAppCommunication.connectToParent(
             parentConnectionConfig,
           ).then(parentApi => {
-            Hippo.UserActivity.onInactive(() => {
+            Hippo.UserActivity.registerOnInactive(() => {
               parentApi.onSessionExpired();
             });
-            return parentApi;
+            Hippo.UserActivity.registerOnActive(() => {
+              parentApi.onUserActivity();
+            });
           });
           return this.parentConnection;
         },
