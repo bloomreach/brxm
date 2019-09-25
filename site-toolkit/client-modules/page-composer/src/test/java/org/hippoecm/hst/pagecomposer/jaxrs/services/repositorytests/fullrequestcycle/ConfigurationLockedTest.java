@@ -88,7 +88,7 @@ public class ConfigurationLockedTest extends MountResourceTest {
 
         assertEquals(Boolean.FALSE, responseMap.get("success"));
         assertEquals(ClientError.FORBIDDEN.name(), responseMap.get("errorCode"));
-        assertEquals("Method is forbidden when channel has its configuration locked.", responseMap.get("message"));
+        assertEquals("POST operation is forbidden when channel has its configuration locked.", responseMap.get("message"));
     }
 
     @Test
