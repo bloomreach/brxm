@@ -192,6 +192,9 @@ public class HstModelImpl implements InternalHstModel {
 
         this.hstLinkCreator = new CompositeHstLinkCreatorImpl(modelRegistry, defaultHstLinkCreator);
 
+
+        new ContentBasedChannelFilter();
+
         channelFilter = configureChannelFilter(new ContentBasedChannelFilter());
 
         invalidationMonitor = new InvalidationMonitor(session, hstNodeLoadingCache, hstConfigurationLoadingCache, this);

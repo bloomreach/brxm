@@ -16,19 +16,15 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.cxf;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.security.Privilege;
 
-
 import org.apache.cxf.message.Exchange;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelManagerPrivileges;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
@@ -61,14 +57,11 @@ public class PrivilegesAllowedInvokerPreprocessor extends AbstractInvokerPreProc
         try {
             final Session session = RequestContextProvider.get().getSession();
 
+            final Privilege[] privileges = ChannelManagerPrivileges.createPrivileges(privilegesAllowed.value());
+
             final String liveConfigurationPath = getPageComposerContextService().getEditingLiveConfigurationPath();
-            final Privilege[] livePrivileges = session.getAccessControlManager().getPrivileges(liveConfigurationPath);
 
-            final Set<String> privilegesAllowedSet = Arrays.stream(privilegesAllowed.value()).collect(Collectors.toSet());
-
-            final Set<String> intersection = getIntersection(privilegesAllowedSet, livePrivileges);
-
-            if (intersection.isEmpty()) {
+            if (!session.getAccessControlManager().hasPrivileges(liveConfigurationPath, privileges)) {
                 return Optional.of(String.format("Method '%s' is not allowed to be invoked since current user does not have " +
                         "the right privileges", method.getName()));
             }
@@ -77,12 +70,7 @@ public class PrivilegesAllowedInvokerPreprocessor extends AbstractInvokerPreProc
                 return Optional.empty();
             }
 
-
-            final Privilege[] previewPrivileges = session.getAccessControlManager().getPrivileges(previewChannel.getHstConfigPath());
-
-            final Set<String> finalIntersection = getIntersection(intersection, previewPrivileges);
-
-            if (finalIntersection.isEmpty()) {
+            if (!session.getAccessControlManager().hasPrivileges(previewChannel.getHstConfigPath(), privileges)) {
                 return Optional.of(String.format("Method '%s' is not allowed to be invoked since current user does not have " +
                         "the right privileges", method.getName()));
             }
@@ -92,13 +80,6 @@ public class PrivilegesAllowedInvokerPreprocessor extends AbstractInvokerPreProc
             throw new IllegalStateException("Exception while trying to find whether user has privilege.", e);
         }
 
-    }
-
-    private Set<String> getIntersection(final Set<String> privilegesAllowed, final Privilege[] privileges) {
-        return Arrays.stream(privileges)
-                .filter(privilege -> privilegesAllowed.contains(privilege.getName()))
-                .map(privilege -> privilege.getName())
-                .collect(Collectors.toSet());
     }
 
 }

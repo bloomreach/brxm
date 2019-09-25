@@ -45,7 +45,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ServerErrorExcept
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.pagecomposer.jaxrs.api.SecurityConstants.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
+import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 
 /**
  * The REST resource handler for the nodes that are of the type "hst:containeritemcomponent". This is specified using
