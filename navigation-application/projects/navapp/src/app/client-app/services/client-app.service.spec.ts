@@ -194,4 +194,58 @@ describe('ClientAppService', () => {
       });
     });
   });
+
+  describe('user activity', () => {
+
+    const throttleMillis = 60_000;
+    let childApi1: ChildPromisedApi;
+    let childApi2: ChildPromisedApi;
+    let childApi3: ChildPromisedApi;
+
+    beforeEach(async(() => {
+
+      navItemsMock.find(item => item.id === 'item2').appIframeUrl = 'http://app2.com';
+      navItemsMock.find(item => item.id === 'item3').appIframeUrl = 'http://app3.com';
+      service.init();
+
+      childApi1 = jasmine.createSpyObj('ChildApi', ['onUserActivity']);
+      childApi2 = jasmine.createSpyObj('ChildApi', ['onUserActivity']);
+      childApi3 = jasmine.createSpyObj('ChildApi', ['onUserActivity']);
+
+      service.addConnection(new Connection('http://app1.com', childApi1));
+      service.addConnection(new Connection('http://app2.com', childApi2));
+      service.addConnection(new Connection('http://app3.com', childApi3));
+    }));
+
+    it('should broadcast user activity to app2 and app3 if app1 is active', fakeAsync(() => {
+      service.activateApplication('http://app1.com');
+      service.onUserActivity();
+      tick(throttleMillis);
+
+      expect(childApi1.onUserActivity).not.toHaveBeenCalled();
+      expect(childApi2.onUserActivity).toHaveBeenCalled();
+      expect(childApi3.onUserActivity).toHaveBeenCalled();
+    }));
+
+    it('should broadcast user activity to app1 and app3 if app2 is active', fakeAsync(() => {
+      service.activateApplication('http://app2.com');
+      service.onUserActivity();
+      tick(throttleMillis);
+
+      expect(childApi2.onUserActivity).not.toHaveBeenCalled();
+      expect(childApi1.onUserActivity).toHaveBeenCalled();
+      expect(childApi3.onUserActivity).toHaveBeenCalled();
+    }));
+
+    it('should broadcast user activity to app1 and app2 if app3 is active', fakeAsync(() => {
+      service.activateApplication('http://app3.com');
+      service.onUserActivity();
+      tick(throttleMillis);
+
+      expect(childApi3.onUserActivity).not.toHaveBeenCalled();
+      expect(childApi1.onUserActivity).toHaveBeenCalled();
+      expect(childApi2.onUserActivity).toHaveBeenCalled();
+    }));
+  });
+
 });

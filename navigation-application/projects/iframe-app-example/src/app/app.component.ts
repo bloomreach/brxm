@@ -90,6 +90,9 @@ export class AppComponent implements OnInit {
           return Promise.resolve();
         }
       },
+      onUserActivity: () => {
+        console.log('parent reported user activity');
+      },
     };
 
     if (this.isBrSmMock) {
@@ -155,7 +158,7 @@ export class AppComponent implements OnInit {
   }
 
   onButtonClicked(): void {
-    this.buttonClicked++;
+    this.parent.onUserActivity().then(() => { this.buttonClicked++; });
   }
 
   toggleOverlay(): void {

@@ -16,9 +16,9 @@
 
 import { Injectable } from '@angular/core';
 import { ChildConfig, NavItem } from '@bloomreach/navapp-communication';
-import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
-import { bufferCount, first, map, switchMap, tap } from 'rxjs/operators';
+import { bufferCount, first, map, switchMap, tap, throttleTime } from 'rxjs/operators';
 
 import { Connection } from '../../models/connection.model';
 import { FailedConnection } from '../../models/failed-connection.model';
@@ -36,6 +36,7 @@ export class ClientAppService {
   private connectedApps: Map<string, ClientAppWithConfig> = new Map<string, ClientAppWithConfig>();
   private activeAppId = new BehaviorSubject<string>(undefined);
   private connection$ = new ReplaySubject<Connection>();
+  private userActivityReceived$ = new Subject<ClientApp>();
 
   constructor(private navConfigService: NavConfigService) {}
 
@@ -71,6 +72,15 @@ export class ClientAppService {
     const navItems = this.navConfigService.navItems;
     const uniqueURLs = this.filterUniqueURLs(navItems);
     this.uniqueURLs.next(uniqueURLs);
+
+    const throttleMinutes = 1;
+    const throttleMillis = throttleMinutes * 60 * 1000;
+    this.userActivityReceived$.pipe(
+      throttleTime(throttleMillis),
+      map(activeApp => this.apps.filter(app => app !== activeApp && !!app.api.onUserActivity)),
+    ).subscribe(apps => {
+      apps.forEach(app => app.api.onUserActivity());
+    });
 
     return this.uniqueURLs.pipe(
       switchMap(urls => this.waitForConnections(urls.length)),
@@ -129,6 +139,11 @@ export class ClientAppService {
     return Promise.all(this.apps.map(
       app => app.api.logout(),
     ));
+  }
+
+  onUserActivity(): Promise<void> {
+    this.userActivityReceived$.next(this.activeApp);
+    return Promise.resolve();
   }
 
   private filterUniqueURLs(navItems: NavItem[]): string[] {

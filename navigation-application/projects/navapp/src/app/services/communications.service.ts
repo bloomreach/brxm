@@ -58,6 +58,7 @@ export class CommunicationsService {
       updateNavLocation: (location: NavLocation) => this.navigationService.updateByNavLocation(location),
       onError: (clientError: ClientError) => this.onClientError(clientError),
       onSessionExpired: () => this.logoutService.logout('SessionExpired'),
+      onUserActivity: () => this.clientAppService.onUserActivity(),
     };
   }
 
