@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { AppError } from '../error-handling/models/app-error';
+import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { BusyIndicatorService } from '../services/busy-indicator.service';
 
 import { BootstrapService } from './bootstrap.service';
@@ -28,10 +30,23 @@ export const appBootstrappedPromise = new Promise((resolve, reject) => {
 export const scheduleAppBootstrapping = (
   bootstrapService: BootstrapService,
   busyIndicatorService: BusyIndicatorService,
+  errorHandlingService: ErrorHandlingService,
 ) => {
   busyIndicatorService.show();
 
   bootstrapService.bootstrap()
-    .then(bootstrapResolve, bootstrapReject)
+    .then(
+      bootstrapResolve,
+      error => {
+        if (error instanceof AppError) {
+          errorHandlingService.setError(error);
+        } else {
+          errorHandlingService.setInternalError(
+            'An error occurred during initialization',
+            error ? error.toString() : undefined,
+          );
+        }
+      },
+    )
     .then(() => busyIndicatorService.hide());
 };

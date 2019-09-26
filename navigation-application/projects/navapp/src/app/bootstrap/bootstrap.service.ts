@@ -33,13 +33,6 @@ export class BootstrapService {
   bootstrap(): Promise<void> {
     return this.clientAppService.init()
       .then(() => this.menuStateService.init())
-      .then(() => this.navigationService.initialNavigation())
-      .catch(error => {
-        const message = typeof error === 'object' ? error.message : error;
-
-        console.error(`[NAVAPP] Bootstrap error: ${message}`);
-
-        return Promise.reject(message);
-      });
+      .then(() => this.navigationService.initialNavigation());
   }
 }

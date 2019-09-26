@@ -28,5 +28,5 @@ export const appInitializer = (
   busyIndicatorService: BusyIndicatorService,
   errorHandlingService: ErrorHandlingService,
 ) => () => loadNavItems(navConfigService)
-  .then(() => scheduleAppBootstrapping(bootstrapService, busyIndicatorService))
+  .then(() => scheduleAppBootstrapping(bootstrapService, busyIndicatorService, errorHandlingService))
   .catch(() => errorHandlingService.setCriticalError('Unable to load initial configuration'));
