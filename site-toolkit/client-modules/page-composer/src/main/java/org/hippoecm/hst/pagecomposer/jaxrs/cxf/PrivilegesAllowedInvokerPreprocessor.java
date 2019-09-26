@@ -21,10 +21,10 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.security.PermitAll;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.security.Privilege;
-
 
 import org.apache.cxf.message.Exchange;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -48,9 +48,25 @@ public class PrivilegesAllowedInvokerPreprocessor extends AbstractInvokerPreProc
 
         final Method method = getMethod(exchange);
         final PrivilegesAllowed privilegesAllowed = method.getAnnotation(PrivilegesAllowed.class);
+        final PermitAll permitAll = method.getAnnotation(PermitAll.class);
 
-        if (privilegesAllowed == null) {
+        if (privilegesAllowed == null && permitAll == null) {
+            final String message = String.format("Method '%s' is not annotated with @PrivilegesAllowed and neither with @PermitAll which " +
+                    "is not allowed. Either permit all or specify which privilege is allowed.", method.getName());
+            log.error(message);
+            return Optional.of(message);
+        } else if (privilegesAllowed != null && permitAll != null) {
+            final String message = String.format("Method '%s' is annotated with @PrivilegesAllowed AND with @PermitAll which " +
+                    "is not allowed. Either permit all or specify which privilege is allowed.", method.getName());
+            log.error(message);
+            return Optional.of(message);
+        } else if (privilegesAllowed == null) {
+            log.info("Method '{}' is permitted for all", method.getName());
             return Optional.empty();
+        }
+
+        if (previewChannel == null) {
+            return Optional.of(String.format("Method '%s' is not allowed to be invoked no channel selected yet", method.getName()));
         }
 
         // the privilege is currently checked against the *live hstConfigPath* and against the *preview hstConfigPath* if

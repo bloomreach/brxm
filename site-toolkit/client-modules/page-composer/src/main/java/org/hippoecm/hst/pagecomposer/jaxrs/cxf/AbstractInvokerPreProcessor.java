@@ -44,12 +44,13 @@ public abstract class AbstractInvokerPreProcessor implements InvokerPreprocessor
 
     @Override
     public Object preprocoess(final Exchange exchange, final Object request) {
-        if (!pageComposerContextService.isRenderingMountSet()) {
-            getLogger().debug("Not yet a rendering mount set.");
-            return null;
-        }
 
-        final Channel previewChannel = pageComposerContextService.getEditingPreviewChannel();
+        final Channel previewChannel;
+        if (pageComposerContextService.isRenderingMountSet()) {
+            previewChannel = pageComposerContextService.getEditingPreviewChannel();
+        } else {
+            previewChannel = null;
+        }
 
         try {
             final Optional<String> forbiddenOperation = isForbiddenOperation(exchange, previewChannel);

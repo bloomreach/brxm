@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.annotation.security.PermitAll;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
@@ -91,10 +92,15 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     /**
      * This method returns only the channels from a single hst webapp which is on purpose since it is used for the
      * cross channel page copy which is not supported over cross webapp
+     * NOTE #getChannels is a too generic method for 'cross channel page copy'. Namely, for page copy, we'd only want to
+     * return channels which you are really allowed to copy *to*. Therefor, it would be better to have an extra method,
+     * something like @Path("/channels/copy") which returns allowed channels to copy to, aka channels for which the
+     * current user has CHANNEL_WEBMASTER_PRIVILEGE_NAME. The method should then be annotated with
+     * @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
      */
     @GET
     @Path("/channels")
-    @PrivilegesAllowed(CHANNEL_WEB_VIEWER_PRIVILEGE_NAME)
+    @PermitAll
     public Response getChannels(@HeaderParam("hostGroup") final String hostGroup,
                                 @QueryParam("previewConfigRequired") final boolean previewConfigRequired,
                                 @QueryParam("workspaceRequired") final boolean workspaceRequired,
@@ -117,7 +123,10 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @GET
     @Path("/channels/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    @PrivilegesAllowed(CHANNEL_WEB_VIEWER_PRIVILEGE_NAME)
+    // PermitAll because this method is invoked before a channel has been set on the cms session context. Cleaner
+    // would be if the cms-user would have 'webviewer' privilege on target 'channelId' but then it becomes quite
+    // complex to find which channel to check in PrivilegesAllowedInvokerPreprocessor
+    @PermitAll
     public Response getChannel(@HeaderParam("contextPath") final String contextPath,
                                @HeaderParam("hostGroup") final String hostGroup,
                                @PathParam("id") String channelId) {
@@ -237,7 +246,9 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @GET
     @Path("/composermode/{renderingHost}/{mountId}")
     @Produces(MediaType.APPLICATION_JSON)
-    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
+    // PermitAll because this method is invoked before a channel has been set on the cms session context, hence
+    // PrivilegesAllowedInvokerPreprocessor does not yet 'know' which channel to check privileges for
+    @PermitAll
     public Response composerModeGet(@HeaderParam("hostGroup") final String hostGroup,
                                     @Context HttpServletRequest servletRequest,
                                     @PathParam("renderingHost") String renderingHost,
