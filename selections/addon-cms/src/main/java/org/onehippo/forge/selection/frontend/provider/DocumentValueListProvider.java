@@ -33,10 +33,6 @@ import org.slf4j.LoggerFactory;
 
 public class DocumentValueListProvider extends Plugin implements IValueListProvider {
 
-    /** Deprecated because the method that uses it is deprecated */
-    @Deprecated
-    private final static String CONFIG_SOURCE = "source";
-
     private static final Logger log = LoggerFactory.getLogger(DocumentValueListProvider.class);
 
     public DocumentValueListProvider(IPluginContext context, IPluginConfig config) {
@@ -48,21 +44,6 @@ public class DocumentValueListProvider extends Plugin implements IValueListProvi
         if (log.isDebugEnabled()) {
             log.debug(this.getClass().getName() + " registered under " + name);
         }
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public ValueList getValueList(IPluginConfig config) {
-        if (config == null) {
-            throw new IllegalArgumentException("Argument 'config' may not be null");
-        }
-        return getValueList(config.getString(CONFIG_SOURCE));
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public ValueList getValueList(String name) {
-        return getValueList(name, null/*locale*/);
     }
 
     /** {@inheritDoc} */

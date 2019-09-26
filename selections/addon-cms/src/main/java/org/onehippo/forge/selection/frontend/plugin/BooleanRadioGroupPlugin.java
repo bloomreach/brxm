@@ -16,7 +16,6 @@
 
 package org.onehippo.forge.selection.frontend.plugin;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.onehippo.forge.selection.frontend.model.ListItem;
@@ -28,31 +27,11 @@ import org.onehippo.forge.selection.frontend.model.ValueList;
  * <p>
  * The labels for the true and false values can be populated by a ValueList, through the source property. This gives the
  * option to display localized values.
- * <p>
- * Otherwise the labels can be configured with the plugin configuration properties "trueLabel" and "falseLabel". Note
- * that this latter option is deprecated and will be removed in a future version. Use a value list to populate this
- * field.
  *
  * @author Dennis Dam
  */
 public class BooleanRadioGroupPlugin extends RadioGroupPlugin {
 
-    /**
-     * Name of configuration parameter holding the label of the 'true' radio item.
-     *
-     * @deprecated Use {@link Config#TRUE_LABEL} instead. This configuration option will be removed in a future version.
-     */
-    @Deprecated
-    public static final String TRUE_LABEL = "trueLabel";
-
-    /**
-     * Name of configuration parameter holding the label of the 'false' radio item.  This configuration option will be
-     * removed in a future version.
-     *
-     * @deprecated Use {@link Config#FALSE_LABEL} instead.
-     */
-    @Deprecated
-    public static final String FALSE_LABEL = "falseLabel";
     private ValueList valueList;
 
     /**
@@ -74,16 +53,13 @@ public class BooleanRadioGroupPlugin extends RadioGroupPlugin {
     protected ValueList getValueList() {
         if (valueList == null) {
             valueList = new ValueList();
-            final IPluginConfig config = getPluginConfig();
             final ValueList sourceList = super.getValueList();
 
-            valueList.add(listItem(sourceList, "true",
-                    StringUtils.defaultIfBlank(config.getString(Config.TRUE_LABEL), "true")));
-            valueList.add(listItem(sourceList, "false",
-                    StringUtils.defaultIfBlank(config.getString(Config.FALSE_LABEL), "false")));
+            valueList.add(listItem(sourceList, "true", "true"));
+            valueList.add(listItem(sourceList, "false", "false"));
         }
 
-        return this.valueList;
+        return valueList;
     }
 
     private ListItem listItem(final ValueList sourceList, final String key, final String defaultValue) {
