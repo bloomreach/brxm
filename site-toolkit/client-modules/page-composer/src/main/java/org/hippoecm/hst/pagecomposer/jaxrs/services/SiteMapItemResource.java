@@ -29,7 +29,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRe
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.SiteMapTreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
 
-import static org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 
 @Path("/" + HstNodeTypes.NODETYPE_HST_SITEMAPITEM + "/")
 @Produces(MediaType.APPLICATION_JSON)

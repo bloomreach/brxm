@@ -70,7 +70,8 @@ import org.hippoecm.hst.platform.linking.containers.HippoGalleryAssetSet;
 import org.hippoecm.hst.platform.linking.containers.HippoGalleryImageSetContainer;
 import org.hippoecm.hst.platform.linking.resolvers.HippoResourceLocationResolver;
 import org.hippoecm.hst.platform.matching.BasicHstSiteMapMatcher;
-import org.hippoecm.hst.platform.services.channel.ContentBasedChannelFilter;
+import org.hippoecm.hst.platform.services.channel.ContentReadChannelFilter;
+import org.hippoecm.hst.platform.services.channel.PrivilegeBasedChannelFilter;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
@@ -192,10 +193,9 @@ public class HstModelImpl implements InternalHstModel {
 
         this.hstLinkCreator = new CompositeHstLinkCreatorImpl(modelRegistry, defaultHstLinkCreator);
 
+        final BiPredicate<Session, Channel> builtinFilter = new PrivilegeBasedChannelFilter().and(new ContentReadChannelFilter());
 
-        new ContentBasedChannelFilter();
-
-        channelFilter = configureChannelFilter(new ContentBasedChannelFilter());
+        channelFilter = configureChannelFilter(builtinFilter);
 
         invalidationMonitor = new InvalidationMonitor(session, hstNodeLoadingCache, hstConfigurationLoadingCache, this);
 
