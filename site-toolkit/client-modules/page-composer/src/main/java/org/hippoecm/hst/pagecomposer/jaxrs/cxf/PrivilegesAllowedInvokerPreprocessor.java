@@ -35,8 +35,18 @@ import org.slf4j.LoggerFactory;
 
 public class PrivilegesAllowedInvokerPreprocessor extends AbstractInvokerPreProcessor {
 
-
     private static final Logger log = LoggerFactory.getLogger(PrivilegesAllowedInvokerPreprocessor.class);
+    private boolean enabled = true;
+
+    /**
+     * This is a method only meant for integration tests to be able to temporarily switch of the
+     * PrivilegesAllowedInvokerPreprocessor. Typically for the use case like asserting that deleting a non existing
+     * channel results in a 404, however, this Preprocessor typically already does not allow the delete since for example
+     * no 'previewChannel' is present. Therefor this setter is there to disable this PreProcessor
+     */
+    public void setEnabled(final boolean enabled) {
+        this.enabled = enabled;
+    }
 
     @Override
     public Logger getLogger() {
@@ -45,6 +55,9 @@ public class PrivilegesAllowedInvokerPreprocessor extends AbstractInvokerPreProc
 
     @Override
     public Optional<String> isForbiddenOperation(final Exchange exchange, final Channel previewChannel) {
+        if (!enabled) {
+            return Optional.empty();
+        }
 
         final Method method = getMethod(exchange);
         final PrivilegesAllowed privilegesAllowed = method.getAnnotation(PrivilegesAllowed.class);
@@ -115,5 +128,6 @@ public class PrivilegesAllowedInvokerPreprocessor extends AbstractInvokerPreProc
                 .map(privilege -> privilege.getName())
                 .collect(Collectors.toSet());
     }
+
 
 }

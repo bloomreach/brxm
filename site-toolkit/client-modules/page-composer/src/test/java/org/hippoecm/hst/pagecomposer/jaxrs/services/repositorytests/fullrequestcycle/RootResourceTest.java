@@ -71,7 +71,7 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
     }
 
     @Test
-    public void remove_channel_not_allowed_if_not_hippo_admin_role_fails() throws Exception {
+    public void remove_channel_not_allowed_if_not_hippo_admin_role() throws Exception {
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels/unittestproject", null, "DELETE");
 
@@ -90,13 +90,16 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
     @Test
     public void remove_channel_with_right_role_but_channel_not_existing_results_in_404() throws Exception {
 
-        final RequestResponseMock requestResponse = mockGetRequestResponse(
-                "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels/nonexisting", null, "DELETE");
+        try (SuppressPrivilegesAllowedPreProcessor ignore = new SuppressPrivilegesAllowedPreProcessor()){
 
-        SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
+            final RequestResponseMock requestResponse = mockGetRequestResponse(
+                    "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels/nonexisting", null, "DELETE");
 
-        final MockHttpServletResponse response = render(null, requestResponse, admin);
-        assertEquals(SC_NOT_FOUND, response.getStatus());
+            SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
+
+            final MockHttpServletResponse response = render(null, requestResponse, admin);
+            assertEquals(SC_NOT_FOUND, response.getStatus());
+        }
     }
 
     @Test
@@ -223,17 +226,14 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
     @Test
     public void remove_channel_with_right_role_and_channel_deletable_but_configuration_locked_wont_succeed_even_if_rendering_mount_is_not_yet_set() throws Exception {
 
-        // org.hippoecm.hst.pagecomposer.jaxrs.cxf.HstConfigLockedCheckInvokerPreprocessor.preprocoess() will directly
-        // return null because pageComposerContextService.isRenderingMountSet() returns false. But still a locked config
-        // should not be possible to be removed
-
         Session session = createSession("admin", "admin");
         Node configuration = session.getNode("/hst:hst/hst:configurations/unittestsubproject");
         configuration.getNode("hst:channel").setProperty(CHANNEL_PROPERTY_DELETABLE, true);
         configuration.setProperty(CONFIGURATION_PROPERTY_LOCKED, true);
         session.save();
 
-        try {
+        // skip the PrivilegesAllowedPreProcessor to make sure we hit the code we want to test below
+        try (SuppressPrivilegesAllowedPreProcessor ignore = new SuppressPrivilegesAllowedPreProcessor()){
             final RequestResponseMock requestResponse = mockGetRequestResponse(
                     "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels/unittestsubproject", null, "DELETE");
 
@@ -269,32 +269,33 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
         configuration.setProperty(CONFIGURATION_PROPERTY_LOCKED, true);
         session.save();
 
-        try {
-            {
-                final RequestResponseMock requestResponse = mockGetRequestResponse(
-                        "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./setvariant/foo", null, "POST");
+        // for the test below we want to pass the PrivilegesAllowedPreProcessor hence skip it
+        try (SuppressPrivilegesAllowedPreProcessor ignore = new SuppressPrivilegesAllowedPreProcessor()){
+                {
+                    final RequestResponseMock requestResponse = mockGetRequestResponse(
+                            "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./setvariant/foo", null, "POST");
 
-                SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
-                final MockHttpServletResponse response = render(null, requestResponse, admin);
-                assertEquals("Even for locked configuration setvariant POST should be allowed", SC_OK, response.getStatus());
+                    SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
+                    final MockHttpServletResponse response = render(null, requestResponse, admin);
+                    assertEquals("Even for locked configuration setvariant POST should be allowed", SC_OK, response.getStatus());
 
 
-                Object renderVariant = requestResponse.getCmsSessionContext().getContextPayload().get(ContainerConstants.RENDER_VARIANT);
-                assertNotNull(renderVariant);
-                assertEquals("foo", renderVariant);
-            }
-            {
-                final RequestResponseMock requestResponse = mockGetRequestResponse(
-                        "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./clearvariant", null, "POST");
+                    Object renderVariant = requestResponse.getCmsSessionContext().getContextPayload().get(ContainerConstants.RENDER_VARIANT);
+                    assertNotNull(renderVariant);
+                    assertEquals("foo", renderVariant);
+                }
+                {
+                    final RequestResponseMock requestResponse = mockGetRequestResponse(
+                            "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./clearvariant", null, "POST");
 
-                SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
+                    SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
 
-                final String mountId = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root").getIdentifier();
+                    final String mountId = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root").getIdentifier();
 
-                final MockHttpServletResponse response = render(mountId, requestResponse, admin);
-                assertEquals("Even for locked configuration clearvariant POST should be allowed", SC_OK, response.getStatus());
-                assertNull(requestResponse.getRequest().getSession().getAttribute(ContainerConstants.RENDER_VARIANT));
-            }
+                    final MockHttpServletResponse response = render(mountId, requestResponse, admin);
+                    assertEquals("Even for locked configuration clearvariant POST should be allowed", SC_OK, response.getStatus());
+                    assertNull(requestResponse.getRequest().getSession().getAttribute(ContainerConstants.RENDER_VARIANT));
+                }
         } finally {
             session.logout();
         }

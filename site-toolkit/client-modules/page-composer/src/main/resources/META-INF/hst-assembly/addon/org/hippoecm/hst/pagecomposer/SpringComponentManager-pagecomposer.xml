@@ -162,11 +162,13 @@
     <property name="pageComposerContextService" ref="pageComposerContextService"/>
   </bean>
 
+  <bean id="org.hippoecm.hst.pagecomposer.jaxrs.cxf.PrivilegesAllowedInvokerPreprocessor"
+        class="org.hippoecm.hst.pagecomposer.jaxrs.cxf.PrivilegesAllowedInvokerPreprocessor" parent="abstractInvokerPreProcessor"/>
 
   <bean id="jaxrsHstConfigServiceInvoker" class="org.hippoecm.hst.jaxrs.cxf.AroundProcessableJAXRSInvoker">
     <property name="invokerPreprocessors">
       <list>
-        <bean class="org.hippoecm.hst.pagecomposer.jaxrs.cxf.PrivilegesAllowedInvokerPreprocessor" parent="abstractInvokerPreProcessor"/>
+        <ref bean="org.hippoecm.hst.pagecomposer.jaxrs.cxf.PrivilegesAllowedInvokerPreprocessor"/>
         <bean class="org.hippoecm.hst.pagecomposer.jaxrs.cxf.HstConfigLockedCheckInvokerPreprocessor" parent="abstractInvokerPreProcessor"/>
       </list>
     </property>
