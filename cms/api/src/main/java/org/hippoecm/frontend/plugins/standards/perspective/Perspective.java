@@ -117,6 +117,10 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
         return navAppPerspective.getId();
     }
 
+    public String getAppPath() {
+        return navAppPerspective.getAppPath();
+    }
+
     @Override
     public IModel<String> getTitle() {
         return title;
