@@ -29,11 +29,6 @@ public class CategoryNode extends AbstractNode {
     private final AbstractNode parent;
     private final CategoryModel model;
 
-    /**
-     * In order to fix issue HIPPLUG-1583 we had to remove the two deprecated constructors that did not accept a
-     * {@code parent} argument. Strictly speaking, these should have been removed in 13.0, but as we see more value in
-     * fixing HIPPLUG-1583 than maintaining full backwards-compatibility we decided to remove them anyway.
-     */
     public CategoryNode(final CategoryModel model, final AbstractNode parent, final Locale locale,
                         final Comparator<Category> categoryComparator) {
         super(model.getTaxonomyModel(), locale, categoryComparator);

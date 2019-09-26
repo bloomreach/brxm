@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -50,7 +50,6 @@ import org.onehippo.taxonomy.plugin.tree.CategoryNode;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyNode;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyTree;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyTreeModel;
-import org.onehippo.taxonomy.util.TaxonomyUtil;
 
 /**
  * TaxonomyBrowser panel which is rendered in the right panel in the taxonomy picker dialog.
@@ -65,25 +64,6 @@ public class TaxonomyBrowser extends Panel {
     private String currentCategoryKey;
     private boolean taxonomyRootSelected = true;
     private boolean detailsReadOnly;
-
-    /**
-     * Constructor which organizes the UI components in this panel.
-     * @deprecated use the constructor with the Locale object for the preferredLocale
-     */
-    @Deprecated
-    public TaxonomyBrowser(String id, IModel<Classification> model, final TaxonomyModel taxonomyModel, String preferredLocale) {
-        this(id, model, taxonomyModel, TaxonomyUtil.toLocale(preferredLocale), false, null);
-    }
-
-    /**
-     * Constructor which organizes the UI components in this panel.
-     * @deprecated use the constructor with the Locale object for the preferredLocale
-     */
-    @Deprecated
-    public TaxonomyBrowser(String id, IModel<Classification> model, final TaxonomyModel taxonomyModel,
-                           String preferredLocale, final boolean detailsReadOnly, final ITreeNodeIconProvider iconProvider) {
-        this(id, model, taxonomyModel, TaxonomyUtil.toLocale(preferredLocale), detailsReadOnly, iconProvider);
-    }
 
     /**
      * Constructor which organizes the UI components in this panel.
@@ -104,7 +84,7 @@ public class TaxonomyBrowser extends Panel {
 
         emptyDetails = new EmptyDetails("details", "emptyDetails", this);
 
-        final Locale treeLocale = getPreferredLocaleObject();
+        final Locale treeLocale = getPreferredLocale();
         final Comparator<Category> categoryComparator = getCategoryComparator(taxonomyModel.getPluginConfig(), treeLocale);
         final TaxonomyTreeModel treeModel = new TaxonomyTreeModel(taxonomyModel, treeLocale, categoryComparator);
         final TaxonomyTree tree = new TaxonomyTree("tree", treeModel, treeLocale, iconProvider) {
@@ -138,10 +118,10 @@ public class TaxonomyBrowser extends Panel {
                 Category category = taxonomyModel.getObject().getCategoryByKey(key);
                 IModel<String> labelModel;
                 if (category != null) {
-                    String name = TaxonomyHelper.getCategoryName(category, getPreferredLocaleObject());
+                    String name = TaxonomyHelper.getCategoryName(category, getPreferredLocale());
                     while (category.getParent() != null) {
                         category = category.getParent();
-                        name = TaxonomyHelper.getCategoryName(category, getPreferredLocaleObject()) + " > " + name;
+                        name = TaxonomyHelper.getCategoryName(category, getPreferredLocale()) + " > " + name;
                     }
                     labelModel = new Model<>(name);
                 } else {
@@ -187,7 +167,7 @@ public class TaxonomyBrowser extends Panel {
             @Override
             protected CanonicalCategory load() {
                 Classification classification = TaxonomyBrowser.this.getModelObject();
-                return new CanonicalCategory(taxonomyModel.getObject(), classification.getCanonical(), getPreferredLocaleObject());
+                return new CanonicalCategory(taxonomyModel.getObject(), classification.getCanonical(), getPreferredLocale());
             }
         };
         container.add(new Label("canon", new StringResourceModel("canonical", this).setModel(canonicalNameModel)) {
@@ -241,7 +221,7 @@ public class TaxonomyBrowser extends Panel {
      * </p>
      */
     protected void addCategoryDetailFields(MarkupContainer detailFragment, Category category) {
-        CategoryInfo translation = category.getInfo(getPreferredLocaleObject());
+        CategoryInfo translation = category.getInfo(getPreferredLocale());
 
         if (translation != null) {
             detailFragment.add(new Label("name", translation.getName()));
@@ -254,16 +234,7 @@ public class TaxonomyBrowser extends Panel {
         }
     }
 
-    /**
-     * Returns the preferred locale
-     * @deprecated use {@link #getPreferredLocaleObject()} to get the language code
-     */
-    @Deprecated
-    protected String getPreferredLocale() {
-        return getPreferredLocaleObject().getLanguage();
-    }
-
-    protected Locale getPreferredLocaleObject() {
+    protected Locale getPreferredLocale() {
         return preferredLocale;
     }
 
@@ -291,15 +262,6 @@ public class TaxonomyBrowser extends Panel {
             r += s;
         }
         return r;
-    }
-
-    /**
-     * Return <code>Category</code> comparator to be used when sorting sibling category nodes.
-     * @deprecated use {@link #getCategoryComparator(IPluginConfig, Locale)} instead
-     */
-    @Deprecated
-    protected Comparator<Category> getCategoryComparator(final IPluginConfig config, final String locale) {
-        return getCategoryComparator(config, TaxonomyUtil.toLocale(locale));
     }
 
     /**

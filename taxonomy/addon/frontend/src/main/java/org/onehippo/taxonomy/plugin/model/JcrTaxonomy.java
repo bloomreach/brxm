@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -53,17 +53,8 @@ public class JcrTaxonomy extends TaxonomyObject implements EditableTaxonomy {
         super(nodeModel, editable, service);
     }
 
-    /**
-     * @deprecated use {@link #getLocaleObjects()} instead.
-     */
     @Override
-    @Deprecated
-    public String[] getLocales() {
-        return getLocaleObjects().stream().map(Locale::getLanguage).toArray(String[]::new);
-    }
-
-    @Override
-    public List<Locale> getLocaleObjects() {
+    public List<Locale> getLocales() {
         List<Locale> locales = new ArrayList<>();
 
         try {
@@ -143,12 +134,6 @@ public class JcrTaxonomy extends TaxonomyObject implements EditableTaxonomy {
     @Override
     public JcrCategory getCategory(String relPath) {
         return null;
-    }
-
-    @Override
-    @Deprecated
-    public JcrCategory addCategory(String key, String name, String locale) throws TaxonomyException {
-        return addCategory(key, name, TaxonomyUtil.toLocale(locale));
     }
 
     @Override

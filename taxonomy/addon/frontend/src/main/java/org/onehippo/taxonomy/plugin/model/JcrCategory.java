@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,8 +27,6 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.collections.Transformer;
-import org.apache.commons.collections.map.LazyMap;
 import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
@@ -197,15 +195,6 @@ public class JcrCategory extends TaxonomyObject implements EditableCategory {
         return null;
     }
 
-    /**
-     * @deprecated use {@link #getInfo(Locale)} instead
-     */
-    @Override
-    @Deprecated
-    public EditableCategoryInfo getInfo(final String language) {
-        return getInfo(TaxonomyUtil.toLocale(language));
-    }
-
     @Override
     public EditableCategoryInfo getInfo(final Locale locale) {
         final String nodeName = JcrHelper.getNodeName(locale);
@@ -246,10 +235,6 @@ public class JcrCategory extends TaxonomyObject implements EditableCategory {
 
                     public String getDescription() {
                         return "";
-                    }
-
-                    public String getLanguage() {
-                        return getLocale().getLanguage();
                     }
 
                     @Override
@@ -294,27 +279,6 @@ public class JcrCategory extends TaxonomyObject implements EditableCategory {
         return null;
     }
 
-    /**
-     * @deprecated use {@link #getInfosByLocale()} instead
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    @Deprecated
-    public Map<String, ? extends CategoryInfo> getInfos() {
-        Map<String, ? extends CategoryInfo> map = new HashMap<>();
-        return LazyMap.decorate(map,
-                new Transformer() {
-                    @Override
-                    public Object transform(Object locale) {
-                        if (locale instanceof Locale) {
-                            return getInfo((Locale) locale);
-                        } else {
-                            return getInfo((String) locale);
-                        }
-                    }
-                });
-    }
-
     @Override
     public Map<Locale, ? extends CategoryInfo> getInfosByLocale() {
         Map<Locale, JcrCategoryInfo> map = new HashMap<>();
@@ -347,12 +311,6 @@ public class JcrCategory extends TaxonomyObject implements EditableCategory {
     @Override
     public int hashCode() {
         return getNodeModel().hashCode() ^ 9887;
-    }
-
-    @Override
-    @Deprecated
-    public JcrCategory addCategory(String key, String name, String locale, final IModel<Taxonomy> taxonomyModel) throws TaxonomyException {
-        return addCategory(key, name, TaxonomyUtil.toLocale(locale), taxonomyModel);
     }
 
     @Override

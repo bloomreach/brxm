@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_CATEGORY
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -30,19 +29,14 @@ import java.util.Map;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.collections.Transformer;
-import org.apache.commons.collections.collection.CompositeCollection;
 import org.apache.commons.collections.map.LazyMap;
-import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
-import org.hippoecm.hst.service.Service;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.CategoryInfo;
 import org.onehippo.taxonomy.api.Taxonomy;
 import org.onehippo.taxonomy.api.TaxonomyException;
 import org.onehippo.taxonomy.api.TaxonomyNodeTypes;
-import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,14 +124,6 @@ public class CategoryImpl implements Category {
         return ancestors;
     }
 
-    /**
-     * @deprecated use {@link #getInfo(Locale)} instead
-     */
-    @Deprecated
-    public CategoryInfo getInfo(String language) {
-        return getInfo(TaxonomyUtil.toLocale(language));
-    }
-
     @Override
     public CategoryInfo getInfo(final Locale locale) {
         final List<Locale.LanguageRange> documentLocale = Locale.LanguageRange.parse(locale.toLanguageTag());
@@ -149,40 +135,11 @@ public class CategoryImpl implements Category {
         return info;
     }
 
-    /**
-     * @deprecated use {@link #getInfosByLocale()} instead
-     */
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    public Map<String, ? extends CategoryInfo> getInfos() {
-        final Map<String, CategoryInfo> map = new HashMap();
-        
-        return LazyMap.decorate(map, new Transformer() {
-            @Override
-            public Object transform(Object locale) {
-                if (locale instanceof Locale) {
-                    return getInfo((Locale) locale);
-                } else {
-                    return getInfo((String) locale);
-                }
-            }
-        });
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public Map<Locale, ? extends CategoryInfo> getInfosByLocale() {
         final Map<Locale, CategoryInfo> map = new HashMap();
 
-        return LazyMap.decorate(map, new Transformer() {
-            @Override
-            public Object transform(Object locale) {
-                if (locale instanceof Locale) {
-                    return getInfo((Locale) locale);
-                } else {
-                    return getInfo((String) locale);
-                }
-            }
-        });
+        return LazyMap.decorate(map, locale -> getInfo((Locale)locale));
     }
 }

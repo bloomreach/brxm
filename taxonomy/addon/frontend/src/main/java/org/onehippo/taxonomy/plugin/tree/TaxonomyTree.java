@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.util.Locale;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 
-import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.wicket.Component;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -41,15 +40,6 @@ public class TaxonomyTree extends ContextMenuTree {
     private Locale preferredLocale;
     private final ITreeNodeIconProvider treeNodeIconService;
     private final WicketTreeHelperBehavior treeHelperBehavior;
-
-    /**
-     * @deprecated use {@link TaxonomyTree(String, TreeModel, Locale, ITreeNodeIconProvider)} instead.
-     */
-    @Deprecated
-    public TaxonomyTree(String id, TreeModel model, String preferredLanguage, ITreeNodeIconProvider treeNodeIconService) {
-        this(id, model, TaxonomyUtil.toLocale(preferredLanguage), treeNodeIconService);
-
-    }
 
     public TaxonomyTree(String id, TreeModel model, Locale preferredLocale, ITreeNodeIconProvider treeNodeIconService) {
         super(id, model);

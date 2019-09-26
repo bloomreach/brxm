@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,12 +22,6 @@ import org.onehippo.taxonomy.api.Taxonomy;
 import org.onehippo.taxonomy.api.TaxonomyException;
 
 public interface EditableTaxonomy extends Taxonomy {
-
-    /**
-     * @deprecated use {@link #addCategory(String, String, Locale)} instead
-     */
-    @Deprecated
-    EditableCategory addCategory(String key, String name, String locale) throws TaxonomyException;
 
     EditableCategory addCategory(String key, String name, Locale locale) throws TaxonomyException;
 

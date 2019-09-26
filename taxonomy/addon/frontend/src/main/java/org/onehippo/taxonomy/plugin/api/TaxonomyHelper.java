@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.CategoryInfo;
 
@@ -42,13 +41,4 @@ public final class TaxonomyHelper {
         }
         return category.getName();
     }
-
-    /**
-     * @deprecated use {@link #getCategoryName(Category, Locale)} instead
-     */
-    @Deprecated
-    public static String getCategoryName(Category category, String language) {
-        return getCategoryName(category, TaxonomyUtil.toLocale(language));
-    }
-
 }

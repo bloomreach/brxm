@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ import java.util.Locale;
 
 import javax.swing.tree.DefaultTreeModel;
 
-import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.wicket.model.IModel;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.Taxonomy;
@@ -29,22 +28,6 @@ public class TaxonomyTreeModel extends DefaultTreeModel {
 
     private Locale locale;
 
-    /**
-     * @deprecated use {@link #TaxonomyTreeModel(IModel, Locale)} instead
-     */
-    @Deprecated
-    public TaxonomyTreeModel(IModel<Taxonomy> root, String language) {
-        this(root, language, null);
-    }
-
-    /**
-     * @deprecated use {@link #TaxonomyTreeModel(IModel, Locale, Comparator)} instead
-     */
-    @Deprecated
-    public TaxonomyTreeModel(IModel<Taxonomy> root, String language, Comparator<Category> categoryComparator) {
-        this(root, TaxonomyUtil.toLocale(language), categoryComparator);
-    }
-
     public TaxonomyTreeModel(IModel<Taxonomy> root, Locale locale) {
         this(root, locale, null);
     }
@@ -52,14 +35,6 @@ public class TaxonomyTreeModel extends DefaultTreeModel {
     public TaxonomyTreeModel(IModel<Taxonomy> root, Locale locale, Comparator<Category> categoryComparator) {
         super(new TaxonomyNode(root, locale, categoryComparator));
         this.locale = locale;
-    }
-
-    /**
-     * @deprecated use {@link #getLocale()} to retrieve the language code from
-     */
-    @Deprecated
-    public String getLanguage() {
-        return locale.getLanguage();
     }
 
     public Locale getLocale() {

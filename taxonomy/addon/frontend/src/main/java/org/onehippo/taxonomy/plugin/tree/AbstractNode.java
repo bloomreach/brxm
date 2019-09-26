@@ -24,7 +24,6 @@ import java.util.Locale;
 
 import javax.swing.tree.TreeNode;
 
-import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.onehippo.taxonomy.api.Category;
@@ -37,22 +36,6 @@ public abstract class AbstractNode implements TreeNode, IDetachable {
     private final IModel<Taxonomy> taxonomyModel;
     private List<CategoryNode> children = null;
     private final Comparator<Category> categoryComparator;
-
-    /**
-     * @deprecated Use {@link #AbstractNode(IModel, Locale, Comparator)} instead.
-     */
-    @Deprecated
-    public AbstractNode(final IModel<Taxonomy> taxonomyModel, final String language) {
-        this(taxonomyModel, TaxonomyUtil.toLocale(language), null);
-    }
-
-    /**
-     * @deprecated Use {@link #AbstractNode(IModel, Locale, Comparator)} instead.
-     */
-    @Deprecated
-    public AbstractNode(final IModel<Taxonomy> taxonomyModel, final String language, final Comparator<Category> categoryComparator) {
-        this(taxonomyModel, TaxonomyUtil.toLocale(language), categoryComparator);
-    }
 
     public AbstractNode(final IModel<Taxonomy> taxonomyModel, final Locale locale,
                  final Comparator<Category> categoryComparator) {

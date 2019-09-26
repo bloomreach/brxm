@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.commons.lang.ArrayUtils;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.CategoryInfo;
-import org.onehippo.taxonomy.util.TaxonomyUtil;
 
 /**
  * Used for the category which is not yet translated so doesn't have category info.
@@ -42,22 +41,6 @@ public class TransientCategoryInfoImpl implements CategoryInfo {
 
     public String getName() {
         return name;
-    }
-
-    /**
-     * @deprecated use {@link #getLocale()} to retrieve the language code from
-     */
-    @Deprecated
-    public String getLanguage() {
-        return getLocale().getLanguage();
-    }
-
-    /**
-     * @deprecated use {@link #setLocale(Locale)} to set the language code
-     */
-    @Deprecated
-    public void setLanguage(String language) {
-        this.locale = TaxonomyUtil.toLocale(language);
     }
 
     @Override

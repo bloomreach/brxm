@@ -15,7 +15,6 @@
  */
 package org.onehippo.taxonomy.plugin;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -98,7 +97,6 @@ import org.onehippo.taxonomy.plugin.tree.CategoryNode;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyNode;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyTree;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyTreeModel;
-import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -451,23 +449,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     }
 
     private List<Locale> getAvailableLocaleSelections() {
-        return taxonomy.getLocaleObjects();
-    }
-
-    /**
-     * @deprecated use {@link #getCurrentLocaleSelection()} instead.
-     */
-    @Deprecated
-    public LanguageSelection getCurrentLanguageSelection() {
-        return new LanguageSelection(currentLocaleSelection, currentLocaleSelection);
-    }
-
-    /**
-     * @deprecated use {@link #setCurrentLocaleSelection(Locale)} instead.
-     */
-    @Deprecated
-    public void setCurrentLanguageSelection(final LanguageSelection currentLanguageSelection) {
-        this.currentLocaleSelection = TaxonomyUtil.toLocale(currentLanguageSelection.getLanguageCode());
+        return taxonomy.getLocales();
     }
 
     public Locale getCurrentLocaleSelection() {
@@ -487,15 +469,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
      */
     protected Form<?> getContainerForm() {
         return container;
-    }
-
-    /**
-     * Return <code>Category</code> comparator to be used when sorting sibling category nodes.
-     * @deprecated use {@link #getCategoryComparator(IPluginConfig, Locale)} instead
-     */
-    @Deprecated
-    protected Comparator<Category> getCategoryComparator(final IPluginConfig config, final String locale) {
-        return getCategoryComparator(config, TaxonomyUtil.toLocale(locale));
     }
 
     /**
@@ -570,83 +543,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         }
 
         public void detach() {
-        }
-    }
-
-    /**
-     * @deprecated use {@link Locale} instead.
-     */
-    @Deprecated
-    protected final class LanguageSelection implements Serializable {
-
-        private String languageCode;
-        private String displayName;
-
-        /**
-         * Constructor
-         *
-         * @param selectionLocale the locale for the actual language selection item
-         * @param uiLocale        the locale by which the language name is determined
-         */
-
-        public LanguageSelection(final Locale selectionLocale, final Locale uiLocale) {
-            this(selectionLocale.toString(), getDisplayLanguage(selectionLocale, uiLocale));
-        }
-
-        public LanguageSelection(final String languageCode, final String displayName) {
-            this.languageCode = languageCode;
-            this.displayName = displayName;
-        }
-
-        public String getLanguageCode() {
-            return languageCode;
-        }
-
-        public void setLanguageCode(final String languageCode) {
-            this.languageCode = languageCode;
-        }
-
-        public String getDisplayName() {
-            return displayName;
-        }
-
-        public void setDisplayName(final String displayName) {
-            this.displayName = displayName;
-        }
-
-        @Override
-        public boolean equals(final Object o) {
-            if (o == null) {
-                return false;
-            }
-
-            if (!(o instanceof LanguageSelection)) {
-                return false;
-            }
-
-            if (languageCode == null && ((LanguageSelection) o).getLanguageCode() == null) {
-                return true;
-            }
-
-            if (languageCode != null && languageCode.equals(((LanguageSelection) o).getLanguageCode())) {
-                return true;
-            }
-
-            return false;
-        }
-
-        @Override
-        public int hashCode() {
-            if (languageCode != null) {
-                return languageCode.hashCode();
-            }
-
-            return super.hashCode();
-        }
-
-        @Override
-        public String toString() {
-            return super.toString() + " [ " + languageCode + ", " + displayName + " }";
         }
     }
 
