@@ -48,8 +48,8 @@ public class SessionSecurityDelegationIT extends AbstractRepositoryTestCase {
         sessionSecurityDelegation = new SessionSecurityDelegationImpl();
         sessionSecurityDelegation.setSecurityDelegationEnabled(true);
         sessionSecurityDelegation.setRepository(server.getRepository());
-        sessionSecurityDelegation.setPreviewCredentials(new SimpleCredentials(PREVIEW_USER_ID, PREVIEW_USER_PASS.toCharArray()));
-        sessionSecurityDelegation.setLiveCredentials(JvmCredentials.getCredentials(LIVE_USER_ID));
+        sessionSecurityDelegation.setPreviewCredentials(JvmCredentials.getCredentials("previewuser"));
+        sessionSecurityDelegation.setLiveCredentials(JvmCredentials.getCredentials("liveuser"));
     }
 
     @Test
