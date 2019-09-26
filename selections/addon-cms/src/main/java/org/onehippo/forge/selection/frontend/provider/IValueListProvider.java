@@ -45,6 +45,27 @@ public interface IValueListProvider extends ValueListProvider, IClusterable {
     String SERVICE_VALUELIST_DEFAULT = "service.valuelist.default";
 
     /**
+     * Returns a list of values
+     *
+     * @param config a plugin configuration that can help the
+     *               provider to generate the list
+     * @return a list of value items
+     * @deprecated please use {@link #getValueList(String)} instead
+     */
+    @Deprecated
+    ValueList getValueList(IPluginConfig config);
+
+    /**
+     * Returns an immutable list of values.
+     *
+     * @param name the name of a value list
+     * @return a list of value items
+     * @deprecated please use {@link #getValueList(String, Locale)} instead
+     */
+    @Deprecated
+    ValueList getValueList(String name);
+
+    /**
      * Returns an immutable list of values.
      *
      * @param name the name of a value list
