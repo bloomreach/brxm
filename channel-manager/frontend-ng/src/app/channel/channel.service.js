@@ -301,6 +301,7 @@ class ChannelService {
       workspaceRequired: true,
       skipBranches: true,
       skipConfigurationLocked: true,
+      privilegeAllowed: 'hippo:channel-webmaster',
     };
 
     const response = await this.HstService.doGetWithParams(this.ConfigService.rootUuid, params, 'channels');
