@@ -38,7 +38,6 @@ import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
 import org.hippoecm.frontend.extjs.ExtWidgetRegistry;
-import org.hippoecm.frontend.NavAppToAppHeaderItem;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
@@ -171,7 +170,7 @@ public class RootPlugin extends TabsPlugin {
 
         add(view);
 
-        if (!hidePerspectiveMenu()){
+        if (!hidePerspectiveMenu()) {
             add(new AjaxIndicatorBehavior());
         }
 
@@ -198,7 +197,7 @@ public class RootPlugin extends TabsPlugin {
 
         final PageLayoutSettings pageLayoutSettings = getPageLayoutSettings(config);
         add(new PageLayoutBehavior(pageLayoutSettings));
-        add(new ResourceLink("faviconLink", ((PluginApplication)getApplication()).getPluginApplicationFavIconReference()));
+        add(new ResourceLink("faviconLink", ((PluginApplication) getApplication()).getPluginApplicationFavIconReference()));
     }
 
     private void addPinger() {
