@@ -21,6 +21,8 @@ import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
@@ -124,6 +126,9 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
                 WebRequest request = (WebRequest) RequestCycle.get().getRequest();
                 controller.process(request.getRequestParameters());
             }
+
+            add(new Label("pageTitle", getString("page.title", null, "Bloomreach Experience")));
+            add(new ResourceLink("faviconLink", ((PluginApplication)getApplication()).getPluginApplicationFavIconReference()));
         } finally {
             if (pageInitTask != null) {
                 pageInitTask.stop();
