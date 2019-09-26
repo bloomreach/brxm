@@ -20,7 +20,7 @@ import { NavItem, NavLocation } from '@bloomreach/navapp-communication';
 
 import { ClientAppMock } from '../client-app/models/client-app.mock';
 import { ClientAppService } from '../client-app/services/client-app.service';
-import { InternalError } from '../error-handling/models/app-internal-error';
+import { InternalError } from '../error-handling/models/internal-error';
 import { NotFoundError } from '../error-handling/models/not-found-error';
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';

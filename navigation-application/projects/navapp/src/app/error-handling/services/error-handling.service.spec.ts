@@ -15,10 +15,12 @@
  */
 
 import { ClientErrorCodes } from '@bloomreach/navapp-communication';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 
 import { AppError } from '../models/app-error';
+import { InternalError } from '../models/internal-error';
+
+import { CriticalError } from '../models/critical-error';
+import { NotFoundError } from '../models/not-found-error';
 
 import { ErrorHandlingService } from './error-handling.service';
 
@@ -49,6 +51,30 @@ describe('ErrorHandlingService', () => {
     );
 
     service.setClientError(ClientErrorCodes.UnknownError, 'Optional message');
+
+    expect(service.currentError).toEqual(expected);
+  });
+
+  it('should set the CriticalError', () => {
+    const expected = new CriticalError('Some critical error', 'Description for logs');
+
+    service.setCriticalError('Some critical error', 'Description for logs');
+
+    expect(service.currentError).toEqual(expected);
+  });
+
+  it('should set the NotFoundError', () => {
+    const expected = new NotFoundError('Some available to the user description', 'Description for logs');
+
+    service.setNotFoundError('Some available to the user description', 'Description for logs');
+
+    expect(service.currentError).toEqual(expected);
+  });
+
+  it('should set the InternalError', () => {
+    const expected = new InternalError('Some available to the user description', 'Description for logs');
+
+    service.setInternalError('Some available to the user description', 'Description for logs');
 
     expect(service.currentError).toEqual(expected);
   });

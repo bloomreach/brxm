@@ -14,28 +14,6 @@
  * limitations under the License.
  */
 
-export class AppError extends Error {
-  constructor(
-    public code: number,
-    message: string,
-    public description?: string,
-    public internalDescription?: string,
-  ) {
-    super(message);
+import { NavConfigService } from '../services/nav-config.service';
 
-    Object.setPrototypeOf(this, AppError.prototype);
-    this.stack = this.getStack();
-    this.name = 'AppError';
-  }
-
-  toString(): string {
-    return `${this.name}: ${this.message}: ${this.description}: ${this.internalDescription}`;
-  }
-
-  protected getStack(): string {
-    const stack = (new Error()).stack.split('\n');
-
-    // Skip internal stack entries
-    return stack.slice(3).join('\n');
-  }
-}
+export const loadNavItems = (navConfigService: NavConfigService) => navConfigService.init();

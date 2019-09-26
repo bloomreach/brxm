@@ -22,6 +22,7 @@
   <div *ngIf="error && error.description" class="error-description">{{ error.description }}</div>
 
   <button
+    *ngIf="isGoToHomeButtonVisible"
     mat-flat-button
     color="primary"
     (click)="navigateToHome()"
