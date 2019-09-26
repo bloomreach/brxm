@@ -20,6 +20,7 @@ import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
 import { bufferCount, first, map, switchMap, tap, throttleTime } from 'rxjs/operators';
 
+import { CriticalError } from '../../error-handling/models/critical-error';
 import { Connection } from '../../models/connection.model';
 import { FailedConnection } from '../../models/failed-connection.model';
 import { NavConfigService } from '../../services/nav-config.service';
@@ -194,7 +195,16 @@ export class ClientAppService {
   }
 
   private discardFailedConnections(connections: Connection[]): Connection[] {
-    return connections.filter(c => !(c instanceof FailedConnection));
+    const successfulConnections = connections.filter(c => !(c instanceof FailedConnection));
+
+    if (successfulConnections.length === 0) {
+      throw new CriticalError(
+        'Unable to connect to the client applications',
+        'All connections to the client applications are failed',
+      );
+    }
+
+    return successfulConnections;
   }
 
   private createClientApp(connection: Connection): ClientApp {
