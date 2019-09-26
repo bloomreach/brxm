@@ -167,7 +167,7 @@
   Wicket.Window.prototype.show = function () {
     _super.show.apply(this, arguments);
 
-    Hippo && Hippo.showMask();
+    Hippo && Hippo.showMask && Hippo.showMask();
 
     if (this.settings.titleTooltip !== null) {
       this.captionText.setAttribute('title', this.settings.titleTooltip);
