@@ -14,29 +14,24 @@
  * limitations under the License.
  */
 
-import { APP_INITIALIZER, NgModule } from '@angular/core';
-
-import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { BusyIndicatorService } from '../services/busy-indicator.service';
-import { NavConfigService } from '../services/nav-config.service';
 
-import { APP_BOOTSTRAPPED } from './app-bootstrapped';
-import { appInitializer } from './app-initializer';
 import { BootstrapService } from './bootstrap.service';
-import { appBootstrappedPromise } from './schedule-app-bootstrapping';
 
-@NgModule({
-  providers: [
-    {
-      provide: APP_INITIALIZER,
-      useFactory: appInitializer,
-      deps: [NavConfigService, BootstrapService, BusyIndicatorService, ErrorHandlingService],
-      multi: true,
-    },
-    {
-      provide: APP_BOOTSTRAPPED,
-      useValue: appBootstrappedPromise,
-    },
-  ],
-})
-export class BootstrapModule { }
+let bootstrapResolve: () => void;
+let bootstrapReject: () => void;
+export const appBootstrappedPromise = new Promise((resolve, reject) => {
+  bootstrapResolve = resolve;
+  bootstrapReject = reject;
+});
+
+export const scheduleAppBootstrapping = (
+  bootstrapService: BootstrapService,
+  busyIndicatorService: BusyIndicatorService,
+) => {
+  busyIndicatorService.show();
+
+  bootstrapService.bootstrap()
+    .then(bootstrapResolve, bootstrapReject)
+    .then(() => busyIndicatorService.hide());
+};

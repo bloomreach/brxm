@@ -71,18 +71,43 @@ describe('BootstrapService', () => {
     expect(navigationServiceMock.initialNavigation).not.toHaveBeenCalled();
   }));
 
-  it('should print an error in the console', fakeAsync(() => {
-    spyOn(console, 'error');
-    clientAppServiceMock.init.and.callFake(() => Promise.reject('Something went wrong'));
-    let caughtError: string;
+  describe('in case of the error', () => {
+    const errorMessage = 'Something went wrong';
+    const expectedErrorMessage = `[NAVAPP] Bootstrap error: ${errorMessage}`;
 
-    service.bootstrap().catch(error => caughtError = error);
+    beforeEach(() => {
+      spyOn(console, 'error');
+      clientAppServiceMock.init.and.callFake(() => Promise.reject(errorMessage));
+    });
 
-    tick();
+    it('should print an error in the console', fakeAsync(() => {
+      service.bootstrap().catch(() => {});
 
-    expect(console.error).toHaveBeenCalledWith('[NAVAPP] Bootstrap error: Something went wrong');
-    expect(caughtError).toBe('Something went wrong');
-  }));
+      tick();
+
+      expect(console.error).toHaveBeenCalledWith(expectedErrorMessage);
+    }));
+
+    it('it should reject the returned promise with the caught reason', fakeAsync(() => {
+      let caughtError: string;
+
+      service.bootstrap().catch(error => caughtError = error);
+
+      tick();
+
+      expect(caughtError).toBe('Something went wrong');
+    }));
+
+    it('should extract a message from the error object', fakeAsync(() => {
+      clientAppServiceMock.init.and.callFake(() => Promise.reject(new Error(errorMessage)));
+
+      service.bootstrap().catch(() => {});
+
+      tick();
+
+      expect(console.error).toHaveBeenCalledWith(expectedErrorMessage);
+    }));
+  });
 
   describe('when ClientAppService is initialized', () => {
     let bootstrapped = false;

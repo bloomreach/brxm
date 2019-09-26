@@ -16,8 +16,10 @@
 
 import { Component, Input } from '@angular/core';
 
+import { MenuStateService } from '../../main-menu/services/menu-state.service';
 import { NavigationService } from '../../services/navigation.service';
 import { AppError } from '../models/app-error';
+import { CriticalError } from '../models/critical-error';
 
 @Component({
   selector: 'brna-error-page',
@@ -28,7 +30,14 @@ export class ErrorPageComponent {
   @Input()
   error: AppError;
 
-  constructor(private navigationService: NavigationService) { }
+  constructor(
+    private navigationService: NavigationService,
+    private menuStateService: MenuStateService,
+  ) {}
+
+  get isGoToHomeButtonVisible(): boolean {
+    return !(this.error instanceof CriticalError) && !!this.menuStateService.homeMenuItem;
+  }
 
   navigateToHome(): void {
     this.navigationService.navigateToHome();

@@ -16,10 +16,10 @@
 
 import { Injectable } from '@angular/core';
 import { ClientErrorCodes } from '@bloomreach/navapp-communication';
-import { Subject } from 'rxjs';
 
 import { AppError } from '../models/app-error';
-import { InternalError } from '../models/app-internal-error';
+import { CriticalError } from '../models/critical-error';
+import { InternalError } from '../models/internal-error';
 import { NotFoundError } from '../models/not-found-error';
 
 @Injectable()
@@ -32,6 +32,10 @@ export class ErrorHandlingService {
 
   setError(error: AppError): void {
     this.error = error;
+  }
+
+  setCriticalError(message: string, internalDescription?: string): void {
+    this.error = new CriticalError(message, internalDescription);
   }
 
   setNotFoundError(publicDescription?: string, internalDescription?: string): void {

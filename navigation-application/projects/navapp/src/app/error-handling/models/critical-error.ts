@@ -14,28 +14,15 @@
  * limitations under the License.
  */
 
-export class AppError extends Error {
-  constructor(
-    public code: number,
-    message: string,
-    public description?: string,
-    public internalDescription?: string,
-  ) {
-    super(message);
+import { AppError } from './app-error';
+import { AppErrorCodes } from './app-error-codes';
 
-    Object.setPrototypeOf(this, AppError.prototype);
+export class CriticalError extends AppError {
+  constructor(message: string, internalDescription?: string) {
+    super(AppErrorCodes.Internal, message, undefined, internalDescription);
+
+    Object.setPrototypeOf(this, CriticalError.prototype);
     this.stack = this.getStack();
-    this.name = 'AppError';
-  }
-
-  toString(): string {
-    return `${this.name}: ${this.message}: ${this.description}: ${this.internalDescription}`;
-  }
-
-  protected getStack(): string {
-    const stack = (new Error()).stack.split('\n');
-
-    // Skip internal stack entries
-    return stack.slice(3).join('\n');
+    this.name = 'CriticalError';
   }
 }
