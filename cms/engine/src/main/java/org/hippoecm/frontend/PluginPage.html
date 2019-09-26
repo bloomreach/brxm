@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
- * Copyright 2007-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2007-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -18,6 +18,10 @@
   <head>
     <meta name="robots" content="noindex,nofollow,noarchive"/>
   </head>
+  <wicket:head>
+    <title wicket:id="pageTitle"></title>
+    <link wicket:id="faviconLink" rel="shortcut icon" type="image/png" />
+  </wicket:head>
   <body class="hippo-root">
     <div wicket:id="dialog"/>
     <div wicket:id="root"/>
