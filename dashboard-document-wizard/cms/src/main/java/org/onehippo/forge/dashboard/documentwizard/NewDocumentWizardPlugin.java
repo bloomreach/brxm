@@ -1,5 +1,5 @@
 /*
- * Copyright 2001-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2001-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -275,13 +275,6 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             IModel<String> nameModel = new PropertyModel<>(this, "documentName");
             TextField<String> nameField = new TextField<>("name", nameModel);
             nameField.setRequired(true);
-            nameField.add(strValue -> {
-                String value = strValue.getValue();
-                //noinspection ConstantConditions
-                if (!isValidName(value)) {
-                    strValue.error(messageSource -> new StringResourceModel("invalid.name", this).getString());
-                }
-            });
             nameField.setLabel(new StringResourceModel(DIALOG_NAME_LABEL, this));
             add(nameField);
 
@@ -547,91 +540,9 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
         }
     }
 
-    /**
-     * Determine whether the a document name is valid.
-     *
-     * @param value the document name
-     * @return whether the name is a valid document name
-     */
-    protected static boolean isValidName(@SuppressWarnings("unused") final String value) {
-        // HIPPLUG-1109: by default, all name values are considered valid.
-        // The name value is input to the node name codec, which encodes a valid node name.
-        return true;
-    }
-
     protected StringCodec getNodeNameCodec() {
         final String locale = getSession().getLocale().toString();
         return CodecUtils.getNodeNameCodecModel(getPluginContext(), locale).getObject();
-    }
-
-    /**
-     * Get or create folder for classificationType.LIST.
-     *
-     * @param parent parent folder in which the list-based folder is to be found/created.
-     * @param list   list-based name of the folder
-     * @param create flag indicating whether the folder should be created if it doesn't exist
-     * @return node representing the list-based folder
-     * @throws java.rmi.RemoteException for unexpected errors
-     * @throws javax.jcr.RepositoryException for unexpected errors
-     * @throws org.hippoecm.repository.api.WorkflowException for unexpected errors
-     *
-     * @deprecated use the getFolderPath and getFolder methods instead.
-     */
-    @Deprecated
-    protected HippoNode getListFolder(HippoNode parent, String list, boolean create) throws RemoteException, RepositoryException, WorkflowException {
-        String listEncoded = getNodeNameCodec().encode(list);
-        HippoNode resultParent = parent;
-        if (resultParent.hasNode(listEncoded)) {
-            resultParent = (HippoNode) resultParent.getNode(listEncoded);
-        } else {
-            if (create) {
-                resultParent = createFolder(resultParent, listEncoded);
-            } else {
-                return null;
-            }
-        }
-        return resultParent;
-    }
-
-    /**
-     * Get or create folder(s) for classificationType.DATE.
-     *
-     * @param parent parent folder in which the date-based folder is to be found/created.
-     * @param date   date for which to find/create the folder(s).
-     * @param create flag indicating whether the folders should be created if they don't exist
-     * @return node representing the date-based folder
-     * @throws java.rmi.RemoteException for unexpected errors
-     * @throws javax.jcr.RepositoryException for unexpected errors
-     * @throws org.hippoecm.repository.api.WorkflowException for unexpected errors
-     *
-     * @deprecated use the getFolderPath and getFolder methods instead.
-     */
-    @Deprecated
-    protected HippoNode getDateFolder(HippoNode parent, Date date, boolean create) throws RemoteException, RepositoryException, WorkflowException {
-        String year = new SimpleDateFormat("yyyy").format(date);
-        HippoNode resultParent = parent;
-        if (resultParent.hasNode(year)) {
-            resultParent = (HippoNode) resultParent.getNode(year);
-        } else {
-            if (create) {
-                resultParent = createFolder(resultParent, year);
-            } else {
-                return null;
-            }
-        }
-
-        String month = new SimpleDateFormat("MM").format(date);
-        if (resultParent.hasNode(month)) {
-            resultParent = (HippoNode) resultParent.getNode(month);
-        } else {
-            if (create) {
-                resultParent = createFolder(resultParent, month);
-            } else {
-                return null;
-            }
-        }
-
-        return resultParent;
     }
 
     protected HippoNode createFolder(HippoNode parentNode, String name) throws RepositoryException, RemoteException, WorkflowException {
