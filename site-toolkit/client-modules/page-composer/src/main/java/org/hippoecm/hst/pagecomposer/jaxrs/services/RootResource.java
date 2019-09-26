@@ -92,27 +92,33 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     /**
      * This method returns only the channels from a single hst webapp which is on purpose since it is used for the
      * cross channel page copy which is not supported over cross webapp
-     * NOTE #getChannels is a too generic method for 'cross channel page copy'. Namely, for page copy, we'd only want to
-     * return channels which you are really allowed to copy *to*. Therefor, it would be better to have an extra method,
-     * something like @Path("/channels/copy") which returns allowed channels to copy to, aka channels for which the
-     * current user has CHANNEL_WEBMASTER_PRIVILEGE_NAME. The method should then be annotated with
-     * @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
+     * NOTE #getChannels for something like 'page copy' to a different channel, then
+     * privilegeAllowed=hippo:channel-webmaster should be in the query string since channels the user is not webmaster
+     * on (s)he cannot copy pages to.
+     *
+     * The param @QueryParam("privilegeAllowed") final String privilegeAllowed can be used to only return channels
+     * for which the current user has the privilege 'privilegeAllowed'. If missing, the minimal privilege
+     * ChannelManagerPrivileges#CHANNEL_WEB_VIEWER_PRIVILEGE_NAME is assumed
      */
     @GET
     @Path("/channels")
+    @Produces(MediaType.APPLICATION_JSON)
     @PermitAll
     public Response getChannels(@HeaderParam("hostGroup") final String hostGroup,
                                 @QueryParam("previewConfigRequired") final boolean previewConfigRequired,
                                 @QueryParam("workspaceRequired") final boolean workspaceRequired,
                                 @QueryParam("skipBranches") final boolean skipBranches,
-                                @QueryParam("skipConfigurationLocked") final boolean skipConfigurationLocked) {
+                                @QueryParam("skipConfigurationLocked") final boolean skipConfigurationLocked,
+                                @QueryParam("privilegeAllowed") final String privilegeAllowed) {
 
         try {
+
             final List<Channel> channels = this.channelService.getChannels(previewConfigRequired,
                     workspaceRequired,
                     skipBranches,
                     skipConfigurationLocked,
-                    hostGroup);
+                    hostGroup,
+                    privilegeAllowed == null ? CHANNEL_WEB_VIEWER_PRIVILEGE_NAME : privilegeAllowed);
             return ok("Fetched channels successful", channels);
         } catch (RuntimeRepositoryException e) {
             log.warn("Could not determine authorization", e);

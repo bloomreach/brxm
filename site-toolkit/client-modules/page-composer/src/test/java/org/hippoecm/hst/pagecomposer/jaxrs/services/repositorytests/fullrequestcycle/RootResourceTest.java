@@ -15,12 +15,16 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
+import org.assertj.core.api.Assertions;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
@@ -40,6 +44,7 @@ import static org.hippoecm.hst.configuration.HstNodeTypes.CONFIGURATION_PROPERTY
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONFIGURATION;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError.CHILD_MOUNT_EXISTS;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -348,4 +353,76 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
             session.logout();
         }
     }
+
+    @Test
+    public void get_channels_only_returns_channels_for_which_user_has_privileges() throws Exception {
+        // the method ChannelService.getChannels(...) is meant for the cross channel copy page : Only channels
+        // for which the user is a webmaster should be returned!
+
+        {
+            final RequestResponseMock requestResponse = mockGetRequestResponse("http", "localhost",
+                    "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels", null, "GET");
+
+            SimpleCredentials author = new SimpleCredentials("author", "author".toCharArray());
+            final MockHttpServletResponse response = render(null, requestResponse, author);
+            final String restResponse = response.getContentAsString();
+
+            final Map<String, Object> responseMap = mapper.readerFor(Map.class).readValue(restResponse);
+
+            List<Map<String, String>> data = (List<Map<String, String>>) responseMap.get("data");
+
+            assertEquals(2, data.size());
+
+            final Set<String> channelIds = data.stream().map(channelMap -> channelMap.get("id")).collect(Collectors.toSet());
+
+            Assertions.assertThat(channelIds)
+                    .containsExactly("unittestproject", "unittestsubproject");
+        }
+
+        {
+            final RequestResponseMock requestResponse = mockGetRequestResponse("http", "localhost",
+                    "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels",
+                    "privilegeAllowed=" + CHANNEL_WEBMASTER_PRIVILEGE_NAME, "GET");
+
+            SimpleCredentials author = new SimpleCredentials("author", "author".toCharArray());
+            final MockHttpServletResponse response = render(null, requestResponse, author);
+            final String restResponse = response.getContentAsString();
+
+            final Map<String, Object> responseMap = mapper.readerFor(Map.class).readValue(restResponse);
+
+            List<Map<String, String>> data = (List<Map<String, String>>) responseMap.get("data");
+
+            assertEquals("Author does not have privilege 'hippo:channel-webmaster'",0, data.size());
+
+        }
+
+
+        for (String queryString : new String[]{"", "privilegeAllowed=" + CHANNEL_WEBMASTER_PRIVILEGE_NAME}) {
+            {
+                final RequestResponseMock requestResponse = mockGetRequestResponse("http", "localhost",
+                        "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels", queryString, "GET");
+
+                SimpleCredentials author = new SimpleCredentials("editor", "editor".toCharArray());
+                final MockHttpServletResponse response = render(null, requestResponse, author);
+                final String restResponse = response.getContentAsString();
+
+                final Map<String, Object> responseMap = mapper.readerFor(Map.class).readValue(restResponse);
+
+                List<Map<String, String>> data = (List<Map<String, String>>) responseMap.get("data");
+
+                assertEquals("'editor' should be able to fetch the channels with default privilege " +
+                        "'hippo:channel-webviewer' and with 'hippo:channel-webmaster'",2, data.size());
+
+                final Set<String> channelIds = data.stream().map(channelMap -> channelMap.get("id")).collect(Collectors.toSet());
+
+                Assertions.assertThat(channelIds)
+                        .containsExactly("unittestproject", "unittestsubproject");
+
+            }
+
+
+        }
+
+    }
+
 }

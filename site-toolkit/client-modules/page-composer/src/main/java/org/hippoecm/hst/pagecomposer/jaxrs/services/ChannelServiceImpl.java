@@ -61,6 +61,7 @@ import org.hippoecm.hst.platform.api.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.platform.api.beans.FieldGroupInfo;
 import org.hippoecm.hst.platform.api.beans.HstPropertyDefinitionInfo;
 import org.hippoecm.hst.platform.api.beans.InformationObjectsBuilder;
+import org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
@@ -325,17 +326,38 @@ public class ChannelServiceImpl implements ChannelService {
                                      final boolean workspaceRequired,
                                      final boolean skipBranches,
                                      final boolean skipConfigurationLocked,
-                                     final String hostGroup) {
+                                     final String hostGroup,
+                                     final String privilegeAllowed) {
         final VirtualHosts virtualHosts = getEditingPreviewVirtualHosts();
-        return virtualHosts.getChannels(hostGroup)
-                .values()
-                .stream()
-                .filter(channel -> previewConfigRequiredFiltered(channel, previewConfigRequired))
-                .filter(channel -> workspaceFiltered(virtualHosts, channel, workspaceRequired))
-                .filter(channel -> !skipBranches || channel.getBranchOf() == null)
-                .filter(channel -> !channel.isConfigurationLocked())
-                .sorted(Comparator.comparing(channel -> channel.getName() == null ? "" : channel.getName().toLowerCase()))
-                .collect(Collectors.toList());
+        try {
+            final HstRequestContext requestContext = RequestContextProvider.get();
+            if (requestContext == null) {
+                throw new IllegalStateException("Method #getChannels is not allowed to be invoked without a requestContext");
+            }
+            final Session session = requestContext.getSession();
+            return virtualHosts.getChannels(hostGroup)
+                    .values()
+                    .stream()
+                    .filter(channel -> previewConfigRequiredFiltered(channel, previewConfigRequired))
+                    .filter(channel -> workspaceFiltered(virtualHosts, channel, workspaceRequired))
+                    .filter(channel -> !skipBranches || channel.getBranchOf() == null)
+                    .filter(channel -> !channel.isConfigurationLocked())
+                    .filter(channel -> {
+                        try {
+                            return session.getAccessControlManager()
+                                    .hasPrivileges(channel.getHstConfigPath(), ChannelManagerPrivileges.createPrivileges(privilegeAllowed));
+                        } catch (RepositoryException e) {
+                            log.error("Exception while checking privilege for channel '{}'. Skip channel in result",
+                                    channel.getId());
+                            return false;
+                        }
+                    })
+                    .sorted(Comparator.comparing(channel -> channel.getName() == null ? "" : channel.getName().toLowerCase()))
+                    .collect(Collectors.toList());
+        } catch (RepositoryException e) {
+            throw new IllegalStateException("Method #getChannels is not allowed to be invoked without a JCR User Session " +
+                    "on the request context");
+        }
     }
 
     @Override
