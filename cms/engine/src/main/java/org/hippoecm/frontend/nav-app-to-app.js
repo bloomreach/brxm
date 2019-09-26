@@ -92,6 +92,7 @@
             Hippo.UserActivity.registerOnActive(() => {
               parentApi.onUserActivity();
             });
+            return parentApi;
           });
           return this.parentConnection;
         },
