@@ -23,6 +23,7 @@ import { catchError, skip, switchMap, tap } from 'rxjs/operators';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { AppError } from '../error-handling/models/app-error';
+import { CriticalError } from '../error-handling/models/critical-error';
 import { InternalError } from '../error-handling/models/internal-error';
 import { NotFoundError } from '../error-handling/models/not-found-error';
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
@@ -38,8 +39,7 @@ import { UrlMapperService } from './url-mapper.service';
 
 interface Route {
   path: string;
-  navItem?: NavItem;
-  redirectTo?: string;
+  navItem: NavItem;
 }
 
 enum NavigationTrigger {
@@ -88,7 +88,7 @@ export class NavigationService implements OnDestroy {
     private menuStateService: MenuStateService,
     private breadcrumbsService: BreadcrumbsService,
     private urlMapperService: UrlMapperService,
-    private globalSettingsService: GlobalSettingsService,
+    private settings: GlobalSettingsService,
     private errorHandlingService: ErrorHandlingService,
   ) {
     this.setupNavigations();
@@ -99,13 +99,20 @@ export class NavigationService implements OnDestroy {
     return this.events.asObservable();
   }
 
+  private get basePath(): string {
+    const baseUrl = this.settings.appSettings.navAppBaseURL;
+
+    return new URL(baseUrl).pathname;
+  }
+
   private get homeUrl(): string {
     const homeMenuItem = this.menuStateService.homeMenuItem;
-    const homeUrl = homeMenuItem ?
-      this.urlMapperService.mapNavItemToBrowserUrl(homeMenuItem.navItem) :
-      '';
 
-    return homeUrl;
+    if (!homeMenuItem) {
+      throw new CriticalError('Configuration error', 'Unable to find home item');
+    }
+
+    return this.urlMapperService.mapNavItemToBrowserUrl(homeMenuItem.navItem);
   }
 
   initialNavigation(): Promise<void> {
@@ -114,9 +121,7 @@ export class NavigationService implements OnDestroy {
 
     this.setUpLocationChangeListener();
 
-    const baseUrl = this.globalSettingsService.appSettings.navAppBaseURL;
-    const basePath = new URL(baseUrl).pathname;
-    const url = `${basePath}${this.globalSettingsService.appSettings.initialPath}`;
+    const url = `${this.basePath}${this.settings.appSettings.initialPath}`;
 
     return this.scheduleNavigation(url, NavigationTrigger.Imperative, {}, {}, true);
   }
@@ -270,7 +275,7 @@ export class NavigationService implements OnDestroy {
     replaceState = false,
   ): Promise<void> {
     let resolve: () => void;
-    let reject: () =>  void;
+    let reject: () => void;
 
     const promise = new Promise<void>((res, rej) => {
       resolve = res;
@@ -294,7 +299,7 @@ export class NavigationService implements OnDestroy {
     return of(transition).pipe(
       // Resolving the url
       switchMap((t: Transition) => {
-        const route = this.matchRoute(t.url, this.routes);
+        const route = this.matchRoute(t.url);
 
         if (!route) {
           return throwError(new NotFoundError(`Unknown url: ${t.url}`));
@@ -358,34 +363,17 @@ export class NavigationService implements OnDestroy {
   }
 
   private generateRoutes(navItems: NavItem[]): Route[] {
-    const routes: Route[] = navItems.map(navItem => ({
+    return navItems.map(navItem => ({
       path: this.urlMapperService.mapNavItemToBrowserUrl(navItem),
       navItem,
     }));
-
-    const homeMenuItem = this.menuStateService.homeMenuItem;
-    const homeUrl = homeMenuItem ? this.urlMapperService.mapNavItemToBrowserUrl(homeMenuItem.navItem) : '';
-
-    const defaultRoute: Route = {
-      path: '**',
-      redirectTo: homeUrl,
-    };
-
-    return routes.concat([defaultRoute]);
   }
 
-  private matchRoute(url: string, routes: Route[]): Route {
-    const route = routes.find(x => url.startsWith(x.path) || x.path === '**');
-
-    if (!route) {
-      return;
+  private matchRoute(url: string): Route {
+    if (Location.stripTrailingSlash(url) === Location.stripTrailingSlash(this.basePath)) {
+      url = this.homeUrl;
     }
 
-    if (route.hasOwnProperty('redirectTo')) {
-      const routesExceptCurrent = routes.filter(x => x.path !== route.path);
-      return this.matchRoute(route.redirectTo || '', routesExceptCurrent);
-    }
-
-    return route;
+    return this.routes.find(x => url.startsWith(x.path));
   }
 }
