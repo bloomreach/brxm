@@ -90,7 +90,8 @@
               parentApi.onSessionExpired();
             });
             Hippo.UserActivity.registerOnActive(() => {
-              parentApi.onUserActivity();
+              //TODO delete once implemented in the navapp
+              parentApi.onUserActivity && parentApi.onUserActivity();
             });
             return parentApi;
           });
@@ -195,6 +196,9 @@
       );
 
       if (iframeClassName.includes(perspectiveIdentifier + '-iframe')) {
+        if ( perspectiveIdentifier === 'projects' ){
+          pathElements.unshift(perspectiveIdentifier);
+        }
         const location = { path: pathElements.join('/') };
 
         if (flags && flags['forceRefresh']) {
