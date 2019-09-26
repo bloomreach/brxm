@@ -25,6 +25,9 @@
   },
   "pluginDependencies": [
     {
+      "pluginId": "crisp"
+    },
+    {
       "pluginId": "enterpriseProject"
     }
   ]
