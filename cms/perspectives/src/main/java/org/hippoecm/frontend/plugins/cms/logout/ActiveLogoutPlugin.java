@@ -19,6 +19,7 @@ import org.apache.wicket.Component;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.internal.HtmlHeaderContainer;
 import org.apache.wicket.util.time.Duration;
+import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.NavAppToAppHeaderItem;
 import org.hippoecm.frontend.service.ILogoutService;
 import org.hippoecm.frontend.util.WebApplicationHelper;
@@ -60,7 +61,9 @@ public class ActiveLogoutPlugin extends Component {
         super.internalRenderHead(container);
 
         final IHeaderResponse header = container.getHeaderResponse();
-        header.render(new NavAppToAppHeaderItem(getLogoutCallbackUrl()));
+        if (Main.isCmsApplication()) {
+            header.render(new NavAppToAppHeaderItem(getLogoutCallbackUrl()));
+        }
 
         if (isActive()) {
             log.info("Inactive user sessions will be logged out automatically after {}", Duration.minutes(maxInactiveIntervalMinutes));

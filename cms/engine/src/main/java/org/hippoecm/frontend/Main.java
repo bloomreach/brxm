@@ -833,7 +833,7 @@ public class Main extends PluginApplication {
         });
     }
 
-    private boolean isCmsApplication() {
+    public static boolean isCmsApplication() {
         return PluginUserSession.get().getApplicationName().equals("cms");
     }
 
