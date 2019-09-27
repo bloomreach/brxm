@@ -11,15 +11,6 @@ definitions:
           hipposys:filter: false
           hipposys:type: Name
           hipposys:value: hipposysedit:prototype
-      /taxonomy-section:
-        jcr:primaryType: hipposys:domainrule
-        /cluster-name:
-          jcr:primaryType: hipposys:facetrule
-          hipposys:equals: true
-          hipposys:facet: cluster.name
-          hipposys:filter: false
-          hipposys:type: String
-          hipposys:value: cms-tree-views/taxonomies
       /readwrite:
         jcr:primaryType: hipposys:authrole
         hipposys:groups: [author, editor]
