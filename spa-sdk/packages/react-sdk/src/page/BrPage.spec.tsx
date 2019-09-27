@@ -14,36 +14,20 @@
  * limitations under the License.
  */
 
-import * as spaSdk from '@bloomreach/spa-sdk';
+jest.mock('@bloomreach/spa-sdk');
 
 import React from 'react';
 import { shallow, ShallowWrapper } from 'enzyme';
+import { destroy, initialize, Page } from '@bloomreach/spa-sdk';
 
 import { BrPage } from './BrPage';
-import { Meta } from '../meta/Meta';
+import { Meta } from '../meta';
+import { pageMock } from '../../__mocks__/@bloomreach/spa-sdk';
 
 const model = {
   data: {
-    page: {
-      id: 'page1',
-      type: 'COMPONENT',
-      name: 'Page1',
-      "_meta": {
-        "beginNodeSpan": [
-          {
-            "type": "comment",
-            "data": "comment-start"
-          },
-        ],
-        "endNodeSpan": [
-          {
-            "type": "comment",
-            "data": "comment-end"
-          },
-        ],
-      },
-    },
-  }
+    page: { id: 'page1', type: 'COMPONENT' },
+  },
 };
 
 const config = {
@@ -63,54 +47,56 @@ const config = {
 class TestComponent extends React.Component {}
 const mapping = { TestComponent };
 
-describe('BrPage', function() {
-  let spaInit: any;
-  let spaDestroy: any;
+const initializeMock = (initialize as jest.Mock);
 
+async function createBrPage(children: JSX.Element | undefined = undefined): Promise<ShallowWrapper> {
+  const wrapper = shallow(
+    <BrPage configuration={config} mapping={mapping}>
+      {children}
+    </BrPage>
+  );
+
+  // wait for BrPage.initializePage to resolve
+  await (initialize as jest.Mock).mock.results[0].value;
+  return wrapper;
+}
+
+describe('BrPage', () => {
   beforeEach(() => {
-    spaInit = jest.spyOn(spaSdk, 'initialize');
-    spaDestroy = jest.spyOn(spaSdk, 'destroy');
+    initializeMock.mockResolvedValue(pageMock);
   });
 
   afterEach(() => {
-    spaInit.mockRestore();
-    spaDestroy.mockRestore();
+    initializeMock.mockClear();
+    (destroy as jest.Mock).mockClear();
   });
-
-  async function createBrPage(children: JSX.Element | undefined = undefined): Promise<ShallowWrapper> {
-    const wrapper = shallow(
-      <BrPage configuration={config} mapping={mapping}>
-        {children}
-      </BrPage>
-    );
-    // wait for BrPage.initializePage to resolve
-    const page = await spaInit.mock.results[0].value;
-
-    return wrapper;
-  }
 
   it('should initialize the SPA SDK', async () => {
     const wrapper = await createBrPage();
-    expect(spaInit).toHaveBeenCalledWith(config);
+    expect(initialize).toHaveBeenCalledWith(config);
 
-    const page: spaSdk.Page = wrapper.state('page');
+    const page: Page = wrapper.state('page');
     expect(page).toBeDefined();
-    expect(page.getComponent().getId()).toBe('page1');
   });
 
   it('should render nothing if there is no page', async () => {
-    spaInit.mockReturnValue(null);
+    initializeMock.mockResolvedValue(null);
     const wrapper = await createBrPage();
+    const page: Page = wrapper.state('page');
 
+    expect(page).toBeNull();
     expect(wrapper.isEmptyRender()).toBe(true);
   });
 
   it('should render nothing if there is an error loading the page', (done) => {
-    spaInit.mockRejectedValue('error-loading-page');
+    const error = new Error('error-loading-page');
+    initializeMock.mockRejectedValue(error);
+
     const wrapper = shallow(<BrPage configuration={config} mapping={{}}/>);
-    spaInit.mock.results[0].value.catch((e: Error) => {
+
+    initializeMock.mock.results[0].value.catch((e: Error) => {
       expect(wrapper.isEmptyRender()).toBe(true);
-      expect(e).toEqual('error-loading-page');
+      expect(e).toEqual(error);
       done();
     });
   });
@@ -118,28 +104,25 @@ describe('BrPage', function() {
   it('should render MappingContext.provider', async () => {
     const wrapper = await createBrPage();
 
-    expect(wrapper.find("ContextProvider").first().prop('value')).toEqual(mapping);
+    expect(wrapper.find('ContextProvider').first().prop('value')).toEqual(mapping);
   });
 
   it('should render PageContext.provider', async () => {
     const wrapper = await createBrPage();
     const page = wrapper.state('page');
 
-    expect(wrapper.find("ContextProvider").last().prop('value')).toEqual(page);
+    expect(wrapper.find('ContextProvider').last().prop('value')).toEqual(page);
   });
 
   it('should render children', async () => {
-    const wrapper = await createBrPage(<div id="br-page-child"></div>);
-    await spaInit.mock.results[0].value;
+    const wrapper = await createBrPage(<div id="br-page-child"/>);
 
-    expect(wrapper.contains([
-      <div id="br-page-child"></div>
-    ])).toBe(true);
+    expect(wrapper.contains(<div id="br-page-child"/>)).toBe(true);
   });
 
   it('should render meta data in comments', async () => {
-    const wrapper = await createBrPage();
-    const page: spaSdk.Page = wrapper.state('page');
+    const wrapper = await createBrPage(<div id="child-id"/>);
+    const page: Page = wrapper.state('page');
     const pageMeta = page.getComponent().getMeta();
 
     expect(wrapper.contains(<Meta meta={pageMeta[0]} />)).toBe(true);
@@ -154,8 +137,8 @@ describe('BrPage', function() {
       configuration: newConfig,
     });
 
-    expect(spaDestroy).toHaveBeenCalledWith(page);
-    expect(spaInit).toHaveBeenCalledWith(newConfig);
+    expect(destroy).toHaveBeenCalledWith(page);
+    expect(initialize).toHaveBeenCalledWith(newConfig);
   });
 
   it('should destroy the page when unmounting', async () => {
@@ -163,14 +146,14 @@ describe('BrPage', function() {
     const page = wrapper.state('page');
 
     wrapper.unmount();
-    expect(spaDestroy).toHaveBeenCalledWith(page);
+    expect(destroy).toHaveBeenCalledWith(page);
   });
 
   it('should not destroy a null page when unmounting', async () => {
-    spaInit.mockReturnValue(null);
+    initializeMock.mockReturnValue(null);
     const wrapper = await createBrPage();
 
     wrapper.unmount();
-    expect(spaDestroy).not.toHaveBeenCalled();
+    expect(destroy).not.toHaveBeenCalled();
   });
 });
