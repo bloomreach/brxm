@@ -23,8 +23,7 @@ definitions:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.plugin.workflow.ShortcutsPlugin
         shortcuts.id: shortcuts.id
-        shortcuts.query: /jcr:root/hippo:configuration/hippo:frontend/cms/cms-dashshortcuts/*/@workaround
-          order by @workaround
+        shortcuts.query: /jcr:root/hippo:configuration/hippo:frontend/cms/cms-dashshortcuts/* order by @sortingWeight
         wicket.id: service.dashboard.shortcuts.shortcut
       /currentActivityPlugin:
         jcr:primaryType: frontend:plugin
