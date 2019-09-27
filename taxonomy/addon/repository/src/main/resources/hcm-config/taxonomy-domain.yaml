@@ -20,22 +20,6 @@ definitions:
           hipposys:filter: false
           hipposys:type: String
           hipposys:value: cms-tree-views/taxonomies
-      /taxonomy-namespace-filter:
-        jcr:primaryType: hipposys:domainrule
-        /node-type:
-          jcr:primaryType: hipposys:facetrule
-          hipposys:equals: true
-          hipposys:facet: jcr:primaryType
-          hipposys:filter: false
-          hipposys:type: Name
-          hipposys:value: frontend:pluginconfig
-        /node-name:
-          jcr:primaryType: hipposys:facetrule
-          hipposys:equals: true
-          hipposys:facet: nodename
-          hipposys:filter: false
-          hipposys:type: Name
-          hipposys:value: showTaxonomyNamespace
       /readwrite:
         jcr:primaryType: hipposys:authrole
         hipposys:groups: [author, editor]
