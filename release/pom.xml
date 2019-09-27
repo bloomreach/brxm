@@ -71,7 +71,7 @@
     <hippo.plugin.content-tagging.version>14.0.0-SNAPSHOT</hippo.plugin.content-tagging.version>
     <hippo.plugin.dashboard-document-wizard.version>14.0.0-SNAPSHOT</hippo.plugin.dashboard-document-wizard.version>
     <hippo.plugin.gallerypicker.version>14.0.0-SNAPSHOT</hippo.plugin.gallerypicker.version>
-    <hippo.plugin.poll.version>14.0.0-SNAPSHOT</hippo.plugin.poll.version>
+    <hippo.plugin.poll.version>14.0.0-securitydomain-SNAPSHOT</hippo.plugin.poll.version>
     <hippo.plugin.relateddocs.version>14.0.0-SNAPSHOT</hippo.plugin.relateddocs.version>
     <hippo.plugin.resourcebundle-editor.version>14.0.0-SNAPSHOT</hippo.plugin.resourcebundle-editor.version>
     <hippo.plugin.robotstxt.version>14.0.0-SNAPSHOT</hippo.plugin.robotstxt.version>
