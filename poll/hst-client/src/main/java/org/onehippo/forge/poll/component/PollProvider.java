@@ -24,6 +24,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.Cookie;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
@@ -40,6 +41,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Strings;
+
+import static org.apache.commons.lang.StringUtils.substringAfterLast;
 
 /**
  * Provider that can be instantiated within a component to add poll functionality by composition.
@@ -310,7 +313,13 @@ public class PollProvider {
         }
 
         // On 1.08.01+, multi site is better supported with structure [base] / [site root] / [relativepath]
-        return baseDataPath + "/" + request.getRequestContext().getSiteContentBaseBean().getName() + "/" + stripSlash(pollDocumentPath);
+
+        // do not use request.getRequestContext().getSiteContentBaseBean() to find the 'content base node name since
+        // this method is also invoked with the 'sitewriter' user which by default does not have read-access to
+        // content folders
+        final String siteContentBaseNodeName = substringAfterLast(request.getRequestContext().getSiteContentBasePath(), "/");
+
+        return baseDataPath + "/" + siteContentBaseNodeName + "/" + stripSlash(pollDocumentPath);
     }
 
     /**

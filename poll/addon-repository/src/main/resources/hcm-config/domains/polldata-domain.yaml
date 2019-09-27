@@ -4,27 +4,18 @@ definitions:
       jcr:primaryType: hipposys:domain
       /readwrite:
         jcr:primaryType: hipposys:authrole
-        hipposys:groups: [sitewriters]
+        hipposys:users: [sitewriter]
         hipposys:role: readwrite
       /readonly:
         jcr:primaryType: hipposys:authrole
-        hipposys:groups: [liveusers, previewusers]
+        hipposys:users: [liveuser, previewuser]
         hipposys:role: readonly
-      /poll-polldata:
+      /polldata-and-descendants:
         jcr:primaryType: hipposys:domainrule
         /poll-polldata-node:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
-          hipposys:facet: jcr:primaryType
+          hipposys:facet: jcr:path
           hipposys:filter: false
-          hipposys:type: Name
-          hipposys:value: poll:polldata
-      /poll-vote:
-        jcr:primaryType: hipposys:domainrule
-        /poll-vote-node:
-          jcr:primaryType: hipposys:facetrule
-          hipposys:equals: true
-          hipposys:facet: jcr:primaryType
-          hipposys:filter: false
-          hipposys:type: Name
-          hipposys:value: poll:votes
+          hipposys:type: Reference
+          hipposys:value: /polldata
