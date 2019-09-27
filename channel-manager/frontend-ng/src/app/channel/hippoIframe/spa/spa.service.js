@@ -52,6 +52,9 @@ class SpaService {
         syncOverlay: () => {
           this.OverlayService.sync();
         },
+        sync: () => {
+          this.RenderingService.createOverlay();
+        },
       };
       this.spa.init(publicApi);
     } catch (error) {
