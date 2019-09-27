@@ -6,8 +6,8 @@ definitions:
       browser.id: service.browse
       documentType: {{namespace}}:newsdocument
       plugin.class: org.onehippo.forge.dashboard.documentwizard.NewDocumentWizardPlugin
+      sortingWeight: 2
       wicket.id: shortcut
-      workaround: 2
       /nl:
         jcr:primaryType: frontend:pluginconfig
         date-label: Jaar/maand-folders

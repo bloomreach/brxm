@@ -7,9 +7,9 @@ definitions:
       classificationType: list
       documentType: {{namespace}}:eventsdocument
       plugin.class: org.onehippo.forge.dashboard.documentwizard.NewDocumentWizardPlugin
+      sortingWeight: 3
       valueListPath: /content/documents/valuelists/eventtypes
       wicket.id: shortcut
-      workaround: 3
       /nl:
         jcr:primaryType: frontend:pluginconfig
         list-label: Thema
