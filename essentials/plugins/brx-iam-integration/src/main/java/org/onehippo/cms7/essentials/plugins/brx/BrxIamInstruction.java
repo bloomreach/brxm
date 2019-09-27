@@ -38,13 +38,8 @@ public class BrxIamInstruction implements Instruction {
 
     public static final String FILTER_NAME = "BrxAuthFilter";
     private static final List<String> URL_PATTERNS = Collections.singletonList("/*");
-    private static final String ENTERPRISE_SERVICES_ARTIFACTID = "hippo-enterprise-services";
-    private static final MavenDependency DEPENDENCY_ENTERPRISE_SERVICES
-            = new MavenDependency(ProjectService.GROUP_ID_ENTERPRISE, ENTERPRISE_SERVICES_ARTIFACTID);
 
     @Inject private WebXmlService webXmlService;
-    @Inject private MavenCargoService mavenCargoService;
-    @Inject private MavenAssemblyService mavenAssemblyService;
 
     @Override
     public Status execute(final Map<String, Object> parameters) {
@@ -53,18 +48,11 @@ public class BrxIamInstruction implements Instruction {
         // Note: this relies on a Java annotation to register the filter first, to avoid ordering problems
         webXmlService.insertFilterMapping(Module.CMS, FILTER_NAME, URL_PATTERNS, "HstFilter");
 
-        // Install "enterprise services" JAR
-        mavenCargoService.addDependencyToCargoSharedClasspath(DEPENDENCY_ENTERPRISE_SERVICES);
-        mavenAssemblyService.addIncludeToFirstDependencySet("shared-lib-component.xml", DEPENDENCY_ENTERPRISE_SERVICES);
-
         return Status.SUCCESS;
     }
 
     @Override
     public void populateChangeMessages(final BiConsumer<Type, String> changeMessageQueue) {
         changeMessageQueue.accept(Type.EXECUTE, "Add new filter to web.xml for BRX IAM Integration.");
-        changeMessageQueue.accept(Type.EXECUTE, "Add dependency '" + ProjectService.GROUP_ID_ENTERPRISE
-                + ":" + ENTERPRISE_SERVICES_ARTIFACTID + "' to shared classpath of the Maven cargo plugin configuration.");
-        changeMessageQueue.accept(Type.EXECUTE, "Add same dependency to distribution configuration file 'shared-lib-component.xml'.");
     }
 }
