@@ -19,11 +19,15 @@ const spaSdk = jest.requireActual('@bloomreach/spa-sdk');
 export const META_POSITION_BEGIN = spaSdk.META_POSITION_BEGIN;
 export const META_POSITION_END = spaSdk.META_POSITION_END;
 
-function mockMeta(data: string, position: string) {
+export function mockMeta(data: string, position: string) {
   return {
     getData: jest.fn().mockReturnValue(data),
     getPosition: jest.fn().mockReturnValue(position),
   };
+}
+
+export function mockNoCommentMeta() {
+  return mockMeta('not-a-comment', META_POSITION_BEGIN);
 }
 
 const componentMock = {
@@ -42,3 +46,7 @@ export const pageMock = {
 
 export const initialize = jest.fn();
 export const destroy = jest.fn();
+
+export function isMetaComment(value: any) {
+  return value.getData() !== 'not-a-comment';
+}

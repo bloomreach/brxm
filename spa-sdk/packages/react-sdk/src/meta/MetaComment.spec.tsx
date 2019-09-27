@@ -14,26 +14,25 @@
  * limitations under the License.
  */
 
-import { mount, shallow, ShallowWrapper } from 'enzyme';
+jest.mock('@bloomreach/spa-sdk');
+
+import { mount } from 'enzyme';
 import React from 'react';
+import { META_POSITION_BEGIN } from '@bloomreach/spa-sdk';
+
 import { MetaComment } from './MetaComment';
-import { MetaComment as SpaMetaComment } from '@bloomreach/spa-sdk';
+import { mockMeta } from '../../__mocks__/@bloomreach/spa-sdk';
 
-const meta: SpaMetaComment = {
-  getData: () => 'comment-data',
-  getPosition: jest.fn(),
-}
-
-describe('MetaComment', function() {
+describe('MetaComment', () => {
   it('should render a comment that contains data', () => {
+    const meta = mockMeta('comment-data', META_POSITION_BEGIN);
     const wrapper = mount(<div><MetaComment meta={meta}/></div>);
 
     expect(wrapper.html()).toBe('<div><!--comment-data--></div>');
-
-    wrapper.unmount();
   });
 
   it('should update if meta data has changed', () => {
+    const meta = mockMeta('comment-data', META_POSITION_BEGIN);
     const shouldComponentUpdate = jest.spyOn(MetaComment.prototype, 'shouldComponentUpdate');
     const wrapper = mount(<MetaComment meta={meta}/>);
     expect(shouldComponentUpdate).not.toHaveBeenCalled();
@@ -49,6 +48,7 @@ describe('MetaComment', function() {
   });
 
   it('should remove the comment when the component unmounts', () => {
+    const meta = mockMeta('comment-data', META_POSITION_BEGIN);
     const wrapper = mount(<div><MetaComment meta={meta}/></div>);
     wrapper.unmount();
 
