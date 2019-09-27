@@ -71,12 +71,13 @@ describe('BrPage', () => {
     (destroy as jest.Mock).mockClear();
   });
 
-  it('should initialize the SPA SDK', async () => {
+  it('should initialize the SPA SDK and sync the CMS', async () => {
     const wrapper = await createBrPage();
     expect(initialize).toHaveBeenCalledWith(config);
 
     const page: Page = wrapper.state('page');
     expect(page).toBeDefined();
+    expect(page.sync).toHaveBeenCalled();
   });
 
   it('should render nothing if there is no page', async () => {
@@ -129,9 +130,9 @@ describe('BrPage', () => {
     expect(wrapper.contains(<Meta meta={pageMeta[1]} />)).toBe(true);
   });
 
-  it('should destroy current page and init new page when configuration changes', async () => {
+  it('should update page and sync CMS when configuration changes', async () => {
     const wrapper = await createBrPage();
-    const page = wrapper.state('page');
+    const page: Page = wrapper.state('page');
     const newConfig = { ...config };
     wrapper.setProps({
       configuration: newConfig,
@@ -139,6 +140,7 @@ describe('BrPage', () => {
 
     expect(destroy).toHaveBeenCalledWith(page);
     expect(initialize).toHaveBeenCalledWith(newConfig);
+    expect(page.sync).toHaveBeenCalled();
   });
 
   it('should destroy the page when unmounting', async () => {
