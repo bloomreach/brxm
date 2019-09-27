@@ -1,21 +1,30 @@
 definitions:
   config:
-    /hippo:configuration/hippo:domains/polldata:
-      jcr:primaryType: hipposys:domain
-      /readwrite:
-        jcr:primaryType: hipposys:authrole
-        hipposys:users: [sitewriter]
-        hipposys:role: readwrite
-      /readonly:
-        jcr:primaryType: hipposys:authrole
-        hipposys:users: [liveuser, previewuser]
-        hipposys:role: readonly
-      /polldata-and-descendants:
-        jcr:primaryType: hipposys:domainrule
-        /poll-polldata-node:
-          jcr:primaryType: hipposys:facetrule
-          hipposys:equals: true
-          hipposys:facet: jcr:path
-          hipposys:filter: false
-          hipposys:type: Reference
-          hipposys:value: /polldata
+    /polldata/poll:domains:
+      jcr:primaryType: hipposys:federateddomainfolder
+      /polldata:
+        jcr:primaryType: hipposys:domain
+        /readwrite:
+          jcr:primaryType: hipposys:authrole
+          hipposys:users: [sitewriter]
+          hipposys:role: readwrite
+        /readonly:
+          jcr:primaryType: hipposys:authrole
+          hipposys:users: [liveuser, previewuser]
+          hipposys:role: readonly
+        /polldata-and-descendants:
+          jcr:primaryType: hipposys:domainrule
+          /poll-polldata-node:
+            jcr:primaryType: hipposys:facetrule
+            hipposys:equals: true
+            hipposys:facet: jcr:path
+            hipposys:filter: false
+            hipposys:type: Reference
+            hipposys:value: /
+          /exclude-poll-domains-and-descendants:
+            jcr:primaryType: hipposys:facetrule
+            hipposys:equals: false
+            hipposys:facet: jcr:path
+            hipposys:filter: false
+            hipposys:type: Reference
+            hipposys:value: /poll:domains
