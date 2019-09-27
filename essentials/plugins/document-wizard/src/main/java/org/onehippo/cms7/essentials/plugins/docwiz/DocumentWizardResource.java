@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ public class DocumentWizardResource {
             final Node node = root.addNode(shortcutName, "frontend:plugin");
             node.setProperty("browser.id", "service.browse");
             node.setProperty("wicket.id", "shortcut");
-            node.setProperty("workaround", "4");
+            node.setProperty("sortingWeight", Long.valueOf("4"));
             node.setProperty("plugin.class", "org.onehippo.forge.dashboard.documentwizard.NewDocumentWizardPlugin");
             node.setProperty("baseFolder", configuration.getBaseFolder());
             node.setProperty("query", configuration.getDocumentQuery());
