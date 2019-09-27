@@ -29,7 +29,7 @@ definitions:
         .meta:residual-child-node-category: content
         jcr:primaryType: hst:sites
       /hst:domains:
-        jcr:primaryType: hst:domainfolder
+        jcr:primaryType: hipposys:federateddomainfolder
         .meta:residual-child-node-category: system
         /hstconfig:
           jcr:primaryType: hipposys:domain
