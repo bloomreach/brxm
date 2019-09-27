@@ -24,6 +24,10 @@ class SpaService {
     this.RenderingService = RenderingService;
   }
 
+  _warnDeprecated() {
+    this.$log.warn('This version of the SPA SDK is deprecated and will not work in the next major release.');
+  }
+
   init(iframeJQueryElement) {
     this.iframeJQueryElement = iframeJQueryElement;
   }
@@ -47,9 +51,11 @@ class SpaService {
     try {
       const publicApi = {
         createOverlay: () => {
+          this._warnDeprecated();
           this.RenderingService.createOverlay();
         },
         syncOverlay: () => {
+          this._warnDeprecated();
           this.OverlayService.sync();
         },
         sync: () => {
