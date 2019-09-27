@@ -54,8 +54,8 @@
       }
 
       return childConnectionPromise
-        .then(childApi => childApi.navigate(location, flags))
-        .catch(e => console.error(e));
+        .then((childApi) => childApi.navigate(location, flags))
+        .catch((e) => console.error(e));
     }
 
     registerIframe(iframeElement) {
@@ -69,7 +69,7 @@
 
       connectionPromise
         .then(() => this.connections.set(iframeElement, connectionPromise))
-        .catch(e => console.error(e));
+        .catch((e) => console.error(e));
 
       return connectionPromise;
     }
@@ -77,7 +77,7 @@
     connectToParent(parentOrigin) {
       // Config object sent to parent when connecting.
       const parentConnectionConfig = {
-        parentOrigin: parentOrigin,
+        parentOrigin,
         methods: this.cmsToNavApp,
       };
 
@@ -85,19 +85,20 @@
         () => {
           this.parentConnection = this.navAppCommunication.connectToParent(
             parentConnectionConfig,
-          ).then(parentApi => {
+          ).then((parentApi) => {
             Hippo.UserActivity.registerOnInactive(() => {
               parentApi.onSessionExpired();
             });
             Hippo.UserActivity.registerOnActive(() => {
-              //TODO delete once implemented in the navapp
-              parentApi.onUserActivity && parentApi.onUserActivity();
+              if (parentApi.onUserActivity) {
+                parentApi.onUserActivity();
+              }
             });
             return parentApi;
           });
           return this.parentConnection;
         },
-        e => e,
+        (e) => console.error(e),
       );
     }
   }
@@ -180,7 +181,8 @@
       return Promise.resolve(true);
     },
     navigate(location, flags) {
-      const pathElements = location.path.split('/');
+      const pathWithoutLeadingSlash = location.path.replace(/^\/+/, '');
+      const pathElements = pathWithoutLeadingSlash.split('/');
       const perspectiveIdentifier = pathElements.shift();
       const perspective = getPerspective(perspectiveIdentifier);
 
@@ -192,21 +194,23 @@
 
       const connections = Hippo.iframeConnections.getConnections();
       const iframeClassName = Array.from(connections.keys()).map(
-        iframe => iframe.className,
+        (iframe) => iframe.className,
       );
 
-      if (iframeClassName.includes(perspectiveIdentifier + '-iframe')) {
-        if ( perspectiveIdentifier === 'projects' ){
+      if (iframeClassName.includes(`${perspectiveIdentifier}-iframe`)) {
+        if ( perspectiveIdentifier === 'projects' ) {
           pathElements.unshift(perspectiveIdentifier);
         }
-        const location = { path: pathElements.join('/') };
+        const subAppLocation
+          = { path: pathElements.join('/') };
 
         if (flags && flags['forceRefresh']) {
           if (perspectiveIdentifier === 'channelmanager') {
             openChannelManagerOverview.call(this);
           }
           if (perspectiveIdentifier === 'projects') {
-            location.path = '/projects';
+            subAppLocation
+              .path = '/projects';
           }
         }
 
@@ -215,7 +219,8 @@
         );
 
         if (iframe) {
-          return Hippo.iframeConnections.navigate(iframe, location, flags);
+          return Hippo.iframeConnections.navigate(iframe, subAppLocation
+            , flags);
         }
       }
 
