@@ -17,6 +17,7 @@ package org.onehippo.forge.poll.component;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.servlet.http.Cookie;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.annotations.Persistable;
@@ -37,6 +38,10 @@ public class PollComponent extends BaseHstComponent {
     public void doBeforeRender(HstRequest request, HstResponse response)
             throws HstComponentException {
         super.doBeforeRender(request, response);
+        // set a cookie that is totally not important but is needed to avoid that IF a visitor does not yet have
+        // any cookie, that org.onehippo.forge.poll.component.PollProvider.getPersistentValue() returns
+        // org.onehippo.forge.poll.component.PollProvider.NO_COOKIE_SUPPORT
+        response.addCookie(new Cookie("cookiesAllowed", "true"));
         PollComponentInfo pollComponentInfo = getComponentParametersInfo(request);
         pollProvider.doBeforeRender(request, response, pollComponentInfo);
     }
