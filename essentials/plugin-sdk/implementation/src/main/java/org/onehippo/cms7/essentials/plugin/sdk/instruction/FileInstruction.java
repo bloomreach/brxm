@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
 public class FileInstruction extends BuiltinInstruction {
 
     public enum Action {
-        COPY, DELETE
+        COPY, DELETE, APPEND
     }
 
     private static final Logger log = LoggerFactory.getLogger(FileInstruction.class);
@@ -72,6 +72,13 @@ public class FileInstruction extends BuiltinInstruction {
                     return Status.FAILED;
                 }
                 return projectService.deleteFile(target, placeholderData) ? Status.SUCCESS : Status.FAILED;
+            case APPEND:
+                if (StringUtils.isBlank(target)) {
+                    log.error("Invalid file instruction '{}'.", toString());
+                    return Status.FAILED;
+                }
+                return projectService.appendResource("/" + source, target, placeholderData, binary)
+                        ? Status.SUCCESS : Status.FAILED;
         }
 
         log.error("Unsupported file instruction action '{}'.", action);

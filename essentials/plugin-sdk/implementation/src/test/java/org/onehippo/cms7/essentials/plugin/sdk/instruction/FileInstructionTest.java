@@ -17,11 +17,13 @@
 package org.onehippo.cms7.essentials.plugin.sdk.instruction;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 import org.onehippo.cms7.essentials.BaseTest;
 import org.onehippo.cms7.essentials.ResourceModifyingTest;
@@ -71,6 +73,48 @@ public class FileInstructionTest extends ResourceModifyingTest {
         assertEquals(Instruction.Status.SUCCESS, instruction.execute(dummyParameters));
         assertTrue(file.exists());
         assertTrue(GlobalUtils.readTextFile(file.toPath()).toString().contains("{{namespace}}"));
+
+        // and delete again
+        instruction.setActionEnum(FileInstruction.Action.DELETE);
+        assertEquals(Instruction.Status.SUCCESS, instruction.execute(dummyParameters));
+        assertFalse(file.exists());
+    }
+
+    @Test
+    public void testAppend() throws Exception {
+        createModifiableDirectory("dummy"); // initialise project.basedir
+
+        final String targetInput = "{{projectRoot}}/file_instruction_copy.txt";
+        final Map<String, Object> placeholders = placeholderService.makePlaceholders();
+        final String target = TemplateUtils.replaceTemplateData(targetInput, placeholders);
+        final File file = new File(target);
+        final FileInstruction instruction = new FileInstruction();
+        autoWire(instruction);
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(FileInstruction.class).build()) {
+            assertEquals(Instruction.Status.FAILED, instruction.execute(dummyParameters));
+            assertTrue(interceptor.messages().anyMatch(m -> m.contains("Invalid file instruction")));
+        }
+
+        // copy file and validate result
+        instruction.setAction(FileInstruction.Action.APPEND.toString());
+        final String sourceName = "file_instruction_test.txt";
+        final String sourceText = IOUtils.resourceToString("/"+sourceName, StandardCharsets.UTF_8);
+        final String matchText = TemplateUtils.replaceTemplateData(sourceText, placeholders);
+        instruction.setSource(sourceName);
+        instruction.setTarget(targetInput);
+        assertEquals(Instruction.Status.SUCCESS, instruction.execute(dummyParameters));
+        assertTrue(file.exists());
+        // NOTE: it's not clear why a trailing \n is added to the output
+        final String copyResult = GlobalUtils.readTextFile(file.toPath()).toString();
+        assertEquals(matchText+"\n", copyResult);
+        assertTrue(copyResult.contains(BaseTest.PROJECT_NAMESPACE_TEST));
+
+        // append the same data again
+        assertEquals(Instruction.Status.SUCCESS, instruction.execute(dummyParameters));
+        assertTrue(file.exists());
+        final String appendResult = GlobalUtils.readTextFile(file.toPath()).toString();
+        assertEquals(matchText+matchText+"\n", appendResult);
 
         // and delete again
         instruction.setActionEnum(FileInstruction.Action.DELETE);

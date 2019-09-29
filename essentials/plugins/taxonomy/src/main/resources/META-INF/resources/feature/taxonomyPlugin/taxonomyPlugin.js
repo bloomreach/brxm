@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@
                         });
                     }
                 });
-                $http.post(endpointTaxonomy + '/add', taxonomyFields).success(function () {
+                $http.post(endpointTaxonomy + '/add', taxonomyFields).then(function () {
                     $scope.fieldsAdded = true;
                     updateDocumentTypes();
                 });
@@ -40,7 +40,7 @@
                     name: $scope.taxonomyName,
                     locales: extractLocales($scope.locales)
                 };
-                $http.post(endpointTaxonomy + '/taxonomies/add', taxonomy).success(function () {
+                $http.post(endpointTaxonomy + '/taxonomies/add', taxonomy).then(function () {
                     loadTaxonomies();
                 });
             };
@@ -51,10 +51,10 @@
             //############################################
             // INITIALIZE APP:
             //############################################
-            essentialsContentTypeService.getContentTypes().success(function (data) {
+            essentialsContentTypeService.getContentTypes().then(function (response) {
                 // Filter out basedocument
                 $scope.documentTypes = [];
-                angular.forEach(data, function(docType) {
+                angular.forEach(response.data, function(docType) {
                     if (docType.name !== 'basedocument') {
                         $scope.documentTypes.push(docType);
                     }
@@ -81,10 +81,10 @@
                 ];
                 $scope.taxonomyName = null;
 
-                $http.get(endpointTaxonomy + "/taxonomies").success(function (data) {
-                    $scope.taxonomies = data;
+                $http.get(endpointTaxonomy + "/taxonomies").then(function (response) {
+                    $scope.taxonomies = response.data;
 
-                    angular.forEach(data, function (taxonomy) {
+                    angular.forEach(response.data, function (taxonomy) {
                         taxonomy.localesString = taxonomy.locales.join(', ');
                     });
                 });
@@ -98,9 +98,9 @@
                     $scope.typesWithTaxonomyField = 0;
 
                     // update list of per-document used taxonomies
-                    $http.get(endpointTaxonomy + '/taxonomies/' + docType.fullName).success(function (taxonomies) {
-                        docType.taxonomies = taxonomies;
-                        docType.taxonomiesString = taxonomies.join(', ');
+                    $http.get(endpointTaxonomy + '/taxonomies/' + docType.fullName).then(function (response) {
+                        docType.taxonomies = response.data;
+                        docType.taxonomiesString = response.data.join(', ');
                         docType.hasTaxonomyFields = !!docType.taxonomiesString;
                         if (!docType.taxonomiesString) {
                             docType.taxonomiesString = 'none';

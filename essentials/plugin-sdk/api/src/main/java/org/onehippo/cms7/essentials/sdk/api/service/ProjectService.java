@@ -142,6 +142,20 @@ public interface ProjectService {
     List<File> getLog4j2Files();
 
     /**
+     * Append data from a resource file to a file inside the project.
+     *
+     * The targetLocation is interpolated with the context's placeholder data to produce the full filesystem path
+     * for the destination file. It therefore typically starts with a placeholder such as {{siteResources}}.
+     *
+     * @param resourcePath    absolute classloader path to the resource to copy
+     * @param targetLocation  of the copied file
+     * @param placeholderData to interpolate placeholders in resource and targetLocation
+     * @param isBinary        flag indicating that the resource has binary content and is therefore not subject to interpolation
+     * @return true if the file was copied successfully, false otherwise
+     */
+    boolean appendResource(String resourcePath, String targetLocation, Map<String, Object> placeholderData, boolean isBinary);
+
+    /**
      * Copy a resource to a file inside the project.
      *
      * The targetLocation is interpolated with the context's placeholder data to produce the full filesystem path

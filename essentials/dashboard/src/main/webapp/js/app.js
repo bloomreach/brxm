@@ -34,7 +34,7 @@
 //############################################
 // GLOBAL LOADING
 //############################################
-        .config(function ($provide, $httpProvider) {
+        .config(function ($provide, $httpProvider, $locationProvider) {
 
             function addError($rootScope, error) {
                 if (!error) {
@@ -116,6 +116,8 @@
             }
             $httpProvider.defaults.headers.get['If-Modified-Since'] = 'Mon, 26 Jul 1997 05:00:00 GMT';
             $httpProvider.defaults.headers.get['Cache-Control'] = 'no-cache';
+
+            $locationProvider.hashPrefix('');
         })
 
 //############################################
@@ -158,6 +160,7 @@
 
             $rootScope.feedbackMessages = [];
             $rootScope.applicationUrl = window.SERVER_URL + '/essentials';
+
         })
 
 

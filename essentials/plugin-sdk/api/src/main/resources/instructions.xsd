@@ -28,6 +28,7 @@
     <xs:restriction base="xs:string">
       <xs:enumeration value="delete"/>
       <xs:enumeration value="copy"/>
+      <xs:enumeration value="append"/>
     </xs:restriction>
   </xs:simpleType>
   <xs:simpleType name="xmlActionType">

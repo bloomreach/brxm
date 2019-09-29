@@ -1,5 +1,5 @@
 <!--
-  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -43,16 +43,16 @@
         <div class="flex-child right-col" ng-hide="selectedImageSet">
             <div class="alert alert-warning">
                 <p>
-                    BloomReach CMS stores several variants of each uploaded image.
+                    Bloomreach CMS stores several variants of each uploaded image.
                     All variants of an image are together called an Image Set, and can be uploaded in the
-                    <a target='_blank' href='https://www.onehippo.org/library/end-user-manual/images.html'>Images section</a> of the Content perspective in the CMS.
+                    <a target='_blank' href='https://documentation.bloomreach.com/library/end-user-manual/images.html'>Images section</a> of the Content perspective in the CMS.
                 </p>
                 <p>
                     No custom Image Set Definitions have been created yet, there is only the default Hippo Image Set. You can create
                     custom Image Sets with this Gallery Manager tool.
                 </p>
                 <p>
-                    This tool will create all the <a target='_blank' href='https://www.onehippo.org/library/concepts/images-and-assets/create-a-custom-image-set.html'>technical configuration</a>
+                    This tool will create all the <a target='_blank' href='https://documentation.bloomreach.com/library/concepts/images-and-assets/create-a-custom-image-set.html'>technical configuration</a>
                     for the custom Image Sets.
                 </p>
             </div>
@@ -70,6 +70,8 @@
                         <th>Variant</th>
                         <th>Width</th>
                         <th>Height</th>
+                        <th>Upscale</th>
+                        <th>Crop</th>
                         <th class="table-action"></th>
                         <th class="table-action"></th>
                         <th class="table-action"></th>
@@ -80,6 +82,12 @@
                         <td class="text">{{variant.name}}</td>
                         <td class="text">{{dimension(variant.width)}}</td>
                         <td class="text">{{dimension(variant.height)}}</td>
+                        <td>
+                          <hippo-icon name="check-square" ng-show="variant.upscaling"></hippo-icon>
+                        </td>
+                        <td>
+                          <hippo-icon name="check-square" ng-show="variant.cropping"></hippo-icon>
+                        </td>
                         <td>
                             <hippo-icon name="search" ng-click="viewVariant(variant)"></hippo-icon>
                         </td>
@@ -162,6 +170,8 @@
                 <dd>{{dimension(variant.height)}}</dd>
                 <dt>Upscale</dt>
                 <dd>{{upscaling()}}</dd>
+                <dt>Upscale and crop</dt>
+                <dd>{{cropping()}}</dd>
                 <dt>Speed vs. quality</dt>
                 <dd>{{optimization()}}</dd>
                 <dt>JPEG quality</dt>
@@ -215,11 +225,18 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <div class="col-xs-offset-3 col-sm-9">
+                        <label for="upscaleOption" class="col-xs-3 control-label">Filling options</label>
+                        <div class="col-xs-9">
                             <div class="checkbox">
-                                <label uib-tooltip="Checking 'upscale' allows the image processor to enlarge image variants beyond the original dimensions. This will deteriorate image quality and is therefore not recommended."
-                                tooltip-placement="top" tooltip-trigger="mouseenter">
-                                    <input type="checkbox" ng-model="variant.upscaling"> Upscale
+                                <label uib-tooltip="Originals that are smaller than the variant dimensions are enlarged to fit. This may deteriorate image quality."
+                                tooltip-placement="right" tooltip-trigger="mouseenter" ng-class="upscalingDisabled()?'text-disabled':''">
+                                    <input type="checkbox" id="upscaleOption" ng-model="variant.upscaling" ng-disabled="upscalingDisabled()"> Upscale smaller images
+                                </label>
+                            </div>
+                            <div class="checkbox">
+                                <label uib-tooltip="Scales and then crops the originals to completely fill the variant dimensions. Only available when both width and height are specified."
+                                tooltip-placement="right" tooltip-trigger="mouseenter" ng-class="croppingDisabled()?'text-disabled':''">
+                                    <input type="checkbox" id="croppingOption" ng-model="variant.cropping" ng-disabled="croppingDisabled()"> Crop images to fill dimensions
                                 </label>
                             </div>
                         </div>
@@ -269,7 +286,7 @@
             <div class="modal-footer">
                 <button class="btn btn-default" type="button" ng-click="cancel()">Cancel</button>
                 <button class="btn btn-primary" type="submit" ng-click="save()"
-                        ng-disabled="!variantEditForm.$dirty || variantEditForm.$invalid">Save Changes</button>
+                        ng-disabled="!variantEditForm.$dirty || variantEditForm.$invalid">Save</button>
             </div>
         </form>
     </script>

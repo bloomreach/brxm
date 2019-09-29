@@ -28,7 +28,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
                 version = "1.0.0",
                 description = "Hippo Essentials REST API",
                 license = @License(name = "Apache 2.0 License", url = "http://www.apache.org/licenses/LICENSE-2.0.html"),
-                contact = @Contact(url = "https://bloomreach.com", name = "BloomReach", email = "info@bloomreach.com")
+                contact = @Contact(url = "https://bloomreach.com", name = "Bloomreach", email = "info@bloomreach.com")
         ),
         servers = {
                 @Server(

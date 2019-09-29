@@ -8,7 +8,7 @@
     "/essentials/feature/images/screenshots/tagging01.png",
     "/essentials/feature/images/screenshots/tagging02.png"
   ],
-  "documentationLink": "https://www.onehippo.org/library/concepts/plugins/tagging/about.html",
+  "documentationLink": "https://documentation.bloomreach.com/library/concepts/plugins/tagging/about.html",
   "hasConfiguration": true,
   "installWithParameters": false,
   "packageFile": "/META-INF/tagging_plugin_instructions.xml",
@@ -17,7 +17,7 @@
   ],
   "type": "feature",
   "vendor" : {
-    "name" : "BloomReach",
+    "name" : "Bloomreach",
     "url" : "https://www.bloomreach.com"
   },
   "categories": {

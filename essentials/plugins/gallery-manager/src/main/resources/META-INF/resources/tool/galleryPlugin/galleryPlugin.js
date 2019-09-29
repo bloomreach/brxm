@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -70,7 +70,7 @@
                     updateExisting: $scope.updateExisting
                 };
 
-                $http.post(resource, parameters).success(function () {
+                $http.post(resource, parameters).then(function () {
                     $uibModalInstance.close(prefix + ":" + $scope.name);
                 });
             };
@@ -89,7 +89,7 @@
                     imageVariantName: $scope.name,
                     selectedImageSet: $scope.imageSet.name
                 };
-                $http.post(resource, parameters).success(function () {
+                $http.post(resource, parameters).then(function () {
                     $uibModalInstance.close($scope.name);
                 });
             };
@@ -111,6 +111,13 @@
                     false: 'off'
                 };
                 return map[$scope.variant.upscaling];
+            };
+            $scope.cropping = function() {
+                var map = {
+                    true: 'on',
+                    false: 'off'
+                };
+                return map[$scope.variant.cropping];
             };
             $scope.optimization = function() {
                 var map = {
@@ -141,6 +148,16 @@
         .controller('GalleryManagerVariantEditModalCtrl', ['$scope', '$http', '$uibModalInstance', 'variant', 'resource',
             function($scope, $http, $uibModalInstance, variant, resource) {
 
+            $scope.$watch("variant.cropping", function (value) {
+                if (value) {
+                    $scope.variant.upscaling = true;
+                }
+            });
+            $scope.$watch("croppingDisabled()", function (value) {
+              if (value) {
+                $scope.variant.cropping = false;
+              }
+            });
             $scope.variant = angular.copy(variant);
             $scope.optimizeValues = [
                 { value: "quality", description: "quality" },
@@ -157,6 +174,15 @@
                 { value: 0.7, description: "medium" },
                 { value: 0.5, description: "low" }
             ];
+            $scope.upscalingDisabled = function() {
+                return $scope.variant.cropping;
+            };
+            $scope.croppingDisabled = function() {
+                return !($scope.variant.width 
+                  && parseInt($scope.variant.width) 
+                  && $scope.variant.height 
+                  && parseInt($scope.variant.height));
+            };
             $scope.addTranslation = function() {
                 $scope.variant.translations.push({
                     language: "",
@@ -167,7 +193,7 @@
                 $scope.variant.translations.splice($scope.variant.translations.indexOf(translation), 1);
             };
             $scope.save = function() {
-                $http.post(resource, $scope.variant).success(function () {
+                $http.post(resource, $scope.variant).then(function () {
                     $uibModalInstance.close();
                 });
             };
@@ -181,7 +207,7 @@
 
             $scope.variant = variant;
             $scope.ok = function() {
-                $http.post(resource, variant).success(function () {
+                $http.post(resource, variant).then(function () {
                     $uibModalInstance.close();
                 });
             };
@@ -310,8 +336,8 @@
             };
 
             function loadImageSets(imageSetNameToSelect) {
-                return $http.get(endpoint).success(function (data) {
-                    $scope.imageSets = data;
+                return $http.get(endpoint).then(function (response) {
+                    $scope.imageSets = response.data;
 
                     if (!imageSetNameToSelect) {
                         if ($scope.selectedImageSet) {

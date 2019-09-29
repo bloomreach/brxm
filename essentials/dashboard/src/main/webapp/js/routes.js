@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -105,22 +105,22 @@
                     }
                 }
 
-                projectService.ping().success(function(systemInfo) {
-                    if (systemInfo) {
-                        if (systemInfo.initialized) {
+                projectService.ping().then(function(response) {
+                    if (response.data) {
+                        if (response.data.initialized) {
                             $timeout(ping, PING_RUNNING_TIMER);
-                            $rootScope.TOTAL_PLUGINS = systemInfo.totalPlugins;
-                            $rootScope.TOTAL_TOOLS = systemInfo.totalTools;
-                            $rootScope.INSTALLED_FEATURES = systemInfo.installedFeatures;
-                            $rootScope.NEEDS_REBUILD = systemInfo.needsRebuild;
-                            $rootScope.TOTAL_NEEDS_ATTENTION = pluginTypeFilter(systemInfo.rebuildPlugins, "feature").length + systemInfo.configurablePlugins;
-                            $rootScope.REBUILD_PLUGINS = systemInfo.rebuildPlugins;
+                            $rootScope.TOTAL_PLUGINS = response.data.totalPlugins;
+                            $rootScope.TOTAL_TOOLS = response.data.totalTools;
+                            $rootScope.INSTALLED_FEATURES = response.data.installedFeatures;
+                            $rootScope.NEEDS_REBUILD = response.data.needsRebuild;
+                            $rootScope.TOTAL_NEEDS_ATTENTION = pluginTypeFilter(response.data.rebuildPlugins, "feature").length + response.data.configurablePlugins;
+                            $rootScope.REBUILD_PLUGINS = response.data.rebuildPlugins;
                         } else {
                             // app is back up, but needs to restart
                             window.location.href = $rootScope.applicationUrl;
                         }
                     }
-                }).error(function () {
+                }).catch(function () {
                     openModal();
                     $timeout(ping, PING_DOWN_TIMER);
                 });
@@ -136,11 +136,11 @@
 
             // Dispatch to appropriate initial location
             projectService.status()
-                .success(function (response) {
+                .then(function (response) {
                     if ($location.url() === '') { // only dispatch if not on specific "page".
-                        if (!response.projectInitialized) {
+                        if (!response.data.projectInitialized) {
                             $location.path("/introduction");
-                        } else if (response.pluginsInstalled > 0) {
+                        } else if (response.data.pluginsInstalled > 0) {
                             $location.path("/installed-features");
                         } else {
                             $location.path("/library");
@@ -148,7 +148,7 @@
                     }
                     deferred.resolve(true);
                 })
-                .error(function () {
+                .catch(function () {
                     $location.path("/library");
                     deferred.resolve(true);
                 });

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,13 +66,13 @@
                         parameters.javaFiles.push(docType.fullPath);
                     }
                 });
-                $http.post($scope.endpoint, parameters).success(function () {
+                $http.post($scope.endpoint, parameters).then(function () {
                     // empty
                 });
             };
 
-            essentialsContentTypeService.getContentTypes().success(function (data) {
-                angular.forEach(data, function (docType) {
+            essentialsContentTypeService.getContentTypes().then(function (response) {
+                angular.forEach(response.data, function (docType) {
                     if (docType.fullPath) {
                         $scope.documentTypes.push(docType);
                     }

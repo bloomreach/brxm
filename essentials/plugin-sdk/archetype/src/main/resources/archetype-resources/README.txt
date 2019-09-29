@@ -11,4 +11,4 @@ project. After a (re)build, it will show up as a Feature in the Feature Library.
 
 How to develop this plugin
 ==========================
-Start with documentation at https://www.onehippo.org/library/essentials-plugins/overview.html
+Start with documentation at https://documentation.bloomreach.com/library/essentials-plugins/overview.html
