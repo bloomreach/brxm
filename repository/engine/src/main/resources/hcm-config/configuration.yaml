@@ -121,9 +121,21 @@ definitions:
       /hippo:userroles:
         jcr:primaryType: hipposys:userrolefolder
         .meta:residual-child-node-category: system
+        /xm-security-manager:
+          jcr:primaryType: hipposys:userrole
+          hipposys:system: true
+        /xm-security-user-manager:
+          jcr:primaryType: hipposys:userrole
+          hipposys:system: true
+          hipposys:userroles: [xm-security-manager]
+        /xm-security-application-manager:
+          jcr:primaryType: hipposys:userrole
+          hipposys:system: true
+          hipposys:userroles: [xm-security-manager]
         /xm-admin:
           jcr:primaryType: hipposys:userrole
           hipposys:system: true
+          hipposys:userroles: [xm-security-user-manager, xm-security-application-manager]
         /xm-read-everywhere:
           jcr:primaryType: hipposys:userrole
           hipposys:system: true

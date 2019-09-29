@@ -21,13 +21,16 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
 
 import org.assertj.core.api.Assertions;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.security.Group;
@@ -54,16 +57,33 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.onehippo.repository.security.SecurityConstants.CONFIG_GROUPS_PATH;
+import static org.onehippo.repository.security.SecurityConstants.CONFIG_USERS_PATH;
 import static org.onehippo.repository.util.JcrConstants.JCR_PATH;
 import static org.onehippo.repository.util.JcrConstants.JCR_PRIMARY_TYPE;
 import static org.onehippo.repository.util.JcrConstants.JCR_UUID;
 
 public class SecurityServiceTest extends RepositoryTestCase {
 
+    private static final String TEST_USER_ID = "testuser";
+
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+        final Node users = session.getNode(CONFIG_USERS_PATH);
+        if (users.hasNode(TEST_USER_ID)) {
+            users.getNode(TEST_USER_ID).remove();
+        }
+        final Node testUserNode = users.addNode(TEST_USER_ID, NT_USER);
+        testUserNode.setProperty(HIPPO_USERROLES, new String[0]);
+        session.save();
+    }
+
     @After
     @Override
     public void tearDown() throws Exception {
-        final Node users = session.getNode("/hippo:configuration/hippo:users");
+        final Node users = session.getNode(CONFIG_USERS_PATH);
         final String encodedName = NodeNameCodec.encode("'t hart", true);
         if (users.hasNode(encodedName)) {
             users.getNode(encodedName).remove();
@@ -71,6 +91,9 @@ public class SecurityServiceTest extends RepositoryTestCase {
         final Node groups = session.getNode("/hippo:configuration/hippo:groups");
         if (groups.hasNode(encodedName)) {
             groups.getNode(encodedName).remove();
+        }
+        if (users.hasNode(TEST_USER_ID)) {
+            users.getNode(TEST_USER_ID).remove();
         }
         session.save();
         super.tearDown();
@@ -117,100 +140,96 @@ public class SecurityServiceTest extends RepositoryTestCase {
     @Test
     public void user_roles_via_security_manager_versus_session() throws Exception {
 
-        final Node adminNode = session.getNode("/hippo:configuration/hippo:users/admin");
-        final Node editorGroup = session.getNode("/hippo:configuration/hippo:groups/editor");
+        final Node testNode = session.getNode(CONFIG_USERS_PATH+"/"+TEST_USER_ID);
+        final Node editorGroup = session.getNode(CONFIG_GROUPS_PATH+"/editor");
 
-        final Value[] originalAdminRoles = adminNode.getProperty(HIPPO_USERROLES).getValues();
         final Value[] originalEditorGroupMember = editorGroup.getProperty(HIPPO_MEMBERS).getValues();
 
-        adminNode.setProperty(HIPPO_USERROLES, new String[]{"xm-admin", "non-existing", "xm-content-reader"});
-        session.save();
+        Session testSession = session.impersonate(new SimpleCredentials(TEST_USER_ID, new char[0]));
         try {
+            testNode.setProperty(HIPPO_USERROLES, new String[]{"non-existing", "xm-content-reader"});
+            session.save();
 
-
-            Assertions.assertThatThrownBy(() ->  ((HippoSession) session).getUser().getUserRoles().add("test"))
+            Assertions.assertThatThrownBy(() ->  ((HippoSession) testSession).getUser().getUserRoles().add("test"))
                     .as("Expected user roles to be unmodifiable")
                     .isInstanceOf(UnsupportedOperationException.class);
 
-            assertThat(((HippoSession) session).getUser().getUserRoles())
+            assertThat(((HippoSession) testSession).getUser().getUserRoles())
                     .as("Existing sessions do not get their user roles updated")
-                    .containsOnly("xm-admin");
+                    .isEmpty();
 
             final SecurityService securityService = HippoServiceRegistry.getService(SecurityService.class);
 
-            final User user = securityService.getUser(session.getUserID());
+            final User user = securityService.getUser(TEST_USER_ID);
             Assertions.assertThatThrownBy(() -> user.getUserRoles().add("test"))
                     .as("Expected user roles to be unmodifiable")
                     .isInstanceOf(UnsupportedOperationException.class);
 
-            assertThat(securityService.getUser(session.getUserID()).getUserRoles())
+            assertThat(user.getUserRoles())
                     .as("User roles via SecurityService should be directly updated and contains also non-existing " +
                             "roles")
-                    .containsOnly("xm-admin", "non-existing", "xm-content-reader");
+                    .containsOnly("non-existing", "xm-content-reader");
 
-            Session newSession = server.login(CREDENTIALS);
+            Session newSession = session.impersonate(new SimpleCredentials(TEST_USER_ID, new char[0]));
 
             assertThat(((HippoSession)newSession).getUser().getUserRoles())
                     .as("New logged in session should have the new user role 'xm-content-reader' but " +
                             "should not have 'non-existing' since only existing user roles should be returned")
-                    .containsOnly("xm-admin", "xm-content-reader");
+                    .containsOnly("xm-content-reader");
 
-            adminNode.setProperty(HIPPO_USERROLES, new String[] {"xm-content-editor"});
+            testNode.setProperty(HIPPO_USERROLES, new String[] {"non-existing", "xm-content-editor"});
 
             session.save();
 
-            assertThat(securityService.getUser(session.getUserID()).getUserRoles())
+            assertThat(securityService.getUser(TEST_USER_ID).getUserRoles())
                     .as("User roles via SecurityService should be directly updated and contains also non-existing " +
                             "roles")
-                    .containsOnly("xm-content-editor");
+                    .containsOnly("non-existing", "xm-content-editor");
 
             newSession.logout();
-            newSession = server.login(CREDENTIALS);
+            newSession = session.impersonate(new SimpleCredentials(TEST_USER_ID, new char[0]));
 
             assertThat(((HippoSession)newSession).getUser().getUserRoles())
                     .as("xm-content-editor should be extended to xm-content-author and xm-content-reader")
                     .containsOnly("xm-content-editor", "xm-content-author", "xm-content-reader");
 
-            adminNode.setProperty(HIPPO_USERROLES, originalAdminRoles);
+            testNode.setProperty(HIPPO_USERROLES, new String[0]);
 
-            // now add 'admin to the 'editor' group. As a result 'admin' should get user role 'xm-content-editor'
+            // now add 'test to the 'editor' group. As a result 'test' should get user role 'xm-content-editor'
             // which in turn should inherit 'xm-content-author'
 
-            editorGroup.setProperty(HIPPO_MEMBERS, new String[]{"admin"});
+            editorGroup.setProperty(HIPPO_MEMBERS, new String[]{TEST_USER_ID});
             session.save();
 
             assertThat(user.getUserRoles())
                     .as("Existing User object is not updated")
-                    .containsOnly("xm-admin", "non-existing", "xm-content-reader");
+                    .containsOnly("non-existing", "xm-content-reader");
 
-            assertThat(securityService.getUser(session.getUserID()).getUserRoles())
+            assertThat(securityService.getUser(TEST_USER_ID).getUserRoles())
                     .as("User roles via SecurityService should be updated to new value")
-                    .containsOnly("xm-admin");
+                    .isEmpty();
 
             newSession.logout();
 
-            newSession = server.login(CREDENTIALS);
+            newSession = session.impersonate(new SimpleCredentials(TEST_USER_ID, new char[0]));
 
-            assertThat(((HippoSession)newSession).getUser().getUserRoles())
-                    .as("Existing session user roles should not have changed")
-                    .containsOnly("xm-admin", "xm-content-editor", "xm-content-author", "xm-content-reader");
-
-            assertThat(securityService.getUser(session.getUserID()).getUserRoles())
+            assertThat(securityService.getUser(TEST_USER_ID).getUserRoles())
                     .as("Security Service should not give user roles from Group back but only the explicitly " +
                             "configured roles on the user node")
-                    .containsOnly("xm-admin");
+                    .isEmpty();
 
             assertThat(((HippoSession)newSession).getUser().getUserRoles())
-                    .as("Admin session should now have the (expanded) roles from group editor")
-                    .containsOnly("xm-admin", "xm-content-reader", "xm-content-author", "xm-content-editor");
+                    .as("Test session should now have the (expanded) roles from group editor")
+                    .containsOnly("xm-content-reader", "xm-content-author", "xm-content-editor");
 
             newSession.logout();
 
         } finally {
-
-            adminNode.setProperty(HIPPO_USERROLES, originalAdminRoles);
             editorGroup.setProperty(HIPPO_MEMBERS, originalEditorGroupMember);
             session.save();
+            if (testSession != null && testSession.isLive()) {
+                testSession.logout();
+            }
         }
     }
 

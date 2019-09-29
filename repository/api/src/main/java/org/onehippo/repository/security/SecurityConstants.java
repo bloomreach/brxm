@@ -37,9 +37,26 @@ public final class SecurityConstants {
     // Standard system user roles
 
     /**
-     * The user role reprenting a user (to be) granted jcr:all (everything) everywhere (domain everywhere)
+     * The user role representing a user (to be) granted jcr:all (everything) everywhere (domain everywhere)
      */
     public static final String USERROLE_ADMIN = "xm-admin";
+
+    /**
+     * The user role representing a user (to be) granted access to security administrative features
+     */
+    public static final String USERROLE_SECURITY_MANAGER = "xm-security-manager";
+
+    /**
+     * The user role representing a user (to be) granted access to user security administrative features; implies
+     * {@link #USERROLE_SECURITY_MANAGER}
+     */
+    public static final String USERROLE_SECURITY_USER_MANAGER = "xm-security-user-manager";
+
+    /**
+     * The user role representing a user (to be) granted access to application security administrative features; implies
+     * {@link #USERROLE_SECURITY_MANAGER}
+     */
+    public static final String USERROLE_SECURITY_APPLICATION_MANAGER = "xm-security-application-manager";
 
     /**
      * The user role representing a user (to be) granted read-only access on content

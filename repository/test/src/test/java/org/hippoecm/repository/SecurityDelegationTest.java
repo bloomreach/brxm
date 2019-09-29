@@ -62,6 +62,7 @@ public class SecurityDelegationTest extends RepositoryTestCase {
             final Node wonderland = test.addNode("wonderland", "hippo:authtestdocument");
             wonderland.setProperty("creator", "carroll");
             wonderland.setProperty("type", "novel");
+            test.addNode("bobsland");
         }
 
 
@@ -81,6 +82,13 @@ public class SecurityDelegationTest extends RepositoryTestCase {
         }
         if (!domains.hasNode("bobsdomain")) {
             final Node bobsdomain = domains.addNode("bobsdomain", "hipposys:domain");
+            // must include at least one domainrule otherwise the whole domain will be ignored
+            final Node bobsland = bobsdomain.addNode("bobsland", "hipposys:domainrule");
+            final Node bobslandfacet = bobsland.addNode("include-bobsland", "hipposys:facetrule");
+            bobslandfacet.setProperty("hipposys:equals", true);
+            bobslandfacet.setProperty("hipposys:facet", "jcr:uuid");
+            bobslandfacet.setProperty("hipposys:type", "Reference");
+            bobslandfacet.setProperty("hipposys:value", "/test/bobsland");
             final Node bobisadmin = bobsdomain.addNode("bobisadmin", "hipposys:authrole");
             bobisadmin.setProperty("hipposys:users", new String[]{"bob"});
             bobisadmin.setProperty("hipposys:role", "admin");

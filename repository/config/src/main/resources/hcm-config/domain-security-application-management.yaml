@@ -1,0 +1,21 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/security-application-management:
+      jcr:primaryType: hipposys:domain
+      /domains:
+        jcr:primaryType: hipposys:domainrule
+        /modules-and-descendants:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:filter: false
+          hipposys:type: Reference
+          hipposys:value: /hippo:configuration/hippo:domains
+      /readonly:
+        jcr:primaryType: hipposys:authrole
+        hipposys:userrole: xm-security-manager
+        hipposys:role: readonly
+      /readwrite:
+        jcr:primaryType: hipposys:authrole
+        hipposys:userrole: xm-security-application-manager
+        hipposys:role: readwrite
