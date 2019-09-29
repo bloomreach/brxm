@@ -16,7 +16,9 @@
 package org.hippoecm.frontend.session;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 import javax.jcr.Credentials;
 import javax.jcr.RepositoryException;
@@ -255,6 +257,9 @@ public class PluginUserSession extends UserSession {
     public void login() {
         try {
             UserCredentials userCreds = getUserCredentialsFromRequestAttribute();
+            if (userCreds != null) {
+                setUserPreferencesFromRequestAttribute();
+            }
             login(userCreds, new JcrSessionModel(userCreds));
         } catch (LoginException ignore) {
         }
@@ -267,6 +272,21 @@ public class PluginUserSession extends UserSession {
     protected UserCredentials getUserCredentialsFromRequestAttribute() {
         HttpServletRequest request = ((HttpServletRequest)RequestCycle.get().getRequest().getContainerRequest());
         return (UserCredentials)request.getAttribute(UserCredentials.class.getName());
+    }
+
+    /**
+     * {@link #login()} method invokes this method if there are any user preferences from the request.
+     */
+    protected void setUserPreferencesFromRequestAttribute() {
+        HttpServletRequest request = ((HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest());
+        Locale locale = (Locale) request.getAttribute(CmsSessionContext.LOCALE);
+        if (locale != null) {
+            setLocale(locale);
+        }
+        TimeZone timezone = (TimeZone) request.getAttribute(CmsSessionContext.TIME_ZONE);
+        if (timezone != null) {
+           getClientInfo().getProperties().setTimeZone(timezone);
+        }
     }
 
     @Override
