@@ -79,10 +79,14 @@ public class LoginPanel extends Panel {
 
         add(ClassAttribute.append("login-panel-center"));
 
-        form = new LoginForm(config.isAutoComplete(), config.getLocales(), config.getSupportedBrowsers());
+        form = createLoginForm(config);
         add(form);
     }
-
+    
+    protected LoginForm createLoginForm(final LoginConfig config) {
+        return new LoginForm(config.isAutoComplete(), config.getLocales(), config.getSupportedBrowsers());
+    }
+    
     protected void login() throws LoginException {
         final PluginUserSession userSession = PluginUserSession.get();
 

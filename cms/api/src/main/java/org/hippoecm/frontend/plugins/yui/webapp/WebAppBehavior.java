@@ -23,8 +23,6 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiAjaxBehavior;
 import org.hippoecm.frontend.plugins.yui.AbstractYuiBehavior;
-import org.hippoecm.frontend.plugins.yui.flash.FlashVersion;
-import org.hippoecm.frontend.plugins.yui.flash.ProbeFlashBehavior;
 import org.hippoecm.frontend.plugins.yui.header.IYuiContext;
 import org.hippoecm.frontend.plugins.yui.header.YuiContext;
 import org.hippoecm.frontend.plugins.yui.header.YuiHeaderCache;
@@ -45,11 +43,7 @@ import org.onehippo.yui.YahooNamespace;
  * and reset-fonts-grids stylesheets, as well as pre-loading Wicket-Ajax dependencies. This can be configured in the
  * {@link WebAppSettings}.
  * </p>
- * <p>
- * Upon the first load, it will probe the client for a flash version and store the result so other components
- * can query it.
- * </p>
- * 
+ *
  * @see IYuiManager
  */
 public class WebAppBehavior extends Behavior implements IYuiManager {
@@ -70,13 +64,6 @@ public class WebAppBehavior extends Behavior implements IYuiManager {
 
     YuiHeaderCache headerContributor;
     YuiContext helper;
-
-    /**
-     * @Deprecated Flash is no longer used nor needed for the core of this product.
-     * Please move any dependencies on flash to your project implementation.
-     */
-    @Deprecated
-    FlashVersion flash;
 
     public WebAppBehavior(WebAppSettings settings) {
         headerContributor = new YuiHeaderCache(settings.isLoadWicketAjax());
@@ -100,20 +87,6 @@ public class WebAppBehavior extends Behavior implements IYuiManager {
     }
 
     @Override
-    public void bind(Component component) {
-        super.bind(component);
-
-        component.add(new ProbeFlashBehavior() {
-
-            @Override
-            protected void handleFlash(FlashVersion flash) {
-                WebAppBehavior.this.flash = flash;
-            }
-        });
-
-    }
-
-    @Override
     public void renderHead(Component component, IHeaderResponse response) {
         headerContributor.renderHead(response);
         helper.renderHead(response);
@@ -121,23 +94,5 @@ public class WebAppBehavior extends Behavior implements IYuiManager {
 
     public IYuiContext newContext() {
         return new YuiContext(headerContributor);
-    }
-
-    /**
-     * @Deprecated Flash is no longer used nor needed for the core of this product.
-     * Please move any dependencies on flash to your project implementation.
-     */
-    @Deprecated
-    public FlashVersion getFlash() {
-        return flash;
-    }
-
-    /**
-     * @Deprecated Flash is no longer used nor needed for the core of this product.
-     * Please move any dependencies on flash to your project implementation.
-     */
-    @Deprecated
-    public void setFlash(FlashVersion flash) {
-        this.flash = flash;
     }
 }
