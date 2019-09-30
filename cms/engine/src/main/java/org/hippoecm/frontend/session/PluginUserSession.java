@@ -184,10 +184,10 @@ public class PluginUserSession extends UserSession {
     }
 
     /**
-     * Retrieve the JCR {@link javax.jcr.Session} that is bound to the Wicket {@link org.apache.wicket.Session}. This
+     * Retrieve the {@link HippoSession} that is bound to the Wicket {@link org.apache.wicket.Session}. This
      * method will throw a RestartResponseException when no JCR session is available.
      */
-    public Session getJcrSession() {
+    public HippoSession getJcrSession() {
         Session session = getJcrSessionInternal();
         if (session == null) {
             Main main = (Main)Application.get();
@@ -206,7 +206,7 @@ public class PluginUserSession extends UserSession {
         } else {
             resetFallbackSession();
         }
-        return session;
+        return (HippoSession)session;
     }
 
     private Session getJcrSessionInternal() {

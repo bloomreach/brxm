@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
@@ -48,12 +47,14 @@ import org.hippoecm.frontend.plugins.cms.admin.widgets.PasswordWidget;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.session.LoginException;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.repository.security.SessionUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.bloomreach.xm.repository.security.ChangePasswordManager;
 
 public class ChangePasswordShortcutPlugin extends RenderPlugin {
 
@@ -67,7 +68,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
     private final String username;
     private final long notificationPeriod;
 
-    private User user;
+    private SessionUserAdapter user;
     private String currentPassword;
     private String newPassword;
     private String checkPassword;
@@ -81,17 +82,21 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
         final UserSession session = UserSession.get();
         // password max age is defined on the /hippo:configuration/hippo:security node
         try {
-            final Node securityNode = session.getRootNode().getNode(SECURITY_PATH);
-            if (securityNode.hasProperty(HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS)) {
-                passwordMaxAge = (long) (securityNode.getProperty(HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS).getDouble() * ONE_DAY_MS);
+            SessionUser sessionUser = session.getJcrSession().getUser();
+            if (!sessionUser.isExternal()) {
+                ChangePasswordManager changePasswordManager =
+                        session.getJcrSession().getWorkspace().getSecurityManager().getChangePasswordManager();
+                passwordMaxAge = changePasswordManager.getPasswordMaxAgeMs();
+                user = new SessionUserAdapter(sessionUser, changePasswordManager);
+            } else {
+                user = new SessionUserAdapter(sessionUser, null);
             }
         }
         catch (final RepositoryException e) {
-            log.error("Failed to determine configured password maximum age", e);
+            throw new IllegalStateException("Error while obtaining user", e);
         }
 
-        username = session.getJcrSession().getUserID();
-        user = new User(username);
+        username = user.getUsername();
 
         final AjaxLink link = new AjaxLink("link") {
             @Override
@@ -158,12 +163,13 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
 
     /**
      * Set the user password
+     * @param currentPassword the current password
      * @param password the password to set
      * @return true if the password is successfully applied, false otherwise
      */
-    private boolean setPassword(final char[] password) {
+    private boolean setPassword(final char[] currentPassword, final char[] password) {
         try {
-            user.savePassword(new String(password));
+            user.savePassword(currentPassword, password);
             return true;
         } catch (final RepositoryException e) {
             log.error("Error while setting user password", e);
@@ -298,13 +304,11 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
             }
 
             if (ok) {
-                if (!setPassword(newPassword.toCharArray())) {
+                if (!setPassword(currentPassword.toCharArray(), newPassword.toCharArray())) {
                     error(translate("error-setting-password"));
                     log.warn("Setting the password by user '{}' failed.", username);
                 } else {
                     log.info("Password changed by user '{}'.", username);
-                    // create a new user to refresh properties like hipposys:passwordlastmodified
-                    user = new User(username);
                 }
             } else {
                 feedbackLevel = "";

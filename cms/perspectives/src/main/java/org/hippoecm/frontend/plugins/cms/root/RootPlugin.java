@@ -19,6 +19,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.jcr.ItemNotFoundException;
+
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -39,7 +41,6 @@ import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
 import org.hippoecm.frontend.extjs.ExtWidgetRegistry;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.cms.logout.ActiveLogoutPlugin;
 import org.hippoecm.frontend.plugins.standards.tabs.TabbedPanel;
 import org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin;
@@ -63,6 +64,7 @@ import org.hippoecm.frontend.useractivity.UserActivityHeaderItem;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.hippoecm.frontend.widgets.AbstractView;
 import org.hippoecm.frontend.widgets.Pinger;
+import org.onehippo.repository.security.SessionUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.js.ext.util.ExtResourcesHeaderItem;
@@ -254,9 +256,13 @@ public class RootPlugin extends TabsPlugin {
     protected void onRemoveRenderService(Item<IRenderService> item, IRenderService renderer) {
     }
 
-    private User getCurrentUser() {
-        final String userID = getSession().getJcrSession().getUserID();
-        return new User(userID);
+    private SessionUser getCurrentUser() {
+        try {
+            return getSession().getJcrSession().getUser();
+        } catch (ItemNotFoundException ignore) {
+            // cannot happen: only non-system users are allowed to login
+            return null;
+        }
     }
 
     private PageLayoutSettings getPageLayoutSettings(final IPluginConfig config) {
