@@ -46,6 +46,7 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.PasswordHelper;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.onehippo.repository.security.SessionUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,8 +109,6 @@ public class User implements Comparable<User>, IClusterable {
     private static final String QUERY_LOCAL_MEMBERSHIPS = "//element(*, hipposys:group)[@hipposys:members='{}']";
     private static final String QUERY_EXTERNAL_MEMBERSHIPS = "//element(*, hipposys:externalgroup)[@hipposys:members='{}']";
     private static final String QUERY_AND_NOT_A_SYSTEM_GROUP = "//element(*, hipposys:group)[@hipposys:members='{}' and (not(@hipposys:system) or @hipposys:system=false)]";
-
-    private static final long ONEDAYMS = 1000 * 3600 * 24L;
 
     private boolean external = false;
     private boolean active = true;
@@ -270,6 +269,14 @@ public class User implements Comparable<User>, IClusterable {
         return passwordLastModified;
     }
 
+    protected void setPasswordLastModified(final Calendar passwordLastModified) {
+        this.passwordLastModified = passwordLastModified;
+    }
+
+    protected void setPasswordMaxAge(final long passwordMaxAge) {
+        this.passwordMaxAge = passwordMaxAge;
+    }
+
     //----------------------- constructors ---------//
 
     /**
@@ -312,6 +319,32 @@ public class User implements Comparable<User>, IClusterable {
         init(node);
     }
 
+    protected User(final SessionUser user) {
+        this.username = user.getId();
+        this.external = user.isExternal();
+        this.email = user.getEmail();
+        this.firstName = user.getFirstName();
+        this.lastName = user.getLastName();
+        this.active = user.isActive();
+        this.system = user.isSystemUser();
+        for (String p : user.getPropertyNames()) {
+            if (!p.startsWith("jcr:") && !p.equals(PROP_EMAIL) && !p.equals(PROP_FIRSTNAME) && !p.equals(PROP_LASTNAME)) {
+                String value = user.getProperty(p);
+                if (p.equalsIgnoreCase("email")) {
+                    this.email = value;
+                } else if (p.equalsIgnoreCase("firstname")) {
+                    this.firstName = value;
+                } else if (p.equalsIgnoreCase("lastName")) {
+                    this.lastName = value;
+                } else if (p.equals(PROP_PROVIDER)) {
+                    this.provider = user.getProperty(PROP_PROVIDER);
+                } else {
+                    properties.put(p, user.getProperty(p));
+                }
+            }
+        }
+    }
+
     private void init(final Node node) throws RepositoryException {
         this.node = node;
         this.path = node.getPath().substring(1);
@@ -350,11 +383,8 @@ public class User implements Comparable<User>, IClusterable {
             }
         }
 
-        Node securityNode = ((UserSession) Session.get()).getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH)
-                .getNode(HippoNodeType.SECURITY_PATH);
-        if (securityNode.hasProperty(HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS)) {
-            passwordMaxAge = (long) (securityNode.getProperty(
-                    HippoNodeType.HIPPO_PASSWORDMAXAGEDAYS).getDouble() * ONEDAYMS);
+        if (!external) {
+            passwordMaxAge = UserSession.get().getJcrSession().getWorkspace().getSecurityManager().getChangePasswordManager().getPasswordMaxAgeMs();
         }
     }
 
