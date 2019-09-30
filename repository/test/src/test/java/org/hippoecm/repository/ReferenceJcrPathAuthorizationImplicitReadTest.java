@@ -187,8 +187,7 @@ public class ReferenceJcrPathAuthorizationImplicitReadTest extends AbstractRefer
         facetRule.setProperty("hipposys:facet", "color");
         facetRule.setProperty("hipposys:type", "String");
         facetRule.setProperty("hipposys:value", "red");
-        // since filter is false, every node that matches must have  'color=red' which is any node!
-        facetRule.setProperty("hipposys:filter", false);
+        // since filter is false (missing), every node that matches must have  'color=red' which is any node!
 
         session.save();
 

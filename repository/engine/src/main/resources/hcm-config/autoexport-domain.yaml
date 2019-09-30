@@ -13,6 +13,5 @@ definitions:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: nodetype
-          hipposys:filter: false
           hipposys:type: Name
           hipposys:value: autoexport:config

@@ -198,7 +198,7 @@
 - hipposys:value (string) mandatory
 - hipposys:type (string) = 'String' mandatory < 'String', 'Name', 'Reference'
 - hipposys:equals (boolean) = 'true' mandatory autocreated
-- hipposys:filter (boolean) = 'false' mandatory autocreated
+- hipposys:filter (boolean)
 - hipposys:description (string)
 
 [hipposys:domainrule] > nt:base

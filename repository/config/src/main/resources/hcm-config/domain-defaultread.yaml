@@ -8,7 +8,6 @@ definitions:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: jcr:path
-          hipposys:filter: false
           hipposys:type: Reference
           hipposys:value: /hippo:configuration/hippo:translations
       /hippo-derivatives:
@@ -17,7 +16,6 @@ definitions:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: jcr:path
-          hipposys:filter: false
           hipposys:type: Reference
           hipposys:value: /hippo:configuration/hippo:derivatives
       # TODO shouldn't hippolog be for cms users only?
@@ -27,7 +25,6 @@ definitions:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: jcr:path
-          hipposys:filter: false
           hipposys:type: Reference
           hipposys:value: /hippo:log
       # TODO who else than the system user really needs to read this?
@@ -37,7 +34,6 @@ definitions:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: jcr:path
-          hipposys:filter: false
           hipposys:type: Reference
           hipposys:value: /hippo:configuration/hippo:modules
       /readonly:

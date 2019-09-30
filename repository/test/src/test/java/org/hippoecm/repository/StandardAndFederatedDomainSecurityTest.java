@@ -55,7 +55,6 @@ public class StandardAndFederatedDomainSecurityTest extends RepositoryTestCase {
                 "/hippo:configuration/hippo:domains/extranet/extranet-domain", "hipposys:domainrule",
                 "/hippo:configuration/hippo:domains/extranet/extranet-domain/extranet-nodes", "hipposys:facetrule",
                 "hipposys:equals", "true",
-                "hipposys:filter", "false",
                 "hipposys:facet", "jcr:path",
                 "hipposys:type", "Reference",
                 "hipposys:value", "/test/extranet",
@@ -71,7 +70,6 @@ public class StandardAndFederatedDomainSecurityTest extends RepositoryTestCase {
                 "/test/intranet/intranet-domains/intranet/intranet-domain", "hipposys:domainrule",
                 "/test/intranet/intranet-domains/intranet/intranet-domain/intranet-nodes", "hipposys:facetrule",
                 "hipposys:equals", "true",
-                "hipposys:filter", "false",
                 "hipposys:facet", "jcr:path",
                 "hipposys:type", "Reference",
                 // Federated domains always have the root the location of the parent of the 'federateddomainfolder'

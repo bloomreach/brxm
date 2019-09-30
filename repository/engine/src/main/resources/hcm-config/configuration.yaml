@@ -36,7 +36,6 @@ definitions:
               jcr:primaryType: hipposys:facetrule
               hipposys:equals: true
               hipposys:facet: jcr:primaryType
-              hipposys:filter: false
               hipposys:type: Name
               hipposys:value: '*'
           /admin:

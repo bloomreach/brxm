@@ -8,7 +8,6 @@ definitions:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: jcr:path
-          hipposys:filter: false
           hipposys:type: Reference
           hipposys:value: /hippo:configuration/hippo:users
       /groups:
@@ -17,7 +16,6 @@ definitions:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: jcr:path
-          hipposys:filter: false
           hipposys:type: Reference
           hipposys:value: /hippo:configuration/hippo:groups
       /readonly:

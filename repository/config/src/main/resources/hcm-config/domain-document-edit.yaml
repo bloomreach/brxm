@@ -8,21 +8,18 @@ definitions:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: jcr:path
-          hipposys:filter: false
           hipposys:type: Reference
           hipposys:value: /content
         /if-holder:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: hippostd:holder
-          hipposys:filter: false
           hipposys:type: String
           hipposys:value: __user__
         /draft-only:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: hippostd:state
-          hipposys:filter: false
           hipposys:type: String
           hipposys:value: draft
       /document-non-publishable-domain:
@@ -31,21 +28,18 @@ definitions:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: jcr:path
-          hipposys:filter: false
           hipposys:type: Reference
           hipposys:value: /content
         /only-documents:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: hippo:availability
-          hipposys:filter: false
           hipposys:type: String
           hipposys:value: live
         /non-publishable:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: false
           hipposys:facet: nodetype
-          hipposys:filter: false
           hipposys:type: String
           hipposys:value: hippostd:publishable
       /readwrite:
