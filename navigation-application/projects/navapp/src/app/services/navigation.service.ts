@@ -141,7 +141,7 @@ export class NavigationService implements OnDestroy {
     let browserUrl: string;
 
     try {
-      browserUrl = this.urlMapperService.mapNavLocationToBrowserUrl(navLocation, true)[0];
+      browserUrl = this.urlMapperService.mapNavLocationToBrowserUrl(navLocation, false)[0];
     } catch (e) {
       this.errorHandlingService.setNotFoundError(
         undefined,
