@@ -115,6 +115,7 @@ definitions:
         .meta:residual-child-node-category: system
         /admin:
           jcr:primaryType: hipposys:role
+          hipposys:system: true
           hipposys:privileges: ['jcr:all', 'hippo:admin']
           hipposys:roles: [editor]
       /hippo:userroles:

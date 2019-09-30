@@ -2,4 +2,5 @@ definitions:
   config:
     /hippo:configuration/hippo:roles/modify:
       jcr:primaryType: hipposys:role
+      hipposys:system: true
       hipposys:privileges: ['jcr:read', 'jcr:modifyProperties', 'jcr:addChildNodes', 'jcr:removeChildNodes']

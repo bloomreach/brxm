@@ -172,8 +172,10 @@
 - * (string)
 
 [hipposys:role] > nt:base
+- hipposys:system (boolean)
 - hipposys:privileges (string) multiple
 - hipposys:roles (string) multiple
+- hipposys:description (string)
 - hipposys:jcrread (boolean) // obsolete, never used
 - hipposys:jcrwrite (boolean) // obsolete, never used
 - hipposys:jcrremove (boolean) // obsolete, never used

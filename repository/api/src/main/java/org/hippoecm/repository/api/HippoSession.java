@@ -226,4 +226,9 @@ public interface HippoSession extends Session {
      */
     void disableVirtualLayers();
 
+    /**
+     * Convenient return type override for getting the HippoWorkspace without needing to typecast
+     * @return HippoWorkspace
+     */
+    HippoWorkspace getWorkspace();
 }

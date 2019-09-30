@@ -76,10 +76,6 @@ import org.hippoecm.repository.security.domain.InvalidDomainException;
 import org.hippoecm.repository.security.group.DummyGroupManager;
 import org.hippoecm.repository.security.group.GroupManager;
 import org.hippoecm.repository.security.principals.UserPrincipal;
-import org.hippoecm.repository.security.role.AbstractRole;
-import org.hippoecm.repository.security.role.Role;
-import org.hippoecm.repository.security.role.RolesModel;
-import org.hippoecm.repository.security.role.UserRolesModel;
 import org.hippoecm.repository.security.service.SessionUserImpl;
 import org.hippoecm.repository.security.user.DummyUserManager;
 import org.hippoecm.repository.security.user.HippoUserManager;
@@ -87,9 +83,12 @@ import org.onehippo.repository.security.SessionUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bloomreach.xm.repository.security.AbstractRole;
+import com.bloomreach.xm.repository.security.RepositorySecurityProviders;
+import com.bloomreach.xm.repository.security.Role;
+import com.bloomreach.xm.repository.security.impl.RepositorySecurityProvidersImpl;
+
 import static org.onehippo.repository.security.SecurityConstants.CONFIG_SECURITY_PATH;
-import static org.onehippo.repository.security.SecurityConstants.CONFIG_ROLES_PATH;
-import static org.onehippo.repository.security.SecurityConstants.CONFIG_USERROLES_PATH;
 
 public class SecurityManager implements HippoSecurityManager {
 
@@ -105,8 +104,7 @@ public class SecurityManager implements HippoSecurityManager {
     private boolean maintenanceMode;
     private PrincipalProviderRegistry principalProviderRegistry;
     private PermissionManager permissionManager;
-    private RolesModel rolesModel;
-    private UserRolesModel userRolesModel;
+    private RepositorySecurityProvidersImpl securityProviders;
 
     private AuthContextProvider authCtxProvider;
 
@@ -150,8 +148,7 @@ public class SecurityManager implements HippoSecurityManager {
             log.error("No security providers found: login will not be possible!");
         }
         // the following must be done after the above configuration: only from here on session.impersonate is possible!
-        rolesModel = new RolesModel(systemSession, CONFIG_ROLES_PATH);
-        userRolesModel = new UserRolesModel(systemSession, CONFIG_USERROLES_PATH);
+        securityProviders = new RepositorySecurityProvidersImpl(systemSession);
     }
 
     class HippoJAASAuthContext extends JAASAuthContext {
@@ -432,7 +429,7 @@ public class SecurityManager implements HippoSecurityManager {
                 groupManager = providers.get(INTERNAL_PROVIDER).getGroupManager();
             }
             SessionUser user = new SessionUserImpl(userManager.getUser(userId), groupManager,
-                    roleNames -> userRolesModel.resolveRoleNames(roleNames));
+                    roleNames -> securityProviders.getUserRolesProvider().resolveRoleNames(roleNames));
             userRoles = user.getUserRoles();
             groupIds = user.getMemberships();
             userPrincipal = new UserPrincipal(user, getFacetAuthDomains(user.getId(), groupIds, userRoles));
@@ -462,7 +459,7 @@ public class SecurityManager implements HippoSecurityManager {
             for (final String userRoleName : userRoles) {
                 roleNames.addAll(domain.getRolesForUserRole(userRoleName));
             }
-            Set<Role> resolvedRoles = rolesModel.resolveRoles(roleNames);
+            Set<Role> resolvedRoles = securityProviders.getRolesProvider().resolveRoles(roleNames);
             Set<String> roles = resolvedRoles.stream().map(AbstractRole::getName).collect(Collectors.toSet());
             Set<String> privileges = new HashSet<>();
             resolvedRoles.forEach(role -> privileges.addAll(role.getPrivileges()));
@@ -511,14 +508,17 @@ public class SecurityManager implements HippoSecurityManager {
         return providers.get(providerId).getGroupManager(session);
     }
 
+    @Override
+    public RepositorySecurityProviders getRepositorySecurityProviders() {
+        return securityProviders;
+    }
+
     public void dispose(String workspace) {
     }
 
     public void close() {
-        userRolesModel.close();
-        rolesModel.close();
-        userRolesModel = null;
-        rolesModel = null;
+        securityProviders.close();
+        securityProviders = null;
     }
 
     public AuthContext getAuthContext(Credentials credentials, Subject subject, String workspaceName) throws RepositoryException {

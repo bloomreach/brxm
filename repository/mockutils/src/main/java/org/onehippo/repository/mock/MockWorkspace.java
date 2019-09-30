@@ -34,6 +34,8 @@ import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.xml.sax.ContentHandler;
 
+import com.bloomreach.xm.repository.security.RepositorySecurityManager;
+
 /**
  * Mock version of {@link Workspace}.
  */
@@ -161,6 +163,11 @@ public class MockWorkspace implements HippoWorkspace {
 
     @Override
     public HierarchyResolver getHierarchyResolver() throws RepositoryException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public RepositorySecurityManager getSecurityManager() {
         throw new UnsupportedOperationException();
     }
 }

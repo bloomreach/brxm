@@ -283,6 +283,7 @@ public class SiteIntegrationTest {
 
     private Set<String> getSharedClasses() {
         return ImmutableSet.of("org.onehippo.cm.engine.Configuration",
+                "com.bloomreach.xm.repository",
                 "org.hippoecm.repository.",
                 "org.apache.jackrabbit",
                 "org.onehippo.repository.",

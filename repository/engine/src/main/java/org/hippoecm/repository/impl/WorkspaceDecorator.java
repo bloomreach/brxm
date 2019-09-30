@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -62,6 +62,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 
+import com.bloomreach.xm.repository.security.RepositorySecurityManager;
+import com.bloomreach.xm.repository.security.impl.RepositorySecurityManagerImpl;
+
 public class WorkspaceDecorator extends SessionBoundDecorator implements HippoWorkspace {
 
     protected static final Logger logger = LoggerFactory.getLogger(WorkspaceDecorator.class);
@@ -70,6 +73,7 @@ public class WorkspaceDecorator extends SessionBoundDecorator implements HippoWo
 
     protected final Workspace workspace;
     protected WorkflowManagerImpl workflowManager;
+    protected RepositorySecurityManagerImpl repositorySecurityManager;
 
     public static Workspace unwrap(final Workspace workspace) {
         if (workspace instanceof WorkspaceDecorator) {;
@@ -124,6 +128,14 @@ public class WorkspaceDecorator extends SessionBoundDecorator implements HippoWo
     @Override
     public HierarchyResolver getHierarchyResolver() throws RepositoryException {
         return new HierarchyResolverImpl();
+    }
+
+    @Override
+    public RepositorySecurityManager getSecurityManager() {
+        if (repositorySecurityManager == null) {
+            repositorySecurityManager = new RepositorySecurityManagerImpl(getSession());
+        }
+        return repositorySecurityManager;
     }
 
     @Override
@@ -377,6 +389,9 @@ public class WorkspaceDecorator extends SessionBoundDecorator implements HippoWo
     void dispose() {
         if (workflowManager != null) {
             workflowManager.close();
+        }
+        if (repositorySecurityManager != null) {
+            repositorySecurityManager.close();
         }
     }
 }

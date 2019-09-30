@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.security.role;
+package com.bloomreach.xm.repository.security.impl;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -35,12 +35,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.onehippo.repository.security.SecurityConstants.USERROLE_ADMIN;
 
-public class UserRolesModelTest extends RepositoryTestCase {
+public class UserRolesProviderImplTest extends RepositoryTestCase {
 
     private static String TEST_USERROLES_PATH = "/test/"+HIPPO_USERROLES;
 
     private InternalHippoRepository internalHippoRepository;
-    private UserRolesModel model;
+    private Session systemSession;
 
     @Override
     public void setUp() throws Exception {
@@ -50,10 +50,10 @@ public class UserRolesModelTest extends RepositoryTestCase {
 
     @Override
     public void tearDown() throws Exception {
-        if (model != null) {
-            model.close();
-            model = null;
+        if (systemSession != null && systemSession.isLive()) {
+            systemSession.logout();
         }
+        systemSession = null;
         super.tearDown();
     }
 
@@ -86,31 +86,25 @@ public class UserRolesModelTest extends RepositoryTestCase {
     @Test
     public void testModelSyncOnJcrEvents() throws Exception {
         removeTestUserRoles();
-        Session systemSession = internalHippoRepository.createSystemSession();
-        model = new UserRolesModel(systemSession, TEST_USERROLES_PATH);
-        systemSession.logout();
-        assertNull(model.getRole(USERROLE_ADMIN));
+        systemSession = internalHippoRepository.createSystemSession();
+        UserRolesProviderImpl userRolesProvider = new UserRolesProviderImpl(systemSession, TEST_USERROLES_PATH);
+        assertNull(userRolesProvider.getRole(USERROLE_ADMIN));
         setupTestUserRoles();
-        Thread.sleep((100));
-        assertNotNull(model.getRole(USERROLE_ADMIN));
-        assertEquals(ImmutableSet.of(USERROLE_ADMIN, "foo", "bar"), model.resolveRoleNames("foo"));
+        assertNotNull(userRolesProvider.getRole(USERROLE_ADMIN));
+        assertEquals(ImmutableSet.of(USERROLE_ADMIN, "foo", "bar"), userRolesProvider.resolveRoleNames("foo"));
         session.getWorkspace().move(TEST_USERROLES_PATH+"/"+"bar", TEST_USERROLES_PATH+"/"+"bar2");
         session.getWorkspace().move(TEST_USERROLES_PATH+"/"+"bar2", "/test/"+"bar3");
         session.getWorkspace().move("/test/"+"bar3", TEST_USERROLES_PATH+"/"+"bar3");
-        Thread.sleep(100);
-        assertEquals(ImmutableSet.of("foo"), model.resolveRoleNames("foo"));
+        assertEquals(ImmutableSet.of("foo"), userRolesProvider.resolveRoleNames("foo"));
         session.getNode(TEST_USERROLES_PATH+"/"+"foo").setProperty(HIPPO_USERROLES, new String[]{"bar3"});
         session.save();
-        Thread.sleep(100);
         session.move(TEST_USERROLES_PATH+"/"+"bar3", TEST_USERROLES_PATH+"/"+"bar2");
         session.move(TEST_USERROLES_PATH+"/"+"bar2", "/test/"+"bar3");
         session.move("/test/"+"bar3", TEST_USERROLES_PATH+"/"+"bar");
         session.save();
-        Thread.sleep(100);
-        assertEquals(ImmutableSet.of("foo"), model.resolveRoleNames("foo"));
+        assertEquals(ImmutableSet.of("foo"), userRolesProvider.resolveRoleNames("foo"));
         session.getNode(TEST_USERROLES_PATH+"/"+"foo").setProperty(HIPPO_USERROLES, new String[]{"bar"});
         session.save();
-        Thread.sleep(100);
-        assertEquals(ImmutableSet.of(USERROLE_ADMIN, "foo", "bar"), model.resolveRoleNames("foo"));
+        assertEquals(ImmutableSet.of(USERROLE_ADMIN, "foo", "bar"), userRolesProvider.resolveRoleNames("foo"));
     }
 }

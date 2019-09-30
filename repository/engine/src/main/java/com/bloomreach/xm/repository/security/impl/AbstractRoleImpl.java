@@ -13,20 +13,26 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.security.role;
+package com.bloomreach.xm.repository.security.impl;
 
 import java.util.Set;
 
+import com.bloomreach.xm.repository.security.AbstractRole;
+
 /**
- * Implementation of a {@link UserRole}
+ * Abstract implementation of a {@link AbstractRole}
  */
-class UserRoleImpl implements UserRole {
+public abstract class AbstractRoleImpl implements AbstractRole {
+
     private final String name;
+    private final String description;
     private final boolean system;
     private final Set<String> roles;
 
-    UserRoleImpl(final String name, final boolean system, final Set<String> roles) {
+    protected AbstractRoleImpl(final String name, final String description, final boolean system,
+                               final Set<String> roles) {
         this.name = name;
+        this.description = description;
         this.system = system;
         this.roles = roles;
     }
@@ -37,6 +43,11 @@ class UserRoleImpl implements UserRole {
     }
 
     @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
     public boolean isSystem() {
         return system;
     }
@@ -44,11 +55,6 @@ class UserRoleImpl implements UserRole {
     @Override
     public Set<String> getRoles() {
         return roles;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        return obj instanceof UserRoleImpl && name.equals(((UserRoleImpl)obj).name);
     }
 
     @Override

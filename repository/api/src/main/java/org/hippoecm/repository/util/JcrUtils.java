@@ -22,6 +22,7 @@ import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -221,6 +222,33 @@ public class JcrUtils {
             if (baseNode.hasProperty(relPath)) {
                 final Value[] values = baseNode.getProperty(relPath).getValues();
                 final ArrayList<String> result = new ArrayList<>(values.length);
+                for (final Value value : values) {
+                    result.add(value.getString());
+                }
+                return result;
+            }
+        } catch (PathNotFoundException | ValueFormatException ignore) {
+        }
+        return defaultValue;
+    }
+
+    /**
+     * Returns the unique and unordered multiple string property values at <code>relPath</code>
+     * from <code>baseNode</code> or <code>defaultValue</code> if no such property exists.
+     *
+     * @param baseNode     existing node that should be the base for the relative path
+     * @param relPath      relative path to the property to get
+     * @param defaultValue default value to return when the property does not exist
+     * @return the unique and unordered multiple string property value at <code>relPath</code> from <code>baseNode</code>
+     * or <code>defaultValue</code> if no such property exists
+     * @throws RepositoryException in case of exception accessing the Repository
+     */
+    public static Set<String> getStringSetProperty(final Node baseNode, final String relPath,
+                                                     final Set<String> defaultValue) throws RepositoryException {
+        try {
+            if (baseNode.hasProperty(relPath)) {
+                final Value[] values = baseNode.getProperty(relPath).getValues();
+                final HashSet<String> result = new HashSet<>(values.length);
                 for (final Value value : values) {
                     result.add(value.getString());
                 }

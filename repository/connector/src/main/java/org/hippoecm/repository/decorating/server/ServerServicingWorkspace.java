@@ -29,6 +29,8 @@ import org.hippoecm.repository.decorating.remote.RemoteHierarchyResolver;
 import org.hippoecm.repository.decorating.remote.RemoteServicingWorkspace;
 import org.hippoecm.repository.decorating.remote.RemoteWorkflowManager;
 
+import com.bloomreach.xm.repository.security.RepositorySecurityManager;
+
 public class ServerServicingWorkspace extends ServerWorkspace implements RemoteServicingWorkspace {
 
     private HippoWorkspace workspace;
@@ -65,6 +67,10 @@ public class ServerServicingWorkspace extends ServerWorkspace implements RemoteS
         } catch (RepositoryException ex) {
             throw getRepositoryException(ex);
         }
+    }
+
+    public RepositorySecurityManager getSecurityManager() throws RepositoryException, RemoteException {
+        throw new UnsupportedOperationException();
     }
 
 }

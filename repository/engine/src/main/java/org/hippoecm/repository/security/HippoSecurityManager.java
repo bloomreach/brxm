@@ -27,6 +27,8 @@ import org.hippoecm.repository.security.group.GroupManager;
 import org.hippoecm.repository.security.user.AbstractUserManager;
 import org.hippoecm.repository.security.user.HippoUserManager;
 
+import com.bloomreach.xm.repository.security.RepositorySecurityProviders;
+
 public interface HippoSecurityManager extends JackrabbitSecurityManager {
 
     /**
@@ -74,4 +76,8 @@ public interface HippoSecurityManager extends JackrabbitSecurityManager {
      */
     GroupManager getGroupManager(Session session, String providerId) throws RepositoryException;
 
+    /**
+     * Get the {@link RepositorySecurityProviders}
+     */
+    RepositorySecurityProviders getRepositorySecurityProviders();
 }

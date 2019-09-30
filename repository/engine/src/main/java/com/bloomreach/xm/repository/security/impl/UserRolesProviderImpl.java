@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.security.role;
+package com.bloomreach.xm.repository.security.impl;
 
 import java.util.Set;
 
@@ -21,30 +21,35 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import com.bloomreach.xm.repository.security.UserRole;
+import com.bloomreach.xm.repository.security.UserRolesProvider;
+
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_USERROLES;
 import static org.hippoecm.repository.api.HippoNodeType.NT_USERROLE;
 
 /**
  * Concrete implementation for loading and referencing {@link UserRole}s in a fully thread-safe way, with asynchronous
- * reloading trigger by JCR event listeners replacing the underlying model atomically.
+ * background reloading triggered by a <em>synchronous</em> JCR event listener replacing the underlying model atomically.
  */
-public class UserRolesModel extends AbstractRolesModel<UserRole> {
+class UserRolesProviderImpl extends AbstractRolesProvider<UserRole> implements UserRolesProvider {
 
-    public UserRolesModel(final Session systemSession, final String userRolesPath) throws RepositoryException {
-        super(systemSession, userRolesPath, NT_USERROLE, HIPPO_USERROLES);
+    UserRolesProviderImpl(final Session systemSession, final String userRolesPath) throws RepositoryException {
+        super(systemSession, userRolesPath, NT_USERROLE, HIPPO_USERROLES, UserRole.class);
     }
 
     /**
      * Factory of {@link UserRole} instances.
      * @param node role node
      * @param name already JCR decoded role node name
+     * @param description role description
      * @param system indicator if the role is a system role
      * @param roleNames all directly (not recursively) implied roles
      * @return a new {@link UserRole} instance
      * @throws RepositoryException if something went wrong
      */
     @Override
-    protected UserRole createRole(final Node node, final String name, final boolean system, final Set<String> roleNames) {
-        return new UserRoleImpl(name, system, roleNames);
+    protected UserRole createRole(final Node node, final String name, final String description, final boolean system,
+                                  final Set<String> roleNames) {
+        return new UserRoleImpl(name, description, system, roleNames);
     }
 }

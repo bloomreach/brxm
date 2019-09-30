@@ -13,17 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.security.role;
+package com.bloomreach.xm.repository.security.impl;
 
 import java.util.Set;
 
+import com.bloomreach.xm.repository.security.UserRole;
+
 /**
- * A data access role possibly holding and representing a set of fine-grained privilege names
+ * Implementation of a {@link UserRole}
  */
-public interface Role extends AbstractRole {
-    /**
-     * The set of fine-grained privileges represented by this role
-     * @return the fine-grained privileges of this role
-     */
-    Set<String> getPrivileges();
+class UserRoleImpl extends AbstractRoleImpl implements UserRole {
+
+    UserRoleImpl(final String name, final String description, final boolean system, final Set<String> roles) {
+        super(name, description, system, roles);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return obj instanceof UserRoleImpl && getName().equals(((UserRoleImpl)obj).getName());
+    }
 }

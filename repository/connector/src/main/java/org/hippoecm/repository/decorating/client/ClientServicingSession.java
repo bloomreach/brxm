@@ -22,7 +22,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -46,6 +45,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.jackrabbit.rmi.client.ClientSession;
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.decorating.remote.RemoteServicingSession;
 import org.onehippo.repository.security.SessionUser;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
@@ -189,5 +189,10 @@ public class ClientServicingSession extends ClientSession implements HippoSessio
     @Override
     public void disableVirtualLayers() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public HippoWorkspace getWorkspace() {
+        return (HippoWorkspace)super.getWorkspace();
     }
 }

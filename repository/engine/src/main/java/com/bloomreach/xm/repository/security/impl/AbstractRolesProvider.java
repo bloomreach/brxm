@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.security.role;
+package com.bloomreach.xm.repository.security.impl;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -25,25 +25,29 @@ import java.util.stream.Collectors;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
-import javax.jcr.observation.EventListener;
 
+import org.apache.jackrabbit.core.observation.SynchronousEventListener;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 
+import com.bloomreach.xm.repository.security.AbstractRole;
+import com.bloomreach.xm.repository.security.Role;
+import com.bloomreach.xm.repository.security.UserRole;
+
+import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_DESCRIPTION;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_SYSTEM;
 
 /**
- * Base model for loading and referencing {@link Role}s or {@link UserRole}s into a {@link RolesModel} or {@link UserRolesModel}
- * in a fully thread-safe way, with asynchronous reloading trigger by JCR event listeners replacing the underlying
- * model atomically.
+ * Base provider for loading and referencing {@link Role}s or {@link UserRole}s into a {@link RolesProviderImpl}
+ * or {@link UserRolesProviderImpl} in a fully thread-safe way, with asynchronous background reloading
+ * triggered by a <em>synchronous</em> JCR event listener replacing the underlying model atomically.
  * @param <R> the {@link Role} or {@link UserRole} class type for specializing this base model
  */
-abstract class AbstractRolesModel<R extends AbstractRole> {
+abstract class AbstractRolesProvider<R extends AbstractRole> {
 
     private static String parentPath(final String path) {
         return path.substring(0, path.lastIndexOf('/'));
@@ -53,7 +57,7 @@ abstract class AbstractRolesModel<R extends AbstractRole> {
         private final ConcurrentHashMap<String, R> roles = new ConcurrentHashMap<>();
     }
 
-    private final class ModelEventListener implements EventListener {
+    private final class ModelEventListener implements SynchronousEventListener {
 
         @Override
         public void onEvent(final EventIterator events) {
@@ -108,21 +112,24 @@ abstract class AbstractRolesModel<R extends AbstractRole> {
     private final String rolesPath;
     private final String roleTypeName;
     private final String rolesPropertyName;
+    private final Class<R> roleType;
 
     /**
      * Factory method for new role instances
      * @param node role node
      * @param name already JCR decoded role node name
+     * @param description role description
      * @param system indicator if the role is a system role
      * @param roleNames all directly (not recursively) implied roles
      * @return the role instance
      * @throws RepositoryException if something went wrong
      */
-    protected abstract R createRole(final Node node, final String name, final boolean system, final Set<String> roleNames)
+    protected abstract R createRole(final Node node, final String name, final String description, final boolean system,
+                                    final Set<String> roleNames)
             throws RepositoryException;
 
     /**
-     * Creates an instance of this base model requiring a system session (which is 'forked' through impersonation) to
+     * Creates an instance of this base provider requiring a system session (which is 'forked' through impersonation) to
      * read the JCR data, at a specific rolesPath for a specific role type (roleTypeName) and a specific rolesPropertyName
      * to read 'implied' roles.
      *
@@ -132,12 +139,13 @@ abstract class AbstractRolesModel<R extends AbstractRole> {
      * @param rolesPropertyName the name of the multi-value string property holding 'implied' roles
      * @throws RepositoryException if something fails during the creation of this instance
      */
-    protected AbstractRolesModel(final Session systemSession, final String rolesPath, final String roleTypeName,
-                                 final String rolesPropertyName) throws RepositoryException {
-        this.systemSession = systemSession.impersonate(new SimpleCredentials("system", new char[0]));
+    protected AbstractRolesProvider(final Session systemSession, final String rolesPath, final String roleTypeName,
+                                    final String rolesPropertyName, final Class<R> roleType) throws RepositoryException {
+        this.systemSession = systemSession;
         this.rolesPath = rolesPath;
         this.roleTypeName = roleTypeName;
         this.rolesPropertyName = rolesPropertyName;
+        this.roleType = roleType;
 
         this.systemSession.getWorkspace().getObservationManager().addEventListener(new ModelEventListener(),
                 Event.NODE_ADDED|Event.NODE_REMOVED|Event.PROPERTY_ADDED|Event.PROPERTY_CHANGED|Event.PROPERTY_REMOVED,
@@ -146,6 +154,39 @@ abstract class AbstractRolesModel<R extends AbstractRole> {
         synchronized (modelReference) {
             loadModel(modelReference.get());
         }
+    }
+
+    String getRolesPath() {
+        return rolesPath;
+    }
+
+    String getRolesTypeName() {
+        return roleTypeName;
+    }
+
+    String getRolesPropertyName() {
+        return rolesPropertyName;
+    }
+
+    Class<R> getRoleType() {
+        return roleType;
+    }
+
+    /**
+     * Get all the roles
+     * @return set of all the roles
+     */
+    public Set<R> getRoles() {
+        return new HashSet<>(modelReference.get().roles.values());
+    }
+
+    /**
+     * Checks if a role exists
+     * @param roleName role name
+     * @return true if the role exists
+     */
+    public boolean hasRole(final String roleName) {
+        return modelReference.get().roles.containsKey(roleName);
     }
 
     /**
@@ -200,19 +241,12 @@ abstract class AbstractRolesModel<R extends AbstractRole> {
         return resolveRoles(roleNames).stream().map(AbstractRole::getName).collect(Collectors.toSet());
     }
 
-    /**
-     * Close underlying dedicated system session used by this instance. The model itself isn't invalidated but will
-     * no longer monitor and receive JCR data events to update the model.
-     */
     public void close() {
-        if (systemSession.isLive()) {
-            systemSession.logout();
-        }
     }
 
     /**
      * Internal method to load a multi-valued string property by property name, used for specialization of loading a
-     * role model, see {@link RolesModel#createRole(Node, String, boolean, Set)}
+     * role model, see {@link RolesProviderImpl#createRole(Node, String, boolean, Set)}
      * @param node role node
      * @param propertyName multi-valued string property
      * @return set of property string values, empty if none found
@@ -282,9 +316,10 @@ abstract class AbstractRolesModel<R extends AbstractRole> {
     private void loadRole(final Model<R> model, final Node node) throws RepositoryException {
         if (node.isNodeType(roleTypeName)) {
             String roleName = NodeNameCodec.decode(node.getName());
+            String description = JcrUtils.getStringProperty(node, HIPPOSYS_DESCRIPTION, null);
             Set<String> rolesNames = getValues(node, rolesPropertyName);
             boolean system = JcrUtils.getBooleanProperty(node, HIPPO_SYSTEM, false);
-            R role = createRole(node, roleName, system, rolesNames);
+            R role = createRole(node, roleName, description, system, rolesNames);
             model.roles.putIfAbsent(roleName, role);
         }
     }

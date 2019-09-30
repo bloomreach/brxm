@@ -4,7 +4,7 @@ definitions:
       jcr:primaryType: hipposys:domain
       /users:
         jcr:primaryType: hipposys:domainrule
-        /modules-and-descendants:
+        /users-and-descendants:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: jcr:path
@@ -12,7 +12,7 @@ definitions:
           hipposys:value: /hippo:configuration/hippo:users
       /groups:
         jcr:primaryType: hipposys:domainrule
-        /modules-and-descendants:
+        /groups-and-descendants:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: jcr:path

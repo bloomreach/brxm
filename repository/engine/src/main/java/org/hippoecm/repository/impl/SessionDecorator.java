@@ -65,11 +65,14 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.jackrabbit.api.XASession;
 import org.apache.jackrabbit.commons.xml.ToXmlContentHandler;
+import org.apache.jackrabbit.core.SessionImpl;
+import org.apache.jackrabbit.core.SessionListener;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.deriveddata.DerivedDataEngine;
 import org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
+import org.hippoecm.repository.jackrabbit.XASessionImpl;
 import org.onehippo.repository.security.SessionUser;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.xml.ContentResourceLoader;
@@ -84,12 +87,12 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
-public class SessionDecorator implements XASession, HippoSession {
+public class SessionDecorator implements XASession, HippoSession, SessionListener {
 
     private static Logger log = LoggerFactory.getLogger(SessionDecorator.class);
 
     protected final Repository repository;
-    protected final Session session;
+    protected final XASessionImpl session;
     protected WorkspaceDecorator workspaceDecorator;
 
     protected DerivedDataEngine derivedEngine;
@@ -106,9 +109,28 @@ public class SessionDecorator implements XASession, HippoSession {
     }
 
     SessionDecorator(final Session session) {
-        this.session = unwrap(session);
+        this.session = (XASessionImpl)unwrap(session);
+        this.session.addListener(this);
         this.repository = new RepositoryDecorator(this.session.getRepository());
         derivedEngine = new DerivedDataEngine(this);
+    }
+
+    // -- SessionListener interface
+    @Override
+    public void loggingOut(final SessionImpl session) {
+    }
+
+    @Override
+    public void loggedOut(final SessionImpl session) {
+        dispose();
+    }
+    // -- end SessionListener interface
+
+    private void dispose() {
+        // dispose workspace provided managers closed/detached so their own managed sessions are properly logged out.
+        if (workspaceDecorator != null) {
+            workspaceDecorator.dispose();
+        }
     }
 
     void postSave(final Node node) throws VersionException, LockException, ConstraintViolationException, RepositoryException {

@@ -13,33 +13,31 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.security.role;
+package com.bloomreach.xm.repository.security;
 
-import java.util.Set;
+import java.util.HashSet;
 
 /**
- * Implementation of a {@link Role}
+ * Simple POJO bean implementation of {@link Role}
  */
-class RoleImpl extends UserRoleImpl implements Role {
-    private final Set<String> privileges;
+public class RoleBean extends AbstractRoleBean implements Role {
 
-    RoleImpl(final String name, final boolean system, final Set<String> roles, final Set<String> privileges) {
-        super(name, system, roles);
-        this.privileges = privileges;
+    private final HashSet<String> privileges = new HashSet<>();
+
+    public RoleBean() {
+    }
+
+    public RoleBean(final String name, final String description) {
+        super(name, description);
+    }
+
+    public RoleBean(final Role role) {
+        super(role);
+        this.privileges.addAll(role.getPrivileges());
     }
 
     @Override
-    public Set<String> getPrivileges() {
+    public HashSet<String> getPrivileges() {
         return privileges;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        return obj instanceof RoleImpl && getName().equals(((RoleImpl)obj).getName());
-    }
-
-    @Override
-    public int hashCode() {
-        return getName().hashCode();
     }
 }

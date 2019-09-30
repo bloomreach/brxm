@@ -13,14 +13,23 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository.security.role;
-
-import org.onehippo.repository.security.User;
-import org.onehippo.repository.security.Group;
+package com.bloomreach.xm.repository.security;
 
 /**
- * A named functional role to be held or performed by a {@link User} or {@link Group} of users.
- * @see User#getUserRoles()
+ * Internal interface for the HippoSecurityManager provided singleton read-only and thread-safe security providers
+ * share all a dedicated system session
  */
-public interface UserRole extends AbstractRole {
+public interface RepositorySecurityProviders {
+
+    /**
+     * Provides a read-only and thread-safe provider for accessing repository Role definitions
+     * @return the roles provider
+     */
+    RolesProvider getRolesProvider();
+
+    /**
+     * Provides a read-only and thread-safe provider for accessing repository User Role definitions
+     * @return the userroles provider
+     */
+    UserRolesProvider getUserRolesProvider();
 }
