@@ -178,6 +178,69 @@ public class ReferenceJcrPathAuthorizationTest extends AbstractReferenceJcrPathA
     }
 
     @Test
+    public void deleted_facet_rules_do_not_affect_logged_in_user() throws Exception {
+
+        Session bob = null;
+        try {
+            bob = loginUser("bob");
+
+            // now remove the read access for Bob user, however it doen not (yet!) affect the already logged in user
+            session.getNode("/hippo:configuration/hippo:domains/pathFacetRuleDomain/read-all-nodes-test-folder-and-below/allow-by-path").remove();
+            session.save();
+
+            assertTrue(bob.nodeExists("/test"));
+            assertTrue(bob.nodeExists("/test/folder"));
+
+            bob.logout();
+            bob = loginUser("bob");
+            // newly logged in bob does not 'see' the test/folder any more
+            assertTrue(bob.nodeExists("/test"));
+            assertFalse(bob.nodeExists("/test/folder"));
+        } finally {
+
+            if (bob != null) {
+                bob.logout();
+            }
+        }
+    }
+
+    @Test
+    public void added_facet_rules_do_not_affect_logged_in_user() throws Exception {
+
+        // remove the facet rule giving bob read access
+        session.move("/hippo:configuration/hippo:domains/pathFacetRuleDomain/read-all-nodes-test-folder-and-below/allow-by-path",
+                "/backup");
+        session.save();
+
+        Session bob = null;
+        try {
+            bob = loginUser("bob");
+
+            assertTrue(bob.nodeExists("/test"));
+            assertFalse(bob.nodeExists("/test/folder"));
+
+            session.move("/backup",
+                    "/hippo:configuration/hippo:domains/pathFacetRuleDomain/read-all-nodes-test-folder-and-below/allow-by-path");
+            session.save();
+
+            // logged in user should not be affected (yet!) by added facet rule!
+            assertTrue(bob.nodeExists("/test"));
+            assertFalse(bob.nodeExists("/test/folder"));
+
+            bob.logout();
+            bob = loginUser("bob");
+            // newly logged in bob does 'see' the test/folder now
+            assertTrue(bob.nodeExists("/test"));
+            assertTrue(bob.nodeExists("/test/folder"));
+        } finally {
+
+            if (bob != null) {
+                bob.logout();
+            }
+        }
+    }
+
+    @Test
     public void bob_finds_test_folder_and_any_node_below() throws Exception {
 
         String xpath = "/jcr:root/test//*[@jcr:primaryType='hippostd:folder' or @jcr:primaryType='hippo:authtestdocument' " +
