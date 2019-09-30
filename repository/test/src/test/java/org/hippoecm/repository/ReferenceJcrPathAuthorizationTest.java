@@ -16,6 +16,8 @@
 package org.hippoecm.repository;
 
 import java.security.AccessControlException;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -24,12 +26,16 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
+import org.assertj.core.api.Assertions;
 import org.hippoecm.repository.api.HippoNodeIterator;
+import org.hippoecm.repository.jackrabbit.QFacetRuleStateManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.security.StandardPermissionNames;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -207,11 +213,22 @@ public class ReferenceJcrPathAuthorizationTest extends AbstractReferenceJcrPathA
     @Test
     public void added_facet_rules_do_not_affect_logged_in_user() throws Exception {
 
-        // remove the facet rule giving bob read access
-        session.move("/hippo:configuration/hippo:domains/pathFacetRuleDomain/read-all-nodes-test-folder-and-below/allow-by-path",
-                "/backup");
-        session.save();
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(QFacetRuleStateManager.class).build()) {
+            // remove the facet rule giving bob read access
+            session.move("/hippo:configuration/hippo:domains/pathFacetRuleDomain/read-all-nodes-test-folder-and-below/allow-by-path",
+                    "/backup");
+            session.save();
 
+            try {
+                assertThat(interceptor.messages().collect(Collectors.toSet()))
+                        .containsExactly("Skipping facet rule in not-supported location");
+            } catch (Exception e) {
+                // sometimes the #getPath succeeds (concurrency?). Hence the test also passes if only the warning below
+                // is logged
+                assertThat(interceptor.messages().collect(Collectors.toSet()))
+                        .containsExactlyInAnyOrder("Skipping facet rule in not-supported location: /backup");
+            }
+        }
         Session bob = null;
         try {
             bob = loginUser("bob");

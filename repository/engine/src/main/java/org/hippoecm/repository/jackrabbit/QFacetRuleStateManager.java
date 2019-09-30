@@ -97,7 +97,13 @@ public class QFacetRuleStateManager {
                 }
             }
         } else if (log.isWarnEnabled()) {
-            log.warn("Skipping domain folder in not-supported location: {}",domainFolderNode.getPath());
+            try {
+                log.warn("Skipping domain folder in not-supported location: {}", domainFolderNode.getPath());
+            } catch (RepositoryException e) {
+                log.warn("Skipping domain folder in not-supported location");
+                log.info("Exception while fetching path for domain folder. Most likely the result of a node move which " +
+                        "has not been processed by other (session) listeners. Ignore this exception");
+            }
         }
     }
 
@@ -109,7 +115,13 @@ public class QFacetRuleStateManager {
                 Domain.isValidDomainFolderLocation(facetRuleNode.getParent().getParent())) {
             processFacetRuleJcrPath(facetRuleNode);
         } else if (log.isWarnEnabled()) {
-            log.warn("Skipping facet rule in not-supported location: {}",facetRuleNode.getPath());
+            try {
+                log.warn("Skipping facet rule in not-supported location: {}", facetRuleNode.getPath());
+            } catch (RepositoryException e) {
+                log.warn("Skipping facet rule in not-supported location");
+                log.info("Exception while fetching path for facet rule. Most likely the result of a node move which " +
+                        "has not been processed by other (session) listeners. Ignore this exception");
+            }
         }
     }
 
