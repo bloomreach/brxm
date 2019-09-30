@@ -17,14 +17,12 @@ definitions:
               jcr:primaryType: hipposys:facetrule
               hipposys:equals: true
               hipposys:facet: jcr:path
-              hipposys:filter: false
               hipposys:type: Reference
               hipposys:value: /
             /exclude-hst-domains-and-descendants:
               jcr:primaryType: hipposys:facetrule
               hipposys:equals: false
               hipposys:facet: jcr:path
-              hipposys:filter: false
               hipposys:type: Reference
               hipposys:value: /webfiles:domains
     /hippo:configuration/hippo:userroles:
