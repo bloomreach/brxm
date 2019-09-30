@@ -15,7 +15,6 @@ definitions:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: jcr:path
-          hipposys:filter: false
           hipposys:type: Reference
           hipposys:value: /testcontent
         # Although hippo:availability = live should suffice, this is an extra safe guard

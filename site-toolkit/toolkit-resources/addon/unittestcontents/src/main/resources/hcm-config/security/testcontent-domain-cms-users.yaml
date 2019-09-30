@@ -7,7 +7,6 @@ definitions:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: jcr:path
-          hipposys:filter: false
           hipposys:type: Reference
           hipposys:value: /unittestcontent
       /extracontent-domain:
@@ -16,6 +15,5 @@ definitions:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: jcr:path
-          hipposys:filter: false
           hipposys:type: Reference
           hipposys:value: /extracontent
