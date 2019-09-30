@@ -1,0 +1,20 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:domains/autoexport-config:
+      jcr:primaryType: hipposys:domain
+      /autoexport-config:
+        jcr:primaryType: hipposys:domainrule
+        /autoexport-config-node:
+          jcr:primaryType: hipposys:facetrule
+          hipposys:equals: true
+          hipposys:facet: jcr:path
+          hipposys:type: Reference
+          hipposys:value: /hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig
+      /modify-console-user:
+        jcr:primaryType: hipposys:authrole
+        hipposys:userrole: xm-console-user
+        hipposys:role: modify
+      /modify-cms-user:
+        jcr:primaryType: hipposys:authrole
+        hipposys:userrole: xm-cms-user
+        hipposys:role: modify
