@@ -3,3 +3,27 @@ definitions:
     /formdata:
       .meta:residual-child-node-category: system
       jcr:primaryType: hst:formdatacontainer
+      /hst:domains:
+        jcr:primaryType: hipposys:federateddomainfolder
+        /formdata:
+          jcr:primaryType: hipposys:domain
+          /readwrite:
+            jcr:primaryType: hipposys:authrole
+            hipposys:userrole: xm-hst-formdata-writer
+            hipposys:role: readwrite
+          /formdata:
+            jcr:primaryType: hipposys:domainrule
+            /hst-formdata:
+              jcr:primaryType: hipposys:facetrule
+              hipposys:equals: true
+              hipposys:facet: jcr:path
+              hipposys:filter: false
+              hipposys:type: Reference
+              hipposys:value: /
+            /exclude-hst-domains-and-descendants:
+              jcr:primaryType: hipposys:facetrule
+              hipposys:equals: false
+              hipposys:facet: jcr:path
+              hipposys:filter: false
+              hipposys:type: Reference
+              hipposys:value: /hst:domains
