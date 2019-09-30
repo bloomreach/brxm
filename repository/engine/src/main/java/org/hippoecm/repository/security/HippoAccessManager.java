@@ -732,21 +732,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
             boolean allRulesMatched = true;
 
-            // no facet rules means no match
-            final Set<QFacetRule> facetRules = domainRule.getFacetRules();
-            if (facetRules.isEmpty()) {
-                allRulesMatched = false;
-                log.debug("No facet rules found for : {} in domain rule: {}", nodeState.getId(), domainRule);
-            }
             // check if node matches ALL of the facet rules
-            for (QFacetRule facetRule : facetRules) {
-                if (!matchFacetRule(nodeState, facetRule, fad)) {
-                    allRulesMatched = false;
-                    log.trace("Rule doesn't match for : {} facet rule: {}", nodeState.getId(), facetRule);
-                    break;
-                }
-            }
-            if (allRulesMatched) {
+            if (matchFacetRules(nodeState, domainRule, fad)) {
                 // a match is found, don't check other domain rules;
                 isInDomain = true;
                 log.debug("Node :  {} found in domain {} match {}", nodeState.getId(), fad.getDomainName(), domainRule);
@@ -781,6 +768,26 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             }
         }
         return isInDomain;
+    }
+
+    /**
+     * @see #matchFacetRule(NodeState, QFacetRule, FacetAuthDomain) only now for a list of facet rules
+     */
+    private boolean matchFacetRules(final NodeState nodeState, final DomainRule domainRule, final FacetAuthDomain fad)
+            throws RepositoryException {
+        // no facet rules means no match
+        final Set<QFacetRule> facetRules = domainRule.getFacetRules();
+        if (facetRules.isEmpty()) {
+            log.debug("No facet rules found for : {} in domain rule: {}", nodeState.getId(), domainRule);
+            return false;
+        }
+        for (QFacetRule facetRule : facetRules) {
+            if (!matchFacetRule(nodeState, facetRule, fad)) {
+                log.trace("Rule doesn't match for : {} facet rule: {}", nodeState.getId(), facetRule);
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -1683,9 +1690,9 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                 }
 
                 try {
-                    if (!isNodeInDomain(nodeState, fad, true)) {
+                    if (!matchFacetRules(nodeState, domainRule, fad)) {
                         log.debug("Do not give read access to ancestry since the referenced path is not included " +
-                                "in the domain due some other facet rule, and as a result, the ancestry should " +
+                                "in the domain rule due some other facet rule, and as a result, the ancestry should " +
                                 "not get implicit read access");
                         continue;
                     }
