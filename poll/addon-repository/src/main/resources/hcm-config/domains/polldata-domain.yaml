@@ -12,9 +12,9 @@ definitions:
           jcr:primaryType: hipposys:authrole
           hipposys:users: [liveuser, previewuser]
           hipposys:role: readonly
-        /polldata-and-descendants:
+        /polldata:
           jcr:primaryType: hipposys:domainrule
-          /poll-polldata-node:
+          /polldata-and-descendants:
             jcr:primaryType: hipposys:facetrule
             hipposys:equals: true
             hipposys:facet: jcr:path
