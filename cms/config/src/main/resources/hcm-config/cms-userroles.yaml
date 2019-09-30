@@ -7,7 +7,7 @@ definitions:
       /xm-cms-user:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
-        hipposys:userroles: [xm-frontendconfig-reader]
+        hipposys:userroles: [xm-frontendconfig-reader, xm-webfiles-reader]
       /xm-console-user:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
