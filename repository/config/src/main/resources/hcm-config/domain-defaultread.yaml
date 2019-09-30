@@ -27,15 +27,6 @@ definitions:
           hipposys:facet: jcr:path
           hipposys:type: Reference
           hipposys:value: /hippo:log
-      # TODO who else than the system user really needs to read this?
-      /hippo-modules:
-        jcr:primaryType: hipposys:domainrule
-        /modules-and-descendants:
-          jcr:primaryType: hipposys:facetrule
-          hipposys:equals: true
-          hipposys:facet: jcr:path
-          hipposys:type: Reference
-          hipposys:value: /hippo:configuration/hippo:modules
       /readonly:
         jcr:primaryType: hipposys:authrole
         hipposys:groups: [everybody]
