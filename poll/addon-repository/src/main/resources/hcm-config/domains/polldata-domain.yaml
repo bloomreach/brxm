@@ -18,13 +18,11 @@ definitions:
             jcr:primaryType: hipposys:facetrule
             hipposys:equals: true
             hipposys:facet: jcr:path
-            hipposys:filter: false
             hipposys:type: Reference
             hipposys:value: /
           /exclude-poll-domains-and-descendants:
             jcr:primaryType: hipposys:facetrule
             hipposys:equals: false
             hipposys:facet: jcr:path
-            hipposys:filter: false
             hipposys:type: Reference
             hipposys:value: /poll:domains
