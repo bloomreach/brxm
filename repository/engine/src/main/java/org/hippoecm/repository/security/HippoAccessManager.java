@@ -730,8 +730,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         // check is node matches ONE of the domain rules
         for (DomainRule domainRule : fad.getRules()) {
 
-            boolean allRulesMatched = true;
-
             // check if node matches ALL of the facet rules
             if (matchFacetRules(nodeState, domainRule, fad)) {
                 // a match is found, don't check other domain rules;
