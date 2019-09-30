@@ -24,3 +24,4 @@
 
 [webfiles:webfiles] > nt:base
 + * (webfiles:bundle) = webfiles:bundle
++ webfiles:domains (hipposys:federateddomainfolder) = hipposys:federateddomainfolder
