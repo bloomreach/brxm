@@ -8,14 +8,12 @@ definitions:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: nodename
-          hipposys:filter: false
           hipposys:type: Name
           hipposys:value: __user__
         /type-hippo-user:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: nodetype
-          hipposys:filter: false
           hipposys:type: Name
           hipposys:value: hipposys:user
       /modify:
