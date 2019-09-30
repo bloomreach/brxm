@@ -13,7 +13,7 @@ definitions:
             hipposys:role: readwrite
           /formdata:
             jcr:primaryType: hipposys:domainrule
-            /hst-formdata:
+            /formdata-and-descendants:
               jcr:primaryType: hipposys:facetrule
               hipposys:equals: true
               hipposys:facet: jcr:path
