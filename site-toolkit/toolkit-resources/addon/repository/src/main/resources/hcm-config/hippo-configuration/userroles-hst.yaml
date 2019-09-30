@@ -4,12 +4,9 @@ definitions:
       /xm-hst-formdata-writer:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
-      /xm-hst-webfiles-reader:
-        jcr:primaryType: hipposys:userrole
-        hipposys:system: true
       /xm-hst-user:
         jcr:primaryType: hipposys:userrole
-        hipposys:userroles: [xm-hst-webfiles-reader]
+        hipposys:userroles: [xm-webfiles-reader]
         hipposys:system: true
       /xm-hst-live-documents-reader:
         jcr:primaryType: hipposys:userrole
