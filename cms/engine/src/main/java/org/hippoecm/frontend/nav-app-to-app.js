@@ -197,6 +197,13 @@
         (iframe) => iframe.className,
       );
 
+      if (perspectiveIdentifier === 'browser' && pathElements.length > 1) {
+        const location = document.location;
+        const url = new URL(location.href);
+        url.searchParams.append('uuid', pathElements[1]);
+        location.assign(url.toString());
+      }
+
       if (iframeClassName.includes(`${perspectiveIdentifier}-iframe`)) {
         if ( perspectiveIdentifier === 'projects' ) {
           pathElements.unshift(perspectiveIdentifier);
