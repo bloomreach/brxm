@@ -116,6 +116,12 @@ describe('SpaService', () => {
       publicApi.syncOverlay();
       expect(OverlayService.sync).toHaveBeenCalled();
     });
+
+    it('can sync the positions and meta-data of the overlay elements', () => {
+      spyOn(RenderingService, 'createOverlay');
+      publicApi.sync();
+      expect(RenderingService.createOverlay).toHaveBeenCalled();
+    });
   });
 
   describe('render component', () => {
