@@ -29,9 +29,9 @@
     border-radius: $editor-field-border-radius;
     overflow: hidden; // prevent background-color bleeding over rounded corners
 
-    &:focus-within {
-      border-color: $bluePrimary;
-      box-shadow: 0 0 0 1px $bluePrimary;
+    &.cke_focus {
+      border-color: $editor-field-focus-color;
+      box-shadow: 0 0 0 1px $editor-field-focus-color;
     }
   }
 
