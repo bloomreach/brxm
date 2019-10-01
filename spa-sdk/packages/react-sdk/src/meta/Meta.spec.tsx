@@ -14,26 +14,36 @@
  * limitations under the License.
  */
 
+import React from 'react';
+import { mocked } from 'ts-jest/utils';
+import { shallow } from 'enzyme';
+import { isMetaComment, Meta } from '@bloomreach/spa-sdk';
+import { Meta as MetaComponent } from './Meta';
+import { MetaComment } from './MetaComment';
+
 jest.mock('@bloomreach/spa-sdk');
 
-import { shallow } from 'enzyme';
-import React from 'react';
-import { META_POSITION_BEGIN } from '@bloomreach/spa-sdk';
-
-import { Meta } from './Meta';
-import { MetaComment } from './MetaComment';
-import { mockMeta, mockNoCommentMeta } from '../../__mocks__/@bloomreach/spa-sdk';
-
 describe('Meta', () => {
+  const meta = new class implements Meta {
+    getData = jest.fn();
+    getPosition = jest.fn();
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should render MetaComment if meta is a comment', () => {
-    const meta = mockMeta('comment-data', META_POSITION_BEGIN);
-    const wrapper = shallow(<Meta meta={meta}/>);
+    mocked(isMetaComment).mockReturnValueOnce(true);
+
+    const wrapper = shallow(<MetaComponent meta={meta}/>);
     expect(wrapper.contains(<MetaComment meta={meta}/>)).toBe(true);
   });
 
-  it('should not render MetaComment if meta is not a comment', () => {
-    const meta = mockNoCommentMeta();
-    const wrapper = shallow(<Meta meta={meta}/>);
-    expect(wrapper.contains(<MetaComment meta={meta}/>)).toBe(false);
+  it('should render nothing if meta is not determined', () => {
+    mocked(isMetaComment).mockReturnValueOnce(false);
+
+    const wrapper = shallow(<MetaComponent meta={meta}/>);
+    expect(wrapper.isEmptyRender()).toBe(true);
   });
 });
