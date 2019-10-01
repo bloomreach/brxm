@@ -89,9 +89,13 @@ export class Spa {
       return;
     }
 
+    const data = new URLSearchParams(properties as Record<string, string>);
     const response = await config.httpClient({
       url,
-      data: properties,
+      data: data.toString(),
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
       method: 'POST',
     });
 

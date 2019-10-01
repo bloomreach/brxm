@@ -154,7 +154,10 @@ describe('Spa', () => {
         expect(config.httpClient).toBeCalledWith({
           url: 'some-url',
           method: 'POST',
-          data: { a: 'b' },
+          data: 'a=b',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
         });
       });
 
