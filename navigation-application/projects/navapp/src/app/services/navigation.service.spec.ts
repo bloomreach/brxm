@@ -35,6 +35,8 @@ import { UrlMapperService } from './url-mapper.service';
 describe('NavigationService', () => {
   let service: NavigationService;
 
+  const basePath = '/base-path';
+
   const locationMock = jasmine.createSpyObj('Location', [
     'path',
     'subscribe',
@@ -88,11 +90,12 @@ describe('NavigationService', () => {
     'combinePathParts',
     'trimLeadingSlash',
   ]);
+  urlMapperServiceMock.basePath = basePath;
 
   const globalSettingsServiceMock: any = {
     appSettings: {
       navAppBaseURL: 'https://some-domain.com/iframe1/url',
-      initialPath: '/app/path/to/home',
+      initialPath: '/iframe1/url/app/path/to/home',
     },
   };
 
@@ -121,7 +124,7 @@ describe('NavigationService', () => {
     }));
 
     urlMapperServiceMock.mapNavItemToBrowserUrl.and.callFake(
-      (navItem: NavItem) => `${new URL(navItem.appIframeUrl).pathname}/${navItem.appPath}`,
+      (navItem: NavItem) => `${basePath}${new URL(navItem.appIframeUrl).pathname}/${navItem.appPath}`,
     );
     urlMapperServiceMock.trimLeadingSlash.and.callFake((value: string) => value.replace(/^\//, ''));
     urlMapperServiceMock.combinePathParts.and.callFake((...parts: string[]) => parts.map(urlMapperServiceMock.trimLeadingSlash).join('/'));
@@ -161,7 +164,7 @@ describe('NavigationService', () => {
     });
 
     it('should do the initial url navigation', () => {
-      expect(locationMock.replaceState).toHaveBeenCalledWith('/iframe1/url/app/path/to/home', '', { flags: '{}' });
+      expect(locationMock.replaceState).toHaveBeenCalledWith(`${basePath}/iframe1/url/app/path/to/home`, '', { flags: '{}' });
     });
   });
 
@@ -190,7 +193,7 @@ describe('NavigationService', () => {
       tick();
 
       expect(locationMock.go).toHaveBeenCalledWith(
-        '/iframe1/url/app/path/to/page1',
+        `${basePath}/iframe1/url/app/path/to/page1`,
         '',
         { breadcrumbLabel: 'some breadcrumb label', flags: '{"forceRefresh":false}' },
       );
@@ -202,7 +205,7 @@ describe('NavigationService', () => {
       tick();
 
       expect(locationMock.go).toHaveBeenCalledWith(
-        '/iframe1/url/app/path/to/home',
+        `${basePath}/iframe1/url/app/path/to/home`,
         '',
         { flags: '{"forceRefresh":true}' },
       );
@@ -234,7 +237,7 @@ describe('NavigationService', () => {
 
     it('should navigate by NavLocation', fakeAsync(() => {
       urlMapperServiceMock.mapNavLocationToBrowserUrl.and.returnValue([
-        '/iframe1/url/app/path/to/page1/internal/page1',
+        `${basePath}/iframe1/url/app/path/to/page1/internal/page1`,
         new NavItemMock(),
       ]);
 
@@ -251,7 +254,7 @@ describe('NavigationService', () => {
       expect(menuStateServiceMock.activateMenuItem).toHaveBeenCalledWith('http://domain.com/iframe1/url', 'app/path/to/page1');
       expect(breadcrumbsServiceMock.setSuffix).toHaveBeenCalledWith('another breadcrumb label');
       expect(locationMock.go).toHaveBeenCalledWith(
-        '/iframe1/url/app/path/to/page1/internal/page1',
+        `${basePath}/iframe1/url/app/path/to/page1/internal/page1`,
         '',
         { breadcrumbLabel: 'another breadcrumb label', flags: '{}' },
       );
@@ -259,7 +262,7 @@ describe('NavigationService', () => {
 
     it('should replace browser state when url is the same', fakeAsync(() => {
       urlMapperServiceMock.mapNavLocationToBrowserUrl.and.returnValue([
-        '/iframe1/url/app/path/to/page1/internal/page1',
+        `${basePath}/iframe1/url/app/path/to/page1/internal/page1`,
         new NavItemMock(),
       ]);
 
@@ -275,7 +278,7 @@ describe('NavigationService', () => {
       tick();
 
       expect(locationMock.replaceState).toHaveBeenCalledWith(
-        '/iframe1/url/app/path/to/page1/internal/page1',
+        `${basePath}/iframe1/url/app/path/to/page1/internal/page1`,
         '',
         { breadcrumbLabel: 'a breadcrumb label', flags: '{}' },
       );
@@ -283,7 +286,7 @@ describe('NavigationService', () => {
 
     it('should navigate on location changes', fakeAsync(() => {
       const urlChangeEvent: PopStateEvent = {
-        url: '/iframe2/url/another/app/path/to/home',
+        url: `${basePath}/iframe2/url/another/app/path/to/home`,
         state: { breadcrumbLabel: 'label', flags: '{}' },
       };
 

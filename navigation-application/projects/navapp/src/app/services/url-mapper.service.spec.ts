@@ -29,6 +29,7 @@ describe('UrlMapperService', () => {
 
   const globalSettingsServiceMock = {
     appSettings: {
+      navAppBaseURL: 'https://some-domain.com/base/path',
     },
   } as any;
 
@@ -72,10 +73,10 @@ describe('UrlMapperService', () => {
     service = TestBed.get(UrlMapperService);
   });
 
-  it('should combine path parts', () => {
-    const expected = '/part1/part2/part3';
+  it('should return the base path', () => {
+    const expected = '/base/path';
 
-    const actual = service.combinePathParts('part1', 'part2/', '/part3');
+    const actual = service.basePath;
 
     expect(actual).toBe(expected);
   });
@@ -89,7 +90,7 @@ describe('UrlMapperService', () => {
   });
 
   it('should map nav item to the browser url', () => {
-    const expected = '/path/to/app/path/to/page?param1=value1#hash-data';
+    const expected = '/base/path/path/to/app/path/to/page?param1=value1#hash-data';
     const navItem: NavItem = {
       id: 'some-id',
       appIframeUrl: 'https://iframe-domain.com/path/to/app',
@@ -101,8 +102,8 @@ describe('UrlMapperService', () => {
     expect(actual).toBe(expected);
   });
 
-  it('should map nav item to the browser url with stripped of "iframe" path part from iframe url', () => {
-    const expected = '/path/to/app/path/to/page?param1=value1#hash-data';
+  it('should map nav item to the browser url with stripped off "iframe" path part from iframe url', () => {
+    const expected = '/base/path/path/to/app/path/to/page?param1=value1#hash-data';
     const navItem: NavItem = {
       id: 'some-id',
       appIframeUrl: 'https://iframe-domain.com/iframe/path/to/app',
@@ -114,8 +115,34 @@ describe('UrlMapperService', () => {
     expect(actual).toBe(expected);
   });
 
+  it('should map nav item to the browser url with stripped off base path part from iframe url', () => {
+    const expected = '/base/path/path/to/app/path/to/page?param1=value1#hash-data';
+    const navItem: NavItem = {
+      id: 'some-id',
+      appIframeUrl: 'https://iframe-domain.com/base/path/path/to/app',
+      appPath: 'path/to/page?param1=value1#hash-data',
+    };
+
+    const actual = service.mapNavItemToBrowserUrl(navItem);
+
+    expect(actual).toBe(expected);
+  });
+
+  it('should map nav item to the browser url with stripped off "iframe" and base path parts from iframe url', () => {
+    const expected = '/base/path/path/to/app/path/to/page?param1=value1#hash-data';
+    const navItem: NavItem = {
+      id: 'some-id',
+      appIframeUrl: 'https://iframe-domain.com/base/path/iframe/path/to/app',
+      appPath: 'path/to/page?param1=value1#hash-data',
+    };
+
+    const actual = service.mapNavItemToBrowserUrl(navItem);
+
+    expect(actual).toBe(expected);
+  });
+
   it('should map nav location to the browser url', () => {
-    const expected = ['/iframe1/url/app/path/to/page1/some/detailed/page?param1=value1#hash-data', navItemsMock[1]];
+    const expected = ['/base/path/iframe1/url/app/path/to/page1/some/detailed/page?param1=value1#hash-data', navItemsMock[1]];
     const navLocation: NavLocation = {
       path: 'app/path/to/page1/some/detailed/page?param1=value1#hash-data',
     };

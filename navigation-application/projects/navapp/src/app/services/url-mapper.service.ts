@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { Location } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { NavItem, NavLocation } from '@bloomreach/navapp-communication';
 
@@ -22,24 +23,37 @@ import { ClientAppService } from '../client-app/services/client-app.service';
 import { GlobalSettingsService } from './global-settings.service';
 import { NavConfigService } from './nav-config.service';
 
-const pathPartsToStripOffFromIframeUrl = [
-  'iframe',
-];
-
 @Injectable({
   providedIn: 'root',
 })
 export class UrlMapperService {
+  // Path parts without leading and trailing slashes
+  private pathPartsToStripOffFromIframeUrl: string[] = [
+    'iframe',
+  ];
+
   constructor(
     private settings: GlobalSettingsService,
     private navConfigService: NavConfigService,
     private clientAppService: ClientAppService,
-  ) { }
+  ) {
+      this.pathPartsToStripOffFromIframeUrl.unshift(
+        this.trimSlashes(this.basePath),
+      );
+  }
+
+  get basePath(): string {
+    const baseUrl = this.settings.appSettings.navAppBaseURL;
+
+    return new URL(baseUrl).pathname;
+  }
 
   mapNavItemToBrowserUrl(navItem: NavItem): string {
     const appBasePath = this.normalizeAppIframeUrl(navItem.appIframeUrl);
 
-    return this.combinePathParts(appBasePath, navItem.appPath);
+    const path = Location.joinWithSlash(appBasePath, navItem.appPath);
+
+    return Location.joinWithSlash(this.basePath, path);
   }
 
   mapNavLocationToBrowserUrl(navLocation: NavLocation, useCurrentApp = false): [string, NavItem] {
@@ -59,13 +73,7 @@ export class UrlMapperService {
     const browserUrl = this.mapNavItemToBrowserUrl(navItem);
     const addPathAddOn = navLocation.path.slice(navItem.appPath.length);
 
-    return [this.combinePathParts(browserUrl, addPathAddOn), navItem];
-  }
-
-  combinePathParts(...parts: string[]): string {
-    const url = parts.filter(x => x.length > 0).map(x => this.trimSlashes(x)).join('/');
-
-    return `/${this.trimLeadingSlash(url)}`;
+    return [Location.joinWithSlash(browserUrl, addPathAddOn), navItem];
   }
 
   trimLeadingSlash(value: string): string {
@@ -79,7 +87,7 @@ export class UrlMapperService {
   private normalizeAppIframeUrl(appIframeUrl: string): string {
     let appBasePath = this.trimSlashes(new URL(appIframeUrl).pathname);
 
-    pathPartsToStripOffFromIframeUrl.forEach(pathPart => {
+    this.pathPartsToStripOffFromIframeUrl.forEach(pathPart => {
       const fullRegExp = new RegExp(`^${pathPart}$`);
       const prefixRegExp = new RegExp(`^${pathPart}\/`);
 

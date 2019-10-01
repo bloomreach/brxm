@@ -100,9 +100,7 @@ export class NavigationService implements OnDestroy {
   }
 
   private get basePath(): string {
-    const baseUrl = this.settings.appSettings.navAppBaseURL;
-
-    return new URL(baseUrl).pathname;
+    return this.urlMapperService.basePath;
   }
 
   private get homeUrl(): string {
@@ -333,7 +331,7 @@ export class NavigationService implements OnDestroy {
           ));
         }
 
-        const appPath = this.urlMapperService.combinePathParts(t.navItem.appPath, t.appPathAddOn);
+        const appPath = Location.joinWithSlash(t.navItem.appPath, t.appPathAddOn);
         const appPathWithoutLeadingSlash = this.urlMapperService.trimLeadingSlash(appPath);
 
         const navigatePromise = app.api.navigate(
