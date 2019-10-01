@@ -32,6 +32,22 @@ describe('ContainerImpl', () => {
 
       expect(container.getType()).toBe(TYPE_CONTAINER_BOX);
     });
+
+    it('should return a type in lower case', () => {
+      const container = new ContainerImpl({
+        id: 'id',
+        type: TYPE_COMPONENT_CONTAINER,
+        xtype: TYPE_CONTAINER_BOX.toUpperCase() as typeof TYPE_CONTAINER_BOX,
+      });
+
+      expect(container.getType()).toBe(TYPE_CONTAINER_BOX);
+    });
+
+    it('should return undefined where there is no xtype specified', () => {
+      const container = new ContainerImpl({ id: 'id', type: TYPE_COMPONENT_CONTAINER });
+
+      expect(container.getType()).toBeUndefined();
+    });
   });
 });
 

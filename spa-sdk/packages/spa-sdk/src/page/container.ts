@@ -40,7 +40,7 @@ type ContainerType = typeof TYPE_CONTAINER_BOX
  */
 export interface ContainerModel extends ComponentModel {
   type: typeof TYPE_COMPONENT_CONTAINER;
-  xtype: ContainerType;
+  xtype?: ContainerType;
 }
 
 /**
@@ -53,7 +53,7 @@ export interface Container extends Component {
    * @see https://documentation.bloomreach.com/library/concepts/template-composer/channel-editor-containers.html
    * @return The type of a container (e.g. `TYPE_CONTAINER_BOX`).
    */
-  getType(): ContainerType;
+  getType(): ContainerType | undefined;
 
   /**
    * @return The children of a container.
@@ -75,7 +75,7 @@ export class ContainerImpl extends ComponentImpl implements Container {
   }
 
   getType() {
-    return this.model.xtype;
+    return this.model.xtype && this.model.xtype.toLowerCase() as ContainerType;
   }
 }
 
