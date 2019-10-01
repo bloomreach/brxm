@@ -94,7 +94,7 @@ describe('Spa', () => {
     it('should request a page model', () => {
       expect(config.httpClient).toBeCalledWith({
         url: 'http://example.com',
-        method: 'get',
+        method: 'GET',
         headers: config.request.headers,
       });
     });
@@ -153,7 +153,7 @@ describe('Spa', () => {
       it('should request a component model', () => {
         expect(config.httpClient).toBeCalledWith({
           url: 'some-url',
-          method: 'post',
+          method: 'POST',
           data: { a: 'b' },
         });
       });

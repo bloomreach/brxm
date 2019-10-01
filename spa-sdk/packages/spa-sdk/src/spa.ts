@@ -74,8 +74,8 @@ export class Spa {
     const url = this.pageModelUrlBuilder(config.request, config.options);
     const response = await config.httpClient({
       url,
-      method: 'get',
       headers: config.request.headers,
+      method: 'GET',
     });
 
     return response.data;
@@ -92,7 +92,7 @@ export class Spa {
     const response = await config.httpClient({
       url,
       data: properties,
-      method: 'post',
+      method: 'POST',
     });
 
     return response.data;

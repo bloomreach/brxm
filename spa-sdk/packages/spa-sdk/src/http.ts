@@ -26,7 +26,7 @@ export type HttpClientConfig = {
   /**
    * HTTP request method.
    */
-  method: 'get' | 'post',
+  method: 'GET' | 'POST',
 
   /**
    * The URL to send the HTTP request to.
