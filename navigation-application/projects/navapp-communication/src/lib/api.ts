@@ -64,11 +64,14 @@ interface UserSettings {
   userName: string;
   /** email of user account if available */
   email?: string;
-  /** The language the user specified at login. If the app supports that language, it should render its labels in that language. */
-  /* TODO describe format, should be locale object? */
+  /** The language the user specified at login. If the app supports that language, it should render its labels in that
+   * language. Format: two lowercase alpha characters. Examples: 'en', 'fr', 'sq'.
+   */
   language: string;
-  /** The time zone the user specified at login. Where applicable, the app should display its date fields using that time zone. */
-  /* TODO describe format */
+  /** The time zone the user specified at login. Where applicable, the app should display its date fields using that time zone.
+   * Format: TZ database names in the form "Area/Location", e.g. "America/New_York" as specified by the TZDB group.
+   * See https://en.wikipedia.org/wiki/List_of_tz_database_time_zones from more examples.
+   */
   timeZone: string;
 }
 
