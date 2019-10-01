@@ -98,6 +98,30 @@ describe('PageImpl', () => {
     });
   });
 
+  describe('isPreview', () => {
+    it('should return true', () => {
+      const page = new PageImpl(
+        {
+          page: { id: 'id', type: TYPE_COMPONENT },
+          _meta: { preview: true },
+        },
+        root,
+        content,
+        eventBus,
+      );
+
+      expect(page.isPreview()).toBe(true);
+    });
+
+    it('should return false', () => {
+      const page1 = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT, _meta: {} } }, root, content, eventBus);
+      const page2 = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus);
+
+      expect(page1.isPreview()).toBe(false);
+      expect(page2.isPreview()).toBe(false);
+    });
+  });
+
   describe('onPageUpdate', () => {
     it('should update content on page.update event', async () => {
       const model = { page: { id: 'id', type: TYPE_COMPONENT } };

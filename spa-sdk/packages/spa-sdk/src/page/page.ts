@@ -78,6 +78,11 @@ export interface Page {
   getTitle(): string | undefined;
 
   /**
+   * @returns Whether the page is in the preview mode.
+   */
+  isPreview(): boolean;
+
+  /**
    * Synchronizes the CMS integration state.
    */
   sync(): void;
@@ -119,6 +124,10 @@ export class PageImpl implements Page {
 
   getTitle() {
     return this.model.page._meta && this.model.page._meta.pageTitle;
+  }
+
+  isPreview() {
+    return !!(this.model._meta && this.model._meta.preview);
   }
 
   sync() {
