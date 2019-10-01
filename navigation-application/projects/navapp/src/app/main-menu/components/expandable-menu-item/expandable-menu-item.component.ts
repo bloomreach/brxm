@@ -34,7 +34,7 @@ import { MenuStateService } from '../../services/menu-state.service';
   templateUrl: 'expandable-menu-item.component.html',
   styleUrls: ['expandable-menu-item.component.scss'],
   animations: [
-    trigger('slideInOut', [
+    trigger('menuSlideInOut', [
       state('false', style({ height: '0' })),
       state('true', style({ height: '*' })),
       transition('false <=> true', animate('300ms ease')),

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { animate, style, transition, trigger } from '@angular/animations';
+import { animate, query, style, transition, trigger } from '@angular/animations';
 import {
   Component,
   HostBinding,
@@ -40,6 +40,10 @@ import { MenuStateService } from '../../services/menu-state.service';
         animate('300ms ease-in-out', style({ transform: 'translateX(0%)' })),
       ]),
       transition(':leave', [
+        query('@menuSlideInOut', [
+          animate('300ms ease-in-out', style({ height: '0' })),
+        ],
+        { optional: true }),
         animate('300ms ease-in-out', style({ transform: 'translateX(-100%)' })),
       ]),
     ]),
