@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ public class DomainTest extends PluginTest {
 
     @Test
     public void testCreateAuthRole() throws Exception {
-        final Node domainNode = root.getNode("hippo:configuration/hippo:domains/autoexport");
+        final Node domainNode = root.getNode("hippo:configuration/hippo:domains/defaultread");
         try {
             Domain domain = new Domain(domainNode);
             assertFalse(domain.getAuthRoles().containsKey("author"));
