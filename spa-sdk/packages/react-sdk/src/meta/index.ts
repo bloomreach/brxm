@@ -14,5 +14,5 @@
  * limitations under the License.
  */
 
-export * from './Meta';
+export * from './BrMeta';
 export * from './MetaComment';

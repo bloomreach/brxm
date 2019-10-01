@@ -18,12 +18,12 @@ import React from 'react';
 import { mocked } from 'ts-jest/utils';
 import { shallow } from 'enzyme';
 import { isMetaComment, Meta } from '@bloomreach/spa-sdk';
-import { Meta as MetaComponent } from './Meta';
+import { BrMeta } from './BrMeta';
 import { MetaComment } from './MetaComment';
 
 jest.mock('@bloomreach/spa-sdk');
 
-describe('Meta', () => {
+describe('BrMeta', () => {
   const meta = new class implements Meta {
     getData = jest.fn();
     getPosition = jest.fn();
@@ -36,14 +36,14 @@ describe('Meta', () => {
   it('should render MetaComment if meta is a comment', () => {
     mocked(isMetaComment).mockReturnValueOnce(true);
 
-    const wrapper = shallow(<MetaComponent meta={meta}/>);
+    const wrapper = shallow(<BrMeta meta={meta}/>);
     expect(wrapper.contains(<MetaComment meta={meta}/>)).toBe(true);
   });
 
   it('should render nothing if meta is not determined', () => {
     mocked(isMetaComment).mockReturnValueOnce(false);
 
-    const wrapper = shallow(<MetaComponent meta={meta}/>);
+    const wrapper = shallow(<BrMeta meta={meta}/>);
     expect(wrapper.isEmptyRender()).toBe(true);
   });
 });

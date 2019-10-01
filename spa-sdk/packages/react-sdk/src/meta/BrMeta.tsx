@@ -15,15 +15,15 @@
  */
 
 import React from 'react';
-import { isMetaComment, Meta as SpaMeta } from '@bloomreach/spa-sdk';
+import { isMetaComment, Meta } from '@bloomreach/spa-sdk';
 import { MetaComment } from './MetaComment';
 
-interface MetaProps {
-  meta: SpaMeta;
+interface BrMetaProps {
+  meta: Meta;
 }
 
 // tslint:disable-next-line:function-name
-export function Meta(props: MetaProps) {
+export function BrMeta(props: BrMetaProps) {
   if (isMetaComment(props.meta)) {
     return <MetaComment meta={props.meta} />;
   }
