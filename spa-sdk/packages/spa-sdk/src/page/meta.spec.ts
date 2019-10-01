@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { MetaImpl, Meta, META_POSITION_BEGIN } from './meta';
+import { MetaImpl, Meta, META_POSITION_BEGIN, isMeta } from './meta';
 
 describe('MetaImpl', () => {
   let meta: Meta;
@@ -33,5 +33,18 @@ describe('MetaImpl', () => {
     it('should return a position', () => {
       expect(meta.getPosition()).toBe(META_POSITION_BEGIN);
     });
+  });
+});
+
+describe('isMeta', () => {
+  it('should return true', () => {
+    const meta = new MetaImpl({ data: 'some-data', type: 'some-type' }, META_POSITION_BEGIN);
+
+    expect(isMeta(meta)).toBe(true);
+  });
+
+  it('should return false', () => {
+    expect(isMeta(undefined)).toBe(false);
+    expect(isMeta({})).toBe(false);
   });
 });
