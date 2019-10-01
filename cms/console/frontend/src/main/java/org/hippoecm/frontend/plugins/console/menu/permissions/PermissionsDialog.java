@@ -174,7 +174,7 @@ public class PermissionsDialog extends Dialog<Node> {
                 final StringBuilder builder = new StringBuilder();
                 privileges.forEach((name, domainInfoPrivilege) -> {
                     builder.append("\n").append(name).append(" : ");
-                    domainInfoPrivilege.getDomainsProvidingPrivilege().stream()
+                    domainInfoPrivilege.getDomainPaths().stream()
                             .forEach(domainPath -> builder.append("\n\t").append("domain: ").append(domainPath));
 
                 });
