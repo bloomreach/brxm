@@ -163,7 +163,7 @@ describe('initialize', () => {
     }));
 
     window.SPA!.renderComponent('r1_r1_r1', {});
-    await new Promise(resolve => process.nextTick(resolve));
+    await new Promise(process.nextTick);
 
     expect(httpClient).toBeCalledWith(expect.objectContaining({ url: banner0.getUrl() }));
     expect(listener0).toBeCalled();

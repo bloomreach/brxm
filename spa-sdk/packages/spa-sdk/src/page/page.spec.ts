@@ -111,4 +111,15 @@ describe('PageImpl', () => {
       expect(page.getContent('some-content')).toBe(someContent);
     });
   });
+
+  describe('sync', () => {
+    it('should emit page.ready event', () => {
+      spyOn(eventBus, 'emit');
+
+      const page = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus);
+      page.sync();
+
+      expect(eventBus.emit).toBeCalledWith('page.ready', {});
+    });
+  });
 });
