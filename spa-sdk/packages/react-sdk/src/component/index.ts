@@ -15,4 +15,5 @@
  */
 
 export * from './BrMappingContext';
+export * from './BrNodeComponent';
 export * from './BrProps';
