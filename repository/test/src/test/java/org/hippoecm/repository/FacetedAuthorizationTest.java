@@ -996,9 +996,9 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
                         .as("Expected '%s' privilege but was '%s'", expectedPermission, current.getName())
                         .isEqualTo(expectedPermission);
 
-                assertThat(current.getDomainsProvidingPrivilege())
+                assertThat(current.getDomainPaths())
                         .as("Expected everywhere domain '%s' also giving '%s' privilege but was domain(s) '%s'",
-                                everywhereDomainPath, current.getName(), current.getDomainsProvidingPrivilege())
+                                everywhereDomainPath, current.getName(), current.getDomainPaths())
                         .containsExactly(everywhereDomainPath);
             }
 
@@ -1021,9 +1021,9 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
                     .as("Expected jcr:read privilege")
                     .isEqualTo(JCR_READ);
 
-            assertThat(privileges[0].getDomainsProvidingPrivilege())
+            assertThat(privileges[0].getDomainPaths())
                     .as("Expected read domain '%s' giving jcr:read privilege but was domain '%s'",
-                            readDomain.getPath(), privileges[0].getDomainsProvidingPrivilege().first())
+                            readDomain.getPath(), privileges[0].getDomainPaths().first())
                     .containsExactly(readDomain.getPath());
         }
 
@@ -1041,18 +1041,18 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
             assertThat(first.getName())
                     .as("Expected jcr:read as the first element in the sorted set")
                     .isEqualTo(JCR_READ);
-            assertThat(first.getDomainsProvidingPrivilege())
+            assertThat(first.getDomainPaths())
                     .as("Expected write domain '%s' giving jcr:read privilege but was domain(s) '%s'",
-                            writeDomain.getPath(), first.getDomainsProvidingPrivilege())
+                            writeDomain.getPath(), first.getDomainPaths())
                     .containsExactly(writeDomain.getPath());
 
             final DomainInfoPrivilege second = set.pollFirst();
             assertThat(second.getName())
                     .as("Expected jcr:write as the second element in the sorted set")
                     .isEqualTo(JCR_WRITE);
-            assertThat(second.getDomainsProvidingPrivilege())
+            assertThat(second.getDomainPaths())
                     .as("Expected write domain '%s' giving jcr:write privilege but was domain(s) '%s'",
-                            writeDomain.getPath(), second.getDomainsProvidingPrivilege())
+                            writeDomain.getPath(), second.getDomainPaths())
                     .containsExactly(writeDomain.getPath());
         }
 
@@ -1079,18 +1079,18 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
                 assertThat(first.getName())
                         .as("Expected jcr:read as the first element in the sorted set")
                         .isEqualTo(JCR_READ);
-                assertThat(first.getDomainsProvidingPrivilege())
+                assertThat(first.getDomainPaths())
                         .as("Expected domain '%s' and '%s' giving jcr:read privilege but was domain(s) '%s'",
-                                writeDomain.getPath(), writeDomainPath2, first.getDomainsProvidingPrivilege())
+                                writeDomain.getPath(), writeDomainPath2, first.getDomainPaths())
                         .containsExactly(writeDomain.getPath(), writeDomainPath2);
 
                 final DomainInfoPrivilege second = set.pollFirst();
                 assertThat(second.getName())
                         .as("Expected jcr:write as the second element in the sorted set")
                         .isEqualTo(JCR_WRITE);
-                assertThat(second.getDomainsProvidingPrivilege())
+                assertThat(second.getDomainPaths())
                         .as("Expected domain '%s' and '%s' giving jcr:write privilege but was domain(s) '%s'",
-                                writeDomain.getPath(), writeDomainPath2, second.getDomainsProvidingPrivilege())
+                                writeDomain.getPath(), writeDomainPath2, second.getDomainPaths())
                         .containsExactly(writeDomain.getPath(), writeDomainPath2);
             }
         } finally {

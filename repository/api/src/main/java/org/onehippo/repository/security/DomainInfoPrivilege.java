@@ -21,22 +21,18 @@ import javax.jcr.security.Privilege;
 /**
  * <p>
  *     {@link DomainInfoPrivilege} is a simple wrapper class for a {@link Privilege} supporting extra information. It
- *     supports information about all the security domain paths ({@link #getDomainsProvidingPrivilege()})
+ *     supports information about all the security domain paths ({@link #getDomainPaths()})
  *     that contributed to this specific {@link Privilege}. Because of how the security domains are set up, a single
  *     privilege on a {@link javax.jcr.Node}, eg jcr:read, can be the result of multiple security domains all giving
- *     jcr:read on the node. Hence {@link #getDomainsProvidingPrivilege()} returns a {@link TreeSet} and not a single
+ *     jcr:read on the node. Hence {@link #getDomainPaths()} returns a {@link TreeSet} and not a single
  *     domain path (Treeset such that the domains paths are sorted alphabetically).
  * </p>
- * <p>
- *
- * </p>
- *
  */
 public class DomainInfoPrivilege implements Privilege {
 
     private Privilege delegatee;
 
-    private TreeSet<String> domainsProvidingPrivilege = new TreeSet<>();
+    private TreeSet<String> domainPaths = new TreeSet<>();
 
     public DomainInfoPrivilege(final Privilege delegatee) {
         if (delegatee == null) {
@@ -49,12 +45,12 @@ public class DomainInfoPrivilege implements Privilege {
     /**
      * @return All the security domain node paths providing this privilege, sorted alphabetically on the domain path
      */
-    public TreeSet<String> getDomainsProvidingPrivilege() {
-        return domainsProvidingPrivilege;
+    public TreeSet<String> getDomainPaths() {
+        return domainPaths;
     }
 
-    public void addDomainProvidingPrivilege(final String domainPath) {
-        domainsProvidingPrivilege.add(domainPath);
+    public void addDomainPath(final String domainPath) {
+        domainPaths.add(domainPath);
     }
 
     @Override

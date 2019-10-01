@@ -1544,9 +1544,9 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      */
     public boolean hasPrivileges(String absPath, Privilege[] privileges) throws PathNotFoundException,
             RepositoryException {
-        final Path path = npRes.getQPath(absPath).getNormalizedPath();
-        if (privileges == null) {
-            return hasPrivileges(path, Collections.emptySet());
+        if (privileges == null || privileges.length == 0) {
+            // nothing to check, always true
+            return true;
         }
         Set<String> permissionNames = Arrays.stream(privileges).map(Privilege::getName).collect(Collectors.toCollection(HashSet::new));
         // first resolve permissionNames with jcr:all and jcr:write replaced with their aggregate privileges
@@ -1556,6 +1556,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         if (permissionNames.remove(StandardPermissionNames.JCR_ALL)) {
             permissionNames.addAll(StandardPermissionNames.JCR_ALL_PRIVILEGES);
         }
+        final Path path = npRes.getQPath(absPath).getNormalizedPath();
         return hasPrivileges(path, permissionNames);
     }
 
@@ -1786,7 +1787,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      *     does, we return an array of {@link DomainInfoPrivilege}s. A {@link DomainInfoPrivilege} is just a thin wrapper
      *     for a {@link Privilege} but also provides information from which security domain(s) the {@link Privilege} is
      *     coming from. Since multiple domains can provide one single {@link Privilege} for a {@link javax.jcr.Node}, the
-     *     {@link DomainInfoPrivilege#getDomainsProvidingPrivilege()} returns a set.
+     *     {@link DomainInfoPrivilege#getDomainPaths()} returns a set of domain paths.
      * </p>
      * @see AccessControlManager#getPrivileges(String)
      */
@@ -1794,8 +1795,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         checkInitialized();
 
         if (isSystem) {
-            return Arrays.stream(getSupportedPrivileges(absPath)).map(privilege ->
-                    new DomainInfoPrivilege(privilege)).collect(Collectors.toList()).toArray(new DomainInfoPrivilege[0]);
+            return Arrays.stream(getSupportedPrivileges(absPath)).map(DomainInfoPrivilege::new).toArray(DomainInfoPrivilege[]::new);
         }
 
         updateReferenceFacetRules();
@@ -1817,7 +1817,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                 for (String privilegeName : fad.getPrivileges()) {
                     final DomainInfoPrivilege domainInfoPrivilege = privileges
                             .computeIfAbsent(privilegeName, priv -> new DomainInfoPrivilege(permissionManager.getOrCreatePrivilege(priv)));
-                    domainInfoPrivilege.addDomainProvidingPrivilege(fad.getDomainPath());
+                    domainInfoPrivilege.addDomainPath(fad.getDomainPath());
                 }
             }
         }
