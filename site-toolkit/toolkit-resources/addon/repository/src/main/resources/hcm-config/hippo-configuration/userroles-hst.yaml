@@ -26,6 +26,7 @@ definitions:
         hipposys:system: true
       /xm-channel-webviewer:
         jcr:primaryType: hipposys:userrole
+        hipposys:userroles: [xm-webfiles-reader]
         hipposys:system: true
     /hippo:configuration/hippo:users/admin:
       hipposys:userroles:
