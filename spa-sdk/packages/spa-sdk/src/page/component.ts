@@ -73,7 +73,7 @@ export interface Component {
   /**
    * @return The map of models.
    */
-  getModels(): Models;
+  getModels<T extends Models>(): T;
 
   /**
    * @return The link to the partial component model.
@@ -124,6 +124,7 @@ export class ComponentImpl implements Component {
     return this.meta;
   }
 
+  getModels<T extends Models>(): T;
   getModels() {
     return this.model.models || {};
   }
