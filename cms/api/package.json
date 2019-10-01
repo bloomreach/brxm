@@ -17,6 +17,7 @@
     "blueimp-load-image": "2.12.2",
     "blueimp-tmpl": "3.8.0",
     "bootstrap-sass": "3.3.7",
+    "focus-visible": "5.0.2",
     "normalize.css": "6.0.0",
     "open-sans-fontface": "1.4.0",
     "retinajs": "2.1.0",

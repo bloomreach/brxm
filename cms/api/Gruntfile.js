@@ -192,7 +192,8 @@ module.exports = function (grunt) {
           '<%= build.npmDir %>/blueimp-file-upload/js/jquery.fileupload-validate.js',
           '<%= build.npmDir %>/blueimp-file-upload/js/jquery.fileupload-image.js',
           '<%= build.npmDir %>/blueimp-file-upload/js/jquery.iframe-transport.js',
-          '<%= build.npmDir %>/bootstrap-sass/assets/javascripts/bootstrap/tooltip.js'
+          '<%= build.npmDir %>/bootstrap-sass/assets/javascripts/bootstrap/tooltip.js',
+          '<%= build.npmDir %>/focus-visible/dist/focus-visible.js',
         ],
         dest: '<%= build.skin %>/js/<%= build.file %>.js',
         nonull: true
