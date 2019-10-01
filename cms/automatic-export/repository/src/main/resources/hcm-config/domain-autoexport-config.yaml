@@ -4,7 +4,7 @@ definitions:
       jcr:primaryType: hipposys:domain
       /autoexport-config:
         jcr:primaryType: hipposys:domainrule
-        /autoexport-config-node:
+        /autoexport-config-and-decendants:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: jcr:path
