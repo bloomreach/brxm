@@ -49,11 +49,11 @@
           background-color: $gray5 !important;
         }
 
-        // Language dropdown button
         > span {
           display: flex;
           align-items: center;
 
+          // Add space between icon and label in the dropdown button
           img,
           svg {
             margin-right: 4px;
