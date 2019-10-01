@@ -14,6 +14,10 @@
  * limitations under the License.
  */
 
-export * from './BrContainerBox';
-export * from './BrContainerInline';
-export * from './BrContainerNoMarkup';
+import React from 'react';
+import { BrProps } from '../component';
+
+// tslint:disable-next-line:function-name
+export function BrContainerNoMarkup(props: React.PropsWithChildren<BrProps>) {
+  return <>{props.children}</>;
+}
