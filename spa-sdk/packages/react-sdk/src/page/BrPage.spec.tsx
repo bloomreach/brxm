@@ -14,24 +14,19 @@
  * limitations under the License.
  */
 
-jest.mock('@bloomreach/spa-sdk');
-
 import React from 'react';
-import { shallow, ShallowWrapper } from 'enzyme';
+import { mocked } from 'ts-jest/utils';
+import { mount, shallow, ShallowWrapper } from 'enzyme';
 import { destroy, initialize, Page } from '@bloomreach/spa-sdk';
-
 import { BrPage } from './BrPage';
 import { Meta } from '../meta';
-import { pageMock } from '../../__mocks__/@bloomreach/spa-sdk';
 
-const model = {
-  data: {
-    page: { id: 'page1', type: 'COMPONENT' },
-  },
-};
+jest.mock('@bloomreach/spa-sdk');
+
+class TestComponent extends React.Component {}
 
 const config = {
-  httpClient: jest.fn(async () => model),
+  httpClient: jest.fn(),
   request: { path: '/' },
   options: {
     live: {
@@ -43,117 +38,86 @@ const config = {
     },
   },
 };
-
-class TestComponent extends React.Component {}
 const mapping = { TestComponent };
 
-const initializeMock = (initialize as jest.Mock);
-
-async function createBrPage(children: JSX.Element | undefined = undefined): Promise<ShallowWrapper> {
-  const wrapper = shallow(
-    <BrPage configuration={config} mapping={mapping}>
-      {children}
-    </BrPage>
-  );
-
-  // wait for BrPage.initializePage to resolve
-  await (initialize as jest.Mock).mock.results[0].value;
-  return wrapper;
-}
-
 describe('BrPage', () => {
+  const children = <div/>;
+  let wrapper: ShallowWrapper<React.ComponentProps<typeof BrPage>, { page?: Page }> ;
+
   beforeEach(() => {
-    initializeMock.mockResolvedValue(pageMock);
+    jest.clearAllMocks();
+
+    wrapper = shallow(<BrPage configuration={config} mapping={mapping}>{children}</BrPage>);
   });
 
-  afterEach(() => {
-    initializeMock.mockClear();
-    (destroy as jest.Mock).mockClear();
-  });
-
-  it('should initialize the SPA SDK and sync the CMS', async () => {
-    const wrapper = await createBrPage();
+  it('should initialize the SPA SDK and sync the CMS', () => {
     expect(initialize).toHaveBeenCalledWith(config);
 
-    const page: Page = wrapper.state('page');
+    const page = wrapper.state('page');
     expect(page).toBeDefined();
-    expect(page.sync).toHaveBeenCalled();
+    expect(page!.sync).toHaveBeenCalled();
   });
 
-  it('should render nothing if there is no page', async () => {
-    initializeMock.mockResolvedValue(null);
-    const wrapper = await createBrPage();
-    const page: Page = wrapper.state('page');
+  it('should render nothing if there is no page', () => {
+    wrapper.setState({ page: undefined });
 
-    expect(page).toBeNull();
     expect(wrapper.isEmptyRender()).toBe(true);
   });
 
-  it('should render nothing if there is an error loading the page', (done) => {
+  it('should render nothing if there is an error loading the page', async () => {
     const error = new Error('error-loading-page');
-    initializeMock.mockRejectedValue(error);
+    mocked(initialize).mockRejectedValueOnce(error);
 
-    const wrapper = shallow(<BrPage configuration={config} mapping={{}}/>);
+    const setState = jest.spyOn(BrPage.prototype, 'setState')
+      .mockImplementationOnce(() => {});
 
-    initializeMock.mock.results[0].value.catch((e: Error) => {
-      expect(wrapper.isEmptyRender()).toBe(true);
-      expect(e).toEqual(error);
-      done();
-    });
+    mount(<BrPage configuration={config} mapping={mapping} />);
+    await new Promise(process.nextTick);
+
+    expect(setState).toHaveBeenCalledWith(expect.any(Function));
+    expect(setState.mock.calls[0][0]).toThrowError(error);
   });
 
-  it('should render MappingContext.provider', async () => {
-    const wrapper = await createBrPage();
-
+  it('should render MappingContext.provider', () => {
     expect(wrapper.find('ContextProvider').first().prop('value')).toEqual(mapping);
   });
 
-  it('should render PageContext.provider', async () => {
-    const wrapper = await createBrPage();
-    const page = wrapper.state('page');
-
+  it('should render PageContext.provider', () => {
+    const page = wrapper.state('page')!;
     expect(wrapper.find('ContextProvider').last().prop('value')).toEqual(page);
   });
 
-  it('should render children', async () => {
-    const wrapper = await createBrPage(<div id="br-page-child"/>);
-
-    expect(wrapper.contains(<div id="br-page-child"/>)).toBe(true);
+  it('should render children', () => {
+    expect(wrapper.contains(children)).toBe(true);
   });
 
-  it('should render meta data in comments', async () => {
-    const wrapper = await createBrPage(<div id="child-id"/>);
-    const page: Page = wrapper.state('page');
-    const pageMeta = page.getComponent().getMeta();
+  it('should render meta data in comments', () => {
+    const page = wrapper.state('page')!;
+    const [beginMeta, endMeta] = page.getComponent()!.getMeta();
 
-    expect(wrapper.contains(<Meta meta={pageMeta[0]} />)).toBe(true);
-    expect(wrapper.contains(<Meta meta={pageMeta[1]} />)).toBe(true);
+    expect(wrapper.contains(<Meta meta={beginMeta} />)).toBe(true);
+    expect(wrapper.contains(<Meta meta={endMeta} />)).toBe(true);
   });
 
   it('should update page and sync CMS when configuration changes', async () => {
-    const wrapper = await createBrPage();
-    const page: Page = wrapper.state('page');
-    const newConfig = { ...config };
-    wrapper.setProps({
-      configuration: newConfig,
-    });
+    const page = wrapper.state('page')!;
+    const configuration = { ...config };
+    wrapper.setProps({ configuration });
 
     expect(destroy).toHaveBeenCalledWith(page);
-    expect(initialize).toHaveBeenCalledWith(newConfig);
+    expect(initialize).toHaveBeenCalledWith(configuration);
     expect(page.sync).toHaveBeenCalled();
   });
 
   it('should destroy the page when unmounting', async () => {
-    const wrapper = await createBrPage();
-    const page = wrapper.state('page');
+    const page = wrapper.state('page')!;
 
     wrapper.unmount();
     expect(destroy).toHaveBeenCalledWith(page);
   });
 
-  it('should not destroy a null page when unmounting', async () => {
-    initializeMock.mockReturnValue(null);
-    const wrapper = await createBrPage();
+  it('should not destroy an empty page when unmounting', async () => {
+    wrapper.setState({ page: undefined });
 
     wrapper.unmount();
     expect(destroy).not.toHaveBeenCalled();

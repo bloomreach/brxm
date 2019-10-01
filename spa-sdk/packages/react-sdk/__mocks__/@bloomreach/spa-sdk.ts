@@ -14,39 +14,39 @@
  * limitations under the License.
  */
 
-const spaSdk = jest.requireActual('@bloomreach/spa-sdk');
+import { Component, Page, Meta } from '@bloomreach/spa-sdk';
 
-export const META_POSITION_BEGIN = spaSdk.META_POSITION_BEGIN;
-export const META_POSITION_END = spaSdk.META_POSITION_END;
+const { META_POSITION_BEGIN, META_POSITION_END } = jest.requireActual('@bloomreach/spa-sdk');
 
-export function mockMeta(data: string, position: string) {
-  return {
-    getData: jest.fn().mockReturnValue(data),
-    getPosition: jest.fn().mockReturnValue(position),
-  };
-}
-
-export function mockNoCommentMeta() {
-  return mockMeta('not-a-comment', META_POSITION_BEGIN);
-}
-
-const componentMock = {
-  getMeta: jest.fn().mockReturnValue([
-    mockMeta('meta-begin', META_POSITION_BEGIN),
-    mockMeta('meta-end', META_POSITION_END),
-  ]),
+const meta = [
+  new class implements Meta {
+    getData = jest.fn(() => 'meta1');
+    getPosition = jest.fn(() => META_POSITION_BEGIN as typeof META_POSITION_BEGIN);
+  },
+  new class implements Meta {
+    getData = jest.fn(() => 'meta2');
+    getPosition = jest.fn(() => META_POSITION_END as typeof META_POSITION_END);
+  },
+];
+const component = new class implements Component {
+  getId = jest.fn();
+  getMeta = jest.fn(() => meta);
+  getModels = jest.fn();
+  getUrl = jest.fn();
+  getName = jest.fn();
+  getParameters = jest.fn();
+  getChildren = jest.fn();
+  getComponent = jest.fn();
+  getComponentById = jest.fn();
+};
+const page = new class implements Page {
+  getComponent = jest.fn(() => component);
+  getContent = jest.fn();
+  getTitle = jest.fn();
+  sync = jest.fn();
 };
 
-export const pageMock = {
-  getComponent: jest.fn().mockReturnValue(componentMock),
-  getContent: jest.fn(),
-  getTitle: jest.fn(),
-  sync: jest.fn(),
+module.exports = {
+  ...jest.genMockFromModule('@bloomreach/spa-sdk'),
+  initialize: jest.fn(async () => page),
 };
-
-export const initialize = jest.fn();
-export const destroy = jest.fn();
-
-export function isMetaComment(value: any) {
-  return value.getData() !== 'not-a-comment';
-}
