@@ -14,8 +14,20 @@
  * limitations under the License.
  */
 
-export * from './BrContainerBox';
-export * from './BrContainerInline';
-export * from './BrContainerNoMarkup';
-export * from './BrContainerOrderedList';
-export * from './BrContainerUnorderedList';
+import React from 'react';
+import { BrProps } from '../component';
+
+// tslint:disable-next-line:function-name
+export function BrContainerUnorderedList(props: React.PropsWithChildren<BrProps>) {
+  return (
+    // tslint:disable:jsx-no-multiline-js
+    <ul className={props.page.isPreview() ? 'hst-container' : undefined}>
+      {React.Children.map(props.children, child => (
+        <li className={props.page.isPreview() ? 'hst-container-item' : undefined}>
+          {child}
+        </li>
+      ))}
+    </ul>
+    // tslint:enable:jsx-no-multiline-js
+  );
+}
