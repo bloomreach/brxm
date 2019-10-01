@@ -18,6 +18,31 @@ import { NavItem, Site } from '@bloomreach/navapp-communication';
 
 export const mockNavItems: NavItem[] = [
   {
+    id: 'site-search/search-ranking',
+    appIframeUrl: 'http://localhost:4201',
+    appPath: 'site-search/search-ranking',
+  },
+  {
+    id: 'site-search/ab-testing',
+    appIframeUrl: 'http://localhost:4201',
+    appPath: 'site-search/ab-testing',
+  },
+  {
+    id: 'site-search/campaigns',
+    appIframeUrl: 'http://localhost:4201',
+    appPath: 'site-search/campaigns',
+  },
+  {
+    id: 'site-search/assets',
+    appIframeUrl: 'http://localhost:4201',
+    appPath: 'site-search/assets',
+  },
+  {
+    id: 'site-search/autosuggest-blacklist',
+    appIframeUrl: 'http://localhost:4201',
+    appPath: 'site-search/autosuggest-blacklist',
+  },
+  {
     id: 'categories/category-ranking',
     appIframeUrl: 'http://localhost:4201',
     appPath: 'categories/category-ranking',
@@ -26,6 +51,16 @@ export const mockNavItems: NavItem[] = [
     id: 'categories/all-category-pages',
     appIframeUrl: 'http://localhost:4201',
     appPath: 'categories/all-category-pages',
+  },
+  {
+    id: 'categories/category-facets-ranking',
+    appIframeUrl: 'http://localhost:4201',
+    appPath: 'categories/category-facets-ranking',
+  },
+  {
+    id: 'categories/category-facets-ranking',
+    appIframeUrl: 'http://localhost:4201',
+    appPath: 'categories/category-facets-ranking',
   },
   {
     id: 'seo',
