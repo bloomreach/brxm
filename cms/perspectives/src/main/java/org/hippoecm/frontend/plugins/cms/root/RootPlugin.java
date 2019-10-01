@@ -23,8 +23,6 @@ import org.apache.commons.lang3.Validate;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
@@ -34,7 +32,6 @@ import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.CmsHeaderItem;
-import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
 import org.hippoecm.frontend.extjs.ExtWidgetRegistry;
@@ -108,8 +105,6 @@ public class RootPlugin extends TabsPlugin {
         getApplication().getApplicationSettings().setFeedbackMessageCleanupFilter(IFeedbackMessageFilter.NONE);
 
         addPinger();
-
-        add(new Label("pageTitle", getString("page.title", null, "Hippo CMS 10")));
 
         addUserMenu();
 
@@ -197,7 +192,6 @@ public class RootPlugin extends TabsPlugin {
 
         final PageLayoutSettings pageLayoutSettings = getPageLayoutSettings(config);
         add(new PageLayoutBehavior(pageLayoutSettings));
-        add(new ResourceLink("faviconLink", ((PluginApplication) getApplication()).getPluginApplicationFavIconReference()));
     }
 
     private void addPinger() {
