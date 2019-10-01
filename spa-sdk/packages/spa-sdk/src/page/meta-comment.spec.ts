@@ -21,7 +21,7 @@ describe('MetaCommentImpl', () => {
   describe('getData', () => {
     it('should return a data from the HTML-comment', () => {
       const meta = new MetaCommentImpl({ data: '<!-- something -->', type: 'comment' }, META_POSITION_BEGIN);
-      expect(meta.getData()).toBe('something');
+      expect(meta.getData()).toBe(' something ');
     });
 
     it('should fallback to the model data on invalid HTML-comment', () => {

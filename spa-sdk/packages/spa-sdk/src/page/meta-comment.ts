@@ -17,7 +17,7 @@
 import { MetaImpl, Meta } from './meta';
 
 export const TYPE_META_COMMENT = 'comment';
-const HTML_COMMENT = /<!--\s*(.*?)\s*-->/;
+const HTML_COMMENT = /^<!--(.*)-->$/;
 
 export interface MetaComment extends Meta {}
 
