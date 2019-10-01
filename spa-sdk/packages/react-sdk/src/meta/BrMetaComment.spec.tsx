@@ -22,7 +22,7 @@ import { BrMetaComment } from './BrMetaComment';
 describe('BrMetaComment', () => {
   const meta = new class implements MetaComment {
     getData = jest.fn(() => 'comment-data');
-    getPosition = jest.fn(() => META_POSITION_BEGIN as typeof META_POSITION_BEGIN);
+    getPosition = jest.fn();
   };
 
   beforeEach(() => {

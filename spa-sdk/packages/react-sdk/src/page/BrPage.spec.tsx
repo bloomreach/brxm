@@ -20,7 +20,6 @@ import { mount, shallow, ShallowWrapper } from 'enzyme';
 import { destroy, initialize, Page } from '@bloomreach/spa-sdk';
 import { BrProps } from '../component';
 import { BrPage } from './BrPage';
-import { Meta } from '../meta';
 
 jest.mock('@bloomreach/spa-sdk');
 
@@ -90,14 +89,6 @@ describe('BrPage', () => {
 
   it('should render children', () => {
     expect(wrapper.contains(children)).toBe(true);
-  });
-
-  it('should render meta data in comments', () => {
-    const page = wrapper.state('page')!;
-    const [beginMeta, endMeta] = page.getComponent()!.getMeta();
-
-    expect(wrapper.contains(<Meta meta={beginMeta} />)).toBe(true);
-    expect(wrapper.contains(<Meta meta={endMeta} />)).toBe(true);
   });
 
   it('should update page and sync CMS when configuration changes', async () => {

@@ -15,9 +15,9 @@
  */
 
 import React from 'react';
-import { initialize, destroy, Configuration, Page, META_POSITION_BEGIN, META_POSITION_END } from '@bloomreach/spa-sdk';
-import { Meta } from '../meta';
+import { destroy, initialize, Configuration, Page } from '@bloomreach/spa-sdk';
 import { BrMappingContext } from '../component';
+import { BrMetaWrapper } from '../meta';
 import { BrPageContext } from './BrPageContext';
 
 interface BrPageProps {
@@ -80,18 +80,11 @@ export class BrPage extends React.Component<BrPageProps, BrPageState> {
     return (
       <BrPageContext.Provider value={this.state.page}>
         <BrMappingContext.Provider value={this.props.mapping}>
-          {this.renderMeta(META_POSITION_BEGIN)}
-          {this.props.children}
-          {this.renderMeta(META_POSITION_END)}
+          <BrMetaWrapper meta={this.state.page.getComponent().getMeta()}>
+            {this.props.children}
+          </BrMetaWrapper>
         </BrMappingContext.Provider>
       </BrPageContext.Provider>
     );
-  }
-
-  private renderMeta(position: typeof META_POSITION_BEGIN | typeof META_POSITION_END) {
-    return this.state.page!.getComponent()
-      .getMeta()
-      .filter(meta => position === meta.getPosition())
-      .map((meta, index) => <Meta key={index} meta={meta} />);
   }
 }

@@ -16,3 +16,4 @@
 
 export * from './BrMeta';
 export * from './BrMetaComment';
+export * from './BrMetaWrapper';
