@@ -14,5 +14,12 @@
  * limitations under the License.
  */
 
-export { BrProps } from './component';
-export { BrPage, BrPageContext } from './page';
+import React from 'react';
+import { BrProps } from './BrProps';
+
+export interface BrMapping {
+  [key: string]: React.ComponentType<BrProps>;
+}
+
+// tslint:disable-next-line:variable-name
+export const BrMappingContext = React.createContext<BrMapping>({});

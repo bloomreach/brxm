@@ -17,12 +17,12 @@
 import React from 'react';
 import { initialize, destroy, Configuration, Page, META_POSITION_BEGIN, META_POSITION_END } from '@bloomreach/spa-sdk';
 import { Meta } from '../meta';
-import { MappingContext } from './MappingContext';
+import { BrMappingContext } from '../component';
 import { BrPageContext } from './BrPageContext';
 
 interface BrPageProps {
   configuration: Configuration;
-  mapping: React.ContextType<typeof MappingContext>;
+  mapping: React.ContextType<typeof BrMappingContext>;
 }
 
 interface BrPageState {
@@ -79,11 +79,11 @@ export class BrPage extends React.Component<BrPageProps, BrPageState> {
 
     return (
       <BrPageContext.Provider value={this.state.page}>
-        <MappingContext.Provider value={this.props.mapping}>
+        <BrMappingContext.Provider value={this.props.mapping}>
           {this.renderMeta(META_POSITION_BEGIN)}
           {this.props.children}
           {this.renderMeta(META_POSITION_END)}
-        </MappingContext.Provider>
+        </BrMappingContext.Provider>
       </BrPageContext.Provider>
     );
   }

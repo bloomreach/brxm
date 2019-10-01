@@ -18,12 +18,13 @@ import React from 'react';
 import { mocked } from 'ts-jest/utils';
 import { mount, shallow, ShallowWrapper } from 'enzyme';
 import { destroy, initialize, Page } from '@bloomreach/spa-sdk';
+import { BrProps } from '../component';
 import { BrPage } from './BrPage';
 import { Meta } from '../meta';
 
 jest.mock('@bloomreach/spa-sdk');
 
-class TestComponent extends React.Component {}
+class TestComponent extends React.Component<BrProps> {}
 
 const config = {
   httpClient: jest.fn(),
@@ -83,7 +84,7 @@ describe('BrPage', () => {
     expect(wrapper.find('ContextProvider').first().prop('value')).toEqual(page);
   });
 
-  it('should render MappingContext.provider', () => {
+  it('should render BrMappingContext.provider', () => {
     expect(wrapper.find('ContextProvider').last().prop('value')).toEqual(mapping);
   });
 

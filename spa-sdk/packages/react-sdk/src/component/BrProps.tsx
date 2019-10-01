@@ -14,5 +14,9 @@
  * limitations under the License.
  */
 
-export { BrProps } from './component';
-export { BrPage, BrPageContext } from './page';
+import { Component, Page } from '@bloomreach/spa-sdk';
+
+export interface BrProps<T extends Component = Component> {
+  component: T;
+  page: Page;
+}

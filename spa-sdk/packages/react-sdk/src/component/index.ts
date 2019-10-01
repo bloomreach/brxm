@@ -14,11 +14,5 @@
  * limitations under the License.
  */
 
-import React from 'react';
-
-interface Mapping {
-  [key: string]: typeof React.Component;
-}
-
-// tslint:disable-next-line:variable-name
-export const MappingContext = React.createContext<Mapping>({});
+export * from './BrMappingContext';
+export * from './BrProps';
