@@ -62,34 +62,37 @@ export class MenuStructureService {
       'document-search',
     );
 
-    const categories = new MenuItemContainer(
-      'Categories',
-      [
-        new MenuItemLink('categories/category-ranking', 'Category ranking'),
-        new MenuItemLink('categories/all-category-pages', 'All category pages'),
-        new MenuItemLink('categories/category-ranking-diagnostics', 'Category ranking diagnostics'),
-        new MenuItemLink('categories/category-facets-ranking', 'Category facets'),
-        new MenuItemLink('categories/category-banners', 'Category banners'),
-      ],
-      'categories',
-    );
-
     const siteSearch = new MenuItemContainer(
       'Site search',
       [
-        new MenuItemLink('site-search/search-ranking', 'Search ranking'),
+        new MenuItemLink('site-search/search-ranking', 'Ranking rules'),
         new MenuItemLink('site-search/redirects', 'Redirects'),
-        new MenuItemLink('site-search/search-ranking-diagnostics', 'Search ranking diagnostics'),
-        new MenuItemLink('site-search/search-facets', 'Search facets'),
-        new MenuItemLink('site-search/search-banners', 'Search banners'),
+        new MenuItemLink('site-search/search-facets', 'Facets'),
+        new MenuItemLink('site-search/ab-testing', 'A/B testing'),
+        new MenuItemContainer('Campaigns & assets', [
+          new MenuItemLink('site-search/campaigns', 'Campaigns'),
+          new MenuItemLink('site-search/assets', 'Assets'),
+        ]),
         new MenuItemLink('site-search/autosuggest-blacklist', 'Autosuggest blacklist'),
         new MenuItemLink('site-search/synonyms', 'Synonyms'),
+        new MenuItemLink('site-search/search-ranking-diagnostics', 'Ranking diagnostics'),
+        new MenuItemLink('site-search/profile-simulator', 'Profile simulator'),
       ],
       'site-search',
     );
 
+    const categories = new MenuItemContainer(
+      'Categories',
+      [
+        new MenuItemLink('categories/category-ranking', 'Ranking rules'),
+        new MenuItemLink('categories/all-category-pages', 'All category pages'),
+        new MenuItemLink('categories/category-facets-ranking', 'Facets'),
+      ],
+      'categories',
+    );
+
     const seo = new MenuItemLink('seo', 'SEO', 'seo');
-    const widgets = new MenuItemLink('widgets', 'Widgets', 'widget');
+    const pathways = new MenuItemLink('pathways', 'Pathways', 'widget');
 
     const insights = new MenuItemContainer(
       'Insights',
@@ -110,6 +113,8 @@ export class MenuStructureService {
         ]),
         new MenuItemContainer('Library', [
           new MenuItemContainer('Overview', [
+            new MenuItemLink('insights/overview/account-overview', 'Account overview'),
+            new MenuItemLink('insights/overview/account-traffic-breakdown', 'Account traffic breakdown'),
             new MenuItemLink('insights/overview/sitewide-overview', 'Sitewide overview'),
             new MenuItemLink('insights/overview/site-search-overview', 'Site search overview'),
             new MenuItemLink('insights/overview/site-search-kpis', 'Site search KPIs'),
@@ -120,6 +125,7 @@ export class MenuStructureService {
             new MenuItemLink('insights/reporting/brand-dashboard', 'Brand dashboard'),
             new MenuItemLink('insights/reporting/page-dashboard', 'Page dashboard'),
             new MenuItemLink('insights/reporting/site-search-diagnostics', 'Site search diagnostics'),
+            new MenuItemLink('insights/reporting/account-api-usage', 'Account API usage'),
           ]),
         ]),
         new MenuItemContainer('Category analytics', [
@@ -129,7 +135,7 @@ export class MenuStructureService {
         new MenuItemContainer('Site search analytics', [
           new MenuItemLink('insights/site-search-analytics/overall-performance', 'Overall performance'),
           new MenuItemLink('insights/site-search-analytics/top-keywords', 'Top keywords'),
-          new MenuItemLink('insights/site-search-analytics/no-revenue-keywords', 'No Revenue Keywords'),
+          new MenuItemLink('insights/site-search-analytics/no-revenue-keywords', 'No revenue keywords'),
         ]),
         new MenuItemContainer('SEO analytics', [
           new MenuItemLink('insights/seo-analytics/overall-performance', 'Overall performance'),
@@ -149,11 +155,10 @@ export class MenuStructureService {
             new MenuItemLink('insights/seo-analytics/device-traffic/tablet', 'Tablet'),
           ]),
         ]),
-        new MenuItemContainer('Widget analytics', [
-          new MenuItemLink('insights/widget-analytics/just-for-you', 'Just for you'),
-          new MenuItemLink('insights/widget-analytics/more-like-this', 'More like this'),
+        new MenuItemContainer('Pathway analytics', [
+          new MenuItemLink('insights/pathway-analytics/just-for-you', 'Just for you'),
+          new MenuItemLink('insights/pathway-analytics/more-like-this', 'More like this'),
         ]),
-        new MenuItemLink('insights/product-a-b-testing', 'Product A/B testing'),
         // Will be split into: Buzz, My documents, Team documents and Totals
         new MenuItemLink(
           'hippo-perspective-reportsperspective',
@@ -182,13 +187,74 @@ export class MenuStructureService {
           new MenuItemLink('setup/algorithm-settings/global-ranking-rules', 'Global ranking rules'),
           new MenuItemLink('setup/algorithm-settings/global-facet-management', 'Global facet management'),
         ]),
-        new MenuItemLink('setup/pixel', 'Pixel'),
-        new MenuItemLink('setup/feed', 'Feed'),
         new MenuItemContainer('User management', [
-          new MenuItemLink('setup/user-management/sm-users', 'SM users'),
+          new MenuItemContainer('Merchandising users', [
+            new MenuItemLink('setup/user-management/merchandising-user/user-management', 'User management'),
+            new MenuItemLink('setup/user-management/merchandising-user/internal-user-management', 'Internal user management'),
+          ]),
+        ]),
+        new MenuItemContainer('DevStudio', [
+          new MenuItemLink('setup/devstudio/account-information', 'Account information'),
+          new MenuItemLink('setup/devstudio/pixel-monitor', 'Pixel monitor'),
+          new MenuItemContainer('Feed', [
+            new MenuItemLink('setup/devstudio/feed/configuration', 'Configuration'),
+            new MenuItemLink('setup/devstudio/feed/status', 'Status'),
+          ]),
+          new MenuItemLink('setup/devstudio/attribute-configuration', 'Attribute configuration'),
+          new MenuItemLink('setup/devstudio/api-explorer', 'API explorer'),
         ]),
         new MenuItemLink('hippo-perspective-adminperspective', 'System'),
         new MenuItemLink('hippo-perspective-formdataperspective', 'Formdata'),
+
+        new MenuItemContainer('Internal admin', [
+          new MenuItemLink('setup/internal-admin/api-details', 'API details'),
+          new MenuItemLink('setup/internal-admin/debug-tools', 'Debug tools'),
+          new MenuItemLink('setup/internal-admin/purge-cache', 'Purge cache'),
+          new MenuItemLink('setup/internal-admin/merchant-custom-configs', 'Merchant custom configs'),
+          new MenuItemLink('setup/internal-admin/site-configuration', 'Site configuration'),
+
+          new MenuItemContainer('Traffic analysis', [
+            new MenuItemLink('setup/internal-admin/traffic-analysis/overview', 'Overview'),
+            new MenuItemLink('setup/internal-admin/traffic-analysis/last-click-overview', 'Last click overview'),
+          ]),
+        ]),
+        new MenuItemContainer('Internal reports', [
+          new MenuItemContainer('Organic trends', [
+            new MenuItemLink('setup/internal-reports/organic-trends/homepage-traffic', 'Homepage traffic'),
+            new MenuItemLink('setup/internal-reports/organic-trends/overall-traffic', 'Overall traffic'),
+            new MenuItemLink('setup/internal-reports/organic-trends/product-page-traffic', 'Product page traffic'),
+            new MenuItemLink('setup/internal-reports/organic-trends/category-page-traffic', 'Category page traffic'),
+            new MenuItemLink('setup/internal-reports/organic-trends/other-page-traffic', 'Other page traffic'),
+          ]),
+          new MenuItemContainer('Organic', [
+            new MenuItemLink('setup/internal-reports/organic/debug', 'debug'),
+            new MenuItemLink('setup/internal-reports/organic/any-click-conversions', 'Any click conversions'),
+            new MenuItemLink('setup/internal-reports/organic/last-click-conversions', 'Last click conversions'),
+            new MenuItemLink('setup/internal-reports/organic/all-conversions', 'All conversions'),
+            new MenuItemLink('setup/internal-reports/organic/account-overview', 'Account overview'),
+            new MenuItemLink('setup/internal-reports/organic/traffic-sources', 'Traffic sources'),
+            new MenuItemLink('setup/internal-reports/organic/legacy-debug', 'Legacy debug'),
+            new MenuItemLink('setup/internal-reports/organic/site-optimization-metrics', 'Site optimization metrics'),
+            new MenuItemLink('setup/internal-reports/organic/rsrp-widget-engagement', 'RS/RP widget engagement'),
+            new MenuItemLink('setup/internal-reports/organic/unclaimed-thematic-traffic', 'Unclaimed thematic traffic'),
+            new MenuItemLink('setup/internal-reports/organic/url-param-tracking', 'URL param tracking'),
+            new MenuItemLink('setup/internal-reports/organic/all-traffic', 'All traffic'),
+          ]),
+          new MenuItemContainer('SNAP', [
+            new MenuItemLink('setup/internal-reports/snap/multi-account-chart', 'Multi account chart'),
+            new MenuItemLink('setup/internal-reports/snap/browse-sessions', 'Browse sessions'),
+            new MenuItemLink('setup/internal-reports/snap/top-products', 'Top products'),
+            new MenuItemLink('setup/internal-reports/snap/assisted-conversions', 'Assisted conversions'),
+            new MenuItemLink('setup/internal-reports/snap/session-details', 'Session details'),
+            new MenuItemLink('setup/internal-reports/snap/search-experiment', 'Search experiment'),
+            new MenuItemLink('setup/internal-reports/snap/top-keywords-w-experiment', 'Top keywords w/ experiment'),
+            new MenuItemLink('setup/internal-reports/snap/no-revenue-keywords-w-experiment', 'No revenue keywords w/ experiment'),
+            new MenuItemLink('setup/internal-reports/snap/top-categories-w-experiment', 'Top categories w/ experiment'),
+            new MenuItemLink('setup/internal-reports/snap/page-performance', 'Page performance'),
+            new MenuItemLink('setup/internal-reports/snap/assisted-overview', 'Assisted overview'),
+            new MenuItemLink('setup/internal-reports/snap/suggest-overview', 'Suggest overview'),
+          ]),
+        ]),
       ],
       'settings',
     );
@@ -199,10 +265,10 @@ export class MenuStructureService {
       projects,
       content,
       documentSearch,
-      categories,
       siteSearch,
+      categories,
       seo,
-      widgets,
+      pathways,
       insights,
       audiences,
       this.extensions,
