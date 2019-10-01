@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { isMetaComment, Meta } from '@bloomreach/spa-sdk';
-import { MetaComment } from './MetaComment';
+import { BrMetaComment } from './BrMetaComment';
 
 interface BrMetaProps {
   meta: Meta;
@@ -25,7 +25,7 @@ interface BrMetaProps {
 // tslint:disable-next-line:function-name
 export function BrMeta(props: BrMetaProps) {
   if (isMetaComment(props.meta)) {
-    return <MetaComment meta={props.meta} />;
+    return <BrMetaComment meta={props.meta} />;
   }
 
   return null;

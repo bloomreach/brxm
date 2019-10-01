@@ -15,13 +15,13 @@
  */
 
 import React from 'react';
-import { MetaComment as SpaMetaComment } from '@bloomreach/spa-sdk';
+import { MetaComment } from '@bloomreach/spa-sdk';
 
-interface MetaCommentProps {
-  meta: SpaMetaComment;
+interface BrMetaCommentProps {
+  meta: MetaComment;
 }
 
-export class MetaComment extends React.Component<MetaCommentProps> {
+export class BrMetaComment extends React.Component<BrMetaCommentProps> {
   private placeholder = React.createRef<HTMLElement>();
   private comment?: Comment;
 
@@ -35,7 +35,7 @@ export class MetaComment extends React.Component<MetaCommentProps> {
     placeholder.parentNode!.replaceChild(this.comment, placeholder);
   }
 
-  shouldComponentUpdate(nextProps: MetaCommentProps) {
+  shouldComponentUpdate(nextProps: BrMetaCommentProps) {
     return nextProps.meta.getData() !== this.props.meta.getData();
   }
 

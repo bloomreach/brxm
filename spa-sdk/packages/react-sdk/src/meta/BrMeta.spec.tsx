@@ -19,7 +19,7 @@ import { mocked } from 'ts-jest/utils';
 import { shallow } from 'enzyme';
 import { isMetaComment, Meta } from '@bloomreach/spa-sdk';
 import { BrMeta } from './BrMeta';
-import { MetaComment } from './MetaComment';
+import { BrMetaComment } from './BrMetaComment';
 
 jest.mock('@bloomreach/spa-sdk');
 
@@ -37,7 +37,7 @@ describe('BrMeta', () => {
     mocked(isMetaComment).mockReturnValueOnce(true);
 
     const wrapper = shallow(<BrMeta meta={meta}/>);
-    expect(wrapper.contains(<MetaComment meta={meta}/>)).toBe(true);
+    expect(wrapper.contains(<BrMetaComment meta={meta}/>)).toBe(true);
   });
 
   it('should render nothing if meta is not determined', () => {

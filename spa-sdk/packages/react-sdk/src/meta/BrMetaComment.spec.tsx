@@ -17,9 +17,9 @@
 import React from 'react';
 import { mount } from 'enzyme';
 import { MetaComment, META_POSITION_BEGIN } from '@bloomreach/spa-sdk';
-import { MetaComment as MetaCommentComponent } from './MetaComment';
+import { BrMetaComment } from './BrMetaComment';
 
-describe('MetaComment', () => {
+describe('BrMetaComment', () => {
   const meta = new class implements MetaComment {
     getData = jest.fn(() => 'comment-data');
     getPosition = jest.fn(() => META_POSITION_BEGIN as typeof META_POSITION_BEGIN);
@@ -30,14 +30,14 @@ describe('MetaComment', () => {
   });
 
   it('should render a comment that contains data', () => {
-    const wrapper = mount(<div><MetaCommentComponent meta={meta}/></div>);
+    const wrapper = mount(<div><BrMetaComment meta={meta}/></div>);
 
     expect(wrapper.html()).toBe('<div><!--comment-data--></div>');
   });
 
   it('should update if meta data has changed', () => {
-    const shouldComponentUpdate = jest.spyOn(MetaCommentComponent.prototype, 'shouldComponentUpdate');
-    const wrapper = mount(<MetaCommentComponent meta={meta}/>);
+    const shouldComponentUpdate = jest.spyOn(BrMetaComment.prototype, 'shouldComponentUpdate');
+    const wrapper = mount(<BrMetaComment meta={meta}/>);
     expect(shouldComponentUpdate).not.toHaveBeenCalled();
 
     meta.getData.mockReturnValueOnce('comment-data');
@@ -50,9 +50,9 @@ describe('MetaComment', () => {
   });
 
   it('should remove the comment when the component unmounts', () => {
-    const wrapper = mount(<div><MetaCommentComponent meta={meta}/></div>);
+    const wrapper = mount(<div><BrMetaComment meta={meta}/></div>);
     wrapper.unmount();
 
-    expect(wrapper.contains(<MetaCommentComponent meta={meta}/>)).toBe(false);
+    expect(wrapper.contains(<BrMetaComment meta={meta}/>)).toBe(false);
   });
 });

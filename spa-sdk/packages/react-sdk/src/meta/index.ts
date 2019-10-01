@@ -15,4 +15,4 @@
  */
 
 export * from './BrMeta';
-export * from './MetaComment';
+export * from './BrMetaComment';
