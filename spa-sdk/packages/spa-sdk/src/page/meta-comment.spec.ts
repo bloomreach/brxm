@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 
-import { MetaCommentImpl } from './meta-comment';
-import { META_POSITION_BEGIN } from './meta';
+import { MetaCommentImpl, isMetaComment } from './meta-comment';
+import { MetaImpl, META_POSITION_BEGIN } from './meta';
 
 describe('MetaCommentImpl', () => {
   describe('getData', () => {
@@ -28,5 +28,20 @@ describe('MetaCommentImpl', () => {
       const meta = new MetaCommentImpl({ data: '<!-- something', type: 'comment' }, META_POSITION_BEGIN);
       expect(meta.getData()).toBe('<!-- something');
     });
+  });
+});
+
+describe('isMetaComment', () => {
+  it('should return true', () => {
+    const meta = new MetaCommentImpl({ data: '<!-- something -->', type: 'comment' }, META_POSITION_BEGIN);
+
+    expect(isMetaComment(meta)).toBe(true);
+  });
+
+  it('should return false', () => {
+    const meta = new MetaImpl({ data: 'some-data', type: 'some-type' }, META_POSITION_BEGIN);
+
+    expect(isMetaComment(undefined)).toBe(false);
+    expect(isMetaComment(meta)).toBe(false);
   });
 });
