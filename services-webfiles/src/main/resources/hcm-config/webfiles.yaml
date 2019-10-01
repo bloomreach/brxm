@@ -19,7 +19,7 @@ definitions:
               hipposys:facet: jcr:path
               hipposys:type: Reference
               hipposys:value: /
-            /exclude-hst-domains-and-descendants:
+            /exclude-webfiles-domains-and-descendants:
               jcr:primaryType: hipposys:facetrule
               hipposys:equals: false
               hipposys:facet: jcr:path
