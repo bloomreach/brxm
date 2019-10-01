@@ -14,9 +14,20 @@
  * limitations under the License.
  */
 
-export * from './BrContainerBox';
-export * from './BrContainerInline';
-export * from './BrContainerNoMarkup';
-export * from './BrContainerOrderedList';
-export * from './BrContainerUnorderedList';
-export * from './BrContainerItemUndefined';
+import React from 'react';
+import { mount } from 'enzyme';
+import { ContainerItem, Page } from '@bloomreach/spa-sdk';
+import { BrContainerItemUndefined } from './BrContainerItemUndefined';
+
+describe('BrContainerItemUndefined', () => {
+  const props = {
+    component: { getType: () => 'something' } as unknown as jest.Mocked<ContainerItem>,
+    page: {} as unknown as jest.Mocked<Page>,
+  };
+
+  it('should render a message', () => {
+    const wrapper = mount(<BrContainerItemUndefined {...props} />);
+
+    expect(wrapper.html()).toBe('Component "something" is not defined.');
+  });
+});

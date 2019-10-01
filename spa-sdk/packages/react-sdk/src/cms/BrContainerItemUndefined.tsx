@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-export * from './BrContainerBox';
-export * from './BrContainerInline';
-export * from './BrContainerNoMarkup';
-export * from './BrContainerOrderedList';
-export * from './BrContainerUnorderedList';
-export * from './BrContainerItemUndefined';
+import React from 'react';
+import { ContainerItem } from '@bloomreach/spa-sdk';
+import { BrProps } from '../component';
+
+// tslint:disable-next-line:function-name
+export function BrContainerItemUndefined(props: React.PropsWithChildren<BrProps<ContainerItem>>) {
+  return <>Component "{props.component.getType()}" is not defined.</>;
+}
