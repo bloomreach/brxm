@@ -78,13 +78,13 @@ describe('BrPage', () => {
     expect(setState.mock.calls[0][0]).toThrowError(error);
   });
 
-  it('should render MappingContext.provider', () => {
-    expect(wrapper.find('ContextProvider').first().prop('value')).toEqual(mapping);
+  it('should render BrPageContext.provider', () => {
+    const page = wrapper.state('page')!;
+    expect(wrapper.find('ContextProvider').first().prop('value')).toEqual(page);
   });
 
-  it('should render PageContext.provider', () => {
-    const page = wrapper.state('page')!;
-    expect(wrapper.find('ContextProvider').last().prop('value')).toEqual(page);
+  it('should render MappingContext.provider', () => {
+    expect(wrapper.find('ContextProvider').last().prop('value')).toEqual(mapping);
   });
 
   it('should render children', () => {

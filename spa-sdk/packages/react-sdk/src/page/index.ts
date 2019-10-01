@@ -15,5 +15,4 @@
  */
 
 export * from './BrPage';
-export * from './MappingContext';
-export * from './PageContext';
+export * from './BrPageContext';
