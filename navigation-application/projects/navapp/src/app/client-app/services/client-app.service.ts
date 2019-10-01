@@ -74,8 +74,8 @@ export class ClientAppService {
     const uniqueURLs = this.filterUniqueURLs(navItems);
     this.uniqueURLs.next(uniqueURLs);
 
-    const throttleMinutes = 1;
-    const throttleMillis = throttleMinutes * 60 * 1000;
+    const throttleSeconds = 30;
+    const throttleMillis = throttleSeconds * 1000;
     this.userActivityReceived$.pipe(
       throttleTime(throttleMillis),
       map(activeApp => this.apps.filter(app => app !== activeApp && !!app.api.onUserActivity)),
