@@ -56,8 +56,12 @@ export class BrPage extends React.Component<BrPageProps, BrPageState> {
   }
 
   private async initializePage() {
-    const page = await initialize(this.props.configuration);
-    this.setState({ page });
+    try {
+      const page = await initialize(this.props.configuration);
+      this.setState({ page });
+    } catch (error) {
+      this.setState(() => { throw error; });
+    }
   }
 
   private destroyPage() {
