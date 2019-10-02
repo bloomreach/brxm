@@ -10,6 +10,10 @@ definitions:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.plugins.cms.admin.groups.ListGroupsPlugin
         hipposys:userrole: xm-security-manager
+      /userroles:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.plugins.cms.admin.userroles.ListUserRolesPlugin
+        hipposys:userrole: xm-security-manager
       /permissions:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionsPlugin
