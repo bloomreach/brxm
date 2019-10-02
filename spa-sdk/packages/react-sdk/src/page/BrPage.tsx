@@ -16,8 +16,7 @@
 
 import React from 'react';
 import { destroy, initialize, Configuration, Page } from '@bloomreach/spa-sdk';
-import { BrMappingContext } from '../component';
-import { BrMetaWrapper } from '../meta';
+import { BrMappingContext, BrNode } from '../component';
 import { BrPageContext } from './BrPageContext';
 
 interface BrPageProps {
@@ -80,9 +79,9 @@ export class BrPage extends React.Component<BrPageProps, BrPageState> {
     return (
       <BrPageContext.Provider value={this.state.page}>
         <BrMappingContext.Provider value={this.props.mapping}>
-          <BrMetaWrapper meta={this.state.page.getComponent().getMeta()}>
+          <BrNode component={this.state.page.getComponent()}>
             {this.props.children}
-          </BrMetaWrapper>
+          </BrNode>
         </BrMappingContext.Provider>
       </BrPageContext.Provider>
     );

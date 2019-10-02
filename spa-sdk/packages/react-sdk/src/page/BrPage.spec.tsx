@@ -18,7 +18,7 @@ import React from 'react';
 import { mocked } from 'ts-jest/utils';
 import { mount, shallow, ShallowWrapper } from 'enzyme';
 import { destroy, initialize, Page } from '@bloomreach/spa-sdk';
-import { BrProps } from '../component';
+import { BrNode, BrProps } from '../component';
 import { BrPage } from './BrPage';
 
 jest.mock('@bloomreach/spa-sdk');
@@ -85,6 +85,14 @@ describe('BrPage', () => {
 
   it('should render BrMappingContext.provider', () => {
     expect(wrapper.find('ContextProvider').last().prop('value')).toEqual(mapping);
+  });
+
+  it('should render root component', () => {
+    const node = wrapper.find(BrNode);
+    const root = wrapper.state('page')!.getComponent();
+
+    expect(node.exists()).toBe(true);
+    expect(node.prop('component')).toBe(root);
   });
 
   it('should render children', () => {
