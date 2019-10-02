@@ -17,6 +17,7 @@ package org.hippoecm.repository.standardworkflow;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -29,6 +30,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
@@ -64,8 +66,12 @@ import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_EXCLUDE_PRIMARY_TYPES;
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_MODIFY;
 import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROTOTYPE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
+import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
 import static org.onehippo.repository.security.StandardPermissionNames.HIPPO_AUTHOR;
 
 /**
@@ -210,9 +216,18 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                         Query query = qmgr.getQuery(foldertype);
                         query = qmgr.createQuery(foldertype.getProperty("jcr:statement").getString(), query.getLanguage()); // HREPTWO-1266
                         QueryResult rs = query.execute();
+
+                        final Set<String> excludePrimaryTypesSet =
+                                Arrays.stream(getMultipleStringProperty(foldertype, HIPPOSTD_EXCLUDE_PRIMARY_TYPES, new String[0]))
+                                        .collect(Collectors.toSet());
+
                         for (NodeIterator iter = rs.getNodes(); iter.hasNext();) {
                             Node typeNode = iter.nextNode();
-                            if (typeNode.getName().equals("hipposysedit:prototype")) {
+                            if (excludePrimaryTypesSet.contains(typeNode.getPrimaryNodeType().getName())) {
+                                log.info("Skip prototype '{}' since excluded by '{}'", typeNode.getPath(),
+                                        foldertype.getPath() + "/@" + HIPPOSTD_EXCLUDE_PRIMARY_TYPES);
+
+                            } else if (typeNode.getName().equals(HIPPO_PROTOTYPE)) {
                                 String documentType = typeNode.getPrimaryNodeType().getName();
                                 if (!documentType.startsWith("hippo:") && !documentType.startsWith("hipposys:") && !documentType.startsWith("hipposysedit:") && !documentType.startsWith("reporting:")
                                         && !documentType.equals("nt:unstructured") && !documentType.startsWith("hippogallery:")) {
@@ -327,8 +342,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         Node result = null;
         final Node target = rootSession.getNodeByIdentifier(subject.getIdentifier());
         Map<String, String[]> renames = new TreeMap<>();
-        if (templateQuery.hasProperty("hippostd:modify")) {
-            Value[] values = templateQuery.getProperty("hippostd:modify").getValues();
+        if (templateQuery.hasProperty(HIPPOSTD_MODIFY)) {
+            Value[] values = templateQuery.getProperty(HIPPOSTD_MODIFY).getValues();
             String[] params = new String[values.length];
             for (int i = 0; i < values.length; i++) {
                 params[i] = values[i].getString();
@@ -340,7 +355,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             Node handleNode = null;
             for (Node prototypeNode : new NodeIterable(rs.getNodes())) {
                 prototypeNode = rootSession.getNodeByIdentifier(prototypeNode.getIdentifier());
-                if (prototypeNode.getName().equals("hipposysedit:prototype")) {
+                if (prototypeNode.getName().equals(HIPPO_PROTOTYPE)) {
                     String documentType = prototypeNode.getPrimaryNodeType().getName();
                     if (documentType.equals(template)) {
                         // create handle ourselves, if not already exists

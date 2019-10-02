@@ -11,6 +11,7 @@ definitions:
           $now, './hippostd:holder', $holder]
         jcr:language: xpath
         jcr:statement: //element(*,hipposysedit:namespacefolder)/element(*,mix:referenceable)/element(*,hipposysedit:templatetype)/hipposysedit:prototypes/element(hipposysedit:prototype,hippo:document)
+        hippostd:excludePrimaryTypes: []
       /simple:
         jcr:primaryType: hippostd:templatequery
         jcr:mixinTypes: ['hipposys:implementation']
