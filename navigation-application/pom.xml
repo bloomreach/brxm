@@ -99,6 +99,16 @@
               <arguments>run test:single-run</arguments>
             </configuration>
           </execution>
+          <execution>
+            <id>npm docs</id>
+            <phase>package</phase>
+            <goals>
+              <goal>npm</goal>
+            </goals>
+            <configuration>
+              <arguments>run docs</arguments>
+            </configuration>
+          </execution>
         </executions>
       </plugin>
       <plugin>
