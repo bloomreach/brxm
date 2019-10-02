@@ -14,5 +14,5 @@
  * limitations under the License.
  */
 
-export { BrComponentContext, BrProps } from './component';
+export { BrComponent, BrComponentContext, BrProps } from './component';
 export { BrPage, BrPageContext } from './page';
