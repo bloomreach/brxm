@@ -14,21 +14,34 @@
  * limitations under the License.
  */
 
+import { TestBed } from '@angular/core/testing';
 import { ClientErrorCodes } from '@bloomreach/navapp-communication';
+import { of } from 'rxjs';
 
+import { ConnectionService } from '../../services/connection.service';
 import { AppError } from '../models/app-error';
-import { InternalError } from '../models/internal-error';
-
 import { CriticalError } from '../models/critical-error';
+import { InternalError } from '../models/internal-error';
 import { NotFoundError } from '../models/not-found-error';
 
 import { ErrorHandlingService } from './error-handling.service';
 
 describe('ErrorHandlingService', () => {
-  let service: ErrorHandlingService;
+  let errorHandlingService: ErrorHandlingService;
 
   beforeEach(() => {
-    service = new ErrorHandlingService();
+    const connectionServiceMock = {
+      onError$: of(),
+    };
+
+    TestBed.configureTestingModule({
+      providers: [
+        ErrorHandlingService,
+        { provide: ConnectionService, useValue: connectionServiceMock },
+      ],
+    });
+
+    errorHandlingService = TestBed.get(ErrorHandlingService);
   });
 
   it('should set the AppError', () => {
@@ -38,9 +51,9 @@ describe('ErrorHandlingService', () => {
       'Some detailed message',
     );
 
-    service.setError(expected);
+    errorHandlingService.setError(expected);
 
-    expect(service.currentError).toBe(expected);
+    expect(errorHandlingService.currentError).toBe(expected);
   });
 
   it('should set the AppError basing on a client error', () => {
@@ -50,33 +63,33 @@ describe('ErrorHandlingService', () => {
       'Optional message',
     );
 
-    service.setClientError(ClientErrorCodes.UnknownError, 'Optional message');
+    errorHandlingService.setClientError(ClientErrorCodes.UnknownError, 'Optional message');
 
-    expect(service.currentError).toEqual(expected);
+    expect(errorHandlingService.currentError).toEqual(expected);
   });
 
   it('should set the CriticalError', () => {
     const expected = new CriticalError('Some critical error', 'Description for logs');
 
-    service.setCriticalError('Some critical error', 'Description for logs');
+    errorHandlingService.setCriticalError('Some critical error', 'Description for logs');
 
-    expect(service.currentError).toEqual(expected);
+    expect(errorHandlingService.currentError).toEqual(expected);
   });
 
   it('should set the NotFoundError', () => {
     const expected = new NotFoundError('Some available to the user description', 'Description for logs');
 
-    service.setNotFoundError('Some available to the user description', 'Description for logs');
+    errorHandlingService.setNotFoundError('Some available to the user description', 'Description for logs');
 
-    expect(service.currentError).toEqual(expected);
+    expect(errorHandlingService.currentError).toEqual(expected);
   });
 
   it('should set the InternalError', () => {
     const expected = new InternalError('Some available to the user description', 'Description for logs');
 
-    service.setInternalError('Some available to the user description', 'Description for logs');
+    errorHandlingService.setInternalError('Some available to the user description', 'Description for logs');
 
-    expect(service.currentError).toEqual(expected);
+    expect(errorHandlingService.currentError).toEqual(expected);
   });
 
   describe('when the error is set', () => {
@@ -87,13 +100,13 @@ describe('ErrorHandlingService', () => {
         'Some detailed message',
       );
 
-      service.setError(expected);
+      errorHandlingService.setError(expected);
     });
 
     it('should clean the error', () => {
-      service.clearError();
+      errorHandlingService.clearError();
 
-      expect(service.currentError).toBeUndefined();
+      expect(errorHandlingService.currentError).toBeUndefined();
     });
   });
 });

@@ -21,191 +21,121 @@ import {
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
-import * as navappCommunication from '@bloomreach/navapp-communication';
+import { Site } from '@bloomreach/navapp-communication';
 
 import { AppSettings } from '../models/dto/app-settings.dto';
 import { AppSettingsMock } from '../models/dto/app-settings.mock';
+import { ConfigResource } from '../models/dto/config-resource.dto';
+import { ConfigResourceMock } from '../models/dto/config-resource.mock';
 import { NavItemMock } from '../models/dto/nav-item.mock';
 
 import { APP_SETTINGS } from './app-settings';
+import { ConnectionService } from './connection.service';
 import { NavConfigService } from './nav-config.service';
+import { NavItemService } from './nav-item.service';
+import { SiteService } from './site.service';
 
 describe('NavConfigService', () => {
-  let service: NavConfigService;
   let http: HttpClient;
   let httpTestingController: HttpTestingController;
+  let navConfigService: Partial<jasmine.SpyObj<NavConfigService>>;
+  let navItemService: NavItemService;
+  let siteService: SiteService;
+  let appSettings: AppSettings;
 
-  const navConfig = [
-    new NavItemMock({ id: 'testId1' }),
-    new NavItemMock({ id: 'testId2' }),
-  ];
-
-  const mockSites: navappCommunication.Site[] = [
-    {
-      siteId: -1,
-      accountId: 1,
-      name: 'www.company.com',
-      subGroups: [],
-    },
+  const navItems = [
+    new NavItemMock({ id: 'iframeItem' }),
+    new NavItemMock({ id: 'restItem' }),
+    new NavItemMock({ id: 'internalRestItem' }),
   ];
 
   const locationMock = jasmine.createSpyObj('Location', [
     'prepareExternalUrl',
   ]);
+  locationMock.prepareExternalUrl.and.callFake((path: string) => path);
 
-  const appSettingsMock: AppSettings = new AppSettingsMock({
-    loginResources: [
-      { url: 'testLoginResource1', resourceType: 'IFRAME' },
-      { url: 'testLoginResource2', resourceType: 'IFRAME' },
-    ],
-  });
+  const sites: Site[] = [
+    {
+      siteId: 1,
+      accountId: 123,
+      name: 'test1',
+    },
+    {
+      siteId: 2,
+      accountId: 123,
+      name: 'test2',
+    },
+  ];
 
-  const selectedSite = { accountId: 1, siteId: 2 };
-
-  const childApiMock = jasmine.createSpyObj('childApi', {
-    getNavItems: Promise.resolve(navConfig),
-    getSites: Promise.resolve(mockSites),
-    getSelectedSite: Promise.resolve(selectedSite),
-  });
-
-  const connectionMock = jasmine.createSpy('connectToChild');
+  const selectedSite = {
+    siteId: sites[0].siteId,
+    accountId: sites[0].accountId,
+  };
 
   beforeEach(() => {
+    const appSettingsMock = new AppSettingsMock();
+
+    const siteServiceMock = {
+      sites: [],
+      setSelectedSite: jasmine.createSpy('setSelectedSite'),
+    };
+
+    const navItemServiceMock = {
+      navItems: [],
+    };
+
+    const connectionServiceMock = jasmine.createSpyObj('ConnectionService', {
+      createConnection: Promise.resolve({
+        url: 'testIFRAMEurl',
+        api: {
+          getNavItems: () => [navItems[0]],
+          getSites: () => sites,
+          getSelectedSite: () => selectedSite,
+        },
+      }),
+    });
+
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       providers: [
+        NavConfigService,
         { provide: Location, useValue: locationMock },
         { provide: APP_SETTINGS, useValue: appSettingsMock },
-        NavConfigService,
+        { provide: ConnectionService, useValue: connectionServiceMock },
+        { provide: NavItemService, useValue: navItemServiceMock },
+        { provide: SiteService, useValue: siteServiceMock },
       ],
     });
 
     http = TestBed.get(HttpClient);
     httpTestingController = TestBed.get(HttpTestingController);
-    service = TestBed.get(NavConfigService);
-
-    spyOnProperty(navappCommunication, 'connectToChild', 'get').and.returnValue(
-      connectionMock,
-    );
+    navConfigService = TestBed.get(NavConfigService);
+    siteService = TestBed.get(SiteService);
+    navItemService = TestBed.get(NavItemService);
+    appSettings = TestBed.get(APP_SETTINGS);
   });
 
   afterEach(() => {
     httpTestingController.verify();
   });
 
-  it('should gracefully handle the connection error', fakeAsync(() => {
-    const expectedNavItems = [
-      new NavItemMock({
-        id: 'testItem',
-        appIframeUrl: 'testurl',
-        appPath: 'test path',
-      }),
-    ];
-
-    const returnValues = [
-      Promise.resolve({}), // login resource 1
-      Promise.resolve({}), // login resource 2
-      Promise.reject(), // iframe data extraction
-    ];
-
-    // connectionMock.and.returnValue(Promise.reject()); generates an error
-    // workaround from https://github.com/jasmine/jasmine/issues/1590
-    connectionMock.and.callFake(() => returnValues.shift());
-
-    service.init();
-
-    tick();
-
-    const request = httpTestingController.expectOne('testRESTurl');
-    request.flush(expectedNavItems);
-
-    tick();
-
-    expect(service.navItems).toEqual(expectedNavItems);
-    expect(service.sites).toEqual([]);
-
-    service.selectedSite$.subscribe(x => {
-      expect(x).toEqual(undefined);
-    });
-  }));
-
   describe('after initialization', () => {
-    let totalNavItems: navappCommunication.NavItem[];
+    it('should fetch resources', fakeAsync(() => {
+      const rootUrl = appSettings.basePath;
 
-    beforeEach(fakeAsync(() => {
-      connectionMock.and.returnValue(Promise.resolve(childApiMock));
+      navConfigService.init();
 
-      const RESTNavItem = new NavItemMock({
-        id: 'testItem',
-        appIframeUrl: 'testurl',
-        appPath: 'test path',
-      });
+      const restReq = httpTestingController.expectOne(appSettings.navConfigResources[1].url);
+      restReq.flush([navItems[1]]);
 
-      totalNavItems = navConfig.concat(RESTNavItem);
-
-      service.init();
+      const internalRestReq = httpTestingController.expectOne(`${rootUrl}${appSettings.navConfigResources[2].url}`);
+      internalRestReq.flush([navItems[2]]);
 
       tick();
 
-      const req = httpTestingController.expectOne('testRESTurl');
-      req.flush([RESTNavItem]);
+      expect(navItemService.navItems).toEqual(navItems);
+      expect(siteService.sites).toEqual(sites);
+      expect(siteService.setSelectedSite).toHaveBeenCalledWith(selectedSite);
     }));
-
-    it('should fetch resources', () => {
-      expect(service.navItems).toEqual(totalNavItems);
-      expect(service.sites).toEqual(mockSites);
-
-      service.selectedSite$.subscribe(site => {
-        expect(site.accountId).toEqual(1);
-        expect(site.siteId).toEqual(2);
-      });
-
-      httpTestingController.verify();
-    });
-
-    it('should find the nav item', () => {
-      const expected = new NavItemMock({
-        id: 'testItem',
-        appIframeUrl: 'testurl',
-        appPath: 'test path',
-      });
-
-      const actual = service.findNavItem('testurl', 'test path');
-
-      expect(actual).toEqual(expected);
-    });
-
-    it('should not find a nav item with unknown path', () => {
-      const actual = service.findNavItem(
-        'testurl',
-        'non existing path',
-      );
-
-      expect(actual).toBeUndefined();
-    });
-
-    it('should not find a nav item with unknown iframeUrl', () => {
-      const actual = service.findNavItem(
-        'unknownIframeUrl',
-        'test path',
-      );
-
-      expect(actual).toBeUndefined();
-    });
-
-    it('should set the selected site', () => {
-      const site = {
-        accountId: 1,
-        siteId: 10,
-        name: 'Some name',
-      };
-      let actual: navappCommunication.Site;
-
-      service.selectedSite$.subscribe(x => (actual = x));
-
-      service.setSelectedSite(site);
-
-      expect(actual).toEqual(site);
-    });
   });
 });

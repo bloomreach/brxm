@@ -19,7 +19,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { ClientAppService } from '../../client-app/services/client-app.service';
-import { NavConfigService } from '../../services/nav-config.service';
+import { SiteService } from '../../services/site.service';
 import { RightSidePanelService } from '../services/right-side-panel.service';
 
 @Component({
@@ -30,13 +30,13 @@ import { RightSidePanelService } from '../services/right-side-panel.service';
 export class TopPanelComponent {
 
   constructor(
-    private navConfigService: NavConfigService,
+    private siteService: SiteService,
     private clientAppService: ClientAppService,
     private rightSidePanelService: RightSidePanelService,
-  ) {}
+  ) { }
 
   get selectedSiteName$(): Observable<string> {
-    return this.navConfigService.selectedSite$.pipe(
+    return this.siteService.selectedSite$.pipe(
       map(x => x ? x.name : ''),
     );
   }

@@ -20,7 +20,7 @@ import { ChildPromisedApi } from '@bloomreach/navapp-communication';
 import { Connection } from '../../models/connection.model';
 import { AppSettingsMock } from '../../models/dto/app-settings.mock';
 import { APP_SETTINGS } from '../../services/app-settings';
-import { NavConfigService } from '../../services/nav-config.service';
+import { NavItemService } from '../../services/nav-item.service';
 import { ClientApp } from '../models/client-app.model';
 
 import { ClientAppService } from './client-app.service';
@@ -48,7 +48,7 @@ describe('ClientAppService', () => {
     },
   ];
 
-  const navConfigServiceMock = {
+  const navItemServiceMock = {
     navItems: navItemsMock,
   } as any;
 
@@ -60,7 +60,7 @@ describe('ClientAppService', () => {
     TestBed.configureTestingModule({
       providers: [
         ClientAppService,
-        { provide: NavConfigService, useValue: navConfigServiceMock },
+        { provide: NavItemService, useValue: navItemServiceMock },
         { provide: APP_SETTINGS, useValue: appSettingsMock },
       ],
     });

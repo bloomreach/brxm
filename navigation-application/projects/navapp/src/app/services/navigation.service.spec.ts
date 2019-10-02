@@ -17,6 +17,7 @@
 import { Location, PopStateEvent } from '@angular/common';
 import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { NavItem, NavLocation } from '@bloomreach/navapp-communication';
+import { of } from 'rxjs';
 
 import { ClientAppMock } from '../client-app/models/client-app.mock';
 import { ClientAppService } from '../client-app/services/client-app.service';
@@ -24,17 +25,21 @@ import { InternalError } from '../error-handling/models/internal-error';
 import { NotFoundError } from '../error-handling/models/not-found-error';
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
+import { AppSettings } from '../models/dto/app-settings.dto';
 import { AppSettingsMock } from '../models/dto/app-settings.mock';
 import { NavItemMock } from '../models/dto/nav-item.mock';
 import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
 
 import { APP_SETTINGS } from './app-settings';
-import { NavConfigService } from './nav-config.service';
+import { BusyIndicatorService } from './busy-indicator.service';
+import { ConnectionService } from './connection.service';
+import { NavItemService } from './nav-item.service';
 import { NavigationService } from './navigation.service';
 import { UrlMapperService } from './url-mapper.service';
 
 describe('NavigationService', () => {
   let service: NavigationService;
+  let appSettings: jasmine.SpyObj<AppSettings>;
 
   const basePath = '/base-path';
 
@@ -46,7 +51,7 @@ describe('NavigationService', () => {
     'go',
   ]);
 
-  const navConfigServiceMock = {
+  const navItemServiceMock = {
     navItems: [
       new NavItemMock({
         id: 'item1',
@@ -94,7 +99,7 @@ describe('NavigationService', () => {
   ]);
   urlMapperServiceMock.basePath = basePath;
 
-  const appSettingsMock = new AppSettingsMock({
+  const appSettingsMock: AppSettings = new AppSettingsMock({
     basePath: '/base-path',
     initialPath: '/iframe1/url/app/path/to/home',
   });
@@ -129,20 +134,29 @@ describe('NavigationService', () => {
     urlMapperServiceMock.trimLeadingSlash.and.callFake((value: string) => value.replace(/^\//, ''));
     urlMapperServiceMock.combinePathParts.and.callFake((...parts: string[]) => parts.map(urlMapperServiceMock.trimLeadingSlash).join('/'));
 
+    const busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', ['show', 'hide']);
+    const connectionServiceMock = {
+      navigate$: of(),
+      updateNavLocation$: of(),
+    };
+
     TestBed.configureTestingModule({
       providers: [
-        NavigationService,
-        { provide: Location, useValue: locationMock },
-        { provide: NavConfigService, useValue: navConfigServiceMock },
-        { provide: ClientAppService, useValue: clientAppServiceMock },
-        { provide: MenuStateService, useValue: menuStateServiceMock },
-        { provide: BreadcrumbsService, useValue: breadcrumbsServiceMock },
-        { provide: UrlMapperService, useValue: urlMapperServiceMock },
-        { provide: ErrorHandlingService, useValue: errorHandlingServiceMock },
         { provide: APP_SETTINGS, useValue: appSettingsMock },
+        { provide: BreadcrumbsService, useValue: breadcrumbsServiceMock },
+        { provide: BusyIndicatorService, useValue: busyIndicatorServiceMock },
+        { provide: ClientAppService, useValue: clientAppServiceMock },
+        { provide: ConnectionService, useValue: connectionServiceMock },
+        { provide: ErrorHandlingService, useValue: errorHandlingServiceMock },
+        { provide: Location, useValue: locationMock },
+        { provide: MenuStateService, useValue: menuStateServiceMock },
+        { provide: NavItemService, useValue: navItemServiceMock },
+        { provide: UrlMapperService, useValue: urlMapperServiceMock },
+        NavigationService,
       ],
     });
 
+    appSettings = TestBed.get(APP_SETTINGS);
     service = TestBed.get(NavigationService);
   });
 

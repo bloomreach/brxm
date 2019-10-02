@@ -23,7 +23,7 @@ import { InternalError } from '../error-handling/models/internal-error';
 import { AppSettings } from '../models/dto/app-settings.dto';
 
 import { APP_SETTINGS } from './app-settings';
-import { NavConfigService } from './nav-config.service';
+import { NavItemService } from './nav-item.service';
 
 @Injectable({
   providedIn: 'root',
@@ -35,7 +35,7 @@ export class UrlMapperService {
   ];
 
   constructor(
-    private navConfigService: NavConfigService,
+    private navItemService: NavItemService,
     private clientAppService: ClientAppService,
     @Inject(APP_SETTINGS) private appSettings: AppSettings,
   ) {
@@ -66,7 +66,7 @@ export class UrlMapperService {
     const appPathPredicate = (x: NavItem) => navLocation.path.startsWith(x.appPath);
     const appUrlAndAppPathPredicate = (x: NavItem) => x.appIframeUrl === activeAppUrl && appPathPredicate(x);
 
-    const navItem = this.navConfigService.navItems.find(x => {
+    const navItem = this.navItemService.navItems.find(x => {
       return useCurrentApp ? appUrlAndAppPathPredicate(x) : appPathPredicate(x);
     });
 

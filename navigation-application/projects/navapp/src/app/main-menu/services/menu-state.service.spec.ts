@@ -16,7 +16,7 @@
 
 import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
 
-import { NavConfigService } from '../../services/nav-config.service';
+import { NavItemService } from '../../services/nav-item.service';
 import { MenuItemContainer } from '../models/menu-item-container.model';
 import { MenuItemLinkMock } from '../models/menu-item-link.mock';
 
@@ -27,7 +27,7 @@ import { MenuStructureService } from './menu-structure.service';
 describe('MenuStateService', () => {
   let service: MenuStateService;
 
-  const navConfigServiceMock = jasmine.createSpyObj('MenuStructureService', {
+  const navItemService = jasmine.createSpyObj('MenuStructureService', {
     findNavItem: {
       id: 'nav-item-2',
       appIframeUrl: 'http://domain.com/iframe1/url',
@@ -78,7 +78,7 @@ describe('MenuStateService', () => {
     TestBed.configureTestingModule({
       providers: [
         MenuStateService,
-        { provide: NavConfigService, useValue: navConfigServiceMock },
+        { provide: NavItemService, useValue: navItemService },
         { provide: MenuBuilderService, useValue: menuBuilderServiceMock },
       ],
     });

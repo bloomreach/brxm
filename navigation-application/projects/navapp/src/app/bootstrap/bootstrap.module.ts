@@ -17,6 +17,7 @@
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
+import { AuthService } from '../services/auth.service';
 import { BusyIndicatorService } from '../services/busy-indicator.service';
 import { NavConfigService } from '../services/nav-config.service';
 
@@ -30,7 +31,7 @@ import { appBootstrappedPromise } from './schedule-app-bootstrapping';
     {
       provide: APP_INITIALIZER,
       useFactory: appInitializer,
-      deps: [NavConfigService, BootstrapService, BusyIndicatorService, ErrorHandlingService],
+      deps: [AuthService, NavConfigService, BootstrapService, BusyIndicatorService, ErrorHandlingService],
       multi: true,
     },
     {

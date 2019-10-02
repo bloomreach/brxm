@@ -23,11 +23,11 @@ import { AppSettingsMock } from '../models/dto/app-settings.mock';
 import { NavItemMock } from '../models/dto/nav-item.mock';
 
 import { APP_SETTINGS } from './app-settings';
-import { NavConfigService } from './nav-config.service';
+import { NavItemService } from './nav-item.service';
 import { UrlMapperService } from './url-mapper.service';
 
 describe('UrlMapperService', () => {
-  let service: UrlMapperService;
+  let urlMapperService: UrlMapperService;
 
   const navItemsMock = [
     new NavItemMock({
@@ -46,40 +46,38 @@ describe('UrlMapperService', () => {
       appPath: 'another/app/path/to/home',
     }),
   ];
-  const navConfigServiceMock = {
+  const navItemServiceMock = {
     navItems: navItemsMock,
   };
 
   let clientAppServiceMock = {
-    activeApp: undefined,
-  } as any;
+    activeApp: {
+      url: '',
+    },
+  };
 
   const appSettingsMock = new AppSettingsMock({
     navAppBaseURL: 'https://some-domain.com/base/path',
   });
 
   beforeEach(() => {
-    clientAppServiceMock.activeApp = {
-      url: '',
-    };
-
     TestBed.configureTestingModule({
       providers: [
         UrlMapperService,
         { provide: APP_SETTINGS, useValue: appSettingsMock },
-        { provide: NavConfigService, useValue: navConfigServiceMock },
+        { provide: NavItemService, useValue: navItemServiceMock },
         { provide: ClientAppService, useValue: clientAppServiceMock },
       ],
     });
 
-    service = TestBed.get(UrlMapperService);
+    urlMapperService = TestBed.get(UrlMapperService);
     clientAppServiceMock = TestBed.get(ClientAppService);
   });
 
   it('should return the base path', () => {
     const expected = '/base/path';
 
-    const actual = service.basePath;
+    const actual = urlMapperService.basePath;
 
     expect(actual).toBe(expected);
   });
@@ -87,7 +85,7 @@ describe('UrlMapperService', () => {
   it('should trim the leading slash', () => {
     const expected = 'some/path';
 
-    const actual = service.trimLeadingSlash('/some/path');
+    const actual = urlMapperService.trimLeadingSlash('/some/path');
 
     expect(actual).toBe(expected);
   });
@@ -100,7 +98,7 @@ describe('UrlMapperService', () => {
       appPath: 'path/to/page?param1=value1#hash-data',
     };
 
-    const actual = service.mapNavItemToBrowserUrl(navItem);
+    const actual = urlMapperService.mapNavItemToBrowserUrl(navItem);
 
     expect(actual).toBe(expected);
   });
@@ -113,7 +111,7 @@ describe('UrlMapperService', () => {
       appPath: 'path/to/page?param1=value1#hash-data',
     };
 
-    const actual = service.mapNavItemToBrowserUrl(navItem);
+    const actual = urlMapperService.mapNavItemToBrowserUrl(navItem);
 
     expect(actual).toBe(expected);
   });
@@ -126,7 +124,7 @@ describe('UrlMapperService', () => {
       appPath: 'path/to/page?param1=value1#hash-data',
     };
 
-    const actual = service.mapNavItemToBrowserUrl(navItem);
+    const actual = urlMapperService.mapNavItemToBrowserUrl(navItem);
 
     expect(actual).toBe(expected);
   });
@@ -139,7 +137,7 @@ describe('UrlMapperService', () => {
       appPath: 'path/to/page?param1=value1#hash-data',
     };
 
-    const actual = service.mapNavItemToBrowserUrl(navItem);
+    const actual = urlMapperService.mapNavItemToBrowserUrl(navItem);
 
     expect(actual).toBe(expected);
   });
@@ -150,7 +148,7 @@ describe('UrlMapperService', () => {
       path: 'app/path/to/page1/some/detailed/page?param1=value1#hash-data',
     };
 
-    const actual = service.mapNavLocationToBrowserUrl(navLocation);
+    const actual = urlMapperService.mapNavLocationToBrowserUrl(navLocation);
 
     expect(actual).toEqual(expected);
   });
@@ -160,7 +158,7 @@ describe('UrlMapperService', () => {
 
     clientAppServiceMock.activeApp = undefined;
 
-    expect(() => service.mapNavLocationToBrowserUrl({ path: '' })).toThrow(expected);
+    expect(() => urlMapperService.mapNavLocationToBrowserUrl({ path: '' })).toThrow(expected);
   });
 
   it('should throw an exception when the nav item contains a relative url instead of an absolute one', () => {
@@ -172,6 +170,6 @@ describe('UrlMapperService', () => {
       appPath: 'path/to/page',
     };
 
-    expect(() => service.mapNavItemToBrowserUrl(navItem)).toThrow(expectedError);
+    expect(() => urlMapperService.mapNavItemToBrowserUrl(navItem)).toThrow(expectedError);
   });
 });

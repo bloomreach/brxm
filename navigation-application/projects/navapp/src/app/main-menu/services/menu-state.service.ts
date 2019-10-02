@@ -17,7 +17,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
-import { NavConfigService } from '../../services/nav-config.service';
+import { NavItemService } from '../../services/nav-item.service';
 import { MenuItemContainer } from '../models/menu-item-container.model';
 import { MenuItemLink } from '../models/menu-item-link.model';
 import { MenuItem } from '../models/menu-item.model';
@@ -34,8 +34,8 @@ export class MenuStateService {
 
   constructor(
     private menuBuilderService: MenuBuilderService,
-    private navConfigService: NavConfigService,
-  ) {}
+    private navItemService: NavItemService,
+  ) { }
 
   get menu(): MenuItem[] {
     return this.menuItems;
@@ -62,7 +62,7 @@ export class MenuStateService {
   }
 
   init(): void {
-    const navItems = this.navConfigService.navItems;
+    const navItems = this.navItemService.navItems;
     this.menuItems = this.menuBuilderService.buildMenu(navItems);
     this.homeMenuItemLink = this.findHomeMenuItemLink(this.menuItems);
   }
@@ -72,7 +72,7 @@ export class MenuStateService {
   }
 
   activateMenuItem(appId: string, path: string): void {
-    const navItem = this.navConfigService.findNavItem(appId, path);
+    const navItem = this.navItemService.findNavItem(appId, path);
 
     if (!navItem) {
       throw new Error(`It's impossible to find an appropriate menu element for appId=${appId} and path=${path}`);

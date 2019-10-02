@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,22 +15,15 @@
  */
 
 import { Injectable } from '@angular/core';
+import { NavItem } from '@bloomreach/navapp-communication';
 
 @Injectable({
   providedIn: 'root',
 })
-export class BusyIndicatorService {
-  private visible = false;
+export class NavItemService {
+  navItems: NavItem[] = [];
 
-  get isVisible(): boolean {
-    return this.visible;
-  }
-
-  show(): void {
-    this.visible = true;
-  }
-
-  hide(): void {
-    this.visible = false;
+  findNavItem(iframeUrl: string, path: string): NavItem {
+    return this.navItems.find(item => (item.appIframeUrl === iframeUrl) && (path.startsWith(item.appPath)));
   }
 }

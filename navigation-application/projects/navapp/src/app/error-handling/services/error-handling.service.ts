@@ -17,6 +17,7 @@
 import { Injectable } from '@angular/core';
 import { ClientErrorCodes } from '@bloomreach/navapp-communication';
 
+import { ConnectionService } from '../../services/connection.service';
 import { AppError } from '../models/app-error';
 import { CriticalError } from '../models/critical-error';
 import { InternalError } from '../models/internal-error';
@@ -25,6 +26,12 @@ import { NotFoundError } from '../models/not-found-error';
 @Injectable()
 export class ErrorHandlingService {
   private error: AppError;
+
+  constructor(
+    private connectionService: ConnectionService,
+  ) {
+    this.connectionService.onError$.subscribe(error => this.setClientError(error.errorCode, error.message));
+  }
 
   get currentError(): AppError {
     return this.error;

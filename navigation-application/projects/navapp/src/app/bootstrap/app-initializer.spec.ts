@@ -36,6 +36,10 @@ describe('appInitializer', () => {
     'setCriticalError',
   ]);
 
+  const authServiceMock = jasmine.createSpyObj('AuthService', [
+    'loginAllResources',
+  ]);
+
   beforeEach(() => {
     spyOnProperty(loadNavItemsModule, 'loadNavItems', 'get').and.returnValue(() => Promise.resolve());
   });
@@ -46,6 +50,7 @@ describe('appInitializer', () => {
     let initialized = false;
 
     appInitializer(
+      authServiceMock,
       navConfigServiceMock,
       bootstrapServiceMock,
       busyIndicatorServiceMock,
@@ -61,6 +66,7 @@ describe('appInitializer', () => {
     spyOnProperty(scheduleAppBootstrappingModule, 'scheduleAppBootstrapping', 'get').and.returnValue(() => Promise.reject());
 
     appInitializer(
+      authServiceMock,
       navConfigServiceMock,
       bootstrapServiceMock,
       busyIndicatorServiceMock,

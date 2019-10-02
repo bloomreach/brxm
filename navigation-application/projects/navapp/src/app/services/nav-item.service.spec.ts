@@ -16,34 +16,37 @@
 
 import { TestBed } from '@angular/core/testing';
 
-import { BusyIndicatorService } from './busy-indicator.service';
+import { NavItemMock } from '../models/dto/nav-item.mock';
 
-describe('BusyIndicatorService', () => {
-  let busyIndicatorService: BusyIndicatorService;
+import { NavItemService } from './nav-item.service';
+
+describe('NavItemService', () => {
+  let navItemService: NavItemService;
+
+  const appIframeUrl = 'https://test.url';
+  const mockNavItems = [
+    new NavItemMock({
+      appPath: 'test1',
+      appIframeUrl,
+    }),
+    new NavItemMock({
+      appPath: 'test2',
+      appIframeUrl,
+    }),
+  ];
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        BusyIndicatorService,
+        NavItemService,
       ],
     });
 
-    busyIndicatorService = TestBed.get(BusyIndicatorService);
+    navItemService = TestBed.get(NavItemService);
+    navItemService.navItems = mockNavItems;
   });
 
-  it('busy indicator should be hidden by default', () => {
-    expect(busyIndicatorService.isVisible).toBeFalsy();
-  });
-
-  it('should show the busy indicator', () => {
-    busyIndicatorService.show();
-
-    expect(busyIndicatorService.isVisible).toBeTruthy();
-  });
-
-  it('should hide the busy indicator', () => {
-    busyIndicatorService.hide();
-
-    expect(busyIndicatorService.isVisible).toBeFalsy();
+  it('should find navitem by iframe url and path', () => {
+    expect(navItemService.findNavItem(appIframeUrl, 'test2')).toEqual(mockNavItems[1]);
   });
 });

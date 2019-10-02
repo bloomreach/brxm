@@ -75,10 +75,10 @@ export class AppComponent implements OnInit {
         }
       },
       getNavItems: () => {
-        return new Promise((resolve, reject) => {
+        return new Promise(resolve => {
           setTimeout(() => {
             resolve(mockNavItems);
-          }, 1);
+          }, 100);
         });
       },
       logout: () => {
@@ -136,7 +136,7 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     if (window.parent === window) {
-      console.log('Iframe app was not loaded inside iframe');
+      console.error('Iframe app was not loaded inside iframe');
       return;
     }
 
@@ -147,8 +147,8 @@ export class AppComponent implements OnInit {
 
     connectToParent(config)
       .then(parent => (this.parent = parent))
-      .then(parent => {
-        if (parent.getConfig) {
+      .then(() => {
+        if (this.parent.getConfig) {
           this.parent.getConfig()
             .then(parentConfig => this.parentApiVersion = parentConfig.apiVersion);
         }
@@ -162,29 +162,28 @@ export class AppComponent implements OnInit {
   toggleOverlay(): void {
     if (this.overlaid) {
       this.parent.hideMask().then(() => {
-        console.log('hiding parent mask');
         this.overlaid = false;
       });
     } else {
       this.parent.showMask().then(() => {
-        console.log('showing parent mask');
         this.overlaid = true;
       });
     }
   }
 
   navigateTo(path: string, breadcrumbLabel?: string): void {
-    let onNavigatedPromise: Promise<void>;
-
     if (path.startsWith(this.navigatedTo)) {
       this.navigatedTo = path;
-      onNavigatedPromise = this.parent.updateNavLocation({ path: this.navigatedTo, breadcrumbLabel });
+      this.parent.updateNavLocation({ path: this.navigatedTo, breadcrumbLabel });
     } else {
-      onNavigatedPromise = this.parent.navigate({ path, breadcrumbLabel });
+      this.parent.navigate({ path, breadcrumbLabel });
     }
+  }
 
-    onNavigatedPromise.then(() => {
-      console.log(`Successfully navigated to ${path} page.`);
+  showError(): void {
+    this.parent.onError({
+      errorCode: 500,
+      message: 'Error from the iframe app example',
     });
   }
 }
