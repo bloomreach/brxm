@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { connectToParent } from '@bloomreach/navapp-communication';
+
 class ChannelService {
   constructor(
     $log,
@@ -46,6 +48,12 @@ class ChannelService {
 
     this.isToolbarDisplayed = true;
     this.channel = {};
+
+    const parentOrigin = window.location.origin;
+    const methods = {
+      navigate: (location, flags) => this.updateNavLocation(flags),
+    };
+    this.parentApiPromise = connectToParent({ parentOrigin, methods });
   }
 
   /**
@@ -122,6 +130,7 @@ class ChannelService {
     if (this.SessionService.hasWriteAccess()) {
       this._augmentChannelWithPrototypeInfo();
     }
+    this.updateNavLocation();
   }
 
   _makeContextPrefix(contextPath) {
@@ -135,6 +144,7 @@ class ChannelService {
     if (!this.isToolbarDisplayed) {
       this.setToolbarDisplayed(true);
     }
+    this.updateNavLocation();
   }
 
   hasChannel() {
@@ -322,11 +332,28 @@ class ChannelService {
   }
 
   deleteChannel() {
-    return this.HstService.doDelete(this.ConfigService.rootUuid, 'channels', this.getId());
+    return this.HstService
+      .doDelete(this.ConfigService.rootUuid, 'channels', this.getId())
+      .then(() => this.updateNavLocation());
   }
 
   setToolbarDisplayed(state) {
     this.isToolbarDisplayed = state;
+  }
+
+  updateNavLocation(flags) {
+    const location = this._getLocation(flags);
+    return this.parentApiPromise.then(api => api.updateNavLocation(location));
+  }
+
+  _getLocation(flags) {
+    if ((flags && flags.forceRefresh) || !this.hasChannel()) {
+      return { path: 'channelmanager' };
+    }
+    return {
+      breadcrumbLabel: this.getName(),
+      path: `channelmanager/${this.getId()}`,
+    };
   }
 }
 

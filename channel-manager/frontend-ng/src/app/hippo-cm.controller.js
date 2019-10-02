@@ -26,7 +26,6 @@ class HippoCmCtrl {
     ConfigService,
     FeedbackService,
     HippoIframeService,
-    ParentIframeCommunicationService,
   ) {
     'ngInject';
 
@@ -40,7 +39,6 @@ class HippoCmCtrl {
     this.ConfigService = ConfigService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
-    this.ParentIframeCommunicationService = ParentIframeCommunicationService;
   }
 
   $onInit() {
@@ -77,20 +75,11 @@ class HippoCmCtrl {
 
   _loadChannel(channelId, contextPath, hostGroup, branchId, initialPath) {
     if (!this.ChannelService.matchesChannel(channelId)) {
-      this._initializeChannel(channelId, contextPath, hostGroup, branchId, initialPath)
-        .then(() => this._notifyParentIframe(this.ChannelService.channel));
+      this._initializeChannel(channelId, contextPath, hostGroup, branchId, initialPath);
     } else {
       this.HippoIframeService.initializePath(initialPath)
-        .then(() => this._notifyParentIframe(this.ChannelService.channel));
+        .then(() => this.ChannelService.updateNavLocation());
     }
-  }
-
-  _notifyParentIframe(channel) {
-    const location = {
-      breadcrumbLabel: channel.name,
-      path: `channelmanager/${channel.id}`,
-    };
-    this.ParentIframeCommunicationService.updateNavLocation(location);
   }
 
   _initializeChannel(channelId, contextPath, hostGroup, branchId, initialPath) {

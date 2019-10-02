@@ -33,7 +33,6 @@ class ChannelMenuService extends MenuService {
     HippoIframeService,
     SessionService,
     SiteMapService,
-    ParentIframeCommunicationService,
     ProjectService,
   ) {
     'ngInject';
@@ -54,7 +53,6 @@ class ChannelMenuService extends MenuService {
     this.SessionService = SessionService;
     this.SiteMapService = SiteMapService;
     this.ProjectService = ProjectService;
-    this.ParentIframeCommunicationService = ParentIframeCommunicationService;
 
     this.defineMenu('channel', {
       translationKey: 'TOOLBAR_BUTTON_CHANNEL',
@@ -263,8 +261,7 @@ class ChannelMenuService extends MenuService {
   _deleteChannel() {
     this._closeEditors()
       .then(() => this._confirmDeleteChannel())
-      .then(() => this._executeDeleteChannel())
-      .then(() => this.ParentIframeCommunicationService.updateNavLocation({ path: 'channelmanager' }));
+      .then(() => this._executeDeleteChannel());
   }
 
   _executeDeleteChannel() {
@@ -344,7 +341,6 @@ class ChannelMenuService extends MenuService {
     this.$state.go('hippo-cm')
       .then(() => {
         this.ChannelService.clearChannel();
-        this.ParentIframeCommunicationService.updateNavLocation({ path: 'channelmanager' });
         this.CmsService.publish('close-channel');
       });
   }
