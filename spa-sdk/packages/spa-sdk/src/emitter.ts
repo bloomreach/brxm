@@ -20,7 +20,6 @@ type Constructor = new (...args: any[]) => any;
 
 export type Emitter<T> = Pick<Typed<T>, 'on' | 'off'>;
 
-// tslint:disable-next-line:function-name variable-name
 export function EmitterMixin<T extends Constructor, U extends Events>(Super: T) {
   return class EmitterMixin extends Super implements Emitter<U> {
     /**

@@ -17,7 +17,6 @@
 import React from 'react';
 import { BrProps } from '../component';
 
-// tslint:disable-next-line:function-name
 export function BrContainerNoMarkup(props: React.PropsWithChildren<BrProps>) {
   return <>{props.children}</>;
 }

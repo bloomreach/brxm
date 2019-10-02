@@ -21,5 +21,4 @@ export interface BrMapping {
   [key: string]: React.ComponentType<BrProps>;
 }
 
-// tslint:disable-next-line:variable-name
 export const BrMappingContext = React.createContext<BrMapping>({});

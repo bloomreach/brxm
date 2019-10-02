@@ -17,5 +17,4 @@
 import React from 'react';
 import { Component } from '@bloomreach/spa-sdk';
 
-// tslint:disable-next-line:variable-name
 export const BrComponentContext = React.createContext<Component | undefined>(undefined);

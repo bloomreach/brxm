@@ -28,7 +28,6 @@ function renderMeta(meta: Meta[], position: typeof META_POSITION_BEGIN | typeof 
     .map((meta, index) => <BrMeta key={index} meta={meta} />);
 }
 
-// tslint:disable-next-line:function-name
 export function BrMetaWrapper(props: React.PropsWithChildren<BrMetaWrapperProps>) {
   return (
     <>

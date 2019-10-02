@@ -22,7 +22,6 @@ interface BrMetaProps {
   meta: Meta;
 }
 
-// tslint:disable-next-line:function-name
 export function BrMeta(props: BrMetaProps) {
   if (isMetaComment(props.meta)) {
     return <BrMetaComment meta={props.meta} />;

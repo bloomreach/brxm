@@ -17,5 +17,4 @@
 import React from 'react';
 import { Page } from '@bloomreach/spa-sdk';
 
-// tslint:disable-next-line:variable-name
 export const BrPageContext = React.createContext<Page | undefined>(undefined);

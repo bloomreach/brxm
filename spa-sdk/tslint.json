@@ -1,6 +1,15 @@
 {
   "extends": "tslint-config-airbnb",
   "rules": {
-    "max-line-length": [true, 120]
+    "max-line-length": [true, 120],
+    "function-name": [
+      true,
+      {
+        "function-regex": "^[\\w$][\\w\\d]+$"
+      }
+    ],
+    "variable-name": {
+      "options": ["allow-pascal-case"]
+    }
   }
 }

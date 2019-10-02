@@ -18,7 +18,6 @@ import React from 'react';
 import { ContainerItem } from '@bloomreach/spa-sdk';
 import { BrProps } from '../component';
 
-// tslint:disable-next-line:function-name
 export function BrContainerItemUndefined(props: React.PropsWithChildren<BrProps<ContainerItem>>) {
   return <>Component "{props.component.getType()}" is not defined.</>;
 }
