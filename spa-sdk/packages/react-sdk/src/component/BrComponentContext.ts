@@ -14,5 +14,8 @@
  * limitations under the License.
  */
 
-export { BrComponentContext, BrProps } from './component';
-export { BrPage, BrPageContext } from './page';
+import React from 'react';
+import { Component } from '@bloomreach/spa-sdk';
+
+// tslint:disable-next-line:variable-name
+export const BrComponentContext = React.createContext<Component | undefined>(undefined);

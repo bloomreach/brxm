@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+export * from './BrComponentContext';
 export * from './BrMappingContext';
 export * from './BrNodeComponent';
 export * from './BrNodeContainer';
