@@ -35,18 +35,22 @@ import com.google.common.collect.ImmutableSet;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_DESCRIPTION;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_SYSTEM;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_USERROLES;
+import static org.hippoecm.repository.api.HippoNodeType.NT_EXTERNALGROUP;
 
 public final class GroupImpl extends AbstractSecurityNodeInfo implements Group {
 
     private static final Set<String> PROTECTED_PROPERTY_NAMES = ImmutableSet.of(HIPPO_SYSTEM);
 
     private final String id;
+    private final boolean external;
     private final HashMap<String, Object> properties = new HashMap<>();
     private Set<String> userIds;
     private final Set<String> userRoles;
 
     GroupImpl(final Node node, final GroupManager groupManager) throws RepositoryException {
         this.id = NodeNameCodec.decode(node.getName());
+        this.external = node.isNodeType(NT_EXTERNALGROUP);
+
         // load and store the String value of all node properties which are:
         // - not multiple value
         // - of type String|Boolean}Date|Double|Long
@@ -79,6 +83,11 @@ public final class GroupImpl extends AbstractSecurityNodeInfo implements Group {
     @Override
     public boolean isSystemGroup() {
         return (Boolean)properties.get(HIPPO_SYSTEM);
+    }
+
+    @Override
+    public boolean isExternal() {
+        return external;
     }
 
     @Override

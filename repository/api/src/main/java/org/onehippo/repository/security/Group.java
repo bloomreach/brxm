@@ -15,7 +15,6 @@
  */
 package org.onehippo.repository.security;
 
-
 import java.util.Set;
 
 /**
@@ -63,6 +62,12 @@ public interface Group {
      * @return  whether this group is a system group
      */
     boolean isSystemGroup();
+
+    /**
+     * Whether this is an external user
+     * @return whether this is an external user
+     */
+    boolean isExternal();
 
     /**
      * Get an additional group property by name.

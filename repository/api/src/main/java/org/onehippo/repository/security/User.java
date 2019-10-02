@@ -45,6 +45,12 @@ public interface User {
     boolean isActive();
 
     /**
+     * Whether this is an external user
+     * @return whether this is an external user
+     */
+    boolean isExternal();
+
+    /**
      * Get the immutable set of {@link Group#getId() Group identities} this user is a member of, which can be used to
      * lookup the referenced {@link Group} object(s) through {@link SecurityService#getGroup(String)}.
      *
@@ -88,6 +94,13 @@ public interface User {
      * @return  the last login property of this user or {@code null} if not present
      */
     Calendar getLastLogin();
+
+    /**
+     * Get the names of the available additional user properties (with a value type String)
+     * @see #getProperty(String)
+     * @return the names of the available additional user properties (with a value type String)
+     */
+    Set<String> getPropertyNames();
 
     /**
      * Get an additional user property by name.

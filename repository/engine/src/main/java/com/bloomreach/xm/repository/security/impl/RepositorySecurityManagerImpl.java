@@ -28,6 +28,7 @@ import com.bloomreach.xm.repository.security.RepositorySecurityManager;
 import com.bloomreach.xm.repository.security.RepositorySecurityProviders;
 import com.bloomreach.xm.repository.security.RolesManager;
 import com.bloomreach.xm.repository.security.RolesProvider;
+import com.bloomreach.xm.repository.security.ChangePasswordManager;
 import com.bloomreach.xm.repository.security.UserRolesManager;
 import com.bloomreach.xm.repository.security.UserRolesProvider;
 
@@ -43,6 +44,7 @@ public class RepositorySecurityManagerImpl implements RepositorySecurityManager 
     final private RepositorySecurityProviders securityProviders;
     final private HippoSession hippoSession;
 
+    private ChangePasswordManagerImpl changePasswordManager;
     private RolesManagerImpl rolesManager;
     private UserRolesManagerImpl userRolesManager;
     private HippoSession systemSession;
@@ -77,6 +79,20 @@ public class RepositorySecurityManagerImpl implements RepositorySecurityManager 
     @Override
     public UserRolesProvider getUserRolesProvider() {
         return securityProviders.getUserRolesProvider();
+    }
+
+    @Override
+    public synchronized ChangePasswordManager getChangePasswordManager()
+            throws AccessDeniedException, RepositoryException {
+        checkClosed();
+        if (changePasswordManager == null) {
+            if (hippoSession.isSystemUser() || hippoSession.getUser().isSystemUser() || hippoSession.getUser().isExternal()) {
+                throw new AccessDeniedException("Not allowed to use the ChangePasswordManager for system or external users");
+            }
+            createSystemSessionIfNeeded();
+            changePasswordManager = new ChangePasswordManagerImpl(this);
+        }
+        return changePasswordManager;
     }
 
     @Override
@@ -125,6 +141,7 @@ public class RepositorySecurityManagerImpl implements RepositorySecurityManager 
             }
             rolesManager = null;
             userRolesManager = null;
+            changePasswordManager = null;
             if (systemSession != null && systemSession.isLive()) {
                 systemSession.logout();
                 systemSession = null;

@@ -64,6 +64,10 @@ public class UserUtils {
     }
 
     public static Optional<String> getUserName(User user) throws RepositoryException {
+        return Optional.of(getDisplayName(user));
+    }
+
+    public static String getDisplayName(User user) {
         final String firstName = user.getFirstName();
         final String lastName = user.getLastName();
 
@@ -76,6 +80,6 @@ public class UserUtils {
             sb.append(lastName.trim());
         }
         final String username = sb.toString().trim();
-        return Optional.of(username.isEmpty() ? user.getId() : username);
+        return username.isEmpty() ? user.getId() : username;
     }
 }

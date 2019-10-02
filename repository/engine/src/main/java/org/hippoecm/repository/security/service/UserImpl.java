@@ -20,8 +20,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.Property;
@@ -45,6 +47,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PASSWORD;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PASSWORDLASTMODIFIED;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_SYSTEM;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_USERROLES;
+import static org.hippoecm.repository.api.HippoNodeType.NT_EXTERNALUSER;
 
 /**
  * Implementation of a {@link User}, using lazy loading of its {@link GroupManager#getMembershipIds(String) group memberships}.
@@ -61,6 +64,7 @@ public class UserImpl extends AbstractSecurityNodeInfo implements User {
     );
 
     private final String id;
+    private final boolean external;
     private final HashMap<String, Object> properties = new HashMap<>();
     private final Set<String> groups;
     private final Set<String> userRoles;
@@ -73,6 +77,8 @@ public class UserImpl extends AbstractSecurityNodeInfo implements User {
     protected UserImpl(final Node userNode, final GroupManager groupManager,
                        final Function<Set<String>, Set<String>> rolesResolver) throws RepositoryException {
         this.id = NodeNameCodec.decode(userNode.getName());
+        this.external = userNode.isNodeType(NT_EXTERNALUSER);
+
         // load and store the String value of all node properties which are:
         // - not multiple value
         // - of type String|Boolean}Date|Double|Long
@@ -112,6 +118,13 @@ public class UserImpl extends AbstractSecurityNodeInfo implements User {
     }
 
     @Override
+    public Set<String> getPropertyNames() {
+        return properties.entrySet().stream()
+                .filter(entry -> entry.getValue() instanceof String)
+                .map(Map.Entry::getKey).collect(Collectors.toSet());
+    }
+
+    @Override
     public String getId() {
         return id;
     }
@@ -124,6 +137,11 @@ public class UserImpl extends AbstractSecurityNodeInfo implements User {
     @Override
     public boolean isActive() {
         return (Boolean)properties.get(HIPPO_ACTIVE);
+    }
+
+    @Override
+    public boolean isExternal() {
+        return external;
     }
 
     @Override

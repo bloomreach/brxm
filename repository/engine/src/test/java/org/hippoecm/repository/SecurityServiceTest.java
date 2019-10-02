@@ -21,7 +21,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
@@ -46,6 +45,7 @@ import static org.hippoecm.repository.api.HippoNodeType.HIPPO_LASTLOGIN;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_LASTSYNC;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MEMBERS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PASSWORD;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_SECURITYPROVIDER;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_SYSTEM;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_USERROLES;
 import static org.hippoecm.repository.api.HippoNodeType.NT_EXTERNALGROUP;
@@ -317,6 +317,8 @@ public class SecurityServiceTest extends RepositoryTestCase {
         assertEquals(now, user.getLastLogin().getTime());
         assertNull(user.getProperty(HIPPO_LASTLOGIN));
         assertEquals(calendarString, user.getProperty(HIPPO_LASTSYNC));
+        assertTrue(user.getPropertyNames().contains(HIPPO_SECURITYPROVIDER));
+        assertEquals(user.getProperty(HIPPO_SECURITYPROVIDER), "internal");
     }
 
     @Test

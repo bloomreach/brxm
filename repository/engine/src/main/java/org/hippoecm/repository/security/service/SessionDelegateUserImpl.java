@@ -76,6 +76,11 @@ public class SessionDelegateUserImpl implements SessionDelegateUser {
     }
 
     @Override
+    public boolean isExternal() {
+        return false;
+    }
+
+    @Override
     public String getFirstName() {
         return null;
     }
@@ -93,6 +98,11 @@ public class SessionDelegateUserImpl implements SessionDelegateUser {
     @Override
     public Calendar getLastLogin() {
         return null;
+    }
+
+    @Override
+    public Set<String> getPropertyNames() {
+        return Collections.emptySet();
     }
 
     @Override
