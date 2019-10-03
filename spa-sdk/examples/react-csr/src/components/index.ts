@@ -17,3 +17,4 @@
 export * from './Banner';
 export * from './Content';
 export * from './Menu';
+export * from './NewsList';

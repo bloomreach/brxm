@@ -58,3 +58,30 @@ interface MenuItem {
     },
   };
 }
+
+interface PageableModels {
+  pageable: Pageable;
+}
+
+interface Pageable {
+  currentPage: number;
+  currentRange: number[];
+  endOffset: number;
+  endPage: number;
+  // TODO: Replace with a reference interface
+  items: { $ref: string }[];
+  maxSize: number;
+  next: boolean;
+  nextBatch: boolean;
+  nextPage: number | null;
+  pageNumbersArray: number[];
+  pageSize: number;
+  previous: boolean;
+  previousPage: number | null;
+  showPagination: boolean;
+  startOffset: number;
+  startPage: number;
+  total: number;
+  totalPages: number;
+  visiblePages: number;
+}
