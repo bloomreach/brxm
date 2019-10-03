@@ -99,7 +99,7 @@ export interface Component {
    * Looks up for a nested component.
    * @param componentNames A lookup path.
    */
-  getComponent<U extends Component>(): this;
+  getComponent(): this;
   getComponent<U extends Component>(...componentNames: string[]): U | undefined;
 
   /**
@@ -145,7 +145,7 @@ export class ComponentImpl implements Component {
     return this.children;
   }
 
-  getComponent<U extends Component>(): this;
+  getComponent(): this;
   getComponent<U extends Component>(...componentNames: string[]): U | undefined;
   getComponent(...componentNames: string[]) {
     // tslint:disable-next-line:no-this-assignment
