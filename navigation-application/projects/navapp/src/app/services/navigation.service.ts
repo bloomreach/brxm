@@ -333,9 +333,10 @@ export class NavigationService implements OnDestroy {
 
         const appPath = Location.joinWithSlash(t.navItem.appPath, t.appPathAddOn);
         const appPathWithoutLeadingSlash = this.urlMapperService.trimLeadingSlash(appPath);
+        const appPathPrefix = new URL(t.navItem.appIframeUrl).pathname;
 
         const navigatePromise = app.api.navigate(
-          { path: appPathWithoutLeadingSlash },
+          { pathPrefix: appPathPrefix, path: appPathWithoutLeadingSlash },
           t.clientAppFlags,
         ).then(() => t as Navigation);
 
