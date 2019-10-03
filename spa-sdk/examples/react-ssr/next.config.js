@@ -20,7 +20,7 @@ const dotenv = require('dotenv');
 
 const dotenvPath = path.resolve(process.cwd(), '.env');
 if (fs.existsSync(dotenvPath)) {
-  const { error } = dotenv.confg({ path: dotenvPath });
+  const { error } = dotenv.config({ path: dotenvPath });
   if (error) {
     throw error;
   }
