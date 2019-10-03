@@ -20,8 +20,6 @@ import java.util.function.Supplier;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.core.request.handler.IPartialPageRequestHandler;
 import org.apache.wicket.request.cycle.RequestCycle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This class modifies the dom to append javascript when
@@ -29,10 +27,8 @@ import org.slf4j.LoggerFactory;
  */
 public class ParentApiCaller implements ParentApi {
 
-    public static final String JAVA_SCRIPT_TEMPLATE = "Hippo.updateNavLocation('%s')";
-    private static final Logger log = LoggerFactory.getLogger(ParentApiCaller.class);
+    static final String JAVA_SCRIPT_TEMPLATE = "Hippo.updateNavLocation({ path: '%s' })";
     private Supplier<IPartialPageRequestHandler> targetSupplier;
-
 
     public ParentApiCaller() {
         setTargetSupplier(() -> RequestCycle.get().find(AjaxRequestTarget.class));
@@ -48,11 +44,8 @@ public class ParentApiCaller implements ParentApi {
     public void updateNavLocation(final String path) {
         final IPartialPageRequestHandler target = targetSupplier.get();
         if (target != null) {
-            target.appendJavaScript(getJavaScript(path));
+            target.appendJavaScript(String.format(JAVA_SCRIPT_TEMPLATE, path));
         }
     }
 
-    private String getJavaScript(final String path) {
-        return String.format(JAVA_SCRIPT_TEMPLATE, path);
-    }
 }
