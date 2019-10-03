@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -311,7 +311,12 @@ public class LoginServlet extends HttpServlet {
 
         destination = normalizeDestination(destination, request);
 
-        response.sendRedirect(response.encodeURL(getFullyQualifiedURL(request, destination)));
+        try {
+            response.sendRedirect(response.encodeURL(getFullyQualifiedURL(request, destination)));
+        } catch (IllegalArgumentException e) {
+            // potentially an Open Redirect attempt
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        }
     }
 
 
@@ -342,7 +347,12 @@ public class LoginServlet extends HttpServlet {
 
         destination = normalizeDestination(destination, request);
 
-        response.sendRedirect(response.encodeURL(getFullyQualifiedURL(request, destination)));
+        try {
+            response.sendRedirect(response.encodeURL(getFullyQualifiedURL(request, destination)));
+        } catch (IllegalArgumentException e) {
+            // potentially an Open Redirect attempt
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        }
     }
 
     protected void doLoginLogout(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -353,7 +363,12 @@ public class LoginServlet extends HttpServlet {
             session.invalidate();
         }
 
-        response.sendRedirect(response.encodeURL(getFullyQualifiedURL(request, destination)));
+        try {
+            response.sendRedirect(response.encodeURL(getFullyQualifiedURL(request, destination)));
+        } catch (IllegalArgumentException e) {
+            // potentially an Open Redirect attempt
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST);
+        }
     }
 
     protected void doLoginError(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -589,6 +604,10 @@ public class LoginServlet extends HttpServlet {
 
     public static String getFullyQualifiedURL(final HttpServletRequest request, final String destination) {
         if (destination.startsWith("http:") || destination.startsWith("https:")) {
+            if (!destination.startsWith(getBaseURL(request))) {
+                throw new IllegalArgumentException(String.format("Destination URL '%s' to domain found which does not start " +
+                        "with allowed domain '%s' ", destination, getBaseURL(request)));
+            }
             return destination;
         }
         if (destination.startsWith("/")) {
