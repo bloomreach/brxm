@@ -52,6 +52,7 @@ export class NavConfigService {
     private http: HttpClient,
     private settings: GlobalSettingsService,
     private rendererFactory: RendererFactory2,
+    private location: Location,
     @Inject(DOCUMENT) private document,
   ) {
     this.renderer = this.rendererFactory.createRenderer(undefined, undefined);
@@ -156,9 +157,11 @@ export class NavConfigService {
           selectedSiteId: undefined,
         }));
       case 'INTERNAL_REST':
-        const basePath = this.settings.appSettings.navAppBaseURL;
-        return this.fetchFromREST<NavItem[]>(basePath + resource.url).then(navItems => {
-          navItems.forEach(item => item.appIframeUrl = basePath + item.appIframeUrl);
+        const baseUrl = this.location.prepareExternalUrl(this.settings.appSettings.basePath);
+        const url = Location.joinWithSlash(baseUrl, resource.url);
+
+        return this.fetchFromREST<NavItem[]>(url).then(navItems => {
+          navItems.forEach(item => item.appIframeUrl = Location.joinWithSlash(baseUrl, item.appIframeUrl));
           return {
             navItems,
             sites: [],

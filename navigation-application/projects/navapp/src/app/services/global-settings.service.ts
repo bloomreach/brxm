@@ -32,16 +32,16 @@ export class GlobalSettingsService implements GlobalSettings {
     const settings = (window as any).NavAppSettings;
     Object.assign(this, settings);
 
-    this.appSettings.navAppBaseURL = this.extractBaseURL();
+    if (!this.appSettings.basePath) {
+      this.appSettings.basePath = this.extractBasePath();
+    }
 
     if (!this.appSettings.iframesConnectionTimeout) {
       this.appSettings.iframesConnectionTimeout = 30000;
     }
   }
 
-  private extractBaseURL(): string {
-    const pathname = Location.stripTrailingSlash(window.location.pathname);
-    const fullPath = `${window.location.origin}${pathname}`;
-    return fullPath;
+  private extractBasePath(): string {
+    return Location.stripTrailingSlash(window.location.pathname);
   }
 }
