@@ -14,6 +14,27 @@
  * limitations under the License.
  */
 
+interface DocumentModels {
+  // TODO: Replace with a reference interface
+  document: { $ref: string };
+}
+
+interface DocumentData {
+  author: string;
+  content: DocumentContent;
+  date: number;
+  // TODO: Replace with a reference interface
+  image: { $ref: string };
+  introduction: string;
+  title: string;
+
+  [property: string]: any;
+}
+
+interface DocumentContent {
+  value: string;
+}
+
 interface MenuModels {
   menu: Menu;
 }
