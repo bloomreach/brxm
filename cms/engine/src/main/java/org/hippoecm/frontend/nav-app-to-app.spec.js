@@ -12,16 +12,12 @@
  * limitations under the License.
  *
  */
+describe('IFrameConnections', function () {
 
-describe("IFrameConnections", function () {
-
-  let iFrameConnections, childApi, promise, parentApiPromise, navAppCommunication;
-  let subAppLocation, subAppFlags, rejectedPromise
-  let cms;
+  let iFrameConnections, childApi, parentApi, promise, parentApiPromise;
+  let subAppLocation, subAppFlags;
 
   beforeEach(function () {
-      navAppCommunication = function () {
-      };
       childApi = {
         navigate: function (location, flags) {
           subAppLocation = location;
@@ -31,85 +27,31 @@ describe("IFrameConnections", function () {
       parentApi = {
         navigate: function (location, flags) {
         }
-      }
+      };
       parentApiPromise = MakeQuerablePromise(new Promise(function (resolve, reject) {
         resolve(parentApi)
       }));
       promise = MakeQuerablePromise(new Promise(function (resolve, reject) {
         resolve(childApi);
       }));
-      navAppCommunication.connectToChild = function (subAppConfig) {
-        return promise;
-      };
-      navAppCommunication.connectToParent = function (parentAppConfig) {
-        return parentApiPromise;
-      }
-      iFrameConnections = new Hippo.IFrameConnections(navAppCommunication, cms, function (identifier) {
-        return identifier;
-      });
-      window.bloomreach = {};
-      window.bloomreach['navapp-communication'] = {};
-
+      iFrameConnections = new Hippo.IFrameConnections(parentApiPromise);
     }
   );
 
-  describe("registerIFrame", function () {
-    it("adds an entry with identifier as key to the connections map", function () {
-      const iFrameElement = {className: "identifier"}
+  describe('registerIFrame', function () {
+    it('adds an entry with identifier as key to the connections map', function () {
+      const iFrameElement = {className: 'identifier'}
       iFrameConnections.registerIframe(iFrameElement).then(
         () => expect(iFrameConnections.getConnections().has(iFrameElement)).toBe(true)
       )
-
     });
-    it("adds an entry with as value a promise", function () {
+    it('adds an entry with as value a promise', function () {
       let iframeElement = {className: 'identifier'};
       iFrameConnections.registerIframe(iframeElement).then(() => {
-        let value = iFrameConnections.getConnections().get(iframeElement);
+        let value = iFrameConnections.getChildApiPromise(iframeElement);
         expect(value).toEqual(promise);
       });
-
     });
-  });
-
-  describe("navigate", function () {
-    it("settles the connection promise if it pending", function () {
-      const iFrameElement = {className: "identifier"}
-      iFrameConnections.navigate(iFrameElement, "location", {})
-        .then(() => expect(iFrameConnections.getConnections().get(iFrameElement).isFulfilled()).toBe(true))
-        .catch(() => {
-        });
-    });
-
-    it("calls navigate on the childApi if the promise is fulfilled ", function () {
-      let location = "location";
-      let flags = {};
-      iFrameConnections.navigate("identifier", location, flags).then(() => {
-          expect(subAppFlags).toEqual(flags)
-          expect(subAppLocation).toEqual(location)
-        }
-      );
-    });
-
-  });
-
-  describe("connectToParent", function () {
-    it("fullFills the connectToParent promise if all connection promise to subapp have been fulfilled", function () {
-      iFrameConnections.registerIframe("iframeIdentifier1");
-      iFrameConnections.registerIframe("iframeIdentifier2");
-      iFrameConnections.connectToParent("origin").then(
-        Promise.all([iFrameConnections.getConnections().keys()]).then(() =>
-          expect(true).toBe(true)
-        )
-      )
-    });
-
-    it("does not fullFill the connectToParent promise if one of the connection promises has been rejected", function () {
-      iFrameConnections.registerIframe("iframeIdentifier1");
-      iFrameConnections.registerIframe("iframeIdentifier2");
-      iFrameConnections.getConnections().set("iframeIdentifier2", Promise.reject(new Error('fail')));
-      expect(MakeQuerablePromise(iFrameConnections.connectToParent("origin")).isFulfilled()).toBe(false);
-    });
-
   });
 
   function MakeQuerablePromise (promise) {

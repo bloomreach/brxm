@@ -24,244 +24,152 @@
  * these methods will be available in the CMS iframe.
  */
 
-(function() {
+(function () {
   'use strict';
 
   class IFrameConnections {
-    constructor(navAppCommunication, cmsToNavApp, subAppToCms) {
-      this.navAppCommunication = navAppCommunication;
-      this.cmsToNavApp = cmsToNavApp;
-      this.subAppToCms = subAppToCms;
-      this.connections = new Map([]);
-      this.parentConnection = {};
+    constructor(parentApiPromise) {
+      this.parentApiPromise = parentApiPromise;
+      this.childApiPromiseMap = new Map([]);
     }
 
-    getConnections() {
-      return this.connections;
+    getIFrameByPerspectiveId (perspectiveId) {
+      const key = `${perspectiveId}-iframe`;
+      return Array.from(this.childApiPromiseMap.keys()).find(iframe => iframe.className === key);
     }
 
-    getParentConnection() {
-      return this.parentConnection;
+    getChildApiPromises () {
+      return Array.from(this.childApiPromiseMap.values());
     }
 
-    navigate(iframeElement, location, flags) {
-      let childConnectionPromise;
-
-      if (!this.getConnections().has(iframeElement)) {
-        childConnectionPromise = this.registerIframe(iframeElement);
-      } else {
-        childConnectionPromise = this.connections.get(iframeElement);
+    getChildApiPromise (iframeElement) {
+      if (this.childApiPromiseMap.has(iframeElement)) {
+        return this.childApiPromiseMap.get(iframeElement);
       }
-
-      return childConnectionPromise
-        .then((childApi) => childApi.navigate(location, flags))
-        .catch((e) => console.error(e));
+      return this.registerIframe(iframeElement);
     }
 
-    registerIframe(iframeElement) {
-      const subAppConnectConfig = {
-        iframe: iframeElement,
-        methods: this.subAppToCms,
-      };
-      const connectionPromise = this.navAppCommunication.connectToChild(
-        subAppConnectConfig,
-      );
-
-      connectionPromise
-        .then(() => this.connections.set(iframeElement, connectionPromise))
-        .catch((e) => console.error(e));
-
-      return connectionPromise;
+    registerIframe (iframeElement) {
+      return this.parentApiPromise
+        .then(parentApi => {
+          const subAppConnectConfig = {
+            iframe: iframeElement,
+            methods: parentApi,
+          };
+          const childApiPromise = window.bloomreach['navapp-communication'].connectToChild(subAppConnectConfig);
+          this.childApiPromiseMap.set(iframeElement, childApiPromise);
+          return childApiPromise;
+        });
     }
 
-    connectToParent(parentOrigin) {
-      // Config object sent to parent when connecting.
-      const parentConnectionConfig = {
-        parentOrigin,
-        methods: this.cmsToNavApp,
-      };
-
-      return Promise.all(this.getConnections().values()).then(
-        () => {
-          this.parentConnection = this.navAppCommunication.connectToParent(
-            parentConnectionConfig,
-          ).then((parentApi) => {
-            Hippo.UserActivity.registerOnInactive(() => {
-              parentApi.onSessionExpired();
-            });
-            Hippo.UserActivity.registerOnActive(() => {
-              if (parentApi.onUserActivity) {
-                parentApi.onUserActivity();
-              }
-            });
-            return parentApi;
-          });
-          return this.parentConnection;
-        },
-        (e) => console.error(e),
-      );
+    showMask () {
+      this.parentApiPromise.then(parentApi => parentApi.showMask());
     }
+
+    hideMask () {
+      this.parentApiPromise.then(parentApi => parentApi.hideMask());
+    }
+
+    updateNavLocation (location) {
+      this.parentApiPromise.then(parentApi => parentApi.updateNavLocation(location));
+    }
+
   }
+  Hippo.IFrameConnections = IFrameConnections;
 
-  // This method is called whenever a Perspective is activated (see ParentApiCaller)
-  // The path is expected to be the appPath, which represents the identifier of a Perspective.
-  Hippo.updateNavLocation = function(path) {
-    if (
-      !Hippo.currentNavLocation ||
-      Hippo.currentNavLocation.path.indexOf(path) < 0
-    ) {
-      // Hippo.currentNavLocation is undefined initially (after login). When the CMS activates the first
-      // perspective then it calls this method, so then we can set it with path and leave breadcrumb undefined.
-      //
-      // If currentNavLocation.path starts with path then a sub-app has already called changed the
-      // currentNavLocation and called AppToNavApp.updateNavLocation with it. (see cms-subapp-iframe-communication.js)
-      //
-      // In all other cases it means that the perspective changed to some other perspective so then we should
-      // change the currentLocation and inform the navapp about this
-      Hippo.currentNavLocation = { path };
-      Hippo.iframeConnections
-        .getParentConnection()
-        .then(cmsToNavApp =>
-          cmsToNavApp.updateNavLocation(Hippo.currentNavLocation),
+  const cmsChildApi = {
+
+    beforeNavigation () {
+      const beforeNavigationPromises = Hippo.iframeConnections.getChildApiPromises()
+        .map(childApiPromise =>
+          childApiPromise.then(
+            childApi => childApi.beforeNavigation && childApi.beforeNavigation() || Promise.resolve(true)
+          )
         );
-    }
-  };
-
-  function getPerspective(identifier) {
-    const perspectiveClassName = `.hippo-perspective-${identifier}perspective`;
-    const perspective = document.querySelector(perspectiveClassName);
-
-    return perspective;
-  }
-
-  function openChannelManagerOverview() {
-    const rootPanel = Ext.getCmp('rootPanel');
-
-    if (rootPanel) {
-      rootPanel.fireEvent('navigate-to-channel-overview');
-    }
-  }
-
-  Hippo.showMask = function() {
-    return Hippo.iframeConnections
-      .getParentConnection()
-      .then(cmsToNavApp => cmsToNavApp.showMask());
-  };
-
-  Hippo.hideMask = function() {
-    return Hippo.iframeConnections
-      .getParentConnection()
-      .then(cmsToNavApp => cmsToNavApp.hideMask());
-  };
-
-  // Receiver object for the implementation of the Parent API
-  const subAppToCms = {
-    updateNavLocation(location) {
-      Hippo.currentNavLocation = {
-        path: location.path,
-        breadcrumbLabel: location.breadcrumbLabel,
-      };
-
-      return Hippo.iframeConnections
-        .getParentConnection()
-        .then(cmsToNavApp =>
-          cmsToNavApp.updateNavLocation(Hippo.currentNavLocation),
-        );
+      return Promise.all(beforeNavigationPromises);
     },
-    showMask() {
-      return Hippo.showMask();
-    } ,
-    hideMask() {
-      return Hippo.hideMask();
-    } ,
-  };
 
-  const navAppToCms = {
-    beforeNavigation() {
-      return Promise.resolve(true);
-    },
-    navigate(location, flags) {
+    navigate (location, flags) {
       const pathWithoutLeadingSlash = location.path.replace(/^\/+/, '');
       const pathElements = pathWithoutLeadingSlash.split('/');
-      const perspectiveIdentifier = pathElements.shift();
-      const perspective = getPerspective(perspectiveIdentifier);
+      const perspectiveId = pathElements.shift();
+      const perspective = document.querySelector(`.hippo-perspective-${perspectiveId}perspective`);
 
       if (!perspective) {
-        return Promise.reject(new Error(`${perspectiveIdentifier} not found`));
+        return Promise.reject(new Error(`${perspectiveId} not found`));
       }
 
+      const iframe = Hippo.iframeConnections.getIFrameByPerspectiveId(perspectiveId);
+      if (iframe) {
+        const forceRefresh = flags && flags.forceRefresh;
+        const subAppLocation = {path: pathElements.join('/')};
+        switch (perspectiveId) {
+
+          case 'projects':
+            pathElements.unshift(perspectiveId);
+            if (forceRefresh) {
+              subAppLocation.path = 'projects';
+            }
+            break;
+
+          case 'channelmanager':
+            if (forceRefresh) {
+              const rootPanel = Ext.getCmp('rootPanel');
+              if (rootPanel) {
+                rootPanel.fireEvent('navigate-to-channel-overview');
+              }
+            }
+            break;
+        }
+        return Hippo.iframeConnections.getChildApiPromise(iframe)
+          .then(childApi => childApi.navigate(subAppLocation, flags))
+          .then(() => perspective.click());
+      }
+
+      if (perspectiveId === 'browser' && pathElements.length > 1) {
+        const docLocation = document.location;
+        const url = new URL(docLocation.href);
+        url.searchParams.append('uuid', pathElements[1]);
+        docLocation.assign(url.toString())
+      }
       perspective.click();
-
-      const connections = Hippo.iframeConnections.getConnections();
-      const iframeClassName = Array.from(connections.keys()).map(
-        (iframe) => iframe.className,
-      );
-
-      if (perspectiveIdentifier === 'browser' && pathElements.length > 1) {
-        const location = document.location;
-        const url = new URL(location.href);
-        if ( pathElements[0] === 'path') {
-          url.searchParams.append('path', pathElements.slice(1).join('/'));
-        } else {
-          url.searchParams.append('uuid', pathElements[1]);
-        }
-        location.assign(url.toString());
-      }
-
-      if (iframeClassName.includes(`${perspectiveIdentifier}-iframe`)) {
-        if ( perspectiveIdentifier === 'projects' ) {
-          pathElements.unshift(perspectiveIdentifier);
-        }
-        const subAppLocation
-          = { path: pathElements.join('/') };
-
-        if (flags && flags['forceRefresh']) {
-          if (perspectiveIdentifier === 'channelmanager') {
-            openChannelManagerOverview.call(this);
-          }
-          if (perspectiveIdentifier === 'projects') {
-            subAppLocation
-              .path = '/projects';
-          }
-        }
-
-        const iframe = Array.from(connections.keys()).find(
-          iframe => iframe.className === perspectiveIdentifier + '-iframe',
-        );
-
-        if (iframe) {
-          return Hippo.iframeConnections.navigate(iframe, subAppLocation
-            , flags);
-        }
-      }
-
       return Promise.resolve();
     },
 
-    logout() {
-      Hippo.Events.publish('CMSLogout');
+    logout () {
       // The jqXHR objects returned by jQuery.ajax() as of jQuery 1.5 implements the Promise interface
       // See http://api.jquery.com/jquery.ajax/
       return jQuery.ajax('${logoutCallbackUrl}');
     },
 
-    onUserActivity() {
+    onUserActivity () {
       Hippo.UserActivity.report();
       return Promise.resolve();
     }
 
   };
 
-  window.bloomreach = window.bloomreach || {};
+  const parentApiPromise = window.bloomreach && window.bloomreach['navapp-communication']
+    .connectToParent({parentOrigin: '${parentOrigin}', methods: cmsChildApi})
+    .then(parentApi => {
+      Hippo.UserActivity.registerOnInactive(() => parentApi.onSessionExpired());
+      Hippo.UserActivity.registerOnActive(() => parentApi.onUserActivity());
+      return parentApi;
+    });
 
-  Hippo.IFrameConnections = IFrameConnections;
   Hippo.iframeConnections = new IFrameConnections(
-    window.bloomreach['navapp-communication'],
-    navAppToCms,
-    subAppToCms,
+    parentApiPromise
   );
 
-  Hippo.iframeConnections.connectToParent('${parentOrigin}');
+  Hippo.updateNavLocation = function(location) {
+    Hippo.iframeConnections.updateNavLocation(location);
+  }
+  Hippo.showMask = function() {
+    Hippo.iframeConnections.showMask();
+  }
+  Hippo.hideMask = function() {
+    Hippo.iframeConnections.hideMask();
+  }
 })();
 
 //# sourceURL=nav-app-to-app.js
