@@ -6,20 +6,19 @@ Example client-side React app using the BloomReach Experience SDK for React. The
 
 __TODO__: Start the BRX example Docker image
 
-Then, customize `.env` file to contain a correct [PUBLIC_URL](https://create-react-app.dev/docs/using-the-public-folder) path, for example:
+Then, copy `.env.dist` file to `.env` and customize it to contain a correct [PUBLIC_URL](https://create-react-app.dev/docs/using-the-public-folder) path, for example:
 ```
 PUBLIC_URL=http://localhost:3000
 ```
 
 Beware of [this issue](https://github.com/facebook/create-react-app/pull/7259). The PUBLIC_URL may not work in development mode.
 
-In the same `.env` file, also specify the brXM instance to fetch the page model from. The default configuration 
-connects to `http://localhost:8080/site/`:
-
+In the same `.env` file, also specify the brXM instance to fetch the page model from:
 ```
-REACT_APP_BR_ORIGIN=http://localhost:8080
-REACT_APP_BR_CONTEXT_PATH=site
-REACT_APP_BR_CHANNEL_PATH=
+REACT_APP_BR_URL_LIVE=http://localhost:8080/site/spa-csr/resourceapi
+REACT_APP_SPA_BASE_PATH_LIVE=
+REACT_APP_BR_URL_PREVIEW=http://localhost:8080/site/_cmsinternal/spa-csr/resourceapi
+REACT_APP_SPA_BASE_PATH_PREVIEW=/site/_cmsinternal/spa-csr
 ```
 
 Finally, build and run the React app as follows:

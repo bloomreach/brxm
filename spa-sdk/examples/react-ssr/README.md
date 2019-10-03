@@ -7,18 +7,17 @@ as framework for creating a server-side rendered app.
 
 __TODO__: Start the BRX example Docker image
 
-Then, customize `.env` file to contain a correct PUBLIC_URL path, for example:
+Then, copy `.env.dist` file to `.env` and customize it to contain a correct `PUBLIC_URL` path, for example:
 ```
 PUBLIC_URL=http://localhost:3000
 ```
 
-In the same `.env` file, also specify the brXM instance to fetch the page model from. The default configuration 
-connects to `http://localhost:8080/site/`:
-
+In the same `.env` file, also specify the brXM instance to fetch the page model from:
 ```
-BR_ORIGIN=http://localhost:8080
-BR_CONTEXT_PATH=site
-BR_CHANNEL_PATH=
+BR_URL_LIVE=http://localhost:8080/site/spa-ssr/resourceapi
+SPA_BASE_PATH_LIVE=
+BR_URL_PREVIEW=http://localhost:8080/site/_cmsinternal/spa-ssr/resourceapi
+SPA_BASE_PATH_PREVIEW=/site/_cmsinternal/spa-csr
 ```
 
 Finally, build and run the React app as followed:

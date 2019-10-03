@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-const dotenv = require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
+const dotenv = require('dotenv');
 
-if (dotenv.error) {
-  throw dotenv.error;
+const dotenvPath = path.resolve(process.cwd(), '.env');
+if (fs.existsSync(dotenvPath)) {
+  const { error } = dotenv.confg({ path: dotenvPath });
+  if (error) {
+    throw error;
+  }
 }
 
 module.exports = {
