@@ -5,6 +5,6 @@ definitions:
       browser.id: service.browse
       option.location: /content/documents
       plugin.class: org.hippoecm.frontend.plugins.gotolink.GotolinkDocumentsShortcutPlugin
+      sortingWeight: 1
       wicket.id: shortcut
       wicket.model: model.browse.folder
-      workaround: 1

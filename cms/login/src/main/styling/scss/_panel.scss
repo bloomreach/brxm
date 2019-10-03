@@ -32,8 +32,8 @@
 }
 
 .login-panel-header-logo {
-  background: url('#{$images}/login/logo-br-dev.svg') no-repeat scroll center center;
-  background-size: $login-panel-width - 100;
+  background: url('#{$images}/login/logo-brxm-dev.svg') no-repeat scroll center center;
+  background-size: $login-panel-width - 160;
   height: $login-panel-header-height;
 
   &::before {

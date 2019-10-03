@@ -465,12 +465,6 @@
                 <exclude>gotolink/src/test/java/org/hippoecm/frontend/plugins/gotolink/MyHomePage.java</exclude>
                 <!-- covered by 3rd-party licenses in the LICENSE file -->
                 <exclude>api/src/main/resources/org/hippoecm/frontend/extjs/hippotheme/ExtHippoTheme.less</exclude>
-                <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/ColorQuantizer.java</exclude>
-                <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/DiffusionFilterOp.java</exclude>
-                <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFEncoder.java</exclude>
-                <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImageWriteParam.java</exclude>
-                <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImageWriter.java</exclude>
-                <exclude>gallery/frontend/src/main/java/org/hippoecm/frontend/plugins/gallery/gif/GIFImageWriterSpi.java</exclude>
                 <exclude>perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/lib/util/simple-hint.css</exclude>
                 <exclude>perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/lib/util/simple-hint.js</exclude>
                 <exclude>perspectives/src/main/resources/org/hippoecm/frontend/plugins/cms/codemirror/lib/codemirror.css</exclude>
