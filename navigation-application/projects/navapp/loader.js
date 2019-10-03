@@ -30,7 +30,23 @@
   baseTag.href = navAppResourceLocation;
   document.head.appendChild(baseTag);
 
-  fetch(`${navAppResourceLocation}/filelist.json`)
+  function getQueryParameters(scriptName) {
+    const scripts = Array.from(document.getElementsByTagName('script'));
+    const script = scripts.find(script =>
+      script.src.includes(`/${scriptName}`),
+    );
+    return new URL(script.src).searchParams;
+  }
+
+  const queryParameters = getQueryParameters('loader.js');
+  const antiCache = queryParameters.get('antiCache');
+
+  let fileList = `${navAppResourceLocation}/filelist.json`;
+  if (antiCache) {
+    fileList += `?antiCache=${antiCache}`;
+  }
+
+  fetch(fileList)
     .then(response => response.json())
     .then(files => {
       const urls = Object.values(files);
