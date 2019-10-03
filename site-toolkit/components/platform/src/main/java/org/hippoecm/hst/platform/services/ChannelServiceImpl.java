@@ -49,7 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.PREFER_RENDER_BRANCH_ID;
-import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_ADMIN_PRIVILEGE_NAME;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 /**
@@ -203,10 +203,11 @@ public class ChannelServiceImpl implements ChannelService {
 
         try {
             final boolean isChannelAdmin = userSession.getAccessControlManager().hasPrivileges(hstModel.getConfigurationRootPath(),
-                    new Privilege[]{userSession.getAccessControlManager().privilegeFromName(CHANNEL_WEBMASTER_PRIVILEGE_NAME)});
+                    new Privilege[]{userSession.getAccessControlManager().privilegeFromName(CHANNEL_ADMIN_PRIVILEGE_NAME)});
 
             if (!isChannelAdmin) {
-                throw new ChannelException(String.format("User '%s' is not allowed to create new channel", userSession.getUserID()));
+                throw new ChannelException(String.format("User '%s' is not allowed to create new channel within %s",
+                        userSession.getUserID(), hstModel.getConfigurationRootPath()));
             }
 
             return hstModel.getChannelManager().persist(userSession, blueprintId, channel);

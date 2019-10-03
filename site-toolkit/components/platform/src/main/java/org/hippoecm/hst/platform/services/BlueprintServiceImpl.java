@@ -30,7 +30,7 @@ import org.hippoecm.hst.platform.model.HstModelRegistryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_ADMIN_PRIVILEGE_NAME;
 
 public class BlueprintServiceImpl implements BlueprintService {
 
@@ -53,12 +53,13 @@ public class BlueprintServiceImpl implements BlueprintService {
 
                         try {
                             final boolean granted = userSession.getAccessControlManager().hasPrivileges(configurationRootPath,
-                                    new Privilege[] {userSession.getAccessControlManager().privilegeFromName(CHANNEL_WEBMASTER_PRIVILEGE_NAME)});
+                                    new Privilege[] {userSession.getAccessControlManager().privilegeFromName(CHANNEL_ADMIN_PRIVILEGE_NAME)});
 
                             if (granted) {
                                 log.info("Adding blueprint '{}' for user '{}'", blueprint, userSession.getUserID());
                             } else {
-                                log.info("Skipping blueprint '{}' for user '{}' since not granted", blueprint, userSession.getUserID());
+                                log.info("Skipping blueprint '{}' for user '{}' since no access granted (requires: {} privilege)",
+                                        blueprint, userSession.getUserID(), CHANNEL_ADMIN_PRIVILEGE_NAME);
                             }
                             return granted;
                         } catch (RepositoryException e) {
