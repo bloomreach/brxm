@@ -1,4 +1,4 @@
-// Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ $brand-warning: $warning;
 $brand-danger: $danger;
 
 $body-bg: $white;
-$text-color: $darkest-shade;
+$text-color: $gray87;
 $link-color: $primary;
 $link-hover-color: $darker-shade;
 $link-hover-decoration: none;
@@ -39,20 +39,21 @@ $link-hover-decoration: none;
 $font-family-sans-serif: "Helvetica Neue", Helvetica, Arial, sans-serif;
 $font-family-monospace: Menlo, Monaco, Consolas, "Courier New", monospace;
 $font-family-base: "Open Sans", $font-family-sans-serif;
+
 /* No need for a serif font in the CMS UI */
 $font-family-serif: $font-family-base;
 
-$font-size-base: 13px;
-$font-size-large: ceil(($font-size-base * 1.10)); // ~15px
-$font-size-small: ceil(($font-size-base * 0.85)); // ~12px
-$font-size-tiny: ceil(($font-size-base * 0.75)); // ~10px
+$font-size-base: 14px;
+$font-size-large: ceil(($font-size-base * 1.1)); // ~15px
+$font-size-small: ceil(($font-size-base * .85)); // ~12px
+$font-size-tiny: ceil(($font-size-base * .75)); // ~10px
 
 $font-size-h1: floor(($font-size-base * 2.6)); // ~33px
 $font-size-h2: floor(($font-size-base * 2.15)); // ~27px
 $font-size-h3: ceil(($font-size-base * 1.7)); // ~23px
 $font-size-h4: ceil(($font-size-base * 1.25)); // ~17px
 $font-size-h5: $font-size-base;
-$font-size-h6: ceil(($font-size-base * 0.85)); // ~12px
+$font-size-h6: ceil(($font-size-base * .85)); // ~12px
 
 $line-height-base: 1.24;
 $line-height-computed: floor($font-size-base * $line-height-base); // ~16px
@@ -66,7 +67,8 @@ $icon-font-path: '../fonts/';
 
 //== Components
 //
-//## Define common padding and border radius sizes and more. Values based on 14px text and 1.428 line-height (~20px to start).
+// Define common padding and border radius sizes and more.
+// Values based on 14px text and 1.428 line-height (~20px to start).
 $padding-base-vertical: 8px;
 $padding-large-vertical: 12px;
 $padding-small-vertical: 4px;
@@ -78,7 +80,7 @@ $border-radius-large: 0;
 $border-radius-small: 0;
 
 // Allows for customizing button radius independently from global border radius
-$btn-border-radius-base: 5px;
+$btn-border-radius-base: 4px;
 
 //== Tables
 //
@@ -103,8 +105,8 @@ $table-border-color: $light-gray;
 // //## For each of Bootstrap's buttons, define text, background and border color.
 
 $btn-default-color: $text-color;
-$btn-default-bg: $white;
-$btn-default-border: $light-gray;
+$btn-default-bg: transparent;
+$btn-default-border: $gray38;
 
 $btn-primary-color: $white;
 $btn-primary-bg: $primary;
@@ -127,6 +129,9 @@ $btn-danger-bg: $danger;
 $btn-danger-border: darken($btn-danger-bg, 5%) !default;
 
 $btn-link-disabled-color: $dark-gray;
+
+$btn-focus-color: $blueMedium;
+$btn-focus-bg: $gray5;
 
 //== Form states and alerts
 //

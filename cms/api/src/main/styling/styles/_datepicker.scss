@@ -1,4 +1,4 @@
-// Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -28,18 +28,22 @@
   .hippo-datepicker-value-container {
     background-color: $editor-subfield-bg;
     border: 1px solid $editor-subfield-border;
+    border-radius: $editor-field-border-radius;
     box-sizing: border-box;
     font-size: 13px;
     padding: 8px;
+
+    &:focus-within {
+      border-color: $editor-field-focus-color;
+      box-shadow: 0 0 0 1px $editor-field-focus-color;
+    }
   }
 }
 
 .hippo-datepicker-date {
-
   .hippo-datepicker-value-container {
     display: inline-flex;
     margin-right: 8px;
-    border-radius: 0 $datepicker-button-border-radius $datepicker-button-border-radius 0;
     padding: 0;
     // Prevent background-color bleeding over rounded corners
     overflow: hidden;

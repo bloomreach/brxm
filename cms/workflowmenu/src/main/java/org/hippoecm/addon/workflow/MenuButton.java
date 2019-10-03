@@ -114,8 +114,6 @@ class MenuButton extends Panel implements IContextMenu {
             }
             link.add(label);
         }
-
-        link.add(HippoIcon.fromSprite("icon", Icon.CHEVRON_DOWN, IconSize.S));
     }
 
     protected IContextMenuManager getContextMenuManager() {

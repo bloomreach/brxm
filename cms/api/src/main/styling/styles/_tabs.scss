@@ -1,4 +1,4 @@
-// Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@
 
   ul {
     display: flex;
-    flex-direction: row-reverse;
 
     > li {
       flex: 1;
@@ -30,6 +29,10 @@
       max-width: $tab-width;
       min-width: 0;
       border-right: 1px solid $document-tab-border-color;
+
+      &:first-child {
+        border-left: 1px solid transparent;
+      }
 
       > div {
         flex: 1;
@@ -41,11 +44,10 @@
           flex: 1;
           display: flex;
           align-items: center;
-
           min-width: 0;
           padding-left: $tab-padding-left;
-
           color: $document-tab-title-color;
+          font-weight: 600;
           text-decoration: none;
           white-space: nowrap;
           user-select: none;
@@ -54,10 +56,12 @@
             min-width: 0;
             display: inline-block;
             line-height: $line-height-computed;
+
             @include truncate();
           }
 
-          svg, img {
+          svg,
+          img {
             flex: none;
             min-width: 0;
             margin-right: 6px;
@@ -70,50 +74,40 @@
           margin-left: 2px;
           margin-right: 8px;
 
-          .hi-times-circle {
-            color: $white;
-            fill: $document-tab-close-color;
+          .hi-times {
+            color: $document-tab-close-color;
+          }
+
+          &:hover .hi-times {
+            color: $document-tab-close-hover-color;
           }
         }
       }
 
       &:hover {
-        background-color: $document-tab-hover-bgcolor;
         cursor: pointer;
-
-        .hippo-tabs-documents-close .hi-times-circle {
-          fill: $document-tab-hover-close-color;
-        }
-        .hippo-tabs-documents-close:hover .hi-times-circle {
-          fill: $document-tab-close-hover-color;
-        }
-      }
-
-      &:first-child {
-        border-right: 0;
-      }
-
-      &:last-child {
-        border-left: 1px solid $document-tab-border-color;
       }
     }
   }
-}
 
-// highlight selected tab
-.hippo-tabs-documents {
-  .selected:hover,
+  // highlight selected tab
   .selected {
-    border-right-color: $document-tab-selected-bgcolor;
-    background-color: $document-tab-selected-bgcolor;
-  }
+    position: relative;
 
-  .selected:last-child {
-    border-left-color: $footer-bgcolor;
-  }
+    // show blue border floating at the top of the tab and over the left and right border
+    div::after {
+      content: "";
+      background-color: $bluePrimary;
+      height: 3px;
+      left: -1px;
+      position: absolute;
+      top: 0;
+      width: calc(100% + 2px);
+    }
 
-  .selected + li {
-    border-right-color: $footer-bgcolor;
+    .hippo-tabs-documents-tab {
+      color: $bluePrimary !important;
+    }
   }
 }
 

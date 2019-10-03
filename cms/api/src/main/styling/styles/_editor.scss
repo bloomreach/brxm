@@ -13,10 +13,10 @@
 // limitations under the License.
 
 .hippo-editor {
-  color: $editor-color;
   background: $editor-bgcolor;
   display: flex;
   flex-direction: column;
+
   @include fixed-height(100%);
 
   .hippo-editor-body {
@@ -45,7 +45,7 @@
     width: 30%;
     float: right;
   }
-  
+
   .col30left {
     padding-right: 16px;
     width: 30%;
@@ -76,7 +76,6 @@
     float: left;
   }
 
-  
   .col20,
   .col20right,
   .col30,
@@ -86,6 +85,7 @@
   .col70right,
   .col80 {
     box-sizing: border-box;
+
     > .even:last-child,
     > .odd:last-child {
       .hippo-editor-compound-field > .hippo-editor-field:last-child {
@@ -93,11 +93,6 @@
       }
     }
   }
-}
-
-.hippo-editor-feedback,
-.hippo-editor-body {
-  border-left: 8px solid $editor-body-border-color;
 }
 
 .hippo-editor-threepane {
@@ -110,18 +105,23 @@
 
 .hippo-editor-field {
   margin-bottom: 32px;
+
   @include clearfix();
 
   .dialog-link,
   .hippo-editor-field-textarea,
-  select,
   .hippo-editor-field-value-container,
   .yui-date-time-field input {
     background-color: $editor-subfield-bg;
     border: 1px solid $editor-subfield-border;
+    border-radius: $editor-field-border-radius;
     box-sizing: border-box;
-    font-size: 13px;
     padding: 8px;
+
+    &:focus-within {
+      border-color: $editor-field-focus-color;
+      box-shadow: 0 0 0 1px $editor-field-focus-color;
+    }
 
     .hippo-editor-large & {
       font-size: 26px;
@@ -141,6 +141,32 @@
 
   input[type="checkbox"] {
     width: auto;
+  }
+
+  select {
+    background: none;
+    border: 1px solid $editor-subfield-border;
+    border-radius: $editor-field-border-radius;
+    height: 32px;
+    overflow: hidden;
+    padding-left: 8px;
+    padding-right: 8px;
+
+    &:focus {
+      border-color: $editor-field-focus-color;
+      box-shadow: 0 0 0 1px $editor-field-focus-color;
+    }
+
+    &[multiple] {
+      height: initial;
+      max-height: 200px;
+      padding-left: 0;
+      padding-right: 0;
+
+      option {
+        padding: 4px 8px;
+      }
+    }
   }
 
   .hippo-editor-field-boolean {
@@ -165,6 +191,16 @@
     width: 100%;
   }
 
+  .radiogroup {
+    &.horizontal li:not(:last-child) {
+      margin-right: 16px;
+    }
+
+    &.vertical li:not(:last-child) {
+      margin-bottom: 4px;
+    }
+  }
+
   .hippo-editor-field-textarea {
     line-height: 1.6em;
   }
@@ -183,30 +219,42 @@
     display: block;
     width: 100%;
   }
+
+  .mirrortemplate_buttons {
+    display: inline-block;
+    padding-top: 4px;
+  }
 }
 
 .hippo-editor-compound-field {
   margin: 0 -8px;
 
   .hippo-editor-compound-field {
-    margin: 0;
+    margin: 0 0 16px 0;
   }
 
   > .hippo-editor-field {
-    padding: 16px 8px;
     border: 1px solid $editor-compound-field-border;
+    border-radius: $editor-field-border-radius;
+    padding: 16px 8px;
 
     > .hippo-editor-field-title {
+      color: $editor-compound-field-color;
+      font-weight: 600;
       margin-bottom: 8px;
     }
 
-    > .hippo-editor-field-subfield > .hippo-editor-field-subfield-controls {
-      padding: 0;
-    }
-
     > .hippo-editor-field-subfield {
-      padding: 16px 8px;
-      border: 1px solid $editor-subfield-border;
+      padding-bottom: 4px;
+      padding-top: 8px;
+
+      &:not(:last-child) {
+        border-bottom: 1px solid $gray12;
+      }
+
+      > .hippo-editor-field-subfield-controls {
+        padding: 0;
+      }
     }
   }
 }
@@ -215,11 +263,11 @@
 
 .hippo-editor-field-title {
   color: $editor-field-title-color;
-  font-weight: normal;
-  margin-bottom: 8px;
-  margin-right: 4px;
   display: inline-block;
-  font-size: 18px;
+  font-weight: normal;
+  font-size: 14px;
+  margin-bottom: $editor-field-title-bottom-margin;
+  margin-right: 4px;
 }
 
 .hippo-editor-field-subfield {
@@ -231,17 +279,12 @@
   }
 
   .hippo-editor-field {
-    margin-bottom: 8px;
+    margin-bottom: 20px;
   }
 
   .hippo-editor-field-title {
-    font-size: 13px;
-    font-weight: bold;
+    font-size: 14px;
     margin-bottom: 4px;
-
-    + .hippo-hint-field {
-      top: -1px;
-    }
   }
 
   .hippo-editor-field-subfield-input {
@@ -260,7 +303,7 @@
 
   .add-16:hover {
     border: 1px solid $lighter-shade;
-    background-color: $white
+    background-color: $white;
   }
 }
 
@@ -270,7 +313,7 @@
   position: absolute;
   right: 0;
   top: 0;
-  
+
   .hippo-editor-field-subfield:hover > & {
     opacity: 1;
   }
@@ -282,21 +325,18 @@
   .hi {
     color: $dark-gray;
   }
-  
+
   a[href] .hi {
     color: $darkest-shade;
+
     &.hi-times {
       color: $danger;
     }
   }
-  
+
   a:active,
   a:hover {
     text-decoration: none;
-  }
-
-  .hide-top-bottom-arrows & .top-bottom-arrow {
-    display: none;
   }
 
   .hide-top-bottom-arrows & .top-bottom-arrow {
@@ -343,6 +383,7 @@
     background-color: $lightest-shade;
     color: $darkest-shade;
     line-height: 16px;
+
     &:link,
     &:hover {
       text-decoration: none;
@@ -373,7 +414,7 @@
 .invalid {
   > .hippo-editor-field {
     margin-bottom: 32px;
-    
+
     > .hippo-editor-field-title {
       color: $validation-title-color !important;
     }
@@ -386,6 +427,7 @@
       .cke,
       select {
         border-color: $validation-border !important;
+        box-shadow: none;
       }
     }
   }
@@ -407,7 +449,7 @@
   height: 100%;
   left: 0;
   margin: 0;
-  opacity: 0.6;
+  opacity: .6;
   padding: 0;
   position: absolute;
   top: 0;
@@ -420,7 +462,7 @@
   overflow: visible;
 }
 
-.column-wrapper:after {
+.column-wrapper::after {
   content: "";
   display: table;
   clear: both;
@@ -437,8 +479,30 @@
   height: 100%;
 }
 
+.browse-perspective-center-body .tabpanel {
+  animation: jump .3s infinite alternate ease-out;
+  background-image: url("#{$images}/logo/logo.svg");
+  background-repeat: no-repeat;
+  background-size: 100px 60px;
+}
+
+@keyframes jump {
+  from {
+    background-position: center bottom -9px;
+  }
+
+  to {
+    background-position: center bottom 16px;
+  }
+}
+
 .hippo-editor-field-value-container {
   line-height: normal;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+// ensure that reorder arrows are visible when content block title is not shown
+.content-block-title {
+  min-height: 8px;
 }

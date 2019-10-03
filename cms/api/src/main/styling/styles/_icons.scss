@@ -1,4 +1,4 @@
-// Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -27,14 +27,17 @@
   height: 10px;
   width: 10px;
 }
+
 .hi-m {
   height: 16px;
   width: 16px;
 }
+
 .hi-l {
   height: 32px;
   width: 32px;
 }
+
 .hi-xl {
   height: 48px;
   width: 48px;
@@ -48,6 +51,17 @@
 .hi-stack {
   display: inline-block;
   position: relative;
+
+  // Shift stacked translation flags right of the folder icon
+  &.hi-translation {
+    width: 36px;
+
+    img {
+      position: relative;
+      left: 21px;
+      bottom: 3px;
+    }
+  }
 
   > .hi {
     vertical-align: baseline;
@@ -90,27 +104,16 @@
   right: 0;
 }
 
-// Shift stacked translation flags a bit
-.hi-stack {
-  > .hi-folder + img,
-  > .hi-folder-open + img {
-    bottom: -1px;
-    left: auto;
-    right: -1px;
-    top: auto;
-  }
-}
-
 // Default colors of shapes in icons
 .hi-file-text,
 .hi-folder,
 .hi-custom-node-type {
-  color: $primary;
+  color: $gray60;
 }
 
 @each $type in $mimetypes {
   .hi-mimetype-#{$type} {
-    color: $primary;
+    color: $gray60;
     fill: $white;
 
     .hippo-list-selected & {
@@ -121,7 +124,7 @@
 
 .hi-expand,
 .hi-compress {
-  color: $dark-gray;
+  color: $gray60;
 }
 
 .hi-move-into {
@@ -132,7 +135,8 @@
   color: $black;
 }
 
-.hi-minus-circle, .hi-times-circle {
+.hi-minus-circle,
+.hi-times-circle {
   color: $white;
   fill: $danger;
 }
@@ -238,15 +242,14 @@
 
   .hi-overlay-plus {
     color: $white;
-    fill: $hippo-menu-disabled-color
+    fill: $hippo-menu-disabled-color;
   }
 }
 
 // This was previously a IE11 fix for CMS7-8642: IE11 becomes unresponsive after opening/closing several documents
 // In Edge this should no longer be required, but it actually resolves the issue when icons are used in links
 // (like the tree context-menu button) and can only be clicked at certain points of the icon.
-// For more information see https://connect.microsoft.com/IE/feedback/details/796745/mouse-events-are-not-delivered-at-all-anymore-when-inside-an-svg-a-use-is-removed-from-the-dom
+// For more information see https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/205775/
 svg use {
   pointer-events: none;
 }
-

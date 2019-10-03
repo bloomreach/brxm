@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -61,7 +61,6 @@ if (!YAHOO.hippo.TreeHelper) {
                         registered: false,
                         layoutUnit: null,
                         wicketTree: null,
-                        highlight: null,
                         overId: null
                     };
 
@@ -117,50 +116,7 @@ if (!YAHOO.hippo.TreeHelper) {
                 if (helper.cfg.workflowEnabled) {
                     this.updateMouseListeners(id, tree, helper);
                 }
-                this.updateHighlight(id, tree, helper);
                 this.updateContextIcon(id, tree, helper);
-            },
-
-            updateHighlight : function(id, tree, helper) {
-                var selected, selectedY, highlight;
-
-                highlight = helper.highlight = helper.highlight === null ? this.createHighlight(tree) : helper.highlight;
-
-                if (highlight === null) {
-                    return;
-                }
-
-                selected = Dom.getFirstChildBy(helper.wicketTree, function(node) {
-                    return Dom.hasClass(node, 'row-selected');
-                });
-
-                if (selected === null) {
-                    if (!Dom.hasClass(highlight, 'hippo-global-hideme')) {
-                        Dom.addClass(highlight, 'hippo-global-hideme');
-                    }
-                } else {
-                    if (Dom.hasClass(highlight, 'hippo-global-hideme')) {
-                        Dom.removeClass(highlight, 'hippo-global-hideme');
-                    }
-
-                    selectedY = Dom.getY(selected);
-                    if (selectedY !== Dom.getY(highlight)) {
-                        // Move highlight widget to position of selected
-                        Dom.setY(highlight, selectedY);
-                    }
-                }
-            },
-
-            createHighlight: function(tree) {
-                var hippoTree = byClass('hippo-tree', 'div', tree),
-                    el = null;
-
-                if (hippoTree !== null) {
-                    el = document.createElement('div');
-                    hippoTree.appendChild(el);
-                    Dom.addClass(el, 'hippo-tree-highlight-widget');
-                }
-                return el;
             },
 
             updateContextIcon: function(id, tree, helper) {

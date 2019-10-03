@@ -1,4 +1,4 @@
-// Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,28 +13,30 @@
 // limitations under the License.
 
 .hippo-dialog-body .question-answer {
+  background-color: $grayLightSolid;
   display: flex;
   height: 100%;
   justify-content: flex-start;
-  margin-left: 16px;
-  padding-bottom: 8px;
-  padding-top: 8px;
+  padding: 8px 16px;
 
-  .question{
+  .question {
     align-self: center;
     line-height: 30px;
     margin-right: 8px;
   }
 
   .answer {
-    align-items: center;
+    flex: 1;
     display: flex;
+    align-items: center;
 
     input {
-      height: 28px;
-      line-height: 28px;
-      padding-left: 4px;
-      width: 320px;
+      flex: 1;
+      border: 1px solid $gray60;
+      border-radius: $editor-field-border-radius;
+      height: 30px;
+      line-height: 30px;
+      padding-left: 8px;
     }
   }
 }

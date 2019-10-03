@@ -50,6 +50,7 @@
   }
 
   .w_content_1 {
+    box-shadow: $whiteframe-shadow-24dp;
     margin-right: $modal-border-width;
   }
 
@@ -59,12 +60,12 @@
 
   .w_close,
   .w_close:hover {
-    width: 16px;
-    height: 16px;
-    right: 14px;
-    top: 12px;
-    overflow: visible;
     background: url("#{$images}/icons/delete.svg") no-repeat left;
+    height: 16px;
+    overflow: visible;
+    right: 14px;
+    top: 16px;
+    width: 16px;
 
     &:hover {
       background: url("#{$images}/icons/delete-hover.svg") no-repeat left;
@@ -74,20 +75,22 @@
   // Header styling
   .w_caption {
     background: $modal-header-bgcolor;
+    border-bottom: 1px solid $gray12;
     color: $modal-header-color;
     cursor: move;
     height: $modal-header-height;
     text-align: left;
 
     span {
-      font-size: $modal-header-font-size;
-      margin: 0;
-      padding-left: $modal-header-padding;
-      padding-right: $modal-header-padding * 2;
-      line-height: $modal-header-height;
       box-sizing: border-box;
       display: inline-block;
+      font-size: $modal-header-font-size;
+      font-weight: 600;
+      line-height: $modal-header-height;
+      margin: 0;
       overflow: hidden;
+      padding-left: $modal-header-padding;
+      padding-right: $modal-header-padding * 2;
       text-overflow: ellipsis;
       white-space: nowrap;
       width: 100%;
@@ -112,6 +115,7 @@
 }
 
 .hippo-dialog-center {
+  background-color: $white;
   flex: auto;
   overflow: auto;
 
@@ -127,7 +131,8 @@
     }
 
     .label {
-      padding: 0 0 5px 0;
+      color: $editor-field-title-color;
+      margin-bottom: $editor-field-title-bottom-margin;
     }
 
     .input-row {
@@ -139,8 +144,8 @@
     }
 
     .input {
-      display: flex;
       align-items: center;
+      display: flex;
       padding: 0 0 16px 0;
 
       &:last-child {
@@ -160,7 +165,8 @@
     input,
     select,
     textarea {
-      border: 1px solid $light-gray;
+      border: 1px solid $editor-subfield-border;
+      border-radius: $editor-field-border-radius;
     }
 
     input,
@@ -178,24 +184,59 @@
     }
   }
 
+  .hippo-confirm-dialog {
+    background-color: $grayLightSolid;
+  }
+
   .hippo-window-buttons {
     bottom: 0;
     right: 0;
-
     display: inline;
     padding-right: 16px;
     padding-top: 12px;
     position: relative;
   }
+
+  .hippo-referring-documents {
+    padding: 0;
+    background: $white;
+
+    .hippo-referring-documents-header {
+      display: flex;
+      align-items: center;
+      background: $lightest-shade;
+
+      .hippo-referring-documents-label {
+        flex: 1 1 auto;
+        padding: 16px;
+        line-height: 16px;
+        height: 16px;
+      }
+    }
+
+    .hippo-referring-documents-list {
+      flex: 1 0 auto;
+
+      th,
+      td {
+        padding: 16px;
+      }
+
+      tbody > tr {
+        // use 100% width
+        display: inherit;
+      }
+    }
+  }
 }
 
 .hippo-dialog-bottom {
-  min-height: $modal-footer-height;
-  height: $modal-footer-height;
-  width: 100%;
   display: flex;
   flex-direction: row;
+  height: $modal-footer-height;
   justify-content: space-between;
+  min-height: $modal-footer-height;
+  width: 100%;
 
   .hippo-dialog-bottom-left {
     height: 100%;
@@ -203,14 +244,13 @@
   }
 
   .hippo-dialog-bottom-right {
-    flex-shrink: 0;
     flex-grow: 0;
+    flex-shrink: 0;
   }
 
   .hippo-window-buttons {
     bottom: 0;
     right: 0;
-
     display: inline-block;
     align-self: center;
     position: relative;
@@ -256,40 +296,6 @@
 .hippo-dialog-message svg {
   float: left;
   margin-right: 8px;
-}
-
-.hippo-dialog-center {
-  .hippo-referring-documents {
-    padding: 0;
-    background: $white;
-
-    .hippo-referring-documents-header {
-      display: flex;
-      align-items: center;
-      background: $lightest-shade;
-
-      .hippo-referring-documents-label {
-        flex: 1 1 auto;
-        padding: 16px;
-        line-height: 16px;
-        height: 16px;
-      }
-    }
-
-    .hippo-referring-documents-list {
-      flex: 1 0 auto;
-
-      th,
-      td {
-        padding: 16px;
-      }
-
-      tbody > tr {
-        // use 100% width
-        display: inherit;
-      }
-    }
-  }
 }
 
 .hippo-workflow-dialog {
@@ -352,9 +358,11 @@
       .hippo-list-paging .paging-label {
         padding-right: 16px;
       }
+
       .hippo-list-documents > tbody > tr > td {
         padding-left: 12px;
       }
+
       .hippo-list-documents:not(.hippo-paging) {
         margin-bottom: 41px;
         border-bottom: 1px solid $light-shade;
@@ -404,13 +412,15 @@
   }
 }
 
-// Picker dialog
+// Fixed-size picker dialog
+$fixed-picker-height: 450px;
+
 .hippo-picker {
-  height: 356px;
+  height: $fixed-picker-height;
 }
 
 .hippo-picker-list-details {
-  height: 356px;
+  height: $fixed-picker-height;
   margin-left: 0;
   background: $white;
   width: auto;
@@ -420,16 +430,16 @@
 
 .hippo-picker-properties {
   align-items: center;
+  background-color: $grayLightSolid;
   clear: both;
   height: 48px;
   padding: 0 16px;
   margin-top: 0;
-  border-bottom: 1px solid $light-shade;
   display: flex;
 
   label {
     display: flex;
-    margin-right: 4px;
+    margin-right: 8px;
     white-space: nowrap;
   }
 
@@ -439,7 +449,9 @@
 
     input {
       flex: 1 1 auto;
-      border: 1px solid $light-shade;
+      border: 1px solid $editor-subfield-border;
+      border-radius: $editor-field-border-radius;
+      height: 26px;
       padding: 2px 4px;
     }
   }
@@ -453,24 +465,54 @@
   .hippo-dialog-type,
   .hippo-dialog-alt {
     display: flex;
+    align-items: center;
+
     label {
       line-height: 24px;
     }
   }
 
-  .hippo-dialog-type, .hippo-dialog-align {
+  .hippo-dialog-type,
+  .hippo-dialog-align {
     margin-right: 16px;
   }
 
   .hippo-dialog-type select,
   .hippo-dialog-align select {
-    margin-top: 4px;
+    border: 1px solid $editor-subfield-border;
+    background-color: transparent;
+    border-radius: $editor-field-border-radius;
+    height: 32px;
   }
 
   .hippo-dialog-alt,
   .hippo-dialog-alt .text-input,
   .hippo-dialog-alt .text-input input {
     flex: 1 0 auto;
+  }
+}
+
+// Relative-size picker dialog
+.hippo-dialog-relative {
+  .hippo-dialog-center {
+    display: flex;
+    flex-direction: column;
+
+    > div:last-child {
+      flex: 1;
+    }
+
+    .hippo-picker-tree {
+      min-width: 230px;
+      width: 30%;
+    }
+  }
+
+  .hippo-picker,
+  .hippo-picker-list-details,
+  .hippo-picker-list-details > div,
+  .hippo-list-documents {
+    height: 100%;
   }
 }
 
@@ -484,6 +526,7 @@
   input {
     margin-right: 8px;
     min-width: 64px;
+
     &:last-child {
       margin-right: 0;
     }
@@ -491,10 +534,11 @@
 }
 
 /* Windows */
+
 /* ================================================ */
 .hippo-window,
 .hippo-window .hippo-root {
-  background: none
+  background: none;
 }
 
 .hippo-window .hippo-root table.modal-contents {
@@ -505,7 +549,7 @@
   padding: 2px 5px 2px 5px;
 }
 
-.hippo-window h1, .hippo-window h1 {
+.hippo-window h1 {
   margin-bottom: 10px;
   font-size: 16px;
 }
@@ -536,6 +580,7 @@ table.hippo-window-form {
 
 .hippo-window-form.no-left-padding {
   padding-left: 0;
+
   td {
     padding-left: 0;
   }
@@ -562,7 +607,7 @@ table.hippo-window-form {
   margin: 11px;
   padding: 12px;
   text-align: center;
-  background:  $warning-light;
+  background: $warning-light;
   border: 1px solid $warning;
 }
 
@@ -585,11 +630,11 @@ table.hippo-window-form {
 }
 
 .hippo-window-dialog-question {
-  font-weight: bold
+  font-weight: bold;
 }
 
 .hippo-root div.wicket-modal .w_content_3 {
-  border: none
+  border: none;
 }
 
 .hippo-root div.wicket-modal .w_content_2 {
@@ -598,7 +643,9 @@ table.hippo-window-form {
 
 // copied from hippo-modal.css
 
-.hippo-root div.modal_fullscreen .w_top_1, .hippo-root div.modal_fullscreen .w_bottom_1, .hippo-root div.modal_fullscreen .w_caption {
+.hippo-root div.modal_fullscreen .w_top_1,
+.hippo-root div.modal_fullscreen .w_bottom_1,
+.hippo-root div.modal_fullscreen .w_caption {
   display: none;
 }
 
@@ -658,7 +705,7 @@ table.hippo-window-form {
 }
 
 .hippo-history-documents .hippo-revision-history tbody tr.disabled td {
-  opacity: 0.5;
+  opacity: .5;
   cursor: not-allowed;
 }
 
@@ -687,6 +734,7 @@ table.hippo-window-form {
         line-height: $doclist-paging-button-size - 2;
         text-align: center;
         border: 1px solid transparent;
+
         &:hover {
           text-decoration: none;
         }
@@ -698,6 +746,7 @@ table.hippo-window-form {
         border-radius: 2px;
         color: $text-color;
         display: inline-block;
+
         &:hover {
           color: $doclist-paging-button-hover-color;
           background-color: $doclist-paging-button-hover-fill;
@@ -726,6 +775,10 @@ table.hippo-window-form {
     padding: 16px;
     display: block;
     box-sizing: border-box;
+
+    td {
+      padding-bottom: 4px;
+    }
 
     td:not(:first-child) {
       padding-left: 8px;
