@@ -8,7 +8,7 @@ definitions:
       /channel-webmaster:
         jcr:primaryType: hipposys:role
         hipposys:privileges: ['hippo:channel-webmaster']
-        hipposys:roles: [readwrite, channel-webviewer]
-      /channel-webviewer:
+        hipposys:roles: [readwrite, channel-viewer]
+      /channel-viewer:
         jcr:primaryType: hipposys:role
-        hipposys:privileges: ['hippo:channel-webviewer']
+        hipposys:privileges: ['hippo:channel-viewer']

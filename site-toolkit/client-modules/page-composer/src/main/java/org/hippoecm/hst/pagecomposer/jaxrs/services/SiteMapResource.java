@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_SITEMAP;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
-import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEB_VIEWER_PRIVILEGE_NAME;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_VIEWER_PRIVILEGE_NAME;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils.findAvailableDocumentRepresentations;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils.getDocumentRepresentationHstConfigUser;
 
@@ -84,7 +84,7 @@ public class SiteMapResource extends AbstractConfigResource {
 
     @GET
     @Path("/mount")
-    @PrivilegesAllowed(CHANNEL_WEB_VIEWER_PRIVILEGE_NAME)
+    @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
     public Response getMountRepresentation() {
         return tryGet(new Callable<Response>() {
             @Override
@@ -95,11 +95,11 @@ public class SiteMapResource extends AbstractConfigResource {
         });
     }
 
-    // below CHANNEL_WEB_VIEWER_PRIVILEGE_NAME privilege since web authors not being allowed to modify hst config still
+    // below CHANNEL_VIEWER_PRIVILEGE_NAME privilege since web authors not being allowed to modify hst config still
     // need to be able to load the available sitemap pages for navigation
     @GET
     @Path("/pages")
-    @PrivilegesAllowed(CHANNEL_WEB_VIEWER_PRIVILEGE_NAME)
+    @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
     public Response getSiteMapPages() {
         return tryGet(new Callable<Response>() {
             @Override

@@ -412,7 +412,7 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
                 List<Map<String, String>> data = (List<Map<String, String>>) responseMap.get("data");
 
                 assertEquals("'editor' should be able to fetch the channels with default privilege " +
-                        "'hippo:channel-webviewer' and with 'hippo:channel-webmaster'",2, data.size());
+                        "'hippo:channel-viewer' and with 'hippo:channel-webmaster'",2, data.size());
 
                 final Set<String> channelIds = data.stream().map(channelMap -> channelMap.get("id")).collect(Collectors.toSet());
 

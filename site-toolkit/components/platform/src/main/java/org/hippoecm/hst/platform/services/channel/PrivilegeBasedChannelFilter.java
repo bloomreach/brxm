@@ -25,7 +25,7 @@ import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEB_VIEWER_PRIVILEGE_NAME;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_VIEWER_PRIVILEGE_NAME;
 
 public class PrivilegeBasedChannelFilter implements BiPredicate<Session, Channel> {
 
@@ -35,11 +35,11 @@ public class PrivilegeBasedChannelFilter implements BiPredicate<Session, Channel
     public boolean test(final Session userSession, final Channel channel) {
 
         try {
-            final Privilege privilege = userSession.getAccessControlManager().privilegeFromName(CHANNEL_WEB_VIEWER_PRIVILEGE_NAME);
+            final Privilege privilege = userSession.getAccessControlManager().privilegeFromName(CHANNEL_VIEWER_PRIVILEGE_NAME);
             return userSession.getAccessControlManager().hasPrivileges(channel.getHstConfigPath(), new Privilege[]{privilege});
         } catch (RepositoryException e) {
             log.warn("Exception while checking privilege '{}' for channel '{}'. Skip that channel:",
-                    CHANNEL_WEB_VIEWER_PRIVILEGE_NAME, channel.getHstConfigPath(), e);
+                    CHANNEL_VIEWER_PRIVILEGE_NAME, channel.getHstConfigPath(), e);
             return false;
         }
 

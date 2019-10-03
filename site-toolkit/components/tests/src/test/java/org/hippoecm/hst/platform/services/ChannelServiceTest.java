@@ -35,7 +35,7 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.hst.Channel;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEB_VIEWER_PRIVILEGE_NAME;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_VIEWER_PRIVILEGE_NAME;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_VALUE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PRIVILEGES;
 
@@ -72,7 +72,7 @@ public class ChannelServiceTest extends AbstractBeanTestCase {
         Session liveuserSession = repository.login(creds);
 
         // assert liveuser can read the content of the channels, thus /unittestcontent and /extracontent
-        // however since the liveuser does not have privilege 'hippo:channel-webviewer' on the channel configurations,
+        // however since the liveuser does not have privilege 'hippo:channel-viewer' on the channel configurations,
         // all channels should be filtered
 
         assertThat(liveuserSession.nodeExists("/unittestcontent")).isTrue();
@@ -81,7 +81,7 @@ public class ChannelServiceTest extends AbstractBeanTestCase {
         final List<Channel> liveChannels = platformServices.getChannelService().getLiveChannels(liveuserSession, "dev-localhost");
 
         assertThat(liveChannels)
-                .as("'liveuser' does not have privilege 'hippo:channel-webviewer' hence the channels should " +
+                .as("'liveuser' does not have privilege 'hippo:channel-viewer' hence the channels should " +
                         "not be returned")
                 .hasSize(0);
 
@@ -96,7 +96,7 @@ public class ChannelServiceTest extends AbstractBeanTestCase {
         final Session author = repository.login(new SimpleCredentials("author", "author".toCharArray()));
 
         // assert author can read the content of the channels, thus /unittestcontent and /extracontent
-        // however since the liveuser does not have privilege 'hippo:channel-webviewer' on the channel configurations,
+        // however since the liveuser does not have privilege 'hippo:channel-viewer' on the channel configurations,
         // all channels should be filtered
 
         assertThat(author.nodeExists("/unittestcontent")).isTrue();
@@ -106,19 +106,19 @@ public class ChannelServiceTest extends AbstractBeanTestCase {
 
         assertThat(authorChannels.stream().map(channel -> channel.getId()).collect(Collectors.toSet()))
                 .as("Author is expected to have privilege '%s' on all channel configurations and read access " +
-                        "on the content hence should 'see' them all", CHANNEL_WEB_VIEWER_PRIVILEGE_NAME)
+                        "on the content hence should 'see' them all", CHANNEL_VIEWER_PRIVILEGE_NAME)
                 .containsExactlyInAnyOrder("unittestproject", "extraproject", "intranettestproject", "unittestsubproject");
 
         author.logout();
 
-        // remove the privilege 'hippo:channel-webviewer' from 'channel-webviewer' role : After this, the channels
+        // remove the privilege 'hippo:channel-viewer' from 'channel-viewer' role : After this, the channels
         // should be filtered for the cms users while the author can still read the content
 
         final Session admin = createSession();
-        final Node webviewerRoleNode = admin.getNode("/hippo:configuration/hippo:roles/channel-webviewer");
+        final Node viewerRoleNode = admin.getNode("/hippo:configuration/hippo:roles/channel-viewer");
         Value[] originalValues = null;
         try {
-            final Property privileges = webviewerRoleNode.getProperty(HIPPO_PRIVILEGES);
+            final Property privileges = viewerRoleNode.getProperty(HIPPO_PRIVILEGES);
             originalValues = privileges.getValues();
             privileges.remove();
             admin.save();
@@ -130,12 +130,12 @@ public class ChannelServiceTest extends AbstractBeanTestCase {
             final List<Channel> newAuthorChannels = platformServices.getChannelService().getLiveChannels(newAuthor, "dev-localhost");
 
             assertThat(newAuthorChannels)
-                    .as("Authors do not have privilege '%s' any more hence channels should be filtered", CHANNEL_WEB_VIEWER_PRIVILEGE_NAME)
+                    .as("Authors do not have privilege '%s' any more hence channels should be filtered", CHANNEL_VIEWER_PRIVILEGE_NAME)
                     .hasSize(0);
             newAuthor.logout();
 
         } finally {
-            webviewerRoleNode.setProperty(HIPPO_PRIVILEGES, originalValues);
+            viewerRoleNode.setProperty(HIPPO_PRIVILEGES, originalValues);
             admin.save();
             admin.logout();
         }
@@ -171,7 +171,7 @@ public class ChannelServiceTest extends AbstractBeanTestCase {
 
             assertThat(authorChannels.stream().map(channel -> channel.getId()).collect(Collectors.toSet()))
                     .as("Author is expected to have privilege '%s' on all channel configurations but only " +
-                            "read access to the content for some channels, hence should not see them all", CHANNEL_WEB_VIEWER_PRIVILEGE_NAME)
+                            "read access to the content for some channels, hence should not see them all", CHANNEL_VIEWER_PRIVILEGE_NAME)
                     .containsExactlyInAnyOrder("unittestproject", "intranettestproject", "unittestsubproject");
 
 

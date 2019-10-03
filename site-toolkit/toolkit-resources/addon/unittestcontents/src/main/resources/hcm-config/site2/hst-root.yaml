@@ -45,10 +45,10 @@ definitions:
             hipposys:userrole: xm-channel-webmaster
             hipposys:groups: []
             hipposys:users: []
-          /channel-webviewer:
-            hipposys:role: channel-webviewer
+          /channel-viewer:
+            hipposys:role: channel-viewer
             jcr:primaryType: hipposys:authrole
-            hipposys:userrole: xm-channel-webviewer
+            hipposys:userrole: xm-channel-viewer
             hipposys:groups: []
             hipposys:users: []
           /hstconfig:

@@ -66,7 +66,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_ADMIN_PRIVILEGE_NAME;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
-import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEB_VIEWER_PRIVILEGE_NAME;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_VIEWER_PRIVILEGE_NAME;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.HstConfigurationServiceImpl.PREVIEW_SUFFIX;
 import static org.onehippo.repository.security.StandardPermissionNames.JCR_READ;
 import static org.onehippo.repository.security.StandardPermissionNames.JCR_WRITE;
@@ -98,7 +98,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
      *
      * The param @QueryParam("privilegeAllowed") final String privilegeAllowed can be used to only return channels
      * for which the current user has the privilege 'privilegeAllowed'. If missing, the minimal privilege
-     * ChannelManagerPrivileges#CHANNEL_WEB_VIEWER_PRIVILEGE_NAME is assumed
+     * ChannelManagerPrivileges#CHANNEL_VIEWER_PRIVILEGE_NAME is assumed
      */
     @GET
     @Path("/channels")
@@ -118,7 +118,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
                     skipBranches,
                     skipConfigurationLocked,
                     hostGroup,
-                    privilegeAllowed == null ? CHANNEL_WEB_VIEWER_PRIVILEGE_NAME : privilegeAllowed);
+                    privilegeAllowed == null ? CHANNEL_VIEWER_PRIVILEGE_NAME : privilegeAllowed);
             return ok("Fetched channels successful", channels);
         } catch (RuntimeRepositoryException e) {
             log.warn("Could not determine authorization", e);
@@ -130,7 +130,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @Path("/channels/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     // PermitAll because this method is invoked before a channel has been set on the cms session context. Cleaner
-    // would be if the cms-user would have 'webviewer' privilege on target 'channelId' but then it becomes quite
+    // would be if the cms-user would have 'viewer' privilege on target 'channelId' but then it becomes quite
     // complex to find which channel to check in PrivilegesAllowedInvokerPreprocessor
     @PermitAll
     public Response getChannel(@HeaderParam("contextPath") final String contextPath,
@@ -164,7 +164,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @GET
     @Path("/channels/{id}/info")
     @Produces(MediaType.APPLICATION_JSON)
-    @PrivilegesAllowed(CHANNEL_WEB_VIEWER_PRIVILEGE_NAME)
+    @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
     public Response getChannelInfoDescription(@HeaderParam("hostGroup") final String hostGroup,
                                               @PathParam("id") String channelId, @QueryParam("locale") String locale) {
         if (StringUtils.isEmpty(locale)) {
@@ -329,7 +329,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @GET
     @Path("/previewmode/{renderingHost}/")
     @Produces(MediaType.APPLICATION_JSON)
-    @PrivilegesAllowed(CHANNEL_WEB_VIEWER_PRIVILEGE_NAME)
+    @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
     public Response previewMode(@Context HttpServletRequest servletRequest,
                                 @PathParam("renderingHost") String renderingHost) {
         HttpSession session = servletRequest.getSession(true);
@@ -346,7 +346,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @POST
     @Path("/setvariant/{variantId}/")
     @Produces(MediaType.APPLICATION_JSON)
-    @PrivilegesAllowed(CHANNEL_WEB_VIEWER_PRIVILEGE_NAME)
+    @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
     public Response setVariant(@Context HttpServletRequest servletRequest, @PathParam("variantId") String variant) {
         final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(servletRequest.getSession());
         cmsSessionContext.getContextPayload().put(ContainerConstants.RENDER_VARIANT, variant);
@@ -358,7 +358,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @POST
     @Path("/clearvariant/")
     @Produces(MediaType.APPLICATION_JSON)
-    @PrivilegesAllowed(CHANNEL_WEB_VIEWER_PRIVILEGE_NAME)
+    @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
     public Response clearVariant(@Context HttpServletRequest servletRequest) {
         final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(servletRequest.getSession());
         cmsSessionContext.getContextPayload().remove(ContainerConstants.RENDER_VARIANT);

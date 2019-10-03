@@ -21,6 +21,6 @@ public class ChannelManagerPrivileges {
 
     public final static String CHANNEL_WEBMASTER_PRIVILEGE_NAME = "hippo:channel-webmaster";
 
-    public final static String CHANNEL_WEB_VIEWER_PRIVILEGE_NAME = "hippo:channel-webviewer";
+    public final static String CHANNEL_VIEWER_PRIVILEGE_NAME = "hippo:channel-viewer";
 
 }
