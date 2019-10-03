@@ -17,51 +17,55 @@
 import React from 'react';
 import axios from 'axios';
 import { RouteComponentProps } from 'react-router-dom';
-import { BrPage } from '@bloomreach/react-sdk';
-
-const config = {
-  httpClient: axios.request,
-  options: {
-    live: {
-      pageModelBaseUrl: process.env.REACT_APP_BR_URL_LIVE!,
-      spaBasePath: process.env.REACT_APP_SPA_BASE_PATH_LIVE,
-    },
-    preview: {
-      pageModelBaseUrl: process.env.REACT_APP_BR_URL_PREVIEW!,
-      spaBasePath: process.env.REACT_APP_SPA_BASE_PATH_PREVIEW,
-    },
-  },
-};
+import { BrComponent, BrPage, BrPageContext } from '@bloomreach/react-sdk';
+import { Banner, Content, Menu, NewsList } from './components';
 
 export default function App(props: RouteComponentProps) {
+  const configuration = {
+    httpClient: axios.request,
+    options: {
+      live: {
+        pageModelBaseUrl: process.env.REACT_APP_BR_URL_LIVE!,
+        spaBasePath: process.env.REACT_APP_SPA_BASE_PATH_LIVE,
+      },
+      preview: {
+        pageModelBaseUrl: process.env.REACT_APP_BR_URL_PREVIEW!,
+        spaBasePath: process.env.REACT_APP_SPA_BASE_PATH_PREVIEW,
+      },
+    },
+    request: {
+      path: `${props.location.pathname}${props.location.search}`,
+    },
+  };
+  const mapping = { Banner, Content, 'News List': NewsList };
+
   return (
-      <BrPage configuration={{
-        ...config,
-        request: {
-          path: `${props.location.pathname}${props.location.search}`
-        },
-      }} mapping={{}}>
-        <div id="header">
-          <nav className="navbar navbar-expand-md navbar-dark bg-dark">
-            <span className="navbar-brand">Client-side React Demo</span>
-            <button type="button"
-              className="navbar-toggler"
-              data-toggle="collapse"
-              data-target="#navbarCollapse"
-              aria-controls="navbarCollapse"
-              aria-expanded="false"
-              aria-label="Toggle navigation">
-              <span className="navbar-toggler-icon" />
-            </button>
-            <div className="collapse navbar-collapse" id="navbarCollapse">
-              Render Menu here
+    <BrPage configuration={configuration} mapping={mapping}>
+      <header>
+        <nav className="navbar navbar-expand-sm navbar-dark sticky-top bg-dark" role="navigation">
+          <div className="container">
+            <BrPageContext.Consumer>
+              {page => <a href="/" className="navbar-brand">{ page!.getTitle() || 'Client-side React Demo'}</a>}
+            </BrPageContext.Consumer>
+            <div className="collapse navbar-collapse">
+              <BrComponent path="menu">
+                <Menu />
+              </BrComponent>
             </div>
-          </nav>
+          </div>
+        </nav>
+      </header>
+      <section className="container pt-3">
+        <BrComponent path="main" />
+      </section>
+      <footer className="bg-dark text-light py-3">
+        <div className="container">
+          <div className="float-left pr-3">&copy; Bloomreach</div>
+          <div className="overflow-hidden">
+            <BrComponent path="footer" />
+          </div>
         </div>
-        <div className="container marketing">
-          Render Container here<br/>
-          cmsUrls: <pre>{JSON.stringify(config, null, 2)}</pre>
-        </div>
+      </footer>
     </BrPage>
   );
 }
