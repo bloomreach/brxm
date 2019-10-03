@@ -194,9 +194,9 @@ export interface ChildApi {
    * It’s an application’s responsibility to make a decision on how to handle this navigational call.
    *
    * @param location the NavLocation to navigate to
-   * @param flags optional navigation flags to be passed to the client app
+   * @param triggeredBy The source of the navigate call so the client app is able to react appropriately on a specific source
    */
-  navigate?: (location: NavLocation, flags?: NavigateFlags) => (void | Promise<void>);
+  navigate?: (location: NavLocation, triggeredBy: NavigationTrigger) => (void | Promise<void>);
   /**
    * Sets the accountId (merchantId) and siteId (siteGroupId) to work with. Site selection is intentionally separated
    * from navigation since it represents an additional dimension in the navigation process to cover brSM needs.
@@ -222,15 +222,8 @@ export interface ChildPromisedApi {
   beforeNavigation?: () => Promise<boolean>;
   onUserActivity?: () => Promise<void>;
   logout?: () => Promise<void>;
-  navigate?: (location: NavLocation, flags?: NavigateFlags) => Promise<void>;
+  navigate?: (location: NavLocation, triggeredBy: NavigationTrigger) => Promise<void>;
   updateSelectedSite?: (siteId?: SiteId) => Promise<void>;
-}
-
-export interface NavigateFlags {
-  /**
-   * Passed the client app should navigate to its default ‘home’ route
-   */
-  forceRefresh?: boolean;
 }
 
 export interface NavItem {
@@ -339,4 +332,16 @@ export interface ClientError {
    * Human readable message that can be displayed to the user
    */
   message?: string;
+}
+
+/**
+ * The source of the navigate call
+ */
+export enum NavigationTrigger {
+  NotDefined = 0,
+  Menu,
+  Breadcrumbs,
+  FastTravel,
+  AnotherApp,
+  PopState,
 }
