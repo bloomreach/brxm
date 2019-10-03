@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,10 +13,10 @@
 // limitations under the License.
 
 .hippo-revision-history {
-
   width: 100%;
 
-  td, th {
+  td,
+  th {
     padding: 4px;
   }
 
@@ -31,14 +31,14 @@
   }
 
   .state-prev-new {
-    background-image: url("#{$images_legacy}/icons/state-prev-new-16.png")
+    background-image: url("#{$images_legacy}/icons/state-prev-new-16.png");
   }
 
   .state-prev-changed {
-    background-image: url("#{$images_legacy}/icons/state-prev-changed-16.png")
+    background-image: url("#{$images_legacy}/icons/state-prev-changed-16.png");
   }
 
   .state-prev-live {
-    background-image: url("#{$images_legacy}/icons/state-prev-live-16.png")
+    background-image: url("#{$images_legacy}/icons/state-prev-live-16.png");
   }
 }

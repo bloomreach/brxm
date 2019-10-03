@@ -55,7 +55,8 @@
       afterFullScreen: new YAHOO.util.CustomEvent('afterFullScreen'),
       beforeInitScreen: new YAHOO.util.CustomEvent('beforeInitScreen'),
       afterInitScreen: new YAHOO.util.CustomEvent('afterInitScreen'),
-      resizeFullScreen: new YAHOO.util.CustomEvent('resizeFullScreen')
+      resizeFullScreen: new YAHOO.util.CustomEvent('resizeFullScreen'),
+      resizeModal: new YAHOO.util.CustomEvent('resizeModal')
     };
   };
 
@@ -79,6 +80,8 @@
       this.event.resizeFullScreen.fire({w: width, h: height});
 
       this.resizing();
+    } else {
+      this.event.resizeModal.fire({w: width, h: height});
     }
   };
 
@@ -180,6 +183,7 @@
         .map(selector => $(selector).height())
         .reduce((x, y) => x + y);
       this.content.style.height = `calc(${this.settings.height}vh - ${dialogBoundaryHeight}px)`;
+      this.content.classList.add('hippo-dialog-relative');
       this.center();
     }
   };
