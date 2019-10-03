@@ -19,54 +19,64 @@ import axios from 'axios';
 import { NextPageContext } from 'next';
 // tslint:disable-next-line:import-name
 import getConfig from 'next/config';
-import { BrPage } from '@bloomreach/react-sdk';
+import { BrComponent, BrPage, BrPageContext } from '@bloomreach/react-sdk';
+import { Banner, Content, Menu, NewsList } from '../components';
 
 const { publicRuntimeConfig } = getConfig();
-const config = {
-  httpClient: axios.request,
-  options: {
-    live: {
-      pageModelBaseUrl: publicRuntimeConfig.brUrlLive,
-      spaBasePath: publicRuntimeConfig.spaBasePathLive,
-    },
-    preview: {
-      pageModelBaseUrl: publicRuntimeConfig.brUrlPreview,
-      spaBasePath: publicRuntimeConfig.spaBasePathPreview,
-    },
-  },
-};
 
 interface IndexProps {
   request: any;
 }
 
-interface IndexState {}
-
-export default class Index extends React.Component<IndexProps, IndexState> {
+export default class Index extends React.Component<IndexProps> {
   static async getInitialProps({ req: request }: NextPageContext) {
     return { request };
   }
 
   render() {
+    const configuration = {
+      httpClient: axios.request,
+      options: {
+        live: {
+          pageModelBaseUrl: publicRuntimeConfig.brUrlLive,
+          spaBasePath: publicRuntimeConfig.spaBasePathLive,
+        },
+        preview: {
+          pageModelBaseUrl: publicRuntimeConfig.brUrlPreview,
+          spaBasePath: publicRuntimeConfig.spaBasePathPreview,
+        },
+      },
+      request: this.props.request,
+    };
+    const mapping = { Banner, Content, 'News List': NewsList };
+
     return (
-      <BrPage configuration={{ ...config, request: this.props.request }} mapping={{}}>
-        <div id='header'>
-          <nav className='navbar navbar-expand-md navbar-dark bg-dark'>
-            <span className='navbar-brand'>Server-side React Demo</span>
-            <button className='navbar-toggler' type='button' data-toggle='collapse' data-target='#navbar-collapse'
-                    aria-controls='navbar-collapse' aria-expanded='false' aria-label='Toggle navigation'>
-              <span className='navbar-toggler-icon' />
-            </button>
-            <div className='collapse navbar-collapse' id='navbar-collapse'>
-              Render Menu
+      <BrPage configuration={configuration} mapping={mapping}>
+        <header>
+          <nav className="navbar navbar-expand-sm navbar-dark sticky-top bg-dark" role="navigation">
+            <div className="container">
+              <BrPageContext.Consumer>
+                {page => <a href="/" className="navbar-brand">{ page!.getTitle() || 'Server-side React Demo'}</a>}
+              </BrPageContext.Consumer>
+              <div className="collapse navbar-collapse">
+                <BrComponent path="menu">
+                  <Menu />
+                </BrComponent>
+              </div>
             </div>
           </nav>
-        </div>
-        <div className='container marketing'>
-          Render Container here<br/>
-          cmsUrls: <pre>{JSON.stringify(config, null, 2)}</pre>
-          request: <pre>{JSON.stringify(this.props.request, null, 2)}</pre>
-        </div>
+        </header>
+        <section className="container pt-3">
+          <BrComponent path="main" />
+        </section>
+        <footer className="bg-dark text-light py-3">
+          <div className="container">
+            <div className="float-left pr-3">&copy; Bloomreach</div>
+            <div className="overflow-hidden">
+              <BrComponent path="footer" />
+            </div>
+          </div>
+        </footer>
       </BrPage>
     );
   }

@@ -22,30 +22,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.container {
-  padding-top: 2rem;
+#root {
+  height: 100vh;
 }
 
-footer {
-  margin-top: 30px;
-}
-
-.jumbotron img {
-  width: 100%;
-}
-
-.navbar .navbar-brand {
-  margin-right: 3rem;
-}
-
-.navbar-nav .nav-link {
-  text-transform: capitalize;
-}
-
-.blog-post-date {
-  margin-right: 10px;
-}
-
-.has-edit-button {
-  position: relative;
+#root > .container {
+   flex: 1;
 }

@@ -19,11 +19,11 @@ import Document, { Head, Main, NextScript } from 'next/document';
 export default class DefaultDocument extends Document {
   render() {
     return (
-      <html lang='en'>
+      <html lang="en">
         <head>
-          <meta charSet='utf-8' />
-          <meta name='viewport' content='width=device-width, initial-scale=1' />
-          <meta name='description' content='Example server-side React App for BloomReach Experience' />
+          <meta charSet="utf-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1" />
+          <meta name="description" content="Example server-side React App for Bloomreach Experience" />
 
           <title>Server-side React App for BRX</title>
 
@@ -31,14 +31,15 @@ export default class DefaultDocument extends Document {
             href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
             integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
             crossOrigin="anonymous" />
-          <link rel='stylesheet' href={`${process.env.PUBLIC_URL}/static/brx.theme.css`} media='screen' />
+          <link rel="stylesheet" href={`${process.env.PUBLIC_URL}/static/brx.theme.css`} media="screen" />
 
           <Head />
         </head>
         <body>
-          <div id='root'>
+          <div id="root" className="d-flex flex-column">
             <Main />
           </div>
+
           <NextScript />
         </body>
       </html>
