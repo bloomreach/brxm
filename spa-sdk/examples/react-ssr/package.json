@@ -8,7 +8,7 @@
   "dependencies": {
     "@bloomreach/react-sdk": "^14.0",
     "axios": "^0.19",
-    "next": "^9.0.5",
+    "next": "9.0.7",
     "next-routes": "^1.4.2",
     "react": "^16.9",
     "react-dom": "^16.9"
