@@ -55,6 +55,7 @@ export interface Content {
    * @return The content data as it is returned in the Page Model API.
    */
   getData(): ContentModel;
+  getData<T extends Record<string, any>>(): T & ContentModel;
 }
 
 export class ContentImpl implements Content {
