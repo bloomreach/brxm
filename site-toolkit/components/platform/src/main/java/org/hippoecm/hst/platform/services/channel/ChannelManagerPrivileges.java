@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.platform.services.channel;
 
-import javax.jcr.security.Privilege;
-
 public class ChannelManagerPrivileges {
 
     public final static String CHANNEL_ADMIN_PRIVILEGE_NAME = "hippo:channel-admin";
@@ -25,41 +23,4 @@ public class ChannelManagerPrivileges {
 
     public final static String CHANNEL_WEB_VIEWER_PRIVILEGE_NAME = "hippo:channel-webviewer";
 
-
-    public static Privilege[] createPrivileges(final String... names) {
-
-        final Privilege[] privileges = new Privilege[names.length];
-
-        for (int i = 0; i < names.length; i++) {
-            final String name = names[i];
-
-            privileges[i] = new Privilege() {
-                @Override
-                public String getName() {
-                    return name;
-                }
-
-                @Override
-                public boolean isAbstract() {
-                    return false;
-                }
-
-                @Override
-                public boolean isAggregate() {
-                    return false;
-                }
-
-                @Override
-                public Privilege[] getDeclaredAggregatePrivileges() {
-                    return new Privilege[0];
-                }
-
-                @Override
-                public Privilege[] getAggregatePrivileges() {
-                    return new Privilege[0];
-                }
-            };
-        }
-        return privileges;
-    }
 }

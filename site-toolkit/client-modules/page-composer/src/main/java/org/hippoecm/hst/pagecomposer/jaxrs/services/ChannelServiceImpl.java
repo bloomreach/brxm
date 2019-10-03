@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.security.Privilege;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -61,7 +62,6 @@ import org.hippoecm.hst.platform.api.beans.ChannelInfoClassInfo;
 import org.hippoecm.hst.platform.api.beans.FieldGroupInfo;
 import org.hippoecm.hst.platform.api.beans.HstPropertyDefinitionInfo;
 import org.hippoecm.hst.platform.api.beans.InformationObjectsBuilder;
-import org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
@@ -345,7 +345,8 @@ public class ChannelServiceImpl implements ChannelService {
                     .filter(channel -> {
                         try {
                             return session.getAccessControlManager()
-                                    .hasPrivileges(channel.getHstConfigPath(), ChannelManagerPrivileges.createPrivileges(privilegeAllowed));
+                                    .hasPrivileges(channel.getHstConfigPath(),
+                                            new Privilege[] {session.getAccessControlManager().privilegeFromName(privilegeAllowed)});
                         } catch (RepositoryException e) {
                             log.error("Exception while checking privilege for channel '{}'. Skip channel in result",
                                     channel.getId());

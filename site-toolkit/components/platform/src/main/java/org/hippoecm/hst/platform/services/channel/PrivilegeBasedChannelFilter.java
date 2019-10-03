@@ -26,19 +26,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEB_VIEWER_PRIVILEGE_NAME;
-import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.createPrivileges;
 
 public class PrivilegeBasedChannelFilter implements BiPredicate<Session, Channel> {
 
     private static final Logger log = LoggerFactory.getLogger(ContentReadChannelFilter.class);
 
-    private static final Privilege[] requiredPrivileges = createPrivileges(CHANNEL_WEB_VIEWER_PRIVILEGE_NAME);
-
     @Override
     public boolean test(final Session userSession, final Channel channel) {
 
         try {
-            return userSession.getAccessControlManager().hasPrivileges(channel.getHstConfigPath(), requiredPrivileges);
+            final Privilege privilege = userSession.getAccessControlManager().privilegeFromName(CHANNEL_WEB_VIEWER_PRIVILEGE_NAME);
+            return userSession.getAccessControlManager().hasPrivileges(channel.getHstConfigPath(), new Privilege[]{privilege});
         } catch (RepositoryException e) {
             log.warn("Exception while checking privilege '{}' for channel '{}'. Skip that channel:",
                     CHANNEL_WEB_VIEWER_PRIVILEGE_NAME, channel.getHstConfigPath(), e);
