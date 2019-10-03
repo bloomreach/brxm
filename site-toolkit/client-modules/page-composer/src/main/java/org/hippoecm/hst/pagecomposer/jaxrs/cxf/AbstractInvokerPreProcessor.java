@@ -27,7 +27,6 @@ import org.hippoecm.hst.jaxrs.cxf.InvokerPreprocessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
-import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 
 public abstract class AbstractInvokerPreProcessor implements InvokerPreprocessor {
@@ -45,15 +44,8 @@ public abstract class AbstractInvokerPreProcessor implements InvokerPreprocessor
     @Override
     public Object preprocoess(final Exchange exchange, final Object request) {
 
-        final Channel previewChannel;
-        if (pageComposerContextService.isRenderingMountSet()) {
-            previewChannel = pageComposerContextService.getEditingPreviewChannel();
-        } else {
-            previewChannel = null;
-        }
-
         try {
-            final Optional<String> forbiddenOperation = isForbiddenOperation(exchange, previewChannel);
+            final Optional<String> forbiddenOperation = isForbiddenOperation(exchange);
             if (forbiddenOperation.isPresent()) {
                 ExtResponseRepresentation entity = new ExtResponseRepresentation();
                 entity.setMessage(forbiddenOperation.get());
@@ -79,9 +71,8 @@ public abstract class AbstractInvokerPreProcessor implements InvokerPreprocessor
      * @return if it returns {@link Optional#empty()}, the operation is allowed, and if present, the optional contains the
      * forbidden message
      * @param exchange
-     * @param previewChannel the preview channel which is null in case there is not yet a preview
      */
-    public abstract Optional<String> isForbiddenOperation(final Exchange exchange, final Channel previewChannel);
+    public abstract Optional<String> isForbiddenOperation(final Exchange exchange);
 
 
     public Method getMethod(final Exchange exchange) {

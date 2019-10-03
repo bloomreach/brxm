@@ -27,9 +27,9 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 
 import org.apache.cxf.message.Exchange;
-import org.onehippo.cms7.services.hst.Channel;
 import org.hippoecm.hst.jaxrs.cxf.InvokerPreprocessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.IgnoreLock;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,12 +43,15 @@ public class HstConfigLockedCheckInvokerPreprocessor extends AbstractInvokerPreP
     }
 
     @Override
-    public Optional<String> isForbiddenOperation(final Exchange exchange, final Channel previewChannel) {
+    public Optional<String> isForbiddenOperation(final Exchange exchange) {
 
-        if (previewChannel == null) {
+
+        if (!getPageComposerContextService().isRenderingMountSet()) {
             getLogger().debug("No preview channel yet so also not (yet) locked");
             return Optional.empty();
         }
+
+        final Channel previewChannel = getPageComposerContextService().getEditingPreviewChannel();
 
         if (!previewChannel.isConfigurationLocked()) {
             getLogger().debug("Channel configuration for '{}' not locked.", previewChannel.getId());
@@ -101,11 +104,11 @@ public class HstConfigLockedCheckInvokerPreprocessor extends AbstractInvokerPreP
         }
 
         log.info("Expected on method '{}' at least one of the annotations GET, HEAD, PUT, POST or DELETE. Since " +
-                "the method is not annotated with HEAD or GET, the method is not allowed for locked hst configuration nodes",
+                        "the method is not annotated with HEAD or GET, the method is not allowed for locked hst configuration nodes",
                 method.getName());
 
         return Optional.of("Method without annotation GET, HEAD, PUT, POST or DELETE is forbidden when channel has its configuration locked.");
     }
 
-
 }
+

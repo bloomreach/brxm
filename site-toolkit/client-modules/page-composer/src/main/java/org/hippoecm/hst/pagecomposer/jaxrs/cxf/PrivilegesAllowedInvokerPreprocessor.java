@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,10 +26,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.security.Privilege;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.message.Exchange;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
-import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,8 +41,8 @@ public class PrivilegesAllowedInvokerPreprocessor extends AbstractInvokerPreProc
     /**
      * This is a method only meant for integration tests to be able to temporarily switch of the
      * PrivilegesAllowedInvokerPreprocessor. Typically for the use case like asserting that deleting a non existing
-     * channel results in a 404, however, this Preprocessor typically already does not allow the delete since for example
-     * no 'previewChannel' is present. Therefor this setter is there to disable this PreProcessor
+     * channel results in a 404, however, this Preprocessor typically already does not allow the delete since for
+     * example no 'previewChannel' is present. Therefor this setter is there to disable this PreProcessor
      */
     public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
@@ -54,7 +54,7 @@ public class PrivilegesAllowedInvokerPreprocessor extends AbstractInvokerPreProc
     }
 
     @Override
-    public Optional<String> isForbiddenOperation(final Exchange exchange, final Channel previewChannel) {
+    public Optional<String> isForbiddenOperation(final Exchange exchange) {
         if (!enabled) {
             return Optional.empty();
         }
@@ -66,55 +66,36 @@ public class PrivilegesAllowedInvokerPreprocessor extends AbstractInvokerPreProc
         if (privilegesAllowed == null && permitAll == null) {
             final String message = String.format("Method '%s' is not annotated with @PrivilegesAllowed and neither with @PermitAll which " +
                     "is not allowed. Either permit all or specify which privilege is allowed.", method.getName());
-            log.error(message);
+            getLogger().error(message);
             return Optional.of(message);
         } else if (privilegesAllowed != null && permitAll != null) {
             final String message = String.format("Method '%s' is annotated with @PrivilegesAllowed AND with @PermitAll which " +
                     "is not allowed. Either permit all or specify which privilege is allowed.", method.getName());
-            log.error(message);
+            getLogger().error(message);
             return Optional.of(message);
         } else if (privilegesAllowed == null) {
-            log.info("Method '{}' is permitted for all", method.getName());
+            getLogger().info("Method '{}' is permitted for all", method.getName());
             return Optional.empty();
         }
-
-        if (previewChannel == null) {
-            return Optional.of(String.format("Method '%s' is not allowed to be invoked no channel selected yet", method.getName()));
-        }
-
-        // the privilege is currently checked against the *live hstConfigPath* and against the *preview hstConfigPath* if
-        // there exists a preview (if no preview present, only the live is checked) :
-        // the privileges need to be on both live and preview (if preview present) config path, otherwise not allowed
 
         try {
             final Session session = RequestContextProvider.get().getSession();
 
-            final String liveConfigurationPath = getPageComposerContextService().getEditingLiveConfigurationPath();
-            final Privilege[] livePrivileges = session.getAccessControlManager().getPrivileges(liveConfigurationPath);
-
             final Set<String> privilegesAllowedSet = Arrays.stream(privilegesAllowed.value()).collect(Collectors.toSet());
 
-            final Set<String> intersection = getIntersection(privilegesAllowedSet, livePrivileges);
+            final String absPath = privilegesAllowed.absPath();
 
-            if (intersection.isEmpty()) {
-                return Optional.of(String.format("Method '%s' is not allowed to be invoked since current user does not have " +
-                        "the right privileges", method.getName()));
-            }
-
-            if (previewChannel == null) {
+            if (StringUtils.isNotEmpty(absPath)) {
+                final Privilege[] privileges = session.getAccessControlManager().getPrivileges(absPath);
+                final Set<String> intersection = getIntersection(privilegesAllowedSet, privileges);
+                if (intersection.isEmpty()) {
+                    return Optional.of(String.format("Method '%s' is not allowed to be invoked since current user does not have " +
+                            "the right privileges on path '%s'", method.getName(), absPath));
+                }
                 return Optional.empty();
+            } else {
+                return isForbiddenOperationContext(exchange, method, privilegesAllowedSet);
             }
-
-
-            final Privilege[] previewPrivileges = session.getAccessControlManager().getPrivileges(previewChannel.getHstConfigPath());
-
-            final Set<String> finalIntersection = getIntersection(intersection, previewPrivileges);
-
-            if (finalIntersection.isEmpty()) {
-                return Optional.of(String.format("Method '%s' is not allowed to be invoked since current user does not have " +
-                        "the right privileges", method.getName()));
-            }
-            return Optional.empty();
 
         } catch (RepositoryException e) {
             throw new IllegalStateException("Exception while trying to find whether user has privilege.", e);
@@ -122,7 +103,20 @@ public class PrivilegesAllowedInvokerPreprocessor extends AbstractInvokerPreProc
 
     }
 
-    private Set<String> getIntersection(final Set<String> privilegesAllowed, final Privilege[] privileges) {
+    /**
+     * To be subclassed if the privilege check is context aware instead of absolute path based. Context aware can for
+     * example be based on some http session attribute (like what is the currently selected channel) By default this
+     * PrivilegesAllowedInvokerPreprocessor returns that the method is forbidden, subclasses can
+     * allow the method
+     */
+    protected Optional<String> isForbiddenOperationContext(final Exchange exchange,
+                                                           final Method method, Set<String> privilegesAllowed) {
+        return Optional.of(String.format("Method '%s' is not allowed to be invoked since current user does not have one of " +
+                "the allowed privileges '%s' for the current context",
+                method.getName(), privilegesAllowed));
+    }
+
+    protected Set<String> getIntersection(final Set<String> privilegesAllowed, final Privilege[] privileges) {
         return Arrays.stream(privileges)
                 .filter(privilege -> privilegesAllowed.contains(privilege.getName()))
                 .map(privilege -> privilege.getName())

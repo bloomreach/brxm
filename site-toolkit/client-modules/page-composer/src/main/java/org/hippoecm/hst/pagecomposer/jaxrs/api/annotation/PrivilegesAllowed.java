@@ -32,4 +32,11 @@ public @interface PrivilegesAllowed {
      */
     String[] value();
 
+    /**
+     * The absolute JCR path against which the privileges need to be checked. If left empty or missing, it means that
+     * the implementation using the {@link PrivilegesAllowed} can decide against which (context aware) JCR path to
+     * check the privilege
+     */
+    String absPath() default "";
+
 }
