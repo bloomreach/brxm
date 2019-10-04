@@ -1,4 +1,4 @@
-// Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ $buttons-width: 40px;
     width: 100%;
 
     * {
-      cursor: pointer
+      cursor: pointer;
     }
 
     tr {
@@ -69,7 +69,7 @@ $buttons-width: 40px;
 
   .hippo-reorder-border {
     min-height: 140px;
-    position: relative
+    position: relative;
   }
 
   .hippo-reorder-buttons {

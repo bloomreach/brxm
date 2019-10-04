@@ -118,7 +118,7 @@ public class TreeNodeIconPlugin extends AbstractJcrTreeNodeIconProvider implemen
     }
 
     private HippoIconStack getTranslatedNodeIcon(final String id, final TreeNode treeNode, final ITreeState state, final String locale) {
-        final HippoIconStack nodeIcon = new HippoIconStack(id, IconSize.M);
+        final HippoIconStack nodeIcon = new HippoIconStack(id, IconSize.M, "hi-translation");
         final HippoLocale hippoLocale = locales.getLocale(locale);
 
         if (state.isNodeExpanded(treeNode)) {

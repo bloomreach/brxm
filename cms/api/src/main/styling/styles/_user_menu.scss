@@ -1,4 +1,4 @@
-// Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -23,7 +23,9 @@
 
   .hippo-current-user-name {
     font-size: 11px;
+
     @include truncate();
+
     padding: 0 4px;
   }
 }
@@ -40,7 +42,6 @@
   text-align: left;
   min-width: 90px;
   max-width: 100%;
-
 
   > div.label {
     line-height: 1.3em;
@@ -68,7 +69,8 @@
   }
 
   // Draw an arrow
-  &:after, &:before {
+  &::after,
+  &::before {
     right: 100%;
     bottom: 0;
     border: solid transparent;
@@ -79,16 +81,15 @@
     pointer-events: none;
   }
 
-  &:after {
+  &::after {
     border-right-color: $user-menu-popup-background;
     border-width: 10px;
     margin-bottom: 20px;
   }
 
-  &:before {
+  &::before {
     border-right-color: $user-menu-popup-border;
     border-width: 14px;
     margin-bottom: 16px;
   }
 }
-
