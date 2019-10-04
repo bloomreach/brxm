@@ -55,15 +55,22 @@ public class MockSession implements HippoSession {
 
     private final MockNode root;
     private final MockWorkspace workspace;
+    private AccessControlManager accessControlManager;
     private MockRepository mockRepository;
 
-    protected MockSession(MockNode root, QueryManager queryManager) {
+    public MockSession(MockNode root) {
+        this(root, null);
+    }
+
+    public MockSession(MockNode root, QueryManager queryManager) {
         this.root = root;
         this.workspace = new MockWorkspace(this, queryManager);
     }
 
-    protected MockSession(MockNode root) {
-        this(root, null);
+    public MockSession(MockNode root, QueryManager queryManager, AccessControlManager accessControlManager) {
+        this.root = root;
+        this.workspace = new MockWorkspace(this, queryManager);
+        this.accessControlManager = accessControlManager;
     }
 
     @Override
@@ -350,7 +357,10 @@ public class MockSession implements HippoSession {
 
     @Override
     public AccessControlManager getAccessControlManager() {
-        throw new UnsupportedOperationException();
+        if (accessControlManager == null) {
+            throw new IllegalStateException("AccessControlManager is not set");
+        }
+       return accessControlManager;
     }
 
     @Override
