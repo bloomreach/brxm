@@ -87,7 +87,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
         this.workflowSession = session.impersonate(workflowuser);
         try {
             ((HippoSession) workflowSession).disableVirtualLayers();
-            configurationId = session.getRootNode().getNode(CONFIGURATION_PATH + "/" + WORKFLOWS_PATH).getIdentifier();
+            configurationId = workflowSession.getRootNode().getNode(CONFIGURATION_PATH + "/" + WORKFLOWS_PATH).getIdentifier();
             workflowLogger = new WorkflowLogger(workflowSession);
         } catch (Exception e) {
             log.error("Exception while trying to get workflow", e);
