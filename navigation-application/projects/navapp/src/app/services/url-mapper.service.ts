@@ -89,7 +89,13 @@ export class UrlMapperService {
   }
 
   private normalizeAppIframeUrl(appIframeUrl: string): string {
-    let appBasePath = this.trimSlashes(new URL(appIframeUrl).pathname);
+    let appBasePath: string;
+
+    try {
+      appBasePath = this.trimSlashes(new URL(appIframeUrl).pathname);
+    } catch {
+      throw new InternalError(undefined, `The url has incorrect format: ${appIframeUrl}`);
+    }
 
     this.pathPartsToStripOffFromIframeUrl.forEach(pathPart => {
       const fullRegExp = new RegExp(`^${pathPart}$`);
