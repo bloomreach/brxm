@@ -14,8 +14,19 @@
  * limitations under the License.
  */
 
+const dotenv = require('dotenv');
 const express = require('express');
+const fs = require('fs');
 const path = require('path');
+
+const dotenvPath = path.resolve(process.cwd(), '.env');
+if (fs.existsSync(dotenvPath)) {
+  const { error } = dotenv.config({ path: dotenvPath });
+  if (error) {
+    throw error;
+  }
+}
+
 const port = process.env.PORT || 3000;
 const app = express();
 
