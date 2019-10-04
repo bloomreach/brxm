@@ -15,13 +15,14 @@
  */
 
 import { Location } from '@angular/common';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { NavItem, NavLocation } from '@bloomreach/navapp-communication';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { InternalError } from '../error-handling/models/internal-error';
+import { AppSettings } from '../models/dto/app-settings.dto';
 
-import { GlobalSettingsService } from './global-settings.service';
+import { APP_SETTINGS } from './app-settings';
 import { NavConfigService } from './nav-config.service';
 
 @Injectable({
@@ -34,19 +35,17 @@ export class UrlMapperService {
   ];
 
   constructor(
-    private settings: GlobalSettingsService,
     private navConfigService: NavConfigService,
     private clientAppService: ClientAppService,
+    @Inject(APP_SETTINGS) private appSettings: AppSettings,
   ) {
-      this.pathPartsToStripOffFromIframeUrl.unshift(
-        this.trimSlashes(this.basePath),
-      );
+    this.pathPartsToStripOffFromIframeUrl.unshift(
+      this.trimSlashes(this.basePath),
+    );
   }
 
   get basePath(): string {
-    const baseUrl = this.settings.appSettings.navAppBaseURL;
-
-    return new URL(baseUrl).pathname;
+    return this.appSettings.basePath;
   }
 
   mapNavItemToBrowserUrl(navItem: NavItem): string {

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import {
   HttpClientTestingModule,
@@ -22,17 +23,17 @@ import {
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import * as navappCommunication from '@bloomreach/navapp-communication';
 
-import { GlobalSettingsMock } from '../models/dto/global-settings.mock';
+import { AppSettings } from '../models/dto/app-settings.dto';
+import { AppSettingsMock } from '../models/dto/app-settings.mock';
 import { NavItemMock } from '../models/dto/nav-item.mock';
 
-import { GlobalSettingsService } from './global-settings.service';
+import { APP_SETTINGS } from './app-settings';
 import { NavConfigService } from './nav-config.service';
 
 describe('NavConfigService', () => {
   let service: NavConfigService;
   let http: HttpClient;
   let httpTestingController: HttpTestingController;
-  let globalSettingsService: GlobalSettingsService;
 
   const navConfig = [
     new NavItemMock({ id: 'testId1' }),
@@ -48,11 +49,16 @@ describe('NavConfigService', () => {
     },
   ];
 
-  const globalSettingsServiceMock = new GlobalSettingsMock();
-  globalSettingsServiceMock.appSettings.loginResources = [
-    { url: 'testLoginResource1', resourceType: 'IFRAME' },
-    { url: 'testLoginResource2', resourceType: 'IFRAME' },
-  ];
+  const locationMock = jasmine.createSpyObj('Location', [
+    'prepareExternalUrl',
+  ]);
+
+  const appSettingsMock: AppSettings = new AppSettingsMock({
+    loginResources: [
+      { url: 'testLoginResource1', resourceType: 'IFRAME' },
+      { url: 'testLoginResource2', resourceType: 'IFRAME' },
+    ],
+  });
 
   const selectedSite = { accountId: 1, siteId: 2 };
 
@@ -68,7 +74,8 @@ describe('NavConfigService', () => {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       providers: [
-        { provide: GlobalSettingsService, useValue: globalSettingsServiceMock },
+        { provide: Location, useValue: locationMock },
+        { provide: APP_SETTINGS, useValue: appSettingsMock },
         NavConfigService,
       ],
     });
@@ -76,7 +83,6 @@ describe('NavConfigService', () => {
     http = TestBed.get(HttpClient);
     httpTestingController = TestBed.get(HttpTestingController);
     service = TestBed.get(NavConfigService);
-    globalSettingsService = TestBed.get(GlobalSettingsService);
 
     spyOnProperty(navappCommunication, 'connectToChild', 'get').and.returnValue(
       connectionMock,

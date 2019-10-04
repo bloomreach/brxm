@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import { AppSettings } from './app-settings.dto';
-import { UserSettings } from './user-settings.dto';
+import { InjectionToken } from '@angular/core';
 
-export interface GlobalSettings {
-  userSettings: UserSettings;
-  appSettings: AppSettings;
-}
+import { UserSettings } from '../models/dto/user-settings.dto';
+
+export const USER_SETTINGS = new InjectionToken<UserSettings>('USER_SETTINGS');

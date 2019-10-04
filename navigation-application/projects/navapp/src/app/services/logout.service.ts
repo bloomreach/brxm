@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { DOCUMENT } from '@angular/common';
-import { Inject, Injectable } from '@angular/core';
+import { Location } from '@angular/common';
+import { Injectable } from '@angular/core';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
+import { WindowRef } from '../shared/services/window-ref.service';
 
 import { BusyIndicatorService } from './busy-indicator.service';
-import { GlobalSettingsService } from './global-settings.service';
 import { NavConfigService } from './nav-config.service';
 
 @Injectable({
@@ -31,9 +31,9 @@ export class LogoutService {
   constructor(
     private busyIndicatorService: BusyIndicatorService,
     private clientAppService: ClientAppService,
-    @Inject(DOCUMENT) private document: Document,
-    private globalSettingsService: GlobalSettingsService,
     private navConfigService: NavConfigService,
+    private location: Location,
+    private windowRef: WindowRef,
   ) { }
 
   logout(loginMessageKey: string): void {
@@ -44,13 +44,12 @@ export class LogoutService {
       .finally(() => {
         this.busyIndicatorService.hide();
         const loginLocation = this.getLoginLocation(loginMessageKey);
-        this.document.location.replace(loginLocation);
+        this.windowRef.nativeWindow.location.replace(loginLocation);
       });
   }
 
   private getLoginLocation(loginMessageKey: string): string {
     const queryParams = loginMessageKey && `/?loginmessage=${loginMessageKey}` || '/';
-    const baseUrl = this.globalSettingsService.appSettings.navAppBaseURL;
-    return `${baseUrl}${queryParams}`;
+    return this.location.prepareExternalUrl(queryParams);
   }
 }

@@ -28,9 +28,10 @@ import {
 import { BehaviorSubject, Observable } from 'rxjs';
 import { filter } from 'rxjs/operators';
 
+import { AppSettings } from '../models/dto/app-settings.dto';
 import { ConfigResource } from '../models/dto/config-resource.dto';
 
-import { GlobalSettingsService } from './global-settings.service';
+import { APP_SETTINGS } from './app-settings';
 
 interface Configuration {
   navItems: NavItem[];
@@ -50,9 +51,9 @@ export class NavConfigService {
 
   constructor(
     private http: HttpClient,
-    private settings: GlobalSettingsService,
     private rendererFactory: RendererFactory2,
     private location: Location,
+    @Inject(APP_SETTINGS) private appSettings: AppSettings,
     @Inject(DOCUMENT) private document,
   ) {
     this.renderer = this.rendererFactory.createRenderer(undefined, undefined);
@@ -85,7 +86,7 @@ export class NavConfigService {
   }
 
   logout(): Promise<void[]> {
-    const logoutPromises = this.settings.appSettings.logoutResources.map(resource => this.logoutSilently(resource));
+    const logoutPromises = this.appSettings.logoutResources.map(resource => this.logoutSilently(resource));
     return Promise.all(logoutPromises);
   }
 
@@ -98,7 +99,7 @@ export class NavConfigService {
   }
 
   private loginIfNecessary(): Promise<void> {
-    const loginPromises = this.settings.appSettings.loginResources.map(
+    const loginPromises = this.appSettings.loginResources.map(
       resource => this.loginSilently(resource),
     );
 
@@ -120,7 +121,7 @@ export class NavConfigService {
   }
 
   private fetchAndMergeConfigurations(): Promise<Configuration> {
-    const configurationPromises = this.settings.appSettings.navConfigResources.map(
+    const configurationPromises = this.appSettings.navConfigResources.map(
       resource => this.fetchConfiguration(resource),
     );
 
@@ -157,7 +158,7 @@ export class NavConfigService {
           selectedSiteId: undefined,
         }));
       case 'INTERNAL_REST':
-        const baseUrl = this.location.prepareExternalUrl(this.settings.appSettings.basePath);
+        const baseUrl = this.location.prepareExternalUrl(this.appSettings.basePath);
         const url = Location.joinWithSlash(baseUrl, resource.url);
 
         return this.fetchFromREST<NavItem[]>(url).then(navItems => {
@@ -224,7 +225,7 @@ export class NavConfigService {
 
     const config: ChildConnectConfig = {
       iframe,
-      timeout: this.settings.appSettings.iframesConnectionTimeout,
+      timeout: this.appSettings.iframesConnectionTimeout,
     };
 
     return connectToChild(config)

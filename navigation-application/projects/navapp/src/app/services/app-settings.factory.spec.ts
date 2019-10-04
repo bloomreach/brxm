@@ -1,0 +1,121 @@
+/*!
+ * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { AppSettings } from '../models/dto/app-settings.dto';
+
+import { appSettingsFactory } from './app-settings.factory';
+
+describe('appSettingsFactory', () => {
+  const windowRefMock: any = {
+    nativeWindow: {},
+  };
+
+  const locationMock = jasmine.createSpyObj('Location', [
+    'path',
+  ]);
+
+  beforeEach(() => {
+    spyOn(console, 'error');
+  });
+
+  it('should print an error when the global configuration object is not set', () => {
+    appSettingsFactory(windowRefMock, locationMock);
+
+    expect(console.error).toHaveBeenCalledWith('[NAVAPP] The global configuration object is not set');
+  });
+
+  it('should return an empty object when the global configuration object is not set', () => {
+    const expected: AppSettings = {} as any;
+
+    const actual = appSettingsFactory(windowRefMock, locationMock);
+
+    expect(actual).toEqual(expected);
+  });
+
+  describe('when the global configuration object is set', () => {
+    beforeEach(() => {
+      windowRefMock.nativeWindow = {
+        NavAppSettings: {},
+      };
+    });
+
+    it('should print an error when the app settings are not set in the global object', () => {
+      appSettingsFactory(windowRefMock, locationMock);
+
+      expect(console.error).toHaveBeenCalledWith('[NAVAPP] App settings part of the global configuration object is not set');
+    });
+
+    it('should return an empty object the app settings are not set in the global object', () => {
+      const expected: AppSettings = {} as any;
+
+      const actual = appSettingsFactory(windowRefMock, locationMock);
+
+      expect(actual).toEqual(expected);
+    });
+
+    describe('and the app settings object is set', () => {
+      const appSettingsMock: AppSettings = {
+        basePath: '/base/path',
+        iframesConnectionTimeout: 10000,
+      } as any;
+
+      beforeEach(() => {
+        windowRefMock.nativeWindow = {
+          NavAppSettings: {
+            appSettings: appSettingsMock,
+          },
+        };
+      });
+
+      it('should return the app settings object', () => {
+        const expected = appSettingsMock;
+
+        const actual = appSettingsFactory(windowRefMock, locationMock);
+
+        expect(actual).toEqual(expected);
+      });
+
+      it('should read the base path value from the location if the base path is not set', () => {
+        const expected = '/base/path/from/browser/location';
+
+        windowRefMock.nativeWindow = {
+          NavAppSettings: {
+            appSettings: { basePath: undefined },
+          },
+        };
+        locationMock.path.and.returnValue(expected);
+
+        const actual = appSettingsFactory(windowRefMock, locationMock).basePath;
+
+        expect(actual).toEqual(expected);
+      });
+
+      it('should set the default value of iframesConnectionTimeout if it is not set', () => {
+        const expected = 30000;
+
+        windowRefMock.nativeWindow = {
+          NavAppSettings: {
+            appSettings: { iframesConnectionTimeout: undefined },
+          },
+        };
+
+        const actual = appSettingsFactory(windowRefMock, locationMock).iframesConnectionTimeout;
+
+        expect(actual).toEqual(expected);
+      });
+    });
+  });
+});

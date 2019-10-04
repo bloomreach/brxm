@@ -22,7 +22,6 @@ import { APP_BOOTSTRAPPED } from '../../bootstrap/app-bootstrapped';
 import { BootstrapService } from '../../bootstrap/bootstrap.service';
 import { ClientAppService } from '../../client-app/services/client-app.service';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
-import { GlobalSettingsService } from '../../services/global-settings.service';
 import { NavigationService } from '../../services/navigation.service';
 import { QaHelperService } from '../../services/qa-helper.service';
 import { MenuItemLinkMock } from '../models/menu-item-link.mock';
@@ -62,11 +61,6 @@ describe('MainMenuComponent', () => {
     connectionEstablished$: of(true),
   };
 
-  let globalSettingsService: GlobalSettingsService;
-  const globalSettingsServiceMock = {
-    userSettings: {},
-  };
-
   const bootstrappedSuccessful$ = new Subject();
   const bootstrapServiceMock = {
     bootstrappedSuccessful$,
@@ -96,7 +90,6 @@ describe('MainMenuComponent', () => {
         { provide: MenuStateService, useValue: menuStateServiceMock },
         { provide: QaHelperService, useValue: qaHelperServiceMock },
         { provide: ClientAppService, useValue: clientAppServiceMock },
-        { provide: GlobalSettingsService, useValue: globalSettingsServiceMock },
         { provide: BootstrapService, useValue: bootstrapServiceMock },
         { provide: BusyIndicatorService, useValue: busyIndicatorServiceMock },
         { provide: NavigationService, useValue: navigationServiceMock },
@@ -109,9 +102,6 @@ describe('MainMenuComponent', () => {
     menuStateService = fixture.debugElement.injector.get(MenuStateService);
     qaHelperService = fixture.debugElement.injector.get(QaHelperService);
     clientAppService = fixture.debugElement.injector.get(ClientAppService);
-    globalSettingsService = fixture.debugElement.injector.get(
-      GlobalSettingsService,
-    );
 
     component = fixture.componentInstance;
     fixture.detectChanges();

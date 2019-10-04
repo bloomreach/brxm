@@ -14,17 +14,8 @@
  * limitations under the License.
  */
 
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
+import { InjectionToken } from '@angular/core';
 
-import { OverlayComponent } from './components/overlay/overlay.component';
-import { MaterialModule } from './material/material.module';
-import { WindowRef } from './services/window-ref.service';
+import { AppSettings } from '../models/dto/app-settings.dto';
 
-@NgModule({
-  imports: [CommonModule],
-  declarations: [OverlayComponent],
-  providers: [WindowRef],
-  exports: [MaterialModule, OverlayComponent],
-})
-export class SharedModule {}
+export const APP_SETTINGS = new InjectionToken<AppSettings>('APP_SETTINGS');

@@ -18,9 +18,7 @@ import { Component, HostBinding, Inject, OnDestroy, OnInit } from '@angular/core
 import { Subject } from 'rxjs';
 
 import { APP_BOOTSTRAPPED } from '../../bootstrap/app-bootstrapped';
-import { UserSettings } from '../../models/dto/user-settings.dto';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
-import { GlobalSettingsService } from '../../services/global-settings.service';
 import { NavigationService } from '../../services/navigation.service';
 import { QaHelperService } from '../../services/qa-helper.service';
 import { MenuItemContainer } from '../models/menu-item-container.model';
@@ -35,7 +33,6 @@ import { MenuStateService } from '../services/menu-state.service';
 })
 export class MainMenuComponent implements OnInit, OnDestroy {
   menuItems: MenuItem[] = [];
-  userSettings: UserSettings;
   isHelpToolbarOpened = false;
   isUserToolbarOpened = false;
 
@@ -45,7 +42,6 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   constructor(
     private menuStateService: MenuStateService,
     private qaHelperService: QaHelperService,
-    private settingsService: GlobalSettingsService,
     private busyIndicatorService: BusyIndicatorService,
     private navigationService: NavigationService,
     @Inject(APP_BOOTSTRAPPED) private appBootstrapped: Promise<void>,
@@ -73,8 +69,6 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.userSettings = this.settingsService.userSettings;
-
     this.appBootstrapped.then(() => this.extractMenuItems());
   }
 

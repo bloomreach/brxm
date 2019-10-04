@@ -24,10 +24,11 @@ import { InternalError } from '../error-handling/models/internal-error';
 import { NotFoundError } from '../error-handling/models/not-found-error';
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
+import { AppSettingsMock } from '../models/dto/app-settings.mock';
 import { NavItemMock } from '../models/dto/nav-item.mock';
 import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
 
-import { GlobalSettingsService } from './global-settings.service';
+import { APP_SETTINGS } from './app-settings';
 import { NavConfigService } from './nav-config.service';
 import { NavigationService } from './navigation.service';
 import { UrlMapperService } from './url-mapper.service';
@@ -93,12 +94,10 @@ describe('NavigationService', () => {
   ]);
   urlMapperServiceMock.basePath = basePath;
 
-  const globalSettingsServiceMock: any = {
-    appSettings: {
-      navAppBaseURL: 'https://some-domain.com/iframe1/url',
-      initialPath: '/iframe1/url/app/path/to/home',
-    },
-  };
+  const appSettingsMock = new AppSettingsMock({
+    basePath: '/base-path',
+    initialPath: '/iframe1/url/app/path/to/home',
+  });
 
   const errorHandlingServiceMock = jasmine.createSpyObj('ErrorHandlingService', [
     'clearError',
@@ -139,8 +138,8 @@ describe('NavigationService', () => {
         { provide: MenuStateService, useValue: menuStateServiceMock },
         { provide: BreadcrumbsService, useValue: breadcrumbsServiceMock },
         { provide: UrlMapperService, useValue: urlMapperServiceMock },
-        { provide: GlobalSettingsService, useValue: globalSettingsServiceMock },
         { provide: ErrorHandlingService, useValue: errorHandlingServiceMock },
+        { provide: APP_SETTINGS, useValue: appSettingsMock },
       ],
     });
 

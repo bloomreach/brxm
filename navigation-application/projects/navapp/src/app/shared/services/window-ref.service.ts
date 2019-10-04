@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
+import { Injectable } from '@angular/core';
 
-import { OverlayComponent } from './components/overlay/overlay.component';
-import { MaterialModule } from './material/material.module';
-import { WindowRef } from './services/window-ref.service';
+import { AppSettings } from '../../models/dto/app-settings.dto';
+import { UserSettings } from '../../models/dto/user-settings.dto';
 
-@NgModule({
-  imports: [CommonModule],
-  declarations: [OverlayComponent],
-  providers: [WindowRef],
-  exports: [MaterialModule, OverlayComponent],
-})
-export class SharedModule {}
+export interface CustomWindow extends Window {
+  NavAppSettings: {
+    appSettings: AppSettings,
+    userSettings: UserSettings,
+  };
+}
+
+@Injectable()
+export class WindowRef {
+  get nativeWindow(): CustomWindow {
+    return window as any;
+  }
+}
