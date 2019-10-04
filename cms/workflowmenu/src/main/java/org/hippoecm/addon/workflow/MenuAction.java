@@ -76,14 +76,6 @@ class MenuAction extends Panel implements IContextMenu {
         } else if (fragment instanceof Fragment) {
             link.add(fragment);
         }
-
-        fragment = wf.getFragment("icon");
-        if (fragment instanceof ActionDescription.ActionDisplay) {
-            ((ActionDescription.ActionDisplay) fragment).substantiate();
-            link.add(fragment);
-        } else if (fragment instanceof Fragment) {
-            link.add(fragment);
-        }
     }
 
     public void collapse(final AjaxRequestTarget target) {

@@ -1,4 +1,4 @@
-// Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,29 +14,30 @@
 
 .hippo-tree {
   min-width: 100%;
-
   width: intrinsic;           // Safari/WebKit uses a non-standard name
   width: -moz-max-content;    // Firefox/Gecko
   width: -webkit-max-content;
 
   .wicket-tree {
-    padding: 0 0 4px 0;
+    padding: 4px 0 4px 0;
     white-space: nowrap;
-
-    // Set to relative to allow highlight-widget to go under
-    position: relative;
-    z-index: 2;
 
     // Make the rows expand so it will activate the scrolling of the .hippotree div
     .row {
+      align-items: stretch;
+      display: flex;
+      height: 24px;
+      padding-left: 16px;
       white-space: nowrap;
-      height: 20px;
-      padding: 2px 4px 0 8px;
-      clear: both;
-      font-size: $font-size-svg-fix;
+
+      &:hover:not(.row-selected) {
+        background-color: $tree-hover-background-color;
+      }
 
       .a_ {
-        height: 1.8em;
+        align-items: stretch;
+        display: flex;
+        flex-grow: 1;
 
         svg {
           // Edge and Firefox will both trigger mouse-leave events on a <div/> when hovering over a nested SVG image,
@@ -45,19 +46,23 @@
         }
 
         a:first-of-type:focus {
-          outline: 0;
           background-color: transparent;
+          outline: 0;
         }
       }
 
       .hippo-tree-junction-link {
-        display: inline-block;
+        align-items: center;
+        display: flex;
+        padding-right: 4px;
       }
 
       .hippo-tree-node-link {
-        display: inline-block;
+        align-items: center;
+        color: $text-color;
+        display: flex;
+        flex-grow: 1;
         text-decoration: none;
-        color: $tree-text-color;
 
         // Folder icon
         .hi-folder,
@@ -66,8 +71,6 @@
         }
 
         &:hover {
-          color: $tree-hover-color;
-
           .hi-folder,
           .hi-folder-open {
             color: $tree-hover-color;
@@ -77,23 +80,22 @@
         // Text label
         > span + span {
           display: inline-block;
-          position: relative;
-          top: 1px;
+          margin-top: 1px;
+          padding-left: 4px;
         }
       }
 
       .hippo-tree-dropdown-icon-container {
-        background: transparent;
-        position: absolute;
+        color: $gray60;
         display: none;
+        position: absolute;
 
-        // hide text below context-icon
         svg {
-          background-color: $white;
+          background-color: $gray5Solid; // hide text below context-icon
         }
 
         &:hover {
-          color: $primary;
+          color: $gray87;
         }
       }
 
@@ -104,33 +106,29 @@
 
     // Selected tree item
     .row-selected {
-      font-weight: 600;
+      background-color: $blueLight;
+      font-weight: $tree-selected-font-weight;
 
       // Text label
       .hippo-tree-node-link span {
-        color: $white;
+        color: $gray87;
       }
 
       // white SVGs when node is selected
       .hippo-tree-junction-link svg.hi,
       .hippo-tree-node-link svg.hi,
       .hippo-tree-node-link:hover svg.hi {
-        color: $white;
+        color: $gray87;
       }
 
       .hippo-tree-dropdown-icon-container svg {
-        color: $white;
-        background-color: $primary;
+        background-color: $blueLightSolid;
       }
     }
 
     .indent-line,   // tree whitespace
     .indent-blank {  // tree whitespace
-    //.icon {         // legacy icon
-      float: left;
-      width: 18px;
-      height: 1.5em;
-      min-height: 18px;
+      width: 20px;
     }
 
     // Junction icons
@@ -143,18 +141,4 @@
       }
     }
   }
-
-  // Blue highlight widget
-  .hippo-tree-highlight-widget {
-    border-radius: 4px;
-    background-color: $primary;
-    position: relative;
-    z-index: 1;
-    height: 22px;
-    width: auto;
-    // The following top-margin is a workaround so the parent element does not claim 22 extra pixels on the bottom which
-    // in turn results in a scrollbar even though it is not (yet) needed.
-    margin: -22px 4px 0;
-  }
 }
-

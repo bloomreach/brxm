@@ -1,4 +1,4 @@
-// Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,31 +14,26 @@
 
 .gallery-upload-panel {
   .upload-wrapper {
-    padding: 10px;
-    border: 1px solid $lighter-shade;
+    background-color: $grayLightSolid;
+    display: flex;
+    padding: 8px 16px;
 
     .uploadpanel {
-      display:inline-block;
-      flex-shrink: 1;
+      display: flex;
 
       .fileinput-button {
         display: flex;
         align-items: center;
 
         .fileupload-label {
-          margin-right:0.5em;
+          margin-right: .5em;
         }
       }
     }
 
     .upload-button {
-      display:inline-block;
-      margin: 0 0 0 2px;
-      position:absolute;
-    }
-
-    .upload-button-osx {
-      position: relative;
+      display: inline-block;
+      margin-left: 8px;
     }
   }
 }
