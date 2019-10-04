@@ -63,7 +63,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
     @Path("/{itemUUID}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @PrivilegesAllowed(value = CHANNEL_WEBMASTER_PRIVILEGE_NAME, absPath = "test")
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response createContainerItem(final @PathParam("itemUUID") String itemUUID,
                                         final @QueryParam("lastModifiedTimestamp") long versionStamp) throws ContainerException {
         if (StringUtils.isEmpty(itemUUID)) {
