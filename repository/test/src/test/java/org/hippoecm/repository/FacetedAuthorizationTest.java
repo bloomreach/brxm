@@ -384,37 +384,6 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     }
 
     @Test
-    public void awkward_permissions_logic_REPO_1971() throws RepositoryException {
-
-        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
-
-        assertFalse("User session should not have write access to the checked node",
-                userSession.hasPermission(testData.getPath() + "/" + "readdoc0", Session.ACTION_ADD_NODE));
-
-        // node 'foo' does not exist below 'readdoc0', but the action is checked against the parent 'readdoc0' which does exist
-        assertFalse("User session should not have write access to the checked node",
-                userSession.hasPermission(testData.getPath() + "/" + "readdoc0/foo", Session.ACTION_ADD_NODE));
-
-
-        // TODO node 'foo' does not exist below 'readdoc0' : The action is checked agains 'readdoc0/foo' which does not exist
-        // TODO and thus HippoAccessManager.hasPrivileges(org.apache.jackrabbit.spi.Path, javax.jcr.security.Privilege[]) returns
-        // TODO true because getNodeId(absPath) returns null
-        // TODO Perhaps this is needed for some obscure clustering logic, however not clear from the code (at all) and
-        // TODO version history does go long enough back
-        assertTrue("UNEXPECTED TRUE",
-                userSession.hasPermission(testData.getPath() + "/" + "readdoc0/foo/bar", Session.ACTION_ADD_NODE));
-    }
-
-    @Test
-    public void awkward_permissions_logic_REPO_1971_2() throws RepositoryException {
-        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
-        // TODO 'foo' is not a known privilege....why does this return true?
-        assertTrue("UNEXPECTED TRUE : 'foo' is not a known privilege : why does this return true?",
-                userSession.hasPermission(testData.getPath() + "/" + "readdoc0/foo", "foo"));
-
-    }
-
-    @Test
     public void testDocumentsAreOrderedBelowHandle() throws RepositoryException {
         Node testRoot = session.getRootNode().getNode(TEST_DATA_NODE);
         final Node handle = testRoot.addNode("doc", "hippo:handle");
@@ -628,9 +597,13 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", JCR_MODIFY_PROPERTIES));
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/newprop", Session.ACTION_SET_PROPERTY));
         assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/newprop", Session.ACTION_SET_PROPERTY));
-        // see REPO-1971 ('dummy' does not exist)
-        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/dummy", Session.ACTION_REMOVE));
-        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/dummy", JCR_REMOVE_NODE));
+        assertTrue("REPO-1971 Session.ACTION_REMOVE check on non-existing document is allowed",
+                userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/dummy", Session.ACTION_REMOVE));
+        try {
+            userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/dummy", JCR_REMOVE_NODE);
+            fail("REPO-1971: jcr:removeNode permission check on a non-existing path should fail with PathNotFoundException");
+        } catch (PathNotFoundException ignore) {
+        }
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", JCR_REMOVE_CHILD_NODES));
 
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/newnode", Session.ACTION_ADD_NODE));
@@ -649,9 +622,11 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/newprop", Session.ACTION_SET_PROPERTY));
         assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/newprop", Session.ACTION_SET_PROPERTY));
         assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/dummy", Session.ACTION_REMOVE));
-        // see REPO-1971 ('dummy' does not exist)
-        assertTrue("REPO-1971 remove on non-existing document is allowed",
-                userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/dummy", JCR_REMOVE_NODE));
+        try {
+            userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/dummy", JCR_REMOVE_NODE);
+            fail("REPO-1971: jcr:removeNode permission check on a non-existing path should fail with PathNotFoundException");
+        } catch (PathNotFoundException ignore) {
+        }
         assertFalse("REPO-1971 'level1/level2' does exist and should not be allowed to be removed by the userSession",
                 userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2", JCR_REMOVE_NODE));
         assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1", JCR_REMOVE_CHILD_NODES));
@@ -673,9 +648,11 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         assertTrue("user should have write access to properties of document",
                 userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/newprop", Session.ACTION_SET_PROPERTY));
         assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/dummy", Session.ACTION_REMOVE));
-        // see REPO-1971 ('dummy' does not exist)
-        assertTrue("REPO-1971 remove on non-existing document is allowed",
-                userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/dummy", JCR_REMOVE_NODE));
+        try {
+            userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/dummy", JCR_REMOVE_NODE);
+            fail("REPO-1971: jcr:removeNode permission check on a non-existing path should fail with PathNotFoundException");
+        } catch (PathNotFoundException ignore) {
+        }
         assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2", JCR_REMOVE_NODE));
         assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1", JCR_REMOVE_CHILD_NODES));
 
@@ -693,9 +670,11 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1", JCR_MODIFY_PROPERTIES));
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/newprop", Session.ACTION_SET_PROPERTY));
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/dummy", Session.ACTION_REMOVE));
-        // see REPO-1971 ('dummy' does not exist)
-        assertTrue("REPO-1971 remove on non-existing document is allowed",
-                userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/dummy", JCR_REMOVE_NODE));
+        try {
+            userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/dummy", JCR_REMOVE_NODE);
+            fail("REPO-1971: jcr:removeNode permission check on a non-existing path should fail with PathNotFoundException");
+        } catch (PathNotFoundException ignore) {
+        }
         assertFalse("'level2' node is still not readable and thus should not inherit jcr:write",
                 userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2", JCR_REMOVE_NODE));
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1", JCR_REMOVE_CHILD_NODES));
@@ -714,9 +693,11 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2", JCR_MODIFY_PROPERTIES));
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2/newprop", Session.ACTION_SET_PROPERTY));
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2/dummy", Session.ACTION_REMOVE));
-        // see REPO-1971 ('dummy' does not exist)
-        assertTrue("REPO-1971 remove on non-existing document is allowed",
-                userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2/dummy", JCR_REMOVE_NODE));
+        try {
+            userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2/dummy", JCR_REMOVE_NODE);
+            fail("REPO-1971: jcr:removeNode permission check on a non-existing path should fail with PathNotFoundException");
+        } catch (PathNotFoundException ignore) {
+        }
         assertTrue("'level2' node is still not readable and thus should not inherit jcr:write",
                 userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2", JCR_REMOVE_NODE));
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2", JCR_REMOVE_CHILD_NODES));
