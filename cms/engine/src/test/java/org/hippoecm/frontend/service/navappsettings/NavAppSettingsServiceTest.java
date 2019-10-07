@@ -106,6 +106,10 @@ public class NavAppSettingsServiceTest {
         replay(request);
         expect(parameters.getParameterValue(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER))
                 .andStubReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.UUID_PARAM))
+                .andStubReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.PATH_PARAM))
+                .andStubReturn(StringValue.valueOf((String) null));
         replay(parameters);
 
         expect(servletRequest.getHeader("X-Forwarded-Proto")).andReturn(scheme);
@@ -319,11 +323,44 @@ public class NavAppSettingsServiceTest {
         final String someInitialPath = "a/b/c?x=y&p=q";
         expect(parameters.getParameterValue(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER))
                 .andReturn(StringValue.valueOf(someInitialPath));
+        expect(parameters.getParameterValue(NavAppSettingsService.UUID_PARAM))
+                .andStubReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.PATH_PARAM))
+                .andStubReturn(StringValue.valueOf((String) null));
         replay(parameters);
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
         assertThat(navAppSettings.getAppSettings().getInitialPath(), is(someInitialPath));
     }
 
+    @Test
+    public void uuid_parameter_is_set() {
+        reset(parameters);
+        final String someUUID = "{mock-uuid}";
+        expect(parameters.getParameterValue(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER))
+                .andStubReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.UUID_PARAM))
+                .andReturn(StringValue.valueOf((String) someUUID));
+        expect(parameters.getParameterValue(NavAppSettingsService.PATH_PARAM))
+                .andStubReturn(StringValue.valueOf((String) null));
+        replay(parameters);
+        final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
+        assertThat(navAppSettings.getAppSettings().getInitialPath(), is("/browser/uuid/" + someUUID));
+    }
+
+    @Test
+    public void path_parameter_is_set() {
+        reset(parameters);
+        final String somePath = "/path/to/document";
+        expect(parameters.getParameterValue(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER))
+                .andStubReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.UUID_PARAM))
+                .andStubReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.PATH_PARAM))
+                .andReturn(StringValue.valueOf((String) somePath));
+        replay(parameters);
+        final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
+        assertThat(navAppSettings.getAppSettings().getInitialPath(), is("/browser/path/" + somePath));
+    }
 
     private void testUserSettingsAssertions(UserSettings userSettings) {
         assertThat(userSettings.getUserName(), is("firstname lastname"));

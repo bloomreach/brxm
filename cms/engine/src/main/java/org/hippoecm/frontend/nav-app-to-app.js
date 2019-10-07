@@ -200,7 +200,11 @@
       if (perspectiveIdentifier === 'browser' && pathElements.length > 1) {
         const location = document.location;
         const url = new URL(location.href);
-        url.searchParams.append('uuid', pathElements[1]);
+        if ( pathElements[0] === 'path') {
+          url.searchParams.append('path', pathElements.slice(1).join('/'));
+        } else {
+          url.searchParams.append('uuid', pathElements[1]);
+        }
         location.assign(url.toString());
       }
 
