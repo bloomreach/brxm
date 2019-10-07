@@ -17,7 +17,7 @@
 import Penpal from 'penpal';
 import { NavItemMock } from 'projects/navapp/src/app/models/dto/nav-item.mock';
 
-import { ChildApi, ChildConfig, NavItem } from './api';
+import { ChildApi, ChildConfig, NavigationTrigger, NavItem } from './api';
 import { connectToParent, getTimeoutValue, wrapWithTimeout } from './parent';
 import { DEFAULT_COMMUNICATION_TIMEOUT } from './utils';
 
@@ -98,7 +98,7 @@ describe('connectToParent', () => {
       const promisedApi = await wrapWithTimeout(api, 100);
 
       try {
-        await promisedApi.navigate({ path: 'test' });
+        await promisedApi.navigate({ path: 'test' }, NavigationTrigger.NotDefined);
       } catch (err) {
         // Error should be thrown because of timeout, so all is good
         return;
@@ -116,7 +116,7 @@ describe('connectToParent', () => {
       const promisedApi = await wrapWithTimeout(api, 100);
 
       try {
-        await promisedApi.navigate({ path: 'test' });
+        await promisedApi.navigate({ path: 'test' }, NavigationTrigger.NotDefined);
       } catch (err) {
         expect(err).toEqual(errorMessage);
       }
