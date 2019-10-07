@@ -59,4 +59,22 @@ describe('UrlBuilderImpl', () => {
       expect(() => builder.getApiUrl(path)).toThrow(message);
     });
   });
+
+  describe('getSpaUrl', () => {
+    const options1 = { cmsBaseUrl: 'http://localhost:8080/site/spa' };
+    const options2 = { ...options1, spaBaseUrl: '//example.com/something' };
+
+    it.each`
+      options     | path                      | expected
+      ${options1} | ${'/'}                    | ${'/'}
+      ${options1} | ${'/news'}                | ${'/news'}
+      ${options1} | ${'/site/spa/news/'}      | ${'/news/'}
+      ${options1} | ${'/site/spa/news?query'} | ${'/news?query'}
+      ${options2} | ${'/site/spa/about'}      | ${'//example.com/something/about'}
+    `('should create an SPA URL for "$path" using options "$options"', ({ options, path, expected }) => {
+      const builder = new UrlBuilderImpl(options);
+
+      expect(builder.getSpaUrl(path)).toBe(expected);
+    });
+  });
 });

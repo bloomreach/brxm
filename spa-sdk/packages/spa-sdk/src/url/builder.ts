@@ -52,6 +52,12 @@ export interface UrlBuilder {
    * @returns The Page Model API URL.
    */
   getApiUrl(path: string): string;
+
+  /**
+   * @param path Source path to generate an SPA URL.
+   * @return The SPA URL for the channel path from the source path.
+   */
+  getSpaUrl(path: string): string;
 }
 
 export class UrlBuilderImpl {
@@ -87,5 +93,15 @@ export class UrlBuilderImpl {
     const channelPath = pathname.substring(basePath.length);
 
     return UrlBuilderImpl.appendQuery(`${apiBaseUrl}${channelPath}${apiUrlSuffix}`, query);
+  }
+
+  getSpaUrl(path: string) {
+    const { cmsBaseUrl, spaBaseUrl = DEFAULT_SPA_BASE_URL } = this.options;
+    const basePath = UrlBuilderImpl.getUrlPath(cmsBaseUrl);
+    const channelPath = basePath && path.startsWith(basePath)
+      ? path.substring(basePath.length)
+      : path;
+
+    return `${spaBaseUrl}${channelPath}`;
   }
 }
