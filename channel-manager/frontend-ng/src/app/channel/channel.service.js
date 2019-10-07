@@ -51,7 +51,7 @@ class ChannelService {
 
     const parentOrigin = window.location.origin;
     const methods = {
-      navigate: (location, flags) => this.updateNavLocation(flags),
+      navigate: (location, flags) => this.navigate(flags),
     };
     this.parentApiPromise = connectToParent({ parentOrigin, methods });
   }
@@ -339,6 +339,14 @@ class ChannelService {
 
   setToolbarDisplayed(state) {
     this.isToolbarDisplayed = state;
+  }
+
+  navigate(flags) {
+    if (this.channel) {
+      this.reload().then(() => this.updateNavLocation(flags));
+    } else {
+      this.updateNavLocation(flags);
+    }
   }
 
   updateNavLocation(flags) {
