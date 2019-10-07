@@ -87,6 +87,22 @@ public class MountResourceTest extends AbstractMountResourceTest {
         assertFalse("Preview config node should not exist yet.",
                 session.nodeExists(previewConfigurationPath));
 
+        assertTrue("Preview and live channel should have the same paths, as preview does not exist yet",
+                pccs.getEditingPreviewChannelPath().equals(pccs.getEditingLiveChannelPath()));
+
+        //PageComposerContextService tests prior to editing
+        if (channelNodeInWorkspace) {
+            assertEquals("Wrong value for live channel path from page composer context service (before editing channel).",
+                    "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:channel", pccs.getEditingLiveChannelPath());
+            assertEquals("Wrong value for preview channel path from page composer context service (before editing channel).",
+                    "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:channel", pccs.getEditingPreviewChannelPath());
+        } else {
+            assertEquals("Wrong value for live channel path from page composer context service (before editing channel).",
+                    "/hst:hst/hst:configurations/unittestproject/hst:channel", pccs.getEditingLiveChannelPath());
+            assertEquals("Wrong value for preview channel path from page composer context service (before editing channel).",
+                    "/hst:hst/hst:configurations/unittestproject/hst:channel", pccs.getEditingPreviewChannelPath());
+        }
+
         mountResource.startEdit();
 
         assertTrue("Live config node should exist",
@@ -117,11 +133,25 @@ public class MountResourceTest extends AbstractMountResourceTest {
                     "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:channel", previewChannel.getChannelPath());
 
             assertTrue("Because hst:channel below hst:workspace, it should be editable.", previewChannel.isChannelSettingsEditable());
+
+            //PageComposerContextService tests after editing
+            assertEquals("Wrong value for live channel path from page composer context service (after editing channel).",
+                    "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:channel", pccs.getEditingLiveChannelPath());
+            assertEquals("Wrong value for preview channel path from page composer context service (after editing channel).",
+                    "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:channel", pccs.getEditingPreviewChannelPath());
+
         } else {
             assertEquals("Because hst:channel not below hst:workspace, it should not be copied to the preview config.",
                     "/hst:hst/hst:configurations/unittestproject/hst:channel", previewChannel.getChannelPath());
 
             assertFalse("Because hst:channel not below hst:workspace, it should not be editable.", previewChannel.isChannelSettingsEditable());
+
+            //PageComposerContextService tests after editing
+            assertEquals("Wrong value for live channel path from page composer context service (after editing channel).",
+                    "/hst:hst/hst:configurations/unittestproject/hst:channel", pccs.getEditingLiveChannelPath());
+            assertEquals("Wrong value for preview channel path from page composer context service (after editing channel).",
+                    "/hst:hst/hst:configurations/unittestproject/hst:channel", pccs.getEditingPreviewChannelPath());
+
         }
 
         final String previewContainerNodeUUID = session.getNode(previewConfigurationPath)
