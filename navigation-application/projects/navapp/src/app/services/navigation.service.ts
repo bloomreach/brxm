@@ -245,16 +245,6 @@ export class NavigationService implements OnDestroy {
       skip(1),
     ).subscribe(
       n => {
-        const { breadcrumbLabel } = n.state;
-
-        this.menuStateService.activateMenuItem(n.navItem.appIframeUrl, n.navItem.appPath);
-        this.breadcrumbsService.setSuffix(breadcrumbLabel);
-
-        if (n.source === NavigationTrigger.Imperative) {
-          n.state.flags = JSON.stringify(n.clientAppFlags);
-          this.setBrowserUrl(n.url, n.state, n.replaceState);
-        }
-
         n.resolve();
         this.events.next(new NavigationStopEvent());
       },
@@ -292,11 +282,20 @@ export class NavigationService implements OnDestroy {
 
   private processTransition(transition: Transition): Observable<Navigation> {
     return of(transition).pipe(
+      // Eagerly update the browser url
+      tap(t => {
+        if (t.source === NavigationTrigger.Imperative) {
+          t.state.flags = JSON.stringify(t.clientAppFlags);
+          this.setBrowserUrl(t.url, t.state, t.replaceState);
+        }
+      }),
       // Resolving the url
       switchMap((t: Transition) => {
         const route = this.matchRoute(t.url);
 
         if (!route) {
+          this.menuStateService.deactivateMenuItem();
+
           return throwError(new NotFoundError(`Unknown url: ${t.url}`));
         }
 
@@ -308,6 +307,13 @@ export class NavigationService implements OnDestroy {
         const appPathAddOn = t.url.slice(route.path.length);
 
         return of({ ...t, navItem: route.navItem, appPathAddOn });
+      }),
+      // Eagerly update the menu and teh breadcrumb label
+      tap(t => {
+        const { breadcrumbLabel } = t.state;
+
+        this.menuStateService.activateMenuItem(t.navItem.appIframeUrl, t.navItem.appPath);
+        this.breadcrumbsService.setSuffix(breadcrumbLabel);
       }),
       // Client navigation
       switchMap(t => {

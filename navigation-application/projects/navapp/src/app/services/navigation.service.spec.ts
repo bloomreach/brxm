@@ -72,6 +72,7 @@ describe('NavigationService', () => {
 
   const menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
     'activateMenuItem',
+    'deactivateMenuItem',
   ]);
   menuStateServiceMock.homeMenuItem = {
     navItem: {
@@ -315,7 +316,53 @@ describe('NavigationService', () => {
       expect(locationMock.go).not.toHaveBeenCalled();
     }));
 
-    describe('errors handling', () => {
+    describe('eager state update', () => {
+      const invalidNavItem = new NavItemMock({
+        appIframeUrl: 'http://domain.com/some/unknown/url',
+        appPath: 'app/path/to/other-page',
+      });
+      const validNavItem = new NavItemMock({
+        appIframeUrl: 'http://domain.com/iframe1/url',
+        appPath: 'app/path/to/page1',
+      });
+
+      beforeEach(() => {
+        childApi.navigate.and.returnValue(Promise.reject(new Error('Some error')));
+      });
+
+      it('should update the browser\'s url before any errors are thrown (before resolving an active route)', () => {
+        const expectedError = new NotFoundError();
+
+        service.navigateByNavItem(invalidNavItem);
+
+        expect(locationMock.go).toHaveBeenCalledWith(
+          '/base-path/some/unknown/url/app/path/to/other-page',
+          '',
+          { flags: '{}' },
+        );
+        expect(errorHandlingServiceMock.setError).toHaveBeenCalledWith(expectedError);
+      });
+
+      it('should activate the new appropriate menu item before calling childApi.navigate()', fakeAsync(() => {
+        service.navigateByNavItem(validNavItem);
+
+        tick();
+
+        expect(menuStateServiceMock.activateMenuItem).toHaveBeenCalledWith('http://domain.com/iframe1/url', 'app/path/to/page1');
+        expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(undefined, 'Some error');
+      }));
+
+      it('should set the breadcrumb label before calling childApi.navigate()', fakeAsync(() => {
+        service.navigateByNavItem(validNavItem, 'some breadcrumb label');
+
+        tick();
+
+        expect(breadcrumbsServiceMock.setSuffix).toHaveBeenCalledWith('some breadcrumb label');
+        expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(undefined, 'Some error');
+      }));
+    });
+
+    describe('error handling', () => {
       it('should clear the app error during navigation', fakeAsync(() => {
         service.navigateByNavItem(new NavItemMock(), 'some breadcrumb label');
 
