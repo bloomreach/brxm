@@ -54,6 +54,12 @@ export interface UrlBuilder {
   getApiUrl(path: string): string;
 
   /**
+   * @param path Source path to the CMS resource.
+   * @returns The URL to the CMS resource.
+   */
+  getCmsUrl(path: string): string;
+
+  /**
    * @param path Source path to generate an SPA URL.
    * @return The SPA URL for the channel path from the source path.
    */
@@ -93,6 +99,16 @@ export class UrlBuilderImpl {
     const channelPath = pathname.substring(basePath.length);
 
     return UrlBuilderImpl.appendQuery(`${apiBaseUrl}${channelPath}${apiUrlSuffix}`, query);
+  }
+
+  getCmsUrl(path: string) {
+    const { cmsBaseUrl } = this.options;
+    const basePath = UrlBuilderImpl.getUrlPath(cmsBaseUrl);
+    const origin = basePath && cmsBaseUrl.endsWith(basePath)
+      ? cmsBaseUrl.substring(0, cmsBaseUrl.length - basePath.length)
+      : cmsBaseUrl;
+
+    return `${origin}${path}`;
   }
 
   getSpaUrl(path: string) {

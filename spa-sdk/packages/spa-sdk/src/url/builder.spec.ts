@@ -60,6 +60,23 @@ describe('UrlBuilderImpl', () => {
     });
   });
 
+  describe('getCmsUrl', () => {
+    const options1 = { cmsBaseUrl: 'http://localhost:8080/site/spa' };
+    const options2 = { cmsBaseUrl: '//example.com' };
+
+    it.each`
+      options     | path       | expected
+      ${options1} | ${'/'}     | ${'http://localhost:8080/'}
+      ${options1} | ${'/news'} | ${'http://localhost:8080/news'}
+      ${options2} | ${'/'}     | ${'//example.com/'}
+      ${options2} | ${'/news'} | ${'//example.com/news'}
+    `('should create a CMS URL for "$path" using options "$options"', ({ options, path, expected }) => {
+      const builder = new UrlBuilderImpl(options);
+
+      expect(builder.getCmsUrl(path)).toBe(expected);
+    });
+  });
+
   describe('getSpaUrl', () => {
     const options1 = { cmsBaseUrl: 'http://localhost:8080/site/spa' };
     const options2 = { ...options1, spaBaseUrl: '//example.com/something' };
