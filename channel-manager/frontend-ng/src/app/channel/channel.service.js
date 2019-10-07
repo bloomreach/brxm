@@ -28,6 +28,7 @@ class ChannelService {
     HstService,
     PathService,
     ProjectService,
+    RightSidePanelService,
     SessionService,
     SiteMapService,
   ) {
@@ -43,6 +44,7 @@ class ChannelService {
     this.HstService = HstService;
     this.PathService = PathService;
     this.ProjectService = ProjectService;
+    this.RightSidePanelService = RightSidePanelService;
     this.SessionService = SessionService;
     this.SiteMapService = SiteMapService;
 
@@ -52,6 +54,7 @@ class ChannelService {
     const parentOrigin = window.location.origin;
     const methods = {
       navigate: (location, flags) => this.navigate(flags),
+      beforeNavigation: () => this._beforeNavigation(),
     };
     this.parentApiPromise = connectToParent({ parentOrigin, methods });
   }
@@ -135,6 +138,10 @@ class ChannelService {
 
   _makeContextPrefix(contextPath) {
     return this.PathService.concatPaths('/', contextPath, this.channel.cmsPreviewPrefix);
+  }
+
+  _beforeNavigation() {
+    return this.RightSidePanelService.close().then(() => undefined);
   }
 
   clearChannel() {
