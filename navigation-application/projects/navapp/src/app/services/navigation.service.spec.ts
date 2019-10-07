@@ -250,7 +250,7 @@ describe('NavigationService', () => {
 
       tick();
 
-      expect(childApi.navigate).toHaveBeenCalledWith({ path: 'app/path/to/page1/internal/page1' }, {});
+      expect(childApi.navigate).toHaveBeenCalledWith({ pathPrefix: '/iframe1/url', path: 'app/path/to/page1/internal/page1' }, {});
       expect(menuStateServiceMock.activateMenuItem).toHaveBeenCalledWith('http://domain.com/iframe1/url', 'app/path/to/page1');
       expect(breadcrumbsServiceMock.setSuffix).toHaveBeenCalledWith('another breadcrumb label');
       expect(locationMock.go).toHaveBeenCalledWith(
