@@ -49,8 +49,11 @@ import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.SearchTermPanel;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.EventBusUtils;
+import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.cms7.event.HippoEventConstants;
+import org.onehippo.repository.security.SecurityConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +69,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
     private final IPluginContext context;
     private final AdminDataTable table;
     private final UserDataProvider userDataProvider;
+    private final boolean isSecurityUserManager;
 
     /**
      * Constructs a new ListUsersPanel.
@@ -85,26 +89,18 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
         this.context = context;
         this.userDataProvider = userDataProvider;
 
-        final PanelPluginBreadCrumbLink createUserLink = new PanelPluginBreadCrumbLink("create-user-link", breadCrumbModel) {
+        final HippoSession session = UserSession.get().getJcrSession();
+        isSecurityUserManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_MANAGER);
 
+        final PanelPluginBreadCrumbLink createUserLink = new PanelPluginBreadCrumbLink("create-user-link", breadCrumbModel) {
             @Override
             protected IBreadCrumbParticipant getParticipant(final String componentId) {
                 return new CreateUserPanel(componentId, breadCrumbModel, context, config);
             }
-
-            @Override
-            public boolean isVisible() {
-                return isUserCreationEnabled();
-            }
         };
-
-        final WebMarkupContainer createButtonContainer = new WebMarkupContainer("create-user-button-container") {
-            @Override
-            public boolean isVisible() {
-                return isUserCreationEnabled();
-            }
-        };
-
+        createUserLink.setVisible(isUserCreationEnabled() && isSecurityUserManager);
+        final WebMarkupContainer createButtonContainer = new WebMarkupContainer("create-user-button-container");
+        createButtonContainer.setVisible(isUserCreationEnabled() && isSecurityUserManager);
         createButtonContainer.add(createUserLink);
         add(createButtonContainer);
 
@@ -153,8 +149,11 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
             @Override
             public void populateItem(final Item<ICellPopulator<User>> cellItem, final String componentId,
                                      final IModel<User> rowModel) {
-
-                cellItem.add(new DeleteUserActionLink(componentId, new ResourceModel("user-remove-action"), rowModel));
+                if (isSecurityUserManager && !rowModel.getObject().isExternal()) {
+                    cellItem.add(new DeleteUserActionLink(componentId, new ResourceModel("user-remove-action"), rowModel));
+                } else {
+                    cellItem.add(new Label(componentId, ""));
+                }
             }
         });
 

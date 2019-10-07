@@ -53,11 +53,14 @@ import org.hippoecm.frontend.plugins.cms.admin.groups.ViewGroupActionLink;
 import org.hippoecm.frontend.plugins.cms.admin.permissions.DomainLinkListPanel;
 import org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionBean;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.EventBusUtils;
 import org.hippoecm.frontend.widgets.UpdateFeedbackInfo;
 
+import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.cms7.event.HippoEventConstants;
 
+import org.onehippo.repository.security.SecurityConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,12 +71,16 @@ public class SetMembershipsPanel extends Panel {
     private final IModel userModel;
     private final IPluginContext context;
     private final HippoForm hippoForm;
+    private final boolean isSecurityUserManager;
 
     public SetMembershipsPanel(final String id, final IPluginContext context,
                                final IBreadCrumbModel breadCrumbModel, final IModel<User> userModel) {
         super(id);
 
         setOutputMarkupId(true);
+
+        final HippoSession session = UserSession.get().getJcrSession();
+        isSecurityUserManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_MANAGER);
 
         selectedGroup = null;
         this.userModel = userModel;
@@ -119,22 +126,23 @@ public class SetMembershipsPanel extends Panel {
                 return selectedGroup != null;
             }
         };
+        submit.setVisible(isSecurityUserManager);
         hippoForm.add(submit);
 
-        final List<Group> localGroups = Group.getLocalGroups();
-        final DropDownChoice<Group> ddc = new DropDownChoice<>("local-groups", PropertyModel.of(this, "selectedGroup"),
-                localGroups, new ChoiceRenderer<>("groupname"));
-        ddc.setNullValid(false);
-        ddc.add(new AjaxFormComponentUpdatingBehavior("change") {
-            @Override
-            protected void onUpdate(final AjaxRequestTarget target) {
-                target.add(submit);
-            }
-        });
+        if (isSecurityUserManager) {
+            final List<Group> localGroups = Group.getLocalGroups();
+            final DropDownChoice<Group> ddc = new DropDownChoice<>("local-groups", PropertyModel.of(this, "selectedGroup"),
+                    localGroups, new ChoiceRenderer<>("groupname"));
+            ddc.setNullValid(false);
+            ddc.add(new AjaxFormComponentUpdatingBehavior("change") {
+                @Override
+                protected void onUpdate(final AjaxRequestTarget target) {
+                    target.add(submit);
+                }
+            });
 
-        hippoForm.add(ddc);
-        add(hippoForm);
-
+            hippoForm.add(ddc);
+        }
         // local memberships
         final Label localLabel = new Label("local-memberships-label", new ResourceModel("user-local-memberships"));
         final MembershipsListEditView localList =
@@ -159,6 +167,8 @@ public class SetMembershipsPanel extends Panel {
                 breadCrumbModel.setActive(all.get(all.size() - 2));
             }
         }.setDefaultFormProcessing(false));
+
+        add(hippoForm);
     }
 
     private void showError(final String message, final AjaxRequestTarget target) {
@@ -207,23 +217,27 @@ public class SetMembershipsPanel extends Panel {
 
             addDomainLinkListPanelForGroup(item, group);
 
-            item.add(new AjaxLinkLabel("remove", new ResourceModel("user-membership-remove-action")) {
-                @Override
-                public void onClick(final AjaxRequestTarget target) {
-                    hippoForm.clearFeedbackMessages();
-                    try {
-                        group.removeMembership(user.getUsername());
+            if (isSecurityUserManager) {
+                item.add(new AjaxLinkLabel("remove", new ResourceModel("user-membership-remove-action")) {
+                    @Override
+                    public void onClick(final AjaxRequestTarget target) {
+                        hippoForm.clearFeedbackMessages();
+                        try {
+                            group.removeMembership(user.getUsername());
 
-                        EventBusUtils.post("remove-user-from-group", HippoEventConstants.CATEGORY_GROUP_MANAGEMENT,
-                                String.format("removed user %s from group %s", user.getUsername(), group.getGroupname()));
-                        showInfo(getString("user-membership-removed", Model.of(group)), target);
-                    } catch (final RepositoryException e) {
-                        showError(getString("user-membership-remove-failed", Model.of(group)), target);
-                        log.error("Failed to remove memberships", e);
+                            EventBusUtils.post("remove-user-from-group", HippoEventConstants.CATEGORY_GROUP_MANAGEMENT,
+                                    String.format("removed user %s from group %s", user.getUsername(), group.getGroupname()));
+                            showInfo(getString("user-membership-removed", Model.of(group)), target);
+                        } catch (final RepositoryException e) {
+                            showError(getString("user-membership-remove-failed", Model.of(group)), target);
+                            log.error("Failed to remove memberships", e);
+                        }
+                        target.add(updateTarget);
                     }
-                    target.add(updateTarget);
-                }
-            });
+                });
+            } else {
+                item.add(new Label("remove", ""));
+            }
         }
     }
 
