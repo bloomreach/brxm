@@ -22,14 +22,16 @@ import { ReplaySubject } from 'rxjs';
 import { ClientErrorCodes } from '../../../../navapp-communication/src/lib/api';
 import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
-import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
+import { GlobalSettingsMock } from '../models/dto/global-settings.mock';
 
 import { BusyIndicatorService } from './busy-indicator.service';
 import { CommunicationsService } from './communications.service';
+import { GlobalSettingsService } from './global-settings.service';
 import { LogoutService } from './logout.service';
 import { NavConfigService } from './nav-config.service';
 import { NavigationService } from './navigation.service';
 import { OverlayService } from './overlay.service';
+import { UserActivityService } from './user-activity.service';
 
 describe('CommunicationsService', () => {
   let service: CommunicationsService;
@@ -42,9 +44,9 @@ describe('CommunicationsService', () => {
 
   const activeMenuItem$ = new ReplaySubject(1);
 
-  const overlayServiceMock = jasmine.createSpyObj('OverlayService', [
-    'enable',
-    'disable',
+  const busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', [
+    'show',
+    'hide',
   ]);
 
   const clientAppServiceMock = jasmine.createSpyObj('ClientAppService', [
@@ -53,9 +55,8 @@ describe('CommunicationsService', () => {
     'logoutApps',
   ]);
 
-  const busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', [
-    'show',
-    'hide',
+  const logoutServiceMock = jasmine.createSpyObj('LogoutService', [
+    'logout',
   ]);
 
   const navigationServiceMock = jasmine.createSpyObj('NavigationService', [
@@ -63,13 +64,16 @@ describe('CommunicationsService', () => {
     'updateByNavLocation',
   ]);
 
-  const logoutServiceMock = jasmine.createSpyObj('LogoutService', [
-    'logout',
+  const overlayServiceMock = jasmine.createSpyObj('OverlayService', [
+    'enable',
+    'disable',
   ]);
 
-  const errorHandlingServiceMock = jasmine.createSpyObj('ErrorHandlingService', [
-    'setClientError',
+  const userActivityServiceMock = jasmine.createSpyObj('UserActivityService', [
+    'broadcastUserActivity',
   ]);
+
+  const globalSettingsServiceMock = new GlobalSettingsMock();
 
   beforeEach(() => {
     const childApiMock = jasmine.createSpyObj('parentApi', {
@@ -107,7 +111,8 @@ describe('CommunicationsService', () => {
         { provide: LogoutService, useValue: logoutServiceMock },
         { provide: NavigationService, useValue: navigationServiceMock },
         { provide: OverlayService, useValue: overlayServiceMock },
-        { provide: ErrorHandlingService, useValue: errorHandlingServiceMock },
+        { provide: UserActivityService, useValue: userActivityServiceMock },
+        { provide: GlobalSettingsService, useValue: globalSettingsServiceMock },
       ],
     });
 
@@ -144,7 +149,6 @@ describe('CommunicationsService', () => {
         expect(busyIndicatorService.hide).toHaveBeenCalled();
       });
     });
-
   });
 
   describe('parent api methods', () => {
@@ -210,6 +214,14 @@ describe('CommunicationsService', () => {
           .forEach(errorCode =>
             service.parentApiMethods.onError({ errorCode, message: 'some other client error' }));
         expect(logoutServiceMock.logout.calls.count()).toBe(0);
+      });
+    });
+
+    describe('.onUserActivity', () => {
+      it('should broadcast the use activity', () => {
+        service.parentApiMethods.onUserActivity();
+
+        expect(userActivityServiceMock.broadcastUserActivity).toHaveBeenCalled();
       });
     });
   });

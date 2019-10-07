@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { async, fakeAsync, tick } from '@angular/core/testing';
+import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { ChildPromisedApi } from '@bloomreach/navapp-communication';
-import { of, Subject } from 'rxjs';
 
-import { createSpyObj } from '../../../test-utilities';
 import { Connection } from '../../models/connection.model';
+import { GlobalSettingsMock } from '../../models/dto/global-settings.mock';
+import { GlobalSettingsService } from '../../services/global-settings.service';
 import { NavConfigService } from '../../services/nav-config.service';
 import { ClientApp } from '../models/client-app.model';
 
@@ -27,6 +27,8 @@ import { ClientAppService } from './client-app.service';
 
 describe('ClientAppService', () => {
   let service: ClientAppService;
+
+  const iframesConnectionTimeout = 200;
 
   const navItemsMock = [
     {
@@ -50,8 +52,19 @@ describe('ClientAppService', () => {
     navItems: navItemsMock,
   } as any;
 
+  const globalConfigurationServiceMock = new GlobalSettingsMock();
+  globalConfigurationServiceMock.appSettings.iframesConnectionTimeout = iframesConnectionTimeout;
+
   beforeEach(() => {
-    service = new ClientAppService(navConfigServiceMock);
+    TestBed.configureTestingModule({
+      providers: [
+        ClientAppService,
+        { provide: NavConfigService, useValue: navConfigServiceMock },
+        { provide: GlobalSettingsService, useValue: globalConfigurationServiceMock },
+      ],
+    });
+
+    service = TestBed.get(ClientAppService);
   });
 
   it('should exist', () => {
@@ -69,6 +82,21 @@ describe('ClientAppService', () => {
 
     expect(console.error).toHaveBeenCalledWith('An attempt to register the connection to unknown url = http://suspect-site.com');
   });
+
+  it('should finish initialization when the timeout is reached but not all connections are registered', fakeAsync(() => {
+    let initialized = false;
+
+    service.init().then(() => initialized = true);
+
+    tick(iframesConnectionTimeout / 2);
+
+    service.addConnection(new Connection('http://app1.com', {}));
+
+    tick(iframesConnectionTimeout);
+
+    expect(initialized).toBeTruthy();
+    expect(service.apps.length).toBe(1);
+  }));
 
   it('should init', fakeAsync(() => {
     const expected = [
@@ -194,58 +222,4 @@ describe('ClientAppService', () => {
       });
     });
   });
-
-  describe('user activity', () => {
-
-    const throttleMillis = 60_000;
-    let childApi1: ChildPromisedApi;
-    let childApi2: ChildPromisedApi;
-    let childApi3: ChildPromisedApi;
-
-    beforeEach(async(() => {
-
-      navItemsMock.find(item => item.id === 'item2').appIframeUrl = 'http://app2.com';
-      navItemsMock.find(item => item.id === 'item3').appIframeUrl = 'http://app3.com';
-      service.init();
-
-      childApi1 = jasmine.createSpyObj('ChildApi', ['onUserActivity']);
-      childApi2 = jasmine.createSpyObj('ChildApi', ['onUserActivity']);
-      childApi3 = jasmine.createSpyObj('ChildApi', ['onUserActivity']);
-
-      service.addConnection(new Connection('http://app1.com', childApi1));
-      service.addConnection(new Connection('http://app2.com', childApi2));
-      service.addConnection(new Connection('http://app3.com', childApi3));
-    }));
-
-    it('should broadcast user activity to app2 and app3 if app1 is active', fakeAsync(() => {
-      service.activateApplication('http://app1.com');
-      service.onUserActivity();
-      tick(throttleMillis);
-
-      expect(childApi1.onUserActivity).not.toHaveBeenCalled();
-      expect(childApi2.onUserActivity).toHaveBeenCalled();
-      expect(childApi3.onUserActivity).toHaveBeenCalled();
-    }));
-
-    it('should broadcast user activity to app1 and app3 if app2 is active', fakeAsync(() => {
-      service.activateApplication('http://app2.com');
-      service.onUserActivity();
-      tick(throttleMillis);
-
-      expect(childApi2.onUserActivity).not.toHaveBeenCalled();
-      expect(childApi1.onUserActivity).toHaveBeenCalled();
-      expect(childApi3.onUserActivity).toHaveBeenCalled();
-    }));
-
-    it('should broadcast user activity to app1 and app2 if app3 is active', fakeAsync(() => {
-      service.activateApplication('http://app3.com');
-      service.onUserActivity();
-      tick(throttleMillis);
-
-      expect(childApi3.onUserActivity).not.toHaveBeenCalled();
-      expect(childApi1.onUserActivity).toHaveBeenCalled();
-      expect(childApi2.onUserActivity).toHaveBeenCalled();
-    }));
-  });
-
 });

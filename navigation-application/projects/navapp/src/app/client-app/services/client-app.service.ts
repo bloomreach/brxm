@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
+import { Location } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { ChildConfig, NavItem } from '@bloomreach/navapp-communication';
-import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
-import { bufferCount, first, map, switchMap, tap, throttleTime } from 'rxjs/operators';
+import { bufferTime, first, map, switchMap, tap } from 'rxjs/operators';
 
 import { CriticalError } from '../../error-handling/models/critical-error';
 import { Connection } from '../../models/connection.model';
 import { FailedConnection } from '../../models/failed-connection.model';
+import { GlobalSettingsService } from '../../services/global-settings.service';
 import { NavConfigService } from '../../services/nav-config.service';
 import { ClientApp } from '../models/client-app.model';
 
@@ -37,9 +39,11 @@ export class ClientAppService {
   private connectedApps: Map<string, ClientAppWithConfig> = new Map<string, ClientAppWithConfig>();
   private activeAppId = new BehaviorSubject<string>(undefined);
   private connection$ = new ReplaySubject<Connection>();
-  private userActivityReceived$ = new Subject<ClientApp>();
 
-  constructor(private navConfigService: NavConfigService) {}
+  constructor(
+    private navConfigService: NavConfigService,
+    private settings: GlobalSettingsService,
+  ) {}
 
   get urls$(): Observable<string[]> {
     return this.uniqueURLs.asObservable();
@@ -74,15 +78,6 @@ export class ClientAppService {
     const uniqueURLs = this.filterUniqueURLs(navItems);
     this.uniqueURLs.next(uniqueURLs);
 
-    const throttleSeconds = 30;
-    const throttleMillis = throttleSeconds * 1000;
-    this.userActivityReceived$.pipe(
-      throttleTime(throttleMillis),
-      map(activeApp => this.apps.filter(app => app !== activeApp && !!app.api.onUserActivity)),
-    ).subscribe(apps => {
-      apps.forEach(app => app.api.onUserActivity());
-    });
-
     return this.uniqueURLs.pipe(
       switchMap(urls => this.waitForConnections(urls.length)),
       map(connections => this.discardFailedConnections(connections)),
@@ -103,9 +98,9 @@ export class ClientAppService {
 
   addConnection(connection: Connection): void {
     const uniqueURLs = this.uniqueURLs.value;
+    const connectionUrl = Location.stripTrailingSlash(connection.appUrl);
 
-    const withoutTrailingSlash = connection.appUrl.replace(/\/$/, '');
-    const url = uniqueURLs.find(x => x === connection.appUrl || x === withoutTrailingSlash);
+    const url = uniqueURLs.find(x => Location.stripTrailingSlash(x) === connectionUrl);
 
     if (!url) {
       console.error(`An attempt to register the connection to unknown url = ${connection.appUrl}`);
@@ -142,11 +137,6 @@ export class ClientAppService {
     ));
   }
 
-  onUserActivity(): Promise<void> {
-    this.userActivityReceived$.next(this.activeApp);
-    return Promise.resolve();
-  }
-
   private filterUniqueURLs(navItems: NavItem[]): string[] {
     const uniqueUrlsSet = navItems.reduce((uniqueUrls, config) => {
       uniqueUrls.add(config.appIframeUrl);
@@ -162,7 +152,7 @@ export class ClientAppService {
 
   private waitForConnections(expectedNumber: number): Observable<Connection[]> {
     return this.connection$.pipe(
-      bufferCount(expectedNumber),
+      bufferTime(this.settings.appSettings.iframesConnectionTimeout * 1.5 , undefined, expectedNumber),
     );
   }
 
