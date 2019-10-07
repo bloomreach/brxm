@@ -21,9 +21,12 @@ import java.io.UnsupportedEncodingException;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.jcr.Node;
@@ -46,9 +49,12 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.PasswordHelper;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.security.SessionUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_USERROLES;
 
 /**
  * This class is an object representation of a Hippo User, to be used in the admin interface only.
@@ -106,10 +112,9 @@ public class User implements Comparable<User>, IClusterable {
 
     private static final String QUERY_USER = "SELECT * FROM hipposys:user WHERE fn:name()='{}'";
 
-    private static final String QUERY_LOCAL_MEMBERSHIPS = "//element(*, hipposys:group)[@hipposys:members='{}']";
+    private static final String QUERY_LOCAL_MEMBERSHIPS = "//element(*, hipposys:group)[@jcr:primaryType='hipposys:group' and @hipposys:members='{}']";
     private static final String QUERY_EXTERNAL_MEMBERSHIPS = "//element(*, hipposys:externalgroup)[@hipposys:members='{}']";
-    private static final String QUERY_AND_NOT_A_SYSTEM_GROUP = "//element(*, hipposys:group)[@hipposys:members='{}' and (not(@hipposys:system) or @hipposys:system=false)]";
-
+    private static final String QUERY_AND_NOT_A_SYSTEM_GROUP = "//element(*, hipposys:group)[@jcr:primaryType='hipposys:group' and @hipposys:members='{}' and (not(@hipposys:system) or @hipposys:system=false)]";
     private boolean external = false;
     private boolean active = true;
     private boolean system = false;
@@ -121,6 +126,7 @@ public class User implements Comparable<User>, IClusterable {
     private String provider;
     private Calendar passwordLastModified;
     private long passwordMaxAge = -1L;
+    private List<String> userRoles;
 
     private Map<String, String> properties = new TreeMap<>();
     private transient List<DetachableGroup> externalMemberships;
@@ -327,6 +333,8 @@ public class User implements Comparable<User>, IClusterable {
         this.lastName = user.getLastName();
         this.active = user.isActive();
         this.system = user.isSystemUser();
+        this.userRoles = new ArrayList<>(user.getUserRoles());
+        Collections.sort(userRoles);
         for (String p : user.getPropertyNames()) {
             if (!p.startsWith("jcr:") && !p.equals(PROP_EMAIL) && !p.equals(PROP_FIRSTNAME) && !p.equals(PROP_LASTNAME)) {
                 String value = user.getProperty(p);
@@ -354,6 +362,8 @@ public class User implements Comparable<User>, IClusterable {
             external = true;
         }
 
+        userRoles = new ArrayList<>(JcrUtils.getStringSetProperty(node, HIPPO_USERROLES, Collections.emptySet()));
+        Collections.sort(userRoles);
         PropertyIterator pi = node.getProperties();
         while (pi.hasNext()) {
             final Property p = pi.nextProperty();
@@ -385,6 +395,37 @@ public class User implements Comparable<User>, IClusterable {
 
         if (!external) {
             passwordMaxAge = UserSession.get().getJcrSession().getWorkspace().getSecurityManager().getChangePasswordManager().getPasswordMaxAgeMs();
+        }
+    }
+
+    public List<String> getUserRoles() {
+        return userRoles;
+    }
+
+    public void addUserRole(final String userRole) throws RepositoryException {
+        Set<String> currentUserRoles = JcrUtils.getStringSetProperty(node, HIPPO_USERROLES, new HashSet<>());
+        if (currentUserRoles.add(userRole)) {
+            node.setProperty(HIPPO_USERROLES, currentUserRoles.toArray(new String[0]));
+            node.getSession().save();
+            userRoles = new ArrayList<>(currentUserRoles);
+            Collections.sort(userRoles);
+        }
+    }
+
+    public void removeUserRole(final String userRole) throws RepositoryException {
+        Set<String> currentUserRoles = JcrUtils.getStringSetProperty(node, HIPPO_USERROLES, new HashSet<>());
+        if (currentUserRoles.remove(userRole)) {
+            if (currentUserRoles.isEmpty()) {
+                Property userRolesProperty = JcrUtils.getPropertyIfExists(node, HIPPO_USERROLES);
+                if (userRolesProperty != null) {
+                    userRolesProperty.remove();
+                }
+            } else {
+                node.setProperty(HIPPO_USERROLES, currentUserRoles.toArray(new String[0]));
+            }
+            node.getSession().save();
+            userRoles = new ArrayList<>(currentUserRoles);
+            Collections.sort(userRoles);
         }
     }
 

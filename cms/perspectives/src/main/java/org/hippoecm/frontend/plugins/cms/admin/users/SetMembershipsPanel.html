@@ -38,6 +38,7 @@
           </tr>
         </table>
       </wicket:enclosure>
+      <wicket:enclosure child="submit">
       <div class="hippo-controlpanel-options">
         <wicket:message key="user-membership-make-member-of"/>
         <select wicket:id="local-groups">
@@ -45,7 +46,10 @@
         </select>
         <input type="submit" class="btn btn-default btn-xs" wicket:message="value:user-membership-add-action" wicket:id="submit"/>
       </div>
+      </wicket:enclosure>
       <wicket:enclosure child="external-memberships-label">
+        <br/>
+        <br/>
         <span wicket:id="external-memberships-label"/>
         <table class="hippo-controlpanel-table-default hippo-list-details" wicket:id="externalMembershipsContainer">
           <tr>
