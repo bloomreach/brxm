@@ -178,5 +178,13 @@ describe('MenuStateService', () => {
 
       expect(actual).toBeFalsy();
     });
+
+    it('should deactivate the currently active menu item', () => {
+      service.deactivateMenuItem();
+
+      const actual = service.isMenuItemActive(builtMenuMock[0]);
+
+      expect(actual).toBeFalsy();
+    });
   });
 });

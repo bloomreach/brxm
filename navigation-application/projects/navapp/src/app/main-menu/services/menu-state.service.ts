@@ -67,6 +67,10 @@ export class MenuStateService {
     this.homeMenuItemLink = this.findHomeMenuItemLink(this.menuItems);
   }
 
+  deactivateMenuItem(): void {
+    this.activePath.next([]);
+  }
+
   activateMenuItem(appId: string, path: string): void {
     const navItem = this.navConfigService.findNavItem(appId, path);
 
