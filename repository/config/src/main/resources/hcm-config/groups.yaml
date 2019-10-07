@@ -1,0 +1,36 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:groups:
+      /everybody:
+        jcr:primaryType: hipposys:group
+        hipposys:description: ''
+        hipposys:members: ['*']
+        hipposys:securityprovider: internal
+        hipposys:system: true
+      /author:
+        jcr:primaryType: hipposys:group
+        hipposys:members:
+          .meta:category: system
+          value: []
+        hipposys:userroles:
+          .meta:category: system
+          value: [xm-content-author]
+        hipposys:securityprovider: internal
+      /editor:
+        jcr:primaryType: hipposys:group
+        hipposys:members:
+          .meta:category: system
+          value: []
+        hipposys:userroles:
+          .meta:category: system
+          value: [xm-content-editor]
+        hipposys:securityprovider: internal
+      /admin:
+        jcr:primaryType: hipposys:group
+        hipposys:members:
+          .meta:category: system
+          value: []
+        hipposys:userroles:
+          .meta:category: system
+          value: [xm-admin]
+        hipposys:securityprovider: internal

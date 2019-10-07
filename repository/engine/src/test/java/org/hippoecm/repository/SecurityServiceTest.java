@@ -59,6 +59,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.onehippo.repository.security.SecurityConstants.CONFIG_GROUPS_PATH;
 import static org.onehippo.repository.security.SecurityConstants.CONFIG_USERS_PATH;
+import static org.onehippo.repository.security.SecurityConstants.USERROLE_CONTENT_AUTHOR;
+import static org.onehippo.repository.security.SecurityConstants.USERROLE_CONTENT_EDITOR;
+import static org.onehippo.repository.security.SecurityConstants.USERROLE_CONTENT_VIEWER;
 import static org.onehippo.repository.util.JcrConstants.JCR_PATH;
 import static org.onehippo.repository.util.JcrConstants.JCR_PRIMARY_TYPE;
 import static org.onehippo.repository.util.JcrConstants.JCR_UUID;
@@ -147,7 +150,7 @@ public class SecurityServiceTest extends RepositoryTestCase {
 
         Session testSession = session.impersonate(new SimpleCredentials(TEST_USER_ID, new char[0]));
         try {
-            testNode.setProperty(HIPPO_USERROLES, new String[]{"non-existing", "xm-content-reader"});
+            testNode.setProperty(HIPPO_USERROLES, new String[]{"non-existing", USERROLE_CONTENT_VIEWER});
             session.save();
 
             Assertions.assertThatThrownBy(() ->  ((HippoSession) testSession).getUser().getUserRoles().add("test"))
@@ -168,30 +171,30 @@ public class SecurityServiceTest extends RepositoryTestCase {
             assertThat(user.getUserRoles())
                     .as("User roles via SecurityService should be directly updated and contains also non-existing " +
                             "roles")
-                    .containsOnly("non-existing", "xm-content-reader");
+                    .containsOnly("non-existing", USERROLE_CONTENT_VIEWER);
 
             Session newSession = session.impersonate(new SimpleCredentials(TEST_USER_ID, new char[0]));
 
             assertThat(((HippoSession)newSession).getUser().getUserRoles())
-                    .as("New logged in session should have the new user role 'xm-content-reader' but " +
+                    .as("New logged in session should have the new user role "+USERROLE_CONTENT_VIEWER+" but " +
                             "should not have 'non-existing' since only existing user roles should be returned")
-                    .containsOnly("xm-content-reader");
+                    .containsOnly(USERROLE_CONTENT_VIEWER);
 
-            testNode.setProperty(HIPPO_USERROLES, new String[] {"non-existing", "xm-content-editor"});
+            testNode.setProperty(HIPPO_USERROLES, new String[] {"non-existing", USERROLE_CONTENT_EDITOR});
 
             session.save();
 
             assertThat(securityService.getUser(TEST_USER_ID).getUserRoles())
                     .as("User roles via SecurityService should be directly updated and contains also non-existing " +
                             "roles")
-                    .containsOnly("non-existing", "xm-content-editor");
+                    .containsOnly("non-existing", USERROLE_CONTENT_EDITOR);
 
             newSession.logout();
             newSession = session.impersonate(new SimpleCredentials(TEST_USER_ID, new char[0]));
 
             assertThat(((HippoSession)newSession).getUser().getUserRoles())
-                    .as("xm-content-editor should be extended to xm-content-author and xm-content-reader")
-                    .containsOnly("xm-content-editor", "xm-content-author", "xm-content-reader");
+                    .as("xm-content-editor should be extended to "+USERROLE_CONTENT_AUTHOR+" and "+USERROLE_CONTENT_VIEWER)
+                    .containsOnly(USERROLE_CONTENT_EDITOR, USERROLE_CONTENT_AUTHOR, USERROLE_CONTENT_VIEWER);
 
             testNode.setProperty(HIPPO_USERROLES, new String[0]);
 
@@ -203,7 +206,7 @@ public class SecurityServiceTest extends RepositoryTestCase {
 
             assertThat(user.getUserRoles())
                     .as("Existing User object is not updated")
-                    .containsOnly("non-existing", "xm-content-reader");
+                    .containsOnly("non-existing", USERROLE_CONTENT_VIEWER);
 
             assertThat(securityService.getUser(TEST_USER_ID).getUserRoles())
                     .as("User roles via SecurityService should be updated to new value")
@@ -220,7 +223,7 @@ public class SecurityServiceTest extends RepositoryTestCase {
 
             assertThat(((HippoSession)newSession).getUser().getUserRoles())
                     .as("Test session should now have the (expanded) roles from group editor")
-                    .containsOnly("xm-content-reader", "xm-content-author", "xm-content-editor");
+                    .containsOnly(USERROLE_CONTENT_EDITOR, USERROLE_CONTENT_AUTHOR, USERROLE_CONTENT_VIEWER);
 
             newSession.logout();
 

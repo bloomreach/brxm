@@ -1,8 +1,0 @@
-definitions:
-  config:
-    /hippo:configuration/hippo:userroles/xm-content-editor:
-      jcr:primaryType: hipposys:userrole
-      hipposys:userroles: [xm-content-author]
-      hipposys:system: true
-
-

@@ -1,0 +1,36 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:userroles:
+      /xm-admin:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-security-user-manager, xm-security-application-manager]
+      /xm-security-manager:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+      /xm-security-user-manager:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-security-manager]
+      /xm-security-application-manager:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-security-manager]
+      /xm-content-viewer:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+      /xm-content-author:
+        jcr:primaryType: hipposys:userrole
+        hipposys:userroles: [xm-content-viewer]
+        hipposys:system: true
+      /xm-content-editor:
+        jcr:primaryType: hipposys:userrole
+        hipposys:userroles: [xm-content-author]
+        hipposys:system: true
+      /xm-content-admin:
+        jcr:primaryType: hipposys:userrole
+        hipposys:userroles: [xm-content-editor]
+        hipposys:system: true
+      /xm-read-everywhere:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true

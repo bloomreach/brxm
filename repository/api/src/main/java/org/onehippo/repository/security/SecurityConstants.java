@@ -59,12 +59,12 @@ public final class SecurityConstants {
     public static final String USERROLE_SECURITY_APPLICATION_MANAGER = "xm-security-application-manager";
 
     /**
-     * The user role representing a user (to be) granted read-only access on content
+     * The user role representing a user (to be) granted read-only view access on content
      */
-    public static final String USERROLE_CONTENT_READER = "xm-content-reader";
+    public static final String USERROLE_CONTENT_VIEWER = "xm-content-viewer";
 
     /**
-     * The user role representing a user (to be) granted author access on content; implies {@link #USERROLE_CONTENT_READER}
+     * The user role representing a user (to be) granted author access on content; implies {@link #USERROLE_CONTENT_VIEWER}
      */
     public static final String USERROLE_CONTENT_AUTHOR = "xm-content-author";
 
@@ -72,6 +72,11 @@ public final class SecurityConstants {
      * The user role representing a user (to be) granted editor access on content; implies {@link #USERROLE_CONTENT_AUTHOR}
      */
     public static final String USERROLE_CONTENT_EDITOR = "xm-content-editor";
+
+    /**
+     * The user role representing a user (to be) granted admin access on content; implies {@link #USERROLE_CONTENT_EDITOR}
+     */
+    public static final String USERROLE_CONTENT_ADMIN = "xm-content-admin";
 
     /**
      * The user role representing a (system) user which need read access everywhere, for example the user that needs to

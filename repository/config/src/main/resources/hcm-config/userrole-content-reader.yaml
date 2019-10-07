@@ -1,6 +1,0 @@
-definitions:
-  config:
-    /hippo:configuration/hippo:userroles/xm-content-reader:
-      jcr:primaryType: hipposys:userrole
-      hipposys:system: true
-
