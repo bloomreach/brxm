@@ -199,6 +199,21 @@ describe('NavigationService', () => {
       );
     }));
 
+    it('should activate the app before ChildApi.navigate() is called and activated even in a case of the error', async(() => {
+      const navItem = new NavItemMock({
+        appIframeUrl: 'http://domain.com/iframe1/url',
+        appPath: 'app/path/to/page1',
+      });
+
+      childApi.navigate.and.returnValue(new Promise(r => {
+        expect(clientAppServiceMock.activateApplication).toHaveBeenCalledWith('http://domain.com/iframe1/url');
+
+        r();
+      }));
+
+      service.navigateByNavItem(navItem);
+    }));
+
     it('should navigate to the default page for the app', fakeAsync(() => {
       service.navigateToDefaultCurrentAppPage();
 
