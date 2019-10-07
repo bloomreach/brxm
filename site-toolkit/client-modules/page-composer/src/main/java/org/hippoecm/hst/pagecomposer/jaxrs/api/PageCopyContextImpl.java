@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,8 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
-public class PageCopyContextImpl implements PageCopyContext {
+public class PageCopyContextImpl extends AbstractPageContext implements PageCopyContext {
 
-    private transient HstRequestContext requestContext;
-    private transient Mount editingMount;
     private transient HstSiteMapItem sourceSiteMapItem;
     private transient Node sourceSiteMapNode;
     private transient HstComponentConfiguration sourcePage;
@@ -52,8 +50,7 @@ public class PageCopyContextImpl implements PageCopyContext {
                            final HstSiteMapItem targetSiteMapItem,
                            final Node newSiteMapItemNode,
                            final Node newPageNode) {
-        this.requestContext = requestContext;
-        this.editingMount = editingMount;
+        super(requestContext, editingMount);
         this.sourceSiteMapItem = sourceSiteMapItem;
         this.sourceSiteMapNode = sourceSiteMapNode;
         this.sourcePage = sourcePage;
@@ -62,21 +59,6 @@ public class PageCopyContextImpl implements PageCopyContext {
         this.targetSiteMapItem = targetSiteMapItem;
         this.newSiteMapItemNode = newSiteMapItemNode;
         this.newPageNode = newPageNode;
-    }
-
-    /**
-     * @return the {@link HstRequestContext} that originated this {@link PageCopyContextImpl}. It will never be {@code null}
-     */
-    public HstRequestContext getRequestContext() {
-        return requestContext;
-    }
-
-    /**
-     * @return the {@link Mount} that belongs to the channel from which the copy action originated.
-     * This method never returns {@code null}.
-     */
-    public Mount getEditingMount() {
-        return editingMount;
     }
 
     /**
@@ -155,8 +137,8 @@ public class PageCopyContextImpl implements PageCopyContext {
     @Override
     public String toString() {
         return "PageCopyContext{" +
-                "requestContext=" + requestContext +
-                ", editingMount=" + editingMount +
+                "requestContext=" + getRequestContext() +
+                ", editingMount=" + getEditingMount() +
                 ", sourceSiteMapItem=" + sourceSiteMapItem +
                 ", sourceSiteMapNode=" + sourceSiteMapNode +
                 ", sourcePage=" + sourcePage +

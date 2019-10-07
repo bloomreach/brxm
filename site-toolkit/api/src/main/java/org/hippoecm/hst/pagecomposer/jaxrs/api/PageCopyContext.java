@@ -25,18 +25,7 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 /**
  * Page copying context data used in {@link PageCopyEvent}.
  */
-public interface PageCopyContext {
-
-    /**
-     * @return the {@link HstRequestContext} that originated this {@link PageCopyContext}. It will never be {@code null}
-     */
-    public HstRequestContext getRequestContext();
-
-    /**
-     * @return the {@link Mount} that belongs to the channel from which the copy action originated.
-     * This method never returns {@code null}.
-     */
-    public Mount getEditingMount();
+public interface PageCopyContext extends PageActionContext {
 
     /**
      * @return the {@link HstSiteMapItem} belonging to the page that is to be copied. This {@link HstSiteMapItem} instance always

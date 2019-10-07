@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,30 +17,22 @@ package org.hippoecm.hst.pagecomposer.jaxrs.api;
 
 /**
  * <p>
- *      <code>PageCopyEvent</code> which will be put on the internal Guava event bus for
+ *      <code>PageMoveEvent</code> which will be put on the internal Guava event bus for
  *      <code>synchronous</code> events dispatching where listeners to this event can inject logic or short-circuit
- *      processing by setting a {@link java.lang.RuntimeException}
- *      through <code>PageCopyEvent#setException(java.lang.RuntimeException)</code>. When a {@link java.lang.RuntimeException} is
- *      set on this <code>PageCopyEvent</code> by a listener, the
+ *      processing by setting a {@link RuntimeException}
+ *      through <code>PageMoveEvent#setException(java.lang.RuntimeException)</code>. When a {@link RuntimeException} is
+ *      set on this <code>PageMoveEvent</code> by a listener, the
  *      {@link org.hippoecm.hst.pagecomposer.jaxrs.services.AbstractConfigResource#publishSynchronousEvent} will rethrow the
- *      exception. The reason that this has to be done via this PageCopyEvent object is that Guava
+ *      exception. The reason that this has to be done via this PageMoveEvent object is that Guava
  *      {@link com.google.common.eventbus.EventBus} always catches an exception thrown by a listener, even when injecting a
  *      custom {@link com.google.common.eventbus.SubscriberExceptionHandler}
  * </p>
  *  <p>
- *     <strong>Note</strong> that listeners for <code>PageCopyEvent</code>s must <strong>never</strong> invoke
+ *     <strong>Note</strong> that listeners for <code>PageMoveEvent</code>s must <strong>never</strong> invoke
  *     {@link javax.jcr.Session#save() HstRequestContext#getSession()#save()}. Changes in the JCR {@link javax.jcr.Session}
- *     will always be persisted by the code that posted the <code>PageCopyEvent</code> to the guava event bus
+ *     will always be persisted by the code that posted the <code>PageMoveEvent</code> to the guava event bus
  * </p>
  */
-public interface PageCopyEvent extends PageEvent<PageCopyContext> {
-
-    /**
-     * Return the page copy context data.
-     * @return the page copy context data
-     * @deprecated use {@link #getPageActionContext()}
-     */
-    @Deprecated
-    public PageCopyContext getPageCopyContext();
+public interface PageMoveEvent extends PageEvent<PageMoveContext> {
 
 }

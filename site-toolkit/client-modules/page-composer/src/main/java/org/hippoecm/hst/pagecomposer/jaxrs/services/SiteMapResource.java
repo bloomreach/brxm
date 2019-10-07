@@ -39,8 +39,16 @@ import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContextImpl;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyEventImpl;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCreateContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCreateEventImpl;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageDeleteContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageDeleteEventImpl;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageMoveContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageMoveEventImpl;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageUpdateContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageUpdateEventImpl;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.DocumentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.MountRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
@@ -218,7 +226,7 @@ public class SiteMapResource extends AbstractConfigResource {
         }
 
 
-        // if the update has a uuid for componenent id, we need to re-apply a prototype. In that case we also need to
+        // if the update has a uuid for component id, we need to re-apply a prototype. In that case we also need to
         // validate the prototype page
         boolean isCompIdUUID = false;
         if (siteMapItem.getComponentConfigurationId() != null) {
@@ -236,7 +244,9 @@ public class SiteMapResource extends AbstractConfigResource {
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                siteMapHelper.update(siteMapItem, reapplyPrototype);
+                final PageUpdateContext pageUpdateContext = siteMapHelper.update(siteMapItem, reapplyPrototype);
+                publishSynchronousEvent(new PageUpdateEventImpl(getPageComposerContextService().getEditingPreviewChannel(), pageUpdateContext));
+                log.debug("Published page update event with context: {}", pageUpdateContext);
                 final SiteMapPageRepresentation siteMapPageRepresentation = createSiteMapPageRepresentation(siteMapItem.getId(), null);
                 return ok("Item updated successfully", siteMapPageRepresentation);
             }
@@ -271,8 +281,10 @@ public class SiteMapResource extends AbstractConfigResource {
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                Node newSiteMapItem = siteMapHelper.create(siteMapItem, parentId);
-                SiteMapPageRepresentation siteMapPageRepresentation = createSiteMapPageRepresentation(newSiteMapItem.getIdentifier() , parentId);
+                final PageCreateContext pageCreateContext = siteMapHelper.create(siteMapItem, parentId);
+                publishSynchronousEvent(new PageCreateEventImpl(getPageComposerContextService().getEditingPreviewChannel(), pageCreateContext));
+                log.debug("Published page create event with context: {}", pageCreateContext);
+                SiteMapPageRepresentation siteMapPageRepresentation = createSiteMapPageRepresentation(pageCreateContext.getNewSiteMapItemNode().getIdentifier(), parentId);
                 return ok("Item created successfully", siteMapPageRepresentation);
             }
         }, preValidators.build());
@@ -322,11 +334,13 @@ public class SiteMapResource extends AbstractConfigResource {
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                PageCopyContextImpl pcc = siteMapHelper.copy(mountId, siteMapItemUUID,
+                final PageCopyContext pageCopyContext = siteMapHelper.copy(mountId, siteMapItemUUID,
                         targetSiteMapItemUUID, targetName);
-                PageCopyEventImpl event = new PageCopyEventImpl(getPageComposerContextService().getEditingPreviewChannel(), pcc);
+                PageCopyEventImpl event = new PageCopyEventImpl(getPageComposerContextService().getEditingPreviewChannel(), pageCopyContext);
                 publishSynchronousEvent(event);
-                final SiteMapPageRepresentation siteMapPageRepresentation = createSiteMapPageRepresentation(pcc.getTargetMount(), pcc.getNewSiteMapItemNode().getIdentifier(), null);
+                log.debug("Published page copy event with context: {}", pageCopyContext);
+                final SiteMapPageRepresentation siteMapPageRepresentation = createSiteMapPageRepresentation(pageCopyContext.getTargetMount(),
+                        pageCopyContext.getNewSiteMapItemNode().getIdentifier(), null);
                 return ok("Item created successfully", siteMapPageRepresentation);
             }
         }, preValidators.build());
@@ -356,7 +370,9 @@ public class SiteMapResource extends AbstractConfigResource {
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                siteMapHelper.move(id, parentId);
+                final PageMoveContext pageMoveContext = siteMapHelper.move(id, parentId);
+                publishSynchronousEvent(new PageMoveEventImpl(getPageComposerContextService().getEditingPreviewChannel(), pageMoveContext));
+                log.debug("Published page move event with context: {}", pageMoveContext);
                 final SiteMapPageRepresentation siteMapPageRepresentation = createSiteMapPageRepresentation(id, parentId);
                 return ok("Item moved successfully", siteMapPageRepresentation);
             }
@@ -378,7 +394,9 @@ public class SiteMapResource extends AbstractConfigResource {
         return tryExecute(new Callable<Response>() {
             @Override
             public Response call() throws Exception {
-                siteMapHelper.delete(id);
+                final PageDeleteContext pageDeleteContext = siteMapHelper.delete(id);
+                publishSynchronousEvent(new PageDeleteEventImpl(getPageComposerContextService().getEditingPreviewChannel(), pageDeleteContext));
+                log.debug("Published page delete event with context: {}", pageDeleteContext);
                 return ok("Item deleted successfully", id);
             }
         }, preValidator);

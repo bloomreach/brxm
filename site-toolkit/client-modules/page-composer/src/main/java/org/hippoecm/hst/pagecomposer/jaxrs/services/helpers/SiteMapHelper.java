@@ -37,7 +37,16 @@ import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContextImpl;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCreateContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCreateContextImpl;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageDeleteContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageDeleteContextImpl;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageMoveContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageMoveContextImpl;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageUpdateContext;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.PageUpdateContextImpl;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
@@ -103,7 +112,7 @@ public class SiteMapHelper extends AbstractHelper {
         return NODETYPE_HST_SITEMAPITEM;
     }
 
-    public void update(final SiteMapItemRepresentation siteMapItem, final boolean reApplyPrototype) throws RepositoryException {
+    public PageUpdateContext update(final SiteMapItemRepresentation siteMapItem, final boolean reApplyPrototype) throws RepositoryException {
         HstRequestContext requestContext = pageComposerContextService.getRequestContext();
         final Session session = requestContext.getSession();
         final String itemId = siteMapItem.getId();
@@ -115,13 +124,13 @@ public class SiteMapHelper extends AbstractHelper {
 
         moveIfNeeded(itemId, siteMapItem.getParentId(), modifiedName);
 
+        Node updatedPage = null;
         if (reApplyPrototype) {
             final Node newPrototypePage = session.getNodeByIdentifier(siteMapItem.getComponentConfigurationId());
             final String targetPageNodeName = getSiteMapPathPrefixPart(siteMapItemNode) + "-" + newPrototypePage.getName();
 
             final HstComponentConfiguration existingPageConfig = getHstComponentConfiguration(siteMapItemNode);
 
-            Node updatedPage;
             if (existingPageConfig == null) {
                 log.warn("Unexpected update with re-apply prototype of sitemap item '{}' because there is no" +
                         " existing page in workspace for sitemap item. Instead of re-apply prototype, just create page" +
@@ -157,6 +166,8 @@ public class SiteMapHelper extends AbstractHelper {
         final Set<String> modifiedRoles = siteMapItem.getRoles();
         setRoles(siteMapItemNode, modifiedRoles);
 
+        return new PageUpdateContextImpl(requestContext, pageComposerContextService.getEditingMount(),
+                siteMapItemNode, updatedPage);
     }
 
     private HstComponentConfiguration getHstComponentConfiguration(final Node siteMapItemNode) throws RepositoryException {
@@ -172,8 +183,7 @@ public class SiteMapHelper extends AbstractHelper {
         }
     }
 
-
-    public Node create(final SiteMapItemRepresentation siteMapItem, final String parentId) throws RepositoryException {
+    public PageCreateContext create(final SiteMapItemRepresentation siteMapItem, final String parentId) throws RepositoryException {
         final String finalParentId;
         if (parentId == null) {
             finalParentId = getWorkspaceSiteMapId();
@@ -218,7 +228,8 @@ public class SiteMapHelper extends AbstractHelper {
             newSitemapNode.setProperty(SITEMAPITEM_PROPERTY_APPLICATION_ID, prototypeApplicationId);
         }
 
-        return newSitemapNode;
+        return new PageCreateContextImpl(requestContext, pageComposerContextService.getEditingMount(),
+                newSitemapNode, newPage);
     }
 
     /**
@@ -231,10 +242,10 @@ public class SiteMapHelper extends AbstractHelper {
      * @param targetSiteMapItemUUID the uuid of the target siteMapItem, can be {@code null} in which case the same
      *                              location as {@code siteMapItem} will be used, only with name {@code targetName}
      * @param targetName            the name of the copy, not allowed to be {@code null}
-     * @return the {@link javax.jcr.Node} of the created new siteMapItem
+     * @return a {@link PageCopyContext} containing the created new siteMapItem
      * @throws RepositoryException
      */
-    public PageCopyContextImpl copy(final String mountId, final String sourceSiteMapItemUUID, final String targetSiteMapItemUUID, final String targetName)
+    public PageCopyContext copy(final String mountId, final String sourceSiteMapItemUUID, final String targetSiteMapItemUUID, final String targetName)
             throws RepositoryException {
 
         HstRequestContext requestContext = pageComposerContextService.getRequestContext();
@@ -317,7 +328,7 @@ public class SiteMapHelper extends AbstractHelper {
         newSiteMapNode.setProperty(SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID,
                 NODENAME_HST_PAGES + "/" + clonedPage.getName());
 
-        PageCopyContextImpl pcc = new PageCopyContextImpl(requestContext, editingMount, sourceSiteMapItem, session.getNodeByIdentifier(sourceSiteMapItemUUID),
+        final PageCopyContext pcc = new PageCopyContextImpl(requestContext, editingMount, sourceSiteMapItem, session.getNodeByIdentifier(sourceSiteMapItemUUID),
                 sourcePage, session.getNodeByIdentifier(sourcePage.getCanonicalIdentifier()), targetMount, targetSiteMapItem, newSiteMapNode, clonedPage);
 
         templateHelper.copyTemplates(pcc);
@@ -383,11 +394,11 @@ public class SiteMapHelper extends AbstractHelper {
         return hstSiteMapItem;
     }
 
-    public void move(final String sourceId, final String targetParentId) throws RepositoryException {
-        moveIfNeeded(sourceId, targetParentId, null);
+    public PageMoveContext move(final String sourceId, final String targetParentId) throws RepositoryException {
+        return moveIfNeeded(sourceId, targetParentId, null);
     }
 
-    public void moveIfNeeded(final String sourceId, final String targetParentId, final String name) throws RepositoryException {
+    public PageMoveContext moveIfNeeded(final String sourceId, final String targetParentId, final String name) throws RepositoryException {
         final String finalTargetParentId;
         final String finalName;
         if (targetParentId == null) {
@@ -409,20 +420,31 @@ public class SiteMapHelper extends AbstractHelper {
         }
         Node targetParent = session.getNodeByIdentifier(finalTargetParentId);
         Node currentParent = sourceNode.getParent();
+        final String oldLocation = sourceNode.getPath();
 
         if (currentParent.isSame(targetParent)) {
             if (!sourceNode.getName().equals(finalName)) {
                 // we do not need to check lock for parent as this is a rename within same parent
-                String oldLocation = sourceNode.getPath();
                 String target = sourceNode.getParent().getPath() + "/" + finalName;
                 validateTarget(session, target, pageComposerContextService.getEditingPreviewSite().getSiteMap());
-                session.move(sourceNode.getPath(), sourceNode.getParent().getPath() + "/" + finalName);
+                session.move(oldLocation, target);
                 createMarkedDeletedIfLiveExists(session, oldLocation);
                 log.info("Renamed item from '{}' to '{}'", oldLocation, target);
-                return;
+
+                return new PageMoveContextImpl(requestContext, pageComposerContextService.getEditingMount(),
+                        currentParent,
+                        targetParent,
+                        session.getNodeByIdentifier(sourceNode.getIdentifier()) // New sitemap node
+
+                );
             }
             log.debug("No move was required since same name and same parent");
-            return;
+            return new PageMoveContextImpl(requestContext, pageComposerContextService.getEditingMount(),
+                    currentParent,
+                    targetParent,
+                    sourceNode // New sitemap node
+
+            );
         }
         final Node unLockableNode = lockHelper.getUnLockableNode(targetParent, true, false);
         if (unLockableNode != null) {
@@ -433,18 +455,30 @@ public class SiteMapHelper extends AbstractHelper {
         lockHelper.acquireLock(sourceNode, 0);
         validateTarget(session, targetParent.getPath() + "/" + finalName,
                 pageComposerContextService.getEditingPreviewSite().getSiteMap());
-        String oldLocation = sourceNode.getPath();
         session.move(currentParent.getPath() + "/" + sourceNode.getName(), targetParent.getPath() + "/" + finalName);
         createMarkedDeletedIfLiveExists(session, oldLocation);
+
+        return new PageMoveContextImpl(requestContext, pageComposerContextService.getEditingMount(),
+                currentParent,
+                targetParent,
+                session.getNodeByIdentifier(sourceNode.getIdentifier()) // New sitemap node
+
+        );
     }
 
-    public void delete(final String id) throws RepositoryException {
-        HstRequestContext requestContext = pageComposerContextService.getRequestContext();
+    public PageDeleteContext delete(final String id) throws RepositoryException {
+        final HstRequestContext requestContext = pageComposerContextService.getRequestContext();
         final Session session = requestContext.getSession();
-        Node sitemapItemNodeToDelete = session.getNodeByIdentifier(id);
+        final HstSiteMapItem sitemapItemToDeleteConfig = getConfigObject(id);
+        final Node sitemapItemNodeToDelete = session.getNodeByIdentifier(id);
+        final String sitemapItemNodeToDeletePath = sitemapItemNodeToDelete.getPath();
         lockHelper.acquireLock(sitemapItemNodeToDelete, 0);
         pagesHelper.delete(sitemapItemNodeToDelete);
         deleteOrMarkDeletedIfLiveExists(sitemapItemNodeToDelete);
+
+        return new PageDeleteContextImpl(requestContext, pageComposerContextService.getEditingMount(),
+                sitemapItemToDeleteConfig,
+                sitemapItemNodeToDeletePath);
     }
 
     /**
