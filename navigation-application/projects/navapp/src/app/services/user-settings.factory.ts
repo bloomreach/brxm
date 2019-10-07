@@ -14,13 +14,23 @@
  * limitations under the License.
  */
 
-import { AppSettings } from './app-settings.dto';
-import { AppSettingsMock } from './app-settings.mock';
-import { GlobalSettings } from './global-settings.dto';
-import { UserSettings } from './user-settings.dto';
-import { UserSettingsMock } from './user-settings.mock';
+import { UserSettings } from '../models/dto/user-settings.dto';
+import { WindowRef } from '../shared/services/window-ref.service';
 
-export class GlobalSettingsMock implements GlobalSettings {
-  userSettings = new UserSettingsMock() as UserSettings;
-  appSettings = new AppSettingsMock() as AppSettings;
-}
+export const userSettingsFactory = (windowRef: WindowRef): UserSettings => {
+  const globalSettings = windowRef.nativeWindow.NavAppSettings;
+
+  if (!globalSettings) {
+    console.error('[NAVAPP] The global configuration object is not set');
+
+    return {} as any;
+  }
+
+  if (!globalSettings.userSettings) {
+    console.error('[NAVAPP] User settings part of the global configuration object is not set');
+
+    return {} as any;
+  }
+
+  return globalSettings.userSettings;
+};

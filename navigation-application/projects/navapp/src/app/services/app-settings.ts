@@ -14,14 +14,8 @@
  * limitations under the License.
  */
 
-import { ConfigResource } from './config-resource.dto';
+import { InjectionToken } from '@angular/core';
 
-export interface AppSettings {
-  initialPath: string;
-  basePath: string;
-  navAppResourceLocation: string;
-  navConfigResources: ConfigResource[];
-  loginResources: ConfigResource[];
-  logoutResources: ConfigResource[];
-  iframesConnectionTimeout: number;
-}
+import { AppSettings } from '../models/dto/app-settings.dto';
+
+export const APP_SETTINGS = new InjectionToken<AppSettings>('APP_SETTINGS');

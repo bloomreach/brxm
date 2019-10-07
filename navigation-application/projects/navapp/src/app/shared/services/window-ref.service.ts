@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-import { ConfigResource } from './config-resource.dto';
+import { Injectable } from '@angular/core';
 
-export interface AppSettings {
-  initialPath: string;
-  basePath: string;
-  navAppResourceLocation: string;
-  navConfigResources: ConfigResource[];
-  loginResources: ConfigResource[];
-  logoutResources: ConfigResource[];
-  iframesConnectionTimeout: number;
+import { AppSettings } from '../../models/dto/app-settings.dto';
+import { UserSettings } from '../../models/dto/user-settings.dto';
+
+export interface CustomWindow extends Window {
+  NavAppSettings: {
+    appSettings: AppSettings,
+    userSettings: UserSettings,
+  };
+}
+
+@Injectable()
+export class WindowRef {
+  get nativeWindow(): CustomWindow {
+    return window as any;
+  }
 }

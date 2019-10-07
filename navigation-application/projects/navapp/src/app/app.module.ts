@@ -24,7 +24,12 @@ import { BootstrapModule } from './bootstrap/bootstrap.module';
 import { ClientAppModule } from './client-app/client-app.module';
 import { ErrorHandlingModule } from './error-handling/error-handling.module';
 import { MainMenuModule } from './main-menu/main-menu.module';
+import { APP_SETTINGS } from './services/app-settings';
+import { appSettingsFactory } from './services/app-settings.factory';
 import { USER_ACTIVITY_DEBOUNCE_TIME } from './services/user-activity-debounce-time';
+import { USER_SETTINGS } from './services/user-settings';
+import { userSettingsFactory } from './services/user-settings.factory';
+import { WindowRef } from './shared/services/window-ref.service';
 import { SharedModule } from './shared/shared.module';
 import { TopPanelModule } from './top-panel/top-panel.module';
 
@@ -43,6 +48,8 @@ import { TopPanelModule } from './top-panel/top-panel.module';
     Location,
     { provide: LocationStrategy, useClass: PathLocationStrategy },
     { provide: APP_BASE_HREF, useValue: window.location.origin },
+    { provide: APP_SETTINGS, useFactory: appSettingsFactory, deps: [WindowRef, Location] },
+    { provide: USER_SETTINGS, useFactory: userSettingsFactory, deps: [WindowRef] },
     { provide: USER_ACTIVITY_DEBOUNCE_TIME, useValue: 30000 },
   ],
   declarations: [AppComponent],

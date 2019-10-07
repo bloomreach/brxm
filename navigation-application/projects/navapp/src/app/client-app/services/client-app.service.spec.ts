@@ -18,8 +18,8 @@ import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { ChildPromisedApi } from '@bloomreach/navapp-communication';
 
 import { Connection } from '../../models/connection.model';
-import { GlobalSettingsMock } from '../../models/dto/global-settings.mock';
-import { GlobalSettingsService } from '../../services/global-settings.service';
+import { AppSettingsMock } from '../../models/dto/app-settings.mock';
+import { APP_SETTINGS } from '../../services/app-settings';
 import { NavConfigService } from '../../services/nav-config.service';
 import { ClientApp } from '../models/client-app.model';
 
@@ -52,15 +52,16 @@ describe('ClientAppService', () => {
     navItems: navItemsMock,
   } as any;
 
-  const globalConfigurationServiceMock = new GlobalSettingsMock();
-  globalConfigurationServiceMock.appSettings.iframesConnectionTimeout = iframesConnectionTimeout;
+  const appSettingsMock = new AppSettingsMock({
+    iframesConnectionTimeout,
+  });
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
         ClientAppService,
         { provide: NavConfigService, useValue: navConfigServiceMock },
-        { provide: GlobalSettingsService, useValue: globalConfigurationServiceMock },
+        { provide: APP_SETTINGS, useValue: appSettingsMock },
       ],
     });
 

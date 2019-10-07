@@ -15,7 +15,7 @@
  */
 
 import { Location } from '@angular/common';
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import { ChildConfig, NavItem } from '@bloomreach/navapp-communication';
 import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
@@ -23,8 +23,9 @@ import { bufferTime, first, map, switchMap, tap } from 'rxjs/operators';
 
 import { CriticalError } from '../../error-handling/models/critical-error';
 import { Connection } from '../../models/connection.model';
+import { AppSettings } from '../../models/dto/app-settings.dto';
 import { FailedConnection } from '../../models/failed-connection.model';
-import { GlobalSettingsService } from '../../services/global-settings.service';
+import { APP_SETTINGS } from '../../services/app-settings';
 import { NavConfigService } from '../../services/nav-config.service';
 import { ClientApp } from '../models/client-app.model';
 
@@ -42,7 +43,7 @@ export class ClientAppService {
 
   constructor(
     private navConfigService: NavConfigService,
-    private settings: GlobalSettingsService,
+    @Inject(APP_SETTINGS) private appSettings: AppSettings,
   ) {}
 
   get urls$(): Observable<string[]> {
@@ -152,7 +153,7 @@ export class ClientAppService {
 
   private waitForConnections(expectedNumber: number): Observable<Connection[]> {
     return this.connection$.pipe(
-      bufferTime(this.settings.appSettings.iframesConnectionTimeout * 1.5 , undefined, expectedNumber),
+      bufferTime(this.appSettings.iframesConnectionTimeout * 1.5 , undefined, expectedNumber),
     );
   }
 

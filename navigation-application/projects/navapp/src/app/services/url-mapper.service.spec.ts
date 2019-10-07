@@ -19,20 +19,15 @@ import { NavItem, NavLocation } from '@bloomreach/navapp-communication';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { InternalError } from '../error-handling/models/internal-error';
+import { AppSettingsMock } from '../models/dto/app-settings.mock';
 import { NavItemMock } from '../models/dto/nav-item.mock';
 
-import { GlobalSettingsService } from './global-settings.service';
+import { APP_SETTINGS } from './app-settings';
 import { NavConfigService } from './nav-config.service';
 import { UrlMapperService } from './url-mapper.service';
 
 describe('UrlMapperService', () => {
   let service: UrlMapperService;
-
-  const globalSettingsServiceMock = {
-    appSettings: {
-      navAppBaseURL: 'https://some-domain.com/base/path',
-    },
-  } as any;
 
   const navItemsMock = [
     new NavItemMock({
@@ -59,6 +54,10 @@ describe('UrlMapperService', () => {
     activeApp: undefined,
   } as any;
 
+  const appSettingsMock = new AppSettingsMock({
+    navAppBaseURL: 'https://some-domain.com/base/path',
+  });
+
   beforeEach(() => {
     clientAppServiceMock.activeApp = {
       url: '',
@@ -67,7 +66,7 @@ describe('UrlMapperService', () => {
     TestBed.configureTestingModule({
       providers: [
         UrlMapperService,
-        { provide: GlobalSettingsService, useValue: globalSettingsServiceMock },
+        { provide: APP_SETTINGS, useValue: appSettingsMock },
         { provide: NavConfigService, useValue: navConfigServiceMock },
         { provide: ClientAppService, useValue: clientAppServiceMock },
       ],
@@ -162,5 +161,17 @@ describe('UrlMapperService', () => {
     clientAppServiceMock.activeApp = undefined;
 
     expect(() => service.mapNavLocationToBrowserUrl({ path: '' })).toThrow(expected);
+  });
+
+  it('should throw an exception when the nav item contains a relative url instead of an absolute one', () => {
+    const expectedError = new InternalError(undefined, 'The url has incorrect format: /some/url');
+
+    const navItem: NavItem = {
+      id: 'some-id',
+      appIframeUrl: '/some/url',
+      appPath: 'path/to/page',
+    };
+
+    expect(() => service.mapNavItemToBrowserUrl(navItem)).toThrow(expectedError);
   });
 });

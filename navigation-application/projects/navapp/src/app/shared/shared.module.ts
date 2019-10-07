@@ -19,10 +19,12 @@ import { NgModule } from '@angular/core';
 
 import { OverlayComponent } from './components/overlay/overlay.component';
 import { MaterialModule } from './material/material.module';
+import { WindowRef } from './services/window-ref.service';
 
 @NgModule({
   imports: [CommonModule],
   declarations: [OverlayComponent],
+  providers: [WindowRef],
   exports: [MaterialModule, OverlayComponent],
 })
 export class SharedModule {}

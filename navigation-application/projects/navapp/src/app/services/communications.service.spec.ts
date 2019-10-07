@@ -22,23 +22,20 @@ import { ReplaySubject } from 'rxjs';
 import { ClientErrorCodes } from '../../../../navapp-communication/src/lib/api';
 import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
-import { GlobalSettingsMock } from '../models/dto/global-settings.mock';
+import { AppSettingsMock } from '../models/dto/app-settings.mock';
+import { UserSettingsMock } from '../models/dto/user-settings.mock';
 
+import { APP_SETTINGS } from './app-settings';
 import { BusyIndicatorService } from './busy-indicator.service';
 import { CommunicationsService } from './communications.service';
-import { GlobalSettingsService } from './global-settings.service';
 import { LogoutService } from './logout.service';
-import { NavConfigService } from './nav-config.service';
 import { NavigationService } from './navigation.service';
 import { OverlayService } from './overlay.service';
 import { UserActivityService } from './user-activity.service';
+import { USER_SETTINGS } from './user-settings';
 
 describe('CommunicationsService', () => {
   let service: CommunicationsService;
-  let clientAppService: ClientAppService;
-  let navConfigService: NavConfigService;
-  let overlayService: OverlayService;
-  let busyIndicatorService: BusyIndicatorService;
 
   let clientApps: ClientApp[];
 
@@ -73,7 +70,9 @@ describe('CommunicationsService', () => {
     'broadcastUserActivity',
   ]);
 
-  const globalSettingsServiceMock = new GlobalSettingsMock();
+  const appSettingsMock = new AppSettingsMock();
+
+  const userSettingsMock = new UserSettingsMock();
 
   beforeEach(() => {
     const childApiMock = jasmine.createSpyObj('parentApi', {
@@ -112,15 +111,12 @@ describe('CommunicationsService', () => {
         { provide: NavigationService, useValue: navigationServiceMock },
         { provide: OverlayService, useValue: overlayServiceMock },
         { provide: UserActivityService, useValue: userActivityServiceMock },
-        { provide: GlobalSettingsService, useValue: globalSettingsServiceMock },
+        { provide: APP_SETTINGS, useValue: appSettingsMock },
+        { provide: USER_SETTINGS, useValue: userSettingsMock },
       ],
     });
 
     service = TestBed.get(CommunicationsService);
-    clientAppService = TestBed.get(ClientAppService);
-    navConfigService = TestBed.get(NavConfigService);
-    overlayService = TestBed.get(OverlayService);
-    busyIndicatorService = TestBed.get(BusyIndicatorService);
   });
 
   describe('client api methods', () => {
@@ -128,7 +124,7 @@ describe('CommunicationsService', () => {
       it('should get the client app and communicate the site id', () => {
         service.updateSelectedSite({ accountId: 10, siteId: 1337 });
         expect(
-          clientAppService.getApp('testId').api.updateSelectedSite,
+          clientAppServiceMock.getApp('testId').api.updateSelectedSite,
         ).toHaveBeenCalledWith({ accountId: 10, siteId: 1337 });
       });
 
@@ -145,8 +141,8 @@ describe('CommunicationsService', () => {
       it('should show the busy indicator', () => {
         service.updateSelectedSite({ accountId: 10, siteId: 1337 });
 
-        expect(busyIndicatorService.show).toHaveBeenCalled();
-        expect(busyIndicatorService.hide).toHaveBeenCalled();
+        expect(busyIndicatorServiceMock.show).toHaveBeenCalled();
+        expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
       });
     });
   });
@@ -181,14 +177,14 @@ describe('CommunicationsService', () => {
     describe('.showMask', () => {
       it('should enable the overlay', () => {
         service.parentApiMethods.showMask();
-        expect(overlayService.enable).toHaveBeenCalled();
+        expect(overlayServiceMock.enable).toHaveBeenCalled();
       });
     });
 
     describe('.hideMask', () => {
       it('should disable the overlay', () => {
         service.parentApiMethods.hideMask();
-        expect(overlayService.disable).toHaveBeenCalled();
+        expect(overlayServiceMock.disable).toHaveBeenCalled();
       });
     });
 

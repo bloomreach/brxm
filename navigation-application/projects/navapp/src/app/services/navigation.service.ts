@@ -15,7 +15,7 @@
  */
 
 import { Location } from '@angular/common';
-import { Injectable, OnDestroy } from '@angular/core';
+import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { NavigateFlags, NavItem, NavLocation } from '@bloomreach/navapp-communication';
 import { BehaviorSubject, Observable, of, Subject, Subscription, throwError } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
@@ -28,12 +28,13 @@ import { InternalError } from '../error-handling/models/internal-error';
 import { NotFoundError } from '../error-handling/models/not-found-error';
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
+import { AppSettings } from '../models/dto/app-settings.dto';
 import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
 
+import { APP_SETTINGS } from './app-settings';
 import { NavigationStartEvent } from './events/navigation-start.event';
 import { NavigationStopEvent } from './events/navigation-stop.event';
 import { NavigationEvent } from './events/navigation.event';
-import { GlobalSettingsService } from './global-settings.service';
 import { NavConfigService } from './nav-config.service';
 import { UrlMapperService } from './url-mapper.service';
 
@@ -88,8 +89,8 @@ export class NavigationService implements OnDestroy {
     private menuStateService: MenuStateService,
     private breadcrumbsService: BreadcrumbsService,
     private urlMapperService: UrlMapperService,
-    private settings: GlobalSettingsService,
     private errorHandlingService: ErrorHandlingService,
+    @Inject(APP_SETTINGS) private appSettings: AppSettings,
   ) {
     this.setupNavigations();
     this.processNavigations();
@@ -100,7 +101,7 @@ export class NavigationService implements OnDestroy {
   }
 
   private get basePath(): string {
-    return this.urlMapperService.basePath;
+    return this.appSettings.basePath;
   }
 
   private get homeUrl(): string {
@@ -119,7 +120,7 @@ export class NavigationService implements OnDestroy {
 
     this.setUpLocationChangeListener();
 
-    const url = `${this.basePath}${this.settings.appSettings.initialPath}`;
+    const url = `${this.basePath}${this.appSettings.initialPath}`;
 
     return this.scheduleNavigation(url, NavigationTrigger.Imperative, {}, {}, true);
   }

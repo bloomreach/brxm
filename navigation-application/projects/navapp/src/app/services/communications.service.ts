@@ -14,25 +14,26 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
+import { Inject, Injectable } from '@angular/core';
 import {
   ClientError, ClientErrorCodes, connectToChild, NavLocation, ParentApi, SiteId,
 } from '@bloomreach/navapp-communication';
-import { Subject } from 'rxjs';
-import { map, throttleTime } from 'rxjs/operators';
 
 import { version } from '../../../../../package.json';
-import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { Connection } from '../models/connection.model';
+import { AppSettings } from '../models/dto/app-settings.dto';
+import { UserSettings } from '../models/dto/user-settings.dto';
 import { FailedConnection } from '../models/failed-connection.model';
 
+import { APP_SETTINGS } from './app-settings';
 import { BusyIndicatorService } from './busy-indicator.service';
-import { GlobalSettingsService } from './global-settings.service';
 import { LogoutService } from './logout.service';
 import { NavigationService } from './navigation.service';
 import { OverlayService } from './overlay.service';
+
 import { UserActivityService } from './user-activity.service';
+import { USER_SETTINGS } from './user-settings';
 
 @Injectable({
   providedIn: 'root',
@@ -45,14 +46,15 @@ export class CommunicationsService {
     private navigationService: NavigationService,
     private overlay: OverlayService,
     private userActivityService: UserActivityService,
-    private settings: GlobalSettingsService,
+    @Inject(APP_SETTINGS) private appSettings: AppSettings,
+    @Inject(USER_SETTINGS) private userSettings: UserSettings,
   ) {}
 
   get parentApiMethods(): ParentApi {
     return {
       getConfig: () => ({
         apiVersion: version,
-        userSettings: this.settings.userSettings,
+        userSettings: this.userSettings,
       }),
       showMask: () => this.overlay.enable(),
       hideMask: () => this.overlay.disable(),
@@ -82,7 +84,7 @@ export class CommunicationsService {
     return connectToChild({
       iframe,
       methods: this.parentApiMethods,
-      timeout: this.settings.appSettings.iframesConnectionTimeout,
+      timeout: this.appSettings.iframesConnectionTimeout,
     }).then(
       api => this.clientAppService.addConnection(new Connection(appUrl, api)),
       error => this.clientAppService.addConnection(new FailedConnection(appUrl, error)),
