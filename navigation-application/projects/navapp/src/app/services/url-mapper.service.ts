@@ -19,6 +19,7 @@ import { Injectable } from '@angular/core';
 import { NavItem, NavLocation } from '@bloomreach/navapp-communication';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
+import { InternalError } from '../error-handling/models/internal-error';
 
 import { GlobalSettingsService } from './global-settings.service';
 import { NavConfigService } from './nav-config.service';
@@ -57,6 +58,10 @@ export class UrlMapperService {
   }
 
   mapNavLocationToBrowserUrl(navLocation: NavLocation, useCurrentApp = false): [string, NavItem] {
+    if (!this.clientAppService.activeApp) {
+      throw new InternalError('Initialization problem', 'Active app is not set');
+    }
+
     const activeAppUrl = this.clientAppService.activeApp.url;
 
     const appPathPredicate = (x: NavItem) => navLocation.path.startsWith(x.appPath);

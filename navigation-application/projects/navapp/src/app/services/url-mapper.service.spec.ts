@@ -18,6 +18,7 @@ import { TestBed } from '@angular/core/testing';
 import { NavItem, NavLocation } from '@bloomreach/navapp-communication';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
+import { InternalError } from '../error-handling/models/internal-error';
 import { NavItemMock } from '../models/dto/nav-item.mock';
 
 import { GlobalSettingsService } from './global-settings.service';
@@ -54,13 +55,15 @@ describe('UrlMapperService', () => {
     navItems: navItemsMock,
   };
 
-  const clientAppServiceMock = {
-    activeApp: {
-      url: '',
-    },
+  let clientAppServiceMock = {
+    activeApp: undefined,
   } as any;
 
   beforeEach(() => {
+    clientAppServiceMock.activeApp = {
+      url: '',
+    };
+
     TestBed.configureTestingModule({
       providers: [
         UrlMapperService,
@@ -71,6 +74,7 @@ describe('UrlMapperService', () => {
     });
 
     service = TestBed.get(UrlMapperService);
+    clientAppServiceMock = TestBed.get(ClientAppService);
   });
 
   it('should return the base path', () => {
@@ -150,5 +154,13 @@ describe('UrlMapperService', () => {
     const actual = service.mapNavLocationToBrowserUrl(navLocation);
 
     expect(actual).toEqual(expected);
+  });
+
+  it('should throw an exception during mapNavLocationToBrowserUrl call when the active app is not set', () => {
+    const expected = new InternalError('Initialization problem', 'Active app is not set');
+
+    clientAppServiceMock.activeApp = undefined;
+
+    expect(() => service.mapNavLocationToBrowserUrl({ path: '' })).toThrow(expected);
   });
 });

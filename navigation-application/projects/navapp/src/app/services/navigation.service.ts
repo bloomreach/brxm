@@ -245,9 +245,6 @@ export class NavigationService implements OnDestroy {
       skip(1),
     ).subscribe(
       n => {
-        const appId = n.navItem.appIframeUrl;
-        this.clientAppService.activateApplication(appId);
-
         const { breadcrumbLabel } = n.state;
 
         this.menuStateService.activateMenuItem(n.navItem.appIframeUrl, n.navItem.appPath);
@@ -330,6 +327,8 @@ export class NavigationService implements OnDestroy {
             `The app with id="${appId}" is not connected to the nav app`,
           ));
         }
+
+        this.clientAppService.activateApplication(appId);
 
         const appPath = Location.joinWithSlash(t.navItem.appPath, t.appPathAddOn);
         const appPathWithoutLeadingSlash = this.urlMapperService.trimLeadingSlash(appPath);
