@@ -57,7 +57,8 @@ public class NavAppRedirectFilter implements Filter {
             "/site",
             "/skin",
             "/wicket",
-            "/ws"
+            "/ws",
+            "/binaries"
     );
 
 
