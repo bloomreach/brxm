@@ -18,8 +18,11 @@ import { Injectable } from '@angular/core';
 import {
   ClientError, ClientErrorCodes, connectToChild, NavLocation, ParentApi, SiteId,
 } from '@bloomreach/navapp-communication';
+import { Subject } from 'rxjs';
+import { map, throttleTime } from 'rxjs/operators';
 
 import { version } from '../../../../../package.json';
+import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { Connection } from '../models/connection.model';
 import { FailedConnection } from '../models/failed-connection.model';
@@ -29,6 +32,7 @@ import { GlobalSettingsService } from './global-settings.service';
 import { LogoutService } from './logout.service';
 import { NavigationService } from './navigation.service';
 import { OverlayService } from './overlay.service';
+import { UserActivityService } from './user-activity.service';
 
 @Injectable({
   providedIn: 'root',
@@ -40,9 +44,9 @@ export class CommunicationsService {
     private logoutService: LogoutService,
     private navigationService: NavigationService,
     private overlay: OverlayService,
+    private userActivityService: UserActivityService,
     private settings: GlobalSettingsService,
-  ) {
-  }
+  ) {}
 
   get parentApiMethods(): ParentApi {
     return {
@@ -56,7 +60,7 @@ export class CommunicationsService {
       updateNavLocation: (location: NavLocation) => this.navigationService.updateByNavLocation(location),
       onError: (clientError: ClientError) => this.onClientError(clientError),
       onSessionExpired: () => this.logoutService.logout('SessionExpired'),
-      onUserActivity: () => this.clientAppService.onUserActivity(),
+      onUserActivity: () => this.userActivityService.broadcastUserActivity(),
     };
   }
 

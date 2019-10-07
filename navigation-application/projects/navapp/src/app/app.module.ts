@@ -24,6 +24,7 @@ import { BootstrapModule } from './bootstrap/bootstrap.module';
 import { ClientAppModule } from './client-app/client-app.module';
 import { ErrorHandlingModule } from './error-handling/error-handling.module';
 import { MainMenuModule } from './main-menu/main-menu.module';
+import { USER_ACTIVITY_DEBOUNCE_TIME } from './services/user-activity-debounce-time';
 import { SharedModule } from './shared/shared.module';
 import { TopPanelModule } from './top-panel/top-panel.module';
 
@@ -42,6 +43,7 @@ import { TopPanelModule } from './top-panel/top-panel.module';
     Location,
     { provide: LocationStrategy, useClass: PathLocationStrategy },
     { provide: APP_BASE_HREF, useValue: window.location.origin },
+    { provide: USER_ACTIVITY_DEBOUNCE_TIME, useValue: 30000 },
   ],
   declarations: [AppComponent],
   bootstrap: [AppComponent],
