@@ -219,7 +219,7 @@ export interface ChildPromisedApi {
   getNavItems?: () => Promise<NavItem[]>;
   getSites?: () => Promise<Site[]>;
   getSelectedSite?: () => Promise<SiteId>;
-  beforeNavigation?: () => Promise<boolean>;
+  beforeNavigation?: () => Promise<void>;
   onUserActivity?: () => Promise<void>;
   logout?: () => Promise<void>;
   navigate?: (location: NavLocation, triggeredBy: NavigationTrigger) => Promise<void>;
