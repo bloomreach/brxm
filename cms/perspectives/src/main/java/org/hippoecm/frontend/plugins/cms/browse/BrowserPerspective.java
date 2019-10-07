@@ -113,7 +113,6 @@ public class BrowserPerspective extends Perspective {
             @Override
             void onUpdateModel(final IModel<Node> oldModel, final IModel<Node> newModel) {
                 final String newTab = JcrUtils.getNodePathQuietly(newModel.getObject());
-                state.onTabChanged(newTab);
 
                 final ParentApiCaller parentApiCaller = new ParentApiCaller();
                 if (newTab == null) {
@@ -126,6 +125,9 @@ public class BrowserPerspective extends Perspective {
                         log.warn("Failed to update nav location for document with path '{}'", newTab);
                     }
                 }
+
+                state.onTabChanged(newTab);
+
             }
         };
 
