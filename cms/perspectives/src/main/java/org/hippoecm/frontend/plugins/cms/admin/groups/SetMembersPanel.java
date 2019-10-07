@@ -41,8 +41,11 @@ import org.hippoecm.frontend.plugins.cms.admin.users.UserDataProvider;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.SearchTermPanel;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.EventBusUtils;
+import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.cms7.event.HippoEventConstants;
+import org.onehippo.repository.security.SecurityConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,11 +54,15 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
 
     private final IModel<Group> model;
     private final ListView localList;
+    private final boolean isSecurityUserManager;
 
     public SetMembersPanel(final String id, final IBreadCrumbModel breadCrumbModel,
                            final IModel<Group> model) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
+
+        final HippoSession session = UserSession.get().getJcrSession();
+        isSecurityUserManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_MANAGER);
 
         this.model = model;
         final Group group = model.getObject();
@@ -73,35 +80,37 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
         allUserColumns.add(new PropertyColumn<>(new ResourceModel("user-firstname"), "firstName"));
         allUserColumns.add(new PropertyColumn<>(new ResourceModel("user-lastname"), "lastName"));
 
-        allUserColumns.add(new AbstractColumn<User, String>(new ResourceModel("group-member-actions"), "add") {
+        if (isSecurityUserManager && !group.isExternal() && !group.isSystem()) {
+            allUserColumns.add(new AbstractColumn<User, String>(new ResourceModel("group-member-actions"), "add") {
 
-            public void populateItem(final Item<ICellPopulator<User>> cellItem, final String componentId,
-                                     final IModel<User> rowModel) {
-                final User user = rowModel.getObject();
-                final AjaxLinkLabel action = new AjaxLinkLabel(componentId, new ResourceModel("group-member-add-action")) {
+                public void populateItem(final Item<ICellPopulator<User>> cellItem, final String componentId,
+                                         final IModel<User> rowModel) {
+                    final User user = rowModel.getObject();
+                    final AjaxLinkLabel action = new AjaxLinkLabel(componentId, new ResourceModel("group-member-add-action")) {
 
-                    @Override
-                    public void onClick(final AjaxRequestTarget target) {
-                        try {
-                            if (group.getMembers().contains(user.getUsername())) {
-                                showInfo(getString("group-member-already-member", rowModel));
-                            } else {
-                                group.addMembership(user.getUsername());
-                                EventBusUtils.post("add-user-to-group", HippoEventConstants.CATEGORY_GROUP_MANAGEMENT,
-                                        "added user " + user.getUsername() + " to group " + group.getGroupname());
-                                showInfo(getString("group-member-added", rowModel));
-                                localList.removeAll();
+                        @Override
+                        public void onClick(final AjaxRequestTarget target) {
+                            try {
+                                if (group.getMembers().contains(user.getUsername())) {
+                                    showInfo(getString("group-member-already-member", rowModel));
+                                } else {
+                                    group.addMembership(user.getUsername());
+                                    EventBusUtils.post("add-user-to-group", HippoEventConstants.CATEGORY_GROUP_MANAGEMENT,
+                                            "added user " + user.getUsername() + " to group " + group.getGroupname());
+                                    showInfo(getString("group-member-added", rowModel));
+                                    localList.removeAll();
+                                }
+                            } catch (RepositoryException e) {
+                                showError(getString("group-member-add-failed", rowModel));
+                                log.error("Failed to add member", e);
                             }
-                        } catch (RepositoryException e) {
-                            showError(getString("group-member-add-failed", rowModel));
-                            log.error("Failed to add member", e);
+                            target.add(SetMembersPanel.this);
                         }
-                        target.add(SetMembersPanel.this);
-                    }
-                };
-                cellItem.add(action);
-            }
-        });
+                    };
+                    cellItem.add(action);
+                }
+            });
+        }
 
         final UserDataProvider userDataProvider = new UserDataProvider();
         final AdminDataTable table = new AdminDataTable<>("table", allUserColumns, userDataProvider, 20);
@@ -148,23 +157,27 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
             item.setOutputMarkupId(true);
             final String username = item.getModelObject();
             item.add(new Label(labelId, username));
-            item.add(new AjaxLinkLabel("remove", new ResourceModel("group-member-remove-action")) {
+            if (isSecurityUserManager && !group.isSystem() && !group.isExternal()) {
+                item.add(new AjaxLinkLabel("remove", new ResourceModel("group-member-remove-action")) {
 
-                @Override
-                public void onClick(AjaxRequestTarget target) {
-                    try {
-                        group.removeMembership(username);
-                        EventBusUtils.post("remove-user-from-group", HippoEventConstants.CATEGORY_GROUP_MANAGEMENT,
-                                "removed user " + username + " from group " + group.getGroupname());
-                        showInfo(getString("group-member-removed"));
-                        localList.removeAll();
-                    } catch (RepositoryException e) {
-                        showError(getString("group-member-remove-failed"));
-                        log.error("Failed to remove memberships", e);
+                    @Override
+                    public void onClick(AjaxRequestTarget target) {
+                        try {
+                            group.removeMembership(username);
+                            EventBusUtils.post("remove-user-from-group", HippoEventConstants.CATEGORY_GROUP_MANAGEMENT,
+                                    "removed user " + username + " from group " + group.getGroupname());
+                            showInfo(getString("group-member-removed"));
+                            localList.removeAll();
+                        } catch (RepositoryException e) {
+                            showError(getString("group-member-remove-failed"));
+                            log.error("Failed to remove memberships", e);
+                        }
+                        target.add(SetMembersPanel.this);
                     }
-                    target.add(SetMembersPanel.this);
-                }
-            });
+                });
+            } else {
+                item.add(new Label("remove", ""));
+            }
         }
     }
 

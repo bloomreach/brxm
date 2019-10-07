@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -48,6 +48,23 @@
             </tr>
         </table>
     </div>
+    <br/>
+    <br/>
+    <h3><wicket:message key="userrole-overview-title"/></h3>
+    <span><wicket:message key="group-userroles-label"/></span>
+    <table class="hippo-list-details hippo-controlpanel-table-default">
+        <tr>
+            <th><wicket:message key="userrole-name"/></th>
+            <th><wicket:message key="userrole-description"/></th>
+            <th><wicket:message key="table-header-actions"/></th>
+        </tr>
+        <tr wicket:id="userroles">
+            <td><span wicket:id="name"/></td>
+            <td><span wicket:id="description"/></td>
+            <td><span wicket:id="remove-userrole"/></td>
+        </tr>
+    </table>
+    <span wicket:id="add-userroles"></span>
     <br/>
     <br/>
     <h3 class="hippo-controlpanel-section-title">
