@@ -22,12 +22,14 @@ import javax.jcr.RepositoryException;
 import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
+import org.hippoecm.frontend.session.UserSession;
 import org.onehippo.repository.security.SessionUser;
 
 import com.bloomreach.xm.repository.security.ChangePasswordManager;
 
 /**
- * Adapter class which extends {@link User} to wrap a {@link SessionUser} and a {@link ChangePasswordManager}
+ * Adapter class which extends {@link User} to wrap a {@link SessionUser} and optionally allowing to change the current
+ * user its password through the {@link ChangePasswordManager},
  * providing reduced and adapted access to the standard {@link User} methods which would require direct readwrite access
  * to the underlying repository user (node).
  * <p>
@@ -42,12 +44,12 @@ import com.bloomreach.xm.repository.security.ChangePasswordManager;
  */
 class SessionUserAdapter extends User {
 
-    private final ChangePasswordManager changePasswordManager;
+    private final boolean canChangePassword;
 
     SessionUserAdapter(final SessionUser user, final ChangePasswordManager changePasswordManager)
             throws RepositoryException {
         super(user);
-        this.changePasswordManager = changePasswordManager;
+        this.canChangePassword = changePasswordManager != null;
         if (changePasswordManager != null) {
             setPasswordMaxAge(changePasswordManager.getPasswordMaxAgeMs());
             setPasswordLastModified(changePasswordManager.getPasswordLastModified());
@@ -55,19 +57,23 @@ class SessionUserAdapter extends User {
     }
 
     public void savePassword(final char[] currentPassword, final char[] newPassword) throws RepositoryException {
-        if (changePasswordManager == null) {
+        if (!canChangePassword) {
             throw new UnsupportedOperationException();
         }
+        final ChangePasswordManager changePasswordManager =
+                UserSession.get().getJcrSession().getWorkspace().getSecurityManager().getChangePasswordManager();
         changePasswordManager.setPassword(currentPassword, newPassword);
         setPasswordLastModified(changePasswordManager.getPasswordLastModified());
     }
 
     @Override
     public boolean checkPassword(final char[] password) {
-        if (changePasswordManager == null) {
+        if (!canChangePassword) {
             throw new UnsupportedOperationException();
         }
         try {
+            final ChangePasswordManager changePasswordManager =
+                    UserSession.get().getJcrSession().getWorkspace().getSecurityManager().getChangePasswordManager();
             return changePasswordManager.checkPassword(password);
         } catch (RepositoryException e) {
             return false;
@@ -76,9 +82,11 @@ class SessionUserAdapter extends User {
 
     @Override
     public boolean isPreviousPassword(final char[] password, final int numberOfPreviousPasswords) throws RepositoryException {
-        if (changePasswordManager == null) {
+        if (!canChangePassword) {
             throw new UnsupportedOperationException();
         }
+        final ChangePasswordManager changePasswordManager =
+                UserSession.get().getJcrSession().getWorkspace().getSecurityManager().getChangePasswordManager();
         return changePasswordManager.checkNewPasswordUsedBefore(password, numberOfPreviousPasswords);
     }
 
