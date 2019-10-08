@@ -338,10 +338,11 @@ export interface ClientError {
  * The source of the navigate call
  */
 export enum NavigationTrigger {
-  NotDefined = 0,
-  Menu,
-  Breadcrumbs,
-  FastTravel,
-  AnotherApp,
-  PopState,
+  NotDefined = 'NotDefined',
+  InitialNavigation = 'InitialNavigation',
+  Menu = 'Menu',
+  Breadcrumbs = 'Breadcrumbs',
+  FastTravel = 'FastTravel',
+  AnotherApp = 'AnotherApp',
+  PopState = 'PopState',
 }
