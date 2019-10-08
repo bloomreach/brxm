@@ -26,8 +26,7 @@ import { Site } from '@bloomreach/navapp-communication';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { CommunicationsService } from '../../../services/communications.service';
-import { NavConfigService } from '../../../services/nav-config.service';
+import { SiteService } from '../../../services/site.service';
 import { RightSidePanelService } from '../../services/right-side-panel.service';
 
 interface SiteFlatNode {
@@ -63,10 +62,9 @@ export class SiteSelectionComponent implements OnInit, OnDestroy {
   private unsubscribe = new Subject();
 
   constructor(
-    private navConfigService: NavConfigService,
-    private communicationsService: CommunicationsService,
+    private siteService: SiteService,
     private rightSidePanelService: RightSidePanelService,
-  ) {}
+  ) { }
 
   get isNotFoundPanelVisible(): boolean {
     return (
@@ -77,10 +75,10 @@ export class SiteSelectionComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.sites = this.navConfigService.sites;
+    this.sites = this.siteService.sites;
     this.updateDataSource();
 
-    this.navConfigService.selectedSite$.pipe(
+    this.siteService.selectedSite$.pipe(
       takeUntil(this.unsubscribe),
     ).subscribe(x => {
       this.selectedSite = x;
@@ -100,8 +98,8 @@ export class SiteSelectionComponent implements OnInit, OnDestroy {
   onNodeClicked(node: SiteFlatNode): void {
     const site = { accountId: node.accountId, siteId: node.siteId, name: node.name };
 
-    this.communicationsService.updateSelectedSite(site).then(() => {
-      this.navConfigService.setSelectedSite(site);
+    this.siteService.updateSelectedSite(site).then(() => {
+      this.siteService.setSelectedSite(site);
       this.rightSidePanelService.close();
     });
   }

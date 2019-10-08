@@ -17,11 +17,20 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
+import { ConnectionService } from './connection.service';
+
 @Injectable({
   providedIn: 'root',
 })
 export class OverlayService {
   private isOverlayVisible = new BehaviorSubject<boolean>(false);
+
+  constructor(
+    private connectionService: ConnectionService,
+  ) {
+    this.connectionService.showMask$.subscribe(() => this.enable());
+    this.connectionService.hideMask$.subscribe(() => this.disable());
+  }
 
   get visible$(): Observable<boolean> {
     return this.isOverlayVisible.asObservable();

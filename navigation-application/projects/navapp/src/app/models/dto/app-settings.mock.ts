@@ -20,16 +20,20 @@ import { ConfigResourceMock } from './config-resource.mock';
 
 export class AppSettingsMock implements AppSettings {
   basePath = '/base/path';
-  initialPath = 'initial/path';
-  navAppResourceLocation = 'testLocation';
+  initialPath = '/initial/path';
+  navAppResourceLocation = '/testLocation';
   navConfigResources = [
     new ConfigResourceMock({
       resourceType: 'IFRAME',
-      url: 'testIFRAMEurl',
+      url: '/testIFRAMEurl',
     }) as ConfigResource,
     new ConfigResourceMock({
       resourceType: 'REST',
-      url: 'testRESTurl',
+      url: '/testRESTurl',
+    }) as ConfigResource,
+    new ConfigResourceMock({
+      resourceType: 'INTERNAL_REST',
+      url: '/internalRESTurl',
     }) as ConfigResource,
   ];
   iframesConnectionTimeout = 30000;
@@ -37,22 +41,22 @@ export class AppSettingsMock implements AppSettings {
   loginResources = [
     new ConfigResourceMock({
       resourceType: 'IFRAME',
-      url: 'testLoginResource1',
+      url: '/testLoginResource1',
     }) as ConfigResource,
     new ConfigResourceMock({
       resourceType: 'IFRAME',
-      url: 'testLoginResource2',
+      url: '/testLoginResource2',
     }) as ConfigResource,
   ];
 
   logoutResources = [
     new ConfigResourceMock({
       resourceType: 'IFRAME',
-      url: 'testLogoutResource1',
+      url: '/testLogoutResource1',
     }) as ConfigResource,
     new ConfigResourceMock({
       resourceType: 'IFRAME',
-      url: 'testLogoutResource2',
+      url: '/testLogoutResource2',
     }) as ConfigResource,
   ];
 

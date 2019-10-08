@@ -15,15 +15,24 @@
  */
 
 import { TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
 
+import { ConnectionService } from './connection.service';
 import { OverlayService } from './overlay.service';
 
 describe('OverlayService', () => {
   let overlayService: OverlayService;
 
   beforeEach(() => {
+    const connectionServiceMock = {
+      showMask$: of(),
+      hideMask$: of(),
+    };
     TestBed.configureTestingModule({
-      providers: [OverlayService],
+      providers: [
+        OverlayService,
+        { provide: ConnectionService, useValue: connectionServiceMock },
+      ],
     });
 
     overlayService = TestBed.get(OverlayService);

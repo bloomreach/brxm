@@ -24,7 +24,10 @@ import {
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
-import { CommunicationsService } from '../../../services/communications.service';
+import { Connection } from '../../../models/connection.model';
+import { FailedConnection } from '../../../models/failed-connection.model';
+import { ConnectionService } from '../../../services/connection.service';
+import { ClientAppService } from '../../services/client-app.service';
 
 @Component({
   selector: 'brna-client-app',
@@ -42,14 +45,23 @@ export class ClientAppComponent implements OnInit, AfterViewInit {
 
   constructor(
     private domSanitizer: DomSanitizer,
-    private communicationsService: CommunicationsService,
-  ) {}
+    private connectionService: ConnectionService,
+    private clientAppService: ClientAppService,
+  ) { }
 
   ngOnInit(): void {
     this.safeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(this.url);
   }
 
   ngAfterViewInit(): void {
-    this.communicationsService.connectToChild(this.iframe.nativeElement);
+    const nativeIFrame = this.iframe.nativeElement;
+    const url = nativeIFrame.src;
+
+    this.connectionService
+      .connectToIframe(nativeIFrame)
+      .then(
+        connection => this.clientAppService.addConnection(new Connection(url, connection.api)),
+        error => this.clientAppService.addConnection(new FailedConnection(url, error)),
+      );
   }
 }

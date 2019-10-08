@@ -17,7 +17,7 @@
 import { Location } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { ChildConfig, NavItem } from '@bloomreach/navapp-communication';
-import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
+import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
 import { bufferTime, first, map, switchMap, tap } from 'rxjs/operators';
 
@@ -26,7 +26,7 @@ import { Connection } from '../../models/connection.model';
 import { AppSettings } from '../../models/dto/app-settings.dto';
 import { FailedConnection } from '../../models/failed-connection.model';
 import { APP_SETTINGS } from '../../services/app-settings';
-import { NavConfigService } from '../../services/nav-config.service';
+import { NavItemService } from '../../services/nav-item.service';
 import { ClientApp } from '../models/client-app.model';
 
 interface ClientAppWithConfig {
@@ -39,12 +39,13 @@ export class ClientAppService {
   private uniqueURLs = new BehaviorSubject<string[]>([]);
   private connectedApps: Map<string, ClientAppWithConfig> = new Map<string, ClientAppWithConfig>();
   private activeAppId = new BehaviorSubject<string>(undefined);
-  private connection$ = new ReplaySubject<Connection>();
+  private connectionCounter$ = new ReplaySubject<Connection>();
+  private userActivityReceived$ = new Subject<ClientApp>();
 
   constructor(
-    private navConfigService: NavConfigService,
     @Inject(APP_SETTINGS) private appSettings: AppSettings,
-  ) {}
+    private navItemService: NavItemService,
+  ) { }
 
   get urls$(): Observable<string[]> {
     return this.uniqueURLs.asObservable();
@@ -75,7 +76,7 @@ export class ClientAppService {
   }
 
   init(): Promise<void> {
-    const navItems = this.navConfigService.navItems;
+    const navItems = this.navItemService.navItems;
     const uniqueURLs = this.filterUniqueURLs(navItems);
     this.uniqueURLs.next(uniqueURLs);
 
@@ -111,7 +112,7 @@ export class ClientAppService {
     // Fix extra/missing trailing slash issue
     connection.appUrl = url;
 
-    this.connection$.next(connection);
+    this.connectionCounter$.next(connection);
   }
 
   getApp(appUrl: string): ClientApp {
@@ -132,10 +133,9 @@ export class ClientAppService {
     return this.connectedApps.get(appUrl).config;
   }
 
-  logoutApps(): Promise<void[]> {
-    return Promise.all(this.apps.map(
-      app => app.api.logout(),
-    ));
+  onUserActivity(): Promise<void> {
+    this.userActivityReceived$.next(this.activeApp);
+    return Promise.resolve();
   }
 
   private filterUniqueURLs(navItems: NavItem[]): string[] {
@@ -152,8 +152,8 @@ export class ClientAppService {
   }
 
   private waitForConnections(expectedNumber: number): Observable<Connection[]> {
-    return this.connection$.pipe(
-      bufferTime(this.appSettings.iframesConnectionTimeout * 1.5 , undefined, expectedNumber),
+    return this.connectionCounter$.pipe(
+      bufferTime(this.appSettings.iframesConnectionTimeout * 1.5, undefined, expectedNumber),
     );
   }
 

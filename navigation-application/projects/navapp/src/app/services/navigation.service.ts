@@ -32,10 +32,12 @@ import { AppSettings } from '../models/dto/app-settings.dto';
 import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
 
 import { APP_SETTINGS } from './app-settings';
+import { BusyIndicatorService } from './busy-indicator.service';
+import { ConnectionService } from './connection.service';
 import { NavigationStartEvent } from './events/navigation-start.event';
 import { NavigationStopEvent } from './events/navigation-stop.event';
 import { NavigationEvent } from './events/navigation.event';
-import { NavConfigService } from './nav-config.service';
+import { NavItemService } from './nav-item.service';
 import { UrlMapperService } from './url-mapper.service';
 
 interface Route {
@@ -83,15 +85,24 @@ export class NavigationService implements OnDestroy {
   private events = new Subject<NavigationEvent>();
 
   constructor(
-    private location: Location,
-    private navConfigService: NavConfigService,
-    private clientAppService: ClientAppService,
-    private menuStateService: MenuStateService,
-    private breadcrumbsService: BreadcrumbsService,
-    private urlMapperService: UrlMapperService,
-    private errorHandlingService: ErrorHandlingService,
     @Inject(APP_SETTINGS) private appSettings: AppSettings,
+    private breadcrumbsService: BreadcrumbsService,
+    private busyIndicatorService: BusyIndicatorService,
+    private clientAppService: ClientAppService,
+    private connectionService: ConnectionService,
+    private errorHandlingService: ErrorHandlingService,
+    private location: Location,
+    private menuStateService: MenuStateService,
+    private navItemService: NavItemService,
+    private urlMapperService: UrlMapperService,
   ) {
+    this.connectionService
+      .navigate$
+      .subscribe(navLocation => this.navigateByNavLocation(navLocation));
+    this.connectionService
+      .updateNavLocation$
+      .subscribe(navLocation => this.updateByNavLocation(navLocation));
+
     this.setupNavigations();
     this.processNavigations();
   }
@@ -115,7 +126,7 @@ export class NavigationService implements OnDestroy {
   }
 
   initialNavigation(): Promise<void> {
-    const navItems = this.navConfigService.navItems;
+    const navItems = this.navItemService.navItems;
     this.routes = this.generateRoutes(navItems);
 
     this.setUpLocationChangeListener();
@@ -210,7 +221,10 @@ export class NavigationService implements OnDestroy {
 
   private setupNavigations(): void {
     this.transitions.pipe(
-      tap(() => this.events.next(new NavigationStartEvent())),
+      tap(() => {
+        this.busyIndicatorService.show();
+        this.events.next(new NavigationStartEvent());
+      }),
       switchMap((t: Transition) => this.processTransition(t).pipe(
         catchError(error => {
           // Always resolve a promise (for now) to overcome consequent problems of handling promise rejection
@@ -223,7 +237,10 @@ export class NavigationService implements OnDestroy {
           return of(error);
         }),
       )),
-      tap(() => this.events.next(new NavigationStopEvent())),
+      tap(() => {
+        this.busyIndicatorService.hide();
+        this.events.next(new NavigationStopEvent());
+      }),
     ).subscribe((t: Navigation | Error) => {
       if (t instanceof AppError) {
         this.errorHandlingService.setError(t);

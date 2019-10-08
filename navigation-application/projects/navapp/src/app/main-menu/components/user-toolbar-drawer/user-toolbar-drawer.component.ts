@@ -24,7 +24,7 @@ import {
 } from '@angular/core';
 
 import { UserSettings } from '../../../models/dto/user-settings.dto';
-import { LogoutService } from '../../../services/logout.service';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'brna-user-toolbar-drawer',
@@ -55,7 +55,9 @@ export class UserToolbarDrawerComponent {
   @HostBinding('@slideInOut')
   animate = true;
 
-  constructor(private logoutService: LogoutService) {}
+  constructor(
+    private authService: AuthService,
+  ) { }
 
   get userName(): string {
     return this.config.userName;
@@ -67,7 +69,7 @@ export class UserToolbarDrawerComponent {
 
   logout(event: Event): void {
     event.preventDefault();
-    this.logoutService.logout('UserLoggedOut');
+    this.authService.logout('UserLoggedOut');
   }
 
   onClickedOutside(): void {

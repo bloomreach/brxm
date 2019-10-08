@@ -15,18 +15,25 @@
  */
 
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
+import { AuthService } from '../services/auth.service';
 import { BusyIndicatorService } from '../services/busy-indicator.service';
 import { NavConfigService } from '../services/nav-config.service';
 
 import { BootstrapService } from './bootstrap.service';
-import { loadNavItems } from './load-nav-items';
 import { scheduleAppBootstrapping } from './schedule-app-bootstrapping';
 
 export const appInitializer = (
+  authService: AuthService,
   navConfigService: NavConfigService,
   bootstrapService: BootstrapService,
   busyIndicatorService: BusyIndicatorService,
   errorHandlingService: ErrorHandlingService,
-) => () => loadNavItems(navConfigService)
-  .then(() => scheduleAppBootstrapping(bootstrapService, busyIndicatorService, errorHandlingService))
-  .catch(() => errorHandlingService.setCriticalError('Unable to load initial configuration'));
+) => async () => {
+  try {
+    await authService.loginAllResources();
+    await navConfigService.init();
+    scheduleAppBootstrapping(bootstrapService, busyIndicatorService, errorHandlingService);
+  } catch (error) {
+    errorHandlingService.setCriticalError('Unable to load initial configuration');
+  }
+};
