@@ -21,6 +21,10 @@ import { BrProps } from '@bloomreach/react-sdk';
 export function NewsList(props: BrProps) {
   const { pageable } = props.component.getModels<PageableModels>();
 
+  if (!pageable) {
+    return <div/>;
+  }
+
   return (
     <div>
       { pageable.items.map((reference, key) => <NewsListItem key={key} item={props.page.getContent(reference)!} />) }
