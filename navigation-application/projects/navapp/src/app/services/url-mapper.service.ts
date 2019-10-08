@@ -63,7 +63,7 @@ export class UrlMapperService {
 
     const activeAppUrl = this.clientAppService.activeApp.url;
 
-    const appPathPredicate = (x: NavItem) => navLocation.path.startsWith(x.appPath);
+    const appPathPredicate = (x: NavItem) => navLocation.path.startsWith((new URL(x.appIframeUrl + x.appPath)).pathname);
     const appUrlAndAppPathPredicate = (x: NavItem) => x.appIframeUrl === activeAppUrl && appPathPredicate(x);
 
     const navItem = this.navConfigService.navItems.find(x => {
