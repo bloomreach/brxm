@@ -31,6 +31,7 @@
     constructor(parentApiPromise) {
       this.parentApiPromise = parentApiPromise;
       this.childApiPromiseMap = new Map([]);
+      this.locationsMap = new Map();
     }
 
     getIFrameByPerspectiveId (perspectiveId) {
@@ -54,7 +55,14 @@
         .then(parentApi => {
           const subAppConnectConfig = {
             iframe: iframeElement,
-            methods: parentApi,
+            methods: {
+              ...parentApi,
+              updateNavLocation: (location) => {
+                this.locationsMap.set(iframeElement, location);
+
+                return this.updateNavLocation(location);
+              }
+             },
           };
           const childApiPromise = window.bloomreach['navapp-communication'].connectToChild(subAppConnectConfig);
           this.childApiPromiseMap.set(iframeElement, childApiPromise);
@@ -71,11 +79,22 @@
     }
 
     updateNavLocation (location) {
-      this.parentApiPromise.then(parentApi => parentApi.updateNavLocation(location));
+      return this.parentApiPromise.then(parentApi => parentApi.updateNavLocation(location));
+    }
+  }
+
+  Hippo.IFrameConnections = IFrameConnections;
+
+  const navigateIframe = (iframe, path, triggeredBy) => {
+    const location = Hippo.iframeConnections.locationsMap.get(iframe);
+
+    if (location && triggeredBy === 'Menu') {
+      return Hippo.updateNavLocation(location);
     }
 
-  }
-  Hippo.IFrameConnections = IFrameConnections;
+    return Hippo.iframeConnections.getChildApiPromise(iframe)
+      .then(childApi => childApi.navigate({ path }));
+  };
 
   const cmsChildApi = {
 
@@ -89,7 +108,7 @@
       return Promise.all(beforeNavigationPromises);
     },
 
-    navigate (location, flags) {
+    navigate (location, triggeredBy) {
       const pathWithoutLeadingSlash = location.path.replace(/^\/+/, '');
       const pathElements = pathWithoutLeadingSlash.split('/');
       const perspectiveId = pathElements.shift();
@@ -100,40 +119,48 @@
       }
 
       const iframe = Hippo.iframeConnections.getIFrameByPerspectiveId(perspectiveId);
-      if (iframe) {
-        const forceRefresh = flags && flags.forceRefresh;
-        const subAppLocation = {path: pathElements.join('/')};
+
+      const navigateToPerspective = () => {
         switch (perspectiveId) {
-
           case 'projects':
-            pathElements.unshift(perspectiveId);
-            if (forceRefresh) {
-              subAppLocation.path = 'projects';
+            if (!iframe) {
+              return Promise.reject(new Error('project\'s iframe is not found'));
             }
-            break;
 
+            return navigateIframe(iframe, 'projects', triggeredBy);
+  
           case 'channelmanager':
-            if (forceRefresh) {
-              const rootPanel = Ext.getCmp('rootPanel');
-              if (rootPanel) {
-                rootPanel.fireEvent('navigate-to-channel-overview');
-              }
+            if (!iframe) {
+              return Promise.reject(new Error('channel manager\'s iframe is not found'));
             }
-            break;
-        }
-        return Hippo.iframeConnections.getChildApiPromise(iframe)
-          .then(childApi => childApi.navigate(subAppLocation, flags))
-          .then(() => perspective.click());
-      }
 
-      if (perspectiveId === 'browser' && pathElements.length > 1) {
-        const docLocation = document.location;
-        const url = new URL(docLocation.href);
-        url.searchParams.append('uuid', pathElements[1]);
-        docLocation.assign(url.toString())
-      }
-      perspective.click();
-      return Promise.resolve();
+            const rootPanel = Ext.getCmp('rootPanel');
+
+            if (!rootPanel) {
+              return Promise.reject(new Error('rootPanel is not found'));
+            }
+  
+            const path = pathElements.join('/');
+            return navigateIframe(iframe, path, triggeredBy);
+  
+          case 'browser':
+            if (pathElements.length === 0) {
+              return Promise.resolve();
+            }
+  
+            const docLocation = document.location;
+            const url = new URL(docLocation.href);
+            url.searchParams.append('uuid', pathElements[1]);
+            docLocation.assign(url.toString())
+  
+            return Promise.resolve();
+  
+          default:
+              return Promise.resolve();
+        }
+      };
+
+      return navigateToPerspective().then(() => perspective.click());
     },
 
     logout () {
@@ -162,7 +189,7 @@
   );
 
   Hippo.updateNavLocation = function(location) {
-    Hippo.iframeConnections.updateNavLocation(location);
+    return Hippo.iframeConnections.updateNavLocation(location);
   }
   Hippo.showMask = function() {
     Hippo.iframeConnections.showMask();
