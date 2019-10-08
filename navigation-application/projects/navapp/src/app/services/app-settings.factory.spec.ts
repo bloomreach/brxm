@@ -88,33 +88,72 @@ describe('appSettingsFactory', () => {
         expect(actual).toEqual(expected);
       });
 
-      it('should read the base path value from the location if the base path is not set', () => {
-        const expected = '/base/path/from/browser/location';
+      describe('basePath', () => {
+        it ('should be returned from the app settings object', () => {
+          const expected = appSettingsMock.basePath;
 
-        windowRefMock.nativeWindow = {
-          NavAppSettings: {
-            appSettings: { basePath: undefined },
-          },
-        };
-        locationMock.path.and.returnValue(expected);
+          const actual = appSettingsFactory(windowRefMock, locationMock).basePath;
 
-        const actual = appSettingsFactory(windowRefMock, locationMock).basePath;
+          expect(actual).toEqual(expected);
+        });
 
-        expect(actual).toEqual(expected);
+        describe('when it is not set in the app settings object', () => {
+          beforeEach(() => {
+            windowRefMock.nativeWindow = {
+              NavAppSettings: {
+                appSettings: { basePath: undefined },
+              },
+            };
+          });
+
+          it('should be read from the location', () => {
+            const expected = '/base/path/from/browser/location';
+
+            locationMock.path.and.returnValue(expected);
+
+            const actual = appSettingsFactory(windowRefMock, locationMock).basePath;
+
+            expect(actual).toEqual(expected);
+          });
+
+          it('should strip off the query string', () => {
+            const expected = '/base/path/from/browser/location';
+
+            locationMock.path.and.returnValue('/base/path/from/browser/location?queryParam=value');
+
+            const actual = appSettingsFactory(windowRefMock, locationMock).basePath;
+
+            expect(actual).toEqual(expected);
+          });
+        });
       });
 
-      it('should set the default value of iframesConnectionTimeout if it is not set', () => {
-        const expected = 30000;
+      describe('iframesConnectionTimeout', () => {
+        it ('should be returned from the app settings object', () => {
+          const expected = appSettingsMock.iframesConnectionTimeout;
 
-        windowRefMock.nativeWindow = {
-          NavAppSettings: {
-            appSettings: { iframesConnectionTimeout: undefined },
-          },
-        };
+          const actual = appSettingsFactory(windowRefMock, locationMock).iframesConnectionTimeout;
 
-        const actual = appSettingsFactory(windowRefMock, locationMock).iframesConnectionTimeout;
+          expect(actual).toEqual(expected);
+        });
 
-        expect(actual).toEqual(expected);
+        describe('when it is not set in the app settings object', () => {
+          beforeEach(() => {
+            windowRefMock.nativeWindow = {
+              NavAppSettings: {
+                appSettings: { iframesConnectionTimeout: undefined },
+              },
+            };
+          });
+
+          it('should be set to the default value', () => {
+            const expected = 30000;
+
+            const actual = appSettingsFactory(windowRefMock, locationMock).iframesConnectionTimeout;
+
+            expect(actual).toEqual(expected);
+          });
+        });
       });
     });
   });
