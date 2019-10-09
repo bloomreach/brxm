@@ -41,7 +41,7 @@ import { MenuStateService } from '../../services/menu-state.service';
       ]),
       transition(':leave', [
         query('@menuSlideInOut', [
-          animate('300ms ease-in-out', style({ height: '0' })),
+          animate('100ms ease-in-out', style({ height: '0' })),
         ],
         { optional: true }),
         animate('300ms ease-in-out', style({ transform: 'translateX(-100%)' })),
