@@ -277,6 +277,11 @@
         <artifactId>hippo-repository-workflow</artifactId>
         <version>${hippo.repository.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-jaxrs</artifactId>
+        <version>${hippo.repository.version}</version>
+      </dependency>
 
       <dependency>
         <groupId>org.apache.jackrabbit</groupId>
@@ -441,6 +446,12 @@
         <version>${hippo.repository.version}</version>
         <scope>test</scope>
       </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7</groupId>
+        <artifactId>hippo-repository-mockutils</artifactId>
+        <version>${hippo.repository.version}</version>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -499,6 +510,8 @@
                 <exclude>console/frontend/node_modules/**</exclude>
                 <exclude>login/node_modules/**</exclude>
                 <exclude>**/ADDITIONAL-LICENSES.yml</exclude>
+                <exclude>engine/node_modules/**</exclude>
+                <exclude>engine/.npmrc</exclude>
               </excludes>
             </configuration>
           </plugin>

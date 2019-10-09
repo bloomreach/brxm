@@ -49,6 +49,10 @@ public class Json {
     private Json() {
     }
 
+    public static ObjectMapper getMapper() {
+        return mapper;
+    }
+
     public static ObjectNode object() {
         return mapper.createObjectNode();
     }
@@ -71,4 +75,5 @@ public class Json {
             return uglyJson;
         }
     }
+
 }
