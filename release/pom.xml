@@ -67,7 +67,7 @@
 
     <!-- Hippo standard plugin versions -->
     <hippo.essentials-components.version>14.0.0-securitydomain-SNAPSHOT</hippo.essentials-components.version>
-    <hippo.plugin.content-blocks.version>14.0.0-SNAPSHOT</hippo.plugin.content-blocks.version>
+    <hippo.plugin.content-blocks.version>14.0.0-securitydomain-SNAPSHOT</hippo.plugin.content-blocks.version>
     <hippo.plugin.content-tagging.version>14.0.0-SNAPSHOT</hippo.plugin.content-tagging.version>
     <hippo.plugin.dashboard-document-wizard.version>14.0.0-SNAPSHOT</hippo.plugin.dashboard-document-wizard.version>
     <hippo.plugin.gallerypicker.version>14.0.0-SNAPSHOT</hippo.plugin.gallerypicker.version>
