@@ -2,8 +2,18 @@
   "bundleType" : "WICKET",
   "keyData" : {
     "cms-version-intro-label" : {
+<<<<<<< Updated upstream
       "status" : "CLEAN",
       "locales" : null
+=======
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+>>>>>>> Stashed changes
     },
     "repository.error" : {
       "status" : "CLEAN",
@@ -14,8 +24,18 @@
       "locales" : null
     },
     "page.title" : {
+<<<<<<< Updated upstream
       "status" : "CLEAN",
       "locales" : null
+=======
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+>>>>>>> Stashed changes
     },
     "access.denied" : {
       "status" : "CLEAN",
@@ -30,8 +50,18 @@
       "locales" : null
     },
     "terms-and-conditions-label" : {
+<<<<<<< Updated upstream
       "status" : "CLEAN",
       "locales" : null
+=======
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+>>>>>>> Stashed changes
     },
     "edition.label" : {
       "status" : "CLEAN",
@@ -58,8 +88,18 @@
       "locales" : null
     },
     "browser.unsupported.warning" : {
+<<<<<<< Updated upstream
       "status" : "CLEAN",
       "locales" : null
+=======
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+>>>>>>> Stashed changes
     },
     "cms-version-mitro-label" : {
       "status" : "CLEAN",
