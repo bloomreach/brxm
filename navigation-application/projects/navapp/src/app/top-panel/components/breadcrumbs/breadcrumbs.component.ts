@@ -15,6 +15,7 @@
  */
 
 import { Component } from '@angular/core';
+import { NavigationTrigger } from '@bloomreach/navapp-communication';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
@@ -45,6 +46,6 @@ export class BreadcrumbsComponent {
   }
 
   onLastBreadcrumbClicked(): void {
-    this.navigationService.navigateToDefaultCurrentAppPage();
+    this.navigationService.navigateToDefaultCurrentAppPage(NavigationTrigger.Breadcrumbs);
   }
 }
