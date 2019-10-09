@@ -1,4 +1,4 @@
-// Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
 // limitations under the License.
 
 .hippo-dialog {
-
   .section-viewer {
     width: 230px;
     float: left;
@@ -26,7 +25,35 @@
 
   .section-selection {
     background-color: $picker-section-selection-bgcolor;
-    border-right: $picker-section-selection-border;
+    border-right-color: $picker-section-selection-bgcolor;
+    border-bottom: none;
+
+    $modal-select-height: 32px;
+
+    .selectric-wrapper {
+      margin-top: 4px;
+    }
+
+    .selectric {
+      border: 1px solid $gray60;
+      height: $modal-select-height;
+
+      .label {
+        font-size: 16px;
+        line-height: $modal-select-height;
+      }
+
+      .button {
+        height: $modal-select-height;
+        line-height: $modal-select-height;
+      }
+    }
+
+    .selectric-hover .selectric,
+    .selectric-open .selectric {
+      background-color: transparent;
+      border-color: $gray87;
+    }
   }
 
   .section-top {
@@ -35,5 +62,9 @@
 
   .section-view.selected {
     background-color: $picker-section-center-bgcolor;
+  }
+
+  .section-search-input input {
+    height: 32px;
   }
 }

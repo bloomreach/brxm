@@ -176,18 +176,7 @@ public abstract class GalleryUploadPanel extends Panel {
         };
         uploadForm.add(this.fileUploadWidget);
 
-        renderButtonInOSX();
-
         return uploadForm;
-    }
-
-    private void renderButtonInOSX() {
-        //OMG: ugly workaround.. Input[type=file] is rendered differently on OSX in all browsers..
-        HttpServletRequest httpServletReq = (HttpServletRequest) RequestCycle.get().getRequest().getContainerRequest();
-        String ua = httpServletReq.getHeader("User-Agent");
-        if (ua.contains("Macintosh")) {
-            uploadButton.add(ClassAttribute.append("upload-button-osx"));
-        }
     }
 
     protected void createGalleryItem(final FileUpload upload, final String galleryType) {

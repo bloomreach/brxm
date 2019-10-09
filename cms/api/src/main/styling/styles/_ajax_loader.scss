@@ -1,4 +1,4 @@
-// Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,7 +29,9 @@
     animation: ajaxloader 1s infinite linear;
     animation-play-state: paused;
     background-size: $ajax-loader-width $ajax-loader-height;
+
     @include retina("#{$images}/loader/ajax-loader.png", 2, $ajax-loader-width $ajax-loader-height);
+
     background-repeat: no-repeat;
     will-change: auto;
   }
@@ -37,6 +39,7 @@
 
 .hippo-ajax-show-load .wicket-ajax-indicator {
   visibility: visible;
+
   .ajax-loader {
     will-change: transform;
     animation-play-state: running;

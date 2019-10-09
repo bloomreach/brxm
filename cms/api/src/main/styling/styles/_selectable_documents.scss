@@ -1,4 +1,4 @@
-// Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@
 
   .hippo-selectable-documents-list {
     flex: 1 0 auto;
+
     .hippo-paging tbody {
       height: 170px;
     }
@@ -32,9 +33,7 @@
   .hippo-selectable-documents-buttons {
     height: 41px;
     padding: 0 16px 0 16px;
-
     background-color: $white;
-
     display: flex;
     justify-content: space-between;
     align-items: center;

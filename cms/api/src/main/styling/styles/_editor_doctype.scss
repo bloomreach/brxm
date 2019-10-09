@@ -1,4 +1,4 @@
-// Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -14,7 +14,6 @@
 
 // Document type preview styling
 .hippo-preview-document-wrapper {
-
   .template-type-right-body {
     border-left: 0;
   }
@@ -32,6 +31,7 @@
     .active {
       > .hippo-editor-template-field {
         border-color: $light-gray;
+
         > .hippo-editor-template-field-controls {
           background-color: $dark-gray;
         }
@@ -52,6 +52,7 @@
   .active {
     > .hippo-editor-template-field {
       border-color: $primary;
+
       > .hippo-editor-template-field-controls {
         background-color: $primary;
       }
@@ -89,7 +90,6 @@
       padding: 16px 8px;
 
       > .hippo-editor-field-subfield {
-
         .hippo-editor-field {
           padding-left: 0;
           padding-right: 0;
@@ -155,7 +155,6 @@
 }
 
 .hippo-editor-template-field-edit {
-
   > div.even,
   > div.odd {
     padding: 3px;
@@ -290,7 +289,6 @@
 }
 
 .active > .hippo-editor-template-field > .hippo-editor-template-field-controls {
-
   .hi {
     fill: $primary;
 
