@@ -15,6 +15,7 @@
  */
 
 import { Typed } from 'emittery';
+import { mocked } from 'ts-jest/utils';
 import { Events } from './events';
 import { Cms } from './cms';
 import {
@@ -27,8 +28,10 @@ import {
   Page,
   TYPE_COMPONENT,
 } from './page';
-import { PageModelUrlBuilder } from './url';
 import { Spa } from './spa';
+import * as Url from './url';
+
+jest.mock('./url');
 
 const model = {
   _meta: {},
@@ -47,11 +50,10 @@ const config = {
   httpClient: jest.fn(async () => ({ data: model })),
   options: {
     live: {
-      pageModelBaseUrl: 'http://localhost:8080/site/my-spa/resourceapi',
+      cmsBaseUrl: 'http://localhost:8080/site/my-spa',
     },
     preview: {
-      pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/my-spa/resourceapi',
-      spaBasePath: '/site/_cmsinternal/my-spa',
+      cmsBaseUrl: 'http://localhost:8080/site/_cmsinternal/my-spa',
     },
   },
   request: {
@@ -66,8 +68,9 @@ describe('Spa', () => {
   let contentFactory: ContentFactory;
   let eventBus: Typed<Events>;
   let metaFactory: MetaFactory;
-  let pageModelUrlBuilder: PageModelUrlBuilder;
   let spa: Spa;
+  let urlBuilder: Url.UrlBuilder;
+  let urlBuilderImpl: jasmine.Spy;
 
   beforeEach(() => {
     eventBus = new Typed<Events>();
@@ -75,13 +78,14 @@ describe('Spa', () => {
     componentFactory = new ComponentFactory();
     contentFactory = new ContentFactoryImpl(jest.fn());
     metaFactory = new MetaFactory();
-    pageModelUrlBuilder = jest.fn(() => 'http://example.com');
+    urlBuilder = { getApiUrl: jest.fn(() => 'http://example.com') } as unknown as Url.UrlBuilder;
+    urlBuilderImpl = spyOn(Url, 'UrlBuilderImpl').and.returnValue(urlBuilder);
 
     cms.initialize = jest.fn();
     componentFactory.create = jest.fn(model => new ComponentImpl(model));
     spyOn(contentFactory, 'create');
 
-    spa = new Spa(pageModelUrlBuilder, componentFactory, contentFactory, metaFactory, eventBus, cms);
+    spa = new Spa(componentFactory, contentFactory, metaFactory, eventBus, cms);
   });
 
   describe('initialize', () => {
@@ -98,8 +102,17 @@ describe('Spa', () => {
       expect(cms.initialize).toBeCalled();
     });
 
+    it('should use a preview configuration', async () => {
+      mocked(Url.isPreview).mockReturnValueOnce(true);
+      await spa.initialize(config);
+
+      expect(urlBuilderImpl).toBeCalledTimes(2);
+      expect(urlBuilderImpl).nthCalledWith(1, config.options.live);
+      expect(urlBuilderImpl).nthCalledWith(2, config.options.preview);
+    });
+
     it('should generate a URL', () => {
-      expect(pageModelUrlBuilder).toBeCalledWith(config.request, config.options);
+      expect(urlBuilder.getApiUrl).toBeCalledWith(config.request.path);
     });
 
     it('should request a page model', () => {

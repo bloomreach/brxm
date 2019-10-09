@@ -41,11 +41,10 @@ describe('initialize', () => {
       request: { path: '/' },
       options: {
         live: {
-          pageModelBaseUrl: 'http://localhost:8080/site/my-spa/resourceapi',
+          cmsBaseUrl: 'http://localhost:8080/site/my-spa',
         },
         preview: {
-          pageModelBaseUrl: 'http://localhost:8080/site/_cmsinternal/my-spa/resourceapi',
-          spaBasePath: '/site/_cmsinternal/my-spa',
+          cmsBaseUrl: 'http://localhost:8080/site/_cmsinternal/my-spa',
         },
       },
     });

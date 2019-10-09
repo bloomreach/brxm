@@ -43,7 +43,6 @@ import {
   TYPE_META_COMMENT,
 } from './page';
 import { Configuration, Spa } from './spa';
-import { buildPageModelUrl } from './url';
 
 const eventBus = new Typed<Events>();
 
@@ -65,7 +64,7 @@ const componentFactory = new ComponentFactory()
   );
 
 const cms = new Cms(eventBus);
-const spa = new Spa(buildPageModelUrl, componentFactory, contentFactory, metaFactory, eventBus, cms);
+const spa = new Spa(componentFactory, contentFactory, metaFactory, eventBus, cms);
 
 /**
  * Initializes the page model.

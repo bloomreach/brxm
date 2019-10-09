@@ -19,7 +19,28 @@ import { Cms, Window } from './cms';
 import { ComponentFactory, ContentFactory, Content, PageModel, PageImpl, Page, MetaFactory } from './page';
 import { Events, CmsUpdateEvent } from './events';
 import { HttpClient, HttpRequest } from './http';
-import { PageModelUrlBuilder, PageModelUrlOptions } from './url';
+import { UrlBuilder, UrlBuilderImpl, UrlBuilderOptions, isPreview } from './url';
+
+/**
+ * Configuration options for generating the page model URL.
+ */
+export interface UrlOptions {
+  /**
+   * URL mapping for the live page model.
+   */
+  live: UrlBuilderOptions;
+
+  /**
+   * URL mapping for the preview page model.
+   */
+  preview: UrlBuilderOptions;
+
+  /**
+   * A query parameter used to differentiate between live and preview modes.
+   * The default value is `bloomreach-preview=true`.
+   */
+  previewQuery?: string;
+}
 
 /**
  * Configuration of the SPA SDK.
@@ -38,7 +59,7 @@ export interface Configuration {
   /**
    * Options for generating the page model API URL.
    */
-  options: PageModelUrlOptions;
+  options: UrlOptions;
 
   /**
    * The window reference for the CMS integration.
@@ -51,17 +72,15 @@ export interface Configuration {
  * SPA entry point interacting with the Channel Manager and the Page Model API.
  */
 export class Spa {
-  private pages = new Map<Page, Configuration>();
+  private pages = new Map<Page, [Configuration, UrlBuilder]>();
 
   /**
-   * @param pageModelUrlBuilder Function generating an API URL based on the current request.
    * @param componentFactory Factory to produce component entities.
    * @param contentFactory Factory to produce content entities.
    * @param eventBus Event bus to exchange data between submodules.
    * @param cms Cms integration instance.
    */
   constructor(
-    private pageModelUrlBuilder: PageModelUrlBuilder,
     private componentFactory: ComponentFactory,
     private contentFactory: ContentFactory,
     private metaFactory: MetaFactory,
@@ -71,8 +90,7 @@ export class Spa {
     this.onCmsUpdate = this.onCmsUpdate.bind(this);
   }
 
-  private async fetchPageModel(config: Configuration) {
-    const url = this.pageModelUrlBuilder(config.request, config.options);
+  private async fetchPageModel(config: Configuration, url: string) {
     const response = await config.httpClient({
       url,
       headers: config.request.headers,
@@ -82,15 +100,8 @@ export class Spa {
     return response.data;
   }
 
-  private async fetchComponentModel(config: Configuration, page: Page, id: string, properties: object) {
-    const root = page.getComponent();
-    const component = root.getComponentById(id);
-    const url = component && component.getUrl();
-    if (!url) {
-      return;
-    }
-
-    const data = new URLSearchParams(properties as Record<string, string>);
+  private async fetchComponentModel(config: Configuration, url: string, payload: object) {
+    const data = new URLSearchParams(payload as Record<string, string>);
     const response = await config.httpClient({
       url,
       data: data.toString(),
@@ -127,12 +138,24 @@ export class Spa {
     );
   }
 
+  private initalizeUrlBuilder(config: Configuration) {
+    const options = isPreview(config.request, config.options.previewQuery)
+      ? config.options.preview
+      : config.options.live;
+
+    return new UrlBuilderImpl(options);
+  }
+
   protected async onCmsUpdate(event: CmsUpdateEvent) {
-    this.pages.forEach(async (config, page) => {
-      const model = await this.fetchComponentModel(config, page, event.id, event.properties);
-      if (!model) {
+    this.pages.forEach(async ([config], page) => {
+      const root = page.getComponent();
+      const component = root.getComponentById(event.id);
+      const url = component && component.getUrl();
+      if (!url) {
         return;
       }
+
+      const model = await this.fetchComponentModel(config, url, event.properties);
 
       this.eventBus.emit('page.update', { page: this.initializePage(model) });
     });
@@ -145,14 +168,16 @@ export class Spa {
   async initialize(config: Configuration): Promise<Page> {
     this.cms.initialize(config.window);
 
-    const model = await this.fetchPageModel(config);
+    const urlBuilder = this.initalizeUrlBuilder(config);
+    const url = urlBuilder.getApiUrl(config.request.path);
+    const model = await this.fetchPageModel(config, url);
     const page = this.initializePage(model);
 
     if (!this.pages.size) {
       this.eventBus.on('cms.update', this.onCmsUpdate);
     }
 
-    this.pages.set(page, config);
+    this.pages.set(page, [config, urlBuilder]);
 
     return page;
   }
