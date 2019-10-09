@@ -1,4 +1,4 @@
-// Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 table.hippo-panel-plugin-body {
   height: 100%;
   width: 100%;
-  margin-top:4px;
+  margin-top: 4px;
   margin-bottom: 25px;
 }
 
@@ -61,6 +61,7 @@ table.hippo-panel-plugin-body {
 .hippo-panel-plugin-breadcrumbs .wicketExtensionsBreadCrumbBarCrumb a {
   color: $darkest-shade;
   padding: 0;
+
   &:hover {
     text-decoration: none;
   }

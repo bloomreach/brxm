@@ -57,6 +57,10 @@ public class HippoIconStack extends Panel {
     }
 
     public HippoIconStack(final String id, final IconSize stackSize) {
+        this(id, stackSize, null);
+    }
+
+    public HippoIconStack(final String id, final IconSize stackSize, final String extraCssClass) {
         super(id);
 
         this.stackSize = stackSize;
@@ -64,15 +68,18 @@ public class HippoIconStack extends Panel {
         setRenderBodyOnly(true);
 
         final WebMarkupContainer stack = new WebMarkupContainer("stack");
-        addCssClasses(stack, stackSize);
+        addCssClasses(stack, stackSize, extraCssClass);
         add(stack);
 
         icons = new RepeatingView("icons");
         stack.add(icons);
     }
 
-    private static void addCssClasses(final WebMarkupContainer stack, final IconSize size) {
+    private static void addCssClasses(final WebMarkupContainer stack, final IconSize size, final String extraCssClass) {
         stack.add(ClassAttribute.append("hi hi-stack hi-" + size.name().toLowerCase()));
+        if (extraCssClass != null) {
+            stack.add(ClassAttribute.append(extraCssClass));
+        }
     }
 
     public HippoIcon addFromSprite(final Icon icon) {

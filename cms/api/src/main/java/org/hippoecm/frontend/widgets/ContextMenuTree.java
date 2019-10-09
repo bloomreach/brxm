@@ -111,7 +111,7 @@ public class ContextMenuTree extends DefaultAbstractTree {
     }
 
     protected Component newMenuIcon(MarkupContainer parent, String id, final TreeNode node) {
-        return HippoIcon.fromSprite(id, Icon.CARET_DOWN_CIRCLE);
+        return HippoIcon.fromSprite(id, Icon.MORE);
     }
 
     protected MarkupContainer newContextContent(MarkupContainer parent, String id, final TreeNode node) {

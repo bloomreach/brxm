@@ -23,10 +23,6 @@ $images_legacy:                      "../../images";
 $OpenSansPath:                       "../fonts/open-sans";
 
 // Font sizes
-// If we define a font-size on the body element that is uneven, Firefox will render certain SVG images blurry unless
-// the font-size of a container element (not yet sure which ones specifically apart from the divs in the tree) is an
-// even number of px.
-$font-size-svg-fix:                  12px;
 $font-size-extjs:                    12px;
 
 // Line height
@@ -35,6 +31,19 @@ $line-height-base:                   1.2;
 // Common
 $top-bar-height:                     41px;
 $bottom-bar-height:                  40px;
+$top-bar-bottom-border:              1px solid $gray12;
+$menu-padding-top-bottom:            8px;
+
+// Shadows (copied from Material Design)
+$whiteframe-shadow-8dp:
+  0 5px 5px -3px rgba(0, 0, 0, .2),
+  0 8px 10px 1px rgba(0, 0, 0, .14),
+  0 3px 14px 2px rgba(0, 0, 0, .12);
+
+$whiteframe-shadow-24dp:
+  0 11px 15px -7px rgba(0, 0, 0, .2),
+  0 24px 38px 3px rgba(0, 0, 0, .14),
+  0 9px 46px 8px rgba(0, 0, 0, .12);
 
 // Main menu
 $main-menu-width:                    64px;
@@ -54,26 +63,26 @@ $user-menu-width:                    $main-menu-width;
 $user-menu-height:                   70px;
 $user-menu-bgcolor:                  $main-menu-bgcolor;
 $user-menu-current-user-color:       $lighter-shade;
-$user-menu-popup-border:             rgba(0,0,0,0.3);
+$user-menu-popup-border:             rgba(0, 0, 0, .3);
 $user-menu-popup-background:         $white;
 
 // Dashboard
 $dashboard-header-height:            $top-bar-height;
 
 // Modal
-$modal-mask-opacity:                 0.5;
-$modal-border-color:                 $dark-shade;
+$modal-mask-opacity:                 .5;
+$modal-border-color:                 transparent;
 $modal-border-width:                 3px;
-$modal-header-color:                 $darker-shade;
-$modal-header-bgcolor:               $light-shade;
-$modal-header-font-size:             15px;
-$modal-header-height:                41px;
+$modal-header-color:                 $gray87;
+$modal-header-bgcolor:               $grayLightSolid;
+$modal-header-font-size:             16px;
+$modal-header-height:                47px;
 $modal-header-padding:               16px;
 $modal-body-top-padding:             12px;
 $modal-body-padding:                 16px;
 $modal-footer-padding:               16px;
 $modal-footer-height:                48px;
-$modal-bgcolor:                      $lightest-shade;
+$modal-bgcolor:                      $grayLightSolid;
 
 // Hippo logo
 $hippo-logo-width:                   $main-menu-width;
@@ -84,20 +93,17 @@ $hippo-logo-bgcolor:                 $main-menu-bgcolor;
 $hippo-dev-extensions-bgcolor:       $lighter-shade;
 
 // Footer
-$footer-bgcolor:                     $light-shade;
+$footer-bgcolor:                     $grayLightSolid;
 $footer-height:                      40px;
 
 // Document tabs
 $document-tab-width:                 250px;
 $document-tab-height:                $footer-height;
-$document-tab-hover-bgcolor:         $light-shade;
 $document-tab-hover-close-color:     $black;
-$document-tab-selected-bgcolor:      $lightest-shade;
-$document-tab-font-size:             $font-size-small;
-$document-tab-title-color:           $darkest-shade;
-$document-tab-border-color:          $dark-gray;
-$document-tab-close-color:           $dark-gray;
-$document-tab-close-hover-color:     $primary;
+$document-tab-title-color:           $gray60;
+$document-tab-border-color:          $gray12;
+$document-tab-close-color:           $gray60;
+$document-tab-close-hover-color:     $gray87;
 
 // TabsPlugin Document switcher
 $tab-width:                          $document-tab-width;
@@ -109,36 +115,40 @@ $navigator-bgcolor:                  $white;
 $navigator-border-color:             $light-shade;
 
 // Section viewer
-$section-selection-bgcolor:          $light-shade;
+$section-selection-bgcolor:          $grayLightSolid;
 $sections-select-height:             $top-bar-height;
 $sections-top-height:                40px;
 $sections-top-search-result-height:  64px;
 $sections-bottom-height:             41px;
-$sections-border-color:              $light-shade;
 $sections-top-bgcolor:               $white;
 
 // Section search
-$search-input-border-color:          $light-shade;
-$search-input-icon-color:            $darker-shade;
-$search-input-icon-hover-color:      $primary;
-$search-scope-active-bgcolor:        $light-shade;
-$search-scope-inactive-color:        $darkest-shade;
+$search-input-border-color:          $gray60;
+$search-input-placeholder-color:     $gray60;
+$search-input-active-color:          $gray87;
+$search-input-icon-color:            $gray60;
+$search-input-icon-hover-color:      $gray87;
+$search-scope-active-bgcolor:        $blueLightSolid;
+$search-scope-active-color:          $gray87;
+$search-scope-inactive-color:        $gray87;
+$search-scope-inactive-border-color: $gray38;
+$search-scope-height:                32px;
+$search-scope-border-width:          1px;
 
 // Section add root
 $add-root-folder-hover-color:        $lightest-shade;
 
 // Document listing
-$doclist-head-bgcolor:               $light-shade;
-$doclist-head-border-color:          $dark-gray;
-$doclist-head-color:                 $darkest-shade;
-$doclist-head-sorted-color:          $primary;
+$doclist-head-bgcolor:               $grayLightSolid;
+$doclist-head-color:                 $gray60;
+$doclist-head-hover-color:           $gray87;
+$doclist-head-sorted-color:          $gray87;
 $doclist-head-height:                $top-bar-height;
-$doclist-body-border-color:          $light-shade;
 $doclist-padding-left-right:         8px;
 $doclist-padding-icon:               12px;
 $doclist-row-separator-color:        $light-shade;
-$doclist-row-selected-bgcolor:       $primary;
-$doclist-row-selected-color:         $white;
+$doclist-row-selected-bgcolor:       $blueLight;
+$doclist-row-selected-color:         $gray87;
 $doclist-foot-height:                $doclist-head-height;
 $doclist-paging-button-stroke:       $lighter-shade;
 $doclist-paging-button-fill:         $lightest-shade;
@@ -153,36 +163,35 @@ $image-gallery-thumbnail-padding:    12px;
 $image-gallery-thumbnail-item-width: 200px;
 
 // Tree
-$tree-caret-color:                   $darker-shade;
-$tree-junction-color:                $darkest-shade;
-$tree-folder-color:                  $dark-shade;
-$tree-hover-color:                   $primary;
-$tree-text-color:                    $darkest-shade;
+$tree-junction-color:                $gray60;
+$tree-folder-color:                  $gray60;
+$tree-hover-color:                   $gray87;
+$tree-hover-background-color:        $gray5;
+$tree-selected-font-weight:          600;
 
 // Editor
-$editor-bgcolor:                     $lightest-shade;
-$editor-color:                       $darkest-shade;
-$editor-body-border-color:           $light-shade;
+$editor-bgcolor:                     $white;
+$editor-field-border-radius:         4px;
 $editor-subfield-bg:                 $white;
-$editor-field-title-color:           $darker-shade;
-$editor-subfield-border:             $light-gray;
-$editor-compound-field-border:       $light-gray;
-$editor-padding:                     32px;
-$editor-field-bgs:                   ($lighter-shade, $light-shade, $light-gray, $dark-gray, $dark-shade);
+$editor-field-title-color:           $gray60;
+$editor-field-title-bottom-margin:   6px;
+$editor-subfield-border:             $gray60;
+$editor-subfield-in-compound-border: $gray12;
+$editor-compound-field-color:        $gray87;
+$editor-compound-field-border:       $gray12;
+$editor-padding:                     24px;
+$editor-field-bgs:                   (transparent, $lighter-shade, $light-shade, $light-gray, $dark-gray);
+$editor-field-focus-color:           $bluePrimary;
 
 // Editor preview
 $editor-preview-field-bgcolor:       $lightest-shade;
 $rich-text-preview-link-hover-color: $primary;
 
 // Editor toolbar
-$editor-toolbar-bgcolor:             $light-shade;
-$editor-toolbar-border-color:        $dark-gray;
+$editor-toolbar-bgcolor:             $grayLightSolid;
 $editor-toolbar-fontsize:            15px;
 $editor-toolbar-height:              $top-bar-height;
 $editor-toolbar-color:               $darker-shade;
-$editor-toolbar-hover-color:         $primary;
-$editor-toolbar-active-color:        $darker-shade;
-$editor-toolbar-active-bgcolor:      $lightest-shade;
 
 // Editor validation
 $validation-title-color:             $danger;
@@ -190,43 +199,37 @@ $validation-border:                  $danger;
 $validation-message-color:           $danger;
 
 // CKEditor
-$ckeditor-toolbar-bgcolor:           $lightest-shade;
+$ckeditor-toolbar-bgcolor:           $gray5;
 
 // Hippo dropdown/context menu
-$hippo-menu-fontsize:                $font-size-base;
-$hippo-menu-bgcolor:                 $light-shade;
-$hippo-menu-enabled-color:           $darkest-shade;
-$hippo-menu-enabled-hover-color:     $primary;
-$hippo-menu-enabled-hover-bgcolor:   $lightest-shade;
-$hippo-menu-disabled-color:          $dark-shade;
+$hippo-menu-bgcolor:                 $white;
+$hippo-menu-enabled-color:           $gray87;
+$hippo-menu-enabled-hover-bgcolor:   $gray5;
+$hippo-menu-disabled-color:          $gray38;
 
 // Form elements
 $forms-disabled-color:               $dark-shade;
 $forms-disabled-bgcolor:             $lighter-shade;
 
-$forms-select-bgcolor:               $white;
-$forms-select-border-radius:         3px;
-$forms-select-button-color:          $dark-gray;
-$forms-select-button-hover-color:    $dark-shade;
-$forms-select-arrow-color:           $white;
-$forms-select-arrow-hover-color:     $white;
-$forms-select-open-bgcolor:          $white;
+$forms-select-height:                41px;
+$forms-select-border-radius:         4px;
+$forms-select-arrow-color:           $gray60;
+$forms-select-arrow-hover-color:     $gray60;
+$forms-select-items-color:           $gray87;
 $forms-select-items-bgcolor:         $white;
-$forms-select-items-hover-color:     $white;
-$forms-select-items-hover-bgcolor:   $darker-shade;
+$forms-select-items-hover-bgcolor:   $gray5;
 
 // Date picker
 $datepicker-fontsize:                13px;
 $datepicker-button-bgcolor:          $lighter-shade;
 $datepicker-button-border:           $light-gray;
-$datepicker-button-border-radius:    3px;
 
 // Hippo icon default colors
 $hippo-icon-delete-enabled:          $danger;
 
 // Buttons
 $button-bgcolor:                     $lightest-shade;
-$button-border:                      $dark-gray;
+$button-border:                      $gray38;
 $button-border-radius:               $btn-border-radius-base;
 $button-color:                       $darkest-shade;
 $button-disabled-bgcolor:            $lightest-shade;
@@ -247,12 +250,13 @@ $dashboard-panel-header-color:       $darkest-shade;
 $dashboard-gotolink-icon-color:      $brand-primary;
 
 // Picker
-$picker-section-selection-bgcolor:  $lighter-shade;
+$picker-topbar-bottom-border-color: $grayLightSolid;
+$picker-section-selection-bgcolor:  $grayLightSolid;
 $picker-section-top-bgcolor:        $white;
 $picker-section-center-bgcolor:     $white;
 $picker-section-selection-border:   1px solid $light-gray;
 $picker-section-view-border:        1px solid $light-shade;
-$picker-doclist-head-bgcolor:       $lighter-shade;
+$picker-doclist-head-bgcolor:       $grayLightSolid;
 
 $reorder-border-color:              $light-gray;
 $reorder-selected-bgcolor:          $primary;
@@ -274,7 +278,6 @@ $file-upload-stripe-bg:             $lighter-shade;
 $permissions-workflow-border:       $modal-border-color;
 $permissions-workflow-separator:    $light-shade;
 
-
 // supported mimetypes that have a specific icon
 $mimetypes: (
   audio
@@ -292,4 +295,3 @@ $mimetypes: (
   xls xlsx
   zip
 );
-

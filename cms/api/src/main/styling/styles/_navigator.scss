@@ -1,4 +1,4 @@
-// Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -29,13 +29,15 @@
 }
 
 .navigator-center-body .hippo-list-documents {
-
-  > thead {
-    border-left: 1px solid $doclist-head-border-color;
-  }
-
   > tbody {
-    border-left: 1px solid $doclist-body-border-color;
     width: auto !important;
+  }
+}
+
+.yui-resize-handle {
+  border-right: 1px solid $gray60Solid;
+
+  &:hover {
+    border-color: $gray87;
   }
 }

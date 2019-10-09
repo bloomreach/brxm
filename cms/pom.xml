@@ -496,7 +496,7 @@
                 <exclude>translation/frontend/flags.txt</exclude>
                 <exclude>gallery/frontend/src/main/java/META-INF/services/javax.imageio.spi.ImageWriterSpi</exclude>
                 <!-- front-end build configuration files without license header -->
-                <exclude>api/.csslintrc</exclude>
+                <exclude>api/.stylelintrc</exclude>
                 <exclude>api/.npmrc</exclude>
                 <exclude>console/frontend/.npmrc</exclude>
                 <exclude>login/.npmrc</exclude>

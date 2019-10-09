@@ -16,6 +16,7 @@
 'use strict';
 
 const sass = require('node-sass');
+const stylelintFormatter = require('stylelint-formatter-pretty');
 
 module.exports = function (grunt) {
 
@@ -47,7 +48,7 @@ module.exports = function (grunt) {
           livereload: false
         },
         files: ['<%= build.src %>/**/*.scss'],
-        tasks: ['sass', 'autoprefixer', 'csslint', 'concat:css', 'clean:tmp']
+        tasks: ['stylelint', 'sass', 'autoprefixer', 'concat:css', 'clean:tmp']
       },
       reloadCompiledCss: {
         files: ['<%= build.skin %>/**/*.css']
@@ -70,6 +71,16 @@ module.exports = function (grunt) {
         files: ['<%= build.svgsprite %>'],
         tasks: ['newer:svgstore']
       },
+    },
+
+    // Lint sass files
+    stylelint: {
+      options: {
+        formatter: stylelintFormatter,
+      },
+      src: [
+        '<%= build.src %>/**/*.scss',
+      ]
     },
 
     // Compile Sass to CSS.
@@ -103,16 +114,6 @@ module.exports = function (grunt) {
         },
         src: '<%= build.tmp %>/css/<%= build.file %>.css',
         dest: '<%= build.tmp %>/css/<%= build.file %>.css'
-      }
-    },
-
-    // Lint the css output
-    csslint: {
-      main: {
-        options: {
-          csslintrc: '.csslintrc'
-        },
-        src: ['<%= build.tmp %>/css/<%= build.file %>.css']
       }
     },
 
@@ -191,7 +192,8 @@ module.exports = function (grunt) {
           '<%= build.npmDir %>/blueimp-file-upload/js/jquery.fileupload-validate.js',
           '<%= build.npmDir %>/blueimp-file-upload/js/jquery.fileupload-image.js',
           '<%= build.npmDir %>/blueimp-file-upload/js/jquery.iframe-transport.js',
-          '<%= build.npmDir %>/bootstrap-sass/assets/javascripts/bootstrap/tooltip.js'
+          '<%= build.npmDir %>/bootstrap-sass/assets/javascripts/bootstrap/tooltip.js',
+          '<%= build.npmDir %>/focus-visible/dist/focus-visible.js',
         ],
         dest: '<%= build.skin %>/js/<%= build.file %>.js',
         nonull: true
@@ -287,10 +289,10 @@ module.exports = function (grunt) {
   // build theme
   grunt.registerTask('build', 'Build the theme', [
     'clean:copies',
+    'stylelint',
     'sass',
     'svgstore',
     'autoprefixer',
-    'csslint',
     'concat',
     'uglify',
     'cssmin:theme',
