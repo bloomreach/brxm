@@ -77,12 +77,13 @@ class HippoCmCtrl {
     if (!this.ChannelService.matchesChannel(channelId)) {
       this._initializeChannel(channelId, contextPath, hostGroup, branchId, initialPath);
     } else {
-      this.HippoIframeService.initializePath(initialPath);
+      this.HippoIframeService.initializePath(initialPath)
+        .then(() => this.ChannelService.updateNavLocation());
     }
   }
 
   _initializeChannel(channelId, contextPath, hostGroup, branchId, initialPath) {
-    this.ChannelService.initializeChannel(channelId, contextPath, hostGroup, branchId)
+    return this.ChannelService.initializeChannel(channelId, contextPath, hostGroup, branchId)
       .then(() => {
         if (!this.$state.includes('hippo-cm.channel')) {
           return this.$state.go('hippo-cm.channel');

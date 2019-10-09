@@ -57,6 +57,7 @@ describe('hippoCm', () => {
         'matchesChannel',
         'reload',
       ]);
+      ChannelService.initializeChannel.and.returnValue(Promise.resolve());
 
       ConfigService = jasmine.createSpyObj('ConfigService', [
         'isDevMode',
@@ -66,6 +67,7 @@ describe('hippoCm', () => {
         'initializePath',
         'reload',
       ]);
+      HippoIframeService.initializePath.and.returnValue(Promise.resolve());
 
       $ctrl = $componentController('hippoCm', {
         $state,

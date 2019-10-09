@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { connectToParent } from '@bloomreach/navapp-communication';
+
 class ChannelService {
   constructor(
     $log,
@@ -26,6 +28,7 @@ class ChannelService {
     HstService,
     PathService,
     ProjectService,
+    RightSidePanelService,
     SessionService,
     SiteMapService,
   ) {
@@ -41,11 +44,19 @@ class ChannelService {
     this.HstService = HstService;
     this.PathService = PathService;
     this.ProjectService = ProjectService;
+    this.RightSidePanelService = RightSidePanelService;
     this.SessionService = SessionService;
     this.SiteMapService = SiteMapService;
 
     this.isToolbarDisplayed = true;
     this.channel = {};
+
+    const parentOrigin = window.location.origin;
+    const methods = {
+      navigate: (location, flags) => this.navigate(flags),
+      beforeNavigation: () => this._beforeNavigation(),
+    };
+    this.parentApiPromise = connectToParent({ parentOrigin, methods });
   }
 
   /**
@@ -122,12 +133,15 @@ class ChannelService {
     if (this.SessionService.hasWriteAccess()) {
       this._augmentChannelWithPrototypeInfo();
     }
-
-    this.CmsService.publish('set-breadcrumb', this.channel.name);
+    this.updateNavLocation();
   }
 
   _makeContextPrefix(contextPath) {
     return this.PathService.concatPaths('/', contextPath, this.channel.cmsPreviewPrefix);
+  }
+
+  _beforeNavigation() {
+    return this.RightSidePanelService.close().then(() => undefined);
   }
 
   clearChannel() {
@@ -137,6 +151,7 @@ class ChannelService {
     if (!this.isToolbarDisplayed) {
       this.setToolbarDisplayed(true);
     }
+    this.updateNavLocation();
   }
 
   hasChannel() {
@@ -324,11 +339,36 @@ class ChannelService {
   }
 
   deleteChannel() {
-    return this.HstService.doDelete(this.ConfigService.rootUuid, 'channels', this.getId());
+    return this.HstService
+      .doDelete(this.ConfigService.rootUuid, 'channels', this.getId())
+      .then(() => this.updateNavLocation());
   }
 
   setToolbarDisplayed(state) {
     this.isToolbarDisplayed = state;
+  }
+
+  navigate(flags) {
+    if (this.channel) {
+      this.reload().then(() => this.updateNavLocation(flags));
+    } else {
+      this.updateNavLocation(flags);
+    }
+  }
+
+  updateNavLocation(flags) {
+    const location = this._getLocation(flags);
+    return this.parentApiPromise.then(api => api.updateNavLocation(location));
+  }
+
+  _getLocation(flags) {
+    if ((flags && flags.forceRefresh) || !this.hasChannel()) {
+      return { path: 'channelmanager' };
+    }
+    return {
+      breadcrumbLabel: this.getName(),
+      path: `channelmanager/${this.getId()}`,
+    };
   }
 }
 

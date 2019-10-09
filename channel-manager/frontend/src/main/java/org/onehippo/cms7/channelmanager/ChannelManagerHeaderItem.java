@@ -44,7 +44,6 @@ public class ChannelManagerHeaderItem extends HeaderItem {
     private static final String ROOT_PANEL = "RootPanel.js";
     private static final String BLUEPRINT_LIST_PANEL = "BlueprintListPanel.js";
     private static final String CHANNEL_FORM_PANEL = "ChannelFormPanel.js";
-    private static final String BREADCRUMB_TOOLBAR = "BreadcrumbToolbar.js";
 
     private static final JavaScriptResourceReference[] JAVASCRIPT_RESOURCE_REFERENCES;
 
@@ -52,7 +51,6 @@ public class ChannelManagerHeaderItem extends HeaderItem {
         List<JavaScriptResourceReference> references = new ArrayList<>();
         references.add(new JavaScriptResourceReference(CommonBundle.class, CommonBundle.MARK_REQUIRED_FIELDS));
         references.add(new JavaScriptResourceReference(ExtStoreFuture.class, ExtStoreFuture.EXT_STORE_FUTURE));
-        references.add(new JavaScriptResourceReference(ChannelManagerHeaderItem.class, BREADCRUMB_TOOLBAR));
         references.add(new JavaScriptResourceReference(ChannelManagerHeaderItem.class, ROOT_PANEL));
         references.add(new JavaScriptResourceReference(ChannelManagerHeaderItem.class, BLUEPRINT_LIST_PANEL));
         references.add(new JavaScriptResourceReference(ChannelManagerHeaderItem.class, CHANNEL_FORM_PANEL));
