@@ -121,6 +121,7 @@ describe('NavigationService', () => {
     locationMock.subscribe.and.callFake(cb => locationChangeFunction = cb);
 
     childApi = jasmine.createSpyObj('ChildApi', {
+      beforeNavigation: Promise.resolve(true),
       navigate: Promise.resolve(),
     });
 
@@ -180,6 +181,69 @@ describe('NavigationService', () => {
     it('should do the initial url navigation', () => {
       expect(locationMock.replaceState).toHaveBeenCalledWith(`${basePath}/iframe1/url/app/path/to/home`, '', {});
     });
+  });
+
+  describe('beforeNavigation', () => {
+    const navItem = new NavItemMock({
+      appIframeUrl: 'http://domain.com/iframe1/url',
+      appPath: 'app/path/to/page1',
+    });
+
+    let beforeNavigationResolve: (value: boolean) => void;
+    let beforeNavigationReject: (reason?: any) => void;
+
+    beforeEach(fakeAsync(() => {
+      service.initialNavigation();
+
+      tick();
+
+      childApi.beforeNavigation.calls.reset();
+      childApi.beforeNavigation.and.returnValue(new Promise((resolve, reject) => {
+        beforeNavigationResolve = resolve;
+        beforeNavigationReject = reject;
+      }));
+
+      childApi.navigate.calls.reset();
+    }));
+
+    it('should be called before the navigate method', () => {
+      service.navigateByNavItem(navItem, NavigationTrigger.NotDefined);
+
+      expect(childApi.beforeNavigation).toHaveBeenCalled();
+      expect(childApi.navigate).not.toHaveBeenCalled();
+    });
+
+    it('should proceed to the navigate method invocation if "true" is returned', fakeAsync(() => {
+      service.navigateByNavItem(navItem, NavigationTrigger.NotDefined);
+
+      beforeNavigationResolve(true);
+
+      tick();
+
+      expect(childApi.navigate).toHaveBeenCalled();
+    }));
+
+    it('should prevent the navigate method invocation if "false" is returned', fakeAsync(() => {
+      service.navigateByNavItem(navItem, NavigationTrigger.NotDefined);
+
+      beforeNavigationResolve(false);
+
+      tick();
+
+      expect(childApi.navigate).not.toHaveBeenCalled();
+    }));
+
+    it('should set the error if the promise is rejected', fakeAsync(() => {
+      const expectedError = new Error('Some error during before navigation call');
+
+      service.navigateByNavItem(navItem, NavigationTrigger.NotDefined);
+
+      beforeNavigationReject(expectedError);
+
+      tick();
+
+      expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(undefined, expectedError.message);
+    }));
   });
 
   describe('after initial navigation', () => {
@@ -481,7 +545,7 @@ describe('NavigationService', () => {
 
           tick();
 
-          expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(undefined, 'app.api.navigate is not a function');
+          expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(undefined, 't.app.api.navigate is not a function');
         }));
       });
     });

@@ -17,10 +17,11 @@
 import { Location } from '@angular/common';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { NavigationTrigger, NavItem, NavLocation } from '@bloomreach/navapp-communication';
-import { BehaviorSubject, Observable, of, Subject, Subscription, throwError } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, of, Subject, Subscription, throwError } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
-import { catchError, skip, switchMap, tap } from 'rxjs/operators';
+import { catchError, finalize, map, mapTo, skip, switchMap, tap } from 'rxjs/operators';
 
+import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { AppError } from '../error-handling/models/app-error';
 import { CriticalError } from '../error-handling/models/critical-error';
@@ -51,6 +52,7 @@ interface Navigation {
   appPathAddOn: string;
   state: { [key: string]: string };
   source: NavigationTrigger;
+  app: ClientApp;
   replaceState: boolean;
   resolve: () => void;
   reject: (reason?: any) => void;
@@ -71,6 +73,7 @@ export class NavigationService implements OnDestroy {
     appPathAddOn: '',
     state: {},
     source: NavigationTrigger.NotDefined,
+    app: undefined,
     replaceState: false,
     resolve: undefined,
     reject: undefined,
@@ -214,20 +217,21 @@ export class NavigationService implements OnDestroy {
       }),
       switchMap((t: Transition) => this.processTransition(t).pipe(
         catchError(error => {
-          // Always resolve a promise (for now) to overcome consequent problems of handling promise rejection
-          // t.reject(error);
-          t.resolve();
           if (typeof error === 'string') {
             error = new InternalError(undefined, error);
           }
 
           return of(error);
         }),
+        finalize(() => {
+          // Always resolve a promise (for now) to overcome consequent problems of handling promise rejection
+          // t.reject(error);
+          t.resolve();
+
+          this.busyIndicatorService.hide();
+          this.events.next(new NavigationStopEvent());
+        }),
       )),
-      tap(() => {
-        this.busyIndicatorService.hide();
-        this.events.next(new NavigationStopEvent());
-      }),
     ).subscribe((t: Navigation | Error) => {
       if (t instanceof AppError) {
         this.errorHandlingService.setError(t);
@@ -249,8 +253,7 @@ export class NavigationService implements OnDestroy {
     this.navigations.pipe(
       skip(1),
     ).subscribe(
-      n => {
-        n.resolve();
+      () => {
         this.events.next(new NavigationStopEvent());
       },
       e => console.error(`Unhandled Navigation Error: ${e}`),
@@ -310,14 +313,7 @@ export class NavigationService implements OnDestroy {
 
         return of({ ...t, navItem: route.navItem, appPathAddOn });
       }),
-      // Eagerly update the menu and teh breadcrumb label
-      tap(t => {
-        const { breadcrumbLabel } = t.state;
-
-        this.menuStateService.activateMenuItem(t.navItem.appIframeUrl, t.navItem.appPath);
-        this.breadcrumbsService.setSuffix(breadcrumbLabel);
-      }),
-      // Client navigation
+      // Ensure the app with the found id exists and it has the connected API
       switchMap(t => {
         const appId = t.navItem.appIframeUrl;
         const app = this.clientAppService.getApp(appId);
@@ -336,18 +332,45 @@ export class NavigationService implements OnDestroy {
           ));
         }
 
-        this.clientAppService.activateApplication(appId);
+        return of({ ...t, app });
+      }),
+      // Process beforeNavigation
+      switchMap(t => {
+        if (!t.app.api.beforeNavigation) {
+          return of(t);
+        }
 
+        return fromPromise(t.app.api.beforeNavigation()).pipe(
+          switchMap(allowedToContinue => allowedToContinue ? of(t) : EMPTY),
+        );
+      }),
+      // Eagerly update the menu and the breadcrumb label
+      tap(t => {
+        const { breadcrumbLabel } = t.state;
+
+        this.menuStateService.activateMenuItem(t.navItem.appIframeUrl, t.navItem.appPath);
+        this.breadcrumbsService.setSuffix(breadcrumbLabel);
+      }),
+      // Activate the app
+      tap(t => {
+        const appId = t.navItem.appIframeUrl;
+
+        this.clientAppService.activateApplication(appId);
+      }),
+      // Process navigation
+      switchMap(t => {
         const appPath = Location.joinWithSlash(t.navItem.appPath, t.appPathAddOn);
         const appPathWithoutLeadingSlash = this.urlMapperService.trimLeadingSlash(appPath);
         const appPathPrefix = new URL(t.navItem.appIframeUrl).pathname;
 
-        const navigatePromise = app.api.navigate(
+        const navigationPromise = t.app.api.navigate(
           { pathPrefix: appPathPrefix, path: appPathWithoutLeadingSlash },
           t.source,
-        ).then(() => t as Navigation);
+        );
 
-        return fromPromise(navigatePromise);
+        return fromPromise(navigationPromise).pipe(
+          mapTo(t as Navigation),
+        );
       }),
     );
   }
