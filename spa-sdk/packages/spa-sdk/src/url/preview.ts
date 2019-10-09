@@ -14,5 +14,14 @@
  * limitations under the License.
  */
 
-export * from './builder';
-export * from './preview';
+import { HttpRequest } from '../http';
+
+const DEFAULT_PREVIEW_QUERY = 'bloomreach-preview=true';
+
+export function isPreview(request: HttpRequest, previewQuery = DEFAULT_PREVIEW_QUERY) {
+  const [param, value = ''] = previewQuery.split('=');
+  const [, query] = request.path.split('?', 2);
+  const params = new URLSearchParams(query);
+
+  return !value && params.has(param) || params.get(param) === value;
+}
