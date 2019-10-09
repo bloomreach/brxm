@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.cms.browse;
 import java.util.Iterator;
 
 import javax.jcr.Node;
+import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
@@ -30,6 +31,7 @@ import org.hippoecm.frontend.model.event.IObservable;
 import org.hippoecm.frontend.model.event.IObserver;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.standards.perspective.ParentApiCaller;
 import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
 import org.hippoecm.frontend.plugins.standards.tabs.TabsPlugin;
 import org.hippoecm.frontend.plugins.yui.layout.IExpandableCollapsable;
@@ -111,7 +113,21 @@ public class BrowserPerspective extends Perspective {
             @Override
             void onUpdateModel(final IModel<Node> oldModel, final IModel<Node> newModel) {
                 final String newTab = JcrUtils.getNodePathQuietly(newModel.getObject());
+
+                final ParentApiCaller parentApiCaller = new ParentApiCaller();
+                if (newTab == null) {
+                    parentApiCaller.updateNavLocation(getAppPath());
+                } else {
+                    try {
+                        final String path = String.format("%s/uuid/%s", getAppPath(), newModel.getObject().getIdentifier());
+                        parentApiCaller.updateNavLocation(path);
+                    } catch (RepositoryException e) {
+                        log.warn("Failed to update nav location for document with path '{}'", newTab);
+                    }
+                }
+
                 state.onTabChanged(newTab);
+
             }
         };
 

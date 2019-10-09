@@ -30,6 +30,7 @@ import javax.transaction.UserTransaction;
 import org.apache.wicket.RuntimeConfigurationType;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.request.Response;
+import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.UserCredentials;
@@ -160,7 +161,7 @@ public abstract class MockPluginTest {
 
         @Override
         public ResourceReference getPluginApplicationFavIconReference() {
-            throw new UnsupportedOperationException();
+            return new PackageResourceReference(MockPluginTest.class, getPluginApplicationName() + "-icon.png");
         }
 
         @Override

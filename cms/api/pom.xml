@@ -259,6 +259,7 @@
             <exclude>org/hippoecm/frontend/plugins/yui/layout/init_page.js</exclude>
             <exclude>org/hippoecm/frontend/plugins/yui/tree/init_tree.js</exclude>
             <exclude>org/hippoecm/frontend/plugins/yui/widget/widget_template.js</exclude>
+            <exclude>org/hippoecm/frontend/plugins/standards/perspective/cms-subapp-iframe-communication.js</exclude>
           </excludes>
           <predefinedVars>
             Ext,

@@ -19,11 +19,10 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang3.Validate;
 import org.apache.wicket.feedback.IFeedbackMessageFilter;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.IHeaderResponse;
-import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
@@ -33,7 +32,6 @@ import org.apache.wicket.request.Response;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.time.Duration;
 import org.hippoecm.frontend.CmsHeaderItem;
-import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
 import org.hippoecm.frontend.extjs.ExtWidgetRegistry;
@@ -47,11 +45,13 @@ import org.hippoecm.frontend.plugins.yui.ajax.AjaxIndicatorBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.PageLayoutBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.PageLayoutSettings;
 import org.hippoecm.frontend.plugins.yui.layout.UnitBehavior;
+import org.hippoecm.frontend.plugins.yui.layout.UnitSettings;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
 import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppBehavior;
 import org.hippoecm.frontend.plugins.yui.webapp.WebAppSettings;
 import org.hippoecm.frontend.service.ILogoutService;
+import org.hippoecm.frontend.service.INestedBrowserContextService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.ServiceTracker;
@@ -105,8 +105,6 @@ public class RootPlugin extends TabsPlugin {
         getApplication().getApplicationSettings().setFeedbackMessageCleanupFilter(IFeedbackMessageFilter.NONE);
 
         addPinger();
-
-        add(new Label("pageTitle", getString("page.title", null, "Hippo CMS 10")));
 
         addUserMenu();
 
@@ -167,7 +165,9 @@ public class RootPlugin extends TabsPlugin {
 
         add(view);
 
-        add(new AjaxIndicatorBehavior());
+        if (!hidePerspectiveMenu()) {
+            add(new AjaxIndicatorBehavior());
+        }
 
         add(new ExtHippoThemeBehavior());
 
@@ -183,14 +183,15 @@ public class RootPlugin extends TabsPlugin {
 
         TabbedPanel tabbedPanel = getTabbedPanel();
         tabbedPanel.setIconType(IconSize.L);
-        tabbedPanel.add(new WireframeBehavior(new WireframeSettings(config.getPluginConfig("layout.wireframe"))));
+        final WireframeSettings settings = new WireframeSettings(config.getPluginConfig("layout.wireframe"));
+        hidePerspectiveMenu(settings);
+        tabbedPanel.add(new WireframeBehavior(settings));
 
         get("tabs:panel-container").add(new UnitBehavior("center"));
         get("tabs:tabs-container").add(new UnitBehavior("left"));
 
         final PageLayoutSettings pageLayoutSettings = getPageLayoutSettings(config);
         add(new PageLayoutBehavior(pageLayoutSettings));
-        add(new ResourceLink("faviconLink", ((PluginApplication)getApplication()).getPluginApplicationFavIconReference()));
     }
 
     private void addPinger() {
@@ -200,8 +201,19 @@ public class RootPlugin extends TabsPlugin {
 
     private void addUserMenu() {
         final ILogoutService logoutService = getPluginContext().getService(ILogoutService.SERVICE_ID, ILogoutService.class);
-        add(new UserMenu("userMenu", getCurrentUser(), logoutService));
+        final UserMenu userMenu = new UserMenu("userMenu", getCurrentUser(), logoutService);
+        userMenu.setVisible(!hidePerspectiveMenu());
+        add(userMenu);
         add(new ActiveLogoutPlugin("activeLogout", getMaxInactiveIntervalMinutes(), logoutService));
+    }
+
+    private boolean hidePerspectiveMenu() {
+        final INestedBrowserContextService nestedBrowserContextService =
+                getPluginContext().getService(INestedBrowserContextService.class.getName(), INestedBrowserContextService.class);
+        final String message = String.format("%s should not be null, make sure it's registered on the %s"
+                , INestedBrowserContextService.class.getName(), IPluginContext.class.getName());
+        Validate.notNull(nestedBrowserContextService, message);
+        return nestedBrowserContextService.hidePerspectiveMenu();
     }
 
     private Integer getMaxInactiveIntervalMinutes() {
@@ -268,6 +280,15 @@ public class RootPlugin extends TabsPlugin {
             PageLayoutSettings settings = new PageLayoutSettings();
             settings.setFooterHeight(28);
             return settings;
+        }
+    }
+
+    private void hidePerspectiveMenu(final WireframeSettings wireFrameSettings) {
+        if (hidePerspectiveMenu()) {
+            final UnitSettings left = wireFrameSettings.getUnit(UnitSettings.LEFT);
+            if (left != null) {
+                left.setWidth("0");
+            }
         }
     }
 }
