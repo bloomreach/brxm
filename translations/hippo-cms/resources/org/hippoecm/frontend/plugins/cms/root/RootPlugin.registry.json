@@ -2,18 +2,8 @@
   "bundleType" : "WICKET",
   "keyData" : {
     "page.title" : {
-<<<<<<< Updated upstream
       "status" : "CLEAN",
       "locales" : null
-=======
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
->>>>>>> Stashed changes
     }
   }
 }

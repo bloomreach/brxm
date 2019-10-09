@@ -870,18 +870,8 @@
       "locales" : null
     },
     "DOCUMENT_NOT_PART_OF_PROJECT" : {
-<<<<<<< Updated upstream
       "status" : "CLEAN",
       "locales" : null
-=======
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
->>>>>>> Stashed changes
     },
     "ADD_TO_PROJECT" : {
       "status" : "CLEAN",
