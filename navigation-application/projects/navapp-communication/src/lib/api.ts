@@ -164,10 +164,10 @@ export interface ChildApi {
    * this event allows applications to clean up location-specific state (such as dirty forms)
    * if necessary.
    * The callback is responsible to resolve the Promise before nav-app can continue.
-   * When the application is good to “leave”, it resolves the Promise.
-   * In order to prevent leaving the current location, the application should reject the Promise
+   * When the application is good to “leave”, it resolves the Promise with "true".
+   * In order to prevent leaving the current location, the application should resolve the Promise with "false".
    */
-  beforeNavigation?: () => (void | Promise<void>);
+  beforeNavigation?: () => (boolean | Promise<boolean>);
 
   /**
    * Fired before nav-app initiates a logout broadcast, this event allows applications to clean up
@@ -219,7 +219,7 @@ export interface ChildPromisedApi {
   getNavItems?: () => Promise<NavItem[]>;
   getSites?: () => Promise<Site[]>;
   getSelectedSite?: () => Promise<SiteId>;
-  beforeNavigation?: () => Promise<void>;
+  beforeNavigation?: () => Promise<boolean>;
   onUserActivity?: () => Promise<void>;
   logout?: () => Promise<void>;
   navigate?: (location: NavLocation, triggeredBy: NavigationTrigger) => Promise<void>;
