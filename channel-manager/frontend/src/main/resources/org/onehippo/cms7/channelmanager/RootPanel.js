@@ -206,6 +206,8 @@
       Hippo.ChannelManager.NewChannelWindow.superclass.initComponent.apply(this, arguments);
 
       this.on('beforeshow', this.resetWizard, this);
+      this.on('beforeshow', this.showMask, this);
+      this.on('beforehide', this.hideMask, this);
 
       Ext.getCmp('card-container').add(new Hippo.ChannelManager.BlueprintListPanel({
         id: 'blueprints-panel',
@@ -237,6 +239,18 @@
 
     resetWizard: function () {
       this.showBlueprintChoice();
+    },
+
+    showMask: function () {
+      if (Hippo && Hippo.showMask) {
+        Hippo.showMask();
+      }
+    },
+
+    hideMask: function () {
+      if (Hippo && Hippo.hideMask) {
+        Hippo.hideMask();
+      }
     },
 
     processPreviousStep: function () {
