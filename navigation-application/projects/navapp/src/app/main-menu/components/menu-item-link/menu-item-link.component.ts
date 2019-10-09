@@ -15,6 +15,7 @@
  */
 
 import { Component, HostBinding, Input } from '@angular/core';
+import { NavigationTrigger } from '@bloomreach/navapp-communication';
 
 import { NavigationService } from '../../../services/navigation.service';
 import { MenuItemLink } from '../../models/menu-item-link.model';
@@ -37,6 +38,6 @@ export class MenuItemLinkComponent {
   onClick(e: MouseEvent): void {
     e.preventDefault();
 
-    this.navigationService.navigateByNavItem(this.config.navItem);
+    this.navigationService.navigateByNavItem(this.config.navItem, NavigationTrigger.Menu);
   }
 }

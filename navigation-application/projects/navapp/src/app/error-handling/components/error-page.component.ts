@@ -15,6 +15,7 @@
  */
 
 import { Component, Input } from '@angular/core';
+import { NavigationTrigger } from '@bloomreach/navapp-communication';
 
 import { MenuStateService } from '../../main-menu/services/menu-state.service';
 import { NavigationService } from '../../services/navigation.service';
@@ -40,6 +41,6 @@ export class ErrorPageComponent {
   }
 
   navigateToHome(): void {
-    this.navigationService.navigateToHome();
+    this.navigationService.navigateToHome(NavigationTrigger.NotDefined);
   }
 }

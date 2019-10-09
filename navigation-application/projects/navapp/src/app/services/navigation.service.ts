@@ -16,7 +16,7 @@
 
 import { Location } from '@angular/common';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
-import { NavigateFlags, NavItem, NavLocation } from '@bloomreach/navapp-communication';
+import { NavigationTrigger, NavItem, NavLocation } from '@bloomreach/navapp-communication';
 import { BehaviorSubject, Observable, of, Subject, Subscription, throwError } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
 import { catchError, skip, switchMap, tap } from 'rxjs/operators';
@@ -45,16 +45,10 @@ interface Route {
   navItem: NavItem;
 }
 
-enum NavigationTrigger {
-  Imperative,
-  PopState,
-}
-
 interface Navigation {
   url: string;
   navItem: NavItem;
   appPathAddOn: string;
-  clientAppFlags: NavigateFlags;
   state: { [key: string]: string };
   source: NavigationTrigger;
   replaceState: boolean;
@@ -75,9 +69,8 @@ export class NavigationService implements OnDestroy {
     url: undefined,
     navItem: undefined,
     appPathAddOn: '',
-    clientAppFlags: {},
     state: {},
-    source: NavigationTrigger.Imperative,
+    source: NavigationTrigger.NotDefined,
     replaceState: false,
     resolve: undefined,
     reject: undefined,
@@ -98,7 +91,7 @@ export class NavigationService implements OnDestroy {
   ) {
     this.connectionService
       .navigate$
-      .subscribe(navLocation => this.navigateByNavLocation(navLocation));
+      .subscribe(navLocation => this.navigateByNavLocation(navLocation, NavigationTrigger.AnotherApp));
     this.connectionService
       .updateNavLocation$
       .subscribe(navLocation => this.updateByNavLocation(navLocation));
@@ -133,7 +126,7 @@ export class NavigationService implements OnDestroy {
 
     const url = `${this.basePath}${this.appSettings.initialPath}`;
 
-    return this.scheduleNavigation(url, NavigationTrigger.Imperative, {}, {}, true);
+    return this.scheduleNavigation(url, NavigationTrigger.NotDefined, {}, true);
   }
 
   ngOnDestroy(): void {
@@ -142,12 +135,12 @@ export class NavigationService implements OnDestroy {
     }
   }
 
-  navigateByNavItem(navItem: NavItem, breadcrumbLabel?: string, flags?: NavigateFlags): Promise<void> {
+  navigateByNavItem(navItem: NavItem, triggeredBy: NavigationTrigger, breadcrumbLabel?: string): Promise<void> {
     const browserUrl = this.urlMapperService.mapNavItemToBrowserUrl(navItem);
-    return this.navigateByUrl(browserUrl, breadcrumbLabel, flags);
+    return this.navigateByUrl(browserUrl, triggeredBy, breadcrumbLabel);
   }
 
-  navigateByNavLocation(navLocation: NavLocation): Promise<void> {
+  navigateByNavLocation(navLocation: NavLocation, triggeredBy: NavigationTrigger): Promise<void> {
     let browserUrl: string;
 
     try {
@@ -161,7 +154,7 @@ export class NavigationService implements OnDestroy {
       return;
     }
 
-    return this.navigateByUrl(browserUrl, navLocation.breadcrumbLabel);
+    return this.navigateByUrl(browserUrl, triggeredBy, navLocation.breadcrumbLabel);
   }
 
   updateByNavLocation(navLocation: NavLocation): void {
@@ -185,20 +178,20 @@ export class NavigationService implements OnDestroy {
     this.setBrowserUrl(browserUrl, { breadcrumbLabel: navLocation.breadcrumbLabel });
   }
 
-  navigateToDefaultCurrentAppPage(): Promise<void> {
+  navigateToDefaultCurrentAppPage(triggeredBy: NavigationTrigger): Promise<void> {
     const lastNavigation = this.getLastNavigation();
 
-    return this.navigateByNavItem(lastNavigation.navItem, '', { forceRefresh: true });
+    return this.navigateByNavItem(lastNavigation.navItem, triggeredBy, '');
   }
 
-  navigateToHome(): Promise<void> {
-    return this.navigateByUrl(this.homeUrl);
+  navigateToHome(triggeredBy: NavigationTrigger): Promise<void> {
+    return this.navigateByUrl(this.homeUrl, triggeredBy);
   }
 
-  private navigateByUrl(url: string, breadcrumbLabel?: string, flags?: NavigateFlags): Promise<void> {
+  private navigateByUrl(url: string, triggeredBy: NavigationTrigger, breadcrumbLabel?: string): Promise<void> {
     this.errorHandlingService.clearError();
 
-    return this.scheduleNavigation(url, NavigationTrigger.Imperative, { breadcrumbLabel }, { ...flags });
+    return this.scheduleNavigation(url, triggeredBy, { breadcrumbLabel });
   }
 
   private setUpLocationChangeListener(): void {
@@ -209,13 +202,7 @@ export class NavigationService implements OnDestroy {
     this.locationSubscription = this.location.subscribe(change => {
       this.errorHandlingService.clearError();
 
-      let flags = {};
-      try {
-        flags = JSON.parse(change.state.flags);
-        delete change.state.flags;
-      } catch { }
-
-      this.scheduleNavigation(change.url, NavigationTrigger.PopState, change.state || {}, flags);
+      this.scheduleNavigation(change.url, NavigationTrigger.PopState, change.state);
     }) as any;
   }
 
@@ -273,8 +260,7 @@ export class NavigationService implements OnDestroy {
   private scheduleNavigation(
     url: string,
     source: NavigationTrigger,
-    state: { [key: string]: string },
-    flags: NavigateFlags,
+    state: { [key: string]: string } = {},
     replaceState = false,
   ): Promise<void> {
     let resolve: () => void;
@@ -289,7 +275,6 @@ export class NavigationService implements OnDestroy {
       url,
       state,
       source,
-      clientAppFlags: flags,
       replaceState,
       resolve,
       reject,
@@ -302,8 +287,7 @@ export class NavigationService implements OnDestroy {
     return of(transition).pipe(
       // Eagerly update the browser url
       tap(t => {
-        if (t.source === NavigationTrigger.Imperative) {
-          t.state.flags = JSON.stringify(t.clientAppFlags);
+        if (t.source !== NavigationTrigger.PopState) {
           this.setBrowserUrl(t.url, t.state, t.replaceState);
         }
       }),
@@ -360,7 +344,7 @@ export class NavigationService implements OnDestroy {
 
         const navigatePromise = app.api.navigate(
           { pathPrefix: appPathPrefix, path: appPathWithoutLeadingSlash },
-          t.clientAppFlags,
+          t.source,
         ).then(() => t as Navigation);
 
         return fromPromise(navigatePromise);

@@ -16,7 +16,7 @@
 
 import { Location, PopStateEvent } from '@angular/common';
 import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { NavItem, NavLocation } from '@bloomreach/navapp-communication';
+import { NavigationTrigger, NavItem, NavLocation } from '@bloomreach/navapp-communication';
 import { of } from 'rxjs';
 
 import { ClientAppMock } from '../client-app/models/client-app.mock';
@@ -178,7 +178,7 @@ describe('NavigationService', () => {
     });
 
     it('should do the initial url navigation', () => {
-      expect(locationMock.replaceState).toHaveBeenCalledWith(`${basePath}/iframe1/url/app/path/to/home`, '', { flags: '{}' });
+      expect(locationMock.replaceState).toHaveBeenCalledWith(`${basePath}/iframe1/url/app/path/to/home`, '', {});
     });
   });
 
@@ -200,16 +200,15 @@ describe('NavigationService', () => {
         appIframeUrl: 'http://domain.com/iframe1/url',
         appPath: 'app/path/to/page1',
       });
-      const flags = { forceRefresh: false };
 
-      service.navigateByNavItem(navItem, 'some breadcrumb label', flags);
+      service.navigateByNavItem(navItem, NavigationTrigger.NotDefined, 'some breadcrumb label');
 
       tick();
 
       expect(locationMock.go).toHaveBeenCalledWith(
         `${basePath}/iframe1/url/app/path/to/page1`,
         '',
-        { breadcrumbLabel: 'some breadcrumb label', flags: '{"forceRefresh":false}' },
+        { breadcrumbLabel: 'some breadcrumb label' },
       );
     }));
 
@@ -225,20 +224,30 @@ describe('NavigationService', () => {
         r();
       }));
 
-      service.navigateByNavItem(navItem);
+      service.navigateByNavItem(navItem, NavigationTrigger.NotDefined);
     }));
 
     it('should navigate to the default page for the app', fakeAsync(() => {
-      service.navigateToDefaultCurrentAppPage();
+      service.navigateToDefaultCurrentAppPage(NavigationTrigger.NotDefined);
 
       tick();
 
       expect(locationMock.go).toHaveBeenCalledWith(
         `${basePath}/iframe1/url/app/path/to/home`,
         '',
-        { flags: '{"forceRefresh":true}' },
+        {},
       );
     }));
+
+    it('should navigate to the home page', () => {
+      service.navigateToHome(NavigationTrigger.FastTravel);
+
+      expect(locationMock.go).toHaveBeenCalledWith(
+        `${basePath}/iframe1/url/app/path/to/home`,
+        '',
+        {},
+      );
+    });
 
     it('should update browser url when updateByNavLocation is called', fakeAsync(() => {
       urlMapperServiceMock.mapNavLocationToBrowserUrl.and.returnValue([
@@ -275,17 +284,20 @@ describe('NavigationService', () => {
         breadcrumbLabel: 'another breadcrumb label',
       };
 
-      service.navigateByNavLocation(navLocation);
+      service.navigateByNavLocation(navLocation, NavigationTrigger.Menu);
 
       tick();
 
-      expect(childApi.navigate).toHaveBeenCalledWith({ pathPrefix: '/iframe1/url', path: 'app/path/to/page1/internal/page1' }, {});
+      expect(childApi.navigate).toHaveBeenCalledWith(
+        { pathPrefix: '/iframe1/url', path: 'app/path/to/page1/internal/page1' },
+        NavigationTrigger.Menu,
+      );
       expect(menuStateServiceMock.activateMenuItem).toHaveBeenCalledWith('http://domain.com/iframe1/url', 'app/path/to/page1');
       expect(breadcrumbsServiceMock.setSuffix).toHaveBeenCalledWith('another breadcrumb label');
       expect(locationMock.go).toHaveBeenCalledWith(
         `${basePath}/iframe1/url/app/path/to/page1/internal/page1`,
         '',
-        { breadcrumbLabel: 'another breadcrumb label', flags: '{}' },
+        { breadcrumbLabel: 'another breadcrumb label' },
       );
     }));
 
@@ -302,14 +314,14 @@ describe('NavigationService', () => {
         breadcrumbLabel: 'a breadcrumb label',
       };
 
-      service.navigateByNavLocation(navLocation);
+      service.navigateByNavLocation(navLocation, NavigationTrigger.NotDefined);
 
       tick();
 
       expect(locationMock.replaceState).toHaveBeenCalledWith(
         `${basePath}/iframe1/url/app/path/to/page1/internal/page1`,
         '',
-        { breadcrumbLabel: 'a breadcrumb label', flags: '{}' },
+        { breadcrumbLabel: 'a breadcrumb label' },
       );
     }));
 
@@ -346,18 +358,18 @@ describe('NavigationService', () => {
       it('should update the browser\'s url before any errors are thrown (before resolving an active route)', () => {
         const expectedError = new NotFoundError();
 
-        service.navigateByNavItem(invalidNavItem);
+        service.navigateByNavItem(invalidNavItem, NavigationTrigger.NotDefined);
 
         expect(locationMock.go).toHaveBeenCalledWith(
           '/base-path/some/unknown/url/app/path/to/other-page',
           '',
-          { flags: '{}' },
+          {},
         );
         expect(errorHandlingServiceMock.setError).toHaveBeenCalledWith(expectedError);
       });
 
       it('should activate the new appropriate menu item before calling childApi.navigate()', fakeAsync(() => {
-        service.navigateByNavItem(validNavItem);
+        service.navigateByNavItem(validNavItem, NavigationTrigger.NotDefined);
 
         tick();
 
@@ -366,7 +378,7 @@ describe('NavigationService', () => {
       }));
 
       it('should set the breadcrumb label before calling childApi.navigate()', fakeAsync(() => {
-        service.navigateByNavItem(validNavItem, 'some breadcrumb label');
+        service.navigateByNavItem(validNavItem, NavigationTrigger.NotDefined, 'some breadcrumb label');
 
         tick();
 
@@ -377,7 +389,7 @@ describe('NavigationService', () => {
 
     describe('error handling', () => {
       it('should clear the app error during navigation', fakeAsync(() => {
-        service.navigateByNavItem(new NavItemMock(), 'some breadcrumb label');
+        service.navigateByNavItem(new NavItemMock(), NavigationTrigger.NotDefined, 'some breadcrumb label');
 
         tick();
 
@@ -403,7 +415,7 @@ describe('NavigationService', () => {
           breadcrumbLabel: 'another breadcrumb label',
         };
 
-        service.navigateByNavLocation(navLocation);
+        service.navigateByNavLocation(navLocation, NavigationTrigger.NotDefined);
 
         expect(errorHandlingServiceMock.setNotFoundError).toHaveBeenCalledWith(
           undefined,
@@ -438,7 +450,7 @@ describe('NavigationService', () => {
 
           clientAppServiceMock.getApp.and.returnValue(undefined);
 
-          service.navigateByNavItem(navItemToNavigate);
+          service.navigateByNavItem(navItemToNavigate, NavigationTrigger.NotDefined);
 
           tick();
 
@@ -453,7 +465,7 @@ describe('NavigationService', () => {
 
           clientAppServiceMock.getApp.and.returnValue(app);
 
-          service.navigateByNavItem(navItemToNavigate);
+          service.navigateByNavItem(navItemToNavigate, NavigationTrigger.NotDefined);
 
           tick();
 
@@ -465,7 +477,7 @@ describe('NavigationService', () => {
             api: {},
           }));
 
-          service.navigateByNavItem(navItemToNavigate);
+          service.navigateByNavItem(navItemToNavigate, NavigationTrigger.NotDefined);
 
           tick();
 

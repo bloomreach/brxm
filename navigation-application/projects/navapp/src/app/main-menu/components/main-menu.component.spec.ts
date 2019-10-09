@@ -16,6 +16,7 @@
 
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { NavigationTrigger } from '@bloomreach/navapp-communication';
 import { of, Subject } from 'rxjs';
 
 import { APP_BOOTSTRAPPED } from '../../bootstrap/app-bootstrapped';
@@ -133,7 +134,7 @@ describe('MainMenuComponent', () => {
 
       component.selectMenuItem(menuItemLink);
 
-      expect(navigationServiceMock.navigateByNavItem).toHaveBeenCalledWith(menuItemLink.navItem);
+      expect(navigationServiceMock.navigateByNavItem).toHaveBeenCalledWith(menuItemLink.navItem, NavigationTrigger.Menu);
     });
 
     it('should not activate the home menu element until menu is emitted', () => {

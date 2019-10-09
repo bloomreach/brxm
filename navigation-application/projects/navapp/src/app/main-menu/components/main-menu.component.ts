@@ -15,6 +15,7 @@
  */
 
 import { Component, HostBinding, Inject, OnDestroy, OnInit } from '@angular/core';
+import { NavigationTrigger } from '@bloomreach/navapp-communication';
 import { Subject } from 'rxjs';
 
 import { APP_BOOTSTRAPPED } from '../../bootstrap/app-bootstrapped';
@@ -110,7 +111,7 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   selectMenuItem(item: MenuItem): void {
     this.isUserToolbarOpened = false;
     if (item instanceof MenuItemLink) {
-      this.navigationService.navigateByNavItem(item.navItem);
+      this.navigationService.navigateByNavItem(item.navItem, NavigationTrigger.Menu);
       return;
     }
 
