@@ -14,19 +14,20 @@
  * limitations under the License.
  */
 
-import { TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { BehaviorSubject, of, Subject } from 'rxjs';
 
 import { ConnectionService } from './connection.service';
 import { OverlayService } from './overlay.service';
 
 describe('OverlayService', () => {
   let overlayService: OverlayService;
-
+  const showMask = new Subject<void>();
+  const hideMask = new Subject<void>();
   beforeEach(() => {
     const connectionServiceMock = {
-      showMask$: of(),
-      hideMask$: of(),
+      showMask$: showMask,
+      hideMask$: hideMask,
     };
     TestBed.configureTestingModule({
       providers: [
@@ -41,24 +42,42 @@ describe('OverlayService', () => {
   it('should save state for overlay visibility', () => {
     overlayService.visible$.subscribe(visible => {
       expect(visible).toBe(false);
-    });
+    }).unsubscribe();
   });
 
   it('should set visibility', () => {
-    overlayService.enable();
+    showMask.next();
     overlayService.visible$
       .subscribe(visible => {
         expect(visible).toBe(true);
       })
       .unsubscribe();
-
-    overlayService.disable();
-    overlayService.enable();
-    overlayService.disable();
+    hideMask.next();
+    showMask.next();
+    hideMask.next();
     overlayService.visible$
       .subscribe(visible => {
         expect(visible).toBe(false);
       })
       .unsubscribe();
   });
+
+  it('should return invisible if hideMask is called the same number of times as showMask', () => {
+
+    const actualVisible = [];
+    const subscription = overlayService.visible$
+      .subscribe(visible => actualVisible.push(visible));
+
+    showMask.next();
+    showMask.next();
+    showMask.next();
+    hideMask.next();
+    hideMask.next();
+    hideMask.next();
+    subscription.unsubscribe();
+
+    const expectedVisible = [false, true, true, true, true, true, false];
+    expect(actualVisible).toEqual(expectedVisible);
+  });
+
 });
