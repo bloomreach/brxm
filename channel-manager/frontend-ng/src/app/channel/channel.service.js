@@ -141,7 +141,8 @@ class ChannelService {
   }
 
   _beforeNavigation() {
-    return this.RightSidePanelService.close().then(() => undefined);
+    return this.RightSidePanelService.close()
+      .then(() => true, () => false);
   }
 
   clearChannel() {
