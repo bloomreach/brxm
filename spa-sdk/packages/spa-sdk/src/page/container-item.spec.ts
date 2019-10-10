@@ -20,12 +20,15 @@ import { ContainerItemImpl, ContainerItem, isContainerItem, TYPE_COMPONENT_CONTA
 import { Events } from '../events';
 import { Meta } from './meta';
 import { PageImpl } from './page';
+import { MetaFactory } from './meta-factory';
 
 describe('ContainerItemImpl', () => {
   let eventBus: Typed<Events>;
+  let metaFactory: MetaFactory;
 
   beforeEach(() => {
     eventBus = new Typed<Events>();
+    metaFactory = new MetaFactory();
   });
 
   describe('getType', () => {
@@ -142,6 +145,7 @@ describe('ContainerItemImpl', () => {
           containerItem2,
           new Map(),
           eventBus,
+          metaFactory,
         ),
       });
 
@@ -156,6 +160,7 @@ describe('ContainerItemImpl', () => {
           new ContainerItemImpl({ id: 'id1', type: TYPE_COMPONENT_CONTAINER_ITEM }, eventBus, meta2),
           new Map(),
           eventBus,
+          metaFactory,
         ),
       });
 
@@ -169,6 +174,7 @@ describe('ContainerItemImpl', () => {
           new ContainerItemImpl({ id: 'id1', type: TYPE_COMPONENT_CONTAINER_ITEM, label: 'b' }, eventBus, meta2),
           new Map(),
           eventBus,
+          metaFactory,
         ),
       });
 
@@ -185,6 +191,7 @@ describe('ContainerItemImpl', () => {
           new ContainerItemImpl({ id: 'id1', type: TYPE_COMPONENT_CONTAINER_ITEM }, eventBus, meta2),
           new Map(),
           eventBus,
+          metaFactory,
         ),
       });
 

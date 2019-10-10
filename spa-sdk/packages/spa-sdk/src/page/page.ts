@@ -20,6 +20,8 @@ import { ContentModel, Content } from './content';
 import { ContentMap } from './content-map';
 import { Events, PageUpdateEvent } from '../events';
 import { Reference, isReference } from './reference';
+import { MetaCollectionModel, Meta } from './meta';
+import { MetaFactory } from './meta-factory';
 
 /**
  * Meta-data of a page root component.
@@ -73,6 +75,13 @@ export interface Page {
   getContent(reference: Reference | string): Content | undefined;
 
   /**
+   * Generate meta-data from the provided MetaCollectionModel.
+   *
+   * @param metaCollection the meta-collection as returned by the page-model-api
+   */
+  getMeta(metaCollection: MetaCollectionModel): Meta[];
+
+  /**
    * @return The title of the page, or `undefined` if not configured.
    */
   getTitle(): string | undefined;
@@ -94,6 +103,7 @@ export class PageImpl implements Page {
     protected root: Component,
     protected content: ContentMap,
     private eventBus: Typed<Events>,
+    private metaFactory: MetaFactory,
   ) {
     eventBus.on('page.update', this.onPageUpdate.bind(this));
   }
@@ -124,6 +134,10 @@ export class PageImpl implements Page {
 
   getTitle() {
     return this.model.page._meta && this.model.page._meta.pageTitle;
+  }
+
+  getMeta(metaCollection: MetaCollectionModel) {
+    return this.metaFactory.create(metaCollection);
   }
 
   isPreview() {

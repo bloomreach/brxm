@@ -20,15 +20,19 @@ import { ContentMap } from './content-map';
 import { ContentImpl } from './content';
 import { Events } from '../events';
 import { PageImpl, Page } from './page';
+import { MetaFactory } from './meta-factory';
+import { MetaCollectionModel } from './meta';
 
 describe('PageImpl', () => {
   let content: ContentMap;
   let eventBus: Typed<Events>;
+  let metaFactory: MetaFactory;
   let root: Component;
 
   beforeEach(() => {
     content = new Map();
     eventBus = new Typed<Events>();
+    metaFactory = new MetaFactory();
     root = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT });
 
     jest.spyOn(root, 'getComponent');
@@ -37,7 +41,7 @@ describe('PageImpl', () => {
 
   describe('getComponent', () => {
     it('should forward a call to the root component', () => {
-      const page = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus);
+      const page = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus, metaFactory);
       page.getComponent('a', 'b');
 
       expect(root.getComponent).toBeCalledWith('a', 'b');
@@ -48,7 +52,7 @@ describe('PageImpl', () => {
     let page: Page;
 
     beforeEach(() => {
-      page = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus);
+      page = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus, metaFactory);
     });
 
     it('should resolve a reference', () => {
@@ -71,6 +75,18 @@ describe('PageImpl', () => {
     });
   });
 
+  describe('getMeta', () => {
+    it('should delegate to the MetaFactory to create new meta', () => {
+      const metaFactoryCreateSpy = jest.spyOn(metaFactory, 'create');
+      const page = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus, metaFactory);
+
+      const metaCollectionModel = {} as MetaCollectionModel;
+      page.getMeta(metaCollectionModel);
+
+      expect(metaFactoryCreateSpy).toHaveBeenCalledWith(metaCollectionModel);
+    });
+  });
+
   describe('getTitle', () => {
     it('should return a page title', () => {
       const page = new PageImpl(
@@ -84,14 +100,21 @@ describe('PageImpl', () => {
         root,
         content,
         eventBus,
+        metaFactory,
       );
 
       expect(page.getTitle()).toBe('something');
     });
 
     it('should return an undefined value', () => {
-      const page1 = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT, _meta: {} } }, root, content, eventBus);
-      const page2 = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus);
+      const page1 = new PageImpl(
+        { page: { id: 'id', type: TYPE_COMPONENT, _meta: {} } },
+        root,
+        content,
+        eventBus,
+        metaFactory,
+      );
+      const page2 = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus, metaFactory);
 
       expect(page1.getTitle()).toBeUndefined();
       expect(page2.getTitle()).toBeUndefined();
@@ -108,14 +131,27 @@ describe('PageImpl', () => {
         root,
         content,
         eventBus,
+        metaFactory,
       );
 
       expect(page.isPreview()).toBe(true);
     });
 
     it('should return false', () => {
-      const page1 = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT, _meta: {} } }, root, content, eventBus);
-      const page2 = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus);
+      const page1 = new PageImpl(
+        {
+          page: {
+            id: 'id',
+            type: TYPE_COMPONENT,
+            _meta: {},
+          },
+        },
+        root,
+        content,
+        eventBus,
+        metaFactory,
+      );
+      const page2 = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus, metaFactory);
 
       expect(page1.isPreview()).toBe(false);
       expect(page2.isPreview()).toBe(false);
@@ -125,12 +161,12 @@ describe('PageImpl', () => {
   describe('onPageUpdate', () => {
     it('should update content on page.update event', async () => {
       const model = { page: { id: 'id', type: TYPE_COMPONENT } };
-      const page = new PageImpl(model, root, content, eventBus);
+      const page = new PageImpl(model, root, content, eventBus, metaFactory);
       const someContent = new ContentImpl({ id: 'some-id', name: 'some-name' });
 
       expect(page.getContent('some-content')).toBeUndefined();
       await eventBus.emitSerial('page.update', {
-        page: new PageImpl(model, root, new Map([['some-content', someContent]]), eventBus),
+        page: new PageImpl(model, root, new Map([['some-content', someContent]]), eventBus, metaFactory),
       });
       expect(page.getContent('some-content')).toBe(someContent);
     });
@@ -140,7 +176,7 @@ describe('PageImpl', () => {
     it('should emit page.ready event', () => {
       spyOn(eventBus, 'emit');
 
-      const page = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus);
+      const page = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus, metaFactory);
       page.sync();
 
       expect(eventBus.emit).toBeCalledWith('page.ready', {});

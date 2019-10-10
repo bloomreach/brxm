@@ -17,7 +17,16 @@
 import { Typed } from 'emittery';
 import { Events } from './events';
 import { Cms } from './cms';
-import { ComponentFactory, ComponentImpl, ContentFactory, ContentFactoryImpl, PageImpl, Page, TYPE_COMPONENT } from './page';
+import {
+  ComponentFactory,
+  ComponentImpl,
+  ContentFactory,
+  ContentFactoryImpl,
+  MetaFactory,
+  PageImpl,
+  Page,
+  TYPE_COMPONENT,
+} from './page';
 import { PageModelUrlBuilder } from './url';
 import { Spa } from './spa';
 
@@ -56,6 +65,7 @@ describe('Spa', () => {
   let componentFactory: ComponentFactory;
   let contentFactory: ContentFactory;
   let eventBus: Typed<Events>;
+  let metaFactory: MetaFactory;
   let pageModelUrlBuilder: PageModelUrlBuilder;
   let spa: Spa;
 
@@ -64,13 +74,14 @@ describe('Spa', () => {
     cms = new Cms(eventBus);
     componentFactory = new ComponentFactory();
     contentFactory = new ContentFactoryImpl(jest.fn());
+    metaFactory = new MetaFactory();
     pageModelUrlBuilder = jest.fn(() => 'http://example.com');
 
     cms.initialize = jest.fn();
     componentFactory.create = jest.fn(model => new ComponentImpl(model));
     spyOn(contentFactory, 'create');
 
-    spa = new Spa(pageModelUrlBuilder, componentFactory, contentFactory, eventBus, cms);
+    spa = new Spa(pageModelUrlBuilder, componentFactory, contentFactory, metaFactory, eventBus, cms);
   });
 
   describe('initialize', () => {

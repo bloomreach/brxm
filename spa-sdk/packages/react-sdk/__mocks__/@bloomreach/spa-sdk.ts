@@ -42,6 +42,7 @@ const component = new class implements Component {
 const page = new class implements Page {
   getComponent = jest.fn(() => component);
   getContent = jest.fn();
+  getMeta = jest.fn();
   getTitle = jest.fn();
   isPreview = jest.fn();
   sync = jest.fn();

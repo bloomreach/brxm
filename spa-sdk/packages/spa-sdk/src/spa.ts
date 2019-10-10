@@ -16,7 +16,7 @@
 
 import { Typed } from 'emittery';
 import { Cms, Window } from './cms';
-import { ComponentFactory, ContentFactory, Content, PageModel, PageImpl, Page } from './page';
+import { ComponentFactory, ContentFactory, Content, PageModel, PageImpl, Page, MetaFactory } from './page';
 import { Events, CmsUpdateEvent } from './events';
 import { HttpClient, HttpRequest } from './http';
 import { PageModelUrlBuilder, PageModelUrlOptions } from './url';
@@ -64,6 +64,7 @@ export class Spa {
     private pageModelUrlBuilder: PageModelUrlBuilder,
     private componentFactory: ComponentFactory,
     private contentFactory: ContentFactory,
+    private metaFactory: MetaFactory,
     protected eventBus: Typed<Events>,
     protected cms: Cms,
   ) {
@@ -122,6 +123,7 @@ export class Spa {
       this.initializeRoot(model),
       this.initializeContent(model),
       this.eventBus,
+      this.metaFactory,
     );
   }
 

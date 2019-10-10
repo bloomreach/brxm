@@ -65,7 +65,7 @@ const componentFactory = new ComponentFactory()
   );
 
 const cms = new Cms(eventBus);
-const spa = new Spa(buildPageModelUrl, componentFactory, contentFactory, eventBus, cms);
+const spa = new Spa(buildPageModelUrl, componentFactory, contentFactory, metaFactory, eventBus, cms);
 
 /**
  * Initializes the page model.
