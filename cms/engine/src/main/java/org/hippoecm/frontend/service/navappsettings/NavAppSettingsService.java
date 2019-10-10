@@ -18,6 +18,7 @@ package org.hippoecm.frontend.service.navappsettings;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -25,6 +26,7 @@ import java.util.function.Supplier;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.util.string.StringValue;
 import org.hippoecm.frontend.filter.NavAppRedirectFilter;
@@ -54,6 +56,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     static final String RESOURCE_URL = "resource.url";
     static final String RESOURCE_TYPE = "resource.type";
     static final String IFRAMES_CONNECTION_TIMEOUT = "iframesConnectionTimeout";
+    static final String LOGIN_TYPE_QUERY_PARAMETER = "logintype";
     public static final String PATH_PARAM = "path";
     public static final String UUID_PARAM = "uuid";
 
@@ -77,8 +80,15 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     public NavAppSettings getNavAppSettings(final Request request) {
 
         final UserSettings userSettings = createUserSettings(pluginUserSessionSupplier.get());
-        final StringValue initialPath = request.getQueryParameters().getParameterValue(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER);
-        final AppSettings appSettings = createAppSettings(initialPath.toString(convertLegacyDocumentParameters(request)));
+
+        final IRequestParameters queryParameters = request.getQueryParameters();
+        final StringValue initialPathStringValue = queryParameters.getParameterValue(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER);
+        final String initialPath = initialPathStringValue.toString(convertLegacyDocumentParameters(request));
+
+        final StringValue loginTypeStringValue = queryParameters.getParameterValue(LOGIN_TYPE_QUERY_PARAMETER);
+        final boolean localLogin = loginTypeStringValue.toString("").equals("local");
+
+        final AppSettings appSettings = createAppSettings(initialPath, localLogin);
         return new NavAppSettings() {
             @Override
             public UserSettings getUserSettings() {
@@ -124,7 +134,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         return userSettingsBuilder.build();
     }
 
-    private AppSettings createAppSettings(String initialPath) {
+    private AppSettings createAppSettings(String initialPath, boolean localLogin) {
 
         final String navAppLocation = System.getProperty(NAVAPP_LOCATION_SYSTEM_PROPERTY, null);
         final boolean cmsOriginOfNavAppResources = navAppLocation == null;
@@ -134,9 +144,9 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         // the ResourceServlet is being used to serve the resources inside of that directory.
         // When running mvn package the files needed for the navapp (and navigation-communication)
         // are copied into  the target directory. See copy-files.js
-        final List<NavAppResource> navConfigResources = readNavConfigResources();
-        final List<NavAppResource> loginDomains = readResources(LOGIN_RESOURCES);
-        final List<NavAppResource> logoutDomains = readResources(LOGOUT_RESOURCES);
+        final List<NavAppResource> navConfigResources = readNavConfigResources(localLogin);
+        final List<NavAppResource> loginDomains = readResources(LOGIN_RESOURCES, localLogin);
+        final List<NavAppResource> logoutDomains = readResources(LOGOUT_RESOURCES, localLogin);
         final int iframesConnectionTimeout = readIframesConnectionTimeout();
 
         return new AppSettings() {
@@ -182,14 +192,17 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         return getPluginConfig().getInt(IFRAMES_CONNECTION_TIMEOUT, 30_000);
     }
 
-    private List<NavAppResource> readNavConfigResources() {
+    private List<NavAppResource> readNavConfigResources(boolean localLogin) {
         final List<NavAppResource> resources = new ArrayList<>();
         resources.add(createResource(URI.create(NAVIGATIONITEMS_ENDPOINT), ResourceType.INTERNAL_REST));
-        resources.addAll(readResources(NAV_CONFIG_RESOURCES));
+        resources.addAll(readResources(NAV_CONFIG_RESOURCES, localLogin));
         return resources;
     }
 
-    private List<NavAppResource> readResources(String resourceKey) {
+    private List<NavAppResource> readResources(String resourceKey, boolean localLogin) {
+        if (localLogin) {
+            return Collections.emptyList();
+        }
         final List<NavAppResource> resources = new ArrayList<>();
         final IPluginConfig pluginConfig = getPluginConfig();
         if (pluginConfig.containsKey(resourceKey)) {
