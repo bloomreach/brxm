@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { BrProps } from '@bloomreach/react-sdk';
+import { BrManageContentButton, BrProps } from '@bloomreach/react-sdk';
 
 export function Banner(props: BrProps) {
   const { document: documentRef } = props.component.getModels();
@@ -31,8 +31,9 @@ export function Banner(props: BrProps) {
   const link = linkRef && props.page.getContent(linkRef);
 
   return (
-    <div className="jumbotron mb-3">
-      { title && <h1>{title}</h1>}
+    <div className={`jumbotron mb-3 ${props.page.isPreview() ? 'has-edit-button' : ''}`}>
+      <BrManageContentButton content={document} />
+      { title && <h1>{title}</h1> }
       { image && <img className="img-fluid" src={image.getData()._links.site.href} alt={title} /> }
       { content && <div dangerouslySetInnerHTML={{ __html: content.value }} /> }
       { link && (

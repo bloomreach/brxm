@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { Content } from '@bloomreach/spa-sdk';
-import { BrProps } from '@bloomreach/react-sdk';
+import { BrManageContentButton, BrProps } from '@bloomreach/react-sdk';
 
 export function NewsList(props: BrProps) {
   const { pageable } = props.component.getModels<PageableModels>();
@@ -43,6 +43,7 @@ export function NewsListItem({ item }: NewsListItemProps) {
   // TODO: Implement link generation mechanism
   return (
     <div className="card mb-3">
+      <BrManageContentButton content={item} />
       <div className="card-body">
         { title && (
           <h2 className="card-title">

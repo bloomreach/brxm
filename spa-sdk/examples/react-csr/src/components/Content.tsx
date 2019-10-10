@@ -15,7 +15,7 @@
  */
 
 import React from 'react';
-import { BrProps } from '@bloomreach/react-sdk';
+import { BrManageContentButton, BrProps } from '@bloomreach/react-sdk';
 
 export function Content(props: BrProps) {
   const { document: documentRef } = props.component.getModels<DocumentModels>();
@@ -30,7 +30,8 @@ export function Content(props: BrProps) {
   const image = imageRef && props.page.getContent(imageRef);
 
   return (
-    <div>
+    <div className={props.page.isPreview() ? 'has-edit-button' : ''}>
+      <BrManageContentButton content={document} />
       { image && <img className="img-fluid mb-3" src={image.getData()._links.site.href} alt={title} /> }
       { title && <h1>{title}</h1> }
       { author && <p className="mb-3 text-muted">{author}</p> }

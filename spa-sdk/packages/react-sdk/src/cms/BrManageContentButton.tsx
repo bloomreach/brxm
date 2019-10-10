@@ -14,22 +14,28 @@
  * limitations under the License.
  */
 
-body {
-  padding-bottom: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+import React from 'react';
+import { Content } from '@bloomreach/spa-sdk';
+import { BrPageContext } from '../page';
+import { BrMetaWrapper } from '../meta';
+
+interface BrManageContentButtonProps {
+  content: Content;
 }
 
-#root {
-  height: 100vh;
-}
+export class BrManageContentButton extends React.Component<BrManageContentButtonProps, {}> {
+  static contextType = BrPageContext;
+  context: React.ContextType<typeof BrPageContext>;
 
-#root > .container {
-   flex: 1;
-}
+  constructor(props: BrManageContentButtonProps) {
+    super(props);
+  }
 
-.has-edit-button {
-  position: relative;
+  render() {
+    if (!this.context!.isPreview()) {
+      return null;
+    }
+
+    return <BrMetaWrapper meta={this.props.content.getMeta()} />;
+  }
 }

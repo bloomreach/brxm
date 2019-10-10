@@ -15,4 +15,5 @@
  */
 
 export { BrComponent, BrComponentContext, BrProps } from './component';
+export { BrManageContentButton } from './cms/BrManageContentButton';
 export { BrPage, BrPageContext } from './page';
