@@ -348,7 +348,7 @@ public class SecurityManager implements HippoSecurityManager {
                 return AuthenticationStatus.SUCCEEDED;
             }
 
-            providers.get(providerId).synchronizeOnLogin(userId);
+            providers.get(providerId).synchronizeOnLogin(creds);
 
             return AuthenticationStatus.SUCCEEDED;
         } catch (RepositoryException e) {
