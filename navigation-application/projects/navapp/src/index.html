@@ -35,7 +35,7 @@
         },
         appSettings: {
           basePath: '/base/path',
-          initialPath: '/categories/category-ranking',
+          get initialPath() { return window.location.pathname.slice(this.basePath.length) },
           navAppResourceLocation: 'http://localhost:4200',
           loginResources: [],
           navConfigResources: [
