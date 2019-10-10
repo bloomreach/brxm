@@ -90,6 +90,8 @@ export {
   ContainerItem,
   Container,
   Content,
+  Menu,
+  MenuModels,
   MetaComment,
   Meta,
   Page,

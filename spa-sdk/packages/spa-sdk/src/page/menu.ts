@@ -14,25 +14,29 @@
  * limitations under the License.
  */
 
-import React from 'react';
-import { MenuModels } from '@bloomreach/spa-sdk';
-import { BrComponentContext } from '@bloomreach/react-sdk';
+import { MetaCollectionModel } from './meta';
 
-export function Menu() {
-  const component = React.useContext(BrComponentContext);
-  if (!component) {
-    return null;
-  }
+export interface MenuModels {
+  menu: Menu;
+}
 
-  const { menu } = component.getModels<MenuModels>();
+export interface Menu {
+  _meta?: MetaCollectionModel;
+  selectSiteMenuItem: MenuItem | null;
+  siteMenuItems: MenuItem[];
+}
 
-  return (
-    <ul className="navbar-nav">
-      {menu.siteMenuItems.map((item, index) => (
-        <li key={index} className={`nav-item ${item.selected ? 'active' : ''}`}>
-          <a className="nav-link text-capitalize" href={item._links.site.href}>{item.name}</a>
-        </li>
-      ))}
-    </ul>
-  );
+export interface MenuItem {
+  childMenuItems: MenuItem[];
+  depth: number;
+  expanded: boolean;
+  name: string;
+  parameters: object;
+  repositoryBased: boolean;
+  selected: boolean;
+  _links: {
+    site: {
+      href: string;
+    },
+  };
 }

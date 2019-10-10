@@ -35,30 +35,6 @@ interface DocumentContent {
   value: string;
 }
 
-interface MenuModels {
-  menu: Menu;
-}
-
-interface Menu {
-  selectSiteMenuItem: MenuItem | null;
-  siteMenuItems: MenuItem[];
-}
-
-interface MenuItem {
-  childMenuItems: MenuItem[];
-  depth: number;
-  expanded: boolean;
-  name: string;
-  parameters: object;
-  repositoryBased: boolean;
-  selected: boolean;
-  _links: {
-    site: {
-      href: string;
-    },
-  };
-}
-
 interface PageableModels {
   pageable: Pageable;
 }

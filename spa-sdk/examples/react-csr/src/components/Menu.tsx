@@ -15,6 +15,7 @@
  */
 
 import React from 'react';
+import { MenuModels } from '@bloomreach/spa-sdk';
 import { BrComponentContext } from '@bloomreach/react-sdk';
 
 export function Menu() {
