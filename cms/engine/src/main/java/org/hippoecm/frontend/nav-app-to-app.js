@@ -139,7 +139,11 @@
             if (!rootPanel) {
               return Promise.reject(new Error('rootPanel is not found'));
             }
-  
+            if (triggeredBy === 'Breadcrumbs'){
+              rootPanel.fireEvent('navigate-to-channel-overview');
+              return Promise.resolve();
+            }
+
             const path = pathElements.join('/');
             return navigateIframe(iframe, path, triggeredBy);
   
