@@ -131,7 +131,8 @@
   
           case 'channelmanager':
             if (!iframe) {
-              return Promise.reject(new Error('channel manager\'s iframe is not found'));
+              // If there is no iframe perspective.click() is enough to show channels overview
+              return Promise.resolve();
             }
 
             const rootPanel = Ext.getCmp('rootPanel');
@@ -139,7 +140,9 @@
             if (!rootPanel) {
               return Promise.reject(new Error('rootPanel is not found'));
             }
-            if (triggeredBy === 'Breadcrumbs'){
+
+            // Just show the channels overview when requested path is 'channelmanager'
+            if (pathElements.length === 0) {
               rootPanel.fireEvent('navigate-to-channel-overview');
               return Promise.resolve();
             }
