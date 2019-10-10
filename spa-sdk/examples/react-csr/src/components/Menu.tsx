@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { MenuModels } from '@bloomreach/spa-sdk';
-import { BrComponentContext } from '@bloomreach/react-sdk';
+import { BrComponentContext, BrManageMenuButton } from '@bloomreach/react-sdk';
 
 export function Menu() {
   const component = React.useContext(BrComponentContext);
@@ -28,11 +28,12 @@ export function Menu() {
 
   return (
     <ul className="navbar-nav">
-      {menu.siteMenuItems.map((item, index) => (
+      <BrManageMenuButton menu={menu}/>
+      { menu.siteMenuItems.map((item, index) => (
         <li key={index} className={`nav-item ${item.selected ? 'active' : ''}`}>
           <a className="nav-link text-capitalize" href={item._links.site.href}>{item.name}</a>
         </li>
-      ))}
+      )) }
     </ul>
   );
 }
