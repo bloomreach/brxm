@@ -110,6 +110,8 @@ public class NavAppSettingsServiceTest {
                 .andStubReturn(StringValue.valueOf((String) null));
         expect(parameters.getParameterValue(NavAppSettingsService.PATH_PARAM))
                 .andStubReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.LOGIN_TYPE_QUERY_PARAMETER))
+                .andStubReturn(StringValue.valueOf((String) null));
         replay(parameters);
 
         expect(servletRequest.getHeader("X-Forwarded-Proto")).andReturn(scheme);
@@ -327,6 +329,8 @@ public class NavAppSettingsServiceTest {
                 .andStubReturn(StringValue.valueOf((String) null));
         expect(parameters.getParameterValue(NavAppSettingsService.PATH_PARAM))
                 .andStubReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.LOGIN_TYPE_QUERY_PARAMETER))
+                .andStubReturn(StringValue.valueOf((String) null));
         replay(parameters);
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
         assertThat(navAppSettings.getAppSettings().getInitialPath(), is(someInitialPath));
@@ -339,8 +343,10 @@ public class NavAppSettingsServiceTest {
         expect(parameters.getParameterValue(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER))
                 .andStubReturn(StringValue.valueOf((String) null));
         expect(parameters.getParameterValue(NavAppSettingsService.UUID_PARAM))
-                .andReturn(StringValue.valueOf((String) someUUID));
+                .andReturn(StringValue.valueOf(someUUID));
         expect(parameters.getParameterValue(NavAppSettingsService.PATH_PARAM))
+                .andStubReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.LOGIN_TYPE_QUERY_PARAMETER))
                 .andStubReturn(StringValue.valueOf((String) null));
         replay(parameters);
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
@@ -356,10 +362,35 @@ public class NavAppSettingsServiceTest {
         expect(parameters.getParameterValue(NavAppSettingsService.UUID_PARAM))
                 .andStubReturn(StringValue.valueOf((String) null));
         expect(parameters.getParameterValue(NavAppSettingsService.PATH_PARAM))
-                .andReturn(StringValue.valueOf((String) somePath));
+                .andReturn(StringValue.valueOf(somePath));
+        expect(parameters.getParameterValue(NavAppSettingsService.LOGIN_TYPE_QUERY_PARAMETER))
+                .andStubReturn(StringValue.valueOf((String) null));
         replay(parameters);
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
         assertThat(navAppSettings.getAppSettings().getInitialPath(), is("/browser/path/" + somePath));
+    }
+
+    @Test
+    public void loads_no_resources_for_logintype_local() {
+
+        reset(config);
+        expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
+        replay(config);
+
+        reset(parameters);
+        expect(parameters.getParameterValue(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER))
+                .andStubReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.UUID_PARAM))
+                .andStubReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.PATH_PARAM))
+                .andReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.LOGIN_TYPE_QUERY_PARAMETER))
+                .andStubReturn(StringValue.valueOf("local"));
+        replay(parameters);
+
+        final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
+        assertThat(navAppSettings.getAppSettings().getNavConfigResources().size(), is(1));
+        verify(config, parameters);
     }
 
     private void testUserSettingsAssertions(UserSettings userSettings) {
