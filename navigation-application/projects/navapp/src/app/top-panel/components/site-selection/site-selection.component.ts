@@ -114,7 +114,11 @@ export class SiteSelectionComponent implements OnInit, OnDestroy {
 
   private updateDataSource(): void {
     this.dataSource.data = this.filterSites(this.sites, this.searchText);
-    this.expandActiveNode();
+    if (this.searchText) {
+      this.treeControl.expandAll();
+    } else {
+      this.expandActiveNode();
+    }
   }
 
   private expandActiveNode(): void {
