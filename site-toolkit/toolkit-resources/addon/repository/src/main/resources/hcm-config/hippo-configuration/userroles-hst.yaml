@@ -53,5 +53,8 @@ definitions:
         hipposys:members:
           .meta:category: system
           value: []
-        hipposys:userroles: [xm-channel-webmaster]
+        hipposys:userroles:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: [xm-channel-webmaster]
         hipposys:securityprovider: internal
