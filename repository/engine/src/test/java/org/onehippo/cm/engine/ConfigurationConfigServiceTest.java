@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import javax.jcr.Session;
 import javax.jcr.lock.LockManager;
 import javax.jcr.nodetype.NodeType;
 
+import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.repository.testutils.RepositoryTestCase;
@@ -32,6 +33,7 @@ import org.onehippo.testutils.jcr.event.ExpectedEvents;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -1899,4 +1901,66 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
             }
         }
     }
+
+    @Test
+    public void test_add_new_system_values() throws Exception {
+        final String baselineSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      test:\n"
+                + "        .meta:category: system\n"
+                + "        .meta:add-new-system-values: true\n"
+                + "        value: [a,b]\n";
+        ConfigurationModel baseline = applyDefinitions(baselineSource);
+
+        // overwrite the test values
+        testNode.setProperty("test", new String[]{"a", "c"});
+        session.save();
+
+        // verify standard update of existing system value is ignored
+        String updateSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      test:\n"
+                + "        .meta:category: system\n"
+                + "        value: [b, d]\n";
+        baseline = applyDefinitions(updateSource, baseline);
+        String[] testValues = JcrUtils.getMultipleStringProperty(testNode, "test", new String[0]);
+        assertArrayEquals(new String[]{"a", "c"}, testValues);
+
+        // verify removal of existing system values (compared to the baseline) is ignored
+        updateSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      test:\n"
+                + "        .meta:category: system\n"
+                + "        .meta:add-new-system-values: true\n"
+                + "        value: [b]\n";
+        baseline = applyDefinitions(updateSource, baseline);
+        testValues = JcrUtils.getMultipleStringProperty(testNode, "test", new String[0]);
+        assertArrayEquals(new String[]{"a", "c"}, testValues);
+
+        // verify add new-system-values is applied: (only) new system values are added, no removals, nor restoring
+        updateSource
+                = "definitions:\n"
+                + "  config:\n"
+                + "    /test:\n"
+                + "      jcr:primaryType: nt:unstructured\n"
+                + "      test:\n"
+                + "        .meta:category: system\n"
+                + "        .meta:add-new-system-values: true\n"
+                + "        value: [d]\n";
+        applyDefinitions(updateSource, baseline);
+        testValues = JcrUtils.getMultipleStringProperty(testNode, "test", new String[0]);
+        assertArrayEquals(new String[]{"a", "c", "d"}, testValues);
+
+    }
+
+
 }

@@ -11,9 +11,11 @@ definitions:
         jcr:primaryType: hipposys:group
         hipposys:members:
           .meta:category: system
+          .meta:add-new-system-values: true
           value: []
         hipposys:userroles:
           .meta:category: system
+          .meta:add-new-system-values: true
           value: [xm-content-author]
         hipposys:securityprovider: internal
       /editor:
@@ -23,6 +25,7 @@ definitions:
           value: []
         hipposys:userroles:
           .meta:category: system
+          .meta:add-new-system-values: true
           value: [xm-content-editor]
         hipposys:securityprovider: internal
       /admin:
@@ -32,5 +35,6 @@ definitions:
           value: []
         hipposys:userroles:
           .meta:category: system
+          .meta:add-new-system-values: true
           value: [xm-admin]
         hipposys:securityprovider: internal

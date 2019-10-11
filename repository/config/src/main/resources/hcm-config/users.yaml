@@ -14,6 +14,7 @@ definitions:
           .meta:category: system
         hipposys:userroles:
           .meta:category: system
+          .meta:add-new-system-values: true
           value: [xm-admin]
       /workflowuser:
         jcr:primaryType: hipposys:user
@@ -29,6 +30,7 @@ definitions:
           .meta:category: system
         hipposys:userroles:
           .meta:category: system
+          .meta:add-new-system-values: true
           value: [xm-admin]
       /ping-user:
         jcr:primaryType: hipposys:user
