@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -56,6 +56,7 @@ import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.onehippo.cm.model.Constants.DEFAULT_EXPLICIT_SEQUENCING;
 import static org.onehippo.cm.model.Constants.HST_HST_SEGMENT;
 import static org.onehippo.cm.model.Constants.META_CATEGORY_KEY;
+import static org.onehippo.cm.model.Constants.META_ADD_NEW_SYSTEM_VALUES;
 import static org.onehippo.cm.model.Constants.OPERATION_KEY;
 import static org.onehippo.cm.model.Constants.PATH_KEY;
 import static org.onehippo.cm.model.Constants.RESOURCE_KEY;
@@ -250,7 +251,7 @@ public abstract class SourceParser extends AbstractBaseParser {
     protected DefinitionPropertyImpl constructDefinitionPropertyFromMap(final String name, final Node value, final ValueType defaultValueType, final DefinitionNodeImpl parent) throws ParserException {
         final DefinitionPropertyImpl property;
         final Map<String, Node> map = asMapping(value, new String[0],
-                new String[]{META_CATEGORY_KEY,OPERATION_KEY,TYPE_KEY,VALUE_KEY,RESOURCE_KEY,PATH_KEY});
+                new String[]{META_CATEGORY_KEY,OPERATION_KEY,TYPE_KEY,VALUE_KEY,RESOURCE_KEY,PATH_KEY, META_ADD_NEW_SYSTEM_VALUES});
 
         int expectedMapSize = 1; // the 'value', 'resource', or 'path' key
 
@@ -301,6 +302,14 @@ public abstract class SourceParser extends AbstractBaseParser {
             valueType = defaultValueType;
         }
 
+        final Boolean addNewSystemValues;
+        if (map.keySet().contains(META_ADD_NEW_SYSTEM_VALUES)) {
+            addNewSystemValues = constructMetaAddNewSystemValuesValue(map.get(META_ADD_NEW_SYSTEM_VALUES));
+            expectedMapSize++;
+        } else {
+            addNewSystemValues = null;
+        }
+
         if (map.size() != expectedMapSize) {
             throw new ParserException(
                     "Property map must have either a '" + VALUE_KEY + "', '" + RESOURCE_KEY + "' or '" + PATH_KEY
@@ -336,6 +345,14 @@ public abstract class SourceParser extends AbstractBaseParser {
             property.setOperation(PropertyOperation.OVERRIDE);
         }
 
+        if (addNewSystemValues != null) {
+            try {
+                property.setAddNewSystemValues(addNewSystemValues);
+            } catch (IllegalArgumentException e) {
+                throw new ParserException(e.getMessage(), value);
+            }
+        }
+
         return property;
     }
 
@@ -346,6 +363,15 @@ public abstract class SourceParser extends AbstractBaseParser {
         } catch (IllegalArgumentException e) {
             throw new ParserException("Unrecognized category: '" + categoryString + "'", node);
         }
+    }
+
+    protected boolean constructMetaAddNewSystemValuesValue(final Node node) throws ParserException {
+        final ScalarNode scalar = asScalar(node);
+        if (!scalar.getTag().equals(Tag.BOOL)) {
+            throw new ParserException("Value for " + META_ADD_NEW_SYSTEM_VALUES + " must be boolean", node);
+        }
+        final Object object = scalarConstructor.constructScalarNode(scalar);
+        return object.equals(true);
     }
 
     protected DefinitionPropertyImpl constructDefinitionPropertyFromValueMap(final String name, final Node node, final DefinitionNodeImpl parent, final ValueType valueType) throws ParserException {

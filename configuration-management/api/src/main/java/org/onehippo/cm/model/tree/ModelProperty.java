@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,6 +37,12 @@ public interface ModelProperty extends ModelItem {
      * @return true iff this is a multi-valued property
      */
     boolean isMultiple();
+
+    /**
+     * @return true if this is a multi-valued system property for which (only) <em>new</em>values should be added to an
+     * existing property
+     */
+    boolean isAddNewSystemValues();
 
     /**
      * @return the Value of this property

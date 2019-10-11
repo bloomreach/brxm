@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -2521,5 +2522,226 @@ public class ConfigurationTreeBuilderTest {
         definitions = ModelTestUtils.parseNoSort(yaml);
         builder.push((ConfigDefinitionImpl)definitions.get(0));
         builder.finishModule().build();
+    }
+
+    @Test
+    public void test_propertydefinition_add_new_system_values() throws Exception {
+        String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /node:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      test:\n"
+                + "        .meta:category: system\n"
+                + "        .meta:add-new-system-values: true\n"
+                + "        value: [a, b]\n";
+        List<AbstractDefinitionImpl> definitions = ModelTestUtils.parseNoSort(yaml);
+        DefinitionNodeImpl definition = ((ConfigDefinitionImpl)definitions.get(0)).getNode();
+        DefinitionPropertyImpl testProperty = definition.getProperty("test");
+        assertTrue(testProperty.isAddNewSystemValuesSet() && testProperty.isAddNewSystemValues());
+
+        yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /node:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      test:\n"
+                + "        .meta:add-new-system-values: true\n"
+                + "        value: [a, b]\n";
+        try {
+            ModelTestUtils.parseNoSort(yaml);
+            fail("Expected ParserException");
+        } catch (ParserException e) {
+            assertTrue(e.getMessage().startsWith("Setting .meta:add-new-system-values is only supported for " +
+                    "(not reference type of) multi-value system properties of category system"));
+        }
+
+        yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /node:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      test:\n"
+                + "        .meta:category: system\n"
+                + "        .meta:add-new-system-values: true\n"
+                + "        value: a\n";
+        try {
+            ModelTestUtils.parseNoSort(yaml);
+            fail("Expected ParserException");
+        } catch (ParserException e) {
+            assertTrue(e.getMessage().startsWith("Setting .meta:add-new-system-values is only supported for " +
+                    "(not reference type of) multi-value system properties of category system"));
+        }
+
+        yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /node:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      test:\n"
+                + "        .meta:category: system\n"
+                + "        .meta:add-new-system-values: true\n"
+                + "        type: reference\n"
+                + "        value: [cafebabe-cafe-babe-cafe-babecafebabe]\n";
+        try {
+            ModelTestUtils.parseNoSort(yaml);
+            fail("Expected ParserException");
+        } catch (ParserException e) {
+            assertTrue(e.getMessage().startsWith("Setting .meta:add-new-system-values is only supported for " +
+                    "(not reference type of) multi-value system properties of category system"));
+        }
+    }
+
+    @Test
+    public void test_model_building_with_add_new_system_values() throws Exception {
+        String yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /node:\n"
+                + "      jcr:primaryType: foo\n"
+                + "      test:\n"
+                + "        .meta:category: system\n"
+                + "        .meta:add-new-system-values: true\n"
+                + "        value: [a, b]\n";
+        builder.push((ConfigDefinitionImpl)ModelTestUtils.parseNoSort(yaml).get(0));
+
+        yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /node:\n"
+                + "      test:\n"
+                + "        operation: add\n"
+                + "        value: [c]\n";
+        builder.push((ConfigDefinitionImpl)ModelTestUtils.parseNoSort(yaml).get(0));
+        ConfigurationNodeImpl node = builder.build().getNode("node[1]");
+        ConfigurationPropertyImpl property = node.getProperty("test");
+        assertTrue(property.isAddNewSystemValues());
+
+        yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /node:\n"
+                + "      test: [c]\n";
+        builder.push((ConfigDefinitionImpl)ModelTestUtils.parseNoSort(yaml).get(0));
+        node = builder.build().getNode("node[1]");
+        property = node.getProperty("test");
+        assertTrue(property.isAddNewSystemValues());
+
+        yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /node:\n"
+                + "      test:\n"
+                + "        operation: override\n"
+                + "        type: long\n"
+                + "        value: [1, 2]\n";
+        builder.push((ConfigDefinitionImpl)ModelTestUtils.parseNoSort(yaml).get(0));
+        node = builder.build().getNode("node[1]");
+        property = node.getProperty("test");
+        assertTrue(property.isAddNewSystemValues());
+
+        yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /node:\n"
+                + "      test:\n"
+                + "        operation: override\n"
+                + "        type: reference\n"
+                + "        value: [cafebabe-cafe-babe-cafe-babecafebabe]\n";
+        builder.push((ConfigDefinitionImpl)ModelTestUtils.parseNoSort(yaml).get(0));
+        node = builder.build().getNode("node[1]");
+        property = node.getProperty("test");
+        assertFalse(property.isAddNewSystemValues());
+
+        yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /node:\n"
+                + "      test:\n"
+                + "        operation: override\n"
+                + "        type: long\n"
+                + "        value: [1, 2]\n";
+        builder.push((ConfigDefinitionImpl)ModelTestUtils.parseNoSort(yaml).get(0));
+        node = builder.build().getNode("node[1]");
+        property = node.getProperty("test");
+        assertFalse(property.isAddNewSystemValues());
+
+        yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /node:\n"
+                + "      test:\n"
+                + "        .meta:category: system\n"
+                + "        .meta:add-new-system-values: true\n"
+                + "        type: long\n"
+                + "        value: [3]\n";
+        builder.push((ConfigDefinitionImpl)ModelTestUtils.parseNoSort(yaml).get(0));
+        node = builder.build().getNode("node[1]");
+        property = node.getProperty("test");
+        assertTrue(property.isAddNewSystemValues());
+
+        yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /node:\n"
+                + "      test:\n"
+                + "        operation: override\n"
+                + "        type: long\n"
+                + "        value: 1\n";
+        builder.push((ConfigDefinitionImpl)ModelTestUtils.parseNoSort(yaml).get(0));
+        node = builder.build().getNode("node[1]");
+        property = node.getProperty("test");
+        assertFalse(property.isAddNewSystemValues());
+
+        yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /node:\n"
+                + "      test:\n"
+                + "        operation: override\n"
+                + "        .meta:category: system\n"
+                + "        .meta:add-new-system-values: true\n"
+                + "        type: long\n"
+                + "        value: [3]\n";
+        builder.push((ConfigDefinitionImpl)ModelTestUtils.parseNoSort(yaml).get(0));
+        node = builder.build().getNode("node[1]");
+        property = node.getProperty("test");
+        assertTrue(property.isAddNewSystemValues());
+
+        yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /node:\n"
+                + "      test:\n"
+                + "        .meta:category: config\n"
+                + "        type: long\n"
+                + "        value: [3]\n";
+        builder.push((ConfigDefinitionImpl)ModelTestUtils.parseNoSort(yaml).get(0));
+        node = builder.build().getNode("node[1]");
+        property = node.getProperty("test");
+        assertFalse(property.isAddNewSystemValues());
+
+        yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /node:\n"
+                + "      test:\n"
+                + "        operation: override\n"
+                + "        .meta:category: system\n"
+                + "        .meta:add-new-system-values: true\n"
+                + "        type: long\n"
+                + "        value: [3]\n";
+        builder.push((ConfigDefinitionImpl)ModelTestUtils.parseNoSort(yaml).get(0));
+        node = builder.build().getNode("node[1]");
+        property = node.getProperty("test");
+        assertTrue(property.isAddNewSystemValues());
+
+        yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /node:\n"
+                + "      test:\n"
+                + "        type: long\n"
+                + "        value: [4]\n";
+        builder.push((ConfigDefinitionImpl)ModelTestUtils.parseNoSort(yaml).get(0));
+        node = builder.build().getNode("node[1]");
+        property = node.getProperty("test");
+        assertTrue(property.isAddNewSystemValues());
+
+        yaml = "definitions:\n"
+                + "  config:\n"
+                + "    /node:\n"
+                + "      test:\n"
+                + "        .meta:add-new-system-values: false\n"
+                + "        type: long\n"
+                + "        value: [5]\n";
+        builder.push((ConfigDefinitionImpl)ModelTestUtils.parseNoSort(yaml).get(0));
+        node = builder.build().getNode("node[1]");
+        property = node.getProperty("test");
+        assertFalse(property.isAddNewSystemValues());
     }
 }
