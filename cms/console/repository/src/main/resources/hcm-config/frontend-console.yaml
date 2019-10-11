@@ -3,8 +3,6 @@ definitions:
     /hippo:configuration/hippo:frontend/console:
       jcr:primaryType: frontend:application
       frontend:defaultcluster: console
-      frontend:privileges: hippo:admin
-      frontend:privileges.path: /content/documents
       frontend:saveonexit: false
       /console:
         jcr:primaryType: frontend:plugincluster
