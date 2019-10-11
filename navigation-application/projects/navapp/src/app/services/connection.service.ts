@@ -23,6 +23,7 @@ import { AppSettings } from '../models/dto/app-settings.dto';
 import { UserSettings } from '../models/dto/user-settings.dto';
 
 import { APP_SETTINGS } from './app-settings';
+import { BusyIndicatorService } from './busy-indicator.service';
 import { USER_SETTINGS } from './user-settings';
 
 export interface ChildConnection {
@@ -50,6 +51,7 @@ export class ConnectionService {
     @Inject(APP_SETTINGS) private appSettings: AppSettings,
     @Inject(USER_SETTINGS) private userSettings: UserSettings,
     private rendererFactory: RendererFactory2,
+    private busyIndicatorService: BusyIndicatorService,
   ) { }
 
   get parentApiMethods(): ParentApi {
@@ -60,6 +62,8 @@ export class ConnectionService {
       }),
       showMask: () => this.showMask$.next(),
       hideMask: () => this.hideMask$.next(),
+      showBusyIndicator: () => this.busyIndicatorService.show(),
+      hideBusyIndicator: () => this.busyIndicatorService.hide(),
       navigate: (location: NavLocation) => this.navigate$.next(location),
       updateNavLocation: (location: NavLocation) => this.updateNavLocation$.next(location),
       onError: (clientError: ClientError) => this.onError$.next(clientError),

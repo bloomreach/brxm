@@ -113,6 +113,17 @@ export interface ParentApi {
    */
   hideMask?: () => (void | Promise<void>);
   /**
+   * Is called by an application when it needs to show the busy indicator to indicate the user has to wait until the application has
+   * changed its ui state.
+   * For each call to the application should make a @{link {ParentApi.hideBusyIndicator}} call.
+   */
+  showBusyIndicator?: () => (void | Promise<void>);
+  /**
+   * Is called by an application when it needs to hide the busy indicator to indicate the user can interact with the application again
+   * For each call to the application should make a @{link {ParentApi.showBusyIndicator}} call.
+   */
+  hideBusyIndicator?: () => (void | Promise<void>);
+  /**
    * Is called by an active application when a user makes some actions. Nav-app can propagate this calls to other
    * applications to prevent session expiration.
    */

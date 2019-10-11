@@ -15,22 +15,34 @@
  */
 
 import { Injectable } from '@angular/core';
+import { map, scan } from 'rxjs/operators';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { ConnectionService } from './connection.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BusyIndicatorService {
-  private visible = false;
+  private visible: boolean;
+  private counter = new BehaviorSubject<number>(0);
+
+  constructor(
+  ) {
+    this.counter.pipe(
+      scan((acc, n) => acc + n),
+      map(n => n > 0),
+    ).subscribe(visible => this.visible = visible);
+  }
 
   get isVisible(): boolean {
     return this.visible;
   }
 
   show(): void {
-    this.visible = true;
+    this.counter.next(+1);
   }
 
   hide(): void {
-    this.visible = false;
+    this.counter.next(-1);
   }
 }
