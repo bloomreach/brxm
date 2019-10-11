@@ -198,6 +198,7 @@ export class MenuStructureService {
         new MenuItemContainer('DevStudio', [
           new MenuItemLink('setup/devstudio/account-information', 'Account information'),
           new MenuItemLink('setup/devstudio/pixel-monitor', 'Pixel monitor'),
+          new MenuItemLink('setup/devstudio/data-connect', 'DataConnect'),
           new MenuItemContainer('Feed', [
             new MenuItemLink('setup/devstudio/feed/configuration', 'Configuration'),
             new MenuItemLink('setup/devstudio/feed/status', 'Status'),
