@@ -93,7 +93,7 @@
     <hippo.services.htmlprocessor.version>14.0.0-SNAPSHOT</hippo.services.htmlprocessor.version>
     <hippo.services.validation.version>14.0.0-SNAPSHOT</hippo.services.validation.version>
     <hippo.repository.version>14.0.0-securitydomain-SNAPSHOT</hippo.repository.version>
-    <hippo.configuration-management.version>14.0.0-SNAPSHOT</hippo.configuration-management.version>
+    <hippo.configuration-management.version>14.0.0-securitydomain-SNAPSHOT</hippo.configuration-management.version>
 
     <!-- Test dependencies  -->
     <easymock.version>3.4</easymock.version>
