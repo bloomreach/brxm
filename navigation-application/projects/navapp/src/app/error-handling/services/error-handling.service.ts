@@ -25,7 +25,7 @@ import { NotFoundError } from '../models/not-found-error';
 
 @Injectable()
 export class ErrorHandlingService {
-  private error: AppError;
+  private appError: AppError;
 
   constructor(
     private connectionService: ConnectionService,
@@ -34,7 +34,12 @@ export class ErrorHandlingService {
   }
 
   get currentError(): AppError {
-    return this.error;
+    return this.appError;
+  }
+
+  private set error(value: AppError) {
+    console.error(value.internalDescription);
+    this.appError = value;
   }
 
   setError(error: AppError): void {

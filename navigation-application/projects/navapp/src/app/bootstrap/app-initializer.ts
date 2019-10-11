@@ -34,6 +34,6 @@ export const appInitializer = (
     await navConfigService.init();
     scheduleAppBootstrapping(bootstrapService, busyIndicatorService, errorHandlingService);
   } catch (error) {
-    errorHandlingService.setCriticalError('Unable to load initial configuration');
+    errorHandlingService.setCriticalError('Unable to load initial configuration', error.message);
   }
 };
