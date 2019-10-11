@@ -75,7 +75,7 @@
     <javadoc.base.version>13.1</javadoc.base.version>
 
     <hippo.jackrabbit.version>2.18.3-h1</hippo.jackrabbit.version>
-    <hippo.configuration-management.version>14.0.0-SNAPSHOT</hippo.configuration-management.version>
+    <hippo.configuration-management.version>14.0.0-securitydomain-SNAPSHOT</hippo.configuration-management.version>
     <hippo.commons.version>14.0.0-SNAPSHOT</hippo.commons.version>
     <hippo.services.version>14.0.0-SNAPSHOT</hippo.services.version>
     <hippo.services.eventbus.version>14.0.0-SNAPSHOT</hippo.services.eventbus.version>
