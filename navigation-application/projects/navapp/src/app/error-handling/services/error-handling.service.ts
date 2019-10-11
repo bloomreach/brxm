@@ -38,7 +38,10 @@ export class ErrorHandlingService {
   }
 
   private set error(value: AppError) {
-    console.error(value.internalDescription);
+    if (value) {
+      console.error(value.internalDescription);
+    }
+
     this.appError = value;
   }
 
@@ -69,7 +72,7 @@ export class ErrorHandlingService {
   }
 
   clearError(): void {
-    this.error = undefined;
+    this.appError = undefined;
   }
 
   private mapClientErrorCodeToHttpErrorCode(code: ClientErrorCodes): number {
