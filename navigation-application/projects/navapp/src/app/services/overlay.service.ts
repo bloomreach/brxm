@@ -16,6 +16,7 @@
 
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { map, scan } from 'rxjs/operators';
 
 import { ConnectionService } from './connection.service';
 
@@ -23,24 +24,18 @@ import { ConnectionService } from './connection.service';
   providedIn: 'root',
 })
 export class OverlayService {
-  private isOverlayVisible = new BehaviorSubject<boolean>(false);
+
+  visible$: Observable<boolean>;
 
   constructor(
     private connectionService: ConnectionService,
   ) {
-    this.connectionService.showMask$.subscribe(() => this.enable());
-    this.connectionService.hideMask$.subscribe(() => this.disable());
-  }
-
-  get visible$(): Observable<boolean> {
-    return this.isOverlayVisible.asObservable();
-  }
-
-  enable(): void {
-    this.isOverlayVisible.next(true);
-  }
-
-  disable(): void {
-    this.isOverlayVisible.next(false);
+    const counter = new BehaviorSubject<number>(0);
+    this.connectionService.showMask$.subscribe(() => counter.next(+1));
+    this.connectionService.hideMask$.subscribe(() => counter.next(-1));
+    this.visible$ = counter.pipe(
+      scan((acc, n) => acc + n),
+      map(n => n > 0),
+    );
   }
 }
