@@ -41,9 +41,6 @@ public class JcrConfigServiceFactory implements IPluginConfigService {
     private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(JcrConfigServiceFactory.class);
 
-    private static final String PRIVILEGES_CONFIGURATION_PARAM = "frontend:privileges";
-    private static final String PRIVILEGES_PATH_CONFIGURATION_PARAM = "frontend:privileges.path";
-
     private JcrNodeModel model;
     private String defaultKey;
 

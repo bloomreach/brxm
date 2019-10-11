@@ -10,7 +10,6 @@ definitions:
           hipposys:facet: jcr:path
           hipposys:type: Reference
           hipposys:value: /hippo:configuration/hippo:frontend
-      # read access to all user folders needed because the modify-self domain is not path based
       /hippo-namespaces:
         jcr:primaryType: hipposys:domainrule
         /hippo-namespaces-and-descendants:
