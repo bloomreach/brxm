@@ -185,7 +185,6 @@ export interface ChildApi {
   onUserActivity?: () => (void | Promise<void>);
   /**
    * Called to let the child app initiate their logout process.
-   * TODO: What is the use-case for logout? Is this method required?
    */
   logout?: () => (void | Promise<void>);
   /**
