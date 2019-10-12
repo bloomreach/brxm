@@ -32,6 +32,7 @@ import javax.jcr.Session;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.security.AccessControlException;
 import javax.transaction.xa.XAResource;
+import javax.xml.XMLConstants;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -113,6 +114,7 @@ public class ClientServicingSession extends ClientSession implements HippoSessio
             Result result = new SAXResult(contentHandler);
 
             TransformerFactory factory = TransformerFactory.newInstance();
+            factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
             Transformer transformer = factory.newTransformer();
             transformer.transform(source, result);
         } catch (RemoteException ex) {

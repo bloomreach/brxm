@@ -2,7 +2,6 @@
   jcr:primaryType: hippogallery:stdAssetGallery
   jcr:mixinTypes: ['mix:versionable']
   jcr:uuid: dd1f34b9-9e3c-4361-856b-f74e0c3436d8
-  hippo:availability: [preview, live]
   hippostd:foldertype: [new-file-folder]
   hippostd:gallerytype: ['hippogallery:exampleAssetSet']
   /Hippo.pdf:

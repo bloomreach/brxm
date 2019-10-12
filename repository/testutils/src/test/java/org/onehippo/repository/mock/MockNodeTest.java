@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -132,6 +132,15 @@ public class MockNodeTest {
     }
 
     @Test
+    public void propertySetToNullRemovesProperty() throws RepositoryException {
+        MockNode node = MockNode.root();
+        node.setProperty("prop", "value");
+        node.setProperty("prop", (Value)null);
+
+        assertFalse(node.hasProperty("prop"));
+    }
+
+    @Test
     public void multiplePropertyIsSet() throws RepositoryException {
         MockNode node = MockNode.root();
         String[] values = {"value1", "value2"};
@@ -180,6 +189,15 @@ public class MockNodeTest {
         MockValue[] expected = new MockValue[1];
         expected[0] = new MockValue(PropertyType.STRING, "value");
         assertArrayEquals(expected, actual.getValues());
+    }
+
+    @Test
+    public void multiplePropertySetToNullRemovesProperty() throws RepositoryException {
+        MockNode node = MockNode.root();
+        node.setProperty("prop", "value");
+        node.setProperty("prop", (Value[])null);
+
+        assertFalse(node.hasProperty("prop"));
     }
 
     @Test

@@ -12,7 +12,10 @@ definitions:
           jcr:primaryType: hipposched:crontrigger
           jcr:mixinTypes: ['mix:lockable']
           hipposched:cronExpression: 0 0 3 * * ?
-          hipposched:enabled: true
+          hipposched:enabled:
+            .meta:category: system
+            value: true
+            type: boolean
           hipposched:nextFireTime:
             .meta:category: system
           jcr:lockOwner:

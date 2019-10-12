@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,15 @@
 package org.onehippo.repository.journal;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 import javax.jcr.Credentials;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+
+import com.google.common.collect.Lists;
 
 import org.apache.commons.io.FileUtils;
 import org.hippoecm.repository.HippoRepository;
@@ -63,6 +67,11 @@ public class ExternalRepositorySyncRevisionServiceTest {
             assertEquals("Stored revision", 12345, syncRevision.get());
             ExternalRepositorySyncRevision localRevision = syncRevisionService.getSyncRevision("node");
             assertNotNull("Local node revision should exist", localRevision.exists());
+
+
+            final List<ChangeLog> changeLogs = syncRevisionService.getChangeLogs(session, 1, 50000,
+                    Collections.singletonList(""), Collections.emptyList(), true);
+
         }
         catch (Exception e) {
             ex = e;

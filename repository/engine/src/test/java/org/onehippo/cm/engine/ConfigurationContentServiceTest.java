@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import javax.jcr.ItemExistsException;
 import javax.jcr.Session;
 
+import org.apache.commons.collections.ListUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.cm.model.definition.ActionType;
@@ -83,6 +84,7 @@ public class ConfigurationContentServiceTest {
         final DefinitionNodeImpl defNode1 = addContentDefinition(stubModule, "source1", "/some/path").getNode();
         final DefinitionNodeImpl defNode3 = addContentDefinition(stubModule, "source3", "/some/sibling").getNode();
 
+        expect(model.getContentDefinitions()).andReturn(ListUtils.EMPTY_LIST).atLeastOnce();
         expect(model.getConfigurationRootNode()).andReturn(configurationNode).atLeastOnce();
         expect(model.getModules()).andReturn(ImmutableList.of(stubModule)).anyTimes();
         replay(model);

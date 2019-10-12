@@ -300,7 +300,7 @@ public abstract class AbstractLockManager implements InternalLockManager {
             try {
                 thread.join(waitMax);
             } catch (InterruptedException e) {
-                getLogger().info("Thread '{}' already interrupted");
+                getLogger().info("Thread '{}' already interrupted", thread.getName());
                 thread.interrupt();
             }
         }

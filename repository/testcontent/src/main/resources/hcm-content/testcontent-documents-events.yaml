@@ -2,7 +2,6 @@
   jcr:primaryType: hippostd:folder
   jcr:mixinTypes: ['mix:versionable']
   jcr:uuid: cbd837ed-2f07-492e-94dc-409f089a4fcf
-  hippo:availability: [preview, live]
   hippostd:foldertype: [new-document, new-folder]
   /myevent1:
     jcr:primaryType: hippo:handle

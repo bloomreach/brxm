@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -107,6 +107,8 @@ public class PingServlet extends HttpServlet {
      */
     private static final String REPOSITORY_ADDRESS_PARAM = "repository-address";
     private static final String USERNAME_PARAM = "check-username";
+    // This is not a password but the name of a password parameter
+    @SuppressWarnings("squid:S2068")
     private static final String PASSWORD_PARAM = "check-password";
     private static final String NODE_PARAM = "check-node";
     private static final String WRITE_ENABLE_PARAM = "write-check-enable";

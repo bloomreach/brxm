@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashMap;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -85,16 +85,13 @@ public class ConfigurationContentService {
         final boolean isUpgradeTo12 = checkUpgradeTo12(session);
         boolean allModulesHaveSucceeded = true;
 
-        //Collect all model content definitions, sort them in natural order, and transform to map where key is
-        //Content Definition root path, and value is module which contains that definition
-        final Map<JcrPath, Module> allSortedContentDefs = getSortedDefinitions(model.getContentDefinitions(), false).stream()
-                .collect(Collectors.toMap(ContentDefinitionImpl::getRootPath, m -> m.getSource().getModule(),
-                        (u,v) -> { throw new IllegalStateException(String.format("Duplicate definition key %s", u));},
-                        LinkedHashMap::new));
+        //Collect all model content definitions, sort them in natural order by path
+        final List<ContentDefinitionImpl> sortedContentDefs = new ArrayList<>(model.getContentDefinitions());
+        sortedContentDefs.sort(Comparator.comparing(ContentDefinitionImpl::getRootPath));
 
         for (ModuleImpl module : model.getModules()) {
             if (isNotEmpty(module.getActionsMap()) || isNotEmpty(module.getContentDefinitions())) {
-                final boolean success = apply(module, model, allSortedContentDefs, session, isUpgradeTo12);
+                final boolean success = apply(module, model, sortedContentDefs, session, isUpgradeTo12);
                 if (!success) {
                     allModulesHaveSucceeded = false;
                 }
@@ -134,7 +131,7 @@ public class ConfigurationContentService {
      * @param module target {@link Module}
      * @param session active {@link Session}
      */
-    private boolean apply(final ModuleImpl module, final ConfigurationModel model, Map<JcrPath, Module> contentDefinitions,
+    private boolean apply(final ModuleImpl module, final ConfigurationModel model, final Collection<ContentDefinitionImpl> allSortedContentDefs,
                           final Session session, final boolean isUpgradeTo12) throws RepositoryException {
 
         // TODO: below processing contains a small bug, see REPO-1833
@@ -160,8 +157,8 @@ public class ConfigurationContentService {
             }
 
             // Check if there is root content definition belonging to different extension
-            if (contentDefinitions.entrySet().stream().anyMatch(e -> JcrPaths.getPath(baseNodePath).startsWith(e.getKey()) &&
-                    e.getValue().isNotCore() && !Objects.equals(module.getSiteName(), e.getValue().getSiteName()))) {
+            if (emptyIfNull(allSortedContentDefs).stream().anyMatch(d -> JcrPaths.getPath(baseNodePath).startsWith(d.getNode().getJcrPath())
+            && d.getSource().getModule().isNotCore() && !Objects.equals(module.getSiteName(), d.getSource().getModule().getSiteName()))) {
                 log.error("Incompatible content definition: {}. Content definition can be applied only if it's parent " +
                         "belongs to core or same extension", baseNodePath);
                 failedPaths.add(baseNodePath);

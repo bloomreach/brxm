@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -82,10 +82,12 @@ public class JcrUtils {
      */
     public static Node getNodeIfExists(Node baseNode, String relPath) throws RepositoryException {
         try {
-            return baseNode.getNode(relPath);
-        } catch (PathNotFoundException e) {
-            return null;
+            if (baseNode.hasNode(relPath)) {
+                return baseNode.getNode(relPath);
+            }
+        } catch (PathNotFoundException ignore) {
         }
+        return null;
     }
 
     /**
@@ -98,10 +100,12 @@ public class JcrUtils {
      */
     public static Node getNodeIfExists(String absPath, Session session) throws RepositoryException {
         try {
-            return session.getNode(absPath);
-        } catch (PathNotFoundException e) {
-            return null;
+            if (session.nodeExists(absPath)) {
+                return session.getNode(absPath);
+            }
+        } catch (PathNotFoundException ignore) {
         }
+        return null;
     }
 
     /**
@@ -142,10 +146,12 @@ public class JcrUtils {
      */
     public static String getStringProperty(Node baseNode, String relPath, String defaultValue) throws RepositoryException {
         try {
-            return baseNode.getProperty(relPath).getString();
-        } catch (PathNotFoundException e) {
-            return defaultValue;
+            if (baseNode.hasProperty(relPath)) {
+                return baseNode.getProperty(relPath).getString();
+            }
+        } catch (PathNotFoundException | ValueFormatException ignore) {
         }
+        return defaultValue;
     }
 
     /**
@@ -161,11 +167,13 @@ public class JcrUtils {
      */
     public static <E extends Enum<E>> E getEnumProperty(Node baseNode, String relPath, E defaultValue) throws RepositoryException {
         try {
-            String propertyValue = baseNode.getProperty(relPath).getString();
-            return (E) Enum.valueOf(defaultValue.getClass(), propertyValue);
-        } catch (PathNotFoundException | IllegalArgumentException e) {
-            return defaultValue;
+            if (baseNode.hasProperty(relPath)) {
+                String propertyValue = baseNode.getProperty(relPath).getString();
+                return (E) Enum.valueOf(defaultValue.getClass(), propertyValue);
+            }
+        } catch (PathNotFoundException | IllegalArgumentException | ValueFormatException ignore) {
         }
+        return defaultValue;
     }
 
     /**
@@ -181,15 +189,17 @@ public class JcrUtils {
      */
     public static String[] getMultipleStringProperty(final Node baseNode, final String relPath, final String[] defaultValue) throws RepositoryException {
         try {
-            final Value[] values = baseNode.getProperty(relPath).getValues();
-            final String[] result = new String[values.length];
-            for (int i = 0; i < values.length; i++) {
-                result[i] = values[i].getString();
+            if (baseNode.hasProperty(relPath)) {
+                final Value[] values = baseNode.getProperty(relPath).getValues();
+                final String[] result = new String[values.length];
+                for (int i = 0; i < values.length; i++) {
+                    result[i] = values[i].getString();
+                }
+                return result;
             }
-            return result;
-        } catch (PathNotFoundException e) {
-            return defaultValue;
+        } catch (PathNotFoundException | ValueFormatException ignore) {
         }
+        return defaultValue;
     }
 
     /**
@@ -205,10 +215,12 @@ public class JcrUtils {
      */
     public static Long getLongProperty(Node baseNode, String relPath, Long defaultValue) throws RepositoryException {
         try {
-            return baseNode.getProperty(relPath).getLong();
-        } catch (PathNotFoundException e) {
-            return defaultValue;
+            if (baseNode.hasProperty(relPath)) {
+                return baseNode.getProperty(relPath).getLong();
+            }
+        } catch (PathNotFoundException | ValueFormatException ignore) {
         }
+        return defaultValue;
     }
 
     /**
@@ -224,10 +236,12 @@ public class JcrUtils {
      */
     public static Double getDoubleProperty(Node baseNode, String relPath, Double defaultValue) throws RepositoryException {
         try {
-            return baseNode.getProperty(relPath).getDouble();
-        } catch (PathNotFoundException e) {
-            return defaultValue;
+            if (baseNode.hasProperty(relPath)) {
+                return baseNode.getProperty(relPath).getDouble();
+            }
+        } catch (PathNotFoundException | ValueFormatException ignore) {
         }
+        return defaultValue;
     }
 
     /**
@@ -243,10 +257,12 @@ public class JcrUtils {
      */
     public static Boolean getBooleanProperty(Node baseNode, String relPath, Boolean defaultValue) throws RepositoryException {
         try {
-            return baseNode.getProperty(relPath).getBoolean();
-        } catch (PathNotFoundException e) {
-            return defaultValue;
+            if (baseNode.hasProperty(relPath)) {
+                return baseNode.getProperty(relPath).getBoolean();
+            }
+        } catch (PathNotFoundException | ValueFormatException ignore) {
         }
+        return defaultValue;
     }
 
     /**
@@ -262,10 +278,12 @@ public class JcrUtils {
      */
     public static Calendar getDateProperty(Node baseNode, String relPath, Calendar defaultValue) throws RepositoryException {
         try {
-            return baseNode.getProperty(relPath).getDate();
-        } catch (PathNotFoundException e) {
-            return defaultValue;
+            if (baseNode.hasProperty(relPath)) {
+                return baseNode.getProperty(relPath).getDate();
+            }
+        } catch (PathNotFoundException | ValueFormatException ignore) {
         }
+        return defaultValue;
     }
 
     /**
@@ -281,10 +299,12 @@ public class JcrUtils {
      */
     public static BigDecimal getDecimalProperty(Node baseNode, String relPath, BigDecimal defaultValue) throws RepositoryException {
         try {
-            return baseNode.getProperty(relPath).getDecimal();
-        } catch (PathNotFoundException e) {
-            return defaultValue;
+            if (baseNode.hasProperty(relPath)) {
+                return baseNode.getProperty(relPath).getDecimal();
+            }
+        } catch (PathNotFoundException | ValueFormatException ignore) {
         }
+        return defaultValue;
     }
 
     /**
@@ -300,10 +320,12 @@ public class JcrUtils {
      */
     public static Binary getBinaryProperty(Node baseNode, String relPath, Binary defaultValue) throws RepositoryException {
         try {
-            return baseNode.getProperty(relPath).getBinary();
-        } catch (PathNotFoundException e) {
-            return defaultValue;
+            if (baseNode.hasProperty(relPath)) {
+                return baseNode.getProperty(relPath).getBinary();
+            }
+        } catch (PathNotFoundException | ValueFormatException ignore) {
         }
+        return defaultValue;
     }
 
     /**
@@ -319,10 +341,12 @@ public class JcrUtils {
      */
     public static Node getNodeProperty(Node baseNode, String relPath, Node defaultValue) throws RepositoryException {
         try {
-            return baseNode.getProperty(relPath).getNode();
-        } catch (PathNotFoundException e) {
-            return defaultValue;
+            if (baseNode.hasProperty(relPath)) {
+                return baseNode.getProperty(relPath).getNode();
+            }
+        } catch (PathNotFoundException | ValueFormatException ignore) {
         }
+        return defaultValue;
     }
 
 
@@ -339,10 +363,12 @@ public class JcrUtils {
      */
     public static String getStringProperty(Session session, String absPath, String defaultValue) throws RepositoryException {
         try {
-            return session.getProperty(absPath).getString();
-        } catch (PathNotFoundException e) {
-            return defaultValue;
+            if (session.itemExists(absPath)) {
+                return session.getProperty(absPath).getString();
+            }
+        } catch (PathNotFoundException | ValueFormatException ignore) {
         }
+        return defaultValue;
     }
 
     /**
@@ -356,10 +382,12 @@ public class JcrUtils {
      */
     public static Long getLongProperty(Session session, String absPath, Long defaultValue) throws RepositoryException {
         try {
-            return session.getProperty(absPath).getLong();
-        } catch (PathNotFoundException e) {
-            return defaultValue;
+            if (session.itemExists(absPath)) {
+                return session.getProperty(absPath).getLong();
+            }
+        } catch (PathNotFoundException | ValueFormatException ignore) {
         }
+        return defaultValue;
     }
 
     /**
@@ -375,10 +403,12 @@ public class JcrUtils {
      */
     public static Double getDoubleProperty(Session session, String absPath, Double defaultValue) throws RepositoryException {
         try {
-            return session.getProperty(absPath).getDouble();
-        } catch (PathNotFoundException e) {
-            return defaultValue;
+            if (session.itemExists(absPath)) {
+                return session.getProperty(absPath).getDouble();
+            }
+        } catch (PathNotFoundException | ValueFormatException ignore) {
         }
+        return defaultValue;
     }
 
     /**
@@ -394,10 +424,12 @@ public class JcrUtils {
      */
     public static Boolean getBooleanProperty(Session session, String absPath, Boolean defaultValue) throws RepositoryException {
         try {
-            return session.getProperty(absPath).getBoolean();
-        } catch (PathNotFoundException e) {
-            return defaultValue;
+            if (session.itemExists(absPath)) {
+                return session.getProperty(absPath).getBoolean();
+            }
+        } catch (PathNotFoundException | ValueFormatException ignore) {
         }
+        return defaultValue;
     }
 
     /**
@@ -411,10 +443,12 @@ public class JcrUtils {
      */
     public static Calendar getDateProperty(Session session, String absPath, Calendar defaultValue) throws RepositoryException {
         try {
-            return session.getProperty(absPath).getDate();
-        } catch (PathNotFoundException e) {
-            return defaultValue;
+            if (session.itemExists(absPath)) {
+                return session.getProperty(absPath).getDate();
+            }
+        } catch (PathNotFoundException | ValueFormatException ignore) {
         }
+        return defaultValue;
     }
 
     /**
@@ -430,10 +464,12 @@ public class JcrUtils {
      */
     public static BigDecimal getDecimalProperty(Session session, String absPath, BigDecimal defaultValue) throws RepositoryException {
         try {
-            return session.getProperty(absPath).getDecimal();
-        } catch (PathNotFoundException e) {
-            return defaultValue;
+            if (session.itemExists(absPath)) {
+                return session.getProperty(absPath).getDecimal();
+            }
+        } catch (PathNotFoundException | ValueFormatException ignore) {
         }
+        return defaultValue;
     }
 
     /**
@@ -449,10 +485,12 @@ public class JcrUtils {
      */
     public static Binary getBinaryProperty(Session session, String absPath, Binary defaultValue) throws RepositoryException {
         try {
-            return session.getProperty(absPath).getBinary();
-        } catch (PathNotFoundException e) {
-            return defaultValue;
+            if (session.itemExists(absPath)) {
+                return session.getProperty(absPath).getBinary();
+            }
+        } catch (PathNotFoundException | ValueFormatException ignore) {
         }
+        return defaultValue;
     }
 
     /**
@@ -466,10 +504,12 @@ public class JcrUtils {
      */
     public static Node getNodeProperty(Session session, String absPath, Node defaultValue) throws RepositoryException {
         try {
-            return session.getProperty(absPath).getNode();
-        } catch (PathNotFoundException e) {
-            return defaultValue;
+            if (session.itemExists(absPath)) {
+                return session.getProperty(absPath).getNode();
+            }
+        } catch (PathNotFoundException ignore) {
         }
+        return defaultValue;
     }
 
     /**
@@ -484,10 +524,12 @@ public class JcrUtils {
      */
     public static Property getPropertyIfExists(Node baseNode, String relPath) throws RepositoryException {
         try {
-            return baseNode.getProperty(relPath);
-        } catch (PathNotFoundException e) {
-            return null;
+            if (baseNode.hasProperty(relPath)) {
+                return baseNode.getProperty(relPath);
+            }
+        } catch (PathNotFoundException ignore) {
         }
+        return null;
     }
 
     /**
@@ -500,10 +542,12 @@ public class JcrUtils {
      */
     public static Property getPropertyIfExists(String absPath, Session session) throws RepositoryException {
         try {
-            return session.getProperty(absPath);
-        } catch (PathNotFoundException e) {
-            return null;
+            if (session.itemExists(absPath)) {
+                return session.getProperty(absPath);
+            }
+        } catch (PathNotFoundException ignore) {
         }
+        return null;
     }
 
     /**

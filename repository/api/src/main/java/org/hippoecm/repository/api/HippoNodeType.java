@@ -204,6 +204,8 @@ public interface HippoNodeType {
 
     public static final String HIPPO_CLASSNAME = "hipposys:classname";
 
+    // Not actually a password constant...
+    @SuppressWarnings("squid:S2068")
     public static final String HIPPO_PASSWORDMAXAGEDAYS = "hipposys:passwordmaxagedays";
 
     public static final String HIPPO_CONFIG = "hipposys:config";
@@ -286,10 +288,14 @@ public interface HippoNodeType {
 
     public static final String HIPPO_PASSKEY = "hipposys:passkey";
 
+    // Not actually a password constant...
+    @SuppressWarnings("squid:S2068")
     public static final String HIPPO_PASSWORD = "hipposys:password";
 
+    @SuppressWarnings("squid:S2068")
     public static final String HIPPO_PREVIOUSPASSWORDS = "hipposys:previouspasswords";
 
+    @SuppressWarnings("squid:S2068")
     public static final String HIPPO_PASSWORDLASTMODIFIED = "hipposys:passwordlastmodified";
 
     public static final String HIPPO_PATH = "hipposysedit:path";

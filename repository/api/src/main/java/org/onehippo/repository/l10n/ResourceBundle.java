@@ -61,7 +61,9 @@ public interface ResourceBundle {
      * @param parameters a map of names and values to replace variables
      * @return the String identified by a {@code key} with replaced variables
      */
-    String getString(String key, Map<String, String> parameters);
+    default String getString(String key, Map<String, String> parameters) {
+        return null;
+    }
 
     /**
      * Gets the {@link Locale}-specific translation identified by a given {@code key}. If a String is not defined in
@@ -76,7 +78,9 @@ public interface ResourceBundle {
      * @param parameterValue the replacement value for the variable
      * @return the String identified by a {@code key} with replaced variables
      */
-    String getString(String key, String parameterName, String parameterValue);
+    default String getString(String key, String parameterName, String parameterValue) {
+        return null;
+    }
     
     default java.util.ResourceBundle toJavaResourceBundle() {
         return null;
