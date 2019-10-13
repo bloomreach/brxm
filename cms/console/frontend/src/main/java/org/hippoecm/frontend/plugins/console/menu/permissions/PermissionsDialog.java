@@ -148,7 +148,7 @@ public class PermissionsDialog extends Dialog<Node> {
                 privileges.remove(JCR_WRITE);
             }
             final Set<String> actions = getAllowedActions(subjectPath, selectedUserJcrSession, JCR_ACTIONS);
-            final Set<String> userRoles = selectedUserJcrSession.getUser().getUserRoles();
+            final Set<String> userRoles = new TreeSet<>(selectedUserJcrSession.getUser().getUserRoles());
             if (userRoles.isEmpty()) {
                 userRolesLabel.setDefaultModel(Model.of("<<none>>"));
             } else {
