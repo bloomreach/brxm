@@ -42,6 +42,11 @@ public final class SecurityConstants {
     public static final String USERROLE_ADMIN = "xm-admin";
 
     /**
+     * The user role representing a user (to be) granted access to system administrative features; implies {@link #USERROLE_ADMIN}
+     */
+    public static final String USERROLE_SYSADMIN = "xm-sysadmin";
+
+    /**
      * The user role representing a user (to be) granted access to security administrative features
      */
     public static final String USERROLE_SECURITY_MANAGER = "xm-security-manager";

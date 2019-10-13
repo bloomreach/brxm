@@ -4,10 +4,15 @@ definitions:
       /xm-admin:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
-        hipposys:userroles: [xm-security-user-manager, xm-security-application-manager]
+        hipposys:userroles: []
+      /xm-sysadmin:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-admin, xm-security-user-manager, xm-security-application-manager]
       /xm-security-manager:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:userroles: []
       /xm-security-user-manager:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
@@ -19,18 +24,20 @@ definitions:
       /xm-content-viewer:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:userroles: []
       /xm-content-author:
         jcr:primaryType: hipposys:userrole
-        hipposys:userroles: [xm-content-viewer]
         hipposys:system: true
+        hipposys:userroles: [xm-content-viewer]
       /xm-content-editor:
         jcr:primaryType: hipposys:userrole
-        hipposys:userroles: [xm-content-author]
         hipposys:system: true
+        hipposys:userroles: [xm-content-author]
       /xm-content-admin:
         jcr:primaryType: hipposys:userrole
-        hipposys:userroles: [xm-content-editor]
         hipposys:system: true
+        hipposys:userroles: [xm-content-editor]
       /xm-read-everywhere:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:userroles: []
