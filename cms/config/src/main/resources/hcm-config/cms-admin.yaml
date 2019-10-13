@@ -17,12 +17,12 @@ definitions:
       /systeminfo:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.plugins.cms.admin.system.SystemInfoPlugin
-        hipposys:userrole: xm-admin
+        hipposys:userrole: xm-sysadmin
       /systemprops:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.plugins.cms.admin.system.SystemPropertiesPlugin
-        hipposys:userrole: xm-admin
+        hipposys:userrole: xm-sysadmin
       /updater:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.plugins.cms.admin.updater.UpdaterPanelPlugin
-        hipposys:userrole: xm-admin
+        hipposys:userrole: xm-sysadmin
