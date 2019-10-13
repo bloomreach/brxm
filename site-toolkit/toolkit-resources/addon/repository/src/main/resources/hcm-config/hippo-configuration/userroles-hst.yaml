@@ -4,30 +4,27 @@ definitions:
       /xm-hst-formdata-writer:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
-      /xm-hst-user:
-        jcr:primaryType: hipposys:userrole
-        hipposys:userroles: [xm-webfiles-reader]
-        hipposys:system: true
+        hipposys:userroles: []
       /xm-hst-live-documents-reader:
         jcr:primaryType: hipposys:userrole
-        hipposys:userroles: [xm-hst-user]
         hipposys:system: true
+        hipposys:userroles: [xm-webfiles-reader]
       /xm-hst-preview-documents-reader:
         jcr:primaryType: hipposys:userrole
-        hipposys:userroles: [xm-hst-user]
         hipposys:system: true
+        hipposys:userroles: [xm-webfiles-reader]
       /xm-channel-admin:
         jcr:primaryType: hipposys:userrole
-        hipposys:userroles: [xm-channel-webmaster]
         hipposys:system: true
+        hipposys:userroles: [xm-channel-webmaster]
       /xm-channel-webmaster:
         jcr:primaryType: hipposys:userrole
-        hipposys:userroles: [xm-channel-viewer]
         hipposys:system: true
+        hipposys:userroles: [xm-channel-viewer]
       /xm-channel-viewer:
         jcr:primaryType: hipposys:userrole
-        hipposys:userroles: [xm-webfiles-reader]
         hipposys:system: true
+        hipposys:userroles: [xm-webfiles-reader, xm-content-viewer]
     /hippo:configuration/hippo:users/admin:
       hipposys:userroles:
         operation: add
