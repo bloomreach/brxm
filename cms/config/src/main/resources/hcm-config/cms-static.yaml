@@ -35,6 +35,7 @@ definitions:
         wicket.behavior: [service.behavior.tabs, service.behavior.dashboard]
         wicket.extensions: [extension.shortcuts, extension.currentActivity, extension.todo]
         wicket.id: service.tab
+        hipposys:userrole: xm-dashboard-user
       /browserPerspective:
         jcr:primaryType: frontend:plugin
         center: service.browse.editor
@@ -42,6 +43,7 @@ definitions:
         model.document: model.browse.document
         plugin.class: org.hippoecm.frontend.plugins.cms.browse.BrowserPerspective
         wicket.id: service.tab
+        hipposys:userrole: xm-content-user
         /layout.wireframe:
           jcr:primaryType: frontend:pluginconfig
           center: id=browse-perspective-center,body=browse-perspective-center-body,min.width=400,scroll=false,gutter=0px
@@ -112,7 +114,7 @@ definitions:
         jcr:primaryType: frontend:plugin
         cluster.name: cms-admin
         plugin.class: org.hippoecm.frontend.plugins.cms.admin.AdminPerspective
-        hipposys:userrole: xm-security-manager
+        hipposys:userrole: xm-administration-user
         wicket.id: service.tab
         /layout.wireframe:
           jcr:primaryType: frontend:pluginconfig

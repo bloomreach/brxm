@@ -4,6 +4,7 @@ definitions:
       /xm-frontendconfig-reader:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:userroles: []
       /xm-cms-user:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
@@ -12,24 +13,62 @@ definitions:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
         hipposys:userroles: [xm-frontendconfig-reader]
+      /xm-dashboard-user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-cms-user]
+      /xm-content-user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-cms-user]
+      /xm-report-user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-cms-user]
+      /xm-administration-user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-cms-user]
+      /xm-sysadmin:
+        hipposys:userroles:
+          operation: add
+          value: [xm-console-user]
+      /xm-security-manager:
+        hipposys:userroles:
+          operation: add
+          value: [xm-administration-user]
+      /xm-content-viewer:
+        hipposys:userroles:
+          operation: add
+          value: [xm-content-user]
     /hippo:configuration/hippo:users/admin:
       hipposys:userroles:
         operation: add
-        value: [xm-cms-user, xm-console-user]
+        value: [xm-dashboard-user]
     /hippo:configuration/hippo:groups:
+      /cmsadmin:
+        jcr:primaryType: hipposys:group
+        hipposys:members:
+          .meta:category: system
+          value: []
+        hipposys:userroles:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: [xm-admin, xm-content-admin, xm-channel-admin, xm-dashboard-user, xm-security-user-manager, xm-security-application-manager]
+        hipposys:securityprovider: internal
       /admin:
         hipposys:userroles:
           operation: add
-          value: [xm-cms-user, xm-console-user]
+          value: [xm-dashboard-user]
       /author:
         hipposys:userroles:
           operation: add
-          value: [xm-cms-user]
+          value: [xm-dashboard-user]
       /editor:
         hipposys:userroles:
           operation: add
-          value: [xm-cms-user]
+          value: [xm-dashboard-user]
       /webmaster:
         hipposys:userroles:
           operation: add
-          value: [xm-cms-user]
+          value: [xm-dashboard-user]
