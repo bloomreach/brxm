@@ -5,6 +5,12 @@
       "localeString": "en",
       "name": "banner1",
       "title": "Sample banner",
+      "_links": {
+        "site": {
+          "href": "/site/_cmsinternal/my-spa/banner1.html",
+          "type": "external"
+        }
+      },
       "_meta": {
         "beginNodeSpan": [
           {
@@ -19,6 +25,12 @@
       "localeString": "en",
       "name": "banner2",
       "title": "Sample banner 2",
+      "_links": {
+        "site": {
+          "href": "/site/_cmsinternal/my-spa/banner2.html",
+          "type": "external"
+        }
+      },
       "_meta": {
         "beginNodeSpan": [
           {
@@ -52,7 +64,7 @@
             },
             "_links": {
               "componentRendering": {
-                "href": "/site/_cmsinternal/spa-csr/resourceapi?_hn:type=component-rendering&_hn:ref=r1_r1_r1&org.hippoecm.hst.container.render_host=127.0.0.1"
+                "href": "/site/_cmsinternal/my-spa/resourceapi?_hn:type=component-rendering&_hn:ref=r1_r1_r1&org.hippoecm.hst.container.render_host=127.0.0.1"
               }
             },
             "_meta": {
@@ -65,7 +77,7 @@
               "beginNodeSpan": [
                 {
                   "type": "comment",
-                  "data": "<!-- { \"HST-Label\":\"Banner\", \"HST-LastModified\":\"1568281400490\", \"uuid\":\"03c65ab8-06cc-47d3-b6bd-adc928937c8d\", \"HST-Type\":\"CONTAINER_ITEM_COMPONENT\", \"refNS\":\"r3_r1_r1_r1\", \"url\":\"/site/_cmsinternal/spa-csr/resourceapi?_hn:type=component-rendering&_hn:ref=r3_r1_r1_r1&org.hippoecm.hst.container.render_host=127.0.0.1\", \"HST-Render-Variant\":\"\"} -->"
+                  "data": "<!-- { \"HST-Label\":\"Banner\", \"HST-LastModified\":\"1568281400490\", \"uuid\":\"03c65ab8-06cc-47d3-b6bd-adc928937c8d\", \"HST-Type\":\"CONTAINER_ITEM_COMPONENT\", \"refNS\":\"r3_r1_r1_r1\", \"url\":\"/site/_cmsinternal/my-spa/resourceapi?_hn:type=component-rendering&_hn:ref=r3_r1_r1_r1&org.hippoecm.hst.container.render_host=127.0.0.1\", \"HST-Render-Variant\":\"\"} -->"
                 }
               ],
               "endNodeSpan": [
@@ -88,7 +100,7 @@
             },
             "_links": {
               "componentRendering": {
-                "href": "/site/_cmsinternal/spa-csr/resourceapi?_hn:type=component-rendering&_hn:ref=r1_r1_r2&org.hippoecm.hst.container.render_host=127.0.0.1"
+                "href": "/site/_cmsinternal/my-spa/resourceapi?_hn:type=component-rendering&_hn:ref=r1_r1_r2&org.hippoecm.hst.container.render_host=127.0.0.1"
               }
             },
             "_meta": {
@@ -101,7 +113,7 @@
               "beginNodeSpan": [
                 {
                   "type": "comment",
-                  "data": "<!-- { \"HST-Label\":\"Banner\", \"HST-LastModified\":\"1568281400490\", \"uuid\":\"1f409759-ee0e-46eb-a65f-d73a507f6463\", \"HST-Type\":\"CONTAINER_ITEM_COMPONENT\", \"refNS\":\"r3_r1_r1_r2\", \"url\":\"/site/_cmsinternal/spa-csr/resourceapi?_hn:type=component-rendering&_hn:ref=r3_r1_r1_r2&org.hippoecm.hst.container.render_host=127.0.0.1\", \"HST-Render-Variant\":\"\"} -->"
+                  "data": "<!-- { \"HST-Label\":\"Banner\", \"HST-LastModified\":\"1568281400490\", \"uuid\":\"1f409759-ee0e-46eb-a65f-d73a507f6463\", \"HST-Type\":\"CONTAINER_ITEM_COMPONENT\", \"refNS\":\"r3_r1_r1_r2\", \"url\":\"/site/_cmsinternal/my-spa/resourceapi?_hn:type=component-rendering&_hn:ref=r3_r1_r1_r2&org.hippoecm.hst.container.render_host=127.0.0.1\", \"HST-Render-Variant\":\"\"} -->"
                 }
               ],
               "endNodeSpan": [
@@ -117,14 +129,14 @@
     ],
     "_links": {
       "componentRendering": {
-        "href": "/site/_cmsinternal/spa-csr/resourceapi?_hn:type=component-rendering&_hn:ref=r1&org.hippoecm.hst.container.render_host=127.0.0.1"
+        "href": "/site/_cmsinternal/my-spa/resourceapi?_hn:type=component-rendering&_hn:ref=r1&org.hippoecm.hst.container.render_host=127.0.0.1"
       }
     },
     "_meta": {
       "endNodeSpan": [
         {
           "type": "comment",
-          "data": "<!-- { \"HST-Path-Info\":\"\", \"HST-Context-Path\":\"/site\", \"HST-Site-Id\":\"7b1539a1-18ad-4523-b7d5-878b0c03600c\", \"HST-Sitemap-Id\":\"381a7d3b-4f3c-4187-ba81-dcafb9bcf6fc\", \"HST-Mount-Id\":\"76e65e84-b0b2-4676-8ec0-9893273020de\", \"HST-Site-HasPreviewConfig\":\"true\", \"HST-Page-Id\":\"32c9afd2-fd32-4f8e-ae38-7e031c85f47c\", \"HST-SitemapItem-Id\":\"209551ae-27f2-4213-8196-14c8957a6d58\", \"HST-Type\":\"PAGE-META-DATA\", \"HST-Channel-Id\":\"spa-csr-preview\", \"HST-Page-Editable\":\"true\", \"HST-Render-Variant\":\"hippo-default\"} -->"
+          "data": "<!-- { \"HST-Path-Info\":\"\", \"HST-Context-Path\":\"/site\", \"HST-Site-Id\":\"7b1539a1-18ad-4523-b7d5-878b0c03600c\", \"HST-Sitemap-Id\":\"381a7d3b-4f3c-4187-ba81-dcafb9bcf6fc\", \"HST-Mount-Id\":\"76e65e84-b0b2-4676-8ec0-9893273020de\", \"HST-Site-HasPreviewConfig\":\"true\", \"HST-Page-Id\":\"32c9afd2-fd32-4f8e-ae38-7e031c85f47c\", \"HST-SitemapItem-Id\":\"209551ae-27f2-4213-8196-14c8957a6d58\", \"HST-Type\":\"PAGE-META-DATA\", \"HST-Channel-Id\":\"my-spa-preview\", \"HST-Page-Editable\":\"true\", \"HST-Render-Variant\":\"hippo-default\"} -->"
         },
         {
           "type": "comment",

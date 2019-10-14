@@ -16,15 +16,18 @@
 
 import { ContentImpl, ContentModel } from './content';
 import { Factory } from './factory';
+import { Link } from './link';
 import { MetaCollectionModel, MetaImpl, Meta, META_POSITION_BEGIN } from './meta';
 
+let linkFactory: jest.Mocked<Factory<[Link], string>>;
 let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], Meta[]>>;
 
 function createContent(model: ContentModel) {
-  return new ContentImpl(model, metaFactory);
+  return new ContentImpl(model, linkFactory, metaFactory);
 }
 
 beforeEach(() => {
+  linkFactory = { create: jest.fn() };
   metaFactory = { create: jest.fn() };
 });
 
@@ -83,6 +86,22 @@ describe('ContentImpl', () => {
       const content = createContent({ id: 'some-id', name: 'some-name' });
 
       expect(content.getData()).toEqual({ id: 'some-id', name: 'some-name' });
+    });
+  });
+
+  describe('getUrl', () => {
+    it('should return a content url', () => {
+      const content = createContent({ id: 'some-id', name: 'some-name', _links: { site: { href: 'url' } } });
+      linkFactory.create.mockReturnValueOnce('url');
+
+      expect(content.getUrl()).toBe('url');
+      expect(linkFactory.create).toBeCalledWith({ href: 'url' });
+    });
+
+    it('should return undefined when content links are missing', () => {
+      const content = createContent({ id: 'some-id', name: 'some-name' });
+
+      expect(content.getUrl()).toBeUndefined();
     });
   });
 });

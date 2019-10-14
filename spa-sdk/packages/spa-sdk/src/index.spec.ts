@@ -38,13 +38,14 @@ describe('initialize', () => {
     page = await initialize({
       httpClient,
       window,
-      request: { path: '/' },
+      request: { path: '/?bloomreach-preview=true' },
       options: {
         live: {
           cmsBaseUrl: 'http://localhost:8080/site/my-spa',
         },
         preview: {
           cmsBaseUrl: 'http://localhost:8080/site/_cmsinternal/my-spa',
+          spaBaseUrl: '//example.com',
         },
       },
     });
@@ -142,6 +143,16 @@ describe('initialize', () => {
     expect(meta).toBeDefined();
     expect(meta.getPosition()).toBe(META_POSITION_BEGIN);
     expect(JSON.parse(meta.getData())).toMatchSnapshot();
+  });
+
+  it('should rewrite content links', () => {
+    const banner0 = page.getComponent('main', 'banner');
+    const document0 = page.getContent(banner0!.getModels().document);
+    const banner1 = page.getComponent('main', 'banner1');
+    const document1 = page.getContent(banner1!.getModels().document);
+
+    expect(document0!.getUrl()).toBe('//example.com/banner1.html');
+    expect(document1!.getUrl()).toBe('//example.com/banner2.html');
   });
 
   it('should react on a component rendering', async () => {

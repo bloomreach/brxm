@@ -79,7 +79,7 @@ export async function initialize(config: Configuration): Promise<Page> {
       linkFactory,
       metaFactory,
     ));
-  const contentFactory = new SingleTypeFactory(model => new ContentImpl(model, metaFactory));
+  const contentFactory = new SingleTypeFactory(model => new ContentImpl(model, linkFactory, metaFactory));
   const pageFactory = new SingleTypeFactory(
     model => new PageImpl(model, componentFactory.create(model.page), contentFactory, eventBus, metaFactory),
   );

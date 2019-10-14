@@ -7,7 +7,7 @@ Object {
   "HST-Render-Variant": "",
   "HST-Type": "CONTAINER_ITEM_COMPONENT",
   "refNS": "r3_r1_r1_r1",
-  "url": "/site/_cmsinternal/spa-csr/resourceapi?_hn:type=component-rendering&_hn:ref=r3_r1_r1_r1&org.hippoecm.hst.container.render_host=127.0.0.1",
+  "url": "/site/_cmsinternal/my-spa/resourceapi?_hn:type=component-rendering&_hn:ref=r3_r1_r1_r1&org.hippoecm.hst.container.render_host=127.0.0.1",
   "uuid": "03c65ab8-06cc-47d3-b6bd-adc928937c8d",
 }
 `;
@@ -28,7 +28,7 @@ Object {
 
 exports[`initialize should contain page meta-data 1`] = `
 Object {
-  "HST-Channel-Id": "spa-csr-preview",
+  "HST-Channel-Id": "my-spa-preview",
   "HST-Context-Path": "/site",
   "HST-Mount-Id": "76e65e84-b0b2-4676-8ec0-9893273020de",
   "HST-Page-Editable": "true",

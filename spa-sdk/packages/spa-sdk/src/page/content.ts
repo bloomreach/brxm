@@ -15,12 +15,16 @@
  */
 
 import { Factory } from './factory';
+import { Link } from './link';
 import { MetaCollectionModel, Meta } from './meta';
+
+type ContentLinks = 'site';
 
 /**
  * Model of a content item.
  */
 export interface ContentModel {
+  _links?: Record<ContentLinks, Link>;
   _meta?: MetaCollectionModel;
   id: string;
   localeString?: string;
@@ -57,6 +61,11 @@ export interface Content {
    */
   getData(): ContentModel;
   getData<T extends Record<string, any>>(): T & ContentModel;
+
+  /**
+   * @return The link to the content.
+   */
+  getUrl(): string | undefined;
 }
 
 export class ContentImpl implements Content {
@@ -64,6 +73,7 @@ export class ContentImpl implements Content {
 
   constructor(
     protected model: ContentModel,
+    private linkFactory: Factory<[Link], string>,
     metaFactory: Factory<[MetaCollectionModel], Meta[]>,
   ) {
     this.meta = metaFactory.create(this.model._meta || {});
@@ -87,5 +97,9 @@ export class ContentImpl implements Content {
 
   getData() {
     return this.model;
+  }
+
+  getUrl() {
+    return this.model._links && this.linkFactory.create(this.model._links.site);
   }
 }
