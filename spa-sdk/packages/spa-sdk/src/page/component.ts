@@ -15,6 +15,7 @@
  */
 
 import { Factory } from './factory';
+import { Link } from './link';
 import { MetaCollectionModel, Meta } from './meta';
 
 /**
@@ -48,17 +49,15 @@ export interface ComponentMeta extends MetaCollectionModel {
   params?: ComponentParameters;
 }
 
-interface Links {
-  componentRendering?: { href: string };
-}
+type ComponentLinks = 'componentRendering';
 type ComponentModels = Record<string, any>;
 
 /**
  * Model of a component.
  */
 export interface ComponentModel {
+  _links?: Record<ComponentLinks, Link>;
   _meta?: ComponentMeta;
-  _links?: Links;
   id: string;
   models?: ComponentModels;
   name?: string;
@@ -125,6 +124,7 @@ export class ComponentImpl implements Component {
   constructor(
     protected model: ComponentModel,
     protected children: Component[],
+    private linkFactory: Factory<[Link], string>,
     metaFactory: Factory<[MetaCollectionModel], Meta[]>,
   ) {
     this.meta = metaFactory.create(model._meta || {});
@@ -144,7 +144,7 @@ export class ComponentImpl implements Component {
   }
 
   getUrl() {
-    return this.model._links && this.model._links.componentRendering && this.model._links.componentRendering.href;
+    return this.model._links && this.linkFactory.create(this.model._links.componentRendering);
   }
 
   getName() {

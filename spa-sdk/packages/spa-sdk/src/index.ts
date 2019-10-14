@@ -31,6 +31,7 @@ import {
   ContainerImpl,
   ContainerModel,
   ContentImpl,
+  LinkFactory,
   MetaCommentImpl,
   MetaFactory,
   PageImpl,
@@ -40,6 +41,9 @@ import {
   TYPE_COMPONENT_CONTAINER_ITEM,
   TYPE_COMPONENT_CONTAINER,
   TYPE_META_COMMENT,
+  TYPE_LINK_EXTERNAL,
+  TYPE_LINK_INTERNAL,
+  TYPE_LINK_RESOURCE,
 } from './page';
 import { Configuration, Spa } from './spa';
 import { UrlBuilderImpl } from './url';
@@ -55,18 +59,24 @@ const pages = new WeakMap<Page, Spa>();
  */
 export async function initialize(config: Configuration): Promise<Page> {
   const urlBuilder =  new UrlBuilderImpl();
+  const linkFactory = new LinkFactory()
+    .register(TYPE_LINK_EXTERNAL, urlBuilder.getSpaUrl.bind(urlBuilder))
+    .register(TYPE_LINK_INTERNAL, urlBuilder.getSpaUrl.bind(urlBuilder))
+    .register(TYPE_LINK_RESOURCE, urlBuilder.getCmsUrl.bind(urlBuilder));
   const metaFactory = new MetaFactory()
     .register(TYPE_META_COMMENT, (model, position) => new MetaCommentImpl(model, position));
   const componentFactory = new ComponentFactory()
-    .register(TYPE_COMPONENT, (model, children) => new ComponentImpl(model, children, metaFactory))
+    .register(TYPE_COMPONENT, (model, children) => new ComponentImpl(model, children, linkFactory, metaFactory))
     .register(TYPE_COMPONENT_CONTAINER, (model, children) => new ContainerImpl(
       model as ContainerModel,
       children as ContainerItem[],
+      linkFactory,
       metaFactory,
     ))
     .register(TYPE_COMPONENT_CONTAINER_ITEM, model => new ContainerItemImpl(
       model as ContainerItemModel,
       eventBus,
+      linkFactory,
       metaFactory,
     ));
   const contentFactory = new SingleTypeFactory(model => new ContentImpl(model, metaFactory));

@@ -16,15 +16,18 @@
 
 import { ComponentImpl, ComponentModel, Component, TYPE_COMPONENT, isComponent } from './component';
 import { Factory } from './factory';
+import { Link } from './link';
 import { MetaCollectionModel, MetaImpl, Meta, META_POSITION_BEGIN } from './meta';
 
+let linkFactory: jest.Mocked<Factory<[Link], string>>;
 let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], Meta[]>>;
 
 function createComponent(model: ComponentModel, children: Component[] = []) {
-  return new ComponentImpl(model, children, metaFactory);
+  return new ComponentImpl(model, children, linkFactory, metaFactory);
 }
 
 beforeEach(() => {
+  linkFactory = { create: jest.fn() };
   metaFactory = { create: jest.fn() };
 });
 
@@ -76,10 +79,13 @@ describe('ComponentImpl', () => {
         { id: 'id', type: TYPE_COMPONENT, _links: { componentRendering: { href: 'url' } } },
       );
 
+      linkFactory.create.mockReturnValueOnce('url');
+
       expect(component.getUrl()).toBe('url');
+      expect(linkFactory.create).toBeCalledWith({ href: 'url' });
     });
 
-    it('should return undefined when a model url is missing', () => {
+    it('should return undefined when component links are missing', () => {
       const component = createComponent({ id: 'id', type: TYPE_COMPONENT });
 
       expect(component.getUrl()).toBeUndefined();

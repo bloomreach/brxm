@@ -17,6 +17,7 @@
 import { ComponentImpl, ComponentModel, Component, TYPE_COMPONENT_CONTAINER } from './component';
 import { ContainerItem } from './container-item';
 import { Factory } from './factory';
+import { Link } from './link';
 import { MetaCollectionModel, Meta } from './meta';
 
 export const TYPE_CONTAINER_BOX = 'hst.vbox';
@@ -61,9 +62,10 @@ export class ContainerImpl extends ComponentImpl implements Container {
   constructor(
     protected model: ContainerModel,
     protected children: ContainerItem[],
+    linkFactory: Factory<[Link], string>,
     metaFactory: Factory<[MetaCollectionModel], Meta[]>,
   ) {
-    super(model, children, metaFactory);
+    super(model, children, linkFactory, metaFactory);
   }
 
   getChildren() {

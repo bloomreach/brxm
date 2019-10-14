@@ -19,17 +19,20 @@ import { ComponentImpl, TYPE_COMPONENT_CONTAINER_ITEM } from './component';
 import { ContainerItemImpl, ContainerItemModel, ContainerItem, isContainerItem } from './container-item';
 import { Events } from '../events';
 import { Factory } from './factory';
+import { Link } from './link';
 import { MetaCollectionModel, Meta } from './meta';
 
 let eventBus: Typed<Events>;
+let linkFactory: jest.Mocked<Factory<[Link], string>>;
 let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], Meta[]>>;
 
 function createContainerItem(model: ContainerItemModel) {
-  return new ContainerItemImpl(model, eventBus, metaFactory);
+  return new ContainerItemImpl(model, eventBus, linkFactory, metaFactory);
 }
 
 beforeEach(() => {
   eventBus = new Typed<Events>();
+  linkFactory = { create: jest.fn() };
   metaFactory = { create: jest.fn() };
 });
 
@@ -174,6 +177,7 @@ describe('isContainerItem', () => {
     const component = new ComponentImpl(
       { id: 'id', type: TYPE_COMPONENT_CONTAINER_ITEM },
       [],
+      linkFactory,
       metaFactory,
     );
 
