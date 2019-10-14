@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-export * from './component-factory';
-export * from './component';
-export * from './container-item';
-export * from './container';
-export * from './content';
-export * from './factory';
-export * from './link';
-export * from './menu';
-export * from './meta-comment';
-export * from './meta-factory';
-export * from './meta';
-export * from './page';
+import { isLink } from './link';
+
+describe('isLink', () => {
+  it('should be a link', () => {
+    expect(isLink({ href: 'something' })).toBe(true);
+  });
+
+  it('should not be a link', () => {
+    expect(isLink(undefined)).toBe(false);
+    expect(isLink({})).toBe(false);
+  });
+});

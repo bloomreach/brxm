@@ -98,6 +98,7 @@ export {
   ContainerItem,
   Container,
   Content,
+  Link,
   Menu,
   MetaComment,
   Meta,
@@ -105,6 +106,7 @@ export {
   isComponent,
   isContainerItem,
   isContainer,
+  isLink,
   isMetaComment,
   isMeta,
   META_POSITION_BEGIN,
@@ -114,4 +116,7 @@ export {
   TYPE_CONTAINER_NO_MARKUP,
   TYPE_CONTAINER_ORDERED_LIST,
   TYPE_CONTAINER_UNORDERED_LIST,
+  TYPE_LINK_EXTERNAL,
+  TYPE_LINK_INTERNAL,
+  TYPE_LINK_RESOURCE,
 } from './page';
