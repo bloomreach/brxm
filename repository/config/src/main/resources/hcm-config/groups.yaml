@@ -7,6 +7,10 @@ definitions:
         hipposys:members: ['*']
         hipposys:securityprovider: internal
         hipposys:system: true
+        hipposys:userroles:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: [xm-content-holder]
       /author:
         jcr:primaryType: hipposys:group
         hipposys:members:
