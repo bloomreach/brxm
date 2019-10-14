@@ -1,35 +1,29 @@
 definitions:
   config:
-    /hippo:configuration/hippo:domains/assets-gallery-items-readwrite:
+    /hippo:configuration/hippo:domains/non-publishable-readwrite:
       jcr:primaryType: hipposys:domain
-      /gallery-domain:
+      /non-publishable-domain:
         jcr:primaryType: hipposys:domainrule
-        /gallery-and-descendants:
+        /content-and-descendants:
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: jcr:path
           hipposys:type: Reference
-          hipposys:value: /content/gallery
-        /gallery-item:
+          hipposys:value: /content
+        /documents-only:
+          # only way to specify a document that is non-publishable is to require availability = live and not of type
+          # hippostd:publishable. Unfortunately there is no other way
           jcr:primaryType: hipposys:facetrule
           hipposys:equals: true
           hipposys:facet: hippo:availability
           hipposys:type: String
           hipposys:value: live
-      /assets-domain:
-        jcr:primaryType: hipposys:domainrule
-        /assets-and-descendants:
+        /non-publishable:
           jcr:primaryType: hipposys:facetrule
-          hipposys:equals: true
-          hipposys:facet: jcr:path
-          hipposys:type: Reference
-          hipposys:value: /content/assets
-        /asset-item:
-          jcr:primaryType: hipposys:facetrule
-          hipposys:equals: true
-          hipposys:facet: hippo:availability
+          hipposys:equals: false
+          hipposys:facet: nodetype
           hipposys:type: String
-          hipposys:value: live
+          hipposys:value: hippostd:publishable
       /readwrite:
         jcr:primaryType: hipposys:authrole
         hipposys:userrole: xm-content-author
