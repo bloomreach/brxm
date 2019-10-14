@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Page, ComponentModel } from './page';
+import { ComponentModel, PageModel } from './page';
 
 export interface Events {
   'cms.update': CmsUpdateEvent;
@@ -44,7 +44,7 @@ export interface PageUpdateEvent {
   /**
    * Updated part of the page model.
    */
-  page: Page;
+  page: PageModel;
 }
 
 /**

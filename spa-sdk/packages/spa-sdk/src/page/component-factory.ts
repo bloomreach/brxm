@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { ComponentModel, Component } from './component';
+import { ComponentModel, ComponentType, Component } from './component';
+import { MultipleTypeFactory } from './factory';
 
 interface Task {
   model: ComponentModel;
@@ -22,29 +23,12 @@ interface Task {
   siblings?: Component[];
 }
 
-type ComponentType<T extends ComponentModel> = T['type'];
-type ComponentBuilder<T extends ComponentModel, U extends Component> = (model: T, children: U[]) => Component;
+type ComponentBuilder = (model: ComponentModel, children: Component[]) => Component;
 
 /**
  * A component factory producing components based on a type.
  */
-export class ComponentFactory {
-  private mapping = new Map<ComponentType<any>, ComponentBuilder<any, any>>();
-
-  /**
-   * Registers a component builder for the specified type.
-   * @param type The component type.
-   * @param builder The component builder.
-   */
-  register<T extends ComponentModel, U extends Component = Component>(
-    type: ComponentType<T>,
-    builder: ComponentBuilder<T, U>,
-  ) {
-    this.mapping.set(type, builder);
-
-    return this;
-  }
-
+export class ComponentFactory extends MultipleTypeFactory<ComponentType, ComponentBuilder> {
   /**
    * Produces a component based on the model.
    * @param model The component model.

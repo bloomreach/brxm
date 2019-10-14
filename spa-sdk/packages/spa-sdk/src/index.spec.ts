@@ -158,7 +158,7 @@ describe('initialize', () => {
       data: {
         ...model,
         page: model.page.components[0].components[0],
-      },
+      } as PageModel,
     }));
 
     window.SPA!.renderComponent('r1_r1_r1', {});

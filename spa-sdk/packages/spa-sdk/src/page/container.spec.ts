@@ -14,13 +14,26 @@
  * limitations under the License.
  */
 
-import { ComponentImpl } from './component';
-import { ContainerImpl, isContainer, TYPE_COMPONENT_CONTAINER, TYPE_CONTAINER_BOX } from './container';
+import { ComponentImpl, TYPE_COMPONENT_CONTAINER } from './component';
+import { ContainerImpl, ContainerModel, isContainer, TYPE_CONTAINER_BOX } from './container';
+import { ContainerItem } from './container-item';
+import { Factory } from './factory';
+import { MetaCollectionModel, Meta } from './meta';
+
+let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], Meta[]>>;
+
+function createContainer(model: ContainerModel, children: ContainerItem[] = []) {
+  return new ContainerImpl(model, children, metaFactory);
+}
+
+beforeEach(() => {
+  metaFactory = { create: jest.fn() };
+});
 
 describe('ContainerImpl', () => {
   describe('getChildren', () => {
     it('should return children', () => {
-      const container = new ContainerImpl({ id: 'id', type: TYPE_COMPONENT_CONTAINER, xtype: TYPE_CONTAINER_BOX }, []);
+      const container = createContainer({ id: 'id', type: TYPE_COMPONENT_CONTAINER, xtype: TYPE_CONTAINER_BOX });
 
       expect(container.getChildren()).toEqual([]);
     });
@@ -28,13 +41,13 @@ describe('ContainerImpl', () => {
 
   describe('getType', () => {
     it('should return a type', () => {
-      const container = new ContainerImpl({ id: 'id', type: TYPE_COMPONENT_CONTAINER, xtype: TYPE_CONTAINER_BOX });
+      const container = createContainer({ id: 'id', type: TYPE_COMPONENT_CONTAINER, xtype: TYPE_CONTAINER_BOX });
 
       expect(container.getType()).toBe(TYPE_CONTAINER_BOX);
     });
 
     it('should return a type in lower case', () => {
-      const container = new ContainerImpl({
+      const container = createContainer({
         id: 'id',
         type: TYPE_COMPONENT_CONTAINER,
         xtype: TYPE_CONTAINER_BOX.toUpperCase() as typeof TYPE_CONTAINER_BOX,
@@ -44,7 +57,7 @@ describe('ContainerImpl', () => {
     });
 
     it('should return undefined where there is no xtype specified', () => {
-      const container = new ContainerImpl({ id: 'id', type: TYPE_COMPONENT_CONTAINER });
+      const container = createContainer({ id: 'id', type: TYPE_COMPONENT_CONTAINER });
 
       expect(container.getType()).toBeUndefined();
     });
@@ -53,13 +66,13 @@ describe('ContainerImpl', () => {
 
 describe('isContainer', () => {
   it('should return true', () => {
-    const container = new ContainerImpl({ id: 'id', type: TYPE_COMPONENT_CONTAINER, xtype: TYPE_CONTAINER_BOX });
+    const container = createContainer({ id: 'id', type: TYPE_COMPONENT_CONTAINER, xtype: TYPE_CONTAINER_BOX });
 
     expect(isContainer(container)).toBe(true);
   });
 
   it('should return false', () => {
-    const component = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT_CONTAINER });
+    const component = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT_CONTAINER }, [], metaFactory);
 
     expect(isContainer(undefined)).toBe(false);
     expect(isContainer(component)).toBe(false);

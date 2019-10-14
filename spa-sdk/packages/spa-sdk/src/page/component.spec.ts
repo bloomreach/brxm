@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-import { ComponentImpl, isComponent, TYPE_COMPONENT } from './component';
-import { MetaImpl, META_POSITION_BEGIN } from './meta';
+import { ComponentImpl, ComponentModel, Component, TYPE_COMPONENT, isComponent } from './component';
+import { Factory } from './factory';
+import { MetaCollectionModel, MetaImpl, Meta, META_POSITION_BEGIN } from './meta';
+
+let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], Meta[]>>;
+
+function createComponent(model: ComponentModel, children: Component[] = []) {
+  return new ComponentImpl(model, children, metaFactory);
+}
+
+beforeEach(() => {
+  metaFactory = { create: jest.fn() };
+});
 
 describe('ComponentImpl', () => {
   describe('getId', () => {
     it('should return a component id', () => {
-      const component = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT });
+      const component = createComponent({ id: 'id', type: TYPE_COMPONENT });
 
       expect(component.getId()).toBe('id');
     });
@@ -28,28 +39,32 @@ describe('ComponentImpl', () => {
 
   describe('getMeta', () => {
     it('should return a meta-data array', () => {
+      const metaModel = {};
       const meta = new MetaImpl({ data: '', type: 'comment' }, META_POSITION_BEGIN);
-      const component = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT }, [], [meta]);
 
+      metaFactory.create.mockReturnValueOnce([meta]);
+      const component = createComponent({ id: 'id', type: TYPE_COMPONENT, _meta: metaModel });
+
+      expect(metaFactory.create).toBeCalledWith(metaModel);
       expect(component.getMeta()).toEqual([meta]);
     });
 
-    it('should return an empty array', () => {
-      const component = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT });
+    it('should pass an empty object if there is no meta-data', () => {
+      createComponent({ id: 'id', type: TYPE_COMPONENT });
 
-      expect(component.getMeta()).toEqual([]);
+      expect(metaFactory.create).toBeCalledWith({});
     });
   });
 
   describe('getModels', () => {
     it('should return models object', () => {
-      const component = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT, models: { a: 1, b: 2 } });
+      const component = createComponent({ id: 'id', type: TYPE_COMPONENT, models: { a: 1, b: 2 } });
 
       expect(component.getModels()).toEqual({ a: 1, b: 2 });
     });
 
     it('should return empty object', () => {
-      const component = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT });
+      const component = createComponent({ id: 'id', type: TYPE_COMPONENT });
 
       expect(component.getModels()).toEqual({});
     });
@@ -57,33 +72,29 @@ describe('ComponentImpl', () => {
 
   describe('getUrl', () => {
     it('should return a model url', () => {
-      const component = new ComponentImpl({
-        id: 'id',
-        type: TYPE_COMPONENT,
-        _links: { componentRendering: { href: 'url' } },
-      });
+      const component = createComponent(
+        { id: 'id', type: TYPE_COMPONENT, _links: { componentRendering: { href: 'url' } } },
+      );
 
       expect(component.getUrl()).toBe('url');
     });
 
     it('should return undefined when a model url is missing', () => {
-      const component1 = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT });
-      const component2 = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT, _links: {} });
+      const component = createComponent({ id: 'id', type: TYPE_COMPONENT });
 
-      expect(component1.getUrl()).toBeUndefined();
-      expect(component2.getUrl()).toBeUndefined();
+      expect(component.getUrl()).toBeUndefined();
     });
   });
 
   describe('getName', () => {
     it('should return a name', () => {
-      const component = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT, name: 'something' });
+      const component = createComponent({ id: 'id', type: TYPE_COMPONENT, name: 'something' });
 
       expect(component.getName()).toBe('something');
     });
 
     it('should return an empty string', () => {
-      const component = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT });
+      const component = createComponent({ id: 'id', type: TYPE_COMPONENT });
 
       expect(component.getName()).toBe('');
     });
@@ -91,20 +102,14 @@ describe('ComponentImpl', () => {
 
   describe('getParameters', () => {
     it('should return parameters', () => {
-      const component = new ComponentImpl({
-        id: 'id',
-        type: TYPE_COMPONENT,
-        _meta: {
-          params: { a: '1', b: '2' },
-        },
-      });
+      const component = createComponent({ id: 'id', type: TYPE_COMPONENT, _meta: { params: { a: '1', b: '2' } } });
 
       expect(component.getParameters()).toEqual({ a: '1', b: '2' });
     });
 
     it('should return an empty object', () => {
-      const component1 = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT });
-      const component2 = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT, _meta: {} });
+      const component1 = createComponent({ id: 'id', type: TYPE_COMPONENT });
+      const component2 = createComponent({ id: 'id', type: TYPE_COMPONENT, _meta: {} });
 
       expect(component1.getParameters()).toEqual({});
       expect(component2.getParameters()).toEqual({});
@@ -113,16 +118,16 @@ describe('ComponentImpl', () => {
 
   describe('getComponent', () => {
     it('should return a reference to itself', () => {
-      const component = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT });
+      const component = createComponent({ id: 'id', type: TYPE_COMPONENT });
 
       expect(component.getComponent()).toBe(component);
     });
 
     it('should find a child component', () => {
-      const root = new ComponentImpl({ id: 'root-component', type: TYPE_COMPONENT }, [
-        new ComponentImpl({ id: 'a-component', type: TYPE_COMPONENT, name: 'a' }),
-        new ComponentImpl({ id: 'b-component', type: TYPE_COMPONENT, name: 'b' }, [
-          new ComponentImpl({ id: 'c-component', type: TYPE_COMPONENT, name: 'c' }),
+      const root = createComponent({ id: 'root-component', type: TYPE_COMPONENT }, [
+        createComponent({ id: 'a-component', type: TYPE_COMPONENT, name: 'a' }),
+        createComponent({ id: 'b-component', type: TYPE_COMPONENT, name: 'b' }, [
+          createComponent({ id: 'c-component', type: TYPE_COMPONENT, name: 'c' }),
         ]),
       ]);
 
@@ -134,7 +139,7 @@ describe('ComponentImpl', () => {
     });
 
     it('should not find a child component', () => {
-      const component = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT });
+      const component = createComponent({ id: 'id', type: TYPE_COMPONENT });
 
       expect(component.getComponent('a', 'b')).toBeUndefined();
     });
@@ -142,10 +147,10 @@ describe('ComponentImpl', () => {
 
   describe('getComponentById', () => {
     it('should find a component by id', () => {
-      const root = new ComponentImpl({ id: 'root-component', type: TYPE_COMPONENT }, [
-        new ComponentImpl({ id: 'a-component', type: TYPE_COMPONENT, name: 'a' }),
-        new ComponentImpl({ id: 'b-component', type: TYPE_COMPONENT, name: 'b' }, [
-          new ComponentImpl({ id: 'c-component', type: TYPE_COMPONENT, name: 'c' }),
+      const root = createComponent({ id: 'root-component', type: TYPE_COMPONENT }, [
+        createComponent({ id: 'a-component', type: TYPE_COMPONENT, name: 'a' }),
+        createComponent({ id: 'b-component', type: TYPE_COMPONENT, name: 'b' }, [
+          createComponent({ id: 'c-component', type: TYPE_COMPONENT, name: 'c' }),
         ]),
       ]);
 
@@ -157,7 +162,7 @@ describe('ComponentImpl', () => {
     });
 
     it('should return undefined when a component does not exist', () => {
-      const component = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT });
+      const component = createComponent({ id: 'id', type: TYPE_COMPONENT });
 
       expect(component.getComponentById('a')).toBeUndefined();
     });
@@ -166,7 +171,7 @@ describe('ComponentImpl', () => {
 
 describe('isComponent', () => {
   it('should return true', () => {
-    const containerItem = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT });
+    const containerItem = createComponent({ id: 'id', type: TYPE_COMPONENT });
 
     expect(isComponent(containerItem)).toBe(true);
   });

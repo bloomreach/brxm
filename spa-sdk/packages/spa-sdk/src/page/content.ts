@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { Factory } from './factory';
 import { MetaCollectionModel, Meta } from './meta';
 
 /**
@@ -59,7 +60,14 @@ export interface Content {
 }
 
 export class ContentImpl implements Content {
-  constructor(protected model: ContentModel, protected meta: Meta[] = []) {}
+  protected meta: Meta[];
+
+  constructor(
+    protected model: ContentModel,
+    metaFactory: Factory<[MetaCollectionModel], Meta[]>,
+  ) {
+    this.meta = metaFactory.create(this.model._meta || {});
+  }
 
   getId() {
     return this.model.id;

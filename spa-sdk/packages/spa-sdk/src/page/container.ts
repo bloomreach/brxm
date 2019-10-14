@@ -14,14 +14,10 @@
  * limitations under the License.
  */
 
-import { ComponentImpl, ComponentModel, Component } from './component';
+import { ComponentImpl, ComponentModel, Component, TYPE_COMPONENT_CONTAINER } from './component';
 import { ContainerItem } from './container-item';
-import { Meta } from './meta';
-
-/**
- * Container type.
- */
-export const TYPE_COMPONENT_CONTAINER = 'CONTAINER_COMPONENT';
+import { Factory } from './factory';
+import { MetaCollectionModel, Meta } from './meta';
 
 export const TYPE_CONTAINER_BOX = 'hst.vbox';
 export const TYPE_CONTAINER_UNORDERED_LIST = 'hst.unorderedlist';
@@ -29,7 +25,7 @@ export const TYPE_CONTAINER_ORDERED_LIST = 'hst.orderedlist';
 export const TYPE_CONTAINER_INLINE = 'hst.span';
 export const TYPE_CONTAINER_NO_MARKUP = 'hst.nomarkup';
 
-type ContainerType = typeof TYPE_CONTAINER_BOX
+export type ContainerType = typeof TYPE_CONTAINER_BOX
   | typeof TYPE_CONTAINER_UNORDERED_LIST
   | typeof TYPE_CONTAINER_ORDERED_LIST
   | typeof TYPE_CONTAINER_INLINE
@@ -64,10 +60,10 @@ export interface Container extends Component {
 export class ContainerImpl extends ComponentImpl implements Container {
   constructor(
     protected model: ContainerModel,
-    protected children: ContainerItem[] = [],
-    protected meta: Meta[] = [],
+    protected children: ContainerItem[],
+    metaFactory: Factory<[MetaCollectionModel], Meta[]>,
   ) {
-    super(model, children, meta);
+    super(model, children, metaFactory);
   }
 
   getChildren() {

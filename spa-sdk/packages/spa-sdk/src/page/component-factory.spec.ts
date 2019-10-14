@@ -15,64 +15,63 @@
  */
 
 import { ComponentFactory } from './component-factory';
-import { ComponentImpl, ComponentModel, Component } from './component';
+import {
+  ComponentImpl,
+  ComponentModel,
+  Component,
+  TYPE_COMPONENT,
+  TYPE_COMPONENT_CONTAINER_ITEM,
+  TYPE_COMPONENT_CONTAINER,
+} from './component';
 
 describe('ComponentFactory', () => {
-  describe('register', () => {
-    it('should provide a fluent interface', () => {
-      const factory = new ComponentFactory();
-
-      expect(factory.register('something', () => new ComponentImpl({ id: 'id', type: 'something' }))).toBe(factory);
-    });
-  });
-
   describe('create', () => {
     it('should call a registered builder', () => {
-      const builder1 = jest.fn(() => new ComponentImpl({ id: 'id1', type: '1' }));
-      const builder2 = jest.fn(() => new ComponentImpl({ id: 'id2', type: '2' }));
+      const builder1 = jest.fn();
+      const builder2 = jest.fn();
       const factory = new ComponentFactory()
-        .register('type1', builder1)
-        .register('type2', builder2);
+        .register(TYPE_COMPONENT, builder1)
+        .register(TYPE_COMPONENT_CONTAINER, builder2);
 
-      factory.create({ id: 'id1', type: 'type1', name: 'Component 1' });
-      factory.create({ id: 'id2', type: 'type2', name: 'Component 2' });
+      factory.create({ id: 'id1', type: TYPE_COMPONENT, name: 'Component 1' });
+      factory.create({ id: 'id2', type: TYPE_COMPONENT_CONTAINER, name: 'Component 2' });
 
-      expect(builder1).toBeCalledWith({ id: 'id1', type: 'type1', name: 'Component 1' }, []);
-      expect(builder2).toBeCalledWith({ id: 'id2', type: 'type2', name: 'Component 2' }, []);
+      expect(builder1).toBeCalledWith({ id: 'id1', type: TYPE_COMPONENT, name: 'Component 1' }, []);
+      expect(builder2).toBeCalledWith({ id: 'id2', type: TYPE_COMPONENT_CONTAINER, name: 'Component 2' }, []);
     });
 
     it('should throw an exception on unknown component type', () => {
       const factory = new ComponentFactory()
-        .register('type0', model => new ComponentImpl(model));
+        .register(TYPE_COMPONENT_CONTAINER_ITEM, jest.fn());
 
-      expect(() => factory.create({ id: 'id1', type: 'type1', name: 'Component 1' })).toThrowError();
+      expect(() => factory.create({ id: 'id1', type: TYPE_COMPONENT_CONTAINER, name: 'Component 1' })).toThrowError();
     });
 
     it('should produce a tree structure', () => {
-      const builder = jest.fn((model: ComponentModel, children: Component[]) => new ComponentImpl(model, children));
+      const builder = jest.fn(model => model.id);
       const factory = new ComponentFactory()
-        .register('type', builder);
+        .register(TYPE_COMPONENT, builder);
 
       const root = factory.create({
-        id: 'id',
-        type: 'type',
+        id: 'root',
+        type: TYPE_COMPONENT,
         components: [
-          { id: 'id-a', type: 'type', name: 'a' },
-          { id: 'id-b',
-            type: 'type',
-            name: 'b',
+          { id: 'a', type: TYPE_COMPONENT },
+          { id: 'b', type: TYPE_COMPONENT,
             components: [
-              { id: 'id-c', type: 'type', name: 'c' },
-              { id: 'id-d', type: 'type', name: 'd' },
+              { id: 'c', type: TYPE_COMPONENT },
+              { id: 'd', type: TYPE_COMPONENT },
             ] },
         ],
       });
 
-      expect(root.getComponent('a', 'b')).toBeUndefined();
-
-      const c = root.getComponent('b', 'c');
-      expect(c).toBeDefined();
-      expect(c!.getName()).toBe('c');
+      expect(builder).toBeCalledTimes(5);
+      expect(builder).nthCalledWith(1, expect.objectContaining({ id: 'a' }), []);
+      expect(builder).nthCalledWith(2, expect.objectContaining({ id: 'c' }), []);
+      expect(builder).nthCalledWith(3, expect.objectContaining({ id: 'd' }), []);
+      expect(builder).nthCalledWith(4, expect.objectContaining({ id: 'b' }), ['c', 'd']);
+      expect(builder).nthCalledWith(5, expect.objectContaining({ id: 'root' }), ['a', 'b']);
+      expect(root).toBe('root');
     });
   });
 });

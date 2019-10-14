@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { MetaImpl, Meta, META_POSITION_BEGIN, isMeta } from './meta';
+import { MetaImpl, Meta, META_POSITION_BEGIN, TYPE_META_COMMENT, isMeta } from './meta';
 
 describe('MetaImpl', () => {
   let meta: Meta;
 
   beforeEach(() => {
-    meta = new MetaImpl({ data: 'some-data', type: 'some-type' }, META_POSITION_BEGIN);
+    meta = new MetaImpl({ data: 'some-data', type: TYPE_META_COMMENT }, META_POSITION_BEGIN);
   });
 
   describe('getData', () => {
@@ -38,7 +38,7 @@ describe('MetaImpl', () => {
 
 describe('isMeta', () => {
   it('should return true', () => {
-    const meta = new MetaImpl({ data: 'some-data', type: 'some-type' }, META_POSITION_BEGIN);
+    const meta = new MetaImpl({ data: 'some-data', type: TYPE_META_COMMENT }, META_POSITION_BEGIN);
 
     expect(isMeta(meta)).toBe(true);
   });

@@ -17,6 +17,8 @@
 import { UrlBuilderImpl } from './builder';
 
 describe('UrlBuilderImpl', () => {
+  const builder = new UrlBuilderImpl();
+
   describe('getApiUrl', () => {
     const options1 = { cmsBaseUrl: 'http://localhost:8080/site/spa' };
     const options2 = { ...options1, apiBaseUrl: 'http://127.0.0.1/resourceapi' };
@@ -44,7 +46,7 @@ describe('UrlBuilderImpl', () => {
       ${options5} | ${'/news/2019/?query'}    | ${'http://localhost:8080/site/spa/resourceapi/2019/?query'}
       ${options6} | ${'/news/2019/?query'}    | ${'http://localhost:8080/site/spa/resourceapi/2019/?query'}
     `('should create the Page Model API URL for "$path" using options "$options"', ({ options, path, expected }) => {
-      const builder = new UrlBuilderImpl(options);
+      builder.initialize(options);
 
       expect(builder.getApiUrl(path)).toBe(expected);
     });
@@ -54,7 +56,7 @@ describe('UrlBuilderImpl', () => {
       ${options4} | ${'/'}                    | ${'The path "/" does not start with the base path "/news".'}
       ${options6} | ${'/something'}           | ${'The path "/something" does not start with the base path "/news".'}
     `('should throw an error for the path "$path" with message "$message"', ({ options, path, message }) => {
-      const builder = new UrlBuilderImpl(options);
+      builder.initialize(options);
 
       expect(() => builder.getApiUrl(path)).toThrow(message);
     });
@@ -71,7 +73,7 @@ describe('UrlBuilderImpl', () => {
       ${options2} | ${'/'}     | ${'//example.com/'}
       ${options2} | ${'/news'} | ${'//example.com/news'}
     `('should create a CMS URL for "$path" using options "$options"', ({ options, path, expected }) => {
-      const builder = new UrlBuilderImpl(options);
+      builder.initialize(options);
 
       expect(builder.getCmsUrl(path)).toBe(expected);
     });
@@ -89,7 +91,7 @@ describe('UrlBuilderImpl', () => {
       ${options1} | ${'/site/spa/news?query'} | ${'/news?query'}
       ${options2} | ${'/site/spa/about'}      | ${'//example.com/something/about'}
     `('should create an SPA URL for "$path" using options "$options"', ({ options, path, expected }) => {
-      const builder = new UrlBuilderImpl(options);
+      builder.initialize(options);
 
       expect(builder.getSpaUrl(path)).toBe(expected);
     });

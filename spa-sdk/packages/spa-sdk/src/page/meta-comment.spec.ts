@@ -15,7 +15,7 @@
  */
 
 import { MetaCommentImpl, isMetaComment } from './meta-comment';
-import { MetaImpl, META_POSITION_BEGIN } from './meta';
+import { MetaImpl, META_POSITION_BEGIN, TYPE_META_COMMENT } from './meta';
 
 describe('MetaCommentImpl', () => {
   describe('getData', () => {
@@ -39,7 +39,7 @@ describe('isMetaComment', () => {
   });
 
   it('should return false', () => {
-    const meta = new MetaImpl({ data: 'some-data', type: 'some-type' }, META_POSITION_BEGIN);
+    const meta = new MetaImpl({ data: 'some-data', type: TYPE_META_COMMENT }, META_POSITION_BEGIN);
 
     expect(isMetaComment(undefined)).toBe(false);
     expect(isMetaComment(meta)).toBe(false);

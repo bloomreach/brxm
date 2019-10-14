@@ -16,7 +16,6 @@
 
 import { MetaImpl, Meta } from './meta';
 
-export const TYPE_META_COMMENT = 'comment';
 const HTML_COMMENT = /^<!--(.*)-->$/;
 
 export interface MetaComment extends Meta {}
@@ -24,7 +23,7 @@ export interface MetaComment extends Meta {}
 /**
  * Meta information stored in HST-comments.
  */
-export class MetaCommentImpl extends MetaImpl<typeof TYPE_META_COMMENT> implements MetaComment {
+export class MetaCommentImpl extends MetaImpl implements MetaComment {
   getData() {
     const data = super.getData();
     const [, payload = data] = data.match(HTML_COMMENT) || [];

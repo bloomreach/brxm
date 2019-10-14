@@ -16,31 +16,32 @@
 
 import { Typed } from 'emittery';
 import { ComponentMeta, ComponentModel, Component } from './component';
+import { ContainerItemModel } from './container-item';
+import { ContainerModel } from './container';
 import { ContentModel, Content } from './content';
-import { ContentMap } from './content-map';
+import { Factory } from './factory';
 import { Events, PageUpdateEvent } from '../events';
-import { Reference, isReference } from './reference';
 import { MetaCollectionModel, Meta } from './meta';
-import { MetaFactory } from './meta-factory';
+import { Reference, isReference } from './reference';
 
 /**
  * Meta-data of a page root component.
  */
-export interface RootMeta extends ComponentMeta {
+interface PageRootMeta extends ComponentMeta {
   pageTitle?: string;
 }
 
 /**
  * Model of a page root component.
  */
-export interface RootModel extends ComponentModel {
-  _meta?: RootMeta;
+interface PageRootModel {
+  _meta?: PageRootMeta;
 }
 
 /**
  * Meta-data of a page.
  */
-export interface PageMeta {
+interface PageMeta {
   preview?: boolean;
 }
 
@@ -50,7 +51,7 @@ export interface PageMeta {
 export interface PageModel {
   _meta?: PageMeta;
   content?: { [reference: string]: ContentModel };
-  page: RootModel;
+  page: (ComponentModel | ContainerItemModel | ContainerModel) & PageRootModel;
 }
 
 /**
@@ -98,20 +99,28 @@ export interface Page {
 }
 
 export class PageImpl implements Page {
+  protected content: Map<string, Content>;
+
   constructor(
     protected model: PageModel,
     protected root: Component,
-    protected content: ContentMap,
+    private contentFactory: Factory<[ContentModel], Content>,
     private eventBus: Typed<Events>,
-    private metaFactory: MetaFactory,
+    private metaFactory: Factory<[MetaCollectionModel], Meta[]>,
   ) {
     eventBus.on('page.update', this.onPageUpdate.bind(this));
+
+    this.content = new Map(
+      Object.entries(model.content || {}).map(
+        ([alias, model]) => [alias, contentFactory.create(model)],
+      ),
+    );
   }
 
   protected onPageUpdate(event: PageUpdateEvent) {
-    if (event.page instanceof PageImpl) {
-      event.page.content.forEach((content, reference) => this.content.set(reference, content));
-    }
+    Object.entries(event.page.content || {}).forEach(
+      ([alias, model]) => this.content.set(alias, this.contentFactory.create(model)),
+    );
   }
 
   private static getContentReference(reference: Reference) {

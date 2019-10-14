@@ -48,6 +48,12 @@ export interface UrlBuilderOptions {
 
 export interface UrlBuilder {
   /**
+   * Initializes the URL Builder with options.
+   * @param options The URL Builder options.
+   */
+  initialize(options: UrlBuilderOptions): void;
+
+  /**
    * @param path Source path to generate the Page Model API URL.
    * @returns The Page Model API URL.
    */
@@ -81,7 +87,11 @@ export class UrlBuilderImpl {
     return `${url}${url.includes('?') ? '&' : '?'}${query}`;
   }
 
-  constructor(private options: UrlBuilderOptions) {}
+  private options: UrlBuilderOptions = { cmsBaseUrl: '' };
+
+  initialize(options: UrlBuilderOptions) {
+    this.options = options;
+  }
 
   getApiUrl(path: string) {
     const [pathname, query = ''] = path.split('?', 2);

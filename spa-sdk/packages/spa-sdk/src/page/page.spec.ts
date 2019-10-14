@@ -15,33 +15,37 @@
  */
 
 import { Typed } from 'emittery';
-import { ComponentImpl, Component, TYPE_COMPONENT } from './component';
-import { ContentMap } from './content-map';
-import { ContentImpl } from './content';
+import { Component, TYPE_COMPONENT } from './component';
+import { ContentModel, Content } from './content';
 import { Events } from '../events';
-import { MetaCollectionModel } from './meta';
-import { MetaFactory } from './meta-factory';
-import { PageImpl, Page } from './page';
+import { Factory } from './factory';
+import { MetaCollectionModel, Meta } from './meta';
+import { PageImpl, PageModel, Page } from './page';
 
 describe('PageImpl', () => {
-  let content: ContentMap;
+  let content: Content;
+  let contentFactory: jest.Mocked<Factory<[ContentModel], Content>>;
   let eventBus: Typed<Events>;
-  let metaFactory: MetaFactory;
+  let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], Meta[]>>;
   let root: Component;
 
-  beforeEach(() => {
-    content = new Map();
-    eventBus = new Typed<Events>();
-    metaFactory = new MetaFactory();
-    root = new ComponentImpl({ id: 'id', type: TYPE_COMPONENT });
+  function createPage(model: PageModel) {
+    return new PageImpl(model, root, contentFactory, eventBus, metaFactory);
+  }
 
-    jest.spyOn(root, 'getComponent');
-    jest.spyOn(content, 'get');
+  beforeEach(() => {
+    content = {} as jest.Mocked<Content>;
+    contentFactory = { create: jest.fn() };
+    eventBus = new Typed<Events>();
+    metaFactory = { create: jest.fn() };
+    root = { getComponent: jest.fn() } as unknown as jest.Mocked<Component>;
+
+    contentFactory.create.mockReturnValue(content);
   });
 
   describe('getComponent', () => {
     it('should forward a call to the root component', () => {
-      const page = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus, metaFactory);
+      const page = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
       page.getComponent('a', 'b');
 
       expect(root.getComponent).toBeCalledWith('a', 'b');
@@ -52,33 +56,30 @@ describe('PageImpl', () => {
     let page: Page;
 
     beforeEach(() => {
-      page = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus, metaFactory);
+      page = createPage({
+        content: {
+          content1: { id: 'id1', name: 'content1' },
+          content2: { id: 'id2', name: 'content2' },
+        },
+        page: { id: 'id', type: TYPE_COMPONENT },
+      });
     });
 
-    it('should resolve a reference', () => {
-      page.getContent({ $ref: '/content/some-content' });
-
-      expect(content.get).toBeCalledWith('some-content');
-    });
-
-    it('should pass a string reference directly', () => {
-      page.getContent('content-reference');
-
-      expect(content.get).toBeCalledWith('content-reference');
+    it('should create content instances', () => {
+      expect(contentFactory.create).toBeCalledTimes(2);
+      expect(contentFactory.create).nthCalledWith(1, { id: 'id1', name: 'content1' });
+      expect(contentFactory.create).nthCalledWith(2, { id: 'id2', name: 'content2' });
     });
 
     it('should return a content item', () => {
-      const someContent = new ContentImpl({ id: 'some-id', name: 'some-name' });
-      content.set('some-content', someContent);
-
-      expect(page.getContent('some-content')).toBe(someContent);
+      expect(page.getContent('content1')).toBe(content);
     });
   });
 
   describe('getMeta', () => {
     it('should delegate to the MetaFactory to create new meta', () => {
       const metaFactoryCreateSpy = jest.spyOn(metaFactory, 'create');
-      const page = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus, metaFactory);
+      const page = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
 
       const metaCollectionModel = {} as MetaCollectionModel;
       page.getMeta(metaCollectionModel);
@@ -89,32 +90,20 @@ describe('PageImpl', () => {
 
   describe('getTitle', () => {
     it('should return a page title', () => {
-      const page = new PageImpl(
-        {
-          page: {
-            id: 'id',
-            type: TYPE_COMPONENT,
-            _meta: { pageTitle: 'something' },
-          },
+      const page = createPage({
+        page: {
+          id: 'id',
+          type: TYPE_COMPONENT,
+          _meta: { pageTitle: 'something' },
         },
-        root,
-        content,
-        eventBus,
-        metaFactory,
-      );
+      });
 
       expect(page.getTitle()).toBe('something');
     });
 
     it('should return an undefined value', () => {
-      const page1 = new PageImpl(
-        { page: { id: 'id', type: TYPE_COMPONENT, _meta: {} } },
-        root,
-        content,
-        eventBus,
-        metaFactory,
-      );
-      const page2 = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus, metaFactory);
+      const page1 = createPage({ page: { id: 'id', type: TYPE_COMPONENT, _meta: {} } });
+      const page2 = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
 
       expect(page1.getTitle()).toBeUndefined();
       expect(page2.getTitle()).toBeUndefined();
@@ -123,35 +112,17 @@ describe('PageImpl', () => {
 
   describe('isPreview', () => {
     it('should return true', () => {
-      const page = new PageImpl(
-        {
-          page: { id: 'id', type: TYPE_COMPONENT },
-          _meta: { preview: true },
-        },
-        root,
-        content,
-        eventBus,
-        metaFactory,
-      );
+      const page = createPage({
+        page: { id: 'id', type: TYPE_COMPONENT },
+        _meta: { preview: true },
+      });
 
       expect(page.isPreview()).toBe(true);
     });
 
     it('should return false', () => {
-      const page1 = new PageImpl(
-        {
-          page: {
-            id: 'id',
-            type: TYPE_COMPONENT,
-            _meta: {},
-          },
-        },
-        root,
-        content,
-        eventBus,
-        metaFactory,
-      );
-      const page2 = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus, metaFactory);
+      const page1 = createPage({ page: { id: 'id', type: TYPE_COMPONENT, _meta: {} } });
+      const page2 = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
 
       expect(page1.isPreview()).toBe(false);
       expect(page2.isPreview()).toBe(false);
@@ -160,15 +131,19 @@ describe('PageImpl', () => {
 
   describe('onPageUpdate', () => {
     it('should update content on page.update event', async () => {
-      const model = { page: { id: 'id', type: TYPE_COMPONENT } };
-      const page = new PageImpl(model, root, content, eventBus, metaFactory);
-      const someContent = new ContentImpl({ id: 'some-id', name: 'some-name' });
+      const page = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
 
-      expect(page.getContent('some-content')).toBeUndefined();
-      await eventBus.emitSerial('page.update', {
-        page: new PageImpl(model, root, new Map([['some-content', someContent]]), eventBus, metaFactory),
-      });
-      expect(page.getContent('some-content')).toBe(someContent);
+      expect(page.getContent('content')).toBeUndefined();
+
+      await eventBus.emitSerial('page.update', { page: {
+        content: {
+          content: { id: 'id', name: 'content' },
+        },
+        page: { id: 'id', type: TYPE_COMPONENT },
+      } });
+
+      expect(contentFactory.create).toBeCalledWith({ id: 'id', name: 'content' });
+      expect(page.getContent('content')).toBe(content);
     });
   });
 
@@ -176,7 +151,7 @@ describe('PageImpl', () => {
     it('should emit page.ready event', () => {
       spyOn(eventBus, 'emit');
 
-      const page = new PageImpl({ page: { id: 'id', type: TYPE_COMPONENT } }, root, content, eventBus, metaFactory);
+      const page = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
       page.sync();
 
       expect(eventBus.emit).toBeCalledWith('page.ready', {});

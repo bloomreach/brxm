@@ -16,20 +16,11 @@
 
 import { Typed } from 'emittery';
 import { mocked } from 'ts-jest/utils';
-import { Events } from './events';
 import { Cms } from './cms';
-import {
-  ComponentFactory,
-  ComponentImpl,
-  ContentFactory,
-  ContentFactoryImpl,
-  MetaFactory,
-  PageImpl,
-  Page,
-  TYPE_COMPONENT,
-} from './page';
-import { Spa } from './spa';
-import * as Url from './url';
+import { Component, Factory, PageModel, Page, TYPE_COMPONENT } from './page';
+import { Configuration, Spa } from './spa';
+import { Events } from './events';
+import { UrlBuilder, isPreview } from './url';
 
 jest.mock('./url');
 
@@ -63,52 +54,42 @@ const config = {
 };
 
 describe('Spa', () => {
-  let cms: Cms;
-  let componentFactory: ComponentFactory;
-  let contentFactory: ContentFactory;
+  let cms: jest.Mocked<Cms>;
   let eventBus: Typed<Events>;
-  let metaFactory: MetaFactory;
+  let page: jest.Mocked<Page>;
+  let pageFactory: jest.Mocked<Factory<[PageModel], Page>>;
   let spa: Spa;
-  let urlBuilder: Url.UrlBuilder;
-  let urlBuilderImpl: jasmine.Spy;
+  let urlBuilder: jest.Mocked<UrlBuilder>;
 
   beforeEach(() => {
     eventBus = new Typed<Events>();
-    cms = new Cms(eventBus);
-    componentFactory = new ComponentFactory();
-    contentFactory = new ContentFactoryImpl(jest.fn());
-    metaFactory = new MetaFactory();
-    urlBuilder = { getApiUrl: jest.fn(() => 'http://example.com') } as unknown as Url.UrlBuilder;
-    urlBuilderImpl = spyOn(Url, 'UrlBuilderImpl').and.returnValue(urlBuilder);
+    cms = { initialize: jest.fn() } as unknown as jest.Mocked<Cms>;
+    page = { getComponent: jest.fn() } as unknown as jest.Mocked<Page>;
+    pageFactory = { create: jest.fn() };
+    urlBuilder = {
+      initialize: jest.fn(),
+      getApiUrl: jest.fn(() => 'http://example.com'),
+    } as unknown as jest.Mocked<UrlBuilder>;
 
-    cms.initialize = jest.fn();
-    componentFactory.create = jest.fn(model => new ComponentImpl(model));
-    spyOn(contentFactory, 'create');
-
-    spa = new Spa(componentFactory, contentFactory, metaFactory, eventBus, cms);
+    spyOn(eventBus, 'on').and.callThrough();
+    pageFactory.create.mockReturnValue(page);
+    spa = new Spa(config as Configuration, cms, eventBus, pageFactory, urlBuilder);
   });
 
   describe('initialize', () => {
-    let page: Page;
-    let on: jasmine.Spy;
-
-    beforeEach(async () => {
-      config.httpClient.mockClear();
-      on = spyOn(eventBus, 'on');
-      page = await spa.initialize(config);
-    });
+    beforeEach(async () => await spa.initialize());
 
     it('should initialize a CMS integration', () => {
       expect(cms.initialize).toBeCalled();
     });
 
     it('should use a preview configuration', async () => {
-      mocked(Url.isPreview).mockReturnValueOnce(true);
-      await spa.initialize(config);
+      mocked(isPreview).mockReturnValueOnce(true);
+      await spa.initialize();
 
-      expect(urlBuilderImpl).toBeCalledTimes(2);
-      expect(urlBuilderImpl).nthCalledWith(1, config.options.live);
-      expect(urlBuilderImpl).nthCalledWith(2, config.options.preview);
+      expect(urlBuilder.initialize).toBeCalledTimes(2);
+      expect(urlBuilder.initialize).nthCalledWith(1, config.options.live);
+      expect(urlBuilder.initialize).nthCalledWith(2, config.options.preview);
     });
 
     it('should generate a URL', () => {
@@ -123,33 +104,18 @@ describe('Spa', () => {
       });
     });
 
-    it('should create a root component', () => {
-      expect(componentFactory.create).toBeCalledWith(model.page);
-    });
-
-    it('should return a page instance', () => {
-      expect(page).toBeInstanceOf(PageImpl);
-    });
-
-    it('should create a content instance', () => {
-      expect(contentFactory.create).toBeCalledWith(model.content.someContent);
+    it('should create a page instance', () => {
+      expect(pageFactory.create).toBeCalledWith(model);
     });
 
     it('should subscribe for cms.update event', () => {
       expect(eventBus.on).toBeCalledWith('cms.update', expect.any(Function));
     });
 
-    it('should not subscribe for cms.update event twice', async () => {
-      on.calls.reset();
-      await spa.initialize(config);
-
-      expect(eventBus.on).not.toBeCalledWith('cms.update', expect.anything());
-    });
-
     it('should reject a promise when fetching the page model fails', () => {
       const error = new Error('Failed to fetch page model data');
       config.httpClient.mockImplementationOnce(() => { throw error; });
-      const promise = spa.initialize(config);
+      const promise = spa.initialize();
 
       expect.assertions(1);
       expect(promise).rejects.toBe(error);
@@ -157,9 +123,16 @@ describe('Spa', () => {
   });
 
   describe('onCmsUpdate', () => {
+    let component: jest.Mocked<Component>;
+    let root: jest.Mocked<Component>;
+
     beforeEach(async () => {
+      root = { getComponentById: jest.fn() } as unknown as jest.Mocked<Component>;
+      component = { getUrl: jest.fn() } as unknown as jest.Mocked<Component>;
+
+      page.getComponent.mockReturnValue(root);
       spyOn(eventBus, 'emit');
-      await spa.initialize(config);
+      await spa.initialize();
 
       jest.clearAllMocks();
     });
@@ -167,14 +140,20 @@ describe('Spa', () => {
     it('should not proceed if a component does not exist', async () => {
       await eventBus.emitSerial('cms.update', { id: 'some-component', properties: {} });
 
+      expect(root.getComponentById).toBeCalledWith('some-component');
       expect(config.httpClient).not.toBeCalled();
       expect(eventBus.emit).not.toBeCalled();
     });
 
     describe('on component update', () => {
-      beforeEach(() => eventBus.emitSerial('cms.update', { id: 'page-id', properties: { a: 'b' } }));
+      beforeEach(async () => {
+        root.getComponentById.mockReturnValue(component);
+        component.getUrl.mockReturnValue('some-url');
+        await eventBus.emitSerial('cms.update', { id: 'page-id', properties: { a: 'b' } });
+      });
 
       it('should request a component model', () => {
+        expect(component.getUrl).toBeCalled();
         expect(config.httpClient).toBeCalledWith({
           url: 'some-url',
           method: 'POST',
@@ -185,48 +164,20 @@ describe('Spa', () => {
         });
       });
 
-      it('should create a component', () => {
-        expect(componentFactory.create).toBeCalledWith(model.page);
-      });
-
-      it('should create a content instance', () => {
-        expect(contentFactory.create).toBeCalledWith(model.content.someContent);
-      });
-
       it('should emit page.update event', () => {
-        expect(eventBus.emit).toBeCalledWith('page.update', { page: expect.any(PageImpl) });
+        expect(eventBus.emit).toBeCalledWith('page.update', { page: model });
       });
     });
   });
 
   describe('destroy', () => {
-    it('should not emit page.update event after destroy', async () => {
-      const page = await spa.initialize(config);
-      spa.destroy(page);
-
-      spyOn(eventBus, 'emit');
-      await eventBus.emitSerial('cms.update', { id: 'page-id', properties: { a: 'b' } });
-
-      expect(eventBus.emit).not.toBeCalledWith('page.update', expect.anything());
-    });
-
     it('should unsubscribe from cms.update event', async () => {
       spyOn(eventBus, 'off');
 
-      const page = await spa.initialize(config);
-      spa.destroy(page);
+      await spa.initialize();
+      spa.destroy();
 
       expect(eventBus.off).toBeCalledWith('cms.update', expect.any(Function));
-    });
-
-    it('should not unsubscribe from cms.update event when there are pages left', async () => {
-      spyOn(eventBus, 'off');
-
-      const page1 = await spa.initialize(config);
-      const page2 = await spa.initialize(config);
-      spa.destroy(page1);
-
-      expect(eventBus.off).not.toBeCalledWith('cms.update', expect.anything());
     });
   });
 });

@@ -15,15 +15,19 @@
  */
 
 import { Typed } from 'emittery';
-import { ComponentImpl, ComponentMeta, ComponentModel, ComponentParameters, Component } from './component';
+import {
+  ComponentImpl,
+  ComponentMeta,
+  ComponentModel,
+  ComponentParameters,
+  Component,
+  TYPE_COMPONENT_CONTAINER_ITEM,
+} from './component';
 import { EmitterMixin, Emitter } from '../emitter';
 import { Events, PageUpdateEvent } from '../events';
-import { Meta } from './meta';
+import { Factory } from './factory';
+import { MetaCollectionModel, Meta } from './meta';
 
-/**
- * Container item type.
- */
-export const TYPE_COMPONENT_CONTAINER_ITEM = 'CONTAINER_ITEM_COMPONENT';
 const PARAMETER_HIDDEN = 'com.onehippo.cms7.targeting.TargetingParameterUtil.hide';
 
 /**
@@ -84,19 +88,24 @@ export class ContainerItemImpl
   extends EmitterMixin<typeof ComponentImpl, ContainerItemEvents>(ComponentImpl)
   implements ContainerItem
 {
-  constructor(protected model: ContainerItemModel, eventBus: Typed<Events>, meta: Meta[] = []) {
-    super(model, [], meta);
+  constructor(
+    protected model: ContainerItemModel,
+    eventBus: Typed<Events>,
+    private metaFactory: Factory<[MetaCollectionModel], Meta[]>,
+  ) {
+    super(model, [], metaFactory);
+
     eventBus.on('page.update', this.onPageUpdate.bind(this));
   }
 
   protected onPageUpdate(event: PageUpdateEvent) {
-    const component = event.page.getComponent();
-    if (!(component instanceof ContainerItemImpl) || component === this || component.getId() !== this.getId()) {
+    const { page: model } = event.page;
+    if (model.id !== this.getId()) {
       return;
     }
 
-    this.meta = component.meta;
-    this.model = component.model;
+    this.model = model as ContainerItemModel;
+    this.meta = this.metaFactory.create(model._meta || {});
     this.emit('update', {});
   }
 

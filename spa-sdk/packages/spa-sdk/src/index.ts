@@ -15,10 +15,8 @@
  */
 
 /**
- * Main entry point of the spa-sdk library. Implements the public API defined in the
- * api module.
+ * Main entry point of the spa-sdk library.
  * @module index
- * @see module:api
  */
 
 import { Typed } from 'emittery';
@@ -32,47 +30,56 @@ import {
   ContainerItem,
   ContainerImpl,
   ContainerModel,
-  ContentFactoryImpl,
   ContentImpl,
   MetaCommentImpl,
   MetaFactory,
+  PageImpl,
   Page,
+  SingleTypeFactory,
   TYPE_COMPONENT,
   TYPE_COMPONENT_CONTAINER_ITEM,
   TYPE_COMPONENT_CONTAINER,
   TYPE_META_COMMENT,
 } from './page';
 import { Configuration, Spa } from './spa';
+import { UrlBuilderImpl } from './url';
 
 const eventBus = new Typed<Events>();
-
-const metaFactory = new MetaFactory()
-  .register(TYPE_META_COMMENT, (model, position) => new MetaCommentImpl(model, position));
-const contentFactory = new ContentFactoryImpl(model => new ContentImpl(model, metaFactory.create(model._meta)));
-const componentFactory = new ComponentFactory()
-  .register(
-    TYPE_COMPONENT,
-    (model, children) => new ComponentImpl(model, children, metaFactory.create(model._meta)),
-  )
-  .register<ContainerModel, ContainerItem>(
-    TYPE_COMPONENT_CONTAINER,
-    (model, children) => new ContainerImpl(model, children, metaFactory.create(model._meta)),
-  )
-  .register<ContainerItemModel>(
-    TYPE_COMPONENT_CONTAINER_ITEM,
-    model => new ContainerItemImpl(model, eventBus, metaFactory.create(model._meta)),
-  );
-
 const cms = new Cms(eventBus);
-const spa = new Spa(componentFactory, contentFactory, metaFactory, eventBus, cms);
+const pages = new WeakMap<Page, Spa>();
 
 /**
  * Initializes the page model.
  *
  * @param config Configuration of the SPA integration with brXM.
  */
-export function initialize(config: Configuration): Promise<Page> {
-  return spa.initialize(config);
+export async function initialize(config: Configuration): Promise<Page> {
+  const urlBuilder =  new UrlBuilderImpl();
+  const metaFactory = new MetaFactory()
+    .register(TYPE_META_COMMENT, (model, position) => new MetaCommentImpl(model, position));
+  const componentFactory = new ComponentFactory()
+    .register(TYPE_COMPONENT, (model, children) => new ComponentImpl(model, children, metaFactory))
+    .register(TYPE_COMPONENT_CONTAINER, (model, children) => new ContainerImpl(
+      model as ContainerModel,
+      children as ContainerItem[],
+      metaFactory,
+    ))
+    .register(TYPE_COMPONENT_CONTAINER_ITEM, model => new ContainerItemImpl(
+      model as ContainerItemModel,
+      eventBus,
+      metaFactory,
+    ));
+  const contentFactory = new SingleTypeFactory(model => new ContentImpl(model, metaFactory));
+  const pageFactory = new SingleTypeFactory(
+    model => new PageImpl(model, componentFactory.create(model.page), contentFactory, eventBus, metaFactory),
+  );
+
+  const spa = new Spa(config, cms, eventBus, pageFactory, urlBuilder);
+  const page = await spa.initialize();
+
+  pages.set(page, spa);
+
+  return page;
 }
 
 /**
@@ -80,7 +87,9 @@ export function initialize(config: Configuration): Promise<Page> {
  * @param page Page instance to destroy.
  */
 export function destroy(page: Page) {
-  return spa.destroy(page);
+  const spa = pages.get(page);
+
+  return spa && spa.destroy();
 }
 
 export { Configuration } from './spa';

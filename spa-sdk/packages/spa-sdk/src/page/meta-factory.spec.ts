@@ -15,26 +15,15 @@
  */
 
 import { MetaFactory } from './meta-factory';
-import { MetaImpl, META_POSITION_BEGIN, META_POSITION_END } from './meta';
+import { MetaImpl, MetaType, META_POSITION_BEGIN, META_POSITION_END, TYPE_META_COMMENT } from './meta';
 
 describe('MetaFactory', () => {
-  describe('register', () => {
-    it('should provide a fluent interface', () => {
-      const factory = new MetaFactory();
-
-      expect(factory.register(
-        'something',
-        () => new MetaImpl({ data: 'something', type: 'something' }, META_POSITION_BEGIN),
-      )).toBe(factory);
-    });
-  });
-
   describe('create', () => {
     const builder1 = jest.fn((model, position) => new MetaImpl(model, position));
     const builder2 = jest.fn((model, position) => new MetaImpl(model, position));
     const factory = new MetaFactory()
-      .register('type1', builder1)
-      .register('type2', builder2);
+      .register('type1' as MetaType, builder1)
+      .register('type2' as MetaType, builder2);
 
     beforeEach(() => {
       builder1.mockClear();
@@ -48,8 +37,8 @@ describe('MetaFactory', () => {
     it('should call a registered builder', () => {
       factory.create({
         beginNodeSpan: [
-          { data: 'meta1', type: 'type1' },
-          { data: 'meta2', type: 'type2' },
+          { data: 'meta1', type: 'type1' as MetaType },
+          { data: 'meta2', type: 'type2' as MetaType },
         ],
       });
 
@@ -59,14 +48,14 @@ describe('MetaFactory', () => {
 
     it('should throw an exception on unknown component type', () => {
       expect(() => factory.create({
-        beginNodeSpan: [{ data: 'data0', type: 'type0' }],
+        beginNodeSpan: [{ data: 'data0', type: 'type0' as MetaType }],
       })).toThrowError();
     });
 
     it('should pass a position of the meta', () => {
       factory.create({
-        beginNodeSpan: [{ data: 'meta1', type: 'type1' }],
-        endNodeSpan: [{ data: 'meta2', type: 'type2' }],
+        beginNodeSpan: [{ data: 'meta1', type: 'type1' as MetaType }],
+        endNodeSpan: [{ data: 'meta2', type: 'type2' as MetaType }],
       });
 
       expect(builder1).toBeCalledWith({ data: 'meta1', type: 'type1' }, META_POSITION_BEGIN);

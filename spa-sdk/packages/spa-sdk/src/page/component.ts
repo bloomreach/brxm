@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { Factory } from './factory';
 import { MetaCollectionModel, Meta } from './meta';
 
 /**
@@ -22,11 +23,23 @@ import { MetaCollectionModel, Meta } from './meta';
 export const TYPE_COMPONENT = 'COMPONENT';
 
 /**
+ * Container item type.
+ */
+export const TYPE_COMPONENT_CONTAINER_ITEM = 'CONTAINER_ITEM_COMPONENT';
+
+/**
+ * Container type.
+ */
+export const TYPE_COMPONENT_CONTAINER = 'CONTAINER_COMPONENT';
+
+export type ComponentType = typeof TYPE_COMPONENT
+  | typeof TYPE_COMPONENT_CONTAINER_ITEM
+  | typeof TYPE_COMPONENT_CONTAINER;
+
+/**
  * Parameters of a component.
  */
-export interface ComponentParameters {
-  [name: string]: string | undefined;
-}
+export type ComponentParameters = Partial<Record<string, string>>;
 
 /**
  * Meta-data of a component.
@@ -35,13 +48,10 @@ export interface ComponentMeta extends MetaCollectionModel {
   params?: ComponentParameters;
 }
 
-interface Models {
-  [model: string]: any;
-}
-
 interface Links {
   componentRendering?: { href: string };
 }
+type ComponentModels = Record<string, any>;
 
 /**
  * Model of a component.
@@ -50,9 +60,9 @@ export interface ComponentModel {
   _meta?: ComponentMeta;
   _links?: Links;
   id: string;
-  models?: Models;
+  models?: ComponentModels;
   name?: string;
-  type: typeof TYPE_COMPONENT | string;
+  type: ComponentType;
   components?: ComponentModel[];
 }
 
@@ -73,7 +83,7 @@ export interface Component {
   /**
    * @return The map of models.
    */
-  getModels<T extends Models>(): T;
+  getModels<T extends ComponentModels>(): T;
 
   /**
    * @return The link to the partial component model.
@@ -110,11 +120,15 @@ export interface Component {
 }
 
 export class ComponentImpl implements Component {
+  protected meta: Meta[];
+
   constructor(
     protected model: ComponentModel,
-    protected children: Component[] = [],
-    protected meta: Meta[] = [],
-  ) {}
+    protected children: Component[],
+    metaFactory: Factory<[MetaCollectionModel], Meta[]>,
+  ) {
+    this.meta = metaFactory.create(model._meta || {});
+  }
 
   getId() {
     return this.model.id;
@@ -124,7 +138,7 @@ export class ComponentImpl implements Component {
     return this.meta;
   }
 
-  getModels<T extends Models>(): T;
+  getModels<T extends ComponentModels>(): T;
   getModels() {
     return this.model.models || {};
   }

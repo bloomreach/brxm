@@ -14,13 +14,24 @@
  * limitations under the License.
  */
 
-import { ContentImpl } from './content';
-import { MetaImpl, META_POSITION_BEGIN } from './meta';
+import { ContentImpl, ContentModel } from './content';
+import { Factory } from './factory';
+import { MetaCollectionModel, MetaImpl, Meta, META_POSITION_BEGIN } from './meta';
+
+let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], Meta[]>>;
+
+function createContent(model: ContentModel) {
+  return new ContentImpl(model, metaFactory);
+}
+
+beforeEach(() => {
+  metaFactory = { create: jest.fn() };
+});
 
 describe('ContentImpl', () => {
   describe('getId', () => {
     it('should return a content item id', () => {
-      const content = new ContentImpl({ id: 'some-id', name: 'some-name' });
+      const content = createContent({ id: 'some-id', name: 'some-name' });
 
       expect(content.getId()).toBe('some-id');
     });
@@ -28,13 +39,13 @@ describe('ContentImpl', () => {
 
   describe('getLocale', () => {
     it('should return a content item locale', () => {
-      const content = new ContentImpl({ id: 'some-id', name: 'some-name', localeString: 'some-locale' });
+      const content = createContent({ id: 'some-id', name: 'some-name', localeString: 'some-locale' });
 
       expect(content.getLocale()).toBe('some-locale');
     });
 
     it('should return undefined when there is no locale', () => {
-      const content = new ContentImpl({ id: 'some-id', name: 'some-name' });
+      const content = createContent({ id: 'some-id', name: 'some-name' });
 
       expect(content.getLocale()).toBeUndefined();
     });
@@ -42,16 +53,26 @@ describe('ContentImpl', () => {
 
   describe('getMeta', () => {
     it('should return a meta-data array', () => {
+      const metaModel = {};
       const meta = new MetaImpl({ data: '', type: 'comment' }, META_POSITION_BEGIN);
-      const content = new ContentImpl({ id: 'some-id', name: 'some-name' }, [meta]);
+      metaFactory.create.mockReturnValueOnce([meta]);
 
+      const content = createContent({ id: 'some-id', name: 'some-name', _meta: metaModel });
+
+      expect(metaFactory.create).toBeCalledWith(metaModel);
       expect(content.getMeta()).toEqual([meta]);
+    });
+
+    it('should pass an empty object if there is no meta-data', () => {
+      createContent({ id: 'some-id', name: 'some-name' });
+
+      expect(metaFactory.create).toBeCalledWith({});
     });
   });
 
   describe('getName', () => {
     it('should return a content item name', () => {
-      const content = new ContentImpl({ id: 'some-id', name: 'some-name' });
+      const content = createContent({ id: 'some-id', name: 'some-name' });
 
       expect(content.getName()).toBe('some-name');
     });
@@ -59,7 +80,7 @@ describe('ContentImpl', () => {
 
   describe('getData', () => {
     it('should return a content item data', () => {
-      const content = new ContentImpl({ id: 'some-id', name: 'some-name' });
+      const content = createContent({ id: 'some-id', name: 'some-name' });
 
       expect(content.getData()).toEqual({ id: 'some-id', name: 'some-name' });
     });

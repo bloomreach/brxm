@@ -14,38 +14,19 @@
  * limitations under the License.
  */
 
+import { MultipleTypeFactory } from './factory';
 import { MetaCollectionModel, MetaModel, MetaPosition, MetaType, Meta, META_POSITION_BEGIN, META_POSITION_END } from './meta';
 
-type MetaBuilder<T extends MetaType> = (model: MetaModel<T>, position: MetaPosition) => Meta;
+type MetaBuilder = (model: MetaModel, position: MetaPosition) => Meta;
 
 /**
  * The factory to produce meta-data collection from the page model meta-data.
  */
-export class MetaFactory {
-  private mapping = new Map<MetaType, MetaBuilder<any>>();
-
-  /**
-   * Registers a meta builder for the specified type.
-   * @param type The meta type.
-   * @param builder The meta builder.
-   */
-  register<T extends MetaType>(
-    type: T,
-    builder: MetaBuilder<T>,
-  ) {
-    this.mapping.set(type, builder);
-
-    return this;
-  }
-
-  /**
-   * Produces a meta-data collection based on the model.
-   * @param meta The meta-data from the page model.
-   */
-  create(meta?: MetaCollectionModel) {
+export class MetaFactory extends MultipleTypeFactory<MetaType, MetaBuilder> {
+  create(meta: MetaCollectionModel) {
     return [
-      ...(meta && meta.beginNodeSpan || []).map(this.buildMeta.bind(this, META_POSITION_BEGIN)),
-      ...(meta && meta.endNodeSpan || []).map(this.buildMeta.bind(this, META_POSITION_END)),
+      ...(meta.beginNodeSpan || []).map(this.buildMeta.bind(this, META_POSITION_BEGIN)),
+      ...(meta.endNodeSpan || []).map(this.buildMeta.bind(this, META_POSITION_END)),
     ];
   }
 

@@ -16,13 +16,14 @@
 
 export const META_POSITION_BEGIN = 'begin';
 export const META_POSITION_END = 'end';
+export const TYPE_META_COMMENT = 'comment';
 
-export type MetaType = string;
+export type MetaType = typeof TYPE_META_COMMENT;
 export type MetaPosition = typeof META_POSITION_BEGIN | typeof META_POSITION_END;
 
-export interface MetaModel<T extends MetaType = MetaType> {
+export interface MetaModel {
   data: string;
-  type: T;
+  type: MetaType;
 }
 
 export interface MetaCollectionModel {
@@ -45,8 +46,8 @@ export interface Meta {
   getPosition(): MetaPosition;
 }
 
-export class MetaImpl<T extends MetaType = MetaType> implements Meta {
-  constructor(protected model: MetaModel<T>, protected position: MetaPosition) {}
+export class MetaImpl implements Meta {
+  constructor(protected model: MetaModel, protected position: MetaPosition) {}
 
   getData() {
     return this.model.data;
