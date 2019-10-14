@@ -22,6 +22,7 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.ChannelEventListenerRegistry;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyEvent;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtResponseRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMapItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMapResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
@@ -140,8 +141,8 @@ public class PageCopyEventTest extends AbstractSiteMapResourceTest {
             final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "localhost", "/home");
             SiteMapResource siteMapResource = createResource();
             final Mount editingMount = mountResource.getPageComposerContextService().getEditingMount();
-            final Response copy = siteMapResource.copy(editingMount.getIdentifier(), home.getId(), null, "copiedHome");
-            assertEquals(INTERNAL_SERVER_ERROR.getStatusCode(), copy.getStatus());
+            final Response response = siteMapResource.copy(editingMount.getIdentifier(), home.getId(), null, "copiedHome");
+            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(), INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
 
             final String previewSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/copiedHome";
             final String previewPageNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/copiedHome";
@@ -163,8 +164,8 @@ public class PageCopyEventTest extends AbstractSiteMapResourceTest {
             final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "localhost", "/home");
             SiteMapResource siteMapResource = createResource();
             final Mount editingMount = mountResource.getPageComposerContextService().getEditingMount();
-            final Response copy = siteMapResource.copy(editingMount.getIdentifier(), home.getId(), null, "copiedHome");
-            assertEquals(BAD_REQUEST.getStatusCode(), copy.getStatus());
+            final Response response = siteMapResource.copy(editingMount.getIdentifier(), home.getId(), null, "copiedHome");
+            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(), BAD_REQUEST.getStatusCode(), response.getStatus());
 
             final String previewSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/copiedHome";
             final String previewPageNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/copiedHome";
@@ -182,8 +183,8 @@ public class PageCopyEventTest extends AbstractSiteMapResourceTest {
         final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "localhost", "/home");
         SiteMapResource siteMapResource = createResource();
         final Mount editingMount = mountResource.getPageComposerContextService().getEditingMount();
-        final Response copy = siteMapResource.copy(editingMount.getIdentifier(), home.getId(), (targetParent == null ? null : targetParent.getId()), copyName);
-        assertEquals(OK.getStatusCode(), copy.getStatus());
+        final Response response = siteMapResource.copy(editingMount.getIdentifier(), home.getId(), (targetParent == null ? null : targetParent.getId()), copyName);
+        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(), OK.getStatusCode(), response.getStatus());
 
         final String pathInfo;
         if (targetParent == null) {

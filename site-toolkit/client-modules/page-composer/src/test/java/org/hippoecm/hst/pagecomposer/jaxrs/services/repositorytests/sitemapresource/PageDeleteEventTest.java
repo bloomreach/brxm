@@ -166,8 +166,8 @@ public class PageDeleteEventTest extends AbstractSiteMapResourceTest {
             final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "localhost", "/home");
             SiteMapResource siteMapResource = createResource();
 
-            final Response delete = siteMapResource.delete(home.getId());
-            assertEquals(INTERNAL_SERVER_ERROR.getStatusCode(), delete.getStatus());
+            final Response response = siteMapResource.delete(home.getId());
+            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(), INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
 
             final String previewSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home";
             final String previewPageNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/homepage";
@@ -190,8 +190,8 @@ public class PageDeleteEventTest extends AbstractSiteMapResourceTest {
             final SiteMapItemRepresentation home = getSiteMapItemRepresentation(session, "localhost", "/home");
             SiteMapResource siteMapResource = createResource();
 
-            final Response delete = siteMapResource.delete(home.getId());
-            assertEquals(BAD_REQUEST.getStatusCode(), delete.getStatus());
+            final Response response = siteMapResource.delete(home.getId());
+            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(), BAD_REQUEST.getStatusCode(), response.getStatus());
 
             final String previewSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home";
             final String previewPageNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/homepage";
@@ -207,8 +207,8 @@ public class PageDeleteEventTest extends AbstractSiteMapResourceTest {
 
     private void deleteHomePage(boolean publish) throws Exception {
         SiteMapResource siteMapResource = createResource();
-        final Response delete = siteMapResource.delete(homeRepresentation.getId());
-        assertEquals(OK.getStatusCode(), delete.getStatus());
+        final Response response = siteMapResource.delete(homeRepresentation.getId());
+        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(), OK.getStatusCode(), response.getStatus());
 
         final String previewSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home";
         final String previewPageNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/homepage";
