@@ -20,3 +20,8 @@ import { VueConstructor } from 'vue';
  * The brXM SDK plugin.
  */
 export declare function BrSdk(vue: VueConstructor): void;
+
+/**
+ * The brXM page.
+ */
+export declare const BrPage: VueConstructor;

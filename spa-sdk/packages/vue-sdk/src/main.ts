@@ -15,10 +15,13 @@
  */
 
 import { VueConstructor } from 'vue';
+import BrPage from './BrPage.vue';
 
 /**
  * The brXM SDK plugin.
  */
 export function BrSdk(vue: VueConstructor): void {
-  //
+  vue.component('br-page', BrPage);
 }
+
+export { BrPage };
