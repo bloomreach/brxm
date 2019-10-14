@@ -25,7 +25,7 @@ definitions:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
         hipposys:userroles: [xm-cms-user]
-      /xm-administration-user:
+      /xm-system-user:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
         hipposys:userroles: [xm-cms-user]
@@ -36,7 +36,7 @@ definitions:
       /xm-security-manager:
         hipposys:userroles:
           operation: add
-          value: [xm-administration-user]
+          value: [xm-system-user]
       /xm-content-viewer:
         hipposys:userroles:
           operation: add
