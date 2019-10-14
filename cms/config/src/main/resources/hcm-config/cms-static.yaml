@@ -114,7 +114,7 @@ definitions:
         jcr:primaryType: frontend:plugin
         cluster.name: cms-admin
         plugin.class: org.hippoecm.frontend.plugins.cms.admin.AdminPerspective
-        hipposys:userrole: xm-administration-user
+        hipposys:userrole: xm-system-user
         wicket.id: service.tab
         /layout.wireframe:
           jcr:primaryType: frontend:pluginconfig
