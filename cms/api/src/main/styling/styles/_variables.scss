@@ -29,9 +29,11 @@ $font-size-extjs:                    12px;
 $line-height-base:                   1.2;
 
 // Common
-$top-bar-height:                     41px;
+$top-bar-height:                     52px;
+$top-bar-bgcolor:                    $grayLightSolid;
+$top-bar-border-bottom:              1px solid $gray12;
+$top-bar-font-size:                  20px;
 $bottom-bar-height:                  40px;
-$top-bar-bottom-border:              1px solid $gray12;
 $menu-padding-top-bottom:            8px;
 
 // Shadows (copied from Material Design)
@@ -116,7 +118,7 @@ $navigator-border-color:             $light-shade;
 
 // Section viewer
 $section-selection-bgcolor:          $grayLightSolid;
-$sections-select-height:             $top-bar-height;
+$sections-select-height:             $top-bar-height - 1;
 $sections-top-height:                40px;
 $sections-top-search-result-height:  64px;
 $sections-bottom-height:             41px;
@@ -139,11 +141,11 @@ $search-scope-border-width:          1px;
 $add-root-folder-hover-color:        $lightest-shade;
 
 // Document listing
-$doclist-head-bgcolor:               $grayLightSolid;
+$doclist-head-bgcolor:               $top-bar-bgcolor;
 $doclist-head-color:                 $gray60;
 $doclist-head-hover-color:           $gray87;
 $doclist-head-sorted-color:          $gray87;
-$doclist-head-height:                $top-bar-height;
+$doclist-head-height:                $top-bar-height - 1;
 $doclist-padding-left-right:         8px;
 $doclist-padding-icon:               12px;
 $doclist-row-separator-color:        $light-shade;
@@ -245,8 +247,9 @@ $feedback-error-color:               $danger-light;
 // Dashboard
 $dashboard-panel-bgcolor:            $white;
 $dashboard-panel-border-color:       $light-shade;
-$dashboard-panel-header-bgcolor:     $light-shade;
+$dashboard-panel-header-bgcolor:     $top-bar-bgcolor;
 $dashboard-panel-header-color:       $darkest-shade;
+$dashboard-panel-header-border-bt:   $top-bar-border-bottom;
 $dashboard-gotolink-icon-color:      $brand-primary;
 
 // Picker
