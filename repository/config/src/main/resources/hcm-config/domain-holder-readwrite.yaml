@@ -1,6 +1,6 @@
 definitions:
   config:
-    /hippo:configuration/hippo:domains/holder-document-draft-readwrite:
+    /hippo:configuration/hippo:domains/draft-document-holder-readwrite:
       jcr:primaryType: hipposys:domain
       /holder-domain:
         jcr:primaryType: hipposys:domainrule
