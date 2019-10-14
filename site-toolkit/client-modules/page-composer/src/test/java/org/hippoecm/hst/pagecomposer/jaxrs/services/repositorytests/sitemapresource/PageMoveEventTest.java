@@ -72,11 +72,11 @@ public class PageMoveEventTest extends AbstractSiteMapResourceTest {
                 final PageMoveContext pageMoveContext = event.getPageActionContext();
 
                 assertEquals("Original parent sitemapitem node is not set correctly",
-                        "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap", pageMoveContext.getOriginalParentSiteMapNode().getPath());
+                        getPreviewConfigurationWorkspaceSitemapPath(), pageMoveContext.getOriginalParentSiteMapNode().getPath());
                 assertEquals("Parent sitemapitem node of moved item is not set correctly",
-                        "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/news", pageMoveContext.getNewParentSiteMapNode().getPath());
+                        getPreviewConfigurationWorkspaceSitemapPath() + "/news", pageMoveContext.getNewParentSiteMapNode().getPath());
                 assertEquals("Moved sitemapitem node is not at the expected path",
-                        "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/news/home", pageMoveContext.getNewSiteMapItemNode().getPath());
+                        getPreviewConfigurationWorkspaceSitemapPath() + "/news/home", pageMoveContext.getNewSiteMapItemNode().getPath());
                 assertEquals("Moved sitemapitem node should be locked by admin",
                         "admin", pageMoveContext.getNewSiteMapItemNode().getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
             } catch (Exception e) {
@@ -111,7 +111,8 @@ public class PageMoveEventTest extends AbstractSiteMapResourceTest {
             final SiteMapItemRepresentation news = getSiteMapItemRepresentation(session, "news");
             SiteMapResource siteMapResource = createResource();
             final Response response = siteMapResource.move(home.getId(), news.getId());
-            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(), Response.Status.OK.getStatusCode(), response.getStatus());
+            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                    Response.Status.OK.getStatusCode(), response.getStatus());
 
             final PageMoveEvent pme = pageMoveEventListener.receivedEvent;
             assertNotNull(pme);
@@ -133,10 +134,11 @@ public class PageMoveEventTest extends AbstractSiteMapResourceTest {
             final SiteMapItemRepresentation news = getSiteMapItemRepresentation(session, "news");
             SiteMapResource siteMapResource = createResource();
             final Response response = siteMapResource.move(home.getId(), news.getId());
-            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(), INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                    INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
 
-            final String originalSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home";
-            final String originalPageNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/homepage";
+            final String originalSiteMapItemNodePath = getPreviewConfigurationWorkspaceSitemapPath() + "/home";
+            final String originalPageNodePath = getPreviewConfigurationWorkspacePagesPath() + "/homepage";
 
             // FailingPageDeleteEventListener should have short circuited the entire move and also must have removed the session changes
             assertTrue(session.nodeExists(originalSiteMapItemNodePath));
@@ -157,10 +159,11 @@ public class PageMoveEventTest extends AbstractSiteMapResourceTest {
             final SiteMapItemRepresentation news = getSiteMapItemRepresentation(session, "news");
             SiteMapResource siteMapResource = createResource();
             final Response response = siteMapResource.move(home.getId(), news.getId());
-            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(), BAD_REQUEST.getStatusCode(), response.getStatus());
+            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                    BAD_REQUEST.getStatusCode(), response.getStatus());
 
-            final String originalSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home";
-            final String originalPageNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/homepage";
+            final String originalSiteMapItemNodePath = getPreviewConfigurationWorkspaceSitemapPath() + "/home";
+            final String originalPageNodePath = getPreviewConfigurationWorkspacePagesPath() + "/homepage";
 
             // FailingPageDeleteEventListener should have short circuited the entire move and also must have removed the session changes
             assertTrue(session.nodeExists(originalSiteMapItemNodePath));

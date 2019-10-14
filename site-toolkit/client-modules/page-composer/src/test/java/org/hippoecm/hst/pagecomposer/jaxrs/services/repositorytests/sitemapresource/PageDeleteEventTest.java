@@ -103,11 +103,14 @@ public class PageDeleteEventTest extends AbstractSiteMapResourceTest {
             }
             final PageDeleteContext pageDeleteContext = event.getPageActionContext();
 
-            assertEquals("Deleted sitemap item is not home", "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home", pageDeleteContext.getSourceSiteMapPath());
-            assertEquals("Deleted sitemap item object does not equal home sitemapitem object", homeSiteMapItem, pageDeleteContext.getSourceSiteMapItem());
+            assertEquals("Deleted sitemap item is not home",
+                    getPreviewConfigurationWorkspaceSitemapPath() + "/home", pageDeleteContext.getSourceSiteMapPath());
+            assertEquals("Deleted sitemap item object does not equal home sitemapitem object",
+                    homeSiteMapItem, pageDeleteContext.getSourceSiteMapItem());
 
             try {
-                assertEquals("Deleted sitemap item has not been marked for deletion", "deleted", session.getNode(pageDeleteContext.getSourceSiteMapPath()).getProperty(EDITABLE_PROPERTY_STATE).getString());
+                assertEquals("Deleted sitemap item has not been marked for deletion",
+                        "deleted", session.getNode(pageDeleteContext.getSourceSiteMapPath()).getProperty(EDITABLE_PROPERTY_STATE).getString());
             } catch (Exception e) {
                 event.setException(new RuntimeException("Exception while accessing " + pageDeleteContext.getSourceSiteMapPath()));
             }
@@ -147,9 +150,10 @@ public class PageDeleteEventTest extends AbstractSiteMapResourceTest {
             final PageDeleteContext pageDeleteContext = receivedEvent.getPageActionContext();
             assertNotNull(pageDeleteContext);
 
-            final String previewSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home";
+            final String previewSiteMapItemNodePath = getPreviewConfigurationWorkspaceSitemapPath() + "/home";
 
-            assertEquals("Deleted sitemapitem path doesn't match the path in page delete context", previewSiteMapItemNodePath, pageDeleteContext.getSourceSiteMapPath());
+            assertEquals("Deleted sitemapitem path doesn't match the path in page delete context",
+                    previewSiteMapItemNodePath, pageDeleteContext.getSourceSiteMapPath());
 
         } finally {
             pageDeleteEventListener.destroy();
@@ -167,10 +171,11 @@ public class PageDeleteEventTest extends AbstractSiteMapResourceTest {
             SiteMapResource siteMapResource = createResource();
 
             final Response response = siteMapResource.delete(home.getId());
-            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(), INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                    INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
 
-            final String previewSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home";
-            final String previewPageNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/homepage";
+            final String previewSiteMapItemNodePath = getPreviewConfigurationWorkspaceSitemapPath() + "/home";
+            final String previewPageNodePath = getPreviewConfigurationWorkspacePagesPath() + "/homepage";
 
             // FailingPageDeleteEventListener should have short circuited the entire delete and also must have removed the session changes
             assertTrue(session.nodeExists(previewSiteMapItemNodePath));
@@ -191,10 +196,11 @@ public class PageDeleteEventTest extends AbstractSiteMapResourceTest {
             SiteMapResource siteMapResource = createResource();
 
             final Response response = siteMapResource.delete(home.getId());
-            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(), BAD_REQUEST.getStatusCode(), response.getStatus());
+            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                    BAD_REQUEST.getStatusCode(), response.getStatus());
 
-            final String previewSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home";
-            final String previewPageNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/homepage";
+            final String previewSiteMapItemNodePath = getPreviewConfigurationWorkspaceSitemapPath() + "/home";
+            final String previewPageNodePath = getPreviewConfigurationWorkspacePagesPath() + "/homepage";
 
             // FailingPageDeleteEventListener should have short circuited the entire delete and also must have removed the session changes
             assertTrue(session.nodeExists(previewSiteMapItemNodePath));
@@ -208,12 +214,13 @@ public class PageDeleteEventTest extends AbstractSiteMapResourceTest {
     private void deleteHomePage(boolean publish) throws Exception {
         SiteMapResource siteMapResource = createResource();
         final Response response = siteMapResource.delete(homeRepresentation.getId());
-        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(), OK.getStatusCode(), response.getStatus());
+        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                OK.getStatusCode(), response.getStatus());
 
-        final String previewSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home";
-        final String previewPageNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/homepage";
-        final String liveSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/home";
-        final String livePageNodePath = "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/homepage";
+        final String previewSiteMapItemNodePath = getPreviewConfigurationWorkspaceSitemapPath() + "/home";
+        final String previewPageNodePath = getPreviewConfigurationWorkspacePagesPath() + "/homepage";
+        final String liveSiteMapItemNodePath = getLiveConfigurationWorkspaceSitemapPath() + "/home";
+        final String livePageNodePath = getLiveConfigurationWorkspacePagesPath() + "/homepage";
         assertTrue(session.nodeExists(previewSiteMapItemNodePath));
         assertTrue(session.nodeExists(previewPageNodePath));
 

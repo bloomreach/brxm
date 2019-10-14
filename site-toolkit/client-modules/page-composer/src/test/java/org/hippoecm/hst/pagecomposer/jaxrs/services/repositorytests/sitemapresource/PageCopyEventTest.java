@@ -74,8 +74,10 @@ public class PageCopyEventTest extends AbstractSiteMapResourceTest {
             final PageCopyContext pageCopyContext = event.getPageActionContext();
 
             try {
-                assertEquals("Copied sitemap item should be locked by admin", "admin", pageCopyContext.getNewSiteMapItemNode().getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
-                assertEquals("Copied page should be locked by admin", "admin", pageCopyContext.getNewPageNode().getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
+                assertEquals("Copied sitemap item should be locked by admin", "admin",
+                        pageCopyContext.getNewSiteMapItemNode().getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
+                assertEquals("Copied page should be locked by admin", "admin",
+                        pageCopyContext.getNewPageNode().getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
             } catch (Exception e) {
                 event.setException(new RuntimeException(e));
             }
@@ -111,10 +113,10 @@ public class PageCopyEventTest extends AbstractSiteMapResourceTest {
             final PageCopyContext pcc = pce.getPageActionContext();
             assertNotNull(pcc);
 
-            final String previewSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/copiedHome";
-            final String previewPageNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/copiedHome";
-            final String liveSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/copiedHome";
-            final String livePageNodePath = "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/copiedHome";
+            final String previewSiteMapItemNodePath = getPreviewConfigurationWorkspaceSitemapPath() + "/copiedHome";
+            final String previewPageNodePath = getPreviewConfigurationWorkspacePagesPath() + "/copiedHome";
+            final String liveSiteMapItemNodePath = getLiveConfigurationWorkspaceSitemapPath() + "/copiedHome";
+            final String livePageNodePath = getLiveConfigurationWorkspacePagesPath() + "/copiedHome";
 
             assertEquals(previewSiteMapItemNodePath, pcc.getNewSiteMapItemNode().getPath());
             assertEquals(previewPageNodePath, pcc.getNewPageNode().getPath());
@@ -142,10 +144,11 @@ public class PageCopyEventTest extends AbstractSiteMapResourceTest {
             SiteMapResource siteMapResource = createResource();
             final Mount editingMount = mountResource.getPageComposerContextService().getEditingMount();
             final Response response = siteMapResource.copy(editingMount.getIdentifier(), home.getId(), null, "copiedHome");
-            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(), INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
+            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                    INTERNAL_SERVER_ERROR.getStatusCode(), response.getStatus());
 
-            final String previewSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/copiedHome";
-            final String previewPageNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/copiedHome";
+            final String previewSiteMapItemNodePath = getPreviewConfigurationWorkspaceSitemapPath() + "/copiedHome";
+            final String previewPageNodePath = getPreviewConfigurationWorkspacePagesPath() + "/copiedHome";
 
             // FailingPageCopyEventListener should have short circuited the entire copy and also must have removed the session changes
             assertFalse(session.nodeExists(previewSiteMapItemNodePath));
@@ -165,10 +168,11 @@ public class PageCopyEventTest extends AbstractSiteMapResourceTest {
             SiteMapResource siteMapResource = createResource();
             final Mount editingMount = mountResource.getPageComposerContextService().getEditingMount();
             final Response response = siteMapResource.copy(editingMount.getIdentifier(), home.getId(), null, "copiedHome");
-            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(), BAD_REQUEST.getStatusCode(), response.getStatus());
+            assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                    BAD_REQUEST.getStatusCode(), response.getStatus());
 
-            final String previewSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/copiedHome";
-            final String previewPageNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/copiedHome";
+            final String previewSiteMapItemNodePath = getPreviewConfigurationWorkspaceSitemapPath() + "copiedHome";
+            final String previewPageNodePath = getPreviewConfigurationWorkspacePagesPath() + "/copiedHome";
 
             // FailingPageCopyEventListener should have short circuited the entire copy and also must have removed the session changes
             assertFalse(session.nodeExists(previewSiteMapItemNodePath));
@@ -184,7 +188,8 @@ public class PageCopyEventTest extends AbstractSiteMapResourceTest {
         SiteMapResource siteMapResource = createResource();
         final Mount editingMount = mountResource.getPageComposerContextService().getEditingMount();
         final Response response = siteMapResource.copy(editingMount.getIdentifier(), home.getId(), (targetParent == null ? null : targetParent.getId()), copyName);
-        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(), OK.getStatusCode(), response.getStatus());
+        assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
+                OK.getStatusCode(), response.getStatus());
 
         final String pathInfo;
         if (targetParent == null) {
@@ -196,10 +201,10 @@ public class PageCopyEventTest extends AbstractSiteMapResourceTest {
         }
 
         final String pageName = pathInfo.replaceAll("/", "-");
-        final String previewSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/" + pathInfo;
-        final String previewPageNodePath = "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:pages/" + pageName;
-        final String liveSiteMapItemNodePath = "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:sitemap/" + pathInfo;
-        final String livePageNodePath = "/hst:hst/hst:configurations/unittestproject/hst:workspace/hst:pages/" + pageName;
+        final String previewSiteMapItemNodePath = getPreviewConfigurationWorkspaceSitemapPath() + "/" + pathInfo;
+        final String previewPageNodePath = getPreviewConfigurationWorkspacePagesPath() + "/" + pageName;
+        final String liveSiteMapItemNodePath = getLiveConfigurationWorkspaceSitemapPath() + "/" + pathInfo;
+        final String livePageNodePath = getLiveConfigurationWorkspacePagesPath() + "/" + pageName;
         assertTrue(session.nodeExists(previewSiteMapItemNodePath));
         assertTrue(session.nodeExists(previewPageNodePath));
         assertFalse(session.nodeExists(liveSiteMapItemNodePath));
