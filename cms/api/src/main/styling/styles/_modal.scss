@@ -19,20 +19,6 @@
 }
 
 .hippo-root .wicket-modal {
-
-  // Wicket Modal bottom direction cursor image fixes
-  .w_bottom {
-    cursor: s-resize;
-  }
-
-  .w_bottomLeft {
-    cursor: sw-resize;
-  }
-
-  .w_bottomRight {
-    cursor: se-resize;
-  }
-
   // Set border width, height and color
   .w_topLeft,
   .w_top,
@@ -47,11 +33,6 @@
   .w_left,
   .w_right {
     background-color: $modal-border-color;
-  }
-
-  .w_content_1 {
-    box-shadow: $whiteframe-shadow-24dp;
-    margin-right: $modal-border-width;
   }
 
   .w_right_1 {
@@ -76,6 +57,8 @@
   .w_caption {
     background: $modal-header-bgcolor;
     border-bottom: 1px solid $gray12;
+    border-top-left-radius: $modal-border-radius;
+    border-top-right-radius: $modal-border-radius;
     color: $modal-header-color;
     cursor: move;
     height: $modal-header-height;
@@ -99,6 +82,32 @@
 
   .w_content {
     background-color: $modal-bgcolor;
+    border-bottom-left-radius: $modal-border-radius;
+    border-bottom-right-radius: $modal-border-radius;
+  }
+
+  .w_content_1 {
+    border-bottom-left-radius: $modal-border-radius;
+    border-bottom-right-radius: $modal-border-radius;
+    box-shadow: $whiteframe-shadow-24dp;
+    margin-right: $modal-border-width;
+  }
+
+  .w_content_2 {
+    background-color: transparent;
+  }
+
+  // Wicket Modal bottom direction cursor image fixes
+  .w_bottom {
+    cursor: s-resize;
+  }
+
+  .w_bottomLeft {
+    cursor: sw-resize;
+  }
+
+  .w_bottomRight {
+    cursor: se-resize;
   }
 }
 
