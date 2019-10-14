@@ -103,17 +103,11 @@ public class PageDeleteEventTest extends AbstractSiteMapResourceTest {
             }
             final PageDeleteContext pageDeleteContext = event.getPageActionContext();
 
-            if (!"/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home".equals(pageDeleteContext.getSourceSiteMapPath())) {
-                event.setException(new RuntimeException("Deleted sitemap item is not home"));
-            }
-            if (!homeSiteMapItem.equals(pageDeleteContext.getSourceSiteMapItem())) {
-                event.setException(new RuntimeException("Deleted sitemap item object does not equal home sitemapitem object"));
-            }
+            assertEquals("Deleted sitemap item is not home", "/hst:hst/hst:configurations/unittestproject-preview/hst:workspace/hst:sitemap/home", pageDeleteContext.getSourceSiteMapPath());
+            assertEquals("Deleted sitemap item object does not equal home sitemapitem object", homeSiteMapItem, pageDeleteContext.getSourceSiteMapItem());
 
             try {
-                if (!"deleted".equals(session.getNode(pageDeleteContext.getSourceSiteMapPath()).getProperty(EDITABLE_PROPERTY_STATE).getString())) {
-                    event.setException(new RuntimeException("Deleted sitemap item has not been marked for deletion"));
-                }
+                assertEquals("Deleted sitemap item has not been marked for deletion", "deleted", session.getNode(pageDeleteContext.getSourceSiteMapPath()).getProperty(EDITABLE_PROPERTY_STATE).getString());
             } catch (Exception e) {
                 event.setException(new RuntimeException("Exception while accessing " + pageDeleteContext.getSourceSiteMapPath()));
             }

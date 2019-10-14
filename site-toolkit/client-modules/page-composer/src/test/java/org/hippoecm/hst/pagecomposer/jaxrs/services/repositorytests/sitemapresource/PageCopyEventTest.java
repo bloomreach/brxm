@@ -73,12 +73,8 @@ public class PageCopyEventTest extends AbstractSiteMapResourceTest {
             final PageCopyContext pageCopyContext = event.getPageActionContext();
 
             try {
-                if (!"admin".equals(pageCopyContext.getNewSiteMapItemNode().getProperty(GENERAL_PROPERTY_LOCKED_BY).getString())) {
-                    event.setException(new RuntimeException("Copied sitemap item should be locked by admin"));
-                }
-                if (!"admin".equals(pageCopyContext.getNewPageNode().getProperty(GENERAL_PROPERTY_LOCKED_BY).getString())) {
-                    event.setException(new RuntimeException("Copied page should be locked by admin"));
-                }
+                assertEquals("Copied sitemap item should be locked by admin", "admin", pageCopyContext.getNewSiteMapItemNode().getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
+                assertEquals("Copied page should be locked by admin", "admin", pageCopyContext.getNewPageNode().getProperty(GENERAL_PROPERTY_LOCKED_BY).getString());
             } catch (Exception e) {
                 event.setException(new RuntimeException(e));
             }
