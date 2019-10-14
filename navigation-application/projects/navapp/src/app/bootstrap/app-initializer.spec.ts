@@ -75,6 +75,9 @@ describe('appInitializer', () => {
 
     tick();
 
-    expect(errorHandlingServiceMock.setCriticalError).toHaveBeenCalledWith('Unable to load initial configuration');
+    expect(errorHandlingServiceMock.setCriticalError).toHaveBeenCalledWith(
+      'Unable to load initial configuration',
+      'navConfigService.init is not a function',
+    );
   }));
 });

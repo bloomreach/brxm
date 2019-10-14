@@ -50,7 +50,6 @@ describe('AppComponent', () => {
       schemas: [NO_ERRORS_SCHEMA],
     }).createComponent(AppComponent);
 
-    fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
   });
 
