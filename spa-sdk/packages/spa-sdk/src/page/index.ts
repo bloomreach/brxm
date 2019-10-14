@@ -20,6 +20,7 @@ export * from './container-item';
 export * from './container';
 export * from './content';
 export * from './factory';
+export * from './link-factory';
 export * from './link';
 export * from './menu';
 export * from './meta-comment';
