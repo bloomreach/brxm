@@ -35,7 +35,7 @@ export class MenuStructureService {
   private createMenuStructure(): MenuItem[] {
     const dashboard = new MenuItemLink(
       'hippo-perspective-dashboardperspective',
-      'Dashboard',
+      'Home',
       'dashboard',
     );
 
