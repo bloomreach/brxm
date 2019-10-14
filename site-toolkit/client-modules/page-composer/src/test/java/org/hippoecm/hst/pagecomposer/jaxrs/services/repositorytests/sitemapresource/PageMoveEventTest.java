@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import org.onehippo.cms7.services.eventbus.Subscribe;
 
 import static javax.ws.rs.core.Response.Status.BAD_REQUEST;
 import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_LOCKED_BY;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError.INVALID_NAME;
 import static org.junit.Assert.assertEquals;
@@ -112,7 +113,7 @@ public class PageMoveEventTest extends AbstractSiteMapResourceTest {
             SiteMapResource siteMapResource = createResource();
             final Response response = siteMapResource.move(home.getId(), news.getId());
             assertEquals(((ExtResponseRepresentation) response.getEntity()).getMessage(),
-                    Response.Status.OK.getStatusCode(), response.getStatus());
+                    OK.getStatusCode(), response.getStatus());
 
             final PageMoveEvent pme = pageMoveEventListener.receivedEvent;
             assertNotNull(pme);
