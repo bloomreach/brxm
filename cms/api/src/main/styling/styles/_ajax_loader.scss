@@ -23,7 +23,7 @@
   visibility: hidden;
 
   .ajax-loader {
-    display: block;
+    display: none;
     width: 100%;
     height: $ajax-loader-height;
     animation: ajaxloader 1s infinite linear;
@@ -38,7 +38,7 @@
 }
 
 .hippo-ajax-show-load .wicket-ajax-indicator {
-  visibility: visible;
+  visibility: hidden;
 
   .ajax-loader {
     will-change: transform;

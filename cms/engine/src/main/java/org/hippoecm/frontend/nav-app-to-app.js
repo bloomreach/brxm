@@ -78,6 +78,14 @@
       this.parentApiPromise.then(parentApi => parentApi.hideMask());
     }
 
+    showBusyIndicator() {
+      this.parentApiPromise.then(parentApi => parentApi.showBusyIndicator());
+    }
+
+    hideBusyIndicator() {
+      this.parentApiPromise.then(parentApi => parentApi.hideBusyIndicator());
+    }
+
     updateNavLocation (location) {
       return this.parentApiPromise.then(parentApi => parentApi.updateNavLocation(location));
     }
@@ -191,13 +199,19 @@
 
   Hippo.updateNavLocation = function(location) {
     return Hippo.iframeConnections.updateNavLocation(location);
-  }
+  };
   Hippo.showMask = function() {
     Hippo.iframeConnections.showMask();
-  }
+  };
   Hippo.hideMask = function() {
     Hippo.iframeConnections.hideMask();
-  }
+  };
+  Hippo.showBusyIndicator = function() {
+    Hippo.iframeConnections.showBusyIndicator();
+  };
+  Hippo.hideBusyIndicator = function() {
+    Hippo.iframeConnections.hideBusyIndicator();
+  };
 })();
 
 //# sourceURL=nav-app-to-app.js
