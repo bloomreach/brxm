@@ -19,12 +19,14 @@ import {
   Component,
   EventEmitter,
   HostBinding,
+  Inject,
   Input,
   Output,
 } from '@angular/core';
 
 import { UserSettings } from '../../../models/dto/user-settings.dto';
 import { AuthService } from '../../../services/auth.service';
+import { USER_SETTINGS } from '../../../services/user-settings';
 
 @Component({
   selector: 'brna-user-toolbar-drawer',
@@ -44,9 +46,6 @@ import { AuthService } from '../../../services/auth.service';
 })
 export class UserToolbarDrawerComponent {
   @Input()
-  config: UserSettings;
-
-  @Input()
   userDrawerOpen: boolean;
 
   @Output()
@@ -57,14 +56,15 @@ export class UserToolbarDrawerComponent {
 
   constructor(
     private authService: AuthService,
-  ) { }
+    @Inject(USER_SETTINGS) private userSettings: UserSettings,
+  ) {}
 
   get userName(): string {
-    return this.config.userName;
+    return this.userSettings.userName;
   }
 
   get email(): string {
-    return this.config.email || '';
+    return this.userSettings.email || '';
   }
 
   logout(event: Event): void {
