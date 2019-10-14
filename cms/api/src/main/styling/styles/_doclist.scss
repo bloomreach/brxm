@@ -184,7 +184,7 @@ $doclist-icon-shift-right: 2px;
   > thead {
     color: $doclist-head-color;
     background-color: $doclist-head-bgcolor;
-    border-bottom: $top-bar-bottom-border;
+    border-bottom: $top-bar-border-bottom;
 
     > tr {
       display: block;
@@ -206,7 +206,7 @@ $doclist-icon-shift-right: 2px;
         // align the background image of the icon column header with the icons in the body
         &.doclisting-icon {
           background-position:
-            top ($doclist-padding-icon + 1)
+            top ($doclist-padding-icon + 5)
             left ($doclist-padding-icon + $doclist-icon-shift-right + 8);
         }
       }

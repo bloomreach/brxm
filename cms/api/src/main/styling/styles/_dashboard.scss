@@ -25,14 +25,16 @@
     background: $dashboard-panel-bgcolor;
 
     h2 {
+      background-color: $dashboard-panel-header-bgcolor;
+      border-bottom: $dashboard-panel-header-border-bt;
+      box-sizing: border-box;
       color: $dashboard-panel-header-color;
       font-size: 15px;
       font-style: normal;
       font-weight: normal;
       height: $dashboard-header-height;
       line-height: $dashboard-header-height;
-      padding: 0 16px;
-      background-color: $dashboard-panel-header-bgcolor;
+      padding: 0 24px;
 
       @include truncate();
     }
