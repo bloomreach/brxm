@@ -165,9 +165,7 @@ public class RootPlugin extends TabsPlugin {
 
         add(view);
 
-        if (!hidePerspectiveMenu()) {
-            add(new AjaxIndicatorBehavior());
-        }
+        add(new AjaxIndicatorBehavior());
 
         add(new ExtHippoThemeBehavior());
 
