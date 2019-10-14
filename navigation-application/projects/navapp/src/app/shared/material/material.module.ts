@@ -50,6 +50,8 @@ export class MaterialModule {
         'audiences.active',
         'categories',
         'categories.active',
+        'dashboard',
+        'dashboard.active',
         'default',
         'default.active',
         'documents',

@@ -22,6 +22,18 @@
   position: relative;
 }
 
+.home {
+  align-items: center;
+  display: grid;
+  height: $menu-top-item-height;
+
+  .mat-icon {
+    color: $white;
+    display: grid;
+    grid-template-columns: $menu-collapsed-width 1fr;
+  }
+}
+
 .static-menu {
   align-content: space-between;
   background-color: $menu-bg;

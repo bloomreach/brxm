@@ -82,11 +82,6 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     this.menuStateService.toggle();
   }
 
-  onHomeMenuItemClick(event: MouseEvent): void {
-    event.stopImmediatePropagation();
-    this.selectMenuItem(this.homeMenuItem);
-  }
-
   onMenuItemClick(event: MouseEvent, item: MenuItem): void {
     event.stopImmediatePropagation();
     this.isHelpToolbarOpened = false;
@@ -124,10 +119,6 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     return this.menuStateService.isMenuItemActive(item);
   }
 
-  isHomeMenuItemActive(): boolean {
-    return this.isMenuItemActive(this.homeMenuItem);
-  }
-
   getQaClass(item: MenuItem | string): string {
     return this.qaHelperService.getMenuItemClass(item);
   }
@@ -139,7 +130,6 @@ export class MainMenuComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.homeMenuItem = menu[0] as MenuItemLink;
-    this.menuItems = menu.slice(1);
+    this.menuItems = menu;
   }
 }

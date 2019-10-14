@@ -116,12 +116,12 @@ describe('MainMenuComponent', () => {
     expect(component.menuItems).toEqual([]);
   });
 
-  it('should extract menu items when the app is bootstrapped', fakeAsync(() => {
+  it('should return all menu items when the app is bootstrapped', fakeAsync(() => {
     appBootstrappedResolve();
 
     tick();
 
-    expect(component.menuItems).toEqual(menuMock.slice(1));
+    expect(component.menuItems).toEqual(menuMock);
   }));
 
   describe('when the app is bootstrapped', () => {
