@@ -27,6 +27,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { SiteService } from '../../../services/site.service';
+import { WindowRef } from '../../../shared/services/window-ref.service';
 import { RightSidePanelService } from '../../services/right-side-panel.service';
 
 interface SiteFlatNode {
@@ -64,6 +65,7 @@ export class SiteSelectionComponent implements OnInit, OnDestroy {
   constructor(
     private siteService: SiteService,
     private rightSidePanelService: RightSidePanelService,
+    private windowRef: WindowRef,
   ) { }
 
   get isNotFoundPanelVisible(): boolean {
@@ -101,6 +103,7 @@ export class SiteSelectionComponent implements OnInit, OnDestroy {
     this.siteService.updateSelectedSite(site).then(() => {
       this.siteService.setSelectedSite(site);
       this.rightSidePanelService.close();
+      this.windowRef.nativeWindow.location.reload();
     });
   }
 
