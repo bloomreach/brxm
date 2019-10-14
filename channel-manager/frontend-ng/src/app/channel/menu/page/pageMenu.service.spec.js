@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -120,7 +120,7 @@ describe('PageMenuService', () => {
 
       it('hides the "tools" option', () => {
         const tools = getItem('tools');
-        expect(tools).not.toBeDefined();
+        expect(tools.isVisible()).toBe(false);
       });
     });
 
@@ -393,7 +393,13 @@ describe('PageMenuService', () => {
       it('the menu has only the tools option', () => {
         const tools = getItem('tools');
         expect(tools).toBeDefined();
-        expect(PageMenuService.menu.items.length).toBe(1);
+        expect(tools.isVisible()).toBe(true);
+
+        PageMenuService.menu.items.forEach((item) => {
+          if (item !== tools) {
+            expect(item.isVisible()).toBe(false);
+          }
+        });
       });
     });
 
