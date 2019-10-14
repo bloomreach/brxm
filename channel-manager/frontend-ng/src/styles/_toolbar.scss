@@ -16,7 +16,9 @@
 @import 'variables';
 
 md-toolbar.hippo-toolbar {
-  background: $grey-200;
+  background: $toolbar-bg;
+  border-bottom: $toolbar-border-bottom;
+  box-sizing: content-box;
   color: $text-dark;
   height: $toolbar-height;
   min-height: $toolbar-height;
@@ -61,6 +63,8 @@ md-toolbar.hippo-toolbar {
     }
 
     md-menu > .md-button {
+      border-radius: 4px;
+      height: $toolbar-button-height;
       margin-right: 0;
       min-width: initial;
     }
@@ -73,10 +77,10 @@ md-toolbar.hippo-toolbar {
 
   .md-icon-button {
     color: $text-dark;
-    height: $toolbar-height;
+    height: $toolbar-round-button-size;
     margin: 0;
     padding: 0;
-    width: 40px;
+    width: $toolbar-round-button-size;
   }
 
   md-icon {
@@ -123,11 +127,11 @@ md-toolbar.hippo-toolbar {
 }
 
 md-toolbar > md-progress-linear {
-  bottom: 0;
-  height: 2px;
+  height: 1px;
   position: absolute;
+  top: $toolbar-height;
 
   .md-container {
-    height: 2px;
+    height: 1px;
   }
 }

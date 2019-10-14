@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -33,7 +33,7 @@
             this.userPreferences = JSON.parse(localStorage.getItem('channelMgrConf'));
 
             toolbar = new Ext.Toolbar({
-                height: 40,
+                height: 52,
                 cls: 'channel-manager-toolbar',
                 items: [
                     '->',

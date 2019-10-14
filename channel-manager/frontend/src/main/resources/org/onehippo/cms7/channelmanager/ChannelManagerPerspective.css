@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,9 +30,9 @@
 
 /* toolbar */
 .x-panel .x-panel-tbar .channel-manager-toolbar.x-toolbar {
-  background: #e8e8ea none;
-  padding: 0 8px;
-  border-bottom: none;
+  background: #f5f5f5 none;
+  padding: 0 8px 0 20px;
+  border-bottom: 1px solid rgba(0, 0, 0, .12);
 }
 
 #hippo-channelmanager-breadcrumb.x-toolbar {
@@ -56,8 +56,8 @@
 
 .channel-manager .channel-manager-toolbar.x-toolbar .x-btn-text {
   margin: 0 4px;
-  height: 40px;
-  line-height: 40px;
+  height: 52px;
+  line-height: 52px;
 }
 
 .channel-manager .x-btn:not(.btn) .x-btn-text:hover {
