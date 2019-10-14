@@ -14,7 +14,7 @@
 
 .hippo-toolbar-menu {
   align-items: center;
-  box-sizing: content-box;
+  box-sizing: border-box;
   border-bottom: 1px solid $gray12;
   background-color: $editor-toolbar-bgcolor;
   display: flex;
