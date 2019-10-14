@@ -128,33 +128,22 @@
             }
 
             return navigateIframe(iframe, 'projects', triggeredBy);
-  
+
           case 'channelmanager':
-            if (!iframe) {
-              // If there is no iframe perspective.click() is enough to show channels overview
-              return Promise.resolve();
-            }
-
-            const rootPanel = Ext.getCmp('rootPanel');
-
-            if (!rootPanel) {
-              return Promise.reject(new Error('rootPanel is not found'));
-            }
-
-            // Just show the channels overview when requested path is 'channelmanager'
-            if (pathElements.length === 0) {
+            if (triggeredBy === 'NotDefined' || triggeredBy === 'Breadcrumbs') {
+              const rootPanel = Ext.getCmp('rootPanel');
+              if (!rootPanel) {
+                return Promise.reject(new Error('rootPanel is not found'));
+              }
               rootPanel.fireEvent('navigate-to-channel-overview');
-              return Promise.resolve();
             }
+            return Promise.resolve();
 
-            const path = pathElements.join('/');
-            return navigateIframe(iframe, path, triggeredBy);
-  
           case 'browser':
             if (pathElements.length === 0) {
               return Promise.resolve();
             }
-  
+
             const docLocation = document.location;
             const url = new URL(docLocation.href);
             if ( pathElements[0] === 'path') {
@@ -163,9 +152,9 @@
               url.searchParams.append('uuid', pathElements[1]);
             }
             docLocation.assign(url.toString())
-  
+
             return Promise.resolve();
-  
+
           default:
               return Promise.resolve();
         }
