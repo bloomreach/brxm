@@ -32,7 +32,7 @@ public interface PageUpdateContext extends PageActionContext {
 
     /**
      * @return the in {@link HstRequestContext#getSession() session} created (but not yet persisted) page JCR {@link Node}
-     * as a result of this update page action
+     * as a result of this update page action, or null if the page used by this site map item was not changed
      */
     public Node getUpdatedPageNode();
 }
