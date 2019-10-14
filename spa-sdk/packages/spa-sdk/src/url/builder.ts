@@ -74,9 +74,23 @@ export interface UrlBuilder {
 
 export class UrlBuilderImpl {
   private static getUrlPath(url: string) {
+    if (!url) {
+      return '';
+    }
+
     // URL constructor requires either a valid URL or a base URL.
     // Since this function returns a pathname, we can safely pass a fake host to be able to resolve relative URLs.
-    return url && (new URL(url, 'http://example.com')).pathname;
+    const { hash, pathname, search } = new URL(url, 'http://example.com');
+
+    return `${pathname}${search}${hash}`;
+  }
+
+  private static getUrlOrigin(url: string) {
+    const path = UrlBuilderImpl.getUrlPath(url);
+
+    return path && url.endsWith(path)
+      ? url.substring(0, url.length - path.length)
+      : url;
   }
 
   private static appendQuery(url: string, query: string) {
@@ -101,33 +115,30 @@ export class UrlBuilderImpl {
       apiUrlSuffix = DEFAULT_API_URL_SUFFIX,
       spaBaseUrl = DEFAULT_SPA_BASE_URL,
     } = this.options;
-    const basePath = UrlBuilderImpl.getUrlPath(spaBaseUrl);
-    if (basePath && !pathname.startsWith(basePath)) {
-      throw new Error(`The path "${path}" does not start with the base path "${basePath}".`);
+    const base = UrlBuilderImpl.getUrlPath(spaBaseUrl);
+    if (base && !pathname.startsWith(base)) {
+      throw new Error(`The path "${path}" does not start with the base path "${base}".`);
     }
 
-    const channelPath = pathname.substring(basePath.length);
+    const route = pathname.substring(base.length);
 
-    return UrlBuilderImpl.appendQuery(`${apiBaseUrl}${channelPath}${apiUrlSuffix}`, query);
+    return UrlBuilderImpl.appendQuery(`${apiBaseUrl}${route}${apiUrlSuffix}`, query);
   }
 
-  getCmsUrl(path: string) {
-    const { cmsBaseUrl } = this.options;
-    const basePath = UrlBuilderImpl.getUrlPath(cmsBaseUrl);
-    const origin = basePath && cmsBaseUrl.endsWith(basePath)
-      ? cmsBaseUrl.substring(0, cmsBaseUrl.length - basePath.length)
-      : cmsBaseUrl;
+  getCmsUrl(link: string) {
+    const origin = UrlBuilderImpl.getUrlOrigin(this.options.cmsBaseUrl);
 
-    return `${origin}${path}`;
+    return `${origin}${link && UrlBuilderImpl.getUrlPath(link)}`;
   }
 
-  getSpaUrl(path: string) {
+  getSpaUrl(link: string) {
     const { cmsBaseUrl, spaBaseUrl = DEFAULT_SPA_BASE_URL } = this.options;
-    const basePath = UrlBuilderImpl.getUrlPath(cmsBaseUrl);
-    const channelPath = basePath && path.startsWith(basePath)
-      ? path.substring(basePath.length)
+    const base = UrlBuilderImpl.getUrlPath(cmsBaseUrl);
+    const path = link && UrlBuilderImpl.getUrlPath(link);
+    const route = base && path.startsWith(base)
+      ? path.substring(base.length)
       : path;
 
-    return `${spaBaseUrl}${channelPath}`;
+    return `${spaBaseUrl}${!route.startsWith('/') && !spaBaseUrl ? '/' : ''}${route}`;
   }
 }

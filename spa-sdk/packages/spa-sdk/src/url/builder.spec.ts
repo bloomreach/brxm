@@ -68,10 +68,13 @@ describe('UrlBuilderImpl', () => {
 
     it.each`
       options     | path       | expected
+      ${options1} | ${''}      | ${'http://localhost:8080'}
       ${options1} | ${'/'}     | ${'http://localhost:8080/'}
       ${options1} | ${'/news'} | ${'http://localhost:8080/news'}
       ${options2} | ${'/'}     | ${'//example.com/'}
       ${options2} | ${'/news'} | ${'//example.com/news'}
+      ${options2} | ${'//localhost/news'}          | ${'//example.com/news'}
+      ${options2} | ${'/news?something#something'} | ${'//example.com/news?something#something'}
     `('should create a CMS URL for "$path" using options "$options"', ({ options, path, expected }) => {
       builder.initialize(options);
 
@@ -82,6 +85,7 @@ describe('UrlBuilderImpl', () => {
   describe('getSpaUrl', () => {
     const options1 = { cmsBaseUrl: 'http://localhost:8080/site/spa' };
     const options2 = { ...options1, spaBaseUrl: '//example.com/something' };
+    const options3 = { ...options1, spaBaseUrl: '' };
 
     it.each`
       options     | path                      | expected
@@ -89,7 +93,10 @@ describe('UrlBuilderImpl', () => {
       ${options1} | ${'/news'}                | ${'/news'}
       ${options1} | ${'/site/spa/news/'}      | ${'/news/'}
       ${options1} | ${'/site/spa/news?query'} | ${'/news?query'}
+      ${options1} | ${'/site/spa/news?q#h'}   | ${'/news?q#h'}
       ${options2} | ${'/site/spa/about'}      | ${'//example.com/something/about'}
+      ${options2} | ${'//host/site/spa/news'} | ${'//example.com/something/news'}
+      ${options3} | ${'//host/site/spa'}      | ${'/'}
     `('should create an SPA URL for "$path" using options "$options"', ({ options, path, expected }) => {
       builder.initialize(options);
 
