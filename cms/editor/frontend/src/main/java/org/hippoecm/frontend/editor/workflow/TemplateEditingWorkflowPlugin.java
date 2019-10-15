@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.frontend.buttons.ButtonStyle;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -111,6 +112,11 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
 
             @Override
+            public String getCssClass() {
+                return ButtonStyle.SECONDARY.getCssClass();
+            }
+
+            @Override
             protected Component getIcon(final String id) {
                 return HippoIcon.fromSprite(id, Icon.FLOPPY);
             }
@@ -125,6 +131,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 return null;
             }
         });
+
         add(new WorkflowAction("done", new StringResourceModel("done", this)) {
 
             @Override
@@ -135,6 +142,11 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
             @Override
             protected Component getIcon(final String id) {
                 return HippoIcon.inline(id, CmsIcon.FLOPPY_TIMES_CIRCLE);
+            }
+
+            @Override
+            public String getCssClass() {
+                return ButtonStyle.PRIMARY.getCssClass();
             }
 
             @Override
