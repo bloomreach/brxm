@@ -16,23 +16,19 @@
 
 import React from 'react';
 import { Content } from '@bloomreach/spa-sdk';
-import { BrPageContext } from '../page';
 import { BrMetaWrapper } from '../meta';
+import { BrPageContext } from '../page';
 
 interface BrManageContentButtonProps {
   content: Content;
 }
 
-export class BrManageContentButton extends React.Component<BrManageContentButtonProps, {}> {
+export class BrManageContentButton extends React.Component<BrManageContentButtonProps> {
   static contextType = BrPageContext;
   context: React.ContextType<typeof BrPageContext>;
 
-  constructor(props: BrManageContentButtonProps) {
-    super(props);
-  }
-
   render() {
-    if (!this.context!.isPreview()) {
+    if (!this.context || !this.context.isPreview()) {
       return null;
     }
 

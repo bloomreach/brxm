@@ -21,9 +21,9 @@ import { BrManageContentButton } from './BrManageContentButton';
 import { BrMetaWrapper } from '../meta';
 
 describe('BrManageContentButton', () => {
-  const context = ({ isPreview: jest.fn() } as unknown) as jest.Mocked<Page>;
+  const context = { isPreview: jest.fn() } as unknown as jest.Mocked<Page>;
   const meta: Meta[] = [];
-  const content = ({ getMeta: jest.fn().mockReturnValue(meta) } as unknown) as jest.Mocked<Content>;
+  const content = { getMeta: jest.fn(() => meta) } as unknown as jest.Mocked<Content>;
   const props = { content };
 
   beforeEach(() => {
@@ -31,21 +31,21 @@ describe('BrManageContentButton', () => {
 
     // @see https://github.com/airbnb/enzyme/issues/1553
     /// @ts-ignore
-    BrManageContentButton.contextTypes = { isPreview: () => false };
+    BrManageContentButton.contextTypes = { isPreview: () => null };
     delete BrManageContentButton.contextType;
   });
 
   it('should only render in preview mode', () => {
     context.isPreview.mockReturnValueOnce(false);
-
     const wrapper = shallow(<BrManageContentButton {...props} />, { context });
+
     expect(wrapper.html()).toBe(null);
   });
 
   it('should render manage-content-button meta-data', () => {
     context.isPreview.mockReturnValueOnce(true);
-
     const wrapper = shallow(<BrManageContentButton {...props} />, { context });
+
     expect(
       wrapper
         .find(BrMetaWrapper)
