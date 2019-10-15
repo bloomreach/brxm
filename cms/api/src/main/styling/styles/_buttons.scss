@@ -12,6 +12,44 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+@mixin button-variant(
+  $bg, $border, $color,
+  $hover-bg, $hover-border, $hover-color,
+  $active-bg, $active-border, $active-color,
+  $focus-bg, $focus-border, $focus-color,
+  $disabled-bg, $disabled-border, $disabled-color
+) {
+  color: $color;
+  background-color: $bg;
+  border-color: $border;
+
+  &:focus,
+  &.focus-visible {
+    background-color: $focus-bg !important;
+    border-color: $focus-border;
+    color: $focus-color;
+  }
+
+  &:hover {
+    background-color: $hover-bg !important;
+    border-color: $hover-border;
+    color: $hover-color;
+  }
+
+  &:active {
+    background-color: $active-bg !important;
+    border-color: $active-border;
+    color: $active-color;
+  }
+
+  &[disabled],
+  &[disabled]:hover {
+    background-color: $disabled-bg !important;
+    border-color: $disabled-border;
+    color: $disabled-color;
+  }
+}
+
 .btn {
   box-sizing: border-box;
 
@@ -24,16 +62,16 @@
 
   &:active {
     box-shadow: none;
-    background-color: $gray12 !important;
+    background-color: $button-active-bg !important;
   }
 
   &:hover {
-    background-color: $gray5;
+    background-color: $button-hover-bg;
   }
 
   &.focus-visible {
-    background-color: $btn-focus-bg;
-    box-shadow: 0 0 0 2px $btn-focus-color;
+    background-color: $button-focus-bg;
+    box-shadow: 0 0 0 2px $button-focus-color;
   }
 
   a {
@@ -43,6 +81,46 @@
     &:focus {
       text-decoration: none;
     }
+  }
+
+  &.btn-br-primary {
+    @include button-variant(
+      $button-primary-bg,
+      $button-primary-border,
+      $button-primary-color,
+      $button-primary-hover-bg,
+      $button-primary-hover-border,
+      $button-primary-hover-color,
+      $button-primary-active-bg,
+      $button-primary-active-border,
+      $button-primary-active-color,
+      $button-primary-focus-bg,
+      $button-primary-focus-border,
+      $button-primary-focus-color,
+      $button-primary-disabled-bg,
+      $button-primary-disabled-border,
+      $button-primary-disabled-color
+    );
+  }
+
+  &.btn-br-secondary {
+    @include button-variant(
+      $button-secondary-bg,
+      $button-secondary-border,
+      $button-secondary-color,
+      $button-secondary-hover-bg,
+      $button-secondary-hover-border,
+      $button-secondary-hover-color,
+      $button-secondary-active-bg,
+      $button-secondary-active-border,
+      $button-secondary-active-color,
+      $button-secondary-focus-bg,
+      $button-secondary-focus-border,
+      $button-secondary-focus-color,
+      $button-secondary-disabled-bg,
+      $button-secondary-disabled-border,
+      $button-secondary-disabled-color
+    );
   }
 }
 
