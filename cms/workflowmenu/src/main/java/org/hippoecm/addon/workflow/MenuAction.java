@@ -23,6 +23,7 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.behaviors.IContextMenu;
+import org.hippoecm.frontend.buttons.ButtonStyle;
 
 class MenuAction extends Panel implements IContextMenu {
 
@@ -65,11 +66,15 @@ class MenuAction extends Panel implements IContextMenu {
         };
         add(link);
 
+        link.add(ClassAttribute.append(() -> wf.getCssClass() != null
+                ? wf.getCssClass()
+                : ButtonStyle.DEFAULT.getCssClass()));
+
         link.add(ClassAttribute.append(() -> !wf.isEnabled()
                 ? "disabled"
                 : StringUtils.EMPTY));
 
-        Component fragment = wf.getFragment("text");
+        final Component fragment = wf.getFragment("text");
         if (fragment instanceof ActionDescription.ActionDisplay) {
             ((ActionDescription.ActionDisplay) fragment).substantiate();
             link.add(fragment);
