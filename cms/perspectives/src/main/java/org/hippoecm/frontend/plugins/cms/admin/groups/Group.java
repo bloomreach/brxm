@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,10 +23,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import javax.jcr.Item;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 import javax.jcr.query.Query;
@@ -47,9 +48,15 @@ import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.EventBusUtils;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.NodeNameCodec;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.event.HippoEventConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.bloomreach.xm.repository.security.Role;
+
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_SYSTEM;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_USERROLES;
 
 public class Group implements Comparable<Group>, IClusterable {
 
@@ -58,7 +65,6 @@ public class Group implements Comparable<Group>, IClusterable {
     private static final String PROP_DESCRIPTION = "hipposys:description";
     private static final String QUERY_ALL_LOCAL = "select * from hipposys:group where hipposys:securityprovider='internal' and (hipposys:system <> 'true' or hipposys:system IS NULL)";
     private static final String QUERY_ALL = "select * from hipposys:group";
-    private static final String QUERY_ALL_ROLES = "select * from hipposys:role";
     private static final String QUERY_GROUP = "SELECT * FROM hipposys:group WHERE fn:name()='{}'";
     private static final char SLASH = '/';
 
@@ -67,6 +73,8 @@ public class Group implements Comparable<Group>, IClusterable {
 
     private String description;
     private boolean external;
+    private boolean system;
+    private List<String> userRoles;
 
     private transient Node node;
 
@@ -129,12 +137,8 @@ public class Group implements Comparable<Group>, IClusterable {
     * @return A list of all roles defined in the system
     */
     public static List<String> getAllRoles() {
-        try {
-            return executeQuery(QUERY_ALL_ROLES, Item::getName);
-        } catch (final RepositoryException e) {
-            log.error("Error while querying for a list of all roles", e);
-        }
-        return Collections.emptyList();
+        return UserSession.get().getJcrSession().getWorkspace().getSecurityManager().getRolesProvider().getRoles()
+                .stream().map(Role::getName).sorted().collect(Collectors.toList());
     }
 
     /**
@@ -161,8 +165,19 @@ public class Group implements Comparable<Group>, IClusterable {
         }
     }
 
+    public static Group newGroup(final String groupname)
+    {
+        Group group = new Group();
+        group.setGroupname(groupname);
+        return group;
+    }
+
     public boolean isExternal() {
         return external;
+    }
+
+    public boolean isSystem() {
+        return system;
     }
 
     public String getGroupname() {
@@ -195,7 +210,9 @@ public class Group implements Comparable<Group>, IClusterable {
         path = node.getPath().substring(1);
         groupname = NodeNameCodec.decode(node.getName());
         external = node.isNodeType(HippoNodeType.NT_EXTERNALGROUP);
-
+        system = JcrUtils.getBooleanProperty(node, HIPPO_SYSTEM, false);
+        userRoles = new ArrayList<>(JcrUtils.getStringSetProperty(node, HIPPO_USERROLES, Collections.emptySet()));
+        Collections.sort(userRoles);
         if (node.hasProperty(PROP_DESCRIPTION)) {
             description = node.getProperty(PROP_DESCRIPTION).getString();
         } else if (node.hasProperty("description")) {
@@ -236,6 +253,37 @@ public class Group implements Comparable<Group>, IClusterable {
         }
         Collections.sort(members);
         return members;
+    }
+
+    public List<String> getUserRoles() {
+        return userRoles;
+    }
+
+    public void addUserRole(final String userRole) throws RepositoryException {
+        Set<String> currentUserRoles = JcrUtils.getStringSetProperty(node, HIPPO_USERROLES, new HashSet<>());
+        if (currentUserRoles.add(userRole)) {
+            node.setProperty(HIPPO_USERROLES, currentUserRoles.toArray(new String[0]));
+            node.getSession().save();
+            userRoles = new ArrayList<>(currentUserRoles);
+            Collections.sort(userRoles);
+        }
+    }
+
+    public void removeUserRole(final String userRole) throws RepositoryException {
+        Set<String> currentUserRoles = JcrUtils.getStringSetProperty(node, HIPPO_USERROLES, new HashSet<>());
+        if (currentUserRoles.remove(userRole)) {
+            if (currentUserRoles.isEmpty()) {
+                Property userRolesProperty = JcrUtils.getPropertyIfExists(node, HIPPO_USERROLES);
+                if (userRolesProperty != null) {
+                    userRolesProperty.remove();
+                }
+            } else {
+                node.setProperty(HIPPO_USERROLES, currentUserRoles.toArray(new String[0]));
+            }
+            node.getSession().save();
+            userRoles = new ArrayList<>(currentUserRoles);
+            Collections.sort(userRoles);
+        }
     }
 
     public List<DetachableUser> getMembersAsDetachableUsers() {

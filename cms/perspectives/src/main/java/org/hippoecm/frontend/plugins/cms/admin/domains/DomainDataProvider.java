@@ -17,6 +17,7 @@ package org.hippoecm.frontend.plugins.cms.admin.domains;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -34,11 +35,16 @@ import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Comparator.comparing;
+
 public class DomainDataProvider extends SortableDataProvider<Domain, String> {
 
     private static final Logger log = LoggerFactory.getLogger(DomainDataProvider.class);
 
     private static final String QUERY_DOMAIN_LIST = "SELECT * FROM hipposys:domain";
+
+    private static final Comparator<Domain> nameComparator = comparing(Domain::getName);
+    private static final Comparator<Domain> pathComparator = comparing(Domain::getPath);
 
     private final transient List<Domain> domainList = new ArrayList<>();
 
@@ -51,7 +57,12 @@ public class DomainDataProvider extends SortableDataProvider<Domain, String> {
         final List<Domain> domains = getDomainList();
         domains.sort((domain1, domain2) -> {
             final int direction = getSort().isAscending() ? 1 : -1;
-            return direction * domain1.compareTo(domain2);
+            switch (getSort().getProperty()) {
+                case "path":
+                    return direction * pathComparator.compare(domain1, domain2);
+                default:
+                    return direction * nameComparator.compare(domain1, domain2);
+            }
         });
 
         final int endIndex = (int) Math.min(first + count, domains.size());
