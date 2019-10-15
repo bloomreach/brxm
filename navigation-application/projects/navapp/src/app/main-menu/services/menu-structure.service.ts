@@ -190,12 +190,7 @@ export class MenuStructureService {
           new MenuItemLink('setup/algorithm-settings/global-ranking-rules', 'Global ranking rules'),
           new MenuItemLink('setup/algorithm-settings/global-facet-management', 'Global facet management'),
         ]),
-        new MenuItemContainer('User management', [
-          new MenuItemContainer('Merchandising users', [
-            new MenuItemLink('setup/user-management/merchandising-user/user-management', 'User management'),
-            new MenuItemLink('setup/user-management/merchandising-user/internal-user-management', 'Internal user management'),
-          ]),
-        ]),
+        new MenuItemLink('setup/user-management/merchandising-user/user-management', 'User management'),
         new MenuItemContainer('DevStudio', [
           new MenuItemLink('setup/devstudio/account-information', 'Account information'),
           new MenuItemLink('setup/devstudio/pixel-monitor', 'Pixel monitor'),
@@ -211,6 +206,7 @@ export class MenuStructureService {
         new MenuItemLink('hippo-perspective-formdataperspective', 'Formdata'),
 
         new MenuItemContainer('Internal admin', [
+          new MenuItemLink('setup/user-management/merchandising-user/internal-user-management', 'Internal user management'),
           new MenuItemLink('setup/internal-admin/api-details', 'API details'),
           new MenuItemLink('setup/internal-admin/debug-tools', 'Debug tools'),
           new MenuItemLink('setup/internal-admin/purge-cache', 'Purge cache'),
