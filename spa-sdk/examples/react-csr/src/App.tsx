@@ -45,7 +45,9 @@ export default function App(props: RouteComponentProps) {
         <nav className="navbar navbar-expand-sm navbar-dark sticky-top bg-dark" role="navigation">
           <div className="container">
             <BrPageContext.Consumer>
-              {page => <a href="/" className="navbar-brand">{ page!.getTitle() || 'Client-side React Demo'}</a>}
+              { page => (
+                <a href={page!.getUrl('/')} className="navbar-brand">{ page!.getTitle() || 'Client-Side React Demo'}</a>
+              ) }
             </BrPageContext.Consumer>
             <div className="collapse navbar-collapse">
               <BrComponent path="menu">
