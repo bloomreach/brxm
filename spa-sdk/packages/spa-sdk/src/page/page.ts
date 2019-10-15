@@ -20,9 +20,12 @@ import { ContainerItemModel } from './container-item';
 import { ContainerModel } from './container';
 import { ContentModel, Content } from './content';
 import { Factory } from './factory';
+import { Link } from './link';
 import { Events, PageUpdateEvent } from '../events';
 import { MetaCollectionModel, Meta } from './meta';
 import { Reference, isReference } from './reference';
+
+type PageLinks = 'self' | 'site';
 
 /**
  * Meta-data of a page root component.
@@ -49,6 +52,7 @@ interface PageMeta {
  * Model of a page.
  */
 export interface PageModel {
+  _links?: Record<PageLinks, Link>;
   _meta?: PageMeta;
   content?: { [reference: string]: ContentModel };
   page: (ComponentModel | ContainerItemModel | ContainerModel) & PageRootModel;
@@ -88,6 +92,29 @@ export interface Page {
   getTitle(): string | undefined;
 
   /**
+   * Generates a URL for a link object.
+   * - If the link object type is internal or external, then it will prepend `spaBaseUrl`.
+   *   In case when the link starts with the same path as in `cmsBaseUrl`, this part will be removed.
+   *   For example, for link `/site/_cmsinternal/spa/about` with configuration options
+   *   `cmsBaseUrl = "http://localhost:8080/site/_cmsinternal/spa"` and `spaBaseUrl = "http://example.com"`
+   *   it will generate `http://example.com/about`.
+   * - If it is a resource link then it will prepend origin part from the `cmsBaseUrl` option.
+   *   For example, for link `/site/_cmsinternal/binaries/image1.jpg` with configuration option
+   *   `cmsBaseUrl = "//localhost:8080/site/spa"`, it will generate `//localhost/site/_cmsinternal/binaries/image1.jpg`.
+   * - In other cases, the link will be returned as-is.
+   * @param link The link object to generate URL.
+   */
+  getUrl(link: Link): string;
+
+  /**
+   * Generates an SPA URL for the path.
+   * - If it is a relative path, then it will prepend `spaBaseUrl`.
+   * - If it is an absolute path, then the behavior will be similar to internal and external link generation.
+   * @param path The path to generate URL.
+   */
+  getUrl(path: string): string;
+
+  /**
    * @returns Whether the page is in the preview mode.
    */
   isPreview(): boolean;
@@ -106,6 +133,7 @@ export class PageImpl implements Page {
     protected root: Component,
     private contentFactory: Factory<[ContentModel], Content>,
     private eventBus: Typed<Events>,
+    private linkFactory: Factory<[Link | string], string>,
     private metaFactory: Factory<[MetaCollectionModel], Meta[]>,
   ) {
     eventBus.on('page.update', this.onPageUpdate.bind(this));
@@ -141,12 +169,16 @@ export class PageImpl implements Page {
     return this.content.get(contentReference);
   }
 
+  getMeta(meta: MetaCollectionModel) {
+    return this.metaFactory.create(meta);
+  }
+
   getTitle() {
     return this.model.page._meta && this.model.page._meta.pageTitle;
   }
 
-  getMeta(meta: MetaCollectionModel) {
-    return this.metaFactory.create(meta);
+  getUrl(link: Link | string) {
+    return this.linkFactory.create(link);
   }
 
   isPreview() {

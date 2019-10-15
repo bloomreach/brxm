@@ -19,6 +19,7 @@ import { Component, TYPE_COMPONENT } from './component';
 import { ContentModel, Content } from './content';
 import { Events } from '../events';
 import { Factory } from './factory';
+import { Link } from './link';
 import { MetaCollectionModel, Meta } from './meta';
 import { PageImpl, PageModel, Page } from './page';
 
@@ -26,17 +27,19 @@ describe('PageImpl', () => {
   let content: Content;
   let contentFactory: jest.Mocked<Factory<[ContentModel], Content>>;
   let eventBus: Typed<Events>;
+  let linkFactory: jest.Mocked<Factory<[Link], string>>;
   let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], Meta[]>>;
   let root: Component;
 
   function createPage(model: PageModel) {
-    return new PageImpl(model, root, contentFactory, eventBus, metaFactory);
+    return new PageImpl(model, root, contentFactory, eventBus, linkFactory, metaFactory);
   }
 
   beforeEach(() => {
     content = {} as jest.Mocked<Content>;
     contentFactory = { create: jest.fn() };
     eventBus = new Typed<Events>();
+    linkFactory = { create: jest.fn() };
     metaFactory = { create: jest.fn() };
     root = { getComponent: jest.fn() } as unknown as jest.Mocked<Component>;
 
@@ -107,6 +110,17 @@ describe('PageImpl', () => {
 
       expect(page1.getTitle()).toBeUndefined();
       expect(page2.getTitle()).toBeUndefined();
+    });
+  });
+
+  describe('getUrl', () => {
+    it('should pass a link to the link factory', () => {
+      const link = { href: '' };
+      const page = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
+      linkFactory.create.mockReturnValueOnce('url');
+
+      expect(page.getUrl(link)).toBe('url');
+      expect(linkFactory.create).toBeCalledWith(link);
     });
   });
 

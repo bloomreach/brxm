@@ -80,9 +80,14 @@ export async function initialize(config: Configuration): Promise<Page> {
       metaFactory,
     ));
   const contentFactory = new SingleTypeFactory(model => new ContentImpl(model, linkFactory, metaFactory));
-  const pageFactory = new SingleTypeFactory(
-    model => new PageImpl(model, componentFactory.create(model.page), contentFactory, eventBus, metaFactory),
-  );
+  const pageFactory = new SingleTypeFactory(model => new PageImpl(
+    model,
+    componentFactory.create(model.page),
+    contentFactory,
+    eventBus,
+    linkFactory,
+    metaFactory,
+  ));
 
   const spa = new Spa(config, cms, eventBus, pageFactory, urlBuilder);
   const page = await spa.initialize();

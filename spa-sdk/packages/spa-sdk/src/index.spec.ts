@@ -25,8 +25,8 @@ import {
   META_POSITION_END,
   TYPE_CONTAINER_BOX,
 } from './index';
+import { PageModel, TYPE_LINK_RESOURCE, TYPE_LINK_EXTERNAL, TYPE_LINK_INTERNAL } from './page';
 import { Window } from './cms';
-import { PageModel } from './page';
 
 describe('initialize', () => {
   let page: Page;
@@ -77,6 +77,17 @@ describe('initialize', () => {
     expect(meta2).toBeDefined();
     expect(meta2.getPosition()).toBe(META_POSITION_END);
     expect(JSON.parse(meta2.getData())).toMatchSnapshot();
+  });
+
+  it.each`
+    link                                | expected
+    ${''}                               | ${'//example.com'}
+    ${'/site/_cmsinternal/my-spa/news'} | ${'//example.com/news'}
+    ${{ href: 'http://127.0.0.1/path?query', type: TYPE_LINK_EXTERNAL }}   | ${'//example.com/path?query'}
+    ${{ href: 'something#hash', type: TYPE_LINK_INTERNAL }}                | ${'//example.com/something#hash'}
+    ${{ href: 'http://127.0.0.1/resource.jpg', type: TYPE_LINK_RESOURCE }} | ${'http://localhost:8080/resource.jpg'}
+  `('should create a URL "$expected" for link "$link"', ({ link, expected }) => {
+    expect(page.getUrl(link)).toBe(expected);
   });
 
   it('should contain a main component', () => {
