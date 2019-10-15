@@ -38,12 +38,12 @@ export default class Index extends React.Component<IndexProps> {
       httpClient: axios.request,
       options: {
         live: {
-          pageModelBaseUrl: publicRuntimeConfig.brUrlLive,
-          spaBasePath: publicRuntimeConfig.spaBasePathLive,
+          cmsBaseUrl: publicRuntimeConfig.liveBrBaseUrl,
+          spaBaseUrl: publicRuntimeConfig.liveSpaBaseUrl,
         },
         preview: {
-          pageModelBaseUrl: publicRuntimeConfig.brUrlPreview,
-          spaBasePath: publicRuntimeConfig.spaBasePathPreview,
+          cmsBaseUrl: publicRuntimeConfig.previewBrBaseUrl,
+          spaBaseUrl: publicRuntimeConfig.previewSpaBaseUrl,
         },
       },
       request: this.props.request,

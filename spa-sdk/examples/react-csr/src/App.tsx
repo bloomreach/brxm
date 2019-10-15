@@ -25,12 +25,12 @@ export default function App(props: RouteComponentProps) {
     httpClient: axios.request,
     options: {
       live: {
-        pageModelBaseUrl: process.env.REACT_APP_BR_URL_LIVE!,
-        spaBasePath: process.env.REACT_APP_SPA_BASE_PATH_LIVE,
+        cmsBaseUrl: process.env.REACT_APP_LIVE_BR_BASE_URL!,
+        spaBaseUrl: process.env.REACT_APP_LIVE_SPA_BASE_URL,
       },
       preview: {
-        pageModelBaseUrl: process.env.REACT_APP_BR_URL_PREVIEW!,
-        spaBasePath: process.env.REACT_APP_SPA_BASE_PATH_PREVIEW,
+        cmsBaseUrl: process.env.REACT_APP_PREVIEW_BR_BASE_URL!,
+        spaBaseUrl: process.env.REACT_APP_PREVIEW_SPA_BASE_URL,
       },
     },
     request: {
