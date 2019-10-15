@@ -52,8 +52,6 @@ public class Dialog<ModelType> extends AbstractDialog<ModelType> {
     public Dialog(final IModel<ModelType> model) {
         super(model);
 
-        setButtonCssClass("btn btn-default");
-
         add(new EmptyPanel(BOTTOM_LEFT_ID).setVisible(false));
     }
 
