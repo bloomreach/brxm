@@ -21,6 +21,7 @@ export * from './container';
 export * from './content';
 export * from './factory';
 export * from './link-factory';
+export * from './link-rewriter';
 export * from './link';
 export * from './menu';
 export * from './meta-comment';

@@ -12,8 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
- * @jest-environment jest-environment-jsdom-fifteen
  */
 
 import { Typed } from 'emittery';
@@ -21,33 +19,32 @@ import { Component, TYPE_COMPONENT } from './component';
 import { ContentModel, Content } from './content';
 import { Events } from '../events';
 import { Factory } from './factory';
-import { Link, TYPE_LINK_INTERNAL, TYPE_LINK_RESOURCE } from './link';
+import { LinkRewriter } from './link-rewriter';
+import { Link } from './link';
 import { MetaCollectionModel, Meta } from './meta';
 import { PageImpl, PageModel, Page } from './page';
 
 describe('PageImpl', () => {
   let content: Content;
   let contentFactory: jest.Mocked<Factory<[ContentModel], Content>>;
-  let domParser: DOMParser;
   let eventBus: Typed<Events>;
   let linkFactory: jest.Mocked<Factory<[Link], string>>;
+  let linkRewriter: jest.Mocked<LinkRewriter>;
   let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], Meta[]>>;
   let root: Component;
-  let xmlSerializer: XMLSerializer;
 
   function createPage(model: PageModel) {
-    return new PageImpl(model, root, contentFactory, eventBus, linkFactory, metaFactory, domParser, xmlSerializer);
+    return new PageImpl(model, root, contentFactory, eventBus, linkFactory, linkRewriter, metaFactory);
   }
 
   beforeEach(() => {
     content = {} as jest.Mocked<Content>;
     contentFactory = { create: jest.fn() };
-    domParser = new DOMParser();
     eventBus = new Typed<Events>();
     linkFactory = { create: jest.fn() };
+    linkRewriter = { rewrite: jest.fn() } as unknown as jest.Mocked<LinkRewriter>;
     metaFactory = { create: jest.fn() };
     root = { getComponent: jest.fn() } as unknown as jest.Mocked<Component>;
-    xmlSerializer = new XMLSerializer();
 
     contentFactory.create.mockReturnValue(content);
   });
@@ -168,47 +165,13 @@ describe('PageImpl', () => {
   });
 
   describe('rewriteLinks', () => {
-    let page: Page;
+    it('should pass a call to the link rewriter', () => {
+      linkRewriter.rewrite.mockReturnValueOnce('rewritten');
 
-    beforeEach(() => {
-      page = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
-    });
+      const page = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
 
-    it('should ignore anchors without href attribute', () => {
-      const html = '<a name="something" data-type="internal">something</a>';
-
-      expect(page.rewriteLinks(html)).toBe(html);
-      expect(linkFactory.create).not.toBeCalled();
-    });
-
-    it('should ignore anchors without data-type attribute', () => {
-      const html = '<a href="http://example.com">something</a>';
-
-      expect(page.rewriteLinks(html)).toBe(html);
-      expect(linkFactory.create).not.toBeCalled();
-    });
-
-    it('should rewrite anchor links', () => {
-      linkFactory.create.mockReturnValueOnce('url');
-
-      expect(page.rewriteLinks('<a href="/some/path" data-type="internal">something</a>'))
-        .toBe('<a href="url" data-type="internal">something</a>');
-      expect(linkFactory.create).toBeCalledWith({ href: '/some/path', type: TYPE_LINK_INTERNAL });
-    });
-
-    it('should ignore images without src attribute', () => {
-      const html = '<img alt="something" />';
-
-      expect(page.rewriteLinks(html)).toBe(html);
-      expect(linkFactory.create).not.toBeCalled();
-    });
-
-    it('should rewrite images links', () => {
-      linkFactory.create.mockReturnValueOnce('url');
-
-      expect(page.rewriteLinks('<img src="/some/path" alt="something" />'))
-        .toBe('<img src="url" alt="something" />');
-      expect(linkFactory.create).toBeCalledWith({ href: '/some/path', type: TYPE_LINK_RESOURCE });
+      expect(page.rewriteLinks('something', 'text/html')).toBe('rewritten');
+      expect(linkRewriter.rewrite).toBeCalledWith('something', 'text/html');
     });
   });
 

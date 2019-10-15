@@ -20,12 +20,11 @@ import { ContainerItemModel } from './container-item';
 import { ContainerModel } from './container';
 import { ContentModel, Content } from './content';
 import { Factory } from './factory';
-import { LinkType, Link, TYPE_LINK_RESOURCE } from './link';
+import { LinkRewriter } from './link-rewriter';
+import { Link } from './link';
 import { Events, PageUpdateEvent } from '../events';
 import { MetaCollectionModel, Meta } from './meta';
 import { Reference, isReference } from './reference';
-
-const BODY_CONTENTS = /^<body.*?>(.*)<\/body>$/;
 
 type PageLinks = 'self' | 'site';
 
@@ -145,9 +144,8 @@ export class PageImpl implements Page {
     private contentFactory: Factory<[ContentModel], Content>,
     private eventBus: Typed<Events>,
     private linkFactory: Factory<[Link | string], string>,
+    private linkRewriter: LinkRewriter,
     private metaFactory: Factory<[MetaCollectionModel], Meta[]>,
-    private domParser: DOMParser,
-    private xmlSerializer: XMLSerializer,
   ) {
     eventBus.on('page.update', this.onPageUpdate.bind(this));
 
@@ -199,25 +197,7 @@ export class PageImpl implements Page {
   }
 
   rewriteLinks(content: string, type: SupportedType = 'text/html') {
-    const document = this.domParser.parseFromString(content, type);
-
-    document.querySelectorAll('a[href][data-type]').forEach(
-      element => element.setAttribute('href', this.linkFactory.create({
-        href: element.getAttribute('href')!,
-        type: element.getAttribute('data-type') as LinkType,
-      })),
-    );
-
-    document.querySelectorAll('img[src]').forEach(
-      element => element.setAttribute('src', this.linkFactory.create({
-        href: element.getAttribute('src')!,
-        type: TYPE_LINK_RESOURCE,
-      })),
-    );
-
-    const body = this.xmlSerializer.serializeToString(document.body);
-
-    return body.replace(BODY_CONTENTS, '$1');
+    return this.linkRewriter.rewrite(content, type);
   }
 
   sync() {

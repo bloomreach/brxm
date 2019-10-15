@@ -32,6 +32,7 @@ import {
   ContainerModel,
   ContentImpl,
   LinkFactory,
+  LinkRewriterImpl,
   MetaCommentImpl,
   MetaFactory,
   PageImpl,
@@ -65,6 +66,7 @@ export async function initialize(config: Configuration): Promise<Page> {
     .register(TYPE_LINK_EXTERNAL, urlBuilder.getSpaUrl.bind(urlBuilder))
     .register(TYPE_LINK_INTERNAL, urlBuilder.getSpaUrl.bind(urlBuilder))
     .register(TYPE_LINK_RESOURCE, urlBuilder.getCmsUrl.bind(urlBuilder));
+  const linkRewriter = new LinkRewriterImpl(linkFactory, domParser, xmlSerializer);
   const metaFactory = new MetaFactory()
     .register(TYPE_META_COMMENT, (model, position) => new MetaCommentImpl(model, position));
   const componentFactory = new ComponentFactory()
@@ -88,9 +90,8 @@ export async function initialize(config: Configuration): Promise<Page> {
     contentFactory,
     eventBus,
     linkFactory,
+    linkRewriter,
     metaFactory,
-    domParser,
-    xmlSerializer,
   ));
 
   const spa = new Spa(config, cms, eventBus, pageFactory, urlBuilder);
