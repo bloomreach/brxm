@@ -16,26 +16,26 @@
 
 import React from 'react';
 import { shallow } from 'enzyme';
-import { Menu, Page, Meta } from '@bloomreach/spa-sdk';
+import { Menu, Meta, Page } from '@bloomreach/spa-sdk';
 import { BrManageMenuButton } from './BrManageMenuButton';
 import { BrMetaWrapper } from '../meta';
 
 describe('BrManageMenuButton', () => {
-  const context = ({
+  const context = {
     isPreview: jest.fn(),
     getMeta: jest.fn(),
-  } as unknown) as jest.Mocked<Page>;
-  const props = { menu: ({} as unknown) as jest.Mocked<Menu> };
+  } as unknown as jest.Mocked<Page>;
+  let props: React.ComponentProps<typeof BrManageMenuButton>;
 
   beforeEach(() => {
     jest.restoreAllMocks();
 
-    props.menu._meta = undefined;
+    props = { menu: {} as Menu };
 
     // @see https://github.com/airbnb/enzyme/issues/1553
     /// @ts-ignore
     BrManageMenuButton.contextTypes = {
-      isPreview: () => false,
+      isPreview: () => null,
       getMeta: () => null,
     };
     delete BrManageMenuButton.contextType;
@@ -43,15 +43,15 @@ describe('BrManageMenuButton', () => {
 
   it('should only render in preview mode', () => {
     context.isPreview.mockReturnValueOnce(false);
-
     const wrapper = shallow(<BrManageMenuButton {...props} />, { context });
+
     expect(wrapper.html()).toBe(null);
   });
 
   it('should only render if meta-data is available', () => {
     context.isPreview.mockReturnValueOnce(true);
-
     const wrapper = shallow(<BrManageMenuButton {...props} />, { context });
+
     expect(wrapper.html()).toBe(null);
   });
 
@@ -60,8 +60,8 @@ describe('BrManageMenuButton', () => {
     context.getMeta.mockReturnValueOnce(meta);
     context.isPreview.mockReturnValueOnce(true);
     props.menu._meta = {};
-
     const wrapper = shallow(<BrManageMenuButton {...props} />, { context });
+
     expect(context.getMeta).toHaveBeenCalledWith(props.menu._meta);
     expect(
       wrapper

@@ -16,31 +16,22 @@
 
 import React from 'react';
 import { Menu } from '@bloomreach/spa-sdk';
-import { BrPageContext } from '../page';
 import { BrMetaWrapper } from '../meta';
+import { BrPageContext } from '../page';
 
 interface BrManageMenuButtonProps {
   menu: Menu;
 }
 
-export class BrManageMenuButton extends React.Component<BrManageMenuButtonProps, {}> {
+export class BrManageMenuButton extends React.Component<BrManageMenuButtonProps> {
   static contextType = BrPageContext;
   context: React.ContextType<typeof BrPageContext>;
 
-  constructor(props: BrManageMenuButtonProps) {
-    super(props);
-  }
-
   render() {
-    if (!this.context!.isPreview()) {
+    if (!this.context || !this.context.isPreview() || !this.props.menu._meta) {
       return null;
     }
 
-    if (!this.props.menu._meta) {
-      return null;
-    }
-
-    const meta = this.context!.getMeta(this.props.menu._meta);
-    return <BrMetaWrapper meta={meta} />;
+    return <BrMetaWrapper meta={this.context.getMeta(this.props.menu._meta)} />;
   }
 }
