@@ -15,8 +15,9 @@
  */
 
 import { Injectable } from '@angular/core';
-import { map, scan } from 'rxjs/operators';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { map, scan } from 'rxjs/operators';
+
 import { ConnectionService } from './connection.service';
 
 @Injectable({
