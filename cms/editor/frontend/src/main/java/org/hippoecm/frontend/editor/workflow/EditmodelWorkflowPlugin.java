@@ -36,6 +36,7 @@ import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.addon.workflow.WorkflowDialog;
 import org.hippoecm.editor.NamespaceValidator;
 import org.hippoecm.editor.repository.EditmodelWorkflow;
+import org.hippoecm.frontend.buttons.ButtonStyle;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -64,6 +65,7 @@ import org.slf4j.LoggerFactory;
 public class EditmodelWorkflowPlugin extends RenderPlugin<WorkflowDescriptor> {
 
     private static final Logger log = LoggerFactory.getLogger(EditmodelWorkflowPlugin.class);
+
     private StdWorkflow editAction;
 
     public EditmodelWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
@@ -80,6 +82,11 @@ public class EditmodelWorkflowPlugin extends RenderPlugin<WorkflowDescriptor> {
             @Override
             protected Component getIcon(final String id) {
                 return HippoIcon.fromSprite(id, Icon.PENCIL_SQUARE);
+            }
+
+            @Override
+            public String getCssClass() {
+                return ButtonStyle.SECONDARY.getCssClass();
             }
 
             @Override
@@ -161,16 +168,16 @@ public class EditmodelWorkflowPlugin extends RenderPlugin<WorkflowDescriptor> {
                     final JcrNodeModel nodeModel = new JcrNodeModel(path);
                     if (path == null) {
                         log.error("no model found to edit");
-                        return null;                        
+                        return null;
                     }
-                    
+
                     final IPluginContext context = EditmodelWorkflowPlugin.this.getPluginContext();
                     final IPluginConfig config = EditmodelWorkflowPlugin.this.getPluginConfig();
 
-                    final IEditorManager editService = context.getService(config.getString(IEditorManager.EDITOR_ID), 
+                    final IEditorManager editService = context.getService(config.getString(IEditorManager.EDITOR_ID),
                             IEditorManager.class);
                     final IEditor editor = editService.openEditor(nodeModel);
-                    final IRenderService renderer = context.getService(context.getReference(editor).getServiceId(), 
+                    final IRenderService renderer = context.getService(context.getReference(editor).getServiceId(),
                             IRenderService.class);
                     if (renderer != null) {
                         renderer.focus(null);

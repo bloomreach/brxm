@@ -17,7 +17,7 @@ package org.hippoecm.frontend.buttons;
 
 public enum ButtonStyle {
 
-    DEFAULT("btn"),
+    DEFAULT("btn btn-default"),
     PRIMARY("btn btn-br-primary"),
     SECONDARY("btn btn-br-secondary");
 
