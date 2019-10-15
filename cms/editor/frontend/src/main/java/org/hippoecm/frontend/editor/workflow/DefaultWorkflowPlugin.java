@@ -30,12 +30,11 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.util.string.Strings;
-
 import org.hippoecm.addon.workflow.DestinationDialog;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.addon.workflow.WorkflowDialog;
-
+import org.hippoecm.frontend.buttons.ButtonStyle;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.ExceptionDialog;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
@@ -57,7 +56,6 @@ import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.util.DocumentUtils;
 import org.hippoecm.frontend.widgets.NameUriField;
-
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
@@ -69,7 +67,6 @@ import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.gallery.GalleryWorkflow;
 import org.hippoecm.repository.gallery.HippoGalleryNodeType;
 import org.hippoecm.repository.standardworkflow.DefaultWorkflow;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,6 +106,11 @@ public class DefaultWorkflowPlugin extends RenderPlugin {
             @Override
             protected Component getIcon(final String id) {
                 return HippoIcon.fromSprite(id, Icon.PENCIL_SQUARE);
+            }
+
+            @Override
+            public String getCssClass() {
+                return ButtonStyle.SECONDARY.getCssClass();
             }
 
             @Override
