@@ -25,7 +25,6 @@ export function Banner(props: BrProps) {
     return <div/>;
   }
 
-  // TODO: Implement link generation mechanism
   const { content, image: imageRef, link: linkRef, title } = document.getData<DocumentData>();
   const image = imageRef && props.page.getContent(imageRef);
   const link = linkRef && props.page.getContent(linkRef);
@@ -34,11 +33,11 @@ export function Banner(props: BrProps) {
     <div className={`jumbotron mb-3 ${props.page.isPreview() ? 'has-edit-button' : ''}`}>
       <BrManageContentButton content={document} />
       { title && <h1>{title}</h1> }
-      { image && <img className="img-fluid" src={image.getData()._links.site.href} alt={title} /> }
+      { image && <img className="img-fluid" src={image.getUrl()} alt={title} /> }
       { content && <div dangerouslySetInnerHTML={{ __html: content.value }} /> }
       { link && (
         <p className="lead">
-          <a className="btn btn-primary btn-lg" href={link.getData()._links.site.href} role="button">Learn more</a>
+          <a className="btn btn-primary btn-lg" href={link.getUrl()} role="button">Learn more</a>
         </p>
       ) }
     </div>

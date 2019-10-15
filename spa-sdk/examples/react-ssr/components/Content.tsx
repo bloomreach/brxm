@@ -25,14 +25,13 @@ export function Content(props: BrProps) {
     return <div/>;
   }
 
-  // TODO: Implement link generation mechanism
   const { author, content, date, image: imageRef, title } = document.getData<DocumentData>();
   const image = imageRef && props.page.getContent(imageRef);
 
   return (
     <div className={props.page.isPreview() ? 'has-edit-button' : ''}>
       <BrManageContentButton content={document} />
-      { image && <img className="img-fluid mb-3" src={image.getData()._links.site.href} alt={title} /> }
+      { image && <img className="img-fluid mb-3" src={image.getUrl()} alt={title} /> }
       { title && <h1>{title}</h1> }
       { author && <p className="mb-3 text-muted">{author}</p> }
       { date && <p className="mb-3 small text-muted">{new Date(date).toDateString()}</p> }

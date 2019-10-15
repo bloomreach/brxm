@@ -15,11 +15,12 @@
  */
 
 import React from 'react';
-import { BrComponentContext, BrManageMenuButton } from '@bloomreach/react-sdk';
+import { BrComponentContext, BrManageMenuButton, BrPageContext } from '@bloomreach/react-sdk';
 
 export function Menu() {
   const component = React.useContext(BrComponentContext);
-  if (!component) {
+  const page = React.useContext(BrPageContext);
+  if (!component || !page) {
     return null;
   }
 
@@ -30,7 +31,7 @@ export function Menu() {
       <BrManageMenuButton menu={menu} />
       { menu.siteMenuItems.map((item, index) => (
         <li key={index} className={`nav-item ${item.selected ? 'active' : ''}`}>
-          <a className="nav-link text-capitalize" href={item._links.site.href}>{item.name}</a>
+          <a className="nav-link text-capitalize" href={page.getUrl(item._links.site!)}>{item.name}</a>
         </li>
       )) }
     </ul>

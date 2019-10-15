@@ -38,16 +38,15 @@ interface NewsListItemProps {
 }
 
 export function NewsListItem({ item }: NewsListItemProps) {
-  const { author, date, introduction, title, _links } = item.getData<DocumentData>();
+  const { author, date, introduction, title } = item.getData<DocumentData>();
 
-  // TODO: Implement link generation mechanism
   return (
     <div className="card mb-3">
       <BrManageContentButton content={item} />
       <div className="card-body">
         { title && (
           <h2 className="card-title">
-            <a href={_links.site.href}>{title}</a>
+            <a href={item.getUrl()}>{title}</a>
           </h2>
         ) }
         { author && <div className="card-subtitle mb-3 text-muted">{author}</div> }
