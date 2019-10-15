@@ -35,7 +35,7 @@ export function Content(props: BrProps) {
       { title && <h1>{title}</h1> }
       { author && <p className="mb-3 text-muted">{author}</p> }
       { date && <p className="mb-3 small text-muted">{new Date(date).toDateString()}</p> }
-      { content && <div dangerouslySetInnerHTML={{ __html: content.value }} /> }
+      { content && <div dangerouslySetInnerHTML={{ __html: props.page.rewriteLinks(content.value) }} /> }
     </div>
   );
 }

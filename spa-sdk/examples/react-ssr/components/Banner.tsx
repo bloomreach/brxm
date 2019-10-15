@@ -34,7 +34,7 @@ export function Banner(props: BrProps) {
       <BrManageContentButton content={document} />
       { title && <h1>{title}</h1> }
       { image && <img className="img-fluid" src={image.getUrl()} alt={title} /> }
-      { content && <div dangerouslySetInnerHTML={{ __html: content.value }} /> }
+      { content && <div dangerouslySetInnerHTML={{ __html: props.page.rewriteLinks(content.value) }} /> }
       { link && (
         <p className="lead">
           <a className="btn btn-primary btn-lg" href={link.getUrl()} role="button">Learn more</a>
