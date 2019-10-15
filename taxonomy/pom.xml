@@ -43,9 +43,9 @@
     <notice.project.name>Hippo Plugin Taxonomy</notice.project.name>
 
     <hippo.services.version>14.0.0-SNAPSHOT</hippo.services.version>
-    <hippo.cms.version>14.0.0-SNAPSHOT</hippo.cms.version>
-    <hippo.repository.version>14.0.0-SNAPSHOT</hippo.repository.version>
-    <hippo.hst.version>14.0.0-SNAPSHOT</hippo.hst.version>
+    <hippo.cms.version>14.0.0-securitydomain-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>14.0.0-securitydomain-SNAPSHOT</hippo.repository.version>
+    <hippo.hst.version>14.0.0-securitydomain-SNAPSHOT</hippo.hst.version>
 
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-lang.version>2.6</commons-lang.version>
