@@ -20,10 +20,12 @@ import { ContainerItemModel } from './container-item';
 import { ContainerModel } from './container';
 import { ContentModel, Content } from './content';
 import { Factory } from './factory';
-import { Link } from './link';
+import { LinkType, Link, TYPE_LINK_RESOURCE } from './link';
 import { Events, PageUpdateEvent } from '../events';
 import { MetaCollectionModel, Meta } from './meta';
 import { Reference, isReference } from './reference';
+
+const BODY_CONTENTS = /^<body.*?>(.*)<\/body>$/;
 
 type PageLinks = 'self' | 'site';
 
@@ -120,6 +122,15 @@ export interface Page {
   isPreview(): boolean;
 
   /**
+   * Rewrite links to pages and resources in the HTML content.
+   * This method looks up for `a` tags with `data-type` and `href` attributes and `img` tags with `src` attribute.
+   * Links will be updated according to the configuration used to initialize the page.
+   * @param content The HTML content to rewrite links.
+   * @param type The content type.
+   */
+  rewriteLinks(content: string, type?: SupportedType): string;
+
+  /**
    * Synchronizes the CMS integration state.
    */
   sync(): void;
@@ -135,6 +146,8 @@ export class PageImpl implements Page {
     private eventBus: Typed<Events>,
     private linkFactory: Factory<[Link | string], string>,
     private metaFactory: Factory<[MetaCollectionModel], Meta[]>,
+    private domParser: DOMParser,
+    private xmlSerializer: XMLSerializer,
   ) {
     eventBus.on('page.update', this.onPageUpdate.bind(this));
 
@@ -183,6 +196,28 @@ export class PageImpl implements Page {
 
   isPreview() {
     return !!(this.model._meta && this.model._meta.preview);
+  }
+
+  rewriteLinks(content: string, type: SupportedType = 'text/html') {
+    const document = this.domParser.parseFromString(content, type);
+
+    document.querySelectorAll('a[href][data-type]').forEach(
+      element => element.setAttribute('href', this.linkFactory.create({
+        href: element.getAttribute('href')!,
+        type: element.getAttribute('data-type') as LinkType,
+      })),
+    );
+
+    document.querySelectorAll('img[src]').forEach(
+      element => element.setAttribute('src', this.linkFactory.create({
+        href: element.getAttribute('src')!,
+        type: TYPE_LINK_RESOURCE,
+      })),
+    );
+
+    const body = this.xmlSerializer.serializeToString(document.body);
+
+    return body.replace(BODY_CONTENTS, '$1');
   }
 
   sync() {

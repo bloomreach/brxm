@@ -50,7 +50,9 @@ import { UrlBuilderImpl } from './url';
 
 const eventBus = new Typed<Events>();
 const cms = new Cms(eventBus);
+const domParser = new DOMParser();
 const pages = new WeakMap<Page, Spa>();
+const xmlSerializer = new XMLSerializer();
 
 /**
  * Initializes the page model.
@@ -87,6 +89,8 @@ export async function initialize(config: Configuration): Promise<Page> {
     eventBus,
     linkFactory,
     metaFactory,
+    domParser,
+    xmlSerializer,
   ));
 
   const spa = new Spa(config, cms, eventBus, pageFactory, urlBuilder);

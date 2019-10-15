@@ -49,3 +49,5 @@ Object {
   "HST-Type": "PAGE-META-DATA",
 }
 `;
+
+exports[`initialize should rewrite links in the HTML blob 1`] = `"Some text containing <a href=\\"//example.com/news\\" data-type=\\"internal\\">link1</a>, <a href=\\"//example.com/about\\" data-type=\\"internal\\">link2</a>, <a href=\\"https://example.com\\">link3</a>, and the image: <img src=\\"http://localhost:8080/binaries/image.jpg\\" />"`;

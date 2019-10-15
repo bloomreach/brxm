@@ -12,6 +12,8 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * @jest-environment jest-environment-jsdom-fifteen
  */
 
 import { default as model } from './index.fixture.json';
@@ -164,6 +166,14 @@ describe('initialize', () => {
 
     expect(document0!.getUrl()).toBe('//example.com/banner1.html');
     expect(document1!.getUrl()).toBe('//example.com/banner2.html');
+  });
+
+  it('should rewrite links in the HTML blob', () => {
+    const banner = page.getComponent('main', 'banner');
+    const document = page.getContent(banner!.getModels().document);
+    const { content } = document!.getData<{ content: any }>();
+
+    expect(page.rewriteLinks(content.value)).toMatchSnapshot();
   });
 
   it('should react on a component rendering', async () => {

@@ -1,6 +1,9 @@
 {
   "content": {
     "u895fb1b6410d497298946b6a06d2b361": {
+      "content": {
+        "value": "Some text containing <a href=\"/site/_cmsinternal/my-spa/news\" data-type=\"internal\">link1</a>, <a href=\"/site/_cmsinternal/my-spa/about\" data-type=\"internal\">link2</a>, <a href=\"https://example.com\">link3</a>, and the image: <img src=\"http://127.0.0.1/binaries/image.jpg\" />"
+      },
       "id": "895fb1b6-410d-4972-9894-6b6a06d2b361",
       "localeString": "en",
       "name": "banner1",
