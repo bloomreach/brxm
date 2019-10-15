@@ -29,7 +29,7 @@
         </a></li>
         <li class="delete" wicket:id="delete-group"/>
     </ul>
-    <div class="icons-128 groups-128">
+    <div>
         <h3>
             <wicket:message key="group-properties"/>
         </h3>
@@ -74,19 +74,23 @@
     <table class="hippo-list-details hippo-controlpanel-table-default">
         <tr>
             <th>
-                <wicket:message key="permissions-role-header"/>
-            </th>
-            <th>
                 <wicket:message key="permissions-domain-header"/>
             </th>
             <th>
-                <wicket:message key="table-header-actions"/>
+                <wicket:message key="permissions-column-folder-header"/>
+            </th>
+            <th>
+                <wicket:message key="permissions-permission-header"/>
+            </th>
+            <th>
+                <wicket:message key="permissions-role-header"/>
             </th>
         </tr>
         <tr wicket:id="permissions">
-            <td><label wicket:id="role"/></td>
             <td><a href="#" wicket:id="securityDomain"><span wicket:id="label">[[label]]</span></a></td>
-            <td><span wicket:id="remove"/></td>
+            <td><span wicket:id="domain-folder"/></td>
+            <td><span wicket:id="permission"/></td>
+            <td><label wicket:id="role"/></td>
         </tr>
     </table>
     <br/>
@@ -107,5 +111,10 @@
             <td><span wicket:id="remove"/></td>
         </tr>
     </table>
+    <form wicket:id="back-form">
+        <div class="hippo-controlpanel-actions">
+            <input type="submit" class="btn btn-default" wicket:message="value:user-back-action" wicket:id="back-button"/>
+        </div>
+    </form>
 </wicket:extend>
 </html>

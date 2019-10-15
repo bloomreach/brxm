@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
 
@@ -29,13 +29,15 @@ import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
 public class ViewDomainActionLink extends AjaxLink<Domain> {
 
     private final AdminBreadCrumbPanel panelToReplace;
-    private final Domain domain;
+    private final IModel<Domain> domainModel;
+    private IPluginContext context;
 
-    public ViewDomainActionLink(final String id, final AdminBreadCrumbPanel panelToReplace,
-                                final IModel<Domain> domainIModel, final IModel<String> displayText) {
-        super(id, domainIModel);
+    public ViewDomainActionLink(final String id, final IPluginContext context, final AdminBreadCrumbPanel panelToReplace,
+                                final IModel<Domain> domainModel, final IModel<String> displayText) {
+        super(id, domainModel);
+        this.context = context;
         this.panelToReplace = panelToReplace;
-        this.domain = domainIModel.getObject();
+        this.domainModel = domainModel;
 
         Label label = new Label("label", displayText);
         label.setRenderBodyOnly(true);
@@ -44,16 +46,15 @@ public class ViewDomainActionLink extends AjaxLink<Domain> {
 
     @Override
     public void onClick(final AjaxRequestTarget target) {
+
         /**
          * Get the originating parent to be able to do a replace of the panel.
          */
         final IBreadCrumbModel breadCrumbModel = panelToReplace.getBreadCrumbModel();
-        SetPermissionsPanel setPermissionsPanel = new SetPermissionsPanel(
-                panelToReplace.getId(), breadCrumbModel, new Model<Domain>(domain)
-        );
-        panelToReplace.replaceWith(setPermissionsPanel);
+        DomainPanel domainPanel = new DomainPanel(panelToReplace.getId(), context, breadCrumbModel, domainModel);
+        panelToReplace.replaceWith(domainPanel);
         // Reset the reference
-        target.add(setPermissionsPanel);
-        panelToReplace.activate(setPermissionsPanel);
+        target.add(domainPanel);
+        panelToReplace.activate(domainPanel);
     }
 }

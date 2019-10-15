@@ -22,12 +22,15 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.ajax.markup.html.form.AjaxButton;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
+import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.repeater.Item;
@@ -127,6 +130,19 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
         };
         add(searchTermPanel);
 
+        // add form with markup id setter so it can be updated via ajax
+        final Form form = new Form<>("back-form");
+        form.setOutputMarkupId(true);
+        add(form);
+        // add a cancel/back button
+        form.add(new AjaxButton("back-button") {
+            @Override
+            protected void onSubmit(final AjaxRequestTarget target, final Form form) {
+                // one up
+                final List<IBreadCrumbParticipant> all = breadCrumbModel.allBreadCrumbParticipants();
+                breadCrumbModel.setActive(all.get(all.size() - 2));
+            }
+        }.setDefaultFormProcessing(false));
     }
 
     private void showError(final String msg) {

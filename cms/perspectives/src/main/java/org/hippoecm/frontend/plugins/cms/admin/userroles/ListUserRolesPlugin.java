@@ -25,6 +25,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.AdminPanelPlugin;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 
+@SuppressWarnings("unused")
 public class ListUserRolesPlugin extends AdminPanelPlugin {
 
     public ListUserRolesPlugin(IPluginContext context, IPluginConfig config) {
@@ -33,7 +34,7 @@ public class ListUserRolesPlugin extends AdminPanelPlugin {
 
     @Override
     public ResourceReference getImage() {
-        return new PackageResourceReference(getClass(), "userroles-48.png");
+        return new PackageResourceReference(AdminPanelPlugin.class, "blank-48.png");
     }
 
     @Override

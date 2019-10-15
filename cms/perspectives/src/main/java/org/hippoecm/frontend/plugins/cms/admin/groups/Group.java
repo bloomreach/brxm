@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -163,6 +163,13 @@ public class Group implements Comparable<Group>, IClusterable {
             log.error("Unable to check if group '{}' exists, returning true", groupName, e);
             return null;
         }
+    }
+
+    public static Group newGroup(final String groupname)
+    {
+        Group group = new Group();
+        group.setGroupname(groupname);
+        return group;
     }
 
     public boolean isExternal() {

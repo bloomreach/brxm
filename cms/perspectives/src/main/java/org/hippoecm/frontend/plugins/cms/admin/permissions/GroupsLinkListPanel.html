@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -16,16 +16,8 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:panel>
-    <span wicket:id="usersLabel">
-        <wicket:message key="permissions-users-label"/>
-    </span>
-    <span wicket:id="users"><span wicket:id="link"/></span>
-
-    <span wicket:id="groupsLabel">
-        <wicket:message key="permissions-groups-label"/>
-    </span>
-    <span wicket:id="groupItem">
-        <a href="#" wicket:id="link"><span wicket:id="label">[[label]]</span></a><br/>
-    </span>
+    <span wicket:id="item"><a href="#" wicket:id="link"><span wicket:id="label">[[label]]</span></a><br/></span>
 </wicket:panel>
+
+
 </html>

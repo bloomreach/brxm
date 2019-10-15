@@ -291,6 +291,12 @@ public class User implements Comparable<User>, IClusterable {
     public User() {
     }
 
+    public static User newUser(final String username) {
+        User user = new User();
+        user.username = username;
+        return user;
+    }
+
     /**
      * Constructs a User object based on the username. Effectively fetches the user from the repository and wraps it in
      * this object.

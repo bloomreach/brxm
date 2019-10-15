@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,10 +42,7 @@ import org.hippoecm.repository.api.HippoNodeType;
  */
 public class PermissionBean implements Serializable {
     
-    private static final String DOMAINS_BASE_PATH = 
-            "/jcr:root/" + HippoNodeType.CONFIGURATION_PATH + "/" + HippoNodeType.DOMAINS_PATH; 
-    private static final String ALL_AUTHROLES_FOR_GROUP_QUERY = DOMAINS_BASE_PATH + 
-            "/*/element(*, hipposys:authrole)[@hipposys:groups='{}']";
+    private static final String ALL_AUTHROLES_FOR_GROUP_QUERY = "//element(*, hipposys:authrole)[@hipposys:groups='{}']";
 
     public static final PermissionsBeanByDomainNameComparator COMPARATOR_BY_DOMAIN_NAME =
             new PermissionsBeanByDomainNameComparator();
@@ -85,7 +82,7 @@ public class PermissionBean implements Serializable {
         NodeIterator nodeIterator = obtainNodeIteratorForQueryString(queryString);
 
         DetachableGroup detachableGroup = new DetachableGroup(group);
-        List<PermissionBean> permissionBeans = new ArrayList<PermissionBean>();
+        List<PermissionBean> permissionBeans = new ArrayList<>();
         while (nodeIterator.hasNext()) {
             Node node = nodeIterator.nextNode();
             Domain.AuthRole authRole = new Domain.AuthRole(node);
@@ -97,7 +94,7 @@ public class PermissionBean implements Serializable {
             PermissionBean permissionBean = new PermissionBean(detachableGroup, detachableDomain, authRole);
             permissionBeans.add(permissionBean);
         }
-
+        permissionBeans.sort(Comparator.comparing(o -> o.getAuthRole().getPath()));
         return permissionBeans;
     }
 
