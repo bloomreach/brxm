@@ -28,3 +28,4 @@ export * from './meta-comment';
 export * from './meta-factory';
 export * from './meta';
 export * from './page';
+export * from './reference';
