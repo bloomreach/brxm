@@ -169,4 +169,14 @@ class SessionUserAdapter extends User {
     public void removeAllGroupMemberships() {
         throw new UnsupportedOperationException();
     }
+
+    @Override
+    public void addUserRole(final String userRole) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void removeUserRole(final String userRole) {
+        throw new UnsupportedOperationException();
+    }
 }

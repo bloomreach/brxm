@@ -27,17 +27,14 @@
             <th>
               <wicket:message key="table-header-actions"/>
             </th>
-            <th>
-              <wicket:message key="table-header-security-domain"/>
-            </th>
           </tr>
           <tr wicket:id="local-memberships">
             <td><a href="#" wicket:id="link"><span wicket:id="label">[[label]]</span></a></td>
             <td><span wicket:id="remove"/></td>
-            <td><label wicket:id="securityDomains"/></td>
           </tr>
         </table>
       </wicket:enclosure>
+      <wicket:enclosure child="submit">
       <div class="hippo-controlpanel-options">
         <wicket:message key="user-membership-make-member-of"/>
         <select wicket:id="local-groups">
@@ -45,20 +42,19 @@
         </select>
         <input type="submit" class="btn btn-default btn-xs" wicket:message="value:user-membership-add-action" wicket:id="submit"/>
       </div>
+      </wicket:enclosure>
       <wicket:enclosure child="external-memberships-label">
+        <br/>
+        <br/>
         <span wicket:id="external-memberships-label"/>
         <table class="hippo-controlpanel-table-default hippo-list-details" wicket:id="externalMembershipsContainer">
           <tr>
             <th>
               <wicket:message key="table-header-groups"/>
             </th>
-            <th>
-              <wicket:message key="table-header-security-domain"/>
-            </th>
           </tr>
           <tr wicket:id="external-memberships">
             <td><span wicket:id="label">[[label]]</span></td>
-            <td><label wicket:id="securityDomains"/></td>
           </tr>
         </table>
       </wicket:enclosure>
