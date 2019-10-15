@@ -57,7 +57,7 @@
 
   > li > a {
     color: $menu-text-color;
-    cursor: alias;
+    cursor: pointer;
     text-decoration: none;
 
     &.mail {

@@ -52,4 +52,8 @@ export class HelpToolbarDrawerComponent {
   onClickedOutside(): void {
     this.helpDrawerOpenChange.emit(false);
   }
+
+  onLinkClicked(): void {
+    this.onClickedOutside();
+  }
 }
