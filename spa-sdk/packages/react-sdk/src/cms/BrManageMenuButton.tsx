@@ -17,7 +17,7 @@
 import React from 'react';
 import { Menu } from '@bloomreach/spa-sdk';
 import { BrMetaWrapper } from '../meta';
-import { BrPageContext } from '../page';
+import { BrPageContext } from '../page/BrPageContext';
 
 interface BrManageMenuButtonProps {
   menu: Menu;

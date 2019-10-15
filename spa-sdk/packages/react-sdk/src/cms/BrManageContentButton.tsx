@@ -17,7 +17,7 @@
 import React from 'react';
 import { Content } from '@bloomreach/spa-sdk';
 import { BrMetaWrapper } from '../meta';
-import { BrPageContext } from '../page';
+import { BrPageContext } from '../page/BrPageContext';
 
 interface BrManageContentButtonProps {
   content: Content;
