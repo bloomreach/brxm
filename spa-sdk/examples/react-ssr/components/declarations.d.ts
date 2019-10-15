@@ -35,6 +35,10 @@ interface DocumentContent {
   value: string;
 }
 
+interface MenuModels {
+  menu: import('@bloomreach/spa-sdk').Menu;
+}
+
 interface PageableModels {
   pageable: Pageable;
 }

@@ -16,16 +16,18 @@
 
 import { MetaCollectionModel } from './meta';
 
-export interface MenuModels {
-  menu: Menu;
-}
-
+/**
+ * Essentials component menu model.
+ */
 export interface Menu {
   _meta?: MetaCollectionModel;
   selectSiteMenuItem: MenuItem | null;
   siteMenuItems: MenuItem[];
 }
 
+/**
+ * Essentials component menu item model.
+ */
 export interface MenuItem {
   childMenuItems: MenuItem[];
   depth: number;

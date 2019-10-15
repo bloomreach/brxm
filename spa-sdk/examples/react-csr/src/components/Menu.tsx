@@ -15,7 +15,6 @@
  */
 
 import React from 'react';
-import { MenuModels } from '@bloomreach/spa-sdk';
 import { BrComponentContext, BrManageMenuButton } from '@bloomreach/react-sdk';
 
 export function Menu() {
@@ -28,7 +27,7 @@ export function Menu() {
 
   return (
     <ul className="navbar-nav">
-      <BrManageMenuButton menu={menu}/>
+      <BrManageMenuButton menu={menu} />
       { menu.siteMenuItems.map((item, index) => (
         <li key={index} className={`nav-item ${item.selected ? 'active' : ''}`}>
           <a className="nav-link text-capitalize" href={item._links.site.href}>{item.name}</a>
