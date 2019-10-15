@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
+import { Link } from './link';
 import { MetaCollectionModel } from './meta';
+
+type MenuItemLinks = 'site';
 
 /**
  * Essentials component menu model.
@@ -36,9 +39,5 @@ export interface MenuItem {
   parameters: object;
   repositoryBased: boolean;
   selected: boolean;
-  _links: {
-    site: {
-      href: string;
-    },
-  };
+  _links: Record<MenuItemLinks, Link>;
 }

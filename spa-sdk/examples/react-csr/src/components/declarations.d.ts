@@ -15,16 +15,14 @@
  */
 
 interface DocumentModels {
-  // TODO: Replace with a reference interface
-  document: { $ref: string };
+  document: import('@bloomreach/spa-sdk').Reference;
 }
 
 interface DocumentData {
   author: string;
   content: DocumentContent;
   date: number;
-  // TODO: Replace with a reference interface
-  image: { $ref: string };
+  image: import('@bloomreach/spa-sdk').Reference;
   introduction: string;
   title: string;
 
@@ -48,8 +46,7 @@ interface Pageable {
   currentRange: number[];
   endOffset: number;
   endPage: number;
-  // TODO: Replace with a reference interface
-  items: { $ref: string }[];
+  items: import('@bloomreach/spa-sdk').Reference[];
   maxSize: number;
   next: boolean;
   nextBatch: boolean;
