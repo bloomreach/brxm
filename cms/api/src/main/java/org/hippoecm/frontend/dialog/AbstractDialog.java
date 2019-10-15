@@ -61,8 +61,9 @@ import org.apache.wicket.request.handler.resource.ResourceReferenceRequestHandle
 import org.apache.wicket.util.resource.IResourceStream;
 import org.apache.wicket.util.value.IValueMap;
 import org.hippoecm.frontend.PluginRequestTarget;
-import org.hippoecm.frontend.i18n.TranslatorUtils;
 import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.buttons.ButtonStyle;
+import org.hippoecm.frontend.i18n.TranslatorUtils;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.widgets.AjaxUpdatingWidget;
 import org.slf4j.Logger;
@@ -89,7 +90,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
         FIRST,
         LAST
     }
-    
+
     protected static class PersistentFeedbackMessagesModel extends FeedbackMessagesModel {
 
         private List<FeedbackMessage> messages;
@@ -285,6 +286,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
             }
         };
         ok.setKeyType(KeyType.Enter);
+        ok.setStyle(ButtonStyle.PRIMARY);
 
         cancel = new ButtonWrapper(new ResourceModel("cancel")) {
 
