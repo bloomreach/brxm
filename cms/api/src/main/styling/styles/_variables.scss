@@ -258,7 +258,7 @@ $button-secondary-color:             $bluePrimary;
 $button-secondary-hover-bg:          $blueLight;
 $button-secondary-hover-border:      $blueDark;
 $button-secondary-hover-color:       $blueDark;
-$button-secondary-active-bg:         darken($blueLight, 20%) !default;
+$button-secondary-active-bg:         darken($blueLightSolid, 10%) !default;
 $button-secondary-active-border:     $blueDark;
 $button-secondary-active-color:      $blueDark;
 $button-secondary-focus-bg:          transparent;
