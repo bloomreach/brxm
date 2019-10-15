@@ -50,6 +50,7 @@ import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
 import org.hippoecm.frontend.plugins.cms.admin.domains.Domain.AuthRole;
 import org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionBean;
 import org.hippoecm.frontend.plugins.cms.admin.permissions.ViewDomainActionLink;
+import org.hippoecm.frontend.plugins.cms.admin.permissions.ViewPermissionLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.userroles.DetachableUserRole;
 import org.hippoecm.frontend.plugins.cms.admin.userroles.ViewUserRoleLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.users.DetachableUser;
@@ -75,6 +76,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
 
     private static final Logger log = LoggerFactory.getLogger(ViewGroupPanel.class);
 
+    private final IPluginContext context;
     private final Group group;
     private final PermissionsListView permissionsListView;
     private final GroupMembersListView groupMembersListView;
@@ -88,6 +90,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
     public ViewGroupPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel,
                           final Group group) {
         super(id, breadCrumbModel);
+        this.context = context;
         setOutputMarkupId(true);
 
         final HippoSession session = UserSession.get().getJcrSession();
@@ -152,6 +155,20 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
 
         groupMembersListView = new GroupMembersListView("groupmembers", context);
         add(groupMembersListView);
+
+        // add form with markup id setter so it can be updated via ajax
+        final Form form = new Form<>("back-form");
+        form.setOutputMarkupId(true);
+        add(form);
+        // add a cancel/back button
+        form.add(new AjaxButton("back-button") {
+            @Override
+            protected void onSubmit(final AjaxRequestTarget target, final Form form) {
+                // one up
+                final List<IBreadCrumbParticipant> all = breadCrumbModel.allBreadCrumbParticipants();
+                breadCrumbModel.setActive(all.get(all.size() - 2));
+            }
+        }.setDefaultFormProcessing(false));
     }
 
     @Override
@@ -175,29 +192,6 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
             error(getString("group-remove-failed", Model.of(groupToDelete)));
             log.error("Unable to delete group '{}' : ", groupName, e);
             redraw();
-        }
-    }
-
-    /**
-     * Delete the link between the group and it's domain and the role.
-     *
-     * @param permissionBean the permission to remove
-     */
-    private void deleteRoleDomainCombination(final PermissionBean permissionBean) {
-        final Domain domain = permissionBean.getDomain().getObject();
-        final AuthRole authRole = permissionBean.getAuthRole();
-        final Group groupToChange = permissionBean.getGroup().getObject();
-
-        try {
-            domain.removeGroupFromRole(authRole.getRole(), groupToChange.getGroupname());
-            EventBusUtils.post("remove-group-from-role", HippoEventConstants.CATEGORY_GROUP_MANAGEMENT,
-                    "removed group " + groupToChange.getGroupname() + " from role " + authRole.getRole());
-
-            final String infoMsg = getString("group-role-domain-combination-removed", Model.of(groupToChange));
-            activateParentAndDisplayInfo(infoMsg);
-        } catch (RepositoryException e) {
-            error(getString("group-delete-role-domain-combination-failed", Model.of(groupToChange)));
-            log.error("Failed to remove role domain combination", e);
         }
     }
 
@@ -259,34 +253,12 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
             final Domain domain = permissionBean.getDomain().getObject();
             final AuthRole authRole = permissionBean.getAuthRole();
             final String roleName = authRole.getRole();
-
-            final ViewDomainActionLink action = new ViewDomainActionLink(
-                    "securityDomain",
-                    ViewGroupPanel.this,
-                    permissionBean.getDomain(),
-                    Model.of(domain.getName())
-            );
-            item.add(action);
+            item.add(new ViewDomainActionLink("securityDomain",context, ViewGroupPanel.this, permissionBean.getDomain(),
+                    Model.of(domain.getName())));
+            item.add(new Label("domain-folder", domain.getFolder()));
+            item.add(new ViewPermissionLinkLabel("permission", permissionBean.getDomain(), authRole.getName(),
+                    ViewGroupPanel.this, context));
             item.add(new Label("role", roleName));
-            if (isSecurityAppManager) {
-                item.add(new AjaxLinkLabel("remove", new ResourceModel("group-delete-role-domain-combination")) {
-                    @Override
-                    public void onClick(final AjaxRequestTarget target) {
-                        final Confirm confirm = new Confirm(
-                                getString("group-delete-role-domain-title", item.getModel()),
-                                getString("group-delete-role-domain-text", item.getModel())
-                        ).ok(() -> {
-                            deleteRoleDomainCombination(permissionBean);
-                            setModelObject(group.getPermissions());
-                        });
-
-                        dialogService.show(confirm);
-                        target.add(ViewGroupPanel.this);
-                    }
-                });
-            } else {
-                item.add(new Label("remove", ""));
-            }
         }
     }
 

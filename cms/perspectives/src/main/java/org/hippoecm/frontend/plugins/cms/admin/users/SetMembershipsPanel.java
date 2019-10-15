@@ -15,10 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.users;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.jcr.RepositoryException;
 
@@ -46,12 +43,9 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
 import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.plugins.cms.admin.groups.ViewGroupActionLink;
-import org.hippoecm.frontend.plugins.cms.admin.permissions.DomainLinkListPanel;
-import org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionBean;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.EventBusUtils;
@@ -215,8 +209,6 @@ public class SetMembershipsPanel extends Panel {
 
             item.add(groupLink);
 
-            addDomainLinkListPanelForGroup(item, group);
-
             if (isSecurityUserManager) {
                 item.add(new AjaxLinkLabel("remove", new ResourceModel("user-membership-remove-action")) {
                     @Override
@@ -244,11 +236,11 @@ public class SetMembershipsPanel extends Panel {
     /**
      * list view to be nested in the hippoForm.
      */
-    private static final class MembershipsListView extends ListView<DetachableGroup> {
+    private final class MembershipsListView extends ListView<DetachableGroup> {
         private final String labelId;
 
         MembershipsListView(final String id, final String labelId, final User user) {
-            super(id, new PropertyModel<List<DetachableGroup>>(user, "externalMemberships"));
+            super(id, new PropertyModel<>(user, "externalMemberships"));
             this.labelId = labelId;
             setReuseItems(true);
         }
@@ -260,29 +252,7 @@ public class SetMembershipsPanel extends Panel {
             final Label label = new Label(labelId, group.getGroupname());
             label.setRenderBodyOnly(true);
             item.add(label);
-
-            addDomainLinkListPanelForGroup(item, group);
         }
-    }
-
-    private static void addDomainLinkListPanelForGroup(final ListItem item, final Group group) {
-        final List<PermissionBean> groupPermissions = group.getPermissions();
-        final Map<Domain, List<String>> domainsWithRoles = new HashMap<>();
-        for (final PermissionBean permission : groupPermissions) {
-            final Domain domain = permission.getDomain().getObject();
-            List<String> roles = domainsWithRoles.get(domain);
-            if (roles == null) {
-                roles = new ArrayList<>();
-            }
-            roles.add(permission.getAuthRole().getRole());
-            domainsWithRoles.put(domain, roles);
-        }
-
-        final DomainLinkListPanel domainLinkList = new DomainLinkListPanel(
-                "securityDomains", domainsWithRoles, item.findParent(ViewUserPanel.class)
-        );
-
-        item.add(domainLinkList);
     }
 
     /**
