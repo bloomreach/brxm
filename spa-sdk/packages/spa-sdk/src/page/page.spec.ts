@@ -19,9 +19,9 @@ import { ComponentImpl, Component, TYPE_COMPONENT } from './component';
 import { ContentMap } from './content-map';
 import { ContentImpl } from './content';
 import { Events } from '../events';
-import { PageImpl, Page } from './page';
-import { MetaFactory } from './meta-factory';
 import { MetaCollectionModel } from './meta';
+import { MetaFactory } from './meta-factory';
+import { PageImpl, Page } from './page';
 
 describe('PageImpl', () => {
   let content: ContentMap;

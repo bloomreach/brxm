@@ -136,8 +136,8 @@ export class PageImpl implements Page {
     return this.model.page._meta && this.model.page._meta.pageTitle;
   }
 
-  getMeta(metaCollection: MetaCollectionModel) {
-    return this.metaFactory.create(metaCollection);
+  getMeta(meta: MetaCollectionModel) {
+    return this.metaFactory.create(meta);
   }
 
   isPreview() {
