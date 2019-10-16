@@ -24,28 +24,23 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.common.collect.ImmutableMap;
+
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.core.container.ContainerConfiguration;
-import org.hippoecm.hst.core.container.HstComponentRegistry;
-import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
-import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.channel.Blueprint;
-import org.hippoecm.hst.platform.configuration.channel.BlueprintHandler;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.channel.ChannelInfo;
-import org.hippoecm.hst.platform.configuration.channel.ChannelInfoClassProcessor;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
-import org.hippoecm.hst.platform.configuration.channel.ChannelUtils;
 import org.hippoecm.hst.configuration.channel.HstPropertyDefinition;
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -54,13 +49,20 @@ import org.hippoecm.hst.configuration.hosting.PortMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstNode;
-import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
-import org.hippoecm.hst.container.site.CompositeHstSite;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.container.site.CompositeHstSite;
+import org.hippoecm.hst.core.container.ContainerConfiguration;
+import org.hippoecm.hst.core.container.HstComponentRegistry;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
+import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
+import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
+import org.hippoecm.hst.platform.configuration.channel.BlueprintHandler;
+import org.hippoecm.hst.platform.configuration.channel.ChannelInfoClassProcessor;
+import org.hippoecm.hst.platform.configuration.channel.ChannelUtils;
+import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.resourcebundle.CompositeResourceBundle;
 import org.hippoecm.hst.site.request.ResolvedVirtualHostImpl;
@@ -73,8 +75,6 @@ import org.onehippo.cms7.services.hst.Channel;
 import org.onehippo.repository.l10n.LocalizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableMap;
 
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.supportedSchemeNotMatchingResponseCodesAsString;
@@ -568,8 +568,9 @@ public class VirtualHostsService implements MutableVirtualHosts {
 
     public ResolvedMount matchMount(String hostName, String requestPath) throws MatchException {
         Task matchingTask = null;
+        boolean hdcStarted = HDC.isStarted();
         try {
-            if (HDC.isStarted()) {
+            if (hdcStarted) {
                 matchingTask = HDC.getCurrentTask().startSubtask("Host and Mount Matching");
             }
             ResolvedVirtualHost resolvedVirtualHost = matchVirtualHost(hostName);
@@ -577,6 +578,12 @@ public class VirtualHostsService implements MutableVirtualHosts {
             if(resolvedVirtualHost != null) {
                 resolvedMount  = resolvedVirtualHost.matchMount(requestPath);
             }
+
+            if (hdcStarted) {
+                matchingTask.setAttribute("virtualhost", resolvedVirtualHost.getVirtualHost().toString());
+                matchingTask.setAttribute("mount", resolvedMount.getMount().toString());
+            }
+
             return resolvedMount;
         } finally {
             if (matchingTask != null) {
