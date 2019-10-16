@@ -31,7 +31,6 @@ import { ConnectionService } from './connection.service';
   providedIn: 'root',
 })
 export class AuthService {
-
   constructor(
     private connectionService: ConnectionService,
     private clientAppService: ClientAppService,
@@ -43,6 +42,10 @@ export class AuthService {
       .onError$
       .pipe(filter(error => error.errorCode === ClientErrorCodes.NotAuthorizedError))
       .subscribe(error => this.logout(error.errorCode.toString()));
+
+    this.connectionService
+      .onSessionExpired$
+      .subscribe(() => this.logout('SessionExpired'));
   }
 
   async loginAllResources(): Promise<void> {
@@ -58,8 +61,7 @@ export class AuthService {
     try {
       await Promise.all(loginPromises);
     } catch (error) {
-      const internalError = new InternalError(error.message);
-      this.logout(internalError.code.toString());
+      this.logout('SilentLoginFailed');
     }
   }
 

@@ -16,12 +16,11 @@
 
 import { DOCUMENT } from '@angular/common';
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { ClientError } from '@bloomreach/navapp-communication';
+import { ChildPromisedApi, ClientError } from '@bloomreach/navapp-communication';
 import { Subject } from 'rxjs';
 
 import { ClientAppMock } from '../client-app/models/client-app.mock';
 import { ClientAppService } from '../client-app/services/client-app.service';
-import { AppSettings } from '../models/dto/app-settings.dto';
 import { AppSettingsMock } from '../models/dto/app-settings.mock';
 
 import { APP_SETTINGS } from './app-settings';
@@ -30,15 +29,31 @@ import { BusyIndicatorService } from './busy-indicator.service';
 import { ConnectionService } from './connection.service';
 
 describe('AuthService', () => {
-  let authService: AuthService;
-  let appSettings: jasmine.SpyObj<AppSettings>;
-  let connectionService: jasmine.SpyObj<ConnectionService>;
-  let clientAppService: jasmine.SpyObj<ClientAppService>;
+  let service: AuthService;
+  let childApiMock: jasmine.SpyObj<ChildPromisedApi>;
 
-  const mockErrorStream = new Subject<ClientError>();
-  const mockLogoutApi = {
-    logout: jasmine.createSpy('logout'),
+  const errorMock$ = new Subject<ClientError>();
+  const sessionExpiredMock$ = new Subject();
+
+  const connectionServiceMock = {
+    onError$: errorMock$,
+    onSessionExpired$: sessionExpiredMock$,
+    createConnection: undefined,
+    removeConnection: undefined,
   };
+
+  const clientAppServiceMock = {
+    apps: undefined,
+  };
+
+  const busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', [
+    'show',
+    'hide',
+  ]);
+
+  const appSettingsMock = new AppSettingsMock();
+  const numberOfLoginApps = appSettingsMock.loginResources.length;
+  const numberOfLogoutApps = appSettingsMock.logoutResources.length;
 
   const documentMock = {
     location: {
@@ -47,102 +62,93 @@ describe('AuthService', () => {
   };
 
   beforeEach(() => {
-    const appSettingsMock = new AppSettingsMock();
+    connectionServiceMock.createConnection = jasmine
+      .createSpy('createConnection')
+      .and
+      .returnValue(Promise.resolve({ url: 'testUrl' }));
+    connectionServiceMock.removeConnection = jasmine
+      .createSpy('removeConnection')
+      .and
+      .returnValue(Promise.resolve());
 
-    const connectionServiceMock = {
-      onError$: mockErrorStream,
-      createConnection: jasmine
-        .createSpy('createConnection')
-        .and
-        .returnValue(Promise.resolve({ url: 'testUrl' })),
-      removeConnection: jasmine
-        .createSpy('removeConnection')
-        .and
-        .returnValue(Promise.resolve()),
-    };
-
-    const busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', [
-      'show',
-      'hide',
+    childApiMock = jasmine.createSpyObj('ChildApi', [
+      'logout',
     ]);
-
-    const clientAppServiceMock = {
-      apps: [
-        new ClientAppMock({ url: 'http://test.com', api: mockLogoutApi }),
-        new ClientAppMock({ url: 'http://test2.com', api: mockLogoutApi }),
-      ],
-    };
+    clientAppServiceMock.apps = [
+      new ClientAppMock({ url: 'http://test.com', api: childApiMock }),
+      new ClientAppMock({ url: 'http://test2.com', api: childApiMock }),
+    ];
 
     TestBed.configureTestingModule({
       providers: [
         AuthService,
-        { provide: APP_SETTINGS, useValue: appSettingsMock },
         { provide: ConnectionService, useValue: connectionServiceMock },
         { provide: ClientAppService, useValue: clientAppServiceMock },
         { provide: BusyIndicatorService, useValue: busyIndicatorServiceMock },
+        { provide: APP_SETTINGS, useValue: appSettingsMock },
         { provide: DOCUMENT, useValue: documentMock },
       ],
     });
 
-    authService = TestBed.get(AuthService);
-    appSettings = TestBed.get(APP_SETTINGS);
-    connectionService = TestBed.get(ConnectionService);
-    clientAppService = TestBed.get(ClientAppService);
+    service = TestBed.get(AuthService);
   });
 
   it('should set up listener for unauthorized errors', () => {
-    spyOn(authService, 'logout');
+    spyOn(service, 'logout');
 
-    mockErrorStream.next({ errorCode: 500 });
-    mockErrorStream.next({ errorCode: 403 });
+    errorMock$.next({ errorCode: 500 });
+    errorMock$.next({ errorCode: 403 });
 
-    expect(authService.logout).toHaveBeenCalledTimes(1);
+    expect(service.logout).toHaveBeenCalledTimes(1);
+  });
+
+  it('should set up listener for session expiration', () => {
+    spyOn(service, 'logout');
+
+    sessionExpiredMock$.next();
+
+    expect(service.logout).toHaveBeenCalledWith('SessionExpired');
   });
 
   describe('Logging in', () => {
     beforeEach(() => {
-      spyOn(authService, 'logout');
+      spyOn(service, 'logout');
     });
 
-    it('should login all provided resources', fakeAsync(() => {
-      const numberOfLoginApps = appSettings.loginResources.length;
-
-      authService.loginAllResources();
+    it('should log in all provided resources', fakeAsync(() => {
+      service.loginAllResources();
 
       tick();
 
-      expect(connectionService.createConnection).toHaveBeenCalledTimes(numberOfLoginApps);
-      expect(authService.logout).not.toHaveBeenCalled();
-      expect(connectionService.removeConnection).toHaveBeenCalledTimes(numberOfLoginApps);
+      expect(connectionServiceMock.createConnection).toHaveBeenCalledTimes(numberOfLoginApps);
+      expect(service.logout).not.toHaveBeenCalled();
+      expect(connectionServiceMock.removeConnection).toHaveBeenCalledTimes(numberOfLoginApps);
     }));
 
     it('should logout if any of the logins fail', fakeAsync(() => {
-      connectionService.createConnection.and.returnValue(Promise.reject({ message: 'Error' }));
-      const numberOfLoginApps = appSettings.loginResources.length;
+      connectionServiceMock.createConnection.and.returnValue(Promise.reject({ message: 'Error' }));
 
-      authService.loginAllResources();
+      service.loginAllResources();
 
       tick();
 
-      expect(connectionService.createConnection).toHaveBeenCalledTimes(numberOfLoginApps);
-      expect(authService.logout).toHaveBeenCalled();
-      expect(connectionService.removeConnection).toHaveBeenCalledTimes(numberOfLoginApps);
+      expect(connectionServiceMock.createConnection).toHaveBeenCalledTimes(numberOfLoginApps);
+      expect(service.logout).toHaveBeenCalledWith('SilentLoginFailed');
+      expect(connectionServiceMock.removeConnection).toHaveBeenCalledTimes(numberOfLoginApps);
     }));
   });
 
   describe('logging out', () => {
     it('should tell all apps to logout', fakeAsync(() => {
-      const numberOfLogoutApps = appSettings.logoutResources.length;
-
-      authService.logout('Test logout message');
+      service.logout('Test logout message');
       tick();
 
-      expect(mockLogoutApi.logout).toHaveBeenCalledTimes(numberOfLogoutApps);
+      expect(childApiMock.logout).toHaveBeenCalledTimes(numberOfLogoutApps);
     }));
 
     it('should redirect to the login location', fakeAsync(() => {
       const logoutMessage = 'test logout message';
-      authService.logout(logoutMessage);
+      service.logout(logoutMessage);
       tick();
 
       const loginLocation: string = documentMock.location.replace.calls.mostRecent().args[0];

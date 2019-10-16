@@ -45,7 +45,7 @@ export class ConnectionService {
   updateNavLocation$ = new Subject<NavLocation>();
   onError$ = new Subject<ClientError>();
   onUserActivity$ = new Subject<void>();
-  onSessionExpired$ = new Subject<string>();
+  onSessionExpired$ = new Subject<void>();
 
   constructor(
     @Inject(APP_SETTINGS) private appSettings: AppSettings,
@@ -67,7 +67,7 @@ export class ConnectionService {
       navigate: (location: NavLocation) => this.navigate$.next(location),
       updateNavLocation: (location: NavLocation) => this.updateNavLocation$.next(location),
       onError: (clientError: ClientError) => this.onError$.next(clientError),
-      onSessionExpired: () => this.onSessionExpired$.next('SessionExpired'),
+      onSessionExpired: () => this.onSessionExpired$.next(),
       onUserActivity: () => this.onUserActivity$.next(),
     };
   }
