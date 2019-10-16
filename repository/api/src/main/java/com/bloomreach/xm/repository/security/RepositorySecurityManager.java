@@ -102,4 +102,45 @@ public interface RepositorySecurityManager {
      * @throws RepositoryException if the underlying HippoSession is no longer live, or something else went wrong
      */
     UserRolesManager getUserRolesManager() throws AccessDeniedException, RepositoryException;
+
+    /**
+     * Provides administrative (crud) domain management; currently limited to only {@link AuthRole}s of an existing domain.
+     * <p>
+     *     Accessing the {@link DomainsManager} requires the HippoSession to be in userRole
+     *     {@link SecurityConstants#USERROLE_SECURITY_MANAGER} otherwise an {@link AccessDeniedException} will be raised.
+     * </p>
+     * <p>
+     *     Note that this manager only provides and allows operations on {@link DomainAuth}s in a <em>valid</em> location!
+     * </p>
+     * <p>
+     *     A domain location is valid if:
+     * </p>
+     * <ul>
+     *     <li>it is a domain (directly) under a hipposys:domainfolder parent node below /hippo:configuration/hippo:domains</li>
+     *     <li>it is a domain (directly) under a hipposys:federateddomainfolder parent node with depth >= 2</li>
+     * </ul>
+     * <p>
+     *     Likewise, access and operations on {@link AuthRole}s is only provided for authroles directly under a <em>valid</em>
+     *     domain location.
+     * </p>
+     * <p>
+     *     All <em>modifying operations</em> require the underlying HippoSession to have userRole
+     *     {@link SecurityConstants#USERROLE_SECURITY_APPLICATION_MANAGER}
+     * </p>
+     * <p>
+     *     The HippoSession will be attached to a dedicated internal system session for performing the
+     *     requested administrative tasks. The HippoSession itself is (only) used for (possibly) additional
+     *     authorization checks, depending on the requested administrative task, and for (audit) logging purposes.
+     * </p>
+     * <p>
+     *     All of the managers provided by this RepositorySecurityManager share the same
+     *     internal system session for its HippoSession, which is automatically logged out when the
+     *     HippoSession logs out.
+     * </p>
+     * @return the DomainsManager
+     * @throws AccessDeniedException if the provided HippoSession isn't granted the userrole
+     *         {@link SecurityConstants#USERROLE_SECURITY_MANAGER}
+     * @throws RepositoryException if the underlying HippoSession is no longer live, or something else went wrong
+     */
+    DomainsManager getDomainsManager() throws AccessDeniedException, RepositoryException;
 }

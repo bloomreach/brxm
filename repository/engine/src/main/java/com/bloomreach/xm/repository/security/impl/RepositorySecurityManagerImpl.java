@@ -24,6 +24,7 @@ import org.hippoecm.repository.impl.RepositoryDecorator;
 import org.hippoecm.repository.impl.SessionDecorator;
 import org.onehippo.repository.InternalHippoRepository;
 
+import com.bloomreach.xm.repository.security.DomainsManager;
 import com.bloomreach.xm.repository.security.RepositorySecurityManager;
 import com.bloomreach.xm.repository.security.RepositorySecurityProviders;
 import com.bloomreach.xm.repository.security.RolesManager;
@@ -33,6 +34,7 @@ import com.bloomreach.xm.repository.security.UserRolesManager;
 import com.bloomreach.xm.repository.security.UserRolesProvider;
 
 import static org.onehippo.repository.security.SecurityConstants.USERROLE_SECURITY_APPLICATION_MANAGER;
+import static org.onehippo.repository.security.SecurityConstants.USERROLE_SECURITY_MANAGER;
 
 /**
  * Implementation of the {@link RepositorySecurityManager} which is bound to a specific {@link HippoSession}
@@ -47,6 +49,7 @@ public class RepositorySecurityManagerImpl implements RepositorySecurityManager 
     private ChangePasswordManagerImpl changePasswordManager;
     private RolesManagerImpl rolesManager;
     private UserRolesManagerImpl userRolesManager;
+    private DomainsManagerImpl domainsManager;
     private HippoSession systemSession;
 
     private boolean closed;
@@ -123,6 +126,20 @@ public class RepositorySecurityManagerImpl implements RepositorySecurityManager 
         return userRolesManager;
     }
 
+    @Override
+    public synchronized DomainsManager getDomainsManager()
+            throws AccessDeniedException, RepositoryException {
+        checkClosed();
+        if (domainsManager == null) {
+            if (!hippoSession.isUserInRole(USERROLE_SECURITY_MANAGER)) {
+                throw new AccessDeniedException("Access denied.");
+            }
+            createSystemSessionIfNeeded();
+            domainsManager = new DomainsManagerImpl(this);
+        }
+        return domainsManager;
+    }
+
     /**
      * Check the underlying HippoSession is still alive and otherwise forces a "This session has been closed." RepositoryException
      * @throws RepositoryException when the underlying HippoSession is no longer live (logged out or gc'ed)
@@ -142,6 +159,7 @@ public class RepositorySecurityManagerImpl implements RepositorySecurityManager 
             rolesManager = null;
             userRolesManager = null;
             changePasswordManager = null;
+            domainsManager = null;
             if (systemSession != null && systemSession.isLive()) {
                 systemSession.logout();
                 systemSession = null;
