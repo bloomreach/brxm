@@ -166,11 +166,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     private Name hippoFacetSearch;
 
     /**
-     * Name of hippo:facetselect, needed for document model checking
-     */
-    private Name hippoFacetSelect;
-
-    /**
      * Root NodeId of current session
      */
     private NodeId rootNodeId;
@@ -300,7 +295,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         hippoHandle = npRes.getQName(HippoNodeType.NT_HANDLE);
         hippoFacetResult = npRes.getQName(HippoNodeType.NT_FACETRESULT);
         hippoFacetSearch = npRes.getQName(HippoNodeType.NT_FACETSEARCH);
-        hippoFacetSelect = npRes.getQName(HippoNodeType.NT_FACETSELECT);
 
         // initialize read cache
         int cacheSize = getPermCacheSize();
@@ -1365,8 +1359,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         try {
             if (isInstanceOfType(nodeState, HippoNodeType.NT_DOCUMENT)
                     || nodeState.getNodeTypeName().equals(hippoHandle)
-                    || nodeState.getNodeTypeName().equals(hippoFacetSearch)
-                    || nodeState.getNodeTypeName().equals(hippoFacetSelect)) {
+                    || nodeState.getNodeTypeName().equals(hippoFacetSearch)) {
                 if (log.isTraceEnabled()) {
                     log.trace("Node is already document root: " + nodeState.getNodeTypeName());
                 }
@@ -1394,12 +1387,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             if (nodeState.getNodeTypeName().equals(hippoFacetSearch)) {
                 if (log.isDebugEnabled()) {
                     log.debug("MATCH hippoFacetSearch: " + nodeState.getNodeTypeName());
-                }
-                return null;
-            }
-            if (nodeState.getNodeTypeName().equals(hippoFacetSelect)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("MATCH hippoFacetSelect: " + nodeState.getNodeTypeName());
                 }
                 return null;
             }

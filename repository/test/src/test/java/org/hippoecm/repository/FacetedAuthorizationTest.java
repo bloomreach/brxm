@@ -45,6 +45,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.security.HippoAccessManager;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.Utilities;
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
@@ -56,6 +57,7 @@ import org.onehippo.repository.security.domain.FacetRule;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hippoecm.repository.HippoStdNodeType.NT_RELAXED;
 import static org.hippoecm.repository.api.HippoNodeType.CONFIGURATION_PATH;
 import static org.hippoecm.repository.api.HippoNodeType.DOMAINS_PATH;
 import static org.hippoecm.repository.api.HippoNodeType.GROUPS_PATH;
@@ -577,6 +579,18 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         doc.addMixin("hippo:container");
         final Node childNode = doc.addNode("level1", "hippo:testcomposite");
         childNode.addNode("level2", "hippo:testcomposite");
+        {
+            final Node link = childNode.addNode("link", "hippo:facetselect");
+            link.setProperty(HippoNodeType.HIPPO_FACETS, new String[]{});
+            link.setProperty(HippoNodeType.HIPPO_MODES, new String[]{});
+            link.setProperty(HippoNodeType.HIPPO_VALUES, new String[]{});
+            link.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getIdentifier());
+        }
+        {
+            final Node mirror = childNode.addNode("mirror", "hippo:mirror");
+            mirror.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getIdentifier());
+        }
+
         session.save();
 
         assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
@@ -610,7 +624,6 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", JCR_ADD_CHILD_NODES));
         userSession.getNode("/" + TEST_DATA_NODE + "/doc/doc").addNode("foo", "hippo:testcomposite");
         userSession.save();
-
 
         doc.setProperty("authtest", "canread");
         session.save();
@@ -677,6 +690,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         }
         assertFalse("'level2' node is still not readable and thus should not inherit jcr:write",
                 userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2", JCR_REMOVE_NODE));
+
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1", JCR_REMOVE_CHILD_NODES));
 
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/newnode", Session.ACTION_ADD_NODE));
@@ -704,6 +718,46 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
 
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2/newnode", Session.ACTION_ADD_NODE));
         assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2", JCR_ADD_CHILD_NODES));
+
+
+        // MIRROR NODETYPE TESTS
+
+        // 'level1/mirror' is not readable
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/mirror", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/mirror", JCR_REMOVE_NODE));
+
+        // make 'mirror' readable, now it should also receive the write access from level1
+        final Node mirror = session.getNode("/" + TEST_DATA_NODE + "/doc/doc/level1/mirror");
+        mirror.addMixin(NT_RELAXED);
+        mirror.setProperty("authtest", "canread");
+        session.save();
+
+        // because of mirror #^#^#$^&*%^#$ blah logic we need refresh user session, sigh
+        userSession.refresh(false);
+
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/mirror", Session.ACTION_READ));
+        // 'level1/mirror' is now readable and thus should inherit write access
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/mirror", JCR_REMOVE_NODE));
+
+        // FACETSELECT TESTS
+
+        // 'level1/link' is not readable
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/link", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/link", JCR_REMOVE_NODE));
+
+        // make 'link' readable, now it should also receive the write access from level1
+        final Node link = session.getNode("/" + TEST_DATA_NODE + "/doc/doc/level1/link");
+        link.addMixin(NT_RELAXED);
+        link.setProperty("authtest", "canread");
+        session.save();
+
+        // because of facetselect #^#^#$^&*%^#$ blah logic we need refresh user session, sigh
+        userSession.refresh(false);
+
+
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/link", Session.ACTION_READ));
+        // 'level1/link' is now readable and thus should inherit write access
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/link", JCR_REMOVE_NODE));
     }
 
     @Test

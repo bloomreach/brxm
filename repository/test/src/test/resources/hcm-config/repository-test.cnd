@@ -25,6 +25,8 @@
 
 [hippo:testcomposite] > hippo:compound
 + * (hippo:testcomposite) = hippo:testcomposite
++ * (hippo:facetselect)
++ * (hippo:mirror)
 - * (string)
 
 [hippo:testdocument] > hippo:document
