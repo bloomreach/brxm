@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, Location } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { ClientErrorCodes } from '@bloomreach/navapp-communication';
 import { filter } from 'rxjs/operators';
@@ -35,6 +35,7 @@ export class AuthService {
     private connectionService: ConnectionService,
     private clientAppService: ClientAppService,
     private busyIndicatorService: BusyIndicatorService,
+    private location: Location,
     @Inject(APP_SETTINGS) private appSettings: AppSettings,
     @Inject(DOCUMENT) private document: Document,
   ) {
@@ -68,23 +69,26 @@ export class AuthService {
   async logout(loginMessageKey: string): Promise<void> {
     this.busyIndicatorService.show();
 
+    const logoutAppPromises = this.clientAppService.apps
+      .filter(app => !!app.api.logout)
+      .map(app => app.api.logout());
     const logoutResources = this.appSettings.logoutResources || [];
     const logoutResourcePromises = logoutResources.map(resource => this.connectionService.createConnection(resource.url));
-    const logoutAppPromises = this.clientAppService.apps.map(app => app.api.logout());
 
     try {
-      await Promise.all(logoutResourcePromises);
       await Promise.all(logoutAppPromises);
+      await Promise.all(logoutResourcePromises);
     } finally {
       const loginLocation = this.getLoginLocation(loginMessageKey);
-      this.document.location.replace(loginLocation);
       this.busyIndicatorService.hide();
+      this.document.location.replace(loginLocation);
     }
   }
 
   private getLoginLocation(loginMessageKey: string): string {
     const queryParams = loginMessageKey && `/?loginmessage=${loginMessageKey}` || '/';
     const baseUrl = this.appSettings.basePath;
-    return `${baseUrl}${queryParams}`;
+
+    return this.location.prepareExternalUrl(`${baseUrl}${queryParams}`);
   }
 }

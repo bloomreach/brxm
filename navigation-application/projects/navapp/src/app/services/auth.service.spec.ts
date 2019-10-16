@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT, Location } from '@angular/common';
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { ChildPromisedApi, ClientError } from '@bloomreach/navapp-communication';
 import { Subject } from 'rxjs';
@@ -57,9 +57,13 @@ describe('AuthService', () => {
 
   const documentMock = {
     location: {
-      replace: jasmine.createSpy('replace'),
+      replace: undefined,
     },
   };
+
+  const locationMock = jasmine.createSpyObj('Location', [
+    'prepareExternalUrl',
+  ]);
 
   beforeEach(() => {
     connectionServiceMock.createConnection = jasmine
@@ -79,12 +83,15 @@ describe('AuthService', () => {
       new ClientAppMock({ url: 'http://test2.com', api: childApiMock }),
     ];
 
+    documentMock.location.replace = jasmine.createSpy('replace');
+
     TestBed.configureTestingModule({
       providers: [
         AuthService,
         { provide: ConnectionService, useValue: connectionServiceMock },
         { provide: ClientAppService, useValue: clientAppServiceMock },
         { provide: BusyIndicatorService, useValue: busyIndicatorServiceMock },
+        { provide: Location, useValue: locationMock },
         { provide: APP_SETTINGS, useValue: appSettingsMock },
         { provide: DOCUMENT, useValue: documentMock },
       ],
@@ -147,14 +154,15 @@ describe('AuthService', () => {
     }));
 
     it('should redirect to the login location', fakeAsync(() => {
-      const logoutMessage = 'test logout message';
+      locationMock.prepareExternalUrl.and.returnValue('https://some-domain.com/base/path');
+      const logoutMessage = 'test-logout-message';
+
       service.logout(logoutMessage);
+
       tick();
 
-      const loginLocation: string = documentMock.location.replace.calls.mostRecent().args[0];
-
-      expect(documentMock.location.replace).toHaveBeenCalled();
-      expect(loginLocation.includes(logoutMessage)).toBe(true);
+      expect(locationMock.prepareExternalUrl).toHaveBeenCalledWith('/base/path/?loginmessage=test-logout-message');
+      expect(documentMock.location.replace).toHaveBeenCalledWith('https://some-domain.com/base/path');
     }));
   });
 });
