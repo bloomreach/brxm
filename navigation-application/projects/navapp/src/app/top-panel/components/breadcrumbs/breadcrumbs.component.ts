@@ -46,6 +46,6 @@ export class BreadcrumbsComponent {
   }
 
   onLastBreadcrumbClicked(): void {
-    this.navigationService.navigateToDefaultCurrentAppPage(NavigationTrigger.Breadcrumbs);
+    this.navigationService.navigateToDefaultAppPage(NavigationTrigger.Breadcrumbs);
   }
 }

@@ -17,9 +17,9 @@
 import { Location } from '@angular/common';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { NavigationTrigger, NavItem, NavLocation } from '@bloomreach/navapp-communication';
-import { BehaviorSubject, EMPTY, Observable, of, Subject, Subscription, throwError } from 'rxjs';
+import { EMPTY, Observable, of, Subject, Subscription, throwError } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
-import { catchError, finalize, map, mapTo, skip, switchMap, tap } from 'rxjs/operators';
+import { catchError, finalize, mapTo, switchMap, tap } from 'rxjs/operators';
 
 import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
@@ -35,9 +35,6 @@ import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
 import { APP_SETTINGS } from './app-settings';
 import { BusyIndicatorService } from './busy-indicator.service';
 import { ConnectionService } from './connection.service';
-import { NavigationStartEvent } from './events/navigation-start.event';
-import { NavigationStopEvent } from './events/navigation-stop.event';
-import { NavigationEvent } from './events/navigation.event';
 import { NavItemService } from './nav-item.service';
 import { UrlMapperService } from './url-mapper.service';
 
@@ -67,18 +64,7 @@ export class NavigationService implements OnDestroy {
   private routes: Route[];
   private locationSubscription: Subscription;
   private readonly transitions = new Subject<Transition | Error>();
-  private readonly navigations = new BehaviorSubject<Navigation>({
-    url: undefined,
-    navItem: undefined,
-    appPathAddOn: '',
-    state: {},
-    source: NavigationTrigger.NotDefined,
-    app: undefined,
-    replaceState: false,
-    resolve: undefined,
-    reject: undefined,
-  });
-  private events = new Subject<NavigationEvent>();
+  private currentNavItem: NavItem;
 
   constructor(
     @Inject(APP_SETTINGS) private appSettings: AppSettings,
@@ -95,16 +81,12 @@ export class NavigationService implements OnDestroy {
     this.connectionService
       .navigate$
       .subscribe(navLocation => this.navigateByNavLocation(navLocation, NavigationTrigger.AnotherApp));
+
     this.connectionService
       .updateNavLocation$
       .subscribe(navLocation => this.updateByNavLocation(navLocation));
 
     this.setupNavigations();
-    this.processNavigations();
-  }
-
-  get events$(): Observable<NavigationEvent> {
-    return this.events.asObservable();
   }
 
   private get basePath(): string {
@@ -175,16 +157,19 @@ export class NavigationService implements OnDestroy {
       return;
     }
 
+    this.currentNavItem = navItem;
     this.menuStateService.activateMenuItem(navItem.appIframeUrl, navItem.appPath);
     this.breadcrumbsService.setSuffix(navLocation.breadcrumbLabel);
 
     this.setBrowserUrl(browserUrl, { breadcrumbLabel: navLocation.breadcrumbLabel });
   }
 
-  navigateToDefaultCurrentAppPage(triggeredBy: NavigationTrigger): Promise<void> {
-    const lastNavigation = this.getLastNavigation();
+  navigateToDefaultAppPage(triggeredBy: NavigationTrigger): Promise<void> {
+    if (!this.currentNavItem) {
+      return Promise.resolve();
+    }
 
-    return this.navigateByNavItem(lastNavigation.navItem, triggeredBy, '');
+    return this.navigateByNavItem(this.currentNavItem, triggeredBy, '');
   }
 
   navigateToHome(triggeredBy: NavigationTrigger): Promise<void> {
@@ -213,7 +198,6 @@ export class NavigationService implements OnDestroy {
     this.transitions.pipe(
       tap(() => {
         this.busyIndicatorService.show();
-        this.events.next(new NavigationStartEvent());
       }),
       switchMap((t: Transition) => this.processTransition(t).pipe(
         catchError(error => {
@@ -229,7 +213,6 @@ export class NavigationService implements OnDestroy {
           t.resolve();
 
           this.busyIndicatorService.hide();
-          this.events.next(new NavigationStopEvent());
         }),
       )),
     ).subscribe((t: Navigation | Error) => {
@@ -244,20 +227,7 @@ export class NavigationService implements OnDestroy {
 
         return;
       }
-
-      this.navigations.next(t as Navigation);
     });
-  }
-
-  private processNavigations(): void {
-    this.navigations.pipe(
-      skip(1),
-    ).subscribe(
-      () => {
-        this.events.next(new NavigationStopEvent());
-      },
-      e => console.error(`Unhandled Navigation Error: ${e}`),
-    );
   }
 
   private scheduleNavigation(
@@ -300,6 +270,7 @@ export class NavigationService implements OnDestroy {
 
         if (!route) {
           this.menuStateService.deactivateMenuItem();
+          this.currentNavItem = undefined;
 
           return throwError(new NotFoundError(`Unknown url: ${t.url}`));
         }
@@ -348,6 +319,7 @@ export class NavigationService implements OnDestroy {
       tap(t => {
         const { breadcrumbLabel } = t.state;
 
+        this.currentNavItem = t.navItem;
         this.menuStateService.activateMenuItem(t.navItem.appIframeUrl, t.navItem.appPath);
         this.breadcrumbsService.setSuffix(breadcrumbLabel);
       }),
@@ -373,10 +345,6 @@ export class NavigationService implements OnDestroy {
         );
       }),
     );
-  }
-
-  private getLastNavigation(): Navigation {
-    return this.navigations.value;
   }
 
   private setBrowserUrl(url: string, state: { [key: string]: any }, replaceState = false): void {

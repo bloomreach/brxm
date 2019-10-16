@@ -291,18 +291,6 @@ describe('NavigationService', () => {
       service.navigateByNavItem(navItem, NavigationTrigger.NotDefined);
     }));
 
-    it('should navigate to the default page for the app', fakeAsync(() => {
-      service.navigateToDefaultCurrentAppPage(NavigationTrigger.NotDefined);
-
-      tick();
-
-      expect(locationMock.go).toHaveBeenCalledWith(
-        `${basePath}/iframe1/url/app/path/to/home`,
-        '',
-        {},
-      );
-    }));
-
     it('should navigate to the home page', () => {
       service.navigateToHome(NavigationTrigger.FastTravel);
 
@@ -404,6 +392,49 @@ describe('NavigationService', () => {
       expect(locationMock.replaceState).not.toHaveBeenCalled();
       expect(locationMock.go).not.toHaveBeenCalled();
     }));
+
+    describe('navigateToDefaultAppPage', () => {
+      it('should navigate to the default page for the app', fakeAsync(() => {
+        service.navigateToDefaultAppPage(NavigationTrigger.NotDefined);
+
+        tick();
+
+        expect(locationMock.go).toHaveBeenCalledWith(
+          `${basePath}/iframe1/url/app/path/to/home`,
+          '',
+          {},
+        );
+      }));
+
+      describe('after updateByNavLocation invocation', () => {
+        beforeEach(() => {
+          urlMapperServiceMock.mapNavLocationToBrowserUrl.and.returnValue([
+            `${basePath}/iframe1/url/app/path/to/page1`,
+            new NavItemMock({
+              id: 'item2',
+              appIframeUrl: 'http://domain.com/iframe1/url',
+              appPath: 'app/path/to/page1',
+            }),
+          ]);
+
+          service.updateByNavLocation({
+            path: 'app/path/to/page1',
+          });
+        });
+
+        it('should navigate to the other default page for the app', fakeAsync(() => {
+          service.navigateToDefaultAppPage(NavigationTrigger.NotDefined);
+
+          tick();
+
+          expect(locationMock.go).toHaveBeenCalledWith(
+            `${basePath}/iframe1/url/app/path/to/page1`,
+            '',
+            {},
+          );
+        }));
+      });
+    });
 
     describe('eager state update', () => {
       const invalidNavItem = new NavItemMock({
