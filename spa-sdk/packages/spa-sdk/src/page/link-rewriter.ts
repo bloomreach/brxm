@@ -36,24 +36,35 @@ export class LinkRewriterImpl implements LinkRewriter {
   ) {}
 
   rewrite(content: string, type: SupportedType = 'text/html') {
-    const document = this.domParser.parseFromString(content, type);
+    const document = this.domParser.parseFromString(`<body>${content}</body>`, type);
 
-    document.querySelectorAll('a[href][data-type]').forEach(
-      element => element.setAttribute('href', this.linkFactory.create({
-        href: element.getAttribute('href')!,
-        type: element.getAttribute('data-type') as LinkType,
-      })),
-    );
+    this.rewriteAnchors(document);
+    this.rewriteImages(document);
 
-    document.querySelectorAll('img[src]').forEach(
-      element => element.setAttribute('src', this.linkFactory.create({
-        href: element.getAttribute('src')!,
-        type: TYPE_LINK_RESOURCE,
-      })),
-    );
-
-    const body = this.xmlSerializer.serializeToString(document.body);
+    const body = this.xmlSerializer.serializeToString(document);
 
     return body.replace(BODY_CONTENTS, '$1');
+  }
+
+  private rewriteAnchors(document: Document) {
+    Array.from(document.getElementsByTagName('a'))
+      .filter(element => element.hasAttribute('href') && element.hasAttribute('data-type'))
+      .forEach(
+        element => element.setAttribute('href', this.linkFactory.create({
+          href: element.getAttribute('href')!,
+          type: element.getAttribute('data-type') as LinkType,
+        })),
+      );
+  }
+
+  private rewriteImages(document: Document) {
+    Array.from(document.getElementsByTagName('img'))
+      .filter(element => element.hasAttribute('src'))
+      .forEach(
+        element => element.setAttribute('src', this.linkFactory.create({
+          href: element.getAttribute('src')!,
+          type: TYPE_LINK_RESOURCE,
+        })),
+      );
   }
 }

@@ -19,6 +19,7 @@
  * @module index
  */
 
+import { DOMParser, XMLSerializer } from 'xmldom';
 import { Typed } from 'emittery';
 import { Events } from './events';
 import { Cms } from './cms';
