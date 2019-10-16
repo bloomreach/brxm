@@ -36,6 +36,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
@@ -47,6 +48,10 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
+import org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionBean;
+import org.hippoecm.frontend.plugins.cms.admin.permissions.ViewDomainActionLink;
+import org.hippoecm.frontend.plugins.cms.admin.permissions.ViewPermissionLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.userroles.DetachableUserRole;
 import org.hippoecm.frontend.plugins.cms.admin.userroles.ViewUserRoleLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
@@ -59,8 +64,9 @@ import org.onehippo.repository.security.SecurityConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bloomreach.xm.repository.security.AuthRole;
+import com.bloomreach.xm.repository.security.DomainAuth;
 import com.bloomreach.xm.repository.security.UserRole;
-import com.bloomreach.xm.repository.security.UserRolesProvider;
 
 public class ViewUserPanel extends AdminBreadCrumbPanel {
     private static final Logger log = LoggerFactory.getLogger(ViewUserPanel.class);
@@ -69,7 +75,9 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
     private final boolean isSecurityUserManager;
     private final UserRolesListView userRolesListView;
     private final AddUserRolePanel addUserRolePanel;
+    private final PermissionsListView permissionsListView;
     private final IDialogService dialogService;
+    private final IPluginContext context;
 
     /**
      * @param id the ID for the Panel
@@ -80,6 +88,7 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
     public ViewUserPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel,
                          final IModel<User> userModel) {
         super(id, breadCrumbModel);
+        this.context = context;
         setOutputMarkupId(true);
         model = userModel;
         dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
@@ -155,6 +164,9 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
         addUserRolePanel.setVisible(isSecurityUserManager);
         add(addUserRolePanel);
 
+        permissionsListView = new PermissionsListView("permissions");
+        add(permissionsListView);
+
         final SetMembershipsPanel setMembershipsPanel =
                 new SetMembershipsPanel("set-member-ship-panel", context, breadCrumbModel, userModel);
         add(setMembershipsPanel);
@@ -226,10 +238,8 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
 
         @Override
         protected void populateItem(final ListItem<String> item) {
-            UserRolesProvider userRolesProvider =
-                    UserSession.get().getJcrSession().getWorkspace().getSecurityManager().getUserRolesProvider();
             final String userRoleName = item.getModelObject();
-            final UserRole userRole = userRolesProvider.getRole(userRoleName);
+            final UserRole userRole = SecurityManagerHelper.getUserRolesProvider().getRole(userRoleName);
             if (userRole == null) {
                 item.add(new Label("name", Model.of(userRoleName)));
                 item.add(new Label("description"));
@@ -329,9 +339,7 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
         List<String> getUserRoleChoices() {
             final User user = model.getObject();
             if (user != null) {
-                UserRolesProvider userRolesProvider =
-                        UserSession.get().getJcrSession().getWorkspace().getSecurityManager().getUserRolesProvider();
-                return userRolesProvider.getRoles().stream()
+                return SecurityManagerHelper.getUserRolesProvider().getRoles().stream()
                         .map(UserRole::getName)
                         .filter(r -> !user.getUserRoles().contains(r))
                         .sorted()
@@ -347,6 +355,40 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
         @SuppressWarnings("unused")
         public void setSelectedUserRole(final String selectedUserRole) {
             this.selectedUserRole = selectedUserRole;
+        }
+    }
+
+    /**
+     * List view for showing the permissions of the user.
+     */
+    private final class PermissionsListView extends ListView<PermissionBean> {
+
+        private final IModel<List<PermissionBean>> permissionBeanModel =
+                new LoadableDetachableModel<List<PermissionBean>>() {
+                    @Override
+                    protected List<PermissionBean> load() {
+                        return PermissionBean.forUser(model.getObject());
+                    }
+                };
+
+        PermissionsListView(final String id) {
+            super(id);
+            setDefaultModel(permissionBeanModel);
+            setReuseItems(false);
+        }
+
+        @Override
+        protected void populateItem(final ListItem<PermissionBean> item) {
+            final PermissionBean permissionBean = item.getModelObject();
+            final DomainAuth domain = permissionBean.getDomain().getObject();
+            final AuthRole authRole = permissionBean.getAuthRole();
+            final String roleName = authRole.getRole();
+            item.add(new ViewDomainActionLink("securityDomain",context, ViewUserPanel.this, permissionBean.getDomain(),
+                    Model.of(domain.getName())));
+            item.add(new Label("domain-folder", domain.getFolderPath()));
+            item.add(new ViewPermissionLinkLabel("permission", permissionBean.getDomain(), authRole.getName(),
+                    ViewUserPanel.this, context));
+            item.add(new Label("role", roleName));
         }
     }
 }

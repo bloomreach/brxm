@@ -22,18 +22,19 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
+
+import com.bloomreach.xm.repository.security.DomainAuth;
 
 /**
  */
-public class ViewDomainActionLink extends AjaxLink<Domain> {
+public class ViewDomainActionLink extends AjaxLink<DomainAuth> {
 
     private final AdminBreadCrumbPanel panelToReplace;
-    private final IModel<Domain> domainModel;
+    private final IModel<DomainAuth> domainModel;
     private IPluginContext context;
 
     public ViewDomainActionLink(final String id, final IPluginContext context, final AdminBreadCrumbPanel panelToReplace,
-                                final IModel<Domain> domainModel, final IModel<String> displayText) {
+                                final IModel<DomainAuth> domainModel, final IModel<String> displayText) {
         super(id, domainModel);
         this.context = context;
         this.panelToReplace = panelToReplace;

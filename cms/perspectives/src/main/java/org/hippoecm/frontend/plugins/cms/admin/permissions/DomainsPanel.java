@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.cms.admin.permissions;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
@@ -34,10 +33,11 @@ import org.apache.wicket.model.ResourceModel;
 
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
 import org.hippoecm.frontend.plugins.cms.admin.domains.DomainDataProvider;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
+
+import com.bloomreach.xm.repository.security.DomainAuth;
 
 public class DomainsPanel extends AdminBreadCrumbPanel {
 
@@ -45,11 +45,11 @@ public class DomainsPanel extends AdminBreadCrumbPanel {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
 
-        final List<IColumn<Domain, String>> columns = new ArrayList<>();
+        final List<IColumn<DomainAuth, String>> columns = new ArrayList<>();
 
-        columns.add(new AbstractColumn<Domain, String>(new ResourceModel("permissions-column-domain-header"), "name") {
-            public void populateItem(final Item<ICellPopulator<Domain>> item, final String componentId,
-                                     final IModel<Domain> model) {
+        columns.add(new AbstractColumn<DomainAuth, String>(new ResourceModel("permissions-column-domain-header"), "name") {
+            public void populateItem(final Item<ICellPopulator<DomainAuth>> item, final String componentId,
+                                     final IModel<DomainAuth> model) {
                 final AjaxLinkLabel action = new AjaxLinkLabel(componentId, PropertyModel.of(model, "name")) {
                     @Override
                     public void onClick(final AjaxRequestTarget target) {
@@ -60,23 +60,23 @@ public class DomainsPanel extends AdminBreadCrumbPanel {
                 item.add(action);
             }
         });
-        columns.add(new AbstractColumn<Domain, String>(new ResourceModel("permissions-column-folder-header"), "path") {
+        columns.add(new AbstractColumn<DomainAuth, String>(new ResourceModel("permissions-column-folder-header"), "path") {
 
-            public void populateItem(final Item<ICellPopulator<Domain>> item, final String componentId,
-                                     final IModel<Domain> model) {
-                final Domain domain = model.getObject();
-                item.add(new Label(componentId, domain.getFolder()));
+            public void populateItem(final Item<ICellPopulator<DomainAuth>> item, final String componentId,
+                                     final IModel<DomainAuth> model) {
+                final DomainAuth domain = model.getObject();
+                item.add(new Label(componentId, domain.getFolderPath()));
             }
         });
-        columns.add(new AbstractColumn<Domain, String>(new ResourceModel("permissions-column-permissions-header")) {
+        columns.add(new AbstractColumn<DomainAuth, String>(new ResourceModel("permissions-column-permissions-header")) {
 
-            public void populateItem(final Item<ICellPopulator<Domain>> item, final String componentId,
-                                     final IModel<Domain> model) {
-                final Domain domain = model.getObject();
-                item.add(new Label(componentId, domain.getNamedAuthRoles().keySet().stream().collect(Collectors.joining(", "))));
+            public void populateItem(final Item<ICellPopulator<DomainAuth>> item, final String componentId,
+                                     final IModel<DomainAuth> model) {
+                final DomainAuth domain = model.getObject();
+                item.add(new Label(componentId, String.join(", ", domain.getAuthRolesMap().keySet())));
             }
         });
-        final AdminDataTable<Domain> table = new AdminDataTable<>("table", columns, new DomainDataProvider(), 20);
+        final AdminDataTable<DomainAuth> table = new AdminDataTable<>("table", columns, new DomainDataProvider(), 20);
         add(table);
     }
 

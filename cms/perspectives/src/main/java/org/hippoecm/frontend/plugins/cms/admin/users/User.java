@@ -43,6 +43,7 @@ import org.apache.jackrabbit.util.ISO9075;
 import org.apache.jackrabbit.util.Text;
 import org.apache.wicket.Session;
 import org.apache.wicket.util.io.IClusterable;
+import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
 import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.session.UserSession;
@@ -400,7 +401,7 @@ public class User implements Comparable<User>, IClusterable {
         }
 
         if (!external) {
-            passwordMaxAge = UserSession.get().getJcrSession().getWorkspace().getSecurityManager().getChangePasswordManager().getPasswordMaxAgeMs();
+            passwordMaxAge = SecurityManagerHelper.getChangePasswordManager().getPasswordMaxAgeMs();
         }
     }
 

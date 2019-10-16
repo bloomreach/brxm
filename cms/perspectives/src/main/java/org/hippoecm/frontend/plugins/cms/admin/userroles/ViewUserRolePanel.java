@@ -36,6 +36,7 @@ import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
@@ -47,6 +48,10 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
+import org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionBean;
+import org.hippoecm.frontend.plugins.cms.admin.permissions.ViewDomainActionLink;
+import org.hippoecm.frontend.plugins.cms.admin.permissions.ViewPermissionLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
 import org.hippoecm.frontend.session.UserSession;
@@ -56,10 +61,10 @@ import org.onehippo.repository.security.SecurityConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bloomreach.xm.repository.security.AuthRole;
+import com.bloomreach.xm.repository.security.DomainAuth;
 import com.bloomreach.xm.repository.security.UserRole;
 import com.bloomreach.xm.repository.security.UserRoleBean;
-import com.bloomreach.xm.repository.security.UserRolesManager;
-import com.bloomreach.xm.repository.security.UserRolesProvider;
 
 /**
  * Panel showing information regarding the userrole.
@@ -68,9 +73,11 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
 
     private static final Logger log = LoggerFactory.getLogger(ViewUserRolePanel.class);
 
+    private final IPluginContext context;
     private final IModel<UserRole> userRoleModel;
     private final UserRolesListView userRolesListView;
     private final AddUserRolePanel addUserRolePanel;
+    private final PermissionsListView permissionsListView;
     private final boolean isSecurityApplManager;
 
     private final IDialogService dialogService;
@@ -78,6 +85,7 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
     public ViewUserRolePanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel,
                              final IModel<UserRole> userRoleModel) {
         super(id, breadCrumbModel);
+        this.context = context;
         final HippoSession session = UserSession.get().getJcrSession();
         isSecurityApplManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_MANAGER);
 
@@ -124,6 +132,11 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
         addUserRolePanel = new AddUserRolePanel("add-userroles");
         addUserRolePanel.setVisible(isSecurityApplManager && !userRole.isSystem());
         add(addUserRolePanel);
+
+        permissionsListView = new PermissionsListView("permissions");
+        add(permissionsListView);
+
+
         // add form with markup id setter so it can be updated via ajax
         final Form form = new Form<>("back-form");
         form.setOutputMarkupId(true);
@@ -154,13 +167,10 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
     }
 
     private void deleteUserRole() {
-        final HippoSession hippoSession = UserSession.get().getJcrSession();
         final UserRole userRole = userRoleModel.getObject();
         if (userRole != null) {
             try {
-                UserRolesManager userRolesManager =
-                        hippoSession.getWorkspace().getSecurityManager().getUserRolesManager();
-                userRolesManager.deleteUserRole(userRole.getName());
+                SecurityManagerHelper.getUserRolesManager().deleteUserRole(userRole.getName());
                 EventBusUtils.post("delete-userrole", "userrole-management", "deleted userrole " + userRole.getName());
                 activateParentAndDisplayInfo(getString("userrole-deleted", userRoleModel));
             } catch (AccessDeniedException e) {
@@ -181,16 +191,13 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
      * @param userRoleToRemove The UserRole name to remove from the userrole.
      */
     private void removeUserRole(final String userRoleToRemove) {
-        final HippoSession hippoSession = UserSession.get().getJcrSession();
         final UserRole userRole = userRoleModel.getObject();
         final MapModel nameModel = new MapModel<>(Collections.singletonMap("name", userRoleToRemove));
         try {
             if (userRole != null && userRole.getRoles().contains(userRoleToRemove)) {
-                UserRolesManager userRolesManager =
-                        hippoSession.getWorkspace().getSecurityManager().getUserRolesManager();
                 UserRoleBean userRoleBean = new UserRoleBean(userRole);
                 userRoleBean.getRoles().remove(userRoleToRemove);
-                userRoleModel.setObject(userRolesManager.updateUserRole(userRoleBean));
+                userRoleModel.setObject(SecurityManagerHelper.getUserRolesManager().updateUserRole(userRoleBean));
                 info(getString("userrole-removed", nameModel));
             }
             addUserRolePanel.updateUserRoleChoice();
@@ -221,16 +228,13 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
                 protected void onSubmit(AjaxRequestTarget target, Form form) {
                     // clear old feedbacks prior showing new ones
                     hippoForm.clearFeedbackMessages();
-                    final HippoSession hippoSession = UserSession.get().getJcrSession();
                     final UserRole userRole = userRoleModel.getObject();
                     final MapModel nameModel = new MapModel<>(Collections.singletonMap("name", selectedUserRole));
                     try {
                         if (userRole != null && !userRole.getRoles().contains(selectedUserRole)) {
-                            UserRolesManager userRolesManager =
-                                    hippoSession.getWorkspace().getSecurityManager().getUserRolesManager();
                             UserRoleBean userRoleBean = new UserRoleBean(userRole);
                             userRoleBean.getRoles().add(selectedUserRole);
-                            userRoleModel.setObject(userRolesManager.updateUserRole(userRoleBean));
+                            userRoleModel.setObject(SecurityManagerHelper.getUserRolesManager().updateUserRole(userRoleBean));
                             info(getString("userrole-added", nameModel));
                         }
                         userRolesListView.updateUserRoles();
@@ -264,9 +268,7 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
         }
 
         List<String> getUserRoleChoices() {
-            UserRolesProvider userRolesProvider =
-                    UserSession.get().getJcrSession().getWorkspace().getSecurityManager().getUserRolesProvider();
-            return userRolesProvider.getRoles().stream()
+            return SecurityManagerHelper.getUserRolesProvider().getRoles().stream()
                     .map(UserRole::getName)
                     .filter(r -> !(r.equals(userRoleModel.getObject().getName()) || userRoleModel.getObject().getRoles().contains(r)))
                     .sorted()
@@ -298,10 +300,8 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
 
         @Override
         protected void populateItem(final ListItem<String> item) {
-            UserRolesProvider userRolesProvider =
-                    UserSession.get().getJcrSession().getWorkspace().getSecurityManager().getUserRolesProvider();
             final String userRoleName = item.getModelObject();
-            final UserRole userRole = userRolesProvider.getRole(userRoleName);
+            final UserRole userRole = SecurityManagerHelper.getUserRolesProvider().getRole(userRoleName);
             if (userRole == null) {
                 item.add(new Label("name", Model.of(userRoleName)));
                 item.add(new Label("description"));
@@ -344,6 +344,40 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
                 dialogService.show(confirm);
                 target.add(ViewUserRolePanel.this);
             }
+        }
+    }
+
+    /**
+     * List view for showing the permissions of the user.
+     */
+    private final class PermissionsListView extends ListView<PermissionBean> {
+
+        private final IModel<List<PermissionBean>> permissionBeanModel =
+                new LoadableDetachableModel<List<PermissionBean>>() {
+                    @Override
+                    protected List<PermissionBean> load() {
+                        return PermissionBean.forUserRole(userRoleModel.getObject());
+                    }
+                };
+
+        PermissionsListView(final String id) {
+            super(id);
+            setDefaultModel(permissionBeanModel);
+            setReuseItems(false);
+        }
+
+        @Override
+        protected void populateItem(final ListItem<PermissionBean> item) {
+            final PermissionBean permissionBean = item.getModelObject();
+            final DomainAuth domain = permissionBean.getDomain().getObject();
+            final AuthRole authRole = permissionBean.getAuthRole();
+            final String roleName = authRole.getRole();
+            item.add(new ViewDomainActionLink("securityDomain",context, ViewUserRolePanel.this, permissionBean.getDomain(),
+                    Model.of(domain.getName())));
+            item.add(new Label("domain-folder", domain.getFolderPath()));
+            item.add(new ViewPermissionLinkLabel("permission", permissionBean.getDomain(), authRole.getName(),
+                    ViewUserRolePanel.this, context));
+            item.add(new Label("role", roleName));
         }
     }
 }

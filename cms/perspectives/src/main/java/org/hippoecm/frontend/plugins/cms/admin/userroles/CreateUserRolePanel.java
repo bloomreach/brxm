@@ -36,14 +36,13 @@ import org.apache.wicket.validation.IValidatable;
 import org.apache.wicket.validation.ValidationError;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.EventBusUtils;
-import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bloomreach.xm.repository.security.UserRoleBean;
-import com.bloomreach.xm.repository.security.UserRolesManager;
 import com.bloomreach.xm.repository.security.UserRolesProvider;
 
 public class CreateUserRolePanel extends AdminBreadCrumbPanel {
@@ -75,10 +74,8 @@ public class CreateUserRolePanel extends AdminBreadCrumbPanel {
                 if (StringUtils.isBlank(description)) {
                     description = null;
                 }
-                final HippoSession hippoSession = UserSession.get().getJcrSession();
                 try {
-                    UserRolesManager userRolesManager = hippoSession.getWorkspace().getSecurityManager().getUserRolesManager();
-                    userRolesManager.addUserRole(new UserRoleBean(name, description));
+                    SecurityManagerHelper.getUserRolesManager().addUserRole(new UserRoleBean(name, description));
                     EventBusUtils.post("create-userrole", "userrole-management", "added userrole " + name);
                     activateParentAndDisplayInfo(getString("userrole-created", nameModel));
                 } catch (AccessDeniedException e) {
@@ -122,9 +119,7 @@ public class CreateUserRolePanel extends AdminBreadCrumbPanel {
             super.validate(validatable);
 
             final String name = validatable.getValue();
-            UserRolesProvider userRolesProvider =
-                    UserSession.get().getJcrSession().getWorkspace().getSecurityManager().getUserRolesProvider();
-            if (userRolesProvider.hasRole(name)) {
+            if (SecurityManagerHelper.getUserRolesProvider().hasRole(name)) {
                 validatable.error(new ValidationError(this, "exists"));
             }
         }

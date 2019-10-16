@@ -70,6 +70,34 @@
         </tr>
     </table>
     <span wicket:id="add-userroles"></span>
+    <br/>
+    <br/>
+    <h3 class="hippo-controlpanel-section-title">
+        <wicket:message key="userrole-permissions"/>
+    </h3>
+    <br/>
+    <table class="hippo-list-details hippo-controlpanel-table-default">
+        <tr>
+            <th>
+                <wicket:message key="permissions-domain-header"/>
+            </th>
+            <th>
+                <wicket:message key="permissions-column-folder-header"/>
+            </th>
+            <th>
+                <wicket:message key="permissions-permission-header"/>
+            </th>
+            <th>
+                <wicket:message key="permissions-role-header"/>
+            </th>
+        </tr>
+        <tr wicket:id="permissions">
+            <td><a href="#" wicket:id="securityDomain"><span wicket:id="label">[[label]]</span></a></td>
+            <td><span wicket:id="domain-folder"/></td>
+            <td><span wicket:id="permission"/></td>
+            <td><label wicket:id="role"/></td>
+        </tr>
+    </table>
     <form wicket:id="back-form">
         <div class="hippo-controlpanel-actions">
             <input type="submit" class="btn btn-default" wicket:message="value:user-back-action" wicket:id="back-button"/>

@@ -18,11 +18,13 @@ package org.hippoecm.frontend.plugins.cms.admin.domains;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class DetachableDomain extends LoadableDetachableModel<Domain> {
+import com.bloomreach.xm.repository.security.DomainAuth;
+
+public final class DetachableDomain extends LoadableDetachableModel<DomainAuth> {
 
     private static final Logger log = LoggerFactory.getLogger(DetachableDomain.class);
 
@@ -31,7 +33,7 @@ public final class DetachableDomain extends LoadableDetachableModel<Domain> {
     /**
      * @param domain the Domain to wrap
      */
-    public DetachableDomain(final Domain domain) {
+    public DetachableDomain(final DomainAuth domain) {
         this(domain.getPath());
         this.setObject(domain);
     }
@@ -76,10 +78,10 @@ public final class DetachableDomain extends LoadableDetachableModel<Domain> {
     }
 
     @Override
-    protected Domain load() {
+    protected DomainAuth load() {
         // loads contact from jcr
         try {
-            return new Domain(UserSession.get().getJcrSession().getNode(path));
+            return SecurityManagerHelper.getDomainsManager().getDomainAuth(path);
         } catch (RepositoryException e) {
             log.error("Unable to load domain, returning null", e);
             return null;

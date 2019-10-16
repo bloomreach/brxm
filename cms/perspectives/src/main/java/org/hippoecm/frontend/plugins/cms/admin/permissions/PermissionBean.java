@@ -15,121 +15,115 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.permissions;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.query.InvalidQueryException;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-import javax.jcr.query.QueryResult;
 
-import org.apache.jackrabbit.util.Text;
-import org.apache.wicket.Session;
+import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
 import org.hippoecm.frontend.plugins.cms.admin.domains.DetachableDomain;
-import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
-import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
-import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.frontend.plugins.cms.admin.users.User;
+
+import com.bloomreach.xm.repository.security.AuthRole;
+import com.bloomreach.xm.repository.security.DomainAuth;
+import com.bloomreach.xm.repository.security.UserRole;
 
 /**
- * Holds a role - domain - group combination
+ * Holds an AuthRole - Domain combination
  */
-public class PermissionBean implements Serializable {
+public class PermissionBean {
     
-    private static final String ALL_AUTHROLES_FOR_GROUP_QUERY = "//element(*, hipposys:authrole)[@hipposys:groups='{}']";
-
-    public static final PermissionsBeanByDomainNameComparator COMPARATOR_BY_DOMAIN_NAME =
-            new PermissionsBeanByDomainNameComparator();
-
-    private final DetachableGroup group;
     private final DetachableDomain domain;
-    private final Domain.AuthRole authRole;
+    private final AuthRole authRole;
 
-    public PermissionBean(final DetachableGroup group, final DetachableDomain domain, final Domain.AuthRole authRole) {
-        this.group = group;
+    public PermissionBean(final DetachableDomain domain, final AuthRole authRole) {
         this.domain = domain;
         this.authRole = authRole;
-    }
-
-    public DetachableGroup getGroup() {
-        return group;
     }
 
     public DetachableDomain getDomain() {
         return domain;
     }
 
-    public Domain.AuthRole getAuthRole() {
+    public AuthRole getAuthRole() {
         return authRole;
     }
 
     /**
-     * Returns all permissions for a group. If you already have a {@link Group} object, this is faster than calling
-     * forGroup(String).
+     * Returns all permissions for a group.
      *
      * @param group the {@link Group} to return all permissions for
      * @return a {@link List} of {@link PermissionBean}s containing all permissions for this group
      */
     public static List<PermissionBean> forGroup(Group group) {
-        final String escapedGroupName = Text.escapeIllegalJcr10Chars(group.getGroupname());
-        final String queryString = ALL_AUTHROLES_FOR_GROUP_QUERY.replace("{}", escapedGroupName);
-        NodeIterator nodeIterator = obtainNodeIteratorForQueryString(queryString);
-
-        DetachableGroup detachableGroup = new DetachableGroup(group);
         List<PermissionBean> permissionBeans = new ArrayList<>();
-        while (nodeIterator.hasNext()) {
-            Node node = nodeIterator.nextNode();
-            Domain.AuthRole authRole = new Domain.AuthRole(node);
-
-            DetachableDomain detachableDomain;
-            String domainNodePath = getDomainNodePathForAuthRole(node);
-            detachableDomain = new DetachableDomain(domainNodePath);
-
-            PermissionBean permissionBean = new PermissionBean(detachableGroup, detachableDomain, authRole);
-            permissionBeans.add(permissionBean);
+        try {
+            Set<DomainAuth> groupDomains = SecurityManagerHelper.getDomainsManager().getDomainAuthsForGroup(group.getGroupname());
+            for (DomainAuth domain : groupDomains) {
+                for (AuthRole authRole : domain.getAuthRolesMap().values()) {
+                    if (authRole.getGroups().contains(group.getGroupname())) {
+                        PermissionBean permissionBean = new PermissionBean(new DetachableDomain(domain), authRole);
+                        permissionBeans.add(permissionBean);
+                    }
+                }
+            }
+            permissionBeans.sort(Comparator.comparing(o -> o.getAuthRole().getPath()));
+        } catch (RepositoryException e) {
+            throw new IllegalStateException("Repository error occured, cannot get PermissionBeans for group.", e);
         }
-        permissionBeans.sort(Comparator.comparing(o -> o.getAuthRole().getPath()));
         return permissionBeans;
     }
 
-
-    private static NodeIterator obtainNodeIteratorForQueryString(final String queryString) {
-        QueryManager queryManager = ((UserSession) Session.get()).getQueryManager();
+    /**
+     * Returns all permissions for a user.
+     *
+     * @param user the {@link User} to return all permissions for
+     * @return a {@link List} of {@link PermissionBean}s containing all permissions for this user
+     */
+    public static List<PermissionBean> forUser(User user) {
+        List<PermissionBean> permissionBeans = new ArrayList<>();
         try {
-            @SuppressWarnings("deprecation") Query query = queryManager.createQuery(queryString, Query.XPATH);
-            QueryResult queryResult = query.execute();
-           return queryResult.getNodes();
-        } catch (InvalidQueryException e) {
-            throw new IllegalArgumentException("Query is malformed, cannot create query.", e);
-        } catch (RepositoryException e) {
-            throw new IllegalStateException("Repository error occured, cannot create query.", e);
-        }
-    }
-
-    private static String getDomainNodePathForAuthRole(Node authRoleNode) {
-        try {
-            Node domainNodeCandidate = authRoleNode.getParent();
-            if (!domainNodeCandidate.isNodeType(HippoNodeType.NT_DOMAIN)) {
-                throw new IllegalStateException("Parent of authrole node is not a domain node");
+            Set<DomainAuth> groupDomains = SecurityManagerHelper.getDomainsManager().getDomainAuthsForUser(user.getUsername());
+            for (DomainAuth domain : groupDomains) {
+                for (AuthRole authRole : domain.getAuthRolesMap().values()) {
+                    if (authRole.getUsers().contains(user.getUsername())) {
+                        PermissionBean permissionBean = new PermissionBean(new DetachableDomain(domain), authRole);
+                        permissionBeans.add(permissionBean);
+                    }
+                }
             }
-            return domainNodeCandidate.getPath();
+            permissionBeans.sort(Comparator.comparing(o -> o.getAuthRole().getPath()));
         } catch (RepositoryException e) {
-            throw new IllegalStateException("Cannot obtain the domain node for authrole node.");
+            throw new IllegalStateException("Repository error occured, cannot get PermissionBeans for user.", e);
         }
+        return permissionBeans;
     }
-    
-    public static class PermissionsBeanByDomainNameComparator implements Comparator<PermissionBean>, Serializable {
-        @Override
-        public int compare(final PermissionBean o1, final PermissionBean o2) {
-            String domainName1 = o1.getDomain().getObject().getName();
-            String domainName2 = o2.getDomain().getObject().getName();
-            return domainName1.compareTo(domainName2);
+
+    /**
+     * Returns all permissions for a userRole.
+     *
+     * @param userRole the {@link UserRole} to return all permissions for
+     * @return a {@link List} of {@link PermissionBean}s containing all permissions for this user
+     */
+    public static List<PermissionBean> forUserRole(UserRole userRole) {
+        List<PermissionBean> permissionBeans = new ArrayList<>();
+        try {
+            Set<DomainAuth> groupDomains = SecurityManagerHelper.getDomainsManager().getDomainAuthsForUserRole(userRole.getName());
+            for (DomainAuth domain : groupDomains) {
+                for (AuthRole authRole : domain.getAuthRolesMap().values()) {
+                    if (userRole.getName().equals(authRole.getUserRole())) {
+                        PermissionBean permissionBean = new PermissionBean(new DetachableDomain(domain), authRole);
+                        permissionBeans.add(permissionBean);
+                    }
+                }
+            }
+            permissionBeans.sort(Comparator.comparing(o -> o.getAuthRole().getPath()));
+        } catch (RepositoryException e) {
+            throw new IllegalStateException("Repository error occured, cannot get PermissionBeans for userrole.", e);
         }
+        return permissionBeans;
     }
 }

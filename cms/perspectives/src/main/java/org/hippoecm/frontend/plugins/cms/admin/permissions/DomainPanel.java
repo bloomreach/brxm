@@ -38,6 +38,7 @@ import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.IModelComparator;
+import org.apache.wicket.model.LoadableDetachableModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -50,8 +51,8 @@ import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
-import org.hippoecm.frontend.plugins.cms.admin.domains.Domain.AuthRole;
+import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
+import org.hippoecm.frontend.plugins.cms.admin.domains.AuthRolesHelper;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.plugins.cms.admin.userroles.DetachableUserRole;
 import org.hippoecm.frontend.plugins.cms.admin.userroles.ViewUserRoleLinkLabel;
@@ -63,20 +64,20 @@ import org.onehippo.repository.security.SecurityConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bloomreach.xm.repository.security.AuthRole;
+import com.bloomreach.xm.repository.security.DomainAuth;
 import com.bloomreach.xm.repository.security.Role;
-import com.bloomreach.xm.repository.security.RolesProvider;
 import com.bloomreach.xm.repository.security.UserRole;
-import com.bloomreach.xm.repository.security.UserRolesProvider;
 
 public class DomainPanel extends AdminBreadCrumbPanel {
     private static final Logger log = LoggerFactory.getLogger(DomainPanel.class);
 
     private final IPluginContext context;
-    private final IModel<Domain> model;
+    private final IModel<DomainAuth> model;
     private final AuthRolesListView authRolesListView;
     private final boolean isSecurityApplManager;
 
-    public DomainPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel, final IModel<Domain> model) {
+    public DomainPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel, final IModel<DomainAuth> model) {
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
         this.context = context;
@@ -86,7 +87,7 @@ public class DomainPanel extends AdminBreadCrumbPanel {
         isSecurityApplManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_MANAGER);
 
         add(new Label("permissions-domain-title", new StringResourceModel("permissions-domain-title", this).setModel(model)));
-        add(new Label("domain-folder", model.getObject().getFolder()));
+        add(new Label("domain-folder", model.getObject().getFolderPath()));
         this.authRolesListView = new AuthRolesListView("authrole-row");
         add(authRolesListView);
         AddAuthRolePanel addAuthRolePanel = new AddAuthRolePanel("add-authrole");
@@ -117,31 +118,38 @@ public class DomainPanel extends AdminBreadCrumbPanel {
     /**
      * List view for the userroles.
      */
-    private final class AuthRolesListView extends ListView<Domain.AuthRole> {
+    private final class AuthRolesListView extends ListView<AuthRole> {
+
+        private final IModel<List<AuthRole>> authRolesListModel =
+                new LoadableDetachableModel<List<AuthRole>>() {
+                    @Override
+                    protected List<AuthRole> load() {
+                        return new ArrayList<>(model.getObject().getAuthRolesMap().values());
+                    }
+                };
 
         AuthRolesListView(final String id) {
-            super(id, new ArrayList<>(model.getObject().getNamedAuthRoles().values()));
+            super(id);
+            setDefaultModel(authRolesListModel);
             setReuseItems(false);
         }
 
         @Override
-        protected void populateItem(final ListItem<Domain.AuthRole> item) {
-            Domain.AuthRole authRole = item.getModelObject();
+        protected void populateItem(final ListItem<AuthRole> item) {
+            AuthRole authRole = item.getModelObject();
             item.add(new ViewPermissionLinkLabel("authrole-name", model, authRole.getName(), DomainPanel.this, context));
             item.add(new Label("role-name", authRole.getRole()));
             UserRole userRole = null;
-            if (authRole.getUserrole() != null) {
-                UserRolesProvider userRolesProvider =
-                        UserSession.get().getJcrSession().getWorkspace().getSecurityManager().getUserRolesProvider();
-                userRole = userRolesProvider.getRole(authRole.getUserrole());
+            if (authRole.getUserRole() != null) {
+                userRole = SecurityManagerHelper.getUserRolesProvider().getRole(authRole.getUserRole());
             }
             if (userRole != null) {
                 item.add(new ViewUserRoleLinkLabel("userrole", new DetachableUserRole(userRole), DomainPanel.this, context));
             } else {
-                item.add(new Label("userrole", authRole.getUserrole()));
+                item.add(new Label("userrole", authRole.getUserRole()));
             }
             final List<Group> groups = new ArrayList<>();
-            for (final String groupName : authRole.getGroupnames()) {
+            for (final String groupName : authRole.getGroups()) {
                 Group group = Group.getGroup(groupName);
                 if (group != null) {
                     groups.add(group);
@@ -152,7 +160,7 @@ public class DomainPanel extends AdminBreadCrumbPanel {
             item.add(new GroupsLinkListPanel("groups", groups, context, DomainPanel.this));
 
             final List<User> users = new ArrayList<>();
-            for (final String userName : authRole.getUsernames()) {
+            for (final String userName : authRole.getUsers()) {
                 if (User.userExists(userName)) {
                     users.add(new User(userName));
                 } else {
@@ -179,15 +187,15 @@ public class DomainPanel extends AdminBreadCrumbPanel {
         }
 
         void updateAuthRoles() {
-            setModelObject(new ArrayList<>(model.getObject().getNamedAuthRoles().values()));
+            authRolesListModel.detach();
         }
     }
 
     private class DeleteAuthRoleActionLink extends AjaxLinkLabel {
-        private final IModel<Domain> domainModel;
+        private final IModel<DomainAuth> domainModel;
         private final String name;
 
-        private DeleteAuthRoleActionLink(final String id, final IModel<String> model, final IModel<Domain> domainModel, final String name) {
+        private DeleteAuthRoleActionLink(final String id, final IModel<String> model, final IModel<DomainAuth> domainModel, final String name) {
             super(id, model);
             this.domainModel = domainModel;
             this.name = name;
@@ -201,7 +209,7 @@ public class DomainPanel extends AdminBreadCrumbPanel {
             final Confirm confirm = new Confirm(
                     getString("permissions-permission-delete-title", nameModel),
                     getString("permissions-permission-delete-text", nameModel)
-            ).ok(() -> deleteAuthRole(authRole));
+            ).ok(() -> deleteAuthRole(name));
 
             dialogService.show(confirm);
         }
@@ -236,12 +244,14 @@ public class DomainPanel extends AdminBreadCrumbPanel {
                     // clear old feedbacks prior showing new ones
                     hippoForm.clearFeedbackMessages();
                     final HippoSession hippoSession = UserSession.get().getJcrSession();
-                    final Domain domain = model.getObject();
+                    final DomainAuth domain = model.getObject();
                     final MapModel nameModel = new MapModel<>(Collections.singletonMap("name", name));
                     try {
-                        if (domain != null && !domain.getNamedAuthRoles().containsKey(name)) {
-                            domain.createAuthRole(name, selectedRole);
+                        if (domain != null && !domain.getAuthRolesMap().containsKey(name)) {
+                            AuthRolesHelper.addAuthRole(name, domain.getPath(), selectedRole);
                             info(getString("permissions-permission-added", nameModel));
+                            // backing model is immutable, force reload
+                            model.detach();
                             authRolesListView.updateAuthRoles();
                             name = null;
                         } else {
@@ -277,9 +287,7 @@ public class DomainPanel extends AdminBreadCrumbPanel {
         }
 
         List<String> getRoleChoices() {
-            RolesProvider rolesProvider =
-                    UserSession.get().getJcrSession().getWorkspace().getSecurityManager().getRolesProvider();
-            return rolesProvider.getRoles().stream()
+            return SecurityManagerHelper.getRolesProvider().getRoles().stream()
                     .map(Role::getName)
                     .sorted()
                     .collect(Collectors.toList());
@@ -298,15 +306,18 @@ public class DomainPanel extends AdminBreadCrumbPanel {
 
 
 
-    private void deleteAuthRole(final AuthRole authRole) {
+    private void deleteAuthRole(final String authRoleName) {
+        final AuthRole authRole = model.getObject().getAuthRole(authRoleName);
         if (authRole == null) {
             log.info("No permission model found when trying to delete permission. Probably the Ok button was double clicked.");
             return;
         }
         final MapModel nameModel = new MapModel<>(Collections.singletonMap("name", authRole.getName()));
         try {
-            authRole.delete();
+            AuthRolesHelper.deleteAuthRole(authRole);
             info(getString("permissions-permission-deleted", nameModel));
+            // backing model is immutable, force reload
+            model.detach();
             authRolesListView.updateAuthRoles();
         } catch (final RepositoryException e) {
             error(getString("permissions-permission-delete-failed", nameModel));
@@ -322,9 +333,9 @@ public class DomainPanel extends AdminBreadCrumbPanel {
 
     public static final class AuthRoleNameValidator extends StringValidator {
 
-        final private IModel<Domain> model;
+        final private IModel<DomainAuth> model;
 
-        public AuthRoleNameValidator(final IModel<Domain> model) {
+        public AuthRoleNameValidator(final IModel<DomainAuth> model) {
             this.model = model;
         }
 
@@ -332,8 +343,8 @@ public class DomainPanel extends AdminBreadCrumbPanel {
         public void validate(final IValidatable<String> validatable) {
             super.validate(validatable);
             final String name = validatable.getValue();
-            Domain domain = model.getObject();
-            if (domain.getNamedAuthRoles().containsKey(name)) {
+            DomainAuth domain = model.getObject();
+            if (domain.getAuthRolesMap().containsKey(name)) {
                 ValidationError validationError = new ValidationError(this, "exists");
                 validatable.error(validationError);
             }

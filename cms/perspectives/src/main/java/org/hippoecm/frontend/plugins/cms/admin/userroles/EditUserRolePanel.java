@@ -31,8 +31,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,15 +69,13 @@ public class EditUserRolePanel extends AdminBreadCrumbPanel {
                 if (StringUtils.isBlank(description)) {
                     description = null;
                 }
-                final HippoSession hippoSession = UserSession.get().getJcrSession();
                 final UserRole userRole = userRoleModel.getObject();
                 try {
-                    RepositorySecurityManager rsm = hippoSession.getWorkspace().getSecurityManager();
-                    UserRolesManager userRolesManager = rsm.getUserRolesManager();;
                     // create a userRoleTemplate from the current backend UserRole
-                    UserRoleBean userRoleTemplate = new UserRoleBean(rsm.getUserRolesProvider().getRole(userRole.getName()));
+                    UserRoleBean userRoleTemplate =
+                            new UserRoleBean(SecurityManagerHelper.getUserRolesProvider().getRole(userRole.getName()));
                     userRoleTemplate.setDescription(description);
-                    userRoleModel.setObject(userRolesManager.updateUserRole(userRoleTemplate));
+                    userRoleModel.setObject(SecurityManagerHelper.getUserRolesManager().updateUserRole(userRoleTemplate));
                     activateParentAndDisplayInfo(getString("userrole-saved", userRoleModel));
                 } catch (AccessDeniedException e) {
                     target.add(EditUserRolePanel.this);

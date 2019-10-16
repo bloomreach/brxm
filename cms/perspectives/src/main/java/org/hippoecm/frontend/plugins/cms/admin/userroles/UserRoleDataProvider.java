@@ -22,16 +22,17 @@ import java.util.List;
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bloomreach.xm.repository.security.UserRole;
-import com.bloomreach.xm.repository.security.UserRolesProvider;
 
 public class UserRoleDataProvider extends SortableDataProvider<UserRole, String> {
 
     private static final Logger log = LoggerFactory.getLogger(UserRoleDataProvider.class);
+
+    private List<UserRole> userRoles = new ArrayList<>();
 
     public UserRoleDataProvider() {
         setSort("name", SortOrder.ASCENDING);
@@ -39,7 +40,6 @@ public class UserRoleDataProvider extends SortableDataProvider<UserRole, String>
 
     @Override
     public Iterator<UserRole> iterator(long first, long count) {
-        final List<UserRole> userRoles = getUserRoleList();
         userRoles.sort((userRole1, userRole2) -> {
             final int direction = getSort().isAscending() ? 1 : -1;
             return direction * userRole1.getName().compareTo(userRole2.getName());
@@ -60,13 +60,8 @@ public class UserRoleDataProvider extends SortableDataProvider<UserRole, String>
     }
 
     public List<UserRole> getUserRoleList() {
-        UserRolesProvider userRolesProvider =
-                UserSession.get().getJcrSession().getWorkspace().getSecurityManager().getUserRolesProvider();
-        return new ArrayList<>(userRolesProvider.getRoles());
-    }
-
-    @Override
-    public void detach() {
-        super.detach();
+        userRoles.clear();
+        userRoles.addAll(SecurityManagerHelper.getUserRolesProvider().getRoles());
+        return userRoles;
     }
 }
