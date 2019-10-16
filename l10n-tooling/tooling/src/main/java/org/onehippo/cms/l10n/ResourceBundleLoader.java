@@ -56,7 +56,7 @@ public abstract class ResourceBundleLoader {
             final URL manifestURL = resources.nextElement();
             if (isJarURL(manifestURL)) {
                 final ArtifactInfo artifactInfo = new ArtifactInfo(manifestURL);
-                if (artifactInfo.isHippoArtifact()) {
+                if (artifactInfo.isBloomreachArtifact()) {
                     hippoJars.add(artifactInfo);
                 }
             }

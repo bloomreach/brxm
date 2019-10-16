@@ -58,8 +58,8 @@ class ArtifactInfo {
         manifestURL = null;
     }
     
-    boolean isHippoArtifact() {
-        return isHippoGroupId(getGroupId());
+    boolean isBloomreachArtifact() {
+        return isBloomreachArtifactGroupId(getGroupId());
     }
 
     String getGroupId() {
@@ -82,8 +82,8 @@ class ArtifactInfo {
        return new File(getJarURL().toURI());
     }
 
-    private static boolean isHippoGroupId(final String groupId) {
-        return groupId != null && (groupId.startsWith("org.onehippo.cms") || groupId.startsWith("com.onehippo.cms"));
+    public static boolean isBloomreachArtifactGroupId(final String groupId) {
+        return groupId != null && (groupId.startsWith("org.onehippo.cms") || groupId.startsWith("com.onehippo.cms") || groupId.startsWith("com.bloomreach.xm"));
     }
 
     private URL getJarURL() throws MalformedURLException {
