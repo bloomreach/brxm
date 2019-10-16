@@ -21,8 +21,9 @@ import org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
+
+import com.bloomreach.xm.repository.security.DomainAuth;
 
 /**
  * Creates a link to the permission detail page
@@ -31,11 +32,11 @@ public class ViewPermissionLinkLabel extends AjaxLinkLabel {
 
     private static final long serialVersionUID = 1L;
     private final BreadCrumbPanel panelToReplace;
-    private final IModel<Domain> domainModel;
+    private final IModel<DomainAuth> domainModel;
     private final String permissionName;
     private final IPluginContext pluginContext;
 
-    public ViewPermissionLinkLabel(final String id, final IModel<Domain> domainModel, final String permissionName,
+    public ViewPermissionLinkLabel(final String id, final IModel<DomainAuth> domainModel, final String permissionName,
                                    final BreadCrumbPanel panelToReplace, final IPluginContext pluginContext) {
         super(id, Model.of(permissionName));
         this.panelToReplace = panelToReplace;

@@ -39,6 +39,7 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
 import org.hippoecm.frontend.plugins.cms.admin.password.validation.IPasswordValidationService;
 import org.hippoecm.frontend.plugins.cms.admin.password.validation.IPasswordValidator;
 import org.hippoecm.frontend.plugins.cms.admin.password.validation.PasswordValidationStatus;
@@ -84,8 +85,7 @@ public class ChangePasswordShortcutPlugin extends RenderPlugin {
         try {
             SessionUser sessionUser = session.getJcrSession().getUser();
             if (!sessionUser.isExternal()) {
-                ChangePasswordManager changePasswordManager =
-                        session.getJcrSession().getWorkspace().getSecurityManager().getChangePasswordManager();
+                ChangePasswordManager changePasswordManager = SecurityManagerHelper.getChangePasswordManager();
                 passwordMaxAge = changePasswordManager.getPasswordMaxAgeMs();
                 user = new SessionUserAdapter(sessionUser, changePasswordManager);
             } else {

@@ -20,8 +20,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -37,9 +35,7 @@ import javax.jcr.query.QueryResult;
 import org.apache.jackrabbit.util.ISO9075;
 import org.apache.jackrabbit.util.Text;
 import org.apache.wicket.util.io.IClusterable;
-import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
-import org.hippoecm.frontend.plugins.cms.admin.domains.Domain.AuthRole;
-import org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionBean;
+import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
 import org.hippoecm.frontend.plugins.cms.admin.users.DetachableUser;
 import org.hippoecm.frontend.plugins.cms.admin.users.SystemUserDataProvider;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
@@ -137,7 +133,7 @@ public class Group implements Comparable<Group>, IClusterable {
     * @return A list of all roles defined in the system
     */
     public static List<String> getAllRoles() {
-        return UserSession.get().getJcrSession().getWorkspace().getSecurityManager().getRolesProvider().getRoles()
+        return SecurityManagerHelper.getRolesProvider().getRoles()
                 .stream().map(Role::getName).sorted().collect(Collectors.toList());
     }
 
@@ -375,26 +371,12 @@ public class Group implements Comparable<Group>, IClusterable {
      * @throws RepositoryException
      */
     public void delete() throws RepositoryException {
-        removeAllPermissions();
 
         final Node parent = node.getParent();
         node.remove();
         parent.getSession().save();
 
         EventBusUtils.post("delete-group", HippoEventConstants.CATEGORY_GROUP_MANAGEMENT, "deleted group " + groupname);
-    }
-
-    /**
-     * Removes all permissions for this group
-     *
-     * @throws RepositoryException When a repository error occurs while removing a group reference on an AuthRole
-     *                             object
-     */
-    public void removeAllPermissions() throws RepositoryException {
-        final List<PermissionBean> permissions = PermissionBean.forGroup(this);
-        for (final PermissionBean permission : permissions) {
-            permission.getAuthRole().removeGroup(groupname);
-        }
     }
 
     public void removeMembership(String user) throws RepositoryException {
@@ -409,34 +391,6 @@ public class Group implements Comparable<Group>, IClusterable {
         members.add(user);
         node.setProperty(HippoNodeType.HIPPO_MEMBERS, members.toArray(new String[members.size()]));
         node.getSession().save();
-    }
-
-    /**
-     * Get the roles for this group on the passed Domain.
-     *
-     * @param domain the {@link Domain} to get the roles for
-     * @return the roles
-     */
-    public List<AuthRole> getLinkedAuthenticatedRoles(final Domain domain) {
-        final Map<String, AuthRole> authRoles = domain.getAuthRoles();
-        final List<AuthRole> roles = new ArrayList<>();
-        for (Entry<String, AuthRole> entry : authRoles.entrySet()) {
-            final AuthRole authenticationRole = entry.getValue();
-            final boolean groupHasRole = authenticationRole.getGroupnames().contains(getGroupname());
-            if (groupHasRole) {
-                roles.add(authenticationRole);
-            }
-        }
-        return roles;
-    }
-
-    /**
-     * Returns all domain - authrole combinations for this group
-     *
-     * @return a {@link List} of {@link PermissionBean}s
-     */
-    public List<PermissionBean> getPermissions() {
-        return PermissionBean.forGroup(this);
     }
 
     //--------------------- default object -------------------//

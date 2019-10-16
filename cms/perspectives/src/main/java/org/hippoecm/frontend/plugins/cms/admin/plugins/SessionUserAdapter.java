@@ -19,10 +19,10 @@ import java.util.List;
 
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
 import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.plugins.cms.admin.users.User;
-import org.hippoecm.frontend.session.UserSession;
 import org.onehippo.repository.security.SessionUser;
 
 import com.bloomreach.xm.repository.security.ChangePasswordManager;
@@ -60,8 +60,7 @@ class SessionUserAdapter extends User {
         if (!canChangePassword) {
             throw new UnsupportedOperationException();
         }
-        final ChangePasswordManager changePasswordManager =
-                UserSession.get().getJcrSession().getWorkspace().getSecurityManager().getChangePasswordManager();
+        final ChangePasswordManager changePasswordManager = SecurityManagerHelper.getChangePasswordManager();
         changePasswordManager.setPassword(currentPassword, newPassword);
         setPasswordLastModified(changePasswordManager.getPasswordLastModified());
     }
@@ -72,9 +71,7 @@ class SessionUserAdapter extends User {
             throw new UnsupportedOperationException();
         }
         try {
-            final ChangePasswordManager changePasswordManager =
-                    UserSession.get().getJcrSession().getWorkspace().getSecurityManager().getChangePasswordManager();
-            return changePasswordManager.checkPassword(password);
+            return SecurityManagerHelper.getChangePasswordManager().checkPassword(password);
         } catch (RepositoryException e) {
             return false;
         }
@@ -85,9 +82,7 @@ class SessionUserAdapter extends User {
         if (!canChangePassword) {
             throw new UnsupportedOperationException();
         }
-        final ChangePasswordManager changePasswordManager =
-                UserSession.get().getJcrSession().getWorkspace().getSecurityManager().getChangePasswordManager();
-        return changePasswordManager.checkNewPasswordUsedBefore(password, numberOfPreviousPasswords);
+        return SecurityManagerHelper.getChangePasswordManager().checkNewPasswordUsedBefore(password, numberOfPreviousPasswords);
     }
 
     @Override

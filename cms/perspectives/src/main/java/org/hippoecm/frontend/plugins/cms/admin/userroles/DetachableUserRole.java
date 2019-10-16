@@ -16,11 +16,10 @@
 package org.hippoecm.frontend.plugins.cms.admin.userroles;
 
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bloomreach.xm.repository.security.RepositorySecurityManager;
 import com.bloomreach.xm.repository.security.UserRole;
 
 public final class DetachableUserRole extends LoadableDetachableModel<UserRole> {
@@ -73,7 +72,6 @@ public final class DetachableUserRole extends LoadableDetachableModel<UserRole> 
         if (name == null) {
             return null;
         }
-        RepositorySecurityManager rsm = UserSession.get().getJcrSession().getWorkspace().getSecurityManager();
-        return rsm.getUserRolesProvider().getRole(name);
+        return SecurityManagerHelper.getUserRolesProvider().getRole(name);
     }
 }

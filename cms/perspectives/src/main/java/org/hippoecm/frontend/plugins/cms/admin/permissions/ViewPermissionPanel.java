@@ -51,7 +51,8 @@ import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
-import org.hippoecm.frontend.plugins.cms.admin.domains.Domain;
+import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
+import org.hippoecm.frontend.plugins.cms.admin.domains.AuthRolesHelper;
 import org.hippoecm.frontend.plugins.cms.admin.groups.DetachableGroup;
 import org.hippoecm.frontend.plugins.cms.admin.groups.Group;
 import org.hippoecm.frontend.plugins.cms.admin.groups.ViewGroupLinkLabel;
@@ -68,8 +69,9 @@ import org.onehippo.repository.security.SecurityConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.bloomreach.xm.repository.security.AuthRole;
+import com.bloomreach.xm.repository.security.DomainAuth;
 import com.bloomreach.xm.repository.security.UserRole;
-import com.bloomreach.xm.repository.security.UserRolesProvider;
 
 /**
  * Panel showing information regarding the permission (Domain.AuthRole).
@@ -78,7 +80,7 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
 
     private static final Logger log = LoggerFactory.getLogger(ViewPermissionPanel.class);
 
-    private final IModel<Domain> model;
+    private final IModel<DomainAuth> model;
     private final String authRoleName;
     private final MapModel nameModel;
     private final boolean isSecurityApplManager;
@@ -89,7 +91,7 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
     private final IDialogService dialogService;
 
     public ViewPermissionPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel,
-                               final IModel<Domain> model, final String authRoleName) {
+                               final IModel<DomainAuth> model, final String authRoleName) {
         super(id, breadCrumbModel);
         final HippoSession session = UserSession.get().getJcrSession();
         isSecurityApplManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_MANAGER);
@@ -98,13 +100,13 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
 
         this.model = model;
         this.authRoleName = authRoleName;
-        Domain domain = model.getObject();
-        Domain.AuthRole authRole = domain.getAuthRole(authRoleName);
+        DomainAuth domain = model.getObject();
+        AuthRole authRole = domain.getAuthRole(authRoleName);
         dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
         nameModel = new MapModel<>(Collections.singletonMap("name", authRole.getName()));
         add(new Label("permissions-permission-title", new StringResourceModel("permissions-permission-title", this).setModel(nameModel)));
         add(new Label("domain", model.getObject().getName()));
-        add(new Label("domain-folder", model.getObject().getFolder()));
+        add(new Label("domain-folder", model.getObject().getFolderPath()));
         final AjaxLinkLabel deletePermission = new AjaxLinkLabel("delete-permission", new ResourceModel("permissions-permission-delete")) {
             @Override
             public void onClick(final AjaxRequestTarget target) {
@@ -122,7 +124,7 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
         add(deletePermission);
 
         add(new Label("role", authRole.getRole()));
-        add(new Label("userrole", ReadOnlyModel.of(()->model.getObject().getAuthRole(authRoleName).getUserrole())));
+        add(new Label("userrole", ReadOnlyModel.of(()->model.getObject().getAuthRole(authRoleName).getUserRole())));
 
         SetUserRolePanel setUserRolePanel = new SetUserRolePanel("set-userrole");
         setUserRolePanel.setVisible(isSecurityApplManager);
@@ -153,13 +155,15 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
 
                         @Override
                         public void onClick(final AjaxRequestTarget target) {
-                            Domain.AuthRole authRole = model.getObject().getAuthRole(authRoleName);
+                            AuthRole authRole = model.getObject().getAuthRole(authRoleName);
                             try {
-                                if (authRole.getUsernames().contains(user.getUsername())) {
+                                if (authRole.getUsers().contains(user.getUsername())) {
                                     showInfo(getString("permissions-permission-user-already-added", rowModel));
                                 } else {
-                                    authRole.addUser(user.getUsername());
+                                    AuthRolesHelper.authRoleAddUser(authRole, user.getUsername());
                                     showInfo(getString("group-member-added", rowModel));
+                                    // backing model is immutable, force reload
+                                    model.detach();
                                     usersListView.updateUsers();
                                 }
                             } catch (RepositoryException e) {
@@ -233,12 +237,12 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
     }
 
     private void deletePermission() {
-        final Domain domain = model.getObject();
-        final Domain.AuthRole authRole = domain.getAuthRole(authRoleName);
+        final DomainAuth domain = model.getObject();
+        final AuthRole authRole = domain.getAuthRole(authRoleName);
         if (authRole != null) {
             final MapModel nameModel = new MapModel<>(Collections.singletonMap("name", authRole.getName()));
             try {
-                authRole.delete();
+                AuthRolesHelper.deleteAuthRole(authRole);
                 activateParentAndDisplayInfo(getString("permissions-permission-deleted", nameModel));
             } catch (RepositoryException e) {
                 error(getString("permissions-permission-delete-failed", nameModel));
@@ -263,19 +267,22 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
                 protected void onSubmit(AjaxRequestTarget target, Form form) {
                     // clear old feedbacks prior showing new ones
                     hippoForm.clearFeedbackMessages();
-                    final Domain domain = model.getObject();
-                    final Domain.AuthRole authRole = domain.getAuthRole(authRoleName);
-                    if (!StringUtils.equals(selectedUserRole, authRole.getUserrole())) {
+                    final DomainAuth domain = model.getObject();
+                    final AuthRole authRole = domain.getAuthRole(authRoleName);
+                    if (!StringUtils.equals(selectedUserRole, authRole.getUserRole())) {
                         final MapModel nameModel = new MapModel<>(Collections.singletonMap("name", selectedUserRole));
                         try {
                             if (selectedUserRole != null) {
-                                authRole.setUserRole(selectedUserRole);
+                                AuthRolesHelper.authRoleSetUserRole(authRole, selectedUserRole);
                                 info(getString("permissions-permission-userrole-set", nameModel));
                             } else {
-                                final MapModel oldNameModel = new MapModel<>(Collections.singletonMap("name", authRole.getUserrole()));
-                                authRole.removeUserRole();
+                                final MapModel oldNameModel = new MapModel<>(Collections.singletonMap("name", authRole.getUserRole()));
+                                AuthRolesHelper.authRoleSetUserRole(authRole, null);
                                 info(getString("permissions-permission-userrole-cleared", oldNameModel));
                             }
+                            // backing model is immutable, force reload
+                            model.detach();
+                            redraw();
                         } catch (RepositoryException e) {
                             error(getString("permissions-permission-userrole-set-failed", nameModel));
                             log.error("Unable to set userrole '{}' : ", selectedUserRole, e);
@@ -286,12 +293,12 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
 
                 @Override
                 public boolean isEnabled() {
-                    return !StringUtils.equals(selectedUserRole, model.getObject().getAuthRole(authRoleName).getUserrole());
+                    return !StringUtils.equals(selectedUserRole, model.getObject().getAuthRole(authRoleName).getUserRole());
                 }
             };
             submit.setDefaultFormProcessing(false);
             hippoForm.add(submit);
-            selectedUserRole = model.getObject().getAuthRole(authRoleName).getUserrole();
+            selectedUserRole = model.getObject().getAuthRole(authRoleName).getUserRole();
             final DropDownChoice<String> userRoleChoice =
                     new DropDownChoice<>("userroles-select", new PropertyModel<>(this, "selectedUserRole"), getUserRoleChoices());
             userRoleChoice.setNullValid(true);
@@ -306,9 +313,7 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
         }
 
         List<String> getUserRoleChoices() {
-            UserRolesProvider userRolesProvider =
-                    UserSession.get().getJcrSession().getWorkspace().getSecurityManager().getUserRolesProvider();
-            return userRolesProvider.getRoles().stream()
+            return SecurityManagerHelper.getUserRolesProvider().getRoles().stream()
                     .map(UserRole::getName)
                     .sorted()
                     .collect(Collectors.toList());
@@ -328,7 +333,7 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
         private final IPluginContext context;
 
         GroupsListView(final String id, final IPluginContext context) {
-            super(id, new ArrayList<>(model.getObject().getAuthRole(authRoleName).getGroupnames()));
+            super(id, new ArrayList<>(model.getObject().getAuthRole(authRoleName).getGroups()));
             this.context = context;
             setReuseItems(false);
         }
@@ -351,7 +356,7 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
         }
 
         void updateGroups() {
-            setModelObject(new ArrayList<>(model.getObject().getAuthRole(authRoleName).getGroupnames()));
+            setModelObject(new ArrayList<>(model.getObject().getAuthRole(authRoleName).getGroups()));
         }
 
         private final class RemoveGroupActionLinkLabel extends AjaxLinkLabel {
@@ -382,7 +387,9 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
     private void removeGroup(final String groupToRemove) {
         final MapModel nameModel = new MapModel<>(Collections.singletonMap("name", groupToRemove));
         try {
-            model.getObject().getAuthRole(authRoleName).removeGroup(groupToRemove);
+            AuthRolesHelper.authRoleRemoveGroup(model.getObject().getAuthRole(authRoleName), groupToRemove);
+            // backing model is immutable, force reload
+            model.detach();
             groupsListView.updateGroups();
             info(getString("permissions-permission-group-removed", nameModel));
         } catch (RepositoryException e) {
@@ -410,11 +417,13 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
                     hippoForm.clearFeedbackMessages();
                     final MapModel nameModel = new MapModel<>(Collections.singletonMap("name", selectedGroup));
                     try {
-                        Domain.AuthRole authRole = model.getObject().getAuthRole(authRoleName);
-                        if (authRole != null && !authRole.getGroupnames().contains(selectedGroup)) {
-                            authRole.addGroup(selectedGroup);
+                        AuthRole authRole = model.getObject().getAuthRole(authRoleName);
+                        if (authRole != null && !authRole.getGroups().contains(selectedGroup)) {
+                            AuthRolesHelper.authRoleAddGroup(authRole, selectedGroup);
                             info(getString("permissions-permission-group-added", nameModel));
                         }
+                        // backing model is immutable, force reload
+                        model.detach();
                         groupsListView.updateGroups();
                         updateGroupChoice();
                     } catch (RepositoryException e) {
@@ -443,10 +452,10 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
         }
 
         List<String> getGroupChoices() {
-            final Domain.AuthRole authRole = model.getObject().getAuthRole(authRoleName);
+            final AuthRole authRole = model.getObject().getAuthRole(authRoleName);
             return Group.getAllGroups().stream()
                     .map(Group::getGroupname)
-                    .filter(r -> !authRole.getGroupnames().contains(r))
+                    .filter(r -> !authRole.getGroups().contains(r))
                     .sorted()
                     .collect(Collectors.toList());
         }
@@ -466,7 +475,7 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
         private final IPluginContext context;
 
         UsersListView(final String id, final IPluginContext context) {
-            super(id, new ArrayList<>(model.getObject().getAuthRole(authRoleName).getUsernames()));
+            super(id, new ArrayList<>(model.getObject().getAuthRole(authRoleName).getUsers()));
             this.context = context;
             setReuseItems(false);
             setOutputMarkupId(true);
@@ -495,7 +504,7 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
         }
 
         void updateUsers() {
-            setModelObject(new ArrayList<>(model.getObject().getAuthRole(authRoleName).getUsernames()));
+            setModelObject(new ArrayList<>(model.getObject().getAuthRole(authRoleName).getUsers()));
         }
 
         private final class RemoveUserActionLinkLabel extends AjaxLinkLabel {
@@ -526,7 +535,9 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
     private void removeUser(final String userToRemove) {
         final MapModel nameModel = new MapModel<>(Collections.singletonMap("name", userToRemove));
         try {
-            model.getObject().getAuthRole(authRoleName).removeUser(userToRemove);
+            AuthRolesHelper.authRoleRemoveUser(model.getObject().getAuthRole(authRoleName), userToRemove);
+            // backing model is immutable, force reload
+            model.detach();
             usersListView.updateUsers();
             info(getString("permissions-permission-user-removed", nameModel));
         } catch (RepositoryException e) {
