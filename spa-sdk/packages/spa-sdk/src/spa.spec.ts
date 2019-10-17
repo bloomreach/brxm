@@ -104,6 +104,15 @@ describe('Spa', () => {
       });
     });
 
+    it('should use a page model from the arguments', async () => {
+      jest.clearAllMocks();
+      const model = {} as PageModel;
+
+      await spa.initialize(model);
+      expect(config.httpClient).not.toBeCalled();
+      expect(pageFactory.create).toBeCalledWith(model);
+    });
+
     it('should create a page instance', () => {
       expect(pageFactory.create).toBeCalledWith(model);
     });

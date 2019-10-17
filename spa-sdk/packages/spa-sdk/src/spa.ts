@@ -133,8 +133,7 @@ export class Spa {
     this.cms.initialize(this.config.window);
 
     const url = this.urlBuilder.getApiUrl(this.config.request.path);
-    const model = await this.fetchPageModel(url);
-    this.page = this.pageFactory.create(model);
+    this.page = this.pageFactory.create(model || await this.fetchPageModel(url));
 
     this.eventBus.on('cms.update', this.onCmsUpdate);
 

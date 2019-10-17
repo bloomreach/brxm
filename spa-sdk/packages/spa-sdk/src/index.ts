@@ -37,6 +37,7 @@ import {
   MetaCommentImpl,
   MetaFactory,
   PageImpl,
+  PageModel,
   Page,
   SingleTypeFactory,
   TYPE_COMPONENT,
@@ -61,7 +62,7 @@ const xmlSerializer = new XMLSerializer();
  *
  * @param config Configuration of the SPA integration with brXM.
  */
-export async function initialize(config: Configuration): Promise<Page> {
+export async function initialize(config: Configuration, model?: PageModel): Promise<Page> {
   const urlBuilder =  new UrlBuilderImpl();
   const linkFactory = new LinkFactory()
     .register(TYPE_LINK_EXTERNAL, urlBuilder.getSpaUrl.bind(urlBuilder))
@@ -96,7 +97,7 @@ export async function initialize(config: Configuration): Promise<Page> {
   ));
 
   const spa = new Spa(config, cms, eventBus, pageFactory, urlBuilder);
-  const page = await spa.initialize();
+  const page = await spa.initialize(model);
 
   pages.set(page, spa);
 
@@ -123,6 +124,7 @@ export {
   Menu,
   MetaComment,
   Meta,
+  PageModel,
   Page,
   Reference,
   isComponent,

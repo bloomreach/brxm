@@ -185,4 +185,13 @@ describe('PageImpl', () => {
       expect(eventBus.emit).toBeCalledWith('page.ready', {});
     });
   });
+
+  describe('toJSON', () => {
+    it('should return a page model', () => {
+      const model = { page: { id: 'id', type: TYPE_COMPONENT } } as PageModel;
+      const page = createPage(model);
+
+      expect(page.toJSON()).toBe(model);
+    });
+  });
 });

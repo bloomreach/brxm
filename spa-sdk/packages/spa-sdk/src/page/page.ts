@@ -133,6 +133,11 @@ export interface Page {
    * Synchronizes the CMS integration state.
    */
   sync(): void;
+
+  /**
+   * @return A plain javascript object of the page model.
+   */
+  toJSON(): PageModel;
 }
 
 export class PageImpl implements Page {
@@ -202,5 +207,9 @@ export class PageImpl implements Page {
 
   sync() {
     this.eventBus.emit('page.ready', {});
+  }
+
+  toJSON() {
+    return this.model;
   }
 }
