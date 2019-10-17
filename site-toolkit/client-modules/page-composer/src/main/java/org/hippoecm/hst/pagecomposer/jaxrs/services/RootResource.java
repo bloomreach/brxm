@@ -112,7 +112,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
                                 @QueryParam("privilegeAllowed") final String privilegeAllowed) {
 
         try {
-
+            // TODO HSTTWO-4667 filter the channels like HstModel does: thus also filter on read-access for content!
             final List<Channel> channels = this.channelService.getChannels(previewConfigRequired,
                     workspaceRequired,
                     skipBranches,
@@ -281,7 +281,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
             final boolean isChannelAdmin;
 
             // JCR_WRITE does not automatically imply JCR_READ but both are needed for webmasters or channel admins
-            // CHANNEL_ADMIN_PRIVILEGE_NAME does automatically inherity jcr:read and jcr:write, see roles-hst.yaml
+            // CHANNEL_ADMIN_PRIVILEGE_NAME does automatically inherit jcr:read and jcr:write, see roles-hst.yaml
             final String webmasterPermissions = JCR_READ + "," + JCR_WRITE;
 
             final String liveConfigPath = getPageComposerContextService().getEditingLiveConfigurationPath();
