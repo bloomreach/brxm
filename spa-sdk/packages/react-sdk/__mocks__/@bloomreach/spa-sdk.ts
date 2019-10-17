@@ -44,8 +44,11 @@ const page = new class implements Page {
   getContent = jest.fn();
   getMeta = jest.fn();
   getTitle = jest.fn();
+  getUrl = jest.fn();
   isPreview = jest.fn();
+  rewriteLinks = jest.fn();
   sync = jest.fn();
+  toJSON = jest.fn();
 };
 
 module.exports = {
