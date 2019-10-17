@@ -16,9 +16,11 @@
 
 import React from 'react';
 import axios from 'axios';
-import { RouteComponentProps } from 'react-router-dom';
+import { Link, RouteComponentProps } from 'react-router-dom';
 import { BrComponent, BrPage, BrPageContext } from '@bloomreach/react-sdk';
 import { Banner, Content, Menu, NewsList } from './components';
+
+axios.interceptors.request.use(config => ({ ...config, withCredentials: true }));
 
 export default function App(props: RouteComponentProps) {
   const configuration = {
@@ -46,7 +48,9 @@ export default function App(props: RouteComponentProps) {
           <div className="container">
             <BrPageContext.Consumer>
               { page => (
-                <a href={page!.getUrl('/')} className="navbar-brand">{ page!.getTitle() || 'Client-Side React Demo'}</a>
+                <Link to={page!.getUrl('/')} className="navbar-brand">
+                  { page!.getTitle() || 'Client-Side React Demo'}
+                </Link>
               ) }
             </BrPageContext.Consumer>
             <div className="collapse navbar-collapse">

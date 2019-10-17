@@ -15,6 +15,7 @@
  */
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { BrManageContentButton, BrProps } from '@bloomreach/react-sdk';
 
 export function Banner(props: BrProps) {
@@ -37,7 +38,7 @@ export function Banner(props: BrProps) {
       { content && <div dangerouslySetInnerHTML={{ __html: props.page.rewriteLinks(content.value) }} /> }
       { link && (
         <p className="lead">
-          <a className="btn btn-primary btn-lg" href={link.getUrl()} role="button">Learn more</a>
+          <Link to={link.getUrl()!} className="btn btn-primary btn-lg" role="button">Learn more</Link>
         </p>
       ) }
     </div>

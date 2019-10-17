@@ -15,6 +15,7 @@
  */
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { BrComponentContext, BrManageMenuButton, BrPageContext } from '@bloomreach/react-sdk';
 
 export function Menu() {
@@ -31,7 +32,7 @@ export function Menu() {
       <BrManageMenuButton menu={menu} />
       { menu.siteMenuItems.map((item, index) => (
         <li key={index} className={`nav-item ${item.selected ? 'active' : ''}`}>
-          <a className="nav-link text-capitalize" href={page.getUrl(item._links.site!)}>{item.name}</a>
+          <Link to={page.getUrl(item._links.site)} className="nav-link text-capitalize">{item.name}</Link>
         </li>
       )) }
     </ul>
