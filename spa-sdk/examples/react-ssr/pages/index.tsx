@@ -20,22 +20,21 @@ import { NextPageContext } from 'next';
 // tslint:disable-next-line:import-name
 import getConfig from 'next/config';
 import { BrComponent, BrPage, BrPageContext } from '@bloomreach/react-sdk';
+import { Configuration, Page, initialize } from '@bloomreach/spa-sdk';
 import { Banner, Content, Menu, NewsList } from '../components';
+
+axios.interceptors.request.use(config => ({ ...config, withCredentials: true }));
 
 const { publicRuntimeConfig } = getConfig();
 
 interface IndexProps {
-  request: any;
+  config: Configuration;
+  page: Page;
 }
 
 export default class Index extends React.Component<IndexProps> {
-  static async getInitialProps({ req: request }: NextPageContext) {
-    return { request };
-  }
-
-  render() {
-    const configuration = {
-      httpClient: axios.request,
+  static async getInitialProps(context: NextPageContext) {
+    const config = {
       options: {
         live: {
           cmsBaseUrl: publicRuntimeConfig.liveBrBaseUrl,
@@ -46,12 +45,25 @@ export default class Index extends React.Component<IndexProps> {
           spaBaseUrl: publicRuntimeConfig.previewSpaBaseUrl,
         },
       },
-      request: this.props.request,
+      request: { path: context.asPath || '' },
     };
+
+    return {
+      config,
+      page: await initialize({
+        ...config,
+        httpClient: axios.request,
+        request: { ...config.request, headers: context.req && context.req.headers },
+      }),
+    };
+  }
+
+  render() {
+    const config = { ...this.props.config, httpClient: axios.request };
     const mapping = { Banner, Content, 'News List': NewsList };
 
     return (
-      <BrPage configuration={configuration} mapping={mapping}>
+      <BrPage configuration={config} mapping={mapping} page={this.props.page}>
         <header>
           <nav className="navbar navbar-expand-sm navbar-dark sticky-top bg-dark" role="navigation">
             <div className="container">
