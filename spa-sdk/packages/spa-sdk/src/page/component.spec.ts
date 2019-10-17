@@ -177,9 +177,9 @@ describe('ComponentImpl', () => {
 
 describe('isComponent', () => {
   it('should return true', () => {
-    const containerItem = createComponent({ id: 'id', type: TYPE_COMPONENT });
+    const component = createComponent({ id: 'id', type: TYPE_COMPONENT });
 
-    expect(isComponent(containerItem)).toBe(true);
+    expect(isComponent(component)).toBe(true);
   });
 
   it('should return false', () => {

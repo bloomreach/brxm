@@ -22,33 +22,33 @@ import { Factory } from './factory';
 import { LinkRewriter } from './link-rewriter';
 import { Link } from './link';
 import { MetaCollectionModel, Meta } from './meta';
-import { PageImpl, PageModel, Page } from './page';
+import { PageImpl, PageModel, Page, isPage } from './page';
+
+let content: Content;
+let contentFactory: jest.Mocked<Factory<[ContentModel], Content>>;
+let eventBus: Typed<Events>;
+let linkFactory: jest.Mocked<Factory<[Link], string>>;
+let linkRewriter: jest.Mocked<LinkRewriter>;
+let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], Meta[]>>;
+let root: Component;
+
+function createPage(model: PageModel) {
+  return new PageImpl(model, root, contentFactory, eventBus, linkFactory, linkRewriter, metaFactory);
+}
+
+beforeEach(() => {
+  content = {} as jest.Mocked<Content>;
+  contentFactory = { create: jest.fn() };
+  eventBus = new Typed<Events>();
+  linkFactory = { create: jest.fn() };
+  linkRewriter = { rewrite: jest.fn() } as unknown as jest.Mocked<LinkRewriter>;
+  metaFactory = { create: jest.fn() };
+  root = { getComponent: jest.fn() } as unknown as jest.Mocked<Component>;
+
+  contentFactory.create.mockReturnValue(content);
+});
 
 describe('PageImpl', () => {
-  let content: Content;
-  let contentFactory: jest.Mocked<Factory<[ContentModel], Content>>;
-  let eventBus: Typed<Events>;
-  let linkFactory: jest.Mocked<Factory<[Link], string>>;
-  let linkRewriter: jest.Mocked<LinkRewriter>;
-  let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], Meta[]>>;
-  let root: Component;
-
-  function createPage(model: PageModel) {
-    return new PageImpl(model, root, contentFactory, eventBus, linkFactory, linkRewriter, metaFactory);
-  }
-
-  beforeEach(() => {
-    content = {} as jest.Mocked<Content>;
-    contentFactory = { create: jest.fn() };
-    eventBus = new Typed<Events>();
-    linkFactory = { create: jest.fn() };
-    linkRewriter = { rewrite: jest.fn() } as unknown as jest.Mocked<LinkRewriter>;
-    metaFactory = { create: jest.fn() };
-    root = { getComponent: jest.fn() } as unknown as jest.Mocked<Component>;
-
-    contentFactory.create.mockReturnValue(content);
-  });
-
   describe('getComponent', () => {
     it('should forward a call to the root component', () => {
       const page = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
@@ -193,5 +193,18 @@ describe('PageImpl', () => {
 
       expect(page.toJSON()).toBe(model);
     });
+  });
+});
+
+describe('isPage', () => {
+  it('should return true', () => {
+    const page = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
+
+    expect(isPage(page)).toBe(true);
+  });
+
+  it('should return false', () => {
+    expect(isPage(undefined)).toBe(false);
+    expect(isPage({})).toBe(false);
   });
 });

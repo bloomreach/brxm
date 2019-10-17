@@ -213,3 +213,11 @@ export class PageImpl implements Page {
     return this.model;
   }
 }
+
+/**
+ * Checks whether a value is a page.
+ * @param value The value to check.
+ */
+export function isPage(value: any): value is Page {
+  return value instanceof PageImpl;
+}

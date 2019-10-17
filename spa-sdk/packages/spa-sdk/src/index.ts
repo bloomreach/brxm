@@ -133,6 +133,7 @@ export {
   isLink,
   isMetaComment,
   isMeta,
+  isPage,
   isReference,
   META_POSITION_BEGIN,
   META_POSITION_END,
