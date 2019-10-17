@@ -46,9 +46,10 @@ describe('UrlMapperService', () => {
       appPath: 'another/app/path/to/home',
     }),
   ];
-  const navItemServiceMock = {
-    navItems: navItemsMock,
-  };
+  const navItemServiceMock = jasmine.createSpyObj('NavItemService', [
+    'findNavItem',
+  ]);
+  navItemServiceMock.navItems = navItemsMock;
 
   let clientAppServiceMock = {
     activeApp: {
@@ -144,6 +145,7 @@ describe('UrlMapperService', () => {
 
   it('should map nav location to the browser url', () => {
     const expected = ['/base/path/iframe1/url/app/path/to/page1/some/detailed/page?param1=value1#hash-data', navItemsMock[1]];
+    navItemServiceMock.findNavItem.and.returnValue(navItemsMock[1]);
     const navLocation: NavLocation = {
       path: 'app/path/to/page1/some/detailed/page?param1=value1#hash-data',
     };
@@ -153,12 +155,13 @@ describe('UrlMapperService', () => {
     expect(actual).toEqual(expected);
   });
 
-  it('should throw an exception during mapNavLocationToBrowserUrl call when the active app is not set', () => {
+  it('should throw an exception during mapNavLocationToBrowserUrl invocation when the active app is not set' +
+    ' and the current app is used', () => {
     const expected = new InternalError('Initialization problem', 'Active app is not set');
 
     clientAppServiceMock.activeApp = undefined;
 
-    expect(() => urlMapperService.mapNavLocationToBrowserUrl({ path: '' })).toThrow(expected);
+    expect(() => urlMapperService.mapNavLocationToBrowserUrl({ path: '' }, true)).toThrow(expected);
   });
 
   it('should throw an exception when the nav item contains a relative url instead of an absolute one', () => {

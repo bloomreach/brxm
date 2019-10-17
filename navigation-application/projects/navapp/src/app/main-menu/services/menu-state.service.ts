@@ -72,7 +72,7 @@ export class MenuStateService {
   }
 
   activateMenuItem(appId: string, path: string): void {
-    const navItem = this.navItemService.findNavItem(appId, path);
+    const navItem = this.navItemService.findNavItem(path, appId);
 
     if (!navItem) {
       throw new Error(`It's impossible to find an appropriate menu element for appId=${appId} and path=${path}`);
