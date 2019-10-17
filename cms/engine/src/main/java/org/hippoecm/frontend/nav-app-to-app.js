@@ -101,7 +101,7 @@
     }
 
     return Hippo.iframeConnections.getChildApiPromise(iframe)
-      .then(childApi => childApi.navigate({ path }));
+      .then(childApi => childApi.navigate({ path }, triggeredBy));
   };
 
   const cmsChildApi = {
