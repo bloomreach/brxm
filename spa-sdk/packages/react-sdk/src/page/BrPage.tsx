@@ -15,13 +15,14 @@
  */
 
 import React from 'react';
-import { destroy, initialize, Configuration, Page } from '@bloomreach/spa-sdk';
+import { Configuration, PageModel, Page, destroy, initialize, isPage } from '@bloomreach/spa-sdk';
 import { BrMappingContext, BrNode } from '../component';
 import { BrPageContext } from './BrPageContext';
 
 interface BrPageProps {
   configuration: Configuration;
   mapping: React.ContextType<typeof BrMappingContext>;
+  page?: Page | PageModel;
 }
 
 interface BrPageState {
@@ -40,13 +41,13 @@ export class BrPage extends React.Component<BrPageProps, BrPageState> {
   }
 
   componentDidUpdate(prevProps: BrPageProps, prevState: BrPageState) {
-    if (this.props.configuration !== prevProps.configuration) {
+    if (this.props.configuration !== prevProps.configuration || this.props.page !== prevProps.page) {
       this.destroyPage();
-      this.initializePage();
+      this.initializePage(this.props.page === prevProps.page);
     }
 
-    if (this.state.page && this.state.page !== prevState.page) {
-      this.state.page.sync();
+    if (this.state.page !== prevState.page) {
+      this.forceUpdate(() => this.state.page && this.state.page.sync());
     }
   }
 
@@ -54,10 +55,15 @@ export class BrPage extends React.Component<BrPageProps, BrPageState> {
     this.destroyPage();
   }
 
-  private async initializePage() {
+  private async initializePage(force = false) {
+    const page = force ? undefined : this.props.page;
+
+    if (isPage(page)) {
+      return this.setState({ page });
+    }
+
     try {
-      const page = await initialize(this.props.configuration);
-      this.setState({ page });
+      this.setState({ page: await initialize(this.props.configuration, page) });
     } catch (error) {
       this.setState(() => { throw error; });
     }
