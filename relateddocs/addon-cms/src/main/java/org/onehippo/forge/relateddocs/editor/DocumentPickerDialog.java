@@ -42,6 +42,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.forge.relateddocs.RelatedDoc;
 import org.onehippo.forge.relateddocs.RelatedDocCollection;
@@ -100,7 +101,8 @@ public class DocumentPickerDialog extends Dialog<Node> {
                 // if dialog contains selected node and node is not equal to model
                 // (note: this can only happen if dialog adds support for "remembering" last selected node,
                 // currently, this will not happen because above support is missing):
-                if (!selectedNode.getObject().getIdentifier().equals(editedDocumentId)) {
+                final Node ourSelection = selectedNode.getObject();
+                if (!ourSelection.getIdentifier().equals(editedDocumentId) && !isFolderNodeType(ourSelection)) {
                     selectedNode = new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getNodeByIdentifier(editedDocumentId));
                     setOkEnabled(true);
                 }
@@ -146,6 +148,9 @@ public class DocumentPickerDialog extends Dialog<Node> {
 
         try {
             final Node targetNode = (Node) targetModel.getObject();
+            if (isFolderNodeType(targetNode)) {
+                return false;
+            }
 
             Node testNode = targetNode;
             if (targetNode.isNodeType(HippoNodeType.NT_HANDLE) && targetNode.hasNode(targetNode.getName())) {
@@ -266,6 +271,16 @@ public class DocumentPickerDialog extends Dialog<Node> {
         JcrNodeModel selectedNodeModel = (JcrNodeModel) selectedNode;
 
         try {
+
+            final Node selectedNode = selectedNodeModel.getNode();
+            // we don't allow folder selections within dialog (see isValidSelection() method),
+            // below check is just an extra check
+            // (e.g. for legacy stuff or if property is set by a script or via console)
+            if (isFolderNodeType(selectedNode)) {
+                error("You cannot add a folder as the related document");
+                return;
+            }
+
             if (editedDocumentId.equalsIgnoreCase(selectedNodeModel.getNode().getIdentifier())) {
                 error("You cannot add the same document as the related document");
                 return;
@@ -276,6 +291,10 @@ public class DocumentPickerDialog extends Dialog<Node> {
 
         collection.add(new RelatedDoc(selectedNodeModel));
 
+    }
+
+    private boolean isFolderNodeType(final Node node) throws RepositoryException {
+        return node.isNodeType(HippoStdNodeType.NT_FOLDER);
     }
 
     @Override
