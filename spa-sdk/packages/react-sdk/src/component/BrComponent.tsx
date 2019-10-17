@@ -15,7 +15,6 @@
  */
 
 import React from 'react';
-import { isComponent, Component } from '@bloomreach/spa-sdk';
 import { BrComponentContext } from './BrComponentContext';
 import { BrNode } from './BrNode';
 
@@ -23,26 +22,9 @@ interface BrComponentProps {
   path?: string;
 }
 
-interface BrComponentState {
-  components: Component[];
-}
-
-export class BrComponent extends React.Component<BrComponentProps, BrComponentState> {
+export class BrComponent extends React.Component<BrComponentProps> {
   static contextType = BrComponentContext;
-
-  constructor(props: BrComponentProps, public context: React.ContextType<typeof BrComponentContext>) {
-    super(props, context);
-
-    this.state = {
-      components: this.getComponents(),
-    };
-  }
-
-  componentDidUpdate(prevProps: BrComponentProps) {
-    if (this.props.path !== prevProps.path) {
-      this.setState({ components: this.getComponents() });
-    }
-  }
+  context: React.ContextType<typeof BrComponentContext>;
 
   private getComponents() {
     if (!this.context) {
@@ -58,7 +40,7 @@ export class BrComponent extends React.Component<BrComponentProps, BrComponentSt
   }
 
   private renderComponents() {
-    return this.state.components.map((component, index) => (
+    return this.getComponents().map((component, index) => (
       <BrNode key={index} component={component}>{this.props.children}</BrNode>
     ));
   }

@@ -78,14 +78,4 @@ describe('BrComponent', () => {
 
     expect(wrapper.contains(<BrNode component={component}><a/></BrNode>)).toBe(true);
   });
-
-  it('should update components on path update', () => {
-    const component = {} as Component;
-    context.getComponent.mockReturnValueOnce(component);
-    const wrapper = shallow(<BrComponent />, { context });
-    wrapper.setProps({ path: 'a/b' });
-
-    expect(context.getComponent).toBeCalledWith('a', 'b');
-    expect(wrapper.state('components')).toEqual([component]);
-  });
 });
