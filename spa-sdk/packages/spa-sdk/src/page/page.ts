@@ -21,7 +21,7 @@ import { ContainerModel } from './container';
 import { ContentModel, Content } from './content';
 import { Factory } from './factory';
 import { LinkRewriter } from './link-rewriter';
-import { Link } from './link';
+import { Link, TYPE_LINK_INTERNAL } from './link';
 import { Events, PageUpdateEvent } from '../events';
 import { MetaCollectionModel, Meta } from './meta';
 import { Reference, isReference } from './reference';
@@ -102,10 +102,11 @@ export interface Page {
    * - If it is a resource link then it will prepend origin part from the `cmsBaseUrl` option.
    *   For example, for link `/site/_cmsinternal/binaries/image1.jpg` with configuration option
    *   `cmsBaseUrl = "//localhost:8080/site/spa"`, it will generate `//localhost/site/_cmsinternal/binaries/image1.jpg`.
+   * - If the link parameter is omitted then the link to the current page will be returned.
    * - In other cases, the link will be returned as-is.
    * @param link The link object to generate URL.
    */
-  getUrl(link: Link): string;
+  getUrl(link?: Link): string;
 
   /**
    * Generates an SPA URL for the path.
@@ -193,8 +194,12 @@ export class PageImpl implements Page {
     return this.model.page._meta && this.model.page._meta.pageTitle;
   }
 
-  getUrl(link: Link | string) {
-    return this.linkFactory.create(link);
+  getUrl(link?: Link | string) {
+    return this.linkFactory.create(link || (
+      this.model._links
+        ? { ...this.model._links.site, type: TYPE_LINK_INTERNAL }
+        : ''
+    ));
   }
 
   isPreview() {

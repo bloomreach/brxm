@@ -20,7 +20,7 @@ import { ContentModel, Content } from './content';
 import { Events } from '../events';
 import { Factory } from './factory';
 import { LinkRewriter } from './link-rewriter';
-import { Link } from './link';
+import { Link, TYPE_LINK_INTERNAL } from './link';
 import { MetaCollectionModel, Meta } from './meta';
 import { PageImpl, PageModel, Page, isPage } from './page';
 
@@ -117,13 +117,36 @@ describe('PageImpl', () => {
   });
 
   describe('getUrl', () => {
+    beforeEach(() => {
+      linkFactory.create.mockReturnValueOnce('url');
+    });
+
     it('should pass a link to the link factory', () => {
       const link = { href: '' };
       const page = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
-      linkFactory.create.mockReturnValueOnce('url');
 
       expect(page.getUrl(link)).toBe('url');
       expect(linkFactory.create).toBeCalledWith(link);
+    });
+
+    it('should pass the current page link', () => {
+      const page = createPage({
+        page: { id: 'id', type: TYPE_COMPONENT },
+        _links: {
+          site: { href: 'site-url' },
+          self: { href: 'self-url' },
+        },
+      });
+
+      expect(page.getUrl()).toBe('url');
+      expect(linkFactory.create).toBeCalledWith({ href: 'site-url', type: TYPE_LINK_INTERNAL });
+    });
+
+    it('should pass empty string', () => {
+      const page = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
+
+      expect(page.getUrl()).toBe('url');
+      expect(linkFactory.create).toBeCalledWith('');
     });
   });
 
