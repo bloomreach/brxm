@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { mount } from 'enzyme';
-import { MetaComment, META_POSITION_BEGIN } from '@bloomreach/spa-sdk';
+import { MetaComment } from '@bloomreach/spa-sdk';
 import { BrMetaComment } from './BrMetaComment';
 
 describe('BrMetaComment', () => {

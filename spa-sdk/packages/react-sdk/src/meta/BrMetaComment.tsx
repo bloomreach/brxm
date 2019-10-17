@@ -26,11 +26,7 @@ export class BrMetaComment extends React.Component<BrMetaCommentProps> {
   private comment?: Comment;
 
   componentDidMount() {
-    if (!this.placeholder.current) {
-      return;
-    }
-
-    const placeholder = this.placeholder.current;
+    const placeholder = this.placeholder.current!;
     this.comment = placeholder.ownerDocument!.createComment(this.props.meta.getData());
     placeholder.parentNode!.replaceChild(this.comment, placeholder);
   }
@@ -44,11 +40,8 @@ export class BrMetaComment extends React.Component<BrMetaCommentProps> {
   }
 
   componentWillUnmount() {
-    if (!this.comment) {
-      return;
-    }
-
-    this.comment.remove();
+    this.comment!.parentNode!.replaceChild(this.placeholder.current!, this.comment!);
+    delete this.comment;
   }
 
   render() {
