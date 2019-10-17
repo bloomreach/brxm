@@ -61,7 +61,7 @@ export default function App(props: RouteComponentProps) {
         <BrComponent path="main" />
       </section>
       <footer className="bg-dark text-light py-3">
-        <div className="container">
+        <div className="container clearfix">
           <div className="float-left pr-3">&copy; Bloomreach</div>
           <div className="overflow-hidden">
             <BrComponent path="footer" />
