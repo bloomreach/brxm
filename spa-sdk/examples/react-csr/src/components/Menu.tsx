@@ -27,7 +27,7 @@ export function Menu() {
   const { menu } = component.getModels<MenuModels>();
 
   return (
-    <ul className="navbar-nav">
+    <ul className={`navbar-nav col-12 ${page.isPreview() ? 'has-edit-button' : ''}`}>
       <BrManageMenuButton menu={menu} />
       { menu.siteMenuItems.map((item, index) => (
         <li key={index} className={`nav-item ${item.selected ? 'active' : ''}`}>
