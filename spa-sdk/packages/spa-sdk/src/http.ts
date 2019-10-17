@@ -48,9 +48,7 @@ export type HttpClientConfig = {
 /**
  * Map of HTTP headers.
  */
-export type HttpHeaders = {
-  [name: string]: string;
-};
+export type HttpHeaders = Partial<Record<string, string | string[]>>;
 
 /**
  * An HTTP request
