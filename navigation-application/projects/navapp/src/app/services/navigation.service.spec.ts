@@ -39,9 +39,12 @@ import { UrlMapperService } from './url-mapper.service';
 
 describe('NavigationService', () => {
   let service: NavigationService;
-  let appSettings: jasmine.SpyObj<AppSettings>;
 
   const basePath = '/base-path';
+
+  let appSettingsMock: AppSettings = new AppSettingsMock({
+    basePath,
+  });
 
   const locationMock = jasmine.createSpyObj('Location', [
     'path',
@@ -99,11 +102,6 @@ describe('NavigationService', () => {
   ]);
   urlMapperServiceMock.basePath = basePath;
 
-  const appSettingsMock: AppSettings = new AppSettingsMock({
-    basePath: '/base-path',
-    initialPath: '/iframe1/url/app/path/to/home',
-  });
-
   const errorHandlingServiceMock = jasmine.createSpyObj('ErrorHandlingService', [
     'clearError',
     'setError',
@@ -116,6 +114,8 @@ describe('NavigationService', () => {
   let childApi: any;
 
   beforeEach(() => {
+    appSettingsMock.initialPath = '/iframe1/url/app/path/to/home';
+
     locationMock.path.and.returnValue('');
     locationMock.isCurrentPathEqualTo.and.returnValue(false);
     locationMock.subscribe.and.callFake(cb => locationChangeFunction = cb);
@@ -157,8 +157,8 @@ describe('NavigationService', () => {
       ],
     });
 
-    appSettings = TestBed.get(APP_SETTINGS);
     service = TestBed.get(NavigationService);
+    appSettingsMock = TestBed.get(APP_SETTINGS);
   });
 
   it('should not clear the app error during initial navigation', fakeAsync(() => {
@@ -170,17 +170,38 @@ describe('NavigationService', () => {
   }));
 
   describe('initialNavigation', () => {
-    beforeEach(async(() => {
-      service.initialNavigation();
-    }));
-
     it('should subscribe on location changes', () => {
+      service.initialNavigation();
+
       expect(locationMock.subscribe).toHaveBeenCalled();
     });
 
     it('should do the initial url navigation', () => {
+      service.initialNavigation();
+
       expect(locationMock.replaceState).toHaveBeenCalledWith(`${basePath}/iframe1/url/app/path/to/home`, '', {});
     });
+
+    it('should use the initialPath param', fakeAsync(() => {
+      appSettingsMock.initialPath = '/iframe2/url/another/app/path/to/home';
+
+      service.initialNavigation();
+
+      tick();
+
+      expect(locationMock.replaceState).toHaveBeenCalledWith(`${basePath}/iframe2/url/another/app/path/to/home`, '', {});
+    }));
+
+    it('should use the browser\'s location path', fakeAsync(() => {
+      appSettingsMock.initialPath = undefined;
+      locationMock.path.and.returnValue(`${basePath}/iframe1/url/app/path/to/page1`);
+
+      service.initialNavigation();
+
+      tick();
+
+      expect(locationMock.replaceState).toHaveBeenCalledWith(`${basePath}/iframe1/url/app/path/to/page1`, '', {});
+    }));
   });
 
   describe('beforeNavigation', () => {

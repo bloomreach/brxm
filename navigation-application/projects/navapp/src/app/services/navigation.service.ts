@@ -28,6 +28,7 @@ import { CriticalError } from '../error-handling/models/critical-error';
 import { InternalError } from '../error-handling/models/internal-error';
 import { NotFoundError } from '../error-handling/models/not-found-error';
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
+import { stripOffQueryString } from '../helpers/strip-off-query-string';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { AppSettings } from '../models/dto/app-settings.dto';
 import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
@@ -109,7 +110,7 @@ export class NavigationService implements OnDestroy {
 
     this.setUpLocationChangeListener();
 
-    const url = `${this.basePath}${this.appSettings.initialPath}`;
+    const url = this.appSettings.initialPath ? `${this.basePath}${this.appSettings.initialPath}` : this.getLocationPath();
 
     return this.scheduleNavigation(url, NavigationTrigger.NotDefined, {}, true);
   }
@@ -174,6 +175,10 @@ export class NavigationService implements OnDestroy {
 
   navigateToHome(triggeredBy: NavigationTrigger): Promise<void> {
     return this.navigateByUrl(this.homeUrl, triggeredBy);
+  }
+
+  private getLocationPath(): string {
+    return stripOffQueryString(this.location.path());
   }
 
   private navigateByUrl(url: string, triggeredBy: NavigationTrigger, breadcrumbLabel?: string): Promise<void> {

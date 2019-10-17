@@ -16,12 +16,9 @@
 
 import { Location } from '@angular/common';
 
+import { stripOffQueryString } from '../helpers/strip-off-query-string';
 import { AppSettings } from '../models/dto/app-settings.dto';
 import { WindowRef } from '../shared/services/window-ref.service';
-
-const stripOffQueryString = (pathWithQueryString: string) => {
-  return pathWithQueryString.replace(/\?.*$/, '');
-};
 
 export const appSettingsFactory = (windowRef: WindowRef, location: Location): AppSettings => {
   const globalSettings = windowRef.nativeWindow.NavAppSettings;

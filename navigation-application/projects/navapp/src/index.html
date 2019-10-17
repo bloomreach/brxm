@@ -35,7 +35,8 @@
         },
         appSettings: {
           basePath: '/base/path',
-          get initialPath() { return window.location.pathname.slice(this.basePath.length) },
+          // initialPath is optional. If set it navigates to the specified location
+          // initialPath: '/categories/category-ranking',
           navAppResourceLocation: 'http://localhost:4200',
           loginResources: [],
           navConfigResources: [
