@@ -21,9 +21,39 @@ import { NavItem } from '@bloomreach/navapp-communication';
   providedIn: 'root',
 })
 export class NavItemService {
-  navItems: NavItem[] = [];
+  private sortedNavItems: NavItem[] = [];
 
-  findNavItem(iframeUrl: string, path: string): NavItem {
-    return this.navItems.find(item => (item.appIframeUrl === iframeUrl) && (path.startsWith(item.appPath)));
+  get navItems(): NavItem[] {
+    return this.sortedNavItems;
+  }
+
+  set navItems(value: NavItem[]) {
+    this.sortedNavItems = value.slice();
+
+    this.sortedNavItems.sort((a, b) => b.appPath.length - a.appPath.length);
+  }
+
+  findNavItem(path: string, iframeUrlOrPath?: string): NavItem {
+    let isIframeUrl = false;
+
+    try {
+      isIframeUrl = !!new URL(iframeUrlOrPath).pathname;
+    } catch {}
+
+    const appPathPredicate = (x: NavItem) => path.startsWith(x.appPath);
+    const iframeUrlPredicate = (x: NavItem) => {
+      if (isIframeUrl) {
+        return x.appIframeUrl === iframeUrlOrPath;
+      }
+
+      try {
+        return new URL(x.appIframeUrl).pathname === iframeUrlOrPath;
+      } catch {
+        console.warn(`Unable to parse nav items's url: ${x.appIframeUrl}`);
+        return false;
+      }
+    };
+
+    return this.navItems.find(x => iframeUrlOrPath ? iframeUrlPredicate(x) && appPathPredicate(x) : appPathPredicate(x));
   }
 }
