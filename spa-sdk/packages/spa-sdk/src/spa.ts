@@ -19,7 +19,7 @@ import { Cms, Window } from './cms';
 import { Factory, PageModel, Page } from './page';
 import { Events, CmsUpdateEvent } from './events';
 import { HttpClient, HttpRequest } from './http';
-import { UrlBuilder, UrlBuilderOptions, isPreview } from './url';
+import { UrlBuilder, UrlBuilderOptions, isMatched } from './url';
 
 /**
  * Configuration options for generating the page model URL.
@@ -34,12 +34,6 @@ export interface UrlOptions {
    * URL mapping for the preview page model.
    */
   preview: UrlBuilderOptions;
-
-  /**
-   * A query parameter used to differentiate between live and preview modes.
-   * The default value is `bloomreach-preview=true`.
-   */
-  previewQuery?: string;
 }
 
 /**
@@ -131,8 +125,8 @@ export class Spa {
   /**
    * Intitializes the SPA.
    */
-  async initialize(): Promise<Page> {
-    const options = isPreview(this.config.request, this.config.options.previewQuery)
+  async initialize(model?: PageModel): Promise<Page> {
+    const options = isMatched(this.config.request.path, this.config.options.preview.spaBaseUrl)
       ? this.config.options.preview
       : this.config.options.live;
     this.urlBuilder.initialize(options);

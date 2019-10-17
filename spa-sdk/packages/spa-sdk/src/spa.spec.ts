@@ -20,7 +20,7 @@ import { Cms } from './cms';
 import { Component, Factory, PageModel, Page, TYPE_COMPONENT } from './page';
 import { Configuration, Spa } from './spa';
 import { Events } from './events';
-import { UrlBuilder, isPreview } from './url';
+import { UrlBuilder, isMatched } from './url';
 
 jest.mock('./url');
 
@@ -84,7 +84,7 @@ describe('Spa', () => {
     });
 
     it('should use a preview configuration', async () => {
-      mocked(isPreview).mockReturnValueOnce(true);
+      mocked(isMatched).mockReturnValueOnce(true);
       await spa.initialize();
 
       expect(urlBuilder.initialize).toBeCalledTimes(2);

@@ -45,7 +45,7 @@ describe('initialize', () => {
         },
         preview: {
           cmsBaseUrl: 'http://localhost:8080/site/_cmsinternal/my-spa',
-          spaBaseUrl: '//example.com',
+          spaBaseUrl: '//example.com?bloomreach-preview=true',
         },
       },
     });
@@ -81,10 +81,11 @@ describe('initialize', () => {
 
   it.each`
     link                                | expected
-    ${''}                               | ${'//example.com'}
-    ${'/site/_cmsinternal/my-spa/news'} | ${'//example.com/news'}
-    ${{ href: 'http://127.0.0.1/path?query', type: TYPE_LINK_EXTERNAL }}   | ${'//example.com/path?query'}
-    ${{ href: 'something#hash', type: TYPE_LINK_INTERNAL }}                | ${'//example.com/something#hash'}
+    ${''}                               | ${'//example.com/?bloomreach-preview=true'}
+    ${'/site/_cmsinternal/my-spa/news'} | ${'//example.com/news?bloomreach-preview=true'}
+    ${{ href: 'http://127.0.0.1/news?a=b', type: TYPE_LINK_EXTERNAL }}     | ${'//example.com/news?a=b&bloomreach-preview=true'}
+    ${{ href: '/news?a=b', type: TYPE_LINK_INTERNAL }}                     | ${'//example.com/news?a=b&bloomreach-preview=true'}
+    ${{ href: 'news#hash', type: TYPE_LINK_INTERNAL }}                     | ${'//example.com/news?bloomreach-preview=true#hash'}
     ${{ href: 'http://127.0.0.1/resource.jpg', type: TYPE_LINK_RESOURCE }} | ${'http://localhost:8080/resource.jpg'}
   `('should create a URL "$expected" for link "$link"', ({ link, expected }) => {
     expect(page.getUrl(link)).toBe(expected);
@@ -162,8 +163,8 @@ describe('initialize', () => {
     const banner1 = page.getComponent('main', 'banner1');
     const document1 = page.getContent(banner1!.getModels().document);
 
-    expect(document0!.getUrl()).toBe('//example.com/banner1.html');
-    expect(document1!.getUrl()).toBe('//example.com/banner2.html');
+    expect(document0!.getUrl()).toBe('//example.com/banner1.html?bloomreach-preview=true');
+    expect(document1!.getUrl()).toBe('//example.com/banner2.html?bloomreach-preview=true');
   });
 
   it('should rewrite links in the HTML blob', () => {
