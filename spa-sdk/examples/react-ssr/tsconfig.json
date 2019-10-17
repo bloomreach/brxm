@@ -18,6 +18,8 @@
   },
   "include": [
     "next-env.d.ts",
-    "pages"
+    "components",
+    "pages",
+    "**/*.js"
   ]
 }

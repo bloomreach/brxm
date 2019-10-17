@@ -22,9 +22,11 @@ import getConfig from 'next/config';
 import { BrComponent, BrPage, BrPageContext } from '@bloomreach/react-sdk';
 import { Configuration, Page, initialize } from '@bloomreach/spa-sdk';
 import { Banner, Content, Menu, NewsList } from '../components';
+import routes from '../routes';
 
 axios.interceptors.request.use(config => ({ ...config, withCredentials: true }));
 
+const { Link } = routes;
 const { publicRuntimeConfig } = getConfig();
 
 interface IndexProps {
@@ -69,7 +71,9 @@ export default class Index extends React.Component<IndexProps> {
             <div className="container">
               <BrPageContext.Consumer>
                 { page => (
-                  <a href={page!.getUrl('/')} className="navbar-brand">{ page!.getTitle() || 'Server-Side React Demo'}</a>
+                  <Link route={page!.getUrl('/')}>
+                    <a className="navbar-brand">{ page!.getTitle() || 'Server-Side React Demo'}</a>
+                  </Link>
                 ) }
               </BrPageContext.Consumer>
               <div className="collapse navbar-collapse">

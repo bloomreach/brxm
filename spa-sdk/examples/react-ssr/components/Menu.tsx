@@ -16,6 +16,9 @@
 
 import React from 'react';
 import { BrComponentContext, BrManageMenuButton, BrPageContext } from '@bloomreach/react-sdk';
+import routes from '../routes';
+
+const { Link } = routes;
 
 export function Menu() {
   const component = React.useContext(BrComponentContext);
@@ -29,11 +32,13 @@ export function Menu() {
   return (
     <ul className={`navbar-nav col-12 ${page.isPreview() ? 'has-edit-button' : ''}`}>
       <BrManageMenuButton menu={menu} />
-      {menu.siteMenuItems.map((item, index) => (
+      { menu.siteMenuItems.map((item, index) => (
         <li key={index} className={`nav-item ${item.selected ? 'active' : ''}`}>
-          <a className="nav-link text-capitalize" href={page.getUrl(item._links.site!)}>{item.name}</a>
+          <Link route={page.getUrl(item._links.site)}>
+            <a className="nav-link text-capitalize">{item.name}</a>
+          </Link>
         </li>
-      ))}
+      )) }
     </ul>
   );
 }
