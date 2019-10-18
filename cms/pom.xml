@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>hippo-cms</artifactId>
-  <version>14.0.0-securitydomain-SNAPSHOT</version>
+  <version>14.0.0-merge-securitydomain-SNAPSHOT</version>
 
   <inceptionYear>2007</inceptionYear>
 
@@ -88,12 +88,12 @@
     <hippo.jackrabbit.version>2.18.3-h1</hippo.jackrabbit.version>
     <hippo.commons.version>14.0.0-SNAPSHOT</hippo.commons.version>
     <hippo.utilities.version>14.0.0-SNAPSHOT</hippo.utilities.version>
-    <hippo.hst.version>14.0.0-securitydomain-SNAPSHOT</hippo.hst.version>
+    <hippo.hst.version>14.0.0-merge-securitydomain-SNAPSHOT</hippo.hst.version>
     <hippo.services.version>14.0.0-SNAPSHOT</hippo.services.version>
     <hippo.services.htmlprocessor.version>14.0.0-SNAPSHOT</hippo.services.htmlprocessor.version>
     <hippo.services.validation.version>14.0.0-SNAPSHOT</hippo.services.validation.version>
-    <hippo.repository.version>14.0.0-securitydomain-SNAPSHOT</hippo.repository.version>
-    <hippo.configuration-management.version>14.0.0-securitydomain-SNAPSHOT</hippo.configuration-management.version>
+    <hippo.repository.version>14.0.0-merge-securitydomain-SNAPSHOT</hippo.repository.version>
+    <hippo.configuration-management.version>14.0.0-merge-securitydomain-SNAPSHOT</hippo.configuration-management.version>
 
     <!-- Test dependencies  -->
     <easymock.version>3.4</easymock.version>
