@@ -25,7 +25,7 @@ export function NewsList(props: BrProps) {
   const { pageable } = props.component.getModels<PageableModels>();
 
   if (!pageable) {
-    return <div/>;
+    return null;
   }
 
   return (

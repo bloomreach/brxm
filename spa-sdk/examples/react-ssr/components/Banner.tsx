@@ -25,7 +25,7 @@ export function Banner(props: BrProps) {
   const document = documentRef && props.page.getContent(documentRef);
 
   if (!document) {
-    return <div/>;
+    return null;
   }
 
   const { content, image: imageRef, link: linkRef, title } = document.getData<DocumentData>();

@@ -22,7 +22,7 @@ export function Content(props: BrProps) {
   const document = documentRef && props.page.getContent(documentRef);
 
   if (!document) {
-    return <div/>;
+    return null;
   }
 
   const { author, content, date, image: imageRef, title } = document.getData<DocumentData>();
