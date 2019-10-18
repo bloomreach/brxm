@@ -1,18 +1,15 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "target": "es6",
-    "module": "es6",
+    "baseUrl": "./src",
+    "declaration": true,
+    "declarationDir": "./dist",
     "lib": [
-      "es5",
       "es6",
       "dom"
     ],
-    "baseUrl": "./src",
-    "allowSyntheticDefaultImports": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "declaration": true,
-    "declarationDir": "./dist"
+    "module": "es6",
+    "target": "es6"
   },
   "include": [
     "src"
@@ -27,8 +24,5 @@
     "mode": "file",
     "out": "docs",
     "readme": "src/docs/index.md"
-  },
-  "types": [
-    "jest"
-  ]
+  }
 }
