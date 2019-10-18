@@ -527,10 +527,16 @@ describe('ChannelMenuService', () => {
       doInject();
     });
 
-    it('the menu has only the close option', () => {
+    it('the menu has only the close option as visible option', () => {
       const close = getItem('close');
       expect(close).toBeDefined();
-      expect(ChannelMenuService.menu.items.length).toBe(1);
+      expect(close.isVisible()).toBe(true);
+
+      ChannelMenuService.menu.items.forEach((item) => {
+        if (item !== close) {
+          expect(item.isVisible()).toBe(false);
+        }
+      });
     });
   });
 });

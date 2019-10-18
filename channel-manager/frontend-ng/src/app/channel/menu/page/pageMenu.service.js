@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,43 +51,48 @@ class PageMenuService extends MenuService {
       onClick: () => this.onOpenMenu(),
     });
 
-    if (this._hasPageExtensions()) {
-      menu.addAction('tools', {
-        translationKey: 'TOOLBAR_MENU_PAGE_TOOLS',
+    menu
+      .addAction('tools', {
+        isVisible: () => this._hasPageExtensions(),
         onClick: () => this._pageTools(),
+        translationKey: 'TOOLBAR_MENU_PAGE_TOOLS',
+      })
+      .addAction('properties', {
+        isEnabled: () => this._canEditPage(),
+        isVisible: () => this._hasWriteAccess(),
+        onClick: () => this._pageProperties(),
+        translationKey: 'TOOLBAR_MENU_PAGE_PROPERTIES',
+      })
+      .addDivider({
+        isVisible: () => this._hasWriteAccess(),
+      })
+      .addAction('copy', {
+        isEnabled: () => this._canCopyPage(),
+        isVisible: () => this._hasWriteAccess(),
+        onClick: () => this._copyPage(),
+        translationKey: 'TOOLBAR_MENU_PAGE_COPY',
+      })
+      .addAction('move', {
+        isEnabled: () => this._canEditPage(),
+        isVisible: () => this._hasWriteAccess(),
+        onClick: () => this._movePage(),
+        translationKey: 'TOOLBAR_MENU_PAGE_MOVE',
+      })
+      .addAction('delete', {
+        isEnabled: () => this._canEditPage(),
+        isVisible: () => this._hasWriteAccess(),
+        onClick: () => this._deletePage(),
+        translationKey: 'TOOLBAR_MENU_PAGE_DELETE',
+      })
+      .addDivider({
+        isVisible: () => this._hasWriteAccess(),
+      })
+      .addAction('new', {
+        isEnabled: () => this._canAddNewPage(),
+        isVisible: () => this._hasWriteAccess(),
+        onClick: () => this._newPage(),
+        translationKey: 'TOOLBAR_MENU_PAGE_NEW',
       });
-    }
-
-    if (this._hasWriteAccess()) {
-      menu
-        .addAction('properties', {
-          translationKey: 'TOOLBAR_MENU_PAGE_PROPERTIES',
-          isEnabled: () => this._canEditPage(),
-          onClick: () => this._pageProperties(),
-        })
-        .addDivider()
-        .addAction('copy', {
-          translationKey: 'TOOLBAR_MENU_PAGE_COPY',
-          isEnabled: () => this._canCopyPage(),
-          onClick: () => this._copyPage(),
-        })
-        .addAction('move', {
-          translationKey: 'TOOLBAR_MENU_PAGE_MOVE',
-          isEnabled: () => this._canEditPage(),
-          onClick: () => this._movePage(),
-        })
-        .addAction('delete', {
-          translationKey: 'TOOLBAR_MENU_PAGE_DELETE',
-          isEnabled: () => this._canEditPage(),
-          onClick: () => this._deletePage(),
-        })
-        .addDivider()
-        .addAction('new', {
-          translationKey: 'TOOLBAR_MENU_PAGE_NEW',
-          isEnabled: () => this._canAddNewPage(),
-          onClick: () => this._newPage(),
-        });
-    }
   }
 
   onOpenMenu() {

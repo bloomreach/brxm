@@ -280,6 +280,9 @@
     },
 
     _maskSurroundings: function() {
+      if (Hippo && Hippo.showMask) {
+        Hippo.showMask();
+      }
       $(document.body).append(
         '<div class="channel-editor-mask channel-editor-mask-left"></div>' +
         '<div class="channel-editor-mask channel-editor-mask-bottom"></div>'
@@ -291,6 +294,9 @@
         .addClass('channel-editor-mask-removing')
         .delay(400)
         .queue(function() {
+          if (Hippo && Hippo.hideMask) {
+            Hippo.hideMask();
+          }
           $(this).remove();
         });
     },
