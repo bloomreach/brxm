@@ -16,23 +16,21 @@
 
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map, scan } from 'rxjs/operators';
 
-import { ConnectionService } from './connection.service';
+import { distinctUntilAccumulatorIsEmpty } from '../helpers/distinct-until-equal-number-of-values';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BusyIndicatorService {
+  private readonly source = new BehaviorSubject<boolean>(false);
   private visible: boolean;
-  private counter = new BehaviorSubject<number>(0);
 
   constructor(
   ) {
-    this.counter.pipe(
-      scan((acc, n) => acc + n),
-      map(n => n > 0),
-    ).subscribe(visible => this.visible = visible);
+    this.source.pipe(
+      distinctUntilAccumulatorIsEmpty(),
+    ).subscribe(x => this.visible = x);
   }
 
   get isVisible(): boolean {
@@ -40,10 +38,10 @@ export class BusyIndicatorService {
   }
 
   show(): void {
-    this.counter.next(+1);
+    this.source.next(true);
   }
 
   hide(): void {
-    this.counter.next(-1);
+    this.source.next(false);
   }
 }

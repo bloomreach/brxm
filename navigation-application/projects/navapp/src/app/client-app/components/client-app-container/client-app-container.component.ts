@@ -14,24 +14,49 @@
  * limitations under the License.
  */
 
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { ClientApp } from '../../models/client-app.model';
+import { NavigationService } from '../../../services/navigation.service';
 import { ClientAppService } from '../../services/client-app.service';
 
 @Component({
   selector: 'brna-client-app-container',
   templateUrl: './client-app-container.component.html',
   styleUrls: ['client-app-container.component.scss'],
+  animations: [
+    trigger('fadeInOut', [
+      state('true', style({
+        opacity: .3,
+        display: 'block',
+      })),
+      state('false', style({
+        opacity: 0,
+        display: 'none',
+      })),
+      transition('false => true', [
+        style({ display: 'block' }),
+        animate('200ms ease-in'),
+      ]),
+      transition('true => false', animate('200ms ease-out')),
+    ]),
+  ],
 })
 export class ClientAppContainerComponent implements OnInit, OnDestroy {
   private unsubscribe = new Subject();
 
   urls: string[] = [];
 
-  constructor(private clientAppService: ClientAppService) {}
+  constructor(
+    private clientAppService: ClientAppService,
+    private navigationService: NavigationService,
+  ) {}
+
+  get isNavigating$(): Observable<boolean> {
+    return this.navigationService.navigating$;
+  }
 
   ngOnInit(): void {
     this.clientAppService.urls$
