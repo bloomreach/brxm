@@ -27,7 +27,7 @@
   <name>Hippo Plugin Poll</name>
   <description>Hippo Plugin Poll</description>
   <artifactId>hippo-plugin-poll</artifactId>
-  <version>14.0.0-securitydomain-SNAPSHOT</version>
+  <version>14.0.0-merge-securitydomain-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
@@ -42,9 +42,9 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Plugin Poll</notice.project.name>
 
-    <hippo.cms.version>14.0.0-SNAPSHOT</hippo.cms.version>
-    <hippo.repository.version>14.0.0-SNAPSHOT</hippo.repository.version>
-    <hippo.hst.version>14.0.0-SNAPSHOT</hippo.hst.version>
+    <hippo.cms.version>14.0.0-merge-securitydomain-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>14.0.0-merge-securitydomain-SNAPSHOT</hippo.repository.version>
+    <hippo.hst.version>14.0.0-merge-securitydomain-SNAPSHOT</hippo.hst.version>
     <hippo.commons.version>14.0.0-SNAPSHOT</hippo.commons.version>
   </properties>
 
