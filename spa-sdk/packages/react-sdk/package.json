@@ -34,7 +34,8 @@
     "@bloomreach/spa-sdk": "^14.0.0"
   },
   "peerDependencies": {
-    "react": "^16.9"
+    "react": "^16.10",
+    "react-dom": "^16.10"
   },
   "devDependencies": {
     "@babel/core": "^7.6",
@@ -48,7 +49,8 @@
     "jest": "^24.0",
     "jest-environment-enzyme": "^7.1",
     "jest-enzyme": "^7.1",
-    "react": "^16.9",
+    "react": "^16.10",
+    "react-dom": "^16.10",
     "rollup": "^1.21",
     "rollup-plugin-babel": "^4.3",
     "rollup-plugin-terser": "^5.1",

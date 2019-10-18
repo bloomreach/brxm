@@ -6,8 +6,8 @@
   "dependencies": {
     "@bloomreach/react-sdk": "^14.0",
     "axios": "^0.19",
-    "react": "^16.9",
-    "react-dom": "^16.9",
+    "react": "^16.10",
+    "react-dom": "^16.10",
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.2.0",
     "typescript": "^3.6"

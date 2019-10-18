@@ -10,8 +10,8 @@
     "axios": "^0.19",
     "next": "9.0.7",
     "next-routes": "^1.4.2",
-    "react": "^16.9",
-    "react-dom": "^16.9"
+    "react": "^16.10",
+    "react-dom": "^16.10"
   },
   "devDependencies": {
     "@types/node": "^12.0",

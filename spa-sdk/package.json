@@ -49,8 +49,6 @@
     "jest": "^24.0",
     "js-beautify": "^1.0",
     "minicat": "^1.0",
-    "react": "^16.9",
-    "react-dom": "^16.9",
     "rollup": "^1.21",
     "rollup-plugin-babel": "^4.3",
     "rollup-plugin-terser": "^5.1",
