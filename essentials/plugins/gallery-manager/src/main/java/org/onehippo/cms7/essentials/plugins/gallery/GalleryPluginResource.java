@@ -77,6 +77,7 @@ public class GalleryPluginResource {
     private static final String HEIGHT = "height";
     private static final String WIDTH = "width";
     private static final String UPSCALING = "upscaling";
+    private static final String UPDATE_SCRIPT_NODE_NAME = "Update Image Sets";
 
     private final ContentBeansService contentBeansService;
     private final JcrService jcrService;
@@ -106,6 +107,8 @@ public class GalleryPluginResource {
             updateTranslations(payload, myType, namespaceNode);
             // add processor stuff...
             updateProcessorNode(payload, session, myType);
+            // put script in registry for reuse
+            registerImageScript();
             // update sets
             scheduleImageScript();
             session.save();
@@ -315,6 +318,24 @@ public class GalleryPluginResource {
             final Node updaterQueue = session.getNode("/hippo:configuration/hippo:update/hippo:queue");
             jcrService.importResource(updaterQueue, "/image_set_updater.xml", placeholderService.makePlaceholders());
             session.save();
+        } catch (RepositoryException e) {
+            log.error("Failed to run image set updater.", e);
+        } finally {
+            jcrService.destroySession(session);
+        }
+    }
+
+    private void registerImageScript() {
+        final Session session = jcrService.createSession();
+        try {
+            final Node registryNode = session.getNode("/hippo:configuration/hippo:update/hippo:registry");
+            if (registryNode.hasNode(UPDATE_SCRIPT_NODE_NAME)) {
+                log.debug("Update script '{}' already registered", UPDATE_SCRIPT_NODE_NAME);
+                return;
+            }
+            jcrService.importResource(registryNode, "/image_set_updater.xml", placeholderService.makePlaceholders());
+            session.save();
+            log.debug("Update script '{}' added to update registry", UPDATE_SCRIPT_NODE_NAME);
         } catch (RepositoryException e) {
             log.error("Failed to run image set updater.", e);
         } finally {
