@@ -30,7 +30,7 @@
   <name>Hippo Plugin Related Documents</name>
   <description>Hippo Plugin Related Documents</description>
   <artifactId>hippo-plugin-relateddocs-parent</artifactId>
-  <version>14.0.0-securitydomain-SNAPSHOT</version>
+  <version>14.0.0-merge-securitydomain-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
@@ -43,9 +43,9 @@
 
   <properties>
     <hippo.services.version>14.0.0-SNAPSHOT</hippo.services.version>
-    <hippo.cms.version>14.0.0-securitydomain-SNAPSHOT</hippo.cms.version>
-    <hippo.repository.version>14.0.0-securitydomain-SNAPSHOT</hippo.repository.version>
-    <hippo.hst.version>14.0.0-securitydomain-SNAPSHOT</hippo.hst.version>
+    <hippo.cms.version>14.0.0-merge-securitydomain-SNAPSHOT</hippo.cms.version>
+    <hippo.repository.version>14.0.0-merge-securitydomain-SNAPSHOT</hippo.repository.version>
+    <hippo.hst.version>14.0.0-merge-securitydomain-SNAPSHOT</hippo.hst.version>
   </properties>
 
   <repositories>
