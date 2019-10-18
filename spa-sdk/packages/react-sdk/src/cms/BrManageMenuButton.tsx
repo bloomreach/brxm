@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { Menu } from '@bloomreach/spa-sdk';
-import { BrMetaWrapper } from '../meta';
+import { BrMeta } from '../meta';
 import { BrPageContext } from '../page/BrPageContext';
 
 interface BrManageMenuButtonProps {
@@ -32,6 +32,6 @@ export class BrManageMenuButton extends React.Component<BrManageMenuButtonProps>
       return null;
     }
 
-    return <BrMetaWrapper meta={this.context.getMeta(this.props.menu._meta)} />;
+    return <BrMeta meta={this.context.getMeta(this.props.menu._meta)} />;
   }
 }

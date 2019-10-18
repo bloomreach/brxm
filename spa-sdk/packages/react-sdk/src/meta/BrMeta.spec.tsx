@@ -16,34 +16,103 @@
 
 import React from 'react';
 import { mocked } from 'ts-jest/utils';
-import { shallow } from 'enzyme';
-import { isMetaComment, Meta } from '@bloomreach/spa-sdk';
+import { mount } from 'enzyme';
+import { MetaComment, META_POSITION_BEGIN, META_POSITION_END, isMetaComment } from '@bloomreach/spa-sdk';
 import { BrMeta } from './BrMeta';
-import { BrMetaComment } from './BrMetaComment';
-
-jest.mock('@bloomreach/spa-sdk');
 
 describe('BrMeta', () => {
-  const meta = new class implements Meta {
-    getData = jest.fn();
-    getPosition = jest.fn();
-  };
+  const meta = [
+    new class implements MetaComment {
+      getData = jest.fn(() => 'begin comment 1');
+      getPosition = jest.fn(() => META_POSITION_BEGIN as any);
+    },
+    new class implements MetaComment {
+      getData = jest.fn(() => 'begin comment 2');
+      getPosition = jest.fn(() => META_POSITION_BEGIN as any);
+    },
+    new class implements MetaComment {
+      getData = jest.fn(() => 'end comment 1');
+      getPosition = jest.fn(() => META_POSITION_END as any);
+    },
+    new class implements MetaComment {
+      getData = jest.fn(() => 'end comment 2');
+      getPosition = jest.fn(() => META_POSITION_END as any);
+    },
+  ];
 
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  it('should render MetaComment if meta is a comment', () => {
-    mocked(isMetaComment).mockReturnValueOnce(true);
+  describe('componentDidMount', () => {
+    it('should render comments surrounding children', () => {
+      mocked(isMetaComment).mockReturnValue(true);
 
-    const wrapper = shallow(<BrMeta meta={meta}/>);
-    expect(wrapper.contains(<BrMetaComment meta={meta}/>)).toBe(true);
+      const wrapper = mount((
+        <div>
+          <BrMeta meta={meta}>
+            <a/>
+            <b/>
+          </BrMeta>
+        </div>
+      ));
+
+      mocked(isMetaComment).mockReset();
+
+      expect(wrapper.html()).toMatchSnapshot();
+    });
+
+    it('should render comment meta only', () => {
+      mocked(isMetaComment).mockReturnValueOnce(true);
+
+      const wrapper = mount((
+        <div>
+          <BrMeta meta={meta}/>
+        </div>
+      ));
+
+      expect(wrapper.html()).toMatchSnapshot();
+    });
   });
 
-  it('should render nothing if meta is not determined', () => {
-    mocked(isMetaComment).mockReturnValueOnce(false);
+  describe('componentDidUpdate', () => {
+    it('should rerender comments on update', () => {
+      mocked(isMetaComment).mockReturnValue(true);
 
-    const wrapper = shallow(<BrMeta meta={meta}/>);
-    expect(wrapper.isEmptyRender()).toBe(true);
+      const container = document.createElement('div');
+      const wrapper = mount(<BrMeta meta={meta}><a/></BrMeta>, { attachTo: container });
+      wrapper.setProps({ meta: [meta[0], meta[2]] });
+
+      mocked(isMetaComment).mockReset();
+
+      expect(container.innerHTML).toMatchSnapshot();
+    });
+  });
+
+  describe('componentWillUnmount', () => {
+    it('should remove the comment when the component unmounts', () => {
+      mocked(isMetaComment).mockReturnValue(true);
+
+      const container = document.createElement('div');
+      const wrapper = mount(<div><BrMeta meta={meta} /></div>, { attachTo: container });
+      wrapper.detach();
+
+      expect(container.innerHTML).toBe('');
+    });
+  });
+
+  describe('render', () => {
+    it('should render only children if there is no meta', () => {
+      const wrapper = mount((
+        <div>
+          <BrMeta meta={[]}>
+            <a/>
+            <b/>
+          </BrMeta>
+        </div>
+      ));
+
+      expect(wrapper.html()).toMatchSnapshot();
+    });
   });
 });

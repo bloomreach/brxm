@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { Content } from '@bloomreach/spa-sdk';
-import { BrMetaWrapper } from '../meta';
+import { BrMeta } from '../meta';
 import { BrPageContext } from '../page/BrPageContext';
 
 interface BrManageContentButtonProps {
@@ -32,6 +32,6 @@ export class BrManageContentButton extends React.Component<BrManageContentButton
       return null;
     }
 
-    return <BrMetaWrapper meta={this.props.content.getMeta()} />;
+    return <BrMeta meta={this.props.content.getMeta()} />;
   }
 }

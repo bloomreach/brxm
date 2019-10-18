@@ -18,7 +18,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import { Menu, Meta, Page } from '@bloomreach/spa-sdk';
 import { BrManageMenuButton } from './BrManageMenuButton';
-import { BrMetaWrapper } from '../meta';
+import { BrMeta } from '../meta';
 
 describe('BrManageMenuButton', () => {
   const context = {
@@ -65,7 +65,7 @@ describe('BrManageMenuButton', () => {
     expect(context.getMeta).toHaveBeenCalledWith(props.menu._meta);
     expect(
       wrapper
-        .find(BrMetaWrapper)
+        .find(BrMeta)
         .first()
         .prop('meta'),
     ).toBe(meta);

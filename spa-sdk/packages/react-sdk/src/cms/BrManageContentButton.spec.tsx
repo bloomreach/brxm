@@ -18,7 +18,7 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import { Content, Meta, Page } from '@bloomreach/spa-sdk';
 import { BrManageContentButton } from './BrManageContentButton';
-import { BrMetaWrapper } from '../meta';
+import { BrMeta } from '../meta';
 
 describe('BrManageContentButton', () => {
   const context = { isPreview: jest.fn() } as unknown as jest.Mocked<Page>;
@@ -48,7 +48,7 @@ describe('BrManageContentButton', () => {
 
     expect(
       wrapper
-        .find(BrMetaWrapper)
+        .find(BrMeta)
         .first()
         .prop('meta'),
     ).toBe(meta);

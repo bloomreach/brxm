@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { isContainer, isContainerItem, Component } from '@bloomreach/spa-sdk';
-import { BrMetaWrapper } from '../meta';
+import { BrMeta } from '../meta';
 import { BrPageContext } from '../page/BrPageContext';
 import { BrComponentContext } from './BrComponentContext';
 import { BrNodeContainer } from './BrNodeContainer';
@@ -64,9 +64,9 @@ export class BrNode extends React.Component<BrNodeProps> {
   render() {
     return(
       <BrComponentContext.Provider value={this.props.component}>
-        <BrMetaWrapper meta={this.props.component.getMeta()}>
+        <BrMeta meta={this.props.component.getMeta()}>
           {this.renderNode()}
-        </BrMetaWrapper>
+        </BrMeta>
       </BrComponentContext.Provider>
     );
   }

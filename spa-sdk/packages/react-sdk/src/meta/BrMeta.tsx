@@ -15,17 +15,66 @@
  */
 
 import React from 'react';
-import { isMetaComment, Meta } from '@bloomreach/spa-sdk';
-import { BrMetaComment } from './BrMetaComment';
+import ReactDOM from 'react-dom';
+import { MetaComment, Meta, META_POSITION_BEGIN, META_POSITION_END, isMetaComment } from '@bloomreach/spa-sdk';
 
 interface BrMetaProps {
-  meta: Meta;
+  meta: Meta[];
 }
 
-export function BrMeta(props: BrMetaProps) {
-  if (isMetaComment(props.meta)) {
-    return <BrMetaComment meta={props.meta} />;
+export class BrMeta extends React.Component<BrMetaProps> {
+  private comments: Comment[] = [];
+  private head?: Element | Text;
+  private tailRef = React.createRef<HTMLElement>();
+
+  componentDidMount() {
+    this.head = ReactDOM.findDOMNode(this)!;
+    this.renderMeta();
   }
 
-  return null;
+  componentDidUpdate() {
+    this.head = ReactDOM.findDOMNode(this)!;
+    this.removeMeta();
+    this.renderMeta();
+  }
+
+  componentWillUnmount() {
+    this.removeMeta();
+  }
+
+  private removeMeta() {
+    this.comments.splice(0).forEach(comment => comment.remove());
+  }
+
+  private renderMeta() {
+    this.props.meta.filter(meta => isMetaComment(meta) && meta.getPosition() === META_POSITION_BEGIN)
+      .forEach(this.renderMetaComment.bind(this));
+    this.props.meta.filter(meta => isMetaComment(meta) && meta.getPosition() === META_POSITION_END)
+      .reverse()
+      .forEach(this.renderMetaComment.bind(this));
+  }
+
+  private renderMetaComment(meta: MetaComment) {
+    const comment = this.head!.ownerDocument!.createComment(meta.getData());
+    this.comments.push(comment);
+
+    if (meta.getPosition() === META_POSITION_BEGIN) {
+      return void this.head!.parentNode!.insertBefore(comment, this.head!);
+    }
+
+    if (!this.tailRef.current!.nextSibling) {
+      return void this.tailRef.current!.parentNode!.appendChild(comment);
+    }
+
+    this.tailRef.current!.parentNode!.insertBefore(comment, this.tailRef.current!.nextSibling);
+  }
+
+  render() {
+    return (
+      <>
+        {this.props.children}
+        {this.props.meta.length ? <span style={{ display: 'none' }} ref={this.tailRef} /> : null}
+      </>
+    );
+  }
 }

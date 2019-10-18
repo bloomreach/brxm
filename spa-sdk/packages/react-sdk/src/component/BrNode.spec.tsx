@@ -18,7 +18,7 @@ import React from 'react';
 import { mocked } from 'ts-jest/utils';
 import { shallow } from 'enzyme';
 import { isContainer, isContainerItem, Component, Meta, Page } from '@bloomreach/spa-sdk';
-import { BrMetaWrapper } from '../meta';
+import { BrMeta } from '../meta';
 import { BrNode } from './BrNode';
 import { BrNodeComponent } from './BrNodeComponent';
 import { BrNodeContainer } from './BrNodeContainer';
@@ -55,7 +55,7 @@ describe('BrNode', () => {
     props.component.getMeta.mockReturnValueOnce(meta);
     const wrapper = shallow(<BrNode {...props} />);
 
-    expect(wrapper.find(BrMetaWrapper).first().prop('meta')).toBe(meta);
+    expect(wrapper.find(BrMeta).first().prop('meta')).toBe(meta);
   });
 
   it('should render a component', () => {
