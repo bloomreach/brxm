@@ -288,6 +288,16 @@
                     <todir>conf/</todir>
                     <tofile>logging.properties</tofile>
                   </configfile>
+                  <configfile>
+                    <file>${project.basedir}/conf/hst-dev.properties</file>
+                    <todir>conf/</todir>
+                    <tofile>hst.properties</tofile>
+                  </configfile>
+                  <configfile>
+                    <file>${project.basedir}/conf/platform-dev.properties</file>
+                    <todir>conf/</todir>
+                    <tofile>platform.properties</tofile>
+                  </configfile>
                 </configfiles>
                 <files>
                   <file>
