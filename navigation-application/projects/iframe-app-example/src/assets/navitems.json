@@ -15,9 +15,19 @@
     "appPath": "projects"
   },
   {
+    "id": "hippo-perspective-browserperspective",
+    "appIframeUrl": "http://localhost:4201",
+    "appPath": "browser"
+  },
+  {
     "id": "hippo-perspective-searchperspective",
     "appIframeUrl": "http://localhost:4201",
-    "appPath": "search"
+    "appPath": "documents-search"
+  },
+  {
+    "id": "hippo-perspective-reportsperspective",
+    "appIframeUrl": "http://localhost:4201",
+    "appPath": "reports"
   },
   {
     "id": "hippo-perspective-experienceoptimizerperspective",
