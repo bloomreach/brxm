@@ -13,7 +13,7 @@
       "esnext"
     ],
     "module": "esnext",
-    "target": "esnext",
+    "target": "esnext"
   },
   "include": [
     "src"
