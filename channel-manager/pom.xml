@@ -24,7 +24,7 @@
   </parent>
 
   <artifactId>hippo-addon-channel-manager</artifactId>
-  <version>14.0.0-securitydomain-SNAPSHOT</version>
+  <version>14.0.0-merge-securitydomain-SNAPSHOT</version>
   <packaging>pom</packaging>
   <inceptionYear>2011</inceptionYear>
 
@@ -34,12 +34,12 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Addon Channel Manager</notice.project.name>
 
-    <hippo.repository.version>14.0.0-securitydomain-SNAPSHOT</hippo.repository.version>
-    <hippo.cms.version>14.0.0-securitydomain-SNAPSHOT</hippo.cms.version>
-    <hippo.hst.version>14.0.0-securitydomain-SNAPSHOT</hippo.hst.version>
+    <hippo.repository.version>14.0.0-merge-securitydomain-SNAPSHOT</hippo.repository.version>
+    <hippo.cms.version>14.0.0-merge-securitydomain-SNAPSHOT</hippo.cms.version>
+    <hippo.hst.version>14.0.0-merge-securitydomain-SNAPSHOT</hippo.hst.version>
     <hippo.commons.version>14.0.0-SNAPSHOT</hippo.commons.version>
-    <hippo.plugin.gallerypicker.version>14.0.0-SNAPSHOT</hippo.plugin.gallerypicker.version>
-    <hippo.plugin.selections.version>14.0.0-SNAPSHOT</hippo.plugin.selections.version>
+    <hippo.plugin.gallerypicker.version>14.0.0-merge-securitydomain-SNAPSHOT</hippo.plugin.gallerypicker.version>
+    <hippo.plugin.selections.version>14.0.0-merge-securitydomain-SNAPSHOT</hippo.plugin.selections.version>
     <hippo.services.version>14.0.0-SNAPSHOT</hippo.services.version>
     <hippo.services.htmlprocessor.version>14.0.0-SNAPSHOT</hippo.services.htmlprocessor.version>
     <hippo.services.validation.version>14.0.0-SNAPSHOT</hippo.services.validation.version>
