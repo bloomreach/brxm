@@ -32,6 +32,7 @@ export class UrlMapperService {
   // Path parts without leading and trailing slashes
   private pathPartsToStripOffFromIframeUrl: string[] = [
     'iframe',
+    'sm',
   ];
 
   constructor(
