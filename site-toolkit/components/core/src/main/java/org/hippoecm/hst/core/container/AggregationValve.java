@@ -185,6 +185,8 @@ public class AggregationValve extends AbstractBaseOrderableValve {
             if (rootWindow.getResponseState().getRedirectLocation() != null) {
                 redirectLocation = rootWindow.getResponseState().getRedirectLocation();
             }
+            // although above the 'forwardPathInfo' is already fetched, it might have been null back then but now
+            // rootWindow.getResponseState() might have a forward pathInfo set due to the invocation of handleComponentExceptions
             if (rootWindow.getResponseState().getForwardPathInfo() != null) {
                 forwardPathInfo = rootWindow.getResponseState().getForwardPathInfo();
             }

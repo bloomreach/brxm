@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -44,8 +44,11 @@ import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
 import org.hippoecm.hst.util.ServletConfigUtils;
+import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.onehippo.cms7.services.context.HippoWebappContext.CMS_OR_PLATFORM;
 
 /**
  * DefaultHstSiteConfigurer, implementing {@link HstSiteConfigurer}.
@@ -124,6 +127,9 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
 
     private static final String HST_CONFIG_ENV_PROPERTIES = "${catalina.base}/conf/hst.properties";
 
+    // We now maintain a separate default environment config file for CMS/platform vs. sites
+    private static final String PLATFORM_CONFIG_ENV_PROPERTIES = "${catalina.base}/conf/platform.properties";
+
     private static final String HST_CONFIGURATION_REFRESH_DELAY_PARAM = "hst-config-refresh-delay";
 
     private static final String FORCEFUL_REINIT_PARAM = "forceful.reinit";
@@ -146,7 +152,8 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
 
     private boolean lazyHstConfigurationLoading = false;
 
-    private String hstConfigEnvProperties = HST_CONFIG_ENV_PROPERTIES;
+    // This cannot be accurately determined until after setHippoWebappContext() is called
+    private String hstConfigEnvProperties;
 
     // -------------------------------------------------------------------
     // I N I T I A L I Z A T I O N
@@ -158,17 +165,29 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
 
     private ServletContext servletContext;
 
+    private HippoWebappContext webappContext;
+
     private HstModelRegistry hstModelRegistry;
 
-    public DefaultHstSiteConfigurer() {
+    public DefaultHstSiteConfigurer(final HippoWebappContext webappContext) {
+        if (webappContext == null) {
+            throw new IllegalArgumentException("The HippoWebappContext must not be null!");
+        }
+
+        this.webappContext = webappContext;
+        this.servletContext = webappContext.getServletContext();
+
+        // if we're configuring the platform or CMS, default to a different external properties file than for sites
+        if (CMS_OR_PLATFORM.contains(webappContext.getType())) {
+            hstConfigEnvProperties = getConfigOrContextInitParameter(HST_CONFIG_ENV_PROPERTIES_PARAM, PLATFORM_CONFIG_ENV_PROPERTIES);
+        }
+        else {
+            hstConfigEnvProperties = getConfigOrContextInitParameter(HST_CONFIG_ENV_PROPERTIES_PARAM, HST_CONFIG_ENV_PROPERTIES);
+        }
     }
 
-    public ServletContext getServletContext() {
+    private ServletContext getServletContext() {
         return servletContext;
-    }
-
-    public void setServletContext(ServletContext servletContext) {
-        this.servletContext = servletContext;
     }
 
     @Override
@@ -192,7 +211,6 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
         lazyHstConfigurationLoading = BooleanUtils.toBoolean(getConfigOrContextInitParameter(HST_LAZY_HST_CONFIGURATION_LOADING_PARAM, "false"));
 
         hstSystemPropertiesOverride = BooleanUtils.toBoolean(getConfigOrContextInitParameter(HST_SYSTEM_PROPERTIES_OVERRIDE_PARAM, "true"));
-        hstConfigEnvProperties = getConfigOrContextInitParameter(HST_CONFIG_ENV_PROPERTIES_PARAM, HST_CONFIG_ENV_PROPERTIES);
 
         configurationRefreshDelay = NumberUtils.toLong(getConfigOrContextInitParameter(HST_CONFIGURATION_REFRESH_DELAY_PARAM, null), DEFAULT_CONFIGURATION_REFRESH_DELAY);
         this.configuration = getConfiguration();
@@ -438,7 +456,7 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
         {
             Configuration config = loadConfigurationFromProperties(getResourceFile(hstConfigEnvProperties, true));
             if (config != null) {
-                log.info("Adding Configurarion file to HST Configuration: {}", fileParam);
+                log.info("Adding Configuration file to HST Configuration: {}", fileParam);
                 configs.add(config);
             }
         }
