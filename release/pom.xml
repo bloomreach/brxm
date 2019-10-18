@@ -80,8 +80,10 @@
     <hippo.plugin.sitemap.version>14.0.0-SNAPSHOT</hippo.plugin.sitemap.version>
     <hippo.plugin.taxonomy.version>14.0.0-merge-securitydomain-SNAPSHOT</hippo.plugin.taxonomy.version>
     <hippo.addon-crisp.version>14.0.0-SNAPSHOT</hippo.addon-crisp.version>
+    <hippo.spa-sdk.version>14.0.0-SNAPSHOT</hippo.spa-sdk.version>
+    <hippo.ui-extension.version>14.0.0-SNAPSHOT</hippo.ui-extension.version>
 
-    <hippo.maven.plugin.l10n>13.2.1</hippo.maven.plugin.l10n>
+    <hippo.maven.plugin.l10n>14.0.0-SNAPSHOT</hippo.maven.plugin.l10n>
     <!-- included locales placeholder to be overridden by end projects -->
     <hippo.cms.locales />
 
