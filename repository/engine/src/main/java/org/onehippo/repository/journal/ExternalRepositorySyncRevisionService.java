@@ -81,6 +81,9 @@ public interface ExternalRepositorySyncRevisionService {
 
     /**
      * <p>
+     *     Experimental, do not use in production since it needs hardening, see the comments in the implementation
+     * </p>
+     * <p>
      *     Note on the {@code session} the implementation will invoke
      *     {@link Session#refresh(boolean) session.refresh(true)} to force a cluster sync
      * </p>

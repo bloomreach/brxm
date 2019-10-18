@@ -193,6 +193,10 @@ public class ExternalRepositorySyncRevisionServiceImpl implements ExternalReposi
                 // TODO this means that events are removed AFAICS....does this have impact? Or should we say that the
                 // TODO session of the argument is not allowed to be used in a listener? Or do we have to impersonate
                 // TODO the session first to another session?
+
+                // TODO See org.apache.jackrabbit.core.observation.ObservationManagerImpl.getEventJournal(int, java.lang.String, boolean,
+                // TODO java.lang.String[], java.lang.String[]) : It seems the session has to be admin otherwise
+                // TODO getEventJournal is not supported it seems
                 RevisionEventJournal eventJournal = (RevisionEventJournal)session.getWorkspace().getObservationManager().getEventJournal();
 
                 eventJournal.skipToRevision(fromRevision);
@@ -260,10 +264,7 @@ public class ExternalRepositorySyncRevisionServiceImpl implements ExternalReposi
                 return changeLogs;
 
             } catch (RepositoryException e) {
-                // TODO handle
-                e.printStackTrace();
-
-                // TODO
+                log.error("Repository Exception while getting ChangesLogs", e);
                 return Collections.emptyList();
             }
 

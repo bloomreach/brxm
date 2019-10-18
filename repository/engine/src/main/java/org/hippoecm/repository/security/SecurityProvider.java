@@ -17,6 +17,7 @@ package org.hippoecm.repository.security;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 import org.apache.jackrabbit.api.security.user.UserManager;
 import org.hippoecm.repository.security.group.DummyGroupManager;
@@ -72,10 +73,10 @@ public interface SecurityProvider {
 
     /**
      * Synchronize user and user groups.
-     * @param userId
+     * @param creds
      * @throws RepositoryException
      */
-    default void synchronizeOnLogin(String userId) throws RepositoryException {
+    default void synchronizeOnLogin(SimpleCredentials creds) throws RepositoryException {
     }
 
 }

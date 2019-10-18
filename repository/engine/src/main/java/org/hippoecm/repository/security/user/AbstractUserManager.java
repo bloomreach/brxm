@@ -42,6 +42,8 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.security.SecurityManager.INTERNAL_PROVIDER;
+
 /**
  * UserManager provider that stores the users inside the JCR repository
  * 
@@ -210,7 +212,7 @@ public abstract class AbstractUserManager implements HippoUserManager {
             }
         }
         Node user = usersNode.addNode(NodeNameCodec.encode(userId, true), getNodeType());
-        if (!org.hippoecm.repository.security.SecurityManager.INTERNAL_PROVIDER.equals(providerId)) {
+        if (!INTERNAL_PROVIDER.equals(providerId)) {
             user.setProperty(HippoNodeType.HIPPO_SECURITYPROVIDER, providerId);
         }
         log.debug("User: {} created by {} ", userId, providerId);
@@ -247,7 +249,7 @@ public abstract class AbstractUserManager implements HippoUserManager {
      * @param rawUserId
      * @return the trimmed and if needed converted to lowercase userId
      */
-    private String sanitizeId(String rawUserId) {
+    protected String sanitizeId(String rawUserId) {
         if (rawUserId == null) {
             // anonymous
             return null;
@@ -328,7 +330,7 @@ public abstract class AbstractUserManager implements HippoUserManager {
         if (user.hasProperty(HippoNodeType.HIPPO_SECURITYPROVIDER)) {
             return providerId.equals(user.getProperty(HippoNodeType.HIPPO_SECURITYPROVIDER).getString());
         } else {
-            return org.hippoecm.repository.security.SecurityManager.INTERNAL_PROVIDER.equals(providerId);
+            return INTERNAL_PROVIDER.equals(providerId);
         }
     }
 

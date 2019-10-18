@@ -17,6 +17,7 @@ package org.hippoecm.repository.security;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 import org.apache.jackrabbit.api.security.user.UserManager;
 import org.hippoecm.repository.security.group.DummyGroupManager;
@@ -48,23 +49,32 @@ public abstract class AbstractSecurityProvider implements SecurityProvider {
         return groupManager;
     }
 
-    public void synchronizeOnLogin(String userId) throws RepositoryException {
+    public void synchronizeOnLogin(SimpleCredentials creds) throws RepositoryException {
         // The sync blocks are synchronized because the underlying
         // methods can share the same jcr session and the jcr session is
         // not thread safe. This is a "best effort" solution as the usrMgr
         // and the groupMgr could also share the same session but generally
         // do not operate on the same nodes.
 
-        HippoUserManager userMgr = (HippoUserManager) getUserManager();
+        final HippoUserManager userMgr = (HippoUserManager) getUserManager();
+        syncUser(creds, userMgr);
+
+        final GroupManager groupMgr = getGroupManager();
+        syncGroup(creds, userMgr, groupMgr);
+    }
+
+    protected void syncUser(final SimpleCredentials creds, final HippoUserManager userMgr) throws RepositoryException {
+        final String userId = creds.getUserID();
         synchronized(userMgr) {
             userMgr.syncUserInfo(userId);
             userMgr.updateLastLogin(userId);
             userMgr.saveUsers();
         }
+    }
 
-        GroupManager groupMgr = getGroupManager();
+    protected void syncGroup(final SimpleCredentials creds, final HippoUserManager userMgr, final GroupManager groupMgr) throws RepositoryException {
         synchronized(groupMgr) {
-            groupMgr.syncMemberships(userMgr.getUser(userId));
+            groupMgr.syncMemberships(userMgr.getUser(creds.getUserID()));
             groupMgr.saveGroups();
         }
     }

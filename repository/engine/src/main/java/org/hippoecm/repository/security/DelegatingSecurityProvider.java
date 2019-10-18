@@ -17,6 +17,7 @@ package org.hippoecm.repository.security;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 import org.apache.jackrabbit.api.security.user.UserManager;
 import org.hippoecm.repository.security.group.GroupManager;
@@ -66,8 +67,8 @@ public class DelegatingSecurityProvider implements SecurityProvider {
     }
 
     @Override
-    public void synchronizeOnLogin(String userId) throws RepositoryException {
-        delegatee.synchronizeOnLogin(userId);
+    public void synchronizeOnLogin(SimpleCredentials creds) throws RepositoryException {
+        delegatee.synchronizeOnLogin(creds);
     }
 
 }

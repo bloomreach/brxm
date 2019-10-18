@@ -115,7 +115,7 @@ public abstract class ClusterTest {
             cleanup();
         }
         if (dbtype.equals("h2")) {
-            server = Server.createTcpServer("-tcpPort", dbport, "-baseDir", h2Path).start();
+            server = Server.createTcpServer("-tcpPort", dbport, "-baseDir", h2Path, "-ifNotExists").start();
         }
         final String repoPathSysProp = System.getProperty("repo.path", "");
         System.setProperty("repo.path", "");

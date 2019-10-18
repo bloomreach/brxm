@@ -18,6 +18,7 @@ package org.hippoecm.repository.security.group;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.Node;
@@ -226,7 +227,7 @@ public abstract class AbstractGroupManager implements GroupManager {
      * @param rawGroupId
      * @return the trimmed and if needed converted to lowercase groupId
      */
-    private String sanitizeId(final String rawGroupId) {
+    protected String sanitizeId(final String rawGroupId) {
         if (rawGroupId == null) {
             // anonymous
             return null;
@@ -336,21 +337,17 @@ public abstract class AbstractGroupManager implements GroupManager {
         if (!isExternal()) {
             return;
         }
-        String userId = user.getName();
-        Set<String> repositoryMemberships = getMembershipIds(userId, providerId);
-        Set<String> backendMemberships = new HashSet<>();
-        for (String groupId : backendGetMemberships(user)) {
-            backendMemberships.add(sanitizeId(groupId));
-        }
-        Set<String> inSync = new HashSet<>();
-        for (String groupId : repositoryMemberships) {
-            if (backendMemberships.contains(groupId)) {
-                inSync.add(groupId);
-            }
-        }
+        final String userId = user.getName();
+        final Set<String> repositoryMemberships = getMembershipIds(userId, providerId);
+        final Set<String> backendMemberships = backendGetMemberships(user).stream().map(this::sanitizeId).collect(Collectors.toSet());
+
+        syncMemberships(userId, repositoryMemberships, backendMemberships);
+    }
+
+    protected void syncMemberships(final String userId, final Set<String> repositoryMemberships, final Set<String> backendMemberships) throws RepositoryException {
+        final Set<String> inSync = repositoryMemberships.stream().filter(backendMemberships::contains).collect(Collectors.toSet());
         repositoryMemberships.removeAll(inSync);
         backendMemberships.removeAll(inSync);
-
 
         // remove memberships that have been removed in the backend
         for (String groupId : repositoryMemberships) {
