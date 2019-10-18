@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
@@ -44,7 +45,6 @@ import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.model.util.MapModel;
-import org.h2.util.StringUtils;
 import org.hippoecm.frontend.dialog.Confirm;
 import org.hippoecm.frontend.dialog.HippoForm;
 import org.hippoecm.frontend.dialog.IDialogService;
