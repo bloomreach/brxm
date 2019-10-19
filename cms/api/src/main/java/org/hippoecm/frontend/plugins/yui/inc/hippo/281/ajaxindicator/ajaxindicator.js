@@ -82,6 +82,7 @@
     },
 
     show: function() {
+      window.Hippo.showBusyIndicator();
         this.body.addClass(this.waitClass);
 
       if (this.active) {
@@ -113,7 +114,10 @@
 
         this.elements.removeClass(this.busyClass).removeClass(this.loadClass);
       }
+      if (this.body.hasClass(this.waitClass)){
         this.body.removeClass(this.waitClass);
+        window.Hippo.hideBusyIndicator();
+      }
     },
 
     setActive: function(active) {

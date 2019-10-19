@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@
           id: this.frameId,
           autoEl: {
             tag: 'iframe',
+            'class': 'channelmanager-iframe',
             frameborder: 0,
             src: config.url || 'about:blank'
           },
@@ -75,6 +76,10 @@
       this.currentLocation = this._getFrameLocation();
 
       this.fireEvent('locationchanged');
+    },
+
+    _connectToChild: function () {
+      window.Hippo.iframeConnections.registerIframe(this._getFrame());
     },
 
     _getFrameLocation: function () {
@@ -123,6 +128,7 @@
     setLocation: function (url) {
       this.previousLocation = this.currentLocation;
       this._getFrameDom().src = url;
+      this._connectToChild();
     },
 
     _detachFrame: function () {

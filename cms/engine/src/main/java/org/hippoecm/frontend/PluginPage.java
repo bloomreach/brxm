@@ -15,11 +15,14 @@
  */
 package org.hippoecm.frontend;
 
+import org.apache.commons.lang3.Validate;
 import org.apache.wicket.Application;
 import org.apache.wicket.Component;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
+import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.link.ResourceLink;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
@@ -33,6 +36,7 @@ import org.hippoecm.frontend.model.event.IRefreshable;
 import org.hippoecm.frontend.model.event.ObservableRegistry;
 import org.hippoecm.frontend.observation.JcrObservationManager;
 import org.hippoecm.frontend.plugin.IClusterControl;
+import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.IServiceTracker;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
@@ -42,7 +46,11 @@ import org.hippoecm.frontend.plugin.config.impl.PluginConfigFactory;
 import org.hippoecm.frontend.plugin.impl.PluginContext;
 import org.hippoecm.frontend.plugin.impl.PluginManager;
 import org.hippoecm.frontend.service.IController;
+import org.hippoecm.frontend.service.INavAppSettingsService;
+import org.hippoecm.frontend.service.INestedBrowserContextService;
 import org.hippoecm.frontend.service.IRenderService;
+import org.hippoecm.frontend.service.NavAppSettings;
+import org.hippoecm.frontend.service.NestedBrowserContextService;
 import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
@@ -89,6 +97,13 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
             pluginConfigService = new PluginConfigFactory(UserSession.get(), appFactory);
             context.registerService(pluginConfigService, IPluginConfigService.class.getName());
 
+            final String configurationParameter = PluginApplication.get()
+                    .getConfigurationParameter(Main.PLUGIN_APPLICATION_HIDE_PERSPECTIVE_MENU_PARAMETER
+                            , Boolean.FALSE.toString());
+            final boolean showPerspectiveMenu = Boolean.parseBoolean(configurationParameter);
+            context.registerService(new NestedBrowserContextService(!showPerspectiveMenu)
+                    , INestedBrowserContextService.class.getName());
+
             obRegistry = new ObservableRegistry(context, null);
             obRegistry.startObservation();
 
@@ -111,6 +126,9 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
                 WebRequest request = (WebRequest) RequestCycle.get().getRequest();
                 controller.process(request.getRequestParameters());
             }
+
+            add(new Label("pageTitle", getString("page.title", null, "Bloomreach Experience")));
+            add(new ResourceLink("faviconLink", ((PluginApplication)getApplication()).getPluginApplicationFavIconReference()));
         } finally {
             if (pageInitTask != null) {
                 pageInitTask.stop();
@@ -153,6 +171,8 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
             super.renderHead(response);
             CoreLibrariesContributor.contribute(Application.get(), response);
 
+            showPerspectiveMenu(response);
+
             if (WebApplicationHelper.isDevelopmentMode()) {
                 addDevelopmentModeCssClassToHtml(response);
             }
@@ -160,6 +180,18 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
             if (pageRenderHeadTask != null) {
                 pageRenderHeadTask.stop();
             }
+        }
+    }
+
+    private void showPerspectiveMenu(final IHeaderResponse response) {
+        final INestedBrowserContextService nestedBrowserContextService =
+                context.getService(INestedBrowserContextService.class.getName(), INestedBrowserContextService.class);
+        final String message = String.format("%s should not be null, make sure it's registered on the %s"
+                , INestedBrowserContextService.class.getName(), IPluginContext.class.getName());
+        Validate.notNull(nestedBrowserContextService, message);
+        if (!nestedBrowserContextService.hidePerspectiveMenu()) {
+            final String script = String.format("$(\"div#ft\").addClass(\"%s\")", "show-perspective-menu");
+            response.render(JavaScriptHeaderItem.forScript(script, "show-perspective-menu"));
         }
     }
 
@@ -188,8 +220,7 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
 
             // refresh session
             JcrObservationManager.getInstance().refreshSession();
-        }
-        finally {
+        } finally {
             if (refreshTask != null) {
                 refreshTask.stop();
             }
@@ -327,9 +358,24 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
     }
 
     public void addService(IRenderService service, String name) {
-        root = service;
-        root.bind(this, "root");
-        replace(root.getComponent());
+        final INestedBrowserContextService nestedBrowserContextService =
+                context.getService(INestedBrowserContextService.class.getName(), INestedBrowserContextService.class);
+        final String message = String.format("%s should not be null, make sure it's registered on the %s"
+                , INestedBrowserContextService.class.getName(), IPluginContext.class.getName());
+        Validate.notNull(nestedBrowserContextService, message);
+
+        if (nestedBrowserContextService.showNavigationApplication()) {
+            final INavAppSettingsService navAppSettingsService = context.getService(INavAppSettingsService.SERVICE_ID, INavAppSettingsService.class);
+            final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(RequestCycle.get().getRequest());
+            final NavAppPanel navAppPanel = new NavAppPanel("root", navAppSettings);
+            navAppPanel.setRenderBodyOnly(true);
+            replace(navAppPanel);
+            replace(new EmptyPanel("dialog").setRenderBodyOnly(true));
+        } else {
+            root = service;
+            root.bind(this, "root");
+            replace(root.getComponent());
+        }
     }
 
     public void removeService(IRenderService service, String name) {

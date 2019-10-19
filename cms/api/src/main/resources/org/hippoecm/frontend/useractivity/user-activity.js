@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,8 @@
   var MAX_INACTIVE_INTERVAL_MS = parseInt("${maxInactiveIntervalMinutes}", 10) * 60 * 1000,
     AJAX_ATTR_SYSTEM_ACTIVITY = "${ajaxAttrSystemActivity}",
     lastActive = Date.now(),
-    callbacks = [];
+    onInactiveCallbacks = [],
+    onActiveCallbacks = [];
 
   Hippo.UserActivity = {
 
@@ -27,18 +28,35 @@
      return ajaxOptions[AJAX_ATTR_SYSTEM_ACTIVITY] !== true;
     },
 
+    /**
+     * Reports user activity and invokes all onActive callbacks
+     */
     report: function () {
       lastActive = Date.now();
+      invokeCallbacks(onActiveCallbacks, "Error while executing user activity callback");
     },
 
-    onInactive: function(callback) {
-      callbacks.push(callback);
+    /**
+     * Registers the given onInactive callback. The callback will be invoked when no activity has been reported
+     * during the last "${maxInactiveIntervalMinutes}" minutes.
+     * @param callback
+     */
+    registerOnInactive: function(callback) {
+      onInactiveCallbacks.push(callback);
+    },
+
+    /**
+     * Registers the given onActive callback. The callback will be invoked when user activity is reported.
+     * @param callback
+     */
+    registerOnActive: function(callback) {
+      onActiveCallbacks.push(callback);
     },
 
     unInactive: function(callback) {
-      var index = callbacks.indexOf(callback);
+      var index = onInactiveCallbacks.indexOf(callback);
       if (index >= 0) {
-        callbacks.splice(index, 1);
+        onInactiveCallbacks.splice(index, 1);
       }
     }
 
@@ -52,12 +70,12 @@
     });
   }
 
-  function reportInactivity() {
+  function invokeCallbacks(callbacks, errorMessage) {
     callbacks.forEach(function(callback) {
       try {
         callback();
       } catch (e) {
-        console.warn("Error while executing user inactivity callback", e, callback);
+        console.warn(errorMessage, e, callback);
       }
     })
   }
@@ -68,7 +86,7 @@
       msToNextCheck;
 
     if (msSinceLastActivity > MAX_INACTIVE_INTERVAL_MS) {
-      reportInactivity();
+      invokeCallbacks(onInactiveCallbacks, "Error while executing user inactivity callback");
     } else {
       msToNextCheck = MAX_INACTIVE_INTERVAL_MS - msSinceLastActivity;
       window.setTimeout(observeInactivity, msToNextCheck);
