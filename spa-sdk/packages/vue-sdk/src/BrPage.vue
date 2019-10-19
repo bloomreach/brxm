@@ -15,19 +15,21 @@
   -->
 
 <template>
-  <div v-if="page" :component="root">
+  <br-node-component v-if="page" :component="root">
     <slot :component="root" :page="page" />
-  </div>
+  </br-node-component>
 </template>
 
 <script lang="ts">
 import { Configuration, Page, initialize, destroy } from '@bloomreach/spa-sdk';
 import { Component, Prop, ProvideReactive, Vue, Watch } from 'vue-property-decorator';
+import BrNodeComponent from './BrNodeComponent.vue';
 
 /**
  * The brXM page.
  */
 @Component({
+  components: { BrNodeComponent },
   computed: {
     root(this: BrPage) {
       return this.page?.getComponent();
