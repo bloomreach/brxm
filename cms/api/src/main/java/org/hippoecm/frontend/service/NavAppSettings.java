@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -12,18 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
  */
-(function () {
-  "use strict";
 
-  var LOGOUT_CALLBACK_URL = "${logoutCallbackUrl}";
+package org.hippoecm.frontend.service;
 
-  function logout() {
-    Wicket.Ajax.get({
-      u: LOGOUT_CALLBACK_URL
-    });
-  }
+public interface NavAppSettings {
 
-  Hippo.UserActivity.onInactive(logout);
+    UserSettings getUserSettings();
 
-}());
+    AppSettings getAppSettings();
+}

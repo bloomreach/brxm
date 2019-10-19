@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Predicate;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
@@ -48,6 +49,11 @@ import org.apache.wicket.core.request.handler.RenderPageRequestHandler;
 import org.apache.wicket.core.request.handler.RenderPageRequestHandler.RedirectPolicy;
 import org.apache.wicket.core.util.resource.locator.IResourceNameIterator;
 import org.apache.wicket.core.util.resource.locator.IResourceStreamLocator;
+import org.apache.wicket.markup.head.HeaderItem;
+import org.apache.wicket.markup.head.filter.AbstractHeaderResponseFilter;
+import org.apache.wicket.markup.head.filter.FilteredHeaderItem;
+import org.apache.wicket.markup.head.filter.FilteringHeaderResponse;
+import org.apache.wicket.markup.head.filter.OppositeHeaderResponseFilter;
 import org.apache.wicket.markup.html.IPackageResourceGuard;
 import org.apache.wicket.page.IPageManagerContext;
 import org.apache.wicket.pageStore.IDataStore;
@@ -114,6 +120,8 @@ import org.onehippo.repository.security.JvmCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.wicket.markup.head.filter.FilteringHeaderResponse.DEFAULT_HEADER_FILTER_NAME;
+
 public class Main extends PluginApplication {
 
     static final Logger log = LoggerFactory.getLogger(Main.class);
@@ -140,6 +148,7 @@ public class Main extends PluginApplication {
     public final static String OUTPUT_WICKETPATHS = "output-wicketpaths";
 
     public final static String PLUGIN_APPLICATION_NAME_PARAMETER = "config";
+    public static final String PLUGIN_APPLICATION_HIDE_PERSPECTIVE_MENU_PARAMETER = "hidePerspectiveMenu";
     public final static String PLUGIN_APPLICATION_VALUE_CMS = "cms";
     public final static String PLUGIN_APPLICATION_VALUE_CONSOLE = "console";
 
@@ -165,6 +174,8 @@ public class Main extends PluginApplication {
      * Wicket RequestCycleSettings timeout configuration parameter name in deployment mode.
      */
     public final static String DEPLOYMENT_REQUEST_TIMEOUT_PARAM = "wicket.deployment.request.timeout";
+
+    public static final String CMS_AS_IFRAME_QUERY_PARAMETER = "iframe";
 
     // class in the root package, to make it possible to use the caching resource stream locator
     // for resources that are not associated with a class.
@@ -210,6 +221,9 @@ public class Main extends PluginApplication {
 //        getPageSettings().setAutomaticMultiWindowSupport(false);
 
 //        getSessionSettings().setPageMapEvictionStrategy(new LeastRecentlyAccessedEvictionStrategy(1));
+
+        // LatestBundledJQueryResourceReference to be removed when upgrading to Wicket 8.x
+        getJavaScriptLibrarySettings().setJQueryReference(new LatestBundledJQueryResourceReference());
 
         getApplicationSettings().setPageExpiredErrorPage(PageExpiredErrorPage.class);
         try {
@@ -306,7 +320,7 @@ public class Main extends PluginApplication {
                                 subSession.getRootNode(), path);
                         // YUCK: no exception!
                         if (node == null) {
-                            log.info("no binary found at " + path);
+                            log.info("no binary found at {}", path);
                         } else {
                             if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
                                 node = (Node) JcrHelper.getPrimaryItem(node);
@@ -314,7 +328,7 @@ public class Main extends PluginApplication {
                             return new JcrResourceRequestHandler(node);
                         }
                     } catch (PathNotFoundException e) {
-                        log.info("binary not found " + e.getMessage());
+                        log.info("binary not found: {}", e.getMessage());
                     } catch (javax.jcr.LoginException ex) {
                         log.warn(ex.getMessage());
                     } catch (RepositoryException ex) {
@@ -531,6 +545,8 @@ public class Main extends PluginApplication {
         if (log.isInfoEnabled()) {
             log.info("Hippo CMS application " + applicationName + " has started");
         }
+
+        addHeaderResponseDecorator();
     }
 
     protected IPackageResourceGuard createPackageResourceGuard() {
@@ -790,5 +806,50 @@ public class Main extends PluginApplication {
 
             return false;
         }
+
     }
+
+    private void addHeaderResponseDecorator() {
+
+        final AbstractHeaderResponseFilter navAppFilter = new AbstractHeaderResponseFilter(NavAppPanel.NAVAPP_JAVASCRIPT_HEADER_ITEM) {
+            @Override
+            public boolean accepts(final HeaderItem item) {
+                if (item instanceof FilteredHeaderItem) {
+                    return ((FilteredHeaderItem) item).getFilterName().equals(this.getName());
+                }
+                return false;
+            }
+        };
+
+        final FilteringHeaderResponse.IHeaderResponseFilter oppositeFilter = new OppositeHeaderResponseFilter(DEFAULT_HEADER_FILTER_NAME, navAppFilter);
+        final List<FilteringHeaderResponse.IHeaderResponseFilter> filters = Arrays.asList(navAppFilter, oppositeFilter);
+
+        setHeaderResponseDecorator(response -> new FilteringHeaderResponse(response, DEFAULT_HEADER_FILTER_NAME, filters) {
+
+            final Predicate<HeaderItem> shouldRender =
+                    isCmsApplication() && hasNoIFrameParameter()
+                            ? NavAppUtils::isNavAppHeaderItem
+                            : item -> !NavAppUtils.isNavAppHeaderItem(item);
+
+            @Override
+            public void render(final HeaderItem item) {
+                if (shouldRender.test(item)) {
+                    super.render(item);
+                }
+            }
+        });
+    }
+
+    public static boolean isCmsApplication() {
+        return PluginUserSession.get().getApplicationName().equals("cms");
+    }
+
+    public static boolean hasNoIFrameParameter() {
+        final RequestCycle requestCycle = RequestCycle.get();
+        if (requestCycle == null) {
+            return true;
+        }
+        return requestCycle.getRequest().getQueryParameters().getParameterValue(CMS_AS_IFRAME_QUERY_PARAMETER).isNull();
+    }
+
 }

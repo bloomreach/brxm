@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:frontend/cms/cms-services/navAppSettingsService:
+      jcr:primaryType: frontend:plugin
+      plugin.class: org.hippoecm.frontend.service.navappsettings.NavAppSettingsService
+      /navConfigResources:
+        jcr:primaryType: frontend:pluginconfig

@@ -56,6 +56,7 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
     private static final String EVENT_PARAM_CMS = "CMS";
 
     private static final ArrayList<String> cmsEventNamesList;
+
     static {
         cmsEventNamesList = new ArrayList<>();
         cmsEventNamesList.add("dashboard");
@@ -78,6 +79,8 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
     private IModel<String> title;
     private boolean isRendered;
     private boolean isActivated;
+    private boolean isMenuItem;
+    private NavAppPerspective navAppPerspective;
 
     public Perspective(IPluginContext context, IPluginConfig config) {
         this(context, config, null);
@@ -93,11 +96,29 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
         fallbackImageExtension = config.getString("fallback.image.extension", FALLBACK_IMAGE_EXTENSION);
 
         add(ClassAttribute.append("perspective"));
+
+        isMenuItem = isMenuItem(config);
+
+        navAppPerspective = new NavAppPerspective(getClass());
+
+    }
+
+    /**
+     * @param config IPluginConfig
+     * @return {@code true} if this perspective is a menu item, otherwise false
+     */
+    protected boolean isMenuItem(final IPluginConfig config) {
+        return "service.tab".equals(config.getString("wicket.id"));
     }
 
     public String getTitleCssClass() {
-        // return a stable CSS class name to be able to identify a perspective's link in automated tests
-        return "hippo-perspective-" + getClass().getSimpleName().toLowerCase();
+        // Stable CSS class name to be able to identify a perspective's link in automated tests
+        // It is also used to be able to navigate via javascript by looking up a perspective via it's class name.
+        return navAppPerspective.getId();
+    }
+
+    public String getAppPath() {
+        return navAppPerspective.getAppPath();
     }
 
     @Override
@@ -258,7 +279,7 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
 
         @Override
         public void render(final Response response) {
-            if(StringUtils.isNotEmpty(perspectiveId)) {
+            if (StringUtils.isNotEmpty(perspectiveId)) {
                 final UsageEvent perspectiveActivated = new UsageEvent(perspectiveId);
 
                 final String eventJs = perspectiveActivated.getJavaScript();
