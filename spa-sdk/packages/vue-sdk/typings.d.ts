@@ -22,6 +22,11 @@ import { VueConstructor } from 'vue';
 export declare function BrSdk(vue: VueConstructor): void;
 
 /**
+ * The brXM component.
+ */
+export declare const BrComponent: VueConstructor;
+
+/**
  * The brXM page.
  */
 export declare const BrPage: VueConstructor;

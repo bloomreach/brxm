@@ -27,6 +27,11 @@ module.exports = {
         commonjs2: 'vue-class-component',
         root: 'VueClassComponent',
       },
+      'vue-fragment': {
+        commonjs: 'vue-fragment',
+        commonjs2: 'vue-fragment',
+        root: 'Fragment',
+      },
       'vue-property-decorator': {
         commonjs: 'vue-property-decorator',
         commonjs2: 'vue-property-decorator',
