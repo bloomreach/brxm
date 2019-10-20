@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-import { VueConstructor } from 'vue';
-import BrComponent from './BrComponent.vue';
-import BrPage from './BrPage.vue';
+declare module 'vue-fragment' {
+  import Vue, { AsyncComponent, ComponentOptions, PluginObject } from 'vue';
 
-/**
- * The brXM SDK plugin.
- */
-export function BrSdk(vue: VueConstructor): void {
-  vue.component('br-component', BrComponent);
-  vue.component('br-page', BrPage);
+  type Component = ComponentOptions<Vue> | typeof Vue | AsyncComponent;
+
+  namespace VueFragment {
+    export const Fragment: Component;
+    export const Plugin: PluginObject<undefined>;
+  }
+
+  export const Fragment: Component;
+  export const Plugin: PluginObject<undefined>;
+  export default VueFragment;
 }
-
-export { BrComponent, BrPage };
