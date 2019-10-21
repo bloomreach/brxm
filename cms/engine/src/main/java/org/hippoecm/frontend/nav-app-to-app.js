@@ -135,16 +135,20 @@
               return Promise.reject(new Error('project\'s iframe is not found'));
             }
 
-            return navigateIframe(iframe, 'projects', triggeredBy);
+            pathElements.unshift('projects');
 
+            return navigateIframe(iframe, pathElements.join('/'), triggeredBy);
+  
           case 'channelmanager':
-            if (triggeredBy === 'NotDefined' || triggeredBy === 'Breadcrumbs') {
+            if (triggeredBy !== 'Menu') {
               const rootPanel = Ext.getCmp('rootPanel');
+
               if (!rootPanel) {
                 return Promise.reject(new Error('rootPanel is not found'));
               }
               rootPanel.fireEvent('navigate-to-channel-overview');
             }
+
             return Promise.resolve();
 
           case 'browser':
