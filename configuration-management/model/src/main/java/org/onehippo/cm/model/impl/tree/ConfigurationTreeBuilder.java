@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,6 +45,7 @@ import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.apache.jackrabbit.JcrConstants.JCR_UUID;
 import static org.apache.jackrabbit.JcrConstants.MIX_REFERENCEABLE;
 import static org.onehippo.cm.model.Constants.META_IGNORE_REORDERED_CHILDREN;
+import static org.onehippo.cm.model.Constants.META_ADD_NEW_SYSTEM_VALUES;
 import static org.onehippo.cm.model.Constants.META_ORDER_BEFORE_FIRST;
 import static org.onehippo.cm.model.tree.PropertyOperation.ADD;
 import static org.onehippo.cm.model.tree.PropertyOperation.DELETE;
@@ -517,6 +518,7 @@ public class ConfigurationTreeBuilder {
                         parent.clearChildPropertyCategorySettings(name);
                         property.setValue(null);
                         property.setValues(null);
+                        property.setAddNewSystemValues(false);
                     }
                     else {
                         // record the system category override
@@ -546,6 +548,7 @@ public class ConfigurationTreeBuilder {
                 deleteProperty.setDeleted(true);
                 deleteProperty.setKind(property.getKind());
                 deleteProperty.setValueType(property.getValueType());
+                definitionProperty.setAddNewSystemValues(property.isAddNewSystemValues());
                 property.getDefinitions().forEach(deleteProperty::addDefinition);
 
                 //swap real one property with a placeholder one
@@ -562,6 +565,19 @@ public class ConfigurationTreeBuilder {
 
             if (property.getValueType() != definitionProperty.getValueType()) {
                 handleValueTypeConflict(property, definitionProperty, op == OVERRIDE);
+            }
+
+            if (definitionProperty.isAddNewSystemValuesSet() &&
+                    definitionProperty.isAddNewSystemValues() != property.isAddNewSystemValues()) {
+                if (!property.isAddNewSystemValues() &&
+                        ConfigurationItemCategory.SYSTEM != parent.getChildPropertyCategory(property.getName())) {
+                    final String msg = String.format("Cannot set %s for property %s as requested in %s: "
+                                    + "only supported for (not reference type of) multi-value properties of category %s.",
+                            META_ADD_NEW_SYSTEM_VALUES, property.getJcrPath(), definitionProperty.getOrigin(),
+                            ConfigurationItemCategory.SYSTEM);
+                    throw new IllegalStateException(msg);
+                }
+                property.setAddNewSystemValues(definitionProperty.isAddNewSystemValues());
             }
 
             requireOverrideOperationForPrimaryType(definitionProperty, property, op == OVERRIDE);
@@ -605,6 +621,9 @@ public class ConfigurationTreeBuilder {
             property.setParent(parent);
             property.setKind(definitionProperty.getKind());
             property.setValueType(definitionProperty.getValueType());
+            if (definitionProperty.isAddNewSystemValuesSet()) {
+                property.setAddNewSystemValues(definitionProperty.isAddNewSystemValues());
+            }
         }
 
         if (op == REPLACE) {
@@ -635,6 +654,7 @@ public class ConfigurationTreeBuilder {
             property.setKind(definitionProperty.getKind());
             property.setValue(null);
             property.setValues(null);
+            property.setAddNewSystemValues(definitionProperty.isAddNewSystemValues());
         } else {
             final String msg = String.format("Property %s already exists with type '%s', as determined by %s, "
                             + "but type '%s' is requested in %s.",
@@ -650,6 +670,9 @@ public class ConfigurationTreeBuilder {
             property.setValueType(definitionProperty.getValueType());
             property.setValue(null);
             property.setValues(null);
+            if (property.getValueType().isReferenceType()) {
+                property.setAddNewSystemValues(false);
+            }
         } else {
             final String msg = String.format("Property %s already exists with value type '%s', "
                             + "as determined by %s, but value type '%s' is requested in %s.",

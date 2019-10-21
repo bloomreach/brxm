@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ public class ConfigurationPropertyImpl extends ConfigurationItemImpl<DefinitionP
     private ValueType valueType;
     private ValueImpl value;
     private List<ValueImpl> values;
+    private boolean addNewSystemValues;
 
     @Override
     public PropertyKind getKind() {
@@ -51,6 +52,15 @@ public class ConfigurationPropertyImpl extends ConfigurationItemImpl<DefinitionP
     @Override
     public boolean isMultiple() {
         return getKind().isMultiple();
+    }
+
+    @Override
+    public boolean isAddNewSystemValues() {
+        return addNewSystemValues;
+    }
+
+    public void setAddNewSystemValues(final boolean addNewSystemValues) {
+        this.addNewSystemValues = addNewSystemValues;
     }
 
     @Override

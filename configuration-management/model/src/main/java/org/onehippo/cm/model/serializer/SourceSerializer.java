@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@ import static org.onehippo.cm.model.Constants.HST_HST_PATH;
 import static org.onehippo.cm.model.Constants.META_CATEGORY_KEY;
 import static org.onehippo.cm.model.Constants.META_DELETE_KEY;
 import static org.onehippo.cm.model.Constants.META_IGNORE_REORDERED_CHILDREN;
+import static org.onehippo.cm.model.Constants.META_ADD_NEW_SYSTEM_VALUES;
 import static org.onehippo.cm.model.Constants.META_ORDER_BEFORE_KEY;
 import static org.onehippo.cm.model.Constants.META_RESIDUAL_CHILD_NODE_CATEGORY_KEY;
 import static org.onehippo.cm.model.Constants.OPERATION_KEY;
@@ -226,6 +227,11 @@ public class SourceSerializer extends AbstractBaseSerializer {
             if (property.getCategory() != null) {
                 valueMapTuples.add(representCategory(META_CATEGORY_KEY, property.getCategory()));
             }
+            if (property.isAddNewSystemValues()) {
+                final NodeTuple addNewSystemValuesNode = new NodeTuple(createStrScalar(META_ADD_NEW_SYSTEM_VALUES),
+                        new ScalarNode(Tag.BOOL, "true", null, null, DumperOptions.ScalarStyle.PLAIN));
+                valueMapTuples.add(addNewSystemValuesNode);
+            }
             if (property.isEmptySystemProperty()) {
                 // this is a .meta:category system property with no specified value -- don't output anything else here
             } else {
@@ -315,6 +321,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
         if (property.getOperation() != PropertyOperation.REPLACE
                 || hasResourceValues(property)
                 || hasPathValues(property)
+                || property.isAddNewSystemValues()
                 || property.getCategory() != null) {
             return true;
         }

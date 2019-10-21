@@ -57,6 +57,7 @@ public final class Constants {
     public static final String URI_KEY = "uri";
     public static final String CND_KEY = "cnd";
     public static final String META_KEY_PREFIX = ".meta:";
+    public static final String META_ADD_NEW_SYSTEM_VALUES = META_KEY_PREFIX + "add-new-system-values";
     public static final String META_IGNORE_REORDERED_CHILDREN = META_KEY_PREFIX + "ignore-reordered-children";
     public static final String META_DELETE_KEY = META_KEY_PREFIX + "delete";
     public static final String META_ORDER_BEFORE_KEY = META_KEY_PREFIX + "order-before";

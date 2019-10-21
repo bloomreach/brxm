@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.onehippo.cm.model.impl.tree;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
 import org.onehippo.cm.model.tree.DefinitionProperty;
 import org.onehippo.cm.model.tree.PropertyOperation;
@@ -38,6 +39,7 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
     private ValueImpl value;
     private List<ValueImpl> values;
     private PropertyOperation operation = PropertyOperation.REPLACE;
+    private Boolean addNewSystemValues;
 
     public DefinitionPropertyImpl(final String name, final ValueImpl value, final DefinitionNodeImpl parent) {
         super(name, parent);
@@ -74,6 +76,27 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
     @Override
     public boolean isMultiple() {
         return getKind().isMultiple();
+    }
+
+    @Override
+    public boolean isAddNewSystemValues() {
+        return addNewSystemValues != null && addNewSystemValues;
+    }
+
+    @Override
+    public boolean isAddNewSystemValuesSet() {
+        return addNewSystemValues != null;
+    }
+
+    public void setAddNewSystemValues(final boolean addNewSystemValues) {
+        if (addNewSystemValues &&
+                (valueType.isReferenceType() || getCategory() != ConfigurationItemCategory.SYSTEM ||
+                        getKind() == PropertyKind.SINGLE)) {
+            throw new IllegalArgumentException("Setting "+ Constants.META_ADD_NEW_SYSTEM_VALUES +
+                    " is only supported for (not reference type of) multi-value system properties of category " +
+                    ConfigurationItemCategory.SYSTEM);
+        }
+        this.addNewSystemValues = addNewSystemValues;
     }
 
     @Override
@@ -145,6 +168,7 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
 
                 if (kind == PropertyKind.SINGLE) {
                     this.values = null;
+                    this.addNewSystemValues = null;
                     this.value = other.value.clone();
                     value.setParent(this);
                 } else {
@@ -171,6 +195,7 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
                 this.operation = PropertyOperation.DELETE;
                 this.values = null;
                 this.value = null;
+                this.addNewSystemValues = null;
                 break;
         }
     }
