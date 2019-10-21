@@ -1,0 +1,6 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:queries/hippo:templates/new-document:
+      hippostd:excludePrimaryTypes:
+        operation: add
+        value: [hippotaxonomy:taxonomy]
