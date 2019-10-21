@@ -179,6 +179,7 @@
               <excludes combine.children="append">
                 <exclude>.*</exclude>
                 <exclude>DEVELOPER.md</exclude>
+                <exclude>Procfile</exclude>
                 <exclude>yarn.lock</exclude>
                 <exclude>packages/**/__snapshots__/*.snap</exclude>
                 <exclude>packages/spa-sdk/src/docs/*.md</exclude>
