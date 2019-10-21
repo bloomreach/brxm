@@ -113,7 +113,7 @@ export class NavigationService implements OnDestroy {
 
     const url = this.appSettings.initialPath ? `${this.basePath}${this.appSettings.initialPath}` : this.location.path(true);
 
-    return this.scheduleNavigation(url, NavigationTrigger.NotDefined, {}, true);
+    return this.scheduleNavigation(url, NavigationTrigger.InitialNavigation, {}, true);
   }
 
   ngOnDestroy(): void {
