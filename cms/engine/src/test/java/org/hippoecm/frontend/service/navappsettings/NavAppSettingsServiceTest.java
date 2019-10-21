@@ -25,6 +25,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 import java.util.stream.Stream;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 
@@ -50,7 +51,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.onehippo.repository.security.User;
+import org.onehippo.repository.security.SessionUser;
 
 import static java.util.stream.Collectors.toSet;
 import static org.easymock.EasyMock.expect;
@@ -96,7 +97,7 @@ public class NavAppSettingsServiceTest {
     @Mock
     private HippoSession hippoSession;
     @Mock
-    private User user;
+    private SessionUser user;
 
     @Before
     public void setUp() throws RepositoryException {
@@ -271,7 +272,7 @@ public class NavAppSettingsServiceTest {
     @Test
     public void is_resilient_to_RepositoryExceptions() throws RepositoryException {
         reset(hippoSession);
-        expect(hippoSession.getUser()).andThrow(new RepositoryException("can always happen"));
+        expect(hippoSession.getUser()).andThrow(new ItemNotFoundException("can always happen"));
         replay(hippoSession);
 
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);

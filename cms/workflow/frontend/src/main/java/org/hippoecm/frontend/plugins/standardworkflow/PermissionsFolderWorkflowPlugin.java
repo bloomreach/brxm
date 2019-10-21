@@ -69,6 +69,8 @@ import org.hippoecm.repository.api.HippoNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_FOLDERTYPE;
+
 public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(PermissionsFolderWorkflowPlugin.class);
@@ -98,7 +100,7 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
                     Node folder = getModel().getNode();
                     PermissionsFolderWorkflowPlugin.this.name = ((HippoNode) folder).getDisplayName();
                     try {
-                        Value[] values = folder.getProperty("hippostd:foldertype").getValues();
+                        Value[] values = folder.getProperty(HIPPOSTD_FOLDERTYPE).getValues();
                         for (Value value : values) {
                             folderTypesList.add(new DisplayModel(value.getString()));
                         }
@@ -131,7 +133,7 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
                 for (IModel propertyModel : folderTypesList) {
                     store = (String[]) ArrayUtils.add(store, propertyModel.getObject());
                 }
-                folder.setProperty("hippostd:foldertype", store);
+                folder.setProperty(HIPPOSTD_FOLDERTYPE, store);
                 session.save();
             }
         });

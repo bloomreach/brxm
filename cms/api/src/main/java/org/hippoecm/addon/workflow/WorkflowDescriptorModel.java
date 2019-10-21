@@ -77,6 +77,7 @@ public class WorkflowDescriptorModel extends LoadableDetachableModel<WorkflowDes
                 return workflowManager.getWorkflowDescriptor(category, node);
             }
         } catch (RepositoryException ex) {
+            log.error("Error loading WorkflowDescriptor", ex);
             return null;
         }
     }

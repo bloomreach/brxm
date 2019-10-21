@@ -83,12 +83,9 @@ public class FolderTreePlugin extends RenderPlugin {
         boolean canAccessPath = true;
         try {
             final Session session = getSession().getJcrSession();
-            if (!session.hasPermission(startingPath, Session.ACTION_READ)) {
-                log.warn("User '{} is unauthorized to read at the configured path '{}'", session.getUserID(), startingPath);
-                canAccessPath = false;
-            } else if (!session.itemExists(startingPath)) {
+            if (!session.itemExists(startingPath)) {
                 log.warn("The configured path '{}' does not exist. Please check the configuration", startingPath);
-                canAccessPath =  false;
+                canAccessPath = false;
             }
         } catch (RepositoryException exception) {
             canAccessPath = false;

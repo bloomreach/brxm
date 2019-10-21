@@ -29,6 +29,9 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
 import org.hippoecm.frontend.plugin.Plugin;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,18 +44,21 @@ public class PerspectiveStoreImpl implements PerspectiveStore {
     @Override
     public List<String> getPerspectiveClassNames(final Session session) throws RepositoryException {
         final NodeIterator perspectiveNodes = getAllPerspectiveNodes(session);
-        return getClassNames(perspectiveNodes);
+        return getClassNames(perspectiveNodes, (HippoSession)session);
     }
 
-    private List<String> getClassNames(NodeIterator perspectiveNodes) throws RepositoryException {
+    private List<String> getClassNames(NodeIterator perspectiveNodes, HippoSession hippoSession) throws RepositoryException {
         final long size = perspectiveNodes.getSize();
         log.debug("Found {} perspective nodes", size);
         final List<String> perspectiveClassNames = new ArrayList<>((int) size);
         while (perspectiveNodes.hasNext()) {
             final Node perspectiveNode = perspectiveNodes.nextNode();
-            if (perspectiveNode.hasProperty(Plugin.CLASSNAME)) {
-                final String className = perspectiveNode.getProperty(Plugin.CLASSNAME).getString();
-                perspectiveClassNames.add(className);
+            final String className = JcrUtils.getStringProperty(perspectiveNode, Plugin.CLASSNAME, null);
+            if (className != null) {
+                final String userRoleConstraint = JcrUtils.getStringProperty(perspectiveNode, HippoNodeType.HIPPO_USERROLE, null);
+                if (userRoleConstraint == null || hippoSession.isUserInRole(userRoleConstraint)) {
+                    perspectiveClassNames.add(className);
+                }
             } else {
                 log.warn("node at path '{}' does not have property '{}', skipping it", perspectiveNode.getPath(), Plugin.CLASSNAME);
             }
