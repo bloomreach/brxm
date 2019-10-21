@@ -15,7 +15,7 @@ definitions:
         hipposys:userroles:
           .meta:category: system
           .meta:add-new-system-values: true
-          value: [xm-sysadmin, xm-content-admin]
+          value: [xm-default-sysadmin-user]
       /workflowuser:
         jcr:primaryType: hipposys:user
         hipposys:active: true

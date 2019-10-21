@@ -63,6 +63,7 @@ import static org.onehippo.repository.security.SecurityConstants.USERROLE_CONTEN
 import static org.onehippo.repository.security.SecurityConstants.USERROLE_CONTENT_EDITOR;
 import static org.onehippo.repository.security.SecurityConstants.USERROLE_CONTENT_VIEWER;
 import static org.onehippo.repository.security.SecurityConstants.USERROLE_CONTENT_HOLDER;
+import static org.onehippo.repository.security.SecurityConstants.USERROLE_DEFAULT_EDITOR_USER;
 import static org.onehippo.repository.util.JcrConstants.JCR_PATH;
 import static org.onehippo.repository.util.JcrConstants.JCR_PRIMARY_TYPE;
 import static org.onehippo.repository.util.JcrConstants.JCR_UUID;
@@ -224,7 +225,7 @@ public class SecurityServiceTest extends RepositoryTestCase {
 
             assertThat(((HippoSession)newSession).getUser().getUserRoles())
                     .as("Test session should now have the (expanded) roles from group editor")
-                    .containsOnly(USERROLE_CONTENT_VIEWER, USERROLE_CONTENT_AUTHOR, USERROLE_CONTENT_EDITOR, USERROLE_CONTENT_HOLDER);
+                    .containsOnly(USERROLE_DEFAULT_EDITOR_USER, USERROLE_CONTENT_VIEWER, USERROLE_CONTENT_AUTHOR, USERROLE_CONTENT_EDITOR, USERROLE_CONTENT_HOLDER);
 
             newSession.logout();
 

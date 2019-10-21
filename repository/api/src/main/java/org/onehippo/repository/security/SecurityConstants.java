@@ -91,4 +91,19 @@ public final class SecurityConstants {
      * For this, the everywhere domain grants the authrole readonly to users with this userrole.
      */
     public static final String USERROLE_READ_EVERYWHERE = "xm-read-everywhere";
+
+    /**
+     * The user role aggregating (implying) the standard user roles for the author user, assigned by default to the author group
+     */
+    public static final String USERROLE_DEFAULT_AUTHOR_USER = "xm-default-author-user";
+
+    /**
+     * The user role aggregating (implying) the standard user roles for the editor user, assigned by default to the editor group
+     */
+    public static final String USERROLE_DEFAULT_EDITOR_USER = "xm-default-editor-user";
+
+    /**
+     * The user role aggregating (implying) the standard user roles for the sysadmin user, assigned by default to the admin group
+     */
+    public static final String USERROLE_DEFAULT_SYSADMIN_USER = "xm-default-sysadmin-user";
 }

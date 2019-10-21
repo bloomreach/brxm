@@ -45,3 +45,15 @@ definitions:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
         hipposys:userroles: []
+      /xm-default-author-user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-content-author]
+      /xm-default-editor-user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-content-editor]
+      /xm-default-sysadmin-user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-sysadmin, xm-content-admin]

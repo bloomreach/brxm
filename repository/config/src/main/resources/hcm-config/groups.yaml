@@ -20,7 +20,7 @@ definitions:
         hipposys:userroles:
           .meta:category: system
           .meta:add-new-system-values: true
-          value: [xm-content-author]
+          value: [xm-default-author-user]
         hipposys:securityprovider: internal
       /editor:
         jcr:primaryType: hipposys:group
@@ -30,7 +30,7 @@ definitions:
         hipposys:userroles:
           .meta:category: system
           .meta:add-new-system-values: true
-          value: [xm-content-editor]
+          value: [xm-default-editor-user]
         hipposys:securityprovider: internal
       /admin:
         jcr:primaryType: hipposys:group
@@ -40,5 +40,5 @@ definitions:
         hipposys:userroles:
           .meta:category: system
           .meta:add-new-system-values: true
-          value: [xm-sysadmin, xm-content-admin]
+          value: [xm-default-sysadmin-user]
         hipposys:securityprovider: internal
