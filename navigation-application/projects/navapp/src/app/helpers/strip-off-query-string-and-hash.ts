@@ -14,22 +14,6 @@
  * limitations under the License.
  */
 
-import { stripOffQueryString } from './strip-off-query-string';
-
-describe('stripOffQueryString', () => {
-  it('should strip off a query string', () => {
-    const expected = 'some/path';
-
-    const actual = stripOffQueryString('some/path?query=string');
-
-    expect(actual).toBe(expected);
-  });
-
-  it('should strip off a query string with a hash', () => {
-    const expected = 'some/path';
-
-    const actual = stripOffQueryString('some/path?query=string#someHash');
-
-    expect(actual).toBe(expected);
-  });
-});
+export const stripOffQueryStringAndHash = (pathWithQueryString: string) => {
+  return pathWithQueryString.replace(/\#.*$/, '').replace(/\?.*$/, '');
+};

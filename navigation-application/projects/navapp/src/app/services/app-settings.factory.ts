@@ -16,7 +16,7 @@
 
 import { Location } from '@angular/common';
 
-import { stripOffQueryString } from '../helpers/strip-off-query-string';
+import { stripOffQueryStringAndHash } from '../helpers/strip-off-query-string-and-hash';
 import { AppSettings } from '../models/dto/app-settings.dto';
 import { WindowRef } from '../shared/services/window-ref.service';
 
@@ -38,7 +38,7 @@ export const appSettingsFactory = (windowRef: WindowRef, location: Location): Ap
   const settings = globalSettings.appSettings;
 
   if (!settings.basePath) {
-    settings.basePath = stripOffQueryString(location.path());
+    settings.basePath = stripOffQueryStringAndHash(location.path());
   }
 
   if (!settings.iframesConnectionTimeout) {

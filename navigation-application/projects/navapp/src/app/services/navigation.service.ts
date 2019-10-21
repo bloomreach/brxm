@@ -28,7 +28,7 @@ import { CriticalError } from '../error-handling/models/critical-error';
 import { InternalError } from '../error-handling/models/internal-error';
 import { NotFoundError } from '../error-handling/models/not-found-error';
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
-import { stripOffQueryString } from '../helpers/strip-off-query-string';
+import { stripOffQueryStringAndHash } from '../helpers/strip-off-query-string-and-hash';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { AppSettings } from '../models/dto/app-settings.dto';
 import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
@@ -262,7 +262,7 @@ export class NavigationService implements OnDestroy {
     return of(transition).pipe(
       // Redirect all empty urls to the home url
       tap(t => {
-        const url = stripOffQueryString(t.url);
+        const url = stripOffQueryStringAndHash(t.url);
 
         if (!url) {
           t.url = this.homeUrl;
@@ -291,7 +291,7 @@ export class NavigationService implements OnDestroy {
         }
 
         const appPathAddOn = t.url.slice(route.path.length);
-        const appPathAddOnWithoutQueryStringAndHash = stripOffQueryString(appPathAddOn);
+        const appPathAddOnWithoutQueryStringAndHash = stripOffQueryStringAndHash(appPathAddOn);
         const queryStringAndHash = appPathAddOn.slice(appPathAddOnWithoutQueryStringAndHash.length);
 
         return of({ ...t, navItem: route.navItem, appPathAddOn: appPathAddOnWithoutQueryStringAndHash, queryStringAndHash });
