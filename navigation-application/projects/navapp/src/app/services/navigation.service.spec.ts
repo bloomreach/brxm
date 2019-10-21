@@ -202,6 +202,39 @@ describe('NavigationService', () => {
 
       expect(locationMock.replaceState).toHaveBeenCalledWith(`${basePath}/iframe1/url/app/path/to/page1`, '', {});
     }));
+
+    it('should use the browser\'s location path with a query string', fakeAsync(() => {
+      appSettingsMock.initialPath = undefined;
+      locationMock.path.and.returnValue(`${basePath}/iframe1/url/app/path/to/page1?queryString=value`);
+
+      service.initialNavigation();
+
+      tick();
+
+      expect(locationMock.replaceState).toHaveBeenCalledWith(`${basePath}/iframe1/url/app/path/to/page1?queryString=value`, '', {});
+    }));
+
+    it('should use the browser\'s location path with a hash', fakeAsync(() => {
+      appSettingsMock.initialPath = undefined;
+      locationMock.path.and.returnValue(`${basePath}/iframe1/url/app/path/to/page1?#hash`);
+
+      service.initialNavigation();
+
+      tick();
+
+      expect(locationMock.replaceState).toHaveBeenCalledWith(`${basePath}/iframe1/url/app/path/to/page1?#hash`, '', {});
+    }));
+
+    it('should use the browser\'s location path with a query string and a hash', fakeAsync(() => {
+      appSettingsMock.initialPath = undefined;
+      locationMock.path.and.returnValue(`${basePath}/iframe1/url/app/path/to/page1?q=value#hash`);
+
+      service.initialNavigation();
+
+      tick();
+
+      expect(locationMock.replaceState).toHaveBeenCalledWith(`${basePath}/iframe1/url/app/path/to/page1?q=value#hash`, '', {});
+    }));
   });
 
   describe('beforeNavigation', () => {

@@ -30,6 +30,8 @@ describe('ErrorHandlingService', () => {
   let errorHandlingService: ErrorHandlingService;
 
   beforeEach(() => {
+    spyOn(console, 'error');
+
     const connectionServiceMock = {
       onError$: of(),
     };
