@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,29 +15,18 @@
  */
 package org.hippoecm.repository;
 
-import java.util.Arrays;
-
 import javax.jcr.Credentials;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PropertyType;
-import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
 import javax.jcr.query.QueryResult;
 
-import org.codehaus.groovy.runtime.powerassert.SourceText;
-import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeIterator;
-import org.hippoecm.repository.api.HippoSession;
-import org.hippoecm.repository.util.NodeIterable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.repository.security.domain.DomainRuleExtension;
-import org.onehippo.repository.security.domain.FacetRule;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
@@ -46,9 +35,13 @@ import static org.junit.Assert.assertTrue;
 
 public class ReferenceUUIDAuthorizationTest extends RepositoryTestCase {
 
+    private Node defaultReadForTestNode;
     @Before
     public void setUp() throws Exception {
         super.setUp();
+
+        removeDefaultReadForTestAndDescendants();
+        defaultReadForTestNode = addDefaultReadForTestNode();
 
         // create users
         final Node users = session.getNode("/hippo:configuration/hippo:users");
@@ -87,6 +80,9 @@ public class ReferenceUUIDAuthorizationTest extends RepositoryTestCase {
     public void tearDown() throws Exception {
         removeNode("/hippo:configuration/hippo:users/testSession");
         removeNode("/hippo:configuration/hippo:domains/uuidDomain");
+        restoreDefaultReadForTestAndDescendants();
+        defaultReadForTestNode.remove();
+        session.save();
         super.tearDown();
     }
 

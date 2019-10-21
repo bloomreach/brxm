@@ -23,6 +23,12 @@
 
 [hippo:ntunstructured] > nt:unstructured
 
+[hippo:testcomposite] > hippo:compound
++ * (hippo:testcomposite) = hippo:testcomposite
++ * (hippo:facetselect)
++ * (hippo:mirror)
+- * (string)
+
 [hippo:testdocument] > hippo:document
 + * (nt:base) = hippo:ntunstructured multiple
 - * (Date)
@@ -32,7 +38,7 @@
 
 [hippo:authtestdocument] > hippo:document
 - hippo:linkto (reference)
-- *
+- * (undefined)
 - * multiple
 + * (nt:base) = hippo:authtestdocument multiple
 

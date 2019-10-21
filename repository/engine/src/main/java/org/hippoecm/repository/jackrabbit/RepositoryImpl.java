@@ -26,6 +26,7 @@ import javax.jcr.NamespaceException;
 import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -242,6 +243,14 @@ public class RepositoryImpl extends ExtendedJackrabbitRepositoryImpl implements 
     }
 
     @Override
+    public InternalHippoSession createSystemSession() throws RepositoryException {
+        Session systemSession = getRootSession(null);
+        synchronized (systemSession) {
+            return (InternalHippoSession)systemSession.impersonate(new SimpleCredentials("system", new char[0]));
+        }
+    }
+
+    @Override
     protected NodeTypeRegistry createNodeTypeRegistry() throws RepositoryException {
         return new HippoNodeTypeRegistry(context.getNamespaceRegistry(), context.getFileSystem());
     }
@@ -329,6 +338,13 @@ public class RepositoryImpl extends ExtendedJackrabbitRepositoryImpl implements 
 
         protected HippoWorkspaceInfo(WorkspaceConfig config) {
             super(config);
+        }
+
+        @Override
+        protected void doPostInitialize() throws RepositoryException {
+            super.doPostInitialize();
+            // at this point the SearchManager has been initialize, e.g. allowing to use queries
+            ((HippoSharedItemStateManager)getItemStateProvider()).doPostInitializeWorkspaceInfo();
         }
 
         @Override

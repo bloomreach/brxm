@@ -53,49 +53,49 @@ import org.slf4j.LoggerFactory;
  * <p>On success the servlet prints "Ok" and returns a 200 status, on failure, the error is
  * printed and a 500 (internal server error) status is returned.</p>
  * <p>In case the custom message is provided, a service unavailable error (503) is returned</p>
- *
- * <p>To enable the servlet add the following to your web.xml. Set the username to anonymous or leave out the username
- * for anonymous checks.</p>
- * <code><![CDATA[
-    <servlet>
-      <servlet-name>PingServlet</servlet-name>
-      <servlet-class>org.hippoecm.repository.PingServlet</servlet-class>
-      <init-param>
-        <param-name>repository-address</param-name>
-        <param-value>rmi://localhost:1099/hipporepository</param-value>
-      </init-param>
-      <init-param>
-        <param-name>check-username</param-name>
-        <param-value>admin</param-value>
-      </init-param>
-      <init-param>
-        <param-name>check-password</param-name>
-        <param-value>admin</param-value>
-      </init-param>
-      <init-param>
-        <param-name>check-node</param-name>
-        <param-value>content/documents</param-value>
-      </init-param>
-      <init-param>
-        <param-name>write-check-enable</param-name>
-        <param-value>false</param-value>
-      </init-param>
-      <init-param>
-        <param-name>write-check-node</param-name>
-        <param-value>pingcheck</param-value>
-      </init-param>
-      <!-- enable while doing upgrades
-        init-param>
-        <param-name>custom-message</param-name>
-        <param-value>Down for upgrade</param-value>
-      </init-param -->
-    </servlet>
-    <servlet-mapping>
-      <servlet-name>PingServlet</servlet-name>
-      <url-pattern>/ping/*</url-pattern>
-    </servlet-mapping>
- * ]]></code>
- *
+ * <p>For performing the check a repository username and optionally a password are needed. Without a password
+ * (preferred) the repository user account must be jvm:// login enabled.</p>
+ * <p>By default, if no username is configured, the builtin jvm:// enabled "ping-user" will be used.</p>
+ * <p><em>Note: Using the anonymous username is no longer support as of v14.0!</em></p>
+ * <p>To enable the servlet add the following to your web.xml:
+ * <pre>{@code
+ * <servlet>
+ *   <servlet-name>PingServlet</servlet-name>
+ *   <servlet-class>org.hippoecm.repository.PingServlet</servlet-class>
+ *   <init-param>
+ *     <param-name>repository-address</param-name>
+ *     <param-value>rmi://localhost:1099/hipporepository</param-value>
+ *   </init-param>
+ *   <init-param>
+ *     <param-name>check-username</param-name>
+ *     <param-value>ping-user</param-value>
+ *   </init-param>
+ *   <init-param>
+ *     <param-name>check-password</param-name>
+ *     <param-value></param-value>
+ *   </init-param>
+ *   <init-param>
+ *     <param-name>check-node</param-name>
+ *     <param-value>content/documents</param-value>
+ *   </init-param>
+ *   <init-param>
+ *     <param-name>write-check-enable</param-name>
+ *     <param-value>false</param-value>
+ *   </init-param>
+ *   <init-param>
+ *     <param-name>write-check-node</param-name>
+ *     <param-value>pingcheck</param-value>
+ *   </init-param>
+ *   <!-- enable while doing upgrades: init-param>
+ *     <param-name>custom-message</param-name>
+ *     <param-value>Down for upgrade</param-value>
+ *   </init-param -->
+ * </servlet>
+ * <servlet-mapping>
+ *   <servlet-name>PingServlet</servlet-name>
+ *   <url-pattern>/ping/*</url-pattern>
+ * </servlet-mapping>
+ * }</pre>
  */
 public class PingServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
@@ -119,7 +119,7 @@ public class PingServlet extends HttpServlet {
      * Default values
      */
     private static final String DEFAULT_REPOSITORY_ADDRESS = "vm://";
-    private static final String DEFAULT_USERNAME = "anonymous";
+    static final String DEFAULT_USER_ID = "ping-user";
     private static final String DEFAULT_PASSWORD = "";
     private static final String DEFAULT_NODE = "";
     private static final String DEFAULT_WRITE_ENABLE = "false";
@@ -148,7 +148,10 @@ public class PingServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         repositoryLocation = getParameter(config, REPOSITORY_ADDRESS_PARAM, DEFAULT_REPOSITORY_ADDRESS);
-        username = getParameter(config, USERNAME_PARAM, DEFAULT_USERNAME);
+        username = getParameter(config, USERNAME_PARAM, DEFAULT_USER_ID);
+        if ("anoynymous".equals(username)) {
+            throw new ServletException("Anonymous user is no longer supported!");
+        }
         password = getParameter(config, PASSWORD_PARAM, DEFAULT_PASSWORD);
         checkNode = makePathRelative(getParameter(config, NODE_PARAM, DEFAULT_NODE));
         writeTestPath = makePathRelative(getParameter(config, WRITE_PATH_PARAM, DEFAULT_WRITE_PATH));
@@ -296,10 +299,6 @@ public class PingServlet extends HttpServlet {
         long start = System.nanoTime();
         Session session = null;
         try {
-            if (username.isEmpty() || "anonymous".equalsIgnoreCase(username)) {
-                session = repository.login();
-                return session;
-            }
             if (StringUtils.isBlank(password)) {
                 // try as jvm enabled user
                 final JvmCredentials credentials = JvmCredentials.getCredentials(username);

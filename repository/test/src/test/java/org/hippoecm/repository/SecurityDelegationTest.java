@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,9 +39,13 @@ import static org.junit.Assert.assertEquals;
 
 public class SecurityDelegationTest extends RepositoryTestCase {
 
+    private Node defaultReadForTestNode;
     @Before
     public void setUp() throws Exception {
         super.setUp();
+
+        removeDefaultReadForTestAndDescendants();
+        defaultReadForTestNode = addDefaultReadForTestNode();
 
         // create users
         final Node users = session.getNode("/hippo:configuration/hippo:users");
@@ -58,7 +62,9 @@ public class SecurityDelegationTest extends RepositoryTestCase {
             final Node wonderland = test.addNode("wonderland", "hippo:authtestdocument");
             wonderland.setProperty("creator", "carroll");
             wonderland.setProperty("type", "novel");
+            test.addNode("bobsland");
         }
+
 
         final Node domains = session.getNode("/hippo:configuration/hippo:domains");
         if (!domains.hasNode("alicesdomain")) {
@@ -76,6 +82,13 @@ public class SecurityDelegationTest extends RepositoryTestCase {
         }
         if (!domains.hasNode("bobsdomain")) {
             final Node bobsdomain = domains.addNode("bobsdomain", "hipposys:domain");
+            // must include at least one domainrule otherwise the whole domain will be ignored
+            final Node bobsland = bobsdomain.addNode("bobsland", "hipposys:domainrule");
+            final Node bobslandfacet = bobsland.addNode("include-bobsland", "hipposys:facetrule");
+            bobslandfacet.setProperty("hipposys:equals", true);
+            bobslandfacet.setProperty("hipposys:facet", "jcr:uuid");
+            bobslandfacet.setProperty("hipposys:type", "Reference");
+            bobslandfacet.setProperty("hipposys:value", "/test/bobsland");
             final Node bobisadmin = bobsdomain.addNode("bobisadmin", "hipposys:authrole");
             bobisadmin.setProperty("hipposys:users", new String[]{"bob"});
             bobisadmin.setProperty("hipposys:role", "admin");
@@ -103,7 +116,12 @@ public class SecurityDelegationTest extends RepositoryTestCase {
             domains.getNode("bobsdomain").remove();
         }
 
+        defaultReadForTestNode.remove();
+
         session.save();
+
+        restoreDefaultReadForTestAndDescendants();
+
         super.tearDown();
     }
 
@@ -224,7 +242,7 @@ public class SecurityDelegationTest extends RepositoryTestCase {
         Session delegateOne = alice.createSecurityDelegate(bob);
         assertEquals(alice.getUserID()+","+bob.getUserID(), delegateOne.getUserID());
         Session delegateTwo = bob.createSecurityDelegate(alice);
-        assertTrue(delegateOne.getUserID().equals(delegateTwo.getUserID()));
+        assertEquals(bob.getUserID()+","+alice.getUserID(), delegateTwo.getUserID());
     }
 
     @Test

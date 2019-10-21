@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 package org.onehippo.repository.util;
+
+import org.onehippo.repository.security.StandardPermissionNames;
 
 public final class JcrConstants {
 
@@ -53,6 +55,7 @@ public final class JcrConstants {
     public static final String JCR_LOCK_IS_DEEP = "jcr:lockIsDeep";
 
     public static final String JCR_UUID = "jcr:uuid";
+    public static final String JCR_PATH = "jcr:path";
 
     public static final String JCR_ROOT_VERSION = "jcr:rootVersion";
     public static final String JCR_BASE_VERSION = "jcr:baseVersion";
@@ -74,8 +77,8 @@ public final class JcrConstants {
 
     // ------------------------------------------ permissions
 
-    public static final String JCR_READ = "jcr:read";
-    public static final String JCR_WRITE = "jcr:write";
+    public static final String JCR_READ = StandardPermissionNames.JCR_READ;
+    public static final String JCR_WRITE = StandardPermissionNames.JCR_WRITE;
 
     // ------------------------------------------ general
 

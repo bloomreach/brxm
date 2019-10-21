@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,9 +18,12 @@ package org.onehippo.repository.update;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
+import org.hippoecm.repository.impl.RepositoryDecorator;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Test;
+import org.onehippo.repository.InternalHippoRepository;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static org.junit.Assert.assertEquals;
@@ -36,15 +39,19 @@ public class UpdaterExecutorTest extends RepositoryTestCase {
             "/test/bar/foo", "nt:unstructured"
     };
 
+    private Session systemSession;
+
     @Override
     public void setUp() throws Exception {
         super.setUp();
         build(content, session);
         session.save();
+        systemSession = ((InternalHippoRepository) RepositoryDecorator.unwrap(session.getRepository())).createSystemSession();
     }
 
     @Override
     public void tearDown() throws Exception {
+        systemSession.logout();
         final Node registry = JcrUtils.getNodeIfExists("/hippo:configuration/hippo:update/hippo:registry", session);
         if (registry != null) {
             final NodeIterator updaters = registry.getNodes();
@@ -91,7 +98,7 @@ public class UpdaterExecutorTest extends RepositoryTestCase {
         updaterNode.setProperty("hipposys:dryrun", dryRun);
         session.save();
 
-        final UpdaterExecutor updaterExecutor = new UpdaterExecutor(updaterNode, session);
+        final UpdaterExecutor updaterExecutor = new UpdaterExecutor(updaterNode, systemSession);
         updaterExecutor.execute();
         updaterExecutor.destroy();
 
@@ -118,7 +125,7 @@ public class UpdaterExecutorTest extends RepositoryTestCase {
         updaterNode.setProperty("hipposys:dryrun", dryRun);
         session.save();
 
-        final UpdaterExecutor updaterExecutor = new UpdaterExecutor(updaterNode, session);
+        final UpdaterExecutor updaterExecutor = new UpdaterExecutor(updaterNode, systemSession);
         updaterExecutor.execute();
         updaterExecutor.destroy();
         assertEquals(2, JcrUtils.getLongProperty(updaterNode, "hipposys:updatedcount", -1L).longValue());

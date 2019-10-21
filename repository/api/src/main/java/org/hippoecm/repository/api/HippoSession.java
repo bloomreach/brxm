@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import javax.jcr.Credentials;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.NamespaceException;
 import javax.jcr.Node;
@@ -31,6 +30,7 @@ import javax.jcr.Session;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.transaction.xa.XAResource;
 
+import org.onehippo.repository.security.SessionUser;
 import org.onehippo.repository.security.User;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.xml.ContentResourceLoader;
@@ -45,17 +45,6 @@ import org.xml.sax.SAXException;
 public interface HippoSession extends Session {
 
     /**
-     * By default a System Session when impersonating another user will always add the SystemPrincipal itself to the impersonated session.
-     * This has as 'side-effect' that it a System Session cannot be 'downgraded' to a normal user.
-     * This limitation or 'feature' will be removed in a next major release.
-     * Until then, the desired effect can be achieved by adding this attribute with any value (not null) on the SimpleCredentials
-     * parameter in a {@link Session#impersonate(Credentials)} call. If this attribute is defined, the SystemPrincipal will not be added
-     * to the impersonated session when using the System session to impersonate another session.
-     * @deprecated this attribute name and usage will be removed again when the limitation as described above has been fixed.
-     */
-    String NO_SYSTEM_IMPERSONATION = "org.hippoecm.repository.security.no-system-impersonation";
-
-    /**
      * Convenience function to copy a node to a destination path in the same workspace.  Unlike the copy method in the javax.jcr.Workspace class,
      * this copy method does not immediately persist (i.e. requires a save operation on the session, or ancestor node of the destination path) and it does
      * return the produced copy.  The latter makes this the preferred method to copy a node as the method on the Workspace makes it impossible to know for
@@ -67,7 +56,7 @@ public interface HippoSession extends Session {
      * @throws RepositoryException a generic error while accessing the repository
      * @deprecated Use {@link org.hippoecm.repository.util.JcrUtils#copy(javax.jcr.Session, String, String)} instead
      */
-    public Node copy(Node srcNode, String destAbsNodePath) throws RepositoryException;
+    Node copy(Node srcNode, String destAbsNodePath) throws RepositoryException;
 
     /**
      * Obtains an iterator over the set of nodes that potentially contain
@@ -91,8 +80,8 @@ public interface HippoSession extends Session {
      * @return A NodeIterator instance which iterates over all modified
      *         nodes, not including the passed node
      */
-    public NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException,
-                                                                           NoSuchNodeTypeException, RepositoryException;
+    NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws NamespaceException,
+            NoSuchNodeTypeException, RepositoryException;
 
     /** Conveniance method for
      * <code>pendingChanges(node,nodeType,false)</code>
@@ -108,8 +97,8 @@ public interface HippoSession extends Session {
      *         nodes, not including the passed node
      * @see #pendingChanges(Node,String,boolean)
      */
-    public NodeIterator pendingChanges(Node node, String nodeType) throws NamespaceException, NoSuchNodeTypeException,
-                                                                          RepositoryException;
+    NodeIterator pendingChanges(Node node, String nodeType) throws NamespaceException,
+            NoSuchNodeTypeException, RepositoryException;
 
 
     /** Largely a conveniance method for
@@ -117,10 +106,10 @@ public interface HippoSession extends Session {
      * will also return the root node if modified.
      *
      * @return A NodeIterator instance which iterates over all modified nodes, including the root
-     * @throws RepositoryException 
+     * @throws RepositoryException
      * @see #pendingChanges(Node,String,boolean)
      */
-    public NodeIterator pendingChanges() throws RepositoryException;
+    NodeIterator pendingChanges() throws RepositoryException;
 
     /**
      * Export a dereferenced view of a node.
@@ -134,7 +123,7 @@ public interface HippoSession extends Session {
      * @throws PathNotFoundException in case the absPath parameter does not point to a valid node
      * @see javax.jcr.Session#exportSystemView(String,OutputStream,boolean,boolean)
      */
-    public void exportDereferencedView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse)
+    void exportDereferencedView(String absPath, OutputStream out, boolean binaryAsLink, boolean noRecurse)
             throws IOException, PathNotFoundException, RepositoryException;
 
     /**
@@ -150,7 +139,7 @@ public interface HippoSession extends Session {
      * @throws PathNotFoundException in case the absPath parameter does not point to a valid node
      * @see javax.jcr.Session#exportSystemView(String,OutputStream,boolean,boolean)
      */
-    public void exportDereferencedView(String absPath, ContentHandler contentHandler, boolean binaryAsLink, boolean noRecurse)
+    void exportDereferencedView(String absPath, ContentHandler contentHandler, boolean binaryAsLink, boolean noRecurse)
             throws PathNotFoundException, SAXException, RepositoryException;
 
     /**
@@ -167,12 +156,12 @@ public interface HippoSession extends Session {
      * @see javax.jcr.Session#importXML(java.lang.String, java.io.InputStream, int)
      * @see org.hippoecm.repository.api.ImportReferenceBehavior
      */
-    public ImportResult importEnhancedSystemViewXML(String parentAbsPath, InputStream in,
-                                                    int uuidBehavior, int referenceBehavior,
-                                                    ContentResourceLoader referredResourceLoader)
+    ImportResult importEnhancedSystemViewXML(String parentAbsPath, InputStream in,
+                                             int uuidBehavior, int referenceBehavior,
+                                             ContentResourceLoader referredResourceLoader)
             throws IOException, RepositoryException;
 
-    public File exportEnhancedSystemViewPackage(String parentAbsPath, boolean recurse)
+    File exportEnhancedSystemViewPackage(String parentAbsPath, boolean recurse)
             throws IOException, RepositoryException;
 
     /**
@@ -182,7 +171,7 @@ public interface HippoSession extends Session {
      *
      * @return the {@link XAResource} object.
      */
-    public XAResource getXAResource();
+    XAResource getXAResource();
 
     /**
      * <b>This call is not (yet) part of the API, but under evaluation.</b>
@@ -191,15 +180,30 @@ public interface HippoSession extends Session {
      * @return a classloader instance that will load class definitions stored in the JCR repository
      * @throws RepositoryException  a generic error while accessing the repository
      */
-    public ClassLoader getSessionClassLoader() throws RepositoryException;
+    ClassLoader getSessionClassLoader() throws RepositoryException;
+
+    /**
+     * If this is a session for the internal "system" user
+     * @return true if this is a session for the internal "system" user
+     */
+    boolean isSystemUser();
 
     /**
      * Get the {@link User} object identified by this session's user id.
      * @return  the {@link User} object identified by this session's user id.
-     * @throws ItemNotFoundException  if the user could not be found in the repository.
-     * @throws RepositoryException
+     * @throws ItemNotFoundException for system sessions
      */
-    public User getUser() throws ItemNotFoundException, RepositoryException;
+    SessionUser getUser() throws ItemNotFoundException;
+
+    /**
+     * Check if a user has the specified userRole assigned, or is implied by one of the userRoles assigned.
+     * <p>
+     *  For a {@link #isSystemUser()} this always returns true.
+     * </p>
+     * @param userRoleName the user role name to check
+     * @return true if the user has the specified directly or indirectly assigned
+     */
+    boolean isUserInRole(final String userRoleName);
 
     /**
      * Create a new Session that contains the union of access control rules
@@ -222,4 +226,9 @@ public interface HippoSession extends Session {
      */
     void disableVirtualLayers();
 
+    /**
+     * Convenient return type override for getting the HippoWorkspace without needing to typecast
+     * @return HippoWorkspace
+     */
+    HippoWorkspace getWorkspace();
 }

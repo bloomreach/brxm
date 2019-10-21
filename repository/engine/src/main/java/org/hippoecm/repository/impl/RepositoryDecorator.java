@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,12 +16,14 @@
 package org.hippoecm.repository.impl;
 
 import javax.jcr.Credentials;
+import javax.jcr.LoginException;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.Value;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.diagnosis.HDC;
 import org.hippoecm.hst.diagnosis.Task;
 import org.onehippo.repository.RepositoryService;
@@ -95,6 +97,14 @@ public class RepositoryDecorator implements RepositoryService {
     }
 
     public Session login(Credentials credentials, final String workspaceName) throws RepositoryException {
+        if (credentials == null) {
+            throw new LoginException("Login without credentials is not allowed");
+        } else if (credentials instanceof SimpleCredentials) {
+            String userId = ((SimpleCredentials)credentials).getUserID();
+            if (StringUtils.isBlank(userId) || "anonymous".equals(userId)) {
+                throw new LoginException("Login without username or as anonymous user is not allowed");
+            }
+        }
         Task loginTask = null;
 
         try {

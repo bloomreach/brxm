@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,11 +36,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.util.RepoUtils;
+import org.onehippo.repository.security.JvmCredentials;
 
 public class StatusServlet extends HttpServlet {
 
     public static final String REPOSITORY_ADDRESS_PARAM = "repository-address";
     public static final String DEFAULT_REPOSITORY_ADDRESS = "vm://";
+    static final String PING_USER_ID = PingServlet.DEFAULT_USER_ID;
 
     String repositoryLocation;
 
@@ -176,13 +178,13 @@ public class StatusServlet extends HttpServlet {
         try {
             if(hippoRepository != null) {
                 try {
-                    Session session = hippoRepository.login();
+                    Session session = hippoRepository.login(JvmCredentials.getCredentials(PING_USER_ID));
                     if(session.isLive()) {
                         writer.println("Repository online and accessible");
                     }
                     session.logout();
                 } catch(LoginException ex) {
-                    writer.println("No internal anonymous login permitted.");
+                    writer.println("Cannot login as jvm:// enabled statususer.");
                 }
             } else {
                 writer.println("No hippo repository present - skipped.");

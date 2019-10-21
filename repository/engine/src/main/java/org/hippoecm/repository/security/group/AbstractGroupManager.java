@@ -291,7 +291,7 @@ public abstract class AbstractGroupManager implements GroupManager {
         final Node groupsFolder = session.getRootNode().getNode(groupsPath);
         return new NodeIteratorAdapter(getMembershipsByPath(userId, providerId, groupsFolder, 0));
     }
-    
+
     public final Set<String> getMembershipIds(String userId) {
         return getMembershipIds(userId, null);
     }

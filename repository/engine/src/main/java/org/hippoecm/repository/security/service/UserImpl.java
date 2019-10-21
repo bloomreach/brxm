@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,37 +15,113 @@
  */
 package org.hippoecm.repository.security.service;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 
-import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.hippoecm.repository.security.group.GroupManager;
-import org.hippoecm.repository.security.user.HippoUserManager;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.repository.security.Group;
+import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.repository.security.User;
 
-public final class UserImpl implements User {
+import com.google.common.collect.ImmutableSet;
 
-    private static final String HIPPOSYS_FIRSTNAME = "hipposys:firstname";
-    private static final String HIPPOSYS_LASTNAME = "hipposys:lastname";
-    private static final String HIPPOSYS_EMAIL = "hipposys:email";
-    private static final String HIPPOSYS_LASTLOGIN = "hipposys:lastlogin";
+import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_EMAIL;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_FIRSTNAME;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_LASTNAME;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_ACTIVE;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_LASTLOGIN;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PASSKEY;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PASSWORD;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PASSWORDLASTMODIFIED;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_SYSTEM;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_USERROLES;
+import static org.hippoecm.repository.api.HippoNodeType.NT_EXTERNALUSER;
+
+/**
+ * Implementation of a {@link User}, using lazy loading of its {@link GroupManager#getMembershipIds(String) group memberships}.
+ */
+public class UserImpl extends AbstractSecurityNodeInfo implements User {
+
+    private static final Set<String> PROTECTED_PROPERTY_NAMES = ImmutableSet.of(
+            HIPPO_PASSWORD,
+            HIPPO_PASSKEY,
+            HIPPO_PASSWORDLASTMODIFIED,
+            HIPPO_SYSTEM,
+            HIPPO_ACTIVE,
+            HIPPO_LASTLOGIN
+    );
 
     private final String id;
-    private final SecurityServiceImpl securityService;
-    private final Node node;
+    private final boolean external;
+    private final HashMap<String, Object> properties = new HashMap<>();
+    private final Set<String> groups;
+    private final Set<String> userRoles;
 
-    UserImpl(final Node node, final SecurityServiceImpl securityService) throws RepositoryException {
-        this.node = node;
-        this.id = node.getName();
-        this.securityService = securityService;
+    public UserImpl(final Node node, final GroupManager groupManager) throws RepositoryException {
+        // use a pass-through rolesResolver (no resolving) for normal Users
+        this(node, groupManager, userRoles -> userRoles);
+    }
+
+    protected UserImpl(final Node userNode, final GroupManager groupManager,
+                       final Function<Set<String>, Set<String>> rolesResolver) throws RepositoryException {
+        this.id = NodeNameCodec.decode(userNode.getName());
+        this.external = userNode.isNodeType(NT_EXTERNALUSER);
+
+        // load and store the String value of all node properties which are:
+        // - not multiple value
+        // - of type String|Boolean}Date|Double|Long
+        // - and not skipped (either to be hidden, or to be loaded with the predefined/interface non-String value below)
+        for (Property p : new PropertyIterable(userNode.getProperties())) {
+            if (isInfoProperty(p)) {
+                properties.put(p.getName(), p.getString());
+            }
+        }
+        // load and store the non-string type values for predefined/interface properties
+        properties.put(HIPPO_SYSTEM, JcrUtils.getBooleanProperty(userNode, HIPPO_SYSTEM, false));
+        properties.put(HIPPO_ACTIVE, JcrUtils.getBooleanProperty(userNode, HIPPO_ACTIVE, true));
+        properties.put(HIPPO_LASTLOGIN, JcrUtils.getDateProperty(userNode, HIPPO_LASTLOGIN, null));
+
+        final HashSet<String> collectedUserRoles = new HashSet<>();
+        final HashSet<String> collectedGroups = new HashSet<>();
+        // load and store the user roles and groups (memberships) for the user
+        collectUserRolesAndGroups(userNode, groupManager, collectedUserRoles, collectedGroups);
+
+        this.userRoles = rolesResolver.andThen(Collections::unmodifiableSet).apply(collectedUserRoles);
+        this.groups = Collections.unmodifiableSet(collectedGroups);
+    }
+
+    protected List<String> collectUserRoles(final Node userNode) throws RepositoryException {
+        return JcrUtils.getStringListProperty(userNode, HIPPO_USERROLES, Collections.emptyList());
+    }
+
+    protected void collectUserRolesAndGroups(final Node userNode, final GroupManager groupManager,
+                                                        final HashSet<String> userRoles, final HashSet<String> groups)
+            throws RepositoryException {
+        userRoles.addAll(collectUserRoles(userNode));
+        groups.addAll(groupManager.getMembershipIds(getId()));
+    }
+
+    protected Set<String> getProtectedPropertyNames() {
+        return PROTECTED_PROPERTY_NAMES;
+    }
+
+    @Override
+    public Set<String> getPropertyNames() {
+        return properties.entrySet().stream()
+                .filter(entry -> entry.getValue() instanceof String)
+                .map(Map.Entry::getKey).collect(Collectors.toSet());
     }
 
     @Override
@@ -54,64 +130,54 @@ public final class UserImpl implements User {
     }
 
     @Override
-    public boolean isSystemUser() throws RepositoryException {
-        return JcrUtils.getBooleanProperty(node, HippoNodeType.HIPPO_SYSTEM, false);
+    public boolean isSystemUser() {
+        return (Boolean)properties.get(HIPPO_SYSTEM);
     }
 
     @Override
-    public boolean isActive() throws RepositoryException {
-        return JcrUtils.getBooleanProperty(node, HippoNodeType.HIPPO_ACTIVE, true);
+    public boolean isActive() {
+        return (Boolean)properties.get(HIPPO_ACTIVE);
     }
 
     @Override
-    public String getFirstName() throws RepositoryException {
-        return JcrUtils.getStringProperty(node, HIPPOSYS_FIRSTNAME, null);
+    public boolean isExternal() {
+        return external;
     }
 
     @Override
-    public String getLastName() throws RepositoryException {
-        return JcrUtils.getStringProperty(node, HIPPOSYS_LASTNAME, null);
+    public String getFirstName() {
+        return getProperty(HIPPOSYS_FIRSTNAME);
     }
 
     @Override
-    public String getEmail() throws RepositoryException {
-        return JcrUtils.getStringProperty(node, HIPPOSYS_EMAIL, null);
+    public String getLastName() {
+        return getProperty(HIPPOSYS_LASTNAME);
     }
 
     @Override
-    public Calendar getLastLogin() throws RepositoryException {
-        return JcrUtils.getDateProperty(node, HIPPOSYS_LASTLOGIN, null);
+    public String getEmail() {
+        return getProperty(HIPPOSYS_EMAIL);
     }
 
     @Override
-    public String getProperty(final String propertyName) throws RepositoryException {
-        return JcrUtils.getStringProperty(node, propertyName, null);
+    public Calendar getLastLogin() {
+        return (Calendar)properties.get(HIPPO_LASTLOGIN);
     }
 
     @Override
-    public Iterable<Group> getMemberships() throws RepositoryException {
-        final List<Group> memberships = new ArrayList<Group>();
-        final NodeIterator nodes = getInternalGroupManager().getMemberships(id);
-        while (nodes.hasNext()) {
-            memberships.add(new GroupImpl(nodes.nextNode(), securityService));
-        }
-        return Collections.unmodifiableCollection(memberships);
+    public String getProperty(final String propertyName) {
+        Object value = properties.get(propertyName);
+        return value instanceof String ? (String)value : null;
     }
 
-    private String getProviderId() throws RepositoryException {
-        return JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_SECURITYPROVIDER, null);
+    @Override
+    public Set<String> getMemberships() {
+        return groups;
     }
 
-    private HippoUserManager getInternalUserManager() {
-        return securityService.getInternalUserManager();
-    }
-
-    private HippoUserManager getUserManager() throws RepositoryException {
-        return securityService.getUserManager(getProviderId());
-    }
-
-    private GroupManager getInternalGroupManager() throws RepositoryException {
-        return securityService.getInternalGroupManager();
+    @Override
+    public Set<String> getUserRoles() {
+        return userRoles;
     }
 
     @Override

@@ -359,5 +359,33 @@ public abstract class RepositoryTestCase {
         }
         return ((HippoWorkspace) session.getWorkspace()).getHierarchyResolver().getNode(session.getRootNode(), path);
     }
-    
+
+
+
+    protected void removeDefaultReadForTestAndDescendants() throws RepositoryException {
+        session.move("/hippo:configuration/hippo:domains/defaultread/test-domain", "/test-domain");
+        session.save();
+    }
+
+
+    protected void restoreDefaultReadForTestAndDescendants() throws RepositoryException {
+        session.move("/test-domain","/hippo:configuration/hippo:domains/defaultread/test-domain");
+        session.save();
+    }
+
+    // give read access to everybody for the node '/test' returns the newly created test node domain
+    protected Node addDefaultReadForTestNode() throws RepositoryException {
+        // give read access to only /test and no descendants
+        final Node defaultRead = session.getNode("/hippo:configuration/hippo:domains/defaultread");
+        final Node domainRule = defaultRead.addNode("read-to-test-node-domain", "hipposys:domainrule");
+
+        final Node facetRule = domainRule.addNode("read-to-test-node", "hipposys:facetrule");
+        facetRule.setProperty("hipposys:equals", true);
+        facetRule.setProperty("hipposys:facet", "jcr:uuid");
+        facetRule.setProperty("hipposys:type", "Reference");
+        facetRule.setProperty("hipposys:value", "/test");
+
+        session.save();
+        return domainRule;
+    }
 }

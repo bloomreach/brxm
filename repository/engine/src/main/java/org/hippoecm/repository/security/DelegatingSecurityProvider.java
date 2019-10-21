@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,6 @@ import javax.jcr.SimpleCredentials;
 
 import org.apache.jackrabbit.api.security.user.UserManager;
 import org.hippoecm.repository.security.group.GroupManager;
-import org.hippoecm.repository.security.role.RoleManager;
 
 /**
  * Delegating to the internal <code>SecurityProvider</code>.
@@ -55,11 +54,6 @@ public class DelegatingSecurityProvider implements SecurityProvider {
     @Override
     public GroupManager getGroupManager() throws RepositoryException {
         return delegatee.getGroupManager();
-    }
-
-    @Override
-    public RoleManager getRoleManager() throws RepositoryException {
-        return delegatee.getRoleManager();
     }
 
     @Override

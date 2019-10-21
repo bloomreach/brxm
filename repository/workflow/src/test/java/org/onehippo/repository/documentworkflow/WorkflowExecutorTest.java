@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -117,9 +117,9 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
                 .listVersions()
                 .obtainEditableInstance(true)
                 .removeBranch(false)
-                .requestDelete(false)
                 .requestDepublication(false)
                 .requestPublication(false)
+                .terminateable(false)
                 .actions();
         assertExpectedActions(data, expectedActions);
     }
@@ -186,10 +186,11 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
                 .listVersions()
                 .obtainEditableInstance(true)
                 .removeBranch(false)
-                .requestDelete(false)
                 .requestDepublication(false)
                 .requestPublication(false)
                 .retrieveVersion()
+                .terminateable(false)
+                .copy()
                 .actions();
         assertExpectedActions(data, expectedActions);
     }
@@ -241,11 +242,12 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
                 .listVersions()
                 .obtainEditableInstance(true)
                 .removeBranch(true)
-                .requestDelete(true)
                 .requestDepublication(false)
                 .requestPublication(false)
                 .retrieveVersion()
                 .retrieveVersion()
+                .terminateable(true)
+                .copy()
                 .actions();
 
         assertExpectedActions(data, expectedActions);
@@ -297,10 +299,11 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
                 .listVersions()
                 .obtainEditableInstance(true)
                 .removeBranch(false)
-                .requestDelete(true)
                 .requestDepublication(false)
                 .requestPublication(false)
                 .retrieveVersion()
+                .terminateable(true)
+                .copy()
                 .actions();
         assertExpectedActions(data, expectedActions);
     }
@@ -368,10 +371,11 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
                 .listVersions()
                 .obtainEditableInstance(true)
                 .removeBranch(false)
-                .requestDelete(false)
                 .requestDepublication(false)
                 .requestPublication(false)
                 .retrieveVersion()
+                .terminateable(false)
+                .copy()
                 .actions();
         assertExpectedActions(data, expectedActions);
     }
@@ -435,10 +439,11 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
                 .listVersions()
                 .obtainEditableInstance(true)
                 .removeBranch(false)
-                .requestDelete(false)
                 .requestDepublication(false)
                 .requestPublication(false)
                 .retrieveVersion()
+                .terminateable(false)
+                .copy()
                 .actions();
         assertExpectedActions(data, expectedActions);
     }

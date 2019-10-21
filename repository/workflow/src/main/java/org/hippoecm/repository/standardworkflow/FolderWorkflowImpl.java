@@ -17,6 +17,7 @@ package org.hippoecm.repository.standardworkflow;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -29,6 +30,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.UUID;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
@@ -64,9 +66,13 @@ import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_EXCLUDE_PRIMARY_TYPES;
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_MODIFY;
 import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROTOTYPE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
-import static org.onehippo.repository.util.JcrConstants.JCR_WRITE;
+import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
+import static org.onehippo.repository.security.StandardPermissionNames.HIPPO_AUTHOR;
 
 /**
  * Customizable implementation of the FolderWorkflow.  Uses foldertypes from the
@@ -116,7 +122,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     private static final String TEMPLATES_PATH = "/hippo:configuration/hippo:queries/hippo:templates";
     public static final String ATTIC = "attic";
     public static final String COPY_OF = "Copy of ";
-    public static final String USER_LACKS_PERMISSION_TO_WRITE_IN_DESTINATION_FOLDER = "User lacks permission to write in destination folder";
+    public static final String USER_LACKS_AUTHOR_PERMISSION_IN_DESTINATION_FOLDER = "User lacks author permission in destination folder";
 
     private final Session userSession;
     private final Session rootSession;
@@ -134,8 +140,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     public Map<String,Serializable> hints() throws WorkflowException, MappingException, RepositoryException, RemoteException {
         Map<String,Serializable> info = new TreeMap<>();
         final Session subjectSession = workflowContext.getSubjectSession();
-        final boolean hasSubjectWritePermission = subjectSession.hasPermission(subject.getPath(), JCR_WRITE);
-        if (hasSubjectWritePermission) {
+        final boolean hasSubjectAuthorPermission = subjectSession.hasPermission(subject.getPath(), HIPPO_AUTHOR);
+        if (hasSubjectAuthorPermission) {
             info.put("add", true);
             info.put("archive", true);
             info.put("delete", true);
@@ -155,7 +161,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                     break;
                 }
             }
-            if (hasSubjectWritePermission) {
+            if (hasSubjectAuthorPermission) {
                 info.put("reorder", isEnabled);
             }
         }
@@ -210,9 +216,18 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
                         Query query = qmgr.getQuery(foldertype);
                         query = qmgr.createQuery(foldertype.getProperty("jcr:statement").getString(), query.getLanguage()); // HREPTWO-1266
                         QueryResult rs = query.execute();
+
+                        final Set<String> excludePrimaryTypesSet =
+                                Arrays.stream(getMultipleStringProperty(foldertype, HIPPOSTD_EXCLUDE_PRIMARY_TYPES, new String[0]))
+                                        .collect(Collectors.toSet());
+
                         for (NodeIterator iter = rs.getNodes(); iter.hasNext();) {
                             Node typeNode = iter.nextNode();
-                            if (typeNode.getName().equals("hipposysedit:prototype")) {
+                            if (excludePrimaryTypesSet.contains(typeNode.getPrimaryNodeType().getName())) {
+                                log.info("Skip prototype '{}' since excluded by '{}'", typeNode.getPath(),
+                                        foldertype.getPath() + "/@" + HIPPOSTD_EXCLUDE_PRIMARY_TYPES);
+
+                            } else if (typeNode.getName().equals(HIPPO_PROTOTYPE)) {
                                 String documentType = typeNode.getPrimaryNodeType().getName();
                                 if (!documentType.startsWith("hippo:") && !documentType.startsWith("hipposys:") && !documentType.startsWith("hipposysedit:") && !documentType.startsWith("reporting:")
                                         && !documentType.equals("nt:unstructured") && !documentType.startsWith("hippogallery:")) {
@@ -327,8 +342,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         Node result = null;
         final Node target = rootSession.getNodeByIdentifier(subject.getIdentifier());
         Map<String, String[]> renames = new TreeMap<>();
-        if (templateQuery.hasProperty("hippostd:modify")) {
-            Value[] values = templateQuery.getProperty("hippostd:modify").getValues();
+        if (templateQuery.hasProperty(HIPPOSTD_MODIFY)) {
+            Value[] values = templateQuery.getProperty(HIPPOSTD_MODIFY).getValues();
             String[] params = new String[values.length];
             for (int i = 0; i < values.length; i++) {
                 params[i] = values[i].getString();
@@ -340,7 +355,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
             Node handleNode = null;
             for (Node prototypeNode : new NodeIterable(rs.getNodes())) {
                 prototypeNode = rootSession.getNodeByIdentifier(prototypeNode.getIdentifier());
-                if (prototypeNode.getName().equals("hipposysedit:prototype")) {
+                if (prototypeNode.getName().equals(HIPPO_PROTOTYPE)) {
                     String documentType = prototypeNode.getPrimaryNodeType().getName();
                     if (documentType.equals(template)) {
                         // create handle ourselves, if not already exists
@@ -686,8 +701,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
 
     private Document duplicate(Node source, String targetName) throws WorkflowException, RepositoryException {
         final Session subjectSession = workflowContext.getSubjectSession();
-        if (!subjectSession.hasPermission(subject.getPath(), JcrConstants.JCR_WRITE)) {
-            throw new AccessDeniedException(USER_LACKS_PERMISSION_TO_WRITE_IN_DESTINATION_FOLDER);
+        if (!subjectSession.hasPermission(subject.getPath(), HIPPO_AUTHOR)) {
+            throw new AccessDeniedException(USER_LACKS_AUTHOR_PERMISSION_IN_DESTINATION_FOLDER);
         }
         if (subject.hasNode(targetName)) {
             throw new WorkflowException("Cannot duplicate document when duplicate already exists");
@@ -793,8 +808,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         String path = subject.getPath().substring(1);
         Node folder = (path.equals("") ? rootSession.getRootNode() : rootSession.getRootNode().getNode(path));
         final Session subjectSession = workflowContext.getSubjectSession();
-        if (!subjectSession.hasPermission(folder.getPath(), JCR_WRITE)) {
-            throw new AccessDeniedException("User lacks permission to write in destination folder");
+        if (!subjectSession.hasPermission(folder.getPath(), HIPPO_AUTHOR)) {
+            throw new AccessDeniedException(USER_LACKS_AUTHOR_PERMISSION_IN_DESTINATION_FOLDER);
         }
         if (targetName == null || targetName.equals("")) {
             throw new WorkflowException("No target name given");
@@ -876,8 +891,8 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         String path = subject.getPath();
         Node folder = rootSession.getNode(path);
         final Session subjectSession = workflowContext.getSubjectSession();
-        if (!subjectSession.hasPermission(folder.getPath(), JCR_WRITE)) {
-            throw new AccessDeniedException("User lacks permission to write in destination folder");
+        if (!subjectSession.hasPermission(folder.getPath(), HIPPO_AUTHOR)) {
+            throw new AccessDeniedException(USER_LACKS_AUTHOR_PERMISSION_IN_DESTINATION_FOLDER);
         }
         if (folder.hasNode(targetName)) {
             throw new WorkflowException("Cannot move document when document with same name exists");

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -50,7 +50,6 @@ import javax.jcr.util.TraversingItemVisitor;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionException;
 
-import org.apache.jackrabbit.api.JackrabbitSession;
 import org.hippoecm.repository.HierarchyResolverImpl;
 import org.hippoecm.repository.api.HierarchyResolver;
 import org.hippoecm.repository.api.HippoNode;
@@ -59,13 +58,12 @@ import org.hippoecm.repository.api.HippoVersionManager;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.jackrabbit.HippoLocalItemStateManager;
-import org.hippoecm.repository.jackrabbit.RepositoryImpl;
-import org.hippoecm.repository.security.HippoSecurityManager;
-import org.hippoecm.repository.security.service.SecurityServiceImpl;
-import org.onehippo.repository.security.SecurityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.ContentHandler;
+
+import com.bloomreach.xm.repository.security.RepositorySecurityManager;
+import com.bloomreach.xm.repository.security.impl.RepositorySecurityManagerImpl;
 
 public class WorkspaceDecorator extends SessionBoundDecorator implements HippoWorkspace {
 
@@ -75,6 +73,7 @@ public class WorkspaceDecorator extends SessionBoundDecorator implements HippoWo
 
     protected final Workspace workspace;
     protected WorkflowManagerImpl workflowManager;
+    protected RepositorySecurityManagerImpl repositorySecurityManager;
 
     public static Workspace unwrap(final Workspace workspace) {
         if (workspace instanceof WorkspaceDecorator) {;
@@ -132,11 +131,11 @@ public class WorkspaceDecorator extends SessionBoundDecorator implements HippoWo
     }
 
     @Override
-    public SecurityService getSecurityService() throws RepositoryException {
-        JackrabbitSession session = (JackrabbitSession) SessionDecorator.unwrap(this.session);
-        RepositoryImpl repository = (RepositoryImpl) session.getRepository();
-        HippoSecurityManager securityManager = (HippoSecurityManager) repository.getSecurityManager();
-        return new SecurityServiceImpl(securityManager, session);
+    public RepositorySecurityManager getSecurityManager() {
+        if (repositorySecurityManager == null) {
+            repositorySecurityManager = new RepositorySecurityManagerImpl(getSession());
+        }
+        return repositorySecurityManager;
     }
 
     @Override
@@ -390,6 +389,9 @@ public class WorkspaceDecorator extends SessionBoundDecorator implements HippoWo
     void dispose() {
         if (workflowManager != null) {
             workflowManager.close();
+        }
+        if (repositorySecurityManager != null) {
+            repositorySecurityManager.close();
         }
     }
 }

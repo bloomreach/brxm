@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,8 +24,8 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
-import org.apache.jackrabbit.spi.commons.name.NameConstants;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.NodeNameCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,15 +45,21 @@ public class DomainRule implements Serializable {
 
     private static final Logger log = LoggerFactory.getLogger(DomainRule.class);
 
-    private Set<QFacetRule> facetRules = new HashSet<QFacetRule>();
-    private String name;
-    private String domainName;
-    private transient int hash;
+    private final Set<QFacetRule> facetRules;
+    private final String name;
+    private final String domainName;
 
-    public DomainRule(String name, String domainName, Set<QFacetRule> facetRules) {
-        this.name = name;
-        this.domainName = domainName;
-        this.facetRules = facetRules;
+    /**
+     * Instantiate a domain rule based on another domain rule with extra facet rules
+     * @param other another domain rule
+     * @param extensionFacetRules extra facet rules
+     */
+    public DomainRule(DomainRule other, Set<QFacetRule> extensionFacetRules) {
+        HashSet<QFacetRule> combinedFacetRules = new HashSet<>(other.getFacetRules());
+        combinedFacetRules.addAll(extensionFacetRules);
+        facetRules = Collections.unmodifiableSet(combinedFacetRules);
+        name = other.getName();
+        domainName = other.getDomainName();
     }
 
     /**
@@ -66,24 +72,15 @@ public class DomainRule implements Serializable {
     public DomainRule(Node node) throws RepositoryException {
         // loop over all the facet rules
         NodeIterator iter = node.getNodes();
+        HashSet<QFacetRule> collectedFacetRules = new HashSet<>();
         while (iter.hasNext()) {
             Node child = iter.nextNode();
-            if (child.getPrimaryNodeType().isNodeType(HippoNodeType.NT_FACETRULE)) {
-                try {
-                    facetRules.add(new QFacetRule(child));
-                } catch (FacetRuleReferenceNotFoundException e) {
-                    if (!e.isEquals()) {
-                        // the facet rule has hipposys:equals = false, and thus can be skipped from the
-                        // domain rule.
-                        log.info("Skipping facet rule '{}' : {}", child.getPath(), e.getMessage());
-                    } else {
-                        // bubble up because hipposys:equals = true implying the domain rule can never result in a match
-                        throw e;
-                    }
-                }
+            if (child.isNodeType(HippoNodeType.NT_FACETRULE)) {
+                collectedFacetRules.add(new QFacetRule(child));
             }
         }
-        this.name = node.getName();
+        facetRules = Collections.unmodifiableSet(collectedFacetRules);
+        this.name = NodeNameCodec.decode(node.getName());
         this.domainName = node.getParent().getName();
     }
 
@@ -105,7 +102,7 @@ public class DomainRule implements Serializable {
      * Get the facet rules defining the domain rule
      */
     public Set<QFacetRule> getFacetRules() {
-        return Collections.unmodifiableSet(facetRules);
+        return facetRules;
     }
 
     /**
@@ -115,6 +112,7 @@ public class DomainRule implements Serializable {
         StringBuilder sb = new StringBuilder();
         Set<QFacetRule> fr = getFacetRules();
         sb.append("DomainRule: ");
+        sb.append(name);
         sb.append("\r\n");
         for (QFacetRule rule : fr) {
             sb.append("  ");
@@ -128,29 +126,13 @@ public class DomainRule implements Serializable {
      * {@inheritDoc}
      */
     public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof DomainRule)) {
-            return false;
-        }
-        DomainRule other = (DomainRule) obj;
-        if (facetRules.size() != other.getFacetRules().size() || !facetRules.containsAll(other.getFacetRules())) {
-            return false;
-        }
-        return true;
+        return obj instanceof DomainRule && getName().equals(((DomainRule)obj).getName());
     }
 
     /**
      * {@inheritDoc}
      */
     public int hashCode() {
-        if (hash == 0) {
-            hash = this.toString().hashCode();
-        }
-        return hash;
+        return name.hashCode();
     }
 }

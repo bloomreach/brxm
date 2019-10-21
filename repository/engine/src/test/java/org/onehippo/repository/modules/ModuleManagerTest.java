@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,7 +21,9 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.impl.RepositoryDecorator;
 import org.junit.Test;
+import org.onehippo.repository.InternalHippoRepository;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.repository.util.JcrConstants;
 
@@ -57,15 +59,20 @@ public class ModuleManagerTest extends RepositoryTestCase {
     public void testBasicLifeCycleManagement() throws Exception {
         testModule.setProperty("hipposys:className", BasicTestModule.class.getName());
         session.save();
-        final ModuleManager moduleManager = new ModuleManager(session);
-        final ModuleRegistration registration = moduleManager.registerModule(testModule);
-        assertEquals(BasicTestModule.class, registration.getModuleClass());
-        final BasicTestModule module = (BasicTestModule) registration.getModule();
-        assertNotNull(module);
-        moduleManager.startModule(registration);
-        assertTrue("Module was expected to be initialized", module.initialized);
-        moduleManager.stopModule(registration);
-        assertTrue("Module was expected to be shut down", module.shutdown);
+        Session systemSession = ((InternalHippoRepository)RepositoryDecorator.unwrap(session.getRepository())).createSystemSession();
+        try {
+            final ModuleManager moduleManager = new ModuleManager(systemSession);
+            final ModuleRegistration registration = moduleManager.registerModule(testModule);
+            assertEquals(BasicTestModule.class, registration.getModuleClass());
+            final BasicTestModule module = (BasicTestModule) registration.getModule();
+            assertNotNull(module);
+            moduleManager.startModule(registration);
+            assertTrue("Module was expected to be initialized", module.initialized);
+            moduleManager.stopModule(registration);
+            assertTrue("Module was expected to be shut down", module.shutdown);
+        } finally {
+            systemSession.logout();
+        }
     }
 
     @Test

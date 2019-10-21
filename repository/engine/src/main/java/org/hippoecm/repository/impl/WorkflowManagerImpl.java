@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -56,7 +56,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.api.HippoNodeType.CONFIGURATION_PATH;
 import static org.hippoecm.repository.api.HippoNodeType.WORKFLOWS_PATH;
-import static org.hippoecm.repository.api.HippoSession.NO_SYSTEM_IMPERSONATION;
 
 public class WorkflowManagerImpl implements WorkflowManager {
 
@@ -85,11 +84,18 @@ public class WorkflowManagerImpl implements WorkflowManager {
     public WorkflowManagerImpl(Session session) throws RepositoryException {
         this.userSession = session;
         SimpleCredentials workflowuser = new SimpleCredentials("workflowuser", new char[]{});
-        workflowuser.setAttribute(NO_SYSTEM_IMPERSONATION, Boolean.TRUE);
         this.workflowSession = session.impersonate(workflowuser);
-        ((HippoSession)workflowSession).disableVirtualLayers();
-        configurationId = session.getRootNode().getNode(CONFIGURATION_PATH + "/" + WORKFLOWS_PATH).getIdentifier();
-        workflowLogger = new WorkflowLogger(workflowSession);
+        try {
+            ((HippoSession) workflowSession).disableVirtualLayers();
+            configurationId = workflowSession.getRootNode().getNode(CONFIGURATION_PATH + "/" + WORKFLOWS_PATH).getIdentifier();
+            workflowLogger = new WorkflowLogger(workflowSession);
+        } catch (Exception e) {
+            log.error("Exception while trying to get workflow", e);
+            if (workflowSession != null) {
+                workflowSession.logout();
+            }
+            throw e;
+        }
     }
 
     public Session getSession() throws RepositoryException {
@@ -406,7 +412,7 @@ public class WorkflowManagerImpl implements WorkflowManager {
                                      final String interaction, final String interactionId, final Throwable exception) {
             final String className = targetMethod != null ? targetMethod.getDeclaringClass().getName() : null;
             final String methodName = targetMethod != null ? targetMethod.getName() : null;
-            workflowLogger.logWorkflowStep(userSession.getUserID(), className,
+            workflowLogger.logWorkflowStep(userSession, className,
                     methodName, args, returnObject, subjectId, subjectPath, interaction, interactionId,
                     category, workflowName, exception);
         }

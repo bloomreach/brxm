@@ -42,8 +42,6 @@ public class RepositoryLoginTest extends RepositoryTestCase {
 
     private static final Logger log = LoggerFactory.getLogger(RepositoryLoginTest.class);
 
-    private static final String ANONYMOUS_ID = "anonymous";
-
     private static final String USERS_PATH = "/hippo:configuration/hippo:users";
 
     private static final String TESTUSER_PASS = "testpass";
@@ -207,44 +205,8 @@ public class RepositoryLoginTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testLoginNullUsername() throws Exception {
-        try {
-            final Session session = server.login(null, TESTUSER_PASS.toCharArray());
-            assertEquals(ANONYMOUS_ID, session.getUserID());
-            session.logout();
-        } catch (LoginException ex) {
-            fail("Anonymous login failed with username null");
-        }
-    }
-
-    @Test
-    public void testLoginNullUsernameNullPassword() throws Exception {
-        try {
-            final Session session = server.login(null);
-            assertEquals(ANONYMOUS_ID, session.getUserID());
-            session.logout();
-        } catch (LoginException ex) {
-            fail("Anonymous login failed with username null");
-        }
-    }
-
-    @Test
-    public void testLoginAnonymous() throws Exception {
-        try {
-            final Session session = server.login();
-            assertEquals(ANONYMOUS_ID, session.getUserID());
-            session.logout();
-        } catch (LoginException e) {
-            fail("Anonymous login failed");
-        }
-    }
-
-    @Test
     public void testImpersonateAsWorkflowUser() throws RepositoryException {
-        Session anonymousSession = server.login();
-        assertEquals("anonymous", anonymousSession.getUserID());
         Session workflowSession = session.impersonate(new SimpleCredentials("workflowuser", "anything".toCharArray()));
-        anonymousSession.logout();
         assertEquals("workflowuser", workflowSession.getUserID());
         workflowSession.logout();
     }

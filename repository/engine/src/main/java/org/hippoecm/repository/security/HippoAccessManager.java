@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,8 +15,10 @@
  */
 package org.hippoecm.repository.security;
 
+import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -24,6 +26,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
@@ -32,6 +35,7 @@ import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeIterator;
@@ -43,7 +47,7 @@ import javax.jcr.security.AccessControlPolicyIterator;
 import javax.jcr.security.Privilege;
 import javax.security.auth.Subject;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.commons.iterator.AccessControlPolicyIteratorAdapter;
 import org.apache.jackrabbit.core.HierarchyManager;
 import org.apache.jackrabbit.core.id.ItemId;
@@ -51,9 +55,7 @@ import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.id.PropertyId;
 import org.apache.jackrabbit.core.security.AMContext;
 import org.apache.jackrabbit.core.security.AccessManager;
-import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
-import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.apache.jackrabbit.core.security.authorization.AccessControlProvider;
 import org.apache.jackrabbit.core.security.authorization.Permission;
 import org.apache.jackrabbit.core.security.authorization.WorkspaceAccessManager;
@@ -74,28 +76,35 @@ import org.apache.jackrabbit.spi.commons.name.PathFactoryImpl;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.hippoecm.repository.jackrabbit.HippoSessionItemStateManager;
+import org.hippoecm.repository.jackrabbit.HippoSharedItemStateManager;
+import org.hippoecm.repository.jackrabbit.QFacetRuleStateManager;
 import org.hippoecm.repository.security.domain.DomainRule;
+import org.hippoecm.repository.security.domain.FacetAuthDomain;
 import org.hippoecm.repository.security.domain.QFacetRule;
-import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
-import org.hippoecm.repository.security.principals.GroupPrincipal;
+import org.hippoecm.repository.security.principals.UserPrincipal;
+import org.onehippo.repository.security.DomainInfoPrivilege;
+import org.onehippo.repository.security.SessionDelegateUser;
+import org.onehippo.repository.security.StandardPermissionNames;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.security.domain.QFacetRule.FacetRuleType.JCR_PATH;
+import static org.hippoecm.repository.security.domain.QFacetRule.FacetRuleType.JCR_PRIMARYTYPE;
+import static org.hippoecm.repository.security.domain.QFacetRule.FacetRuleType.JCR_UUID;
+import static org.hippoecm.repository.security.domain.QFacetRule.FacetRuleType.NODENAME;
+import static org.hippoecm.repository.security.domain.QFacetRule.FacetRuleType.NODETYPE;
+
 /**
- * HippoAccessManager based on facet authorization. A subject (user)
- * has a set of {@link FacetAuthPrincipal}s which hold the domain configuration
- * as defined by a set of {@link DomainRule}s, the roles the subject has
+ * HippoAccessManager based on facet authorization. A regular user subject has a {@link UserPrincipal} which hold
+ * a set of {@link FacetAuthDomain} configurations as defined by a set of {@link DomainRule}s, the roles the subject has
  * for the domain and the JCR permissions the subject has for the domain.
- *
- * For checking if a subject has specific permissions on a item (property), the permissions
- * of the subject on the parent node are checked.
- *
- * The HippoAccessManager also checks if the node is part of a hippo:document in
- * which case the hippo:document is also checked for permissions when the subject
- * does not have the correct permissions on the node itself. If the subject does
- * have the correct permissions on the hippo:document the permissions on the node
- * are granted.
- *
+ * <p>
+ * For checking if a subject has specific permissions on a item (property), the permissions of the subject on the parent
+ * node are checked.
+ * <p>
+ * The HippoAccessManager also checks if the node is part of a hippo:document in which case the hippo:document is also
+ * checked for permissions when the subject does not have the correct permissions on the node itself. If the subject
+ * does have the correct permissions on the hippo:document the permissions on the node are granted.
  */
 public class HippoAccessManager implements AccessManager, AccessControlManager, ItemStateListener {
 
@@ -108,6 +117,11 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * Subject whose access rights this AccessManager should reflect
      */
     private Subject subject;
+
+    /**
+     * Session of subject whose access rights this AccessManager should reflect
+     */
+    private Session session;
 
     /**
      * hierarchy manager used for ACL-based access control model
@@ -123,6 +137,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * The session item state manager used for fetching transient and attic item states
      */
     private HippoSessionItemStateManager itemMgr;
+
+    private HippoSharedItemStateManager sharedItemMgr;
 
     /**
      * NodeTypeManager for resolving superclass node types
@@ -150,11 +166,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     private Name hippoFacetSearch;
 
     /**
-     * Name of hippo:facetselect, needed for document model checking
-     */
-    private Name hippoFacetSelect;
-
-    /**
      * Root NodeId of current session
      */
     private NodeId rootNodeId;
@@ -163,6 +174,13 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * The HippoAccessCache instance
      */
     private HippoAccessCache readAccessCache;
+
+    private Set<NodeId> implicitReads = ConcurrentHashMap.newKeySet();
+
+    private long implicitReadAccessUpdateCounter = 0;
+
+    private long referenceFacetRulesUpdateCounter = 0;
+
     private WeakHashMap<HippoNodeId, Boolean> readVirtualAccessCache;
 
     private static final int DEFAULT_PERM_CACHE_SIZE = 20000;
@@ -175,34 +193,40 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     /**
      * State of the accessManager
      */
-    private boolean initialized = false;
+    private volatile boolean initialized = false;
 
     /**
-     * Flag whether current user is a regular user
+     * Flag whether current user is a regular user, effectively: !isSystem
      */
     private boolean isUser = false;
 
     /**
-     * Flag whether the current user is a system user
+     * Flag whether the current user is a system user, effectively !isUser
      */
     private boolean isSystem = false;
 
     /**
+     * The UserPrincipal when isUser==true.
+     */
+    private UserPrincipal userPrincipal;
+
+    /**
+     * The user id, a ',' concatenated list of userIds when user is a SessionDelegateUser
+     */
+    private String userId;
+    /**
      * The userIds of the logged in user
      */
-    private List<String> userIds = new ArrayList<String>();
+    private List<String> userIds = new ArrayList<>();
 
-    private final List<String> groupIds = new ArrayList<String>();
-    private final List<String> currentDomainRoleIds = new ArrayList<String>();
+    private Set<String> groupIds = Collections.emptySet();
 
-    private Map<String, Collection<QFacetRule>> extendedFacetRules;
+    private final PermissionManager permissionManager = PermissionManager.getInstance();
 
     /**
      * The logger
      */
     private static final Logger log = LoggerFactory.getLogger(HippoAccessManager.class);
-
-    private static ConcurrentHashMap<String, Privilege> currentPrivileges = new ConcurrentHashMap<String, Privilege>();
 
     //---------------------------------------- API ---------------------------------------------//
     /**
@@ -217,44 +241,52 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * @see AccessManager#init(AMContext)
      */
     public void init(AMContext context) throws AccessDeniedException, Exception {
+
         if (initialized) {
             throw new IllegalStateException("already initialized");
         }
+
         subject = context.getSubject();
+        session = context.getSession();
         npRes = context.getNamePathResolver();
 
         if (context instanceof HippoAMContext) {
             ntMgr = ((HippoAMContext) context).getNodeTypeManager();
             itemMgr = (HippoSessionItemStateManager) ((HippoAMContext) context).getSessionItemStateManager();
+            sharedItemMgr = itemMgr.getSharedItemStateManager();
+            referenceFacetRulesUpdateCounter = sharedItemMgr.getQFacetRuleStateManager().getUpdateCounter();
         }
 
         hierMgr = itemMgr.getHierarchyMgr();
         zombieHierMgr = itemMgr.getAtticAwareHierarchyMgr();
 
-        // Shortcuts for checks
-        isSystem = !subject.getPrincipals(SystemPrincipal.class).isEmpty();
-        isUser = !subject.getPrincipals(UserPrincipal.class).isEmpty();
-
-        // prefetch userId
-        userIds = new ArrayList<>();
-        if (isSystem) {
-            for (SystemPrincipal principal : subject.getPrincipals(SystemPrincipal.class)) {
-                userIds.add(principal.getName());
+        // Prefetch userIds and isSystem/isUser
+        // fetch SystemPrincipal, if any. There can only be one, see SystemPrincipal.equals()
+        Principal principal = SubjectHelper.getFirstPrincipal(subject, SystemPrincipal.class);
+        if (principal != null) {
+            isSystem = true;
+        } else {
+            // fetch UserPrincipal, if any. There can only be one, see UserPrincipal.equals()
+            principal = SubjectHelper.getFirstPrincipal(subject, UserPrincipal.class);
+            if (principal != null) {
+                isUser = true;
+                userPrincipal = (UserPrincipal)principal;
             }
-        } else if (isUser) {
-            for (UserPrincipal principal : subject.getPrincipals(UserPrincipal.class)) {
-                userIds.add(principal.getName());
+            else {
+                throw new AccessDeniedException("Anonymous user is not supported");
             }
-        } else if (!subject.getPrincipals(AnonymousPrincipal.class).isEmpty()) {
-            userIds.add(subject.getPrincipals(AnonymousPrincipal.class).iterator().next().getName());
-        }
-        if (userIds.size() == 0) {
-            userIds.add("");
         }
 
-        // prefetch groupId's
-        for (GroupPrincipal gp : subject.getPrincipals(GroupPrincipal.class)) {
-            groupIds.add(gp.getName());
+        if (isUser && userPrincipal.getUser() instanceof SessionDelegateUser) {
+            userId = userPrincipal.getUser().getId();
+            userIds.addAll(((SessionDelegateUser)userPrincipal.getUser()).getIds());
+        } else {
+            userId = principal.getName();
+            userIds.add(userId);
+        }
+
+        if (isUser) {
+            groupIds = userPrincipal.getUser().getMemberships();
         }
 
         // cache root NodeId
@@ -263,7 +295,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         hippoHandle = npRes.getQName(HippoNodeType.NT_HANDLE);
         hippoFacetResult = npRes.getQName(HippoNodeType.NT_FACETRESULT);
         hippoFacetSearch = npRes.getQName(HippoNodeType.NT_FACETSEARCH);
-        hippoFacetSelect = npRes.getQName(HippoNodeType.NT_FACETSELECT);
 
         // initialize read cache
         int cacheSize = getPermCacheSize();
@@ -271,53 +302,43 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             cacheSize = DEFAULT_PERM_CACHE_SIZE;
         }
 
-        final Set<AuthorizationFilterPrincipal> filterPrincipals = subject.getPrincipals(AuthorizationFilterPrincipal.class);
-        if (!filterPrincipals.isEmpty() || userIds.size() != 1) {
-            initializeExtendedFacetRules(filterPrincipals);
-        }
         readAccessCache = new HippoAccessCache(cacheSize);
         readVirtualAccessCache = new WeakHashMap<>();
+
+        initializeImplicitReadAccess();
 
         // we're done
         initialized = true;
 
-        log.info("Initialized HippoAccessManager for user {} with cache size {}", getUserIdAsString(), cacheSize);
-    }
-
-    private void initializeExtendedFacetRules(final Set<AuthorizationFilterPrincipal> filterPrincipals) throws RepositoryException {
-        extendedFacetRules = new HashMap<String, Collection<QFacetRule>>();
-        final Set<FacetAuthPrincipal> facetAuthPrincipals = subject.getPrincipals(FacetAuthPrincipal.class);
-        for (AuthorizationFilterPrincipal afp : filterPrincipals) {
-            final Map<String, Collection<QFacetRule>> facetRules = afp.getExpandedFacetRules(facetAuthPrincipals);
-            for (Map.Entry<String, Collection<QFacetRule>> entry : facetRules.entrySet()) {
-                final String domainPath = entry.getKey();
-                if (!extendedFacetRules.containsKey(domainPath)) {
-                    extendedFacetRules.put(domainPath, new ArrayList<QFacetRule>());
-                }
-                extendedFacetRules.get(domainPath).addAll(entry.getValue());
-            }
-        }
+        log.info("Initialized HippoAccessManager for user {} with cache size {}", userId, cacheSize);
     }
 
     /**
      * @see AccessManager#close()
      */
-    public synchronized void close() throws Exception {
+    public synchronized void close() {
         checkInitialized();
         initialized = false;
 
+        subject = null;
+        session = null;
+        userPrincipal = null;
+
         // clear out all caches
+        implicitReads.clear();
         readAccessCache.clear();
         readVirtualAccessCache.clear();
         //requestItemStateCache.clear();
-        groupIds.clear();
-        currentDomainRoleIds.clear();
 
-        log.info("Closed HippoAccessManager for user " + getUserIdAsString());
+        log.info("Closed HippoAccessManager for user " + userId);
     }
 
-    private String getUserIdAsString() {
-        return StringUtils.join(userIds, ',');
+    public boolean isSystemUser() {
+        return isSystem;
+    }
+
+    public UserPrincipal getUserPrincipal() {
+        return userPrincipal;
     }
 
     /**
@@ -354,6 +375,15 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     public boolean isGranted(final ItemId id, final int permissions) throws RepositoryException {
         checkInitialized();
 
+        // Note: In Jackrabbit 2.18.3 it only invokes this from ItemManager.canRead() (2 use-cases)
+        // using permissions with value: AccessManager.READ (== Permission.READ)
+        //
+        // Internally this also is only called with the same value 2x from HippoLocalItemStateManager
+        //
+        // Effectively, this will only be called with Permission.READ, unless someone uses this
+        // method, or indirectly through #checkPermission(ItemId, int), for other purposes,
+        // both of which are deprecated (AccessManager) methods.
+
         if (permissions != Permission.READ) {
             log.warn("isGranted(ItemId, int) is DEPRECATED!", new RepositoryException(
                     "Use of deprecated method isGranted(ItemId, int)"));
@@ -365,6 +395,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
         // handle properties
         if (!id.denotesNode()) {
+            // unlikely to encounter permissions != Permission.READ, see comments above
             if (permissions == Permission.REMOVE_PROPERTY) {
                 // Don't check remove on properties. A write check on the node itself is done.
                 return true;
@@ -380,7 +411,9 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             return canRead((NodeId) id);
         }
 
-        // not a read, remove node from cache
+        // unlikely to ever reach this, see comments above
+
+        // not a read, remove node from read cache since the action might change the read access for the node
         removeAccessFromCache((NodeId) id);
 
         return isGranted(hierMgr.getPath(id), permissions);
@@ -401,45 +434,66 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         }
         if (log.isInfoEnabled()) {
             log.info("Checking [{}] for user {} absPath: {}", permsString(permissions),
-                    getUserIdAsString(), npRes.getJCRPath(absPath));
+                    userId, npRes.getJCRPath(absPath));
         }
 
-        // fasttrack read permissions check
-        if (permissions == Permission.READ) {
-            return canRead(absPath);
-        }
-
-        // part of combined permissions check
-        if ((permissions & Permission.READ) != 0) {
+        // Only check/handle read and standard modify permissions, all of which require at least read access on the path
+        if ((permissions &
+                (Permission.READ|
+                        Permission.ADD_NODE|Permission.REMOVE_NODE|Permission.SET_PROPERTY|Permission.REMOVE_PROPERTY))
+                != 0) {
             if (!canRead(absPath)) {
-                // all permissions must be matched
                 return false;
             }
-        }
+            if (permissions == Permission.READ) {
+                return true;
+            }
 
-        // translate permissions to privileges according to 6.11.1.4 of JSR-283
-        Set<Privilege> privileges = new HashSet<Privilege>();
-        if ((permissions & Permission.ADD_NODE) != 0) {
-            privileges.add(privilegeFromName("jcr:addChildNodes"));
+            // Standard *modify* permission checks will be translated to a JCR privilege check on the *parent* node,
+            // see also JSR-283 / JCR-2.0 spec 16.6.2
+
+            if (absPath.denotesRoot()) {
+                // root doesn't have a parent node, hence no modify permissions on its 'parent'
+                return false;
+            }
+
+            final Path parentPath = absPath.getAncestor(1);
+            final NodeId parentPathNodeId = getNodeId(parentPath);
+            if (parentPathNodeId == null) {
+                if ((permissions & (Permission.REMOVE_NODE|Permission.REMOVE_PROPERTY)) != 0) {
+                    // special use-case protecting against a removal which is 'lost' in the attic and therefore
+                    // (for now) impossible to check, because the parent node (or possibly some higher-up parent) has
+                    // been re-created after an initial delete before saving.
+                    // Jackrabbit however doesn't handle this, in its ItemSaveOperation processing of deleted items.
+                    // If or when we decide we can/want to fix this (see REPO-1971), this should not be allowed anymore
+                    // and then we can just always throw a PathNotFoundException.
+                    return true;
+                } else {
+                    throw new PathNotFoundException("Path not found " + npRes.getJCRPath(parentPath));
+                }
+            }
+            Set<String> privilegeNames = new HashSet<>();
+            if ((permissions & Permission.ADD_NODE) != 0) {
+                privilegeNames.add(StandardPermissionNames.JCR_ADD_CHILD_NODES);
+            }
+            if ((permissions & Permission.REMOVE_NODE) != 0) {
+                privilegeNames.add(StandardPermissionNames.JCR_REMOVE_CHILD_NODES);
+            }
+            if ((permissions & Permission.SET_PROPERTY) != 0) {
+                privilegeNames.add(StandardPermissionNames.JCR_MODIFY_PROPERTIES);
+            }
+            if ((permissions & Permission.REMOVE_PROPERTY) != 0) {
+                privilegeNames.add(StandardPermissionNames.JCR_MODIFY_PROPERTIES);
+            }
+            return hasPrivileges(parentPath, null, parentPathNodeId, privilegeNames);
         }
-        if ((permissions & Permission.REMOVE_NODE) != 0) {
-            privileges.add(privilegeFromName("jcr:removeChildNodes"));
-        }
-        if ((permissions & Permission.SET_PROPERTY) != 0) {
-            privileges.add(privilegeFromName("jcr:setProperties"));
-        }
-        if ((permissions & Permission.REMOVE_PROPERTY) != 0) {
-            privileges.add(privilegeFromName("jcr:setProperties"));
-        }
-        if (privileges.isEmpty()) {
-            return true;
-        }
-        return hasPrivileges(absPath.getAncestor(1), privileges.toArray(new Privilege[privileges.size()]));
+        // ignore / allow any other non-standard read/modify permission checks
+        return true;
     }
 
     /**
      * Just forwards the call to <code>isGranted(Path,int)</code>
-     * @see HippoAccessManager#isGranted(Path,int)
+     * @see HippoAccessManager#isGranted(Path, int)
      * @see AccessManager#isGranted(Path, Name, int)
      */
 
@@ -474,13 +528,86 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      */
 
     public boolean canAccess(String workspaceName) throws NoSuchWorkspaceException, RepositoryException {
+        updateReferenceFacetRules();
         // no workspace restrictions yet
         return true;
+    }
+
+    /**
+     * Implementation of {@link Session#hasPermission(String, String)} and with support for checking standard
+     * jcr Privileges (by name), like {@link AccessControlManager#hasPrivileges(String, Privilege[])}, as well as any
+     * custom 'privilege'.
+     * @param path an absolute path.
+     * @param actions a comma separated list of action strings.
+     * @return <code>true</code> if this <code>Session</code> has permission to perform the specified actions at the
+     * specified <code>absPath</code>.
+     * @throws RepositoryException if an error occurs.
+     */
+    public boolean hasPermission(final String path, final String actions) throws RepositoryException {
+        checkInitialized();
+
+        Path absPath = npRes.getQPath(path).getNormalizedPath();
+        // test if path is absolute
+        if (!absPath.isAbsolute()) {
+            throw new RepositoryException("Absolute path expected. Was:" + path);
+        }
+
+        if (isSystem) {
+            return true;
+        }
+
+        // permission check/mapping logic adapted from jackrabbit-core SessionImpl.hasPermssion(String, String)
+        Set<String> permissionNames = permissionManager.getOrCreatePermissionNames(actions);
+        int permissions = 0;
+        if (permissionNames.remove(Session.ACTION_READ)) {
+            permissions |= Permission.READ;
+        }
+        if (permissionNames.remove(Session.ACTION_ADD_NODE)) {
+            permissions |= Permission.ADD_NODE;
+        }
+        if (permissionNames.remove(Session.ACTION_SET_PROPERTY)) {
+            permissions |= Permission.SET_PROPERTY;
+        }
+        if (permissionNames.remove(Session.ACTION_REMOVE)) {
+            if (session.nodeExists(path)) {
+                permissions |= (session.propertyExists(path)) ?
+                        (Permission.REMOVE_NODE | Permission.REMOVE_PROPERTY) :
+                        Permission.REMOVE_NODE;
+            } else if (session.propertyExists(path)) {
+                permissions |= Permission.REMOVE_PROPERTY;
+            } else {
+                // item doesn't exist -> check both permissions
+                permissions = Permission.REMOVE_NODE | Permission.REMOVE_PROPERTY;
+            }
+        }
+        if (permissions > 0) {
+            try {
+                if (!isGranted(absPath, permissions)) {
+                    return false;
+                }
+            } catch (AccessDeniedException e) {
+                return false;
+            }
+        }
+        if (!permissionNames.isEmpty()) {
+            return hasPrivileges(absPath, path, null, permissionNames);
+        }
+
+        return true;
+    }
+
+    public Set<NodeId> getImplicitReads() {
+        return implicitReads;
+    }
+
+    public long getImplicitReadAccessUpdateCounter() {
+        return implicitReadAccessUpdateCounter;
     }
 
     //---------------------------------------- Methods ---------------------------------------------//
     /**
      * Check whether a user can read the node with the given id
+     *
      * @param id the id of the node to check
      * @return true if the user is allowed to read the node
      * @throws RepositoryException
@@ -489,6 +616,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         if (isSystem) {
             return true;
         }
+
+        updateReferenceFacetRules();
 
         // check cache
         Boolean allowRead = getAccessFromCache(id);
@@ -535,11 +664,10 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                 }
             }
 
-            Set<FacetAuthPrincipal> faps = subject.getPrincipals(FacetAuthPrincipal.class);
-            for (FacetAuthPrincipal fap : faps) {
-                Set<String> privs = fap.getPrivileges();
-                if (privs.contains("jcr:read")) {
-                    if (isNodeInDomain(nodeState, fap, true)) {
+            for (FacetAuthDomain fad : userPrincipal.getFacetAuthDomains()) {
+                Set<String> privs = fad.getResolvedPrivileges();
+                if (privs.contains(StandardPermissionNames.JCR_READ)) {
+                    if (isNodeInDomain(nodeState, fad, true)) {
                         addAccessToCache(id, true);
                         return true;
                     }
@@ -551,14 +679,16 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                 log.info("DENIED read : {}", npRes.getJCRPath(hierMgr.getPath(id)));
             }
             return false;
-        }
-        finally {
+        } finally {
             inprocessNodeReadAccess.remove(id);
         }
     }
 
     private Boolean getAccessFromCache(NodeId id) {
         if (inprocessNodeReadAccess.contains(id)) {
+            return Boolean.TRUE;
+        }
+        if (implicitReads.contains(id)) {
             return Boolean.TRUE;
         }
         if (id instanceof HippoNodeId) {
@@ -617,47 +747,45 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * domain rules. For each domain all the facet rules are checked.
      *
      * @param nodeState the state of the node to check
-     * @param fap the facet auth principal to check
+     * @param fad       the facet auth domain to check
      * @param checkRead
      * @return true if the node is in the domain of the facet auth
      * @throws RepositoryException
-     * @see FacetAuthPrincipal
+     * @see FacetAuthDomain
      */
     private boolean isNodeInDomain(final NodeState nodeState,
-                                   final FacetAuthPrincipal fap,
+                                   final FacetAuthDomain fad,
                                    final boolean checkRead) throws RepositoryException {
-        log.trace("Checking if node : {} is in domain of {}", nodeState.getId(), fap);
+        log.trace("Checking if node : {} is in domain of {}", nodeState.getId(), fad);
         boolean isInDomain = false;
 
-        currentDomainRoleIds.clear();
-        currentDomainRoleIds.addAll(fap.getRoles());
-
         // check is node matches ONE of the domain rules
-        for (DomainRule domainRule : fap.getRules()) {
+        for (DomainRule domainRule : fad.getRules()) {
 
-            boolean allRulesMatched = true;
-
-            // no facet rules means no match
-            final Set<QFacetRule> facetRules = getFacetRules(domainRule);
-            if (facetRules.isEmpty()) {
-                allRulesMatched = false;
-                log.debug("No facet rules found for : {} in domain rule: {}", nodeState.getId(), domainRule);
-            }
             // check if node matches ALL of the facet rules
-            for (QFacetRule facetRule : facetRules) {
-                if (!matchFacetRule(nodeState, facetRule)) {
-                    allRulesMatched = false;
-                    log.trace("Rule doesn't match for : {} facet rule: {}", nodeState.getId(), facetRule);
-                    break;
-                }
-            }
-            if (allRulesMatched) {
+            if (matchFacetRules(nodeState, domainRule, fad)) {
                 // a match is found, don't check other domain rules;
                 isInDomain = true;
-                log.debug("Node :  {} found in domain {} match {}", nodeState.getId(),fap.getName(), domainRule);
+                log.debug("Node :  {} found in domain {} match {}", nodeState.getId(), fad.getDomainName(), domainRule);
                 break;
             } else {
-                // check if node is part of a hippo:document
+                // All the *READABLE* descendant nodes of a document (hippo:document below hippo:handle) for a
+                // user inherit the permissions from the hippo:document *except* the READ ACCESS. This way it is
+                // still possible to exclude read access to descendant nodes from documents for a user.
+                // Since the read access is never implicitly inherited (like write), the read access is also fully
+                // aligned with the authorization query which does not have any implicit read access knowledge either
+                if (checkRead) {
+                    // read access on 'document descendants' should be explicit via domain security and not like write
+                    // access sometimes implicit: check next domain rule
+                    continue;
+                }
+                // possibly give the permission inherited from an ancestor if the ancestor is a document with the
+                // same permissions. However if the nodeState is not *readable*, it will never get the permissions from
+                // the ancestor document.
+                if (!canRead(nodeState.getNodeId())) {
+                    // nodeState is not explicitly readable, continue to the next domainRule
+                    continue;
+                }
                 NodeState docState = null;
                 try {
                     docState = getParentDoc(nodeState);
@@ -665,45 +793,58 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                     log.error("Unable to retrieve parent state of node with id " + nodeState.getId(), e);
                 }
                 if (docState != null) {
-                    if (checkRead) {
-                        Boolean allowRead = getAccessFromCache(docState.getNodeId());
-                        if (allowRead != null) {
-                            return allowRead;
-                        }
-                    }
-                    return isNodeInDomain(docState, fap, checkRead);
+                    return isNodeInDomain(docState, fad, false);
                 }
             }
         }
         return isInDomain;
     }
 
-    private Set<QFacetRule> getFacetRules(final DomainRule domainRule) {
-        if (extendedFacetRules != null) {
-            final String domainRulePath = domainRule.getDomainName() + "/" + domainRule.getName();
-            final Collection<QFacetRule> extendedRules = extendedFacetRules.get(domainRulePath);
-            if (extendedRules != null) {
-                final Set<QFacetRule> facetRules = new HashSet<QFacetRule>(domainRule.getFacetRules());
-                facetRules.addAll(extendedRules);
-                return facetRules;
+    /**
+     * @see #matchFacetRule(NodeState, QFacetRule, FacetAuthDomain) only now for a list of facet rules
+     */
+    private boolean matchFacetRules(final NodeState nodeState, final DomainRule domainRule, final FacetAuthDomain fad)
+            throws RepositoryException {
+        // no facet rules means no match
+        final Set<QFacetRule> facetRules = domainRule.getFacetRules();
+        if (facetRules.isEmpty()) {
+            log.debug("No facet rules found for : {} in domain rule: {}", nodeState.getId(), domainRule);
+            return false;
+        }
+        for (QFacetRule facetRule : facetRules) {
+            if (!matchFacetRule(nodeState, facetRule, fad)) {
+                log.trace("Rule doesn't match for : {} facet rule: {}", nodeState.getId(), facetRule);
+                return false;
             }
         }
-        return domainRule.getFacetRules();
+        return true;
     }
 
     /**
      * Check if a node matches the current QFacetRule
      * @param nodeState the state of the node to check
      * @param facetRule the facet rule to check
+     * @param fad the FacetAuthDomain of the facet rule
      * @return true if the node matches the facet rule
      * @throws RepositoryException
      * @see org.hippoecm.repository.security.domain.QFacetRule
      */
-    private boolean matchFacetRule(NodeState nodeState, QFacetRule facetRule) throws RepositoryException {
+    private boolean matchFacetRule(final NodeState nodeState, final QFacetRule facetRule, final FacetAuthDomain fad) throws RepositoryException {
         log.trace("Checking node : {} for facet rule: {}", nodeState.getId(), facetRule);
 
-        // is this a 'NodeType' facet rule?
-        if (facetRule.getFacet().equalsIgnoreCase("nodetype")) {
+        if (facetRule.isReferenceRule() && !facetRule.referenceExists()) {
+            if (facetRule.isEqual()) {
+                log.trace("The reference for facet rule '{}' does not (yet) exist. Since the facet rule indicates that it must be " +
+                        "equal, the result is that the nodeState does not match this facet rule", facetRule.getFacetUUID());
+                return false;
+            } else {
+                log.trace("The reference for facet rule '{}' does not (yet) exist. Since the facet rule indicates that it must be " +
+                        "not equal, the result is that the nodeState does match this facet rule", facetRule.getFacetUUID());
+                return true;
+            }
+        }
+
+        if (facetRule.getFacetRuleType() == NODETYPE) {
             boolean match = false;
             log.trace("Checking node : {} for nodeType: {}", nodeState.getId(), facetRule);
             if (isInstanceOfType(nodeState, facetRule.getValue())) {
@@ -720,8 +861,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             }
         }
 
-        // is this a 'NodeName' facet rule?
-        if (facetRule.getFacet().equalsIgnoreCase("nodename")) {
+        if (facetRule.getFacetRuleType() == NODENAME) {
             boolean match = false;
             if (facetRule.getType() == PropertyType.NAME) {
                 log.trace("Checking node : {} for nodename: {}", nodeState.getNodeId(), facetRule);
@@ -745,7 +885,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             }
         }
 
-        if (NameConstants.JCR_UUID.equals(facetRule.getFacetName())) {
+        if (facetRule.getFacetRuleType() == JCR_UUID) {
             boolean uuidMatch = false;
             log.trace("Checking node : {} for matching jcr:uuid with : {}", nodeState.getId(), facetRule);
             if (nodeState.getNodeId().toString().equals(facetRule.getValue())) {
@@ -758,12 +898,12 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             }
         }
 
-        if (NameConstants.JCR_PATH.equals(facetRule.getFacetName())) {
+        if (facetRule.getFacetRuleType() == JCR_PATH) {
             boolean uuidMatch = false;
             log.trace("Checking node : {} for matching jcr:path with : {}", nodeState.getId(), facetRule);
             try {
                 NodeState current = nodeState;
-                for (;;) {
+                for (; ; ) {
                     if (current.getNodeId().toString().equals(facetRule.getValue())) {
                         uuidMatch = true;
                         break;
@@ -798,8 +938,27 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             }
         }
 
+        if (facetRule.getFacetRuleType() == JCR_PRIMARYTYPE) {
+            final boolean match;
+            // WILDCARD match, jcr:primaryType == *
+            if (FacetAuthConstants.WILDCARD.equals(facetRule.getValue())) {
+                match = true;
+            } else if (nodeState.getNodeTypeName().equals(facetRule.getValueName())) {
+                match = true;
+            } else {
+                match = false;
+            }
+
+            // invert match on inequality
+            if (facetRule.isEqual()) {
+                return match;
+            } else {
+                return !match;
+            }
+        }
+
         // check if node has the required property value
-        if (matchPropertyWithFacetRule(nodeState, facetRule)) {
+        if (matchPropertyWithFacetRule(nodeState, facetRule, fad)) {
             log.trace("Found match : {} for facetVal: {}", nodeState.getId(), facetRule);
             return true;
         }
@@ -824,14 +983,16 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         }
         String msg = "Node with id " + nodeState.getId() + " with status [" + nodeState.getStatus()
                 + "] not found in hierarchy manager or zombie hierarchy manager.";
-        log.warn(msg);
+        // due to concurrency it happen that we cannot find the node name since another jcr session might have removed the
+        // Node for the nodeState
+        log.info(msg);
         throw new ItemNotFoundException(msg);
     }
 
     /**
      * Helper function to resolve the name of the node of the nodeState in the specified hierarchy manager.
      * @param nodeState
-     * @param hierMgr hierarchy manager to use for resolving the node name
+     * @param hierMgr   hierarchy manager to use for resolving the node name
      * @return the Name or null when the name can not be found.
      */
     private Name getNodeName(NodeState nodeState, HierarchyManager hierMgr) {
@@ -860,7 +1021,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * instance of the node type (sub class)
      *
      * @param nodeState the node to check
-     * @param nodeType the node type name
+     * @param nodeType  the node type name
      * @return boolean
      * @throws NoSuchNodeTypeException
      */
@@ -909,36 +1070,15 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * Check if a node matches the current QFacetRule based on a
      * check on the properties of the node.
      * @param nodeState the state of the node to check
-     * @param rule the facet rule to check
+     * @param rule      the facet rule to check
+     * @param fad       the facet auth domain of the facet rule
      * @return true if the node matches the facet rule
      * @throws RepositoryException
      * @see org.hippoecm.repository.security.domain.QFacetRule
      */
-    private boolean matchPropertyWithFacetRule(NodeState nodeState, QFacetRule rule) throws RepositoryException {
+    private boolean matchPropertyWithFacetRule(final NodeState nodeState, final QFacetRule rule, final FacetAuthDomain fad) throws RepositoryException {
 
         boolean match = false;
-
-        // jcr:primaryType isn't really a property
-        if (rule.getFacetName().equals(NameConstants.JCR_PRIMARYTYPE)) {
-            // WILDCARD match, jcr:primaryType == *
-            if (FacetAuthConstants.WILDCARD.equals(rule.getValue())) {
-                match = true;
-            } else if (nodeState.getNodeTypeName().equals(rule.getValueName())) {
-                match = true;
-            } else {
-                match = false;
-            }
-
-            // invert match on inequality
-            if (rule.isEqual()) {
-                return match;
-            } else {
-                return !match;
-            }
-        }
-        else if (rule.getFacetName().equals(NameConstants.JCR_UUID)) {
-            return nodeState.getNodeId().toString().equals(rule.getValue()) ? rule.isEqual() : !rule.isEqual();
-        }
 
         // the hierarchy manager is attic aware. The property can also be in the removed properties
         if (!nodeState.hasPropertyName(rule.getFacetName())
@@ -982,13 +1122,18 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         InternalValue[] iVals = state.getValues();
 
         for (InternalValue iVal : iVals) {
-            // types must match
-            if (iVal.getType() != rule.getType()) {
-                continue;
-            }
 
-            if (iVal.getType() == PropertyType.STRING) {
-                log.trace("Checking facet rule: {} (string) -> {}", rule, iVal.getString());
+            if (iVal.getType() == PropertyType.NAME) {
+                log.trace("Checking facet rule: {} (name) -> {}", rule, iVal.getName());
+
+                if (iVal.getName().equals(rule.getValueName())) {
+                    match = true;
+                    break;
+                }
+            } else if (iVal.getType() == PropertyType.BINARY) {
+                return false;
+            } else {
+                log.trace("Checking facet rule for String comparison: {} (string) -> {}", rule, iVal.getString());
 
                 // expander matches
                 if (FacetAuthConstants.EXPANDER_USER.equals(rule.getValue())) {
@@ -1004,7 +1149,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                     }
                 }
                 if (FacetAuthConstants.EXPANDER_ROLE.equals(rule.getValue())) {
-                    if (isUser && currentDomainRoleIds.contains(iVal.getString())) {
+                    if (isUser && fad.getRoles().contains(iVal.getString())) {
                         match = true;
                         break;
                     }
@@ -1014,14 +1159,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                     match = true;
                     break;
                 }
-            } else if (iVal.getType() == PropertyType.NAME) {
-                log.trace("Checking facet rule: {} (name) -> {}", rule, iVal.getName());
-
-                if (iVal.getName().equals(rule.getValueName())) {
-                    match = true;
-                    break;
-                }
             }
+
         }
         if (rule.isEqual()) {
             return match;
@@ -1034,7 +1173,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     /**
      * Check if the node has a mixin type with a specific value
      * @param nodeState the node to check
-     * @param rule the mixin type to check for.
+     * @param rule      the mixin type to check for.
      * @return true if the node has the mixin type
      * @throws RepositoryException
      */
@@ -1080,7 +1219,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * @throws RepositoryException
      */
     private NodeId getNodeId(Path absPath) throws RepositoryException {
-        checkInitialized();
 
         if (!absPath.isAbsolute()) {
             throw new RepositoryException("Absolute path expected, got " + absPath);
@@ -1164,6 +1302,20 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         throw e;
     }
 
+    private NodeState getNodeStateQuietly(ItemId id) {
+        try {
+            final ItemState itemState = getItemState(id);
+            if (!itemState.isNode()) {
+                log.warn("ItemId '{}' points to a property which is not allowed", id);
+                return null;
+            }
+            return (NodeState) itemState;
+        } catch (NoSuchItemStateException e) {
+            log.info("Could not get item state for id '{}', must have been removed already", id, e);
+            return null;
+        }
+    }
+
     /**
      * Get the NodeState of the parent from the nodeState in a transient and attic
      * safe manner.
@@ -1207,8 +1359,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         try {
             if (isInstanceOfType(nodeState, HippoNodeType.NT_DOCUMENT)
                     || nodeState.getNodeTypeName().equals(hippoHandle)
-                    || nodeState.getNodeTypeName().equals(hippoFacetSearch)
-                    || nodeState.getNodeTypeName().equals(hippoFacetSelect)) {
+                    || nodeState.getNodeTypeName().equals(hippoFacetSearch)) {
                 if (log.isTraceEnabled()) {
                     log.trace("Node is already document root: " + nodeState.getNodeTypeName());
                 }
@@ -1236,12 +1387,6 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             if (nodeState.getNodeTypeName().equals(hippoFacetSearch)) {
                 if (log.isDebugEnabled()) {
                     log.debug("MATCH hippoFacetSearch: " + nodeState.getNodeTypeName());
-                }
-                return null;
-            }
-            if (nodeState.getNodeTypeName().equals(hippoFacetSelect)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("MATCH hippoFacetSelect: " + nodeState.getNodeTypeName());
                 }
                 return null;
             }
@@ -1294,24 +1439,41 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
     @Override
     public void stateModified(final ItemState modified) {
+        if (isSystem) {
+            return;
+        }
         if (modified.isNode()) {
-            readAccessCache.remove(modified.getId());
+            removeAccessFromCache((NodeId) modified.getId());
         } else {
-            readAccessCache.remove(modified.getParentId());
+            removeAccessFromCache(modified.getParentId());
         }
     }
 
     @Override
     public void stateDestroyed(final ItemState destroyed) {
+        // opposed to stateCreated, for stateDestroyed the NodeStates are not filtered out
+        if (isSystem) {
+            return;
+        }
+
         if (destroyed.isNode()) {
-            readAccessCache.remove(destroyed.getId());
+            // first remove from implicitReads since implicitReads protects the item to be removed
+            // from the read access cache
+
+            final NodeId id = (NodeId) destroyed.getId();
+            implicitReads.remove(id);
+            removeAccessFromCache(id);
+
         }
     }
 
     @Override
     public void stateDiscarded(final ItemState discarded) {
+        if (isSystem) {
+            return;
+        }
         if (discarded.isNode()) {
-            readAccessCache.remove(discarded.getId());
+            removeAccessFromCache((NodeId) discarded.getId());
         }
     }
 
@@ -1391,146 +1553,284 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     public Privilege[] getSupportedPrivileges(String absPath) throws PathNotFoundException, RepositoryException {
         checkInitialized();
         checkValidNodePath(absPath);
-        // return all known privileges everywhere.
-        return currentPrivileges.values().toArray(new Privilege[currentPrivileges.size()]);
+        return permissionManager.getCurrentPrivileges();
     }
 
     /**
      * @see AccessControlManager#privilegeFromName(String)
      */
-    public Privilege privilegeFromName(String privilegeName) throws AccessControlException, RepositoryException {
+    public Privilege privilegeFromName(String privilegeName) {
         checkInitialized();
-
-        if (currentPrivileges.containsKey(privilegeName)) {
-            return currentPrivileges.get(privilegeName);
-        }
-
-        currentPrivileges.put(privilegeName, new Privilege() {
-
-            private String name;
-
-            public Privilege[] getAggregatePrivileges() {
-                return new Privilege[0];
-            }
-
-            public Privilege[] getDeclaredAggregatePrivileges() {
-                return new Privilege[0];
-            }
-
-            public Privilege create(String name) {
-                this.name = name;
-                return this;
-            }
-
-            public String getName() {
-                return name;
-            }
-
-            public boolean isAbstract() {
-                return false;
-            }
-
-            public boolean isAggregate() {
-                return false;
-            }
-        }.create(privilegeName));
-
-        return currentPrivileges.get(privilegeName);
+        return permissionManager.getOrCreatePrivilege(privilegeName);
     }
 
     /**
-     * @see AccessControlManager#hasPrivileges(String,Privilege[])
+     * @see AccessControlManager#hasPrivileges(String, Privilege[])
      */
-    public boolean hasPrivileges(String absPath, Privilege[] privileges) throws PathNotFoundException,
+    public boolean hasPrivileges(String path, Privilege[] privileges) throws PathNotFoundException,
             RepositoryException {
-        return hasPrivileges(npRes.getQPath(absPath), privileges);
-    }
-
-    /**
-     * Check the privileges based on a absolute Path rather than a String representation of a Path
-     * @see AccessControlManager#hasPrivileges(String,Privilege[])
-     */
-    private boolean hasPrivileges(Path absPath, Privilege[] privileges) throws PathNotFoundException,
-            RepositoryException {
-        checkInitialized();
-
-        // system session can do everything
-        if (isSystem) {
-            return true;
-        }
-
-        // user is always allowed to do nothing
         if (privileges == null || privileges.length == 0) {
-            log.debug("No privileges to check for path: {}.", npRes.getJCRPath(absPath));
+            // nothing to check, always true
             return true;
         }
+        Set<String> permissionNames = Arrays.stream(privileges).map(Privilege::getName).collect(Collectors.toCollection(HashSet::new));
+        // first resolve permissionNames with jcr:all and jcr:write replaced with their aggregate privileges
+        if (permissionNames.remove(StandardPermissionNames.JCR_WRITE)) {
+            permissionNames.addAll(StandardPermissionNames.JCR_WRITE_PRIVILEGES);
+        }
+        if (permissionNames.remove(StandardPermissionNames.JCR_ALL)) {
+            permissionNames.addAll(StandardPermissionNames.JCR_ALL_PRIVILEGES);
+        }
+        final Path absPath = npRes.getQPath(path).getNormalizedPath();
+
+        if (!absPath.isAbsolute()) {
+            throw new RepositoryException("Absolute path expected");
+        }
+
+        return hasPrivileges(absPath, path, null, permissionNames);
+    }
+
+    private String resolveJCRPathIfNeeded(final Path path, final String jcrPath) throws RepositoryException {
+        return jcrPath == null ? npRes.getJCRPath(path) : jcrPath;
+    }
+
+    /**
+     * Check the privileges based on a absolute Path rather than a String representation of a Path.
+     * <p>
+     * This method assumes the following has already been checked/handled:
+     * <ul>
+     *   <li>checkInitialized()</li>
+     *   <li>absPath verified to be absolute</li>
+     *   <li>user is *not* system (system always has all privileges)</li>
+     *   <li>permissionNames is not empty</li>
+     *   </ul>
+     * </p>
+     * @param absPath the absolute path to test
+     * @param path the path String of the absPath (provided if upfront known/source of the absPath)
+     * @param pathNodeId the NodeId for th absPath (provided if upfront known/retrieved before)
+     * @param permissionNames a set of permission (or privilege) names to check
+     */
+    private boolean hasPrivileges(final Path absPath, final String path, final NodeId pathNodeId,
+                                  final Set<String> permissionNames) throws RepositoryException {
+        String jcrPath = path;
 
         // get the id of the node or of the parent node if absPath points to a property
-        NodeId id = getNodeId(absPath);
+        NodeId id = pathNodeId != null ? pathNodeId : getNodeId(absPath);
         if (id == null) {
-            //throw new PathNotFoundException("Node id not found for path: " + absPath);
-            return true;
+            throw new PathNotFoundException("Path not found " + resolveJCRPathIfNeeded(absPath, jcrPath));
         }
 
         // fast track read check
-        if (privileges.length == 1 && "jcr:read".equals(privileges[0].getName())) {
-            return canRead(id);
+        if (permissionNames.remove(StandardPermissionNames.JCR_READ) ||
+                // jcr_write privileges require at least read access
+                permissionNames.stream().anyMatch(StandardPermissionNames.JCR_WRITE_PRIVILEGES::contains)) {
+            if (!canRead(id)) {
+                return false;
+            } else if (permissionNames.isEmpty() ||
+                    // virtual nodes can be read any operation on them is allowed
+                    id instanceof HippoNodeId) {
+                return true;
+            }
         }
-        // if virtual nodes can be read any operation on them is allowed
-        if (id instanceof HippoNodeId) {
-            return canRead(id);
-        }
+
+        updateReferenceFacetRules();
 
         NodeState nodeState;
         try {
             nodeState = (NodeState) getItemState(id);
         } catch (NoSuchItemStateException e) {
-            throw new PathNotFoundException("Path not found " + npRes.getJCRPath(absPath), e);
+            throw new PathNotFoundException("Path not found " + resolveJCRPathIfNeeded(absPath, jcrPath), e);
         }
 
         if (nodeState.getStatus() == NodeState.STATUS_NEW) {
             return true;
         }
 
-        for (Privilege priv : privileges) {
-            if (log.isDebugEnabled()) {
-                log.debug("Checking [{}] : {}", priv.getName(), npRes.getJCRPath(absPath));
-            }
-            boolean allowed = false;
-            for (FacetAuthPrincipal fap : subject.getPrincipals(FacetAuthPrincipal.class)) {
-                if (log.isDebugEnabled()) {
-                    log.debug("Checking [" + priv + "] : " + absPath + " against FacetAuthPrincipal: " + fap);
-                }
+        if (!userPrincipal.getResolvedPrivileges().containsAll(permissionNames)) {
+            // requesting more permissions than the user has overall, fail fast
+            return false;
+        }
+        final boolean hasModifyPropertiesPrivilege = permissionNames.contains(StandardPermissionNames.JCR_MODIFY_PROPERTIES);
 
-                if (fap.getPrivileges().contains(priv.getName())) {
-                    if (isNodeInDomain(nodeState, fap, false)) {
-                        allowed = true;
-                        if (log.isInfoEnabled()) {
-                            log.info("GRANT: " + priv.getName() + " to user " + getUserIdAsString() + " in domain " + fap + " for "
-                                    + npRes.getJCRPath(absPath));
-                        }
-                        if (priv.getName().equals("jcr:setProperties")) {
-                            removeAccessFromCache(id);
-                        }
-                        break;
-                    }
-                }
+        for (FacetAuthDomain fad : userPrincipal.getFacetAuthDomains()) {
+            if (log.isDebugEnabled()) {
+                log.debug("Checking [{}] : {} against FacetAuthDomain: {}",
+                        String.join(", ", permissionNames), (jcrPath = resolveJCRPathIfNeeded(absPath, jcrPath)), fad);
             }
-            if (!allowed) {
-                if (log.isInfoEnabled()) {
-                    log.info("DENY: " + priv.getName() + " to user " + getUserIdAsString() + " for " + npRes.getJCRPath(absPath));
+            HashSet<String> intersection = permissionNames.stream()
+                    .filter(p -> fad.getResolvedPrivileges().contains(p))
+                    .collect(Collectors.toCollection(HashSet::new));
+
+            if (!intersection.isEmpty() && isNodeInDomain(nodeState, fad, false)) {
+                log.info("GRANT: [{}] to user {} in domain {} for {}",
+                        String.join(" ,", intersection), userId, fad, (jcrPath = resolveJCRPathIfNeeded(absPath, jcrPath)));
+                permissionNames.removeAll(intersection);
+                if (permissionNames.isEmpty()) {
+                    if (hasModifyPropertiesPrivilege) {
+                        // because the jcr:modifyProperties is checked, and a property change can result in
+                        // read-access being changed, we need to remove the property from the read cache
+                        removeAccessFromCache(id);
+                    }
+                    return true;
                 }
-                return false;
             }
         }
-        return true;
+        if (log.isInfoEnabled()) {
+            log.info("DENY: [{}] to user {} for {}",
+                    String.join(" ,", permissionNames), userId, (jcrPath = resolveJCRPathIfNeeded(absPath, jcrPath)));
+        }
+        return false;
     }
 
     /**
+     * This gives read access to the ancestry of jcr:path hierarchical facet rule constraints if needed. The goal is
+     * that if a domain for example is about giving certain privileges to certain users below a certain node, say below
+     * /a/b/c, that the users get implicit read access for /a/b.
+     */
+    private void initializeImplicitReadAccess() {
+        if (isSystemUser()) {
+            return;
+        }
+
+        for (FacetAuthDomain fad : userPrincipal.getFacetAuthDomains()) {
+            final Set<String> privs = fad.getResolvedPrivileges();
+            if (!privs.contains(StandardPermissionNames.JCR_READ)) {
+                continue;
+            }
+            for (DomainRule domainRule : fad.getRules()) {
+                initializeImplicitReadAccess(domainRule, fad);
+            }
+        }
+    }
+
+    private synchronized void reInitializeImplicitReadAccess() {
+        implicitReads.clear();
+        readAccessCache.clear();
+        initializeImplicitReadAccess();
+        implicitReadAccessUpdateCounter++;
+    }
+
+    private synchronized void initializeImplicitReadAccess(final DomainRule domainRule, final FacetAuthDomain fad) {
+        for (QFacetRule qFacetRule : domainRule.getFacetRules()) {
+            if (qFacetRule.isHierarchicalWhiteListRule()) {
+
+                if (qFacetRule.isReferenceRule() && !qFacetRule.referenceExists()) {
+                    continue;
+                }
+
+                final NodeId nodeId = new NodeId(qFacetRule.getValue());
+
+                // apply implicit read access to ancestry of nodeId
+                final NodeState nodeState = getNodeStateQuietly(nodeId);
+                if (nodeState == null) {
+                    continue;
+                }
+
+                try {
+                    if (!matchFacetRules(nodeState, domainRule, fad)) {
+                        log.debug("Do not give read access to ancestry since the referenced path is not included " +
+                                "in the domain rule due some other facet rule, and as a result, the ancestry should " +
+                                "not get implicit read access");
+                        continue;
+                    }
+                } catch (RepositoryException e) {
+                    log.error("Exception while testing itemState for '{}' was in domain.", nodeId, e);
+                    continue;
+                }
+
+                setReadAllowedAncestry(nodeState);
+            }
+        }
+    }
+
+    private void setReadAllowedAncestry(final NodeState currentState) {
+        final NodeId parentId = currentState.getParentId();
+        if (parentId == null) {
+            return;
+        }
+
+        if (implicitReads.contains(parentId)) {
+            // ancestry is already taken care off by another domain/facet rule
+            return;
+        }
+        implicitReads.add(parentId);
+        final NodeState parentState = getNodeStateQuietly(parentId);
+        if (parentState == null) {
+            return;
+        }
+        setReadAllowedAncestry(parentState);
+    }
+
+    public void updateReferenceFacetRules() {
+        if (isSystem) {
+            return;
+        }
+
+        final QFacetRuleStateManager qFacetRuleStateManager = sharedItemMgr.getQFacetRuleStateManager();
+
+        long updateCounterSnapShot = qFacetRuleStateManager.getUpdateCounter();
+        if (referenceFacetRulesUpdateCounter == updateCounterSnapShot) {
+            return;
+        }
+
+        // final array to be able to use the reInit var in lambda's
+        final boolean[] reInit = {false};
+
+        final Set<FacetAuthDomain> fads = userPrincipal.getFacetAuthDomains();
+
+        do {
+            referenceFacetRulesUpdateCounter = updateCounterSnapShot;
+
+            fads.forEach(fad -> fad.getRules().forEach(domainRule -> {
+                domainRule.getFacetRules().forEach(qFacetRule -> {
+                    if (qFacetRule.isReferenceRule()) {
+                        final String prevValue = qFacetRule.getValue();
+                        final String newUUID = qFacetRuleStateManager.getReferenceUUID(qFacetRule.getFacetUUID());
+
+                        if (newUUID == null) {
+                            // Facet rule itself was deleted, otherwise an StringUtils.EMPTY would be returned!
+                            // This is an 'unhandled' scenario for a logged in user, just as we don't cater for
+                            // newly added facet rules.
+                            // So, we're simply going to ignore this.
+                            return;
+                        }
+
+                        if (StringUtils.equals(prevValue, newUUID)) {
+                            return;
+                        }
+
+                        reInit[0] = true;
+                        qFacetRule.setUUIDValue(newUUID);
+
+                    }
+                });
+            }));
+            updateCounterSnapShot = qFacetRuleStateManager.getUpdateCounter();
+        } while (referenceFacetRulesUpdateCounter != updateCounterSnapShot);
+
+        if (reInit[0]) {
+            reInitializeImplicitReadAccess();
+        }
+    }
+
+    /**
+     * <p>
+     *     Instead of returning an arrays of {@link Privilege}s like {@link AccessControlManager#getPrivileges(String)}
+     *     does, we return an array of {@link DomainInfoPrivilege}s. A {@link DomainInfoPrivilege} is just a thin wrapper
+     *     for a {@link Privilege} but also provides information from which security domain(s) the {@link Privilege} is
+     *     coming from. Since multiple domains can provide one single {@link Privilege} for a {@link javax.jcr.Node}, the
+     *     {@link DomainInfoPrivilege#getDomainPaths()} returns a set of domain paths.
+     * </p>
      * @see AccessControlManager#getPrivileges(String)
      */
-    public Privilege[] getPrivileges(String absPath) throws PathNotFoundException, RepositoryException {
+    public DomainInfoPrivilege[] getPrivileges(String absPath) throws RepositoryException {
         checkInitialized();
+
+        if (isSystem) {
+            return Arrays.stream(getSupportedPrivileges(absPath)).map(DomainInfoPrivilege::new).toArray(DomainInfoPrivilege[]::new);
+        }
+
+        updateReferenceFacetRules();
 
         NodeId id = getNodeId(npRes.getQPath(absPath));
         if (id == null) {
@@ -1543,20 +1843,22 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             throw new PathNotFoundException("NodeState not found for id " + id + " path: " + absPath);
         }
 
-        Set<Privilege> privileges = new HashSet<Privilege>();
-        for (FacetAuthPrincipal fap : subject.getPrincipals(FacetAuthPrincipal.class)) {
-            if (isNodeInDomain(nodeState, fap, false)) {
-                for (String privilegeName : fap.getPrivileges()) {
-                    privileges.add(privilegeFromName(privilegeName));
+        Map<String, DomainInfoPrivilege> privileges = new HashMap<>();
+        for (FacetAuthDomain fad : userPrincipal.getFacetAuthDomains()) {
+            if (isNodeInDomain(nodeState, fad, false)) {
+                for (String privilegeName : fad.getPrivileges()) {
+                    final DomainInfoPrivilege domainInfoPrivilege = privileges
+                            .computeIfAbsent(privilegeName, priv -> new DomainInfoPrivilege(permissionManager.getOrCreatePrivilege(priv)));
+                    domainInfoPrivilege.addDomainPath(fad.getDomainPath());
                 }
             }
         }
-        return privileges.toArray(new Privilege[privileges.size()]);
+        return privileges.values().toArray(new DomainInfoPrivilege[0]);
     }
 
     /**
      * Always return empty array of <code>AccessControlPolicy</code>
-     * 
+     *
      * @see AccessControlManager#getPolicies(String)
      */
     public AccessControlPolicy[] getPolicies(String absPath) throws PathNotFoundException, AccessDeniedException,
@@ -1570,7 +1872,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
     /**
      * Always return empty array of <code>AccessControlPolicy</code>
-     * 
+     *
      * @see AccessControlManager#getEffectivePolicies(String)
      */
     public AccessControlPolicy[] getEffectivePolicies(String absPath) throws PathNotFoundException,
@@ -1580,7 +1882,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
     /**
      * Always return <code>AccessControlPolicyIteratorAdapter.EMPTY</code>
-     * 
+     *
      * @see AccessControlManager#getApplicablePolicies(String)
      */
     public AccessControlPolicyIterator getApplicablePolicies(String absPath) throws PathNotFoundException,

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -217,14 +217,13 @@ public class FacetedNavigationEngineImpl extends ServicingSearchIndex
 
     class ContextImpl extends FacetedNavigationEngine.Context {
         SessionImpl session;
-        private AuthorizationQuery authorizationQuery;
 
         ContextImpl(SessionImpl session, String userId, Subject subject, NodeTypeManager ntMgr) throws RepositoryException {
             this.session = session;
-            this.authorizationQuery = ((InternalHippoSession) session).getAuthorizationQuery();
         }
 
         BooleanQuery getAuthorizationQuery() {
+            final AuthorizationQuery authorizationQuery = ((InternalHippoSession) session).getAuthorizationQuery();
             return authorizationQuery != null ? authorizationQuery.getQuery() : null;
         }
 

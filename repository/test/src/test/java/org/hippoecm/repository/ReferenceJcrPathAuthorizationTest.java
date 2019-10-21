@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,33 +16,42 @@
 package org.hippoecm.repository;
 
 import java.security.AccessControlException;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import javax.jcr.Credentials;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
+import org.assertj.core.api.Assertions;
 import org.hippoecm.repository.api.HippoNodeIterator;
+import org.hippoecm.repository.jackrabbit.QFacetRuleStateManager;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.repository.testutils.RepositoryTestCase;
+import org.onehippo.repository.security.StandardPermissionNames;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
-public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
+public class ReferenceJcrPathAuthorizationTest extends AbstractReferenceJcrPathAuthorization {
+
+    private Node defaultReadForTestNode;
 
     @Before
     public void setUp() throws Exception {
         super.setUp();
+
+        removeDefaultReadForTestAndDescendants();
+        defaultReadForTestNode = addDefaultReadForTestNode();
 
         // create users
         createUser("bob");
@@ -66,7 +75,7 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
         // bob can read and write to /test/folder and everything *below*
         final Node pathFacetRuleDomain = domains.addNode("pathFacetRuleDomain", "hipposys:domain");
         Node domainRule = pathFacetRuleDomain.addNode("read-all-nodes-test-folder-and-below", "hipposys:domainrule");
-        Node facetRule = domainRule.addNode("path-by-uuid", "hipposys:facetrule");
+        Node facetRule = domainRule.addNode("allow-by-path", "hipposys:facetrule");
         facetRule.setProperty("hipposys:equals", true);
         facetRule.setProperty("hipposys:facet", "jcr:path");
         facetRule.setProperty("hipposys:type", "Reference");
@@ -94,7 +103,7 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
         // thus not "hippo:authtestdocument"
         final Node pathFacetAndTypeRuleDomain = domains.addNode("pathFacetAndTypeRuleDomain", "hipposys:domain");
         domainRule = pathFacetAndTypeRuleDomain.addNode("read-folders-in-test-folder-and-below-type-hippostd-folder", "hipposys:domainrule");
-        facetRule = domainRule.addNode("path-by-uuid", "hipposys:facetrule");
+        facetRule = domainRule.addNode("allow-by-path", "hipposys:facetrule");
         facetRule.setProperty("hipposys:equals", true);
         facetRule.setProperty("hipposys:facet", "jcr:path");
         facetRule.setProperty("hipposys:type", "Reference");
@@ -107,7 +116,7 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
         facetRule.setProperty("hipposys:value", "hippostd:folder");
 
         domainRule = pathFacetAndTypeRuleDomain.addNode("read-folders-in-test-folder-and-below-type-test-document", "hipposys:domainrule");
-        facetRule = domainRule.addNode("path-by-uuid", "hipposys:facetrule");
+        facetRule = domainRule.addNode("allow-by-path", "hipposys:facetrule");
         facetRule.setProperty("hipposys:equals", true);
         facetRule.setProperty("hipposys:facet", "jcr:path");
         facetRule.setProperty("hipposys:type", "Reference");
@@ -133,6 +142,10 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
         removeNode("/hippo:configuration/hippo:domains/pathFacetRuleDomain");
         removeNode("/hippo:configuration/hippo:domains/doublePathFacetRuleDomain");
         removeNode("/hippo:configuration/hippo:domains/pathFacetAndTypeRuleDomain");
+
+        restoreDefaultReadForTestAndDescendants();
+        defaultReadForTestNode.remove();
+        session.save();
         super.tearDown();
     }
 
@@ -164,6 +177,80 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
             bob.checkPermission("/test/folder/testDocument", "jcr:write");
 
         } finally {
+            if (bob != null) {
+                bob.logout();
+            }
+        }
+    }
+
+    @Test
+    public void deleted_facet_rules_do_not_affect_logged_in_user() throws Exception {
+
+        Session bob = null;
+        try {
+            bob = loginUser("bob");
+
+            // now remove the read access for Bob user, however it doen not (yet!) affect the already logged in user
+            session.getNode("/hippo:configuration/hippo:domains/pathFacetRuleDomain/read-all-nodes-test-folder-and-below/allow-by-path").remove();
+            session.save();
+
+            assertTrue(bob.nodeExists("/test"));
+            assertTrue(bob.nodeExists("/test/folder"));
+
+            bob.logout();
+            bob = loginUser("bob");
+            // newly logged in bob does not 'see' the test/folder any more
+            assertTrue(bob.nodeExists("/test"));
+            assertFalse(bob.nodeExists("/test/folder"));
+        } finally {
+
+            if (bob != null) {
+                bob.logout();
+            }
+        }
+    }
+
+    @Test
+    public void added_facet_rules_do_not_affect_logged_in_user() throws Exception {
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onWarn().trap(QFacetRuleStateManager.class).build()) {
+            // remove the facet rule giving bob read access
+            session.move("/hippo:configuration/hippo:domains/pathFacetRuleDomain/read-all-nodes-test-folder-and-below/allow-by-path",
+                    "/backup");
+            session.save();
+
+            try {
+                assertThat(interceptor.messages().collect(Collectors.toSet()))
+                        .containsExactly("Skipping facet rule in not-supported location");
+            } catch (Exception e) {
+                // sometimes the #getPath succeeds (concurrency?). Hence the test also passes if only the warning below
+                // is logged
+                assertThat(interceptor.messages().collect(Collectors.toSet()))
+                        .containsExactlyInAnyOrder("Skipping facet rule in not-supported location: /backup");
+            }
+        }
+        Session bob = null;
+        try {
+            bob = loginUser("bob");
+
+            assertTrue(bob.nodeExists("/test"));
+            assertFalse(bob.nodeExists("/test/folder"));
+
+            session.move("/backup",
+                    "/hippo:configuration/hippo:domains/pathFacetRuleDomain/read-all-nodes-test-folder-and-below/allow-by-path");
+            session.save();
+
+            // logged in user should not be affected (yet!) by added facet rule!
+            assertTrue(bob.nodeExists("/test"));
+            assertFalse(bob.nodeExists("/test/folder"));
+
+            bob.logout();
+            bob = loginUser("bob");
+            // newly logged in bob does 'see' the test/folder now
+            assertTrue(bob.nodeExists("/test"));
+            assertTrue(bob.nodeExists("/test/folder"));
+        } finally {
+
             if (bob != null) {
                 bob.logout();
             }
@@ -286,6 +373,13 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
                 fail("Permissions check failed: " + e);
             }
 
+            // alice is not authorized on "/test/folder/authDocument"
+            for (String privilege : StandardPermissionNames.JCR_ALL_PRIVILEGES) {
+                assertFalse(alice.hasPermission("/test/folder/authDocument", privilege));
+            }
+            assertFalse(alice.hasPermission("/test/folder/authDocument", String.join(",", StandardPermissionNames.JCR_ALL_PRIVILEGES)));
+
+            // alice is not allowed to read 'authDocument': expect AccessControlException
             alice.checkPermission("/test/folder/authDocument", "jcr:read");
 
         } finally {
@@ -322,26 +416,6 @@ public class ReferenceJcrPathAuthorizationTest extends RepositoryTestCase {
                 alice.logout();
             }
         }
-    }
-
-
-    private void createAdminAuthRole(final Node pathFacetRuleDomain, final String user) throws RepositoryException {
-        final Node bobIsAdmin = pathFacetRuleDomain.addNode(user, "hipposys:authrole");
-        bobIsAdmin.setProperty("hipposys:users", new String[]{ user });
-        bobIsAdmin.setProperty("hipposys:role", "admin");
-    }
-
-    private Node createUser(String name) throws RepositoryException {
-        final Node users = session.getNode("/hippo:configuration/hippo:users");
-        if (!users.hasNode(name)) {
-            final Node user = users.addNode(name, "hipposys:user");
-            user.setProperty("hipposys:password", "password");
-        }
-        return users;
-    }
-
-    private Session loginUser(String user) throws RepositoryException {
-        return server.login(new SimpleCredentials(user, "password".toCharArray()));
     }
 
     private void assumePreconditions() throws RepositoryException {

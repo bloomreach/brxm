@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -27,12 +26,11 @@ import javax.jcr.Session;
 import org.hippoecm.repository.api.ActionAware;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
-import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.NodeIterable;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.eventbus.HippoEventBus;
 import org.onehippo.repository.events.HippoWorkflowEvent;
-import org.onehippo.repository.security.SecurityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,11 +42,11 @@ public class WorkflowLogger {
 
     private final Session session;
 
-    public WorkflowLogger(Session session) throws RepositoryException {
+    public WorkflowLogger(Session session) {
         this.session = session;
     }
 
-    public void logWorkflowStep(final String userName, final String className, final String methodName, final Object[] args,
+    public void logWorkflowStep(final Session userSession, final String className, final String methodName, final Object[] args,
                                 final Object returnObject, final String subjectId, final String subjectPath,
                                 final String interaction, String interactionId,
                                 final String category, final String workflowName, final Throwable exception) {
@@ -59,9 +57,9 @@ public class WorkflowLogger {
             final String handleUuid = getHandleUuid(subjectId);
             final String returnType = getReturnType(returnObject);
             final String[] arguments = replaceObjectsWithStrings(args);
-            final Boolean system = isSystemUser(userName);
+            final Boolean system = isSystemUser(userSession);
             final String documentType = getDocumentType(subjectId);
-            event.user(userName).result(returnValue).system(system);
+            event.user(userSession.getUserID()).result(returnValue).system(system);
             event.className(className).methodName(methodName).handleUuid(handleUuid).subjectId(subjectId)
                     .returnType(returnType).returnValue(returnValue).documentPath(subjectPath).subjectPath(subjectPath)
                     .interactionId(interactionId).interaction(interaction).workflowCategory(category)
@@ -89,15 +87,13 @@ public class WorkflowLogger {
         return Optional.empty();
     }
 
-    private Boolean isSystemUser(String userName) {
-        try {
-            final SecurityService securityService = ((HippoWorkspace) session.getWorkspace()).getSecurityService();
-            return securityService.hasUser(userName) && securityService.getUser(userName).isSystemUser();
-        } catch (ItemNotFoundException ignore) {
-            // If hasUser returns true, we expect getUser to return a user, so it is very unlikely that
-            // securityService.getUser(userName) will throw this exception
-        } catch (RepositoryException e) {
-            log.error("Failed to determine system status of event", e);
+    private Boolean isSystemUser(final Session session) {
+        if (session instanceof HippoSession) {
+            HippoSession hippoSession = (HippoSession)session;
+            try {
+                return hippoSession.getUser().isSystemUser();
+            } catch (RepositoryException ignore) {
+            }
         }
         return null;
     }

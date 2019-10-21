@@ -2,4 +2,3 @@ group: hippo-cms
 project: hippo-repository
 module:
     name: hippo-repository-config
-    after: hippo-repository-engine

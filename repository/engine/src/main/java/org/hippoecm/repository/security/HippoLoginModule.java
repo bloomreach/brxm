@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.security;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.util.HashSet;
 import java.util.Map;
@@ -29,19 +30,18 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
+import org.apache.jackrabbit.core.security.SecurityConstants;
 import org.apache.jackrabbit.core.security.SystemPrincipal;
-import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.apache.jackrabbit.core.security.authentication.CredentialsCallback;
 import org.apache.jackrabbit.core.security.authentication.ImpersonationCallback;
 import org.apache.jackrabbit.core.security.authentication.RepositoryCallback;
 import org.hippoecm.repository.jackrabbit.RepositoryImpl;
+import org.hippoecm.repository.security.principals.UserPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
-import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.hippoecm.repository.api.HippoSession.NO_SYSTEM_IMPERSONATION;
 
 public class HippoLoginModule implements LoginModule {
 
@@ -93,18 +93,22 @@ public class HippoLoginModule implements LoginModule {
             } catch(UnsupportedCallbackException ignored) {
             }
 
+            if (StringUtils.isEmpty(userId) || SecurityConstants.ANONYMOUS_ID.equals(userId)) {
+                log.info("Login as anonymous user not allowed");
+                return false;
+            }
+
             // check for impersonation
             Subject impersonator = impersonationCallback.getImpersonator();
             if (impersonator != null) {
                 // anonymous cannot impersonate
                 if (!impersonator.getPrincipals(AnonymousPrincipal.class).isEmpty()) {
-                    log.info("Denied Anonymous impersonating as {}", userId);
-                    return false;
+                    throw new LoginException("Denied Anonymous impersonating as " + userId);
                 }
 
                 // system session impersonate
                 if (!impersonator.getPrincipals(SystemPrincipal.class).isEmpty()) {
-                    if (creds != null && creds.getAttribute(NO_SYSTEM_IMPERSONATION) != null) {
+                    if (creds != null && !"system".equals(userId)) {
                         log.debug("System session impersonating as {}", userId);
                         securityManager.assignPrincipals(principals, creds);
                     }
@@ -116,32 +120,39 @@ public class HippoLoginModule implements LoginModule {
                 }
 
                 // check for valid user
-                if (impersonator.getPrincipals(UserPrincipal.class).isEmpty()) {
-                    log.info("Denied unknown user impersonating as {}", userId);
-                    return false;
+                Principal iup = SubjectHelper.getFirstPrincipal(impersonator, UserPrincipal.class);
+                if (iup == null) {
+                    throw new LoginException("Denied unknown user impersonating as " + userId);
                 }
 
-                Principal iup = impersonator.getPrincipals(UserPrincipal.class).iterator().next();
-                String impersonarorId = iup.getName();
-                // TODO: check somehow if the user is allowed to impersonate
+                String impersonatorId = iup.getName();
+                // check/deny impersonating system user
+                if ("system".equals(userId)) {
+                    throw new LoginException("Denied " + impersonatorId +
+                            " to impersonate system user which is only allowed for the system user itself.");
+                }
 
-                log.info("Impersonating as {} by {}", userId, impersonarorId);
+                // TODO: check somehow if the user is allowed to impersonate someone else
+
+                log.info("Impersonating as {} by {}", userId, impersonatorId);
                 securityManager.assignPrincipals(principals, creds);
 
                 return (validLogin = true);
+
+            } else if (creds == null) {
+                log.info("Login without credentials not allowed");
+                return false;
             }
 
-            // check for anonymous login
-            if (creds == null || creds.getUserID() == null) {
-                log.debug("Authenticated as Anonymous user.");
-                securityManager.assignPrincipals(principals, creds);
-                return (validLogin = true);
+            // deny login as system user
+            if ("system".equals(userId)) {
+                log.info("Login as system user not allowed");
+                return false;
             }
 
             // basic security check
-            if (isEmpty(userId) || ((creds.getPassword() == null || creds.getPassword().length == 0)
-                    && creds.getAttribute("providerId") == null)) {
-                log.debug("Empty username or password not allowed.");
+            if (ArrayUtils.isEmpty(creds.getPassword()) && creds.getAttribute("providerId") == null) {
+                log.debug("Login without password not allowed.");
                 return false;
             }
 
@@ -159,13 +170,7 @@ public class HippoLoginModule implements LoginModule {
                 principals.clear();
                 UnsuccessfulAuthenticationHandler.handle(authenticationStatus, userId);
             }
-        } catch (ClassCastException e) {
-            log.error("Error during login", e);
-            throw new LoginException(e.getMessage());
-        } catch (RepositoryException e) {
-            log.error("Error during login", e);
-            throw new LoginException(e.getMessage());
-        } catch (java.io.IOException e) {
+        } catch (ClassCastException|RepositoryException|IOException e) {
             log.error("Error during login", e);
             throw new LoginException(e.getMessage());
         } catch (UnsupportedCallbackException e) {

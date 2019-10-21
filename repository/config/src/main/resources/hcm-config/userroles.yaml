@@ -1,0 +1,59 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:userroles:
+      /xm-admin:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: []
+      /xm-sysadmin:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-admin, xm-security-user-manager, xm-security-application-manager]
+      /xm-security-manager:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: []
+      /xm-security-user-manager:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-security-manager]
+      /xm-security-application-manager:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-security-manager]
+      /xm-content-viewer:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: []
+      /xm-content-author:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-content-viewer]
+      /xm-content-editor:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-content-author]
+      /xm-content-holder:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: []
+      /xm-content-admin:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-content-editor]
+      /xm-read-everywhere:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: []
+      /xm-default-author-user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-content-author]
+      /xm-default-editor-user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-content-editor]
+      /xm-default-sysadmin-user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-sysadmin, xm-content-admin]

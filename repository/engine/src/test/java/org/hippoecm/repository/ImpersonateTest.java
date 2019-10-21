@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,15 +23,15 @@ import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.impl.RepositoryDecorator;
-import org.hippoecm.repository.jackrabbit.RepositoryImpl;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.repository.InternalHippoRepository;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
-import static org.hippoecm.repository.api.HippoSession.NO_SYSTEM_IMPERSONATION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class ImpersonateTest extends RepositoryTestCase {
@@ -69,7 +69,39 @@ public class ImpersonateTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testImpersonateAnyUserFromAnyUser() throws RepositoryException {
+    public void testLoginAsSystemIsDenied() throws RepositoryException {
+        Node config = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
+        Node users = config.getNode(HippoNodeType.USERS_PATH);
+
+        // create system user
+        Node testUser = users.addNode("system", HippoNodeType.NT_USER);
+        testUser.setProperty(HippoNodeType.HIPPO_PASSWORD, "system");
+        try {
+            session.save();
+            try {
+                session.getRepository().login(new SimpleCredentials("system", "system".toCharArray()));
+                fail("Login as system user should be denied");
+            } catch (LoginException ignore) {
+            }
+        } finally {
+            if (users.hasNode("system")) {
+                users.getNode("system").remove();
+                session.save();
+            }
+        }
+    }
+
+    @Test
+    public void testImpersonatingSystemIsDenied() throws RepositoryException {
+        try {
+            session.getRepository().login(new SimpleCredentials("system", "system".toCharArray()));
+            fail("Login as system user should be denied");
+        } catch (LoginException ignore) {
+        }
+    }
+
+    @Test
+    public void testImpersonateAnyUserFromAnyUserIsAllowed() throws RepositoryException {
         // setup user session
         Session userSession = server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
         Session impersonateSession = userSession.impersonate(new SimpleCredentials("admin", new char[] {}));
@@ -79,41 +111,37 @@ public class ImpersonateTest extends RepositoryTestCase {
     }
 
     @Test
-    public void testSystemAlwaysImpersonatesSystem() throws RepositoryException {
-        // get system session
-        RepositoryImpl internalRepository =  (RepositoryImpl)RepositoryDecorator.unwrap(server.getRepository());
-        Session systemSession = internalRepository.getRootSession("default");
-        assertEquals("system", systemSession.getUserID());
-        SimpleCredentials userCredentials = new SimpleCredentials(TEST_USER_ID, TEST_USER_PASS.toCharArray());
-        Session anotherSystemSession = systemSession.impersonate(userCredentials);
-        assertEquals("system", anotherSystemSession.getUserID());
-        anotherSystemSession.logout();
-    }
-
-    @Test
     public void testSystemImpersonateWithNoSystemImpersonation() throws RepositoryException {
-        // get system session
-        RepositoryImpl internalRepository =  (RepositoryImpl)RepositoryDecorator.unwrap(server.getRepository());
-        Session systemSession = internalRepository.getRootSession("default");
-        assertEquals("system", systemSession.getUserID());
-        SimpleCredentials userCredentials = new SimpleCredentials(TEST_USER_ID, TEST_USER_PASS.toCharArray());
-        userCredentials.setAttribute(NO_SYSTEM_IMPERSONATION, Boolean.TRUE);
-        Session userSession = systemSession.impersonate(userCredentials);
-        assertEquals(TEST_USER_ID, userSession.getUserID());
-        userSession.logout();
+        InternalHippoRepository internalRepository = (InternalHippoRepository) RepositoryDecorator.unwrap(server.getRepository());
+        Session systemSession = internalRepository.createSystemSession();
+        try {
+            assertEquals("system", systemSession.getUserID());
+            Session userSession = systemSession.impersonate(new SimpleCredentials(TEST_USER_ID, TEST_USER_PASS.toCharArray()));
+
+            assertTrue(systemSession.hasPermission("/hippo:configuration/hippo:domains", Session.ACTION_READ));
+            assertFalse("test user should not have read access to hippo:domains",
+                    userSession.hasPermission("/hippo:configuration/hippo:domains", Session.ACTION_READ));
+
+            String userId = userSession.getUserID();
+            userSession.logout();
+            assertEquals(TEST_USER_ID, userId);
+        } finally {
+            systemSession.logout();
+        }
     }
 
     @Test
-    public void testAnonymous() throws RepositoryException {
-        // setup user session
-        Session userSession = server.login();
+    public void testSystemImpersonatesSystemIgnoringPassword() throws RepositoryException {
+        InternalHippoRepository internalRepository = (InternalHippoRepository) RepositoryDecorator.unwrap(server.getRepository());
+        Session systemSession = internalRepository.createSystemSession();
         try {
-            userSession.impersonate(new SimpleCredentials("admin", new char[] {}));
-            fail("User anonymous should not be allowed to impersonate.");
-        } catch (LoginException e) {
-            // correct
+            assertEquals("system", systemSession.getUserID());
+            Session anotherSystemSession = systemSession.impersonate(new SimpleCredentials("system", "foobar".toCharArray()));
+            String userId = anotherSystemSession.getUserID();
+            anotherSystemSession.logout();
+            assertEquals("system", userId);
         } finally {
-            userSession.logout();
+            systemSession.logout();
         }
     }
 
@@ -130,14 +158,4 @@ public class ImpersonateTest extends RepositoryTestCase {
         }
     }
 
-    @Test
-    public void testIssueAnyoneCanImpersonateAsWorkflowUser() throws RepositoryException {
-        SimpleCredentials creds = new SimpleCredentials("nono", "blabla".toCharArray());
-        Session anonymousSession = server.login();
-        assertEquals("anonymous", anonymousSession.getUserID());
-        Session workflowSession = session.impersonate(new SimpleCredentials("workflowuser", "anything".toCharArray()));
-        anonymousSession.logout();
-        assertEquals("workflowuser", workflowSession.getUserID());
-        workflowSession.logout();
-    }
 }

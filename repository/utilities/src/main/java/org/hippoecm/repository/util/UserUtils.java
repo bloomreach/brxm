@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,7 +20,8 @@ import java.util.Optional;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.hippoecm.repository.api.HippoWorkspace;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.security.SecurityService;
 import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,12 +36,27 @@ public class UserUtils {
      * @param userId  ID of some user
      * @param session current user's JCR session
      * @return name of the user or nothing, wrapped in an Optional
+     * @deprecated since 14.0.0, use {@link #getUserName(String)} instead (session parameter is no longer needed)
      */
     public static Optional<String> getUserName(final String userId, final Session session) {
+        return getUserName(userId);
+    }
+
+    /**
+     * Look up the real user name pertaining to a user ID
+     *
+     * @param userId  ID of some user
+     * @return name of the user or nothing, wrapped in an Optional
+     */
+    public static Optional<String> getUserName(final String userId) {
         try {
-            final HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
-            final User user = workspace.getSecurityService().getUser(userId);
-            return getUserName(user);
+            final SecurityService securityService = HippoServiceRegistry.getService(SecurityService.class);
+            if (securityService != null) {
+                final User user = securityService.getUser(userId);
+                if (user != null) {
+                    return getUserName(user);
+                }
+            }
         } catch (RepositoryException e) {
             log.debug("Unable to determine displayName of user '{}'.", userId, e);
         }
@@ -48,6 +64,10 @@ public class UserUtils {
     }
 
     public static Optional<String> getUserName(User user) throws RepositoryException {
+        return Optional.of(getDisplayName(user));
+    }
+
+    public static String getDisplayName(User user) {
         final String firstName = user.getFirstName();
         final String lastName = user.getLastName();
 
@@ -60,8 +80,6 @@ public class UserUtils {
             sb.append(lastName.trim());
         }
         final String username = sb.toString().trim();
-        return Optional.of(username.isEmpty() ? user.getId() : username);
+        return username.isEmpty() ? user.getId() : username;
     }
-
-
 }

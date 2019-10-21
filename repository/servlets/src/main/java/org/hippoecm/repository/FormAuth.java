@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.jcr.Credentials;
 import javax.jcr.LoginException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -73,10 +74,10 @@ public class FormAuth {
     public static Session login(HttpServletRequest request, SimpleCredentials credentials, HippoRepository repository){
         Session hippoSession;
         try {
-            if (credentials.getUserID() == null || credentials.getUserID().length() == 0) {
-                hippoSession = repository.login();
+            if (credentials == null || StringUtils.isBlank(credentials.getUserID())) {
+                return null;
             } else {
-                hippoSession = repository.login(credentials);
+                hippoSession = repository.login((Credentials)credentials);
             }
             if (((HippoSession) hippoSession).getUser().isSystemUser()) {
                 final InetAddress address = InetAddress.getByName(request.getRemoteHost());

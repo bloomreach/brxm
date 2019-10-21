@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,10 +18,9 @@ package org.hippoecm.repository.query.lucene;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import javax.jcr.NamespaceException;
@@ -32,12 +31,10 @@ import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeIterator;
 import javax.jcr.nodetype.NodeTypeManager;
-import javax.security.auth.Subject;
 
+import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.NamespaceMappings;
-import org.apache.jackrabbit.core.security.SystemPrincipal;
-import org.apache.jackrabbit.core.security.UserPrincipal;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.conversion.IllegalNameException;
 import org.apache.jackrabbit.spi.commons.name.NameConstants;
@@ -48,12 +45,14 @@ import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
-import org.hippoecm.repository.security.AuthorizationFilterPrincipal;
 import org.hippoecm.repository.security.FacetAuthConstants;
+import org.hippoecm.repository.security.HippoAccessManager;
 import org.hippoecm.repository.security.domain.DomainRule;
+import org.hippoecm.repository.security.domain.FacetAuthDomain;
 import org.hippoecm.repository.security.domain.QFacetRule;
-import org.hippoecm.repository.security.principals.FacetAuthPrincipal;
-import org.hippoecm.repository.security.principals.GroupPrincipal;
+import org.onehippo.repository.security.SessionDelegateUser;
+import org.onehippo.repository.security.StandardPermissionNames;
+import org.onehippo.repository.security.User;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,33 +94,39 @@ public class AuthorizationQuery {
     private final BooleanQuery query;
 
 
-    public AuthorizationQuery(final Subject subject,
+    public AuthorizationQuery(final Set<FacetAuthDomain> facetAuthDomains,
                               final NamespaceMappings nsMappings,
                               final ServicingIndexingConfiguration indexingConfig,
                               final NodeTypeManager ntMgr,
-                              final Session session,
-                              final String userId) throws RepositoryException {
+                              final Session session) throws RepositoryException {
         // set the max clauses for booleans higher than the default 1024.
         BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
         if (!(session instanceof InternalHippoSession)) {
             throw new RepositoryException("Session is not an instance of o.a.j.core.SessionImpl");
         }
 
-        if (!subject.getPrincipals(SystemPrincipal.class).isEmpty()) {
+        InternalHippoSession internalSession = (InternalHippoSession)session;
+        User user = internalSession.getUser();
+        if (user != null && user.isSystemUser()) {
             this.query = new BooleanQuery(true);
             this.query.add(new MatchAllDocsQuery(), Occur.MUST);
         } else {
-            final Set<String> memberships = new HashSet<String>();
-            for (GroupPrincipal groupPrincipal : subject.getPrincipals(GroupPrincipal.class)) {
-                memberships.add(groupPrincipal.getName());
-            }
-            final Set<String> userIds = new HashSet<String>();
-            for (UserPrincipal userPrincipal : subject.getPrincipals(UserPrincipal.class)) {
-                userIds.add(userPrincipal.getName());
+            final Set<String> memberships;
+            final Set<String> userIds;
+            if (user != null) {
+                memberships = user.getMemberships();
+                if (user instanceof SessionDelegateUser) {
+                    userIds = ((SessionDelegateUser)user).getIds();
+                } else {
+                    userIds = new HashSet<>();
+                    userIds.add(user.getId());
+                }
+            } else {
+                memberships = Collections.emptySet();
+                userIds = Collections.emptySet();
             }
             long start = System.currentTimeMillis();
-            this.query = initQuery(subject.getPrincipals(FacetAuthPrincipal.class),
-                    subject.getPrincipals(AuthorizationFilterPrincipal.class),
+            this.query = initQuery(facetAuthDomains,
                     userIds,
                     memberships,
                     (InternalHippoSession)session,
@@ -129,41 +134,30 @@ public class AuthorizationQuery {
                     nsMappings,
                     ntMgr);
 
-            log.info("Creating authorization query for user '{}' took {} ms. Query: {}", userId, String.valueOf(System.currentTimeMillis() - start), query);
+            log.info("Creating authorization query for user '{}' took {} ms. Query: {}", session.getUserID(), (System.currentTimeMillis() - start), query);
         }
     }
 
-    private BooleanQuery initQuery(final Set<FacetAuthPrincipal> facetAuths,
-                                   final Set<AuthorizationFilterPrincipal> authorizationFilterPrincipals,
+    private BooleanQuery initQuery(final Set<FacetAuthDomain> facetAuthDomains,
                                    final Set<String> userIds,
                                    final Set<String> memberships,
                                    final InternalHippoSession session,
                                    final ServicingIndexingConfiguration indexingConfig,
                                    final NamespaceMappings nsMappings,
-                                   final NodeTypeManager ntMgr) {
+                                   final NodeTypeManager ntMgr) throws RepositoryException {
 
-        Map<String, Collection<QFacetRule>> extendedFacetRules = new HashMap<String, Collection<QFacetRule>>();
-        for (AuthorizationFilterPrincipal afp : authorizationFilterPrincipals) {
-            final Map<String, Collection<QFacetRule>> facetRules = afp.getExpandedFacetRules(facetAuths);
-            for (Map.Entry<String, Collection<QFacetRule>> entry : facetRules.entrySet()) {
-                final String domainPath = entry.getKey();
-                if (!extendedFacetRules.containsKey(domainPath)) {
-                    extendedFacetRules.put(domainPath, new ArrayList<QFacetRule>());
-                }
-                extendedFacetRules.get(domainPath).addAll(entry.getValue());
-            }
-        }
+        final HippoAccessManager hippoAccessManager = session.getAccessControlManager();
 
         BooleanQuery authQuery = new BooleanQuery(true);
-        for (final FacetAuthPrincipal facetAuthPrincipal : facetAuths) {
-            if (!facetAuthPrincipal.getPrivileges().contains("jcr:read")) {
+        for (final FacetAuthDomain facetAuthDomain : facetAuthDomains) {
+            if (!facetAuthDomain.getResolvedPrivileges().contains(StandardPermissionNames.JCR_READ)) {
                 continue;
             }
-            final Set<DomainRule> domainRules = facetAuthPrincipal.getRules();
+            final Set<DomainRule> domainRules = facetAuthDomain.getRules();
             for (final DomainRule domainRule : domainRules) {
                 BooleanQuery facetQuery = new BooleanQuery(true);
-                for (final QFacetRule facetRule : getFacetRules(domainRule, extendedFacetRules)) {
-                    Query q = getFacetRuleQuery(facetRule, userIds, memberships, facetAuthPrincipal.getRoles(), indexingConfig, nsMappings, session, ntMgr);
+                for (final QFacetRule facetRule : domainRule.getFacetRules()) {
+                    Query q = getFacetRuleQuery(facetRule, userIds, memberships, facetAuthDomain.getRoles(), indexingConfig, nsMappings, session, ntMgr);
                     if (isNoHitsQuery(q)) {
                         log.debug("Found a no hits query in facetRule '{}'. Since facet rules are AND-ed with other " +
                                 "facet rules, we can short circuit the domain rule '{}' as it does not match any node.",
@@ -184,7 +178,7 @@ public class AuthorizationQuery {
                     // directly return the BooleanQuery that only contains the MatchAllDocsQuery : This is more efficient
                     return facetQuery;
                 } else if (facetQuery.getClauses().length == 1 && isNoHitsQuery(facetQuery.getClauses()[0].getQuery())) {
-                    log.debug("No hits query does not add any new information for the authorization query '{}' so far " +
+                    log.debug("No hits query does not add any new information for the authorization query so far " +
                             "since gets OR-ed. Hence can be skipped.");
                 } else {
                     authQuery.add(facetQuery, Occur.SHOULD);
@@ -197,23 +191,20 @@ public class AuthorizationQuery {
             authQuery.add(new MatchAllDocsQuery(), Occur.MUST_NOT);
         }
 
+        // add the implicit reads query
+        final Set<NodeId> implicitReads = hippoAccessManager.getImplicitReads();
+        if (implicitReads.size() > 0) {
+            final BooleanQuery implicitReadsQuery = new BooleanQuery(true);
+            for (NodeId implicitRead : implicitReads) {
+                implicitReadsQuery.add(new TermQuery(new Term(FieldNames.UUID, implicitRead.toString())), Occur.SHOULD);
+            }
+            authQuery.add(implicitReadsQuery, Occur.SHOULD);
+        }
+
         log.debug("Authorization query is : " + authQuery);
         log.debug("Authorization query has {} clauses", authQuery.getClauses().length);
 
         return authQuery;
-    }
-
-    private Set<QFacetRule> getFacetRules(final DomainRule domainRule, Map<String, Collection<QFacetRule>> extendedFacetRules) {
-        if (extendedFacetRules != null) {
-            final String domainRulePath = domainRule.getDomainName() + "/" + domainRule.getName();
-            final Collection<QFacetRule> extendedRules = extendedFacetRules.get(domainRulePath);
-            if (extendedRules != null) {
-                final Set<QFacetRule> facetRules = new HashSet<QFacetRule>(domainRule.getFacetRules());
-                facetRules.addAll(extendedRules);
-                return facetRules;
-            }
-        }
-        return domainRule.getFacetRules();
     }
 
     private Query getFacetRuleQuery(final QFacetRule facetRule,
@@ -225,6 +216,17 @@ public class AuthorizationQuery {
                                     final InternalHippoSession session,
                                     final NodeTypeManager ntMgr) {
         String value = facetRule.getValue();
+
+        if (facetRule.isReferenceRule() && !facetRule.referenceExists()) {
+            if (facetRule.isEqual()) {
+                // non existing reference and equals says true, so no hits
+                return createNoHitsQuery();
+            } else {
+                // non existing reference and equals says false, so only hits
+                return new MatchAllDocsQuery();
+            }
+        }
+
         switch (facetRule.getType()) {
             case PropertyType.STRING:
                 Name facetName = facetRule.getFacetName();

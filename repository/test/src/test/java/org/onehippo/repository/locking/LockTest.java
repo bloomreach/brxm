@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.repository.util.JcrConstants;
 
-import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.fail;
@@ -49,14 +48,6 @@ public class LockTest extends RepositoryTestCase {
         session.getWorkspace().getLockManager().lock("/test", false, false, Long.MAX_VALUE, null);
         final Session adminSession = session.getRepository().login(new SimpleCredentials("admin", "admin".toCharArray()));
         adminSession.getWorkspace().getLockManager().unlock("/test");
-        assertFalse("Node /test is still locked", session.getWorkspace().getLockManager().isLocked("/test"));
-    }
-
-    @Test
-    public void testAnonymousUserCanUnlockNodeWithoutLockOwnership() throws Exception {
-        session.getWorkspace().getLockManager().lock("/test", false, false, Long.MAX_VALUE, null);
-        final Session anonSession = session.getRepository().login();
-        anonSession.getWorkspace().getLockManager().unlock("/test");
         assertFalse("Node /test is still locked", session.getWorkspace().getLockManager().isLocked("/test"));
     }
 

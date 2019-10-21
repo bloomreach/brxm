@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import javax.jcr.LoginException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -40,6 +39,7 @@ import org.hippoecm.repository.impl.SessionDecorator;
 import org.hippoecm.repository.jackrabbit.HippoNodeTypeRegistry;
 import org.hippoecm.repository.nodetypes.NodeTypesChangeTracker;
 import org.hippoecm.repository.security.AuthenticationStatus;
+import org.hippoecm.repository.security.service.SecurityServiceImpl;
 import org.onehippo.cm.ConfigurationService;
 import org.onehippo.cm.engine.ConfigurationServiceImpl;
 import org.onehippo.cm.engine.InternalConfigurationService;
@@ -52,6 +52,7 @@ import org.onehippo.repository.lock.memory.MemoryLockManager;
 import org.onehippo.repository.modules.ModuleManager;
 import org.onehippo.repository.lock.InternalLockManager;
 import org.onehippo.repository.lock.db.DbLockManagerFactory;
+import org.onehippo.repository.security.SecurityService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -88,6 +89,7 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
 
     private ConfigurationServiceImpl configurationService;
     protected InternalLockManager lockManager;
+    private SecurityServiceImpl securityService;
 
     private ModuleManager moduleManager;
 
@@ -292,6 +294,8 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         if (configurationService != null) {
             HippoServiceRegistry.register(configurationService, ConfigurationService.class, InternalConfigurationService.class);
         }
+        securityService = new SecurityServiceImpl(jackrabbitRepository);
+        HippoServiceRegistry.register(securityService, SecurityService.class);
     }
 
     protected RepositoryConfig createRepositoryConfig() throws RepositoryException {
@@ -341,13 +345,20 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
             nodeTypesChangeTracker.stop();
             nodeTypesChangeTracker = null;
         }
+        if (securityService != null) {
+            HippoServiceRegistry.unregister(securityService, SecurityService.class);
+            securityService.close();
+            securityService = null;
+        }
         if (configurationService != null) {
             HippoServiceRegistry.unregister(configurationService, ConfigurationService.class);
             configurationService.stop();
+            configurationService = null;
         }
         if (lockManager != null) {
             HippoServiceRegistry.unregister(lockManager, LockManager.class);
             lockManager.destroy();
+            lockManager = null;
         }
         if (jackrabbitRepository != null) {
             try {

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -47,8 +47,9 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.jackrabbit.rmi.client.ClientSession;
 import org.apache.jackrabbit.rmi.client.RemoteRepositoryException;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.decorating.remote.RemoteServicingXASession;
-import org.onehippo.repository.security.User;
+import org.onehippo.repository.security.SessionUser;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.xml.ContentResourceLoader;
 import org.onehippo.repository.xml.ImportResult;
@@ -148,7 +149,17 @@ public class ClientServicingXASession extends ClientSession implements HippoSess
     }
 
     @Override
-    public User getUser() throws RepositoryException {
+    public boolean isSystemUser() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public SessionUser getUser() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isUserInRole(final String userRoleName) {
         throw new UnsupportedOperationException();
     }
 
@@ -257,5 +268,9 @@ public class ClientServicingXASession extends ClientSession implements HippoSess
     @Override
     public void disableVirtualLayers() {
         throw new UnsupportedOperationException();
+    }
+
+    public HippoWorkspace getWorkspace() {
+        return (HippoWorkspace)super.getWorkspace();
     }
 }

@@ -159,6 +159,10 @@ public interface HippoStdNodeType {
      * hippostd:publishableSummary node type.
      */
     String HIPPOSTD_STATESUMMARY = "hippostd:stateSummary";
+
+    String HIPPOSTD_MODIFY = "hippostd:modify";
+
+    String HIPPOSTD_EXCLUDE_PRIMARY_TYPES = "hippostd:excludePrimaryTypes";
     
     /**
      * The child node name defined by a hippostd:translated containing the translated names.  Multiple translations,

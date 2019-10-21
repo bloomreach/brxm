@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
-  Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -128,10 +128,6 @@
     // true if there is an outstanding workflow request
     def boolean isRequestPending() {
       workflowData.requestPending
-    }
-
-    def getContainingFolder() {
-      workflowData.handle.parent
     }
 
     // true if the branch from  from DocumentHandle is 'master'
@@ -938,10 +934,8 @@
            allowed or possible -->
       <state id="no-terminate">
         <onentry>
-          <!-- report request delete operation as available but default disabled -->
-          <hippo:action action="requestDelete" enabledExpr="false"/>
-          <if cond="workflowContext.isGranted(deleteSource, 'hippo:editor') and workflowContext.isGranted(containingFolder, 'jcr:write')">
-            <!-- if the user is editor (granted hippo:editor) AND allowed to modify (jcr:write) the document folder,
+          <if cond="workflowContext.isGranted(deleteSource, 'hippo:author')">
+            <!-- if the user is author (granted hippo:author),
                  report the delete/move/rename operations as available but default disabled -->
             <hippo:action action="delete" enabledExpr="false"/>
             <hippo:action action="move" enabledExpr="false"/>
@@ -957,22 +951,14 @@
         <onentry>
           <if cond="!requestPending">
             <!-- delete operations are only allowed when (also) no request is pending -->
-            <!-- (then) always enable the request delete operation -->
-            <hippo:action action="requestDelete" enabledExpr="true"/>
-            <if cond="workflowContext.isGranted(deleteSource, 'hippo:editor') and workflowContext.isGranted(containingFolder, 'jcr:write')">
-              <!-- if the user is editor (granted hippo:editor) AND allowed to modify (jcr:write) the document folder,
-                   enable the delete/move/rename operations -->
+            <if cond="workflowContext.isGranted(deleteSource, 'hippo:author')">
+              <!-- if the user is editor (granted hippo:editor) enable the delete/move/rename operations -->
               <hippo:action action="delete" enabledExpr="true"/>
               <hippo:action action="move" enabledExpr="true"/>
               <hippo:action action="rename" enabledExpr="true"/>
             </if>
           </if>
         </onentry>
-
-        <!-- target-less transition to create a delete request -->
-        <transition event="requestDelete">
-          <hippo:workflowRequest type="delete" contextVariantExpr="deleteSource"/>
-        </transition>
 
         <!-- transition to delete the current document and go to final state terminated -->
         <transition event="delete" target="terminated">
@@ -996,13 +982,13 @@
     <!-- the composite copy state is used to manage the copy workflow operation -->
     <state id="copy">
 
-      <!-- the initial no-copy state is used and active when the user is not an editor (granted hippo:editor) -->
+      <!-- the initial no-copy state is used and active when the user is not an author (granted hippo:author) -->
       <state id="no-copy">
-        <!-- event-less transition to copyable state when the user is an editor (granted hippo:editor) -->
-        <transition target="copyable" cond="workflowContext.isGranted(copySource,'hippo:editor') and branchExists"/>
+        <!-- event-less transition to copyable state when the user is an author (granted hippo:author) -->
+        <transition target="copyable" cond="workflowContext.isGranted(copySource,'hippo:author') and branchExists"/>
       </state>
 
-      <!-- the state copyable is only active for users which are editor (granted hippo:editor) -->
+      <!-- the state copyable is active for users which are author (granted hippo:author) -->
       <state id="copyable">
         <onentry>
           <!-- always enable the copy operation -->

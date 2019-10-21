@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -95,6 +95,7 @@ import static org.onehippo.cm.engine.ValueProcessor.isReferenceTypeProperty;
 import static org.onehippo.cm.engine.ValueProcessor.isUuidInUse;
 import static org.onehippo.cm.engine.ValueProcessor.propertyIsIdentical;
 import static org.onehippo.cm.engine.ValueProcessor.valueFrom;
+import static org.onehippo.cm.engine.ValueProcessor.valueIsIdentical;
 import static org.onehippo.cm.engine.ValueProcessor.valuesFrom;
 import static org.onehippo.cm.model.util.FilePathUtils.getParentOrFsRoot;
 
@@ -589,7 +590,9 @@ public class ConfigurationConfigService {
             // todo: should this perhaps only apply initial value on forceApply if property is missing?
             final ConfigurationItemCategory category = updateNode.getChildPropertyCategory(propertyName);
             if (category == ConfigurationItemCategory.SYSTEM && !isNew) {
-                continue;
+                if (!updateProperty.isMultiple() || !updateProperty.isAddNewSystemValues()) {
+                    continue;
+                }
             }
 
             final ConfigurationProperty baselineProperty = baselineNode.getProperty(propertyName);
@@ -853,7 +856,54 @@ public class ConfigurationConfigService {
         final Session session = jcrNode.getSession();
         final List<Value> verifiedUpdateValues = determineVerifiedValues(updateProperty, session);
 
-        if (jcrProperty != null) {
+        javax.jcr.Value[] newSystemValues = null;
+        // in case of a system property with meta add-new-values set, determine the *new* values to be added
+        if (updateProperty.isAddNewSystemValues() && baselineProperty != null &&
+                // only needed when not changing the type/multiplicity of a property because then it will be recreated
+                baselineProperty.isMultiple() && updateProperty.getValueType() == baselineProperty.getValueType()) {
+
+            final List<? extends Value> baselineValues = baselineProperty.getValues();
+
+            // remove all equal values
+            for (int i = verifiedUpdateValues.size() -1; i > -1; i--) {
+                for (Value baselineValue : baselineValues) {
+                    if (valueIsIdentical(verifiedUpdateValues.get(i), baselineValue)) {
+                        verifiedUpdateValues.remove(i);
+                        break;
+                    }
+                }
+            }
+            if (verifiedUpdateValues.isEmpty()) {
+                // all values equal: skip (which is unexpected: then why did we get here in the first place?)
+                return;
+            }
+
+            // in case of an existing multi-value property of the same type, determine which new values actually need to be added
+            if (jcrProperty != null && jcrProperty.isMultiple() &&
+                    updateProperty.getValueType().ordinal() == jcrProperty.getType()) {
+                final javax.jcr.Value[] jcrValues = jcrProperty.getValues();
+
+                // remove all equal values
+                for (int i = verifiedUpdateValues.size()-1; i > -1; i--) {
+                    for (final javax.jcr.Value jcrValue : jcrValues) {
+                        if (valueIsIdentical(updateProperty, verifiedUpdateValues.get(i), jcrValue)) {
+                            verifiedUpdateValues.remove(i);
+                        }
+                    }
+                }
+                if (verifiedUpdateValues.isEmpty()) {
+                    // jcr property already has all the new values: skip
+                    return;
+                }
+                // create the jcr values array up front as we now already have all the information
+                // this is also used (checked) to prevent possible incorrect warning logging below
+                newSystemValues = Arrays.copyOf(jcrValues, jcrValues.length + verifiedUpdateValues.size());
+                System.arraycopy(valuesFrom(updateProperty, verifiedUpdateValues, session), 0, newSystemValues,
+                        jcrValues.length, verifiedUpdateValues.size());
+            }
+        }
+
+        if (newSystemValues == null && jcrProperty != null) {
             if (propertyIsIdentical(jcrProperty, updateProperty, verifiedUpdateValues)) {
                 return; // no update needed
             }
@@ -878,12 +928,11 @@ public class ConfigurationConfigService {
                 }
             }
 
-            // TODO: is this check adding sufficient value, or can/should we always remove the old property?
             if (updateProperty.getValueType().ordinal() != jcrProperty.getType()
                     || updateProperty.isMultiple() != jcrProperty.isMultiple()) {
                 jcrProperty.remove();
             }
-        } else {
+        } else if (jcrProperty == null) {
             if (baselineProperty != null) {
                 // property should already exist, doesn't.
                 final String msg = String.format("[OVERRIDE] Property '%s' has been deleted from the repository, " +
@@ -895,8 +944,11 @@ public class ConfigurationConfigService {
 
         try {
             if (updateProperty.isMultiple()) {
-                jcrNode.setProperty(updateProperty.getName(), valuesFrom(updateProperty, verifiedUpdateValues, session),
-                        updateProperty.getValueType().ordinal());
+                javax.jcr.Value[] jcrValues = newSystemValues;
+                if (jcrValues == null) {
+                    jcrValues = valuesFrom(updateProperty, verifiedUpdateValues, session);
+                }
+                jcrNode.setProperty(updateProperty.getName(), jcrValues, updateProperty.getValueType().ordinal());
             } else {
                 if (verifiedUpdateValues.size() > 0) {
                     jcrNode.setProperty(updateProperty.getName(), valueFrom(updateProperty, verifiedUpdateValues.get(0), session));

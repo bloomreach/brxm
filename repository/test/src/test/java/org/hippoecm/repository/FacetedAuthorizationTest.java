@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,15 +15,20 @@
  */
 package org.hippoecm.repository;
 
+import java.math.BigDecimal;
 import java.security.AccessControlException;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeSet;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -33,34 +38,56 @@ import javax.jcr.query.QueryManager;
 import javax.jcr.query.RowIterator;
 import javax.jcr.security.Privilege;
 
+import org.apache.jackrabbit.core.query.lucene.DecimalField;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.security.HippoAccessManager;
+import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.Utilities;
+import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.onehippo.repository.security.DomainInfoPrivilege;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.security.domain.FacetRule;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
-import static javax.jcr.security.Privilege.JCR_WRITE;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hippoecm.repository.HippoStdNodeType.NT_RELAXED;
+import static org.hippoecm.repository.api.HippoNodeType.CONFIGURATION_PATH;
+import static org.hippoecm.repository.api.HippoNodeType.DOMAINS_PATH;
+import static org.hippoecm.repository.api.HippoNodeType.GROUPS_PATH;
+import static org.hippoecm.repository.api.HippoNodeType.USERS_PATH;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_ADD_CHILD_NODES;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_MODIFY_PROPERTIES;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_READ;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_REMOVE_CHILD_NODES;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_REMOVE_NODE;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_WRITE;
 
 public class FacetedAuthorizationTest extends RepositoryTestCase {
 
+    Node testDataDomain;
     Node hipDocDomain;
     Node readDomain;
     Node writeDomain;
     Node testUser;
 
-    Session userSession;
+    HippoSession userSession;
 
     // nodes that have to be cleaned up
+    private static final String DOMAIN_HANDLE_NODE = "test-domain-handle";
+    private static final String DOMAIN_TEST_DATA_NODE = "testdata";
+//    private static final String DOMAIN_HIPPO_UNSTRUCTURED_NODE = "test-domain-hippo-unstructured";
+    private static final String DOMAIN_NAVIGATION = "navigation";
     private static final String DOMAIN_DOC_NODE = "hippodocument";
     private static final String DOMAIN_READ_NODE = "readme";
     private static final String DOMAIN_WRITE_NODE= "writeme";
@@ -80,10 +107,12 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         SET_PROPERTY_ACTION };
 
     public void cleanup() throws RepositoryException {
-        Node config = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
-        Node domains = config.getNode(HippoNodeType.DOMAINS_PATH);
-        Node users = config.getNode(HippoNodeType.USERS_PATH);
-        Node groups = config.getNode(HippoNodeType.GROUPS_PATH);
+        Node config = session.getRootNode().getNode(CONFIGURATION_PATH);
+        Node domains = config.getNode(DOMAINS_PATH);
+        Node users = config.getNode(USERS_PATH);
+        Node groups = config.getNode(GROUPS_PATH);
+
+        groups.getNode("admin").setProperty("hipposys:members", new String[]{});
 
         cleanupDomains(domains);
 
@@ -97,15 +126,14 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     }
 
     private void cleanupDomains(final Node domains) throws RepositoryException {
-        if (domains.hasNode(DOMAIN_DOC_NODE)) {
-            domains.getNode(DOMAIN_DOC_NODE).remove();
+
+        for (String domain : new String[]{DOMAIN_DOC_NODE, DOMAIN_READ_NODE, DOMAIN_WRITE_NODE, DOMAIN_NAVIGATION,
+                "defaultread/" + DOMAIN_HANDLE_NODE, "defaultread/" + DOMAIN_TEST_DATA_NODE }) {
+            if (domains.hasNode(domain)) {
+                domains.getNode(domain).remove();
+            }
         }
-        if (domains.hasNode(DOMAIN_READ_NODE)) {
-            domains.getNode(DOMAIN_READ_NODE).remove();
-        }
-        if (domains.hasNode(DOMAIN_WRITE_NODE)) {
-            domains.getNode(DOMAIN_WRITE_NODE).remove();
-        }
+
     }
 
     private void cleanupUserAndGroup(final Node users, final Node groups) throws RepositoryException {
@@ -135,10 +163,15 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         super.setUp();
 
         cleanup();
-        Node config = session.getRootNode().getNode(HippoNodeType.CONFIGURATION_PATH);
-        Node domains = config.getNode(HippoNodeType.DOMAINS_PATH);
-        Node users = config.getNode(HippoNodeType.USERS_PATH);
-        Node groups = config.getNode(HippoNodeType.GROUPS_PATH);
+        Node config = session.getRootNode().getNode(CONFIGURATION_PATH);
+        Node domains = config.getNode(DOMAINS_PATH);
+        Node users = config.getNode(USERS_PATH);
+        Node groups = config.getNode(GROUPS_PATH);
+        /*   Temporarily adding admin user to admin group to pass the
+             testDelegatedSessionWithWildcardDomainRuleExtension() and
+             testDelegatedSessionWithNamedDomainRuleExtension() tests
+         */
+        groups.getNode("admin").setProperty("hipposys:members", new String[]{"admin"});
 
         // create test user
         createUserAndGroup(users, groups);
@@ -168,7 +201,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         session.refresh(false);
 
         // setup user session
-        userSession = server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+        userSession = (HippoSession)server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
     }
 
     private void createUserAndGroup(final Node users, final Node groups) throws RepositoryException {
@@ -181,6 +214,16 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
     }
 
     private void createDomains(final Node domains) throws RepositoryException {
+
+        final Node defaultRead = session.getNode("/hippo:configuration/hippo:domains/defaultread");
+        testDataDomain = defaultRead.addNode(DOMAIN_TEST_DATA_NODE, "hipposys:domainrule");
+
+        final Node facetRule = testDataDomain.addNode("read-to-test-node", "hipposys:facetrule");
+        facetRule.setProperty("hipposys:equals", true);
+        facetRule.setProperty("hipposys:facet", "jcr:uuid");
+        facetRule.setProperty("hipposys:type", "Reference");
+        facetRule.setProperty("hipposys:value", "/testdata");
+
         // create hippodoc domain
         hipDocDomain = domains.addNode(DOMAIN_DOC_NODE, HippoNodeType.NT_DOMAIN);
         Node ar = hipDocDomain.addNode("readonly", HippoNodeType.NT_AUTHROLE);
@@ -193,7 +236,27 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         fr.setProperty(HippoNodeType.HIPPOSYS_VALUE, "hippo:testdocument");
         fr.setProperty(HippoNodeType.HIPPOSYS_TYPE, "Name");
 
+        // add default read for 'hippo:handle' and 'DOMAIN_NAVIGATION' since these tests rely on logic that
+        // handle and 'DOMAIN_NAVIGATION' nodes can be read
+        readDomain = domains.getNode("defaultread").addNode(DOMAIN_HANDLE_NODE, HippoNodeType.NT_DOMAINRULE);
+        fr = readDomain.addNode("match-handle-node", HippoNodeType.NT_FACETRULE);
+        fr.setProperty(HippoNodeType.HIPPO_FACET, "nodetype");
+        fr.setProperty(HippoNodeType.HIPPO_EQUALS, true);
+        fr.setProperty(HippoNodeType.HIPPOSYS_VALUE, "hippo:handle");
+        fr.setProperty(HippoNodeType.HIPPOSYS_TYPE, "String");
+
         // create read domain
+        readDomain = domains.addNode(DOMAIN_NAVIGATION, HippoNodeType.NT_DOMAIN);
+        ar = readDomain.addNode("readonly", HippoNodeType.NT_AUTHROLE);
+        ar.setProperty(HippoNodeType.HIPPO_ROLE, "readonly");
+        ar.setProperty(HippoNodeType.HIPPO_GROUPS, new String[]{"everybody"});
+        dr = readDomain.addNode("read-below-navigation", HippoNodeType.NT_DOMAINRULE);
+        fr = dr.addNode("read-below-navigation-rule", HippoNodeType.NT_FACETRULE);
+        fr.setProperty(HippoNodeType.HIPPO_FACET, "jcr:path");
+        fr.setProperty(HippoNodeType.HIPPOSYS_VALUE, "/navigation");
+        fr.setProperty(HippoNodeType.HIPPOSYS_TYPE, "Reference");
+        fr.setProperty(HippoNodeType.HIPPO_EQUALS, true);
+
         readDomain = domains.addNode(DOMAIN_READ_NODE, HippoNodeType.NT_DOMAIN);
         ar = readDomain.addNode("readonly", HippoNodeType.NT_AUTHROLE);
         ar.setProperty(HippoNodeType.HIPPO_ROLE, "readonly");
@@ -320,37 +383,6 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         assertFalse(testData.hasNode("expanders/useradmin"));
         assertFalse(testData.hasNode("expanders/groupadmin"));
         assertFalse(testData.hasNode("expanders/roleadmin"));
-    }
-
-    @Test
-    public void awkward_permissions_logic_REPO_1971() throws RepositoryException {
-
-        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
-
-        assertFalse("User session should not have write access to the checked node",
-                userSession.hasPermission(testData.getPath() + "/" + "readdoc0", Session.ACTION_ADD_NODE));
-
-        // node 'foo' does not exist below 'readdoc0', but the action is checked against the parent 'readdoc0' which does exist
-        assertFalse("User session should not have write access to the checked node",
-                userSession.hasPermission(testData.getPath() + "/" + "readdoc0/foo", Session.ACTION_ADD_NODE));
-
-
-        // TODO node 'foo' does not exist below 'readdoc0' : The action is checked agains 'readdoc0/foo' which does not exist
-        // TODO and thus HippoAccessManager.hasPrivileges(org.apache.jackrabbit.spi.Path, javax.jcr.security.Privilege[]) returns
-        // TODO true because getNodeId(absPath) returns null
-        // TODO Perhaps this is needed for some obscure clustering logic, however not clear from the code (at all) and
-        // TODO version history does go long enough back
-        assertTrue("UNEXPECTED TRUE",
-                userSession.hasPermission(testData.getPath() + "/" + "readdoc0/foo/bar", Session.ACTION_ADD_NODE));
-    }
-
-    @Test
-    public void awkward_permissions_logic_REPO_1971_2() throws RepositoryException {
-        Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
-        // TODO 'foo' is not a known privilege....why does this return true?
-        assertTrue("UNEXPECTED TRUE : 'foo' is not a known privilege : why does this return true?",
-                userSession.hasPermission(testData.getPath() + "/" + "readdoc0/foo", "foo"));
-
     }
 
     @Test
@@ -535,8 +567,9 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         assertEquals(accessibleDocId, userTestData.getNode("doc/doc").getIdentifier());
     }
 
+
     @Test
-    public void testAccessForChildNodeFollowsParent() throws RepositoryException {
+    public void testAccessForChildNodeOfDocument() throws RepositoryException {
         Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
         final Node handle = testData.addNode("doc", "hippo:handle");
         handle.addMixin("mix:referenceable");
@@ -544,22 +577,576 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
 
         Node doc = handle.addNode("doc", "hippo:authtestdocument");
         doc.addMixin("hippo:container");
-        final Node childNode = doc.addNode("link", "hippo:mirror");
-        childNode.setProperty("hippo:docbase", session.getRootNode().getIdentifier());
+        final Node childNode = doc.addNode("level1", "hippo:testcomposite");
+        childNode.addNode("level2", "hippo:testcomposite");
+        {
+            final Node link = childNode.addNode("link", "hippo:facetselect");
+            link.setProperty(HippoNodeType.HIPPO_FACETS, new String[]{});
+            link.setProperty(HippoNodeType.HIPPO_MODES, new String[]{});
+            link.setProperty(HippoNodeType.HIPPO_VALUES, new String[]{});
+            link.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getIdentifier());
+        }
+        {
+            final Node mirror = childNode.addNode("mirror", "hippo:mirror");
+            mirror.setProperty(HippoNodeType.HIPPO_DOCBASE, session.getRootNode().getIdentifier());
+        }
+
         session.save();
 
-        Node userTestData = userSession.getRootNode().getNode(TEST_DATA_NODE);
-        try {
-            userTestData.getNode("doc/doc/link");
-            fail("User should not be able to read doc/doc/link");
-        } catch (PathNotFoundException expected) {}
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
 
         doc.setProperty("authtest", "canread");
         session.save();
 
-        userTestData = userSession.getRootNode().getNode(TEST_DATA_NODE);
-        assertTrue("User can still not read node while authorization was granted", userTestData.hasNode("doc/doc/link"));
-        userTestData.getNode("doc/doc/link");
+        // read should now be allowed to read 'doc/doc'
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
+
+        doc.setProperty("authtest", "canwrite");
+        session.save();
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+
+        // See JCR Spec 16.6.2 table: The Session Actions vs Privileges
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", JCR_MODIFY_PROPERTIES));
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/newprop", Session.ACTION_SET_PROPERTY));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/newprop", Session.ACTION_SET_PROPERTY));
+        assertTrue("REPO-1971 Session.ACTION_REMOVE check on non-existing document is allowed",
+                userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/dummy", Session.ACTION_REMOVE));
+        try {
+            userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/dummy", JCR_REMOVE_NODE);
+            fail("REPO-1971: jcr:removeNode permission check on a non-existing path should fail with PathNotFoundException");
+        } catch (PathNotFoundException ignore) {
+        }
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", JCR_REMOVE_CHILD_NODES));
+
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/newnode", Session.ACTION_ADD_NODE));
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", JCR_ADD_CHILD_NODES));
+        userSession.getNode("/" + TEST_DATA_NODE + "/doc/doc").addNode("foo", "hippo:testcomposite");
+        userSession.save();
+
+        doc.setProperty("authtest", "canread");
+        session.save();
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        // READ is NOT inherited *any more since 14.0* to descendants of a document!
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1", Session.ACTION_READ));
+
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1", JCR_MODIFY_PROPERTIES));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/newprop", Session.ACTION_SET_PROPERTY));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/newprop", Session.ACTION_SET_PROPERTY));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/dummy", Session.ACTION_REMOVE));
+        try {
+            userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/dummy", JCR_REMOVE_NODE);
+            fail("REPO-1971: jcr:removeNode permission check on a non-existing path should fail with PathNotFoundException");
+        } catch (PathNotFoundException ignore) {
+        }
+        assertFalse("REPO-1971 'level1/level2' does exist and should not be allowed to be removed by the userSession",
+                userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2", JCR_REMOVE_NODE));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1", JCR_REMOVE_CHILD_NODES));
+
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/newnode", Session.ACTION_ADD_NODE));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1", JCR_ADD_CHILD_NODES));
+
+        doc.setProperty("authtest", "canwrite");
+        session.save();
+        assertTrue("'canwrite' results in role 'readwrite' which implies also read",
+                userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+
+        // jcr:write *IS* inherited *only* to *READABLE* descendants of a document!
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1", Session.ACTION_READ));
+
+        // jcr:write *IS* inherited to *only* READABLE descendants of a document
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1", JCR_MODIFY_PROPERTIES));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/newprop", Session.ACTION_SET_PROPERTY));
+        assertTrue("user should have write access to properties of document",
+                userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/newprop", Session.ACTION_SET_PROPERTY));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/dummy", Session.ACTION_REMOVE));
+        try {
+            userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/dummy", JCR_REMOVE_NODE);
+            fail("REPO-1971: jcr:removeNode permission check on a non-existing path should fail with PathNotFoundException");
+        } catch (PathNotFoundException ignore) {
+        }
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2", JCR_REMOVE_NODE));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1", JCR_REMOVE_CHILD_NODES));
+
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/newnode", Session.ACTION_ADD_NODE));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1", JCR_ADD_CHILD_NODES));
+
+        // make /doc/doc/level1 node readable. Now the permissions should be inherited from /doc/doc
+        doc.getNode("level1").setProperty("authtest", "canread");
+        session.save();
+
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2", Session.ACTION_READ));
+
+        // Permissions should be implicitly inherited on READABLE descendant nodes
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1", JCR_MODIFY_PROPERTIES));
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/newprop", Session.ACTION_SET_PROPERTY));
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/dummy", Session.ACTION_REMOVE));
+        try {
+            userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/dummy", JCR_REMOVE_NODE);
+            fail("REPO-1971: jcr:removeNode permission check on a non-existing path should fail with PathNotFoundException");
+        } catch (PathNotFoundException ignore) {
+        }
+        assertFalse("'level2' node is still not readable and thus should not inherit jcr:write",
+                userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2", JCR_REMOVE_NODE));
+
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1", JCR_REMOVE_CHILD_NODES));
+
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/newnode", Session.ACTION_ADD_NODE));
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1", JCR_ADD_CHILD_NODES));
+
+        // make /doc/doc/level1/level2 node readable. Now the permissions should be inherited from /doc/doc on level2 as well
+        doc.getNode("level1/level2").setProperty("authtest", "canread");
+        session.save();
+
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1", Session.ACTION_READ));
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2", Session.ACTION_READ));
+
+        // Permissions should be implicitly inherited on READABLE descendant nodes
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2", JCR_MODIFY_PROPERTIES));
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2/newprop", Session.ACTION_SET_PROPERTY));
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2/dummy", Session.ACTION_REMOVE));
+        try {
+            userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2/dummy", JCR_REMOVE_NODE);
+            fail("REPO-1971: jcr:removeNode permission check on a non-existing path should fail with PathNotFoundException");
+        } catch (PathNotFoundException ignore) {
+        }
+        assertTrue("'level2' node is still not readable and thus should not inherit jcr:write",
+                userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2", JCR_REMOVE_NODE));
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2", JCR_REMOVE_CHILD_NODES));
+
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2/newnode", Session.ACTION_ADD_NODE));
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/level2", JCR_ADD_CHILD_NODES));
+
+
+        // MIRROR NODETYPE TESTS
+
+        // 'level1/mirror' is not readable
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/mirror", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/mirror", JCR_REMOVE_NODE));
+
+        // make 'mirror' readable, now it should also receive the write access from level1
+        final Node mirror = session.getNode("/" + TEST_DATA_NODE + "/doc/doc/level1/mirror");
+        mirror.addMixin(NT_RELAXED);
+        mirror.setProperty("authtest", "canread");
+        session.save();
+
+        // because of mirror #^#^#$^&*%^#$ blah logic we need refresh user session, sigh
+        userSession.refresh(false);
+
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/mirror", Session.ACTION_READ));
+        // 'level1/mirror' is now readable and thus should inherit write access
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/mirror", JCR_REMOVE_NODE));
+
+        // FACETSELECT TESTS
+
+        // 'level1/link' is not readable
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/link", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/link", JCR_REMOVE_NODE));
+
+        // make 'link' readable, now it should also receive the write access from level1
+        final Node link = session.getNode("/" + TEST_DATA_NODE + "/doc/doc/level1/link");
+        link.addMixin(NT_RELAXED);
+        link.setProperty("authtest", "canread");
+        session.save();
+
+        // because of facetselect #^#^#$^&*%^#$ blah logic we need refresh user session, sigh
+        userSession.refresh(false);
+
+
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/link", Session.ACTION_READ));
+        // 'level1/link' is now readable and thus should inherit write access
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc/level1/link", JCR_REMOVE_NODE));
+    }
+
+    @Test
+    public void test_FacetRule_on_Boolean_Property_works() throws RepositoryException {
+
+        final Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
+        final Node handle = testData.addNode("doc", "hippo:handle");
+        handle.addMixin("mix:referenceable");
+        final Node doc = handle.addNode("doc", "hippo:authtestdocument");
+        doc.setProperty("authtest", Boolean.TRUE);
+
+        assertThat(doc.getProperty("authtest").getType()).isEqualTo(PropertyType.BOOLEAN);
+
+        session.save();
+
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
+
+        final Node authtestReadRule = readDomain.getNode("authtest-read/authtest-read-rule");
+
+        final Property authtest = authtestReadRule.setProperty(HippoNodeType.HIPPOSYS_VALUE, Boolean.TRUE);
+
+        assertThat(authtest.getType())
+                .as("The hipposys:value is always expressed as a String, even if a Boolean is supplied")
+                .isEqualTo(PropertyType.STRING);
+        assertThat(authtest.getString()).isEqualTo("true");
+
+        session.save();
+        userSession.logout();
+        userSession = (HippoSession)server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
+
+        // assert search (and thus authorization query) also works
+        final Query query = userSession.getWorkspace().getQueryManager()
+                .createQuery("//element(*, hippo:authtestdocument)[@authtest = 'true']", "xpath");
+
+        final NodeIterator result = query.execute().getNodes();
+        assertThat(result.getSize()).isEqualTo(1);
+        assertThat(result.nextNode().getPath()).isEqualTo(doc.getPath());
+
+        // query on true instead of 'true' does not work (did not invest the reason but does not relate to authorization)
+
+        assertThat(userSession.getWorkspace().getQueryManager()
+                .createQuery("//element(*, hippo:authtestdocument)[@authtest = true]", "xpath")
+                .execute().getNodes().getSize()).isEqualTo(0);
+    }
+
+    @Test
+    public void test_FacetRule_on_Long_Property_works() throws RepositoryException {
+
+        final Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
+        final Node handle = testData.addNode("doc", "hippo:handle");
+        handle.addMixin("mix:referenceable");
+        final Node doc = handle.addNode("doc", "hippo:authtestdocument");
+        // set a Long value
+        doc.setProperty("authtest", 10L);
+
+        assertThat(doc.getProperty("authtest").getType()).isEqualTo(PropertyType.LONG);
+
+        session.save();
+
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
+
+        final Node authtestReadRule = readDomain.getNode("authtest-read/authtest-read-rule");
+
+        final Property authtest = authtestReadRule.setProperty(HippoNodeType.HIPPOSYS_VALUE, 10L);
+
+        assertThat(authtest.getType())
+                .as("The hipposys:value is always expressed as a String, even if a Long is supplied")
+                .isEqualTo(PropertyType.STRING);
+        assertThat(authtest.getString()).isEqualTo("10");
+
+        session.save();
+        userSession.logout();
+        userSession = (HippoSession)server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
+
+        // assert search (and thus authorization query) also works
+        // both 10 and '10' works for long
+        for (String value : new String[]{ "'10'", "10"} ) {
+            final Query query = userSession.getWorkspace().getQueryManager()
+                    .createQuery("//element(*, hippo:authtestdocument)[@authtest = " + value + "]", "xpath");
+
+            final NodeIterator result = query.execute().getNodes();
+            assertThat(result.getSize()).isEqualTo(1);
+            assertThat(result.nextNode().getPath()).isEqualTo(doc.getPath());
+        }
+
+    }
+
+    @Test
+    public void test_FacetRule_on_Double_Property_works() throws RepositoryException {
+
+        final Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
+        final Node handle = testData.addNode("doc", "hippo:handle");
+        handle.addMixin("mix:referenceable");
+        final Node doc = handle.addNode("doc", "hippo:authtestdocument");
+        doc.setProperty("authtest", 10.23);
+
+        assertThat(doc.getProperty("authtest").getType()).isEqualTo(PropertyType.DOUBLE);
+
+        session.save();
+
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
+
+        final Node authtestReadRule = readDomain.getNode("authtest-read/authtest-read-rule");
+
+        final Property authtest = authtestReadRule.setProperty(HippoNodeType.HIPPOSYS_VALUE, 10.23);
+
+        assertThat(authtest.getType())
+                .as("The hipposys:value is always expressed as a String, even if a Double is supplied")
+                .isEqualTo(PropertyType.STRING);
+        assertThat(authtest.getString()).isEqualTo("10.23");
+
+        session.save();
+        userSession.logout();
+        userSession = (HippoSession)server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
+
+        // assert search (and thus authorization query) also works
+        // both 10.23 and '10.23' works for long
+        for (String value : new String[]{ "'10.23'", "10.23"} ) {
+            final Query query = userSession.getWorkspace().getQueryManager()
+                    .createQuery("//element(*, hippo:authtestdocument)[@authtest = " + value + "]", "xpath");
+
+            final NodeIterator result = query.execute().getNodes();
+            assertThat(result.getSize()).isEqualTo(1);
+            assertThat(result.nextNode().getPath()).isEqualTo(doc.getPath());
+        }
+
+    }
+
+    @Test
+    public void test_FacetRule_on_BigDecimal_Property_works_in_authorization_but_NOT_in_query_hence_not_fully_supported()
+            throws RepositoryException {
+
+        final Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
+        final Node handle = testData.addNode("doc", "hippo:handle");
+        handle.addMixin("mix:referenceable");
+        final Node doc = handle.addNode("doc", "hippo:authtestdocument");
+        final BigDecimal bigDecimal = new BigDecimal(325234.324);
+        doc.setProperty("authtest", bigDecimal);
+
+        assertThat(doc.getProperty("authtest").getType()).isEqualTo(PropertyType.DECIMAL);
+
+        session.save();
+
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
+
+        final Node authtestReadRule = readDomain.getNode("authtest-read/authtest-read-rule");
+
+        final Property authtest = authtestReadRule.setProperty(HippoNodeType.HIPPOSYS_VALUE, bigDecimal);
+
+        assertThat(authtest.getType())
+                .as("The hipposys:value is always expressed as a String, even if a BigDecimal is supplied")
+                .isEqualTo(PropertyType.STRING);
+
+        session.save();
+        userSession.logout();
+        userSession = (HippoSession)server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
+
+        // assert search (and thus authorization query) does NOT work
+        for (String value : new String[]{ "'325234.324'", "325234.324", "'" + DecimalField.decimalToString(new BigDecimal(325234.324)) + "'" } ) {
+            final Query query = userSession.getWorkspace().getQueryManager()
+                    .createQuery("//element(*, hippo:authtestdocument)[@authtest = " + value + "]", "xpath");
+
+            final NodeIterator result = query.execute().getNodes();
+            assertThat(result.getSize()).isEqualTo(0);
+        }
+
+        // now assert that the ADMIN session actually DOES have a search result : this is because the authorization query
+        // for ADMIN is just a match-all query
+        final String value = DecimalField.decimalToString(new BigDecimal(325234.324));
+        final String xpath = "//element(*, hippo:authtestdocument)[@authtest = '" + value + "']";
+        final Query query = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath");
+
+        final NodeIterator result = query.execute().getNodes();
+        assertThat(result.getSize()).isEqualTo(1);
+    }
+
+    @Test
+    public void test_FacetRule_on_Date_Property_works_but_NOT_in_query_hence_not_fully_supported() throws RepositoryException {
+
+        final Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
+        final Node handle = testData.addNode("doc", "hippo:handle");
+        handle.addMixin("mix:referenceable");
+        final Node doc = handle.addNode("doc", "hippo:authtestdocument");
+        final Calendar date = Calendar.getInstance();
+
+        doc.setProperty("authtest", date);
+
+        assertThat(doc.getProperty("authtest").getType()).isEqualTo(PropertyType.DATE);
+
+        session.save();
+
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
+
+        final Node authtestReadRule = readDomain.getNode("authtest-read/authtest-read-rule");
+
+        final Property authtest = authtestReadRule.setProperty(HippoNodeType.HIPPOSYS_VALUE, date);
+
+        assertThat(authtest.getType())
+                .as("The hipposys:value is always expressed as a String, even if a Date is supplied")
+                .isEqualTo(PropertyType.STRING);
+
+        session.save();
+        userSession.logout();
+        userSession = (HippoSession) server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+
+        assertTrue(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_READ));
+        assertFalse(userSession.hasPermission("/" + TEST_DATA_NODE + "/doc/doc", Session.ACTION_ADD_NODE));
+
+        // assert search (and thus authorization query) does NOT work
+        final String value = "xs:dateTime('" + session.getValueFactory().createValue(date).getString() + "')";
+        final String xpath = "//element(*, hippo:authtestdocument)[@authtest = " + value + "]";
+        final Query query = userSession.getWorkspace().getQueryManager()
+                .createQuery(xpath, "xpath");
+
+        final NodeIterator result = query.execute().getNodes();
+        assertThat(result.getSize()).isEqualTo(0);
+
+        // now assert that the ADMIN session actually DOES have a search result : this is because the authorization query
+        // for ADMIN is just a match-all query
+        final Query queryAdmin = session.getWorkspace().getQueryManager().createQuery(xpath, "xpath");
+
+        final NodeIterator resultAdmin = queryAdmin.execute().getNodes();
+        assertThat(resultAdmin.getSize()).isEqualTo(1);
+        assertThat(resultAdmin.nextNode().getPath()).isEqualTo(doc.getPath());
+    }
+
+
+    @Test
+    public void test_privileges_on_abs_path() throws RepositoryException {
+        final String everywhereDomainPath = "/" + CONFIGURATION_PATH + "/" + DOMAINS_PATH + "/everywhere";
+        Node testData = session.getRootNode().getNode(TEST_DATA_NODE);
+        final Node handle = testData.addNode("doc", "hippo:handle");
+        handle.addMixin("mix:referenceable");
+        Node doc = handle.addNode("doc", "hippo:authtestdocument");
+
+        session.save();
+
+        {
+            // privileges for admin
+            final TreeSet<DomainInfoPrivilege> set = getPrivilegesSortedByName(session, "/" + TEST_DATA_NODE + "/doc/doc");
+            assertThat(set)
+                    .as("Expected read privilege from ")
+                    .hasSize(5);
+
+            final TreeSet<String> expectedPermissions = new TreeSet<>();
+            for (String permissions : new String[]{"hippo:admin", "hippo:author", "hippo:editor", "jcr:all", "jcr:read"}) {
+                expectedPermissions.add(permissions);
+            }
+
+            DomainInfoPrivilege current;
+            while ((current = set.pollFirst()) != null) {
+                final String expectedPermission = expectedPermissions.pollFirst();
+                assertThat(current.getName())
+                        .as("Expected '%s' privilege but was '%s'", expectedPermission, current.getName())
+                        .isEqualTo(expectedPermission);
+
+                assertThat(current.getDomainPaths())
+                        .as("Expected everywhere domain '%s' also giving '%s' privilege but was domain(s) '%s'",
+                                everywhereDomainPath, current.getName(), current.getDomainPaths())
+                        .containsExactly(everywhereDomainPath);
+            }
+
+
+        }
+        assertThat(getPrivileges(userSession, "/" + TEST_DATA_NODE + "/doc/doc"))
+                .as("Expected no single privilege for usersSession")
+                .isEmpty();
+
+
+        doc.setProperty("authtest", "canread");
+        session.save();
+
+        {
+            final DomainInfoPrivilege[] privileges = getPrivileges(userSession, "/" + TEST_DATA_NODE + "/doc/doc");
+            assertThat(privileges)
+                    .as("Expected read privilege from ")
+                    .hasSize(1);
+            assertThat(privileges[0].getName())
+                    .as("Expected jcr:read privilege")
+                    .isEqualTo(JCR_READ);
+
+            assertThat(privileges[0].getDomainPaths())
+                    .as("Expected read domain '%s' giving jcr:read privilege but was domain '%s'",
+                            readDomain.getPath(), privileges[0].getDomainPaths().first())
+                    .containsExactly(readDomain.getPath());
+        }
+
+        doc.setProperty("authtest", "canwrite");
+        session.save();
+
+        {
+            final TreeSet<DomainInfoPrivilege> set = getPrivilegesSortedByName(userSession, "/" + TEST_DATA_NODE + "/doc/doc");
+
+            assertThat(set)
+                    .as("Expected privileges jcr:read and jcr:write")
+                    .hasSize(2);
+
+            final DomainInfoPrivilege first = set.pollFirst();
+            assertThat(first.getName())
+                    .as("Expected jcr:read as the first element in the sorted set")
+                    .isEqualTo(JCR_READ);
+            assertThat(first.getDomainPaths())
+                    .as("Expected write domain '%s' giving jcr:read privilege but was domain(s) '%s'",
+                            writeDomain.getPath(), first.getDomainPaths())
+                    .containsExactly(writeDomain.getPath());
+
+            final DomainInfoPrivilege second = set.pollFirst();
+            assertThat(second.getName())
+                    .as("Expected jcr:write as the second element in the sorted set")
+                    .isEqualTo(JCR_WRITE);
+            assertThat(second.getDomainPaths())
+                    .as("Expected write domain '%s' giving jcr:write privilege but was domain(s) '%s'",
+                            writeDomain.getPath(), second.getDomainPaths())
+                    .containsExactly(writeDomain.getPath());
+        }
+
+        // VERY Specific use case now : If we copy the 'writeDomain' to a second domain, and log in a new user session
+        // we expect that we get the exact same privileges as above BUT this time, the domains providing the privilege
+        // should also include the copied domain!
+
+        final String writeDomainPath2 = writeDomain.getPath() + "2";
+        JcrUtils.copy(session, writeDomain.getPath(), writeDomainPath2);
+        session.save();
+
+        userSession.logout();
+        userSession = (HippoSession)server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+
+        try {
+            {
+                final TreeSet<DomainInfoPrivilege> set = getPrivilegesSortedByName(userSession, "/" + TEST_DATA_NODE + "/doc/doc");
+
+                assertThat(set)
+                        .as("Expected privileges jcr:read and jcr:write")
+                        .hasSize(2);
+
+                final DomainInfoPrivilege first = set.pollFirst();
+                assertThat(first.getName())
+                        .as("Expected jcr:read as the first element in the sorted set")
+                        .isEqualTo(JCR_READ);
+                assertThat(first.getDomainPaths())
+                        .as("Expected domain '%s' and '%s' giving jcr:read privilege but was domain(s) '%s'",
+                                writeDomain.getPath(), writeDomainPath2, first.getDomainPaths())
+                        .containsExactly(writeDomain.getPath(), writeDomainPath2);
+
+                final DomainInfoPrivilege second = set.pollFirst();
+                assertThat(second.getName())
+                        .as("Expected jcr:write as the second element in the sorted set")
+                        .isEqualTo(JCR_WRITE);
+                assertThat(second.getDomainPaths())
+                        .as("Expected domain '%s' and '%s' giving jcr:write privilege but was domain(s) '%s'",
+                                writeDomain.getPath(), writeDomainPath2, second.getDomainPaths())
+                        .containsExactly(writeDomain.getPath(), writeDomainPath2);
+            }
+        } finally {
+            // cleanup the second domain
+            session.getNode(writeDomainPath2).remove();
+            session.save();
+        }
+
+    }
+
+    @NotNull
+    private TreeSet<DomainInfoPrivilege> getPrivilegesSortedByName(final Session userSession, final String absPath) throws RepositoryException {
+
+        final DomainInfoPrivilege[] privileges = getPrivileges(userSession, absPath);
+        TreeSet<DomainInfoPrivilege> set = new TreeSet<>(Comparator.comparing(DomainInfoPrivilege::getName));
+        Arrays.stream(privileges).forEach(domainInfoPrivilege -> set.add(domainInfoPrivilege));
+        return set;
+    }
+
+    private DomainInfoPrivilege[] getPrivileges(final Session session, final String absPath) throws RepositoryException {
+        return ((HippoAccessManager) session.getAccessControlManager()).getPrivileges(absPath);
     }
 
     @Test
@@ -610,7 +1197,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
 
         // setup CLEAN user session
         userSession.logout();
-        userSession = server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+        userSession = (HippoSession) server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
 
         {
             Node testData = userSession.getRootNode().getNode(TEST_DATA_NODE);
@@ -647,7 +1234,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
 
         // setup user session
         userSession.logout();
-        userSession = server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+        userSession = (HippoSession) server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
 
         assertTrue(userSession.getRootNode().getNode(TEST_DATA_NODE).hasNode("readable"));
 
@@ -1013,7 +1600,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         queriesWithExpectedHitSizes.put("/jcr:root/testdata[nothing0/@authtest='nothing']/*[@authtest='nothing']/*", new Long[] {new Long(3), new Long(0)});
         queriesWithExpectedHitSizes.put("/jcr:root/testdata[readdoc0/@authtest='canread']/readdoc0/subread", new Long[] {new Long(1), new Long(1)});
 
-        // for query below, the userSession should be able to read /testdata/writedoc0/subread and /testdata/readdoc0/subread
+        // for query below, the userSession should be able to read /test/writedoc0/subread and /test/readdoc0/subread
         queriesWithExpectedHitSizes.put("/jcr:root/testdata[readdoc0/@authtest='canread']/*/subread", new Long[] {new Long(3), new Long(2)});
 
         queryAssertions(queriesWithExpectedHitSizes);
@@ -1038,7 +1625,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
 
         queriesWithExpectedHitSizes.put("/jcr:root/testdata/nothing0/*[../@authtest='nothing']", new Long[] {new Long(3), new Long(0)});
 
-        // for query below, the userSession should be able to read /testdata/writedoc0 and /testdata/readdoc0
+        // for query below, the userSession should be able to read /test/writedoc0 and /test/readdoc0
         queriesWithExpectedHitSizes.put("/jcr:root/testdata[readdoc0/@authtest='canread']/*/subread/..", new Long[] {new Long(3), new Long(2)});
 
         queryAssertions(queriesWithExpectedHitSizes);
@@ -1080,7 +1667,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         session.save();
 
         userSession.logout();
-        userSession = server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+        userSession = (HippoSession) server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
 
         QueryManager queryManager = userSession.getWorkspace().getQueryManager();
         Query query = queryManager.createQuery("//element(*,hippo:authtestdocument) order by @jcr:score", Query.XPATH);
@@ -1330,7 +1917,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         final Session adminSession = userSession.impersonate(new SimpleCredentials("admin", "admin".toCharArray()));
         Session extendedSession = ((HippoSession) userSession).createSecurityDelegate(adminSession);
 
-        assertEquals("admin," + TEST_USER_ID, extendedSession.getUserID());
+        assertEquals(TEST_USER_ID + ",admin", extendedSession.getUserID());
 
         extendedSession.logout();
         adminSession.logout();

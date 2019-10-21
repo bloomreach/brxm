@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -40,7 +40,7 @@ import javax.transaction.xa.XAResource;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.repository.api.HippoSession;
-import org.onehippo.repository.security.User;
+import org.onehippo.repository.security.SessionUser;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.xml.ContentResourceLoader;
 import org.onehippo.repository.xml.ImportResult;
@@ -55,15 +55,22 @@ public class MockSession implements HippoSession {
 
     private final MockNode root;
     private final MockWorkspace workspace;
+    private AccessControlManager accessControlManager;
     private MockRepository mockRepository;
 
-    protected MockSession(MockNode root, QueryManager queryManager) {
+    public MockSession(MockNode root) {
+        this(root, null);
+    }
+
+    public MockSession(MockNode root, QueryManager queryManager) {
         this.root = root;
         this.workspace = new MockWorkspace(this, queryManager);
     }
 
-    protected MockSession(MockNode root) {
-        this(root, null);
+    public MockSession(MockNode root, QueryManager queryManager, AccessControlManager accessControlManager) {
+        this.root = root;
+        this.workspace = new MockWorkspace(this, queryManager);
+        this.accessControlManager = accessControlManager;
     }
 
     @Override
@@ -350,7 +357,10 @@ public class MockSession implements HippoSession {
 
     @Override
     public AccessControlManager getAccessControlManager() {
-        throw new UnsupportedOperationException();
+        if (accessControlManager == null) {
+            throw new IllegalStateException("AccessControlManager is not set");
+        }
+       return accessControlManager;
     }
 
     @Override
@@ -394,7 +404,17 @@ public class MockSession implements HippoSession {
     }
 
     @Override
-    public User getUser() throws ItemNotFoundException, RepositoryException {
+    public boolean isSystemUser() {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public SessionUser getUser() throws ItemNotFoundException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isUserInRole(final String userRoleName) {
         throw new UnsupportedOperationException();
     }
 

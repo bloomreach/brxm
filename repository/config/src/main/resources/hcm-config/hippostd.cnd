@@ -57,6 +57,7 @@
 - hippostd:icon (string)
 - hippostd:renderer (string)
 - hippostd:modify (string) multiple
+- hippostd:excludePrimaryTypes (string) multiple
 + hippostd:templates (hippostd:templates) = hippostd:templates
 
 [hippostd:html] > nt:base

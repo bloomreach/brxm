@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,8 +22,13 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.jcr.NamespaceException;
-import javax.jcr.ReferentialIntegrityException;
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
+import javax.jcr.Workspace;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
 
 import org.apache.jackrabbit.core.cluster.ClusterException;
 import org.apache.jackrabbit.core.cluster.Update;
@@ -36,7 +41,6 @@ import org.apache.jackrabbit.core.id.PropertyId;
 import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.observation.EventStateCollection;
-import org.apache.jackrabbit.core.observation.EventStateCollectionFactory;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.state.ChangeLog;
 import org.apache.jackrabbit.core.state.ISMLocking;
@@ -47,12 +51,14 @@ import org.apache.jackrabbit.core.state.ItemStateListener;
 import org.apache.jackrabbit.core.state.NoSuchItemStateException;
 import org.apache.jackrabbit.core.state.NodeState;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
-import org.apache.jackrabbit.core.state.StaleItemStateException;
 import org.apache.jackrabbit.spi.Name;
 import org.apache.jackrabbit.spi.commons.name.NameFactoryImpl;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.api.HippoNodeType.NT_DOMAINFOLDER;
+import static org.hippoecm.repository.api.HippoNodeType.NT_FACETRULE;
 
 public class HippoSharedItemStateManager extends SharedItemStateManager {
 
@@ -62,29 +68,43 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
 
     private Name handleNodeName;
     private Name documentNodeName;
+    private NodeId rootNodeId;
     private NodeTypeRegistry nodeTypeRegistry;
 
     private Collection<WeakReference<HandleListener>> handleListeners = new CopyOnWriteArrayList<>();
+
+    private QFacetRuleStateManager qFacetRuleStateManager = new QFacetRuleStateManager();
 
     public HippoSharedItemStateManager(RepositoryImpl repository, PersistenceManager persistMgr, NodeId rootNodeId, NodeTypeRegistry ntReg, boolean usesReferences,
                                        ItemStateCacheFactory cacheFactory, ISMLocking locking, final NodeIdFactory nodeIdFactory) throws ItemStateException {
         super(persistMgr, rootNodeId, ntReg, usesReferences, cacheFactory, locking, nodeIdFactory);
         this.repository = repository;
+        this.rootNodeId = rootNodeId;
         this.nodeTypeRegistry = ntReg;
         super.setEventChannel(new DocumentChangeNotifyingEventChannelDecorator());
+
+    }
+
+    public void doPostInitializeWorkspaceInfo() throws RepositoryException {
+        final Workspace workspace = getSystemSession().getWorkspace();
+        if (workspace.getNodeTypeManager().hasNodeType(NT_DOMAINFOLDER)) {
+            // not a new repository, NT_DOMAINFOLDER was loaded before
+            final QueryManager queryManager = workspace.getQueryManager();
+            final Query query = queryManager.createQuery("//element(*," + NT_DOMAINFOLDER+ ")", Query.XPATH);
+            for (NodeIterator nodes = query.execute().getNodes(); nodes.hasNext();) {
+                getQFacetRuleStateManager().processDomainFolder(nodes.nextNode());
+            }
+        }
+    }
+
+    public QFacetRuleStateManager getQFacetRuleStateManager() {
+        return qFacetRuleStateManager;
     }
 
     @Override
     public void setEventChannel(final UpdateEventChannel upstream) {
         UpdateEventChannel eventChannel = new DocumentChangeNotifyingEventChannelDecorator(upstream);
         super.setEventChannel(eventChannel);
-    }
-
-    // FIXME: transactional update?
-
-    @Override
-    public void update(ChangeLog local, EventStateCollectionFactory factory) throws ReferentialIntegrityException, StaleItemStateException, ItemStateException {
-        super.update(local, factory);
     }
 
     @Override
@@ -108,7 +128,7 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
         }
 
         try {
-            Set<NodeState> handles = new HashSet<NodeState>();
+            Set<NodeState> handles = new HashSet<>();
             addHandles(changeLog.modifiedStates(), changeLog, handles);
             for (NodeState handleState : handles) {
                 for (WeakReference<HandleListener> reference : handleListeners) {
@@ -291,6 +311,92 @@ public class HippoSharedItemStateManager extends SharedItemStateManager {
             if (upstream != null) {
                 upstream.setListener(listener);
             }
+        }
+    }
+
+
+    @Override
+    public void stateModified(final ItemState modified) {
+        super.stateModified(modified);
+
+        if (rootNodeId == null) {
+            // HSISM is being constructed still.
+            return;
+        }
+
+        if (getNamePathResolver() == null) {
+            // HSISM is being constructed still.
+            return;
+        }
+
+        ItemId nodeId = modified.isNode() ? modified.getId() : modified.getParentId();
+
+        try {
+            final Node node = getSystemSession().getNodeByIdentifier(nodeId.toString());
+            if (node.isNodeType(NT_FACETRULE)) {
+                qFacetRuleStateManager.processFacetRule(node);
+            }
+        } catch (RepositoryException e) {
+            log.error("Exception while processing modified state.", e);
+        }
+    }
+
+    @Override
+    public void stateDiscarded(final ItemState discarded) {
+        super.stateDiscarded(discarded);
+        // no post processing needed
+    }
+
+    @Override
+    public void stateCreated(ItemState created) {
+        super.stateCreated(created);
+
+
+        if (rootNodeId == null) {
+            // HSISM is being constructed still.
+            return;
+        }
+
+        if (getNamePathResolver() == null) {
+            // HSISM is being constructed still.
+            return;
+        }
+
+        if (!(created.isNode())) {
+            return;
+        }
+
+        try {
+            final Node node = getSystemSession().getNodeByIdentifier(created.getId().toString());
+            if (node.isNodeType(NT_FACETRULE)) {
+                qFacetRuleStateManager.processFacetRule(node);
+            } else {
+                qFacetRuleStateManager.processNewPath(node.getPath(), created);
+            }
+        } catch (RepositoryException e) {
+            log.error("Exception while processing created state.", e);
+        }
+    }
+
+    @Override
+    public void stateDestroyed(final ItemState destroyed) {
+        super.stateDestroyed(destroyed);
+
+        if (rootNodeId == null) {
+            // HSISM is being constructed still.
+            return;
+        }
+
+        if (getNamePathResolver() == null) {
+            // HSISM is being constructed still.
+            return;
+        }
+
+        if (destroyed.isNode()) {
+            final String destroyedId = destroyed.getId().toString();
+
+            qFacetRuleStateManager.processDestroyedId(destroyedId);
+
         }
     }
 }

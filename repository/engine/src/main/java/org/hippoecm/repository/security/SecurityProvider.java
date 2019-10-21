@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,8 +22,6 @@ import javax.jcr.SimpleCredentials;
 import org.apache.jackrabbit.api.security.user.UserManager;
 import org.hippoecm.repository.security.group.DummyGroupManager;
 import org.hippoecm.repository.security.group.GroupManager;
-import org.hippoecm.repository.security.role.DummyRoleManager;
-import org.hippoecm.repository.security.role.RoleManager;
 import org.hippoecm.repository.security.user.DummyUserManager;
 
 public interface SecurityProvider {
@@ -55,13 +53,6 @@ public interface SecurityProvider {
      * @return the implemented manager or a dummy manager
      */
     GroupManager getGroupManager() throws RepositoryException;
-
-    /**
-     * Get the {@link RoleManager} from the provider using system privileges
-     * @see DummyRoleManager
-     * @return the implemented manager or a dummy manager
-     */
-    RoleManager getRoleManager() throws RepositoryException;
 
     /**
      * Create the {@link UserManager} from the provider using the given session

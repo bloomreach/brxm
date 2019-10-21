@@ -36,6 +36,8 @@ public interface HippoNodeType {
 
     public static final String ROLES_PATH = "hippo:roles";
 
+    public static final String USERROLES_PATH = "hippo:userroles";
+
     public static final String USERS_PATH = "hippo:users";
 
     public static final String WORKFLOWS_PATH = "hippo:workflows";
@@ -63,6 +65,8 @@ public interface HippoNodeType {
     public static final String NT_DOMAIN = "hipposys:domain";
 
     public static final String NT_DOMAINFOLDER = "hipposys:domainfolder";
+
+    public static final String NT_FEDERATEDDOMAINFOLDER = "hipposys:federateddomainfolder";
 
     public static final String NT_DOMAINRULE = "hipposys:domainrule";
 
@@ -149,6 +153,10 @@ public interface HippoNodeType {
 
     public static final String NT_TEMPLATETYPE = "hipposysedit:templatetype";
 
+    public static final String NT_USERROLE = "hipposys:userrole";
+
+    public static final String NT_USERROLEFOLDER = "hipposys:userrolefolder";
+
     /**
      * @deprecated since REPO 4.0.0 (CMS 11.0)
      */
@@ -228,8 +236,6 @@ public interface HippoNodeType {
 
     public static final String HIPPO_DOCBASE = "hippo:docbase";
 
-    public static final String HIPPO_DOMAINSPATH = "hipposys:domainspath";
-
     public static final String HIPPO_EQUALS = "hipposys:equals";
 
     public static final String HIPPO_CMS_ONLY = "hipposys:cmsonly";
@@ -242,7 +248,7 @@ public interface HippoNodeType {
 
     public static final String HIPPO_GROUPS = "hipposys:groups";
 
-    public static final String HIPPO_GROUPSPATH = "hipposys:groupspath";
+    public static final String HIPPO_USERS = "hipposys:users";
 
     public static final String HIPPO_JCRREAD = "hipposys:jcrread";
 
@@ -298,6 +304,14 @@ public interface HippoNodeType {
     @SuppressWarnings("squid:S2068")
     public static final String HIPPO_PASSWORDLASTMODIFIED = "hipposys:passwordlastmodified";
 
+    public static final String HIPPOSYS_FIRSTNAME = "hipposys:firstname";
+
+    public static final String HIPPOSYS_LASTNAME = "hipposys:lastname";
+
+    public static final String HIPPOSYS_EMAIL = "hipposys:email";
+
+    public static final String HIPPOSYS_LASTLOGIN = "hipposys:lastlogin";
+
     public static final String HIPPO_PATH = "hipposysedit:path";
 
     public static final String HIPPO_PATHS = "hippo:paths";
@@ -332,8 +346,6 @@ public interface HippoNodeType {
 
     public static final String HIPPO_ROLES = "hipposys:roles";
 
-    public static final String HIPPO_ROLESPATH = "hipposys:rolespath";
-
     public static final String HIPPO_SECURITYPROVIDER = "hipposys:securityprovider";
 
     public static final String HIPPO_SEARCH = "hipposys:search";
@@ -343,6 +355,10 @@ public interface HippoNodeType {
     public static final String HIPPO_SUPERTYPE = "hipposysedit:supertype";
 
     public static final String HIPPO_TEMPLATE = "hipposysedit:template";
+
+    public static final String HIPPO_USERROLE = "hipposys:userrole";
+
+    public static final String HIPPO_USERROLES = "hipposys:userroles";
 
     /**
      * @deprecated since REPO 4.0.0 (CMS 11.0)
@@ -360,10 +376,6 @@ public interface HippoNodeType {
     public static final String HIPPO_TYPES = "hipposys:types";
 
     public static final String HIPPO_URI = "hipposysedit:uri";
-
-    public static final String HIPPO_USERS = "hipposys:users";
-
-    public static final String HIPPO_USERSPATH = "hipposys:userspath";
 
     public static final String HIPPO_UUID = "hippo:uuid";
 
