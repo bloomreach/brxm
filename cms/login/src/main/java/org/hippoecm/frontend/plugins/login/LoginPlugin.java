@@ -17,6 +17,8 @@ package org.hippoecm.frontend.plugins.login;
 
 import java.util.Arrays;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -46,6 +48,7 @@ import org.hippoecm.frontend.widgets.Pinger;
 public class LoginPlugin extends RenderPlugin {
 
     public static final String TERMS_AND_CONDITIONS_LINK = "https://www.bloomreach.com/en/about/privacy";
+    public static final String LOGIN_MESSAGE_URL_QUERY_NAME = "loginmessage";
 
     private static final ResourceReference DEFAULT_FAVICON = new UrlResourceReference(
             Url.parse("skin/images/cms-icon.png"));
@@ -85,6 +88,12 @@ public class LoginPlugin extends RenderPlugin {
         termsAndConditions.setOutputMarkupId(true);
         add(termsAndConditions);
 
+        final HttpServletRequest httpRequest = (HttpServletRequest) this.getRequest().getContainerRequest();
+        final String loginMessage = httpRequest.getParameter(LOGIN_MESSAGE_URL_QUERY_NAME);
+        if (loginMessage != null) {
+            info(this.getString(loginMessage));
+        }
+        
         final boolean autoComplete = getPluginConfig().getAsBoolean(AUTOCOMPLETE, true);
         String[] localeArray = GlobalSettings.get().getStringArray(LOCALES);
         if (localeArray == null || localeArray.length == 0) {
