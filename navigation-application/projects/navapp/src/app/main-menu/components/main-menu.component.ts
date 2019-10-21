@@ -16,7 +16,7 @@
 
 import { Component, HostBinding, Inject, OnDestroy, OnInit } from '@angular/core';
 import { NavigationTrigger } from '@bloomreach/navapp-communication';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 import { APP_BOOTSTRAPPED } from '../../bootstrap/app-bootstrapped';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';

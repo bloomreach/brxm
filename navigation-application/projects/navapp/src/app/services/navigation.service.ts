@@ -17,7 +17,7 @@
 import { Location } from '@angular/common';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { NavigationTrigger, NavItem, NavLocation } from '@bloomreach/navapp-communication';
-import { EMPTY, Observable, of, Subject, Subscription, throwError } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable, of, Subject, Subscription, throwError } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
 import { catchError, finalize, mapTo, switchMap, tap } from 'rxjs/operators';
 
@@ -28,6 +28,7 @@ import { CriticalError } from '../error-handling/models/critical-error';
 import { InternalError } from '../error-handling/models/internal-error';
 import { NotFoundError } from '../error-handling/models/not-found-error';
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
+import { distinctUntilAccumulatorIsEmpty } from '../helpers/distinct-until-equal-number-of-values';
 import { stripOffQueryStringAndHash } from '../helpers/strip-off-query-string-and-hash';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { AppSettings } from '../models/dto/app-settings.dto';
@@ -67,6 +68,8 @@ export class NavigationService implements OnDestroy {
   private locationSubscription: Subscription;
   private readonly transitions = new Subject<Transition | Error>();
   private currentNavItem: NavItem;
+  private navigating = new BehaviorSubject(false);
+  private readonly navigatingFiltered: Observable<boolean>;
 
   constructor(
     @Inject(APP_SETTINGS) private appSettings: AppSettings,
@@ -88,7 +91,15 @@ export class NavigationService implements OnDestroy {
       .updateNavLocation$
       .subscribe(navLocation => this.updateByNavLocation(navLocation));
 
+    this.navigatingFiltered = this.navigating.pipe(
+      distinctUntilAccumulatorIsEmpty(),
+    );
+
     this.setupNavigations();
+  }
+
+  get navigating$(): Observable<boolean> {
+    return this.navigatingFiltered;
   }
 
   private get basePath(): string {
@@ -200,6 +211,7 @@ export class NavigationService implements OnDestroy {
     this.transitions.pipe(
       tap(() => {
         this.busyIndicatorService.show();
+        this.navigating.next(true);
       }),
       switchMap((t: Transition) => this.processTransition(t).pipe(
         catchError(error => {
@@ -215,6 +227,7 @@ export class NavigationService implements OnDestroy {
           t.resolve();
 
           this.busyIndicatorService.hide();
+          this.navigating.next(false);
         }),
       )),
     ).subscribe((t: Navigation | Error) => {
