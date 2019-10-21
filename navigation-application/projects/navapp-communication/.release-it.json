@@ -5,8 +5,9 @@
   },
   "git": {
     "requireCleanWorkingDir": true,
-    "commitMessage": "TRIVIAL Publish navapp-communication ${version}",
-    "tag": false
+    "commitMessage": "TRIVIAL prepare release bloomreach-navapp-communication-${version}",
+    "tagName": "bloomreach-navapp-communication-${version}",
+    "tagAnnotation": "Release bloomreach-navapp-communication-${version}"
   },
   "npm": {
     "publishPath": "../../dist/navapp-communication/"
