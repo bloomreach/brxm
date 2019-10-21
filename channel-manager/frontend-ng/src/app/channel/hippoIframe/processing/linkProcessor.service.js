@@ -41,7 +41,7 @@ class LinkProcessorService {
       let url = link.prop('href');
 
       // handle links within SVG elements
-      if (url instanceof SVGAnimatedString) {
+      if (url instanceof link[0].ownerDocument.defaultView.SVGAnimatedString) {
         url = url.baseVal;
       }
 
