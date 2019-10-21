@@ -61,7 +61,7 @@ export class AppComponent implements OnInit {
       getConfig: () => ({
         apiVersion: NAVAPP_COMMUNICATION_IMPLEMENTATION_API_VERSION,
         showSiteDropdown: false,
-        communicationTimeout: 1000,
+        communicationTimeout: 500,
       }),
       navigate: (location: NavLocation) => {
         this.navigateCount += 1;
@@ -73,6 +73,8 @@ export class AppComponent implements OnInit {
             breadcrumbLabel: 'Channel 1',
           });
         }
+
+        return new Promise(r => setTimeout(r, 300));
       },
       getNavItems: () => {
         return new Promise(resolve => {

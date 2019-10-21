@@ -16,7 +16,8 @@
 
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { map, scan } from 'rxjs/operators';
+
+import { distinctUntilAccumulatorIsEmpty } from '../helpers/distinct-until-equal-number-of-values';
 
 import { ConnectionService } from './connection.service';
 
@@ -24,18 +25,18 @@ import { ConnectionService } from './connection.service';
   providedIn: 'root',
 })
 export class OverlayService {
-
   visible$: Observable<boolean>;
 
   constructor(
     private connectionService: ConnectionService,
   ) {
-    const counter = new BehaviorSubject<number>(0);
-    this.connectionService.showMask$.subscribe(() => counter.next(+1));
-    this.connectionService.hideMask$.subscribe(() => counter.next(-1));
+    const counter = new BehaviorSubject<boolean>(false);
+
+    this.connectionService.showMask$.subscribe(() => counter.next(true));
+    this.connectionService.hideMask$.subscribe(() => counter.next(false));
+
     this.visible$ = counter.pipe(
-      scan((acc, n) => acc + n),
-      map(n => n > 0),
+      distinctUntilAccumulatorIsEmpty(),
     );
   }
 }

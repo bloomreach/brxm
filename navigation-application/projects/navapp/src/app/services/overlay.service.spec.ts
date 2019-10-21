@@ -63,7 +63,6 @@ describe('OverlayService', () => {
   });
 
   it('should return invisible if hideMask is called the same number of times as showMask', () => {
-
     const actualVisible = [];
     const subscription = overlayService.visible$
       .subscribe(visible => actualVisible.push(visible));
@@ -76,7 +75,7 @@ describe('OverlayService', () => {
     hideMask.next();
     subscription.unsubscribe();
 
-    const expectedVisible = [false, true, true, true, true, true, false];
+    const expectedVisible = [false, true, false];
     expect(actualVisible).toEqual(expectedVisible);
   });
 

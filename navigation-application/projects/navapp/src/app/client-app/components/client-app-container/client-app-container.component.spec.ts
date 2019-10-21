@@ -16,8 +16,10 @@
 
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
-import { of } from 'rxjs';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { of, Subject } from 'rxjs';
 
+import { NavigationService } from '../../../services/navigation.service';
 import { ClientApp } from '../../models/client-app.model';
 import { ClientAppService } from '../../services/client-app.service';
 
@@ -35,10 +37,20 @@ describe('ClientAppContainerComponent', () => {
     activeApp,
   };
 
+  const navigationServiceMock = {
+    navigating$: new Subject<boolean>(),
+  };
+
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      providers: [{ provide: ClientAppService, useValue: clientAppService }],
+      imports: [
+        NoopAnimationsModule,
+      ],
       declarations: [ClientAppContainerComponent],
+      providers: [
+        { provide: ClientAppService, useValue: clientAppService },
+        { provide: NavigationService, useValue: navigationServiceMock },
+      ],
       schemas: [NO_ERRORS_SCHEMA],
     });
   }));
