@@ -1,7 +1,8 @@
 {
   "git": {
     "requireCleanWorkingDir": true,
-    "commitMessage": "TRIVIAL Publish navapp ${version}",
-    "tag": false
+    "commitMessage": "TRIVIAL prepare release bloomreach-navigation-application-${version}",
+    "tagName": "bloomreach-navigation-application-${version}",
+    "tagAnnotation": "Release bloomreach-navigation-application-${version}"
   }
 }
