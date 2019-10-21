@@ -32,6 +32,7 @@ export class UrlMapperService {
   // Path parts without leading and trailing slashes
   private pathPartsToStripOffFromIframeUrl: string[] = [
     'iframe',
+    'sm',
   ];
 
   constructor(
@@ -57,21 +58,16 @@ export class UrlMapperService {
   }
 
   mapNavLocationToBrowserUrl(navLocation: NavLocation, useCurrentApp = false): [string, NavItem] {
-    if (!this.clientAppService.activeApp) {
+    if (useCurrentApp && !this.clientAppService.activeApp) {
       throw new InternalError('Initialization problem', 'Active app is not set');
     }
 
-    const activeAppUrl = this.clientAppService.activeApp.url;
+    const iframeUrlOrPath = useCurrentApp ? this.clientAppService.activeApp.url : navLocation.pathPrefix;
 
-    const appPathPredicate = (x: NavItem) => navLocation.path.startsWith(x.appPath);
-    const appUrlAndAppPathPredicate = (x: NavItem) => x.appIframeUrl === activeAppUrl && appPathPredicate(x);
-
-    const navItem = this.navItemService.navItems.find(x => {
-      return useCurrentApp ? appUrlAndAppPathPredicate(x) : appPathPredicate(x);
-    });
+    const navItem = this.navItemService.findNavItem(navLocation.path, iframeUrlOrPath);
 
     if (!navItem) {
-      throw new Error('Nav item related to provided Nav location is not found');
+      throw new Error('Nav item related to the provided Nav location is not found');
     }
 
     const browserUrl = this.mapNavItemToBrowserUrl(navItem);
