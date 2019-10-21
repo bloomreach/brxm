@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -40,6 +42,8 @@ import org.onehippo.repository.l10n.ResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_EXCLUDE_PRIMARY_TYPES;
+import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
 import static org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason.INVALID_TEMPLATE_QUERY;
 import static org.onehippo.cms.channelmanager.content.error.ErrorInfo.Reason.TEMPLATE_QUERY_NOT_FOUND;
 import static org.onehippo.cms.channelmanager.content.templatequery.DocumentTemplateQueryUtils.executeQuery;
@@ -63,6 +67,7 @@ public class DocumentTemplateQueryServiceImpl implements DocumentTemplateQuerySe
     @Override
     public DocumentTemplateQuery getDocumentTemplateQuery(final String id, final UserContext userContext) throws ErrorWithPayloadException {
         final Session session = userContext.getSession();
+
         final Locale locale = userContext.getLocale();
         final List<DocumentTypeInfo> documentTypes = new ArrayList<>();
         final String documentTemplateQueryPath = HIPPO_TEMPLATES_PATH + "/" + id;
@@ -77,13 +82,25 @@ public class DocumentTemplateQueryServiceImpl implements DocumentTemplateQuerySe
                 throw new InternalServerErrorException(new ErrorInfo(TEMPLATE_QUERY_NOT_FOUND, "documentTemplateQuery", id));
             }
 
+            final Set<String> excludePrimaryTypesSet =
+                    Arrays.stream(getMultipleStringProperty(documentTemplateQueryNode, HIPPOSTD_EXCLUDE_PRIMARY_TYPES, new String[0]))
+                            .collect(Collectors.toSet());
+
+
             final NodeIterator nodes = executeQuery(session, documentTemplateQueryNode);
             while (nodes.hasNext()) {
                 final Node typeNode = nodes.nextNode();
-                final String documentTypeName = getDocumentTypeName(typeNode);
-                if (documentTypeName != null) {
-                    final DocumentTypeInfo documentTypeInfo = createDocumentTypeInfo(documentTypeName, locale);
-                    documentTypes.add(documentTypeInfo);
+
+                if (excludePrimaryTypesSet.contains(typeNode.getPrimaryNodeType().getName())) {
+                    log.info("Skip prototype '{}' since excluded by '{}'", typeNode.getPath(),
+                            documentTemplateQueryNode.getPath() + "/@" + HIPPOSTD_EXCLUDE_PRIMARY_TYPES);
+
+                } else {
+                    final String documentTypeName = getDocumentTypeName(typeNode);
+                    if (documentTypeName != null) {
+                        final DocumentTypeInfo documentTypeInfo = createDocumentTypeInfo(documentTypeName, locale);
+                        documentTypes.add(documentTypeInfo);
+                    }
                 }
             }
         } catch (final InvalidQueryException e) {

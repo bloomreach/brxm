@@ -40,7 +40,7 @@ import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IEditorOpenListener;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.WebApplicationHelper;
-import org.hippoecm.repository.api.HippoWorkspace;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.util.UserUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -212,17 +212,16 @@ public class ChannelEditor extends ExtPanel {
 
     private void setUserData(final javax.jcr.Session session) {
         this.cmsUser = session.getUserID();
-        final HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
         try {
-            final User user = workspace.getSecurityService().getUser(session.getUserID());
-            this.cmsUserFirstName = user.getFirstName();
-            this.cmsUserLastName = user.getLastName();
+            final User user = ((HippoSession)session).getUser();
+            if (user != null) {
+                this.cmsUserFirstName = user.getFirstName();
+                this.cmsUserLastName = user.getLastName();
+                UserUtils.getUserName(user).ifPresent(userName -> this.cmsUserDisplayName = userName);
+            }
         } catch (RepositoryException e) {
             log.error("Unable to retrieve information of user '{}'.", session.getUserID(), e);
         }
-
-        UserUtils.getUserName(this.cmsUser, session)
-                 .ifPresent(userName -> this.cmsUserDisplayName = userName);
     }
 
     @Override

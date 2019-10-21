@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -86,7 +86,7 @@ public class HintsInspectorImpl implements HintsInspector {
             final Map<String, Serializable> params = new HashMap<>();
             final String userId = (String) hints.get(HINT_IN_USE_BY);
             params.put("userId", userId);
-            UserUtils.getUserName(userId, session).ifPresent(userName -> params.put("userName", userName));
+            getUserName(userId).ifPresent(userName -> params.put("userName", userName));
             return errorInfo(ErrorInfo.Reason.OTHER_HOLDER, params);
         }
 
@@ -108,6 +108,11 @@ public class HintsInspectorImpl implements HintsInspector {
         }
 
         return Optional.empty();
+    }
+
+    // needed for unit test override of static method call
+    protected Optional<String> getUserName(final String userId) {
+        return UserUtils.getUserName(userId);
     }
 
     private boolean hasCancelablePublicationRequest(final Map<String, Serializable> hints, final Session session) {
