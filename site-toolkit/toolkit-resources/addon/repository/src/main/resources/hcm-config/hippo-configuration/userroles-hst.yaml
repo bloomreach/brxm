@@ -25,26 +25,26 @@ definitions:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
         hipposys:userroles: [xm-webfiles-reader]
-    /hippo:configuration/hippo:users/admin:
-      hipposys:userroles:
-        operation: add
-        value: [xm-channel-admin]
-    /hippo:configuration/hippo:groups:
-      /admin:
+      /xm-default-sysadmin-user:
         hipposys:userroles:
           operation: add
           value: [xm-channel-admin]
-      # By default editor group is channel web author giving them access to the preview of the channel mgr
-      /editor:
+      # xm-default-editor-user is channel web author giving them access to the preview of the channel mgr
+      /xm-default-editor-user:
         hipposys:userroles:
           operation: add
           value: [xm-channel-viewer]
-      # By default author group is channel web author giving them access to the preview of the channel mgr
-      /author:
+      # xm-default-author-user is channel web author giving them access to the preview of the channel mgr
+      /xm-default-author-user:
         hipposys:userroles:
           operation: add
           value: [xm-channel-viewer]
-      # By default webmaster group is channel webmaster allowing them to modify hst configuration
+      # xm-default-webmaster-user is channel webmaster allowing them to modify hst configuration
+      /xm-default-webmaster-user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-channel-webmaster]
+    /hippo:configuration/hippo:groups:
       /webmaster:
         jcr:primaryType: hipposys:group
         hipposys:members:
@@ -53,5 +53,5 @@ definitions:
         hipposys:userroles:
           .meta:category: system
           .meta:add-new-system-values: true
-          value: [xm-channel-webmaster]
+          value: [xm-default-webmaster-user]
         hipposys:securityprovider: internal
