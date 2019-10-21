@@ -79,6 +79,8 @@ import org.hippoecm.repository.standardworkflow.FolderWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.repository.security.StandardPermissionNames.HIPPO_AUTHOR;
+
 public class FolderShortcutPlugin extends RenderPlugin {
 
     private static Logger log = LoggerFactory.getLogger(FolderShortcutPlugin.class);
@@ -114,7 +116,7 @@ public class FolderShortcutPlugin extends RenderPlugin {
                 if (!jcrSession.getRootNode().hasNode(defaultDropLocation)) {
                     defaultDropLocation = null;
                 } else {
-                    link.setVisible(jcrSession.hasPermission(SLASH + defaultDropLocation, Session.ACTION_ADD_NODE));
+                    link.setVisible(jcrSession.hasPermission(SLASH + defaultDropLocation, HIPPO_AUTHOR));
                 }
             } catch (PathNotFoundException ex) {
                 log.warn("No default drop location present");

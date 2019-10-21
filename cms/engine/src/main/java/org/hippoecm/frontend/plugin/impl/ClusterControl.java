@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,10 +22,14 @@ import java.util.Map;
 
 import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.model.IDetachable;
+import org.hippoecm.frontend.RepositoryRuntimeException;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IServiceTracker;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
+import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -121,7 +125,27 @@ public class ClusterControl implements IClusterControl, IServiceTracker<ICluster
         }
 
         int i = 0;
+        HippoSession hippoSession = null;
+        Boolean checkSession = null;
         for (IPluginConfig plugin : config.getPlugins()) {
+            String userRoleRequired = plugin.getString(HippoNodeType.HIPPO_USERROLE, null);
+            if (userRoleRequired != null) {
+                if (checkSession == null) {
+                    checkSession = false;
+                    UserSession userSession = UserSession.get();
+                    if (userSession != null) {
+                        checkSession = true;
+                        try {
+                            hippoSession = (HippoSession)userSession.getJcrSession();
+                        } catch (RepositoryRuntimeException ignore) {
+                        }
+                    }
+                }
+                if (checkSession && (hippoSession == null || !hippoSession.isUserInRole(userRoleRequired))) {
+                    // skip plugin
+                    continue;
+                }
+            }
             contexts[i++] = context.start(plugin);
         }
 

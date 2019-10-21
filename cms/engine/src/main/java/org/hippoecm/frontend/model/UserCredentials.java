@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,9 +20,13 @@ import java.io.Serializable;
 import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
 
+import org.onehippo.repository.security.JvmCredentials;
+
 public class UserCredentials implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    public static String FRONTEND_SYSTEM_USER_ID = "frontend-system-user";
 
     private Credentials credentials = null;
     private String username = "";
@@ -36,6 +40,8 @@ public class UserCredentials implements Serializable {
         this.credentials = credentials;
         if(credentials instanceof SimpleCredentials) {
             username = ((SimpleCredentials)credentials).getUserID();
+        } else if (credentials instanceof JvmCredentials) {
+            username = ((JvmCredentials)credentials).getUserID();
         }
     }
 

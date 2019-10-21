@@ -22,28 +22,29 @@ import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
-import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.cms.logout.LogoutLink;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.service.ILogoutService;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.skin.Icon;
+import org.hippoecm.repository.util.UserUtils;
+import org.onehippo.repository.security.SessionUser;
 
 public class UserMenu extends Panel {
 
     public static final JavaScriptResourceReference SCRIPT_REFERENCE =
             new JavaScriptResourceReference(UserMenu.class, "UserMenu.js");
 
-    public UserMenu(final String id, final User user, final ILogoutService logoutService) {
+    public UserMenu(final String id, final SessionUser user, final ILogoutService logoutService) {
         super(id);
 
         setRenderBodyOnly(true);
 
         add(HippoIcon.fromSprite("icon", Icon.USER_CIRCLE, IconSize.XL));
 
-        final String userName = user.getUsername();
-        final String displayName = user.getDisplayName();
+        final String userName = user.getId();
+        final String displayName = UserUtils.getDisplayName(user);
         final String email = user.getEmail();
 
         final Label userNameLabel = new Label("userName", userName);

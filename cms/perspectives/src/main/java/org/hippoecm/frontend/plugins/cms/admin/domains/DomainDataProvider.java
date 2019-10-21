@@ -16,42 +16,47 @@
 package org.hippoecm.frontend.plugins.cms.admin.domains;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.query.Query;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
 
-import org.hippoecm.frontend.session.UserSession;
-
+import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DomainDataProvider extends SortableDataProvider<Domain, String> {
+import com.bloomreach.xm.repository.security.DomainAuth;
+
+import static java.util.Comparator.comparing;
+
+public class DomainDataProvider extends SortableDataProvider<DomainAuth, String> {
 
     private static final Logger log = LoggerFactory.getLogger(DomainDataProvider.class);
 
-    private static final String QUERY_DOMAIN_LIST = "SELECT * FROM hipposys:domain";
+    private static final Comparator<DomainAuth> nameComparator = comparing(DomainAuth::getName);
+    private static final Comparator<DomainAuth> pathComparator = comparing(DomainAuth::getPath);
 
-    private final transient List<Domain> domainList = new ArrayList<>();
+    private final transient List<DomainAuth> domains = new ArrayList<>();
 
     public DomainDataProvider() {
         setSort("name", SortOrder.ASCENDING);
     }
 
     @Override
-    public Iterator<Domain> iterator(long first, long count) {
-        final List<Domain> domains = getDomainList();
+    public Iterator<DomainAuth> iterator(long first, long count) {
         domains.sort((domain1, domain2) -> {
             final int direction = getSort().isAscending() ? 1 : -1;
-            return direction * domain1.compareTo(domain2);
+            switch (getSort().getProperty()) {
+                case "path":
+                    return direction * pathComparator.compare(domain1, domain2);
+                default:
+                    return direction * nameComparator.compare(domain1, domain2);
+            }
         });
 
         final int endIndex = (int) Math.min(first + count, domains.size());
@@ -59,7 +64,7 @@ public class DomainDataProvider extends SortableDataProvider<Domain, String> {
     }
 
     @Override
-    public IModel<Domain> model(Domain domain) {
+    public IModel<DomainAuth> model(DomainAuth domain) {
         return new DetachableDomain(domain);
     }
 
@@ -68,34 +73,13 @@ public class DomainDataProvider extends SortableDataProvider<Domain, String> {
         return getDomainList().size();
     }
 
-    /**
-     * Populate list, refresh when a new session id is found or when dirty
-     */
-    private void populateDomainList() {
-        domainList.clear();
-
+    public List<DomainAuth> getDomainList() {
+        domains.clear();
         try {
-            @SuppressWarnings("deprecation")
-            final Query listQuery = UserSession.get().getQueryManager().createQuery(QUERY_DOMAIN_LIST, Query.SQL);
-            final NodeIterator iterator = listQuery.execute().getNodes();
-            while (iterator.hasNext()) {
-                Node node = iterator.nextNode();
-                if (node != null) {
-                    try {
-                        domainList.add(new Domain(node));
-                    } catch (RepositoryException e) {
-                        log.warn("Unable to instantiate new domain.", e);
-                    }
-                }
-            }
-            Collections.sort(domainList);
+            domains.addAll(SecurityManagerHelper.getDomainsManager().getDomainAuths());
         } catch (RepositoryException e) {
-            log.error("Error while trying to query domain nodes.", e);
+            log.error("Error while trying to retrieve domains.", e);
         }
-    }
-
-    public List<Domain> getDomainList() {
-        populateDomainList();
-        return domainList;
+        return domains;
     }
 }
