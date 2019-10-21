@@ -29,9 +29,9 @@ import org.slf4j.LoggerFactory;
 /**
  * only channels that the authenticated cms user is allowed to read the content from will pass the {@link BiPredicate}
  */
-public class ContentBasedChannelFilter implements BiPredicate<Session, Channel> {
+public class ContentReadChannelFilter implements BiPredicate<Session, Channel> {
 
-    private static final Logger log = LoggerFactory.getLogger(ContentBasedChannelFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(ContentReadChannelFilter.class);
 
     @Override
     public boolean test(final Session userSession, final Channel channel) {

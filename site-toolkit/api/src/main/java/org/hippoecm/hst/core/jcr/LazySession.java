@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,12 +18,14 @@ package org.hippoecm.hst.core.jcr;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.repository.api.HippoSession;
+
 /**
  * LazySession interface.
  * 
  * @version $Id$
  */
-public interface LazySession extends Session {
+public interface LazySession extends HippoSession {
     
     /**
      * Invokes logout() of the underlying session.
@@ -45,9 +47,5 @@ public interface LazySession extends Session {
      */
     long getRefreshPendingAfter();
 
-    /**
-     * Does a localRefresh that does not get propagated in clustered environments to the database
-     */
-    void localRefresh();
     
 }

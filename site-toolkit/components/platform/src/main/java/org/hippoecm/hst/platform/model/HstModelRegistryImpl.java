@@ -176,7 +176,7 @@ public class HstModelRegistryImpl implements HstModelRegistry {
         return ImmutableList.copyOf(models.values());
     }
 
-    public InternalHstModel getPlatformHstModel(final String contextPath) {
+    public InternalHstModel getInternalHstModel(final String contextPath) {
         return (InternalHstModel)getHstModel(contextPath);
     }
 

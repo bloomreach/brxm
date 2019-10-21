@@ -36,6 +36,7 @@ import javax.servlet.http.HttpSession;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.hippoecm.hst.container.HstFilter;
+import org.hippoecm.hst.pagecomposer.jaxrs.cxf.PrivilegesAllowedInvokerPreprocessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.ConfigurationLockedTest;
 import org.junit.Before;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
@@ -244,6 +245,22 @@ public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
 
         public MockHttpServletResponse getResponse() {
             return response;
+        }
+    }
+
+    public class SuppressPrivilegesAllowedPreProcessor implements AutoCloseable {
+
+        private final PrivilegesAllowedInvokerPreprocessor privilegesAllowedInvokerPreprocessor;
+
+        public SuppressPrivilegesAllowedPreProcessor() {
+            privilegesAllowedInvokerPreprocessor =
+                    platformComponentManager.getComponent(PrivilegesAllowedInvokerPreprocessor.class, "org.hippoecm.hst.pagecomposer");
+            privilegesAllowedInvokerPreprocessor.setEnabled(false);
+        }
+
+        @Override
+        public void close() throws Exception {
+            privilegesAllowedInvokerPreprocessor.setEnabled(true);
         }
     }
 }

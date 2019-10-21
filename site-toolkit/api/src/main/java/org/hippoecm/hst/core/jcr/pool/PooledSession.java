@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,9 +18,11 @@ package org.hippoecm.hst.core.jcr.pool;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.repository.api.HippoSession;
+
 /**
  * PooledSession interface.
- * This interface extends <CODE>javax.jcr.Session</CODE>, allowing to set additional attributes
+ * This interface extends {@link HippoSession}, allowing to set additional attributes
  * for internal use.
  * For example, if a pooled session is needed to refresh just before borrowing from the pool,
  * the pool implementation can set a specific attribute to check it later.
@@ -29,7 +31,7 @@ import javax.jcr.Session;
  * 
  * @version $Id$
  */
-public interface PooledSession extends Session {
+public interface PooledSession extends HippoSession {
     
     /**
      * Marks this pooled session as activated.
@@ -67,9 +69,4 @@ public interface PooledSession extends Session {
      */
     String getUserID();
 
-    /**
-     * Does a localRefresh that does not get propagated in clustered environments to the database
-     */
-    void localRefresh();
-    
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,12 +37,15 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ServerErrorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 
 /**
  * The REST resource handler for the nodes that are of the type "hst:containeritemcomponent". This is specified using
@@ -69,6 +72,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response getVariants() {
 
         try {
@@ -95,6 +99,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response retainVariants(final String[] variants,
                                    final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
         try {
@@ -120,6 +125,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @GET
     @Path("/{variant}/{locale}")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public ContainerItemComponentRepresentation getVariant(final @PathParam("variant") String variant,
                                final @PathParam("locale") String localeString) {
         try {
@@ -147,6 +153,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @PUT
     @Path("/{variantId}")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response moveAndUpdateVariant(final @PathParam("variantId") String variantId,
                                          final @HeaderParam("Move-To") String  newVariantId,
                                          final @HeaderParam("lastModifiedTimestamp") long versionStamp,
@@ -181,6 +188,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @POST
     @Path("/{variantId}")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response createVariant(final @PathParam("variantId") String variantId,
                                   final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
 
@@ -198,6 +206,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource {
     @DELETE
     @Path("/{variantId}")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response deleteVariant(final @PathParam("variantId") String variantId,
                                   final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
         try {

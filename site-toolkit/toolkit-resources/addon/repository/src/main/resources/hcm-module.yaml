@@ -1,5 +1,5 @@
 group: hippo-cms
 project:
     name: hippo-site-toolkit
-    after: hippo-repository
+    after: hippo-services-webfiles
 module: hst-addon-repository

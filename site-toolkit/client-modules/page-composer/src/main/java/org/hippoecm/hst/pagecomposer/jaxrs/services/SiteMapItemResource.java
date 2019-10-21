@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,9 +24,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.SiteMapTreePickerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMapHelper;
+
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 
 @Path("/" + HstNodeTypes.NODETYPE_HST_SITEMAPITEM + "/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -40,6 +43,7 @@ public class SiteMapItemResource extends AbstractConfigResource {
 
     @GET
     @Path("/picker")
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response getSiteMapItemTreePicker() {
         return tryGet(new Callable<Response>() {
             @Override

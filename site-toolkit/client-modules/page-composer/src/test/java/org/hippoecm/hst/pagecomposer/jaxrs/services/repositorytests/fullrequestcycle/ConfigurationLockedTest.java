@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -66,29 +66,32 @@ public class ConfigurationLockedTest extends MountResourceTest {
     @Test
     @Override
     public void start_edit_creating_preview_config_as_admin() throws Exception {
-        // method should fail because channel has #isConfigurationLocked
         try {
             super.start_edit_creating_preview_config_as_admin();
         } catch (ForbiddenException e) {
             fail("Expected that 'start edit' is allowed *even* when live is locked because start edit only creates the " +
                     "(locked) preview");
-            Session session = createSession("admin", "admin");
-            try {
-                assertTrue(session.getNode("/hst:hst/hst:configurations/unittestproject-preview").getProperty(CONFIGURATION_PROPERTY_LOCKED).getBoolean());
-            } finally {
-                session.logout();
-            }
+        }
+        Session session = createSession("admin", "admin");
+        try {
+            assertTrue(session.getNode("/hst:hst/hst:configurations/unittestproject-preview").getProperty(CONFIGURATION_PROPERTY_LOCKED).getBoolean());
+        } finally {
+            session.logout();
         }
     }
 
     private void forbiddenAssertions(final ForbiddenException e) throws java.io.IOException {
-        MockHttpServletResponse response = e.getResponse();
-        final String restResponse = response.getContentAsString();
-        final Map<String, Object> responseMap = mapper.readerFor(Map.class).readValue(restResponse);
+        final Map<String, Object> responseMap = getResponseMap(e);
 
         assertEquals(Boolean.FALSE, responseMap.get("success"));
         assertEquals(ClientError.FORBIDDEN.name(), responseMap.get("errorCode"));
-        assertEquals("Method is forbidden when channel has its configuration locked.", responseMap.get("message"));
+        assertEquals("POST operation is forbidden when channel has its configuration locked.", responseMap.get("message"));
+    }
+
+    private Map<String, Object> getResponseMap(final ForbiddenException e) throws java.io.IOException {
+        MockHttpServletResponse response = e.getResponse();
+        final String restResponse = response.getContentAsString();
+        return mapper.readerFor(Map.class).readValue(restResponse);
     }
 
     @Test
@@ -99,29 +102,29 @@ public class ConfigurationLockedTest extends MountResourceTest {
         } catch (ForbiddenException e) {
             fail("Expected that 'start edit' is allowed *even* when live is locked because start edit only creates the " +
                     "(locked) preview");
-            Session session = createSession("admin", "admin");
-            try {
-                assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview"));
-            } finally {
-                session.logout();
-            }
+        }
+        Session session = createSession("admin", "admin");
+        try {
+            assertTrue(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview"));
+        } finally {
+            session.logout();
         }
     }
 
     @Test
     @Override
-    public void liveuser_cannot_start_edit() throws Exception {
-        try{
-            super.liveuser_cannot_start_edit();
+    public void liveuser_cannot_invoke_start_edit() throws Exception {
+        try {
+            super.liveuser_cannot_invoke_start_edit();
+            fail("liveuser should not be allowed to start edit");
         } catch (ForbiddenException e) {
-            fail("Expected that 'start edit' is allowed *even* when live is locked because start edit only creates the " +
-                    "(locked) preview");
-            Session session = createSession("admin", "admin");
-            try {
-                assertTrue(session.getNode("/hst:hst/hst:configurations/unittestproject-preview").getProperty(CONFIGURATION_PROPERTY_LOCKED).getBoolean());
-            } finally {
-                session.logout();
-            }
+            // ignore
+        }
+        Session session = createSession("admin", "admin");
+        try {
+            assertFalse(session.nodeExists("/hst:hst/hst:configurations/unittestproject-preview"));
+        } finally {
+            session.logout();
         }
     }
 
@@ -154,7 +157,9 @@ public class ConfigurationLockedTest extends MountResourceTest {
             super.liveuser_cannot_copy_page();
             fail("Expected forbidden");
         } catch (ForbiddenException e) {
-            forbiddenAssertions(e);
+            final Map<String, Object> responseMap = getResponseMap(e);
+            assertEquals(ClientError.FORBIDDEN.name(), responseMap.get("errorCode"));
+            assertEquals("Method 'copy' is not allowed to be invoked since current user does not have the right privileges", responseMap.get("message"));
         }
     }
 

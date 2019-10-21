@@ -450,6 +450,7 @@
 + hst:configurations (hst:configurations) = hst:configurations version
 + hst:hosts (hst:virtualhosts) = hst:virtualhosts version
 + hst:blueprints (hst:blueprints) = hst:blueprints version
++ hst:domains (hipposys:federateddomainfolder) = hipposys:federateddomainfolder
 + * (hst:sites) = hst:sites version
 
 // the hst nodetype for the contentmount's: this nodetype is for content sharing between subsites
@@ -462,15 +463,16 @@
 
 [hst:formdata]
 - hst:creationtime (date) mandatory
-+ hst:formfieldvalue (hst:formfieldvalue) multiple
 - hst:predecessor (string)
 - hst:sealed (boolean)
 // optional property pointing to the identifier of the backing form
 - hst:formid (string)
++ hst:formfieldvalue (hst:formfieldvalue) multiple
 
 [hst:formdatacontainer] 
 + * (hst:formdatacontainer)
 + * (hst:formdata)
++ hst:domains (hipposys:federateddomainfolder) = hipposys:federateddomainfolder
 
 [hst:formdatapayload] mixin
 - hst:payload (string)

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -178,7 +178,7 @@ public class DefaultLoginModule implements LoginModule {
                 user = getAuthenticationProvider().authenticate(username, password.toCharArray());
                 
                 if (storePrivCreds) {
-                    subject.getPrivateCredentials().add(createSubjectRepositoryCredentials(username, password.toCharArray()));
+                    subject.getPrivateCredentials().add(createSubjectRepositoryCredentials(username, new char[0]));
                 }
             } catch (SecurityException se) {
                 if (se.getCause() != null) {

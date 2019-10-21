@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,15 +20,17 @@ import java.util.List;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.security.Privilege;
 
 import org.hippoecm.hst.configuration.channel.Blueprint;
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.platform.api.BlueprintService;
-import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistryImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_ADMIN_PRIVILEGE_NAME;
 
 public class BlueprintServiceImpl implements BlueprintService {
 
@@ -47,13 +49,17 @@ public class BlueprintServiceImpl implements BlueprintService {
 
             hstModel.getVirtualHosts().getBlueprints().stream()
                     .filter(blueprint -> {
-                        final String configurationRootPath = ((InternalHstModel) hstModel).getConfigurationRootPath();
+                        final String configurationRootPath = hstModel.getConfigurationRootPath();
+
                         try {
-                            final boolean granted = userSession.hasPermission(configurationRootPath + "/accesstest", Session.ACTION_ADD_NODE);
+                            final boolean granted = userSession.getAccessControlManager().hasPrivileges(configurationRootPath,
+                                    new Privilege[] {userSession.getAccessControlManager().privilegeFromName(CHANNEL_ADMIN_PRIVILEGE_NAME)});
+
                             if (granted) {
                                 log.info("Adding blueprint '{}' for user '{}'", blueprint, userSession.getUserID());
                             } else {
-                                log.info("Skipping blueprint '{}' for user '{}' since not granted", blueprint, userSession.getUserID());
+                                log.info("Skipping blueprint '{}' for user '{}' since no access granted (requires: {} privilege)",
+                                        blueprint, userSession.getUserID(), CHANNEL_ADMIN_PRIVILEGE_NAME);
                             }
                             return granted;
                         } catch (RepositoryException e) {

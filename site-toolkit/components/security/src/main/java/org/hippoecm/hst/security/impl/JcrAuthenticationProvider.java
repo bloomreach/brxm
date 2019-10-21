@@ -16,9 +16,9 @@
 package org.hippoecm.hst.security.impl;
 
 import java.text.MessageFormat;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
@@ -127,46 +127,23 @@ public class JcrAuthenticationProvider implements AuthenticationProvider {
     }
     
     public Set<Role> getRolesByUsername(String username) throws SecurityException {
-        Set<Role> roleSet = null;
+        Set<Role> roleSet;
         
         try {
-            Set<String> roleNameSet = getRoleNamesOfUser(username);
-            roleSet = new HashSet<Role>();
-            
-            if (defaultRoleName == null) {
-                for (String roleName : roleNameSet) {
-                    roleSet.add(new TransientRole(roleName));
-                }
-            } else {
-                boolean defaultRoleAdded = false;
-                
-                for (String roleName : roleNameSet) {
-                    roleSet.add(new TransientRole(roleName));
-                    
-                    if (defaultRoleName.equals(roleName)) {
-                        defaultRoleAdded = true;
-                    }
-                }
-                
-                if (!defaultRoleAdded) {
-                    roleSet.add(new TransientRole(defaultRoleName));
-                }
+            roleSet = getRoleNamesOfUser(username).stream().map(TransientRole::new).collect(Collectors.toCollection(HashSet::new));
+            if (defaultRoleName != null) {
+                roleSet.add(new TransientRole(defaultRoleName));
             }
+            return roleSet;
         } catch (LoginException e) {
             throw new SecurityException("System repository throws LoginException: " + e, e);
         } catch (RepositoryException e) {
             throw new SecurityException("System repository throws RepositoryException: " + e, e);
         }
-        
-        if (roleSet == null) {
-            roleSet = Collections.emptySet();
-        }
-        
-        return roleSet;
     }
     
     protected Set<String> getRoleNamesOfUser(String username) throws LoginException, RepositoryException {
-        Set<String> roleNameSet = null;
+        Set<String> roleNameSet;
         Session session = null;
         
         try {
@@ -184,12 +161,13 @@ public class JcrAuthenticationProvider implements AuthenticationProvider {
             QueryResult result = q.execute();
             NodeIterator nodeIt = result.getNodes();
             
-            roleNameSet = new HashSet<String>();
+            roleNameSet = new HashSet<>();
             
             while (nodeIt.hasNext()) {
                 String roleName = nodeIt.nextNode().getName();
                 roleNameSet.add(roleName);
             }
+            return roleNameSet;
         } finally {
             if (session != null) {
                 try {
@@ -198,12 +176,6 @@ public class JcrAuthenticationProvider implements AuthenticationProvider {
                 }
             }
         }
-        
-        if (roleNameSet == null) {
-            roleNameSet = Collections.emptySet();
-        }
-        
-        return roleNameSet;
     }
     
 }

@@ -92,9 +92,8 @@
     <hippo.services.eventbus.version>14.0.0-SNAPSHOT</hippo.services.eventbus.version>
     <hippo.services.search.version>14.0.0-SNAPSHOT</hippo.services.search.version>
     <hippo.services.contenttype.version>14.0.0-SNAPSHOT</hippo.services.contenttype.version>
+    <hippo.services.webfiles.version>14.0.0-SNAPSHOT</hippo.services.webfiles.version>
     <hippo.testutils.version>14.0.0-SNAPSHOT</hippo.testutils.version>
-    <hippo.plugin.gallerypicker.version>14.0.0-SNAPSHOT</hippo.plugin.gallerypicker.version>
-    <hippo.plugin.selections.version>14.0.0-SNAPSHOT</hippo.plugin.selections.version>
     <hippo.packages.version>14.0.0-SNAPSHOT</hippo.packages.version>
     
     <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
