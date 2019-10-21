@@ -41,10 +41,26 @@ definitions:
         hipposys:userroles:
           operation: add
           value: [xm-content-user]
-    /hippo:configuration/hippo:users/admin:
-      hipposys:userroles:
-        operation: add
-        value: [xm-dashboard-user]
+      /xm-default-cmsadmin-user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-admin, xm-content-admin, xm-channel-admin, xm-dashboard-user, xm-security-user-manager, xm-security-application-manager]
+      /xm-default-sysadmin-user:
+        hipposys:userroles:
+          operation: add
+          value: [xm-dashboard-user]
+      /xm-default-author-user:
+        hipposys:userroles:
+          operation: add
+          value: [xm-dashboard-user]
+      /xm-default-editor-user:
+        hipposys:userroles:
+          operation: add
+          value: [xm-dashboard-user]
+      /xm-default-webmaster-user:
+        hipposys:userroles:
+          operation: add
+          value: [xm-dashboard-user]
     /hippo:configuration/hippo:groups:
       /cmsadmin:
         jcr:primaryType: hipposys:group
@@ -54,21 +70,5 @@ definitions:
         hipposys:userroles:
           .meta:category: system
           .meta:add-new-system-values: true
-          value: [xm-admin, xm-content-admin, xm-channel-admin, xm-dashboard-user, xm-security-user-manager, xm-security-application-manager]
+          value: [xm-default-cmsadmin-user]
         hipposys:securityprovider: internal
-      /admin:
-        hipposys:userroles:
-          operation: add
-          value: [xm-dashboard-user]
-      /author:
-        hipposys:userroles:
-          operation: add
-          value: [xm-dashboard-user]
-      /editor:
-        hipposys:userroles:
-          operation: add
-          value: [xm-dashboard-user]
-      /webmaster:
-        hipposys:userroles:
-          operation: add
-          value: [xm-dashboard-user]
