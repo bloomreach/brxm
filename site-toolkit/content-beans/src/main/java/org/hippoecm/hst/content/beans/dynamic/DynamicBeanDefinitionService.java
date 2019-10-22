@@ -17,7 +17,6 @@ package org.hippoecm.hst.content.beans.dynamic;
 
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_GALLERYTYPE;
 
-import javax.annotation.Nullable;
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
@@ -29,7 +28,6 @@ import org.hippoecm.hst.content.beans.builder.HippoContentBean;
 import org.hippoecm.hst.content.beans.manager.DynamicObjectConverterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoCompound;
-import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
@@ -46,24 +44,6 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
     private final DynamicObjectConverterImpl objectConverter;
 
     private String[] galleryTypes;
-
-    private class BeanInfo {
-        private final Class<? extends HippoBean> beanClass;
-        private final boolean updated;
-
-        Class<? extends HippoBean> getBeanClass() {
-            return beanClass;
-        }
-
-        public boolean isUpdated() {
-            return updated;
-        }
-
-        BeanInfo(final Class<? extends HippoBean> beanClass, final boolean updated) {
-            this.beanClass = beanClass;
-            this.updated = updated;
-        }
-    }
 
     public DynamicBeanDefinitionService(final DynamicObjectConverterImpl objectConverter) {
         this.objectConverter = objectConverter;
@@ -99,20 +79,17 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
         }
     }
 
-    private BeanInfo createBeanDefinition(@Nullable BeanInfo parentBeanInfo, final HippoContentBean contentBean, final boolean isCompound) {
+    private Class<? extends HippoBean> createBeanDefinition(final HippoContentBean contentBean, final boolean isCompound) {
         // TODO reason to test this compound parent check should be explained
         if (isCompound && !HippoCompound.class.equals(contentBean.getParentBean())) {
             return null;
         }
 
-        if (parentBeanInfo == null) {
-            if (contentBean.getParentBean() != null) {
-                parentBeanInfo = new BeanInfo(contentBean.getParentBean(), true);
-            } else {
-                parentBeanInfo = getOrCreateParentBeanDef(contentBean.getParentDocumentType(), isCompound);
-            }
+        if (contentBean.getParentBean() == null) {
+            setOrCreateParentBeanDefinition(contentBean, isCompound);
         }
-        return generateBeanDefinition(parentBeanInfo, contentBean, isCompound);
+
+        return generateBeanDefinition(contentBean);
     }
 
     @Override
@@ -121,36 +98,30 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
             log.error("ContentType of the document type {} doesn't exist in the ContentTypeService.", documentType);
             return null;
         }
-        final HippoContentBean contentBean = new HippoContentBean(contentType);
-        final BeanInfo generatedBeanDef = createBeanDefinition(superClazz != null ? new BeanInfo(superClazz, false) : null, contentBean, false);
-        return generatedBeanDef.getBeanClass();
+        final HippoContentBean contentBean = new HippoContentBean(superClazz, contentType);
+        return createBeanDefinition(contentBean, false);
     }
 
     /**
-     * Searchs a parent bean definition in the contentTypes. If there is any matching parent
+     * Searchs a parent bean definition in objectConverter. If there is a matching parent
      * bean definition, uses the definition. Otherwise, a pre-defined base bean will be used
      * as a parent bean.
      * 
-     * @param contentType type of the content from the ContentTypeService
-     * @param isCompound whether a contentType is a compound type or not
+     * @param contentBean content of the runtime bean to be generated
+     * @param isCompound the document type whether is a compound type
      * @return
      */
-    private BeanInfo getOrCreateParentBeanDef(final String parentDocumentType, final boolean isCompound) {
-        final Class<? extends HippoBean> parentDocumentBeanDef = objectConverter.getClassFor(parentDocumentType);
-        if (parentDocumentBeanDef == null) {
-            final ContentType parentDocumentContentType = objectConverter.getContentType(parentDocumentType);
-            final HippoContentBean contentBean = new HippoContentBean(parentDocumentContentType);
-            final BeanInfo generatedBeanInfo = isCompound ? createBeanDefinition(null, contentBean, true)
-                    : createBeanDefinition(null, contentBean, false);
+    private void setOrCreateParentBeanDefinition(final HippoContentBean contentBean, final boolean isCompound) {
+        final Class<? extends HippoBean> parentBean = objectConverter.getClassFor(contentBean.getParentDocumentType());
+        if (parentBean == null) {
+            final ContentType parentDocumentContentType = objectConverter.getContentType(contentBean.getParentDocumentType());
+            final HippoContentBean parentRuntimeBeanContent = new HippoContentBean(parentDocumentContentType);
 
-            return generatedBeanInfo != null ? generatedBeanInfo : getDefaultParentBeanInfo(isCompound);
+            contentBean.setParentBean(createBeanDefinition(parentRuntimeBeanContent, isCompound));
+            contentBean.forceGeneration();
         } else {
-            return new BeanInfo(parentDocumentBeanDef, false);
+            contentBean.setParentBean(parentBean);
         }
-    }
-
-    private BeanInfo getDefaultParentBeanInfo(final boolean isCompound) {
-        return new BeanInfo(isCompound ? HippoCompound.class : HippoDocument.class, true);
     }
 
     /**
@@ -160,23 +131,23 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
      * @param contentType of the document type
      * @return Class definition
      */
-    private BeanInfo generateBeanDefinition(final BeanInfo parentBeanInfo, final HippoContentBean contentBean, final boolean isUpdated) {
+    private Class<? extends HippoBean> generateBeanDefinition(final HippoContentBean contentBean) {
         final DynamicBeanBuilder builder = new DynamicBeanBuilder(
-                DynamicBeanUtils.createJavaClassName(contentBean.getName()), parentBeanInfo.getBeanClass());
+                DynamicBeanUtils.createJavaClassName(contentBean.getName()), contentBean.getParentBean());
 
         generateMethodsByProperties(contentBean, builder);
         generateMethodsByChildNodes(contentBean, builder);
 
-        if(!builder.isMethodAdded() && !parentBeanInfo.isUpdated()) {
-            log.info("Bean {} is not enhanced because it doesn't have any missing methods.", parentBeanInfo.getBeanClass().getSimpleName());
-            return parentBeanInfo;
+        if(!builder.isMethodAdded() && !contentBean.isParentReloaded()) {
+            log.info("Bean {} is not enhanced because it doesn't have any missing methods.", contentBean.getParentBean().getSimpleName());
+            return contentBean.getParentBean();
         }
 
         final Class<? extends HippoBean> generatedBean = builder.create();
         objectConverter.addBeanDefinition(contentBean.getName(), generatedBean);
-        log.info("Created dynamic bean {} from parent bean {}.", contentBean.getName(), parentBeanInfo.getBeanClass().getSimpleName());
+        log.info("Created dynamic bean {} from parent bean {}.", contentBean.getName(), contentBean.getParentBean().getSimpleName());
 
-        return new BeanInfo(generatedBean, true);
+        return generatedBean;
     }
 
     @Override
@@ -232,17 +203,18 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
             }
             return HippoGalleryImageSet.class;
         } else {
-            Class<? extends HippoBean> generatedBeanDef = objectConverter.getClassFor(galleryTypes[0]);
-            if (generatedBeanDef == null) {
+            Class<? extends HippoBean> generatedBeanDefinition = objectConverter.getClassFor(galleryTypes[0]);
+            if (generatedBeanDefinition == null) {
                 final ContentType galleryContentType = objectConverter.getContentType(galleryTypes[0]);
                 if (galleryContentType == null) {
                     return HippoGalleryImageSet.class;
                 }
-                final HippoContentBean galleryBeanContent = new HippoContentBean(galleryContentType);
-                final BeanInfo generatedBeanInfo = generateBeanDefinition(new BeanInfo(HippoGalleryImageSet.class, true), galleryBeanContent, false);
-                generatedBeanDef = generatedBeanInfo.getBeanClass();
+
+                final HippoContentBean galleryBeanContent = new HippoContentBean(HippoGalleryImageSet.class, galleryContentType);
+                galleryBeanContent.forceGeneration();
+                generatedBeanDefinition = generateBeanDefinition(galleryBeanContent);
             }
-            return generatedBeanDef;
+            return generatedBeanDefinition;
         }
     }
 
@@ -292,8 +264,8 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
     }
 
     private Class<? extends HippoBean> getOrCreateCustomBean(final String type) {
-        Class<? extends HippoBean> generatedBeanDef = objectConverter.getClassFor(type);
-        if (generatedBeanDef == null) {
+        Class<? extends HippoBean> generatedBeanDefinition = objectConverter.getClassFor(type);
+        if (generatedBeanDefinition == null) {
             // Custom generic bean should be created because the document type doesn't exist in objectConverter
             final ContentType compoundContentType = objectConverter.getContentType(type);
             if (compoundContentType == null) {
@@ -301,12 +273,8 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
             }
 
             final HippoContentBean contentBean = new HippoContentBean(compoundContentType);
-            final BeanInfo generatedBeanInfo = createBeanDefinition(null, contentBean, true);
-            if (generatedBeanInfo == null) {
-                return null;
-            }
-            generatedBeanDef = generatedBeanInfo.getBeanClass();
+            generatedBeanDefinition = createBeanDefinition(contentBean, true);
         }
-        return generatedBeanDef;
+        return generatedBeanDefinition;
     }
 }
