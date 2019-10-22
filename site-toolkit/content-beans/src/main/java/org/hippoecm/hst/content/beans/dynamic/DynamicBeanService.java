@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.content.beans.dynamic;
 
+import org.hippoecm.hst.content.beans.builder.HippoContentBean;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.onehippo.cms7.services.contenttype.ContentType;
 
@@ -27,11 +28,9 @@ public interface DynamicBeanService {
     /**
      * Creates a bean/class definition for given content type
      * 
-     * @param superClazz if the bean is inherited from another bean this parameter is used to describe the parent bean
-     * @param documentType of the document
-     * @param contentType of the document type which is read from contentTypeService
+     * @param contentBean content of the runtime bean to be generated
      * @return Class definition for a given {@link ContentType}
      */
-    Class<? extends HippoBean> createDocumentBeanDef(Class<? extends HippoBean> superClazz, String documentType, ContentType contentType);
+    Class<? extends HippoBean> createBeanDefinition(final HippoContentBean contentBean);
 
 }

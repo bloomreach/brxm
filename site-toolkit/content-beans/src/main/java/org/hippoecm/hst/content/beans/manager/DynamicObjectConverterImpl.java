@@ -23,6 +23,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
+import org.hippoecm.hst.content.beans.builder.HippoContentBean;
 import org.hippoecm.hst.content.beans.dynamic.DynamicBeanDefinitionService;
 import org.hippoecm.hst.content.beans.dynamic.DynamicBeanService;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -57,9 +58,7 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
         jcrPrimaryNodeTypeBeanPairs.entrySet()
                 .stream()
                 .filter(entry -> shouldGenerateEnhancedBean(entry.getValue()))
-                .forEach(entry -> dynamicBeanService.createDocumentBeanDef(entry.getValue(), entry.getKey(), contentTypes.getType(entry.getKey())));
-
-
+                .forEach(entry -> dynamicBeanService.createBeanDefinition(new HippoContentBean(entry.getKey(), entry.getValue(), contentTypes.getType(entry.getKey()))));
     }
 
     public boolean shouldGenerateEnhancedBean(final Class<? extends HippoBean> existingBeanClass) {
@@ -143,7 +142,9 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
             //The object has been already garbage collected, in practice, it should never happen
             throw new IllegalStateException("The required ContentTypes object has been already garbage collected!");
         }
-        return dynamicBeanService.createDocumentBeanDef(superClazz, documentType, contentTypes.getType(documentType));
+
+        final HippoContentBean contentBean = new HippoContentBean(documentType, superClazz, contentTypes.getType(documentType));
+        return dynamicBeanService.createBeanDefinition(contentBean);
     }
     
     /**
