@@ -171,7 +171,7 @@ public abstract class AbstractBeanBuilderService {
                 addBeanMethodContentBlocks(propertyName, methodName, multiple, builder);
                 break;
             case HIPPO_COMPOUND:
-                addBeanMethodCompoundType(propertyName, methodName, multiple, childNode.getContentType().getName(), builder);
+                addBeanMethodCompoundType(propertyName, methodName, multiple, childNode.getName(), builder);
                 break;
             default:
                 addCustomNodeType(propertyName, methodName, multiple, type, builder);
