@@ -78,7 +78,8 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
         }
     }
 
-    private Class<? extends HippoBean> createBeanDefinition(final HippoContentBean contentBean) {
+    @Override
+    public Class<? extends HippoBean> createBeanDefinition(final HippoContentBean contentBean) {
         if (!contentBean.hasContentType()) {
             log.error("ContentType of the document type {} doesn't exist in the ContentTypeService.", contentBean.getName());
             return null;
@@ -94,12 +95,6 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
         }
 
         return generateBeanDefinition(contentBean);
-    }
-
-    @Override
-    public Class<? extends HippoBean> createDocumentBeanDef(final Class<? extends HippoBean> superClazz, final String documentType, final ContentType contentType) {
-        final HippoContentBean contentBean = new HippoContentBean(documentType, superClazz, contentType);
-        return createBeanDefinition(contentBean);
     }
 
     /**
