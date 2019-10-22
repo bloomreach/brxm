@@ -16,11 +16,9 @@
 package org.hippoecm.hst.content.beans.builder;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder;
 import org.hippoecm.hst.content.beans.dynamic.DynamicBeanUtils;
-import org.onehippo.cms7.services.contenttype.ContentTypeChild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +29,6 @@ public abstract class AbstractBeanBuilderService {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractBeanBuilderService.class);
     private static final String DOCBASE = "Docbase";
-    private static final String CONTENT_BLOCKS_VALIDATOR = "contentblocks-validator";
 
     private enum DocumentType {
         STRING("String"), //
@@ -152,7 +149,7 @@ public abstract class AbstractBeanBuilderService {
                 continue;
             }
 
-            final DocumentType documentType = getChildNodeDocumentType(type, childNode.getContentType());
+            final DocumentType documentType = getChildNodeDocumentType(type, childNode.hasContentBlocks());
 
             switch (documentType) {
             case HIPPO_HTML:
@@ -208,17 +205,17 @@ public abstract class AbstractBeanBuilderService {
      * a possible content block definition
      * 
      * @param type of the document
-     * @param contentTypeChild child element of the corresponding contentType of the document type
+     * @param hasContentBlocks whether a contentType has any content blocks or not
      * @return the corresponding document type
      */
-    private DocumentType getChildNodeDocumentType(final String type, final ContentTypeChild contentTypeChild) {
+    private DocumentType getChildNodeDocumentType(final String type, final boolean hasContentBlocks) {
         final DocumentType documentType = DocumentType.getDocumentType(type);
 
         // if a document type doesn't match with any predefined document type, then
         // a content block definition check must be made to figure out whether the
         // document type is a content block
         if (DocumentType.UNKNOWN == documentType) {
-            if (hasContentBlocks(contentTypeChild)) {
+            if (hasContentBlocks) {
                 return DocumentType.CONTENT_BLOCKS;
             } else {
                 log.warn("Type {} is undefined.", type);
@@ -226,20 +223,6 @@ public abstract class AbstractBeanBuilderService {
         }
 
         return documentType;
-    }
-
-    /**
-     * checks whether a content bean child has a content blocks
-     * 
-     * @param bean {@link HippoContentBean}
-     * @return true if the content bean child has a content blocks
-     */
-    private boolean hasContentBlocks(final ContentTypeChild contentTypeChild) {
-        final List<String> validators = contentTypeChild.getValidators();
-        if (validators != null && validators.contains(CONTENT_BLOCKS_VALIDATOR)) {
-            return true;
-        }
-        return false;
     }
 
     /**
