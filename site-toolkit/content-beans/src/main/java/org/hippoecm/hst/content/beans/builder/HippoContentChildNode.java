@@ -17,14 +17,16 @@ package org.hippoecm.hst.content.beans.builder;
 
 import java.util.regex.Pattern;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.onehippo.cms7.services.contenttype.ContentTypeChild;
 
 /**
- * @version "$Id$"
+ * Wrapper of a {@link ContentTypeChild} object to use in Runtime Bean Generation.
  */
 public class HippoContentChildNode {
 
     private static final Pattern PREFIX_SPLITTER = Pattern.compile(":");
+    private static final String CONTENT_BLOCKS_VALIDATOR = "contentblocks-validator";
     private final ContentTypeChild contentType;
     private final String prefix;
     private final String shortName;
@@ -32,6 +34,7 @@ public class HippoContentChildNode {
     private final boolean multiple;
     private final String type;
     private final String cmsType;
+    private final boolean contentBlocks;
 
     public HippoContentChildNode(final ContentTypeChild contentType) {
         this.contentType = contentType;
@@ -47,6 +50,13 @@ public class HippoContentChildNode {
         this.type = contentType.getEffectiveType();
         this.cmsType = contentType.getItemType();
         this.multiple = contentType.isMultiple();
+
+        if (CollectionUtils.isEmpty(contentType.getValidators())) {
+            this.contentBlocks = false;
+        } else {
+            this.contentBlocks = contentType.getValidators().stream()
+                    .anyMatch(validator -> validator.contains(CONTENT_BLOCKS_VALIDATOR));
+        }
     }
 
     public String getType() {
@@ -73,6 +83,10 @@ public class HippoContentChildNode {
         return name;
     }
 
+    public boolean hasContentBlocks() {
+        return contentBlocks;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("HippoContentChildNode{");
@@ -81,6 +95,7 @@ public class HippoContentChildNode {
         sb.append(", shortName='").append(shortName).append('\'');
         sb.append(", name='").append(name).append('\'');
         sb.append(", type='").append(type).append('\'');
+        sb.append(", contentBlocks='").append(contentBlocks).append('\'');
         sb.append('}');
         return sb.toString();
     }
