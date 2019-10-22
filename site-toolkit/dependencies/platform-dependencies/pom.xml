@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -34,12 +34,6 @@
       <artifactId>hst-site-dependencies</artifactId>
       <version>${project.version}</version>
       <type>pom</type>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon.toolkit-cnd</groupId>
-      <artifactId>hst-addon-cnd</artifactId>
-      <version>${project.version}</version>
     </dependency>
 
     <dependency>

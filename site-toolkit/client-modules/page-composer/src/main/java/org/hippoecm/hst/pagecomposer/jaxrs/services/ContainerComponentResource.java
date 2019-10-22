@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.core.container.ContainerException;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
@@ -40,6 +41,8 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentService.Co
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 
 @Path("/hst:containercomponent/")
 public class ContainerComponentResource extends AbstractConfigResource {
@@ -60,6 +63,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
     @Path("/{itemUUID}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response createContainerItem(final @PathParam("itemUUID") String itemUUID,
                                         final @QueryParam("lastModifiedTimestamp") long versionStamp) throws ContainerException {
         if (StringUtils.isEmpty(itemUUID)) {
@@ -95,6 +99,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response updateContainer(final ContainerRepresentation container) {
         final ContainerAction<Response> updateContainer = () -> {
             containerComponentService.updateContainer(getSession(), container);
@@ -107,6 +112,7 @@ public class ContainerComponentResource extends AbstractConfigResource {
     @DELETE
     @Path("/{itemUUID}")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response deleteContainerItem(final @PathParam("itemUUID") String itemUUID,
                                         final @QueryParam("lastModifiedTimestamp") long versionStamp) {
         final ContainerAction<Response> deleteContainerItem = () -> {

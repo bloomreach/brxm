@@ -28,7 +28,9 @@ import java.util.Set;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.security.Privilege;
 
 import org.hippoecm.hst.configuration.channel.ChannelException;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -47,6 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.PREFER_RENDER_BRANCH_ID;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_ADMIN_PRIVILEGE_NAME;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 /**
@@ -195,10 +198,21 @@ public class ChannelServiceImpl implements ChannelService {
     @Override
     public String persist(final Session userSession, final String blueprintId, final Channel channel) throws ChannelException {
 
-        final InternalHstModel hstModel = hstModelRegistry.getPlatformHstModel(channel.getContextPath());
+        // this is the hst model where the channel will be created
+        final InternalHstModel hstModel = hstModelRegistry.getInternalHstModel(channel.getContextPath());
 
         try {
+            final boolean isChannelAdmin = userSession.getAccessControlManager().hasPrivileges(hstModel.getConfigurationRootPath(),
+                    new Privilege[]{userSession.getAccessControlManager().privilegeFromName(CHANNEL_ADMIN_PRIVILEGE_NAME)});
+
+            if (!isChannelAdmin) {
+                throw new ChannelException(String.format("User '%s' is not allowed to create new channel within %s",
+                        userSession.getUserID(), hstModel.getConfigurationRootPath()));
+            }
+
             return hstModel.getChannelManager().persist(userSession, blueprintId, channel);
+        } catch (RepositoryException e) {
+            throw new ChannelException("Error while persisting a new channel - Channel:" , e);
         } catch (ChannelException ce) {
             log.warn("Error while persisting a new channel - Channel: {} - {} : {}", channel, ce.getClass().getName(), ce.toString());
             throw ce;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.SiteMenuRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
@@ -48,6 +49,8 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.SiteMenuItemHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.Validator;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorBuilder;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory;
+
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 
 @Path("/" + HstNodeTypes.NODETYPE_HST_SITEMENU + "/")
 @Produces(MediaType.APPLICATION_JSON)
@@ -76,6 +79,7 @@ public class SiteMenuResource extends AbstractConfigResource {
 
     @GET
     @Path("/")
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response getMenu() {
         return tryGet(() -> {
             final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration();
@@ -88,6 +92,7 @@ public class SiteMenuResource extends AbstractConfigResource {
 
     @GET
     @Path("/{menuItemId}")
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response getMenuItem(final @PathParam("menuItemId") String menuItemId) {
         return tryGet(() -> {
             final HstSiteMenuConfiguration menu = getHstSiteMenuConfiguration();
@@ -100,6 +105,7 @@ public class SiteMenuResource extends AbstractConfigResource {
 
     @POST
     @Path("/{parentId}")
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response create(final @PathParam("parentId") String parentId,
                            final @DefaultValue(Position.LAST_AS_STRING) @QueryParam("position") String position,
                            final @DefaultValue("") @QueryParam("sibling") String after,
@@ -122,6 +128,7 @@ public class SiteMenuResource extends AbstractConfigResource {
 
     @POST
     @Path("/")
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response update(final SiteMenuItemRepresentation modifiedItem) {
 
         final Validator preValidator = ValidatorBuilder.builder()
@@ -151,6 +158,7 @@ public class SiteMenuResource extends AbstractConfigResource {
      */
     @PUT
     @Path("/{parentId}/{index}")
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response move(final @HeaderParam("Move-From") String sourceId,
                          final @PathParam("parentId") String parentId,
                          final @PathParam("index") Integer childIndex) {
@@ -172,6 +180,7 @@ public class SiteMenuResource extends AbstractConfigResource {
 
     @DELETE
     @Path("/{menuItemId}")
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response delete(final @PathParam("menuItemId") String menuItemId) {
         final Validator preValidator = ValidatorBuilder.builder()
                 .add(getDefaultMenuModificationValidator())
