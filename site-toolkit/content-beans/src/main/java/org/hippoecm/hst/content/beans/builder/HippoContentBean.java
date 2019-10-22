@@ -55,8 +55,13 @@ public class HippoContentBean {
     private final Set<String> superTypes = new HashSet<>();
     private String parentDocumentType;
     private Class<? extends HippoBean> parentBean;
+    private boolean parentReloaded = false;
 
     public HippoContentBean(final ContentType contentType) {
+        this(null, contentType);
+    }
+
+    public HippoContentBean(final Class<? extends HippoBean> parentBean, final ContentType contentType) {
         this.contentType = contentType;
 
         final String originalName = contentType.getName();
@@ -67,9 +72,26 @@ public class HippoContentBean {
         } else {
             this.prefix = null;
         }
-        processSuperTypes();
+
+        if (parentBean == null) {
+            processSuperTypes();
+        } else {
+            this.parentBean = parentBean;
+        }
+
         processProperties();
         processSubNodes();
+    }
+
+    public void setParentBean(final Class<? extends HippoBean> parentBean) {
+        this.parentBean = parentBean;
+    }
+
+    /**
+     * The Runtime Bean of this class should be regenareted regardless of other criteria. 
+     */
+    public void forceGeneration() {
+        this.parentReloaded = true;
     }
 
     private String extractName(final String originalName) {
@@ -197,6 +219,10 @@ public class HippoContentBean {
         return parentBean;
     }
 
+    public boolean isParentReloaded() {
+        return parentReloaded;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("HippoContentBean{");
@@ -205,6 +231,7 @@ public class HippoContentBean {
         sb.append(", children=").append(children);
         sb.append(", parentDocumentType=").append(parentDocumentType);
         sb.append(", parentBean=").append(parentBean);
+        sb.append(", parentReloaded=").append(parentReloaded);
         sb.append('}');
         return sb.toString();
     }
