@@ -92,7 +92,6 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
                 log.warn("Failed to get the gallery type(s), the default type 'HippoGalleryImageSet' will be used for dynamic beans.");
                 galleryTypes = new String[]{GALLERY_IMAGESET_NODETYPE};
             }
-
         } catch (RepositoryException e) {
             throw new RuntimeRepositoryException(e);
         } finally {
@@ -100,18 +99,13 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
                  session.logout();
             }
         }
-
     }
 
     private BeanInfo createCompoundBeanDef(@Nullable BeanInfo parentBeanInfo, final ContentType contentType) {
         if (contentType.getSuperTypes().stream().noneMatch(HippoNodeType.NT_COMPOUND::equals)) {
             return null;
         }
-
-        if (parentBeanInfo == null) {
-            parentBeanInfo = getOrCreateParentBeanDef(contentType, true);
-        }
-        return generateBeanDefinition(parentBeanInfo, contentType);
+        return generateBeanDefinition(parentBeanInfo, contentType, true);
     }
 
     @Override
@@ -125,10 +119,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
     }
 
     private BeanInfo createDocumentBeanDef(@Nonnull final ContentType contentType, @Nullable BeanInfo parentBeanInfo) {
-        if (parentBeanInfo == null) {
-            parentBeanInfo = getOrCreateParentBeanDef(contentType, false);
-        }
-        return generateBeanDefinition(parentBeanInfo, contentType);
+        return generateBeanDefinition(parentBeanInfo, contentType, false);
     }
 
     /**
@@ -140,26 +131,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
      * @param isCompound whether a contentType is a compound type or not
      * @return
      */
-    private BeanInfo getOrCreateParentBeanDef(@Nonnull final ContentType contentType, final boolean isCompound) {
-        final String documentType = contentType.getName();
-        final String projectNamespace = documentType.substring(0, documentType.indexOf(':'));
-
-        String parentDocumentType = contentType.getSuperTypes().stream()
-                .filter(superType -> superType.startsWith(projectNamespace) && !superType.endsWith(":basedocument")).findFirst().orElse(null);
-
-        if (parentDocumentType == null) {
-            parentDocumentType = contentType.getSuperTypes().stream().filter(superType -> superType.equals(projectNamespace + ":basedocument"))
-                    .findFirst().orElse(null);
-        }
-
-        if (parentDocumentType == null && contentType.getSuperTypes().stream().anyMatch(superType -> superType.equals(GALLERY_IMAGESET_NODETYPE))) {
-            return new BeanInfo(HippoGalleryImageSet.class, true);
-        }
-
-        if (parentDocumentType == null) {
-            return getDefaultParentBeanInfo(isCompound);
-        }
-
+    private BeanInfo getOrCreateParentBeanDef(final String parentDocumentType, final boolean isCompound) {
         final Class<? extends HippoBean> parentDocumentBeanDef = objectConverter.getClassFor(parentDocumentType);
         if (parentDocumentBeanDef == null) {
             final ContentType parentDocumentContentType = objectConverter.getContentType(parentDocumentType);
@@ -183,15 +155,22 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
      * @param contentType of the document type
      * @return Class definition
      */
-    private BeanInfo generateBeanDefinition(final BeanInfo parentBeanInfo, final ContentType contentType) {
+    private BeanInfo generateBeanDefinition(BeanInfo parentBeanInfo, final ContentType contentType, final boolean isCompound) {
         final HippoContentBean contentBean = new HippoContentBean(contentType);
+        if (parentBeanInfo == null) {
+            if (contentBean.getParentBean() != null) {
+                parentBeanInfo = new BeanInfo(contentBean.getParentBean(), true);
+            } else {
+                parentBeanInfo = getOrCreateParentBeanDef(contentBean.getParentDocumentType(), isCompound);
+            }
+        }
 
         final DynamicBeanBuilder builder = new DynamicBeanBuilder(
                 DynamicBeanUtils.createJavaClassName(contentBean.getName()), parentBeanInfo.getBeanClass());
 
         generateMethodsByProperties(contentBean, builder);
         generateMethodsByChildNodes(contentBean, builder);
-        
+
         if(!builder.isMethodAdded() && !parentBeanInfo.isUpdated()) {
             log.info("Bean {} is not enhanced because it doesn't have any missing methods.", parentBeanInfo.getBeanClass().getSimpleName());
             return parentBeanInfo;
@@ -263,7 +242,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
                 if (galleryContentType == null) {
                     return HippoGalleryImageSet.class;
                 }
-                final BeanInfo generatedBeanInfo = generateBeanDefinition(new BeanInfo(HippoGalleryImageSet.class, true), galleryContentType);
+                final BeanInfo generatedBeanInfo = generateBeanDefinition(new BeanInfo(HippoGalleryImageSet.class, true), galleryContentType, false);
                 generatedBeanDef = generatedBeanInfo.getBeanClass();
             }
             return generatedBeanDef;
