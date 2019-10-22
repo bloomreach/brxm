@@ -27,7 +27,6 @@ import org.hippoecm.hst.content.beans.builder.AbstractBeanBuilderService;
 import org.hippoecm.hst.content.beans.builder.HippoContentBean;
 import org.hippoecm.hst.content.beans.manager.DynamicObjectConverterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.content.beans.standard.HippoCompound;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
@@ -79,14 +78,14 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
         }
     }
 
-    private Class<? extends HippoBean> createBeanDefinition(final HippoContentBean contentBean, final boolean isCompound) {
-        // TODO reason to test this compound parent check should be explained
-        if (isCompound && !HippoCompound.class.equals(contentBean.getParentBean())) {
+    private Class<? extends HippoBean> createBeanDefinition(final HippoContentBean contentBean) {
+        if (contentBean.getParentBean() == null && contentBean.getParentDocumentType() == null) {
+            log.error("Document {} can't be generated because it doesn't have any relevant supertypes.", contentBean.getName());
             return null;
         }
 
         if (contentBean.getParentBean() == null) {
-            setOrCreateParentBeanDefinition(contentBean, isCompound);
+            setOrCreateParentBeanDefinition(contentBean);
         }
 
         return generateBeanDefinition(contentBean);
@@ -99,7 +98,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
             return null;
         }
         final HippoContentBean contentBean = new HippoContentBean(documentType, superClazz, contentType);
-        return createBeanDefinition(contentBean, false);
+        return createBeanDefinition(contentBean);
     }
 
     /**
@@ -108,16 +107,15 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
      * as a parent bean.
      * 
      * @param contentBean content of the runtime bean to be generated
-     * @param isCompound the document type whether is a compound type
      * @return
      */
-    private void setOrCreateParentBeanDefinition(final HippoContentBean contentBean, final boolean isCompound) {
+    private void setOrCreateParentBeanDefinition(final HippoContentBean contentBean) {
         final Class<? extends HippoBean> parentBean = objectConverter.getClassFor(contentBean.getParentDocumentType());
         if (parentBean == null) {
             final ContentType parentDocumentContentType = objectConverter.getContentType(contentBean.getParentDocumentType());
             final HippoContentBean parentRuntimeBeanContent = new HippoContentBean(contentBean.getParentDocumentType(), parentDocumentContentType);
 
-            contentBean.setParentBean(createBeanDefinition(parentRuntimeBeanContent, isCompound));
+            contentBean.setParentBean(createBeanDefinition(parentRuntimeBeanContent));
             contentBean.forceGeneration();
         } else {
             contentBean.setParentBean(parentBean);
@@ -273,7 +271,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
             }
 
             final HippoContentBean contentBean = new HippoContentBean(documentType, compoundContentType);
-            generatedBeanDefinition = createBeanDefinition(contentBean, true);
+            generatedBeanDefinition = createBeanDefinition(contentBean);
         }
         return generatedBeanDefinition;
     }
