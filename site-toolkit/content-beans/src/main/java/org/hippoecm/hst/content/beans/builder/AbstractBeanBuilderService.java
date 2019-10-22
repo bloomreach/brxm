@@ -77,7 +77,6 @@ public abstract class AbstractBeanBuilderService {
         for (HippoContentProperty property : bean.getProperties()) {
             final String propertyName = property.getName();
             final boolean multiple = property.isMultiple();
-            final String cmsType = property.getCmsType();
 
             final String methodName = DynamicBeanUtils.createMethodName(propertyName);
             boolean hasChange = hasChange(methodName, multiple, builder);
@@ -85,15 +84,14 @@ public abstract class AbstractBeanBuilderService {
                 continue;
             }
 
-            String type = property.getType();
-            log.trace("Adding property {} to the bean {}.", property.getName(), bean.getName());
+            log.trace("Adding property {} to the bean {}.", property.getName(), bean.getDocumentType());
 
-            if (type == null) {
-                log.error("Missing type for property, cannot create method {} on bean {}.", property.getName(), bean.getName());
+            if (property.getType() == null) {
+                log.error("Missing type for property, cannot create method {} on bean {}.", property.getName(), bean.getDocumentType());
                 continue;
             }
 
-            final DocumentType documentType = getPropertyDocumentType(type, cmsType);
+            final DocumentType documentType = getPropertyDocumentType(property.getType(), property.getCmsType());
 
             switch (documentType) {
             case STRING:
@@ -118,7 +116,7 @@ public abstract class AbstractBeanBuilderService {
                 addBeanMethodDocbase(propertyName, methodName, multiple, builder);
                 break;
             default:
-                addCustomPropertyType(propertyName, methodName, multiple, type, builder);
+                addCustomPropertyType(propertyName, methodName, multiple, property.getType(), builder);
                 break;
             }
         }
@@ -141,15 +139,14 @@ public abstract class AbstractBeanBuilderService {
                 continue;
             }
 
-            final String type = childNode.getType();
-            log.trace("Adding property {} to the bean {}.", childNode.getName(), bean.getName());
+            log.trace("Adding property {} to the bean {}.", childNode.getName(), bean.getDocumentType());
 
-            if (type == null) {
-                log.error("Missing type for node, cannot create method {} on bean {}.", childNode.getName(), bean.getName());
+            if (childNode.getType() == null) {
+                log.error("Missing type for node, cannot create method {} on bean {}.", childNode.getName(), bean.getDocumentType());
                 continue;
             }
 
-            final DocumentType documentType = getChildNodeDocumentType(type, childNode.hasContentBlocks());
+            final DocumentType documentType = getChildNodeDocumentType(childNode.getType(), childNode.hasContentBlocks());
 
             switch (documentType) {
             case HIPPO_HTML:
@@ -174,7 +171,7 @@ public abstract class AbstractBeanBuilderService {
                 addBeanMethodCompoundType(propertyName, methodName, multiple, childNode.getName(), builder);
                 break;
             default:
-                addCustomNodeType(propertyName, methodName, multiple, type, builder);
+                addCustomNodeType(propertyName, methodName, multiple, childNode.getType(), builder);
                 break;
             }
         }
