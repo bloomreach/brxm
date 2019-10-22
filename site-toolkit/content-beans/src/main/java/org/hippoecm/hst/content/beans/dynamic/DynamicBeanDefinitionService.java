@@ -98,7 +98,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
             log.error("ContentType of the document type {} doesn't exist in the ContentTypeService.", documentType);
             return null;
         }
-        final HippoContentBean contentBean = new HippoContentBean(superClazz, contentType);
+        final HippoContentBean contentBean = new HippoContentBean(documentType, superClazz, contentType);
         return createBeanDefinition(contentBean, false);
     }
 
@@ -115,7 +115,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
         final Class<? extends HippoBean> parentBean = objectConverter.getClassFor(contentBean.getParentDocumentType());
         if (parentBean == null) {
             final ContentType parentDocumentContentType = objectConverter.getContentType(contentBean.getParentDocumentType());
-            final HippoContentBean parentRuntimeBeanContent = new HippoContentBean(parentDocumentContentType);
+            final HippoContentBean parentRuntimeBeanContent = new HippoContentBean(contentBean.getParentDocumentType(), parentDocumentContentType);
 
             contentBean.setParentBean(createBeanDefinition(parentRuntimeBeanContent, isCompound));
             contentBean.forceGeneration();
@@ -210,7 +210,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
                     return HippoGalleryImageSet.class;
                 }
 
-                final HippoContentBean galleryBeanContent = new HippoContentBean(HippoGalleryImageSet.class, galleryContentType);
+                final HippoContentBean galleryBeanContent = new HippoContentBean(galleryTypes[0], HippoGalleryImageSet.class, galleryContentType);
                 galleryBeanContent.forceGeneration();
                 generatedBeanDefinition = generateBeanDefinition(galleryBeanContent);
             }
@@ -263,16 +263,16 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
         builder.addBeanMethodInternalType(methodName, generatedBeanDef, propertyName, multiple);
     }
 
-    private Class<? extends HippoBean> getOrCreateCustomBean(final String type) {
-        Class<? extends HippoBean> generatedBeanDefinition = objectConverter.getClassFor(type);
+    private Class<? extends HippoBean> getOrCreateCustomBean(final String documentType) {
+        Class<? extends HippoBean> generatedBeanDefinition = objectConverter.getClassFor(documentType);
         if (generatedBeanDefinition == null) {
             // Custom generic bean should be created because the document type doesn't exist in objectConverter
-            final ContentType compoundContentType = objectConverter.getContentType(type);
+            final ContentType compoundContentType = objectConverter.getContentType(documentType);
             if (compoundContentType == null) {
                 return null;
             }
 
-            final HippoContentBean contentBean = new HippoContentBean(compoundContentType);
+            final HippoContentBean contentBean = new HippoContentBean(documentType, compoundContentType);
             generatedBeanDefinition = createBeanDefinition(contentBean, true);
         }
         return generatedBeanDefinition;
