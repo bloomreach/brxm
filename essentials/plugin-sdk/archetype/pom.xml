@@ -104,12 +104,8 @@
             <phase>process-resources</phase>
             <configuration>
               <target>
-                <replace summary="true"
-                         failOnNoReplacements="true"
-                         token= "@project.version@"
-                         value="${project.version}"
-                         dir="${project.build.outputDirectory}/archetype-resources">
-                  <include name="pom.xml"/>
+                <replace summary="true" failOnNoReplacements="true" token="@project.version@" value="${project.version}" dir="${project.build.outputDirectory}/archetype-resources">
+                  <include name="pom.xml" />
                 </replace>
               </target>
             </configuration>
