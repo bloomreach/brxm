@@ -22,9 +22,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoCompound;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
@@ -45,8 +45,6 @@ public class HippoContentBean {
     private static final String GALLERY_IMAGESET_NODETYPE = "hippogallery:imageset";
     public static final Set<String> ACCEPTED_PROPERTIES = Collections
             .unmodifiableSet(new HashSet<>(Arrays.asList("hippotaxonomy:keys", "relateddocs:reldoc", "hippostd:tags")));
-    private static final Pattern PREFIX_SPLITTER = Pattern.compile(":");
-    private static final Pattern COMMA_SPLITTER = Pattern.compile(",");
     private final ContentType contentType;
     private final String prefix;
     private final String name;
@@ -57,21 +55,14 @@ public class HippoContentBean {
     private Class<? extends HippoBean> parentBean;
     private boolean parentReloaded = false;
 
-    public HippoContentBean(final ContentType contentType) {
-        this(null, contentType);
+    public HippoContentBean(final String name, final ContentType contentType) {
+        this(name, null, contentType);
     }
 
-    public HippoContentBean(final Class<? extends HippoBean> parentBean, final ContentType contentType) {
+    public HippoContentBean(final String name, final Class<? extends HippoBean> parentBean, final ContentType contentType) {
         this.contentType = contentType;
-
-        final String originalName = contentType.getName();
-        name = extractName(originalName);
-        if (name.indexOf(':') != -1) {
-            final String[] fullName = PREFIX_SPLITTER.split(name);
-            this.prefix = fullName[0];
-        } else {
-            this.prefix = null;
-        }
+        this.name = name;
+        this.prefix = StringUtils.substringBefore(name, ":");
 
         if (parentBean == null) {
             processSuperTypes();
@@ -92,15 +83,6 @@ public class HippoContentBean {
      */
     public void forceGeneration() {
         this.parentReloaded = true;
-    }
-
-    private String extractName(final String originalName) {
-        String myName = originalName;
-        if (originalName.indexOf(',') != -1) {
-            final String[] names = COMMA_SPLITTER.split(originalName);
-            myName = names[0];
-        }
-        return myName;
     }
 
     private void processSuperTypes() {
