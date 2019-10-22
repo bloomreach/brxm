@@ -39,7 +39,7 @@ export class ErrorHandlingService {
 
   private set error(value: AppError) {
     if (value) {
-      console.error(value.internalDescription);
+      console.error(value);
     }
 
     this.appError = value;

@@ -29,6 +29,7 @@ import { InternalError } from '../error-handling/models/internal-error';
 import { NotFoundError } from '../error-handling/models/not-found-error';
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { distinctUntilAccumulatorIsEmpty } from '../helpers/distinct-until-equal-number-of-values';
+import { stripOffQueryStringAndHash } from '../helpers/strip-off-query-string-and-hash';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { AppSettings } from '../models/dto/app-settings.dto';
 import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
@@ -48,6 +49,7 @@ interface Navigation {
   url: string;
   navItem: NavItem;
   appPathAddOn: string;
+  queryStringAndHash: string;
   state: { [key: string]: string };
   source: NavigationTrigger;
   app: ClientApp;
@@ -120,9 +122,9 @@ export class NavigationService implements OnDestroy {
 
     this.setUpLocationChangeListener();
 
-    const url = `${this.basePath}${this.appSettings.initialPath}`;
+    const url = this.appSettings.initialPath ? `${this.basePath}${this.appSettings.initialPath}` : this.location.path(true);
 
-    return this.scheduleNavigation(url, NavigationTrigger.NotDefined, {}, true);
+    return this.scheduleNavigation(url, NavigationTrigger.InitialNavigation, {}, true);
   }
 
   ngOnDestroy(): void {
@@ -271,6 +273,14 @@ export class NavigationService implements OnDestroy {
 
   private processTransition(transition: Transition): Observable<Navigation> {
     return of(transition).pipe(
+      // Redirect all empty urls to the home url
+      tap(t => {
+        const url = stripOffQueryStringAndHash(t.url);
+
+        if (!url) {
+          t.url = this.homeUrl;
+        }
+      }),
       // Eagerly update the browser url
       tap(t => {
         if (t.source !== NavigationTrigger.PopState) {
@@ -294,8 +304,10 @@ export class NavigationService implements OnDestroy {
         }
 
         const appPathAddOn = t.url.slice(route.path.length);
+        const appPathAddOnWithoutQueryStringAndHash = stripOffQueryStringAndHash(appPathAddOn);
+        const queryStringAndHash = appPathAddOn.slice(appPathAddOnWithoutQueryStringAndHash.length);
 
-        return of({ ...t, navItem: route.navItem, appPathAddOn });
+        return of({ ...t, navItem: route.navItem, appPathAddOn: appPathAddOnWithoutQueryStringAndHash, queryStringAndHash });
       }),
       // Ensure the app with the found id exists and it has the connected API
       switchMap(t => {
@@ -344,7 +356,7 @@ export class NavigationService implements OnDestroy {
       }),
       // Process navigation
       switchMap(t => {
-        const appPath = Location.joinWithSlash(t.navItem.appPath, t.appPathAddOn);
+        const appPath = Location.joinWithSlash(t.navItem.appPath, t.appPathAddOn) + t.queryStringAndHash;
         const appPathWithoutLeadingSlash = this.urlMapperService.trimLeadingSlash(appPath);
         const appPathPrefix = new URL(t.navItem.appIframeUrl).pathname;
 
