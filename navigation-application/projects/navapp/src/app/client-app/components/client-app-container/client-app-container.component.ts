@@ -29,7 +29,7 @@ import { ClientAppService } from '../../services/client-app.service';
   animations: [
     trigger('fadeInOut', [
       state('true', style({
-        opacity: .3,
+        opacity: .25,
         display: 'block',
       })),
       state('false', style({
