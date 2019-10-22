@@ -29,8 +29,8 @@ public class HippoContentChildNode {
     private final String type;
     private final boolean contentBlocks;
 
-    public HippoContentChildNode(final ContentTypeChild contentType) {
-        this.name = contentType.getName();
+    public HippoContentChildNode(final String name, final ContentTypeChild contentType) {
+        this.name = name;
         this.type = contentType.getEffectiveType();
         this.multiple = contentType.isMultiple();
 
@@ -54,6 +54,10 @@ public class HippoContentChildNode {
         return contentBlocks;
     }
 
+    public boolean isMultiple() {
+        return multiple;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("HippoContentChildNode{");
@@ -62,9 +66,5 @@ public class HippoContentChildNode {
         sb.append(", contentBlocks='").append(contentBlocks).append('\'');
         sb.append('}');
         return sb.toString();
-    }
-
-    public boolean isMultiple() {
-        return multiple;
     }
 }

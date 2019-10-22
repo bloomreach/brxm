@@ -80,7 +80,7 @@ public class HippoContentBean {
     }
 
     /**
-     * The Runtime Bean of this class should be regenareted regardless of other criteria. 
+     * The Runtime Bean of this class should be regenareted regardless of other criterias. 
      */
     public void forceGeneration() {
         this.parentReloaded = true;
@@ -145,7 +145,7 @@ public class HippoContentBean {
         contentType.getChildren().entrySet()
             .stream()
             .filter(entry -> entry.getKey().startsWith(prefix))
-            .forEach(entry -> children.add(new HippoContentChildNode(entry.getValue())));
+            .forEach(entry -> children.add(new HippoContentChildNode(entry.getKey(), entry.getValue())));
     }
 
     private void processProperties() {
@@ -156,7 +156,7 @@ public class HippoContentBean {
         contentType.getProperties().entrySet()
             .stream()
             .filter(entry -> entry.getKey().startsWith(prefix))
-            .forEach(entry -> properties.add(new HippoContentProperty(entry.getValue())));
+            .forEach(entry -> properties.add(new HippoContentProperty(entry.getKey(), entry.getValue())));
     }
 
     public List<HippoContentProperty> getProperties() {
