@@ -64,6 +64,10 @@ public class HippoContentBean {
         this.name = name;
         this.prefix = StringUtils.substringBefore(name, ":");
 
+        if (contentType == null) {
+            return;
+        }
+
         if (parentBean == null) {
             processSuperTypes();
         } else {
@@ -203,6 +207,10 @@ public class HippoContentBean {
 
     public boolean isParentReloaded() {
         return parentReloaded;
+    }
+
+    public boolean hasContentType() {
+        return contentType != null;
     }
 
     @Override
