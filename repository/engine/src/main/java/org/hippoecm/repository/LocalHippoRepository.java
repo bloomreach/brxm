@@ -323,11 +323,22 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
         final HippoSecurityManager securityManager = (HippoSecurityManager) jackrabbitRepository.getSecurityManager();
         securityManager.configure();
 
-        // check for default admin password and issue a stern warning
-        final AuthenticationStatus status = securityManager.authenticate(new SimpleCredentials("admin", "admin".toCharArray()));
-        if (status.equals(AuthenticationStatus.SUCCEEDED)) {
-            log.error("\n\n\tInsecure default administrator credentials are enabled! Change the password!\n");
+        if (!inJunitTestCallStack()) {
+            // check for default admin password and issue a stern warning
+            final AuthenticationStatus status = securityManager.authenticate(new SimpleCredentials("admin", "admin".toCharArray()));
+            if (status.equals(AuthenticationStatus.SUCCEEDED)) {
+                log.error("\n\n\tInsecure default administrator credentials are enabled! Change the password!\n");
+            }
         }
+    }
+
+    private boolean inJunitTestCallStack() {
+        for (StackTraceElement ste : Thread.currentThread().getStackTrace()) {
+            if (ste.getClassName().startsWith("org.junit.")) {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected void migrateToV13IfNeeded(final Session rootSession, final boolean dryRun) throws RepositoryException {
