@@ -79,6 +79,11 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
     }
 
     private Class<? extends HippoBean> createBeanDefinition(final HippoContentBean contentBean) {
+        if (!contentBean.hasContentType()) {
+            log.error("ContentType of the document type {} doesn't exist in the ContentTypeService.", contentBean.getName());
+            return null;
+        }
+
         if (contentBean.getParentBean() == null && contentBean.getParentDocumentType() == null) {
             log.error("Document {} can't be generated because it doesn't have any relevant supertypes.", contentBean.getName());
             return null;
@@ -93,10 +98,6 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
 
     @Override
     public Class<? extends HippoBean> createDocumentBeanDef(final Class<? extends HippoBean> superClazz, final String documentType, final ContentType contentType) {
-        if (contentType == null) {
-            log.error("ContentType of the document type {} doesn't exist in the ContentTypeService.", documentType);
-            return null;
-        }
         final HippoContentBean contentBean = new HippoContentBean(documentType, superClazz, contentType);
         return createBeanDefinition(contentBean);
     }
