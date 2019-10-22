@@ -19,9 +19,9 @@
     <slot>
       <br-node-container-item v-if="isContainerItem(component)" />
 
-      <div v-else-if="isContainer(component)">
+      <br-node-container v-else-if="isContainer(component)">
         <br-node-component v-for="(component, key) in component.getChildren()" :key="key" :component="component" />
-      </div>
+      </br-node-container>
 
       <br-node-component v-else v-for="(component, key) in component.getChildren()" :key="key" :component="component" />
     </slot>
@@ -33,11 +33,13 @@ import { Component as SpaComponent, Page, isContainerItem, isContainer } from '@
 import { Component, InjectReactive, Prop, Provide, Vue } from 'vue-property-decorator';
 import BrMeta from './BrMeta.vue';
 import BrNodeContainerItem from './BrNodeContainerItem.vue';
+import BrNodeContainer from './BrNodeContainer.vue';
 
 @Component({
   components: {
     BrMeta,
     BrNodeContainerItem,
+    BrNodeContainer,
   },
   methods: {
     isContainerItem,
