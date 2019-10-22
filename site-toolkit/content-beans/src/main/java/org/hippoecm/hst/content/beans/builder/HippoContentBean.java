@@ -22,9 +22,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoCompound;
+import org.hippoecm.hst.content.beans.standard.HippoDocument;
+import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.onehippo.cms7.services.contenttype.ContentTypeChild;
@@ -38,7 +42,7 @@ import org.slf4j.LoggerFactory;
 public class HippoContentBean {
 
     private static final Logger log = LoggerFactory.getLogger(HippoContentBean.class);
-
+    private static final String GALLERY_IMAGESET_NODETYPE = "hippogallery:imageset";
     public static final Set<String> ACCEPTED_PROPERTIES = Collections
             .unmodifiableSet(new HashSet<>(Arrays.asList("hippotaxonomy:keys", "relateddocs:reldoc", "hippostd:tags")));
     private static final Pattern PREFIX_SPLITTER = Pattern.compile(":");
@@ -49,6 +53,8 @@ public class HippoContentBean {
     private final List<HippoContentProperty> properties = new ArrayList<>();
     private final List<HippoContentChildNode> children = new ArrayList<>();
     private final Set<String> superTypes = new HashSet<>();
+    private String parentDocumentType;
+    private Class<? extends HippoBean> parentBean;
 
     public HippoContentBean(final ContentType contentType) {
         this.contentType = contentType;
@@ -61,9 +67,9 @@ public class HippoContentBean {
         } else {
             this.prefix = null;
         }
+        processSuperTypes();
         processProperties();
         processSubNodes();
-        processSupertypes();
     }
 
     private String extractName(final String originalName) {
@@ -75,31 +81,54 @@ public class HippoContentBean {
         return myName;
     }
 
-    private void processSupertypes() {
-        if (name.endsWith("basedocument")) {
-            addSuperType(HippoNodeType.NT_DOCUMENT);
+    private void processSuperTypes() {
+        final Set<String> superTypes = contentType.getSuperTypes()
+                    .stream()
+                    .filter(type -> type.startsWith(prefix))
+                    .collect(Collectors.toSet());
+
+        if (!superTypes.isEmpty()) {
+            // if document type is created from other custom document types, use them as parent document types
+            log.trace("{} has supertypes {}.", name, superTypes);
+            processParentBean(superTypes);
+        } else if (contentType.getSuperTypes().contains(HippoNodeType.NT_DOCUMENT)) {
+            // if document type has HippoNodeType.NT_DOCUMENT as super type, then mark this document as HippoDocument
+            parentDocumentType = HippoNodeType.NT_DOCUMENT;
+            parentBean = HippoDocument.class;
+            log.trace("{} is a document type.", name);
+        } else if (contentType.getSuperTypes().contains(HippoNodeType.NT_COMPOUND)) {
+            // if document type has HippoNodeType.NT_COMPOUND as super type, then mark this document as HippoCompound
+            parentDocumentType = HippoNodeType.NT_COMPOUND;
+            parentBean = HippoCompound.class;
+            log.trace("{} is a compound type.", name);
+        } else { 
+            log.error("{} is an unknown document type with supertypes {}.", name, contentType.getSuperTypes());
         }
-        boolean documentType = false;
-        boolean compoundType = false;
-        final SortedSet<String> mySupertypes = contentType.getSuperTypes();
-        for (String mySupertype : mySupertypes) {
-            if (mySupertype.equals(HippoNodeType.NT_DOCUMENT)) {
-                documentType = true;
-            } else if (mySupertype.equals(HippoNodeType.NT_COMPOUND)) {
-                compoundType = true;
-            }
-            if (mySupertype.startsWith(prefix)) {
-                addSuperType(mySupertype);
-            }
+    }
+
+    private void processParentBean(final Set<String> superTypes) {
+        final String baseDocumentName = prefix + ":basedocument";
+
+        // if there is a custom document type other than basedocument in project namespace, use that
+        parentDocumentType = superTypes
+                    .stream()
+                    .filter(superType -> !superType.equals(baseDocumentName))
+                    .findFirst()
+                    .orElse(null);
+
+        if (parentDocumentType == null) {
+            // if there is a basedocument in project namespace, use that
+            parentDocumentType = superTypes
+                    .stream()
+                    .filter(superType -> superType.equals(baseDocumentName))
+                    .findFirst()
+                    .orElse(null);
         }
-        if (superTypes.size() == 0) {
-            if (documentType) {
-                addSuperType(HippoNodeType.NT_DOCUMENT);
-            } else if (compoundType) {
-                addSuperType(HippoNodeType.NT_COMPOUND);
-            } else {
-                log.warn("Unknown supertype for {}", this);
-            }
+
+        // if the document type is extended from hippogallery:imageset, use that as parent
+        if (parentDocumentType == null && superTypes.stream().anyMatch(superType -> superType.equals(GALLERY_IMAGESET_NODETYPE))) {
+            parentDocumentType = GALLERY_IMAGESET_NODETYPE;
+            parentBean = HippoGalleryImageSet.class;
         }
     }
 
@@ -160,12 +189,22 @@ public class HippoContentBean {
         return name;
     }
 
+    public String getParentDocumentType() {
+        return parentDocumentType;
+    }
+
+    public Class<? extends HippoBean> getParentBean() {
+        return parentBean;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("HippoContentBean{");
         sb.append(", name='").append(name).append('\'');
         sb.append(", properties=").append(properties);
         sb.append(", children=").append(children);
+        sb.append(", parentDocumentType=").append(parentDocumentType);
+        sb.append(", parentBean=").append(parentBean);
         sb.append('}');
         return sb.toString();
     }
