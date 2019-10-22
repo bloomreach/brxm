@@ -40,4 +40,12 @@ describe('stripOffQueryStringAndHash', () => {
 
     expect(actual).toBe(expected);
   });
+
+  it('should strip off a hash', () => {
+    const expected = 'some/path';
+
+    const actual = stripOffQueryStringAndHash('some/path#someHash');
+
+    expect(actual).toBe(expected);
+  });
 });
