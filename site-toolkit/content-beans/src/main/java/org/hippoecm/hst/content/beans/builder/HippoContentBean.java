@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version "$Id$"
+ * Wrapper of a {@link ContentType} object to use in Runtime Bean Generation.
  */
 public class HippoContentBean {
 
@@ -45,7 +45,6 @@ public class HippoContentBean {
     private static final Pattern COMMA_SPLITTER = Pattern.compile(",");
     private final ContentType contentType;
     private final String prefix;
-    private final String shortName;
     private final String name;
     private final List<HippoContentProperty> properties = new ArrayList<>();
     private final List<HippoContentChildNode> children = new ArrayList<>();
@@ -58,10 +57,8 @@ public class HippoContentBean {
         name = extractName(originalName);
         if (name.indexOf(':') != -1) {
             final String[] fullName = PREFIX_SPLITTER.split(name);
-            this.shortName = fullName[1];
             this.prefix = fullName[0];
         } else {
-            this.shortName = name;
             this.prefix = null;
         }
         processProperties();
@@ -155,24 +152,8 @@ public class HippoContentBean {
         return properties;
     }
 
-    public ContentType getContentType() {
-        return contentType;
-    }
-
-    public String getPrefix() {
-        return prefix;
-    }
-
     public List<HippoContentChildNode> getChildren() {
         return children;
-    }
-
-    public Set<String> getSuperTypes() {
-        return superTypes;
-    }
-
-    public String getShortName() {
-        return shortName;
     }
 
     public String getName() {
@@ -182,12 +163,9 @@ public class HippoContentBean {
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("HippoContentBean{");
-        sb.append(", prefix='").append(prefix).append('\'');
-        sb.append(", shortName='").append(shortName).append('\'');
         sb.append(", name='").append(name).append('\'');
         sb.append(", properties=").append(properties);
         sb.append(", children=").append(children);
-        sb.append(", superTypes=").append(superTypes);
         sb.append('}');
         return sb.toString();
     }

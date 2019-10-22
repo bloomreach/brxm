@@ -15,78 +15,49 @@
  */
 package org.hippoecm.hst.content.beans.builder;
 
-import java.util.regex.Pattern;
-
 import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 
 /**
- * @version "$Id$"
+ * Wrapper of a {@link ContentTypeProperty} object to use in Runtime Bean Generation.
  */
 public class HippoContentProperty {
 
-    private static final Pattern PREFIX_SPLITTER = Pattern.compile(":");
-    private final ContentTypeProperty contentType;
-    private final String prefix;
-    private final String shortName;
     private final String name;
     private final boolean multiple;
-
-    public String getType() {
-        return type;
-    }
-
     private final String type;
     private final String cmsType;
 
     public HippoContentProperty(final ContentTypeProperty contentType) {
-        this.contentType = contentType;
         this.name = contentType.getName();
-        if (name.indexOf(':') != -1) {
-            final String[] fullName = PREFIX_SPLITTER.split(contentType.getName());
-            this.shortName = fullName[1];
-            this.prefix = fullName[0];
-        } else {
-            this.shortName = name;
-            this.prefix = null;
-        }
         this.type = contentType.getEffectiveType();
         this.cmsType = contentType.getItemType();
         this.multiple = contentType.isMultiple();
+    }
+
+    public String getType() {
+        return type;
     }
 
     public String getCmsType() {
         return cmsType;
     }
 
-    public ContentTypeProperty getContentType() {
-        return contentType;
-    }
-
-    public String getPrefix() {
-        return prefix;
-    }
-
-    public String getShortName() {
-        return shortName;
-    }
-
     public String getName() {
         return name;
+    }
+
+    public boolean isMultiple() {
+        return multiple;
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("HippoContentProperty{");
-        sb.append("contentType=").append(contentType);
-        sb.append(", prefix='").append(prefix).append('\'');
-        sb.append(", shortName='").append(shortName).append('\'');
         sb.append(", name='").append(name).append('\'');
         sb.append(", type='").append(type).append('\'');
+        sb.append(", cmsType='").append(cmsType).append('\'');
+        sb.append(", multiple='").append(multiple).append('\'');
         sb.append('}');
         return sb.toString();
-    }
-
-    public boolean isMultiple() {
-        return multiple;
     }
 }
