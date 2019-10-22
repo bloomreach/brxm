@@ -519,6 +519,10 @@ public class SecurityManager implements HippoSecurityManager {
     public void close() {
         securityProviders.close();
         securityProviders = null;
+        for (SecurityProvider provider : providers.values()) {
+            provider.remove();
+        }
+        providers.clear();
     }
 
     public AuthContext getAuthContext(Credentials credentials, Subject subject, String workspaceName) throws RepositoryException {
