@@ -16,9 +16,6 @@
 package org.hippoecm.hst.content.beans.builder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -41,8 +38,6 @@ public class HippoContentBean {
 
     private static final Logger log = LoggerFactory.getLogger(HippoContentBean.class);
     private static final String GALLERY_IMAGESET_NODETYPE = "hippogallery:imageset";
-    public static final Set<String> ACCEPTED_PROPERTIES = Collections
-            .unmodifiableSet(new HashSet<>(Arrays.asList("hippotaxonomy:keys", "relateddocs:reldoc", "hippostd:tags")));
     private final ContentType contentType;
     private final String prefix;
     private final String documentType;
