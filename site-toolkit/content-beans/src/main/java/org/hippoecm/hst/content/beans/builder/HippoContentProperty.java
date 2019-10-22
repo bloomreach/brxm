@@ -27,8 +27,8 @@ public class HippoContentProperty {
     private final String type;
     private final String cmsType;
 
-    public HippoContentProperty(final ContentTypeProperty contentType) {
-        this.name = contentType.getName();
+    public HippoContentProperty(final String name, final ContentTypeProperty contentType) {
+        this.name = name;
         this.type = contentType.getEffectiveType();
         this.cmsType = contentType.getItemType();
         this.multiple = contentType.isMultiple();
