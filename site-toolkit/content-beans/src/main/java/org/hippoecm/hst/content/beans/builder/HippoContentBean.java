@@ -90,7 +90,7 @@ public class HippoContentBean {
         if (!superTypes.isEmpty()) {
             // if document type is created from other custom document types, use them as parent document types
             log.trace("{} has supertypes {}.", documentType, superTypes);
-            processParentBean(superTypes);
+            assignParentDocumentType(superTypes);
         } else if (contentType.getSuperTypes().contains(HippoNodeType.NT_DOCUMENT)) {
             // if document type has HippoNodeType.NT_DOCUMENT as super type, then mark this document as HippoDocument
             parentDocumentType = HippoNodeType.NT_DOCUMENT;
@@ -101,35 +101,26 @@ public class HippoContentBean {
             parentDocumentType = HippoNodeType.NT_COMPOUND;
             parentBean = HippoCompound.class;
             log.trace("{} is a compound type.", documentType);
-        } else { 
+        } else if (contentType.getSuperTypes().contains(GALLERY_IMAGESET_NODETYPE)) {
+            // if document type has hippogallery:imageset as super type, then mark this document as hippogallery:imageset
+            parentDocumentType = GALLERY_IMAGESET_NODETYPE;
+            parentBean = HippoGalleryImageSet.class;
+            log.trace("{} is gallery image set.", documentType);
+        } else {
             log.error("{} is an unknown document type with supertypes {}.", documentType, contentType.getSuperTypes());
         }
     }
 
-    private void processParentBean(final Set<String> superTypes) {
+    private void assignParentDocumentType(final Set<String> superTypes) {
         final String baseDocumentName = prefix + ":basedocument";
 
-        // if there is a custom document type other than basedocument in project namespace, use that
+        // If there is a custom document type other than basedocument in project namespace, use that.
+        // Otherwise, use basedocument as the parent document type.
         parentDocumentType = superTypes
                     .stream()
                     .filter(superType -> !superType.equals(baseDocumentName))
                     .findFirst()
-                    .orElse(null);
-
-        if (parentDocumentType == null) {
-            // if there is a basedocument in project namespace, use that
-            parentDocumentType = superTypes
-                    .stream()
-                    .filter(superType -> superType.equals(baseDocumentName))
-                    .findFirst()
-                    .orElse(null);
-        }
-
-        // if the document type is extended from hippogallery:imageset, use that as parent
-        if (parentDocumentType == null && superTypes.stream().anyMatch(superType -> superType.equals(GALLERY_IMAGESET_NODETYPE))) {
-            parentDocumentType = GALLERY_IMAGESET_NODETYPE;
-            parentBean = HippoGalleryImageSet.class;
-        }
+                    .orElse(baseDocumentName);
     }
 
     private void processChildNodes() {
