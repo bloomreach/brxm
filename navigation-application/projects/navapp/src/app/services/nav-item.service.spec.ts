@@ -150,6 +150,8 @@ describe('NavItemService', () => {
 
   describe('when nav items with wrong iframe urls are set', () => {
     beforeEach(() => {
+      spyOn(console, 'warn');
+
       service.navItems = [
         new NavItemMock({
           appPath: 'a',
@@ -168,6 +170,12 @@ describe('NavItemService', () => {
 
     it('should not throw an exception', () => {
       expect(() => service.findNavItem('a', 'test.url/some/path')).not.toThrow();
+    });
+
+    it('should output a warning message', () => {
+      service.findNavItem('a', 'test.url/some/path');
+
+      expect(console.warn).toHaveBeenCalledWith('Unable to parse nav items\'s url: test.url/some/path');
     });
 
     it('should not find a nav item by an iframe url and an app path when the protocol is omitted in the iframe url', () => {

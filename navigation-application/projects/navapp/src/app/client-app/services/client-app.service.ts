@@ -105,7 +105,11 @@ export class ClientAppService {
     const url = uniqueURLs.find(x => Location.stripTrailingSlash(x) === connectionUrl);
 
     if (!url) {
-      console.error(`An attempt to register the connection to unknown url = ${connection.appUrl}`);
+      const message = `An attempt to register the connection to unknown url = ${connection.appUrl}`;
+
+      console.error(message);
+      this.connectionCounter$.next(new FailedConnection(connection.appUrl, message));
+
       return;
     }
 

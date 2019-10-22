@@ -19,6 +19,7 @@ import { ChildPromisedApi } from '@bloomreach/navapp-communication';
 
 import { Connection } from '../../models/connection.model';
 import { AppSettingsMock } from '../../models/dto/app-settings.mock';
+import { FailedConnection } from '../../models/failed-connection.model';
 import { APP_SETTINGS } from '../../services/app-settings';
 import { NavItemService } from '../../services/nav-item.service';
 import { ClientApp } from '../models/client-app.model';
@@ -75,7 +76,7 @@ describe('ClientAppService', () => {
   it('should trigger an error error when a connection with unknown url is added', () => {
     spyOn(console, 'error');
 
-    service.init();
+    service.init().catch(() => {});
 
     const badConnection = new Connection('http://suspect-site.com', {});
 
@@ -97,6 +98,24 @@ describe('ClientAppService', () => {
 
     expect(initialized).toBeTruthy();
     expect(service.apps.length).toBe(1);
+  }));
+
+  it('should reject the promise when all connections are failed', fakeAsync(() => {
+    spyOn(console, 'error');
+    let initialized: boolean;
+
+    service.init().catch(() => initialized = false);
+
+    const badConnection = new Connection('http://suspect-site.com', {});
+    service.addConnection(badConnection);
+
+    const failedConnection = new FailedConnection('http://app1.com', 'some reason');
+    service.addConnection(failedConnection);
+
+    tick();
+
+    expect(initialized).toBe(false);
+    expect(service.apps.length).toBe(0);
   }));
 
   it('should init', fakeAsync(() => {

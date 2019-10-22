@@ -447,7 +447,7 @@ describe('NavigationService', () => {
       });
 
       beforeEach(() => {
-        childApi.navigate.and.returnValue(Promise.reject(new Error('Some error')));
+        childApi.navigate.and.callFake(() => Promise.reject(new Error('Some error')));
       });
 
       it('should update the browser\'s url before any errors are thrown (before resolving an active route)', () => {
