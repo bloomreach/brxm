@@ -31,9 +31,9 @@
     <slot />
   </div>
 
-  <div v-else>
+  <br-container-box v-else :component="component" :page="page">
     <slot />
-  </div>
+  </br-container-box>
 </template>
 
 <script lang="ts">
@@ -46,8 +46,10 @@ import {
   TYPE_CONTAINER_UNORDERED_LIST,
 } from '@bloomreach/spa-sdk';
 import { Component, InjectReactive, Inject, Vue } from 'vue-property-decorator';
+import BrContainerBox from './BrContainerBox.vue';
 
 @Component({
+  components: { BrContainerBox },
   computed: {
     component(this: BrNodeContainer) {
       return this.component$();
