@@ -16,6 +16,8 @@ definitions:
         jcr:primaryType: hst:sitemapitem
         hst:componentconfigurationid: hst:pages/mashup
         hst:refId: mashupId
+        hst:authenticated: true
+        hst:roles: [admin]
       /news:
         jcr:primaryType: hst:sitemapitem
         hst:componentconfigurationid: hst:pages/newsarchive
