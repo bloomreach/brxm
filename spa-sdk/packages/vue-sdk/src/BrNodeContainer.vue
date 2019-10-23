@@ -27,9 +27,13 @@
     <slot />
   </br-container-no-markup>
 
-  <div v-else-if="component.getType() === TYPE_CONTAINER_ORDERED_LIST">
+  <br-container-ordered-list
+    v-else-if="component.getType() === TYPE_CONTAINER_ORDERED_LIST"
+    :component="component"
+    :page="page"
+  >
     <slot />
-  </div>
+  </br-container-ordered-list>
 
   <div v-else-if="component.getType() === TYPE_CONTAINER_UNORDERED_LIST">
     <slot />
@@ -53,12 +57,14 @@ import { Component, InjectReactive, Inject, Vue } from 'vue-property-decorator';
 import BrContainerBox from './BrContainerBox.vue';
 import BrContainerInline from './BrContainerInline.vue';
 import BrContainerNoMarkup from './BrContainerNoMarkup.vue';
+import BrContainerOrderedList from './BrContainerOrderedList.vue';
 
 @Component({
   components: {
     BrContainerBox,
     BrContainerInline,
     BrContainerNoMarkup,
+    BrContainerOrderedList,
   },
   computed: {
     component(this: BrNodeContainer) {
