@@ -145,6 +145,7 @@ describe('UrlMapperService', () => {
 
   it('should map nav location to the browser url', () => {
     const expected = ['/base/path/iframe1/url/app/path/to/page1/some/detailed/page?param1=value1#hash-data', navItemsMock[1]];
+
     navItemServiceMock.findNavItem.and.returnValue(navItemsMock[1]);
     const navLocation: NavLocation = {
       path: 'app/path/to/page1/some/detailed/page?param1=value1#hash-data',
@@ -153,6 +154,18 @@ describe('UrlMapperService', () => {
     const actual = urlMapperService.mapNavLocationToBrowserUrl(navLocation);
 
     expect(actual).toEqual(expected);
+  });
+
+  it('should use pathPrefix when searching for a nav item', () => {
+    navItemServiceMock.findNavItem.and.returnValue(navItemsMock[1]);
+    const navLocation: NavLocation = {
+      pathPrefix: '/some/path/prefix',
+      path: 'app/path/to/page1',
+    };
+
+    urlMapperService.mapNavLocationToBrowserUrl(navLocation);
+
+    expect(navItemServiceMock.findNavItem).toHaveBeenCalledWith('app/path/to/page1', '/some/path/prefix');
   });
 
   it('should throw an exception during mapNavLocationToBrowserUrl invocation when the active app is not set' +
