@@ -71,9 +71,9 @@ export class UrlMapperService {
     }
 
     const browserUrl = this.mapNavItemToBrowserUrl(navItem);
-    const addPathAddOn = navLocation.path.slice(navItem.appPath.length);
+    const appPathAddOn = navLocation.path.slice(navItem.appPath.length);
 
-    return [Location.joinWithSlash(browserUrl, addPathAddOn), navItem];
+    return [Location.joinWithSlash(browserUrl, appPathAddOn), navItem];
   }
 
   trimLeadingSlash(value: string): string {
