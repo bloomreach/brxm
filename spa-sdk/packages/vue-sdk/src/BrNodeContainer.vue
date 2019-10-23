@@ -15,9 +15,9 @@
   -->
 
 <template>
-  <div v-if="component.getType() === TYPE_CONTAINER_INLINE">
+  <br-container-inline v-if="component.getType() === TYPE_CONTAINER_INLINE" :component="component" :page="page">
     <slot />
-  </div>
+  </br-container-inline>
 
   <div v-else-if="component.getType() === TYPE_CONTAINER_NO_MARKUP">
     <slot />
@@ -47,9 +47,13 @@ import {
 } from '@bloomreach/spa-sdk';
 import { Component, InjectReactive, Inject, Vue } from 'vue-property-decorator';
 import BrContainerBox from './BrContainerBox.vue';
+import BrContainerInline from './BrContainerInline.vue';
 
 @Component({
-  components: { BrContainerBox },
+  components: {
+    BrContainerBox,
+    BrContainerInline,
+  },
   computed: {
     component(this: BrNodeContainer) {
       return this.component$();
