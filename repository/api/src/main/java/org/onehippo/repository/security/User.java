@@ -15,13 +15,14 @@
  */
 package org.onehippo.repository.security;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Set;
 
 /**
  * Represents a user in the repository.
  */
-public interface User {
+public interface User extends Serializable {
 
     /**
      * Get the id of the user.

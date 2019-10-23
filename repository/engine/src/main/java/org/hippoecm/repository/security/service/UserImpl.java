@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.security.service;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
@@ -54,6 +55,8 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_EXTERNALUSER;
  */
 public class UserImpl extends AbstractSecurityNodeInfo implements User {
 
+    private static final long serialVersionUID = 1L;
+
     private static final Set<String> PROTECTED_PROPERTY_NAMES = ImmutableSet.of(
             HIPPO_PASSWORD,
             HIPPO_PASSKEY,
@@ -65,7 +68,7 @@ public class UserImpl extends AbstractSecurityNodeInfo implements User {
 
     private final String id;
     private final boolean external;
-    private final HashMap<String, Object> properties = new HashMap<>();
+    private final HashMap<String, Serializable> properties = new HashMap<>();
     private final Set<String> groups;
     private final Set<String> userRoles;
 

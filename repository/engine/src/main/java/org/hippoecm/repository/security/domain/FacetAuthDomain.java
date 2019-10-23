@@ -15,6 +15,7 @@
  */
 package org.hippoecm.repository.security.domain;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Set;
 
@@ -22,7 +23,10 @@ import java.util.Set;
  * A user applicable {@link Domain} with all the active/expanded/resolved roles and privileges based on the matching
  * {@link AuthRole}(s) of the backing domain.
  */
-public class FacetAuthDomain {
+public class FacetAuthDomain implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     /**
      * The name representing the domain
      */
