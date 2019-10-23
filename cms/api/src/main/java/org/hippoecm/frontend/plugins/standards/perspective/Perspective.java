@@ -79,7 +79,6 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
     private IModel<String> title;
     private boolean isRendered;
     private boolean isActivated;
-    private boolean isMenuItem;
     private NavAppPerspective navAppPerspective;
 
     public Perspective(IPluginContext context, IPluginConfig config) {
@@ -97,18 +96,9 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
 
         add(ClassAttribute.append("perspective"));
 
-        isMenuItem = isMenuItem(config);
 
         navAppPerspective = new NavAppPerspective(getClass());
 
-    }
-
-    /**
-     * @param config IPluginConfig
-     * @return {@code true} if this perspective is a menu item, otherwise false
-     */
-    protected boolean isMenuItem(final IPluginConfig config) {
-        return "service.tab".equals(config.getString("wicket.id"));
     }
 
     public String getTitleCssClass() {
