@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,15 +15,15 @@
  */
 package org.hippoecm.hst.security;
 
-import java.lang.SecurityException;import java.lang.String;import java.util.Set;
+import java.lang.SecurityException;
+import java.lang.String;
+import java.util.Set;
 
 /**
  * AuthenticationProvider
  * <p>
  * Configures an authentication provider.
  * </p>
- * 
- * @version $Id$
  */
 public interface AuthenticationProvider {
 
@@ -39,7 +39,20 @@ public interface AuthenticationProvider {
     /**
      * Returns security roles of the given username
      * @param username
+     * @deprecated since v14, will be removed in v15+. Use {@link #getRolesByUser(User)} instead
      */
+    @Deprecated
     Set<Role> getRolesByUsername(String username) throws SecurityException;
-    
+
+    /**
+     * Returns security roles of the given user
+     * <p>
+     *     Note: this is a default method delegating to deprecated {@link #getRolesByUser(User)}
+     *     which will become required to be implemented when that method is removed in v15+
+     * </p>
+     * @param user
+     */
+    default Set<Role> getRolesByUser(User user) throws SecurityException {
+        return getRolesByUsername(user.getName());
+    }
 }

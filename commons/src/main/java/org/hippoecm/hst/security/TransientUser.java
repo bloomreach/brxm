@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,14 +15,21 @@
  */
 package org.hippoecm.hst.security;
 
+import java.io.Serializable;
+
+/**
+ * An User Principal which optionally may hold a serializable {@link #getUserObject()}
+ * which later can be used to provide additional user info
+ */
 public class TransientUser implements User {
     
     private static final long serialVersionUID = 1L;
     
     private String name;
+
+    private Serializable userObject;
     
     public TransientUser() {
-        
     }
     
     public TransientUser(String name) {
@@ -32,11 +39,20 @@ public class TransientUser implements User {
         
         this.name = name;
     }
-    
+
+    public TransientUser(String name, Serializable userObject) {
+        this(name);
+        this.userObject = userObject;
+    }
+
     public String getName() {
         return name;
     }
-    
+
+    public Serializable getUserObject() {
+        return userObject;
+    }
+
     public boolean equals(Object o) {
         if (o == this) {
             return true;
