@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -44,8 +44,9 @@ import org.slf4j.LoggerFactory;
  * Basic authentication provider implementation which queries role nodes by the specified <CODE>rolesOfUserQuery</CODE>.
  * The default configuration is to query group nodes from the Hippo Repository.
  * </P>
- * @version $Id$
+ * @deprecated since v14, will be removed in v15+. Use {@link RepositoryAuthenticationProvider} instead
  */
+@Deprecated
 public class JcrAuthenticationProvider implements AuthenticationProvider {
     
     static final Logger log = LoggerFactory.getLogger(JcrAuthenticationProvider.class);
@@ -106,8 +107,7 @@ public class JcrAuthenticationProvider implements AuthenticationProvider {
     
     public User authenticate(String userName, char[] password) throws SecurityException {
         Session session = null;
-        SimpleCredentials creds = new SimpleCredentials(userName, password);
-        
+
         try {
             session = userAuthRepository.login(new SimpleCredentials(userName, password));
         } catch (LoginException e) {
@@ -123,7 +123,7 @@ public class JcrAuthenticationProvider implements AuthenticationProvider {
             }
         }
         
-        return new TransientUser(creds.getUserID());
+        return new TransientUser(userName);
     }
     
     public Set<Role> getRolesByUsername(String username) throws SecurityException {

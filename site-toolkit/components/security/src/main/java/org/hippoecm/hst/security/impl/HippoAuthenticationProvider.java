@@ -41,8 +41,9 @@ import org.slf4j.LoggerFactory;
  * Also, by default, the <CODE>hipposys:authrole</CODE> nodes are retrieved from the <CODE>everywhere</CODE> domain.
  * You can change the domain name by setting <CODE>roleDomainName</CODE> property though.
  * </P>
- * @version $Id$
+ * @deprecated since v14, will be removed in v15+. Use {@link RepositoryAuthenticationProvider} instead
  */
+@Deprecated
 public class HippoAuthenticationProvider extends JcrAuthenticationProvider {
     
     static final Logger log = LoggerFactory.getLogger(HippoAuthenticationProvider.class);
