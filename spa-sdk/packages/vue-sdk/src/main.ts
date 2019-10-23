@@ -16,6 +16,7 @@
 
 import { VueConstructor } from 'vue';
 import BrComponent from './BrComponent.vue';
+import BrManageContentButton from './BrManageContentButton.vue';
 import BrPage from './BrPage.vue';
 
 /**
@@ -23,7 +24,8 @@ import BrPage from './BrPage.vue';
  */
 export function BrSdk(vue: VueConstructor): void {
   vue.component('br-component', BrComponent);
+  vue.component('br-manage-content-button', BrManageContentButton);
   vue.component('br-page', BrPage);
 }
 
-export { BrComponent, BrPage };
+export { BrComponent, BrManageContentButton, BrPage };

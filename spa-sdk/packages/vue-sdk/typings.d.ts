@@ -22,6 +22,11 @@ import { VueConstructor } from 'vue';
 export declare function BrSdk(vue: VueConstructor): void;
 
 /**
+ * The button component that opens for editing a content.
+ */
+export declare const BrManageContentButton: VueConstructor;
+
+/**
  * The brXM component.
  */
 export declare const BrComponent: VueConstructor;
