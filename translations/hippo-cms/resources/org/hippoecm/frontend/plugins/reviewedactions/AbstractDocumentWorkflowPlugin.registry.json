@@ -85,10 +85,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "request-delete" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "rename-title" : {
       "status" : "CLEAN",
       "locales" : null

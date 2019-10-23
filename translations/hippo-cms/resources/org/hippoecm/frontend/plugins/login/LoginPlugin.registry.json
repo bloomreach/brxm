@@ -112,16 +112,6 @@
         "zh" : "UNRESOLVED",
         "es" : "UNRESOLVED"
       }
-    },
-    "SilentLoginFailed" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
     }
   }
 }
