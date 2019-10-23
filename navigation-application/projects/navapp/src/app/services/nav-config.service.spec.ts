@@ -93,6 +93,7 @@ describe('NavConfigService', () => {
           getSelectedSite: () => selectedSite,
         },
       }),
+      removeConnection: Promise.resolve(),
     });
 
     TestBed.configureTestingModule({

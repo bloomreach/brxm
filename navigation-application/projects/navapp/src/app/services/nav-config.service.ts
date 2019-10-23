@@ -89,12 +89,15 @@ export class NavConfigService {
             );
 
             return Promise.all(communications).then(
-              ([navItems, sites, selectedSiteId]) => ({
+              ([ navItems, sites, selectedSiteId ]) => ({
                 navItems,
                 sites,
                 selectedSiteId,
               }),
             );
+          })
+          .finally(() => {
+            this.connectionService.removeConnection(resource.url);
           });
       case 'REST':
         return this.fetchFromREST<NavItem[]>(resource.url).then(navItems => ({
