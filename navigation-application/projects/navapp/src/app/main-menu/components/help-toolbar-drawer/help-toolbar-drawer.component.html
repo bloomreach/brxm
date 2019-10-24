@@ -15,11 +15,11 @@
   -->
 
 <div class="content-wrapper" (clickOutside)="onClickedOutside()">
-  <h1 class="header">Help</h1>
+  <h1 class="header">{{ 'MENU_CONTAINER_HELP' | translate }}</h1>
   <ul class="links" (click)="onLinkClicked()">
-    <li><a href="http://support.bloomreach.com" target="_blank">Support portal</a></li>
-    <li><a href="https://documentation.bloomreach.com/" target="_blank">brXM documentation</a></li>
-    <li><a href="https://help.bloomreach.com/" target="_blank">brSM help</a></li>
+    <li><a href="http://support.bloomreach.com" target="_blank">{{ 'HELP_LINK_SUPPORT_PORTAL' | translate }}</a></li>
+    <li><a href="https://documentation.bloomreach.com/" target="_blank">{{ 'HELP_LINK_XM_DOCUMENTATION' | translate }}</a></li>
+    <li><a href="https://help.bloomreach.com/" target="_blank">{{ 'HELP_LINK_SM_HELP' | translate }}</a></li>
   </ul>
 </div>
 <div class="window-content-cover"></div>

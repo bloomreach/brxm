@@ -15,6 +15,7 @@
  */
 
 import { Injectable } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
 
 import { MenuItemContainer } from '../models/menu-item-container.model';
 import { MenuItemLink } from '../models/menu-item-link.model';
@@ -23,6 +24,14 @@ import { MenuItem } from '../models/menu-item.model';
 @Injectable()
 export class MenuStructureService {
   private extensions = new MenuItemContainer('Extensions', [], 'extensions');
+
+  constructor(
+    private translateService: TranslateService,
+  ) {}
+
+  translate(key: string): string {
+    return  this.translateService.instant(key);
+  }
 
   addExtension(item: MenuItemLink): void {
     this.extensions.children.push(item);
@@ -33,226 +42,284 @@ export class MenuStructureService {
   }
 
   private createMenuStructure(): MenuItem[] {
+    this.extensions.caption = this.translate('MENU_CONTAINER_EXTENSIONS');
     const dashboard = new MenuItemLink(
       'hippo-perspective-dashboardperspective',
-      'Home',
+       this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_DASHBOARDPERSPECTIVE'),
       'home',
     );
 
     const experienceManager = new MenuItemLink(
       'hippo-perspective-channelmanagerperspective',
-      'Experience manager',
+       this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_CHANNELMANAGERPERSPECTIVE'),
       'experience-manager',
     );
 
     const projects = new MenuItemLink(
       'hippo-perspective-projectsperspective',
-      'Projects',
+       this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_PROJECTSPERSPECTIVE'),
       'projects',
     );
 
     const content = new MenuItemLink(
       'hippo-perspective-browserperspective',
-      'Content',
+       this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_BROWSERPERSPECTIVE'),
       'documents',
     );
 
     const documentSearch = new MenuItemLink(
       'hippo-perspective-searchperspective',
-      'Document search',
+       this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_SEARCHPERSPECTIVE'),
       'document-search',
     );
 
     const siteSearch = new MenuItemContainer(
-      'Site search',
+       this.translate('MENU_CONTAINER_SITE_SEARCH'),
       [
-        new MenuItemLink('site-search/search-ranking', 'Ranking rules'),
-        new MenuItemLink('site-search/redirects', 'Redirects'),
-        new MenuItemLink('site-search/search-facets', 'Facets'),
-        new MenuItemLink('site-search/ab-testing', 'A/B testing'),
-        new MenuItemContainer('Campaigns & assets', [
-          new MenuItemLink('site-search/campaigns', 'Campaigns'),
-          new MenuItemLink('site-search/assets', 'Assets'),
+        new MenuItemLink('site-search/search-ranking', this.translate('MENU_ITEM_SITE_SEARCH_SEARCH_RANKING')),
+        new MenuItemLink('site-search/redirects', this.translate('MENU_ITEM_SITE_SEARCH_REDIRECTS')),
+        new MenuItemLink('site-search/search-facets', this.translate('MENU_ITEM_SITE_SEARCH_SEARCH_FACETS')),
+        new MenuItemLink('site-search/ab-testing', this.translate('MENU_ITEM_SITE_SEARCH_AB_TESTING')),
+        new MenuItemContainer(this.translate('MENU_CONTAINER_CAMPAIGNS_AND_ASSETS'), [
+          new MenuItemLink('site-search/campaigns', this.translate('MENU_ITEM_SITE_SEARCH_CAMPAIGNS')),
+          new MenuItemLink('site-search/assets', this.translate('MENU_ITEM_SITE_SEARCH_ASSETS')),
         ]),
-        new MenuItemLink('site-search/autosuggest-blacklist', 'Autosuggest blacklist'),
-        new MenuItemLink('site-search/synonyms', 'Synonyms'),
-        new MenuItemLink('site-search/search-ranking-diagnostics', 'Ranking diagnostics'),
-        new MenuItemLink('site-search/profile-simulator', 'Profile simulator'),
+        new MenuItemLink('site-search/autosuggest-blacklist', this.translate('MENU_ITEM_SITE_SEARCH_AUTOSUGGEST_BLACKLIST')),
+        new MenuItemLink('site-search/synonyms', this.translate('MENU_ITEM_SITE_SEARCH_SYNONYMS')),
+        new MenuItemLink('site-search/search-ranking-diagnostics', this.translate('MENU_ITEM_SITE_SEARCH_SEARCH_RANKING_DIAGNOSTICS')),
+        new MenuItemLink('site-search/profile-simulator', this.translate('MENU_ITEM_SITE_SEARCH_PROFILE_SIMULATOR')),
       ],
       'site-search',
     );
 
     const categories = new MenuItemContainer(
-      'Categories',
+       this.translate('MENU_CONTAINER_CATEGORIES'),
       [
-        new MenuItemLink('categories/category-ranking', 'Ranking rules'),
-        new MenuItemLink('categories/all-category-pages', 'All category pages'),
-        new MenuItemLink('categories/category-facets-ranking', 'Facets'),
+        new MenuItemLink('categories/category-ranking', this.translate('MENU_ITEM_SITE_SEARCH_SEARCH_RANKING')),
+        new MenuItemLink('categories/all-category-pages', this.translate('MENU_ITEM_CATEGORIES_ALL_CATEGORY_PAGES')),
+        new MenuItemLink('categories/category-facets-ranking', this.translate('MENU_ITEM_SITE_SEARCH_SEARCH_FACETS')),
       ],
       'categories',
     );
 
-    const seo = new MenuItemLink('seo', 'SEO', 'seo');
-    const pathways = new MenuItemLink('pathways', 'Pathways', 'widget');
+    const seo = new MenuItemLink('seo', this.translate('MENU_ITEM_SEO'), 'seo');
+    const pathways = new MenuItemLink('pathways', this.translate('MENU_ITEM_PATHWAYS'), 'widget');
 
     const insights = new MenuItemContainer(
-      'Insights',
+       this.translate('MENU_CONTAINER_INSIGHTS'),
       [
-        new MenuItemContainer('Opportunities', [
-          new MenuItemLink('insights/opportunities/top-opportunities', 'Top opportunities'),
-          new MenuItemLink('insights/opportunities/improve-category-navigation', 'Improve category navigation'),
-          new MenuItemLink('insights/opportunities/improve-site-search', 'Improve site search'),
+        new MenuItemContainer(this.translate('MENU_CONTAINER_OPPORTUNITIES'), [
+          new MenuItemLink('insights/opportunities/top-opportunities',
+            this.translate('MENU_ITEM_INSIGHTS_OPPORTUNITIES_TOP_OPPORTUNITIES')),
+          new MenuItemLink('insights/opportunities/improve-category-navigation',
+            this.translate('MENU_ITEM_INSIGHTS_OPPORTUNITIES_IMPROVE_CATEGORY_NAVIGATION')),
+          new MenuItemLink('insights/opportunities/improve-site-search',
+            this.translate('MENU_ITEM_INSIGHTS_OPPORTUNITIES_IMPROVE_SITE_SEARCH')),
         ]),
-        new MenuItemLink('insights/activities', 'Activities'),
-        new MenuItemLink('insights/playbooks', 'Playbooks'),
-        new MenuItemContainer('Collections', [
-          new MenuItemLink('insights/collections/product-collections', 'Product collections'),
-          new MenuItemLink('insights/collections/category-collections', 'Category collections'),
-          new MenuItemLink('insights/collections/page-collections', 'Page collections'),
-          new MenuItemLink('insights/collections/query-collections', 'Query collections'),
-          new MenuItemLink('insights/collections/brand-collections', 'Brand collections'),
+        new MenuItemLink('insights/activities', this.translate('MENU_ITEM_INSIGHTS_ACTIVITIES')),
+        new MenuItemLink('insights/playbooks', this.translate('MENU_ITEM_INSIGHTS_PLAYBOOKS')),
+        new MenuItemContainer(this.translate('MENU_CONTAINER_COLLECTIONS'), [
+          new MenuItemLink('insights/collections/product-collections',
+            this.translate('MENU_ITEM_INSIGHTS_COLLECTIONS_PRODUCT_COLLECTIONS')),
+          new MenuItemLink('insights/collections/category-collections',
+            this.translate('MENU_ITEM_INSIGHTS_COLLECTIONS_CATEGORY_COLLECTIONS')),
+          new MenuItemLink('insights/collections/page-collections', this.translate('MENU_ITEM_INSIGHTS_COLLECTIONS_PAGE_COLLECTIONS')),
+          new MenuItemLink('insights/collections/query-collections', this.translate('MENU_ITEM_INSIGHTS_COLLECTIONS_QUERY_COLLECTIONS')),
+          new MenuItemLink('insights/collections/brand-collections', this.translate('MENU_ITEM_INSIGHTS_COLLECTIONS_BRAND_COLLECTIONS')),
         ]),
-        new MenuItemContainer('Library', [
-          new MenuItemContainer('Overview', [
-            new MenuItemLink('insights/overview/account-overview', 'Account overview'),
-            new MenuItemLink('insights/overview/account-traffic-breakdown', 'Account traffic breakdown'),
-            new MenuItemLink('insights/overview/sitewide-overview', 'Sitewide overview'),
-            new MenuItemLink('insights/overview/site-search-overview', 'Site search overview'),
-            new MenuItemLink('insights/overview/site-search-kpis', 'Site search KPIs'),
+        new MenuItemContainer(this.translate('MENU_CONTAINER_LIBRARY'), [
+          new MenuItemContainer(this.translate('MENU_CONTAINER_OVERVIEW'), [
+            new MenuItemLink('insights/overview/account-overview', this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_ACCOUNT_OVERVIEW')),
+            new MenuItemLink('insights/overview/account-traffic-breakdown',
+              this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_ACCOUNT_TRAFFIC_BREAKDOWN')),
+            new MenuItemLink('insights/overview/sitewide-overview', this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_SITEWIDE_OVERVIEW')),
+            new MenuItemLink('insights/overview/site-search-overview', this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_SITE_SEARCH_OVERVIEW')),
+            new MenuItemLink('insights/overview/site-search-kpis', this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_SITE_SEARCH_KPIS')),
           ]),
-          new MenuItemContainer('Reporting', [
-            new MenuItemLink('insights/reporting/category-page-diagnostics', 'Category page diagnostics'),
-            new MenuItemLink('insights/reporting/product-dashboard', 'Product dashboard'),
-            new MenuItemLink('insights/reporting/brand-dashboard', 'Brand dashboard'),
-            new MenuItemLink('insights/reporting/page-dashboard', 'Page dashboard'),
-            new MenuItemLink('insights/reporting/neiman-category-dashboard', 'Neiman category dashboard'),
-            new MenuItemLink('insights/reporting/site-search-diagnostics', 'Site search diagnostics'),
-            new MenuItemLink('insights/reporting/site-search-debugging-library', 'Site search debugging library'),
-            new MenuItemLink('insights/reporting/account-api-usage', 'Account API usage'),
-          ]),
-        ]),
-        new MenuItemContainer('Category analytics', [
-          new MenuItemLink('insights/category-analytics/overall-performance', 'Overall performance'),
-          new MenuItemLink('insights/category-analytics/top-categories', 'Top categories'),
-        ]),
-        new MenuItemContainer('Site search analytics', [
-          new MenuItemLink('insights/site-search-analytics/overall-performance', 'Overall performance'),
-          new MenuItemLink('insights/site-search-analytics/top-keywords', 'Top keywords'),
-          new MenuItemLink('insights/site-search-analytics/no-revenue-keywords', 'No revenue keywords'),
-        ]),
-        new MenuItemContainer('SEO analytics', [
-          new MenuItemLink('insights/seo-analytics/overall-performance', 'Overall performance'),
-          new MenuItemLink('insights/seo-analytics/incremental', 'Incremental'),
-          new MenuItemContainer('Targeted pages', [
-            new MenuItemLink('insights/seo-analytics/targeted-pages/overview', 'Overview'),
-            new MenuItemLink('insights/seo-analytics/targeted-pages/top-performing-pages', 'Top performing pages'),
-          ]),
-          new MenuItemContainer('Generated pages', [
-            new MenuItemLink('insights/seo-analytics/generated-pages/overview', 'Overview'),
-            new MenuItemLink('insights/seo-analytics/generated-pages/top-performing-pages', 'Top performing pages'),
-          ]),
-          new MenuItemContainer('Device traffic', [
-            new MenuItemLink('insights/seo-analytics/device-traffic/overall', 'Overall'),
-            new MenuItemLink('insights/seo-analytics/device-traffic/desktop', 'Desktop'),
-            new MenuItemLink('insights/seo-analytics/device-traffic/mobile', 'Mobile'),
-            new MenuItemLink('insights/seo-analytics/device-traffic/tablet', 'Tablet'),
+          new MenuItemContainer(this.translate('MENU_CONTAINER_REPORTING'), [
+            new MenuItemLink('insights/reporting/category-page-diagnostics',
+              this.translate('MENU_ITEM_INSIGHTS_REPORTING_CATEGORY_PAGE_DIAGNOSTICS')),
+            new MenuItemLink('insights/reporting/product-dashboard', this.translate('MENU_ITEM_INSIGHTS_REPORTING_PRODUCT_DASHBOARD')),
+            new MenuItemLink('insights/reporting/brand-dashboard', this.translate('MENU_ITEM_INSIGHTS_REPORTING_BRAND_DASHBOARD')),
+            new MenuItemLink('insights/reporting/page-dashboard', this.translate('MENU_ITEM_INSIGHTS_REPORTING_PAGE_DASHBOARD')),
+            new MenuItemLink('insights/reporting/neiman-category-dashboard',
+              this.translate('MENU_ITEM_INSIGHTS_REPORTING_NEIMAN_CATEGORY_DASHBOARD')),
+            new MenuItemLink('insights/reporting/site-search-diagnostics',
+              this.translate('MENU_ITEM_INSIGHTS_REPORTING_SITE_SEARCH_DIAGNOSTICS')),
+            new MenuItemLink('insights/reporting/site-search-debugging-library',
+              this.translate('MENU_ITEM_INSIGHTS_REPORTING_SITE_SEARCH_DEBUGGING_LIBRARY')),
+            new MenuItemLink('insights/reporting/account-api-usage', this.translate('MENU_ITEM_INSIGHTS_REPORTING_ACCOUNT_API_USAGE')),
           ]),
         ]),
-        new MenuItemContainer('Pathway analytics', [
-          new MenuItemLink('insights/pathway-analytics/just-for-you', 'Just for you'),
-          new MenuItemLink('insights/pathway-analytics/more-like-this', 'More like this'),
+        new MenuItemContainer(this.translate('MENU_CONTAINER_CATEGORY_ANALYTICS'), [
+          new MenuItemLink('insights/category-analytics/overall-performance',
+            this.translate('MENU_ITEM_INSIGHTS_CATEGORY_ANALYTICS_OVERALL_PERFORMANCE')),
+          new MenuItemLink('insights/category-analytics/top-categories',
+            this.translate('MENU_ITEM_INSIGHTS_CATEGORY_ANALYTICS_TOP_CATEGORIES')),
+        ]),
+        new MenuItemContainer(this.translate('MENU_CONTAINER_SITE_SEARCH_ANALYTICS'), [
+          new MenuItemLink('insights/site-search-analytics/overall-performance',
+            this.translate('MENU_ITEM_INSIGHTS_CATEGORY_ANALYTICS_OVERALL_PERFORMANCE')),
+          new MenuItemLink('insights/site-search-analytics/top-keywords',
+            this.translate('MENU_ITEM_INSIGHTS_SITE_SEARCH_ANALYTICS_TOP_KEYWORDS')),
+          new MenuItemLink('insights/site-search-analytics/no-revenue-keywords',
+            this.translate('MENU_ITEM_INSIGHTS_SITE_SEARCH_ANALYTICS_NO_REVENUE_KEYWORDS')),
+        ]),
+        new MenuItemContainer(this.translate('MENU_CONTAINER_SEO_ANALYTICS'), [
+          new MenuItemLink('insights/seo-analytics/overall-performance',
+            this.translate('MENU_ITEM_INSIGHTS_CATEGORY_ANALYTICS_OVERALL_PERFORMANCE')),
+          new MenuItemLink('insights/seo-analytics/incremental', this.translate('MENU_ITEM_INSIGHTS_SEO_ANALYTICS_INCREMENTAL')),
+          new MenuItemContainer(this.translate('MENU_CONTAINER_TARGETED_PAGES'), [
+            new MenuItemLink('insights/seo-analytics/targeted-pages/overview', this.translate('MENU_CONTAINER_OVERVIEW')),
+            new MenuItemLink('insights/seo-analytics/targeted-pages/top-performing-pages',
+              this.translate('MENU_ITEM_INSIGHTS_SEO_ANALYTICS_TARGETED_PAGES_TOP_PERFORMING_PAGES')),
+          ]),
+          new MenuItemContainer(this.translate('MENU_CONTAINER_GENERATED_PAGES'), [
+            new MenuItemLink('insights/seo-analytics/generated-pages/overview', this.translate('MENU_CONTAINER_OVERVIEW')),
+            new MenuItemLink('insights/seo-analytics/generated-pages/top-performing-pages',
+              this.translate('MENU_ITEM_INSIGHTS_SEO_ANALYTICS_TARGETED_PAGES_TOP_PERFORMING_PAGES')),
+          ]),
+          new MenuItemContainer(this.translate('MENU_CONTAINER_DEVICE_TRAFFIC'), [
+            new MenuItemLink('insights/seo-analytics/device-traffic/overall',
+              this.translate('MENU_ITEM_INSIGHTS_SEO_ANALYTICS_DEVICE_TRAFFIC_OVERALL')),
+            new MenuItemLink('insights/seo-analytics/device-traffic/desktop',
+              this.translate('MENU_ITEM_INSIGHTS_SEO_ANALYTICS_DEVICE_TRAFFIC_DESKTOP')),
+            new MenuItemLink('insights/seo-analytics/device-traffic/mobile',
+              this.translate('MENU_ITEM_INSIGHTS_SEO_ANALYTICS_DEVICE_TRAFFIC_MOBILE')),
+            new MenuItemLink('insights/seo-analytics/device-traffic/tablet',
+              this.translate('MENU_ITEM_INSIGHTS_SEO_ANALYTICS_DEVICE_TRAFFIC_TABLET')),
+          ]),
+        ]),
+        new MenuItemContainer(this.translate('MENU_CONTAINER_PATHWAY_ANALYTICS'), [
+          new MenuItemLink('insights/pathway-analytics/just-for-you', this.translate('MENU_ITEM_INSIGHTS_PATHWAY_ANALYTICS_JUST_FOR_YOU')),
+          new MenuItemLink('insights/pathway-analytics/more-like-this',
+            this.translate('MENU_ITEM_INSIGHTS_PATHWAY_ANALYTICS_MORE_LIKE_THIS')),
         ]),
         // Will be split into: Buzz, My documents, Team documents and Totals
         new MenuItemLink(
           'hippo-perspective-reportsperspective',
-          'Content reports',
+           this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_REPORTSPERSPECTIVE'),
         ),
       ],
       'insights',
     );
 
     const audiences = new MenuItemContainer(
-      'Audiences',
+       this.translate('MENU_CONTAINER_AUDIENCES'),
       [
         new MenuItemLink(
           'hippo-perspective-experienceoptimizerperspective',
-          'Content audiences',
+           this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_EXPERIENCEOPTIMIZERPERSPECTIVE'),
         ),
-        new MenuItemLink('audiences/merchandising-audiences', 'Merchandising audiences'),
+        new MenuItemLink('audiences/merchandising-audiences', this.translate('MENU_ITEM_AUDIENCES_MERCHANDISING_AUDIENCES')),
       ],
       'audiences',
     );
 
     const setup = new MenuItemContainer(
-      'Setup',
+       this.translate('MENU_CONTAINER_SETUP'),
       [
-        new MenuItemContainer('Algorithm settings', [
-          new MenuItemLink('setup/algorithm-settings/global-ranking-rules', 'Global ranking rules'),
-          new MenuItemLink('setup/algorithm-settings/global-facet-management', 'Global facet management'),
+        new MenuItemContainer(this.translate('MENU_CONTAINER_ALGORITHM_SETTINGS'), [
+          new MenuItemLink('setup/algorithm-settings/global-ranking-rules',
+            this.translate('MENU_ITEM_SETUP_ALGORITHM_SETTINGS_GLOBAL_RANKING_RULES')),
+          new MenuItemLink('setup/algorithm-settings/global-facet-management',
+            this.translate('MENU_ITEM_SETUP_ALGORITHM_SETTINGS_GLOBAL_FACET_MANAGEMENT')),
         ]),
-        new MenuItemLink('setup/user-management/merchandising-user/user-management', 'User management'),
-        new MenuItemContainer('DevStudio', [
-          new MenuItemLink('setup/devstudio/account-information', 'Account information'),
-          new MenuItemLink('setup/devstudio/pixel-monitor', 'Pixel monitor'),
-          new MenuItemLink('setup/devstudio/data-connect', 'DataConnect'),
-          new MenuItemContainer('Feed', [
-            new MenuItemLink('setup/devstudio/feed/configuration', 'Configuration'),
-            new MenuItemLink('setup/devstudio/feed/status', 'Status'),
+        new MenuItemLink('setup/user-management/merchandising-user/user-management',
+          this.translate('MENU_ITEM_SETUP_USER_MANAGEMENT_MERCHANDISING_USER_USER_MANAGEMENT')),
+        new MenuItemContainer(this.translate('MENU_CONTAINER_DEVSTUDIO'), [
+          new MenuItemLink('setup/devstudio/account-information', this.translate('MENU_ITEM_SETUP_DEVSTUDIO_ACCOUNT_INFORMATION')),
+          new MenuItemLink('setup/devstudio/pixel-monitor', this.translate('MENU_ITEM_SETUP_DEVSTUDIO_PIXEL_MONITOR')),
+          new MenuItemLink('setup/devstudio/data-connect', this.translate('MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT')),
+          new MenuItemContainer(this.translate('MENU_CONTAINER_FEED'), [
+            new MenuItemLink('setup/devstudio/feed/configuration', this.translate('MENU_ITEM_SETUP_DEVSTUDIO_FEED_CONFIGURATION')),
+            new MenuItemLink('setup/devstudio/feed/status', this.translate('MENU_ITEM_SETUP_DEVSTUDIO_FEED_STATUS')),
           ]),
-          new MenuItemLink('setup/devstudio/attribute-configuration', 'Attribute configuration'),
-          new MenuItemLink('setup/devstudio/api-explorer', 'API explorer'),
+          new MenuItemLink('setup/devstudio/attribute-configuration', this.translate('MENU_ITEM_SETUP_DEVSTUDIO_ATTRIBUTE_CONFIGURATION')),
+          new MenuItemLink('setup/devstudio/api-explorer', this.translate('MENU_ITEM_SETUP_DEVSTUDIO_API_EXPLORER')),
         ]),
-        new MenuItemLink('hippo-perspective-adminperspective', 'System'),
-        new MenuItemLink('hippo-perspective-formdataperspective', 'Formdata'),
+        new MenuItemLink('hippo-perspective-adminperspective', this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_ADMINPERSPECTIVE')),
+        new MenuItemLink('hippo-perspective-formdataperspective', this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_FORMDATAPERSPECTIVE')),
 
-        new MenuItemContainer('Internal admin', [
-          new MenuItemLink('setup/user-management/merchandising-user/internal-user-management', 'Internal user management'),
-          new MenuItemLink('setup/internal-admin/api-details', 'API details'),
-          new MenuItemLink('setup/internal-admin/debug-tools', 'Debug tools'),
-          new MenuItemLink('setup/internal-admin/purge-cache', 'Purge cache'),
-          new MenuItemLink('setup/internal-admin/merchant-custom-configs', 'Merchant custom configs'),
-          new MenuItemLink('setup/internal-admin/site-configuration', 'Site configuration'),
+        new MenuItemContainer(this.translate('MENU_CONTAINER_INTERNAL_ADMIN'), [
+          new MenuItemLink('setup/user-management/merchandising-user/internal-user-management',
+            this.translate('MENU_ITEM_SETUP_USER_MANAGEMENT_MERCHANDISING_USER_INTERNAL_USER_MANAGEMENT')),
+          new MenuItemLink('setup/internal-admin/api-details', this.translate('MENU_ITEM_SETUP_INTERNAL_ADMIN_API_DETAILS')),
+          new MenuItemLink('setup/internal-admin/debug-tools', this.translate('MENU_ITEM_SETUP_INTERNAL_ADMIN_DEBUG_TOOLS')),
+          new MenuItemLink('setup/internal-admin/purge-cache', this.translate('MENU_ITEM_SETUP_INTERNAL_ADMIN_PURGE_CACHE')),
+          new MenuItemLink('setup/internal-admin/merchant-custom-configs',
+            this.translate('MENU_ITEM_SETUP_INTERNAL_ADMIN_MERCHANT_CUSTOM_CONFIGS')),
+          new MenuItemLink('setup/internal-admin/site-configuration', this.translate('MENU_ITEM_SETUP_INTERNAL_ADMIN_SITE_CONFIGURATION')),
 
-          new MenuItemContainer('Traffic analysis', [
-            new MenuItemLink('setup/internal-admin/traffic-analysis/overview', 'Overview'),
-            new MenuItemLink('setup/internal-admin/traffic-analysis/last-click-overview', 'Last click overview'),
+          new MenuItemContainer(this.translate('MENU_CONTAINER_TRAFFIC_ANALYSIS'), [
+            new MenuItemLink('setup/internal-admin/traffic-analysis/overview', this.translate('MENU_CONTAINER_OVERVIEW')),
+            new MenuItemLink('setup/internal-admin/traffic-analysis/last-click-overview',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_ADMIN_TRAFFIC_ANALYSIS_LAST_CLICK_OVERVIEW')),
           ]),
         ]),
-        new MenuItemContainer('Internal reports', [
-          new MenuItemContainer('Organic trends', [
-            new MenuItemLink('setup/internal-reports/organic-trends/homepage-traffic', 'Homepage traffic'),
-            new MenuItemLink('setup/internal-reports/organic-trends/overall-traffic', 'Overall traffic'),
-            new MenuItemLink('setup/internal-reports/organic-trends/product-page-traffic', 'Product page traffic'),
-            new MenuItemLink('setup/internal-reports/organic-trends/category-page-traffic', 'Category page traffic'),
-            new MenuItemLink('setup/internal-reports/organic-trends/other-page-traffic', 'Other page traffic'),
+        new MenuItemContainer(this.translate('MENU_CONTAINER_INTERNAL_REPORTS'), [
+          new MenuItemContainer(this.translate('MENU_CONTAINER_ORGANIC_TRENDS'), [
+            new MenuItemLink('setup/internal-reports/organic-trends/homepage-traffic',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_TRENDS_HOMEPAGE_TRAFFIC')),
+            new MenuItemLink('setup/internal-reports/organic-trends/overall-traffic',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_TRENDS_OVERALL_TRAFFIC')),
+            new MenuItemLink('setup/internal-reports/organic-trends/product-page-traffic',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_TRENDS_PRODUCT_PAGE_TRAFFIC')),
+            new MenuItemLink('setup/internal-reports/organic-trends/category-page-traffic',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_TRENDS_CATEGORY_PAGE_TRAFFIC')),
+            new MenuItemLink('setup/internal-reports/organic-trends/other-page-traffic',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_TRENDS_OTHER_PAGE_TRAFFIC')),
           ]),
-          new MenuItemContainer('Organic', [
-            new MenuItemLink('setup/internal-reports/organic/debug', 'debug'),
-            new MenuItemLink('setup/internal-reports/organic/any-click-conversions', 'Any click conversions'),
-            new MenuItemLink('setup/internal-reports/organic/last-click-conversions', 'Last click conversions'),
-            new MenuItemLink('setup/internal-reports/organic/all-conversions', 'All conversions'),
-            new MenuItemLink('setup/internal-reports/organic/account-overview', 'Account overview'),
-            new MenuItemLink('setup/internal-reports/organic/traffic-sources', 'Traffic sources'),
-            new MenuItemLink('setup/internal-reports/organic/legacy-debug', 'Legacy debug'),
-            new MenuItemLink('setup/internal-reports/organic/site-optimization-metrics', 'Site optimization metrics'),
-            new MenuItemLink('setup/internal-reports/organic/rsrp-widget-engagement', 'RS/RP widget engagement'),
-            new MenuItemLink('setup/internal-reports/organic/unclaimed-thematic-traffic', 'Unclaimed thematic traffic'),
-            new MenuItemLink('setup/internal-reports/organic/url-param-tracking', 'URL param tracking'),
-            new MenuItemLink('setup/internal-reports/organic/all-traffic', 'All traffic'),
+          new MenuItemContainer(this.translate('MENU_CONTAINER_ORGANIC'), [
+            new MenuItemLink('setup/internal-reports/organic/debug', this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_DEBUG')),
+            new MenuItemLink('setup/internal-reports/organic/any-click-conversions',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_ANY_CLICK_CONVERSIONS')),
+            new MenuItemLink('setup/internal-reports/organic/last-click-conversions',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_LAST_CLICK_CONVERSIONS')),
+            new MenuItemLink('setup/internal-reports/organic/all-conversions',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_ALL_CONVERSIONS')),
+            new MenuItemLink('setup/internal-reports/organic/account-overview',
+              this.translate('MENU_ITEM_INSIGHTS_OVERVIEW_ACCOUNT_OVERVIEW')),
+            new MenuItemLink('setup/internal-reports/organic/traffic-sources',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_TRAFFIC_SOURCES')),
+            new MenuItemLink('setup/internal-reports/organic/legacy-debug',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_LEGACY_DEBUG')),
+            new MenuItemLink('setup/internal-reports/organic/site-optimization-metrics',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_SITE_OPTIMIZATION_METRICS')),
+            new MenuItemLink('setup/internal-reports/organic/rsrp-widget-engagement',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_RSRP_WIDGET_ENGAGEMENT')),
+            new MenuItemLink('setup/internal-reports/organic/unclaimed-thematic-traffic',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_UNCLAIMED_THEMATIC_TRAFFIC')),
+            new MenuItemLink('setup/internal-reports/organic/url-param-tracking',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_URL_PARAM_TRACKING')),
+            new MenuItemLink('setup/internal-reports/organic/all-traffic',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_ALL_TRAFFIC')),
           ]),
-          new MenuItemContainer('SNAP', [
-            new MenuItemLink('setup/internal-reports/snap/multi-account-chart', 'Multi account chart'),
-            new MenuItemLink('setup/internal-reports/snap/browse-sessions', 'Browse sessions'),
-            new MenuItemLink('setup/internal-reports/snap/top-products', 'Top products'),
-            new MenuItemLink('setup/internal-reports/snap/assisted-conversions', 'Assisted conversions'),
-            new MenuItemLink('setup/internal-reports/snap/session-details', 'Session details'),
-            new MenuItemLink('setup/internal-reports/snap/search-experiment', 'Search experiment'),
-            new MenuItemLink('setup/internal-reports/snap/top-keywords-w-experiment', 'Top keywords w/ experiment'),
-            new MenuItemLink('setup/internal-reports/snap/no-revenue-keywords-w-experiment', 'No revenue keywords w/ experiment'),
-            new MenuItemLink('setup/internal-reports/snap/top-categories-w-experiment', 'Top categories w/ experiment'),
-            new MenuItemLink('setup/internal-reports/snap/page-performance', 'Page performance'),
-            new MenuItemLink('setup/internal-reports/snap/assisted-overview', 'Assisted overview'),
-            new MenuItemLink('setup/internal-reports/snap/suggest-overview', 'Suggest overview'),
+          new MenuItemContainer(this.translate('MENU_CONTAINER_SNAP'), [
+            new MenuItemLink('setup/internal-reports/snap/multi-account-chart',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_MULTI_ACCOUNT_CHART')),
+            new MenuItemLink('setup/internal-reports/snap/browse-sessions',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_BROWSE_SESSIONS')),
+            new MenuItemLink('setup/internal-reports/snap/top-products',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_TOP_PRODUCTS')),
+            new MenuItemLink('setup/internal-reports/snap/assisted-conversions',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_ASSISTED_CONVERSIONS')),
+            new MenuItemLink('setup/internal-reports/snap/session-details',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_SESSION_DETAILS')),
+            new MenuItemLink('setup/internal-reports/snap/search-experiment',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_SEARCH_EXPERIMENT')),
+            new MenuItemLink('setup/internal-reports/snap/top-keywords-w-experiment',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_TOP_KEYWORDS_W_EXPERIMENT')),
+            new MenuItemLink('setup/internal-reports/snap/no-revenue-keywords-w-experiment',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_NO_REVENUE_KEYWORDS_W_EXPERIMENT')),
+            new MenuItemLink('setup/internal-reports/snap/top-categories-w-experiment',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_TOP_CATEGORIES_W_EXPERIMENT')),
+            new MenuItemLink('setup/internal-reports/snap/page-performance',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_PAGE_PERFORMANCE')),
+            new MenuItemLink('setup/internal-reports/snap/assisted-overview',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_ASSISTED_OVERVIEW')),
+            new MenuItemLink('setup/internal-reports/snap/suggest-overview',
+              this.translate('MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_SUGGEST_OVERVIEW')),
           ]),
         ]),
       ],

@@ -18,7 +18,7 @@
   <img src="navapp-assets/images/error-page-main-image.png">
 
   <div class="error-code">{{ error?.code || 500 }}</div>
-  <div class="error-message">{{ error?.message || 'Something went wrong' }}</div>
+  <div class="error-message">{{ error?.message || 'ERROR_PAGE_DEFAULT_ERROR' | translate }}</div>
   <div *ngIf="error && error.description" class="error-description">{{ error.description }}</div>
 
   <button
@@ -26,7 +26,5 @@
     mat-flat-button
     color="primary"
     (click)="navigateToHome()"
-    class="go-to-home-btn">
-    Go to home
-  </button>
+    class="go-to-home-btn">{{ 'ERROR_PAGE_BUTTON_BACK_HOME' | translate }}</button>
 </div>

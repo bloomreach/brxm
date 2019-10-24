@@ -17,6 +17,7 @@
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { TranslateModule } from '@ngx-translate/core';
 import { ClickOutsideModule } from 'ng-click-outside';
 
 import { SharedModule } from '../shared/shared.module';
@@ -39,6 +40,7 @@ import { MenuStructureService } from './services/menu-structure.service';
     BrowserAnimationsModule,
     SharedModule,
     ClickOutsideModule,
+    TranslateModule,
   ],
   declarations: [
     MainMenuComponent,

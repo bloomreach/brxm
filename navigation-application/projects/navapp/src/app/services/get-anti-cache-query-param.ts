@@ -14,25 +14,12 @@
  * limitations under the License.
  */
 
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+const QUERY_PARAM_NAME = 'antiCache';
 
-import { MaterialModule } from '../shared/material/material.module';
+export function getAntiCacheQueryParam(locationPath): string {
+  const results = new RegExp(`[?&]${QUERY_PARAM_NAME}=([^&#]*)`).exec(locationPath);
 
-import { ErrorPageComponent } from './components/error-page.component';
-import { ErrorHandlingService } from './services/error-handling.service';
+  const antiCacheValue = results ? results[1] : new Date().toLocaleString();
 
-@NgModule({
-  imports: [
-    CommonModule,
-    MaterialModule,
-    TranslateModule,
-  ],
-  providers: [
-    ErrorHandlingService,
-  ],
-  declarations: [ErrorPageComponent],
-  exports: [ErrorPageComponent],
-})
-export class ErrorHandlingModule {}
+  return `${QUERY_PARAM_NAME}=${antiCacheValue}`;
+}
