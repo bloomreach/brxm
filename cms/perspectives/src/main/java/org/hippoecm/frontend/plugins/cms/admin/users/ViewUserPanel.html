@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+  * Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@
         <li class="delete" wicket:id="delete-user"/>
     </ul>
     <div class="hippo-controlpanel-form">
-        <div class="icons-128 user-128">
+        <div>
             <h3>
                 <wicket:message key="user-properties"/>
             </h3>
@@ -79,6 +79,52 @@
                 </tr>
             </table>
         </div>
+        <br/>
+        <br/>
+        <h3><wicket:message key="userrole-overview-title"/></h3>
+        <span><wicket:message key="user-userroles-label"/></span>
+        <table class="hippo-list-details hippo-controlpanel-table-default">
+            <tr>
+                <th><wicket:message key="userrole-name"/></th>
+                <th><wicket:message key="userrole-description"/></th>
+                <th><wicket:message key="table-header-actions"/></th>
+            </tr>
+            <tr wicket:id="userroles">
+                <td><span wicket:id="name"/></td>
+                <td><span wicket:id="description"/></td>
+                <td><span wicket:id="remove-userrole"/></td>
+            </tr>
+        </table>
+        <span wicket:id="add-userroles"></span>
+        <br/>
+        <br/>
+        <h3 class="hippo-controlpanel-section-title">
+            <wicket:message key="user-permissions"/>
+        </h3>
+        <br/>
+        <table class="hippo-list-details hippo-controlpanel-table-default">
+            <tr>
+                <th>
+                    <wicket:message key="permissions-domain-header"/>
+                </th>
+                <th>
+                    <wicket:message key="permissions-column-folder-header"/>
+                </th>
+                <th>
+                    <wicket:message key="permissions-permission-header"/>
+                </th>
+                <th>
+                    <wicket:message key="permissions-role-header"/>
+                </th>
+            </tr>
+            <tr wicket:id="permissions">
+                <td><a href="#" wicket:id="securityDomain"><span wicket:id="label">[[label]]</span></a></td>
+                <td><span wicket:id="domain-folder"/></td>
+                <td><span wicket:id="permission"/></td>
+                <td><label wicket:id="role"/></td>
+            </tr>
+        </table>
+        <br/>
         <br/>
         <h3>
             <wicket:message key="user-memberships"/>

@@ -62,8 +62,8 @@
 
 [frontend:application] > nt:base
 - frontend:saveonexit (boolean)
-- frontend:privileges (string)
-- frontend:privileges.path (string)
+- frontend:privileges (string) // obsolete since v14, no longer used
+- frontend:privileges.path (string) // obsolete since v14, no longer used
 - frontend:defaultcluster (string)
 + * (frontend:plugincluster) multiple
 + * (frontend:clusterfolder) multiple

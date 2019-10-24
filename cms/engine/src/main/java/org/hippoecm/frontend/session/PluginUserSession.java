@@ -62,6 +62,7 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.WorkflowManager;
+import org.jetbrains.annotations.NotNull;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsContextService;
 import org.onehippo.cms7.services.cmscontext.CmsInternalCmsContextService;
@@ -183,10 +184,10 @@ public class PluginUserSession extends UserSession {
     }
 
     /**
-     * Retrieve the JCR {@link javax.jcr.Session} that is bound to the Wicket {@link org.apache.wicket.Session}. This
+     * Retrieve the {@link HippoSession} that is bound to the Wicket {@link org.apache.wicket.Session}. This
      * method will throw a RestartResponseException when no JCR session is available.
      */
-    public Session getJcrSession() {
+    public HippoSession getJcrSession() {
         Session session = getJcrSessionInternal();
         if (session == null) {
             Main main = (Main)Application.get();
@@ -205,7 +206,7 @@ public class PluginUserSession extends UserSession {
         } else {
             resetFallbackSession();
         }
-        return session;
+        return (HippoSession)session;
     }
 
     private Session getJcrSessionInternal() {
@@ -387,10 +388,17 @@ public class PluginUserSession extends UserSession {
 
     protected void checkApplicationPermission(final Session jcrSession) throws LoginException {
         final String applicationName = getApplicationName(jcrSession);
-        final IPluginConfigService application = getApplicationFactory(jcrSession).getApplication(applicationName);
-        if (!application.checkPermission(jcrSession)) {
+        final HippoSession hippoSession = (HippoSession)jcrSession;
+        final String applicationUserRole = getApplicationUserRole(applicationName);
+        if (!hippoSession.isUserInRole(applicationUserRole)) {
+            log.info("Permission denied to user '{}' on application {}: requires user role {}",
+                    hippoSession.getUserID(), applicationName, applicationUserRole);
             throw new LoginException(Cause.ACCESS_DENIED);
         }
+    }
+
+    private String getApplicationUserRole(final String applicationName) {
+        return "xm-"+applicationName+"-user";
     }
 
     public void logout() {
@@ -582,7 +590,7 @@ public class PluginUserSession extends UserSession {
         String applicationName;
         String userID = session.getUserID();
 
-        if (StringUtils.isEmpty(userID) || userID.equalsIgnoreCase("anonymous")) {
+        if (StringUtils.isEmpty(userID) || userID.equals(UserCredentials.FRONTEND_SYSTEM_USER_ID)) {
             applicationName = "login";
         } else {
             applicationName = PluginApplication.get().getPluginApplicationName();

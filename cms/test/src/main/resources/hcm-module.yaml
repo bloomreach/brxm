@@ -1,7 +1,7 @@
 group: hippo-cms
 project:
     name: hippo-cms
-    after: hippo-repository
+    after: hippo-site-toolkit
 module:
     name: hippo-cms-test
     after: hippo-cms-types

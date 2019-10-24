@@ -78,6 +78,14 @@
       this.parentApiPromise.then(parentApi => parentApi.hideMask());
     }
 
+    showBusyIndicator() {
+      this.parentApiPromise.then(parentApi => parentApi.showBusyIndicator());
+    }
+
+    hideBusyIndicator() {
+      this.parentApiPromise.then(parentApi => parentApi.hideBusyIndicator());
+    }
+
     updateNavLocation (location) {
       return this.parentApiPromise.then(parentApi => parentApi.updateNavLocation(location));
     }
@@ -93,7 +101,7 @@
     }
 
     return Hippo.iframeConnections.getChildApiPromise(iframe)
-      .then(childApi => childApi.navigate({ path }));
+      .then(childApi => childApi.navigate({ path }, triggeredBy));
   };
 
   const cmsChildApi = {
@@ -127,34 +135,27 @@
               return Promise.reject(new Error('project\'s iframe is not found'));
             }
 
-            return navigateIframe(iframe, 'projects', triggeredBy);
+            pathElements.unshift('projects');
+
+            return navigateIframe(iframe, pathElements.join('/'), triggeredBy);
   
           case 'channelmanager':
-            if (!iframe) {
-              // If there is no iframe perspective.click() is enough to show channels overview
-              return Promise.resolve();
-            }
+            if (triggeredBy !== 'Menu') {
+              const rootPanel = Ext.getCmp('rootPanel');
 
-            const rootPanel = Ext.getCmp('rootPanel');
-
-            if (!rootPanel) {
-              return Promise.reject(new Error('rootPanel is not found'));
-            }
-
-            // Just show the channels overview when requested path is 'channelmanager'
-            if (pathElements.length === 0) {
+              if (!rootPanel) {
+                return Promise.reject(new Error('rootPanel is not found'));
+              }
               rootPanel.fireEvent('navigate-to-channel-overview');
-              return Promise.resolve();
             }
 
-            const path = pathElements.join('/');
-            return navigateIframe(iframe, path, triggeredBy);
-  
+            return Promise.resolve();
+
           case 'browser':
             if (pathElements.length === 0) {
               return Promise.resolve();
             }
-  
+
             const docLocation = document.location;
             const url = new URL(docLocation.href);
             if ( pathElements[0] === 'path') {
@@ -163,9 +164,9 @@
               url.searchParams.append('uuid', pathElements[1]);
             }
             docLocation.assign(url.toString())
-  
+
             return Promise.resolve();
-  
+
           default:
               return Promise.resolve();
         }
@@ -202,13 +203,19 @@
 
   Hippo.updateNavLocation = function(location) {
     return Hippo.iframeConnections.updateNavLocation(location);
-  }
+  };
   Hippo.showMask = function() {
     Hippo.iframeConnections.showMask();
-  }
+  };
   Hippo.hideMask = function() {
     Hippo.iframeConnections.hideMask();
-  }
+  };
+  Hippo.showBusyIndicator = function() {
+    Hippo.iframeConnections.showBusyIndicator();
+  };
+  Hippo.hideBusyIndicator = function() {
+    Hippo.iframeConnections.hideBusyIndicator();
+  };
 })();
 
 //# sourceURL=nav-app-to-app.js

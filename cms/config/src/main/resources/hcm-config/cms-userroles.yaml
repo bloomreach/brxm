@@ -1,0 +1,74 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:userroles:
+      /xm-frontendconfig-reader:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: []
+      /xm-cms-user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-frontendconfig-reader]
+      /xm-console-user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-frontendconfig-reader]
+      /xm-dashboard-user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-cms-user]
+      /xm-content-user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-cms-user]
+      /xm-report-user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-cms-user]
+      /xm-system-user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-cms-user]
+      /xm-sysadmin:
+        hipposys:userroles:
+          operation: add
+          value: [xm-console-user]
+      /xm-security-manager:
+        hipposys:userroles:
+          operation: add
+          value: [xm-system-user]
+      /xm-content-viewer:
+        hipposys:userroles:
+          operation: add
+          value: [xm-content-user]
+      /xm-default-cmsadmin-user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm-admin, xm-content-admin, xm-channel-admin, xm-dashboard-user, xm-security-user-manager, xm-security-application-manager]
+      /xm-default-sysadmin-user:
+        hipposys:userroles:
+          operation: add
+          value: [xm-dashboard-user]
+      /xm-default-author-user:
+        hipposys:userroles:
+          operation: add
+          value: [xm-dashboard-user]
+      /xm-default-editor-user:
+        hipposys:userroles:
+          operation: add
+          value: [xm-dashboard-user]
+      /xm-default-webmaster-user:
+        hipposys:userroles:
+          operation: add
+          value: [xm-dashboard-user]
+    /hippo:configuration/hippo:groups:
+      /cmsadmin:
+        jcr:primaryType: hipposys:group
+        hipposys:members:
+          .meta:category: system
+          value: []
+        hipposys:userroles:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: [xm-default-cmsadmin-user]
+        hipposys:securityprovider: internal

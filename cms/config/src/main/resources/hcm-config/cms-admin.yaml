@@ -5,18 +5,28 @@ definitions:
       /users:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.plugins.cms.admin.users.ListUsersPlugin
+        hipposys:userrole: xm-security-manager
       /groups:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.plugins.cms.admin.groups.ListGroupsPlugin
+        hipposys:userrole: xm-security-manager
+      /userroles:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.plugins.cms.admin.userroles.ListUserRolesPlugin
+        hipposys:userrole: xm-security-manager
       /permissions:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionsPlugin
+        hipposys:userrole: xm-security-manager
       /systeminfo:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.plugins.cms.admin.system.SystemInfoPlugin
+        hipposys:userrole: xm-sysadmin
       /systemprops:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.plugins.cms.admin.system.SystemPropertiesPlugin
+        hipposys:userrole: xm-sysadmin
       /updater:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.plugins.cms.admin.updater.UpdaterPanelPlugin
+        hipposys:userrole: xm-sysadmin
