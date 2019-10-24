@@ -55,7 +55,12 @@ export default class Index extends React.Component<IndexProps> {
       page: await initialize({
         ...config,
         httpClient: axios.request,
-        request: { ...config.request, headers: context.req && context.req.headers },
+        request: {
+          ...config.request,
+          headers: context.req && context.req.headers && context.req.headers.cookie
+            ? { cookie: context.req.headers.cookie }
+            : undefined,
+        },
       }),
     };
   }
