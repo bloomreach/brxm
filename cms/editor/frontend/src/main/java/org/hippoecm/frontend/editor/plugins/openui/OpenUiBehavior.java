@@ -35,12 +35,12 @@ import org.hippoecm.frontend.model.SystemInfoDataProvider;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.util.UserUtils;
 import org.onehippo.cms7.openui.extensions.JcrUiExtensionLoader;
 import org.onehippo.cms7.openui.extensions.UiExtension;
 import org.onehippo.cms7.openui.extensions.UiExtensionLoader;
 import org.onehippo.cms7.openui.extensions.UiExtensionPoint;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.security.SecurityService;
 import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
@@ -168,19 +168,20 @@ class OpenUiBehavior extends Behavior {
         final String userId = jcrSession.getUserID();
         parameters.put("userId", userId);
 
-        final HippoWorkspace workspace = (HippoWorkspace) jcrSession.getWorkspace();
-        try {
-            final SecurityService securityService = workspace.getSecurityService();
-            final User user = securityService.getUser(userId);
 
-            parameters.put("userFirstName", user.getFirstName());
-            parameters.put("userLastName", user.getLastName());
+        try {
+            final SecurityService securityService = HippoServiceRegistry.getService(SecurityService.class);
+            if (securityService != null) {
+                final User user = securityService.getUser(userId);
+                if (user != null) {
+                    parameters.put("userFirstName", user.getFirstName());
+                    parameters.put("userLastName", user.getLastName());
+                    UserUtils.getUserName(user).ifPresent(displayName -> parameters.put("userDisplayName", displayName));
+                }
+            }
         } catch (RepositoryException e) {
             log.warn("Unable to retrieve first and last name of user '{}'", userId, e);
         }
-
-        UserUtils.getUserName(userId, jcrSession)
-                .ifPresent(displayName -> parameters.put("userDisplayName", displayName));
     }
 
     private class OpenUiDialogManager extends DialogManager<String> {

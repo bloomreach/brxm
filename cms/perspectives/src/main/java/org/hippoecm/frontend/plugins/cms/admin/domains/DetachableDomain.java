@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,29 +15,27 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin.domains;
 
-import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class DetachableDomain extends LoadableDetachableModel<Domain> {
+import com.bloomreach.xm.repository.security.DomainAuth;
+
+public final class DetachableDomain extends LoadableDetachableModel<DomainAuth> {
 
     private static final Logger log = LoggerFactory.getLogger(DetachableDomain.class);
 
     private final String path;
 
-    protected static Node getRootNode() throws RepositoryException {
-        return UserSession.get().getJcrSession().getRootNode();
-    }
-
     /**
      * @param domain the Domain to wrap
      */
-    public DetachableDomain(final Domain domain) {
+    public DetachableDomain(final DomainAuth domain) {
         this(domain.getPath());
+        this.setObject(domain);
     }
 
     /**
@@ -47,7 +45,7 @@ public final class DetachableDomain extends LoadableDetachableModel<Domain> {
         if (path == null || path.isEmpty()) {
             throw new IllegalArgumentException("Path argument can not be empty");
         }
-        this.path = path.startsWith("/") ? path.substring(1) : path;
+        this.path = path;
     }
 
     /**
@@ -80,10 +78,10 @@ public final class DetachableDomain extends LoadableDetachableModel<Domain> {
     }
 
     @Override
-    protected Domain load() {
+    protected DomainAuth load() {
         // loads contact from jcr
         try {
-            return new Domain(getRootNode().getNode(path));
+            return SecurityManagerHelper.getDomainsManager().getDomainAuth(path);
         } catch (RepositoryException e) {
             log.error("Unable to load domain, returning null", e);
             return null;

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.AdminPanelPlugin;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 
+@SuppressWarnings("unused")
 public class SystemPropertiesPlugin extends AdminPanelPlugin {
 
     public SystemPropertiesPlugin(IPluginContext context, IPluginConfig config) {
@@ -33,7 +34,7 @@ public class SystemPropertiesPlugin extends AdminPanelPlugin {
 
     @Override
     public ResourceReference getImage() {
-        return new PackageResourceReference(getClass(), "system-properties-48.png");
+        return new PackageResourceReference(AdminPanelPlugin.class, "blank-48.png");
     }
 
     @Override

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.hippoecm.frontend.session;
 import java.util.TimeZone;
 
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.observation.ObservationManager;
 import javax.jcr.query.QueryManager;
 
@@ -28,6 +27,7 @@ import org.apache.wicket.request.Request;
 import org.hippoecm.frontend.observation.IFacetRootsObserver;
 import org.hippoecm.repository.HippoRepository;
 import org.hippoecm.repository.api.HippoNode;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.WorkflowManager;
 
 /**
@@ -68,7 +68,7 @@ public abstract class UserSession extends WebSession {
 
     public abstract void logout();
 
-    public abstract Session getJcrSession();
+    public abstract HippoSession getJcrSession();
 
     public abstract void releaseJcrSession();
 

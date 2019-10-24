@@ -29,6 +29,7 @@ import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulato
 import org.apache.wicket.extensions.markup.html.repeater.data.table.AbstractColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.IColumn;
 import org.apache.wicket.extensions.markup.html.repeater.data.table.PropertyColumn;
+import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
@@ -44,6 +45,9 @@ import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.AjaxLinkLabel;
 import org.hippoecm.frontend.plugins.cms.admin.widgets.SearchTermPanel;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
+import org.hippoecm.frontend.session.UserSession;
+import org.hippoecm.repository.api.HippoSession;
+import org.onehippo.repository.security.SecurityConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +63,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
     private AdminDataTable table;
     private IPluginContext context;
     private final GroupDataProvider groupDataProvider;
+    private final boolean isSecurityUserManager;
 
     /**
      * Constructs a new ListGroupsPanel.
@@ -72,16 +77,20 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
         super(id, breadCrumbModel);
         setOutputMarkupId(true);
 
+        final HippoSession session = UserSession.get().getJcrSession();
+        isSecurityUserManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_MANAGER);
+
         this.context = context;
         this.groupDataProvider = groupDataProvider;
 
-        add(new PanelPluginBreadCrumbLink("create-group", breadCrumbModel) {
-
+        final Component createGroupLink = new PanelPluginBreadCrumbLink("create-group", breadCrumbModel) {
             @Override
             protected IBreadCrumbParticipant getParticipant(final String componentId) {
                 return new CreateGroupPanel(componentId, breadCrumbModel);
             }
-        });
+        };
+        createGroupLink.setVisible(isSecurityUserManager);
+        add(createGroupLink);
 
         final List<IColumn<Group, String>> columns = new ArrayList<>();
         columns.add(new AbstractColumn<Group, String>(new ResourceModel("group-name"), "groupname") {
@@ -156,8 +165,12 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
         @Override
         public void populateItem(final Item<ICellPopulator<Group>> cellItem, final String componentId,
                                  final IModel<Group> rowModel) {
-
-            cellItem.add(new DeleteGroupActionLink(componentId, new ResourceModel("group-remove-action"), rowModel));
+            Group group = rowModel.getObject();
+            if (isSecurityUserManager && !group.isSystem() && !group.isExternal()) {
+                cellItem.add(new DeleteGroupActionLink(componentId, new ResourceModel("group-remove-action"), rowModel));
+            } else {
+                cellItem.add(new Label(componentId, ""));
+            }
         }
     }
 
