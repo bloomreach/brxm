@@ -89,7 +89,6 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
                          final IModel<User> userModel) {
         super(id, breadCrumbModel);
         this.context = context;
-        setOutputMarkupId(true);
         model = userModel;
         dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
 

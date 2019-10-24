@@ -37,20 +37,17 @@ import org.apache.wicket.validation.ValidationError;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.EventBusUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.bloomreach.xm.repository.security.UserRoleBean;
-import com.bloomreach.xm.repository.security.UserRolesProvider;
 
 public class CreateUserRolePanel extends AdminBreadCrumbPanel {
     private static final Logger log = LoggerFactory.getLogger(CreateUserRolePanel.class);
 
     public CreateUserRolePanel(final String id, final IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
-        setOutputMarkupId(true);
 
         // add form with markup id setter so it can be updated via ajax
         final Form form = new Form<>("form");

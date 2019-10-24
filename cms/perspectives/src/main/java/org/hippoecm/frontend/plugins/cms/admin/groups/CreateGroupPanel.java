@@ -43,7 +43,6 @@ public class CreateGroupPanel extends AdminBreadCrumbPanel {
 
     public CreateGroupPanel(final String id, final IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
-        setOutputMarkupId(true);
 
         // add form with markup id setter so it can be updated via ajax
         final CompoundPropertyModel<Group> formModel = new CompoundPropertyModel<>(groupModel);

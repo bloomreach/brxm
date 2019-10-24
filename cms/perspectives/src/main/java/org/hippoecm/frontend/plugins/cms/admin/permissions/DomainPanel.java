@@ -79,7 +79,6 @@ public class DomainPanel extends AdminBreadCrumbPanel {
 
     public DomainPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel, final IModel<DomainAuth> model) {
         super(id, breadCrumbModel);
-        setOutputMarkupId(true);
         this.context = context;
         this.model = model;
 
