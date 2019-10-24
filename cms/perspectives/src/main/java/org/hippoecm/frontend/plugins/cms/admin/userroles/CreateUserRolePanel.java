@@ -33,6 +33,7 @@ import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.model.util.MapModel;
 import org.apache.wicket.validation.IValidatable;
+import org.apache.wicket.validation.IValidator;
 import org.apache.wicket.validation.ValidationError;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
@@ -109,12 +110,10 @@ public class CreateUserRolePanel extends AdminBreadCrumbPanel {
         return new StringResourceModel("userrole-create", component);
     }
 
-    private static final class UserRoleNameValidator extends StringValidator {
+    private static final class UserRoleNameValidator implements IValidator<String> {
 
         @Override
         public void validate(final IValidatable<String> validatable) {
-            super.validate(validatable);
-
             final String name = validatable.getValue();
             if (SecurityManagerHelper.getUserRolesProvider().hasRole(name)) {
                 validatable.error(new ValidationError(this, "exists"));
