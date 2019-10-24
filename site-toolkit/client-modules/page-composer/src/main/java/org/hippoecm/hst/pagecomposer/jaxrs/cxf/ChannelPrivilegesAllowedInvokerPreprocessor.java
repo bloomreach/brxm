@@ -49,7 +49,8 @@ public class ChannelPrivilegesAllowedInvokerPreprocessor extends PrivilegesAllow
                                                            final Method method, Set<String> privilegesAllowed) {
 
         if (method.getAnnotation(ChannelAgnostic.class) != null) {
-            log.info("Method '{}' is channel agnostic", method.getName());
+            log.info("Method '{}' is channel agnostic so passes ChannelPrivilegesAllowedInvokerPreprocessor preprocesser",
+                    method.getName());
             return Optional.empty();
         }
         

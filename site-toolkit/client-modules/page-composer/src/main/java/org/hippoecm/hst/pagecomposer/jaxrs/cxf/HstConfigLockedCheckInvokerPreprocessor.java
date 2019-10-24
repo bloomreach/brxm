@@ -50,7 +50,8 @@ public class HstConfigLockedCheckInvokerPreprocessor extends AbstractInvokerPreP
 
         ChannelAgnostic channelAgnostic = method.getAnnotation(ChannelAgnostic.class);
         if (channelAgnostic != null) {
-            log.info("Method '{}' is channel agnostic", method.getName());
+            log.info("Method '{}' is channel agnostic so passes HstConfigLockedCheckInvokerPreprocessor preprocesser",
+                    method.getName());
             return Optional.empty();
         }
 

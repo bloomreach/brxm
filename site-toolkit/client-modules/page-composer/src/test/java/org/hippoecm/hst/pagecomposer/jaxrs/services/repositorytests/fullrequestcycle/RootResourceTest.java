@@ -18,6 +18,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequest
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.jcr.Node;
@@ -29,9 +30,11 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
+import org.hippoecm.hst.pagecomposer.jaxrs.cxf.HstConfigLockedCheckInvokerPreprocessor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
@@ -39,6 +42,7 @@ import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hippoecm.hst.configuration.HstNodeTypes.CHANNEL_PROPERTY_DELETABLE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.CONFIGURATION_PROPERTY_LOCKED;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
@@ -356,6 +360,23 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
     }
 
     @Test
+    public void get_channels_is_a_channel_agnostic_call_which_passes_invoker_preprocessor() throws Exception {
+
+        final RequestResponseMock requestResponse = mockGetRequestResponse("http", "localhost",
+                "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels", null, "GET");
+
+        SimpleCredentials author = new SimpleCredentials("author", "author".toCharArray());
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(HstConfigLockedCheckInvokerPreprocessor.class).build()) {
+            render(null, requestResponse, author);
+
+            assertThat(interceptor.messages())
+                    .contains("Method 'getChannels' is channel agnostic so passes HstConfigLockedCheckInvokerPreprocessor preprocesser");
+
+        }
+    }
+
+
+    @Test
     public void get_channels_only_returns_channels_for_which_user_has_privileges() throws Exception {
         // the method ChannelService.getChannels(...) is meant for the cross channel copy page : Only channels
         // for which the user is a webmaster should be returned!
@@ -376,7 +397,7 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
 
             final Set<String> channelIds = data.stream().map(channelMap -> channelMap.get("id")).collect(Collectors.toSet());
 
-            Assertions.assertThat(channelIds)
+            assertThat(channelIds)
                     .containsExactly("unittestproject", "unittestsubproject");
         }
 
@@ -416,7 +437,7 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
 
                 final Set<String> channelIds = data.stream().map(channelMap -> channelMap.get("id")).collect(Collectors.toSet());
 
-                Assertions.assertThat(channelIds)
+                assertThat(channelIds)
                         .containsExactly("unittestproject", "unittestsubproject");
 
             }
