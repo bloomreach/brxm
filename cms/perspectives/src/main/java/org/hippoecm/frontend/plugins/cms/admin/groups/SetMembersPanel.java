@@ -62,7 +62,6 @@ public class SetMembersPanel extends AdminBreadCrumbPanel {
     public SetMembersPanel(final String id, final IBreadCrumbModel breadCrumbModel,
                            final IModel<Group> model) {
         super(id, breadCrumbModel);
-        setOutputMarkupId(true);
 
         final HippoSession session = UserSession.get().getJcrSession();
         isSecurityUserManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_MANAGER);

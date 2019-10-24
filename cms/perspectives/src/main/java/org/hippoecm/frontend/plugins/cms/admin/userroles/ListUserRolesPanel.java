@@ -86,7 +86,6 @@ public class ListUserRolesPanel extends AdminBreadCrumbPanel {
         final AdminDataTable<UserRole> table = new AdminDataTable<>("table", columns, new UserRoleDataProvider(),
                 NUMBER_OF_ITEMS_PER_PAGE);
         add(table);
-        setOutputMarkupId(true);
     }
 
     @Override

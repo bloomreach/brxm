@@ -59,7 +59,6 @@ public class CreateUserPanel extends AdminBreadCrumbPanel {
 
     public CreateUserPanel(final String id, final IBreadCrumbModel breadCrumbModel, final IPluginContext context, final IPluginConfig config) {
         super(id, breadCrumbModel);
-        setOutputMarkupId(true);
 
         passwordValidationService = context.getService(IPasswordValidationService.class.getName(),
                 IPasswordValidationService.class);

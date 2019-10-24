@@ -89,8 +89,6 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
         final HippoSession session = UserSession.get().getJcrSession();
         isSecurityApplManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_MANAGER);
 
-        setOutputMarkupId(true);
-
         this.userRoleModel = userRoleModel;
         UserRole userRole = userRoleModel.getObject();
         dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);

@@ -83,8 +83,6 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
                           final IBreadCrumbModel breadCrumbModel, final UserDataProvider userDataProvider) {
         super(id, breadCrumbModel);
 
-        setOutputMarkupId(true);
-
         this.config = config;
         this.context = context;
         this.userDataProvider = userDataProvider;

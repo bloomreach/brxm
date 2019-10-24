@@ -46,7 +46,6 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
     public SetPasswordPanel(final String id, final IBreadCrumbModel breadCrumbModel, final IModel<User> model,
                             final IPluginContext context) {
         super(id, breadCrumbModel);
-        setOutputMarkupId(true);
 
         this.model = model;
         final User user = model.getObject();
@@ -97,7 +96,7 @@ public class SetPasswordPanel extends AdminBreadCrumbPanel {
         };
         queue(setButton);
         form.setDefaultButton(setButton);
-        
+
         // add a button that can be used to submit the form via ajax
         queue(new AjaxButton("cancel-button") {
 

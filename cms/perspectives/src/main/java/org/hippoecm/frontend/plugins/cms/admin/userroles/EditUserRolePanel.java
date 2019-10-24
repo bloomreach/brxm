@@ -35,10 +35,8 @@ import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bloomreach.xm.repository.security.RepositorySecurityManager;
 import com.bloomreach.xm.repository.security.UserRole;
 import com.bloomreach.xm.repository.security.UserRoleBean;
-import com.bloomreach.xm.repository.security.UserRolesManager;
 
 public class EditUserRolePanel extends AdminBreadCrumbPanel {
     private static final Logger log = LoggerFactory.getLogger(EditUserRolePanel.class);
@@ -47,7 +45,6 @@ public class EditUserRolePanel extends AdminBreadCrumbPanel {
 
     public EditUserRolePanel(final String id, final IBreadCrumbModel breadCrumbModel, final IModel<UserRole> userRoleModel) {
         super(id, breadCrumbModel);
-        setOutputMarkupId(true);
 
         this.userRoleModel = userRoleModel;
 
