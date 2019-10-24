@@ -99,6 +99,7 @@ describe('NavigationService', () => {
     'mapNavLocationToBrowserUrl',
     'combinePathParts',
     'trimLeadingSlash',
+    'extractPathAndQueryStringAndHash',
   ]);
   urlMapperServiceMock.basePath = basePath;
 
@@ -134,6 +135,7 @@ describe('NavigationService', () => {
     );
     urlMapperServiceMock.trimLeadingSlash.and.callFake((value: string) => value.replace(/^\//, ''));
     urlMapperServiceMock.combinePathParts.and.callFake((...parts: string[]) => parts.map(urlMapperServiceMock.trimLeadingSlash).join('/'));
+    urlMapperServiceMock.extractPathAndQueryStringAndHash.and.returnValue(['', '']);
 
     const busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', ['show', 'hide']);
     const connectionServiceMock = {
@@ -384,6 +386,7 @@ describe('NavigationService', () => {
         `${basePath}/iframe1/url/app/path/to/page1/internal/page1`,
         new NavItemMock(),
       ]);
+      urlMapperServiceMock.extractPathAndQueryStringAndHash.and.returnValue(['internal/page1', '']);
 
       const navLocation: NavLocation = {
         path: 'app/path/to/page1/internal/page1',

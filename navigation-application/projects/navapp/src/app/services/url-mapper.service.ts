@@ -20,6 +20,7 @@ import { NavItem, NavLocation } from '@bloomreach/navapp-communication';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { InternalError } from '../error-handling/models/internal-error';
+import { stripOffQueryStringAndHash } from '../helpers/strip-off-query-string-and-hash';
 import { AppSettings } from '../models/dto/app-settings.dto';
 
 import { APP_SETTINGS } from './app-settings';
@@ -70,14 +71,28 @@ export class UrlMapperService {
       throw new Error('Nav item related to the provided Nav location is not found');
     }
 
-    const browserUrl = this.mapNavItemToBrowserUrl(navItem);
-    const appPathAddOn = navLocation.path.slice(navItem.appPath.length);
+    const baseBrowserUrl = this.mapNavItemToBrowserUrl(navItem);
 
-    return [Location.joinWithSlash(browserUrl, appPathAddOn), navItem];
+    const appPathAddOn = navLocation.path.slice(navItem.appPath.length);
+    const [
+      appPathAddOnWithoutQueryStringAndHash,
+      queryStringAndHash,
+    ] = this.extractPathAndQueryStringAndHash(appPathAddOn);
+
+    const browserUrl = Location.joinWithSlash(baseBrowserUrl, appPathAddOnWithoutQueryStringAndHash) + queryStringAndHash;
+
+    return [browserUrl, navItem];
   }
 
   trimLeadingSlash(value: string): string {
     return value.replace(/^\//, '');
+  }
+
+  extractPathAndQueryStringAndHash(pathWithQueryStringAndHash: string): [string, string] {
+    const pathWithoutQueryStringAndHash = stripOffQueryStringAndHash(pathWithQueryStringAndHash);
+    const queryStringAndHash = pathWithQueryStringAndHash.slice(pathWithoutQueryStringAndHash.length);
+
+    return [pathWithoutQueryStringAndHash, queryStringAndHash];
   }
 
   private trimSlashes(value: string): string {

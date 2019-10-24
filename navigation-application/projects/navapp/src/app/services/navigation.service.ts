@@ -304,8 +304,10 @@ export class NavigationService implements OnDestroy {
         }
 
         const appPathAddOn = t.url.slice(route.path.length);
-        const appPathAddOnWithoutQueryStringAndHash = stripOffQueryStringAndHash(appPathAddOn);
-        const queryStringAndHash = appPathAddOn.slice(appPathAddOnWithoutQueryStringAndHash.length);
+        const [
+          appPathAddOnWithoutQueryStringAndHash,
+          queryStringAndHash,
+        ] = this.urlMapperService.extractPathAndQueryStringAndHash(appPathAddOn);
 
         return of({ ...t, navItem: route.navItem, appPathAddOn: appPathAddOnWithoutQueryStringAndHash, queryStringAndHash });
       }),

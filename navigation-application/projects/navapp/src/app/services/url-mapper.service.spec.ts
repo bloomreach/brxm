@@ -27,7 +27,7 @@ import { NavItemService } from './nav-item.service';
 import { UrlMapperService } from './url-mapper.service';
 
 describe('UrlMapperService', () => {
-  let urlMapperService: UrlMapperService;
+  let service: UrlMapperService;
 
   const navItemsMock = [
     new NavItemMock({
@@ -71,14 +71,14 @@ describe('UrlMapperService', () => {
       ],
     });
 
-    urlMapperService = TestBed.get(UrlMapperService);
+    service = TestBed.get(UrlMapperService);
     clientAppServiceMock = TestBed.get(ClientAppService);
   });
 
   it('should return the base path', () => {
     const expected = '/base/path';
 
-    const actual = urlMapperService.basePath;
+    const actual = service.basePath;
 
     expect(actual).toBe(expected);
   });
@@ -86,106 +86,173 @@ describe('UrlMapperService', () => {
   it('should trim the leading slash', () => {
     const expected = 'some/path';
 
-    const actual = urlMapperService.trimLeadingSlash('/some/path');
+    const actual = service.trimLeadingSlash('/some/path');
 
     expect(actual).toBe(expected);
   });
 
-  it('should map nav item to the browser url', () => {
-    const expected = '/base/path/path/to/app/path/to/page?param1=value1#hash-data';
-    const navItem: NavItem = {
-      id: 'some-id',
-      appIframeUrl: 'https://iframe-domain.com/path/to/app',
-      appPath: 'path/to/page?param1=value1#hash-data',
-    };
+  describe('extractPathAndQueryStringAndHash', () => {
+    it('should extract the path part the query string part with hash', () => {
+      const expected = ['some/path', '?param=value#some-hash'];
 
-    const actual = urlMapperService.mapNavItemToBrowserUrl(navItem);
+      const actual = service.extractPathAndQueryStringAndHash('some/path?param=value#some-hash');
 
-    expect(actual).toBe(expected);
+      expect(actual).toEqual(expected);
+    });
+
+    it('should extract the path part and the query string only if there is no hash', () => {
+      const expected = ['some/path', '?param=value'];
+
+      const actual = service.extractPathAndQueryStringAndHash('some/path?param=value');
+
+      expect(actual).toEqual(expected);
+    });
+
+    it('should extract the path part and the hash only if there is no a query string', () => {
+      const expected = ['some/path', '#some-hash'];
+
+      const actual = service.extractPathAndQueryStringAndHash('some/path#some-hash');
+
+      expect(actual).toEqual(expected);
+    });
+
+    it('should extract the path part only and an empty query string with hash if there is no a query string and hash', () => {
+      const expected = ['some/path', ''];
+
+      const actual = service.extractPathAndQueryStringAndHash('some/path');
+
+      expect(actual).toEqual(expected);
+    });
+
+    it('should preserve the leading slash', () => {
+      const expected = ['/some/path', '?param'];
+
+      const actual = service.extractPathAndQueryStringAndHash('/some/path?param');
+
+      expect(actual).toEqual(expected);
+    });
+
+    it('should preserve the trailing slash', () => {
+      const expected = ['some/path/', '?param'];
+
+      const actual = service.extractPathAndQueryStringAndHash('some/path/?param');
+
+      expect(actual).toEqual(expected);
+    });
   });
 
-  it('should map nav item to the browser url with stripped off "iframe" path part from iframe url', () => {
-    const expected = '/base/path/path/to/app/path/to/page?param1=value1#hash-data';
-    const navItem: NavItem = {
-      id: 'some-id',
-      appIframeUrl: 'https://iframe-domain.com/iframe/path/to/app',
-      appPath: 'path/to/page?param1=value1#hash-data',
-    };
+  describe('mapNavItemToBrowserUrl', () => {
+    it('should map nav item to the browser url', () => {
+      const expected = '/base/path/path/to/app/path/to/page?param1=value1#hash-data';
+      const navItem: NavItem = {
+        id: 'some-id',
+        appIframeUrl: 'https://iframe-domain.com/path/to/app',
+        appPath: 'path/to/page?param1=value1#hash-data',
+      };
 
-    const actual = urlMapperService.mapNavItemToBrowserUrl(navItem);
+      const actual = service.mapNavItemToBrowserUrl(navItem);
 
-    expect(actual).toBe(expected);
+      expect(actual).toBe(expected);
+    });
+
+    it('should map nav item to the browser url with stripped off "iframe" path part from iframe url', () => {
+      const expected = '/base/path/path/to/app/path/to/page?param1=value1#hash-data';
+      const navItem: NavItem = {
+        id: 'some-id',
+        appIframeUrl: 'https://iframe-domain.com/iframe/path/to/app',
+        appPath: 'path/to/page?param1=value1#hash-data',
+      };
+
+      const actual = service.mapNavItemToBrowserUrl(navItem);
+
+      expect(actual).toBe(expected);
+    });
+
+    it('should map nav item to the browser url with stripped off base path part from iframe url', () => {
+      const expected = '/base/path/path/to/app/path/to/page?param1=value1#hash-data';
+      const navItem: NavItem = {
+        id: 'some-id',
+        appIframeUrl: 'https://iframe-domain.com/base/path/path/to/app',
+        appPath: 'path/to/page?param1=value1#hash-data',
+      };
+
+      const actual = service.mapNavItemToBrowserUrl(navItem);
+
+      expect(actual).toBe(expected);
+    });
+
+    it('should map nav item to the browser url with stripped off "iframe" and base path parts from iframe url', () => {
+      const expected = '/base/path/path/to/app/path/to/page?param1=value1#hash-data';
+      const navItem: NavItem = {
+        id: 'some-id',
+        appIframeUrl: 'https://iframe-domain.com/base/path/iframe/path/to/app',
+        appPath: 'path/to/page?param1=value1#hash-data',
+      };
+
+      const actual = service.mapNavItemToBrowserUrl(navItem);
+
+      expect(actual).toBe(expected);
+    });
+
+    it('should throw an exception when the nav item contains a relative url instead of an absolute one', () => {
+      const expectedError = new InternalError(undefined, 'The url has incorrect format: /some/url');
+
+      const navItem: NavItem = {
+        id: 'some-id',
+        appIframeUrl: '/some/url',
+        appPath: 'path/to/page',
+      };
+
+      expect(() => service.mapNavItemToBrowserUrl(navItem)).toThrow(expectedError);
+    });
   });
 
-  it('should map nav item to the browser url with stripped off base path part from iframe url', () => {
-    const expected = '/base/path/path/to/app/path/to/page?param1=value1#hash-data';
-    const navItem: NavItem = {
-      id: 'some-id',
-      appIframeUrl: 'https://iframe-domain.com/base/path/path/to/app',
-      appPath: 'path/to/page?param1=value1#hash-data',
-    };
+  describe('mapNavLocationToBrowserUrl', () => {
+    it('should map nav location to the browser url', () => {
+      const expected = ['/base/path/iframe1/url/app/path/to/page1?param1=value1#hash-data', navItemsMock[1]];
 
-    const actual = urlMapperService.mapNavItemToBrowserUrl(navItem);
+      navItemServiceMock.findNavItem.and.returnValue(navItemsMock[1]);
+      const navLocation: NavLocation = {
+        path: 'app/path/to/page1?param1=value1#hash-data',
+      };
 
-    expect(actual).toBe(expected);
-  });
+      const actual = service.mapNavLocationToBrowserUrl(navLocation);
 
-  it('should map nav item to the browser url with stripped off "iframe" and base path parts from iframe url', () => {
-    const expected = '/base/path/path/to/app/path/to/page?param1=value1#hash-data';
-    const navItem: NavItem = {
-      id: 'some-id',
-      appIframeUrl: 'https://iframe-domain.com/base/path/iframe/path/to/app',
-      appPath: 'path/to/page?param1=value1#hash-data',
-    };
+      expect(actual).toEqual(expected);
+    });
 
-    const actual = urlMapperService.mapNavItemToBrowserUrl(navItem);
+    it('should map nav location with sub path part to the browser url', () => {
+      const expected = ['/base/path/iframe1/url/app/path/to/page1/some/detailed/page?param1=value1#hash-data', navItemsMock[1]];
 
-    expect(actual).toBe(expected);
-  });
+      navItemServiceMock.findNavItem.and.returnValue(navItemsMock[1]);
+      const navLocation: NavLocation = {
+        path: 'app/path/to/page1/some/detailed/page?param1=value1#hash-data',
+      };
 
-  it('should map nav location to the browser url', () => {
-    const expected = ['/base/path/iframe1/url/app/path/to/page1/some/detailed/page?param1=value1#hash-data', navItemsMock[1]];
+      const actual = service.mapNavLocationToBrowserUrl(navLocation);
 
-    navItemServiceMock.findNavItem.and.returnValue(navItemsMock[1]);
-    const navLocation: NavLocation = {
-      path: 'app/path/to/page1/some/detailed/page?param1=value1#hash-data',
-    };
+      expect(actual).toEqual(expected);
+    });
 
-    const actual = urlMapperService.mapNavLocationToBrowserUrl(navLocation);
+    it('should use pathPrefix when searching for a nav item', () => {
+      navItemServiceMock.findNavItem.and.returnValue(navItemsMock[1]);
+      const navLocation: NavLocation = {
+        pathPrefix: '/some/path/prefix',
+        path: 'app/path/to/page1',
+      };
 
-    expect(actual).toEqual(expected);
-  });
+      service.mapNavLocationToBrowserUrl(navLocation);
 
-  it('should use pathPrefix when searching for a nav item', () => {
-    navItemServiceMock.findNavItem.and.returnValue(navItemsMock[1]);
-    const navLocation: NavLocation = {
-      pathPrefix: '/some/path/prefix',
-      path: 'app/path/to/page1',
-    };
+      expect(navItemServiceMock.findNavItem).toHaveBeenCalledWith('app/path/to/page1', '/some/path/prefix');
+    });
 
-    urlMapperService.mapNavLocationToBrowserUrl(navLocation);
+    it('should throw an exception during mapNavLocationToBrowserUrl invocation when the active app is not set' +
+      ' and the current app is used', () => {
+      const expected = new InternalError('Initialization problem', 'Active app is not set');
 
-    expect(navItemServiceMock.findNavItem).toHaveBeenCalledWith('app/path/to/page1', '/some/path/prefix');
-  });
+      clientAppServiceMock.activeApp = undefined;
 
-  it('should throw an exception during mapNavLocationToBrowserUrl invocation when the active app is not set' +
-    ' and the current app is used', () => {
-    const expected = new InternalError('Initialization problem', 'Active app is not set');
-
-    clientAppServiceMock.activeApp = undefined;
-
-    expect(() => urlMapperService.mapNavLocationToBrowserUrl({ path: '' }, true)).toThrow(expected);
-  });
-
-  it('should throw an exception when the nav item contains a relative url instead of an absolute one', () => {
-    const expectedError = new InternalError(undefined, 'The url has incorrect format: /some/url');
-
-    const navItem: NavItem = {
-      id: 'some-id',
-      appIframeUrl: '/some/url',
-      appPath: 'path/to/page',
-    };
-
-    expect(() => urlMapperService.mapNavItemToBrowserUrl(navItem)).toThrow(expectedError);
+      expect(() => service.mapNavLocationToBrowserUrl({ path: '' }, true)).toThrow(expected);
+    });
   });
 });
