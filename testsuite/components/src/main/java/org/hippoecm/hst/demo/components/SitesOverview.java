@@ -20,6 +20,7 @@ import java.util.List;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.configuration.hosting.Mount;
@@ -53,14 +54,15 @@ public class SitesOverview extends BaseHstComponent {
     @Override
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
 
-        Session writableSession = null;
         try {
-            writableSession = this.getPersistableSession(request);
+            // since this session is obtained via a pooling session, it will be automatically logged out at the end of
+            // the request, do not logout manually
+            Session workflowSession  = request.getRequestContext().getSession().impersonate(new SimpleCredentials("workflowuser", new char[0]));
 
             if(request.getParameter("touch") != null) {
-                Node hstHostsNode = writableSession.getNode("/hst:hst/hst:hosts");
+                Node hstHostsNode = workflowSession.getNode("/hst:hst/hst:hosts");
                 hstHostsNode.setProperty("hst:pagenotfound", "error " + ++counter);
-                writableSession.save();
+                workflowSession.save();
             } else {
                 String numberStr = request.getParameter("number");
                 int numberToAdd = Integer.parseInt(numberStr);
@@ -74,7 +76,7 @@ public class SitesOverview extends BaseHstComponent {
                     numberToAdd--;
 
                     // add a new host first: First check the first non-existing 'com' + integer host:
-                    Node localHost = writableSession.getNode("/hst:hst/hst:hosts/dev-test-many/localhost");
+                    Node localHost = workflowSession.getNode("/hst:hst/hst:hosts/dev-test-many/localhost");
                     while(localHost.hasNode("com" + tryToAdd)) {
                         tryToAdd++;
                     }
@@ -85,31 +87,31 @@ public class SitesOverview extends BaseHstComponent {
                     mount.setProperty("hst:alias", "mount"+tryToAdd);
 
                     // add a new hst:site
-                    Node site = writableSession.getNode("/hst:hst/hst:sites").addNode("demosite-test-many"+tryToAdd, "hst:site");
+                    Node site = workflowSession.getNode("/hst:hst/hst:sites").addNode("demosite-test-many"+tryToAdd, "hst:site");
                     site.setProperty("hst:content", "/content/documents/demosite");
 
                     // now copy the hst:configurations
 
-                    Node config = writableSession.getNode("/hst:hst/hst:configurations").addNode("demosite-test-many" + tryToAdd, "hst:configuration");
+                    Node config = workflowSession.getNode("/hst:hst/hst:configurations").addNode("demosite-test-many" + tryToAdd, "hst:configuration");
                     String[] inherits = {"../democommon"};
                     config.setProperty("hst:inheritsfrom", inherits);
 
-                    JcrUtils.copy(writableSession, "/hst:hst/hst:configurations/demosite-test-many/hst:sitemap", config.getPath() + "/hst:sitemap");
-                    JcrUtils.copy(writableSession,"/hst:hst/hst:configurations/demosite-test-many/hst:sitemenus", config.getPath() + "/hst:sitemenus");
-                    JcrUtils.copy(writableSession,"/hst:hst/hst:configurations/demosite-test-many/hst:channel", config.getPath() + "/hst:channel");
+                    JcrUtils.copy(workflowSession, "/hst:hst/hst:configurations/demosite-test-many/hst:sitemap", config.getPath() + "/hst:sitemap");
+                    JcrUtils.copy(workflowSession,"/hst:hst/hst:configurations/demosite-test-many/hst:sitemenus", config.getPath() + "/hst:sitemenus");
+                    JcrUtils.copy(workflowSession,"/hst:hst/hst:configurations/demosite-test-many/hst:channel", config.getPath() + "/hst:channel");
 
                     // update channel
-                    Node channel = config.getNode("/hst:channel");
+                    Node channel = config.getNode("hst:channel");
                     channel.setProperty("hst:name", "Test Many Site " + tryToAdd);
                     Node channelInfo = channel.getNode("hst:channelinfo");
                     channelInfo.setProperty("exampleValue", "example " + tryToAdd);
 
                     if (copyComponents) {
-                        JcrUtils.copy(writableSession, "/hst:hst/hst:configurations/demosite-test-many/hst:pages", config.getPath() + "/hst:pages");
-                        JcrUtils.copy(writableSession,"/hst:hst/hst:configurations/demosite-test-many/hst:templates",  config.getPath()  + "/hst:templates");
+                        JcrUtils.copy(workflowSession, "/hst:hst/hst:configurations/demosite-test-many/hst:pages", config.getPath() + "/hst:pages");
+                        JcrUtils.copy(workflowSession,"/hst:hst/hst:configurations/demosite-test-many/hst:templates",  config.getPath()  + "/hst:templates");
                     }
 
-                    writableSession.save();
+                    workflowSession.save();
 
                 }
             }
@@ -118,10 +120,6 @@ public class SitesOverview extends BaseHstComponent {
             log.error(e.toString(),e);
         } catch (NumberFormatException e) {
             log.error(e.toString(),e);
-        } finally {
-            if(writableSession != null) {
-                writableSession.logout();
-            }
         }
 
     }
