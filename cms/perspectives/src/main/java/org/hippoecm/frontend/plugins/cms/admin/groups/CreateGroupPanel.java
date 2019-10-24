@@ -28,6 +28,7 @@ import org.apache.wicket.model.CompoundPropertyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.validation.IValidatable;
+import org.apache.wicket.validation.IValidator;
 import org.apache.wicket.validation.ValidationError;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
@@ -100,12 +101,10 @@ public class CreateGroupPanel extends AdminBreadCrumbPanel {
         return new StringResourceModel("group-create", component);
     }
 
-    private static final class GroupNameValidator extends StringValidator {
+    private static final class GroupNameValidator implements IValidator<String> {
 
         @Override
         public void validate(final IValidatable<String> validatable) {
-            super.validate(validatable);
-
             final String groupName = validatable.getValue();
             if (Group.exists(groupName)) {
                 validatable.error(new ValidationError(this, "exists"));
