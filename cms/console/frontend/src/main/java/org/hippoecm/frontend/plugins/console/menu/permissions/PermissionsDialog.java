@@ -25,6 +25,7 @@ import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -137,17 +138,42 @@ public class PermissionsDialog extends Dialog<Node> {
             final Session jcrSession = subject.getSession();
             selectedUserJcrSession = (HippoSession) jcrSession.impersonate(new SimpleCredentials(userID, new char[]{}));
 
-            // getPrivileges() must be called before getSupportedPrivileges() to ensure they are all 'loaded'
-            final String subjectPath = subject.getPath();
-            final SortedMap<String, DomainInfoPrivilege> privileges = getPrivileges(subjectPath, selectedUserJcrSession);
-            if (privileges.containsKey(JCR_WRITE)) {
-                JCR_WRITE_PRIVILEGES.forEach(s -> privileges.remove(s));
+            try {
+                // The path for the selected user can be *different* then the path from the subject node! This is because
+                // SNS variants below a handle get reshuffled based on read access in the repository in
+                // HippoLocalItemStateManager#reorderHandleChildNodeEntries : hence first try to fetch the node with the
+                // user session and then get the path from the fetched node : as a result, for example the path from
+                // subject.getNode().getPath() can be for example /content/documents/mydoc/mydoc[3] while below the
+                // subjectPathForSelectedUser can have become /content/documents/mydoc/mydoc
+                final String subjectPathForSelectedUser = selectedUserJcrSession.getNodeByIdentifier(subject.getIdentifier()).getPath();
+                final SortedMap<String, DomainInfoPrivilege> privileges = getPrivileges(subjectPathForSelectedUser, selectedUserJcrSession);
+                if (privileges.containsKey(JCR_WRITE)) {
+                    JCR_WRITE_PRIVILEGES.forEach(s -> privileges.remove(s));
+                }
+                if (privileges.containsKey(JCR_ALL)) {
+                    JCR_ALL_PRIVILEGES.forEach(s -> privileges.remove(s));
+                    privileges.remove(JCR_WRITE);
+                }
+
+                final StringBuilder builder = new StringBuilder();
+                privileges.forEach((name, domainInfoPrivilege) -> {
+                    builder.append("\n").append(name).append(" : ");
+                    domainInfoPrivilege.getDomainPaths().stream()
+                            .forEach(domainPath -> builder.append("\n\t").append("domain: ").append(domainPath));
+
+                });
+
+                multiLinePrivileges = builder.toString();
+
+                final Set<String> actions = getAllowedActions(subjectPathForSelectedUser, selectedUserJcrSession, JCR_ACTIONS);
+                actionsLabel.setDefaultModel(Model.of(StringUtils.join(actions, ", ")));
+
+            } catch (ItemNotFoundException e) {
+                actionsLabel.setDefaultModel(Model.of("<<none>>"));
+                multiLinePrivileges = "<<none>>";
+                log.info("Node '{}' not readable by session '{}'", subject.getIdentifier(), userID);
             }
-            if (privileges.containsKey(JCR_ALL)) {
-                JCR_ALL_PRIVILEGES.forEach(s -> privileges.remove(s));
-                privileges.remove(JCR_WRITE);
-            }
-            final Set<String> actions = getAllowedActions(subjectPath, selectedUserJcrSession, JCR_ACTIONS);
+
             final Set<String> userRoles = new TreeSet<>(selectedUserJcrSession.getUser().getUserRoles());
             if (userRoles.isEmpty()) {
                 userRolesLabel.setDefaultModel(Model.of("<<none>>"));
@@ -160,26 +186,6 @@ public class PermissionsDialog extends Dialog<Node> {
                 membershipsLabel.setDefaultModel(Model.of("<<none>>"));
             } else {
                 membershipsLabel.setDefaultModel(Model.of(StringUtils.join(memberships, ", ")));
-            }
-            if (actions.isEmpty()) {
-                actionsLabel.setDefaultModel(Model.of("<<none>>"));
-            } else {
-                actionsLabel.setDefaultModel(Model.of(StringUtils.join(actions, ", ")));
-            }
-
-            if (privileges.isEmpty()) {
-                multiLinePrivileges = "<<none>>";
-            } else {
-
-                final StringBuilder builder = new StringBuilder();
-                privileges.forEach((name, domainInfoPrivilege) -> {
-                    builder.append("\n").append(name).append(" : ");
-                    domainInfoPrivilege.getDomainPaths().stream()
-                            .forEach(domainPath -> builder.append("\n\t").append("domain: ").append(domainPath));
-
-                });
-
-                multiLinePrivileges = builder.toString();
             }
 
             exception.setDefaultModel(Model.of(""));
