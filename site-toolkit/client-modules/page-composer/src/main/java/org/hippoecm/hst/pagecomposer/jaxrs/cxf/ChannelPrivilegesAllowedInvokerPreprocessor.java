@@ -29,6 +29,7 @@ import javax.jcr.security.Privilege;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.message.Exchange;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.ChannelAgnostic;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
@@ -46,6 +47,12 @@ public class ChannelPrivilegesAllowedInvokerPreprocessor extends PrivilegesAllow
     @Override
     protected Optional<String> isForbiddenOperationContext(final Exchange exchange,
                                                            final Method method, Set<String> privilegesAllowed) {
+
+        if (method.getAnnotation(ChannelAgnostic.class) != null) {
+            log.info("Method '{}' is channel agnostic", method.getName());
+            return Optional.empty();
+        }
+        
         try {
             final Session session = RequestContextProvider.get().getSession();
             if (!getPageComposerContextService().isRenderingMountSet()) {

@@ -28,6 +28,7 @@ import javax.ws.rs.PUT;
 
 import org.apache.cxf.message.Exchange;
 import org.hippoecm.hst.jaxrs.cxf.InvokerPreprocessor;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.ChannelAgnostic;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.IgnoreLock;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
@@ -45,6 +46,13 @@ public class HstConfigLockedCheckInvokerPreprocessor extends AbstractInvokerPreP
     @Override
     public Optional<String> isForbiddenOperation(final Exchange exchange) {
 
+        final Method method = getMethod(exchange);
+
+        ChannelAgnostic channelAgnostic = method.getAnnotation(ChannelAgnostic.class);
+        if (channelAgnostic != null) {
+            log.info("Method '{}' is channel agnostic", method.getName());
+            return Optional.empty();
+        }
 
         if (!getPageComposerContextService().isRenderingMountSet()) {
             getLogger().debug("No preview channel yet so also not (yet) locked");
@@ -58,7 +66,6 @@ public class HstConfigLockedCheckInvokerPreprocessor extends AbstractInvokerPreP
             return Optional.empty();
         }
 
-        final Method method = getMethod(exchange);
 
         GET get = method.getAnnotation(GET.class);
         if (get != null) {

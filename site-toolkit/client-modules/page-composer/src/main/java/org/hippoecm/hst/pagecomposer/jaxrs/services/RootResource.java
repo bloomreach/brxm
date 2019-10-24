@@ -51,6 +51,7 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.BeforeChannelDeleteEventImpl;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.ChannelAgnostic;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.IgnoreLock;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
@@ -104,6 +105,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @Path("/channels")
     @Produces(MediaType.APPLICATION_JSON)
     @PermitAll
+    @ChannelAgnostic
     public Response getChannels(@HeaderParam("hostGroup") final String hostGroup,
                                 @QueryParam("previewConfigRequired") final boolean previewConfigRequired,
                                 @QueryParam("workspaceRequired") final boolean workspaceRequired,
@@ -133,6 +135,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     // would be if the cms-user would have 'viewer' privilege on target 'channelId' but then it becomes quite
     // complex to find which channel to check in PrivilegesAllowedInvokerPreprocessor
     @PermitAll
+    @ChannelAgnostic
     public Response getChannel(@HeaderParam("contextPath") final String contextPath,
                                @HeaderParam("hostGroup") final String hostGroup,
                                @PathParam("id") String channelId) {
@@ -255,6 +258,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     // PermitAll because this method is invoked before a channel has been set on the cms session context, hence
     // PrivilegesAllowedInvokerPreprocessor does not yet 'know' which channel to check privileges for
     @PermitAll
+    @ChannelAgnostic
     public Response composerModeGet(@HeaderParam("hostGroup") final String hostGroup,
                                     @Context HttpServletRequest servletRequest,
                                     @PathParam("renderingHost") String renderingHost,
