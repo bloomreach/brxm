@@ -1,5 +1,5 @@
-/**
- * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+/*
+ * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,16 +22,16 @@ import org.apache.wicket.model.IModel;
 
 public class LabelledTextAreaTableRow extends Panel {
 
-    private static final long serialVersionUID = 1L;
-
     protected final Label label;
     protected final TextArea<String> textarea;
 
-    public LabelledTextAreaTableRow(String id, final IModel<String> labelModel, final IModel<String> textareaModel) {
+    public LabelledTextAreaTableRow(final String id, final IModel<String> labelModel, final IModel<String> textareaModel) {
         super(id);
+
         label = new Label("label", labelModel);
         add(label);
-        textarea = new TextArea<String>("textarea", textareaModel);
+
+        textarea = new TextArea<>("textarea", textareaModel);
         add(textarea);
     }
 

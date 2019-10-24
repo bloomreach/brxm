@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,8 +22,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 
 
 public class UpdaterQueueEditor extends UpdaterEditor {
-
-    private static final long serialVersionUID = 1L;
 
     public UpdaterQueueEditor(final IModel<?> model, final IPluginContext context, final Panel container) {
         super(model, context, container);

@@ -37,7 +37,7 @@ public class DeleteUpdaterDialog extends Dialog<Node> {
 
     private final Panel container;
 
-    public DeleteUpdaterDialog(final IModel<Node> defaultModel, Panel container) {
+    public DeleteUpdaterDialog(final IModel<Node> defaultModel, final Panel container) {
         super(defaultModel);
         setTitle(Model.of("Delete Updater"));
         setSize(DialogConstants.SMALL);
@@ -62,7 +62,7 @@ public class DeleteUpdaterDialog extends Dialog<Node> {
         }
     }
 
-    private Node getSiblingOrParent(Node node) throws RepositoryException {
+    private Node getSiblingOrParent(final Node node) throws RepositoryException {
         final Node parent = node.getParent();
         final NodeIterator nodes = parent.getNodes();
         Node sibling = null;
@@ -81,7 +81,7 @@ public class DeleteUpdaterDialog extends Dialog<Node> {
     }
 
     private String getUpdaterName() {
-        Node node = (Node) getDefaultModelObject();
+        final Node node = (Node) getDefaultModelObject();
         if (node != null) {
             try {
                 return node.getName();

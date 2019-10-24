@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.FrontendNodeType;
 import org.hippoecm.frontend.plugins.cms.admin.SearchableDataProvider;
 import org.hippoecm.frontend.plugins.cms.admin.comparators.PropertyComparator;
 import org.hippoecm.frontend.session.UserSession;
@@ -36,10 +37,8 @@ import static java.util.Comparator.nullsLast;
 
 public class UserDataProvider extends SearchableDataProvider<User> {
 
-    private static final long serialVersionUID = 1L;
-    private static final String QUERY_USER_LIST = "SELECT * " +
-                " FROM " + HippoNodeType.NT_USER
-               +" WHERE (hipposys:system <> 'true' OR hipposys:system IS NULL)";
+    private static final String QUERY_USER_LIST = String.format(
+            "SELECT *  FROM %s WHERE (hipposys:system <> 'true' OR hipposys:system IS NULL)", HippoNodeType.NT_USER);
 
     private static final String HIPPO_USERS_NODE_PATH = "/hippo:configuration/hippo:users";
 
@@ -75,15 +74,15 @@ public class UserDataProvider extends SearchableDataProvider<User> {
     }
 
     @Override
-    public Iterator<User> iterator(long first, long count) {
+    public Iterator<User> iterator(final long first, final long count) {
         final List<User> userList = new ArrayList<>(getList());
 
         userList.sort((user1, user2) -> {
             final int direction = getSort().isAscending() ? 1 : -1;
             switch (getSort().getProperty()) {
-                case "frontend:firstname":
+                case FrontendNodeType.FRONTEND_FIRSTNAME:
                     return direction * firstNameComparator.compare(user1, user2);
-                case "frontend:lastname":
+                case FrontendNodeType.FRONTEND_LASTNAME:
                     return direction * lastNameComparator.compare(user1, user2);
                 default:
                     return direction * usernameComparator.compare(user1, user2);

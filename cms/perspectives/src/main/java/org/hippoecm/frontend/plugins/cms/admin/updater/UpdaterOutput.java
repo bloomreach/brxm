@@ -1,5 +1,5 @@
-/**
- * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+/*
+ * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,46 +21,45 @@ import javax.jcr.Binary;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxSelfUpdatingTimerBehavior;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Panel;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.util.io.IOUtils;
 import org.apache.wicket.util.time.Duration;
+import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.repository.util.JcrUtils;
 
 public class UpdaterOutput extends Panel {
 
     public UpdaterOutput(final String id, final Component container, final boolean updating) {
         super(id);
-        final Label output = new Label("output", new AbstractReadOnlyModel<String>() {
-            @Override
-            public String getObject() {
-                final Object o = container.getDefaultModelObject();
-                if (o != null) {
-                    final Node node = (Node) o;
-                    try {
-                        final Binary fullLog = JcrUtils.getBinaryProperty(node, "hipposys:log", null);
-                        if (fullLog != null) {
-                            return IOUtils.toString(fullLog.getStream());
-                        } else {
-                            return JcrUtils.getStringProperty(node, "hipposys:logtail", "");
-                        }
-                    } catch (RepositoryException e) {
-                        return "Cannot read log: " + e.getMessage();
-                    } catch (IOException e) {
-                        return "Cannot read log: " + e.getMessage();
-                    }
-                }
-                return "";
-            }
-        });
+
+        final Label output = new Label("output", ReadOnlyModel.of(() -> parseOutput(container.getDefaultModelObject())));
         if (updating) {
             output.setOutputMarkupId(true);
             output.add(new AjaxSelfUpdatingTimerBehavior(Duration.seconds(5)));
         }
         add(output);
+    }
+
+    private static String parseOutput(final Object o) {
+        if (!(o instanceof Node)) {
+            return StringUtils.EMPTY;
+        }
+
+        final Node node = (Node) o;
+        try {
+            final Binary fullLog = JcrUtils.getBinaryProperty(node, "hipposys:log", null);
+            if (fullLog != null) {
+                return IOUtils.toString(fullLog.getStream());
+            } else {
+                return JcrUtils.getStringProperty(node, "hipposys:logtail", "");
+            }
+        } catch (RepositoryException | IOException e) {
+            return "Cannot read log: " + e.getMessage();
+        }
     }
 
 }

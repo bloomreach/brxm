@@ -1,5 +1,5 @@
-/**
- * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+/*
+ * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,9 +27,7 @@ import org.hippoecm.repository.util.JcrUtils;
 
 public class UpdaterHistoryEditor extends UpdaterEditor {
 
-    private static final long serialVersionUID = 1L;
-
-    public UpdaterHistoryEditor(IModel<?> model, final IPluginContext context, Panel container) {
+    public UpdaterHistoryEditor(final IModel<?> model, final IPluginContext context, final Panel container) {
         super(model, context, container);
     }
 
@@ -63,8 +61,8 @@ public class UpdaterHistoryEditor extends UpdaterEditor {
         final Node node = (Node) getDefaultModelObject();
         if (node != null) {
             try {
-                boolean isRevertRun = JcrUtils.getBooleanProperty(node, HippoNodeType.HIPPOSYS_REVERT, false);
-                boolean isDryRun = JcrUtils.getBooleanProperty(node, HippoNodeType.HIPPOSYS_DRYRUN, false);
+                final boolean isRevertRun = JcrUtils.getBooleanProperty(node, HippoNodeType.HIPPOSYS_REVERT, false);
+                final boolean isDryRun = JcrUtils.getBooleanProperty(node, HippoNodeType.HIPPOSYS_DRYRUN, false);
                 return !isRevertRun && !isDryRun;
             } catch (RepositoryException ignore) {}
         }

@@ -64,7 +64,7 @@ public class CreateUserRolePanel extends AdminBreadCrumbPanel {
 
         final AjaxButton createButton = new AjaxButton("create-button", form) {
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
+            protected void onSubmit(final AjaxRequestTarget target, final Form form) {
                 final String name = userRoleNameField.getDefaultModelObjectAsString();
                 String description = descriptionField.getDefaultModelObjectAsString();
                 final MapModel nameModel = new MapModel<>(Collections.singletonMap("name", name));
@@ -88,7 +88,7 @@ public class CreateUserRolePanel extends AdminBreadCrumbPanel {
             }
 
             @Override
-            protected void onError(AjaxRequestTarget target, Form form) {
+            protected void onError(final AjaxRequestTarget target, final Form form) {
                 // make sure the feedback panel is shown
                 target.add(CreateUserRolePanel.this);
             }
@@ -99,14 +99,14 @@ public class CreateUserRolePanel extends AdminBreadCrumbPanel {
         // add a button that can be used to submit the form via ajax
         form.add(new AjaxButton("cancel-button") {
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
+            protected void onSubmit(final AjaxRequestTarget target, final Form form) {
                 activateParent();
             }
         }.setDefaultFormProcessing(false));
     }
 
     @Override
-    public IModel<String> getTitle(Component component) {
+    public IModel<String> getTitle(final Component component) {
         return new StringResourceModel("userrole-create", component);
     }
 

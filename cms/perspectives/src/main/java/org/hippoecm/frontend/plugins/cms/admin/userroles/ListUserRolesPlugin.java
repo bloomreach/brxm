@@ -28,7 +28,7 @@ import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.Panel
 @SuppressWarnings("unused")
 public class ListUserRolesPlugin extends AdminPanelPlugin {
 
-    public ListUserRolesPlugin(IPluginContext context, IPluginConfig config) {
+    public ListUserRolesPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
     }
 
