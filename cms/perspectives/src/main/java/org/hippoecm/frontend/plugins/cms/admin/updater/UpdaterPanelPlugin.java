@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,7 +28,7 @@ import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.Panel
 @SuppressWarnings("unused")
 public class UpdaterPanelPlugin extends AdminPanelPlugin {
 
-    public UpdaterPanelPlugin(IPluginContext context, IPluginConfig config) {
+    public UpdaterPanelPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
     }
 

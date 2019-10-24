@@ -29,16 +29,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PasswordStrengthValidator implements IValidator<String> {
-    private static final long serialVersionUID = 1L;
+
     private static final Logger log = LoggerFactory.getLogger(PasswordStrengthValidator.class);
 
     private final Component form;
     private final IPasswordValidationService passwordValidationService;
     private final IModel<User> userModel;
 
-    public PasswordStrengthValidator(Component form, IPluginContext context, IModel<User> userModel) {
+    public PasswordStrengthValidator(final Component form, final IPluginContext context, final IModel<User> userModel) {
         this.form = form;
-        this.passwordValidationService = context.getService(IPasswordValidationService.class.getName(), IPasswordValidationService.class);
+        this.passwordValidationService = context.getService(IPasswordValidationService.class.getName(),
+                IPasswordValidationService.class);
         this.userModel = userModel;
     }
 
@@ -56,10 +57,9 @@ public class PasswordStrengthValidator implements IValidator<String> {
 
         try {
             passwordValidationService.checkPassword(password, userModel.getObject()).stream()
-                .filter(status -> !status.accepted())
-                .forEach(status -> form.error(status.getMessage()));
-        }
-        catch (RepositoryException e) {
+                    .filter(status -> !status.accepted())
+                    .forEach(status -> form.error(status.getMessage()));
+        } catch (RepositoryException e) {
             log.error("Failure validating password using password validation service", e);
         }
     }

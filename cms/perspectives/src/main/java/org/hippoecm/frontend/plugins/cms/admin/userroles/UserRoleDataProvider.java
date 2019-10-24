@@ -23,23 +23,19 @@ import org.apache.wicket.extensions.markup.html.repeater.data.sort.SortOrder;
 import org.apache.wicket.extensions.markup.html.repeater.util.SortableDataProvider;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.bloomreach.xm.repository.security.UserRole;
 
 public class UserRoleDataProvider extends SortableDataProvider<UserRole, String> {
 
-    private static final Logger log = LoggerFactory.getLogger(UserRoleDataProvider.class);
-
-    private List<UserRole> userRoles = new ArrayList<>();
+    private final List<UserRole> userRoles = new ArrayList<>();
 
     public UserRoleDataProvider() {
         setSort("name", SortOrder.ASCENDING);
     }
 
     @Override
-    public Iterator<UserRole> iterator(long first, long count) {
+    public Iterator<UserRole> iterator(final long first, final long count) {
         userRoles.sort((userRole1, userRole2) -> {
             final int direction = getSort().isAscending() ? 1 : -1;
             return direction * userRole1.getName().compareTo(userRole2.getName());
@@ -50,7 +46,7 @@ public class UserRoleDataProvider extends SortableDataProvider<UserRole, String>
     }
 
     @Override
-    public IModel<UserRole> model(UserRole userRole) {
+    public IModel<UserRole> model(final UserRole userRole) {
         return new DetachableUserRole(userRole);
     }
 

@@ -34,29 +34,23 @@ import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 
 public class SystemInfoPanel extends AdminBreadCrumbPanel {
 
-    private static final long serialVersionUID = 1L;
-
-    private SystemInfoDataProvider memoryInfo = new SystemInfoDataProvider();
+    private final SystemInfoDataProvider memoryInfo = new SystemInfoDataProvider();
 
     public SystemInfoPanel(final String id, final IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
 
-        List<ICellPopulator> columns = new ArrayList<ICellPopulator>(2);
+        final List<ICellPopulator> columns = new ArrayList<>(2);
         columns.add(new PropertyPopulator("Key"));
         columns.add(new PropertyPopulator("Value"));
         add(new DataGridView("rows", columns, memoryInfo) {
-            private static final long serialVersionUID = 1L;
-
-            protected Item newRowItem(String id, int index, IModel model) {
+            protected Item newRowItem(final String id, final int index, final IModel model) {
                 return new OddEvenItem(id, index, model);
             }
         });
 
         add(new AjaxLink("refresh") {
-            private static final long serialVersionUID = 1L;
-
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 memoryInfo.refresh();
                 target.add(SystemInfoPanel.this);
             }
@@ -64,7 +58,7 @@ public class SystemInfoPanel extends AdminBreadCrumbPanel {
 
     }
 
-    public IModel<String> getTitle(Component component) {
+    public IModel<String> getTitle(final Component component) {
         return new ResourceModel("admin-system-info-title");
     }
 

@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -25,14 +25,9 @@ import org.slf4j.LoggerFactory;
 
 public final class DetachableUser extends LoadableDetachableModel<User> {
 
-    private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(DetachableUser.class);
 
     private String path;
-
-    protected Node getRootNode() throws RepositoryException {
-        return UserSession.get().getJcrSession().getRootNode();
-    }
 
     public DetachableUser() {
     }
@@ -63,7 +58,7 @@ public final class DetachableUser extends LoadableDetachableModel<User> {
 
     /**
      * used for dataview with ReuseIfModelsEqualStrategy item reuse strategy
-     * 
+     *
      * @see org.apache.wicket.markup.repeater.ReuseIfModelsEqualStrategy
      * @see java.lang.Object#equals(java.lang.Object)
      */
@@ -74,7 +69,7 @@ public final class DetachableUser extends LoadableDetachableModel<User> {
         } else if (obj == null) {
             return false;
         } else if (obj instanceof DetachableUser) {
-            DetachableUser other = (DetachableUser) obj;
+            final DetachableUser other = (DetachableUser) obj;
             if (path == null || other.path == null) {
                 return false;
             }
@@ -99,4 +94,9 @@ public final class DetachableUser extends LoadableDetachableModel<User> {
             return null;
         }
     }
+
+    protected Node getRootNode() throws RepositoryException {
+        return UserSession.get().getJcrSession().getRootNode();
+    }
+
 }

@@ -1,5 +1,5 @@
-/**
- * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+/*
+ * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,8 +60,6 @@ import net.sf.json.JSONObject;
 
 public class UpdaterEditor extends Panel {
 
-    private static final long serialVersionUID = 1L;
-
     protected final static Logger log = LoggerFactory.getLogger(UpdaterEditor.class);
 
     protected static final String UPDATE_PATH = "/hippo:configuration/hippo:update";
@@ -69,8 +67,8 @@ public class UpdaterEditor extends Panel {
     protected static final String UPDATE_REGISTRY_PATH = UPDATE_PATH + "/hippo:registry";
     protected static final String UPDATE_HISTORY_PATH = UPDATE_PATH + "/hippo:history";
 
-    private static final long DEFAULT_BATCH_SIZE = 10l;
-    private static final long DEFAULT_THOTTLE = 1000l;
+    private static final long DEFAULT_BATCH_SIZE = 10L;
+    private static final long DEFAULT_THROTTLE = 1000L;
     private static final String DEFAULT_METHOD = "path";
 
     @SuppressWarnings("unchecked")
@@ -86,8 +84,8 @@ public class UpdaterEditor extends Panel {
     protected final Panel container;
     protected final Form form;
     protected final FeedbackPanel feedback;
-    protected String script;
 
+    protected String script;
     protected String name;
     protected String description;
     protected String visitorPath;
@@ -95,11 +93,11 @@ public class UpdaterEditor extends Panel {
     protected String method = DEFAULT_METHOD;
     protected String parameters;
     protected String batchSize = String.valueOf(DEFAULT_BATCH_SIZE);
-    protected String throttle = String.valueOf(DEFAULT_THOTTLE);
+    protected String throttle = String.valueOf(DEFAULT_THROTTLE);
     protected boolean dryRun = false;
     protected String logLevel = Level.DEBUG.toString();
 
-    public UpdaterEditor(IModel<?> model, final IPluginContext context, Panel container) {
+    public UpdaterEditor(final IModel<?> model, final IPluginContext context, final Panel container) {
         super("updater-editor", model);
         this.context = context;
         this.container = container;
@@ -111,10 +109,8 @@ public class UpdaterEditor extends Panel {
         form.add(feedback);
 
         final AjaxButton executeButton = new AjaxButton("execute-button") {
-            private static final long serialVersionUID = 1L;
-
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> currentForm) {
+            protected void onSubmit(final AjaxRequestTarget target, final Form<?> currentForm) {
                 executeUpdater(false);
                 tryRenderFeedback(target);
             }
@@ -133,9 +129,8 @@ public class UpdaterEditor extends Panel {
         form.add(executeButton);
 
         final AjaxButton undoButton = new AjaxButton("undo-button") {
-            private static final long serialVersionUID = 1L;
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> currentForm) {
+            protected void onSubmit(final AjaxRequestTarget target, final Form<?> currentForm) {
                 executeUndo();
                 tryRenderFeedback(target);
             }
@@ -154,9 +149,8 @@ public class UpdaterEditor extends Panel {
         form.add(undoButton);
 
         final AjaxButton dryRunButton = new AjaxButton("dryrun-button") {
-            private static final long serialVersionUID = 1L;
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> currentForm) {
+            protected void onSubmit(final AjaxRequestTarget target, final Form<?> currentForm) {
                 executeUpdater(true);
                 tryRenderFeedback(target);
             }
@@ -175,7 +169,6 @@ public class UpdaterEditor extends Panel {
         form.add(dryRunButton);
 
         final AjaxButton saveButton = new AjaxButton("save-button") {
-            private static final long serialVersionUID = 1L;
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
                 saveUpdater();
@@ -197,9 +190,8 @@ public class UpdaterEditor extends Panel {
         form.add(saveButton);
 
         final AjaxButton stopButton = new AjaxButton("stop-button") {
-            private static final long serialVersionUID = 1L;
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form<?> currentForm) {
+            protected void onSubmit(final AjaxRequestTarget target, final Form<?> currentForm) {
                 stopUpdater();
                 tryRenderFeedback(target);
             }
@@ -217,7 +209,6 @@ public class UpdaterEditor extends Panel {
         form.add(stopButton);
 
         final AjaxButton deleteButton = new AjaxButton("delete-button") {
-            private static final long serialVersionUID = 1L;
             @Override
             protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
                 deleteUpdater();
@@ -238,8 +229,8 @@ public class UpdaterEditor extends Panel {
         final RadioGroup<String> radios = new RadioGroup<>("radios", new PropertyModel<>(this, "method"));
         form.add(radios);
 
-        final LabelledInputFieldTableRow nameField = new LabelledInputFieldTableRow("name", new Model<>("Name"), new PropertyModel<>(this, "name")) {
-            private static final long serialVersionUID = 1L;
+        final LabelledInputFieldTableRow nameField = new LabelledInputFieldTableRow("name", new Model<>("Name"),
+                new PropertyModel<>(this, "name")) {
             @Override
             public boolean isEnabled() {
                 return isNameFieldEnabled();
@@ -252,8 +243,8 @@ public class UpdaterEditor extends Panel {
         };
         radios.add(nameField);
 
-        final LabelledTextAreaTableRow descriptionField = new LabelledTextAreaTableRow("description", new Model<>("Description"), new PropertyModel<>(this, "description")) {
-            private static final long serialVersionUID = 1L;
+        final LabelledTextAreaTableRow descriptionField = new LabelledTextAreaTableRow("description",
+                new Model<>("Description"), new PropertyModel<>(this, "description")) {
             @Override
             public boolean isEnabled() {
                 return isDescriptionFieldEnabled();
@@ -268,8 +259,8 @@ public class UpdaterEditor extends Panel {
 
         radios.add(new Label("select", new Model<>("Select node using")));
 
-        final RadioLabelledInputFieldTableRow pathField = new RadioLabelledInputFieldTableRow("path", radios, new Model<>("Repository path"), new PropertyModel<>(this, "visitorPath")) {
-            private static final long serialVersionUID = 1L;
+        final RadioLabelledInputFieldTableRow pathField = new RadioLabelledInputFieldTableRow("path", radios,
+                new Model<>("Repository path"), new PropertyModel<>(this, "visitorPath")) {
             @Override
             public boolean isEnabled() {
                 return isPathFieldEnabled();
@@ -287,8 +278,8 @@ public class UpdaterEditor extends Panel {
         };
         radios.add(pathField);
 
-        final RadioLabelledInputFieldTableRow queryField = new RadioLabelledInputFieldTableRow("query", radios, new Model<>("XPath query"), new PropertyModel<>(this, "visitorQuery")) {
-            private static final long serialVersionUID = 1L;
+        final RadioLabelledInputFieldTableRow queryField = new RadioLabelledInputFieldTableRow("query", radios,
+                new Model<>("XPath query"), new PropertyModel<>(this, "visitorQuery")) {
             @Override
             public boolean isEnabled() {
                 return isQueryFieldEnabled();
@@ -308,7 +299,6 @@ public class UpdaterEditor extends Panel {
 
         final RadioLabelledInputFieldTableRow customField = new RadioLabelledInputFieldTableRow("custom", radios,
                 new Model<>("Updater"), new Model<>("")) {
-            private static final long serialVersionUID = 1L;
             @Override
             public boolean isEnabled() {
                 return isCustomFieldEnabled();
@@ -327,8 +317,8 @@ public class UpdaterEditor extends Panel {
         customField.input.setVisible(false);
         radios.add(customField);
 
-        final LabelledTextAreaTableRow parametersField = new LabelledTextAreaTableRow("parameters", new Model<>("Parameters"), new PropertyModel<>(this, "parameters")) {
-            private static final long serialVersionUID = 1L;
+        final LabelledTextAreaTableRow parametersField = new LabelledTextAreaTableRow("parameters",
+                new Model<>("Parameters"), new PropertyModel<>(this, "parameters")) {
             @Override
             public boolean isEnabled() {
                 return isParametersFieldEnabled();
@@ -341,8 +331,8 @@ public class UpdaterEditor extends Panel {
         };
         radios.add(parametersField);
 
-        final LabelledInputFieldTableRow batchSizeField = new LabelledInputFieldTableRow("batch-size", new Model<>("Batch Size"), new PropertyModel<>(this, "batchSize")) {
-            private static final long serialVersionUID = 1L;
+        final LabelledInputFieldTableRow batchSizeField = new LabelledInputFieldTableRow("batch-size",
+                new Model<>("Batch Size"), new PropertyModel<>(this, "batchSize")) {
             @Override
             public boolean isEnabled() {
                 return isBatchSizeFieldEnabled();
@@ -356,8 +346,8 @@ public class UpdaterEditor extends Panel {
         };
         radios.add(batchSizeField);
 
-        final LabelledInputFieldTableRow throttleField = new LabelledInputFieldTableRow("throttle", new Model<>("Throttle (ms)"), new PropertyModel<>(this, "throttle")) {
-            private static final long serialVersionUID = 1L;
+        final LabelledInputFieldTableRow throttleField = new LabelledInputFieldTableRow("throttle",
+                new Model<>("Throttle (ms)"), new PropertyModel<>(this, "throttle")) {
             @Override
             public boolean isEnabled() {
                 return isThrottleFieldEnabled();
@@ -372,7 +362,6 @@ public class UpdaterEditor extends Panel {
 
         final LabelledDropDownFieldTableRow logLevelField = new LabelledDropDownFieldTableRow("log-level",
                 new Model<>("Log Level"), new PropertyModel<>(this, "logLevel"), LOG_LEVELS_MAP) {
-            private static final long serialVersionUID = 1L;
 
             @Override
             public boolean isEnabled() {
@@ -386,8 +375,8 @@ public class UpdaterEditor extends Panel {
         };
         radios.add(logLevelField);
 
-        final LabelledCheckBoxTableRow dryRunCheckBox = new LabelledCheckBoxTableRow("dryrun", new Model<>("Dry run"), new PropertyModel<>(this, "dryRun")) {
-            private static final long serialVersionUID = 1L;
+        final LabelledCheckBoxTableRow dryRunCheckBox = new LabelledCheckBoxTableRow("dryrun", new Model<>("Dry run"),
+                new PropertyModel<>(this, "dryRun")) {
             @Override
             public boolean isEnabled() {
                 return false;
@@ -402,7 +391,8 @@ public class UpdaterEditor extends Panel {
 
         script = getStringProperty(HippoNodeType.HIPPOSYS_SCRIPT, null);
 
-        final CodeMirrorEditor scriptEditor = new CodeMirrorEditor("script-editor", getEditorName(), new PropertyModel<>(this, "script"));
+        final CodeMirrorEditor scriptEditor = new CodeMirrorEditor("script-editor", getEditorName(),
+                new PropertyModel<>(this, "script"));
         scriptEditor.setReadOnly(isScriptEditorReadOnly());
         form.add(scriptEditor);
 
@@ -416,7 +406,7 @@ public class UpdaterEditor extends Panel {
         loadProperties();
     }
 
-    private void tryRenderFeedback(AjaxRequestTarget target) {
+    private void tryRenderFeedback(final AjaxRequestTarget target) {
         if (feedback.findParent(Page.class) != null) {
             target.add(feedback);
         }
@@ -440,11 +430,10 @@ public class UpdaterEditor extends Panel {
         visitorPath = getStringProperty(HippoNodeType.HIPPOSYS_PATH, null);
         visitorQuery = getStringProperty(HippoNodeType.HIPPOSYS_QUERY, null);
         batchSize = String.valueOf(getLongProperty(HippoNodeType.HIPPOSYS_BATCHSIZE, DEFAULT_BATCH_SIZE));
-        throttle = String.valueOf(getLongProperty(HippoNodeType.HIPPOSYS_THROTTLE, DEFAULT_THOTTLE));
+        throttle = String.valueOf(getLongProperty(HippoNodeType.HIPPOSYS_THROTTLE, DEFAULT_THROTTLE));
         if (visitorQuery != null) {
             method = "query";
-        }
-        else if (visitorPath != null) {
+        } else if (visitorPath != null) {
             method = "path";
         } else {
             method = "custom";
@@ -465,7 +454,7 @@ public class UpdaterEditor extends Panel {
         return null;
     }
 
-    protected final String getStringProperty(String propertyName, String defaultValue) {
+    protected final String getStringProperty(final String propertyName, final String defaultValue) {
         final Node node = (Node) getDefaultModelObject();
         if (node != null) {
             try {
@@ -477,7 +466,7 @@ public class UpdaterEditor extends Panel {
         return defaultValue;
     }
 
-    protected final boolean getBooleanProperty(String propertyName, boolean defaultValue) {
+    protected final boolean getBooleanProperty(final String propertyName, final boolean defaultValue) {
         final Node node = (Node) getDefaultModelObject();
         if (node != null) {
             try {
@@ -489,7 +478,7 @@ public class UpdaterEditor extends Panel {
         return defaultValue;
     }
 
-    protected final Long getLongProperty(String propertyName, Long defaultValue) {
+    protected final Long getLongProperty(final String propertyName, final Long defaultValue) {
         final Node node = (Node) getDefaultModelObject();
         if (node != null) {
             try {
@@ -502,7 +491,7 @@ public class UpdaterEditor extends Panel {
     }
 
     protected boolean isUpdater() {
-        Node node = (Node) getDefaultModelObject();
+        final Node node = (Node) getDefaultModelObject();
         if (node != null) {
             try {
                 return node.isNodeType("hipposys:updaterinfo");
@@ -513,12 +502,12 @@ public class UpdaterEditor extends Panel {
         return false;
     }
 
-    protected Component createOutputComponent(String id) {
+    protected Component createOutputComponent(final String id) {
         return new Label(id);
     }
 
     protected void deleteUpdater() {
-        IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
+        final IDialogService dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
         dialogService.show(new DeleteUpdaterDialog((IModel<Node>) getDefaultModel(), container));
     }
 
@@ -534,8 +523,7 @@ public class UpdaterEditor extends Panel {
             if (isCustomMethod()) {
                 node.setProperty(HippoNodeType.HIPPOSYS_PATH, (String) null);
                 node.setProperty(HippoNodeType.HIPPOSYS_QUERY, (String) null);
-            }
-            else if (isPathMethod()) {
+            } else if (isPathMethod()) {
                 if (!validateVisitorPath()) {
                     return false;
                 }
@@ -552,18 +540,19 @@ public class UpdaterEditor extends Panel {
             if (!validateBatchSize()) {
                 return false;
             }
-            node.setProperty(HippoNodeType.HIPPOSYS_BATCHSIZE, Long.valueOf(batchSize));
+            node.setProperty(HippoNodeType.HIPPOSYS_BATCHSIZE, Long.parseLong(batchSize));
             if (!validateThrottle()) {
                 return false;
             }
-            node.setProperty(HippoNodeType.HIPPOSYS_THROTTLE, Long.valueOf(throttle));
+            node.setProperty(HippoNodeType.HIPPOSYS_THROTTLE, Long.parseLong(throttle));
             node.setProperty(HippoNodeType.HIPPOSYS_SCRIPT, script);
             if (!node.getName().equals(name)) {
                 rename();
             }
             node.setProperty(HippoNodeType.HIPPOSYS_DESCRIPTION, StringUtils.defaultString(description));
             node.setProperty(HippoNodeType.HIPPOSYS_PARAMETERS, StringUtils.defaultString(parameters));
-            node.setProperty(HippoNodeType.HIPPOSYS_LOGLEVEL, StringUtils.defaultIfBlank(logLevel, Level.DEBUG.toString()));
+            node.setProperty(HippoNodeType.HIPPOSYS_LOGLEVEL,
+                    StringUtils.defaultIfBlank(logLevel, Level.DEBUG.toString()));
             node.getSession().save();
             return true;
         } catch (RepositoryException e) {
@@ -590,7 +579,7 @@ public class UpdaterEditor extends Panel {
             return true;
         }
         try {
-            JSONObject json = JSONObject.fromObject(parameters);
+            final JSONObject json = JSONObject.fromObject(parameters);
             return json != null;
         } catch (JSONException e) {
             form.error(getString("parameters-invalid-json"));
@@ -612,7 +601,7 @@ public class UpdaterEditor extends Panel {
         try {
             Long.valueOf(batchSize);
             return true;
-        } catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             form.error(getString("batchsize-must-be-positive"));
             return false;
         }
@@ -630,7 +619,7 @@ public class UpdaterEditor extends Panel {
                 return false;
             }
         } catch (RepositoryException e) {
-            String message = getString("path-not-wellformed");
+            final String message = getString("path-not-wellformed");
             form.error(message);
             if (log.isDebugEnabled()) {
                 log.error(message, e);
@@ -687,7 +676,7 @@ public class UpdaterEditor extends Panel {
         }
     }
 
-    private void executeUpdater(boolean dryRun) {
+    private void executeUpdater(final boolean dryRun) {
         this.dryRun = dryRun;
         if (!saveUpdater()) {
             return;
@@ -728,9 +717,9 @@ public class UpdaterEditor extends Panel {
                     queuedNode.setProperty(HippoNodeType.HIPPOSYS_STARTEDBY, session.getUserID());
                     queuedNode.setProperty(HippoNodeType.HIPPOSYS_REVERT, true);
                     queuedNode.setProperty(HippoNodeType.HIPPOSYS_SKIPPED, (Value) null);
-                    queuedNode.setProperty(HippoNodeType.HIPPOSYS_SKIPPEDCOUNT, -1l);
+                    queuedNode.setProperty(HippoNodeType.HIPPOSYS_SKIPPEDCOUNT, -1L);
                     queuedNode.setProperty(HippoNodeType.HIPPOSYS_FAILED, (Value) null);
-                    queuedNode.setProperty(HippoNodeType.HIPPOSYS_FAILEDCOUNT, -1l);
+                    queuedNode.setProperty(HippoNodeType.HIPPOSYS_FAILEDCOUNT, -1L);
                     queuedNode.setProperty(HippoNodeType.HIPPOSYS_LOG, (Value) null);
                     queuedNode.setProperty(HippoNodeType.HIPPOSYS_LOGTAIL, (String) null);
                     session.save();
@@ -893,8 +882,8 @@ public class UpdaterEditor extends Panel {
     }
 
     protected IModel<String> getExceptionTranslation(final Throwable t, final Object... parameters) {
-        String key = "exception,type=${type},message=${message}";
-        HashMap<String, String> details = new HashMap<>();
+        final String key = "exception,type=${type},message=${message}";
+        final HashMap<String, String> details = new HashMap<>();
         details.put("type", t.getClass().getName());
         details.put("message", t.getMessage());
         return new StringResourceModel(key, this)

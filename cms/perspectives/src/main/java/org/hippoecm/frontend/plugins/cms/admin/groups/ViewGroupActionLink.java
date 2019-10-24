@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,9 +17,7 @@ package org.hippoecm.frontend.plugins.cms.admin.groups;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
-import org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -29,8 +27,6 @@ public class ViewGroupActionLink extends AjaxLink<String> {
     private final IPluginContext context;
     private final BreadCrumbPanel breadCrumbPanel;
 
-    private static final long serialVersionUID = 1L;
-
     public ViewGroupActionLink(final String id, final IModel<String> labelTextModel, final Group group,
                                final IPluginContext context, final BreadCrumbPanel breadCrumbPanel) {
         super(id, labelTextModel);
@@ -39,17 +35,14 @@ public class ViewGroupActionLink extends AjaxLink<String> {
         this.context = context;
         this.breadCrumbPanel = breadCrumbPanel;
 
-        Label label = new Label("label", labelTextModel);
+        final Label label = new Label("label", labelTextModel);
         label.setRenderBodyOnly(true);
         add(label);
     }
 
     @Override
-    public void onClick(AjaxRequestTarget target) {
-        breadCrumbPanel.activate(new IBreadCrumbPanelFactory() {
-            public BreadCrumbPanel create(String componentId, IBreadCrumbModel breadCrumbModel) {
-                return new ViewGroupPanel(componentId, context, breadCrumbModel, group);
-            }
-        });
+    public void onClick(final AjaxRequestTarget target) {
+        breadCrumbPanel.activate((componentId, breadCrumbModel) ->
+                new ViewGroupPanel(componentId, context, breadCrumbModel, group));
     }
 }

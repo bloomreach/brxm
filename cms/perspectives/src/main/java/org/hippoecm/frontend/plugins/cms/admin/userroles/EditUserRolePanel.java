@@ -61,7 +61,7 @@ public class EditUserRolePanel extends AdminBreadCrumbPanel {
         final AjaxButton saveButton = new AjaxButton("save-button", form) {
 
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
+            protected void onSubmit(final AjaxRequestTarget target, final Form form) {
                 String description = descriptionField.getDefaultModelObjectAsString();
                 if (StringUtils.isBlank(description)) {
                     description = null;
@@ -69,7 +69,7 @@ public class EditUserRolePanel extends AdminBreadCrumbPanel {
                 final UserRole userRole = userRoleModel.getObject();
                 try {
                     // create a userRoleTemplate from the current backend UserRole
-                    UserRoleBean userRoleTemplate =
+                    final UserRoleBean userRoleTemplate =
                             new UserRoleBean(SecurityManagerHelper.getUserRolesProvider().getRole(userRole.getName()));
                     userRoleTemplate.setDescription(description);
                     userRoleModel.setObject(SecurityManagerHelper.getUserRolesManager().updateUserRole(userRoleTemplate));
@@ -90,14 +90,14 @@ public class EditUserRolePanel extends AdminBreadCrumbPanel {
 
         form.add(new AjaxButton("cancel-button") {
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
+            protected void onSubmit(final AjaxRequestTarget target, final Form form) {
                 activateParent();
             }
         }.setDefaultFormProcessing(false));
     }
 
     @Override
-    public IModel<String> getTitle(Component component) {
+    public IModel<String> getTitle(final Component component) {
         return new StringResourceModel("userrole-edit-title", component).setModel(userRoleModel);
     }
 
