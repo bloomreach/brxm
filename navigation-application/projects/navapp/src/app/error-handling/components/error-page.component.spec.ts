@@ -17,6 +17,7 @@
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { MenuItemLinkMock } from '../../main-menu/models/menu-item-link.mock';
 import { MenuStateService } from '../../main-menu/services/menu-state.service';
@@ -49,6 +50,7 @@ describe('ErrorPageComponent', () => {
         { provide: NavigationService, useValue: navigationServiceMock },
         { provide: MenuStateService, useValue: menuStateServiceMock },
       ],
+      imports: [TranslateModule.forRoot()],
     });
 
     fixture = TestBed.createComponent(ErrorPageComponent);

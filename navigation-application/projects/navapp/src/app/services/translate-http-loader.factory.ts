@@ -14,25 +14,15 @@
  * limitations under the License.
  */
 
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import { Location } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
+import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
-import { MaterialModule } from '../shared/material/material.module';
+import { getAntiCacheQueryParam } from './get-anti-cache-query-param';
 
-import { ErrorPageComponent } from './components/error-page.component';
-import { ErrorHandlingService } from './services/error-handling.service';
+export const translateHttpLoaderFactory = (http: HttpClient, location: Location): TranslateHttpLoader => {
+  const locationPath = location.path();
+  const antiCacheQueryParam = getAntiCacheQueryParam(locationPath);
 
-@NgModule({
-  imports: [
-    CommonModule,
-    MaterialModule,
-    TranslateModule,
-  ],
-  providers: [
-    ErrorHandlingService,
-  ],
-  declarations: [ErrorPageComponent],
-  exports: [ErrorPageComponent],
-})
-export class ErrorHandlingModule {}
+  return new TranslateHttpLoader(http, 'navapp-assets/i18n/', `.json?${antiCacheQueryParam}`);
+};

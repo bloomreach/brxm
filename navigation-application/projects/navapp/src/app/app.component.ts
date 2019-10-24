@@ -14,13 +14,18 @@
  * limitations under the License.
  */
 
-import { Component, HostBinding, OnInit, ViewChild } from '@angular/core';
+import { Component, HostBinding, Inject, OnInit, ViewChild } from '@angular/core';
+
+import { TranslateService } from '@ngx-translate/core';
+
 import { MatSidenav } from '@angular/material';
 import { Observable } from 'rxjs';
 
 import { AppError } from './error-handling/models/app-error';
 import { ErrorHandlingService } from './error-handling/services/error-handling.service';
+import { UserSettings } from './models/dto/user-settings.dto';
 import { OverlayService } from './services/overlay.service';
+import { USER_SETTINGS } from './services/user-settings';
 import { RightSidePanelService } from './top-panel/services/right-side-panel.service';
 
 @Component({
@@ -36,9 +41,11 @@ export class AppComponent implements OnInit {
   sidenav: MatSidenav;
 
   constructor(
+    private translateService: TranslateService,
     private overlayService: OverlayService,
     private rightSidePanelService: RightSidePanelService,
     private errorHandlingService: ErrorHandlingService,
+    @Inject(USER_SETTINGS) private userSettings: UserSettings,
   ) {}
 
   get isOverlayVisible$(): Observable<boolean> {
@@ -50,6 +57,23 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.configureTranslateService();
     this.rightSidePanelService.setSidenav(this.sidenav);
+  }
+
+  private configureTranslateService(): void {
+    const defaultLocale = 'en';
+
+    this.translateService.addLangs([
+      'en',
+      'nl',
+      'fr',
+      'de',
+      'es',
+      'zh',
+    ]);
+
+    this.translateService.setDefaultLang(defaultLocale);
+    this.translateService.use(this.userSettings.language || defaultLocale);
   }
 }
