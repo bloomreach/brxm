@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,13 +27,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.HippoStdPubWfNodeType;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.quartz.HippoSchedJcrConstants;
 import org.junit.Test;
 import org.onehippo.cms.channelmanager.content.error.ErrorInfo;
 import org.onehippo.repository.mock.MockNode;
-import org.onehippo.repository.security.SecurityService;
-import org.onehippo.repository.security.User;
 
 import static java.util.Collections.emptyMap;
 import static org.easymock.EasyMock.expect;
@@ -204,17 +201,13 @@ public class HintsInspectorImplTest {
     @Test
     public void determineEditingFailureInUseByWithName() throws Exception {
         final Session session = createMock(Session.class);
-        final HippoWorkspace workspace = createMock(HippoWorkspace.class);
-        final SecurityService securityService = createMock(SecurityService.class);
-        final User user = createMock(User.class);
+        HintsInspector hintsInspector = new HintsInspectorImpl() {
+            protected Optional<String> getUserName(final String userName) {
+                return Optional.of("John Doe");
+            }
+        };
         final Map<String, Serializable> hints = new HashMap<>();
         hints.put("inUseBy", "admin");
-
-        expect(session.getWorkspace()).andReturn(workspace);
-        expect(workspace.getSecurityService()).andReturn(securityService);
-        expect(securityService.getUser("admin")).andReturn(user);
-        expect(user.getFirstName()).andReturn(" John ");
-        expect(user.getLastName()).andReturn(" Doe ");
         replayAll();
 
         final Optional<ErrorInfo> errorInfoOptional = hintsInspector.determineEditingFailure("master", hints, session);
@@ -233,12 +226,9 @@ public class HintsInspectorImplTest {
     @Test
     public void determineEditingFailureInUseByWithoutName() throws Exception {
         final Session session = createMock(Session.class);
-        final HippoWorkspace workspace = createMock(HippoWorkspace.class);
         final Map<String, Serializable> hints = new HashMap<>();
         hints.put("inUseBy", "admin");
 
-        expect(session.getWorkspace()).andReturn(workspace);
-        expect(workspace.getSecurityService()).andThrow(new RepositoryException());
         replayAll();
 
         final Optional<ErrorInfo> errorInfoOptional = hintsInspector.determineEditingFailure("master", hints, session);

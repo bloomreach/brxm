@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,12 +26,10 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
-import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -193,35 +191,6 @@ public class EditingUtils {
             log.warn("Value of hint action '{}' is expected to be boolean but it was '{}'", action, value);
         }
         return Boolean.FALSE.equals(value);
-    }
-
-    /**
-     * Look up the real user name pertaining to a user ID
-     *
-     * @param userId  ID of some user
-     * @param session current user's JCR session
-     * @return name of the user or nothing, wrapped in an Optional
-     */
-    public static Optional<String> getUserName(final String userId, final Session session) {
-        try {
-            final HippoWorkspace workspace = (HippoWorkspace) session.getWorkspace();
-            final User user = workspace.getSecurityService().getUser(userId);
-            final String firstName = user.getFirstName();
-            final String lastName = user.getLastName();
-
-            final StringBuilder sb = new StringBuilder();
-            if (firstName != null) {
-                sb.append(firstName.trim());
-                sb.append(" ");
-            }
-            if (lastName != null) {
-                sb.append(lastName.trim());
-            }
-            return Optional.of(sb.toString().trim());
-        } catch (final RepositoryException e) {
-            log.debug("Unable to determine displayName of user '{}'.", userId, e);
-        }
-        return Optional.empty();
     }
 
     /**
