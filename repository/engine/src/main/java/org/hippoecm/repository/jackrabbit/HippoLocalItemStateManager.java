@@ -429,62 +429,72 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
 
     @Override
     public NodeState getNodeState(NodeId id) throws NoSuchItemStateException, ItemStateException {
-        NodeState state = null;
-        if (!(id instanceof HippoNodeId)) {
-            try {
-                state = super.getNodeState(id);
-            } catch (NoSuchItemStateException ex) {
-                if (!(id instanceof ParameterizedNodeId)) {
-                    throw ex;
+
+        // check cache. synchronized to ensure an entry is not created twice. (Just like JR LocalItemStateManager)
+        synchronized (this) {
+            final ItemState item = cache.retrieve(id);
+            if (item != null) {
+                return (NodeState) item;
+            }
+
+
+            NodeState state = null;
+            if (!(id instanceof HippoNodeId)) {
+                try {
+                    state = super.getNodeState(id);
+                } catch (NoSuchItemStateException ex) {
+                    if (!(id instanceof ParameterizedNodeId)) {
+                        throw ex;
+                    }
                 }
             }
-        }
 
-        if (virtualNodes.containsKey(id)) {
-            state = (NodeState)virtualNodes.get(id);
-        } else if (state == null && id instanceof HippoNodeId) {
-            boolean editPreviousMode = editFakeMode;
-            editFakeMode = true;
-            NodeState nodeState;
-            try {
-                edit();
-                if (isEnabled()) {
-                    nodeState = ((HippoNodeId)id).populate(currentContext);
-                    if (nodeState == null) {
-                        throw new NoSuchItemStateException("Populating node failed");
+            if (virtualNodes.containsKey(id)) {
+                state = (NodeState) virtualNodes.get(id);
+            } else if (state == null && id instanceof HippoNodeId) {
+                boolean editPreviousMode = editFakeMode;
+                editFakeMode = true;
+                NodeState nodeState;
+                try {
+                    edit();
+                    if (isEnabled()) {
+                        nodeState = ((HippoNodeId) id).populate(currentContext);
+                        if (nodeState == null) {
+                            throw new NoSuchItemStateException("Populating node failed");
+                        }
+                    } else {
+                        nodeState = populate((HippoNodeId) id);
                     }
-                } else {
-                    nodeState = populate((HippoNodeId)id);
-                }
 
-                virtualNodes.put((HippoNodeId)id, nodeState);
-                forceStore(nodeState);
+                    virtualNodes.put((HippoNodeId) id, nodeState);
+                    forceStore(nodeState);
 
-                Name nodeTypeName = nodeState.getNodeTypeName();
-                if (virtualNodeNames.containsKey(nodeTypeName)) {
-                    int type = isVirtual(nodeState);
+                    Name nodeTypeName = nodeState.getNodeTypeName();
+                    if (virtualNodeNames.containsKey(nodeTypeName)) {
+                        int type = isVirtual(nodeState);
                     /*
                      * If a node is EXTERNAL && VIRTUAL, we are dealing with an already populated nodestate.
                      * Since the parent EXTERNAL node can impose new constaints, like an inherited filter, we
                      * first need to remove all the childNodeEntries, and then populate it again
                      */
-                    if ((type & ITEM_TYPE_EXTERNAL) != 0 && (type & ITEM_TYPE_VIRTUAL) != 0) {
-                        nodeState.removeAllChildNodeEntries();
+                        if ((type & ITEM_TYPE_EXTERNAL) != 0 && (type & ITEM_TYPE_VIRTUAL) != 0) {
+                            nodeState.removeAllChildNodeEntries();
+                        }
+                        try {
+                            state = ((HippoNodeId) id).populate(virtualNodeNames.get(nodeTypeName), nodeState);
+                        } catch (InvalidItemStateException ex) {
+                            throw new ItemStateException("Node has been modified", ex);
+                        }
                     }
-                    try {
-                        state = ((HippoNodeId)id).populate(virtualNodeNames.get(nodeTypeName), nodeState);
-                    } catch(InvalidItemStateException ex) {
-                        throw new ItemStateException("Node has been modified", ex);
-                    }
+                } finally {
+                    editFakeMode = editPreviousMode;
                 }
-            } finally {
-                editFakeMode = editPreviousMode;
+                return nodeState;
+            } else if (isHandle(state)) {
+                reorderHandleChildNodeEntries(state);
             }
-            return nodeState;
-        } else if (isHandle(state)) {
-            reorderHandleChildNodeEntries(state);
+            return state;
         }
-        return state;
     }
 
     private void reorderHandleChildNodeEntries(final NodeState state) {
@@ -494,38 +504,32 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
 
         // returns a copy of the list
         List<ChildNodeEntry> cnes = state.getChildNodeEntries();
-        LinkedList<ChildNodeEntry> updatedList = new LinkedList<ChildNodeEntry>();
-        int readableIndex = 0;
-        for (ChildNodeEntry current : cnes) {
-            boolean added = false;
-
-            // if there is a same-name-sibling with a bigger index, check authorization
-            // there is no need to check last one, because it's already last
-            int index = current.getIndex();
-            ChildNodeEntry next = state.getChildNodeEntry(current.getName(), index + 1);
-            if (next != null) {
-                try {
-                    // this is SNS number 2, so check previous one,
-                    if (!accessManager.isGranted(current.getId(), AccessManager.READ)) {
-                        updatedList.addLast(current);
-                        added = true;
-                    }
-                } catch (ItemNotFoundException t) {
-                    log.error("Unable to order documents below handle " + state.getId(), t);
-                } catch (RepositoryException t) {
-                    log.error("Unable to determine access rights for " + current.getId());
-                }
-            }
-
-            if (!added) {
-                updatedList.add(readableIndex, current);
-                readableIndex++;
-            }
+        if (cnes.isEmpty() || cnes.size() == 1) {
+            // nothing to reorder
+            return;
         }
 
+        // sort the readable nodes to be first
+        final LinkedList<ChildNodeEntry> reordered = new LinkedList<>();
+        int readPosition = 0;
+        for (ChildNodeEntry cne : cnes) {
+            try {
+                if (accessManager.isGranted(cne.getId(), AccessManager.READ)) {
+                    reordered.add(readPosition, cne);
+                    readPosition++;
+                } else {
+                    reordered.addLast(cne);
+                }
+            } catch (ItemNotFoundException t) {
+                log.error("Skipping child entry that cannot be found below handle " + state.getId(), t);
+            } catch (RepositoryException t) {
+                log.error("Unable to determine access rights for '{}', skipping that child entry", cne.getId());
+            }
+        }
         // always invoke {@link NodeState#setChildNodeEntries} (even when there are no changes)
         // so that the hierarchy manager cache is verified and updated.
-        state.setChildNodeEntries(updatedList);
+        state.setChildNodeEntries(reordered);
+
     }
 
     @Override
