@@ -174,17 +174,18 @@ $tree-selected-font-weight:          600;
 
 // Editor
 $editor-bgcolor:                     $white;
+$editor-input-height:                18px;
 $editor-field-border-radius:         4px;
-$editor-subfield-bg:                 $white;
+$editor-field-bgs:                   (transparent, $lighter-shade, $light-shade, $light-gray, $dark-gray);
+$editor-field-focus-color:           $bluePrimary;
 $editor-field-title-color:           $gray60;
 $editor-field-title-bottom-margin:   6px;
+$editor-subfield-bg:                 $white;
 $editor-subfield-border:             $gray60;
 $editor-subfield-in-compound-border: $gray12;
 $editor-compound-field-color:        $gray87;
 $editor-compound-field-border:       $gray12;
 $editor-padding:                     24px;
-$editor-field-bgs:                   (transparent, $lighter-shade, $light-shade, $light-gray, $dark-gray);
-$editor-field-focus-color:           $bluePrimary;
 
 // Editor preview
 $editor-preview-field-bgcolor:       $lightest-shade;
