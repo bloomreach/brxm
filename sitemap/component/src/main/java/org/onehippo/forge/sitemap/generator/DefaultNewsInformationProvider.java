@@ -74,7 +74,7 @@ public class DefaultNewsInformationProvider extends DefaultUrlInformationProvide
      * Returns the value of the publicationDateProperty as specified in the constructor
      */
     public Calendar getPublicationDate(HippoBean hippoBean) {
-        return hippoBean.getProperty(publicationDateProperty);
+        return hippoBean.getSingleProperty(publicationDateProperty);
     }
 
     /**

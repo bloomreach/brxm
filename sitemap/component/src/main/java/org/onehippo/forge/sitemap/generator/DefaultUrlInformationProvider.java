@@ -38,7 +38,7 @@ public class DefaultUrlInformationProvider implements UrlInformationProvider {
      * Returns the hippostdpubwf:lastModificationDate property of the passed {@link HippoBean}
      */
     public Calendar getLastModified(HippoBean hippoBean) {
-        return hippoBean.getProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE);
+        return hippoBean.getSingleProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE);
     }
 
     /**
