@@ -24,50 +24,50 @@ import org.hippoecm.hst.content.beans.Node;
 public class TextDocument extends BaseDocument {
 
     public String getTitle() {
-        return getProperty("{{namespace}}:title");
+        return getSingleProperty("{{namespace}}:title");
     }
 
     public String getStaticDropdownValue() {
-        return getProperty("{{namespace}}:staticdropdown");
+        return getSingleProperty("{{namespace}}:staticdropdown");
     }
 
     public String getDynamicDropdownValue() {
-        return getProperty("{{namespace}}:dynamicdropdown");
+        return getSingleProperty("{{namespace}}:dynamicdropdown");
     }
 
     public String getDynamicDropdownObservableValue() {
-        return getProperty("{{namespace}}:dynamicdropdown_observable");
+        return getSingleProperty("{{namespace}}:dynamicdropdown_observable");
     }
 
     public String getDynamicDropdownObserverValue() {
-        return getProperty("{{namespace}}:dynamicdropdown_observer");
+        return getSingleProperty("{{namespace}}:dynamicdropdown_observer");
     }
 
     public String getCustomDynamicDropdownValue() {
-        return getProperty("{{namespace}}:customdynamicdropdown");
+        return getSingleProperty("{{namespace}}:customdynamicdropdown");
     }
 
     public String getGroupedDropdownValue() {
-        return getProperty("{{namespace}}:groupeddropdown");
+        return getSingleProperty("{{namespace}}:groupeddropdown");
     }
 
     public String getStringRadioGroupValue() {
-        return getProperty("{{namespace}}:stringradiogroup");
+        return getSingleProperty("{{namespace}}:stringradiogroup");
     }
 
     public Boolean getBooleanDropdownValue() {
-        return getProperty("{{namespace}}:booleanradiogroup");
+        return getSingleProperty("{{namespace}}:booleanradiogroup");
     }
 
     public String[] getMultiSelectListValues() {
-        return getProperty("{{namespace}}:multiselectlist");
+        return getMultipleProperty("{{namespace}}:multiselectlist");
     }
 
     public String[] getMultiCheckboxesValues() {
-        return getProperty("{{namespace}}:multicheckboxes");
+        return getMultipleProperty("{{namespace}}:multicheckboxes");
     }
 
     public String[] getMultiPaletteValues() {
-        return getProperty("{{namespace}}:multipalette");
+        return getMultipleProperty("{{namespace}}:multipalette");
     }
 }

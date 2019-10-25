@@ -23,10 +23,10 @@ import org.hippoecm.hst.content.beans.Node;
 public class MultilingualDocument extends BaseDocument {
 
     public String getTitle() {
-        return getProperty("{{namespace}}:title");
+        return getSingleProperty("{{namespace}}:title");
     }
 
     public String getDynamicDropdownValue() {
-        return getProperty("{{namespace}}:dynamicdropdown");
+        return getSingleProperty("{{namespace}}:dynamicdropdown");
     }
 }

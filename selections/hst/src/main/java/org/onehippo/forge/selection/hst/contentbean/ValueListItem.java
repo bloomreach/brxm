@@ -30,10 +30,10 @@ import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerat
 public class ValueListItem extends HippoItem  {
 
     public String getKey() {
-        return getProperty("selection:key");
+        return getSingleProperty("selection:key");
     }
 
     public String getLabel() {
-        return getProperty("selection:label");
+        return getSingleProperty("selection:label");
     }
 }
