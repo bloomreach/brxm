@@ -15,7 +15,7 @@
   limitations under the License.
   -->
 
-<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="Update Image Sets">
+<sv:node xmlns:sv="http://www.jcp.org/jcr/sv/1.0" sv:name="UpdateImageSets">
   <sv:property sv:name="jcr:primaryType" sv:type="Name">
     <sv:value>hipposys:updaterinfo</sv:value>
   </sv:property>

@@ -66,17 +66,23 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_RESOURCEBUNDLES;
 public class GalleryPluginResource {
 
     private static final Logger log = LoggerFactory.getLogger(GalleryPluginResource.class);
+
     private static final Pattern NS_PATTERN = Pattern.compile(":");
+
     private static final String HIPPOSYSEDIT_NODETYPE = "hipposysedit:nodetype";
     private static final String HIPPOSYSEDIT_PROTOTYPE = "hipposysedit:prototype";
-    private static final String PROCESSOR_PATH = "/hippo:configuration/hippo:frontend/cms/cms-services/galleryProcessorService";
     private static final String HIPPOGALLERY_IMAGE_SET = "hippogallery:imageset";
-    private static final String JCR_STATEMENT = "jcr:statement";
     private static final String HIPPOSTD_FOLDERTYPE = "hippostd:foldertype";
     private static final String HIPPOSTD_GALLERYTYPE = "hippostd:gallerytype";
+
+    private static final String PROCESSOR_PATH = "/hippo:configuration/hippo:frontend/cms/cms-services/galleryProcessorService";
     private static final String HEIGHT = "height";
     private static final String WIDTH = "width";
     private static final String UPSCALING = "upscaling";
+
+    private static final String JCR_STATEMENT = "jcr:statement";
+
+    private static final String UPDATE_SCRIPT_NODE_NAME = "UpdateImageSets";
 
     private final ContentBeansService contentBeansService;
     private final JcrService jcrService;
@@ -106,6 +112,8 @@ public class GalleryPluginResource {
             updateTranslations(payload, myType, namespaceNode);
             // add processor stuff...
             updateProcessorNode(payload, session, myType);
+            // put script in registry for reuse
+            registerImageScript();
             // update sets
             scheduleImageScript();
             session.save();
@@ -322,6 +330,23 @@ public class GalleryPluginResource {
         }
     }
 
+    private void registerImageScript() {
+        final Session session = jcrService.createSession();
+        try {
+            final Node registryNode = session.getNode("/hippo:configuration/hippo:update/hippo:registry");
+            if (registryNode.hasNode(UPDATE_SCRIPT_NODE_NAME)) {
+                log.debug("Update script '{}' already registered", UPDATE_SCRIPT_NODE_NAME);
+                return;
+            }
+            jcrService.importResource(registryNode, "/image_set_updater.xml", placeholderService.makePlaceholders());
+            session.save();
+            log.debug("Update script '{}' added to registry", UPDATE_SCRIPT_NODE_NAME);
+        } catch (RepositoryException e) {
+            log.error("Failed to add update script " + UPDATE_SCRIPT_NODE_NAME + " to registry", e);
+        } finally {
+            jcrService.destroySession(session);
+        }
+    }
 
     private ImageModel extractBestModel(final GalleryModel ourModel) {
         final List<ImageModel> models = ourModel.getModels();
