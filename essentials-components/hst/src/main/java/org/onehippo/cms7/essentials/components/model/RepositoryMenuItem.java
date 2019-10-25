@@ -68,7 +68,7 @@ public class RepositoryMenuItem {
             return bean.getName();
         } else {
             String namespace = bean.getNode().getPrimaryNodeType().getName().split(":")[0];
-            String title = bean.getProperty(namespace + ":title");
+            String title = bean.getSingleProperty(namespace + ":title");
             if (title != null) {
                 return title;
             } else {
