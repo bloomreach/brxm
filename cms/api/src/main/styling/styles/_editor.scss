@@ -136,6 +136,9 @@
     background: none;
     border: none;
     box-sizing: border-box;
+    display: block;
+    height: $editor-input-height;
+    line-height: $editor-input-height;
     width: 100%;
   }
 
