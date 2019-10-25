@@ -71,8 +71,8 @@ public class SEOHelperComponentTest {
         contentBean = EasyMock.createNiceMock(HippoBean.class);
         EasyMock.expect(contentBean.getName()).andReturn("CONTENTDOCUMENT").anyTimes();
         EasyMock.expect(contentBean.getNode()).andReturn(contentNode).anyTimes();
-        EasyMock.expect(contentBean.getProperty("hippostdpubwf:publicationDate")).andReturn(publicationDate).anyTimes();
-        EasyMock.expect(contentBean.getProperty("hippostdpubwf:lastModificationDate")).andReturn(lastModificationDate).anyTimes();
+        EasyMock.expect(contentBean.getSingleProperty("hippostdpubwf:publicationDate")).andReturn(publicationDate).anyTimes();
+        EasyMock.expect(contentBean.getSingleProperty("hippostdpubwf:lastModificationDate")).andReturn(lastModificationDate).anyTimes();
         EasyMock.replay(contentBean);
 
         paramsInfo = new MySEOHelperComponentParamsInfo();

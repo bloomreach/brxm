@@ -487,9 +487,9 @@ public class SEOHelperComponent extends BaseHstComponent {
             return null;
         }
         if (node.isNodeType("hippostdpubwf:document")) {
-            return document.getProperty("hippostdpubwf:publicationDate");
+            return document.getSingleProperty("hippostdpubwf:publicationDate");
         } else if (node.isNodeType("mix:created")) {
-            return document.getProperty("jcr:created");
+            return document.getSingleProperty("jcr:created");
         }
         return null;
     }
@@ -506,9 +506,9 @@ public class SEOHelperComponent extends BaseHstComponent {
         }
 
         if (node.isNodeType("hippostdpubwf:document")) {
-            return document.getProperty("hippostdpubwf:lastModificationDate");
+            return document.getSingleProperty("hippostdpubwf:lastModificationDate");
         } else if (node.isNodeType("mix:lastModified")) {
-            return document.getProperty("jcr:lastModified");
+            return document.getSingleProperty("jcr:lastModified");
         }
         return null;
     }
