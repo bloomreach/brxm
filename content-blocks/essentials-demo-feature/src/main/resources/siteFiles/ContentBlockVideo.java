@@ -26,6 +26,6 @@ public class ContentBlockVideo extends HippoCompound {
     }
 
     public String getVideo() {
-        return getProperty("{{namespace}}:video");
+        return getSingleProperty("{{namespace}}:video");
     }
 }

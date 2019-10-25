@@ -26,15 +26,15 @@ import org.hippoecm.hst.content.beans.standard.HippoHtml;
 public class ContentBlocksDocument extends BaseDocument {
 
     public String getTitle() {
-        return getProperty("{{namespace}}:title");
+        return getSingleProperty("{{namespace}}:title");
     }
     
     public String getSummary() {
-        return getProperty("{{namespace}}:summary");
+        return getSingleProperty("{{namespace}}:summary");
     }
     
     public Calendar getDate() {
-        return getProperty("{{namespace}}:date");
+        return getSingleProperty("{{namespace}}:date");
     }
 
     public HippoHtml getHtml(){
