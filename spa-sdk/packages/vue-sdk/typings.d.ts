@@ -27,6 +27,11 @@ export declare function BrSdk(vue: VueConstructor): void;
 export declare const BrManageContentButton: VueConstructor;
 
 /**
+ * The button component that opens a menu editor.
+ */
+export declare const BrManageMenuButton: VueConstructor;
+
+/**
  * The brXM component.
  */
 export declare const BrComponent: VueConstructor;
