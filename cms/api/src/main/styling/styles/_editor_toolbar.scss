@@ -57,6 +57,10 @@
           display: flex;
           align-items: center;
 
+          > .menu-action-icon {
+            display: inline-flex;
+          }
+
           // Add space between icon and label in the dropdown button
           img,
           svg {
