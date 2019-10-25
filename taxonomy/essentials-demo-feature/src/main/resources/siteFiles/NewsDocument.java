@@ -44,7 +44,7 @@ public class NewsDocument extends HippoDocument {
      */
     @HippoEssentialsGenerated(internalName = "{{namespace}}:title")
     public String getTitle() {
-        return getProperty(TITLE);
+        return getSingleProperty(TITLE);
     }
 
     /** 
@@ -53,7 +53,7 @@ public class NewsDocument extends HippoDocument {
      */
     @HippoEssentialsGenerated(internalName = "{{namespace}}:date")
     public Calendar getDate() {
-        return getProperty(DATE);
+        return getSingleProperty(DATE);
     }
 
     /** 
@@ -62,7 +62,7 @@ public class NewsDocument extends HippoDocument {
      */
     @HippoEssentialsGenerated(internalName = "{{namespace}}:introduction")
     public String getIntroduction() {
-        return getProperty(INTRODUCTION);
+        return getSingleProperty(INTRODUCTION);
     }
 
     /** 
@@ -89,7 +89,7 @@ public class NewsDocument extends HippoDocument {
      */
     @HippoEssentialsGenerated(internalName = "{{namespace}}:location")
     public String getLocation() {
-        return getProperty(LOCATION);
+        return getSingleProperty(LOCATION);
     }
 
     /** 
@@ -98,7 +98,7 @@ public class NewsDocument extends HippoDocument {
      */
     @HippoEssentialsGenerated(internalName = "{{namespace}}:author")
     public String getAuthor() {
-        return getProperty(AUTHOR);
+        return getSingleProperty(AUTHOR);
     }
 
     /** 
@@ -107,11 +107,11 @@ public class NewsDocument extends HippoDocument {
      */
     @HippoEssentialsGenerated(internalName = "{{namespace}}:source")
     public String getSource() {
-        return getProperty(SOURCE);
+        return getSingleProperty(SOURCE);
     }
 
     @HippoEssentialsGenerated(internalName = "hippotaxonomy:keys")
     public String[] getKeys() {
-        return getProperty("hippotaxonomy:keys");
+        return getMultipleProperty("hippotaxonomy:keys");
     }
 }
