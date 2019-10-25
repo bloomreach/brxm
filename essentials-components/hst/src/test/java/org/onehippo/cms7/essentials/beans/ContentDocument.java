@@ -24,11 +24,11 @@ import java.util.Calendar;
 @Node(jcrType = "myhippoproject:contentdocument")
 public class ContentDocument extends BaseDocument {
         public String getIntroduction() {
-        return getProperty("myhippoproject:introduction");
+        return getSingleProperty("myhippoproject:introduction");
     }
 
         public String getTitle() {
-        return getProperty("myhippoproject:title");
+        return getSingleProperty("myhippoproject:title");
     }
 
         public HippoHtml getContent() {
@@ -36,6 +36,6 @@ public class ContentDocument extends BaseDocument {
     }
 
         public Calendar getPublicationDate() {
-        return getProperty("myhippoproject:publicationdate");
+        return getSingleProperty("myhippoproject:publicationdate");
     }
 }
