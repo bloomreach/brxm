@@ -32,18 +32,18 @@ import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerat
 public class Option extends HippoItem {
     
     public String getValue() {
-        String value = this.getProperty("poll:value");
+        String value = this.getSingleProperty("poll:value");
         if (value != null) {
             return value;
         }
         
         // if not there, take label's first word in lower case
-        String label = this.getProperty("poll:label");
+        String label = this.getSingleProperty("poll:label");
         return (label == null) ? "null" : label.split(" ")[0].toLowerCase();
     }
     
     public String getLabel() {
-        String label = this.getProperty("poll:label");
+        String label = this.getSingleProperty("poll:label");
         return (label != null) ? label : getValue();
     }
 }

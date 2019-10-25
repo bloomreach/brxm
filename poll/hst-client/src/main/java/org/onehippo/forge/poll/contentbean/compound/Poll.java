@@ -41,15 +41,15 @@ public class Poll extends HippoItem {
      * @deprecated no longer in use
      */
     public Boolean getActive() {
-        return this.getProperty("poll:active");
+        return this.getSingleProperty("poll:active");
     }
     
     public String getText() {
-        return this.getProperty("poll:text");
+        return this.getSingleProperty("poll:text");
     }
     
     public String getIntroduction() {
-        return this.getProperty("poll:introduction");
+        return this.getSingleProperty("poll:introduction");
     }
     
     public List<Option> getOptions() {
