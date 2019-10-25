@@ -34,11 +34,11 @@ public class Section extends HippoItem {
     private final static String DISALLOW_PREFIX = "Disallow: ";
     
     public String getUserAgent() {
-        return this.getProperty("robotstxt:useragent");
+        return this.getSingleProperty("robotstxt:useragent");
     }
 
     public List<String> getDisallows() {
-        final String[] disallows = this.getProperty("robotstxt:disallow");
+        final String[] disallows = this.getMultipleProperty("robotstxt:disallow");
         List<String> disallowsList = Arrays.asList(disallows);
         return disallowsList;
     }

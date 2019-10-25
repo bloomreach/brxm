@@ -36,10 +36,10 @@ public class Robotstxt extends HippoDocument {
     }
 
     public String[] getSitemaps() {
-        return getProperty("robotstxt:sitemap");
+        return getMultipleProperty("robotstxt:sitemap");
     }
 
     public boolean isDisallowFacNav() {
-        return getProperty("robotstxt:disallowfacnav", true);
+        return getSingleProperty("robotstxt:disallowfacnav", true);
     }
 }
