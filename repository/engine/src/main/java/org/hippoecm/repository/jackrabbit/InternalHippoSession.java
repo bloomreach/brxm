@@ -36,6 +36,7 @@ import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.security.HippoAccessManager;
 import org.onehippo.repository.security.SessionUser;
+import org.onehippo.repository.security.User;
 import org.onehippo.repository.security.domain.DomainRuleExtension;
 import org.onehippo.repository.xml.ImportContext;
 
@@ -49,6 +50,15 @@ public interface InternalHippoSession extends JackrabbitSession, NamespaceResolv
 
     SessionUser getUser();
 
+    /**
+     *  <p>
+     *      {@code true} when this {@link InternalHippoSession} is a JCR System Session, implying jcr:all everywhere.
+     *      Mind you that {@link User#isSystemUser()  this.getUser().isSystemUser()} is something COMPLETELY different:
+     *      that returns whether the user is a user required by the system, not whether the user is a JCR System Session
+     *  </p>
+     *
+     * @return {@code true} when this {@link InternalHippoSession} is a JCR System Session, implying jcr:all everywhere.
+     */
     boolean isSystemUser();
 
     NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws RepositoryException;

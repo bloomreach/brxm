@@ -106,11 +106,12 @@ public class AuthorizationQuery {
         }
 
         InternalHippoSession internalSession = (InternalHippoSession)session;
-        User user = internalSession.getUser();
-        if (user != null && user.isSystemUser()) {
+
+        if (internalSession.isSystemUser()) {
             this.query = new BooleanQuery(true);
             this.query.add(new MatchAllDocsQuery(), Occur.MUST);
         } else {
+            User user = internalSession.getUser();
             final Set<String> memberships;
             final Set<String> userIds;
             if (user != null) {
@@ -160,7 +161,7 @@ public class AuthorizationQuery {
                     Query q = getFacetRuleQuery(facetRule, userIds, memberships, facetAuthDomain.getRoles(), indexingConfig, nsMappings, session, ntMgr);
                     if (isNoHitsQuery(q)) {
                         log.debug("Found a no hits query in facetRule '{}'. Since facet rules are AND-ed with other " +
-                                "facet rules, we can short circuit the domain rule '{}' as it does not match any node.",
+                                        "facet rules, we can short circuit the domain rule '{}' as it does not match any node.",
                                 facetRule, domainRule);
                         facetQuery = new BooleanQuery(true);
                         facetQuery.add(q, Occur.MUST);
@@ -302,7 +303,7 @@ public class AuthorizationQuery {
             case PropertyType.NAME:
                 String nodeNameString = facetRule.getFacet();
                 if (UNINDEXED_TYPE_FACETS.contains(value) &&
-                                (NODETYPE.equalsIgnoreCase(nodeNameString) ||
+                        (NODETYPE.equalsIgnoreCase(nodeNameString) ||
                                 JCR_PRIMARY_TYPE.equals(nodeNameString) ||
                                 JCR_MIXIN_TYPES.equals(nodeNameString))) {
                     if (facetRule.isEqual()) {

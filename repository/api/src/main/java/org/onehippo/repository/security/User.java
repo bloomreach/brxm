@@ -32,9 +32,11 @@ public interface User extends Serializable {
     String getId();
 
     /**
-     * Whether this user is marked as a system user.
+     * Whether this user is marked as a system user : mind you this is something totally different than a JCR System
+     * Session which implies jcr:all everywhere. When {@link User#isSystemUser()} returns {@code true} it implies that
+     * the user is required for the running instance, for example the 'liveuser' in case of the delivery tier
      *
-     * @return  whether this user is marked as a system user.
+     * @return  whether this user is marked as user required by the system (not whether this user is a JCR system session)
      */
     boolean isSystemUser();
 
