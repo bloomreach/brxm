@@ -22,6 +22,9 @@ import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
+import org.hippoecm.repository.impl.SessionDecorator;
+import org.hippoecm.repository.jackrabbit.InternalHippoSession;
+import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -281,5 +284,59 @@ public class DocumentVariantShufflingTest extends RepositoryTestCase {
 
     }
 
+
+
+    /**
+     * This test is a very specific test to validate a fix in the HippoAccessManager wrt inprocessNodeReadAccess : If
+     * the authorization query is a 'matchAll' query for the live user (which we now *FAKE* by setting it explicitly),
+     * then the not-yet authorization filtered resultset contains also the preview and draft version. Then after
+     * access manager filtering, only the correct live draft should be kept *AND* it should be the first child entry
+     * below the live user handle
+     */
+    @Test
+    public void live_user_access_live_variant_via_facet_navigation_result_set_with_all_allowed_authorization_query() throws Exception {
+        build(facetNavigationNode, session);
+        // correct the docbase
+        session.getNode("/test/facnav").setProperty("hippo:docbase", session.getNode("/shuffletest/content").getIdentifier());
+        session.save();
+
+        Session liveuser = null;
+        try {
+            for (int i = 0; i < 10; i++) {
+                liveuser = server.login(new SimpleCredentials("liveuser", "liveuser".toCharArray()));
+                InternalHippoSession unwrap = (InternalHippoSession) SessionDecorator.unwrap(liveuser);
+
+                // we OVERRIDE the normal authorization query of the live user to a match all query: now still
+                // everything should still work since the access will still be checked regardless of that the
+                // searches return all results (since authorization query does not filter preview/draft variants
+                // any more
+                unwrap.setAuthorizationQuery(AuthorizationQuery.matchAll);
+
+                final Node resultset = liveuser.getNode("/test/facnav/color/red/hippo:resultset");
+                // only one variant should be visible for the liveuser
+                assertEquals(1, resultset.getNodes().getSize());
+                final Node mydoc = resultset.getNode("mydoc");
+
+                final List<String> availabilityVirtualNode = getStringListProperty(mydoc, "hippo:availability", Collections.emptyList());
+                assertEquals("live", availabilityVirtualNode.get(0));
+
+                final List<String> availability = getStringListProperty(liveuser.getNode("/shuffletest/content/mydoc/mydoc"),
+                        "hippo:availability", Collections.emptyList());
+
+                assertEquals("live", availability.get(0));
+
+                // copies first SNS and adds last, after this, remove the first entry and then save to reshuffle variants
+                JcrUtils.copy(session, "/shuffletest/content/mydoc/mydoc", "/shuffletest/content/mydoc/mydoc");
+                session.getNode("/shuffletest/content/mydoc/mydoc").remove();
+                session.save();
+
+                liveuser.logout();
+            }
+        } finally {
+            if (liveuser != null) {
+                liveuser.logout();
+            }
+        }
+    }
 
 }

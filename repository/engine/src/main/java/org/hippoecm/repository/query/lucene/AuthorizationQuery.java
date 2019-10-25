@@ -93,6 +93,12 @@ public class AuthorizationQuery {
      */
     private final BooleanQuery query;
 
+    public static AuthorizationQuery matchAll = new AuthorizationQuery(new MatchAllDocsQuery());
+
+    private AuthorizationQuery(final Query query) {
+        this.query = new BooleanQuery(true);
+        this.query.add(query, Occur.MUST);
+    }
 
     public AuthorizationQuery(final Set<FacetAuthDomain> facetAuthDomains,
                               final NamespaceMappings nsMappings,

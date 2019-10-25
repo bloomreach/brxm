@@ -529,7 +529,19 @@ class SessionImplHelper {
         }
     }
 
+    private AuthorizationQuery explicitAuthorizationQuery;
+
+    // used for testing purposes only!!!
+    public void setAuthorizationQuery(final AuthorizationQuery authorizationQuery) {
+        this.explicitAuthorizationQuery = authorizationQuery;
+    }
+
     AuthorizationQuery getAuthorizationQuery() {
+
+        if (explicitAuthorizationQuery != null) {
+            log.info("Returning explicitly set authorization query");
+            return explicitAuthorizationQuery;
+        }
 
         // potentially trigger the implicit read access cache to update
         ham.updateReferenceFacetRules();
@@ -654,4 +666,6 @@ class SessionImplHelper {
         }
         return applied;
     }
+
+
 }
