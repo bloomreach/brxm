@@ -41,3 +41,7 @@
     border-color: $gray87;
   }
 }
+
+.yui-layout-expanded .browse-perspective-left + .yui-resize-handle {
+  border-right: 0;
+}

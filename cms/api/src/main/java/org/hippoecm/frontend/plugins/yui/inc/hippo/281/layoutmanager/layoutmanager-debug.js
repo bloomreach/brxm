@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -609,7 +609,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
           }
           this.unitExpanded = position;
           unit.set('width', this.layout.getSizes().doc.w);
-          Dom.replaceClass(unit.body, 'yui-layout-collapsed', 'yui-layout-expanded');
+          unit.replaceClass('yui-layout-collapsed', 'yui-layout-expanded');
         }
       },
 
@@ -624,7 +624,7 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
             width = this.unitCollapsedWidth || config.width;
             this.unitCollapsedWidth = null;
             unit.set('width', Number(width));
-            Dom.replaceClass(unit.body, 'yui-layout-expanded', 'yui-layout-collapsed');
+            unit.replaceClass('yui-layout-expanded', 'yui-layout-collapsed');
             this.children.forEach(this, function (k, v) {
               v.checkSizes();
             });
