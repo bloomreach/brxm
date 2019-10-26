@@ -52,6 +52,8 @@ import { Configuration } from '@bloomreach/spa-sdk';
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import { Route } from 'vue-router';
 
+import Banner from './components/BrBanner.vue';
+
 @Component({
   data: () => ({
     configuration: {
@@ -60,7 +62,9 @@ import { Route } from 'vue-router';
       spaBaseUrl: process.env.BASE_URL !== '/' ? process.env.BASE_URL : '',
       request: {},
     },
-    mapping: {},
+    mapping: {
+      Banner,
+    },
   }),
 })
 export default class App extends Vue {
