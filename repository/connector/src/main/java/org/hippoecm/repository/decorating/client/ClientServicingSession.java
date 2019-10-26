@@ -147,7 +147,7 @@ public class ClientServicingSession extends ClientSession implements HippoSessio
     }
 
     @Override
-    public boolean isSystemUser() {
+    public boolean isSystemSession() {
         throw new UnsupportedOperationException();
     }
 

@@ -194,12 +194,12 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
 
     @Override
     public SessionUser getUser() {
-        return ham.isSystemUser() ? null : ham.getUserPrincipal().getUser();
+        return ham.isSystemSession() ? null : ham.getUserPrincipal().getUser();
     }
 
     @Override
-    public boolean isSystemUser() {
-        return ham.isSystemUser();
+    public boolean isSystemSession() {
+        return ham.isSystemSession();
     }
 
     /**
@@ -408,9 +408,9 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
                 final RepositoryImpl repository = (RepositoryImpl)context.getRepository();
                 HippoQueryHandler queryHandler = repository.getHippoQueryHandler(getWorkspace().getName());
                 if (queryHandler != null) {
-                    Set<FacetAuthDomain> facetAuthDomains = ham.isSystemUser() ? Collections.emptySet() : ham.getUserPrincipal().getFacetAuthDomains();
+                    Set<FacetAuthDomain> facetAuthDomains = ham.isSystemSession() ? Collections.emptySet() : ham.getUserPrincipal().getFacetAuthDomains();
                     authorizationQuery = new AuthorizationQuery(facetAuthDomains, queryHandler.getNamespaceMappings(),
-                            queryHandler.getIndexingConfig(),  context.getNodeTypeManager(), context.getSessionImpl());
+                            queryHandler.getIndexingConfig(),  context.getNodeTypeManager(), this);
                 }
             } catch (RepositoryException e) {
                 throw new RuntimeException(e);
@@ -424,9 +424,9 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
     public Session createDelegatedSession(final InternalHippoSession session, DomainRuleExtension... domainExtensions) throws RepositoryException {
         String workspaceName = context.getRepositoryContext().getWorkspaceManager().getDefaultWorkspaceName();
 
-        if (ham.isSystemUser()) {
+        if (ham.isSystemSession()) {
             throw new IllegalStateException("Cannot create a delegated session for the system user");
-        } else if (session.isSystemUser()) {
+        } else if (session.isSystemSession()) {
             throw new IllegalStateException("Cannot create a delegated session with a system user session");
         }
 

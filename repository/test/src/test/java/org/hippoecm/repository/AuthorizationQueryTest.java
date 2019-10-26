@@ -76,7 +76,7 @@ public class AuthorizationQueryTest extends RepositoryTestCase {
 
             InternalHippoSession unwrap = (InternalHippoSession) SessionDecorator.unwrap(author);
 
-            assertFalse("author not expected to be a JCR System Session", unwrap.isSystemUser());
+            assertFalse("author not expected to be a JCR System Session", unwrap.isSystemSession());
             assertFalse("author not expected to be marked as system user ",unwrap.getUser().isSystemUser());
 
             final AuthorizationQuery authorizationQuery = unwrap.getAuthorizationQuery();
@@ -94,7 +94,7 @@ public class AuthorizationQueryTest extends RepositoryTestCase {
 
             InternalHippoSession unwrap = (InternalHippoSession) SessionDecorator.unwrap(author);
 
-            assertFalse("author not expected to be a JCR System Session ALTHOUGH marked as system", unwrap.isSystemUser());
+            assertFalse("author not expected to be a JCR System Session ALTHOUGH marked as system", unwrap.isSystemSession());
             assertTrue("author EXPECTED to be marked as system user",unwrap.getUser().isSystemUser());
 
             final AuthorizationQuery authorizationQuery = unwrap.getAuthorizationQuery();

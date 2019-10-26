@@ -31,7 +31,7 @@ public interface RolesManager {
      * @return the created role (retrieved from the {@link RolesProvider}
      * @throws IllegalArgumentException when the role is null or roleTemplate.name is null/blank
      * @throws AccessDeniedException if not allowed to create a role, or trying to create a system role which is only
-     * allowed for system users: {@link HippoSession#isSystemUser}
+     * allowed for system users: {@link HippoSession#isSystemSession}
      * @throws RepositoryException if the underlying HippoSession is no longer live, or something else went wrong
      */
     Role addRole(final Role roleTemplate)
@@ -43,7 +43,7 @@ public interface RolesManager {
      * @return the (possibly) updated role (retrieved from the {@link RolesProvider}
      * @throws IllegalArgumentException when the role is null or roleTemplate.name is null/blank
      * @throws AccessDeniedException if not allowed to set the system status, or change a system role, which is only
-     * allowed for system users: {@link HippoSession#isSystemUser}
+     * allowed for system users: {@link HippoSession#isSystemSession}
      * @throws RepositoryException if the underlying HippoSession is no longer live, or something else went wrong
      */
     Role updateRole(final Role roleTemplate)
@@ -55,7 +55,7 @@ public interface RolesManager {
      * @return true if the role was deleted; false if the role didn't exist (anymore)
      * @throws IllegalArgumentException when the roleName is null/blank
      * @throws AccessDeniedException if not allowed to delete a system role which is only
-     * allowed for system users: {@link HippoSession#isSystemUser}
+     * allowed for system users: {@link HippoSession#isSystemSession}
      * @throws RepositoryException if the underlying HippoSession is no longer live, or something else went wrong
      */
     boolean deleteRole(final String roleName)

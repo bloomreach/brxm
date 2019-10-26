@@ -205,8 +205,8 @@ public class SessionDecorator implements XASession, HippoSession, SessionListene
     }
 
     @Override
-    public boolean isSystemUser() {
-        return getInternalHippoSession().isSystemUser();
+    public boolean isSystemSession() {
+        return getInternalHippoSession().isSystemSession();
     }
 
     @Override
@@ -220,7 +220,7 @@ public class SessionDecorator implements XASession, HippoSession, SessionListene
 
     @Override
     public boolean isUserInRole(final String userRoleName) {
-        return isSystemUser() || getInternalHippoSession().getUser().getUserRoles().contains(userRoleName);
+        return isSystemSession() || getInternalHippoSession().getUser().getUserRoles().contains(userRoleName);
     }
 
     @Override

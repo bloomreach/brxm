@@ -149,7 +149,7 @@ public class ClientServicingXASession extends ClientSession implements HippoSess
     }
 
     @Override
-    public boolean isSystemUser() {
+    public boolean isSystemSession() {
         throw new UnsupportedOperationException();
     }
 

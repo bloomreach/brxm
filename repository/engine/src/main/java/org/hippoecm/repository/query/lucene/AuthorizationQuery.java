@@ -26,7 +26,6 @@ import java.util.Set;
 import javax.jcr.NamespaceException;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.nodetype.NodeType;
 import javax.jcr.nodetype.NodeTypeIterator;
@@ -104,16 +103,11 @@ public class AuthorizationQuery {
                               final NamespaceMappings nsMappings,
                               final ServicingIndexingConfiguration indexingConfig,
                               final NodeTypeManager ntMgr,
-                              final Session session) throws RepositoryException {
+                              final InternalHippoSession internalSession) throws RepositoryException {
         // set the max clauses for booleans higher than the default 1024.
         BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
-        if (!(session instanceof InternalHippoSession)) {
-            throw new RepositoryException("Session is not an instance of o.a.j.core.SessionImpl");
-        }
 
-        InternalHippoSession internalSession = (InternalHippoSession)session;
-
-        if (internalSession.isSystemUser()) {
+        if (internalSession.isSystemSession()) {
             this.query = new BooleanQuery(true);
             this.query.add(new MatchAllDocsQuery(), Occur.MUST);
         } else {
@@ -136,12 +130,12 @@ public class AuthorizationQuery {
             this.query = initQuery(facetAuthDomains,
                     userIds,
                     memberships,
-                    (InternalHippoSession)session,
+                    internalSession,
                     indexingConfig,
                     nsMappings,
                     ntMgr);
 
-            log.info("Creating authorization query for user '{}' took {} ms. Query: {}", session.getUserID(), (System.currentTimeMillis() - start), query);
+            log.info("Creating authorization query for user '{}' took {} ms. Query: {}", internalSession.getUserID(), (System.currentTimeMillis() - start), query);
         }
     }
 

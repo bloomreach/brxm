@@ -93,7 +93,7 @@ public class RepositorySecurityManagerImpl implements RepositorySecurityManager 
             throws AccessDeniedException, RepositoryException {
         checkClosed();
         if (changePasswordManager == null) {
-            if (hippoSession.isSystemUser() || hippoSession.getUser().isSystemUser() || hippoSession.getUser().isExternal()) {
+            if (hippoSession.isSystemSession() || hippoSession.getUser().isSystemUser() || hippoSession.getUser().isExternal()) {
                 throw new AccessDeniedException("Not allowed to use the ChangePasswordManager for system or external users");
             }
             createSystemSessionIfNeeded();

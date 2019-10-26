@@ -196,17 +196,17 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     private volatile boolean initialized = false;
 
     /**
-     * Flag whether current user is a regular user, effectively: !isSystem
+     * Flag whether current session is for a regular user, effectively: !isSystemSession
      */
-    private boolean isUser = false;
+    private boolean isUserSession = false;
 
     /**
-     * Flag whether the current user is a system user, effectively !isUser
+     * Flag whether the current session is for the JackRabbit "system" user/session, effectively !isUserSession
      */
-    private boolean isSystem = false;
+    private boolean isSystemSession = false;
 
     /**
-     * The UserPrincipal when isUser==true.
+     * The UserPrincipal when isUserSession==true.
      */
     private UserPrincipal userPrincipal;
 
@@ -260,16 +260,16 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         hierMgr = itemMgr.getHierarchyMgr();
         zombieHierMgr = itemMgr.getAtticAwareHierarchyMgr();
 
-        // Prefetch userIds and isSystem/isUser
+        // Prefetch userIds and isSystemSession/isUserSession
         // fetch SystemPrincipal, if any. There can only be one, see SystemPrincipal.equals()
         Principal principal = SubjectHelper.getFirstPrincipal(subject, SystemPrincipal.class);
         if (principal != null) {
-            isSystem = true;
+            isSystemSession = true;
         } else {
             // fetch UserPrincipal, if any. There can only be one, see UserPrincipal.equals()
             principal = SubjectHelper.getFirstPrincipal(subject, UserPrincipal.class);
             if (principal != null) {
-                isUser = true;
+                isUserSession = true;
                 userPrincipal = (UserPrincipal)principal;
             }
             else {
@@ -277,7 +277,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             }
         }
 
-        if (isUser && userPrincipal.getUser() instanceof SessionDelegateUser) {
+        if (isUserSession && userPrincipal.getUser() instanceof SessionDelegateUser) {
             userId = userPrincipal.getUser().getId();
             userIds.addAll(((SessionDelegateUser)userPrincipal.getUser()).getIds());
         } else {
@@ -285,7 +285,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             userIds.add(userId);
         }
 
-        if (isUser) {
+        if (isUserSession) {
             groupIds = userPrincipal.getUser().getMemberships();
         }
 
@@ -333,8 +333,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         log.info("Closed HippoAccessManager for user " + userId);
     }
 
-    public boolean isSystemUser() {
-        return isSystem;
+    public boolean isSystemSession() {
+        return isSystemSession;
     }
 
     public UserPrincipal getUserPrincipal() {
@@ -389,7 +389,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                     "Use of deprecated method isGranted(ItemId, int)"));
         }
 
-        if (isSystem) {
+        if (isSystemSession) {
             return true;
         }
 
@@ -429,7 +429,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         if (!absPath.isAbsolute()) {
             throw new RepositoryException("Absolute path expected");
         }
-        if (isSystem) {
+        if (isSystemSession) {
             return true;
         }
         if (log.isInfoEnabled()) {
@@ -505,8 +505,8 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     private boolean canRead(Path absPath) throws RepositoryException {
         checkInitialized();
 
-        // allow everything to the system user
-        if (isSystem) {
+        // allow everything to the system Session
+        if (isSystemSession) {
             return true;
         }
 
@@ -552,7 +552,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             throw new RepositoryException("Absolute path expected. Was:" + path);
         }
 
-        if (isSystem) {
+        if (isSystemSession) {
             return true;
         }
 
@@ -613,7 +613,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * @throws RepositoryException
      */
     private boolean canRead(NodeId id) throws RepositoryException {
-        if (isSystem) {
+        if (isSystemSession) {
             return true;
         }
 
@@ -872,11 +872,11 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                 log.trace("Checking node : {} for nodename: {}", nodeState.getNodeId(), facetRule);
                 Name nodeName = getNodeName(nodeState);
                 if (FacetAuthConstants.EXPANDER_USER.equals(facetRule.getValue())) {
-                    if (isUser && userIds.contains(npRes.getJCRName(nodeName))) {
+                    if (isUserSession && userIds.contains(npRes.getJCRName(nodeName))) {
                         match = true;
                     }
                 } else if (FacetAuthConstants.EXPANDER_GROUP.equals(facetRule.getValue())) {
-                    if (isUser && groupIds.contains(npRes.getJCRName(nodeName))) {
+                    if (isUserSession && groupIds.contains(npRes.getJCRName(nodeName))) {
                         match = true;
                     }
                 } else if (nodeName.equals(facetRule.getValueName())) {
@@ -1142,19 +1142,19 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
                 // expander matches
                 if (FacetAuthConstants.EXPANDER_USER.equals(rule.getValue())) {
-                    if (isUser && userIds.contains(iVal.getString())) {
+                    if (isUserSession && userIds.contains(iVal.getString())) {
                         match = true;
                         break;
                     }
                 }
                 if (FacetAuthConstants.EXPANDER_GROUP.equals(rule.getValue())) {
-                    if (isUser && groupIds.contains(iVal.getString())) {
+                    if (isUserSession && groupIds.contains(iVal.getString())) {
                         match = true;
                         break;
                     }
                 }
                 if (FacetAuthConstants.EXPANDER_ROLE.equals(rule.getValue())) {
-                    if (isUser && fad.getRoles().contains(iVal.getString())) {
+                    if (isUserSession && fad.getRoles().contains(iVal.getString())) {
                         match = true;
                         break;
                     }
@@ -1444,7 +1444,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
     @Override
     public void stateModified(final ItemState modified) {
-        if (isSystem) {
+        if (isSystemSession) {
             return;
         }
         if (modified.isNode()) {
@@ -1457,7 +1457,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     @Override
     public void stateDestroyed(final ItemState destroyed) {
         // opposed to stateCreated, for stateDestroyed the NodeStates are not filtered out
-        if (isSystem) {
+        if (isSystemSession) {
             return;
         }
 
@@ -1474,7 +1474,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
     @Override
     public void stateDiscarded(final ItemState discarded) {
-        if (isSystem) {
+        if (isSystemSession) {
             return;
         }
         if (discarded.isNode()) {
@@ -1610,7 +1610,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * <ul>
      *   <li>checkInitialized()</li>
      *   <li>absPath verified to be absolute</li>
-     *   <li>user is *not* system (system always has all privileges)</li>
+     *   <li>session is *not* a system session (system session always has all privileges)</li>
      *   <li>permissionNames is not empty</li>
      *   </ul>
      * </p>
@@ -1697,7 +1697,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
      * /a/b/c, that the users get implicit read access for /a/b.
      */
     private void initializeImplicitReadAccess() {
-        if (isSystemUser()) {
+        if (isSystemSession()) {
             return;
         }
 
@@ -1771,7 +1771,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     }
 
     public void updateReferenceFacetRules() {
-        if (isSystem) {
+        if (isSystemSession) {
             return;
         }
 
@@ -1835,7 +1835,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
     public DomainInfoPrivilege[] getPrivileges(String absPath) throws RepositoryException {
         checkInitialized();
 
-        if (isSystem) {
+        if (isSystemSession) {
             return Arrays.stream(getSupportedPrivileges(absPath)).map(DomainInfoPrivilege::new).toArray(DomainInfoPrivilege[]::new);
         }
 

@@ -70,7 +70,7 @@ public class AbstractRolesManager<R extends AbstractRole> {
         if (rolesProvider.hasRole(name)) {
             throw new ItemExistsException(roleTypeClassName + " '"+name+"' already exists");
         }
-        if (roleTemplate.isSystem() && !repositorySecurityManager.getHippoSession().isSystemUser()) {
+        if (roleTemplate.isSystem() && !repositorySecurityManager.getHippoSession().isSystemSession()) {
             log.error("Unauthorized attempt to create a system {} '{}'", roleTypeClassName.toLowerCase(), name);
             throw new AccessDeniedException("Not allowed to create a system " + roleTypeClassName.toLowerCase());
         }
@@ -100,12 +100,12 @@ public class AbstractRolesManager<R extends AbstractRole> {
         if (currentRole == null) {
             throw new ItemNotFoundException(roleTypeClassName + " '"+roleTemplate+"' no longer exists");
         }
-        if (currentRole.isSystem() && !repositorySecurityManager.getHippoSession().isSystemUser()) {
+        if (currentRole.isSystem() && !repositorySecurityManager.getHippoSession().isSystemSession()) {
             log.error("Unauthorized attempt to change system {} '{}'", roleTypeClassName.toLowerCase(), name);
             throw new AccessDeniedException("Not allowed to change system " +
                     roleTypeClassName.toLowerCase() + " '" + currentRole.getName() + "'");
         }
-        if (roleTemplate.isSystem() && !repositorySecurityManager.getHippoSession().isSystemUser()) {
+        if (roleTemplate.isSystem() && !repositorySecurityManager.getHippoSession().isSystemSession()) {
             log.error("Unauthorized attempt to set system status of {} '{}'", roleTypeClassName.toLowerCase(), name);
             throw new AccessDeniedException("Not allowed to set system status of " +
                     roleTypeClassName.toLowerCase() + " '" + currentRole.getName() + "'");
@@ -137,7 +137,7 @@ public class AbstractRolesManager<R extends AbstractRole> {
         if (currentRole == null) {
             return false;
         }
-        if (currentRole.isSystem() && !repositorySecurityManager.getHippoSession().isSystemUser()) {
+        if (currentRole.isSystem() && !repositorySecurityManager.getHippoSession().isSystemSession()) {
             log.error("Unauthorized attempt to delete system {} '{}'", roleTypeClassName.toLowerCase(), name);
             throw new AccessDeniedException("Not allowed to delete a system " + roleTypeClassName.toLowerCase());
         }

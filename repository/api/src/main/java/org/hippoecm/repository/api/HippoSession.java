@@ -39,8 +39,8 @@ import org.xml.sax.ContentHandler;
 import org.xml.sax.SAXException;
 
 /**
- * An extension of a plain {@link javax.jcr.Session} based session.  Any session as obtained from the Hippo Repository 2 can be cased to
- * a HippoSession allowing access to the extensions to the JCR API.
+ * An extension of a plain {@link javax.jcr.Session} based session.  Any JCR Session obtained from the Hippo Repository
+ * also implements HippoSession allowing access to the extensions to the JCR API.
  */
 public interface HippoSession extends Session {
 
@@ -183,22 +183,34 @@ public interface HippoSession extends Session {
     ClassLoader getSessionClassLoader() throws RepositoryException;
 
     /**
-     * If this is a session for the internal "system" user
-     * @return true if this is a session for the internal "system" user
+     * If this is a JCR System Session, having all privileges everywhere.
+     * <p>
+     *     For a JCR System Session {@link #isUserInRole(String)} and {@link #hasPermission(String, String)} will always
+     *     return true!
+     * </p>
+     * <p>
+     *     This should <em>NOT</em> be confused with {@link User#isSystemUser()} which indicates a required and non-human
+     *     <em>type</em> of user necessary for the <em>running system</em> itself.
+     * </p>
+     * <p>
+     *     A JCR System Session also does <em>NOT</em> have a {@link User} representation and calling {@link #getUser()}
+     *     for a JCR Session Session will result in a {@link ItemNotFoundException}!
+     * </p>
+     * @return true if this a JCR System Session, having all privileges everywhere.
      */
-    boolean isSystemUser();
+    boolean isSystemSession();
 
     /**
      * Get the {@link User} object identified by this session's user id.
      * @return  the {@link User} object identified by this session's user id.
-     * @throws ItemNotFoundException for system sessions
+     * @throws ItemNotFoundException when {{@link #isSystemSession()}} returns true
      */
     SessionUser getUser() throws ItemNotFoundException;
 
     /**
      * Check if a user has the specified userRole assigned, or is implied by one of the userRoles assigned.
      * <p>
-     *  For a {@link #isSystemUser()} this always returns true.
+     *  For a {@link #isSystemSession()} this always returns true.
      * </p>
      * @param userRoleName the user role name to check
      * @return true if the user has the specified directly or indirectly assigned

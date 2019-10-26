@@ -50,7 +50,7 @@ public interface RepositorySecurityManager {
 
     /**
      * The ChangePasswordManager allows the {link HippoSession} user to change its password
-     * @throws AccessDeniedException for a {@link HippoSession#isSystemUser()}, a {@link User#isSystemUser()} or a
+     * @throws AccessDeniedException for a {@link HippoSession#isSystemSession()}, a {@link User#isSystemUser()} or a
      * {@link User#isExternal()}.
      * @throws RepositoryException if the underlying HippoSession is no longer live, or something else went wrong
      * @return the ChangePasswordManager

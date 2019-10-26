@@ -33,6 +33,7 @@ import org.apache.jackrabbit.core.id.NodeId;
 import org.apache.jackrabbit.spi.commons.conversion.IdentifierResolver;
 import org.apache.jackrabbit.spi.commons.conversion.NamePathResolver;
 import org.apache.jackrabbit.spi.commons.namespace.NamespaceResolver;
+import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.query.lucene.AuthorizationQuery;
 import org.hippoecm.repository.security.HippoAccessManager;
 import org.onehippo.repository.security.SessionUser;
@@ -51,15 +52,26 @@ public interface InternalHippoSession extends JackrabbitSession, NamespaceResolv
     SessionUser getUser();
 
     /**
-     *  <p>
-     *      {@code true} when this {@link InternalHippoSession} is a JCR System Session, implying jcr:all everywhere.
-     *      Mind you that {@link User#isSystemUser()  this.getUser().isSystemUser()} is something COMPLETELY different:
-     *      that returns whether the user is a user required by the system, not whether the user is a JCR System Session
-     *  </p>
-     *
-     * @return {@code true} when this {@link InternalHippoSession} is a JCR System Session, implying jcr:all everywhere.
+     * If this is a JCR System Session, having all privileges everywhere.
+     * <p>
+     *     For a JCR System Session {@link HippoSession#isUserInRole(String)} and
+     *     {@link Session#hasPermission(String, String)} will always return true!
+     * </p>
+     * <p>
+     *     This should <em>NOT</em> be confused with {@link User#isSystemUser()} which indicates a required and non-human
+     *     <em>type</em> of user necessary for the <em>running system</em> (application) itself.
+     * </p>
+     * <p>
+     *     A JCR System Session also does <em>NOT</em> have a {@link User} representation and calling {@link #getUser()}
+     *     for a JCR Session Session will always return null.
+     * </p>
+     * <p>
+     *     Also note the difference with calling {@link HippoSession#getUser()} for a JCR System Session, which will
+     *     result in {@link ItemNotFoundException}.
+     * </p>
+     * @return true if this a JCR System Session, having all privileges everywhere.
      */
-    boolean isSystemUser();
+    boolean isSystemSession();
 
     NodeIterator pendingChanges(Node node, String nodeType, boolean prune) throws RepositoryException;
 

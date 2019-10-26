@@ -404,7 +404,7 @@ public class MockSession implements HippoSession {
     }
 
     @Override
-    public boolean isSystemUser() {
+    public boolean isSystemSession() {
         throw new UnsupportedOperationException();
     }
 

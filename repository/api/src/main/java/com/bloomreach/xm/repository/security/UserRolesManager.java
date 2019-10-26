@@ -31,7 +31,7 @@ public interface UserRolesManager {
      * @return the created userrole (retrieved from the {@link UserRolesProvider}
      * @throws IllegalArgumentException when the userrole is null or userRoleTemplate.name is null/blank
      * @throws AccessDeniedException if not allowed to create a userrole, or trying to create a system userrole which is
-     * only allowed for system users: {@link HippoSession#isSystemUser}
+     * only allowed for system users: {@link HippoSession#isSystemSession}
      * @throws RepositoryException if the underlying HippoSession is no longer live, or something else went wrong
      */
     UserRole addUserRole(final UserRole userRoleTemplate)
@@ -43,7 +43,7 @@ public interface UserRolesManager {
      * @return the (possibly) updated userrole (retrieved from the {@link UserRolesProvider}
      * @throws IllegalArgumentException when the userrole is null or userRoleTemplate.name is null/blank
      * @throws AccessDeniedException if not allowed to to set the system status, or change a system userrole which is only
-     * allowed for system users: {@link HippoSession#isSystemUser}
+     * allowed for system users: {@link HippoSession#isSystemSession}
      * @throws RepositoryException if the underlying HippoSession is no longer live, or something else went wrong
      */
     UserRole updateUserRole(final UserRole userRoleTemplate)
@@ -55,7 +55,7 @@ public interface UserRolesManager {
      * @return true if the userrole was deleted; false if the userrole didn't exist (anymore)
      * @throws IllegalArgumentException when the userRoleName is null/blank
      * @throws AccessDeniedException if not allowed to delete a system userrole which is only
-     * allowed for system users: {@link HippoSession#isSystemUser}
+     * allowed for system users: {@link HippoSession#isSystemSession}
      * @throws RepositoryException if the underlying HippoSession is no longer live, or something else went wrong
      */
     boolean deleteUserRole(final String userRoleName)
