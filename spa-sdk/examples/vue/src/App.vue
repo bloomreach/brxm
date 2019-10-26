@@ -53,6 +53,7 @@ import { Component, Vue, Watch } from 'vue-property-decorator';
 import { Route } from 'vue-router';
 
 import Banner from './components/BrBanner.vue';
+import Content from './components/BrContent.vue';
 
 @Component({
   data: () => ({
@@ -64,6 +65,7 @@ import Banner from './components/BrBanner.vue';
     },
     mapping: {
       Banner,
+      Content,
     },
   }),
 })
