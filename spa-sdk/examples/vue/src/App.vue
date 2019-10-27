@@ -55,6 +55,7 @@ import { Route } from 'vue-router';
 import Banner from './components/BrBanner.vue';
 import Content from './components/BrContent.vue';
 import Menu from './components/BrMenu.vue';
+import NewsList from './components/BrNewsList.vue';
 
 @Component({
   data: () => ({
@@ -68,6 +69,7 @@ import Menu from './components/BrMenu.vue';
       Banner,
       Content,
       menu: Menu,
+      'News List': NewsList,
     },
   }),
 })
