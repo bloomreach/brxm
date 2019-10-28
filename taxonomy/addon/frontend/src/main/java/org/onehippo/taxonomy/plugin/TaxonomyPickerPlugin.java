@@ -206,7 +206,7 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
             final DialogLink dialogLink = new DialogLink("edit", new ResourceModel("edit"), dialogFactory, getDialogService());
             final Component ajaxLink = dialogLink.get("dialog-link");
             if (ajaxLink != null) {
-                ajaxLink.add(new AttributeAppender("class", new Model<>("btn btn-default btn-sm")));
+                ajaxLink.add(new AttributeAppender("class", new Model<>("btn btn-default")));
             }
             add(dialogLink);
             setEnabled(getTaxonomy() != null);
