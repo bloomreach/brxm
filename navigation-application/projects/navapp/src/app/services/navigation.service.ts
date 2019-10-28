@@ -209,10 +209,6 @@ export class NavigationService implements OnDestroy {
 
   private setupNavigations(): void {
     this.transitions.pipe(
-      tap(() => {
-        this.busyIndicatorService.show();
-        this.navigating.next(true);
-      }),
       switchMap((t: Transition) => this.processTransition(t).pipe(
         catchError(error => {
           if (typeof error === 'string') {
@@ -341,6 +337,10 @@ export class NavigationService implements OnDestroy {
         return fromPromise(t.app.api.beforeNavigation()).pipe(
           switchMap(allowedToContinue => allowedToContinue ? of(t) : EMPTY),
         );
+      }),
+      tap(() => {
+        this.busyIndicatorService.show();
+        this.navigating.next(true);
       }),
       // Eagerly update the menu and the breadcrumb label
       tap(t => {
