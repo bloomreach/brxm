@@ -24,11 +24,10 @@
     <version>31.0.0-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.onehippo</groupId>
+  <groupId>com.bloomreach.xm</groupId>
   <artifactId>navigation-application</artifactId>
   <name>BloomReach Navigation Application</name>
   <version>1.0.0-SNAPSHOT</version>
-  <packaging>pom</packaging>
 
   <inceptionYear>2019</inceptionYear>
 
@@ -138,6 +137,27 @@
             </fileset>
           </filesets>
         </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>prepare-package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.outputDirectory}/angular</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${basedir}/dist</directory>
+                  <filtering>false</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 	  <plugin>
         <groupId>org.apache.maven.plugins</groupId>
