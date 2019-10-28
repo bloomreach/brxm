@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -72,9 +72,8 @@
 }
 
 .contentpicker-dropdown select {
-  padding: 1px 4px;
-  margin-right: 4px;
-  height: 28px;
+  margin-right: 8px;
+  height: 36px;
 }
 
 .contentpicker-label {
