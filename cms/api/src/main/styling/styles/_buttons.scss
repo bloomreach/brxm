@@ -52,12 +52,33 @@
 
 .btn {
   box-sizing: border-box;
+  line-height: $button-line-height;
+  max-height: $button-max-height;
+
+  .button-label {
+    display: inherit;
+  }
 
   &,
   &.btn-lg,
   &.btn-sm,
   &.btn-xs {
     border-radius: $button-border-radius;
+  }
+
+  &.btn-lg {
+    line-height: $button-lg-line-height;
+    max-height: $button-lg-max-height;
+  }
+
+  &.btn-sm {
+    line-height: $button-sm-line-height;
+    max-height: $button-sm-max-height;
+  }
+
+  &.btn-xs {
+    line-height: $button-xs-line-height;
+    max-height: $button-xs-max-height;
   }
 
   &:active {
@@ -124,6 +145,14 @@
   }
 }
 
+.btn-bar {
+  display: inline-flex;
+
+  .btn {
+    margin-right: 8px;
+  }
+}
+
 // default buttons
 .hippo-root {
   .hippo-button {
@@ -136,7 +165,7 @@
 
     &:hover,
     &:focus {
-      background-color: $button-focus-bgcolor;
+      background-color: $button-focus-bg;
       border-color: $button-focus-border;
       color: $button-focus-color;
       text-decoration: none;
