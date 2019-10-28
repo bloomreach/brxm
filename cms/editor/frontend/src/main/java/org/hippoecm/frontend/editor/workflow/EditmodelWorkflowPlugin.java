@@ -214,7 +214,7 @@ public class EditmodelWorkflowPlugin extends RenderPlugin<WorkflowDescriptor> {
         public CopyModelDialog(final StdWorkflow action) {
             super(action);
             setTitle(new StringResourceModel("copy-model", this).setParameters(new PropertyModel(this, "name")));
-            setSize(DialogConstants.SMALL);
+            setSize(DialogConstants.SMALL_AUTO);
 
             final WorkflowDescriptorModel workflowModel =
                     (WorkflowDescriptorModel) EditmodelWorkflowPlugin.this.getDefaultModel();
