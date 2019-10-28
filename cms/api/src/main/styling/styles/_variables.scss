@@ -233,9 +233,26 @@ $hippo-icon-delete-enabled:          $danger;
 
 // Buttons
 $button-active-bg:                   $gray12;
+$button-bgcolor:                     $lightest-shade;
+$button-border:                      $gray38;
+$button-border-radius:               $btn-border-radius-base;
+$button-color:                       $darkest-shade;
+$button-disabled-bgcolor:            $lightest-shade;
+$button-disabled-border:             $dark-gray;
+$button-disabled-color:              $dark-shade;
 $button-focus-bg:                    $btn-focus-bg;
+$button-focus-border:                $darker-shade;
 $button-focus-color:                 $btn-focus-color;
 $button-hover-bg:                    $gray5;
+
+$button-line-height:                 18px/$font-size-base;
+$button-max-height:                  36px;
+$button-lg-line-height:              1.3333333;
+$button-lg-max-height:               46px;
+$button-sm-line-height:              1.5;
+$button-sm-max-height:               30px;
+$button-xs-line-height:              1.5;
+$button-xs-max-height:               22px;
 
 $button-primary-bg:                  $btn-primary-bg;
 $button-primary-border:              $btn-primary-border;
@@ -268,16 +285,6 @@ $button-secondary-focus-color:       $bluePrimary;
 $button-secondary-disabled-bg:       transparent;
 $button-secondary-disabled-border:   $gray38;
 $button-secondary-disabled-color:    $gray38;
-
-$button-bgcolor:                     $lightest-shade;
-$button-border:                      $gray38;
-$button-border-radius:               $btn-border-radius-base;
-$button-color:                       $darkest-shade;
-$button-disabled-bgcolor:            $lightest-shade;
-$button-disabled-border:             $dark-gray;
-$button-disabled-color:              $dark-shade;
-$button-focus-bgcolor:               $darker-shade;
-$button-focus-border:                $darker-shade;
 
 // Feedback
 $feedback-error-color:               $danger-light;

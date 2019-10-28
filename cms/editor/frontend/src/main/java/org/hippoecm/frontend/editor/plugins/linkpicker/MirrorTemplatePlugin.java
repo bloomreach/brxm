@@ -25,14 +25,12 @@ import javax.jcr.ValueFormatException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.markup.head.CssHeaderItem;
-import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
-import org.apache.wicket.request.resource.CssResourceReference;
+import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
@@ -42,7 +40,6 @@ import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.attributes.TitleAttribute;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -56,20 +53,11 @@ import org.slf4j.LoggerFactory;
 public class MirrorTemplatePlugin extends RenderPlugin<Node> {
     private static final Logger log = LoggerFactory.getLogger(MirrorTemplatePlugin.class);
 
-    private static final CssResourceReference MIRROR_TEMPLATE_PLUGIN =
-            new CssResourceReference(MirrorTemplatePlugin.class, MirrorTemplatePlugin.class.getSimpleName()+".css");
-
     private Fragment fragment;
 
     public MirrorTemplatePlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
         init(config);
-    }
-
-    @Override
-    public void renderHead(final IHeaderResponse response) {
-        super.renderHead(response);
-        response.render(CssHeaderItem.forReference(MIRROR_TEMPLATE_PLUGIN));
     }
 
     private void init(final IPluginConfig config) {
