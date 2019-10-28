@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { Component, HostBinding, Inject, OnInit, ViewChild } from '@angular/core';
-
-import { TranslateService } from '@ngx-translate/core';
-
+import { animate, state, style, transition, trigger } from '@angular/animations';
+import { Component, HostBinding, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material';
-import { Observable } from 'rxjs';
+import { TranslateService } from '@ngx-translate/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { AppError } from './error-handling/models/app-error';
 import { ErrorHandlingService } from './error-handling/services/error-handling.service';
@@ -31,14 +31,33 @@ import { RightSidePanelService } from './top-panel/services/right-side-panel.ser
 @Component({
   selector: 'brna-root',
   templateUrl: './app.component.html',
-  styleUrls: ['app.component.scss'],
+  styleUrls: [ 'app.component.scss' ],
+  animations: [
+    trigger('showOverlay', [
+      state('false', style({ opacity: '0', 'z-index': 0 })),
+      state('true', style({ opacity: '1', 'z-index': 3 })),
+      transition('false <=> true', [
+        animate('400ms cubic-bezier(.25, .8, .25, 1)'),
+      ]),
+    ]),
+    trigger('stackMain', [
+      state('false', style({ 'z-index': 0 })),
+      state('true', style({ 'z-index': 4 })),
+      transition('false <=> true', [
+        animate('400ms cubic-bezier(.25, .8, .25, 1)'),
+      ]),
+    ]),
+  ],
 })
-export class AppComponent implements OnInit {
+export class AppComponent implements OnInit, OnDestroy {
   @HostBinding('class.mat-typography')
   typography = true;
 
   @ViewChild(MatSidenav)
   sidenav: MatSidenav;
+
+  isOverlayVisible = false;
+  private unsubscribe = new Subject();
 
   constructor(
     private translateService: TranslateService,
@@ -46,11 +65,7 @@ export class AppComponent implements OnInit {
     private rightSidePanelService: RightSidePanelService,
     private errorHandlingService: ErrorHandlingService,
     @Inject(USER_SETTINGS) private userSettings: UserSettings,
-  ) {}
-
-  get isOverlayVisible$(): Observable<boolean> {
-    return this.overlayService.visible$;
-  }
+  ) { }
 
   get error(): AppError {
     return this.errorHandlingService.currentError;
@@ -59,6 +74,14 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.configureTranslateService();
     this.rightSidePanelService.setSidenav(this.sidenav);
+    this.overlayService.visible$
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(visible => this.isOverlayVisible = visible);
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
   }
 
   private configureTranslateService(): void {
