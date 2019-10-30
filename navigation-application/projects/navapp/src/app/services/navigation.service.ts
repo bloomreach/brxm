@@ -17,8 +17,7 @@
 import { Location } from '@angular/common';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { NavigationTrigger, NavItem, NavLocation } from '@bloomreach/navapp-communication';
-import { BehaviorSubject, EMPTY, Observable, of, Subject, Subscription, throwError } from 'rxjs';
-import { fromPromise } from 'rxjs/internal-compatibility';
+import { BehaviorSubject, EMPTY, from, Observable, of, Subject, Subscription, throwError } from 'rxjs';
 import { catchError, finalize, mapTo, switchMap, tap } from 'rxjs/operators';
 
 import { ClientApp } from '../client-app/models/client-app.model';
@@ -334,9 +333,9 @@ export class NavigationService implements OnDestroy {
           return of(t);
         }
 
-        return fromPromise(t.app.api.beforeNavigation()).pipe(
+        return from(t.app.api.beforeNavigation()).pipe(
           switchMap(allowedToContinue => allowedToContinue ? of(t) : EMPTY),
-        );
+          );
       }),
       tap(() => {
         this.busyIndicatorService.show();
@@ -367,7 +366,7 @@ export class NavigationService implements OnDestroy {
           t.source,
         );
 
-        return fromPromise(navigationPromise).pipe(
+        return from(navigationPromise).pipe(
           mapTo(t as Navigation),
         );
       }),
