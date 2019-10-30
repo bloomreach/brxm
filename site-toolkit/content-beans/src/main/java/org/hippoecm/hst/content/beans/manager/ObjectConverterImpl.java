@@ -264,8 +264,8 @@ public class ObjectConverterImpl implements ObjectConverter {
         }
 
         if (node.isNodeType(NT_FROZEN_NODE)) {
-            log.error("Unexpected {} node since we always expect a decorated node of type '{}'", NT_FROZEN_NODE,
-                    HippoBeanFrozenNode.class.getName(), new Exception(String.format("Unexpected frozen node for '{}'", node.getPath())));
+            log.error("Unexpected {} node for path {} since we always expect a decorated node of type '{}'.", NT_FROZEN_NODE,
+                    node.getPath(), HippoBeanFrozenNode.class.getName());
             return HippoBeanFrozenNodeUtils.getWorkspaceFrozenNode(node, node.getPath(), node.getName());
         }
 
