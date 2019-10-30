@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, HostBinding, Inject, OnDestroy, OnInit } from '@angular/core';
 import { NavigationTrigger } from '@bloomreach/navapp-communication';
 import { Observable, Subject } from 'rxjs';
@@ -31,6 +32,13 @@ import { MenuStateService } from '../services/menu-state.service';
   selector: 'brna-main-menu',
   templateUrl: 'main-menu.component.html',
   styleUrls: ['main-menu.component.scss'],
+  animations: [
+    trigger('rotate-expand-collapse', [
+      state('true', style({ transform: 'rotate(0)' })),
+      state('false', style({ transform: 'rotate(-180deg)' })),
+      transition('true <=> false', animate('300ms ease')),
+    ]),
+  ],
 })
 export class MainMenuComponent implements OnInit, OnDestroy {
   menuItems: MenuItem[] = [];

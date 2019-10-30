@@ -59,8 +59,7 @@
     </brna-top-level-menu-item>
 
     <div class="trigger qa-menu-trigger" (click)="toggle()">
-      <mat-icon *ngIf="collapsed" svgIcon="nav-expand"></mat-icon>
-      <mat-icon *ngIf="!collapsed" svgIcon="nav-collapse"></mat-icon>
+      <mat-icon svgIcon="nav-expand" [@rotate-expand-collapse]="collapsed"></mat-icon>
     </div>
   </div>
 </div>
