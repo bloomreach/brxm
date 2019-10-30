@@ -98,7 +98,7 @@ export interface ParentApi {
   updateNavLocation?: (location: NavLocation) => (void | Promise<void>);
   /**
    * Is called by an application to perform internal or cross-app navigation. It **does** trigger the nav-app to perform a
-   * ‘beforeNavigate’ and ‘navigate’ to route to the provided location.
+   * ‘beforeNavigation’ and ‘navigate’ to route to the provided location.
    * **Do not set locations to other applications for navigation **
    * @param location The NavLocation navigated to
    */

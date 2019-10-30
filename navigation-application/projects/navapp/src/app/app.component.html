@@ -19,14 +19,14 @@
     <brna-site-selection></brna-site-selection>
   </mat-sidenav>
   <mat-sidenav-content>
-    <brna-overlay *ngIf="isOverlayVisible$ | async" class="overlay"></brna-overlay>
+    <div class="overlay" [@showOverlay]="isOverlayVisible"></div>
     <header>
       <brna-top-panel></brna-top-panel>
     </header>
     <nav>
       <brna-main-menu></brna-main-menu>
     </nav>
-    <main>
+    <main [@stackMain]="isOverlayVisible">
       <brna-error-page *ngIf="error" [error]="error"></brna-error-page>
       <brna-client-app-container></brna-client-app-container>
     </main>

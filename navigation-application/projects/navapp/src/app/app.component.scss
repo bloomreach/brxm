@@ -51,11 +51,14 @@ main {
 }
 
 .overlay {
-  z-index: 3;
-
-  ~ main {
-    z-index: 4;
-  }
+  background: rgba(0, 0, 0, .32);
+  bottom: 0;
+  display: block;
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
 brna-error-page + brna-client-app-container {

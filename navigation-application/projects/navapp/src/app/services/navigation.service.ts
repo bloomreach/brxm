@@ -17,8 +17,7 @@
 import { Location } from '@angular/common';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { NavigationTrigger, NavItem, NavLocation } from '@bloomreach/navapp-communication';
-import { BehaviorSubject, EMPTY, Observable, of, Subject, Subscription, throwError } from 'rxjs';
-import { fromPromise } from 'rxjs/internal-compatibility';
+import { BehaviorSubject, EMPTY, from, Observable, of, Subject, Subscription, throwError } from 'rxjs';
 import { catchError, finalize, mapTo, switchMap, tap } from 'rxjs/operators';
 
 import { ClientApp } from '../client-app/models/client-app.model';
@@ -209,10 +208,6 @@ export class NavigationService implements OnDestroy {
 
   private setupNavigations(): void {
     this.transitions.pipe(
-      tap(() => {
-        this.busyIndicatorService.show();
-        this.navigating.next(true);
-      }),
       switchMap((t: Transition) => this.processTransition(t).pipe(
         catchError(error => {
           if (typeof error === 'string') {
@@ -338,9 +333,13 @@ export class NavigationService implements OnDestroy {
           return of(t);
         }
 
-        return fromPromise(t.app.api.beforeNavigation()).pipe(
+        return from(t.app.api.beforeNavigation()).pipe(
           switchMap(allowedToContinue => allowedToContinue ? of(t) : EMPTY),
-        );
+          );
+      }),
+      tap(() => {
+        this.busyIndicatorService.show();
+        this.navigating.next(true);
       }),
       // Eagerly update the menu and the breadcrumb label
       tap(t => {
@@ -367,7 +366,7 @@ export class NavigationService implements OnDestroy {
           t.source,
         );
 
-        return fromPromise(navigationPromise).pipe(
+        return from(navigationPromise).pipe(
           mapTo(t as Navigation),
         );
       }),
