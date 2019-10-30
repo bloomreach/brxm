@@ -110,10 +110,16 @@
       const beforeNavigationPromises = Hippo.iframeConnections.getChildApiPromises()
         .map(childApiPromise =>
           childApiPromise.then(
-            childApi => childApi.beforeNavigation && childApi.beforeNavigation() || Promise.resolve(true)
+            childApi => childApi.beforeNavigation ? childApi.beforeNavigation() : Promise.resolve(true)
           )
+      );
+
+      return Promise
+        .all(beforeNavigationPromises)
+        .then(
+          childResponses => childResponses.every(canNavigate => canNavigate),
+          error => new Error(error),
         );
-      return Promise.all(beforeNavigationPromises);
     },
 
     navigate (location, triggeredBy) {
@@ -138,7 +144,7 @@
             pathElements.unshift('projects');
 
             return navigateIframe(iframe, pathElements.join('/'), triggeredBy);
-  
+
           case 'channelmanager':
             if (triggeredBy !== 'Menu') {
               const rootPanel = Ext.getCmp('rootPanel');
