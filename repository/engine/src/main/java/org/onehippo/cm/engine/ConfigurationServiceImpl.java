@@ -269,6 +269,11 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
             log.debug("applying model config for sites: {}", siteNames);
             boolean success = applyConfig(newBaselineModel, newRuntimeConfigModel, false, verify, fullConfigure, !first, false);
             if (success) {
+                log.debug("processing webfiles for site: {}", siteName);
+                //process webfilebundle instructions from HCM Site which are not from the current site
+                final List<WebFileBundleDefinitionImpl> webfileBundleDefs = getWebFileBundleDefsForSite(newRuntimeConfigModel, siteName);
+                configService.writeWebfiles(webfileBundleDefs, baselineService, session);
+
                 log.debug("applying model content for sites: {}", siteNames);
                 success = applyContent(newRuntimeConfigModel);
             }
@@ -282,11 +287,6 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                     log.debug("reloading stored baseline during site init for site: {}, sites: {}", siteName, siteNames);
                     this.baselineModel = loadBaselineModel(siteNames);
                 }
-
-                log.debug("processing webfiles for site: {}", siteName);
-                //process webfilebundle instructions from HCM Site which are not from the current site
-                final List<WebFileBundleDefinitionImpl> webfileBundleDefs = getWebFileBundleDefsForSite(runtimeConfigurationModel, siteName);
-                configService.writeWebfiles(webfileBundleDefs, baselineService, session);
 
                 // Run post site migrators for this site
                 log.debug("applying site post-migrators for site: {}", siteName);
@@ -348,7 +348,6 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
 
             ConfigurationModelImpl bootstrapModel = null;
 
-            boolean success;
             if (!mustConfigure) {
                 initWithoutBootstrap(startRepositoryServicesTask, baselineModel);
             }
@@ -364,6 +363,12 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                         initWithoutBootstrap(startRepositoryServicesTask, baselineModel);
                     }
                     else {
+                        //In case bootstrapping fails, we make sure there is a non-null runtimeConfigurationModel
+                        //We exclude the cases where repository is bootstrapped first time or when repo.bootstrap=full (cause the baseline model is ignored then)
+                        if (!fullConfigure) {
+                            runtimeConfigurationModel = baselineModel;
+                        }
+
                         // now that we have the deployment-based bootstrap model, we want to find out if the auto-export
                         // config indicates to us that we should load some modules from the filesystem
                         if (startAutoExportService) {
@@ -424,21 +429,25 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                         }
 
                         log.info("ConfigurationService: apply bootstrap config");
-                        success = applyConfig(baselineModel, bootstrapModel, false, verify, fullConfigure, !first, true);
+                        boolean configAppliedSuccessfully = applyConfig(baselineModel, bootstrapModel, false, verify, fullConfigure, !first, true);
 
-                        if (success) {
+                        if (configAppliedSuccessfully) {
                             // set runtimeConfigurationModel from bootstrapModel -- this is a reasonable default in case of exception
                             runtimeConfigurationModel = bootstrapModel;
 
                             log.info("ConfigurationService: store bootstrap config as baseline");
-                            success = storeBaselineModel(bootstrapModel);
+                            configAppliedSuccessfully = storeBaselineModel(bootstrapModel);
                         }
-                        if (success) {
+
+                        boolean contentAppliedSuccessfully = false;
+
+                        if (configAppliedSuccessfully) {
                             log.info("ConfigurationService: apply bootstrap content");
                             // use bootstrap modules, because that's the only place content sources really exist
-                            success = applyContent(bootstrapModel);
+                            contentAppliedSuccessfully = applyContent(bootstrapModel);
                         }
-                        if (success) {
+
+                        if (configAppliedSuccessfully && contentAppliedSuccessfully) {
                             // if we're in a mode that allows auto-export, keep a copy of the baseline for future use
                             if (startAutoExportService) {
                                 // reload the baseline after storing, so we have a JCR-backed view of our modules
@@ -457,7 +466,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
 
                         log.info("ConfigurationService: start repository services");
                         startRepositoryServicesTask.execute();
-                        if (success) {
+                        if (configAppliedSuccessfully) {
                             log.info("ConfigurationService: start post-startup tasks");
                             // we need the bootstrap model here, not the baseline, so we can access the jar content
                             postStartupTasks(bootstrapModel);
@@ -465,8 +474,12 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
 
                         boolean autoExportRunning = false;
                         if (startAutoExportService) {
-                            log.info("ConfigurationService: start autoexport service");
-                            autoExportRunning = startAutoExportService();
+                            if(configAppliedSuccessfully && contentAppliedSuccessfully) {
+                                log.info("ConfigurationService: start autoexport service");
+                                autoExportRunning = startAutoExportService();
+                            } else {
+                                log.warn("ConfigurationService: skipping starting autoexport service due to bootstrap errors");
+                            }
                         }
 
                         // post migrators need to run after the auto export service has been started because the
