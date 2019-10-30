@@ -856,4 +856,13 @@ public class JCRJobStore implements JobStore {
     private Session getSession() {
         return session;
     }
+
+    @Override
+    public void resetTriggerFromErrorState(final TriggerKey triggerKey) throws JobPersistenceException {
+    }
+
+    @Override
+    public long getAcquireRetryDelay(int failureCount) {
+        return 0;
+    }
 }

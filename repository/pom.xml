@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -101,7 +101,7 @@
     <pdfbox.version>2.0.16</pdfbox.version>
     <!-- commons-compress is pulled in via tika-parsers, but needs a version override as-of Tika 1.22 -->
     <commons-compress.version>1.19</commons-compress.version>
-    <quartz.version>2.2.1</quartz.version>
+    <quartz.version>2.3.2</quartz.version>
     <json-lib.version>2.4</json-lib.version>
     <easymock.version>3.4</easymock.version>
     <powermock.version>1.7.0</powermock.version>

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,13 +42,12 @@ public class SchedulerModule implements DaemonModule, ConfigurableDaemonModule {
 
     private static final Properties SCHEDULER_FACTORY_PROPERTIES = new Properties();
     static {
-        SCHEDULER_FACTORY_PROPERTIES.put(JcrSchedulerFactory.PROP_SCHED_INSTANCE_NAME, "Hippo JCR Quartz Job Scheduler");
-        SCHEDULER_FACTORY_PROPERTIES.put(JcrSchedulerFactory.PROP_SCHED_INSTANCE_ID, "AUTO");
-        SCHEDULER_FACTORY_PROPERTIES.put(JcrSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK, "true");
-        SCHEDULER_FACTORY_PROPERTIES.put(JcrSchedulerFactory.PROP_THREAD_POOL_CLASS, SimpleThreadPool.class.getName());
+        SCHEDULER_FACTORY_PROPERTIES.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, "Hippo JCR Quartz Job Scheduler");
+        SCHEDULER_FACTORY_PROPERTIES.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_ID, "AUTO");
+        SCHEDULER_FACTORY_PROPERTIES.put(StdSchedulerFactory.PROP_THREAD_POOL_CLASS, SimpleThreadPool.class.getName());
         SCHEDULER_FACTORY_PROPERTIES.put(JcrSchedulerFactory.PROP_THREAD_POOL_THREADCOUNT, "2");
         SCHEDULER_FACTORY_PROPERTIES.put(JcrSchedulerFactory.PROP_THREAD_POOL_THREADPRIORITY, "5");
-        SCHEDULER_FACTORY_PROPERTIES.put(JcrSchedulerFactory.PROP_JOB_STORE_CLASS, JCRJobStore.class.getName());
+        SCHEDULER_FACTORY_PROPERTIES.put(StdSchedulerFactory.PROP_JOB_STORE_CLASS, JCRJobStore.class.getName());
     }
 
     private Session session;
