@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@
     <commons-lang.version>2.6</commons-lang.version>
     <commons-csv.version>1.6</commons-csv.version>
     <json-lib.version>2.4</json-lib.version>
-    <apache-poi.version>3.16</apache-poi.version>
+    <apache-poi.version>4.1.1</apache-poi.version>
     <hippo.configuration-management.version>${hippo.release.version}</hippo.configuration-management.version>
     <junit.version>4.12</junit.version>
   </properties>
