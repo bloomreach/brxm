@@ -503,6 +503,8 @@ if (!YAHOO.hippo.LayoutManager) { // Ensure only one layout manager exists
 
             if (unitConfig.expanded === true) {
               this.expandUnit(unitConfig.position);
+            } else if (unitConfig.expandCollapseEnabled === true) {
+              this.collapseUnit(unitConfig.position);
             }
           }
         }
