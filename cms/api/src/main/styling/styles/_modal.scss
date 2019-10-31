@@ -270,6 +270,10 @@
   }
 }
 
+.hippo-dialog-resizable .hippo-dialog-center {
+  flex: none;
+}
+
 // Hippo dialog feedback
 .hippo-dialog-feedback ul {
   background-color: $alert-danger-bg;
