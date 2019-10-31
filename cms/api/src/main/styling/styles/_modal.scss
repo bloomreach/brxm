@@ -346,21 +346,7 @@
         }
 
         a {
-          flex: 0 0 auto;
           margin-right: 16px;
-          padding: 0 4px 0 4px;
-          border: 1px solid $button-border;
-          border-radius: $button-border-radius;
-          background-color: transparent;
-          height: 24px;
-          line-height: 24px;
-          color: $text-color;
-
-          &:hover,
-          &:visited,
-          &:active {
-            text-decoration: none;
-          }
         }
       }
 
