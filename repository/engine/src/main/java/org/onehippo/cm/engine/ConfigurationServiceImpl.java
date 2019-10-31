@@ -732,7 +732,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
             final ContentDefinitionImpl contentDefinition = module.getContentSources().iterator().next().getContentDefinition();
             contentService.importNode(contentDefinition.getNode(), parentNode, ActionType.RELOAD);
         } catch (ParserException e) {
-            throw new RuntimeException("Import failed", e);
+            throw new RepositoryException("Import failed", e);
         }
 
     }
@@ -759,7 +759,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
             final ContentDefinitionImpl contentDefinition = module.getContentSources().iterator().next().getContentDefinition();
             contentService.importNode(contentDefinition.getNode(), parentNode, ActionType.RELOAD);
         } catch (Exception e) {
-            throw new RuntimeException("Import failed", e);
+            throw new RepositoryException("Import failed", e);
         }
     }
 
