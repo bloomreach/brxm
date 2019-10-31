@@ -18,6 +18,7 @@ package org.hippoecm.frontend.plugins.standards.perspective;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.markup.head.HeaderItem;
@@ -25,23 +26,25 @@ import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.OnLoadHeaderItem;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.PackageResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.navigation.NavigationItem;
+import org.hippoecm.frontend.navigation.NavigationItemService;
 import org.hippoecm.frontend.plugin.IClusterControl;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IClusterConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugin.config.IPluginConfigService;
-import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.service.ITitleDecorator;
 import org.hippoecm.frontend.service.IconSize;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.usagestatistics.UsageEvent;
 import org.hippoecm.frontend.usagestatistics.UsageStatisticsHeaderItem;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 
 public abstract class Perspective extends RenderPlugin<Void> implements ITitleDecorator {
 
@@ -75,11 +78,11 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
     private final String eventId;
     private final String imageExtension;
     private final String fallbackImageExtension;
+    private final NavigationItem navigationItem;
 
     private IModel<String> title;
     private boolean isRendered;
     private boolean isActivated;
-    private NavAppPerspective navAppPerspective;
 
     public Perspective(IPluginContext context, IPluginConfig config) {
         this(context, config, null);
@@ -88,27 +91,29 @@ public abstract class Perspective extends RenderPlugin<Void> implements ITitleDe
     public Perspective(IPluginContext context, IPluginConfig config, final String eventId) {
         super(context, config);
 
+        NavigationItemService navigationItemService = HippoServiceRegistry.getService(NavigationItemService.class);
+        this.navigationItem = Optional
+                .ofNullable(navigationItemService.getNavigationItem(getSession().getJcrSession(), config.getString("plugin.class"), getLocale()))
+                .orElse(new NavigationItem());
+
         this.eventId = eventId;
-        this.title = new StringResourceModel(TITLE_KEY, this);
+        this.title = Model.of(navigationItem.getDisplayName());
 
         imageExtension = config.getString("image.extension", IMAGE_EXTENSION);
         fallbackImageExtension = config.getString("fallback.image.extension", FALLBACK_IMAGE_EXTENSION);
 
         add(ClassAttribute.append("perspective"));
 
-
-        navAppPerspective = new NavAppPerspective(getClass());
-
     }
 
     public String getTitleCssClass() {
         // Stable CSS class name to be able to identify a perspective's link in automated tests
         // It is also used to be able to navigate via javascript by looking up a perspective via it's class name.
-        return navAppPerspective.getId();
+        return navigationItem.getAppPath();
     }
 
     public String getAppPath() {
-        return navAppPerspective.getAppPath();
+        return navigationItem.getAppPath();
     }
 
     @Override

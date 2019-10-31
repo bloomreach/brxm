@@ -1,0 +1,10 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:translations/hippo:navigation:
+      jcr:primaryType: hipposys:resourcebundles
+      /navigationitem:
+        jcr:primaryType: hipposys:resourcebundles
+        /displayName:
+          jcr:primaryType: hipposys:resourcebundles
+          /en:
+            jcr:primaryType: hipposys:resourcebundle
