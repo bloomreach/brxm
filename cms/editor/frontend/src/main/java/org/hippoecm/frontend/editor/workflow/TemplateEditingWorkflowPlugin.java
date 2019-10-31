@@ -33,6 +33,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.buttons.ButtonStyle;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
@@ -215,23 +216,7 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
             exceptionLabel.setOutputMarkupId(true);
             add(exceptionLabel);
 
-            AjaxButton button = new AjaxButton(DialogConstants.BUTTON) {
-                @Override
-                protected void onSubmit(AjaxRequestTarget target, Form form) {
-                    try {
-                        doRevert();
-                        closeDialog();
-                        closeEditor();
-                    } catch (Exception ex) {
-                        exceptionLabel.setDefaultModel(Model.of(ex.getMessage()));
-                        target.add(exceptionLabel);
-                    }
-                }
-            };
-            button.setModel(new ResourceModel("discard", "Discard"));
-            addButton(button);
-
-            button = new AjaxButton(DialogConstants.BUTTON) {
+            final AjaxButton saveButton = new AjaxButton(DialogConstants.BUTTON) {
                 @Override
                 public boolean isEnabled() {
                     return super.isValid() && TemplateEditingWorkflowPlugin.this.isValid();
@@ -249,8 +234,28 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
                     }
                 }
             };
-            button.setModel(new ResourceModel("save", "Save"));
-            addButton(button);
+            saveButton.setModel(new ResourceModel("save", "Save"));
+            addButton(saveButton);
+
+            final AjaxButton discardButton = new AjaxButton(DialogConstants.BUTTON) {
+                @Override
+                protected void onSubmit(AjaxRequestTarget target, Form form) {
+                    try {
+                        doRevert();
+                        closeDialog();
+                        closeEditor();
+                    } catch (Exception ex) {
+                        exceptionLabel.setDefaultModel(Model.of(ex.getMessage()));
+                        target.add(exceptionLabel);
+                    }
+                }
+            };
+            discardButton.setModel(new ResourceModel("discard", "Discard"));
+            discardButton.add(ClassAttribute.append(() -> saveButton.isEnabled()
+                    ? ButtonStyle.SECONDARY.getCssClass()
+                    : ButtonStyle.PRIMARY.getCssClass()));
+            addButton(discardButton);
+
         }
 
         public IModel<String> getTitle() {
