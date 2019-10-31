@@ -20,12 +20,13 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.wicket.ajax.AjaxRequestHandler;
 import org.apache.wicket.ajax.AjaxRequestTarget;
+import org.apache.wicket.event.IEvent;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.dialog.Dialog;
-import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -58,7 +59,8 @@ public class LinkPickerDialog extends Dialog<String> {
 
         setOutputMarkupId(true);
         setCssClass("hippo-dialog-picker");
-        setSize(DialogConstants.MEDIUM_RELATIVE);
+        setResizable(true);
+
 
         final NodePickerControllerSettings settings = NodePickerControllerSettings.fromPluginConfig(config);
         controller = new NodePickerController(context, settings) {
@@ -154,6 +156,16 @@ public class LinkPickerDialog extends Dialog<String> {
             saveNode(selectedModel.getObject());
         } else {
             error("No node selected");
+        }
+    }
+
+    @Override
+    public void onEvent(final IEvent<?> event) {
+        super.onEvent(event);
+        if (event.getPayload() instanceof AjaxRequestHandler) {
+            final AjaxRequestHandler handler = (AjaxRequestHandler) event.getPayload();
+            handler.appendJavaScript(
+                    "Wicket.Window.current.resizer && Wicket.Window.current.resizer.restoreDatatableHeight();");
         }
     }
 
