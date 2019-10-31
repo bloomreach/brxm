@@ -24,38 +24,56 @@ import java.util.Locale;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.frontend.Main;
+import org.hippoecm.frontend.navigation.NavigationItem;
+import org.hippoecm.frontend.navigation.NavigationItemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.stream.Collectors.toList;
-
 final class NavigationItemServiceImpl implements NavigationItemService {
 
+    static final String APP_IFRAME_URL = String.format("/?%s", Main.CMS_AS_IFRAME_QUERY_PARAMETER);
     private static final Logger log = LoggerFactory.getLogger(NavigationItemServiceImpl.class);
 
-    private PerspectiveStore perspectiveStore;
-    private NavigationItemFactory navigationItemFactory;
+    private NavigationItemStore navigationItemStore;
+    private NavigationItemLocalizer navigationItemLocalizer;
 
-    public void setPerspectiveStore(PerspectiveStore perspectiveStore) {
-        this.perspectiveStore = perspectiveStore;
+    void setNavigationItemStore(NavigationItemStore navigationItemStore) {
+        this.navigationItemStore = navigationItemStore;
     }
 
-    public void setNavigationItemFactory(NavigationItemFactory navigationItemFactory) {
-        this.navigationItemFactory = navigationItemFactory;
+    void setNavigationItemLocalizer(NavigationItemLocalizer navigationItemLocalizer) {
+        this.navigationItemLocalizer = navigationItemLocalizer;
     }
 
     @Override
-    public List<NavigationItem> getNavigationItems(Session userSession, String appIframeUrl, Locale locale) {
+    public List<NavigationItem> getNavigationItems(Session userSession, Locale locale) {
         try {
-            return perspectiveStore
-                    .getPerspectiveClassNames(userSession)
-                    .stream()
-                    .map(name -> navigationItemFactory.newInstance(name, appIframeUrl, locale))
-                    .collect(toList());
+            final List<NavigationItem> navigationItems = navigationItemStore.getNavigationItems(userSession);
+            navigationItems.forEach(navigationItem -> decorate(locale, navigationItem));
+            return navigationItems;
         } catch (RepositoryException e) {
-            log.error("Failed to get perspectives for user with id '{}'", userSession.getUserID(), e);
+            log.error("Failed to get navigation items for user with id '{}'", userSession.getUserID(), e);
             return Collections.emptyList();
         }
     }
 
+    @Override
+    public NavigationItem getNavigationItem(Session userSession, String pluginClass, Locale locale) {
+        try {
+            final NavigationItem navigationItem = navigationItemStore.getNavigationItem(pluginClass, userSession);
+            decorate(locale, navigationItem);
+            return navigationItem;
+        } catch (RepositoryException e) {
+            log.error("Failed to get navigation items for user with id '{}'", userSession.getUserID(), e);
+            return null;
+        }
+    }
+
+    private void decorate(Locale locale, NavigationItem navigationItem) {
+        if (navigationItem != null) {
+            navigationItem.setAppIframeUrl(APP_IFRAME_URL);
+            navigationItemLocalizer.localize(navigationItem, locale);
+        }
+    }
 }

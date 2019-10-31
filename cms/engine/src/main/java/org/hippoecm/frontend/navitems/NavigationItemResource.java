@@ -28,14 +28,13 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
-import org.hippoecm.frontend.Main;
+import org.hippoecm.frontend.navigation.NavigationItem;
+import org.hippoecm.frontend.navigation.NavigationItemService;
 import org.onehippo.repository.jaxrs.api.SessionRequestContextProvider;
 
 @Produces(MediaType.APPLICATION_JSON)
 @Path("/")
 public final class NavigationItemResource {
-
-    static final String APP_IFRAME_URL = String.format("/?%s", Main.CMS_AS_IFRAME_QUERY_PARAMETER);
 
     private SessionRequestContextProvider sessionRequestContextProvider;
     private NavigationItemService navigationItemService;
@@ -50,7 +49,7 @@ public final class NavigationItemResource {
 
     @GET
     public List<NavigationItem> getNavigationItems(@Context HttpServletRequest request) {
-        return navigationItemService.getNavigationItems(getUserSession(request), APP_IFRAME_URL, getLocale(request));
+        return navigationItemService.getNavigationItems(getUserSession(request), getLocale(request));
     }
 
     private Session getUserSession(HttpServletRequest request) {

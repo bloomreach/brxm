@@ -15,7 +15,7 @@
  *
  */
 
-package org.hippoecm.frontend.navitems;
+package org.hippoecm.frontend.navigation;
 
 import java.util.List;
 import java.util.Locale;
@@ -27,10 +27,19 @@ public interface NavigationItemService {
     /**
      * Returns the list of {@link NavigationItem}s that the logged in user (identified by the userSession) is allowed to see.
      *
-     * @param userSession  jcr session of the logged in user
-     * @param appIframeUrl the url of the iframe that the navigation items must belong to.
-     * @param locale       the locale to use for localizing the displayName of a navigation item.
+     * @param userSession jcr session of the logged in user
+     * @param locale      the locale to use for localizing the displayName of a navigation item.
      * @return list of navigation items
      */
-    List<NavigationItem> getNavigationItems(Session userSession, String appIframeUrl, Locale locale);
+    List<NavigationItem> getNavigationItems(Session userSession, Locale locale);
+
+    /**
+     * Returns the navigation item for the given plugin class.
+     *
+     * @param userSession jcr session of the logged in user
+     * @param pluginClass fully qualified name of the plugin class that belongs to the returned item.
+     * @param locale      the locale to use for localizing the displayName of a navigation item.
+     * @return
+     */
+    NavigationItem getNavigationItem(Session userSession, String pluginClass, Locale locale);
 }
