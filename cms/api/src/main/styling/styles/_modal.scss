@@ -176,12 +176,20 @@
     textarea {
       border: 1px solid $editor-subfield-border;
       border-radius: $editor-field-border-radius;
+      box-sizing: border-box;
+      padding: 8px;
+
+      &.focus-visible {
+        border-color: $editor-field-focus-color;
+        box-shadow: 0 0 0 1px $editor-field-focus-color;
+      }
     }
 
     input,
     select {
       flex-grow: 1;
-      height: 30px;
+      //height: 30px;
+      height: 36px;
     }
 
     input {
