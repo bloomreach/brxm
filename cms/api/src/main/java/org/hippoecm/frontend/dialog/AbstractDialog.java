@@ -336,6 +336,7 @@ public abstract class AbstractDialog<T> extends Form<T> implements IDialogServic
                     fullscreen = !fullscreen;
                 }
             };
+            goFullscreen.add(ClassAttribute.append(ButtonStyle.SECONDARY.getCssClass()));
             addButton(goFullscreen);
         }
 
