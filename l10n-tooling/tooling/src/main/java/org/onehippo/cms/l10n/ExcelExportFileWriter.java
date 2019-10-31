@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,12 +22,12 @@ import java.util.List;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import static org.apache.poi.ss.usermodel.Cell.CELL_TYPE_STRING;
 
 public class ExcelExportFileWriter implements ExportFileWriter {
 
@@ -36,29 +36,31 @@ public class ExcelExportFileWriter implements ExportFileWriter {
 
     @Override
     public void write(final File file, final List<String[]> data) throws IOException {
-        final Workbook workbook = new XSSFWorkbook();
-        final Sheet sheet = workbook.createSheet();
-        sheet.setColumnWidth(1, 20000);
-        sheet.setColumnWidth(2, 20000);
-        final CellStyle defaultStyle = workbook.getCellStyleAt(0);
-        defaultStyle.setVerticalAlignment(CellStyle.VERTICAL_TOP);
-        final CellStyle textStyle = workbook.createCellStyle();
-        textStyle.setWrapText(true);
-        textStyle.setVerticalAlignment(CellStyle.VERTICAL_TOP);
+        final FileOutputStream fileOut;
+        try (Workbook workbook = new XSSFWorkbook()) {
+            final Sheet sheet = workbook.createSheet();
+            sheet.setColumnWidth(1, 20000);
+            sheet.setColumnWidth(2, 20000);
+            final CellStyle defaultStyle = workbook.getCellStyleAt(0);
+            defaultStyle.setVerticalAlignment(VerticalAlignment.TOP);
+            final CellStyle textStyle = workbook.createCellStyle();
+            textStyle.setWrapText(true);
+            textStyle.setVerticalAlignment(VerticalAlignment.TOP);
 
-        for (int r = 0 ; r < data.size(); r++) {
-            final Row row = sheet.createRow(r);
-            for (int c = 0; c < data.get(r).length; c++) {
-                final Cell cell = row.createCell(c, CELL_TYPE_STRING);
-                cell.setCellValue(data.get(r)[c]);
-                if (c > 0) {
-                    cell.setCellStyle(textStyle);
+            for (int r = 0; r < data.size(); r++) {
+                final Row row = sheet.createRow(r);
+                for (int c = 0; c < data.get(r).length; c++) {
+                    final Cell cell = row.createCell(c, CellType.STRING);
+                    cell.setCellValue(data.get(r)[c]);
+                    if (c > 0) {
+                        cell.setCellStyle(textStyle);
+                    }
                 }
             }
-        }
 
-        final FileOutputStream fileOut = new FileOutputStream(file);
-        workbook.write(fileOut);
+            fileOut = new FileOutputStream(file);
+            workbook.write(fileOut);
+        }
         fileOut.close();
     }
 
