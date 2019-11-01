@@ -17,11 +17,14 @@
 
 package org.hippoecm.frontend.service.navappsettings;
 
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.stream.Stream;
 
@@ -29,6 +32,7 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.wicket.Session;
 import org.apache.wicket.ThreadContext;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.protocol.http.servlet.ServletWebRequest;
@@ -98,6 +102,7 @@ public class NavAppSettingsServiceTest {
     private HippoSession hippoSession;
     @Mock
     private SessionUser user;
+    private SessionAttributeStore sessionAttributeStore;
 
     @Before
     public void setUp() throws RepositoryException {
@@ -125,6 +130,7 @@ public class NavAppSettingsServiceTest {
         expect(userSession.getTimeZone()).andReturn(TimeZone.getDefault());
         replay(userSession);
 
+
         expect(hippoSession.getUser()).andReturn(user);
         replay(hippoSession);
 
@@ -142,7 +148,36 @@ public class NavAppSettingsServiceTest {
         expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
         replay(config);
 
-        this.navAppSettingsService = new NavAppSettingsService(context, config, () -> userSession);
+        sessionAttributeStore = new SessionAttributeStore() {
+
+            private final Map<String, Serializable> attributes = new HashMap<>();
+
+            @Override
+            public Serializable getAttribute(final String name) {
+                return attributes.get(name);
+            }
+
+            @Override
+            public Session setAttribute(final String name, final Serializable value) {
+                attributes.put(name, value);
+                return null;
+            }
+        };
+        this.sessionAttributeStore =new SessionAttributeStore(){
+
+            final private Map<String,Serializable> attributes = new HashMap<>();
+            @Override
+            public Serializable getAttribute(final String name) {
+                return attributes.get(name);
+            }
+
+            @Override
+            public Session setAttribute(final String name, final Serializable value) {
+                attributes.put(name, value);
+                return null;
+            }
+        };
+        this.navAppSettingsService = new NavAppSettingsService(context, config, () -> userSession, sessionAttributeStore);
 
         ThreadContext.setApplication(webApplication);
     }
@@ -388,6 +423,31 @@ public class NavAppSettingsServiceTest {
         expect(parameters.getParameterValue(NavAppSettingsService.LOGIN_TYPE_QUERY_PARAMETER))
                 .andStubReturn(StringValue.valueOf("local"));
         replay(parameters);
+
+        final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
+        assertThat(navAppSettings.getAppSettings().getNavConfigResources().size(), is(1));
+        verify(config, parameters);
+    }
+
+    @Test
+    public void loads_no_resources_for_logintype_local_reload() {
+
+        reset(config);
+        expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
+        replay(config);
+
+
+        reset(parameters);
+        expect(parameters.getParameterValue(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER))
+                .andStubReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.UUID_PARAM))
+                .andStubReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.PATH_PARAM))
+                .andReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.LOGIN_TYPE_QUERY_PARAMETER))
+                .andReturn(StringValue.valueOf((String) null));
+        replay(parameters);
+        sessionAttributeStore.setAttribute(NavAppSettingsService.LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME,true);
 
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
         assertThat(navAppSettings.getAppSettings().getNavConfigResources().size(), is(1));

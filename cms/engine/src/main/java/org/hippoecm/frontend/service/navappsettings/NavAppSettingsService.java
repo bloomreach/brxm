@@ -20,6 +20,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -57,6 +58,8 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     static final String RESOURCE_TYPE = "resource.type";
     static final String IFRAMES_CONNECTION_TIMEOUT = "iframesConnectionTimeout";
     static final String LOGIN_TYPE_QUERY_PARAMETER = "logintype";
+    public static final String LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME = NavAppSettingsService.class.getName() + "_" +
+            LOGIN_TYPE_QUERY_PARAMETER;
     public static final String PATH_PARAM = "path";
     public static final String UUID_PARAM = "uuid";
 
@@ -64,29 +67,37 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     private static final Logger log = LoggerFactory.getLogger(NavAppSettingsService.class);
     // To make unit testing easier (needs to be transient to prevent Wicket from serializing it.
     private final transient Supplier<PluginUserSession> pluginUserSessionSupplier;
+    private final SessionAttributeStore sessionAttributeStore;
 
-    NavAppSettingsService(IPluginContext context, IPluginConfig config, Supplier<PluginUserSession> pluginUserSessionSupplier) {
+    NavAppSettingsService(IPluginContext context, IPluginConfig config, Supplier<PluginUserSession> pluginUserSessionSupplier, final SessionAttributeStore sessionAttributeStore) {
         super(context, config);
         this.pluginUserSessionSupplier = pluginUserSessionSupplier;
         final String name = config.getString(SERVICE_ID, SERVICE_ID);
+        this.sessionAttributeStore = sessionAttributeStore;
         context.registerService(this, name);
     }
 
     public NavAppSettingsService(IPluginContext context, IPluginConfig config) {
-        this(context, config, PluginUserSession::get);
+        this(context, config, PluginUserSession::get, new UserSessionAttributeStore(PluginUserSession.get()));
     }
 
     @Override
     public NavAppSettings getNavAppSettings(final Request request) {
 
-        final UserSettings userSettings = createUserSettings(pluginUserSessionSupplier.get());
+        final PluginUserSession pluginUserSession = pluginUserSessionSupplier.get();
+        final UserSettings userSettings = createUserSettings(pluginUserSession);
 
         final IRequestParameters queryParameters = request.getQueryParameters();
         final StringValue initialPathStringValue = queryParameters.getParameterValue(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER);
         final String initialPath = initialPathStringValue.toString(convertLegacyDocumentParameters(request));
 
         final StringValue loginTypeStringValue = queryParameters.getParameterValue(LOGIN_TYPE_QUERY_PARAMETER);
-        final boolean localLogin = loginTypeStringValue.toString("").equals("local");
+        if (loginTypeStringValue.toString("").equals("local")){
+            this.sessionAttributeStore.setAttribute(LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME, true);
+        }
+        boolean localLogin = (boolean) Optional
+                .ofNullable( this.sessionAttributeStore.getAttribute(LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME))
+                .orElse(false);
 
         final AppSettings appSettings = createAppSettings(initialPath, localLogin);
         return new NavAppSettings() {
