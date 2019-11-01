@@ -61,7 +61,7 @@
 }
 
 .channel-manager .x-btn:not(.btn) .x-btn-text:hover {
-  color: #0877d1;
+  color: #147AC8;
 }
 
 .channel-manager .x-toolbar .x-btn-text-icon .x-btn-text {
@@ -128,7 +128,7 @@
 }
 
 #hippo-channelmanager-breadcrumb .x-btn-over .x-btn-text {
-  color: #0877d1;
+  color: #147AC8;
 }
 
 .channel-manager .x-toolbar .breadcrumb-item {
@@ -300,7 +300,7 @@
 }
 
 .channel-manager .x-grid3-cell-inner a {
-  color: #0877d1;
+  color: #147AC8;
 }
 
 .channel-manager .x-grid3-cell-inner a:hover {
@@ -447,8 +447,8 @@
 }
 
 .channel-manager-toolbar .x-toolbar-right .x-btn-pressed.x-btn-noicon .x-btn-text {
-  color: #0877d1;
-  border-bottom: 3px solid #0877d1;
+  color: #147AC8;
+  border-bottom: 3px solid #147AC8;
 }
 
 .channel-manager-toolbar .x-toolbar-right .xtb-spacer {
@@ -467,7 +467,7 @@
 }
 
 .channel-manager .x-btn-pressed .x-btn-small .icon-view {
-  border-bottom: 3px solid #0877d1;
+  border-bottom: 3px solid #147AC8;
 }
 
 .channel-manager .x-btn-small .list-view {
@@ -482,7 +482,7 @@
 }
 
 .channel-manager .x-btn-pressed .x-btn-small .list-view {
-  border-bottom: 3px solid #0877d1;
+  border-bottom: 3px solid #147AC8;
 }
 
 .channel-manager-toolbar .x-btn-tl,
