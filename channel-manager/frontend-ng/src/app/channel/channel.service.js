@@ -365,12 +365,12 @@ class ChannelService {
 
   _getLocation() {
     if (!this.hasChannel()) {
-      return { path: 'channelmanager' };
+      return { path: 'experience-manager' };
     }
 
     return {
       breadcrumbLabel: this.getName(),
-      path: `channelmanager/${this.getId()}`,
+      path: `experience-manager/${this.getId()}`,
     };
   }
 }
