@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -64,26 +64,16 @@
     },
 
     beforeAjaxCall: function() {
-      this.calls++;
-
-      if (this.calls === 1) {
-        this.show();
-      }
+      this.show();
     },
 
     afterAjaxCall: function() {
-      if (this.calls > 0) {
-        this.calls--;
-      }
-
-      if (this.calls === 0) {
-        this.hide();
-      }
+      this.hide();
     },
 
     show: function() {
       window.Hippo.showBusyIndicator();
-        this.body.addClass(this.waitClass);
+      this.body.addClass(this.waitClass);
 
       if (this.active) {
       if (this.loadTimer === null) {
@@ -121,13 +111,11 @@
     },
 
     setActive: function(active) {
-      if (this.calls > 0) {
-        if (active) {
+      if (active) {
         this.show();
       } else {
         this.hide();
       }
-    }
       this.active = active;
     }
   };
