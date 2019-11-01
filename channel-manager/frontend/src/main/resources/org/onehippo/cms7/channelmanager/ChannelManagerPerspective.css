@@ -54,10 +54,30 @@
   background: #f7f7f7;
 }
 
-.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-text {
-  margin: 0 4px;
+.x-btn.btn {
+  height: 36px;
+  line-height: 18px;
+}
+
+.x-btn.btn-br-primary button {
+  color: #fff;
+}
+
+.x-btn.btn-br-primary.x-item-disabled,
+.x-btn.btn-br-primary.x-item-disabled:hover {
+  background-color: rgba(0, 0, 0, .12) !important;
+  border-color: rgba(0, 0, 0, .38);
+  color: rgba(0, 0, 0, .38);
+}
+
+.channel-manager .channel-manager-toolbar.x-toolbar {
   height: 52px;
   line-height: 52px;
+}
+
+.channel-manager .channel-manager-toolbar.x-toolbar .x-toolbar-right-ct .x-btn-text {
+  height: 51px;
+  margin: 0 4px;
 }
 
 .channel-manager .x-btn:not(.btn) .x-btn-text:hover {
@@ -65,7 +85,7 @@
 }
 
 .channel-manager .x-toolbar .x-btn-text-icon .x-btn-text {
-  padding-left: 22px;
+  padding-left: 26px;
 }
 
 .channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-tl,
@@ -287,11 +307,11 @@
 }
 
 .channel-manager .x-btn-small .add-channel {
-  background-image: url("add.svg");
+  background-image: url("plus.svg");
 }
 
-.channel-manager .x-btn-small .add-channel:hover {
-  background-image: url("add-blue.svg");
+.channel-manager .x-btn.x-item-disabled .add-channel {
+  background-image: url("plus-gray.svg");
 }
 
 .channel-manager .x-window .x-window-ml,

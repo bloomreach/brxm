@@ -105,7 +105,8 @@
                     },
                     allowDepress: false,
                     scope: this,
-                    iconCls: 'add-channel'
+                    iconCls: 'add-channel',
+                    cls: 'btn btn-br-primary'
                 });
             }
 
