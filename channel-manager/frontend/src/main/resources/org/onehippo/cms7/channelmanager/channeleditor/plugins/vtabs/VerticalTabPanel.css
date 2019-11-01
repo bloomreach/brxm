@@ -25,7 +25,7 @@
 
 .x-tot2ivn-vr-tab-strip-wrap .x-tab-strip-top .x-tot2ivn-vr-tab-strip-title.x-tab-strip-active,
 .x-tot2ivn-vr-tab-strip-wrap .x-tab-strip-top .x-tot2ivn-vr-tab-strip-title.x-tab-strip-active + .x-tot2ivn-vr-tab-strip-title {
-    border-top-color: #0877d1;
+    border-top-color: #147AC8;
 }
 
 .x-tot2ivn-vr-tab-strip-wrap .x-tab-strip-top .x-tab-right {
@@ -96,5 +96,5 @@
 .x-tot2ivn-vr-tab-panel .x-tab-strip-active span.x-tot2ivn-vr-tab-strip-text {
     font-weight: normal !important;
     color: #ffffff;
-    background-color: #0877d1;
+    background-color: #147AC8;
 }
