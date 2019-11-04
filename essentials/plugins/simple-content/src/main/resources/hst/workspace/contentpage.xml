@@ -36,6 +36,9 @@
       <sv:property sv:name="hst:componentclassname" sv:type="String">
         <sv:value>org.onehippo.cms7.essentials.components.EssentialsContentComponent</sv:value>
       </sv:property>
+      <sv:property sv:name="hst:label" sv:type="String">
+        <sv:value>Content</sv:value>
+      </sv:property>
       <sv:property sv:name="hst:template" sv:type="String">
         <sv:value>contentpage-main</sv:value>
       </sv:property>

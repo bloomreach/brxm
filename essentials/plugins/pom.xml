@@ -71,6 +71,7 @@
     <module>enterprise-project</module>
     <module>crisp</module>
     <module>install-all-plugins</module>
+    <module>spa-demo</module>
   </modules>
 
   <dependencyManagement>
