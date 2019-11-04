@@ -58,8 +58,8 @@ public class DomainsManagerImpl implements DomainsManager {
     private static final String ALL_DOMAINS_QUERY = "//element(*," + NT_DOMAINFOLDER + ")/element(*," + NT_DOMAIN + ")";
     private static final String ALL_AUTHROLES_QUERY = ALL_DOMAINS_QUERY + "/element(*," + NT_AUTHROLE + ")";
     private static final String AUTHROLES_FOR_USERROLE_QUERY = ALL_AUTHROLES_QUERY + "[@" + HIPPO_USERROLE + "='{}']";
-    private static final String AUTHROLES_FOR_GROUP_QUERY = ALL_AUTHROLES_QUERY + "[@" + HIPPO_USERS + "='{}']";
-    private static final String AUTHROLES_FOR_USER_QUERY = ALL_AUTHROLES_QUERY + "[@" + HIPPO_GROUPS + "='{}']";
+    private static final String AUTHROLES_FOR_GROUP_QUERY = ALL_AUTHROLES_QUERY + "[@" + HIPPO_GROUPS + "='{}']";
+    private static final String AUTHROLES_FOR_USER_QUERY = ALL_AUTHROLES_QUERY + "[@" + HIPPO_USERS + "='{}']";
 
     private final RepositorySecurityManagerImpl repositorySecurityManager;
 
