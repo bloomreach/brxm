@@ -19,7 +19,6 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
@@ -224,9 +223,12 @@ public class YamlImportDialog extends Dialog<Node> {
                 FileUtils.deleteQuietly(tempFile);
             }
 
-        } catch (Exception ex) {
+        } catch (RepositoryException ex) {
             log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
             error("Import failed: " + ex.getCause().getMessage());
+        } catch (Exception ex) {
+            log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
+            error("Import failed: " + ex.getMessage());
         }
     }
 
