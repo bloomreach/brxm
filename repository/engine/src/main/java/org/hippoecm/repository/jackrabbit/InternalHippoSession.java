@@ -71,11 +71,6 @@ public interface InternalHippoSession extends JackrabbitSession, NamespaceResolv
 
     AuthorizationQuery getAuthorizationQuery();
 
-    /**
-     * sets an explicit authorization query, only for TESTING purposes
-     */
-    void setAuthorizationQuery(AuthorizationQuery authorizationQuery);
-
     Session createDelegatedSession(InternalHippoSession session, DomainRuleExtension... domainExtensions) throws RepositoryException;
 
     void localRefresh();

@@ -182,8 +182,7 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
     }
 
     // testing purposes only!!
-    @Override
-    public void setAuthorizationQuery(final AuthorizationQuery authorizationQuery) {
+    void setAuthorizationQuery(final AuthorizationQuery authorizationQuery) {
         helper.setAuthorizationQuery(authorizationQuery);
     }
 

@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.repository;
+package org.hippoecm.repository.jackrabbit;
 
 import java.util.Collections;
 import java.util.List;
@@ -304,7 +304,7 @@ public class DocumentVariantShufflingTest extends RepositoryTestCase {
         try {
             for (int i = 0; i < 10; i++) {
                 liveuser = server.login(new SimpleCredentials("liveuser", "liveuser".toCharArray()));
-                InternalHippoSession unwrap = (InternalHippoSession) SessionDecorator.unwrap(liveuser);
+                XASessionImpl unwrap = (XASessionImpl) SessionDecorator.unwrap(liveuser);
 
                 // we OVERRIDE the normal authorization query of the live user to a match all query: now still
                 // everything should still work since the access will still be checked regardless of that the
