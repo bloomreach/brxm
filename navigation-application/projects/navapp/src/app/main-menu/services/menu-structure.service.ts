@@ -44,31 +44,31 @@ export class MenuStructureService {
   private createMenuStructure(): MenuItem[] {
     this.extensions.caption = this.translate('MENU_CONTAINER_EXTENSIONS');
     const dashboard = new MenuItemLink(
-      'hippo-perspective-dashboardperspective',
+      'xm-home',
        this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_DASHBOARDPERSPECTIVE'),
       'home',
     );
 
     const experienceManager = new MenuItemLink(
-      'hippo-perspective-channelmanagerperspective',
+      'xm-experience-manager',
        this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_CHANNELMANAGERPERSPECTIVE'),
       'experience-manager',
     );
 
     const projects = new MenuItemLink(
-      'hippo-perspective-projectsperspective',
+      'xm-projects',
        this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_PROJECTSPERSPECTIVE'),
       'projects',
     );
 
     const content = new MenuItemLink(
-      'hippo-perspective-browserperspective',
+      'xm-content',
        this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_BROWSERPERSPECTIVE'),
       'documents',
     );
 
     const documentSearch = new MenuItemLink(
-      'hippo-perspective-searchperspective',
+      'xm-document-search',
        this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_SEARCHPERSPECTIVE'),
       'document-search',
     );
@@ -197,7 +197,7 @@ export class MenuStructureService {
         ]),
         // Will be split into: Buzz, My documents, Team documents and Totals
         new MenuItemLink(
-          'hippo-perspective-reportsperspective',
+          'xm-content-reports',
            this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_REPORTSPERSPECTIVE'),
         ),
       ],
@@ -208,7 +208,7 @@ export class MenuStructureService {
        this.translate('MENU_CONTAINER_AUDIENCES'),
       [
         new MenuItemLink(
-          'hippo-perspective-experienceoptimizerperspective',
+          'xm-content-audiences',
            this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_EXPERIENCEOPTIMIZERPERSPECTIVE'),
         ),
         new MenuItemLink('audiences/merchandising-audiences', this.translate('MENU_ITEM_AUDIENCES_MERCHANDISING_AUDIENCES')),
@@ -238,8 +238,8 @@ export class MenuStructureService {
           new MenuItemLink('setup/devstudio/attribute-configuration', this.translate('MENU_ITEM_SETUP_DEVSTUDIO_ATTRIBUTE_CONFIGURATION')),
           new MenuItemLink('setup/devstudio/api-explorer', this.translate('MENU_ITEM_SETUP_DEVSTUDIO_API_EXPLORER')),
         ]),
-        new MenuItemLink('hippo-perspective-adminperspective', this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_ADMINPERSPECTIVE')),
-        new MenuItemLink('hippo-perspective-formdataperspective', this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_FORMDATAPERSPECTIVE')),
+        new MenuItemLink('xm-system', this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_ADMINPERSPECTIVE')),
+        new MenuItemLink('xm-form-data', this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_FORMDATAPERSPECTIVE')),
 
         new MenuItemContainer(this.translate('MENU_CONTAINER_INTERNAL_ADMIN'), [
           new MenuItemLink('setup/user-management/merchandising-user/internal-user-management',
