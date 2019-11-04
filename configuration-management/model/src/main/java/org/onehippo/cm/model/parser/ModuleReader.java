@@ -114,7 +114,15 @@ public class ModuleReader {
              final InputStream moduleDescriptorInputStream = new BufferedInputStream(inputStream)) {
 
             final ModuleDescriptorParser moduleDescriptorParser = new ModuleDescriptorParser(explicitSequencing);
-            return moduleDescriptorParser.parse(moduleDescriptorInputStream, moduleDescriptorPath.toAbsolutePath().toString(), siteName);
+
+            try {
+                return moduleDescriptorParser.parse(moduleDescriptorInputStream, moduleDescriptorPath.toAbsolutePath().toString(), siteName);
+            } catch (ParserException e) {
+                log.error("Error while parsing module descriptor {} for site: {}",
+                        moduleDescriptorPath.toUri().toString(), siteName);
+                e.setSource(moduleDescriptorPath.toUri().toString());
+                throw e;
+            }
         }
     }
 
@@ -180,6 +188,7 @@ public class ModuleReader {
                     sourceParser.parse(new BufferedInputStream(sourceInputStream), pair.getRight(), pair.getLeft().toString(), module);
                 }
             } catch (ParserException e) {
+                log.error("Error while parsing source: {}:{}", module.getFullName(), pair.getLeft().toString());
                 // add information about the module and source to the parser exception
                 e.setSource("[" + module.getFullName() + ": " + pair.getRight() + "]");
                 throw(e);

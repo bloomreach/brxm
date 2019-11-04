@@ -22,15 +22,12 @@ import java.nio.charset.StandardCharsets;
 import org.apache.commons.io.IOUtils;
 import org.apache.geronimo.mail.util.StringBufferOutputStream;
 import org.junit.Test;
-import org.onehippo.cm.model.Constants;
 import org.onehippo.cm.model.Site;
 import org.onehippo.cm.model.impl.ModuleImpl;
 import org.onehippo.cm.model.serializer.ModuleDescriptorSerializer;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 
 public class ModuleDescriptorTest {
 
@@ -55,6 +52,17 @@ public class ModuleDescriptorTest {
         final String resource = "/hcm-module-site.yaml";
         ModuleImpl module = loadDescriptor(resource);
         assertEquals("mainsite", module.getProject().getGroup().getSite().getName());
+    }
+
+    @Test
+    public void testModuleConfigWithDuplicates() throws IOException {
+        final String resource = "/hcm-module-with-duplicates.yaml";
+        try {
+            loadDescriptor(resource);
+            fail("An exception should have occurred");
+        } catch (ParserException e) {
+            assertEquals("Key 'project' is already present", e.getMessage());
+        }
     }
 
     private ModuleImpl loadDescriptor(final String resource) throws ParserException, IOException {

@@ -142,6 +142,9 @@ public abstract class AbstractBaseParser {
             if (checkSchema && !find(key, requiredKeys, optionalKeys)) {
                 throw new ParserException("Key '" + key + "' is not allowed", node);
             }
+            if (result.containsKey(key)) {
+                throw new ParserException("Key '" + key + "' is already present", node);
+            }
             result.put(key, tuple.getValueNode());
         }
 
