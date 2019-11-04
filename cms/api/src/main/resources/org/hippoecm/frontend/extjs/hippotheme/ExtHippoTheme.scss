@@ -491,7 +491,9 @@ textarea.x-form-focus,
 .x-toolbar div,
 .x-toolbar select,
 .x-toolbar label {
-  font: normal 11px tahoma, arial, helvetica, sans-serif;
+  font-family: $font-family-base;
+  font-size: 11px;
+  font-weight: normal;
 }
 
 .x-toolbar .x-item-disabled {
