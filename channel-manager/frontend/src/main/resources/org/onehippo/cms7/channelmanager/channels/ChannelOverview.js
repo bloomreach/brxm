@@ -36,6 +36,11 @@
                 height: 52,
                 cls: 'channel-manager-toolbar',
                 items: [
+                    {
+                      xtype: 'tbtext',
+                      text: config.resources.channels,
+                      cls: 'br-toolbar-label'
+                    },
                     '->',
                     {
                         text: config.resources.type,
