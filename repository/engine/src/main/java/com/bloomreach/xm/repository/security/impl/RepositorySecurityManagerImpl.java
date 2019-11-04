@@ -67,6 +67,10 @@ public class RepositorySecurityManagerImpl implements RepositorySecurityManager 
     }
 
     HippoSession getSystemSession() {
+        if (systemSession == null) {
+            throw new IllegalStateException("#createSystemSessionIfNeeded() should have been invoked before access " +
+                    "to the system session is supported");
+        }
         return systemSession;
     }
 
