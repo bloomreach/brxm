@@ -181,6 +181,12 @@ public class XASessionImpl extends org.apache.jackrabbit.core.XASessionImpl impl
         return helper.getAuthorizationQuery();
     }
 
+    // testing purposes only!!
+    @Override
+    public void setAuthorizationQuery(final AuthorizationQuery authorizationQuery) {
+        helper.setAuthorizationQuery(authorizationQuery);
+    }
+
     @Override
     public Session createDelegatedSession(final InternalHippoSession session, DomainRuleExtension... domainExtensions) throws RepositoryException {
         return helper.createDelegatedSession(session, domainExtensions);

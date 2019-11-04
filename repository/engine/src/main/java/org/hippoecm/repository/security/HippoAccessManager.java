@@ -658,10 +658,15 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
             // make sure all parent nodes are readable
             // if node is not readable because of parent, don't cache as we can't invalidate
             if (!rootNodeId.equals(id) && !(id instanceof HippoNodeId)) {
+                // while checking parent, remove the 'untested true readaccess' for the current id since the parent
+                // getNodeState might access the current node id and incorrectly can conclude it is readable
+                inprocessNodeReadAccess.remove(id);
                 if (!canRead(nodeState.getParentId())) {
                     removeAccessFromCache(id);
                     return false;
                 }
+                // since the parent is readable, add the current id again to the 'untested true readaccess' list
+                inprocessNodeReadAccess.add(id);
             }
 
             for (FacetAuthDomain fad : userPrincipal.getFacetAuthDomains()) {
@@ -1475,6 +1480,10 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         if (discarded.isNode()) {
             removeAccessFromCache((NodeId) discarded.getId());
         }
+    }
+
+    public void removeNodeInprocessNodeReadAccess(final NodeId id) {
+        inprocessNodeReadAccess.remove(id);
     }
 
     /**
