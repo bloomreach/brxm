@@ -353,13 +353,38 @@ textarea.x-form-focus,
 }
 
 .x-btn {
-  font: normal 11px tahoma, arial, helvetica, sans-serif;
 
-  &.btn,
-  &.btn button {
-    // Override extjs script styling on buttons
+  &.btn {
+    height: 36px !important;
     width: auto !important;
-    height: auto !important;
+
+    &.x-btn-focus,
+    &.x-btn-focus:hover {
+      box-shadow: 0 0 0 2px $button-focus-color;
+    }
+
+    &.x-btn-focus.x-btn-click,
+    &.x-btn-focus.x-btn-click:hover {
+      box-shadow: none;
+    }
+
+    button {
+      // Override extjs script styling on buttons
+      font-family: $font-family-base;
+      font-size: $button-font-size;
+      line-height: $button-line-height;
+    }
+
+    &.btn-br-primary button {
+      color: $button-primary-color;
+    }
+
+    &.btn-br-primary.x-item-disabled,
+    &.btn-br-primary.x-item-disabled:hover {
+      background-color: $button-primary-disabled-bg !important;
+      border-color: $button-primary-disabled-border;
+      color: $button-primary-disabled-color ;
+    }
   }
 
   .x-btn-tl,
