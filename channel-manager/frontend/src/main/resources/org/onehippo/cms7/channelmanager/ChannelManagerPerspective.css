@@ -58,7 +58,7 @@
   line-height: 52px;
 }
 
-.channel-manager .channel-manager-toolbar.x-toolbar .x-toolbar-right-ct .x-btn-text {
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-text {
   height: 51px;
   margin: 0 4px;
 }
@@ -67,8 +67,9 @@
   color: #147AC8;
 }
 
-.channel-manager .x-toolbar .x-btn-text-icon .x-btn-text {
+.channel-manager .channel-manager-toolbar.x-toolbar .x-btn-text-icon .x-btn-text {
   height: 18px;
+  margin: 0;
   padding-left: 26px;
 }
 

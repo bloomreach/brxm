@@ -98,7 +98,7 @@
             });
 
             if (this.blueprintsAvailable) {
-                toolbar.insert(0, {
+                toolbar.add(' ', {
                     text: config.resources['action.add.channel'],
                     handler: function () {
                         this.fireEvent('add-channel');
