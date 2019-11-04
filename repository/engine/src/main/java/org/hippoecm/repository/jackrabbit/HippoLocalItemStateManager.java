@@ -26,6 +26,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.UUID;
 import java.util.WeakHashMap;
+import java.util.stream.Collectors;
 
 import javax.jcr.InvalidItemStateException;
 import javax.jcr.ItemNotFoundException;
@@ -502,18 +503,37 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
             return;
         }
 
-        // returns a copy of the list
+
+        final String handleName;
+        try {
+            handleName = hierMgr.getName(state.getId()).getLocalName();
+        } catch (RepositoryException e) {
+            log.error("Could not get node name of handle, return without shuffling");
+            return;
+        }
+
         List<ChildNodeEntry> cnes = state.getChildNodeEntries();
-        if (cnes.isEmpty() || cnes.size() == 1) {
+
+        Set<ChildNodeEntry> docs = cnes.stream()
+                .filter(cne -> handleName.equals(cne.getName().getLocalName())).collect(Collectors.toSet());
+
+        if (docs.isEmpty() || docs.size() == 1) {
             // nothing to reorder
             return;
         }
 
         // sort the readable nodes to be first
         final LinkedList<ChildNodeEntry> reordered = new LinkedList<>();
+
         int readPosition = 0;
         for (ChildNodeEntry cne : cnes) {
             try {
+                if (!docs.contains(cne)) {
+                    // no need to reshuffle nodes that do not have the same name as the handle node
+                    reordered.add(readPosition, cne);
+                    readPosition++;
+                    continue;
+                }
                 if (accessManager.isGranted(cne.getId(), AccessManager.READ)) {
                     reordered.add(readPosition, cne);
                     readPosition++;
@@ -526,9 +546,11 @@ public class HippoLocalItemStateManager extends XAItemStateManager implements Da
                 log.error("Unable to determine access rights for '{}', skipping that child entry", cne.getId());
             }
         }
-        // always invoke {@link NodeState#setChildNodeEntries} (even when there are no changes)
-        // so that the hierarchy manager cache is verified and updated.
-        state.setChildNodeEntries(reordered);
+
+        if (!reordered.equals(cnes)) {
+            // inform the hierarchy manager cache (via listener) that the children have been reordered
+            state.setChildNodeEntries(reordered);
+        }
 
     }
 
