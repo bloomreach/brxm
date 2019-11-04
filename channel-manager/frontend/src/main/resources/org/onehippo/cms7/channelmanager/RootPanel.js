@@ -174,7 +174,7 @@
         buttons: [
           {
             id: 'previousButton',
-            cls: 'btn btn-default btn-sm',
+            cls: 'btn btn-default',
             text: this.resources['new-channel-previous'],
             handler: this.processPreviousStep,
             width: 'auto',
@@ -184,7 +184,7 @@
           '->',
           {
             id: 'cancelButton',
-            cls: 'btn btn-default btn-sm',
+            cls: 'btn btn-default',
             text: this.resources['new-channel-cancel'],
             scope: this,
             handler: function () {
@@ -193,7 +193,7 @@
           },
           {
             id: 'nextButton',
-            cls: 'btn btn-default btn-sm',
+            cls: 'btn btn-br-primary',
             text: this.resources['new-channel-next'],
             handler: this.processNextStep,
             scope: this
