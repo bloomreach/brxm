@@ -731,7 +731,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
             // todo: check for missing content source
             final ContentDefinitionImpl contentDefinition = module.getContentSources().iterator().next().getContentDefinition();
             contentService.importNode(contentDefinition.getNode(), parentNode, ActionType.RELOAD);
-        } catch (ParserException e) {
+        } catch (Exception e) {
             throw new RepositoryException("Import failed", e);
         }
 
