@@ -24,6 +24,7 @@ import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
@@ -281,7 +282,7 @@ public class DomainsManagerImpl implements DomainsManager {
             log.info(NT_AUTHROLE +" at path {} deleted by user {}", authRoleTemplate.getPath(),
                     repositorySecurityManager.getHippoSession().getUserID());
             return true;
-        } catch (ItemNotFoundException e) {
+        } catch (PathNotFoundException e) {
             return false;
         } finally {
             silentRefreshSystemSession();
