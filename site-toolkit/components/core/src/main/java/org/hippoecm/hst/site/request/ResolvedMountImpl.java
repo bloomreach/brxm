@@ -131,9 +131,11 @@ public class ResolvedMountImpl implements MutableResolvedMount {
                 item = matcher.match(pageNotFound, this);
             }
 
-            HstSiteMapItem siteMapItem = item.getHstSiteMapItem();
-            if (siteMapItem != null && hdcStarted) {
-                matchingTask.setAttribute("sitemapitem", siteMapItem.toString());
+            if(hdcStarted && item != null) {
+                HstSiteMapItem siteMapItem = item.getHstSiteMapItem();
+                if (siteMapItem != null) {
+                    matchingTask.setAttribute("sitemapitem", siteMapItem.toString());
+                }
             }
             return item;
         } finally {

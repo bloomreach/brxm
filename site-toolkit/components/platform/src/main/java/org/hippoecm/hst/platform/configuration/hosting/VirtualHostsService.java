@@ -32,8 +32,6 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.common.collect.ImmutableMap;
-
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
@@ -75,6 +73,8 @@ import org.onehippo.cms7.services.hst.Channel;
 import org.onehippo.repository.l10n.LocalizationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.ImmutableMap;
 
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.supportedSchemeNotMatchingResponseCodesAsString;
@@ -580,8 +580,12 @@ public class VirtualHostsService implements MutableVirtualHosts {
             }
 
             if (hdcStarted) {
-                matchingTask.setAttribute("virtualhost", resolvedVirtualHost.getVirtualHost().toString());
-                matchingTask.setAttribute("mount", resolvedMount.getMount().toString());
+                if (resolvedVirtualHost != null && resolvedVirtualHost.getVirtualHost() != null) {
+                    matchingTask.setAttribute("virtualhost", resolvedVirtualHost.getVirtualHost().toString());
+                }
+                if (resolvedMount != null && resolvedMount.getMount() != null) {
+                    matchingTask.setAttribute("mount", resolvedMount.getMount().toString());
+                }
             }
 
             return resolvedMount;
@@ -1110,7 +1114,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
     }
 
     /**
-     * matches hostname to auto host template url by using regex validations 
+     * matches hostname to auto host template url by using regex validations
      */
     private boolean matchHostTemplateURL(String templateHostURL, String hostName) {
         Pattern pattern = Pattern.compile(AUTO_HOST_TEMPLATE_URL_REGEX, Pattern.LITERAL);
