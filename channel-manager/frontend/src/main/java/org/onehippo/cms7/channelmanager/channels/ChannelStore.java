@@ -243,6 +243,9 @@ public class ChannelStore extends ExtGroupingStore<Object> {
 
         String channelIconUrl = getChannelIconUrl(channelFieldValuesWithType, getChannelTypeIconPath());
         if (StringUtils.isEmpty(channelIconUrl)) {
+            channelIconUrl = getIconResourceReferenceUrl(type + ".svg");
+        }
+        if (StringUtils.isEmpty(channelIconUrl)) {
             channelIconUrl = getIconResourceReferenceUrl(type + ".png");
         }
         object.put("channelTypeImg", channelIconUrl);
