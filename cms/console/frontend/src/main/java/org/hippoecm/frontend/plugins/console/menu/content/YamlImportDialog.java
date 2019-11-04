@@ -224,14 +224,9 @@ public class YamlImportDialog extends Dialog<Node> {
                 FileUtils.deleteQuietly(tempFile);
             }
 
-        } catch (RepositoryException ex) {
-            log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
-            error("Import failed: " + ex.getMessage());
-        } catch (IOException ex) {
-            log.error("IOException initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
-            error("Import failed: " + ex.getMessage());
         } catch (Exception ex) {
-            error("Import failed: " + ex.getMessage());
+            log.error("Error initializing content in '" + nodeModel.getItemModel().getPath() + "' : " + ex.getMessage(), ex);
+            error("Import failed: " + ex.getCause().getMessage());
         }
     }
 
