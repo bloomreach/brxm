@@ -247,7 +247,8 @@ $button-focus-border:                $darker-shade;
 $button-focus-color:                 $btn-focus-color;
 $button-hover-bg:                    $gray5;
 
-$button-line-height:                 18px/$font-size-base;
+$button-font-size:                   $font-size-base;
+$button-line-height:                 18px/$button-font-size;
 $button-max-height:                  36px;
 $button-lg-line-height:              1.3333333;
 $button-lg-max-height:               46px;
