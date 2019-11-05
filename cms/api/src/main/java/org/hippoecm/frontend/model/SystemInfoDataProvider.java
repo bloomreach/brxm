@@ -28,7 +28,6 @@ import java.util.Map.Entry;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-import javax.jcr.Repository;
 import javax.servlet.ServletContext;
 
 import org.apache.wicket.markup.repeater.data.IDataProvider;
@@ -36,7 +35,6 @@ import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.protocol.http.WebApplication;
 import org.hippoecm.frontend.Home;
-import org.hippoecm.frontend.session.UserSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,16 +94,8 @@ public class SystemInfoDataProvider implements IDataProvider {
         nf.setMaximumFractionDigits(2);
         info.clear();
         info.put("Project version", getProjectVersion());
-        info.put("Bloomreach Release version", getReleaseVersion());
-        info.put("Bloomreach CMS version", getCMSVersion());
-        info.put("Repository vendor", getRepositoryVendor());
-        info.put("Repository version", getRepositoryVersion());
+        info.put("Bloomreach release version", getReleaseVersion());
         info.put("Memory maximum", nf.format(((double) runtime.maxMemory()) / MB) + " MB");
-        info.put("Memory taken", nf.format(((double) runtime.totalMemory()) / MB) + " MB");
-        info.put("Memory free", nf.format(((double) runtime.freeMemory()) / MB) + " MB");
-        info.put("Memory in use", nf.format(((double) (runtime.totalMemory() - runtime.freeMemory())) / MB) + " MB");
-        info.put("Memory total free", nf.format(((double)
-                (runtime.maxMemory() - runtime.totalMemory() + runtime.freeMemory())) / MB) + " MB");
         info.put("Java vendor", System.getProperty("java.vendor"));
         info.put("Java version", System.getProperty("java.version"));
         info.put("Java VM", System.getProperty("java.vm.name"));
@@ -147,7 +137,7 @@ public class SystemInfoDataProvider implements IDataProvider {
         try {
             final Manifest manifest = getWebAppManifest();
             if (manifest != null) {
-                return buildVersionString(manifest, "Project-Version", "Project-Build");
+                return buildVersionString(manifest);
             }
         } catch (IOException iOException) {
             log.debug("Error occurred getting the project version from the webapp-manifest.", iOException);
@@ -177,15 +167,15 @@ public class SystemInfoDataProvider implements IDataProvider {
         return null;
     }
 
-    private String buildVersionString(final Manifest manifest, final String versionAttribute, final String buildAttribute) {
+    private String buildVersionString(final Manifest manifest) {
         StringBuilder versionString = new StringBuilder();
 
         final Attributes attributes = manifest.getMainAttributes();
-        final String projectVersion = attributes.getValue(versionAttribute);
+        final String projectVersion = attributes.getValue("Project-Version");
         if (projectVersion != null) {
             versionString.append(projectVersion);
         }
-        final String projectBuild = attributes.getValue(buildAttribute);
+        final String projectBuild = attributes.getValue("Project-Build");
         if (projectBuild != null && !"-1".equals(projectBuild)) {
             if (versionString.length() > 0) {
                 versionString.append(", build: ");
@@ -195,21 +185,4 @@ public class SystemInfoDataProvider implements IDataProvider {
         return versionString.toString();
     }
 
-    public String getRepositoryVersion() {
-        Repository repository = UserSession.get().getJcrSession().getRepository();
-        if (repository != null) {
-            return repository.getDescriptor(Repository.REP_VERSION_DESC);
-        } else {
-            return UNKNOWN;
-        }
-    }
-
-    public String getRepositoryVendor() {
-        Repository repository = UserSession.get().getJcrSession().getRepository();
-        if (repository != null) {
-            return repository.getDescriptor(Repository.REP_VENDOR_DESC);
-        } else {
-            return UNKNOWN;
-        }
-    }
 }

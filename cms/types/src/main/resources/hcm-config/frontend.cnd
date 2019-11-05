@@ -81,3 +81,6 @@
 - frontend:deep (boolean) = false
 - frontend:uuids (string) multiple
 - frontend:nodetypes (string) multiple
+
+[frontend:navigationitem] mixin
+- frontend:appPath (string) mandatory
