@@ -326,10 +326,9 @@
 
 .channel-manager .x-grid3-col-url a.show-preview {
   display: inline;
-  padding: 0 0 0 7px;
+  padding: 0 0 0 8px;
   position: absolute;
-  right: 5px;
-  background-color: #ffffff;
+  right: 4px;
 }
 
 #componentPropertiesWindow .x-window-body {
@@ -571,6 +570,15 @@
   padding: 0;
 }
 
+#channel-grid-panel .x-grid3-header .x-grid3-hd-btn {
+  background-color: transparent;
+  background-image: url(caret-down.svg);
+}
+
+#channel-grid-panel .x-grid3-header .x-grid3-hd-btn:hover {
+  background-position: left center;
+}
+
 #channel-grid-panel .x-grid3-header .x-grid3-hd-inner {
   box-sizing: border-box;
   height: 40px;
@@ -584,7 +592,7 @@
 }
 
 #channel-grid-panel .x-grid3-cell-first {
-  padding-left: 36px;
+  padding-left: 24px;
   padding-right: 0;
 }
 
@@ -601,6 +609,11 @@
 
 #channel-grid-panel .x-grid3-hd-row td {
   font-size: 12px;
+}
+
+#channel-grid-panel .x-grid3-hd-row td:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  cursor: pointer;
 }
 
 #channel-grid-panel .x-grid3-hd-row td .x-grid3-hd-inner {
@@ -639,7 +652,7 @@
 }
 
 #channel-grid-panel .x-grid3-row:hover {
-  background-color: rgba(0, 0, 0, 0.05);;
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 #channel-grid-panel .x-grid3-row,
