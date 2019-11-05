@@ -107,8 +107,24 @@ $hippo-red: #ff4040;
 $hippo-green: #3dcc3d;
 $hippo-yellow: #ffa733;
 
+// Bloomreach grays.
+// "solid" means: same color without alpha channel as if rendered on a white background.
+$black:                                       #000;
+$gray5:                                       rgba(0, 0, 0, .05);
+$gray5Solid:                                  #f2f2f2;
+$gray12:                                      rgba(0, 0, 0, .12);
+$grayLightSolid:                              #f5f5f5;
+$gray38:                                      rgba(0, 0, 0, .38);
+$gray60:                                      rgba(0, 0, 0, .6);
+$gray60Solid:                                 #666;
+$gray87:                                      rgba(0, 0, 0, .87);
+$white:                                       #fff;
+
 // the default background color in browsers is white, so make the sheet white too
 $sheet-bgcolor: #fff;
+
+// Buttons
+$button-border-radius: 4px;
 
 // Side panels
 $list-item-active-bgcolor: rgba(158, 158, 158, .2);
@@ -151,7 +167,11 @@ $tooltip-bg: $black;
 $select-invalid-color: #f70029;
 
 // Toolbar
-$toolbar-height: 40px;
+$toolbar-bg: $grayLightSolid;
+$toolbar-border-bottom: 1px solid $gray12;
+$toolbar-height: 51px;
+$toolbar-button-height: 36px;
+$toolbar-round-button-size: 40px;
 
 // For consistency we use the same yellow color as is used in the CMS for the exclamation icon
 $toolbar-channel-changes-color: #ffa733;
