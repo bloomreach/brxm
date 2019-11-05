@@ -82,8 +82,6 @@
 
   .w_content {
     background-color: $modal-bgcolor;
-    border-bottom-left-radius: $modal-border-radius;
-    border-bottom-right-radius: $modal-border-radius;
   }
 
   .w_content_1 {
@@ -91,6 +89,7 @@
     border-bottom-right-radius: $modal-border-radius;
     box-shadow: $whiteframe-shadow-24dp;
     margin-right: $modal-border-width;
+    overflow: hidden;
   }
 
   .w_content_2 {
@@ -188,7 +187,6 @@
     input,
     select {
       flex-grow: 1;
-      //height: 30px;
       height: 36px;
     }
 
