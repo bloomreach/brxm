@@ -366,6 +366,7 @@ describe('NavigationService', () => {
       const navLocation: NavLocation = {
         path: 'app/path/to/page1/internal/page1',
         breadcrumbLabel: 'some breadcrumb label',
+        addHistory: true,
       };
 
       service.updateByNavLocation(navLocation);
