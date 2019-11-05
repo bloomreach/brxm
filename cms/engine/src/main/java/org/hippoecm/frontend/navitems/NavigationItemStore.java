@@ -17,21 +17,23 @@
 
 package org.hippoecm.frontend.navitems;
 
-import java.util.Locale;
+import java.util.List;
 
-/**
- * Factory interface for creating instances of Navigation Items
- */
-public interface NavigationItemFactory {
+import javax.jcr.RepositoryException;
+import javax.jcr.Session;
+
+import org.hippoecm.frontend.navigation.NavigationItem;
+
+public interface NavigationItemStore {
 
     /**
-     * Create a new {@link NavigationItem} for the perspective with the given appIframe url.
+     * Returns the list of partially populated navigation items for the given session.
      *
-     * @param perspectiveClassName fully qualified class name of a perspective
-     * @param appIframeUrl         the url of the iframe that the navigation items must belong to.
-     * @param locale               the locale to use for localizing the displayName of a navigation item.
-     * @return a new instance
+     * @param session a jcr session.
+     * @return list of fully qualified perspective class names.
+     * @throws RepositoryException if querying the repository fails
      */
-    NavigationItem newInstance(String perspectiveClassName, String appIframeUrl, Locale locale);
+    List<NavigationItem> getNavigationItems(Session session) throws RepositoryException;
 
+    NavigationItem getNavigationItem(String pluginClass, Session session) throws RepositoryException;
 }

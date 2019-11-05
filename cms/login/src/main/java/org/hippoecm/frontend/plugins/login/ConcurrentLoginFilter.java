@@ -25,6 +25,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.hippoecm.frontend.model.UserCredentials;
+
 public class ConcurrentLoginFilter implements Filter {
 
     final private static String ATTRIBUTE_SESSIONMATCH = ConcurrentLoginFilter.class.getName() + ".match";
@@ -48,6 +50,8 @@ public class ConcurrentLoginFilter implements Filter {
             String match = (String)context.getAttribute(ATTRIBUTE_SESSIONMATCH + "." + user);
             if (current == null || (!current.equals("*") && !current.equals(match))) {
                 session.invalidate();
+                //User credentials could be set as request attribute , such as for SSO functionality
+                req.removeAttribute(UserCredentials.class.getName());
             }
         }
 
@@ -69,7 +73,7 @@ public class ConcurrentLoginFilter implements Filter {
         }
     }
 
-    static void validateSession(HttpSession session, String user, boolean allowConcurrent) {
+    public static void validateSession(HttpSession session, String user, boolean allowConcurrent) {
         ServletContext context = session.getServletContext();
         String match = (String)context.getAttribute(ATTRIBUTE_SESSIONMATCH + "." + user);
         if (allowConcurrent && match != null) {
