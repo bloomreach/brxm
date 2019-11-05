@@ -26,6 +26,7 @@ definitions:
           footer.height: 40
       /dashboardPerspective:
         jcr:primaryType: frontend:plugin
+        jcr:mixinTypes: ['frontend:navigationitem']
         cluster.name: cms-dashboard
         edition: community
         extension.currentActivity: service.dashboard.current
@@ -36,14 +37,17 @@ definitions:
         wicket.extensions: [extension.shortcuts, extension.currentActivity, extension.todo]
         wicket.id: service.tab
         hipposys:userrole: xm-dashboard-user
+        frontend:appPath: home
       /browserPerspective:
         jcr:primaryType: frontend:plugin
+        jcr:mixinTypes: ['frontend:navigationitem']
         center: service.browse.editor
         left: service.browse.navigator
         model.document: model.browse.document
         plugin.class: org.hippoecm.frontend.plugins.cms.browse.BrowserPerspective
         wicket.id: service.tab
         hipposys:userrole: xm-content-user
+        frontend:appPath: content
         /layout.wireframe:
           jcr:primaryType: frontend:pluginconfig
           center: id=browse-perspective-center,body=browse-perspective-center-body,min.width=400,scroll=false,gutter=0px
@@ -112,10 +116,12 @@ definitions:
         plugin.class: org.hippoecm.frontend.plugins.cms.root.ControllerPlugin
       /adminLoader:
         jcr:primaryType: frontend:plugin
+        jcr:mixinTypes: ['frontend:navigationitem']
         cluster.name: cms-admin
         plugin.class: org.hippoecm.frontend.plugins.cms.admin.AdminPerspective
         hipposys:userrole: xm-system-user
         wicket.id: service.tab
+        frontend:appPath: system
         /layout.wireframe:
           jcr:primaryType: frontend:pluginconfig
           center: id=hippo-panel-plugin-perspective-center,body=hippo-panel-plugin-perspective-center-body,scroll=true

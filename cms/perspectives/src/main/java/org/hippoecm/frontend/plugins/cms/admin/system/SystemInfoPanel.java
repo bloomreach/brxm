@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -53,16 +53,6 @@ public class SystemInfoPanel extends AdminBreadCrumbPanel {
             }
         });
 
-        add(new AjaxLink("refresh") {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public void onClick(AjaxRequestTarget target) {
-                memoryInfo.refresh();
-                target.add(SystemInfoPanel.this);
-            }
-        });
-        
     }
 
     public IModel<String> getTitle(Component component) {
