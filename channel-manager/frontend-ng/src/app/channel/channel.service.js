@@ -53,7 +53,7 @@ class ChannelService {
 
     const parentOrigin = window.location.origin;
     const methods = {
-      navigate: (location, flags) => this.navigate(flags),
+      navigate: () => this.navigate(),
       beforeNavigation: () => this._beforeNavigation(),
     };
     this.parentApiPromise = connectToParent({ parentOrigin, methods });
@@ -350,26 +350,27 @@ class ChannelService {
     this.isToolbarDisplayed = state;
   }
 
-  navigate(flags) {
+  navigate() {
     if (this.channel) {
-      this.reload().then(() => this.updateNavLocation(flags));
+      this.reload().then(() => this.updateNavLocation());
     } else {
-      this.updateNavLocation(flags);
+      this.updateNavLocation();
     }
   }
 
-  updateNavLocation(flags) {
-    const location = this._getLocation(flags);
+  updateNavLocation() {
+    const location = this._getLocation();
     return this.parentApiPromise.then(api => api.updateNavLocation(location));
   }
 
-  _getLocation(flags) {
-    if ((flags && flags.forceRefresh) || !this.hasChannel()) {
-      return { path: 'channelmanager' };
+  _getLocation() {
+    if (!this.hasChannel()) {
+      return { path: 'experience-manager' };
     }
+
     return {
       breadcrumbLabel: this.getName(),
-      path: `channelmanager/${this.getId()}`,
+      path: `experience-manager/${this.getId()}`,
     };
   }
 }
