@@ -148,22 +148,7 @@ public class NavAppSettingsServiceTest {
         expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
         replay(config);
 
-        sessionAttributeStore = new SessionAttributeStore() {
-
-            private final Map<String, Serializable> attributes = new HashMap<>();
-
-            @Override
-            public Serializable getAttribute(final String name) {
-                return attributes.get(name);
-            }
-
-            @Override
-            public Session setAttribute(final String name, final Serializable value) {
-                attributes.put(name, value);
-                return null;
-            }
-        };
-        this.sessionAttributeStore =new SessionAttributeStore(){
+        sessionAttributeStore =new SessionAttributeStore(){
 
             final private Map<String,Serializable> attributes = new HashMap<>();
             @Override
