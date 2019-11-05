@@ -46,16 +46,14 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_AUTHROLE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.onehippo.repository.security.SecurityConstants.USERROLE_SECURITY_APPLICATION_MANAGER;
 import static org.onehippo.repository.security.SecurityConstants.USERROLE_SECURITY_USER_MANAGER;
 
 public class DomainManagerTest extends RepositoryTestCase {
 
-
-    final static String PREFIX = "/hippo:configuration/hippo:domains";
-
-    final String[] defaultDomains = {
+    private final String[] defaultDomains = {
             "/hippo:configuration/hippo:domains/extranet", "hipposys:domain",
             "/hippo:configuration/hippo:domains/extranet/extranet-domain", "hipposys:domainrule",
             "/hippo:configuration/hippo:domains/extranet/extranet-domain/extranet-nodes", "hipposys:facetrule",
@@ -69,7 +67,7 @@ public class DomainManagerTest extends RepositoryTestCase {
             "hipposys:role", "readonly"
     };
 
-    final String[] federatedDomains = {
+    private final String[] federatedDomains = {
             "/domaintest/intranet/intranet-domains", "hipposys:federateddomainfolder",
             "/domaintest/intranet/intranet-domains/intranet", "hipposys:domain",
             "/domaintest/intranet/intranet-domains/intranet/intranet-domain", "hipposys:domainrule",
@@ -84,7 +82,7 @@ public class DomainManagerTest extends RepositoryTestCase {
             "hipposys:role", "readwrite"
     };
 
-    final String[] content = {
+    private final String[] content = {
             "/domaintest", "nt:unstructured",
             "/domaintest/extranet", "nt:unstructured",
             "/domaintest/extranet/doc", "hippo:handle",
@@ -95,14 +93,14 @@ public class DomainManagerTest extends RepositoryTestCase {
     };
 
 
-    final String[] testadminConfig = new String[]{
+    private final String[] testadminConfig = new String[]{
             "/hippo:configuration/hippo:users/testadmin", "hipposys:user",
             "hipposys:password", "testadmin",
             "hipposys:securityprovider", "internal",
             "hipposys:userroles", USERROLE_SECURITY_USER_MANAGER
     };
 
-    final String[] testuserConfig = new String[]{
+    private final String[] testuserConfig = new String[]{
             "/hippo:configuration/hippo:users/testuser", "hipposys:user",
             "hipposys:password", "testuser",
             "hipposys:securityprovider", "internal"
@@ -171,7 +169,7 @@ public class DomainManagerTest extends RepositoryTestCase {
             final DomainsManager domainsManager = getDomainsManager(testAdmin);
 
             final SortedSet<DomainAuth> domainAuths = domainsManager.getDomainAuths();
-            final Set<String> allDomainPathsByManager = domainAuths.stream().map(domainAuth -> domainAuth.getPath()).collect(Collectors.toSet());
+            final Set<String> allDomainPathsByManager = domainAuths.stream().map(DomainAuth::getPath).collect(Collectors.toSet());
 
             NodeIterator allDomainNodes = session.getWorkspace().getQueryManager()
                     .createQuery("//element(*, hipposys:domain)", "xpath").execute().getNodes();
@@ -217,7 +215,7 @@ public class DomainManagerTest extends RepositoryTestCase {
                     .as("Expected 2 authroles for 'test user'")
                     .size().isEqualTo(2);
 
-            Set<String> domainNamesForUser = domainAuthsForUser.stream().map(domainAuth -> domainAuth.getName()).collect(Collectors.toSet());
+            Set<String> domainNamesForUser = domainAuthsForUser.stream().map(DomainAuth::getName).collect(Collectors.toSet());
 
             assertThat(domainNamesForUser)
                     .as("Both general domain 'extranet' and federated domain 'intranet' expected")
@@ -226,7 +224,7 @@ public class DomainManagerTest extends RepositoryTestCase {
 
             SortedSet<DomainAuth> domainAuthsForUserRole = domainsManager.getDomainAuthsForUserRole(USERROLE_SECURITY_USER_MANAGER);
 
-            Set<String> domainNamesForUserRole = domainAuthsForUserRole.stream().map(domainAuth -> domainAuth.getName()).collect(Collectors.toSet());
+            Set<String> domainNamesForUserRole = domainAuthsForUserRole.stream().map(DomainAuth::getName).collect(Collectors.toSet());
 
             assertThat(domainNamesForUserRole)
                     .as("Expected 'security-user-management' domain for role '%s' ",  USERROLE_SECURITY_USER_MANAGER)
@@ -234,7 +232,7 @@ public class DomainManagerTest extends RepositoryTestCase {
 
             SortedSet<DomainAuth> domainAuthsForGroup = domainsManager.getDomainAuthsForGroup("everybody");
 
-            Set<String> domainNamesForGroup = domainAuthsForGroup.stream().map(domainAuth -> domainAuth.getName()).collect(Collectors.toSet());
+            Set<String> domainNamesForGroup = domainAuthsForGroup.stream().map(DomainAuth::getName).collect(Collectors.toSet());
 
             assertThat(domainNamesForGroup)
                     .as("Expected 'versioning' and 'defaultread' domain for group 'everybody'",  USERROLE_SECURITY_USER_MANAGER)
@@ -283,7 +281,6 @@ public class DomainManagerTest extends RepositoryTestCase {
 
 
             final SortedSet<DomainAuth> securityUserManagerDomains = domainsManager.getDomainAuthsForUserRole(USERROLE_SECURITY_USER_MANAGER);
-            securityUserManagerDomains.remove(testuserDomains.first());
 
             assertThatThrownBy(() -> securityUserManagerDomains.remove(securityUserManagerDomains.first()))
                     .as("role domains should be immutable")
@@ -331,7 +328,9 @@ public class DomainManagerTest extends RepositoryTestCase {
                     .hasMessage("Access Denied.");
 
         } finally {
-            testAdmin.logout();
+            if (testAdmin != null) {
+                testAdmin.logout();
+            }
         }
     }
 
@@ -375,7 +374,9 @@ public class DomainManagerTest extends RepositoryTestCase {
                     .isFalse();
 
         } finally {
-            testAdmin.logout();
+            if (testAdmin != null) {
+                testAdmin.logout();
+            }
         }
 
     }
@@ -406,8 +407,7 @@ public class DomainManagerTest extends RepositoryTestCase {
 
             final SortedSet<String> after = authRole.getGroups();
 
-            assertTrue("An existing AuthRole instance does NOT get updated but needs to be refechted!",
-                    before == after);
+            assertSame("An existing AuthRole instance does NOT get updated but needs to be refechted!", before, after);
 
             assertThat(updatedAuthRole.getGroups()).containsExactly("newgroup");
 
@@ -418,7 +418,9 @@ public class DomainManagerTest extends RepositoryTestCase {
             assertThat(afterNew).containsExactly("newgroup");
 
         } finally {
-            testAdmin.logout();
+            if (testAdmin != null) {
+                testAdmin.logout();
+            }
         }
     }
 
@@ -443,7 +445,9 @@ public class DomainManagerTest extends RepositoryTestCase {
             // really persisted
             assertTrue(session.nodeExists("/domaintest/intranet/intranet-domains/intranet/readnew"));
         } finally {
-            testAdmin.logout();
+            if (testAdmin != null) {
+                testAdmin.logout();
+            }
         }
     }
 

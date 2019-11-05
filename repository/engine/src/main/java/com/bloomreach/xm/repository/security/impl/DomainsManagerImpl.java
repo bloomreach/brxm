@@ -15,6 +15,7 @@
  */
 package com.bloomreach.xm.repository.security.impl;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
@@ -117,7 +118,7 @@ public class DomainsManagerImpl implements DomainsManager {
                 }
             }
         }
-        return domainAuths;
+        return Collections.unmodifiableSortedSet(domainAuths);
     }
 
     private Node getAuthRoleNode(final String path) throws RepositoryException {
