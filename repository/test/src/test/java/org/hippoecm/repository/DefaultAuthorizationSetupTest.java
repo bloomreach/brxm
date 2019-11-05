@@ -159,4 +159,18 @@ public class DefaultAuthorizationSetupTest extends RepositoryTestCase {
         }
 
     }
+
+    @Test
+    public void author_editor_do_not_have_read_access_to_hippo_configuration_modules() throws RepositoryException {
+        final Session author = server.login("author", "author".toCharArray());
+        final Session editor = server.login("author", "author".toCharArray());
+
+        for (Session user : new Session[]{author, editor}) {
+            try {
+                assertFalse(user.hasPermission("/hippo:configuration/hippo:modules", Session.ACTION_READ));
+            } finally {
+                user.logout();
+            }
+        }
+    }
 }
