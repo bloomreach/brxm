@@ -17,19 +17,16 @@
 
 package org.hippoecm.frontend.navitems;
 
-import java.util.List;
+import java.util.Locale;
 
-import javax.jcr.RepositoryException;
-import javax.jcr.Session;
+import org.hippoecm.frontend.navigation.NavigationItem;
 
-public interface PerspectiveStore {
-
+public interface NavigationItemLocalizer {
     /**
-     * Returns the list of (fully qualified) perspective class names for the given session.
+     * Localizes the given navigationItem
      *
-     * @param session a jcr session.
-     * @return list of fully qualified perspective class names.
-     * @throws RepositoryException if querying the repository fails
+     * @param navigationItem a navigation item
+     * @param locale         a locale
      */
-    List<String> getPerspectiveClassNames(Session session) throws RepositoryException;
+    void localize(NavigationItem navigationItem, Locale locale);
 }

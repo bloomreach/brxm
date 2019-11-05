@@ -110,26 +110,32 @@
       const beforeNavigationPromises = Hippo.iframeConnections.getChildApiPromises()
         .map(childApiPromise =>
           childApiPromise.then(
-            childApi => childApi.beforeNavigation && childApi.beforeNavigation() || Promise.resolve(true)
+            childApi => childApi.beforeNavigation ? childApi.beforeNavigation() : Promise.resolve(true)
           )
+      );
+
+      return Promise
+        .all(beforeNavigationPromises)
+        .then(
+          childResponses => childResponses.every(canNavigate => canNavigate),
+          error => new Error(error),
         );
-      return Promise.all(beforeNavigationPromises);
     },
 
     navigate (location, triggeredBy) {
       const pathWithoutLeadingSlash = location.path.replace(/^\/+/, '');
       const pathElements = pathWithoutLeadingSlash.split('/');
-      const perspectiveId = pathElements.shift();
-      const perspective = document.querySelector(`.hippo-perspective-${perspectiveId}perspective`);
+      const appPath = pathElements.shift();
+      const appLinkElement = document.querySelector(`.${appPath}`);
 
-      if (!perspective) {
-        return Promise.reject(new Error(`${perspectiveId} not found`));
+      if (!appLinkElement) {
+        return Promise.reject(new Error(`${appPath} not found`));
       }
 
-      const iframe = Hippo.iframeConnections.getIFrameByPerspectiveId(perspectiveId);
+      const iframe = Hippo.iframeConnections.getIFrameByPerspectiveId(appPath);
 
       const navigateToPerspective = () => {
-        switch (perspectiveId) {
+        switch (appPath) {
           case 'projects':
             if (!iframe) {
               return Promise.reject(new Error('project\'s iframe is not found'));
@@ -138,8 +144,8 @@
             pathElements.unshift('projects');
 
             return navigateIframe(iframe, pathElements.join('/'), triggeredBy);
-  
-          case 'channelmanager':
+
+          case 'experience-manager':
             if (triggeredBy !== 'Menu') {
               const rootPanel = Ext.getCmp('rootPanel');
 
@@ -151,7 +157,7 @@
 
             return Promise.resolve();
 
-          case 'browser':
+          case 'content':
             if (pathElements.length === 0) {
               return Promise.resolve();
             }
@@ -172,7 +178,7 @@
         }
       };
 
-      return navigateToPerspective().then(() => perspective.click());
+      return navigateToPerspective().then(() => appLinkElement.click());
     },
 
     logout () {

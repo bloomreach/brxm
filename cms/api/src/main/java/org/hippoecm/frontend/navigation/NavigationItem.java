@@ -15,10 +15,13 @@
  *
  */
 
-package org.hippoecm.frontend.navitems;
+package org.hippoecm.frontend.navigation;
 
 
-public class NavigationItem {
+import java.io.Serializable;
+import java.util.StringJoiner;
+
+public class NavigationItem implements Serializable {
 
     private String id;
     private String displayName;
@@ -55,5 +58,15 @@ public class NavigationItem {
 
     public void setAppPath(final String appPath) {
         this.appPath = appPath;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", NavigationItem.class.getSimpleName() + "[", "]")
+                .add("id='" + id + "'")
+                .add("displayName='" + displayName + "'")
+                .add("appIframeUrl='" + appIframeUrl + "'")
+                .add("appPath='" + appPath + "'")
+                .toString();
     }
 }
