@@ -2,7 +2,7 @@
   {
     "id": "xm-home",
     "appIframeUrl": "http://localhost:4201",
-    "appPath": "dashboard"
+    "appPath": "home"
   },
   {
     "id": "xm-experience-manager",
@@ -17,7 +17,12 @@
   {
     "id": "xm-content",
     "appIframeUrl": "http://localhost:4201",
-    "appPath": "browser"
+    "appPath": "content"
+  },
+  {
+    "id": "xm-content-reports",
+    "appIframeUrl": "http://localhost:4201",
+    "appPath": "content-reports"
   },
   {
     "id": "xm-document-search",
@@ -25,23 +30,18 @@
     "appPath": "documents-search"
   },
   {
-    "id": "xm-content-reports",
-    "appIframeUrl": "http://localhost:4201",
-    "appPath": "reports"
-  },
-  {
     "id": "xm-content-audiences",
     "appIframeUrl": "http://localhost:4201",
-    "appPath": "experienceoptimizer"
+    "appPath": "content-audiences"
   },
   {
     "id": "xm-system",
     "appIframeUrl": "http://localhost:4201",
-    "appPath": "admin"
+    "appPath": "system"
   },
   {
     "id": "xm-form-data",
     "appIframeUrl": "http://localhost:4201",
-    "appPath": "formdata"
+    "appPath": "form-data"
   }
 ]
