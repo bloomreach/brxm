@@ -15,6 +15,7 @@
  */
 package com.bloomreach.xm.repository.security.impl;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.SortedSet;
@@ -24,6 +25,7 @@ import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
+import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.query.Query;
@@ -116,7 +118,7 @@ public class DomainsManagerImpl implements DomainsManager {
                 }
             }
         }
-        return domainAuths;
+        return Collections.unmodifiableSortedSet(domainAuths);
     }
 
     private Node getAuthRoleNode(final String path) throws RepositoryException {
@@ -281,7 +283,7 @@ public class DomainsManagerImpl implements DomainsManager {
             log.info(NT_AUTHROLE +" at path {} deleted by user {}", authRoleTemplate.getPath(),
                     repositorySecurityManager.getHippoSession().getUserID());
             return true;
-        } catch (ItemNotFoundException e) {
+        } catch (PathNotFoundException e) {
             return false;
         } finally {
             silentRefreshSystemSession();
