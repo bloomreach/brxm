@@ -109,8 +109,8 @@ $btn-default-bg: transparent;
 $btn-default-border: $gray38;
 
 $btn-primary-color: $white;
-$btn-primary-bg: $primary;
-$btn-primary-border: darken($btn-primary-bg, 5%) !default;
+$btn-primary-bg: $bluePrimary;
+$btn-primary-border: $bluePrimary;
 
 $btn-success-color: $white;
 $btn-success-bg: $success;
@@ -131,7 +131,7 @@ $btn-danger-border: darken($btn-danger-bg, 5%) !default;
 $btn-link-disabled-color: $dark-gray;
 
 $btn-focus-color: $blueMedium;
-$btn-focus-bg: $gray5;
+$btn-focus-bg: $btn-default-bg;
 
 //== Form states and alerts
 //

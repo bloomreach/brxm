@@ -42,25 +42,26 @@ table.hippo-panel-plugin-body {
 }
 
 .hippo-panel-plugin-breadcrumbs {
-  background-color: $light-shade;
   font-weight: bold;
+  background-color: $top-bar-bgcolor;
+  border-bottom: $top-bar-border-bottom;
 }
 
 .hippo-panel-plugin-breadcrumbs-backbutton {
-  display: block;
   box-sizing: border-box;
-  height: 41px;
-  line-height: 41px;
-  padding: 0 16px 0 16px;
-  font-family: $font-family-base;
-  font-weight: normal;
-  font-size: 15px;
   color: $text-color;
+  display: block;
+  font-family: $font-family-base;
+  font-size: $top-bar-font-size;
+  font-weight: normal;
+  height: $top-bar-height - 1;
+  line-height: $top-bar-height - 1;
+  padding: 0 18px;
 }
 
 .hippo-panel-plugin-breadcrumbs .wicketExtensionsBreadCrumbBarCrumb a {
   color: $darkest-shade;
-  padding: 0;
+  padding: 0 6px;
 
   &:hover {
     text-decoration: none;
@@ -111,6 +112,6 @@ table.hippo-panel-plugin-body {
 
 .hippo-panel-plugin-breadcrumbs-backbutton .breadcrumbs-separator {
   height: 12px;
+  vertical-align: baseline;
   width: 12px;
-  padding: 0 0 3px 2px;
 }
