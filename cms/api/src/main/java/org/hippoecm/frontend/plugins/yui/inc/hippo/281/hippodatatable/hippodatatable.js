@@ -38,17 +38,13 @@
 
             YAHOO.extend(YAHOO.hippo.DataTable, YAHOO.hippo.Widget, {
 
-                render: function() {
-                    // defining a render function here is enough to make YAHOO trigger the resize() function
-                },
-
                 resize: function(sizes) {
                     var table = $('#' + this.id);
                     this._resize(table, sizes);
                 },
 
                 _resize: function(table, sizes) {
-                    var theadRow, tbody, tfootRow;
+                    var theadRow, tbody, tfootRow, tbodyHeight;
 
                     tbody = table.children('tbody');
 
@@ -58,7 +54,8 @@
                         theadRow = table.find('thead > tr');
                         tfootRow = table.find('tfoot > tr');
 
-                        tbody.height(sizes.wrap.h - theadRow.height() - tfootRow.height());
+                        tbodyHeight = sizes.wrap.h - (theadRow.height() || 0) - (tfootRow.height() || 0);
+                        tbody.height(tbodyHeight);
 
                         theadRow.css('max-width', sizes.wrap.w-1 + 'px');
                         theadRow.width(tbody[0].scrollWidth);

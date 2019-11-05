@@ -136,6 +136,9 @@
     background: none;
     border: none;
     box-sizing: border-box;
+    display: block;
+    height: $editor-input-height;
+    line-height: $editor-input-height;
     width: 100%;
   }
 
@@ -147,7 +150,7 @@
     background: none;
     border: 1px solid $editor-subfield-border;
     border-radius: $editor-field-border-radius;
-    height: 32px;
+    height: 36px;
     overflow: hidden;
     padding-left: 8px;
     padding-right: 8px;
@@ -221,8 +224,13 @@
   }
 
   .mirrortemplate_buttons {
-    display: inline-block;
-    padding-top: 4px;
+    display: flex;
+  }
+
+  .mirrortemplate_link {
+    display: inline-flex;
+    margin-right: 8px;
+    overflow: visible;
   }
 }
 
@@ -497,7 +505,7 @@
 }
 
 .hippo-editor-field-value-container {
-  line-height: normal;
+  line-height: 18px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
