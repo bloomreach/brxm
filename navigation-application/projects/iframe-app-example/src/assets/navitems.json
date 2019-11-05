@@ -1,46 +1,46 @@
 [
   {
-    "id": "hippo-perspective-dashboardperspective",
+    "id": "xm-home",
     "appIframeUrl": "http://localhost:4201",
     "appPath": "dashboard"
   },
   {
-    "id": "hippo-perspective-channelmanagerperspective",
+    "id": "xm-experience-manager",
     "appIframeUrl": "http://localhost:4201",
     "appPath": "experience-manager"
   },
   {
-    "id": "hippo-perspective-projectsperspective",
+    "id": "xm-projects",
     "appIframeUrl": "http://localhost:4201",
     "appPath": "projects"
   },
   {
-    "id": "hippo-perspective-browserperspective",
+    "id": "xm-content",
     "appIframeUrl": "http://localhost:4201",
     "appPath": "browser"
   },
   {
-    "id": "hippo-perspective-searchperspective",
+    "id": "xm-document-search",
     "appIframeUrl": "http://localhost:4201",
     "appPath": "documents-search"
   },
   {
-    "id": "hippo-perspective-reportsperspective",
+    "id": "xm-content-reports",
     "appIframeUrl": "http://localhost:4201",
     "appPath": "reports"
   },
   {
-    "id": "hippo-perspective-experienceoptimizerperspective",
+    "id": "xm-content-audiences",
     "appIframeUrl": "http://localhost:4201",
     "appPath": "experienceoptimizer"
   },
   {
-    "id": "hippo-perspective-adminperspective",
+    "id": "xm-system",
     "appIframeUrl": "http://localhost:4201",
     "appPath": "admin"
   },
   {
-    "id": "hippo-perspective-formdataperspective",
+    "id": "xm-form-data",
     "appIframeUrl": "http://localhost:4201",
     "appPath": "formdata"
   }

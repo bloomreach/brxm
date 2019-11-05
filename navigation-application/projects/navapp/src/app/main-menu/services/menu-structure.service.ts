@@ -45,31 +45,31 @@ export class MenuStructureService {
     this.extensions.caption = this.translate('MENU_CONTAINER_EXTENSIONS');
     const dashboard = new MenuItemLink(
       'xm-home',
-       this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_DASHBOARDPERSPECTIVE'),
+       this.translate('MENU_ITEM_XM_HOME'),
       'home',
     );
 
     const experienceManager = new MenuItemLink(
       'xm-experience-manager',
-       this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_CHANNELMANAGERPERSPECTIVE'),
+       this.translate('MENU_ITEM_XM_EXPERIENCE_MANAGER'),
       'experience-manager',
     );
 
     const projects = new MenuItemLink(
       'xm-projects',
-       this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_PROJECTSPERSPECTIVE'),
+       this.translate('MENU_ITEM_XM_PROJECTS'),
       'projects',
     );
 
     const content = new MenuItemLink(
       'xm-content',
-       this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_BROWSERPERSPECTIVE'),
+       this.translate('MENU_ITEM_XM_CONTENT'),
       'documents',
     );
 
     const documentSearch = new MenuItemLink(
       'xm-document-search',
-       this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_SEARCHPERSPECTIVE'),
+       this.translate('MENU_ITEM_XM_DOCUMENT_SEARCH'),
       'document-search',
     );
 
@@ -198,7 +198,7 @@ export class MenuStructureService {
         // Will be split into: Buzz, My documents, Team documents and Totals
         new MenuItemLink(
           'xm-content-reports',
-           this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_REPORTSPERSPECTIVE'),
+           this.translate('MENU_ITEM_XM_CONTENT_REPORTS'),
         ),
       ],
       'insights',
@@ -209,7 +209,7 @@ export class MenuStructureService {
       [
         new MenuItemLink(
           'xm-content-audiences',
-           this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_EXPERIENCEOPTIMIZERPERSPECTIVE'),
+           this.translate('MENU_ITEM_XM_CONTENT_AUDIENCES'),
         ),
         new MenuItemLink('audiences/merchandising-audiences', this.translate('MENU_ITEM_AUDIENCES_MERCHANDISING_AUDIENCES')),
       ],
@@ -238,8 +238,8 @@ export class MenuStructureService {
           new MenuItemLink('setup/devstudio/attribute-configuration', this.translate('MENU_ITEM_SETUP_DEVSTUDIO_ATTRIBUTE_CONFIGURATION')),
           new MenuItemLink('setup/devstudio/api-explorer', this.translate('MENU_ITEM_SETUP_DEVSTUDIO_API_EXPLORER')),
         ]),
-        new MenuItemLink('xm-system', this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_ADMINPERSPECTIVE')),
-        new MenuItemLink('xm-form-data', this.translate('MENU_ITEM_HIPPO_PERSPECTIVE_FORMDATAPERSPECTIVE')),
+        new MenuItemLink('xm-system', this.translate('MENU_ITEM_XM_SYSTEM')),
+        new MenuItemLink('xm-form-data', this.translate('MENU_ITEM_XM_FORM_DATA')),
 
         new MenuItemContainer(this.translate('MENU_CONTAINER_INTERNAL_ADMIN'), [
           new MenuItemLink('setup/user-management/merchandising-user/internal-user-management',

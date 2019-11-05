@@ -40,7 +40,7 @@
   </div>
 
   <div class="bottom-elements">
-    <brna-top-level-menu-item caption="Help"
+    <brna-top-level-menu-item caption="{{ 'MENU_CONTAINER_HELP' | translate }}"
                               icon="help"
                               [collapsed]="collapsed"
                               [pressed]="isHelpToolbarOpened"
@@ -49,7 +49,7 @@
                               (click)="onHelpMenuItemClick($event)">
     </brna-top-level-menu-item>
 
-    <brna-top-level-menu-item caption="User account"
+    <brna-top-level-menu-item caption="{{ 'MENU_CONTAINER_USER_ACCOUNT' | translate }}"
                               icon="user"
                               [collapsed]="collapsed"
                               [pressed]="isUserToolbarOpened"

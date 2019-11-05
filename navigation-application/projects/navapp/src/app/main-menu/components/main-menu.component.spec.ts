@@ -18,6 +18,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NavigationTrigger } from '@bloomreach/navapp-communication';
+import { TranslateModule } from '@ngx-translate/core';
 import { of, Subject } from 'rxjs';
 
 import { APP_BOOTSTRAPPED } from '../../bootstrap/app-bootstrapped';
@@ -88,6 +89,7 @@ describe('MainMenuComponent', () => {
     TestBed.configureTestingModule({
       imports: [
         NoopAnimationsModule,
+        TranslateModule.forRoot(),
       ],
       declarations: [MainMenuComponent],
       schemas: [NO_ERRORS_SCHEMA],
