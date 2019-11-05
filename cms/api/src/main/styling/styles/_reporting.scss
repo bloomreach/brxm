@@ -12,17 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-.reports-perspective-top .refresh-group {
-  color: #000;
-  font-weight: normal;
-  font-size: $font-size-base;
-}
+.reports-perspective-top {
+  .refresh-group {
+    color: #000;
+    font-weight: normal;
+    font-size: $font-size-base;
+  }
 
-.reports-perspective-top a.reports-refresh-button {
-  background: url("#{$images_legacy}/refresh.gif") no-repeat 3px center #fff;
-  padding-left: 22px;
-}
+  .reports-refresh-button {
+    background: url("#{$images_legacy}/refresh.gif") no-repeat 3px center #fff;
+    padding-left: 22px;
 
-.reports-perspective-top a.reports-refresh-button:hover {
-  text-decoration: none;
+    &:hover {
+      text-decoration: none;
+    }
+  }
 }
