@@ -199,7 +199,7 @@ public class ConfigurationConfigServiceNamespaceTest extends BaseConfigurationCo
             fail("an exception should have occurred");
         } catch (Exception e) {
             assertEquals(
-                    "Failed to process property '/test/node/test2:property' defined in"
+                    "Failed to process property '/test/node/test2:property' in path '/test/node' defined in"
                             + " [core/test-group/test-project/test-module-0 [config: string]]: no matching property definition"
                             + " found for {http://www.onehippo.org/test/nt/2.0}property",
                     e.getMessage());
