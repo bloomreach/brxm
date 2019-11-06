@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -121,8 +121,8 @@ public interface HippoUserManager extends UserManager {
     boolean isCaseSensitive();
 
     /**
-     * Checks if the username should be sync to the application as lowercase or uppercase.
-     * @return true if the username should be sync to the application as lowercase.
+     * Checks if the username should be added to the repository as lowercase or uppercase.
+     * @return true if the username should be be added to the repository as lowercase.
      */
     default boolean isUserIdLowerCase() {
         return true;
