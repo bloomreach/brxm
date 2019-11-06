@@ -116,11 +116,11 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     private String convertLegacyDocumentParameters(final Request request) {
         final StringValue uuid = request.getQueryParameters().getParameterValue(UUID_PARAM);
         if (!uuid.isEmpty()) {
-            return "/browser/uuid/" + uuid.toString();
+            return "/content/uuid/" + uuid.toString();
         }
         final StringValue path = request.getQueryParameters().getParameterValue(PATH_PARAM);
         if (!path.isEmpty()) {
-            return "/browser/path/" + path.toString();
+            return "/content/path/" + path.toString();
         }
         return "/";
     }
