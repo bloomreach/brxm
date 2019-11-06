@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -256,10 +256,8 @@ public abstract class AbstractUserManager implements HippoUserManager {
         }
         if (isCaseSensitive()) {
             return rawUserId.trim();
-        } else if (isUserIdLowerCase()) {
-            return rawUserId.trim().toLowerCase();
         } else {
-            return rawUserId.trim().toUpperCase();
+            return rawUserId.trim().toLowerCase();
         }
     }
 
