@@ -220,6 +220,8 @@ public class RepositoryAuthenticationProvider implements AuthenticationProvider 
      * @param username the username to get the roles for
      * @return list of roles
      * @throws SecurityException in case something goes wrong
+     * @deprecated Note that this method will need to be kept, but just made private in v15 since
+     * getRolesByUser(final User user) will still need to be able to fetch the roles by user name
      */
     @Override
     @Deprecated
