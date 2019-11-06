@@ -371,7 +371,7 @@ public class NavAppSettingsServiceTest {
                 .andStubReturn(StringValue.valueOf((String) null));
         replay(parameters);
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
-        assertThat(navAppSettings.getAppSettings().getInitialPath(), is("/browser/uuid/" + someUUID));
+        assertThat(navAppSettings.getAppSettings().getInitialPath(), is("/content/uuid/" + someUUID));
     }
 
     @Test
@@ -388,7 +388,7 @@ public class NavAppSettingsServiceTest {
                 .andStubReturn(StringValue.valueOf((String) null));
         replay(parameters);
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
-        assertThat(navAppSettings.getAppSettings().getInitialPath(), is("/browser/path/" + somePath));
+        assertThat(navAppSettings.getAppSettings().getInitialPath(), is("/content/path/" + somePath));
     }
 
     @Test
