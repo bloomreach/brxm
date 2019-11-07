@@ -27,6 +27,8 @@ $font-size-extjs:                    12px;
 
 // Line height
 $line-height-base:                   1.2;
+$line-height-textarea:               1.6em;
+$line-height-textarea-computed:      floor($font-size-base * 1.6);
 
 // Common
 $top-bar-height:                     52px;
