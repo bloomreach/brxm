@@ -231,12 +231,14 @@
     width: 100%;
   }
 
-  .mirrortemplate_buttons {
+  .picker-controls {
     display: flex;
+    flex-wrap: wrap;
   }
 
   .mirrortemplate_link {
     display: inline-flex;
+    margin-bottom: 8px;
     margin-right: 8px;
     overflow: visible;
   }
