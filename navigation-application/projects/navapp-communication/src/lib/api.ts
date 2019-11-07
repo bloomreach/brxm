@@ -279,6 +279,10 @@ export interface NavLocation {
    * a (translated, where appropriate) label nav-app should append to its breadcrumbs.
    */
   breadcrumbLabel?: string;
+  /** Optional: This field is only used when an application updates the nav-app location.
+   *  When set to true it will add a new history item to the browser history instead of replacing the current item.
+   */
+  addHistory?: boolean;
 }
 
 export interface SiteId {

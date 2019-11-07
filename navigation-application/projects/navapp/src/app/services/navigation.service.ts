@@ -173,7 +173,9 @@ export class NavigationService implements OnDestroy {
     this.menuStateService.activateMenuItem(navItem.appIframeUrl, navItem.appPath);
     this.breadcrumbsService.setSuffix(navLocation.breadcrumbLabel);
 
-    this.setBrowserUrl(browserUrl, { breadcrumbLabel: navLocation.breadcrumbLabel });
+    const replaceState = !navLocation.addHistory;
+
+    this.setBrowserUrl(browserUrl, { breadcrumbLabel: navLocation.breadcrumbLabel }, replaceState);
   }
 
   navigateToDefaultAppPage(triggeredBy: NavigationTrigger): Promise<void> {
@@ -360,11 +362,12 @@ export class NavigationService implements OnDestroy {
         const appPath = Location.joinWithSlash(t.navItem.appPath, t.appPathAddOn) + t.queryStringAndHash;
         const appPathWithoutLeadingSlash = this.urlMapperService.trimLeadingSlash(appPath);
         const appPathPrefix = new URL(t.navItem.appIframeUrl).pathname;
+        const location = {
+          pathPrefix: appPathPrefix,
+          path: appPathWithoutLeadingSlash,
+        };
 
-        const navigationPromise = t.app.api.navigate(
-          { pathPrefix: appPathPrefix, path: appPathWithoutLeadingSlash },
-          t.source,
-        );
+        const navigationPromise = t.app.api.navigate(location, t.source);
 
         return from(navigationPromise).pipe(
           mapTo(t as Navigation),
