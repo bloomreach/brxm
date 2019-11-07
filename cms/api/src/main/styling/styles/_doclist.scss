@@ -297,6 +297,7 @@ $doclist-icon-shift-right: 2px;
           display: block;
           overflow: hidden;
           max-height: 2 * $line-height-computed;
+          line-height: $line-height-computed;
         }
       }
 
