@@ -21,6 +21,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -47,31 +48,79 @@ final class NavAppResourceServiceImpl implements NavAppResourceService {
     private static final String TYPE = "type";
 
     private final Properties properties;
+    private final Set<NavAppResource> loginResources;
+    private final Set<NavAppResource> logoutResources;
+    private final Set<NavAppResource> navigationItemsResources;
 
     NavAppResourceServiceImpl(Properties properties) {
         this.properties = properties;
+        final Map<String, NavAppResource> loginResourceMap = getResources(LOGIN_KEY_PREFIX);
+        final Map<String, NavAppResource> logoutResourceMap = getResources(LOGOUT_KEY_PREFIX);
+        final Map<String, NavAppResource> navigationItemsResourceMap = getResources(NAVIGATION_ITEMS_KEY_PREFIX);
+
+        if (!loginResourceMap.isEmpty() || !logoutResourceMap.isEmpty()) {
+            final Set<String> loginKeys = new HashSet<>(loginResourceMap.keySet());
+            final Set<String> logoutKeys = new HashSet<>(logoutResourceMap.keySet());
+
+            final StringBuilder loginLogoutMissing = new StringBuilder();
+            final String missing = " is missing" + System.lineSeparator();
+            logoutKeys.stream()
+                    .filter(k -> !loginKeys.contains(k))
+                    .forEach(logoutKey -> loginLogoutMissing.append(LOGIN_KEY_PREFIX).append(".").append(logoutKey).append(missing));
+            loginKeys.stream()
+                    .filter(k -> !logoutKeys.contains(k))
+                    .forEach(logoutKey -> loginLogoutMissing.append(LOGOUT_KEY_PREFIX).append(".").append(logoutKey).append(missing));
+            loginKeys.addAll(logoutKeys);
+            if (loginLogoutMissing.length() > 0) {
+                loginLogoutMissing.append("Please configure a logout resource for every login resource and vice versa.")
+                        .append(System.lineSeparator());
+            }
+
+            final Set<String> navigationItemKeys = navigationItemsResourceMap.keySet();
+            final StringBuilder navigationItemResourceMissing = new StringBuilder();
+            loginKeys.stream()
+                    .filter(k -> !navigationItemKeys.contains(k))
+                    .forEach(logoutKey -> navigationItemResourceMissing.append(NAVIGATION_ITEMS_KEY_PREFIX).append(".").append(logoutKey).append(missing));
+            if (navigationItemResourceMissing.length() > 0) {
+                navigationItemResourceMissing
+                        .append("Please configure a navigationitems resource for every login/logout resource pair")
+                        .append(System.lineSeparator());
+            }
+
+            loginLogoutMissing.append(navigationItemResourceMissing);
+            if (loginLogoutMissing.length() > 0) {
+                loginLogoutMissing.insert(0,"Invalid property values detected" + System.lineSeparator());
+                throw new IllegalArgumentException(loginLogoutMissing.toString());
+            }
+        }
+
+        this.loginResources = new HashSet<>(loginResourceMap.values());
+        this.logoutResources = new HashSet<>(logoutResourceMap.values());
+        this.navigationItemsResources = new HashSet<>(navigationItemsResourceMap.values());
     }
 
     @Override
     public Set<NavAppResource> getNavigationItemsResources() {
-        return getResources(NAVIGATION_ITEMS_KEY_PREFIX);
+        return navigationItemsResources;
     }
 
     @Override
     public Set<NavAppResource> getLoginResources() {
-        return getResources(LOGIN_KEY_PREFIX);
+        return loginResources;
     }
 
     @Override
     public Set<NavAppResource> getLogoutResources() {
-        return getResources(LOGOUT_KEY_PREFIX);
+        return logoutResources;
     }
 
-    private Set<NavAppResource> getResources(String keyPrefix) {
+    private Map<String, NavAppResource> getResources(String keyPrefix) {
         final Map<NavAppResource, List<String>> resourceToKeyMap = new HashMap<>();
+        final Map<String, NavAppResource> keyToResourceMap = new HashMap<>();
         for (Object key : properties.keySet()) {
             if (key.toString().startsWith(keyPrefix)) {
                 final NavAppResource navAppResource = createResource(key.toString());
+                keyToResourceMap.put(key.toString().substring(keyPrefix.length() + 1), navAppResource);
                 resourceToKeyMap.computeIfAbsent(navAppResource, r -> new ArrayList<>()).add(key.toString());
             }
         }
@@ -79,7 +128,7 @@ final class NavAppResourceServiceImpl implements NavAppResourceService {
                 .filter(e -> e.getValue().size() > 1)
                 .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
         if (duplicates.isEmpty()) {
-            return resourceToKeyMap.keySet();
+            return keyToResourceMap;
         }
         throw new IllegalArgumentException(
                 "Duplicate values found: " + resourceToKeyMap + "\n" +
