@@ -254,13 +254,13 @@ public abstract class AbstractUserManager implements HippoUserManager {
             // anonymous
             return null;
         }
-		if (isCaseSensitive()) {
-			return rawUserId.trim();
-		} else if (isUserIdLowerCase()) {
-			return rawUserId.trim().toLowerCase();
-		} else {
-			return rawUserId.trim().toUpperCase();
-		}
+        if (isCaseSensitive()) {
+            return rawUserId.trim();
+        } else if (isUserIdLowerCase()) {
+            return rawUserId.trim().toLowerCase();
+        } else {
+            return rawUserId.trim().toUpperCase();
+        }
     }
 
     private void setDirLevels() {
