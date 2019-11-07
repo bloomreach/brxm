@@ -96,7 +96,7 @@ final class NavAppResourceServiceImpl implements NavAppResourceService {
         }
 
         final ResourceType resourceType = getResourceType(key, values.get(0));
-        final URI resourceUrl = getResourceUrl(key, values.get(1).trim());
+        final URI resourceUrl = getResourceUrl(key, values.get(1));
         return new NavAppResourceBuilder()
                 .resourceType(resourceType)
                 .resourceUrl(resourceUrl)
@@ -105,7 +105,7 @@ final class NavAppResourceServiceImpl implements NavAppResourceService {
 
     private URI getResourceUrl(String key, String urlString) {
         try {
-            return URI.create(urlString);
+            return URI.create(urlString.trim());
         } catch (IllegalArgumentException e) {
             throw invalidValue(URL, urlString, key);
         }
