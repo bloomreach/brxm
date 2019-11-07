@@ -18,6 +18,7 @@
 package org.hippoecm.frontend.service.navappsettings;
 
 import java.net.URI;
+import java.util.Objects;
 
 import org.hippoecm.frontend.service.NavAppResource;
 import org.hippoecm.frontend.service.ResourceType;
@@ -38,16 +39,57 @@ final class NavAppResourceBuilder {
     }
 
     NavAppResource build() {
-        return new NavAppResource() {
-            @Override
-            public URI getUrl() {
-                return url;
+        return new NavAppResourceImpl(url, resourceType);
+    }
+
+    private static final class NavAppResourceImpl implements NavAppResource {
+        private final URI url;
+        private final ResourceType resourceType;
+
+        private NavAppResourceImpl(URI url, ResourceType resourceType) {
+            Objects.requireNonNull(url);
+            Objects.requireNonNull(resourceType);
+            this.url = url;
+            this.resourceType = resourceType;
+        }
+
+        @Override
+        public URI getUrl() {
+            return url;
+        }
+
+        @Override
+        public ResourceType getResourceType() {
+            return resourceType;
+        }
+
+        @Override
+        public String toString() {
+            return resourceType + ", " + url;
+        }
+
+        @Override
+        public boolean equals(final Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
             }
 
-            @Override
-            public ResourceType getResourceType() {
-                return resourceType;
+            final NavAppResourceImpl that = (NavAppResourceImpl) o;
+
+            if (!url.equals(that.url)) {
+                return false;
             }
-        };
+            return resourceType == that.resourceType;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = url.hashCode();
+            result = 31 * result + resourceType.hashCode();
+            return result;
+        }
     }
 }

@@ -19,13 +19,14 @@ package org.hippoecm.frontend.service.navappsettings;
 
 import java.io.Serializable;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.RepositoryException;
@@ -137,9 +138,10 @@ public class NavAppSettingsServiceTest {
         expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
         replay(config);
 
-        sessionAttributeStore =new SessionAttributeStore(){
+        sessionAttributeStore = new SessionAttributeStore() {
 
-            final private Map<String,Serializable> attributes = new HashMap<>();
+            final private Map<String, Serializable> attributes = new HashMap<>();
+
             @Override
             public Serializable getAttribute(final String name) {
                 return attributes.get(name);
@@ -151,9 +153,9 @@ public class NavAppSettingsServiceTest {
                 return null;
             }
         };
-        expect(navAppResourceService.getLoginResources()).andStubReturn(Collections.emptyList());
-        expect(navAppResourceService.getLogoutResources()).andStubReturn(Collections.emptyList());
-        expect(navAppResourceService.getNavigationItemsResources()).andStubReturn(Collections.emptyList());
+        expect(navAppResourceService.getLoginResources()).andStubReturn(Collections.emptySet());
+        expect(navAppResourceService.getLogoutResources()).andStubReturn(Collections.emptySet());
+        expect(navAppResourceService.getNavigationItemsResources()).andStubReturn(Collections.emptySet());
         replay(navAppResourceService);
 
         this.navAppSettingsService = new NavAppSettingsService(context, config, () -> userSession, sessionAttributeStore, navAppResourceService);
@@ -218,15 +220,13 @@ public class NavAppSettingsServiceTest {
         expect(servletRequest.getContextPath()).andReturn("/context-path");
         replay(servletRequest);
 
-        final NavAppResource navAppResource = createMock(NavAppResource.class);
-        expect(navAppResource.getResourceType()).andStubReturn(ResourceType.IFRAME);
-        expect(navAppResource.getUrl()).andStubReturn(URI.create("some-other-url1"));
-        replay(navAppResource);
+        final NavAppResource navAppResource1 = new NavAppResourceBuilder().resourceType(ResourceType.IFRAME).resourceUrl(URI.create("some-other-url1")).build();
+        final NavAppResource navAppResource2 = new NavAppResourceBuilder().resourceType(ResourceType.INTERNAL_REST).resourceUrl(URI.create("some-other-url2")).build();
 
         reset(navAppResourceService);
-        expect(navAppResourceService.getLoginResources()).andStubReturn(Collections.emptyList());
-        expect(navAppResourceService.getLogoutResources()).andStubReturn(Collections.emptyList());
-        expect(navAppResourceService.getNavigationItemsResources()).andReturn(Arrays.asList(navAppResource, navAppResource));
+        expect(navAppResourceService.getLoginResources()).andStubReturn(Collections.emptySet());
+        expect(navAppResourceService.getLogoutResources()).andStubReturn(Collections.emptySet());
+        expect(navAppResourceService.getNavigationItemsResources()).andReturn(Stream.of(navAppResource1, navAppResource2).collect(Collectors.toSet()));
         replay(navAppResourceService);
 
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
@@ -262,9 +262,9 @@ public class NavAppSettingsServiceTest {
         replay(navAppResource);
 
         reset(navAppResourceService);
-        expect(navAppResourceService.getNavigationItemsResources()).andReturn(Collections.emptyList());
-        expect(navAppResourceService.getLoginResources()).andReturn(Collections.singletonList(navAppResource));
-        expect(navAppResourceService.getLogoutResources()).andReturn(Collections.singletonList(navAppResource));
+        expect(navAppResourceService.getNavigationItemsResources()).andReturn(Collections.emptySet());
+        expect(navAppResourceService.getLoginResources()).andReturn(Collections.singleton(navAppResource));
+        expect(navAppResourceService.getLogoutResources()).andReturn(Collections.singleton(navAppResource));
         replay(navAppResourceService);
 
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
@@ -372,7 +372,7 @@ public class NavAppSettingsServiceTest {
         expect(parameters.getParameterValue(NavAppSettingsService.LOGIN_TYPE_QUERY_PARAMETER))
                 .andReturn(StringValue.valueOf((String) null));
         replay(parameters);
-        sessionAttributeStore.setAttribute(NavAppSettingsService.LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME,true);
+        sessionAttributeStore.setAttribute(NavAppSettingsService.LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME, true);
 
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
         assertThat(navAppSettings.getAppSettings().getNavConfigResources().size(), is(1));
