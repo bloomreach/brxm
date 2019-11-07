@@ -25,7 +25,6 @@ import java.util.Set;
 
 import org.hippoecm.frontend.service.NavAppResource;
 import org.hippoecm.frontend.service.ResourceType;
-import org.junit.Before;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.allOf;
@@ -39,12 +38,8 @@ import static org.junit.Assert.fail;
 
 public class NavAppResourceServiceImplTest {
 
-    @Before
-    public void setUp() {
-    }
-
     @Test
-    public void allEmpty() {
+    public void no_resources_at_all_is_allowed() {
         final Properties properties = new Properties();
         final NavAppResourceService service = new NavAppResourceServiceImpl(properties);
         assertThat(service.getNavigationItemsResources().isEmpty(), is(true));
@@ -53,33 +48,33 @@ public class NavAppResourceServiceImplTest {
     }
 
     @Test
-    public void an_IFRAME_LoginResource() {
-
+    public void resources_from_properties() throws IOException {
+        final String data = "# Sample platform.properties\n"
+                + "brx.navapp.resource.login.id-1  = IFRAME, https://company-1.com/login\n"
+                + "brx.navapp.resource.login.id-2  = REST, https://company-2.com/login\n"
+                + "brx.navapp.resource.login.id-3  = INTERNAL_REST, https://company-3.com/login\n"
+                + "brx.navapp.resource.logout.id-1 = IFRAME, https://company-1.com/logout\n"
+                + "brx.navapp.resource.logout.id-2 = IFRAME, https://company-2.com/logout\n"
+                + "brx.navapp.resource.logout.id-3 = IFRAME, https://company-3.com/logout\n"
+                + "brx.navapp.resource.navigationitems.id-1  = IFRAME, https://company-1.com/nav-items\n"
+                + "brx.navapp.resource.navigationitems.id-2  = REST, https://company-2.com/mav-items\n"
+                + "brx.navapp.resource.navigationitems.id-3  = INTERNAL_REST, https://company-3.com/nav-items\n"
+                + "brx.navapp.some.other.property  = some value\n"
+                + "brx.navapp.resource.LOGIN.id-3  = properties are case sensitive, so this one doesn't count\n"
+                + "x.y.z = just some other property\n"
+                + "p.q.r = yet another one\n";
         final Properties properties = new Properties();
-        properties.setProperty(LOGIN_KEY_PREFIX + ".company-a.", "IFRAME, http://company-a.com/nav-items");
+        properties.load(new StringReader(data));
 
         final NavAppResourceService service = new NavAppResourceServiceImpl(properties);
-        final Set<NavAppResource> loginResources = service.getLoginResources();
 
-        assertThat(loginResources.iterator().next().getResourceType(), is(ResourceType.IFRAME));
-        assertThat(loginResources.iterator().next().getUrl(), is(URI.create("http://company-a.com/nav-items")));
+        assertThat(service.getLoginResources().size(), is(3));
+        assertThat(service.getLogoutResources().size(), is(3));
+        assertThat(service.getNavigationItemsResources().size(), is(3));
     }
 
     @Test
-    public void a_REST_LogoutResource() {
-
-        final Properties properties = new Properties();
-        properties.setProperty(LOGOUT_KEY_PREFIX + ".company-b", "REST, http://company-b.com/nav-items");
-
-        final NavAppResourceService service = new NavAppResourceServiceImpl(properties);
-        final Set<NavAppResource> loginResources = service.getLogoutResources();
-
-        assertThat(loginResources.iterator().next().getResourceType(), is(ResourceType.REST));
-        assertThat(loginResources.iterator().next().getUrl(), is(URI.create("http://company-b.com/nav-items")));
-    }
-
-    @Test
-    public void an_INTERNAL_REST_NavigationItemsResource() {
+    public void navigationitems_without_login_logout_pair_is_allowed() {
 
         final Properties properties = new Properties();
         properties.setProperty(NAVIGATION_ITEMS_KEY_PREFIX + ".company-c", "INTERNAL_REST, http://company-c.com/nav-items");
@@ -92,14 +87,72 @@ public class NavAppResourceServiceImplTest {
     }
 
     @Test
-    public void values_wrong_order() {
+    public void login_without_logout_not_allowed() throws IOException {
+        final String data = "# Sample platform.properties\n"
+                + "brx.navapp.resource.navigationitems.id-1  = IFRAME, https://company-1.com/nav-items\n"
+                + "brx.navapp.resource.login.id-1  = IFRAME, https://company-1.com/login\n";
+        final Properties properties = new Properties();
+        properties.load(new StringReader(data));
+
+        try {
+            new NavAppResourceServiceImpl(properties);
+            fail("should have thrown");
+        } catch (IllegalArgumentException e) {
+            System.err.println(e);
+            assertThat(e.getMessage(), allOf(
+                    containsString("brx.navapp.resource.logout.id-1"),
+                    containsString("missing")
+            ));
+        }
+    }
+
+    @Test
+    public void logout_without_login_not_allowed() throws IOException {
+        final String data = "# Sample platform.properties\n"
+                + "brx.navapp.resource.navigationitems.id-1  = IFRAME, https://company-1.com/nav-items\n"
+                + "brx.navapp.resource.logout.id-1  = IFRAME, https://company-1.com/logout\n";
+        final Properties properties = new Properties();
+        properties.load(new StringReader(data));
+
+        try {
+            new NavAppResourceServiceImpl(properties);
+            fail("should have thrown");
+        } catch (IllegalArgumentException e) {
+            System.err.println(e);
+            assertThat(e.getMessage(), allOf(
+                    containsString("brx.navapp.resource.login.id-1"),
+                    containsString("missing")
+            ));
+        }
+    }
+
+    @Test
+    public void login_logout_without_navigationitems_not_allowed() {
+
+        final Properties properties = new Properties();
+        properties.setProperty(LOGIN_KEY_PREFIX + ".company-a", "IFRAME, http://company-a.com/login");
+        properties.setProperty(LOGOUT_KEY_PREFIX + ".company-a", "REST, http://company-b.com/logout");
+
+        try {
+            new NavAppResourceServiceImpl(properties);
+            fail("should have thrown");
+        } catch (IllegalArgumentException e) {
+            System.err.println(e);
+            assertThat(e.getMessage(), allOf(
+                    containsString("brx.navapp.resource.navigationitems.company-a"),
+                    containsString("missing")
+            ));
+        }
+    }
+
+    @Test
+    public void values_wrong_order_not_allowed() {
 
         final Properties properties = new Properties();
         properties.setProperty(NAVIGATION_ITEMS_KEY_PREFIX + ".company-a", "http://company-c.com/nav-items, IFRAME");
 
-        final NavAppResourceService service = new NavAppResourceServiceImpl(properties);
         try {
-            service.getNavigationItemsResources();
+            new NavAppResourceServiceImpl(properties);
             fail("Should have thrown");
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), allOf(
@@ -110,14 +163,13 @@ public class NavAppResourceServiceImplTest {
     }
 
     @Test
-    public void missing_ResourceType_Property() {
+    public void missing_resource_type_not_allowed() {
 
         final Properties properties = new Properties();
         properties.setProperty(NAVIGATION_ITEMS_KEY_PREFIX + ".company-a", "http://company-c.com/nav-items");
 
-        final NavAppResourceService service = new NavAppResourceServiceImpl(properties);
         try {
-            service.getNavigationItemsResources();
+            new NavAppResourceServiceImpl(properties);
             fail("should have thrown");
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), allOf(
@@ -129,14 +181,13 @@ public class NavAppResourceServiceImplTest {
     }
 
     @Test
-    public void missing_URL_Property() {
+    public void missing_url_not_allowed() {
 
         final Properties properties = new Properties();
         properties.setProperty(NAVIGATION_ITEMS_KEY_PREFIX + ".company-a", "REST");
 
-        final NavAppResourceService service = new NavAppResourceServiceImpl(properties);
         try {
-            service.getNavigationItemsResources();
+            new NavAppResourceServiceImpl(properties);
             fail("should have thrown");
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), allOf(
@@ -148,14 +199,13 @@ public class NavAppResourceServiceImplTest {
     }
 
     @Test
-    public void properties_reversed() {
+    public void properties_reversed_not_allowed() {
 
         final Properties properties = new Properties();
         properties.setProperty(NAVIGATION_ITEMS_KEY_PREFIX + ".company-a", "http://company-a.com/navitems, REST");
 
-        final NavAppResourceService service = new NavAppResourceServiceImpl(properties);
         try {
-            service.getNavigationItemsResources();
+            new NavAppResourceServiceImpl(properties);
             fail("should have thrown");
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), allOf(
@@ -167,57 +217,21 @@ public class NavAppResourceServiceImplTest {
     }
 
     @Test
-    public void fromPropertiesFile() throws IOException {
+    public void duplicate_values_for_different_keys_not_allowed() throws IOException {
         final String data = "# Sample platform.properties\n"
                 + "brx.navapp.resource.login.id-1  = IFRAME, https://company-1.com/login\n"
-                + "brx.navapp.resource.login.id-2  = REST, https://company-2.com/login\n"
-                + "brx.navapp.resource.login.id-3  = INTERNAL_REST, https://company-3.com/login\n"
-                + "brx.navapp.resource.logout.id-1 = IFRAME, https://company-1.com/logout\n"
-                + "brx.navapp.resource.logout.id-2 = IFRAME, https://company-2.com/logout\n"
-                + "brx.navapp.some.other.property  = some value\n"
-                + "brx.navapp.resource.LOGIN.id-3  = properties are case sensitive, so this one doesn't count\n"
-                + "x.y.z = just some other property\n"
-                + "p.q.r = yet another one\n"
-                ;
+                + "brx.navapp.resource.login.id-2  = IFRAME, https://company-1.com/login\n";
         final Properties properties = new Properties();
         properties.load(new StringReader(data));
 
-        final NavAppResourceService service = new NavAppResourceServiceImpl(properties);
-
-        assertThat(service.getLoginResources().size(), is(3));
-        assertThat(service.getLogoutResources().size(), is(2));
-    }
-
-    @Test
-    public void duplicate_values() throws IOException {
-        final String data = "# Sample platform.properties\n"
-                + "brx.navapp.resource.login.id-1  = IFRAME, https://company-1.com/login\n"
-                + "brx.navapp.resource.login.id-2  = IFRAME, https://company-1.com/login\n"
-                + "brx.navapp.resource.logout.id-1 = IFRAME, https://company-1.com/logout\n"
-                + "brx.navapp.resource.logout.id-2 = IFRAME, https://company-1.com/logout\n"
-                ;
-        final Properties properties = new Properties();
-        properties.load(new StringReader(data));
-
-        final NavAppResourceServiceImpl navAppResourceService = new NavAppResourceServiceImpl(properties);
         try {
-            navAppResourceService.getLoginResources();
+            new NavAppResourceServiceImpl(properties);
             fail("should have thrown");
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), allOf(
                     containsString("IFRAME, https://company-1.com/login"),
                     containsString("brx.navapp.resource.login.id-1"),
                     containsString("brx.navapp.resource.login.id-2")
-            ));
-        }
-        try {
-            navAppResourceService.getLogoutResources();
-            fail("should have thrown");
-        } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), allOf(
-                    containsString("IFRAME, https://company-1.com/logout"),
-                    containsString("brx.navapp.resource.logout.id-1"),
-                    containsString("brx.navapp.resource.logout.id-2")
             ));
         }
     }
