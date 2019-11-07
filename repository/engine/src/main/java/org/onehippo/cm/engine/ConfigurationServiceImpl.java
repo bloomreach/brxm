@@ -255,10 +255,13 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         log.debug("loading existing baseline during site bootstrap for sites: {}", siteNames);
         final ConfigurationModelImpl newBaselineModel = loadBaselineModel(siteNames);
 
-        if (shouldSkipBecauseOfDigestMatch(newRuntimeConfigModel, newBaselineModel, siteName)) {
+        if (shouldSkipConfigBecauseOfDigestMatch(newRuntimeConfigModel, newBaselineModel)) {
             log.info("ConfigurationService: skipping site bootstrap because of matching bootstrap and baseline models: {}", siteName);
             // Note: site continues using jar-backed model for runtime use
             runtimeConfigurationModel = newRuntimeConfigModel;
+
+            //process webfilebundle instructions from HCM Site which are not from the current site
+            applyWebfiles(runtimeConfigurationModel, siteName);
         }
         else {
             // Run pre site migrators for this site
@@ -271,8 +274,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
             if (success) {
                 log.debug("processing webfiles for site: {}", siteName);
                 //process webfilebundle instructions from HCM Site which are not from the current site
-                final List<WebFileBundleDefinitionImpl> webfileBundleDefs = getWebFileBundleDefsForSite(newRuntimeConfigModel, siteName);
-                configService.writeWebfiles(webfileBundleDefs, baselineService, session);
+                applyWebfiles(runtimeConfigurationModel, siteName);
 
                 log.debug("applying model content for sites: {}", siteNames);
                 success = applyContent(newRuntimeConfigModel);
@@ -358,9 +360,11 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                     bootstrapModel = loadBootstrapModel();
 
                     // check the digest before doing real bootstrap work
-                    if (shouldSkipBecauseOfDigestMatch(bootstrapModel, baselineModel, null)) {
-                        log.info("ConfigurationService: skipping core bootstrap because of matching bootstrap and baseline models");
+                    if (shouldSkipConfigBecauseOfDigestMatch(bootstrapModel, baselineModel)) {
+                        log.info("ConfigurationService: skipping config and content bootstrap because of matching bootstrap and baseline models");
                         initWithoutBootstrap(startRepositoryServicesTask, baselineModel);
+
+                        applyWebfiles(bootstrapModel, null);
                     }
                     else {
                         //In case bootstrapping fails, we make sure there is a non-null runtimeConfigurationModel
@@ -469,7 +473,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                         if (configAppliedSuccessfully) {
                             log.info("ConfigurationService: start post-startup tasks");
                             // we need the bootstrap model here, not the baseline, so we can access the jar content
-                            postStartupTasks(bootstrapModel);
+                            applyWebfiles(bootstrapModel, null);
                         }
 
                         boolean autoExportRunning = false;
@@ -506,10 +510,8 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         }
     }
 
-    private boolean shouldSkipBecauseOfDigestMatch(final ConfigurationModelImpl bootstrapModel,
-                                                   final ConfigurationModelImpl baselineModel,
-                                                   final String siteName)
-            throws RepositoryException {
+    private boolean shouldSkipConfigBecauseOfDigestMatch(final ConfigurationModelImpl bootstrapModel,
+                                                         final ConfigurationModelImpl baselineModel) {
         // NOTE: This will not notice differences within content files, since these are not fully stored
         //       in the baseline. This will only notice added or removed content files, changed actions,
         //       or changed config files.
@@ -521,20 +523,6 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
 
         boolean skip = !fullConfigure && !startAutoExportService
                 && bootstrapModel.currentSitesMatchByDigests(baselineModel);
-
-        // check the webfiles bundle digests here, too!
-        if (skip) {
-            try {
-                final List<WebFileBundleDefinitionImpl> webFileBundleDefs =
-                        (siteName != null)?
-                                getWebFileBundleDefsForSite(bootstrapModel, siteName):
-                                bootstrapModel.getWebFileBundleDefinitions();
-                skip = configService.shouldSkipWebfilesBecauseOfDigestMatch(webFileBundleDefs, baselineService, session);
-            }
-            catch (IOException e) {
-                throw new RepositoryException("Exception checking webfiles bundle digests during bootstrap", e);
-            }
-        }
 
         stopWatch.stop();
         log.debug("digest comparison in {}", stopWatch.toString());
@@ -1058,17 +1046,18 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         }
     }
 
-    private void postStartupTasks(final ConfigurationModel bootstrapModel) {
+    private void applyWebfiles(final ConfigurationModelImpl bootstrapModel, final String siteName) {
+        final List<WebFileBundleDefinitionImpl> webFileBundleDefs =
+                (siteName != null) ?
+                        getWebFileBundleDefsForSite(bootstrapModel, siteName) :
+                        bootstrapModel.getWebFileBundleDefinitions();
         try {
-            // webfiles
-            try {
-                configService.writeWebfiles(bootstrapModel.getWebFileBundleDefinitions(), baselineService, session);
+            boolean skip = configService.skipOrWriteWebfiles(webFileBundleDefs, baselineService, session);
+            if (!skip) {
                 session.save();
-            } catch (IOException e) {
-                log.error("Error initializing webfiles", e);
             }
-        } catch (Exception e) {
-            log.error("Failed to complete post-startup tasks", e);
+        } catch (IOException | RepositoryException e) {
+            log.error("Error initializing webfiles", e);
         }
     }
 
