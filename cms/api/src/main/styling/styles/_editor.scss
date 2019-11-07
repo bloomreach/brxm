@@ -195,6 +195,10 @@
   }
 
   .radiogroup {
+    input[type="radio"] {
+      display: inline-block;
+    }
+
     &.horizontal li:not(:last-child) {
       margin-right: 16px;
     }
