@@ -17,35 +17,32 @@
   <wicket:panel>
     <wicket:container wicket:id="fragment"/>
   </wicket:panel>
+
   <wicket:fragment wicket:id="edit">
-    <table border="0" cellpadding="0" cellspacing="0">
-      <tr>
-        <td>
-          <img wicket:id="previewImage"/>
-        </td>
-        <td class="gallerypickerbuttons btn-bar">
-          <a class="btn btn-default" wicket:id="select">
-            <span class="button-label"><wicket:message key="picker.select">[Select]</wicket:message></span>
-          </a>
-          <a class="btn btn-default" wicket:id="open">
-            <span class="button-label"><wicket:message key="picker.open">[Open]</wicket:message></span>
-          </a>
-          <a class="btn btn-default" href="#" wicket:id="remove">
-            <span class="button-label"><wicket:message key="picker.remove">[Clear]</wicket:message></span>
-          </a>
-        </td>
-      </tr>
-    </table>
+    <div class="hippo-editor-field-value picker-controls">
+      <div class="preview-image">
+        <img wicket:id="previewImage"/>
+      </div>
+      <div class="btn-bar">
+        <a class="btn btn-default" wicket:id="select">
+          <span class="button-label"><wicket:message key="picker.select">[Select]</wicket:message></span>
+        </a>
+        <a class="btn btn-default" wicket:id="open">
+          <span class="button-label"><wicket:message key="picker.open">[Open]</wicket:message></span>
+        </a>
+        <a class="btn btn-default" href="#" wicket:id="remove">
+          <span class="button-label"><wicket:message key="picker.remove">[Clear]</wicket:message></span>
+        </a>
+      </div>
+    </div>
   </wicket:fragment>
+
   <wicket:fragment wicket:id="view">
-    <table border="0" cellpadding="0" cellspacing="0">
-      <tr>
-        <td>
-          <img wicket:id="previewImage"/>
-        </td>
-      </tr>
-    </table>
+    <div class="hippo-editor-field-value">
+      <img wicket:id="previewImage"/>
+    </div>
   </wicket:fragment>
+
   <wicket:fragment wicket:id="compare">
     <table border="0" cellpadding="0" cellspacing="0">
       <tr>
