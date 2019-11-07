@@ -34,4 +34,6 @@ td.hippo-gallery-added img {
 .preview-image {
   align-items: center;
   display: inline-flex;
+  margin-bottom: 8px;
+
 }
