@@ -31,6 +31,7 @@
 
   [
    'initialize',
+   'close',
    'bindInit',
    'bindClean',
    'show',
@@ -47,6 +48,7 @@
   });
 
   Wicket.Window.prototype.initialize = function () {
+    Hippo.showMask();
     _super.initialize.apply(this, arguments);
     this.settings.isFullscreen = false;
 
@@ -58,6 +60,11 @@
       resizeFullScreen: new YAHOO.util.CustomEvent('resizeFullScreen'),
       resizeModal: new YAHOO.util.CustomEvent('resizeModal')
     };
+  };
+
+  Wicket.Window.prototype.close = function () {
+    _super.close.apply(this, arguments);
+    Hippo.hideMask();
   };
 
   Wicket.Window.prototype.onWindowResize = function (e) {
@@ -169,8 +176,6 @@
 
   Wicket.Window.prototype.show = function () {
     _super.show.apply(this, arguments);
-
-    Hippo && Hippo.showMask && Hippo.showMask();
 
     if (this.settings.titleTooltip !== null) {
       this.captionText.setAttribute('title', this.settings.titleTooltip);
