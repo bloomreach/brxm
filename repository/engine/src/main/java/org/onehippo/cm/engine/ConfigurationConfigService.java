@@ -119,23 +119,9 @@ public class ConfigurationConfigService {
         }
     }
 
-    void writeWebfiles(final List<? extends WebFileBundleDefinition> webfileBundles,
-                       final ConfigurationBaselineService baselineService,
-                       final Session session)
-            throws IOException, RepositoryException {
-        skipOrWriteWebfiles(webfileBundles, baselineService, session, true);
-    }
-
-    boolean shouldSkipWebfilesBecauseOfDigestMatch(final List<? extends WebFileBundleDefinition> webfileBundles,
-                                                final ConfigurationBaselineService baselineService,
-                                                final Session session)
-            throws IOException, RepositoryException {
-        return skipOrWriteWebfiles(webfileBundles, baselineService, session, false);
-    }
-
-    private boolean skipOrWriteWebfiles(final List<? extends WebFileBundleDefinition> webfileBundles,
+    boolean skipOrWriteWebfiles(final List<? extends WebFileBundleDefinition> webfileBundles,
                               final ConfigurationBaselineService baselineService,
-                              final Session session, final boolean write)
+                              final Session session)
             throws IOException, RepositoryException {
         if (webfileBundles.isEmpty()) {
             // trivial noop
@@ -155,6 +141,7 @@ public class ConfigurationConfigService {
                 return true;
             }
 
+            boolean noWrite = true;
             // now we check each bundle
             for (WebFileBundleDefinition webFileBundleDefinition : webfileBundles) {
                 final String bundleName = webFileBundleDefinition.getName();
@@ -175,12 +162,7 @@ public class ConfigurationConfigService {
                     final String fsBundleDigest = DigestBundleResolver.calculateFsBundleDigest(bundleZipFile, webFilesService);
                     boolean reload = shouldReloadBundle(fsBundleDigest, bundleName, webFilesService.getReloadMode(), baselineService, session);
                     if (reload) {
-                        // if we're just checking, we should short-circuit as soon as we find a module that requires real work
-                        if (!write) {
-                            return false;
-                        }
-
-                        // otherwise we continue with the actual loading
+                        noWrite = false;
                         webFilesService.importJcrWebFileBundle(session, bundleZipFile, false);
 
                         // TODO: this check seems redundant with shouldReloadBundle().... remove it?
@@ -191,11 +173,7 @@ public class ConfigurationConfigService {
                         }
                     }
                 } else {
-                    // if we're just checking, we should short-circuit as soon as we find a module that requires real work
-                    if (!write) {
-                        return false;
-                    }
-
+                    noWrite = false;
                     log.debug(String.format("Module '%s' is not an archive, perform bundle reload", module));
                     final FileResourceInputProvider resourceInputProvider =
                             (FileResourceInputProvider) module.getConfigResourceInputProvider();
@@ -203,7 +181,7 @@ public class ConfigurationConfigService {
                     webFilesService.importJcrWebFileBundle(session, modulePath.resolve(bundleName).toFile(), true);
                 }
             }
-            return true;
+            return noWrite;
         }
     }
 
