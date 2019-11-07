@@ -20,8 +20,8 @@ package org.hippoecm.frontend.service.navappsettings;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
-import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 
 import org.hippoecm.frontend.service.NavAppResource;
 import org.hippoecm.frontend.service.ResourceType;
@@ -59,10 +59,10 @@ public class NavAppResourceServiceImplTest {
         properties.setProperty(LOGIN_KEY_PREFIX + ".company-a.", "IFRAME, http://company-a.com/nav-items");
 
         final NavAppResourceService service = new NavAppResourceServiceImpl(properties);
-        final List<NavAppResource> loginResources = service.getLoginResources();
+        final Set<NavAppResource> loginResources = service.getLoginResources();
 
-        assertThat(loginResources.get(0).getResourceType(), is(ResourceType.IFRAME));
-        assertThat(loginResources.get(0).getUrl(), is(URI.create("http://company-a.com/nav-items")));
+        assertThat(loginResources.iterator().next().getResourceType(), is(ResourceType.IFRAME));
+        assertThat(loginResources.iterator().next().getUrl(), is(URI.create("http://company-a.com/nav-items")));
     }
 
     @Test
@@ -72,10 +72,10 @@ public class NavAppResourceServiceImplTest {
         properties.setProperty(LOGOUT_KEY_PREFIX + ".company-b", "REST, http://company-b.com/nav-items");
 
         final NavAppResourceService service = new NavAppResourceServiceImpl(properties);
-        final List<NavAppResource> loginResources = service.getLogoutResources();
+        final Set<NavAppResource> loginResources = service.getLogoutResources();
 
-        assertThat(loginResources.get(0).getResourceType(), is(ResourceType.REST));
-        assertThat(loginResources.get(0).getUrl(), is(URI.create("http://company-b.com/nav-items")));
+        assertThat(loginResources.iterator().next().getResourceType(), is(ResourceType.REST));
+        assertThat(loginResources.iterator().next().getUrl(), is(URI.create("http://company-b.com/nav-items")));
     }
 
     @Test
@@ -85,10 +85,10 @@ public class NavAppResourceServiceImplTest {
         properties.setProperty(NAVIGATION_ITEMS_KEY_PREFIX + ".company-c", "INTERNAL_REST, http://company-c.com/nav-items");
 
         final NavAppResourceService service = new NavAppResourceServiceImpl(properties);
-        final List<NavAppResource> loginResources = service.getNavigationItemsResources();
+        final Set<NavAppResource> loginResources = service.getNavigationItemsResources();
 
-        assertThat(loginResources.get(0).getResourceType(), is(ResourceType.INTERNAL_REST));
-        assertThat(loginResources.get(0).getUrl(), is(URI.create("http://company-c.com/nav-items")));
+        assertThat(loginResources.iterator().next().getResourceType(), is(ResourceType.INTERNAL_REST));
+        assertThat(loginResources.iterator().next().getUrl(), is(URI.create("http://company-c.com/nav-items")));
     }
 
     @Test
@@ -187,4 +187,39 @@ public class NavAppResourceServiceImplTest {
         assertThat(service.getLoginResources().size(), is(3));
         assertThat(service.getLogoutResources().size(), is(2));
     }
+
+    @Test
+    public void duplicate_values() throws IOException {
+        final String data = "# Sample platform.properties\n"
+                + "brx.navapp.resource.login.id-1  = IFRAME, https://company-1.com/login\n"
+                + "brx.navapp.resource.login.id-2  = IFRAME, https://company-1.com/login\n"
+                + "brx.navapp.resource.logout.id-1 = IFRAME, https://company-1.com/logout\n"
+                + "brx.navapp.resource.logout.id-2 = IFRAME, https://company-1.com/logout\n"
+                ;
+        final Properties properties = new Properties();
+        properties.load(new StringReader(data));
+
+        final NavAppResourceServiceImpl navAppResourceService = new NavAppResourceServiceImpl(properties);
+        try {
+            navAppResourceService.getLoginResources();
+            fail("should have thrown");
+        } catch (IllegalArgumentException e) {
+            assertThat(e.getMessage(), allOf(
+                    containsString("IFRAME, https://company-1.com/login"),
+                    containsString("brx.navapp.resource.login.id-1"),
+                    containsString("brx.navapp.resource.login.id-2")
+            ));
+        }
+        try {
+            navAppResourceService.getLogoutResources();
+            fail("should have thrown");
+        } catch (IllegalArgumentException e) {
+            assertThat(e.getMessage(), allOf(
+                    containsString("IFRAME, https://company-1.com/logout"),
+                    containsString("brx.navapp.resource.logout.id-1"),
+                    containsString("brx.navapp.resource.logout.id-2")
+            ));
+        }
+    }
+
 }

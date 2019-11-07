@@ -18,16 +18,20 @@
 package org.hippoecm.frontend.service.navappsettings;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
-import java.util.stream.Collectors;
+import java.util.Set;
 
 import org.hippoecm.frontend.service.NavAppResource;
 import org.hippoecm.frontend.service.ResourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.stream.Collectors.toMap;
 import static org.hippoecm.frontend.service.ResourceType.IFRAME;
 import static org.hippoecm.frontend.service.ResourceType.REST;
 
@@ -49,27 +53,37 @@ final class NavAppResourceServiceImpl implements NavAppResourceService {
     }
 
     @Override
-    public List<NavAppResource> getNavigationItemsResources() {
+    public Set<NavAppResource> getNavigationItemsResources() {
         return getResources(NAVIGATION_ITEMS_KEY_PREFIX);
     }
 
     @Override
-    public List<NavAppResource> getLoginResources() {
+    public Set<NavAppResource> getLoginResources() {
         return getResources(LOGIN_KEY_PREFIX);
     }
 
     @Override
-    public List<NavAppResource> getLogoutResources() {
+    public Set<NavAppResource> getLogoutResources() {
         return getResources(LOGOUT_KEY_PREFIX);
     }
 
-    private List<NavAppResource> getResources(String keyPrefix) {
-        return properties.keySet()
-                .stream()
-                .map(Object::toString)
-                .filter(key -> key.startsWith(keyPrefix))
-                .map(this::createResource)
-                .collect(Collectors.toList());
+    private Set<NavAppResource> getResources(String keyPrefix) {
+        final Map<NavAppResource, List<String>> resourceToKeyMap = new HashMap<>();
+        for (Object key : properties.keySet()) {
+            if (key.toString().startsWith(keyPrefix)) {
+                final NavAppResource navAppResource = createResource(key.toString());
+                resourceToKeyMap.computeIfAbsent(navAppResource, r -> new ArrayList<>()).add(key.toString());
+            }
+        }
+        final Map<NavAppResource, List<String>> duplicates = resourceToKeyMap.entrySet().stream()
+                .filter(e -> e.getValue().size() > 1)
+                .collect(toMap(Map.Entry::getKey, Map.Entry::getValue));
+        if (duplicates.isEmpty()) {
+            return resourceToKeyMap.keySet();
+        }
+        throw new IllegalArgumentException(
+                "Duplicate values found: " + resourceToKeyMap + "\n" +
+                        "Please make sure that all values for keys with prefix " + keyPrefix + " are unique.");
     }
 
     private NavAppResource createResource(String key) {

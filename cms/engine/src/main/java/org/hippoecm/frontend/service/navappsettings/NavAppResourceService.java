@@ -17,15 +17,15 @@
 
 package org.hippoecm.frontend.service.navappsettings;
 
-import java.util.List;
+import java.util.Set;
 
 import org.hippoecm.frontend.service.NavAppResource;
 
 public interface NavAppResourceService {
 
-    List<NavAppResource> getNavigationItemsResources();
+    Set<NavAppResource> getNavigationItemsResources();
 
-    List<NavAppResource> getLoginResources();
+    Set<NavAppResource> getLoginResources();
 
-    List<NavAppResource> getLogoutResources();
+    Set<NavAppResource> getLogoutResources();
 }
