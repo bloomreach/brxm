@@ -652,7 +652,7 @@ public class TabsPlugin extends RenderPlugin {
             setSize(DialogConstants.LARGE_AUTO);
             setTitleKey("title");
 
-            addButton(new AjaxButton(DialogConstants.BUTTON, new ResourceModel("discard-all")) {
+            final AjaxButton discardAllButton = new AjaxButton(DialogConstants.BUTTON, new ResourceModel("discard-all")) {
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form form) {
                     final Consumer<Tab> discardAndClose = currentTab -> {
@@ -673,9 +673,11 @@ public class TabsPlugin extends RenderPlugin {
                     processAllTabs(discardAndClose);
                     updateDialog(target);
                 }
-            }, ButtonPosition.LAST);
+            };
+            discardAllButton.add(ClassAttribute.append(ButtonStyle.SECONDARY.getCssClass()));
+            addButton(discardAllButton, ButtonPosition.LAST);
 
-            addButton(new AjaxButton(DialogConstants.BUTTON, new ResourceModel("save-all")) {
+            final AjaxButton saveAllButton = new AjaxButton(DialogConstants.BUTTON, new ResourceModel("save-all")) {
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form form) {
                     final Consumer<Tab> saveAndClose = currentTab -> {
@@ -696,7 +698,9 @@ public class TabsPlugin extends RenderPlugin {
                     processAllTabs(saveAndClose);
                     updateDialog(target);
                 }
-            }, ButtonPosition.LAST);
+            };
+            saveAllButton.add(ClassAttribute.append(ButtonStyle.PRIMARY.getCssClass()));
+            addButton(saveAllButton, ButtonPosition.LAST);
 
             provider = new ModifiedDocumentsProvider(getNodeModelList(changedTabs));
             modifiedDocumentsView = new ModifiedDocumentsView(MODIFIED_DOCS_VIEW_ID, provider);
