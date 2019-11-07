@@ -23,20 +23,20 @@ describe('userSettingsFactory', () => {
     nativeWindow: {},
   };
 
-  beforeEach(() => {
-    spyOn(console, 'error');
-  });
+  const loggerMock = jasmine.createSpyObj('NGXLogger', [
+    'error',
+  ]);
 
   it('should print an error when the global configuration object is not set', () => {
-    userSettingsFactory(windowRefMock);
+    userSettingsFactory(windowRefMock, loggerMock);
 
-    expect(console.error).toHaveBeenCalledWith('[NAVAPP] The global configuration object is not set');
+    expect(loggerMock.error).toHaveBeenCalledWith('The global configuration object is not set');
   });
 
   it('should return an empty object when the global configuration object is not set', () => {
     const expected: UserSettings = {} as any;
 
-    const actual = userSettingsFactory(windowRefMock);
+    const actual = userSettingsFactory(windowRefMock, loggerMock);
 
     expect(actual).toEqual(expected);
   });
@@ -49,15 +49,15 @@ describe('userSettingsFactory', () => {
     });
 
     it('should print an error when the app settings are not set in the global object', () => {
-      userSettingsFactory(windowRefMock);
+      userSettingsFactory(windowRefMock, loggerMock);
 
-      expect(console.error).toHaveBeenCalledWith('[NAVAPP] User settings part of the global configuration object is not set');
+      expect(loggerMock.error).toHaveBeenCalledWith('User settings part of the global configuration object is not set');
     });
 
     it('should return an empty object the app settings are not set in the global object', () => {
       const expected: UserSettings = {} as any;
 
-      const actual = userSettingsFactory(windowRefMock);
+      const actual = userSettingsFactory(windowRefMock, loggerMock);
 
       expect(actual).toEqual(expected);
     });
@@ -81,7 +81,7 @@ describe('userSettingsFactory', () => {
       it('should return the app settings object', () => {
         const expected = userSettingsMock;
 
-        const actual = userSettingsFactory(windowRefMock);
+        const actual = userSettingsFactory(windowRefMock, loggerMock);
 
         expect(actual).toEqual(expected);
       });

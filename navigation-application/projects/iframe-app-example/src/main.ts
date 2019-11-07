@@ -25,4 +25,5 @@ if (environment.production) {
 }
 
 platformBrowserDynamic().bootstrapModule(AppModule)
+  /* tslint:disable-next-line:no-console */
   .catch(err => console.error(err));

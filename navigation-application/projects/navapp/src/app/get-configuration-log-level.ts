@@ -14,17 +14,16 @@
  * limitations under the License.
  */
 
-import { enableProdMode } from '@angular/core';
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
-import 'zone.js/dist/zone';
+import { NgxLoggerLevel } from 'ngx-logger';
 
-import { AppModule } from './app/app.module';
-import { environment } from './environments/environment';
+import { CustomWindow } from './shared/services/window-ref.service';
 
-if (environment.production) {
-  enableProdMode();
-}
+export const getConfigurationLogLevel = (): NgxLoggerLevel => {
+  try {
+    const logLevelString = (window as CustomWindow).NavAppSettings.appSettings.logLevel;
 
-platformBrowserDynamic().bootstrapModule(AppModule)
-  /* tslint:disable-next-line:no-console */
-  .catch(err => console.error(err));
+    return NgxLoggerLevel[logLevelString];
+  } catch {
+    return undefined;
+  }
+};

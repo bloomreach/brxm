@@ -17,6 +17,7 @@
 import { Location } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { ChildConfig, NavItem } from '@bloomreach/navapp-communication';
+import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
 import { bufferTime, first, map, switchMap, tap } from 'rxjs/operators';
@@ -45,6 +46,7 @@ export class ClientAppService {
   constructor(
     @Inject(APP_SETTINGS) private appSettings: AppSettings,
     private navItemService: NavItemService,
+    private logger: NGXLogger,
   ) { }
 
   get urls$(): Observable<string[]> {
@@ -105,9 +107,9 @@ export class ClientAppService {
     const url = uniqueURLs.find(x => Location.stripTrailingSlash(x) === connectionUrl);
 
     if (!url) {
-      const message = `An attempt to register the connection to unknown url = ${connection.appUrl}`;
+      const message = `An attempt to register the connection to an unknown url "${connection.appUrl}"`;
 
-      console.error(message);
+      this.logger.error(message);
       this.connectionCounter$.next(new FailedConnection(connection.appUrl, message));
 
       return;
@@ -175,12 +177,12 @@ export class ClientAppService {
     return app.api.getConfig ?
       app.api.getConfig().then(config => {
         if (!config) {
-          console.warn(`[NAVAPP] The app '${app.url}' return an empty config.`);
-          config = {} as ChildConfig;
+          this.logger.warn(`The app "${app.url}" return an empty config`);
+          config = { apiVersion: 'unknown' };
         }
 
         if (!config.apiVersion) {
-          console.warn(`[NAVAPP] The app '${app.url}' returned a config with an empty version.`);
+          this.logger.warn(`The app "${app.url}" returned a config with an empty version`);
           config.apiVersion = 'unknown';
         }
 

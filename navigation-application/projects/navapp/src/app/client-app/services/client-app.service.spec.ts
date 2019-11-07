@@ -16,6 +16,8 @@
 
 import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { ChildPromisedApi } from '@bloomreach/navapp-communication';
+import { NGXLogger } from 'ngx-logger';
+import { LoggerTestingModule } from 'ngx-logger/testing';
 
 import { Connection } from '../../models/connection.model';
 import { AppSettingsMock } from '../../models/dto/app-settings.mock';
@@ -28,6 +30,7 @@ import { ClientAppService } from './client-app.service';
 
 describe('ClientAppService', () => {
   let service: ClientAppService;
+  let logger: NGXLogger;
 
   const iframesConnectionTimeout = 200;
 
@@ -59,6 +62,9 @@ describe('ClientAppService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
+      imports: [
+        LoggerTestingModule,
+      ],
       providers: [
         ClientAppService,
         { provide: NavItemService, useValue: navItemServiceMock },
@@ -67,73 +73,12 @@ describe('ClientAppService', () => {
     });
 
     service = TestBed.get(ClientAppService);
+    logger = TestBed.get(NGXLogger);
   });
 
   it('should exist', () => {
     expect(service).toBeDefined();
   });
-
-  it('should trigger an error error when a connection with unknown url is added', () => {
-    spyOn(console, 'error');
-
-    service.init().catch(() => {});
-
-    const badConnection = new Connection('http://suspect-site.com', {});
-
-    service.addConnection(badConnection);
-
-    expect(console.error).toHaveBeenCalledWith('An attempt to register the connection to unknown url = http://suspect-site.com');
-  });
-
-  it('should finish initialization when the timeout is reached but not all connections are registered', fakeAsync(() => {
-    let initialized = false;
-
-    service.init().then(() => initialized = true);
-
-    tick(iframesConnectionTimeout / 2);
-
-    service.addConnection(new Connection('http://app1.com', {}));
-
-    tick(iframesConnectionTimeout);
-
-    expect(initialized).toBeTruthy();
-    expect(service.apps.length).toBe(1);
-  }));
-
-  it('should reject the promise when all connections are failed', fakeAsync(() => {
-    spyOn(console, 'error');
-    let initialized: boolean;
-
-    service.init().catch(() => initialized = false);
-
-    const badConnection = new Connection('http://suspect-site.com', {});
-    service.addConnection(badConnection);
-
-    const failedConnection = new FailedConnection('http://app1.com', 'some reason');
-    service.addConnection(failedConnection);
-
-    tick();
-
-    expect(initialized).toBe(false);
-    expect(service.apps.length).toBe(0);
-  }));
-
-  it('should init', fakeAsync(() => {
-    const expected = [
-      new ClientApp('http://app1.com', {}),
-      new ClientApp('http://app2.com', {}),
-    ];
-    let actual: ClientApp[];
-
-    service.init().then(() => actual = service.apps);
-
-    service.addConnection(new Connection('http://app1.com', {}));
-    service.addConnection(new Connection('http://app2.com', {}));
-
-    tick();
-
-    expect(actual).toEqual(expected);
-  }));
 
   describe('before initialized', () => {
     it('should emit an empty array of urls', () => {
@@ -150,6 +95,166 @@ describe('ClientAppService', () => {
       const actual = service.doesActiveAppSupportSites;
 
       expect(actual).toBeFalsy();
+    });
+  });
+
+  describe('initialization', () => {
+    it('should be completed successfully', fakeAsync(() => {
+      const expected = [
+        new ClientApp('http://app1.com', {}),
+        new ClientApp('http://app2.com', {}),
+      ];
+      let actual: ClientApp[];
+
+      service.init().then(() => actual = service.apps);
+
+      service.addConnection(new Connection('http://app1.com', {}));
+      service.addConnection(new Connection('http://app2.com', {}));
+
+      tick();
+
+      expect(actual).toEqual(expected);
+    }));
+
+    it('should be finished when the timeout is reached but not all connections are registered', fakeAsync(() => {
+      let initialized = false;
+
+      service.init().then(() => initialized = true);
+
+      tick(iframesConnectionTimeout / 2);
+
+      service.addConnection(new Connection('http://app1.com', {}));
+
+      tick(iframesConnectionTimeout);
+
+      expect(initialized).toBeTruthy();
+      expect(service.apps.length).toBe(1);
+    }));
+
+    it('should trigger an error error when a connection with unknown url is added', () => {
+      spyOn(logger, 'error');
+
+      service.init().catch(() => {});
+
+      const badConnection = new Connection('http://suspect-site.com', {});
+
+      service.addConnection(badConnection);
+
+      expect(logger.error).toHaveBeenCalledWith('An attempt to register the connection to an unknown url "http://suspect-site.com"');
+    });
+
+    it('should reject the promise when all connections are failed', fakeAsync(() => {
+      let initialized: boolean;
+
+      service.init().catch(() => initialized = false);
+
+      const badConnection = new Connection('http://suspect-site.com', {});
+      service.addConnection(badConnection);
+
+      const failedConnection = new FailedConnection('http://app1.com', 'some reason');
+      service.addConnection(failedConnection);
+
+      tick();
+
+      expect(initialized).toBe(false);
+      expect(service.apps.length).toBe(0);
+    }));
+
+    describe('when getConfig() is defined in ChildApi', () => {
+      let childApi1: jasmine.SpyObj<ChildPromisedApi>;
+      let childApi2: jasmine.SpyObj<ChildPromisedApi>;
+
+      beforeEach(() => {
+        spyOn(logger, 'warn');
+
+        childApi1 = jasmine.createSpyObj('ChildApi1', [
+          'getConfig',
+        ]);
+
+        childApi2 = jasmine.createSpyObj('ChildApi2', [
+          'getConfig',
+        ]);
+      });
+
+      describe('and returns undefined', () => {
+        beforeEach(async(() => {
+          childApi1.getConfig.and.returnValue(Promise.resolve(undefined));
+          childApi2.getConfig.and.returnValue(Promise.resolve({ apiVersion: '1.0.0' }));
+
+          service.init();
+
+          service.addConnection(new Connection('http://app1.com', childApi1));
+          service.addConnection(new Connection('http://app2.com', childApi2));
+        }));
+
+        it('should set the config object to a default object', () => {
+          expect(service.getAppConfig('http://app1.com')).toEqual({ apiVersion: 'unknown' });
+          expect(service.getAppConfig('http://app2.com')).toEqual({ apiVersion: '1.0.0' });
+        });
+
+        it('should provide a warning message', () => {
+          expect(logger.warn).toHaveBeenCalledWith('The app "http://app1.com" return an empty config');
+        });
+      });
+
+      describe('and returns the config object without apiVersion', () => {
+        beforeEach(async(() => {
+          childApi1.getConfig.and.returnValue(Promise.resolve({}));
+          childApi2.getConfig.and.returnValue(Promise.resolve({ apiVersion: '1.0.0' }));
+
+          service.init();
+
+          service.addConnection(new Connection('http://app1.com', childApi1));
+          service.addConnection(new Connection('http://app2.com', childApi2));
+        }));
+
+        it('should set the apiVersion to unknown', () => {
+          expect(service.getAppConfig('http://app1.com')).toEqual({ apiVersion: 'unknown' });
+          expect(service.getAppConfig('http://app2.com')).toEqual({ apiVersion: '1.0.0' });
+        });
+
+        it('should provide a warning message', () => {
+          expect(logger.warn).toHaveBeenCalledWith('The app "http://app1.com" returned a config with an empty version');
+        });
+      });
+
+      describe('and return a rejected promise', () => {
+        beforeEach(() => {
+          childApi1.getConfig.and.callFake(() => Promise.reject());
+          childApi2.getConfig.and.returnValue(Promise.resolve({ apiVersion: '1.0.0' }));
+        });
+
+        it('should reject the init promise', fakeAsync(() => {
+          let initialized: boolean;
+
+          service.init().catch(() => initialized = false);
+
+          service.addConnection(new Connection('http://app1.com', childApi1));
+          service.addConnection(new Connection('http://app2.com', childApi2));
+
+          tick();
+
+          expect(initialized).toBe(false);
+          expect(service.apps.length).toBe(0);
+        }));
+      });
+
+      describe('and returns the config object with an apiVersion set', () => {
+        beforeEach(async(() => {
+          childApi1.getConfig.and.returnValue(Promise.resolve({ apiVersion: '1.0.0' }));
+          childApi2.getConfig.and.returnValue(Promise.resolve({ apiVersion: '2.0.0' }));
+
+          service.init();
+
+          service.addConnection(new Connection('http://app1.com', childApi1));
+          service.addConnection(new Connection('http://app2.com', childApi2));
+        }));
+
+        it('should be completed successfully', () => {
+          expect(service.getAppConfig('http://app1.com')).toEqual({ apiVersion: '1.0.0' });
+          expect(service.getAppConfig('http://app2.com')).toEqual({ apiVersion: '2.0.0' });
+        });
+      });
     });
   });
 

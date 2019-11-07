@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
+import { NGXLogger } from 'ngx-logger';
+
 import { UserSettings } from '../models/dto/user-settings.dto';
 import { WindowRef } from '../shared/services/window-ref.service';
 
-export const userSettingsFactory = (windowRef: WindowRef): UserSettings => {
+export const userSettingsFactory = (windowRef: WindowRef, logger: NGXLogger): UserSettings => {
   const globalSettings = windowRef.nativeWindow.NavAppSettings;
 
   if (!globalSettings) {
-    console.error('[NAVAPP] The global configuration object is not set');
+    logger.error('The global configuration object is not set');
 
     return {} as any;
   }
 
   if (!globalSettings.userSettings) {
-    console.error('[NAVAPP] User settings part of the global configuration object is not set');
+    logger.error('User settings part of the global configuration object is not set');
 
     return {} as any;
   }

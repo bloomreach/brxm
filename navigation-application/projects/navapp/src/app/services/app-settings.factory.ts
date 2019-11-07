@@ -15,22 +15,23 @@
  */
 
 import { Location } from '@angular/common';
+import { NGXLogger } from 'ngx-logger';
 
 import { stripOffQueryStringAndHash } from '../helpers/strip-off-query-string-and-hash';
 import { AppSettings } from '../models/dto/app-settings.dto';
 import { WindowRef } from '../shared/services/window-ref.service';
 
-export const appSettingsFactory = (windowRef: WindowRef, location: Location): AppSettings => {
+export const appSettingsFactory = (windowRef: WindowRef, location: Location, logger: NGXLogger): AppSettings => {
   const globalSettings = windowRef.nativeWindow.NavAppSettings;
 
   if (!globalSettings) {
-    console.error('[NAVAPP] The global configuration object is not set');
+    logger.error('The global configuration object is not set');
 
     return {} as any;
   }
 
   if (!globalSettings.appSettings) {
-    console.error('[NAVAPP] App settings part of the global configuration object is not set');
+    logger.error('App settings part of the global configuration object is not set');
 
     return {} as any;
   }

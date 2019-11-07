@@ -16,6 +16,8 @@
 
 import { TestBed } from '@angular/core/testing';
 import { ClientErrorCodes } from '@bloomreach/navapp-communication';
+import { NGXLogger } from 'ngx-logger';
+import { LoggerTestingModule } from 'ngx-logger/testing';
 import { of } from 'rxjs';
 
 import { ConnectionService } from '../../services/connection.service';
@@ -26,72 +28,124 @@ import { NotFoundError } from '../models/not-found-error';
 
 import { ErrorHandlingService } from './error-handling.service';
 
+const expectedLoggerMessages = (error: AppError) => [
+  `Code: "${error.code}"`,
+  `Message: "${error.message}"`,
+  `Public description: "${error.description}"`,
+  `Description: "${error.internalDescription}"`,
+];
+
 describe('ErrorHandlingService', () => {
-  let errorHandlingService: ErrorHandlingService;
+  let service: ErrorHandlingService;
+  let logger: NGXLogger;
 
   beforeEach(() => {
-    spyOn(console, 'error');
-
     const connectionServiceMock = {
       onError$: of(),
     };
 
     TestBed.configureTestingModule({
+      imports: [
+        LoggerTestingModule,
+      ],
       providers: [
         ErrorHandlingService,
         { provide: ConnectionService, useValue: connectionServiceMock },
       ],
     });
 
-    errorHandlingService = TestBed.get(ErrorHandlingService);
+    service = TestBed.get(ErrorHandlingService);
+    logger = TestBed.get(NGXLogger);
+
+    spyOn(logger, 'error');
   });
 
-  it('should set the AppError', () => {
-    const expected = new AppError(
+  describe('AppError', () => {
+    const expectedError = new AppError(
       500,
       'Some title',
       'Some detailed message',
     );
 
-    errorHandlingService.setError(expected);
+    beforeEach(() => {
+      service.setError(expectedError);
+    });
 
-    expect(errorHandlingService.currentError).toBe(expected);
+    it('should be set', () => {
+      expect(service.currentError).toBe(expectedError);
+    });
+
+    it('should forward the error to logger', () => {
+      expect(logger.error).toHaveBeenCalledWith(...expectedLoggerMessages(expectedError));
+    });
   });
 
-  it('should set the AppError basing on a client error', () => {
-    const expected = new AppError(
+  describe('AppError basing on a client error', () => {
+    const expectedError = new AppError(
       500,
       'Something went wrong',
       'Optional message',
     );
 
-    errorHandlingService.setClientError(ClientErrorCodes.UnknownError, 'Optional message');
+    beforeEach(() => {
+      service.setClientError(ClientErrorCodes.UnknownError, 'Optional message');
+    });
 
-    expect(errorHandlingService.currentError).toEqual(expected);
+    it('should be set', () => {
+      expect(service.currentError).toEqual(expectedError);
+    });
+
+    it('should forward the error to logger', () => {
+      expect(logger.error).toHaveBeenCalledWith(...expectedLoggerMessages(expectedError));
+    });
   });
 
-  it('should set the CriticalError', () => {
-    const expected = new CriticalError('Some critical error', 'Description for logs');
+  describe('CriticalError', () => {
+    const expectedError = new CriticalError('Some critical error', 'Description for logs');
 
-    errorHandlingService.setCriticalError('Some critical error', 'Description for logs');
+    beforeEach(() => {
+      service.setCriticalError('Some critical error', 'Description for logs');
+    });
 
-    expect(errorHandlingService.currentError).toEqual(expected);
+    it('should be set', () => {
+      expect(service.currentError).toEqual(expectedError);
+    });
+
+    it('should forward the error to logger', () => {
+      expect(logger.error).toHaveBeenCalledWith(...expectedLoggerMessages(expectedError));
+    });
   });
 
-  it('should set the NotFoundError', () => {
-    const expected = new NotFoundError('Some available to the user description', 'Description for logs');
+  describe('NotFoundError', () => {
+    const expectedError = new NotFoundError('Some available to the user description', 'Description for logs');
 
-    errorHandlingService.setNotFoundError('Some available to the user description', 'Description for logs');
+    beforeEach(() => {
+      service.setNotFoundError('Some available to the user description', 'Description for logs');
+    });
 
-    expect(errorHandlingService.currentError).toEqual(expected);
+    it('should be set', () => {
+      expect(service.currentError).toEqual(expectedError);
+    });
+
+    it('should forward the error to logger', () => {
+      expect(logger.error).toHaveBeenCalledWith(...expectedLoggerMessages(expectedError));
+    });
   });
 
-  it('should set the InternalError', () => {
-    const expected = new InternalError('Some available to the user description', 'Description for logs');
+  describe('InternalError', () => {
+    const expectedError = new InternalError('Some available to the user description', 'Description for logs');
 
-    errorHandlingService.setInternalError('Some available to the user description', 'Description for logs');
+    beforeEach(() => {
+      service.setInternalError('Some available to the user description', 'Description for logs');
+    });
 
-    expect(errorHandlingService.currentError).toEqual(expected);
+    it('should be set', () => {
+      expect(service.currentError).toEqual(expectedError);
+    });
+
+    it('should forward the error to logger', () => {
+      expect(logger.error).toHaveBeenCalledWith(...expectedLoggerMessages(expectedError));
+    });
   });
 
   describe('when the error is set', () => {
@@ -102,13 +156,13 @@ describe('ErrorHandlingService', () => {
         'Some detailed message',
       );
 
-      errorHandlingService.setError(expected);
+      service.setError(expected);
     });
 
     it('should clean the error', () => {
-      errorHandlingService.clearError();
+      service.clearError();
 
-      expect(errorHandlingService.currentError).toBeUndefined();
+      expect(service.currentError).toBeUndefined();
     });
   });
 });
