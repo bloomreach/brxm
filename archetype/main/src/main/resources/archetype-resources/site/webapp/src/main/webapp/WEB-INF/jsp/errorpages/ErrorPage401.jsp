@@ -32,7 +32,7 @@
   <div class="hippo-login-panel">
     <form class="hippo-login-panel-form" name="signInForm" method="post" action="${loginProxyUrl}">
       <h2>
-        <div class="hippo-global-hideme"><span>BloomReach Experience</span></div>
+        <div class="hippo-global-hideme"><span>Bloomreach Experience</span></div>
       </h2>
       <div class="hippo-login-form-container">
         <table>
@@ -59,7 +59,7 @@
       </div>
     </form>
     <div class="hippo-login-panel-copyright">
-      &copy; 1999-2018 BloomReach B.V.
+      &copy; 1999-2019 BloomReach B.V.
     </div>
   </div>
 </div>
