@@ -16,12 +16,15 @@
 
 import { Injectable } from '@angular/core';
 import { NavItem } from '@bloomreach/navapp-communication';
+import { NGXLogger } from 'ngx-logger';
 
 @Injectable({
   providedIn: 'root',
 })
 export class NavItemService {
   private sortedNavItems: NavItem[] = [];
+
+  constructor(private readonly logger: NGXLogger) {}
 
   get navItems(): NavItem[] {
     return this.sortedNavItems;
@@ -49,7 +52,7 @@ export class NavItemService {
       try {
         return new URL(x.appIframeUrl).pathname === iframeUrlOrPath;
       } catch {
-        console.warn(`Unable to parse nav items's url: ${x.appIframeUrl}`);
+        this.logger.warn(`Unable to parse nav items's url "${x.appIframeUrl}"`);
         return false;
       }
     };

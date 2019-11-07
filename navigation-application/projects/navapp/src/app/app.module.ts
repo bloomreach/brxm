@@ -19,11 +19,13 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
+import { LoggerModule, NGXLogger, NgxLoggerLevel } from 'ngx-logger';
 
 import { AppComponent } from './app.component';
 import { BootstrapModule } from './bootstrap/bootstrap.module';
 import { ClientAppModule } from './client-app/client-app.module';
 import { ErrorHandlingModule } from './error-handling/error-handling.module';
+import { getConfigurationLogLevel } from './get-configuration-log-level';
 import { MainMenuModule } from './main-menu/main-menu.module';
 import { APP_SETTINGS } from './services/app-settings';
 import { appSettingsFactory } from './services/app-settings.factory';
@@ -52,13 +54,18 @@ import { TopPanelModule } from './top-panel/top-panel.module';
         deps: [HttpClient, Location],
       },
     }),
+    LoggerModule.forRoot({
+      // Set the desired log level here to avoid missing log messages due to not properly configured log messages level
+      level: getConfigurationLogLevel() || NgxLoggerLevel.WARN,
+      enableSourceMaps: true,
+    }),
   ],
   providers: [
     Location,
     { provide: LocationStrategy, useClass: PathLocationStrategy },
     { provide: APP_BASE_HREF, useValue: window.location.origin },
-    { provide: APP_SETTINGS, useFactory: appSettingsFactory, deps: [WindowRef, Location] },
-    { provide: USER_SETTINGS, useFactory: userSettingsFactory, deps: [WindowRef] },
+    { provide: APP_SETTINGS, useFactory: appSettingsFactory, deps: [WindowRef, Location, NGXLogger] },
+    { provide: USER_SETTINGS, useFactory: userSettingsFactory, deps: [WindowRef, NGXLogger] },
     { provide: USER_ACTIVITY_DEBOUNCE_TIME, useValue: 30000 },
   ],
   declarations: [AppComponent],

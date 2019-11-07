@@ -27,20 +27,20 @@ describe('appSettingsFactory', () => {
     'path',
   ]);
 
-  beforeEach(() => {
-    spyOn(console, 'error');
-  });
+  const loggerMock = jasmine.createSpyObj('NGXLogger', [
+    'error',
+  ]);
 
   it('should print an error when the global configuration object is not set', () => {
-    appSettingsFactory(windowRefMock, locationMock);
+    appSettingsFactory(windowRefMock, locationMock, loggerMock);
 
-    expect(console.error).toHaveBeenCalledWith('[NAVAPP] The global configuration object is not set');
+    expect(loggerMock.error).toHaveBeenCalledWith('The global configuration object is not set');
   });
 
   it('should return an empty object when the global configuration object is not set', () => {
     const expected: AppSettings = {} as any;
 
-    const actual = appSettingsFactory(windowRefMock, locationMock);
+    const actual = appSettingsFactory(windowRefMock, locationMock, loggerMock);
 
     expect(actual).toEqual(expected);
   });
@@ -53,15 +53,15 @@ describe('appSettingsFactory', () => {
     });
 
     it('should print an error when the app settings are not set in the global object', () => {
-      appSettingsFactory(windowRefMock, locationMock);
+      appSettingsFactory(windowRefMock, locationMock, loggerMock);
 
-      expect(console.error).toHaveBeenCalledWith('[NAVAPP] App settings part of the global configuration object is not set');
+      expect(loggerMock.error).toHaveBeenCalledWith('App settings part of the global configuration object is not set');
     });
 
     it('should return an empty object the app settings are not set in the global object', () => {
       const expected: AppSettings = {} as any;
 
-      const actual = appSettingsFactory(windowRefMock, locationMock);
+      const actual = appSettingsFactory(windowRefMock, locationMock, loggerMock);
 
       expect(actual).toEqual(expected);
     });
@@ -83,7 +83,7 @@ describe('appSettingsFactory', () => {
       it('should return the app settings object', () => {
         const expected = appSettingsMock;
 
-        const actual = appSettingsFactory(windowRefMock, locationMock);
+        const actual = appSettingsFactory(windowRefMock, locationMock, loggerMock);
 
         expect(actual).toEqual(expected);
       });
@@ -92,7 +92,7 @@ describe('appSettingsFactory', () => {
         it ('should be returned from the app settings object', () => {
           const expected = appSettingsMock.basePath;
 
-          const actual = appSettingsFactory(windowRefMock, locationMock).basePath;
+          const actual = appSettingsFactory(windowRefMock, locationMock, loggerMock).basePath;
 
           expect(actual).toEqual(expected);
         });
@@ -111,7 +111,7 @@ describe('appSettingsFactory', () => {
 
             locationMock.path.and.returnValue(expected);
 
-            const actual = appSettingsFactory(windowRefMock, locationMock).basePath;
+            const actual = appSettingsFactory(windowRefMock, locationMock, loggerMock).basePath;
 
             expect(actual).toEqual(expected);
           });
@@ -121,7 +121,7 @@ describe('appSettingsFactory', () => {
 
             locationMock.path.and.returnValue('/base/path/from/browser/location?queryParam=value');
 
-            const actual = appSettingsFactory(windowRefMock, locationMock).basePath;
+            const actual = appSettingsFactory(windowRefMock, locationMock, loggerMock).basePath;
 
             expect(actual).toEqual(expected);
           });
@@ -132,7 +132,7 @@ describe('appSettingsFactory', () => {
         it ('should be returned from the app settings object', () => {
           const expected = appSettingsMock.iframesConnectionTimeout;
 
-          const actual = appSettingsFactory(windowRefMock, locationMock).iframesConnectionTimeout;
+          const actual = appSettingsFactory(windowRefMock, locationMock, loggerMock).iframesConnectionTimeout;
 
           expect(actual).toEqual(expected);
         });
@@ -149,7 +149,7 @@ describe('appSettingsFactory', () => {
           it('should be set to the default value', () => {
             const expected = 30000;
 
-            const actual = appSettingsFactory(windowRefMock, locationMock).iframesConnectionTimeout;
+            const actual = appSettingsFactory(windowRefMock, locationMock, loggerMock).iframesConnectionTimeout;
 
             expect(actual).toEqual(expected);
           });

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+// tslint:disable:no-console
 import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import {

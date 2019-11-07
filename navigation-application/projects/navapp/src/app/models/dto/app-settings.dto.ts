@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { NgxLoggerLevel } from 'ngx-logger';
+
 import { ConfigResource } from './config-resource.dto';
 
 export interface AppSettings {
@@ -24,4 +26,5 @@ export interface AppSettings {
   loginResources: ConfigResource[];
   logoutResources: ConfigResource[];
   iframesConnectionTimeout: number;
+  logLevel: keyof typeof NgxLoggerLevel;
 }

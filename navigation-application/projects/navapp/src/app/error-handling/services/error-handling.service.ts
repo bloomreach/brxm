@@ -16,6 +16,7 @@
 
 import { Injectable } from '@angular/core';
 import { ClientErrorCodes } from '@bloomreach/navapp-communication';
+import { NGXLogger } from 'ngx-logger';
 
 import { ConnectionService } from '../../services/connection.service';
 import { AppError } from '../models/app-error';
@@ -29,6 +30,7 @@ export class ErrorHandlingService {
 
   constructor(
     private connectionService: ConnectionService,
+    private logger: NGXLogger,
   ) {
     this.connectionService.onError$.subscribe(error => this.setClientError(error.errorCode, error.message));
   }
@@ -39,7 +41,12 @@ export class ErrorHandlingService {
 
   private set error(value: AppError) {
     if (value) {
-      console.error(value);
+      this.logger.error(
+        `Code: "${value.code}"`,
+        `Message: "${value.message}"`,
+        `Public description: "${value.description}"`,
+        `Description: "${value.internalDescription}"`,
+      );
     }
 
     this.appError = value;
