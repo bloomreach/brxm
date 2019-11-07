@@ -188,7 +188,7 @@
     background: none;
     border: none;
     box-sizing: border-box;
-    min-height: 100px;
+    min-height: 5 * $line-height-textarea-computed;
     overflow-y: auto;
     padding: 0;
     width: 100%;
@@ -209,7 +209,11 @@
   }
 
   .hippo-editor-field-textarea {
-    line-height: 1.6em;
+    line-height: $line-height-textarea;
+
+    > span {
+      display: flex;
+    }
   }
 
   .linefill {
