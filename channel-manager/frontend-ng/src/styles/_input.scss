@@ -17,7 +17,7 @@
     margin: 12px 0;
 
     /* stylelint-disable-next-line max-line-length */
-    &:not(.field-type-radio_group):not(.field-type-boolean_radio_group):not(.field-type-image_link):not(.field-type-open_ui) {
+    &:not(.field-type-radio_group):not(.field-type-boolean_radio_group):not(.field-type-image_link):not(.field-type-open_ui):not(.field-type_search) {
       $input: 'input.md-input';
       $textarea: 'textarea.md-input';
       $select: 'md-select';
