@@ -72,8 +72,10 @@
     },
 
     show: function() {
-      window.Hippo.showBusyIndicator();
-      this.body.addClass(this.waitClass);
+      if (!this.body.hasClass(this.waitClass)){
+        window.Hippo.showBusyIndicator();
+        this.body.addClass(this.waitClass);
+      }
 
       if (this.active) {
         if (this.loadTimer === null) {
