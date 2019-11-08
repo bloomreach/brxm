@@ -16,7 +16,8 @@
 
 <md-tabs flex="grow"
          layout="column"
-         md-selected="$ctrl.selectedTab">
+         md-selected="$ctrl.selectedTab"
+         md-border-bottom>
   <md-tab ng-repeat="extension in $ctrl.extensions track by extension.id"
           md-on-select="$ctrl.selectedTab = $index">
     <md-tab-label>
