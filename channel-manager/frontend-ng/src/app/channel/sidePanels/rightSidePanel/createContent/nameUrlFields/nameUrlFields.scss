@@ -1,4 +1,4 @@
-// Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -20,9 +20,13 @@ name-url-fields {
   }
 
   .input-icon-button {
+    height: 32px !important;
+    min-height: auto;
+    padding: 4px !important;
     position: absolute;
-    right: 0;
-    top: -2px;
+    right: 6px;
+    top: 4px;
+    width: 32px !important;
   }
 
   // Hide the 'clear field' icon in Edge because it overlaps with the edit/regenerate icon

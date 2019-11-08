@@ -21,20 +21,25 @@ document-location-field {
     width: 100%;
 
     .md-button {
+      height: 32px !important;
+      min-height: auto;
+      padding: 4px !important;
       position: absolute;
-      right: 0;
-      top: -2px;
+      right: 6px;
+      top: 4px;
+      width: 32px !important;
     }
   }
 
   .input-overlay {
     box-sizing: border-box;
-    color: $text-disabled;
+    color: $bloomreach-gray-12;
     cursor: pointer;
-    height: 100%;
-    line-height: 26px;
+    font-size: 14px;
+    height: 36px;
+    line-height: 34px;
     outline: 0;
-    padding: 2px 2px 1px;
+    padding: 1px 5px 1px 17px;
     position: absolute;
     width: 100%;
 
@@ -47,13 +52,13 @@ document-location-field {
     }
 
     .highlight {
-      color: $text-dark;
+      color: $bloomreach-black;
     }
 
     // hide the text of the input
     & + .md-input {
       &[disabled] {
-        color: transparent;
+        color: transparent !important;
       }
     }
   }

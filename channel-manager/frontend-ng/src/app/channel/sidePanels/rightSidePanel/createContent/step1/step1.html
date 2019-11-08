@@ -1,5 +1,5 @@
 <!--
-  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License")
   you may not use this file except in compliance with the License.
@@ -13,10 +13,11 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<md-content class="create-content-step1">
+<md-content class="create-content-step1" flex layout="column" >
   <form novalidate
         name="$ctrl.form"
-        class="create-content-step1-form">
+        class="create-content-step1-form"
+        flex="grow">
     <!-- Name and URL fields (as a separate component) -->
     <name-url-fields name-field="$ctrl.name"
                      url-field="$ctrl.url"
