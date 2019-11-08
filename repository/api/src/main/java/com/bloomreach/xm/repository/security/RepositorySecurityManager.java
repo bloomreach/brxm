@@ -61,7 +61,7 @@ public interface RepositorySecurityManager {
      * Provides administrative (crud) roles management.
      * <p>
      *     Accessing the {@link RolesManager} requires the HippoSession to be in userrole
-     *     {@link SecurityConstants#USERROLE_SECURITY_MANAGER} otherwise an {@link AccessDeniedException} will be raised.
+     *     {@link SecurityConstants#USERROLE_SECURITY_VIEWER} otherwise an {@link AccessDeniedException} will be raised.
      * </p>
      * <p>
      *     The HippoSession will be attached to a dedicated internal system session for performing the
@@ -75,7 +75,7 @@ public interface RepositorySecurityManager {
      * </p>
      * @return the roles manager
      * @throws AccessDeniedException if the HippoSession isn't granted the userrole
-     *         {@link SecurityConstants#USERROLE_SECURITY_APPLICATION_MANAGER}
+     *         {@link SecurityConstants#USERROLE_SECURITY_APPLICATION_ADMIN}
      * @throws RepositoryException if the underlying HippoSession is no longer live, or something else went wrong
      */
     RolesManager getRolesManager() throws AccessDeniedException, RepositoryException;
@@ -84,7 +84,7 @@ public interface RepositorySecurityManager {
      * Provides administrative (crud) userroles management.
      * <p>
      *     Accessing the {@link UserRolesManager} requires the HippoSession to be in userrole
-     *     {@link SecurityConstants#USERROLE_SECURITY_MANAGER} otherwise an {@link AccessDeniedException} will be raised.
+     *     {@link SecurityConstants#USERROLE_SECURITY_VIEWER} otherwise an {@link AccessDeniedException} will be raised.
      * </p>
      * <p>
      *     The HippoSession will be attached to a dedicated internal system session for performing the
@@ -98,7 +98,7 @@ public interface RepositorySecurityManager {
      * </p>
      * @return the userroles manager
      * @throws AccessDeniedException if the provided HippoSession isn't granted the userrole
-     *         {@link SecurityConstants#USERROLE_SECURITY_APPLICATION_MANAGER}
+     *         {@link SecurityConstants#USERROLE_SECURITY_APPLICATION_ADMIN}
      * @throws RepositoryException if the underlying HippoSession is no longer live, or something else went wrong
      */
     UserRolesManager getUserRolesManager() throws AccessDeniedException, RepositoryException;
@@ -107,7 +107,7 @@ public interface RepositorySecurityManager {
      * Provides administrative (crud) domain management; currently limited to only {@link AuthRole}s of an existing domain.
      * <p>
      *     Accessing the {@link DomainsManager} requires the HippoSession to be in userRole
-     *     {@link SecurityConstants#USERROLE_SECURITY_MANAGER} otherwise an {@link AccessDeniedException} will be raised.
+     *     {@link SecurityConstants#USERROLE_SECURITY_VIEWER} otherwise an {@link AccessDeniedException} will be raised.
      * </p>
      * <p>
      *     Note that this manager only provides and allows operations on {@link DomainAuth}s in a <em>valid</em> location!
@@ -125,7 +125,7 @@ public interface RepositorySecurityManager {
      * </p>
      * <p>
      *     All <em>modifying operations</em> require the underlying HippoSession to have userRole
-     *     {@link SecurityConstants#USERROLE_SECURITY_APPLICATION_MANAGER}
+     *     {@link SecurityConstants#USERROLE_SECURITY_APPLICATION_ADMIN}
      * </p>
      * <p>
      *     The HippoSession will be attached to a dedicated internal system session for performing the
@@ -139,7 +139,7 @@ public interface RepositorySecurityManager {
      * </p>
      * @return the DomainsManager
      * @throws AccessDeniedException if the provided HippoSession isn't granted the userrole
-     *         {@link SecurityConstants#USERROLE_SECURITY_MANAGER}
+     *         {@link SecurityConstants#USERROLE_SECURITY_VIEWER}
      * @throws RepositoryException if the underlying HippoSession is no longer live, or something else went wrong
      */
     DomainsManager getDomainsManager() throws AccessDeniedException, RepositoryException;

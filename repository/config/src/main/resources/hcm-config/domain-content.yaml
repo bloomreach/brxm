@@ -12,21 +12,21 @@ definitions:
           hipposys:value: /content
       /author:
         jcr:primaryType: hipposys:authrole
-        hipposys:userrole: xm-content-author
+        hipposys:userrole: xm.content.author
         hipposys:role: author
       /editor:
         jcr:primaryType: hipposys:authrole
-        hipposys:userrole: xm-content-editor
+        hipposys:userrole: xm.content.editor
         hipposys:role: editor
-      # even though the userrole xm-content-admin isn't assigned by default, this is handy for downstream projects
+      # even though the userrole xm.content.admin isn't assigned by default, this is handy for downstream projects
       # needing it, which now only needs to be assigned to a specific group/user
       /admin:
         jcr:primaryType: hipposys:authrole
-        hipposys:userrole: xm-content-admin
+        hipposys:userrole: xm.content.admin
         hipposys:role: admin
-      # even though the userrole xm-content-viewer isn't assigned by default, this is handy for downstream projects
+      # even though the userrole xm.content.viewer isn't assigned by default, this is handy for downstream projects
       # needing it, which now only needs to be assigned to a specific group/user
       /readonly:
         jcr:primaryType: hipposys:authrole
-        hipposys:userrole: xm-content-viewer
+        hipposys:userrole: xm.content.viewer
         hipposys:role: readonly

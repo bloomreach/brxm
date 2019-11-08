@@ -26,5 +26,5 @@ definitions:
           hipposys:value: hippostd:publishable
       /readwrite:
         jcr:primaryType: hipposys:authrole
-        hipposys:userrole: xm-content-author
+        hipposys:userrole: xm.content.author
         hipposys:role: readwrite

@@ -33,8 +33,8 @@ import com.bloomreach.xm.repository.security.ChangePasswordManager;
 import com.bloomreach.xm.repository.security.UserRolesManager;
 import com.bloomreach.xm.repository.security.UserRolesProvider;
 
-import static org.onehippo.repository.security.SecurityConstants.USERROLE_SECURITY_APPLICATION_MANAGER;
-import static org.onehippo.repository.security.SecurityConstants.USERROLE_SECURITY_MANAGER;
+import static org.onehippo.repository.security.SecurityConstants.USERROLE_SECURITY_APPLICATION_ADMIN;
+import static org.onehippo.repository.security.SecurityConstants.USERROLE_SECURITY_VIEWER;
 
 /**
  * Implementation of the {@link RepositorySecurityManager} which is bound to a specific {@link HippoSession}
@@ -107,7 +107,7 @@ public class RepositorySecurityManagerImpl implements RepositorySecurityManager 
             throws AccessDeniedException, RepositoryException {
         checkClosed();
         if (rolesManager == null) {
-            if (!hippoSession.isUserInRole(USERROLE_SECURITY_APPLICATION_MANAGER)) {
+            if (!hippoSession.isUserInRole(USERROLE_SECURITY_APPLICATION_ADMIN)) {
                 throw new AccessDeniedException("Access denied.");
             }
             createSystemSessionIfNeeded();
@@ -121,7 +121,7 @@ public class RepositorySecurityManagerImpl implements RepositorySecurityManager 
             throws AccessDeniedException, RepositoryException {
         checkClosed();
         if (userRolesManager == null) {
-            if (!hippoSession.isUserInRole(USERROLE_SECURITY_APPLICATION_MANAGER)) {
+            if (!hippoSession.isUserInRole(USERROLE_SECURITY_APPLICATION_ADMIN)) {
                 throw new AccessDeniedException("Access denied.");
             }
             createSystemSessionIfNeeded();
@@ -135,7 +135,7 @@ public class RepositorySecurityManagerImpl implements RepositorySecurityManager 
             throws AccessDeniedException, RepositoryException {
         checkClosed();
         if (domainsManager == null) {
-            if (!hippoSession.isUserInRole(USERROLE_SECURITY_MANAGER)) {
+            if (!hippoSession.isUserInRole(USERROLE_SECURITY_VIEWER)) {
                 throw new AccessDeniedException("Access denied.");
             }
             createSystemSessionIfNeeded();

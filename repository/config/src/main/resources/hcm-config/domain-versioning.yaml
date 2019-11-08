@@ -16,5 +16,5 @@ definitions:
         hipposys:role: readonly
       /editor:
         jcr:primaryType: hipposys:authrole
-        hipposys:userrole: xm-content-editor
+        hipposys:userrole: xm.content.editor
         hipposys:role: editor

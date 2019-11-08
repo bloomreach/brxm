@@ -1,59 +1,59 @@
 definitions:
   config:
     /hippo:configuration/hippo:userroles:
-      /xm-admin:
+      /xm.repository.admin:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
         hipposys:userroles: []
-      /xm-sysadmin:
+      /xm.system.admin:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
-        hipposys:userroles: [xm-admin, xm-security-user-manager, xm-security-application-manager]
-      /xm-security-manager:
-        jcr:primaryType: hipposys:userrole
-        hipposys:system: true
-        hipposys:userroles: []
-      /xm-security-user-manager:
-        jcr:primaryType: hipposys:userrole
-        hipposys:system: true
-        hipposys:userroles: [xm-security-manager]
-      /xm-security-application-manager:
-        jcr:primaryType: hipposys:userrole
-        hipposys:system: true
-        hipposys:userroles: [xm-security-manager]
-      /xm-content-viewer:
+        hipposys:userroles: [xm.repository.admin, xm.security.user-admin, xm.security.application-admin]
+      /xm.security.viewer:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
         hipposys:userroles: []
-      /xm-content-author:
+      /xm.security.user-admin:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
-        hipposys:userroles: [xm-content-viewer]
-      /xm-content-editor:
+        hipposys:userroles: [xm.security.viewer]
+      /xm.security.application-admin:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
-        hipposys:userroles: [xm-content-author]
-      /xm-content-holder:
-        jcr:primaryType: hipposys:userrole
-        hipposys:system: true
-        hipposys:userroles: []
-      /xm-content-admin:
-        jcr:primaryType: hipposys:userrole
-        hipposys:system: true
-        hipposys:userroles: [xm-content-editor]
-      /xm-read-everywhere:
+        hipposys:userroles: [xm.security.viewer]
+      /xm.content.viewer:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
         hipposys:userroles: []
-      /xm-default-author-user:
+      /xm.content.author:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
-        hipposys:userroles: [xm-content-author]
-      /xm-default-editor-user:
+        hipposys:userroles: [xm.content.viewer]
+      /xm.content.editor:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
-        hipposys:userroles: [xm-content-editor]
-      /xm-default-sysadmin-user:
+        hipposys:userroles: [xm.content.author]
+      /xm.content.holder:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
-        hipposys:userroles: [xm-sysadmin, xm-content-admin]
+        hipposys:userroles: []
+      /xm.content.admin:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm.content.editor]
+      /xm.repository.reader:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: []
+      /xm.default-user.author:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm.content.author]
+      /xm.default-user.editor:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm.content.editor]
+      /xm.default-user.system-admin:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true
+        hipposys:userroles: [xm.system.admin, xm.content.admin]

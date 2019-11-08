@@ -20,9 +20,9 @@ definitions:
           hipposys:value: /hippo:configuration/hippo:groups
       /readonly:
         jcr:primaryType: hipposys:authrole
-        hipposys:userrole: xm-security-manager
+        hipposys:userrole: xm.security.viewer
         hipposys:role: readonly
       /readwrite:
         jcr:primaryType: hipposys:authrole
-        hipposys:userrole: xm-security-user-manager
+        hipposys:userrole: xm.security.user-admin
         hipposys:role: readwrite

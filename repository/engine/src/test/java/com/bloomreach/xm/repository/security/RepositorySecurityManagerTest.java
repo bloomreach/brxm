@@ -32,9 +32,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.onehippo.repository.security.SecurityConstants.USERROLE_SECURITY_APPLICATION_MANAGER;
-import static org.onehippo.repository.security.SecurityConstants.USERROLE_SECURITY_MANAGER;
-import static org.onehippo.repository.security.SecurityConstants.USERROLE_SECURITY_USER_MANAGER;
+import static org.onehippo.repository.security.SecurityConstants.USERROLE_SECURITY_APPLICATION_ADMIN;
+import static org.onehippo.repository.security.SecurityConstants.USERROLE_SECURITY_VIEWER;
+import static org.onehippo.repository.security.SecurityConstants.USERROLE_SECURITY_USER_ADMIN;
 
 public class RepositorySecurityManagerTest extends RepositoryTestCase {
 
@@ -84,46 +84,46 @@ public class RepositorySecurityManagerTest extends RepositoryTestCase {
         testUserSession = impersonate(TEST_USER_ID);
         RepositorySecurityManager repositorySecurityManager = testUserSession.getWorkspace().getSecurityManager();
 
-        assertFalse(testUserSession.isUserInRole(USERROLE_SECURITY_APPLICATION_MANAGER));
+        assertFalse(testUserSession.isUserInRole(USERROLE_SECURITY_APPLICATION_ADMIN));
         try {
             repositorySecurityManager.getRolesManager();
-            fail("Should not be allowed to access RolesManager without userrole " + USERROLE_SECURITY_APPLICATION_MANAGER);
+            fail("Should not be allowed to access RolesManager without userrole " + USERROLE_SECURITY_APPLICATION_ADMIN);
         } catch (AccessDeniedException ignore) {
         }
         try {
             repositorySecurityManager.getUserRolesManager();
-            fail("Should not be allowed to access UserRolesManager without userrole " + USERROLE_SECURITY_APPLICATION_MANAGER);
+            fail("Should not be allowed to access UserRolesManager without userrole " + USERROLE_SECURITY_APPLICATION_ADMIN);
         } catch (AccessDeniedException ignore) {
         }
 
-        testUserNode.setProperty(HIPPO_USERROLES, new String[]{USERROLE_SECURITY_USER_MANAGER});
+        testUserNode.setProperty(HIPPO_USERROLES, new String[]{USERROLE_SECURITY_USER_ADMIN});
         session.save();
         testUserSession.logout();
         testUserSession = impersonate(TEST_USER_ID);
         repositorySecurityManager = testUserSession.getWorkspace().getSecurityManager();
 
-        assertTrue(testUserSession.isUserInRole(USERROLE_SECURITY_MANAGER));
-        assertTrue(testUserSession.isUserInRole(USERROLE_SECURITY_USER_MANAGER));
-        assertFalse(testUserSession.isUserInRole(USERROLE_SECURITY_APPLICATION_MANAGER));
+        assertTrue(testUserSession.isUserInRole(USERROLE_SECURITY_VIEWER));
+        assertTrue(testUserSession.isUserInRole(USERROLE_SECURITY_USER_ADMIN));
+        assertFalse(testUserSession.isUserInRole(USERROLE_SECURITY_APPLICATION_ADMIN));
         try {
             repositorySecurityManager.getRolesManager();
-            fail("Should not be allowed to access RolesManager without userrole " + USERROLE_SECURITY_APPLICATION_MANAGER);
+            fail("Should not be allowed to access RolesManager without userrole " + USERROLE_SECURITY_APPLICATION_ADMIN);
         } catch (AccessDeniedException ignore) {
         }
         try {
             repositorySecurityManager.getUserRolesManager();
-            fail("Should not be allowed to access UserRolesManager without userrole " + USERROLE_SECURITY_APPLICATION_MANAGER);
+            fail("Should not be allowed to access UserRolesManager without userrole " + USERROLE_SECURITY_APPLICATION_ADMIN);
         } catch (AccessDeniedException ignore) {
         }
 
         // access to RoleManager and UserRoleManager should only be allowed with USERROLE_SECURITY_APPLICATION_MANAGER
-        testUserNode.setProperty(HIPPO_USERROLES, new String[]{USERROLE_SECURITY_APPLICATION_MANAGER});
+        testUserNode.setProperty(HIPPO_USERROLES, new String[]{USERROLE_SECURITY_APPLICATION_ADMIN});
         session.save();
         testUserSession.logout();
         testUserSession = impersonate(TEST_USER_ID);
         repositorySecurityManager = testUserSession.getWorkspace().getSecurityManager();
 
-        assertTrue(testUserSession.isUserInRole(USERROLE_SECURITY_APPLICATION_MANAGER));
+        assertTrue(testUserSession.isUserInRole(USERROLE_SECURITY_APPLICATION_ADMIN));
         assertNotNull(repositorySecurityManager.getRolesManager());
         assertNotNull(repositorySecurityManager.getUserRolesManager());
 
@@ -132,7 +132,7 @@ public class RepositorySecurityManagerTest extends RepositoryTestCase {
 
     @Test
     public void testIllegalStateExceptionAfterLogout() throws Exception {
-        testUserNode.setProperty(HIPPO_USERROLES, new String[]{USERROLE_SECURITY_APPLICATION_MANAGER});
+        testUserNode.setProperty(HIPPO_USERROLES, new String[]{USERROLE_SECURITY_APPLICATION_ADMIN});
         session.save();
         testUserSession = impersonate(TEST_USER_ID);
         RepositorySecurityManager repositorySecurityManager = testUserSession.getWorkspace().getSecurityManager();
@@ -140,7 +140,7 @@ public class RepositorySecurityManagerTest extends RepositoryTestCase {
         testUserSession.logout();
 
         try {
-            userRolesManager.deleteUserRole(USERROLE_SECURITY_APPLICATION_MANAGER);
+            userRolesManager.deleteUserRole(USERROLE_SECURITY_APPLICATION_ADMIN);
             fail("Should not be possible to use a UserRoleManager after its HippoSession has been logged out");
         } catch (RepositoryException e) {
             if (!e.getMessage().startsWith("This session has been closed.")) {

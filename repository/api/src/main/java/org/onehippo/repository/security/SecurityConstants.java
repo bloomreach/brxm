@@ -39,71 +39,76 @@ public final class SecurityConstants {
     /**
      * The user role representing a user (to be) granted jcr:all (everything) everywhere (domain everywhere)
      */
-    public static final String USERROLE_ADMIN = "xm-admin";
+    public static final String USERROLE_REPOSITORY_ADMIN = "xm.repository.admin";
 
     /**
-     * The user role representing a user (to be) granted access to system administrative features; implies {@link #USERROLE_ADMIN}
+     * The user role representing a user (to be) granted access to system administrative features; implies {@link #USERROLE_REPOSITORY_ADMIN}
      */
-    public static final String USERROLE_SYSADMIN = "xm-sysadmin";
+    public static final String USERROLE_SYSTEM_ADMIN = "xm.system.admin";
 
     /**
      * The user role representing a user (to be) granted access to security administrative features
      */
-    public static final String USERROLE_SECURITY_MANAGER = "xm-security-manager";
+    public static final String USERROLE_SECURITY_VIEWER = "xm.security.viewer";
 
     /**
      * The user role representing a user (to be) granted access to user security administrative features; implies
-     * {@link #USERROLE_SECURITY_MANAGER}
+     * {@link #USERROLE_SECURITY_VIEWER}
      */
-    public static final String USERROLE_SECURITY_USER_MANAGER = "xm-security-user-manager";
+    public static final String USERROLE_SECURITY_USER_ADMIN = "xm.security.user-admin";
 
     /**
      * The user role representing a user (to be) granted access to application security administrative features; implies
-     * {@link #USERROLE_SECURITY_MANAGER}
+     * {@link #USERROLE_SECURITY_VIEWER}
      */
-    public static final String USERROLE_SECURITY_APPLICATION_MANAGER = "xm-security-application-manager";
+    public static final String USERROLE_SECURITY_APPLICATION_ADMIN = "xm.security.application-admin";
 
     /**
      * The user role representing a user (to be) granted read-only view access on content
      */
-    public static final String USERROLE_CONTENT_VIEWER = "xm-content-viewer";
+    public static final String USERROLE_CONTENT_VIEWER = "xm.content.viewer";
 
     /**
      * The user role representing a user (to be) granted author access on content; implies {@link #USERROLE_CONTENT_VIEWER}
      */
-    public static final String USERROLE_CONTENT_AUTHOR = "xm-content-author";
+    public static final String USERROLE_CONTENT_AUTHOR = "xm.content.author";
 
     /**
      * The user role representing a user (to be) granted editor access on content; implies {@link #USERROLE_CONTENT_AUTHOR}
      */
-    public static final String USERROLE_CONTENT_EDITOR = "xm-content-editor";
+    public static final String USERROLE_CONTENT_EDITOR = "xm.content.editor";
 
     /**
      * The user role representing a user (to be) granted admin access on content; implies {@link #USERROLE_CONTENT_EDITOR}
      */
-    public static final String USERROLE_CONTENT_ADMIN = "xm-content-admin";
+    public static final String USERROLE_CONTENT_ADMIN = "xm.content.admin";
 
-    public static final String USERROLE_CONTENT_HOLDER = "xm-content-holder";
+    public static final String USERROLE_CONTENT_HOLDER = "xm.content.holder";
 
     /**
      * The user role representing a (system) user which need read access everywhere, for example the user that needs to
      * read all kind of configuration but never modify it.
      * For this, the everywhere domain grants the authrole readonly to users with this userrole.
      */
-    public static final String USERROLE_READ_EVERYWHERE = "xm-read-everywhere";
+    public static final String USERROLE_REPOSITORY_READER = "xm.repository.reader";
 
     /**
      * The user role aggregating (implying) the standard user roles for the author user, assigned by default to the author group
      */
-    public static final String USERROLE_DEFAULT_AUTHOR_USER = "xm-default-author-user";
+    public static final String USERROLE_DEFAULT_USER_AUTHOR = "xm.default-user.author";
 
     /**
      * The user role aggregating (implying) the standard user roles for the editor user, assigned by default to the editor group
      */
-    public static final String USERROLE_DEFAULT_EDITOR_USER = "xm-default-editor-user";
+    public static final String USERROLE_DEFAULT_USER_EDITOR = "xm.default-user.editor";
 
     /**
-     * The user role aggregating (implying) the standard user roles for the sysadmin user, assigned by default to the admin group
+     * The user role aggregating (implying) the standard user roles for the system-admin user, assigned by default to the admin group
      */
-    public static final String USERROLE_DEFAULT_SYSADMIN_USER = "xm-default-sysadmin-user";
+    public static final String USERROLE_DEFAULT_USER_SYSTEM_ADMIN = "xm.default-user.system-admin";
+
+    /**
+     * The user role aggregating (implying) the standard user roles for the cms-admin user, assigned by default to the cms-admin group
+     */
+    public static final String USERROLE_DEFAULT_USER_CMS_ADMIN = "xm.default-user.cms-admin";
 }

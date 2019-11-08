@@ -42,7 +42,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.onehippo.repository.security.SecurityConstants.USERROLE_SECURITY_APPLICATION_MANAGER;
+import static org.onehippo.repository.security.SecurityConstants.USERROLE_SECURITY_APPLICATION_ADMIN;
 
 public class RolesManagerTest extends RepositoryTestCase {
 
@@ -108,7 +108,7 @@ public class RolesManagerTest extends RepositoryTestCase {
 
     @Test
     public void testRolesManager() throws RepositoryException {
-        testUserNode.setProperty(HIPPO_USERROLES, new String[]{USERROLE_SECURITY_APPLICATION_MANAGER});
+        testUserNode.setProperty(HIPPO_USERROLES, new String[]{USERROLE_SECURITY_APPLICATION_ADMIN});
         session.save();
         testUserSession = impersonate(TEST_USER_ID);
         createSystemSession();

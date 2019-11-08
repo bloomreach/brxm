@@ -33,7 +33,7 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_USERROLEFOLDER;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.onehippo.repository.security.SecurityConstants.USERROLE_ADMIN;
+import static org.onehippo.repository.security.SecurityConstants.USERROLE_REPOSITORY_ADMIN;
 
 public class UserRolesProviderImplTest extends RepositoryTestCase {
 
@@ -74,12 +74,12 @@ public class UserRolesProviderImplTest extends RepositoryTestCase {
             test.getNode(HIPPO_USERROLES).remove();
         }
         final Node userRoles = test.addNode(HIPPO_USERROLES, NT_USERROLEFOLDER);
-        Node userRole = userRoles.addNode(USERROLE_ADMIN, NT_USERROLE);
+        Node userRole = userRoles.addNode(USERROLE_REPOSITORY_ADMIN, NT_USERROLE);
         userRole.setProperty(HIPPO_SYSTEM, true);
         userRole = userRoles.addNode("foo", NT_USERROLE);
         userRole.setProperty(HIPPO_USERROLES, new String[]{"bar"});
         userRole = userRoles.addNode("bar", NT_USERROLE);
-        userRole.setProperty(HIPPO_USERROLES, new String[]{USERROLE_ADMIN});
+        userRole.setProperty(HIPPO_USERROLES, new String[]{USERROLE_REPOSITORY_ADMIN});
         session.save();
     }
 
@@ -88,10 +88,10 @@ public class UserRolesProviderImplTest extends RepositoryTestCase {
         removeTestUserRoles();
         systemSession = internalHippoRepository.createSystemSession();
         UserRolesProviderImpl userRolesProvider = new UserRolesProviderImpl(systemSession, TEST_USERROLES_PATH);
-        assertNull(userRolesProvider.getRole(USERROLE_ADMIN));
+        assertNull(userRolesProvider.getRole(USERROLE_REPOSITORY_ADMIN));
         setupTestUserRoles();
-        assertNotNull(userRolesProvider.getRole(USERROLE_ADMIN));
-        assertEquals(ImmutableSet.of(USERROLE_ADMIN, "foo", "bar"), userRolesProvider.resolveRoleNames("foo"));
+        assertNotNull(userRolesProvider.getRole(USERROLE_REPOSITORY_ADMIN));
+        assertEquals(ImmutableSet.of(USERROLE_REPOSITORY_ADMIN, "foo", "bar"), userRolesProvider.resolveRoleNames("foo"));
         session.getWorkspace().move(TEST_USERROLES_PATH+"/"+"bar", TEST_USERROLES_PATH+"/"+"bar2");
         session.getWorkspace().move(TEST_USERROLES_PATH+"/"+"bar2", "/test/"+"bar3");
         session.getWorkspace().move("/test/"+"bar3", TEST_USERROLES_PATH+"/"+"bar3");
@@ -105,6 +105,6 @@ public class UserRolesProviderImplTest extends RepositoryTestCase {
         assertEquals(ImmutableSet.of("foo"), userRolesProvider.resolveRoleNames("foo"));
         session.getNode(TEST_USERROLES_PATH+"/"+"foo").setProperty(HIPPO_USERROLES, new String[]{"bar"});
         session.save();
-        assertEquals(ImmutableSet.of(USERROLE_ADMIN, "foo", "bar"), userRolesProvider.resolveRoleNames("foo"));
+        assertEquals(ImmutableSet.of(USERROLE_REPOSITORY_ADMIN, "foo", "bar"), userRolesProvider.resolveRoleNames("foo"));
     }
 }

@@ -48,8 +48,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.onehippo.repository.security.SecurityConstants.USERROLE_SECURITY_APPLICATION_MANAGER;
-import static org.onehippo.repository.security.SecurityConstants.USERROLE_SECURITY_USER_MANAGER;
+import static org.onehippo.repository.security.SecurityConstants.USERROLE_SECURITY_APPLICATION_ADMIN;
+import static org.onehippo.repository.security.SecurityConstants.USERROLE_SECURITY_USER_ADMIN;
 
 public class DomainManagerTest extends RepositoryTestCase {
 
@@ -97,7 +97,7 @@ public class DomainManagerTest extends RepositoryTestCase {
             "/hippo:configuration/hippo:users/testadmin", "hipposys:user",
             "hipposys:password", "testadmin",
             "hipposys:securityprovider", "internal",
-            "hipposys:userroles", USERROLE_SECURITY_USER_MANAGER
+            "hipposys:userroles", USERROLE_SECURITY_USER_ADMIN
     };
 
     private final String[] testuserConfig = new String[]{
@@ -181,7 +181,7 @@ public class DomainManagerTest extends RepositoryTestCase {
                     allDomainPathsByJcr.add(domainNode.getPath());
 
                     if (!domainNode.getPath().equals("/hippo:configuration/hippo:domains/security-user-management")) {
-                        assertFalse(String.format("testAdmin with userrole 'xm-security-manager' not expected to have " +
+                        assertFalse(String.format("testAdmin with userrole 'xm.security.viewer' not expected to have " +
                                 "JCR read access on '%s'", domainNode.getPath()), wrapper.get().nodeExists(domainNode.getPath()));
                     }
 
@@ -222,12 +222,12 @@ public class DomainManagerTest extends RepositoryTestCase {
                     .containsExactly("intranet", "extranet");
 
 
-            SortedSet<DomainAuth> domainAuthsForUserRole = domainsManager.getDomainAuthsForUserRole(USERROLE_SECURITY_USER_MANAGER);
+            SortedSet<DomainAuth> domainAuthsForUserRole = domainsManager.getDomainAuthsForUserRole(USERROLE_SECURITY_USER_ADMIN);
 
             Set<String> domainNamesForUserRole = domainAuthsForUserRole.stream().map(DomainAuth::getName).collect(Collectors.toSet());
 
             assertThat(domainNamesForUserRole)
-                    .as("Expected 'security-user-management' domain for role '%s' ",  USERROLE_SECURITY_USER_MANAGER)
+                    .as("Expected 'security-user-management' domain for role '%s' ", USERROLE_SECURITY_USER_ADMIN)
                     .containsExactly("security-user-management");
 
             SortedSet<DomainAuth> domainAuthsForGroup = domainsManager.getDomainAuthsForGroup("everybody");
@@ -235,7 +235,7 @@ public class DomainManagerTest extends RepositoryTestCase {
             Set<String> domainNamesForGroup = domainAuthsForGroup.stream().map(DomainAuth::getName).collect(Collectors.toSet());
 
             assertThat(domainNamesForGroup)
-                    .as("Expected 'versioning' and 'defaultread' domain for group 'everybody'",  USERROLE_SECURITY_USER_MANAGER)
+                    .as("Expected 'versioning' and 'defaultread' domain for group 'everybody'", USERROLE_SECURITY_USER_ADMIN)
                     .containsExactly("versioning", "defaultread");
 
         } finally {
@@ -280,7 +280,7 @@ public class DomainManagerTest extends RepositoryTestCase {
                     .isInstanceOf(UnsupportedOperationException.class);
 
 
-            final SortedSet<DomainAuth> securityUserManagerDomains = domainsManager.getDomainAuthsForUserRole(USERROLE_SECURITY_USER_MANAGER);
+            final SortedSet<DomainAuth> securityUserManagerDomains = domainsManager.getDomainAuthsForUserRole(USERROLE_SECURITY_USER_ADMIN);
 
             assertThatThrownBy(() -> securityUserManagerDomains.remove(securityUserManagerDomains.first()))
                     .as("role domains should be immutable")
@@ -309,21 +309,21 @@ public class DomainManagerTest extends RepositoryTestCase {
 
             assertThatThrownBy(
                     () -> domainsManager.addAuthRole(new AuthRoleBean("readOnly", "/foo/bar", "dummy-role")))
-                    .as("Role xm-security-manager should not have enough karma to create auth roles")
+                    .as("Role xm.security.viewer should not have enough karma to create auth roles")
                     .isInstanceOf(AccessDeniedException.class)
                     .hasMessage("Access Denied.");
 
 
             assertThatThrownBy(
                     () -> domainsManager.updateAuthRole(new AuthRoleBean("readOnly", "/foo/bar", "dummy-role")))
-                    .as("Role xm-security-manager should not have enough karma to create auth roles")
+                    .as("Role xm.security.viewer should not have enough karma to create auth roles")
                     .isInstanceOf(AccessDeniedException.class)
                     .hasMessage("Access Denied.");
 
 
             assertThatThrownBy(
                     () -> domainsManager.deleteAuthRole(new AuthRoleBean("readOnly", "/foo/bar", "dummy-role")))
-                    .as("Role xm-security-manager should not have enough karma to create auth roles")
+                    .as("Role xm.security.viewer should not have enough karma to create auth roles")
                     .isInstanceOf(AccessDeniedException.class)
                     .hasMessage("Access Denied.");
 
@@ -339,7 +339,7 @@ public class DomainManagerTest extends RepositoryTestCase {
 
         // increase karma
         session.getNode("/hippo:configuration/hippo:users/testadmin").setProperty(HIPPO_USERROLES,
-                new String[]{USERROLE_SECURITY_APPLICATION_MANAGER});
+                new String[]{USERROLE_SECURITY_APPLICATION_ADMIN});
         session.save();
 
         HippoSession testAdmin = null;
@@ -386,7 +386,7 @@ public class DomainManagerTest extends RepositoryTestCase {
 
         // increase karma
         session.getNode("/hippo:configuration/hippo:users/testadmin").setProperty(HIPPO_USERROLES,
-                new String[]{USERROLE_SECURITY_APPLICATION_MANAGER});
+                new String[]{USERROLE_SECURITY_APPLICATION_ADMIN});
         session.save();
 
         HippoSession testAdmin = null;
@@ -429,7 +429,7 @@ public class DomainManagerTest extends RepositoryTestCase {
 
         // increase karma
         session.getNode("/hippo:configuration/hippo:users/testadmin").setProperty(HIPPO_USERROLES,
-                new String[]{USERROLE_SECURITY_APPLICATION_MANAGER});
+                new String[]{USERROLE_SECURITY_APPLICATION_ADMIN});
         session.save();
 
         HippoSession testAdmin = null;

@@ -175,7 +175,7 @@ public class DomainsManagerImpl implements DomainsManager {
     public AuthRole addAuthRole(final AuthRole authRoleTemplate) throws IllegalArgumentException,
             AccessDeniedException, RepositoryException {
         repositorySecurityManager.checkClosed();
-        if (!repositorySecurityManager.getHippoSession().isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_MANAGER)) {
+        if (!repositorySecurityManager.getHippoSession().isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_ADMIN)) {
             throw new AccessDeniedException("Access Denied.");
         }
         if (authRoleTemplate == null || StringUtils.isBlank(authRoleTemplate.getName()) ||
@@ -216,7 +216,7 @@ public class DomainsManagerImpl implements DomainsManager {
     public AuthRole updateAuthRole(final AuthRole authRoleTemplate) throws IllegalArgumentException,
             AccessDeniedException, RepositoryException {
         repositorySecurityManager.checkClosed();
-        if (!repositorySecurityManager.getHippoSession().isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_MANAGER)) {
+        if (!repositorySecurityManager.getHippoSession().isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_ADMIN)) {
             throw new AccessDeniedException("Access Denied.");
         }
         if (authRoleTemplate == null || StringUtils.isBlank(authRoleTemplate.getName()) ||
@@ -271,7 +271,7 @@ public class DomainsManagerImpl implements DomainsManager {
     public boolean deleteAuthRole(final AuthRole authRoleTemplate) throws IllegalArgumentException,
             AccessDeniedException, RepositoryException {
         repositorySecurityManager.checkClosed();
-        if (!repositorySecurityManager.getHippoSession().isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_MANAGER)) {
+        if (!repositorySecurityManager.getHippoSession().isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_ADMIN)) {
             throw new AccessDeniedException("Access Denied.");
         }
         if (authRoleTemplate == null || StringUtils.isBlank(authRoleTemplate.getPath())) {

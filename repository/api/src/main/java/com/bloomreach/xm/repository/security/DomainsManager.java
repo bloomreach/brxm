@@ -42,7 +42,7 @@ import org.onehippo.repository.security.SecurityConstants;
  * </p>
  * <p>
  *     All <em>modifying operations</em> require the underlying HippoSession to have userRole
- *     {@link SecurityConstants#USERROLE_SECURITY_APPLICATION_MANAGER}
+ *     {@link SecurityConstants#USERROLE_SECURITY_APPLICATION_ADMIN}
  * </p>
  */
 public interface DomainsManager {
@@ -106,7 +106,7 @@ public interface DomainsManager {
      * @throws ItemNotFoundException When there is no (valid) domain located at template.domainPath
      * @throws ItemExistsException When there already is an AuthRole named template.name under template.domainPath
      * @throws AccessDeniedException if the underlying HippoSession doesn't have the userRole
-     * {@link SecurityConstants#USERROLE_SECURITY_APPLICATION_MANAGER}
+     * {@link SecurityConstants#USERROLE_SECURITY_APPLICATION_ADMIN}
      * @throws RepositoryException if the underlying HippoSession is no longer live, or something else went wrong
      */
     AuthRole addAuthRole(final AuthRole authRoleTemplate) throws IllegalArgumentException, AccessDeniedException, RepositoryException;
@@ -118,7 +118,7 @@ public interface DomainsManager {
      * @throws IllegalArgumentException When the template, template.name, template.domainPath or template.role is null.
      * @throws ItemNotFoundException When there is no (valid) domain located at template.domainPath
      * @throws AccessDeniedException if the underlying HippoSession doesn't have the userRole
-     * {@link SecurityConstants#USERROLE_SECURITY_APPLICATION_MANAGER}
+     * {@link SecurityConstants#USERROLE_SECURITY_APPLICATION_ADMIN}
      * @throws RepositoryException if the underlying HippoSession is no longer live, or something else went wrong
      */
     AuthRole updateAuthRole(final AuthRole authRoleTemplate) throws IllegalArgumentException, AccessDeniedException, RepositoryException;
@@ -129,7 +129,7 @@ public interface DomainsManager {
      * @return true if the AuthRole was deleted; false if not (not found or in an invalid location)
      * @throws IllegalArgumentException When the template or template.path is null.
      * @throws AccessDeniedException if the underlying HippoSession doesn't have the userRole
-     * {@link SecurityConstants#USERROLE_SECURITY_APPLICATION_MANAGER}
+     * {@link SecurityConstants#USERROLE_SECURITY_APPLICATION_ADMIN}
      * @throws RepositoryException if the underlying HippoSession is no longer live, or something else went wrong
      */
     boolean deleteAuthRole(final AuthRole authRoleTemplate) throws IllegalArgumentException, AccessDeniedException, RepositoryException;

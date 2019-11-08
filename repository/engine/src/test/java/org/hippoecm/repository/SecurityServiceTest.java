@@ -63,7 +63,7 @@ import static org.onehippo.repository.security.SecurityConstants.USERROLE_CONTEN
 import static org.onehippo.repository.security.SecurityConstants.USERROLE_CONTENT_EDITOR;
 import static org.onehippo.repository.security.SecurityConstants.USERROLE_CONTENT_VIEWER;
 import static org.onehippo.repository.security.SecurityConstants.USERROLE_CONTENT_HOLDER;
-import static org.onehippo.repository.security.SecurityConstants.USERROLE_DEFAULT_EDITOR_USER;
+import static org.onehippo.repository.security.SecurityConstants.USERROLE_DEFAULT_USER_EDITOR;
 import static org.onehippo.repository.util.JcrConstants.JCR_PATH;
 import static org.onehippo.repository.util.JcrConstants.JCR_PRIMARY_TYPE;
 import static org.onehippo.repository.util.JcrConstants.JCR_UUID;
@@ -195,13 +195,13 @@ public class SecurityServiceTest extends RepositoryTestCase {
             newSession = session.impersonate(new SimpleCredentials(TEST_USER_ID, new char[0]));
 
             assertThat(((HippoSession)newSession).getUser().getUserRoles())
-                    .as("xm-content-editor should be extended to "+USERROLE_CONTENT_AUTHOR+" and "+USERROLE_CONTENT_VIEWER)
+                    .as("xm.content.editor should be extended to "+USERROLE_CONTENT_AUTHOR+" and "+USERROLE_CONTENT_VIEWER)
                     .containsOnly(USERROLE_CONTENT_EDITOR, USERROLE_CONTENT_AUTHOR, USERROLE_CONTENT_VIEWER, USERROLE_CONTENT_HOLDER);
 
             testNode.setProperty(HIPPO_USERROLES, new String[0]);
 
-            // now add 'test to the 'editor' group. As a result 'test' should get user role 'xm-content-editor'
-            // which in turn should inherit 'xm-content-author'
+            // now add 'test to the 'editor' group. As a result 'test' should get user role 'xm.content.editor'
+            // which in turn should inherit 'xm.content.author'
 
             editorGroup.setProperty(HIPPO_MEMBERS, new String[]{TEST_USER_ID});
             session.save();
@@ -225,7 +225,7 @@ public class SecurityServiceTest extends RepositoryTestCase {
 
             assertThat(((HippoSession)newSession).getUser().getUserRoles())
                     .as("Test session should now have the (expanded) roles from group editor")
-                    .containsOnly(USERROLE_DEFAULT_EDITOR_USER, USERROLE_CONTENT_VIEWER, USERROLE_CONTENT_AUTHOR, USERROLE_CONTENT_EDITOR, USERROLE_CONTENT_HOLDER);
+                    .containsOnly(USERROLE_DEFAULT_USER_EDITOR, USERROLE_CONTENT_VIEWER, USERROLE_CONTENT_AUTHOR, USERROLE_CONTENT_EDITOR, USERROLE_CONTENT_HOLDER);
 
             newSession.logout();
 

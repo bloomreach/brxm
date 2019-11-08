@@ -13,9 +13,9 @@ definitions:
             hipposys:value: '*'
         /admin:
           jcr:primaryType: hipposys:authrole
-          hipposys:userrole: xm-admin
+          hipposys:userrole: xm.repository.admin
           hipposys:role: admin
         /readonly:
           jcr:primaryType: hipposys:authrole
-          hipposys:userrole: xm-read-everywhere
+          hipposys:userrole: xm.repository.reader
           hipposys:role: readonly
