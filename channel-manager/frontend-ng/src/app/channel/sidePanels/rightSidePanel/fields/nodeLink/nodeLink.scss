@@ -34,20 +34,26 @@ node-link {
   }
 
   .hippo-node-link-buttons {
+    box-sizing: border-box;
     display: flex;
     justify-content: flex-end;
-    min-height: $button-width;
+    min-height: 32px;
+    padding-right: 16px;
 
     // the hippo-internallink-buttons container overlays the input and (optional) hint icon
     // so it should ignore pointer events unless they are triggered on the buttons themselves
     pointer-events: none;
     position: absolute;
-    top: 0;
+    top: 4px;
     width: 100%;
     z-index: 1;
 
     .md-button.md-icon-button {
+      height: 32px;
       margin: 0;
+      min-height: auto;
+      padding: 0;
+      width: 32px;
 
       &:first-of-type {
         margin-left: $first-button-left-padding;
