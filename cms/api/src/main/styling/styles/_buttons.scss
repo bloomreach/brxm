@@ -150,11 +150,12 @@
   flex-wrap: wrap;
 
   .btn {
-    margin-top: 8px;
+    margin-bottom: 8px;
     margin-right: 8px;
 
     &:last-child {
       margin-right: 0;
+      margin-bottom: 0;
     }
   }
 }
