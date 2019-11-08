@@ -9,7 +9,7 @@ definitions:
           jcr:primaryType: hipposys:domain
           /readwrite:
             jcr:primaryType: hipposys:authrole
-            hipposys:userrole: xm-hst-formdata-writer
+            hipposys:userrole: xm.form.writer
             hipposys:role: readwrite
           /formdata:
             jcr:primaryType: hipposys:domainrule

@@ -4,6 +4,6 @@ definitions:
       jcr:primaryType: hipposys:user
       hipposys:active: true
       hipposys:passkey: jvm://
-      hipposys:userroles: [xm-hst-preview-documents-reader]
+      hipposys:userroles: [xm.preview-documents.reader]
       hipposys:securityprovider: internal
       hipposys:system: true

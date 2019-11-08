@@ -36,19 +36,19 @@ definitions:
           /channel-admin:
             jcr:primaryType: hipposys:authrole
             hipposys:role: channel-admin
-            hipposys:userrole: xm-channel-admin
+            hipposys:userrole: xm.channel.admin
             hipposys:groups: []
             hipposys:users: []
           /channel-webmaster:
             hipposys:role: channel-webmaster
             jcr:primaryType: hipposys:authrole
-            hipposys:userrole: xm-channel-webmaster
+            hipposys:userrole: xm.channel.webmaster
             hipposys:groups: []
             hipposys:users: []
           /channel-viewer:
             hipposys:role: channel-viewer
             jcr:primaryType: hipposys:authrole
-            hipposys:userrole: xm-channel-viewer
+            hipposys:userrole: xm.channel.viewer
             hipposys:groups: []
             hipposys:users: []
           /hstconfig:

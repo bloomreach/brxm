@@ -1,6 +1,6 @@
 definitions:
   config:
-    /hippo:configuration/hippo:domains/hst-live-documents:
+    /hippo:configuration/hippo:domains/live-documents:
       jcr:primaryType: hipposys:domain
       /hippo-document:
         jcr:primaryType: hipposys:domainrule
@@ -33,5 +33,5 @@ definitions:
           hipposys:value: draft
       /readonly:
         jcr:primaryType: hipposys:authrole
-        hipposys:userrole: xm-hst-live-documents-reader
+        hipposys:userrole: xm.live-documents.reader
         hipposys:role: readonly

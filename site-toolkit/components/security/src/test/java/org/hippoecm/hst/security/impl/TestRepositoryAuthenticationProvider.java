@@ -51,7 +51,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.onehippo.repository.security.SecurityConstants.USERROLE_DEFAULT_SYSADMIN_USER;
+import static org.onehippo.repository.security.SecurityConstants.USERROLE_DEFAULT_USER_SYSTEM_ADMIN;
 
 public class TestRepositoryAuthenticationProvider extends RepositoryTestCase {
 
@@ -137,11 +137,11 @@ public class TestRepositoryAuthenticationProvider extends RepositoryTestCase {
         authenticationProvider.setIncludedUserRolePrefix(null);
         authenticationProvider.setDefaultRoleName(null);
 
-        authenticationProvider.setRequiredUserRole(USERROLE_DEFAULT_SYSADMIN_USER);
+        authenticationProvider.setRequiredUserRole(USERROLE_DEFAULT_USER_SYSTEM_ADMIN);
         try {
             getRolesByUser("admin", "admin");
         } catch (SecurityException e) {
-            fail("admin user should have the required userrole "+USERROLE_DEFAULT_SYSADMIN_USER);
+            fail("admin user should have the required userrole "+ USERROLE_DEFAULT_USER_SYSTEM_ADMIN);
         }
 
         authenticationProvider.setRequiredUserRole("doesn't exist");
@@ -166,8 +166,8 @@ public class TestRepositoryAuthenticationProvider extends RepositoryTestCase {
 
     @Test
     public void testDefaultSetup() {
-        authenticationProvider.setExcludedUserRolePrefixes("xm-");
-        authenticationProvider.setIncludedUserRolePrefix("xm-");
+        authenticationProvider.setExcludedUserRolePrefixes("xm.");
+        authenticationProvider.setIncludedUserRolePrefix("xm.");
         authenticationProvider.setDefaultRoleName(null);
 
         Set<Role> roleSet = getRolesByUser("admin", "admin");
@@ -202,7 +202,7 @@ public class TestRepositoryAuthenticationProvider extends RepositoryTestCase {
         setupCustomUserRolesAndUser();
 
         SessionUser testSessionUser = (SessionUser)authenticationProvider.authenticate("test", "test".toCharArray()).getUserObject();
-        authenticationProvider.setExcludedUserRolePrefixes("xm-");
+        authenticationProvider.setExcludedUserRolePrefixes("xm.");
         authenticationProvider.setIncludedUserRolePrefix(null);
         authenticationProvider.setStripIncludedUserRolePrefix(false);
         authenticationProvider.setDefaultRoleName(null);
@@ -211,7 +211,7 @@ public class TestRepositoryAuthenticationProvider extends RepositoryTestCase {
         roleNames = roleNames(authenticationProvider.getRolesByUser(testSessionUser));
         assertTrue(equals(roleNames, "manager", "SITEA_developer", "SITEB_engineer" ));
 
-        authenticationProvider.setExcludedUserRolePrefixes("xm-,SITEB_");
+        authenticationProvider.setExcludedUserRolePrefixes("xm.,SITEB_");
         roleNames = roleNames(authenticationProvider.getRolesByUser(testSessionUser));
         assertTrue(equals(roleNames, "manager", "SITEA_developer" ));
 
