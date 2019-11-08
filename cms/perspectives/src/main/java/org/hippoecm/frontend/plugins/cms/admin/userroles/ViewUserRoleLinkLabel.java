@@ -1,12 +1,12 @@
 /*
  *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,7 +17,6 @@ package org.hippoecm.frontend.plugins.cms.admin.userroles;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
-import org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -31,14 +30,13 @@ import com.bloomreach.xm.repository.security.UserRole;
  */
 public class ViewUserRoleLinkLabel extends AjaxLinkLabel {
 
-    private static final long serialVersionUID = 1L;
     private final BreadCrumbPanel panelToReplace;
     private final IModel<UserRole> userRoleModel;
     private final IPluginContext pluginContext;
 
     public ViewUserRoleLinkLabel(final String id, final IModel<UserRole> userRoleModel, final BreadCrumbPanel panelToReplace,
                                  final IPluginContext pluginContext) {
-        super(id, new PropertyModel(userRoleModel, "name"));
+        super(id, PropertyModel.of(userRoleModel, "name"));
         this.panelToReplace = panelToReplace;
         this.userRoleModel = userRoleModel;
         this.pluginContext = pluginContext;
@@ -46,7 +44,7 @@ public class ViewUserRoleLinkLabel extends AjaxLinkLabel {
 
     @Override
     public void onClick(final AjaxRequestTarget target) {
-        panelToReplace.activate((IBreadCrumbPanelFactory) (componentId, breadCrumbModel) ->
+        panelToReplace.activate((componentId, breadCrumbModel) ->
                 new ViewUserRolePanel(componentId, pluginContext, breadCrumbModel, userRoleModel));
     }
 }

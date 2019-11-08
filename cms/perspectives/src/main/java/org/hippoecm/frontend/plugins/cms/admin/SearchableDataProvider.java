@@ -1,12 +1,12 @@
 /*
- *  Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -51,15 +51,14 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class SearchableDataProvider<T extends Comparable<T>> extends SortableDataProvider<T, String> implements IObservable {
 
-    private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(SearchableDataProvider.class);
 
     private final String searchAllSqlStatement;
     private final String observePath;
     private final String[] observeNodeTypes;
     private String searchTerm;
-    private String[] includePrimaryTypes = new String[] {};
-    private List<T> list = new ArrayList<T>();
+    private String[] includePrimaryTypes = new String[]{};
+    private final List<T> list = new ArrayList<>();
     private volatile boolean dirty = true;
     private IObservationContext<JcrNodeModel> context;
     private JcrEventListener listener;
@@ -67,9 +66,9 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
     /**
      * Creates a searchable provider.
      *
-     * @param searchAllSqlStatement          the JCR SQL searchTerm to search for all beans
-     * @param observePath                    the JCR path to observe for changes
-     * @param observeNodeTypes               the node types to observe for changes
+     * @param searchAllSqlStatement the JCR SQL searchTerm to search for all beans
+     * @param observePath           the JCR path to observe for changes
+     * @param observeNodeTypes      the node types to observe for changes
      */
     public SearchableDataProvider(final String searchAllSqlStatement, final String observePath,
                                   final String... observeNodeTypes) {
@@ -88,9 +87,9 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
     protected abstract T createBean(Node node) throws RepositoryException;
 
     @Override
-    public Iterator<T> iterator(long first, long count) {
+    public Iterator<T> iterator(final long first, final long count) {
         populateList(searchTerm);
-        List<T> result = new ArrayList<T>();
+        final List<T> result = new ArrayList<>();
         for (long i = first; i < (count + first); i++) {
             result.add(list.get((int) i));
         }
@@ -131,8 +130,8 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
                 nodeIterator = searchBuilder.getResultModel().getObject().getQueryResult().getNodes();
             } else {
                 final UserSession session = UserSession.get();
-                @SuppressWarnings("deprecation")
-                final Query listQuery = session.getQueryManager().createQuery(searchAllSqlStatement, Query.SQL);
+                @SuppressWarnings("deprecation") final Query listQuery = session.getQueryManager().createQuery(
+                        searchAllSqlStatement, Query.SQL);
                 nodeIterator = listQuery.execute().getNodes();
             }
 
@@ -188,14 +187,15 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
     }
 
     @Override
-    public void setObservationContext(IObservationContext<? extends IObservable> context) {
+    public void setObservationContext(final IObservationContext<? extends IObservable> context) {
         this.context = (IObservationContext<JcrNodeModel>) context;
     }
 
     @Override
     public void startObservation() {
         listener = new JcrEventListener(context, Event.NODE_ADDED | Event.NODE_REMOVED | Event.PROPERTY_ADDED
-                | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED | Event.NODE_MOVED, observePath, true, null, observeNodeTypes) {
+                | Event.PROPERTY_CHANGED | Event.PROPERTY_REMOVED | Event.NODE_MOVED, observePath, true, null,
+                observeNodeTypes) {
             @Override
             public void onEvent(final EventIterator events) {
                 dirty = true;
@@ -223,14 +223,14 @@ public abstract class SearchableDataProvider<T extends Comparable<T>> extends So
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (this == object) {
             return true;
         }
         if (!(object instanceof SearchableDataProvider)) {
             return false;
         }
-        SearchableDataProvider other = (SearchableDataProvider) object;
+        final SearchableDataProvider other = (SearchableDataProvider) object;
 
         return new EqualsBuilder()
                 .append(searchAllSqlStatement, other.searchAllSqlStatement)

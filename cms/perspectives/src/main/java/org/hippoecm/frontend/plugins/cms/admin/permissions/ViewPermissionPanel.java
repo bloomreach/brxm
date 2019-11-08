@@ -96,8 +96,6 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
         final HippoSession session = UserSession.get().getJcrSession();
         isSecurityApplManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_MANAGER);
 
-        setOutputMarkupId(true);
-
         this.model = model;
         this.authRoleName = authRoleName;
         DomainAuth domain = model.getObject();

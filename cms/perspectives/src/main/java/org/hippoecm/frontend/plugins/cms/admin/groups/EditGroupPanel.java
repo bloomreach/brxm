@@ -39,7 +39,6 @@ public class EditGroupPanel extends AdminBreadCrumbPanel {
 
     public EditGroupPanel(final String id, final IBreadCrumbModel breadCrumbModel, final IModel<Group> model) {
         super(id, breadCrumbModel);
-        setOutputMarkupId(true);
 
         this.model = model;
 

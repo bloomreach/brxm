@@ -44,6 +44,7 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.model.util.MapModel;
 import org.apache.wicket.validation.IValidatable;
+import org.apache.wicket.validation.IValidator;
 import org.apache.wicket.validation.ValidationError;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.frontend.dialog.Confirm;
@@ -79,7 +80,6 @@ public class DomainPanel extends AdminBreadCrumbPanel {
 
     public DomainPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel, final IModel<DomainAuth> model) {
         super(id, breadCrumbModel);
-        setOutputMarkupId(true);
         this.context = context;
         this.model = model;
 
@@ -331,7 +331,7 @@ public class DomainPanel extends AdminBreadCrumbPanel {
         return new StringResourceModel("permissions-domain-title", component).setModel(model);
     }
 
-    public static final class AuthRoleNameValidator extends StringValidator {
+    public static final class AuthRoleNameValidator implements IValidator<String> {
 
         final private IModel<DomainAuth> model;
 
@@ -341,11 +341,10 @@ public class DomainPanel extends AdminBreadCrumbPanel {
 
         @Override
         public void validate(final IValidatable<String> validatable) {
-            super.validate(validatable);
             final String name = validatable.getValue();
-            DomainAuth domain = model.getObject();
+            final DomainAuth domain = model.getObject();
             if (domain.getAuthRolesMap().containsKey(name)) {
-                ValidationError validationError = new ValidationError(this, "exists");
+                final ValidationError validationError = new ValidationError(this, "exists");
                 validatable.error(validationError);
             }
         }
