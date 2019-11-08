@@ -663,6 +663,7 @@
               <containerId>tomcat${cargo.tomcat.major.version}x</containerId>
               <systemProperties>
                 <Log4jContextSelector>org.apache.logging.log4j.core.selector.BasicContextSelector</Log4jContextSelector>
+                <h2.implicitRelativePath>true</h2.implicitRelativePath>
               </systemProperties>
             </container>
           </configuration>
