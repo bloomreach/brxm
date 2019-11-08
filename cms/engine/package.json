@@ -7,8 +7,8 @@
     "test": "karma start"
   },
   "dependencies": {
-    "@bloomreach/navapp": "1.0.1-4",
-    "@bloomreach/navapp-communication": "1.0.0",
+    "@bloomreach/navapp": "1.0.1-5",
+    "@bloomreach/navapp-communication": "1.1.0-0",
     "penpal": "^4.0.0"
   },
   "devDependencies": {
