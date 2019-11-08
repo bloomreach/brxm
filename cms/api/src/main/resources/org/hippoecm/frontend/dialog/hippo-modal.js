@@ -48,7 +48,7 @@
   });
 
   Wicket.Window.prototype.initialize = function () {
-    Hippo.showMask();
+    Hippo && Hippo.showMask && Hippo.showMask();
     _super.initialize.apply(this, arguments);
     this.settings.isFullscreen = false;
 
@@ -64,7 +64,7 @@
 
   Wicket.Window.prototype.close = function () {
     _super.close.apply(this, arguments);
-    Hippo.hideMask();
+    Hippo && Hippo.hideMask && Hippo.hideMask();
   };
 
   Wicket.Window.prototype.onWindowResize = function (e) {
