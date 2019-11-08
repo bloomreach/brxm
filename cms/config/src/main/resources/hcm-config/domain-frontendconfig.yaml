@@ -1,6 +1,6 @@
 definitions:
   config:
-    /hippo:configuration/hippo:domains/frontendconfig:
+    /hippo:configuration/hippo:domains/frontend-config:
       jcr:primaryType: hipposys:domain
       /frontend-config:
         jcr:primaryType: hipposys:domainrule
@@ -36,5 +36,5 @@ definitions:
           hipposys:value: /hippo:configuration/hippo:workflows
       /readonly:
         jcr:primaryType: hipposys:authrole
-        hipposys:userrole: xm-frontendconfig-reader
+        hipposys:userrole: xm.frontend-config.reader
         hipposys:role: readonly

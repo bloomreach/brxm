@@ -9,7 +9,7 @@ definitions:
         plugin.class: org.onehippo.cms7.reports.ReportsPerspective
         wicket.extension: []
         wicket.id: service.tab
-        hipposys:userrole: xm-report-user
+        hipposys:userrole: xm.report.user
         frontend:appPath: content-reports
         /layout.wireframe:
           jcr:primaryType: frontend:pluginconfig

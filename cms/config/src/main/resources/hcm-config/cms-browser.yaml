@@ -40,7 +40,7 @@ definitions:
         jcr:primaryType: frontend:plugin
         cluster.name: cms-tree-views/configuration
         plugin.class: org.hippoecm.frontend.plugin.loader.PluginClusterLoader
-        hipposys:userrole: xm-sysadmin
+        hipposys:userrole: xm.system.admin
         /cluster.config:
           jcr:primaryType: frontend:pluginconfig
           bind.to.layout.unit: true
