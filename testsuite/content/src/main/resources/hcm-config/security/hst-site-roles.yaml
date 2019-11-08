@@ -5,7 +5,7 @@ definitions:
         jcr:primaryType: hipposys:userrole
       /site-admin:
         jcr:primaryType: hipposys:userrole
-      /xm-cms-user:
+      /xm.cms.user:
         hipposys:userroles:
           operation: add
           value: [hst-site-user]
