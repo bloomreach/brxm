@@ -1,5 +1,5 @@
-/**
- * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+/*
+ * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import org.apache.wicket.model.IModel;
 
 public class LabelledCheckBoxTableRow extends Panel {
 
-    public LabelledCheckBoxTableRow(String id, IModel<String> labelModel, IModel<Boolean> checkboxModel) {
+    public LabelledCheckBoxTableRow(final String id, final IModel<String> labelModel, final IModel<Boolean> checkboxModel) {
         super(id);
         add(new Label("label", labelModel));
         add(new CheckBox("input", checkboxModel));

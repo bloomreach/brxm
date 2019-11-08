@@ -17,9 +17,7 @@ package org.hippoecm.frontend.plugins.cms.admin.permissions;
 
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
-import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.panel.BreadCrumbPanel;
-import org.apache.wicket.extensions.breadcrumb.panel.IBreadCrumbPanelFactory;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -28,11 +26,10 @@ import org.hippoecm.frontend.plugins.cms.admin.users.User;
 import org.hippoecm.frontend.plugins.cms.admin.users.ViewUserPanel;
 
 public class ViewUserActionLink extends AjaxLink<String> {
+
     private final User user;
     private final IPluginContext context;
     private final BreadCrumbPanel breadCrumbPanel;
-
-    private static final long serialVersionUID = 1L;
 
     public ViewUserActionLink(final String id, final IModel<String> labelTextModel, final User user,
                               final IPluginContext context, final BreadCrumbPanel breadCrumbPanel) {
@@ -42,17 +39,14 @@ public class ViewUserActionLink extends AjaxLink<String> {
         this.context = context;
         this.breadCrumbPanel = breadCrumbPanel;
 
-        Label label = new Label("label", labelTextModel);
+        final Label label = new Label("label", labelTextModel);
         label.setRenderBodyOnly(true);
         add(label);
     }
 
     @Override
-    public void onClick(AjaxRequestTarget target) {
-        breadCrumbPanel.activate(new IBreadCrumbPanelFactory() {
-            public BreadCrumbPanel create(String componentId, IBreadCrumbModel breadCrumbModel) {
-                return new ViewUserPanel(componentId, context, breadCrumbModel, new DetachableUser(user));
-            }
-        });
+    public void onClick(final AjaxRequestTarget target) {
+        breadCrumbPanel.activate((componentId, breadCrumbModel) ->
+                new ViewUserPanel(componentId, context, breadCrumbModel, new DetachableUser(user)));
     }
 }

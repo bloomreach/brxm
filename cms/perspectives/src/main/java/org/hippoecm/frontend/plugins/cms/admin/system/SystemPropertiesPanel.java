@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,20 +28,17 @@ import org.hippoecm.frontend.plugins.cms.admin.widgets.AdminDataTable;
 
 public class SystemPropertiesPanel extends AdminBreadCrumbPanel {
 
-    
-    private static final long serialVersionUID = 1L;
-    
     public SystemPropertiesPanel(final String id, final IPluginContext context, final IPluginConfig config, final IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
 
-        IColumn[] columns = new IColumn[2];
+        final IColumn[] columns = new IColumn[2];
         columns[0] = new PropertyColumn(new ResourceModel("admin-system-properties-key"), "key");
         columns[1] = new PropertyColumn(new ResourceModel("admin-system-properties-value"), "value");
-        
+
         add(new AdminDataTable("table", columns, new SystemPropertiesDataProvider(), 25));
     }
 
-    public IModel<String> getTitle(Component component) {
+    public IModel<String> getTitle(final Component component) {
         return new ResourceModel("admin-system-properties-title");
     }
 
