@@ -19,13 +19,13 @@ package org.hippoecm.frontend.service.navappsettings;
 
 import java.io.Serializable;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.jcr.ItemNotFoundException;
@@ -57,22 +57,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.onehippo.repository.security.SessionUser;
 
-import static java.util.stream.Collectors.toSet;
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.reset;
 import static org.easymock.EasyMock.verify;
-import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
-import static org.hippoecm.frontend.service.navappsettings.NavAppSettingsService.LOGIN_RESOURCES;
-import static org.hippoecm.frontend.service.navappsettings.NavAppSettingsService.LOGOUT_RESOURCES;
 import static org.hippoecm.frontend.service.navappsettings.NavAppSettingsService.NAVIGATIONITEMS_ENDPOINT;
-import static org.hippoecm.frontend.service.navappsettings.NavAppSettingsService.NAV_CONFIG_RESOURCES;
-import static org.hippoecm.frontend.service.navappsettings.NavAppSettingsService.RESOURCE_TYPE;
-import static org.hippoecm.frontend.service.navappsettings.NavAppSettingsService.RESOURCE_URL;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 @RunWith(EasyMockRunner.class)
 public class NavAppSettingsServiceTest {
@@ -88,7 +81,9 @@ public class NavAppSettingsServiceTest {
     @Mock
     private IPluginContext context;
     @Mock
-    private IPluginConfig config, cfg1, cfg2;
+    private IPluginConfig config;
+    @Mock
+    private NavAppResourceService navAppResourceService;
 
     private final String scheme = "scheme";
     private final String host = "cms.host.name";
@@ -140,17 +135,13 @@ public class NavAppSettingsServiceTest {
         replay(user);
 
         expect(config.getString(INavAppSettingsService.SERVICE_ID, INavAppSettingsService.SERVICE_ID)).andReturn(null);
-        expect(config.containsKey(NAV_CONFIG_RESOURCES)).andStubReturn(true);
-        expect(config.getPluginConfig(NAV_CONFIG_RESOURCES)).andReturn(config);
-        expect(config.getPluginConfigSet()).andReturn(Collections.emptySet());
-        expect(config.containsKey(LOGIN_RESOURCES)).andStubReturn(false);
-        expect(config.containsKey(LOGOUT_RESOURCES)).andStubReturn(false);
         expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
         replay(config);
 
-        sessionAttributeStore =new SessionAttributeStore(){
+        sessionAttributeStore = new SessionAttributeStore() {
 
-            final private Map<String,Serializable> attributes = new HashMap<>();
+            final private Map<String, Serializable> attributes = new HashMap<>();
+
             @Override
             public Serializable getAttribute(final String name) {
                 return attributes.get(name);
@@ -162,7 +153,12 @@ public class NavAppSettingsServiceTest {
                 return null;
             }
         };
-        this.navAppSettingsService = new NavAppSettingsService(context, config, () -> userSession, sessionAttributeStore);
+        expect(navAppResourceService.getLoginResources()).andStubReturn(Collections.emptySet());
+        expect(navAppResourceService.getLogoutResources()).andStubReturn(Collections.emptySet());
+        expect(navAppResourceService.getNavigationItemsResources()).andStubReturn(Collections.emptySet());
+        replay(navAppResourceService);
+
+        this.navAppSettingsService = new NavAppSettingsService(context, config, () -> userSession, sessionAttributeStore, navAppResourceService);
 
         ThreadContext.setApplication(webApplication);
     }
@@ -224,18 +220,14 @@ public class NavAppSettingsServiceTest {
         expect(servletRequest.getContextPath()).andReturn("/context-path");
         replay(servletRequest);
 
-        reset(config);
-        expect(config.containsKey(NAV_CONFIG_RESOURCES)).andStubReturn(true);
-        expect(config.getPluginConfig(NAV_CONFIG_RESOURCES)).andReturn(config);
-        expect(config.getPluginConfigSet()).andReturn(Stream.of(cfg1, cfg2).collect(toSet()));
-        expect(config.containsKey(LOGIN_RESOURCES)).andStubReturn(false);
-        expect(config.containsKey(LOGOUT_RESOURCES)).andStubReturn(false);
-        expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
-        expect(cfg1.getString(NavAppSettingsService.RESOURCE_TYPE)).andReturn(ResourceType.IFRAME.name());
-        expect(cfg1.getString(NavAppSettingsService.RESOURCE_URL)).andReturn("some-other-url1");
-        expect(cfg2.getString(NavAppSettingsService.RESOURCE_TYPE)).andReturn(ResourceType.REST.name());
-        expect(cfg2.getString(NavAppSettingsService.RESOURCE_URL)).andReturn("some-other-url2");
-        replay(config, cfg1, cfg2);
+        final NavAppResource navAppResource1 = new NavAppResourceBuilder().resourceType(ResourceType.IFRAME).resourceUrl(URI.create("some-other-url1")).build();
+        final NavAppResource navAppResource2 = new NavAppResourceBuilder().resourceType(ResourceType.INTERNAL_REST).resourceUrl(URI.create("some-other-url2")).build();
+
+        reset(navAppResourceService);
+        expect(navAppResourceService.getLoginResources()).andStubReturn(Collections.emptySet());
+        expect(navAppResourceService.getLogoutResources()).andStubReturn(Collections.emptySet());
+        expect(navAppResourceService.getNavigationItemsResources()).andReturn(Stream.of(navAppResource1, navAppResource2).collect(Collectors.toSet()));
+        replay(navAppResourceService);
 
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
         final List<NavAppResource> navConfigResources = navAppSettings.getAppSettings().getNavConfigResources();
@@ -245,49 +237,9 @@ public class NavAppSettingsServiceTest {
         final NavAppResource iframeResource = navConfigResources.stream().filter(r -> ResourceType.IFRAME == r.getResourceType()).findFirst().orElseThrow(() -> new RuntimeException("IFRAME resource not found"));
         assertThat(iframeResource.getUrl(), is(URI.create("some-other-url1")));
 
-        verify(config, cfg1, cfg2);
+        verify(config);
     }
 
-
-    @Test
-    public void throws_on_invalid_navcfg_resource_uri() {
-
-        reset(config);
-        expect(config.containsKey(NAV_CONFIG_RESOURCES)).andStubReturn(true);
-        expect(config.getPluginConfig(NAV_CONFIG_RESOURCES)).andReturn(config);
-        expect(config.getPluginConfigSet()).andReturn(Stream.of(cfg1).collect(toSet()));
-        expect(cfg1.getString(NavAppSettingsService.RESOURCE_URL)).andReturn("invalid resource url");
-        replay(config, cfg1);
-
-        try {
-            navAppSettingsService.getNavAppSettings(request);
-            fail("should have thrown an exception because the resource url is invalid");
-        } catch (IllegalArgumentException e) {
-            assertThat(e.getCause(), instanceOf(URISyntaxException.class));
-        }
-        verify(config, cfg1);
-    }
-
-
-    @Test
-    public void throws_on_empty_navcfg_resource_uri() {
-
-        reset(config);
-        expect(config.containsKey(NAV_CONFIG_RESOURCES)).andStubReturn(true);
-        expect(config.getPluginConfig(NAV_CONFIG_RESOURCES)).andReturn(config);
-        expect(config.getPluginConfigSet()).andReturn(Stream.of(cfg1).collect(toSet()));
-        expect(cfg1.getName()).andStubReturn("cfg1");
-        expect(cfg1.getString(NavAppSettingsService.RESOURCE_URL)).andReturn("\t\t   \t\t");
-        replay(config, cfg1);
-
-        try {
-            navAppSettingsService.getNavAppSettings(request);
-            fail("should have thrown an exception because the resource url is invalid");
-        } catch (IllegalArgumentException e) {
-            assertThat(e.getMessage(), is(NavAppSettingsService.RESOURCE_URL + " must not be empty or null"));
-        }
-        verify(config, cfg1);
-    }
 
     @Test
     public void is_resilient_to_RepositoryExceptions() throws RepositoryException {
@@ -304,28 +256,16 @@ public class NavAppSettingsServiceTest {
     @Test
     public void load_login_and_logout_resources() {
 
-        reset(config);
-        expect(config.containsKey(NAV_CONFIG_RESOURCES)).andReturn(false);
+        final NavAppResource navAppResource = createMock(NavAppResource.class);
+        expect(navAppResource.getResourceType()).andReturn(ResourceType.IFRAME);
+        expect(navAppResource.getResourceType()).andReturn(ResourceType.REST);
+        replay(navAppResource);
 
-        expect(config.containsKey(LOGIN_RESOURCES)).andReturn(true);
-        expect(config.getPluginConfig(LOGIN_RESOURCES)).andReturn(config);
-
-        expect(config.containsKey(LOGOUT_RESOURCES)).andReturn(true);
-        expect(config.getPluginConfig(LOGOUT_RESOURCES)).andReturn(config);
-        expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
-
-        expect(config.getPluginConfigSet())
-                .andReturn(Stream.of(cfg1).collect(toSet()))
-                .andReturn(Stream.of(cfg2).collect(toSet()));
-        expect(cfg1.getString(RESOURCE_TYPE))
-                .andReturn(ResourceType.IFRAME.name());
-        expect(cfg1.getString(RESOURCE_URL))
-                .andReturn("http://a.b/login");
-        expect(cfg2.getString(RESOURCE_TYPE))
-                .andReturn(ResourceType.REST.name());
-        expect(cfg2.getString(RESOURCE_URL))
-                .andReturn("http://p.q/logout");
-        replay(config, cfg1, cfg2);
+        reset(navAppResourceService);
+        expect(navAppResourceService.getNavigationItemsResources()).andReturn(Collections.emptySet());
+        expect(navAppResourceService.getLoginResources()).andReturn(Collections.singleton(navAppResource));
+        expect(navAppResourceService.getLogoutResources()).andReturn(Collections.singleton(navAppResource));
+        replay(navAppResourceService);
 
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
 
@@ -337,7 +277,7 @@ public class NavAppSettingsServiceTest {
         assertThat(loginResources.size(), is(1));
         assertThat(logoutResources.get(0).getResourceType(), is(ResourceType.REST));
 
-        verify(config, cfg1, cfg2);
+        verify(config);
     }
 
     @Test
@@ -432,7 +372,7 @@ public class NavAppSettingsServiceTest {
         expect(parameters.getParameterValue(NavAppSettingsService.LOGIN_TYPE_QUERY_PARAMETER))
                 .andReturn(StringValue.valueOf((String) null));
         replay(parameters);
-        sessionAttributeStore.setAttribute(NavAppSettingsService.LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME,true);
+        sessionAttributeStore.setAttribute(NavAppSettingsService.LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME, true);
 
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
         assertThat(navAppSettings.getAppSettings().getNavConfigResources().size(), is(1));
