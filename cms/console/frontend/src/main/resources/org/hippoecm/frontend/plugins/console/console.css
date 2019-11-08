@@ -17,7 +17,7 @@
 /* ================================================ */
 
 *:focus {
-   outline: none !important; 
+   outline: none !important;
 }
 
 /* Remove inner padding and border in Firefox 4+. */
@@ -733,6 +733,10 @@ li.hippo-console-menu-actions-save.session-changes a {
   font-size: 20px;
 }
 
+.error-message {
+  color: #f44336;
+}
+
 .hippo-console-editor textarea {
   width: 95%;
   font-size: 14px;
@@ -954,6 +958,10 @@ body.hippo-root div.yui-log-container {
   padding: 0 0 5px 0;
 }
 
+.hippo-dialog-center .hippo-dialog-body .label-bold {
+  font-weight: bold;
+}
+
 .hippo-dialog-center .hippo-dialog-body .input-row {
   padding: 0 0 16px 0;
 }
@@ -1097,7 +1105,7 @@ body.hippo-root div.yui-log-container {
 }
 
 .w_caption a.w_close {
-  /* copy of fontawesome .fa class */ 
+  /* copy of fontawesome .fa class */
   display: inline-block;
   font: normal normal normal 14px/1 FontAwesome;
   font-size: 17px;
@@ -1284,4 +1292,63 @@ body.hippo-root div.yui-log-container {
   background-image: none;
   font-size: 13px;
   padding-left: 0;
+}
+
+.hippo-dialog-body .group {
+  font-size: 13px;
+  margin-bottom: 16px;
+}
+
+.hippo-dialog-body .group:last-child {
+  margin-bottom: 0;
+}
+
+.hippo-dialog-body .group h3 {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.hippo-dialog-body .grid {
+  display: grid;
+  grid-gap: 8px;
+  grid-template-columns: 80px 717px;
+}
+
+.hippo-dialog-body .grid .grid-label {
+  color: rgba(0, 0, 0, 0.8);
+}
+
+.hippo-dialog-body .grid .priviliges ul {
+  margin-bottom: 8px;
+}
+
+.hippo-dialog-body .grid .priviliges li {
+  list-style: disc;
+  margin-left: 20px;
+}
+
+.hippo-dialog-body .grid .priviliges p:last-child {
+  margin-bottom: 0;
+}
+
+.hippo-dialog-body .form-input {
+  display: inline-flex;
+}
+
+.hippo-dialog-body .form-input button {
+  margin: 0 4px;
+}
+
+.hippo-dialog-body .form-input input {
+  padding: 8px;
+  border-radius: 4px;
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  font-size: 12px;
+  line-height: 14px;
+  height: 32px;
+}
+
+.hippo-dialog-body .form-input input.medium {
+  width: 200px;
 }
