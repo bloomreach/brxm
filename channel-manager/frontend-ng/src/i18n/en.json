@@ -41,7 +41,7 @@
   "CREATE_NEW_DOCUMENT_TYPE": "Create new {{documentType}}",
   "DEFAULT_PROPERTY_GROUP_LABEL": "Property group",
   "DELETE": "Delete",
-  "DELETE_COMPONENT": "Delete Component",
+  "DELETE_COMPONENT": "Delete component",
   "DELETING_CHANNEL": "Deleting channel '{{channel}}'...",
   "DISCARD": "Discard",
   "DISCARD_ALL": "Discard all",

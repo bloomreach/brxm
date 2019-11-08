@@ -31,6 +31,11 @@ right-side-panel {
     .md-toolbar-tools > .md-icon-button {
       min-width: 40px;
     }
+
+    .md-button {
+      margin-left: 0;
+      margin-right: 0;
+    }
   }
 
   .right-side-panel-top-toolbar-icon:not(:empty) {
@@ -73,14 +78,24 @@ right-side-panel {
     }
 
     .md-button {
-      margin-left: 0;
-      margin-right: 0;
       padding-left: 0;
       padding-right: 0;
 
       &.large-label {
         padding-left: 6px;
         padding-right: 6px;
+      }
+    }
+
+    &:not(.right-side-panel-top-toolbar) {
+      .md-button {
+        &:first-of-type {
+          margin-left: 0;
+        }
+
+        &:last-child {
+          margin-right: 0;
+        }
       }
     }
   }
