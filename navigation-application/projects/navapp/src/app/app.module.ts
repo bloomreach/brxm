@@ -19,12 +19,13 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
-import { LoggerModule, NGXLogger, NgxLoggerLevel } from 'ngx-logger';
+import { NGXLogger } from 'ngx-logger';
 
 import { AppComponent } from './app.component';
 import { BootstrapModule } from './bootstrap/bootstrap.module';
 import { ClientAppModule } from './client-app/client-app.module';
 import { ErrorHandlingModule } from './error-handling/error-handling.module';
+import { ConfiguredLoggerModule } from './logger/configured-logger.module';
 import { MainMenuModule } from './main-menu/main-menu.module';
 import { APP_SETTINGS } from './services/app-settings';
 import { appSettingsFactory } from './services/app-settings.factory';
@@ -32,12 +33,9 @@ import { translateHttpLoaderFactory } from './services/translate-http-loader.fac
 import { USER_ACTIVITY_DEBOUNCE_TIME } from './services/user-activity-debounce-time';
 import { USER_SETTINGS } from './services/user-settings';
 import { userSettingsFactory } from './services/user-settings.factory';
-import { CustomWindow, WindowRef } from './shared/services/window-ref.service';
+import { WindowRef } from './shared/services/window-ref.service';
 import { SharedModule } from './shared/shared.module';
 import { TopPanelModule } from './top-panel/top-panel.module';
-
-const logLevelString: string = (window as CustomWindow).NavAppSettings.appSettings.logLevel;
-const loglevel = logLevelString || 'WARN';
 
 @NgModule({
   imports: [
@@ -56,11 +54,7 @@ const loglevel = logLevelString || 'WARN';
         deps: [HttpClient, Location],
       },
     }),
-    LoggerModule.forRoot({
-      // Set the desired log level here to avoid missing log messages due to not properly configured log messages level
-      level: NgxLoggerLevel[loglevel],
-      enableSourceMaps: true,
-    }),
+    ConfiguredLoggerModule,
   ],
   providers: [
     Location,
