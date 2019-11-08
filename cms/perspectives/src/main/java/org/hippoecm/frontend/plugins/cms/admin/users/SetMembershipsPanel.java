@@ -74,7 +74,7 @@ public class SetMembershipsPanel extends Panel {
         setOutputMarkupId(true);
 
         final HippoSession session = UserSession.get().getJcrSession();
-        isSecurityUserManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_MANAGER);
+        isSecurityUserManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_ADMIN);
 
         selectedGroup = null;
         this.userModel = userModel;

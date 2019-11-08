@@ -84,7 +84,7 @@ public class DomainPanel extends AdminBreadCrumbPanel {
         this.model = model;
 
         final HippoSession session = UserSession.get().getJcrSession();
-        isSecurityApplManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_MANAGER);
+        isSecurityApplManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_ADMIN);
 
         add(new Label("permissions-domain-title", new StringResourceModel("permissions-domain-title", this).setModel(model)));
         add(new Label("domain-folder", model.getObject().getFolderPath()));

@@ -94,7 +94,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         this.context = context;
 
         final HippoSession session = UserSession.get().getJcrSession();
-        isSecurityUserManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_MANAGER);
+        isSecurityUserManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_ADMIN);
         this.group = group;
         dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
 

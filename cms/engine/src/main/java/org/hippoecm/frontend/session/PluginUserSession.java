@@ -398,7 +398,7 @@ public class PluginUserSession extends UserSession {
     }
 
     private String getApplicationUserRole(final String applicationName) {
-        return "xm-"+applicationName+"-user";
+        return "xm."+applicationName+".user";
     }
 
     public void logout() {

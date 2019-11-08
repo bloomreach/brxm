@@ -87,7 +87,7 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
         super(id, breadCrumbModel);
         this.context = context;
         final HippoSession session = UserSession.get().getJcrSession();
-        isSecurityApplManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_MANAGER);
+        isSecurityApplManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_ADMIN);
 
         this.userRoleModel = userRoleModel;
         final UserRole userRole = userRoleModel.getObject();

@@ -7,4 +7,4 @@ definitions:
       hipposys:passkey: jvm://
       hipposys:securityprovider: internal
       hipposys:system: true
-      hipposys:userroles: [xm-frontendconfig-reader]
+      hipposys:userroles: [xm.frontend-config.reader]

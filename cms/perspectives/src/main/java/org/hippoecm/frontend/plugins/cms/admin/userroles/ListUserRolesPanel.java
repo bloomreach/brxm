@@ -56,8 +56,7 @@ public class ListUserRolesPanel extends AdminBreadCrumbPanel {
         super(id, breadCrumbModel);
 
         final HippoSession session = UserSession.get().getJcrSession();
-        final boolean isSecurityApplManager = session.isUserInRole(
-                SecurityConstants.USERROLE_SECURITY_APPLICATION_MANAGER);
+        final boolean isSecurityApplAdmin = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_ADMIN);
 
         final PanelPluginBreadCrumbLink createLink =
                 new PanelPluginBreadCrumbLink("create-userrole", breadCrumbModel) {
@@ -66,7 +65,7 @@ public class ListUserRolesPanel extends AdminBreadCrumbPanel {
                         return new CreateUserRolePanel(componentId, breadCrumbModel);
                     }
                 };
-        createLink.setVisible(isSecurityApplManager);
+        createLink.setVisible(isSecurityApplAdmin);
         add(createLink);
 
         final List<IColumn<UserRole, String>> columns = new ArrayList<>();

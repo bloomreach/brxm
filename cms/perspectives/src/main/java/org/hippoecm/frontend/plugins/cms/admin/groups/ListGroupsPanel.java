@@ -77,7 +77,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
         super(id, breadCrumbModel);
 
         final HippoSession session = UserSession.get().getJcrSession();
-        isSecurityUserManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_MANAGER);
+        isSecurityUserManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_ADMIN);
 
         this.context = context;
         this.groupDataProvider = groupDataProvider;
