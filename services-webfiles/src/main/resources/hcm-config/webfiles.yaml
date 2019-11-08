@@ -9,7 +9,7 @@ definitions:
           jcr:primaryType: hipposys:domain
           /readonly:
             jcr:primaryType: hipposys:authrole
-            hipposys:userrole: xm-webfiles-reader
+            hipposys:userrole: xm.webfiles.reader
             hipposys:role: readonly
           /webfiles:
             jcr:primaryType: hipposys:domainrule
@@ -26,6 +26,6 @@ definitions:
               hipposys:type: Reference
               hipposys:value: /webfiles:domains
     /hippo:configuration/hippo:userroles:
-      /xm-webfiles-reader:
+      /xm.webfiles.reader:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
