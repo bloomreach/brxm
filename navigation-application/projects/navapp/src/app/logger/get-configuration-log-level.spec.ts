@@ -16,8 +16,9 @@
 
 import { NgxLoggerLevel } from 'ngx-logger';
 
-import { getConfigurationLogLevel } from './get-configuration-log-level';
 import { CustomWindow } from '../shared/services/window-ref.service';
+
+import { getConfigurationLogLevel } from './get-configuration-log-level';
 
 describe('getConfigurationLogLevel', () => {
   let navappSettingsOldValue: any;
