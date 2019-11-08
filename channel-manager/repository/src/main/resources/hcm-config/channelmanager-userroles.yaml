@@ -1,11 +1,11 @@
 definitions:
   config:
     /hippo:configuration/hippo:userroles:
-      /xm-channel-user:
+      /xm.channel.user:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
-        hipposys:userroles: [xm-cms-user]
-      /xm-channel-viewer:
+        hipposys:userroles: [xm.cms.user]
+      /xm.channel.viewer:
         hipposys:userroles:
           operation: add
-          value: [xm-channel-user]
+          value: [xm.channel.user]

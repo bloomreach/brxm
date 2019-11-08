@@ -4,6 +4,6 @@ definitions:
       /channelManagerLoader:
         .meta:order-before: browserPerspective
         jcr:primaryType: frontend:plugin
-        hipposys:userrole: xm-channel-user
+        hipposys:userrole: xm.channel.user
         cluster.name: hippo-channel-manager
         plugin.class: org.hippoecm.frontend.plugin.loader.PluginClusterLoader
