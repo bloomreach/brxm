@@ -1,4 +1,4 @@
-// Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -50,5 +50,79 @@
 
   &[disabled] > md-icon {
     color: $grey-500 !important;
+  }
+}
+
+.md-bloomreach-theme {
+  .md-button:not(.md-icon-button) {
+    --color: #{$bloomreach-black};
+    --background-color: #{$bloomreach-white};
+    --border-color: #{$bloomreach-gray-38};
+    --hover-color: var(--color);
+    --hover-background-color: #{$bloomreach-gray-12};
+    --hover-border-color: var(--border-color);
+    --focus-color: var(--color);
+    --focus-background-color: var(--background-color);
+    --focus-border-color: var(--border-color);
+    --focus-outline-color: #{$bloomreach-blue-light};
+    --disabled-color: #{$bloomreach-gray-12};
+    --disabled-background-color: #{$bloomreach-white};
+    --disabled-border-color: var(--disabled-color);
+
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--color) !important;
+    font-weight: 600;
+    height: 36px;
+    line-height: 34px;
+    min-width: 64px;
+    padding: 0 16px;
+    text-transform: none;
+
+    &:not([disabled]) {
+      &:hover,
+      &.md-focused:hover,
+      &:focus:hover {
+        background-color: var(--hover-background-color);
+        border-color: var(--hover-border-color);
+        color: var(--hover-color) !important;
+      }
+
+      &:focus,
+      &.md-focused {
+        background-color: var(--focus-background-color);
+        border-color: var(--focus-border-color);
+        box-shadow: 0 0 0 2px var(--focus-outline-color);
+        color: var(--focus-color) !important;
+
+        .md-ripple-container {
+          border: none;
+        }
+      }
+    }
+
+    &[disabled] {
+      background-color: var(--disabled-background-color);
+      border-color: var(--disabled-border-color);
+      color: var(--disabled-color) !important;
+    }
+
+    &.md-primary {
+      --color: #{$bloomreach-white};
+      --background-color: #{$bloomreach-blue-primary};
+      --border-color: #{$bloomreach-blue-primary};
+      --hover-background-color: #{$bloomreach-blue-dark};
+      --focus-outline-color: #{$bloomreach-blue-light};
+      --disabled-color: #{$bloomreach-gray-12};
+      --disabled-background-color: #{$bloomreach-gray-5};
+    }
+
+    &.md-accent {
+      --color: #{$bloomreach-blue-primary};
+      --border-color: #{$bloomreach-blue-primary};
+      --focus-outline-color: #{$bloomreach-blue-light};
+      --hover-background-color: #{$bloomreach-blue-light};
+    }
   }
 }
