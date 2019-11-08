@@ -147,8 +147,10 @@
 
 .btn-bar {
   display: inline-flex;
+  flex-wrap: wrap;
 
   .btn {
+    margin-top: 8px;
     margin-right: 8px;
 
     &:last-child {
