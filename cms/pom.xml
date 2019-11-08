@@ -206,6 +206,11 @@
         <scope>provided</scope>
       </dependency>
       <dependency>
+        <groupId>org.onehippo.cms7.hst</groupId>
+        <artifactId>hst-commons</artifactId>
+        <version>${hippo.hst.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.hippoecm</groupId>
         <artifactId>htmldiff</artifactId>
         <version>${hippo.htmldiff.version}</version>

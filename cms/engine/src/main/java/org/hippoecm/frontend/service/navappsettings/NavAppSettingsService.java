@@ -18,15 +18,12 @@ package org.hippoecm.frontend.service.navappsettings;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.function.Supplier;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.util.string.StringValue;
@@ -41,6 +38,7 @@ import org.hippoecm.frontend.service.NavAppSettings;
 import org.hippoecm.frontend.service.ResourceType;
 import org.hippoecm.frontend.service.UserSettings;
 import org.hippoecm.frontend.session.PluginUserSession;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
@@ -51,11 +49,6 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     private static final String JAR_PATH_PREFIX = "navapp";
     static final String NAVAPP_LOCATION_SYSTEM_PROPERTY = "navapp.location";
 
-    static final String NAV_CONFIG_RESOURCES = "navConfigResources";
-    static final String LOGIN_RESOURCES = "loginResources";
-    static final String LOGOUT_RESOURCES = "logoutResources";
-    static final String RESOURCE_URL = "resource.url";
-    static final String RESOURCE_TYPE = "resource.type";
     static final String IFRAMES_CONNECTION_TIMEOUT = "iframesConnectionTimeout";
     static final String LOGIN_TYPE_QUERY_PARAMETER = "logintype";
     public static final String LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME = NavAppSettingsService.class.getName() + "_" +
@@ -67,18 +60,25 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     private static final Logger log = LoggerFactory.getLogger(NavAppSettingsService.class);
     // To make unit testing easier (needs to be transient to prevent Wicket from serializing it.
     private final transient Supplier<PluginUserSession> pluginUserSessionSupplier;
-    private final SessionAttributeStore sessionAttributeStore;
+    private final transient SessionAttributeStore sessionAttributeStore;
 
-    NavAppSettingsService(IPluginContext context, IPluginConfig config, Supplier<PluginUserSession> pluginUserSessionSupplier, final SessionAttributeStore sessionAttributeStore) {
+    private final transient NavAppResourceService navAppResourceService;
+
+    NavAppSettingsService(IPluginContext context, IPluginConfig config, Supplier<PluginUserSession> pluginUserSessionSupplier, SessionAttributeStore sessionAttributeStore, NavAppResourceService navAppResourceService) {
         super(context, config);
         this.pluginUserSessionSupplier = pluginUserSessionSupplier;
+        this.navAppResourceService = navAppResourceService;
         final String name = config.getString(SERVICE_ID, SERVICE_ID);
         this.sessionAttributeStore = sessionAttributeStore;
         context.registerService(this, name);
     }
 
     public NavAppSettingsService(IPluginContext context, IPluginConfig config) {
-        this(context, config, PluginUserSession::get, new UserSessionAttributeStore(PluginUserSession.get()));
+        this(context, config,
+                PluginUserSession::get,
+                new UserSessionAttributeStore(PluginUserSession.get()),
+                new NavAppResourceServiceImpl(HstServices.getComponentManager().getContainerConfiguration().toProperties())
+        );
     }
 
     @Override
@@ -126,7 +126,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     }
 
     private UserSettings createUserSettings(final PluginUserSession userSession) {
-        final HippoSession hippoSession = (HippoSession) userSession.getJcrSession();
+        final HippoSession hippoSession = userSession.getJcrSession();
         final String userName = userSession.getUserName();
         final UserSettingsBuilder userSettingsBuilder =
                 new UserSettingsBuilder()
@@ -155,9 +155,23 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         // the ResourceServlet is being used to serve the resources inside of that directory.
         // When running mvn package the files needed for the navapp (and navigation-communication)
         // are copied into  the target directory. See copy-files.js
-        final List<NavAppResource> navConfigResources = readNavConfigResources(localLogin);
-        final List<NavAppResource> loginDomains = readResources(LOGIN_RESOURCES, localLogin);
-        final List<NavAppResource> logoutDomains = readResources(LOGOUT_RESOURCES, localLogin);
+
+        final List<NavAppResource> navConfigResources = new ArrayList<>();
+        final List<NavAppResource> loginResources = new ArrayList<>();
+        final List<NavAppResource> logoutResources = new ArrayList<>();
+
+        final NavAppResource cmsNavigationItemsResource = new NavAppResourceBuilder()
+                .resourceType(ResourceType.INTERNAL_REST)
+                .resourceUrl(URI.create(NAVIGATIONITEMS_ENDPOINT))
+                .build();
+        navConfigResources.add(cmsNavigationItemsResource);
+
+        if (!localLogin) {
+            navConfigResources.addAll(navAppResourceService.getNavigationItemsResources());
+            loginResources.addAll(navAppResourceService.getLoginResources());
+            logoutResources.addAll(navAppResourceService.getLogoutResources());
+        }
+
         final int iframesConnectionTimeout = readIframesConnectionTimeout();
 
         return new AppSettings() {
@@ -184,12 +198,12 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
 
             @Override
             public List<NavAppResource> getLoginResources() {
-                return loginDomains;
+                return loginResources;
             }
 
             @Override
             public List<NavAppResource> getLogoutResources() {
-                return logoutDomains;
+                return logoutResources;
             }
 
             @Override
@@ -201,54 +215,6 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
 
     private int readIframesConnectionTimeout() {
         return getPluginConfig().getInt(IFRAMES_CONNECTION_TIMEOUT, 30_000);
-    }
-
-    private List<NavAppResource> readNavConfigResources(boolean localLogin) {
-        final List<NavAppResource> resources = new ArrayList<>();
-        resources.add(createResource(URI.create(NAVIGATIONITEMS_ENDPOINT), ResourceType.INTERNAL_REST));
-        resources.addAll(readResources(NAV_CONFIG_RESOURCES, localLogin));
-        return resources;
-    }
-
-    private List<NavAppResource> readResources(String resourceKey, boolean localLogin) {
-        if (localLogin) {
-            return Collections.emptyList();
-        }
-        final List<NavAppResource> resources = new ArrayList<>();
-        final IPluginConfig pluginConfig = getPluginConfig();
-        if (pluginConfig.containsKey(resourceKey)) {
-            final IPluginConfig navConfigResources = pluginConfig.getPluginConfig(resourceKey);
-            final Set<IPluginConfig> configSet = navConfigResources.getPluginConfigSet();
-            for (IPluginConfig eachResource : configSet) {
-                resources.add(readResource(eachResource));
-            }
-        }
-        return resources;
-    }
-
-    private NavAppResource readResource(IPluginConfig resourceConfig) {
-        final String resourceUrlString = resourceConfig.getString(RESOURCE_URL).trim();
-        if (StringUtils.isBlank(resourceUrlString)) {
-            throw new IllegalArgumentException(RESOURCE_URL + " must not be empty or null");
-        }
-        final URI url = URI.create(resourceUrlString);
-        final ResourceType type = ResourceType.valueOf(resourceConfig.getString(RESOURCE_TYPE).toUpperCase());
-        return createResource(url, type);
-    }
-
-
-    private NavAppResource createResource(URI url, ResourceType resourceType) {
-        return new NavAppResource() {
-            @Override
-            public URI getUrl() {
-                return url;
-            }
-
-            @Override
-            public ResourceType getResourceType() {
-                return resourceType;
-            }
-        };
     }
 
 }
