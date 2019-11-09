@@ -105,8 +105,8 @@
     <commons-compress.version>1.19</commons-compress.version>
     <quartz.version>2.3.2</quartz.version>
     <json-lib.version>2.4</json-lib.version>
-    <easymock.version>3.4</easymock.version>
-    <powermock.version>1.7.0</powermock.version>
+    <easymock.version>4.0.2</easymock.version>
+    <powermock.version>2.0.2</powermock.version>
     <restassured.version>2.5.0</restassured.version>
     <decentxml.version>1.4</decentxml.version>
     <commons-scxml2.version>2.0-M1</commons-scxml2.version>
