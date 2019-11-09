@@ -45,8 +45,8 @@
     <junit.version>4.12</junit.version>
 
     <!-- Make sure that easymock and powermock are compatible -->
-    <easymock.version>3.4</easymock.version>
-    <powermock.version>1.6.5</powermock.version>
+    <easymock.version>4.0.2</easymock.version>
+    <powermock.version>2.0.2</powermock.version>
   </properties>
 
   <repositories>
