@@ -47,9 +47,9 @@
     <hippo.hst.version>14.0.0-SNAPSHOT</hippo.hst.version>
 
     <junit.version>4.12</junit.version>
-    <easymock.version>3.4</easymock.version>
+    <easymock.version>4.0.2</easymock.version>
     <!-- Make sure that powermock and easymock are compatible -->
-    <powermock.version>1.6.5</powermock.version>
+    <powermock.version>2.0.2</powermock.version>
   </properties>
 
   <repositories>
