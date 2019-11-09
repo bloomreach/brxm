@@ -29,8 +29,8 @@
   <name>Hippo CMS L10N Maven Plugin</name>
 
   <properties>
-    <maven.version>3.5.4</maven.version>
-    <maven.plugin.plugin.version>3.5.2</maven.plugin.plugin.version>
+    <maven.version>3.6.2</maven.version>
+    <maven.plugin.plugin.version>3.6.0</maven.plugin.plugin.version>
     <maven.shared.dependency.tree.version>3.0.1</maven.shared.dependency.tree.version>
     <commons-lang.version>2.6</commons-lang.version>
     <maven.plugin-annotations.version>3.5.2</maven.plugin-annotations.version>
