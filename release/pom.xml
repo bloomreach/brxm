@@ -152,7 +152,6 @@
     <!-- GID is set as 1000 by default to avoid getting permission error on most Linux systems in the local development-->
     <docker.brxm.container.dev.gid>1000</docker.brxm.container.dev.gid>
     <docker.brxm.container.dev.uid>1000</docker.brxm.container.dev.uid>
-
   </properties>
 
   <repositories>
@@ -1134,6 +1133,12 @@
           <version>${hippo.cargo-extensions.version}</version>
           <scope>runtime</scope>
         </dependency>
+        <dependency>
+          <groupId>com.h2database</groupId>
+          <artifactId>h2</artifactId>
+          <version>${h2.database.version}</version>
+          <scope>provided</scope>
+        </dependency>
       </dependencies>
       <build>
         <plugins>
@@ -1172,6 +1177,11 @@
                     <groupId>org.onehippo.cms7.hst</groupId>
                     <artifactId>hst-api</artifactId>
                     <classpath>shared</classpath>
+                  </dependency>
+                  <dependency>
+                    <groupId>com.h2database</groupId>
+                    <artifactId>h2</artifactId>
+                    <classpath>extra</classpath>
                   </dependency>
                 </dependencies>
               </container>
