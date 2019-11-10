@@ -140,7 +140,8 @@
 
     <!-- default empty javaagent, to be set for JRebel or HotSwapAgent -->
     <javaagent />
-
+    <!-- the h2 driver version to use for development environments. The h2 driver is bundled with the repository and added to the Tomcat classpath-->
+    <h2.database.version>1.4.200</h2.database.version>
   </properties>
 
   <licenses>
