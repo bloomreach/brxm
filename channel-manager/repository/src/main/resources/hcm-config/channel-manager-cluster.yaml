@@ -8,7 +8,7 @@ definitions:
         plugin.class: org.onehippo.cms7.channelmanager.ChannelManagerPerspective
         wicket.id: service.tab
         frontend:appPath: experience-manager
-        hipposys:userrole: xm-channel-user
+        hipposys:userrole: xm.channel.user
         /channel-list:
           jcr:primaryType: frontend:pluginconfig
           channelRegionIconPath: /content/gallery/channels/${region}.png/${region}.png/hippogallery:original
