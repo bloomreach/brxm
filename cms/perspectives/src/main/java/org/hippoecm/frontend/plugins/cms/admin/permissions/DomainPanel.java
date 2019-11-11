@@ -76,7 +76,7 @@ public class DomainPanel extends AdminBreadCrumbPanel {
     private final IPluginContext context;
     private final IModel<DomainAuth> model;
     private final AuthRolesListView authRolesListView;
-    private final boolean isSecurityApplManager;
+    private final boolean isSecurityApplAdmin;
 
     public DomainPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel, final IModel<DomainAuth> model) {
         super(id, breadCrumbModel);
@@ -84,14 +84,14 @@ public class DomainPanel extends AdminBreadCrumbPanel {
         this.model = model;
 
         final HippoSession session = UserSession.get().getJcrSession();
-        isSecurityApplManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_ADMIN);
+        isSecurityApplAdmin = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_ADMIN);
 
         add(new Label("permissions-domain-title", new StringResourceModel("permissions-domain-title", this).setModel(model)));
         add(new Label("domain-folder", model.getObject().getFolderPath()));
         this.authRolesListView = new AuthRolesListView("authrole-row");
         add(authRolesListView);
         AddAuthRolePanel addAuthRolePanel = new AddAuthRolePanel("add-authrole");
-        addAuthRolePanel.setVisible(isSecurityApplManager);
+        addAuthRolePanel.setVisible(isSecurityApplAdmin);
         add(addAuthRolePanel);
         // add form with markup id setter so it can be updated via ajax
         final Form form = new Form<>("back-form");
@@ -168,7 +168,7 @@ public class DomainPanel extends AdminBreadCrumbPanel {
                 }
             }
             item.add(new UsersLinkListPanel("users", users, context, DomainPanel.this));
-            if (isSecurityApplManager) {
+            if (isSecurityApplAdmin) {
                 item.add(new DeleteAuthRoleActionLink("action", new ResourceModel("permissions-permission-delete-action"), model, authRole.getName()));
             } else {
                 item.add(new Label("action") {
