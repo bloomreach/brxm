@@ -19,6 +19,7 @@ import java.util.Collections;
 
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.JavaScriptReferenceHeaderItem;
+import org.apache.wicket.markup.head.OnDomReadyHeaderItem;
 import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -47,6 +48,11 @@ public class LoginHeaderItem extends HippoHeaderItem {
 
     @Override
     public void render(final Response response) {
+
+        OnDomReadyHeaderItem.forScript(
+                "if (top.location != self.location) { top.location.reload(); };"
+        ).render(response);
+
         CssHeaderItem.forReference(isDevelopmentMode() ? THEME_CSS : THEME_MIN_CSS).render(response);
 
         JavaScriptReferenceHeaderItem.forReference(GLOBAL_JS).render(response);
