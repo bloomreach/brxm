@@ -88,7 +88,7 @@ public class EmbeddingTest {
                 .get("http://localhost:" + portNumber + "/embedTomcat/")
         .then()
                 .statusCode(200)
-                .content(equalTo("Hello world from plain servlet"));
+                .body(equalTo("Hello world from plain servlet"));
 
         tomcat.stop();
         tomcat.destroy();
@@ -120,7 +120,7 @@ public class EmbeddingTest {
                 .get("http://localhost:" + portNumber + "/embedCXF/")
         .then()
                 .statusCode(200)
-                .content(equalTo("Hello world from CXF"));
+                .body(equalTo("Hello world from CXF"));
 
         tomcat.stop();
         tomcat.destroy();
@@ -149,7 +149,7 @@ public class EmbeddingTest {
                 .get("http://localhost:" + portNumber + "/embedRepositoryJaxrsServlet/")
         .then()
                 .statusCode(200)
-                .content(equalTo("Hello world from CXF"));
+                .body(equalTo("Hello world from CXF"));
 
         tomcat.stop();
         tomcat.destroy();

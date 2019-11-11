@@ -139,7 +139,7 @@ public class RepositoryJaxrsServiceTest extends RepositoryTestCase {
                 .get("http://localhost:" + portNumber + "/META-INF/cxf/")
         .then()
                 .statusCode(200)
-                .content(equalTo("Hello world from CXF"));
+                .body(equalTo("Hello world from CXF"));
     }
 
     private void expectOK(String pathAndMessage) {
@@ -161,7 +161,7 @@ public class RepositoryJaxrsServiceTest extends RepositoryTestCase {
         client.get("http://localhost:" + portNumber + "/jaxrs/" + path + "/")
         .then()
                 .statusCode(200)
-                .content(equalTo(message));
+                .body(equalTo(message));
     }
 
     private void expectStatusCode(String path, int statusCode) {
@@ -224,7 +224,7 @@ public class RepositoryJaxrsServiceTest extends RepositoryTestCase {
                 .get("http://localhost:" + portNumber + "/jaxrs/simple")
         .then()
                .statusCode(200)
-               .content(equalTo("simple"));
+               .body(equalTo("simple"));
     }
 
     @Test
