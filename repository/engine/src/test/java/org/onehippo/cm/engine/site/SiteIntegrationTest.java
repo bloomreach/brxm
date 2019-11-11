@@ -73,7 +73,93 @@ public class SiteIntegrationTest {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
-        @Test
+    @Test
+    public void site_with_webfiles() throws Exception {
+
+        final String fixtureName = "webfiles";
+        final String fixture2Name = "webfiles2";
+        final Fixture fixture = new Fixture(fixtureName);
+
+        final HippoWebappContextRegistry hippoWebappContextRegistry = HippoWebappContextRegistry.get();
+
+        try {
+            HippoWebappContext siteContext = createSiteApplicationContext(fixtureName, "sitewithwebfiles");
+            hippoWebappContextRegistry.register(siteContext);
+
+            fixture.test(session -> {
+                try {
+                    session.getNode("/webfiles/webfilebundle/css/test.css");
+                } catch (PathNotFoundException ex) {
+                    fail("Initial import of webfiles failed");
+                }
+
+                hippoWebappContextRegistry.unregister(siteContext);
+                session.logout();
+                IsolatedRepository repository = fixture.getRepository();
+
+                //Register same site with different webfiles while repository is stopped
+                repository.stop();
+                hippoWebappContextRegistry.register(createSiteApplicationContext(fixture2Name, "sitewithwebfiles"));
+
+                repository.startRepository();
+                session = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
+
+                try {
+                    session.getNode("/webfiles/webfilebundle/css/test2.css");
+                } catch (PathNotFoundException ex) {
+                    fail("Webfiles should bootstrap when changed, even when there are no changes in config or content");
+                }
+                session.logout();
+            });
+        } finally {
+            hippoWebappContextRegistry.getEntries().forEach(e -> HippoWebappContextRegistry.get().unregister(e.getServiceObject()));
+        }
+    }
+
+    @Test
+    public void site_with_webfiles_loaded_after_repo() throws Exception {
+
+        final String fixtureName = "webfiles";
+        final String fixture2Name = "webfiles2";
+        final Fixture fixture = new Fixture(fixtureName);
+
+        final HippoWebappContextRegistry hippoWebappContextRegistry = HippoWebappContextRegistry.get();
+
+        try {
+            HippoWebappContext siteContext = createSiteApplicationContext(fixtureName, "sitewithwebfiles");
+            hippoWebappContextRegistry.register(siteContext);
+
+            fixture.test(session -> {
+                try {
+                    session.getNode("/webfiles/webfilebundle/css/test.css");
+                } catch (PathNotFoundException ex) {
+                    fail("Initial import of webfiles failed");
+                }
+
+                hippoWebappContextRegistry.unregister(siteContext);
+                session.logout();
+
+                IsolatedRepository repository = fixture.getRepository();
+                repository.stop();
+
+                //Register same site with different webfiles after repository is started
+                repository.startRepository();
+                hippoWebappContextRegistry.register(createSiteApplicationContext(fixture2Name, "sitewithwebfiles"));
+
+                session = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
+                try {
+                    session.getNode("/webfiles/webfilebundle/css/test2.css");
+                } catch (PathNotFoundException ex) {
+                    fail("Webfiles should bootstrap when changed, even when there are no changes in config or content");
+                }
+                session.logout();
+            });
+        } finally {
+            hippoWebappContextRegistry.getEntries().forEach(e -> HippoWebappContextRegistry.get().unregister(e.getServiceObject()));
+        }
+    }
+
+    @Test
     public void sites_with_content() throws Exception {
 
         final String fixtureName = "sites_with_existing_content";
@@ -288,9 +374,7 @@ public class SiteIntegrationTest {
 
         System.setProperty(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED, "false");
         final String fixtureName = "sites_before_cms";
-
-        final Set<String> sharedClasses = getSharedClasses();
-        final Fixture fixture = new Fixture(fixtureName, sharedClasses);
+        final Fixture fixture = new Fixture(fixtureName);
 
         final HippoWebappContextRegistry hippoWebappContextRegistry = HippoWebappContextRegistry.get();
         try {
@@ -324,9 +408,7 @@ public class SiteIntegrationTest {
 
         System.setProperty(SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED, "false");
         final String fixtureName = "sites_before_cms";
-
-        final Set<String> sharedClasses = getSharedClasses();
-        final Fixture fixture = new Fixture(fixtureName, sharedClasses);
+        final Fixture fixture = new Fixture(fixtureName);
 
         final HippoWebappContextRegistry hippoWebappContextRegistry = HippoWebappContextRegistry.get();
         try {
@@ -348,15 +430,15 @@ public class SiteIntegrationTest {
         }
     }
 
-    private Set<String> getSharedClasses() {
-        return ImmutableSet.of("org.onehippo.cm.engine.Configuration",
-                "com.bloomreach.xm.repository",
-                "org.hippoecm.repository.",
-                "org.apache.jackrabbit",
-                "org.onehippo.repository.",
-                "org.quartz.spi.",
-                "org.onehippo.cm.");
-    }
+    private static Set<String> sharedClasses = ImmutableSet.of(
+            "org.onehippo.cm.engine.Configuration",
+            "org.hippoecm.repository.",
+            "org.apache.jackrabbit",
+            "org.onehippo.repository.",
+            "org.quartz.spi.",
+            "org.onehippo.cm.",
+            "org.onehippo.cms7.services.",
+            "org.onehippo.cms7.services.webfiles.");
 
     public HippoWebappContext createSiteApplicationContext(final String fixtureName, final String siteName) throws MalformedURLException {
         final Path siteBasePath = getSiteBasePath(fixtureName, getBaseDir());
@@ -389,13 +471,14 @@ public class SiteIntegrationTest {
         private Set<String> sharedClasses = new HashSet<>();
 
         public Fixture(final String fixtureName) throws IOException {
-            this(new SiteModuleInfo(fixtureName));
+            this(fixtureName, SiteIntegrationTest.sharedClasses);
         }
 
         public Fixture(final String fixtureName, final Set<String> sharedClasses) throws IOException {
             this(new SiteModuleInfo(fixtureName));
-            if (sharedClasses != null)
-            this.sharedClasses.addAll(sharedClasses);
+            if (sharedClasses != null) {
+                this.sharedClasses.addAll(sharedClasses);
+            }
         }
 
         private Fixture(final ModuleInfo... modules) throws IOException {
@@ -433,7 +516,6 @@ public class SiteIntegrationTest {
                     additionalClasspathURLs.add(workingDirectory.toAbsolutePath().toUri().toURL());
                 }
 
-                this.sharedClasses.add("org.onehippo.cms7.services.");
                 repository =
                         new IsolatedRepository(folder.getRoot(), projectPath.toFile(), additionalClasspathURLs,
                                 this.sharedClasses, false);
@@ -445,9 +527,10 @@ public class SiteIntegrationTest {
                 run.getJcrRunner().run(session);
                 run.getPostConditionValidator().validate(session, repository.getRuntimeConfigurationModel());
 
-                if (session.isLive()) {
+                if(session.isLive()){
                     session.logout();
                 }
+
                 repository.stop();
             }
         }
