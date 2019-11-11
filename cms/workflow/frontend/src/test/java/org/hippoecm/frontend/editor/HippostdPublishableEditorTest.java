@@ -50,7 +50,7 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verify;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"javax.management.*"})
+@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*", "com.sun.org.apache.xalan.*", "javax.activation.*", "javax.net.ssl.*"})
 @PrepareForTest({HippostdPublishableEditor.class, AbstractCmsEditor.class})
 public class HippostdPublishableEditorTest extends PluginTest {
 

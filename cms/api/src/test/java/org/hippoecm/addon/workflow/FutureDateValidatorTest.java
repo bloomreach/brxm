@@ -45,7 +45,7 @@ import static org.powermock.api.easymock.PowerMock.mockStatic;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
+@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*", "com.sun.org.apache.xalan.*", "javax.activation.*", "javax.net.ssl.*"})
 @PrepareForTest({DateTimePrinter.class, FutureDateValidator.class, Instant.class})
 public class FutureDateValidatorTest {
 

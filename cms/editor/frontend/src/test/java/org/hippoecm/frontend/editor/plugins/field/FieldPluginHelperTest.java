@@ -35,7 +35,7 @@ import org.powermock.reflect.Whitebox;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"javax.management.*"})
+@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*", "com.sun.org.apache.xalan.*", "javax.activation.*", "javax.net.ssl.*"})
 @PrepareForTest({FieldPluginHelper.class})
 public class FieldPluginHelperTest {
 
