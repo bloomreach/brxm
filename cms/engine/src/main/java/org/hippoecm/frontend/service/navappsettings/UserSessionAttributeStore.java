@@ -18,25 +18,24 @@ package org.hippoecm.frontend.service.navappsettings;
 import java.io.Serializable;
 
 import org.apache.wicket.Session;
-import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
 
-public class UserSessionAttributeStore implements SessionAttributeStore {
+class UserSessionAttributeStore implements SessionAttributeStore, Serializable {
 
-    private final transient PluginUserSession userSession;
+    private final SerializableSupplier<UserSession> userSessionSupplier;
 
-    public UserSessionAttributeStore(final PluginUserSession userSession) {
-        this.userSession = userSession;
+    public UserSessionAttributeStore(final SerializableSupplier<UserSession> userSessionSupplier) {
+        this.userSessionSupplier = userSessionSupplier;
     }
 
 
     @Override
     public Serializable getAttribute(final String name) {
-        return userSession.getAttribute(name);
+        return userSessionSupplier.get().getAttribute(name);
     }
 
     @Override
     public Session setAttribute(final String name, final Serializable value) {
-        return userSession.setAttribute(name, value);
+        return userSessionSupplier.get().setAttribute(name, value);
     }
 }
