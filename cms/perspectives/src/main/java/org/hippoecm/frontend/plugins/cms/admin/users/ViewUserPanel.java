@@ -72,7 +72,7 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
     private static final Logger log = LoggerFactory.getLogger(ViewUserPanel.class);
 
     private final IModel<User> model;
-    private final boolean isSecurityUserManager;
+    private final boolean isSecurityUserAdmin;
     private final UserRolesListView userRolesListView;
     private final AddUserRolePanel addUserRolePanel;
     private final PermissionsListView permissionsListView;
@@ -93,7 +93,7 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
         dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
 
         final HippoSession session = UserSession.get().getJcrSession();
-        isSecurityUserManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_ADMIN);
+        isSecurityUserAdmin = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_ADMIN);
 
         add(new Label("view-user-panel-title", new StringResourceModel("user-view-title", this).setModel(userModel)));
         // common user properties
@@ -130,7 +130,7 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
                 return new EditUserPanel(componentId, breadCrumbModel, userModel);
             }
         };
-        edit.setVisible(isSecurityUserManager && !user.isExternal());
+        edit.setVisible(isSecurityUserAdmin && !user.isExternal());
         add(edit);
 
         final PanelPluginBreadCrumbLink password = new PanelPluginBreadCrumbLink("set-user-password", breadCrumbModel) {
@@ -139,7 +139,7 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
                 return new SetPasswordPanel(componentId, breadCrumbModel, userModel, context);
             }
         };
-        password.setVisible(isSecurityUserManager && !user.isExternal());
+        password.setVisible(isSecurityUserAdmin && !user.isExternal());
         add(password);
 
         final AjaxLinkLabel deleteUserLabel = new AjaxLinkLabel("delete-user", new ResourceModel("user-delete")) {
@@ -154,13 +154,13 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
                 dialogService.show(confirm);
             }
         };
-        deleteUserLabel.setVisible(isSecurityUserManager && !user.isExternal());
+        deleteUserLabel.setVisible(isSecurityUserAdmin && !user.isExternal());
         add(deleteUserLabel);
 
         userRolesListView = new UserRolesListView("userroles", context);
         add(userRolesListView);
         addUserRolePanel = new AddUserRolePanel("add-userroles");
-        addUserRolePanel.setVisible(isSecurityUserManager);
+        addUserRolePanel.setVisible(isSecurityUserAdmin);
         add(addUserRolePanel);
 
         permissionsListView = new PermissionsListView("permissions");
@@ -247,7 +247,7 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
                 item.add(new ViewUserRoleLinkLabel("name", userRoleModel, ViewUserPanel.this, context));
                 item.add(new Label("description", Model.of(userRoleModel.getObject().getDescription())));
             }
-            if (isSecurityUserManager) {
+            if (isSecurityUserAdmin) {
                 item.add(new RemoveUserRoleActionLinkLabel("remove-userrole",
                         new ResourceModel("userrole-remove-action"), userRoleName));
             } else {

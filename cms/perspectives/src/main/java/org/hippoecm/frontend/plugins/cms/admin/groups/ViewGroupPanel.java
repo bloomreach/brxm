@@ -85,7 +85,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
     private final UserRolesListView userRolesListView;
     private final AddUserRolePanel addUserRolePanel;
 
-    private final boolean isSecurityUserManager;
+    private final boolean isSecurityUserAdmin;
     private final IDialogService dialogService;
 
     public ViewGroupPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel,
@@ -94,7 +94,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         this.context = context;
 
         final HippoSession session = UserSession.get().getJcrSession();
-        isSecurityUserManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_ADMIN);
+        isSecurityUserAdmin = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_ADMIN);
         this.group = group;
         dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
 
@@ -107,7 +107,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
                 return new EditGroupPanel(componentId, breadCrumbModel, groupModel);
             }
         };
-        edit.setVisible(isSecurityUserManager && !group.isExternal() && !group.isSystem());
+        edit.setVisible(isSecurityUserAdmin && !group.isExternal() && !group.isSystem());
         add(edit);
 
         final PanelPluginBreadCrumbLink members = new PanelPluginBreadCrumbLink("set-group-members", breadCrumbModel) {
@@ -116,7 +116,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
                 return new SetMembersPanel(componentId, breadCrumbModel, groupModel);
             }
         };
-        members.setVisible(isSecurityUserManager && !group.isExternal() && !group.isSystem());
+        members.setVisible(isSecurityUserAdmin && !group.isExternal() && !group.isSystem());
         add(members);
 
         final AjaxLinkLabel deleteGroupLabel = new AjaxLinkLabel("delete-group", new ResourceModel("group-delete")) {
@@ -132,7 +132,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
                 dialogService.show(confirm);
             }
         };
-        deleteGroupLabel.setVisible(isSecurityUserManager && !group.isExternal() && !group.isSystem());
+        deleteGroupLabel.setVisible(isSecurityUserAdmin && !group.isExternal() && !group.isSystem());
         add(deleteGroupLabel);
 
         // common group properties
@@ -142,7 +142,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
         userRolesListView = new UserRolesListView("userroles", context);
         add(userRolesListView);
         addUserRolePanel = new AddUserRolePanel("add-userroles");
-        addUserRolePanel.setVisible(isSecurityUserManager && !group.isSystem());
+        addUserRolePanel.setVisible(isSecurityUserAdmin && !group.isSystem());
         add(addUserRolePanel);
 
         permissionsListView = new PermissionsListView("permissions");
@@ -287,7 +287,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
                 item.add(new ViewUserRoleLinkLabel("name", userRoleModel, ViewGroupPanel.this, context));
                 item.add(new Label("description", Model.of(userRoleModel.getObject().getDescription())));
             }
-            if (isSecurityUserManager && !group.isSystem()) {
+            if (isSecurityUserAdmin && !group.isSystem()) {
                 item.add(new RemoveUserRoleActionLinkLabel("remove-userrole",
                         new ResourceModel("userrole-remove-action"), userRoleName));
             } else {
@@ -412,7 +412,7 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
             item.add(new ViewUserLinkLabel("username", detachableUser, ViewGroupPanel.this, context));
             final Component actionLinkLabel = new DeleteGroupMembershipActionLinkLabel("remove",
                     new ResourceModel("group-member-remove-action"), user);
-            actionLinkLabel.setVisible(isSecurityUserManager && !group.isExternal() && !group.isSystem());
+            actionLinkLabel.setVisible(isSecurityUserAdmin && !group.isExternal() && !group.isSystem());
             item.add(actionLinkLabel);
         }
 
