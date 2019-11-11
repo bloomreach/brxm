@@ -81,7 +81,9 @@ export class AuthService {
     } finally {
       const loginLocation = this.getLoginLocation(loginMessageKey);
       this.busyIndicatorService.hide();
-      this.document.location.replace(loginLocation);
+      setTimeout(() => {
+        this.document.location.replace(loginLocation);
+      }, 1000);
     }
   }
 
