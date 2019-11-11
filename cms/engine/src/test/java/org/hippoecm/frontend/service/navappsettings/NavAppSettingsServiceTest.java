@@ -158,7 +158,7 @@ public class NavAppSettingsServiceTest {
         expect(navAppResourceService.getNavigationItemsResources()).andStubReturn(Collections.emptySet());
         replay(navAppResourceService);
 
-        this.navAppSettingsService = new NavAppSettingsService(context, config, () -> userSession, sessionAttributeStore, navAppResourceService);
+        this.navAppSettingsService = new NavAppSettingsService(context, config, () -> userSession, () -> sessionAttributeStore, navAppResourceService);
 
         ThreadContext.setApplication(webApplication);
     }
