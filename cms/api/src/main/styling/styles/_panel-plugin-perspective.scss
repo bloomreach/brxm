@@ -75,39 +75,52 @@ table.hippo-panel-plugin-body {
 .hippo-panel-plugin-navigation li {
   display: block;
   float: left;
-}
 
-.hippo-panel-plugin-navigation li span {
-  display: block;
-  float: left;
-  font-weight: normal;
-  color: $dark-shade;
-  font-size: 11px;
-}
+  span {
+    display: block;
+    float: left;
+    font-weight: normal;
+    color: $dark-shade;
+  }
 
-.hippo-panel-plugin-navigation li a {
-  color: $darkest-shade;
-  width: 230px;
-  border: 1px solid $lightest-shade;
-  height: 47px;
-  padding: 10px;
-  float: left;
-  margin: 10px;
-  font-size: 12px;
-  font-weight: bold;
-}
+  a {
+    color: $darkest-shade;
+    border: 1px solid $gray12;
+    border-radius: 4px;
+    float: left;
+    height: 70px;
+    margin: 8px;
+    padding: 16px;
+    text-decoration: none;
+    width: 160px;
 
-.hippo-panel-plugin-navigation li a div {
-  width: 150px;
-  float: right;
-}
+    div {
+      font-weight: bold;
 
-.hippo-panel-plugin-navigation li a img {
-  float: left;
-}
+      > div {
+        margin-bottom: 4px;
+      }
+    }
 
-.hippo-panel-plugin-navigation li a:hover {
-  border: 1px solid $dark-shade;
+    img {
+      float: left;
+    }
+
+    &:hover {
+      border: 1px solid $dark-shade;
+    }
+  }
+
+  &.icon-48 {
+    a {
+      width: 230px;
+    }
+
+    div {
+      float: right;
+      width: 150px;
+    }
+  }
 }
 
 .hippo-panel-plugin-breadcrumbs-backbutton .breadcrumbs-separator {
