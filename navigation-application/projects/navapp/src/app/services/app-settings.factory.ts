@@ -46,5 +46,7 @@ export const appSettingsFactory = (windowRef: WindowRef, location: Location, log
     settings.iframesConnectionTimeout = 30000;
   }
 
+  logger.info('App settings', settings);
+
   return settings;
 };

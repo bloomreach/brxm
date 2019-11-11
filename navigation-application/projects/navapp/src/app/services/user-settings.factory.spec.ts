@@ -25,6 +25,7 @@ describe('userSettingsFactory', () => {
 
   const loggerMock = jasmine.createSpyObj('NGXLogger', [
     'error',
+    'info',
   ]);
 
   it('should print an error when the global configuration object is not set', () => {
@@ -48,7 +49,7 @@ describe('userSettingsFactory', () => {
       };
     });
 
-    it('should print an error when the app settings are not set in the global object', () => {
+    it('should log an error when the app settings are not set in the global object', () => {
       userSettingsFactory(windowRefMock, loggerMock);
 
       expect(loggerMock.error).toHaveBeenCalledWith('User settings part of the global configuration object is not set');
@@ -78,12 +79,18 @@ describe('userSettingsFactory', () => {
         };
       });
 
-      it('should return the app settings object', () => {
+      it('should return the user settings object', () => {
         const expected = userSettingsMock;
 
         const actual = userSettingsFactory(windowRefMock, loggerMock);
 
         expect(actual).toEqual(expected);
+      });
+
+      it('should log user settings', () => {
+        userSettingsFactory(windowRefMock, loggerMock);
+
+        expect(loggerMock.info).toHaveBeenCalledWith('User settings', userSettingsMock);
       });
     });
   });

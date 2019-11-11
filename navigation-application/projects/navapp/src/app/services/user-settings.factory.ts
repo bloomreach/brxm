@@ -34,5 +34,7 @@ export const userSettingsFactory = (windowRef: WindowRef, logger: NGXLogger): Us
     return {} as any;
   }
 
+  logger.info('User settings', globalSettings.userSettings);
+
   return globalSettings.userSettings;
 };

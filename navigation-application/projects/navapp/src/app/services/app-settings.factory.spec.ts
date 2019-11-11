@@ -29,6 +29,7 @@ describe('appSettingsFactory', () => {
 
   const loggerMock = jasmine.createSpyObj('NGXLogger', [
     'error',
+    'info',
   ]);
 
   it('should print an error when the global configuration object is not set', () => {
@@ -86,6 +87,12 @@ describe('appSettingsFactory', () => {
         const actual = appSettingsFactory(windowRefMock, locationMock, loggerMock);
 
         expect(actual).toEqual(expected);
+      });
+
+      it('should log app settings', () => {
+        appSettingsFactory(windowRefMock, locationMock, loggerMock);
+
+        expect(loggerMock.info).toHaveBeenCalledWith('App settings', appSettingsMock);
       });
 
       describe('basePath', () => {

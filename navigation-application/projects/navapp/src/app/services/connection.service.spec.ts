@@ -17,6 +17,7 @@
 import { RendererFactory2 } from '@angular/core';
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import * as comLib from '@bloomreach/navapp-communication';
+import { NGXLogger } from 'ngx-logger';
 
 import { AppSettingsMock } from '../models/dto/app-settings.mock';
 import { UserSettingsMock } from '../models/dto/user-settings.mock';
@@ -27,6 +28,10 @@ import { USER_SETTINGS } from './user-settings';
 
 describe('ConnectionService', () => {
   let connectionService: ConnectionService;
+
+  const loggerMock = jasmine.createSpyObj('NGXLogger', [
+    'debug',
+  ]);
 
   beforeEach(() => {
     const appSettingsMock = new AppSettingsMock();
@@ -46,6 +51,7 @@ describe('ConnectionService', () => {
         { provide: APP_SETTINGS, useValue: appSettingsMock },
         { provide: USER_SETTINGS, useValue: userSettingsMock },
         { provide: RendererFactory2, useValue: rendererMock },
+        { provide: NGXLogger, useValue: loggerMock },
       ],
     });
 
