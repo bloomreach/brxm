@@ -324,8 +324,7 @@ public class RootResourceTest extends AbstractResourceTest {
     @Test
     public void deletes_channel_and_publishes_event() throws ChannelException, RepositoryException {
         mock_HstConfigurationUtils_persistChanges(1);
-
-        final List<Mount> mountsOfChannel = Arrays.asList(EasyMock.createMock(Mount.class));
+        final List<Mount> mountsOfChannel = Arrays.asList(EasyMock.<Mount>mock(Mount.class));
 
         final Channel channelFoo = new Channel("channel-foo");
 
