@@ -69,7 +69,7 @@ import static org.powermock.api.easymock.PowerMock.replayAll;
 import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"javax.management.*","javax.net.ssl.*"})
+@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*", "com.sun.org.apache.xalan.*", "javax.activation.*", "javax.net.ssl.*"})
 @PrepareForTest({DocumentsService.class, DocumentTypesService.class, SlugFactory.class, ContentResource.class})
 public class ContentResourceTest extends CXFTest {
 
