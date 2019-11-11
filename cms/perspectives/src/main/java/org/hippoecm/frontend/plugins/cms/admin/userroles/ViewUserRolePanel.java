@@ -87,12 +87,10 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
         super(id, breadCrumbModel);
         this.context = context;
         final HippoSession session = UserSession.get().getJcrSession();
-        isSecurityApplManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_MANAGER);
-
-        setOutputMarkupId(true);
+        isSecurityApplManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_ADMIN);
 
         this.userRoleModel = userRoleModel;
-        UserRole userRole = userRoleModel.getObject();
+        final UserRole userRole = userRoleModel.getObject();
         dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
 
         add(new Label("view-userrole-panel-title", new StringResourceModel("userrole-view-title", this).setModel(userRoleModel)));
@@ -117,9 +115,7 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
                 final Confirm confirm = new Confirm(
                         getString("userrole-delete-title", userRoleModel),
                         getString("userrole-delete-text", userRoleModel)
-                ).ok(() -> {
-                    deleteUserRole();
-                });
+                ).ok(() -> deleteUserRole());
 
                 dialogService.show(confirm);
             }
@@ -153,12 +149,12 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
     }
 
     @Override
-    public IModel<String> getTitle(Component component) {
+    public IModel<String> getTitle(final Component component) {
         return new StringResourceModel("userrole-view-title", component).setModel(userRoleModel);
     }
 
     @Override
-    public void onActivate(IBreadCrumbParticipant previous) {
+    public void onActivate(final IBreadCrumbParticipant previous) {
         super.onActivate(previous);
         if (!userRoleModel.getObject().isSystem()) {
             userRolesListView.updateUserRoles();
@@ -195,7 +191,7 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
         final MapModel nameModel = new MapModel<>(Collections.singletonMap("name", userRoleToRemove));
         try {
             if (userRole != null && userRole.getRoles().contains(userRoleToRemove)) {
-                UserRoleBean userRoleBean = new UserRoleBean(userRole);
+                final UserRoleBean userRoleBean = new UserRoleBean(userRole);
                 userRoleBean.getRoles().remove(userRoleToRemove);
                 userRoleModel.setObject(SecurityManagerHelper.getUserRolesManager().updateUserRole(userRoleBean));
                 info(getString("userrole-removed", nameModel));
@@ -225,14 +221,14 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
 
             final AjaxButton submit = new AjaxButton("submit", hippoForm) {
                 @Override
-                protected void onSubmit(AjaxRequestTarget target, Form form) {
+                protected void onSubmit(final AjaxRequestTarget target, final Form form) {
                     // clear old feedbacks prior showing new ones
                     hippoForm.clearFeedbackMessages();
                     final UserRole userRole = userRoleModel.getObject();
                     final MapModel nameModel = new MapModel<>(Collections.singletonMap("name", selectedUserRole));
                     try {
                         if (userRole != null && !userRole.getRoles().contains(selectedUserRole)) {
-                            UserRoleBean userRoleBean = new UserRoleBean(userRole);
+                            final UserRoleBean userRoleBean = new UserRoleBean(userRole);
                             userRoleBean.getRoles().add(selectedUserRole);
                             userRoleModel.setObject(SecurityManagerHelper.getUserRolesManager().updateUserRole(userRoleBean));
                             info(getString("userrole-added", nameModel));
@@ -338,9 +334,7 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
                 final Confirm confirm = new Confirm(
                         getString("userrole-remove-title", nameModel),
                         getString("userrole-remove-text", nameModel)
-                ).ok(() -> {
-                    removeUserRole(userRoleToRemove);
-                });
+                ).ok(() -> removeUserRole(userRoleToRemove));
                 dialogService.show(confirm);
                 target.add(ViewUserRolePanel.this);
             }

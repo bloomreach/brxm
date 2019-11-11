@@ -1,12 +1,12 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -32,12 +32,11 @@ import org.slf4j.LoggerFactory;
 
 public class PasswordValidationServiceImpl extends Plugin implements IPasswordValidationService {
 
-    private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(PasswordValidationServiceImpl.class);
 
     private List<IPasswordValidator> validators;
 
-    public PasswordValidationServiceImpl(IPluginContext context, IPluginConfig config) {
+    public PasswordValidationServiceImpl(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         loadConfiguration();
@@ -46,13 +45,13 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
 
     private void loadConfiguration() {
         // get the child pluginconfig nodes that define the validators
-        Set<IPluginConfig> configs = getPluginConfig().getPluginConfigSet();
-        validators = new ArrayList<IPasswordValidator>(configs.size());
-        List<IPasswordValidator> optionalValidators = new ArrayList<IPasswordValidator>(configs.size());
-        for (IPluginConfig config : configs) {
-            String validatorClassName = config.getString("validator.class");
+        final Set<IPluginConfig> configs = getPluginConfig().getPluginConfigSet();
+        validators = new ArrayList<>(configs.size());
+        final List<IPasswordValidator> optionalValidators = new ArrayList<>(configs.size());
+        for (final IPluginConfig config : configs) {
+            final String validatorClassName = config.getString("validator.class");
             try {
-                Class candidateClass = Class.forName(validatorClassName);
+                final Class candidateClass = Class.forName(validatorClassName);
 
                 if (!IPasswordValidator.class.isAssignableFrom(candidateClass)) {
                     // throw an Exception if the cast below will fail..
@@ -60,11 +59,12 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
                             "Class {} does not implement IPasswordValidator".replace("{}", candidateClass.getName()));
                 }
 
-                @SuppressWarnings({"unchecked"}) // If clause above already make 100% this cast will succeed
+                @SuppressWarnings({"unchecked"}) final // If clause above already make 100% this cast will succeed
                         Class<IPasswordValidator> validatorClass = (Class<IPasswordValidator>) candidateClass;
 
-                Constructor<IPasswordValidator> validatorConstructor = validatorClass.getConstructor(IPluginConfig.class);
-                IPasswordValidator validator = validatorConstructor.newInstance(config);
+                final Constructor<IPasswordValidator> validatorConstructor = validatorClass.getConstructor(
+                        IPluginConfig.class);
+                final IPasswordValidator validator = validatorConstructor.newInstance(config);
                 if (validator.isOptional()) {
                     optionalValidators.add(validator);
                 } else {
@@ -76,7 +76,7 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
         }
 
         // get the required password strength
-        int requiredStrength = getPluginConfig().getInt("password.strength", 0);
+        final int requiredStrength = getPluginConfig().getInt("password.strength", 0);
 
         // add the optional password validator
         validators.add(new OptionalPasswordValidator(optionalValidators, requiredStrength));
@@ -84,10 +84,10 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
     }
 
     @Override
-    public List<PasswordValidationStatus> checkPassword(String password, User user) throws RepositoryException {
-        List<PasswordValidationStatus> result = new ArrayList<PasswordValidationStatus>(validators.size());
-        for (IPasswordValidator validator : validators) {
-            PasswordValidationStatus status = validator.checkPassword(password, user);
+    public List<PasswordValidationStatus> checkPassword(final String password, final User user) throws RepositoryException {
+        final List<PasswordValidationStatus> result = new ArrayList<>(validators.size());
+        for (final IPasswordValidator validator : validators) {
+            final PasswordValidationStatus status = validator.checkPassword(password, user);
             result.add(status);
         }
         return result;
@@ -99,12 +99,10 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
 
     private static class OptionalPasswordValidator implements IPasswordValidator {
 
-        private static final long serialVersionUID = 1L;
-
         private final List<IPasswordValidator> optionalValidators;
         private final int requiredStrength;
 
-        private OptionalPasswordValidator(List<IPasswordValidator> optionalValidators, int requiredStrength) {
+        private OptionalPasswordValidator(final List<IPasswordValidator> optionalValidators, final int requiredStrength) {
             this.optionalValidators = optionalValidators;
             this.requiredStrength = requiredStrength;
             if (requiredStrength > optionalValidators.size()) {
@@ -114,10 +112,10 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
         }
 
         @Override
-        public PasswordValidationStatus checkPassword(String password, User user) throws RepositoryException {
+        public PasswordValidationStatus checkPassword(final String password, final User user) throws RepositoryException {
             int passwordStrength = 0;
-            for (IPasswordValidator validator : optionalValidators) {
-                PasswordValidationStatus status = validator.checkPassword(password, user);
+            for (final IPasswordValidator validator : optionalValidators) {
+                final PasswordValidationStatus status = validator.checkPassword(password, user);
                 if (status.accepted()) {
                     passwordStrength++;
                 }
@@ -135,11 +133,11 @@ public class PasswordValidationServiceImpl extends Plugin implements IPasswordVa
 
         @Override
         public String getDescription() {
-            StringBuilder description = new StringBuilder();
+            final StringBuilder description = new StringBuilder();
             description.append(new ClassResourceModel("message", PasswordValidationServiceImpl.class,
                     requiredStrength).getObject());
             int counter = 1;
-            for (IPasswordValidator validator : optionalValidators) {
+            for (final IPasswordValidator validator : optionalValidators) {
                 description.append("\n").append(counter).append(") ").append(validator.getDescription());
                 if (counter < optionalValidators.size()) {
                     description.append(";");

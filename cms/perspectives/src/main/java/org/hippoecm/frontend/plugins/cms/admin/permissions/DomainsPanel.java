@@ -43,7 +43,6 @@ public class DomainsPanel extends AdminBreadCrumbPanel {
 
     public DomainsPanel(final String id, final IBreadCrumbModel breadCrumbModel, final IPluginContext pluginContext) {
         super(id, breadCrumbModel);
-        setOutputMarkupId(true);
 
         final List<IColumn<DomainAuth, String>> columns = new ArrayList<>();
 

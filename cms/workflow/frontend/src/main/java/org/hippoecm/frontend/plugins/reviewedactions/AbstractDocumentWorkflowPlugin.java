@@ -23,7 +23,6 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang3.Validate;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.StdWorkflow;
@@ -38,15 +37,17 @@ import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.util.DocumentUtils;
-import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNode;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.util.WorkflowUtils;
 import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.HippoStdNodeType.NT_DIRECTORY;
+import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
 public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
 
@@ -92,14 +93,40 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
             WorkflowDescriptorModel wdm = getModel();
             if (wdm != null) {
                 Node node = getHandleOrUnpublishedVariant(wdm.getWorkflow());
-                Validate.isTrue(node.isNodeType(HippoNodeType.NT_HANDLE));
+                if (!isHandleInFolder(node)) {
+                    logWarning(String.format("Node '{}' is not a handle in a folder, cannot return valid folder, return " +
+                            "root folder", node.getPath()), new Throwable("stack trace"));
+                    return folderModel;
+                }
                 folderModel = new JcrNodeModel(node.getParent());
-                Validate.isTrue(folderModel.getNode().isNodeType(HippoStdNodeType.NT_FOLDER));
             }
         } catch (RepositoryException ex) {
-            log.warn("Could not determine folder path", ex);
+            logWarning(String.format("Could not determine folder path, return root folder : %s", ex.toString()), ex);
         }
         return folderModel;
+    }
+
+    private void logWarning(final String msg, final Throwable th) {
+        if (log.isDebugEnabled()) {
+            log.warn(msg, th);
+        } else {
+            log.warn(msg);
+        }
+    }
+
+    private boolean isHandleInFolder(final Node node) throws RepositoryException {
+        if (!node.isNodeType(NT_HANDLE)) {
+            return false;
+        }
+        Node parent = node.getParent();
+        if (parent.isNodeType(NT_FOLDER)) {
+            return true;
+        }
+        if (parent.isNodeType(NT_DIRECTORY)) {
+            return true;
+        }
+
+        return false;
     }
 
     protected Node getVariant(final Node handle, final WorkflowUtils.Variant variant) throws RepositoryException {

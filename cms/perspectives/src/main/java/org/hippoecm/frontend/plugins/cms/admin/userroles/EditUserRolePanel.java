@@ -35,10 +35,8 @@ import org.hippoecm.frontend.plugins.cms.admin.SecurityManagerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.bloomreach.xm.repository.security.RepositorySecurityManager;
 import com.bloomreach.xm.repository.security.UserRole;
 import com.bloomreach.xm.repository.security.UserRoleBean;
-import com.bloomreach.xm.repository.security.UserRolesManager;
 
 public class EditUserRolePanel extends AdminBreadCrumbPanel {
     private static final Logger log = LoggerFactory.getLogger(EditUserRolePanel.class);
@@ -47,7 +45,6 @@ public class EditUserRolePanel extends AdminBreadCrumbPanel {
 
     public EditUserRolePanel(final String id, final IBreadCrumbModel breadCrumbModel, final IModel<UserRole> userRoleModel) {
         super(id, breadCrumbModel);
-        setOutputMarkupId(true);
 
         this.userRoleModel = userRoleModel;
 
@@ -64,7 +61,7 @@ public class EditUserRolePanel extends AdminBreadCrumbPanel {
         final AjaxButton saveButton = new AjaxButton("save-button", form) {
 
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
+            protected void onSubmit(final AjaxRequestTarget target, final Form form) {
                 String description = descriptionField.getDefaultModelObjectAsString();
                 if (StringUtils.isBlank(description)) {
                     description = null;
@@ -72,7 +69,7 @@ public class EditUserRolePanel extends AdminBreadCrumbPanel {
                 final UserRole userRole = userRoleModel.getObject();
                 try {
                     // create a userRoleTemplate from the current backend UserRole
-                    UserRoleBean userRoleTemplate =
+                    final UserRoleBean userRoleTemplate =
                             new UserRoleBean(SecurityManagerHelper.getUserRolesProvider().getRole(userRole.getName()));
                     userRoleTemplate.setDescription(description);
                     userRoleModel.setObject(SecurityManagerHelper.getUserRolesManager().updateUserRole(userRoleTemplate));
@@ -93,14 +90,14 @@ public class EditUserRolePanel extends AdminBreadCrumbPanel {
 
         form.add(new AjaxButton("cancel-button") {
             @Override
-            protected void onSubmit(AjaxRequestTarget target, Form form) {
+            protected void onSubmit(final AjaxRequestTarget target, final Form form) {
                 activateParent();
             }
         }.setDefaultFormProcessing(false));
     }
 
     @Override
-    public IModel<String> getTitle(Component component) {
+    public IModel<String> getTitle(final Component component) {
         return new StringResourceModel("userrole-edit-title", component).setModel(userRoleModel);
     }
 

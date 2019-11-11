@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.wicket.Component;
-import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.DataGridView;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
@@ -34,28 +32,22 @@ import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
 
 public class SystemInfoPanel extends AdminBreadCrumbPanel {
 
-    private static final long serialVersionUID = 1L;
-
-    private SystemInfoDataProvider memoryInfo = new SystemInfoDataProvider();
+    private final SystemInfoDataProvider memoryInfo = new SystemInfoDataProvider();
 
     public SystemInfoPanel(final String id, final IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
-        setOutputMarkupId(true);
 
-        List<ICellPopulator> columns = new ArrayList<ICellPopulator>(2);
+        final List<ICellPopulator> columns = new ArrayList<>(2);
         columns.add(new PropertyPopulator("Key"));
         columns.add(new PropertyPopulator("Value"));
         add(new DataGridView("rows", columns, memoryInfo) {
-            private static final long serialVersionUID = 1L;
-
-            protected Item newRowItem(String id, int index, IModel model) {
+            protected Item newRowItem(final String id, final int index, final IModel model) {
                 return new OddEvenItem(id, index, model);
             }
         });
-
     }
 
-    public IModel<String> getTitle(Component component) {
+    public IModel<String> getTitle(final Component component) {
         return new ResourceModel("admin-system-info-title");
     }
 

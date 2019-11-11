@@ -92,10 +92,9 @@ public class ViewGroupPanel extends AdminBreadCrumbPanel {
                           final Group group) {
         super(id, breadCrumbModel);
         this.context = context;
-        setOutputMarkupId(true);
 
         final HippoSession session = UserSession.get().getJcrSession();
-        isSecurityUserManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_MANAGER);
+        isSecurityUserManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_ADMIN);
         this.group = group;
         dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
 

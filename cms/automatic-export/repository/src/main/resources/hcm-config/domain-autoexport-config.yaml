@@ -12,9 +12,9 @@ definitions:
           hipposys:value: /hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig
       /modify-console-user:
         jcr:primaryType: hipposys:authrole
-        hipposys:userrole: xm-console-user
+        hipposys:userrole: xm.console.user
         hipposys:role: modify
       /modify-cms-user:
         jcr:primaryType: hipposys:authrole
-        hipposys:userrole: xm-cms-user
+        hipposys:userrole: xm.cms.user
         hipposys:role: modify
