@@ -148,7 +148,7 @@ describe('AuthService', () => {
   describe('logging out', () => {
     it('should tell all apps to logout', fakeAsync(() => {
       service.logout('Test logout message');
-      tick();
+      tick(1000);
 
       expect(childApiMock.logout).toHaveBeenCalledTimes(numberOfLogoutApps);
     }));
@@ -159,7 +159,7 @@ describe('AuthService', () => {
 
       service.logout(logoutMessage);
 
-      tick();
+      tick(1000);
 
       expect(locationMock.prepareExternalUrl).toHaveBeenCalledWith('/base/path/?loginmessage=test-logout-message');
       expect(documentMock.location.replace).toHaveBeenCalledWith('https://some-domain.com/base/path');
