@@ -183,9 +183,10 @@
 
     logout () {
       Hippo.Events.publish('CMSLogout');
-      // The jqXHR objects returned by jQuery.ajax() as of jQuery 1.5 implements the Promise interface
-      // See http://api.jquery.com/jquery.ajax/
-      return jQuery.ajax('${logoutCallbackUrl}');
+      return new Promise((res, _) => {
+        res();
+        document.location.href = '${logoutCallbackUrl}';
+      });
     },
 
     onUserActivity () {
