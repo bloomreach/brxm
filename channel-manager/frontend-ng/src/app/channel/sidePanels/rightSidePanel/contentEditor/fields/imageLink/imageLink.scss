@@ -13,142 +13,43 @@
 // limitations under the License.
 
 @import 'variables';
-
-$thumbnail-width: 60px; // default thumbnail max width
-$first-button-left-padding: 8px;
-$button-width: 40px;
-$hint-icon-width: 28px; // the hint icon width is 24px + 4px margin
-
-.field-type-image_link:not(.md-input-has-value) {
-  label {
-    cursor: pointer;
-  }
-
-  &.has-focused-field label {
-    color: $text-disabled !important;
-
-    md-icon {
-      color: $text-dim !important;
-    }
-  }
-}
+@import '../../../fields/nodeLink/nodeLink.scss';
 
 image-link {
-  .input-bottom-border {
-    border-bottom: 1px solid;
-    bottom: 2px; // reserve 2px space for the bottom border (1px normally, 2px when focused) to avoid jumping
-    max-width: $thumbnail-width + $first-button-left-padding + (2 * $button-width);
-    position: absolute;
-    width: 100%;
-  }
+  @extend node-link;
 
-  .input-bottom-border,
-  input {
-    // hide checkered background for readonly input fields
-    background-image: none !important;
-    border-bottom-color: $border-color !important;
-  }
-
-  .input-bottom-border-limited-empty {
-    max-width: $thumbnail-width + $first-button-left-padding + $button-width;
-  }
-
-  .hippo-imagelink-input {
-    cursor: pointer;
-    min-width: 100%;
-  }
-
-  .has-focused-field & {
-    .hippo-imagelink-input.has-focus,
-    .input-bottom-border.has-focus {
-      border-bottom-color: $blue-500 !important;
-      border-bottom-width: 2px;
-    }
-  }
+  display: block;
+  min-height: 36px;
+  position: relative;
 
   img {
     cursor: pointer;
-    padding-top: 6px;
+    display: block;
+    margin-left: 16px;
+    padding: 12px 0 8px;
+    position: relative;
+    z-index: 1;
 
     &:focus {
       outline: none; // prevent browser-specific outline when focused
     }
   }
 
-  .md-icon-button > md-icon {
-    color: $grey-600 !important;
-    margin: 0;
+  .hippo-node-link-buttons {
+    left: 0;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
   }
 
-  .hippo-imagelink-buttons {
-    align-items: flex-end;
-    display: flex;
-    min-height: $button-width;
-    // the hippo-imagelink-buttons container will overlay the selected image and (optional) hint icon,
-    // so it should pass through pointer events to allow the image to be clickable and the hint label to show on hover
-    pointer-events: none;
-    position: absolute;
-    top: 0;
-    z-index: 1;
-
-    button {
-      pointer-events: all;
-    }
-
-    // render transparent span containing the field name + optional asterisk
-    // to align the image picker buttons in the correct position
-    > span {
-      color: transparent;
-      min-width: $thumbnail-width;
-      user-select: none;
-    }
-
-    &:not(.image-has-url),
-    &:not(.image-has-url) > span {
+  .md-input-has-value & {
+    .md-input {
+      color: transparent !important;
+      height: 100% !important;
+      left: 0;
+      position: absolute;
+      top: 0;
       width: 100%;
     }
-
-    .md-button.md-icon-button {
-      margin: 0;
-
-      &:first-of-type {
-        margin-left: $first-button-left-padding;
-      }
-    }
-
-    &:not(.image-has-url) .md-button.md-icon-button {
-      bottom: 1px;
-    }
-
-    &.image-has-hint.image-has-label:not(.image-has-url) button {
-      margin-left: $hint-icon-width;
-    }
-
-    &.image-has-url {
-      bottom: -4px;
-      height: 100%;
-      padding-left: $thumbnail-width;
-      top: initial;
-
-      > span {
-        display: none;
-      }
-    }
-  }
-
-  .hippo-imagelink-picked {
-    animation-duration: .2s;
-    animation-fill-mode: forwards;
-    animation-name: enter;
-  }
-}
-
-@keyframes enter {
-  from {
-    transform: scale(0);
-  }
-
-  to {
-    transform: scale(1);
   }
 }

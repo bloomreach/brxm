@@ -13,41 +13,44 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
-<input aria-label="{{::$ctrl.ariaLabel}}"
-       class="hippo-imagelink-input"
-       name="{{::$ctrl.name}}"
-       ng-class="{'input-bottom-border-limited-empty': $ctrl.index > 0, 'has-focus': $ctrl.buttonHasFocus}"
-       ng-value="$ctrl.ngModel.$modelValue"
-       ng-hide="$ctrl.url"
-       ng-click="$ctrl.openImagePicker()"
-       readonly="readonly"
-       tabindex="-1"
-       type="text">
 
-<img ng-if="$ctrl.url"
-     tabindex="-1"
-     ng-class="{'hippo-imagelink-picked' : $ctrl.imagePicked }"
-     ng-click="$ctrl.openImagePicker()"
-     ng-src="../../{{ $ctrl.url }}"/>
+<img ng-if="$ctrl.displayName"
+  tabindex="-1"
+  ng-click="$ctrl.open()"
+  ng-src="../../{{ $ctrl.displayName }}"/>
 
-<div class="input-bottom-border" ng-class="{ 'has-focus': $ctrl.buttonHasFocus }"
-     ng-if="$ctrl.url"></div>
+<input
+  aria-label="{{::$ctrl.ariaLabel}}"
+  name="{{::$ctrl.name}}"
+  ng-blur="$ctrl.onBlur($event)"
+  ng-class="{'has-focus': $ctrl.hasFocus}"
+  ng-click="$ctrl.open()"
+  ng-focus="$ctrl.onFocus($event)"
+  ng-value="$ctrl.displayName"
+  readonly="readonly"
+  tabindex="-1"
+  type="text"
+>
 
-<div class="hippo-imagelink-buttons"
-     ng-class="{'image-has-url': $ctrl.url, 'image-has-hint': $ctrl.hint, 'image-has-label': $ctrl.index === 0}">
-  <span>{{::$ctrl.hiddenLabel}}</span>
-  <md-button class="md-icon-button hippo-imagelink-clear"
-             focus-if="$ctrl.imagePicked"
-             ng-blur="$ctrl.onBlur($event)"
-             ng-click="$ctrl.clearPickedImage()"
-             ng-focus="$ctrl.onFocus($event)"
-             ng-if="$ctrl.url">
+<div class="hippo-node-link-buttons">
+  <md-button
+    class="md-icon-button hippo-node-link-clear"
+    ng-blur="$ctrl.onBlur($event)"
+    ng-click="$ctrl.clear()"
+    ng-disabled="$ctrl.disabled"
+    ng-focus="$ctrl.onFocus($event)"
+    ng-if="$ctrl.displayName"
+  >
     <md-icon md-font-icon="mdi-close"></md-icon>
   </md-button>
-  <md-button class="md-icon-button hippo-imagelink-select"
-             ng-blur="$ctrl.onBlur($event)"
-             ng-click="$ctrl.openImagePicker()"
-             ng-focus="$ctrl.onFocus($event)">
+  <md-button
+    class="md-icon-button hippo-node-link-select"
+    focus-if="$ctrl.isPicked"
+    ng-blur="$ctrl.onBlur($event)"
+    ng-click="$ctrl.open()"
+    ng-disabled="$ctrl.disabled"
+    ng-focus="$ctrl.onFocus($event)"
+  >
     <md-icon md-font-icon="mdi-magnify"></md-icon>
   </md-button>
 </div>
