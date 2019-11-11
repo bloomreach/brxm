@@ -18,6 +18,7 @@ package org.onehippo.cm.engine.test;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashSet;
@@ -61,7 +62,7 @@ public class IsolatedRepository {
     private final URL[] additionalClasspathURLs;
     private final boolean autoExportEnabled;
 
-    private URLClassLoader classLoader;
+    private RepositoryClassLoader classLoader;
     private Object repository;
     private String repositoryPath;
 
@@ -158,9 +159,30 @@ public class IsolatedRepository {
     }
 
     private Object create(final String repoPath, final String repoConfig) throws Exception {
-        final URLClassLoader contextClassLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
+        final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
+        URL[] contextClassLoaderURLs;
+        if (contextClassLoader instanceof URLClassLoader) {
+            contextClassLoaderURLs = ((URLClassLoader)contextClassLoader).getURLs();
+        } else {
+            // Java 11 no longer uses URLClassLoader... build URLs from current class path entries
+            String[] classPathEntries = System.getProperty("java.class.path").split(System.getProperty("path.separator"));
+            contextClassLoaderURLs = new URL[classPathEntries.length];
+            for (int i = 0; i < classPathEntries.length; i++) {
+                try {
+                    if (classPathEntries[i].endsWith(".jar") || classPathEntries[i].endsWith("/")) {
+                        contextClassLoaderURLs[i] = new URL("file:"+classPathEntries[i]);
+                    } else {
+                        // make sure to postfix classpath folders with a /
+                        contextClassLoaderURLs[i] = new URL("file:"+classPathEntries[i]+"/");
+                    }
+                } catch (MalformedURLException unexpected) {
+                    // should never happen
+                    throw new RuntimeException(unexpected);
+                }
+            }
+        }
         classLoader = new RepositoryClassLoader(
-                (URL[]) ArrayUtils.addAll(contextClassLoader.getURLs(), additionalClasspathURLs),
+                (URL[]) ArrayUtils.addAll(contextClassLoaderURLs, additionalClasspathURLs),
                 contextClassLoader, sharedClasses);
         Thread.currentThread().setContextClassLoader(classLoader);
         try {
@@ -182,7 +204,7 @@ public class IsolatedRepository {
     }
 
     public void runSingleAutoExportCycle() throws Exception {
-        final URLClassLoader contextClassLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
+        final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(classLoader);
         try {
             final Class configurationServiceClass = Class.forName(ConfigurationService.class.getName(), true, classLoader);
@@ -199,7 +221,7 @@ public class IsolatedRepository {
     }
 
     public ConfigurationModelImpl getRuntimeConfigurationModel() throws Exception {
-        final URLClassLoader contextClassLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
+        final ClassLoader contextClassLoader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(classLoader);
         try {
             final Class configurationServiceClass = Class.forName(ConfigurationService.class.getName(), true, classLoader);
@@ -208,24 +230,6 @@ public class IsolatedRepository {
                     .getMethod("getService", Class.class)
                     .invoke(null, configurationServiceClass);
             return (ConfigurationModelImpl) configurationServiceClass.getMethod("getRuntimeConfigurationModel").invoke(service);
-        } finally {
-            Thread.currentThread().setContextClassLoader(contextClassLoader);
-        }
-    }
-
-    public ConfigurationModelImpl getBaselineConfigurationModel() throws Exception {
-        final URLClassLoader contextClassLoader = (URLClassLoader) Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(classLoader);
-        try {
-            final Class configurationServiceClass = Class.forName(ConfigurationService.class.getName(), true, classLoader);
-
-            final Object service = Class.forName(HippoServiceRegistry.class.getName(), true, classLoader)
-                    .getMethod("getService", Class.class)
-                    .invoke(null, configurationServiceClass);
-
-            final Class internalConfigService = Class.forName(InternalConfigurationService.class.getName(), true, classLoader);
-            final Method method = internalConfigService.getMethod("getBaselineModel");
-            return (ConfigurationModelImpl) method.invoke(service);
         } finally {
             Thread.currentThread().setContextClassLoader(contextClassLoader);
         }
@@ -248,23 +252,23 @@ public class IsolatedRepository {
 
     private static class RepositoryClassLoader extends URLClassLoader {
 
-        private final URLClassLoader shared;
+        private final ClassLoader shared;
         private Set<String> sharedClasses = new HashSet<>();
 
-        RepositoryClassLoader(final URL[] urls, final URLClassLoader shared) {
+        RepositoryClassLoader(final URL[] urls, final ClassLoader shared) {
             super(urls, null);
             this.shared = shared;
         }
 
-        RepositoryClassLoader(final URL[] urls, final URLClassLoader shared, final Set<String> sharedClasses) {
+        RepositoryClassLoader(final URL[] urls, final ClassLoader shared, final Set<String> sharedClasses) {
             this(urls, shared);
             this.sharedClasses.addAll(sharedClasses);
         }
 
-
         @Override
         public Class<?> loadClass(final String name, boolean resolve) throws ClassNotFoundException {
-            if (name.startsWith("javax.jcr") || name.startsWith("org.onehippo.cm.model") || name.startsWith("javax.servlet") ||
+            if (name.startsWith("javax.jcr") || name.startsWith("java.sql.") || name.startsWith("javax.sql.") ||
+                    name.startsWith("org.onehippo.cm.model") || name.startsWith("javax.servlet") ||
                     sharedClasses.stream().anyMatch(name::startsWith))
             {
                 return shared.loadClass(name);
@@ -272,5 +276,4 @@ public class IsolatedRepository {
             return super.loadClass(name, resolve);
         }
     }
-
 }
