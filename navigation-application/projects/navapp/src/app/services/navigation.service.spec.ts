@@ -17,6 +17,7 @@
 import { Location, PopStateEvent } from '@angular/common';
 import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { NavigationTrigger, NavItem, NavLocation } from '@bloomreach/navapp-communication';
+import { NGXLogger } from 'ngx-logger';
 import { of } from 'rxjs';
 
 import { ClientAppMock } from '../client-app/models/client-app.mock';
@@ -110,6 +111,10 @@ describe('NavigationService', () => {
     'setInternalError',
   ]);
 
+  const loggerMock = jasmine.createSpyObj('NGXLogger', [
+    'debug',
+  ]);
+
   let locationChangeFunction: (value: PopStateEvent) => undefined;
 
   let childApi: any;
@@ -155,6 +160,7 @@ describe('NavigationService', () => {
         { provide: MenuStateService, useValue: menuStateServiceMock },
         { provide: NavItemService, useValue: navItemServiceMock },
         { provide: UrlMapperService, useValue: urlMapperServiceMock },
+        { provide: NGXLogger, useValue: loggerMock },
         NavigationService,
       ],
     });

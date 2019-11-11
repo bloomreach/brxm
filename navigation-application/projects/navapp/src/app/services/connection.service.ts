@@ -16,6 +16,7 @@
 
 import { Inject, Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import { ChildPromisedApi, ClientError, connectToChild, NavLocation, ParentApi } from '@bloomreach/navapp-communication';
+import { NGXLogger } from 'ngx-logger';
 import { Subject } from 'rxjs';
 
 import { version } from '../../../../../package.json';
@@ -52,25 +53,8 @@ export class ConnectionService {
     @Inject(USER_SETTINGS) private userSettings: UserSettings,
     private rendererFactory: RendererFactory2,
     private busyIndicatorService: BusyIndicatorService,
+    private logger: NGXLogger,
   ) { }
-
-  get parentApiMethods(): ParentApi {
-    return {
-      getConfig: () => ({
-        apiVersion: version,
-        userSettings: this.userSettings,
-      }),
-      showMask: () => this.showMask$.next(),
-      hideMask: () => this.hideMask$.next(),
-      showBusyIndicator: () => this.busyIndicatorService.show(),
-      hideBusyIndicator: () => this.busyIndicatorService.hide(),
-      navigate: (location: NavLocation) => this.navigate$.next(location),
-      updateNavLocation: (location: NavLocation) => this.updateNavLocation$.next(location),
-      onError: (clientError: ClientError) => this.onError$.next(clientError),
-      onSessionExpired: () => this.onSessionExpired$.next(),
-      onUserActivity: () => this.onUserActivity$.next(),
-    };
-  }
 
   getConnection(url: string): ChildConnection {
     return this.connections.get(url);
@@ -103,7 +87,7 @@ export class ConnectionService {
     const url = iframe.src;
     const config = {
       iframe,
-      methods: this.parentApiMethods,
+      methods: this.getParentApiMethods(url),
       timeout: this.appSettings.iframesConnectionTimeout,
     };
 
@@ -116,5 +100,47 @@ export class ConnectionService {
     } catch (error) {
       throw new Error(`Could not create connection for ${url}: ${error}`);
     }
+  }
+
+  private getParentApiMethods(appUrl: string): ParentApi {
+    return {
+      getConfig: () => ({
+        apiVersion: version,
+        userSettings: this.userSettings,
+      }),
+      showMask: () => {
+        this.logger.debug(`app '${appUrl}' called showMask()`, location);
+        this.showMask$.next();
+      },
+      hideMask: () => {
+        this.logger.debug(`app '${appUrl}' called hideMask()`, location);
+        this.hideMask$.next();
+      },
+      showBusyIndicator: () => {
+        this.logger.debug(`app '${appUrl}' called showBusyIndicator()`, location);
+        this.busyIndicatorService.show();
+      },
+      hideBusyIndicator: () => {
+        this.logger.debug(`app '${appUrl}' called hideBusyIndicator()`, location);
+        this.busyIndicatorService.hide();
+      },
+      navigate: (location: NavLocation) => {
+        this.logger.debug(`app '${appUrl}' called navigate()`, location);
+        this.navigate$.next(location);
+      },
+      updateNavLocation: (location: NavLocation) => {
+        this.logger.debug(`app '${appUrl}' called updateNavLocation()`, location);
+        this.updateNavLocation$.next(location);
+      },
+      onError: (clientError: ClientError) => {
+        this.logger.debug(`app '${appUrl}' called onError()`, clientError);
+        this.onError$.next(clientError);
+      },
+      onSessionExpired: () => {
+        this.logger.debug(`app '${appUrl}' called onSessionExpired()`);
+        this.onSessionExpired$.next();
+      },
+      onUserActivity: () => this.onUserActivity$.next(),
+    };
   }
 }

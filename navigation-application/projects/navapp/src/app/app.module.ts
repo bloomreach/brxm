@@ -21,6 +21,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 
+import { dependencies, version } from '../../../../package.json';
+
 import { AppComponent } from './app.component';
 import { BootstrapModule } from './bootstrap/bootstrap.module';
 import { ClientAppModule } from './client-app/client-app.module';
@@ -67,4 +69,10 @@ import { TopPanelModule } from './top-panel/top-panel.module';
   declarations: [AppComponent],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule {
+  constructor(logger: NGXLogger) {
+    const commLibVersion = dependencies['@bloomreach/navapp-communication'];
+
+    logger.info(`Navapp version ${version}, communication library version ${commLibVersion}`);
+  }
+}

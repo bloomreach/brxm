@@ -17,6 +17,7 @@
 import { Location } from '@angular/common';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { NavigationTrigger, NavItem, NavLocation } from '@bloomreach/navapp-communication';
+import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, EMPTY, from, Observable, of, Subject, Subscription, throwError } from 'rxjs';
 import { catchError, finalize, mapTo, switchMap, tap } from 'rxjs/operators';
 
@@ -81,6 +82,7 @@ export class NavigationService implements OnDestroy {
     private menuStateService: MenuStateService,
     private navItemService: NavItemService,
     private urlMapperService: UrlMapperService,
+    private logger: NGXLogger,
   ) {
     this.connectionService
       .navigate$
@@ -272,10 +274,12 @@ export class NavigationService implements OnDestroy {
     return of(transition).pipe(
       // Redirect all empty urls to the home url
       tap(t => {
+        this.logger.debug(`Navigation: initiated to the url '${t.url}'`);
         const url = stripOffQueryStringAndHash(t.url);
 
         if (!url) {
           t.url = this.homeUrl;
+          this.logger.debug(`Navigation: redirected to home url '${t.url}'`);
         }
       }),
       // Eagerly update the browser url
@@ -335,9 +339,19 @@ export class NavigationService implements OnDestroy {
           return of(t);
         }
 
+        this.logger.debug(`Navigation: beforeNavigation() is called for '${t.app.url}'`);
+
         return from(t.app.api.beforeNavigation()).pipe(
+          tap(allowedToContinue => {
+            if (allowedToContinue) {
+              this.logger.debug(`Navigation: beforeNavigation() call for '${t.app.url}' succeeded`);
+              return;
+            }
+
+            this.logger.debug(`Navigation: beforeNavigation() call for for '${t.app.url}' cancelled navigation`);
+          }),
           switchMap(allowedToContinue => allowedToContinue ? of(t) : EMPTY),
-          );
+        );
       }),
       tap(() => {
         this.busyIndicatorService.show();
@@ -367,10 +381,16 @@ export class NavigationService implements OnDestroy {
           path: appPathWithoutLeadingSlash,
         };
 
+        this.logger.debug(`Navigation: navigate() is called for '${t.app.url}'`, {
+          location,
+          source: t.source,
+        });
+
         const navigationPromise = t.app.api.navigate(location, t.source);
 
         return from(navigationPromise).pipe(
           mapTo(t as Navigation),
+          tap(x => this.logger.debug(`Navigation: navigate() call for '${x.app.url}' succeeded`)),
         );
       }),
     );

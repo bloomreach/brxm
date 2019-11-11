@@ -22,6 +22,8 @@ import {
   Site,
   SiteId,
 } from '@bloomreach/navapp-communication';
+import { NGXLogger } from 'ngx-logger';
+import { map, tap } from 'rxjs/operators';
 
 import { AppSettings } from '../models/dto/app-settings.dto';
 import { ConfigResource } from '../models/dto/config-resource.dto';
@@ -47,6 +49,7 @@ export class NavConfigService {
     private connectionService: ConnectionService,
     private navItemService: NavItemService,
     private siteService: SiteService,
+    private logger: NGXLogger,
     @Inject(APP_SETTINGS) private appSettings: AppSettings,
   ) { }
 
@@ -72,51 +75,15 @@ export class NavConfigService {
 
   private fetchConfiguration(resource: ConfigResource): Promise<Configuration> {
     switch (resource.resourceType) {
-      case 'IFRAME':
-        return this.connectionService
-          .createConnection(resource.url)
-          .then(connection => {
-            const child = connection.api;
-            const communications: Promise<any>[] = [];
-            communications.push(
-              child.getNavItems ? child.getNavItems() : Promise.resolve([]),
-            );
-            communications.push(
-              child.getSites ? child.getSites() : Promise.resolve([]),
-            );
-            communications.push(
-              child.getSelectedSite ? child.getSelectedSite() : Promise.resolve(undefined),
-            );
-
-            return Promise.all(communications).then(
-              ([ navItems, sites, selectedSiteId ]) => ({
-                navItems,
-                sites,
-                selectedSiteId,
-              }),
-            );
-          })
-          .finally(() => {
-            this.connectionService.removeConnection(resource.url);
-          });
       case 'REST':
-        return this.fetchFromREST<NavItem[]>(resource.url).then(navItems => ({
-          navItems,
-          sites: [],
-          selectedSiteId: undefined,
-        }));
-      case 'INTERNAL_REST':
-        const baseUrl = this.location.prepareExternalUrl(this.appSettings.basePath);
-        const url = Location.joinWithSlash(baseUrl, resource.url);
+        return this.fetchFromREST(resource.url);
 
-        return this.fetchFromREST<NavItem[]>(url).then(navItems => {
-          navItems.forEach(item => item.appIframeUrl = Location.joinWithSlash(baseUrl, item.appIframeUrl));
-          return {
-            navItems,
-            sites: [],
-            selectedSiteId: undefined,
-          };
-        });
+      case 'INTERNAL_REST':
+        return this.fetchFromInternalREST(resource.url);
+
+      case 'IFRAME':
+        return this.fetchFromIFrame(resource.url);
+
       default:
         return Promise.reject(
           new Error(`Resource type ${resource.resourceType} is not supported`),
@@ -159,7 +126,66 @@ export class NavConfigService {
     };
   }
 
-  private fetchFromREST<T>(url: string): Promise<T> {
-    return this.http.get<T>(url).toPromise();
+  private fetchFromREST(url: string): Promise<Configuration> {
+    this.logger.debug(`Fetching configuration from an REST endpoint '${url}'`);
+
+    return this.http.get<NavItem[]>(url).pipe(
+      map(navItems => ({
+        navItems,
+        sites: [],
+        selectedSiteId: undefined,
+      })),
+      tap(x => this.logger.debug(`Nav items have been received from the REST endpoint '${url}'`, x.navItems)),
+    ).toPromise();
+  }
+
+  private fetchFromInternalREST(url: string): Promise<Configuration> {
+    this.logger.debug(`Fetching configuration from an Internal REST endpoint '${url}'`);
+
+    const baseUrl = this.location.prepareExternalUrl(this.appSettings.basePath);
+    url = Location.joinWithSlash(baseUrl, url);
+
+    return this.fetchFromREST(url).then(configuration => {
+      configuration.navItems.forEach(item => item.appIframeUrl = Location.joinWithSlash(baseUrl, item.appIframeUrl));
+
+      return configuration;
+    });
+  }
+
+  private fetchFromIFrame(url: string): Promise<Configuration> {
+    this.logger.debug(`Fetching configuration from an iframe '${url}'`);
+
+    return this.connectionService
+      .createConnection(url)
+      .then(connection => {
+        const child = connection.api;
+        const communications: Promise<any>[] = [];
+        communications.push(
+          child.getNavItems ? child.getNavItems() : Promise.resolve([]),
+        );
+        communications.push(
+          child.getSites ? child.getSites() : Promise.resolve([]),
+        );
+        communications.push(
+          child.getSelectedSite ? child.getSelectedSite() : Promise.resolve(undefined),
+        );
+
+        return Promise.all(communications).then(
+          ([ navItems, sites, selectedSiteId ]) => ({
+            navItems,
+            sites,
+            selectedSiteId,
+          }),
+        ).then(x => {
+          this.logger.debug(`Nav items have been received from the iframe '${url}'`, x.navItems);
+          this.logger.debug(`Sites have been received from the iframe '${url}'`, x.sites);
+          this.logger.debug(`Selected site id has been received from the iframe '${url}'`, x.selectedSiteId);
+
+          return x;
+        });
+      })
+      .finally(() => {
+        this.connectionService.removeConnection(url);
+      });
   }
 }

@@ -16,6 +16,7 @@
 
 import { Injectable } from '@angular/core';
 import { Site, SiteId } from '@bloomreach/navapp-communication';
+import { NGXLogger } from 'ngx-logger';
 import { Observable, ReplaySubject } from 'rxjs';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
@@ -32,6 +33,7 @@ export class SiteService {
   constructor(
     private busyIndicatorService: BusyIndicatorService,
     private clientAppService: ClientAppService,
+    private logger: NGXLogger,
   ) { }
 
   get selectedSite$(): Observable<Site> {
@@ -46,14 +48,24 @@ export class SiteService {
   updateSelectedSite(siteId: SiteId): Promise<void> {
     this.busyIndicatorService.show();
 
+    this.logger.debug(`updateSelectedSite() is called for the active app '${this.clientAppService.activeApp.url}'`, siteId);
+
     return this.clientAppService.activeApp.api
       .updateSelectedSite(siteId)
       .then(() => {
+        this.logger.debug('Active app successfully updated the selected site. Start broadcasting updateSelectedSite() for the other apps.');
+
         const updatePromises = this.clientAppService.apps
           .filter(app => app.api && app.api.updateSelectedSite && app !== this.clientAppService.activeApp)
-          .map(app => app.api.updateSelectedSite());
+          .map(app => {
+            this.logger.debug(`updateSelectedSite() is called for '${app.url}'`);
 
-        return Promise.all(updatePromises);
+            return app.api.updateSelectedSite();
+          });
+
+        return Promise.all(updatePromises).then(() => {
+          this.logger.debug('updateSelectedSite() broadcasting finished successfully');
+        });
       })
       .then(() => this.busyIndicatorService.hide());
   }

@@ -82,6 +82,8 @@ export class ClientAppService {
     const uniqueURLs = this.filterUniqueURLs(navItems);
     this.uniqueURLs.next(uniqueURLs);
 
+    this.logger.debug('Client app iframes are expected to be loaded', uniqueURLs);
+
     return this.uniqueURLs.pipe(
       switchMap(urls => this.waitForConnections(urls.length)),
       map(connections => this.discardFailedConnections(connections)),
@@ -107,7 +109,7 @@ export class ClientAppService {
     const url = uniqueURLs.find(x => Location.stripTrailingSlash(x) === connectionUrl);
 
     if (!url) {
-      const message = `An attempt to register the connection to an unknown url "${connection.appUrl}"`;
+      const message = `An attempt to register the connection to an unknown url '${connection.appUrl}'`;
 
       this.logger.error(message);
       this.connectionCounter$.next(new FailedConnection(connection.appUrl, message));
@@ -117,6 +119,8 @@ export class ClientAppService {
 
     // Fix extra/missing trailing slash issue
     connection.appUrl = url;
+
+    this.logger.debug(`Connection is established to the iframe '${url}'`);
 
     this.connectionCounter$.next(connection);
   }
@@ -177,14 +181,16 @@ export class ClientAppService {
     return app.api.getConfig ?
       app.api.getConfig().then(config => {
         if (!config) {
-          this.logger.warn(`The app "${app.url}" return an empty config`);
+          this.logger.warn(`The app '${app.url}' returned an empty config`);
           config = { apiVersion: 'unknown' };
         }
 
         if (!config.apiVersion) {
-          this.logger.warn(`The app "${app.url}" returned a config with an empty version`);
+          this.logger.warn(`The app '${app.url}' returned a config with an empty version`);
           config.apiVersion = 'unknown';
         }
+
+        this.logger.info(`Connected API '${app.url}' version ${config.apiVersion}`);
 
         return config;
       }) :

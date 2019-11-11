@@ -16,6 +16,7 @@
 
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { Site, SiteId } from '@bloomreach/navapp-communication';
+import { NGXLogger } from 'ngx-logger';
 
 import { ClientAppMock } from '../client-app/models/client-app.mock';
 import { ClientAppService } from '../client-app/services/client-app.service';
@@ -27,6 +28,10 @@ describe('SiteService', () => {
   let siteService: SiteService;
   let updateSelectedSite: jasmine.Spy;
   let clientAppMocks: ClientAppMock[];
+
+  const loggerMock = jasmine.createSpyObj('NGXLogger', [
+    'debug',
+  ]);
 
   beforeEach(() => {
     const busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', [
@@ -84,6 +89,7 @@ describe('SiteService', () => {
         SiteService,
         { provide: ClientAppService, useValue: clientAppServiceMock },
         { provide: BusyIndicatorService, useValue: busyIndicatorServiceMock },
+        { provide: NGXLogger, useValue: loggerMock },
       ],
     });
 

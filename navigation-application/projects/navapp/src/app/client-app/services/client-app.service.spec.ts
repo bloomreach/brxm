@@ -140,7 +140,7 @@ describe('ClientAppService', () => {
 
       service.addConnection(badConnection);
 
-      expect(logger.error).toHaveBeenCalledWith('An attempt to register the connection to an unknown url "http://suspect-site.com"');
+      expect(logger.error).toHaveBeenCalledWith('An attempt to register the connection to an unknown url \'http://suspect-site.com\'');
     });
 
     it('should reject the promise when all connections are failed', fakeAsync(() => {
@@ -193,7 +193,7 @@ describe('ClientAppService', () => {
         });
 
         it('should provide a warning message', () => {
-          expect(logger.warn).toHaveBeenCalledWith('The app "http://app1.com" return an empty config');
+          expect(logger.warn).toHaveBeenCalledWith('The app \'http://app1.com\' returned an empty config');
         });
       });
 
@@ -214,7 +214,7 @@ describe('ClientAppService', () => {
         });
 
         it('should provide a warning message', () => {
-          expect(logger.warn).toHaveBeenCalledWith('The app "http://app1.com" returned a config with an empty version');
+          expect(logger.warn).toHaveBeenCalledWith('The app \'http://app1.com\' returned a config with an empty version');
         });
       });
 

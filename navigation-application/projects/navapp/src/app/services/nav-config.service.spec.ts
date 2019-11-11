@@ -22,6 +22,7 @@ import {
 } from '@angular/common/http/testing';
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { Site } from '@bloomreach/navapp-communication';
+import { NGXLogger } from 'ngx-logger';
 
 import { AppSettings } from '../models/dto/app-settings.dto';
 import { AppSettingsMock } from '../models/dto/app-settings.mock';
@@ -72,6 +73,10 @@ describe('NavConfigService', () => {
     accountId: sites[0].accountId,
   };
 
+  const loggerMock = jasmine.createSpyObj('NGXLogger', [
+    'debug',
+  ]);
+
   beforeEach(() => {
     const appSettingsMock = new AppSettingsMock();
 
@@ -105,6 +110,7 @@ describe('NavConfigService', () => {
         { provide: ConnectionService, useValue: connectionServiceMock },
         { provide: NavItemService, useValue: navItemServiceMock },
         { provide: SiteService, useValue: siteServiceMock },
+        { provide: NGXLogger, useValue: loggerMock },
       ],
     });
 
