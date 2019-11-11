@@ -41,7 +41,6 @@ public class EditUserPanel extends AdminBreadCrumbPanel {
 
     public EditUserPanel(final String id, final IBreadCrumbModel breadCrumbModel, final IModel<User> model) {
         super(id, breadCrumbModel);
-        setOutputMarkupId(true);
 
         this.model = model;
 

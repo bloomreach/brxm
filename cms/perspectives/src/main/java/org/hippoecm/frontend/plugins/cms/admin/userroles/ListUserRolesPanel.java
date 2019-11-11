@@ -35,8 +35,6 @@ import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.Panel
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.repository.security.SecurityConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.bloomreach.xm.repository.security.UserRole;
 
@@ -45,22 +43,20 @@ import com.bloomreach.xm.repository.security.UserRole;
  */
 public class ListUserRolesPanel extends AdminBreadCrumbPanel {
 
-    private static final Logger log = LoggerFactory.getLogger(ListUserRolesPanel.class);
-
     private static final int NUMBER_OF_ITEMS_PER_PAGE = 20;
 
     /**
      * Constructs a new ListUserRolesPanel.
      *
-     * @param id                the id
-     * @param context           the context
-     * @param breadCrumbModel   the breadCrumbModel
+     * @param id              the id
+     * @param context         the context
+     * @param breadCrumbModel the breadCrumbModel
      */
     public ListUserRolesPanel(final String id, final IPluginContext context, final IBreadCrumbModel breadCrumbModel) {
         super(id, breadCrumbModel);
 
         final HippoSession session = UserSession.get().getJcrSession();
-        final boolean isSecurityApplManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_MANAGER);
+        final boolean isSecurityApplAdmin = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_ADMIN);
 
         final PanelPluginBreadCrumbLink createLink =
                 new PanelPluginBreadCrumbLink("create-userrole", breadCrumbModel) {
@@ -69,7 +65,7 @@ public class ListUserRolesPanel extends AdminBreadCrumbPanel {
                         return new CreateUserRolePanel(componentId, breadCrumbModel);
                     }
                 };
-        createLink.setVisible(isSecurityApplManager);
+        createLink.setVisible(isSecurityApplAdmin);
         add(createLink);
 
         final List<IColumn<UserRole, String>> columns = new ArrayList<>();
@@ -86,7 +82,6 @@ public class ListUserRolesPanel extends AdminBreadCrumbPanel {
         final AdminDataTable<UserRole> table = new AdminDataTable<>("table", columns, new UserRoleDataProvider(),
                 NUMBER_OF_ITEMS_PER_PAGE);
         add(table);
-        setOutputMarkupId(true);
     }
 
     @Override

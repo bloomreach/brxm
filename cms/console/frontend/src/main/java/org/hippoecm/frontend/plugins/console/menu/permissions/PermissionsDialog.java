@@ -15,9 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.console.menu.permissions;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -26,6 +24,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.jcr.ItemNotFoundException;
+import javax.jcr.LoginException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -33,22 +32,20 @@ import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
-import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
+import org.apache.wicket.ajax.markup.html.form.AjaxSubmitLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.basic.MultiLineLabel;
-import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.markup.html.form.TextField;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
+import org.hippoecm.frontend.behaviors.OnEnterAjaxBehavior;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
-import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.security.HippoAccessManager;
-import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.security.DomainInfoPrivilege;
-import org.onehippo.repository.security.SecurityService;
-import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,81 +59,78 @@ public class PermissionsDialog extends Dialog<Node> {
 
     private static final Logger log = LoggerFactory.getLogger(PermissionsDialog.class);
 
-    private final IModel<String> selectedUserModel;
-    private final Label membershipsLabel;
-    private final Label userRolesLabel;
-    private final Label actionsLabel;
-    private final MultiLineLabel privilegesLabel;
-    private String multiLinePrivileges;
-    private final Label exception;
+    @SuppressWarnings({"FieldCanBeLocal", "unused"}) private String selectedUser = "<<unknown>>";
+    @SuppressWarnings({"FieldCanBeLocal", "unused"}) private String memberships = "None";
+    @SuppressWarnings({"FieldCanBeLocal", "unused"}) private String userRoles = "None";
+    @SuppressWarnings({"FieldCanBeLocal", "unused"}) private String actions = "None";
+    @SuppressWarnings({"FieldCanBeLocal", "unused"}) private String privileges = "None";
+    @SuppressWarnings({"FieldCanBeLocal", "unused"}) private String exception = "None";
 
-    public PermissionsDialog(final PermissionsPlugin plugin) {
+    PermissionsDialog(final PermissionsPlugin plugin) {
         setSize(DialogConstants.LARGE_AUTO);
         setModel(plugin.getModel());
+        setOkVisible(false);
+        setCancelLabel("Close");
+        setFocusOnCancel();
 
-        selectedUserModel = Model.of("<<unknown>>");
-
-        membershipsLabel = new Label("memberships", "None");
+        final Label membershipsLabel = new Label("memberships", PropertyModel.of(this, "memberships"));
         membershipsLabel.setOutputMarkupId(true);
         add(membershipsLabel);
 
-        userRolesLabel = new Label("userRoles", "None");
+        final Label userRolesLabel = new Label("userRoles", PropertyModel.of(this, "userRoles"));
         userRolesLabel.setOutputMarkupId(true);
         add(userRolesLabel);
 
-        actionsLabel = new Label("actions", "None");
+        final Label actionsLabel = new Label("actions", PropertyModel.of(this, "actions"));
         actionsLabel.setOutputMarkupId(true);
         add(actionsLabel);
 
-        privilegesLabel = new MultiLineLabel("privileges",  new PropertyModel<String>(this, "multiLinePrivileges"));
+        final MultiLineLabel privilegesLabel = new MultiLineLabel("privileges", PropertyModel.of(this, "privileges"));
         privilegesLabel.setOutputMarkupId(true);
+        privilegesLabel.setEscapeModelStrings(false);
         add(privilegesLabel);
 
-        exception = new Label("exception", "None");
-        exception.setOutputMarkupId(true);
-        add(exception);
+        final Label exceptionLabel = new Label("exception", PropertyModel.of(this, "exception"));
+        exceptionLabel.setOutputMarkupId(true);
+        add(exceptionLabel);
 
         final Node subject = getModelObject();
         try {
             final Session jcrSession = subject.getSession();
-            selectedUserModel.setObject(jcrSession.getUserID());
+            selectedUser = jcrSession.getUserID();
         } catch (RepositoryException e) {
             log.error("Could not set selected user", e);
         }
-        final SecurityService securityService = HippoServiceRegistry.getService(SecurityService.class);
-        final List<String> userIDs = new ArrayList<>();
-        final Iterable<User> users = securityService.getUsers(0, 0);
-        for (final User user : users) {
-            userIDs.add(user.getId());
-        }
 
-        final DropDownChoice<String> userDropDown = new DropDownChoice<>("user", selectedUserModel,
-                ReadOnlyModel.of(() -> userIDs));
-        userDropDown.setRequired(true);
-        userDropDown.setOutputMarkupId(true);
-        userDropDown.add(new AjaxFormComponentUpdatingBehavior("change") {
+        final TextField<String> userField = new TextField<>("user", PropertyModel.of(this, "selectedUser"));
+        userField.add(new OnEnterAjaxBehavior() {
             @Override
-            protected void onUpdate(final AjaxRequestTarget target) {
+            protected void onSubmit(final AjaxRequestTarget target) {
                 loadPermissions();
-                target.add(membershipsLabel, userRolesLabel, actionsLabel, privilegesLabel, exception);
+                target.add(PermissionsDialog.this);
             }
         });
-        add(userDropDown);
+        add(userField);
+
+        final AjaxSubmitLink findUser = new AjaxSubmitLink("findUser") {
+            @Override
+            protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
+                loadPermissions();
+                target.add(PermissionsDialog.this);
+            }
+        };
+        add(findUser);
 
         loadPermissions();
-
-        setOkVisible(false);
-        setFocusOnCancel();
-
     }
 
     private void loadPermissions() {
+        final Node subject = getModelObject();
+
         HippoSession selectedUserJcrSession = null;
         try {
-            final Node subject = getModelObject();
-            final String userID = selectedUserModel.getObject();
             final Session jcrSession = subject.getSession();
-            selectedUserJcrSession = (HippoSession) jcrSession.impersonate(new SimpleCredentials(userID, new char[]{}));
+            selectedUserJcrSession = (HippoSession) jcrSession.impersonate(new SimpleCredentials(selectedUser, new char[]{}));
 
             try {
                 // The path for the selected user can be *different* then the path from the subject node! This is because
@@ -145,62 +139,74 @@ public class PermissionsDialog extends Dialog<Node> {
                 // user session and then get the path from the fetched node : as a result, for example the path from
                 // subject.getNode().getPath() can be for example /content/documents/mydoc/mydoc[3] while below the
                 // subjectPathForSelectedUser can have become /content/documents/mydoc/mydoc
-                final String subjectPathForSelectedUser = selectedUserJcrSession.getNodeByIdentifier(subject.getIdentifier()).getPath();
-                final SortedMap<String, DomainInfoPrivilege> privileges = getPrivileges(subjectPathForSelectedUser, selectedUserJcrSession);
-                if (privileges.containsKey(JCR_WRITE)) {
-                    JCR_WRITE_PRIVILEGES.forEach(s -> privileges.remove(s));
+                final String subjectPathForSelectedUser = selectedUserJcrSession.getNodeByIdentifier(
+                        subject.getIdentifier()).getPath();
+                final SortedMap<String, DomainInfoPrivilege> privilegesSet = getPrivileges(subjectPathForSelectedUser,
+                        selectedUserJcrSession);
+                if (privilegesSet.containsKey(JCR_WRITE)) {
+                    JCR_WRITE_PRIVILEGES.forEach(privilegesSet::remove);
                 }
-                if (privileges.containsKey(JCR_ALL)) {
-                    JCR_ALL_PRIVILEGES.forEach(s -> privileges.remove(s));
-                    privileges.remove(JCR_WRITE);
+                if (privilegesSet.containsKey(JCR_ALL)) {
+                    JCR_ALL_PRIVILEGES.forEach(privilegesSet::remove);
+                    privilegesSet.remove(JCR_WRITE);
                 }
 
-                final StringBuilder builder = new StringBuilder();
-                privileges.forEach((name, domainInfoPrivilege) -> {
-                    builder.append("\n").append(name).append(" : ");
-                    domainInfoPrivilege.getDomainPaths().stream()
-                            .forEach(domainPath -> builder.append("\n\t").append("domain: ").append(domainPath));
+                privileges = getPrivileges(privilegesSet);
 
-                });
-
-                multiLinePrivileges = builder.toString();
-
-                final Set<String> actions = getAllowedActions(subjectPathForSelectedUser, selectedUserJcrSession, JCR_ACTIONS);
-                actionsLabel.setDefaultModel(Model.of(StringUtils.join(actions, ", ")));
+                final Set<String> actionsSet = getAllowedActions(subjectPathForSelectedUser, selectedUserJcrSession,
+                        JCR_ACTIONS);
+                actions = StringUtils.join(actionsSet, ", ");
 
             } catch (ItemNotFoundException e) {
-                actionsLabel.setDefaultModel(Model.of("<<none>>"));
-                multiLinePrivileges = "<<none>>";
-                log.info("Node '{}' not readable by session '{}'", subject.getIdentifier(), userID);
+                actions = "<<none>>";
+                privileges = "<<none>>";
+                log.info("Node '{}' not readable by session '{}'", subject.getIdentifier(), selectedUser);
             }
 
-            final Set<String> userRoles = new TreeSet<>(selectedUserJcrSession.getUser().getUserRoles());
-            if (userRoles.isEmpty()) {
-                userRolesLabel.setDefaultModel(Model.of("<<none>>"));
+            final Set<String> userRolesSet = new TreeSet<>(selectedUserJcrSession.getUser().getUserRoles());
+            if (userRolesSet.isEmpty()) {
+                userRoles = "<<none>>";
             } else {
-                userRolesLabel.setDefaultModel(Model.of(StringUtils.join(userRoles, ", ")));
+                userRoles = StringUtils.join(userRolesSet, ", ");
             }
 
-            final Set<String> memberships = getMemberships(selectedUserJcrSession);
-            if (memberships.isEmpty()) {
-                membershipsLabel.setDefaultModel(Model.of("<<none>>"));
+            final Set<String> membershipsSet = getMemberships(selectedUserJcrSession);
+            if (membershipsSet.isEmpty()) {
+                memberships = "<<none>>";
             } else {
-                membershipsLabel.setDefaultModel(Model.of(StringUtils.join(memberships, ", ")));
+                memberships = StringUtils.join(membershipsSet, ", ");
             }
 
-            exception.setDefaultModel(Model.of(""));
+            exception = "";
+        } catch (LoginException ex) {
+            resetLabels();
+            exception = String.format("Failed to load permissions of user '%s'. Does the user actually exist? ", selectedUser);
         } catch (RepositoryException ex) {
-            userRolesLabel.setDefaultModel(Model.of(""));
-            membershipsLabel.setDefaultModel(Model.of(""));
-            actionsLabel.setDefaultModel(Model.of(""));
-            privilegesLabel.setDefaultModel(Model.of(""));
-
-            exception.setDefaultModel(Model.of(String.format("Exception happened: '%s': %s ", ex.getClass().getName(), ex.getMessage())));
+            resetLabels();
+            exception = String.format("Exception happened: '%s': %s ", ex.getClass().getName(), ex.getMessage());
         } finally {
             if (selectedUserJcrSession != null) {
                 selectedUserJcrSession.logout();
             }
         }
+    }
+
+    private String getPrivileges(final SortedMap<String, DomainInfoPrivilege> privilegesSet) {
+        final StringBuilder builder = new StringBuilder();
+        privilegesSet.forEach((name, domainInfoPrivilege) -> {
+            builder.append(name).append("<ul>");
+            domainInfoPrivilege.getDomainPaths().forEach(domainPath ->
+                    builder.append("<li>").append("domain: ").append(domainPath).append("</li>"));
+            builder.append("</ul>");
+        });
+        return builder.toString();
+    }
+
+    private void resetLabels() {
+        userRoles = "";
+        memberships = "";
+        actions = "";
+        privileges = "";
     }
 
     private static Set<String> getAllowedActions(final String nodePath, final Session session, final Set<String> actions)
@@ -230,7 +236,7 @@ public class PermissionsDialog extends Dialog<Node> {
                     throw new IllegalStateException(String.format("Found two DomainInfoPrivilege objects with same name '%s' which " +
                             "should never be possible from HippoAccessManager#getPrivileges()", priv1.getName()));
                 },
-                () -> new TreeMap<>()));
+                TreeMap::new));
     }
 
 

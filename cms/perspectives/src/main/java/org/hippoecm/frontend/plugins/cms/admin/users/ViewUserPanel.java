@@ -89,12 +89,11 @@ public class ViewUserPanel extends AdminBreadCrumbPanel {
                          final IModel<User> userModel) {
         super(id, breadCrumbModel);
         this.context = context;
-        setOutputMarkupId(true);
         model = userModel;
         dialogService = context.getService(IDialogService.class.getName(), IDialogService.class);
 
         final HippoSession session = UserSession.get().getJcrSession();
-        isSecurityUserManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_MANAGER);
+        isSecurityUserManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_ADMIN);
 
         add(new Label("view-user-panel-title", new StringResourceModel("user-view-title", this).setModel(userModel)));
         // common user properties

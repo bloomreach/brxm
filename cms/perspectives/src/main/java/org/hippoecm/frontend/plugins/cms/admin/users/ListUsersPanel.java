@@ -83,14 +83,12 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
                           final IBreadCrumbModel breadCrumbModel, final UserDataProvider userDataProvider) {
         super(id, breadCrumbModel);
 
-        setOutputMarkupId(true);
-
         this.config = config;
         this.context = context;
         this.userDataProvider = userDataProvider;
 
         final HippoSession session = UserSession.get().getJcrSession();
-        isSecurityUserManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_MANAGER);
+        isSecurityUserManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_ADMIN);
 
         final PanelPluginBreadCrumbLink createUserLink = new PanelPluginBreadCrumbLink("create-user-link", breadCrumbModel) {
             @Override

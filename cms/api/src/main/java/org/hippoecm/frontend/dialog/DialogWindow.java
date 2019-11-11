@@ -169,7 +169,7 @@ public class DialogWindow extends ModalWindow implements IDialogService {
             if (target != null) {
                 clear();
                 final String javascript = String.format(
-                        "var el = document.getElementById('%s'); if (el) { el.parentNode.removeChild(el); }; Hippo && Hippo.hideMask && Hippo.hideMask();",
+                        "var el = document.getElementById('%s'); if (el) { el.parentNode.removeChild(el); };",
                         getContent().getMarkupId());
                 target.appendJavaScript(javascript);
                 target.add(this);

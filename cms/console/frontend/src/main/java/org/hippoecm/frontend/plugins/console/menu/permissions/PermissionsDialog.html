@@ -15,20 +15,33 @@
 -->
 <html xmlns:wicket="http://wicket.apache.org/">
 <wicket:extend>
-  <br/>
-  <pre>
-      <em>User information</em>
-      Username    : <select wicket:id="user"></select>
-      Memberships : <strong><span wicket:id="memberships"></span></strong><br/><br/>
-      <em>Global UserRoles</em>
-      UserRoles   : <strong><span wicket:id="userRoles"></span></strong>
-      <br/><br/>
-      <em>Permissions allowed on node</em>
-      Actions     : <strong><span wicket:id="actions"></span></strong>
-      Privileges  : <strong><span wicket:id="privileges"></span></strong><br/>
-
-      <span wicket:id="exception"></span>
-    </pre>
+  <div class="hippo-dialog-body">
+    <div class="group">
+      <div class="label label-bold">Username</div>
+      <div class="form-input">
+        <input wicket:id="user" class="medium"/> <button wicket:id="findUser" class="btn btn-default">Find user</button>
+      </div>
+      <span wicket:id="exception" class="error-message"></span>
+    </div>
+    <div class="group">
+      <h3>User information</h3>
+      <div class="grid">
+        <div class="grid-label">Memberships: </div>
+        <div wicket:id="memberships"></div>
+        <div class="grid-label">UserRoles: </div>
+        <div wicket:id="userRoles"></div>
+      </div>
+    </div>
+    <div class="group">
+      <h3>Permissions allowed on node</h3>
+      <div class="grid">
+        <div class="grid-label">Actions: </div>
+        <div wicket:id="actions"></div>
+        <div class="grid-label">Privileges: </div>
+        <div wicket:id="privileges" class="priviliges"></div>
+      </div>
+    </div>
+  </div>
 </wicket:extend>
 </html>
 
