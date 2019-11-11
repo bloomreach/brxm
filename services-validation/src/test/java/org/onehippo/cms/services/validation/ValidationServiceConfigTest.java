@@ -42,7 +42,7 @@ import static org.powermock.api.easymock.PowerMock.verifyAll;
 
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore("javax.management.*")
+@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.internal.*", "javax.xml.parsers.*", "org.w3c.dom.*", "org.xml.sax.*"})
 @PrepareForTest(ValidatorInstanceFactory.class)
 public class ValidationServiceConfigTest {
 
