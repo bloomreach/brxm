@@ -187,6 +187,12 @@ final class LocationMapper {
         contextNode = "/content";
         file = "content.yaml";
         ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
+        // /content/documents/administration/labels/resourcebundle.yaml
+        nodePatterns = new String[] {"/content/documents/administration/" + NAME + "/" + NAME};
+        propertyPatterns = new String[] {"/content/documents/administration/" + NAME + "/" + NAME + "/" + ANY};
+        contextNode = "/content/documents/administration/$1/$2";
+        file = "content/documents/administration/$1/$2.yaml";
+        ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
         // /content/documents/myproject
         nodePatterns = new String[] {"/content/" + NAME + "/" + NAME};
         propertyPatterns = new String[] {"/content/" + NAME + "/" + NAME + "/" + NAME};
