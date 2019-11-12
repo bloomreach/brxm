@@ -234,6 +234,8 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
         Session session = UserSession.get().getJcrSession();
         JcrUtils.copy(session, prototype.getNode().getPath(), destination);
+
+        validateModelObjects();
     }
 
     @Override
@@ -491,9 +493,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         final EditorPlugin editorPlugin = findParent(EditorPlugin.class);
         if (editorPlugin != null && editorPlugin.getForm() instanceof EditorForm) {
             final EditorForm editorForm = (EditorForm) editorPlugin.getForm();
-            if (editorForm.hasErrorMessage()) {
-                editorForm.onValidateModelObjects();
-            }
+            editorForm.onValidateModelObjects();
         }
     }
 
