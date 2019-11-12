@@ -24,7 +24,6 @@ import java.util.Set;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.Component;
@@ -48,6 +47,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
@@ -62,7 +62,6 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.diff.LCS;
 import org.hippoecm.frontend.plugins.standards.diff.LCS.Change;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -81,6 +80,7 @@ import org.onehippo.taxonomy.plugin.api.TaxonomyHelper;
 import org.onehippo.taxonomy.plugin.model.Classification;
 import org.onehippo.taxonomy.plugin.model.ClassificationDao;
 import org.onehippo.taxonomy.plugin.model.ClassificationModel;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +90,7 @@ import org.slf4j.LoggerFactory;
  */
 public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
 
-    static final Logger log = LoggerFactory.getLogger(TaxonomyPickerPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(TaxonomyPickerPlugin.class);
 
     private static final CssResourceReference CSS = new CssResourceReference(TaxonomyPickerPlugin.class, "style.css");
 
@@ -158,10 +158,10 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
 
             switch (change.getType()) {
                 case ADDED:
-                    label.add(CssClass.append("hippo-diff-added"));
+                    label.add(ClassAttribute.append("hippo-diff-added"));
                     break;
                 case REMOVED:
-                    label.add(CssClass.append("hippo-diff-removed"));
+                    label.add(ClassAttribute.append("hippo-diff-removed"));
                     break;
             }
 
@@ -223,8 +223,8 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
                             if (baseModel != null) {
                                 final List<String> currentKeys = dao.getClassification(getModel()).getKeys();
                                 final List<String> baseKeys = dao.getClassification(baseModel).getKeys();
-                                return LCS.getChangeSet(baseKeys.toArray(new String[baseKeys.size()]), currentKeys
-                                        .toArray(new String[currentKeys.size()]));
+                                return LCS.getChangeSet(baseKeys.toArray(new String[0]),
+                                        currentKeys.toArray(new String[0]));
                             }
                         }
                     }

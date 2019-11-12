@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,6 +37,8 @@ import org.onehippo.repository.update.BaseNodeUpdateVisitor;
 
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_LANGUAGE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MESSAGE;
+import static org.onehippo.repository.util.JcrConstants.JCR_ROOT_VERSION;
+import static org.onehippo.repository.util.JcrConstants.JCR_UUID;
 import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_CATEGORYINFO;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_CATEGORYINFOS;
@@ -44,7 +46,7 @@ import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.HIPPOTAXONOMY_NAME;
 import static org.onehippo.taxonomy.api.TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CATEGORY;
 
 public class TaxonomyTranslationsUpdater extends BaseNodeUpdateVisitor {
-    
+
     private Session session;
     private HippoVersionManager versionManager;
 
@@ -72,13 +74,13 @@ public class TaxonomyTranslationsUpdater extends BaseNodeUpdateVisitor {
         }
         return true;
     }
-    
-    private void migrateVersionHistory(final Node newTaxonomyNode, final VersionHistory versionHistory) 
+
+    private void migrateVersionHistory(final Node newTaxonomyNode, final VersionHistory versionHistory)
             throws RepositoryException {
         final VersionIterator versions = versionHistory.getAllVersions();
         while (versions.hasNext()) {
             final Version version = versions.nextVersion();
-            if (!version.getName().equals("jcr:rootVersion")) {
+            if (!version.getName().equals(JCR_ROOT_VERSION)) {
                 copy(version.getFrozenNode(), newTaxonomyNode);
                 updateTaxonomy(newTaxonomyNode);
                 session.save();
@@ -93,7 +95,7 @@ public class TaxonomyTranslationsUpdater extends BaseNodeUpdateVisitor {
             @Override
             public void setProperty(final PropInfo prop) throws RepositoryException {
                 final String name = prop.getName();
-                if (name.startsWith("jcr:frozen") || name.startsWith("jcr:uuid") ||
+                if (name.startsWith("jcr:frozen") || name.startsWith(JCR_UUID) ||
                         name.equals(HippoNodeType.HIPPO_RELATED) ||
                         name.equals(HippoNodeType.HIPPO_COMPUTE) ||
                         name.equals(HippoNodeType.HIPPO_PATHS)) {
@@ -103,11 +105,11 @@ public class TaxonomyTranslationsUpdater extends BaseNodeUpdateVisitor {
             }
         });
     }
-    
+
     private void updateTaxonomy(final Node taxonomyNode) throws RepositoryException {
         traverse(taxonomyNode);
     }
-    
+
     private void traverse(final Node node) throws RepositoryException {
         for (Node child : new NodeIterable(node.getNodes())) {
             if (child.isNodeType(NODETYPE_HIPPOTAXONOMY_CATEGORY)) {
@@ -115,7 +117,7 @@ public class TaxonomyTranslationsUpdater extends BaseNodeUpdateVisitor {
             }
         }
     }
-    
+
     private void updateCategory(final Node categoryNode) throws RepositoryException {
         if (categoryNode.isNodeType("hippotaxonomy:translated")) {
             if (!categoryNode.hasNode(HIPPOTAXONOMY_CATEGORYINFOS)) {
@@ -123,7 +125,7 @@ public class TaxonomyTranslationsUpdater extends BaseNodeUpdateVisitor {
             }
             final Node infoNodes = categoryNode.getNode(HIPPOTAXONOMY_CATEGORYINFOS);
             for (Node translationNode : new NodeIterable(categoryNode.getNodes("hippotaxonomy:translation"))) {
-                final String language = translationNode.getProperty("hippo:language").getString();
+                final String language = translationNode.getProperty(HIPPO_LANGUAGE).getString();
                 final Node infoNode;
                 if (!infoNodes.hasNode(language)) {
                     infoNode = infoNodes.addNode(language, HIPPOTAXONOMY_CATEGORYINFO);

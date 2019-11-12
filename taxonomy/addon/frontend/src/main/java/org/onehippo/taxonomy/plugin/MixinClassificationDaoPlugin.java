@@ -96,7 +96,7 @@ public class MixinClassificationDaoPlugin extends Plugin implements Classificati
 
             if (JcrHelper.isNodeType(node, TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CLASSIFIABLE)) {
                 List<String> keys = classification.getKeys();
-                node.setProperty(getFieldPath(), keys.toArray(new String[keys.size()]));
+                node.setProperty(getFieldPath(), keys.toArray(new String[0]));
                 if (JcrHelper.isNodeType(node, TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_CANONISED)) {
                     String canonKey = classification.getCanonical();
                     // when null, save empty string because it is mandatory at JCR level (see hippotaxonomy.cnd)

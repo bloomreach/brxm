@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 
 public class TaxonomyPlugin extends Plugin implements ITaxonomyService {
 
-    static final Logger log = LoggerFactory.getLogger(TaxonomyPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(TaxonomyPlugin.class);
 
     public static final String CONFIG_CATEGORY_FILTERS = "taxonomy.category.filters";
 
@@ -89,7 +89,7 @@ public class TaxonomyPlugin extends Plugin implements ITaxonomyService {
     @Override
     public Taxonomy getTaxonomy(String name) {
         try {
-            Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+            Session session = UserSession.get().getJcrSession();
             Node taxonomyHandleNode = ((Node) session.getItem(contentPath + "/" + name));
 
             if (taxonomyHandleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
@@ -129,7 +129,7 @@ public class TaxonomyPlugin extends Plugin implements ITaxonomyService {
         List<String> result = new LinkedList<>();
 
         try {
-            Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+            Session session = UserSession.get().getJcrSession();
             NodeIterator nodes = ((Node) session.getItem(contentPath)).getNodes();
 
             while (nodes.hasNext()) {

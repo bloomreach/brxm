@@ -36,7 +36,6 @@ import javax.swing.tree.TreeNode;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
@@ -64,6 +63,7 @@ import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.addon.workflow.ConfirmDialog;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -71,7 +71,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
 import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -566,10 +565,9 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         @SuppressWarnings("unchecked")
         final AjaxLink<Void> menuAction = (AjaxLink<Void>) toolbarHolder.get(actionId);
 
-        final AttributeModifier cssModifier = CssClass.set(enabled
+        menuAction.add(ClassAttribute.set(enabled
                 ? MENU_ACTION_STYLE_CLASS
-                : DISABLED_MENU_ACTION_STYLE_CLASS);
-        menuAction.add(cssModifier);
+                : DISABLED_MENU_ACTION_STYLE_CLASS));
     }
 
     protected Set<String> getClassifiedDocumentHandlesByCategoryKey(final String key, final int maxItems) {
