@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.onehippo.taxonomy.plugin;
 import java.io.Serializable;
 import java.util.Locale;
 
-import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.Taxonomy;
 import org.onehippo.taxonomy.plugin.api.TaxonomyHelper;
@@ -33,14 +32,6 @@ public class CanonicalCategory implements Serializable {
         this.taxonomy = taxonomy;
         this.key = key;
         this.locale = locale;
-    }
-
-    /**
-     * @deprecated use {@link CanonicalCategory(Taxonomy, String, Locale)} instead
-     */
-    @Deprecated
-    public CanonicalCategory(final Taxonomy taxonomy, final String key, final String language) {
-        this(taxonomy, key, TaxonomyUtil.toLocale(language));
     }
 
     public String getName() {

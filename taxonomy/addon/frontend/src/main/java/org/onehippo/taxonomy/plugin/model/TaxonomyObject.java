@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -107,11 +106,6 @@ public class TaxonomyObject extends JcrObject {
 
     protected Node getNode() throws ItemNotFoundException {
         return super.getNode();
-    }
-
-    @Deprecated
-    protected JcrCategory createCategory(Node parent, String key, String name, String locale) throws RepositoryException, TaxonomyException {
-        return createCategory(parent, key, name, TaxonomyUtil.toLocale(locale));
     }
 
     protected JcrCategory createCategory(Node parent, String key, String name, Locale locale) throws RepositoryException, TaxonomyException {

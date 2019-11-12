@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,17 +27,17 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.onehippo.taxonomy.api.TaxonomyException;
-import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.util.DocumentUtils;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.util.NodeIterable;
+import org.onehippo.taxonomy.api.TaxonomyException;
 import org.onehippo.taxonomy.api.TaxonomyNodeTypes;
 import org.onehippo.taxonomy.plugin.ITaxonomyService;
 import org.onehippo.taxonomy.plugin.api.EditableTaxonomy;
+import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,17 +53,8 @@ public class JcrTaxonomy extends TaxonomyObject implements EditableTaxonomy {
         super(nodeModel, editable, service);
     }
 
-    /**
-     * @deprecated use {@link #getLocaleObjects()} instead.
-     */
     @Override
-    @Deprecated
-    public String[] getLocales() {
-        return getLocaleObjects().stream().map(Locale::getLanguage).toArray(String[]::new);
-    }
-
-    @Override
-    public List<Locale> getLocaleObjects() {
+    public List<Locale> getLocales() {
         List<Locale> locales = new ArrayList<>();
 
         try {
@@ -107,13 +98,14 @@ public class JcrTaxonomy extends TaxonomyObject implements EditableTaxonomy {
                         }
                     } catch (RepositoryException re) {
                         if (log.isDebugEnabled()) {
-                            log.debug("Can't create category from child of node " +  nodePath, re);
-                        }
-                        else {
-                            log.warn("Can't create category from child of node {}, message is {}", nodePath, re.getMessage());
+                            log.debug("Can't create category from child of node " + nodePath, re);
+                        } else {
+                            log.warn("Can't create category from child of node {}, message is {}", nodePath,
+                                    re.getMessage());
                         }
                     } catch (TaxonomyException te) {
-                        log.warn("TaxonomyException: can't create category from child of node {}, message is {}", nodePath, te.getMessage());
+                        log.warn("TaxonomyException: can't create category from child of node {}, message is {}",
+                                nodePath, te.getMessage());
                     }
                 }
             }
@@ -143,12 +135,6 @@ public class JcrTaxonomy extends TaxonomyObject implements EditableTaxonomy {
     @Override
     public JcrCategory getCategory(String relPath) {
         return null;
-    }
-
-    @Override
-    @Deprecated
-    public JcrCategory addCategory(String key, String name, String locale) throws TaxonomyException {
-        return addCategory(key, name, TaxonomyUtil.toLocale(locale));
     }
 
     @Override
@@ -191,8 +177,10 @@ public class JcrTaxonomy extends TaxonomyObject implements EditableTaxonomy {
             try {
                 Node taxonomyRootNode = getNode();
                 if (!taxonomyRootNode.isNodeType(TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TAXONOMY)) {
-                    log.warn("Expected taxonomy  node of type {} for node {} but was of type {}",
-                            new String[]{TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TAXONOMY, taxonomyRootNode.getPath(), taxonomyRootNode.getPrimaryNodeType().getName()});
+                    log.warn("Expected taxonomy node of type {} for node {} but was of type {}",
+                            TaxonomyNodeTypes.NODETYPE_HIPPOTAXONOMY_TAXONOMY,
+                            taxonomyRootNode.getPath(),
+                            taxonomyRootNode.getPrimaryNodeType().getName());
                     return;
                 }
                 loadCategories(taxonomyRootNode);
@@ -206,7 +194,7 @@ public class JcrTaxonomy extends TaxonomyObject implements EditableTaxonomy {
     private void loadCategories(final Node node) throws RepositoryException {
 
         if (node instanceof HippoNode) {
-            if (((HippoNode)node).isVirtual())  {
+            if (((HippoNode) node).isVirtual()) {
                 return;
             }
         }
@@ -232,9 +220,10 @@ public class JcrTaxonomy extends TaxonomyObject implements EditableTaxonomy {
                 }
             } catch (TaxonomyException e) {
                 if (log.isDebugEnabled()) {
-                    log.warn("TaxonomyException: failed to load category from below {} : {}", node.getPath() , e);
+                    log.warn("TaxonomyException: failed to load category from below {} : {}", node.getPath(), e);
                 } else {
-                    log.warn("TaxonomyException: failed to load category from below {}, message is {}", node.getPath() , e.toString());
+                    log.warn("TaxonomyException: failed to load category from below {}, message is {}", node.getPath(),
+                            e.toString());
                 }
             }
         }

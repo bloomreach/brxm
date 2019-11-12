@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,13 +25,6 @@ public interface CategoryInfo {
      */
     String getName();
     
-    /**
-     * @return the language of this translation
-     * @deprecated use the {@link #getLocale()} to retrieve the language code from
-     */
-    @Deprecated
-    String getLanguage();
-
     /**
      * @return the Locale of this translation or null if the locale cannot be determined
      */

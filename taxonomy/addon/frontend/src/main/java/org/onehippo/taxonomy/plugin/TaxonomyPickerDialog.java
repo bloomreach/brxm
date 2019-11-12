@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin;
 import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
 import org.onehippo.taxonomy.plugin.model.Classification;
 import org.onehippo.taxonomy.plugin.model.TaxonomyModel;
-import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,11 +58,10 @@ public class TaxonomyPickerDialog extends Dialog<Classification> {
      * @param model
      * @param preferredLocale
      */
-    @Deprecated
-     public TaxonomyPickerDialog(final IPluginContext context, final IPluginConfig config, IModel<Classification> model,
-             String preferredLocale) {
-         this(context, config, model, preferredLocale, new TaxonomyModel(context, config), false);
-     }
+    public TaxonomyPickerDialog(final IPluginContext context, final IPluginConfig config, IModel<Classification> model,
+                                final Locale preferredLocale) {
+        this(context, config, model, preferredLocale, new TaxonomyModel(context, config), false);
+    }
 
     /**
      * Constructor which adds UI components in the dialog.
@@ -74,35 +72,7 @@ public class TaxonomyPickerDialog extends Dialog<Classification> {
      * @param preferredLocale
      * @param taxonomyModel
      */
-    @Deprecated
     public TaxonomyPickerDialog(final IPluginContext context, final IPluginConfig config, IModel<Classification> model,
-                                String preferredLocale, final TaxonomyModel taxonomyModel, final boolean detailsReadOnly) {
-        this(context, config, model, TaxonomyUtil.toLocale(preferredLocale), taxonomyModel, detailsReadOnly);
-    }
-
-    /**
-     * Constructor which adds UI components in the dialog.
-     * The main UI component in this dialog is the taxonomy browser.
-     * @param context
-     * @param config
-     * @param model
-     * @param preferredLocale
-     */
-    public TaxonomyPickerDialog(final IPluginContext context, final IPluginConfig config, IModel<Classification> model,
-                                final Locale preferredLocale) {
-        this(context, config, model, preferredLocale, new TaxonomyModel(context, config), false);
-    }
-
-        /**
-         * Constructor which adds UI components in the dialog.
-         * The main UI component in this dialog is the taxonomy browser.
-         * @param context
-         * @param config
-         * @param model
-         * @param preferredLocale
-         * @param taxonomyModel
-         */
-     public TaxonomyPickerDialog(final IPluginContext context, final IPluginConfig config, IModel<Classification> model,
                                  final Locale preferredLocale, final TaxonomyModel taxonomyModel,
                                  final boolean detailsReadOnly) {
         super(model);

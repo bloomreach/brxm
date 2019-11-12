@@ -15,7 +15,6 @@
  */
 package org.onehippo.taxonomy.plugin;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -37,7 +36,6 @@ import javax.swing.tree.TreeNode;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.AttributeModifier;
 import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.OnChangeAjaxBehavior;
@@ -65,6 +63,7 @@ import org.apache.wicket.util.value.IValueMap;
 import org.apache.wicket.validation.validator.StringValidator;
 import org.hippoecm.addon.workflow.ConfirmDialog;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -72,7 +71,6 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.browse.tree.FolderTreePlugin;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standards.list.resolvers.CssClass;
 import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
 import org.hippoecm.frontend.service.ISettingsService;
 import org.hippoecm.frontend.service.render.RenderPlugin;
@@ -98,7 +96,6 @@ import org.onehippo.taxonomy.plugin.tree.CategoryNode;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyNode;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyTree;
 import org.onehippo.taxonomy.plugin.tree.TaxonomyTreeModel;
-import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -451,23 +448,7 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
     }
 
     private List<Locale> getAvailableLocaleSelections() {
-        return taxonomy.getLocaleObjects();
-    }
-
-    /**
-     * @deprecated use {@link #getCurrentLocaleSelection()} instead.
-     */
-    @Deprecated
-    public LanguageSelection getCurrentLanguageSelection() {
-        return new LanguageSelection(currentLocaleSelection, currentLocaleSelection);
-    }
-
-    /**
-     * @deprecated use {@link #setCurrentLocaleSelection(Locale)} instead.
-     */
-    @Deprecated
-    public void setCurrentLanguageSelection(final LanguageSelection currentLanguageSelection) {
-        this.currentLocaleSelection = TaxonomyUtil.toLocale(currentLanguageSelection.getLanguageCode());
+        return taxonomy.getLocales();
     }
 
     public Locale getCurrentLocaleSelection() {
@@ -487,15 +468,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
      */
     protected Form<?> getContainerForm() {
         return container;
-    }
-
-    /**
-     * Return <code>Category</code> comparator to be used when sorting sibling category nodes.
-     * @deprecated use {@link #getCategoryComparator(IPluginConfig, Locale)} instead
-     */
-    @Deprecated
-    protected Comparator<Category> getCategoryComparator(final IPluginConfig config, final String locale) {
-        return getCategoryComparator(config, TaxonomyUtil.toLocale(locale));
     }
 
     /**
@@ -573,83 +545,6 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         }
     }
 
-    /**
-     * @deprecated use {@link Locale} instead.
-     */
-    @Deprecated
-    protected final class LanguageSelection implements Serializable {
-
-        private String languageCode;
-        private String displayName;
-
-        /**
-         * Constructor
-         *
-         * @param selectionLocale the locale for the actual language selection item
-         * @param uiLocale        the locale by which the language name is determined
-         */
-
-        public LanguageSelection(final Locale selectionLocale, final Locale uiLocale) {
-            this(selectionLocale.toString(), getDisplayLanguage(selectionLocale, uiLocale));
-        }
-
-        public LanguageSelection(final String languageCode, final String displayName) {
-            this.languageCode = languageCode;
-            this.displayName = displayName;
-        }
-
-        public String getLanguageCode() {
-            return languageCode;
-        }
-
-        public void setLanguageCode(final String languageCode) {
-            this.languageCode = languageCode;
-        }
-
-        public String getDisplayName() {
-            return displayName;
-        }
-
-        public void setDisplayName(final String displayName) {
-            this.displayName = displayName;
-        }
-
-        @Override
-        public boolean equals(final Object o) {
-            if (o == null) {
-                return false;
-            }
-
-            if (!(o instanceof LanguageSelection)) {
-                return false;
-            }
-
-            if (languageCode == null && ((LanguageSelection) o).getLanguageCode() == null) {
-                return true;
-            }
-
-            if (languageCode != null && languageCode.equals(((LanguageSelection) o).getLanguageCode())) {
-                return true;
-            }
-
-            return false;
-        }
-
-        @Override
-        public int hashCode() {
-            if (languageCode != null) {
-                return languageCode.hashCode();
-            }
-
-            return super.hashCode();
-        }
-
-        @Override
-        public String toString() {
-            return super.toString() + " [ " + languageCode + ", " + displayName + " }";
-        }
-    }
-
     private static String getDisplayLanguage(final Locale selectionLocale, final Locale uiLocale) {
         final String displayName = selectionLocale.getDisplayName(uiLocale);
         if (Strings.isNullOrEmpty(displayName)) {
@@ -670,10 +565,9 @@ public class TaxonomyEditorPlugin extends RenderPlugin<Node> {
         @SuppressWarnings("unchecked")
         final AjaxLink<Void> menuAction = (AjaxLink<Void>) toolbarHolder.get(actionId);
 
-        final AttributeModifier cssModifier = CssClass.set(enabled
+        menuAction.add(ClassAttribute.set(enabled
                 ? MENU_ACTION_STYLE_CLASS
-                : DISABLED_MENU_ACTION_STYLE_CLASS);
-        menuAction.add(cssModifier);
+                : DISABLED_MENU_ACTION_STYLE_CLASS));
     }
 
     protected Set<String> getClassifiedDocumentHandlesByCategoryKey(final String key, final int maxItems) {

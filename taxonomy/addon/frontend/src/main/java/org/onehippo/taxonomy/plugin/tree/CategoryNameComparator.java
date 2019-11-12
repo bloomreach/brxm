@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,7 +18,6 @@ package org.onehippo.taxonomy.plugin.tree;
 import java.util.Comparator;
 import java.util.Locale;
 
-import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.onehippo.taxonomy.api.Category;
 
 /**
@@ -30,14 +29,6 @@ import org.onehippo.taxonomy.api.Category;
 public class CategoryNameComparator implements Comparator<Category> {
 
     private Locale locale;
-
-    /**
-     * @deprecated use {@link #CategoryNameComparator(Locale)} instead
-     */
-    @Deprecated
-    public CategoryNameComparator(final String language) {
-        this(TaxonomyUtil.toLocale(language));
-    }
 
     public CategoryNameComparator(final Locale locale) {
         this.locale = locale;

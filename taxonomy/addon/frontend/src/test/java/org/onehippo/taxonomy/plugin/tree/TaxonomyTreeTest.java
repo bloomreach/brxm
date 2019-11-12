@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,7 @@ package org.onehippo.taxonomy.plugin.tree;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Comparator;
+import java.util.Locale;
 
 import org.apache.wicket.model.IModel;
 import org.junit.Test;
@@ -47,7 +48,7 @@ public class TaxonomyTreeTest extends AbstractTaxonomyTest {
     public void setUp() throws Exception {
         super.setUp();
         IModel taxonomyModel = new TaxModel();
-        final String locale = "en";
+        final Locale locale = new Locale("en");
         Comparator<Category> categoryComparator = new CategoryNameComparator(locale);
         treeModel = new TaxonomyTreeModel(taxonomyModel, locale, categoryComparator);
     }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -77,19 +77,6 @@ public class JcrCategoryInfo extends TaxonomyObject implements EditableCategoryI
             log.debug("Could not rename category node; a sibling with name {} already exists", encoded);
         } catch (RepositoryException ex) {
             log.warn("Unable to update node name of category", ex);
-        }
-    }
-
-    /**
-     * @deprecated use {@link #getLocale()} to get the language code from
-     */
-    @Deprecated
-    public String getLanguage() {
-        final Locale locale = getLocale();
-        if (locale != null) {
-            return locale.getLanguage();
-        } else {
-            return "<unknown>";
         }
     }
 

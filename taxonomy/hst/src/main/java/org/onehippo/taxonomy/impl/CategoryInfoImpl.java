@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,9 +22,7 @@ import java.util.Map;
 import javax.jcr.Node;
 
 import org.apache.commons.lang.ArrayUtils;
-import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
-import org.hippoecm.hst.service.Service;
 import org.onehippo.taxonomy.api.CategoryInfo;
 import org.onehippo.taxonomy.api.TaxonomyNodeTypes;
 import org.onehippo.taxonomy.util.TaxonomyUtil;
@@ -59,14 +57,6 @@ public class CategoryInfoImpl implements CategoryInfo {
 
     public String getName() {
         return name;
-    }
-
-    /**
-     * @deprecated use {@link #getLocale()} to retrieve the language code from
-     */
-    @Deprecated
-    public String getLanguage() {
-        return getLocale().getLanguage();
     }
 
     @Override
