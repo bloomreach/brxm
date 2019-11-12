@@ -26,29 +26,40 @@
   align-items: center;
   display: flex;
   height: 100%;
-  opacity: .5;
   overflow: hidden;
   position: relative;
 
   > span {
     display: block;
+    opacity: .5;
     padding: 0 8px;
+  }
+
+  .mat-icon {
+    color: $breadcrumbs-chevron-color;
   }
 
   &.last {
     cursor: pointer;
-    opacity: 1;
+
+    > span {
+      opacity: 1;
+    }
 
     &:not(.has-suffix):not(.single-crumb) {
       font-weight: $font-weight-semibold;
+    }
+
+    &:hover {
+      background-color: $breadcrumbs-active-background-color;
     }
   }
 
   &.suffix {
     font-weight: $font-weight-semibold;
-    opacity: 1;
 
     > span {
+      opacity: 1;
       padding-left: 8px;
     }
 

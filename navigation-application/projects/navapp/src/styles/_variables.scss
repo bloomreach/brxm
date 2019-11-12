@@ -97,6 +97,7 @@ $body-text-color: $grey-900;
 // Font, line-height, and color for body text, headings, and more.
 $font-family: 'Open Sans', Roboto, 'Helvetica Neue', sans-serif;
 $font-weight-semibold: 500;
+$text-color: rgba(0, 0, 0, .87);
 
 // Menu
 $menu-top-item-height: 48px;
@@ -128,6 +129,10 @@ $menu-drawer-menu-hover-text-color: #fff;
 $top-panel-height: 36px;
 $top-panel-bg: rgb(245, 245, 245);
 $top-panel-border-color: rgb(234, 232, 234);
+
+// breadcrumbs
+$breadcrumbs-active-background-color: #e0e0e0;
+$breadcrumbs-chevron-color: rgba(0, 0, 0, .6);
 
 // Site selection side panel
 $site-selection-text-color: #6a6a6a;
