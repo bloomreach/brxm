@@ -45,6 +45,7 @@ import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.ValidationScope;
 import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.frontend.validation.Violation;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -148,9 +149,12 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
                 }
             }
         }
+
+        final boolean isCompound = field.getTypeDescriptor().isType(HippoNodeType.NT_COMPOUND);
+        final FeedbackScope feedbackScope = isCompound ? FeedbackScope.COMPOUND : FeedbackScope.FIELD;
         final Violation defaultViolation = newViolation(new ModelPathElement(field, field.getPath(), 0),
                 getMessage(ValidatorMessages.REQUIRED_FIELD_NOT_PRESENT),
-                FeedbackScope.FIELD);
+                feedbackScope);
         return Collections.singleton(defaultViolation);
     }
 
