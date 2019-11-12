@@ -236,7 +236,7 @@ public class DomainManagerTest extends RepositoryTestCase {
 
             assertThat(domainNamesForGroup)
                     .as("Expected 'versioning' and 'defaultread' domain for group 'everybody'", USERROLE_SECURITY_USER_ADMIN)
-                    .containsExactly("versioning", "defaultread");
+                    .containsExactly("versioning", "draft-document-holder-readwrite", "defaultread");
 
         } finally {
             if (testAdmin != null) {

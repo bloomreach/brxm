@@ -18,5 +18,5 @@ definitions:
           hipposys:value: draft
       /readwrite:
         jcr:primaryType: hipposys:authrole
-        hipposys:userrole: xm.content.holder
+        hipposys:groups: [everybody]
         hipposys:role: readwrite

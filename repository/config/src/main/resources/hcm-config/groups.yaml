@@ -10,7 +10,7 @@ definitions:
         hipposys:userroles:
           .meta:category: system
           .meta:add-new-system-values: true
-          value: [xm.content.holder]
+          value: []
       /author:
         jcr:primaryType: hipposys:group
         hipposys:members:

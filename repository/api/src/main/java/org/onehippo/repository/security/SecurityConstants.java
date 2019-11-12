@@ -83,8 +83,6 @@ public final class SecurityConstants {
      */
     public static final String USERROLE_CONTENT_ADMIN = "xm.content.admin";
 
-    public static final String USERROLE_CONTENT_HOLDER = "xm.content.holder";
-
     /**
      * The user role representing a (system) user which need read access everywhere, for example the user that needs to
      * read all kind of configuration but never modify it.

@@ -33,10 +33,6 @@ definitions:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
         hipposys:userroles: [xm.content.author]
-      /xm.content.holder:
-        jcr:primaryType: hipposys:userrole
-        hipposys:system: true
-        hipposys:userroles: []
       /xm.content.admin:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true

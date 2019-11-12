@@ -62,7 +62,6 @@ import static org.onehippo.repository.security.SecurityConstants.CONFIG_USERS_PA
 import static org.onehippo.repository.security.SecurityConstants.USERROLE_CONTENT_AUTHOR;
 import static org.onehippo.repository.security.SecurityConstants.USERROLE_CONTENT_EDITOR;
 import static org.onehippo.repository.security.SecurityConstants.USERROLE_CONTENT_VIEWER;
-import static org.onehippo.repository.security.SecurityConstants.USERROLE_CONTENT_HOLDER;
 import static org.onehippo.repository.security.SecurityConstants.USERROLE_DEFAULT_USER_EDITOR;
 import static org.onehippo.repository.util.JcrConstants.JCR_PATH;
 import static org.onehippo.repository.util.JcrConstants.JCR_PRIMARY_TYPE;
@@ -161,7 +160,7 @@ public class SecurityServiceTest extends RepositoryTestCase {
 
             assertThat(((HippoSession) testSession).getUser().getUserRoles())
                     .as("Existing sessions do not get their user roles updated")
-                    .containsOnly(USERROLE_CONTENT_HOLDER);
+                    .isEmpty();
 
             final SecurityService securityService = HippoServiceRegistry.getService(SecurityService.class);
 
@@ -180,7 +179,7 @@ public class SecurityServiceTest extends RepositoryTestCase {
             assertThat(((HippoSession)newSession).getUser().getUserRoles())
                     .as("New logged in session should have the new user role "+USERROLE_CONTENT_VIEWER+" but " +
                             "should not have 'non-existing' since only existing user roles should be returned")
-                    .containsOnly(USERROLE_CONTENT_VIEWER, USERROLE_CONTENT_HOLDER);
+                    .containsOnly(USERROLE_CONTENT_VIEWER);
 
             testNode.setProperty(HIPPO_USERROLES, new String[] {"non-existing", USERROLE_CONTENT_EDITOR});
 
@@ -196,7 +195,7 @@ public class SecurityServiceTest extends RepositoryTestCase {
 
             assertThat(((HippoSession)newSession).getUser().getUserRoles())
                     .as("xm.content.editor should be extended to "+USERROLE_CONTENT_AUTHOR+" and "+USERROLE_CONTENT_VIEWER)
-                    .containsOnly(USERROLE_CONTENT_EDITOR, USERROLE_CONTENT_AUTHOR, USERROLE_CONTENT_VIEWER, USERROLE_CONTENT_HOLDER);
+                    .containsOnly(USERROLE_CONTENT_EDITOR, USERROLE_CONTENT_AUTHOR, USERROLE_CONTENT_VIEWER);
 
             testNode.setProperty(HIPPO_USERROLES, new String[0]);
 
@@ -225,7 +224,7 @@ public class SecurityServiceTest extends RepositoryTestCase {
 
             assertThat(((HippoSession)newSession).getUser().getUserRoles())
                     .as("Test session should now have the (expanded) roles from group editor")
-                    .containsOnly(USERROLE_DEFAULT_USER_EDITOR, USERROLE_CONTENT_VIEWER, USERROLE_CONTENT_AUTHOR, USERROLE_CONTENT_EDITOR, USERROLE_CONTENT_HOLDER);
+                    .containsOnly(USERROLE_DEFAULT_USER_EDITOR, USERROLE_CONTENT_VIEWER, USERROLE_CONTENT_AUTHOR, USERROLE_CONTENT_EDITOR);
 
             newSession.logout();
 
