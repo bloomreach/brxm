@@ -139,6 +139,15 @@
           <groupId>org.codehaus.groovy</groupId>
           <artifactId>groovy-ant</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>org.codehaus.groovy</groupId>
+          <artifactId>groovy-jmx</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.codehaus.groovy</groupId>
+          <artifactId>groovy-sql</artifactId>
+        </exclusion>
+
       </exclusions>
     </dependency>
 
