@@ -47,7 +47,7 @@ import static org.hamcrest.core.IsEqual.equalTo;
 import static org.powermock.api.easymock.PowerMock.replayAll;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
+@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.internal.*", "javax.xml.parsers.*", "org.w3c.dom.*", "org.xml.sax.*", "javax.net.ssl.*"})
 @PrepareForTest({ValueListService.class})
 public class ValueListResourceTest extends CXFTest {
 
