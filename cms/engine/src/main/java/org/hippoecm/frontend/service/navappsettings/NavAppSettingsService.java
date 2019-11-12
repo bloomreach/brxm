@@ -35,6 +35,7 @@ import org.hippoecm.frontend.service.AppSettings;
 import org.hippoecm.frontend.service.INavAppSettingsService;
 import org.hippoecm.frontend.service.NavAppResource;
 import org.hippoecm.frontend.service.NavAppSettings;
+import org.hippoecm.frontend.service.NgxLoggerLevel;
 import org.hippoecm.frontend.service.ResourceType;
 import org.hippoecm.frontend.service.UserSettings;
 import org.hippoecm.frontend.session.PluginUserSession;
@@ -50,6 +51,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     static final String NAVAPP_LOCATION_SYSTEM_PROPERTY = "navapp.location";
 
     static final String IFRAMES_CONNECTION_TIMEOUT = "iframesConnectionTimeout";
+    static final String LOG_LEVEL = "logLevel";
     static final String LOGIN_TYPE_QUERY_PARAMETER = "logintype";
     public static final String LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME = NavAppSettingsService.class.getName() + "_" +
             LOGIN_TYPE_QUERY_PARAMETER;
@@ -173,6 +175,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         }
 
         final int iframesConnectionTimeout = readIframesConnectionTimeout();
+        final NgxLoggerLevel ngxLoggerLevel = readLogLevel();
 
         return new AppSettings() {
 
@@ -210,11 +213,21 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
             public int getIframesConnectionTimeout() {
                 return iframesConnectionTimeout;
             }
+
+            @Override
+            public NgxLoggerLevel getLogLevel() {
+                return ngxLoggerLevel;
+            }
         };
     }
 
     private int readIframesConnectionTimeout() {
         return getPluginConfig().getInt(IFRAMES_CONNECTION_TIMEOUT, 30_000);
+    }
+
+    private NgxLoggerLevel readLogLevel() {
+        final String logLevelString = getPluginConfig().getString(LOG_LEVEL, NgxLoggerLevel.OFF.name());
+        return NgxLoggerLevel.valueOf(logLevelString);
     }
 
 }
