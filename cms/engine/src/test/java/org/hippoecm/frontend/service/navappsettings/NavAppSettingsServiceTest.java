@@ -47,6 +47,7 @@ import org.hippoecm.frontend.service.AppSettings;
 import org.hippoecm.frontend.service.INavAppSettingsService;
 import org.hippoecm.frontend.service.NavAppResource;
 import org.hippoecm.frontend.service.NavAppSettings;
+import org.hippoecm.frontend.service.NgxLoggerLevel;
 import org.hippoecm.frontend.service.ResourceType;
 import org.hippoecm.frontend.service.UserSettings;
 import org.hippoecm.frontend.session.PluginUserSession;
@@ -136,6 +137,7 @@ public class NavAppSettingsServiceTest {
 
         expect(config.getString(INavAppSettingsService.SERVICE_ID, INavAppSettingsService.SERVICE_ID)).andReturn(null);
         expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
+        expect(config.getString(NavAppSettingsService.LOG_LEVEL, NgxLoggerLevel.OFF.name())).andReturn(NgxLoggerLevel.OFF.name());
         replay(config);
 
         sessionAttributeStore = new SessionAttributeStore() {
@@ -336,6 +338,7 @@ public class NavAppSettingsServiceTest {
 
         reset(config);
         expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
+        expect(config.getString(NavAppSettingsService.LOG_LEVEL, NgxLoggerLevel.OFF.name())).andReturn(NgxLoggerLevel.OFF.name());
         replay(config);
 
         reset(parameters);
@@ -359,6 +362,7 @@ public class NavAppSettingsServiceTest {
 
         reset(config);
         expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
+        expect(config.getString(NavAppSettingsService.LOG_LEVEL, NgxLoggerLevel.OFF.name())).andReturn(NgxLoggerLevel.OFF.name());
         replay(config);
 
 
