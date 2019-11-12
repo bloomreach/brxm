@@ -152,7 +152,13 @@
               if (!rootPanel) {
                 return Promise.reject(new Error('rootPanel is not found'));
               }
-              rootPanel.fireEvent('navigate-to-channel-overview');
+
+              const channelId = pathElements.shift();
+              if (channelId) {
+                rootPanel.selectCard(1);
+              } else {
+                rootPanel.selectCard(0);
+              }
             }
 
             return Promise.resolve();
