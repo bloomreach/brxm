@@ -169,6 +169,7 @@
             } else {
               url.searchParams.append('uuid', pathElements[1]);
             }
+            Hippo.hideBusyIndicator();
             docLocation.assign(url.toString())
 
             return Promise.resolve();
