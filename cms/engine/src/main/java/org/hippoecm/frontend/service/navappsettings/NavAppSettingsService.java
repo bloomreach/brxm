@@ -20,7 +20,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Supplier;
 
 import javax.jcr.RepositoryException;
 
@@ -60,25 +59,25 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
 
     static final String NAVIGATIONITEMS_ENDPOINT = "/ws/navigationitems";
     private static final Logger log = LoggerFactory.getLogger(NavAppSettingsService.class);
-    // To make unit testing easier (needs to be transient to prevent Wicket from serializing it.
-    private final transient Supplier<PluginUserSession> pluginUserSessionSupplier;
-    private final transient SessionAttributeStore sessionAttributeStore;
+    // To make unit testing easier (needs to be serializable )
+    private final  SerializableSupplier<PluginUserSession> pluginUserSessionSupplier;
+    private final SerializableSupplier<SessionAttributeStore> sessionAttributeStoreSupplier;
 
     private final transient NavAppResourceService navAppResourceService;
 
-    NavAppSettingsService(IPluginContext context, IPluginConfig config, Supplier<PluginUserSession> pluginUserSessionSupplier, SessionAttributeStore sessionAttributeStore, NavAppResourceService navAppResourceService) {
+    NavAppSettingsService(IPluginContext context, IPluginConfig config, SerializableSupplier<PluginUserSession> pluginUserSessionSupplier, SerializableSupplier<SessionAttributeStore> sessionAttributeStoreSupplier, NavAppResourceService navAppResourceService) {
         super(context, config);
         this.pluginUserSessionSupplier = pluginUserSessionSupplier;
         this.navAppResourceService = navAppResourceService;
         final String name = config.getString(SERVICE_ID, SERVICE_ID);
-        this.sessionAttributeStore = sessionAttributeStore;
+        this.sessionAttributeStoreSupplier = sessionAttributeStoreSupplier;
         context.registerService(this, name);
     }
 
     public NavAppSettingsService(IPluginContext context, IPluginConfig config) {
         this(context, config,
                 PluginUserSession::get,
-                new UserSessionAttributeStore(PluginUserSession.get()),
+                () -> new UserSessionAttributeStore(PluginUserSession::get),
                 new NavAppResourceServiceImpl(HstServices.getComponentManager().getContainerConfiguration().toProperties())
         );
     }
@@ -95,10 +94,10 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
 
         final StringValue loginTypeStringValue = queryParameters.getParameterValue(LOGIN_TYPE_QUERY_PARAMETER);
         if (loginTypeStringValue.toString("").equals("local")){
-            this.sessionAttributeStore.setAttribute(LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME, true);
+            this.sessionAttributeStoreSupplier.get().setAttribute(LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME, true);
         }
         boolean localLogin = (boolean) Optional
-                .ofNullable( this.sessionAttributeStore.getAttribute(LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME))
+                .ofNullable( this.sessionAttributeStoreSupplier.get().getAttribute(LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME))
                 .orElse(false);
 
         final AppSettings appSettings = createAppSettings(initialPath, localLogin);
