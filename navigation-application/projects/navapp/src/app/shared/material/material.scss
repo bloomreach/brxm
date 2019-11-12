@@ -131,7 +131,7 @@ $hippo-theme: mat-light-theme($hippo-primary, $hippo-accent, $hippo-warn);
 
 // default body text color
 .mat-typography {
-  color: rgba(0, 0, 0, .87);
+  color: $text-color;
 }
 
 .mat-flat-button > span {
