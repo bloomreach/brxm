@@ -16,11 +16,9 @@
 package org.hippoecm.hst.content.beans.builder;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder;
 import org.hippoecm.hst.content.beans.dynamic.DynamicBeanUtils;
-import org.onehippo.cms7.services.contenttype.ContentTypeChild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +29,6 @@ public abstract class AbstractBeanBuilderService {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractBeanBuilderService.class);
     private static final String DOCBASE = "Docbase";
-    private static final String CONTENT_BLOCKS_VALIDATOR = "contentblocks-validator";
 
     private enum DocumentType {
         STRING("String"), //
@@ -80,7 +77,6 @@ public abstract class AbstractBeanBuilderService {
         for (HippoContentProperty property : bean.getProperties()) {
             final String propertyName = property.getName();
             final boolean multiple = property.isMultiple();
-            final String cmsType = property.getCmsType();
 
             final String methodName = DynamicBeanUtils.createMethodName(propertyName);
             boolean hasChange = hasChange(methodName, multiple, builder);
@@ -88,15 +84,14 @@ public abstract class AbstractBeanBuilderService {
                 continue;
             }
 
-            String type = property.getType();
-            log.trace("Adding property {} to the bean {}.", property.getName(), bean.getName());
+            log.trace("Adding property {} to the bean {}.", property.getName(), bean.getDocumentType());
 
-            if (type == null) {
-                log.error("Missing type for property, cannot create method {} on bean {}.", property.getName(), bean.getName());
+            if (property.getType() == null) {
+                log.error("Missing type for property, cannot create method {} on bean {}.", property.getName(), bean.getDocumentType());
                 continue;
             }
 
-            final DocumentType documentType = getPropertyDocumentType(type, cmsType);
+            final DocumentType documentType = getPropertyDocumentType(property.getType(), property.getCmsType());
 
             switch (documentType) {
             case STRING:
@@ -121,7 +116,7 @@ public abstract class AbstractBeanBuilderService {
                 addBeanMethodDocbase(propertyName, methodName, multiple, builder);
                 break;
             default:
-                addCustomPropertyType(propertyName, methodName, multiple, type, builder);
+                addCustomPropertyType(propertyName, methodName, multiple, property.getType(), builder);
                 break;
             }
         }
@@ -144,15 +139,14 @@ public abstract class AbstractBeanBuilderService {
                 continue;
             }
 
-            final String type = childNode.getType();
-            log.trace("Adding property {} to the bean {}.", childNode.getName(), bean.getName());
+            log.trace("Adding property {} to the bean {}.", childNode.getName(), bean.getDocumentType());
 
-            if (type == null) {
-                log.error("Missing type for node, cannot create method {} on bean {}.", childNode.getName(), bean.getName());
+            if (childNode.getType() == null) {
+                log.error("Missing type for node, cannot create method {} on bean {}.", childNode.getName(), bean.getDocumentType());
                 continue;
             }
 
-            final DocumentType documentType = getChildNodeDocumentType(type, childNode.getContentType());
+            final DocumentType documentType = getChildNodeDocumentType(childNode.getType(), childNode.hasContentBlocks());
 
             switch (documentType) {
             case HIPPO_HTML:
@@ -174,10 +168,10 @@ public abstract class AbstractBeanBuilderService {
                 addBeanMethodContentBlocks(propertyName, methodName, multiple, builder);
                 break;
             case HIPPO_COMPOUND:
-                addBeanMethodCompoundType(propertyName, methodName, multiple, childNode.getContentType().getName(), builder);
+                addBeanMethodCompoundType(propertyName, methodName, multiple, childNode.getName(), builder);
                 break;
             default:
-                addCustomNodeType(propertyName, methodName, multiple, type, builder);
+                addCustomNodeType(propertyName, methodName, multiple, childNode.getType(), builder);
                 break;
             }
         }
@@ -208,17 +202,17 @@ public abstract class AbstractBeanBuilderService {
      * a possible content block definition
      * 
      * @param type of the document
-     * @param contentTypeChild child element of the corresponding contentType of the document type
+     * @param hasContentBlocks whether a contentType has any content blocks or not
      * @return the corresponding document type
      */
-    private DocumentType getChildNodeDocumentType(final String type, final ContentTypeChild contentTypeChild) {
+    private DocumentType getChildNodeDocumentType(final String type, final boolean hasContentBlocks) {
         final DocumentType documentType = DocumentType.getDocumentType(type);
 
         // if a document type doesn't match with any predefined document type, then
         // a content block definition check must be made to figure out whether the
         // document type is a content block
         if (DocumentType.UNKNOWN == documentType) {
-            if (hasContentBlocks(contentTypeChild)) {
+            if (hasContentBlocks) {
                 return DocumentType.CONTENT_BLOCKS;
             } else {
                 log.warn("Type {} is undefined.", type);
@@ -226,20 +220,6 @@ public abstract class AbstractBeanBuilderService {
         }
 
         return documentType;
-    }
-
-    /**
-     * checks whether a content bean child has a content blocks
-     * 
-     * @param bean {@link HippoContentBean}
-     * @return true if the content bean child has a content blocks
-     */
-    private boolean hasContentBlocks(final ContentTypeChild contentTypeChild) {
-        final List<String> validators = contentTypeChild.getValidators();
-        if (validators != null && validators.contains(CONTENT_BLOCKS_VALIDATOR)) {
-            return true;
-        }
-        return false;
     }
 
     /**

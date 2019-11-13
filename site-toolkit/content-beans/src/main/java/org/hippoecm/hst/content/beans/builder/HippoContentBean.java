@@ -16,178 +16,172 @@
 package org.hippoecm.hst.content.beans.builder;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoCompound;
+import org.hippoecm.hst.content.beans.standard.HippoDocument;
+import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.contenttype.ContentType;
-import org.onehippo.cms7.services.contenttype.ContentTypeChild;
-import org.onehippo.cms7.services.contenttype.ContentTypeProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version "$Id$"
+ * Wrapper of a {@link ContentType} object to use in Runtime Bean Generation.
  */
 public class HippoContentBean {
 
     private static final Logger log = LoggerFactory.getLogger(HippoContentBean.class);
-
-    public static final Set<String> ACCEPTED_PROPERTIES = Collections
-            .unmodifiableSet(new HashSet<>(Arrays.asList("hippotaxonomy:keys", "relateddocs:reldoc", "hippostd:tags")));
-    private static final Pattern PREFIX_SPLITTER = Pattern.compile(":");
-    private static final Pattern COMMA_SPLITTER = Pattern.compile(",");
+    private static final String GALLERY_IMAGESET_NODETYPE = "hippogallery:imageset";
     private final ContentType contentType;
     private final String prefix;
-    private final String shortName;
-    private final String name;
+    private final String documentType;
     private final List<HippoContentProperty> properties = new ArrayList<>();
     private final List<HippoContentChildNode> children = new ArrayList<>();
-    private final Set<String> superTypes = new HashSet<>();
+    private String parentDocumentType;
+    private Class<? extends HippoBean> parentBean;
+    private boolean parentReloaded = false;
 
-    public HippoContentBean(final ContentType contentType) {
+    public HippoContentBean(final String documentType, final ContentType contentType) {
+        this(documentType, null, contentType);
+    }
+
+    public HippoContentBean(final String documentType, final Class<? extends HippoBean> parentBean, final ContentType contentType) {
         this.contentType = contentType;
+        this.documentType = documentType;
+        this.prefix = StringUtils.substringBefore(documentType, ":");
 
-        final String originalName = contentType.getName();
-        name = extractName(originalName);
-        if (name.indexOf(':') != -1) {
-            final String[] fullName = PREFIX_SPLITTER.split(name);
-            this.shortName = fullName[1];
-            this.prefix = fullName[0];
+        if (contentType == null) {
+            return;
+        }
+
+        if (parentBean == null) {
+            processSuperTypes();
         } else {
-            this.shortName = name;
-            this.prefix = null;
+            this.parentBean = parentBean;
         }
+
         processProperties();
-        processSubNodes();
-        processSupertypes();
+        processChildNodes();
     }
 
-    private String extractName(final String originalName) {
-        String myName = originalName;
-        if (originalName.indexOf(',') != -1) {
-            final String[] names = COMMA_SPLITTER.split(originalName);
-            myName = names[0];
-        }
-        return myName;
+    public void setParentBean(final Class<? extends HippoBean> parentBean) {
+        this.parentBean = parentBean;
     }
 
-    private void processSupertypes() {
-        if (name.endsWith("basedocument")) {
-            addSuperType(HippoNodeType.NT_DOCUMENT);
-        }
-        boolean documentType = false;
-        boolean compoundType = false;
-        final SortedSet<String> mySupertypes = contentType.getSuperTypes();
-        for (String mySupertype : mySupertypes) {
-            if (mySupertype.equals(HippoNodeType.NT_DOCUMENT)) {
-                documentType = true;
-            } else if (mySupertype.equals(HippoNodeType.NT_COMPOUND)) {
-                compoundType = true;
-            }
-            if (mySupertype.startsWith(prefix)) {
-                addSuperType(mySupertype);
-            }
-        }
-        if (superTypes.size() == 0) {
-            if (documentType) {
-                addSuperType(HippoNodeType.NT_DOCUMENT);
-            } else if (compoundType) {
-                addSuperType(HippoNodeType.NT_COMPOUND);
-            } else {
-                log.warn("Unknown supertype for {}", this);
-            }
+    /**
+     * The Runtime Bean of this class should be regenareted regardless of other criterias. 
+     */
+    public void forceGeneration() {
+        this.parentReloaded = true;
+    }
+
+    private void processSuperTypes() {
+        final Set<String> superTypes = contentType.getSuperTypes()
+                    .stream()
+                    .filter(type -> type.startsWith(prefix))
+                    .collect(Collectors.toSet());
+
+        if (!superTypes.isEmpty()) {
+            // if document type is created from other custom document types, use them as parent document types
+            log.trace("{} has supertypes {}.", documentType, superTypes);
+            assignParentDocumentType(superTypes);
+        } else if (contentType.getSuperTypes().contains(HippoNodeType.NT_DOCUMENT)) {
+            // if document type has HippoNodeType.NT_DOCUMENT as super type, then mark this document as HippoDocument
+            parentDocumentType = HippoNodeType.NT_DOCUMENT;
+            parentBean = HippoDocument.class;
+            log.trace("{} is a document type.", documentType);
+        } else if (contentType.getSuperTypes().contains(HippoNodeType.NT_COMPOUND)) {
+            // if document type has HippoNodeType.NT_COMPOUND as super type, then mark this document as HippoCompound
+            parentDocumentType = HippoNodeType.NT_COMPOUND;
+            parentBean = HippoCompound.class;
+            log.trace("{} is a compound type.", documentType);
+        } else if (contentType.getSuperTypes().contains(GALLERY_IMAGESET_NODETYPE)) {
+            // if document type has hippogallery:imageset as super type, then mark this document as hippogallery:imageset
+            parentDocumentType = GALLERY_IMAGESET_NODETYPE;
+            parentBean = HippoGalleryImageSet.class;
+            log.trace("{} is gallery image set.", documentType);
+        } else {
+            log.error("{} is an unknown document type with supertypes {}.", documentType, contentType.getSuperTypes());
         }
     }
 
-    private void processSubNodes() {
-        final Map<String, ContentTypeChild> myChildren = contentType.getChildren();
-        for (Map.Entry<String, ContentTypeChild> entry : myChildren.entrySet()) {
-            final String key = entry.getKey();
-            if (key.startsWith(prefix)) {
-                final ContentTypeChild value = entry.getValue();
-                addChild(new HippoContentChildNode(value));
-            }
+    private void assignParentDocumentType(final Set<String> superTypes) {
+        final String baseDocumentName = prefix + ":basedocument";
+
+        // If there is a custom document type other than basedocument in project namespace, use that.
+        // Otherwise, use basedocument as the parent document type.
+        parentDocumentType = superTypes
+                    .stream()
+                    .filter(superType -> !superType.equals(baseDocumentName))
+                    .findFirst()
+                    .orElse(baseDocumentName);
+    }
+
+    private void processChildNodes() {
+        if (MapUtils.isEmpty(contentType.getChildren())) {
+            return;
         }
+
+        contentType.getChildren().entrySet()
+            .stream()
+            .filter(entry -> entry.getKey().startsWith(prefix))
+            .forEach(entry -> children.add(new HippoContentChildNode(entry.getKey(), entry.getValue())));
     }
 
     private void processProperties() {
-        final Map<String, ContentTypeProperty> myProperties = contentType.getProperties();
-        for (Map.Entry<String, ContentTypeProperty> entry : myProperties.entrySet()) {
-            final String key = entry.getKey();
-            if (key.startsWith(prefix)) {
-                addProperty(new HippoContentProperty(entry.getValue()));
-            } else if (ACCEPTED_PROPERTIES.contains(key)) {
-                addProperty(new HippoContentProperty(entry.getValue()));
-            }
-
+        if (MapUtils.isEmpty(contentType.getProperties())) {
+            return;
         }
-    }
 
-    public boolean hasProperty(final String name) {
-        for (HippoContentProperty property : properties) {
-            if (property.getName().equals(name)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void addChild(final HippoContentChildNode child) {
-        children.add(child);
-    }
-
-    public void addSuperType(final String superType) {
-        superTypes.add(superType);
-    }
-
-    public void addProperty(final HippoContentProperty property) {
-        properties.add(property);
+        contentType.getProperties().entrySet()
+            .stream()
+            .filter(entry -> entry.getKey().startsWith(prefix))
+            .forEach(entry -> properties.add(new HippoContentProperty(entry.getKey(), entry.getValue())));
     }
 
     public List<HippoContentProperty> getProperties() {
         return properties;
     }
 
-    public ContentType getContentType() {
-        return contentType;
-    }
-
-    public String getPrefix() {
-        return prefix;
-    }
-
     public List<HippoContentChildNode> getChildren() {
         return children;
     }
 
-    public Set<String> getSuperTypes() {
-        return superTypes;
+    public String getDocumentType() {
+        return documentType;
     }
 
-    public String getShortName() {
-        return shortName;
+    public String getParentDocumentType() {
+        return parentDocumentType;
     }
 
-    public String getName() {
-        return name;
+    public Class<? extends HippoBean> getParentBean() {
+        return parentBean;
+    }
+
+    public boolean isParentReloaded() {
+        return parentReloaded;
+    }
+
+    public boolean hasContentType() {
+        return contentType != null;
     }
 
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("HippoContentBean{");
-        sb.append(", prefix='").append(prefix).append('\'');
-        sb.append(", shortName='").append(shortName).append('\'');
-        sb.append(", name='").append(name).append('\'');
+        sb.append(", documentType='").append(documentType).append('\'');
         sb.append(", properties=").append(properties);
         sb.append(", children=").append(children);
-        sb.append(", superTypes=").append(superTypes);
+        sb.append(", parentDocumentType=").append(parentDocumentType);
+        sb.append(", parentBean=").append(parentBean);
+        sb.append(", parentReloaded=").append(parentReloaded);
         sb.append('}');
         return sb.toString();
     }
