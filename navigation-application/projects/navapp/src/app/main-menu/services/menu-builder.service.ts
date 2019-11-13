@@ -37,12 +37,18 @@ export class MenuBuilderService {
   private applyNavItems(menu: MenuItem[], navItems: NavItem[]): void {
     const menuItemLinks = this.getMenuItemLinks(menu);
     navItems.forEach(navItem => {
-      let item = menuItemLinks.find(i => i.id === navItem.id);
-      if (!item) {
-        item = new MenuItemLink(navItem.id, navItem.displayName || navItem.id);
-        this.menuStructureService.addExtension(item);
+      const correspondingMenuItem = menuItemLinks.find(i => i.id === navItem.id);
+
+      if (correspondingMenuItem) {
+        correspondingMenuItem.navItem = navItem;
+        return;
       }
-      item.navItem = navItem;
+
+      if (navItem.displayName) {
+        const menuItem = new MenuItemLink(navItem.id, navItem.displayName);
+        this.menuStructureService.addExtension(menuItem);
+        menuItem.navItem = navItem;
+      }
     });
   }
 

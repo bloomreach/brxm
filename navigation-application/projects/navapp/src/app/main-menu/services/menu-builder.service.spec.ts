@@ -19,7 +19,6 @@ import { TestBed } from '@angular/core/testing';
 import { NavItemMock } from '../../models/dto/nav-item.mock';
 import { MenuItemContainerMock } from '../models/menu-item-container.mock';
 import { MenuItemLinkMock } from '../models/menu-item-link.mock';
-import { MenuItemLink } from '../models/menu-item-link.model';
 
 import { MenuBuilderService } from './menu-builder.service';
 import { MenuStructureService } from './menu-structure.service';
@@ -33,18 +32,16 @@ describe('MenuBuilderService', () => {
   );
 
   const menuItemsMock = [
-    new MenuItemLinkMock({ id: 'testNavItemId' }),
+    new MenuItemLinkMock({ id: 'testNavItemId', caption: 'Root menu item 1', navItem: null }),
     new MenuItemContainerMock({
       caption: 'submenu',
       children: [
-        new MenuItemLinkMock({ id: 'subitem1' }),
-        new MenuItemLinkMock({ id: 'subitem2' }),
-        new MenuItemLinkMock({ id: 'subitem3' }),
+        new MenuItemLinkMock({ id: 'subitem1', caption: 'Sub item 1', navItem: null }),
+        new MenuItemLinkMock({ id: 'subitem2', caption: 'Sub item 2', navItem: null }),
+        new MenuItemLinkMock({ id: 'subitem3', caption: 'Sub item 3', navItem: null }),
       ],
     }),
   ];
-
-  const navItemsMock = [new NavItemMock()];
 
   menuStructureServiceMock.getMenuStructure.and.returnValue(menuItemsMock);
 
@@ -60,8 +57,35 @@ describe('MenuBuilderService', () => {
   });
 
   it('should get the filtered menu populated with app paths', () => {
+    const expected = [
+      new MenuItemLinkMock({ id: 'testNavItemId', caption: 'Root menu item 1', navItem: new NavItemMock() }),
+    ];
+
+    const navItemsMock = [new NavItemMock()];
     const actual = menuBuilderService.buildMenu(navItemsMock);
 
-    expect((actual[0] as MenuItemLink).navItem).toEqual(navItemsMock[0]);
+    expect(actual).toEqual(expected);
+  });
+
+  it('should add a nav item as an extension menu item when displayName is set', () => {
+    const expected = [
+      new MenuItemLinkMock({ id: 'testNavItemId', caption: 'Root menu item 1', navItem: new NavItemMock() }),
+    ];
+
+    const navItemsMock = [
+      new NavItemMock(),
+      new NavItemMock({
+        id: 'unknown1',
+        displayName: undefined,
+      }),
+      new NavItemMock({
+        id: 'unknown2',
+        displayName: 'Some display name',
+      }),
+    ];
+
+    const actual = menuBuilderService.buildMenu(navItemsMock);
+
+    expect(actual).toEqual(expected);
   });
 });

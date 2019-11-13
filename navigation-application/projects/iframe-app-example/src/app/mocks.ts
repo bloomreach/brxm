@@ -73,11 +73,6 @@ export const mockNavItems: NavItem[] = [
     appPath: 'audiences/merchandising-audiences',
   },
   {
-    id: 'insights/product-a-b-testing',
-    appIframeUrl: 'http://localhost:4201/brsm',
-    appPath: 'insights/product-a-b-testing',
-  },
-  {
     id: 'insights/opportunities/top-opportunities',
     appIframeUrl: 'http://localhost:4201/brsm',
     appPath: 'insights/opportunities/top-opportunities',
@@ -116,6 +111,17 @@ export const mockNavItems: NavItem[] = [
     id: 'insights/seo-analytics/generated-pages/top-performing-pages',
     appIframeUrl: 'http://localhost:4201/brsm',
     appPath: 'insights/seo-analytics/generated-pages/top-performing-pages',
+  },
+  {
+    id: 'insights/product-a-b-testing',
+    appIframeUrl: 'http://localhost:4201/brsm',
+    appPath: 'insights/product-a-b-testing',
+    displayName: 'A/B Testing',
+  },
+  {
+    id: 'not-a-part-of-menu',
+    appIframeUrl: 'http://localhost:4201/brsm',
+    appPath: 'custom',
   },
 ];
 
