@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@
   <groupId>org.onehippo.cms7.hst.components</groupId>
   <artifactId>hst-jaxrs</artifactId>
   <packaging>jar</packaging>
-  
+
   <dependencies>
 
     <dependency>
@@ -35,7 +35,7 @@
       <artifactId>hippo-repository-api</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
     <!-- JAX-RS API -->
     <dependency>
       <groupId>javax.ws.rs</groupId>
@@ -46,12 +46,12 @@
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
@@ -62,34 +62,34 @@
         </exclusion>
       </exclusions>
     </dependency>
-    
+
     <!-- Exclude commons-logging explicitly by a provided dependency. -->
-    <dependency> 
-      <groupId>commons-logging</groupId> 
-      <artifactId>commons-logging</artifactId> 
-      <scope>provided</scope> 
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <scope>provided</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-api</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-commons</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-content-beans</artifactId>
       <version>${project.version}</version>
     </dependency>
-    
+
     <dependency>
       <groupId>org.onehippo.cms7.hst.components</groupId>
       <artifactId>hst-rewriter</artifactId>
@@ -146,12 +146,6 @@
     <dependency>
       <groupId>io.swagger</groupId>
       <artifactId>swagger-jaxrs</artifactId>
-      <exclusions>
-        <exclusion>
-          <groupId>org.javassist</groupId>
-          <artifactId>javassist</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <!-- Test dependencies -->
@@ -181,7 +175,7 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.easymock</groupId>
       <artifactId>easymock</artifactId>
@@ -199,14 +193,14 @@
       <artifactId>spring-test</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-mock</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.onehippo.cms7.hst.components</groupId>
       <artifactId>hst-core</artifactId>
@@ -214,18 +208,18 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-    
-    <groupId>org.springframework</groupId>
+
+      <groupId>org.springframework</groupId>
       <artifactId>spring-context-support</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjweaver</artifactId>
@@ -281,5 +275,5 @@
       </plugin>
     </plugins>
   </build>
-  
+
 </project>
