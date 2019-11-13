@@ -39,5 +39,5 @@ export interface MenuItem {
   parameters: object;
   repositoryBased: boolean;
   selected: boolean;
-  _links: Record<MenuItemLinks, Link>;
+  _links: Partial<Record<MenuItemLinks, Link>>;
 }
