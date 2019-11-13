@@ -20,6 +20,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import javax.jcr.RepositoryException;
 
@@ -44,6 +45,9 @@ import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.stream.Collectors.toList;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
 public class NavAppSettingsService extends Plugin implements INavAppSettingsService {
 
     private static final String JAR_PATH_PREFIX = "navapp";
@@ -60,7 +64,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     static final String NAVIGATIONITEMS_ENDPOINT = "/ws/navigationitems";
     private static final Logger log = LoggerFactory.getLogger(NavAppSettingsService.class);
     // To make unit testing easier (needs to be serializable )
-    private final  SerializableSupplier<PluginUserSession> pluginUserSessionSupplier;
+    private final SerializableSupplier<PluginUserSession> pluginUserSessionSupplier;
     private final SerializableSupplier<SessionAttributeStore> sessionAttributeStoreSupplier;
 
     private final transient NavAppResourceService navAppResourceService;
@@ -93,14 +97,17 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         final String initialPath = initialPathStringValue.toString(convertLegacyDocumentParameters(request));
 
         final StringValue loginTypeStringValue = queryParameters.getParameterValue(LOGIN_TYPE_QUERY_PARAMETER);
-        if (loginTypeStringValue.toString("").equals("local")){
+        if (loginTypeStringValue.toString(EMPTY).equals("local")) {
             this.sessionAttributeStoreSupplier.get().setAttribute(LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME, true);
         }
-        boolean localLogin = (boolean) Optional
-                .ofNullable( this.sessionAttributeStoreSupplier.get().getAttribute(LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME))
+
+        final boolean localLogin = (boolean) Optional
+                .ofNullable(this.sessionAttributeStoreSupplier.get().getAttribute(LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME))
                 .orElse(false);
 
-        final AppSettings appSettings = createAppSettings(initialPath, localLogin);
+        final String logLevelString = queryParameters.getParameterValue(LOG_LEVEL).toString(EMPTY);
+
+        final AppSettings appSettings = createAppSettings(initialPath, localLogin, logLevelString);
         return new NavAppSettings() {
             @Override
             public UserSettings getUserSettings() {
@@ -146,7 +153,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         return userSettingsBuilder.build();
     }
 
-    private AppSettings createAppSettings(String initialPath, boolean localLogin) {
+    private AppSettings createAppSettings(String initialPath, boolean localLogin, String logLevelQueryParamString) {
 
         final String navAppLocation = System.getProperty(NAVAPP_LOCATION_SYSTEM_PROPERTY, null);
         final boolean cmsOriginOfNavAppResources = navAppLocation == null;
@@ -174,7 +181,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         }
 
         final int iframesConnectionTimeout = readIframesConnectionTimeout();
-        final NgxLoggerLevel ngxLoggerLevel = readLogLevel();
+        final NgxLoggerLevel ngxLoggerLevel = readLogLevel(logLevelQueryParamString);
 
         return new AppSettings() {
 
@@ -224,9 +231,29 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         return getPluginConfig().getInt(IFRAMES_CONNECTION_TIMEOUT, 30_000);
     }
 
-    private NgxLoggerLevel readLogLevel() {
-        final String logLevelString = getPluginConfig().getString(LOG_LEVEL, NgxLoggerLevel.OFF.name());
-        return NgxLoggerLevel.valueOf(logLevelString);
+    private NgxLoggerLevel readLogLevel(String logLevelQueryParamString) {
+
+        final NgxLoggerLevel defaultLevel = NgxLoggerLevel.OFF;
+
+        final String logLevelString;
+        if (logLevelQueryParamString.isEmpty()) {
+            logLevelString = getPluginConfig().getString(LOG_LEVEL, defaultLevel.name());
+        } else {
+            logLevelString = logLevelQueryParamString;
+        }
+
+        try {
+            return NgxLoggerLevel.valueOf(logLevelString.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            if (logLevelQueryParamString.isEmpty()) {
+                log.error("'{}' is an invalid value for property '{}'. Valid values are: {}.",
+                        logLevelString,
+                        LOG_LEVEL,
+                        Stream.of(NgxLoggerLevel.values()).collect(toList())
+                );
+            }
+            return defaultLevel;
+        }
     }
 
 }

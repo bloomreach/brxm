@@ -65,6 +65,9 @@ import static org.easymock.EasyMock.reset;
 import static org.easymock.EasyMock.verify;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hippoecm.frontend.service.NgxLoggerLevel.INFO;
+import static org.hippoecm.frontend.service.NgxLoggerLevel.OFF;
+import static org.hippoecm.frontend.service.NgxLoggerLevel.TRACE;
 import static org.hippoecm.frontend.service.navappsettings.NavAppSettingsService.NAVIGATIONITEMS_ENDPOINT;
 import static org.junit.Assert.assertThat;
 
@@ -114,6 +117,8 @@ public class NavAppSettingsServiceTest {
                 .andStubReturn(StringValue.valueOf((String) null));
         expect(parameters.getParameterValue(NavAppSettingsService.LOGIN_TYPE_QUERY_PARAMETER))
                 .andStubReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.LOG_LEVEL))
+                .andStubReturn(StringValue.valueOf((String) null));
         replay(parameters);
 
         expect(servletRequest.getHeader("X-Forwarded-Proto")).andReturn(scheme);
@@ -137,7 +142,7 @@ public class NavAppSettingsServiceTest {
 
         expect(config.getString(INavAppSettingsService.SERVICE_ID, INavAppSettingsService.SERVICE_ID)).andReturn(null);
         expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
-        expect(config.getString(NavAppSettingsService.LOG_LEVEL, NgxLoggerLevel.OFF.name())).andReturn(NgxLoggerLevel.OFF.name());
+        expect(config.getString(NavAppSettingsService.LOG_LEVEL, OFF.name())).andReturn(OFF.name());
         replay(config);
 
         sessionAttributeStore = new SessionAttributeStore() {
@@ -294,6 +299,8 @@ public class NavAppSettingsServiceTest {
                 .andStubReturn(StringValue.valueOf((String) null));
         expect(parameters.getParameterValue(NavAppSettingsService.LOGIN_TYPE_QUERY_PARAMETER))
                 .andStubReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.LOG_LEVEL))
+                .andStubReturn(StringValue.valueOf((String) null));
         replay(parameters);
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
         assertThat(navAppSettings.getAppSettings().getInitialPath(), is(someInitialPath));
@@ -310,6 +317,8 @@ public class NavAppSettingsServiceTest {
         expect(parameters.getParameterValue(NavAppSettingsService.PATH_PARAM))
                 .andStubReturn(StringValue.valueOf((String) null));
         expect(parameters.getParameterValue(NavAppSettingsService.LOGIN_TYPE_QUERY_PARAMETER))
+                .andStubReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.LOG_LEVEL))
                 .andStubReturn(StringValue.valueOf((String) null));
         replay(parameters);
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
@@ -328,6 +337,8 @@ public class NavAppSettingsServiceTest {
                 .andReturn(StringValue.valueOf(somePath));
         expect(parameters.getParameterValue(NavAppSettingsService.LOGIN_TYPE_QUERY_PARAMETER))
                 .andStubReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.LOG_LEVEL))
+                .andStubReturn(StringValue.valueOf((String) null));
         replay(parameters);
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
         assertThat(navAppSettings.getAppSettings().getInitialPath(), is("/content/path/" + somePath));
@@ -338,7 +349,7 @@ public class NavAppSettingsServiceTest {
 
         reset(config);
         expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
-        expect(config.getString(NavAppSettingsService.LOG_LEVEL, NgxLoggerLevel.OFF.name())).andReturn(NgxLoggerLevel.OFF.name());
+        expect(config.getString(NavAppSettingsService.LOG_LEVEL, OFF.name())).andReturn(OFF.name());
         replay(config);
 
         reset(parameters);
@@ -350,6 +361,8 @@ public class NavAppSettingsServiceTest {
                 .andReturn(StringValue.valueOf((String) null));
         expect(parameters.getParameterValue(NavAppSettingsService.LOGIN_TYPE_QUERY_PARAMETER))
                 .andStubReturn(StringValue.valueOf("local"));
+        expect(parameters.getParameterValue(NavAppSettingsService.LOG_LEVEL))
+                .andStubReturn(StringValue.valueOf((String) null));
         replay(parameters);
 
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
@@ -362,7 +375,7 @@ public class NavAppSettingsServiceTest {
 
         reset(config);
         expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
-        expect(config.getString(NavAppSettingsService.LOG_LEVEL, NgxLoggerLevel.OFF.name())).andReturn(NgxLoggerLevel.OFF.name());
+        expect(config.getString(NavAppSettingsService.LOG_LEVEL, OFF.name())).andReturn(OFF.name());
         replay(config);
 
 
@@ -375,6 +388,8 @@ public class NavAppSettingsServiceTest {
                 .andReturn(StringValue.valueOf((String) null));
         expect(parameters.getParameterValue(NavAppSettingsService.LOGIN_TYPE_QUERY_PARAMETER))
                 .andReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.LOG_LEVEL))
+                .andStubReturn(StringValue.valueOf((String) null));
         replay(parameters);
         sessionAttributeStore.setAttribute(NavAppSettingsService.LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME, true);
 
@@ -382,6 +397,89 @@ public class NavAppSettingsServiceTest {
         assertThat(navAppSettings.getAppSettings().getNavConfigResources().size(), is(1));
         verify(config, parameters);
     }
+
+    @Test
+    public void uses_logLevel_from_repository() {
+
+        final NgxLoggerLevel info = INFO;
+        reset(config);
+        expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
+        expect(config.getString(NavAppSettingsService.LOG_LEVEL, OFF.name())).andReturn(info.name());
+        replay(config);
+
+
+        reset(parameters);
+        expect(parameters.getParameterValue(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER))
+                .andStubReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.UUID_PARAM))
+                .andStubReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.PATH_PARAM))
+                .andReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.LOGIN_TYPE_QUERY_PARAMETER))
+                .andReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.LOG_LEVEL))
+                .andStubReturn(StringValue.valueOf((String) null));
+        replay(parameters);
+        sessionAttributeStore.setAttribute(NavAppSettingsService.LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME, true);
+
+        final AppSettings appSettings = navAppSettingsService.getNavAppSettings(request).getAppSettings();
+        assertThat(appSettings.getLogLevel(), is(info));
+
+        verify(config, parameters);
+    }
+
+    @Test
+    public void uses_logLevel_from_query_parameter() {
+
+        reset(config);
+        expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
+        replay(config);
+
+        reset(parameters);
+        expect(parameters.getParameterValue(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER))
+                .andStubReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.UUID_PARAM))
+                .andStubReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.PATH_PARAM))
+                .andReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.LOGIN_TYPE_QUERY_PARAMETER))
+                .andReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.LOG_LEVEL))
+                .andReturn(StringValue.valueOf((String) "Trace"));
+        replay(parameters);
+        sessionAttributeStore.setAttribute(NavAppSettingsService.LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME, true);
+
+        final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
+        assertThat(navAppSettings.getAppSettings().getLogLevel(), is(TRACE));
+        verify(config, parameters);
+    }
+
+    @Test
+    public void returns_default_if_logLevel_from_query_parameter_is_invalid() {
+
+        reset(config);
+        expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
+        replay(config);
+
+        reset(parameters);
+        expect(parameters.getParameterValue(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER))
+                .andStubReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.UUID_PARAM))
+                .andStubReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.PATH_PARAM))
+                .andReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.LOGIN_TYPE_QUERY_PARAMETER))
+                .andReturn(StringValue.valueOf((String) null));
+        expect(parameters.getParameterValue(NavAppSettingsService.LOG_LEVEL))
+                .andReturn(StringValue.valueOf("TRACY"));
+        replay(parameters);
+        sessionAttributeStore.setAttribute(NavAppSettingsService.LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME, true);
+
+        final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
+        testAppSettingsAssertions(navAppSettings.getAppSettings());
+        verify(config, parameters);
+    }
+
 
     private void testUserSettingsAssertions(UserSettings userSettings) {
         assertThat(userSettings.getUserName(), is("firstname lastname"));
@@ -396,6 +494,7 @@ public class NavAppSettingsServiceTest {
         assertThat(navConfigResources.get(0).getResourceType(), is(ResourceType.INTERNAL_REST));
         assertThat(navConfigResources.get(0).getUrl(), is(URI.create(NAVIGATIONITEMS_ENDPOINT)));
         assertThat(appSettings.getInitialPath(), is("/"));
+        assertThat(appSettings.getLogLevel(), is(OFF));
     }
 
 }
