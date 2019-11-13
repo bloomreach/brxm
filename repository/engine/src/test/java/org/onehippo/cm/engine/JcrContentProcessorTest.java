@@ -31,8 +31,6 @@ import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.ValueFactory;
 
-import com.google.common.io.Files;
-
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.junit.Before;
@@ -54,6 +52,8 @@ import org.onehippo.cm.model.tree.ValueType;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 import org.onehippo.repository.util.JcrConstants;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
+
+import com.google.common.io.Files;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -262,7 +262,11 @@ public class JcrContentProcessorTest extends RepositoryTestCase {
     @Test
     public void append_existing_content_during_upgrade() throws Exception {
         applyAndSaveDefinitions(new String[]{source1});
-        applyAndSaveDefinitions(new String[]{source1_reload}, ActionType.APPEND, true);
+        try {
+            applyAndSaveDefinitions(new String[]{source1_reload}, ActionType.APPEND);
+            fail("Operation should have failed as path already exists");
+        } catch (Exception e) {
+        }
     }
 
     @Test(expected = PathNotFoundException.class)
@@ -367,10 +371,10 @@ public class JcrContentProcessorTest extends RepositoryTestCase {
         final JcrContentProcessor processingService = new JcrContentProcessor();
 
         final DefinitionNodeImpl deleteNode = new DefinitionNodeImpl("/test/node3", "node3", null);
-        processingService.apply(deleteNode, ActionType.DELETE, session, false);
+        processingService.apply(deleteNode, ActionType.DELETE, session);
 
         final DefinitionNodeImpl nonExistingNode = new DefinitionNodeImpl("/not_existing_path/node", "node", null);
-        processingService.apply(nonExistingNode, ActionType.DELETE, session, false);
+        processingService.apply(nonExistingNode, ActionType.DELETE, session);
 
     }
 
@@ -427,13 +431,13 @@ public class JcrContentProcessorTest extends RepositoryTestCase {
     }
 
     private void saveContent(final ConfigurationModel configModel) throws RepositoryException {
-        saveContent(configModel, ActionType.APPEND, false);
+        saveContent(configModel, ActionType.APPEND);
     }
 
-    private void saveContent(final ConfigurationModel configModel, final ActionType actionType, final boolean isUpgradeTo12) throws RepositoryException {
+    private void saveContent(final ConfigurationModel configModel, final ActionType actionType) throws RepositoryException {
         final JcrContentProcessor processingService = new JcrContentProcessor();
         for (final ContentDefinition contentDefinition : configModel.getContentDefinitions()) {
-            processingService.apply(contentDefinition.getNode(), actionType, session, isUpgradeTo12);
+            processingService.apply(contentDefinition.getNode(), actionType, session);
         }
     }
 
@@ -442,13 +446,8 @@ public class JcrContentProcessorTest extends RepositoryTestCase {
     }
 
     private void applyAndSaveDefinitions(final String[] sources, final ActionType actionType) throws Exception {
-        applyAndSaveDefinitions(sources, actionType, false);
-    }
-
-    private void applyAndSaveDefinitions(final String[] sources, final ActionType actionType, final boolean isUpgradeTo12) throws Exception {
-
         final ConfigurationModel configurationModel = createConfigurationModel(sources);
-        saveContent(configurationModel, actionType, isUpgradeTo12);
+        saveContent(configurationModel, actionType);
         session.save();
     }
 

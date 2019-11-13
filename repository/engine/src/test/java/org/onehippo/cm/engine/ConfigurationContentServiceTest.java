@@ -95,16 +95,13 @@ public class ConfigurationContentServiceTest {
         expect(baselineService.contentNodeExists(session)).andReturn(true);
         replay(baselineService);
 
-        expect(session.nodeExists("/content-upgrade-to-12-marker")).andReturn(false);
-        replay(session);
-
-        jcrContentProcessor.apply(defNode1, ActionType.APPEND, session, false);
+        jcrContentProcessor.apply(defNode1, ActionType.APPEND, session);
         expectLastCall().andThrow(new ItemExistsException("This is an intentional Exception")).once();
-        jcrContentProcessor.apply(defNode3, ActionType.APPEND, session, false);
+        jcrContentProcessor.apply(defNode3, ActionType.APPEND, session);
         expectLastCall().once();
-        jcrContentProcessor.apply(defNode4, ActionType.APPEND, session, false);
+        jcrContentProcessor.apply(defNode4, ActionType.APPEND, session);
         expectLastCall().once();
-        jcrContentProcessor.apply(defNode2, ActionType.APPEND, session, false);
+        jcrContentProcessor.apply(defNode2, ActionType.APPEND, session);
         expectLastCall().andThrow(new AssertionFailedError("Should not be executed")).anyTimes();
 
         replay(jcrContentProcessor);

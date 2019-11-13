@@ -82,8 +82,9 @@ public class ConfigurationContentService {
      * @param session active {@link Session}
      */
     public void apply(final ConfigurationModelImpl model, final Session session) throws RepositoryException {
-        final boolean isUpgradeTo12 = checkUpgradeTo12(session);
-        boolean allModulesHaveSucceeded = true;
+        if (!configurationBaselineService.contentNodeExists(session)) {
+            configurationBaselineService.createContentNode(session);
+        }
 
         //Collect all model content definitions, sort them in natural order by path
         final List<ContentDefinitionImpl> sortedContentDefs = new ArrayList<>(model.getContentDefinitions());
@@ -91,15 +92,8 @@ public class ConfigurationContentService {
 
         for (ModuleImpl module : model.getModules()) {
             if (isNotEmpty(module.getActionsMap()) || isNotEmpty(module.getContentDefinitions())) {
-                final boolean success = apply(module, model, sortedContentDefs, session, isUpgradeTo12);
-                if (!success) {
-                    allModulesHaveSucceeded = false;
-                }
+                apply(module, model, sortedContentDefs, session);
             }
-        }
-
-        if (isUpgradeTo12 && allModulesHaveSucceeded) {
-            completeUpgradeTo12(session);
         }
     }
 
@@ -131,14 +125,14 @@ public class ConfigurationContentService {
      * @param module target {@link Module}
      * @param session active {@link Session}
      */
-    private boolean apply(final ModuleImpl module, final ConfigurationModel model, final Collection<ContentDefinitionImpl> allSortedContentDefs,
-                          final Session session, final boolean isUpgradeTo12) throws RepositoryException {
+    private void apply(final ModuleImpl module, final ConfigurationModel model, final Collection<ContentDefinitionImpl> allSortedContentDefs,
+                          final Session session) throws RepositoryException {
 
         // TODO: below processing contains a small bug, see REPO-1833
         // TODO: a path with an append and a later delete action always is applied
 
         final List<ActionItem> actionsToProcess = collectNewActions(module.getLastExecutedAction(), module.getActionsMap());
-        processItemsToDelete(actionsToProcess, model, session, isUpgradeTo12);
+        processItemsToDelete(actionsToProcess, model, session);
         session.save();
 
         final Collection<String> failedPaths = new ArrayList<>();
@@ -171,7 +165,7 @@ public class ConfigurationContentService {
                 try {
                     if (ConfigurationModelUtils.getCategoryForNode(baseNodePath, model) == ConfigurationItemCategory.CONTENT) {
                         log.debug("Processing {} action for content node: {}", action, baseNodePath);
-                        contentProcessingService.apply(contentNode, action, session, isUpgradeTo12);
+                        contentProcessingService.apply(contentNode, action, session);
 
                         if (!nodeAlreadyProcessed) {
                             // will save all the session changes!
@@ -200,7 +194,6 @@ public class ConfigurationContentService {
         }
 
         configurationBaselineService.updateLastExecutedActionForModule(module, session);
-        return failedPaths.isEmpty();
     }
 
     /**
@@ -265,8 +258,7 @@ public class ConfigurationContentService {
      * @param items items to delete
      * @param session active {@link Session}
      */
-    private void processItemsToDelete(final List<ActionItem> items, final ConfigurationModel model,
-                                      final Session session, final boolean isUpgradeTo12) throws RepositoryException {
+    private void processItemsToDelete(final List<ActionItem> items, final ConfigurationModel model, final Session session) throws RepositoryException {
         for (final ActionItem item : items) {
             if (item.getType() == ActionType.DELETE) {
                 final JcrPath baseNodePath = item.getPath();
@@ -274,7 +266,7 @@ public class ConfigurationContentService {
                     log.debug("Processing delete action for node: {}", baseNodePath);
 
                     final DefinitionNode deleteNode = new DefinitionNodeImpl(baseNodePath, null);
-                    contentProcessingService.apply(deleteNode, ActionType.DELETE, session, isUpgradeTo12);
+                    contentProcessingService.apply(deleteNode, ActionType.DELETE, session);
                 } else {
                     log.warn(String.format("Base node '%s' is not categorized as content, skipping delete action.",
                             baseNodePath));
@@ -295,46 +287,5 @@ public class ConfigurationContentService {
                 .filter(x -> x.getPath().equals(absolutePath) && x.getType() != ActionType.DELETE)
                 .map(ActionItem::getType)
                 .reduce((__, second) -> second);
-    }
-
-    /**
-     * Below upgradeTo12 functionality works as follows:
-     *
-     * Upon entering ConfigurationContentService#apply, we check if the content node (/hcm:hcm/hcm:content) exists.
-     * If it doesn't, we create it, and we also create a "content upgrade to 12 marker" node at the root of the
-     * repository. The content node doesn't exist when bootstrapping the first time against a CMS 11 repository, but
-     * also when bootstrapping a fresh repository. In the latter case, there will be no content in the repository
-     * either, and therefore, the upgrade flag's effect will be nil.
-     *
-     * While that marker node exists, we accept/ignore the situation that a content definition is attempted to be
-     * applied (i.e. it has not yet been marked as applied in the baseline), while the content definition's base node
-     * already exists in the repository. We do, however, in such a case, add the content definition base path to the
-     * baseline's set of applied content paths, such that subsequently, this content definition is ignored (unless it
-     * is associated with a content action).
-     *
-     * The first time the content of all modules is applied successfully, the marker node is removed, and therefore,
-     * the system returns to its normal content bootstrapping behaviour.
-     *
-     * Above-described logic pertains to the upgrade from CMS 11 to CMS 12. In CMS 13, this logic should be cleaned up.
-     */
-    private static final String UPGRADE_TO_12_MARKER_NODE_NAME = "content-upgrade-to-12-marker";
-
-    private boolean checkUpgradeTo12(final Session session) throws RepositoryException {
-        if (!configurationBaselineService.contentNodeExists(session)) {
-            configurationBaselineService.createContentNode(session);
-            session.getRootNode()
-                    .addNode(UPGRADE_TO_12_MARKER_NODE_NAME, NodeType.NT_UNSTRUCTURED)
-                    .setProperty("description", "This node is used by the bootstrapping mechanism " +
-                            "to track the upgrade of repository content to CMS 12. Please don't remove " +
-                            "it manually; it will be removed automatically.");
-            session.save();
-        }
-
-        return session.nodeExists("/" + UPGRADE_TO_12_MARKER_NODE_NAME);
-    }
-
-    private void completeUpgradeTo12(final Session session) throws RepositoryException {
-        session.removeItem("/" + UPGRADE_TO_12_MARKER_NODE_NAME);
-        session.save();
     }
 }

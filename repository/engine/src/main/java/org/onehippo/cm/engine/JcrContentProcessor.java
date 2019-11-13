@@ -35,8 +35,8 @@ import org.apache.jackrabbit.core.NodeImpl;
 import org.hippoecm.repository.impl.NodeDecorator;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cm.model.definition.ActionType;
-import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.impl.tree.DefinitionNodeImpl;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.tree.DefinitionNode;
 import org.onehippo.cm.model.tree.DefinitionProperty;
@@ -81,7 +81,7 @@ public class JcrContentProcessor {
             modelNode.getDefinition().setRootPath(JcrPaths.getPath(parentNode.getPath()).resolve(modelNode.getJcrName()));
 
             final Session session = parentNode.getSession();
-            validateAppendAction(modelNode.getDefinition().getRootPath().toString(), actionType, session, false);
+            validateAppendAction(modelNode.getDefinition().getRootPath().toString(), actionType, session);
 
             final Collection<Pair<DefinitionProperty, Node>> unprocessedReferences = new ArrayList<>();
             applyNode(modelNode, parentNode, actionType, unprocessedReferences);
@@ -96,20 +96,13 @@ public class JcrContentProcessor {
      * @param nodePath Node path
      * @param actionType current action type
      * @param session current session
-     * @param allowIgnoreConflict if true and node exists with action type APPEND <em>may</em> be ignored
-     * @return true if there is no conflict, false if there was a conflict but the above system parameter is true
-     * @throws RepositoryException if node exists and action type is APPEND and !allowIgnoreConflict
+     * @throws RepositoryException if node exists and action type is APPEND
      */
-    private boolean validateAppendAction(final String nodePath, final ActionType actionType, final Session session,
-                                         final boolean allowIgnoreConflict) throws RepositoryException {
+    private void validateAppendAction(final String nodePath, final ActionType actionType, final Session session) throws RepositoryException {
         final boolean nodeExists = session.nodeExists(nodePath);
         if (nodeExists && actionType == APPEND) {
-            if (allowIgnoreConflict) {
-                return false;
-            }
             throw new ItemExistsException(String.format("Node already exists at path %s", nodePath));
         }
-        return true;
     }
 
     private String constructNodePath(final String path, final String nodeName) {
@@ -122,20 +115,16 @@ public class JcrContentProcessor {
      * @param definitionNode
      * @param actionType
      * @param session JCR session to use
-     * @param isUpgradeTo12 flag indicating that the system is busy upgrading to CMS 12.x
      * @throws RepositoryException
      */
-    public synchronized void apply(final DefinitionNode definitionNode, final ActionType actionType,
-                                   final Session session, final boolean isUpgradeTo12) throws RepositoryException {
+    public synchronized void apply(final DefinitionNode definitionNode, final ActionType actionType, final Session session) throws RepositoryException {
         if (actionType == null) {
             throw new IllegalArgumentException("Action type cannot be null");
         }
 
         try {
-            if (!validateAppendAction(definitionNode.getPath().toString(), actionType, session, isUpgradeTo12)) {
-                // node exists and actionType is APPEND but ignore content conflict system parameter == true: ignore
-                return;
-            }
+            validateAppendAction(definitionNode.getPath().toString(), actionType, session);
+
             if (actionType == DELETE && !session.nodeExists(definitionNode.getPath().toString())) {
                 return;
             }

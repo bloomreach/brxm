@@ -33,6 +33,7 @@ import java.util.Set;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
+import javax.jcr.Property;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
@@ -58,6 +59,7 @@ import org.springframework.mock.web.MockServletContext;
 
 import com.google.common.collect.ImmutableSet;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -70,6 +72,71 @@ public class SiteIntegrationTest {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
+
+        @Test
+    public void sites_with_content() throws Exception {
+
+        final String fixtureName = "sites_with_existing_content";
+        final String fixture2Name = "sites_with_existing_content2";
+        final String fixture3Name = "sites_with_existing_content3";
+        final String fixture4Name = "sites_with_existing_content4";
+
+        final Fixture fixture = new Fixture(fixtureName);
+
+        final HippoWebappContextRegistry hippoWebappContextRegistry = HippoWebappContextRegistry.get();
+
+        try {
+            fixture.test(session -> {
+                IsolatedRepository repository = fixture.getRepository();
+
+                //Register site that bootstraps content at same content path
+                HippoWebappContext siteContext = createSiteApplicationContext(fixtureName, "sitewithcontent");
+                try {
+                    hippoWebappContextRegistry.register(siteContext);
+                    fail("Failure is expected since site contains duplicate paths");
+                } catch (Exception e) {
+                    assertTrue(e instanceof IllegalStateException);
+                    assertEquals("Duplicate definition root paths '/content/sitewithexistingcontent/contentnode' in module 'site-with-content' in source files 'withcontent/hippo-cms-test/site-with-content-project/site-with-content [content: contentnode2.yaml]' and 'withcontent/hippo-cms-test/site-with-content-project/site-with-content [content: contentnode.yaml]'.",
+                            e.getMessage());
+                }
+                hippoWebappContextRegistry.unregister(siteContext);
+                session.logout();
+                repository.stop();
+
+                //Register site that bootstraps normally
+                HippoWebappContext siteContext2 = createSiteApplicationContext(fixture2Name, "sitewithcontent");
+                hippoWebappContextRegistry.register(siteContext2);
+                repository.startRepository();
+                session = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
+                try {
+                    session.getNode("/content/sitewithexistingcontent/contentnode").getProperty("property");
+                } catch (PathNotFoundException ex) {
+                    fail("Initial bootstrap failed");
+                }
+                hippoWebappContextRegistry.unregister(siteContext2);
+                session.logout();
+                repository.stop();
+
+                //Register site that bootstraps content at a previously loaded content path
+                HippoWebappContext siteContext3 = createSiteApplicationContext(fixture3Name, "sitewithcontent");
+                hippoWebappContextRegistry.register(siteContext3);
+                repository.startRepository();
+                session = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
+                try {
+                    Property property = session.getNode("/content/sitewithexistingcontent/contentnode").getProperty("property");
+                    //property shouldn't have changed value
+                    assertEquals("propertyValue", property.getString());
+                } catch (PathNotFoundException ex) {
+                    fail("Unexpected exception");
+                }
+                hippoWebappContextRegistry.unregister(siteContext3);
+                session.logout();
+            });
+        } finally {
+            hippoWebappContextRegistry.getEntries().forEach(e -> HippoWebappContextRegistry.get().unregister(e.getServiceObject()));
+        }
+    }
+
 
     @Test
     public void sites_before_and_after_cms_init() throws Exception {
@@ -378,7 +445,9 @@ public class SiteIntegrationTest {
                 run.getJcrRunner().run(session);
                 run.getPostConditionValidator().validate(session, repository.getRuntimeConfigurationModel());
 
-                session.logout();
+                if (session.isLive()) {
+                    session.logout();
+                }
                 repository.stop();
             }
         }
