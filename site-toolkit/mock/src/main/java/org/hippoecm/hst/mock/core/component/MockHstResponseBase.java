@@ -1,5 +1,5 @@
 /**
- * Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
@@ -50,7 +51,7 @@ public class MockHstResponseBase implements HttpServletResponse {
     private String contentType;
     private Locale locale;
     private boolean committed;
-    private int contentLength;
+    private long contentLength;
 
     private List<Cookie> cookies = new ArrayList<Cookie>();
     private Map<String, List<Object>> headers = new LinkedHashMap<String, List<Object>>();
@@ -91,7 +92,7 @@ public class MockHstResponseBase implements HttpServletResponse {
     }
 
     public int getContentLength() {
-        return contentLength;
+        return (int) contentLength;
     }
 
     public List<Cookie> getCookies() {
@@ -189,7 +190,7 @@ public class MockHstResponseBase implements HttpServletResponse {
         contentType = null;
         locale = null;
         committed = false;
-        contentLength = -1;
+        contentLength = -1L;
         statusCode = 0;
         statusMessage = null;
         redirectLocation = null;
@@ -219,6 +220,11 @@ public class MockHstResponseBase implements HttpServletResponse {
     }
 
     public void setContentLength(int contentLength) {
+        this.contentLength = contentLength;
+    }
+
+    @Override
+    public void setContentLengthLong(long contentLength) {
         this.contentLength = contentLength;
     }
 
@@ -303,9 +309,6 @@ public class MockHstResponseBase implements HttpServletResponse {
         addIntHeader(name, value);
     }
 
-    /**
-     * @deprecated
-     */
     public void setStatus(int sc) {
         setStatus(sc, null);
     }
@@ -372,6 +375,15 @@ public class MockHstResponseBase implements HttpServletResponse {
         @Override
         public void close() throws IOException {
             internalOutputStream.close();
+        }
+
+        @Override
+        public boolean isReady() {
+            return true;
+        }
+
+        @Override
+        public void setWriteListener(WriteListener writeListener) {
         }
 
         public void setSize(int size) throws IllegalStateException {
