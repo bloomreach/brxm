@@ -15,10 +15,33 @@
  */
 
 import React from 'react';
+import { TYPE_LINK_EXTERNAL } from '@bloomreach/spa-sdk';
 import { BrComponentContext, BrManageMenuButton, BrPageContext } from '@bloomreach/react-sdk';
 import routes from '../routes';
 
 const { Link } = routes;
+
+interface MenuLinkProps {
+  item: MenuModels['menu']['siteMenuItems'][0];
+}
+
+function MenuLink({ item }: MenuLinkProps) {
+  const page = React.useContext(BrPageContext)!;
+
+  if (!item._links.site) {
+    return <span className="nav-link text-capitalize disabled">{item.name}</span>;
+  }
+
+  if (item._links.site.type === TYPE_LINK_EXTERNAL) {
+    return <a className="nav-link text-capitalize" href={item._links.site.href}>{item.name}</a>;
+  }
+
+  return (
+    <Link route={page.getUrl(item._links.site)}>
+      <a className="nav-link text-capitalize">{item.name}</a>
+    </Link>
+  );
+}
 
 export function Menu() {
   const component = React.useContext(BrComponentContext);
@@ -34,9 +57,7 @@ export function Menu() {
       <BrManageMenuButton menu={menu} />
       { menu.siteMenuItems.map((item, index) => (
         <li key={index} className={`nav-item ${item.selected ? 'active' : ''}`}>
-          <Link route={page.getUrl(item._links.site)}>
-            <a className="nav-link text-capitalize">{item.name}</a>
-          </Link>
+          <MenuLink item={item} />
         </li>
       )) }
     </ul>
