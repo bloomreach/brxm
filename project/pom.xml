@@ -65,7 +65,7 @@
         Note that there is *no* dependency management for the version properties below.
     -->
     <google-api-services-analytics.version>v3-rev116-1.20.0</google-api-services-analytics.version>
-    <cxf.version>3.2.6</cxf.version>
+    <cxf.version>3.2.11</cxf.version>
     <jaxrs.version>2.1</jaxrs.version>
     <!-- the jackson2 version must be compatible with Jackson used in cxf -->
     <jackson2.version>2.10.0</jackson2.version>
