@@ -139,13 +139,36 @@
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-services-contenttype</artifactId>
     </dependency>
-
-    <dependency>
-      <groupId>org.jooq</groupId>
-      <artifactId>joor-java-8</artifactId>
-    </dependency>
-
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>java8</id>
+      <activation>
+        <jdk>1.8</jdk>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.jooq</groupId>
+          <artifactId>joor-java-8</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
+      <id>java11</id>
+      <activation>
+        <jdk>11</jdk>
+      </activation>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.jooq</groupId>
+          <artifactId>joor</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 
   <build>
     <plugins>
