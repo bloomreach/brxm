@@ -2,14 +2,7 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "baseUrl": "./src",
-    "declaration": true,
     "declarationDir": "./dist",
-    "lib": [
-      "es6",
-      "dom"
-    ],
-    "module": "es6",
-    "target": "es6"
   },
   "include": [
     "src"

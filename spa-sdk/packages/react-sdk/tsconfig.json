@@ -2,15 +2,8 @@
   "extends": "../../tsconfig.json",
   "compilerOptions": {
     "baseUrl": "./src",
-    "declaration": true,
     "declarationDir": "./dist",
     "jsx": "react",
-    "lib": [
-      "es6",
-      "dom"
-    ],
-    "module": "es6",
-    "target": "es6"
   },
   "include": [
     "src"
