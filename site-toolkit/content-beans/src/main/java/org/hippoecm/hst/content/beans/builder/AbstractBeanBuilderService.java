@@ -214,8 +214,6 @@ public abstract class AbstractBeanBuilderService {
         if (DocumentType.UNKNOWN == documentType) {
             if (hasContentBlocks) {
                 return DocumentType.CONTENT_BLOCKS;
-            } else {
-                log.warn("Type {} is undefined.", type);
             }
         }
 
