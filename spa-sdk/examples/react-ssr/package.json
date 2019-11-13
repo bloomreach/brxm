@@ -8,8 +8,8 @@
   "dependencies": {
     "@bloomreach/react-sdk": "^14.0",
     "axios": "^0.19",
-    "next": "9.0.7",
-    "next-routes": "^1.4.2",
+    "next": "^9.0",
+    "next-routes": "^1.4",
     "react": "^16.10",
     "react-dom": "^16.10"
   },
@@ -21,8 +21,8 @@
   "scripts": {
     "dev": "node server.js",
     "build": "next build",
-    "lint": "echo lint not yet implemented for example-react-ssr",
+    "lint": "echo linting",
     "start": "NODE_ENV=production node server.js",
-    "test": "echo test not yet implemented for example-react-ssr"
+    "test": "echo tests"
   }
 }
