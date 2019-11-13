@@ -97,6 +97,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
             + AUTOHOST_URL_ASTERIX_REGEX + AUTOHOST_URL_HOST_REGEX + AUTOHOST_URL_PORT_NUMBER_REGEX + "$";
     public final static String AUTO_HOST_TEMPLATE_URL_ASTERIX_REGEX = "([-a-zA-Z0-9]*)";
 
+    public final static Pattern PATTERN = Pattern.compile(AUTO_HOST_TEMPLATE_URL_REGEX, Pattern.LITERAL);
+
     private final String contextPath;
     private HstNodeLoadingCache hstNodeLoadingCache;
     private Map<String, Map<String, VirtualHost>> rootVirtualHostsByGroup = new DuplicateKeyNotAllowedHashMap<>();
@@ -1106,8 +1108,8 @@ public class VirtualHostsService implements MutableVirtualHosts {
      * matches hostname to auto host template url by using regex validations 
      */
     private boolean matchHostTemplateURL(String templateHostURL, String hostName) {
-        Pattern pattern = Pattern.compile(AUTO_HOST_TEMPLATE_URL_REGEX, Pattern.LITERAL);
-        if (pattern.matcher(templateHostURL).matches()) {
+
+        if (PATTERN.matcher(templateHostURL).matches()) {
             log.warn("Auto host template url pattern of {} is not correct. It should be in http(s)://(*.)example.org(:port) pattern.",
                     templateHostURL);
             return false;
@@ -1117,7 +1119,9 @@ public class VirtualHostsService implements MutableVirtualHosts {
         String runtimeHostName = StringUtils.substringBefore(StringUtils.substringAfter(templateHostURL, "://"), ":");
         Pattern runtimePattern = Pattern.compile(runtimeHostName.replace("*", AUTO_HOST_TEMPLATE_URL_ASTERIX_REGEX));
 
-        return runtimePattern.matcher(hostName).matches();
+        String hostNameNoPort = StringUtils.substringBefore(hostName, ":");
+
+        return runtimePattern.matcher(hostNameNoPort).matches();
     }
 
 }
