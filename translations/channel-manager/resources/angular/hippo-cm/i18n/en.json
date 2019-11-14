@@ -105,7 +105,7 @@
   "FEEDBACK_CANNOT_SAVE_COMPONENT_WITH_INVALID_FIELD_VALUES": "Cannot save component '{{componentLabel}}', there are errors in field values",
   "FEEDBACK_HELD_BY_CORE_PROJECT_MESSAGE": "Document has been edited on core",
   "SAVE_CHANGES_TO_DOCUMENT": "Document '{{documentName}}' has unsaved changes. Do you want to save or discard these changes?",
-  "DELETE_COMPONENT": "Delete Component",
+  "DELETE_COMPONENT": "Delete component",
   "FEEDBACK_PROJECT_NOT_FOUND": "Document has project id {{projectId}} which does not exist (any more)",
   "SEARCH_COMPONENT_NAME": "component",
   "PAGE": "Page",
