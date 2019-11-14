@@ -27,7 +27,7 @@ import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerat
  *   - robotstxt:sitemap (string) multiple
  *   + robotstxt:section (robotstxt:section) multiple
  */
-@Node(jcrType="robotstxt:robotstxt")
+@Node(jcrType = "robotstxt:robotstxt")
 @HippoEssentialsGenerated(allowModifications = false)
 public class Robotstxt extends HippoDocument {
 

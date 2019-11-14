@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,15 @@
  */
 package org.onehippo.forge.robotstxt.components;
 
-import com.google.common.base.Strings;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.RepositoryException;
+import javax.jcr.query.Query;
+import javax.jcr.query.QueryManager;
+
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.component.HstComponentException;
@@ -28,13 +36,7 @@ import org.onehippo.forge.robotstxt.annotated.Robotstxt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.RepositoryException;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
-import java.util.ArrayList;
-import java.util.List;
+import com.google.common.base.Strings;
 
 public class RobotstxtComponent extends BaseHstComponent {
 
@@ -65,8 +67,8 @@ public class RobotstxtComponent extends BaseHstComponent {
     }
 
     /**
-     * Handle faceted navigation URLs. Typically, they should be disallowed, but a flag on the
-     * robots.txt document can override this behavior and allow faceted navigation URLs.
+     * Handle faceted navigation URLs. Typically, they should be disallowed, but a flag on the robots.txt document can
+     * override this behavior and allow faceted navigation URLs.
      *
      * @param request Handle for current request
      * @param bean    The robots.txt document (CMS content)
@@ -94,7 +96,8 @@ public class RobotstxtComponent extends BaseHstComponent {
             // The query gets all facetnavigation content nodes and matches later to be under the current mount's
             // content path (or under any submount paths)
             final QueryManager queryManager = request.getRequestContext().getSession().getWorkspace().getQueryManager();
-            @SuppressWarnings("deprecation") final Query query = queryManager.createQuery(getFacNavQueryXPath(), Query.XPATH);
+            @SuppressWarnings("deprecation") final Query query = queryManager.createQuery(getFacNavQueryXPath(),
+                    Query.XPATH);
             query.setLimit(getFacNavQueryLimit());
 
             final NodeIterator nodeIterator = query.execute().getNodes();
@@ -111,9 +114,11 @@ public class RobotstxtComponent extends BaseHstComponent {
                 final Mount facNavLinkMount = facNavLink.getMount();
 
                 if (allMounts.stream().noneMatch(mount -> mount.equals(facNavLinkMount))) {
-                    log.debug("Not disallowing links for facet navigation node {} because its link mount {} is not part " +
+                    log.debug(
+                            "Not disallowing links for facet navigation node {} because its link mount {} is not part " +
                                     "of the current mount (or one of its submounts) for paths {}", facNavNode.getPath(),
-                            facNavLink.getMount().getContentPath(), allMounts.stream().map(mount -> mount.getContentPath()).toArray());
+                            facNavLink.getMount().getContentPath(),
+                            allMounts.stream().map(Mount::getContentPath).toArray());
                     continue;
                 }
 
@@ -124,7 +129,8 @@ public class RobotstxtComponent extends BaseHstComponent {
 
                     if (!facetChildNode.isNodeType(FacNavNodeType.NT_FACETSAVAILABLENAVIGATION)) {
                         log.debug("Not disallowing link for facet child node {}: it is not of type {} but of type {}",
-                                facetChildNode.getPath(), FacNavNodeType.NT_FACETSAVAILABLENAVIGATION, facetChildNode.getPrimaryNodeType().getName());
+                                facetChildNode.getPath(), FacNavNodeType.NT_FACETSAVAILABLENAVIGATION,
+                                facetChildNode.getPrimaryNodeType().getName());
                         continue;
                     }
 
@@ -161,9 +167,10 @@ public class RobotstxtComponent extends BaseHstComponent {
         final String limitStr = this.getComponentParameter("facnavQueryLimit");
         if (!Strings.isNullOrEmpty(limitStr)) {
             try {
-                limit = Long.valueOf(limitStr);
+                limit = Long.parseLong(limitStr);
             } catch (NumberFormatException nfe) {
-                log.warn("Value {} for parameter facnavQueryLimit is not a long, falling back to limit {}", limitStr, limit);
+                log.warn("Value {} for parameter facnavQueryLimit is not a long, falling back to limit {}", limitStr,
+                        limit);
             }
         }
         return limit;
