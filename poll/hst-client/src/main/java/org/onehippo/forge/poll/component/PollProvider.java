@@ -24,8 +24,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.Cookie;
 
-import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.query.HstQuery;
+import org.hippoecm.hst.content.beans.query.HstQueryManager;
 import org.hippoecm.hst.content.beans.query.HstQueryResult;
 import org.hippoecm.hst.content.beans.query.exceptions.QueryException;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -33,6 +33,7 @@ import org.hippoecm.hst.content.beans.standard.HippoBeanIterator;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.request.HstRequestContext;
 import org.onehippo.forge.poll.bean.PollVotesBean;
 import org.onehippo.forge.poll.contentbean.PollDocument;
 import org.onehippo.forge.poll.contentbean.compound.Option;
@@ -206,7 +207,8 @@ public class PollProvider {
                             final String pollDocumentPath, final String optionId,
                             final PollComponentInfo pollComponentInfo) {
 
-        final Node votesNode = createPollDataVotesNode(request, persistableSession, pollDocumentPath, optionId, pollComponentInfo);
+        final Node votesNode = createPollDataVotesNode(request, persistableSession, pollDocumentPath, optionId,
+                pollComponentInfo);
 
         if (votesNode != null) {
 
@@ -228,7 +230,8 @@ public class PollProvider {
                     lockHelper.unlock(votesNode);
                 }
             } else {
-                logger.warn("Could not get a lock on node while saving a vote; document path is {}, optionId is {}", pollDocumentPath, optionId);
+                logger.warn("Could not get a lock on node while saving a vote; document path is {}, optionId is {}",
+                        pollDocumentPath, optionId);
             }
         }
 
@@ -248,7 +251,8 @@ public class PollProvider {
         final String baseDataPath = getBaseDataPath(request, pollComponentInfo);
 
         try {
-            final String pollDataPath = getPollDataPath(baseDataPath, pollDocumentPath, request, persistableSession.getRootNode());
+            final String pollDataPath = getPollDataPath(baseDataPath, pollDocumentPath, request,
+                    persistableSession.getRootNode());
 
             final String[] pathItems = pollDataPath.split("/");
             Node currentNode = persistableSession.getRootNode();
@@ -263,7 +267,8 @@ public class PollProvider {
                             lockHelper.unlock(currentNode);
                         }
                     } else {
-                        logger.warn("Could not get a lock on node while creating poll data path {}; item is {}", pollDataPath, pathItem);
+                        logger.warn("Could not get a lock on node while creating poll data path {}; item is {}",
+                                pollDataPath, pathItem);
                         return null;
                     }
                 }
@@ -281,7 +286,8 @@ public class PollProvider {
                         lockHelper.unlock(currentNode);
                     }
                 } else {
-                    logger.warn("Could not get a lock on node while creating option node: poll data path is {}", pollDataPath);
+                    logger.warn("Could not get a lock on node while creating option node: poll data path is {}",
+                            pollDataPath);
                     return null;
                 }
             }
@@ -456,17 +462,20 @@ public class PollProvider {
                 return bean;
             }
             if (!path.equals("/")) {
-                logger.warn("Bean could not be found by path {}, relative to site content root {}", relPath.substring(1), siteBasePath);
+                logger.warn("Bean could not be found by path {}, relative to site content root {}",
+                        relPath.substring(1), siteBasePath);
             }
         } else {
             final HippoBean currentDocument = request.getRequestContext().getContentBean();
             if (currentDocument != null) {
                 HippoDocumentBean bean = currentDocument.getParentBean().getBean(path);
                 if (bean != null) {
-                    logger.error("Bean could not be found by path {} relative to {}", path, currentDocument.getParentBean().getPath());
+                    logger.error("Bean could not be found by path {} relative to {}",
+                            path, currentDocument.getParentBean().getPath());
                 }
             } else {
-                logger.error("Bean could not be found by relative path {} because the current content bean is null", path);
+                logger.error("Bean could not be found by relative path {} because the current content bean is null",
+                        path);
             }
         }
 
@@ -528,7 +537,9 @@ public class PollProvider {
 
         // 'poll-docsPath' points to a folder that is the scope to search for poll documents
         try {
-            final HstQuery query = request.getRequestContext().getQueryManager().createQuery(documentOrScope, beanClass);
+            final HstRequestContext requestContext = request.getRequestContext();
+            final HstQueryManager queryManager = requestContext.getQueryManager();
+            final HstQuery query = queryManager.createQuery(documentOrScope, beanClass);
             query.setLimit(queryLimit);
 
             final HstQueryResult result = query.execute();
