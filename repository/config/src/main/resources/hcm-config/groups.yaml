@@ -40,5 +40,5 @@ definitions:
         hipposys:userroles:
           .meta:category: system
           .meta:add-new-system-values: true
-          value: [xm.default-user.system-admin]
+          value: [xm.default-user.system-admin, xm.repository-browser.user]
         hipposys:securityprovider: internal

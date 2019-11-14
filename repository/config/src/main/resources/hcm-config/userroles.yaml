@@ -53,3 +53,6 @@ definitions:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
         hipposys:userroles: [xm.system.admin, xm.content.admin]
+      /xm.repository-browser.user:
+        jcr:primaryType: hipposys:userrole
+        hipposys:system: true

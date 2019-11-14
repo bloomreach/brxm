@@ -58,6 +58,12 @@ public final class SecurityConstants {
     public static final String USERROLE_SECURITY_USER_ADMIN = "xm.security.user-admin";
 
     /**
+     * The user role representing a user who is allowed to log in into the repository servlet. It does not grant *any*
+     * JCR node privileges
+     */
+    public static final String USERROLE_REPOSITORY_BROWSER_USER = "xm.repository-browser.user";
+
+    /**
      * The user role representing a user (to be) granted access to application security administrative features; implies
      * {@link #USERROLE_SECURITY_VIEWER}
      */

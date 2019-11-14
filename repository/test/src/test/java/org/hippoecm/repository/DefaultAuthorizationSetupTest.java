@@ -16,9 +16,14 @@
 package org.hippoecm.repository;
 
 import javax.jcr.Node;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.Value;
 
+import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.util.Utilities;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -30,10 +35,12 @@ import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_HOLDER;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.HippoStdNodeType.NT_DIRECTORY;
 import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MEMBERS;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.repository.security.SecurityConstants.USERROLE_REPOSITORY_BROWSER_USER;
 import static org.onehippo.repository.security.StandardPermissionNames.JCR_MODIFY_PROPERTIES;
 import static org.onehippo.repository.security.StandardPermissionNames.JCR_READ;
 
@@ -53,6 +60,53 @@ public class DefaultAuthorizationSetupTest extends RepositoryTestCase {
         session.getNode("/content/testdirectory").remove();
         session.save();
         super.tearDown();
+    }
+
+    @Test
+    public void user_admin_is_in_role_repository_browser_user() throws Exception {
+        Session user = null;
+        try {
+            user = server.login(CREDENTIALS);
+            assertTrue("admin should be allowed to browse the repository servlet",
+                    ((HippoSession)user).isUserInRole(USERROLE_REPOSITORY_BROWSER_USER));
+        } finally {
+            if (user != null) {
+                user.logout();
+            }
+        }
+
+        for (String userName : new String[]{"author", "editor"}) {
+            try {
+                user = server.login(userName, userName.toCharArray());
+                assertFalse(String.format("%s should NOT be allowed to browse the repository servlet", userName),
+                        ((HippoSession)user).isUserInRole(USERROLE_REPOSITORY_BROWSER_USER));
+            } finally {
+                if (user != null) {
+                    user.logout();
+                }
+            }
+        }
+    }
+
+    @Test
+    public void group_admin_is_in_role_repository_browser_user() throws Exception {
+        Value[] orginal = session.getNode("/hippo:configuration/hippo:groups/admin").getProperty(HIPPO_MEMBERS).getValues();
+        session.getNode("/hippo:configuration/hippo:groups/admin").setProperty(HIPPO_MEMBERS, new String[]{"author"});
+        session.save();
+        Session user = null;
+        try {
+            user = server.login("author", "author".toCharArray());
+            assertTrue(String.format("author should be allowed to browse the repository servlet since admin group should " +
+                            "be allowed to do so"),
+                    ((HippoSession)user).isUserInRole(USERROLE_REPOSITORY_BROWSER_USER));
+
+        } finally {
+            if (user != null) {
+                user.logout();
+            }
+            session.getNode("/hippo:configuration/hippo:groups/admin").setProperty(HIPPO_MEMBERS, orginal);
+            session.save();
+        }
     }
 
     @Test
