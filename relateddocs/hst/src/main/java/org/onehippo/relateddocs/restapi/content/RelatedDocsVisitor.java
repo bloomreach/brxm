@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -49,12 +49,7 @@ public class RelatedDocsVisitor extends DefaultNodeVisitor {
             NodeVisitor childVisitor = context.getVisitor(child);
             childVisitor.visit(context, child, relatedResponse);
         }
-        if (relatedResponse.containsKey(RELATEDDOCS_RELDOC)) {
-            response.put("related", relatedResponse.get(RELATEDDOCS_RELDOC));
-        }
-        else {
-            response.put("related", Collections.emptyList());
-        }
+        response.put("related", relatedResponse.getOrDefault(RELATEDDOCS_RELDOC, Collections.emptyList()));
     }
 
     @Override

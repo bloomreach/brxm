@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.UnsupportedRepositoryOperationException;
 
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -35,8 +34,8 @@ import org.slf4j.LoggerFactory;
  */
 public class RelatedDoc implements Comparable<RelatedDoc>, IDetachable {
 
-    private static final long serialVersionUID = 1L;
     private static final Logger log = LoggerFactory.getLogger(RelatedDoc.class);
+
     private JcrNodeModel nodeModel;
     private String uuid;
     private double score = 1.0;
@@ -101,12 +100,9 @@ public class RelatedDoc implements Comparable<RelatedDoc>, IDetachable {
         this.nodeModel = nodeModel;
         try {
             this.uuid = nodeModel.getNode().getIdentifier();
-        } catch (UnsupportedRepositoryOperationException e) {
-            this.uuid = "";
-            log.error("Error retreiving UUID of a Node", e);
         } catch (RepositoryException e) {
             this.uuid = "";
-            log.error("Error retreiving UUID of a Node", e);
+            log.error("Error retrieving UUID of a Node", e);
         }
     }
 
@@ -139,7 +135,7 @@ public class RelatedDoc implements Comparable<RelatedDoc>, IDetachable {
 
     public String getPath() {
         try {
-            return nodeModel.getNode().getPath().replaceFirst("/content/","");
+            return nodeModel.getNode().getPath().replaceFirst("/content/", "");
         } catch (RepositoryException e) {
             log.error("Could not retrieve path");
             return null;
@@ -199,7 +195,7 @@ public class RelatedDoc implements Comparable<RelatedDoc>, IDetachable {
             }
 
             return node.isNodeType(HippoNodeType.NT_HANDLE) && node.hasNode(node.getName()) &&
-                   !node.getNode(node.getName()).isNodeType(HippoNodeType.NT_DELETED);
+                    !node.getNode(node.getName()).isNodeType(HippoNodeType.NT_DELETED);
 
         } catch (ItemNotFoundException ex) {
             return false;

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.Set;
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.Row;
 import javax.jcr.query.RowIterator;
@@ -32,6 +33,7 @@ import org.hippoecm.repository.api.HippoNode;
 import org.onehippo.forge.relateddocs.RelatedDoc;
 import org.onehippo.forge.relateddocs.RelatedDocCollection;
 import org.onehippo.forge.relateddocs.RelatedDocsNodeType;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,15 +45,15 @@ import org.slf4j.LoggerFactory;
  */
 public class SimilaritySearchRelatedDocsProvider extends AbstractRelatedDocsProvider {
 
+    private static final Logger log = LoggerFactory.getLogger(SimilaritySearchRelatedDocsProvider.class);
+
     public static final String SCORE = "score";
     public static final double DEFAULT_SCORE = 1.0;
     public static final String DEFAULT_SCOPE = "content";
 
-    private static final long serialVersionUID = 1L;
     private static final int MAX_RESULTS = 25;
-    private double score;
 
-    private static final Logger log = LoggerFactory.getLogger(SimilaritySearchRelatedDocsProvider.class);
+    private double score;
 
     public SimilaritySearchRelatedDocsProvider(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -66,8 +68,10 @@ public class SimilaritySearchRelatedDocsProvider extends AbstractRelatedDocsProv
         try {
             nodeModel = new JcrNodeModel(documentModel.getNode().getNode(RelatedDocsNodeType.NT_RELATEDDOCS));
         } catch (PathNotFoundException e) {
-            log.info("Relateddocs node for current document not found, returning empty docs, so creating one. Message={}.", e.getMessage());
-            nodeModel = new JcrNodeModel(documentModel.getNode().addNode(RelatedDocsNodeType.NT_RELATEDDOCS, RelatedDocsNodeType.NT_RELATEDDOCS));
+            log.info("Relateddocs node for current document not found, returning empty docs, so creating one. Message={}.",
+                    e.getMessage());
+            nodeModel = new JcrNodeModel(documentModel.getNode().addNode(RelatedDocsNodeType.NT_RELATEDDOCS,
+                    RelatedDocsNodeType.NT_RELATEDDOCS));
         }
 
         RelatedDocCollection currentCollection = new RelatedDocCollection(nodeModel);
@@ -83,9 +87,9 @@ public class SimilaritySearchRelatedDocsProvider extends AbstractRelatedDocsProv
         if (log.isDebugEnabled()) {
             log.debug("Executing query: {}", xpathQuery);
         }
+        final Session session = nodeModel.getNode().getSession();
         @SuppressWarnings(value = "deprecation")
-        Query query = nodeModel.getNode().getSession().getWorkspace().getQueryManager().createQuery(
-                xpathQuery, Query.XPATH);
+        Query query = session.getWorkspace().getQueryManager().createQuery(xpathQuery, Query.XPATH);
 
         query.setLimit(MAX_RESULTS);
         RowIterator r = query.execute().getRows();
@@ -93,12 +97,12 @@ public class SimilaritySearchRelatedDocsProvider extends AbstractRelatedDocsProv
         while (r.hasNext()) {
             // retrieve the query results from the row
             Row row = r.nextRow();
-            String path = row.getValue("jcr:path").getString();
+            String path = row.getValue(JcrConstants.JCR_PATH).getString();
             long myScore = row.getValue("jcr:score").getLong();
 
             // retrieve the found document from the repository
             try {
-                Node document = nodeModel.getNode().getSession().getNode(path);
+                Node document = session.getNode(path);
                 Node canonicalDocument = ((HippoNode) document).getCanonicalNode();
                 if (docHandleNode.isSame(canonicalDocument)) {
                     if (log.isDebugEnabled()) {
@@ -119,7 +123,8 @@ public class SimilaritySearchRelatedDocsProvider extends AbstractRelatedDocsProv
                 }
                 collection.add(new RelatedDoc(new JcrNodeModel(document), this.score * myScore));
             } catch (RepositoryException e) {
-                log.error("{} handling SimilaritySearch result on path {}. Message={}", e.getClass().getName(), path, e.getMessage());
+                log.error("{} handling SimilaritySearch result on path {}. Message={}", e.getClass().getName(), path,
+                        e.getMessage());
             }
         }
         return collection;
@@ -149,7 +154,8 @@ public class SimilaritySearchRelatedDocsProvider extends AbstractRelatedDocsProv
             siteContentNode = rootNode.getNode(DEFAULT_SCOPE);
         }
 
-        StringBuilder statement = new StringBuilder("//element(*, ").append(RelatedDocsNodeType.NT_RELATABLEDOCS).append(")[rep:similar(., '");
+        StringBuilder statement = new StringBuilder("//element(*, ").append(
+                RelatedDocsNodeType.NT_RELATABLEDOCS).append(")[rep:similar(., '");
         statement.append(docNode.getPath()).append("')");
         statement.append(" and (@hippo:availability='preview' or (@hippo:availability = 'live'))");
         statement.append(" and @hippo:paths='").append(siteContentNode.getIdentifier()).append('\'');

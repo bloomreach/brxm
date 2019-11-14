@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,16 +34,17 @@ import org.hippoecm.repository.api.HippoQuery;
 import org.onehippo.forge.relateddocs.RelatedDoc;
 import org.onehippo.forge.relateddocs.RelatedDocCollection;
 import org.onehippo.forge.relateddocs.RelatedDocsNodeType;
+import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ReferringRelatedDocsProvider extends AbstractRelatedDocsProvider {
 
+    private static final Logger log = LoggerFactory.getLogger(ReferringRelatedDocsProvider.class);
+
     public static final String SCORE = "score";
     public static final double DEFAULT_SCORE = 0.5;
 
-    private static final long serialVersionUID = 1L;
-    private static final Logger log = LoggerFactory.getLogger(ReferringRelatedDocsProvider.class);
     private static final int MAX_RESULTS = 25;
 
     private double score;
@@ -61,35 +62,35 @@ public class ReferringRelatedDocsProvider extends AbstractRelatedDocsProvider {
         try {
             nodeModel = new JcrNodeModel(documentModel.getNode().getNode(RelatedDocsNodeType.NT_RELATEDDOCS));
         } catch (PathNotFoundException e) {
-            //I think when a new document is opened, the document doesn't coantin the "realteddocs" node yet, so we *may* need to create one -- Vijay
+            // When a new document is opened, the document doesn't contain the "relateddocs:docs" node yet, so we *may* need to create one -- Vijay
             log.info("Cannot find relateddocs node for the current node, so creating the node.", e);
-            nodeModel = new JcrNodeModel(documentModel.getNode().addNode(RelatedDocsNodeType.NT_RELATEDDOCS, RelatedDocsNodeType.NT_RELATEDDOCS));
+            nodeModel = new JcrNodeModel(documentModel.getNode().addNode(RelatedDocsNodeType.NT_RELATEDDOCS,
+                    RelatedDocsNodeType.NT_RELATEDDOCS));
         }
 
 
         RelatedDocCollection currentCollection = new RelatedDocCollection(nodeModel);
-        Set<String> uuidSet = new HashSet<String>();
+        Set<String> uuidSet = new HashSet<>();
         for (RelatedDoc r : currentCollection) {
             uuidSet.add(r.getUuid());
         }
 
         Node parentNode = documentModel.getNode().getParent();
-
         String xpathQuery = createXpathQuery(nodeModel);
-
 
         if (log.isDebugEnabled()) {
             log.debug("Executing query: {}" + xpathQuery);
         }
 
-        HippoQuery query = (HippoQuery) nodeModel.getNode().getSession().getWorkspace().getQueryManager().createQuery(xpathQuery, Query.XPATH);
+        HippoQuery query = (HippoQuery) nodeModel.getNode().getSession().getWorkspace().getQueryManager().createQuery(
+                xpathQuery, Query.XPATH);
         query.setLimit(MAX_RESULTS);
         RowIterator r = query.execute().getRows();
         int i = 0;
         while (r.hasNext() && i < MAX_RESULTS) {
             // retrieve the query results from the row
             Row row = r.nextRow();
-            String path = row.getValue("jcr:path").getString();
+            String path = row.getValue(JcrConstants.JCR_PATH).getString();
             try {
                 // retrieve the found document from the repository
                 Node document = (Node) nodeModel.getNode().getSession().getItem(path);
@@ -135,7 +136,8 @@ public class ReferringRelatedDocsProvider extends AbstractRelatedDocsProvider {
         final Node node = nodeModel.getNode();
         // check if translated:
 
-        StringBuilder statement = new StringBuilder("//element(*, ").append(RelatedDocsNodeType.NT_RELATABLEDOCS).append(')');
+        StringBuilder statement = new StringBuilder("//element(*, ").append(
+                RelatedDocsNodeType.NT_RELATABLEDOCS).append(')');
         statement.append('/' + RelatedDocsNodeType.NT_RELATEDDOCS);
         statement.append("/*[@hippo:docbase='");
 

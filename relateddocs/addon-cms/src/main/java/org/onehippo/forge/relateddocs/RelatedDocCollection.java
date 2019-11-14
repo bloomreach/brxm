@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -53,11 +53,10 @@ import org.slf4j.LoggerFactory;
  */
 public class RelatedDocCollection implements Cloneable, IDataProvider<RelatedDoc>, IDetachable, Iterable<RelatedDoc> {
 
-    @SuppressWarnings("unused")
-    private static final long serialVersionUID = 1L;
-    static final Logger log = LoggerFactory.getLogger(RelatedDocCollection.class);
+    private static final Logger log = LoggerFactory.getLogger(RelatedDocCollection.class);
+
     private JcrNodeModel nodeModel;
-    private SortedMap<RelatedDoc, RelatedDoc> related = new TreeMap<RelatedDoc, RelatedDoc>();
+    private SortedMap<RelatedDoc, RelatedDoc> related = new TreeMap<>();
 
     /**
      * Constructs a RelatedDocCollection that is not written to the repository (e.g. suggestionlist)
@@ -107,7 +106,7 @@ public class RelatedDocCollection implements Cloneable, IDataProvider<RelatedDoc
             NodeIterator docs = node.getNodes();
             final javax.jcr.Session session = ((UserSession) Session.get()).getJcrSession();
             while (docs.hasNext()) {
-                final String uuid = docs.nextNode().getProperty("hippo:docbase").getString();
+                final String uuid = docs.nextNode().getProperty(HippoNodeType.HIPPO_DOCBASE).getString();
                 final RelatedDoc relatedDoc = createIfExists(session, uuid, i);
                 if (relatedDoc != null) {
                     related.put(relatedDoc, relatedDoc);
@@ -123,14 +122,16 @@ public class RelatedDocCollection implements Cloneable, IDataProvider<RelatedDoc
     public void add(RelatedDoc r) {
         String uuid = r.getUuid();
         if (log.isDebugEnabled()) {
-            log.debug("Trying to add RelatedDoc " + r + " with UUID " + uuid);
+            log.debug("Trying to add RelatedDoc {} with UUID {}", r, uuid);
         }
+
         if (StringUtils.isBlank(uuid)) {
             if (log.isWarnEnabled()) {
                 log.warn("Empty UUID returned, will not add this related doc");
             }
             return;
         }
+
         boolean exists = related.containsKey(r);
         if (exists) {
             RelatedDoc relatedDoc = related.get(r);
@@ -146,7 +147,8 @@ public class RelatedDocCollection implements Cloneable, IDataProvider<RelatedDoc
         }
 
         try {
-            Node docFacetSelect = nodeModel.getNode().addNode(RelatedDocsNodeType.RELATEDDOCS_RELDOC, HippoNodeType.NT_FACETSELECT);
+            Node docFacetSelect = nodeModel.getNode().addNode(RelatedDocsNodeType.RELATEDDOCS_RELDOC,
+                    HippoNodeType.NT_FACETSELECT);
             docFacetSelect.setProperty(HippoNodeType.HIPPO_DOCBASE, r.getUuid());
             docFacetSelect.setProperty(HippoNodeType.HIPPO_VALUES, ArrayUtils.EMPTY_STRING_ARRAY);
             docFacetSelect.setProperty(HippoNodeType.HIPPO_FACETS, ArrayUtils.EMPTY_STRING_ARRAY);
@@ -165,7 +167,7 @@ public class RelatedDocCollection implements Cloneable, IDataProvider<RelatedDoc
     }
 
     public void addAll(RelatedDocCollection col) {
-        RelatedDocCollection collection = (RelatedDocCollection) col.clone();
+        RelatedDocCollection collection = col.clone();
         collection.normalizeScores();
         for (RelatedDoc r : collection.related.keySet()) {
             add(r);
@@ -211,7 +213,7 @@ public class RelatedDocCollection implements Cloneable, IDataProvider<RelatedDoc
         final RelatedDocCollection clone;
         try {
             clone = (RelatedDocCollection) super.clone();
-            clone.related = new TreeMap<RelatedDoc, RelatedDoc>(clone.related);
+            clone.related = new TreeMap<>(clone.related);
         } catch (CloneNotSupportedException e) {
             throw new RuntimeException(e);
         }
@@ -229,8 +231,9 @@ public class RelatedDocCollection implements Cloneable, IDataProvider<RelatedDoc
     }
 
     /**
-     * Iterate over relatedDocs and normalize to a score between 0 and 100
-     * TODO: should this manipulate the current collection or return a new one???
+     * Iterate over relatedDocs and normalize to a score between 0 and 100 TODO: should this manipulate the current
+     * collection or return a new one???
+     *
      * @return this object (for chaining method invocations)
      */
     public RelatedDocCollection normalizeScores() {
@@ -273,7 +276,7 @@ public class RelatedDocCollection implements Cloneable, IDataProvider<RelatedDoc
 
     @Override
     public IModel<RelatedDoc> model(RelatedDoc doc) {
-        return new Model<RelatedDoc>(doc);
+        return new Model<>(doc);
     }
 
     @Override
