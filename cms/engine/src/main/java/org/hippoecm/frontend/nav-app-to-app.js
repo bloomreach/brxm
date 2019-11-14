@@ -152,7 +152,13 @@
               if (!rootPanel) {
                 return Promise.reject(new Error('rootPanel is not found'));
               }
-              rootPanel.fireEvent('navigate-to-channel-overview');
+
+              const channelId = pathElements.shift();
+              if (channelId) {
+                rootPanel.selectCard(1);
+              } else {
+                rootPanel.selectCard(0);
+              }
             }
 
             return Promise.resolve();
@@ -169,6 +175,7 @@
             } else {
               url.searchParams.append('uuid', pathElements[1]);
             }
+            Hippo.hideBusyIndicator();
             docLocation.assign(url.toString())
 
             return Promise.resolve();
@@ -183,9 +190,10 @@
 
     logout () {
       Hippo.Events.publish('CMSLogout');
-      // The jqXHR objects returned by jQuery.ajax() as of jQuery 1.5 implements the Promise interface
-      // See http://api.jquery.com/jquery.ajax/
-      return jQuery.ajax('${logoutCallbackUrl}');
+      return new Promise((res, _) => {
+        res();
+        document.location.href = '${logoutCallbackUrl}';
+      });
     },
 
     onUserActivity () {

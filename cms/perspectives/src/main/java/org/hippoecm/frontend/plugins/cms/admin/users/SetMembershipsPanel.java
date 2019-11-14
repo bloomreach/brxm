@@ -65,7 +65,7 @@ public class SetMembershipsPanel extends Panel {
     private final IModel userModel;
     private final IPluginContext context;
     private final HippoForm hippoForm;
-    private final boolean isSecurityUserManager;
+    private final boolean isSecurityUserAdmin;
 
     public SetMembershipsPanel(final String id, final IPluginContext context,
                                final IBreadCrumbModel breadCrumbModel, final IModel<User> userModel) {
@@ -74,7 +74,7 @@ public class SetMembershipsPanel extends Panel {
         setOutputMarkupId(true);
 
         final HippoSession session = UserSession.get().getJcrSession();
-        isSecurityUserManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_ADMIN);
+        isSecurityUserAdmin = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_ADMIN);
 
         selectedGroup = null;
         this.userModel = userModel;
@@ -120,10 +120,10 @@ public class SetMembershipsPanel extends Panel {
                 return selectedGroup != null;
             }
         };
-        submit.setVisible(isSecurityUserManager);
+        submit.setVisible(isSecurityUserAdmin);
         hippoForm.add(submit);
 
-        if (isSecurityUserManager) {
+        if (isSecurityUserAdmin) {
             final List<Group> localGroups = Group.getLocalGroups();
             final DropDownChoice<Group> ddc = new DropDownChoice<>("local-groups", PropertyModel.of(this, "selectedGroup"),
                     localGroups, new ChoiceRenderer<>("groupname"));
@@ -209,7 +209,7 @@ public class SetMembershipsPanel extends Panel {
 
             item.add(groupLink);
 
-            if (isSecurityUserManager) {
+            if (isSecurityUserAdmin) {
                 item.add(new AjaxLinkLabel("remove", new ResourceModel("user-membership-remove-action")) {
                     @Override
                     public void onClick(final AjaxRequestTarget target) {

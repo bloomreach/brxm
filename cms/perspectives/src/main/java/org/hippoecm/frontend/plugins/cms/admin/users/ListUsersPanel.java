@@ -69,7 +69,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
     private final IPluginContext context;
     private final AdminDataTable table;
     private final UserDataProvider userDataProvider;
-    private final boolean isSecurityUserManager;
+    private final boolean isSecurityUserAdmin;
 
     /**
      * Constructs a new ListUsersPanel.
@@ -88,7 +88,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
         this.userDataProvider = userDataProvider;
 
         final HippoSession session = UserSession.get().getJcrSession();
-        isSecurityUserManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_ADMIN);
+        isSecurityUserAdmin = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_ADMIN);
 
         final PanelPluginBreadCrumbLink createUserLink = new PanelPluginBreadCrumbLink("create-user-link", breadCrumbModel) {
             @Override
@@ -96,9 +96,9 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
                 return new CreateUserPanel(componentId, breadCrumbModel, context, config);
             }
         };
-        createUserLink.setVisible(isUserCreationEnabled() && isSecurityUserManager);
+        createUserLink.setVisible(isUserCreationEnabled() && isSecurityUserAdmin);
         final WebMarkupContainer createButtonContainer = new WebMarkupContainer("create-user-button-container");
-        createButtonContainer.setVisible(isUserCreationEnabled() && isSecurityUserManager);
+        createButtonContainer.setVisible(isUserCreationEnabled() && isSecurityUserAdmin);
         createButtonContainer.add(createUserLink);
         add(createButtonContainer);
 
@@ -147,7 +147,7 @@ public class ListUsersPanel extends AdminBreadCrumbPanel implements IObserver<Us
             @Override
             public void populateItem(final Item<ICellPopulator<User>> cellItem, final String componentId,
                                      final IModel<User> rowModel) {
-                if (isSecurityUserManager && !rowModel.getObject().isExternal()) {
+                if (isSecurityUserAdmin && !rowModel.getObject().isExternal()) {
                     cellItem.add(new DeleteUserActionLink(componentId, new ResourceModel("user-remove-action"), rowModel));
                 } else {
                     cellItem.add(new Label(componentId, ""));
