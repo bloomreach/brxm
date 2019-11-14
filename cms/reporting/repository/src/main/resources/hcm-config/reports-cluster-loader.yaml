@@ -16,4 +16,4 @@ definitions:
           center: id=reports-perspective-center,body=reports-perspective-center-body,scroll=true
           linked.with.parent: true
           root.id: reports-perspective-wrapper
-          top: id=reports-perspective-top,body=reports-perspective-top-body,height=41
+          top: id=reports-perspective-top,body=reports-perspective-top-body,height=52

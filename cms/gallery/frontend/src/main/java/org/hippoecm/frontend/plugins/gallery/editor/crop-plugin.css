@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,16 +36,13 @@
   color: #999999;
 }
 
-/*.imageset-override-styles .resource-values, .imageset-override-styles .dataTableContainer {
-    margin-top: 4px;
-} */
-
-.imageset-override-styles .imageset-extension-upload, .imageset-override-styles .imageset-extension-crop {
+.imageset-override-styles .imageset-extension-upload,
+.imageset-override-styles .imageset-extension-crop {
   float:left;
 }
 
 .imageset-override-styles .imageset-extension-crop {
-  padding-top: 10px;
+  margin-right: 8px;
 }
 
 
