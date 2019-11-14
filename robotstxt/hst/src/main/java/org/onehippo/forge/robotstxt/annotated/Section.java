@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,38 +25,18 @@ import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerat
 /**
   * [robotstxt:section]
   *   - robotstxt:useragent (string) mandatory
-  *   - robotstxt:disallow (string) multiple 
+  *   - robotstxt:disallow (string) multiple
  */
 @Node(jcrType = "robotstxt:section")
 @HippoEssentialsGenerated(allowModifications = false)
 public class Section extends HippoItem {
 
-    private final static String DISALLOW_PREFIX = "Disallow: ";
-    
     public String getUserAgent() {
         return this.getSingleProperty("robotstxt:useragent");
     }
 
     public List<String> getDisallows() {
         final String[] disallows = this.getMultipleProperty("robotstxt:disallow");
-        List<String> disallowsList = Arrays.asList(disallows);
-        return disallowsList;
+        return Arrays.asList(disallows);
     }
-
-    /**
-     * @deprecated This function implements part of the rendering. Rendering is supposed
-     * to happen in the JSP, so it is *recommended* to use the section's "disallows"
-     * attribute directly from the JSP. This function is left here for backwards
-     * compatibility.
-     * @return a pre-formatted string, containing all "Disallow:" lines for this section.
-     */
-    @Deprecated
-    public String getDisallowFragment() {
-        StringBuilder sb = new StringBuilder();
-        for (String s : getDisallows()) {
-            sb.append(DISALLOW_PREFIX).append(s).append(System.getProperty("line.separator"));
-        }
-        return sb.toString();
-    }
-
 }
