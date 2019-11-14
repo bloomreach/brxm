@@ -300,12 +300,14 @@ public class DefinitionNodeImpl extends DefinitionItemImpl implements Definition
     public DefinitionPropertyImpl addProperty(final DefinitionPropertyImpl other) {
         if (other.getKind() == PropertyKind.SINGLE) {
             DefinitionPropertyImpl newProp = addProperty(other.getName(), other.getValue().clone());
+            newProp.setCategory(other.getCategory());
             newProp.setOperation(other.getOperation());
             return newProp;
         }
         else {
             DefinitionPropertyImpl newProp =
                     addProperty(other.getName(), other.getValueType(), other.cloneValues(null));
+            newProp.setCategory(other.getCategory());
             newProp.setOperation(other.getOperation());
             if (other.isAddNewSystemValues()) {
                 newProp.setAddNewSystemValues(other.isAddNewSystemValues());
