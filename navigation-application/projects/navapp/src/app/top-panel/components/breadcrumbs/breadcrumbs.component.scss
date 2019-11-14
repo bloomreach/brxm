@@ -46,7 +46,7 @@
       opacity: 1;
     }
 
-    &:not(.has-suffix):not(.single-crumb) {
+    &:not(.has-suffix) {
       font-weight: $font-weight-semibold;
     }
 
