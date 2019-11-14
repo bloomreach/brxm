@@ -32,3 +32,12 @@ body {
 .hidden {
   display: none !important;
 }
+
+brna-root {
+  display: block;
+  height: 100%;
+}
+
+brna-root:empty {
+  background: url('navapp-assets/loaders/br-loader.gif') center/100px 100px no-repeat;
+}

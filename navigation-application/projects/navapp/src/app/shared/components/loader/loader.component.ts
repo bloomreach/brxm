@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-import { CommonModule } from '@angular/common';
-import { NgModule } from '@angular/core';
+import { Component } from '@angular/core';
 
-import { LoaderComponent } from './components/loader/loader.component';
-import { MaterialModule } from './material/material.module';
-import { WindowRef } from './services/window-ref.service';
-
-@NgModule({
-  imports: [CommonModule],
-  providers: [WindowRef],
-  declarations: [LoaderComponent],
-  exports: [MaterialModule, LoaderComponent],
+@Component({
+  selector: 'brna-loader',
+  templateUrl: './loader.component.html',
+  styleUrls: [ 'loader.component.scss' ],
 })
-export class SharedModule {}
+export class LoaderComponent {}

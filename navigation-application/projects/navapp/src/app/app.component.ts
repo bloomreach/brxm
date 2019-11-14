@@ -18,9 +18,11 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { Component, HostBinding, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material';
 import { TranslateService } from '@ngx-translate/core';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Observable, of, Subject } from 'rxjs';
+import { fromPromise } from 'rxjs/internal-compatibility';
+import { catchError, mapTo, startWith, takeUntil } from 'rxjs/operators';
 
+import { APP_BOOTSTRAPPED } from './bootstrap/app-bootstrapped';
 import { AppError } from './error-handling/models/app-error';
 import { ErrorHandlingService } from './error-handling/services/error-handling.service';
 import { UserSettings } from './models/dto/user-settings.dto';
@@ -56,6 +58,7 @@ export class AppComponent implements OnInit, OnDestroy {
   @ViewChild(MatSidenav)
   sidenav: MatSidenav;
 
+  isLoading$: Observable<boolean>;
   isOverlayVisible = false;
   private unsubscribe = new Subject();
 
@@ -65,6 +68,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private rightSidePanelService: RightSidePanelService,
     private errorHandlingService: ErrorHandlingService,
     @Inject(USER_SETTINGS) private userSettings: UserSettings,
+    @Inject(APP_BOOTSTRAPPED) private appBootstrapped: Promise<void>,
   ) { }
 
   get error(): AppError {
@@ -72,6 +76,7 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    this.initializeObservables();
     this.configureTranslateService();
     this.rightSidePanelService.setSidenav(this.sidenav);
     this.overlayService.visible$
@@ -82,6 +87,14 @@ export class AppComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.unsubscribe.next();
     this.unsubscribe.complete();
+  }
+
+  private initializeObservables(): void {
+    this.isLoading$ = fromPromise(this.appBootstrapped).pipe(
+      mapTo(false),
+      startWith(true),
+      catchError(() => of(false)),
+    );
   }
 
   private configureTranslateService(): void {

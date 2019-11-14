@@ -61,6 +61,16 @@ main {
   top: 0;
 }
 
-brna-error-page + brna-client-app-container {
+brna-error-page ~ brna-client-app-container,
+brna-error-page ~ brna-loader,
+brna-loader ~ brna-client-app-container {
   display: none;
+}
+
+brna-loader {
+  // Reposition the icon so it is in the same position as the initial
+  // loading icon background present on the brna-root element in default.scss
+  left: -($menu-collapsed-width / 2);
+  position: relative;
+  top: -($top-panel-height / 2);
 }
