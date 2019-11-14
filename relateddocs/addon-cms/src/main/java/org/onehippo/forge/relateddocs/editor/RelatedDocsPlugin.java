@@ -31,13 +31,13 @@ import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.RefreshingView;
-import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.model.event.JcrEvent;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -62,7 +62,8 @@ public class RelatedDocsPlugin extends AbstractRelatedDocsPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(RelatedDocsPlugin.class);
 
-    private static final CssResourceReference CSS = new CssResourceReference(RelatedDocsPlugin.class, "RelatedDocsPlugin.css");
+    private static final CssResourceReference CSS = new CssResourceReference(RelatedDocsPlugin.class,
+            "RelatedDocsPlugin.css");
 
     private JcrNodeModel baseModel;
 
@@ -245,7 +246,7 @@ public class RelatedDocsPlugin extends AbstractRelatedDocsPlugin {
         };
     }
 
-    private void rebuildRelatedDocsCollection(final List<RelatedDoc> relatedDocs, 
+    private void rebuildRelatedDocsCollection(final List<RelatedDoc> relatedDocs,
                                               final RelatedDocCollection relatedDocCollection) {
         for (RelatedDoc relatedDoc : relatedDocs) {
             relatedDocCollection.remove(relatedDoc);
@@ -279,14 +280,7 @@ public class RelatedDocsPlugin extends AbstractRelatedDocsPlugin {
                 }
 
                 for (final Change<RelatedDoc> change : LCS.getChangeSet(baseDocs, currentDocs)) {
-                    itemModels.add(new AbstractReadOnlyModel<Change<RelatedDoc>>() {
-
-                        @Override
-                        public Change<RelatedDoc> getObject() {
-                            return change;
-                        }
-
-                    });
+                    itemModels.add(ReadOnlyModel.of(() -> change));
                 }
                 return itemModels.iterator();
             }
@@ -327,17 +321,17 @@ public class RelatedDocsPlugin extends AbstractRelatedDocsPlugin {
                 }
 
                 // dummy components needed for the wicket component tree
-                MarkupContainer deleteLink = new WebMarkupContainer("delete"); 
+                MarkupContainer deleteLink = new WebMarkupContainer("delete");
                 deleteLink.setVisible(false);
                 deleteLink.add(new WebMarkupContainer("deleteIcon"));
                 item.add(deleteLink);
 
-                MarkupContainer upToTopLink = new WebMarkupContainer("upToTop"); 
+                MarkupContainer upToTopLink = new WebMarkupContainer("upToTop");
                 upToTopLink.setVisible(false);
                 upToTopLink.add(new WebMarkupContainer("up-top-icon"));
                 item.add(upToTopLink);
 
-                MarkupContainer upLink = new WebMarkupContainer("up"); 
+                MarkupContainer upLink = new WebMarkupContainer("up");
                 upLink.setVisible(false);
                 upLink.add(new WebMarkupContainer("up-icon"));
                 item.add(upLink);

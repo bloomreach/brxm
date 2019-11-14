@@ -44,6 +44,7 @@ import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.forge.relateddocs.RelatedDoc;
 import org.onehippo.forge.relateddocs.RelatedDocCollection;
 import org.slf4j.Logger;
@@ -52,15 +53,13 @@ import org.slf4j.LoggerFactory;
 public class DocumentPickerDialog extends Dialog<Node> {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentPickerDialog.class);
-    protected static final String CLUSTER_OPTIONS = "cluster.options";
+
     private static final String PICKER_CLUSTER_NAME_OPTION = "pickerClusterName";
     private static final String PICKER_CLUSTER_NAME_DEFAULT = "cms-pickers/documents";
 
-    private List<String> nodetypes = new ArrayList<>();
+    protected static final String CLUSTER_OPTIONS = "cluster.options";
 
-    protected final IPluginContext context;
-    protected final IPluginConfig config;
-    protected IRenderService dialogRenderer;
+    private List<String> nodetypes = new ArrayList<>();
     private IClusterControl control;
     private IModel<Node> selectedNode;
     private final RelatedDocCollection collection;
@@ -71,6 +70,10 @@ public class DocumentPickerDialog extends Dialog<Node> {
 
     private IModelReference<Node> folderModelReference;
     private IObserver folderModelObserver;
+
+    protected final IPluginContext context;
+    protected final IPluginConfig config;
+    protected IRenderService dialogRenderer;
 
     public DocumentPickerDialog(final IPluginContext context, final IPluginConfig config, final IModel<Node> model,
                                 final RelatedDocCollection collection) {
@@ -96,6 +99,7 @@ public class DocumentPickerDialog extends Dialog<Node> {
 
         setOkEnabled(false);
         try {
+            final HippoSession jcrSession = UserSession.get().getJcrSession();
             editedDocumentId = findHandleId(model);
             if (selectedNode != null) {
                 // if dialog contains selected node and node is not equal to model
@@ -103,12 +107,12 @@ public class DocumentPickerDialog extends Dialog<Node> {
                 // currently, this will not happen because above support is missing):
                 final Node ourSelection = selectedNode.getObject();
                 if (!ourSelection.getIdentifier().equals(editedDocumentId) && !isFolderNodeType(ourSelection)) {
-                    selectedNode = new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getNodeByIdentifier(editedDocumentId));
+                    selectedNode = new JcrNodeModel(jcrSession.getNodeByIdentifier(editedDocumentId));
                     setOkEnabled(true);
                 }
             } else if (editedDocumentId != null) {
                 // make our current document as selected node, so we cannot add it as a reference to itself
-                selectedNode = new JcrNodeModel(((UserSession) Session.get()).getJcrSession().getNodeByIdentifier(editedDocumentId));
+                selectedNode = new JcrNodeModel(jcrSession.getNodeByIdentifier(editedDocumentId));
             }
 
         } catch (RepositoryException ex) {

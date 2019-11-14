@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -59,7 +59,6 @@ import static org.hippoecm.frontend.service.IEditor.Mode;
  * document. If the user clicks on a suggestion, the related document will be added to the list of related documents.
  */
 public class RelatedDocsSuggestPlugin extends AbstractRelatedDocsPlugin {
-    private static final long serialVersionUID = 1L;
 
     private static final Logger log = LoggerFactory.getLogger(RelatedDocsSuggestPlugin.class);
     private static final CssResourceReference CSS = new CssResourceReference(RelatedDocsSuggestPlugin.class, "RelatedDocsSuggestPlugin.css");
@@ -80,8 +79,6 @@ public class RelatedDocsSuggestPlugin extends AbstractRelatedDocsPlugin {
         if (Mode.EDIT == mode && getRelatedDocs() != null) {
 
             refreshLink = new AjaxSubmitLink("refreshlink", suggestionsForm) {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form form) {
                     redraw();
@@ -89,8 +86,6 @@ public class RelatedDocsSuggestPlugin extends AbstractRelatedDocsPlugin {
             };
 
             browseLink = new DialogLink("browse", new ResourceModel("browse"), new IDialogFactory() {
-                private static final long serialVersionUID = 1L;
-
                 public Dialog createDialog() {
                     return new DocumentPickerDialog(context, getPluginConfig(), getModel(), getRelatedDocs());
                 }
@@ -162,7 +157,6 @@ public class RelatedDocsSuggestPlugin extends AbstractRelatedDocsPlugin {
 
     private class RelatedDocsSuggestView extends RefreshingView {
 
-        private static final long serialVersionUID = 1L;
         private int size;
 
         public RelatedDocsSuggestView(String id) {
@@ -208,9 +202,6 @@ public class RelatedDocsSuggestPlugin extends AbstractRelatedDocsPlugin {
             final RelatedDoc relatedDoc = (RelatedDoc) item.getModelObject();
 
             AjaxLink link = new AjaxLink("link") {
-
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 public void onClick(AjaxRequestTarget target) {
                     if (relatedDoc.exists()) {
@@ -239,9 +230,6 @@ public class RelatedDocsSuggestPlugin extends AbstractRelatedDocsPlugin {
             item.add(link);
 
             AjaxLink previewLink = new AjaxLink("preview") {
-
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 public void onClick(final AjaxRequestTarget target) {
                     if (relatedDoc.exists()) {

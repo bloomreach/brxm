@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -44,7 +44,6 @@ import static org.onehippo.forge.relateddocs.RelatedDocsNodeType.NT_RELATABLEDOC
 import static org.onehippo.forge.relateddocs.RelatedDocsNodeType.NT_RELATEDDOCS;
 
 public abstract class AbstractRelatedDocsPlugin extends RenderPlugin<Node> implements IObserver {
-    private static final long serialVersionUID = 1L;
 
     public static final Logger log = LoggerFactory.getLogger(AbstractRelatedDocsPlugin.class);
 
@@ -162,7 +161,7 @@ public abstract class AbstractRelatedDocsPlugin extends RenderPlugin<Node> imple
         for (RelatedDoc doc : relatedDocs.getObject()) {
             if (!doc.exists()) {
                 if (nonExistingDocs == null) {
-                    nonExistingDocs = new LinkedList<RelatedDoc>();
+                    nonExistingDocs = new LinkedList<>();
                 }
                 nonExistingDocs.add(doc);
             }

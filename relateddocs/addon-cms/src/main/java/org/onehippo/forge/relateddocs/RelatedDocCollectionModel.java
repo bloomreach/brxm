@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,13 +20,8 @@ import javax.jcr.Node;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class RelatedDocCollectionModel implements IModel<RelatedDocCollection> {
-    private static final long serialVersionUID = 1L;
-
-    private static final Logger log = LoggerFactory.getLogger(RelatedDocCollectionModel.class);
 
     private RelatedDocCollection collection;
     private JcrNodeModel document;

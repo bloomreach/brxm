@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,4 @@ package org.onehippo.forge.relateddocs.dialogs;
  * An implementation of a dialog to show an information message to the user
  */
 public class RelatedDocNotFoundDialog extends InfoDialog {
-
-    private static final long serialVersionUID = 1L;
 }

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import org.hippoecm.frontend.dialog.DialogConstants;
 /**
  * An implementation of a dialog to show an information message to the user
  */
-public class RelatedDocMightBeDeletedMessageDialog  extends AbstractDialog {
+public class RelatedDocMightBeDeletedMessageDialog extends AbstractDialog {
 
     public RelatedDocMightBeDeletedMessageDialog() {
         super();
@@ -40,9 +40,9 @@ public class RelatedDocMightBeDeletedMessageDialog  extends AbstractDialog {
         return Model.of(getString("relateddoc-might-be-deleted-title"));
     }
 
-   @Override
+    @Override
     public IValueMap getProperties() {
-       return DialogConstants.SMALL;
+        return DialogConstants.SMALL;
     }
 
 }

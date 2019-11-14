@@ -13,15 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
 */
-
 package org.onehippo.forge.beans;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoFacetSelect;
 import org.hippoecm.hst.content.beans.standard.HippoItem;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
 
 @Node(jcrType = "relateddocs:docs")
@@ -29,7 +30,7 @@ import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerat
 public class RelatedDocsBean extends HippoItem {
 
     public List<HippoBean> getDocs() {
-        List<HippoFacetSelect> relatedDocumentLinks = getChildBeans("hippo:facetselect");
+        List<HippoFacetSelect> relatedDocumentLinks = getChildBeans(HippoNodeType.NT_FACETSELECT);
         List<HippoBean> docs = new ArrayList<>();
 
         for (HippoFacetSelect link : relatedDocumentLinks) {
