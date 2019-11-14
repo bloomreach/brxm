@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -42,15 +42,10 @@ import static org.hippoecm.repository.api.StringCodecFactory.ISO9075Helper;
 /**
  * Tag provider that suggests tags based on the tags that are already
  * assigned to a document.
- *
- * @author Jeroen Tietema
  */
 public class CurrentTagsTagsProvider extends AbstractTagsProvider {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
-    static final Logger log = LoggerFactory.getLogger(CurrentTagsTagsProvider.class);
-    private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(CurrentTagsTagsProvider.class);
 
     public final static String SCORE = "score";
     public final static String TAGS_INDEX = "tags.index";
@@ -68,7 +63,7 @@ public class CurrentTagsTagsProvider extends AbstractTagsProvider {
 
         try {
             // retrieve the facet root node; facet navigation is preferred, facetsearch is supported
-            Session session = ((UserSession) org.apache.wicket.Session.get()).getJcrSession();
+            Session session = UserSession.get().getJcrSession();
             Node facetRoot = session.getRootNode().getNode(tagsIndex);
             if (!facetRoot.isNodeType("hippofacnav:facetnavigation")) {
                 log.warn("Facet search tags node has been deprecated; use facetnavigation instead");
@@ -90,7 +85,7 @@ public class CurrentTagsTagsProvider extends AbstractTagsProvider {
             if (log.isDebugEnabled()) {
                 log.debug("Searching for tags related to {}", tagName);
             }
-            /**
+            /*
              * This collection contains all tags related to one tag.
              * This is done to be able to normalize at the end. This prevents
              * boosting tags that occur a lot in context of one related tag and

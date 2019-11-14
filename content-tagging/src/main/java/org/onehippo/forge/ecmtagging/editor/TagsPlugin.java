@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,6 +14,10 @@
  *  limitations under the License.
  */
 package org.onehippo.forge.ecmtagging.editor;
+
+import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.wicket.markup.head.CssHeaderItem;
 import org.apache.wicket.markup.head.IHeaderResponse;
@@ -32,10 +36,6 @@ import org.onehippo.forge.ecmtagging.TaggingNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 /**
  * Frontend Plugin that displays the current assigned tags of the document.
  */
@@ -43,13 +43,14 @@ public class TagsPlugin extends AbstractTagsPlugin {
 
     private static final Logger log = LoggerFactory.getLogger(TagsPlugin.class);
 
-    public static final String WIDGET_ROWS = "widget.rows";
-    public static final String LOWERCASE = "tolowercase";
     private static final CssResourceReference CSS = new CssResourceReference(TagsPlugin.class, "TagsPlugin.css");
 
+    public static final String WIDGET_ROWS = "widget.rows";
+    public static final String LOWERCASE = "tolowercase";
+
     private final JcrNodeModel nodeModel;
-    private String rows;
     private final boolean toLowerCase;
+    private String rows;
 
     public TagsPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
@@ -70,14 +71,14 @@ public class TagsPlugin extends AbstractTagsPlugin {
             Label label = null;
             if ("compare".equals(mode) && config.containsKey("model.compareTo")) {
                 IModelReference baseRef = context.getService(config.getString("model.compareTo"),
-                    IModelReference.class);
+                        IModelReference.class);
                 if (baseRef != null) {
                     TagsModel baseModel = createTagModel((JcrNodeModel) baseRef.getModel());
                     Set<String> baseTags = new TreeSet<>(baseModel.getTags());
                     Set<String> currentTags = new TreeSet<>(tagModel.getTags());
                     List<Change<String>> changes = LCS.getChangeSet(
-                        baseTags.toArray(new String[0]),
-                        currentTags.toArray(new String[0]));
+                            baseTags.toArray(new String[0]),
+                            currentTags.toArray(new String[0]));
                     boolean first = true;
                     StringBuilder sb = new StringBuilder();
                     for (Change<String> change : changes) {
@@ -87,18 +88,18 @@ public class TagsPlugin extends AbstractTagsPlugin {
                             sb.append(", ");
                         }
                         switch (change.getType()) {
-                        case ADDED:
-                            sb.append("<span class=\"hippo-diff-added\">");
-                            sb.append(change.getValue());
-                            sb.append("</span>");
-                            break;
-                        case REMOVED:
-                            sb.append("<span class=\"hippo-diff-removed\">");
-                            sb.append(change.getValue());
-                            sb.append("</span>");
-                            break;
-                        case INVARIANT:
-                            sb.append(change.getValue());
+                            case ADDED:
+                                sb.append("<span class=\"hippo-diff-added\">");
+                                sb.append(change.getValue());
+                                sb.append("</span>");
+                                break;
+                            case REMOVED:
+                                sb.append("<span class=\"hippo-diff-removed\">");
+                                sb.append(change.getValue());
+                                sb.append("</span>");
+                                break;
+                            case INVARIANT:
+                                sb.append(change.getValue());
                         }
                     }
                     label = (Label) new Label("value", sb.toString()).setEscapeModelStrings(false);

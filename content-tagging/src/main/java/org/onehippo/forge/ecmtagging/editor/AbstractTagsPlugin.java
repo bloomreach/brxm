@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,10 +38,10 @@ public abstract class AbstractTagsPlugin extends RenderPlugin<Node> {
 
     /**
      * Get the model for the caption, a.k.a. title.
-     *
-     * Inspired on org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin#getCaptionModel(),
-     * unfortunately this class does not extend from AbstractFieldPlugin. Also, it's become quite different, since the
-     * concept of a field does not apply to tags/tagsuggest.
+     * <p>
+     * Inspired on org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin#getCaptionModel(), unfortunately this
+     * class does not extend from AbstractFieldPlugin. Also, it's become quite different, since the concept of a field
+     * does not apply to tags/tagsuggest.
      */
     protected IModel<String> getCaptionModel(final String defaultCaptionKey, final String defaultCaption) {
 
@@ -49,7 +49,8 @@ public abstract class AbstractTagsPlugin extends RenderPlugin<Node> {
         final String caption = getPluginConfig().getString("caption", defaultCaption);
 
         // implicitly from translator service (this class implements IStringResourceProvider)
-        log.debug("Getting field caption from translator by captionKey '{}' and default caption '{}'", captionKey, caption);
+        log.debug("Getting field caption from translator by captionKey '{}' and default caption '{}'", captionKey,
+                caption);
         return new StringResourceModel(captionKey, this).setDefaultValue(caption);
     }
 }

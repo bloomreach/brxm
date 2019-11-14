@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -27,22 +27,12 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.StringCodecFactory;
 import org.onehippo.forge.ecmtagging.Tag;
 import org.onehippo.forge.ecmtagging.TagCollection;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * Basic tag provider that suggests the most common tags in the whole
- * repository. It does not inspect the given document in any way.
- * 
- * @author Jeroen Tietema
- *
+ * Basic tag provider that suggests the most common tags in the whole repository. It does not inspect the given document
+ * in any way.
  */
 public class AllTagsProvider extends AbstractTagsProvider {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-
-    static final Logger log = LoggerFactory.getLogger(AllTagsProvider.class);
-    private static final long serialVersionUID = 1L;
 
     public final static String SCORE = "score";
     public final static String TAGS_INDEX = "tags.index";
@@ -68,13 +58,12 @@ public class AllTagsProvider extends AbstractTagsProvider {
     }
 
     /**
-     * @todo Remove use of ISO9075Helper class
-     * 
      * @param session
      * @param tagsIndex
      * @param score
      * @return
      * @throws RepositoryException
+     * @todo Remove use of ISO9075Helper class
      */
     public static TagCollection getTags(Session session, String tagsIndex, double score) throws RepositoryException {
         TagCollection tags = new TagCollection();

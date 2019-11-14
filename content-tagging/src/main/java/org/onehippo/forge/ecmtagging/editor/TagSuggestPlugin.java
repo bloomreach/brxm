@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -52,14 +52,13 @@ import org.slf4j.LoggerFactory;
  * Frontend Plugin that displays the tag suggestions to the user.
  */
 public class TagSuggestPlugin extends AbstractTagsPlugin {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
 
-    static final Logger log = LoggerFactory.getLogger(TagSuggestPlugin.class);
+    private static final Logger log = LoggerFactory.getLogger(TagSuggestPlugin.class);
 
-    private static final long serialVersionUID = 1L;
+    private static final CssResourceReference CSS = new CssResourceReference(TagSuggestPlugin.class,
+            "TagSuggestPlugin.css");
+
     public static final int DEFAULT_LIMIT = 20;
-    private static final CssResourceReference CSS = new CssResourceReference(TagSuggestPlugin.class, "TagSuggestPlugin.css");
 
     private int limit = DEFAULT_LIMIT;
     private Fragment fragment;
@@ -71,22 +70,22 @@ public class TagSuggestPlugin extends AbstractTagsPlugin {
         String mode = config.getString("mode");
         String tagIndexLocation = config.getString("tags.index", "tags");
         if (!tagIndexLocation.startsWith("/")) {
-            tagIndexLocation = "/"+ tagIndexLocation;
+            tagIndexLocation = "/" + tagIndexLocation;
         }
         if ("edit".equals(mode)) {
             fragment = new Fragment("tag-view", "suggestions", this);
 
-            final String defaultCaption = new ClassResourceModel("keyword_suggestions", TagSuggestPlugin.class).getObject();
+            final String defaultCaption = new ClassResourceModel("keyword_suggestions",
+                    TagSuggestPlugin.class).getObject();
             fragment.add(new Label("title", getCaptionModel("tagsuggest", defaultCaption)));
 
             try {
-                fragment.add(new TagSuggestView("view", ((JcrNodeModel) getModel()).getNode().getSession(), tagIndexLocation));
+                final Session session = ((JcrNodeModel) getModel()).getNode().getSession();
+                fragment.add(new TagSuggestView("view", session, tagIndexLocation));
             } catch (RepositoryException e) {
                 log.error("Repository error: " + e.getMessage(), e);
             }
             fragment.add(new AjaxFallbackLink("refreshlink") {
-                private static final long serialVersionUID = 1L;
-
                 @Override
                 public void onClick(AjaxRequestTarget target) {
                     onEvent(null);
@@ -106,7 +105,6 @@ public class TagSuggestPlugin extends AbstractTagsPlugin {
     }
 
     private class TagSuggestView extends TagCloud {
-        private static final long serialVersionUID = 1L;
 
         private int size;
 
@@ -117,16 +115,13 @@ public class TagSuggestPlugin extends AbstractTagsPlugin {
         @Override
         protected void init(Session session, String tagLocation) {
             add(new TagCloudView("view", session, tagLocation) {
-            	private static final long serialVersionUID = 1L;
 
                 @Override
                 protected void populateItem(Item item) {
                     final Tag tag = (Tag) item.getModelObject();
 
                     Fragment fragment = new Fragment("fragment", "linkfragment", this);
-                    AjaxFallbackLink link = new AjaxFallbackLink("link"){
-                        private static final long serialVersionUID = 1L;
-
+                    AjaxFallbackLink link = new AjaxFallbackLink("link") {
                         @Override
                         public void onClick(AjaxRequestTarget target) {
                             TagSuggestView.this.onClick(target, tag);
@@ -134,15 +129,15 @@ public class TagSuggestPlugin extends AbstractTagsPlugin {
                     };
 
                     String tagName = tag.getName();
-                    if (item.getIndex() < size-1 && StringUtils.isNotBlank(tagName)) {
+                    if (item.getIndex() < size - 1 && StringUtils.isNotBlank(tagName)) {
                         tagName += ",";
                     }
 
                     Label label = new Label("link-text", tagName);
-                    Double doubleScore = new Double(Math.ceil(tag.getScore() / 10));
+                    double doubleScore = Math.ceil(tag.getScore() / 10);
                     StringBuilder tagClass = new StringBuilder("tagsuggest");
-                    tagClass.append(doubleScore.intValue());
-                    label.add(new AttributeAppender("class", new Model<String>(tagClass.toString()), " "));
+                    tagClass.append((int) doubleScore);
+                    label.add(new AttributeAppender("class", new Model<>(tagClass.toString()), " "));
                     link.add(label);
                     fragment.add(link);
                     item.add(fragment);
@@ -155,11 +150,11 @@ public class TagSuggestPlugin extends AbstractTagsPlugin {
             return getItemModelsList().iterator();
         }
 
-        protected List<IModel> getItemModelsList(){
-        	TagSuggestor tagSuggestor = getPluginContext().getService(
-                getPluginConfig().getString(TagSuggestor.SERVICE_ID, TagSuggestor.SERVICE_DEFAULT),
-                TagSuggestor.class);
-            List<IModel> list = new ArrayList<IModel>();
+        protected List<IModel> getItemModelsList() {
+            TagSuggestor tagSuggestor = getPluginContext().getService(
+                    getPluginConfig().getString(TagSuggestor.SERVICE_ID, TagSuggestor.SERVICE_DEFAULT),
+                    TagSuggestor.class);
+            List<IModel> list = new ArrayList<>();
             if (tagSuggestor != null) {
                 try {
                     TagCollection tagCollection = tagSuggestor.getTags((JcrNodeModel) TagSuggestPlugin.this.getModel());
@@ -190,7 +185,7 @@ public class TagSuggestPlugin extends AbstractTagsPlugin {
             } catch (PathNotFoundException e) {
                 log.info(TaggingNodeType.PROP_TAGS + " does not exist for this node. Attempting to create it.");
                 // the property hippostd:tags does not exist
-                String[] tags = { keyword.getName() };
+                String[] tags = {keyword.getName()};
                 try {
                     nodeModel.getNode().setProperty(TaggingNodeType.PROP_TAGS, tags);
                 } catch (RepositoryException re) {

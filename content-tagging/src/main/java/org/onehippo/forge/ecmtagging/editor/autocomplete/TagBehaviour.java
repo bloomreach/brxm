@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 package org.onehippo.forge.ecmtagging.editor.autocomplete;
 
 import java.util.Collections;
@@ -22,7 +21,6 @@ import java.util.HashSet;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
@@ -61,15 +59,11 @@ import org.slf4j.LoggerFactory;
 import net.sf.json.JSONObject;
 
 /**
- * This behaviour adds a dropdownbox with tag autocompletion
- * to the tag input plug-in.
- *
- * @author Jeroen Tietema
+ * This behaviour adds a dropdownbox with tag autocompletion to the tag input plug-in.
  */
 public class TagBehaviour extends AutoCompleteBehavior {
-    private static final long serialVersionUID = 1L;
 
-    static final Logger log = LoggerFactory.getLogger(TagBehaviour.class);
+    private static final Logger log = LoggerFactory.getLogger(TagBehaviour.class);
 
     private final SearchBuilder searchBuilder;
     private HashSet<String> previousTags;
@@ -92,7 +86,7 @@ public class TagBehaviour extends AutoCompleteBehavior {
 
     @Override
     public void addHeaderContribution(IYuiContext context) {
-        // fix me. 
+        // fix me.
         // removed the javascript autocompletion because it interfered with autocomplete of searchbox.
         super.addHeaderContribution(context);
         context.addModule(TagNamespace.NS, "tagbox");
@@ -104,7 +98,7 @@ public class TagBehaviour extends AutoCompleteBehavior {
     }
 
     private HashSet<String> arrayToHashSet(String[] tags) {
-        HashSet<String> tagSet = new HashSet<String>();
+        HashSet<String> tagSet = new HashSet<>();
         Collections.addAll(tagSet, tags);
         return tagSet;
     }
@@ -128,7 +122,6 @@ public class TagBehaviour extends AutoCompleteBehavior {
     protected void respond(AjaxRequestTarget ajaxTarget) {
 
         final RequestCycle requestCycle = RequestCycle.get();
-
         final Request request = requestCycle.getRequest();
         final IRequestParameters requestParameters = request.getRequestParameters();
         final StringValue callbackMethod = requestParameters.getParameterValue("callback");
@@ -168,10 +161,6 @@ public class TagBehaviour extends AutoCompleteBehavior {
                 prop.setValue(newTags);
                 // TODO mmilicevic, removed explicit model change call
                 //context.getService(Io.class.getName(), IJcrService.class).flush(nodeModel);
-            } catch (ValueFormatException e) {
-                log.error(e.getMessage(), e);
-            } catch (PathNotFoundException e) {
-                log.error(e.getMessage(), e);
             } catch (RepositoryException e) {
                 log.error(e.getMessage(), e);
             }
@@ -248,7 +237,6 @@ public class TagBehaviour extends AutoCompleteBehavior {
 
     //I guess this should be loaded as a service instead of being an internal class
     private static class SearchBuilder implements IClusterable {
-        private static final long serialVersionUID = 1L;
 
         private static final String QUERY = "//element(*, hippostd:taggable)";
 

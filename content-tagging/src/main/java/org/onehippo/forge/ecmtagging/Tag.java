@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,21 +16,11 @@
 package org.onehippo.forge.ecmtagging;
 
 import org.apache.wicket.model.IModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This represents a tag (including its score).
- * 
- * @author Jeroen Tietema
- *
  */
 public class Tag implements Comparable<Tag>, IModel {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-
-    private static final long serialVersionUID = 1L;
-    static final Logger log = LoggerFactory.getLogger(Tag.class);
 
     private String name;
     private double score = 1.0;
@@ -69,12 +59,11 @@ public class Tag implements Comparable<Tag>, IModel {
 
     /**
      * Compares two tags by name and score
-     * 
+     *
      * <ul>
      * <li>Two tags are equal when they have the same name (score doesn't matter)</li>
      * <li>Tags are first compared by name, then by score</li>
      * </ul>
-     * 
      */
     public int compareTo(Tag otherTag) {
         if (otherTag.getName().equals(name)) {
@@ -87,13 +76,7 @@ public class Tag implements Comparable<Tag>, IModel {
             // tags are equal in score, compare strings (strings will never be equal)
             int c = otherTag.getName().compareTo(name);
             // normalize result to 1, 0 or -1
-            if (c < 0) {
-                return 1;
-            } else if (c > 0) {
-                return -1;
-            } else {
-                return 0;
-            }
+            return Integer.compare(0, c);
 
         }
 

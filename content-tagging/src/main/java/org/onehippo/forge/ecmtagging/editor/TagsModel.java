@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,6 +14,19 @@
  *  limitations under the License.
  */
 package org.onehippo.forge.ecmtagging.editor;
+
+import java.io.Serializable;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.jcr.RepositoryException;
+import javax.jcr.Value;
+import javax.jcr.ValueFormatException;
+import javax.jcr.lock.LockException;
+import javax.jcr.nodetype.ConstraintViolationException;
+import javax.jcr.version.VersionException;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.Model;
@@ -24,34 +37,16 @@ import org.onehippo.forge.ecmtagging.TaggingNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.version.VersionException;
-import java.io.Serializable;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 /**
- * This model represents a tag. It translates the tags from the Value[] to a 
- * String needed by the frontend and translates back if the frontend is updated
- * by the user.
- * 
+ * This model represents a tag. It translates the tags from the Value[] to a String needed by the frontend and
+ * translates back if the frontend is updated by the user.
+ * <p>
  * Other than the name might suggest, this is not a wrapper of the Tag class.
- * 
- * @version $Id$
- *
  */
 public class TagsModel extends Model {
 
+    private static final Logger log = LoggerFactory.getLogger(TagsModel.class);
 
-    private static final long serialVersionUID = 1L;
-
-    static final Logger log = LoggerFactory.getLogger(TagsModel.class);
     public static final String[] EMPTY_ARRAY = new String[]{};
 
     private JcrPropertyModel propertyModel;
@@ -63,7 +58,7 @@ public class TagsModel extends Model {
     public TagsModel(JcrPropertyModel propertyModel) {
         this.propertyModel = propertyModel;
     }
-    
+
     public TagsModel(String relPath) {
         this(new JcrPropertyModel(relPath));
     }
@@ -93,7 +88,7 @@ public class TagsModel extends Model {
             return EMPTY_ARRAY;
         }
         String[] tagsArray = tags.split(TAG_SEPARATOR);
-        LinkedHashSet<String> set = new LinkedHashSet<String>();
+        LinkedHashSet<String> set = new LinkedHashSet<>();
         for (String tag : tagsArray) {
             if (StringUtils.isNotBlank(tag)) {
                 set.add(tag.trim());
@@ -103,7 +98,7 @@ public class TagsModel extends Model {
     }
 
     private LinkedHashSet<String> parsePropertyModel(JcrPropertyModel model) {
-        LinkedHashSet<String> set = new LinkedHashSet<String>();
+        LinkedHashSet<String> set = new LinkedHashSet<>();
         // the property does not exist so don't even try
         if (model.getProperty() == null) {
             return set;
@@ -122,7 +117,7 @@ public class TagsModel extends Model {
 
     /**
      * Parse new tag values
-     * 
+     *
      * @param tag
      * @return
      */
@@ -141,9 +136,9 @@ public class TagsModel extends Model {
             load();
         }
         if (!Strings.isEmpty(tag.trim())) {
-            log.debug("Adding tag: {}",  tag);
+            log.debug("Adding tag: {}", tag);
             tags.add(parseTag(tag));
-            saveProperty(tags.toArray(new String[tags.size()]));
+            saveProperty(tags.toArray(new String[0]));
             super.setObject(buildModelObject(tags));
         }
     }
@@ -177,8 +172,8 @@ public class TagsModel extends Model {
     }
 
     /**
-     * Sets the string object with comma separated tags but also updates
-     * the hippostd:tags property of the document with an updated String array
+     * Sets the string object with comma separated tags but also updates the hippostd:tags property of the document with
+     * an updated String array
      */
     public void setObject(final Object object) {
         if (tags == null) {
@@ -186,10 +181,10 @@ public class TagsModel extends Model {
         }
         log.debug("setObject");
 
-        saveProperty(buildPropertyModel((String)object));
+        saveProperty(buildPropertyModel((String) object));
         tags = parsePropertyModel(propertyModel);
     }
-    
+
     @Override
     public Serializable getObject() {
         if (tags == null) {
@@ -202,8 +197,8 @@ public class TagsModel extends Model {
         tags = parsePropertyModel(this.propertyModel);
         super.setObject(buildModelObject(tags));
     }
-    
-    public void detach(){
+
+    public void detach() {
         super.detach();
         propertyModel.detach();
         tags = null;

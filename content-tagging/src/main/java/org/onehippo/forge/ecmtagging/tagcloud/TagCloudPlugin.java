@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,10 +33,10 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.render.RenderPlugin;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.repository.api.NodeNameCodec;
 import org.onehippo.forge.ecmtagging.Tag;
 import org.onehippo.forge.ecmtagging.TagCollection;
+import org.onehippo.forge.ecmtagging.TaggingNodeType;
 import org.onehippo.forge.ecmtagging.common.TagCloud;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,20 +45,20 @@ import org.slf4j.LoggerFactory;
  * This class renders a tag cloud. It is meant as a frontend component.
  */
 public class TagCloudPlugin extends RenderPlugin {
-    private static final long serialVersionUID = 1L;
     static final Logger log = LoggerFactory.getLogger(TagCloudPlugin.class);
 
     public final static String TAGS_INDEX = "tags.index";
     public final static String TAGS_LIMIT = "tags.limit";
 
-    private static final CssResourceReference CSS = new CssResourceReference(TagCloudPlugin.class, "TagCloudPlugin.css");
+    private static final CssResourceReference CSS = new CssResourceReference(TagCloudPlugin.class,
+            "TagCloudPlugin.css");
 
     private int limit;
 
     public TagCloudPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        Session session = ((UserSession) getSession()).getJcrSession();
+        Session session = getSession().getJcrSession();
         String tagsIndex = config.getString(TAGS_INDEX);
         if (!tagsIndex.startsWith("/")) {
             tagsIndex = "/" + tagsIndex;
@@ -92,10 +92,10 @@ public class TagCloudPlugin extends RenderPlugin {
                 try {
                     Node index = this.tagsNodeModel.getObject();
                     NodeIterator iterator;
-                    if (index.getPrimaryNodeType().getName().equals("hippofacnav:facetnavigation") && index.hasNode("hippostd:tags")) {
-                        iterator = index.getNode("hippostd:tags").getNodes();
-                    }
-                    else {
+                    if (index.getPrimaryNodeType().getName().equals("hippofacnav:facetnavigation") && index.hasNode(
+                            TaggingNodeType.PROP_TAGS)) {
+                        iterator = index.getNode(TaggingNodeType.PROP_TAGS).getNodes();
+                    } else {
                         iterator = index.getNodes();
                     }
                     TagCollection collection = new TagCollection();
@@ -111,7 +111,7 @@ public class TagCloudPlugin extends RenderPlugin {
                     }
                     collection.normalizeScores();
                     // put all the tags in a map to sort them alphabetically
-                    TreeMap<String, IModel> map = new TreeMap<String, IModel>();
+                    TreeMap<String, IModel> map = new TreeMap<>();
                     for (IModel t : collection) {
                         String name = ((Tag) t.getObject()).getName();
                         map.put(name, t);
@@ -131,10 +131,12 @@ public class TagCloudPlugin extends RenderPlugin {
             try {
                 JcrNodeModel nodeModel;
                 if (tagsNodeModel.getNode().getPrimaryNodeType().getName().equals("hippofacnav:facetnavigation")
-                        && tagsNodeModel.getNode().hasNode("hippostd:tags")) {
-                    nodeModel = new JcrNodeModel(tagsNodeModel.getNode().getNode("hippostd:tags").getNode(NodeNameCodec.encode(tag.getName(), true)));
+                        && tagsNodeModel.getNode().hasNode(TaggingNodeType.PROP_TAGS)) {
+                    nodeModel = new JcrNodeModel(tagsNodeModel.getNode().getNode(TaggingNodeType.PROP_TAGS).getNode(
+                            NodeNameCodec.encode(tag.getName(), true)));
                 } else {
-                    nodeModel = new JcrNodeModel(tagsNodeModel.getNode().getNode(NodeNameCodec.encode(tag.getName(), true)));
+                    nodeModel = new JcrNodeModel(
+                            tagsNodeModel.getNode().getNode(NodeNameCodec.encode(tag.getName(), true)));
                 }
                 TagCloudPlugin.this.setModel(nodeModel);
             } catch (PathNotFoundException e) {

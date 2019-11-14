@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,10 +19,8 @@ import java.util.ArrayList;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
-import javax.jcr.ValueFormatException;
 
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -34,26 +32,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A provider that can scan a given text property if it contains existing
- * keywords. If one is found, than it also searches for related keywords.
- * 
- * @author Jeroen Tietema
- *
+ * A provider that can scan a given text property if it contains existing keywords. If one is found, than it also
+ * searches for related keywords.
  */
 public class TextTagsProvider extends AbstractTagsProvider {
-    @SuppressWarnings("unused")
-    private final static String SVN_ID = "$Id$";
-
-    private static final long serialVersionUID = 1L;
-    static final Logger log = LoggerFactory.getLogger(TextTagsProvider.class);
-
-    private String textSource;
+    private static final Logger log = LoggerFactory.getLogger(TextTagsProvider.class);
 
     public static final String TEXT_TAG_SCORE = "text.tag.score";
     public static final String REL_TAG_SCORE = "related.tag.score";
     public static final String TEXT_SOURCE = "text.source";
     public final static String TAGS_INDEX = "tags.index";
 
+    private String textSource;
     private double textScore;
     private double relatedScore;
     private String tagsIndex;
@@ -85,7 +75,8 @@ public class TextTagsProvider extends AbstractTagsProvider {
                     // add the word as tag if it has results (thus exists as tag)
                     tagCollection.add(new Tag(word, textScore));
                     // add the other tags from the nodes that contain this tag with lower score
-                    for (NodeIterator i = tagsSearch.getNode(word).getNode("hippo:resultset").getNodes(); i.hasNext();) {
+                    final Node wordNode = tagsSearch.getNode(word);
+                    for (NodeIterator i = wordNode.getNode("hippo:resultset").getNodes(); i.hasNext(); ) {
                         Node node = i.nextNode();
                         Value[] tags = node.getProperty(TaggingNodeType.PROP_TAGS).getValues();
                         for (Value tag : tags) {
