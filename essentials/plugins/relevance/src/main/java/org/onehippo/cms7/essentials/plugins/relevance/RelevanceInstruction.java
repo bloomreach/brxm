@@ -59,7 +59,7 @@ public class RelevanceInstruction implements Instruction {
         TARGETING_RESOURCE_ATTRIBUTES.put("username", "sa");
         TARGETING_RESOURCE_ATTRIBUTES.put("password", "");
         TARGETING_RESOURCE_ATTRIBUTES.put("driverClassName", "org.h2.Driver");
-        TARGETING_RESOURCE_ATTRIBUTES.put("url", "jdbc:h2:${repo.path}/targeting/targeting;MVCC=TRUE");
+        TARGETING_RESOURCE_ATTRIBUTES.put("url", "jdbc:h2:${repo.path}/targeting/targeting");
 
         TARGETING_ENVIRONMENT_ATTRIBUTES.put("value", "{'indexName':'visits', 'locations':['http://localhost:9200/']}");
         TARGETING_ENVIRONMENT_ATTRIBUTES.put("type", "java.lang.String");
