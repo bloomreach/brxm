@@ -21,7 +21,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 
-import { dependencies, version } from '../../../../package.json';
+import { version } from '../../../../package.json';
 
 import { AppComponent } from './app.component';
 import { BootstrapModule } from './bootstrap/bootstrap.module';
@@ -31,6 +31,7 @@ import { ConfiguredLoggerModule } from './logger/configured-logger.module';
 import { MainMenuModule } from './main-menu/main-menu.module';
 import { APP_SETTINGS } from './services/app-settings';
 import { appSettingsFactory } from './services/app-settings.factory';
+import { getCommunicationLibraryVersion } from './services/get-communication-library-version';
 import { translateHttpLoaderFactory } from './services/translate-http-loader.factory';
 import { USER_ACTIVITY_DEBOUNCE_TIME } from './services/user-activity-debounce-time';
 import { USER_SETTINGS } from './services/user-settings';
@@ -71,7 +72,7 @@ import { TopPanelModule } from './top-panel/top-panel.module';
 })
 export class AppModule {
   constructor(logger: NGXLogger) {
-    const commLibVersion = dependencies['@bloomreach/navapp-communication'];
+    const commLibVersion = getCommunicationLibraryVersion();
 
     logger.info(`Navapp version ${version}, communication library version ${commLibVersion}`);
   }

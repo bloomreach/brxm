@@ -19,12 +19,12 @@ import { ChildPromisedApi, ClientError, connectToChild, NavLocation, ParentApi }
 import { NGXLogger } from 'ngx-logger';
 import { Subject } from 'rxjs';
 
-import { version } from '../../../../../package.json';
 import { AppSettings } from '../models/dto/app-settings.dto';
 import { UserSettings } from '../models/dto/user-settings.dto';
 
 import { APP_SETTINGS } from './app-settings';
 import { BusyIndicatorService } from './busy-indicator.service';
+import { getCommunicationLibraryVersion } from './get-communication-library-version';
 import { USER_SETTINGS } from './user-settings';
 
 export interface ChildConnection {
@@ -105,7 +105,7 @@ export class ConnectionService {
   private getParentApiMethods(appUrl: string): ParentApi {
     return {
       getConfig: () => ({
-        apiVersion: version,
+        apiVersion: getCommunicationLibraryVersion(),
         userSettings: this.userSettings,
       }),
       showMask: () => {
