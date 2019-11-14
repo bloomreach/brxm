@@ -20,6 +20,7 @@ import {
   ElementRef,
   Input,
   OnInit,
+  SecurityContext,
   ViewChild,
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
@@ -50,7 +51,8 @@ export class ClientAppComponent implements OnInit, AfterViewInit {
   ) { }
 
   ngOnInit(): void {
-    this.safeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(this.url);
+    const sanitizedUrl = this.domSanitizer.sanitize(SecurityContext.URL, this.url);
+    this.safeUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(sanitizedUrl);
   }
 
   ngAfterViewInit(): void {
