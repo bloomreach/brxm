@@ -2,8 +2,14 @@
   "bundleType" : "WICKET",
   "keyData" : {
     "action.add.channel" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "type" : {
       "status" : "CLEAN",
@@ -12,6 +18,16 @@
     "region" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "channels" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
