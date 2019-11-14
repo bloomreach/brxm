@@ -24,11 +24,15 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.datetime.PatternDateConverter;
 import org.apache.wicket.datetime.markup.html.basic.DateLabel;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.CssResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.panelperspective.PanelPluginPanel;
@@ -38,6 +42,8 @@ import org.hippoecm.frontend.session.UserSession;
 public class ReportsPerspective extends PanelPluginPerspective {
 
     public static final String REPORTING_SERVICE = "reporting.service";
+
+    private static final ResourceReference REPORTING_LAYOUT_CSS = new CssResourceReference(ReportsPerspective.class, "layout/reporting.css");
 
     private final WebMarkupContainer refreshGroup;
     private final DateLabel lastRefreshDateLabel;
@@ -72,6 +78,12 @@ public class ReportsPerspective extends PanelPluginPerspective {
         refreshLink.add(new Label("refresh-link-label", new StringResourceModel("refresh-link-text", this)));
         refreshGroup.add(refreshLink);
         add(refreshGroup);
+    }
+
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(CssHeaderItem.forReference(REPORTING_LAYOUT_CSS));
     }
 
     @Override

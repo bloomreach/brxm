@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2017 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -353,38 +353,13 @@ textarea.x-form-focus,
 }
 
 .x-btn {
+  font: normal 11px tahoma, arial, helvetica, sans-serif;
 
-  &.btn {
-    height: 36px !important;
+  &.btn,
+  &.btn button {
+    // Override extjs script styling on buttons
     width: auto !important;
-
-    &.x-btn-focus,
-    &.x-btn-focus:hover {
-      box-shadow: 0 0 0 2px $button-focus-color;
-    }
-
-    &.x-btn-focus.x-btn-click,
-    &.x-btn-focus.x-btn-click:hover {
-      box-shadow: none;
-    }
-
-    button {
-      // Override extjs script styling on buttons
-      font-family: $font-family-base;
-      font-size: $button-font-size;
-      line-height: $button-line-height;
-    }
-
-    &.btn-br-primary button {
-      color: $button-primary-color;
-    }
-
-    &.btn-br-primary.x-item-disabled,
-    &.btn-br-primary.x-item-disabled:hover {
-      background-color: $button-primary-disabled-bg !important;
-      border-color: $button-primary-disabled-border;
-      color: $button-primary-disabled-color ;
-    }
+    height: auto !important;
   }
 
   .x-btn-tl,
@@ -491,9 +466,7 @@ textarea.x-form-focus,
 .x-toolbar div,
 .x-toolbar select,
 .x-toolbar label {
-  font-family: $font-family-base;
-  font-size: 11px;
-  font-weight: normal;
+  font: normal 11px tahoma, arial, helvetica, sans-serif;
 }
 
 .x-toolbar .x-item-disabled {
@@ -1601,7 +1574,7 @@ a.x-menu-item {
 
   .x-window-bc .x-window-footer {
     background-color: $modal-bgcolor;
-    padding: 8px 0;
+    padding: 16px 0;
 
     .x-toolbar-cell {
       padding: 0 4px;
@@ -1661,22 +1634,6 @@ body.x-body-masked .x-window-plain .x-window-mc {
   padding-top: $modal-body-top-padding;
 }
 
-// rounded corners for dialogs
-.x-window-tc {
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-}
-
-.x-window-footer.x-panel-btns {
-  border-bottom-left-radius: 4px;
-  border-bottom-right-radius: 4px;
-}
-
-// rounded corners on shadows
-.x-shadow {
-  border-radius: 4px;
-}
-
 .x-html-editor-wrap {
   border-color: $dark-gray;
   background-color: $white;
@@ -1709,7 +1666,7 @@ body.x-body-masked .x-window-plain .x-window-mc {
 }
 
 .x-border-layout-ct {
-  background-color: $top-bar-bgcolor;
+  background-color: $lightest-shade;
 }
 
 .x-accordion-hd {

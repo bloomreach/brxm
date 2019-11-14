@@ -1,5 +1,5 @@
-/*
-  * Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
+/**
+  * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
   *
   * Licensed under the Apache License, Version 2.0 (the  "License");
   * you may not use this file except in compliance with the License.
@@ -35,9 +35,7 @@ public abstract class PanelPlugin implements IPlugin, IBreadCrumbPanelFactory {
         this.config = config;
     }
 
-    public ResourceReference getImage() {
-        return null;
-    }
+    public abstract ResourceReference getImage();
 
     public abstract IModel<String> getTitle();
 

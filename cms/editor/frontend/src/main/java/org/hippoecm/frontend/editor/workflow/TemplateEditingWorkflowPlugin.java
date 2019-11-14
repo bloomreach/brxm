@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,8 +33,6 @@ import org.apache.wicket.model.ResourceModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.CompatibilityWorkflowPlugin;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.frontend.attributes.ClassAttribute;
-import org.hippoecm.frontend.buttons.ButtonStyle;
 import org.hippoecm.frontend.dialog.AbstractDialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -113,11 +111,6 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
             }
 
             @Override
-            public String getCssClass() {
-                return ButtonStyle.SECONDARY.getCssClass();
-            }
-
-            @Override
             protected Component getIcon(final String id) {
                 return HippoIcon.fromSprite(id, Icon.FLOPPY);
             }
@@ -132,7 +125,6 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
                 return null;
             }
         });
-
         add(new WorkflowAction("done", new StringResourceModel("done", this)) {
 
             @Override
@@ -143,11 +135,6 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
             @Override
             protected Component getIcon(final String id) {
                 return HippoIcon.inline(id, CmsIcon.FLOPPY_TIMES_CIRCLE);
-            }
-
-            @Override
-            public String getCssClass() {
-                return ButtonStyle.PRIMARY.getCssClass();
             }
 
             @Override
@@ -216,7 +203,23 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
             exceptionLabel.setOutputMarkupId(true);
             add(exceptionLabel);
 
-            final AjaxButton saveButton = new AjaxButton(DialogConstants.BUTTON) {
+            AjaxButton button = new AjaxButton(DialogConstants.BUTTON) {
+                @Override
+                protected void onSubmit(AjaxRequestTarget target, Form form) {
+                    try {
+                        doRevert();
+                        closeDialog();
+                        closeEditor();
+                    } catch (Exception ex) {
+                        exceptionLabel.setDefaultModel(Model.of(ex.getMessage()));
+                        target.add(exceptionLabel);
+                    }
+                }
+            };
+            button.setModel(new ResourceModel("discard", "Discard"));
+            addButton(button);
+
+            button = new AjaxButton(DialogConstants.BUTTON) {
                 @Override
                 public boolean isEnabled() {
                     return super.isValid() && TemplateEditingWorkflowPlugin.this.isValid();
@@ -234,28 +237,8 @@ public class TemplateEditingWorkflowPlugin extends CompatibilityWorkflowPlugin {
                     }
                 }
             };
-            saveButton.setModel(new ResourceModel("save", "Save"));
-            addButton(saveButton);
-
-            final AjaxButton discardButton = new AjaxButton(DialogConstants.BUTTON) {
-                @Override
-                protected void onSubmit(AjaxRequestTarget target, Form form) {
-                    try {
-                        doRevert();
-                        closeDialog();
-                        closeEditor();
-                    } catch (Exception ex) {
-                        exceptionLabel.setDefaultModel(Model.of(ex.getMessage()));
-                        target.add(exceptionLabel);
-                    }
-                }
-            };
-            discardButton.setModel(new ResourceModel("discard", "Discard"));
-            discardButton.add(ClassAttribute.append(() -> saveButton.isEnabled()
-                    ? ButtonStyle.SECONDARY.getCssClass()
-                    : ButtonStyle.PRIMARY.getCssClass()));
-            addButton(discardButton);
-
+            button.setModel(new ResourceModel("save", "Save"));
+            addButton(button);
         }
 
         public IModel<String> getTitle() {

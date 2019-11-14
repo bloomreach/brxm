@@ -35,13 +35,9 @@
 }
 
 .yui-resize-handle {
-  border-right: 1px solid $gray38;
+  border-right: 1px solid $gray60Solid;
 
   &:hover {
-    border-color: $gray60;
+    border-color: $gray87;
   }
-}
-
-.yui-layout-expanded .browse-perspective-left + .yui-resize-handle {
-  border-right: 0;
 }

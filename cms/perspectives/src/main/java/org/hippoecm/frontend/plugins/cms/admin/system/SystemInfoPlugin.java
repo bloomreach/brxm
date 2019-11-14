@@ -18,6 +18,8 @@ package org.hippoecm.frontend.plugins.cms.admin.system;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.ResourceModel;
+import org.apache.wicket.request.resource.PackageResourceReference;
+import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.AdminPanelPlugin;
@@ -28,6 +30,11 @@ public class SystemInfoPlugin extends AdminPanelPlugin {
 
     public SystemInfoPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+    }
+
+    @Override
+    public ResourceReference getImage() {
+        return new PackageResourceReference(AdminPanelPlugin.class, "blank-48.png");
     }
 
     @Override

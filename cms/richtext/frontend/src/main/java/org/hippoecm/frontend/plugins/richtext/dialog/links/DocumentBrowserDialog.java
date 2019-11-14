@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
- *
+ *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- *
+ * 
  *       http://www.apache.org/licenses/LICENSE-2.0
- *
+ * 
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,26 +35,31 @@ public class DocumentBrowserDialog<T extends RichTextEditorDocumentLink> extends
     public static final String CONFIG_OPEN_IN_NEW_WINDOW_ENABLED = "open.in.new.window.enabled";
     public static final boolean DEFAULT_OPEN_IN_NEW_WINDOW_ENABLED = true;
 
-    public DocumentBrowserDialog(final IPluginContext context, final IPluginConfig config, final IModel<T> model) {
+    private static final long serialVersionUID = 1L;
+
+    public DocumentBrowserDialog(IPluginContext context, IPluginConfig config, IModel<T> model) {
         super(context, config, model);
 
         setResizable(true);
 
         add(new ThrottledTextFieldWidget("title", new StringPropertyModel(model, RichTextEditorDocumentLink.TITLE)) {
+            private static final long serialVersionUID = 1L;
+
             @Override
-            protected void onUpdate(final AjaxRequestTarget target) {
+            protected void onUpdate(AjaxRequestTarget target) {
                 checkState();
             }
         });
 
-        final boolean enableOpenInNewWindow = config.getAsBoolean(CONFIG_OPEN_IN_NEW_WINDOW_ENABLED,
-                DEFAULT_OPEN_IN_NEW_WINDOW_ENABLED);
+        final boolean enableOpenInNewWindow = config.getAsBoolean(CONFIG_OPEN_IN_NEW_WINDOW_ENABLED, DEFAULT_OPEN_IN_NEW_WINDOW_ENABLED);
 
         if (enableOpenInNewWindow) {
-            final Fragment fragment = new Fragment("extra", "popup", this);
-            fragment.add(new BooleanFieldWidget("popup", new PropertyModel<>(model, "openInNewWindow")) {
+            Fragment fragment = new Fragment("extra", "popup", this);
+            fragment.add(new BooleanFieldWidget("popup", new PropertyModel<Boolean>(model, "openInNewWindow")) {
+                private static final long serialVersionUID = 1L;
+
                 @Override
-                protected void onUpdate(final AjaxRequestTarget target) {
+                protected void onUpdate(AjaxRequestTarget target) {
                     checkState();
                 }
             });
@@ -77,12 +82,11 @@ public class DocumentBrowserDialog<T extends RichTextEditorDocumentLink> extends
     }
 
     @Override
-    public void onEvent(final IEvent<?> event) {
+    public void onEvent(IEvent<?> event) {
         super.onEvent(event);
         if (event.getPayload() instanceof AjaxRequestHandler) {
-            final AjaxRequestHandler handler = (AjaxRequestHandler) event.getPayload();
-            handler.appendJavaScript(
-                    "Wicket.Window.current.resizer && Wicket.Window.current.resizer.restoreDatatableHeight();");
+            AjaxRequestHandler handler = (AjaxRequestHandler) event.getPayload();
+            handler.appendJavaScript("Wicket.Window.current.resizer.restoreDatatableHeight();");
         }
     }
 
