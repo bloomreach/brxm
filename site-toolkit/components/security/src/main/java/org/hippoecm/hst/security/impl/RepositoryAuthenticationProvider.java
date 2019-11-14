@@ -231,7 +231,7 @@ public class RepositoryAuthenticationProvider implements AuthenticationProvider 
         try {
             session = systemRepository.login(systemCreds);
             userSession = (HippoSession)session.impersonate(new SimpleCredentials(username, new char[0]));
-            if (userSession.isSystemUser()) {
+            if (userSession.isSystemSession()) {
                 throw new SecurityException("Not allowed to impersonate a system user");
             }
             return getRolesByUser(userSession.getUser());
