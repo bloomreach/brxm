@@ -82,6 +82,10 @@ import org.onehippo.forge.selection.frontend.provider.IValueListProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.onehippo.forge.dashboard.documentwizard.NewDocumentWizardPlugin.ClassificationType.DATE;
+import static org.onehippo.forge.dashboard.documentwizard.NewDocumentWizardPlugin.ClassificationType.LIST;
+import static org.onehippo.forge.dashboard.documentwizard.NewDocumentWizardPlugin.ClassificationType.LISTDATE;
+
 public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHeaderContributor {
 
     private static final Logger log = LoggerFactory.getLogger(NewDocumentWizardPlugin.class);
@@ -95,12 +99,12 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
     private static final String PARAM_BASE_FOLDER = "baseFolder";
     private static final String PARAM_DOCUMENT_TYPE = "documentType";
     private static final String PARAM_QUERY = "query";
-    private static final String PARAM_VALUELIST_PATH = "valueListPath";
+    private static final String PARAM_VALUE_LIST_PATH = "valueListPath";
     private static final String PARAM_SHORTCUT_LINK_LABEL = "shortcut-link-label";
 
     private static final String DEFAULT_QUERY = "new-document";
     private static final String DEFAULT_BASE_FOLDER = "/content/documents";
-    private static final String DEFAULT_SERVICE_VALUELIST = "service.valuelist.default";
+    private static final String DEFAULT_SERVICE_VALUE_LIST = "service.valuelist.default";
 
     protected enum ClassificationType {DATE, LIST, LISTDATE}
 
@@ -243,7 +247,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             try {
                 classificationType = ClassificationType.valueOf(StringUtils.upperCase(classification));
             } catch (Exception iae) {
-                classificationType = ClassificationType.DATE;
+                classificationType = DATE;
             }
 
             // build UI
@@ -258,13 +262,13 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             // get list value list
             IValueListProvider provider = getValueListProvider();
             ValueList categories;
-            String valuelistPath = config.getString(PARAM_VALUELIST_PATH);
+            String valuelistPath = config.getString(PARAM_VALUE_LIST_PATH);
             try {
                 categories = provider.getValueList(valuelistPath, null);
             } catch (IllegalStateException ise) {
-                if (classificationType.equals(ClassificationType.LIST) || classificationType.equals(
-                        ClassificationType.LISTDATE)) {
-                    log.warn("ValueList not found for parameter " + PARAM_VALUELIST_PATH + " with value {}", valuelistPath);
+                if (classificationType.equals(LIST) || classificationType.equals(LISTDATE)) {
+                    log.warn("ValueList not found for parameter {} with value {}", PARAM_VALUE_LIST_PATH,
+                            valuelistPath);
                 }
                 categories = new ValueList();
             }
@@ -289,7 +293,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             listField.setLabel(new StringResourceModel(DIALOG_LIST_LABEL, this));
             add(listField);
 
-            if (!classificationType.equals(ClassificationType.LIST) && !classificationType.equals(ClassificationType.LISTDATE)) {
+            if (!classificationType.equals(LIST) && !classificationType.equals(LISTDATE)) {
                 listLabel.setVisible(false);
                 listField.setVisible(false);
             }
@@ -301,7 +305,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             final YuiDateTimeField dateField = new YuiDateTimeField("date", new PropertyModel<>(this, "date"));
             dateField.setRequired(true);
             add(dateField);
-            if (!classificationType.equals(ClassificationType.DATE) && !classificationType.equals(ClassificationType.LISTDATE)) {
+            if (!classificationType.equals(DATE) && !classificationType.equals(LISTDATE)) {
                 dateLabel.setVisible(false);
                 dateField.setVisible(false);
             }
@@ -376,14 +380,12 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                     final Map<String, String> arguments = new TreeMap<>();
                     arguments.put("name", encodedDocumentName);
 
-                    if (classificationType.equals(ClassificationType.LIST) || classificationType.equals(
-                            ClassificationType.LISTDATE)) {
+                    if (classificationType.equals(LIST) || classificationType.equals(LISTDATE)) {
                         arguments.put("list", list);
                         log.debug("Create document using for $list: {}", list);
                     }
 
-                    if (classificationType.equals(ClassificationType.DATE) || classificationType.equals(
-                            ClassificationType.LISTDATE)) {
+                    if (classificationType.equals(DATE) || classificationType.equals(LISTDATE)) {
                         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd'T'kk:mm:ss.SSSZZ");
                         arguments.put("date", fmt.print(date.getTime()));
                         log.debug("Create document using for $date: {}", fmt.print(date.getTime()));
@@ -398,7 +400,8 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
                     // add the not-encoded document name as display name
                     if (!documentName.equals(encodedDocumentName)) {
 
-                        final DefaultWorkflow defaultWorkflow = (DefaultWorkflow) workflowMgr.getWorkflow("core", documentNode);
+                        final DefaultWorkflow defaultWorkflow = (DefaultWorkflow) workflowMgr.getWorkflow("core",
+                                documentNode);
                         if (defaultWorkflow != null) {
                             defaultWorkflow.setDisplayName(documentName);
                         }
@@ -448,10 +451,10 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
 
         protected String getFolderPath() {
             String folderPath = null;
-            if (classificationType.equals(ClassificationType.LIST) || classificationType.equals(ClassificationType.LISTDATE)) {
+            if (classificationType.equals(LIST) || classificationType.equals(LISTDATE)) {
                 folderPath = getListFolderPath();
             }
-            if (classificationType.equals(ClassificationType.DATE)) {
+            if (classificationType.equals(DATE)) {
                 folderPath = getDateFolderPath();
             }
             return folderPath;
@@ -491,7 +494,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
             // navigate up the tree to find the lowest already existing node in the path
             while (folderNode == null && StringUtils.isNotBlank(checkPath)) {
                 if (session.nodeExists(checkPath)) {
-                   folderNode = session.getNode(checkPath);
+                    folderNode = session.getNode(checkPath);
                 } else {
                     notExistingFolders.add(StringUtils.substringAfterLast(checkPath, "/"));
                     checkPath = StringUtils.substringBeforeLast(checkPath, "/");
@@ -509,7 +512,7 @@ public class NewDocumentWizardPlugin extends RenderPlugin<Object> implements IHe
         }
 
         protected IValueListProvider getValueListProvider() {
-            return context.getService(DEFAULT_SERVICE_VALUELIST, IValueListProvider.class);
+            return context.getService(DEFAULT_SERVICE_VALUE_LIST, IValueListProvider.class);
         }
 
         protected void select(JcrNodeModel nodeModel) {
