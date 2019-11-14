@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NavigationTrigger } from '@bloomreach/navapp-communication';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
 
 import { NavigationService } from '../../../services/navigation.service';
 import { BreadcrumbsService } from '../../services/breadcrumbs.service';
@@ -27,25 +27,31 @@ import { BreadcrumbsService } from '../../services/breadcrumbs.service';
   templateUrl: 'breadcrumbs.component.html',
   styleUrls: ['breadcrumbs.component.scss'],
 })
-export class BreadcrumbsComponent {
+export class BreadcrumbsComponent implements OnInit {
+  breadcrumbsWithoutSuffix: string[] = [];
+  suffix = '';
+
+  private unsubscribe = new Subject();
+
   constructor(
     private breadcrumbsService: BreadcrumbsService,
     private navigationService: NavigationService,
   ) { }
 
-  get breadcrumbs$(): Observable<string[]> {
-    return this.breadcrumbsService.breadcrumbs$.pipe(
-      map(x => x.slice(0, x.length - 1)),
-    );
-  }
-
-  get suffix$(): Observable<string> {
-    return this.breadcrumbsService.breadcrumbs$.pipe(
-      map(x => x[x.length - 1]),
-    );
+  ngOnInit(): void {
+    this.breadcrumbsService.breadcrumbs$.pipe(
+      takeUntil(this.unsubscribe),
+    ).subscribe(breadcrumbs => {
+      this.breadcrumbsWithoutSuffix = breadcrumbs.slice(0, breadcrumbs.length - 1);
+      this.suffix = breadcrumbs[breadcrumbs.length - 1];
+    });
   }
 
   onLastBreadcrumbClicked(): void {
+    if (!this.suffix) {
+      return;
+    }
+
     this.navigationService.navigateToDefaultAppPage(NavigationTrigger.Breadcrumbs);
   }
 }
