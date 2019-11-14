@@ -194,32 +194,6 @@ public class HippoItem implements HippoBean {
         return properties;
     }
 
-    /**
-     * @deprecated Since 13.3.0. Use either {@link #getSingleProperty(String)} for single fields
-     *   or {@link #getMultipleProperty(String)} for multiple fields.
-     */
-    @SuppressWarnings("unchecked")
-    @Deprecated
-    public <T> T getProperty(String name) {
-        return (T) getProperties().get(name);
-    }
-
-    /**
-     * @deprecated Since 13.3.0. Use either {@link #getSingleProperty(String, T)} for single fields
-     *   or {@link #getMultipleProperty(String, T)} for multiple fields.
-     */
-    @Deprecated
-    @Override
-    public <T> T getProperty(String name, T defaultValue) {
-
-        @SuppressWarnings("unchecked")
-        T val = (T) getProperties().get(name);
-        if (val == null) {
-            return defaultValue;
-        }
-        return val;
-    }
-
     @SuppressWarnings("unchecked")
     @Override
     public <T> T getSingleProperty(String name) {
