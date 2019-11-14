@@ -42,6 +42,8 @@ import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.io.IClusterable;
 import org.apache.wicket.util.string.Strings;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.buttons.ButtonStyle;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
@@ -189,7 +191,7 @@ public class TabsPlugin extends RenderPlugin {
     public void renderHead(final IHeaderResponse response) {
         super.renderHead(response);
 
-        final JavaScriptResourceReference tabsPluginJs = new JavaScriptResourceReference(TabsPlugin.class, 
+        final JavaScriptResourceReference tabsPluginJs = new JavaScriptResourceReference(TabsPlugin.class,
                 "TabsPlugin.js");
         response.render(JavaScriptReferenceHeaderItem.forReference(tabsPluginJs));
     }
@@ -293,7 +295,7 @@ public class TabsPlugin extends RenderPlugin {
     void closeAll(final Tab ignoredTab, final AjaxRequestTarget target) {
         final List<Tab> changedTabs = getChangedTabs(ignoredTab);
         if (!changedTabs.isEmpty()) {
-            final IDialogService dialogService = getPluginContext().getService(IDialogService.class.getName(), 
+            final IDialogService dialogService = getPluginContext().getService(IDialogService.class.getName(),
                     IDialogService.class);
             dialogService.show(new CloseAllDialog(changedTabs, ignoredTab));
         } else {
@@ -650,7 +652,7 @@ public class TabsPlugin extends RenderPlugin {
             setSize(DialogConstants.LARGE_AUTO);
             setTitleKey("title");
 
-            addButton(new AjaxButton(DialogConstants.BUTTON, new ResourceModel("discard-all")) {
+            final AjaxButton discardAllButton = new AjaxButton(DialogConstants.BUTTON, new ResourceModel("discard-all")) {
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form form) {
                     final Consumer<Tab> discardAndClose = currentTab -> {
@@ -671,9 +673,11 @@ public class TabsPlugin extends RenderPlugin {
                     processAllTabs(discardAndClose);
                     updateDialog(target);
                 }
-            }, ButtonPosition.LAST);
+            };
+            discardAllButton.add(ClassAttribute.append(ButtonStyle.SECONDARY.getCssClass()));
+            addButton(discardAllButton, ButtonPosition.LAST);
 
-            addButton(new AjaxButton(DialogConstants.BUTTON, new ResourceModel("save-all")) {
+            final AjaxButton saveAllButton = new AjaxButton(DialogConstants.BUTTON, new ResourceModel("save-all")) {
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form form) {
                     final Consumer<Tab> saveAndClose = currentTab -> {
@@ -694,7 +698,9 @@ public class TabsPlugin extends RenderPlugin {
                     processAllTabs(saveAndClose);
                     updateDialog(target);
                 }
-            }, ButtonPosition.LAST);
+            };
+            saveAllButton.add(ClassAttribute.append(ButtonStyle.PRIMARY.getCssClass()));
+            addButton(saveAllButton, ButtonPosition.LAST);
 
             provider = new ModifiedDocumentsProvider(getNodeModelList(changedTabs));
             modifiedDocumentsView = new ModifiedDocumentsView(MODIFIED_DOCS_VIEW_ID, provider);
@@ -761,10 +767,10 @@ public class TabsPlugin extends RenderPlugin {
             exceptionLabel.setOutputMarkupId(true);
             add(exceptionLabel);
 
-            final ResourceModel discardButtonLabel = isValid 
-                    ? new ResourceModel("discard", "Discard") 
+            final ResourceModel discardButtonLabel = isValid
+                    ? new ResourceModel("discard", "Discard")
                     : new ResourceModel("discard-invalid");
-            addButton(new AjaxButton(DialogConstants.BUTTON, discardButtonLabel) {
+            final AjaxButton discardButton = new AjaxButton(DialogConstants.BUTTON, discardButtonLabel) {
                 @Override
                 protected void onSubmit(AjaxRequestTarget target, Form form) {
                     try {
@@ -776,7 +782,10 @@ public class TabsPlugin extends RenderPlugin {
                         target.add(exceptionLabel);
                     }
                 }
-            }, ButtonPosition.LAST);
+            };
+            final ButtonStyle discardStyle = isValid ? ButtonStyle.SECONDARY : ButtonStyle.PRIMARY;
+            discardButton.add(ClassAttribute.append(discardStyle.getCssClass()));
+            addButton(discardButton, ButtonPosition.LAST);
 
 
             final AjaxButton saveButton = new AjaxButton(DialogConstants.BUTTON, new ResourceModel("save", "Save")) {
@@ -798,6 +807,7 @@ public class TabsPlugin extends RenderPlugin {
                 }
             };
             saveButton.setEnabled(mode == IEditor.Mode.EDIT);
+            saveButton.add(ClassAttribute.append(ButtonStyle.PRIMARY.getCssClass()));
             addButton(saveButton, ButtonPosition.LAST);
         }
 

@@ -25,6 +25,7 @@ import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.ConfirmDialog;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.frontend.buttons.ButtonStyle;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
@@ -57,6 +58,11 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
+            public String getCssClass() {
+                return ButtonStyle.SECONDARY.getCssClass();
+            }
+
+            @Override
             protected IModel<String> getTooltip() {
                 return new StringResourceModel("save-hint", this);
             }
@@ -85,6 +91,11 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             @Override
             protected Component getIcon(final String id) {
                 return HippoIcon.inline(id, CmsIcon.FLOPPY_TIMES_CIRCLE);
+            }
+
+            @Override
+            public String getCssClass() {
+                return ButtonStyle.PRIMARY.getCssClass();
             }
 
             @Override
