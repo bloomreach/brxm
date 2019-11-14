@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms7.resourcebundle.validators;
 
 import org.apache.commons.lang.StringUtils;
@@ -29,7 +28,6 @@ import org.onehippo.cms7.resourcebundle.data.ValueSet;
  */
 public class ValueSetNameValidator implements IValidator<String> {
 
-    private static final long serialVersionUID = 1L;
     private final ValueSet valueSet;
     private final Component component;
 

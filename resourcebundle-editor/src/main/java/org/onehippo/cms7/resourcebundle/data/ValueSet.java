@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,15 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms7.resourcebundle.data;
 
 import java.io.Serializable;
 
 /**
- * A value set represents a (often language dependent) set of resource bundle values. The
- * values themselves are not stored here (other than being available through the property),
- * but in the resource's valueMap.
+ * A value set represents a (often language dependent) set of resource bundle values. The values themselves are not
+ * stored here (other than being available through the property), but in the resource's valueMap.
  */
 public class ValueSet implements Comparable<ValueSet>, Serializable {
 

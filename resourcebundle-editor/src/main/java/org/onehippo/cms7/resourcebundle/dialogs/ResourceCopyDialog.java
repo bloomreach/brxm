@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms7.resourcebundle.dialogs;
 
 import org.apache.wicket.markup.html.basic.Label;
@@ -56,7 +55,6 @@ public class ResourceCopyDialog extends Dialog<Resource> {
         add(new TextArea<>("desc-value", new PropertyModel<>(resource, "description")));
 
         add(new ListView<ValueSet>("repeater", bundle.getValueSets()) {
-            private static final long serialVersionUID = 1L;
 
             @Override
             protected void populateItem(final ListItem<ValueSet> item) {
@@ -65,10 +63,12 @@ public class ResourceCopyDialog extends Dialog<Resource> {
                 item.add(new Label("value-label", valueLabel));
                 item.add(new Label("value-set-label", valueSet.getDisplayName()));
                 item.add(new TextField<>("value-set-value", new Model<String>() {
+
                     @Override
                     public String getObject() {
                         return resource.getValue(valueSet.getName());
                     }
+
                     @Override
                     public void setObject(String value) {
                         resource.setValue(valueSet.getName(), value);

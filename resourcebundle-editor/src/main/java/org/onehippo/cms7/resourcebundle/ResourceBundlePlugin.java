@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms7.resourcebundle;
 
 import java.util.List;
@@ -27,7 +26,6 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.form.AjaxFormComponentUpdatingBehavior;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.ajax.markup.html.form.AjaxCheckBox;
-import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.ComponentTag;
 import org.apache.wicket.markup.head.CssHeaderItem;
@@ -49,6 +47,8 @@ import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.CssResourceReference;
 import org.apache.wicket.request.resource.PackageResourceReference;
+import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.model.ReadOnlyModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IEditor;
@@ -63,21 +63,13 @@ import org.onehippo.cms7.resourcebundle.dialogs.ResourceViewDialog;
 import org.onehippo.cms7.resourcebundle.dialogs.ValueSetAddDialog;
 import org.onehippo.cms7.resourcebundle.dialogs.ValueSetDeleteDialog;
 import org.onehippo.cms7.resourcebundle.dialogs.ValueSetRenameDialog;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Renders resource bundles multivalued properties
- *
- * @version "$Id: ResourceBundlePlugin.java 47 2014-06-26 12:34:25Z aschrijvers
- *          $"
  */
 public class ResourceBundlePlugin extends RenderPlugin<Node> {
 
-    private static final long serialVersionUID = 1L;
     public static final String MISSING_VALUE = "[<missing>]";
-
-    private static Logger log = LoggerFactory.getLogger(ResourceBundlePlugin.class);
 
     public static final Pattern NAME_SPLITTER = Pattern.compile(":");
 
@@ -93,7 +85,7 @@ public class ResourceBundlePlugin extends RenderPlugin<Node> {
         super(context, config);
 
         keys = new StringResourceModel("plugin.display.keys.label", this, null).getObject();
-        defaultValueSetName = new StringResourceModel("plugin.display.valueset.default", ResourceBundlePlugin.this, null).getObject();
+        defaultValueSetName = new StringResourceModel("plugin.display.valueset.default", this, null).getObject();
         mode = IEditor.Mode.fromString(config.getString("mode", "view"));
         bundle = new Bundle(getModelObject(), defaultValueSetName);
         selectedAnchor = keys;
@@ -124,8 +116,6 @@ public class ResourceBundlePlugin extends RenderPlugin<Node> {
         // display shows a table of resources, one resource is represented by one row in the table.
         final Component display = new WebMarkupContainer("display")
                 .add(new ListView<Resource>("repeater", bundle.getResources()) {
-                    private static final long serialVersionUID = 1L;
-
                     @Override
                     protected void populateItem(final ListItem<Resource> item) {
                         item.add(createResource(item.getModelObject()));
@@ -135,37 +125,35 @@ public class ResourceBundlePlugin extends RenderPlugin<Node> {
         add(display);
 
         add(new Label("enabled-label", new StringResourceModel("plugin.display.enabled.label", this, null))
-                        .add(new Behavior() {
-                            @Override
-                            public void onComponentTag(final Component component, final ComponentTag tag) {
-                                tag.put("title", new StringResourceModel("plugin.display.enabled.label.title",
-                                        ResourceBundlePlugin.this, null).getObject());
-                            }
-                        })
+                .add(new Behavior() {
+                    @Override
+                    public void onComponentTag(final Component component, final ComponentTag tag) {
+                        tag.put("title", new StringResourceModel("plugin.display.enabled.label.title",
+                                ResourceBundlePlugin.this, null).getObject());
+                    }
+                })
         );
         add(new Label("key-label", keys));
         add(new Label("index-label", new StringResourceModel("plugin.display.index.label", this, null))
-                        .add(new Behavior() {
-                            @Override
-                            public void onComponentTag(final Component component, final ComponentTag tag) {
-                                tag.put("title", new StringResourceModel("plugin.display.index.label.title",
-                                        ResourceBundlePlugin.this, null).getObject());
-                            }
-                        })
+                .add(new Behavior() {
+                    @Override
+                    public void onComponentTag(final Component component, final ComponentTag tag) {
+                        tag.put("title", new StringResourceModel("plugin.display.index.label.title",
+                                ResourceBundlePlugin.this, null).getObject());
+                    }
+                })
         );
 
         // add the value set selection drop-down
         add(new DropDownChoice<>("valueset-dropdown",
-                new PropertyModel<ValueSet>(this, "selectedValueSet"),
+                new PropertyModel<>(this, "selectedValueSet"),
                 bundle.getValueSets(),
                 valueSetRenderer)
                 .setNullValid(false)
                 .setRequired(true)
                 .add(new AjaxFormComponentUpdatingBehavior("change") {
-                    private static final long serialVersionUID = 1L;
-
                     protected void onUpdate(AjaxRequestTarget target) {
-                        // Avoid that the anchor column shows the same content as the value columnn.
+                        // Avoid that the anchor column shows the same content as the value column.
                         if (selectedValueSet.getDisplayName().equals(selectedAnchor)) {
                             if (selectedAnchor.equals(bundle.getDefaultValueSetName())) {
                                 selectedAnchor = keys;
@@ -179,10 +167,10 @@ public class ResourceBundlePlugin extends RenderPlugin<Node> {
                 }));
 
         add(new WebMarkupContainer("value-set-editor")
-                        .add(createValueSetAddLink())
-                        .add(createValueSetRenameLink())
-                        .add(createValueSetDeleteLink())
-                        .setVisible(mode == IEditor.Mode.EDIT)
+                .add(createValueSetAddLink())
+                .add(createValueSetRenameLink())
+                .add(createValueSetDeleteLink())
+                .setVisible(mode == IEditor.Mode.EDIT)
         );
 
         add(createResourceAddLink());
@@ -191,7 +179,8 @@ public class ResourceBundlePlugin extends RenderPlugin<Node> {
     @Override
     public void renderHead(final IHeaderResponse response) {
         super.renderHead(response);
-        response.render(CssHeaderItem.forReference(new CssResourceReference(ResourceBundlePlugin.class, "resource-bundle-plugin.css")));
+        response.render(CssHeaderItem.forReference(
+                new CssResourceReference(ResourceBundlePlugin.class, "resource-bundle-plugin.css")));
     }
 
     public IChoiceRenderer<ValueSet> getValueSetRenderer() {
@@ -200,7 +189,8 @@ public class ResourceBundlePlugin extends RenderPlugin<Node> {
 
     protected WebMarkupContainer createResource(final Resource resource) {
         final String prefix = mode == IEditor.Mode.EDIT ? "edit" : "view";
-        final WebMarkupContainer row = new Fragment("resource", prefix + "-resource", this, new CompoundPropertyModel<>(resource));
+        final WebMarkupContainer row = new Fragment("resource", prefix + "-resource", this,
+                new CompoundPropertyModel<>(resource));
         final boolean hasDescription = StringUtils.isNotBlank(resource.getDescription());
 
         final IModel<Boolean> enabledModel = new IModel<Boolean>() {
@@ -222,12 +212,7 @@ public class ResourceBundlePlugin extends RenderPlugin<Node> {
             public void detach() {
             }
         };
-        row.add(new AttributeAppender("class", new LoadableDetachableModel<String>() {
-            @Override
-            protected String load() {
-                return enabledModel.getObject() ? "" : "disabled";
-            }
-        }));
+        row.add(ClassAttribute.append(ReadOnlyModel.of(() -> enabledModel.getObject() ? "" : "disabled")));
 
         row.add(createEnableCheckBox(resource, enabledModel));
         row.add(new Image("desc", new PackageResourceReference(ResourceBundlePlugin.class, "description.png"))
@@ -406,8 +391,6 @@ public class ResourceBundlePlugin extends RenderPlugin<Node> {
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 getDialogService().show(new ValueSetAddDialog(ResourceBundlePlugin.this, bundle) {
-                    private static final long serialVersionUID = 1L;
-
                     @Override
                     protected void onOk() {
                         bundle.addValueSet(getValueSet());

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms7.resourcebundle.dialogs;
 
 import java.util.List;
@@ -53,9 +52,9 @@ public class ValueSetRenameDialog extends Dialog<String> {
 
         add(new Label("label", new StringResourceModel("dialog.valueset.rename.label", plugin, null)));
         add(new DropDownChoice<>("dropdown",
-                                 new PropertyModel<>(this, "selectedValueSet"),
-                                 valueSets,
-                                 plugin.getValueSetRenderer())
+                new PropertyModel<>(this, "selectedValueSet"),
+                valueSets,
+                plugin.getValueSetRenderer())
                 .setNullValid(false)
                 .setRequired(true)
         );

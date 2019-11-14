@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.onehippo.cms7.resourcebundle.data;
 
 import java.util.ArrayList;
@@ -34,12 +33,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A bundle contains the data structures that represent a bundle document's content, the document is stored in
- * the JCR repository, and referred to by a JCR node.
+ * A bundle contains the data structures that represent a bundle document's content, the document is stored in the JCR
+ * repository, and referred to by a JCR node.
  */
 public class Bundle implements IDetachable {
 
-    private static Logger log = LoggerFactory.getLogger(Bundle.class);
+    private static final Logger log = LoggerFactory.getLogger(Bundle.class);
 
     private static final String NAMESPACE = "resourcebundle:";
     private static final String PROP_KEYS = NAMESPACE + "keys";
@@ -50,7 +49,7 @@ public class Bundle implements IDetachable {
     // properties for accessing backing JCR Node
     // Since Bundle should be serializable (it's referenced directly from the plugin!)
     // the Node is not referenced directly.  Serializing the Node would effectively serialize
-    // the whole repository, including other JCR sessions, bundle caches, etcetera.  Big NONO.
+    // the whole repository, including other JCR sessions, bundle caches, etc.
     private final String nodeId;
     private transient Node node; // JCR node holding the bundle document
 
@@ -84,7 +83,7 @@ public class Bundle implements IDetachable {
     }
 
     public List<ValueSet> getMutableValueSets() {
-        List<ValueSet> result = new ArrayList<ValueSet>();
+        List<ValueSet> result = new ArrayList<>();
         for (ValueSet valueSet : valueSets) {
             if (!valueSet.getDisplayName().equals(defaultValueSetName)) {
                 result.add(valueSet);
@@ -94,7 +93,7 @@ public class Bundle implements IDetachable {
     }
 
     public Resource newResource() {
-        Map<String, String> valueMap = new HashMap<String, String>();
+        Map<String, String> valueMap = new HashMap<>();
         for (ValueSet valueSet : valueSets) {
             valueMap.put(valueSet.getName(), "");
         }
@@ -102,7 +101,7 @@ public class Bundle implements IDetachable {
     }
 
     public Resource copyResource(Resource original) {
-        Map<String, String> valueMap = new HashMap<String, String>(original.getValueMap());
+        Map<String, String> valueMap = new HashMap<>(original.getValueMap());
         return new Resource(this, original.getKey(), original.getDescription(), valueMap);
     }
 
@@ -128,7 +127,7 @@ public class Bundle implements IDetachable {
     public void addValueSet(ValueSet valueSet) {
         String name = valueSet.makeName();
 
-        for (Resource resource: resources) {
+        for (Resource resource : resources) {
             resource.setValue(name, "");
         }
 
@@ -230,13 +229,13 @@ public class Bundle implements IDetachable {
 
             // Load value-sets
             if (valueSets == null) {
-                valueSets = new ArrayList<ValueSet>();
+                valueSets = new ArrayList<>();
             } else {
                 valueSets.clear();
             }
 
-            List<Value[]> valuesList = new ArrayList<Value[]>();
-            List<String> valueSetNames = new ArrayList<String>();
+            List<Value[]> valuesList = new ArrayList<>();
+            List<String> valueSetNames = new ArrayList<>();
             PropertyIterator valueSetPropertyIterator = node.getProperties(PROP_PATTERN_VALUES);
             while (valueSetPropertyIterator.hasNext()) {
                 Property valueSetProperty = valueSetPropertyIterator.nextProperty();
@@ -251,12 +250,12 @@ public class Bundle implements IDetachable {
 
             // Load Resources
             if (resources == null) {
-                resources = new ArrayList<Resource>();
+                resources = new ArrayList<>();
             } else {
                 resources.clear();
             }
             if (resourceByIndex == null) {
-                resourceByIndex = new ArrayList<Resource>();
+                resourceByIndex = new ArrayList<>();
             } else {
                 resourceByIndex.clear();
             }
@@ -271,10 +270,10 @@ public class Bundle implements IDetachable {
 
                 for (int r = 0; r < keys.length; r++) {
                     String description = (descriptions != null && descriptions.length > r)
-                                       ? descriptions[r].getString() : "";
+                            ? descriptions[r].getString() : "";
 
                     // build the map of {valueSetName, value} for this resource
-                    Map<String, String> valueMap = new HashMap<String, String>();
+                    Map<String, String> valueMap = new HashMap<>();
 
                     for (int v = 0; v < valuesList.size(); v++) {
                         Value[] values = valuesList.get(v);
