@@ -26,8 +26,6 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 
 import org.hippoecm.repository.api.HippoNodeIterator;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
@@ -256,7 +254,7 @@ public class TotalSizeTest extends RepositoryTestCase {
             
             Session adminSession = null;
             try {
-                adminSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+                adminSession = server.login(ADMIN_ID, ADMIN_PASSWORD);
                 Node workerNode = adminSession.getNode(absWorkerPath);
                 if (absWorkerPath.equals("/test/translations")) {
                     // add unique named node for translation

@@ -156,7 +156,7 @@ public class MirrorTest extends RepositoryTestCase {
     public void testREPO246() throws Exception {
         for(int i=0; i<2500; i++) {
             Session newSession;
-            newSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+            newSession = server.login(ADMIN_ID, ADMIN_PASSWORD);
             newSession.getRootNode().getNode("test/navigation").getNode("mirror").getNode("test1");
             newSession.logout();
         }

@@ -147,7 +147,7 @@ public class RepositoryJaxrsServiceTest extends RepositoryTestCase {
     }
 
     private void expectOK(String path, String message) {
-        expectOK(SYSTEMUSER_ID, String.valueOf(SYSTEMUSER_PASSWORD), path, message);
+        expectOK(ADMIN_ID, String.valueOf(ADMIN_PASSWORD), path, message);
     }
 
     // Passing in null for the userid will run the check without logging in
@@ -165,7 +165,7 @@ public class RepositoryJaxrsServiceTest extends RepositoryTestCase {
     }
 
     private void expectStatusCode(String path, int statusCode) {
-        expectStatusCode(SYSTEMUSER_ID, String.valueOf(SYSTEMUSER_PASSWORD), path, statusCode);
+        expectStatusCode(ADMIN_ID, String.valueOf(ADMIN_PASSWORD), path, statusCode);
     }
 
     // Passing in null for the userid will run the check without logging in
@@ -219,7 +219,7 @@ public class RepositoryJaxrsServiceTest extends RepositoryTestCase {
         RepositoryJaxrsService.addEndpoint(jaxrsEndpoint);
 
         given()
-                .auth().preemptive().basic(SYSTEMUSER_ID, String.valueOf(SYSTEMUSER_PASSWORD))
+                .auth().preemptive().basic(ADMIN_ID, String.valueOf(ADMIN_PASSWORD))
         .when()
                 .get("http://localhost:" + portNumber + "/jaxrs/simple")
         .then()

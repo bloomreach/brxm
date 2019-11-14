@@ -326,7 +326,7 @@ public class FacetSelectTest extends RepositoryTestCase {
         session.save();
         session.refresh(false);
 
-        final Session session2 = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        final Session session2 = server.login(ADMIN_ID, ADMIN_PASSWORD);
         class SessionEventListener implements javax.jcr.observation.EventListener {
 
             private Session session;

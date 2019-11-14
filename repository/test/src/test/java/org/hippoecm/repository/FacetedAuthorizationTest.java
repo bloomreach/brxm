@@ -447,7 +447,7 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         Node userTestData = userSession.getRootNode().getNode(TEST_DATA_NODE);
         Node userHandle = userTestData.getNode("doc");
 
-        // doc node is still coupled to the SYSTEMUSER_ID based jcr session
+        // doc node is still coupled to the ADMIN_ID based jcr session
         doc = handle.addNode("doc", "hippo:authtestdocument");
         session.save();
         assertEquals("Number of child nodes below doc handle was not 3 ", 3, session.getRootNode().getNode(TEST_DATA_NODE).getNode("doc").getNodes().getSize());

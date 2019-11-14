@@ -70,7 +70,7 @@ public class HREPTWO2655IssueTest extends RepositoryTestCase {
     @Ignore("timeout issue test not supported")
     // @Test(timeout = 60000)
     public void testIssue() throws Exception {
-        session2 = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        session2 = server.login(ADMIN_ID, ADMIN_PASSWORD);
         ObservationManager obsmgr = session2.getWorkspace().getObservationManager();
         obsmgr.addEventListener(new Listener(), Event.NODE_ADDED, "/test", true, null, new String[] {"nt:unstructured"}, true);
         

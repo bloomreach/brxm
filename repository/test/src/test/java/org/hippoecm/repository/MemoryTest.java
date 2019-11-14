@@ -87,7 +87,7 @@ public class MemoryTest extends FacetedNavigationAbstractTest {
         // setup user session
         Session userSession = null;
         for (int i = 0; i < NUMBER_OF_TRAVERSE_LOGINS; i++) {
-            userSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+            userSession = server.login(ADMIN_ID, ADMIN_PASSWORD);
             Node node = userSession.getRootNode().getNode("test/navigation/xyz");
             for (NodeIterator iter = node.getNodes(); iter.hasNext();) {
                 Node child = iter.nextNode();

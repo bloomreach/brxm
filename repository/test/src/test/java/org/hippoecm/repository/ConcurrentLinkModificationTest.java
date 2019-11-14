@@ -96,7 +96,7 @@ public class ConcurrentLinkModificationTest extends RepositoryTestCase {
         super.setUp();
         session.getRootNode().addNode("test");
         session.save();
-        userSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        userSession = server.login(ADMIN_ID, ADMIN_PASSWORD);
     }
 
     @Override

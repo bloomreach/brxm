@@ -20,22 +20,12 @@ import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
-import javax.jcr.AccessDeniedException;
-import javax.jcr.InvalidItemStateException;
-import javax.jcr.ItemExistsException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
-import javax.jcr.ReferentialIntegrityException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.ValueFormatException;
-import javax.jcr.lock.LockException;
-import javax.jcr.nodetype.ConstraintViolationException;
-import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
-import javax.jcr.version.VersionException;
 
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType;
@@ -414,7 +404,7 @@ public class FacetedNavigationConcurrencyTest extends RepositoryTestCase {
         public void run() {
             Session searchSession = null;
             try {
-                searchSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+                searchSession = server.login(ADMIN_ID, ADMIN_PASSWORD);
                 Query q = searchSession.getWorkspace().getQueryManager().createQuery("//element(*,hippo:document) order by @jcr:score descending", "xpath");
                 q.setLimit(100);
                 
@@ -450,7 +440,7 @@ public class FacetedNavigationConcurrencyTest extends RepositoryTestCase {
         public void run() {
             Session traversalSession = null;
             try {
-                traversalSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+                traversalSession = server.login(ADMIN_ID, ADMIN_PASSWORD);
                 Node facetedNode = traversalSession.getRootNode().getNode(facetedNodePath);
                 traverse(facetedNode, "", traverseDepth);
             } catch (Exception e) {

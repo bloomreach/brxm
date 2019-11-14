@@ -573,7 +573,7 @@ public class FolderWorkflowTest extends RepositoryTestCase {
         }
         public void run() {
             try {
-                Session session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+                Session session = server.login(ADMIN_ID, ADMIN_PASSWORD);
                 WorkflowManager manager = ((HippoWorkspace)session.getWorkspace()).getWorkflowManager();
                 Node test = session.getRootNode().getNode(node.getPath().substring(1));
                 createDirectories(session, manager, node, new Random(seed), niters);

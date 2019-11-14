@@ -20,8 +20,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
@@ -78,7 +76,7 @@ public class HREPTWO548Test extends RepositoryTestCase {
         browse = traverse(session, "/test/nav");
 
         { // intermezzo: other session adds node
-            Session session2 = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+            Session session2 = server.login(ADMIN_ID, ADMIN_PASSWORD);
             session2.getRootNode().getNode("test/docs");
             build(content3, session2);
             session2.save();

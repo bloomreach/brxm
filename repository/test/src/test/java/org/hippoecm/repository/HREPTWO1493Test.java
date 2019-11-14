@@ -96,7 +96,7 @@ public class HREPTWO1493Test extends RepositoryTestCase {
 
     @Test
     public void testModifyPropertyAfterBrowsingVirtual() throws RepositoryException {
-        Session session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        Session session = server.login(ADMIN_ID, ADMIN_PASSWORD);
         Node node;
         build(content1, session);
         session.save();
@@ -110,14 +110,14 @@ public class HREPTWO1493Test extends RepositoryTestCase {
         session.save();
 
         session.logout();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        session = server.login(ADMIN_ID, ADMIN_PASSWORD);
 
         node = traverse(session, "/test/docs/doc/doc");
         node.setProperty("hippo:x", "changed");
         session.save();
 
         session.logout();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        session = server.login(ADMIN_ID, ADMIN_PASSWORD);
 
         node = traverse(session, "/test/docs/doc/doc");
         assertEquals("changed", node.getProperty("hippo:x").getString());
@@ -130,7 +130,7 @@ public class HREPTWO1493Test extends RepositoryTestCase {
         session.save();
 
         session.logout();
-        session = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        session = server.login(ADMIN_ID, ADMIN_PASSWORD);
 
         node = traverse(session, "/test/docs/doc/doc");
         assertEquals("reset", node.getProperty("hippo:x").getString());

@@ -168,7 +168,7 @@ public class DocumentWorkflowEditTest extends AbstractDocumentWorkflowIntegratio
         Session anotherAdmin = session.impersonate(CREDENTIALS);
         DocumentWorkflow workflow = getDocumentWorkflow(handle);
         final Node draft = workflow.obtainEditableInstance().getNode(session);
-        assertEquals(SYSTEMUSER_ID, draft.getProperty(HIPPOSTDPUBWF_LAST_MODIFIED_BY).getString());
+        assertEquals(ADMIN_ID, draft.getProperty(HIPPOSTDPUBWF_LAST_MODIFIED_BY).getString());
         draft.setProperty(HIPPOSTDPUBWF_LAST_MODIFIED_BY, "test-user");
         session.save();
         DocumentWorkflow anotherWorkflow = getDocumentWorkflow(anotherAdmin.getNodeByIdentifier(handle.getIdentifier()));

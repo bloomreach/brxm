@@ -46,7 +46,7 @@ public class ConcurrentModificationTest extends RepositoryTestCase {
         testNode.addNode("B");
         testNode.addNode("C");
         session.save();
-        userSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        userSession = server.login(ADMIN_ID, ADMIN_PASSWORD);
     }
 
     @Override

@@ -54,8 +54,8 @@ public class HREPTWO3402IssueTest extends RepositoryTestCase {
     @Test
     public void testIssue() throws RepositoryException {
 
-        Session first= server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
-        Session second = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        Session first= server.login(ADMIN_ID, ADMIN_PASSWORD);
+        Session second = server.login(ADMIN_ID, ADMIN_PASSWORD);
         
         // setup data
         Node test = first.getRootNode().addNode("testdata");

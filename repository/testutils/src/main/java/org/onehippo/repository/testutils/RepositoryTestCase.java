@@ -25,7 +25,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import javax.jcr.Credentials;
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
@@ -74,11 +73,11 @@ public abstract class RepositoryTestCase {
      */
     private static final String KEEPSERVER_SYSPROP = "org.onehippo.repository.test.keepserver";
 
-    protected static final String SYSTEMUSER_ID = "admin";
+    protected static final String ADMIN_ID = "admin";
     // This is a dummy password that is only used in unit- and integration tests.
     @SuppressWarnings("squid:S2068")
-    protected static final char[] SYSTEMUSER_PASSWORD = "admin".toCharArray();
-    protected static final Credentials CREDENTIALS = new SimpleCredentials(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+    protected static final char[] ADMIN_PASSWORD = "admin".toCharArray();
+    protected static final Credentials CREDENTIALS = new SimpleCredentials(ADMIN_ID, ADMIN_PASSWORD);
 
     protected static HippoRepository external = null;
     protected static HippoRepository background = null;
