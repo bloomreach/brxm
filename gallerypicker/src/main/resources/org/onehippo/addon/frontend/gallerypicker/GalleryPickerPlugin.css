@@ -16,24 +16,23 @@
 
 .hippo-node-field-name-hippogallerypicker-imagelink img,
 .hippo-node-field-name-hippogallerypicker-imagelink .simple-link {
-    margin-right: 8px;
+  margin-right: 8px;
 }
 
 td.hippo-gallery-removed img {
-    border: 5px solid #fdc6c6;
+  border: 5px solid #fdc6c6;
 }
 
 td.hippo-gallery-added img {
-	border: 5px solid #ccffcc;
+  border: 5px solid #ccffcc;
 }
 
 .hippo-root .hippo-upload-form select#typeselect {
-    margin: 0 15px 0 0;
+  margin: 0 15px 0 0;
 }
 
 .preview-image {
   align-items: center;
   display: inline-flex;
   margin-bottom: 8px;
-
 }
