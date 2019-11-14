@@ -25,14 +25,15 @@ import org.apache.wicket.model.IModel;
 import org.hippoecm.editor.type.JcrTypeLocator;
 import org.hippoecm.frontend.editor.validator.JcrTypeValidator;
 import org.hippoecm.frontend.editor.validator.ValidatorService;
-import org.hippoecm.frontend.editor.validator.plugins.AbstractCmsValidator;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.types.ITypeLocator;
+import org.hippoecm.frontend.validation.ICmsValidator;
 import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ValidationException;
 import org.hippoecm.frontend.validation.Violation;
@@ -44,13 +45,22 @@ import org.slf4j.LoggerFactory;
  * Validator for the Content Blocks. The validator delegates to the correct validators based on the content block
  * document type.
  */
-@SuppressWarnings("deprecation")
-public class ContentBlocksValidator extends AbstractCmsValidator {
+public class ContentBlocksValidator extends Plugin implements ICmsValidator {
 
     private static final Logger log = LoggerFactory.getLogger(ContentBlocksValidator.class);
 
+    private final String name;
+
     public ContentBlocksValidator(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
+
+        name = config.getName().substring(config.getName().lastIndexOf(".") + 1);
+        context.registerService(this, ValidatorService.VALIDATOR_SERVICE_ID);
+    }
+
+    @Override
+    public String getName() {
+        return name;
     }
 
     @Override
@@ -62,8 +72,7 @@ public class ContentBlocksValidator extends AbstractCmsValidator {
     public Set<Violation> validate(final IFieldValidator fieldValidator, final JcrNodeModel jcrNodeModel,
                                    final IModel model) throws ValidationException {
 
-        @SuppressWarnings("unchecked")
-        final IModel<Node> nodeModel = (IModel<Node>) model;
+        @SuppressWarnings("unchecked") final IModel<Node> nodeModel = (IModel<Node>) model;
 
         final Node contentBlockNode = nodeModel.getObject();
         final JcrTypeLocator jcrTypeLocator = new JcrTypeLocator();
@@ -85,7 +94,8 @@ public class ContentBlocksValidator extends AbstractCmsValidator {
 
             // delegate to the actual content block's validator
             final IFieldDescriptor fieldDescriptor = fieldValidator.getFieldDescriptor();
-            final JcrTypeValidator validator = getTypeValidator(fieldDescriptor, contentBlockDescriptor, validatorService);
+            final JcrTypeValidator validator = getTypeValidator(fieldDescriptor, contentBlockDescriptor,
+                    validatorService);
             if (validator == null) {
                 return Collections.emptySet();
             }
