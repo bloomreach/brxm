@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,18 +26,15 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version "$Id$"
- */
 public class ContentBlockComparer implements IComparer<Node> {
-    static final Logger log = LoggerFactory.getLogger(ContentBlockComparer.class);
+    private static final Logger log = LoggerFactory.getLogger(ContentBlockComparer.class);
 
     private ITemplateEngine engine;
-    
+
     public ContentBlockComparer(ITemplateEngine engine) {
         this.engine = engine;
     }
-    
+
     public boolean areEqual(Node baseNode, Node targetNode) {
         if (baseNode == null && targetNode == null) {
             return true;
@@ -52,10 +49,7 @@ public class ContentBlockComparer implements IComparer<Node> {
             final ITypeDescriptor type = engine.getType(baseNode.getPrimaryNodeType().getName());
             final NodeComparer comparer = new NodeComparer(type, engine);
             return comparer.areEqual(baseNode, targetNode);
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage(), ex);
-            return false;
-        } catch (TemplateEngineException ex) {
+        } catch (RepositoryException | TemplateEngineException ex) {
             log.error(ex.getMessage(), ex);
             return false;
         }
@@ -69,9 +63,7 @@ public class ContentBlockComparer implements IComparer<Node> {
             final ITypeDescriptor type = engine.getType(node.getPrimaryNodeType().getName());
             final NodeComparer comparer = new NodeComparer(type, engine);
             return comparer.getHashCode(node);
-        } catch (RepositoryException ex) {
-            log.error(ex.getMessage(), ex);
-        } catch (TemplateEngineException ex) {
+        } catch (RepositoryException | TemplateEngineException ex) {
             log.error(ex.getMessage(), ex);
         }
         return 0;

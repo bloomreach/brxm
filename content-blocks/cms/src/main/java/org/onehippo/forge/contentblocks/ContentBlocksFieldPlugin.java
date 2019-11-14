@@ -16,7 +16,6 @@
 package org.onehippo.forge.contentblocks;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -88,8 +87,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * ContentBlocksFieldPlugin provides authors with the ability to add different "content blocks" to a document with
- * the Document Editor.
+ * ContentBlocksFieldPlugin provides authors with the ability to add different "content blocks" to a document with the
+ * Document Editor.
  */
 public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
 
@@ -98,7 +97,8 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
     public static final String LINKS = "links";
     public static final String DROPDOWN = "dropdown";
 
-    private static final CssResourceReference CSS = new CssResourceReference(ContentBlocksFieldPlugin.class, "style.css");
+    private static final CssResourceReference CSS = new CssResourceReference(ContentBlocksFieldPlugin.class,
+                                                                             "style.css");
 
     private static final int MAX_ITEMS_UNLIMITED = Integer.MAX_VALUE;
 
@@ -131,8 +131,8 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         compoundList = compoundListFromConfiguration(configuredCompoundList);
         providerCompoundType = config.getString(PROVIDER_COMPOUND);
         if ((configuredCompoundList == null) && (providerCompoundType == null)) {
-            log.error("Missing content picker configuration. Please make sure that the plugin configuration has either " +
-                    "'{}' or '{}' set.", COMPOUND_LIST, PROVIDER_COMPOUND);
+            log.error("Missing content picker configuration. Please make sure that the plugin configuration has " +
+                      "either '{}' or '{}' set.", COMPOUND_LIST, PROVIDER_COMPOUND);
         }
 
         IPluginConfig parameters = new JavaPluginConfig(config.getPluginConfig(CLUSTER_OPTIONS));
@@ -145,7 +145,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
         IFieldDescriptor field = getFieldHelper().getField();
         Label required = new Label("required", "*");
-        required.setVisible(field != null && (field.getValidators().contains("required")|| field.isMandatory()));
+        required.setVisible(field != null && (field.getValidators().contains("required") || field.isMandatory()));
         add(required);
 
         add(new FieldHint("hint-panel", helper.getHintModel(this)));
@@ -188,7 +188,8 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
             final FieldPluginHelper fieldHelper = getFieldHelper();
             final IFieldDescriptor field = fieldHelper.getField();
             final IModel<IValidationResult> validationModel = fieldHelper.getValidationModel();
-            final String violationPerCompoundScript = ViolationUtils.getViolationPerCompoundScript(selector, field, validationModel);
+            final String violationPerCompoundScript = ViolationUtils.getViolationPerCompoundScript(selector, field,
+                    validationModel);
             if (violationPerCompoundScript != null) {
                 target.appendJavaScript(violationPerCompoundScript);
             }
@@ -238,8 +239,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
     }
 
     @Override
-    protected ChildNodeProvider newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
-                                            IModel<Node> nodeModel) {
+    protected ChildNodeProvider newProvider(IFieldDescriptor descriptor, ITypeDescriptor type, IModel<Node> nodeModel) {
         try {
             JcrNodeModel prototype = (JcrNodeModel) getTemplateEngine().getPrototype(type);
             return new ChildNodeProvider(descriptor, prototype, new JcrItemModel<>(nodeModel.getObject()));
@@ -260,14 +260,12 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         if (IEditor.Mode.EDIT != mode || (field == null)) {
             return false;
         }
-        if (!field.isMultiple() && !field.getValidators().contains("optional")) {
-            return false;
-        }
+
         // must be able to replace a first item with a content block of another type, so not this check
         // if (field.getValidators().contains("required") && provider.size() == 1) {
         //     return false;
         // }
-        return true;
+        return field.isMultiple() || field.getValidators().contains("optional");
     }
 
     // the next five methods make these functions available to the ContentBlocksEditableFieldContainer class
@@ -363,7 +361,8 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         parameters.put(ITemplateEngine.ENGINE, getPluginConfig().getString(ITemplateEngine.ENGINE));
         parameters.put(AbstractRenderService.WICKET_ID, id);
         parameters.put(ITemplateEngine.MODE, mode.toString());
-        parameters.put(IValidationService.VALIDATE_ID, getPluginContext().getReference(this).getServiceId() + ".validator." + (validatorCount++));
+        parameters.put(IValidationService.VALIDATE_ID,
+                getPluginContext().getReference(this).getServiceId() + ".validator." + (validatorCount++));
 
         return getPluginContext().newCluster(template, parameters);
     }
@@ -371,7 +370,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
     @Override
     protected void populateEditItem(final Item<IRenderService> item, final JcrNodeModel model) {
         item.add(new ContentBlocksEditableFieldContainer(FIELD_CONTAINER_ID, item, model, this, getBlockName(model)));
-   }
+    }
 
     @Override
     protected void populateViewItem(Item<IRenderService> item, final JcrNodeModel model) {
@@ -424,12 +423,11 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         if (StringUtils.isNotBlank(configuredCompoundList)) {
 
             // split into list, removing commas and white spaces
-            final List<String> list = Arrays.asList(configuredCompoundList.split("\\s*,\\s*"));
+            final String[] list = configuredCompoundList.split("\\s*,\\s*");
             for (String compoundName : list) {
                 if (!compoundName.contains(":")) {
                     compoundList.add(namespaceWithColon.concat(compoundName));
-                }
-                else {
+                } else {
                     compoundList.add(compoundName);
                 }
             }
@@ -479,9 +477,8 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
     }
 
     /**
-     * If validation has already been done, trigger it again. This is useful when items in the form
-     * have moved to a different location or have been removed. After redrawing a possible error message
-     * is shown at the correct field.
+     * If validation has already been done, trigger it again. This is useful when items in the form have moved to a
+     * different location or have been removed. After redrawing a possible error message is shown at the correct field.
      */
     private void validateModelObjects() {
         final EditorPlugin editorPlugin = findParent(EditorPlugin.class);
@@ -539,7 +536,8 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
                         };
 
                         // add (translated) name of compound as link label
-                        final IModel<String> compoundName = new TypeTranslator(new JcrNodeTypeModel(compound)).getTypeName();
+                        final JcrNodeTypeModel nodeTypeModel = new JcrNodeTypeModel(compound);
+                        final IModel<String> compoundName = new TypeTranslator(nodeTypeModel).getTypeName();
                         link.add(new Label("linkText", compoundName));
                         link.add(HippoIcon.fromSprite("icon", Icon.PLUS));
                         item.add(link);
@@ -550,7 +548,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
                     add(repeatingView);
                 }
                 // else use the provider compound to maintain compatibility with the previous method
-                else if (providerCompoundType != null ) {
+                else if (providerCompoundType != null) {
                     ITypeDescriptor cpItemTypeDescriptor = getTemplateEngine().getType(providerCompoundType);
                     log.debug("The Content Blocks items are configured in {}", cpItemTypeDescriptor.getName());
                     final Map<String, IFieldDescriptor> fields = cpItemTypeDescriptor.getFields();
@@ -559,22 +557,23 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
                     final boolean options = getPluginConfig().containsKey(CLUSTER_OPTIONS);
                     SortHelper helper = new SortHelper();
-                    helper.sort(fieldDescriptors, options ? getPluginConfig().getPluginConfig(CLUSTER_OPTIONS) : getPluginConfig());
+                    helper.sort(fieldDescriptors,
+                            options ? getPluginConfig().getPluginConfig(CLUSTER_OPTIONS) : getPluginConfig());
 
                     for (final IFieldDescriptor fieldDesc : fieldDescriptors) {
-
                         // create markup item with link
+                        final String type = fieldDesc.getTypeDescriptor().getType();
                         final WebMarkupContainer item = new WebMarkupContainer(repeatingView.newChildId());
                         final AjaxLink<Void> link = new AjaxLink<Void>("addItem") {
                             @Override
                             public void onClick(AjaxRequestTarget target) {
-                                String type = fieldDesc.getTypeDescriptor().getType();
                                 addItem(type, target);
                             }
                         };
 
                         // add (translated) name of compound as link label
-                        final IModel<String> cpItemFieldName = new TypeTranslator(new JcrNodeTypeModel(fieldDesc.getTypeDescriptor().getType())).getTypeName();
+                        final JcrNodeTypeModel nodeTypeModel = new JcrNodeTypeModel(type);
+                        final IModel<String> cpItemFieldName = new TypeTranslator(nodeTypeModel).getTypeName();
                         link.add(new Label("linkText", cpItemFieldName));
                         link.add(HippoIcon.fromSprite("icon", Icon.PLUS));
                         item.add(link);
@@ -625,7 +624,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
             final AjaxSubmitLink link = new AjaxSubmitLink("addItem", form) {
                 @Override
                 protected void onSubmit(final AjaxRequestTarget target, final Form<?> form) {
-                    final String selectedValue =  selectedOption != null ? selectedOption.getValue() : null;
+                    final String selectedValue = selectedOption != null ? selectedOption.getValue() : null;
 
                     log.debug("Selected value '{}' from dropdown", selectedValue);
                     if (StringUtils.isNotEmpty(selectedValue)) {
@@ -648,7 +647,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
                     providerCompoundType != null ? getOptionsFromProvider() : Collections.emptyList();
         }
 
-        private List<DropDownOption> getOptionsFromProvider(){
+        private List<DropDownOption> getOptionsFromProvider() {
             log.debug("Getting content picker items from compoundType {}", providerCompoundType);
 
             final List<DropDownOption> options = new ArrayList<>();
@@ -659,12 +658,13 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
                 log.debug("The Content Blocks items are configured in {}", cpItemTypeDescriptor.getName());
 
                 Map<String, IFieldDescriptor> fields = cpItemTypeDescriptor.getFields();
-                for (final IFieldDescriptor cpItemField: fields.values()) {
+                for (final IFieldDescriptor cpItemField : fields.values()) {
 
                     // value is actual JCR type, label is (translated) name of compound
                     final ITypeDescriptor typeDescriptor = cpItemField.getTypeDescriptor();
                     final String value = typeDescriptor.getName();
-                    final String label = new TypeTranslator(new JcrNodeTypeModel(typeDescriptor.getType())).getTypeName().getObject();
+                    final JcrNodeTypeModel nodeTypeModel = new JcrNodeTypeModel(typeDescriptor.getType());
+                    final String label = new TypeTranslator(nodeTypeModel).getTypeName().getObject();
 
                     options.add(new DropDownOption(value, label));
                 }

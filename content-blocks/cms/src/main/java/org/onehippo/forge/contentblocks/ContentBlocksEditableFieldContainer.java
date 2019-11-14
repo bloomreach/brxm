@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,15 +31,14 @@ import org.hippoecm.frontend.types.IFieldDescriptor;
 
 public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldContainer {
 
-    
-    public ContentBlocksEditableFieldContainer(final String id, final Item<IRenderService> item, 
-                                               final JcrNodeModel model, final ContentBlocksFieldPlugin plugin, 
+    public ContentBlocksEditableFieldContainer(final String id, final Item<IRenderService> item,
+                                               final JcrNodeModel model, final ContentBlocksFieldPlugin plugin,
                                                final String blockName) {
         super(id, item, blockName);
         add(getControls(plugin, model, item));
     }
 
-    private WebMarkupContainer getControls(final ContentBlocksFieldPlugin plugin, final JcrNodeModel model, 
+    private WebMarkupContainer getControls(final ContentBlocksFieldPlugin plugin, final JcrNodeModel model,
                                            final Item<IRenderService> item) {
         WebMarkupContainer controls = new WebMarkupContainer("controls");
         controls.setVisible(plugin.canRemoveItem() || plugin.canReorderItems());
@@ -114,7 +113,7 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
 
         final HippoIcon downIcon = HippoIcon.fromSprite("down-icon", Icon.ARROW_DOWN);
         downLink.add(downIcon);
-        
+
         // down to bottom arrow button
         MarkupContainer downToBottomLink = new AjaxLink("downToBottom") {
             @Override
@@ -130,10 +129,10 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
 
         final HippoIcon downToBottomIcon = HippoIcon.fromSprite("down-bottom-icon", Icon.ARROW_DOWN_LINE);
         downToBottomLink.add(downToBottomIcon);
-        
+
         return controls;
     }
-    
+
     private static class DeleteItemDialog extends Dialog<JcrNodeModel> {
 
         private final JcrNodeModel model;

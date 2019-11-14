@@ -16,7 +16,6 @@
 package org.onehippo.forge.contentblocks.sort;
 
 import java.io.Serializable;
-import java.util.Collections;
 import java.util.List;
 
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -24,14 +23,12 @@ import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @version "$Id$"
- */
 public class SortHelper implements Serializable {
 
-    public final static String DEFAULT_COMPARATOR_CLASS = DefaultAlphabeticalComparator.class.getName();
+    private static final Logger log = LoggerFactory.getLogger(SortHelper.class);
 
-    private final static Logger log = LoggerFactory.getLogger(SortHelper.class);
+    public static final String DEFAULT_COMPARATOR_CLASS = DefaultAlphabeticalComparator.class.getName();
+
     private IContentBlockComparator contentBlockComparator;
 
     public void sort(List<IFieldDescriptor> values, IPluginConfig config) {
@@ -40,39 +37,40 @@ public class SortHelper implements Serializable {
         }
 
         final String comparatorClass = config.getString("sortComparator");
-        if (comparatorClass != null) {
+        if (comparatorClass == null) {
+            return;
+        }
 
-            // instantiate only once
-            if (contentBlockComparator == null) {
+        // instantiate only once
+        if (contentBlockComparator != null) {
+            return;
+        }
 
-                if (comparatorClass.equals(DEFAULT_COMPARATOR_CLASS)) {
-                    contentBlockComparator = new DefaultAlphabeticalComparator();
+        if (comparatorClass.equals(DEFAULT_COMPARATOR_CLASS)) {
+            contentBlockComparator = new DefaultAlphabeticalComparator();
+        } else {
+            // load class dynamically and instantiate
+            try {
+                Class clazz = Class.forName(comparatorClass);
+                Object instance = clazz.newInstance();
+                if (instance instanceof IContentBlockComparator) {
+                    contentBlockComparator = (IContentBlockComparator) instance;
                 } else {
-                    // load class dynamically and instantiate
-                    try {
-                        Class clazz = Class.forName(comparatorClass);
-
-                        Object instance = clazz.newInstance();
-                        if (instance instanceof IContentBlockComparator) {
-                            contentBlockComparator = (IContentBlockComparator) instance;
-                        } else {
-                            log.error("Configured class " + comparatorClass + " does not implement IContentBlockComparator, using NO comparator");
-                        }
-                    } catch (ClassNotFoundException e) {
-                        log.error("ClassNotFoundException for configured class " + comparatorClass + ", using NO comparator");
-                    } catch (InstantiationException e) {
-                        log.error("InstantiationException for configured class " + comparatorClass + ", using NO comparator");
-                    } catch (IllegalAccessException e) {
-                        log.error("IllegalAccessException for configured class " + comparatorClass + ", using NO comparator");
-                    }
+                    log.error("Configured class {} does not implement IContentBlockComparator, using NO comparator",
+                            comparatorClass);
                 }
-
-                if (contentBlockComparator != null) {
-                    contentBlockComparator.setConfig(config);
-                    Collections.sort(values, contentBlockComparator);
-                }
+            } catch (ClassNotFoundException e) {
+                log.error("ClassNotFoundException for configured class {}, using NO comparator", comparatorClass);
+            } catch (InstantiationException e) {
+                log.error("InstantiationException for configured class {}, using NO comparator", comparatorClass);
+            } catch (IllegalAccessException e) {
+                log.error("IllegalAccessException for configured class {}, using NO comparator", comparatorClass);
             }
         }
-    }
 
+        if (contentBlockComparator != null) {
+            contentBlockComparator.setConfig(config);
+            values.sort(contentBlockComparator);
+        }
+    }
 }

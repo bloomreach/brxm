@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,8 @@ import java.util.Comparator;
 
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.types.IFieldDescriptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-/**
- * @version "$Id$"
- */
 public interface IContentBlockComparator extends Comparator<IFieldDescriptor> {
-
 
     void setConfig(IPluginConfig config);
 }
