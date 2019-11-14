@@ -14,7 +14,7 @@
 
 .hippo-toolbar-menu {
   align-items: center;
-  box-sizing: content-box;
+  box-sizing: border-box;
   border-bottom: 1px solid $gray12;
   background-color: $editor-toolbar-bgcolor;
   display: flex;
@@ -49,13 +49,13 @@
           background-color: $gray5 !important;
         }
 
-        &.focus-visible {
-          box-shadow: none;
-        }
-
         > span {
           display: flex;
           align-items: center;
+
+          > .menu-action-icon {
+            display: inline-flex;
+          }
 
           // Add space between icon and label in the dropdown button
           img,
