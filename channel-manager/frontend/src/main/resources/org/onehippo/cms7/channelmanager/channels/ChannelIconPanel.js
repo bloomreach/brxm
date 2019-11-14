@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -25,19 +25,15 @@
             '  <div class="channel-group-handle expanded {[xindex % 2 === 0 ? "even" : "odd"]}">{name}</div>',
             '  <ul class="channel-group {[xindex % 2 === 0 ? "even" : "odd"]}">',
             '    <tpl for="channels">',
-            '      <li class="channel" channelId="{id}">',
-            '        <div class="channel-icon-stack">',
-            '          <img class="channel-type-icon" src="{channelTypeImg}" />',
+            '      <li class="channel" channelId="{id}" title="{[Ext.util.Format.htmlEncode(values.name)]}">',
+            '        <img class="channel-type-icon" src="{channelTypeImg}" />',
+            '        <div class="channel-footer">',
             '          <tpl if="changedBySet.length &gt; 0">',
-            '            <div class="channel-modified-icon"></div>',
+            '            <div class="channel-modified-icon" title="{lockedLabel}"></div>',
             '          </tpl>',
+            '          <img class="channel-region-icon" src="{channelRegionImg}" class="regionIcon" />',
+            '          <div class="channel-name">{[Ext.util.Format.htmlEncode(values.name)]}</div>',
             '        </div>',
-            '        <br>',
-            '        <img class="channel-region-icon" src="{channelRegionImg}" class="regionIcon" />',
-            '        <span class="channel-name">{[Ext.util.Format.htmlEncode(values.name)]}</span>',
-            '        <tpl if="changedBySet.length &gt; 0">',
-            '          <div class="lockedBy" title="{lockedDetail}">{lockedLabel}</div>',
-            '        </tpl>',
             '      </li>',
             '    </tpl>',
             '  </ul>',

@@ -74,21 +74,12 @@ date-field {
 
   // nested input container for the time fields
   > md-input-container {
-    margin: 0;
+    margin: 0 !important;
 
     .timepart {
-      text-align: right;
-      width: 25px;
-    }
-
-    &:not(.md-input-focused) > input.timepart {
-      border-bottom: 1px solid $grey-300 !important;
-      padding-bottom: 1px !important;
-    }
-
-    &.md-input-focused > input.timepart {
-      border-bottom: 2px solid $blue-500 !important;
-      padding-bottom: 0 !important;
+      padding: 0 4px !important;
+      text-align: center;
+      width: 40px;
     }
   }
 

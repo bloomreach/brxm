@@ -25,7 +25,9 @@
 ckeditor {
   &.is-invalid {
     .cke {
-      border-bottom-color: $red-a700 !important;
+      background-color: var(--invalid-background-color);
+      border-color: var(--invalid-border-color) !important;
+      color: var(--invalid-color);
     }
   }
 
@@ -35,7 +37,12 @@ ckeditor {
     }
 
     .cke_wysiwyg_div {
-      padding: 8px !important;
+      padding: 0 !important;
+
+      &.cke_editable {
+        color: var(--color);
+        font-size: 14px;
+      }
     }
 
     .md-resize-handle {
@@ -47,9 +54,10 @@ ckeditor {
       margin-bottom: 1px;
 
       &.cke_focus {
-        border-bottom-color: $blue-500 !important;
-        border-bottom-style: solid;
-        border-bottom-width: 2px;
+        background-color: var(--focus-background-color);
+        border-color: var(--focus-border-color) !important;
+        box-shadow: 0 0 0 1px var(--focus-border-color);
+        color: var(--focus-color);
         margin-bottom: 0;
       }
     }

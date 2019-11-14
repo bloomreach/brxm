@@ -51,6 +51,7 @@
                 id: 'channel-grid-panel',
                 stripeRows: true,
                 autoHeight: true,
+                bodyBorder: false,
                 viewConfig: {
                     forceFit: true
                 },

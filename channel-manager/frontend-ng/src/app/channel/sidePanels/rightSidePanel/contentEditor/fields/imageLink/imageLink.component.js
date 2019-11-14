@@ -14,25 +14,11 @@
  * limitations under the License.
  */
 
+import nodeLinkComponent from '../../../fields/nodeLink/nodeLink.component';
 import template from './imageLink.html';
 import controller from './imageLink.controller';
 import './imageLink.scss';
 
-const imageLinkComponent = {
-  controller,
-  template,
-  bindings: {
-    ariaLabel: '@',
-    config: '<',
-    hint: '<',
-    index: '<',
-    ngRequired: '<',
-    name: '@',
-    url: '<',
-  },
-  require: {
-    ngModel: 'ngModel',
-  },
-};
+const imageLinkComponent = { ...nodeLinkComponent, controller, template };
 
 export default imageLinkComponent;
