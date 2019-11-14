@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 
-import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
+import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateService } from '@ngx-translate/core';
 import { of } from 'rxjs';
 
 import { AppComponent } from './app.component';
+import { APP_BOOTSTRAPPED } from './bootstrap/app-bootstrapped';
 import { ErrorHandlingService } from './error-handling/services/error-handling.service';
 import { UserSettings } from './models/dto/user-settings.dto';
 import { UserSettingsMock } from './models/dto/user-settings.mock';
@@ -30,6 +33,7 @@ import { RightSidePanelService } from './top-panel/services/right-side-panel.ser
 describe('AppComponent', () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
+  let de: DebugElement;
 
   const translateServiceMock = jasmine.createSpyObj('TranslateService', [
     'addLangs',
@@ -51,10 +55,21 @@ describe('AppComponent', () => {
 
   let userSettingsMock: UserSettings;
 
+  let bootstrappedResolve: () => void;
+  let bootstrappedReject: () => void;
+
   beforeEach(() => {
     userSettingsMock = new UserSettingsMock();
 
+    const bootstrappedMock = new Promise<void>((res, rej) => {
+      bootstrappedResolve = res;
+      bootstrappedReject = rej;
+    });
+
     fixture = TestBed.configureTestingModule({
+      imports: [
+        NoopAnimationsModule,
+      ],
       declarations: [AppComponent],
       providers: [
         { provide: TranslateService, useValue: translateServiceMock },
@@ -62,11 +77,15 @@ describe('AppComponent', () => {
         { provide: RightSidePanelService, useValue: rightSidePanelServiceMock },
         { provide: ErrorHandlingService, useValue: errorHandlingServiceMock },
         { provide: USER_SETTINGS, useValue: userSettingsMock },
+        { provide: APP_BOOTSTRAPPED, useValue: bootstrappedMock },
       ],
       schemas: [NO_ERRORS_SCHEMA],
     }).createComponent(AppComponent);
 
     component = fixture.componentInstance;
+    de = fixture.debugElement;
+
+    fixture.detectChanges();
   });
 
   it('should create the app', () => {
@@ -125,5 +144,41 @@ describe('AppComponent', () => {
 
       expect(translateServiceMock.use).toHaveBeenCalledWith(expected);
     });
+  });
+
+  describe('loading indicator', () => {
+    it('should be shown until the app is bootstrapped', () => {
+      const loader = de.query(By.css('brna-loader'));
+
+      expect(loader).not.toBeNull();
+    });
+
+    it('should be hidden after the app is bootstrapped', fakeAsync(() => {
+      bootstrappedResolve();
+
+      tick();
+
+      fixture.detectChanges();
+
+      tick();
+
+      const loader = de.query(By.css('brna-loader'));
+
+      expect(loader).toBeNull();
+    }));
+
+    it('should be hidden  after the app\'s bootstrapping is failed', fakeAsync(() => {
+      bootstrappedReject();
+
+      tick();
+
+      fixture.detectChanges();
+
+      tick();
+
+      const loader = de.query(By.css('brna-loader'));
+
+      expect(loader).toBeNull();
+    }));
   });
 });
