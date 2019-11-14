@@ -56,7 +56,7 @@ public class ObservationTest extends PluginTest {
         javax.jcr.Session writerSession;
 
         TestWriter() throws LoginException, RepositoryException {
-            writerSession = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+            writerSession = server.login(ADMIN_ID, ADMIN_PASSWORD);
         }
 
         void stop() {
@@ -397,7 +397,7 @@ public class ObservationTest extends PluginTest {
         context.registerService(observer, IObserver.class.getName());
 
         // create node in other session and verify that it is picked up as an event
-        javax.jcr.Session other = server.login(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD);
+        javax.jcr.Session other = server.login(ADMIN_ID, ADMIN_PASSWORD);
         Node otherTestNode = other.getRootNode().addNode("test", "nt:unstructured");
         other.save();
 
@@ -567,7 +567,7 @@ public class ObservationTest extends PluginTest {
         if (sameSession) {
             editSession = session;
         } else {
-            editSession = session.impersonate(new SimpleCredentials(SYSTEMUSER_ID, SYSTEMUSER_PASSWORD));
+            editSession = session.impersonate(new SimpleCredentials(ADMIN_ID, ADMIN_PASSWORD));
         }
         Node xyz = editSession.getNodeByUUID(source.getUUID()).addNode("xyz", "frontendtest:document");
         xyz.addMixin("mix:referenceable");

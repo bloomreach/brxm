@@ -112,7 +112,7 @@ public abstract class PluginTest extends RepositoryTestCase {
         }
     }
 
-    protected static UserCredentials USER_CREDENTIALS = new UserCredentials(RepositoryTestCase.SYSTEMUSER_ID, String.valueOf(RepositoryTestCase.SYSTEMUSER_PASSWORD));
+    protected static UserCredentials USER_CREDENTIALS = new UserCredentials(RepositoryTestCase.ADMIN_ID, String.valueOf(RepositoryTestCase.ADMIN_PASSWORD));
 
     private String[] config = new String[] {
             "/config", "nt:unstructured",
