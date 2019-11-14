@@ -18,14 +18,12 @@ package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequest
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
-import org.assertj.core.api.Assertions;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
@@ -337,7 +335,7 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
     }
 
     @Test
-    public void get_channel_as_admin_for_defined_runtime_host() throws Exception {
+    public void get_channel_as_admin_for_defined_runtime_host_by_http() throws Exception {
         final Session session = createSession("admin", "admin");
         session.getNode("/hst:platform/hst:hosts/dev-localhost").setProperty(
                 HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE, new String[] { "http://cms.example.org" });
@@ -345,6 +343,52 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
 
         try {
             final RequestResponseMock requestResponse = mockGetRequestResponse("http", "cms.example.org",
+                    "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels/unittestproject", null, "GET");
+    
+            SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
+            final MockHttpServletResponse response = render(null, requestResponse, admin);
+            final String restResponse = response.getContentAsString();
+            final Map<String, Object> responseMap = mapper.readerFor(Map.class).readValue(restResponse);
+            assertEquals("unittestproject", responseMap.get("id"));
+        } finally {
+            session.getNode("/hst:platform/hst:hosts/dev-localhost")
+                    .getProperty(HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE).remove();
+            session.logout();
+        }
+    }
+
+    @Test
+    public void get_channel_as_admin_for_defined_runtime_host_by_https() throws Exception {
+        final Session session = createSession("admin", "admin");
+        session.getNode("/hst:platform/hst:hosts/dev-localhost").setProperty(
+                HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE, new String[] { "https://cms.example.org" });
+        session.save();
+
+        try {
+            final RequestResponseMock requestResponse = mockGetRequestResponse("https", "cms.example.org",
+                    "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels/unittestproject", null, "GET");
+    
+            SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
+            final MockHttpServletResponse response = render(null, requestResponse, admin);
+            final String restResponse = response.getContentAsString();
+            final Map<String, Object> responseMap = mapper.readerFor(Map.class).readValue(restResponse);
+            assertEquals("unittestproject", responseMap.get("id"));
+        } finally {
+            session.getNode("/hst:platform/hst:hosts/dev-localhost")
+                    .getProperty(HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE).remove();
+            session.logout();
+        }
+    }
+
+    @Test
+    public void get_channel_as_admin_for_defined_runtime_host_with_port_number() throws Exception {
+        final Session session = createSession("admin", "admin");
+        session.getNode("/hst:platform/hst:hosts/dev-localhost").setProperty(
+                HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE, new String[] { "http://cms.example.org:8080" });
+        session.save();
+
+        try {
+            final RequestResponseMock requestResponse = mockGetRequestResponse("http", "cms.example.org:8080",
                     "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels/unittestproject", null, "GET");
     
             SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
