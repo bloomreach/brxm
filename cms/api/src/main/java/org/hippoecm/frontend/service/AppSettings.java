@@ -58,6 +58,13 @@ public interface AppSettings {
     int getIframesConnectionTimeout();
 
     /**
+     * Returns the log level to use in the browser
+     *
+     * @return logLevel
+     */
+    NgxLoggerLevel getLogLevel();
+
+    /**
      * Returns list of resources that must be called by the navapp to retrieve menu related navigation items.
      *
      * @return list of nav config resources

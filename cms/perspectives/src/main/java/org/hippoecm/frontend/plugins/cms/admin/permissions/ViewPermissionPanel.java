@@ -83,7 +83,7 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
     private final IModel<DomainAuth> model;
     private final String authRoleName;
     private final MapModel nameModel;
-    private final boolean isSecurityApplManager;
+    private final boolean isSecurityApplAdmin;
     private final GroupsListView groupsListView;
     private final AddGroupPanel addGroupPanel;
     private final UsersListView usersListView;
@@ -94,7 +94,7 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
                                final IModel<DomainAuth> model, final String authRoleName) {
         super(id, breadCrumbModel);
         final HippoSession session = UserSession.get().getJcrSession();
-        isSecurityApplManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_ADMIN);
+        isSecurityApplAdmin = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_ADMIN);
 
         this.model = model;
         this.authRoleName = authRoleName;
@@ -118,27 +118,27 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
                 dialogService.show(confirm);
             }
         };
-        deletePermission.setVisible(isSecurityApplManager);
+        deletePermission.setVisible(isSecurityApplAdmin);
         add(deletePermission);
 
         add(new Label("role", authRole.getRole()));
         add(new Label("userrole", ReadOnlyModel.of(()->model.getObject().getAuthRole(authRoleName).getUserRole())));
 
         SetUserRolePanel setUserRolePanel = new SetUserRolePanel("set-userrole");
-        setUserRolePanel.setVisible(isSecurityApplManager);
+        setUserRolePanel.setVisible(isSecurityApplAdmin);
         add(setUserRolePanel);
 
         groupsListView = new GroupsListView("groups", context);
         add(groupsListView);
 
         addGroupPanel = new AddGroupPanel("add-group");
-        addGroupPanel.setVisible(isSecurityApplManager);
+        addGroupPanel.setVisible(isSecurityApplAdmin);
         add(addGroupPanel);
 
         usersListView = new UsersListView("users", context);
         add(usersListView);
 
-        if (isSecurityApplManager) {
+        if (isSecurityApplAdmin) {
             final List<IColumn<User, String>> allUserColumns = new ArrayList<>();
             allUserColumns.add(new PropertyColumn<>(new ResourceModel("user-username"), "username"));
             allUserColumns.add(new PropertyColumn<>(new ResourceModel("user-firstname"), "firstName"));
@@ -345,7 +345,7 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
             } else {
                 item.add(new ViewGroupLinkLabel("groupname", new DetachableGroup(group), ViewPermissionPanel.this, context));
             }
-            if (isSecurityApplManager) {
+            if (isSecurityApplAdmin) {
                 item.add(new RemoveGroupActionLinkLabel("remove-group",
                         new ResourceModel("permissions-permission-group-remove-action"), groupName));
             } else {
@@ -493,7 +493,7 @@ public class ViewPermissionPanel extends AdminBreadCrumbPanel {
                 item.add(new Label("firstname"));
                 item.add(new Label("lastname"));
             }
-            if (isSecurityApplManager) {
+            if (isSecurityApplAdmin) {
                 item.add(new RemoveUserActionLinkLabel("remove-user",
                         new ResourceModel("permissions-permission-user-remove-action"), username));
             } else {

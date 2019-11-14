@@ -63,7 +63,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
     private AdminDataTable table;
     private IPluginContext context;
     private final GroupDataProvider groupDataProvider;
-    private final boolean isSecurityUserManager;
+    private final boolean isSecurityUserAdmin;
 
     /**
      * Constructs a new ListGroupsPanel.
@@ -77,7 +77,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
         super(id, breadCrumbModel);
 
         final HippoSession session = UserSession.get().getJcrSession();
-        isSecurityUserManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_ADMIN);
+        isSecurityUserAdmin = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_USER_ADMIN);
 
         this.context = context;
         this.groupDataProvider = groupDataProvider;
@@ -88,7 +88,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
                 return new CreateGroupPanel(componentId, breadCrumbModel);
             }
         };
-        createGroupLink.setVisible(isSecurityUserManager);
+        createGroupLink.setVisible(isSecurityUserAdmin);
         add(createGroupLink);
 
         final List<IColumn<Group, String>> columns = new ArrayList<>();
@@ -165,7 +165,7 @@ public class ListGroupsPanel extends AdminBreadCrumbPanel implements IObserver<G
         public void populateItem(final Item<ICellPopulator<Group>> cellItem, final String componentId,
                                  final IModel<Group> rowModel) {
             Group group = rowModel.getObject();
-            if (isSecurityUserManager && !group.isSystem() && !group.isExternal()) {
+            if (isSecurityUserAdmin && !group.isSystem() && !group.isExternal()) {
                 cellItem.add(new DeleteGroupActionLink(componentId, new ResourceModel("group-remove-action"), rowModel));
             } else {
                 cellItem.add(new Label(componentId, ""));

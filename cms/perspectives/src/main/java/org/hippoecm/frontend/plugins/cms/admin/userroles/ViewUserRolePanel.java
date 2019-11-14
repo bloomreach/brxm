@@ -78,7 +78,7 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
     private final UserRolesListView userRolesListView;
     private final AddUserRolePanel addUserRolePanel;
     private final PermissionsListView permissionsListView;
-    private final boolean isSecurityApplManager;
+    private final boolean isSecurityApplAdmin;
 
     private final IDialogService dialogService;
 
@@ -87,7 +87,7 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
         super(id, breadCrumbModel);
         this.context = context;
         final HippoSession session = UserSession.get().getJcrSession();
-        isSecurityApplManager = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_ADMIN);
+        isSecurityApplAdmin = session.isUserInRole(SecurityConstants.USERROLE_SECURITY_APPLICATION_ADMIN);
 
         this.userRoleModel = userRoleModel;
         final UserRole userRole = userRoleModel.getObject();
@@ -106,7 +106,7 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
                 return new EditUserRolePanel(componentId, breadCrumbModel, userRoleModel);
             }
         };
-        editLink.setVisible(isSecurityApplManager && !userRole.isSystem());
+        editLink.setVisible(isSecurityApplAdmin && !userRole.isSystem());
         add(editLink);
 
         final AjaxLinkLabel deleteUserRole = new AjaxLinkLabel("delete-userrole", new ResourceModel("userrole-delete")) {
@@ -120,13 +120,13 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
                 dialogService.show(confirm);
             }
         };
-        deleteUserRole.setVisible(isSecurityApplManager && !userRole.isSystem());
+        deleteUserRole.setVisible(isSecurityApplAdmin && !userRole.isSystem());
         add(deleteUserRole);
 
         userRolesListView = new UserRolesListView("userroles", context);
         add(userRolesListView);
         addUserRolePanel = new AddUserRolePanel("add-userroles");
-        addUserRolePanel.setVisible(isSecurityApplManager && !userRole.isSystem());
+        addUserRolePanel.setVisible(isSecurityApplAdmin && !userRole.isSystem());
         add(addUserRolePanel);
 
         permissionsListView = new PermissionsListView("permissions");
@@ -306,7 +306,7 @@ public class ViewUserRolePanel extends AdminBreadCrumbPanel {
                 item.add(new ViewUserRoleLinkLabel("name", userRoleModel, ViewUserRolePanel.this, context));
                 item.add(new Label("description", Model.of(userRoleModel.getObject().getDescription())));
             }
-            if (isSecurityApplManager && !userRoleModel.getObject().isSystem()) {
+            if (isSecurityApplAdmin && !userRoleModel.getObject().isSystem()) {
                 item.add(new RemoveUserRoleActionLinkLabel("remove-userrole",
                         new ResourceModel("userrole-remove-action"), userRoleName));
             } else {
