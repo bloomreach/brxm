@@ -27,15 +27,11 @@ $font-size-extjs:                    12px;
 
 // Line height
 $line-height-base:                   1.2;
-$line-height-textarea:               1.6em;
-$line-height-textarea-computed:      floor($font-size-base * 1.6);
 
 // Common
-$top-bar-height:                     52px;
-$top-bar-bgcolor:                    $grayLightSolid;
-$top-bar-border-bottom:              1px solid $gray12;
-$top-bar-font-size:                  20px;
+$top-bar-height:                     41px;
 $bottom-bar-height:                  40px;
+$top-bar-bottom-border:              1px solid $gray12;
 $menu-padding-top-bottom:            8px;
 
 // Shadows (copied from Material Design)
@@ -77,7 +73,6 @@ $dashboard-header-height:            $top-bar-height;
 $modal-mask-opacity:                 .5;
 $modal-border-color:                 transparent;
 $modal-border-width:                 3px;
-$modal-border-radius:                4px;
 $modal-header-color:                 $gray87;
 $modal-header-bgcolor:               $grayLightSolid;
 $modal-header-font-size:             16px;
@@ -86,7 +81,7 @@ $modal-header-padding:               16px;
 $modal-body-top-padding:             12px;
 $modal-body-padding:                 16px;
 $modal-footer-padding:               16px;
-$modal-footer-height:                52px;
+$modal-footer-height:                48px;
 $modal-bgcolor:                      $grayLightSolid;
 
 // Hippo logo
@@ -121,7 +116,7 @@ $navigator-border-color:             $light-shade;
 
 // Section viewer
 $section-selection-bgcolor:          $grayLightSolid;
-$sections-select-height:             $top-bar-height - 1;
+$sections-select-height:             $top-bar-height;
 $sections-top-height:                40px;
 $sections-top-search-result-height:  64px;
 $sections-bottom-height:             41px;
@@ -144,11 +139,11 @@ $search-scope-border-width:          1px;
 $add-root-folder-hover-color:        $lightest-shade;
 
 // Document listing
-$doclist-head-bgcolor:               $top-bar-bgcolor;
+$doclist-head-bgcolor:               $grayLightSolid;
 $doclist-head-color:                 $gray60;
 $doclist-head-hover-color:           $gray87;
 $doclist-head-sorted-color:          $gray87;
-$doclist-head-height:                $top-bar-height - 1;
+$doclist-head-height:                $top-bar-height;
 $doclist-padding-left-right:         8px;
 $doclist-padding-icon:               12px;
 $doclist-row-separator-color:        $light-shade;
@@ -176,18 +171,17 @@ $tree-selected-font-weight:          600;
 
 // Editor
 $editor-bgcolor:                     $white;
-$editor-input-height:                18px;
 $editor-field-border-radius:         4px;
-$editor-field-bgs:                   (transparent, $lighter-shade, $light-shade, $light-gray, $dark-gray);
-$editor-field-focus-color:           $bluePrimary;
+$editor-subfield-bg:                 $white;
 $editor-field-title-color:           $gray60;
 $editor-field-title-bottom-margin:   6px;
-$editor-subfield-bg:                 $white;
-$editor-subfield-border:             $gray38;
+$editor-subfield-border:             $gray60;
 $editor-subfield-in-compound-border: $gray12;
 $editor-compound-field-color:        $gray87;
 $editor-compound-field-border:       $gray12;
 $editor-padding:                     24px;
+$editor-field-bgs:                   (transparent, $lighter-shade, $light-shade, $light-gray, $dark-gray);
+$editor-field-focus-color:           $bluePrimary;
 
 // Editor preview
 $editor-preview-field-bgcolor:       $lightest-shade;
@@ -226,7 +220,7 @@ $forms-select-items-bgcolor:         $white;
 $forms-select-items-hover-bgcolor:   $gray5;
 
 // Date picker
-$datepicker-fontsize:                14px;
+$datepicker-fontsize:                13px;
 $datepicker-button-bgcolor:          $lighter-shade;
 $datepicker-button-border:           $light-gray;
 
@@ -234,7 +228,6 @@ $datepicker-button-border:           $light-gray;
 $hippo-icon-delete-enabled:          $danger;
 
 // Buttons
-$button-active-bg:                   $gray12;
 $button-bgcolor:                     $lightest-shade;
 $button-border:                      $gray38;
 $button-border-radius:               $btn-border-radius-base;
@@ -242,52 +235,9 @@ $button-color:                       $darkest-shade;
 $button-disabled-bgcolor:            $lightest-shade;
 $button-disabled-border:             $dark-gray;
 $button-disabled-color:              $dark-shade;
-$button-focus-bg:                    $btn-focus-bg;
+$button-focus-bgcolor:               $darker-shade;
 $button-focus-border:                $darker-shade;
-$button-focus-color:                 $btn-focus-color;
-$button-hover-bg:                    $gray5;
-
-$button-font-size:                   $font-size-base;
-$button-line-height:                 18px/$button-font-size;
-$button-max-height:                  36px;
-$button-lg-line-height:              1.3333333;
-$button-lg-max-height:               46px;
-$button-sm-line-height:              1.5;
-$button-sm-max-height:               30px;
-$button-xs-line-height:              1.5;
-$button-xs-max-height:               22px;
-
-$button-primary-bg:                  $btn-primary-bg;
-$button-primary-border:              $btn-primary-border;
-$button-primary-color:               $btn-primary-color;
-$button-primary-hover-bg:            $blueDark;
-$button-primary-hover-border:        $blueDark;
-$button-primary-hover-color:         $btn-primary-color;
-$button-primary-active-bg:           darken($blueDark, 5%) !default;
-$button-primary-active-border:       darken($blueDark, 5%) !default;
-$button-primary-active-color:        $btn-primary-color;
-$button-primary-focus-bg:            $btn-primary-bg;
-$button-primary-focus-border:        $btn-primary-bg;
-$button-primary-focus-color:         $btn-primary-color;
-$button-primary-disabled-bg:         $gray12;
-$button-primary-disabled-border:     $gray38;
-$button-primary-disabled-color:      $gray38;
-
-$button-secondary-bg:                transparent;
-$button-secondary-border:            $bluePrimary;
-$button-secondary-color:             $bluePrimary;
-$button-secondary-hover-bg:          $blueLight;
-$button-secondary-hover-border:      $blueDark;
-$button-secondary-hover-color:       $blueDark;
-$button-secondary-active-bg:         darken($blueLightSolid, 10%) !default;
-$button-secondary-active-border:     $blueDark;
-$button-secondary-active-color:      $blueDark;
-$button-secondary-focus-bg:          transparent;
-$button-secondary-focus-border:      $bluePrimary;
-$button-secondary-focus-color:       $bluePrimary;
-$button-secondary-disabled-bg:       transparent;
-$button-secondary-disabled-border:   $gray38;
-$button-secondary-disabled-color:    $gray38;
+$button-focus-color:                 $white;
 
 // Feedback
 $feedback-error-color:               $danger-light;
@@ -295,9 +245,8 @@ $feedback-error-color:               $danger-light;
 // Dashboard
 $dashboard-panel-bgcolor:            $white;
 $dashboard-panel-border-color:       $light-shade;
-$dashboard-panel-header-bgcolor:     $top-bar-bgcolor;
+$dashboard-panel-header-bgcolor:     $light-shade;
 $dashboard-panel-header-color:       $darkest-shade;
-$dashboard-panel-header-border-bt:   $top-bar-border-bottom;
 $dashboard-gotolink-icon-color:      $brand-primary;
 
 // Picker

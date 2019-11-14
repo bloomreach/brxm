@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ import org.apache.wicket.Component;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
-import org.hippoecm.frontend.buttons.ButtonStyle;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -40,13 +39,14 @@ import org.slf4j.LoggerFactory;
 
 public class EditingDefaultWorkflowPlugin extends RenderPlugin {
 
-    private static final Logger log = LoggerFactory.getLogger(EditingDefaultWorkflowPlugin.class);
+    private static final long serialVersionUID = 1L;
 
-    public EditingDefaultWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
+    private static Logger log = LoggerFactory.getLogger(EditingDefaultWorkflowPlugin.class);
+
+    public EditingDefaultWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
         super(context, config);
 
-        final String editorId = config.getString(IEditorManager.EDITOR_ID);
-        final IEditor editor = context.getService(editorId, IEditor.class);
+        IEditor editor = context.getService(getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditor.class);
         context.registerService(new IEditorFilter() {
             public void postClose(Object object) {
                 // nothing to do
@@ -76,11 +76,6 @@ public class EditingDefaultWorkflowPlugin extends RenderPlugin {
             }
 
             @Override
-            public String getCssClass() {
-                return ButtonStyle.SECONDARY.getCssClass();
-            }
-
-            @Override
             public boolean isFormSubmitted() {
                 return true;
             }
@@ -105,32 +100,26 @@ public class EditingDefaultWorkflowPlugin extends RenderPlugin {
             }
 
             @Override
-            public String getCssClass() {
-                return ButtonStyle.PRIMARY.getCssClass();
-            }
-
-            @Override
             public boolean isFormSubmitted() {
                 return true;
             }
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                final String editorId = getPluginConfig().getString(IEditorManager.EDITOR_ID);
-                final IEditorManager editorMgr = getPluginContext().getService(editorId, IEditorManager.class);
-
-                final Node documentNode = getModel().getNode();
-                if (editorMgr == null) {
-                    log.warn("No editor found to edit {}", documentNode.getPath());
-                    return null;
-                }
-
-                final JcrNodeModel documentModel = new JcrNodeModel(documentNode);
-                final IEditor editor = editorMgr.getEditor(documentModel);
-                if (editor == null) {
-                    editorMgr.openEditor(documentModel);
+                Node docNode = ((WorkflowDescriptorModel) EditingDefaultWorkflowPlugin.this.getDefaultModel())
+                        .getNode();
+                IEditorManager editorMgr = getPluginContext().getService(
+                        getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditorManager.class);
+                if (editorMgr != null) {
+                    JcrNodeModel docModel = new JcrNodeModel(docNode);
+                    IEditor editor = editorMgr.getEditor(docModel);
+                    if (editor == null) {
+                        editorMgr.openEditor(docModel);
+                    } else {
+                        editor.setMode(Mode.VIEW);
+                    }
                 } else {
-                    editor.setMode(Mode.VIEW);
+                    log.warn("No editor found to edit {}", docNode.getPath());
                 }
                 return null;
             }

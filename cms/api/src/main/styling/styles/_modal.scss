@@ -19,6 +19,20 @@
 }
 
 .hippo-root .wicket-modal {
+
+  // Wicket Modal bottom direction cursor image fixes
+  .w_bottom {
+    cursor: s-resize;
+  }
+
+  .w_bottomLeft {
+    cursor: sw-resize;
+  }
+
+  .w_bottomRight {
+    cursor: se-resize;
+  }
+
   // Set border width, height and color
   .w_topLeft,
   .w_top,
@@ -33,6 +47,11 @@
   .w_left,
   .w_right {
     background-color: $modal-border-color;
+  }
+
+  .w_content_1 {
+    box-shadow: $whiteframe-shadow-24dp;
+    margin-right: $modal-border-width;
   }
 
   .w_right_1 {
@@ -57,8 +76,6 @@
   .w_caption {
     background: $modal-header-bgcolor;
     border-bottom: 1px solid $gray12;
-    border-top-left-radius: $modal-border-radius;
-    border-top-right-radius: $modal-border-radius;
     color: $modal-header-color;
     cursor: move;
     height: $modal-header-height;
@@ -82,31 +99,6 @@
 
   .w_content {
     background-color: $modal-bgcolor;
-  }
-
-  .w_content_1 {
-    border-bottom-left-radius: $modal-border-radius;
-    border-bottom-right-radius: $modal-border-radius;
-    box-shadow: $whiteframe-shadow-24dp;
-    margin-right: $modal-border-width;
-    overflow: hidden;
-  }
-
-  .w_content_2 {
-    background-color: transparent;
-  }
-
-  // Wicket Modal bottom direction cursor image fixes
-  .w_bottom {
-    cursor: s-resize;
-  }
-
-  .w_bottomLeft {
-    cursor: sw-resize;
-  }
-
-  .w_bottomRight {
-    cursor: se-resize;
   }
 }
 
@@ -175,19 +167,12 @@
     textarea {
       border: 1px solid $editor-subfield-border;
       border-radius: $editor-field-border-radius;
-      box-sizing: border-box;
-      padding: 8px;
-
-      &.focus-visible {
-        border-color: $editor-field-focus-color;
-        box-shadow: 0 0 0 1px $editor-field-focus-color;
-      }
     }
 
     input,
     select {
       flex-grow: 1;
-      height: 36px;
+      height: 30px;
     }
 
     input {
@@ -276,10 +261,6 @@
   }
 }
 
-.hippo-dialog-resizable .hippo-dialog-center {
-  flex: none;
-}
-
 // Hippo dialog feedback
 .hippo-dialog-feedback ul {
   background-color: $alert-danger-bg;
@@ -352,7 +333,21 @@
         }
 
         a {
+          flex: 0 0 auto;
           margin-right: 16px;
+          padding: 0 4px 0 4px;
+          border: 1px solid $button-border;
+          border-radius: $button-border-radius;
+          background-color: transparent;
+          height: 24px;
+          line-height: 24px;
+          color: $text-color;
+
+          &:hover,
+          &:visited,
+          &:active {
+            text-decoration: none;
+          }
         }
       }
 
@@ -398,17 +393,19 @@
       display: flex;
       align-items: center;
 
+      .hippo-datepicker-value-container {
+        padding: 0;
+        margin: 0;
+      }
+
       .hippo-datepicker-date {
         .hippo-datepicker-value-container {
           margin: 0 8px 0 0;
         }
       }
 
-      .hippo-datepicker-time input {
-        margin: 0 4px;
-      }
-
       input {
+        margin: 6px 4px 6px 4px;
         line-height: 18px;
       }
     }

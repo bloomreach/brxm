@@ -25,8 +25,6 @@ import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.util.io.IClusterable;
-import org.hippoecm.frontend.attributes.ClassAttribute;
-import org.hippoecm.frontend.buttons.ButtonStyle;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 
 import wicket.contrib.input.events.EventType;
@@ -43,7 +41,6 @@ public class ButtonWrapper implements IClusterable {
     private boolean enabled;
     private KeyType keyType;
     private boolean hasChanges = false;
-    private ButtonStyle style = ButtonStyle.DEFAULT;
 
     public ButtonWrapper(final Button button) {
         this.button = button;
@@ -107,11 +104,6 @@ public class ButtonWrapper implements IClusterable {
         button.setVisible(visible);
         button.setEnabled(enabled);
         button.setModel(label);
-
-        if (style != null) {
-            button.add(ClassAttribute.append(style.getCssClass()));
-        }
-
         return button;
     }
 
@@ -190,10 +182,6 @@ public class ButtonWrapper implements IClusterable {
 
     public void setKeyType(final KeyType keyType) {
         this.keyType = keyType;
-    }
-
-    public void setStyle(final ButtonStyle style) {
-        this.style = style;
     }
 
     protected void onSubmit() {

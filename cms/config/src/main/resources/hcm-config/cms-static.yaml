@@ -126,7 +126,7 @@ definitions:
           jcr:primaryType: frontend:pluginconfig
           center: id=hippo-panel-plugin-perspective-center,body=hippo-panel-plugin-perspective-center-body,scroll=true
           root.id: hippo-panel-plugin-wrapper
-          top: id=hippo-panel-plugin-perspective-top,body=hippo-panel-plugin-perspective-top-body,height=52
+          top: id=hippo-panel-plugin-perspective-top,body=hippo-panel-plugin-perspective-top-body,height=41
       /headerbarLoader:
         jcr:primaryType: frontend:plugin
         cluster.name: cms-header-bar

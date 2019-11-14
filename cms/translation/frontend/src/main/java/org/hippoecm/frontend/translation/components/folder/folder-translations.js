@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -77,7 +77,7 @@ Hippo.Translation.Folder.Panel = Ext.extend(Ext.form.FormPanel, {
             disabled: !hasSiblings,
             icon: (hasSiblings ? self.breakLink : self.breakLinkDisabled),
             iconCls: 'hippo-t9n-breaklink',
-            cls: 'x-btn-text-icon btn btn-default' + (!hasSiblings ? ' x-btn-text-icon-not-found' : ''),
+            cls: 'x-btn-text-icon btn btn-default btn-sm' + (!hasSiblings ? ' x-btn-text-icon-not-found' : ''),
             text: (hasSiblings ? self.resources['unlink-translations'] : self.resources['link-translations']),
             listeners: {
                 disable: function(button) {

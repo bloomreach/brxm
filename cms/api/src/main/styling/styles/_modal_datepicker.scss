@@ -31,7 +31,13 @@
   }
 
   .hippo-datepicker-reset {
+    padding-bottom: 5px;
+    padding-top: 6px;
     margin-left: 8px;
+
+    > span {
+      font-size: 13px;
+    }
   }
 
   .hippo-datepicker-time .hippo-datepicker-value-container {
