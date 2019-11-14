@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ package org.hippoecm.frontend.plugins.jquery.upload.multiple;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
@@ -26,8 +27,9 @@ import org.apache.wicket.markup.html.form.Button;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.upload.FileUpload;
 import org.apache.wicket.model.ResourceModel;
-import org.apache.commons.fileupload.FileUploadException;
 import org.apache.wicket.util.value.IValueMap;
+import org.hippoecm.frontend.attributes.ClassAttribute;
+import org.hippoecm.frontend.buttons.ButtonStyle;
 import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -86,6 +88,7 @@ public abstract class JQueryFileUploadDialog extends Dialog {
         };
         uploadButton.add(new InputBehavior(new KeyType[]{KeyType.Enter}, EventType.click));
         uploadButton.setOutputMarkupId(true);
+        uploadButton.add(ClassAttribute.append(ButtonStyle.PRIMARY.getCssClass()));
         this.addButton(uploadButton);
 
         this.pluginContext = pluginContext;

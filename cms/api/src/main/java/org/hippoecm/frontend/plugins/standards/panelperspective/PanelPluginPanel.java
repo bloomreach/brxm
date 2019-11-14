@@ -1,12 +1,12 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -23,11 +23,14 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.StringResourceModel;
+import org.apache.wicket.request.resource.ResourceReference;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugins.standards.image.CachingImage;
 import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbLink;
@@ -107,7 +110,13 @@ public class PanelPluginPanel extends PanelPluginBreadCrumbPanel {
                         return service.create(componentId, getBreadCrumbModel());
                     }
                 };
-                link.add(new CachingImage("img", service.getImage()));
+                final ResourceReference image = service.getImage();
+                if (image != null) {
+                    link.add(new CachingImage("img", image));
+                    item.add(ClassAttribute.append("icon-48"));
+                } else {
+                    link.add(new EmptyPanel("img").setVisible(false));
+                }
                 link.add(new Label("title", service.getTitle()));
                 link.add(new Label("help", service.getHelp()));
                 item.add(link);

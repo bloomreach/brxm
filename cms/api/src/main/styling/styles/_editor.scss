@@ -136,6 +136,9 @@
     background: none;
     border: none;
     box-sizing: border-box;
+    display: block;
+    height: $editor-input-height;
+    line-height: $editor-input-height;
     width: 100%;
   }
 
@@ -147,7 +150,7 @@
     background: none;
     border: 1px solid $editor-subfield-border;
     border-radius: $editor-field-border-radius;
-    height: 32px;
+    height: 36px;
     overflow: hidden;
     padding-left: 8px;
     padding-right: 8px;
@@ -185,13 +188,17 @@
     background: none;
     border: none;
     box-sizing: border-box;
-    min-height: 100px;
+    min-height: 5 * $line-height-textarea-computed;
     overflow-y: auto;
     padding: 0;
     width: 100%;
   }
 
   .radiogroup {
+    input[type="radio"] {
+      display: inline-block;
+    }
+
     &.horizontal li:not(:last-child) {
       margin-right: 16px;
     }
@@ -202,7 +209,11 @@
   }
 
   .hippo-editor-field-textarea {
-    line-height: 1.6em;
+    line-height: $line-height-textarea;
+
+    > span {
+      display: flex;
+    }
   }
 
   .linefill {
@@ -220,9 +231,15 @@
     width: 100%;
   }
 
-  .mirrortemplate_buttons {
-    display: inline-block;
-    padding-top: 4px;
+  .picker-controls {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .mirrortemplate_link {
+    margin-bottom: 8px;
+    margin-right: 8px;
+    white-space: nowrap;
   }
 }
 
@@ -497,7 +514,7 @@
 }
 
 .hippo-editor-field-value-container {
-  line-height: normal;
+  line-height: 18px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
