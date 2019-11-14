@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +14,6 @@
  * limitations under the License.
  */
 package org.onehippo.forge.seo.support;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Method;
 import java.util.Calendar;
@@ -48,9 +44,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+
 public class SEOHelperComponentTest {
 
-    private static Logger log = LoggerFactory.getLogger(SEOHelperComponentTest.class);
+    private static final Logger log = LoggerFactory.getLogger(SEOHelperComponentTest.class);
 
     private SEOHelperComponent helperComp;
     private MySEOHelperComponentParamsInfo paramsInfo;

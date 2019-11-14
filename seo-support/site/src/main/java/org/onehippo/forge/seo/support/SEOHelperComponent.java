@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,10 @@
  */
 package org.onehippo.forge.seo.support;
 
-import java.util.*;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -23,8 +26,8 @@ import javax.jcr.RepositoryException;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.commons.lang.text.StrSubstitutor;
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.hippoecm.hst.component.support.bean.BaseHstComponent;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
@@ -41,11 +44,12 @@ import org.slf4j.LoggerFactory;
 @ParametersInfo(type = SEOHelperComponentParamsInfo.class)
 public class SEOHelperComponent extends BaseHstComponent {
 
+    private static final Logger log = LoggerFactory.getLogger(SEOHelperComponent.class);
+
     static final String SEO_COMPOUND_NODETYPE = "seosupport:seo";
     static final String SEO_TITLE_PROPERTY = "seosupport:seotitle";
     static final String SEO_DESCRIPTION_PROPERTY = "seosupport:seodescription";
     private static final String SEPARATOR_CHARACTERS = ", \t\r\n";
-    private static Logger log = LoggerFactory.getLogger(SEOHelperComponent.class);
 
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) throws HstComponentException {
@@ -197,11 +201,11 @@ public class SEOHelperComponent extends BaseHstComponent {
     }
 
     /**
-     * Sets {@literal dublinCoreSchemaLink}, {@literal dublinCoreTermsLink}, {@literal dublinCoreCopyrightLink}
-     * and {@literal dublinCoreLanguage} request attributes
+     * Sets {@literal dublinCoreSchemaLink}, {@literal dublinCoreTermsLink}, {@literal dublinCoreCopyrightLink} and
+     * {@literal dublinCoreLanguage} request attributes
      *
-     * @param request  current {@link HstRequest}
-     * @param params   {@link SEOHelperComponentParamsInfo}
+     * @param request current {@link HstRequest}
+     * @param params  {@link SEOHelperComponentParamsInfo}
      */
     protected void setDublinCoreLinksRequestAttributes(HstRequest request, SEOHelperComponentParamsInfo params) {
         String dublinCoreSchemaLink = getDublinCoreSchemaLink(request, params);
@@ -226,8 +230,7 @@ public class SEOHelperComponent extends BaseHstComponent {
     }
 
     /**
-     * Sets {@literal dublinCoreTermsCreated} and {@literal dublinCoreTermsModified} request
-     * attributes
+     * Sets {@literal dublinCoreTermsCreated} and {@literal dublinCoreTermsModified} request attributes
      *
      * @param request  current {@link HstRequest}
      * @param document {@link HippoBean} that is the source for the current page
@@ -335,7 +338,7 @@ public class SEOHelperComponent extends BaseHstComponent {
 
         String documentTitle = getDocumentTitle(document, params);
         String sitemapTitle = null;
-        if (request.getRequestContext().getResolvedSiteMapItem()!=null) {
+        if (request.getRequestContext().getResolvedSiteMapItem() != null) {
             sitemapTitle = request.getRequestContext().getResolvedSiteMapItem().getPageTitle();
         }
         if (StringUtils.isNotBlank(documentTitle)) {
@@ -435,7 +438,8 @@ public class SEOHelperComponent extends BaseHstComponent {
     }
 
     /**
-     * Gets the sitemenu item that is closest to the current request ("Events" if the request is for an Event detail page).
+     * Gets the sitemenu item that is closest to the current request ("Events" if the request is for an Event detail
+     * page).
      *
      * @param request current {@link HstRequest}
      * @param params  {@link SEOHelperComponentParamsInfo}
@@ -557,7 +561,7 @@ public class SEOHelperComponent extends BaseHstComponent {
         // Remove placeholders for missing values from template
         for (String value : values.keySet()) {
             if (StringUtils.isBlank(values.get(value))) {
-                final String placeholder = "%("+value+")";
+                final String placeholder = "%(" + value + ")";
                 int startPlaceholder = template.indexOf(placeholder);
                 int endPlaceholder = startPlaceholder + placeholder.length();
                 if (startPlaceholder >= 0) {
@@ -571,11 +575,12 @@ public class SEOHelperComponent extends BaseHstComponent {
                         int startNextPlaceholder = endPlaceholder + template.substring(endPlaceholder).indexOf("%(");
                         if (startNextPlaceholder >= 0) {
                             // Not the last placeholder in template, remove placeholder and separator after missing value
-                            template = template.substring(0, startPlaceholder) + template.substring(startNextPlaceholder);
+                            template = template.substring(0, startPlaceholder)
+                                     + template.substring(startNextPlaceholder);
                         } else {
                             // Only placeholder in the template, remove it
                             template = template.substring(0, startPlaceholder)
-                                    + template.substring(endPlaceholder);
+                                     + template.substring(endPlaceholder);
                         }
                     }
                 }
