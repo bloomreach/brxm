@@ -31,6 +31,13 @@ export class BrNodeContainerItem extends BrNodeComponent<ContainerItem> {
     this.props.component.on('update', this.onUpdate);
   }
 
+  componentDidUpdate(prevProps: BrProps<ContainerItem>) {
+    if (this.props.component !== prevProps.component) {
+      prevProps.component.off('update', this.onUpdate);
+      this.props.component.on('update', this.onUpdate);
+    }
+  }
+
   componentWillUnmount() {
     this.props.component.off('update', this.onUpdate);
   }

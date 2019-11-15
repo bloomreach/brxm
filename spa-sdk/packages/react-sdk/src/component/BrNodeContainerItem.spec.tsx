@@ -42,6 +42,18 @@ describe('BrNodeContainerItem', () => {
     });
   });
 
+  describe('componentDidUpdate', () => {
+    it('should resubscribe on component update', () => {
+      const wrapper = shallow(<BrNodeContainerItem {...props} />);
+
+      jest.clearAllMocks();
+      wrapper.setProps({ component: { ...props.component } });
+
+      expect(props.component.off).toBeCalledWith('update', expect.any(Function));
+      expect(props.component.on).toBeCalledWith('update', expect.any(Function));
+    });
+  });
+
   describe('componentWillUnmount', () => {
     it('should unsubscribe from update event on unmount', () => {
       const wrapper = mount(<BrNodeContainerItem {...props} />);
