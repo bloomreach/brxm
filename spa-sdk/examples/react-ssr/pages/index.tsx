@@ -54,7 +54,7 @@ export default class Index extends React.Component<IndexProps> {
       config,
       page: await initialize({
         ...config,
-        httpClient: axios.request,
+        httpClient: axios,
         request: {
           ...config.request,
           headers: context.req && context.req.headers && context.req.headers.cookie
@@ -66,7 +66,7 @@ export default class Index extends React.Component<IndexProps> {
   }
 
   render() {
-    const config = { ...this.props.config, httpClient: axios.request };
+    const config = { ...this.props.config, httpClient: axios };
     const mapping = { Banner, Content, 'News List': NewsList };
 
     return (

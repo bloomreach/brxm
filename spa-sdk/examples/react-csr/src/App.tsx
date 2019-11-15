@@ -24,7 +24,7 @@ axios.interceptors.request.use(config => ({ ...config, withCredentials: true }))
 
 export default function App(props: RouteComponentProps) {
   const configuration = {
-    httpClient: axios.request,
+    httpClient: axios,
     options: {
       live: {
         cmsBaseUrl: process.env.REACT_APP_LIVE_BR_BASE_URL!,
