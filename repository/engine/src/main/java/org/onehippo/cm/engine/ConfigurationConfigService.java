@@ -119,6 +119,18 @@ public class ConfigurationConfigService {
         }
     }
 
+    /**
+     * Apply webfilebundle definitions from configuration module or skip operation if certain criteria are met.
+     * This method skips applying a bundle if:<pre/>
+     * - the AutoReload and WebFilesWatcher service is running, as in that case webfilebundles will be (re-)imported directly from filesystem instead of from configuration module or<pre/>
+     * - the filesystem webfilebundle digest matches with that in the baseline<pre/>
+     *
+     * @param webfileBundles List of webfile bundles to apply
+     * @param baselineService service providing the baseline configuration
+     * @param session JCR session to write to the repository. The caller has to take care of #save-ing any changes.
+     * @throws RepositoryException
+     * @throws IOException
+     */
     boolean skipOrWriteWebfiles(final List<? extends WebFileBundleDefinition> webfileBundles,
                               final ConfigurationBaselineService baselineService,
                               final Session session)

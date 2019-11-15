@@ -260,7 +260,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
             // Note: site continues using jar-backed model for runtime use
             runtimeConfigurationModel = newRuntimeConfigModel;
 
-            //process webfilebundle instructions from HCM Site which are not from the current site
+            //process webfilebundle instructions from current HCM Site
             applyWebfiles(runtimeConfigurationModel, siteName);
         }
         else {
@@ -287,7 +287,7 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
                 }
 
                 log.debug("processing webfiles for site: {}", siteName);
-                //process webfilebundle instructions from HCM Site which are not from the current site
+                //process webfilebundle instructions from current HCM Site
                 applyWebfiles(runtimeConfigurationModel, siteName);
 
                 // Run post site migrators for this site
