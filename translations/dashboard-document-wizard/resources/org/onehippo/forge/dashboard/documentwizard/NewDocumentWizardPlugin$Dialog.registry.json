@@ -5,15 +5,7 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "error-validation-names" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "list-label" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "invalid.name" : {
       "status" : "CLEAN",
       "locales" : null
     },
