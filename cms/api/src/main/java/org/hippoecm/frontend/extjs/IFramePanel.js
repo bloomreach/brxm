@@ -46,7 +46,7 @@
           id: this.frameId,
           autoEl: {
             tag: 'iframe',
-            'class': 'channelmanager-iframe',
+            'class': 'experience-manager-iframe',
             frameborder: 0,
             src: config.url || 'about:blank'
           },
