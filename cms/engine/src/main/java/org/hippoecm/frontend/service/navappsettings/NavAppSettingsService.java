@@ -28,6 +28,7 @@ import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.util.string.StringValue;
 import org.hippoecm.frontend.filter.NavAppRedirectFilter;
+import org.hippoecm.frontend.model.SerializableSupplier;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
