@@ -92,7 +92,7 @@ describe('BrPage', () => {
       mocked(initialize).mockClear();
     });
 
-    it('should use a page instance from props when it is updated', async () => {
+    it('should use a page instance from props when it is updated', () => {
       mocked(isPage).mockReturnValueOnce(true);
 
       const newPage = { ...page } as Page;
@@ -103,7 +103,7 @@ describe('BrPage', () => {
       expect(initialize).not.toBeCalled();
     });
 
-    it('should initialize page on props update when page from props is not updated', async () => {
+    it('should initialize page on props update when page from props is not updated', () => {
       const configuration = { ...config };
       wrapper.setProps({ configuration });
 
@@ -115,14 +115,14 @@ describe('BrPage', () => {
   });
 
   describe('componentWillUnmount', () => {
-    it('should destroy the page when unmounting', async () => {
+    it('should destroy the page when unmounting', () => {
       const page = wrapper.state('page')!;
 
       wrapper.unmount();
       expect(destroy).toHaveBeenCalledWith(page);
     });
 
-    it('should not destroy an empty page when unmounting', async () => {
+    it('should not destroy an empty page when unmounting', () => {
       wrapper.setState({ page: undefined });
 
       wrapper.unmount();
