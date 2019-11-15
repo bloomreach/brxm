@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -41,7 +41,6 @@ import static org.onehippo.repository.security.SecurityConstants.CONFIG_GROUPS_P
 
 /**
  * TestHippoAuthenticationProvider
- * @version $Id$
  */
 public class TestHippoAuthenticationProvider extends RepositoryTestCase {
     
@@ -75,7 +74,7 @@ public class TestHippoAuthenticationProvider extends RepositoryTestCase {
     public void tearDown() throws Exception {
 
         session.getNode(CONFIG_GROUPS_PATH+"/admin").setProperty(HIPPO_MEMBERS, new String[0]);
-        session.getNode(CONFIG_DOMAINS_PATH+"/everywhere/admin").getProperty(HIPPO_USERS).remove();
+        session.getNode(CONFIG_DOMAINS_PATH+"/everywhere/admin").setProperty(HIPPO_USERS, new String[0]);
         session.save();
 
         super.tearDown();
