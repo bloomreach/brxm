@@ -19,7 +19,7 @@ import { AppErrorCodes } from './app-error-codes';
 
 export class InternalError extends AppError {
   constructor(publicDescription?: string, internalDescription?: string) {
-    super(AppErrorCodes.Internal, 'Something went wrong', publicDescription, internalDescription || publicDescription);
+    super(AppErrorCodes.Internal, 'ERROR_SOMETHING_WENT_WRONG', publicDescription, internalDescription || publicDescription);
 
     Object.setPrototypeOf(this, InternalError.prototype);
     this.stack = this.getStack();

@@ -17,6 +17,7 @@
 import { Location, PopStateEvent } from '@angular/common';
 import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { NavigationTrigger, NavItem, NavLocation } from '@bloomreach/navapp-communication';
+import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 import { of } from 'rxjs';
 
@@ -111,6 +112,10 @@ describe('NavigationService', () => {
     'setInternalError',
   ]);
 
+  const translateServiceMock = jasmine.createSpyObj('TranslateService', {
+    instant: 'translated text',
+  });
+
   const loggerMock = jasmine.createSpyObj('NGXLogger', [
     'debug',
   ]);
@@ -160,6 +165,7 @@ describe('NavigationService', () => {
         { provide: MenuStateService, useValue: menuStateServiceMock },
         { provide: NavItemService, useValue: navItemServiceMock },
         { provide: UrlMapperService, useValue: urlMapperServiceMock },
+        { provide: TranslateService, useValue: translateServiceMock },
         { provide: NGXLogger, useValue: loggerMock },
         NavigationService,
       ],
@@ -553,6 +559,30 @@ describe('NavigationService', () => {
         tick();
 
         expect(errorHandlingServiceMock.clearError).toHaveBeenCalled();
+      }));
+
+      it('should translate the public error message if there is an unknown url', () => {
+        const badNavItem = new NavItemMock({
+          appIframeUrl: 'https://unknown-url.com/unknown/path',
+        });
+
+        service.navigateByNavItem(badNavItem, NavigationTrigger.NotDefined);
+
+        expect(translateServiceMock.instant).toHaveBeenCalledWith('ERROR_UNKNOWN_URL', { url: '/base-path/unknown/path/testPath' });
+      });
+
+      it('should throw an error if the url provided is not recognizable', fakeAsync(() => {
+        const expectedError = new NotFoundError('translated text');
+
+        const badNavItem = new NavItemMock({
+          appIframeUrl: 'https://unknown-url.com',
+        });
+
+        service.navigateByNavItem(badNavItem, NavigationTrigger.NotDefined);
+
+        tick();
+
+        expect(errorHandlingServiceMock.setError).toHaveBeenCalledWith(expectedError);
       }));
 
       it('should clear the app error on a pop state event', () => {

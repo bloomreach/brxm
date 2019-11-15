@@ -19,7 +19,7 @@ import { AppErrorCodes } from './app-error-codes';
 
 export class NotFoundError extends AppError {
   constructor(publicDescription?: string, internalDescription?: string) {
-    super(AppErrorCodes.NotFound, 'Page not found', publicDescription, internalDescription || publicDescription);
+    super(AppErrorCodes.NotFound, 'ERROR_NOT_FOUND', publicDescription, internalDescription || publicDescription);
 
     Object.setPrototypeOf(this, NotFoundError.prototype);
     this.stack = this.getStack();

@@ -16,6 +16,7 @@
 
 import { TestBed } from '@angular/core/testing';
 import { ClientErrorCodes } from '@bloomreach/navapp-communication';
+import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 import { LoggerTestingModule } from 'ngx-logger/testing';
 import { of } from 'rxjs';
@@ -39,7 +40,13 @@ describe('ErrorHandlingService', () => {
   let service: ErrorHandlingService;
   let logger: NGXLogger;
 
+  const translateServiceMock = jasmine.createSpyObj('TranslateService', [
+    'instant',
+  ]);
+
   beforeEach(() => {
+    translateServiceMock.instant.and.callFake(x => x);
+
     const connectionServiceMock = {
       onError$: of(),
     };
@@ -51,6 +58,7 @@ describe('ErrorHandlingService', () => {
       providers: [
         ErrorHandlingService,
         { provide: ConnectionService, useValue: connectionServiceMock },
+        { provide: TranslateService, useValue: translateServiceMock },
       ],
     });
 
@@ -154,6 +162,7 @@ describe('ErrorHandlingService', () => {
         500,
         'Some title',
         'Some detailed message',
+        'Some internal description',
       );
 
       service.setError(expected);
@@ -163,6 +172,14 @@ describe('ErrorHandlingService', () => {
       service.clearError();
 
       expect(service.currentError).toBeUndefined();
+    });
+
+    it('should translate the message of the error', () => {
+      expect(translateServiceMock.instant).toHaveBeenCalledWith('Some title');
+    });
+
+    it('should translate the description of the error', () => {
+      expect(translateServiceMock.instant).toHaveBeenCalledWith('Some detailed message');
     });
   });
 });

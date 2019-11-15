@@ -146,5 +146,12 @@
   "HELP_LINK_XM_DOCUMENTATION": "brXM documentation",
   "HELP_LINK_SM_HELP": "brSM help",
   "ERROR_PAGE_BUTTON_BACK_HOME": "Back",
-  "ERROR_PAGE_DEFAULT_ERROR": "Something went wrong"
+  "ERROR_PAGE_DEFAULT_ERROR": "Something went wrong",
+  "ERROR_CONFIGURATION": "Configuration error",
+  "ERROR_UNABLE_TO_LOAD_CONFIGURATION": "Unable to load configuration",
+  "ERROR_INITIALIZATION": "An error occurred during initialization",
+  "ERROR_SOMETHING_WENT_WRONG": "Something went wrong",
+  "ERROR_NOT_FOUND": "Page not found",
+  "ERROR_UNKNOWN_URL": "Unknown url: {{url}}",
+  "ERROR_UNABLE_TO_CONNECT_TO_CLIENT_APP": "Unable to connect to the client applications"
 }
