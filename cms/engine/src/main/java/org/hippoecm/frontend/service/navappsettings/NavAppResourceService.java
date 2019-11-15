@@ -17,11 +17,15 @@
 
 package org.hippoecm.frontend.service.navappsettings;
 
+import java.net.URI;
+import java.util.Optional;
 import java.util.Set;
 
 import org.hippoecm.frontend.service.NavAppResource;
 
 public interface NavAppResourceService {
+
+    Optional<URI> getNavAppResourceUrl();
 
     Set<NavAppResource> getNavigationItemsResources();
 

@@ -50,9 +50,6 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 public class NavAppSettingsService extends Plugin implements INavAppSettingsService {
 
-    private static final String JAR_PATH_PREFIX = "navapp";
-    static final String NAVAPP_LOCATION_SYSTEM_PROPERTY = "navapp.location";
-
     static final String IFRAMES_CONNECTION_TIMEOUT = "iframesConnectionTimeout";
     static final String LOG_LEVEL = "logLevel";
     static final String LOGIN_TYPE_QUERY_PARAMETER = "logintype";
@@ -155,15 +152,15 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
 
     private AppSettings createAppSettings(String initialPath, boolean localLogin, String logLevelQueryParamString) {
 
-        final String navAppLocation = System.getProperty(NAVAPP_LOCATION_SYSTEM_PROPERTY, null);
-        final boolean cmsOriginOfNavAppResources = navAppLocation == null;
-        final URI navAppResourceLocation =
-                URI.create(cmsOriginOfNavAppResources ? JAR_PATH_PREFIX : navAppLocation);
+        final URI cmsNavAppResourceUrl = URI.create("navapp");
         // It is assumed that the web.xml contains a servlet mapping for /navapp and that
         // the ResourceServlet is being used to serve the resources inside of that directory.
         // When running mvn package the files needed for the navapp (and navigation-communication)
         // are copied into  the target directory. See copy-files.js
-
+        final URI navAppResourceLocation = navAppResourceService
+                .getNavAppResourceUrl()
+                .orElse(cmsNavAppResourceUrl);
+        final boolean cmsOriginOfNavAppResources = cmsNavAppResourceUrl.equals(navAppResourceLocation);
         final List<NavAppResource> navConfigResources = new ArrayList<>();
         final List<NavAppResource> loginResources = new ArrayList<>();
         final List<NavAppResource> logoutResources = new ArrayList<>();

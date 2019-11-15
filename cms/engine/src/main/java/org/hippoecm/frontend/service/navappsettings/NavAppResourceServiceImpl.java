@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
@@ -40,6 +41,7 @@ final class NavAppResourceServiceImpl implements NavAppResourceService {
 
     private static final Logger log = LoggerFactory.getLogger(NavAppResourceServiceImpl.class);
 
+    static final String NAVAPP_LOCATION_KEY = "brx.navapp.location";
     static final String NAVIGATION_ITEMS_KEY_PREFIX = "brx.navapp.resource.navigationitems";
     static final String LOGIN_KEY_PREFIX = "brx.navapp.resource.login";
     static final String LOGOUT_KEY_PREFIX = "brx.navapp.resource.logout";
@@ -89,7 +91,7 @@ final class NavAppResourceServiceImpl implements NavAppResourceService {
 
             loginLogoutMissing.append(navigationItemResourceMissing);
             if (loginLogoutMissing.length() > 0) {
-                loginLogoutMissing.insert(0,"Invalid property values detected" + System.lineSeparator());
+                loginLogoutMissing.insert(0, "Invalid property values detected" + System.lineSeparator());
                 throw new IllegalArgumentException(loginLogoutMissing.toString());
             }
         }
@@ -97,6 +99,14 @@ final class NavAppResourceServiceImpl implements NavAppResourceService {
         this.loginResources = new HashSet<>(loginResourceMap.values());
         this.logoutResources = new HashSet<>(logoutResourceMap.values());
         this.navigationItemsResources = new HashSet<>(navigationItemsResourceMap.values());
+    }
+
+    @Override
+    public Optional<URI> getNavAppResourceUrl() {
+        return Optional.ofNullable(
+                properties.getProperty(NAVAPP_LOCATION_KEY,
+                        System.getProperty(NAVAPP_LOCATION_KEY, null)))
+                .map(URI::create);
     }
 
     @Override

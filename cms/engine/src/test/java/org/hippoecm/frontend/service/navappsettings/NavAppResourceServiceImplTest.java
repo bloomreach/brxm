@@ -20,6 +20,7 @@ package org.hippoecm.frontend.service.navappsettings;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
@@ -71,6 +72,7 @@ public class NavAppResourceServiceImplTest {
         assertThat(service.getLoginResources().size(), is(3));
         assertThat(service.getLogoutResources().size(), is(3));
         assertThat(service.getNavigationItemsResources().size(), is(3));
+        assertThat(service.getNavAppResourceUrl(), is(Optional.empty()));
     }
 
     @Test
@@ -98,7 +100,6 @@ public class NavAppResourceServiceImplTest {
             new NavAppResourceServiceImpl(properties);
             fail("should have thrown");
         } catch (IllegalArgumentException e) {
-            System.err.println(e);
             assertThat(e.getMessage(), allOf(
                     containsString("brx.navapp.resource.logout.id-1"),
                     containsString("missing")
@@ -118,7 +119,6 @@ public class NavAppResourceServiceImplTest {
             new NavAppResourceServiceImpl(properties);
             fail("should have thrown");
         } catch (IllegalArgumentException e) {
-            System.err.println(e);
             assertThat(e.getMessage(), allOf(
                     containsString("brx.navapp.resource.login.id-1"),
                     containsString("missing")
@@ -137,7 +137,6 @@ public class NavAppResourceServiceImplTest {
             new NavAppResourceServiceImpl(properties);
             fail("should have thrown");
         } catch (IllegalArgumentException e) {
-            System.err.println(e);
             assertThat(e.getMessage(), allOf(
                     containsString("brx.navapp.resource.navigationitems.company-a"),
                     containsString("missing")
@@ -236,4 +235,38 @@ public class NavAppResourceServiceImplTest {
         }
     }
 
+    @Test
+    public void navapp_resource_url_from_properties() throws IOException {
+        final URI someCDN = URI.create("https://some.cdn.com/navapp");
+        final String data = "# Sample platform.properties\n"
+                + "brx.navapp.location  = " + someCDN + "\n";
+        final Properties properties = new Properties();
+        properties.load(new StringReader(data));
+
+        final NavAppResourceService service = new NavAppResourceServiceImpl(properties);
+
+        assertThat(service.getNavAppResourceUrl(), is(Optional.of(someCDN)));
+    }
+
+    @Test
+    public void navapp_resource_url_from_environment() {
+
+        final URI someCDN = URI.create("https://some.cdn.com/navapp");
+        System.setProperty(NavAppResourceServiceImpl.NAVAPP_LOCATION_KEY, someCDN.toString());
+
+        final Properties properties = new Properties();
+        final NavAppResourceService service = new NavAppResourceServiceImpl(properties);
+
+        assertThat(service.getNavAppResourceUrl(), is(Optional.of(someCDN)));
+        System.getProperties().remove(NavAppResourceServiceImpl.NAVAPP_LOCATION_KEY);
+    }
+
+    @Test
+    public void navapp_resource_url_null_if_not_set_as_property_or_env_var() {
+
+        final Properties properties = new Properties();
+        final NavAppResourceService service = new NavAppResourceServiceImpl(properties);
+
+        assertThat(service.getNavAppResourceUrl(), is(Optional.empty()));
+    }
 }
