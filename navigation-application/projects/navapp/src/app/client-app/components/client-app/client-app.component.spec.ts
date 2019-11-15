@@ -55,4 +55,15 @@ describe('ClientAppComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should sanitize the provided url', () => {
+    spyOn(console, 'warn');
+    component.url = 'Javascript:alert(\'xss\')';
+    fixture.detectChanges();
+    component.ngOnInit();
+    // tslint:disable-next-line: no-console
+    expect(console.warn).toHaveBeenCalledWith(
+      'WARNING: sanitizing unsafe URL value Javascript:alert(\'xss\') (see http://g.co/ng/security#xss)',
+    );
+  });
 });
