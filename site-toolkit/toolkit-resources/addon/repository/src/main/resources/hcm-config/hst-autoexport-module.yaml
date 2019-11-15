@@ -26,6 +26,4 @@ definitions:
           value: ['/hst:*/hst:configurations: config',
             '/hst:*/hst:hosts: config',
             '/hst:*/hst:hosts/**: config',
-            '/hippo:configuration/hippo:update/hippo:registry: config',
-            '/hippo:configuration/hippo:update/hippo:registry/**: config',
             '/hst:*/hst:blueprints/**: config']
