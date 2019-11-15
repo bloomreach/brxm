@@ -161,6 +161,9 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
                 // calling code will set other.operation as appropriate for final value
                 this.operation = other.operation;
 
+                this.setCategory(other.getCategory());
+                this.addNewSystemValues = other.addNewSystemValues;
+
                 // replace operation does not change value type or property type
                 // but override does, and doing it for replace operation should be safe
                 this.valueType = other.valueType;
@@ -181,6 +184,9 @@ public class DefinitionPropertyImpl extends DefinitionItemImpl implements Defini
             case ADD:
                 // add operation does not change value type
                 // add operation does not change operation here
+
+                this.setCategory(other.getCategory());
+                this.addNewSystemValues = other.addNewSystemValues;
 
                 // an add operation is only valid for a property that is already multi-valued
                 // (i.e. an add to a single-valued property would need to be an override instead)
