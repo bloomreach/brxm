@@ -4,6 +4,9 @@ definitions:
       jcr:primaryType: hipposys:user
       hipposys:active: true
       hipposys:password: intranetpreviewuserpass
-      hipposys:userroles: [xm.preview-documents.reader]
+      hipposys:userroles:
+        .meta:category: system
+        .meta:add-new-system-values: true
+        value: [xm.preview-documents.reader]
       hipposys:securityprovider: internal
       hipposys:system: true
