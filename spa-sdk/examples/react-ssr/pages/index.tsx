@@ -77,7 +77,7 @@ export default class Index extends React.Component<IndexProps> {
               <BrPageContext.Consumer>
                 { page => (
                   <Link route={page!.getUrl('/')}>
-                    <a className="navbar-brand">{ page!.getTitle() || 'Server-Side React Demo'}</a>
+                    <a className="navbar-brand">{ page!.getTitle() || 'brXM + Next.js = ♥️'}</a>
                   </Link>
                 ) }
               </BrPageContext.Consumer>

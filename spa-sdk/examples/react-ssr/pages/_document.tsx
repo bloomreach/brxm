@@ -23,9 +23,9 @@ export default class DefaultDocument extends Document {
         <head>
           <meta charSet="utf-8" />
           <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <meta name="description" content="Example server-side React App for Bloomreach Experience" />
+          <meta name="description" content="Example Next.js SPA for Bloomreach Experience" />
 
-          <title>Server-side React App for BRX</title>
+          <title>brXM + Next.js = ♥️</title>
 
           <link rel="stylesheet" media="screen"
             href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
