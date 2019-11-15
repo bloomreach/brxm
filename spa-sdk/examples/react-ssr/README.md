@@ -1,11 +1,11 @@
-# Example server-side React App
+# brXM + Next.js = ♥️
 
-Example server-side React app using the BloomReach Experience SDK for React. The app uses [Next.js](https://github.com/zeit/next.js)
-as framework for creating a server-side rendered app.
+Example Next.js SPA using the Bloomreach Experience [React SDK](https://www.npmjs.com/package/@bloomreach/react-sdk).
+The app uses unversal framework [Next.js](https://github.com/zeit/next.js) for creating isomorphic React applications.
 
 ## Install and run
 
-__TODO__: Start the BRX example Docker image
+__TODO__: Start the brXM example Docker image
 
 Then, copy `.env.dist` file to `.env` and customize it to contain a correct `PUBLIC_URL` path, for example:
 ```
@@ -20,12 +20,12 @@ BR_URL_PREVIEW=http://localhost:8080/site/_cmsinternal/spa-ssr/resourceapi
 SPA_BASE_PATH_PREVIEW=/site/_cmsinternal/spa-csr
 ```
 
-Finally, build and run the React app as followed:
+Finally, build and run the Next.js app as followed:
 
 ```bash
 yarn
 yarn run dev
 ```
 
-The CMS should now be accessible at <http://localhost:8080/cms>, and it should render the server-side React app in preview
-mode in the Channel Manager. The SPA itself can be accessed directly via <http://localhost:3000>.
+The CMS should now be accessible at <http://localhost:8080/cms>, and it should render the Next.js app in preview mode in the Experience manager.
+The SPA itself can be accessed directly via <http://localhost:3000>.
