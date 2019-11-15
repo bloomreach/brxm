@@ -1,7 +1,7 @@
 {
   "name": "@bloomreach/example-react-ssr",
   "version": "14.0.0",
-  "description": "Example server-side rendered React App for the Bloomreach Experience SPA SDK",
+  "description": "Example Next.js SPA for Bloomreach Experience",
   "private": true,
   "author": "Bloomreach B.V.",
   "license": "Apache-2.0",

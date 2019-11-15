@@ -1,6 +1,6 @@
 {
   "name": "@bloomreach/example-react-csr",
-  "description": "Example client-side rendered React App for the Bloomreach Experience SPA SDK",
+  "description": "Example React SPA for Bloomreach Experience",
   "version": "14.0.0",
   "private": true,
   "dependencies": {
