@@ -29,6 +29,8 @@ final class LocationMapper {
 
     private static final List<Entry> ENTRIES = new ArrayList<>();
     private static final String NAME = "([^/\\u005B\\u005D\\|\\*]+(?:\\u005B\\d+\\u005D)?)";
+    // matches variant nodes like ../resourcbundle/resourcebundle or ../resourcebundle/resourcebundle[1]
+    private static final String VARIANT_NODE_NAME = "(?:[^/\\u005B\\u005D\\|\\*]*\\/)*([^/\\u005B\\u005D\\|\\*]+)\\/\\1($|(\\u005B\\d+\\u005D)+)";
     private static final String ANY = "(.*)";
     // cache the result of the last invocation 
     private static CachedItem lastResult = new CachedItem(null, null, null);
@@ -187,11 +189,23 @@ final class LocationMapper {
         contextNode = "/content";
         file = "content.yaml";
         ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
+        // /content/documents/administration/resourcebundle.yaml
+        nodePatterns = new String[] {"/content/documents/administration/" + VARIANT_NODE_NAME };
+        propertyPatterns = new String[] {"/content/documents/administration/" + VARIANT_NODE_NAME + "/" + ANY};
+        contextNode = "/content/documents/administration/$1";
+        file = "content/documents/administration/$1.yaml";
+        ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
         // /content/documents/administration/labels/resourcebundle.yaml
         nodePatterns = new String[] {"/content/documents/administration/" + NAME + "/" + NAME};
-        propertyPatterns = new String[] {"/content/documents/administration/" + NAME + "/" + NAME + "/" + ANY};
+        propertyPatterns = new String[] {"/content/documents/administration/" + NAME + "/" + NAME + "/" + NAME};
         contextNode = "/content/documents/administration/$1/$2";
         file = "content/documents/administration/$1/$2.yaml";
+        ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
+        // /content/documents/administration/folder1/folder2/resourcebundle.yaml
+        nodePatterns = new String[] {"/content/documents/administration/" + NAME + "/" + NAME + "/" + NAME};
+        propertyPatterns = new String[] {"/content/documents/administration/" + NAME + "/" + NAME + "/" + NAME + "/" + ANY};
+        contextNode = "/content/documents/administration/$1/$2/$3";
+        file = "content/documents/administration/$1/$2/$3.yaml";
         ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
         // /content/documents/myproject
         nodePatterns = new String[] {"/content/" + NAME + "/" + NAME};
@@ -257,14 +271,18 @@ final class LocationMapper {
     private static CachedItem getCachedItem(final String path, final Entry entry, final Matcher matcher) {
         String contextNode = entry.contextNode;
         for (int i = 1; i <= matcher.groupCount(); i++) {
-            contextNode = contextNode.replace("$" + i, matcher.group(i));
+            if (matcher.group(i) != null) {
+                contextNode = contextNode.replace("$" + i, matcher.group(i));
+            }
         }
         String file = entry.file;
         for (int i = 1; i <= matcher.groupCount(); i++) {
             String qName = matcher.group(i);
-            int indexOfColon = qName.indexOf(':');
-            String name = indexOfColon == -1 ? qName : qName.substring(indexOfColon + 1);
-            file = file.replace("$" + i, name);
+            if (qName != null) {
+                int indexOfColon = qName.indexOf(':');
+                String name = indexOfColon == -1 ? qName : qName.substring(indexOfColon + 1);
+                file = file.replace("$" + i, name);
+            }
         }
         return new CachedItem(path, contextNode, file);
     }

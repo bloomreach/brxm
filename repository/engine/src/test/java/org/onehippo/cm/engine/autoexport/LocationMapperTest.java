@@ -290,6 +290,34 @@ public class LocationMapperTest {
         assertEquals("/content/documents/myproject/common", contextNode);
         contextNode = LocationMapper.contextNodeForPath("/content/documents/myproject/common/article/any/sub/node/prop", false);
         assertEquals("/content/documents/myproject/common", contextNode);
+
+    }
+    @Test
+    public void testResourceBundles() {
+        //resource bundles
+        String nodePath = "/content/documents/administration/bloglabels/bloglabels";
+        String file = LocationMapper.fileForPath(nodePath, true);
+        assertEquals("content/documents/administration/bloglabels.yaml", file);
+        String contextNode = LocationMapper.contextNodeForPath(nodePath, true);
+        assertEquals("/content/documents/administration/bloglabels", contextNode);
+        contextNode = LocationMapper.contextNodeForPath(nodePath + "/prop", false);
+        assertEquals("/content/documents/administration/bloglabels/bloglabels", contextNode);
+
+        nodePath = "/content/documents/administration/folder1/bloglabels";
+        file = LocationMapper.fileForPath(nodePath, true);
+        assertEquals("content/documents/administration/folder1/bloglabels.yaml", file);
+        contextNode = LocationMapper.contextNodeForPath(nodePath, true);
+        assertEquals(nodePath, contextNode);
+        contextNode = LocationMapper.contextNodeForPath(nodePath + "/prop", false);
+        assertEquals(nodePath, contextNode);
+
+        nodePath = "/content/documents/administration/folder1/folder2/bloglabels";
+        file = LocationMapper.fileForPath(nodePath, true);
+        assertEquals("content/documents/administration/folder1/folder2/bloglabels.yaml", file);
+        contextNode = LocationMapper.contextNodeForPath(nodePath, true);
+        assertEquals(nodePath, contextNode);
+        contextNode = LocationMapper.contextNodeForPath(nodePath + "/prop", false);
+        assertEquals(nodePath, contextNode);
     }
 
 }
