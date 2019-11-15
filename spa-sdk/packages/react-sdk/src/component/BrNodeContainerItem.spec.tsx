@@ -82,7 +82,7 @@ describe('BrNodeContainerItem', () => {
   describe('onUpdate', () => {
     it('should trigger sync on update event', () => {
       mount(<BrNodeContainerItem {...props} />);
-      props.component.on.mock.calls[0][1]();
+      props.component.on.mock.calls[0][1]({});
 
       expect(props.page.sync).toBeCalled();
     });

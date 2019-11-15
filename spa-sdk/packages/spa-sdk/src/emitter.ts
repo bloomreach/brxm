@@ -18,7 +18,35 @@ import { Events, Typed } from 'emittery';
 
 type Constructor = new (...args: any[]) => any;
 
-export type Emitter<T> = Pick<Typed<T>, 'on' | 'off'>;
+/**
+ * Event listener.
+ */
+type Listener<T, U extends Extract<keyof T, string>> = (eventData: T[U]) => any;
+
+/**
+ * Function to unsubscribe a listener from an event.
+ */
+type UnsubscribeFn = () => void;
+
+/**
+ * Event emitter.
+ */
+export interface Emitter<T> {
+  /**
+   * Subscribes for an event.
+   * @param eventName The event name.
+   * @param listener The event listener.
+   * @return The unsubscribe function.
+   */
+  on<U extends Extract<keyof T, string>>(eventName: U, listener: Listener<T, U>): UnsubscribeFn;
+
+  /**
+   * Unsubscribes from an event.
+   * @param eventName The event name.
+   * @param listener The event listener.
+   */
+  off<U extends Extract<keyof T, string>>(eventName: U, listener: Listener<T, U>): void;
+}
 
 export function EmitterMixin<T extends Constructor, U extends Events>(Super: T) {
   return class EmitterMixin extends Super implements Emitter<U> {
