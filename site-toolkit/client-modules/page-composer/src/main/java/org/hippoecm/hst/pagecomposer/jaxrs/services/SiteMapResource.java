@@ -116,7 +116,7 @@ public class SiteMapResource extends AbstractConfigResource {
 
     @GET
     @Path("/item/{siteMapItemUuid}")
-    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
+    @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
     public Response getSiteMapItem(@PathParam("siteMapItemUuid") final String siteMapItemUuid) {
         return tryGet(new Callable<Response>() {
             @Override
