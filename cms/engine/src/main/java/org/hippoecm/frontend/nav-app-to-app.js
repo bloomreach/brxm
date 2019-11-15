@@ -160,8 +160,7 @@
                 rootPanel.selectCard(0);
               }
             }
-
-            return Promise.resolve();
+            return navigateIframe(iframe, pathElements.join('/'), triggeredBy);
 
           case 'content':
             if (pathElements.length === 0) {
