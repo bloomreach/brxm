@@ -160,6 +160,7 @@ describe('ContainerItemImpl', () => {
           page: { id: 'id1', type: TYPE_COMPONENT_CONTAINER_ITEM },
         } },
       );
+      await new Promise(process.nextTick);
 
       expect(listener).toBeCalledWith({});
     });
