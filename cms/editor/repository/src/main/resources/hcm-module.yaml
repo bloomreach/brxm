@@ -1,7 +1,7 @@
 group: hippo-cms
 project:
     name: hippo-cms
-    after: hippo-repository
+    after: [hippo-repository, hippo-services-validation]
 module:
     name: hippo-cms-editor-repository
     after: hippo-cms-config
