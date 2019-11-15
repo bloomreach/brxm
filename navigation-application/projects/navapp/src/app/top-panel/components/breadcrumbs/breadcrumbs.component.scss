@@ -40,8 +40,6 @@
   }
 
   &.last {
-    cursor: pointer;
-
     > span {
       opacity: 1;
     }
@@ -50,8 +48,9 @@
       font-weight: $font-weight-semibold;
     }
 
-    &:hover {
+    &:hover.has-suffix {
       background-color: $breadcrumbs-active-background-color;
+      cursor: pointer;
     }
   }
 
