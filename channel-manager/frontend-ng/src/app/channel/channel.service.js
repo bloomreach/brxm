@@ -352,9 +352,12 @@ class ChannelService {
 
   navigate() {
     if (this.channel) {
-      this.reload().then(() => this.updateNavLocation());
-    } else {
-      this.updateNavLocation();
+      this.channel = {};
+      this.ProjectService.afterChangeListeners.delete('iframeReload');
+
+      if (!this.isToolbarDisplayed) {
+        this.setToolbarDisplayed(true);
+      }
     }
   }
 
