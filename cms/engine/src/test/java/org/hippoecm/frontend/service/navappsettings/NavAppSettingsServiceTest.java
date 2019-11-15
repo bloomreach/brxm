@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -163,6 +164,7 @@ public class NavAppSettingsServiceTest {
         expect(navAppResourceService.getLoginResources()).andStubReturn(Collections.emptySet());
         expect(navAppResourceService.getLogoutResources()).andStubReturn(Collections.emptySet());
         expect(navAppResourceService.getNavigationItemsResources()).andStubReturn(Collections.emptySet());
+        expect(navAppResourceService.getNavAppResourceUrl()).andStubReturn(Optional.empty());
         replay(navAppResourceService);
 
         this.navAppSettingsService = new NavAppSettingsService(context, config, () -> userSession, () -> sessionAttributeStore, navAppResourceService);
@@ -173,48 +175,6 @@ public class NavAppSettingsServiceTest {
     @After
     public void tearDown() {
         ThreadContext.setApplication(null);
-    }
-
-    @Test
-    public void cms_serves_navapp_resources_if_system_property_not_set() {
-
-        reset(servletRequest);
-        expect(servletRequest.getHeader("X-Forwarded-Proto")).andReturn(scheme);
-        expect(servletRequest.getHeader("X-Forwarded-Host")).andReturn(null).times(2);
-        expect(servletRequest.getHeader("Host")).andReturn(host).times(2);
-        expect(servletRequest.getContextPath()).andReturn("/context-path");
-        replay(servletRequest);
-
-        final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
-        assertThat(navAppSettings.getAppSettings().isCmsServingNavAppResources(), is(true));
-        assertThat(navAppSettings.getAppSettings().getNavAppResourceLocation(), is(URI.create("navapp")));
-
-        testUserSettingsAssertions(navAppSettings.getUserSettings());
-        testAppSettingsAssertions(navAppSettings.getAppSettings());
-    }
-
-
-    @Test
-    public void cdn_serves_navapp_resources_if_system_property_set_to_external_cdn() {
-
-        reset(servletRequest);
-        expect(servletRequest.getHeader("X-Forwarded-Proto")).andReturn(scheme);
-        expect(servletRequest.getHeader("X-Forwarded-Host")).andReturn(null).times(2);
-        expect(servletRequest.getHeader("Host")).andReturn(host).times(2);
-        expect(servletRequest.getContextPath()).andReturn("/context-path");
-        replay(servletRequest);
-
-        final URI navAppLocation = URI.create("https://www.abc.xy:1010/somewhere-far-away");
-        System.setProperty(NavAppSettingsService.NAVAPP_LOCATION_SYSTEM_PROPERTY, navAppLocation.toString());
-
-        final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
-        assertThat(navAppSettings.getAppSettings().getNavAppResourceLocation(), is(navAppLocation));
-        assertThat(navAppSettings.getAppSettings().isCmsServingNavAppResources(), is(false));
-
-        testUserSettingsAssertions(navAppSettings.getUserSettings());
-        testAppSettingsAssertions(navAppSettings.getAppSettings());
-
-        System.getProperties().remove(NavAppSettingsService.NAVAPP_LOCATION_SYSTEM_PROPERTY);
     }
 
     @Test
@@ -234,6 +194,8 @@ public class NavAppSettingsServiceTest {
         expect(navAppResourceService.getLoginResources()).andStubReturn(Collections.emptySet());
         expect(navAppResourceService.getLogoutResources()).andStubReturn(Collections.emptySet());
         expect(navAppResourceService.getNavigationItemsResources()).andReturn(Stream.of(navAppResource1, navAppResource2).collect(Collectors.toSet()));
+        expect(navAppResourceService.getNavAppResourceUrl()).andStubReturn(null);
+        expect(navAppResourceService.getNavAppResourceUrl()).andReturn(Optional.empty());
         replay(navAppResourceService);
 
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
@@ -272,6 +234,7 @@ public class NavAppSettingsServiceTest {
         expect(navAppResourceService.getNavigationItemsResources()).andReturn(Collections.emptySet());
         expect(navAppResourceService.getLoginResources()).andReturn(Collections.singleton(navAppResource));
         expect(navAppResourceService.getLogoutResources()).andReturn(Collections.singleton(navAppResource));
+        expect(navAppResourceService.getNavAppResourceUrl()).andReturn(Optional.empty());
         replay(navAppResourceService);
 
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
@@ -445,7 +408,7 @@ public class NavAppSettingsServiceTest {
         expect(parameters.getParameterValue(NavAppSettingsService.LOGIN_TYPE_QUERY_PARAMETER))
                 .andReturn(StringValue.valueOf((String) null));
         expect(parameters.getParameterValue(NavAppSettingsService.LOG_LEVEL))
-                .andReturn(StringValue.valueOf((String) "Trace"));
+                .andReturn(StringValue.valueOf(("Trace")));
         replay(parameters);
         sessionAttributeStore.setAttribute(NavAppSettingsService.LOGIN_LOGIN_USER_SESSION_ATTRIBUTE_NAME, true);
 
@@ -495,6 +458,8 @@ public class NavAppSettingsServiceTest {
         assertThat(navConfigResources.get(0).getUrl(), is(URI.create(NAVIGATIONITEMS_ENDPOINT)));
         assertThat(appSettings.getInitialPath(), is("/"));
         assertThat(appSettings.getLogLevel(), is(OFF));
+        assertThat(appSettings.getNavAppResourceLocation(), is(URI.create("navapp")));
+        assertThat(appSettings.isCmsServingNavAppResources(), is(true));
     }
 
 }
