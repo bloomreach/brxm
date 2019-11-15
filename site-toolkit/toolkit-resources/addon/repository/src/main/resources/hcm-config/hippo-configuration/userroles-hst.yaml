@@ -49,6 +49,7 @@ definitions:
         jcr:primaryType: hipposys:group
         hipposys:members:
           .meta:category: system
+          .meta:add-new-system-values: true
           value: []
         hipposys:userroles:
           .meta:category: system

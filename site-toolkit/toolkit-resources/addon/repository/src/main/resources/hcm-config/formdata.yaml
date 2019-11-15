@@ -9,8 +9,18 @@ definitions:
           jcr:primaryType: hipposys:domain
           /readwrite:
             jcr:primaryType: hipposys:authrole
-            hipposys:userrole: xm.form.writer
             hipposys:role: readwrite
+            hipposys:userrole:
+              .meta:category: system
+              value: xm.form.writer
+            hipposys:groups:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
+            hipposys:users:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
           /formdata:
             jcr:primaryType: hipposys:domainrule
             /formdata-and-descendants:

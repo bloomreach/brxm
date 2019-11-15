@@ -27,5 +27,15 @@ definitions:
           hipposys:value: draft
       /readonly:
         jcr:primaryType: hipposys:authrole
-        hipposys:userrole: xm.preview-documents.reader
         hipposys:role: readonly
+        hipposys:userrole:
+          .meta:category: system
+          value: xm.preview-documents.reader
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+        hipposys:users:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []

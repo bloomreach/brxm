@@ -36,21 +36,45 @@ definitions:
           /channel-admin:
             jcr:primaryType: hipposys:authrole
             hipposys:role: channel-admin
-            hipposys:userrole: xm.channel.admin
-            hipposys:groups: []
-            hipposys:users: []
+            hipposys:userrole:
+              .meta:category: system
+              value: xm.channel.admin
+            hipposys:groups:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
+            hipposys:users:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
           /channel-webmaster:
             hipposys:role: channel-webmaster
             jcr:primaryType: hipposys:authrole
-            hipposys:userrole: xm.channel.webmaster
-            hipposys:groups: []
-            hipposys:users: []
+            hipposys:userrole:
+              .meta:category: system
+              value: xm.channel.webmaster
+            hipposys:groups:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
+            hipposys:users:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
           /channel-viewer:
             hipposys:role: channel-viewer
             jcr:primaryType: hipposys:authrole
-            hipposys:userrole: xm.channel.viewer
-            hipposys:groups: []
-            hipposys:users: []
+            hipposys:userrole:
+              .meta:category: system
+              value: xm.channel.viewer
+            hipposys:groups:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
+            hipposys:users:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
           /hstconfig:
             jcr:primaryType: hipposys:domainrule
             /hstconfig-and-descendants:

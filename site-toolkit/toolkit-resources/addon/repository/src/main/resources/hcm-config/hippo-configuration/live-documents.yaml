@@ -33,5 +33,16 @@ definitions:
           hipposys:value: draft
       /readonly:
         jcr:primaryType: hipposys:authrole
-        hipposys:userrole: xm.live-documents.reader
         hipposys:role: readonly
+        hipposys:userrole:
+          .meta:category: system
+          value: xm.live-documents.reader
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+        hipposys:users:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+
