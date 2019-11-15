@@ -108,7 +108,7 @@ export async function initialize(config: Configuration, model?: PageModel): Prom
  * Destroys the integration with the SPA page.
  * @param page Page instance to destroy.
  */
-export function destroy(page: Page) {
+export function destroy(page: Page): void {
   const spa = pages.get(page);
 
   return spa && spa.destroy();

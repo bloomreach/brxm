@@ -42,7 +42,7 @@ export interface Link {
 }
 
 /**
- * Checks whether a value is a reference.
+ * Checks whether a value is a link.
  * @param value The value to check.
  */
 export function isLink(value: any): value is Link {

@@ -14,9 +14,17 @@
  * limitations under the License.
  */
 
-export const META_POSITION_BEGIN = 'begin';
-export const META_POSITION_END = 'end';
 export const TYPE_META_COMMENT = 'comment';
+
+/**
+ * Meta-data following before a page component.
+ */
+export const META_POSITION_BEGIN = 'begin';
+
+/**
+ * Meta-data following after a page component.
+ */
+export const META_POSITION_END = 'end';
 
 export type MetaType = typeof TYPE_META_COMMENT;
 export type MetaPosition = typeof META_POSITION_BEGIN | typeof META_POSITION_END;

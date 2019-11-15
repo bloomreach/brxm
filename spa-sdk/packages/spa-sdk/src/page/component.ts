@@ -90,7 +90,7 @@ export interface Component {
   getMeta(): Meta[];
 
   /**
-   * @return The map of models.
+   * @return The map of the component models.
    */
   getModels<T extends ComponentModels>(): T;
 
@@ -100,12 +100,12 @@ export interface Component {
   getUrl(): string | undefined;
 
   /**
-   * @return The name of this component.
+   * @return The name of the component.
    */
   getName(): string;
 
   /**
-   * @return the parameters of this component.
+   * @return The parameters of the component.
    */
   getParameters(): ComponentParameters;
 
@@ -118,8 +118,8 @@ export interface Component {
    * Looks up for a nested component.
    * @param componentNames A lookup path.
    */
-  getComponent(): this;
   getComponent<U extends Component>(...componentNames: string[]): U | undefined;
+  getComponent(): this;
 
   /**
    * Looks up for a nested component by its id.
@@ -200,7 +200,7 @@ export class ComponentImpl implements Component {
 }
 
 /**
- * Checks whether a value is a component.
+ * Checks whether a value is a page component.
  * @param value The value to check.
  */
 export function isComponent(value: any): value is Component {

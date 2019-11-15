@@ -71,28 +71,30 @@ export interface PageModel {
  */
 export interface Page {
   /**
-   * Gets a component in the page (e.g. getComponent('main', 'right')).
-   * Without any arguments it returns the root component.
-   *
-   * @param componentNames the names of the component and its parents.
-   * @return The component, or `undefined` if no such component exists.
+   * Gets a root component in the page.
+   * @return The root component.
    */
   getComponent<T extends Component>(): T;
+
+  /**
+   * Gets a component in the page (e.g. `getComponent('main', 'right')`).
+   * @param componentNames The names of the component and its parents.
+   * @return The component, or `undefined` if no such component exists.
+   */
   getComponent<T extends Component>(...componentNames: string[]): T | undefined;
 
   /**
-   * Gets a content item used in the page.
+   * Gets a content item used on the page.
    * @param reference The reference to the content. It can be an object containing
    * an [RFC-6901](https://tools.ietf.org/html/rfc6901) JSON Pointer.
    */
   getContent(reference: Reference | string): Content | undefined;
 
   /**
-   * Generate meta-data from the provided MetaCollectionModel.
-   *
-   * @param metaCollection the meta-collection as returned by the page-model-api
+   * Generates a meta-data from the provided meta-data model.
+   * @param meta the meta-collection as returned by the page-model-api
    */
-  getMeta(metaCollection: MetaCollectionModel): Meta[];
+  getMeta(meta: MetaCollectionModel): Meta[];
 
   /**
    * @return The title of the page, or `undefined` if not configured.
@@ -106,10 +108,10 @@ export interface Page {
    *   For example, for link `/site/_cmsinternal/spa/about` with configuration options
    *   `cmsBaseUrl = "http://localhost:8080/site/_cmsinternal/spa"` and `spaBaseUrl = "http://example.com"`
    *   it will generate `http://example.com/about`.
-   * - If it is a resource link then it will prepend origin part from the `cmsBaseUrl` option.
+   * - If it is a resource link, then it will prepend the origin part from the `cmsBaseUrl` option.
    *   For example, for link `/site/_cmsinternal/binaries/image1.jpg` with configuration option
    *   `cmsBaseUrl = "//localhost:8080/site/spa"`, it will generate `//localhost/site/_cmsinternal/binaries/image1.jpg`.
-   * - If the link parameter is omitted then the link to the current page will be returned.
+   * - If the link parameter is omitted, then the link to the current page will be returned.
    * - In other cases, the link will be returned as-is.
    * @param link The link object to generate URL.
    */
@@ -143,7 +145,7 @@ export interface Page {
   sync(): void;
 
   /**
-   * @return A plain javascript object of the page model.
+   * @return A plain JavaScript object of the page model.
    */
   toJSON(): PageModel;
 }

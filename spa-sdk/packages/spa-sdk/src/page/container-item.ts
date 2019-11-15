@@ -128,7 +128,7 @@ export class ContainerItemImpl
 }
 
 /**
- * Checks whether a value is a container item.
+ * Checks whether a value is a page container item.
  * @param value The value to check.
  */
 export function isContainerItem(value: any): value is ContainerItem {
