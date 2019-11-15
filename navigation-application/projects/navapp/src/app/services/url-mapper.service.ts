@@ -60,7 +60,7 @@ export class UrlMapperService {
 
   mapNavLocationToBrowserUrl(navLocation: NavLocation, useCurrentApp = false): [string, NavItem] {
     if (useCurrentApp && !this.clientAppService.activeApp) {
-      throw new InternalError('Initialization problem', 'Active app is not set');
+      throw new InternalError('ERROR_INITIALIZATION', 'Active app is not set');
     }
 
     const iframeUrlOrPath = useCurrentApp ? this.clientAppService.activeApp.url : navLocation.pathPrefix;

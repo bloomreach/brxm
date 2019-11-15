@@ -16,6 +16,7 @@
 
 import { Injectable } from '@angular/core';
 import { ClientErrorCodes } from '@bloomreach/navapp-communication';
+import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 
 import { ConnectionService } from '../../services/connection.service';
@@ -30,6 +31,7 @@ export class ErrorHandlingService {
 
   constructor(
     private connectionService: ConnectionService,
+    private translateService: TranslateService,
     private logger: NGXLogger,
   ) {
     this.connectionService.onError$.subscribe(error => this.setClientError(error.errorCode, error.message));
@@ -41,6 +43,8 @@ export class ErrorHandlingService {
 
   private set error(value: AppError) {
     if (value) {
+      this.translateError(value);
+
       this.logger.error(
         `Code: "${value.code}"`,
         `Message: "${value.message}"`,
@@ -106,5 +110,10 @@ export class ErrorHandlingService {
       default:
         return 'Something went wrong';
     }
+  }
+
+  private translateError(error: AppError): void {
+    error.message = this.translateService.instant(error.message);
+    error.description = this.translateService.instant(error.description);
   }
 }

@@ -98,7 +98,7 @@ describe('scheduleAppBootstrapping', () => {
       tick();
 
       expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(
-        'An error occurred during initialization',
+        'ERROR_INITIALIZATION',
         'Error: Some error',
       );
     }));
@@ -112,7 +112,7 @@ describe('scheduleAppBootstrapping', () => {
       tick();
 
       expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(
-        'An error occurred during initialization',
+        'ERROR_INITIALIZATION',
         expected,
       );
     }));
@@ -126,7 +126,7 @@ describe('scheduleAppBootstrapping', () => {
       tick();
 
       expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(
-        'An error occurred during initialization',
+        'ERROR_INITIALIZATION',
         expected,
       );
     }));

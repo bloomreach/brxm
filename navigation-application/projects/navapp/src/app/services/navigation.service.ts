@@ -17,6 +17,7 @@
 import { Location } from '@angular/common';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { NavigationTrigger, NavItem, NavLocation } from '@bloomreach/navapp-communication';
+import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, EMPTY, from, Observable, of, Subject, Subscription, throwError } from 'rxjs';
 import { catchError, finalize, mapTo, switchMap, tap } from 'rxjs/operators';
@@ -82,6 +83,7 @@ export class NavigationService implements OnDestroy {
     private menuStateService: MenuStateService,
     private navItemService: NavItemService,
     private urlMapperService: UrlMapperService,
+    private translateService: TranslateService,
     private logger: NGXLogger,
   ) {
     this.connectionService
@@ -111,7 +113,7 @@ export class NavigationService implements OnDestroy {
     const homeMenuItem = this.menuStateService.homeMenuItem;
 
     if (!homeMenuItem) {
-      throw new CriticalError('Configuration error', 'Unable to find home item');
+      throw new CriticalError('ERROR_CONFIGURATION', 'Unable to find home item');
     }
 
     return this.urlMapperService.mapNavItemToBrowserUrl(homeMenuItem.navItem);
@@ -296,7 +298,8 @@ export class NavigationService implements OnDestroy {
           this.menuStateService.deactivateMenuItem();
           this.currentNavItem = undefined;
 
-          return throwError(new NotFoundError(`Unknown url: ${t.url}`));
+          const publicDescription = this.translateService.instant('ERROR_UNKNOWN_URL', { url: t.url });
+          return throwError(new NotFoundError(publicDescription));
         }
 
         if (!t.url.startsWith(route.path)) {

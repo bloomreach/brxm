@@ -42,7 +42,7 @@ export const scheduleAppBootstrapping = (
           errorHandlingService.setError(error);
         } else {
           errorHandlingService.setInternalError(
-            'An error occurred during initialization',
+            'ERROR_INITIALIZATION',
             error ? error.toString() : undefined,
           );
         }

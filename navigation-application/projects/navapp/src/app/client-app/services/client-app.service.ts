@@ -202,7 +202,7 @@ export class ClientAppService {
 
     if (successfulConnections.length === 0) {
       throw new CriticalError(
-        'Unable to connect to the client applications',
+        'ERROR_UNABLE_TO_CONNECT_TO_CLIENT_APP',
         'All connections to the client applications are failed',
       );
     }
