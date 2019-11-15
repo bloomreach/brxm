@@ -1,10 +1,11 @@
-# Example client-side React App
+# brXM + React = ♥️
 
-Example client-side React app using the BloomReach Experience SDK for React. The app is created using [create-react-app](https://github.com/facebook/create-react-app).
+Example React SPA using the Bloomreach Experience [React SDK](https://www.npmjs.com/package/@bloomreach/react-sdk).
+The app is created using [create-react-app](https://github.com/facebook/create-react-app).
 
 ## Install and run
 
-__TODO__: Start the BRX example Docker image
+__TODO__: Start the brXM example Docker image
 
 Then, copy `.env.dist` file to `.env` and customize it to contain a correct [PUBLIC_URL](https://create-react-app.dev/docs/using-the-public-folder) path, for example:
 ```
@@ -28,7 +29,8 @@ yarn
 yarn run dev
 ```
 
-The CMS should now be accessible at <http://localhost:8080/cms>, and it should render the client-side React app in preview mode in the Channel Manager. The SPA itself can be accessed directly via <http://localhost:3000>.
+The CMS should now be accessible at <http://localhost:8080/cms>, and it should render the React app in preview mode in the Experience manager.
+The SPA itself can be accessed directly via <http://localhost:3000>.
 
 ## Available scripts
 
@@ -37,7 +39,7 @@ In the project directory, you can run:
 ### `yarn dev`
 
 Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Open <http://localhost:3000> to view it in the browser.
 
 The page will reload if you make edits.<br>
 You will also see any lint errors in the console.
@@ -62,4 +64,3 @@ first by running `yarn run build`.
 
 Launches the test runner in the interactive watch mode.<br>
 See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
