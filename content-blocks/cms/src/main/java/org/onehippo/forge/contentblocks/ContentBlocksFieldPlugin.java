@@ -182,9 +182,13 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
     @Override
     public void render(final PluginRequestTarget target) {
         if (isActive() && IEditor.Mode.EDIT == mode && target != null) {
-            final String selector = String.format(
-                    "$('#%s > .hippo-editor-compound-field > .hippo-editor-field > .hippo-editor-field-subfield')",
+            final String compoundSelector = String.format("#%s > .hippo-editor-compound-field > .hippo-editor-field",
                     getMarkupId());
+            final String selector = String.format(
+                    "$('%1$s > .hippo-editor-field-subfield').length " +
+                            "? $('%1$s > .hippo-editor-field-subfield') " +
+                            ": $('%1$s')",
+                    compoundSelector);
             final FieldPluginHelper fieldHelper = getFieldHelper();
             final IFieldDescriptor field = fieldHelper.getField();
             final IModel<IValidationResult> validationModel = fieldHelper.getValidationModel();
@@ -231,6 +235,8 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
         Session session = UserSession.get().getJcrSession();
         JcrUtils.copy(session, prototype.getNode().getPath(), destination);
+
+        validateModelObjects();
     }
 
     @Override
@@ -484,9 +490,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         final EditorPlugin editorPlugin = findParent(EditorPlugin.class);
         if (editorPlugin != null && editorPlugin.getForm() instanceof EditorForm) {
             final EditorForm editorForm = (EditorForm) editorPlugin.getForm();
-            if (editorForm.hasErrorMessage()) {
-                editorForm.onValidateModelObjects();
-            }
+            editorForm.onValidateModelObjects();
         }
     }
 
