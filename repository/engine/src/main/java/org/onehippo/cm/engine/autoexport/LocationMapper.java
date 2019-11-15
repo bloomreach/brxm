@@ -171,7 +171,7 @@ final class LocationMapper {
         ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));
         // /hippo:configuration/hippo:update/hippo:registry/script1.yaml
         nodePatterns = new String[] { "/hippo:configuration/hippo:update/hippo:registry/" + NAME };
-        propertyPatterns = new String[] { "/hippo:configuration/hippo:update/hippo:registry/" + NAME };
+        propertyPatterns = new String[] { "/hippo:configuration/hippo:update/hippo:registry/" + NAME + "/" + ANY};
         contextNode = "/hippo:configuration/hippo:update/hippo:registry/$1";
         file = "configuration/update/registry/$1.yaml";
         ENTRIES.add(new Entry(nodePatterns, propertyPatterns, contextNode, file));

@@ -249,6 +249,14 @@ public class LocationMapperTest {
         assertEquals("/hippo:configuration/hippo:queries/hippo:templates/simple", contextNode);
         contextNode = LocationMapper.contextNodeForPath("/hippo:configuration/hippo:queries/hippo:templates/simple/subnode/prop", true);
         assertEquals("/hippo:configuration/hippo:queries/hippo:templates/simple", contextNode);
+
+        // hippo:configuration/hippo:update/hippo:registry
+        file = LocationMapper.fileForPath("/hippo:configuration/hippo:update/hippo:registry/script1", true);
+        assertEquals("configuration/update/registry/script1.yaml", file);
+        contextNode = LocationMapper.contextNodeForPath("/hippo:configuration/hippo:update/hippo:registry/script1", true);
+        assertEquals("/hippo:configuration/hippo:update/hippo:registry/script1", contextNode);
+        contextNode = LocationMapper.contextNodeForPath("/hippo:configuration/hippo:update/hippo:registry/script1/prop", false);
+        assertEquals("/hippo:configuration/hippo:update/hippo:registry/script1", contextNode);
     }
 
     @Test
