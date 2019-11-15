@@ -26,10 +26,14 @@ import { Events, PageUpdateEvent } from '../events';
 import { MetaCollectionModel, Meta } from './meta';
 import { Reference, isReference } from './reference';
 
+/**
+ * @hidden
+ */
 type PageLinks = 'self' | 'site';
 
 /**
  * Meta-data of a page root component.
+ * @hidden
  */
 interface PageRootMeta extends ComponentMeta {
   pageTitle?: string;
@@ -37,6 +41,7 @@ interface PageRootMeta extends ComponentMeta {
 
 /**
  * Model of a page root component.
+ * @hidden
  */
 interface PageRootModel {
   _meta?: PageRootMeta;
@@ -44,6 +49,7 @@ interface PageRootModel {
 
 /**
  * Meta-data of a page.
+ * @hidden
  */
 interface PageMeta {
   preview?: boolean;
@@ -51,6 +57,7 @@ interface PageMeta {
 
 /**
  * Model of a page.
+ * @hidden
  */
 export interface PageModel {
   _links?: Record<PageLinks, Link>;

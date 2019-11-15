@@ -18,10 +18,14 @@ import { Factory } from './factory';
 import { Link } from './link';
 import { MetaCollectionModel, Meta } from './meta';
 
+/**
+ * @hidden
+ */
 type ContentLinks = 'site';
 
 /**
  * Model of a content item.
+ * @hidden
  */
 export interface ContentModel {
   _links?: Record<ContentLinks, Link>;

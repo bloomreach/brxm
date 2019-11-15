@@ -34,6 +34,7 @@ export type ContainerType = typeof TYPE_CONTAINER_BOX
 
 /**
  * Model of a container item.
+ * @hidden
  */
 export interface ContainerModel extends ComponentModel {
   type: typeof TYPE_COMPONENT_CONTAINER;

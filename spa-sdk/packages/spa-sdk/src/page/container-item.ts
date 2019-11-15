@@ -33,6 +33,7 @@ const PARAMETER_HIDDEN = 'com.onehippo.cms7.targeting.TargetingParameterUtil.hid
 
 /**
  * Parameters of a container item.
+ * @hidden
  */
 export interface ContainerItemParameters extends ComponentParameters {
   [PARAMETER_HIDDEN]?: 'on' | 'off';
@@ -40,6 +41,7 @@ export interface ContainerItemParameters extends ComponentParameters {
 
 /**
  * Meta-data of a container item.
+ * @hidden
  */
 export interface ContainerItemMeta extends ComponentMeta {
   params?: ContainerItemParameters;
@@ -48,6 +50,7 @@ export interface ContainerItemMeta extends ComponentMeta {
 
 /**
  * Model of a container item.
+ * @hidden
  */
 export interface ContainerItemModel extends ComponentModel {
   _meta?: ContainerItemMeta;

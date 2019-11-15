@@ -15,7 +15,7 @@
  */
 
 import { Typed } from 'emittery';
-import { Cms, Window } from './cms';
+import { Cms } from './cms';
 import { Factory, PageModel, Page } from './page';
 import { Events, CmsUpdateEvent } from './events';
 import { HttpClient, HttpRequest } from './http';
