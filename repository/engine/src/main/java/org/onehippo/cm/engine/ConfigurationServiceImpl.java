@@ -1033,6 +1033,13 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         }
     }
 
+    /**
+     * Bootstrap webfile bundles
+     *
+     * @param bootstrapModel The configuration model to load webfilebundles from
+     * @param siteName The site for which bundles are to be bootstrapped, or null to bootstrap
+     *                 the bundles of all sites in this bootstrapModel
+     */
     private void applyWebfiles(final ConfigurationModelImpl bootstrapModel, final String siteName) {
         final List<WebFileBundleDefinitionImpl> webFileBundleDefs =
                 (siteName != null) ?
