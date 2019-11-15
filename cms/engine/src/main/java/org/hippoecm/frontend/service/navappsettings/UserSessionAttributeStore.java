@@ -18,6 +18,7 @@ package org.hippoecm.frontend.service.navappsettings;
 import java.io.Serializable;
 
 import org.apache.wicket.Session;
+import org.hippoecm.frontend.model.SerializableSupplier;
 import org.hippoecm.frontend.session.UserSession;
 
 class UserSessionAttributeStore implements SessionAttributeStore, Serializable {

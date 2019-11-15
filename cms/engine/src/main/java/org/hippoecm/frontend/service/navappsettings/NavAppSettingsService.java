@@ -27,6 +27,7 @@ import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.util.string.StringValue;
 import org.hippoecm.frontend.filter.NavAppRedirectFilter;
+import org.hippoecm.frontend.model.SerializableSupplier;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -60,7 +61,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     static final String NAVIGATIONITEMS_ENDPOINT = "/ws/navigationitems";
     private static final Logger log = LoggerFactory.getLogger(NavAppSettingsService.class);
     // To make unit testing easier (needs to be serializable )
-    private final  SerializableSupplier<PluginUserSession> pluginUserSessionSupplier;
+    private final SerializableSupplier<PluginUserSession> pluginUserSessionSupplier;
     private final SerializableSupplier<SessionAttributeStore> sessionAttributeStoreSupplier;
 
     private final transient NavAppResourceService navAppResourceService;
