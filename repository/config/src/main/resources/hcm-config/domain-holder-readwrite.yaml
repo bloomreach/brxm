@@ -18,5 +18,14 @@ definitions:
           hipposys:value: draft
       /readwrite:
         jcr:primaryType: hipposys:authrole
-        hipposys:groups: [everybody]
         hipposys:role: readwrite
+        hipposys:userrole:
+          .meta:category: system
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: [everybody]
+        hipposys:users:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []

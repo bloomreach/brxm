@@ -50,10 +50,8 @@ definitions:
         .meta:residual-child-node-category: system
       /hippo:roles:
         jcr:primaryType: hipposys:rolefolder
-        .meta:residual-child-node-category: system
       /hippo:userroles:
         jcr:primaryType: hipposys:userrolefolder
-        .meta:residual-child-node-category: system
       /hippo:frontend:
         jcr:primaryType: hipposys:applicationfolder
       /hippo:modules:

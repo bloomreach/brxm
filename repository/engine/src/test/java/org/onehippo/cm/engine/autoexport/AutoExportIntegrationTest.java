@@ -40,8 +40,6 @@ import org.junit.rules.TemporaryFolder;
 import org.onehippo.cm.engine.Constants;
 import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
@@ -69,6 +67,31 @@ public class AutoExportIntegrationTest {
      * - perform multiple runs, see #reapply_content, the first run starts the repository with an empty database,
      *   stops the repository again, restarts the repository reusing the existing database
      */
+
+    @Test
+    public void override_category_system_properties() throws Exception {
+        // test ConfigurationCategoryUtils.isOverridingCategoryForSecurityProperty(...)
+        new Fixture("override_category_system_properties").test(session -> {
+            session.getNode("/hippo:configuration/hippo:users/test-user")
+                    .setProperty("hipposys:userroles", new String[]{"a"});
+            session.getNode("/hippo:configuration/hippo:groups/test-group")
+                    .setProperty("hipposys:userroles", new String[]{"b", "c"});
+            session.getNode("/hippo:configuration/hippo:domains/defaultread/test-authrole")
+                    .getProperty("hipposys:userrole")
+                    .remove();
+            session.getNode("/hippo:configuration/hippo:domains/defaultread/test-authrole")
+                    .setProperty("hipposys:groups", new String[]{});
+            session.getNode("/hippo:configuration/hippo:domains/defaultread/test-authrole")
+                    .setProperty("hipposys:users", new String[]{"test-user"});
+            session.getNode("/hippo:configuration/hippo:domains/defaultread")
+                    .addNode("test-authrole2", "hipposys:authrole")
+                    .setProperty("hipposys:role", "readonly");
+            session.getNode("/hippo:configuration/hippo:domains/defaultread/test-authrole2")
+                    .setProperty("hipposys:userrole", "a");
+            session.getNode("/hippo:configuration/hippo:domains/defaultread/test-authrole2")
+                    .setProperty("hipposys:groups", new String[]{"test-group"});
+        });
+    }
 
     @Test
     public void content_filters() throws Exception {

@@ -20,9 +20,29 @@ definitions:
           hipposys:value: /hippo:configuration/hippo:groups
       /readonly:
         jcr:primaryType: hipposys:authrole
-        hipposys:userrole: xm.security.viewer
         hipposys:role: readonly
+        hipposys:userrole:
+          .meta:category: system
+          value: xm.security.viewer
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+        hipposys:users:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
       /readwrite:
         jcr:primaryType: hipposys:authrole
-        hipposys:userrole: xm.security.user-admin
         hipposys:role: readwrite
+        hipposys:userrole:
+          .meta:category: system
+          value: xm.security.user-admin
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+        hipposys:users:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []

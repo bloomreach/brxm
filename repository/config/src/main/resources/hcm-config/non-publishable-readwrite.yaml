@@ -26,5 +26,15 @@ definitions:
           hipposys:value: hippostd:publishable
       /readwrite:
         jcr:primaryType: hipposys:authrole
-        hipposys:userrole: xm.content.author
         hipposys:role: readwrite
+        hipposys:userrole:
+          .meta:category: system
+          value: xm.content.author
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+        hipposys:users:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []

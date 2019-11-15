@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.MutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.cm.engine.ConfigurationCategoryUtils;
 import org.onehippo.cm.engine.ExportConfig;
 import org.onehippo.cm.model.ConfigurationModel;
 import org.onehippo.cm.model.tree.ConfigurationItemCategory;
@@ -47,6 +48,8 @@ import static org.onehippo.cm.engine.autoexport.AutoExportConstants.CONFIG_INJEC
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.CONFIG_MODULES_PROPERTY_NAME;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.CONFIG_OVERRIDE_RESIDUAL_CHILD_NODE_CATEGORY_PROPERTY_NAME;
 import static org.onehippo.cm.engine.autoexport.AutoExportServiceImpl.log;
+import static org.onehippo.cm.model.tree.ConfigurationItemCategory.CONFIG;
+import static org.onehippo.cm.model.tree.ConfigurationItemCategory.SYSTEM;
 
 public class AutoExportConfig extends ExportConfig {
 
@@ -106,7 +109,9 @@ public class AutoExportConfig extends ExportConfig {
      * Determine the category of a node or property at the specified absolute path. This method differs from
      * {@link ConfigurationModelUtils#getCategoryForItem(String, boolean, ConfigurationModel)} and the super method
      * {@link org.onehippo.cm.engine.ExportConfig#getCategoryForItem(String, boolean, ConfigurationModel)} that it
-     * also takes the configured overrides for .meta:residual-child-node-category into account.
+     * also takes the configured overrides for .meta:residual-child-node-category into account, or possible
+     * SYSTEM overriding CONFIG category for specific security configuration properties
+     * (see: {@link ConfigurationCategoryUtils#isOverridingCategoryForSecurityProperty(ConfigurationModel, String)}).
      *
      * @param absoluteItemPath absolute path a an item
      * @param propertyPath     indicates whether the item is a node or property
@@ -117,7 +122,14 @@ public class AutoExportConfig extends ExportConfig {
                                                         final boolean propertyPath,
                                                         final ConfigurationModel model) {
         final OverrideResidualMatchers matchers = getOverrideResidualMatchers();
-        return ConfigurationModelUtils.getCategoryForItem(absoluteItemPath, propertyPath, model, matchers::getMatch);
+        final ConfigurationItemCategory category =
+                ConfigurationModelUtils.getCategoryForItem(absoluteItemPath, propertyPath, model, matchers::getMatch);
+        if (propertyPath &&
+                SYSTEM == category &&
+                ConfigurationCategoryUtils.isOverridingCategoryForSecurityProperty(model, absoluteItemPath)) {
+            return CONFIG;
+        }
+        return category;
     }
 
     public String getConfigPath() {

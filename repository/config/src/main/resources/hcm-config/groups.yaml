@@ -7,10 +7,6 @@ definitions:
         hipposys:members: ['*']
         hipposys:securityprovider: internal
         hipposys:system: true
-        hipposys:userroles:
-          .meta:category: system
-          .meta:add-new-system-values: true
-          value: []
       /author:
         jcr:primaryType: hipposys:group
         hipposys:members:
@@ -26,6 +22,7 @@ definitions:
         jcr:primaryType: hipposys:group
         hipposys:members:
           .meta:category: system
+          .meta:add-new-system-values: true
           value: []
         hipposys:userroles:
           .meta:category: system
@@ -36,6 +33,7 @@ definitions:
         jcr:primaryType: hipposys:group
         hipposys:members:
           .meta:category: system
+          .meta:add-new-system-values: true
           value: []
         hipposys:userroles:
           .meta:category: system

@@ -12,9 +12,28 @@ definitions:
           hipposys:value: /jcr:system
       /readonly:
         jcr:primaryType: hipposys:authrole
-        hipposys:groups: [everybody]
         hipposys:role: readonly
+        hipposys:userrole:
+          .meta:category: system
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: [everybody]
+        hipposys:users:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
       /editor:
         jcr:primaryType: hipposys:authrole
-        hipposys:userrole: xm.content.editor
         hipposys:role: editor
+        hipposys:userrole:
+          .meta:category: system
+          value: xm.content.editor
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+        hipposys:users:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []

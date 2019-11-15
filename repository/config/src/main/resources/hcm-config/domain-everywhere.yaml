@@ -13,9 +13,29 @@ definitions:
             hipposys:value: '*'
         /admin:
           jcr:primaryType: hipposys:authrole
-          hipposys:userrole: xm.repository.admin
           hipposys:role: admin
+          hipposys:userrole:
+            .meta:category: system
+            value: xm.repository.admin
+          hipposys:groups:
+            .meta:category: system
+            .meta:add-new-system-values: true
+            value: []
+          hipposys:users:
+            .meta:category: system
+            .meta:add-new-system-values: true
+            value: []
         /readonly:
           jcr:primaryType: hipposys:authrole
-          hipposys:userrole: xm.repository.reader
           hipposys:role: readonly
+          hipposys:userrole:
+            .meta:category: system
+            value: xm.repository.reader
+          hipposys:groups:
+            .meta:category: system
+            .meta:add-new-system-values: true
+            value: []
+          hipposys:users:
+            .meta:category: system
+            .meta:add-new-system-values: true
+            value: []

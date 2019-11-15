@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,6 +31,7 @@ import javax.jcr.nodetype.NodeType;
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.PropertyIterable;
+import org.onehippo.cm.engine.ConfigurationCategoryUtils;
 import org.onehippo.cm.engine.JcrContentExporter;
 import org.onehippo.cm.engine.ValueProcessor;
 import org.onehippo.cm.model.Group;
@@ -251,6 +252,19 @@ public class AutoExportConfigExporter extends JcrContentExporter {
         definitionNode.sortProperties();
     }
 
+    @Override
+    protected DefinitionPropertyImpl exportProperty(final Property property, final DefinitionNodeImpl definitionNode)
+            throws RepositoryException {
+        final DefinitionPropertyImpl defProperty = super.exportProperty(property, definitionNode);
+        if (ConfigurationCategoryUtils.isOverridingCategoryForSecurityProperty(property)) {
+            defProperty.setCategory(SYSTEM);
+            if (property.isMultiple()) {
+                defProperty.setAddNewSystemValues(true);
+            }
+        }
+        return defProperty;
+    }
+
     protected DefinitionNodeImpl exportPropertiesDelta(final Node jcrNode,
                                                        final ConfigurationNodeImpl configNode,
                                                        final ConfigSourceImpl configSource,
@@ -269,8 +283,9 @@ public class AutoExportConfigExporter extends JcrContentExporter {
             }
 
             final String propName = jcrProperty.getName();
-            // skip SYSTEM properties
-            if (configNode.getChildPropertyCategory(propName) != ConfigurationItemCategory.CONFIG) {
+            // skip SYSTEM properties, except in case of overriding category for security config properties
+            if (configNode.getChildPropertyCategory(propName) != ConfigurationItemCategory.CONFIG &&
+                    !ConfigurationCategoryUtils.isOverridingCategoryForSecurityProperty(jcrProperty)) {
                 continue;
             }
 
