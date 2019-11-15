@@ -9,8 +9,18 @@ definitions:
           jcr:primaryType: hipposys:domain
           /readonly:
             jcr:primaryType: hipposys:authrole
-            hipposys:userrole: xm.webfiles.reader
             hipposys:role: readonly
+            hipposys:userrole:
+              .meta:category: system
+              value: xm.webfiles.reader
+            hipposys:groups:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
+            hipposys:users:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
           /webfiles:
             jcr:primaryType: hipposys:domainrule
             /webfiles-and-descendants:
