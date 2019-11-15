@@ -23,6 +23,7 @@
   <div *ngIf="last"
        (click)="onLastBreadcrumbClicked()"
        matRipple
+       [matRippleDisabled]="!suffix"
        class="entry last qa-breadcrumb qa-breadcrumb-level-{{i + 1}} qa-breadcrumb-last"
        [class.has-suffix]="suffix">
     <span>{{ breadcrumb }}</span>
