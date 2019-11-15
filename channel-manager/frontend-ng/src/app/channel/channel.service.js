@@ -20,6 +20,7 @@ class ChannelService {
   constructor(
     $log,
     $q,
+    $state,
     $rootScope,
     CatalogService,
     CmsService,
@@ -36,6 +37,7 @@ class ChannelService {
 
     this.$log = $log;
     this.$q = $q;
+    this.$state = $state;
     this.$rootScope = $rootScope;
     this.CatalogService = CatalogService;
     this.CmsService = CmsService;
@@ -53,7 +55,7 @@ class ChannelService {
 
     const parentOrigin = window.location.origin;
     const methods = {
-      navigate: () => this.navigate(),
+      navigate: (location, triggeredBy) => this.navigate(location, triggeredBy),
       beforeNavigation: () => this._beforeNavigation(),
     };
     this.parentApiPromise = connectToParent({ parentOrigin, methods });
@@ -350,9 +352,13 @@ class ChannelService {
     this.isToolbarDisplayed = state;
   }
 
-  navigate() {
-    if (this.channel) {
-      this.reload().then(() => this.updateNavLocation());
+  navigate(location) {
+    if (location.path === '') {
+      this.$state.go('hippo-cm')
+        .then(() => {
+          this.clearChannel();
+          this.CmsService.publish('close-channel');
+        });
     } else {
       this.updateNavLocation();
     }
