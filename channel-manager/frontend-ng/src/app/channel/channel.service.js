@@ -352,15 +352,14 @@ class ChannelService {
     this.isToolbarDisplayed = state;
   }
 
-  navigate (location, triggeredBy) {
+  navigate(location) {
     if (location.path === '') {
       this.$state.go('hippo-cm')
         .then(() => {
           this.clearChannel();
           this.CmsService.publish('close-channel');
         });
-    }
-    else {
+    } else {
       this.updateNavLocation();
     }
   }
