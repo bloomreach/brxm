@@ -36,5 +36,15 @@ definitions:
           hipposys:value: /hippo:configuration/hippo:workflows
       /readonly:
         jcr:primaryType: hipposys:authrole
-        hipposys:userrole: xm.frontend-config.reader
         hipposys:role: readonly
+        hipposys:userrole:
+          .meta:category: system
+          value: xm.frontend-config.reader
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+        hipposys:users:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
