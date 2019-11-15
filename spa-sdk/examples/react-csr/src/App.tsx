@@ -49,7 +49,7 @@ export default function App(props: RouteComponentProps) {
             <BrPageContext.Consumer>
               { page => (
                 <Link to={page!.getUrl('/')} className="navbar-brand">
-                  { page!.getTitle() || 'Client-Side React Demo'}
+                  { page!.getTitle() || 'brXM + React = ♥️'}
                 </Link>
               ) }
             </BrPageContext.Consumer>
