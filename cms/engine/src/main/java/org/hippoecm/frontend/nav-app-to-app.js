@@ -146,22 +146,7 @@
             return navigateIframe(iframe, pathElements.join('/'), triggeredBy);
 
           case 'experience-manager':
-            if (triggeredBy !== 'Menu') {
-              const rootPanel = Ext.getCmp('rootPanel');
-
-              if (!rootPanel) {
-                return Promise.reject(new Error('rootPanel is not found'));
-              }
-
-              const channelId = pathElements.shift();
-              if (channelId) {
-                rootPanel.selectCard(1);
-              } else {
-                rootPanel.selectCard(0);
-              }
-            }
-
-            return Promise.resolve();
+            return navigateIframe(iframe, pathElements.join('/'), triggeredBy);
 
           case 'content':
             if (pathElements.length === 0) {
