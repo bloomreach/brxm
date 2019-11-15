@@ -232,7 +232,7 @@ public class SourceSerializer extends AbstractBaseSerializer {
                         new ScalarNode(Tag.BOOL, "true", null, null, DumperOptions.ScalarStyle.PLAIN));
                 valueMapTuples.add(addNewSystemValuesNode);
             }
-            if (property.isEmptySystemProperty()) {
+            if (property.isEmptySystemProperty() && !property.isAddNewSystemValues()) {
                 // this is a .meta:category system property with no specified value -- don't output anything else here
             } else {
                 // otherwise, we need to process operation, type, and value(s)
