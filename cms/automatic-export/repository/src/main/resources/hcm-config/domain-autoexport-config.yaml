@@ -12,9 +12,29 @@ definitions:
           hipposys:value: /hippo:configuration/hippo:modules/autoexport/hippo:moduleconfig
       /modify-console-user:
         jcr:primaryType: hipposys:authrole
-        hipposys:userrole: xm.console.user
         hipposys:role: modify
+        hipposys:userrole:
+          .meta:category: system
+          value: xm.console.user
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+        hipposys:users:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
       /modify-cms-user:
         jcr:primaryType: hipposys:authrole
-        hipposys:userrole: xm.cms.user
         hipposys:role: modify
+        hipposys:userrole:
+          .meta:category: system
+          value: xm.cms.user
+        hipposys:groups:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
+        hipposys:users:
+          .meta:category: system
+          .meta:add-new-system-values: true
+          value: []
