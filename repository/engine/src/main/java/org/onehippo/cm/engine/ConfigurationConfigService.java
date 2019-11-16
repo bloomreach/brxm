@@ -455,7 +455,7 @@ public class ConfigurationConfigService {
         } else {
             computeAndWritePrimaryTypeDelta(baselineNode, updateNode, targetNode, forceApply);
             computeAndWriteMixinTypesDelta(baselineNode, updateNode, targetNode, forceApply);
-            computeAndWritePropertiesDelta(baselineNode, updateNode, targetNode, isNew, forceApply, unprocessedReferences);
+            computeAndWritePropertiesDelta(baselineNode, updateNode, targetNode, forceApply, unprocessedReferences);
         }
 
         computeAndWriteChildNodesDelta(baselineNode, updateNode, targetNode, forceApply, unprocessedReferences);
@@ -576,10 +576,34 @@ public class ConfigurationConfigService {
         }
     }
 
+    private boolean checkApplyProperty(final ConfigurationProperty updateProperty,
+                                       final ConfigurationItemCategory category,
+                                       final ConfigurationProperty baselineProperty,
+                                       final boolean jcrPropertyExists,
+                                       final boolean forceApply)
+            throws IOException {
+        if (forceApply || baselineProperty == null || !propertyIsIdentical(updateProperty, baselineProperty)) {
+            // when forceApply OR for a new configuration property OR for a changed configuration property
+            if (ConfigurationItemCategory.CONFIG == category) {
+                // apply the property when category CONFIG
+                return true;
+            } else {
+                // or for category SYSTEM properties
+                if (!jcrPropertyExists) {
+                    // when the property doesn't exist yet in the repository
+                    return true;
+                } else {
+                    // or for multi-value properties with .meta:add-new-system-values: true
+                    return updateProperty.isMultiple() && updateProperty.isAddNewSystemValues();
+                }
+            }
+        }
+        return false;
+    }
+
     private void computeAndWritePropertiesDelta(final ConfigurationNode baselineNode,
                                                 final ConfigurationNode updateNode,
                                                 final Node targetNode,
-                                                final boolean isNew,
                                                 final boolean forceApply,
                                                 final List<UnprocessedReference> unprocessedReferences)
             throws RepositoryException, IOException {
@@ -593,18 +617,11 @@ public class ConfigurationConfigService {
                 continue; // nor need to look at immutable jcr:uuid
             }
 
-            // skip initial-value system property, if this node is not new (and forceApply is false)
-            // todo: should this perhaps only apply initial value on forceApply if property is missing?
             final ConfigurationItemCategory category = updateNode.getChildPropertyCategory(propertyName);
-            if (category == ConfigurationItemCategory.SYSTEM && !isNew) {
-                if (!updateProperty.isMultiple() || !updateProperty.isAddNewSystemValues()) {
-                    continue;
-                }
-            }
-
             final ConfigurationProperty baselineProperty = baselineNode.getProperty(propertyName);
+            final boolean jcrPropertyExists = targetNode.hasProperty(updateProperty.getName());
 
-            if (forceApply || baselineProperty == null || !propertyIsIdentical(updateProperty, baselineProperty)) {
+            if (checkApplyProperty(updateProperty, category, baselineProperty, jcrPropertyExists, forceApply)) {
                 if (isReferenceTypeProperty(updateProperty)) {
                     unprocessedReferences.add(new UnprocessedReference(updateProperty, baselineProperty, targetNode));
                 } else {

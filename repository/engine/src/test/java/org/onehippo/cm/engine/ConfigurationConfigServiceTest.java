@@ -599,7 +599,7 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
                 + "        value: [new1, new2]\n"
                 + "";
 
-        applyDefinitions(definition);
+        ConfigurationModel baselineModel = applyDefinitions(definition);
 
         expectNode("/newNode", "[]", "[jcr:primaryType, multiple, single]");
         expectProp("/newNode/single", PropertyType.STRING, "new");
@@ -614,8 +614,8 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
         expectProp("/newNode/single", PropertyType.STRING, "updated");
         expectProp("/newNode/multiple", PropertyType.STRING, "[updated1, updated2]");
 
-        // Modified system properties not to be overwritten, not even in forceApply mode
-        applyDefinitions(definition, true);
+        // Existing system properties not to be overwritten, not even in forceApply mode
+        baselineModel = applyDefinitions(definition, baselineModel, true);
 
         expectNode("/newNode", "[]", "[jcr:primaryType, multiple, single]");
         expectProp("/newNode/single", PropertyType.STRING, "updated");
@@ -625,10 +625,18 @@ public class ConfigurationConfigServiceTest extends BaseConfigurationConfigServi
         newNode.getProperty("multiple").remove();
         session.save();
 
-        // nor when the properties don't exist (anymore) but the node does
-        applyDefinitions(definition,true);
+        expectNode("/newNode", "[]", "[jcr:primaryType]");
+
+        // nor when the properties don't exist (anymore) in jcr but do exist in the baseline model (without forceApply)
+        applyDefinitions(definition, baselineModel, false);
 
         expectNode("/newNode", "[]", "[jcr:primaryType]");
+
+        // but forceApply will create them again
+        applyDefinitions(definition, baselineModel, true);
+
+        expectNode("/newNode", "[]", "[jcr:primaryType, multiple, single]");
+        expectProp("/newNode/single", PropertyType.STRING, "new");
 
         newNode.remove();
         session.save();
