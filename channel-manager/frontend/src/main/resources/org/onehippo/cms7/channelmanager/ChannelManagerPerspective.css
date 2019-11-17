@@ -368,10 +368,12 @@
 }
 
 .channel-manager .channel-group-handle {
+  cursor: pointer;
+  font-size: 12px;
   height: 16px;
+  line-height: 16px;
   margin: 0;
   padding: 16px 0 16px 64px;
-  cursor: pointer;
 }
 
 .channel-manager .channel-group-handle.expanded {
