@@ -31,7 +31,6 @@
   <inceptionYear>2016</inceptionYear>
 
   <properties>
-    <bloomreach-navigation-application.version>1.0.1-2</bloomreach-navigation-application.version>
     <maven.plugin.flatten.version>1.0.1</maven.plugin.flatten.version>
     <locales>fr,nl,de,zh,es</locales>
     <locale />
@@ -102,7 +101,6 @@
     <module>selections</module>
     <module>seo-support</module>
     <module>taxonomy</module>
-    <module>navigation-application</module>
   </modules>
 
   <build>

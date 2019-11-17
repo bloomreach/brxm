@@ -1,8 +1,18 @@
 {
   "bundleType" : "ANGULAR",
   "keyData" : {
+    "MENU_ITEM_XM_CONTENT_REPORTS" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
     "MENU_CONTAINER_INTERNAL_ADMIN" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -12,7 +22,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_ASSISTED_OVERVIEW" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -22,17 +32,7 @@
       }
     },
     "MENU_ITEM_SETUP_ALGORITHM_SETTINGS_GLOBAL_RANKING_RULES" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "MENU_ITEM_HIPPO_PERSPECTIVE_REPORTSPERSPECTIVE" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -42,7 +42,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_SEO_ANALYTICS_DEVICE_TRAFFIC_TABLET" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -52,7 +52,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_CATEGORY_ANALYTICS_TOP_CATEGORIES" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -62,7 +62,7 @@
       }
     },
     "MENU_CONTAINER_DEVICE_TRAFFIC" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -72,7 +72,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_ADMIN_SITE_CONFIGURATION" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -82,7 +82,7 @@
       }
     },
     "MENU_ITEM_SITE_SEARCH_AB_TESTING" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -92,7 +92,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_SEO_ANALYTICS_INCREMENTAL" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -102,7 +102,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_REPORTING_SITE_SEARCH_DEBUGGING_LIBRARY" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -112,7 +112,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_TOP_PRODUCTS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -122,7 +122,7 @@
       }
     },
     "MENU_ITEM_CATEGORIES_CATEGORY_RANKING" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -132,7 +132,7 @@
       }
     },
     "MENU_ITEM_SITE_SEARCH_REDIRECTS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -142,7 +142,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_COLLECTIONS_CATEGORY_COLLECTIONS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -152,7 +152,7 @@
       }
     },
     "MENU_CONTAINER_REPORTING" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -162,7 +162,17 @@
       }
     },
     "HELP_LINK_SUPPORT_PORTAL" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "ERROR_CONFIGURATION" : {
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -172,7 +182,17 @@
       }
     },
     "MENU_ITEM_INSIGHTS_PATHWAY_ANALYTICS_MORE_LIKE_THIS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "MENU_ITEM_XM_EXPERIENCE_MANAGER" : {
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -182,7 +202,7 @@
       }
     },
     "MENU_CONTAINER_AUDIENCES" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -192,7 +212,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_SEO_ANALYTICS_DEVICE_TRAFFIC_DESKTOP" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -202,7 +222,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_RSRP_WIDGET_ENGAGEMENT" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -212,7 +232,7 @@
       }
     },
     "HELP_LINK_XM_DOCUMENTATION" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -222,7 +242,7 @@
       }
     },
     "MENU_CONTAINER_ORGANIC_TRENDS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -232,7 +252,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_OPPORTUNITIES_IMPROVE_CATEGORY_NAVIGATION" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -242,7 +262,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_SEARCH_EXPERIMENT" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -252,7 +272,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_SEO_ANALYTICS_TARGETED_PAGES_TOP_PERFORMING_PAGES" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -262,7 +282,7 @@
       }
     },
     "MENU_ITEM_SITE_SEARCH_AUTOSUGGEST_BLACKLIST" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -272,7 +292,7 @@
       }
     },
     "MENU_CONTAINER_INTERNAL_REPORTS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -282,17 +302,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_TRENDS_CATEGORY_PAGE_TRAFFIC" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "MENU_ITEM_HIPPO_PERSPECTIVE_CHANNELMANAGERPERSPECTIVE" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -302,7 +312,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_REPORTING_CATEGORY_PAGE_DIAGNOSTICS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -312,7 +322,7 @@
       }
     },
     "MENU_ITEM_AUDIENCES_MERCHANDISING_AUDIENCES" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -321,8 +331,8 @@
         "es" : "UNRESOLVED"
       }
     },
-    "MENU_ITEM_HIPPO_PERSPECTIVE_SEARCHPERSPECTIVE" : {
-      "status" : "UPDATED",
+    "ERROR_SOMETHING_WENT_WRONG" : {
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -332,7 +342,7 @@
       }
     },
     "MENU_CONTAINER_SNAP" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -342,7 +352,7 @@
       }
     },
     "MENU_CONTAINER_EXTENSIONS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -352,7 +362,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_REPORTING_ACCOUNT_API_USAGE" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -362,7 +372,7 @@
       }
     },
     "MENU_CONTAINER_TRAFFIC_ANALYSIS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -372,17 +382,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_MULTI_ACCOUNT_CHART" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "MENU_ITEM_HIPPO_PERSPECTIVE_PROJECTSPERSPECTIVE" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -392,7 +392,7 @@
       }
     },
     "ERROR_PAGE_DEFAULT_ERROR" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -402,17 +402,7 @@
       }
     },
     "MENU_CONTAINER_DEVSTUDIO" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "MENU_ITEM_HIPPO_PERSPECTIVE_DASHBOARDPERSPECTIVE" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -422,7 +412,17 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_ADMIN_DEBUG_TOOLS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "ERROR_NOT_FOUND" : {
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -432,7 +432,7 @@
       }
     },
     "MENU_ITEM_SETUP_DEVSTUDIO_ACCOUNT_INFORMATION" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -441,8 +441,8 @@
         "es" : "UNRESOLVED"
       }
     },
-    "MENU_ITEM_HIPPO_PERSPECTIVE_BROWSERPERSPECTIVE" : {
-      "status" : "UPDATED",
+    "MENU_ITEM_XM_FORM_DATA" : {
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -452,7 +452,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_SEO_ANALYTICS_GENERATED_PAGES_TOP_PERFORMING_PAGES" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -462,7 +462,17 @@
       }
     },
     "MENU_ITEM_INSIGHTS_OPPORTUNITIES_IMPROVE_SITE_SEARCH" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "MENU_CONTAINER_USER_ACCOUNT" : {
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -472,17 +482,7 @@
       }
     },
     "MENU_CONTAINER_CATEGORIES" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "MENU_ITEM_HIPPO_PERSPECTIVE_EXPERIENCEOPTIMIZERPERSPECTIVE" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -492,7 +492,7 @@
       }
     },
     "MENU_ITEM_SEO" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -502,7 +502,7 @@
       }
     },
     "MENU_CONTAINER_OVERVIEW" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -512,7 +512,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_SEO_ANALYTICS_TARGETED_PAGES_OVERVIEW" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -522,7 +522,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_DEBUG" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -532,7 +532,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_REPORTING_PAGE_DASHBOARD" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -542,7 +542,7 @@
       }
     },
     "MENU_CONTAINER_CAMPAIGNS_AND_ASSETS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -552,7 +552,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_COLLECTIONS_PAGE_COLLECTIONS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -562,7 +562,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_TRENDS_OVERALL_TRAFFIC" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -572,7 +572,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_PLAYBOOKS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -582,7 +582,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_ADMIN_API_DETAILS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -592,7 +592,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_ACCOUNT_OVERVIEW" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -602,7 +602,27 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_ALL_TRAFFIC" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "ERROR_UNABLE_TO_LOAD_CONFIGURATION" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "MENU_ITEM_XM_CONTENT_AUDIENCES" : {
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -612,7 +632,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_REPORTING_NEIMAN_CATEGORY_DASHBOARD" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -622,7 +642,7 @@
       }
     },
     "MENU_ITEM_SITE_SEARCH_SEARCH_RANKING" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -632,7 +652,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_COLLECTIONS_QUERY_COLLECTIONS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -642,7 +662,7 @@
       }
     },
     "MENU_CONTAINER_FEED" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -652,7 +672,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_OVERVIEW_ACCOUNT_OVERVIEW" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -662,7 +682,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_ADMIN_TRAFFIC_ANALYSIS_OVERVIEW" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -672,7 +692,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_PATHWAY_ANALYTICS_JUST_FOR_YOU" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -682,7 +702,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_COLLECTIONS_BRAND_COLLECTIONS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -692,7 +712,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_SEO_ANALYTICS_DEVICE_TRAFFIC_OVERALL" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -702,7 +722,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_NO_REVENUE_KEYWORDS_W_EXPERIMENT" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -712,7 +732,7 @@
       }
     },
     "MENU_CONTAINER_COLLECTIONS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -722,7 +742,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_REPORTING_SITE_SEARCH_DIAGNOSTICS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -732,7 +752,7 @@
       }
     },
     "MENU_CONTAINER_ORGANIC" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -742,7 +762,7 @@
       }
     },
     "HELP_LINK_SM_HELP" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -752,7 +772,7 @@
       }
     },
     "MENU_ITEM_SITE_SEARCH_SEARCH_RANKING_DIAGNOSTICS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -762,7 +782,17 @@
       }
     },
     "MENU_ITEM_PATHWAYS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "ERROR_UNABLE_TO_CONNECT_TO_CLIENT_APP" : {
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -772,7 +802,7 @@
       }
     },
     "MENU_ITEM_SETUP_USER_MANAGEMENT_MERCHANDISING_USER_INTERNAL_USER_MANAGEMENT" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -782,7 +812,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_TRENDS_PRODUCT_PAGE_TRAFFIC" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -792,7 +822,7 @@
       }
     },
     "MENU_CONTAINER_PATHWAY_ANALYTICS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -802,17 +832,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_PAGE_PERFORMANCE" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "MENU_ITEM_HIPPO_PERSPECTIVE_FORMDATAPERSPECTIVE" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -822,7 +842,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_LEGACY_DEBUG" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -832,7 +852,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_SITE_OPTIMIZATION_METRICS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -842,7 +862,7 @@
       }
     },
     "MENU_ITEM_SITE_SEARCH_PROFILE_SIMULATOR" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -852,17 +872,7 @@
       }
     },
     "MENU_ITEM_SETUP_USER_MANAGEMENT_MERCHANDISING_USER_USER_MANAGEMENT" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
-    "MENU_ITEM_HIPPO_PERSPECTIVE_ADMINPERSPECTIVE" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -872,7 +882,17 @@
       }
     },
     "MENU_ITEM_INSIGHTS_REPORTING_PRODUCT_DASHBOARD" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "MENU_ITEM_XM_HOME" : {
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -882,7 +902,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_SITE_SEARCH_ANALYTICS_OVERALL_PERFORMANCE" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -892,7 +912,7 @@
       }
     },
     "MENU_ITEM_SITE_SEARCH_CAMPAIGNS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -902,7 +922,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_OPPORTUNITIES_TOP_OPPORTUNITIES" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -912,7 +932,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_LAST_CLICK_CONVERSIONS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -922,7 +942,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_SITE_SEARCH_ANALYTICS_NO_REVENUE_KEYWORDS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -932,7 +952,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_ANY_CLICK_CONVERSIONS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -942,7 +962,7 @@
       }
     },
     "MENU_ITEM_CATEGORIES_ALL_CATEGORY_PAGES" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -952,7 +972,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_REPORTING_BRAND_DASHBOARD" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -962,7 +982,7 @@
       }
     },
     "LOGOUT" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -972,7 +992,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_TRENDS_OTHER_PAGE_TRAFFIC" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -982,7 +1002,7 @@
       }
     },
     "MENU_CONTAINER_CATEGORY_ANALYTICS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -992,7 +1012,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_TOP_KEYWORDS_W_EXPERIMENT" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1002,7 +1022,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_OVERVIEW_ACCOUNT_TRAFFIC_BREAKDOWN" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1012,7 +1032,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_URL_PARAM_TRACKING" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1022,7 +1042,17 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_BROWSE_SESSIONS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "MENU_ITEM_XM_CONTENT" : {
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1032,7 +1062,27 @@
       }
     },
     "MENU_ITEM_INSIGHTS_SEO_ANALYTICS_OVERALL_PERFORMANCE" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "ERROR_INITIALIZATION" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "MENU_ITEM_XM_DOCUMENT_SEARCH" : {
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1042,7 +1092,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_SEO_ANALYTICS_GENERATED_PAGES_OVERVIEW" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1052,7 +1102,7 @@
       }
     },
     "MENU_ITEM_SITE_SEARCH_SYNONYMS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1062,7 +1112,7 @@
       }
     },
     "MENU_ITEM_SETUP_DEVSTUDIO_DATA_CONNECT" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1072,7 +1122,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_SESSION_DETAILS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1082,7 +1132,7 @@
       }
     },
     "MENU_ITEM_SETUP_DEVSTUDIO_API_EXPLORER" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1092,7 +1142,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_SUGGEST_OVERVIEW" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1102,7 +1152,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_SEO_ANALYTICS_DEVICE_TRAFFIC_MOBILE" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1112,7 +1162,7 @@
       }
     },
     "MENU_ITEM_SETUP_DEVSTUDIO_PIXEL_MONITOR" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1122,7 +1172,7 @@
       }
     },
     "MENU_CONTAINER_SITE_SEARCH_ANALYTICS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1132,7 +1182,7 @@
       }
     },
     "MENU_CONTAINER_SEO_ANALYTICS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1142,7 +1192,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_ADMIN_PURGE_CACHE" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1152,7 +1202,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_CATEGORY_ANALYTICS_OVERALL_PERFORMANCE" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1162,7 +1212,7 @@
       }
     },
     "MENU_ITEM_SETUP_ALGORITHM_SETTINGS_GLOBAL_FACET_MANAGEMENT" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1172,7 +1222,17 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_TRENDS_HOMEPAGE_TRAFFIC" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "MENU_ITEM_XM_PROJECTS" : {
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1182,7 +1242,7 @@
       }
     },
     "MENU_CONTAINER_GENERATED_PAGES" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1192,7 +1252,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_ALL_CONVERSIONS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1202,7 +1262,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_UNCLAIMED_THEMATIC_TRAFFIC" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1212,7 +1272,7 @@
       }
     },
     "MENU_CONTAINER_INSIGHTS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1222,7 +1282,7 @@
       }
     },
     "MENU_ITEM_SITE_SEARCH_ASSETS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1232,7 +1292,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_OVERVIEW_SITEWIDE_OVERVIEW" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1242,7 +1302,7 @@
       }
     },
     "MENU_CONTAINER_SITE_SEARCH" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1252,7 +1312,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_COLLECTIONS_PRODUCT_COLLECTIONS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1262,7 +1322,7 @@
       }
     },
     "MENU_CONTAINER_HELP" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1272,7 +1332,7 @@
       }
     },
     "MENU_ITEM_SITE_SEARCH_SEARCH_FACETS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1282,7 +1342,7 @@
       }
     },
     "MENU_ITEM_SETUP_DEVSTUDIO_ATTRIBUTE_CONFIGURATION" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1292,7 +1352,7 @@
       }
     },
     "ERROR_PAGE_BUTTON_BACK_HOME" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1302,7 +1362,7 @@
       }
     },
     "MENU_ITEM_SETUP_DEVSTUDIO_FEED_STATUS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1312,7 +1372,17 @@
       }
     },
     "MENU_ITEM_INSIGHTS_SITE_SEARCH_ANALYTICS_TOP_KEYWORDS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "MENU_ITEM_XM_SYSTEM" : {
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1322,7 +1392,7 @@
       }
     },
     "MENU_CONTAINER_SETUP" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1332,7 +1402,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_OVERVIEW_SITE_SEARCH_KPIS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1342,7 +1412,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_ACTIVITIES" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1352,7 +1422,7 @@
       }
     },
     "MENU_ITEM_SETUP_DEVSTUDIO_FEED_CONFIGURATION" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1362,7 +1432,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_ADMIN_MERCHANT_CUSTOM_CONFIGS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1372,7 +1442,7 @@
       }
     },
     "MENU_CONTAINER_ALGORITHM_SETTINGS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1382,7 +1452,7 @@
       }
     },
     "MENU_CONTAINER_TARGETED_PAGES" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1392,7 +1462,7 @@
       }
     },
     "MENU_ITEM_CATEGORIES_CATEGORY_FACETS_RANKING" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1402,7 +1472,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_ORGANIC_TRAFFIC_SOURCES" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1412,7 +1482,7 @@
       }
     },
     "MENU_CONTAINER_OPPORTUNITIES" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1422,7 +1492,7 @@
       }
     },
     "MENU_ITEM_INSIGHTS_OVERVIEW_SITE_SEARCH_OVERVIEW" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1432,7 +1502,17 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_ADMIN_TRAFFIC_ANALYSIS_LAST_CLICK_OVERVIEW" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "ERROR_UNKNOWN_URL" : {
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1442,7 +1522,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_TOP_CATEGORIES_W_EXPERIMENT" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1452,7 +1532,7 @@
       }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_ASSISTED_CONVERSIONS" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -1462,7 +1542,7 @@
       }
     },
     "MENU_CONTAINER_LIBRARY" : {
-      "status" : "UPDATED",
+      "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
