@@ -610,6 +610,7 @@
 }
 
 #channel-grid-panel .x-grid3-hd-row td {
+  color: rgba(0, 0, 0, 0.6);
   font-size: 12px;
 }
 
@@ -628,6 +629,11 @@
 #channel-grid-panel .x-grid3-sort-icon {
   width: 16px;
   height: 16px;
+}
+
+#channel-grid-panel .x-grid3-hd-row td.sort-desc,
+#channel-grid-panel .x-grid3-hd-row td.sort-asc {
+  color: rgba(0, 0, 0, 0.87);
 }
 
 #channel-grid-panel .sort-desc .x-grid3-sort-icon {
