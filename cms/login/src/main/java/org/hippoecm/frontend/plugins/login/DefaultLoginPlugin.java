@@ -118,13 +118,17 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
 
         @Override
         protected void loginSuccess() {
+            setTimeZone();
+            super.loginSuccess();
+        }
+
+        protected void setTimeZone() {
             if (isTimeZoneValid(selectedTimeZone)) {
                 final TimeZone timeZone = TimeZone.getTimeZone(selectedTimeZone);
                 // Store selected timezone in session and cookie
                 UserSession.get().getClientInfo().getProperties().setTimeZone(timeZone);
                 setCookieValue(TIMEZONE_COOKIE, selectedTimeZone, TIMEZONE_COOKIE_MAX_AGE);
             }
-            super.loginSuccess();
         }
 
         private boolean isTimeZoneValid(final String timeZone) {
