@@ -1,12 +1,12 @@
 /*
- * Copyright 2010-2016 Hippo B.V. (http://www.onehippo.com)
- * 
+ * Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *   http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -233,10 +233,15 @@ public class RadioGroupPlugin extends AbstractChoicePlugin {
     private IModel<String> getSelectedLabelModel(String defaultLabel) {
         return getLabelModel(defaultLabel, getSelectedValue());
     }
-    
+
     private IModel<String> getLabelModel(final String defaultLabel, final String propertyValue) {
+        final String bundleName = "hippo:types." + getDocumentType();
+        final String key = getValueKey(propertyValue);
         final Locale locale = SelectionUtils.getLocale(SelectionUtils.getNode(getModel()));
-        return new ResourceBundleModel("hippo:types." + getDocumentType(), getValueKey(propertyValue), defaultLabel, locale);
+        return new ResourceBundleModel.Builder(bundleName, key)
+            .defaultValue(defaultLabel)
+            .locale(locale)
+            .build();
     }
 
     private String getDocumentType() {
@@ -260,7 +265,7 @@ public class RadioGroupPlugin extends AbstractChoicePlugin {
         }
         return "<unknown>";
     }
-    
+
     private String getSelectedValue() {
         JcrPropertyValueModel propertyValueModel = (JcrPropertyValueModel) getDefaultModel();
         try {
@@ -270,7 +275,7 @@ public class RadioGroupPlugin extends AbstractChoicePlugin {
         }
         return "<unknown>";
     }
-    
+
     private String getValueKey(final String value) {
         JcrPropertyValueModel propertyValueModel = (JcrPropertyValueModel) getDefaultModel();
         JcrPropertyModel propertyModel = propertyValueModel.getJcrPropertymodel();
