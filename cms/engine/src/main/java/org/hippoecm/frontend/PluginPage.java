@@ -370,7 +370,7 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
             final NavAppPanel navAppPanel = new NavAppPanel("root", navAppSettings);
             navAppPanel.setRenderBodyOnly(true);
             replace(navAppPanel);
-            replace(new EmptyPanel("dialog").setRenderBodyOnly(true));
+            replace(new EmptyPanel("dialog"));
         } else {
             root = service;
             root.bind(this, "root");
