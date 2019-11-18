@@ -100,7 +100,7 @@
     <pdfbox.version>2.0.16</pdfbox.version>
     <!-- commons-compress is pulled in via tika-parsers, but needs a version override as-of Tika 1.22 -->
     <commons-compress.version>1.19</commons-compress.version>
-    <quartz.version>2.2.3</quartz.version>
+    <quartz.version>2.3.2</quartz.version>
     <json-lib.version>2.4</json-lib.version>
     <easymock.version>3.4</easymock.version>
     <powermock.version>1.7.0</powermock.version>

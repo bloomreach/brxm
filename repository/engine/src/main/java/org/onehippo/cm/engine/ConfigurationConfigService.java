@@ -489,7 +489,14 @@ public class ConfigurationConfigService {
                         updatePrimaryTypeProperty.getOrigin());
                 log.info(msg);
             }
-            targetNode.setPrimaryType(updatePrimaryType);
+
+            try {
+                targetNode.setPrimaryType(updatePrimaryType);
+            } catch (Exception e) {
+                String msg = String.format("Failed to set primary type '%s' in path '%s' defined in %s: %s",
+                        updatePrimaryType, updateNode.getPath(), updateNode.getOrigin(), e.getMessage());
+                throw new ConfigurationRuntimeException(msg, e);
+            }
         }
     }
 
@@ -904,8 +911,8 @@ public class ConfigurationConfigService {
             }
         } catch (RepositoryException e) {
             String msg = String.format(
-                    "Failed to process property '%s' defined in %s: %s",
-                    updateProperty.getPath(), updateProperty.getOrigin(), e.getMessage());
+                    "Failed to process property '%s' in path '%s' defined in %s: %s",
+                    updateProperty.getPath(), jcrNode.getPath(), updateProperty.getOrigin(), e.getMessage());
             throw new ConfigurationRuntimeException(msg, e);
         }
     }
