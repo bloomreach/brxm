@@ -4,55 +4,69 @@ definitions:
       /xm.repository.admin:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:description: Allows all repository (jcr:all and hippo:admin) privileges through role admin
         hipposys:userroles: []
       /xm.system.admin:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:description: Allows administration and use of system functionality and configuration like Document Types, Update Editor, System info, etc.
         hipposys:userroles: [xm.repository.admin, xm.security.user-admin, xm.security.application-admin]
       /xm.security.viewer:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:description: Allows viewing repository security configuration (users, groups, security domains, roles, userroles)
         hipposys:userroles: []
       /xm.security.user-admin:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:description: Allows administration of users and groups; implies xm.security.viewer
         hipposys:userroles: [xm.security.viewer]
       /xm.security.application-admin:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:description: Allows administration of security domains, userroles and roles; implies xm.security.viewer
         hipposys:userroles: [xm.security.viewer]
       /xm.content.viewer:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:description: Allows viewing content through role readonly
         hipposys:userroles: []
       /xm.content.author:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:description: Allows authoring (create, edit, move, rename, copy, delete) of content through role author
         hipposys:userroles: [xm.content.viewer]
       /xm.content.editor:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:description: Allows (de)publishing of content through role editor; implies xm.content.author
         hipposys:userroles: [xm.content.author]
       /xm.content.admin:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:description: Allows unlocking content locked by another user through role admin; implies xm.content.editor
         hipposys:userroles: [xm.content.editor]
       /xm.repository.reader:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:description: Allows repository read access everywhere through role readonly
         hipposys:userroles: []
       /xm.default-user.author:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:description: Implies all standard userroles needed for a default author user or group
         hipposys:userroles: [xm.content.author]
       /xm.default-user.editor:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:description: Implies all standard userroles needed for a default editor user or group
         hipposys:userroles: [xm.content.editor]
       /xm.default-user.system-admin:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:description: Implies all standard userroles needed for a default system administrator user or group
         hipposys:userroles: [xm.system.admin, xm.content.admin]
       /xm.repository-browser.user:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:description: Required to login and use the repository servlet for querying and navigating through the repository content
