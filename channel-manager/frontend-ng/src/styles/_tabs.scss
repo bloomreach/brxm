@@ -19,12 +19,13 @@
       font-weight: 600;
       text-transform: initial;
 
-      &:hover {
+      &:hover,
+      &:focus,
+      &.md-focused {
         background: $bloomreach-blue-light;
       }
 
       &.md-active {
-        background: $bloomreach-blue-light;
         color: $bloomreach-blue-primary;
       }
 
