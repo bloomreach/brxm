@@ -27,7 +27,7 @@
   <groupId>org.onehippo.cms7.hst.components</groupId>
   <artifactId>hst-jaxrs</artifactId>
   <packaging>jar</packaging>
-  
+
   <dependencies>
 
     <dependency>
@@ -35,7 +35,7 @@
       <artifactId>hippo-repository-api</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
     <!-- JAX-RS API -->
     <dependency>
       <groupId>javax.ws.rs</groupId>
@@ -46,12 +46,12 @@
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>commons-beanutils</groupId>
       <artifactId>commons-beanutils</artifactId>
@@ -62,34 +62,34 @@
         </exclusion>
       </exclusions>
     </dependency>
-    
+
     <!-- Exclude commons-logging explicitly by a provided dependency. -->
-    <dependency> 
-      <groupId>commons-logging</groupId> 
-      <artifactId>commons-logging</artifactId> 
-      <scope>provided</scope> 
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <scope>provided</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-api</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-commons</artifactId>
       <version>${project.version}</version>
       <scope>provided</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-content-beans</artifactId>
       <version>${project.version}</version>
     </dependency>
-    
+
     <dependency>
       <groupId>org.onehippo.cms7.hst.components</groupId>
       <artifactId>hst-rewriter</artifactId>
@@ -175,7 +175,7 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.easymock</groupId>
       <artifactId>easymock</artifactId>
@@ -193,14 +193,14 @@
       <artifactId>spring-test</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-mock</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.onehippo.cms7.hst.components</groupId>
       <artifactId>hst-core</artifactId>
@@ -208,27 +208,22 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-    
-    <groupId>org.springframework</groupId>
+
+      <groupId>org.springframework</groupId>
       <artifactId>spring-context-support</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-aop</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.aspectj</groupId>
       <artifactId>aspectjweaver</artifactId>
       <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.jooq</groupId>
-      <artifactId>joor-java-8</artifactId>
     </dependency>
 
     <dependency>
@@ -237,6 +232,35 @@
     </dependency>
 
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>java8</id>
+      <activation>
+        <jdk>1.8</jdk>
+      </activation>
+      <dependencies>
+        <dependency>
+          <groupId>org.jooq</groupId>
+          <artifactId>joor-java-8</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+
+    <profile>
+      <id>java11</id>
+      <activation>
+        <jdk>11</jdk>
+      </activation>
+
+      <dependencies>
+        <dependency>
+          <groupId>org.jooq</groupId>
+          <artifactId>joor</artifactId>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
 
   <build>
     <plugins>
@@ -251,5 +275,5 @@
       </plugin>
     </plugins>
   </build>
-  
+
 </project>

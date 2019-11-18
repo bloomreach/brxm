@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -231,8 +231,8 @@
           <property name="propertyAddedEnabled" value="true"/>
           <property name="propertyChangedEnabled" value="true"/>
           <property name="propertyRemovedEnabled" value="true"/>
-          <!-- only nodes below '/hippo:configuration' in the repository triggers sessions to be logged out -->
-          <property name="absolutePath" value="/hippo:configuration"/>
+          <!-- because of federated domains we have to listen to all paths -->
+          <property name="absolutePath" value="/"/>
           <property name="deep" value="true"/>
           <property name="uuids">
             <null/>
@@ -247,6 +247,8 @@
               <value>hipposys:domainfolder</value>
               <value>hipposys:role</value>
               <value>hipposys:rolefolder</value>
+              <value>hipposys:userrole</value>
+              <value>hipposys:userrolefolder</value>
               <value>hipposys:group</value>
               <value>hipposys:groupfolder</value>
               <value>hipposys:externalgroup</value>

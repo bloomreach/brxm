@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2015 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2019 Hippo B.V. (http://www.onehippo.com)
   
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -77,6 +77,18 @@
     </dependency>
 
     <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-services-webfiles</artifactId>
+      <version>${hippo.services.webfiles.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon.toolkit-cnd</groupId>
+      <artifactId>hst-addon-cnd</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
@@ -93,13 +105,6 @@
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-testutils</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.toolkit-resources.addon.toolkit-cnd</groupId>
-      <artifactId>hst-addon-cnd</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
     </dependency>
 
     <dependency>

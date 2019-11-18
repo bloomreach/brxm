@@ -3,3 +3,35 @@ definitions:
     /formdata:
       .meta:residual-child-node-category: system
       jcr:primaryType: hst:formdatacontainer
+      /hst:domains:
+        jcr:primaryType: hipposys:federateddomainfolder
+        /formdata:
+          jcr:primaryType: hipposys:domain
+          /readwrite:
+            jcr:primaryType: hipposys:authrole
+            hipposys:role: readwrite
+            hipposys:userrole:
+              .meta:category: system
+              value: xm.form.writer
+            hipposys:groups:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
+            hipposys:users:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
+          /formdata:
+            jcr:primaryType: hipposys:domainrule
+            /formdata-and-descendants:
+              jcr:primaryType: hipposys:facetrule
+              hipposys:equals: true
+              hipposys:facet: jcr:path
+              hipposys:type: Reference
+              hipposys:value: /
+            /exclude-hst-domains-and-descendants:
+              jcr:primaryType: hipposys:facetrule
+              hipposys:equals: false
+              hipposys:facet: jcr:path
+              hipposys:type: Reference
+              hipposys:value: /hst:domains

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -61,7 +61,7 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
     }
 
     @Test
-    public void testHstNodeLoadingCache() {
+    public void testHstNodeLoadingCache() throws RepositoryException {
 
         assertNotNull(hstNodeLoadingCache.getNode("/hst:hst"));
         assertNotNull(hstNodeLoadingCache.getNode("/hst:hst/hst:hosts"));
@@ -84,6 +84,16 @@ public class HstNodeLoadingCacheIT extends AbstractHstLoadingCacheTestCase {
         assertNotNull(hstNodeLoadingCache.getNode("/hst:hst/hst:sites"));
         assertNotNull(hstNodeLoadingCache.getNode("/hst:hst/hst:sites/unittestproject"));
         assertNotNull(hstNodeLoadingCache.getNode("/hst:hst/hst:sites/global"));
+
+
+        final Session session = createSession();
+        try {
+            assertTrue(session.nodeExists("/hst:hst/hst:domains"));
+            assertNull("Although node '/hst:hst/hst:domains' exists, it should never be loaded as " +
+                    "HstNode objects since not part of the HST Model", hstNodeLoadingCache.getNode("/hst:hst/hst:domains"));
+        } finally {
+            session.logout();
+        }
     }
 
     @Test

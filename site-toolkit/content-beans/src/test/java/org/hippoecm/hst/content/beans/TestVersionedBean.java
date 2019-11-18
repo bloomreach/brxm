@@ -55,6 +55,7 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
 import org.onehippo.cms7.services.hst.Channel;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
+import org.onehippo.repository.security.JvmCredentials;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.easymock.EasyMock.createNiceMock;
@@ -107,7 +108,7 @@ public class TestVersionedBean extends AbstractBeanTestCase {
 
         objectConverter = createObjectConverter();
 
-        previewUser = session.getRepository().login(new SimpleCredentials("previewuser", "previewuserpass".toCharArray()));
+        previewUser = session.getRepository().login(JvmCredentials.getCredentials("previewuser"));
 
         obm = new ObjectBeanManagerImpl(previewUser, objectConverter);
 

@@ -61,6 +61,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.onehippo.repository.security.JvmCredentials;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -140,7 +141,7 @@ public class AbstractPageComposerTest extends AbstractComponentManagerTest {
 
     protected Session createLiveUserSession() throws RepositoryException {
         Repository repository = HstServices.getComponentManager().getComponent(Repository.class.getName() + ".delegating");
-        return repository.login(new SimpleCredentials("liveuser", "liveuserpass".toCharArray()));
+        return repository.login(JvmCredentials.getCredentials("liveuser"));
     }
 
     protected HstRequestContext getRequestContextWithResolvedSiteMapItemAndContainerURL(final String hostAndPort,

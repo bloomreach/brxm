@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,7 +36,7 @@ import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuConfiguration;
-import org.hippoecm.repository.api.HippoWorkspace;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.hst.Channel;
 import org.onehippo.repository.security.SecurityService;
 import org.onehippo.repository.security.User;
@@ -89,7 +89,7 @@ public class ChannelLazyLoadingChangedBySet implements Set<String> {
         if (hstNodeLoadingCache != null && delegatee.size() > 0) {
             // filter all system users out because they are not manageable through the changed by set of a channel
             try (HstNodeLoadingCache.LazyCloseableSession lazyCloseableSession = hstNodeLoadingCache.createLazyCloseableSession()) {
-                final SecurityService securityService = ((HippoWorkspace) lazyCloseableSession.getSession().getWorkspace()).getSecurityService();
+                final SecurityService securityService = HippoServiceRegistry.getService(SecurityService.class);
 
                 final Iterator<String> iterator = delegatee.iterator();
                 while (iterator.hasNext()) {

@@ -108,39 +108,13 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
     Map<String, Object> getProperties();
 
     /**
-     * Return types can be of type String, String[], Boolean, Boolean[], Long, Long[], Double, Double[] or Calendar, Calendar[]
-     * @param <T>
-     * @param name the name of the property
-     * @return The value of the property and <code>null</code> if it does not exist. The return type is either String, String[], Boolean, Boolean[], Long, Long[], Double, Double[] or Calendar, Calendar[]
-     * @deprecated Since 13.3.0. Use either {@link #getSingleProperty(String)} for single value fields
-     *   or {@link #getMultipleProperty(String)} for multiple value fields.
-     */
-    @Deprecated
-    <T> T getProperty(String name);
-    
-    /**
-     * If the property does not exist, return the <code>defaultValue</code>. If the property does exist, the same value as {@link #getProperty(String)} will be returned
-     * Return types can be of type String, String[], Boolean, Boolean[], Long, Long[], Double, Double[] or Calendar, Calendar[]
-     * @param <T>
-     * @param name the name of the property
-     * @return The value of the property and <code>defaultValue</code> if it does not exist. The return type is either String, String[], Boolean, Boolean[], Long, Long[], Double, Double[] or Calendar, Calendar[]
-     * @deprecated Since 13.3.0. Use either {@link #getSingleProperty(String, T)} for single value fields
-     *   or {@link #getMultipleProperty(String, T)} for multiple value fields.
-     * 
-     */
-    @Deprecated
-    <T> T getProperty(String name, T defaultValue);
-
-    /**
      * Returns the value of a document field which is marked as <code>single</code>.
      * If the value is an array, then returns the first element.
      * @param <T>
      * @param name the name of the property
      * @return The value of the property or <code>null</code> if it doesn't exist. Return types are String, Boolean, Long, Double or Calendar
      */
-    default <T> T getSingleProperty(String name) {
-        return getProperty(name);
-    }
+    <T> T getSingleProperty(String name);
 
     /**
      * Returns the value of a document field which is marked as <code>single</code>.
@@ -150,9 +124,7 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      * @return The value of the property and <code>defaultValue</code> if it doesn't exist. Allowed return types are String, Boolean, Long, Double or Calendar
      * 
      */
-    default <T> T getSingleProperty(String name, T defaultValue) {
-        return getProperty(name, defaultValue);
-    }
+    <T> T getSingleProperty(String name, T defaultValue);
 
     /**
      * Returns the value of a document field which is marked as <code>multiple</code>.
@@ -161,9 +133,7 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      * @param name the name of the property
      * @return The value of the property and <code>null</code> if it doesn't exist. Allowed return types are String[], Boolean[], Long[], Double[] or Calendar[]
      */
-    default <T> T[] getMultipleProperty(String name) {
-        return getProperty(name);
-    }
+    <T> T[] getMultipleProperty(String name);
 
     /**
      * Returns the value of a document field which is marked as <code>multiple</code>.
@@ -173,9 +143,7 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      * @return The value of the property and <code>defaultValue</code> if it doesn't exist. Allowed return types are String[], Boolean[], Long[], Double[] or Calendar[]
      * 
      */
-    default <T> T[] getMultipleProperty(String name, T[] defaultValue) {
-        return getProperty(name, defaultValue);
-    }
+    <T> T[] getMultipleProperty(String name, T[] defaultValue);
 
     /**
      * @return Map of all properties, where the values can be of type String, String[], Boolean, Boolean[], Long, Long[], Double, Double[] or Calendar, Calendar[]

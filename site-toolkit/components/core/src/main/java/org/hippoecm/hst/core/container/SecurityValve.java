@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,7 +37,6 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.security.AuthenticationProvider;
 import org.hippoecm.hst.security.HstSubject;
 import org.hippoecm.hst.security.PolicyContextWrapper;
-import org.hippoecm.hst.security.Role;
 import org.hippoecm.hst.security.TransientUser;
 import org.hippoecm.hst.security.User;
 
@@ -284,19 +283,25 @@ public class SecurityValve extends AbstractBaseOrderableValve {
         }
 
         if (subject == null) {
-            User user = new TransientUser(userPrincipal.getName());
-
-            Set<Principal> principals = new HashSet<Principal>();
+            Set<Principal> principals = new HashSet<>();
             principals.add(userPrincipal);
-            principals.add(user);
 
-            if (authProvider != null) {
-                Set<Role> roleSet = authProvider.getRolesByUsername(userPrincipal.getName());
-                principals.addAll(roleSet);
+            User user;
+            // reuse a User principal if possible, which, if it also is a TransientUser
+            // with a SessionUser as sessionObject also saves one extra login when retrieving the roles below
+            if (userPrincipal instanceof User) {
+                user = (User)userPrincipal;
+            } else {
+                user = new TransientUser(userPrincipal.getName());
+                principals.add(user);
             }
 
-            Set<Object> pubCred = new HashSet<Object>();
-            Set<Object> privCred = new HashSet<Object>();
+            if (authProvider != null) {
+                principals.addAll(authProvider.getRolesByUser(user));
+            }
+
+            Set<Object> pubCred = new HashSet<>();
+            Set<Object> privCred = new HashSet<>();
 
             HttpSession session = request.getSession(false);
 

@@ -58,13 +58,13 @@
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.5</taglibs.version>
 
-    <jooq.version>0.9.7</jooq.version>
+    <jooq.version>0.9.12</jooq.version>
     <awaitility.version>3.1.6</awaitility.version>
     <junit.version>4.12</junit.version>
-    <easymock.version>3.4</easymock.version>
+    <easymock.version>4.0.2</easymock.version>
     <assertj.version>3.8.0</assertj.version>
     <!-- Make sure that powermock and easymock are compatible -->
-    <powermock.version>1.6.5</powermock.version>
+    <powermock.version>2.0.2</powermock.version>
 
     <xalan.version>2.7.2</xalan.version>
 
@@ -83,7 +83,7 @@
 
     <javadoc.base.version>13.1</javadoc.base.version>
 
-    <hippo.jackrabbit.version>2.18.3-h1</hippo.jackrabbit.version>
+    <hippo.jackrabbit.version>2.18.3-h2</hippo.jackrabbit.version>
     <hippo.commons.version>14.0.0-SNAPSHOT</hippo.commons.version>
     <hippo.repository.version>14.0.0-SNAPSHOT</hippo.repository.version>
     <hippo.configuration-management.version>14.0.0-SNAPSHOT</hippo.configuration-management.version>
@@ -92,22 +92,20 @@
     <hippo.services.eventbus.version>14.0.0-SNAPSHOT</hippo.services.eventbus.version>
     <hippo.services.search.version>14.0.0-SNAPSHOT</hippo.services.search.version>
     <hippo.services.contenttype.version>14.0.0-SNAPSHOT</hippo.services.contenttype.version>
+    <hippo.services.webfiles.version>14.0.0-SNAPSHOT</hippo.services.webfiles.version>
     <hippo.testutils.version>14.0.0-SNAPSHOT</hippo.testutils.version>
-    <hippo.plugin.gallerypicker.version>14.0.0-SNAPSHOT</hippo.plugin.gallerypicker.version>
-    <hippo.plugin.selections.version>14.0.0-SNAPSHOT</hippo.plugin.selections.version>
     <hippo.packages.version>14.0.0-SNAPSHOT</hippo.packages.version>
     
     <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
 
     <mime4j.version>0.6</mime4j.version>
     <dependency.solr.version>4.9.0</dependency.solr.version>
-    <h2.version>1.3.175</h2.version>
 
     <!-- Before updating the swagger version verify swagger yaml works. See HSTTWO-4537 -->
     <swagger-core.version>1.5.15</swagger-core.version>
     <swagger-jaxrs.version>1.5.15</swagger-jaxrs.version>
 
-    <bytebuddy.version>1.9.10</bytebuddy.version>
+    <bytebuddy.version>1.10.2</bytebuddy.version>
 
   </properties>
 
@@ -613,6 +611,12 @@
         <scope>test</scope>
       </dependency>
 
+      <dependency>
+        <groupId>org.jooq</groupId>
+        <artifactId>joor</artifactId>
+        <version>${jooq.version}</version>
+        <scope>test</scope>
+      </dependency>
       <!-- byte buddy dependency -->
       
       <dependency>

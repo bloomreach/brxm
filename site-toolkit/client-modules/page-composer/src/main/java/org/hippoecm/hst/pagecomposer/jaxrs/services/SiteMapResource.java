@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +39,7 @@ import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCopyEventImpl;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.PageCreateContext;
@@ -67,6 +68,8 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_SITEMAP;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_WORKSPACE;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_VIEWER_PRIVILEGE_NAME;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils.findAvailableDocumentRepresentations;
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.DocumentUtils.getDocumentRepresentationHstConfigUser;
 
@@ -89,6 +92,7 @@ public class SiteMapResource extends AbstractConfigResource {
 
     @GET
     @Path("/mount")
+    @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
     public Response getMountRepresentation() {
         return tryGet(new Callable<Response>() {
             @Override
@@ -99,8 +103,11 @@ public class SiteMapResource extends AbstractConfigResource {
         });
     }
 
+    // below CHANNEL_VIEWER_PRIVILEGE_NAME privilege since web authors not being allowed to modify hst config still
+    // need to be able to load the available sitemap pages for navigation
     @GET
     @Path("/pages")
+    @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
     public Response getSiteMapPages() {
         return tryGet(new Callable<Response>() {
             @Override
@@ -117,6 +124,7 @@ public class SiteMapResource extends AbstractConfigResource {
 
     @GET
     @Path("/item/{siteMapItemUuid}")
+    @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
     public Response getSiteMapItem(@PathParam("siteMapItemUuid") final String siteMapItemUuid) {
         return tryGet(new Callable<Response>() {
             @Override
@@ -153,6 +161,7 @@ public class SiteMapResource extends AbstractConfigResource {
 
     @GET
     @Path("/picker")
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response getSiteMapTreePicker() {
         return tryGet(() -> {
             final AbstractTreePickerRepresentation representation = SiteMapTreePickerRepresentation.representRequestSiteMap(getPageComposerContextService());
@@ -168,6 +177,7 @@ public class SiteMapResource extends AbstractConfigResource {
      */
     @GET
     @Path("/picker/{siteMapItemRefIdOrPath: .*}")
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response getSiteMapTreePicker(final @PathParam("siteMapItemRefIdOrPath") String siteMapItemRefIdOrPath) {
         return tryGet(() -> {
             final PageComposerContextService service = getPageComposerContextService();
@@ -200,6 +210,7 @@ public class SiteMapResource extends AbstractConfigResource {
 
     @POST
     @Path("/update")
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response update(final SiteMapItemRepresentation siteMapItem) {
         final ValidatorBuilder preValidatorBuilder = ValidatorBuilder.builder()
                 .add(validatorFactory.getHasPreviewConfigurationValidator(getPageComposerContextService()))
@@ -255,12 +266,14 @@ public class SiteMapResource extends AbstractConfigResource {
 
     @POST
     @Path("/create")
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response create(final SiteMapItemRepresentation siteMapItem) {
         return create(siteMapItem, null);
     }
 
     @POST
     @Path("/create/{parentId}")
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response create(final SiteMapItemRepresentation siteMapItem,
                            final @PathParam("parentId") String parentId) {
         final ValidatorBuilder preValidators = ValidatorBuilder.builder()
@@ -292,6 +305,7 @@ public class SiteMapResource extends AbstractConfigResource {
 
     @POST
     @Path("/copy")
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response copy(
             @HeaderParam("mountId")final String mountId,
             @HeaderParam("siteMapItemUUID") final String siteMapItemUUID,
@@ -352,6 +366,7 @@ public class SiteMapResource extends AbstractConfigResource {
      */
     @POST
     @Path("/move/{id}/{parentId}")
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response move(final @PathParam("id") String id,
                          final @PathParam("parentId") String parentId) {
         final ValidatorBuilder preValidators = ValidatorBuilder.builder()
@@ -381,6 +396,7 @@ public class SiteMapResource extends AbstractConfigResource {
 
     @POST
     @Path("/delete/{id}")
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response delete(final @PathParam("id") String id) {
         final Validator preValidator = ValidatorBuilder.builder()
                 .add(validatorFactory.getHasPreviewConfigurationValidator(getPageComposerContextService()))

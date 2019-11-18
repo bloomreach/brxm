@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_DOMAINS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_UPSTREAM;
 
 /*
@@ -104,7 +105,7 @@ public class HstEventsCollector {
             return;
         }
         if (ignore(jcrEvent)) {
-            log.debug("Ignore event '{}' because not an event below /hst:hst.", jcrEvent.getPath());
+            log.debug("Ignore event '{}' because not an event below '{}'.", jcrEvent.getPath(), rootPath);
             return;
         }
         final String path = jcrEvent.getPath();
@@ -141,10 +142,23 @@ public class HstEventsCollector {
         if (eventPath.contains("/" + NODENAME_HST_UPSTREAM + "/") || eventPath.endsWith("/" + NODENAME_HST_UPSTREAM)) {
             return true;
         }
-        if (eventPath.startsWith(rootPath) && !eventPath.equals(rootPath)) {
-            return false;
+
+        if (!eventPath.startsWith(rootPath)) {
+            log.warn("Unexpected monitored event outside the rootPath '{}'. Skip it");
+            return true;
         }
-        return true;
+
+        if (eventPath.equals(rootPath)) {
+            // ignore root path changes
+            return true;
+        }
+
+        if (eventPath.startsWith(rootPath + "/" + NODENAME_HST_DOMAINS + "/") || eventPath.equals(rootPath + "/" + NODENAME_HST_DOMAINS)) {
+            // ignore security domain configuration since not part of HST in memory model
+            return true;
+        }
+
+        return false;
     }
 
     private boolean isPropertyEvent(final Event jcrEvent) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -58,7 +58,7 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import static com.jayway.restassured.http.ContentType.JSON;
+import static io.restassured.http.ContentType.JSON;
 import static org.easymock.EasyMock.and;
 import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.createNiceMock;
@@ -75,7 +75,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasEntry;
 
 @RunWith(PowerMockRunner.class)
-@PowerMockIgnore({"javax.management.*", "javax.net.ssl.*"})
+@PowerMockIgnore({"javax.management.*", "com.sun.org.apache.xerces.*", "javax.xml.*", "org.xml.*", "org.w3c.dom.*", "com.sun.org.apache.xalan.*", "javax.activation.*", "javax.net.ssl.*"})
 @PrepareForTest(HstConfigurationUtils.class)
 public class RootResourceTest extends AbstractResourceTest {
     private static final String MOCK_REST_PATH = "test-rootresource/";
@@ -324,8 +324,7 @@ public class RootResourceTest extends AbstractResourceTest {
     @Test
     public void deletes_channel_and_publishes_event() throws ChannelException, RepositoryException {
         mock_HstConfigurationUtils_persistChanges(1);
-
-        final List<Mount> mountsOfChannel = Arrays.asList(EasyMock.createMock(Mount.class));
+        final List<Mount> mountsOfChannel = Arrays.asList(EasyMock.<Mount>mock(Mount.class));
 
         final Channel channelFoo = new Channel("channel-foo");
 

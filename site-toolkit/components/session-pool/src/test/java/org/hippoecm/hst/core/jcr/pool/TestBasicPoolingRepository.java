@@ -278,8 +278,7 @@ public class TestBasicPoolingRepository extends AbstractSessionPoolSpringTestCas
         assertEquals("The managed session count is wrong.", 1, managedSessions.size());
         
         // Now retrieve an impersonated session which is not from the pool.
-        
-        Session impersonatedNonPooledSession = session.impersonate(new SimpleCredentials("editor", "editor".toCharArray()));
+        Session impersonatedNonPooledSession = session.impersonate(new SimpleCredentials("liveuser", new char[]{}));
         assertNotNull("The impersonated session is null", impersonatedNonPooledSession);
         assertFalse("The session was not a non-pooled session.", impersonatedNonPooledSession instanceof PooledSession);
         

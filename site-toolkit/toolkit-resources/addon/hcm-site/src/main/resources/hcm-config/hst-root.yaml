@@ -28,3 +28,66 @@ definitions:
       /hst:sites:
         .meta:residual-child-node-category: content
         jcr:primaryType: hst:sites
+      /hst:domains:
+        jcr:primaryType: hipposys:federateddomainfolder
+        .meta:residual-child-node-category: system
+        /hstconfig:
+          jcr:primaryType: hipposys:domain
+          /channel-admin:
+            jcr:primaryType: hipposys:authrole
+            hipposys:role: channel-admin
+            hipposys:userrole:
+              .meta:category: system
+              value: xm.channel.admin
+            hipposys:groups:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
+            hipposys:users:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
+          /channel-webmaster:
+            hipposys:role: channel-webmaster
+            jcr:primaryType: hipposys:authrole
+            hipposys:userrole:
+              .meta:category: system
+              value: xm.channel.webmaster
+            hipposys:groups:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
+            hipposys:users:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
+          /channel-viewer:
+            hipposys:role: channel-viewer
+            jcr:primaryType: hipposys:authrole
+            hipposys:userrole:
+              .meta:category: system
+              value: xm.channel.viewer
+            hipposys:groups:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
+            hipposys:users:
+              .meta:category: system
+              .meta:add-new-system-values: true
+              value: []
+          /hstconfig:
+            jcr:primaryType: hipposys:domainrule
+            /hstconfig-and-descendants:
+              jcr:primaryType: hipposys:facetrule
+              hipposys:equals: true
+              hipposys:facet: jcr:path
+              hipposys:type: Reference
+              hipposys:value: /
+            /exclude-hst-domains-and-descendants:
+              jcr:primaryType: hipposys:facetrule
+              hipposys:equals: false
+              hipposys:facet: jcr:path
+              hipposys:type: Reference
+              hipposys:value: /hst:domains
+
+

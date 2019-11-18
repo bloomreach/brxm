@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package org.hippoecm.hst.security.impl;
 
 import java.util.Map;
-import java.util.Set;
 
 import javax.jcr.Credentials;
 import javax.jcr.SimpleCredentials;
@@ -30,7 +29,6 @@ import javax.security.auth.login.LoginException;
 import javax.security.auth.spi.LoginModule;
 
 import org.hippoecm.hst.security.AuthenticationProvider;
-import org.hippoecm.hst.security.Role;
 import org.hippoecm.hst.security.User;
 import org.hippoecm.hst.site.HstServices;
 import org.slf4j.Logger;
@@ -178,7 +176,7 @@ public class DefaultLoginModule implements LoginModule {
                 user = getAuthenticationProvider().authenticate(username, password.toCharArray());
                 
                 if (storePrivCreds) {
-                    subject.getPrivateCredentials().add(createSubjectRepositoryCredentials(username, password.toCharArray()));
+                    subject.getPrivateCredentials().add(createSubjectRepositoryCredentials(username, new char[0]));
                 }
             } catch (SecurityException se) {
                 if (se.getCause() != null) {
@@ -251,13 +249,8 @@ public class DefaultLoginModule implements LoginModule {
      * @param user
      */
     protected void commitSubject(Subject containerSubject, User user) {
-        subject.getPrincipals().add(user);
-        
-        Set<Role> roles = authProvider.getRolesByUsername(user.getName());
-        
-        for (Role role : roles) {
-            subject.getPrincipals().add(role);
-        }
+        containerSubject.getPrincipals().add(user);
+        containerSubject.getPrincipals().addAll(authProvider.getRolesByUser(user));
     }
     
     protected AuthenticationProvider getAuthenticationProvider() throws SecurityException {

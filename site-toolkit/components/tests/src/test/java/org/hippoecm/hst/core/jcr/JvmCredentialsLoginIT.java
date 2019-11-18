@@ -28,8 +28,8 @@ public class JvmCredentialsLoginIT extends AbstractRepositoryTestCase {
         Session session1 = null;
         Session session2 = null;
         try {
-            session1 = server.login(JvmCredentials.getCredentials(LIVE_USER_ID));
-            session2 = session1.getRepository().login(JvmCredentials.getCredentials(LIVE_USER_ID));
+            session1 = server.login(JvmCredentials.getCredentials("liveuser"));
+            session2 = session1.getRepository().login(JvmCredentials.getCredentials("liveuser"));
         } finally {
             if (session1 != null) {
                 session1.logout();

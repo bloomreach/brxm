@@ -238,6 +238,8 @@ public interface HstNodeTypes {
     String NODENAME_HST_CONTAINERS = "hst:containers";
     String NODENAME_HST_UPSTREAM = "hst:upstream";
 
+    String NODENAME_HST_DOMAINS = "hst:domains";
+
     String RELPATH_HST_WORKSPACE_CONTAINERS = "hst:workspace/hst:containers";
 
 }

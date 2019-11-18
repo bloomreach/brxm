@@ -15,7 +15,10 @@
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle;
 
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.jcr.Node;
 import javax.jcr.Session;
@@ -25,9 +28,11 @@ import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
+import org.hippoecm.hst.pagecomposer.jaxrs.cxf.HstConfigLockedCheckInvokerPreprocessor;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
@@ -35,11 +40,13 @@ import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
 import static javax.servlet.http.HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 import static javax.servlet.http.HttpServletResponse.SC_OK;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hippoecm.hst.configuration.HstNodeTypes.CHANNEL_PROPERTY_DELETABLE;
 import static org.hippoecm.hst.configuration.HstNodeTypes.CONFIGURATION_PROPERTY_LOCKED;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_INHERITS_FROM;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODETYPE_HST_CONFIGURATION;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError.CHILD_MOUNT_EXISTS;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -66,7 +73,7 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
     }
 
     @Test
-    public void remove_channel_not_allowed_if_not_hippo_admin_role_fails() throws Exception {
+    public void remove_channel_not_allowed_if_not_hippo_admin_role() throws Exception {
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels/unittestproject", null, "DELETE");
 
@@ -85,13 +92,16 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
     @Test
     public void remove_channel_with_right_role_but_channel_not_existing_results_in_404() throws Exception {
 
-        final RequestResponseMock requestResponse = mockGetRequestResponse(
-                "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels/nonexisting", null, "DELETE");
+        try (SuppressPrivilegesAllowedPreProcessor ignore = new SuppressPrivilegesAllowedPreProcessor()){
 
-        SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
+            final RequestResponseMock requestResponse = mockGetRequestResponse(
+                    "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels/nonexisting", null, "DELETE");
 
-        final MockHttpServletResponse response = render(null, requestResponse, admin);
-        assertEquals(SC_NOT_FOUND, response.getStatus());
+            SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
+
+            final MockHttpServletResponse response = render(null, requestResponse, admin);
+            assertEquals(SC_NOT_FOUND, response.getStatus());
+        }
     }
 
     @Test
@@ -218,17 +228,14 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
     @Test
     public void remove_channel_with_right_role_and_channel_deletable_but_configuration_locked_wont_succeed_even_if_rendering_mount_is_not_yet_set() throws Exception {
 
-        // org.hippoecm.hst.pagecomposer.jaxrs.cxf.HstConfigLockedCheckInvokerPreprocessor.preprocoess() will directly
-        // return null because pageComposerContextService.isRenderingMountSet() returns false. But still a locked config
-        // should not be possible to be removed
-
         Session session = createSession("admin", "admin");
         Node configuration = session.getNode("/hst:hst/hst:configurations/unittestsubproject");
         configuration.getNode("hst:channel").setProperty(CHANNEL_PROPERTY_DELETABLE, true);
         configuration.setProperty(CONFIGURATION_PROPERTY_LOCKED, true);
         session.save();
 
-        try {
+        // skip the PrivilegesAllowedPreProcessor to make sure we hit the code we want to test below
+        try (SuppressPrivilegesAllowedPreProcessor ignore = new SuppressPrivilegesAllowedPreProcessor()){
             final RequestResponseMock requestResponse = mockGetRequestResponse(
                     "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels/unittestsubproject", null, "DELETE");
 
@@ -264,32 +271,33 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
         configuration.setProperty(CONFIGURATION_PROPERTY_LOCKED, true);
         session.save();
 
-        try {
-            {
-                final RequestResponseMock requestResponse = mockGetRequestResponse(
-                        "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./setvariant/foo", null, "POST");
+        // for the test below we want to pass the PrivilegesAllowedPreProcessor hence skip it
+        try (SuppressPrivilegesAllowedPreProcessor ignore = new SuppressPrivilegesAllowedPreProcessor()){
+                {
+                    final RequestResponseMock requestResponse = mockGetRequestResponse(
+                            "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./setvariant/foo", null, "POST");
 
-                SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
-                final MockHttpServletResponse response = render(null, requestResponse, admin);
-                assertEquals("Even for locked configuration setvariant POST should be allowed", SC_OK, response.getStatus());
+                    SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
+                    final MockHttpServletResponse response = render(null, requestResponse, admin);
+                    assertEquals("Even for locked configuration setvariant POST should be allowed", SC_OK, response.getStatus());
 
 
-                Object renderVariant = requestResponse.getCmsSessionContext().getContextPayload().get(ContainerConstants.RENDER_VARIANT);
-                assertNotNull(renderVariant);
-                assertEquals("foo", renderVariant);
-            }
-            {
-                final RequestResponseMock requestResponse = mockGetRequestResponse(
-                        "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./clearvariant", null, "POST");
+                    Object renderVariant = requestResponse.getCmsSessionContext().getContextPayload().get(ContainerConstants.RENDER_VARIANT);
+                    assertNotNull(renderVariant);
+                    assertEquals("foo", renderVariant);
+                }
+                {
+                    final RequestResponseMock requestResponse = mockGetRequestResponse(
+                            "http", "localhost", "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./clearvariant", null, "POST");
 
-                SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
+                    SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
 
-                final String mountId = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root").getIdentifier();
+                    final String mountId = session.getNode("/hst:hst/hst:hosts/dev-localhost/localhost/hst:root").getIdentifier();
 
-                final MockHttpServletResponse response = render(mountId, requestResponse, admin);
-                assertEquals("Even for locked configuration clearvariant POST should be allowed", SC_OK, response.getStatus());
-                assertNull(requestResponse.getRequest().getSession().getAttribute(ContainerConstants.RENDER_VARIANT));
-            }
+                    final MockHttpServletResponse response = render(mountId, requestResponse, admin);
+                    assertEquals("Even for locked configuration clearvariant POST should be allowed", SC_OK, response.getStatus());
+                    assertNull(requestResponse.getRequest().getSession().getAttribute(ContainerConstants.RENDER_VARIANT));
+                }
         } finally {
             session.logout();
         }
@@ -327,7 +335,7 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
     }
 
     @Test
-    public void get_channel_as_admin_for_defined_runtime_host() throws Exception {
+    public void get_channel_as_admin_for_defined_runtime_host_by_http() throws Exception {
         final Session session = createSession("admin", "admin");
         session.getNode("/hst:platform/hst:hosts/dev-localhost").setProperty(
                 HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE, new String[] { "http://cms.example.org" });
@@ -348,4 +356,139 @@ public class RootResourceTest extends AbstractFullRequestCycleTest {
             session.logout();
         }
     }
+
+    @Test
+    public void get_channel_as_admin_for_defined_runtime_host_by_https() throws Exception {
+        final Session session = createSession("admin", "admin");
+        session.getNode("/hst:platform/hst:hosts/dev-localhost").setProperty(
+                HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE, new String[] { "https://cms.example.org" });
+        session.save();
+
+        try {
+            final RequestResponseMock requestResponse = mockGetRequestResponse("https", "cms.example.org",
+                    "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels/unittestproject", null, "GET");
+    
+            SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
+            final MockHttpServletResponse response = render(null, requestResponse, admin);
+            final String restResponse = response.getContentAsString();
+            final Map<String, Object> responseMap = mapper.readerFor(Map.class).readValue(restResponse);
+            assertEquals("unittestproject", responseMap.get("id"));
+        } finally {
+            session.getNode("/hst:platform/hst:hosts/dev-localhost")
+                    .getProperty(HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE).remove();
+            session.logout();
+        }
+    }
+
+    @Test
+    public void get_channel_as_admin_for_defined_runtime_host_with_port_number() throws Exception {
+        final Session session = createSession("admin", "admin");
+        session.getNode("/hst:platform/hst:hosts/dev-localhost").setProperty(
+                HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE, new String[] { "http://cms.example.org:8080" });
+        session.save();
+
+        try {
+            final RequestResponseMock requestResponse = mockGetRequestResponse("http", "cms.example.org:8080",
+                    "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels/unittestproject", null, "GET");
+    
+            SimpleCredentials admin = new SimpleCredentials("admin", "admin".toCharArray());
+            final MockHttpServletResponse response = render(null, requestResponse, admin);
+            final String restResponse = response.getContentAsString();
+            final Map<String, Object> responseMap = mapper.readerFor(Map.class).readValue(restResponse);
+            assertEquals("unittestproject", responseMap.get("id"));
+        } finally {
+            session.getNode("/hst:platform/hst:hosts/dev-localhost")
+                    .getProperty(HstNodeTypes.VIRTUALHOSTGROUP_PROPERTY_AUTO_HOST_TEMPLATE).remove();
+            session.logout();
+        }
+    }
+
+    @Test
+    public void get_channels_is_a_channel_agnostic_call_which_passes_invoker_preprocessor() throws Exception {
+
+        final RequestResponseMock requestResponse = mockGetRequestResponse("http", "localhost",
+                "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels", null, "GET");
+
+        SimpleCredentials author = new SimpleCredentials("author", "author".toCharArray());
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onInfo().trap(HstConfigLockedCheckInvokerPreprocessor.class).build()) {
+            render(null, requestResponse, author);
+
+            assertThat(interceptor.messages())
+                    .contains("Method 'getChannels' is channel agnostic so passes HstConfigLockedCheckInvokerPreprocessor preprocesser");
+
+        }
+    }
+
+
+    @Test
+    public void get_channels_only_returns_channels_for_which_user_has_privileges() throws Exception {
+        // the method ChannelService.getChannels(...) is meant for the cross channel copy page : Only channels
+        // for which the user is a webmaster should be returned!
+
+        {
+            final RequestResponseMock requestResponse = mockGetRequestResponse("http", "localhost",
+                    "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels", null, "GET");
+
+            SimpleCredentials author = new SimpleCredentials("author", "author".toCharArray());
+            final MockHttpServletResponse response = render(null, requestResponse, author);
+            final String restResponse = response.getContentAsString();
+
+            final Map<String, Object> responseMap = mapper.readerFor(Map.class).readValue(restResponse);
+
+            List<Map<String, String>> data = (List<Map<String, String>>) responseMap.get("data");
+
+            assertEquals(2, data.size());
+
+            final Set<String> channelIds = data.stream().map(channelMap -> channelMap.get("id")).collect(Collectors.toSet());
+
+            assertThat(channelIds)
+                    .containsExactly("unittestproject", "unittestsubproject");
+        }
+
+        {
+            final RequestResponseMock requestResponse = mockGetRequestResponse("http", "localhost",
+                    "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels",
+                    "privilegeAllowed=" + CHANNEL_WEBMASTER_PRIVILEGE_NAME, "GET");
+
+            SimpleCredentials author = new SimpleCredentials("author", "author".toCharArray());
+            final MockHttpServletResponse response = render(null, requestResponse, author);
+            final String restResponse = response.getContentAsString();
+
+            final Map<String, Object> responseMap = mapper.readerFor(Map.class).readValue(restResponse);
+
+            List<Map<String, String>> data = (List<Map<String, String>>) responseMap.get("data");
+
+            assertEquals("Author does not have privilege 'hippo:channel-webmaster'",0, data.size());
+
+        }
+
+
+        for (String queryString : new String[]{"", "privilegeAllowed=" + CHANNEL_WEBMASTER_PRIVILEGE_NAME}) {
+            {
+                final RequestResponseMock requestResponse = mockGetRequestResponse("http", "localhost",
+                        "/_rp/cafebabe-cafe-babe-cafe-babecafebabe./channels", queryString, "GET");
+
+                SimpleCredentials author = new SimpleCredentials("editor", "editor".toCharArray());
+                final MockHttpServletResponse response = render(null, requestResponse, author);
+                final String restResponse = response.getContentAsString();
+
+                final Map<String, Object> responseMap = mapper.readerFor(Map.class).readValue(restResponse);
+
+                List<Map<String, String>> data = (List<Map<String, String>>) responseMap.get("data");
+
+                assertEquals("'editor' should be able to fetch the channels with default privilege " +
+                        "'hippo:channel-viewer' and with 'hippo:channel-webmaster'",2, data.size());
+
+                final Set<String> channelIds = data.stream().map(channelMap -> channelMap.get("id")).collect(Collectors.toSet());
+
+                assertThat(channelIds)
+                        .containsExactly("unittestproject", "unittestsubproject");
+
+            }
+
+
+        }
+
+    }
+
 }

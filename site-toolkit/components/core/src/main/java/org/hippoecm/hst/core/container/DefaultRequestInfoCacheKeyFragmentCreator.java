@@ -73,6 +73,11 @@ public class DefaultRequestInfoCacheKeyFragmentCreator implements RequestInfoCac
         // Flag whether the request comes from search engine or bot.
         requestInfo.append(requestContext.isSearchEngineOrBotRequest()).append(delim);
 
+        final String pathSuffix = requestContext.getPathSuffix();
+        if (pathSuffix != null) {
+            requestInfo.append(pathSuffix).append(delim);
+        }
+
         return requestInfo.toString();
     }
 

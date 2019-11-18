@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
  <!--
-     Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+     Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
      
      Licensed under the Apache License, Version 2.0 (the  "License");
      you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
 
 
   <!-- Spring SPI id -->
-  <bean id="org.hippoecm.hst.security.AuthenticationProvider" class="org.hippoecm.hst.security.impl.HippoAuthenticationProvider">
+  <bean id="org.hippoecm.hst.security.AuthenticationProvider" class="org.hippoecm.hst.security.impl.RepositoryAuthenticationProvider">
     <meta key="org.hippoecm.hst.site.container.SpringComponentManager.registerCondition"
           value="config.containsKey('java.security.auth.login.config')" />
     <!-- System repository to retrieve roles for user. -->
@@ -29,10 +29,14 @@
     <constructor-arg index="1" ref="javax.jcr.Credentials.hstconfigreader" />
     <!-- User authentication repository against which each user will be authenticated. -->
     <constructor-arg index="2" ref="javax.jcr.Repository.delegating" />
-    
-    <property name="roleDomainName" value="${security.authentication.role.domain}" />
+    <property name="requiredUserRole" value="${security.authentication.required.userrole}" />
+    <property name="excludedUserRolePrefixes" value="${security.authentication.excluded.userrole.prefixes}" />
+    <property name="excludedUserRolePrefixesDelimiter" value="${security.authentication.excluded.userrole.prefixes.delimiter}" />
+    <property name="includedUserRolePrefix" value="${security.authentication.included.userrole.prefix}" />
+    <property name="stripIncludedUserRolePrefix" value="${security.authentication.strip.included.userrole.prefix}" />
+    <property name="rolePrefix" value="${security.authentication.role.prefix}" />
+    <!-- Default role to be provided always (if not already provided) -->
     <property name="defaultRoleName" value="${security.authentication.default.role}" />
-    
   </bean>
   
   <!--

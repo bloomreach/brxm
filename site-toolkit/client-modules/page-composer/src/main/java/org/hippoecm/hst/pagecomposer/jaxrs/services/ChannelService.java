@@ -41,7 +41,8 @@ public interface ChannelService {
      * cross channel page copy which is not supported over cross webapp
      * @return the List of {@link Channel}s of the *single* webapp for which currently a channel is rendered in the channel mgr
      */
-    List<Channel> getChannels(boolean previewConfigRequired, boolean workspaceRequired, boolean skipBranches, boolean skipConfigurationLocked, final String hostGroup);
+    List<Channel> getChannels(boolean previewConfigRequired, boolean workspaceRequired, boolean skipBranches,
+                              boolean skipConfigurationLocked, String hostGroup, String privilegeAllowed);
 
     Optional<Channel> getChannelByMountId(final String mountId, final String hostGroup);
 

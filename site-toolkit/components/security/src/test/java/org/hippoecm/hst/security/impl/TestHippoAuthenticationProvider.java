@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,18 +25,22 @@ import org.hippoecm.hst.security.AuthenticationProvider;
 import org.hippoecm.hst.security.Role;
 import org.hippoecm.hst.security.TransientRole;
 import org.hippoecm.hst.security.User;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MEMBERS;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_USERS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.onehippo.repository.security.SecurityConstants.CONFIG_DOMAINS_PATH;
+import static org.onehippo.repository.security.SecurityConstants.CONFIG_GROUPS_PATH;
 
 /**
  * TestHippoAuthenticationProvider
- * @version $Id$
  */
 public class TestHippoAuthenticationProvider extends RepositoryTestCase {
     
@@ -54,11 +58,26 @@ public class TestHippoAuthenticationProvider extends RepositoryTestCase {
     public void setUp() throws Exception {
         super.setUp();
 
+        session.getNode(CONFIG_GROUPS_PATH+"/admin").setProperty(HIPPO_MEMBERS, new String[]{"admin"});
+        session.getNode(CONFIG_DOMAINS_PATH+"/everywhere/admin").setProperty(HIPPO_USERS, new String[]{"admin"});
+        session.save();
+
         Repository systemRepo = server.getRepository();
         Credentials systemCreds = new SimpleCredentials("admin", "admin".toCharArray());
         Repository userRepo = server.getRepository();
         
         authenticationProvider = new HippoAuthenticationProvider(systemRepo, systemCreds, userRepo);
+    }
+
+    @Override
+    @After
+    public void tearDown() throws Exception {
+
+        session.getNode(CONFIG_GROUPS_PATH+"/admin").setProperty(HIPPO_MEMBERS, new String[0]);
+        session.getNode(CONFIG_DOMAINS_PATH+"/everywhere/admin").setProperty(HIPPO_USERS, new String[0]);
+        session.save();
+
+        super.tearDown();
     }
 
     @Test

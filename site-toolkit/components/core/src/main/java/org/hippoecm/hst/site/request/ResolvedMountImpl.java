@@ -1,12 +1,12 @@
 /*
  *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -20,6 +20,7 @@ import java.util.Set;
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.NotFoundException;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.internal.MutableResolvedMount;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
@@ -41,7 +42,7 @@ public class ResolvedMountImpl implements MutableResolvedMount {
     // If there was a prefix in the requestPath which is ignored for Mount matching, it is stored in matchingIgnoredPrefix
     final private String matchingIgnoredPrefix;
     final private int portNumber;
-    
+
     public ResolvedMountImpl(final Mount mount,
                              final ResolvedVirtualHost resolvedVirtualHost,
                              final String resolvedMountPath,
@@ -53,7 +54,7 @@ public class ResolvedMountImpl implements MutableResolvedMount {
         this.matchingIgnoredPrefix = matchingIgnoredPrefix;
         this.portNumber = portNumber;
     }
-    
+
     @Override
     public Mount getMount() {
         return mount;
@@ -68,7 +69,7 @@ public class ResolvedMountImpl implements MutableResolvedMount {
     public String getResolvedMountPath() {
         return resolvedMountPath;
     }
-    
+
     @Override
     public String getMatchingIgnoredPrefix() {
         return matchingIgnoredPrefix;
@@ -90,14 +91,15 @@ public class ResolvedMountImpl implements MutableResolvedMount {
         if(getMount().getHstSite() == null) {
             throw new MatchException("No HstSite attached to Mount '"+ getMount().getName()+"'. The path '"+siteMapPathInfo+"' thus not be matched to a sitemap item");
         }
-        
+
         if(siteMapPathInfo == null) {
           throw new MatchException("SiteMapPathInfo is not allowed to be null");
         }
 
         Task matchingTask = null;
+        boolean hdcStarted = HDC.isStarted();
         try {
-            if (HDC.isStarted()) {
+            if (hdcStarted) {
                 matchingTask = HDC.getCurrentTask().startSubtask("Sitemap Matching");
             }
             if("".equals(siteMapPathInfo) || "/".equals(siteMapPathInfo)) {
@@ -127,6 +129,13 @@ public class ResolvedMountImpl implements MutableResolvedMount {
                 }
                 // if pageNotFound cannot be matched, again a NotFoundException is thrown which extends MatchException so is allowed
                 item = matcher.match(pageNotFound, this);
+            }
+
+            if(hdcStarted && item != null) {
+                HstSiteMapItem siteMapItem = item.getHstSiteMapItem();
+                if (siteMapItem != null) {
+                    matchingTask.setAttribute("sitemapitem", siteMapItem.toString());
+                }
             }
             return item;
         } finally {

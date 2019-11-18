@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -37,6 +37,7 @@ import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_DOMAINS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_UPSTREAM;
 
 /**
@@ -110,6 +111,14 @@ public class HstNodeImpl implements HstNode {
     }
 
     private boolean skipNode(final Node child) throws RepositoryException {
+        if (parent == null) {
+            // root node, skip 'hst:domains' below it since not part of the hst model
+            if (child.getName().equals(NODENAME_HST_DOMAINS)) {
+                log.debug("Skipping '{}' since not part of the HST in memory model but federated security domains",
+                        child.getPath());
+                return true;
+            }
+        }
         if (NODENAME_HST_UPSTREAM.equals(child.getName())) {
             log.debug("Skip hst:upstream node (and descendants)");
             return true;

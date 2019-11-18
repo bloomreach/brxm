@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import javax.servlet.ServletException;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractFullRequestCycleTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ExtIdsRepresentation;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientError;
 import org.hippoecm.hst.site.HstServices;
 import org.junit.After;
 import org.junit.Before;
@@ -80,9 +81,9 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
     }
 
     @Test
-    public void liveuser_cannot_start_edit() throws Exception {
+    public void liveuser_cannot_invoke_start_edit() throws Exception {
         Credentials liveUserCreds = HstServices.getComponentManager().getComponent(Credentials.class.getName() + ".default.delegating");
-        startEditAssertions(liveUserCreds, false);
+        startEditAssertions(liveUserCreds, ClientError.FORBIDDEN);
     }
 
     protected Map<String, Object> startEdit(final Credentials creds) throws RepositoryException, IOException, ServletException {
@@ -104,6 +105,12 @@ public class MountResourceTest extends AbstractFullRequestCycleTest {
             assertEquals(Boolean.FALSE, responseMap.get("success"));
             assertTrue(responseMap.get("message").toString().contains("Could not create a preview configuration"));
         }
+    }
+
+    protected void startEditAssertions(final Credentials creds, final ClientError expectedClientError) throws RepositoryException, IOException, ServletException {
+        final Map<String, Object> responseMap = startEdit(creds);
+        assertEquals(Boolean.FALSE, responseMap.get("success"));
+        assertEquals(expectedClientError.name(), responseMap.get("errorCode"));
     }
 
     @Test

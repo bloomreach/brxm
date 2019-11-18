@@ -1,5 +1,5 @@
 /*
-*  Copyright 2010-2018 Hippo B.V. (http://www.onehippo.com)
+*  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.annotation.security.RolesAllowed;
+import javax.annotation.security.PermitAll;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.servlet.http.HttpServletRequest;
@@ -51,9 +51,10 @@ import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.BeforeChannelDeleteEventImpl;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.ChannelAgnostic;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.IgnoreLock;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ChannelInfoDescription;
-import org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.hst.platform.model.HstModel;
@@ -64,9 +65,12 @@ import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel.CHANNEL_MANAGER_ADMIN_ROLE;
-import static org.hippoecm.hst.pagecomposer.jaxrs.security.SecurityModel.CHANNEL_WEBMASTER_ROLE;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_ADMIN_PRIVILEGE_NAME;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_VIEWER_PRIVILEGE_NAME;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.HstConfigurationServiceImpl.PREVIEW_SUFFIX;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_READ;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_WRITE;
 
 @Path("/rep:root/")
 public class RootResource extends AbstractConfigResource implements ComponentManagerAware {
@@ -75,14 +79,9 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     private boolean isCrossChannelPageCopySupported;
 
     private ChannelService channelService;
-    private SecurityModel securityModel;
 
     public void setChannelService(final ChannelService channelService) {
         this.channelService = channelService;
-    }
-
-    public void setSecurityModel(final SecurityModel securityModel) {
-        this.securityModel = securityModel;
     }
 
     @Override
@@ -94,21 +93,34 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     /**
      * This method returns only the channels from a single hst webapp which is on purpose since it is used for the
      * cross channel page copy which is not supported over cross webapp
+     * NOTE #getChannels for something like 'page copy' to a different channel, then
+     * privilegeAllowed=hippo:channel-webmaster should be in the query string since channels the user is not webmaster
+     * on (s)he cannot copy pages to.
+     *
+     * The param @QueryParam("privilegeAllowed") final String privilegeAllowed can be used to only return channels
+     * for which the current user has the privilege 'privilegeAllowed'. If missing, the minimal privilege
+     * ChannelManagerPrivileges#CHANNEL_VIEWER_PRIVILEGE_NAME is assumed
      */
     @GET
     @Path("/channels")
+    @Produces(MediaType.APPLICATION_JSON)
+    @PermitAll
+    @ChannelAgnostic
     public Response getChannels(@HeaderParam("hostGroup") final String hostGroup,
                                 @QueryParam("previewConfigRequired") final boolean previewConfigRequired,
                                 @QueryParam("workspaceRequired") final boolean workspaceRequired,
                                 @QueryParam("skipBranches") final boolean skipBranches,
-                                @QueryParam("skipConfigurationLocked") final boolean skipConfigurationLocked) {
+                                @QueryParam("skipConfigurationLocked") final boolean skipConfigurationLocked,
+                                @QueryParam("privilegeAllowed") final String privilegeAllowed) {
 
         try {
+            // TODO HSTTWO-4667 filter the channels like HstModel does: thus also filter on read-access for content!
             final List<Channel> channels = this.channelService.getChannels(previewConfigRequired,
                     workspaceRequired,
                     skipBranches,
                     skipConfigurationLocked,
-                    hostGroup);
+                    hostGroup,
+                    privilegeAllowed == null ? CHANNEL_VIEWER_PRIVILEGE_NAME : privilegeAllowed);
             return ok("Fetched channels successful", channels);
         } catch (RuntimeRepositoryException e) {
             log.warn("Could not determine authorization", e);
@@ -119,6 +131,11 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @GET
     @Path("/channels/{id}")
     @Produces(MediaType.APPLICATION_JSON)
+    // PermitAll because this method is invoked before a channel has been set on the cms session context. Cleaner
+    // would be if the cms-user would have 'viewer' privilege on target 'channelId' but then it becomes quite
+    // complex to find which channel to check in PrivilegesAllowedInvokerPreprocessor
+    @PermitAll
+    @ChannelAgnostic
     public Response getChannel(@HeaderParam("contextPath") final String contextPath,
                                @HeaderParam("hostGroup") final String hostGroup,
                                @PathParam("id") String channelId) {
@@ -150,6 +167,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @GET
     @Path("/channels/{id}/info")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
     public Response getChannelInfoDescription(@HeaderParam("hostGroup") final String hostGroup,
                                               @PathParam("id") String channelId, @QueryParam("locale") String locale) {
         if (StringUtils.isEmpty(locale)) {
@@ -173,6 +191,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @Path("/channels/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response saveChannel(@HeaderParam("hostGroup") final String hostGroup,
                                 @PathParam("id") final String channelId,
                                 final Channel channel) {
@@ -191,7 +210,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @DELETE
     @Path("/channels/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    @RolesAllowed(CHANNEL_MANAGER_ADMIN_ROLE)
+    @PrivilegesAllowed(CHANNEL_ADMIN_PRIVILEGE_NAME)
     public Response deleteChannel(@HeaderParam("hostGroup") final String hostGroup,
                                   @PathParam("id") String channelId) {
         if (StringUtils.endsWith(channelId, PREVIEW_SUFFIX)) {
@@ -236,11 +255,15 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @GET
     @Path("/composermode/{renderingHost}/{mountId}")
     @Produces(MediaType.APPLICATION_JSON)
+    // PermitAll because this method is invoked before a channel has been set on the cms session context, hence
+    // PrivilegesAllowedInvokerPreprocessor does not yet 'know' which channel to check privileges for
+    @PermitAll
+    @ChannelAgnostic
     public Response composerModeGet(@HeaderParam("hostGroup") final String hostGroup,
                                     @Context HttpServletRequest servletRequest,
                                     @PathParam("renderingHost") String renderingHost,
                                     @PathParam("mountId") String mountId) {
-        HttpSession session = servletRequest.getSession(true);
+        final HttpSession session = servletRequest.getSession(true);
 
 
         final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
@@ -255,10 +278,32 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
         final boolean isChannelDeletionSupported = isChannelDeletionSupported(mountId, hostGroup);
         final boolean isConfigurationLocked = isConfigurationLocked(mountId, hostGroup);
         try {
-            final boolean hasAdminRole = securityModel.isUserInRole(requestContext.getSession(), CHANNEL_MANAGER_ADMIN_ROLE);
-            final boolean isWebmaster = securityModel.isUserInRole(requestContext.getSession(), CHANNEL_WEBMASTER_ROLE);
-            final boolean canDeleteChannel = isChannelDeletionSupported && hasAdminRole && !isConfigurationLocked;
-            final boolean canManageChanges = hasAdminRole && !isConfigurationLocked;
+
+            final Session jcrSession = requestContext.getSession();
+
+            final boolean isWebmaster;
+            final boolean isChannelAdmin;
+
+            // JCR_WRITE does not automatically imply JCR_READ but both are needed for webmasters or channel admins
+            // CHANNEL_ADMIN_PRIVILEGE_NAME does automatically inherit jcr:read and jcr:write, see roles-hst.yaml
+            final String webmasterPermissions = JCR_READ + "," + JCR_WRITE;
+
+            final String liveConfigPath = getPageComposerContextService().getEditingLiveConfigurationPath();
+            if (getPageComposerContextService().hasPreviewConfiguration()) {
+                final String previewConfigPath = getPageComposerContextService().getEditingPreviewConfigurationPath();
+                isWebmaster = jcrSession.hasPermission(liveConfigPath, webmasterPermissions)
+                        && jcrSession.hasPermission(previewConfigPath, webmasterPermissions);
+
+                isChannelAdmin = isWebmaster && jcrSession.hasPermission(liveConfigPath, CHANNEL_ADMIN_PRIVILEGE_NAME)
+                        && jcrSession.hasPermission(previewConfigPath, CHANNEL_ADMIN_PRIVILEGE_NAME);
+            } else {
+                isWebmaster = jcrSession.hasPermission(liveConfigPath, webmasterPermissions);
+                isChannelAdmin = isWebmaster && jcrSession.hasPermission(liveConfigPath, CHANNEL_ADMIN_PRIVILEGE_NAME);
+            }
+
+
+            final boolean canDeleteChannel = isChannelDeletionSupported && isChannelAdmin && !isConfigurationLocked;
+            final boolean canManageChanges = isChannelAdmin && !isConfigurationLocked;
 
             HandshakeResponse response = new HandshakeResponse();
             response.setCanWrite(isWebmaster);
@@ -288,6 +333,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @GET
     @Path("/previewmode/{renderingHost}/")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
     public Response previewMode(@Context HttpServletRequest servletRequest,
                                 @PathParam("renderingHost") String renderingHost) {
         HttpSession session = servletRequest.getSession(true);
@@ -304,6 +350,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @POST
     @Path("/setvariant/{variantId}/")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
     public Response setVariant(@Context HttpServletRequest servletRequest, @PathParam("variantId") String variant) {
         final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(servletRequest.getSession());
         cmsSessionContext.getContextPayload().put(ContainerConstants.RENDER_VARIANT, variant);
@@ -315,6 +362,7 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
     @POST
     @Path("/clearvariant/")
     @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
     public Response clearVariant(@Context HttpServletRequest servletRequest) {
         final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(servletRequest.getSession());
         cmsSessionContext.getContextPayload().remove(ContainerConstants.RENDER_VARIANT);

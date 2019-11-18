@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,9 +28,11 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.request.ResolvedMount;
+import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.AbstractTreePickerRepresentation;
 import org.hippoecm.repository.api.HippoNodeType;
 
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 import static org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.DocumentTreePickerRepresentation.representExpandedParentTree;
 import static org.hippoecm.hst.pagecomposer.jaxrs.model.treepicker.DocumentTreePickerRepresentation.representRequestContentNode;
 
@@ -41,6 +43,7 @@ public class HippoDocumentResource extends AbstractConfigResource {
 
     @GET
     @Path("/picker")
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response getRoot() {
         return tryGet(new Callable<Response>() {
             @Override
@@ -60,6 +63,7 @@ public class HippoDocumentResource extends AbstractConfigResource {
      */
     @GET
     @Path("/picker/{siteMapItemRefIdOrPath: .*}")
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response get(final @PathParam("siteMapItemRefIdOrPath") String siteMapItemRefIdOrPath) {
         return tryGet(new Callable<Response>() {
             @Override
