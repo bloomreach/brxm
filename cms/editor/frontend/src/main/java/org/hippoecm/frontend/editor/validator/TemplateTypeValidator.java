@@ -23,9 +23,8 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
+import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.validation.ValidationException;
-import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.frontend.validation.Violation;
 import org.hippoecm.repository.api.HippoNodeType;
 
@@ -61,9 +60,9 @@ public class TemplateTypeValidator implements ITypeValidator {
                         final String path = field.getProperty(HippoNodeType.HIPPO_PATH).getString();
                         if (paths.contains(path)) {
                             // TODO: add actual paths
-                            violations.add(new Violation(new HashSet<>(),
-                                    new ClassResourceModel(ValidatorMessages.PATH_USED_MULTIPLE_TIMES,
-                                            ValidatorMessages.class)));
+                            final IModel<String> message = new ResourceBundleModel.Builder("hippo:cms.validators",
+                                    "path-is-used-multiple-times").build();
+                            violations.add(new Violation(new HashSet<>(), message));
                         }
                         if (!path.equals("*")) {
                             paths.add(path);

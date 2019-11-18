@@ -31,43 +31,6 @@ public interface IFieldValidator extends IClusterable {
     ITypeDescriptor getFieldType();
 
     /**
-     * Create a Violation object with field information.
-     *
-     * @param childModel
-     * @param key
-     * @throws ValidationException
-     * @deprecated : use the {@link #newValueViolation(IModel, IModel, FeedbackScope)} signature instead
-     */
-    @Deprecated
-    Violation newValueViolation(IModel childModel, String key) throws ValidationException;
-
-    /**
-     * Create a Violation object with field information.
-     *
-     * @param childModel the JcrPropertyValueModel or JcrNodeModel of the child {@link javax.jcr.Node}
-     * @param message    model containing the message to be shown to the user
-     * @throws ValidationException when information to validate is not available
-     * @deprecated use {@link #newValueViolation(IModel, IModel, FeedbackScope)} instead
-     */
-    @Deprecated
-    Violation newValueViolation(IModel childModel, IModel<String> message) throws ValidationException;
-
-    /**
-     * Create a Violation object with field and scope information.
-     *
-     * @param childModel the JcrPropertyValueModel or JcrNodeModel of the child {@link javax.jcr.Node}
-     * @param message    model containing the message to be shown to the user
-     * @param scope      to indicate the level the validation applies to
-     * @throws ValidationException when information to validate is not available
-     * @deprecated Use {@link #newValueViolation(IModel, IModel, FeedbackScope)} instead
-     */
-    @Deprecated
-    default Violation newValueViolation(IModel childModel, IModel<String> message, ValidationScope scope)
-            throws ValidationException {
-        return newValueViolation(childModel, message, scope.toFeedbackScope());
-    }
-
-    /**
      * Create a Violation object with field and scope information.
      *
      * @param childModel the JcrPropertyValueModel or JcrNodeModel of the child {@link javax.jcr.Node}
@@ -75,10 +38,6 @@ public interface IFieldValidator extends IClusterable {
      * @param scope      to indicate the level the validation applies to
      * @throws ValidationException when information to validate is not available
      */
-    default Violation newValueViolation(IModel childModel, IModel<String> message, FeedbackScope scope)
-            throws ValidationException {
-        final Violation violation = newValueViolation(childModel, message);
-        violation.setFeedbackScope(scope);
-        return violation;
-    }
+    Violation newValueViolation(IModel childModel, IModel<String> message, FeedbackScope scope)
+            throws ValidationException;
 }

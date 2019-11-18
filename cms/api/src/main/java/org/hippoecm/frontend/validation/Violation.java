@@ -50,15 +50,6 @@ public final class Violation implements IDetachable {
         this.feedbackScope = feedbackScope;
     }
 
-    /**
-     * @deprecated Use {@link #Violation(Set, IModel, FeedbackScope)} instead
-     */
-    @Deprecated
-    public Violation(final Set<ModelPath> fieldPaths, final IModel<String> message,
-                     final ValidationScope validationScope) {
-        this(fieldPaths, message, validationScope.toFeedbackScope());
-    }
-
     public IModel<String> getMessage() {
         return message;
     }
@@ -73,22 +64,6 @@ public final class Violation implements IDetachable {
 
     public void setFeedbackScope(final FeedbackScope feedbackScope) {
         this.feedbackScope = feedbackScope;
-    }
-
-    /**
-     * @deprecated Use {@link #getFeedbackScope()} instead
-     */
-    @Deprecated
-    public ValidationScope getValidationScope() {
-        return ValidationScope.from(feedbackScope);
-    }
-
-    /**
-     * @deprecated Use {@link #setFeedbackScope(FeedbackScope)} instead
-     */
-    @Deprecated
-    public void setValidationScope(final ValidationScope validationScope) {
-        this.feedbackScope = validationScope.toFeedbackScope();
     }
 
     @Override
