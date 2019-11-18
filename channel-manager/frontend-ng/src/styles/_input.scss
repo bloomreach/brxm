@@ -241,5 +241,26 @@
         }
       }
     }
+
+    &.md-input-invalid {
+      .md-char-counter,
+      .md-input-message-animation,
+      label {
+        color: $bloomreach-red;
+      }
+    }
+
+    .md-input-message-animation,
+    .md-input-messages-animation {
+      color: $bloomreach-red;
+    }
+
+    md-select.ng-invalid.ng-touched .md-select-value {
+      color: $bloomreach-red !important;
+    }
+
+    label.md-required::after {
+      color: $bloomreach-red;
+    }
   }
 }

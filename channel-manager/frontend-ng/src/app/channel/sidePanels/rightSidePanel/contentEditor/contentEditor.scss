@@ -57,11 +57,11 @@ content-editor {
     label,
     .hippo-hint-icon,
     > .has-focused-field > .field-title {
-      color: $red-a700 !important;
+      color: $bloomreach-red !important;
     }
 
     .md-input.ng-invalid {
-      border-color: $red-a700 !important;
+      border-color: $bloomreach-red !important;
     }
 
     // ensure that error messages are also shown if an element has not been touched
