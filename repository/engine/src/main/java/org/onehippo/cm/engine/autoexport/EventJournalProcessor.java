@@ -85,14 +85,11 @@ public class EventJournalProcessor {
     private static final String[] builtinIgnoredEventPaths = new String[]{
             "/hippo:log",
             "/content/attic",
-            "/formdata",
-            "/webfiles",
             "/hippo:configuration/hippo:update/hippo:queue",
             "/hippo:configuration/hippo:update/hippo:history",
             "/hippo:configuration/hippo:update/jcr:",
             "/hippo:configuration/hippo:temporary",
-            "/hippo:configuration/hippo:modules/brokenlinks",
-            "/" + HCM_ROOT,
+            "/" + HCM_ROOT
     };
 
     private static final int MAX_REPEAT_PROCESS_EVENTS = 3;
