@@ -401,12 +401,10 @@
 }
 
 .channel-manager ul.channel-group li {
-  -webkit-flex: 0 0 150px;
-  -ms-flex: 0 0 150px;
   border-radius: 4px;
   cursor: pointer;
   display: block;
-  flex: 0 0 150px;
+  flex: 0 0 200px;
   margin-bottom: 12px;
   margin-right: 16px;
   overflow: hidden;
@@ -420,15 +418,14 @@
 
 .channel-manager ul.channel-group li.x-view-selected {
   background-color: rgba(100, 100, 100, .15);
-  -moz-border-radius: 8px;
-  -webkit-border-radius: 8px;
+  border-radius: 8px;
   border-top: 1px solid rgba(0, 0, 0, .15);
 }
 
 .channel-manager .channel .channel-footer {
   display: flex;
   justify-content: center;
-  padding: 0 4px;
+  padding: 0 8px;
 }
 
 .channel-manager .channel .channel-region-name-wrapper {
