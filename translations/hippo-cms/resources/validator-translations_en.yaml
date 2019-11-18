@@ -10,6 +10,7 @@ definitions:
         escaped: 'Do not use these characters: < > & '' "'
         required#String: Enter some text
         resource-required: Upload a file
+        path-is-used-multiple-times: Do not use the same path multiple times
         summaryMultiple: This document has ${numberOfErrors} errors
         non-empty-html: Enter some text
         required#OpenUiString: Enter a value
