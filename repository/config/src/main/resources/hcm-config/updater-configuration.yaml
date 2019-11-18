@@ -7,7 +7,7 @@ definitions:
       jcr:lockIsDeep:
         .meta:category: system
       /hippo:registry:
-        .meta:residual-child-node-category: content
+        .meta:residual-child-node-category: config
         jcr:primaryType: hipposys:updaterfolder
       /hippo:queue:
         .meta:residual-child-node-category: content
