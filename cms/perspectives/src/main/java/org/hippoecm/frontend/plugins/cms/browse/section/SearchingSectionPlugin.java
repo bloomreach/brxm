@@ -347,7 +347,7 @@ public class SearchingSectionPlugin extends RenderPlugin implements IBrowserSect
 
     public IModel<String> getTitle() {
         final String titleKey = getPluginConfig().getString("title", getPluginConfig().getName());
-        return new ResourceBundleModel(getBundleName(), titleKey);
+        return ResourceBundleModel.of(getBundleName(), titleKey);
     }
 
     @Override

@@ -60,8 +60,8 @@ public class TemplateTypeValidator implements ITypeValidator {
                         final String path = field.getProperty(HippoNodeType.HIPPO_PATH).getString();
                         if (paths.contains(path)) {
                             // TODO: add actual paths
-                            final IModel<String> message = new ResourceBundleModel.Builder("hippo:cms.validators",
-                                    "path-is-used-multiple-times").build();
+                            final IModel<String> message =
+                                    ResourceBundleModel.of("hippo:cms.validators", "path-is-used-multiple-times");
                             violations.add(new Violation(new HashSet<>(), message));
                         }
                         if (!path.equals("*")) {

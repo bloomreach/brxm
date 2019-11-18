@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -33,7 +33,10 @@ public final class ReportUtil {
     }
 
     public static String getTranslation(final String reportName, final String key, final String defaultValue) {
-        return new ResourceBundleModel("hippo:reports."+ reportName, key, defaultValue).getObject();
+        return new ResourceBundleModel.Builder("hippo:reports." + reportName, key)
+            .defaultValue(defaultValue)
+            .build()
+            .getObject();
     }
 
     /**
