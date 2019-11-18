@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -262,7 +262,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                 final Map<String, Set<String>> prototypes = (Map<String, Set<String>>) hints.get("prototypes");
                 for (final String category : prototypes.keySet()) {
                     final IModel<String> categoryLabel = new StringResourceModel("add-category", this)
-                            .setParameters(new ResourceBundleModel(HIPPO_TEMPLATES_BUNDLE_NAME, category));
+                            .setParameters(ResourceBundleModel.of(HIPPO_TEMPLATES_BUNDLE_NAME, category));
 
                     final StdWorkflow<FolderWorkflow> stdWorkflow = new StdWorkflow<FolderWorkflow>("id", categoryLabel, getPluginContext(), model) {
 
@@ -425,7 +425,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
         AddDocumentDialog dialog = new AddDocumentDialog(
                 addDocumentModel,
-                new ResourceBundleModel(HIPPO_TEMPLATES_BUNDLE_NAME, category),
+                ResourceBundleModel.of(HIPPO_TEMPLATES_BUNDLE_NAME, category),
                 category,
                 prototypes,
                 translated && !isLanguageKnown(),

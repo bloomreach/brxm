@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -131,7 +131,8 @@ public class BrowsingSectionPlugin extends RenderPlugin<DocumentCollection> impl
     }
 
     public IModel<String> getTitle() {
-        return new ResourceBundleModel(getBundleName(), getPluginConfig().getString("title", getPluginConfig().getName()));
+        final String key = getPluginConfig().getString("key", getPluginConfig().getName());
+        return ResourceBundleModel.of(getBundleName(), key);
     }
 
     @Override

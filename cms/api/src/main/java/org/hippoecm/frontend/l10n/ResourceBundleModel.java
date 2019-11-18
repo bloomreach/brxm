@@ -26,27 +26,25 @@ import org.onehippo.repository.l10n.ResourceBundle;
 
 public class ResourceBundleModel extends LoadableDetachableModel<String> {
 
-    // after removal of the deprecated constructors: add the final keyword again to these properties
-    private String bundleName;
-    private String key;
-    private Locale locale;
-    private String defaultValue;
-    // keeps track of whether a defaultValue is set. This is needed because defaultValue parameter {@code null} results
-    // in slightly different behavior than the constructor without defaultValue
-    private boolean defaultValueSet;
-    private Map<String, String> parameters;
+    private final String bundleName;
+    private final String key;
+    private final Locale locale;
+    private final Map<String, String> parameters;
+    private final String missingValue;
 
     public static class Builder {
         // required parameters
         private final String bundleName;
         private final String key;
-        
+
         // optional parameters, set to default values
         private Locale locale = null;
         private String defaultValue = null;
+        // keeps track of whether a defaultValue is set. This is needed because defaultValue parameter {@code null}
+        // results in slightly different behavior than the constructor without defaultValue
         private boolean defaultValueSet = false;
         private Map<String, String> parameters = null;
-        
+
         public Builder(final String bundleName, final String key) {
             this.bundleName = bundleName;
             this.key = key;
@@ -76,58 +74,20 @@ public class ResourceBundleModel extends LoadableDetachableModel<String> {
             return new ResourceBundleModel(this);
         }
     }
-    
+
+    public static ResourceBundleModel of(final String bundleName, final String key) {
+        return new Builder(bundleName, key).build();
+    }
+
     private ResourceBundleModel(final Builder builder) {
         this.bundleName = builder.bundleName;
         this.key = builder.key;
         this.locale = builder.locale;
-        this.defaultValue = builder.defaultValue;
-        this.defaultValueSet = builder.defaultValueSet;
         this.parameters = builder.parameters;
-    }
 
-    /**
-     * @deprecated Use {@link ResourceBundleModel.Builder} instead. 
-     */
-    @Deprecated
-    public ResourceBundleModel(final String bundleName, final String key) {
-        this(bundleName, key, null, false, null);
-    }
-
-    /**
-     * @deprecated Use {@link ResourceBundleModel.Builder} instead. 
-     */
-    @Deprecated
-    public ResourceBundleModel(final String bundleName, final String key, final String defaultValue) {
-        this(bundleName, key, defaultValue, true, null);
-    }
-
-    /**
-     * @deprecated Use {@link ResourceBundleModel.Builder} instead. 
-     */
-    @Deprecated
-    public ResourceBundleModel(final String bundleName, final String key, final Locale locale) {
-        this(bundleName, key, null, false, locale);
-    }
-
-    /**
-     * @deprecated Use {@link ResourceBundleModel.Builder} instead. 
-     */
-    @Deprecated
-    public ResourceBundleModel(final String bundleName, final String key, final String defaultValue, 
-                               final Locale locale) {
-        this(bundleName, key, defaultValue, true, locale);
-    }
-
-    // can be removed when the deprecated constructors are removed
-    private ResourceBundleModel(final String bundleName, final String key, final String defaultValue, 
-                                final boolean defaultValueSet, final Locale locale) {
-        this.bundleName = bundleName;
-        this.key = key;
-        this.defaultValue = defaultValue;
-        this.defaultValueSet = defaultValueSet;
-        this.locale = locale;
-        this.parameters = null;
+        missingValue = builder.defaultValueSet
+                ? builder.defaultValue
+                : "???" + key + "???";
     }
 
     @Override
@@ -143,20 +103,17 @@ public class ResourceBundleModel extends LoadableDetachableModel<String> {
             return missingValue();
         }
 
-        final String value = parameters == null ?
-                bundle.getString(key) :
-                bundle.getString(key, parameters);
-        
-        return value == null ?
-                missingValue() :
-                value;
+        final String value = parameters == null
+                ? bundle.getString(key)
+                : bundle.getString(key, parameters);
+
+        return value == null
+                ? missingValue()
+                : value;
     }
 
     private String missingValue() {
-        if (defaultValueSet) {
-            return defaultValue;
-        }
-        return "???" + key + "???";
+        return missingValue;
     }
 
     @Override

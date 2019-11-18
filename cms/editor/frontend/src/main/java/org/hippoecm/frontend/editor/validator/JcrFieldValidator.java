@@ -151,7 +151,7 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
         final boolean isCompound = field.getTypeDescriptor().isType(HippoNodeType.NT_COMPOUND);
         final FeedbackScope feedbackScope = isCompound ? FeedbackScope.COMPOUND : FeedbackScope.FIELD;
         final ModelPathElement child = new ModelPathElement(field, field.getPath(), 0);
-        final IModel<String> message = new ResourceBundleModel.Builder("hippo:cms.validators", "required").build();
+        final IModel<String> message = ResourceBundleModel.of("hippo:cms.validators", "required");
         return Collections.singleton(newViolation(child, message, feedbackScope));
     }
 

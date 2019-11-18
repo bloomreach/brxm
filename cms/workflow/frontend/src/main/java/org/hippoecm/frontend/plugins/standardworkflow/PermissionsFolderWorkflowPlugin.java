@@ -279,8 +279,9 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
 
             IChoiceRenderer<String> folderTypeRenderer = new IChoiceRenderer<String>() {
                 public String getDisplayValue(final String object) {
+                    final IModel<String> templateName = ResourceBundleModel.of(HIPPO_TEMPLATES_BUNDLE_NAME, object);
                     final String categoryLabel = new StringResourceModel("add-category", PermissionsFolderWorkflowPlugin.this)
-                            .setParameters(new ResourceBundleModel(HIPPO_TEMPLATES_BUNDLE_NAME, object))
+                            .setParameters(templateName)
                             .getString();
                     return String.format("%s (%s)", categoryLabel, object);
                 }
@@ -321,8 +322,9 @@ public class PermissionsFolderWorkflowPlugin extends RenderPlugin {
         }
 
         public String getDisplayObject() {
+            final ResourceBundleModel templateName = ResourceBundleModel.of(HIPPO_TEMPLATES_BUNDLE_NAME, getObject());
             final String categoryLabel = new StringResourceModel("add-category", PermissionsFolderWorkflowPlugin.this)
-                    .setParameters(new ResourceBundleModel(HIPPO_TEMPLATES_BUNDLE_NAME, this.getObject()))
+                    .setParameters(templateName)
                     .getString();
             return String.format("%s (%s)", categoryLabel, this.getObject()); //categoryLabel;//
         }
