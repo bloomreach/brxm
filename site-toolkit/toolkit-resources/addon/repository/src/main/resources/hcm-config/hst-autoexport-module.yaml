@@ -25,4 +25,5 @@ definitions:
           operation: add
           value: ['/hst:*/hst:configurations: config',
             '/hst:*/hst:hosts: config',
-            '/hst:*/hst:hosts/**: config']
+            '/hst:*/hst:hosts/**: config',
+            '/hst:*/hst:blueprints/**: config']
