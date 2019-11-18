@@ -35,23 +35,6 @@ public class ScopedFeedBackMessage extends FeedbackMessage {
         this.scope = scope;
     }
 
-    /**
-     * @deprecated Use {@link #ScopedFeedBackMessage(Component, Serializable, int, FeedbackScope)} instead
-     */
-    @Deprecated
-    public ScopedFeedBackMessage(final Component reporter, final Serializable message, final int level,
-                                 final ValidationScope scope) {
-        this(reporter, message, level, scope.toFeedbackScope());
-    }
-
-    /**
-     * @deprecated Use {@link #getFeedbackScope()} instead
-     */
-    @Deprecated
-    public ValidationScope getScope() {
-        return ValidationScope.from(scope);
-    }
-
     public FeedbackScope getFeedbackScope() {
         return scope;
     }

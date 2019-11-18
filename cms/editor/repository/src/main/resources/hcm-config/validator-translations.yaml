@@ -15,6 +15,7 @@ definitions:
         required#hippostd-html: Enter some text
         non-empty: Enter a value
         non-empty-html: Enter some text
+        path-is-used-multiple-times: Do not use the same path multiple times
         html: Enter a value
         resource-required: Upload a file
         summarySingle: This document has 1 error

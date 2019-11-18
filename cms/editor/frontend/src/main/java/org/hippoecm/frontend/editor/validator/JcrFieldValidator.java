@@ -26,6 +26,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.l10n.ResourceBundleModel;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.ChildNodeProvider;
 import org.hippoecm.frontend.model.JcrItemModel;
@@ -33,7 +34,6 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.PropertyValueProvider;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
-import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.FeedbackScope;
@@ -42,8 +42,6 @@ import org.hippoecm.frontend.validation.IFieldValidator;
 import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidationException;
-import org.hippoecm.frontend.validation.ValidationScope;
-import org.hippoecm.frontend.validation.ValidatorMessages;
 import org.hippoecm.frontend.validation.Violation;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
@@ -152,10 +150,9 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
 
         final boolean isCompound = field.getTypeDescriptor().isType(HippoNodeType.NT_COMPOUND);
         final FeedbackScope feedbackScope = isCompound ? FeedbackScope.COMPOUND : FeedbackScope.FIELD;
-        final Violation defaultViolation = newViolation(new ModelPathElement(field, field.getPath(), 0),
-                getMessage(ValidatorMessages.REQUIRED_FIELD_NOT_PRESENT),
-                feedbackScope);
-        return Collections.singleton(defaultViolation);
+        final ModelPathElement child = new ModelPathElement(field, field.getPath(), 0);
+        final IModel<String> message = new ResourceBundleModel.Builder("hippo:cms.validators", "required").build();
+        return Collections.singleton(newViolation(child, message, feedbackScope));
     }
 
     private boolean fieldNeedsValidation(final Set<String> validators) {
@@ -168,23 +165,6 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
 
     public ITypeDescriptor getFieldType() {
         return fieldType;
-    }
-
-    @Override
-    public Violation newValueViolation(final IModel childModel, final String key) throws ValidationException {
-        return newValueViolation(childModel, getMessage(key));
-    }
-
-    @Override
-    public Violation newValueViolation(final IModel childModel, final IModel<String> message)
-            throws ValidationException {
-        return newValueViolation(childModel, message, FeedbackScope.FIELD);
-    }
-
-    @Override
-    public Violation newValueViolation(final IModel childModel, final IModel<String> message,
-                                       final ValidationScope scope) throws ValidationException {
-        return newViolation(getElement(childModel), message, scope.toFeedbackScope());
     }
 
     @Override
@@ -219,10 +199,6 @@ public class JcrFieldValidator implements ITypeValidator, IFieldValidator {
             }
         }
         return new ModelPathElement(field, name, index);
-    }
-
-    private IModel<String> getMessage(final String key, final Object... parameters) {
-        return new ClassResourceModel(key, ValidatorMessages.class, parameters);
     }
 
     private Violation newViolation(final ModelPathElement child, final IModel<String> messageModel,
