@@ -16,7 +16,17 @@
 
 import { Component, Page } from '@bloomreach/spa-sdk';
 
+/**
+ * The mapped component properties.
+ */
 export interface BrProps<T extends Component = Component> {
+  /**
+   * The mapped component.
+   */
   component: T;
+
+  /**
+   * The current page.
+   */
   page: Page;
 }

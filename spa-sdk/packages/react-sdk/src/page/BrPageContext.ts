@@ -17,4 +17,7 @@
 import React from 'react';
 import { Page } from '@bloomreach/spa-sdk';
 
+/**
+ * The React Context holding the current brXM Page.
+ */
 export const BrPageContext = React.createContext<Page | undefined>(undefined);

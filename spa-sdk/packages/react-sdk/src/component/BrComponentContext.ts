@@ -17,4 +17,7 @@
 import React from 'react';
 import { Component } from '@bloomreach/spa-sdk';
 
+/**
+ * The React Context holding the current brXM Component.
+ */
 export const BrComponentContext = React.createContext<Component | undefined>(undefined);

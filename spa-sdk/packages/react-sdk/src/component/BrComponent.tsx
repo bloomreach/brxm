@@ -19,9 +19,18 @@ import { BrComponentContext } from './BrComponentContext';
 import { BrNode } from './BrNode';
 
 interface BrComponentProps {
+  /**
+   * The path to a component.
+   * The path is defined as a slash-separated components name chain
+   * relative to the current component (e.g. `main/container`).
+   * If it is omitted, all the children will be rendered.
+   */
   path?: string;
 }
 
+/**
+ * The brXM component.
+ */
 export class BrComponent extends React.Component<BrComponentProps> {
   static contextType = BrComponentContext;
   context: React.ContextType<typeof BrComponentContext>;

@@ -20,8 +20,21 @@ import { BrMappingContext, BrNode } from '../component';
 import { BrPageContext } from './BrPageContext';
 
 interface BrPageProps {
+  /**
+   * The configuration of the SPA SDK.
+   * @see https://www.npmjs.com/package/@bloomreach/spa-sdk#configuration
+   */
   configuration: Configuration;
+
+  /**
+   * The brXM and React components mapping.
+   */
   mapping: React.ContextType<typeof BrMappingContext>;
+
+  /**
+   * The pre-initialized page instance or prefetched page model.
+   * Mostly this property should be used to transfer state from the server-side to the client-side.
+   */
   page?: Page | PageModel;
 }
 
@@ -29,7 +42,21 @@ interface BrPageState {
   page?: Page;
 }
 
+/**
+ * @typedef {Object} BrPageProps
+ * @property {Configuration} configuration The configuration of the SPA SDK.
+ * @property {Object} mapping The brXM and React components mapping.
+ * @property {Page | PageModel | undefined} page The pre-initialized page instance or prefetched page model.
+ * Mostly this property should be used to transfer state from the server-side to the client-side.
+ */
+
+/**
+ * The brXM page.
+ */
 export class BrPage extends React.Component<BrPageProps, BrPageState> {
+  /**
+   * @param props {BrPageProps}
+   */
   constructor(props: BrPageProps) {
     super(props);
 

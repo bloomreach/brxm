@@ -20,9 +20,15 @@ import { BrMeta } from '../meta';
 import { BrPageContext } from '../page/BrPageContext';
 
 interface BrManageContentButtonProps {
+  /**
+   * The content entity to open for editing.
+   */
   content: Content;
 }
 
+/**
+ * The button component that opens for editing a content.
+ */
 export class BrManageContentButton extends React.Component<BrManageContentButtonProps> {
   static contextType = BrPageContext;
   context: React.ContextType<typeof BrPageContext>;

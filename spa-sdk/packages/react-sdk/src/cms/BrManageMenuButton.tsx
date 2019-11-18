@@ -20,9 +20,15 @@ import { BrMeta } from '../meta';
 import { BrPageContext } from '../page/BrPageContext';
 
 interface BrManageMenuButtonProps {
+  /**
+   * The related menu component.
+   */
   menu: Menu;
 }
 
+/**
+ * The button component that opens a menu editor.
+ */
 export class BrManageMenuButton extends React.Component<BrManageMenuButtonProps> {
   static contextType = BrPageContext;
   context: React.ContextType<typeof BrPageContext>;
