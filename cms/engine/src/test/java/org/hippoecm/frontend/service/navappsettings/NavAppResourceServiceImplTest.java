@@ -20,14 +20,20 @@ package org.hippoecm.frontend.service.navappsettings;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
+import org.apache.commons.configuration.Configuration;
 import org.hippoecm.frontend.service.NavAppResource;
 import org.hippoecm.frontend.service.ResourceType;
+import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.junit.Test;
 
+import static org.apache.commons.configuration.ConfigurationConverter.getConfiguration;
 import static org.hamcrest.CoreMatchers.allOf;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.is;
@@ -39,10 +45,12 @@ import static org.junit.Assert.fail;
 
 public class NavAppResourceServiceImplTest {
 
+    private final Properties properties = new Properties();
+    private final ContainerConfiguration containerConfiguration = fromConfiguration(getConfiguration(properties));
+
     @Test
     public void no_resources_at_all_is_allowed() {
-        final Properties properties = new Properties();
-        final NavAppResourceService service = new NavAppResourceServiceImpl(properties);
+        final NavAppResourceService service = new NavAppResourceServiceImpl(containerConfiguration);
         assertThat(service.getNavigationItemsResources().isEmpty(), is(true));
         assertThat(service.getLoginResources().isEmpty(), is(true));
         assertThat(service.getLogoutResources().isEmpty(), is(true));
@@ -64,10 +72,9 @@ public class NavAppResourceServiceImplTest {
                 + "brx.navapp.resource.LOGIN.id-3  = properties are case sensitive, so this one doesn't count\n"
                 + "x.y.z = just some other property\n"
                 + "p.q.r = yet another one\n";
-        final Properties properties = new Properties();
         properties.load(new StringReader(data));
 
-        final NavAppResourceService service = new NavAppResourceServiceImpl(properties);
+        final NavAppResourceService service = new NavAppResourceServiceImpl(containerConfiguration);
 
         assertThat(service.getLoginResources().size(), is(3));
         assertThat(service.getLogoutResources().size(), is(3));
@@ -78,10 +85,9 @@ public class NavAppResourceServiceImplTest {
     @Test
     public void navigationitems_without_login_logout_pair_is_allowed() {
 
-        final Properties properties = new Properties();
         properties.setProperty(NAVIGATION_ITEMS_KEY_PREFIX + ".company-c", "INTERNAL_REST, http://company-c.com/nav-items");
 
-        final NavAppResourceService service = new NavAppResourceServiceImpl(properties);
+        final NavAppResourceService service = new NavAppResourceServiceImpl(containerConfiguration);
         final Set<NavAppResource> loginResources = service.getNavigationItemsResources();
 
         assertThat(loginResources.iterator().next().getResourceType(), is(ResourceType.INTERNAL_REST));
@@ -93,11 +99,10 @@ public class NavAppResourceServiceImplTest {
         final String data = "# Sample platform.properties\n"
                 + "brx.navapp.resource.navigationitems.id-1  = IFRAME, https://company-1.com/nav-items\n"
                 + "brx.navapp.resource.login.id-1  = IFRAME, https://company-1.com/login\n";
-        final Properties properties = new Properties();
         properties.load(new StringReader(data));
 
         try {
-            new NavAppResourceServiceImpl(properties);
+            new NavAppResourceServiceImpl(containerConfiguration);
             fail("should have thrown");
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), allOf(
@@ -112,11 +117,10 @@ public class NavAppResourceServiceImplTest {
         final String data = "# Sample platform.properties\n"
                 + "brx.navapp.resource.navigationitems.id-1  = IFRAME, https://company-1.com/nav-items\n"
                 + "brx.navapp.resource.logout.id-1  = IFRAME, https://company-1.com/logout\n";
-        final Properties properties = new Properties();
         properties.load(new StringReader(data));
 
         try {
-            new NavAppResourceServiceImpl(properties);
+            new NavAppResourceServiceImpl(containerConfiguration);
             fail("should have thrown");
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), allOf(
@@ -129,12 +133,11 @@ public class NavAppResourceServiceImplTest {
     @Test
     public void login_logout_without_navigationitems_not_allowed() {
 
-        final Properties properties = new Properties();
         properties.setProperty(LOGIN_KEY_PREFIX + ".company-a", "IFRAME, http://company-a.com/login");
         properties.setProperty(LOGOUT_KEY_PREFIX + ".company-a", "REST, http://company-b.com/logout");
 
         try {
-            new NavAppResourceServiceImpl(properties);
+            new NavAppResourceServiceImpl(containerConfiguration);
             fail("should have thrown");
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), allOf(
@@ -147,11 +150,10 @@ public class NavAppResourceServiceImplTest {
     @Test
     public void values_wrong_order_not_allowed() {
 
-        final Properties properties = new Properties();
         properties.setProperty(NAVIGATION_ITEMS_KEY_PREFIX + ".company-a", "http://company-c.com/nav-items, IFRAME");
 
         try {
-            new NavAppResourceServiceImpl(properties);
+            new NavAppResourceServiceImpl(containerConfiguration);
             fail("Should have thrown");
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), allOf(
@@ -164,11 +166,10 @@ public class NavAppResourceServiceImplTest {
     @Test
     public void missing_resource_type_not_allowed() {
 
-        final Properties properties = new Properties();
         properties.setProperty(NAVIGATION_ITEMS_KEY_PREFIX + ".company-a", "http://company-c.com/nav-items");
 
         try {
-            new NavAppResourceServiceImpl(properties);
+            new NavAppResourceServiceImpl(containerConfiguration);
             fail("should have thrown");
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), allOf(
@@ -182,11 +183,10 @@ public class NavAppResourceServiceImplTest {
     @Test
     public void missing_url_not_allowed() {
 
-        final Properties properties = new Properties();
         properties.setProperty(NAVIGATION_ITEMS_KEY_PREFIX + ".company-a", "REST");
 
         try {
-            new NavAppResourceServiceImpl(properties);
+            new NavAppResourceServiceImpl(containerConfiguration);
             fail("should have thrown");
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), allOf(
@@ -200,11 +200,10 @@ public class NavAppResourceServiceImplTest {
     @Test
     public void properties_reversed_not_allowed() {
 
-        final Properties properties = new Properties();
         properties.setProperty(NAVIGATION_ITEMS_KEY_PREFIX + ".company-a", "http://company-a.com/navitems, REST");
 
         try {
-            new NavAppResourceServiceImpl(properties);
+            new NavAppResourceServiceImpl(containerConfiguration);
             fail("should have thrown");
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), allOf(
@@ -220,11 +219,10 @@ public class NavAppResourceServiceImplTest {
         final String data = "# Sample platform.properties\n"
                 + "brx.navapp.resource.login.id-1  = IFRAME, https://company-1.com/login\n"
                 + "brx.navapp.resource.login.id-2  = IFRAME, https://company-1.com/login\n";
-        final Properties properties = new Properties();
         properties.load(new StringReader(data));
 
         try {
-            new NavAppResourceServiceImpl(properties);
+            new NavAppResourceServiceImpl(containerConfiguration);
             fail("should have thrown");
         } catch (IllegalArgumentException e) {
             assertThat(e.getMessage(), allOf(
@@ -240,10 +238,9 @@ public class NavAppResourceServiceImplTest {
         final URI someCDN = URI.create("https://some.cdn.com/navapp");
         final String data = "# Sample platform.properties\n"
                 + "brx.navapp.location  = " + someCDN + "\n";
-        final Properties properties = new Properties();
         properties.load(new StringReader(data));
 
-        final NavAppResourceService service = new NavAppResourceServiceImpl(properties);
+        final NavAppResourceService service = new NavAppResourceServiceImpl(containerConfiguration);
 
         assertThat(service.getNavAppResourceUrl(), is(Optional.of(someCDN)));
     }
@@ -254,8 +251,7 @@ public class NavAppResourceServiceImplTest {
         final URI someCDN = URI.create("https://some.cdn.com/navapp");
         System.setProperty(NavAppResourceServiceImpl.NAVAPP_LOCATION_KEY, someCDN.toString());
 
-        final Properties properties = new Properties();
-        final NavAppResourceService service = new NavAppResourceServiceImpl(properties);
+        final NavAppResourceService service = new NavAppResourceServiceImpl(containerConfiguration);
 
         assertThat(service.getNavAppResourceUrl(), is(Optional.of(someCDN)));
         System.getProperties().remove(NavAppResourceServiceImpl.NAVAPP_LOCATION_KEY);
@@ -264,9 +260,110 @@ public class NavAppResourceServiceImplTest {
     @Test
     public void navapp_resource_url_null_if_not_set_as_property_or_env_var() {
 
-        final Properties properties = new Properties();
-        final NavAppResourceService service = new NavAppResourceServiceImpl(properties);
+        final NavAppResourceService service = new NavAppResourceServiceImpl(containerConfiguration);
 
         assertThat(service.getNavAppResourceUrl(), is(Optional.empty()));
+    }
+
+    private static ContainerConfiguration fromConfiguration(Configuration configuration) {
+        return new ContainerConfiguration() {
+
+            @Override
+            public boolean isEmpty() {
+                return configuration.isEmpty();
+            }
+
+            @Override
+            public boolean containsKey(final String key) {
+                return configuration.containsKey(key);
+            }
+
+            @Override
+            public Iterator<String> getKeys() {
+                return configuration.getKeys();
+            }
+
+            @Override
+            public boolean isDevelopmentMode() {
+                return true;
+            }
+
+            @Override
+            public Properties toProperties() {
+                // Intentionally throw this exception to prevent classes from using it.
+                throw new UnsupportedOperationException();
+            }
+
+            @Override
+            public boolean getBoolean(final String key) {
+                return configuration.getBoolean(key);
+            }
+
+            @Override
+            public boolean getBoolean(final String key, final boolean defaultValue) {
+                return configuration.getBoolean(key, defaultValue);
+            }
+
+            @Override
+            public double getDouble(final String key) {
+                return configuration.getDouble(key);
+            }
+
+            @Override
+            public double getDouble(final String key, final double defaultValue) {
+                return configuration.getDouble(key, defaultValue);
+            }
+
+            @Override
+            public float getFloat(final String key) {
+                return configuration.getFloat(key);
+            }
+
+            @Override
+            public float getFloat(final String key, final float defaultValue) {
+                return configuration.getFloat(key, defaultValue);
+            }
+
+            @Override
+            public int getInt(final String key) {
+                return configuration.getInt(key);
+            }
+
+            @Override
+            public int getInt(final String key, final int defaultValue) {
+                return configuration.getInt(key, defaultValue);
+            }
+
+            @Override
+            public List<String> getList(final String key) {
+                return Arrays.asList(getStringArray(key));
+            }
+
+            @Override
+            public long getLong(final String key) {
+                return configuration.getLong(key);
+            }
+
+            @Override
+            public long getLong(final String key, final long defaultValue) {
+                return configuration.getLong(key, defaultValue);
+            }
+
+            @Override
+            public String getString(final String key) {
+                return configuration.getString(key);
+            }
+
+            @Override
+            public String getString(final String key, final String defaultValue) {
+                return configuration.getString(key, defaultValue);
+            }
+
+            @Override
+            public String[] getStringArray(final String key) {
+                return configuration.getStringArray(key);
+            }
+
+        };
     }
 }
