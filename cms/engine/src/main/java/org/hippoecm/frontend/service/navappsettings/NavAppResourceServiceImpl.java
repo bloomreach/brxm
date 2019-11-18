@@ -19,17 +19,16 @@ package org.hippoecm.frontend.service.navappsettings;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.Set;
 
 import org.hippoecm.frontend.service.NavAppResource;
 import org.hippoecm.frontend.service.ResourceType;
+import org.hippoecm.hst.core.container.ContainerConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,13 +48,13 @@ final class NavAppResourceServiceImpl implements NavAppResourceService {
     private static final String URL = "url";
     private static final String TYPE = "type";
 
-    private final Properties properties;
+    private final ContainerConfiguration containerConfiguration;
     private final Set<NavAppResource> loginResources;
     private final Set<NavAppResource> logoutResources;
     private final Set<NavAppResource> navigationItemsResources;
 
-    NavAppResourceServiceImpl(Properties properties) {
-        this.properties = properties;
+    NavAppResourceServiceImpl(ContainerConfiguration containerConfiguration) {
+        this.containerConfiguration = containerConfiguration;
         final Map<String, NavAppResource> loginResourceMap = getResources(LOGIN_KEY_PREFIX);
         final Map<String, NavAppResource> logoutResourceMap = getResources(LOGOUT_KEY_PREFIX);
         final Map<String, NavAppResource> navigationItemsResourceMap = getResources(NAVIGATION_ITEMS_KEY_PREFIX);
@@ -104,7 +103,7 @@ final class NavAppResourceServiceImpl implements NavAppResourceService {
     @Override
     public Optional<URI> getNavAppResourceUrl() {
         return Optional.ofNullable(
-                properties.getProperty(NAVAPP_LOCATION_KEY,
+                containerConfiguration.getString(NAVAPP_LOCATION_KEY,
                         System.getProperty(NAVAPP_LOCATION_KEY, null)))
                 .map(URI::create);
     }
@@ -127,11 +126,12 @@ final class NavAppResourceServiceImpl implements NavAppResourceService {
     private Map<String, NavAppResource> getResources(String keyPrefix) {
         final Map<NavAppResource, List<String>> resourceToKeyMap = new HashMap<>();
         final Map<String, NavAppResource> keyToResourceMap = new HashMap<>();
-        for (Object key : properties.keySet()) {
-            if (key.toString().startsWith(keyPrefix)) {
-                final NavAppResource navAppResource = createResource(key.toString());
-                keyToResourceMap.put(key.toString().substring(keyPrefix.length() + 1), navAppResource);
-                resourceToKeyMap.computeIfAbsent(navAppResource, r -> new ArrayList<>()).add(key.toString());
+        final Iterable<String> keys = containerConfiguration::getKeys;
+        for (String key : keys) {
+            if (key.startsWith(keyPrefix)) {
+                final NavAppResource navAppResource = createResource(key);
+                keyToResourceMap.put(key.substring(keyPrefix.length() + 1), navAppResource);
+                resourceToKeyMap.computeIfAbsent(navAppResource, r -> new ArrayList<>()).add(key);
             }
         }
         final Map<NavAppResource, List<String>> duplicates = resourceToKeyMap.entrySet().stream()
@@ -147,7 +147,7 @@ final class NavAppResourceServiceImpl implements NavAppResourceService {
 
     private NavAppResource createResource(String key) {
 
-        final List<String> values = Arrays.asList(properties.getProperty(key).split(","));
+        final List<String> values = containerConfiguration.getList(key);
         log.debug("{} = {} ", key, values);
 
         if (values.size() < 2) {
