@@ -80,7 +80,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         this(context, config,
                 PluginUserSession::get,
                 () -> new UserSessionAttributeStore(PluginUserSession::get),
-                new NavAppResourceServiceImpl(HstServices.getComponentManager().getContainerConfiguration().toProperties())
+                new NavAppResourceServiceImpl(HstServices.getComponentManager().getContainerConfiguration())
         );
     }
 
