@@ -4,26 +4,32 @@ definitions:
       /xm.form.writer:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:description: Allows reading and writing of delivery tier form data through role readwrite
         hipposys:userroles: []
       /xm.live-documents.reader:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:description: Allows reading of live (published) documents through role readonly
         hipposys:userroles: [xm.webfiles.reader]
       /xm.preview-documents.reader:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:description: Allows reading of preview (unpublished) documents through role readonly
         hipposys:userroles: [xm.webfiles.reader]
       /xm.channel.admin:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:description: Allows administration of channels through role channel-admin; implies xm.channel.webmaster
         hipposys:userroles: [xm.channel.webmaster]
       /xm.channel.webmaster:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:description: Allows editing and publishing channels through role channel-webmaster; implies xm.channel.viewer
         hipposys:userroles: [xm.channel.viewer]
       /xm.channel.viewer:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:description: Allows viewing channels through role channel-viewer; implies xm.webfiles.reader
         hipposys:userroles: [xm.webfiles.reader]
       /xm.default-user.system-admin:
         hipposys:userroles:
@@ -43,6 +49,7 @@ definitions:
       /xm.default-user.webmaster:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
+        hipposys:description: Implies all standard userroles needed for a default webmaster user or group
         hipposys:userroles: [xm.channel.webmaster]
     /hippo:configuration/hippo:groups:
       /webmaster:
