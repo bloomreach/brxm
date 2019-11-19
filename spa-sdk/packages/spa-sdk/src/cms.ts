@@ -22,8 +22,7 @@ const GLOBAL_WINDOW = typeof window === 'undefined' ? undefined : window;
 /**
  * Channel Manager SPA window.
  */
-export interface Window {
-  [property: string]: any;
+export interface CmsWindow extends Window {
   SPA?: SpaApi;
 }
 
@@ -45,7 +44,7 @@ export interface Cms {
    * @param window The window reference for the CMS integration.
    * By default the global window object will be used.
    */
-  initialize(window?: Window): void;
+  initialize(window?: CmsWindow): void;
 }
 
 export class Cms implements Cms {
@@ -70,7 +69,7 @@ export class Cms implements Cms {
     };
   }
 
-  initialize(window: Window | undefined = GLOBAL_WINDOW) {
+  initialize(window: CmsWindow | undefined = GLOBAL_WINDOW) {
     if (this.api || !window || window.SPA) {
       return;
     }

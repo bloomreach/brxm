@@ -26,12 +26,12 @@ import {
   TYPE_CONTAINER_BOX,
 } from './index';
 import { PageModel, TYPE_LINK_RESOURCE, TYPE_LINK_EXTERNAL, TYPE_LINK_INTERNAL } from './page';
-import { Window } from './cms';
+import { CmsWindow } from './cms';
 
 describe('initialize', () => {
   let page: Page;
   const httpClient = jest.fn(async () => ({ data: model as unknown as PageModel }));
-  const window: Window = {};
+  const window = {} as CmsWindow;
 
   beforeEach(async () => {
     httpClient.mockClear();

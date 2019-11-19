@@ -15,17 +15,17 @@
  */
 
 import { Typed } from 'emittery';
-import { Cms, Window } from './cms';
+import { CmsWindow, Cms } from './cms';
 import { Events } from './events';
 
 describe('Cms', () => {
   let cms: Cms;
   let eventBus: Typed<Events>;
-  let window: Window;
+  let window: CmsWindow;
 
   beforeEach(() => {
     eventBus = new Typed<Events>();
-    window = {};
+    window = {} as CmsWindow;
 
     cms = new Cms(eventBus);
   });
@@ -37,7 +37,7 @@ describe('Cms', () => {
 
     it('should not initialize an SPA object if there is already one', () => {
       const spa: any = {};
-      const window = { SPA: spa };
+      const window = { SPA: spa } as CmsWindow;
       cms.initialize(window);
 
       expect(window.SPA).toBe(spa);
