@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -55,6 +55,7 @@ import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.FieldPluginHelper;
+import org.hippoecm.frontend.editor.plugins.field.ValidationModel;
 import org.hippoecm.frontend.editor.plugins.fieldhint.FieldHint;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -73,6 +74,7 @@ import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.Violation;
+import org.hippoecm.frontend.validation.ViolationUtils;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.onehippo.taxonomy.api.Category;
 import org.onehippo.taxonomy.api.Taxonomy;
@@ -83,6 +85,8 @@ import org.onehippo.taxonomy.plugin.model.ClassificationModel;
 import org.onehippo.taxonomy.util.TaxonomyUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.frontend.validation.ViolationUtils.getFirstFieldViolation;
 
 /**
  * Plugin that edits the classification for a document.  The storage implementation is delegated to a
@@ -96,6 +100,8 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
 
     private static final String INVALID_TAXONOMY_KEY = "invalid.taxonomy.key";
     private static final String INVALID_TAXONOMY_CATEGORY_KEY = "invalid.taxonomy.category.key";
+
+    private final FieldPluginHelper helper;
 
     private class CategoryListView extends RefreshingView<String> {
 
@@ -176,9 +182,13 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
     public TaxonomyPickerPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
+        ValidationModel validationModel = null;
+        if (config.containsKey(IValidationService.VALIDATE_ID)) {
+            validationModel = new ValidationModel(context, config);
+        }
+
         final IFieldDescriptor fieldDescriptor = getTaxonomyFieldDescriptor();
-        final FieldPluginHelper helper = new FieldPluginHelper(context, config, fieldDescriptor,
-                getDocumentTypeDescriptor(), null);
+        helper = new FieldPluginHelper(context, config, fieldDescriptor, getDocumentTypeDescriptor(), validationModel);
 
         final Label requiredMarker = new Label("required", "*");
         if (fieldDescriptor == null || !fieldDescriptor.getValidators().contains("required")) {
@@ -281,18 +291,23 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
 
     @Override
     public void render(final PluginRequestTarget target) {
-
-        // in edit mode, check the validation service for any results for this field
         if (target != null && isActive() && IEditor.Mode.EDIT == mode) {
-            final IValidationService validationService = getService(IValidationService.VALIDATE_ID,
-                    IValidationService.class);
+            final IFieldDescriptor field = helper.getField();
+            final IModel<IValidationResult> validationModel = helper.getValidationModel();
 
-            if (validationService != null && !isTaxonomyFieldValid(validationService.getValidationResult())) {
-                target.appendJavaScript("Wicket.$('" + getMarkupId() + "').setAttribute('class', 'invalid');");
-            }
+            getFirstFieldViolation(field, validationModel).ifPresent(violationMessage -> {
+                final String selector = String.format("$('#%s')", getMarkupId());
+                target.appendJavaScript(ViolationUtils.getFieldViolationScript(selector, violationMessage));
+            });
         }
 
         super.render(target);
+    }
+
+    @Override
+    protected void onDetach() {
+        helper.detach();
+        super.onDetach();
     }
 
     /**
