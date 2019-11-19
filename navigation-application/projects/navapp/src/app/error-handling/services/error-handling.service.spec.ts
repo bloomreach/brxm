@@ -182,4 +182,22 @@ describe('ErrorHandlingService', () => {
       expect(translateServiceMock.instant).toHaveBeenCalledWith('Some detailed message');
     });
   });
+
+  describe('when the error without message and description is set', () => {
+    beforeEach(() => {
+      translateServiceMock.instant.calls.reset();
+
+      const expected = new AppError(500, '');
+
+      service.setError(expected);
+    });
+
+    it('should not translate the message of the error', () => {
+      expect(translateServiceMock.instant).not.toHaveBeenCalledWith('');
+    });
+
+    it('should not translate undefined description', () => {
+      expect(translateServiceMock.instant).not.toHaveBeenCalledWith(undefined);
+    });
+  });
 });
