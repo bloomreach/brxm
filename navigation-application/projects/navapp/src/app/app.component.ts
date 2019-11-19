@@ -55,7 +55,7 @@ export class AppComponent implements OnInit, OnDestroy {
   @HostBinding('class.mat-typography')
   typography = true;
 
-  @ViewChild(MatSidenav)
+  @ViewChild(MatSidenav, { static: true })
   sidenav: MatSidenav;
 
   isLoading$: Observable<boolean>;
