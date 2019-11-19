@@ -21,7 +21,7 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
-import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material';
+import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { Site } from '@bloomreach/navapp-communication';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';

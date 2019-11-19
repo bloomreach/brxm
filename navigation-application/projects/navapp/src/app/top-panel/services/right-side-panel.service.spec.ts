@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { MatSidenav } from '@angular/material';
+import { MatSidenav } from '@angular/material/sidenav';
 
 import { RightSidePanelService } from './right-side-panel.service';
 
