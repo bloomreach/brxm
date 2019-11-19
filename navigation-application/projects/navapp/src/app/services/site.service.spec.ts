@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { Site, SiteId } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 
@@ -124,4 +124,30 @@ describe('SiteService', () => {
 
     expect(updateSelectedSite).toHaveBeenCalledTimes(clientAppMocks.length);
   }));
+
+  describe('logging', () => {
+    describe('updateSelectedSite()', () => {
+      const siteId: SiteId = {
+        siteId: 2,
+        accountId: 123,
+      };
+
+      beforeEach(async(() => {
+        siteService.updateSelectedSite(siteId);
+      }));
+
+      it('should log that updateSelectedSite() is called for the active app', () => {
+        expect(loggerMock.debug).toHaveBeenCalledWith('updateSelectedSite() is called for the active app \'testApp2\'', siteId);
+      });
+
+      it('should log that updateSelectedSite() is called for the other apps', () => {
+        expect(loggerMock.debug).toHaveBeenCalledWith('updateSelectedSite() is called for \'testApp1\'');
+        expect(loggerMock.debug).toHaveBeenCalledWith('updateSelectedSite() is called for \'testApp3\'');
+      });
+
+      it('should log updateSelectedSite() broadcasting has been finished successfully', () => {
+        expect(loggerMock.debug).toHaveBeenCalledWith('updateSelectedSite() broadcasting finished successfully');
+      });
+    });
+  });
 });

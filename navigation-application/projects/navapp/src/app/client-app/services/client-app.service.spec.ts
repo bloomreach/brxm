@@ -74,6 +74,8 @@ describe('ClientAppService', () => {
 
     service = TestBed.get(ClientAppService);
     logger = TestBed.get(NGXLogger);
+
+    spyOn(logger, 'debug');
   });
 
   it('should exist', () => {
@@ -99,6 +101,15 @@ describe('ClientAppService', () => {
   });
 
   describe('initialization', () => {
+    it('should log iframe urls', () => {
+      service.init().catch(() => {});
+
+      expect(logger.debug).toHaveBeenCalledWith('Client app iframes are expected to be loaded', [
+        'http://app1.com',
+        'http://app2.com',
+      ]);
+    });
+
     it('should be completed successfully', fakeAsync(() => {
       const expected = [
         new ClientApp('http://app1.com', {}),
@@ -115,6 +126,14 @@ describe('ClientAppService', () => {
 
       expect(actual).toEqual(expected);
     }));
+
+    it('should log the added connection', () => {
+      service.init().catch(() => {});
+
+      service.addConnection(new Connection('http://app1.com', {}));
+
+      expect(logger.debug).toHaveBeenCalledWith('Connection is established to the iframe \'http://app1.com\'');
+    });
 
     it('should be finished when the timeout is reached but not all connections are registered', fakeAsync(() => {
       let initialized = false;
