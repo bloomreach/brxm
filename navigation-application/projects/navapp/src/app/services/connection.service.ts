@@ -98,7 +98,7 @@ export class ConnectionService {
 
       return connection;
     } catch (error) {
-      throw new Error(`Could not create connection for ${url}: ${error}`);
+      throw new Error(`Could not create connection for '${url}': ${error}`);
     }
   }
 
@@ -109,19 +109,19 @@ export class ConnectionService {
         userSettings: this.userSettings,
       }),
       showMask: () => {
-        this.logger.debug(`app '${appUrl}' called showMask()`, location);
+        this.logger.debug(`app '${appUrl}' called showMask()`);
         this.showMask$.next();
       },
       hideMask: () => {
-        this.logger.debug(`app '${appUrl}' called hideMask()`, location);
+        this.logger.debug(`app '${appUrl}' called hideMask()`);
         this.hideMask$.next();
       },
       showBusyIndicator: () => {
-        this.logger.debug(`app '${appUrl}' called showBusyIndicator()`, location);
+        this.logger.debug(`app '${appUrl}' called showBusyIndicator()`);
         this.busyIndicatorService.show();
       },
       hideBusyIndicator: () => {
-        this.logger.debug(`app '${appUrl}' called hideBusyIndicator()`, location);
+        this.logger.debug(`app '${appUrl}' called hideBusyIndicator()`);
         this.busyIndicatorService.hide();
       },
       navigate: (location: NavLocation) => {

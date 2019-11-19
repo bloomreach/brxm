@@ -674,5 +674,44 @@ describe('NavigationService', () => {
         }));
       });
     });
+
+    describe('logging', () => {
+      const navItemToNavigate = new NavItemMock({
+        appIframeUrl: 'http://domain.com/iframe1/url',
+        appPath: 'app/path/to/page1',
+      });
+
+      beforeEach(async(() => {
+        loggerMock.debug.calls.reset();
+
+        service.navigateByNavItem(navItemToNavigate, NavigationTrigger.NotDefined);
+      }));
+
+      it('should log the navigation is initiated', () => {
+        expect(loggerMock.debug).toHaveBeenCalledWith('Navigation: initiated to the url \'/base-path/iframe1/url/app/path/to/page1\'');
+      });
+
+      it('should log beforeNavigation() is called', () => {
+        expect(loggerMock.debug).toHaveBeenCalledWith('Navigation: beforeNavigation() is called for \'testClientApp\'');
+      });
+
+      it('should log beforeNavigation() call is succeeded', () => {
+        expect(loggerMock.debug).toHaveBeenCalledWith('Navigation: beforeNavigation() call is succeeded for \'testClientApp\'');
+      });
+
+      it('should log navigate() is called', () => {
+        expect(loggerMock.debug).toHaveBeenCalledWith('Navigation: navigate() is called for \'testClientApp\'', {
+          location: {
+            pathPrefix: '/iframe1/url',
+            path: 'app/path/to/page1',
+          },
+          source: NavigationTrigger.NotDefined,
+        });
+      });
+
+      it('should log navigate() call is succeeded', () => {
+        expect(loggerMock.debug).toHaveBeenCalledWith('Navigation: navigate() call is succeeded for \'testClientApp\'');
+      });
+    });
   });
 });

@@ -347,11 +347,11 @@ export class NavigationService implements OnDestroy {
         return from(t.app.api.beforeNavigation()).pipe(
           tap(allowedToContinue => {
             if (allowedToContinue) {
-              this.logger.debug(`Navigation: beforeNavigation() call for '${t.app.url}' succeeded`);
+              this.logger.debug(`Navigation: beforeNavigation() call is succeeded for '${t.app.url}'`);
               return;
             }
 
-            this.logger.debug(`Navigation: beforeNavigation() call for for '${t.app.url}' cancelled navigation`);
+            this.logger.debug(`Navigation: beforeNavigation() call is cancelled for '${t.app.url}'`);
           }),
           switchMap(allowedToContinue => allowedToContinue ? of(t) : EMPTY),
         );
@@ -393,7 +393,7 @@ export class NavigationService implements OnDestroy {
 
         return from(navigationPromise).pipe(
           mapTo(t as Navigation),
-          tap(x => this.logger.debug(`Navigation: navigate() call for '${x.app.url}' succeeded`)),
+          tap(x => this.logger.debug(`Navigation: navigate() call is succeeded for '${x.app.url}'`)),
         );
       }),
     );
