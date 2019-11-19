@@ -38,6 +38,7 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.io.FileUtils;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -73,7 +74,7 @@ public class SiteIntegrationTest {
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
 
-    @Test
+    @Test @Ignore
     public void site_with_webfiles() throws Exception {
 
         final String fixtureName = "webfiles";
@@ -116,7 +117,7 @@ public class SiteIntegrationTest {
         }
     }
 
-    @Test
+    @Test @Ignore
     public void site_with_webfiles_loaded_after_repo() throws Exception {
 
         final String fixtureName = "webfiles";
