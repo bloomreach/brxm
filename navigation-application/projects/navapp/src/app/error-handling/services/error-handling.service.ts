@@ -113,7 +113,12 @@ export class ErrorHandlingService {
   }
 
   private translateError(error: AppError): void {
-    error.message = this.translateService.instant(error.message);
-    error.description = this.translateService.instant(error.description);
+    if (error.message) {
+      error.message = this.translateService.instant(error.message);
+    }
+
+    if (error.description) {
+      error.description = this.translateService.instant(error.description);
+    }
   }
 }
