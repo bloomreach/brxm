@@ -1,6 +1,6 @@
 {
   "name": "@bloomreach/react-sdk",
-  "version": "14.0.0",
+  "version": "14.1.0",
   "description": "BloomReach SPA SDK for React",
   "keywords": [
     "bloomreach",
@@ -31,7 +31,7 @@
     "test": "jest --coverage"
   },
   "dependencies": {
-    "@bloomreach/spa-sdk": "^14.0.0"
+    "@bloomreach/spa-sdk": "^14.1"
   },
   "peerDependencies": {
     "react": "^16.10",
