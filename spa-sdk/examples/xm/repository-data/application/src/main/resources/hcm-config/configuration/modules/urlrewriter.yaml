@@ -1,0 +1,7 @@
+definitions:
+  config:
+    /hippo:configuration/hippo:modules/urlrewriter/hippo:moduleconfig:
+      urlrewriter:skippedprefixes: [/site/_cmsrest, /site/_cmssessioncontext, /site/_rp,
+        '/site/_hn:', /site/ping/]
+      urlrewriter:ignorecontextpath: false
+      urlrewriter:usequerystring: true

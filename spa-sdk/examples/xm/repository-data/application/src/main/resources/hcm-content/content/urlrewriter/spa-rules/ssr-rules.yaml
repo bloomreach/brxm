@@ -1,0 +1,27 @@
+/content/urlrewriter/spa-rules/ssr-rules:
+  jcr:primaryType: hippo:handle
+  jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
+  jcr:uuid: 5c656715-2324-4df1-abd4-bcd1280c4a08
+  hippo:name: SSR Rules
+  /ssr-rules:
+    jcr:primaryType: urlrewriter:xmlrule
+    jcr:mixinTypes: ['mix:referenceable']
+    jcr:uuid: 229f1c9a-74ce-4ca3-bd21-a8ebaa69de84
+    hippo:availability: [live]
+    hippostd:state: published
+    hippostdpubwf:createdBy: admin
+    hippostdpubwf:creationDate: 2019-07-23T10:25:50.213+02:00
+    hippostdpubwf:lastModificationDate: 2019-07-23T10:25:50.213+02:00
+    hippostdpubwf:lastModifiedBy: admin
+    hippostdpubwf:publicationDate: 2019-07-23T10:25:50.213+02:00
+    urlrewriter:rule: "<rule>\n          <!-- Rule 1: Exclude requests for Page Model\
+      \ API and binaries -->\n          <from>^(?:/[^\\/]+)?(?:/_cmsinternal)?/(?:binaries|resourceapi|images)([\\\
+      ?/].*)?$</from>\n          <to last=\"true\">-</to>\n        </rule>\n  \n \
+      \       <rule>\n          <!-- Rule 2: Ensure bloomreach-preview query parameter\
+      \ for preview requests -->\n          <from>\n            ^((?:/[^\\/]+)?/_cmsinternal(?:/[^\\\
+      ?]*)?)(?:\\?((?!(.*&amp;)?bloomreach-preview=.*).*))?$\n          </from>\n\
+      \          <to type=\"redirect\" last=\"true\">$1?$2&amp;bloomreach-preview=true</to>\n\
+      \        </rule>\n\n        <rule>\n          <!-- Rule 3: Proxy requests to\
+      \ route to the SPA server -->\n          <from>^(?:/[^\\/]+)?(?:/_cmsinternal)?([\\\
+      ?/].*)?$</from>\n          <to type=\"proxy\" last=\"true\">http://localhost:3000$0</to>\n\
+      \        </rule>"

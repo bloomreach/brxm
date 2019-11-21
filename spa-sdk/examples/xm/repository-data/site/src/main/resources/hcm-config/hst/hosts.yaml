@@ -12,3 +12,6 @@ definitions:
           jcr:primaryType: hst:mount
           hst:homepage: root
           hst:mountpoint: /hst:xmspaexample/hst:sites/xmspaexample
+          hst:pagemodelapi: resourceapi
+          hst:responseheaders: ['Access-Control-Allow-Origin: http://localhost:3000',
+            'Access-Control-Allow-Credentials: true']

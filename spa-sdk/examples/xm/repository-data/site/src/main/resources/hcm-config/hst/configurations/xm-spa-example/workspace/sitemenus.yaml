@@ -2,3 +2,6 @@ definitions:
   config:
     /hst:hst/hst:configurations/xmspaexample/hst:workspace/hst:sitemenus:
       jcr:primaryType: hst:sitemenus
+      /main:
+        .meta:residual-child-node-category: content
+        jcr:primaryType: hst:sitemenu

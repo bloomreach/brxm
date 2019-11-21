@@ -3,8 +3,8 @@
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
-    <groupId>org.onehippo.cms7</groupId>
-    <artifactId>hippo-cms7-release</artifactId>
+    <groupId>com.onehippo.cms7</groupId>
+    <artifactId>hippo-cms7-enterprise-release</artifactId>
     <version>14.0.0-SNAPSHOT</version>
   </parent>
 
@@ -22,22 +22,20 @@
     DO NOT remove these tags but instead fill them in appropriately as needed, 
     UNLESS the inherited values are valid for your project.
   -->
-  <url/>
-  <inceptionYear/>
-  <organization/>
+  <organization />
   <licenses>
-    <license/>
+    <license />
   </licenses>
   <mailingLists>
-    <mailingList/>
+    <mailingList />
   </mailingLists>
   <developers>
-    <developer/>
+    <developer />
   </developers>
   <contributors>
-    <contributor/>
+    <contributor />
   </contributors>
-  <issueManagement/>
+  <issueManagement />
   <!--
   <scm>
     <connection/>
@@ -45,7 +43,7 @@
     <url/>
   </scm>
   -->
-  <ciManagement/>
+  <ciManagement />
   <distributionManagement>
     <repository>
       <id>-</id>
@@ -78,6 +76,15 @@
       <id>hippo</id>
       <name>Hippo maven 2 repository.</name>
       <url>https://maven.onehippo.com/maven2/</url>
+    </repository>
+    <repository>
+      <releases>
+        <updatePolicy>never</updatePolicy>
+        <checksumPolicy>fail</checksumPolicy>
+      </releases>
+      <id>hippo-maven2-enterprise</id>
+      <name>Hippo Enterprise Maven 2</name>
+      <url>https://maven.onehippo.com/maven2-enterprise</url>
     </repository>
   </repositories>
 
@@ -139,7 +146,7 @@
                     <versionRange>[0.0,)</versionRange>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore/>
+                    <ignore />
                   </action>
                 </pluginExecution>
               </pluginExecutions>
@@ -260,10 +267,6 @@
 
     <profile>
       <id>cargo.run</id>
-      <properties>
-        <!-- Already defined in the cms project POM. Override here for your project, if necessary -->
-        <!-- <repo.bootstrap>true</repo.bootstrap> -->
-      </properties>
       <build>
         <plugins>
           <plugin>
