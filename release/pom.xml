@@ -61,7 +61,7 @@
     <hippo.services.validation.version>13.4.1-SNAPSHOT</hippo.services.validation.version>
     <hippo.services.webfiles.version>13.4.1-SNAPSHOT</hippo.services.webfiles.version>
     <hippo.services.htmlprocessor.version>13.4.1-SNAPSHOT</hippo.services.htmlprocessor.version>
-    <hippo.utilities.version>13.4.1-SNAPSHOT</hippo.utilities.version>
+    <hippo.utilities.version>13.4.1</hippo.utilities.version>
     <hippo.testutils.version>13.4.1</hippo.testutils.version>
     <hippo.l10n-tooling.version>13.4.1-SNAPSHOT</hippo.l10n-tooling.version>
 
