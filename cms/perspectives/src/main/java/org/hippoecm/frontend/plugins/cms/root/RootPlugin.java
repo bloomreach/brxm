@@ -174,13 +174,6 @@ public class RootPlugin extends TabsPlugin {
         extWidgetRegistry = new ExtWidgetRegistry(getPluginContext());
         add(extWidgetRegistry);
 
-        if (config.containsKey("top")) {
-            log.warn("Usage of property 'top' on the RootPlugin is deprecated. The documents tabs is now configured " +
-                    "as an extension. Add a value to property wicket.extensions named 'extension.tabs.documents' and " +
-                    "add a property named 'extension.tabs.documents' with the value of the document tabs service, " +
-                    "by default it's 'service.browse.tabscontainer'.");
-        }
-
         TabbedPanel tabbedPanel = getTabbedPanel();
         tabbedPanel.setIconType(IconSize.L);
         final WireframeSettings settings = new WireframeSettings(config.getPluginConfig("layout.wireframe"));
@@ -282,7 +275,7 @@ public class RootPlugin extends TabsPlugin {
         } else {
             log.warn("Could not find page layout settings at node 'layout.page', falling back to built-in settings");
             PageLayoutSettings settings = new PageLayoutSettings();
-            settings.setFooterHeight(28);
+            settings.setFooterHeight(0);
             return settings;
         }
     }
