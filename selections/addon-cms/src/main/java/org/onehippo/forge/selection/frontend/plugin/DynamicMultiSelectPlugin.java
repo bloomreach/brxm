@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
+import java.util.Optional;
 
 import javax.jcr.RepositoryException;
 
@@ -70,10 +70,8 @@ import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.validation.IValidationResult;
-import org.hippoecm.frontend.validation.ModelPath;
-import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.ValidatorUtils;
-import org.hippoecm.frontend.validation.Violation;
+import org.hippoecm.frontend.validation.ViolationUtils;
 import org.onehippo.forge.selection.frontend.model.ValueList;
 import org.onehippo.forge.selection.frontend.plugin.sorting.SortHelper;
 import org.onehippo.forge.selection.frontend.provider.IValueListProvider;
@@ -82,6 +80,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
+
+import static org.hippoecm.frontend.validation.ViolationUtils.getFirstFieldViolation;
 
 /**
  * A dynamic multiselect plugin, which is backed by a ValueListProvider service that provides a ValueList object.
@@ -192,16 +192,14 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
 
     @Override
     public void render(final PluginRequestTarget target) {
+        if (isActive() && IEditor.Mode.EDIT == mode) {
+            final IFieldDescriptor field = helper.getField();
+            final IModel<IValidationResult> validationModel = helper.getValidationModel();
+            final Optional<ViolationUtils.ViolationMessage> violation = getFirstFieldViolation(field, validationModel);
 
-        if (isActive()) {
-            if (IEditor.Mode.EDIT == mode) {
-                final IModel<IValidationResult> validationModel = helper.getValidationModel();
-                if (validationModel != null && validationModel.getObject() != null) {
-                    final boolean valid = isFieldValid(validationModel.getObject());
-                    if (!valid) {
-                        target.appendJavaScript("Wicket.$('" + getMarkupId() + "').setAttribute('class', 'invalid');");
-                    }
-                }
+            if (violation.isPresent()) {
+                final String selector = String.format("$('#%s')", getMarkupId());
+                target.appendJavaScript(ViolationUtils.getFieldViolationScript(selector, violation.get()));
             }
         }
 
@@ -215,27 +213,21 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
     /**
      * Checks if a field has any violations attached to it.
      *
-     * @param validation The IValidationResult that contains all violations that occurred for this editor
+     * @param validationResult The IValidationResult that contains all violations that occurred for this editor
      * @return true if there are no violations present or non of the validation belong to the current field
+     *
+     * @deprecated This is handled by calling {@link ViolationUtils#getFirstFieldViolation} and checking if a violation
+     *             is present
      */
-    protected boolean isFieldValid(final IValidationResult validation) {
-        if (!validation.isValid()) {
-            final IFieldDescriptor field = getFieldHelper().getField();
-            if (field == null) {
-                return false;
-            }
-            for (final Violation violation : validation.getViolations()) {
-                final Set<ModelPath> paths = violation.getDependentPaths();
-                for (final ModelPath path : paths) {
-                    if (path.getElements().length > 0) {
-                        final ModelPathElement first = path.getElements()[0];
-                        if (first.getField().equals(field)) {
-                            return false;
-                        }
-                    }
-                }
-            }
-        }
+    @Deprecated
+    protected boolean isFieldValid(final IValidationResult validationResult) {
+        final IFieldDescriptor field = helper.getField();
+        final Optional<ViolationUtils.ViolationMessage> violation = getFirstFieldViolation(field,
+                Model.of(validationResult));
+        return !violation.isPresent() && isContainerValid();
+    }
+
+    private boolean isContainerValid() {
         final IFeedbackMessageFilter filter = new ContainerFeedbackMessageFilter(this);
         return !getSession().getFeedbackMessages().hasMessage(filter);
     }
