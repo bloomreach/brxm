@@ -24,6 +24,11 @@
       <version>${essentials.version}</version>
       <type>pom</type>
     </dependency>
+    <dependency>
+      <groupId>org.onehippo.cms7</groupId>
+      <artifactId>hippo-essentials-plugin-spa-demo</artifactId>
+      <version>${essentials.version}</version>
+    </dependency>
   </dependencies>
   <build>
     <resources>
