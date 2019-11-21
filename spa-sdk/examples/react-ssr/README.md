@@ -4,8 +4,10 @@ Example Next.js SPA using the Bloomreach Experience [React SDK](https://www.npmj
 The app uses unversal framework [Next.js](https://github.com/zeit/next.js) for creating isomorphic React applications.
 
 ## Install and run
-
-__TODO__: Start the brXM example Docker image
+Run [Docker](https://hub.docker.com/repository/docker/bloomreach/xm-spa-example) container with the configured brXM instance:
+```bash
+docker run --net=host bloomreach/xm-spa-example
+```
 
 Then, copy `.env.dist` file to `.env` and customize it to contain a correct `PUBLIC_URL` path, for example:
 ```

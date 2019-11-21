@@ -4,8 +4,10 @@ Example React SPA using the Bloomreach Experience [React SDK](https://www.npmjs.
 The app is created using [create-react-app](https://github.com/facebook/create-react-app).
 
 ## Install and run
-
-__TODO__: Start the brXM example Docker image
+Run [Docker](https://hub.docker.com/repository/docker/bloomreach/xm-spa-example) container with the configured brXM instance:
+```bash
+docker run --net=host bloomreach/xm-spa-example
+```
 
 Then, copy `.env.dist` file to `.env` and customize it to contain a correct [PUBLIC_URL](https://create-react-app.dev/docs/using-the-public-folder) path, for example:
 ```
