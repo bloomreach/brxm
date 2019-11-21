@@ -27,7 +27,7 @@
   <description>Hippo Plugin Taxonomy</description>
 
   <artifactId>hippo-plugin-taxonomy</artifactId>
-  <version>13.4.1-SNAPSHOT</version>
+  <version>13.4.1</version>
   <packaging>pom</packaging>
 
   <inceptionYear>2009</inceptionYear>
@@ -42,17 +42,17 @@
     <!-- use root project name for all project modules NOTICE files, should be the same as in the root NOTICE file -->
     <notice.project.name>Hippo Plugin Taxonomy</notice.project.name>
 
-    <hippo.services.version>13.4.1-SNAPSHOT</hippo.services.version>
-    <hippo.cms.version>13.4.1-SNAPSHOT</hippo.cms.version>
-    <hippo.repository.version>13.4.1-SNAPSHOT</hippo.repository.version>
-    <hippo.hst.version>13.4.1-SNAPSHOT</hippo.hst.version>
+    <hippo.services.version>13.4.1</hippo.services.version>
+    <hippo.cms.version>13.4.1</hippo.cms.version>
+    <hippo.repository.version>13.4.1</hippo.repository.version>
+    <hippo.hst.version>13.4.1</hippo.hst.version>
 
     <commons-collections.version>3.2.2</commons-collections.version>
     <commons-lang.version>2.6</commons-lang.version>
 
     <jsp-api.version>2.2</jsp-api.version>
 
-    <hippo.testutils.version>13.4.1-SNAPSHOT</hippo.testutils.version>
+    <hippo.testutils.version>13.4.1</hippo.testutils.version>
     <junit.version>4.12</junit.version>
     <easymock.version>3.0</easymock.version>
   </properties>
