@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/xmspaexample/hst:sitemap:
+      jcr:primaryType: hst:sitemap

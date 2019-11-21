@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<project>
+  <projectNamespace>xmspaexample</projectNamespace>
+  <confirmParams>false</confirmParams>
+  <selectedProjectPackage>com.bloomreach</selectedProjectPackage>
+  <selectedBeansPackage>com.bloomreach.beans</selectedBeansPackage>
+  <selectedComponentsPackage>com.bloomreach.components</selectedComponentsPackage>
+  <selectedRestPackage>com.bloomreach.rest</selectedRestPackage>
+  <hstRoot>/hst:xmspaexample</hstRoot>
+  <webfileBundleName>site</webfileBundleName>
+  <setupDone>false</setupDone>
+  <useSamples>true</useSamples>
+  <extraTemplates>true</extraTemplates>
+</project>

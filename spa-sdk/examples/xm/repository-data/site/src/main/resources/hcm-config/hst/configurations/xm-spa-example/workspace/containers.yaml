@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/xmspaexample/hst:workspace/hst:containers:
+      jcr:primaryType: hst:containercomponentfolder
