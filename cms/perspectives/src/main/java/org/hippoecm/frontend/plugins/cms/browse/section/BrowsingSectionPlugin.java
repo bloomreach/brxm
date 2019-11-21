@@ -131,7 +131,7 @@ public class BrowsingSectionPlugin extends RenderPlugin<DocumentCollection> impl
     }
 
     public IModel<String> getTitle() {
-        final String key = getPluginConfig().getString("key", getPluginConfig().getName());
+        final String key = getPluginConfig().getString("title", getPluginConfig().getName());
         return ResourceBundleModel.of(getBundleName(), key);
     }
 
