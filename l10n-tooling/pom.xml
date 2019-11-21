@@ -26,12 +26,12 @@
   <name>Hippo CMS Translations Tooling Project</name>
   <groupId>org.onehippo.cms.l10n</groupId>
   <artifactId>hippo-cms-l10n-tooling-project</artifactId>
-  <version>2.6.8-SNAPSHOT</version>
+  <version>2.6.8</version>
   <packaging>pom</packaging>
 
   <properties>
 
-    <hippo.configuration-management.version>1.6.8-SNAPSHOT</hippo.configuration-management.version>
+    <hippo.configuration-management.version>1.6.8</hippo.configuration-management.version>
 
     <commons-io.version>2.6</commons-io.version>
     <commons-lang.version>2.6</commons-lang.version>
