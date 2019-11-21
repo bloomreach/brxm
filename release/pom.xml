@@ -58,7 +58,7 @@
     <hippo.services.autoreload.version>13.4.1-SNAPSHOT</hippo.services.autoreload.version>
     <hippo.services.contenttype.version>13.4.1-SNAPSHOT</hippo.services.contenttype.version>
     <hippo.services.eventbus.version>13.4.1</hippo.services.eventbus.version>
-    <hippo.services.validation.version>13.4.1-SNAPSHOT</hippo.services.validation.version>
+    <hippo.services.validation.version>13.4.1</hippo.services.validation.version>
     <hippo.services.webfiles.version>13.4.1-SNAPSHOT</hippo.services.webfiles.version>
     <hippo.services.htmlprocessor.version>13.4.1-SNAPSHOT</hippo.services.htmlprocessor.version>
     <hippo.utilities.version>13.4.1</hippo.utilities.version>
