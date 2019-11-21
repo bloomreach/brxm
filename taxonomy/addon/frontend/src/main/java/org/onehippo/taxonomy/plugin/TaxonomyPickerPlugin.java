@@ -57,6 +57,7 @@ import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin;
 import org.hippoecm.frontend.editor.plugins.field.FieldPluginHelper;
+import org.hippoecm.frontend.editor.plugins.field.ValidationModel;
 import org.hippoecm.frontend.editor.plugins.fieldhint.FieldHint;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -116,8 +117,13 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
                     config.getString(ClassificationDao.SERVICE_ID));
         }
 
+        ValidationModel validationModel = null;
+        if (config.containsKey(IValidationService.VALIDATE_ID)) {
+            validationModel = new ValidationModel(context, config);
+        }
+
         final IFieldDescriptor fieldDescriptor = getTaxonomyFieldDescriptor();
-        helper = new FieldPluginHelper(context, config, fieldDescriptor, getDocumentTypeDescriptor(), null);
+        helper = new FieldPluginHelper(context, config, fieldDescriptor, getDocumentTypeDescriptor(), validationModel);
 
         final Label requiredMarker = new Label("required", "*");
         if (fieldDescriptor == null || !ValidatorUtils.hasRequiredValidator(fieldDescriptor.getValidators())) {
@@ -213,9 +219,8 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
     public void render(final PluginRequestTarget target) {
         if (target != null && isActive() && IEditor.Mode.EDIT == mode) {
             final IFieldDescriptor field = helper.getField();
-            final IValidationResult validationResult = getValidationResult();
-            final Optional<ViolationUtils.ViolationMessage> violation = getFirstFieldViolation(field,
-                    Model.of(validationResult));
+            final IModel<IValidationResult> validationModel = helper.getValidationModel();
+            final Optional<ViolationUtils.ViolationMessage> violation = getFirstFieldViolation(field, validationModel);
 
             if (violation.isPresent()) {
                 final String selector = String.format("$('#%s')", getMarkupId());
@@ -224,14 +229,6 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
         }
 
         super.render(target);
-    }
-
-    private IValidationResult getValidationResult() {
-        final IValidationService validationService = getService(IValidationService.VALIDATE_ID,
-                IValidationService.class);
-        return validationService != null
-                ? validationService.getValidationResult()
-                : null;
     }
 
     @Override
