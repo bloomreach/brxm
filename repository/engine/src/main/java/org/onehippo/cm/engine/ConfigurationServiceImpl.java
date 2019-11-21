@@ -521,6 +521,8 @@ public class ConfigurationServiceImpl implements InternalConfigurationService, S
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
 
+        // In case of setting repo.bootstrap parameter as "full" or repo.autoexport.allowed
+        // parameter as "true", bootstrap should run to create the model regardless of digest check.
         boolean skip = !fullConfigure && !startAutoExportService
                 && bootstrapModel.currentSitesMatchByDigests(baselineModel);
 
