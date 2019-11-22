@@ -185,7 +185,9 @@ export class NavConfigService {
         });
       })
       .finally(() => {
-        this.connectionService.removeConnection(url);
+        try {
+          this.connectionService.removeConnection(url);
+        } catch {}
       });
   }
 }
