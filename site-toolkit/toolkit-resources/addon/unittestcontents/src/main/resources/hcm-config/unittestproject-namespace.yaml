@@ -64,6 +64,7 @@ definitions:
             jcr:primaryType: unittestproject:textpage
             jcr:mixinTypes: ['mix:referenceable']
             hippostd:state: draft
+            hippostd:holder: $holder
             hippostdpubwf:createdBy: admin
             hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
             hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
@@ -127,6 +128,7 @@ definitions:
             jcr:primaryType: unittestproject:newspage
             jcr:mixinTypes: ['mix:referenceable']
             hippostd:state: draft
+            hippostd:holder: $holder
             hippostdpubwf:createdBy: admin
             hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
             hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
