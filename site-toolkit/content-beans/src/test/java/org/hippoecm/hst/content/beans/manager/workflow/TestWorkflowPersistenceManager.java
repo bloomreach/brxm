@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -78,14 +78,23 @@ public class TestWorkflowPersistenceManager extends AbstractBeanTestCase {
         try {
             // create a document with type and name
             String absoluteCreatedDocumentPath = wpm.createAndReturn(TEST_FOLDER_NODE_PATH, TEST_DOCUMENT_NODE_TYPE, TEST_NEW_DOCUMENT_NODE_NAME, false);
-            // retrieves the document created just before
-            PersistableTextPage newPage = (PersistableTextPage) wpm.getObject(absoluteCreatedDocumentPath);
-            assertNotNull(newPage);
+            // retrieves the draft document created just before
+            PersistableTextPage draftNewPage = (PersistableTextPage) wpm.getObject(absoluteCreatedDocumentPath);
+            assertNotNull(draftNewPage);
 
-            String[] availability =  newPage.getValueProvider().getStrings("hippo:availability");
+            String[] draftAvailability =  draftNewPage.getValueProvider().getStrings("hippo:availability");
             // the wpm createAndReturn must have created a document that has 'hippo:availability = preview'
-            assertEquals( "String[] availability should contain 1 string", 1, availability.length);
-            assertEquals( "availability[0] should equal 'preview'", "preview", availability[0]);
+            assertEquals( "String[] availability should contain 1 string", 0, draftAvailability.length);
+
+            // retrieves the preview document created just before
+            // since admin user can read all variants, the preview is expected to be second
+            PersistableTextPage previewNewPage = (PersistableTextPage) wpm.getObject(absoluteCreatedDocumentPath + "[2]");
+            assertNotNull(previewNewPage);
+
+            String[] prevAvailability =  previewNewPage.getValueProvider().getStrings("hippo:availability");
+            // the wpm createAndReturn must have created a document that has 'hippo:availability = preview'
+            assertEquals( "String[] availability should contain 1 string", 1, prevAvailability.length);
+            assertEquals( "availability[0] should equal 'preview'", "preview", prevAvailability[0]);
         } finally {
             PersistableTextPage newPage = null;
 
