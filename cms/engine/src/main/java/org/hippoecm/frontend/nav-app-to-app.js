@@ -104,6 +104,8 @@
       .then(childApi => childApi.navigate({ path }, triggeredBy));
   };
 
+  let isFirstNavigation = true;
+
   const cmsChildApi = {
 
     beforeNavigation () {
@@ -146,6 +148,13 @@
             return navigateIframe(iframe, pathElements.join('/'), triggeredBy);
 
           case 'experience-manager':
+            // on first navigation do not navigate into the iframe
+            // it might not have registered yet and we do not support
+            // deeplinking to channel detail views yet
+            if (isFirstNavigation) {
+              return Promise.resolve();
+            }
+
             return navigateIframe(iframe, pathElements.join('/'), triggeredBy);
 
           case 'content':
@@ -170,7 +179,11 @@
         }
       };
 
-      return navigateToPerspective().then(() => appLinkElement.click());
+      return navigateToPerspective()
+        .then(() => {
+          isFirstNavigation = false;
+          appLinkElement.click();
+        });
     },
 
     logout () {
