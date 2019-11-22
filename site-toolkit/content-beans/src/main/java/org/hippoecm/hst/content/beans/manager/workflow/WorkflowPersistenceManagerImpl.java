@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2014 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,7 +36,6 @@ import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.util.NodeUtils;
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.api.StringCodecFactory;
@@ -265,22 +264,15 @@ public class WorkflowPersistenceManagerImpl extends ObjectBeanManagerImpl implem
 
                 if (documentAdditionWorkflowCategory.equals(category)) {
 
-                    // added new document : because the document must be in 'preview' availability, we now set this explicitly
-                    if (addedNode.isNodeType("hippostd:publishable")) {
-                        log.info("Added document '{}' is pusblishable so set status to preview.",
-                                addedNode.getPath());
-                        addedNode.setProperty("hippostd:state", "unpublished");
-                        addedNode.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[] {"preview"});
+                    // commit the editable instance that was created
+                    final Workflow docWf = getWorkflow(documentNodeWorkflowCategory, getHandleForDocumentWorkflow(addedNode));
+                    if (docWf instanceof DocumentWorkflow) {
+                        ((DocumentWorkflow)docWf).commitEditableInstance();
                     } else {
-                        log.info("Added document '{}' is not publishable so set status to live & preview directly.",
-                                addedNode.getPath());
-                        addedNode.setProperty(HippoNodeType.HIPPO_AVAILABILITY, new String[] {"live", "preview"});
+                        throw new ObjectBeanPersistenceException(String.format("Expected DocumentWorkflow for newly created " +
+                                "node '%s'", addedNode.getPath()));
                     }
 
-                    if (addedNode.isNodeType("hippostd:publishableSummary")) {
-                        addedNode.setProperty("hippostd:stateSummary", "new");
-                    }
-                    addedNode.getSession().save();
                 }
                 return added;
             } else {
