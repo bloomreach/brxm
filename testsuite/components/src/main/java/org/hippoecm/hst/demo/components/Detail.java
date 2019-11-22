@@ -122,7 +122,7 @@ public void doAction(HstRequest request, HstResponse response) throws HstCompone
         String comment = request.getParameter("comment");
         HippoBean commentTo = request.getRequestContext().getContentBean();
         if (!(commentTo instanceof HippoDocumentBean)) {
-            log.warn("Cannot comment on non documents");
+            log.warn("Cannot comment on non documents, document does not exist or the persistable session does not have read access");
             return;
         }
         String commentToUuidOfHandle = ((HippoDocumentBean) commentTo).getCanonicalHandleUUID();
