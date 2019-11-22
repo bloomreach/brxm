@@ -5,7 +5,6 @@ definitions:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
         hipposys:description: Required to view and use the Experience Manager (Channels) menu and functionality within the CMS
-        hipposys:userroles: [xm.cms.user]
       /xm.channel.viewer:
         hipposys:userroles:
           operation: add
