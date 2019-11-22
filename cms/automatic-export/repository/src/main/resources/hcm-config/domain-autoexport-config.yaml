@@ -24,17 +24,3 @@ definitions:
           .meta:category: system
           .meta:add-new-system-values: true
           value: []
-      /modify-cms-user:
-        jcr:primaryType: hipposys:authrole
-        hipposys:role: modify
-        hipposys:userrole:
-          .meta:category: system
-          value: xm.cms.user
-        hipposys:groups:
-          .meta:category: system
-          .meta:add-new-system-values: true
-          value: []
-        hipposys:users:
-          .meta:category: system
-          .meta:add-new-system-values: true
-          value: []
