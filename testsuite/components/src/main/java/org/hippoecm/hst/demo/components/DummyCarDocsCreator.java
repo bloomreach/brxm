@@ -36,13 +36,13 @@ public class DummyCarDocsCreator {
     
     private final static String[] COLORS = {"red","grey", "green", "blue", "black"};
     
-    public void createCars(Session writableSession, String rootByPath, int number) throws RepositoryException{
+    public void createCars(Session admin, String rootByPath, int number) throws RepositoryException{
         
         List<Car> availableCars = new ArrayList<Car>();
         
         fill(availableCars);
         
-        Node baseNode = writableSession.getRootNode().getNode(rootByPath);
+        Node baseNode = admin.getRootNode().getNode(rootByPath);
        
         Node productsFolder;
         
@@ -102,8 +102,8 @@ public class DummyCarDocsCreator {
             doc.setProperty("hippo:availability", availability );
             doc.setProperty("hippostd:stateSummary", "live");
             doc.setProperty("hippostd:state", "published");
-            doc.setProperty("hippostdpubwf:lastModifiedBy", writableSession.getUserID());
-            doc.setProperty("hippostdpubwf:createdBy", writableSession.getUserID());
+            doc.setProperty("hippostdpubwf:lastModifiedBy", admin.getUserID());
+            doc.setProperty("hippostdpubwf:createdBy", admin.getUserID());
             doc.setProperty("hippostdpubwf:lastModificationDate",  Calendar.getInstance());
             doc.setProperty("hippostdpubwf:creationDate", Calendar.getInstance() );
             doc.setProperty("hippostdpubwf:publicationDate", Calendar.getInstance() );
@@ -138,12 +138,12 @@ public class DummyCarDocsCreator {
             body.setProperty("hippostd:content", "<html> <body> <p>body </p> </body> </html>");
             
             if(i%100 == 0) {
-                writableSession.save();
+                admin.save();
                 crFolder = dummyProducts.addNode("folder"+cal.getTimeInMillis());
                 crFolder.addMixin("mix:referenceable");
             }
         }
-        writableSession.save();
+        admin.save();
     }
     
     

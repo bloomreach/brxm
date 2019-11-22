@@ -43,6 +43,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.xml.XMLConstants;
@@ -177,9 +178,11 @@ public class NonWorkflowWikiImporterComponent extends BaseHstComponent {
 
                 WikiPediaToJCRHandler handler;
 
+                // we need an admin session here to be able to do plain jcr writes
                 try {
-                    Session writableSession = this.getPersistableSession(request);
-                    Node baseNode = writableSession.getNode("/" + request.getRequestContext().getSiteContentBasePath());
+                    // since admin session fetched via pooled session impersonation log out will be handled
+                    Session admin = request.getRequestContext().getSession().impersonate(new SimpleCredentials("admin", new char[0]));
+                    Node baseNode = admin.getNode("/" + request.getRequestContext().getSiteContentBasePath());
 
                     Node wikiFolder;
 

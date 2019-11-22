@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.hst.content.beans.query.HstQuery;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentIterator;
@@ -78,25 +79,22 @@ public class Faceted extends AbstractFacetedComponnent {
     public void doAction(HstRequest request, HstResponse response) throws HstComponentException {
        
         DummyCarDocsCreator carCreator = new DummyCarDocsCreator();
-        
-        Session writableSession = null;
+
+        // we need an admin session here to be able to do plain jcr writes
         try {
-            writableSession = this.getPersistableSession(request);
+            // since admin session fetched via pooled session impersonation log out will be handled
+            Session admin = request.getRequestContext().getSession().impersonate(new SimpleCredentials("admin", new char[0]));
             String rootByPath = request.getRequestContext().getResolvedMount().getMount().getContentPath();
             rootByPath = PathUtils.normalizePath(rootByPath);
             String numberStr = request.getParameter("number");
             int number = Integer.parseInt(numberStr);
             
-            carCreator.createCars(writableSession, rootByPath, number);
+            carCreator.createCars(admin, rootByPath, number);
             
         } catch (RepositoryException e) {
             log.error(e.getMessage());
         } catch (NumberFormatException e) {
             log.error(e.getMessage());
-        } finally {
-            if(writableSession != null) {
-                writableSession.logout();
-            }
         }
               
     }
