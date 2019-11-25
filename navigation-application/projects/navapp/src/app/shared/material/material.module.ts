@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import {
   MatButtonModule,
@@ -27,6 +26,9 @@ import {
 } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 
+import { registerIcons as registerCommonIcons } from './common-icons';
+import { registerIcons as registerMenuIcons } from './menu-icons';
+
 @NgModule({
   exports: [
     MatRippleModule,
@@ -35,70 +37,18 @@ import { DomSanitizer } from '@angular/platform-browser';
     MatTreeModule,
     MatSidenavModule,
     MatProgressBarModule,
-    HttpClientModule,
   ],
 })
 export class MaterialModule {
   constructor(
-    iconRegistry: MatIconRegistry,
-    donSanitizer: DomSanitizer,
+    private iconRegistry: MatIconRegistry,
+    private donSanitizer: DomSanitizer,
   ) {
-    const pathToIconsMap = {
-      'icons/menu': [
-        'br-logo',
-        'audiences',
-        'audiences.active',
-        'categories',
-        'categories.active',
-        'default',
-        'default.active',
-        'documents',
-        'documents.active',
-        'document-search',
-        'document-search.active',
-        'experience-manager',
-        'experience-manager.active',
-        'fast-travel',
-        'fast-travel.active',
-        'home',
-        'home.active',
-        'insights',
-        'insights.active',
-        'projects',
-        'projects.active',
-        'seo',
-        'seo.active',
-        'settings',
-        'settings.active',
-        'site-search',
-        'site-search.active',
-        'widget',
-        'widget.active',
-        'extensions',
-        'extensions.active',
-        'help',
-        'user',
-      ],
-      icons: [
-        'nav-collapse',
-        'nav-expand',
-        'expand_less',
-        'expand_more',
-        'remove',
-        'chevron_right',
-        'search',
-        'arrow_drop_down',
-        'arrow_right',
-      ],
-    };
+    this.registerSvgIcons();
+  }
 
-    Object.keys(pathToIconsMap).forEach(path => {
-      const icons = pathToIconsMap[path];
-
-      icons.forEach(icon => iconRegistry.addSvgIcon(
-        icon,
-        donSanitizer.bypassSecurityTrustResourceUrl(`navapp-assets/${path}/${icon}.svg`)),
-      );
-    });
+  private registerSvgIcons(): void {
+    registerCommonIcons(this.iconRegistry, this.donSanitizer);
+    registerMenuIcons(this.iconRegistry, this.donSanitizer);
   }
 }
