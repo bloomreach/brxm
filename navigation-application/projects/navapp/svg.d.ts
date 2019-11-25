@@ -14,27 +14,7 @@
  * limitations under the License.
  */
 
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
-const WebpackAssetsManifest = require('webpack-assets-manifest');
-
-module.exports = {
-  module: {
-    rules: [
-      {
-        test: /\.svg$/,
-        use: 'raw-loader'
-      }
-    ]
-  },
-  plugins: [
-    new WebpackAssetsManifest({
-      output: 'filelist.json',
-    }),
-    new CopyPlugin([{ from: './loader.js', to: 'loader.js' }]),
-    new HtmlWebpackPlugin({
-      inject: false,
-      template: './src/index.html',
-    }),
-  ],
-};
+declare module '*.svg' {
+  const value: string;
+  export default value;
+}
