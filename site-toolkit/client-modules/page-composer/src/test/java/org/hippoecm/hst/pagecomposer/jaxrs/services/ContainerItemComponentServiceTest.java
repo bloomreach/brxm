@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import javax.xml.bind.JAXBException;
 import org.apache.cxf.jaxrs.impl.MetadataMap;
 import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.pagecomposer.jaxrs.AbstractPageComposerTest;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentPropertyRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ServerErrorException;
@@ -43,7 +44,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-public class ContainerItemComponentServiceTest {
+public class ContainerItemComponentServiceTest extends AbstractPageComposerTest{
 
     private static final String HST_PARAMETERVALUES = "hst:parametervalues";
     private static final String HST_PARAMETERNAMES = "hst:parameternames";
@@ -56,6 +57,7 @@ public class ContainerItemComponentServiceTest {
     @Before
     public void setUp() throws Exception {
 
+        super.setUp();
         helper = new ContainerItemHelper();
         mockPageComposerContextService = EasyMock.createNiceMock(PageComposerContextService.class);
 

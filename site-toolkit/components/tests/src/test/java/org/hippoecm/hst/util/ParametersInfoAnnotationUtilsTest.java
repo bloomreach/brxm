@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,36 +15,49 @@
  */
 package org.hippoecm.hst.util;
 
-import javax.jcr.Node;
-import javax.jcr.Property;
-
-import org.easymock.EasyMock;
-import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.core.parameters.Parameter;
-import org.hippoecm.hst.core.parameters.ParametersInfo;
-import org.hippoecm.hst.core.request.ComponentConfiguration;
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
-public class ParametersInfoAnnotationUtilsTest {
+import javax.jcr.Node;
+import javax.jcr.Property;
+import javax.servlet.Filter;
 
+import org.easymock.EasyMock;
+import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.core.beans.AbstractBeanTestCase;
+import org.hippoecm.hst.core.component.GenericHstComponent;
+import org.hippoecm.hst.core.component.HstComponent;
+import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.core.request.ComponentConfiguration;
+import org.hippoecm.hst.site.container.SpringComponentManager;
+import org.junit.Test;
+import org.onehippo.cms7.services.context.HippoWebappContext;
+import org.springframework.mock.web.MockServletContext;
+
+public class ParametersInfoAnnotationUtilsTest extends AbstractBeanTestCase{ 
+
+    protected SpringComponentManager componentManager;
+    protected final MockServletContext servletContext = new MockServletContext();
+    protected HippoWebappContext webappContext = new HippoWebappContext(HippoWebappContext.Type.SITE, servletContext);
+    protected Filter filter;
+
+    
+    protected String[] getConfigurations() {
+        String classXmlFileNamePlatform = "org/hippoecm/hst/test/platform-context.xml";
+        return new String[] {classXmlFileNamePlatform };
+    }
+    
     @Test
     public void testGetParametersInfoAnnotation_Class_ComponentConfiguration() throws Exception {
-        Class<?> componentClazz = null;
+        HstComponent componentClazz = null;
         ComponentConfiguration componentConfig = null;
 
-        // when both componentClazz and componentConfig are null...
-        ParametersInfo paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentClazz,
-                componentConfig);
-        assertNull(paramsInfo);
-
         // when componentClazz is an annotated class and componentConfig are null...
-        componentClazz = AnnotatedComponent.class;
-        paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentClazz, componentConfig);
+        componentClazz =  new AnnotatedComponent();
+        ParametersInfo paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentClazz, componentConfig);
         assertNotNull(paramsInfo);
         assertEquals(ExampleParametersInfoType1.class, paramsInfo.type());
 
@@ -61,7 +74,7 @@ public class ParametersInfoAnnotationUtilsTest {
         assertEquals(ExampleParametersInfoType2.class, paramsInfo.type());
 
         // when componentClazz is a non-annotated class and componentConfig are null...
-        componentClazz = NonAnnotatedComponent.class;
+        componentClazz = new NonAnnotatedComponent();
         componentConfig = null;
         paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentClazz, componentConfig);
         assertNull(paramsInfo);
@@ -80,7 +93,7 @@ public class ParametersInfoAnnotationUtilsTest {
 
     @Test
     public void testGetParametersInfoAnnotation_Class_HstComponentConfiguration() throws Exception {
-        Class<?> componentClazz = null;
+        HstComponent componentClazz = null;
         HstComponentConfiguration componentConfig = null;
 
         // when both componentClazz and componentConfig are null...
@@ -89,7 +102,7 @@ public class ParametersInfoAnnotationUtilsTest {
         assertNull(paramsInfo);
 
         // when componentClazz is an annotated class and componentConfig are null...
-        componentClazz = AnnotatedComponent.class;
+        componentClazz = new AnnotatedComponent();
         paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentClazz, componentConfig);
         assertNotNull(paramsInfo);
         assertEquals(ExampleParametersInfoType1.class, paramsInfo.type());
@@ -108,7 +121,7 @@ public class ParametersInfoAnnotationUtilsTest {
         assertEquals(ExampleParametersInfoType2.class, paramsInfo.type());
 
         // when componentClazz is a non-annotated class and componentConfig are null...
-        componentClazz = NonAnnotatedComponent.class;
+        componentClazz = new NonAnnotatedComponent();
         componentConfig = null;
         paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentClazz, componentConfig);
         assertNull(paramsInfo);
@@ -276,11 +289,11 @@ public class ParametersInfoAnnotationUtilsTest {
     }
 
     @ParametersInfo(type = ExampleParametersInfoType1.class)
-    public static class AnnotatedComponent {
+    public static class AnnotatedComponent extends GenericHstComponent {
 
     }
 
-    public static class NonAnnotatedComponent {
+    public static class NonAnnotatedComponent extends GenericHstComponent {
 
     }
 
