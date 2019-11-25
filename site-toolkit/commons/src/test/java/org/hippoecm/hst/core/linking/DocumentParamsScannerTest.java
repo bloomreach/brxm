@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,10 +27,20 @@ import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.core.component.GenericHstComponent;
+import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.parameters.JcrPath;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
+import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
@@ -39,10 +49,24 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({HippoServiceRegistry.class})
 public class DocumentParamsScannerTest {
 
     private final static ClassLoader classLoader = DocumentParamsScannerTest.class.getClassLoader();
 
+    @Before
+    public void setUp() throws Exception {
+        PowerMockito.mockStatic(HippoServiceRegistry.class);
+        HstModelRegistry hstModelRegistry =  Mockito.mock(HstModelRegistry.class);
+        HstModel hstModel = Mockito.mock(HstModel.class);
+        ComponentManager componentManager = Mockito.mock(ComponentManager.class);   
+        Mockito.when(HippoServiceRegistry.getService(HstModelRegistry.class)).thenReturn(hstModelRegistry);
+        Mockito.when(hstModelRegistry.getHstModel(getClass().getClassLoader())).thenReturn(hstModel);
+        Mockito.when(hstModel.getComponentManager()).thenReturn(componentManager);
+        Mockito.when(componentManager.getComponent(Mockito.anyString())).thenReturn(null);        
+    }
+    
     @Test
     public void non_existing_component_class_returns_empty_set_parameters() {
         HstComponentConfiguration componentConfiguration = EasyMock.createNiceMock(HstComponentConfiguration.class);
