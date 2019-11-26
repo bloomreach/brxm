@@ -49,7 +49,7 @@ class RightSidePanelCtrl {
   $onInit() {
     this.lastSavedWidth = this.localStorageService.get(LS_KEY_PANEL_WIDTH) || '440px';
     this.sideNavElement = this.$element.find('.right-side-panel');
-    this.sideNavElement.css('width', this.lastSavedWidth);
+    this.sideNavElement[0].style.width = this.lastSavedWidth;
 
     this.$transitions.onBefore({ from: 'hippo-cm.channel', to: 'hippo-cm.channel.*.**' }, () => this._openPanel());
     this.$transitions.onSuccess({ from: 'hippo-cm.channel.**', to: 'hippo-cm.channel' }, () => this._closePanel());

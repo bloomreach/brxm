@@ -40,7 +40,7 @@ class LeftSidePanelCtrl {
   $onInit() {
     this.lastSavedWidth = this.localStorageService.get(LS_KEY_PANEL_WIDTH) || '320px';
     this.sideNavElement = this.$element.find('.left-side-panel');
-    this.sideNavElement.css('width', this.lastSavedWidth);
+    this.sideNavElement[0].style.width = this.lastSavedWidth;
   }
 
   $postLink() {
