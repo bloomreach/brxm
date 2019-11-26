@@ -431,4 +431,20 @@ public class HippoContentTypeServiceTest extends RepositoryTestCase {
             assertNoMessages(interceptor);
         }
     }
+
+    @Test
+    public void testCompoundTypeFlagIsNotResetByMerge() {
+        final ContentTypeImpl simpleType = new ContentTypeImpl(new EffectiveNodeTypeImpl("prefix:simple", 0), 0);
+        final ContentTypeImpl compoundType = new ContentTypeImpl(new EffectiveNodeTypeImpl("prefix:compound", 0), 0);
+        compoundType.setCompoundType(true);
+
+        final ContentTypeImpl simpleClone = new ContentTypeImpl(simpleType);
+        simpleClone.merge(compoundType, false);
+        assertTrue(simpleClone.isCompoundType());
+
+        final ContentTypeImpl compoundClone = new ContentTypeImpl(compoundType);
+        compoundClone.merge(simpleType, false);
+        assertTrue(simpleClone.isCompoundType());
+    }
+
 }

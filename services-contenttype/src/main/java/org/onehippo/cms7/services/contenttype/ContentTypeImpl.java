@@ -272,15 +272,16 @@ public class ContentTypeImpl extends Sealable implements ContentType {
         name = null;
         prefix = null;
 
-        if (!other.isCompoundType()) {
-            this.compoundType = false;
+        if (!compoundType) {
+            compoundType = other.isCompoundType();
         }
+
         if (!other.isDerivedType()) {
-            this.derivedType = false;
+            derivedType = false;
         }
 
         if (other.isCascadeValidate()) {
-            this.cascadeValidate = true;
+            cascadeValidate = true;
         }
 
         ContentTypeItemImpl cti;

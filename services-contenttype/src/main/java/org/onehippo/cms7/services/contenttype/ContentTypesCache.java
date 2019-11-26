@@ -358,8 +358,7 @@ class ContentTypesCache extends Sealable implements ContentTypes {
             if (ct.isContentType(HippoNodeType.NT_DOCUMENT)) {
                 ct.setDocumentType(true);
             }
-            // TODO: hippo:compound not defined as HippoNodeType constant
-            else if (ct.isContentType("hippo:compound")) {
+            else if (ct.isContentType(HippoNodeType.NT_COMPOUND)) {
                 ct.setCompoundType(true);
             }
         }
