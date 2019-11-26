@@ -40,6 +40,7 @@ import org.hippoecm.frontend.service.NavAppSettings;
 import org.hippoecm.frontend.service.NgxLoggerLevel;
 import org.hippoecm.frontend.service.ResourceType;
 import org.hippoecm.frontend.service.UserSettings;
+import org.hippoecm.frontend.service.WicketFaviconService;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoSession;
@@ -183,7 +184,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         final int iframesConnectionTimeout = readIframesConnectionTimeout();
         final NgxLoggerLevel ngxLoggerLevel = readLogLevel(logLevelQueryParamString);
 
-        final FaviconService faviconService = HippoServiceRegistry.getService(FaviconService.class);
+        final FaviconService faviconService = HippoServiceRegistry.getService(WicketFaviconService.class, FaviconService.class);
         final String relativeFaviconUrl = faviconService.getRelativeFaviconUrl();
 
         return new AppSettings() {

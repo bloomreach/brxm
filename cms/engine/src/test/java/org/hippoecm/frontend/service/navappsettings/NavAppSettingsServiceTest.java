@@ -52,6 +52,8 @@ import org.hippoecm.frontend.service.NavAppSettings;
 import org.hippoecm.frontend.service.NgxLoggerLevel;
 import org.hippoecm.frontend.service.ResourceType;
 import org.hippoecm.frontend.service.UserSettings;
+import org.hippoecm.frontend.service.WicketFaviconService;
+import org.hippoecm.frontend.service.WicketFaviconServiceImpl;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.repository.api.HippoSession;
 import org.junit.After;
@@ -106,14 +108,14 @@ public class NavAppSettingsServiceTest {
     @Mock
     private SessionUser user;
     @Mock
-    private FaviconService faviconService;
+    private WicketFaviconServiceImpl faviconService;
 
     private SessionAttributeStore sessionAttributeStore;
 
     @Before
     public void setUp() throws RepositoryException {
 
-        HippoServiceRegistry.register(faviconService, FaviconService.class);
+        HippoServiceRegistry.register(faviconService, WicketFaviconService.class, FaviconService.class);
         expect(request.getContainerRequest()).andReturn(servletRequest).anyTimes();
         expect(request.getQueryParameters()).andStubReturn(parameters);
         replay(request);
@@ -185,7 +187,7 @@ public class NavAppSettingsServiceTest {
     @After
     public void tearDown() {
         ThreadContext.setApplication(null);
-        HippoServiceRegistry.unregister(faviconService, FaviconService.class);
+        HippoServiceRegistry.unregister(faviconService, WicketFaviconService.class);
     }
 
 
