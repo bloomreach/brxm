@@ -729,17 +729,3 @@
 .channel-editor-mask-removing {
   animation: hideMask 400ms;
 }
-
-.channel-editor-mask-left {
-  top: 0;
-  left: 0;
-  bottom: 0;
-  width: 64px;
-}
-
-.channel-editor-mask-bottom {
-  height: 40px;
-  left: 64px;
-  right: 0;
-  bottom: 0;
-}

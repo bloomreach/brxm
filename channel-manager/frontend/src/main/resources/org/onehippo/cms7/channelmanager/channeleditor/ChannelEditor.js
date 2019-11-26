@@ -283,22 +283,12 @@
       if (Hippo && Hippo.showMask) {
         Hippo.showMask();
       }
-      $(document.body).append(
-        '<div class="channel-editor-mask channel-editor-mask-left"></div>' +
-        '<div class="channel-editor-mask channel-editor-mask-bottom"></div>'
-      );
     },
 
     _unmaskSurroundings: function() {
-      $(document.body).children('.channel-editor-mask')
-        .addClass('channel-editor-mask-removing')
-        .delay(400)
-        .queue(function() {
-          if (Hippo && Hippo.hideMask) {
-            Hippo.hideMask();
-          }
-          $(this).remove();
-        });
+      if (Hippo && Hippo.hideMask) {
+        Hippo.hideMask();
+      }
     },
 
     _showAlterEgoEditor: function(mainToolbarHeight) {
