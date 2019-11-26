@@ -218,9 +218,8 @@ public class Main extends PluginApplication {
 
         wicketFaviconService = HippoServiceRegistry.getService(WicketFaviconService.class);
         if (wicketFaviconService == null){
-            WicketFaviconServiceImpl wicketFaviconServiceImpl = new WicketFaviconServiceImpl();
-            wicketFaviconService = wicketFaviconServiceImpl;
-            HippoServiceRegistry.register(wicketFaviconServiceImpl, WicketFaviconService.class, FaviconService.class);
+            wicketFaviconService = new WicketFaviconServiceImpl();
+            HippoServiceRegistry.register(wicketFaviconService, WicketFaviconService.class, FaviconService.class);
         }
 
         addRequestCycleListeners();
