@@ -15,14 +15,22 @@
 
 package org.hippoecm.frontend.service;
 
+import java.util.function.Supplier;
+
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.tester.WicketTester;
+import org.easymock.EasyMockRunner;
+import org.easymock.Mock;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import static org.junit.Assert.*;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.junit.Assert.assertEquals;
 
+@RunWith(EasyMockRunner.class)
 public class WicketFaviconServiceImplTest {
 
     public static final String WICKET_FAVICON_PREFIX = "./wicket/resource/org.hippoecm.frontend.service.WicketFaviconServiceImpl/";
@@ -31,51 +39,63 @@ public class WicketFaviconServiceImplTest {
     @SuppressWarnings("FieldCanBeLocal")
     private WicketTester wicketTester;
 
+    @Mock
+    private Supplier<String> pluginApplicationNameSupplier;
+
+    private WicketFaviconServiceImpl faviconService;
+
     @Before
     public void setUp() throws Exception {
-        wicketTester  = new WicketTester();
+        wicketTester = new WicketTester();
+        faviconService = new WicketFaviconServiceImpl(pluginApplicationNameSupplier);
     }
 
     @Test
     public void getRelativeFaviconUrlCms() {
-        FaviconService faviconService = new WicketFaviconServiceImpl("cms");
+        expect(pluginApplicationNameSupplier.get()).andReturn("cms");
+        replay(pluginApplicationNameSupplier);
         assertEquals(WICKET_FAVICON_PREFIX +
-                "cms-icon.png",faviconService.getRelativeFaviconUrl());
+                "cms-icon.png", faviconService.getRelativeFaviconUrl());
     }
 
     @Test
     public void getRelativeFaviconUrlConsole() {
-        FaviconService faviconService = new WicketFaviconServiceImpl("console");
+        expect(pluginApplicationNameSupplier.get()).andReturn("console");
+        replay(pluginApplicationNameSupplier);
         assertEquals(WICKET_FAVICON_PREFIX +
-                "console-icon.png",faviconService.getRelativeFaviconUrl());
+                "console-icon.png", faviconService.getRelativeFaviconUrl());
     }
 
     @Test
     public void getRelativeFaviconUrlResourceDoesNotExist() {
-        FaviconService faviconService = new WicketFaviconServiceImpl("authoring");
-        assertEquals("skin/images/cms-icon.png",faviconService.getRelativeFaviconUrl());
+        expect(pluginApplicationNameSupplier.get()).andReturn("authoring");
+        replay(pluginApplicationNameSupplier);
+        assertEquals("skin/images/cms-icon.png", faviconService.getRelativeFaviconUrl());
     }
 
     @Test
     public void getFaviconResourceReferenceCms() {
-        WicketFaviconService wicketFaviconService = new WicketFaviconServiceImpl("cms");
-        final ResourceReference faviconResourceReference = wicketFaviconService.getFaviconResourceReference();
+        expect(pluginApplicationNameSupplier.get()).andReturn("cms");
+        replay(pluginApplicationNameSupplier);
+        final ResourceReference faviconResourceReference = faviconService.getFaviconResourceReference();
         assertEquals(WICKET_FAVICON_PREFIX +
                 "cms-icon.png", getResourceReferenceUrl(faviconResourceReference));
     }
 
     @Test
     public void getFaviconResourceReferenceConsole() {
-        WicketFaviconService wicketFaviconService = new WicketFaviconServiceImpl("console");
-        final ResourceReference faviconResourceReference = wicketFaviconService.getFaviconResourceReference();
+        expect(pluginApplicationNameSupplier.get()).andReturn("console");
+        replay(pluginApplicationNameSupplier);
+        final ResourceReference faviconResourceReference = faviconService.getFaviconResourceReference();
         assertEquals(WICKET_FAVICON_PREFIX +
                 "console-icon.png", getResourceReferenceUrl(faviconResourceReference));
     }
 
     @Test
     public void getFaviconResourceReferenceResourceDoesNotExist() {
-        WicketFaviconService wicketFaviconService = new WicketFaviconServiceImpl("authoring");
-        final ResourceReference faviconResourceReference = wicketFaviconService.getFaviconResourceReference();
+        expect(pluginApplicationNameSupplier.get()).andReturn("authoring");
+        replay(pluginApplicationNameSupplier);
+        final ResourceReference faviconResourceReference = faviconService.getFaviconResourceReference();
         assertEquals("skin/images/cms-icon.png", getResourceReferenceUrl(faviconResourceReference));
     }
 

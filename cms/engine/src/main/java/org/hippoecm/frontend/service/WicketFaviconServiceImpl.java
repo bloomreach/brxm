@@ -15,6 +15,9 @@
 
 package org.hippoecm.frontend.service;
 
+import java.util.Objects;
+import java.util.function.Supplier;
+
 import org.apache.wicket.request.Url;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.PackageResource;
@@ -29,6 +32,17 @@ public class WicketFaviconServiceImpl implements FaviconService, WicketFaviconSe
     private static final ResourceReference DEFAULT_FAVICON = new UrlResourceReference(
             Url.parse("skin/images/cms" + SUFFIX));
 
+    private final Supplier<String> pluginApplicationNameSupplier;
+
+    public WicketFaviconServiceImpl(Supplier<String> pluginApplicationNameSupplier) {
+        Objects.requireNonNull(pluginApplicationNameSupplier);
+        this.pluginApplicationNameSupplier = pluginApplicationNameSupplier;
+    }
+
+    public WicketFaviconServiceImpl() {
+        this(() -> PluginApplication.get().getPluginApplicationName());
+    }
+
     @Override
     public String getRelativeFaviconUrl() {
         return RequestCycle.get().urlFor(getFaviconResourceReference(), null).toString();
@@ -42,7 +56,7 @@ public class WicketFaviconServiceImpl implements FaviconService, WicketFaviconSe
                 new PackageResourceReference(scope, name) : DEFAULT_FAVICON;
     }
 
-    protected String getFaviconFileName() {
-        return PluginApplication.get().getPluginApplicationName() + SUFFIX;
+    private String getFaviconFileName() {
+        return pluginApplicationNameSupplier.get() + SUFFIX;
     }
 }
