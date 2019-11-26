@@ -76,7 +76,6 @@ import org.apache.wicket.request.handler.render.WebPageRenderer;
 import org.apache.wicket.request.http.WebRequest;
 import org.apache.wicket.request.http.WebResponse;
 import org.apache.wicket.request.mapper.AbstractMapper;
-import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.caching.FilenameWithVersionResourceCachingStrategy;
 import org.apache.wicket.request.resource.caching.QueryStringWithVersionResourceCachingStrategy;
@@ -102,6 +101,9 @@ import org.hippoecm.frontend.observation.InternalCmsEventDispatcherService;
 import org.hippoecm.frontend.observation.JcrObservationManager;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
+import org.hippoecm.frontend.service.FaviconService;
+import org.hippoecm.frontend.service.WicketFaviconService;
+import org.hippoecm.frontend.service.WicketFaviconServiceImpl;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.settings.GlobalSettings;
@@ -200,6 +202,7 @@ public class Main extends PluginApplication {
 
     protected String repositoryFallbackUsername;
     protected String repositoryFallbackPassword;
+    private WicketFaviconService wicketFaviconService;
 
 
     protected void initializeFallBackCredentials() {
@@ -212,6 +215,15 @@ public class Main extends PluginApplication {
         super.init();
 
         initializeFallBackCredentials();
+
+        String applicationName = getPluginApplicationName();
+
+        wicketFaviconService = HippoServiceRegistry.getService(WicketFaviconService.class);
+        if (wicketFaviconService == null){
+            WicketFaviconServiceImpl wicketFaviconServiceImpl = new WicketFaviconServiceImpl();
+            wicketFaviconService = wicketFaviconServiceImpl;
+            HippoServiceRegistry.register(wicketFaviconServiceImpl, WicketFaviconService.class, FaviconService.class);
+        }
 
         addRequestCycleListeners();
 
@@ -349,7 +361,7 @@ public class Main extends PluginApplication {
             }
         });
 
-        String applicationName = getPluginApplicationName();
+
 
         if (PLUGIN_APPLICATION_VALUE_CMS.equals(applicationName)) {
 
@@ -626,7 +638,7 @@ public class Main extends PluginApplication {
 
     @Override
     public ResourceReference getPluginApplicationFavIconReference() {
-        return new PackageResourceReference(Main.class, getPluginApplicationName() + "-icon.png");
+        return this.wicketFaviconService.getFaviconResourceReference();
     }
 
     @Override
