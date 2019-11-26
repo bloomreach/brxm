@@ -18,12 +18,8 @@ package org.hippoecm.frontend.service;
 import org.apache.wicket.request.resource.ResourceReference;
 
 public interface WicketFaviconService {
-
     /**
      * @return a {@link ResourceReference} that refers to the favicon
      */
     ResourceReference getFaviconResourceReference();
-
-
-
 }

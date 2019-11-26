@@ -26,10 +26,7 @@ import javax.jcr.RepositoryException;
 
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Request;
-import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.string.StringValue;
-import org.hippoecm.frontend.Main;
-import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.filter.NavAppRedirectFilter;
 import org.hippoecm.frontend.model.SerializableSupplier;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -43,7 +40,6 @@ import org.hippoecm.frontend.service.NavAppSettings;
 import org.hippoecm.frontend.service.NgxLoggerLevel;
 import org.hippoecm.frontend.service.ResourceType;
 import org.hippoecm.frontend.service.UserSettings;
-import org.hippoecm.frontend.service.WicketFaviconService;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoSession;
@@ -187,7 +183,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         final int iframesConnectionTimeout = readIframesConnectionTimeout();
         final NgxLoggerLevel ngxLoggerLevel = readLogLevel(logLevelQueryParamString);
 
-        final FaviconService faviconService = (FaviconService) HippoServiceRegistry.getService(WicketFaviconService.class);
+        final FaviconService faviconService = HippoServiceRegistry.getService(FaviconService.class);
         final String relativeFaviconUrl = faviconService.getRelativeFaviconUrl();
 
         return new AppSettings() {
@@ -222,9 +218,6 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
                 return logoutResources;
             }
 
-            /**
-             * Returns the relative path of the favicon
-             */
             @Override
             public String getFaviconUrl() {
                 return relativeFaviconUrl;

@@ -22,7 +22,6 @@ import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.UrlResourceReference;
 import org.hippoecm.frontend.PluginApplication;
-import org.jetbrains.annotations.NotNull;
 
 public class WicketFaviconServiceImpl implements FaviconService, WicketFaviconService {
 
@@ -30,17 +29,11 @@ public class WicketFaviconServiceImpl implements FaviconService, WicketFaviconSe
     private static final ResourceReference DEFAULT_FAVICON = new UrlResourceReference(
             Url.parse("skin/images/cms" + SUFFIX));
 
-    /**
-     * @return the relative path to the favicon.
-     */
     @Override
     public String getRelativeFaviconUrl() {
         return RequestCycle.get().urlFor(getFaviconResourceReference(), null).toString();
     }
 
-    /**
-     * @return a {@link ResourceReference} that refers to the favicon
-     */
     @Override
     public ResourceReference getFaviconResourceReference() {
         final Class<WicketFaviconServiceImpl> scope = WicketFaviconServiceImpl.class;
@@ -49,7 +42,6 @@ public class WicketFaviconServiceImpl implements FaviconService, WicketFaviconSe
                 new PackageResourceReference(scope, name) : DEFAULT_FAVICON;
     }
 
-    @NotNull
     protected String getFaviconFileName() {
         return PluginApplication.get().getPluginApplicationName() + SUFFIX;
     }
