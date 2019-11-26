@@ -18,7 +18,6 @@ package org.hippoecm.frontend.service;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.util.tester.WicketTester;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -80,7 +79,6 @@ public class WicketFaviconServiceImplTest {
         assertEquals("skin/images/cms-icon.png", getResourceReferenceUrl(faviconResourceReference));
     }
 
-    @NotNull
     protected String getResourceReferenceUrl(final ResourceReference faviconResourceReference) {
         return RequestCycle.get().urlFor(faviconResourceReference, null).toString();
     }

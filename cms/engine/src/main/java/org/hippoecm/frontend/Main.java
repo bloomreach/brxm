@@ -216,8 +216,6 @@ public class Main extends PluginApplication {
 
         initializeFallBackCredentials();
 
-        String applicationName = getPluginApplicationName();
-
         wicketFaviconService = HippoServiceRegistry.getService(WicketFaviconService.class);
         if (wicketFaviconService == null){
             WicketFaviconServiceImpl wicketFaviconServiceImpl = new WicketFaviconServiceImpl();
@@ -361,7 +359,7 @@ public class Main extends PluginApplication {
             }
         });
 
-
+        String applicationName = getPluginApplicationName();
 
         if (PLUGIN_APPLICATION_VALUE_CMS.equals(applicationName)) {
 
