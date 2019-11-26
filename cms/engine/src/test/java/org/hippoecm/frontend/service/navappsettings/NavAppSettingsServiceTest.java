@@ -45,6 +45,7 @@ import org.hippoecm.frontend.filter.NavAppRedirectFilter;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.AppSettings;
+import org.hippoecm.frontend.service.FaviconService;
 import org.hippoecm.frontend.service.INavAppSettingsService;
 import org.hippoecm.frontend.service.NavAppResource;
 import org.hippoecm.frontend.service.NavAppSettings;
@@ -57,6 +58,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.security.SessionUser;
 
 import static org.easymock.EasyMock.createMock;
@@ -75,6 +77,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(EasyMockRunner.class)
 public class NavAppSettingsServiceTest {
 
+    static final String CMS_ICON_PNG = "cms-icon.png";
     @Mock
     private ServletWebRequest request;
     @Mock
@@ -102,11 +105,15 @@ public class NavAppSettingsServiceTest {
     private HippoSession hippoSession;
     @Mock
     private SessionUser user;
+    @Mock
+    private FaviconService faviconService;
+
     private SessionAttributeStore sessionAttributeStore;
 
     @Before
     public void setUp() throws RepositoryException {
 
+        HippoServiceRegistry.register(faviconService, FaviconService.class);
         expect(request.getContainerRequest()).andReturn(servletRequest).anyTimes();
         expect(request.getQueryParameters()).andStubReturn(parameters);
         replay(request);
@@ -167,6 +174,9 @@ public class NavAppSettingsServiceTest {
         expect(navAppResourceService.getNavAppResourceUrl()).andStubReturn(Optional.empty());
         replay(navAppResourceService);
 
+        expect(faviconService.getRelativeFaviconUrl()).andReturn(CMS_ICON_PNG);
+        replay(faviconService);
+
         this.navAppSettingsService = new NavAppSettingsService(context, config, () -> userSession, () -> sessionAttributeStore, navAppResourceService);
 
         ThreadContext.setApplication(webApplication);
@@ -175,7 +185,9 @@ public class NavAppSettingsServiceTest {
     @After
     public void tearDown() {
         ThreadContext.setApplication(null);
+        HippoServiceRegistry.unregister(faviconService, FaviconService.class);
     }
+
 
     @Test
     public void loads_extra_navcfg_resources_from_config() {
@@ -460,6 +472,7 @@ public class NavAppSettingsServiceTest {
         assertThat(appSettings.getLogLevel(), is(OFF));
         assertThat(appSettings.getNavAppResourceLocation(), is(URI.create("navapp")));
         assertThat(appSettings.isCmsServingNavAppResources(), is(true));
+        assertThat(appSettings.getFaviconUrl(), is(CMS_ICON_PNG));
     }
 
 }
