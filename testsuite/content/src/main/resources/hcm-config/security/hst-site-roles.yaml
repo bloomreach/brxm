@@ -1,19 +1,19 @@
 definitions:
   config:
     /hippo:configuration/hippo:userroles:
-      /hst-site-user:
+      /hst.site.user:
         jcr:primaryType: hipposys:userrole
-      /site-admin:
+      /site.admin:
         jcr:primaryType: hipposys:userrole
       /xm.cms.user:
         hipposys:userroles:
           operation: add
-          value: [hst-site-user]
+          value: [hst.site.user]
     /hippo:configuration/hippo:users/admin:
       hipposys:userroles:
         operation: add
-        value: [site-admin]
+        value: [site.admin]
     /hippo:configuration/hippo:groups/admin:
       hipposys:userroles:
         operation: add
-        value: [site-admin]
+        value: [site.admin]
