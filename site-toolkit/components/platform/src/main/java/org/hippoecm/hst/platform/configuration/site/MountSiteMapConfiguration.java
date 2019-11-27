@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ public class MountSiteMapConfiguration {
     private final String namedPipeline;
     private final boolean finalPipeline;
     private final boolean cacheable;
+    private final boolean authenticated;
     private final String scheme;
     private final boolean schemeAgnostic;
     private final int schemeNotMatchingResponseCode;
@@ -58,6 +59,7 @@ public class MountSiteMapConfiguration {
         namedPipeline = mount.getNamedPipeline();
         finalPipeline = mount.isFinalPipeline();
         cacheable = mount.isCacheable();
+        authenticated = mount.isAuthenticated();
         scheme = mount.getScheme();
         schemeAgnostic = mount.isSchemeAgnostic();
         schemeNotMatchingResponseCode = mount.getSchemeNotMatchingResponseCode();
@@ -90,6 +92,10 @@ public class MountSiteMapConfiguration {
 
     public boolean isCacheable() {
         return cacheable;
+    }
+
+    public boolean isAuthenticated() {
+        return authenticated;
     }
 
     public String getScheme() {
@@ -132,6 +138,10 @@ public class MountSiteMapConfiguration {
         final MountSiteMapConfiguration that = (MountSiteMapConfiguration) o;
 
         if (cacheable != that.cacheable) {
+            return false;
+        }
+
+        if (authenticated != that.authenticated) {
             return false;
         }
         if (schemeAgnostic != that.schemeAgnostic) {
@@ -185,6 +195,7 @@ public class MountSiteMapConfiguration {
         result = 31 * result + (locale != null ? locale.hashCode() : 0);
         result = 31 * result + (namedPipeline != null ? namedPipeline.hashCode() : 0);
         result = 31 * result + (cacheable ? 1 : 0);
+        result = 31 * result + (authenticated ? 1 : 0);
         result = 31 * result + (scheme != null ? scheme.hashCode() : 0);
         result = 31 * result + (schemeAgnostic ? 1 : 0);
         result = 31 * result + schemeNotMatchingResponseCode;
@@ -194,4 +205,5 @@ public class MountSiteMapConfiguration {
         result = 31 * result + (responseHeaders != null ? responseHeaders.hashCode() : 0);
         return result;
     }
+
 }

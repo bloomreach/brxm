@@ -455,6 +455,8 @@ public class HstSiteMapItemService implements InternalHstSiteMapItem, Configurat
             authenticated = node.getValueProvider().getBoolean(SITEMAPITEM_PROPERTY_AUTHENTICATED);
         } else if(this.parentItem != null){
             authenticated = parentItem.isAuthenticated();
+        } else {
+            authenticated = mountSiteMapConfiguration.isAuthenticated();
         }
 
         if (node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_ROLES)) {

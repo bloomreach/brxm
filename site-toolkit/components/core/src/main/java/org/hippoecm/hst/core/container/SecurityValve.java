@@ -207,31 +207,16 @@ public class SecurityValve extends AbstractBaseOrderableValve {
     protected void checkAccess(HttpServletRequest servletRequest) throws ContainerSecurityException {
         HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
         ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
-        Set<String> roles = null;
-        Set<String> users = null;
 
-        boolean authenticated = (resolvedSiteMapItem != null && resolvedSiteMapItem.isAuthenticated());
+        final ResolvedMount resolvedMount = requestContext.getResolvedMount();
 
-        if (authenticated) {
-            roles = resolvedSiteMapItem.getRoles();
-            users = resolvedSiteMapItem.getUsers();
-        } else {
-            ResolvedMount mount = requestContext.getResolvedMount();
-            authenticated = (mount != null && mount.isAuthenticated());
-            
-            if (authenticated) {
-                roles = mount.getRoles();
-                users = mount.getUsers();
-            }
-        }
-
-        if (!authenticated) {
-            log.debug("The sitemap item or site mount is non-authenticated.");
-
+        if ((resolvedSiteMapItem != null && !resolvedSiteMapItem.isAuthenticated()) ||
+                !resolvedMount.isAuthenticated()) {
+            log.debug("The sitemap item and site mount is non-authenticated.");
             return;
         }
 
-        Principal userPrincipal = servletRequest.getUserPrincipal();
+        final Principal userPrincipal = servletRequest.getUserPrincipal();
 
         if (userPrincipal == null) {
             log.debug("The user has not been authenticated yet.");
@@ -239,6 +224,33 @@ public class SecurityValve extends AbstractBaseOrderableValve {
             throw new ContainerSecurityNotAuthenticatedException("Not authenticated yet.");
         }
 
+        if (resolvedSiteMapItem != null) {
+            final Set<String> roles = resolvedSiteMapItem.getRoles();
+            final Set<String> users = resolvedSiteMapItem.getUsers();
+            if (roles.isEmpty() && users.isEmpty()) {
+                // the sitemap item is authenticated, most likely due to mount. If the mount however is not
+                // authenticated, we are dealing with a sitemap item that is authenticated but does not allow anyone
+                if (!resolvedMount.isAuthenticated()) {
+                   log.debug("Sitemap has authenticated = true without roles/users while mount does not have " +
+                           "authenticated = true. This means no-one is allowed to view the sitemap item");
+                } else {
+                    log.debug("Sitemap item does not have roles/users configured, mount authorization check will be done");
+                }
+            } else {
+                // check whether the user passes the sitemap item roles / users check
+                checkAccess(resolvedSiteMapItem.getRoles(), resolvedSiteMapItem.getUsers(), userPrincipal, servletRequest);
+            }
+        }
+
+        // check whether the user passes the mount item roles / users check if the mount has authenticated = true
+        if (resolvedMount.isAuthenticated()) {
+            checkAccess(resolvedMount.getRoles(), resolvedMount.getUsers(), userPrincipal, servletRequest);
+        }
+
+    }
+
+    private void checkAccess(final Set<String> roles, final Set<String> users, final Principal userPrincipal,
+                             final HttpServletRequest servletRequest) throws ContainerSecurityNotAuthorizedException {
         if (users.isEmpty() && roles.isEmpty()) {
             log.debug("The roles or users are not configured.");
         }
@@ -259,7 +271,7 @@ public class SecurityValve extends AbstractBaseOrderableValve {
             }
 
             log.debug("The user is not assigned to roles, {}", roles);
-        }   
+        }
 
         throw new ContainerSecurityNotAuthorizedException("Not authorized.");
     }
