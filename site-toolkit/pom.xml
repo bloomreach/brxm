@@ -63,8 +63,9 @@
     <junit.version>4.12</junit.version>
     <easymock.version>4.0.2</easymock.version>
     <assertj.version>3.8.0</assertj.version>
-    <!-- Make sure that powermock and easymock are compatible -->
+    <!-- Make sure that powermock is compatible with easymock and mockito -->
     <powermock.version>2.0.2</powermock.version>
+    <mockito-core.version>2.23.0</mockito-core.version>
 
     <xalan.version>2.7.2</xalan.version>
 
