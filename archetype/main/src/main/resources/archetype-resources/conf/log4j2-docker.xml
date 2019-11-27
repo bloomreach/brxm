@@ -54,7 +54,7 @@
     <Logger name="org.apache.jackrabbit.core.query.lucene.ConsistencyCheck" level="info"/>
 
     <!-- project logging -->
-    <Logger name="org.example" level="info"/>
+    <Logger name="${package}" level="info"/>
 
     <Root level="warn">
       <AppenderRef ref="console"/>
