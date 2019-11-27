@@ -156,6 +156,7 @@
         <directory>${basedir}/src/main/resources</directory>
         <includes>
           <include>**/*.xml</include>
+          <include>**/*.png</include>
         </includes>
       </resource>
     </resources>
