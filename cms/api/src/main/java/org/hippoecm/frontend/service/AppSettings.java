@@ -87,4 +87,12 @@ public interface AppSettings {
      */
     List<NavAppResource> getLogoutResources();
 
+    /**
+     * Returns the path of the favicon
+     * e.g. ./wicket/resource/org.hippoecm.frontend.service.WicketFaviconServiceImpl/cms-icon.png?ver=1574774708000
+     *
+     * @return path to favicon
+     */
+    String getFaviconUrl();
+
 }

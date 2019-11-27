@@ -33,15 +33,18 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.AppSettings;
+import org.hippoecm.frontend.service.FaviconService;
 import org.hippoecm.frontend.service.INavAppSettingsService;
 import org.hippoecm.frontend.service.NavAppResource;
 import org.hippoecm.frontend.service.NavAppSettings;
 import org.hippoecm.frontend.service.NgxLoggerLevel;
 import org.hippoecm.frontend.service.ResourceType;
 import org.hippoecm.frontend.service.UserSettings;
+import org.hippoecm.frontend.service.WicketFaviconService;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoSession;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.security.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -181,6 +184,9 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         final int iframesConnectionTimeout = readIframesConnectionTimeout();
         final NgxLoggerLevel ngxLoggerLevel = readLogLevel(logLevelQueryParamString);
 
+        final FaviconService faviconService = HippoServiceRegistry.getService(WicketFaviconService.class, FaviconService.class);
+        final String relativeFaviconUrl = faviconService.getRelativeFaviconUrl();
+
         return new AppSettings() {
 
             @Override
@@ -211,6 +217,11 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
             @Override
             public List<NavAppResource> getLogoutResources() {
                 return logoutResources;
+            }
+
+            @Override
+            public String getFaviconUrl() {
+                return relativeFaviconUrl;
             }
 
             @Override
