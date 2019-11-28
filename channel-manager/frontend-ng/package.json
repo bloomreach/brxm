@@ -68,7 +68,6 @@
     "angular-ui-tree": "2.22.6",
     "emittery": "0.4.1",
     "es6-shim": "0.35.3",
-    "gulp": "^4.0.2",
     "jquery": "3.4.1",
     "moment-timezone": "0.5.14",
     "mutation-summary": "0.1.1",
