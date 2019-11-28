@@ -136,7 +136,8 @@ $breadcrumbs-chevron-color: rgba(0, 0, 0, .6);
 
 // Site selection side panel
 $site-selection-text-color: #6a6a6a;
-$site-selection-side-panel-width: 300px;
+$site-selection-side-panel-min-width: 300px;
+$site-selection-side-panel-max-width: 500px;
 $site-selection-side-panel-bg: white;
 $site-selection-hover-bg: rgb(220, 219, 220);
 $site-selection-active-bg: rgb(204, 234, 250);

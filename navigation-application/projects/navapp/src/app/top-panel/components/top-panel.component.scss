@@ -46,3 +46,10 @@
   top: 0;
   z-index: 1;
 }
+
+.selected-site-name {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
