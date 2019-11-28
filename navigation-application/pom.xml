@@ -189,6 +189,7 @@
                 <exclude>projects/navapp/**/*.svg</exclude>
                 <exclude>**/browserslist</exclude>
                 <exclude>projects/navapp-communication/src/docs/index.md</exclude>
+                <exclude>projects/target/surefire-reports/TEST-karma.xml</exclude>
                 <!-- Generated or pulled-in files which are not cleaned up -->
                 <exclude>**/node_modules/**/*</exclude>
                 <exclude>**/node/**/*</exclude>
