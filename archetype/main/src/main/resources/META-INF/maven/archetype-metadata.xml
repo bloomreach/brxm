@@ -67,7 +67,7 @@
     <fileSet filtered="false" encoding="UTF-8">
       <directory>db-bootstrap</directory>
       <includes>
-        <include>.gitkeep</include>
+        <include>README.txt</include>
       </includes>
     </fileSet>
     <!-- repository-data module -->
