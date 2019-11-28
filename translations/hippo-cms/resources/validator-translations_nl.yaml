@@ -10,6 +10,8 @@ definitions:
         escaped: 'De volgende tekens zijn niet toegestaan: < > & '' "'
         required#String: Tekst invoeren
         resource-required: Upload een bestand
+        path-is-used-multiple-times: Hetzelfde pad mag niet meerdere keren worden
+          gebruikt
         summaryMultiple: Dit document bevat ${numberOfErrors} fouten
         non-empty-html: Tekst invoeren
         required#OpenUiString: Waarde invoeren
