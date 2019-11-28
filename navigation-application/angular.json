@@ -21,6 +21,7 @@
             "customWebpackConfig": {
               "path": "./projects/navapp/custom-webpack.config.js"
             },
+            "indexTransform": "./projects/navapp/index-html-transform.js",
             "outputPath": "dist/navapp/",
             "resourcesOutputPath": "navapp-assets",
             "index": "projects/navapp/src/index.html",
