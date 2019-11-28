@@ -18,7 +18,6 @@ import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import * as getAntiCacheModule from './get-anti-cache-query-param';
-
 import { translateHttpLoaderFactory } from './translate-http-loader.factory';
 
 describe('translateHttpLoaderFactory', () => {

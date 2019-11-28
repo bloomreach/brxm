@@ -26,28 +26,32 @@ describe('BootstrapService', () => {
   let service: BootstrapService;
 
   let clientAppServiceInitResolve: () => void;
-  const clientAppServiceMock = jasmine.createSpyObj('ClientAppService', [
-    'init',
-  ]);
+  let clientAppServiceMock: jasmine.SpyObj<ClientAppService>;
 
   let menuStateServiceInitResolve: () => void;
-  const menuStateServiceMock = jasmine.createSpyObj('MenuStateService', {
-    init: new Promise(r => {
-      menuStateServiceInitResolve = r;
-    }),
-  });
+  let menuStateServiceMock: jasmine.SpyObj<MenuStateService>;
 
   let navigationServiceInitialNavigationResolve: () => void;
-  const navigationServiceMock = jasmine.createSpyObj('BreadcrumbsService', {
-    initialNavigation: new Promise(r => {
-      navigationServiceInitialNavigationResolve = r;
-    }),
-  });
+  let navigationServiceMock: jasmine.SpyObj<NavigationService>;
 
   beforeEach(() => {
-    clientAppServiceMock.init.and.returnValue(new Promise(r => {
-      clientAppServiceInitResolve = r;
-    }));
+    clientAppServiceMock = jasmine.createSpyObj('ClientAppService', {
+      init: new Promise(r => {
+        clientAppServiceInitResolve = r;
+      }),
+    });
+
+    menuStateServiceMock = jasmine.createSpyObj('MenuStateService', {
+      init: new Promise(r => {
+        menuStateServiceInitResolve = r;
+      }),
+    });
+
+    navigationServiceMock = jasmine.createSpyObj('NavigationService', {
+      initialNavigation: new Promise(r => {
+        navigationServiceInitialNavigationResolve = r;
+      }),
+    });
 
     TestBed.configureTestingModule({
       providers: [

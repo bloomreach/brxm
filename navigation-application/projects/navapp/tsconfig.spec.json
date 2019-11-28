@@ -3,7 +3,6 @@
   "compilerOptions": {
     "outDir": "../../out-tsc/spec",
     "types": [
-      "jasmine",
       "node"
     ]
   },
@@ -12,6 +11,8 @@
     "src/polyfills.ts"
   ],
   "include": [
+    "src/**/*.ts",
     "src/**/*.spec.ts",
+    "src/**/*.d.ts"
   ]
 }

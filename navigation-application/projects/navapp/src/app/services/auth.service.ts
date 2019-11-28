@@ -17,6 +17,7 @@
 import { DOCUMENT, Location } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { ClientErrorCodes } from '@bloomreach/navapp-communication';
+import { NGXLogger } from 'ngx-logger';
 import { filter } from 'rxjs/operators';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
@@ -36,6 +37,7 @@ export class AuthService {
     private clientAppService: ClientAppService,
     private busyIndicatorService: BusyIndicatorService,
     private location: Location,
+    private logger: NGXLogger,
     @Inject(APP_SETTINGS) private appSettings: AppSettings,
     @Inject(DOCUMENT) private document: Document,
   ) {
@@ -54,6 +56,11 @@ export class AuthService {
     const loginPromises = loginResources.map(resource => {
       return this.connectionService
         .createConnection(resource.url)
+        .catch(e => {
+          this.logger.error(`Silent login has failed for '${resource.url}'`, e);
+
+          return Promise.reject(e);
+        })
         .finally(() => {
           this.connectionService.removeConnection(resource.url);
         });
