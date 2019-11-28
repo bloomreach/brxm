@@ -42,7 +42,6 @@ public class MountSiteMapConfiguration {
     private final String namedPipeline;
     private final boolean finalPipeline;
     private final boolean cacheable;
-    private final boolean authenticated;
     private final String scheme;
     private final boolean schemeAgnostic;
     private final int schemeNotMatchingResponseCode;
@@ -59,15 +58,14 @@ public class MountSiteMapConfiguration {
         namedPipeline = mount.getNamedPipeline();
         finalPipeline = mount.isFinalPipeline();
         cacheable = mount.isCacheable();
-        authenticated = mount.isAuthenticated();
         scheme = mount.getScheme();
         schemeAgnostic = mount.isSchemeAgnostic();
         schemeNotMatchingResponseCode = mount.getSchemeNotMatchingResponseCode();
         defaultResourceBundleIds = mount.getDefaultResourceBundleIds();
-        hashCode = computeHashCode();
         mountContentPath = mount.getContentPath();
         contextPath = mount.getContextPath();
         responseHeaders = mount.getResponseHeaders();
+        hashCode = computeHashCode();
     }
 
     public Map<String, String> getParameters() {
@@ -92,10 +90,6 @@ public class MountSiteMapConfiguration {
 
     public boolean isCacheable() {
         return cacheable;
-    }
-
-    public boolean isAuthenticated() {
-        return authenticated;
     }
 
     public String getScheme() {
@@ -141,9 +135,6 @@ public class MountSiteMapConfiguration {
             return false;
         }
 
-        if (authenticated != that.authenticated) {
-            return false;
-        }
         if (schemeAgnostic != that.schemeAgnostic) {
             return false;
         }
@@ -195,7 +186,6 @@ public class MountSiteMapConfiguration {
         result = 31 * result + (locale != null ? locale.hashCode() : 0);
         result = 31 * result + (namedPipeline != null ? namedPipeline.hashCode() : 0);
         result = 31 * result + (cacheable ? 1 : 0);
-        result = 31 * result + (authenticated ? 1 : 0);
         result = 31 * result + (scheme != null ? scheme.hashCode() : 0);
         result = 31 * result + (schemeAgnostic ? 1 : 0);
         result = 31 * result + schemeNotMatchingResponseCode;

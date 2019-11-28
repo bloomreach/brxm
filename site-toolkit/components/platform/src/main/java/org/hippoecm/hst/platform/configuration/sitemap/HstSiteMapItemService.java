@@ -15,7 +15,6 @@
  */
 package org.hippoecm.hst.platform.configuration.sitemap;
 
-
 import static org.hippoecm.hst.configuration.ConfigurationConstants.CONTAINER_RESOURCE_PIPELINE_NAME;
 import static org.hippoecm.hst.configuration.HstNodeTypes.ANY;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROEPRTY_SCHEME_AGNOSTIC;
@@ -63,7 +62,6 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.ConfigurationUtils;
@@ -451,32 +449,26 @@ public class HstSiteMapItemService implements InternalHstSiteMapItem, Configurat
         }
         locale = StringPool.get(locale);
 
+        // authenticated or not is not inherited from parent items or the mount: instead, parent items and the mount
+        // are checked for access individually for authentication and access.
         if (node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_AUTHENTICATED)) {
             authenticated = node.getValueProvider().getBoolean(SITEMAPITEM_PROPERTY_AUTHENTICATED);
-        } else if(this.parentItem != null){
-            authenticated = parentItem.isAuthenticated();
-        } else {
-            authenticated = mountSiteMapConfiguration.isAuthenticated();
         }
 
+        roles = new HashSet<>();
+
+        // roles are on purpose not inherited!! when acecss is checked, every parent item access is checked separately
+        // and finally the mount
         if (node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_ROLES)) {
-            String [] rolesProp = node.getValueProvider().getStrings(SITEMAPITEM_PROPERTY_ROLES);
-            roles = new HashSet<>();
-            CollectionUtils.addAll(this.roles, rolesProp);
-        } else if (this.parentItem != null){
-            roles = new HashSet<>(parentItem.getRoles());
-        } else {
-            roles = new HashSet<>(0);
+            Arrays.stream(node.getValueProvider().getStrings(SITEMAPITEM_PROPERTY_ROLES)).forEach(role -> roles.add(role));
         }
+
+        // users are on purpose not inherited!! when acecss is checked, every parent item access is checked separately
+        // and finally the mount
+        users = new HashSet<>();
 
         if (node.getValueProvider().hasProperty(SITEMAPITEM_PROPERTY_USERS)) {
-            String [] usersProp = node.getValueProvider().getStrings(SITEMAPITEM_PROPERTY_USERS);
-            users = new HashSet<>();
-            CollectionUtils.addAll(this.users, usersProp);
-        } else if (parentItem != null){
-            users = new HashSet<>(parentItem.getUsers());
-        } else {
-            users = new HashSet<>();
+            Arrays.stream(node.getValueProvider().getStrings(SITEMAPITEM_PROPERTY_USERS)).forEach(user -> users.add(user));
         }
 
         if (node.getValueProvider().hasProperty(GENERAL_PROPERTY_RESPONSE_HEADERS)) {

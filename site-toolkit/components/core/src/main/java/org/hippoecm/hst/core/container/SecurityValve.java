@@ -29,6 +29,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.core.internal.HstMutableRequestContext;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -204,14 +205,10 @@ public class SecurityValve extends AbstractBaseOrderableValve {
      * @param servletRequest
      * @throws ContainerSecurityException
      */
-    protected void checkAccess(HttpServletRequest servletRequest) throws ContainerSecurityException {
-        HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
-        ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+    void checkAccess(HttpServletRequest servletRequest) throws ContainerSecurityException {
+        final HstRequestContext requestContext = (HstRequestContext) servletRequest.getAttribute(ContainerConstants.HST_REQUEST_CONTEXT);
 
-        final ResolvedMount resolvedMount = requestContext.getResolvedMount();
-
-        if ((resolvedSiteMapItem != null && !resolvedSiteMapItem.isAuthenticated()) ||
-                !resolvedMount.isAuthenticated()) {
+        if (!isAuthenticated(requestContext)) {
             log.debug("The sitemap item and site mount is non-authenticated.");
             return;
         }
@@ -224,55 +221,73 @@ public class SecurityValve extends AbstractBaseOrderableValve {
             throw new ContainerSecurityNotAuthenticatedException("Not authenticated yet.");
         }
 
+        final ResolvedMount resolvedMount = requestContext.getResolvedMount();
+        final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+
         if (resolvedSiteMapItem != null) {
-            final Set<String> roles = resolvedSiteMapItem.getRoles();
-            final Set<String> users = resolvedSiteMapItem.getUsers();
-            if (roles.isEmpty() && users.isEmpty()) {
-                // the sitemap item is authenticated, most likely due to mount. If the mount however is not
-                // authenticated, we are dealing with a sitemap item that is authenticated but does not allow anyone
-                if (!resolvedMount.isAuthenticated()) {
-                   log.debug("Sitemap has authenticated = true without roles/users while mount does not have " +
-                           "authenticated = true. This means no-one is allowed to view the sitemap item");
-                } else {
-                    log.debug("Sitemap item does not have roles/users configured, mount authorization check will be done");
+            HstSiteMapItem current = resolvedSiteMapItem.getHstSiteMapItem();
+            while (current != null) {
+                if (current.isAuthenticated()) {
+                    checkAccess(current.getRoles(), current.getUsers(), userPrincipal, servletRequest);
                 }
-            } else {
-                // check whether the user passes the sitemap item roles / users check
-                checkAccess(resolvedSiteMapItem.getRoles(), resolvedSiteMapItem.getUsers(), userPrincipal, servletRequest);
+                current = current.getParentItem();
             }
         }
 
-        // check whether the user passes the mount item roles / users check if the mount has authenticated = true
         if (resolvedMount.isAuthenticated()) {
+            // check whether the user passes the mount roles and users check
             checkAccess(resolvedMount.getRoles(), resolvedMount.getUsers(), userPrincipal, servletRequest);
         }
 
     }
 
+    private boolean isAuthenticated(final HstRequestContext requestContext) {
+        final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+        if (resolvedSiteMapItem != null) {
+            HstSiteMapItem current = resolvedSiteMapItem.getHstSiteMapItem();
+            while (current != null) {
+                if (current.isAuthenticated()) {
+                    return true;
+                }
+                current = current.getParentItem();
+            }
+        }
+        return requestContext.getResolvedMount().isAuthenticated();
+    }
+
+    // if either a user or a role matches, access is allowed
     private void checkAccess(final Set<String> roles, final Set<String> users, final Principal userPrincipal,
                              final HttpServletRequest servletRequest) throws ContainerSecurityNotAuthorizedException {
-        if (users.isEmpty() && roles.isEmpty()) {
-            log.debug("The roles or users are not configured.");
+
+        boolean allowed = checkUserAllowed(users, userPrincipal);
+
+        if (allowed) {
+            log.debug("User is allowed");
+            return;
         }
 
-        if (!users.isEmpty()) {
-            if (users.contains(userPrincipal.getName())) {
+        checkIsInRole(roles, servletRequest);
+        log.debug("User has allowed role");
+    }
+
+    private boolean checkUserAllowed(final Set<String> users, final Principal userPrincipal) throws ContainerSecurityNotAuthorizedException {
+        if (users.isEmpty()) {
+            // users not configured
+            return false;
+        }
+        if (users.contains(userPrincipal.getName())) {
+            return true;
+        }
+        return false;
+    }
+
+    private void checkIsInRole(final Set<String> roles, final HttpServletRequest servletRequest) throws ContainerSecurityNotAuthorizedException {
+        for (String role : roles) {
+            if (servletRequest.isUserInRole(role)) {
+                // found right role
                 return;
             }
-
-            log.debug("The user is not assigned to users, {}", users);
         }
-
-        if (!roles.isEmpty()) {
-            for (String role : roles) {
-                if (servletRequest.isUserInRole(role)) {
-                    return;
-                }
-            }
-
-            log.debug("The user is not assigned to roles, {}", roles);
-        }
-
         throw new ContainerSecurityNotAuthorizedException("Not authorized.");
     }
 
@@ -324,7 +339,7 @@ public class SecurityValve extends AbstractBaseOrderableValve {
                     session.removeAttribute(ContainerConstants.SUBJECT_REPO_CREDS_ATTR_NAME);
                     privCred.add(subjectRepoCreds);
                 }
-            } 
+            }
 
             subject = new Subject(true, principals, pubCred, privCred);
 
