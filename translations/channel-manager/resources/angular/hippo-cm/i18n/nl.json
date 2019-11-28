@@ -105,7 +105,7 @@
   "FEEDBACK_CANNOT_SAVE_COMPONENT_WITH_INVALID_FIELD_VALUES": "Kan component '{{componentLabel}}' niet opslaan. De veldwaarden bevatten fouten.",
   "FEEDBACK_HELD_BY_CORE_PROJECT_MESSAGE": "Document is bewerkt in de core.",
   "SAVE_CHANGES_TO_DOCUMENT": "Document '{{documentName}}' heeft niet-opgeslagen wijzigingen. Wilt u deze wijzigingen opslaan of ongedaan maken?",
-  "DELETE_COMPONENT": "Component verwijderen",
+  "DELETE_COMPONENT": "Onderdeel verwijderen",
   "FEEDBACK_PROJECT_NOT_FOUND": "Document heeft project-ID {{projectId}} die niet (meer) bestaat.",
   "SEARCH_COMPONENT_NAME": "component",
   "PAGE": "Pagina",

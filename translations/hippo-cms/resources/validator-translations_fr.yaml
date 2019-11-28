@@ -10,6 +10,7 @@ definitions:
         escaped: 'N''utilisez pas les caractères : <> & '' '''''
         required#String: Insérer un texte
         resource-required: Télécharger un fichier
+        path-is-used-multiple-times: N'utilisez pas le même chemin plusieurs fois
         summaryMultiple: Ce document contient ${numberOfErrors} erreurs
         non-empty-html: Insérer un texte
         required#OpenUiString: Insérer une valeur

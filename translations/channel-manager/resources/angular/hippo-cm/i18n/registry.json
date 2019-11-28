@@ -1084,14 +1084,8 @@
       "locales" : null
     },
     "DELETE_COMPONENT" : {
-      "status" : "UPDATED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
+      "status" : "CLEAN",
+      "locales" : null
     },
     "RIGHT_SIDE_PANEL_TAB_COMPONENT_PROPERTIES" : {
       "status" : "CLEAN",
