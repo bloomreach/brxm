@@ -139,9 +139,7 @@
     <docker.brxm.envRun.REPO_CLUSTER_NODE_ID />
 
     <docker.brxm.envRun.JAVA_OPTS>
-      -Dproject.basedir=${docker.brxm.project.path}
-      -agentlib:jdwp=transport=dt_socket,address=${docker.brxm.debug.port},server=y,suspend=${docker.brxm.debug.suspend}
-      ${docker.brxm.jvm.args}
+      -Dproject.basedir=${docker.brxm.project.path} -agentlib:jdwp=transport=dt_socket,address=${docker.brxm.debug.port},server=y,suspend=${docker.brxm.debug.suspend} ${docker.brxm.jvm.args}
     </docker.brxm.envRun.JAVA_OPTS>
 
     <!-- Default user, user id and group id for brXM container -->
