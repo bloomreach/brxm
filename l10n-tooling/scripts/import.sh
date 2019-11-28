@@ -23,8 +23,8 @@
 # If no errors, git commit and push the 2 translation modules
 
 locales="nl de fr zh es"
-release="13.0.0"
-branch="release/13.0"
+release="14.1.0"
+branch="release/14.1"
 
 mkdir target
 

@@ -15,8 +15,8 @@
 #  limitations under the License.
 
 locales="nl de fr zh es"
-release="13.3.0"
-branch="release/13.3"
+release="14.1.0"
+branch="release/14.1"
 
 mkdir target
 
