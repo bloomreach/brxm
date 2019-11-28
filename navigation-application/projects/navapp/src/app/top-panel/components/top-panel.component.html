@@ -20,7 +20,7 @@
      (click)="onSiteSelectorClicked()"
      class="site-selector-value">
   <ng-container *ngIf="selectedSiteName$ | async as selectedSiteName">
-    {{ selectedSiteName }}
+    <span class="selected-site-name" [title]="selectedSiteName">{{ selectedSiteName }}</span>
     <mat-icon svgIcon="arrow_drop_down"></mat-icon>
   </ng-container>
 </div>

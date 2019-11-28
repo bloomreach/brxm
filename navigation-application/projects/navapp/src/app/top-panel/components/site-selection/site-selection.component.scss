@@ -22,7 +22,8 @@
   display: grid;
   grid-template-rows: auto 1fr;
   height: 100%;
-  min-width: $site-selection-side-panel-width;
+  max-width: $site-selection-side-panel-max-width;
+  min-width: $site-selection-side-panel-min-width;
 }
 
 .search-form {
@@ -75,6 +76,7 @@
     }
 
     > .mat-icon {
+      flex-shrink: 0;
       width: 40px;
     }
   }
@@ -87,6 +89,14 @@
     > .mat-nested-tree-node > li {
       padding-left: 30px;
     }
+  }
+
+  .site-name {
+    max-width: 100%;
+    overflow: hidden;
+    padding-right: 40px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
