@@ -27,6 +27,7 @@
             "main": "projects/navapp/src/main.ts",
             "polyfills": "projects/navapp/src/polyfills.ts",
             "tsConfig": "projects/navapp/tsconfig.app.json",
+            "aot": false,
             "stylePreprocessorOptions": {
               "includePaths": [
                 "projects/navapp/src/styles"
@@ -40,8 +41,7 @@
               "node_modules/normalize.css/normalize.css",
               "projects/navapp/src/styles.scss"
             ],
-            "scripts": [],
-            "es5BrowserSupport": true
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -65,13 +65,18 @@
                   "type": "initial",
                   "maximumWarning": "2mb",
                   "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
                 }
               ]
             }
           }
         },
         "serve": {
-          "builder": "@angular-builders/dev-server:generic",
+          "builder": "@angular-builders/custom-webpack:dev-server",
           "options": {
             "browserTarget": "navapp:build",
             "disableHostCheck": true,
@@ -102,14 +107,14 @@
                 "projects/navapp/src/styles"
               ]
             },
-            "styles": [
-              "projects/navapp/src/styles.scss"
-            ],
-            "scripts": [],
             "assets": [
               "projects/navapp/src/favicon.ico",
               "projects/navapp/src/navapp-assets"
-            ]
+            ],
+            "styles": [
+              "projects/navapp/src/styles.scss"
+            ],
+            "scripts": []
           }
         },
         "lint": {
@@ -128,9 +133,9 @@
       }
     },
     "navapp-communication": {
+      "projectType": "library",
       "root": "projects/navapp-communication",
       "sourceRoot": "projects/navapp-communication/src",
-      "projectType": "library",
       "prefix": "brnc",
       "architect": {
         "build": {
@@ -165,11 +170,11 @@
       }
     },
     "iframe-app-example": {
-      "root": "projects/iframe-app-example/",
-      "sourceRoot": "projects/iframe-app-example/src",
       "projectType": "application",
-      "prefix": "app",
       "schematics": {},
+      "root": "projects/iframe-app-example",
+      "sourceRoot": "projects/iframe-app-example/src",
+      "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -179,6 +184,7 @@
             "main": "projects/iframe-app-example/src/main.ts",
             "polyfills": "projects/iframe-app-example/src/polyfills.ts",
             "tsConfig": "projects/iframe-app-example/tsconfig.app.json",
+            "aot": false,
             "assets": [
               "projects/iframe-app-example/src/favicon.ico",
               "projects/iframe-app-example/src/assets"
@@ -186,8 +192,7 @@
             "styles": [
               "projects/iframe-app-example/src/styles.css"
             ],
-            "scripts": [],
-            "es5BrowserSupport": true
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -211,6 +216,11 @@
                   "type": "initial",
                   "maximumWarning": "2mb",
                   "maximumError": "5mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
                 }
               ]
             }
