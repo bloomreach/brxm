@@ -17,26 +17,31 @@
 import { fakeAsync, tick } from '@angular/core/testing';
 
 import { CriticalError } from '../error-handling/models/critical-error';
+import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
+import { BusyIndicatorService } from '../services/busy-indicator.service';
 
+import { BootstrapService } from './bootstrap.service';
 import { appBootstrappedPromise, scheduleAppBootstrapping } from './schedule-app-bootstrapping';
 
 describe('scheduleAppBootstrapping', () => {
-  const bootstrapServiceMock = jasmine.createSpyObj('BootstrapService', [
-    'bootstrap',
-  ]);
-
-  const busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', [
-    'show',
-    'hide',
-  ]);
-
-  const errorHandlingServiceMock = jasmine.createSpyObj('ErrorHandlingService', [
-    'setError',
-    'setInternalError',
-  ]);
+  let bootstrapServiceMock: jasmine.SpyObj<BootstrapService>;
+  let busyIndicatorServiceMock: jasmine.SpyObj<BusyIndicatorService>;
+  let errorHandlingServiceMock: jasmine.SpyObj<ErrorHandlingService>;
 
   beforeEach(() => {
-    bootstrapServiceMock.bootstrap.and.returnValue(Promise.resolve());
+    bootstrapServiceMock = jasmine.createSpyObj('BootstrapService', {
+      bootstrap: Promise.resolve(),
+    });
+
+    busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', [
+      'show',
+      'hide',
+    ]);
+
+    errorHandlingServiceMock = jasmine.createSpyObj('ErrorHandlingService', [
+      'setError',
+      'setInternalError',
+    ]);
   });
 
   it('should show busy indicator', () => {
@@ -51,19 +56,23 @@ describe('scheduleAppBootstrapping', () => {
     expect(bootstrapServiceMock.bootstrap).toHaveBeenCalled();
   });
 
-  it('should hide busy indicator when bootstrap promise was resolved', () => {
+  it('should hide busy indicator when bootstrap promise was resolved', fakeAsync(() => {
     scheduleAppBootstrapping(bootstrapServiceMock, busyIndicatorServiceMock, errorHandlingServiceMock);
 
-    expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
-  });
+    tick();
 
-  it('should hide busy indicator when bootstrap promise was rejected', () => {
-    bootstrapServiceMock.bootstrap.and.returnValue(Promise.reject());
+    expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
+  }));
+
+  it('should hide busy indicator when bootstrap promise was rejected', fakeAsync(() => {
+    bootstrapServiceMock.bootstrap.and.callFake(() => Promise.reject());
 
     scheduleAppBootstrapping(bootstrapServiceMock, busyIndicatorServiceMock, errorHandlingServiceMock);
 
+    tick();
+
     expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
-  });
+  }));
 
   it('should resolve appBootstrappedPromise after successful bootstrapping', fakeAsync(() => {
     let resolved = false;

@@ -15,15 +15,12 @@
  */
 
 import { NgModule } from '@angular/core';
-import {
-  MatButtonModule,
-  MatIconModule,
-  MatIconRegistry,
-  MatProgressBarModule,
-  MatRippleModule,
-  MatSidenavModule,
-  MatTreeModule,
-} from '@angular/material';
+import { MatButtonModule } from '@angular/material/button';
+import { MatRippleModule } from '@angular/material/core';
+import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
+import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatTreeModule } from '@angular/material/tree';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { registerIcons as registerCommonIcons } from './common-icons';

@@ -43,109 +43,114 @@ describe('NavigationService', () => {
   let service: NavigationService;
 
   const basePath = '/base-path';
+  const navItemsMock = [
+    new NavItemMock({
+      id: 'item1',
+      appIframeUrl: 'http://domain.com/iframe1/url',
+      appPath: 'app/path/to/home',
+    }),
+    new NavItemMock({
+      id: 'item2',
+      appIframeUrl: 'http://domain.com/iframe1/url',
+      appPath: 'app/path/to/page1',
+    }),
+    new NavItemMock({
+      id: 'item3',
+      appIframeUrl: 'http://domain.com/iframe2/url',
+      appPath: 'another/app/path/to/home',
+    }),
+  ];
 
   let appSettingsMock: AppSettings = new AppSettingsMock({
     basePath,
   });
 
-  const locationMock = jasmine.createSpyObj('Location', [
-    'path',
-    'subscribe',
-    'isCurrentPathEqualTo',
-    'replaceState',
-    'go',
-  ]);
-
-  const navItemServiceMock = {
-    navItems: [
-      new NavItemMock({
-        id: 'item1',
-        appIframeUrl: 'http://domain.com/iframe1/url',
-        appPath: 'app/path/to/home',
-      }),
-      new NavItemMock({
-        id: 'item2',
-        appIframeUrl: 'http://domain.com/iframe1/url',
-        appPath: 'app/path/to/page1',
-      }),
-      new NavItemMock({
-        id: 'item3',
-        appIframeUrl: 'http://domain.com/iframe2/url',
-        appPath: 'another/app/path/to/home',
-      }),
-    ],
-  };
-
-  const clientAppServiceMock = jasmine.createSpyObj('ClientAppService', [
-    'getApp',
-    'activateApplication',
-  ]);
-
-  const menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
-    'activateMenuItem',
-    'deactivateMenuItem',
-  ]);
-  menuStateServiceMock.homeMenuItem = {
-    navItem: {
-      appIframeUrl: 'http://domain.com/iframe1/url',
-      appPath: 'app/path/to/home',
-    },
-  };
-
-  const breadcrumbsServiceMock = jasmine.createSpyObj('BreadcrumbsService', [
-    'setSuffix',
-  ]);
-
-  const urlMapperServiceMock = jasmine.createSpyObj('UrlMapperService', [
-    'mapNavItemToBrowserUrl',
-    'mapNavLocationToBrowserUrl',
-    'combinePathParts',
-    'trimLeadingSlash',
-    'extractPathAndQueryStringAndHash',
-  ]);
-  urlMapperServiceMock.basePath = basePath;
-
-  const errorHandlingServiceMock = jasmine.createSpyObj('ErrorHandlingService', [
-    'clearError',
-    'setError',
-    'setNotFoundError',
-    'setInternalError',
-  ]);
-
-  const translateServiceMock = jasmine.createSpyObj('TranslateService', {
-    instant: 'translated text',
-  });
-
-  const loggerMock = jasmine.createSpyObj('NGXLogger', [
-    'debug',
-  ]);
+  let locationMock: jasmine.SpyObj<Location>;
+  let navItemServiceMock: any;
+  let clientAppServiceMock: jasmine.SpyObj<ClientAppService>;
+  let menuStateServiceMock: jasmine.SpyObj<MenuStateService>;
+  let breadcrumbsServiceMock: jasmine.SpyObj<BreadcrumbsService>;
+  let urlMapperServiceMock: jasmine.SpyObj<UrlMapperService>;
+  let errorHandlingServiceMock: jasmine.SpyObj<ErrorHandlingService>;
+  let translateServiceMock: jasmine.SpyObj<TranslateService>;
+  let loggerMock: jasmine.SpyObj<NGXLogger>;
 
   let locationChangeFunction: (value: PopStateEvent) => undefined;
-
   let childApi: any;
 
   beforeEach(() => {
     appSettingsMock.initialPath = '/iframe1/url/app/path/to/home';
 
+    locationMock = jasmine.createSpyObj('Location', [
+      'path',
+      'subscribe',
+      'isCurrentPathEqualTo',
+      'replaceState',
+      'go',
+    ]);
     locationMock.path.and.returnValue('');
     locationMock.isCurrentPathEqualTo.and.returnValue(false);
     locationMock.subscribe.and.callFake(cb => locationChangeFunction = cb);
+
+    navItemServiceMock = {
+      navItems: navItemsMock,
+    };
 
     childApi = jasmine.createSpyObj('ChildApi', {
       beforeNavigation: Promise.resolve(true),
       navigate: Promise.resolve(),
     });
 
-    clientAppServiceMock.getApp.and.returnValue(new ClientAppMock({
-      api: childApi,
-    }));
+    clientAppServiceMock = jasmine.createSpyObj('ClientAppService', {
+      getApp: new ClientAppMock({
+        api: childApi,
+      }),
+      activateApplication: undefined,
+    });
 
+    menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
+      'activateMenuItem',
+      'deactivateMenuItem',
+    ]);
+    (menuStateServiceMock as any).homeMenuItem = {
+      navItem: {
+        appIframeUrl: 'http://domain.com/iframe1/url',
+        appPath: 'app/path/to/home',
+      },
+    };
+
+    breadcrumbsServiceMock = jasmine.createSpyObj('BreadcrumbsService', [
+      'setSuffix',
+    ]);
+
+    urlMapperServiceMock = jasmine.createSpyObj('UrlMapperService', [
+      'mapNavItemToBrowserUrl',
+      'mapNavLocationToBrowserUrl',
+      'combinePathParts',
+      'trimLeadingSlash',
+      'extractPathAndQueryStringAndHash',
+    ]);
+    (urlMapperServiceMock as any).basePath = basePath;
     urlMapperServiceMock.mapNavItemToBrowserUrl.and.callFake(
       (navItem: NavItem) => `${basePath}${new URL(navItem.appIframeUrl).pathname}/${navItem.appPath}`,
     );
     urlMapperServiceMock.trimLeadingSlash.and.callFake((value: string) => value.replace(/^\//, ''));
-    urlMapperServiceMock.combinePathParts.and.callFake((...parts: string[]) => parts.map(urlMapperServiceMock.trimLeadingSlash).join('/'));
     urlMapperServiceMock.extractPathAndQueryStringAndHash.and.returnValue(['', '']);
+
+    errorHandlingServiceMock = jasmine.createSpyObj('ErrorHandlingService', [
+      'clearError',
+      'setError',
+      'setNotFoundError',
+      'setInternalError',
+    ]);
+
+    translateServiceMock = jasmine.createSpyObj('TranslateService', {
+      instant: 'translated text',
+    });
+
+    loggerMock = jasmine.createSpyObj('NGXLogger', [
+      'debug',
+    ]);
 
     const busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', ['show', 'hide']);
     const connectionServiceMock = {

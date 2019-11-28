@@ -16,7 +16,8 @@
 
 import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { MatIconModule, MatTreeModule } from '@angular/material';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTreeModule } from '@angular/material/tree';
 import { Site } from '@bloomreach/navapp-communication';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { Subject } from 'rxjs';

@@ -15,15 +15,15 @@
  */
 
 // tslint:disable:match-default-export-name
-import arrowDropDown from '!raw-loader!./icons/arrow_drop_down.svg';
-import arrowRight from '!raw-loader!./icons/arrow_right.svg';
-import chevronRight from '!raw-loader!./icons/chevron_right.svg';
-import expandLess from '!raw-loader!./icons/expand_less.svg';
-import expandMore from '!raw-loader!./icons/expand_more.svg';
-import navCollapse from '!raw-loader!./icons/nav-collapse.svg';
-import navExpand from '!raw-loader!./icons/nav-expand.svg';
-import remove from '!raw-loader!./icons/remove.svg';
-import search from '!raw-loader!./icons/search.svg';
+import arrowDropDown from '!!raw-loader!./icons/arrow_drop_down.svg';
+import arrowRight from '!!raw-loader!./icons/arrow_right.svg';
+import chevronRight from '!!raw-loader!./icons/chevron_right.svg';
+import expandLess from '!!raw-loader!./icons/expand_less.svg';
+import expandMore from '!!raw-loader!./icons/expand_more.svg';
+import navCollapse from '!!raw-loader!./icons/nav-collapse.svg';
+import navExpand from '!!raw-loader!./icons/nav-expand.svg';
+import remove from '!!raw-loader!./icons/remove.svg';
+import search from '!!raw-loader!./icons/search.svg';
 import { MatIconRegistry } from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 

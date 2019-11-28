@@ -17,6 +17,7 @@
 import { DOCUMENT, Location } from '@angular/common';
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { ChildPromisedApi, ClientError } from '@bloomreach/navapp-communication';
+import { NGXLogger } from 'ngx-logger';
 import { Subject } from 'rxjs';
 
 import { ClientAppMock } from '../client-app/models/client-app.mock';
@@ -65,6 +66,10 @@ describe('AuthService', () => {
     'prepareExternalUrl',
   ]);
 
+  const loggerMock = jasmine.createSpyObj('NGXLogger', [
+    'error',
+  ]);
+
   beforeEach(() => {
     connectionServiceMock.createConnection = jasmine
       .createSpy('createConnection')
@@ -92,6 +97,7 @@ describe('AuthService', () => {
         { provide: ClientAppService, useValue: clientAppServiceMock },
         { provide: BusyIndicatorService, useValue: busyIndicatorServiceMock },
         { provide: Location, useValue: locationMock },
+        { provide: NGXLogger, useValue: loggerMock },
         { provide: APP_SETTINGS, useValue: appSettingsMock },
         { provide: DOCUMENT, useValue: documentMock },
       ],
@@ -133,7 +139,7 @@ describe('AuthService', () => {
     }));
 
     it('should logout if any of the logins fail', fakeAsync(() => {
-      connectionServiceMock.createConnection.and.returnValue(Promise.reject({ message: 'Error' }));
+      connectionServiceMock.createConnection.and.callFake(() => Promise.reject({ message: 'Error' }));
 
       service.loginAllResources();
 

@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-const CopyPlugin = require('copy-webpack-plugin');
-const WebpackAssetsManifest = require('webpack-assets-manifest');
-const path = require('path');
-
-module.exports = (config) => {
-  config.plugins.push(
-    new WebpackAssetsManifest({ output: 'filelist.json' }),
-    new CopyPlugin([path.join(__dirname, './loader.js')])
-  );
-
-  return config;
+module.exports = (targetOptions, indexHtml) => {
+  const searchString = 'loader.js';
+  const closingString = '" type="module"></script>\n';
+  const startIndex = indexHtml.indexOf(searchString) + searchString.length;
+  const endIndex = indexHtml.indexOf('</body>');
+  const firstPart = indexHtml.slice(0, startIndex);
+  const lastPart = indexHtml.slice(endIndex);
+  const indexWithoutInjectedScripts = firstPart.concat(closingString).concat(lastPart);
+  return indexWithoutInjectedScripts;
 };

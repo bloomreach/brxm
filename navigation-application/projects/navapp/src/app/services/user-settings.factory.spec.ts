@@ -14,38 +14,51 @@
  * limitations under the License.
  */
 
+import { NGXLogger } from 'ngx-logger';
+
 import { UserSettings } from '../models/dto/user-settings.dto';
 
 import { userSettingsFactory } from './user-settings.factory';
 
 describe('userSettingsFactory', () => {
-  const windowRefMock: any = {
-    nativeWindow: {},
-  };
+  let windowRefMock: any;
+  let loggerMock: jasmine.SpyObj<NGXLogger>;
 
-  const loggerMock = jasmine.createSpyObj('NGXLogger', [
-    'error',
-    'info',
-  ]);
-
-  it('should print an error when the global configuration object is not set', () => {
-    userSettingsFactory(windowRefMock, loggerMock);
-
-    expect(loggerMock.error).toHaveBeenCalledWith('The global configuration object is not set');
+  beforeEach(() => {
+    loggerMock = jasmine.createSpyObj('NGXLogger', [
+      'error',
+      'info',
+    ]);
   });
 
-  it('should return an empty object when the global configuration object is not set', () => {
-    const expected: UserSettings = {} as any;
+  describe('when the global configuration object is not set', () => {
+    beforeEach(() => {
+      windowRefMock = {
+        nativeWindow: {},
+      };
+    });
 
-    const actual = userSettingsFactory(windowRefMock, loggerMock);
+    it('should print an error ', () => {
+      userSettingsFactory(windowRefMock, loggerMock);
 
-    expect(actual).toEqual(expected);
+      expect(loggerMock.error).toHaveBeenCalledWith('The global configuration object is not set');
+    });
+
+    it('should return an empty object', () => {
+      const expected: UserSettings = {} as any;
+
+      const actual = userSettingsFactory(windowRefMock, loggerMock);
+
+      expect(actual).toEqual(expected);
+    });
   });
 
   describe('when the global configuration object is set', () => {
     beforeEach(() => {
-      windowRefMock.nativeWindow = {
-        NavAppSettings: {},
+      windowRefMock = {
+        nativeWindow: {
+          NavAppSettings: {},
+        },
       };
     });
 

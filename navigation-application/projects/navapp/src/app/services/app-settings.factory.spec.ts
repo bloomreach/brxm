@@ -14,42 +14,57 @@
  * limitations under the License.
  */
 
+import { Location } from '@angular/common';
+import { NGXLogger } from 'ngx-logger';
+
 import { AppSettings } from '../models/dto/app-settings.dto';
 
 import { appSettingsFactory } from './app-settings.factory';
 
 describe('appSettingsFactory', () => {
-  const windowRefMock: any = {
-    nativeWindow: {},
-  };
+  let windowRefMock: any;
+  let locationMock: jasmine.SpyObj<Location>;
+  let loggerMock: jasmine.SpyObj<NGXLogger>;
 
-  const locationMock = jasmine.createSpyObj('Location', [
-    'path',
-  ]);
+  beforeEach(() => {
+    locationMock = jasmine.createSpyObj('Location', [
+      'path',
+    ]);
 
-  const loggerMock = jasmine.createSpyObj('NGXLogger', [
-    'error',
-    'info',
-  ]);
-
-  it('should print an error when the global configuration object is not set', () => {
-    appSettingsFactory(windowRefMock, locationMock, loggerMock);
-
-    expect(loggerMock.error).toHaveBeenCalledWith('The global configuration object is not set');
+    loggerMock = jasmine.createSpyObj('NGXLogger', [
+      'error',
+      'info',
+    ]);
   });
 
-  it('should return an empty object when the global configuration object is not set', () => {
-    const expected: AppSettings = {} as any;
+  describe('when the global configuration object is not set', () => {
+    beforeEach(() => {
+      windowRefMock = {
+        nativeWindow: {},
+      };
+    });
 
-    const actual = appSettingsFactory(windowRefMock, locationMock, loggerMock);
+    it('should print an error', () => {
+      appSettingsFactory(windowRefMock, locationMock, loggerMock);
 
-    expect(actual).toEqual(expected);
+      expect(loggerMock.error).toHaveBeenCalledWith('The global configuration object is not set');
+    });
+
+    it('should return an empty object', () => {
+      const expected: AppSettings = {} as any;
+
+      const actual = appSettingsFactory(windowRefMock, locationMock, loggerMock);
+
+      expect(actual).toEqual(expected);
+    });
   });
 
   describe('when the global configuration object is set', () => {
     beforeEach(() => {
-      windowRefMock.nativeWindow = {
-        NavAppSettings: {},
+      windowRefMock = {
+        nativeWindow: {
+          NavAppSettings: {},
+        },
       };
     });
 
@@ -148,7 +163,10 @@ describe('appSettingsFactory', () => {
           beforeEach(() => {
             windowRefMock.nativeWindow = {
               NavAppSettings: {
-                appSettings: { iframesConnectionTimeout: undefined },
+                appSettings: {
+                  basePath: '/base/path',
+                  iframesConnectionTimeout: undefined,
+                },
               },
             };
           });

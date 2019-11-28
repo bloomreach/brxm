@@ -16,7 +16,7 @@
 
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, HostBinding, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { MatSidenav } from '@angular/material';
+import { MatSidenav } from '@angular/material/sidenav';
 import { TranslateService } from '@ngx-translate/core';
 import { Observable, of, Subject } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
@@ -55,7 +55,7 @@ export class AppComponent implements OnInit, OnDestroy {
   @HostBinding('class.mat-typography')
   typography = true;
 
-  @ViewChild(MatSidenav)
+  @ViewChild(MatSidenav, { static: true })
   sidenav: MatSidenav;
 
   isLoading$: Observable<boolean>;
