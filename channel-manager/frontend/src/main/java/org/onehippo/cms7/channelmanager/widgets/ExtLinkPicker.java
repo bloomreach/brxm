@@ -228,6 +228,13 @@ public class ExtLinkPicker extends ExtObservable {
             @Override
             public AbstractDialog<String> createDialog() {
                 return new LinkPickerDialog(context, config, model) {
+
+                    @Override
+                    public void onCancelFromCloseButton() {
+                        super.onCancelFromCloseButton();
+                        fireLinkPickerFactoryEvent("cancel");
+                    }
+
                     @Override
                     protected void onCancel() {
                         super.onCancel();
