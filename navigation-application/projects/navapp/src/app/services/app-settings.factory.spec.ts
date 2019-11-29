@@ -27,9 +27,9 @@ describe('appSettingsFactory', () => {
   let loggerMock: jasmine.SpyObj<NGXLogger>;
 
   beforeEach(() => {
-    locationMock = jasmine.createSpyObj('Location', [
-      'path',
-    ]);
+    locationMock = jasmine.createSpyObj('Location', {
+      path: '/some/path',
+    });
 
     loggerMock = jasmine.createSpyObj('NGXLogger', [
       'error',
@@ -119,6 +119,24 @@ describe('appSettingsFactory', () => {
           expect(actual).toEqual(expected);
         });
 
+        describe('when an empty string is set in the app settings object', () => {
+          beforeEach(() => {
+            windowRefMock.nativeWindow = {
+              NavAppSettings: {
+                appSettings: { basePath: '' },
+              },
+            };
+          });
+
+          it('should be read from the location', () => {
+            const expected = '/some/path';
+
+            const actual = appSettingsFactory(windowRefMock, locationMock, loggerMock).basePath;
+
+            expect(actual).toEqual(expected);
+          });
+        });
+
         describe('when it is not set in the app settings object', () => {
           beforeEach(() => {
             windowRefMock.nativeWindow = {
@@ -142,6 +160,16 @@ describe('appSettingsFactory', () => {
             const expected = '/base/path/from/browser/location';
 
             locationMock.path.and.returnValue('/base/path/from/browser/location?queryParam=value');
+
+            const actual = appSettingsFactory(windowRefMock, locationMock, loggerMock).basePath;
+
+            expect(actual).toEqual(expected);
+          });
+
+          it('should be a slash if the location path is empty', () => {
+            const expected = '/';
+
+            locationMock.path.and.returnValue('');
 
             const actual = appSettingsFactory(windowRefMock, locationMock, loggerMock).basePath;
 
