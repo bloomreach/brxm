@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,7 +44,7 @@
                 },
 
                 _resize: function(table, sizes) {
-                    var theadRow, tbody, tfootRow;
+                    var theadRow, tbody, tfootRow, tbodyHeight;
 
                     tbody = table.children('tbody');
 
@@ -54,7 +54,8 @@
                         theadRow = table.find('thead > tr');
                         tfootRow = table.find('tfoot > tr');
 
-                        tbody.height(sizes.wrap.h - theadRow.height() - tfootRow.height());
+                        tbodyHeight = sizes.wrap.h - (theadRow.height() || 0) - (tfootRow.height() || 0);
+                        tbody.height(tbodyHeight);
 
                         theadRow.css('max-width', sizes.wrap.w-1 + 'px');
                         theadRow.width(tbody[0].scrollWidth);
