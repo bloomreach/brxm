@@ -42,7 +42,7 @@ import { UrlMapperService } from './url-mapper.service';
 describe('NavigationService', () => {
   let service: NavigationService;
 
-  const basePath = '/base-path';
+  let basePath: string;
   const navItemsMock = [
     new NavItemMock({
       id: 'item1',
@@ -61,10 +61,7 @@ describe('NavigationService', () => {
     }),
   ];
 
-  let appSettingsMock: AppSettings = new AppSettingsMock({
-    basePath,
-  });
-
+  let appSettingsMock: AppSettings;
   let locationMock: jasmine.SpyObj<Location>;
   let navItemServiceMock: any;
   let clientAppServiceMock: jasmine.SpyObj<ClientAppService>;
@@ -79,7 +76,11 @@ describe('NavigationService', () => {
   let childApi: any;
 
   beforeEach(() => {
-    appSettingsMock.initialPath = '/iframe1/url/app/path/to/home';
+    basePath = '/base-path';
+    appSettingsMock = new AppSettingsMock({
+      basePath,
+      initialPath: '/iframe1/url/app/path/to/home',
+    });
 
     locationMock = jasmine.createSpyObj('Location', [
       'path',
@@ -209,6 +210,17 @@ describe('NavigationService', () => {
       tick();
 
       expect(locationMock.replaceState).toHaveBeenCalledWith(`${basePath}/iframe2/url/another/app/path/to/home`, '', {});
+    }));
+
+    it('should prepend the initialPath with the base path but without adding extra slashes', fakeAsync(() => {
+      basePath = '/base-path/';
+      appSettingsMock.initialPath = '/iframe2/url/another/app/path/to/home';
+
+      service.initialNavigation();
+
+      tick();
+
+      expect(locationMock.replaceState).toHaveBeenCalledWith(`/base-path/iframe2/url/another/app/path/to/home`, '', {});
     }));
 
     it('should use the browser\'s location path', fakeAsync(() => {

@@ -42,6 +42,10 @@ export const appSettingsFactory = (windowRef: WindowRef, location: Location, log
     settings.basePath = stripOffQueryStringAndHash(location.path());
   }
 
+  if (settings.basePath === '') {
+    settings.basePath = '/';
+  }
+
   if (!settings.iframesConnectionTimeout) {
     settings.iframesConnectionTimeout = 30000;
   }
