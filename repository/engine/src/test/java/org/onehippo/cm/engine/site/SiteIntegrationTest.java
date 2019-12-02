@@ -38,7 +38,6 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -73,92 +72,6 @@ public class SiteIntegrationTest {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
-
-    @Test @Ignore
-    public void site_with_webfiles() throws Exception {
-
-        final String fixtureName = "webfiles";
-        final String fixture2Name = "webfiles2";
-        final Fixture fixture = new Fixture(fixtureName);
-
-        final HippoWebappContextRegistry hippoWebappContextRegistry = HippoWebappContextRegistry.get();
-
-        try {
-            HippoWebappContext siteContext = createSiteApplicationContext(fixtureName, "sitewithwebfiles");
-            hippoWebappContextRegistry.register(siteContext);
-
-            fixture.test(session -> {
-                try {
-                    session.getNode("/webfiles/webfilebundle/css/test.css");
-                } catch (PathNotFoundException ex) {
-                    fail("Initial import of webfiles failed");
-                }
-
-                hippoWebappContextRegistry.unregister(siteContext);
-                session.logout();
-                IsolatedRepository repository = fixture.getRepository();
-
-                //Register same site with different webfiles while repository is stopped
-                repository.stop();
-                hippoWebappContextRegistry.register(createSiteApplicationContext(fixture2Name, "sitewithwebfiles"));
-
-                repository.startRepository();
-                session = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
-
-                try {
-                    session.getNode("/webfiles/webfilebundle/css/test2.css");
-                } catch (PathNotFoundException ex) {
-                    fail("Webfiles should bootstrap when changed, even when there are no changes in config or content");
-                }
-                session.logout();
-            });
-        } finally {
-            hippoWebappContextRegistry.getEntries().forEach(e -> HippoWebappContextRegistry.get().unregister(e.getServiceObject()));
-        }
-    }
-
-    @Test @Ignore
-    public void site_with_webfiles_loaded_after_repo() throws Exception {
-
-        final String fixtureName = "webfiles";
-        final String fixture2Name = "webfiles2";
-        final Fixture fixture = new Fixture(fixtureName);
-
-        final HippoWebappContextRegistry hippoWebappContextRegistry = HippoWebappContextRegistry.get();
-
-        try {
-            HippoWebappContext siteContext = createSiteApplicationContext(fixtureName, "sitewithwebfiles");
-            hippoWebappContextRegistry.register(siteContext);
-
-            fixture.test(session -> {
-                try {
-                    session.getNode("/webfiles/webfilebundle/css/test.css");
-                } catch (PathNotFoundException ex) {
-                    fail("Initial import of webfiles failed");
-                }
-
-                hippoWebappContextRegistry.unregister(siteContext);
-                session.logout();
-
-                IsolatedRepository repository = fixture.getRepository();
-                repository.stop();
-
-                //Register same site with different webfiles after repository is started
-                repository.startRepository();
-                hippoWebappContextRegistry.register(createSiteApplicationContext(fixture2Name, "sitewithwebfiles"));
-
-                session = repository.login(new SimpleCredentials("admin", "admin".toCharArray()));
-                try {
-                    session.getNode("/webfiles/webfilebundle/css/test2.css");
-                } catch (PathNotFoundException ex) {
-                    fail("Webfiles should bootstrap when changed, even when there are no changes in config or content");
-                }
-                session.logout();
-            });
-        } finally {
-            hippoWebappContextRegistry.getEntries().forEach(e -> HippoWebappContextRegistry.get().unregister(e.getServiceObject()));
-        }
-    }
 
     @Test
     public void sites_with_content() throws Exception {

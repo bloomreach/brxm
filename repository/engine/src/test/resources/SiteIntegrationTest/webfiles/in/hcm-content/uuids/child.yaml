@@ -1,3 +1,0 @@
-/content/uuids/child:
-  jcr:primaryType: nt:unstructured
-  jcr:mixinTypes: ['mix:referenceable']
