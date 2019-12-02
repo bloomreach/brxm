@@ -997,16 +997,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "userroles-select" : {
-      "status" : "ADDED",
-      "locales" : {
-        "de" : "UNRESOLVED",
-        "fr" : "UNRESOLVED",
-        "nl" : "UNRESOLVED",
-        "zh" : "UNRESOLVED",
-        "es" : "UNRESOLVED"
-      }
-    },
     "userrole-delete-text" : {
       "status" : "CLEAN",
       "locales" : null
