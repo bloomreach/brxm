@@ -525,9 +525,8 @@
       </dependency>
       <dependency>
         <groupId>org.codehaus.groovy</groupId>
-        <artifactId>groovy-all</artifactId>
+        <artifactId>groovy</artifactId>
         <version>${groovy.version}</version>
-        <type>pom</type>
       </dependency>
       <dependency>
         <groupId>org.freemarker</groupId>
