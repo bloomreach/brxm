@@ -1,0 +1,4 @@
+definitions:
+  config:
+    /topmost/upstream/child2FromConfig:
+      jcr:primaryType: nt:unstructured

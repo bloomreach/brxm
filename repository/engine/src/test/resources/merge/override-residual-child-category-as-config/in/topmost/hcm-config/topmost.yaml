@@ -1,0 +1,5 @@
+definitions:
+  config:
+    /topmost:
+      jcr:primaryType: nt:unstructured
+

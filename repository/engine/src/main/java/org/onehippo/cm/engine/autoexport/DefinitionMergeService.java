@@ -266,7 +266,9 @@ public class DefinitionMergeService {
         // ConfigDefinitions are already sorted by root path
         for (final ConfigDefinitionImpl change : changes.getConfigDefinitions()) {
             // run the full and complex merge logic, recursively
-            mergeConfigDefinitionNode(change.getNode());
+            if (!addNodeToContentChangesIfExistInContent(change.getNode(), contentAdded)) {
+                mergeConfigDefinitionNode(change.getNode());
+            }
         }
 
         // merge content changes
@@ -285,6 +287,31 @@ public class DefinitionMergeService {
         log.info("Completed full auto-export merge in {}", stopWatch.toString());
 
         return toExport.values();
+    }
+
+    /**
+     * If the current node already exists in content in the repository, than the node is added to the content list. 
+     * In this case, if the node is not root but in modifiable nodes, than it is also removed from 
+     * modifiable nodes list.
+     * @param node the current config node that needs to be processed.
+     * @param contentAdded The list of nodes in content that are added.
+     * @return true if the current node exists in content in the repository, otherwise returns false.
+     */
+    private boolean addNodeToContentChangesIfExistInContent(final DefinitionNodeImpl node,
+            final Set<String> contentAdded) {
+        for (final ContentDefinitionImpl contentDefinition : model.getContentDefinitions()) {
+            final String contentRoot = contentDefinition.getNode().getJcrPath().suppressIndices().toString();
+            if (contentRoot.equals(node.getJcrPath().toString())) {
+                contentAdded.add(contentRoot);
+                return true;
+            }
+            boolean contentRootFoundInModifiableNodes = node.getModifiableNodes().entrySet()
+                    .removeIf(entry -> contentRoot.equals(entry.getValue().getJcrPath().toString()));
+            if (contentRootFoundInModifiableNodes) {
+                contentAdded.add(contentRoot);
+            }
+        }
+        return false;
     }
 
     /**

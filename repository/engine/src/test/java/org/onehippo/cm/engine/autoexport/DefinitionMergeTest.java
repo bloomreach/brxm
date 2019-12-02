@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import javax.jcr.Node;
@@ -43,7 +44,6 @@ import org.onehippo.cm.model.serializer.ModuleWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static java.util.Collections.emptySet;
 import static org.easymock.EasyMock.anyObject;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
@@ -104,6 +104,12 @@ public class DefinitionMergeTest {
     @Test
     public void node_restore() throws Exception {
         new MergeFixture("node-restore").test();
+    }
+
+    @Test
+    public void overrid_residual_child_category_as_config() throws Exception {
+        new MergeFixture("override-residual-child-category-as-config", "/topmost,/hippo:namespaces,/", null, true,
+                new String[] { "exportFirst" }).test();
     }
 
     @Test
@@ -219,8 +225,8 @@ public class DefinitionMergeTest {
 
                 // merge diff
                 DefinitionMergeService merger = new DefinitionMergeService(autoExportConfig, model, session);
-                Collection<ModuleImpl> allMerged =
-                        merger.mergeChangesToModules(diff, emptySet(), emptySet(), emptySet());
+                Collection<ModuleImpl> allMerged = merger.mergeChangesToModules(diff, new HashSet<String>(),
+                        new HashSet<String>(), new HashSet<String>());
 
                 for (ModuleImpl merged : allMerged) {
                     writeAndCompare(testName, merged);
