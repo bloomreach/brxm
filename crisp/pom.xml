@@ -405,6 +405,7 @@
     <module>repository</module>
     <module>hst</module>
     <module>mock</module>
+    <module>studio</module>
   </modules>
 
   <profiles>

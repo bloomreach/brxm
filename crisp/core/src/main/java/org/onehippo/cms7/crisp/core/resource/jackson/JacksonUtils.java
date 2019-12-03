@@ -23,8 +23,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class JacksonUtils {
+
+    private static ObjectMapper defaultObjectMapperForDump;
 
     private JacksonUtils() {
     }
@@ -84,4 +87,13 @@ public class JacksonUtils {
 
         return fieldNames;
     }
+
+    static void setDefaultObjectMapperForDump(final ObjectMapper objectMapper) {
+        defaultObjectMapperForDump = objectMapper;
+    }
+
+    static ObjectMapper getDefaultObjectMapperForDump() {
+        return defaultObjectMapperForDump;
+    }
+
 }

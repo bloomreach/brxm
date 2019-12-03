@@ -43,7 +43,7 @@ public abstract class AbstractJacksonRestTemplateResourceResolver extends Abstra
 
     public ObjectMapper getObjectMapper() {
         if (objectMapper == null) {
-            objectMapper = new ObjectMapper();
+            setObjectMapper(new ObjectMapper());
         }
 
         return objectMapper;
@@ -51,6 +51,7 @@ public abstract class AbstractJacksonRestTemplateResourceResolver extends Abstra
 
     public void setObjectMapper(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
+        JacksonUtils.setDefaultObjectMapperForDump(objectMapper);
     }
 
     @Override

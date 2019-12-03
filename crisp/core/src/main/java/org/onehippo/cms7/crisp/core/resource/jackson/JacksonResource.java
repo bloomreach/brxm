@@ -15,6 +15,8 @@
  */
 package org.onehippo.cms7.crisp.core.resource.jackson;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -108,6 +110,18 @@ public class JacksonResource extends AbstractResource {
     @Override
     public Object getNodeData() {
         return getJsonNode();
+    }
+
+    @Override
+    public void dump(OutputStream output) throws IOException {
+        ObjectMapper mapper = JacksonUtils.getDefaultObjectMapperForDump();
+
+        // If not available (e.g, unit tests), just create a new one.
+        if (mapper == null) {
+            mapper = new ObjectMapper();
+        }
+
+        mapper.writeValue(output, jsonNode);
     }
 
     @Override

@@ -15,6 +15,7 @@
  */
 package org.onehippo.cms7.crisp.core.resource.jackson;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +24,8 @@ import org.junit.Test;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceCollection;
 import org.onehippo.cms7.crisp.core.resource.util.CrispUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,9 +40,10 @@ import static org.junit.Assert.fail;
 
 public class JacksonResourceTest {
 
+    private static Logger log = LoggerFactory.getLogger(JacksonResourceTest.class);
+
     private static final int[] EXIF_VERSION = { 48, 50, 50, 49 };
     private static final String[] EXIF_GEO_LOCATION = { "N42", "W71" };
-
 
     private JsonNode rootNode;
     private Resource rootResource;
@@ -329,4 +333,17 @@ public class JacksonResourceTest {
         } catch (IllegalArgumentException expected) {
         }
     }
+
+    @Test
+    public void testDumpResource() throws Exception {
+        final JsonNode node = objectMapper.readTree("{ \"a\": { \"a1\": \"v1\" }, \"b\": { \"b1\": \"v2\" } }");
+        JacksonResource resource = new JacksonResource(node);
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        resource.dump(output);
+        byte[] bytes = output.toByteArray();
+        log.debug("Dump data: {}", new String(bytes));
+        final JsonNode node2 = objectMapper.readTree(bytes);
+        assertEquals(node, node2);
+    }
+
 }

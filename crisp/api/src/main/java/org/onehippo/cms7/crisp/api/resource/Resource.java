@@ -15,6 +15,8 @@
  */
 package org.onehippo.cms7.crisp.api.resource;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Serializable;
 
 /**
@@ -164,5 +166,20 @@ public interface Resource extends Serializable {
      * @return the underlying node data if supported by the underlying {@link ResourceResolver} or {@code null} otherwise.
      */
     Object getNodeData();
+
+    /**
+     * Specific implementation may support this operation to dump (write) the internal data representation into the {@code output}
+     * for debugging purpose.
+     * <P>
+     * <EM>WARNING:</EM> This method might not be supported by the specific {@link ResourceResolver} provider.
+     * Therefore, this operation throws an {@link UnsupportedOperationException} by default unless the specific
+     * {@link ResourceResolver} provides a concrete implementation.
+     * </P>
+     * @param output the output stream to which the internal data representation is to be written.
+     * @throws IOException if IO error occurs
+     */
+    default void dump(OutputStream output) throws IOException {
+        throw new UnsupportedOperationException();
+    }
 
 }

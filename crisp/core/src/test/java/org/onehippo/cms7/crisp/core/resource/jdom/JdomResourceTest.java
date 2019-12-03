@@ -15,6 +15,8 @@
  */
 package org.onehippo.cms7.crisp.core.resource.jdom;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -29,6 +31,8 @@ import org.junit.Test;
 import org.onehippo.cms7.crisp.api.resource.Resource;
 import org.onehippo.cms7.crisp.api.resource.ResourceCollection;
 import org.onehippo.cms7.crisp.core.resource.util.CrispUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -39,6 +43,8 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 public class JdomResourceTest {
+
+    private static Logger log = LoggerFactory.getLogger(JdomResourceTest.class);
 
     private Resource rootResource;
 
@@ -314,5 +320,31 @@ public class JdomResourceTest {
             fail("Should have had an IllegalArgumentException for the out-of-bound offset.");
         } catch (IllegalArgumentException expected) {
         }
+    }
+
+    @Test
+    public void testDumpResource() throws Exception {
+        SAXBuilder jdomBuilder = new SAXBuilder();
+        Document jdomDocument = jdomBuilder.build(new StringReader("<resource><a a1=\"v1\"/><b b1=\"v2\"/></resource>"));
+        Element element = jdomDocument.getRootElement();
+        JdomResource resource = new JdomResource(element);
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        resource.dump(output);
+        byte[] bytes = output.toByteArray();
+        log.debug("Dump data: {}", new String(bytes));
+        Document jdomDocument2 = jdomBuilder.build(new ByteArrayInputStream(bytes));
+        Element element2 = jdomDocument2.getRootElement();
+
+        // As JDOM Element doesn't support a logical equality comparison, let's compare them by serializing into strings.
+        XMLOutputter outputter = new XMLOutputter();
+
+        output.reset();
+        outputter.output(element, output);
+        String elementAsString = new String(output.toByteArray());
+
+        output.reset();
+        outputter.output(element2, output);
+        String element2AsString = new String(output.toByteArray());
+        assertEquals(elementAsString, element2AsString);
     }
 }

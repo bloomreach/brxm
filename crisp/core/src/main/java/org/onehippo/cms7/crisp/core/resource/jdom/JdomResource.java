@@ -190,6 +190,11 @@ public class JdomResource extends AbstractResource {
     }
 
     @Override
+    public void dump(OutputStream output) throws IOException {
+        write(new XMLOutputter(), output);
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (o == this) {
             return true;
