@@ -30,7 +30,7 @@ import org.hippoecm.frontend.service.NavAppSettings;
 
 public class NavAppPanel extends Panel {
 
-    static final String NAVAPP_JAVASCRIPT_HEADER_ITEM = "navapp-javascript-header-item";
+    public static final String NAVAPP_JAVASCRIPT_HEADER_ITEM = "navapp-javascript-header-item";
 
     private final HeaderItem navAppJavascriptHeaderItem;
 
