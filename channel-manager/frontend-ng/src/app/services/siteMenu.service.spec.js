@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -252,61 +252,6 @@ describe('SiteMenuService', () => {
       $rootScope.$digest();
     });
 
-    it('saves changes to a menu item', (done) => {
-      const item = {
-        id: '2',
-        collapsed: false,
-        title: 'Parent',
-        linkType: 'SITEMAPITEM',
-        sitemapLink: 'test',
-        localParameters: {
-          key: 'value',
-        },
-        items: [
-          {
-            id: 'child',
-            collapsed: true,
-            title: 'Child',
-            linkType: 'EXTERNAL',
-            externalLink: 'External Link',
-          },
-        ],
-      };
-      SiteMenuService.saveMenuItem(item)
-        .then(() => {
-          SiteMenuService.getEditableMenuItem('2')
-            .then((editableItem) => {
-              expect(editableItem.title).toBe('Parent');
-              expect(editableItem.items[0].title).toBe('Child');
-              done();
-            });
-        })
-        .catch(() => fail());
-      const savedItem = HstService.doPost.calls.mostRecent().args[0];
-      expect(HstService.doPost.calls.mostRecent().args[1]).toBe('testUuid');
-      expect(savedItem.id).toBe('2');
-      expect(savedItem.collapsed).toBeUndefined();
-      expect(savedItem.sitemapLink).toBeUndefined();
-      expect(savedItem.link).toBe('test');
-      expect(savedItem.localParameters.key).toBe('value');
-      expect(savedItem.items.length).toBe(1);
-      expect(savedItem.items[0].externalLink).toBeUndefined();
-      expect(savedItem.items[0].link).toBe('External Link');
-      $rootScope.$digest();
-    });
-
-    it('relays a failure to save a menu item', (done) => {
-      const error = {};
-      HstService.doPost.and.returnValue($q.reject(error));
-      SiteMenuService.saveMenuItem({})
-        .then(() => fail())
-        .catch((response) => {
-          expect(response).toBe(error);
-          done();
-        });
-      $rootScope.$digest();
-    });
-
     it('creates a new menu item', (done) => {
       SiteMenuService.createEditableMenuItem()
         .then((item) => {
@@ -430,58 +375,110 @@ describe('SiteMenuService', () => {
       $rootScope.$digest();
     });
 
-    // Save item
-    it('should save a menu item', (done) => {
-      SiteMenuService.loadMenu('testUuid');
-      $rootScope.$digest();
+    describe('saveMenuItem', () => {
+      let saveMenu;
+      let item;
+      let child1;
+      let child2;
 
-      const menuItemToSave = {
-        id: 'child1',
-        items: [
-          {
-            id: 'child2',
-            title: 'Child 2',
-            sitemapLink: 'home',
-            linkType: 'SITEMAPITEM',
-            collapsed: false,
-          },
-          {
-            id: 'child3',
-            title: 'Child 3',
-            link: 'child3link',
-            linkType: 'NONE',
-          },
-        ],
-        externalLink: 'http://onehippo.org',
-        linkType: 'EXTERNAL',
-        title: 'New title',
-      };
-      const savedMenuItem = {
-        id: 'child1',
-        items: [
-          {
-            id: 'child2',
-            title: 'Child 2',
-            link: 'home',
-            linkType: 'SITEMAPITEM',
-          },
-          {
-            id: 'child3',
-            title: 'Child 3',
-            linkType: 'NONE',
-          },
-        ],
-        link: 'http://onehippo.org',
-        linkType: 'EXTERNAL',
-        title: 'New title',
-      };
+      beforeEach(() => {
+        saveMenu = {
+          id: 'saveMenu',
+          items: [
+            {
+              id: 'item1',
+              title: 'Item 1',
+              localParameters: {
+                key: 'value',
+              },
+              items: [{
+                id: 'child1',
+                title: 'Child 1',
+              },
+              {
+                id: 'child2',
+                title: 'Child 2',
+              }],
+            },
+          ],
+        };
 
-      SiteMenuService.saveMenuItem(menuItemToSave).then(() => {
-        expect(HstService.doPost).toHaveBeenCalledWith(savedMenuItem, 'testUuid');
-        done();
+        [item] = saveMenu.items;
+        [child1, child2] = item.items;
+
+        HstService.doGet.and.returnValue($q.when({ data: saveMenu }));
+        $rootScope.$apply(() => SiteMenuService.loadMenu('saveMenu'));
+        HstService.doGet.calls.reset();
       });
 
-      $rootScope.$digest();
+      it('should remove the collapsed state before saving', (done) => {
+        item.collapsed = false;
+        child1.collapsed = false;
+        child2.collapsed = true;
+
+        SiteMenuService.saveMenuItem(item).then(() => {
+          const savedItem = HstService.doPost.calls.argsFor(0)[0];
+          const [savedChild1, savedChild2] = savedItem.items;
+
+          expect(savedItem.collapsed).toBeUndefined();
+          expect(savedChild1.collapsed).toBeUndefined();
+          expect(savedChild2.collapsed).toBeUndefined();
+          done();
+        });
+
+        $rootScope.$digest();
+      });
+
+      it('should extract a link from linkType SITEMAPITEM or EXTERNAL before saving', (done) => {
+        item.linkType = 'NONE';
+        item.link = 'invalid-link';
+
+        child1.linkType = 'SITEMAPITEM';
+        child1.sitemapLink = 'sitemap-link';
+
+        child2.linkType = 'EXTERNAL';
+        child2.externalLink = 'external-link';
+
+        SiteMenuService.saveMenuItem(item).then(() => {
+          const savedItem1 = HstService.doPost.calls.argsFor(0)[0];
+          const [savedChild1, savedChild2] = savedItem1.items;
+
+          expect(savedItem1.link).toBeUndefined();
+          expect(savedChild1.sitemapLink).toBeUndefined();
+          expect(savedChild1.link).toBe('sitemap-link');
+          expect(savedChild2.externalLink).toBeUndefined();
+          expect(savedChild2.link).toBe('external-link');
+
+          done();
+        });
+
+        $rootScope.$digest();
+      });
+
+      it('should save a menu item', (done) => {
+        SiteMenuService.saveMenuItem(item).then(() => {
+          expect(HstService.doPost).toHaveBeenCalledWith(item, 'saveMenu');
+
+          SiteMenuService.getEditableMenuItem('item1').then((editableItem) => {
+            expect(editableItem.title).toBe('Item 1');
+            expect(editableItem.items[0].title).toBe('Child 1');
+            done();
+          });
+        });
+        $rootScope.$digest();
+      });
+
+      it('relays a failure to save a menu item', (done) => {
+        const error = {};
+        HstService.doPost.and.returnValue($q.reject(error));
+        SiteMenuService.saveMenuItem({})
+          .then(() => fail())
+          .catch((response) => {
+            expect(response).toBe(error);
+            done();
+          });
+        $rootScope.$digest();
+      });
     });
 
     it('should find the path to a menu item', (done) => {

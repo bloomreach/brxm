@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -250,9 +250,9 @@ class SiteMenuService {
   }
 
   _extractLinkFromSitemapLinkOrExternalLink(item) {
-    if (item.linkType === 'SITEMAPITEM') {
+    if (item.linkType === 'SITEMAPITEM' && item.sitemapLink) {
       item.link = item.sitemapLink;
-    } else if (item.linkType === 'EXTERNAL') {
+    } else if (item.linkType === 'EXTERNAL' && item.externalLink) {
       item.link = item.externalLink;
     } else if (item.linkType === 'NONE') {
       delete item.link;
