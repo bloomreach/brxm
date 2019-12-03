@@ -89,6 +89,10 @@
     updateNavLocation (location) {
       return this.parentApiPromise.then(parentApi => parentApi.updateNavLocation(location));
     }
+
+    onError(clientError) {
+      return this.parentApiPromise.then(parentApi => parentApi.onError(clientError));
+    }
   }
 
   Hippo.IFrameConnections = IFrameConnections;
@@ -228,6 +232,9 @@
   Hippo.hideBusyIndicator = function() {
     Hippo.iframeConnections.hideBusyIndicator();
   };
+  Hippo.onError = function(clientError) {
+    Hippo.iframeConnections.onError(clientError);
+  }
 })();
 
 //# sourceURL=nav-app-to-app.js
