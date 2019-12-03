@@ -226,7 +226,7 @@ public class DefinitionMergeService {
         model.build();
 
         stopWatch.stop();
-        log.debug("Model rebuilt for auto-export merge in {}", stopWatch.toString());
+        log.debug("Model rebuilt for auto-export merge in {}", stopWatch);
         return model;
     }
 
@@ -284,7 +284,7 @@ public class DefinitionMergeService {
         toExport.values().forEach(ModuleImpl::build);
 
         stopWatch.stop();
-        log.info("Completed full auto-export merge in {}", stopWatch.toString());
+        log.info("Completed full auto-export merge in {}", stopWatch);
 
         return toExport.values();
     }
@@ -324,7 +324,7 @@ public class DefinitionMergeService {
     private void reorder(final Map<JcrPath, String> contentOrderBefores) {
 
         final List<String> sortedModules = new ArrayList<>();
-        model.getModulesStream().forEach((module) -> sortedModules.add(module.getFullName()));
+        model.getModulesStream().forEach(module -> sortedModules.add(module.getFullName()));
 
         for (final JcrPath path : reorderRegistry) {
             try {
@@ -341,7 +341,7 @@ public class DefinitionMergeService {
                     reorder(path, jcrNode, configurationNode, contentOrderBefores, sortedModules);
                 }
             } catch (PathNotFoundException ignore) {
-                log.warn("Could not find path '{}', skipping", path.toString());
+                log.warn("Could not find path '{}', skipping", path);
                 return;
             } catch (RepositoryException e) {
                 throw new IllegalStateException("Unexpected RepositoryException while reordering node " + path, e);
@@ -387,19 +387,19 @@ public class DefinitionMergeService {
          *  for details.
          */
 
-        log.debug("Reordering node {}", path.toString());
+        log.debug("Reordering node {}", path);
 
         final ImmutableList<JcrPathSegment> expected = getExpectedOrder(jcrNode, configurationNode);
         final List<JcrPathSegment> intermediate = new LinkedList<>();
 
         final Holders configHolders = createConfigHolders(configurationNode, expected, sortedModules);
 
-        configHolders.upstream.forEach((holder) -> holder.apply(expected, intermediate));
+        configHolders.upstream.forEach(holder -> holder.apply(expected, intermediate));
 
         updateStateForIncorrectlyOrderedUpstream(path, configurationNode, expected, sortedModules,
                 intermediate, configHolders.local);
 
-        configHolders.local.forEach((holder) -> holder.apply(expected, intermediate));
+        configHolders.local.forEach(holder -> holder.apply(expected, intermediate));
         configHolders.finish();
 
         applyUpstreamContentDefinitions(path, intermediate);
@@ -442,7 +442,7 @@ public class DefinitionMergeService {
             final int moduleIndex =
                     sortedModules.indexOf(childDefNode.getDefinition().getSource().getModule().getFullName());
             holders.add(new LocalConfigOrderBeforeHolder(moduleIndex, childDefNode,
-                    (deleteDefItem) -> removeOneDefinitionItem(deleteDefItem, new ArrayList<>())));
+                    deleteDefItem -> removeOneDefinitionItem(deleteDefItem, new ArrayList<>())));
         }
 
         holders.sort(Comparator.naturalOrder());
@@ -483,12 +483,10 @@ public class DefinitionMergeService {
 
         for (final Node child : new NodeIterable(jcrNode.getNodes())) {
             final JcrPathSegment segment = JcrPaths.getSegment(child);
-            if (configurationNode != null) {
-                if (configurationNode.getChildNodeCategory(segment) == SYSTEM) {
-                    log.info("Not including node '{}' while reordering '{}'; the node is category 'system'",
-                            segment.toString(), jcrNode.getPath());
-                    continue;
-                }
+            if (configurationNode != null && configurationNode.getChildNodeCategory(segment) == SYSTEM) {
+                log.info("Not including node '{}' while reordering '{}'; the node is category 'system'",
+                        segment, jcrNode.getPath());
+                continue;
             }
             expectedOrder.add(segment);
         }
@@ -503,7 +501,7 @@ public class DefinitionMergeService {
      * @param intermediate  (in & out) the intermediate order of the sub nodes of the given path
      */
     private void applyUpstreamContentDefinitions(final JcrPath path, final List<JcrPathSegment> intermediate) {
-        final Consumer<ContentDefinitionImpl> consumer = (cdi) -> OrderBeforeUtils.insert(cdi.getNode(), intermediate);
+        final Consumer<ContentDefinitionImpl> consumer = cdi -> OrderBeforeUtils.insert(cdi.getNode(), intermediate);
 
         model.getModulesStream()
                 .filter(m -> !toExport.values().contains(m))
@@ -530,7 +528,7 @@ public class DefinitionMergeService {
             // Create the holders for local content definitions
             final List<ContentOrderBeforeHolder> holders = new ArrayList<>();
             final Consumer<ContentDefinitionImpl> consumer =
-                    (cdi) -> holders.add(new ContentOrderBeforeHolder(cdi, contentOrderBefores));
+                    cdi -> holders.add(new ContentOrderBeforeHolder(cdi, contentOrderBefores));
             processContentDefinitions(module, path, intermediate, consumer);
 
             // Sort the list on just the lexical ordering of the path (#processContentDefinitions visits items based on
@@ -597,7 +595,7 @@ public class DefinitionMergeService {
         notContributedByParent.removeAll(intermediate);
         for (final JcrPathSegment name : notContributedByParent) {
             log.warn("While reordering '{}': cannot guarantee correct ordering of node '{}' contributed by a higher content definition",
-                    path.toString(), name.toString());
+                    path, name);
         }
 
         // If during local development, a dev temporarily disables AutoExport, then re-orders in JCR nodes at 'path'
@@ -608,9 +606,9 @@ public class DefinitionMergeService {
         // Or -- there is a bug in the reordering mechanism :-/
 
         final List<JcrPathSegment> incorrectlyOrdered = getIncorrectlyOrdered(expected, intermediate);
-        if (incorrectlyOrdered.size() > 0) {
+        if (!incorrectlyOrdered.isEmpty()) {
             log.warn("While reordering '{}': intermediate ({}) and expected ({}) are ordered differently, most likely caused by manually updating 'autoexport:lastrevision'",
-                    path.toString(), intermediate.toString(), expected.toString());
+                    path, intermediate, expected);
         }
     }
     private static class Holders {
@@ -665,7 +663,7 @@ public class DefinitionMergeService {
                     final int moduleIndex = sortedModules.indexOf(moduleName);
                     if (isLocal) {
                         holders.local.add(new LocalConfigOrderBeforeHolder(moduleIndex, childDefNode,
-                                (deleteDefItem) -> removeOneDefinitionItem(deleteDefItem, new ArrayList<>())));
+                                deleteDefItem -> removeOneDefinitionItem(deleteDefItem, new ArrayList<>())));
                     } else {
                         holders.upstream.add(new UpstreamConfigOrderBeforeHolder(moduleIndex, childDefNode));
                     }
@@ -1653,7 +1651,7 @@ public class DefinitionMergeService {
         removeResources(definition.getNode());
 
         // if the definition was the last one from its source
-        if (source.getDefinitions().size() == 0) {
+        if (source.getDefinitions().isEmpty()) {
             log.debug("Removing source: {}", source.getPath());
 
             // remove the source from its module
@@ -1711,7 +1709,7 @@ public class DefinitionMergeService {
         final boolean propertyExists = (configProperty != null);
         if (propertyExists) {
             // this is an existing property being replaced
-            log.debug(".. which already exists", defProperty.getJcrPath());
+            log.debug(".. which already exists: {}", defProperty.getJcrPath());
 
             // is there a local def for this specific property?
             final Optional<DefinitionPropertyImpl> maybeLocalPropertyDef = getLastLocalDef(configProperty);
@@ -1797,7 +1795,7 @@ public class DefinitionMergeService {
         else {
             // this is a totally new property
             // note: this is effectively unreachable for case: OVERRIDE
-            log.debug(".. which is totally new", defProperty.getJcrPath());
+            log.debug(".. which is totally new: {}", defProperty.getJcrPath());
 
             addLocalProperty(defProperty, configNode);
         }
