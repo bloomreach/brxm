@@ -303,6 +303,13 @@ public class ResourceServiceBrokerProxyServlet extends HttpServlet {
 
         for (Enumeration<String> headerNames = request.getHeaderNames(); headerNames.hasMoreElements(); ) {
             final String headerName = headerNames.nextElement();
+
+            // Do not add Host header; otherwise, the server may refuse to serve for the proxy host different
+            // from the real target server's host.
+            if (StringUtils.equalsIgnoreCase("Host", headerName)) {
+                continue;
+            }
+
             headersMap.put(headerName, EnumerationUtils.toList(request.getHeaders(headerName)));
         }
 
