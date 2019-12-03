@@ -37,6 +37,7 @@ import org.hippoecm.frontend.CmsHeaderItem;
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.extjs.ExtHippoThemeBehavior;
 import org.hippoecm.frontend.extjs.ExtWidgetRegistry;
+import org.hippoecm.frontend.wicketevents.AjaxCallFailureHeaderItem;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.logout.ActiveLogoutPlugin;
@@ -242,6 +243,7 @@ public class RootPlugin extends TabsPlugin {
 
         response.render(CmsHeaderItem.get());
         response.render(ExtResourcesHeaderItem.get());
+        response.render(new AjaxCallFailureHeaderItem());
 
         final UserActivityHeaderItem userActivity = new UserActivityHeaderItem(getMaxInactiveIntervalMinutes());
         response.render(new MonitorExtUserActivityHeaderItem(userActivity));
