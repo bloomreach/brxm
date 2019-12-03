@@ -31,6 +31,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_AVAILABILITY;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_REQUEST;
+import static org.hippoecm.repository.api.HippoNodeType.NT_REQUEST;
 import static org.hippoecm.repository.util.JcrUtils.getStringListProperty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -324,6 +327,65 @@ public class DocumentVariantShufflingTest extends RepositoryTestCase {
                         "hippo:availability", Collections.emptyList());
 
                 assertEquals("live", availability.get(0));
+
+                // copies first SNS and adds last, after this, remove the first entry and then save to reshuffle variants
+                JcrUtils.copy(session, "/shuffletest/content/mydoc/mydoc", "/shuffletest/content/mydoc/mydoc");
+                session.getNode("/shuffletest/content/mydoc/mydoc").remove();
+                session.save();
+
+                liveuser.logout();
+            }
+        } finally {
+            if (liveuser != null) {
+                liveuser.logout();
+            }
+        }
+    }
+
+    @Test
+    public void assert_single_variant_works_correctly() throws Exception {
+
+        session.getNode("/shuffletest/content/mydoc/mydoc").setProperty(HIPPO_AVAILABILITY,
+                new String[]{"draft", "preview", "live"});
+        session.getNode("/shuffletest/content/mydoc/mydoc[3]").remove();
+        session.getNode("/shuffletest/content/mydoc/mydoc[2]").remove();
+        session.save();
+        Session liveuser = null;
+
+        try {
+            liveuser = server.login(new SimpleCredentials("liveuser", "liveuser".toCharArray()));
+
+            assertTrue(liveuser.nodeExists("/shuffletest/content/mydoc/mydoc"));
+
+        } finally {
+            if (liveuser != null) {
+                liveuser.logout();
+            }
+        }
+    }
+
+    @Test
+    public void assert_reshuffling_with_other_nodes_than_document_variants_present_works_as_expected() throws Exception {
+        // add SNS requests: they should NOT be reshuffled!
+        String requestUUID1 = session.getNode("/shuffletest/content/mydoc").addNode(HIPPO_REQUEST, NT_REQUEST).getIdentifier();
+        String requestUUID2 = session.getNode("/shuffletest/content/mydoc").addNode(HIPPO_REQUEST, NT_REQUEST).getIdentifier();
+        String requestUUID3 = session.getNode("/shuffletest/content/mydoc").addNode(HIPPO_REQUEST, NT_REQUEST).getIdentifier();
+
+        session.save();
+
+        Session liveuser = null;
+        try {
+            for (int i = 0; i < 10; i++) {
+
+                liveuser = server.login(new SimpleCredentials("liveuser", "liveuser".toCharArray()));
+                final List<String> availability = getStringListProperty(liveuser.getNode("/shuffletest/content/mydoc/mydoc"),
+                        "hippo:availability", Collections.emptyList());
+
+                assertEquals("live", availability.get(0));
+
+                assertEquals(requestUUID1, session.getNode("/shuffletest/content/mydoc/hippo:request").getIdentifier());
+                assertEquals(requestUUID2, session.getNode("/shuffletest/content/mydoc/hippo:request[2]").getIdentifier());
+                assertEquals(requestUUID3, session.getNode("/shuffletest/content/mydoc/hippo:request[3]").getIdentifier());
 
                 // copies first SNS and adds last, after this, remove the first entry and then save to reshuffle variants
                 JcrUtils.copy(session, "/shuffletest/content/mydoc/mydoc", "/shuffletest/content/mydoc/mydoc");
