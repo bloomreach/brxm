@@ -184,9 +184,6 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
         final int iframesConnectionTimeout = readIframesConnectionTimeout();
         final NgxLoggerLevel ngxLoggerLevel = readLogLevel(logLevelQueryParamString);
 
-        final FaviconService faviconService = HippoServiceRegistry.getService(WicketFaviconService.class, FaviconService.class);
-        final String relativeFaviconUrl = faviconService.getRelativeFaviconUrl();
-
         return new AppSettings() {
 
             @Override
@@ -217,11 +214,6 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
             @Override
             public List<NavAppResource> getLogoutResources() {
                 return logoutResources;
-            }
-
-            @Override
-            public String getFaviconUrl() {
-                return relativeFaviconUrl;
             }
 
             @Override
