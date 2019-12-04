@@ -61,11 +61,7 @@ import org.hippoecm.hst.diagnosis.Task;
 public class PluginPage extends Home implements IServiceTracker<IRenderService> {
 
     private static final long serialVersionUID = 1L;
-    /**
-     * Absolute or relative path to the favicon.
-     * If relative, relative to the location of the navigation application
-     */
-    public static final String FAVICON_PATH = "navapp/navapp-assets/favicon.ico";
+    private static final String RELATIVE_FAVICON_PATH = "navapp-assets/favicon.ico";
 
     private final int pageId;
 
@@ -133,7 +129,7 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
             }
 
             add(new Label("pageTitle", getString("page.title", null, "Bloomreach Experience")));
-            add(new ExternalLink("faviconLink", FAVICON_PATH));
+            add(new ExternalLink("faviconLink", RELATIVE_FAVICON_PATH));
         } finally {
             if (pageInitTask != null) {
                 pageInitTask.stop();
