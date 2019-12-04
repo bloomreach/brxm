@@ -101,7 +101,6 @@ import org.hippoecm.frontend.observation.InternalCmsEventDispatcherService;
 import org.hippoecm.frontend.observation.JcrObservationManager;
 import org.hippoecm.frontend.plugin.config.impl.IApplicationFactory;
 import org.hippoecm.frontend.plugin.config.impl.JcrApplicationFactory;
-import org.hippoecm.frontend.service.FaviconService;
 import org.hippoecm.frontend.service.WicketFaviconService;
 import org.hippoecm.frontend.service.WicketFaviconServiceImpl;
 import org.hippoecm.frontend.session.PluginUserSession;
@@ -219,7 +218,7 @@ public class Main extends PluginApplication {
         wicketFaviconService = HippoServiceRegistry.getService(WicketFaviconService.class);
         if (wicketFaviconService == null){
             wicketFaviconService = new WicketFaviconServiceImpl();
-            HippoServiceRegistry.register(wicketFaviconService, WicketFaviconService.class, FaviconService.class);
+            HippoServiceRegistry.register(wicketFaviconService, WicketFaviconService.class);
         }
 
         addRequestCycleListeners();

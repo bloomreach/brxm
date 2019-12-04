@@ -51,29 +51,6 @@ public class WicketFaviconServiceImplTest {
     }
 
     @Test
-    public void getRelativeFaviconUrlCms() {
-        expect(pluginApplicationNameSupplier.get()).andReturn("cms");
-        replay(pluginApplicationNameSupplier);
-        assertEquals(WICKET_FAVICON_PREFIX +
-                "cms-icon.png", faviconService.getRelativeFaviconUrl());
-    }
-
-    @Test
-    public void getRelativeFaviconUrlConsole() {
-        expect(pluginApplicationNameSupplier.get()).andReturn("console");
-        replay(pluginApplicationNameSupplier);
-        assertEquals(WICKET_FAVICON_PREFIX +
-                "console-icon.png", faviconService.getRelativeFaviconUrl());
-    }
-
-    @Test
-    public void getRelativeFaviconUrlResourceDoesNotExist() {
-        expect(pluginApplicationNameSupplier.get()).andReturn("authoring");
-        replay(pluginApplicationNameSupplier);
-        assertEquals("skin/images/cms-icon.png", faviconService.getRelativeFaviconUrl());
-    }
-
-    @Test
     public void getFaviconResourceReferenceCms() {
         expect(pluginApplicationNameSupplier.get()).andReturn("cms");
         replay(pluginApplicationNameSupplier);

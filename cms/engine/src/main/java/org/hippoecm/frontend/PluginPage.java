@@ -22,7 +22,7 @@ import org.apache.wicket.behavior.Behavior;
 import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.head.JavaScriptHeaderItem;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.ResourceLink;
+import org.apache.wicket.markup.html.link.ExternalLink;
 import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.http.WebRequest;
@@ -61,6 +61,7 @@ import org.hippoecm.hst.diagnosis.Task;
 public class PluginPage extends Home implements IServiceTracker<IRenderService> {
 
     private static final long serialVersionUID = 1L;
+    private static final String RELATIVE_FAVICON_PATH = "navapp-assets/favicon.ico";
 
     private final int pageId;
 
@@ -128,7 +129,7 @@ public class PluginPage extends Home implements IServiceTracker<IRenderService> 
             }
 
             add(new Label("pageTitle", getString("page.title", null, "Bloomreach Experience")));
-            add(new ResourceLink("faviconLink", ((PluginApplication)getApplication()).getPluginApplicationFavIconReference()));
+            add(new ExternalLink("faviconLink", RELATIVE_FAVICON_PATH));
         } finally {
             if (pageInitTask != null) {
                 pageInitTask.stop();
