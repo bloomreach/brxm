@@ -292,20 +292,30 @@
     },
 
     _showAlterEgoEditor: function(mainToolbarHeight) {
-      var alterEgoWindowConfig = Hippo.ExtWidgets.getConfig('Hippo.Targeting.AlterEgoWindow'),
-        alterEgoWindow = Ext.create(alterEgoWindowConfig);
+      this._maskSurroundings();
 
-      // center the alter ego window below the main Angular Material toolbar
-      alterEgoWindow.on('afterrender', function () {
-        var centeredXY = alterEgoWindow.getEl().getAlignToXY(alterEgoWindow.container, 'c-c');
-        alterEgoWindow.setPagePosition(centeredXY[0], mainToolbarHeight);
-      }, this);
+      try {
+        var alterEgoWindowConfig = Hippo.ExtWidgets.getConfig('Hippo.Targeting.AlterEgoWindow'),
+          alterEgoWindow = Ext.create(alterEgoWindowConfig);
 
-      alterEgoWindow.on('alterEgoChanged', function () {
-        this.hostToIFrame.publish('alter-ego-changed');
-      }, this);
+        // center the alter ego window below the main Angular Material toolbar
+        alterEgoWindow.on('afterrender', function () {
+          var centeredXY = alterEgoWindow.getEl().getAlignToXY(alterEgoWindow.container, 'c-c');
+          alterEgoWindow.setPagePosition(centeredXY[0], mainToolbarHeight);
+        }, this);
 
-      alterEgoWindow.show();
+        alterEgoWindow.on('alterEgoChanged', function () {
+          this.hostToIFrame.publish('alter-ego-changed');
+        }, this);
+
+        alterEgoWindow.on('close', function () {
+          this._unmaskSurroundings();
+        }, this);
+
+        alterEgoWindow.show();
+      } catch (e) {
+        this._unmaskSurroundings();
+      }
     },
 
     _onChannelDeleted: function() {
