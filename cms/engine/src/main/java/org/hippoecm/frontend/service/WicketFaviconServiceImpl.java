@@ -19,14 +19,13 @@ import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.apache.wicket.request.Url;
-import org.apache.wicket.request.cycle.RequestCycle;
 import org.apache.wicket.request.resource.PackageResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.apache.wicket.request.resource.UrlResourceReference;
 import org.hippoecm.frontend.PluginApplication;
 
-public class WicketFaviconServiceImpl implements FaviconService, WicketFaviconService {
+public class WicketFaviconServiceImpl implements WicketFaviconService {
 
     private static final String SUFFIX = "-icon.png";
     private static final ResourceReference DEFAULT_FAVICON = new UrlResourceReference(
@@ -41,11 +40,6 @@ public class WicketFaviconServiceImpl implements FaviconService, WicketFaviconSe
 
     public WicketFaviconServiceImpl() {
         this(() -> PluginApplication.get().getPluginApplicationName());
-    }
-
-    @Override
-    public String getRelativeFaviconUrl() {
-        return RequestCycle.get().urlFor(getFaviconResourceReference(), null).toString();
     }
 
     @Override
