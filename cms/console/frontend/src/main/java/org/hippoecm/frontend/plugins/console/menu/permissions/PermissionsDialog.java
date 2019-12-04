@@ -49,7 +49,6 @@ import org.onehippo.repository.security.DomainInfoPrivilege;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.onehippo.repository.security.StandardPermissionNames.JCR_ACTIONS;
 import static org.onehippo.repository.security.StandardPermissionNames.JCR_ALL;
 import static org.onehippo.repository.security.StandardPermissionNames.JCR_ALL_PRIVILEGES;
 import static org.onehippo.repository.security.StandardPermissionNames.JCR_WRITE;
@@ -62,7 +61,6 @@ public class PermissionsDialog extends Dialog<Node> {
     @SuppressWarnings({"FieldCanBeLocal", "unused"}) private String selectedUser = "<<unknown>>";
     @SuppressWarnings({"FieldCanBeLocal", "unused"}) private String memberships = "None";
     @SuppressWarnings({"FieldCanBeLocal", "unused"}) private String userRoles = "None";
-    @SuppressWarnings({"FieldCanBeLocal", "unused"}) private String actions = "None";
     @SuppressWarnings({"FieldCanBeLocal", "unused"}) private String privileges = "None";
     @SuppressWarnings({"FieldCanBeLocal", "unused"}) private String exception = "None";
 
@@ -80,10 +78,6 @@ public class PermissionsDialog extends Dialog<Node> {
         final Label userRolesLabel = new Label("userRoles", PropertyModel.of(this, "userRoles"));
         userRolesLabel.setOutputMarkupId(true);
         add(userRolesLabel);
-
-        final Label actionsLabel = new Label("actions", PropertyModel.of(this, "actions"));
-        actionsLabel.setOutputMarkupId(true);
-        add(actionsLabel);
 
         final MultiLineLabel privilegesLabel = new MultiLineLabel("privileges", PropertyModel.of(this, "privileges"));
         privilegesLabel.setOutputMarkupId(true);
@@ -153,12 +147,8 @@ public class PermissionsDialog extends Dialog<Node> {
 
                 privileges = getPrivileges(privilegesSet);
 
-                final Set<String> actionsSet = getAllowedActions(subjectPathForSelectedUser, selectedUserJcrSession,
-                        JCR_ACTIONS);
-                actions = StringUtils.join(actionsSet, ", ");
-
             } catch (ItemNotFoundException e) {
-                actions = "<<none>>";
+
                 privileges = "<<none>>";
                 log.info("Node '{}' not readable by session '{}'", subject.getIdentifier(), selectedUser);
             }
@@ -205,19 +195,7 @@ public class PermissionsDialog extends Dialog<Node> {
     private void resetLabels() {
         userRoles = "";
         memberships = "";
-        actions = "";
         privileges = "";
-    }
-
-    private static Set<String> getAllowedActions(final String nodePath, final Session session, final Set<String> actions)
-            throws RepositoryException {
-        final Set<String> allowedActions = new TreeSet<>();
-        for (final String action : actions) {
-            if (session.hasPermission(nodePath, action)) {
-                allowedActions.add(action);
-            }
-        }
-        return allowedActions;
     }
 
     private static SortedMap<String, DomainInfoPrivilege> getPrivileges(final String nodePath, final Session session) throws RepositoryException {
