@@ -155,6 +155,11 @@ public class ResourceServiceBrokerProxyServlet extends HttpServlet {
         for (Map.Entry<String, List<String>> entry : exchangeHint.getResponseHeaders().entrySet()) {
             final String headerName = entry.getKey();
 
+            // Skip Transfer-Encoding header as this proxy write the response from the backend's possible chunked response.
+            if (StringUtils.equalsIgnoreCase("Transfer-Encoding", headerName)) {
+                continue;
+            }
+
             // Skip Content-Length header; otherwise, client may try to read data in a different content length value
             // from the real serialized data out of the resource object.
             if (StringUtils.equalsIgnoreCase("Content-Length", headerName)) {
