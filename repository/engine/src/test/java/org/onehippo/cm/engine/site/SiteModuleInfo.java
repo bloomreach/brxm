@@ -15,7 +15,7 @@
  */
 package org.onehippo.cm.engine.site;
 
-import org.onehippo.cm.engine.autoexport.ModuleInfo;
+import org.onehippo.cm.engine.test.ModuleInfo;
 
 import static org.onehippo.cm.engine.site.SiteIntegrationTest.SITE_INTEGRATION_TEST;
 

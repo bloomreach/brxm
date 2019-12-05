@@ -43,11 +43,11 @@ import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.onehippo.cm.engine.ConfigurationContentService;
 import org.onehippo.cm.engine.ConfigurationServiceImpl;
-import org.onehippo.cm.engine.autoexport.IsolatedRepository;
-import org.onehippo.cm.engine.autoexport.JcrRunner;
-import org.onehippo.cm.engine.autoexport.ModuleInfo;
-import org.onehippo.cm.engine.autoexport.Run;
-import org.onehippo.cm.engine.autoexport.Validator;
+import org.onehippo.cm.engine.test.IsolatedRepository;
+import org.onehippo.cm.engine.test.JcrRunner;
+import org.onehippo.cm.engine.test.ModuleInfo;
+import org.onehippo.cm.engine.test.Run;
+import org.onehippo.cm.engine.test.Validator;
 import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 import org.onehippo.cm.model.impl.tree.ConfigurationNodeImpl;
@@ -64,7 +64,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.onehippo.cm.engine.autoexport.AutoExportConstants.SYSTEM_PROPERTY_AUTOEXPORT_ALLOWED;
-import static org.onehippo.cm.engine.autoexport.Validator.NOOP;
+import static org.onehippo.cm.engine.test.Validator.NOOP;
 
 public class SiteIntegrationTest {
 

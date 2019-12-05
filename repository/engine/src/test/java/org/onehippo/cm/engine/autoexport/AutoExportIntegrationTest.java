@@ -38,6 +38,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.onehippo.cm.engine.Constants;
+import org.onehippo.cm.engine.test.IsolatedRepository;
+import org.onehippo.cm.engine.test.JcrRunner;
+import org.onehippo.cm.engine.test.ModuleInfo;
+import org.onehippo.cm.engine.test.Run;
+import org.onehippo.cm.engine.test.Validator;
 import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;
 
@@ -49,7 +54,7 @@ import static org.junit.Assert.assertNull;
 import static org.onehippo.cm.engine.ConfigurationServiceTestUtils.createChildNodesString;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_ORDER_BEFORE;
 import static org.onehippo.cm.engine.Constants.HCM_CONTENT_ORDER_BEFORE_FIRST;
-import static org.onehippo.cm.engine.autoexport.Validator.NOOP;
+import static org.onehippo.cm.engine.test.Validator.NOOP;
 import static org.onehippo.cm.model.Constants.META_ORDER_BEFORE_FIRST;
 
 public class AutoExportIntegrationTest {

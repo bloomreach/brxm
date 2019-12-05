@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.onehippo.cm.engine.autoexport;
+package org.onehippo.cm.engine.test;
 
 import java.time.Instant;
 import java.time.ZoneId;
