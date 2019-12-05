@@ -39,11 +39,11 @@ import org.apache.commons.io.FileUtils;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import org.onehippo.cm.engine.autoexport.IsolatedRepository;
-import org.onehippo.cm.engine.autoexport.JcrRunner;
-import org.onehippo.cm.engine.autoexport.ModuleInfo;
-import org.onehippo.cm.engine.autoexport.Run;
-import org.onehippo.cm.engine.autoexport.Validator;
+import org.onehippo.cm.engine.test.IsolatedRepository;
+import org.onehippo.cm.engine.test.JcrRunner;
+import org.onehippo.cm.engine.test.ModuleInfo;
+import org.onehippo.cm.engine.test.Run;
+import org.onehippo.cm.engine.test.Validator;
 import org.onehippo.cm.model.AbstractBaseTest;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
@@ -52,7 +52,7 @@ import org.springframework.mock.web.MockServletContext;
 import com.google.common.collect.ImmutableSet;
 
 import static org.junit.Assert.fail;
-import static org.onehippo.cm.engine.autoexport.Validator.NOOP;
+import static org.onehippo.cm.engine.test.Validator.NOOP;
 
 public class WebFilesReloadingIT {
 
