@@ -66,6 +66,7 @@ describe('NavigationService', () => {
   let navItemServiceMock: any;
   let clientAppServiceMock: jasmine.SpyObj<ClientAppService>;
   let menuStateServiceMock: jasmine.SpyObj<MenuStateService>;
+  let busyIndicatorServiceMock: jasmine.SpyObj<BusyIndicatorService>;
   let breadcrumbsServiceMock: jasmine.SpyObj<BreadcrumbsService>;
   let urlMapperServiceMock: jasmine.SpyObj<UrlMapperService>;
   let errorHandlingServiceMock: jasmine.SpyObj<ErrorHandlingService>;
@@ -120,6 +121,8 @@ describe('NavigationService', () => {
       },
     };
 
+    busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', ['show', 'hide']);
+
     breadcrumbsServiceMock = jasmine.createSpyObj('BreadcrumbsService', [
       'setSuffix',
     ]);
@@ -153,7 +156,6 @@ describe('NavigationService', () => {
       'debug',
     ]);
 
-    const busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', ['show', 'hide']);
     const connectionServiceMock = {
       navigate$: of(),
       updateNavLocation$: of(),
@@ -690,6 +692,92 @@ describe('NavigationService', () => {
           expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(undefined, 't.app.api.navigate is not a function');
         }));
       });
+    });
+
+    describe('busy indicator', () => {
+      const navItem = new NavItemMock({
+        appIframeUrl: 'http://domain.com/iframe1/url',
+        appPath: 'app/path/to/page1',
+      });
+
+      let beforeNavigationResolve: (value: boolean) => void;
+      let beforeNavigationReject: (reason?: any) => void;
+      let navigateResolve: () => void;
+      let navigateReject: () => void;
+
+      beforeEach(fakeAsync(() => {
+        service.initialNavigation();
+
+        tick();
+
+        childApi.beforeNavigation.calls.reset();
+        childApi.beforeNavigation.and.returnValue(new Promise((resolve, reject) => {
+          beforeNavigationResolve = resolve;
+          beforeNavigationReject = reject;
+        }));
+        childApi.navigate.calls.reset();
+        childApi.navigate.and.returnValue(new Promise((resolve, reject) => {
+          navigateResolve = resolve;
+          navigateReject = reject;
+        }));
+
+        busyIndicatorServiceMock.show.calls.reset();
+        busyIndicatorServiceMock.hide.calls.reset();
+      }));
+
+      describe('when beforeNavigation() returned "true"', () => {
+        beforeEach(async(() => {
+          service.navigateByNavItem(navItem, NavigationTrigger.NotDefined);
+
+          beforeNavigationResolve(true);
+        }));
+
+        it('should be shown', () => {
+          expect(busyIndicatorServiceMock.show).toHaveBeenCalled();
+          expect(busyIndicatorServiceMock.hide).not.toHaveBeenCalled();
+          expect(busyIndicatorServiceMock.show).toHaveBeenCalledBefore(childApi.navigate);
+        });
+
+        it('should be hidden if navigate() resolved', fakeAsync(() => {
+          navigateResolve();
+
+          tick();
+
+          expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
+          expect(childApi.navigate).toHaveBeenCalledBefore(busyIndicatorServiceMock.hide);
+        }));
+
+        it('should be hidden if navigate() rejected', fakeAsync(() => {
+          navigateReject();
+
+          tick();
+
+          expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
+          expect(childApi.navigate).toHaveBeenCalledBefore(busyIndicatorServiceMock.hide);
+        }));
+      });
+
+      it('should be hidden if beforeNavigation() returned "false"', fakeAsync(() => {
+        service.navigateByNavItem(navItem, NavigationTrigger.NotDefined);
+
+        beforeNavigationResolve(false);
+
+        tick();
+
+        expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
+      }));
+
+      it('should be hidden if beforeNavigation() returned an error', fakeAsync(() => {
+        const expectedError = new Error('Some error during before navigation call');
+
+        service.navigateByNavItem(navItem, NavigationTrigger.NotDefined);
+
+        beforeNavigationReject(expectedError);
+
+        tick();
+
+        expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
+      }));
     });
 
     describe('logging', () => {
