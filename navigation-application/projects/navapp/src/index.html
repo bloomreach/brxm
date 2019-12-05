@@ -26,11 +26,13 @@
     <link rel="icon" type="image/x-icon" href="navapp-assets/favicon.ico">
 
     <script>
+      var urlParams = new URLSearchParams(window.location.search);
+      var language = urlParams.get('language');
       window.NavAppSettings = {
         userSettings: {
           userName: 'Frank Zappa',
           email: 'frank.zappa@bloomreach.com',
-          language: 'en',
+          language: language || 'en',
           timeZone: 'Europe/Amsterdam',
         },
         appSettings: {
