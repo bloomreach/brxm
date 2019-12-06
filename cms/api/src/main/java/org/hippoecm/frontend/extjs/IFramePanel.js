@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 (function () {
-  "use strict";
+  'use strict';
 
   Ext.ns('Hippo');
 
@@ -78,7 +78,13 @@
       this.fireEvent('locationchanged');
     },
 
-    _connectToChild: function () {
+    /**
+     * Calling this methods will register the iframe created by the IFramePanel
+     * with the iframeConnections. It is the responsibility of the app hosted in
+     * the to connect to the CMS parent iframe by means of the navapp communication
+     * library.
+     */
+    connectToChild: function () {
       window.Hippo.iframeConnections.registerIframe(this._getFrame());
     },
 
@@ -128,7 +134,6 @@
     setLocation: function (url) {
       this.previousLocation = this.currentLocation;
       this._getFrameDom().src = url;
-      this._connectToChild();
     },
 
     _detachFrame: function () {
