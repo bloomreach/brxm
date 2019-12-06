@@ -360,6 +360,11 @@
       delete sessionStorage.channelId;
       delete sessionStorage.channelPath;
       delete sessionStorage.channelBranch;
+    },
+
+    setLocation: function (url) {
+      Hippo.ChannelManager.ChannelEditor.ChannelEditor.superclass.setLocation.call(this, url);
+      Hippo.ChannelManager.ChannelEditor.ChannelEditor.superclass.connectToChild.call(this);
     }
   });
 
