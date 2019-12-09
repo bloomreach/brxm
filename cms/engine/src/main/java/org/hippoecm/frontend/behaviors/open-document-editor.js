@@ -18,7 +18,6 @@
 
 
   Hippo.openDocumentById = function(documentId, mode) {
-    console.log('Opening document');
     const CALLBACK_URL = '${callbackUrl}';
 
     Wicket.Ajax.get({
