@@ -18,7 +18,7 @@ import { Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 
-import { getAntiCacheQueryParam } from './get-anti-cache-query-param';
+import { getAntiCacheQueryParam } from '../../services/get-anti-cache-query-param';
 
 export const translateHttpLoaderFactory = (http: HttpClient, location: Location): TranslateHttpLoader => {
   const locationPath = location.path();
