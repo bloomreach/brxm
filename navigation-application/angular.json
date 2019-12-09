@@ -38,8 +38,6 @@
               "projects/navapp/src/navapp-assets"
             ],
             "styles": [
-              "node_modules/open-sans-fontface/open-sans.css",
-              "node_modules/normalize.css/normalize.css",
               "projects/navapp/src/styles.scss"
             ],
             "scripts": []

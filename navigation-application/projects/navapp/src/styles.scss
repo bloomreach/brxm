@@ -16,5 +16,7 @@
 
 /* You can add global styles to this file, and also import other style files */
 
+@import '~normalize.css/normalize.css';
+@import '~open-sans-fontface/open-sans.css';
 @import './styles/default';
 @import './app/shared/material/material';
