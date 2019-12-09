@@ -20,7 +20,16 @@ const path = require('path');
 
 module.exports = (config) => {
   config.plugins.push(
-    new WebpackAssetsManifest({ output: 'filelist.json' }),
+    new WebpackAssetsManifest({
+      output: 'filelist.json',
+      customize: (entry) => {
+        if (!entry.value.endsWith('.css') && !entry.value.endsWith('.js')) {
+          return false;
+        }
+
+        return entry;
+      },
+    }),
     new CopyPlugin([path.join(__dirname, './loader.js')])
   );
 
