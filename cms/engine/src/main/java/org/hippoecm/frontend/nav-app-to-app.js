@@ -208,26 +208,28 @@
 
   };
 
-  const rejectAfterMillis = 3000;
   const contentPerspectiveLoaded = new Promise((resolve, reject) => {
 
-    let totalMillis = 0;
-    let timeout = 100;
+    const maxTotalDelayInMs = 3000;
+    const delayInMs = 100;
+    let totalDelayInMs = 0;
 
-    function waitForContentPerspective() {
-      if (!Hippo.openDocumentById) {
-        window.setTimeout(waitForContentPerspective, timeout);
-        totalMillis += timeout;
-        if (totalMillis > rejectAfterMillis) {
-          reject();
-        }
-      } else {
-        resolve();
+    (function waitForContentPerspective() {
+
+      if (Hippo.openDocumentById) {
+        return resolve();
       }
-    }
 
-    waitForContentPerspective();
+      totalDelayInMs += delayInMs;
+
+      if (totalDelayInMs > maxTotalDelayInMs) {
+        return reject();
+      }
+
+      window.setTimeout(waitForContentPerspective, delayInMs);
+    })();
   });
+
 
   const parentApiPromise = window.bloomreach && window.bloomreach['navapp-communication']
     .connectToParent({parentOrigin: '${parentOrigin}', methods: cmsChildApi})
