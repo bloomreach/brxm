@@ -104,48 +104,6 @@ describe('AppComponent', () => {
     });
   });
 
-  describe('translate service set up', () => {
-    it('should add languages', () => {
-      const expectedLanguages = [
-        'en',
-        'nl',
-        'fr',
-        'de',
-        'es',
-        'zh',
-      ];
-
-      component.ngOnInit();
-
-      expect(translateServiceMock.addLangs).toHaveBeenCalledWith(expectedLanguages);
-    });
-
-    it('should set the default language', () => {
-      const expected = 'en';
-
-      component.ngOnInit();
-
-      expect(translateServiceMock.setDefaultLang).toHaveBeenCalledWith(expected);
-    });
-
-    it('should use the language from user settings', () => {
-      const expected = 'en';
-
-      component.ngOnInit();
-
-      expect(translateServiceMock.use).toHaveBeenCalledWith(expected);
-    });
-
-    it('should use the default language if user settings do not contain the language setting', () => {
-      const expected = 'en';
-
-      userSettingsMock.language = undefined;
-      component.ngOnInit();
-
-      expect(translateServiceMock.use).toHaveBeenCalledWith(expected);
-    });
-  });
-
   describe('loading indicator', () => {
     it('should be shown until the app is bootstrapped', () => {
       const loader = de.query(By.css('brna-loader'));

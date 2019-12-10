@@ -15,10 +15,9 @@
  */
 
 import { APP_BASE_HREF, Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 
 import { version } from '../../../../package.json';
@@ -32,13 +31,13 @@ import { MainMenuModule } from './main-menu/main-menu.module';
 import { APP_SETTINGS } from './services/app-settings';
 import { appSettingsFactory } from './services/app-settings.factory';
 import { getCommunicationLibraryVersion } from './services/get-communication-library-version';
-import { translateHttpLoaderFactory } from './services/translate-http-loader.factory';
 import { USER_ACTIVITY_DEBOUNCE_TIME } from './services/user-activity-debounce-time';
 import { USER_SETTINGS } from './services/user-settings';
 import { userSettingsFactory } from './services/user-settings.factory';
 import { WindowRef } from './shared/services/window-ref.service';
 import { SharedModule } from './shared/shared.module';
 import { TopPanelModule } from './top-panel/top-panel.module';
+import { TranslationsModule } from './translations/translations.module';
 
 @NgModule({
   imports: [
@@ -50,13 +49,7 @@ import { TopPanelModule } from './top-panel/top-panel.module';
     TopPanelModule,
     ErrorHandlingModule,
     BootstrapModule,
-    TranslateModule.forRoot({
-      loader: {
-        provide: TranslateLoader,
-        useFactory: translateHttpLoaderFactory,
-        deps: [HttpClient, Location],
-      },
-    }),
+    TranslationsModule,
     ConfiguredLoggerModule,
   ],
   providers: [

@@ -17,7 +17,6 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { Component, HostBinding, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
-import { TranslateService } from '@ngx-translate/core';
 import { Observable, of, Subject } from 'rxjs';
 import { fromPromise } from 'rxjs/internal-compatibility';
 import { catchError, mapTo, startWith, takeUntil } from 'rxjs/operators';
@@ -63,7 +62,6 @@ export class AppComponent implements OnInit, OnDestroy {
   private unsubscribe = new Subject();
 
   constructor(
-    private translateService: TranslateService,
     private overlayService: OverlayService,
     private rightSidePanelService: RightSidePanelService,
     private errorHandlingService: ErrorHandlingService,
@@ -77,7 +75,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.initializeObservables();
-    this.configureTranslateService();
     this.rightSidePanelService.setSidenav(this.sidenav);
     this.overlayService.visible$
       .pipe(takeUntil(this.unsubscribe))
@@ -95,21 +92,5 @@ export class AppComponent implements OnInit, OnDestroy {
       startWith(true),
       catchError(() => of(false)),
     );
-  }
-
-  private configureTranslateService(): void {
-    const defaultLocale = 'en';
-
-    this.translateService.addLangs([
-      'en',
-      'nl',
-      'fr',
-      'de',
-      'es',
-      'zh',
-    ]);
-
-    this.translateService.setDefaultLang(defaultLocale);
-    this.translateService.use(this.userSettings.language || defaultLocale);
   }
 }
