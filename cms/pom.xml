@@ -76,8 +76,6 @@
     <module>platform-dependencies</module>
     <module>dependencies</module>
 
-    <module>scripts</module>
-
   </modules>
 
   <properties>
