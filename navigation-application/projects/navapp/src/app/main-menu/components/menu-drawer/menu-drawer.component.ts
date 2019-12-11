@@ -19,8 +19,8 @@ import {
   Component,
   HostBinding,
   Input,
-  OnChanges,
-  SimpleChanges,
+  OnChanges, QueryList,
+  SimpleChanges, ViewChildren,
 } from '@angular/core';
 import { Subject } from 'rxjs';
 
@@ -28,6 +28,7 @@ import { QaHelperService } from '../../../services/qa-helper.service';
 import { MenuItemContainer } from '../../models/menu-item-container.model';
 import { MenuItem } from '../../models/menu-item.model';
 import { MenuStateService } from '../../services/menu-state.service';
+import { ExpandableMenuItemComponent } from '../expandable-menu-item/expandable-menu-item.component';
 
 @Component({
   selector: 'brna-menu-drawer',
@@ -64,6 +65,9 @@ export class MenuDrawerComponent implements OnChanges {
   @Input()
   config: MenuItemContainer;
 
+  @ViewChildren(ExpandableMenuItemComponent)
+  expandableMenuItems: QueryList<ExpandableMenuItemComponent>;
+
   constructor(
     private menuStateService: MenuStateService,
     private qaHelperService: QaHelperService,
@@ -77,6 +81,12 @@ export class MenuDrawerComponent implements OnChanges {
 
   onClickedOutside(): void {
     this.menuStateService.closeDrawer();
+  }
+
+  onExpandableMenuItemClick(component: ExpandableMenuItemComponent): void {
+    this.expandableMenuItems
+      .filter(x => x !== component)
+      .forEach(x => x.close());
   }
 
   isContainer(item: MenuItem): boolean {

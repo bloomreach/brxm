@@ -70,6 +70,10 @@ export class ExpandableSubMenuItemComponent implements OnChanges {
     this.isChildMenuOpened = !this.isChildMenuOpened;
   }
 
+  close(): void {
+    this.isChildMenuOpened = false;
+  }
+
   isChildMenuItemActive(item: MenuItem): boolean {
     return this.menuStateService.isMenuItemActive(item);
   }

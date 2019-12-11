@@ -29,9 +29,11 @@
     </brna-menu-item-link>
     <brna-expandable-menu-item
                                *ngIf="isContainer(item)"
+                               #expandableMenuItem
                                [config]="item"
                                [active]="isActive(item)"
-                               [ngClass]="getQaClass(item)">
+                               [ngClass]="getQaClass(item)"
+                               (click)="onExpandableMenuItemClick(expandableMenuItem)">
     </brna-expandable-menu-item>
   </div>
 </div>
