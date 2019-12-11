@@ -1,13 +1,11 @@
-/*.iml
+*.iml
 /.idea
 /.project
 /.settings
-component/*.iml
 component/.classpath
 component/.project
 component/.settings
 component/target
-content/*.iml
 content/.classpath
 content/.project
 content/.settings
