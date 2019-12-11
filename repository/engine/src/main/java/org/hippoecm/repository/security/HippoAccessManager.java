@@ -93,6 +93,7 @@ import static org.hippoecm.repository.security.domain.QFacetRule.FacetRuleType.J
 import static org.hippoecm.repository.security.domain.QFacetRule.FacetRuleType.JCR_UUID;
 import static org.hippoecm.repository.security.domain.QFacetRule.FacetRuleType.NODENAME;
 import static org.hippoecm.repository.security.domain.QFacetRule.FacetRuleType.NODETYPE;
+import static org.onehippo.repository.security.StandardPermissionNames.JCR_READ;
 
 /**
  * HippoAccessManager based on facet authorization. A regular user subject has a {@link UserPrincipal} which hold
@@ -671,7 +672,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
             for (FacetAuthDomain fad : userPrincipal.getFacetAuthDomains()) {
                 Set<String> privs = fad.getResolvedPrivileges();
-                if (privs.contains(StandardPermissionNames.JCR_READ)) {
+                if (privs.contains(JCR_READ)) {
                     if (isNodeInDomain(nodeState, fad, true)) {
                         addAccessToCache(id, true);
                         return true;
@@ -1630,7 +1631,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
         }
 
         // fast track read check
-        if (permissionNames.remove(StandardPermissionNames.JCR_READ) ||
+        if (permissionNames.remove(JCR_READ) ||
                 // jcr_write privileges require at least read access
                 permissionNames.stream().anyMatch(StandardPermissionNames.JCR_WRITE_PRIVILEGES::contains)) {
             if (!canRead(id)) {
@@ -1703,7 +1704,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
 
         for (FacetAuthDomain fad : userPrincipal.getFacetAuthDomains()) {
             final Set<String> privs = fad.getResolvedPrivileges();
-            if (!privs.contains(StandardPermissionNames.JCR_READ)) {
+            if (!privs.contains(JCR_READ)) {
                 continue;
             }
             for (DomainRule domainRule : fad.getRules()) {
@@ -1862,6 +1863,15 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                 }
             }
         }
+
+        if (!privileges.containsKey(JCR_READ)) {
+            if(canRead(id)) {
+                // the user must have implicit read access on absPath, hence return jcr:read as privilege without any
+                // domain path since there is no explicit domain for the implicit read
+                privileges.put(JCR_READ, new DomainInfoPrivilege(permissionManager.getOrCreatePrivilege(JCR_READ)));
+            }
+        }
+
         return privileges.values().toArray(new DomainInfoPrivilege[0]);
     }
 

@@ -25,6 +25,7 @@ import org.onehippo.cm.model.tree.ConfigurationProperty;
 
 import static org.apache.jackrabbit.JcrConstants.JCR_PRIMARYTYPE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_GROUPS;
+import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MEMBERS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_USERROLE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_USERROLES;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_USERS;
@@ -136,15 +137,18 @@ public class ConfigurationCategoryUtils {
      *             </ul>
      *         </li>
      *         <li>
-     *             Property {@link HippoNodeType#HIPPO_USERROLES} of:
+     *             Node type {@link HippoNodeType#NT_GROUP} or {@link HippoNodeType#NT_EXTERNALGROUP}
      *             <ul>
-     *                 <li>Node type {@link HippoNodeType#NT_GROUP}</li>
-     *                 <li>Node type {@link HippoNodeType#NT_EXTERNALGROUP}</li>
-     *                 <li>Node type {@link HippoNodeType#NT_USER}</li>
-     *                 <li>Node type {@link HippoNodeType#NT_EXTERNALUSER}</li>
+     *                 <li>property {@link HippoNodeType#HIPPO_USERROLES}</li>
+     *                 <li>property {@link HippoNodeType#HIPPO_MEMBERS}</li>
      *             </ul>
      *         </li>
-     *
+     *         <li>
+     *             Node type {@link HippoNodeType#NT_USER} or {@link HippoNodeType#NT_EXTERNALUSER}
+     *             <ul>
+     *                 <li>property {@link HippoNodeType#HIPPO_USERROLES}</li>
+     *             </ul>
+     *         </li>
      *     </ul>
      * </p>
      * @param nodeType the primary type of the property node to test
@@ -156,10 +160,12 @@ public class ConfigurationCategoryUtils {
         if (NT_AUTHROLE.equals(nodeType)) {
             return HIPPO_USERROLE.equals(propertyName) || HIPPO_GROUPS.equals(propertyName) || HIPPO_USERS.equals(propertyName);
         }
-        else {
-            return HIPPO_USERROLES.equals(propertyName) &&
-                    (NT_GROUP.equals(nodeType) || NT_EXTERNALGROUP.equals(nodeType) ||
-                            NT_USER.equals(nodeType) || NT_EXTERNALUSER.equals(nodeType));
+        else if (NT_GROUP.equals(nodeType) || NT_EXTERNALGROUP.equals(nodeType)) {
+            return HIPPO_USERROLES.equals(propertyName) || HIPPO_MEMBERS.equals(propertyName);
         }
+        else if (NT_USER.equals(nodeType) || NT_EXTERNALUSER.equals(nodeType)) {
+            return HIPPO_USERROLES.equals(propertyName);
+        }
+        return false;
     }
 }
