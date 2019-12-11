@@ -29,16 +29,16 @@ export class MenuStructureService {
     private translateService: TranslateService,
   ) {}
 
-  translate(key: string): string {
-    return  this.translateService.instant(key);
-  }
-
   addExtension(item: MenuItemLink): void {
     this.extensions.children.push(item);
   }
 
   getMenuStructure(): MenuItem[] {
     return this.createMenuStructure();
+  }
+
+  private translate(key: string): string {
+    return this.translateService.instant(key);
   }
 
   private createMenuStructure(): MenuItem[] {
