@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,18 +23,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryManager;
+import javax.jcr.Session;
 
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.repository.translations.DocumentTranslationsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -98,16 +100,22 @@ public class JcrT9Tree extends T9Tree {
     @Override
     public List<T9Node> getSiblings(String t9Id) {
         try {
-            Set<T9Node> nodes = new HashSet<T9Node>();
-            QueryManager qm = targetNode.getSession().getWorkspace().getQueryManager();
-            Query query = qm.createQuery(
-                    "/jcr:root" + ROOT_PATH + "//element(*, " + HippoTranslationNodeType.NT_TRANSLATED + ")[@"
-                            + HippoTranslationNodeType.ID + "='" + t9Id + "']", Query.XPATH);
-            for (NodeIterator iter = query.execute().getNodes(); iter.hasNext();) {
-                Node sibling = iter.nextNode();
-                nodes.add(getT9Node(sibling));
-            }
-            return new ArrayList<T9Node>(nodes);
+            final Set<T9Node> nodes = new HashSet<>();
+            final DocumentTranslationsService documentTranslationsService = HippoServiceRegistry.getService(DocumentTranslationsService.class);
+            final Map<UUID, String> translations = documentTranslationsService.getTranslations(t9Id);
+
+            final Session session = targetNode.getSession();
+            translations.entrySet().forEach(entry -> {
+                try {
+                    nodes.add(getT9Node(session.getNodeByIdentifier(entry.getKey().toString())));
+                } catch (ItemNotFoundException e) {
+                    log.info("session cannot read translated node {}", entry.getKey().toString());
+                } catch (RepositoryException e) {
+                    log.error("Exception while fetching translated node", e);
+                }
+            });
+
+            return new ArrayList<>(nodes);
         } catch (RepositoryException e) {
             throw new RuntimeException("Unable to retrieve siblings for " + t9Id, e);
         }
