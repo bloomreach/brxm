@@ -193,10 +193,11 @@ public class JCRJobStore implements JobStore {
                         try {
                             session1.save();
                         } catch (RepositoryException e) {
-                            log.error("Failed to save ");
+                            log.error("Failed to save ", e);
                             try {
                                 session1.refresh(false);
-                            } catch (RepositoryException ignore) {
+                            } catch (RepositoryException re) {
+                                log.error("Failed to refresh session", re);
                             }
                         }
                     }
