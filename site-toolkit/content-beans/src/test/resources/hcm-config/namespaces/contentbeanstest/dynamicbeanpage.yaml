@@ -228,6 +228,23 @@ definitions:
             hipposysedit:path: contentbeanstest:contentblocks
             hipposysedit:primary: false
             hipposysedit:type: hippo:compound
+          /contentblocksWithValidator:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: true
+            hipposysedit:ordered: true
+            hipposysedit:path: contentbeanstest:contentblocksWithValidator
+            hipposysedit:primary: false
+            hipposysedit:type: hippo:compound
+            hipposysedit:validators: [contentblocks-validator]
+          /essentialsGeneratedContentblocks:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: true
+            hipposysedit:ordered: true
+            hipposysedit:path: contentbeanstest:essentialsGeneratedContentblocks
+            hipposysedit:type: hippo:compound
+            hipposysedit:validators: [contentblocks-validator]
       /hipposysedit:prototypes:
         jcr:primaryType: hipposysedit:prototypeset
         /hipposysedit:prototype:

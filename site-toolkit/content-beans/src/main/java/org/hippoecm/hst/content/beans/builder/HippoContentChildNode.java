@@ -27,7 +27,7 @@ public class HippoContentChildNode {
     private final String name;
     private final boolean multiple;
     private final String type;
-    private final boolean contentBlocks;
+    private final boolean isContentBlocks;
 
     public HippoContentChildNode(final String name, final ContentTypeChild contentType) {
         this.name = name;
@@ -35,9 +35,9 @@ public class HippoContentChildNode {
         this.multiple = contentType.isMultiple();
 
         if (CollectionUtils.isEmpty(contentType.getValidators())) {
-            this.contentBlocks = false;
+            this.isContentBlocks = false;
         } else {
-            this.contentBlocks = contentType.getValidators().stream()
+            this.isContentBlocks = contentType.getValidators().stream()
                     .anyMatch(validator -> validator.contains(CONTENT_BLOCKS_VALIDATOR));
         }
     }
@@ -50,8 +50,8 @@ public class HippoContentChildNode {
         return name;
     }
 
-    public boolean hasContentBlocks() {
-        return contentBlocks;
+    public boolean isContentBlocks() {
+        return isContentBlocks;
     }
 
     public boolean isMultiple() {
@@ -63,7 +63,7 @@ public class HippoContentChildNode {
         final StringBuilder sb = new StringBuilder("HippoContentChildNode{");
         sb.append(", name='").append(name).append('\'');
         sb.append(", type='").append(type).append('\'');
-        sb.append(", contentBlocks='").append(contentBlocks).append('\'');
+        sb.append(", contentBlocks='").append(isContentBlocks).append('\'');
         sb.append('}');
         return sb.toString();
     }

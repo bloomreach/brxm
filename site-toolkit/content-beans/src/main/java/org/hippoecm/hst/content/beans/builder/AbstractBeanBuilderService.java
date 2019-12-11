@@ -146,7 +146,8 @@ public abstract class AbstractBeanBuilderService {
                 continue;
             }
 
-            final DocumentType documentType = getChildNodeDocumentType(childNode.getType(), childNode.hasContentBlocks());
+            final DocumentType documentType = childNode.isContentBlocks() ?
+                    DocumentType.CONTENT_BLOCKS : DocumentType.getDocumentType(childNode.getType());
 
             switch (documentType) {
             case HIPPO_HTML:
@@ -192,29 +193,6 @@ public abstract class AbstractBeanBuilderService {
         // must be made to figure out whether the document type is a docbase
         if (documentType == DocumentType.STRING && DOCBASE.equals(cmsType)) {
             return DocumentType.DOCBASE;
-        }
-
-        return documentType;
-    }
-
-    /**
-     * Gets the corresponding document type enum value of a given document type by checking
-     * a possible content block definition
-     * 
-     * @param type of the document
-     * @param hasContentBlocks whether a contentType has any content blocks or not
-     * @return the corresponding document type
-     */
-    private DocumentType getChildNodeDocumentType(final String type, final boolean hasContentBlocks) {
-        final DocumentType documentType = DocumentType.getDocumentType(type);
-
-        // if a document type doesn't match with any predefined document type, then
-        // a content block definition check must be made to figure out whether the
-        // document type is a content block
-        if (DocumentType.UNKNOWN == documentType) {
-            if (hasContentBlocks) {
-                return DocumentType.CONTENT_BLOCKS;
-            }
         }
 
         return documentType;

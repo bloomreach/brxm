@@ -1,12 +1,12 @@
 /*
  *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,10 +33,10 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
 
 /**
- * 
- * Tests the dynamic bean service for all primitive and compound fields. 
- * The test for 'Value list item' compound field is not added because both BeanWriter 
- * tool and dynamic bean feature don't support this field. 
+ *
+ * Tests the dynamic bean service for all primitive and compound fields.
+ * The test for 'Value list item' compound field is not added because both BeanWriter
+ * tool and dynamic bean feature don't support this field.
  */
 public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
 
@@ -68,6 +68,8 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
     private static final String RESOURCE_COMPOUND_TYPE_METHOD_NAME = "getResourceCompoundType";
     private static final String RICH_TEXT_EDITOR_COMPOUND_TYPE_METHOD_NAME = "getRichTextEditorCompoundType";
     private static final String CONTENT_BLOCKS_TYPE_METHOD_NAME = "getContentblocks";
+    private static final String CONTENT_BLOCKS_TYPE_WITH_VALIDATOR_METHOD_NAME = "getContentblocksWithValidator";
+    private static final String ESSENTIALS_GENERATED_CONTENT_BLOCKS_TYPE_METHOD_NAME = "getEssentialsGeneratedContentblocks";
 
     private DateFormat dateParser = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
 
@@ -276,7 +278,7 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         assertNotNull("The method '" + MULTIPLE_VALUE_SINGLE_DATE_TYPE_METHOD_NAME + "' didn't return any value", value);
 
         Date result = dateParser.parse("25/03/2019");
-        assertTrue(DateUtils.isSameDay(result, value.getTime())); 
+        assertTrue(DateUtils.isSameDay(result, value.getTime()));
     }
 
     @Ignore // This test belongs to the improvement of CMS-11933
@@ -356,7 +358,7 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testGetContentOfContentBlocksTypeWithoutContentBean() throws Exception {
+    public void testGetContentOfContentBlocksTypeWithoutContentBean_withoutValidator() throws Exception {
 
         Object generatedBean = getContentBean();
 
@@ -368,6 +370,38 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         HippoHtml contentBlocksText = (HippoHtml) contentBlocksBean.getClass().getMethod("getText").invoke(contentBlocksBean);
 
         assertEquals("Welcome Home!", contentBlocksText.getContent());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testGetContentOfContentBlocksTypeWithoutContentBean_withValidator() throws Exception {
+
+        Object generatedBean = getContentBean();
+
+        List<HippoBean> htmlBlocks = callContentBeanMethod(generatedBean, CONTENT_BLOCKS_TYPE_WITH_VALIDATOR_METHOD_NAME, List.class);
+
+        assertNotNull("The method '" + CONTENT_BLOCKS_TYPE_WITH_VALIDATOR_METHOD_NAME + "' didn't return any value", htmlBlocks);
+
+        HippoBean contentBlocksBean = htmlBlocks.get(0);
+        HippoHtml contentBlocksText = (HippoHtml) contentBlocksBean.getClass().getMethod("getText").invoke(contentBlocksBean);
+
+        assertEquals("Welcome Home with validator!", contentBlocksText.getContent());
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testGetContentOfEssentialsGeneratedContentBlocksTypeWithoutContentBean() throws Exception {
+
+        Object generatedBean = getContentBean();
+
+        List<HippoBean> htmlBlocks = callContentBeanMethod(generatedBean, ESSENTIALS_GENERATED_CONTENT_BLOCKS_TYPE_METHOD_NAME, List.class);
+
+        assertNotNull("The method '" + ESSENTIALS_GENERATED_CONTENT_BLOCKS_TYPE_METHOD_NAME + "' didn't return any value", htmlBlocks);
+
+        HippoBean contentBlocksBean = htmlBlocks.get(0);
+        HippoHtml contentBlocksText = (HippoHtml) contentBlocksBean.getClass().getMethod("getText").invoke(contentBlocksBean);
+
+        assertEquals("Welcome Home with Essentials!", contentBlocksText.getContent());
     }
 
 }

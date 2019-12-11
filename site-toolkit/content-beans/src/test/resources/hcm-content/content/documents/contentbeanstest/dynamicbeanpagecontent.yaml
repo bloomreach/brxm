@@ -70,3 +70,15 @@
         jcr:primaryType: hippostd:html
         hippostd:content: |-
           Welcome Home!
+    /contentbeanstest:contentblocksWithValidator:
+      jcr:primaryType: contentbeanstest:htmlblock
+      /contentbeanstest:text:
+        jcr:primaryType: hippostd:html
+        hippostd:content: |-
+          Welcome Home with validator!
+    /contentbeanstest:essentialsGeneratedContentblocks:
+      jcr:primaryType: contentbeanstest:htmlblock
+      /contentbeanstest:text:
+        jcr:primaryType: hippostd:html
+        hippostd:content: |-
+          Welcome Home with Essentials!
