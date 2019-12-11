@@ -56,7 +56,7 @@ import static org.onehippo.cm.engine.test.Validator.NOOP;
 
 public class WebFilesReloadingIT {
 
-    static final String SITE_INTEGRATION_TEST = "SiteIntegrationTest";
+    static final String WEBFILES_RELOADING_TEST = "WebFilesReloadingTest";
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -170,7 +170,7 @@ public class WebFilesReloadingIT {
         return path.resolve("src")
                 .resolve("test")
                 .resolve("resources")
-                .resolve(SITE_INTEGRATION_TEST)
+                .resolve(WEBFILES_RELOADING_TEST)
                 .resolve(fixtureName)
                 .resolve("site");
     }
@@ -192,7 +192,7 @@ public class WebFilesReloadingIT {
         }
 
         public Fixture(final String fixtureName, final Set<String> sharedClasses) throws IOException {
-            this(new SiteModuleInfo(fixtureName));
+            this(new WebFilesReloadingSiteModuleInfo(fixtureName));
             if (sharedClasses != null) {
                 this.sharedClasses.addAll(sharedClasses);
             }
