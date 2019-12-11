@@ -30,9 +30,9 @@ import { RightSidePanelService } from '../services/right-side-panel.service';
 export class TopPanelComponent {
 
   constructor(
-    private siteService: SiteService,
-    private clientAppService: ClientAppService,
-    private rightSidePanelService: RightSidePanelService,
+    private readonly siteService: SiteService,
+    private readonly clientAppService: ClientAppService,
+    private readonly rightSidePanelService: RightSidePanelService,
   ) { }
 
   get selectedSiteName$(): Observable<string> {

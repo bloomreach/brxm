@@ -45,13 +45,13 @@ import { ClientAppService } from '../../services/client-app.service';
   ],
 })
 export class ClientAppContainerComponent implements OnInit, OnDestroy {
-  private unsubscribe = new Subject();
+  private readonly unsubscribe = new Subject();
 
   urls: string[] = [];
 
   constructor(
-    private clientAppService: ClientAppService,
-    private navigationService: NavigationService,
+    private readonly clientAppService: ClientAppService,
+    private readonly navigationService: NavigationService,
   ) {}
 
   get isNavigating$(): Observable<boolean> {

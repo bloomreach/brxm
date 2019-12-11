@@ -25,7 +25,7 @@ import { MenuStructureService } from './menu-structure.service';
 
 @Injectable()
 export class MenuBuilderService {
-  constructor(private menuStructureService: MenuStructureService) {}
+  constructor(private readonly menuStructureService: MenuStructureService) {}
 
   buildMenu(navItems: NavItem[]): MenuItem[] {
     const menu = this.menuStructureService.getMenuStructure();

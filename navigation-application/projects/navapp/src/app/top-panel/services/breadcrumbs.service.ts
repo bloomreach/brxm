@@ -22,10 +22,10 @@ import { MenuStateService } from '../../main-menu/services/menu-state.service';
 
 @Injectable()
 export class BreadcrumbsService {
-  private suffix = new BehaviorSubject<string>('');
+  private readonly suffix = new BehaviorSubject<string>('');
 
   constructor(
-    private menuStateService: MenuStateService,
+    private readonly menuStateService: MenuStateService,
   ) {}
 
   get breadcrumbs$(): Observable<string[]> {

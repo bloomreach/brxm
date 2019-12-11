@@ -52,8 +52,8 @@ export class ExpandableSubMenuItemComponent implements OnChanges {
   active = false;
 
   constructor(
-    private menuStateService: MenuStateService,
-    private qaHelperService: QaHelperService,
+    private readonly menuStateService: MenuStateService,
+    private readonly qaHelperService: QaHelperService,
   ) {}
 
   get isOpened(): boolean {

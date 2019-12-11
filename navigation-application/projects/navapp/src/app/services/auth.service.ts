@@ -33,13 +33,13 @@ import { ConnectionService } from './connection.service';
 })
 export class AuthService {
   constructor(
-    private connectionService: ConnectionService,
-    private clientAppService: ClientAppService,
-    private busyIndicatorService: BusyIndicatorService,
-    private location: Location,
-    private logger: NGXLogger,
-    @Inject(APP_SETTINGS) private appSettings: AppSettings,
-    @Inject(DOCUMENT) private document: Document,
+    private readonly connectionService: ConnectionService,
+    private readonly clientAppService: ClientAppService,
+    private readonly busyIndicatorService: BusyIndicatorService,
+    private readonly location: Location,
+    private readonly logger: NGXLogger,
+    @Inject(APP_SETTINGS) private readonly appSettings: AppSettings,
+    @Inject(DOCUMENT) private readonly document: Document,
   ) {
     this.connectionService
       .onError$

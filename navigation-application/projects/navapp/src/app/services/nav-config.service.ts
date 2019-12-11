@@ -44,13 +44,13 @@ interface Configuration {
 })
 export class NavConfigService {
   constructor(
-    private http: HttpClient,
-    private location: Location,
-    private connectionService: ConnectionService,
-    private navItemService: NavItemService,
-    private siteService: SiteService,
-    private logger: NGXLogger,
-    @Inject(APP_SETTINGS) private appSettings: AppSettings,
+    private readonly http: HttpClient,
+    private readonly location: Location,
+    private readonly connectionService: ConnectionService,
+    private readonly navItemService: NavItemService,
+    private readonly siteService: SiteService,
+    private readonly logger: NGXLogger,
+    @Inject(APP_SETTINGS) private readonly appSettings: AppSettings,
   ) { }
 
   init(): Promise<void> {

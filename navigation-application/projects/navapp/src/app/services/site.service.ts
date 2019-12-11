@@ -28,12 +28,12 @@ import { BusyIndicatorService } from './busy-indicator.service';
 })
 export class SiteService {
   sites: Site[] = [];
-  private selectedSite = new ReplaySubject<Site>(1);
+  private readonly selectedSite = new ReplaySubject<Site>(1);
 
   constructor(
-    private busyIndicatorService: BusyIndicatorService,
-    private clientAppService: ClientAppService,
-    private logger: NGXLogger,
+    private readonly busyIndicatorService: BusyIndicatorService,
+    private readonly clientAppService: ClientAppService,
+    private readonly logger: NGXLogger,
   ) { }
 
   get selectedSite$(): Observable<Site> {

@@ -65,8 +65,8 @@ export class MenuDrawerComponent implements OnChanges {
   config: MenuItemContainer;
 
   constructor(
-    private menuStateService: MenuStateService,
-    private qaHelperService: QaHelperService,
+    private readonly menuStateService: MenuStateService,
+    private readonly qaHelperService: QaHelperService,
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {

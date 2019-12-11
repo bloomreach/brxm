@@ -28,7 +28,7 @@ export class OverlayService {
   visible$: Observable<boolean>;
 
   constructor(
-    private connectionService: ConnectionService,
+    private readonly connectionService: ConnectionService,
   ) {
     const counter = new BehaviorSubject<boolean>(false);
 

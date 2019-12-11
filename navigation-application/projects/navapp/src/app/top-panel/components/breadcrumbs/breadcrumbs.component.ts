@@ -31,11 +31,11 @@ export class BreadcrumbsComponent implements OnInit {
   breadcrumbsWithoutSuffix: string[] = [];
   suffix = '';
 
-  private unsubscribe = new Subject();
+  private readonly unsubscribe = new Subject();
 
   constructor(
-    private breadcrumbsService: BreadcrumbsService,
-    private navigationService: NavigationService,
+    private readonly breadcrumbsService: BreadcrumbsService,
+    private readonly navigationService: NavigationService,
   ) { }
 
   ngOnInit(): void {

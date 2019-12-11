@@ -30,9 +30,9 @@ export class ErrorHandlingService {
   private appError: AppError;
 
   constructor(
-    private connectionService: ConnectionService,
-    private translateService: TranslateService,
-    private logger: NGXLogger,
+    private readonly connectionService: ConnectionService,
+    private readonly translateService: TranslateService,
+    private readonly logger: NGXLogger,
   ) {
     this.connectionService.onError$.subscribe(error => this.setClientError(error.errorCode, error.message));
   }

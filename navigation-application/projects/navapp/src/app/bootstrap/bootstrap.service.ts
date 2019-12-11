@@ -25,9 +25,9 @@ import { NavigationService } from '../services/navigation.service';
 })
 export class BootstrapService {
   constructor(
-    private clientAppService: ClientAppService,
-    private menuStateService: MenuStateService,
-    private navigationService: NavigationService,
+    private readonly clientAppService: ClientAppService,
+    private readonly menuStateService: MenuStateService,
+    private readonly navigationService: NavigationService,
   ) { }
 
   bootstrap(): Promise<void> {

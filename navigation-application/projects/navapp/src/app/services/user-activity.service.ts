@@ -27,12 +27,12 @@ import { USER_ACTIVITY_DEBOUNCE_TIME } from './user-activity-debounce-time';
   providedIn: 'root',
 })
 export class UserActivityService implements OnDestroy {
-  private event$ = new Subject<ClientApp>();
-  private unsubscribe = new Subject();
+  private readonly event$ = new Subject<ClientApp>();
+  private readonly unsubscribe = new Subject();
 
   constructor(
-    private clientAppService: ClientAppService,
-    @Inject(USER_ACTIVITY_DEBOUNCE_TIME) private userActivityDebounceTime,
+    private readonly clientAppService: ClientAppService,
+    @Inject(USER_ACTIVITY_DEBOUNCE_TIME) private readonly userActivityDebounceTime,
   ) {
     if (!this.userActivityDebounceTime) {
       throw new Error('USER_ACTIVITY_DEBOUNCE_TIME must be set');

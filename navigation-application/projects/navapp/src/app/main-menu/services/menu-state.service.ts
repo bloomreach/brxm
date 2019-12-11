@@ -28,13 +28,13 @@ import { MenuBuilderService } from './menu-builder.service';
 export class MenuStateService {
   private menuItems: MenuItem[] = [];
   private homeMenuItemLink: MenuItemLink;
-  private activePath = new BehaviorSubject<MenuItem[]>([]);
+  private readonly activePath = new BehaviorSubject<MenuItem[]>([]);
   private collapsed = true;
   private currentDrawerMenuItem: MenuItemContainer;
 
   constructor(
-    private menuBuilderService: MenuBuilderService,
-    private navItemService: NavItemService,
+    private readonly menuBuilderService: MenuBuilderService,
+    private readonly navItemService: NavItemService,
   ) { }
 
   get menu(): MenuItem[] {
