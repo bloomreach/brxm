@@ -144,7 +144,7 @@ public class NavAppSettingsServiceTest {
         replay(user);
 
         expect(config.getString(INavAppSettingsService.SERVICE_ID, INavAppSettingsService.SERVICE_ID)).andReturn(null);
-        expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
+        expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 60_000)).andReturn(10_000);
         expect(config.getString(NavAppSettingsService.LOG_LEVEL, OFF.name())).andReturn(OFF.name());
         replay(config);
 
@@ -314,7 +314,7 @@ public class NavAppSettingsServiceTest {
     public void loads_no_resources_for_logintype_local() {
 
         reset(config);
-        expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
+        expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 60_000)).andReturn(10_000);
         expect(config.getString(NavAppSettingsService.LOG_LEVEL, OFF.name())).andReturn(OFF.name());
         replay(config);
 
@@ -340,7 +340,7 @@ public class NavAppSettingsServiceTest {
     public void loads_no_resources_for_logintype_local_reload() {
 
         reset(config);
-        expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
+        expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 60_000)).andReturn(10_000);
         expect(config.getString(NavAppSettingsService.LOG_LEVEL, OFF.name())).andReturn(OFF.name());
         replay(config);
 
@@ -369,7 +369,7 @@ public class NavAppSettingsServiceTest {
 
         final NgxLoggerLevel info = INFO;
         reset(config);
-        expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
+        expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 60_000)).andReturn(10_000);
         expect(config.getString(NavAppSettingsService.LOG_LEVEL, OFF.name())).andReturn(info.name());
         replay(config);
 
@@ -398,7 +398,7 @@ public class NavAppSettingsServiceTest {
     public void uses_logLevel_from_query_parameter() {
 
         reset(config);
-        expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
+        expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 60_000)).andReturn(10_000);
         replay(config);
 
         reset(parameters);
@@ -424,7 +424,7 @@ public class NavAppSettingsServiceTest {
     public void returns_default_if_logLevel_from_query_parameter_is_invalid() {
 
         reset(config);
-        expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 30_000)).andReturn(10_000);
+        expect(config.getInt(NavAppSettingsService.IFRAMES_CONNECTION_TIMEOUT, 60_000)).andReturn(10_000);
         replay(config);
 
         reset(parameters);
