@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,22 +19,18 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Value;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryResult;
-import javax.jcr.query.Row;
-import javax.jcr.query.RowIterator;
 
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.translation.ILocaleProvider.HippoLocale;
-import org.hippoecm.repository.translation.HippoTranslationNodeType;
+import org.hippoecm.repository.translation.HippoTranslatedNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,21 +50,15 @@ public class DocumentTranslationProvider implements IDataProvider<HippoLocale> {
 
     private void load() {
         if (locales == null) {
-            locales = new TreeMap<String, HippoLocale>();
+            locales = new TreeMap<>();
 
             Node document = model.getObject();
             if (document != null) {
                 try {
-                    String id = document.getProperty(HippoTranslationNodeType.ID).getString();
-                    Query query = document.getSession().getWorkspace().getQueryManager().createQuery(
-                            "SELECT " + HippoTranslationNodeType.LOCALE + " FROM " + HippoTranslationNodeType.NT_TRANSLATED + " WHERE " + HippoTranslationNodeType.ID + "='" + id + "'",
-                            Query.SQL);
-                    final QueryResult result = query.execute();
-                    final RowIterator rowIterator = result.getRows();
-                    while (rowIterator.hasNext()) {
-                        final Row row = rowIterator.nextRow();
-                        final Value value = row.getValue(HippoTranslationNodeType.LOCALE);
-                        HippoLocale locale = provider.getLocale(value.getString());
+                    final Set<String> translations = new HippoTranslatedNode(document).getTranslations();
+
+                    for (String translation : translations) {
+                        HippoLocale locale = provider.getLocale(translation);
                         locales.put(locale.getName(), locale);
                     }
                 } catch (RepositoryException ex) {
