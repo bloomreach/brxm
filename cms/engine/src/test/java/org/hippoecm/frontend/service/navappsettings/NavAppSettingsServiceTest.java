@@ -294,7 +294,7 @@ public class NavAppSettingsServiceTest {
     @Test
     public void path_parameter_is_set() {
         reset(parameters);
-        final String somePath = "/path/to/document";
+        final String somePath = "  / //some/path /to /document";
         expect(parameters.getParameterValue(NavAppRedirectFilter.INITIAL_PATH_QUERY_PARAMETER))
                 .andStubReturn(StringValue.valueOf((String) null));
         expect(parameters.getParameterValue(NavAppSettingsService.UUID_PARAM))
@@ -307,7 +307,7 @@ public class NavAppSettingsServiceTest {
                 .andStubReturn(StringValue.valueOf((String) null));
         replay(parameters);
         final NavAppSettings navAppSettings = navAppSettingsService.getNavAppSettings(request);
-        assertThat(navAppSettings.getAppSettings().getInitialPath(), is("/content/path/" + somePath));
+        assertThat(navAppSettings.getAppSettings().getInitialPath(), is("/content/path/some/path/to/document"));
     }
 
     @Test

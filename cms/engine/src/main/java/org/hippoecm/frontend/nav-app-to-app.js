@@ -166,17 +166,20 @@
               return Promise.resolve();
             }
 
-            const docLocation = document.location;
-            const url = new URL(docLocation.href);
-            if ( pathElements[0] === 'path') {
-              url.searchParams.append('path', pathElements.slice(1).join('/'));
-            } else {
-              url.searchParams.append('uuid', pathElements[1]);
-            }
-            Hippo.hideBusyIndicator();
-            docLocation.assign(url.toString())
+            if (pathElements[0] === 'path') {
+              pathElements.shift();
+              let documentPath = `/${pathElements.join('/')}`;
+              contentPerspectiveLoaded.then(() => {
+                  Hippo.openDocumentByPath(documentPath, "view");
+                }
+              );
 
-            return Promise.resolve();
+            } else {
+              let documentId = pathElements[1];
+              contentPerspectiveLoaded.then(() => {
+                Hippo.openDocumentById(documentId, "view");
+              });
+            }
 
           default:
               return Promise.resolve();
@@ -204,6 +207,29 @@
     }
 
   };
+
+  const contentPerspectiveLoaded = new Promise((resolve, reject) => {
+
+    const maxTotalDelayInMs = 3000;
+    const delayInMs = 100;
+    let totalDelayInMs = 0;
+
+    (function waitForContentPerspective() {
+
+      if (Hippo.openDocumentById) {
+        return resolve();
+      }
+
+      totalDelayInMs += delayInMs;
+
+      if (totalDelayInMs > maxTotalDelayInMs) {
+        return reject();
+      }
+
+      window.setTimeout(waitForContentPerspective, delayInMs);
+    })();
+  });
+
 
   const parentApiPromise = window.bloomreach && window.bloomreach['navapp-communication']
     .connectToParent({parentOrigin: '${parentOrigin}', methods: cmsChildApi})

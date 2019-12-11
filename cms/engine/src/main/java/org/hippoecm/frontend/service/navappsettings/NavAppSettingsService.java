@@ -20,10 +20,12 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.jcr.RepositoryException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.request.IRequestParameters;
 import org.apache.wicket.request.Request;
 import org.apache.wicket.util.string.StringValue;
@@ -122,11 +124,16 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     private String convertLegacyDocumentParameters(final Request request) {
         final StringValue uuid = request.getQueryParameters().getParameterValue(UUID_PARAM);
         if (!uuid.isEmpty()) {
-            return "/content/uuid/" + uuid.toString();
+            return String.format("/content/%s/%s", UUID_PARAM, uuid.toString());
         }
         final StringValue path = request.getQueryParameters().getParameterValue(PATH_PARAM);
         if (!path.isEmpty()) {
-            return "/content/path/" + path.toString();
+            return Stream.concat(
+                    Stream.of("content", PATH_PARAM),
+                    Stream.of(path.toString().split("/"))
+                            .filter(StringUtils::isNotBlank)
+                            .map(String::trim))
+                    .collect(Collectors.joining("/", "/", ""));
         }
         return "/";
     }
