@@ -290,25 +290,24 @@ public class DefinitionMergeService {
     }
 
     /**
-     * If the current node already exists in content in the repository, than the node is added to the content list. 
-     * In this case, if the node is not root but in modifiable nodes, than it is also removed from 
+     * If the current node already exists as content in the repository, then the node is added to the content list.
+     * In this case, if the node is not the root node but child of the root, than it is also removed from
      * modifiable nodes list.
-     * @param node the current config node that needs to be processed.
+     * @param configNodeDef the current config node that needs to be processed.
      * @param contentAdded The list of nodes in content that are added.
      * @return true if the current node exists in content in the repository, otherwise returns false.
      */
-    private boolean addNodeToContentChangesIfExistInContent(final DefinitionNodeImpl node,
-            final Set<String> contentAdded) {
-        for (final ContentDefinitionImpl contentDefinition : model.getContentDefinitions()) {
-            final String contentRoot = contentDefinition.getNode().getJcrPath().suppressIndices().toString();
-            if (contentRoot.equals(node.getJcrPath().toString())) {
-                contentAdded.add(contentRoot);
+    private boolean addNodeToContentChangesIfExistInContent(final DefinitionNodeImpl configNodeDef, final Set<String> contentAdded) {
+        for (final ContentDefinitionImpl contentNodeDef : model.getContentDefinitions()) {
+            final JcrPath contentRootPath = contentNodeDef.getNode().getJcrPath().suppressIndices();
+            if (contentRootPath.equals(configNodeDef.getJcrPath())) {
+                contentAdded.add(contentRootPath.toString());
                 return true;
             }
-            boolean contentRootFoundInModifiableNodes = node.getModifiableNodes().entrySet()
-                    .removeIf(entry -> contentRoot.equals(entry.getValue().getJcrPath().toString()));
-            if (contentRootFoundInModifiableNodes) {
-                contentAdded.add(contentRoot);
+            final boolean contentRootFoundInChildNodes = configNodeDef.getModifiableNodes().entrySet()
+                    .removeIf(entry -> contentRootPath.equals(entry.getValue().getJcrPath().suppressIndices()));
+            if (contentRootFoundInChildNodes) {
+                contentAdded.add(contentRootPath.toString());
             }
         }
         return false;
