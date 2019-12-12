@@ -233,7 +233,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
     }
 
     private int readIframesConnectionTimeout() {
-        return getPluginConfig().getInt(IFRAMES_CONNECTION_TIMEOUT, 30_000);
+        return getPluginConfig().getInt(IFRAMES_CONNECTION_TIMEOUT, 60_000);
     }
 
     private NgxLoggerLevel readLogLevel(String logLevelQueryParamString) {
