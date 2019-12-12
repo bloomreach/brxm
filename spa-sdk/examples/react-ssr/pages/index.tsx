@@ -36,28 +36,42 @@ interface IndexProps {
 
 export default class Index extends React.Component<IndexProps> {
   static async getInitialProps(context: NextPageContext) {
-    const config = {
-      options: {
-        live: {
-          cmsBaseUrl: publicRuntimeConfig.liveBrBaseUrl,
-          spaBaseUrl: publicRuntimeConfig.liveSpaBaseUrl,
-        },
-        preview: {
-          cmsBaseUrl: publicRuntimeConfig.previewBrBaseUrl,
-          spaBaseUrl: publicRuntimeConfig.previewSpaBaseUrl,
-        },
-      },
-      request: { path: context.asPath || '' },
-    };
+    // Workaround for the targeting feature to store visitor cookie after the initial server-side render.
+    const targetingWorkaround = axios.interceptors.response.use((response) => {
+      if (context.res && response.headers['set-cookie']) {
+        response.headers['set-cookie'].forEach((value: string) =>
+          context.res!.setHeader('Set-Cookie', value.replace(/Path=.*?(?=(?:$|;))/, 'Path=/')));
+      }
 
-    return {
-      config,
-      page: await initialize({
-        ...config,
-        httpClient: axios,
-        request: { ...context.req, ...config.request },
-      }),
-    };
+      return response;
+    });
+
+    try {
+      const config = {
+        options: {
+          live: {
+            cmsBaseUrl: publicRuntimeConfig.liveBrBaseUrl,
+            spaBaseUrl: publicRuntimeConfig.liveSpaBaseUrl,
+          },
+          preview: {
+            cmsBaseUrl: publicRuntimeConfig.previewBrBaseUrl,
+            spaBaseUrl: publicRuntimeConfig.previewSpaBaseUrl,
+          },
+        },
+        request: { path: context.asPath || '' },
+      };
+
+      return {
+        config,
+        page: await initialize({
+          ...config,
+          httpClient: axios,
+          request: { ...context.req, ...config.request },
+        }),
+      };
+    } finally {
+      axios.interceptors.response.eject(targetingWorkaround);
+    }
   }
 
   render() {
