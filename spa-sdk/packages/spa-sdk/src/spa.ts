@@ -86,9 +86,15 @@ export class Spa {
   }
 
   private async fetchPageModel(url: string) {
+    const { remoteAddress: ip } = this.config.request.connection || {};
+    const { host, ...headers } = this.config.request.headers || {};
     const response = await this.config.httpClient({
       url,
-      headers: this.config.request.headers,
+      headers: {
+        ...ip && { 'x-forwarded-for': ip },
+        ...host && { 'x-forwarded-host': host },
+        ...headers,
+      },
       method: 'GET',
     });
 

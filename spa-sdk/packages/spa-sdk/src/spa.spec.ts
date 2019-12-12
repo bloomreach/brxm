@@ -48,8 +48,14 @@ const config = {
     },
   },
   request: {
+    connection: {
+      remoteAddress: '127.0.0.1',
+    },
+    headers: {
+      cookie: 'JSESSIONID=1234',
+      host: 'example.com',
+    },
     path: '/',
-    headers: { Cookie: 'JSESSIONID=1234' },
   },
 };
 
@@ -100,7 +106,11 @@ describe('Spa', () => {
       expect(config.httpClient).toBeCalledWith({
         url: 'http://example.com',
         method: 'GET',
-        headers: config.request.headers,
+        headers: {
+          cookie: 'JSESSIONID=1234',
+          'x-forwarded-for': '127.0.0.1',
+          'x-forwarded-host': 'example.com',
+        },
       });
     });
 

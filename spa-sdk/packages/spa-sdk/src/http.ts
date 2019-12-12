@@ -51,19 +51,34 @@ export type HttpClientConfig = {
 export type HttpHeaders = Partial<Record<string, string | string[]>>;
 
 /**
+ * An HTTP connection.
+ */
+export interface HttpConnection {
+  /**
+   * Client's remote IP address.
+   */
+  remoteAddress?: string;
+}
+
+/**
  * An HTTP request
  */
 export interface HttpRequest {
   /**
-   * The path part of the URL, including a query string if present.
-   * For example: '/path/to/page?foo=1'. The path always starts with '/'.
+   * HTTP connection data.
    */
-  path: string;
+  connection?: HttpConnection;
 
   /**
    * All request headers (including cookies).
    */
   headers?: HttpHeaders;
+
+  /**
+   * The path part of the URL, including a query string if present.
+   * For example: '/path/to/page?foo=1'. The path always starts with '/'.
+   */
+  path: string;
 }
 
 /**
