@@ -261,6 +261,7 @@ public class PageModelAggregationValve extends AggregationValve {
         final String id = rootWindow.getReferenceNamespace();
 
         final AggregatedPageModel aggregatedPageModel = new AggregatedPageModel(id);
+        decorateAggregatedPageModel(requestContext, aggregatedPageModel);
 
         final ComponentWindowModel pageWindowModel = new ComponentWindowModel(rootWindow);
 
@@ -454,6 +455,23 @@ public class PageModelAggregationValve extends AggregationValve {
         } else {
             log.warn("Expected a 'PageModelPipeline' always to be nested below a parent site mount. This is not the " +
                     "case for '{}'. Cannot add site links", selfMount);
+        }
+    }
+
+
+    /**
+     * Invoke custom metadata decorators to give a chance to add more metadata for the aggregated page model.
+     * @param requestContext the HST requestContext object
+     * @param aggregatedPageModel MetadataContributable model
+     */
+    private void decorateAggregatedPageModel(final HstRequestContext requestContext,
+                                             final AggregatedPageModel aggregatedPageModel) {
+        if (CollectionUtils.isEmpty(metadataDecorators)) {
+            return;
+        }
+
+        for (MetadataDecorator decorator : metadataDecorators) {
+            decorator.decorateAggregatedPageModelMetadata(requestContext, aggregatedPageModel);
         }
     }
 

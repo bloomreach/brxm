@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,6 +26,15 @@ import org.hippoecm.hst.core.sitemenu.CommonMenu;
  * Decorator interface to allow custom decorators to add more metadata.
  */
 public interface MetadataDecorator {
+
+    /**
+     * Decorate the given page model's {@code metadataModel}.
+     * @param requestContext hst requestContext instance
+     * @param metadataModel metadata model object to decorate for the page model
+     */
+    default void decorateAggregatedPageModelMetadata(HstRequestContext requestContext,
+                                             MetadataContributable metadataModel) {
+    }
 
     /**
      * Decorate the given component window's {@code metadataModel}, either component window or container window.
