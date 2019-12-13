@@ -50,6 +50,7 @@ import org.slf4j.LoggerFactory;
 import static org.apache.commons.collections.MapUtils.isNotEmpty;
 import static org.apache.jackrabbit.JcrConstants.JCR_VERSIONLABELS;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_VERSION_HISTORY_PROPERTY;
+import static org.hippoecm.repository.api.HippoNodeType.NT_COMPOUND;
 import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
@@ -256,6 +257,10 @@ public class ObjectConverterImpl implements ObjectConverter {
 
     boolean isDocumentType(final Node node) throws RepositoryException {
         return node.isNodeType(NT_DOCUMENT) && node.getParent().isNodeType(NT_HANDLE);
+    }
+
+    boolean isCompoundType(final Node node) throws RepositoryException {
+        return node.isNodeType(NT_COMPOUND);
     }
 
     Node getActualNode(final Node node) throws RepositoryException {
