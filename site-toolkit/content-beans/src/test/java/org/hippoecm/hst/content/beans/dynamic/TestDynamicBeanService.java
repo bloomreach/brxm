@@ -70,6 +70,8 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
     private static final String CONTENT_BLOCKS_TYPE_METHOD_NAME = "getContentblocks";
     private static final String CONTENT_BLOCKS_TYPE_WITH_VALIDATOR_METHOD_NAME = "getContentblocksWithValidator";
     private static final String ESSENTIALS_GENERATED_CONTENT_BLOCKS_TYPE_METHOD_NAME = "getEssentialsGeneratedContentblocks";
+    private static final String HTMLBLOCK_TYPE_GETTEXT_METHOD_NAME = "getText";
+
 
     private DateFormat dateParser = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
 
@@ -367,7 +369,7 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         assertNotNull("The method '" + CONTENT_BLOCKS_TYPE_METHOD_NAME + "' didn't return any value", htmlBlocks);
 
         HippoBean contentBlocksBean = htmlBlocks.get(0);
-        HippoHtml contentBlocksText = (HippoHtml) contentBlocksBean.getClass().getMethod("getText").invoke(contentBlocksBean);
+        HippoHtml contentBlocksText = (HippoHtml) contentBlocksBean.getClass().getMethod(HTMLBLOCK_TYPE_GETTEXT_METHOD_NAME).invoke(contentBlocksBean);
 
         assertEquals("Welcome Home!", contentBlocksText.getContent());
     }
@@ -383,7 +385,7 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         assertNotNull("The method '" + CONTENT_BLOCKS_TYPE_WITH_VALIDATOR_METHOD_NAME + "' didn't return any value", htmlBlocks);
 
         HippoBean contentBlocksBean = htmlBlocks.get(0);
-        HippoHtml contentBlocksText = (HippoHtml) contentBlocksBean.getClass().getMethod("getText").invoke(contentBlocksBean);
+        HippoHtml contentBlocksText = (HippoHtml) contentBlocksBean.getClass().getMethod(HTMLBLOCK_TYPE_GETTEXT_METHOD_NAME).invoke(contentBlocksBean);
 
         assertEquals("Welcome Home with validator!", contentBlocksText.getContent());
     }
@@ -399,9 +401,26 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         assertNotNull("The method '" + ESSENTIALS_GENERATED_CONTENT_BLOCKS_TYPE_METHOD_NAME + "' didn't return any value", htmlBlocks);
 
         HippoBean contentBlocksBean = htmlBlocks.get(0);
-        HippoHtml contentBlocksText = (HippoHtml) contentBlocksBean.getClass().getMethod("getText").invoke(contentBlocksBean);
+        HippoHtml contentBlocksText = (HippoHtml) contentBlocksBean.getClass().getMethod(HTMLBLOCK_TYPE_GETTEXT_METHOD_NAME).invoke(contentBlocksBean);
 
         assertEquals("Welcome Home with Essentials!", contentBlocksText.getContent());
     }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void testGetContentOfEssentialsGeneratedContentBlocksTypeWithoutContentBean_for_unregistered_compound_type() throws Exception {
+
+        Object generatedBean = getContentBean();
+
+        List<HippoBean> htmlBlocks = callContentBeanMethod(generatedBean, ESSENTIALS_GENERATED_CONTENT_BLOCKS_TYPE_METHOD_NAME, List.class);
+
+        assertNotNull("The method '" + ESSENTIALS_GENERATED_CONTENT_BLOCKS_TYPE_METHOD_NAME + "' didn't return any value", htmlBlocks);
+
+        HippoBean contentBlocksBean = htmlBlocks.get(1);
+        HippoHtml contentBlocksText = (HippoHtml) contentBlocksBean.getClass().getMethod(HTMLBLOCK_TYPE_GETTEXT_METHOD_NAME).invoke(contentBlocksBean);
+
+        assertEquals("Welcome Home with Essentials and lazy loaded types!", contentBlocksText.getContent());
+    }
+
 
 }

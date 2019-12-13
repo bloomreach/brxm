@@ -47,5 +47,7 @@
 
 [contentbeanstest:htmlblock] > hippo:compound, hippostd:relaxed
 
+[contentbeanstest:htmlblock2] > hippo:compound, hippostd:relaxed
+
 [contentbeanstest:contentblocks] > hippo:compound, hippostd:relaxed
   orderable
