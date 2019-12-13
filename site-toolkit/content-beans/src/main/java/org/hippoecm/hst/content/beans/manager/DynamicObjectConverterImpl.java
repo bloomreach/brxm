@@ -104,7 +104,7 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
                     return null;
                 }
 
-                if (isDocumentType(useNode)) {
+                if (isDocumentType(useNode) || isCompoundType(useNode)) {
                     delegateeClass = createDynamicBeanDefinition(useNode);
                 }
 
