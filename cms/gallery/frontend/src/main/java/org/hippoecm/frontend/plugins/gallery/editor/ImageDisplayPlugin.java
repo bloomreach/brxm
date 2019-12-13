@@ -126,14 +126,15 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
 
     protected Fragment createImageFragment(String id, final JcrResourceStream resource, Node node, IPluginConfig config)
             throws RepositoryException {
-        Fragment fragment = new Fragment(id, "image", this);
-
-        int width = (int)getWidthOrZero(node);
-        int height = (int)getHeightOrZero(node);
-
+        final boolean displayMetaData  = config.getBoolean("display.meta.showSize");
+        final Fragment fragment = displayMetaData ? new Fragment(id, "imageMeta", this) : new Fragment(id, "image", this);
+        if (displayMetaData) {
+            addFileSizeData(resource, id, fragment);
+        }
+        int width = getWidthOrZero(node);
+        int height = getHeightOrZero(node);
         fragment.add(new JcrImage("image", resource, width, height));
         addImageMetaData(node, fragment);
-
         return fragment;
     }
 
@@ -178,6 +179,13 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
 
     private Fragment createEmbedFragment(String id, final JcrResourceStream resource, final String filename) throws RepositoryException {
         Fragment fragment = new Fragment(id, "embed", this);
+        addFileSizeData(resource, filename, fragment);
+        final Node node = getModelObject();
+        addImageMetaData(node, fragment);
+        return fragment;
+    }
+
+    private void addFileSizeData(final JcrResourceStream resource, final String filename, final Fragment fragment) {
         fragment.add(new Label("filesize", Model.of(formatter.format(resource.length().bytes()))));
         fragment.add(new Label("mimetype", Model.of(resource.getContentType())));
         fragment.add(new ResourceLink<Void>("link", new JcrResource(resource) {
@@ -201,9 +209,6 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
             }
 
         });
-        final Node node = getModelObject();
-        addImageMetaData(node, fragment);
-        return fragment;
     }
 
     @Override
