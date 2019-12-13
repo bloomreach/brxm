@@ -1,5 +1,5 @@
 <!--
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,34 @@
       </li>
       <li>
         <label class="simple-editor-label"><wicket:message key="height.label">Height: </wicket:message></label><span wicket:id="height" class="simple-editor-value"> </span> <span class="simple-editor-value"><wicket:message key="pixels.suffix"></wicket:message></span>
+      </li>
+    </ul>
+  </wicket:fragment>
+  <wicket:fragment wicket:id="imageMeta">
+    <img wicket:id="image" />
+    <ul>
+      <li>
+        <label class="simple-editor-label"><wicket:message key="width.label">Width: </wicket:message></label><span wicket:id="width" class="simple-editor-value"> </span> <span class="simple-editor-value"><wicket:message key="pixels.suffix"></wicket:message></span>
+      </li>
+      <li>
+        <label class="simple-editor-label"><wicket:message key="height.label">Height: </wicket:message></label><span wicket:id="height" class="simple-editor-value"> </span> <span class="simple-editor-value"><wicket:message key="pixels.suffix"></wicket:message></span>
+      </li>
+    </ul>
+    <ul>
+      <li>
+        <label class="simple-editor-label">
+          <wicket:message key="mimetype.label">Mime type:</wicket:message>
+        </label><span wicket:id="mimetype" class="simple-editor-value"></span>
+      </li>
+      <li>
+        <label class="simple-editor-label">
+          <wicket:message key="filesize.label">File size:</wicket:message>
+        </label><span wicket:id="filesize" class="simple-editor-value"></span>
+      </li>
+      <li>
+        <a wicket:id="link" class="simple-editor-value">
+          <wicket:message key="download.link">link</wicket:message>
+        </a>
       </li>
     </ul>
   </wicket:fragment>
