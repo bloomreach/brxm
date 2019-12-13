@@ -15,10 +15,13 @@
  */
 
 import { TestBed } from '@angular/core/testing';
+import { NavItem } from '@bloomreach/navapp-communication';
 
 import { NavItemMock } from '../../models/dto/nav-item.mock';
 import { MenuItemContainerMock } from '../models/menu-item-container.mock';
+import { MenuItemContainer } from '../models/menu-item-container.model';
 import { MenuItemLinkMock } from '../models/menu-item-link.mock';
+import { MenuItemLink } from '../models/menu-item-link.model';
 
 import { MenuBuilderService } from './menu-builder.service';
 import { MenuStructureService } from './menu-structure.service';
@@ -26,26 +29,41 @@ import { MenuStructureService } from './menu-structure.service';
 describe('MenuBuilderService', () => {
   let menuBuilderService: MenuBuilderService;
 
-  const menuStructureServiceMock = jasmine.createSpyObj(
-    'MenuStructureService',
-    ['getMenuStructure', 'addExtension'],
-  );
+  const createMenuItemLink = (id: string, caption: string, navItem: NavItem, icon?: string) => {
+    return Object.assign(
+      new MenuItemLink(id, caption, icon),
+      { navItem },
+    );
+  };
 
-  const menuItemsMock = [
-    new MenuItemLinkMock({ id: 'testNavItemId', caption: 'Root menu item 1', navItem: null }),
-    new MenuItemContainerMock({
-      caption: 'submenu',
-      children: [
-        new MenuItemLinkMock({ id: 'subitem1', caption: 'Sub item 1', navItem: null }),
-        new MenuItemLinkMock({ id: 'subitem2', caption: 'Sub item 2', navItem: null }),
-        new MenuItemLinkMock({ id: 'subitem3', caption: 'Sub item 3', navItem: null }),
+  const getMenuStructure = () => [
+    new MenuItemLink('testNavItemId', 'Root menu item 1'),
+    new MenuItemContainer(
+      'Container menu item 1',
+      [
+        new MenuItemLink('subitem1', 'Sub item 1'),
+        new MenuItemLink('subitem2', 'Sub item 2'),
+        new MenuItemLink('subitem3', 'Sub item 3'),
+        new MenuItemContainer(
+          'Sub container menu item 1',
+          [
+            new MenuItemLink('subsubitem1', 'Sub item 1'),
+            new MenuItemLink('subsubitem2', 'Sub item 2'),
+            new MenuItemLink('subsubitem3', 'Sub item 3'),
+          ],
+        ),
       ],
-    }),
+    ),
   ];
 
-  menuStructureServiceMock.getMenuStructure.and.returnValue(menuItemsMock);
+  const menuStructureServiceMock = jasmine.createSpyObj('MenuStructureService', [
+    'getMenuStructure',
+    'addExtension',
+  ]);
 
   beforeEach(() => {
+    menuStructureServiceMock.getMenuStructure.and.returnValue(getMenuStructure());
+
     TestBed.configureTestingModule({
       providers: [
         MenuBuilderService,
@@ -58,10 +76,27 @@ describe('MenuBuilderService', () => {
 
   it('should get the filtered menu populated with app paths', () => {
     const expected = [
-      new MenuItemLinkMock({ id: 'testNavItemId', caption: 'Root menu item 1', navItem: new NavItemMock() }),
+      createMenuItemLink('testNavItemId', 'Root menu item 1', new NavItemMock({ id: 'testNavItemId' })),
     ];
 
-    const navItemsMock = [new NavItemMock()];
+    const navItemsMock = [
+      new NavItemMock({ id: 'testNavItemId' }),
+    ];
+    const actual = menuBuilderService.buildMenu(navItemsMock);
+
+    expect(actual).toEqual(expected);
+  });
+
+  it('should get the filtered and reduced menu populated with app paths', () => {
+    const expected = [
+      createMenuItemLink('testNavItemId', 'Root menu item 1', new NavItemMock({ id: 'testNavItemId' })),
+      createMenuItemLink('subsubitem3', 'Sub item 3', new NavItemMock({ id: 'subsubitem3' })),
+    ];
+
+    const navItemsMock = [
+      new NavItemMock({ id: 'testNavItemId' }),
+      new NavItemMock({ id: 'subsubitem3' }),
+    ];
     const actual = menuBuilderService.buildMenu(navItemsMock);
 
     expect(actual).toEqual(expected);
@@ -69,7 +104,7 @@ describe('MenuBuilderService', () => {
 
   it('should add a nav item as an extension menu item when displayName is set', () => {
     const expected = [
-      new MenuItemLinkMock({ id: 'testNavItemId', caption: 'Root menu item 1', navItem: new NavItemMock() }),
+      createMenuItemLink('testNavItemId', 'Root menu item 1', new NavItemMock()),
     ];
 
     const navItemsMock = [

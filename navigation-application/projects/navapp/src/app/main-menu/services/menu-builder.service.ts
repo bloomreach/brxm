@@ -31,7 +31,10 @@ export class MenuBuilderService {
     const menu = this.menuStructureService.getMenuStructure();
 
     this.applyNavItems(menu, navItems);
-    return this.removeEmptyLeaves(menu);
+
+    const menuWithoutEmptyLeaves = this.removeEmptyLeaves(menu);
+
+    return this.reduceUnnecessaryNesting(menuWithoutEmptyLeaves);
   }
 
   private applyNavItems(menu: MenuItem[], navItems: NavItem[]): void {
@@ -65,6 +68,28 @@ export class MenuBuilderService {
 
       throw new Error('MenuItem has unknown type.');
     });
+  }
+
+  private reduceUnnecessaryNesting(items: MenuItem[]): MenuItem[] {
+    return items.map(item => {
+      if (!(item instanceof MenuItemContainer)) {
+        return item;
+      }
+
+      item.children = this.reduceUnnecessaryNesting(item.children);
+
+      if (item.children.length === 1) {
+        return this.levelUpLink(item.children[0] as MenuItemLink, item);
+      }
+
+      return item;
+    });
+  }
+
+  private levelUpLink(link: MenuItemLink, linkContainer: MenuItemContainer): MenuItemLink {
+    link.icon = linkContainer.icon;
+
+    return link;
   }
 
   private getMenuItemLinks(menu: MenuItem[]): MenuItemLink[] {
