@@ -21,13 +21,13 @@ import {
   transition,
   trigger,
 } from '@angular/animations';
-import { Component, HostBinding, Input, OnChanges } from '@angular/core';
+import { Component, HostBinding, Input, OnChanges, QueryList, ViewChildren } from '@angular/core';
 
 import { QaHelperService } from '../../../services/qa-helper.service';
 import { MenuItemContainer } from '../../models/menu-item-container.model';
-import { MenuItemLink } from '../../models/menu-item-link.model';
 import { MenuItem } from '../../models/menu-item.model';
 import { MenuStateService } from '../../services/menu-state.service';
+import { ExpandableSubMenuItemComponent } from '../expandable-sub-menu-item/expandable-sub-menu-item.component';
 
 @Component({
   selector: 'brna-expandable-menu-item',
@@ -51,6 +51,9 @@ export class ExpandableMenuItemComponent implements OnChanges {
   @HostBinding('class.active')
   active = false;
 
+  @ViewChildren(ExpandableSubMenuItemComponent)
+  expandableSubMenuItems: QueryList<ExpandableSubMenuItemComponent>;
+
   constructor(
     private readonly menuStateService: MenuStateService,
     private readonly qaHelperService: QaHelperService,
@@ -66,8 +69,20 @@ export class ExpandableMenuItemComponent implements OnChanges {
     }
   }
 
+  onExpandableSubMenuItemClick(component: ExpandableSubMenuItemComponent): void {
+    this.expandableSubMenuItems
+      .filter(x => x !== component)
+      .forEach(x => x.close());
+  }
+
   toggle(): void {
     this.isChildMenuOpened = !this.isChildMenuOpened;
+  }
+
+  close(): void {
+    this.isChildMenuOpened = false;
+
+    this.expandableSubMenuItems.forEach(x => x.close());
   }
 
   isContainer(item: MenuItem): boolean {
