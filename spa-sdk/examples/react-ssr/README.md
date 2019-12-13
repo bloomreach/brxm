@@ -16,17 +16,17 @@ PUBLIC_URL=http://localhost:3000
 
 In the same `.env` file, also specify the brXM instance to fetch the page model from:
 ```
-BR_URL_LIVE=http://localhost:8080/site/spa-ssr/resourceapi
-SPA_BASE_PATH_LIVE=
-BR_URL_PREVIEW=http://localhost:8080/site/_cmsinternal/spa-ssr/resourceapi
-SPA_BASE_PATH_PREVIEW=/site/_cmsinternal/spa-csr
+LIVE_BR_BASE_URL=http://localhost:8080/site
+LIVE_SPA_BASE_URL=
+PREVIEW_BR_BASE_URL=http://localhost:8080/site/_cmsinternal
+PREVIEW_SPA_BASE_URL=/site/_cmsinternal?bloomreach-preview=true
 ```
 
 Finally, build and run the Next.js app as followed:
 
 ```bash
 yarn
-yarn run dev
+yarn dev
 ```
 
 The CMS should now be accessible at <http://localhost:8080/cms>, and it should render the Next.js app in preview mode in the Experience manager.
