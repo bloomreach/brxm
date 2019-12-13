@@ -23,10 +23,10 @@ import { MenuItem } from '../models/menu-item.model';
 
 @Injectable()
 export class MenuStructureService {
-  private extensions = new MenuItemContainer('Extensions', [], 'extensions');
+  private readonly extensions = new MenuItemContainer('Extensions', [], 'extensions');
 
   constructor(
-    private translateService: TranslateService,
+    private readonly translateService: TranslateService,
   ) {}
 
   addExtension(item: MenuItemLink): void {

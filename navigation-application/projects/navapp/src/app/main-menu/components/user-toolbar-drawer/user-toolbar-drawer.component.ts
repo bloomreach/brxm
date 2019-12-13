@@ -55,8 +55,8 @@ export class UserToolbarDrawerComponent {
   animate = true;
 
   constructor(
-    private authService: AuthService,
-    @Inject(USER_SETTINGS) private userSettings: UserSettings,
+    private readonly authService: AuthService,
+    @Inject(USER_SETTINGS) private readonly userSettings: UserSettings,
   ) {}
 
   get userName(): string {

@@ -33,7 +33,7 @@ export class MenuItemLinkComponent {
   @HostBinding('class.active')
   active = false;
 
-  constructor(private navigationService: NavigationService) { }
+  constructor(private readonly navigationService: NavigationService) { }
 
   onClick(e: MouseEvent): void {
     e.preventDefault();

@@ -31,15 +31,15 @@ import { NavItemService } from './nav-item.service';
 })
 export class UrlMapperService {
   // Path parts without leading and trailing slashes
-  private pathPartsToStripOffFromIframeUrl: string[] = [
+  private readonly pathPartsToStripOffFromIframeUrl: string[] = [
     'iframe',
     'sm',
   ];
 
   constructor(
-    private navItemService: NavItemService,
-    private clientAppService: ClientAppService,
-    @Inject(APP_SETTINGS) private appSettings: AppSettings,
+    private readonly navItemService: NavItemService,
+    private readonly clientAppService: ClientAppService,
+    @Inject(APP_SETTINGS) private readonly appSettings: AppSettings,
   ) {
     this.pathPartsToStripOffFromIframeUrl.unshift(
       this.trimSlashes(this.basePath),

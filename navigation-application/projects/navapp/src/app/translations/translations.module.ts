@@ -40,7 +40,7 @@ import { translateHttpLoaderFactory } from './services/translate-http-loader.fac
 })
 export class TranslationsModule {
   constructor(
-    private translateService: TranslateService,
+    private readonly translateService: TranslateService,
     @Inject(USER_SETTINGS) userSettings: UserSettings,
   ) {
     this.setUpTranslations(userSettings.language, 'en', enTranslations);

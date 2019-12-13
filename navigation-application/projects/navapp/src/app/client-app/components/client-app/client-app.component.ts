@@ -45,9 +45,9 @@ export class ClientAppComponent implements OnInit, AfterViewInit {
   safeUrl: SafeResourceUrl;
 
   constructor(
-    private domSanitizer: DomSanitizer,
-    private connectionService: ConnectionService,
-    private clientAppService: ClientAppService,
+    private readonly domSanitizer: DomSanitizer,
+    private readonly connectionService: ConnectionService,
+    private readonly clientAppService: ClientAppService,
   ) { }
 
   ngOnInit(): void {

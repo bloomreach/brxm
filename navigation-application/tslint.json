@@ -99,6 +99,7 @@
     "no-invalid-template-strings": true,
     "no-sparse-arrays": true,
     "prefer-object-spread": true,
+    "prefer-readonly": true,
     "restrict-plus-operands": true,
     "strict-boolean-expressions": false,
     "no-duplicate-imports": true,

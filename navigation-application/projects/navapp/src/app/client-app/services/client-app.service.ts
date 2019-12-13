@@ -37,16 +37,16 @@ interface ClientAppWithConfig {
 
 @Injectable()
 export class ClientAppService {
-  private uniqueURLs = new BehaviorSubject<string[]>([]);
-  private connectedApps: Map<string, ClientAppWithConfig> = new Map<string, ClientAppWithConfig>();
-  private activeAppId = new BehaviorSubject<string>(undefined);
-  private connectionCounter$ = new ReplaySubject<Connection>();
-  private userActivityReceived$ = new Subject<ClientApp>();
+  private readonly uniqueURLs = new BehaviorSubject<string[]>([]);
+  private readonly connectedApps: Map<string, ClientAppWithConfig> = new Map<string, ClientAppWithConfig>();
+  private readonly activeAppId = new BehaviorSubject<string>(undefined);
+  private readonly connectionCounter$ = new ReplaySubject<Connection>();
+  private readonly userActivityReceived$ = new Subject<ClientApp>();
 
   constructor(
-    @Inject(APP_SETTINGS) private appSettings: AppSettings,
-    private navItemService: NavItemService,
-    private logger: NGXLogger,
+    @Inject(APP_SETTINGS) private readonly appSettings: AppSettings,
+    private readonly navItemService: NavItemService,
+    private readonly logger: NGXLogger,
   ) { }
 
   get urls$(): Observable<string[]> {

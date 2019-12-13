@@ -60,12 +60,12 @@ export class SiteSelectionComponent implements OnInit, OnDestroy {
 
   private sites: Site[];
   private selectedSite: Site;
-  private unsubscribe = new Subject();
+  private readonly unsubscribe = new Subject();
 
   constructor(
-    private siteService: SiteService,
-    private rightSidePanelService: RightSidePanelService,
-    private windowRef: WindowRef,
+    private readonly siteService: SiteService,
+    private readonly rightSidePanelService: RightSidePanelService,
+    private readonly windowRef: WindowRef,
   ) { }
 
   get isNotFoundPanelVisible(): boolean {

@@ -32,8 +32,8 @@ export class ErrorPageComponent {
   error: AppError;
 
   constructor(
-    private navigationService: NavigationService,
-    private menuStateService: MenuStateService,
+    private readonly navigationService: NavigationService,
+    private readonly menuStateService: MenuStateService,
   ) {}
 
   get isGoToHomeButtonVisible(): boolean {

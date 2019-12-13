@@ -38,8 +38,8 @@ import { registerIcons as registerMenuIcons } from './menu-icons';
 })
 export class MaterialModule {
   constructor(
-    private iconRegistry: MatIconRegistry,
-    private donSanitizer: DomSanitizer,
+    private readonly iconRegistry: MatIconRegistry,
+    private readonly donSanitizer: DomSanitizer,
   ) {
     this.registerSvgIcons();
   }

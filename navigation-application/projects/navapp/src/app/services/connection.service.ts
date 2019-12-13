@@ -37,8 +37,8 @@ export interface ChildConnection {
   providedIn: 'root',
 })
 export class ConnectionService {
-  private connections = new Map<string, ChildConnection>();
-  private renderer: Renderer2 = this.rendererFactory.createRenderer(undefined, undefined);
+  private readonly connections = new Map<string, ChildConnection>();
+  private readonly renderer: Renderer2 = this.rendererFactory.createRenderer(undefined, undefined);
 
   showMask$ = new Subject<void>();
   hideMask$ = new Subject<void>();
@@ -49,11 +49,11 @@ export class ConnectionService {
   onSessionExpired$ = new Subject<void>();
 
   constructor(
-    @Inject(APP_SETTINGS) private appSettings: AppSettings,
-    @Inject(USER_SETTINGS) private userSettings: UserSettings,
-    private rendererFactory: RendererFactory2,
-    private busyIndicatorService: BusyIndicatorService,
-    private logger: NGXLogger,
+    @Inject(APP_SETTINGS) private readonly appSettings: AppSettings,
+    @Inject(USER_SETTINGS) private readonly userSettings: UserSettings,
+    private readonly rendererFactory: RendererFactory2,
+    private readonly busyIndicatorService: BusyIndicatorService,
+    private readonly logger: NGXLogger,
   ) { }
 
   getConnection(url: string): ChildConnection {

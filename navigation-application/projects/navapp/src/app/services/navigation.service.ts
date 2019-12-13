@@ -69,22 +69,22 @@ export class NavigationService implements OnDestroy {
   private locationSubscription: Subscription;
   private readonly transitions = new Subject<Transition | Error>();
   private currentNavItem: NavItem;
-  private navigating = new BehaviorSubject(false);
+  private readonly navigating = new BehaviorSubject(false);
   private readonly navigatingFiltered: Observable<boolean>;
 
   constructor(
-    @Inject(APP_SETTINGS) private appSettings: AppSettings,
-    private breadcrumbsService: BreadcrumbsService,
-    private busyIndicatorService: BusyIndicatorService,
-    private clientAppService: ClientAppService,
-    private connectionService: ConnectionService,
-    private errorHandlingService: ErrorHandlingService,
-    private location: Location,
-    private menuStateService: MenuStateService,
-    private navItemService: NavItemService,
-    private urlMapperService: UrlMapperService,
-    private translateService: TranslateService,
-    private logger: NGXLogger,
+    @Inject(APP_SETTINGS) private readonly appSettings: AppSettings,
+    private readonly breadcrumbsService: BreadcrumbsService,
+    private readonly busyIndicatorService: BusyIndicatorService,
+    private readonly clientAppService: ClientAppService,
+    private readonly connectionService: ConnectionService,
+    private readonly errorHandlingService: ErrorHandlingService,
+    private readonly location: Location,
+    private readonly menuStateService: MenuStateService,
+    private readonly navItemService: NavItemService,
+    private readonly urlMapperService: UrlMapperService,
+    private readonly translateService: TranslateService,
+    private readonly logger: NGXLogger,
   ) {
     this.connectionService
       .navigate$

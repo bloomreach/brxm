@@ -45,15 +45,15 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   isHelpToolbarOpened = false;
   isUserToolbarOpened = false;
 
-  private homeMenuItem: MenuItemLink;
-  private unsubscribe = new Subject();
+  private readonly homeMenuItem: MenuItemLink;
+  private readonly unsubscribe = new Subject();
 
   constructor(
-    private menuStateService: MenuStateService,
-    private qaHelperService: QaHelperService,
-    private busyIndicatorService: BusyIndicatorService,
-    private navigationService: NavigationService,
-    @Inject(APP_BOOTSTRAPPED) private appBootstrapped: Promise<void>,
+    private readonly menuStateService: MenuStateService,
+    private readonly qaHelperService: QaHelperService,
+    private readonly busyIndicatorService: BusyIndicatorService,
+    private readonly navigationService: NavigationService,
+    @Inject(APP_BOOTSTRAPPED) private readonly appBootstrapped: Promise<void>,
   ) { }
 
   get isBusyIndicatorVisible(): boolean {

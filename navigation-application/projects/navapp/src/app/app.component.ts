@@ -59,14 +59,14 @@ export class AppComponent implements OnInit, OnDestroy {
 
   isLoading$: Observable<boolean>;
   isOverlayVisible = false;
-  private unsubscribe = new Subject();
+  private readonly unsubscribe = new Subject();
 
   constructor(
-    private overlayService: OverlayService,
-    private rightSidePanelService: RightSidePanelService,
-    private errorHandlingService: ErrorHandlingService,
-    @Inject(USER_SETTINGS) private userSettings: UserSettings,
-    @Inject(APP_BOOTSTRAPPED) private appBootstrapped: Promise<void>,
+    private readonly overlayService: OverlayService,
+    private readonly rightSidePanelService: RightSidePanelService,
+    private readonly errorHandlingService: ErrorHandlingService,
+    @Inject(USER_SETTINGS) private readonly userSettings: UserSettings,
+    @Inject(APP_BOOTSTRAPPED) private readonly appBootstrapped: Promise<void>,
   ) { }
 
   get error(): AppError {

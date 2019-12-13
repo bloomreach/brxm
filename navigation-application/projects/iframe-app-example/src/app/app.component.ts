@@ -49,8 +49,8 @@ export class AppComponent implements OnInit {
   parentApiVersion: string;
 
   constructor(
-    private location: Location,
-    private cookiesService: CookieService,
+    private readonly location: Location,
+    private readonly cookiesService: CookieService,
   ) { }
 
   get isBrSmMock(): boolean {
