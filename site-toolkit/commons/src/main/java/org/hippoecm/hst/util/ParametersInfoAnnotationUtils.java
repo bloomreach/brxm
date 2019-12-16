@@ -63,6 +63,26 @@ public class ParametersInfoAnnotationUtils {
                 componentClazz.getClassLoader());
     }
 
+
+    /**
+     * Find the <code>ParametersInfo</code> annotation from either the annotation of a {@code componentClazz} or the
+     * {@code componentConfig} directly.
+     * @param componentClazz component class
+     * @param componentConfig ComponentConfiguration instance
+     * @return the type of <code>ParametersInfo</code>
+     */
+    public static ParametersInfo getParametersInfoAnnotation(Class<?> componentClazz,
+                                                             ComponentConfiguration componentConfig) {
+        if (componentClazz == null) {
+            return getParametersInfoAnnotation(componentClazz,
+                    (componentConfig != null) ? componentConfig.getParametersInfoClassName() : null,
+                    Thread.currentThread().getContextClassLoader());
+        }
+        return getParametersInfoAnnotation(componentClazz,
+                (componentConfig != null) ? componentConfig.getParametersInfoClassName() : null,
+                componentClazz.getClassLoader());
+    }
+
     /**
      * Find the <code>ParametersInfo</code> annotation from either the annotation of the class of the {@code component}
      * or the {@code componentConfig} directly.
