@@ -33,14 +33,10 @@ import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.onehippo.cms7.services.HippoServiceRegistry;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
@@ -49,22 +45,32 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({HippoServiceRegistry.class})
 public class DocumentParamsScannerTest {
 
     private final static ClassLoader classLoader = DocumentParamsScannerTest.class.getClassLoader();
 
+    private HstModelRegistry hstModelRegistry;
+
     @Before
     public void setUp() throws Exception {
-        PowerMockito.mockStatic(HippoServiceRegistry.class);
-        HstModelRegistry hstModelRegistry =  Mockito.mock(HstModelRegistry.class);
-        HstModel hstModel = Mockito.mock(HstModel.class);
-        ComponentManager componentManager = Mockito.mock(ComponentManager.class);   
-        Mockito.when(HippoServiceRegistry.getService(HstModelRegistry.class)).thenReturn(hstModelRegistry);
-        Mockito.when(hstModelRegistry.getHstModel(getClass().getClassLoader())).thenReturn(hstModel);
-        Mockito.when(hstModel.getComponentManager()).thenReturn(componentManager);
-        Mockito.when(componentManager.getComponent(Mockito.anyString())).thenReturn(null);        
+
+        hstModelRegistry = EasyMock.createNiceMock(HstModelRegistry.class);
+
+        final ComponentManager componentManager = EasyMock.createNiceMock(ComponentManager.class);
+        expect(componentManager.getComponent(EasyMock.anyString())).andStubReturn(null);
+        final HstModel hstModel = EasyMock.createNiceMock(HstModel.class);
+        expect(hstModel.getComponentManager()).andStubReturn(componentManager);
+        expect(hstModelRegistry.getHstModel(EasyMock.anyObject(ClassLoader.class))).andStubReturn(hstModel);
+
+        replay(hstModelRegistry, componentManager, hstModel);
+
+        HippoServiceRegistry.register(hstModelRegistry, HstModelRegistry.class);
+
+    }
+
+    @After
+    public void tearDown() {
+        HippoServiceRegistry.unregister(hstModelRegistry, HstModelRegistry.class);
     }
     
     @Test
