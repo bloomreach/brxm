@@ -117,43 +117,34 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
     @Test
     @Ignore("Incompatible with hst-platform")
     public void testMatchRootContextPath() throws Exception {
-        Session session = createSession();
-        createHstConfigBackup(session);
-        session.save();
-        Thread.sleep(100);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        GenericHttpServletRequestWrapper containerRequest;
+        {
+            MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setScheme("http");
+            request.setServerName("localhost");
+            request.addHeader("Host", "localhost");
+            setRequestInfo(request, "/site", "/news/2009");
+            containerRequest = new HstContainerRequestImpl(request, hstSitesManager.getPathSuffixDelimiter());
+        }
+
         try {
-            MockHttpServletResponse response = new MockHttpServletResponse();
-            GenericHttpServletRequestWrapper containerRequest;
-            {
-                MockHttpServletRequest request = new MockHttpServletRequest();
-                request.setScheme("http");
-                request.setServerName("localhost");
-                request.addHeader("Host", "localhost");
-                setRequestInfo(request, "/site", "/news/2009");
-                containerRequest = new HstContainerRequestImpl(request, hstSitesManager.getPathSuffixDelimiter());
-            }
+            VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+            ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
+                    HstRequestUtils.getRequestPath(containerRequest));
+            setHstServletPath(containerRequest, mount);
 
-            try {
-                VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
-                ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                        HstRequestUtils.getRequestPath(containerRequest));
-                setHstServletPath(containerRequest, mount);
+            HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
+            ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
 
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
-                ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
-
-                assertTrue("The relative content path must be '/News/2009' but was '" + resolvedSiteMapItem.getHstSiteMapItem().getRelativeContentPath() + "'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
-                assertTrue("The expected id of the resolved sitemap item is 'news/_default_' but was '" + resolvedSiteMapItem.getHstSiteMapItem().getId() + "'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
-                // the requestURI did not match the preview Mount, so our Mount must be live:
-                assertFalse("We should have a match in LIVE ", resolvedSiteMapItem.getResolvedMount().getMount().isPreview());
-                assertTrue("The live Mount must have an empty string \"\" as mountPath", "".equals(resolvedSiteMapItem.getResolvedMount().getResolvedMountPath()));
-            } catch (ContainerException e) {
-                fail(e.getMessage());
-                e.printStackTrace();
-            }
-        } finally {
-            restoreHstConfigBackup(session);
-            session.logout();
+            assertTrue("The relative content path must be '/News/2009' but was '" + resolvedSiteMapItem.getHstSiteMapItem().getRelativeContentPath() + "'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
+            assertTrue("The expected id of the resolved sitemap item is 'news/_default_' but was '" + resolvedSiteMapItem.getHstSiteMapItem().getId() + "'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
+            // the requestURI did not match the preview Mount, so our Mount must be live:
+            assertFalse("We should have a match in LIVE ", resolvedSiteMapItem.getResolvedMount().getMount().isPreview());
+            assertTrue("The live Mount must have an empty string \"\" as mountPath", "".equals(resolvedSiteMapItem.getResolvedMount().getResolvedMountPath()));
+        } catch (ContainerException e) {
+            fail(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -175,37 +166,29 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
             setRequestInfo(request, "", "/preview/news/2009");
             containerRequest = new HstContainerRequestImpl(request, hstSitesManager.getPathSuffixDelimiter());
         }
-        Session session = createSession();
-        createHstConfigBackup(session);
-        session.save();
-        Thread.sleep(100);
+
         try {
-            try {
-                VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+            VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
 
-                ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                        HstRequestUtils.getRequestPath(containerRequest));
+            ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
+                    HstRequestUtils.getRequestPath(containerRequest));
 
-                setHstServletPath(containerRequest, mount);
+            setHstServletPath(containerRequest, mount);
 
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
+            HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
 
-                final ResolvedMount resolvedMount = vhosts.matchMount(hstContainerURL.getHostName(),
-                        hstContainerURL.getRequestPath());
-                ResolvedSiteMapItem resolvedSiteMapItem = resolvedMount.matchSiteMapItem(hstContainerURL.getPathInfo());
+            final ResolvedMount resolvedMount = vhosts.matchMount(hstContainerURL.getHostName(),
+                    hstContainerURL.getRequestPath());
+            ResolvedSiteMapItem resolvedSiteMapItem = resolvedMount.matchSiteMapItem(hstContainerURL.getPathInfo());
 
-                assertTrue("The relative content path must be '/News/2009'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
-                assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
-                // the Mount from the requestURI should match the preview Mount, so our Mount must be preview:
-                assertTrue("We should have a match in PREVIEW  ", resolvedSiteMapItem.getResolvedMount().getMount().isPreview());
-                assertTrue("The preview Mount must have '/preview' as mountPath", "/preview".equals(resolvedSiteMapItem.getResolvedMount().getResolvedMountPath()));
-            } catch (ContainerException e) {
-                fail(e.getMessage());
-                e.printStackTrace();
-            }
-        } finally {
-            restoreHstConfigBackup(session);
-            session.logout();
+            assertTrue("The relative content path must be '/News/2009'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
+            assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
+            // the Mount from the requestURI should match the preview Mount, so our Mount must be preview:
+            assertTrue("We should have a match in PREVIEW  ", resolvedSiteMapItem.getResolvedMount().getMount().isPreview());
+            assertTrue("The preview Mount must have '/preview' as mountPath", "/preview".equals(resolvedSiteMapItem.getResolvedMount().getResolvedMountPath()));
+        } catch (ContainerException e) {
+            fail(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -285,44 +268,32 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
     @Ignore("Incompatible with hst-platform")
     public void testMatchWithContextPathAgnosticMounts() throws Exception {
         MockHttpServletResponse response = new MockHttpServletResponse();
-        Session session = createSession();
-        createHstConfigBackup(session);
 
-        final HstModelRegistry modelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-        final HstModel hstModel = modelRegistry.getHstModel("/site");
+        GenericHttpServletRequestWrapper containerRequest;
+        {
+            MockHttpServletRequest request = new MockHttpServletRequest();
+            request.setScheme("http");
+            request.setServerName("localhost");
+            request.addHeader("Host", "localhost");
+            setRequestInfo(request, "/fooooo", "/news/2009");
+            containerRequest = new HstContainerRequestImpl(request, hstSitesManager.getPathSuffixDelimiter());
+        }
 
-        session.save();
-        Thread.sleep(100);
         try {
-            GenericHttpServletRequestWrapper containerRequest;
-            {
-                MockHttpServletRequest request = new MockHttpServletRequest();
-                request.setScheme("http");
-                request.setServerName("localhost");
-                request.addHeader("Host", "localhost");
-                setRequestInfo(request, "/fooooo", "/news/2009");
-                containerRequest = new HstContainerRequestImpl(request, hstSitesManager.getPathSuffixDelimiter());
-            }
+            VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+            ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
+                    HstRequestUtils.getRequestPath(containerRequest));
+            setHstServletPath(containerRequest, mount);
+            HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
+            ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
 
-            try {
-                VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
-                ResolvedMount mount = vhosts.matchMount(HstRequestUtils.getFarthestRequestHost(containerRequest),
-                        HstRequestUtils.getRequestPath(containerRequest));
-                setHstServletPath(containerRequest, mount);
-                HstContainerURL hstContainerURL = hstURLFactory.getContainerURLProvider().parseURL(containerRequest, response, mount);
-                ResolvedSiteMapItem resolvedSiteMapItem = mount.matchSiteMapItem(hstContainerURL.getPathInfo());
-
-                assertTrue("The relative content path must be '/News/2009'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
-                assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
-                assertFalse("We should have a match in LIVE ", resolvedSiteMapItem.getResolvedMount().getMount().isPreview());
-                assertTrue("The live Mount must have an empty string \"\" as mountPath", "".equals(resolvedSiteMapItem.getResolvedMount().getResolvedMountPath()));
-            } catch (ContainerException e) {
-                fail(e.getMessage());
-                e.printStackTrace();
-            }
-        } finally {
-            restoreHstConfigBackup(session);
-            session.logout();
+            assertTrue("The relative content path must be '/News/2009'", "News/2009".equals(resolvedSiteMapItem.getRelativeContentPath()));
+            assertTrue("The expected id of the resolved sitemap item is 'news/_default_'", "news/_default_".equals(resolvedSiteMapItem.getHstSiteMapItem().getId()));
+            assertFalse("We should have a match in LIVE ", resolvedSiteMapItem.getResolvedMount().getMount().isPreview());
+            assertTrue("The live Mount must have an empty string \"\" as mountPath", "".equals(resolvedSiteMapItem.getResolvedMount().getResolvedMountPath()));
+        } catch (ContainerException e) {
+            fail(e.getMessage());
+            e.printStackTrace();
         }
     }
 
