@@ -15,8 +15,6 @@
 
 package org.hippoecm.frontend.usagestatistics.events;
 
-import java.util.Optional;
-
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.HippoNodeType;
@@ -47,27 +45,27 @@ public class HandleIdentifierStrategyTest {
 
     @Test
     public void getIdentifierFromRootReturnEmpty() throws RepositoryException {
-        final Optional<String> actual = strategy.getIdentifier(root);
-        Assert.assertFalse(actual.isPresent());
+        final String actual = strategy.getIdentifier(root);
+        Assert.assertNotNull(actual);
     }
 
     @Test
     public void getIdentifierFromHandleReturnIdentifierOfHandle() throws RepositoryException {
         final String expected = handle.getIdentifier();
-        final String actual = strategy.getIdentifier(handle).orElseThrow(IllegalStateException::new);
+        final String actual = strategy.getIdentifier(handle);
         Assert.assertEquals(expected, actual);
     }
 
     @Test
     public void getIdentifierFromDescendantOfHandleReturnIdentifierOfHandle() throws RepositoryException{
         final String expected = handle.getIdentifier();
-        final String actual = strategy.getIdentifier(childOfHandle).orElseThrow(IllegalStateException::new);
+        final String actual = strategy.getIdentifier(childOfHandle);
         Assert.assertEquals(expected, actual);
     }
 
     @Test
     public void getIdentifierAscendantOfHandleDescendantOfRootReturnEmpty() throws RepositoryException{
-        final Optional<String> actual = strategy.getIdentifier(descendantOfRootAscendantOfHandle);
-        Assert.assertFalse(actual.isPresent());
+        final String actual = strategy.getIdentifier(descendantOfRootAscendantOfHandle);
+        Assert.assertNotNull(actual);
     }
 }

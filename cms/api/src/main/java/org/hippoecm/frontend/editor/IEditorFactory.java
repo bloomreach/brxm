@@ -28,12 +28,13 @@ public interface IEditorFactory extends IClusterable {
     String SERVICE_ID = "editor.factory.id";
 
     /**
-     * Create an editor for a node model.  Returns null if no editor can be created.
-     * 
-     * @param manager
-     * @param nodeModel
-     * @param mode
-     * @throws EditorException
+     * Tries to create an {@link IEditor} instance.
+     *
+     * @param nodeModel {@link IEditorContext}
+     * @param mode {@link IEditor.Mode}
+     * @param parameters {@link IPluginConfig}
+     * @return {@link IEditor} instance or {@code null} if no editor could be created
+     * @throws EditorException if an error occured
      */
     IEditor<Node> newEditor(IEditorContext manager, IModel<Node> nodeModel, IEditor.Mode mode, IPluginConfig parameters)
             throws EditorException;
