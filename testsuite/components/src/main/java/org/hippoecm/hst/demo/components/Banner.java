@@ -23,8 +23,13 @@ import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 
+@Component("bannerComponent")
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @ParametersInfo(type = BannerInfo.class)
 public class Banner extends BaseHstComponent {
     public static final Logger log = LoggerFactory.getLogger(Banner.class);

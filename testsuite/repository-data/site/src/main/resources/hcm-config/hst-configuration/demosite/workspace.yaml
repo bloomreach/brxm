@@ -159,13 +159,15 @@ definitions:
             hst:xtype: HST.UnorderedList
             /banner1-ul:
               jcr:primaryType: hst:containeritemcomponent
-              hst:componentclassname: org.hippoecm.hst.demo.components.Banner
+              hst:componentclassname: bannerComponent
+              hst:parametersinfoclassname: org.hippoecm.hst.demo.components.BannerInfo
               hst:template: banner
               hst:xtype: HST.Item
               hst:label: Banner1Ul
             /banner2-ul:
               jcr:primaryType: hst:containeritemcomponent
-              hst:componentclassname: org.hippoecm.hst.demo.components.Banner
+              hst:componentclassname: bannerComponent
+              hst:parametersinfoclassname: org.hippoecm.hst.demo.components.BannerInfo
               hst:template: banner
               hst:xtype: HST.Item
               hst:label: Banner2Ul
