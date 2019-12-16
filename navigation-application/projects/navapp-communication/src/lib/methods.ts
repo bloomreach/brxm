@@ -14,12 +14,8 @@
  * limitations under the License.
  */
 
-import 'zone.js/dist/zone';
-import 'zone.js/dist/zone-testing';
+import { ChildApi, ParentApi } from './api';
 
-// This file is required by karma.conf.js and loads recursively all the .spec and framework files
+type MethodNames = keyof ChildApi | keyof ParentApi;
 
-// We find all the tests.
-const context = (require as any).context('./lib', true, /\.ts$/);
-// And load the modules.
-context.keys().map(context);
+export type Methods = { [k in MethodNames]?: (...args: any[]) => any };

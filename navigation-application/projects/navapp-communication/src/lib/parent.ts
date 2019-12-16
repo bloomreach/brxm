@@ -17,50 +17,10 @@
 import Penpal from 'penpal';
 
 import {
-  ChildApi,
-  ChildPromisedApi,
   ParentConnectConfig,
   ParentPromisedApi,
 } from './api';
-import { DEFAULT_COMMUNICATION_TIMEOUT } from './utils';
 
-export async function getTimeoutValue(api: ChildApi): Promise<number> {
-  let timeout = DEFAULT_COMMUNICATION_TIMEOUT;
-
-  if (api.getConfig) {
-    const config = await api.getConfig();
-
-    if (config.communicationTimeout) {
-      timeout = config.communicationTimeout;
-    }
-  }
-
-  return timeout;
-}
-
-export async function wrapWithTimeout(api: ChildApi, timeout: number): Promise<ChildPromisedApi> {
-  return Object
-    .keys(api)
-    .reduce((wrappedApi, methodName) => {
-      wrappedApi[methodName] = (...args) => {
-        return new Promise(async (resolve, reject) => {
-          const timer = setTimeout(() => {
-            reject(`${methodName} call timed out`);
-          }, timeout);
-
-          try {
-            const value = await api[methodName](...args);
-            clearTimeout(timer);
-            resolve(value);
-          } catch (error) {
-            reject(error);
-          }
-        });
-      };
-
-      return wrappedApi;
-    }, {});
-}
 /**
  * Method to connect to a parent window.
  *
@@ -71,7 +31,5 @@ export async function connectToParent({
   parentOrigin,
   methods,
 }: ParentConnectConfig): Promise<ParentPromisedApi> {
-  const timeout = await getTimeoutValue(methods);
-  const proxyMethods = await wrapWithTimeout(methods, timeout);
-  return Penpal.connectToParent({ parentOrigin, methods: proxyMethods }).promise;
+  return Penpal.connectToParent({ parentOrigin, methods }).promise;
 }

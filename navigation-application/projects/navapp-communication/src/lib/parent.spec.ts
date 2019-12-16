@@ -15,111 +15,26 @@
  */
 
 import Penpal from 'penpal';
-import { NavItemMock } from 'projects/navapp/src/app/models/dto/nav-item.mock';
 
-import { ChildApi, ChildConfig, NavigationTrigger, NavItem } from './api';
-import { connectToParent, getTimeoutValue, wrapWithTimeout } from './parent';
-import { DEFAULT_COMMUNICATION_TIMEOUT } from './utils';
+import { connectToParent } from './parent';
 
 describe('connectToParent', () => {
-  const navItemsMock = [
-    new NavItemMock(),
-    new NavItemMock(),
-  ];
-
   beforeEach(() => {
     spyOn(Penpal, 'connectToParent').and.returnValue({ promise: Promise.resolve() });
   });
 
-  describe('connectToParent', () => {
-    it('should pass the config methods to penpal', async () => {
-      const parentOrigin = 'about:blank';
-      const config = {
-        parentOrigin,
-        methods: {},
-      };
+  it('should pass the config methods to penpal', async () => {
+    const parentOrigin = 'about:blank';
+    const config = {
+      parentOrigin,
+      methods: {},
+    };
 
-      await connectToParent(config);
+    await connectToParent(config);
 
-      expect(Penpal.connectToParent).toHaveBeenCalledWith({
-        parentOrigin,
-        methods: {},
-      });
-    });
-  });
-
-  describe('getTimeout', () => {
-    it('should use the default timeout if config is not retrievable', async () => {
-      const api: ChildApi = {};
-      const timeout = await getTimeoutValue(api);
-      expect(timeout).toEqual(DEFAULT_COMMUNICATION_TIMEOUT);
-    });
-
-    it('should use the default timeout if timeout is not provided', async () => {
-      const api: ChildApi = {
-        getConfig: (): ChildConfig => ({
-          apiVersion: '1.0.0',
-        }),
-      };
-      const timeout = await getTimeoutValue(api);
-      expect(timeout).toEqual(DEFAULT_COMMUNICATION_TIMEOUT);
-    });
-
-    it('should use the provided timeout value if provided', async () => {
-      const api: ChildApi = {
-        getConfig: (): ChildConfig => ({
-          apiVersion: '1.0.0',
-          communicationTimeout: 100,
-        }),
-      };
-      const timeout = await getTimeoutValue(api);
-      expect(timeout).toEqual(100);
-    });
-  });
-
-  describe('wrapWithTimeout', () => {
-    it('should wrap provided api in promises if timeout value is provided', async () => {
-      const api: ChildApi = {
-        getNavItems: (): NavItem[] => navItemsMock,
-      };
-
-      const promisedApi = await wrapWithTimeout(api, 1);
-      const navItems = await promisedApi.getNavItems();
-      expect(navItems).toEqual(navItemsMock);
-    });
-
-    it('wrapped api methods should reject after timeout', async () => {
-      const api: ChildApi = {
-        navigate: (): Promise<void> => new Promise(resolve => {
-          setTimeout(resolve, 101);
-        }),
-      };
-
-      const promisedApi = await wrapWithTimeout(api, 100);
-
-      try {
-        await promisedApi.navigate({ path: 'test' }, NavigationTrigger.NotDefined);
-      } catch (err) {
-        // Error should be thrown because of timeout, so all is good
-        return;
-      }
-
-      throw new Error('Promise should have been rejected because of timeout');
-    });
-
-    it('wrapped api methods should pass be able to get rejected', async () => {
-      const errorMessage = 'Throwing error from method';
-      const api: ChildApi = {
-        navigate: (): Promise<void> => Promise.reject(errorMessage),
-      };
-
-      const promisedApi = await wrapWithTimeout(api, 100);
-
-      try {
-        await promisedApi.navigate({ path: 'test' }, NavigationTrigger.NotDefined);
-      } catch (err) {
-        expect(err).toEqual(errorMessage);
-      }
+    expect(Penpal.connectToParent).toHaveBeenCalledWith({
+      parentOrigin,
+      methods: {},
     });
   });
 });

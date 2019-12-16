@@ -104,7 +104,7 @@ describe('ClientAppService', () => {
     it('should log iframe urls', () => {
       service.init().catch(() => {});
 
-      expect(logger.debug).toHaveBeenCalledWith('Client app iframes are expected to be loaded', [
+      expect(logger.debug).toHaveBeenCalledWith('Client app iframes are expected to be loaded (2)', [
         'http://app1.com',
         'http://app2.com',
       ]);
@@ -159,7 +159,7 @@ describe('ClientAppService', () => {
 
       service.addConnection(badConnection);
 
-      expect(logger.error).toHaveBeenCalledWith('An attempt to register the connection to an unknown url \'http://suspect-site.com\'');
+      expect(logger.error).toHaveBeenCalledWith('An attempt to register a connection to an unknown url \'http://suspect-site.com\'');
     });
 
     it('should reject the promise when all connections are failed', fakeAsync(() => {
@@ -237,25 +237,40 @@ describe('ClientAppService', () => {
         });
       });
 
-      describe('and return a rejected promise', () => {
-        beforeEach(() => {
-          childApi1.getConfig.and.callFake(() => Promise.reject());
+      describe('and returns a rejected promise', () => {
+        let initialized: boolean;
+
+        beforeEach(async(() => {
+          initialized = false;
+
+          childApi1.getConfig.and.callFake(() => Promise.reject('some reason'));
           childApi2.getConfig.and.returnValue(Promise.resolve({ apiVersion: '1.0.0' }));
-        });
 
-        it('should reject the init promise', fakeAsync(() => {
-          let initialized: boolean;
-
-          service.init().catch(() => initialized = false);
+          service.init().then(
+            () => initialized = true,
+            () => initialized = false,
+          );
 
           service.addConnection(new Connection('http://app1.com', childApi1));
           service.addConnection(new Connection('http://app2.com', childApi2));
-
-          tick();
-
-          expect(initialized).toBe(false);
-          expect(service.apps.length).toBe(0);
         }));
+
+        it('should not reject the init promise', () => {
+          expect(initialized).toBeTruthy();
+          expect(service.apps.length).toBe(2);
+        });
+
+        it('should return default config for the failed app', () => {
+          const expected = { apiVersion: 'unknown' };
+
+          const actual = service.getAppConfig('http://app1.com');
+
+          expect(actual).toEqual(expected);
+        });
+
+        it('should log a warning message the configuration loading is failed', () => {
+          expect(logger.warn).toHaveBeenCalledWith('Unable to load config for \'http://app1.com\'. Reason: \'some reason\'.');
+        });
       });
 
       describe('and returns the config object with an apiVersion set', () => {

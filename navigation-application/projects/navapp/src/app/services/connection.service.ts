@@ -88,7 +88,8 @@ export class ConnectionService {
     const config = {
       iframe,
       methods: this.getParentApiMethods(url),
-      timeout: this.appSettings.iframesConnectionTimeout,
+      connectionTimeout: this.appSettings.iframesConnectionTimeout,
+      methodInvocationTimeout: this.appSettings.iframesConnectionTimeout,
     };
 
     try {
