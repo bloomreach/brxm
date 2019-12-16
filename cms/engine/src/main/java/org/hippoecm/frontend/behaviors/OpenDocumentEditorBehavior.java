@@ -39,7 +39,6 @@ import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.session.UserSession;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,20 +119,17 @@ public class OpenDocumentEditorBehavior extends AbstractDefaultAjaxBehavior {
         }
     }
 
-    private IEditor<?> getEditor(String documentId) throws ServiceException, RepositoryException, EditorException {
+    private IEditor<?> getEditor(String documentId) throws ServiceException, RepositoryException {
         final Node handle = UserSession.get().getJcrSession().getNodeByIdentifier(documentId);
-        if (handle.isNodeType(HippoNodeType.NT_HANDLE)) {
-            JcrNodeModel documentHandleModel = new JcrNodeModel(handle);
-            final IEditorManager editorManager = context.getService("service.edit", IEditorManager.class);
-            final IEditor<?> editor = editorManager.getEditor(documentHandleModel);
-            if (editor != null) {
-                log.debug("Open existing editor for handle: { uuid: {}}", documentId);
-                return editor;
-            }
-            log.debug("Open new editor for handle: { uuid: {}}", documentId);
-            return editorManager.openEditor(documentHandleModel);
+        JcrNodeModel documentHandleModel = new JcrNodeModel(handle);
+        final IEditorManager editorManager = context.getService("service.edit", IEditorManager.class);
+        final IEditor<?> editor = editorManager.getEditor(documentHandleModel);
+        if (editor != null) {
+            log.debug("Open existing editor for handle: { uuid: {}}", documentId);
+            return editor;
         }
-        throw new EditorException(String.format("Could not open editor for node: { uuid: %s}", documentId));
+        log.debug("Open new editor for handle: { uuid: {}}", documentId);
+        return editorManager.openEditor(documentHandleModel);
     }
 
     private String getDocumentId(String path) throws RepositoryException {

@@ -15,7 +15,6 @@
  */
 package org.hippoecm.frontend.plugins.cms.edit;
 
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,31 +36,47 @@ import org.hippoecm.frontend.plugin.Plugin;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
-import org.hippoecm.frontend.service.IEditor.Mode;
 import org.hippoecm.frontend.service.IEditorManager;
 import org.hippoecm.frontend.service.IEditorOpenListener;
 import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * <p>This class creates and keeps references to {@link IEditor} instances.</p>
+ *
+ * <p>It registers itself on the {@link IPluginContext}</p> with id {@value IEditorManager#EDITOR_ID}.</p>
+ *
+ * <p></p>
+ * <p>It creates editors based on the node and mode.</p>
+ * <p>An {@link ServiceException} is thrown if:
+ * <ul>
+ *     <li>None of the registered {@link IEditorFactory} instances created a editor</li>
+ *     <li>If the node is of a black listed node type See {@link #validateNodeType(Node, IPluginConfig)} </li>
+ * </ul></p>
+ */
 public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefreshable, IDetachable {
 
     private static final long serialVersionUID = 1L;
 
     static final Logger log = LoggerFactory.getLogger(EditorManagerPlugin.class);
 
-    private IEditorFactory editorFactory;
     private BrowserObserver browser;
 
     private List<IEditor<Node>> editors;
     private final Set<IEditorOpenListener> openListeners;
     private transient boolean active = false;
 
+    /**
+     * Parameter name for the black listed node type names
+     */
+    public static final String BLACK_LISTED_NODE_TYPE_NAMES = "blackListedNodeTypeNames";
+
     public EditorManagerPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        editorFactory = createEditorFactory(context, config);
         browser = new BrowserObserver(this, context, config);
 
         editors = new LinkedList<>();
@@ -80,33 +95,6 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
     @Override
     public void unregisterOpenListener(final IEditorOpenListener listener) {
         openListeners.remove(listener);
-    }
-
-    /**
-     * create an editor factory that delegates to registered factories.
-     * The returned editor factory behaves different from the interface: it will throw
-     * an exception when no editor can be created. 
-     */
-    private IEditorFactory createEditorFactory(final IPluginContext context, final IPluginConfig config) {
-        return new IEditorFactory() {
-            private static final long serialVersionUID = 1L;
-
-            @Override
-            public IEditor<Node> newEditor(IEditorContext manager, IModel<Node> nodeModel, Mode mode, IPluginConfig parameters)
-                    throws EditorException {
-                List<IEditorFactory> upstream = context.getServices(config.getString(IEditorFactory.SERVICE_ID,
-                        IEditorFactory.class.getName()), IEditorFactory.class);
-                for (ListIterator<IEditorFactory> iter = upstream.listIterator(upstream.size()); iter.hasPrevious();) {
-                    IEditorFactory factory = iter.previous();
-                    IEditor<Node> editor = factory.newEditor(manager, nodeModel, mode, parameters);
-                    if (editor != null) {
-                        return editor;
-                    }
-                }
-                throw new EditorException("Could not find factory willing to create an editor");
-            }
-
-        };
     }
 
     public void detach() {
@@ -159,7 +147,7 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
     }
 
     protected void checkEditorDoesNotExist(IModel<Node> model) throws ServiceException {
-        for (IEditor editor : editors) {
+        for (IEditor<Node> editor : editors) {
             if (editor.getModel().equals(model)) {
                 throw new ServiceException("editor already exists");
             }
@@ -167,32 +155,77 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
     }
 
     protected IEditor<Node> createEditor(final IModel<Node> model, IEditor.Mode mode) throws ServiceException {
-        try {
-            IEditor<Node> editor = editorFactory.newEditor(new IEditorContext() {
+        final IPluginConfig parameters = getPluginConfig().getPluginConfig("cluster.options");
+        Node node = model.getObject();
+        validateNodeType(node, parameters);
+        final IEditorContext manager = new IEditorContext() {
 
-                public IEditorManager getEditorManager() {
-                    return EditorManagerPlugin.this;
+            public IEditorManager getEditorManager() {
+                return EditorManagerPlugin.this;
+            }
+
+            public void onClose() {
+                EditorManagerPlugin.this.onClose(model);
+            }
+
+            public void onFocus() {
+                EditorManagerPlugin.this.onFocus(model);
+            }
+        };
+        List<IEditorFactory> upstream = getPluginContext().getServices(getPluginConfig().getString(IEditorFactory.SERVICE_ID,
+                IEditorFactory.class.getName()), IEditorFactory.class);
+        for (ListIterator<IEditorFactory> iter = upstream.listIterator(upstream.size()); iter.hasPrevious(); ) {
+            IEditorFactory factory = iter.previous();
+            IEditor<Node> editor;
+            try {
+                 editor = factory.newEditor(manager, model, mode, parameters);
+            } catch (EditorException e) {
+                throw new ServiceException(e);
+            }
+            if (editor != null) {
+                openListeners.forEach(listener -> listener.onOpen(model));
+                editors.add(editor);
+                editor.focus();
+                focusBrowser(model);
+                return editor;
+            }
+
+        }
+        throw new ServiceException(
+                String.format("Could not create editor for node: { path %s }", JcrUtils.getNodePathQuietly(node)));
+    }
+
+    /**
+     * <p>The property with the key {@value #BLACK_LISTED_NODE_TYPE_NAMES} can contain one or more string values
+     * that contain valid nodetypes, e.g. rep:root, hippostd:folder and hippostd:directory.</p>
+     *
+     * <p></p>If the node is of one of type black listed node types a ServiceException will be thrown,
+     * otherwise nothing.</p>
+     *
+     * @param node {@link Node} node to create an editor  for
+     * @param parameters {@link IPluginConfig} for this class
+     * @throws ServiceException if the node is of a black listed node type
+     */
+    private void validateNodeType(final Node node, final IPluginConfig parameters) throws ServiceException {
+        final String[] blackListedNodeTypeNames = parameters.getStringArray(BLACK_LISTED_NODE_TYPE_NAMES);
+        if (blackListedNodeTypeNames == null){
+            log.debug("Could not find any parameter {} on {}.", BLACK_LISTED_NODE_TYPE_NAMES, parameters.getName());
+            return;
+        }
+
+        for (String blackListedNodeTypeName : blackListedNodeTypeNames) {
+            try {
+                if (node.isNodeType(blackListedNodeTypeName)) {
+                    throw new ServiceException(
+                            String.format("Could not create an editor for node: { path: %s }, " +
+                                            "because it is of the black listed type: %s. " +
+                                            "Please correct the deep link to this document or delete the node type name from " +
+                                            "the black list and provide a valid editor template."
+                                    , JcrUtils.getNodePathQuietly(node), blackListedNodeTypeName));
                 }
-
-                public void onClose() {
-                    EditorManagerPlugin.this.onClose(model);
-                }
-
-                public void onFocus() {
-                    EditorManagerPlugin.this.onFocus(model);
-                }
-
-            }, model, mode, getPluginConfig().getPluginConfig("cluster.options"));
-
-            openListeners.forEach(listener -> listener.onOpen(model));
-            editors.add(editor);
-            editor.focus();
-
-            focusBrowser(model);
-            return editor;
-        } catch (EditorException ex) {
-            log.error(ex.getMessage());
-            throw new ServiceException("Initialization failed", ex);
+            } catch (RepositoryException e) {
+                log.error("Could not get node type of node { path {} }", JcrUtils.getNodePathQuietly(node));
+            }
         }
     }
 
@@ -200,10 +233,8 @@ public class EditorManagerPlugin extends Plugin implements IEditorManager, IRefr
     public void refresh() {
         active = true;
         try {
-            List<IEditor<Node>> copy = new LinkedList<IEditor<Node>>(editors);
-            Iterator<IEditor<Node>> iter = copy.iterator();
-            while (iter.hasNext()) {
-                IEditor<Node> editor = iter.next();
+            List<IEditor<Node>> copy = new LinkedList<>(editors);
+            for (final IEditor<Node> editor : copy) {
                 if (editor instanceof IRefreshable) {
                     ((IRefreshable) editor).refresh();
                 }

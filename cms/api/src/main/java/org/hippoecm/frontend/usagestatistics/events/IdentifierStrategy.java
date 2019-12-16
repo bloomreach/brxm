@@ -16,20 +16,24 @@
 package org.hippoecm.frontend.usagestatistics.events;
 
 
-import java.util.Optional;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.frontend.usagestatistics.UsageEvent;
+
 /**
- * Strategy for determining the identifier used in a {@link org.hippoecm.frontend.usagestatistics.UsageEvent}
+ * Strategy for determining the identifier used in a {@link UsageEvent}
  */
 public interface IdentifierStrategy {
 
     /**
+     * Determines the identifier to be used in a {@link UsageEvent}. This can
+     * be the identifier of the node itself or anything that uniquely identifies
+     * the node or any of its ancestors.
+     *
      * @param node {@link Node}
      * @return The identifier of the node ( not necessarily the {@link Node#getIdentifier()} )
-     * @throws RepositoryException
+     * @throws RepositoryException if an error occurs
      */
-    Optional<String> getIdentifier(Node node) throws RepositoryException;
+    String getIdentifier(Node node) throws RepositoryException;
 }

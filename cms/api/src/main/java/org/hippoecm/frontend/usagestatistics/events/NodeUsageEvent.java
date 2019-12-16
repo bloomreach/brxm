@@ -15,8 +15,6 @@
  */
 package org.hippoecm.frontend.usagestatistics.events;
 
-import java.util.Optional;
-
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -38,7 +36,10 @@ public class NodeUsageEvent extends UsageEvent {
         final Node node = nodeModel.getObject();
         if (node != null) {
             try {
-                getNodeIdentifier(node).ifPresent(id -> setParameter(EVENT_PARAM_NODE_ID, id));
+                String id = getNodeIdentifier(node);
+                if (id !=null){
+                    setParameter(EVENT_PARAM_NODE_ID, id);
+                }
             } catch (RepositoryException e) {
                 log.warn("Error retrieving node identifier", e);
             }
@@ -46,10 +47,10 @@ public class NodeUsageEvent extends UsageEvent {
     }
 
     public NodeUsageEvent(final String name, final IModel<Node> nodeModel) {
-        this(name, nodeModel, node -> Optional.of(node.getIdentifier()));
+        this(name, nodeModel, Node::getIdentifier);
     }
 
-    protected Optional<String> getNodeIdentifier(final Node node) throws RepositoryException {
+    protected String getNodeIdentifier(final Node node) throws RepositoryException {
         return strategy.getIdentifier(node);
     }
 }

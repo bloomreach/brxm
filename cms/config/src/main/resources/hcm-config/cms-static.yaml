@@ -106,6 +106,7 @@ definitions:
           editor.id: service.edit
           wicket.behavior: service.behavior.editor.tabs.center
           wicket.id: service.editor.tab
+          blackListedNodeTypeNames : ['rep:root','hippostd:folder','hippostd:directory']
       /autoEditPlugin:
         jcr:primaryType: frontend:plugin
         editor.id: service.edit
