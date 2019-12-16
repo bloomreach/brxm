@@ -20,6 +20,18 @@ import {
   ChildConnectConfig,
   ChildPromisedApi,
 } from './api';
+import { wrapWithTimeout } from './wrap-with-timeout';
+
+const wrapChildMethodsWithTimeout = (methods: ChildPromisedApi, timeout: number) => {
+  const beforeNavigation = methods.beforeNavigation;
+  delete methods.beforeNavigation;
+
+  const wrappedMethods = wrapWithTimeout(methods, timeout);
+
+  wrappedMethods.beforeNavigation = beforeNavigation;
+
+  return wrappedMethods;
+};
 
 /**
  * Method to connect to an application in an iframe window.
@@ -27,12 +39,16 @@ import {
  * @param iframe The iframe element that should contain another instance of the navigation
  *               communication library looking to connect
  * @param methods The api the parent exposes to the child
- * @param timeout The time in ms after which an error will be thrown if the child has failed to connect
+ * @param connectionTimeout The time in ms after which an error will be thrown if the child has failed to connect
+ * @param methodInvocationTimeout The time in ms after which an error will be thrown if a method doesn't return a response
  */
-export function connectToChild({
+export async function connectToChild({
   iframe,
   methods,
-  timeout,
+  connectionTimeout,
+  methodInvocationTimeout,
 }: ChildConnectConfig): Promise<ChildPromisedApi> {
-  return Penpal.connectToChild({ iframe, methods, timeout }).promise;
+  const childMethods = await Penpal.connectToChild({ iframe, methods, connectionTimeout }).promise;
+
+  return wrapChildMethodsWithTimeout(childMethods, methodInvocationTimeout);
 }

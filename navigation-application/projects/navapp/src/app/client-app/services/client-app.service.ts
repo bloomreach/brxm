@@ -82,7 +82,7 @@ export class ClientAppService {
     const uniqueURLs = this.filterUniqueURLs(navItems);
     this.uniqueURLs.next(uniqueURLs);
 
-    this.logger.debug('Client app iframes are expected to be loaded', uniqueURLs);
+    this.logger.debug(`Client app iframes are expected to be loaded (${uniqueURLs.length})`, uniqueURLs);
 
     return this.uniqueURLs.pipe(
       switchMap(urls => this.waitForConnections(urls.length)),
@@ -109,12 +109,16 @@ export class ClientAppService {
     const url = uniqueURLs.find(x => Location.stripTrailingSlash(x) === connectionUrl);
 
     if (!url) {
-      const message = `An attempt to register the connection to an unknown url '${connection.appUrl}'`;
+      const message = `An attempt to register a connection to an unknown url '${connection.appUrl}'`;
 
       this.logger.error(message);
       this.connectionCounter$.next(new FailedConnection(connection.appUrl, message));
 
       return;
+    }
+
+    if (connection instanceof FailedConnection) {
+      this.logger.warn(`Failed to establish a connection to the iframe '${url}'`, connection.reason);
     }
 
     // Fix extra/missing trailing slash issue
@@ -164,6 +168,7 @@ export class ClientAppService {
   private waitForConnections(expectedNumber: number): Observable<Connection[]> {
     return this.connectionCounter$.pipe(
       bufferTime(this.appSettings.iframesConnectionTimeout * 1.5, undefined, expectedNumber),
+      first(),
     );
   }
 
@@ -178,22 +183,36 @@ export class ClientAppService {
   }
 
   private fetchAppConfig(app: ClientApp): Promise<ChildConfig> {
+    this.logger.debug(`Fetching app config for '${app.url}'`);
+
+    if (!app.api.getConfig) {
+      this.logger.warn(`getConfig() method is not defined in api for the app '${app.url}'`);
+    }
+
     return app.api.getConfig ?
-      app.api.getConfig().then(config => {
-        if (!config) {
-          this.logger.warn(`The app '${app.url}' returned an empty config`);
-          config = { apiVersion: 'unknown' };
-        }
+      app.api.getConfig().then(
+        config => {
+          this.logger.debug(`App config is fetched for '${app.url}'`, config);
 
-        if (!config.apiVersion) {
-          this.logger.warn(`The app '${app.url}' returned a config with an empty version`);
-          config.apiVersion = 'unknown';
-        }
+          if (!config) {
+            this.logger.warn(`The app '${app.url}' returned an empty config`);
+            config = { apiVersion: 'unknown' };
+          }
 
-        this.logger.info(`Connected API '${app.url}' version ${config.apiVersion}`);
+          if (!config.apiVersion) {
+            this.logger.warn(`The app '${app.url}' returned a config with an empty version`);
+            config.apiVersion = 'unknown';
+          }
 
-        return config;
-      }) :
+          this.logger.info(`Connected API '${app.url}' version ${config.apiVersion}`);
+
+          return config;
+        },
+        e => {
+          this.logger.warn(`Unable to load config for '${app.url}'. Reason: '${e}'.`);
+
+          return { apiVersion: 'unknown' };
+        }) :
       Promise.resolve({ apiVersion: 'unknown' } as ChildConfig);
   }
 

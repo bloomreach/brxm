@@ -16,26 +16,69 @@
 
 import Penpal from 'penpal';
 
+import { ChildApi, ChildConnectConfig, ParentApi } from './api';
 import { connectToChild } from './child';
 
 describe('connectToChild', () => {
+  let connectionConfig: ChildConnectConfig;
+  let childMethods: ChildApi;
+
   beforeEach(() => {
-    spyOn(Penpal, 'connectToChild').and.callThrough();
+    const parentMethods: ParentApi = {
+      navigate: () => {},
+    };
+
+    const iframe: HTMLIFrameElement = document.createElement('iframe');
+    iframe.src = 'about:blank';
+
+    connectionConfig = {
+      iframe,
+      methods: parentMethods,
+      connectionTimeout: 10000,
+      methodInvocationTimeout: 5000,
+    };
+
+    childMethods = {
+      getConfig: () => ({} as any),
+      getNavItems: () => [],
+      getSites: () => [],
+      getSelectedSite: () => ({} as any),
+      beforeNavigation: () => true,
+      onUserActivity: () => {},
+      logout: () => {},
+      navigate: () => {},
+      updateSelectedSite: () => {},
+    };
+
+    spyOn(Penpal, 'connectToChild').and.returnValue({
+      promise: Promise.resolve(childMethods),
+    });
   });
 
   it('should pass config to penpal connectToChild', () => {
-    const iframe = document.createElement('iframe');
-    iframe.src = 'about:blank';
-
-    const config = {
-      iframe,
-      methods: {
-        navigate: () => { },
-      },
-      timeout: 10000,
+    const expected = {
+      iframe: connectionConfig.iframe,
+      methods: connectionConfig.methods,
+      connectionTimeout: 10000,
     };
 
-    connectToChild(config);
-    expect(Penpal.connectToChild).toHaveBeenCalledWith(config);
+    connectToChild(connectionConfig);
+
+    expect(Penpal.connectToChild).toHaveBeenCalledWith(expected);
+  });
+
+  it('should wrap child methods besides "beforeNavigation()"', async () => {
+    const expectedBeforeNavigation = childMethods.beforeNavigation;
+
+    const wrappedChildMethods = await connectToChild(connectionConfig);
+
+    expect(wrappedChildMethods.beforeNavigation).toBe(expectedBeforeNavigation);
+    expect(wrappedChildMethods.getNavItems).not.toBe(childMethods.getNavItems);
+    expect(wrappedChildMethods.getSites).not.toBe(childMethods.getSites);
+    expect(wrappedChildMethods.getSelectedSite).not.toBe(childMethods.getSelectedSite);
+    expect(wrappedChildMethods.onUserActivity).not.toBe(childMethods.onUserActivity);
+    expect(wrappedChildMethods.logout).not.toBe(childMethods.logout);
+    expect(wrappedChildMethods.navigate).not.toBe(childMethods.navigate);
+    expect(wrappedChildMethods.updateSelectedSite).not.toBe(childMethods.updateSelectedSite);
   });
 });

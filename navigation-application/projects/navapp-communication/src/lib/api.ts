@@ -34,7 +34,12 @@ export interface ChildConnectConfig {
   /**
    * The time in ms after which an error will be thrown if the child has failed to connect
    */
-  timeout?: number;
+  connectionTimeout?: number;
+
+  /**
+   * The time in ms after which an error will be thrown if a method doesn't return a response
+   */
+  methodInvocationTimeout?: number;
 }
 
 export interface ParentConnectConfig {
