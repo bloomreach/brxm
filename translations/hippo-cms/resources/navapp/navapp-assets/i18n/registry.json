@@ -314,8 +314,14 @@
       "locales" : null
     },
     "MENU_ITEM_PATHWAYS" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "ERROR_UNABLE_TO_CONNECT_TO_CLIENT_APP" : {
       "status" : "CLEAN",
@@ -330,8 +336,14 @@
       "locales" : null
     },
     "MENU_CONTAINER_PATHWAY_ANALYTICS" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "MENU_ITEM_SETUP_INTERNAL_REPORTS_SNAP_PAGE_PERFORMANCE" : {
       "status" : "CLEAN",
