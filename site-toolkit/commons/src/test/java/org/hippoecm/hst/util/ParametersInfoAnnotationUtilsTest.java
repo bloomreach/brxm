@@ -15,49 +15,69 @@
  */
 package org.hippoecm.hst.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
 import javax.jcr.Node;
 import javax.jcr.Property;
-import javax.servlet.Filter;
 
 import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
-import org.hippoecm.hst.core.beans.AbstractBeanTestCase;
-import org.hippoecm.hst.core.component.GenericHstComponent;
-import org.hippoecm.hst.core.component.HstComponent;
+import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
-import org.hippoecm.hst.site.container.SpringComponentManager;
+import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.onehippo.cms7.services.context.HippoWebappContext;
-import org.springframework.mock.web.MockServletContext;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 
-public class ParametersInfoAnnotationUtilsTest extends AbstractBeanTestCase{ 
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
-    protected SpringComponentManager componentManager;
-    protected final MockServletContext servletContext = new MockServletContext();
-    protected HippoWebappContext webappContext = new HippoWebappContext(HippoWebappContext.Type.SITE, servletContext);
-    protected Filter filter;
+public class ParametersInfoAnnotationUtilsTest {
 
-    
-    protected String[] getConfigurations() {
-        String classXmlFileNamePlatform = "org/hippoecm/hst/test/platform-context.xml";
-        return new String[] {classXmlFileNamePlatform };
+
+    private HstModelRegistry hstModelRegistry;
+
+    @Before
+    public void setUp() throws Exception {
+
+        hstModelRegistry = EasyMock.createNiceMock(HstModelRegistry.class);
+
+        final ComponentManager componentManager = EasyMock.createNiceMock(ComponentManager.class);
+        expect(componentManager.getComponent(EasyMock.anyString())).andStubReturn(null);
+        final HstModel hstModel = EasyMock.createNiceMock(HstModel.class);
+        expect(hstModel.getComponentManager()).andStubReturn(componentManager);
+        expect(hstModelRegistry.getHstModel(EasyMock.anyObject(ClassLoader.class))).andStubReturn(hstModel);
+
+        replay(hstModelRegistry, componentManager, hstModel);
+
+        HippoServiceRegistry.register(hstModelRegistry, HstModelRegistry.class);
+
     }
-    
+
+    @After
+    public void tearDown() {
+        HippoServiceRegistry.unregister(hstModelRegistry, HstModelRegistry.class);
+    }
+
     @Test
     public void testGetParametersInfoAnnotation_Class_ComponentConfiguration() throws Exception {
-        HstComponent componentClazz = null;
+        Class<?> componentClazz = null;
         ComponentConfiguration componentConfig = null;
 
+        // when both componentClazz and componentConfig are null...
+        ParametersInfo paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentClazz,
+                componentConfig);
+        assertNull(paramsInfo);
+
         // when componentClazz is an annotated class and componentConfig are null...
-        componentClazz =  new AnnotatedComponent();
-        ParametersInfo paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentClazz, componentConfig);
+        componentClazz = AnnotatedComponent.class;
+        paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentClazz, componentConfig);
         assertNotNull(paramsInfo);
         assertEquals(ExampleParametersInfoType1.class, paramsInfo.type());
 
@@ -74,7 +94,7 @@ public class ParametersInfoAnnotationUtilsTest extends AbstractBeanTestCase{
         assertEquals(ExampleParametersInfoType2.class, paramsInfo.type());
 
         // when componentClazz is a non-annotated class and componentConfig are null...
-        componentClazz = new NonAnnotatedComponent();
+        componentClazz = NonAnnotatedComponent.class;
         componentConfig = null;
         paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentClazz, componentConfig);
         assertNull(paramsInfo);
@@ -93,7 +113,7 @@ public class ParametersInfoAnnotationUtilsTest extends AbstractBeanTestCase{
 
     @Test
     public void testGetParametersInfoAnnotation_Class_HstComponentConfiguration() throws Exception {
-        HstComponent componentClazz = null;
+        Class<?> componentClazz = null;
         HstComponentConfiguration componentConfig = null;
 
         // when both componentClazz and componentConfig are null...
@@ -102,7 +122,7 @@ public class ParametersInfoAnnotationUtilsTest extends AbstractBeanTestCase{
         assertNull(paramsInfo);
 
         // when componentClazz is an annotated class and componentConfig are null...
-        componentClazz = new AnnotatedComponent();
+        componentClazz = AnnotatedComponent.class;
         paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentClazz, componentConfig);
         assertNotNull(paramsInfo);
         assertEquals(ExampleParametersInfoType1.class, paramsInfo.type());
@@ -121,7 +141,7 @@ public class ParametersInfoAnnotationUtilsTest extends AbstractBeanTestCase{
         assertEquals(ExampleParametersInfoType2.class, paramsInfo.type());
 
         // when componentClazz is a non-annotated class and componentConfig are null...
-        componentClazz = new NonAnnotatedComponent();
+        componentClazz = NonAnnotatedComponent.class;
         componentConfig = null;
         paramsInfo = ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentClazz, componentConfig);
         assertNull(paramsInfo);
@@ -216,6 +236,7 @@ public class ParametersInfoAnnotationUtilsTest extends AbstractBeanTestCase{
         ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentConfigNode);
     }
 
+
     @Test
     public void testGetParametersInfoAnnotation_String_String() throws Exception {
         String componentClazzName = null;
@@ -289,11 +310,11 @@ public class ParametersInfoAnnotationUtilsTest extends AbstractBeanTestCase{
     }
 
     @ParametersInfo(type = ExampleParametersInfoType1.class)
-    public static class AnnotatedComponent extends GenericHstComponent {
+    public static class AnnotatedComponent {
 
     }
 
-    public static class NonAnnotatedComponent extends GenericHstComponent {
+    public static class NonAnnotatedComponent {
 
     }
 
