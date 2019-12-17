@@ -149,9 +149,18 @@
                   <condition property="executableCommand" value="/c" else="-c">
                     <os family="windows" />
                   </condition>
+                  <condition property="container_user" value="-Ddocker.brxm.container.dev.gid=`id -g` -Ddocker.brxm.container.dev.uid=`id -u`" else="">
+                    <and>
+                      <os family="unix" />
+                      <not>
+                        <os family="mac"/>
+                      </not>
+                    </and>
+                  </condition>
+                  <echo message="Container user is ${container_user}"/>
                   <exec dir="${project.build.directory}/test-classes/projects/gettingstarted/project/${gettingstarted.artifactId}" executable="${executableType}" spawn="true">
                     <arg value="${executableCommand}" />
-                    <arg value="mvn -Pdocker.run -Ddb.profile=h2 -Dmaven.repo.local=${maven.repo.local} -Dhippo.snapshots" />
+                    <arg value="mvn -Pdocker.run -Ddb.profile=h2 -Dmaven.repo.local=${maven.repo.local} -Dhippo.snapshots ${container_user}" />
                   </exec>
                 </target>
               </configuration>
