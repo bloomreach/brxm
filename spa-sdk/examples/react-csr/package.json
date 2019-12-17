@@ -6,11 +6,11 @@
   "dependencies": {
     "@bloomreach/react-sdk": "^14.1",
     "axios": "^0.19",
-    "react": "^16.10",
-    "react-dom": "^16.10",
-    "react-router-dom": "^5.0",
-    "react-scripts": "3.2.0",
-    "typescript": "^3.6"
+    "react": "^16.12",
+    "react-dom": "^16.12",
+    "react-router-dom": "^5.1",
+    "react-scripts": "3.3.0",
+    "typescript": "^3.7"
   },
   "scripts": {
     "build": "react-scripts build",
@@ -37,7 +37,7 @@
   "devDependencies": {
     "@types/react": "^16.9",
     "@types/react-dom": "^16.9",
-    "@types/react-router-dom": "^4.3",
+    "@types/react-router-dom": "^5.1",
     "dotenv": "^8.2",
     "express": "^4.17"
   }
