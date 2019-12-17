@@ -178,13 +178,18 @@
                       <fileset dir="${project.build.directory}/test-classes" excludes="projects/**" includes="**/*.class" />
                     </batchtest>
                   </junit>
+                  <exec executable="${executableType}" outputproperty="container_id">
+                    <arg value="${executableCommand}" />
+                    <arg value="docker ps -q --filter name=${docker.image.name}" />
+                  </exec>
+                  <echo message="Container id is ${container_id}"/>
                   <exec executable="${executableType}">
                     <arg value="${executableCommand}" />
-                    <arg value="docker kill $(docker ps -q --filter 'name=${docker.image.name}')" />
+                    <arg value="docker kill ${container_id}" />
                   </exec>
                   <exec executable="${executableType}">
                     <arg value="${executableCommand}" />
-                    <arg value="docker rm $(docker ps -a -q --filter 'name=${docker.image.name}')" />
+                    <arg value="docker rm ${container_id}" />
                   </exec>
                   <fail message="Test failure detected, check test results." if="test.failed" />
                 </target>
