@@ -53,6 +53,7 @@
     <junit.version>4.12</junit.version>
 
     <docker.test.bootstrap.timeout>120000</docker.test.bootstrap.timeout>
+    <maven.repo.local>${settings.localRepository}</maven.repo.local>
   </properties>
 
   <dependencies>
@@ -124,7 +125,7 @@
                   </condition>
                   <exec dir="${project.build.directory}/test-classes/projects/gettingstarted/project/${gettingstarted.artifactId}" executable="${executableType}">
                     <arg value="${executableCommand}" />
-                    <arg value="mvn -Pdocker.build" />
+                    <arg value="mvn -Pdocker.build -Dmaven.repo.local=${maven.repo.local}" />
                   </exec>
                 </target>
               </configuration>
@@ -146,7 +147,7 @@
                   </condition>
                   <exec dir="${project.build.directory}/test-classes/projects/gettingstarted/project/${gettingstarted.artifactId}" executable="${executableType}" spawn="true">
                     <arg value="${executableCommand}" />
-                    <arg value="mvn -Pdocker.run -Ddb.profile=h2" />
+                    <arg value="mvn -Pdocker.run -Ddb.profile=h2 -Dmaven.repo.local=${maven.repo.local} -Dhippo.snapshots" />
                   </exec>
                 </target>
               </configuration>
