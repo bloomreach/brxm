@@ -98,7 +98,7 @@ export default class Index extends React.Component<IndexProps> {
             </div>
           </nav>
         </header>
-        <section className="container pt-3">
+        <section className="container flex-fill pt-3">
           <BrComponent path="main" />
         </section>
         <footer className="bg-dark text-light py-3">

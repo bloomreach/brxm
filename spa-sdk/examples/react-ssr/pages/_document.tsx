@@ -37,7 +37,7 @@ export default class DefaultDocument extends Document {
           <Head />
         </head>
         <body>
-          <div id="root" className="d-flex flex-column">
+          <div id="root">
             <Main />
           </div>
 
