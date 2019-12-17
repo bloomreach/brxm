@@ -46,7 +46,7 @@ public class HandleIdentifierStrategyTest {
     @Test
     public void getIdentifierFromRootReturnEmpty() throws RepositoryException {
         final String actual = strategy.getIdentifier(root);
-        Assert.assertNotNull(actual);
+        Assert.assertNull(actual);
     }
 
     @Test
@@ -66,6 +66,6 @@ public class HandleIdentifierStrategyTest {
     @Test
     public void getIdentifierAscendantOfHandleDescendantOfRootReturnEmpty() throws RepositoryException{
         final String actual = strategy.getIdentifier(descendantOfRootAscendantOfHandle);
-        Assert.assertNotNull(actual);
+        Assert.assertNull(actual);
     }
 }
