@@ -185,6 +185,10 @@
                   <echo message="Container id is ${container_id}"/>
                   <exec executable="${executableType}">
                     <arg value="${executableCommand}" />
+                    <arg value="docker logs ${container_id}" />
+                  </exec>
+                  <exec executable="${executableType}">
+                    <arg value="${executableCommand}" />
                     <arg value="docker kill ${container_id}" />
                   </exec>
                   <exec executable="${executableType}">
