@@ -26,10 +26,6 @@ body {
   height: 100vh;
 }
 
-#root > .container {
-   flex: 1;
-}
-
 .has-edit-button {
   position: relative;
 }
