@@ -9,13 +9,13 @@
     "@bloomreach/react-sdk": "^14.1",
     "axios": "^0.19",
     "dotenv": "^8.2",
-    "next": "^9.0",
+    "next": "^9.1",
     "next-routes": "^1.4",
-    "react": "^16.10",
-    "react-dom": "^16.10"
+    "react": "^16.12",
+    "react-dom": "^16.12"
   },
   "devDependencies": {
-    "@types/node": "^12.0",
+    "@types/node": "^12.12",
     "@types/react": "^16.9",
     "@types/react-dom": "^16.9"
   },
