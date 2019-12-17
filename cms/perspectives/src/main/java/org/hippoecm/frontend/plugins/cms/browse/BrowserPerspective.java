@@ -119,7 +119,7 @@ public class BrowserPerspective extends Perspective {
                     parentApiCaller.updateNavLocation(getAppPath());
                 } else {
                     try {
-                        final String path = String.format("%s/uuid/%s", getAppPath(), newModel.getObject().getIdentifier());
+                        final String path = String.format("%s/path%s", getAppPath(), newModel.getObject().getPath());
                         parentApiCaller.updateNavLocation(path);
                     } catch (RepositoryException e) {
                         log.warn("Failed to update nav location for document with path '{}'", newTab);
