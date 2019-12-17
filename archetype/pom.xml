@@ -123,6 +123,10 @@
                   <condition property="executableCommand" value="/c" else="-c">
                     <os family="windows" />
                   </condition>
+                  <exec executable="${executableType}">
+                    <arg value="${executableCommand}" />
+                    <arg value="docker version" />
+                  </exec>
                   <exec dir="${project.build.directory}/test-classes/projects/gettingstarted/project/${gettingstarted.artifactId}" executable="${executableType}">
                     <arg value="${executableCommand}" />
                     <arg value="mvn -Pdocker.build -Dmaven.repo.local=${maven.repo.local}" />
