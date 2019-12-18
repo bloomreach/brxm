@@ -3,7 +3,7 @@
 [![License](https://img.shields.io/npm/l/@bloomreach/react-sdk.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 
 Bloomreach React SDK provides simplified headless integration with [Bloomreach Experience Manager](https://www.bloomreach.com/en/products/experience-manager) for React-based applications.
-This library interacts with the [Page Model API](https://documentation.bloomreach.com/library/concepts/spa-plus/page-model-api/introduction.html) and [Bloomreach SPA SDK](https://www.npmjs.com/package/@bloomreach/spa-sdk) and exposes a simplified declarative React interface over the Page Model.
+This library interacts with the [Page Model API](https://documentation.bloomreach.com/library/concepts/page-model-api/introduction.html) and [Bloomreach SPA SDK](https://www.npmjs.com/package/@bloomreach/spa-sdk) and exposes a simplified declarative React interface over the Page Model.
 
 ## What is Bloomreach Experience Manager?
 Bloomreach Experience Manager (brXM) is an open and flexible CMS designed for developers and marketers. As the original headless CMS, brXM allows developers to build quickly and integrate with the systems. While it’s built for speed, it also provides top-notch personalization and channel management capabilities for marketers to drive results.
@@ -198,13 +198,13 @@ The [React Context](https://reactjs.org/docs/context.html) holding the current b
 The [React Context](https://reactjs.org/docs/context.html) holding the current brXM [Page](https://www.npmjs.com/package/@bloomreach/spa-sdk#page).
 
 ## Links
-- [SPA integration concept](https://documentation.bloomreach.com/library/concepts/spa-plus/introduction.html).
-- [Page Model API introduction](https://documentation.bloomreach.com/library/concepts/spa-plus/page-model-api/introduction.html).
+- [SPA integration concept](https://documentation.bloomreach.com/library/concepts/spa-integration/introduction.html).
+- [Page Model API introduction](https://documentation.bloomreach.com/library/concepts/page-model-api/introduction.html).
 - [Bloomreach SPA SDK](https://www.npmjs.com/package/@bloomreach/spa-sdk).
 
 ## FAQ
-- Information about common problems and possible solutions can be found on [the troubleshooting page](https://documentation.bloomreach.com/library/concepts/spa-plus/sdk/spa-sdk-troubleshooting.html).
-- Information about the recommended setup can be found on [the best practices page](https://documentation.bloomreach.com/library/concepts/spa-plus/sdk/spa-sdk-best-practices.html).
+- Information about common problems and possible solutions can be found on [the troubleshooting page](https://documentation.bloomreach.com/library/concepts/spa-integration/troubleshooting.html).
+- Information about the recommended setup can be found on [the best practices page](https://documentation.bloomreach.com/library/concepts/spa-integration/best-practices.html).
 
 ## License
 Published under [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) license.
