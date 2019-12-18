@@ -353,8 +353,9 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             request.setAttribute(ContainerConstants.RESOLVED_MOUNT_REQUEST_ATTR, resolvedMount);
             requestContext.setResolvedMount(resolvedMount);
             if (renderingHost != null) {
-                requestContext.setRenderHost(renderingHost);
                 if (requestComesFromCms(vHosts, renderingHost, req)) {
+                    // only when request comes from CMS, set rendering host
+                    requestContext.setRenderHost(renderingHost);
                     if (!authenticated) {
                         ((HttpServletResponse) response).sendError(SC_UNAUTHORIZED);
                         log.warn("Attempted Channel Manager preview request without being authenticated");
@@ -408,7 +409,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
                     log.debug("{} matched to sitemapitem  '{}'", containerRequest, resolvedSiteMapItem.getHstSiteMapItem());
                     requestContext.setResolvedSiteMapItem(resolvedSiteMapItem);
-                    finishMatchingPhase(requestContext);
+                    finishMatchingPhase(requestContext, renderingHost);
                 }
 
                 if (!isSupportedScheme(requestContext, resolvedSiteMapItem, farthestRequestScheme)) {
@@ -457,7 +458,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     return;
                 }
                 else {
-                    finishMatchingPhase(requestContext);
+                    finishMatchingPhase(requestContext, renderingHost);
                     if (!isSupportedScheme(requestContext, resolvedMount, farthestRequestScheme)) {
                         final Mount mount = resolvedMount.getMount();
                         final String urlWithExplicitSchemeForRequest;
@@ -563,7 +564,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         return false;
     }
 
-    private void finishMatchingPhase(final HstMutableRequestContext requestContext) {
+    private void finishMatchingPhase(final HstMutableRequestContext requestContext, final String renderingHost) {
         requestContext.matchingFinished();
         if (!requestContext.isChannelManagerPreviewRequest()) {
             return;
@@ -593,7 +594,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             }
             final Map<String, Serializable> contextPayload = cmsSessionContext.getContextPayload();
             contextPayload.put(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, requestContext.getResolvedMount().getMount().getIdentifier());
-            contextPayload.put(ContainerConstants.RENDERING_HOST, requestContext.getRenderHost());
+            contextPayload.put(ContainerConstants.RENDERING_HOST, renderingHost);
         }
     }
 
@@ -771,7 +772,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             try {
                 log.info("The resolved sitemap item for {} has error status: {}", containerRequest , Integer.valueOf(resolvedSiteMapItem.getErrorCode()));
                 res.sendError(resolvedSiteMapItem.getErrorCode());
-                
+
             } catch (IOException e) {
                 if (log.isDebugEnabled()) {
                     log.warn("Exception invocation on sendError().", e);
