@@ -16,7 +16,7 @@ docker run -p 8080:8080 bloomreach/xm-spa-example
 ```
 
 Due to [this](https://github.com/docker/for-mac/issues/68) bug in Docker for Mac, the CMS instance cannot access the SPA port on the host machine.
-To get it working, we should update the UrlRewriter [rule](https://documentation.bloomreach.com/library/concepts/spa-plus/url-rewriter-rules.html) to access [`host.docker.internal`](https://docs.docker.com/docker-for-mac/networking/) instead of `localhost`:
+To get it working, we should update the UrlRewriter [rule](https://documentation.bloomreach.com/library/concepts/spa-integration/url-rewriter-rules.html) to access [`host.docker.internal`](https://docs.docker.com/docker-for-mac/networking/) instead of `localhost`:
 ```xml
 <rule>
   <!-- Rule 3: Proxy requests to route to the SPA server -->
