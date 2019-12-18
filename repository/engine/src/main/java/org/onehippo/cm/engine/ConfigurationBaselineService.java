@@ -59,6 +59,8 @@ import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.parser.ConfigSourceParser;
 import org.onehippo.cm.model.parser.ModuleDescriptorParser;
 import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cm.model.path.JcrPath;
+import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
@@ -644,6 +646,19 @@ public class ConfigurationBaselineService {
             InputStream is = IOUtils.toInputStream(descriptor, StandardCharsets.UTF_8);
             module = new ModuleDescriptorParser(DEFAULT_EXPLICIT_SEQUENCING)
                     .parse(is, moduleNode.getPath());
+
+            final JcrPath modulePath = JcrPaths.getPath(moduleNode.getPath());
+            final JcrPath expectedPath = modulePath.subpath(0, modulePath.getSegmentCount() - 3)
+                    .resolve(module.getProject().getGroup().getName())
+                    .resolve(module.getProject().getName())
+                    .resolve(module.getName());
+
+
+            if (!expectedPath.equals(modulePath)) {
+                log.error("Detected baseline module path inconsistency, expected module location: '{}', but actual is: '{}', skipping",
+                        expectedPath, moduleNode.getPath());
+                return;
+            }
 
             final String lastExecutedAction = getLastExecutedAction(moduleNode);
             module.setLastExecutedAction(lastExecutedAction);
