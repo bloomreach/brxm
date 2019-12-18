@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,9 +31,30 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPELINE_NAME;
+import static org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.LinkModel.LinkType.EXTERNAL;
+import static org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.LinkModel.LinkType.INTERNAL;
+import static org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.LinkModel.LinkType.RESOURCE;
 
 @ApiModel(description = "Link model.")
 public class LinkModel {
+
+    public enum LinkType {
+
+        RESOURCE("resource"),
+        EXTERNAL("external"),
+        INTERNAL("internal");
+
+        private final String type;
+
+        LinkType(final String type) {
+
+            this.type = type;
+        }
+
+        public String getType() {
+            return type;
+        }
+    }
 
     private static Logger log = LoggerFactory.getLogger(LinkModel.class);
 
@@ -42,7 +63,7 @@ public class LinkModel {
     /**
      * The type of the link, for example 'internal', 'external' or 'resource'.
      */
-    private final String type;
+    private final LinkType type;
 
     private final String rel;
 
@@ -52,11 +73,11 @@ public class LinkModel {
         this(href, null, null, null);
     }
 
-    public LinkModel(final String href, final String type) {
+    public LinkModel(final String href, final LinkType type) {
         this(href, type, null, null);
     }
 
-    public LinkModel(final String href, final String type, final String rel, final String title) {
+    public LinkModel(final String href, final LinkType type, final String rel, final String title) {
         this.href = href;
         this.type = type;
         this.rel = rel;
@@ -72,7 +93,10 @@ public class LinkModel {
     @JsonInclude(Include.NON_NULL)
     @ApiModelProperty("Type of the link.")
     public String getType() {
-        return type;
+        if (type == null) {
+            return null;
+        }
+        return type.getType();
     }
 
     @JsonInclude(Include.NON_NULL)
@@ -106,24 +130,33 @@ public class LinkModel {
             siteLink = hstLink;
         }
 
-        return new LinkModel(siteLink.toUrlForm(requestContext, false), getLinkType(requestContext, siteLink));
+        final LinkType linkType = getLinkType(requestContext, siteLink);
+        final String href;
+        if (linkType == INTERNAL) {
+            href = siteLink.toUrlForm(requestContext, false);
+        } else {
+            // 'resource' URLs (eg binaries) and 'external' types for Page Model API always must be fully qualified
+            href = siteLink.toUrlForm(requestContext, true);
+        }
+        return new LinkModel(href, linkType);
 
     }
 
-    public static String getLinkType(final HstRequestContext requestContext, final HstLink siteLink) {
+
+    public static LinkType getLinkType(final HstRequestContext requestContext, final HstLink siteLink) {
         if (siteLink.isContainerResource()) {
-            return "resource";
+            return RESOURCE;
         }
 
         final Mount linkMount = siteLink.getMount();
         if (linkMount != null && linkMount != requestContext.getResolvedMount().getMount().getParent()) {
             // this is a cross mount link since does not belong to the parent mount of the PageModelApi mount
-            return "external";
+            return EXTERNAL;
         }
 
         final HstSiteMapItem siteMapItem = siteLink.getHstSiteMapItem();
         if (siteMapItem == null) {
-            return "external";
+            return EXTERNAL;
         }
         final String linkApplicationId = siteMapItem.getApplicationId();
         // although this is the resolved sitemap item for the PAGE_MODEL_PIPELINE_NAME, it should resolve
@@ -132,7 +165,7 @@ public class LinkModel {
         // internal. *If* the SpaSitePipeline is configured on site map item level, a site map item *MUST*
         // have an application id to have correct indication of 'internal/external'.
         final String currentApplicationId = requestContext.getResolvedSiteMapItem().getHstSiteMapItem().getApplicationId();
-        return Objects.equals(linkApplicationId, currentApplicationId) ? "internal" : "external";
+        return Objects.equals(linkApplicationId, currentApplicationId) ? INTERNAL : EXTERNAL;
     }
 
     private static HstLink getSiteLink(final HstLink hstLink, final HstRequestContext requestContext) {
