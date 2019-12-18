@@ -31,6 +31,7 @@ import com.fasterxml.jackson.databind.ser.VirtualBeanPropertyWriter;
 import com.fasterxml.jackson.databind.util.Annotations;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SITE;
+import static org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.LinkModel.LinkType.EXTERNAL;
 
 public class MenuItemLinksVirtualBeanPropertyWriter extends AbstractLinksVirtualBeanPropertyWriter<CommonMenuItem> {
 
@@ -59,7 +60,7 @@ public class MenuItemLinksVirtualBeanPropertyWriter extends AbstractLinksVirtual
 
         if (menuItemLink == null || menuItemLink.isNotFound() || menuItemLink.getMount() == null) {
             if (StringUtils.isNotBlank(menuItem.getExternalLink())) {
-                linksMap.put(LINK_NAME_SITE, new LinkModel(menuItem.getExternalLink(), "external"));
+                linksMap.put(LINK_NAME_SITE, new LinkModel(menuItem.getExternalLink(), EXTERNAL));
             }
             return linksMap;
         }
