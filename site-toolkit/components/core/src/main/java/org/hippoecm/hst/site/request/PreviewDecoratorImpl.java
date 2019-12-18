@@ -61,7 +61,7 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
         if(mount.isPreview()) {
             log.debug("Mount {} is already a preview mount. Still decorate the backing virtualhosts to preview", mount.toString());
         }
-        return new PreviewDecoratedMount(mount);
+        return new PreviewDecoratedMount(this, mount);
     }
 
     @Override
@@ -70,7 +70,7 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
             log.debug("Already preview");
             return virtualHosts;
         }
-        return new PreviewDecoratedVirtualHosts(virtualHosts);
+        return new PreviewDecoratedVirtualHosts(this, virtualHosts);
     }
 
     @Override
@@ -79,15 +79,33 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
             log.debug("Already preview");
             return virtualHost;
         }
-        return new PreviewDecoratedVirtualHost(virtualHost);
+        return new PreviewDecoratedVirtualHost(this, virtualHost);
     }
 
-    class PreviewDecoratedMount implements Mount {
 
+    private ResolvedMount decoratedResolvedMount(final ResolvedMount resolvedMount) {
+        if (resolvedMount == null) {
+            return null;
+        }
+        if (!(resolvedMount instanceof MutableResolvedMount)) {
+            String msg = String.format("Resolved mount '%s' expected to be a MutableResolvedMount but was not.",
+                    resolvedMount.getMount().toString());
+            throw new IllegalStateException(msg);
+        }
+        ((MutableResolvedMount)resolvedMount).setMount(decorateMountAsPreview(resolvedMount.getMount()));
+        return resolvedMount;
+    }
+
+    static class PreviewDecoratedMount implements Mount {
+
+        private PreviewDecoratorImpl previewDecorator;
+        private PreviewDecoratedVirtualHost previewDecoratedVirtualHost;
         private Mount delegatee;
-        private Map<String, Mount> childAsPreview = new HashMap<>();
+        private Mount previewDecoratedParent;
+        private Map<String, Mount> previewDecoratedChildren = new HashMap<>();
 
-        public PreviewDecoratedMount(Mount delegatee) {
+        public PreviewDecoratedMount(final PreviewDecoratorImpl previewDecorator, final Mount delegatee) {
+            this.previewDecorator = previewDecorator;
             this.delegatee = delegatee;
         }
 
@@ -124,31 +142,39 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
             if (delegatee.getParent() == null) {
                 return null;
             }
-            return decorateMountAsPreview(delegatee.getParent());
+            if (previewDecoratedParent != null) {
+                return previewDecoratedParent;
+            }
+            previewDecoratedParent = previewDecorator.decorateMountAsPreview(delegatee.getParent());
+            // set this decorated child as decorated child of the decorated parent, otherwise
+            // decoratedChild.getParent().getChildMount("child") == decoratedChild does not hold
+            ((PreviewDecoratedMount)previewDecoratedParent).previewDecoratedChildren.put(this.getName(), this);
+
+            return previewDecoratedParent;
         }
 
         @Override
         public Mount getChildMount(String name) {
-            Mount child = childAsPreview.get(name);
+            Mount child = previewDecoratedChildren.get(name);
             if (child != null) {
                 return child;
             }
             if (delegatee.getChildMount(name) == null) {
                 return null;
             }
-            child = decorateMountAsPreview(delegatee.getChildMount(name));
-            childAsPreview.put(name, child);
+            child = previewDecorator.decorateMountAsPreview(delegatee.getChildMount(name));
+            previewDecoratedChildren.put(name, child);
             return child;
         }
 
         @Override
         public List<Mount> getChildMounts() {
             List<Mount> childMounts = delegatee.getChildMounts();
-            List<Mount> previewChilds = new ArrayList<>();
+            List<Mount> previewChildren = new ArrayList<>();
             for(Mount child : childMounts) {
-                previewChilds.add(getChildMount(child.getName()));
+                previewChildren.add(getChildMount(child.getName()));
             }
-            return Collections.unmodifiableList(previewChilds);
+            return Collections.unmodifiableList(previewChildren);
         }
 
         @Override
@@ -338,7 +364,26 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
 
         @Override
         public VirtualHost getVirtualHost() {
-            return new PreviewDecoratedVirtualHost(delegatee.getVirtualHost());
+            if (previewDecoratedVirtualHost != null) {
+                return previewDecoratedVirtualHost;
+            }
+
+            VirtualHost virtualHost = delegatee.getVirtualHost();
+
+            previewDecoratedVirtualHost = new PreviewDecoratedVirtualHost(previewDecorator, virtualHost);
+
+            // trigger fetching the preview decorated portmount on port 0 to attach current perview decorated mount to
+
+            PortMount portMount = previewDecoratedVirtualHost.getPortMount(0);
+
+            if (portMount instanceof PreviewDecoratedPortMount) {
+                ((PreviewDecoratedPortMount)portMount).previewDecoratedRootMount = this;
+            } else {
+                // unexpected, log error to trace if it ever happens
+                log.error("Unexpected type of preview decorated portmount for {}", portMount);
+            }
+
+            return previewDecoratedVirtualHost;
         }
 
         @Override
@@ -407,11 +452,17 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
         }
     }
 
-    class PreviewDecoratedVirtualHost implements VirtualHost {
+    static class PreviewDecoratedVirtualHost implements VirtualHost {
 
+        private PreviewDecoratorImpl previewDecorator;
         private VirtualHost delegatee;
+        private VirtualHosts previewDecoratedVirtualHosts;
+        private Map<String, VirtualHost> previewDecoratedChildren = new HashMap<>();
+        private PortMount previewDecoratedPortMount;
 
-        private PreviewDecoratedVirtualHost(VirtualHost delegatee) {
+
+        private PreviewDecoratedVirtualHost(final PreviewDecoratorImpl previewDecorator, final VirtualHost delegatee) {
+            this.previewDecorator = previewDecorator;
             this.delegatee = delegatee;
         }
 
@@ -441,7 +492,13 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
             if (child == null) {
                 return null;
             }
-            return new PreviewDecoratedVirtualHost(child);
+            if (previewDecoratedChildren.containsKey(name)) {
+                return previewDecoratedChildren.get(name);
+            }
+
+            PreviewDecoratedVirtualHost previewDecoratedVirtualHost = new PreviewDecoratedVirtualHost(previewDecorator, child);
+            previewDecoratedChildren.put(name, previewDecoratedVirtualHost);
+            return previewDecoratedVirtualHost;
         }
 
         @Override
@@ -452,10 +509,11 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
             }
             List<VirtualHost> decoratedChildren = new ArrayList<>();
             for (VirtualHost childHost : childHosts) {
-                decoratedChildren.add(new PreviewDecoratedVirtualHost(childHost));
+                decoratedChildren.add(getChildHost(childHost.getName()));
             }
-            return decoratedChildren;
+            return Collections.unmodifiableList(decoratedChildren);
         }
+
 
         @Override
         public PortMount getPortMount(final int portNumber) {
@@ -463,12 +521,20 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
             if (portMount == null) {
                 return null;
             }
-            return new PreviewDecoratedPortMount(portMount);
+            if (previewDecoratedPortMount != null) {
+                return previewDecoratedPortMount;
+            }
+            previewDecoratedPortMount = new PreviewDecoratedPortMount(previewDecorator, portMount);
+            return previewDecoratedPortMount;
         }
 
         @Override
         public VirtualHosts getVirtualHosts() {
-            return new PreviewDecoratedVirtualHosts(delegatee.getVirtualHosts());
+            if (previewDecoratedVirtualHosts != null) {
+                return previewDecoratedVirtualHosts;
+            }
+            previewDecoratedVirtualHosts = new PreviewDecoratedVirtualHosts(previewDecorator, delegatee.getVirtualHosts());
+            return previewDecoratedVirtualHosts;
         }
 
         @Override
@@ -547,11 +613,14 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
         }
     }
 
-    class PreviewDecoratedPortMount implements PortMount {
+    static class PreviewDecoratedPortMount implements PortMount {
 
+        private PreviewDecoratorImpl previewDecorator;
         private PortMount delegatee;
+        private Mount previewDecoratedRootMount;
 
-        private PreviewDecoratedPortMount(PortMount delegatee) {
+        private PreviewDecoratedPortMount(final PreviewDecoratorImpl previewDecorator, final PortMount delegatee) {
+            this.previewDecorator = previewDecorator;
             this.delegatee = delegatee;
         }
         @Override
@@ -561,15 +630,24 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
 
         @Override
         public Mount getRootMount() {
+            if (previewDecoratedRootMount != null) {
+                return previewDecoratedRootMount;
+            }
             final Mount rootMount = delegatee.getRootMount();
-            return decorateMountAsPreview(rootMount);
+            previewDecoratedRootMount = previewDecorator.decorateMountAsPreview(rootMount);
+            return previewDecoratedRootMount;
         }
     }
 
-    class PreviewDecoratedVirtualHosts implements VirtualHosts {
+    static class PreviewDecoratedVirtualHosts implements VirtualHosts {
+        private PreviewDecoratorImpl previewDecorator;
         private VirtualHosts delegatee;
+        private ResolvedMount previewDecoratedResolvedMount;
+        private Map<String, Mount> previewDecoratedMounts = new HashMap<>();
+        private ResolvedVirtualHost previewDecoratedResolvedVirtualHost;
 
-        private PreviewDecoratedVirtualHosts(VirtualHosts delegatee) {
+        private PreviewDecoratedVirtualHosts(final PreviewDecoratorImpl previewDecorator, final VirtualHosts delegatee) {
+            this.previewDecorator = previewDecorator;
             this.delegatee = delegatee;
         }
 
@@ -586,14 +664,22 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
 
         @Override
         public ResolvedMount matchMount(final String hostName, final String requestPath) throws MatchException {
+            if (previewDecoratedResolvedMount != null) {
+                return previewDecoratedResolvedMount;
+            }
             final ResolvedMount resolvedMount = delegatee.matchMount(hostName, requestPath);
-            return decoratedResolvedMount(resolvedMount);
+            previewDecoratedResolvedMount = previewDecorator.decoratedResolvedMount(resolvedMount);
+            return previewDecoratedResolvedMount;
         }
 
         @Override
         public ResolvedVirtualHost matchVirtualHost(final String hostName) throws MatchException {
+            if (previewDecoratedResolvedVirtualHost != null) {
+                return previewDecoratedResolvedVirtualHost;
+            }
             final ResolvedVirtualHost undecorated = delegatee.matchVirtualHost(hostName);
-            return new PreviewDecoratedResolvedVirtualHost(undecorated);
+            previewDecoratedResolvedVirtualHost = new PreviewDecoratedResolvedVirtualHost(previewDecorator, undecorated);
+            return previewDecoratedResolvedVirtualHost;
 
         }
 
@@ -634,7 +720,12 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
             }
             log.debug("Found live mount '{}' for alias '{}' in host group '{}'. Return preview decorated version,",
                     liveMount, alias, hostGroupName);
-            return decorateMountAsPreview(liveMount);
+            if (previewDecoratedMounts.containsKey(liveMount.getIdentifier())) {
+                return previewDecoratedMounts.get(liveMount.getIdentifier());
+            }
+            final Mount decorateMountAsPreview = previewDecorator.decorateMountAsPreview(liveMount);
+            previewDecoratedMounts.put(liveMount.getIdentifier(), decorateMountAsPreview);
+            return decorateMountAsPreview;
         }
 
         @Override
@@ -647,7 +738,13 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
                             "manager.");
                     continue;
                 }
-                previewMounts.add(decorateMountAsPreview(mount));
+                if (previewDecoratedMounts.containsKey(mount.getIdentifier())) {
+                    previewMounts.add(previewDecoratedMounts.get(mount.getIdentifier()));
+                } else {
+                    final Mount decorateMountAsPreview = previewDecorator.decorateMountAsPreview(mount);
+                    previewDecoratedMounts.put(mount.getIdentifier(), decorateMountAsPreview);
+                    previewMounts.add(decorateMountAsPreview);
+                }
             }
             return previewMounts;
         }
@@ -659,12 +756,17 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
 
         @Override
         public Mount getMountByIdentifier(final String uuid) {
+            if (previewDecoratedMounts.containsKey(uuid)) {
+                return previewDecoratedMounts.get(uuid);
+            }
             final Mount mountByIdentifier = delegatee.getMountByIdentifier(uuid);
             if (mountByIdentifier == null) {
                 log.info("Cannot find a mount for uuid '{}'. Most likely just removed.", uuid);
                 return null;
             }
-            return decorateMountAsPreview(mountByIdentifier);
+            final Mount decorateMountAsPreview = previewDecorator.decorateMountAsPreview(mountByIdentifier);
+            previewDecoratedMounts.put(mountByIdentifier.getIdentifier(), decorateMountAsPreview);
+            return decorateMountAsPreview;
         }
 
 
@@ -791,15 +893,25 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
         }
     }
 
-    private class PreviewDecoratedResolvedVirtualHost implements ResolvedVirtualHost {
+    private static class PreviewDecoratedResolvedVirtualHost implements ResolvedVirtualHost {
+
+        private PreviewDecoratorImpl previewDecorator;
         private final ResolvedVirtualHost delegatee;
-        public PreviewDecoratedResolvedVirtualHost(final ResolvedVirtualHost delegatee) {
+        private VirtualHost previewDecoratedVirtualHost;
+        private Map<String, ResolvedMount> previewDecoratedResolvedMounts = new HashMap<>();
+
+        public PreviewDecoratedResolvedVirtualHost(final PreviewDecoratorImpl previewDecorator, final ResolvedVirtualHost delegatee) {
+            this.previewDecorator = previewDecorator;
             this.delegatee = delegatee;
         }
 
         @Override
         public VirtualHost getVirtualHost() {
-            return new PreviewDecoratedVirtualHost(delegatee.getVirtualHost());
+            if (previewDecoratedVirtualHost != null ) {
+                return previewDecoratedVirtualHost;
+            }
+            previewDecoratedVirtualHost = new PreviewDecoratedVirtualHost(previewDecorator, delegatee.getVirtualHost());
+            return previewDecoratedVirtualHost;
         }
 
         @Deprecated
@@ -810,21 +922,15 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
 
         @Override
         public ResolvedMount matchMount(final String requestPath) throws MatchException {
+            if (previewDecoratedResolvedMounts.containsKey(requestPath)) {
+                return previewDecoratedResolvedMounts.get(requestPath);
+            }
             final ResolvedMount resolvedMount = delegatee.matchMount(requestPath);
-            return decoratedResolvedMount(resolvedMount);
+            ResolvedMount decoratedResolvedMount = previewDecorator.decoratedResolvedMount(resolvedMount);
+            previewDecoratedResolvedMounts.put(requestPath, decoratedResolvedMount);
+            return decoratedResolvedMount;
         }
     }
 
-    private ResolvedMount decoratedResolvedMount(final ResolvedMount resolvedMount) {
-        if (resolvedMount == null) {
-            return null;
-        }
-        if (!(resolvedMount instanceof MutableResolvedMount)) {
-            String msg = String.format("Resolved mount '%s' expected to be a MutableResolvedMount but was not.",
-                    resolvedMount.getMount().toString());
-            throw new IllegalStateException(msg);
-        }
-        ((MutableResolvedMount)resolvedMount).setMount(decorateMountAsPreview(resolvedMount.getMount()));
-        return resolvedMount;
-    }
+
 }

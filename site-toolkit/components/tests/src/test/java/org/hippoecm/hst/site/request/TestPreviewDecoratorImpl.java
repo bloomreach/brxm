@@ -34,6 +34,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.createNiceMock;
+import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
@@ -238,4 +239,131 @@ public class TestPreviewDecoratorImpl {
 
     }
 
+    @Test
+    public void get_parent_via_decorated_mount_returns_same_parent_instance() {
+        final Mount child = createNiceMock(Mount.class);
+        final Mount parent = createNiceMock(Mount.class);
+
+        mockParentChildSetup(child, parent);
+        replay(child, parent);
+
+        final PreviewDecoratorImpl mountDecorator = new PreviewDecoratorImpl();
+        final Mount decoratedChild = mountDecorator.decorateMountAsPreview(child);
+
+        assertTrue(decoratedChild.getParent() == decoratedChild.getParent());
+    }
+    @Test
+    public void get_decorated_mount_via_parent_returns_same_instance() {
+        final Mount child = createNiceMock(Mount.class);
+        final Mount parent = createNiceMock(Mount.class);
+
+        mockParentChildSetup(child, parent);
+        replay(child, parent);
+
+        final PreviewDecoratorImpl mountDecorator = new PreviewDecoratorImpl();
+        final Mount decoratedChild = mountDecorator.decorateMountAsPreview(child);
+
+        assertTrue(decoratedChild.getParent().getChildMount("child") == decoratedChild);
+    }
+
+    private void mockParentChildSetup(final Mount child, final Mount parent) {
+        expect(child.isPreview()).andReturn(false).anyTimes();
+        expect(child.getName()).andReturn("child").anyTimes();
+        expect(child.getParent()).andStubReturn(parent);
+        expect(parent.getName()).andReturn("parent").anyTimes();
+        expect(parent.getChildMount(eq("child"))).andStubReturn(child);
+
+    }
+
+    @Test
+    public void get_virtualhost_via_decorated_mount_returns_same_instance() {
+
+        final VirtualHost virtualHost = createNiceMock(VirtualHost.class);
+
+        final Mount mount = createNiceMock(Mount.class);
+        expect(mount.isPreview()).andReturn(false).anyTimes();
+        expect(mount.getName()).andReturn("mount").anyTimes();
+        expect(mount.getVirtualHost()).andReturn(virtualHost).anyTimes();
+
+        replay(mount, virtualHost);
+
+        final PreviewDecoratorImpl mountDecorator = new PreviewDecoratorImpl();
+        final Mount decoratedMount = mountDecorator.decorateMountAsPreview(mount);
+
+        assertTrue(decoratedMount.getVirtualHost() == decoratedMount.getVirtualHost());
+    }
+
+    @Test
+    public void get_decorated_mount_via_virtualhost_returns_same_instance() {
+        final VirtualHost virtualHost = createNiceMock(VirtualHost.class);
+        final PortMount portMount = createNiceMock(PortMount.class);
+
+        final Mount mount = createNiceMock(Mount.class);
+        expect(mount.isPreview()).andReturn(false).anyTimes();
+        expect(mount.getName()).andReturn("mount").anyTimes();
+        expect(mount.getVirtualHost()).andReturn(virtualHost).anyTimes();
+
+        expect(virtualHost.getPortMount(eq(0))).andStubReturn(portMount);
+        expect(portMount.getRootMount()).andStubReturn(mount);
+
+        replay(virtualHost, portMount, mount);
+
+        final PreviewDecoratorImpl mountDecorator = new PreviewDecoratorImpl();
+        final Mount decoratedMount = mountDecorator.decorateMountAsPreview(mount);
+
+        assertTrue(decoratedMount.getVirtualHost().getPortMount(0).getRootMount() == decoratedMount);
+    }
+
+    @Test
+    public void traverse_through_preview_decorated_model_keeps_returning_same_decorated_instances() {
+        final Mount child = createNiceMock(Mount.class);
+        final Mount parent = createNiceMock(Mount.class);
+        mockParentChildSetup(child, parent);
+
+        final VirtualHosts virtualHosts = createNiceMock(VirtualHosts.class);
+
+        expect(virtualHosts.getMountByIdentifier(eq("parentMountId"))).andStubReturn(parent);
+        expect(parent.getIdentifier()).andStubReturn("parentMountId");
+
+        final VirtualHost parentVirtualHost = createNiceMock(VirtualHost.class);
+        expect(parentVirtualHost.getVirtualHosts()).andStubReturn(virtualHosts);
+
+        final VirtualHost childVirtualHost = createNiceMock(VirtualHost.class);
+        expect(childVirtualHost.getVirtualHosts()).andStubReturn(virtualHosts);
+        expect(childVirtualHost.getName()).andStubReturn("childHost");
+
+        expect(child.getVirtualHost()).andStubReturn(childVirtualHost);
+        expect(parentVirtualHost.getChildHost(eq("childHost"))).andStubReturn(childVirtualHost);
+
+        final PortMount portMount = createNiceMock(PortMount.class);
+
+        expect(parent.getVirtualHost()).andReturn(childVirtualHost).anyTimes();
+
+        expect(childVirtualHost.getPortMount(eq(0))).andStubReturn(portMount);
+        expect(portMount.getRootMount()).andStubReturn(parent);
+
+        replay(child, parent, portMount, childVirtualHost, virtualHosts);
+
+
+        final PreviewDecoratorImpl mountDecorator = new PreviewDecoratorImpl();
+        final Mount childDecoratedMount = mountDecorator.decorateMountAsPreview(child);
+
+        VirtualHosts decoratedVirtualHosts = childDecoratedMount.getVirtualHost().getVirtualHosts();
+
+        assertTrue(decoratedVirtualHosts == childDecoratedMount.getVirtualHost().getVirtualHosts());
+
+        Mount decoratedMountParent = childDecoratedMount.getParent();
+
+        Mount decoratedMountParentAgain = decoratedVirtualHosts.getMountByIdentifier("parentMountId");
+
+        assertTrue(decoratedMountParent instanceof PreviewDecoratorImpl.PreviewDecoratedMount &&
+                decoratedMountParentAgain instanceof PreviewDecoratorImpl.PreviewDecoratedMount);
+
+        assertFalse("Getting a mount via the decoratedVirtualHosts does not result in the same decorated mount " +
+                "as through which the decoratedVirtualHosts was retrieved...this can be a future improvement not yet " +
+                "supported",decoratedMountParent == decoratedMountParentAgain);
+
+        assertTrue("Fetching same mount twice via decoratedVirtualHosts results in same instance",
+                decoratedMountParentAgain == decoratedVirtualHosts.getMountByIdentifier("parentMountId"));
+    }
 }
