@@ -122,8 +122,9 @@ public class HtmlContentRewriter extends SimpleContentRewriter {
                     log.info("Could not create a src for '{}'", srcPath);
                     continue;
                 }
+                final LinkModel linkModel = LinkModel.convert(binaryLink, requestContext);
 
-                setAttribute(imageTag, "src", binaryLink.toUrlForm(requestContext, false));
+                setAttribute(imageTag, "src", linkModel.getHref());
 
             }
 
