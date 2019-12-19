@@ -150,6 +150,62 @@ describe('PageImpl', () => {
     });
   });
 
+  describe('getVisitor', () => {
+    it('should return a visitor', () => {
+      const page = createPage({
+        page: { id: 'id', type: TYPE_COMPONENT },
+        _meta: {
+          visitor: {
+            id: 'some-id',
+            header: 'some-header',
+            new: false,
+          },
+        },
+      });
+
+      expect(page.getVisitor()).toEqual({
+        id: 'some-id',
+        header: 'some-header',
+        new: false,
+      });
+    });
+
+    it('should return an undefined value', () => {
+      const page1 = createPage({ page: { id: 'id', type: TYPE_COMPONENT, _meta: {} } });
+      const page2 = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
+
+      expect(page1.getVisitor()).toBeUndefined();
+      expect(page2.getVisitor()).toBeUndefined();
+    });
+  });
+
+  describe('getVisit', () => {
+    it('should return a visit', () => {
+      const page = createPage({
+        page: { id: 'id', type: TYPE_COMPONENT },
+        _meta: {
+          visit: {
+            id: 'some-id',
+            new: false,
+          },
+        },
+      });
+
+      expect(page.getVisit()).toEqual({
+        id: 'some-id',
+        new: false,
+      });
+    });
+
+    it('should return an undefined value', () => {
+      const page1 = createPage({ page: { id: 'id', type: TYPE_COMPONENT, _meta: {} } });
+      const page2 = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
+
+      expect(page1.getVisit()).toBeUndefined();
+      expect(page2.getVisit()).toBeUndefined();
+    });
+  });
+
   describe('isPreview', () => {
     it('should return true', () => {
       const page = createPage({

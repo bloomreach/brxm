@@ -25,6 +25,7 @@ import { Link, TYPE_LINK_INTERNAL } from './link';
 import { Events, PageUpdateEvent } from '../events';
 import { MetaCollectionModel, Meta } from './meta';
 import { Reference, isReference } from './reference';
+import { Visitor, Visit } from './relevance';
 
 /**
  * @hidden
@@ -52,6 +53,18 @@ interface PageRootModel {
  * @hidden
  */
 interface PageMeta {
+  /**
+   * Meta-data about the current visitor. Available when the Relevance Module is enabled.
+   * @see https://documentation.bloomreach.com/library/enterprise/enterprise-features/targeting/targeting.html
+   */
+  visitor?: Visitor;
+
+  /**
+   * Meta-data about the current visit. Available when the Relevance Module is enabled.
+   * @see https://documentation.bloomreach.com/library/enterprise/enterprise-features/targeting/targeting.html
+   */
+  visit?: Visit;
+
   /**
    * Preview mode flag.
    */
@@ -127,6 +140,16 @@ export interface Page {
    * @param path The path to generate URL.
    */
   getUrl(path: string): string;
+
+  /**
+   * @return The current visitor data.
+   */
+  getVisitor(): Visitor | undefined;
+
+  /**
+   * @return The current visit data.
+   */
+  getVisit(): Visit | undefined;
 
   /**
    * @returns Whether the page is in the preview mode.
@@ -212,6 +235,14 @@ export class PageImpl implements Page {
         ? { ...this.model._links.site, type: TYPE_LINK_INTERNAL }
         : ''
     ));
+  }
+
+  getVisitor() {
+    return this.model._meta && this.model._meta.visitor;
+  }
+
+  getVisit() {
+    return this.model._meta && this.model._meta.visit;
   }
 
   isPreview() {
