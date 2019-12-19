@@ -52,6 +52,9 @@ interface PageRootModel {
  * @hidden
  */
 interface PageMeta {
+  /**
+   * Preview mode flag.
+   */
   preview?: boolean;
 }
 
