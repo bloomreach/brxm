@@ -288,35 +288,45 @@ public class HstLinkImpl implements HstLink {
                 urlString = "/";
             }
         }
-        
-        /*
-         * we create a url including http when the Mount is not null and one of the lines below is true
-         * 0) requestContext.isFullyQualifiedURLs() = true
-         * 1) external = true
-         * 2) The virtualhost from current request Mount is different than the Mount for this link
-         * 3) The portnumber is in the url, and the current request Mount has a different portnumber than the Mount for this link
-         */
-        String renderHost = null;
 
         if (mount != null) {
-            if (requestContext.isChannelManagerPreviewRequest()) {
+            // for requests that are a channel manager preview request, we always return absolute links (starting with
+            // a '/') and never fully qualified links UNLESS the request is a channel mgr preview Page Model API request:
+            // Since these requests are consumed by an SPA, they will need to follow the 'normal' URL procssing
+            if (requestContext.isChannelManagerPreviewRequest() && !requestContext.isPageModelApiRequest()) {
+                if (requestContext.getRenderHost() == null) {
+                    throw new IllegalStateException("RequestContext#getRenderHost() cannot be null for channel manager " +
+                            "preview requests");
+                }
                 // check whether the urlString is equal to the contextPath of the mount. If so,
                 // we need to append an extra / to the urlString : This is to avoid a link like 
                 // '/site' in cms preview context: It must there be '/site/'
                 if (urlString.equals(requestMount.getContextPath())) {
                     urlString += "/";
                 }
-            }
-            if (requestContext.getRenderHost() != null && requestMount != mount) {
-                // the link is cross-domain, so set the render host if the render host is different than the current host
-                if (!isHostSame(requestContext.getRenderHost(), mount.getVirtualHost().getHostName())) {
-                    renderHost = mount.getVirtualHost().getHostName();
-                } else if (!StringUtils.equals(requestMount.getContextPath(), mount.getContextPath())) {
-                    // cross webapp link : Since the other webapp might not yet have an 'sso' in the channel mgr, we need
-                    // to include the renderHost
-                    renderHost = mount.getVirtualHost().getHostName();
+
+                if (requestMount != mount) {
+                    String urlRenderHost = null;
+                    // the link is cross-domain, so set the render host if the render host is different than the current host
+                    if (!isHostSame(requestContext.getRenderHost(), mount.getVirtualHost().getHostName())) {
+                        urlRenderHost = mount.getVirtualHost().getHostName();
+                    } else if (!StringUtils.equals(requestMount.getContextPath(), mount.getContextPath())) {
+                        // cross webapp link : Since the other webapp might not yet have an 'sso' in the channel mgr, we need
+                        // to include the renderHost
+                        urlRenderHost = mount.getVirtualHost().getHostName();
+                    }
+
+                    if (urlRenderHost != null && !isContainerResource()) {
+                        // we need to append the render host as a request parameter but it is never needed for resources
+                        if (urlString.contains("?")) {
+                            urlString += "&";
+                        } else {
+                            urlString += "?";
+                        }
+                        urlString += ContainerConstants.RENDERING_HOST + '=' + urlRenderHost;
+                    }
                 }
-            } else if (!requestContext.isChannelManagerPreviewRequest()) {
+            } else {
                 // the above !requestContext.isChannelManagerPreviewRequest() check is to avoid fully qualified links in CMS channel manager:
                 // for the cms, we never want a fully qualified URLs for links as that is managed through the 'renderHost'
 
@@ -357,16 +367,6 @@ public class HstLinkImpl implements HstLink {
                     urlString = host + urlString;
                 }
             }
-        }
-
-        if (renderHost != null && !isContainerResource()) {
-            // we need to append the render host as a request parameter but it is not needed for resources
-            if (urlString.contains("?")) {
-                urlString += "&";
-            } else {
-                urlString += "?";
-            }
-            urlString += ContainerConstants.RENDERING_HOST + '=' + renderHost;
         }
 
         return urlString;
@@ -421,7 +421,7 @@ public class HstLinkImpl implements HstLink {
 
             final Mount requestMount = requestContext.getResolvedMount().getMount();
 
-            if (requestMount.getVirtualHost() != mount.getVirtualHost()) {
+            if (!requestMount.getVirtualHost().getHostName().equals(mount.getVirtualHost().getHostName())) {
                 return true;
             }
             if (mount.isPortInUrl() && requestMount.getPort() != mount.getPort()) {

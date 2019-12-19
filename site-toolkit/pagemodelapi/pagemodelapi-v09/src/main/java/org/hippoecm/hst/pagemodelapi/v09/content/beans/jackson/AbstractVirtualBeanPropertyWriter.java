@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -29,8 +29,6 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.ser.VirtualBeanPropertyWriter;
 import com.fasterxml.jackson.databind.util.Annotations;
-
-import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPELINE_NAME;
 
 /**
  * Abstract base class to add extra properties dynamically.
@@ -100,7 +98,7 @@ abstract public class AbstractVirtualBeanPropertyWriter<S, T> extends VirtualBea
     protected Mount getSiteMountForCurrentPageModelApiRequest(final HstRequestContext requestContext) {
         Mount curMount = requestContext.getResolvedMount().getMount();
 
-        if (PAGE_MODEL_PIPELINE_NAME.equals(curMount.getNamedPipeline())) {
+        if (requestContext.isPageModelApiRequest()) {
             Mount siteMount = curMount.getParent();
 
             if (siteMount != null) {
@@ -111,8 +109,7 @@ abstract public class AbstractVirtualBeanPropertyWriter<S, T> extends VirtualBea
                         curMount);
             }
         } else {
-            log.warn("Expected request mount have named pipeline '{}' but was '{}'. Could not find a proper site mount.",
-                    PAGE_MODEL_PIPELINE_NAME, curMount.getNamedPipeline());
+            log.warn("Expected a Page Model Api Request but was not the case for {}", requestContext.getServletRequest());
         }
 
         return null;

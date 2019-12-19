@@ -39,8 +39,6 @@ import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPELINE_NAME;
-
 public class CmsComponentWindowResponseAppender extends AbstractComponentWindowResponseAppender implements ComponentWindowResponseAppender {
 
     private static final Logger log = LoggerFactory.getLogger(CmsComponentWindowResponseAppender.class);
@@ -123,7 +121,7 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
         pageMetaData.put(ChannelManagerConstants.HST_TYPE, ChannelManagerConstants.HST_TYPE_PAGE_META_DATA);
         pageMetaData.put(ChannelManagerConstants.HST_PATH_INFO, requestContext.getBaseURL().getPathInfo());
 
-        if (PAGE_MODEL_PIPELINE_NAME.equals(mount.getNamedPipeline())) {
+        if (requestContext.isPageModelApiRequest()) {
             // in case of PageModelApi pipeline, we need the parent mount to get the channel since the page model
             // api pipeline never has a channel, see org.hippoecm.hst.configuration.hosting.PageModelApiMount.getChannel()
             pageMetaData.put(ChannelManagerConstants.HST_CHANNEL_ID, mount.getParent().getChannel().getId());

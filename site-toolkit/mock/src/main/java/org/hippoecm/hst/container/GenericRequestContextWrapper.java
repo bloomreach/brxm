@@ -348,6 +348,16 @@ public class GenericRequestContextWrapper implements  HstMutableRequestContext {
         return context.isChannelManagerPreviewRequest();
     }
 
+    @Override
+    public void setPageModelApiRequest(final boolean pageModelApiRequest) {
+        context.setPageModelApiRequest(pageModelApiRequest);
+    }
+
+    @Override
+    public boolean isPageModelApiRequest() {
+        return context.isPageModelApiRequest();
+    }
+
     @Deprecated
     @Override
     public boolean isCmsRequest() {

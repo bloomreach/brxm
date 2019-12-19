@@ -83,6 +83,7 @@ import static org.hippoecm.hst.core.container.ContainerConstants.DEFAULT_SITE_PI
 import static org.hippoecm.hst.core.container.ContainerConstants.FORWARD_RECURSION_ERROR;
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN;
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR;
+import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPELINE_NAME;
 import static org.hippoecm.hst.util.HstRequestUtils.createURLWithExplicitSchemeForRequest;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRemoteAddr;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestHost;
@@ -352,9 +353,14 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
             request.setAttribute(ContainerConstants.RESOLVED_MOUNT_REQUEST_ATTR, resolvedMount);
             requestContext.setResolvedMount(resolvedMount);
+
+            if (PAGE_MODEL_PIPELINE_NAME.equals(resolvedMount.getNamedPipeline())) {
+                log.debug("Request will invoke {} pipeline for request {} ", PAGE_MODEL_PIPELINE_NAME, containerRequest);
+                requestContext.setPageModelApiRequest(true);
+            }
+
             if (renderingHost != null) {
                 if (requestComesFromCms(vHosts, renderingHost, req)) {
-                    // only when request comes from CMS, set rendering host
                     requestContext.setRenderHost(renderingHost);
                     if (!authenticated) {
                         ((HttpServletResponse) response).sendError(SC_UNAUTHORIZED);

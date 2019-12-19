@@ -123,6 +123,8 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     // request is done from a cms context. This can influence for example how a link is created
     protected boolean channelManagerPreviewRequest;
 
+    private boolean pageModelApiRequest;
+
     private Map<Session, ObjectBeanManager> objectBeanManagers;
     private Map<Session, HstQueryManager> hstQueryManagers;
 
@@ -792,6 +794,17 @@ public class HstRequestContextImpl implements HstMutableRequestContext {
     public void setChannelManagerPreviewRequest(final boolean channelMngrPreviewRequest) {
         checkStateValidity();
         this.channelManagerPreviewRequest = channelMngrPreviewRequest;
+    }
+
+    @Override
+    public void setPageModelApiRequest(final boolean pageModelApiRequest) {
+        checkStateValidity();
+        this.pageModelApiRequest = pageModelApiRequest;
+    }
+
+    public boolean isPageModelApiRequest() {
+        checkStateValidity();
+        return pageModelApiRequest;
     }
 
     @Deprecated

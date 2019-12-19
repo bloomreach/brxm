@@ -170,4 +170,6 @@ public interface HstMutableRequestContext extends HstRequestContext {
      * @param contentTypes
      */
     void setContentTypes(ContentTypes contentTypes);
+
+    void setPageModelApiRequest(boolean pageModelApiRequest);
 }

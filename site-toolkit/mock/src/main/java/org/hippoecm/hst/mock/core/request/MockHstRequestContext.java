@@ -93,6 +93,7 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     private boolean fullyQualifiedURLs;
     private String renderHost;
     private boolean channelMngrPreviewRequest;
+    private boolean pageModelApiRequest;
     private ContentBeansTool contentBeansTool;
     private boolean cachingObjectConverterEnabled;
     private HippoBean contentBean;
@@ -515,6 +516,16 @@ public class MockHstRequestContext implements HstMutableRequestContext {
     public void setChannelManagerPreviewRequest(boolean channelMngrPreviewRequest) {
         checkStateValidity();
         this.channelMngrPreviewRequest = channelMngrPreviewRequest;
+    }
+
+    @Override
+    public void setPageModelApiRequest(final boolean pageModelApiRequest) {
+        this.pageModelApiRequest = pageModelApiRequest;
+    }
+
+    @Override
+    public boolean isPageModelApiRequest() {
+        return pageModelApiRequest;
     }
 
     @Deprecated
