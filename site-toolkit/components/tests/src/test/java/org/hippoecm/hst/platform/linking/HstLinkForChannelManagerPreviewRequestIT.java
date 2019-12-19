@@ -15,10 +15,6 @@
  */
 package org.hippoecm.hst.platform.linking;
 
-
-import javax.jcr.Node;
-import javax.jcr.Session;
-
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstManager;
@@ -43,8 +39,6 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
-import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.Utilities;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -90,77 +84,6 @@ public class HstLinkForChannelManagerPreviewRequestIT extends AbstractHstLinkRew
         this.previewDecorator = HstServices.getComponentManager().getComponent(PreviewDecorator.class.getName());
 
     }
-
-    @Test
-    public void testLinksChannelManagerPreviewRequestNoRenderingHost() throws Exception {
-        {
-            HstRequestContext requestContext = getRequestFromCms("localhost", "/home", null, null);
-            ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
-            Object homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
-            HstLink homePageLink = linkCreator.create((HippoBean) homeBean, requestContext);
-            assertEquals("link.getPath for homepage node should be '", "", homePageLink.getPath());
-            // A link in CMS request context for the HOMEPAGE should NOT be /site like for normal site requests,
-            // but should be /site/ to work well with PROXIES using /site/ to match on. Hence, /site/ is expected
-            assertEquals("wrong absolute link for homepage for CMS context", "/site/", (homePageLink.toUrlForm(requestContext, false)));
-    
-            // A fully qualified link for CMS request context for should NOT be fully qualified, even for toUrlForm(requestContext, TRUE))
-            // CMS links must always be relative to the CMS host! Thus no http://localhost involved
-            assertEquals("wrong fully qualified url for homepage for CMS context", "/site/", (homePageLink.toUrlForm(requestContext, true)));
-    
-            Node newsNode = requestContext.getSession().getNode("/unittestcontent/documents/unittestproject/News/News1");
-            HstLink newsLink = linkCreator.create(newsNode, requestContext);
-            assertEquals("wrong link.getPath for News/News1 for CMS context","news/News1.html", newsLink.getPath());
-            assertEquals("wrong absolute link for News/News1 for CMS context" ,"/site/news/News1.html", (newsLink.toUrlForm(requestContext, false)));
-            assertEquals("wrong fully qualified url for News/News1 for CMS context" ,"/site/news/News1.html", (newsLink.toUrlForm(requestContext, true)));
-    
-            // link for an image in cms context should also start with context path
-            HstLink imageLink = linkCreator.create("/images/mythumbnail.gif", requestContext.getResolvedMount().getMount());
-            assertEquals("wrong absolute link for images/mythumbnail.gif for CMS context" ,"/site/images/mythumbnail.gif", (imageLink.toUrlForm(requestContext, false)));
-            assertEquals("wrong fully qualified url for images/mythumbnail.gif for CMS context" ,"/site/images/mythumbnail.gif", (imageLink.toUrlForm(requestContext, true)));
-        }
-        // NOW we do the same tests as above, but we first SET the showcontextpath on hst:hst/hst:hosts to FALSE : 
-        // EVEN when contextpath is set to FALSE, for the URLs in cms context, still the contextpath should be included.
-        // When acessing the site over the host of the cms, ALWAYS the context path needs to be included
-        Session session = createAdminSession();
-        Node hstHostsNode = session.getNode("/hst:hst/hst:hosts");
-        hstHostsNode.setProperty("hst:showcontextpath", false);
-        session.save();
-        // wait to be sure async jcr event arrived
-        Thread.sleep(50);
-        // NOW below, even when show contextpath is FALSE, the /site contextpath should be included because the links are
-        // for cms host
-        {
-            HstRequestContext requestContext = getRequestFromCms("localhost", "/home", null, null);
-            ObjectBeanManager obm = new ObjectBeanManagerImpl(requestContext.getSession(), objectConverter);
-            Object homeBean = obm.getObject("/unittestcontent/documents/unittestproject/common/homepage");
-            HstLink homePageLink = linkCreator.create((HippoBean) homeBean, requestContext);
-            assertEquals("link.getPath for homepage node should be '", "", homePageLink.getPath());
-            // A link in CMS request context for the HOMEPAGE should NOT be /site like for normal site requests,
-            // but should be /site/ to work well with PROXIES using /site/ to match on. Hence, /site/ is expected
-            assertEquals("wrong absolute link for homepage for CMS context", "/site/", (homePageLink.toUrlForm(requestContext, false)));
-
-            // A fully qualified link for CMS request context for should NOT be fully qualified, even for toUrlForm(requestContext, TRUE))
-            // CMS links must always be relative to the CMS host! Thus no http://localhost involved
-            assertEquals("wrong fully qualified url for homepage for CMS context", "/site/", (homePageLink.toUrlForm(requestContext, true)));
-
-            Node newsNode = requestContext.getSession().getNode("/unittestcontent/documents/unittestproject/News/News1");
-            HstLink newsLink = linkCreator.create(newsNode, requestContext);
-            assertEquals("wrong link.getPath for News/News1 for CMS context","news/News1.html", newsLink.getPath());
-            assertEquals("wrong absolute link for News/News1 for CMS context" ,"/site/news/News1.html", (newsLink.toUrlForm(requestContext, false)));
-            assertEquals("wrong fully qualified url for News/News1 for CMS context" ,"/site/news/News1.html", (newsLink.toUrlForm(requestContext, true)));
-
-            // link for an image in cms context should also start with context path
-            HstLink imageLink = linkCreator.create("/images/mythumbnail.gif", requestContext.getResolvedMount().getMount());
-            assertEquals("wrong absolute link for images/mythumbnail.gif for CMS context" ,"/site/images/mythumbnail.gif", (imageLink.toUrlForm(requestContext, false)));
-            assertEquals("wrong fully qualified url for images/mythumbnail.gif for CMS context" ,"/site/images/mythumbnail.gif", (imageLink.toUrlForm(requestContext, true)));
-        }
-        // set the value again to original.
-        hstHostsNode.getProperty("hst:showcontextpath").remove();
-        session.save();
-        session.logout();
-        
-    }
-
 
     @Test
     public void testLinksChannelManagerPreviewRequestWITHRenderingHost() throws Exception {
