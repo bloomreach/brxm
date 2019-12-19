@@ -35,43 +35,42 @@ interface IndexProps {
 }
 
 export default class Index extends React.Component<IndexProps> {
+  private static visitor?: Configuration['visitor'];
+
   static async getInitialProps(context: NextPageContext) {
-    // Workaround for the targeting feature to store visitor cookie after the initial server-side render.
-    const targetingWorkaround = axios.interceptors.response.use((response) => {
-      if (context.res && response.headers['set-cookie']) {
-        response.headers['set-cookie'].forEach((value: string) =>
-          context.res!.setHeader('Set-Cookie', value.replace(/Path=.*?(?=(?:$|;))/, 'Path=/')));
-      }
-
-      return response;
-    });
-
-    try {
-      const config = {
-        options: {
-          live: {
-            cmsBaseUrl: publicRuntimeConfig.liveBrBaseUrl,
-            spaBaseUrl: publicRuntimeConfig.liveSpaBaseUrl,
-          },
-          preview: {
-            cmsBaseUrl: publicRuntimeConfig.previewBrBaseUrl,
-            spaBaseUrl: publicRuntimeConfig.previewSpaBaseUrl,
-          },
+    const config = {
+      options: {
+        live: {
+          cmsBaseUrl: publicRuntimeConfig.liveBrBaseUrl,
+          spaBaseUrl: publicRuntimeConfig.liveSpaBaseUrl,
         },
-        request: { path: context.asPath || '' },
-      };
+        preview: {
+          cmsBaseUrl: publicRuntimeConfig.previewBrBaseUrl,
+          spaBaseUrl: publicRuntimeConfig.previewSpaBaseUrl,
+        },
+      },
+      request: { path: context.asPath || '' },
+      visitor: Index.visitor,
+    };
+    const page = await initialize({
+      ...config,
+      httpClient: axios,
+      request: { ...context.req, ...config.request },
+    });
+    config.visitor = page.getVisitor();
 
-      return {
-        config,
-        page: await initialize({
-          ...config,
-          httpClient: axios,
-          request: { ...context.req, ...config.request },
-        }),
-      };
-    } finally {
-      axios.interceptors.response.eject(targetingWorkaround);
+    if (context.res && config.visitor) {
+      context.res.setHeader(
+        'Set-Cookie',
+        `${config.visitor.header}=${config.visitor.id}; Max-Age=${365 * 24 * 60 * 60}; Path=/; HttpOnly`,
+      );
     }
+
+    return { config, page };
+  }
+
+  componentDidMount() {
+    Index.visitor = this.props.config.visitor;
   }
 
   render() {
