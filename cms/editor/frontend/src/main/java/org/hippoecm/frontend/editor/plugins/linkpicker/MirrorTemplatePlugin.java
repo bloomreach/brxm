@@ -83,6 +83,20 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
         response.render(CssHeaderItem.forReference(MIRROR_TEMPLATE_PLUGIN));
     }
 
+    public Fragment getFragment() {
+        return fragment;
+    }
+
+    protected boolean hasLink() {
+        return StringUtils.isNotEmpty(getPathModel().getObject());
+    }
+
+    protected void addButtons() {
+        addSelectButton();
+        addOpenButton();
+        addClearButton();
+    }
+
     private void addOpenLinkPickerLink() {
         final IModel<String> displayModel = getLocalizedNameModel();
         final IDialogFactory factory = getDialogFactory();
@@ -95,12 +109,6 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
         };
         openPickerLink.add(TitleAttribute.set(getPathModel()));
         fragment.add(openPickerLink);
-    }
-
-    private void addButtons() {
-        addSelectButton();
-        addOpenButton();
-        addClearButton();
     }
 
     private void addOpenLink() {
@@ -119,10 +127,6 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
         openLink.add(TitleAttribute.set(getPathModel()));
         openLink.setOutputMarkupId(true);
         fragment.add(openLink);
-    }
-
-    private boolean hasLink() {
-        return StringUtils.isNotEmpty(getPathModel().getObject());
     }
 
     private void addOpenButton() {
