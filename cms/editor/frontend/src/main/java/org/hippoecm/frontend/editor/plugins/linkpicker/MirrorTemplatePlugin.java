@@ -25,16 +25,21 @@ import javax.jcr.ValueFormatException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.markup.head.CssHeaderItem;
+import org.apache.wicket.markup.head.IHeaderResponse;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IChainingModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.request.resource.CssResourceReference;
 import org.hippoecm.frontend.attributes.TitleAttribute;
-import org.hippoecm.frontend.dialog.AbstractDialog;
+import org.hippoecm.frontend.dialog.Dialog;
 import org.hippoecm.frontend.dialog.DialogLink;
 import org.hippoecm.frontend.dialog.IDialogFactory;
+import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.editor.ITemplateEngine;
+import org.hippoecm.frontend.model.JcrItemModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyModel;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
@@ -49,18 +54,17 @@ import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class MirrorTemplatePlugin extends RenderPlugin<Node> {
     private static final Logger log = LoggerFactory.getLogger(MirrorTemplatePlugin.class);
 
-    private Fragment fragment;
+    private static final CssResourceReference MIRROR_TEMPLATE_PLUGIN =
+            new CssResourceReference(MirrorTemplatePlugin.class, MirrorTemplatePlugin.class.getSimpleName() + ".css");
 
-    public MirrorTemplatePlugin(final IPluginContext context, IPluginConfig config) {
+    private final Fragment fragment;
+
+    public MirrorTemplatePlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
-        init(config);
-    }
 
-    private void init(final IPluginConfig config) {
         final Mode mode = Mode.fromString(config.getString(ITemplateEngine.MODE), Mode.VIEW);
         if (mode == Mode.EDIT) {
             fragment = new Fragment("fragment", "edit", this);
@@ -73,58 +77,67 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
         add(fragment);
     }
 
+    @Override
+    public void renderHead(final IHeaderResponse response) {
+        super.renderHead(response);
+        response.render(CssHeaderItem.forReference(MIRROR_TEMPLATE_PLUGIN));
+    }
+
+    public Fragment getFragment() {
+        return fragment;
+    }
+
+    protected boolean hasLink() {
+        return StringUtils.isNotEmpty(getPathModel().getObject());
+    }
+
+    protected void addButtons() {
+        addSelectButton();
+        addOpenButton();
+        addClearButton();
+    }
+
     private void addOpenLinkPickerLink() {
         final IModel<String> displayModel = getLocalizedNameModel();
-        final IPluginContext context = getPluginContext();
-        DialogLink openPickerLink = new DialogLink("openLinkPickerLink", displayModel, getDialogFactory(context), getDialogService()) {
-
+        final IDialogFactory factory = getDialogFactory();
+        final IDialogService service = getDialogService();
+        final DialogLink openPickerLink = new DialogLink("openLinkPickerLink", displayModel, factory, service) {
             @Override
             public boolean isVisible() {
-                return hasFilledDocbase();
+                return hasLink();
             }
         };
         openPickerLink.add(TitleAttribute.set(getPathModel()));
         fragment.add(openPickerLink);
     }
 
-    private void addButtons() {
-        addSelectButton();
-        addOpenButton();
-        addClearButton();
-    }
-
     private void addOpenLink() {
-        AjaxLink openLink = new AjaxLink("openLink") {
-
+        final AjaxLink<Void> openLink = new AjaxLink<Void>("openLink") {
             @Override
             public boolean isVisible() {
-                return hasFilledDocbase();
+                return hasLink();
             }
 
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 open();
             }
         };
-        openLink.add(new Label("value",getLocalizedNameModel()));
+        openLink.add(new Label("value", getLocalizedNameModel()));
         openLink.add(TitleAttribute.set(getPathModel()));
         openLink.setOutputMarkupId(true);
         fragment.add(openLink);
     }
 
-    private boolean hasFilledDocbase() {
-        return StringUtils.isNotEmpty(getPathModel().getObject());
-    }
-
     private void addOpenButton() {
-        final AjaxLink openButton = new AjaxLink("open") {
+        final AjaxLink<Void> openButton = new AjaxLink<Void>("open") {
             @Override
             public boolean isVisible() {
-                return hasFilledDocbase();
+                return hasLink();
             }
 
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 open();
             }
         };
@@ -133,24 +146,24 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
     }
 
     private void addSelectButton() {
-        final IPluginContext context = getPluginContext();
         fragment.add(new AjaxLink<Void>("select") {
             @Override
             public void onClick(final AjaxRequestTarget target) {
-                getDialogService().show(createLinkPickerDialog(context));
+                final Dialog<String> linkPickerDialog = createLinkPickerDialog();
+                getDialogService().show(linkPickerDialog);
             }
         });
     }
 
     private void addClearButton() {
-        final AjaxLink clearButton = new AjaxLink<Void>("clear") {
+        final AjaxLink<Void> clearButton = new AjaxLink<Void>("clear") {
             @Override
             public boolean isVisible() {
-                return hasFilledDocbase();
+                return hasLink();
             }
 
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 clearModel();
             }
         };
@@ -158,78 +171,77 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
     }
 
     private void clearModel() {
-        Node node = this.getModelObject();
+        final Node node = this.getModelObject();
         try {
             getDocBaseModel().setObject(node.getSession().getRootNode().getIdentifier());
-        } catch (RepositoryException e) {
-            log.error("Unable to reset docbase to rootnode uuid", e);
+        } catch (final RepositoryException e) {
+            log.error("Unable to reset docbase to root node uuid", e);
         }
         redraw();
     }
 
-    private IDialogFactory getDialogFactory(final IPluginContext context) {
-        return () -> createLinkPickerDialog(context);
+    private IDialogFactory getDialogFactory() {
+        return this::createLinkPickerDialog;
     }
 
-    /**
-     * Create a link picker dialog
-     */
-    private AbstractDialog<String> createLinkPickerDialog(final IPluginContext context) {
-        final JcrPropertyValueModel<String> docbaseModel = getDocBaseModel();
-        final IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(getPluginConfig(), docbaseModel);
+    private Dialog<String> createLinkPickerDialog() {
+        final JcrPropertyValueModel<String> docBaseModel = getDocBaseModel();
+        final IPluginConfig dialogConfig = LinkPickerDialogConfig.fromPluginConfig(getPluginConfig(), docBaseModel);
         final IChainingModel<String> linkPickerModel = new IChainingModel<String>() {
             public String getObject() {
-                return docbaseModel.getObject();
+                return docBaseModel.getObject();
             }
 
-            public void setObject(String uuid) {
+            public void setObject(final String uuid) {
                 getDocBaseModel().setObject(uuid);
                 redraw();
             }
 
             public IModel<String> getChainedModel() {
-                return docbaseModel;
+                return docBaseModel;
             }
 
-            public void setChainedModel(IModel<?> model) {
+            public void setChainedModel(final IModel<?> model) {
                 throw new UnsupportedOperationException("Value model cannot be changed");
             }
 
             public void detach() {
-                docbaseModel.detach();
+                docBaseModel.detach();
             }
         };
+
+        final IPluginContext context = getPluginContext();
         return new LinkPickerDialog(context, dialogConfig, linkPickerModel);
     }
 
     private String getMirrorPath() {
-        Node node = MirrorTemplatePlugin.this.getModelObject();
+        final Node node = MirrorTemplatePlugin.this.getModelObject();
         try {
             if (node != null && node.hasProperty(HippoNodeType.HIPPO_DOCBASE)) {
                 return getPath(node.getProperty(HippoNodeType.HIPPO_DOCBASE).getString());
             }
-        } catch (ValueFormatException e) {
+        } catch (final ValueFormatException e) {
             log.warn("Invalid value format for docbase " + e.getMessage());
             log.debug("Invalid value format for docbase ", e);
-        } catch (PathNotFoundException e) {
+        } catch (final PathNotFoundException e) {
             log.warn("Docbase not found " + e.getMessage());
             log.debug("Docbase not found ", e);
-        } catch (ItemNotFoundException e) {
+        } catch (final ItemNotFoundException e) {
             log.info("Docbase " + e.getMessage() + " could not be dereferenced");
-        } catch (RepositoryException e) {
+        } catch (final RepositoryException e) {
             log.error("Invalid docbase " + e.getMessage(), e);
         }
         return StringUtils.EMPTY;
     }
 
-    private String getPath(final String docbaseUuid) {
+    private String getPath(final String docBaseUuid) {
         String path = StringUtils.EMPTY;
         try {
-            if (StringUtils.isNotEmpty(docbaseUuid) && !docbaseUuid.equals(JcrConstants.ROOT_NODE_ID)) {
-                path = getJcrSession().getNodeByIdentifier(docbaseUuid).getPath();
+            if (StringUtils.isNotEmpty(docBaseUuid) && !docBaseUuid.equals(JcrConstants.ROOT_NODE_ID)) {
+                path = getJcrSession().getNodeByIdentifier(docBaseUuid).getPath();
             }
-        } catch (RepositoryException e) {
-            log.error("Invalid docbase: '{}'", docbaseUuid, e);
+        } catch (final RepositoryException e) {
+            log.error("Invalid docbase: '{}'", docBaseUuid, e);
         }
         return path;
     }
@@ -239,12 +251,12 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
         return node.getSession();
     }
 
-    private String getDisplaydName(final String identifier) {
+    private String getDisplayName(final String identifier) {
         try {
-            Node nodeByIdentifier = getJcrSession().getNodeByIdentifier(identifier);
-            HippoNode nodeByIdentifier1 = (HippoNode) nodeByIdentifier;
-            return nodeByIdentifier1.getDisplayName();
-        } catch (RepositoryException e) {
+            final Node node = getJcrSession().getNodeByIdentifier(identifier);
+            final HippoNode hippoNode = (HippoNode) node;
+            return hippoNode.getDisplayName();
+        } catch (final RepositoryException e) {
             log.error("Cannot get display name " + e.getMessage(), e);
         }
         return StringUtils.EMPTY;
@@ -253,12 +265,11 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
     private void open() {
         final IPluginConfig config = getPluginConfig();
         final IPluginContext context = getPluginContext();
-        final IModel<String> displayModel = getPathModel();
         final String browserId = config.getString("browser.id", "service.browse");
-        final IBrowseService browseService = context.getService(browserId, IBrowseService.class);
-        final String location = config.getString("option.location", displayModel.getObject());
+        @SuppressWarnings("unchecked")
+        final IBrowseService<IModel<Node>> browseService = context.getService(browserId, IBrowseService.class);
+        final String location = config.getString("option.location", getPathModel().getObject());
         if (browseService != null) {
-            //noinspection unchecked
             browseService.browse(new JcrNodeModel(location));
         } else {
             log.warn("no browse service found with id '{}', cannot browse to '{}'", browserId, location);
@@ -266,14 +277,14 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
     }
 
     JcrPropertyValueModel<String> getDocBaseModel() {
-        return new JcrPropertyValueModel<>(new JcrPropertyModel<String>(((JcrNodeModel) getModel())
-                .getItemModel().getPath()
-                + "/hippo:docbase"));
+        final JcrNodeModel nodeModel = (JcrNodeModel) getModel();
+        final JcrItemModel<Node> itemModel = nodeModel.getItemModel();
+        final String docBasePath = itemModel.getPath() + "/" + HippoNodeType.HIPPO_DOCBASE;
+        return new JcrPropertyValueModel<>(new JcrPropertyModel<String>(docBasePath));
     }
 
     IModel<String> getPathModel() {
         return new LoadableDetachableModel<String>() {
-
             @Override
             protected String load() {
                 return getMirrorPath();
@@ -283,12 +294,10 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
 
     IModel<String> getLocalizedNameModel() {
         return new LoadableDetachableModel<String>() {
-
             @Override
             protected String load() {
-                return getDisplaydName(getDocBaseModel().getObject());
+                return getDisplayName(getDocBaseModel().getObject());
             }
-
         };
     }
 
