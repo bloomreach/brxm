@@ -3,6 +3,6 @@ group:
   after: hippo-cms
 project: hippo-site-toolkit
 module:
-  name: hippo-site-toolkit-pagemodel-dynamic-beans-test
+  name: hippo-site-toolkit-pagemodelapi-test
   after: hippo-site-toolkit-toolkit-resources-addon-unittestcontents
 
