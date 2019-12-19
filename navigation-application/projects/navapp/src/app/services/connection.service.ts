@@ -15,7 +15,14 @@
  */
 
 import { Inject, Injectable, Renderer2, RendererFactory2 } from '@angular/core';
-import { ChildPromisedApi, ClientError, connectToChild, NavLocation, ParentApi } from '@bloomreach/navapp-communication';
+import {
+  ChildPromisedApi,
+  ClientError,
+  connectToChild,
+  getVersion as getCommunicationLibraryVersion,
+  NavLocation,
+  ParentApi,
+} from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 import { Subject } from 'rxjs';
 
@@ -24,7 +31,6 @@ import { UserSettings } from '../models/dto/user-settings.dto';
 
 import { APP_SETTINGS } from './app-settings';
 import { BusyIndicatorService } from './busy-indicator.service';
-import { getCommunicationLibraryVersion } from './get-communication-library-version';
 import { USER_SETTINGS } from './user-settings';
 
 export interface ChildConnection {
