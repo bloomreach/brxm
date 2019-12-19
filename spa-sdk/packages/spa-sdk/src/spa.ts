@@ -92,7 +92,6 @@ export class Spa {
       url,
       headers: {
         ...ip && { 'x-forwarded-for': ip },
-        ...host && { 'x-forwarded-host': host },
         ...headers,
       },
       method: 'GET',

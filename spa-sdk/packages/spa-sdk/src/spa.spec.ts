@@ -109,7 +109,6 @@ describe('Spa', () => {
         headers: {
           cookie: 'JSESSIONID=1234',
           'x-forwarded-for': '127.0.0.1',
-          'x-forwarded-host': 'example.com',
         },
       });
     });
