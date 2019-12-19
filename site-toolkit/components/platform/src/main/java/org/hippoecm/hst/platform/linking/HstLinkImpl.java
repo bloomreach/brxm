@@ -295,8 +295,10 @@ public class HstLinkImpl implements HstLink {
             // Since these requests are consumed by an SPA, they will need to follow the 'normal' URL procssing
             if (requestContext.isChannelManagerPreviewRequest() && !requestContext.isPageModelApiRequest()) {
                 if (requestContext.getRenderHost() == null) {
-                    throw new IllegalStateException("RequestContext#getRenderHost() cannot be null for channel manager " +
-                            "preview requests");
+                    // TODO See HSTTWO-4587 : Because we still have the issue HSTTWO-4587, the render host can be null
+                    // TODO HSTTWO-4587 needs to be fixed for that, for now, do not throw IllegalStateException
+                    // TODO ENABLE:    throw new IllegalStateException("RequestContext#getRenderHost() cannot be null for channel manager " +
+                    // TODO         "preview requests");
                 }
                 // check whether the urlString is equal to the contextPath of the mount. If so,
                 // we need to append an extra / to the urlString : This is to avoid a link like 
