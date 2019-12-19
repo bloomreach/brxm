@@ -1,0 +1,8 @@
+group:
+  name: hippo-cms-test
+  after: hippo-cms
+project: hippo-site-toolkit
+module:
+  name: hippo-site-toolkit-pagemodel-dynamic-beans-test
+  after: hippo-site-toolkit-toolkit-resources-addon-unittestcontents
+

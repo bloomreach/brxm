@@ -1,0 +1,8 @@
+definitions:
+  config:
+    /hst:hst/hst:configurations/unittestproject/hst:pages:
+      jcr:primaryType: hst:pages
+      /genericdetail:
+        jcr:primaryType: hst:component
+        hst:componentclassname: org.hippoecm.hst.pagemodelapi.v09.test.components.GenericDetailComponent
+        hst:template: detail
