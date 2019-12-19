@@ -26,6 +26,10 @@
     navAppResourceLocation = navAppSettings.appSettings.navAppResourceLocation;
   }
 
+  if (!navAppResourceLocation.endsWith('/')) {
+    navAppResourceLocation += '/';
+  }
+
   const baseTag = document.createElement('base');
   baseTag.href = navAppResourceLocation;
   document.head.appendChild(baseTag);
@@ -41,7 +45,7 @@
   const queryParameters = getQueryParameters('loader.js');
   const antiCache = queryParameters.get('antiCache');
 
-  let fileList = `${navAppResourceLocation}/filelist.json`;
+  let fileList = 'filelist.json';
   if (antiCache) {
     fileList += `?antiCache=${antiCache}`;
   }
@@ -56,7 +60,7 @@
         .forEach(url => {
           const linkTag = document.createElement('link');
           linkTag.rel = 'stylesheet';
-          linkTag.href = `${navAppResourceLocation}/${url}`;
+          linkTag.href = url;
           document.head.appendChild(linkTag);
         });
 
@@ -64,7 +68,7 @@
         .filter(url => url.endsWith('.js'))
         .forEach(url => {
           const scriptTag = document.createElement('script');
-          scriptTag.src = `${navAppResourceLocation}/${url}`;
+          scriptTag.src = url;
           document.body.appendChild(scriptTag);
         });
     });
