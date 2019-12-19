@@ -166,8 +166,14 @@ public class TestPreviewDecoratorImpl {
         expect(resolvedMount2.getMount()).andReturn(mount2).anyTimes();
         expect(resolvedMount3.getMount()).andReturn(mount3).anyTimes();
 
+
+        PortMount portMount = createNiceMock(PortMount.class);
         VirtualHost virtualHost = createNiceMock(VirtualHost.class);
         expect(mount1.getVirtualHost()).andReturn(virtualHost).anyTimes();
+
+        expect(virtualHost.getPortMount(eq(0))).andStubReturn(portMount);
+        expect(portMount.getRootMount()).andStubReturn(mount1);
+
 
         VirtualHosts virtualHosts = createNiceMock(VirtualHosts.class);
         expect(virtualHost.getVirtualHosts()).andReturn(virtualHosts).anyTimes();
@@ -218,8 +224,13 @@ public class TestPreviewDecoratorImpl {
         expect(resolvedMount1.getMount()).andReturn(mount1).anyTimes();
         expect(resolvedMount2.getMount()).andReturn(mount2).anyTimes();
 
+        PortMount portMount = createNiceMock(PortMount.class);
         VirtualHost virtualHost = createNiceMock(VirtualHost.class);
         expect(mount1.getVirtualHost()).andReturn(virtualHost).anyTimes();
+
+        expect(virtualHost.getPortMount(eq(0))).andStubReturn(portMount);
+        expect(portMount.getRootMount()).andStubReturn(mount1);
+
 
         VirtualHosts virtualHosts = createNiceMock(VirtualHosts.class);
         expect(virtualHost.getVirtualHosts()).andReturn(virtualHosts).anyTimes();
@@ -279,13 +290,16 @@ public class TestPreviewDecoratorImpl {
     public void get_virtualhost_via_decorated_mount_returns_same_instance() {
 
         final VirtualHost virtualHost = createNiceMock(VirtualHost.class);
+        final PortMount portMount = createNiceMock(PortMount.class);
 
         final Mount mount = createNiceMock(Mount.class);
         expect(mount.isPreview()).andReturn(false).anyTimes();
         expect(mount.getName()).andReturn("mount").anyTimes();
         expect(mount.getVirtualHost()).andReturn(virtualHost).anyTimes();
+        expect(virtualHost.getPortMount(eq(0))).andStubReturn(portMount);
+        expect(portMount.getRootMount()).andStubReturn(mount);
 
-        replay(mount, virtualHost);
+        replay(mount, portMount, virtualHost);
 
         final PreviewDecoratorImpl mountDecorator = new PreviewDecoratorImpl();
         final Mount decoratedMount = mountDecorator.decorateMountAsPreview(mount);
@@ -326,6 +340,7 @@ public class TestPreviewDecoratorImpl {
         expect(parent.getVirtualHost()).andReturn(virtualHost).anyTimes();
         expect(child.getVirtualHost()).andReturn(virtualHost).anyTimes();
 
+        expect(virtualHost.getPortMount(eq(0))).andStubReturn(portMount);
         expect(portMount.getRootMount()).andStubReturn(parent);
 
         mockParentChildSetup(child, parent);
