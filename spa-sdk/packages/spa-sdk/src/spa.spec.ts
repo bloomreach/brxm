@@ -57,6 +57,10 @@ const config = {
     },
     path: '/',
   },
+  visitor: {
+    id: 'visitor-id',
+    header: 'visitor-header',
+  },
 };
 
 describe('Spa', () => {
@@ -109,6 +113,7 @@ describe('Spa', () => {
         headers: {
           cookie: 'JSESSIONID=1234',
           'x-forwarded-for': '127.0.0.1',
+          'visitor-header': 'visitor-id',
         },
       });
     });
@@ -178,6 +183,7 @@ describe('Spa', () => {
           data: 'a=b',
           headers: {
             'Content-Type': 'application/x-www-form-urlencoded',
+            'visitor-header': 'visitor-id',
           },
         });
       });

@@ -16,7 +16,7 @@
 
 import { Typed } from 'emittery';
 import { Cms } from './cms';
-import { Factory, PageModel, Page } from './page';
+import { Factory, PageModel, Page, Visitor } from './page';
 import { Events, CmsUpdateEvent } from './events';
 import { HttpClient, HttpRequest } from './http';
 import { UrlBuilder, UrlBuilderOptions, isMatched } from './url';
@@ -46,14 +46,19 @@ export interface Configuration {
   httpClient: HttpClient<PageModel>;
 
   /**
+   * Options for generating the page model API URL.
+   */
+  options: UrlOptions;
+
+  /**
    * Current user's request.
    */
   request: HttpRequest;
 
   /**
-   * Options for generating the page model API URL.
+   * Current visitor.
    */
-  options: UrlOptions;
+  visitor?: Omit<Visitor, 'new'>;
 
   /**
    * The window reference for the CMS integration.
@@ -92,6 +97,7 @@ export class Spa {
       url,
       headers: {
         ...ip && { 'x-forwarded-for': ip },
+        ...this.config.visitor && { [this.config.visitor.header]: this.config.visitor.id },
         ...headers,
       },
       method: 'GET',
@@ -107,6 +113,7 @@ export class Spa {
       data: data.toString(),
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
+        ...this.config.visitor && { [this.config.visitor.header]: this.config.visitor.id },
       },
       method: 'POST',
     });
