@@ -387,7 +387,7 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
                 ((PreviewDecoratedPortMount)portMount).previewDecoratedRootMount = this;
             } else {
                 // unexpected, log error to trace if it ever happens
-                log.error("Unexpected type of preview decorated portmount for {}", portMount);
+                log.error("Unexpected type of preview decorated portmount for : {}", portMount);
             }
 
             return previewDecoratedVirtualHost;
