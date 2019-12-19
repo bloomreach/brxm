@@ -29,3 +29,4 @@ export * from './meta-factory';
 export * from './meta';
 export * from './page';
 export * from './reference';
+export * from './relevance';
