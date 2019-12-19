@@ -1,7 +1,7 @@
 {
   "scripts": {
     "beforeStart": "ng lint navapp-communication && ng test navapp-communication --watch=false --browsers ChromeHeadless",
-    "beforeStage": "ng build navapp-communication"
+    "beforeStage": "node utils/set-version.js package.json && ng build navapp-communication"
   },
   "git": {
     "requireCleanWorkingDir": true,

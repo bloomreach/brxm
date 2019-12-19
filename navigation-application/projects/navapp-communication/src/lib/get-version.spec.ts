@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,8 +14,16 @@
  * limitations under the License.
  */
 
-import { dependencies } from '../../../../../package.json';
+import { version } from '../../package.json';
 
-export const getCommunicationLibraryVersion = () => {
-  return dependencies['@bloomreach/navapp-communication'];
-};
+import { getVersion } from './get-version';
+
+describe('getVersion', () => {
+  it(`should return the library's version`, () => {
+    const expected = version;
+
+    const actual = getVersion();
+
+    expect(actual).toBe(expected);
+  });
+});

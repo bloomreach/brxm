@@ -18,6 +18,7 @@ import { APP_BASE_HREF, Location, LocationStrategy, PathLocationStrategy } from 
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { getVersion as getCommunicationLibraryVersion } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 
 import { version } from '../../../../package.json';
@@ -30,7 +31,6 @@ import { ConfiguredLoggerModule } from './logger/configured-logger.module';
 import { MainMenuModule } from './main-menu/main-menu.module';
 import { APP_SETTINGS } from './services/app-settings';
 import { appSettingsFactory } from './services/app-settings.factory';
-import { getCommunicationLibraryVersion } from './services/get-communication-library-version';
 import { USER_ACTIVITY_DEBOUNCE_TIME } from './services/user-activity-debounce-time';
 import { USER_SETTINGS } from './services/user-settings';
 import { userSettingsFactory } from './services/user-settings.factory';

@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,22 +14,9 @@
  * limitations under the License.
  */
 
-import * as packageJson from '../../../../../package.json';
+// This variable is updated automatically during the release process to be equal to the version in 'package.json'
+const version = '1.1.1-2';
 
-import { getCommunicationLibraryVersion } from './get-communication-library-version';
-
-describe('getCommunicationLibraryVersion', () => {
-  beforeEach(() => {
-    (packageJson as any).dependencies = {
-      '@bloomreach/navapp-communication': '1.0.0',
-    };
-  });
-
-  it('should return navapp commenication version', () => {
-    const expected = '1.0.0';
-
-    const actual = getCommunicationLibraryVersion();
-
-    expect(actual).toBe(expected);
-  });
-});
+export function getVersion(): string {
+  return version;
+}
