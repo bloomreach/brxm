@@ -315,6 +315,29 @@ public class TestPreviewDecoratorImpl {
     }
 
     @Test
+    public void get_decorated_virtualhost_instance_via_parent_or_child_mount_results_in_same_instance() {
+
+        final VirtualHost virtualHost = createNiceMock(VirtualHost.class);
+        final PortMount portMount = createNiceMock(PortMount.class);
+
+        final Mount child = createNiceMock(Mount.class);
+        final Mount parent = createNiceMock(Mount.class);
+
+        expect(parent.getVirtualHost()).andReturn(virtualHost).anyTimes();
+        expect(child.getVirtualHost()).andReturn(virtualHost).anyTimes();
+
+        expect(portMount.getRootMount()).andStubReturn(parent);
+
+        mockParentChildSetup(child, parent);
+        replay(virtualHost, portMount, child, parent);
+
+        final PreviewDecoratorImpl mountDecorator = new PreviewDecoratorImpl();
+        final Mount decoratedMount = mountDecorator.decorateMountAsPreview(child);
+
+        assertTrue(decoratedMount.getVirtualHost() == decoratedMount.getParent().getVirtualHost());
+    }
+
+    @Test
     public void traverse_through_preview_decorated_model_keeps_returning_same_decorated_instances() {
         final Mount child = createNiceMock(Mount.class);
         final Mount parent = createNiceMock(Mount.class);

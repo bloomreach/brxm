@@ -364,6 +364,13 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
 
         @Override
         public VirtualHost getVirtualHost() {
+            // as long as there is a parent, get to the virtualhost via the parent since otherwise
+            // child.getVirtualHost() == child.getParent().getVirtualHost() won't hold true
+            final Mount decoratedParentMount = getParent();
+            if (decoratedParentMount != null) {
+                return decoratedParentMount.getVirtualHost();
+            }
+
             if (previewDecoratedVirtualHost != null) {
                 return previewDecoratedVirtualHost;
             }
