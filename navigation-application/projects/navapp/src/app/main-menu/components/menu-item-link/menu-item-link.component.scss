@@ -24,6 +24,16 @@
   &.active .menu-item-link {
     color: $menu-active-text-color;
   }
+
+  &.disabled {
+    opacity: .5;
+
+    .menu-item-link {
+      color: $menu-text-color;
+      cursor: default;
+      font-weight: normal;
+    }
+  }
 }
 
 .menu-item-link {
