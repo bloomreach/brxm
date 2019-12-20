@@ -14,14 +14,32 @@
  * limitations under the License.
  */
 
-import { NavItem } from '../../models/nav-item.model';
+import { NavItem as NavItemDto } from '@bloomreach/navapp-communication';
+import { Observable } from 'rxjs';
 
-export class MenuItemLink {
-  navItem: NavItem;
+export class NavItem implements NavItemDto {
+  get id(): string {
+    return this.dto.id;
+  }
+
+  get appIframeUrl(): string {
+    return this.dto.appIframeUrl;
+  }
+
+  get appPath(): string {
+    return this.dto.appPath;
+  }
+
+  get displayName(): string {
+    return this.dto.displayName;
+  }
+
+  get active$(): Observable<boolean> {
+    return this.activation$;
+  }
 
   constructor(
-    public id: string,
-    public caption: string,
-    public icon?: string,
+    private readonly dto: NavItemDto,
+    private readonly activation$: Observable<boolean>,
   ) {}
 }

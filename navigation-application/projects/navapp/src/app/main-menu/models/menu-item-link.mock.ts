@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { NavItemMock } from '../../models/nav-item.mock';
+
 import { MenuItemLink } from './menu-item-link.model';
 
 export class MenuItemLinkMock extends MenuItemLink {
@@ -21,11 +23,11 @@ export class MenuItemLinkMock extends MenuItemLink {
     caption = 'testCaption',
     icon = 'testIcon',
     id = 'testId',
-    navItem = {
+    navItem = new NavItemMock({
       id: 'some-id',
       appIframeUrl: 'some/app/url',
       appPath: 'app/path',
-    },
+    }),
   } = {}) {
     super(id, caption, icon);
 

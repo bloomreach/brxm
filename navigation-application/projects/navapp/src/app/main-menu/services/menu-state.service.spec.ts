@@ -16,6 +16,7 @@
 
 import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
 
+import { NavItemMock } from '../../models/nav-item.mock';
 import { NavItemService } from '../../services/nav-item.service';
 import { MenuItemContainer } from '../models/menu-item-container.model';
 import { MenuItemLinkMock } from '../models/menu-item-link.mock';
@@ -42,31 +43,31 @@ describe('MenuStateService', () => {
         new MenuItemLinkMock({
           id: 'nav-item-1',
           caption: 'menu link subitem 1',
-          navItem: {
+          navItem: new NavItemMock({
             id: 'nav-item-1',
             appIframeUrl: 'http://domain.com/iframe1/url',
             appPath: 'app/path/to/home',
-          },
+          }),
         }),
         new MenuItemLinkMock({
           id: 'nav-item-2',
           caption: 'menu link subitem 2',
-          navItem: {
+          navItem: new NavItemMock({
             id: 'nav-item-2',
             appIframeUrl: 'http://domain.com/iframe1/url',
             appPath: 'app/path/to/page1',
-          },
+          }),
         }),
       ],
     ),
     new MenuItemLinkMock({
       id: 'nav-item-3',
       caption: 'menu link 1',
-      navItem: {
+      navItem: new NavItemMock({
         id: 'nav-item-3',
         appIframeUrl: 'http://domain.com/iframe2/url',
         appPath: 'app/path/to/home',
-      },
+      }),
     }),
   ] as any[];
 

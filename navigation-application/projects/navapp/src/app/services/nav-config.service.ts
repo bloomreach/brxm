@@ -56,7 +56,7 @@ export class NavConfigService {
   init(): Promise<void> {
     return this.fetchAndMergeConfigurations()
       .then(({ navItems, sites, selectedSiteId }) => {
-        this.navItemService.navItems = navItems;
+        this.navItemService.registerNavItemDtos(navItems);
         this.siteService.sites = sites;
 
         if (selectedSiteId) {

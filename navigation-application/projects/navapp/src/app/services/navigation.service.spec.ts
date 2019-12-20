@@ -29,7 +29,7 @@ import { ErrorHandlingService } from '../error-handling/services/error-handling.
 import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { AppSettings } from '../models/dto/app-settings.dto';
 import { AppSettingsMock } from '../models/dto/app-settings.mock';
-import { NavItemMock } from '../models/dto/nav-item.mock';
+import { NavItemMock } from '../models/nav-item.mock';
 import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
 
 import { APP_SETTINGS } from './app-settings';

@@ -15,12 +15,10 @@
  */
 
 import { TestBed } from '@angular/core/testing';
-import { NavItem } from '@bloomreach/navapp-communication';
 
-import { NavItemMock } from '../../models/dto/nav-item.mock';
-import { MenuItemContainerMock } from '../models/menu-item-container.mock';
+import { NavItemMock } from '../../models/nav-item.mock';
+import { NavItem } from '../../models/nav-item.model';
 import { MenuItemContainer } from '../models/menu-item-container.model';
-import { MenuItemLinkMock } from '../models/menu-item-link.mock';
 import { MenuItemLink } from '../models/menu-item-link.model';
 
 import { MenuBuilderService } from './menu-builder.service';

@@ -20,13 +20,13 @@ import {
   HttpClientTestingModule,
   HttpTestingController,
 } from '@angular/common/http/testing';
-import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { async, TestBed } from '@angular/core/testing';
 import { Site } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 
 import { AppSettings } from '../models/dto/app-settings.dto';
 import { AppSettingsMock } from '../models/dto/app-settings.mock';
-import { NavItemMock } from '../models/dto/nav-item.mock';
+import { NavItemDtoMock } from '../models/dto/nav-item-dto.mock';
 
 import { APP_SETTINGS } from './app-settings';
 import { ConnectionService } from './connection.service';
@@ -43,15 +43,17 @@ describe('NavConfigService', () => {
   let appSettings: AppSettings;
 
   const navItems = [
-    new NavItemMock({ id: 'iframeItem' }),
-    new NavItemMock({ id: 'restItem' }),
-    new NavItemMock({ id: 'internalRestItem' }),
+    new NavItemDtoMock({ id: 'iframeItem' }),
+    new NavItemDtoMock({ id: 'restItem' }),
+    new NavItemDtoMock({ id: 'internalRestItem' }),
   ];
 
   const locationMock = jasmine.createSpyObj('Location', [
     'prepareExternalUrl',
   ]);
   locationMock.prepareExternalUrl.and.callFake((path: string) => path);
+
+  let navItemServiceMock: jasmine.SpyObj<NavItemService>;
 
   const sites: Site[] = [
     {
@@ -83,9 +85,9 @@ describe('NavConfigService', () => {
       setSelectedSite: jasmine.createSpy('setSelectedSite'),
     };
 
-    const navItemServiceMock = {
-      navItems: [],
-    };
+    navItemServiceMock = jasmine.createSpyObj('NavItemsService', [
+      'registerNavItemDtos',
+    ]);
 
     const connectionServiceMock = jasmine.createSpyObj('ConnectionService', {
       createConnection: Promise.resolve({
@@ -180,7 +182,7 @@ describe('NavConfigService', () => {
   });
 
   describe('after initialization', () => {
-    it('should fetch resources', fakeAsync(() => {
+    beforeEach(async(() => {
       const rootUrl = appSettings.basePath;
 
       service.init();
@@ -190,12 +192,18 @@ describe('NavConfigService', () => {
 
       const internalRestReq = httpTestingController.expectOne(`${rootUrl}${appSettings.navConfigResources[2].url}`);
       internalRestReq.flush([navItems[2]]);
-
-      tick();
-
-      expect(navItemService.navItems).toEqual(navItems);
-      expect(siteService.sites).toEqual(sites);
-      expect(siteService.setSelectedSite).toHaveBeenCalledWith(selectedSite);
     }));
+
+    it('should register nav items', () => {
+      expect(navItemService.registerNavItemDtos).toHaveBeenCalledWith(navItems);
+    });
+
+    it('should set the selected site', () => {
+      expect(siteService.setSelectedSite).toHaveBeenCalledWith(selectedSite);
+    });
+
+    it('should set sites', () => {
+      expect(siteService.sites).toEqual(sites);
+    });
   });
 });
