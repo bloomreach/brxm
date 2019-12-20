@@ -15,12 +15,12 @@
  */
 
 import { TestBed } from '@angular/core/testing';
-import { NavItem, NavLocation } from '@bloomreach/navapp-communication';
+import { NavLocation } from '@bloomreach/navapp-communication';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { InternalError } from '../error-handling/models/internal-error';
 import { AppSettingsMock } from '../models/dto/app-settings.mock';
-import { NavItemMock } from '../models/dto/nav-item.mock';
+import { NavItemMock } from '../models/nav-item.mock';
 
 import { APP_SETTINGS } from './app-settings';
 import { NavItemService } from './nav-item.service';
@@ -144,11 +144,11 @@ describe('UrlMapperService', () => {
   describe('mapNavItemToBrowserUrl', () => {
     it('should map nav item to the browser url', () => {
       const expected = '/base/path/path/to/app/path/to/page?param1=value1#hash-data';
-      const navItem: NavItem = {
+      const navItem = new NavItemMock({
         id: 'some-id',
         appIframeUrl: 'https://iframe-domain.com/path/to/app',
         appPath: 'path/to/page?param1=value1#hash-data',
-      };
+      });
 
       const actual = service.mapNavItemToBrowserUrl(navItem);
 
@@ -157,11 +157,11 @@ describe('UrlMapperService', () => {
 
     it('should map nav item to the browser url with stripped off "iframe" path part from iframe url', () => {
       const expected = '/base/path/path/to/app/path/to/page?param1=value1#hash-data';
-      const navItem: NavItem = {
+      const navItem = new NavItemMock({
         id: 'some-id',
         appIframeUrl: 'https://iframe-domain.com/iframe/path/to/app',
         appPath: 'path/to/page?param1=value1#hash-data',
-      };
+      });
 
       const actual = service.mapNavItemToBrowserUrl(navItem);
 
@@ -170,11 +170,11 @@ describe('UrlMapperService', () => {
 
     it('should map nav item to the browser url with stripped off base path part from iframe url', () => {
       const expected = '/base/path/path/to/app/path/to/page?param1=value1#hash-data';
-      const navItem: NavItem = {
+      const navItem = new NavItemMock({
         id: 'some-id',
         appIframeUrl: 'https://iframe-domain.com/base/path/path/to/app',
         appPath: 'path/to/page?param1=value1#hash-data',
-      };
+      });
 
       const actual = service.mapNavItemToBrowserUrl(navItem);
 
@@ -183,11 +183,11 @@ describe('UrlMapperService', () => {
 
     it('should map nav item to the browser url with stripped off "iframe" and base path parts from iframe url', () => {
       const expected = '/base/path/path/to/app/path/to/page?param1=value1#hash-data';
-      const navItem: NavItem = {
+      const navItem = new NavItemMock({
         id: 'some-id',
         appIframeUrl: 'https://iframe-domain.com/base/path/iframe/path/to/app',
         appPath: 'path/to/page?param1=value1#hash-data',
-      };
+      });
 
       const actual = service.mapNavItemToBrowserUrl(navItem);
 
@@ -197,11 +197,11 @@ describe('UrlMapperService', () => {
     it('should throw an exception when the nav item contains a relative url instead of an absolute one', () => {
       const expectedError = new InternalError(undefined, 'The url has incorrect format: /some/url');
 
-      const navItem: NavItem = {
+      const navItem = new NavItemMock({
         id: 'some-id',
         appIframeUrl: '/some/url',
         appPath: 'path/to/page',
-      };
+      });
 
       expect(() => service.mapNavItemToBrowserUrl(navItem)).toThrow(expectedError);
     });

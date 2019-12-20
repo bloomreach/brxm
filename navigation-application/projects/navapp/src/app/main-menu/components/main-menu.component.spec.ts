@@ -24,6 +24,7 @@ import { of, Subject } from 'rxjs';
 import { APP_BOOTSTRAPPED } from '../../bootstrap/app-bootstrapped';
 import { BootstrapService } from '../../bootstrap/bootstrap.service';
 import { ClientAppService } from '../../client-app/services/client-app.service';
+import { NavItemMock } from '../../models/nav-item.mock';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { NavigationService } from '../../services/navigation.service';
 import { QaHelperService } from '../../services/qa-helper.service';
@@ -42,11 +43,11 @@ describe('MainMenuComponent', () => {
     new MenuItemLinkMock({ id: 'item2' }),
   ];
 
-  menuMock[0].navItem = {
+  menuMock[0].navItem = new NavItemMock({
     id: 'someId',
     appIframeUrl: 'homeAppUrl',
     appPath: 'homeAppPath',
-  };
+  });
 
   const menuStateServiceMock = jasmine.createSpyObj('MenuStateService', {
     isMenuItemActive: undefined,

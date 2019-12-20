@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-import { NavItem } from '@bloomreach/navapp-communication';
+import { NavItem as NavItemDto } from '@bloomreach/navapp-communication';
 
-export class NavItemMock implements NavItem {
+export class NavItemDtoMock implements NavItemDto {
   id = 'testNavItemId';
   displayName = 'testDisplayName';
   appIframeUrl = 'https://test.url';
