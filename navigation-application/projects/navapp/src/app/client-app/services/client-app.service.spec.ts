@@ -52,15 +52,18 @@ describe('ClientAppService', () => {
     },
   ];
 
-  const navItemServiceMock = {
-    navItems: navItemsMock,
-  } as any;
+  let navItemServiceMock: jasmine.SpyObj<NavItemService>;
 
   const appSettingsMock = new AppSettingsMock({
     iframesConnectionTimeout,
   });
 
   beforeEach(() => {
+    navItemServiceMock = jasmine.createSpyObj('NavItemService', [
+      'activateNavItems',
+    ]);
+    (navItemServiceMock as any).navItems = navItemsMock;
+
     TestBed.configureTestingModule({
       imports: [
         LoggerTestingModule,
@@ -288,6 +291,23 @@ describe('ClientAppService', () => {
           expect(service.getAppConfig('http://app1.com')).toEqual({ apiVersion: '1.0.0' });
           expect(service.getAppConfig('http://app2.com')).toEqual({ apiVersion: '2.0.0' });
         });
+      });
+    });
+
+    describe('when an app is ready', () => {
+      beforeEach(async(() => {
+        const childApi1 = {};
+        const childApi2 = {};
+
+        service.init();
+
+        service.addConnection(new Connection('http://app1.com', childApi1));
+        service.addConnection(new Connection('http://app2.com', childApi2));
+      }));
+
+      it('should activate related nav items', () => {
+        expect(navItemServiceMock.activateNavItems).toHaveBeenCalledWith('http://app1.com');
+        expect(navItemServiceMock.activateNavItems).toHaveBeenCalledWith('http://app2.com');
       });
     });
   });

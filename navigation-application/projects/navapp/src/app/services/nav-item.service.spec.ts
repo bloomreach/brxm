@@ -14,36 +14,37 @@
  * limitations under the License.
  */
 
-import { NavItemMock } from '../models/dto/nav-item.mock';
+import { NavItemDtoMock } from '../models/dto/nav-item-dto.mock';
 
 import { NavItemService } from './nav-item.service';
 
 describe('NavItemService', () => {
+  const joc = jasmine.objectContaining;
   let service: NavItemService;
 
   const appIframeUrl = 'https://test.url/some/path';
-  const mockNavItems = [
-    new NavItemMock({
+  const mockNavItemDtos = [
+    new NavItemDtoMock({
       appPath: 'a',
       appIframeUrl,
     }),
-    new NavItemMock({
+    new NavItemDtoMock({
       appPath: 'a/b/c',
       appIframeUrl,
     }),
-    new NavItemMock({
+    new NavItemDtoMock({
       appPath: 'a/b',
       appIframeUrl,
     }),
-    new NavItemMock({
+    new NavItemDtoMock({
       appPath: 'a/b/c/d',
       appIframeUrl,
     }),
-    new NavItemMock({
+    new NavItemDtoMock({
       appPath: 'test1',
       appIframeUrl,
     }),
-    new NavItemMock({
+    new NavItemDtoMock({
       appPath: 'test2',
       appIframeUrl,
     }),
@@ -59,44 +60,53 @@ describe('NavItemService', () => {
 
   it('should sort navItems by appPath length', () => {
     const expected = [
-      new NavItemMock({
+      joc({
         appPath: 'a/b/c/d',
         appIframeUrl,
       }),
-      new NavItemMock({
+      joc({
         appPath: 'a/b/c',
         appIframeUrl,
       }),
-      new NavItemMock({
+      joc({
         appPath: 'test1',
         appIframeUrl,
       }),
-      new NavItemMock({
+      joc({
         appPath: 'test2',
         appIframeUrl,
       }),
-      new NavItemMock({
+      joc({
         appPath: 'a/b',
         appIframeUrl,
       }),
-      new NavItemMock({
+      joc({
         appPath: 'a',
         appIframeUrl,
       }),
     ];
 
-    service.navItems = mockNavItems;
+    service.registerNavItemDtos(mockNavItemDtos);
 
+    expect(service.navItems.length).toBe(6);
     expect(service.navItems).toEqual(expected);
   });
 
-  describe('when nav items are set', () => {
+  it('should return an empty list of nav items', () => {
+    const expected = [];
+
+    const actual = service.navItems;
+
+    expect(actual).toEqual(expected);
+  });
+
+  describe('when nav items are registered', () => {
     beforeEach(() => {
-      service.navItems = mockNavItems;
+      service.registerNavItemDtos(mockNavItemDtos);
     });
 
     it('should find a nav item by an iframe url and an app path', () => {
-      const expected = new NavItemMock({
+      const expected = joc({
         appPath: 'a/b',
         appIframeUrl,
       });
@@ -107,7 +117,7 @@ describe('NavItemService', () => {
     });
 
     it('should find a nav item by an iframe url and the app path longer than defined in nav items', () => {
-      const expected = new NavItemMock({
+      const expected = joc({
         appPath: 'a/b',
         appIframeUrl,
       });
@@ -118,7 +128,7 @@ describe('NavItemService', () => {
     });
 
     it('should find a nav item by an app path', () => {
-      const expected = new NavItemMock({
+      const expected = joc({
         appPath: 'a/b/c/d',
         appIframeUrl,
       });
@@ -129,13 +139,14 @@ describe('NavItemService', () => {
     });
 
     it('should find a nav item by an iframe path and an app path', () => {
-      const expected = new NavItemMock({
+      const expected = joc({
         appPath: 'a/b/c/d',
         appIframeUrl,
       });
 
       const actual = service.findNavItem('a/b/c/d/test/test', '/some/path');
 
+      expect(actual).toBeDefined();
       expect(actual).toEqual(expected);
     });
 
@@ -154,20 +165,22 @@ describe('NavItemService', () => {
 
   describe('when nav items with wrong iframe urls are set', () => {
     beforeEach(() => {
-      service.navItems = [
-        new NavItemMock({
+      const dtos = [
+        new NavItemDtoMock({
           appPath: 'a',
           appIframeUrl: 'test.url/some/path',
         }),
-        new NavItemMock({
+        new NavItemDtoMock({
           appPath: 'a/b/c',
           appIframeUrl: '/some/path',
         }),
-        new NavItemMock({
+        new NavItemDtoMock({
           appPath: 'b/c',
           appIframeUrl: 'https://test.com/base',
         }),
       ];
+
+      service.registerNavItemDtos(dtos);
     });
 
     it('should not throw an exception', () => {
@@ -193,13 +206,14 @@ describe('NavItemService', () => {
     });
 
     it('should find a nav with the correct iframe url', () => {
-      const expected = new NavItemMock({
+      const expected = joc({
         appPath: 'b/c',
         appIframeUrl: 'https://test.com/base',
       });
 
       const actual = service.findNavItem('b/c', 'https://test.com/base');
 
+      expect(actual).toBeDefined();
       expect(actual).toEqual(expected);
     });
   });

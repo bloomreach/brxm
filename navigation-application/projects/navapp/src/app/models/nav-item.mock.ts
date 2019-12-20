@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,14 +14,24 @@
  * limitations under the License.
  */
 
-import { NavItem } from '../../models/nav-item.model';
+import { BehaviorSubject, Observable } from 'rxjs';
 
-export class MenuItemLink {
-  navItem: NavItem;
+import { NavItem } from './nav-item.model';
 
-  constructor(
-    public id: string,
-    public caption: string,
-    public icon?: string,
-  ) {}
+type InitObject  = { [key: string]: string } & { activation?: Observable<boolean> };
+
+export class NavItemMock extends NavItem {
+  constructor(initObject: InitObject = {}) {
+    const dto = {
+      id: 'testNavItemId',
+      displayName: 'testDisplayName',
+      appIframeUrl: 'https://test.url',
+      appPath: 'testPath',
+      ...initObject,
+    };
+
+    const activation = initObject && initObject.activation || new BehaviorSubject(true);
+
+    super(dto, activation);
+  }
 }
