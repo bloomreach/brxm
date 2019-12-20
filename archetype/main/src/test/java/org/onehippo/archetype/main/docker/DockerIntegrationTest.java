@@ -44,7 +44,7 @@ public class DockerIntegrationTest {
         while (timeout > 0) {
             try {
                 int webappStatus = doRequest(webapp);
-                assertEquals(webappStatus, EXPECTED_HTTP_STATUS_CODE);
+                assertEquals(EXPECTED_HTTP_STATUS_CODE, webappStatus);
                 return true;
             } catch (SocketTimeoutException | SocketException e) {
                 logger.warn(e.getMessage());

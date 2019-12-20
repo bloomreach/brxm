@@ -34,12 +34,12 @@
     <release.essentials.version>${project.version}</release.essentials.version>
     <notice.project.name>Bloomreach CMS Site Project Archetype</notice.project.name>
     <main.app.groupId>org.onehippo.cms7.hst</main.app.groupId>
-    <main.app.artifactId>gettingstarted</main.app.artifactId>
+    <main.app.artifactId>gettingstarted-${maven.build.timestamp}</main.app.artifactId>
     <main.app.version>0.1.0</main.app.version>
     <main.app.name>Getting Started Main Site</main.app.name>
 
     <extra.app.groupId>org.onehippo.cms7.extra</extra.app.groupId>
-    <extra.app.artifactId>extra</extra.app.artifactId>
+    <extra.app.artifactId>extra-${maven.build.timestamp}</extra.app.artifactId>
     <extra.app.version>0.1.0</extra.app.version>
     <extra.app.name>Getting Started Extra Site</extra.app.name>
 
@@ -54,6 +54,7 @@
 
     <docker.test.bootstrap.timeout>120000</docker.test.bootstrap.timeout>
     <maven.repo.local>${settings.localRepository}</maven.repo.local>
+    <maven.build.timestamp.format>yyyyMMddHHmmssSSS</maven.build.timestamp.format>
   </properties>
 
   <dependencies>
