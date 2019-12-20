@@ -15,38 +15,27 @@
  */
 
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 import { QaHelperService } from '../../../services/qa-helper.service';
 import { MenuItemContainer } from '../../models/menu-item-container.model';
-import { MenuItemLinkMock } from '../../models/menu-item-link.mock';
 import { MenuItemLink } from '../../models/menu-item-link.model';
 import { MenuStateService } from '../../services/menu-state.service';
 
-import { ExpandableSubMenuItemComponent } from './expandable-sub-menu-item.component';
+import { MenuDrawerComponent } from './menu-drawer.component';
 
-describe('ExpandableSubMenuItemComponent', () => {
-  let component: ExpandableSubMenuItemComponent;
-  let fixture: ComponentFixture<ExpandableSubMenuItemComponent>;
+describe('MenuDrawerComponent', () => {
+  let component: MenuDrawerComponent;
+  let fixture: ComponentFixture<MenuDrawerComponent>;
   let de: DebugElement;
 
   let menuStateServiceMock: jasmine.SpyObj<MenuStateService>;
   let qaHelperServiceMock: jasmine.SpyObj<QaHelperService>;
 
-  const configMock = new MenuItemContainer(
-    'some caption',
-    [
-      new MenuItemLinkMock({ id: 'link1' }),
-      new MenuItemLinkMock({ id: 'link2' }),
-      new MenuItemLinkMock({ id: 'link3' }),
-    ],
-    'some-icon',
-  );
-
   beforeEach(async(() => {
     menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
+      'closeDrawer',
       'isMenuItemActive',
     ]);
 
@@ -58,54 +47,69 @@ describe('ExpandableSubMenuItemComponent', () => {
       imports: [
         NoopAnimationsModule,
       ],
-      declarations: [ExpandableSubMenuItemComponent],
+      declarations: [MenuDrawerComponent],
       providers: [
         { provide: MenuStateService, useValue: menuStateServiceMock },
         { provide: QaHelperService, useValue: qaHelperServiceMock },
       ],
       schemas: [NO_ERRORS_SCHEMA],
-    }).createComponent(ExpandableSubMenuItemComponent);
+    }).createComponent(MenuDrawerComponent);
 
     component = fixture.componentInstance;
     de = fixture.debugElement;
 
-    component.config = configMock;
-
     fixture.detectChanges();
   }));
 
-  it('should show a caption', () => {
-    const caption = de.query(By.css('.header'));
+  it('click outside should close the drawer', () => {
+    component.onClickedOutside();
 
-    expect(caption).not.toBeNull();
-    expect(caption.nativeElement.textContent).toContain('some caption');
+    expect(menuStateServiceMock.closeDrawer).toHaveBeenCalled();
   });
 
-  it('should contain a list of links', () => {
-    const links = de.queryAll(By.css('.item'));
+  it('should close all expandable menu items besides the one was clicked', () => {
+    const expandableMenuItems = [
+      jasmine.createSpyObj('ExpandableMenuItemComponent1', [
+        'close',
+      ]),
+      jasmine.createSpyObj('ExpandableMenuItemComponent2', [
+        'close',
+      ]),
+      jasmine.createSpyObj('ExpandableMenuItemComponent3', [
+        'close',
+      ]),
+    ];
 
-    expect(links.length).toBe(3);
+    component.expandableMenuItems = expandableMenuItems as any;
+
+    component.onExpandableMenuItemClick(expandableMenuItems[1]);
+
+    expect(expandableMenuItems[0].close).toHaveBeenCalled();
+    expect(expandableMenuItems[1].close).not.toHaveBeenCalled();
+    expect(expandableMenuItems[2].close).toHaveBeenCalled();
   });
 
-  it('should be collapsed', () => {
-    expect(component.isOpened).toBeFalsy();
+  it('should return true for menu item containers', () => {
+    const container = new MenuItemContainer('some caption', []);
+
+    const actual = component.isContainer(container);
+
+    expect(actual).toBeTruthy();
   });
 
-  it('should be expanded', fakeAsync(() => {
-    component.toggle();
+  it('should return false for menu item links', () => {
+    const link = new MenuItemLink('some-id', 'some caption');
 
-    fixture.detectChanges();
+    const actual = component.isContainer(link);
 
-    tick();
-
-    expect(component.isOpened).toBeTruthy();
-  }));
+    expect(actual).toBeFalsy();
+  });
 
   it('should check for the menu active state', () => {
     menuStateServiceMock.isMenuItemActive.and.returnValue(true);
     const link = new MenuItemLink('some-id', 'some caption');
 
-    const actual = component.isChildMenuItemActive(link);
+    const actual = component.isActive(link);
 
     expect(actual).toBeTruthy();
     expect(menuStateServiceMock.isMenuItemActive).toHaveBeenCalledWith(link);
@@ -119,33 +123,5 @@ describe('ExpandableSubMenuItemComponent', () => {
 
     expect(actual).toBe('qa-class');
     expect(qaHelperServiceMock.getMenuItemClass).toHaveBeenCalledWith(link);
-  });
-
-  describe('when it is expanded', () => {
-    beforeEach(async(() => {
-      component.toggle();
-
-      fixture.detectChanges();
-    }));
-
-    it('should be collapsed by toggling', fakeAsync(() => {
-      component.toggle();
-
-      fixture.detectChanges();
-
-      tick();
-
-      expect(component.isOpened).toBeFalsy();
-    }));
-
-    it('should be collapsed by closing', fakeAsync(() => {
-      component.close();
-
-      fixture.detectChanges();
-
-      tick();
-
-      expect(component.isOpened).toBeFalsy();
-    }));
   });
 });

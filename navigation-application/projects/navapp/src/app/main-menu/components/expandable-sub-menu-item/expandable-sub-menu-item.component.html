@@ -22,7 +22,8 @@
 </h2>
 <div [@slideInOut]="isOpened" class="items-wrapper">
   <brna-menu-item-link *ngFor="let item of config.children"
-                       [config]="item"
+                       [caption]="item.caption"
+                       [navItem]="item.navItem"
                        [active]="isChildMenuItemActive(item)"
                        class="item"
                        [ngClass]="getQaClass(item)">
