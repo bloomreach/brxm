@@ -31,14 +31,11 @@ export class LinkFactory extends MultipleTypeFactory<LinkType, LinkBuilder> {
   }
 
   private createLink(link: Link) {
-    if (!link.type) {
+    if (!link.type || !this.mapping.has(link.type)) {
       return link.href;
     }
 
-    const builder = this.mapping.get(link.type);
-    if (!builder) {
-      throw new Error(`Unsupported link type: '${link.type}'.`);
-    }
+    const builder = this.mapping.get(link.type)!;
 
     return builder(link.href);
   }

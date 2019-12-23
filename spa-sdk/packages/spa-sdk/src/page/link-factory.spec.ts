@@ -38,8 +38,8 @@ describe('LinkFactory', () => {
       expect(builder2).toBeCalledWith('link2');
     });
 
-    it('should throw an exception on unknown link type', () => {
-      expect(() => factory.create({ href: 'link', type: TYPE_LINK_RESOURCE })).toThrowError();
+    it('should return link as-is on unknown link type', () => {
+      expect(factory.create({ href: 'link', type: TYPE_LINK_RESOURCE })).toBe('link');
     });
 
     it('should return link as-is when there is no type specified', () => {
