@@ -65,9 +65,7 @@ const xmlSerializer = new XMLSerializer();
 export async function initialize(config: Configuration, model?: PageModel): Promise<Page> {
   const urlBuilder =  new UrlBuilderImpl();
   const linkFactory = new LinkFactory()
-    .register(TYPE_LINK_EXTERNAL, urlBuilder.getSpaUrl.bind(urlBuilder))
-    .register(TYPE_LINK_INTERNAL, urlBuilder.getSpaUrl.bind(urlBuilder))
-    .register(TYPE_LINK_RESOURCE, urlBuilder.getCmsUrl.bind(urlBuilder));
+    .register(TYPE_LINK_INTERNAL, urlBuilder.getSpaUrl.bind(urlBuilder));
   const linkRewriter = new LinkRewriterImpl(linkFactory, domParser, xmlSerializer);
   const metaFactory = new MetaFactory()
     .register(TYPE_META_COMMENT, (model, position) => new MetaCommentImpl(model, position));

@@ -10,7 +10,7 @@
       "title": "Sample banner",
       "_links": {
         "site": {
-          "href": "/site/_cmsinternal/my-spa/banner1.html",
+          "href": "http://127.0.0.1/site/_cmsinternal/another-spa/banner1.html",
           "type": "external"
         }
       },
@@ -31,7 +31,7 @@
       "_links": {
         "site": {
           "href": "/site/_cmsinternal/my-spa/banner2.html",
-          "type": "external"
+          "type": "internal"
         }
       },
       "_meta": {

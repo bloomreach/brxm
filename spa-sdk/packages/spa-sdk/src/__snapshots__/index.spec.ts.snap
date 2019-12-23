@@ -50,4 +50,4 @@ Object {
 }
 `;
 
-exports[`initialize should rewrite links in the HTML blob 1`] = `"Some text containing <a href=\\"//example.com/news?bloomreach-preview=true\\" data-type=\\"internal\\">link1</a>, <a href=\\"//example.com/about?bloomreach-preview=true\\" data-type=\\"internal\\">link2</a>, <a href=\\"https://example.com\\">link3</a>, and the image: <img src=\\"http://localhost:8080/binaries/image.jpg\\"/>"`;
+exports[`initialize should rewrite links in the HTML blob 1`] = `"Some text containing <a href=\\"//example.com/news?bloomreach-preview=true\\" data-type=\\"internal\\">link1</a>, <a href=\\"//example.com/about?bloomreach-preview=true\\" data-type=\\"internal\\">link2</a>, <a href=\\"https://example.com\\">link3</a>, and the image: <img src=\\"http://127.0.0.1/binaries/image.jpg\\"/>"`;
