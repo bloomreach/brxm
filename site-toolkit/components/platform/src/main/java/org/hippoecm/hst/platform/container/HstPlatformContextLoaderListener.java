@@ -18,6 +18,7 @@ package org.hippoecm.hst.platform.container;
 import org.hippoecm.hst.core.internal.PlatformModelAvailableService;
 import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.platform.model.HstModelRegistryImpl;
+import org.hippoecm.hst.platform.services.AccessControlAllowHeadersServiceImpl;
 import org.hippoecm.hst.platform.services.PlatformServicesImpl;
 import org.hippoecm.hst.site.container.HstContextLoaderListener;
 import org.hippoecm.hst.site.request.PreviewDecoratorImpl;
@@ -53,6 +54,7 @@ public class HstPlatformContextLoaderListener extends HstContextLoaderListener {
 
     private final HstModelRegistryImpl hstModelRegistry = new HstModelRegistryImpl();
     private final PlatformServicesImpl platformServices = new PlatformServicesImpl();
+    private final AccessControlAllowHeadersServiceImpl accessControlAllowHeadersService = new AccessControlAllowHeadersServiceImpl();
     private final PreviewDecorator previewDecorator = new PreviewDecoratorImpl();
     private final PlatformModelAvailableService platformModelAvailableService = new PlatformModelAvailableService(){};
     private ProxiedServiceTracker<RepositoryService> repositoryServiceTracker;
@@ -94,6 +96,8 @@ public class HstPlatformContextLoaderListener extends HstContextLoaderListener {
         platformServices.setHstModelRegistry(hstModelRegistry);
         platformServices.setPreviewDecorator(previewDecorator);
         platformServices.init();
+
+        accessControlAllowHeadersService.init();
         hstModelRegistry.setRepository(repositoryService);
         hstModelRegistry.init();
 
@@ -109,6 +113,7 @@ public class HstPlatformContextLoaderListener extends HstContextLoaderListener {
         hstModelRegistry.setRepository(null);
         platformServices.destroy();
 
+        accessControlAllowHeadersService.destroy();
         platformServices.setPreviewDecorator(null);
         platformServices.setHstModelRegistry(null);
     }

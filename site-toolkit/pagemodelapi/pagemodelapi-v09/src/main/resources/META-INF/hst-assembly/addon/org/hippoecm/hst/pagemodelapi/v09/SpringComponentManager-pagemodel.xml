@@ -48,6 +48,16 @@
     <property name="apiDocPath" value="${pagemodelapi.v09.apiDocPath}" />
   </bean>
 
+
+  <bean id="pageModelApiCorsSupportValve"
+        class="org.hippoecm.hst.core.container.CorsSupportValve">
+    <property name="defaultResponseHeaders">
+      <map>
+        <entry key="Access-Control-Allow-Credentials" value="true"/>
+      </map>
+    </property>
+  </bean>
+
   <bean id="pageModelPipeline.v09" class="org.hippoecm.hst.core.container.HstSitePipeline">
     <property name="initializationValves">
       <list>
@@ -57,6 +67,7 @@
     </property>
     <property name="processingValves">
       <list>
+        <ref bean="pageModelApiCorsSupportValve"/>
         <ref bean="securityValve"/>
         <ref bean="subjectBasedSessionValve"/>
         <ref bean="jcrSessionStatefulConcurrencyValve"/>

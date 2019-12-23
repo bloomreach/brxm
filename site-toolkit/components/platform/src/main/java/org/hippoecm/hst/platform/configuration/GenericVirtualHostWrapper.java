@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.platform.configuration;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -146,5 +147,10 @@ public class GenericVirtualHostWrapper implements VirtualHost {
     @Override
     public Map<String, String> getResponseHeaders() {
         return delegatee.getResponseHeaders();
+    }
+
+    @Override
+    public Collection<String> getAllowedOrigins() {
+        return delegatee.getAllowedOrigins();
     }
 }

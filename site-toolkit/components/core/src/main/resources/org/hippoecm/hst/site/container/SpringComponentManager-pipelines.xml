@@ -213,6 +213,8 @@
     </property>
   </bean>
 
+  <bean id="corsSupportValve"
+        class="org.hippoecm.hst.core.container.CorsSupportValve"/>
   <!-- Pipelines -->
 
   <bean id="org.hippoecm.hst.core.container.Pipelines" class="org.hippoecm.hst.core.container.HstSitePipelines">
@@ -230,6 +232,7 @@
             </property>
             <property name="processingValves">
               <list>
+                <ref bean="corsSupportValve"/>
                 <ref bean="securityValve" />
                 <ref bean="subjectBasedSessionValve" />
                 <ref bean="jcrSessionStatefulConcurrencyValve"/>
@@ -255,7 +258,7 @@
         <!-- Spring API name 'SpaSitePipeline'-->
         <entry key="SpaSitePipeline">
            <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
-            <property name="initializationValves">
+             <property name="initializationValves">
               <list>
                 <ref bean="initializationValve" />
                 <ref bean="cmsSecurityValve"/>
@@ -263,6 +266,7 @@
             </property>
             <property name="processingValves">
               <list>
+                <ref bean="corsSupportValve"/>
                 <ref bean="securityValve" />
                 <ref bean="subjectBasedSessionValve" />
                 <ref bean="jcrSessionStatefulConcurrencyValve"/>
@@ -293,6 +297,7 @@
             </property>
             <property name="processingValves">
               <list>
+                <!-- note web application invoking pipeline does not include corsSupportValve to handle preflight requests! -->
                 <ref bean="localizationValve" />
                 <ref bean="securityValve" />
                 <ref bean="subjectBasedSessionValve" />
@@ -319,6 +324,7 @@
             </property>
             <property name="processingValves">
               <list>
+                <ref bean="corsSupportValve"/>
                 <ref bean="webFileValve" />
               </list>
             </property>
@@ -342,6 +348,7 @@
             </property>
             <property name="processingValves">
               <list>
+                <ref bean="corsSupportValve"/>
                 <ref bean="localizationValve" />
                 <ref bean="securityValve" />
                 <ref bean="subjectBasedSessionValve" />
@@ -371,6 +378,7 @@
             </property>
             <property name="processingValves">
               <list>
+                <!-- note web application invoking pipeline does not include corsSupportValve to handle preflight requests! -->
                 <ref bean="filterChainInvokingValve" />
               </list>
             </property>
@@ -389,6 +397,7 @@
            <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
              <property name="processingValves">
               <list>
+                <ref bean="corsSupportValve"/>
                 <ref bean="contextResolvingValve" />
                 <ref bean="resourceServingValve" />
                 <ref bean="componentRenderingValve" />
