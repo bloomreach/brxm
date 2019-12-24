@@ -73,12 +73,13 @@ describe('MenuBuilderService', () => {
   });
 
   it('should get the filtered menu populated with app paths', () => {
+    const navItem = new NavItemMock({ id: 'testNavItemId' });
     const expected = [
-      createMenuItemLink('testNavItemId', 'Root menu item 1', new NavItemMock({ id: 'testNavItemId' })),
+      createMenuItemLink('testNavItemId', 'Root menu item 1', navItem),
     ];
 
     const navItemsMock = [
-      new NavItemMock({ id: 'testNavItemId' }),
+      navItem,
     ];
     const actual = menuBuilderService.buildMenu(navItemsMock);
 
@@ -86,25 +87,22 @@ describe('MenuBuilderService', () => {
   });
 
   it('should get the filtered and reduced menu populated with app paths', () => {
-    const expected = [
-      createMenuItemLink('testNavItemId', 'Root menu item 1', new NavItemMock({ id: 'testNavItemId' })),
-      createMenuItemLink('subsubitem3', 'Sub item 3', new NavItemMock({ id: 'subsubitem3' })),
-    ];
-
     const navItemsMock = [
       new NavItemMock({ id: 'testNavItemId' }),
       new NavItemMock({ id: 'subsubitem3' }),
     ];
+
+    const expected = [
+      createMenuItemLink('testNavItemId', 'Root menu item 1', navItemsMock[0]),
+      createMenuItemLink('subsubitem3', 'Sub item 3', navItemsMock[1]),
+    ];
+
     const actual = menuBuilderService.buildMenu(navItemsMock);
 
     expect(actual).toEqual(expected);
   });
 
   it('should add a nav item as an extension menu item when displayName is set', () => {
-    const expected = [
-      createMenuItemLink('testNavItemId', 'Root menu item 1', new NavItemMock()),
-    ];
-
     const navItemsMock = [
       new NavItemMock(),
       new NavItemMock({
@@ -115,6 +113,10 @@ describe('MenuBuilderService', () => {
         id: 'unknown2',
         displayName: 'Some display name',
       }),
+    ];
+
+    const expected = [
+      createMenuItemLink('testNavItemId', 'Root menu item 1', navItemsMock[0]),
     ];
 
     const actual = menuBuilderService.buildMenu(navItemsMock);
