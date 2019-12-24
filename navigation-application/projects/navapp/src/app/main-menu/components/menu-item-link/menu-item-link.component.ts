@@ -15,8 +15,9 @@
  */
 
 import { Component, HostBinding, Input } from '@angular/core';
-import { NavigationTrigger, NavItem } from '@bloomreach/navapp-communication';
+import { NavigationTrigger } from '@bloomreach/navapp-communication';
 
+import { NavItem } from '../../../models/nav-item.model';
 import { NavigationService } from '../../../services/navigation.service';
 
 @Component({
