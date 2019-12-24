@@ -19,7 +19,7 @@ import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { NavigationTrigger, NavItem, NavLocation } from '@bloomreach/navapp-communication';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 
 import { ClientAppMock } from '../client-app/models/client-app.mock';
 import { ClientAppService } from '../client-app/services/client-app.service';
@@ -181,6 +181,7 @@ describe('NavigationService', () => {
 
     service = TestBed.get(NavigationService);
     appSettingsMock = TestBed.get(APP_SETTINGS);
+    navItemServiceMock = TestBed.get(NavItemService);
   });
 
   it('should not clear the app error during initial navigation', fakeAsync(() => {
@@ -331,6 +332,47 @@ describe('NavigationService', () => {
 
       expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(undefined, expectedError.message);
     }));
+  });
+
+  describe('nav item', () => {
+    let navItemActive: Subject<boolean>;
+
+    beforeEach(() => {
+      navItemActive = new Subject<boolean>();
+
+      const navItem = new NavItemMock(
+        {
+          id: 'item1',
+          appIframeUrl: 'http://domain.com/iframe1/url',
+          appPath: 'app/path/to/home',
+        },
+        navItemActive,
+      );
+
+      navItemServiceMock.navItems = [navItem];
+
+      service.initialNavigation();
+    });
+
+    it('should not proceed the navigation process while nav item is not ready', () => {
+      expect(clientAppServiceMock.getApp).not.toHaveBeenCalled();
+      expect(childApi.beforeNavigation).not.toHaveBeenCalled();
+    });
+
+    it('should not proceed the navigation process if active$ emitted "false"', () => {
+      navItemActive.next(false);
+
+      expect(clientAppServiceMock.getApp).not.toHaveBeenCalled();
+      expect(childApi.beforeNavigation).not.toHaveBeenCalled();
+    });
+
+    it('should proceed the navigation process when nav item is ready', () => {
+      navItemActive.next(true);
+      navItemActive.complete();
+
+      expect(clientAppServiceMock.getApp).toHaveBeenCalled();
+      expect(childApi.beforeNavigation).toHaveBeenCalled();
+    });
   });
 
   describe('after initial navigation', () => {

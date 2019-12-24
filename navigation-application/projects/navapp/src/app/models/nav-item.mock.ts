@@ -14,14 +14,12 @@
  * limitations under the License.
  */
 
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 
 import { NavItem } from './nav-item.model';
 
-type InitObject  = { [key: string]: string } & { activation?: Observable<boolean> };
-
 export class NavItemMock extends NavItem {
-  constructor(initObject: InitObject = {}) {
+  constructor(initObject = {}, activation?: Observable<boolean>) {
     const dto = {
       id: 'testNavItemId',
       displayName: 'testDisplayName',
@@ -30,8 +28,6 @@ export class NavItemMock extends NavItem {
       ...initObject,
     };
 
-    const activation = initObject && initObject.activation || new BehaviorSubject(true);
-
-    super(dto, activation);
+    super(dto, activation || of(true));
   }
 }
