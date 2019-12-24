@@ -23,8 +23,7 @@
   <div *ngFor="let item of config.children">
     <brna-menu-item-link
                          *ngIf="!isContainer(item)"
-                         [caption]="item.caption"
-                         [navItem]="item.navItem"
+                         [config]="item"
                          [active]="isActive(item)"
                          [ngClass]="getQaClass(item)">
     </brna-menu-item-link>

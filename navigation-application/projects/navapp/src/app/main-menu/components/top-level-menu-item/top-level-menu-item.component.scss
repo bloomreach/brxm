@@ -49,15 +49,6 @@
       width: 16px;
     }
   }
-
-  &.disabled {
-    cursor: default;
-
-    .mat-icon,
-    .caption {
-      opacity: .5;
-    }
-  }
 }
 
 .menu-item {

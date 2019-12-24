@@ -22,7 +22,6 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { QaHelperService } from '../../../services/qa-helper.service';
 import { MenuItemContainer } from '../../models/menu-item-container.model';
 import { MenuItemLinkMock } from '../../models/menu-item-link.mock';
-import { MenuItemLink } from '../../models/menu-item-link.model';
 import { MenuStateService } from '../../services/menu-state.service';
 
 import { ExpandableSubMenuItemComponent } from './expandable-sub-menu-item.component';
@@ -59,11 +58,11 @@ describe('ExpandableSubMenuItemComponent', () => {
         NoopAnimationsModule,
       ],
       declarations: [ExpandableSubMenuItemComponent],
+      schemas: [NO_ERRORS_SCHEMA],
       providers: [
         { provide: MenuStateService, useValue: menuStateServiceMock },
         { provide: QaHelperService, useValue: qaHelperServiceMock },
       ],
-      schemas: [NO_ERRORS_SCHEMA],
     }).createComponent(ExpandableSubMenuItemComponent);
 
     component = fixture.componentInstance;
@@ -100,26 +99,6 @@ describe('ExpandableSubMenuItemComponent', () => {
 
     expect(component.isOpened).toBeTruthy();
   }));
-
-  it('should check for the menu active state', () => {
-    menuStateServiceMock.isMenuItemActive.and.returnValue(true);
-    const link = new MenuItemLink('some-id', 'some caption');
-
-    const actual = component.isChildMenuItemActive(link);
-
-    expect(actual).toBeTruthy();
-    expect(menuStateServiceMock.isMenuItemActive).toHaveBeenCalledWith(link);
-  });
-
-  it('should get qa class', () => {
-    qaHelperServiceMock.getMenuItemClass.and.returnValue('qa-class');
-    const link = new MenuItemLink('some-id', 'some caption');
-
-    const actual = component.getQaClass(link);
-
-    expect(actual).toBe('qa-class');
-    expect(qaHelperServiceMock.getMenuItemClass).toHaveBeenCalledWith(link);
-  });
 
   describe('when it is expanded', () => {
     beforeEach(async(() => {

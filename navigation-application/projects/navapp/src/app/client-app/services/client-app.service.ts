@@ -173,51 +173,47 @@ export class ClientAppService {
   }
 
   private fetchAppConfigs(apps: ClientApp[]): Promise<ClientAppWithConfig[]> {
-    const appWithConfigs = apps.map(async app => {
-      const config = await this.fetchAppConfig(app);
+    const configPromises: Promise<ClientAppWithConfig>[] = [];
 
-      this.navItemService.activateNavItems(app.url);
+    const fetchConfig = (app: ClientApp) => this.fetchAppConfig(app).then(config => ({ app, config }));
 
-      return { app, config };
-    });
+    apps.forEach(app => configPromises.push(fetchConfig(app)));
 
-    return Promise.all(appWithConfigs);
+    return Promise.all(configPromises);
   }
 
-  private async fetchAppConfig(app: ClientApp): Promise<ChildConfig> {
+  private fetchAppConfig(app: ClientApp): Promise<ChildConfig> {
     this.logger.debug(`Fetching app config for '${app.url}'`);
-
-    const fallbackConfig = { apiVersion: 'unknown' };
 
     if (!app.api.getConfig) {
       this.logger.warn(`getConfig() method is not defined in api for the app '${app.url}'`);
-
-      return fallbackConfig;
     }
 
-    try {
-      let config = await app.api.getConfig();
+    return app.api.getConfig ?
+      app.api.getConfig().then(
+        config => {
+          this.logger.debug(`App config is fetched for '${app.url}'`, config);
 
-      this.logger.debug(`App config is fetched for '${app.url}'`, config);
+          if (!config) {
+            this.logger.warn(`The app '${app.url}' returned an empty config`);
+            config = { apiVersion: 'unknown' };
+          }
 
-      if (!config) {
-        this.logger.warn(`The app '${app.url}' returned an empty config`);
-        config = fallbackConfig;
-      }
+          if (!config.apiVersion) {
+            this.logger.warn(`The app '${app.url}' returned a config with an empty version`);
+            config.apiVersion = 'unknown';
+          }
 
-      if (!config.apiVersion) {
-        this.logger.warn(`The app '${app.url}' returned a config with an empty version`);
-        config.apiVersion = fallbackConfig.apiVersion;
-      }
+          this.logger.info(`Connected API '${app.url}' version ${config.apiVersion}`);
 
-      this.logger.info(`Connected API '${app.url}' version ${config.apiVersion}`);
+          return config;
+        },
+        e => {
+          this.logger.warn(`Unable to load config for '${app.url}'. Reason: '${e}'.`);
 
-      return config;
-    } catch (e) {
-      this.logger.warn(`Unable to load config for '${app.url}'. Reason: '${e}'.`);
-
-      return { apiVersion: 'unknown' };
-    }
+          return { apiVersion: 'unknown' };
+        }) :
+      Promise.resolve({ apiVersion: 'unknown' } as ChildConfig);
   }
 
   private discardFailedConnections(connections: Connection[]): Connection[] {

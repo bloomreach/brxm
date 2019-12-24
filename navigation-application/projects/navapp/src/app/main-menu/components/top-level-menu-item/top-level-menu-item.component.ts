@@ -58,9 +58,4 @@ export class TopLevelMenuItemComponent {
   @Input()
   @HostBinding('class.small')
   small = false;
-
-  @Input()
-  @HostBinding('class.disabled')
-  @HostBinding('class.qa-disabled')
-  disabled = false;
 }

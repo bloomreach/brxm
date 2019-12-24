@@ -16,11 +16,11 @@
 
 import { Location } from '@angular/common';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
-import { NavigationTrigger, NavLocation } from '@bloomreach/navapp-communication';
+import { NavigationTrigger, NavItem, NavLocation } from '@bloomreach/navapp-communication';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, EMPTY, from, Observable, of, Subject, Subscription, throwError } from 'rxjs';
-import { catchError, filter, finalize, mapTo, switchMap, tap } from 'rxjs/operators';
+import { catchError, finalize, mapTo, switchMap, tap } from 'rxjs/operators';
 
 import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
@@ -33,7 +33,6 @@ import { distinctUntilAccumulatorIsEmpty } from '../helpers/distinct-until-equal
 import { stripOffQueryStringAndHash } from '../helpers/strip-off-query-string-and-hash';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { AppSettings } from '../models/dto/app-settings.dto';
-import { NavItem } from '../models/nav-item.model';
 import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
 
 import { APP_SETTINGS } from './app-settings';
@@ -318,11 +317,6 @@ export class NavigationService implements OnDestroy {
 
         return of({ ...t, navItem: route.navItem, appPathAddOn: appPathAddOnWithoutQueryStringAndHash, queryStringAndHash });
       }),
-      // Wait for the nav app to be ready
-      switchMap(t => t.navItem.active$.pipe(
-        filter(x => x),
-        mapTo(t),
-      )),
       // Ensure the app with the found id exists and it has the connected API
       switchMap(t => {
         const appId = t.navItem.appIframeUrl;
@@ -383,7 +377,7 @@ export class NavigationService implements OnDestroy {
         this.clientAppService.activateApplication(appId);
       }),
       // Process navigation
-      switchMap((t: Transition) => {
+      switchMap(t => {
         const appPath = Location.joinWithSlash(t.navItem.appPath, t.appPathAddOn) + t.queryStringAndHash;
         const appPathWithoutLeadingSlash = this.urlMapperService.trimLeadingSlash(appPath);
         const appPathPrefix = new URL(t.navItem.appIframeUrl).pathname;
@@ -404,7 +398,7 @@ export class NavigationService implements OnDestroy {
           tap(x => this.logger.debug(`Navigation: navigate() call is succeeded for '${x.app.url}'`)),
         );
       }),
-    ) as Observable<Navigation>;
+    );
   }
 
   private setBrowserUrl(url: string, state: { [key: string]: any }, replaceState = false): void {
