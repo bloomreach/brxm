@@ -20,8 +20,8 @@ import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NavigationTrigger } from '@bloomreach/navapp-communication';
 
-import { NavItem } from '../../../../../../navapp-communication/src/lib/api';
-import { NavItemMock } from '../../../models/dto/nav-item.mock';
+import { NavItemMock } from '../../../models/nav-item.mock';
+import { NavItem } from '../../../models/nav-item.model';
 import { NavigationService } from '../../../services/navigation.service';
 
 import { MenuItemLinkComponent } from './menu-item-link.component';
