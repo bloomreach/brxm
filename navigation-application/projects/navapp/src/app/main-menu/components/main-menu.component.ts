@@ -15,11 +15,13 @@
  */
 
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, HostBinding, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, HostBinding, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NavigationTrigger } from '@bloomreach/navapp-communication';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, fromEvent, Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { APP_BOOTSTRAPPED } from '../../bootstrap/app-bootstrapped';
+import { normalizeWheelEvent } from '../../helpers/normalize-wheel-event';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { NavigationService } from '../../services/navigation.service';
 import { QaHelperService } from '../../services/qa-helper.service';
@@ -45,8 +47,28 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   isHelpToolbarOpened = false;
   isUserToolbarOpened = false;
 
+  readonly height = {
+    menu: 0,
+    occupied: 0,
+    available: 0,
+    bottom: 0,
+  };
+  readonly transitionClass = new BehaviorSubject('onload-transition');
+  readonly menuOffsetTop = new BehaviorSubject(0);
+
   private readonly homeMenuItem: MenuItemLink;
   private readonly unsubscribe = new Subject();
+
+  @ViewChild('menu', { static: false })
+  private readonly menu: ElementRef<HTMLElement>;
+  @ViewChild('arrowUp', { static: false })
+  private readonly arrowUp: ElementRef<HTMLElement>;
+  @ViewChild('arrowDown', { static: false })
+  private readonly arrowDown: ElementRef<HTMLElement>;
+  @ViewChild('progressBar', { static: false })
+  private readonly progressBar: ElementRef<HTMLElement>;
+  @ViewChild('bottomElements', { static: false })
+  private readonly bottomElements: ElementRef<HTMLElement>;
 
   constructor(
     private readonly menuStateService: MenuStateService,
@@ -78,7 +100,14 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.appBootstrapped.then(() => this.extractMenuItems());
+    fromEvent(window, 'resize')
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(this.onResize.bind(this));
+
+    this.appBootstrapped.then(() => {
+      this.extractMenuItems();
+      this.initMenu();
+    });
   }
 
   ngOnDestroy(): void {
@@ -88,6 +117,62 @@ export class MainMenuComponent implements OnInit, OnDestroy {
 
   toggle(): void {
     this.menuStateService.toggle();
+  }
+
+  initMenu(): void {
+    this.height.bottom = this.bottomElements.nativeElement.scrollHeight;
+    this.height.occupied = this.progressBar.nativeElement.scrollHeight + this.height.bottom;
+    this.height.available = window.innerHeight - this.height.occupied;
+
+    fromEvent<MouseEvent>(this.arrowDown.nativeElement, 'click')
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((event: MouseEvent) => {
+        event.preventDefault();
+        this.transitionClass.next('click-transition');
+        this.setMenuOffsetTop(this.menuOffsetTop.value + this.height.available);
+      });
+
+    fromEvent<MouseEvent>(this.arrowUp.nativeElement, 'click')
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((event: MouseEvent) => {
+        event.preventDefault();
+        this.transitionClass.next('click-transition');
+        this.setMenuOffsetTop(this.menuOffsetTop.value - this.height.available);
+      });
+
+    fromEvent<WheelEvent>(this.menu.nativeElement, 'wheel')
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((event: WheelEvent) => {
+        event.preventDefault();
+        this.transitionClass.next('wheel-transition');
+        if (this.getMenuHeight() > this.height.available) {
+          const normalized = normalizeWheelEvent(event);
+          this.setMenuOffsetTop(this.menuOffsetTop.value + normalized.pixelY);
+        }
+      });
+  }
+
+  onResize(event: any): void {
+    this.transitionClass.next('resize-transition');
+
+    const nextAvailableHeight = event.target.innerHeight - this.height.occupied;
+    const delta = nextAvailableHeight - this.height.available;
+    this.height.available = nextAvailableHeight;
+
+    // move menu down if window grows vertically and has moved over the top
+    if (this.menuOffsetTop.value > 0 && delta > 0) {
+      const nextMenuOffsetTop = this.menuOffsetTop.value - delta;
+      this.setMenuOffsetTop(nextMenuOffsetTop);
+    }
+  }
+
+  moveUpEnabled(): boolean {
+    return this.menuOffsetTop.value > 0;
+  }
+
+  moveDownEnabled(): boolean {
+    return this.height.available > 0 &&
+           this.height.available < this.getMenuHeight() - this.menuOffsetTop.value;
   }
 
   onMenuItemClick(event: MouseEvent, item: MenuItem): void {
@@ -139,5 +224,17 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     }
 
     this.menuItems = menu;
+  }
+
+  private setMenuOffsetTop(nextOffsetTop: number): void {
+    const maxOffsetTop = this.getMenuHeight() - this.height.available;
+    this.menuOffsetTop.next(Math.min(Math.max(0, nextOffsetTop), Math.max(0, maxOffsetTop)));
+  }
+
+  private getMenuHeight(): number {
+    if (this.height.menu === 0) {
+      this.height.menu = this.menu.nativeElement.offsetHeight;
+    }
+    return this.height.menu;
   }
 }

@@ -15,31 +15,45 @@
   -->
 
 <div class="static-menu">
-  <div class="progress-bar">
+  <div #progressBar class="progress-bar">
     <mat-progress-bar
       *ngIf="isBusyIndicatorVisible"
       mode="indeterminate"
       class="qa-busy-indicator">
     </mat-progress-bar>
   </div>
-  <div class="top-elements">
-    <div [ngClass]="getQaClass('home')"
-         class="home">
-      <mat-icon svgIcon="br-logo"></mat-icon>
+  <div #topElements class="top-elements" [ngClass]="transitionClass.value">
+    <div #arrowUp
+         class="arrow arrow-up"
+         [class.arrow-visible]="moveUpEnabled()">
+      <mat-icon svgIcon="chevron_up"></mat-icon>
     </div>
-    <brna-top-level-menu-item *ngFor="let item of menuItems"
-                              [caption]="item.caption"
-                              [icon]="item.icon"
-                              [activeIcon]="item.icon  + '.active'"
-                              [collapsed]="collapsed"
-                              [pressed]="item === drawerMenuItem"
-                              [active]="isMenuItemActive(item)"
-                              [ngClass]="getQaClass(item)"
-                              (click)="onMenuItemClick($event, item)">
-    </brna-top-level-menu-item>
+    <div #arrowDown
+         class="arrow arrow-down"
+         [class.arrow-visible]="moveDownEnabled()"
+         [style.bottom.px]="height.bottom">
+      <mat-icon svgIcon="chevron_down"></mat-icon>
+    </div>
+    <div #menu
+      class="menu"
+      [style.transform]="'translate3d(0, -' + menuOffsetTop.value + 'px, 0)'">
+      <div [ngClass]="getQaClass('home')" class="home">
+        <mat-icon svgIcon="br-logo"></mat-icon>
+      </div>
+      <brna-top-level-menu-item *ngFor="let item of menuItems"
+                                [caption]="item.caption"
+                                [icon]="item.icon"
+                                [activeIcon]="item.icon  + '.active'"
+                                [collapsed]="collapsed"
+                                [pressed]="item === drawerMenuItem"
+                                [active]="isMenuItemActive(item)"
+                                [ngClass]="getQaClass(item)"
+                                (click)="onMenuItemClick($event, item)">
+      </brna-top-level-menu-item>
+    </div>
   </div>
 
-  <div class="bottom-elements">
+  <div #bottomElements class="bottom-elements">
     <brna-top-level-menu-item caption="{{ 'MENU_CONTAINER_HELP' | translate }}"
                               icon="help"
                               [collapsed]="collapsed"
