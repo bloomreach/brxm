@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -158,40 +158,44 @@ public class ChannelPropertyMapper {
                         ? channelNode.getValueProvider().getStrings(HstNodeTypes.CHANNEL_PROPERTY_CHANNELINFO_MIXINS)
                         : null;
 
-        if (channelInfoType != null) {
-            final Class<? extends ChannelInfo> channelInfoClazz = loadChannelInfoClass(channelInfoType, channel.getId(),
-                    contextPath, isBlueprint);
-            final Class<? extends ChannelInfo>[] channelInfoMixinClasses = getChannelInfoMixinClasses(channelInfoMixins,
-                    channel.getId(), contextPath, isBlueprint);
+        Class<? extends ChannelInfo> channelInfoClazz = null;
+        Class<? extends ChannelInfo>[] channelInfoMixinClasses = null;
 
+        if (channelInfoType != null) {
+            channelInfoClazz = loadChannelInfoClass(channelInfoType, channel.getId(),
+                    contextPath, isBlueprint);
             if (channelInfoClazz != null) {
                 channel.setChannelInfoClassName(channelInfoClazz.getName());
+            }
+        }
 
-                if (channelInfoMixinClasses.length > 0) {
-                    channel.setChannelInfoMixinNames(
-                            Arrays.stream(channelInfoMixinClasses)
-                            .map(clazz -> clazz.getName()).collect(Collectors.toList()));
-                }
+        if (channelInfoMixins != null) {
+            channelInfoMixinClasses = getChannelInfoMixinClasses(channelInfoMixins,
+                    channel.getId(), contextPath, isBlueprint);
+            if (channelInfoMixinClasses.length > 0) {
+                channel.setChannelInfoMixinNames(
+                        Arrays.stream(channelInfoMixinClasses)
+                                .map(clazz -> clazz.getName()).collect(Collectors.toList()));
+            }
+        }
 
-                HstNode channelInfoNode = channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO);
+        HstNode channelInfoNode = channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO);
 
-                if (channelInfoNode != null) {
-                    Map<String, Object> properties = new HashMap<>();
-                    List<HstPropertyDefinition> propertyDefinitions = ChannelInfoClassProcessor
-                            .getProperties(channelInfoClazz, channelInfoMixinClasses);
-                    Map<HstPropertyDefinition, Object> values = ChannelPropertyMapper.loadProperties(channelInfoNode, propertyDefinitions);
+        if (channelInfoNode != null) {
+            Map<String, Object> properties = new HashMap<>();
+            List<HstPropertyDefinition> propertyDefinitions = ChannelInfoClassProcessor
+                    .getProperties(channelInfoClazz, channelInfoMixinClasses);
+            Map<HstPropertyDefinition, Object> values = ChannelPropertyMapper.loadProperties(channelInfoNode, propertyDefinitions);
 
-                    for (HstPropertyDefinition def : propertyDefinitions) {
-                        if (values.get(def) != null) {
-                            properties.put(def.getName(), values.get(def));
-                        } else if (def.getDefaultValue() != null) {
-                            properties.put(def.getName(), def.getDefaultValue());
-                        }
-                    }
-
-                    channel.setProperties(properties);
+            for (HstPropertyDefinition def : propertyDefinitions) {
+                if (values.get(def) != null) {
+                    properties.put(def.getName(), values.get(def));
+                } else if (def.getDefaultValue() != null) {
+                    properties.put(def.getName(), def.getDefaultValue());
                 }
             }
+
+            channel.setProperties(properties);
         }
 
         return channel;
