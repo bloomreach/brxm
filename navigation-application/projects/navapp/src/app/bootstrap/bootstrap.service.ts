@@ -18,6 +18,7 @@ import { Injectable } from '@angular/core';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
+import { NavItemService } from '../services/nav-item.service';
 import { NavigationService } from '../services/navigation.service';
 
 @Injectable({
@@ -28,9 +29,14 @@ export class BootstrapService {
     private readonly clientAppService: ClientAppService,
     private readonly menuStateService: MenuStateService,
     private readonly navigationService: NavigationService,
+    private readonly navItemService: NavItemService,
   ) { }
 
   bootstrap(): Promise<void> {
+    this.clientAppService.appConnected$.subscribe(app => {
+      this.navItemService.activateNavItems(app.url);
+    });
+
     return this.clientAppService.init()
       .then(() => this.menuStateService.init())
       .then(() => this.navigationService.initialNavigation());
