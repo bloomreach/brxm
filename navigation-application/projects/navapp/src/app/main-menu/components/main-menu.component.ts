@@ -25,6 +25,7 @@ import { normalizeWheelEvent } from '../../helpers/normalize-wheel-event';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { NavigationService } from '../../services/navigation.service';
 import { QaHelperService } from '../../services/qa-helper.service';
+import { WindowRef } from '../../shared/services/window-ref.service';
 import { MenuItemContainer } from '../models/menu-item-container.model';
 import { MenuItemLink } from '../models/menu-item-link.model';
 import { MenuItem } from '../models/menu-item.model';
@@ -76,6 +77,7 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     private readonly busyIndicatorService: BusyIndicatorService,
     private readonly navigationService: NavigationService,
     @Inject(APP_BOOTSTRAPPED) private readonly appBootstrapped: Promise<void>,
+    private readonly windowRef: WindowRef,
   ) { }
 
   get isBusyIndicatorVisible(): boolean {
@@ -100,10 +102,6 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    fromEvent(window, 'resize')
-      .pipe(takeUntil(this.unsubscribe))
-      .subscribe(this.onResize.bind(this));
-
     this.appBootstrapped.then(() => {
       this.extractMenuItems();
       this.initMenu();
@@ -122,7 +120,11 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   initMenu(): void {
     this.height.bottom = this.bottomElements.nativeElement.scrollHeight;
     this.height.occupied = this.progressBar.nativeElement.scrollHeight + this.height.bottom;
-    this.height.available = window.innerHeight - this.height.occupied;
+    this.height.available = this.windowRef.nativeWindow.innerHeight - this.height.occupied;
+
+    fromEvent(this.windowRef.nativeWindow, 'resize')
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(this.onResize.bind(this));
 
     fromEvent<MouseEvent>(this.arrowDown.nativeElement, 'click')
       .pipe(takeUntil(this.unsubscribe))
