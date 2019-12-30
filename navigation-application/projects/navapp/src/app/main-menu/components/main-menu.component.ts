@@ -48,27 +48,27 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   isUserToolbarOpened = false;
 
   readonly height = {
-    menu: 0,
-    occupied: 0,
     available: 0,
     bottom: 0,
+    menu: 0,
+    occupied: 0,
   };
-  readonly transitionClass = new BehaviorSubject('onload-transition');
   readonly menuOffsetTop = new BehaviorSubject(0);
+  readonly transitionClass = new BehaviorSubject('onload-transition');
 
   private readonly homeMenuItem: MenuItemLink;
   private readonly unsubscribe = new Subject();
 
-  @ViewChild('menu', { static: false })
-  private readonly menu: ElementRef<HTMLElement>;
-  @ViewChild('arrowUp', { static: false })
-  private readonly arrowUp: ElementRef<HTMLElement>;
   @ViewChild('arrowDown', { static: false })
   private readonly arrowDown: ElementRef<HTMLElement>;
-  @ViewChild('progressBar', { static: false })
-  private readonly progressBar: ElementRef<HTMLElement>;
+  @ViewChild('arrowUp', { static: false })
+  private readonly arrowUp: ElementRef<HTMLElement>;
   @ViewChild('bottomElements', { static: false })
   private readonly bottomElements: ElementRef<HTMLElement>;
+  @ViewChild('menu', { static: false })
+  private readonly menu: ElementRef<HTMLElement>;
+  @ViewChild('progressBar', { static: false })
+  private readonly progressBar: ElementRef<HTMLElement>;
 
   constructor(
     private readonly menuStateService: MenuStateService,
