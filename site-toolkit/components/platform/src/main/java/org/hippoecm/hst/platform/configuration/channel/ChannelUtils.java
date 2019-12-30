@@ -40,9 +40,26 @@ public class ChannelUtils {
 
     static final Logger log = LoggerFactory.getLogger(ChannelUtils.class);
 
+    /**
+     * Test method only
+     */
+    static <T extends ChannelInfo> T getChannelInfo(final Map<String, Object> values,
+                                                           final Class<? extends ChannelInfo> parametersInfoType,
+                                                           final Class<? extends ChannelInfo>...mixinTypes) {
+        return getChannelInfo(ChannelUtils.class.getClassLoader(), values, parametersInfoType, mixinTypes);
+    }
+
+    public static <T extends ChannelInfo> T getChannelInfo(final String contextPath,
+                                                           final Map<String, Object> values,
+                                                           final Class<? extends ChannelInfo> parametersInfoType,
+                                                           final Class<? extends ChannelInfo>...mixinTypes) {
+        return getChannelInfo(getWebsiteClassLoader(contextPath), values, parametersInfoType, mixinTypes);
+    }
+
     @SafeVarargs
     @SuppressWarnings("unchecked")
-    public static <T extends ChannelInfo> T getChannelInfo(final Map<String, Object> values,
+    public static <T extends ChannelInfo> T getChannelInfo(final ClassLoader classLoader,
+                                                           final Map<String, Object> values,
                                                            final Class<? extends ChannelInfo> parametersInfoType,
                                                            final Class<? extends ChannelInfo>...mixinTypes) {
         final int mixinTypesLen = (mixinTypes != null) ? mixinTypes.length : 0;
@@ -138,7 +155,7 @@ public class ChannelUtils {
             }
         };
 
-        T parametersInfo = (T) factory.createInvokerProxy(proxyClasses[0].getClassLoader(), invoker, proxyClasses);
+        T parametersInfo = (T) factory.createInvokerProxy(classLoader, invoker, proxyClasses);
 
         return parametersInfo;
     }
