@@ -15,9 +15,12 @@
  */
 
 import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { Subject } from 'rxjs';
 
+import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
+import { NavItemService } from '../services/nav-item.service';
 import { NavigationService } from '../services/navigation.service';
 
 import { BootstrapService } from './bootstrap.service';
@@ -25,6 +28,7 @@ import { BootstrapService } from './bootstrap.service';
 describe('BootstrapService', () => {
   let service: BootstrapService;
 
+  let appConnectedSubject: Subject<ClientApp>;
   let clientAppServiceInitResolve: () => void;
   let clientAppServiceMock: jasmine.SpyObj<ClientAppService>;
 
@@ -34,12 +38,16 @@ describe('BootstrapService', () => {
   let navigationServiceInitialNavigationResolve: () => void;
   let navigationServiceMock: jasmine.SpyObj<NavigationService>;
 
+  let navItemServiceMock: jasmine.SpyObj<NavItemService>;
+
   beforeEach(() => {
+    appConnectedSubject = new Subject();
     clientAppServiceMock = jasmine.createSpyObj('ClientAppService', {
       init: new Promise(r => {
         clientAppServiceInitResolve = r;
       }),
     });
+    (clientAppServiceMock as any).appConnected$ = appConnectedSubject.asObservable();
 
     menuStateServiceMock = jasmine.createSpyObj('MenuStateService', {
       init: new Promise(r => {
@@ -53,12 +61,17 @@ describe('BootstrapService', () => {
       }),
     });
 
+    navItemServiceMock = jasmine.createSpyObj('NavItemService', [
+      'activateNavItems',
+    ]);
+
     TestBed.configureTestingModule({
       providers: [
         BootstrapService,
         { provide: ClientAppService, useValue: clientAppServiceMock },
         { provide: MenuStateService, useValue: menuStateServiceMock },
         { provide: NavigationService, useValue: navigationServiceMock },
+        { provide: NavItemService, useValue: navItemServiceMock },
       ],
     });
 
@@ -83,6 +96,14 @@ describe('BootstrapService', () => {
 
       clientAppServiceInitResolve();
     }));
+
+    it('should activate nav items for the connected app', () => {
+      const expected = 'https://some-url';
+
+      appConnectedSubject.next(new ClientApp(expected, {}));
+
+      expect(navItemServiceMock.activateNavItems).toHaveBeenCalledWith(expected);
+    });
 
     it('should call MenuStateService:init()', () => {
       expect(menuStateServiceMock.init).toHaveBeenCalled();
