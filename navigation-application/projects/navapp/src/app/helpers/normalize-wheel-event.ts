@@ -16,21 +16,21 @@
 
 const LINE_HEIGHT = 40;
 
-interface NormalizedWheelData {
-  pixelX: number;
-  pixelY: number;
+interface Coordinates {
+  x: number;
+  y: number;
 }
 
-export function normalizeWheelEvent(event: any): NormalizedWheelData {
+export function normalizeWheelEvent(event: any): Coordinates {
   if (event.deltaMode === 1) { // Firefox
     return {
-      pixelX: event.deltaX * LINE_HEIGHT,
-      pixelY: event.deltaY * LINE_HEIGHT,
-    };
-  } else {
-    return {
-      pixelX : event.wheelDeltaX === 0 ? 0 : event.wheelDeltaX / -3,
-      pixelY : event.wheelDeltaY === 0 ? 0 : event.wheelDeltaY / -3,
+      x: event.deltaX * LINE_HEIGHT,
+      y: event.deltaY * LINE_HEIGHT,
     };
   }
+
+  return {
+    x : event.wheelDeltaX === 0 ? 0 : event.wheelDeltaX / -3,
+    y : event.wheelDeltaY === 0 ? 0 : event.wheelDeltaY / -3,
+  };
 }

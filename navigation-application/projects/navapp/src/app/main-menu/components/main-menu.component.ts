@@ -147,7 +147,7 @@ export class MainMenuComponent implements OnInit, OnDestroy {
         this.transitionClass.next('wheel-transition');
         if (this.getMenuHeight() > this.height.available) {
           const normalized = normalizeWheelEvent(event);
-          this.setMenuOffsetTop(this.menuOffsetTop.value + normalized.pixelY);
+          this.setMenuOffsetTop(this.menuOffsetTop.value + normalized.y);
         }
       });
   }

@@ -18,14 +18,14 @@ import { normalizeWheelEvent } from './normalize-wheel-event';
 
 describe('Normalize wheel events', () => {
   it('normalizes Firefox wheel events', () => {
-    expect(normalizeWheelEvent({deltaMode: 1, deltaX: 0, deltaY: 0 })).toEqual({ pixelX: 0, pixelY: 0 });
-    expect(normalizeWheelEvent({deltaMode: 1, deltaX: 0, deltaY: 1 })).toEqual({ pixelX: 0, pixelY: 40 });
-    expect(normalizeWheelEvent({deltaMode: 1, deltaX: 0, deltaY: -2 })).toEqual({ pixelX: 0, pixelY: -80 });
+    expect(normalizeWheelEvent({deltaMode: 1, deltaX: 0, deltaY: 0 })).toEqual({ x: 0, y: 0 });
+    expect(normalizeWheelEvent({deltaMode: 1, deltaX: 0, deltaY: 1 })).toEqual({ x: 0, y: 40 });
+    expect(normalizeWheelEvent({deltaMode: 1, deltaX: 0, deltaY: -2 })).toEqual({ x: 0, y: -80 });
   });
 
   it('normalizes Chrome/Safari wheel events', () => {
-    expect(normalizeWheelEvent({deltaMode: 0, wheelDeltaX: 0, wheelDeltaY: 0 })).toEqual({ pixelX: 0, pixelY: 0 });
-    expect(normalizeWheelEvent({deltaMode: 0, wheelDeltaX: 0, wheelDeltaY: -120 })).toEqual({ pixelX: 0, pixelY: 40 });
-    expect(normalizeWheelEvent({deltaMode: 0, wheelDeltaX: 0, wheelDeltaY: 240 })).toEqual({ pixelX: 0, pixelY: -80 });
+    expect(normalizeWheelEvent({deltaMode: 0, wheelDeltaX: 0, wheelDeltaY: 0 })).toEqual({ x: 0, y: 0 });
+    expect(normalizeWheelEvent({deltaMode: 0, wheelDeltaX: 0, wheelDeltaY: -120 })).toEqual({ x: 0, y: 40 });
+    expect(normalizeWheelEvent({deltaMode: 0, wheelDeltaX: 0, wheelDeltaY: 240 })).toEqual({ x: 0, y: -80 });
   });
 });
