@@ -253,7 +253,7 @@ export class ClientAppService {
 
         throw new CriticalError(
           'ERROR_UNABLE_TO_CONNECT_TO_CLIENT_APP',
-          'All connections to the client applications are failed',
+          'All connections to the client applications have failed failed',
         );
       }),
     );
