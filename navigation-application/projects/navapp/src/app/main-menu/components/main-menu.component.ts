@@ -233,6 +233,13 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     this.menuOffsetTop.next(Math.min(Math.max(0, nextOffsetTop), Math.max(0, maxOffsetTop)));
   }
 
+  /**
+   * The actual menu height is not known when OnInit is called. We could simply always query
+   * the native element's 'offsetHeight' property, but that would trigger unnecessary reflows,
+   * so instead it's lazily instantiated and cached.
+   *
+   * Note: this will not work if the menu becomes dynamic, i.e. during runtime menu-items can be added/removed.
+   */
   private getMenuHeight(): number {
     if (this.height.menu === 0) {
       this.height.menu = this.menu.nativeElement.offsetHeight;

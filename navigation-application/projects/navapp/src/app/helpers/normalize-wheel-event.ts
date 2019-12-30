@@ -14,18 +14,23 @@
  * limitations under the License.
  */
 
-const LINE_HEIGHT = 40;
-
 interface Coordinates {
   x: number;
   y: number;
 }
 
+/**
+ * Normalize the amount of pixels to scroll from a wheel event as Firefox and Chrome have different implementations.
+ * A single 'tick' of the scroll-wheel amounts for approximately 40 pixels.
+ *
+ * This coded is a simplified version of:
+ * https://github.com/facebookarchive/fixed-data-table/blob/master/src/vendor_upstream/dom/normalizeWheel.js
+ */
 export function normalizeWheelEvent(event: any): Coordinates {
   if (event.deltaMode === 1) { // Firefox
     return {
-      x: event.deltaX * LINE_HEIGHT,
-      y: event.deltaY * LINE_HEIGHT,
+      x: event.deltaX * 40,
+      y: event.deltaY * 40,
     };
   }
 
