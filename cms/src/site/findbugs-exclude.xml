@@ -1,6 +1,0 @@
-<FindBugsFilter>
-   <Match>
-       <Bug pattern="DLS_DEAD_LOCAL_STORE" />
-       <Local name="ex"/>
-   </Match>
-</FindBugsFilter>
