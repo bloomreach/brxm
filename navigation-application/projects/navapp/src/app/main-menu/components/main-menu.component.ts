@@ -146,26 +146,12 @@ export class MainMenuComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((event: WheelEvent) => {
         event.preventDefault();
-        this.transitionClass.next('wheel-transition');
         if (this.getMenuHeight() > this.height.available) {
+          this.transitionClass.next('wheel-transition');
           const normalized = normalizeWheelEvent(event);
           this.setMenuOffsetTop(this.menuOffsetTop.value + normalized.y);
         }
       });
-  }
-
-  onResize(event: any): void {
-    this.transitionClass.next('resize-transition');
-
-    const nextAvailableHeight = event.target.innerHeight - this.height.occupied;
-    const delta = nextAvailableHeight - this.height.available;
-    this.height.available = nextAvailableHeight;
-
-    // move menu down if window grows vertically and has moved over the top
-    if (this.menuOffsetTop.value > 0 && delta > 0) {
-      const nextMenuOffsetTop = this.menuOffsetTop.value - delta;
-      this.setMenuOffsetTop(nextMenuOffsetTop);
-    }
   }
 
   moveUpEnabled(): boolean {
@@ -226,6 +212,19 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     }
 
     this.menuItems = menu;
+  }
+
+  private onResize(event: any): void {
+    const nextAvailableHeight = event.target.innerHeight - this.height.occupied;
+    const delta = nextAvailableHeight - this.height.available;
+    this.height.available = nextAvailableHeight;
+
+    // move menu down if window grows vertically and has moved over the top
+    if (this.menuOffsetTop.value > 0 && delta > 0) {
+      this.transitionClass.next('resize-transition');
+      const nextMenuOffsetTop = this.menuOffsetTop.value - delta;
+      this.setMenuOffsetTop(nextMenuOffsetTop);
+    }
   }
 
   private setMenuOffsetTop(nextOffsetTop: number): void {
