@@ -1,1 +1,0 @@
-YAHOO.hippo.EditorManager.init('${editorUrl}', '${editorLang}', '${editorSkin}');

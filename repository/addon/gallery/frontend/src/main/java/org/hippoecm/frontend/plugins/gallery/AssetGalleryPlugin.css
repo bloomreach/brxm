@@ -1,8 +1,0 @@
-
-table.asset-gallery-plugin th.assetgallery-type, table.asset-gallery-plugin td.assetgallery-type {
-    width: 30px;
-}
-table.asset-gallery-plugin th.assetgallery-size, table.asset-gallery-plugin td.assetgallery-size {
-    width: 60px;
-    white-space:nowrap;
-}
