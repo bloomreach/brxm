@@ -1,5 +1,5 @@
 /*
-*  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+*  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
 *
 *  Licensed under the Apache License, Version 2.0 (the "License");
 *  you may not use this file except in compliance with the License.
@@ -270,7 +270,6 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
         final Map<String, Serializable> contextPayload = cmsSessionContext.getContextPayload();
 
         contextPayload.put(ContainerConstants.RENDERING_HOST, renderingHost);
-        contextPayload.put(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.TRUE);
         contextPayload.put(ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
 
         final HstRequestContext requestContext = getPageComposerContextService().getRequestContext();
@@ -328,22 +327,6 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
         return channelService.getChannelByMountId(mountId, hostGroup)
                 .map(channel -> channel.isConfigurationLocked())
                 .orElse(false);
-    }
-
-    @GET
-    @Path("/previewmode/{renderingHost}/")
-    @Produces(MediaType.APPLICATION_JSON)
-    @PrivilegesAllowed(CHANNEL_VIEWER_PRIVILEGE_NAME)
-    public Response previewMode(@Context HttpServletRequest servletRequest,
-                                @PathParam("renderingHost") String renderingHost) {
-        HttpSession session = servletRequest.getSession(true);
-
-        CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
-        final Map<String, Serializable> contextPayload = cmsSessionContext.getContextPayload();
-        contextPayload.put(ContainerConstants.RENDERING_HOST, renderingHost);
-        contextPayload.put(ContainerConstants.COMPOSER_MODE_ATTR_NAME, Boolean.FALSE);
-        log.info("Preview-Mode successful");
-        return ok("Preview-Mode successful", null);
     }
 
     @IgnoreLock
