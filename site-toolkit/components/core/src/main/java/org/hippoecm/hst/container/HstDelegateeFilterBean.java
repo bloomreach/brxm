@@ -33,6 +33,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.configuration.channel.PreviewURLChannelInfo;
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
@@ -69,6 +70,7 @@ import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.context.HippoWebappContext;
 import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -78,6 +80,8 @@ import org.springframework.web.context.ServletContextAware;
 import static java.lang.Boolean.TRUE;
 import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.hippoecm.hst.core.container.ContainerConstants.ACCESS_TOKEN_REQUEST_ATTRIBUTE;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMSSESSIONCONTEXT_BINDING_PATH;
 import static org.hippoecm.hst.core.container.ContainerConstants.DEFAULT_SITE_PIPELINE_NAME;
 import static org.hippoecm.hst.core.container.ContainerConstants.FORWARD_RECURSION_ERROR;
@@ -367,6 +371,17 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                         log.warn("Attempted Channel Manager preview request without being authenticated");
                         return;
                     }
+
+                    if (resolvedMount.getMount().getHstSite() != null && req.getAttribute(ACCESS_TOKEN_REQUEST_ATTRIBUTE) == null) {
+                        final Channel channel = resolvedMount.getMount().getHstSite().getChannel();
+                        if (channel != null && channel.getProperties().containsKey(PreviewURLChannelInfo.PREVIEW_URL_PROPERTY_NAME)
+                                && isNotBlank(channel.getProperties().get(PreviewURLChannelInfo.PREVIEW_URL_PROPERTY_NAME).toString())) {
+
+                            res.sendRedirect(channel.getProperties().get(PreviewURLChannelInfo.PREVIEW_URL_PROPERTY_NAME).toString());
+                            return;
+                        }
+                    }
+
                     requestContext.setChannelManagerPreviewRequest(true);
                     if (resolvedMount instanceof MutableResolvedMount) {
                         Mount undecoratedMount = resolvedMount.getMount();
