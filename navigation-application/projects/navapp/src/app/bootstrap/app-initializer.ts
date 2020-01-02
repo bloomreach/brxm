@@ -16,23 +16,24 @@
 
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { AuthService } from '../services/auth.service';
-import { BusyIndicatorService } from '../services/busy-indicator.service';
 import { NavConfigService } from '../services/nav-config.service';
+import { NavItemService } from '../services/nav-item.service';
 
 import { BootstrapService } from './bootstrap.service';
-import { scheduleAppBootstrapping } from './schedule-app-bootstrapping';
 
 export const appInitializer = (
   authService: AuthService,
   navConfigService: NavConfigService,
+  navItemService: NavItemService,
   bootstrapService: BootstrapService,
-  busyIndicatorService: BusyIndicatorService,
   errorHandlingService: ErrorHandlingService,
 ) => async () => {
   try {
     await authService.loginAllResources();
-    await navConfigService.init();
-    scheduleAppBootstrapping(bootstrapService, busyIndicatorService, errorHandlingService);
+    const navItemDtos = await navConfigService.init();
+    const navItems = navItemService.registerNavItemDtos(navItemDtos);
+
+    bootstrapService.bootstrap(navItems);
   } catch (error) {
     errorHandlingService.setCriticalError('ERROR_UNABLE_TO_LOAD_CONFIGURATION', error.message);
   }

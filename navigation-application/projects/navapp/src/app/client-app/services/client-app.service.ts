@@ -26,7 +26,6 @@ import { Connection } from '../../models/connection.model';
 import { AppSettings } from '../../models/dto/app-settings.dto';
 import { FailedConnection } from '../../models/failed-connection.model';
 import { APP_SETTINGS } from '../../services/app-settings';
-import { NavItemService } from '../../services/nav-item.service';
 import { ClientApp } from '../models/client-app.model';
 
 interface ClientAppWithConfig {
@@ -39,15 +38,14 @@ export class ClientAppService {
   private readonly uniqueURLs$ = new BehaviorSubject<string[]>([]);
   private readonly connection$ = new Subject<Connection>();
   private readonly connectedAppWithConfig$: Observable<ClientAppWithConfig>;
-  private readonly allAppsAreConnectedOrTimeout = new Subject<void>();
   private readonly userActivityReceived$ = new Subject<ClientApp>();
 
   private readonly connectedApps: Map<string, ClientAppWithConfig> = new Map<string, ClientAppWithConfig>();
   private activeAppUrl: string;
+  private allAppsAreConnectedOrTimeout = false;
 
   constructor(
     @Inject(APP_SETTINGS) private readonly appSettings: AppSettings,
-    private readonly navItemService: NavItemService,
     private readonly logger: NGXLogger,
   ) {
     this.connectedAppWithConfig$ = this.transformConnectionsToApps(this.connection$);
@@ -85,26 +83,18 @@ export class ClientAppService {
     return this.doesAppSupportSites(this.activeApp);
   }
 
-  init(): Promise<void> {
-    const navItems = this.navItemService.navItems;
+  init(navItems: NavItem[]): Promise<void> {
     const uniqueURLs = this.filterUniqueURLs(navItems);
     this.uniqueURLs$.next(uniqueURLs);
 
     this.logger.debug(`Client app iframes are expected to be loaded (${uniqueURLs.length})`, uniqueURLs);
-
-    this.connectedAppWithConfig$.pipe(
-      takeUntil(this.allAppsAreConnectedOrTimeout),
-    ).subscribe(appWithConfig => {
-      this.connectedApps.set(appWithConfig.app.url, appWithConfig);
-    });
 
     return this.waitForAllAppsToBeConnectedOrTimeout(
       this.connectedAppWithConfig$,
       uniqueURLs.length,
       this.appSettings.iframesConnectionTimeout * 1.5,
     ).toPromise().then(() => {
-      this.allAppsAreConnectedOrTimeout.next();
-      this.allAppsAreConnectedOrTimeout.complete();
+      this.allAppsAreConnectedOrTimeout = true;
     });
   }
 
@@ -117,7 +107,7 @@ export class ClientAppService {
   }
 
   addConnection(connection: Connection): void {
-    if (this.allAppsAreConnectedOrTimeout.isStopped) {
+    if (this.allAppsAreConnectedOrTimeout) {
       throw new Error('An attempt to register a connection after all expected connections are registered or timeout has expired');
     }
 
@@ -186,6 +176,7 @@ export class ClientAppService {
     return connection$.pipe(
       filter(connection => !(connection instanceof FailedConnection)),
       mergeMap(connection => this.createClientAppWithConfig(connection)),
+      tap(appWithConfig => this.connectedApps.set(appWithConfig.app.url, appWithConfig)),
       publishReplay(),
       refCount(),
     );

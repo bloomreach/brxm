@@ -18,20 +18,19 @@ import { APP_INITIALIZER, NgModule } from '@angular/core';
 
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { AuthService } from '../services/auth.service';
-import { BusyIndicatorService } from '../services/busy-indicator.service';
 import { NavConfigService } from '../services/nav-config.service';
+import { NavItemService } from '../services/nav-item.service';
 
 import { APP_BOOTSTRAPPED } from './app-bootstrapped';
 import { appInitializer } from './app-initializer';
-import { BootstrapService } from './bootstrap.service';
-import { appBootstrappedPromise } from './schedule-app-bootstrapping';
+import { appBootstrappedPromise, BootstrapService } from './bootstrap.service';
 
 @NgModule({
   providers: [
     {
       provide: APP_INITIALIZER,
       useFactory: appInitializer,
-      deps: [AuthService, NavConfigService, BootstrapService, BusyIndicatorService, ErrorHandlingService],
+      deps: [AuthService, NavConfigService, NavItemService, BootstrapService, ErrorHandlingService],
       multi: true,
     },
     {

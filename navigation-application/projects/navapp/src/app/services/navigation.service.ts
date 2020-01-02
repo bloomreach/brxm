@@ -39,7 +39,6 @@ import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
 import { APP_SETTINGS } from './app-settings';
 import { BusyIndicatorService } from './busy-indicator.service';
 import { ConnectionService } from './connection.service';
-import { NavItemService } from './nav-item.service';
 import { UrlMapperService } from './url-mapper.service';
 
 interface Route {
@@ -82,7 +81,6 @@ export class NavigationService implements OnDestroy {
     private readonly errorHandlingService: ErrorHandlingService,
     private readonly location: Location,
     private readonly menuStateService: MenuStateService,
-    private readonly navItemService: NavItemService,
     private readonly urlMapperService: UrlMapperService,
     private readonly translateService: TranslateService,
     private readonly logger: NGXLogger,
@@ -120,10 +118,11 @@ export class NavigationService implements OnDestroy {
     return this.urlMapperService.mapNavItemToBrowserUrl(homeMenuItem.navItem);
   }
 
-  initialNavigation(): Promise<void> {
-    const navItems = this.navItemService.navItems;
+  init(navItems: NavItem[]): void {
     this.routes = this.generateRoutes(navItems);
+  }
 
+  initialNavigation(): Promise<void> {
     this.setUpLocationChangeListener();
 
     const url = this.appSettings.initialPath ?

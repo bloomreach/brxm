@@ -36,6 +36,11 @@ describe('MenuStateService', () => {
     },
   });
 
+  const navItemsMock = [
+    new NavItemMock({ id: '1' }),
+    new NavItemMock({ id: '2' }),
+  ];
+
   const builtMenuMock = [
     new MenuItemContainer(
       'menu item 1',
@@ -85,7 +90,12 @@ describe('MenuStateService', () => {
     });
 
     service = TestBed.get(MenuStateService);
-    service.init();
+
+    service.init(navItemsMock);
+  });
+
+  it('should build the menu based on the provided nav items', () => {
+    expect(menuBuilderServiceMock.buildMenu).toHaveBeenCalledWith(navItemsMock);
   });
 
   it('should return the built menu', () => {

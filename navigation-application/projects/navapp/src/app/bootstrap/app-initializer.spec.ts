@@ -14,70 +14,90 @@
  * limitations under the License.
  */
 
-import { fakeAsync, tick } from '@angular/core/testing';
+import { async } from '@angular/core/testing';
+
+import { NavItemMock } from '../models/nav-item.mock';
 
 import { appInitializer } from './app-initializer';
-import * as loadNavItemsModule from './load-nav-items';
-import * as scheduleAppBootstrappingModule from './schedule-app-bootstrapping';
 
 describe('appInitializer', () => {
-  const navConfigServiceMock: any = {};
+  const navItemsMock = [
+    new NavItemMock({ id: '1' }),
+    new NavItemMock({ id: '2' }),
+  ];
+
+  const authServiceMock = jasmine.createSpyObj('AuthService', [
+    'loginAllResources',
+  ]);
+
+  const navConfigServiceMock = jasmine.createSpyObj('NavConfigService', {
+    init: Promise.resolve(navItemsMock),
+  });
+
+  const navItemServiceMock = jasmine.createSpyObj('NavItemService', [
+    'registerNavItemDtos',
+  ]);
 
   const bootstrapServiceMock = jasmine.createSpyObj('BootstrapService', [
     'bootstrap',
-  ]);
-
-  const busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', [
-    'show',
-    'hide',
   ]);
 
   const errorHandlingServiceMock = jasmine.createSpyObj('ErrorHandlingService', [
     'setCriticalError',
   ]);
 
-  const authServiceMock = jasmine.createSpyObj('AuthService', [
-    'loginAllResources',
-  ]);
+  const callAppInitializer = () => appInitializer(
+    authServiceMock,
+    navConfigServiceMock,
+    navItemServiceMock,
+    bootstrapServiceMock,
+    errorHandlingServiceMock,
+  )();
 
-  beforeEach(() => {
-    spyOnProperty(loadNavItemsModule, 'loadNavItems', 'get').and.returnValue(() => Promise.resolve());
+  let initialized: boolean;
+
+  describe('when services initialized successfully', () => {
+    beforeEach(async(() => {
+      initialized = false;
+
+      callAppInitializer().then(() => initialized = true);
+    }));
+
+    it('should log in all resources', () => {
+      expect(authServiceMock.loginAllResources).toHaveBeenCalled();
+    });
+
+    it('should initialize NavConfigService', () => {
+      expect(navConfigServiceMock.init).toHaveBeenCalled();
+    });
+
+    it('should register fetched nav items', () => {
+      expect(navItemServiceMock.registerNavItemDtos).toHaveBeenCalledWith(navItemsMock);
+    });
+
+    it('should bootstrap the rest services', () => {
+      expect(bootstrapServiceMock.bootstrap).toHaveBeenCalled();
+    });
+
+    it('should initialize the app', () => {
+      expect(initialized).toBeTruthy();
+    });
   });
 
-  it('should initialize the app', fakeAsync(() => {
-    spyOnProperty(scheduleAppBootstrappingModule, 'scheduleAppBootstrapping', 'get').and.returnValue(() => Promise.resolve());
+  describe('when an error occurred', () => {
+    beforeEach(async(() => {
+      authServiceMock.loginAllResources.and.callFake(() => {
+        throw new Error('some error');
+      });
 
-    let initialized = false;
+      callAppInitializer();
+    }));
 
-    appInitializer(
-      authServiceMock,
-      navConfigServiceMock,
-      bootstrapServiceMock,
-      busyIndicatorServiceMock,
-      errorHandlingServiceMock,
-    )().then(() => initialized = true);
-
-    tick();
-
-    expect(initialized).toBeTruthy();
-  }));
-
-  it('should set the critical error', fakeAsync(() => {
-    spyOnProperty(scheduleAppBootstrappingModule, 'scheduleAppBootstrapping', 'get').and.returnValue(() => Promise.reject());
-
-    appInitializer(
-      authServiceMock,
-      navConfigServiceMock,
-      bootstrapServiceMock,
-      busyIndicatorServiceMock,
-      errorHandlingServiceMock,
-    )();
-
-    tick();
-
-    expect(errorHandlingServiceMock.setCriticalError).toHaveBeenCalledWith(
-      'ERROR_UNABLE_TO_LOAD_CONFIGURATION',
-      'navConfigService.init is not a function',
-    );
-  }));
+    it('should set the critical error', () => {
+      expect(errorHandlingServiceMock.setCriticalError).toHaveBeenCalledWith(
+        'ERROR_UNABLE_TO_LOAD_CONFIGURATION',
+        'some error',
+      );
+    });
+  });
 });
