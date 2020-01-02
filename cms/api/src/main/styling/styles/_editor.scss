@@ -1,4 +1,4 @@
-// Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -110,8 +110,7 @@
 
   .dialog-link,
   .hippo-editor-field-textarea,
-  .hippo-editor-field-value-container,
-  .yui-date-time-field input {
+  .hippo-editor-field-value-container {
     background-color: $editor-subfield-bg;
     border: 1px solid $editor-subfield-border;
     border-radius: $editor-field-border-radius;
@@ -124,8 +123,12 @@
     }
 
     .hippo-editor-large & {
-      font-size: 26px;
-      line-height: $line-height-base;
+      font-size: $editor-large-font-size;
+      line-height: $editor-large-line-height;
+
+      input {
+        height: $editor-large-input-height;
+      }
     }
 
     &.non-breaking {

@@ -1,4 +1,4 @@
-// Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -38,6 +38,12 @@
       box-shadow: 0 0 0 1px $editor-field-focus-color;
     }
   }
+
+  .hippo-editor-large &,
+  .hippo-editor-large & input {
+    font-size: $editor-large-font-size;
+    height: $editor-large-input-height;
+  }
 }
 
 .hippo-datepicker-date {
@@ -52,6 +58,10 @@
   .date {
     width: 74px;
     margin: 8px;
+
+    .hippo-editor-large & {
+      width: 138px;
+    }
   }
 
   // Date picker link/icon
@@ -75,6 +85,10 @@
 .hippo-datepicker-time {
   .time {
     width: 17px;
+
+    .hippo-editor-large & {
+      width: 30px;
+    }
   }
 
   .hippo-datepicker-value-container {
