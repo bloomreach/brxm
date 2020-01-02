@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -949,7 +949,7 @@ public class VirtualHostsService implements MutableVirtualHosts {
     public <T extends ChannelInfo> T getChannelInfo(final Channel channel) throws ChannelException {
         final Class<? extends ChannelInfo> channelInfoClass = getChannelInfoClass(channel);
         final List<Class<? extends ChannelInfo>> channelInfoMixins = getChannelInfoMixins(channel);
-        return (T) ChannelUtils.getChannelInfo(channel.getProperties(), channelInfoClass,
+        return (T) ChannelUtils.getChannelInfo(channel.getContextPath(), channel.getProperties(), channelInfoClass,
                 channelInfoMixins.toArray(new Class[channelInfoMixins.size()]));
     }
 
