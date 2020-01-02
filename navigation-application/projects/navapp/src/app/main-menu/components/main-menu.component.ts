@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,14 +15,17 @@
  */
 
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, HostBinding, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, ElementRef, HostBinding, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NavigationTrigger } from '@bloomreach/navapp-communication';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject, fromEvent, Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { APP_BOOTSTRAPPED } from '../../bootstrap/app-bootstrapped';
+import { normalizeWheelEvent } from '../../helpers/normalize-wheel-event';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { NavigationService } from '../../services/navigation.service';
 import { QaHelperService } from '../../services/qa-helper.service';
+import { WindowRef } from '../../shared/services/window-ref.service';
 import { MenuItemContainer } from '../models/menu-item-container.model';
 import { MenuItemLink } from '../models/menu-item-link.model';
 import { MenuItem } from '../models/menu-item.model';
@@ -45,8 +48,28 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   isHelpToolbarOpened = false;
   isUserToolbarOpened = false;
 
+  readonly height = {
+    available: 0,
+    bottom: 0,
+    menu: 0,
+    occupied: 0,
+  };
+  readonly menuOffsetTop$ = new BehaviorSubject(0);
+  readonly transitionClass$ = new BehaviorSubject('onload-transition');
+
   private readonly homeMenuItem: MenuItemLink;
   private readonly unsubscribe = new Subject();
+
+  @ViewChild('arrowDown', { static: false })
+  private readonly arrowDown: ElementRef<HTMLElement>;
+  @ViewChild('arrowUp', { static: false })
+  private readonly arrowUp: ElementRef<HTMLElement>;
+  @ViewChild('bottomElements', { static: false })
+  private readonly bottomElements: ElementRef<HTMLElement>;
+  @ViewChild('menu', { static: false })
+  private readonly menu: ElementRef<HTMLElement>;
+  @ViewChild('progressBar', { static: false })
+  private readonly progressBar: ElementRef<HTMLElement>;
 
   constructor(
     private readonly menuStateService: MenuStateService,
@@ -54,6 +77,7 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     private readonly busyIndicatorService: BusyIndicatorService,
     private readonly navigationService: NavigationService,
     @Inject(APP_BOOTSTRAPPED) private readonly appBootstrapped: Promise<void>,
+    private readonly windowRef: WindowRef,
   ) { }
 
   get isBusyIndicatorVisible(): boolean {
@@ -78,7 +102,10 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.appBootstrapped.then(() => this.extractMenuItems());
+    this.appBootstrapped.then(() => {
+      this.extractMenuItems();
+      this.initMenu();
+    });
   }
 
   ngOnDestroy(): void {
@@ -88,6 +115,52 @@ export class MainMenuComponent implements OnInit, OnDestroy {
 
   toggle(): void {
     this.menuStateService.toggle();
+  }
+
+  initMenu(): void {
+    this.height.bottom = this.bottomElements.nativeElement.scrollHeight;
+    this.height.occupied = this.progressBar.nativeElement.scrollHeight + this.height.bottom;
+    this.height.available = this.windowRef.nativeWindow.innerHeight - this.height.occupied;
+
+    fromEvent(this.windowRef.nativeWindow, 'resize')
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe(this.onResize.bind(this));
+
+    fromEvent<MouseEvent>(this.arrowDown.nativeElement, 'click')
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((event: MouseEvent) => {
+        event.preventDefault();
+        this.transitionClass$.next('click-transition');
+        this.setMenuOffsetTop(this.menuOffsetTop$.value + this.height.available);
+      });
+
+    fromEvent<MouseEvent>(this.arrowUp.nativeElement, 'click')
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((event: MouseEvent) => {
+        event.preventDefault();
+        this.transitionClass$.next('click-transition');
+        this.setMenuOffsetTop(this.menuOffsetTop$.value - this.height.available);
+      });
+
+    fromEvent<WheelEvent>(this.menu.nativeElement, 'wheel')
+      .pipe(takeUntil(this.unsubscribe))
+      .subscribe((event: WheelEvent) => {
+        event.preventDefault();
+        if (this.getMenuHeight() > this.height.available) {
+          this.transitionClass$.next('wheel-transition');
+          const normalized = normalizeWheelEvent(event);
+          this.setMenuOffsetTop(this.menuOffsetTop$.value + normalized.y);
+        }
+      });
+  }
+
+  moveUpEnabled(): boolean {
+    return this.menuOffsetTop$.value > 0;
+  }
+
+  moveDownEnabled(): boolean {
+    return this.height.available > 0 &&
+           this.height.available < this.getMenuHeight() - this.menuOffsetTop$.value;
   }
 
   onMenuItemClick(event: MouseEvent, item: MenuItem): void {
@@ -139,5 +212,37 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     }
 
     this.menuItems = menu;
+  }
+
+  private onResize(event: any): void {
+    const nextAvailableHeight = event.target.innerHeight - this.height.occupied;
+    const delta = nextAvailableHeight - this.height.available;
+    this.height.available = nextAvailableHeight;
+
+    // move menu down if window grows vertically and has moved over the top
+    if (this.menuOffsetTop$.value > 0 && delta > 0) {
+      this.transitionClass$.next('resize-transition');
+      const nextMenuOffsetTop = this.menuOffsetTop$.value - delta;
+      this.setMenuOffsetTop(nextMenuOffsetTop);
+    }
+  }
+
+  private setMenuOffsetTop(nextOffsetTop: number): void {
+    const maxOffsetTop = this.getMenuHeight() - this.height.available;
+    this.menuOffsetTop$.next(Math.min(Math.max(0, nextOffsetTop), Math.max(0, maxOffsetTop)));
+  }
+
+  /**
+   * The actual menu height is not known when OnInit is called. We could simply always query
+   * the native element's 'offsetHeight' property, but that would trigger unnecessary reflows,
+   * so instead it's lazily instantiated and cached.
+   *
+   * Note: this will not work if the menu becomes dynamic, i.e. during runtime menu-items can be added/removed.
+   */
+  private getMenuHeight(): number {
+    if (this.height.menu === 0) {
+      this.height.menu = this.menu.nativeElement.offsetHeight;
+    }
+    return this.height.menu;
   }
 }
