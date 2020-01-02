@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -34,4 +34,7 @@
 
   <bean class="org.hippoecm.hst.platform.model.RuntimeHostServiceImpl" init-method="init" destroy-method="destroy"/>
 
+  <bean class="org.hippoecm.hst.platform.security.JwtTokenServiceImpl" init-method="init" destroy-method="destroy">
+    <property name="expiresMinutes" value="${jwt.token.expiresMinutes:15}"/>
+  </bean>
 </beans>
