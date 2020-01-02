@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,8 +54,8 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     menu: 0,
     occupied: 0,
   };
-  readonly menuOffsetTop = new BehaviorSubject(0);
-  readonly transitionClass = new BehaviorSubject('onload-transition');
+  readonly menuOffsetTop$ = new BehaviorSubject(0);
+  readonly transitionClass$ = new BehaviorSubject('onload-transition');
 
   private readonly homeMenuItem: MenuItemLink;
   private readonly unsubscribe = new Subject();
@@ -130,16 +130,16 @@ export class MainMenuComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((event: MouseEvent) => {
         event.preventDefault();
-        this.transitionClass.next('click-transition');
-        this.setMenuOffsetTop(this.menuOffsetTop.value + this.height.available);
+        this.transitionClass$.next('click-transition');
+        this.setMenuOffsetTop(this.menuOffsetTop$.value + this.height.available);
       });
 
     fromEvent<MouseEvent>(this.arrowUp.nativeElement, 'click')
       .pipe(takeUntil(this.unsubscribe))
       .subscribe((event: MouseEvent) => {
         event.preventDefault();
-        this.transitionClass.next('click-transition');
-        this.setMenuOffsetTop(this.menuOffsetTop.value - this.height.available);
+        this.transitionClass$.next('click-transition');
+        this.setMenuOffsetTop(this.menuOffsetTop$.value - this.height.available);
       });
 
     fromEvent<WheelEvent>(this.menu.nativeElement, 'wheel')
@@ -147,20 +147,20 @@ export class MainMenuComponent implements OnInit, OnDestroy {
       .subscribe((event: WheelEvent) => {
         event.preventDefault();
         if (this.getMenuHeight() > this.height.available) {
-          this.transitionClass.next('wheel-transition');
+          this.transitionClass$.next('wheel-transition');
           const normalized = normalizeWheelEvent(event);
-          this.setMenuOffsetTop(this.menuOffsetTop.value + normalized.y);
+          this.setMenuOffsetTop(this.menuOffsetTop$.value + normalized.y);
         }
       });
   }
 
   moveUpEnabled(): boolean {
-    return this.menuOffsetTop.value > 0;
+    return this.menuOffsetTop$.value > 0;
   }
 
   moveDownEnabled(): boolean {
     return this.height.available > 0 &&
-           this.height.available < this.getMenuHeight() - this.menuOffsetTop.value;
+           this.height.available < this.getMenuHeight() - this.menuOffsetTop$.value;
   }
 
   onMenuItemClick(event: MouseEvent, item: MenuItem): void {
@@ -220,16 +220,16 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     this.height.available = nextAvailableHeight;
 
     // move menu down if window grows vertically and has moved over the top
-    if (this.menuOffsetTop.value > 0 && delta > 0) {
-      this.transitionClass.next('resize-transition');
-      const nextMenuOffsetTop = this.menuOffsetTop.value - delta;
+    if (this.menuOffsetTop$.value > 0 && delta > 0) {
+      this.transitionClass$.next('resize-transition');
+      const nextMenuOffsetTop = this.menuOffsetTop$.value - delta;
       this.setMenuOffsetTop(nextMenuOffsetTop);
     }
   }
 
   private setMenuOffsetTop(nextOffsetTop: number): void {
     const maxOffsetTop = this.getMenuHeight() - this.height.available;
-    this.menuOffsetTop.next(Math.min(Math.max(0, nextOffsetTop), Math.max(0, maxOffsetTop)));
+    this.menuOffsetTop$.next(Math.min(Math.max(0, nextOffsetTop), Math.max(0, maxOffsetTop)));
   }
 
   /**

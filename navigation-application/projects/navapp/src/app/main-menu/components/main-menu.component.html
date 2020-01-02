@@ -1,5 +1,5 @@
 <!--
-  Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+  Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@
       class="qa-busy-indicator">
     </mat-progress-bar>
   </div>
-  <div #topElements class="top-elements" [ngClass]="transitionClass.value">
+  <div #topElements class="top-elements" [ngClass]="transitionClass$.value">
     <div #arrowUp
          class="arrow arrow-up"
          [class.arrow-visible]="moveUpEnabled()">
@@ -36,7 +36,7 @@
     </div>
     <div #menu
       class="menu"
-      [style.transform]="'translate3d(0, -' + menuOffsetTop.value + 'px, 0)'">
+      [style.transform]="'translate3d(0, -' + menuOffsetTop$.value + 'px, 0)'">
       <div [ngClass]="getQaClass('home')" class="home">
         <mat-icon svgIcon="br-logo"></mat-icon>
       </div>

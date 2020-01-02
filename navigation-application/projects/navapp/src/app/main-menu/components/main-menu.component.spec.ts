@@ -1,5 +1,5 @@
 /*!
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -216,13 +216,13 @@ describe('MainMenuComponent', () => {
     });
 
     it('should move the menu down if the window grows vertically and menu is partially visible at the top', () => {
-      component.menuOffsetTop.next(10);
+      component.menuOffsetTop$.next(10);
 
       triggerResizeEvent(initialWindowHeight - 10);
-      expect(component.menuOffsetTop.value).toBe(10);
+      expect(component.menuOffsetTop$.value).toBe(10);
 
       triggerResizeEvent(initialWindowHeight);
-      expect(component.menuOffsetTop.value).toBe(0);
+      expect(component.menuOffsetTop$.value).toBe(0);
     });
 
     it('should handle wheel events', () => {
@@ -230,41 +230,41 @@ describe('MainMenuComponent', () => {
 
       // 40px up
       triggerWheelEvent(1);
-      expect(component.menuOffsetTop.value).toBe(40);
+      expect(component.menuOffsetTop$.value).toBe(40);
 
       // 80px down (lower out of bounds check)
       triggerWheelEvent(-2);
-      expect(component.menuOffsetTop.value).toBe(0);
+      expect(component.menuOffsetTop$.value).toBe(0);
 
       // as far up as possible without going out of bounds
       triggerWheelEvent(upperBound / 40);
-      expect(component.menuOffsetTop.value > (upperBound - 40));
+      expect(component.menuOffsetTop$.value > (upperBound - 40));
 
       // over the top (upper out of bounds check)
       triggerWheelEvent(2);
-      expect(component.menuOffsetTop.value).toBe(upperBound);
+      expect(component.menuOffsetTop$.value).toBe(upperBound);
     });
 
     it('should handle arrow-down clicks', () => {
       const upperBound = scrollingMenu();
 
       triggerClick('.arrow-down');
-      expect(component.menuOffsetTop.value).toBe(upperBound);
+      expect(component.menuOffsetTop$.value).toBe(upperBound);
 
       // check out-of-bounds
       triggerClick('.arrow-down');
-      expect(component.menuOffsetTop.value).toBe(upperBound);
+      expect(component.menuOffsetTop$.value).toBe(upperBound);
     });
 
     it('should handle arrow-up clicks', () => {
       scrollingMenu();
 
       triggerClick('.arrow-up');
-      expect(component.menuOffsetTop.value).toBe(0);
+      expect(component.menuOffsetTop$.value).toBe(0);
 
       // check out-of-bounds
       triggerClick('.arrow-up');
-      expect(component.menuOffsetTop.value).toBe(0);
+      expect(component.menuOffsetTop$.value).toBe(0);
     });
 
     it('should not enable arrowDown if available height not yet calculated', () => {
@@ -278,7 +278,7 @@ describe('MainMenuComponent', () => {
       component.height.menu = component.height.available + 10;
       expect(component.moveDownEnabled()).toBe(true);
 
-      component.menuOffsetTop.next(10);
+      component.menuOffsetTop$.next(10);
       expect(component.moveDownEnabled()).toBe(false);
     });
 
@@ -288,7 +288,7 @@ describe('MainMenuComponent', () => {
       component.height.menu = component.height.available + 10;
       expect(component.moveUpEnabled()).toBe(false);
 
-      component.menuOffsetTop.next(10);
+      component.menuOffsetTop$.next(10);
       expect(component.moveUpEnabled()).toBe(true);
     });
 
@@ -296,21 +296,21 @@ describe('MainMenuComponent', () => {
       scrollingMenu();
 
       // initial load transition
-      expect(component.transitionClass.value).toBe('onload-transition');
+      expect(component.transitionClass$.value).toBe('onload-transition');
 
       // move menu up and make window larger
-      component.menuOffsetTop.next(10);
+      component.menuOffsetTop$.next(10);
       triggerResizeEvent(initialWindowHeight + 10);
-      expect(component.transitionClass.value).toBe('resize-transition');
+      expect(component.transitionClass$.value).toBe('resize-transition');
 
       triggerClick('.arrow-up');
-      expect(component.transitionClass.value).toBe('click-transition');
+      expect(component.transitionClass$.value).toBe('click-transition');
 
       triggerWheelEvent(1);
-      expect(component.transitionClass.value).toBe('wheel-transition');
+      expect(component.transitionClass$.value).toBe('wheel-transition');
 
       triggerClick('.arrow-down');
-      expect(component.transitionClass.value).toBe('click-transition');
+      expect(component.transitionClass$.value).toBe('click-transition');
     });
   });
 });
