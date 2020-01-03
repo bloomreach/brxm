@@ -35,6 +35,5 @@
   <bean class="org.hippoecm.hst.platform.model.RuntimeHostServiceImpl" init-method="init" destroy-method="destroy"/>
 
   <bean class="org.hippoecm.hst.platform.security.JwtTokenServiceImpl" init-method="init" destroy-method="destroy">
-    <property name="expiresMinutes" value="${jwt.token.expiresMinutes:15}"/>
   </bean>
 </beans>

@@ -45,8 +45,6 @@ public class JwtTokenServiceImpl implements JwtTokenService {
     // TODO support public / private key injection via hst-platform.properties or some other approach
     private KeyPair keyPair;
 
-    private long expiresMinutes;
-
     private void init() {
         keyPair = Keys.keyPairFor(SignatureAlgorithm.RS256); //or RS384, RS512, PS256, PS384, PS512, ES256, ES384, ES512
         HippoServiceRegistry.register(this, JwtTokenService.class);
@@ -55,10 +53,6 @@ public class JwtTokenServiceImpl implements JwtTokenService {
     private void destroy() {
         HippoServiceRegistry.unregister(this, JwtTokenService.class);
         keyPair = null;
-    }
-
-    public void setExpiresMinutes(final long expiresMinutes) {
-        this.expiresMinutes = expiresMinutes;
     }
 
     @Override
@@ -77,8 +71,7 @@ public class JwtTokenServiceImpl implements JwtTokenService {
         final JwtBuilder jwtBuilder = Jwts.builder()
                 .setSubject(userID)
                 .signWith(keyPair.getPrivate())
-                .setClaims(claims)
-                .setExpiration(new Date(System.currentTimeMillis() + expiresMinutes * 60 * 1000));
+                .setClaims(claims);
 
         includeServerId(request, jwtBuilder);
 
