@@ -16,11 +16,6 @@
 
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 
-import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
-import { AuthService } from '../services/auth.service';
-import { NavConfigService } from '../services/nav-config.service';
-import { NavItemService } from '../services/nav-item.service';
-
 import { APP_BOOTSTRAPPED } from './app-bootstrapped';
 import { appInitializer } from './app-initializer';
 import { appBootstrappedPromise, BootstrapService } from './bootstrap.service';
@@ -30,7 +25,7 @@ import { appBootstrappedPromise, BootstrapService } from './bootstrap.service';
     {
       provide: APP_INITIALIZER,
       useFactory: appInitializer,
-      deps: [AuthService, NavConfigService, NavItemService, BootstrapService, ErrorHandlingService],
+      deps: [BootstrapService],
       multi: true,
     },
     {

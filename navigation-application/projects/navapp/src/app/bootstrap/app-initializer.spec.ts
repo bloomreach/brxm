@@ -21,83 +21,23 @@ import { NavItemMock } from '../models/nav-item.mock';
 import { appInitializer } from './app-initializer';
 
 describe('appInitializer', () => {
-  const navItemsMock = [
-    new NavItemMock({ id: '1' }),
-    new NavItemMock({ id: '2' }),
-  ];
-
-  const authServiceMock = jasmine.createSpyObj('AuthService', [
-    'loginAllResources',
-  ]);
-
-  const navConfigServiceMock = jasmine.createSpyObj('NavConfigService', {
-    init: Promise.resolve(navItemsMock),
+  const bootstrapServiceMock = jasmine.createSpyObj('BootstrapService', {
+    bootstrap: Promise.resolve(),
   });
-
-  const navItemServiceMock = jasmine.createSpyObj('NavItemService', [
-    'registerNavItemDtos',
-  ]);
-
-  const bootstrapServiceMock = jasmine.createSpyObj('BootstrapService', [
-    'bootstrap',
-  ]);
-
-  const errorHandlingServiceMock = jasmine.createSpyObj('ErrorHandlingService', [
-    'setCriticalError',
-  ]);
-
-  const callAppInitializer = () => appInitializer(
-    authServiceMock,
-    navConfigServiceMock,
-    navItemServiceMock,
-    bootstrapServiceMock,
-    errorHandlingServiceMock,
-  )();
 
   let initialized: boolean;
 
-  describe('when services initialized successfully', () => {
-    beforeEach(async(() => {
-      initialized = false;
+  beforeEach(async(() => {
+    initialized = false;
 
-      callAppInitializer().then(() => initialized = true);
-    }));
+    appInitializer(bootstrapServiceMock)().then(() => initialized = true);
+  }));
 
-    it('should log in all resources', () => {
-      expect(authServiceMock.loginAllResources).toHaveBeenCalled();
-    });
-
-    it('should initialize NavConfigService', () => {
-      expect(navConfigServiceMock.init).toHaveBeenCalled();
-    });
-
-    it('should register fetched nav items', () => {
-      expect(navItemServiceMock.registerNavItemDtos).toHaveBeenCalledWith(navItemsMock);
-    });
-
-    it('should bootstrap the rest services', () => {
-      expect(bootstrapServiceMock.bootstrap).toHaveBeenCalled();
-    });
-
-    it('should initialize the app', () => {
-      expect(initialized).toBeTruthy();
-    });
+  it('should bootstrap the app', () => {
+    expect(bootstrapServiceMock.bootstrap).toHaveBeenCalled();
   });
 
-  describe('when an error occurred', () => {
-    beforeEach(async(() => {
-      authServiceMock.loginAllResources.and.callFake(() => {
-        throw new Error('some error');
-      });
-
-      callAppInitializer();
-    }));
-
-    it('should set the critical error', () => {
-      expect(errorHandlingServiceMock.setCriticalError).toHaveBeenCalledWith(
-        'ERROR_UNABLE_TO_LOAD_CONFIGURATION',
-        'some error',
-      );
-    });
+  it('should resolve successfully', () => {
+    expect(initialized).toBeTruthy();
   });
 });

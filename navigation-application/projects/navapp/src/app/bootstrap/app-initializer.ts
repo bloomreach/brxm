@@ -14,27 +14,8 @@
  * limitations under the License.
  */
 
-import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
-import { AuthService } from '../services/auth.service';
-import { NavConfigService } from '../services/nav-config.service';
-import { NavItemService } from '../services/nav-item.service';
-
 import { BootstrapService } from './bootstrap.service';
 
 export const appInitializer = (
-  authService: AuthService,
-  navConfigService: NavConfigService,
-  navItemService: NavItemService,
   bootstrapService: BootstrapService,
-  errorHandlingService: ErrorHandlingService,
-) => async () => {
-  try {
-    await authService.loginAllResources();
-    const navItemDtos = await navConfigService.init();
-    const navItems = navItemService.registerNavItemDtos(navItemDtos);
-
-    bootstrapService.bootstrap(navItems);
-  } catch (error) {
-    errorHandlingService.setCriticalError('ERROR_UNABLE_TO_LOAD_CONFIGURATION', error.message);
-  }
-};
+) => async () => bootstrapService.bootstrap();
