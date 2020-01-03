@@ -18,7 +18,6 @@ package org.hippoecm.hst.platform.security;
 import java.security.KeyPair;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Map;
 import java.util.Optional;
 
@@ -42,17 +41,14 @@ import io.jsonwebtoken.security.Keys;
 
 public class JwtTokenServiceImpl implements JwtTokenService {
 
-    // TODO support public / private key injection via hst-platform.properties or some other approach
-    private KeyPair keyPair;
+    private KeyPair keyPair = Keys.keyPairFor(SignatureAlgorithm.RS256); //or RS384, RS512, PS256, PS384, PS512, ES256, ES384, ES512
 
     private void init() {
-        keyPair = Keys.keyPairFor(SignatureAlgorithm.RS256); //or RS384, RS512, PS256, PS384, PS512, ES256, ES384, ES512
         HippoServiceRegistry.register(this, JwtTokenService.class);
     }
 
     private void destroy() {
         HippoServiceRegistry.unregister(this, JwtTokenService.class);
-        keyPair = null;
     }
 
     @Override
