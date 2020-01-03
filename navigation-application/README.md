@@ -17,10 +17,18 @@ The root contains the configuration files related to the `navapp`.
 
 ## Development>
 
-Run `npm run start` and `npm run start:example-app` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+For a development setup:
+1. Run `npm ci`
+2. Optionally run `npm run build navapp-communication -- --watch`
+3. Run `npm run start`
+2. Run `npm run start:example-app`
 
-If you wish to run the communication library in the dev mode to watch changes run `npm run build navapp-communication -- --watch` before `npm run start`.
+Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
 
+## Build
+First install the dependencies with `npm ci` then:
+- For building the navapp run `npm run build`
+- For building the communication library run `npm run build -- navapp-communication`
 
 # Generated README by Angular CLI
 
