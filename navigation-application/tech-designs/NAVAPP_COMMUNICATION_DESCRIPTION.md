@@ -31,11 +31,6 @@ It can then provide a specific set of methods to the nav-app for it to call. The
 
 Example code from a child perspective:
 
-<table>
-  <tr>
-  </tr>
-</table>
-
 ```
 BRNavigationCommunication.connectToParent({
   parentOrigin: '<whitelist the origin to match the authenticated origin>',
