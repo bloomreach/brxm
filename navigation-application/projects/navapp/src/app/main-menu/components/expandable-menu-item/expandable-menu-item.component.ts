@@ -48,8 +48,8 @@ export class ExpandableMenuItemComponent implements OnChanges {
   config: MenuItemContainer;
 
   @Input()
-  @HostBinding('class.active')
-  active = false;
+  @HostBinding('class.highlighted')
+  highlighted = false;
 
   @ViewChildren(ExpandableSubMenuItemComponent)
   expandableSubMenuItems: QueryList<ExpandableSubMenuItemComponent>;
@@ -64,7 +64,7 @@ export class ExpandableMenuItemComponent implements OnChanges {
   }
 
   ngOnChanges(): void {
-    if (this.active) {
+    if (this.highlighted) {
       this.isChildMenuOpened = true;
     }
   }
@@ -89,7 +89,7 @@ export class ExpandableMenuItemComponent implements OnChanges {
     return item instanceof MenuItemContainer;
   }
 
-  isActive(item: MenuItem): boolean {
+  isHighlighted(item: MenuItem): boolean {
     return this.menuStateService.isMenuItemHighlighted(item);
   }
 

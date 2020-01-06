@@ -20,8 +20,8 @@
   display: block;
   overflow: hidden;
 
-  &.active .header,
-  &.active .header .mat-icon {
+  &.highlighted .header,
+  &.highlighted .header .mat-icon {
     color: $menu-highlighted-text-color;
     font-weight: $font-weight-semibold;
   }

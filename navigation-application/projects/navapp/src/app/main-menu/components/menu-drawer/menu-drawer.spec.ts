@@ -109,7 +109,7 @@ describe('MenuDrawerComponent', () => {
     menuStateServiceMock.isMenuItemHighlighted.and.returnValue(true);
     const link = new MenuItemLink('some-id', 'some caption');
 
-    const actual = component.isActive(link);
+    const actual = component.isHighlighted(link);
 
     expect(actual).toBeTruthy();
     expect(menuStateServiceMock.isMenuItemHighlighted).toHaveBeenCalledWith(link);

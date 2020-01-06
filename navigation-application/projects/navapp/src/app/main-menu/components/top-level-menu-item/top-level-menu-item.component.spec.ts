@@ -53,8 +53,8 @@ describe('TopLevelMenuItemComponent', () => {
       expect(wrapper.classes.collapsed).toBeTruthy();
     });
 
-    it('should not be active', () => {
-      expect(wrapper.classes.active).toBeFalsy();
+    it('should not be highlighted', () => {
+      expect(wrapper.classes.highlighted).toBeFalsy();
     });
 
     it('should not be pressed', () => {

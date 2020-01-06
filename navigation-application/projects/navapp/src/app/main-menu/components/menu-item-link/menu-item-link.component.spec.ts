@@ -61,8 +61,8 @@ describe('MenuItemLinkComponent', () => {
   }));
 
   describe('in the initial state', () => {
-    it('should not be active', () => {
-      expect(de.classes.active).toBeFalsy();
+    it('should not be highlighted', () => {
+      expect(de.classes.highlighted).toBeFalsy();
     });
 
     it('should be disabled', () => {

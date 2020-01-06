@@ -275,7 +275,7 @@ describe('MainMenuComponent', () => {
     });
   });
 
-  describe('isMenuItemHighlighted', () => {
+  describe('isHighlighted', () => {
     const menuItem = new MenuItemLinkMock();
 
     beforeEach(() => {

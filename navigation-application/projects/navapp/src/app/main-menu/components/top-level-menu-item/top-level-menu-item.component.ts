@@ -40,7 +40,7 @@ export class TopLevelMenuItemComponent {
   icon: string;
 
   @Input()
-  activeIcon: string;
+  highlightedIcon: string;
 
   @Input()
   caption = '';

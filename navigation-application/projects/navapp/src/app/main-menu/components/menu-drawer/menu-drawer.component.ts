@@ -93,7 +93,7 @@ export class MenuDrawerComponent implements OnChanges {
     return item instanceof MenuItemContainer;
   }
 
-  isActive(item: MenuItem): boolean {
+  isHighlighted(item: MenuItem): boolean {
     return this.menuStateService.isMenuItemHighlighted(item);
   }
 

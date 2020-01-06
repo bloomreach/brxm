@@ -30,7 +30,7 @@
     <brna-top-level-menu-item *ngFor="let item of menuItems;"
                               [caption]="item.caption"
                               [icon]="item.icon"
-                              [activeIcon]="item.icon  + '.active'"
+                              [highlightedIcon]="item.icon  + '.highlighted'"
                               [collapsed]="collapsed"
                               [pressed]="item === drawerMenuItem"
                               [highlighted]="isMenuItemHighlighted(item)"
