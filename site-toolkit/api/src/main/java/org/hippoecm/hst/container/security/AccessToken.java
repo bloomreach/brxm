@@ -15,12 +15,19 @@
  */
 package org.hippoecm.hst.container.security;
 
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+
 public interface AccessToken {
 
     /**
-     * @return the subject, eg userId, of this {@link AccessToken}
+     * @return the subject, eg an identifier, of this {@link AccessToken}
      */
     String getSubject();
+
+    /**
+     * @return the {@link CmsSessionContext} for this {@link AccessToken}
+     */
+    CmsSessionContext getCmsSessionContext();
 
     /**
      * @return the header for {@code headerName} or {@code null} if not present

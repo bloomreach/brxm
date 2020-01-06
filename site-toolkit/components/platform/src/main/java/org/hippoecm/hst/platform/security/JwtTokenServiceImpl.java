@@ -20,19 +20,19 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.container.security.AccessToken;
-import org.hippoecm.hst.container.security.ExpiredTokenException;
+import org.hippoecm.hst.container.security.InvalidTokenException;
 import org.hippoecm.hst.container.security.JwtTokenService;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
@@ -42,6 +42,8 @@ import io.jsonwebtoken.security.Keys;
 public class JwtTokenServiceImpl implements JwtTokenService {
 
     private KeyPair keyPair = Keys.keyPairFor(SignatureAlgorithm.RS256); //or RS384, RS512, PS256, PS384, PS512, ES256, ES384, ES512
+
+    private TokenCmsSessionContextRegistry registry = new TokenCmsSessionContextRegistry();
 
     private void init() {
         HippoServiceRegistry.register(this, JwtTokenService.class);
@@ -62,18 +64,24 @@ public class JwtTokenServiceImpl implements JwtTokenService {
             throw new IllegalStateException("Cannot create jwt token for unauthenticated users");
         }
 
-        String userID = cmsSessionContext.getRepositoryCredentials().getUserID();
+        final String tokenSubject = cmsSessionContext.getId();
+
+        registry.register(tokenSubject, cmsSessionContext, session);
 
         final JwtBuilder jwtBuilder = Jwts.builder()
-                .setSubject(userID)
-                .signWith(keyPair.getPrivate())
-                .setClaims(claims);
+                .setSubject(tokenSubject)
+                .signWith(keyPair.getPrivate());
 
+        // setting empty claims results in exception hence the empty check
+        if (!claims.isEmpty()) {
+            jwtBuilder.setClaims(claims);
+        }
         includeServerId(request, jwtBuilder);
 
         return jwtBuilder.compact();
     }
 
+    // TODO SERVERID should not be in the TOKEN but as a separate querystring parameter
     // include the SERVERID if present in the cookie as a header
     private void includeServerId(final HttpServletRequest request, final JwtBuilder jwtBuilder) {
         final Cookie[] cookies = request.getCookies();
@@ -90,10 +98,13 @@ public class JwtTokenServiceImpl implements JwtTokenService {
     public AccessToken getAccessToken(final String jws) {
         try {
             final Jws<Claims> claimsJws = Jwts.parser().setSigningKey(keyPair.getPublic()).parseClaimsJws(jws);
-            return new AccessTokenImpl(claimsJws);
-        } catch (ExpiredJwtException e) {
-            throw new ExpiredTokenException(e.getMessage());
-        } catch (IllegalArgumentException e) {
+
+            CmsSessionContext cmsSessionContext = registry.getCmsSessionContext(claimsJws.getBody().getSubject());
+            if (cmsSessionContext == null) {
+                throw new InvalidTokenException("Token is not bound to a CmsSessionContext (any more)");
+            }
+            return new AccessTokenImpl(claimsJws, cmsSessionContext);
+        } catch (IllegalArgumentException | InvalidTokenException e) {
             throw e;
         } catch (Exception e) {
             throw new IllegalArgumentException(String.format("Invalid Signed JWT token : %s", e.getMessage()));

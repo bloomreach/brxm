@@ -15,9 +15,9 @@
  */
 package org.hippoecm.hst.container.security;
 
-public class ExpiredTokenException extends RuntimeException {
+public class InvalidTokenException extends RuntimeException {
 
-    public ExpiredTokenException(String message) {
+    public InvalidTokenException(String message) {
         super(message);
     }
 }

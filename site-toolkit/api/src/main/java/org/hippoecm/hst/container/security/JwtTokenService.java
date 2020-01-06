@@ -45,8 +45,8 @@ public interface JwtTokenService {
      *
      * @param jws the signed JWT token
      * @return An {@link AccessToken} object
-     * @throws ExpiredTokenException in case the JWT token has expired
+     * @throws InvalidTokenException in case the JWT token is not bound to a valid {@link CmsSessionContext} (any more)
      * @throws IllegalArgumentException in case the JWT token is malformed, has an invalid signature or some other exception
      */
-    AccessToken getAccessToken(String jws) throws ExpiredTokenException;
+    AccessToken getAccessToken(String jws) throws InvalidTokenException;
 }

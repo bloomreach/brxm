@@ -16,6 +16,7 @@
 package org.hippoecm.hst.platform.security;
 
 import org.hippoecm.hst.container.security.AccessToken;
+import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -23,14 +24,20 @@ import io.jsonwebtoken.Jws;
 public class AccessTokenImpl implements AccessToken {
 
     private Jws<Claims> claimsJws;
+    private CmsSessionContext cmsSessionContext;
 
-    public AccessTokenImpl(final Jws<Claims> claimsJws) {
+    public AccessTokenImpl(final Jws<Claims> claimsJws, final CmsSessionContext cmsSessionContext) {
         this.claimsJws = claimsJws;
+        this.cmsSessionContext = cmsSessionContext;
     }
-
     @Override
     public String getSubject() {
         return claimsJws.getBody().getSubject();
+    }
+
+    @Override
+    public CmsSessionContext getCmsSessionContext() {
+        return cmsSessionContext;
     }
 
     public String getClaim(final String claimName) {
