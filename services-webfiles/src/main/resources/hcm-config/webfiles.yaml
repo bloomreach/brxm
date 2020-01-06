@@ -40,3 +40,4 @@ definitions:
         jcr:primaryType: hipposys:userrole
         hipposys:system: true
         hipposys:description: Allows repository read access of webfiles through role readonly
+        hipposys:userroles: []
