@@ -76,23 +76,9 @@ public class JwtTokenServiceImpl implements JwtTokenService {
         if (!claims.isEmpty()) {
             jwtBuilder.setClaims(claims);
         }
-        includeServerId(request, jwtBuilder);
-
         return jwtBuilder.compact();
     }
 
-    // TODO SERVERID should not be in the TOKEN but as a separate querystring parameter
-    // include the SERVERID if present in the cookie as a header
-    private void includeServerId(final HttpServletRequest request, final JwtBuilder jwtBuilder) {
-        final Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            Optional<String> serverId = Arrays.stream(cookies).filter(cookie -> "SERVERID".equals(cookie.getName()))
-                    .map(cookie -> cookie.getValue()).findFirst();
-            if (serverId.isPresent()) {
-                jwtBuilder.setHeader(Collections.singletonMap("SERVERID", serverId.get()));
-            }
-        }
-    }
 
     @Override
     public AccessToken getAccessToken(final String jws) {
