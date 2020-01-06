@@ -27,12 +27,12 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { SiteService } from '../../../services/site.service';
-import { WindowRef } from '../../../shared/services/window-ref.service';
 import { RightSidePanelService } from '../../services/right-side-panel.service';
 
 interface SiteFlatNode {
   accountId: number;
   siteId: number;
+  isNavappEnabled: boolean;
   expandable: boolean;
   name: string;
   level: number;
@@ -65,7 +65,6 @@ export class SiteSelectionComponent implements OnInit, OnDestroy {
   constructor(
     private readonly siteService: SiteService,
     private readonly rightSidePanelService: RightSidePanelService,
-    private readonly windowRef: WindowRef,
   ) { }
 
   get isNotFoundPanelVisible(): boolean {
@@ -98,12 +97,15 @@ export class SiteSelectionComponent implements OnInit, OnDestroy {
   }
 
   onNodeClicked(node: SiteFlatNode): void {
-    const site = { accountId: node.accountId, siteId: node.siteId, name: node.name };
+    const site = {
+      accountId: node.accountId,
+      siteId: node.siteId,
+      isNavappEnabled: node.isNavappEnabled,
+      name: node.name,
+    };
 
     this.siteService.updateSelectedSite(site).then(() => {
-      this.siteService.setSelectedSite(site);
       this.rightSidePanelService.close();
-      this.windowRef.nativeWindow.location.reload();
     });
   }
 
@@ -173,6 +175,7 @@ export class SiteSelectionComponent implements OnInit, OnDestroy {
     return {
       accountId: node.accountId,
       siteId: node.siteId,
+      isNavappEnabled: node.isNavappEnabled,
       expandable: !!node.subGroups && node.subGroups.length > 0,
       name: node.name,
       level,

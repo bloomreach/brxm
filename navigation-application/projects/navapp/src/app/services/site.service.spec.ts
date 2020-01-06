@@ -20,14 +20,18 @@ import { NGXLogger } from 'ngx-logger';
 
 import { ClientAppMock } from '../client-app/models/client-app.mock';
 import { ClientAppService } from '../client-app/services/client-app.service';
+import { WindowRef } from '../shared/services/window-ref.service';
 
 import { BusyIndicatorService } from './busy-indicator.service';
 import { SiteService } from './site.service';
 
 describe('SiteService', () => {
   let siteService: SiteService;
-  let updateSelectedSite: jasmine.Spy;
+  let app1UpdateSelectedSite: jasmine.Spy;
+  let app2UpdateSelectedSite: jasmine.Spy;
+  let app3UpdateSelectedSite: jasmine.Spy;
   let clientAppMocks: ClientAppMock[];
+  let windowRefMock: WindowRef;
 
   const loggerMock = jasmine.createSpyObj('NGXLogger', [
     'debug',
@@ -39,23 +43,33 @@ describe('SiteService', () => {
       'hide',
     ]);
 
-    updateSelectedSite = jasmine
-      .createSpy('updateSelectedSite')
+    app1UpdateSelectedSite = jasmine
+      .createSpy('app1 updateSelectedSite')
+      .and
+      .returnValue(Promise.resolve());
+
+    app2UpdateSelectedSite = jasmine
+      .createSpy('app2 updateSelectedSite')
+      .and
+      .returnValue(Promise.resolve());
+
+    app3UpdateSelectedSite = jasmine
+      .createSpy('app3 updateSelectedSite')
       .and
       .returnValue(Promise.resolve());
 
     clientAppMocks = [
       new ClientAppMock({
         url: 'testApp1',
-        api: { updateSelectedSite },
+        api: { updateSelectedSite: app1UpdateSelectedSite },
       }),
       new ClientAppMock({
         url: 'testApp2',
-        api: { updateSelectedSite },
+        api: { updateSelectedSite: app2UpdateSelectedSite },
       }),
       new ClientAppMock({
         url: 'testApp3',
-        api: { updateSelectedSite },
+        api: { updateSelectedSite: app3UpdateSelectedSite },
       }),
     ];
 
@@ -64,15 +78,27 @@ describe('SiteService', () => {
       activeApp: clientAppMocks[1],
     };
 
+    windowRefMock = {
+      nativeWindow: {
+        location: {
+          href: '/navapp/some/path',
+          reload: jasmine.createSpy('reload'),
+          assign: jasmine.createSpy('assign'),
+        },
+      } as any,
+    };
+
     const mockSites: Site[] = [
       {
         siteId: 1,
         accountId: 456,
+        isNavappEnabled: true,
         name: 'myTestSite',
         subGroups: [
           {
             siteId: 2,
             accountId: 123,
+            isNavappEnabled: true,
             name: 'myTestSite2',
           },
         ],
@@ -80,6 +106,7 @@ describe('SiteService', () => {
       {
         siteId: 3,
         accountId: 890,
+        isNavappEnabled: true,
         name: 'myTestSite3',
       },
     ];
@@ -87,8 +114,9 @@ describe('SiteService', () => {
     TestBed.configureTestingModule({
       providers: [
         SiteService,
-        { provide: ClientAppService, useValue: clientAppServiceMock },
         { provide: BusyIndicatorService, useValue: busyIndicatorServiceMock },
+        { provide: ClientAppService, useValue: clientAppServiceMock },
+        { provide: WindowRef, useValue: windowRefMock },
         { provide: NGXLogger, useValue: loggerMock },
       ],
     });
@@ -112,32 +140,66 @@ describe('SiteService', () => {
     tick();
   }));
 
-  it('should communicate to non-active apps to update the site after the active app has updated', fakeAsync(() => {
-    const siteId: SiteId = {
+  it('should update the selected site for the active app', () => {
+    const site: Site = {
       siteId: 2,
       accountId: 123,
+      name: 'some name',
+      isNavappEnabled: true,
     };
 
-    siteService.updateSelectedSite(siteId);
+    siteService.updateSelectedSite(site);
+
+    expect(app2UpdateSelectedSite).toHaveBeenCalledWith(site);
+  });
+
+  it('should broadcast to non-active apps that the selected site should be updated', fakeAsync(() => {
+    const site: Site = {
+      siteId: 2,
+      accountId: 123,
+      name: 'some name',
+      isNavappEnabled: true,
+    };
+
+    siteService.updateSelectedSite(site);
 
     tick();
 
-    expect(updateSelectedSite).toHaveBeenCalledTimes(clientAppMocks.length);
+    expect(app1UpdateSelectedSite).toHaveBeenCalledWith();
+    expect(app3UpdateSelectedSite).toHaveBeenCalledWith();
+
+    expect(app2UpdateSelectedSite).toHaveBeenCalledBefore(app1UpdateSelectedSite);
+    expect(app2UpdateSelectedSite).toHaveBeenCalledBefore(app3UpdateSelectedSite);
   }));
+
+  it('should redirect to iUI if navapp isn\'t enabled for the selected site', () => {
+    const site: Site = {
+      siteId: 2,
+      accountId: 123,
+      name: 'some name',
+      isNavappEnabled: false,
+    };
+
+    siteService.updateSelectedSite(site);
+
+    expect(windowRefMock.nativeWindow.location.assign).toHaveBeenCalledWith('/some/path');
+  });
 
   describe('logging', () => {
     describe('updateSelectedSite()', () => {
-      const siteId: SiteId = {
+      const site: Site = {
         siteId: 2,
         accountId: 123,
+        name: 'some name',
+        isNavappEnabled: true,
       };
 
       beforeEach(async(() => {
-        siteService.updateSelectedSite(siteId);
+        siteService.updateSelectedSite(site);
       }));
 
       it('should log that updateSelectedSite() is called for the active app', () => {
-        expect(loggerMock.debug).toHaveBeenCalledWith('updateSelectedSite() is called for the active app \'testApp2\'', siteId);
+        expect(loggerMock.debug).toHaveBeenCalledWith('updateSelectedSite() is called for the active app \'testApp2\'', site);
       });
 
       it('should log that updateSelectedSite() is called for the other apps', () => {
