@@ -121,5 +121,4 @@ export class NavItemService implements OnDestroy {
 
     return activationSubject;
   }
-
 }

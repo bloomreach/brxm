@@ -14,70 +14,30 @@
  * limitations under the License.
  */
 
-import { fakeAsync, tick } from '@angular/core/testing';
+import { async } from '@angular/core/testing';
+
+import { NavItemMock } from '../models/nav-item.mock';
 
 import { appInitializer } from './app-initializer';
-import * as loadNavItemsModule from './load-nav-items';
-import * as scheduleAppBootstrappingModule from './schedule-app-bootstrapping';
 
 describe('appInitializer', () => {
-  const navConfigServiceMock: any = {};
-
-  const bootstrapServiceMock = jasmine.createSpyObj('BootstrapService', [
-    'bootstrap',
-  ]);
-
-  const busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', [
-    'show',
-    'hide',
-  ]);
-
-  const errorHandlingServiceMock = jasmine.createSpyObj('ErrorHandlingService', [
-    'setCriticalError',
-  ]);
-
-  const authServiceMock = jasmine.createSpyObj('AuthService', [
-    'loginAllResources',
-  ]);
-
-  beforeEach(() => {
-    spyOnProperty(loadNavItemsModule, 'loadNavItems', 'get').and.returnValue(() => Promise.resolve());
+  const bootstrapServiceMock = jasmine.createSpyObj('BootstrapService', {
+    bootstrap: Promise.resolve(),
   });
 
-  it('should initialize the app', fakeAsync(() => {
-    spyOnProperty(scheduleAppBootstrappingModule, 'scheduleAppBootstrapping', 'get').and.returnValue(() => Promise.resolve());
+  let initialized: boolean;
 
-    let initialized = false;
+  beforeEach(async(() => {
+    initialized = false;
 
-    appInitializer(
-      authServiceMock,
-      navConfigServiceMock,
-      bootstrapServiceMock,
-      busyIndicatorServiceMock,
-      errorHandlingServiceMock,
-    )().then(() => initialized = true);
+    appInitializer(bootstrapServiceMock)().then(() => initialized = true);
+  }));
 
-    tick();
+  it('should bootstrap the app', () => {
+    expect(bootstrapServiceMock.bootstrap).toHaveBeenCalled();
+  });
 
+  it('should resolve successfully', () => {
     expect(initialized).toBeTruthy();
-  }));
-
-  it('should set the critical error', fakeAsync(() => {
-    spyOnProperty(scheduleAppBootstrappingModule, 'scheduleAppBootstrapping', 'get').and.returnValue(() => Promise.reject());
-
-    appInitializer(
-      authServiceMock,
-      navConfigServiceMock,
-      bootstrapServiceMock,
-      busyIndicatorServiceMock,
-      errorHandlingServiceMock,
-    )();
-
-    tick();
-
-    expect(errorHandlingServiceMock.setCriticalError).toHaveBeenCalledWith(
-      'ERROR_UNABLE_TO_LOAD_CONFIGURATION',
-      'navConfigService.init is not a function',
-    );
-  }));
+  });
 });
