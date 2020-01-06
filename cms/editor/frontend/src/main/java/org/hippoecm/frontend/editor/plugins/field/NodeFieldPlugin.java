@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,6 +30,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.PluginRequestTarget;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.editor.EditorForm;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
@@ -42,7 +43,6 @@ import org.hippoecm.frontend.model.event.JcrEvent;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.skin.Icon;
@@ -60,6 +60,11 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
 
     public NodeFieldPlugin(IPluginContext context, IPluginConfig config) {
         super(context, config);
+
+        final HippoIcon expandCollapseIcon = HippoIcon.fromSprite("expand-collapse-icon", Icon.CHEVRON_DOWN);
+        expandCollapseIcon.addCssClass("expand-collapse-icon");
+        expandCollapseIcon.setVisible(false);
+        add(expandCollapseIcon);
 
         // use caption for backwards compatibility; i18n should use field name
         add(new Label("name", helper.getCaptionModel(this)));
@@ -97,6 +102,11 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
             final List<String> superTypes = field.getTypeDescriptor().getSuperTypes();
             if (superTypes.contains("hippo:compound")) {
                 add(ClassAttribute.append("hippo-editor-compound-field"));
+                if (IEditor.Mode.EDIT == mode) {
+                    expandCollapseIcon.setVisible(true);
+                    final String selector = String.format("#%s.hippo-editor-compound-field", getMarkupId());
+                    add(new CollapsibleFieldBehavior(selector));
+                }
             }
         }
     }
