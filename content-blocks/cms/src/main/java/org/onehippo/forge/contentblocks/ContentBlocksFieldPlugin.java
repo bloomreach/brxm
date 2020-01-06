@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +54,7 @@ import org.hippoecm.frontend.editor.compare.IComparer;
 import org.hippoecm.frontend.editor.editor.EditorForm;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
 import org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin;
+import org.hippoecm.frontend.editor.plugins.field.CollapsibleFieldBehavior;
 import org.hippoecm.frontend.editor.plugins.field.FieldPluginHelper;
 import org.hippoecm.frontend.editor.plugins.fieldhint.FieldHint;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
@@ -139,8 +140,12 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         maxItems = parameters.getInt(MAX_ITEMS, MAX_ITEMS_UNLIMITED);
         showCompoundNames = parameters.getAsBoolean(SHOW_COMPOUND_NAMES, false);
 
-        // use caption for backwards compatibility; i18n should use field name
+        final HippoIcon expandCollapseIcon = HippoIcon.fromSprite("expand-collapse-icon", Icon.CHEVRON_DOWN);
+        expandCollapseIcon.addCssClass("expand-collapse-icon");
+        expandCollapseIcon.setVisible(isEditMode());
+        add(expandCollapseIcon);
 
+        // use caption for backwards compatibility; i18n should use field name
         add(new Label("name", helper.getCaptionModel(this)));
 
         IFieldDescriptor field = getFieldHelper().getField();
@@ -153,6 +158,9 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         final Component controls = createControls();
         controls.setVisible(isEditMode());
         add(controls);
+
+        final String selector = String.format("#%s > .hippo-editor-compound-field", getMarkupId());
+        add(new CollapsibleFieldBehavior(selector));
     }
 
     private Component createControls() {
@@ -405,7 +413,6 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
     }
 
     private boolean isEditMode() {
-        IEditor.Mode mode = IEditor.Mode.fromString(getPluginConfig().getString("mode"));
         return mode == IEditor.Mode.EDIT;
     }
 
