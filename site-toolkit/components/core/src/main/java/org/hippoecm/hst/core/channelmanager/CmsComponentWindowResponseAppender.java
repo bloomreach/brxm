@@ -29,6 +29,7 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.container.security.AccessToken;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -38,6 +39,9 @@ import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE;
+import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_VARIANT;
 
 public class CmsComponentWindowResponseAppender extends AbstractComponentWindowResponseAppender implements ComponentWindowResponseAppender {
 
@@ -57,12 +61,19 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             return;
         }
 
-        final HttpSession session = request.getSession(false);
-        if (session == null) {
-            throw new IllegalStateException("HttpSession should never be null here.");
+        final CmsSessionContext cmsSessionContext;
+        if (request.getAttribute(PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE) == null) {
+            final HttpSession session = request.getSession(false);
+            if (session == null) {
+                throw new IllegalStateException("HttpSession should never be null here.");
+            }
+
+            cmsSessionContext = CmsSessionContext.getContext(session);
+        } else {
+            // token based rendering for preview
+            cmsSessionContext = ((AccessToken) request.getAttribute(PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE)).getCmsSessionContext();
         }
 
-        final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
         if (cmsSessionContext == null) {
             throw new IllegalStateException("cmsSessionContext should never be null here.");
         }
@@ -106,10 +117,13 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             }
         }
 
-        Serializable variant = cmsSessionContext.getContextPayload().get(ContainerConstants.RENDER_VARIANT);
+
+        Serializable variant = cmsSessionContext.getContextPayload().get(RENDER_VARIANT);
+
         if (variant == null) {
             variant = ContainerConstants.DEFAULT_PARAMETER_PREFIX;
         }
+
         pageMetaData.put(ChannelManagerConstants.HST_RENDER_VARIANT, variant.toString());
         pageMetaData.put(ChannelManagerConstants.HST_SITE_HAS_PREVIEW_CONFIG, String.valueOf(mount.getHstSite().hasPreviewConfiguration()));
 

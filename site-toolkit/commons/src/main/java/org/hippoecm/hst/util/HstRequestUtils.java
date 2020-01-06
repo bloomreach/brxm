@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,12 +19,15 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -775,5 +778,32 @@ public class HstRequestUtils {
         return renderSite.getChannel().getBranchId();
     }
 
+    /**
+     * <p>
+     *     Returns the serverid for this request if present. The serverid lookup is done from a cookie and if not found,
+     *     a header will be checked. The following logic is applied
+     *     <ul>
+     *         <li>if cookie present with case-insensitive name 'serverid', return the cookie value</li>
+     *         <li>else if the (case insensitive by spec) header 'serverid' exists, return the value of the header</li>
+     *         <li>else return {@code null}</li>
+     *     </ul>
+     * </p>
+     * @param request the {@link HttpServletRequest} to find the server id from
+     */
+    public static String getServerId(final HttpServletRequest request) {
+        final Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            Optional<String> serverId = Arrays.stream(cookies).filter(cookie -> "serverid".equalsIgnoreCase(cookie.getName()))
+                    .map(cookie -> cookie.getValue()).findFirst();
+            if (serverId.isPresent()) {
+                return serverId.get();
+            }
+        }
+        // TODO once HSTTWO-4703 has been merged, add 'serverid' by default to the AccessControlAllowHeadersService as
+        // TODO allowed header
+        return request.getHeader("serverid");
 
+        // TODO depending on NGINX, we might want to also check a query param 'serverid' if that is easier to support
+        // TODO on nginx instead of a header
+    }
 }

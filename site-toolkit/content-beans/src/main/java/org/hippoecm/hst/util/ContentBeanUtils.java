@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,10 +27,12 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.security.auth.Subject;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.container.security.AccessToken;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.query.HstQuery;
@@ -56,6 +58,8 @@ import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE;
 
 /**
  * Note most of the utilities in this class rely on that the {@link HstRequestContext} is available via a thread local via
@@ -801,11 +805,25 @@ public class ContentBeanUtils {
                 return requestContext.getSession(true);
 
             }
-            final HttpSession httpSession = requestContext.getServletRequest().getSession(false);
-            final CmsSessionContext cmsSessionContext = httpSession != null ? CmsSessionContext.getContext(httpSession) : null;
 
-            if (httpSession == null || cmsSessionContext == null) {
-                throw new HstComponentException("Request is a cms request but there has not been an SSO handshake.");
+            final CmsSessionContext cmsSessionContext;
+            HttpServletRequest servletRequest = requestContext.getServletRequest();
+
+            if (servletRequest.getAttribute(PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE) == null) {
+                final HttpSession session = servletRequest.getSession(false);
+                if (session == null) {
+                    throw new HstComponentException("Request is a cms request but there has not been an SSO handshake.");
+                }
+
+                cmsSessionContext = CmsSessionContext.getContext(session);
+            } else {
+                // token based rendering for preview
+                cmsSessionContext = ((AccessToken) servletRequest.getAttribute(PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE)).getCmsSessionContext();
+            }
+
+            if (cmsSessionContext == null) {
+                throw new HstComponentException("Request is a channel mgr preview request but there is not valid " +
+                        "CmsSessionContext.");
             }
             Credentials cmsUserCred = cmsSessionContext.getRepositoryCredentials();
             if (cmsUserCred == null) {

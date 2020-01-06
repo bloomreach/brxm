@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -210,4 +210,5 @@ public interface ContainerConstants {
 
     String EXTRA_SEARCH_ENGINE_OR_BOT_USER_AGENT_PATTERNS = "search.engine.or.bot.user.agent.patterns.extra";
 
+    String PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE = "org.hippoecm.hst.container.access.preview_token";
 }

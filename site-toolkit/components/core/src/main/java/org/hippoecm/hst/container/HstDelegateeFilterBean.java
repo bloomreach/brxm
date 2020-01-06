@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -31,15 +31,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.configuration.channel.PreviewURLChannelInfo;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.hosting.MatchException;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.container.security.InvalidTokenException;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -65,7 +65,10 @@ import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.platform.model.RuntimeHostService;
+import org.hippoecm.hst.container.security.AccessToken;
+import org.hippoecm.hst.container.security.JwtTokenService;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.context.HippoWebappContext;
@@ -78,10 +81,12 @@ import org.springframework.http.HttpMethod;
 import org.springframework.web.context.ServletContextAware;
 
 import static java.lang.Boolean.TRUE;
+import static java.util.Collections.emptyMap;
 import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.hippoecm.hst.core.container.ContainerConstants.ACCESS_TOKEN_REQUEST_ATTRIBUTE;
+import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
+import static org.hippoecm.hst.configuration.channel.PreviewURLChannelInfo.PREVIEW_URL_PROPERTY_NAME;
+import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMSSESSIONCONTEXT_BINDING_PATH;
 import static org.hippoecm.hst.core.container.ContainerConstants.DEFAULT_SITE_PIPELINE_NAME;
 import static org.hippoecm.hst.core.container.ContainerConstants.FORWARD_RECURSION_ERROR;
@@ -131,6 +136,9 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
     private static final RequestContextProvider.ModifiableRequestContextProvider modifiableRequestContextProvider =
             new RequestContextProvider.ModifiableRequestContextProvider() {};
 
+    private String jwtTokenParam;
+    private String jwtTokenAuthorizationHeader;
+
     @Override
     public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
@@ -158,6 +166,19 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
     public void setHstRequestProcessor(HstRequestProcessor requestProcessor) {
         this.requestProcessor = requestProcessor;
+    }
+
+    public void setJwtTokenAuthorizationHeader(final String jwtTokenAuthorizationHeader) {
+        if (!"Authorization".equalsIgnoreCase(jwtTokenAuthorizationHeader)) {
+            // TODO this is a non-standard http header: Make sure to add it to AccessControlAllowHeadersService
+            // TODO AFTER HSTTWO-4703 has been merged : otherwise, preflight requests won't indicate that the non-stanard
+            // TODO jwtTokenAuthorizationHeader is allowed as CORS header
+        }
+        this.jwtTokenAuthorizationHeader = jwtTokenAuthorizationHeader;
+    }
+
+    public void setJwtTokenParam(final String jwtTokenParam) {
+        this.jwtTokenParam = jwtTokenParam;
     }
 
     @Override
@@ -228,7 +249,27 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
             VirtualHosts vHosts = hstManager.getVirtualHosts();
 
-            final String renderingHost = getRenderingHost(containerRequest);
+
+            // we always want to have the virtualhost available, even when we do not have hst request processing:
+            // We need to know whether to include the contextpath in URL's or not, even for jsp's that are not dispatched by the HST
+            // This info is on the virtual host.
+            String hostName = getFarthestRequestHost(containerRequest);
+
+            String renderingHost = null;
+
+            final String authorization = StringUtils.trim(req.getHeader(jwtTokenAuthorizationHeader));
+
+            if (startsWithIgnoreCase(authorization, "Bearer")) {
+                final String jwtToken = StringUtils.trim(StringUtils.substringAfter(authorization, "Bearer"));
+                final AccessToken accessToken = HippoServiceRegistry.getService(JwtTokenService.class).getAccessToken(jwtToken);
+                req.setAttribute(PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE, accessToken);
+                // just set the rendering host to the request host name: rendering host is needed to render preview
+                renderingHost = hostName;
+            }
+
+            if (renderingHost == null) {
+                renderingHost = getRenderingHost(containerRequest);
+            }
 
             if (isCmsSessionContextBindingRequest(req)) {
                 if (CmsSSOAuthenticationHandler.isAuthenticated(containerRequest)) {
@@ -242,7 +283,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 }
                 return;
 
-            } else if (requestComesFromCms(vHosts, renderingHost, req)
+            } else if (isRequestForChannelManagerPreview(vHosts, renderingHost, req)
                     && !CmsSSOAuthenticationHandler.isAuthenticated(containerRequest)
                     && !CmsSSOAuthenticationHandler.authenticate(containerRequest, res)) {
                 return;
@@ -254,12 +295,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 chain.doFilter(request, response);
                 return;
             }
-
-            // we always want to have the virtualhost available, even when we do not have hst request processing:
-            // We need to know whether to include the contextpath in URL's or not, even for jsp's that are not dispatched by the HST
-            // This info is on the virtual host.
-            String hostName = getFarthestRequestHost(containerRequest);
-
 
             String ip = getFarthestRemoteAddr(containerRequest);
             if (vHosts.isDiagnosticsEnabled(ip)) {
@@ -364,7 +399,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             }
 
             if (renderingHost != null) {
-                if (requestComesFromCms(vHosts, renderingHost, req)) {
+                if (isRequestForChannelManagerPreview(vHosts, renderingHost, req)) {
                     requestContext.setRenderHost(renderingHost);
                     if (!authenticated) {
                         ((HttpServletResponse) response).sendError(SC_UNAUTHORIZED);
@@ -372,12 +407,15 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                         return;
                     }
 
-                    if (resolvedMount.getMount().getHstSite() != null && req.getAttribute(ACCESS_TOKEN_REQUEST_ATTRIBUTE) == null) {
+                    if (resolvedMount.getMount().getHstSite() != null && req.getAttribute(PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE) == null) {
                         final Channel channel = resolvedMount.getMount().getHstSite().getChannel();
-                        if (channel != null && channel.getProperties().containsKey(PreviewURLChannelInfo.PREVIEW_URL_PROPERTY_NAME)
-                                && isNotBlank(channel.getProperties().get(PreviewURLChannelInfo.PREVIEW_URL_PROPERTY_NAME).toString())) {
+                        if (channel != null && channel.getProperties().containsKey(PREVIEW_URL_PROPERTY_NAME)
+                                && StringUtils.isNotBlank(channel.getProperties().get(PREVIEW_URL_PROPERTY_NAME).toString())) {
 
-                            res.sendRedirect(channel.getProperties().get(PreviewURLChannelInfo.PREVIEW_URL_PROPERTY_NAME).toString());
+                            final JwtTokenService jwtTokenService = HippoServiceRegistry.getService(JwtTokenService.class);
+                            res.sendRedirect(channel.getProperties().get(PREVIEW_URL_PROPERTY_NAME).toString()
+                                    + "?" + jwtTokenParam + "=" + jwtTokenService.createToken(req, emptyMap()) +
+                                    "&serverid=" + HstRequestUtils.getServerId(req));
                             return;
                         }
                     }
@@ -526,6 +564,13 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 log.info("{} for '{}': '{}'" , e.getClass().getName(), containerRequest,  e.toString());
             }
             sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
+        } catch (InvalidTokenException e) {
+            if(log.isDebugEnabled()) {
+                log.info("{} for '{}':",e.getClass().getName(), containerRequest , e);
+            } else {
+                log.info("{} for '{}': '{}'" , e.getClass().getName(), containerRequest,  e.toString());
+            }
+            sendError(req, res, HttpServletResponse.SC_UNAUTHORIZED);
         } catch (Exception e) {
             if(log.isDebugEnabled()) {
                 log.warn("ContainerException for '{}':", containerRequest, e);
@@ -692,11 +737,16 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         return StringUtils.substring(req.getServletPath(), 1).equals(CMSSESSIONCONTEXT_BINDING_PATH);
     }
 
-    // returns true if the request comes from cms
-    private boolean requestComesFromCms(VirtualHosts vHosts, final String renderingHost, final HttpServletRequest req) {
+    // returns true if the request is for a preview in the CHANNEL MANAGER (this including meta data)
+    private boolean isRequestForChannelManagerPreview(VirtualHosts vHosts, final String renderingHost, final HttpServletRequest req) {
         if (renderingHost == null) {
             return false;
         }
+
+        if (req.getAttribute(PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE) != null) {
+            return true;
+        }
+
         if(vHosts.getCmsPreviewPrefix() == null || "".equals(vHosts.getCmsPreviewPrefix())) {
             return true;
         }
@@ -968,4 +1018,5 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
         return resolvedVirtualHost;
     }
+
 }
