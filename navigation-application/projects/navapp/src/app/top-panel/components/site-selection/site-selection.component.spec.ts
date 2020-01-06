@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTreeModule } from '@angular/material/tree';
@@ -23,7 +23,6 @@ import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
 import { Subject } from 'rxjs';
 
 import { SiteService } from '../../../services/site.service';
-import { WindowRef } from '../../../shared/services/window-ref.service';
 import { RightSidePanelService } from '../../services/right-side-panel.service';
 
 import { SiteSelectionComponent } from './site-selection.component';
@@ -38,20 +37,24 @@ describe('SiteSelectionComponent', () => {
       siteId: -1,
       accountId: 1,
       name: 'www.company.com',
+      isNavappEnabled: true,
       subGroups: [
         {
           siteId: 1,
           accountId: 1,
+          isNavappEnabled: true,
           name: 'UK & Germany',
           subGroups: [
             {
               siteId: 2,
               accountId: 1,
+              isNavappEnabled: true,
               name: 'Office UK',
             },
             {
               siteId: 3,
               accountId: 1,
+              isNavappEnabled: true,
               name: 'Office DE',
             },
           ],
@@ -61,17 +64,20 @@ describe('SiteSelectionComponent', () => {
     {
       siteId: -1,
       accountId: 2,
+      isNavappEnabled: true,
       name:
         'An example company that has a very long name and a subgroup with many items',
       subGroups: [
         {
           siteId: 12,
           accountId: 2,
+          isNavappEnabled: true,
           name: 'Sub company 001',
         },
         {
           siteId: 13,
           accountId: 2,
+          isNavappEnabled: true,
           name: 'Sub company 002',
         },
       ],
@@ -89,14 +95,6 @@ describe('SiteSelectionComponent', () => {
     'close',
   ]);
 
-  const windowRefMock = {
-    nativeWindow: {
-      location: {
-        reload: jasmine.createSpy('reload'),
-      },
-    },
-  };
-
   beforeEach(() => {
     fixture = TestBed.configureTestingModule({
       imports: [
@@ -109,7 +107,6 @@ describe('SiteSelectionComponent', () => {
       providers: [
         { provide: SiteService, useValue: siteServiceMock },
         { provide: RightSidePanelService, useValue: rightSidePanelServiceMock },
-        { provide: WindowRef, useValue: windowRefMock },
       ],
     }).createComponent(SiteSelectionComponent);
 
@@ -121,11 +118,12 @@ describe('SiteSelectionComponent', () => {
   });
 
   it('should call updateSelectedSite when site is selected in the tree view', () => {
-    const expected = { accountId: 1, siteId: -1, name: 'www.company.com' };
+    const expected = { accountId: 1, siteId: -1, isNavappEnabled: true, name: 'www.company.com' };
 
     const node = {
       accountId: 1,
       siteId: -1,
+      isNavappEnabled: true,
       expandable: true,
       name: 'www.company.com',
       level: 0,
@@ -135,22 +133,4 @@ describe('SiteSelectionComponent', () => {
 
     expect(siteServiceMock.updateSelectedSite).toHaveBeenCalledWith(expected);
   });
-
-  it('should reload the page when site is selected in the tree view', fakeAsync(() => {
-    siteServiceMock.updateSelectedSite.and.returnValue(Promise.resolve());
-
-    const node = {
-      accountId: 1,
-      siteId: -1,
-      expandable: true,
-      name: 'www.company.com',
-      level: 0,
-    };
-
-    component.onNodeClicked(node);
-
-    tick();
-
-    expect(windowRefMock.nativeWindow.location.reload).toHaveBeenCalled();
-  }));
 });
