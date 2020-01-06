@@ -22,7 +22,7 @@
 
   &.active .header,
   &.active .header .mat-icon {
-    color: $menu-active-text-color;
+    color: $menu-highlighted-text-color;
     font-weight: $font-weight-semibold;
   }
 }

@@ -94,7 +94,7 @@ export class MenuDrawerComponent implements OnChanges {
   }
 
   isActive(item: MenuItem): boolean {
-    return this.menuStateService.isMenuItemActive(item);
+    return this.menuStateService.isMenuItemHighlighted(item);
   }
 
   getQaClass(item: MenuItem): string {

@@ -75,7 +75,7 @@ export class ExpandableSubMenuItemComponent implements OnChanges {
   }
 
   isChildMenuItemActive(item: MenuItem): boolean {
-    return this.menuStateService.isMenuItemActive(item);
+    return this.menuStateService.isMenuItemHighlighted(item);
   }
 
   getQaClass(item: MenuItemLink): string {

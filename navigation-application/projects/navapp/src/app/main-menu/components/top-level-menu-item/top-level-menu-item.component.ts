@@ -21,7 +21,7 @@ import {
   transition,
   trigger,
 } from '@angular/animations';
-import { Component, HostBinding, Input } from '@angular/core';
+import { Component, EventEmitter, HostBinding, HostListener, Input, Output } from '@angular/core';
 
 @Component({
   selector: 'brna-top-level-menu-item',
@@ -50,7 +50,7 @@ export class TopLevelMenuItemComponent {
   collapsed = true;
 
   @Input()
-  active = false;
+  highlighted = false;
 
   @Input()
   pressed = false;
@@ -63,4 +63,18 @@ export class TopLevelMenuItemComponent {
   @HostBinding('class.disabled')
   @HostBinding('class.qa-disabled')
   disabled = false;
+
+  @Output()
+  menuItemClick = new EventEmitter<void>();
+
+  @HostListener('click', ['$event'])
+  onHostClickHandler(event: MouseEvent): void {
+    event.stopImmediatePropagation();
+
+    if (this.disabled) {
+      return;
+    }
+
+    this.menuItemClick.emit();
+  }
 }
