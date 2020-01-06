@@ -34,6 +34,7 @@ export class MenuItemLinkComponent {
 
   @Input()
   @HostBinding('class.highlighted')
+  @HostBinding('class.qa-highlighted')
   highlighted = false;
 
   constructor(private readonly navigationService: NavigationService) { }
