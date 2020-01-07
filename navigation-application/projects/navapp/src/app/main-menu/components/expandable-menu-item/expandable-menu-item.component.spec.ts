@@ -55,7 +55,7 @@ describe('ExpandableMenuItemComponent', () => {
 
   beforeEach(async(() => {
     menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
-      'isMenuItemActive',
+      'isMenuItemHighlighted',
     ]);
 
     qaHelperServiceMock = jasmine.createSpyObj('QaHelperService', [
@@ -126,13 +126,13 @@ describe('ExpandableMenuItemComponent', () => {
   });
 
   it('should check for the menu active state', () => {
-    menuStateServiceMock.isMenuItemActive.and.returnValue(true);
+    menuStateServiceMock.isMenuItemHighlighted.and.returnValue(true);
     const link = new MenuItemLink('some-id', 'some caption');
 
-    const actual = component.isActive(link);
+    const actual = component.isHighlighted(link);
 
     expect(actual).toBeTruthy();
-    expect(menuStateServiceMock.isMenuItemActive).toHaveBeenCalledWith(link);
+    expect(menuStateServiceMock.isMenuItemHighlighted).toHaveBeenCalledWith(link);
   });
 
   it('should get qa class', () => {

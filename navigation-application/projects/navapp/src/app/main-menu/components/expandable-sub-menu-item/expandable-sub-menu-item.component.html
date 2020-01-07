@@ -24,7 +24,7 @@
   <brna-menu-item-link *ngFor="let item of config.children"
                        [caption]="item.caption"
                        [navItem]="item.navItem"
-                       [active]="isChildMenuItemActive(item)"
+                       [highlighted]="isHighlighted(item)"
                        class="item"
                        [ngClass]="getQaClass(item)">
   </brna-menu-item-link>

@@ -27,15 +27,16 @@
          class="home">
       <mat-icon svgIcon="br-logo"></mat-icon>
     </div>
-    <brna-top-level-menu-item *ngFor="let item of menuItems"
+    <brna-top-level-menu-item *ngFor="let item of menuItems;"
                               [caption]="item.caption"
                               [icon]="item.icon"
-                              [activeIcon]="item.icon  + '.active'"
+                              [highlightedIcon]="item.icon  + '.highlighted'"
                               [collapsed]="collapsed"
                               [pressed]="item === drawerMenuItem"
-                              [active]="isMenuItemActive(item)"
+                              [highlighted]="isMenuItemHighlighted(item)"
                               [ngClass]="getQaClass(item)"
-                              (click)="onMenuItemClick($event, item)">
+                              [disabled]="isMenuItemDisabled(item) | async"
+                              (menuItemClick)="onMenuItemClick(item)">
     </brna-top-level-menu-item>
   </div>
 
@@ -46,7 +47,7 @@
                               [pressed]="isHelpToolbarOpened"
                               [small]="true"
                               [ngClass]="getQaClass('help')"
-                              (click)="onHelpMenuItemClick($event)">
+                              (menuItemClick)="onHelpMenuItemClick()">
     </brna-top-level-menu-item>
 
     <brna-top-level-menu-item caption="{{ 'MENU_CONTAINER_USER_ACCOUNT' | translate }}"
@@ -55,7 +56,7 @@
                               [pressed]="isUserToolbarOpened"
                               [small]="true"
                               [ngClass]="getQaClass('user')"
-                              (click)="onUserMenuItemClick($event)">
+                              (menuItemClick)="onUserMenuItemClick()">
     </brna-top-level-menu-item>
 
     <div class="trigger qa-menu-trigger" (click)="toggle()">

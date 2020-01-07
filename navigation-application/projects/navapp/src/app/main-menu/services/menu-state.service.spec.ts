@@ -173,19 +173,19 @@ describe('MenuStateService', () => {
     }));
 
     it('should check for activeness positively the root active element', () => {
-      const actual = service.isMenuItemActive(builtMenuMock[0]);
+      const actual = service.isMenuItemHighlighted(builtMenuMock[0]);
 
       expect(actual).toBeTruthy();
     });
 
     it('should check for activeness positively the child active element', () => {
-      const actual = service.isMenuItemActive(builtMenuMock[0].children[1]);
+      const actual = service.isMenuItemHighlighted(builtMenuMock[0].children[1]);
 
       expect(actual).toBeTruthy();
     });
 
     it('should check for activeness negatively an inactive menu item', () => {
-      const actual = service.isMenuItemActive(builtMenuMock[1]);
+      const actual = service.isMenuItemHighlighted(builtMenuMock[1]);
 
       expect(actual).toBeFalsy();
     });
@@ -193,7 +193,7 @@ describe('MenuStateService', () => {
     it('should deactivate the currently active menu item', () => {
       service.deactivateMenuItem();
 
-      const actual = service.isMenuItemActive(builtMenuMock[0]);
+      const actual = service.isMenuItemHighlighted(builtMenuMock[0]);
 
       expect(actual).toBeFalsy();
     });

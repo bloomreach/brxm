@@ -33,9 +33,9 @@ export class MenuItemLinkComponent {
   navItem: NavItem;
 
   @Input()
-  @HostBinding('class.active')
-  @HostBinding('class.qa-disabled')
-  active = false;
+  @HostBinding('class.highlighted')
+  @HostBinding('class.qa-highlighted')
+  highlighted = false;
 
   constructor(private readonly navigationService: NavigationService) { }
 

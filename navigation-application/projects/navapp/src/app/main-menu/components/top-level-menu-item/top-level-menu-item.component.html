@@ -16,11 +16,11 @@
 
 <div class="menu-item" matRipple [matRippleDisabled]="disabled" [ngClass]="{
   'pressed': pressed,
-  'active': active,
+  'highlighted': highlighted,
   'collapsed': collapsed
 }">
   <mat-icon [svgIcon]="icon"></mat-icon>
-  <mat-icon [svgIcon]="activeIcon || icon" class="active"></mat-icon>
+  <mat-icon [svgIcon]="highlightedIcon || icon" class="highlighted"></mat-icon>
   <div class="caption">
     {{ caption }}
   </div>

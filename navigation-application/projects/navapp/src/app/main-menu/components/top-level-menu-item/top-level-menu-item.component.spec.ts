@@ -18,6 +18,7 @@ import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { first } from 'rxjs/operators';
 
 import { TopLevelMenuItemComponent } from './top-level-menu-item.component';
 
@@ -52,8 +53,8 @@ describe('TopLevelMenuItemComponent', () => {
       expect(wrapper.classes.collapsed).toBeTruthy();
     });
 
-    it('should not be active', () => {
-      expect(wrapper.classes.active).toBeFalsy();
+    it('should not be highlighted', () => {
+      expect(wrapper.classes.highlighted).toBeFalsy();
     });
 
     it('should not be pressed', () => {
@@ -91,14 +92,14 @@ describe('TopLevelMenuItemComponent', () => {
     expect(wrapper.classes.pressed).toBeTruthy();
   }));
 
-  it('should switch into the active state', fakeAsync(() => {
-    component.active = true;
+  it('should switch into the highlighted state', fakeAsync(() => {
+    component.highlighted = true;
 
     fixture.detectChanges();
 
     tick();
 
-    expect(wrapper.classes.active).toBeTruthy();
+    expect(wrapper.classes.highlighted).toBeTruthy();
   }));
 
   it('should switch into the expanded state', fakeAsync(() => {
@@ -110,6 +111,33 @@ describe('TopLevelMenuItemComponent', () => {
 
     expect(wrapper.classes.collapsed).toBeFalsy();
   }));
+
+  describe('click on the host element', () => {
+    let emitted: boolean;
+    let event: jasmine.SpyObj<MouseEvent>;
+
+    beforeEach(() => {
+      emitted = false;
+
+      component.menuItemClick.pipe(
+        first(),
+      ).subscribe(() => emitted = true);
+
+      event = jasmine.createSpyObj('MouseEvent', [
+        'stopImmediatePropagation',
+      ]);
+
+      de.triggerEventHandler('click', event);
+    });
+
+    it('should stop immediate propagation', () => {
+      expect(event.stopImmediatePropagation).toHaveBeenCalled();
+    });
+
+    it('should emit menuItemClick output', () => {
+      expect(emitted).toBe(true);
+    });
+  });
 
   describe('when disabled', () => {
     beforeEach(async(() => {
@@ -124,6 +152,33 @@ describe('TopLevelMenuItemComponent', () => {
 
     it('should have "qa-disabled" class', () => {
       expect(de.classes['qa-disabled']).toBeTruthy();
+    });
+
+    describe('click on the host element', () => {
+      let emitted: boolean;
+      let event: jasmine.SpyObj<MouseEvent>;
+
+      beforeEach(() => {
+        emitted = false;
+
+        component.menuItemClick.pipe(
+          first(),
+        ).subscribe(() => emitted = true);
+
+        event = jasmine.createSpyObj('MouseEvent', [
+          'stopImmediatePropagation',
+        ]);
+
+        de.triggerEventHandler('click', event);
+      });
+
+      it('should stop immediate propagation', () => {
+        expect(event.stopImmediatePropagation).toHaveBeenCalled();
+      });
+
+      it('should not emit menuItemClick output', () => {
+        expect(emitted).toBe(false);
+      });
     });
   });
 });

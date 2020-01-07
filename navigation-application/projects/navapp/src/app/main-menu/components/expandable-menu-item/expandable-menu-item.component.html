@@ -25,7 +25,7 @@
       *ngIf="!isContainer(item)"
       [caption]="item.caption"
       [navItem]="item.navItem"
-      [active]="isActive(item)"
+      [highlighted]="isHighlighted(item)"
       [ngClass]="getQaClass(item)"
       class="item">
     </brna-menu-item-link>
@@ -33,7 +33,7 @@
       *ngIf="isContainer(item)"
       #expandableMenuItem
       [config]="item"
-      [active]="isActive(item)"
+      [highlighted]="isHighlighted(item)"
       [ngClass]="getQaClass(item)"
       (click)="onExpandableSubMenuItemClick(expandableMenuItem)"
       class="item">

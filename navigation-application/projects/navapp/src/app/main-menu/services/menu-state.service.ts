@@ -81,7 +81,7 @@ export class MenuStateService {
     this.setActiveItem(navItem.id);
   }
 
-  isMenuItemActive(item: MenuItem): boolean {
+  isMenuItemHighlighted(item: MenuItem): boolean {
     const currentBreadcrumbs = this.activePath.value;
 
     return currentBreadcrumbs.some(x => x === item);
