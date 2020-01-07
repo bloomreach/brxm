@@ -307,6 +307,10 @@ export interface Site extends SiteId {
    */
   name: string;
   /**
+   * Whether navapp or iUI is enabled for a Site
+   */
+  isNavappEnabled: boolean;
+  /**
    * Optional field for grouping sub-sites (2nd and 3rd level nesting). Nav-app will ignore deeper nesting levels,
    * because there is no design on how to display them to the user. When selecting a Site, nav-app shall **not** include
    * this field in the object passed to the app(s).

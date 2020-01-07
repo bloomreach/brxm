@@ -125,6 +125,9 @@ $menu-hover-text-color: $menu-bg;
 $menu-highlighted-text-color: #00b5e2;
 $menu-drawer-menu-hover-text-color: #fff;
 
+$menu-arrow-height: 36px;
+$menu-arrow-bg-gradient: #303d5000, #303d50dd 35%, darken(#303d50fe, 15%);
+
 // Top panel
 $top-panel-height: 36px;
 $top-panel-bg: rgb(245, 245, 245);

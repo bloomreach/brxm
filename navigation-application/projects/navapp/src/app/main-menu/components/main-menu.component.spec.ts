@@ -1,5 +1,5 @@
 /*!
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ import { NavItem } from '../../models/nav-item.model';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { NavigationService } from '../../services/navigation.service';
 import { QaHelperService } from '../../services/qa-helper.service';
+import { WindowRef } from '../../shared/services/window-ref.service';
 import { MenuItemContainerMock } from '../models/menu-item-container.mock';
 import { MenuItemContainer } from '../models/menu-item-container.model';
 import { MenuItemLinkMock } from '../models/menu-item-link.mock';
@@ -59,6 +60,8 @@ describe('MainMenuComponent', () => {
   let qaHelperServiceMock: jasmine.SpyObj<QaHelperService>;
   let busyIndicatorServiceMock: jasmine.SpyObj<BusyIndicatorService>;
   let navigationServiceMock: jasmine.SpyObj<NavigationService>;
+  let windowRefMock: any;
+  const initialWindowHeight = 800;
 
   beforeEach(async(() => {
     menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
@@ -84,6 +87,14 @@ describe('MainMenuComponent', () => {
       'navigateByNavItem',
     ]);
 
+    windowRefMock = {
+      nativeWindow: {
+        innerHeight: initialWindowHeight,
+        addEventListener: jasmine.createSpy('addEventListener'),
+        removeEventListener: jasmine.createSpy('removeEventListener'),
+      },
+    };
+
     fixture = TestBed.configureTestingModule({
       imports: [
         NoopAnimationsModule,
@@ -96,6 +107,7 @@ describe('MainMenuComponent', () => {
         { provide: QaHelperService, useValue: qaHelperServiceMock },
         { provide: BusyIndicatorService, useValue: busyIndicatorServiceMock },
         { provide: NavigationService, useValue: navigationServiceMock },
+        { provide: WindowRef, useValue: windowRefMock },
       ],
     }).createComponent(MainMenuComponent);
 
@@ -346,6 +358,152 @@ describe('MainMenuComponent', () => {
       it('should return "false"', () => {
         expect(activeSnapshot).toBeFalsy();
       });
+    });
+  });
+
+  describe('the scrolling menu', () => {
+    function triggerResizeEvent(height: number): void {
+      const [, resizeCallback] = windowRefMock.nativeWindow.addEventListener.calls.argsFor(0);
+      windowRefMock.nativeWindow.innerHeight = height;
+      resizeCallback({ target: windowRefMock.nativeWindow });
+    }
+
+    function triggerWheelEvent(deltaY: number): void {
+      const menu = fixture.debugElement.query(By.css('.menu'));
+      const payload = { deltaMode: 1, deltaX: 0, deltaY };
+      menu.nativeElement.dispatchEvent(new WheelEvent('wheel', payload));
+    }
+
+    function triggerClick(className: string): void {
+      const el = fixture.debugElement.query(By.css(className));
+      el.nativeElement.dispatchEvent(new MouseEvent('click'));
+    }
+
+    function scrollingMenu(): number {
+      component.height.menu = component.height.available * 2;
+      return component.height.available;
+    }
+
+    it('should register a window resize event handler', () => {
+      const [eventType] = windowRefMock.nativeWindow.addEventListener.calls.argsFor(0);
+      expect(eventType).toBe('resize');
+    });
+
+    it('should calculate the height available for the menu', () => {
+      expect(component.height.available).toBe(initialWindowHeight - component.height.occupied);
+    });
+
+    it('should recalculate the height available for the menu when the window resizes', () => {
+      const originallyAvailable = component.height.available;
+      triggerResizeEvent(initialWindowHeight + 50);
+
+      expect(component.height.available).toBe(originallyAvailable + 50);
+    });
+
+    it('should cache the height of the bottom section of the menu for positioning the down arrow', () => {
+      expect(component.height.bottom).toBeDefined();
+    });
+
+    it('should cache the amount of vertical pixels not available to the menu for quick recalculations', () => {
+      expect(component.height.occupied).toBeDefined();
+    });
+
+    it('should move the menu down if the window grows vertically and menu is partially visible at the top', () => {
+      component.menuOffsetTop$.next(10);
+
+      triggerResizeEvent(initialWindowHeight - 10);
+      expect(component.menuOffsetTop$.value).toBe(10);
+
+      triggerResizeEvent(initialWindowHeight);
+      expect(component.menuOffsetTop$.value).toBe(0);
+    });
+
+    it('should handle wheel events', () => {
+      const upperBound = scrollingMenu();
+
+      // 40px up
+      triggerWheelEvent(1);
+      expect(component.menuOffsetTop$.value).toBe(40);
+
+      // 80px down (lower out of bounds check)
+      triggerWheelEvent(-2);
+      expect(component.menuOffsetTop$.value).toBe(0);
+
+      // as far up as possible without going out of bounds
+      triggerWheelEvent(upperBound / 40);
+      expect(component.menuOffsetTop$.value > (upperBound - 40));
+
+      // over the top (upper out of bounds check)
+      triggerWheelEvent(2);
+      expect(component.menuOffsetTop$.value).toBe(upperBound);
+    });
+
+    it('should handle arrow-down clicks', () => {
+      const upperBound = scrollingMenu();
+
+      triggerClick('.arrow-down');
+      expect(component.menuOffsetTop$.value).toBe(upperBound);
+
+      // check out-of-bounds
+      triggerClick('.arrow-down');
+      expect(component.menuOffsetTop$.value).toBe(upperBound);
+    });
+
+    it('should handle arrow-up clicks', () => {
+      scrollingMenu();
+
+      triggerClick('.arrow-up');
+      expect(component.menuOffsetTop$.value).toBe(0);
+
+      // check out-of-bounds
+      triggerClick('.arrow-up');
+      expect(component.menuOffsetTop$.value).toBe(0);
+    });
+
+    it('should not enable arrowDown if available height not yet calculated', () => {
+      component.height.available = 0;
+      expect(component.moveDownEnabled()).toBe(false);
+    });
+
+    it('should enable arrowDown when menu is partially visible at the bottom', () => {
+      expect(component.moveDownEnabled()).toBe(false);
+
+      component.height.menu = component.height.available + 10;
+      expect(component.moveDownEnabled()).toBe(true);
+
+      component.menuOffsetTop$.next(10);
+      expect(component.moveDownEnabled()).toBe(false);
+    });
+
+    it('should enable arrowUp when menu is partially visible at the top', () => {
+      expect(component.moveUpEnabled()).toBe(false);
+
+      component.height.menu = component.height.available + 10;
+      expect(component.moveUpEnabled()).toBe(false);
+
+      component.menuOffsetTop$.next(10);
+      expect(component.moveUpEnabled()).toBe(true);
+    });
+
+    it('should adjust the transition behavior according to the type of user interaction', () => {
+      scrollingMenu();
+
+      // initial load transition
+      expect(component.transitionClass$.value).toBe('onload-transition');
+
+      // move menu up and make window larger
+      component.menuOffsetTop$.next(10);
+      triggerResizeEvent(initialWindowHeight + 10);
+      expect(component.transitionClass$.value).toBe('resize-transition');
+
+      triggerClick('.arrow-up');
+      expect(component.transitionClass$.value).toBe('click-transition');
+
+      triggerWheelEvent(1);
+      expect(component.transitionClass$.value).toBe('wheel-transition');
+
+      triggerClick('.arrow-down');
+      expect(component.transitionClass$.value).toBe('click-transition');
     });
   });
 });

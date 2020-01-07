@@ -17,7 +17,9 @@
 // tslint:disable:match-default-export-name
 import arrowDropDown from '!!raw-loader!./icons/arrow_drop_down.svg';
 import arrowRight from '!!raw-loader!./icons/arrow_right.svg';
+import chevronDown from '!!raw-loader!./icons/chevron_down.svg';
 import chevronRight from '!!raw-loader!./icons/chevron_right.svg';
+import chevronUp from '!!raw-loader!./icons/chevron_up.svg';
 import expandLess from '!!raw-loader!./icons/expand_less.svg';
 import expandMore from '!!raw-loader!./icons/expand_more.svg';
 import navCollapse from '!!raw-loader!./icons/nav-collapse.svg';
@@ -37,7 +39,9 @@ export const registerIcons = (iconRegistry: MatIconRegistry, donSanitizer: DomSa
   registerIcon('expand_less', expandLess);
   registerIcon('expand_more', expandMore);
   registerIcon('remove', remove);
+  registerIcon('chevron_down', chevronDown);
   registerIcon('chevron_right', chevronRight);
+  registerIcon('chevron_up', chevronUp);
   registerIcon('search', search);
   registerIcon('arrow_drop_down', arrowDropDown);
   registerIcon('arrow_right', arrowRight);

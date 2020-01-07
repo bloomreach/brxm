@@ -20,6 +20,7 @@ import { NGXLogger } from 'ngx-logger';
 import { Observable, ReplaySubject } from 'rxjs';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
+import { WindowRef } from '../shared/services/window-ref.service';
 
 import { BusyIndicatorService } from './busy-indicator.service';
 
@@ -33,6 +34,7 @@ export class SiteService {
   constructor(
     private readonly busyIndicatorService: BusyIndicatorService,
     private readonly clientAppService: ClientAppService,
+    private readonly windowRef: WindowRef,
     private readonly logger: NGXLogger,
   ) { }
 
@@ -45,29 +47,27 @@ export class SiteService {
     this.selectedSite.next(selectedSite);
   }
 
-  updateSelectedSite(siteId: SiteId): Promise<void> {
+  updateSelectedSite(site: Site): Promise<void> {
     this.busyIndicatorService.show();
 
-    this.logger.debug(`updateSelectedSite() is called for the active app '${this.clientAppService.activeApp.url}'`, siteId);
+    if (!site.isNavappEnabled) {
+      this.redirectToiUI();
+
+      return;
+    }
+
+    this.logger.debug(`updateSelectedSite() is called for the active app '${this.clientAppService.activeApp.url}'`, site);
 
     return this.clientAppService.activeApp.api
-      .updateSelectedSite(siteId)
+      .updateSelectedSite(site)
       .then(() => {
         this.logger.debug('Active app successfully updated the selected site. Start broadcasting updateSelectedSite() for the other apps.');
 
-        const updatePromises = this.clientAppService.apps
-          .filter(app => app.api && app.api.updateSelectedSite && app !== this.clientAppService.activeApp)
-          .map(app => {
-            this.logger.debug(`updateSelectedSite() is called for '${app.url}'`);
-
-            return app.api.updateSelectedSite();
-          });
-
-        return Promise.all(updatePromises).then(() => {
-          this.logger.debug('updateSelectedSite() broadcasting finished successfully');
-        });
+        return this.broadcastSelectedSite();
       })
-      .then(() => this.busyIndicatorService.hide());
+      .then(() => this.setSelectedSite(site))
+      .then(() => this.reloadPage())
+      .finally(() => this.busyIndicatorService.hide());
   }
 
   private findSite(sites: Site[], siteId: SiteId): Site {
@@ -86,5 +86,32 @@ export class SiteService {
         return childSite;
       }
     }
+  }
+
+  private broadcastSelectedSite(): Promise<void> {
+    const updatePromises = this.clientAppService.apps
+      .filter(app => app.api && app.api.updateSelectedSite && app !== this.clientAppService.activeApp)
+      .map(app => {
+        this.logger.debug(`updateSelectedSite() is called for '${app.url}'`);
+
+        return app.api.updateSelectedSite();
+      });
+
+    return Promise.all(updatePromises).then(() => {
+      this.logger.debug('updateSelectedSite() broadcasting finished successfully');
+    });
+  }
+
+  private reloadPage(): void {
+    this.windowRef.nativeWindow.location.reload();
+  }
+
+  private redirectToiUI(): void {
+    // For iUI mode, remove '/navapp' from the url.
+    // This needs to be updated once we figure out a reasonable route name for navapp mode.
+    const path = this.windowRef.nativeWindow.location.href;
+    const newPath = path.replace('/navapp', '');
+
+    this.windowRef.nativeWindow.location.assign(newPath);
   }
 }

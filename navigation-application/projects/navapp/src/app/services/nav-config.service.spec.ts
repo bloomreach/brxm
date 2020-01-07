@@ -57,11 +57,13 @@ describe('NavConfigService', () => {
     {
       siteId: 1,
       accountId: 123,
+      isNavappEnabled: true,
       name: 'test1',
     },
     {
       siteId: 2,
       accountId: 123,
+      isNavappEnabled: true,
       name: 'test2',
     },
   ];
