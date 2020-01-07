@@ -148,6 +148,7 @@
   "ERROR_PAGE_BUTTON_BACK_HOME": "Back",
   "ERROR_PAGE_DEFAULT_ERROR": "Something went wrong",
   "ERROR_CONFIGURATION": "Configuration error",
+  "ERROR_UNABLE_TO_PERFORM_SILENT_LOGIN": "Unable to perform silent login",
   "ERROR_UNABLE_TO_LOAD_CONFIGURATION": "Unable to load configuration",
   "ERROR_INITIALIZATION": "An error occurred during initialization",
   "ERROR_SOMETHING_WENT_WRONG": "Something went wrong",

@@ -17,8 +17,8 @@
 import { Component, HostBinding, Input } from '@angular/core';
 import { NavigationTrigger } from '@bloomreach/navapp-communication';
 
+import { NavItem } from '../../../models/nav-item.model';
 import { NavigationService } from '../../../services/navigation.service';
-import { MenuItemLink } from '../../models/menu-item-link.model';
 
 @Component({
   selector: 'brna-menu-item-link',
@@ -27,17 +27,31 @@ import { MenuItemLink } from '../../models/menu-item-link.model';
 })
 export class MenuItemLinkComponent {
   @Input()
-  config: MenuItemLink;
+  caption: string;
 
   @Input()
-  @HostBinding('class.active')
-  active = false;
+  navItem: NavItem;
+
+  @Input()
+  @HostBinding('class.highlighted')
+  @HostBinding('class.qa-highlighted')
+  highlighted = false;
 
   constructor(private readonly navigationService: NavigationService) { }
+
+  @HostBinding('class.disabled')
+  @HostBinding('class.qa-disabled')
+  get disabled(): boolean {
+    return !this.navItem;
+  }
 
   onClick(e: MouseEvent): void {
     e.preventDefault();
 
-    this.navigationService.navigateByNavItem(this.config.navItem, NavigationTrigger.Menu);
+    if (this.disabled || !this.navItem) {
+      return;
+    }
+
+    this.navigationService.navigateByNavItem(this.navItem, NavigationTrigger.Menu);
   }
 }

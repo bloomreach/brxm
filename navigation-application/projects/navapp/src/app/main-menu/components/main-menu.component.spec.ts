@@ -14,22 +14,25 @@
  * limitations under the License.
  */
 
-import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NavigationTrigger } from '@bloomreach/navapp-communication';
 import { TranslateModule } from '@ngx-translate/core';
-import { of, Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 
-import { APP_BOOTSTRAPPED } from '../../bootstrap/app-bootstrapped';
-import { BootstrapService } from '../../bootstrap/bootstrap.service';
-import { ClientAppService } from '../../client-app/services/client-app.service';
+import { NavItemMock } from '../../models/nav-item.mock';
+import { NavItem } from '../../models/nav-item.model';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { NavigationService } from '../../services/navigation.service';
 import { QaHelperService } from '../../services/qa-helper.service';
 import { WindowRef } from '../../shared/services/window-ref.service';
+import { MenuItemContainerMock } from '../models/menu-item-container.mock';
+import { MenuItemContainer } from '../models/menu-item-container.model';
 import { MenuItemLinkMock } from '../models/menu-item-link.mock';
+import { MenuItemLink } from '../models/menu-item-link.model';
+import { MenuItem } from '../models/menu-item.model';
 import { MenuStateService } from '../services/menu-state.service';
 
 import { MainMenuComponent } from './main-menu.component';
@@ -37,59 +40,52 @@ import { MainMenuComponent } from './main-menu.component';
 describe('MainMenuComponent', () => {
   let component: MainMenuComponent;
   let fixture: ComponentFixture<MainMenuComponent>;
+  let de: DebugElement;
 
-  let menuStateService: MenuStateService;
   const menuMock = [
-    new MenuItemLinkMock({ id: 'item1' }),
-    new MenuItemLinkMock({ id: 'item2' }),
+    new MenuItemLinkMock({
+      id: 'item1',
+      navItem: new NavItemMock({
+        id: 'someId',
+        appIframeUrl: 'homeAppUrl',
+        appPath: 'homeAppPath',
+      }),
+    }),
+    new MenuItemLinkMock({
+      id: 'item2',
+    }),
   ];
 
-  menuMock[0].navItem = {
-    id: 'someId',
-    appIframeUrl: 'homeAppUrl',
-    appPath: 'homeAppPath',
-  };
-
-  const menuStateServiceMock = jasmine.createSpyObj('MenuStateService', {
-    isMenuItemActive: undefined,
-    activateMenuItem: undefined,
-  });
-  menuStateServiceMock.menu = menuMock;
-
-  let qaHelperService: QaHelperService;
-  const qaHelperServiceMock = {
-    getMenuItemClass: jasmine.createSpy('getMenuItemClass'),
-  };
-
-  let clientAppService: ClientAppService;
-  const clientAppServiceMock = {
-    connectionEstablished$: of(true),
-  };
-
-  const bootstrappedSuccessful$ = new Subject();
-  const bootstrapServiceMock = {
-    bootstrappedSuccessful$,
-  };
-
-  const busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', [
-    'show',
-    'hide',
-  ]);
-
-  const navigationServiceMock = jasmine.createSpyObj('NavigationService', [
-    'navigateByNavItem',
-  ]);
-
-  let appBootstrappedResolve: () => void;
-  let appBootstrappedMock: Promise<void>;
-
+  let menuStateServiceMock: jasmine.SpyObj<MenuStateService>;
+  let qaHelperServiceMock: jasmine.SpyObj<QaHelperService>;
+  let busyIndicatorServiceMock: jasmine.SpyObj<BusyIndicatorService>;
+  let navigationServiceMock: jasmine.SpyObj<NavigationService>;
   let windowRefMock: any;
   const initialWindowHeight = 800;
 
-  beforeEach(() => {
-    appBootstrappedMock = new Promise<void>((resolve, reject) => {
-      appBootstrappedResolve = resolve;
-    });
+  beforeEach(async(() => {
+    menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
+      'toggle',
+      'openDrawer',
+      'closeDrawer',
+      'isMenuItemHighlighted',
+      'activateMenuItem',
+    ]);
+    (menuStateServiceMock as any).menu = menuMock;
+    (menuStateServiceMock as any).isDrawerOpened = false;
+
+    qaHelperServiceMock = jasmine.createSpyObj('QaHelperService', [
+      'getMenuItemClass',
+    ]);
+
+    busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', [
+      'show',
+      'hide',
+    ]);
+
+    navigationServiceMock = jasmine.createSpyObj('NavigationService', [
+      'navigateByNavItem',
+    ]);
 
     windowRefMock = {
       nativeWindow: {
@@ -99,7 +95,7 @@ describe('MainMenuComponent', () => {
       },
     };
 
-    TestBed.configureTestingModule({
+    fixture = TestBed.configureTestingModule({
       imports: [
         NoopAnimationsModule,
         TranslateModule.forRoot(),
@@ -109,58 +105,259 @@ describe('MainMenuComponent', () => {
       providers: [
         { provide: MenuStateService, useValue: menuStateServiceMock },
         { provide: QaHelperService, useValue: qaHelperServiceMock },
-        { provide: ClientAppService, useValue: clientAppServiceMock },
-        { provide: BootstrapService, useValue: bootstrapServiceMock },
         { provide: BusyIndicatorService, useValue: busyIndicatorServiceMock },
         { provide: NavigationService, useValue: navigationServiceMock },
-        { provide: APP_BOOTSTRAPPED, useValue: appBootstrappedMock },
         { provide: WindowRef, useValue: windowRefMock },
       ],
-    });
-
-    fixture = TestBed.createComponent(MainMenuComponent);
-
-    menuStateService = fixture.debugElement.injector.get(MenuStateService);
-    qaHelperService = fixture.debugElement.injector.get(QaHelperService);
-    clientAppService = fixture.debugElement.injector.get(ClientAppService);
+    }).createComponent(MainMenuComponent);
 
     component = fixture.componentInstance;
+    de = fixture.debugElement;
+
+    menuStateServiceMock = TestBed.get(MenuStateService);
+    busyIndicatorServiceMock = TestBed.get(BusyIndicatorService);
+
+    component.ngOnInit();
+
     fixture.detectChanges();
-  });
+  }));
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should return empty menu until app is bootstrapped', () => {
-    expect(component.menuItems).toEqual([]);
+  it('should show menu items', () => {
+    const menuItems = de.queryAll(By.css('brna-top-level-menu-item'));
+
+    expect(menuItems.length).toBe(4);
   });
 
-  it('should return all menu items when the app is bootstrapped', fakeAsync(() => {
-    appBootstrappedResolve();
+  it('should the busy indicator', fakeAsync(() => {
+    (busyIndicatorServiceMock as any).isVisible = true;
+
+    fixture.detectChanges();
 
     tick();
 
-    expect(component.menuItems).toEqual(menuMock);
+    const drawerEl = de.query(By.css('mat-progress-bar'));
+
+    expect(drawerEl).not.toBeNull();
   }));
 
-  describe('when the app is bootstrapped', () => {
-    beforeEach(async(() => {
-      appBootstrappedResolve();
-    }));
+  it('should provide the collapsed state', () => {
+    (menuStateServiceMock as any).isMenuCollapsed = true;
 
-    it('should navigate when menu item link is clicked', () => {
-      const menuItemLink = new MenuItemLinkMock();
+    expect(component.collapsed).toBeTruthy();
+  });
 
-      component.selectMenuItem(menuItemLink);
+  it('should set .collapsed class', fakeAsync(() => {
+    (menuStateServiceMock as any).isMenuCollapsed = true;
 
-      expect(navigationServiceMock.navigateByNavItem).toHaveBeenCalledWith(menuItemLink.navItem, NavigationTrigger.Menu);
+    fixture.detectChanges();
+
+    tick();
+
+    expect(de.classes.collapsed).toBeTruthy();
+  }));
+
+  it('should toggle expanded/collapsed state', () => {
+    const triggerEl = de.query(By.css('.trigger'));
+
+    triggerEl.triggerEventHandler('click', {});
+
+    expect(menuStateServiceMock.toggle).toHaveBeenCalled();
+  });
+
+  it('should open the drawer', fakeAsync(() => {
+    (menuStateServiceMock as any).isDrawerOpened = true;
+
+    fixture.detectChanges();
+
+    tick();
+
+    const drawerEl = de.query(By.css('brna-menu-drawer'));
+
+    expect(component.isDrawerOpen).toBeTruthy();
+    expect(drawerEl).not.toBeNull();
+  }));
+
+  it('should provide a drawer menu item', () => {
+    const expected: MenuItemContainer = {} as any;
+
+    (menuStateServiceMock as any).drawerMenuItem = expected;
+
+    expect(component.drawerMenuItem).toBe(expected);
+  });
+
+  describe('when a menu item is clicked', () => {
+    beforeEach(() => {
+      const menuItem: MenuItem = {} as any;
+
+      component.onMenuItemClick(menuItem);
     });
 
-    it('should not activate the home menu element until menu is emitted', () => {
-      spyOn(component, 'selectMenuItem');
+    it('should close help toolbar drawer', () => {
+      const helpToolbarEl = de.query(By.css('brna-help-toolbar-drawer'));
 
-      expect(component.selectMenuItem).not.toHaveBeenCalled();
+      expect(component.isHelpToolbarOpened).toBeFalsy();
+      expect(helpToolbarEl).toBeNull();
+    });
+
+    it('should close user toolbar drawer', () => {
+      const userToolbarEl = de.query(By.css('brna-user-toolbar-drawer'));
+
+      expect(component.isUserToolbarOpened).toBeFalsy();
+      expect(userToolbarEl).toBeNull();
+    });
+
+    describe('and menu item is MenuItemLink instance', () => {
+      const navItem = new NavItemMock();
+
+      beforeEach(() => {
+        component.onMenuItemClick(new MenuItemLinkMock({ navItem }));
+      });
+
+      it('should navigate to the nav item contained', () => {
+        expect(navigationServiceMock.navigateByNavItem).toHaveBeenCalledWith(navItem, NavigationTrigger.Menu);
+      });
+    });
+
+    describe('and menu item is MenuItemContainer instance', () => {
+      const menuItem = new MenuItemContainerMock();
+
+      beforeEach(() => {
+        component.onMenuItemClick(menuItem);
+      });
+
+      it('should open the drawer', () => {
+        expect(menuStateServiceMock.openDrawer).toHaveBeenCalledWith(menuItem);
+      });
+    });
+  });
+
+  describe('when help menu item is clicked', () => {
+    beforeEach(async(() => {
+      component.onHelpMenuItemClick();
+
+      fixture.detectChanges();
+    }));
+
+    it('should close the drawer', () => {
+      expect(menuStateServiceMock.closeDrawer).toHaveBeenCalled();
+    });
+
+    it('should close user toolbar drawer', () => {
+      const userToolbarEl = de.query(By.css('brna-user-toolbar-drawer'));
+
+      expect(component.isUserToolbarOpened).toBeFalsy();
+      expect(userToolbarEl).toBeNull();
+    });
+
+    it('should open help toolbar drawer', () => {
+      const helpToolbarEl = de.query(By.css('brna-help-toolbar-drawer'));
+
+      expect(component.isHelpToolbarOpened).toBeTruthy();
+      expect(helpToolbarEl).not.toBeNull();
+    });
+  });
+
+  describe('when user menu item is clicked', () => {
+    beforeEach(async(() => {
+      component.onUserMenuItemClick();
+
+      fixture.detectChanges();
+    }));
+
+    it('should close the drawer', () => {
+      expect(menuStateServiceMock.closeDrawer).toHaveBeenCalled();
+    });
+
+    it('should close help toolbar drawer', () => {
+      const helpToolbarEl = de.query(By.css('brna-help-toolbar-drawer'));
+
+      expect(component.isHelpToolbarOpened).toBeFalsy();
+      expect(helpToolbarEl).toBeNull();
+    });
+
+    it('should open user toolbar drawer', () => {
+      const userToolbarEl = de.query(By.css('brna-user-toolbar-drawer'));
+
+      expect(component.isUserToolbarOpened).toBeTruthy();
+      expect(userToolbarEl).not.toBeNull();
+    });
+  });
+
+  describe('isHighlighted', () => {
+    const menuItem = new MenuItemLinkMock();
+
+    beforeEach(() => {
+      menuStateServiceMock.isMenuItemHighlighted.and.returnValue(true);
+    });
+
+    it('should forward the provided menu item to the service', () => {
+      component.isMenuItemHighlighted(menuItem);
+
+      expect(menuStateServiceMock.isMenuItemHighlighted).toHaveBeenCalledWith(menuItem);
+    });
+
+    it('should return the value return by the service', () => {
+      const actual = component.isMenuItemHighlighted(menuItem);
+
+      expect(actual).toBeTruthy();
+    });
+  });
+
+  describe('isMenuItemDisabled', () => {
+    describe('when MenuItemLink instance is provided', () => {
+      const navItemActiveSubject = new Subject<boolean>();
+      let subscription: Subscription;
+
+      let navItem: NavItem;
+      let menuItemLink: MenuItemLink;
+      let activeSnapshot: boolean;
+
+      beforeEach(() => {
+        activeSnapshot = undefined;
+        navItem = new NavItemMock({}, navItemActiveSubject);
+        menuItemLink = new MenuItemLinkMock({ navItem });
+
+        subscription = component
+          .isMenuItemDisabled(menuItemLink)
+          .subscribe(active => activeSnapshot = active);
+      });
+
+      afterEach(() => {
+        subscription.unsubscribe();
+      });
+
+      it('should return "true" initially', () => {
+        expect(activeSnapshot).toBeTruthy();
+      });
+
+      it('should return "false" if a nav item is active', () => {
+        navItemActiveSubject.next(true);
+
+        expect(activeSnapshot).toBeFalsy();
+      });
+    });
+
+    describe('when MenuItemContainer instance is provided', () => {
+      let subscription: Subscription;
+      let activeSnapshot: boolean;
+
+      beforeEach(() => {
+        subscription = component
+          .isMenuItemDisabled(new MenuItemContainerMock())
+          .subscribe(active => activeSnapshot = active);
+      });
+
+      afterEach(() => {
+        subscription.unsubscribe();
+      });
+
+      it('should return "false"', () => {
+        expect(activeSnapshot).toBeFalsy();
+      });
     });
   });
 
@@ -186,10 +383,6 @@ describe('MainMenuComponent', () => {
       component.height.menu = component.height.available * 2;
       return component.height.available;
     }
-
-    beforeEach(async(() => {
-      appBootstrappedResolve();
-    }));
 
     it('should register a window resize event handler', () => {
       const [eventType] = windowRefMock.nativeWindow.addEventListener.calls.argsFor(0);

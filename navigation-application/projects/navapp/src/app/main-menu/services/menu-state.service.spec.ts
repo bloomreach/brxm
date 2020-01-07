@@ -16,6 +16,7 @@
 
 import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
 
+import { NavItemMock } from '../../models/nav-item.mock';
 import { NavItemService } from '../../services/nav-item.service';
 import { MenuItemContainer } from '../models/menu-item-container.model';
 import { MenuItemLinkMock } from '../models/menu-item-link.mock';
@@ -35,6 +36,11 @@ describe('MenuStateService', () => {
     },
   });
 
+  const navItemsMock = [
+    new NavItemMock({ id: '1' }),
+    new NavItemMock({ id: '2' }),
+  ];
+
   const builtMenuMock = [
     new MenuItemContainer(
       'menu item 1',
@@ -42,31 +48,31 @@ describe('MenuStateService', () => {
         new MenuItemLinkMock({
           id: 'nav-item-1',
           caption: 'menu link subitem 1',
-          navItem: {
+          navItem: new NavItemMock({
             id: 'nav-item-1',
             appIframeUrl: 'http://domain.com/iframe1/url',
             appPath: 'app/path/to/home',
-          },
+          }),
         }),
         new MenuItemLinkMock({
           id: 'nav-item-2',
           caption: 'menu link subitem 2',
-          navItem: {
+          navItem: new NavItemMock({
             id: 'nav-item-2',
             appIframeUrl: 'http://domain.com/iframe1/url',
             appPath: 'app/path/to/page1',
-          },
+          }),
         }),
       ],
     ),
     new MenuItemLinkMock({
       id: 'nav-item-3',
       caption: 'menu link 1',
-      navItem: {
+      navItem: new NavItemMock({
         id: 'nav-item-3',
         appIframeUrl: 'http://domain.com/iframe2/url',
         appPath: 'app/path/to/home',
-      },
+      }),
     }),
   ] as any[];
 
@@ -84,7 +90,12 @@ describe('MenuStateService', () => {
     });
 
     service = TestBed.get(MenuStateService);
-    service.init();
+
+    service.init(navItemsMock);
+  });
+
+  it('should build the menu based on the provided nav items', () => {
+    expect(menuBuilderServiceMock.buildMenu).toHaveBeenCalledWith(navItemsMock);
   });
 
   it('should return the built menu', () => {
@@ -162,19 +173,19 @@ describe('MenuStateService', () => {
     }));
 
     it('should check for activeness positively the root active element', () => {
-      const actual = service.isMenuItemActive(builtMenuMock[0]);
+      const actual = service.isMenuItemHighlighted(builtMenuMock[0]);
 
       expect(actual).toBeTruthy();
     });
 
     it('should check for activeness positively the child active element', () => {
-      const actual = service.isMenuItemActive(builtMenuMock[0].children[1]);
+      const actual = service.isMenuItemHighlighted(builtMenuMock[0].children[1]);
 
       expect(actual).toBeTruthy();
     });
 
     it('should check for activeness negatively an inactive menu item', () => {
-      const actual = service.isMenuItemActive(builtMenuMock[1]);
+      const actual = service.isMenuItemHighlighted(builtMenuMock[1]);
 
       expect(actual).toBeFalsy();
     });
@@ -182,7 +193,7 @@ describe('MenuStateService', () => {
     it('should deactivate the currently active menu item', () => {
       service.deactivateMenuItem();
 
-      const actual = service.isMenuItemActive(builtMenuMock[0]);
+      const actual = service.isMenuItemHighlighted(builtMenuMock[0]);
 
       expect(actual).toBeFalsy();
     });

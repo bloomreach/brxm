@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,26 +14,32 @@
  * limitations under the License.
  */
 
-import { loadNavItems } from './load-nav-items';
+import { NavItem as NavItemDto } from '@bloomreach/navapp-communication';
+import { Observable } from 'rxjs';
 
-describe('loadNavItems', () => {
-  const navConfigServiceMock = jasmine.createSpyObj('NavConfigService', [
-    'init',
-  ]);
+export class NavItem implements NavItemDto {
+  get id(): string {
+    return this.dto.id;
+  }
 
-  it('should call init method', () => {
-    loadNavItems(navConfigServiceMock);
+  get appIframeUrl(): string {
+    return this.dto.appIframeUrl;
+  }
 
-    expect(navConfigServiceMock.init).toHaveBeenCalled();
-  });
+  get appPath(): string {
+    return this.dto.appPath;
+  }
 
-  it('should return a promise', () => {
-    const expected: any = new Promise(() => {});
+  get displayName(): string {
+    return this.dto.displayName;
+  }
 
-    navConfigServiceMock.init.and.returnValue(expected);
+  get active$(): Observable<boolean> {
+    return this.activation$;
+  }
 
-    const actual = loadNavItems(navConfigServiceMock);
-
-    expect(actual).toBe(expected);
-  });
-});
+  constructor(
+    private readonly dto: NavItemDto,
+    private readonly activation$: Observable<boolean>,
+  ) {}
+}

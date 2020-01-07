@@ -23,8 +23,9 @@
   <ng-container *ngFor="let item of config.children">
     <brna-menu-item-link
       *ngIf="!isContainer(item)"
-      [config]="item"
-      [active]="isActive(item)"
+      [caption]="item.caption"
+      [navItem]="item.navItem"
+      [highlighted]="isHighlighted(item)"
       [ngClass]="getQaClass(item)"
       class="item">
     </brna-menu-item-link>
@@ -32,7 +33,7 @@
       *ngIf="isContainer(item)"
       #expandableMenuItem
       [config]="item"
-      [active]="isActive(item)"
+      [highlighted]="isHighlighted(item)"
       [ngClass]="getQaClass(item)"
       (click)="onExpandableSubMenuItemClick(expandableMenuItem)"
       class="item">

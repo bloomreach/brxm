@@ -21,7 +21,7 @@
     display: block;
   }
 
-  .mat-icon.active {
+  .mat-icon.highlighted {
     display: none;
   }
 }
@@ -31,7 +31,7 @@
     display: none;
   }
 
-  .mat-icon.active {
+  .mat-icon.highlighted {
     display: block;
   }
 }
@@ -49,6 +49,15 @@
       width: 16px;
     }
   }
+
+  &.disabled {
+    cursor: default;
+
+    .mat-icon,
+    .caption {
+      opacity: .5;
+    }
+  }
 }
 
 .menu-item {
@@ -60,7 +69,7 @@
   padding-right: (2 * $menu-icon-margin);
 
   &::before {
-    background-color: $menu-active-text-color;
+    background-color: $menu-highlighted-text-color;
     content: '';
     height: 100%;
     left: 0;
@@ -83,7 +92,7 @@
     }
   }
 
-  &.active {
+  &.highlighted {
     @include showActiveIcon;
 
     &::before {
@@ -91,12 +100,12 @@
     }
 
     .mat-icon {
-      color: $menu-icon-active-secondary-color;
+      color: $menu-icon-highlighted-secondary-color;
       transition: color 300ms;
     }
 
     .caption {
-      color: $menu-active-text-color;
+      color: $menu-highlighted-text-color;
       transition: color 300ms;
     }
 
@@ -153,11 +162,11 @@
 // Specific styling for the bloomreach logo in the first item
 :host.home {
   .mat-icon,
-  .active .mat-icon {
+  .highlighted .mat-icon {
     color: $white;
   }
 
-  .active:hover .mat-icon {
+  .highlighted:hover .mat-icon {
     color: $menu-hover-text-color;
   }
 }

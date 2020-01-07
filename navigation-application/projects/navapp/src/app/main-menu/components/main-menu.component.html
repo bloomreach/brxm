@@ -22,7 +22,7 @@
       class="qa-busy-indicator">
     </mat-progress-bar>
   </div>
-  <div #topElements class="top-elements" [ngClass]="transitionClass$.value">
+  <div class="top-elements" [ngClass]="transitionClass$.value">
     <div #arrowUp
          class="arrow arrow-up"
          [class.arrow-visible]="moveUpEnabled()">
@@ -43,12 +43,13 @@
       <brna-top-level-menu-item *ngFor="let item of menuItems"
                                 [caption]="item.caption"
                                 [icon]="item.icon"
-                                [activeIcon]="item.icon  + '.active'"
+                                [highlightedIcon]="item.icon  + '.highlighted'"
                                 [collapsed]="collapsed"
                                 [pressed]="item === drawerMenuItem"
-                                [active]="isMenuItemActive(item)"
+                                [highlighted]="isMenuItemHighlighted(item)"
+                                [disabled]="isMenuItemDisabled(item) | async"
                                 [ngClass]="getQaClass(item)"
-                                (click)="onMenuItemClick($event, item)">
+                                (menuItemClick)="onMenuItemClick(item)">
       </brna-top-level-menu-item>
     </div>
   </div>
@@ -60,7 +61,7 @@
                               [pressed]="isHelpToolbarOpened"
                               [small]="true"
                               [ngClass]="getQaClass('help')"
-                              (click)="onHelpMenuItemClick($event)">
+                              (menuItemClick)="onHelpMenuItemClick()">
     </brna-top-level-menu-item>
 
     <brna-top-level-menu-item caption="{{ 'MENU_CONTAINER_USER_ACCOUNT' | translate }}"
@@ -69,7 +70,7 @@
                               [pressed]="isUserToolbarOpened"
                               [small]="true"
                               [ngClass]="getQaClass('user')"
-                              (click)="onUserMenuItemClick($event)">
+                              (menuItemClick)="onUserMenuItemClick()">
     </brna-top-level-menu-item>
 
     <div class="trigger qa-menu-trigger" (click)="toggle()">

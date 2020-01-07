@@ -19,7 +19,7 @@ import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { NavigationTrigger, NavItem, NavLocation } from '@bloomreach/navapp-communication';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 
 import { ClientAppMock } from '../client-app/models/client-app.mock';
 import { ClientAppService } from '../client-app/services/client-app.service';
@@ -29,13 +29,12 @@ import { ErrorHandlingService } from '../error-handling/services/error-handling.
 import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { AppSettings } from '../models/dto/app-settings.dto';
 import { AppSettingsMock } from '../models/dto/app-settings.mock';
-import { NavItemMock } from '../models/dto/nav-item.mock';
+import { NavItemMock } from '../models/nav-item.mock';
 import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
 
 import { APP_SETTINGS } from './app-settings';
 import { BusyIndicatorService } from './busy-indicator.service';
 import { ConnectionService } from './connection.service';
-import { NavItemService } from './nav-item.service';
 import { NavigationService } from './navigation.service';
 import { UrlMapperService } from './url-mapper.service';
 
@@ -63,7 +62,6 @@ describe('NavigationService', () => {
 
   let appSettingsMock: AppSettings;
   let locationMock: jasmine.SpyObj<Location>;
-  let navItemServiceMock: any;
   let clientAppServiceMock: jasmine.SpyObj<ClientAppService>;
   let menuStateServiceMock: jasmine.SpyObj<MenuStateService>;
   let busyIndicatorServiceMock: jasmine.SpyObj<BusyIndicatorService>;
@@ -93,10 +91,6 @@ describe('NavigationService', () => {
     locationMock.path.and.returnValue('');
     locationMock.isCurrentPathEqualTo.and.returnValue(false);
     locationMock.subscribe.and.callFake(cb => locationChangeFunction = cb);
-
-    navItemServiceMock = {
-      navItems: navItemsMock,
-    };
 
     childApi = jasmine.createSpyObj('ChildApi', {
       beforeNavigation: Promise.resolve(true),
@@ -171,7 +165,6 @@ describe('NavigationService', () => {
         { provide: ErrorHandlingService, useValue: errorHandlingServiceMock },
         { provide: Location, useValue: locationMock },
         { provide: MenuStateService, useValue: menuStateServiceMock },
-        { provide: NavItemService, useValue: navItemServiceMock },
         { provide: UrlMapperService, useValue: urlMapperServiceMock },
         { provide: TranslateService, useValue: translateServiceMock },
         { provide: NGXLogger, useValue: loggerMock },
@@ -181,6 +174,8 @@ describe('NavigationService', () => {
 
     service = TestBed.get(NavigationService);
     appSettingsMock = TestBed.get(APP_SETTINGS);
+
+    service.init(navItemsMock);
   });
 
   it('should not clear the app error during initial navigation', fakeAsync(() => {
@@ -331,6 +326,46 @@ describe('NavigationService', () => {
 
       expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(undefined, expectedError.message);
     }));
+  });
+
+  describe('nav item', () => {
+    let navItemActive: Subject<boolean>;
+
+    beforeEach(() => {
+      navItemActive = new Subject<boolean>();
+
+      const navItem = new NavItemMock(
+        {
+          id: 'item1',
+          appIframeUrl: 'http://domain.com/iframe1/url',
+          appPath: 'app/path/to/home',
+        },
+        navItemActive,
+      );
+
+      service.init([navItem]);
+      service.initialNavigation();
+    });
+
+    it('should not proceed the navigation process while nav item is not ready', () => {
+      expect(clientAppServiceMock.getApp).not.toHaveBeenCalled();
+      expect(childApi.beforeNavigation).not.toHaveBeenCalled();
+    });
+
+    it('should not proceed the navigation process if active$ emitted "false"', () => {
+      navItemActive.next(false);
+
+      expect(clientAppServiceMock.getApp).not.toHaveBeenCalled();
+      expect(childApi.beforeNavigation).not.toHaveBeenCalled();
+    });
+
+    it('should proceed the navigation process when nav item is ready', () => {
+      navItemActive.next(true);
+      navItemActive.complete();
+
+      expect(clientAppServiceMock.getApp).toHaveBeenCalled();
+      expect(childApi.beforeNavigation).toHaveBeenCalled();
+    });
   });
 
   describe('after initial navigation', () => {

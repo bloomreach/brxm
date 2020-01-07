@@ -30,7 +30,6 @@ import { ConfigResource } from '../models/dto/config-resource.dto';
 
 import { APP_SETTINGS } from './app-settings';
 import { ConnectionService } from './connection.service';
-import { NavItemService } from './nav-item.service';
 import { SiteService } from './site.service';
 
 interface Configuration {
@@ -47,21 +46,21 @@ export class NavConfigService {
     private readonly http: HttpClient,
     private readonly location: Location,
     private readonly connectionService: ConnectionService,
-    private readonly navItemService: NavItemService,
     private readonly siteService: SiteService,
     private readonly logger: NGXLogger,
     @Inject(APP_SETTINGS) private readonly appSettings: AppSettings,
   ) { }
 
-  init(): Promise<void> {
+  init(): Promise<NavItem[]> {
     return this.fetchAndMergeConfigurations()
       .then(({ navItems, sites, selectedSiteId }) => {
-        this.navItemService.navItems = navItems;
         this.siteService.sites = sites;
 
         if (selectedSiteId) {
           this.siteService.setSelectedSite(selectedSiteId);
         }
+
+        return navItems;
       });
   }
 

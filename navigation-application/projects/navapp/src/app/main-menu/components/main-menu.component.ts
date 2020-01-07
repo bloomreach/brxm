@@ -15,12 +15,19 @@
  */
 
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, ElementRef, HostBinding, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  HostBinding,
+  OnDestroy,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import { NavigationTrigger } from '@bloomreach/navapp-communication';
-import { BehaviorSubject, fromEvent, Observable, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { BehaviorSubject, fromEvent, Observable, of, Subject } from 'rxjs';
+import { map, startWith, takeUntil } from 'rxjs/operators';
 
-import { APP_BOOTSTRAPPED } from '../../bootstrap/app-bootstrapped';
 import { normalizeWheelEvent } from '../../helpers/normalize-wheel-event';
 import { BusyIndicatorService } from '../../services/busy-indicator.service';
 import { NavigationService } from '../../services/navigation.service';
@@ -43,7 +50,7 @@ import { MenuStateService } from '../services/menu-state.service';
     ]),
   ],
 })
-export class MainMenuComponent implements OnInit, OnDestroy {
+export class MainMenuComponent implements OnInit, AfterViewInit, OnDestroy {
   menuItems: MenuItem[] = [];
   isHelpToolbarOpened = false;
   isUserToolbarOpened = false;
@@ -57,7 +64,6 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   readonly menuOffsetTop$ = new BehaviorSubject(0);
   readonly transitionClass$ = new BehaviorSubject('onload-transition');
 
-  private readonly homeMenuItem: MenuItemLink;
   private readonly unsubscribe = new Subject();
 
   @ViewChild('arrowDown', { static: false })
@@ -76,7 +82,6 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     private readonly qaHelperService: QaHelperService,
     private readonly busyIndicatorService: BusyIndicatorService,
     private readonly navigationService: NavigationService,
-    @Inject(APP_BOOTSTRAPPED) private readonly appBootstrapped: Promise<void>,
     private readonly windowRef: WindowRef,
   ) { }
 
@@ -102,10 +107,11 @@ export class MainMenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.appBootstrapped.then(() => {
-      this.extractMenuItems();
-      this.initMenu();
-    });
+    this.menuItems = this.menuStateService.menu;
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => this.initMenu());
   }
 
   ngOnDestroy(): void {
@@ -163,29 +169,44 @@ export class MainMenuComponent implements OnInit, OnDestroy {
            this.height.available < this.getMenuHeight() - this.menuOffsetTop$.value;
   }
 
-  onMenuItemClick(event: MouseEvent, item: MenuItem): void {
-    event.stopImmediatePropagation();
+  onMenuItemClick(item: MenuItem): void {
     this.isHelpToolbarOpened = false;
     this.isUserToolbarOpened = false;
     this.selectMenuItem(item);
   }
 
-  onHelpMenuItemClick(event: MouseEvent): void {
-    event.stopImmediatePropagation();
+  onHelpMenuItemClick(): void {
     this.menuStateService.closeDrawer();
     this.isUserToolbarOpened = false;
     this.isHelpToolbarOpened = true;
   }
 
-  onUserMenuItemClick(event: MouseEvent): void {
-    event.stopImmediatePropagation();
+  onUserMenuItemClick(): void {
     this.menuStateService.closeDrawer();
     this.isHelpToolbarOpened = false;
     this.isUserToolbarOpened = true;
   }
 
-  selectMenuItem(item: MenuItem): void {
-    this.isUserToolbarOpened = false;
+  isMenuItemHighlighted(item: MenuItem): boolean {
+    return this.menuStateService.isMenuItemHighlighted(item);
+  }
+
+  isMenuItemDisabled(item: MenuItem): Observable<boolean> {
+    if (item instanceof MenuItemLink) {
+      return item.navItem.active$.pipe(
+        startWith(false),
+        map(x => !x),
+      );
+    }
+
+    return of(false);
+  }
+
+  getQaClass(item: MenuItem | string): string {
+    return this.qaHelperService.getMenuItemClass(item);
+  }
+
+  private selectMenuItem(item: MenuItem): void {
     if (item instanceof MenuItemLink) {
       this.navigationService.navigateByNavItem(item.navItem, NavigationTrigger.Menu);
       return;
@@ -194,24 +215,6 @@ export class MainMenuComponent implements OnInit, OnDestroy {
     if (item instanceof MenuItemContainer) {
       this.menuStateService.openDrawer(item);
     }
-  }
-
-  isMenuItemActive(item: MenuItem): boolean {
-    return this.menuStateService.isMenuItemActive(item);
-  }
-
-  getQaClass(item: MenuItem | string): string {
-    return this.qaHelperService.getMenuItemClass(item);
-  }
-
-  private extractMenuItems(): void {
-    const menu = this.menuStateService.menu;
-
-    if (menu.length === 0) {
-      return;
-    }
-
-    this.menuItems = menu;
   }
 
   private onResize(event: any): void {

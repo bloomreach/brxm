@@ -18,16 +18,14 @@ import { Location } from '@angular/common';
 import { Inject, Injectable } from '@angular/core';
 import { ChildConfig, NavItem } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
-import { BehaviorSubject, Observable, ReplaySubject, Subject } from 'rxjs';
-import { fromPromise } from 'rxjs/internal-compatibility';
-import { bufferTime, first, map, switchMap, tap } from 'rxjs/operators';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
+import { bufferTime, filter, first, map, mergeMap, publishReplay, refCount, take, takeUntil, tap } from 'rxjs/operators';
 
 import { CriticalError } from '../../error-handling/models/critical-error';
 import { Connection } from '../../models/connection.model';
 import { AppSettings } from '../../models/dto/app-settings.dto';
 import { FailedConnection } from '../../models/failed-connection.model';
 import { APP_SETTINGS } from '../../services/app-settings';
-import { NavItemService } from '../../services/nav-item.service';
 import { ClientApp } from '../models/client-app.model';
 
 interface ClientAppWithConfig {
@@ -37,20 +35,30 @@ interface ClientAppWithConfig {
 
 @Injectable()
 export class ClientAppService {
-  private readonly uniqueURLs = new BehaviorSubject<string[]>([]);
-  private readonly connectedApps: Map<string, ClientAppWithConfig> = new Map<string, ClientAppWithConfig>();
-  private readonly activeAppId = new BehaviorSubject<string>(undefined);
-  private readonly connectionCounter$ = new ReplaySubject<Connection>();
+  private readonly uniqueURLs$ = new BehaviorSubject<string[]>([]);
+  private readonly connection$ = new Subject<Connection>();
+  private readonly connectedAppWithConfig$: Observable<ClientAppWithConfig>;
   private readonly userActivityReceived$ = new Subject<ClientApp>();
+
+  private readonly connectedApps: Map<string, ClientAppWithConfig> = new Map<string, ClientAppWithConfig>();
+  private activeAppUrl: string;
+  private allAppsAreConnectedOrTimeout = false;
 
   constructor(
     @Inject(APP_SETTINGS) private readonly appSettings: AppSettings,
-    private readonly navItemService: NavItemService,
     private readonly logger: NGXLogger,
-  ) { }
+  ) {
+    this.connectedAppWithConfig$ = this.transformConnectionsToApps(this.connection$);
+  }
 
   get urls$(): Observable<string[]> {
-    return this.uniqueURLs.asObservable();
+    return this.uniqueURLs$.asObservable();
+  }
+
+  get appConnected$(): Observable<ClientApp> {
+    return this.connectedAppWithConfig$.pipe(
+      map(appWithConfig => appWithConfig.app),
+    );
   }
 
   get apps(): ClientApp[] {
@@ -58,13 +66,11 @@ export class ClientAppService {
   }
 
   get activeApp(): ClientApp {
-    const activeAppId = this.activeAppId.value;
-
-    if (!activeAppId) {
+    if (!this.activeAppUrl) {
       return undefined;
     }
 
-    return this.getApp(activeAppId);
+    return this.getApp(this.activeAppUrl);
   }
 
   get doesActiveAppSupportSites(): boolean {
@@ -77,33 +83,35 @@ export class ClientAppService {
     return this.doesAppSupportSites(this.activeApp);
   }
 
-  init(): Promise<void> {
-    const navItems = this.navItemService.navItems;
+  init(navItems: NavItem[]): Promise<void> {
     const uniqueURLs = this.filterUniqueURLs(navItems);
-    this.uniqueURLs.next(uniqueURLs);
+    this.uniqueURLs$.next(uniqueURLs);
 
     this.logger.debug(`Client app iframes are expected to be loaded (${uniqueURLs.length})`, uniqueURLs);
 
-    return this.uniqueURLs.pipe(
-      switchMap(urls => this.waitForConnections(urls.length)),
-      map(connections => this.discardFailedConnections(connections)),
-      map(connections => connections.map(c => this.createClientApp(c))),
-      switchMap(apps => fromPromise(this.fetchAppConfigs(apps))),
-      tap(appsWithConfigs => appsWithConfigs.forEach(awc => this.connectedApps.set(awc.app.url, awc))),
-      first(),
-    ).toPromise() as Promise<any>;
+    return this.waitForAllAppsToBeConnectedOrTimeout(
+      this.connectedAppWithConfig$,
+      uniqueURLs.length,
+      this.appSettings.iframesConnectionTimeout * 1.5,
+    ).toPromise().then(() => {
+      this.allAppsAreConnectedOrTimeout = true;
+    });
   }
 
-  activateApplication(appId: string): void {
-    if (!this.connectedApps.has(appId)) {
-      throw new Error(`An attempt to active unknown app '${appId}'`);
+  activateApplication(appUrl: string): void {
+    if (!this.connectedApps.has(appUrl)) {
+      throw new Error(`An attempt to active unknown app '${appUrl}'`);
     }
 
-    this.activeAppId.next(appId);
+    this.activeAppUrl = appUrl;
   }
 
   addConnection(connection: Connection): void {
-    const uniqueURLs = this.uniqueURLs.value;
+    if (this.allAppsAreConnectedOrTimeout) {
+      throw new Error('An attempt to register a connection after all expected connections are registered or timeout has expired');
+    }
+
+    const uniqueURLs = this.uniqueURLs$.value;
     const connectionUrl = Location.stripTrailingSlash(connection.appUrl);
 
     const url = uniqueURLs.find(x => Location.stripTrailingSlash(x) === connectionUrl);
@@ -112,7 +120,6 @@ export class ClientAppService {
       const message = `An attempt to register a connection to an unknown url '${connection.appUrl}'`;
 
       this.logger.error(message);
-      this.connectionCounter$.next(new FailedConnection(connection.appUrl, message));
 
       return;
     }
@@ -126,13 +133,13 @@ export class ClientAppService {
 
     this.logger.debug(`Connection is established to the iframe '${url}'`);
 
-    this.connectionCounter$.next(connection);
+    this.connection$.next(connection);
   }
 
   getApp(appUrl: string): ClientApp {
     const app = this.connectedApps.has(appUrl);
     if (!app) {
-      throw new Error(`Unable to find the app with id = ${appUrl}`);
+      throw new Error(`Unable to find the app '${appUrl}'`);
     }
 
     return this.connectedApps.get(appUrl).app;
@@ -141,7 +148,7 @@ export class ClientAppService {
   getAppConfig(appUrl: string): ChildConfig {
     const app = this.connectedApps.has(appUrl);
     if (!app) {
-      throw new Error(`Unable to find the app with id = ${appUrl}`);
+      throw new Error(`Unable to find the app '${appUrl}'`);
     }
 
     return this.connectedApps.get(appUrl).config;
@@ -165,71 +172,81 @@ export class ClientAppService {
     return this.getAppConfig(app.url).showSiteDropdown || false;
   }
 
-  private waitForConnections(expectedNumber: number): Observable<Connection[]> {
-    return this.connectionCounter$.pipe(
-      bufferTime(this.appSettings.iframesConnectionTimeout * 1.5, undefined, expectedNumber),
-      first(),
+  private transformConnectionsToApps(connection$: Observable<Connection>): Observable<ClientAppWithConfig> {
+    return connection$.pipe(
+      filter(connection => !(connection instanceof FailedConnection)),
+      mergeMap(connection => this.createClientAppWithConfig(connection)),
+      tap(appWithConfig => this.connectedApps.set(appWithConfig.app.url, appWithConfig)),
+      publishReplay(),
+      refCount(),
     );
   }
 
-  private fetchAppConfigs(apps: ClientApp[]): Promise<ClientAppWithConfig[]> {
-    const configPromises: Promise<ClientAppWithConfig>[] = [];
+  private async createClientAppWithConfig(connection: Connection): Promise<ClientAppWithConfig> {
+    const app = new ClientApp(connection.appUrl, connection.api);
 
-    const fetchConfig = (app: ClientApp) => this.fetchAppConfig(app).then(config => ({ app, config }));
+    const config = await this.fetchAppConfig(app);
 
-    apps.forEach(app => configPromises.push(fetchConfig(app)));
-
-    return Promise.all(configPromises);
+    return {
+      app,
+      config,
+    };
   }
 
-  private fetchAppConfig(app: ClientApp): Promise<ChildConfig> {
+  private async fetchAppConfig(app: ClientApp): Promise<ChildConfig> {
     this.logger.debug(`Fetching app config for '${app.url}'`);
+
+    const fallbackConfig = { apiVersion: 'unknown' };
 
     if (!app.api.getConfig) {
       this.logger.warn(`getConfig() method is not defined in api for the app '${app.url}'`);
+
+      return fallbackConfig;
     }
 
-    return app.api.getConfig ?
-      app.api.getConfig().then(
-        config => {
-          this.logger.debug(`App config is fetched for '${app.url}'`, config);
+    try {
+      let config = await app.api.getConfig();
 
-          if (!config) {
-            this.logger.warn(`The app '${app.url}' returned an empty config`);
-            config = { apiVersion: 'unknown' };
-          }
+      this.logger.debug(`App config is fetched for '${app.url}'`, config);
 
-          if (!config.apiVersion) {
-            this.logger.warn(`The app '${app.url}' returned a config with an empty version`);
-            config.apiVersion = 'unknown';
-          }
+      if (!config) {
+        this.logger.warn(`The app '${app.url}' returned an empty config`);
+        config = fallbackConfig;
+      }
 
-          this.logger.info(`Connected API '${app.url}' version ${config.apiVersion}`);
+      if (!config.apiVersion) {
+        this.logger.warn(`The app '${app.url}' returned a config with an empty version`);
+        config.apiVersion = fallbackConfig.apiVersion;
+      }
 
-          return config;
-        },
-        e => {
-          this.logger.warn(`Unable to load config for '${app.url}'. Reason: '${e}'.`);
+      this.logger.info(`Connected API '${app.url}' version ${config.apiVersion}`);
 
-          return { apiVersion: 'unknown' };
-        }) :
-      Promise.resolve({ apiVersion: 'unknown' } as ChildConfig);
-  }
+      return config;
+    } catch (e) {
+      this.logger.warn(`Unable to load config for '${app.url}'. Reason: '${e}'.`);
 
-  private discardFailedConnections(connections: Connection[]): Connection[] {
-    const successfulConnections = connections.filter(c => !(c instanceof FailedConnection));
-
-    if (successfulConnections.length === 0) {
-      throw new CriticalError(
-        'ERROR_UNABLE_TO_CONNECT_TO_CLIENT_APP',
-        'All connections to the client applications are failed',
-      );
+      return { apiVersion: 'unknown' };
     }
-
-    return successfulConnections;
   }
 
-  private createClientApp(connection: Connection): ClientApp {
-    return new ClientApp(connection.appUrl, connection.api);
+  private waitForAllAppsToBeConnectedOrTimeout(
+    connectedApp$: Observable<ClientAppWithConfig>,
+    expectedNumber: number,
+    timeout: number,
+  ): Observable<ClientAppWithConfig[]> {
+    return connectedApp$.pipe(
+      bufferTime(timeout, undefined, expectedNumber),
+      first(),
+      tap(apps => {
+        if (apps.length > 0) {
+          return;
+        }
+
+        throw new CriticalError(
+          'ERROR_UNABLE_TO_CONNECT_TO_CLIENT_APP',
+          'All connections to the client applications have failed failed',
+        );
+      }),
+    );
   }
 }

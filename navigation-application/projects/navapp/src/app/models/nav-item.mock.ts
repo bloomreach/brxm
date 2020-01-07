@@ -1,4 +1,4 @@
-/*
+/*!
  * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,6 +14,20 @@
  * limitations under the License.
  */
 
-import { NavConfigService } from '../services/nav-config.service';
+import { Observable, of } from 'rxjs';
 
-export const loadNavItems = (navConfigService: NavConfigService) => navConfigService.init();
+import { NavItem } from './nav-item.model';
+
+export class NavItemMock extends NavItem {
+  constructor(initObject = {}, activation?: Observable<boolean>) {
+    const dto = {
+      id: 'testNavItemId',
+      displayName: 'testDisplayName',
+      appIframeUrl: 'https://test.url',
+      appPath: 'testPath',
+      ...initObject,
+    };
+
+    super(dto, activation || of(true));
+  }
+}

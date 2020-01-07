@@ -17,6 +17,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
+import { NavItem } from '../../models/nav-item.model';
 import { NavItemService } from '../../services/nav-item.service';
 import { MenuItemContainer } from '../models/menu-item-container.model';
 import { MenuItemLink } from '../models/menu-item-link.model';
@@ -61,8 +62,7 @@ export class MenuStateService {
     return this.currentDrawerMenuItem;
   }
 
-  init(): void {
-    const navItems = this.navItemService.navItems;
+  init(navItems: NavItem[]): void {
     this.menuItems = this.menuBuilderService.buildMenu(navItems);
     this.homeMenuItemLink = this.findHomeMenuItemLink(this.menuItems);
   }
@@ -81,7 +81,7 @@ export class MenuStateService {
     this.setActiveItem(navItem.id);
   }
 
-  isMenuItemActive(item: MenuItem): boolean {
+  isMenuItemHighlighted(item: MenuItem): boolean {
     const currentBreadcrumbs = this.activePath.value;
 
     return currentBreadcrumbs.some(x => x === item);

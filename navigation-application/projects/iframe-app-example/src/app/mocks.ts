@@ -550,21 +550,25 @@ export const mockSites: Site[] = [
     siteId: -1,
     accountId: 1,
     name: 'www.company.com',
+    isNavappEnabled: true,
     subGroups: [
       {
         siteId: 1,
         accountId: 1,
         name: 'UK & Germany',
+        isNavappEnabled: true,
         subGroups: [
           {
             siteId: 2,
             accountId: 1,
             name: 'Office UK',
+            isNavappEnabled: true,
           },
           {
             siteId: 3,
             accountId: 1,
             name: 'Office DE',
+            isNavappEnabled: true,
           },
         ],
       },
@@ -572,21 +576,25 @@ export const mockSites: Site[] = [
         siteId: 4,
         accountId: 1,
         name: 'Europe',
+        isNavappEnabled: true,
         subGroups: [
           {
             siteId: 5,
             accountId: 1,
             name: 'Office UK',
+            isNavappEnabled: true,
           },
           {
             siteId: 6,
             accountId: 1,
             name: 'Office DE',
+            isNavappEnabled: true,
           },
           {
             siteId: 7,
             accountId: 1,
             name: 'Office FR',
+            isNavappEnabled: true,
           },
         ],
       },
@@ -594,21 +602,25 @@ export const mockSites: Site[] = [
         siteId: 8,
         accountId: 1,
         name: 'All sites',
+        isNavappEnabled: true,
         subGroups: [
           {
             siteId: 9,
             accountId: 1,
             name: 'Office UK',
+            isNavappEnabled: true,
           },
           {
             siteId: 10,
             accountId: 1,
             name: 'Office DE',
+            isNavappEnabled: true,
           },
           {
             siteId: 11,
             accountId: 1,
             name: 'Office FR',
+            isNavappEnabled: true,
           },
         ],
       },
@@ -617,68 +629,80 @@ export const mockSites: Site[] = [
   {
     siteId: -1,
     accountId: 2,
-    name:
-      'An example company that has a very long name and a subgroup with many items',
+    name: 'An example company that has a very long name and a subgroup with many items',
+    isNavappEnabled: true,
     subGroups: [
       {
         siteId: 12,
         accountId: 2,
         name: 'Sub company 001',
+        isNavappEnabled: true,
       },
       {
         siteId: 13,
         accountId: 2,
         name: 'Sub company 002',
+        isNavappEnabled: true,
       },
       {
         siteId: 14,
         accountId: 2,
         name: 'Sub company 003',
+        isNavappEnabled: true,
       },
       {
         siteId: 15,
         accountId: 2,
         name: 'Sub company 004',
+        isNavappEnabled: true,
       },
       {
         siteId: 16,
         accountId: 2,
         name: 'Sub company 005',
+        isNavappEnabled: true,
       },
       {
         siteId: 17,
         accountId: 2,
         name: 'Sub company 006',
+        isNavappEnabled: true,
       },
       {
         siteId: 18,
         accountId: 2,
         name: 'Sub company 007',
+        isNavappEnabled: true,
       },
       {
         siteId: 19,
         accountId: 2,
         name: 'Sub company 008',
+        isNavappEnabled: true,
       },
       {
         siteId: 20,
         accountId: 2,
         name: 'Sub company 009',
+        isNavappEnabled: true,
       },
       {
         siteId: 21,
         accountId: 2,
         name: 'Sub company 010',
+        isNavappEnabled: true,
       },
       {
         siteId: 22,
         accountId: 2,
         name: 'Sub company 011',
+        isNavappEnabled: true,
       },
       {
         siteId: 23,
         accountId: 2,
         name: 'Sub company 012',
+        isNavappEnabled: true,
       },
     ],
   },
@@ -686,51 +710,61 @@ export const mockSites: Site[] = [
     siteId: -1,
     accountId: 3,
     name: 'Name\twith\ttabs',
+    isNavappEnabled: true,
   },
   {
     siteId: -1,
     accountId: 4,
     name: '٩(̾●̮̮̃̾•̃̾)۶',
+    isNavappEnabled: true,
   },
   {
     siteId: -1,
     accountId: 5,
     name: '°º¤ø,¸¸,ø¤º°`°º¤ø,¸,ø¤°º¤ø,¸¸,ø¤º°`°º¤ø,¸',
+    isNavappEnabled: true,
   },
   {
     siteId: -1,
     accountId: 6,
     name: '^⨀ᴥ⨀^',
+    isNavappEnabled: true,
   },
   {
     siteId: -1,
     accountId: 7,
     name: 'Name\twith\ttabs',
+    isNavappEnabled: true,
   },
   {
     siteId: -1,
     accountId: 8,
     name: 'myapp.com',
+    isNavappEnabled: true,
     subGroups: [
       {
         siteId: 24,
         accountId: 8,
         name: 'myapp.com.1',
+        isNavappEnabled: true,
         subGroups: [
           {
             siteId: 25,
             accountId: 8,
             name: 'myapp.com.1.1',
+            isNavappEnabled: true,
             subGroups: [
               {
                 siteId: 26,
                 accountId: 8,
                 name: 'myapp.com.1.1.1',
+                isNavappEnabled: true,
                 subGroups: [
                   {
                     siteId: 27,
                     accountId: 8,
                     name: 'myapp.com.1.1.1.1',
+                    isNavappEnabled: true,
                   },
                 ],
               },
