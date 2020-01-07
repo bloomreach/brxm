@@ -26,8 +26,8 @@ To get it working, we should update the UrlRewriter [rule](https://documentation
 ```
 
 ## Links
-- [React-based application](https://code.onehippo.org/cms-community/bloomreach-spa-sdk/tree/release/14.0/examples/react-csr);
-- [Next.js-based application](https://code.onehippo.org/cms-community/bloomreach-spa-sdk/tree/release/14.0/examples/react-ssr).
+- [React-based application](https://code.onehippo.org/cms-community/bloomreach-spa-sdk/tree/bloomreach-spa-sdk-14.0.0/examples/react-csr);
+- [Next.js-based application](https://code.onehippo.org/cms-community/bloomreach-spa-sdk/tree/bloomreach-spa-sdk-14.0.0/examples/react-ssr).
 
 ## License
 Published under [Apache 2.0](http://www.apache.org/licenses/LICENSE-2.0) license.
