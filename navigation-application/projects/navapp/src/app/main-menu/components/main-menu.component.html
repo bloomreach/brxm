@@ -15,31 +15,18 @@
   -->
 
 <div class="static-menu">
-  <div #progressBar class="progress-bar">
+  <div class="progress-bar">
     <mat-progress-bar
       *ngIf="isBusyIndicatorVisible"
       mode="indeterminate"
       class="qa-busy-indicator">
     </mat-progress-bar>
   </div>
-  <div class="top-elements" [ngClass]="transitionClass$.value">
-    <div #arrowUp
-         class="arrow arrow-up"
-         [class.arrow-visible]="moveUpEnabled()">
-      <mat-icon svgIcon="chevron_up"></mat-icon>
+  <div class="top-elements">
+    <div [ngClass]="getQaClass('home')" class="home">
+      <mat-icon svgIcon="br-logo"></mat-icon>
     </div>
-    <div #arrowDown
-         class="arrow arrow-down"
-         [class.arrow-visible]="moveDownEnabled()"
-         [style.bottom.px]="height.bottom">
-      <mat-icon svgIcon="chevron_down"></mat-icon>
-    </div>
-    <div #menu
-      class="menu"
-      [style.transform]="'translate3d(0, -' + menuOffsetTop$.value + 'px, 0)'">
-      <div [ngClass]="getQaClass('home')" class="home">
-        <mat-icon svgIcon="br-logo"></mat-icon>
-      </div>
+    <brna-menu-scroll class="scroll-box">
       <brna-top-level-menu-item *ngFor="let item of menuItems"
                                 [caption]="item.caption"
                                 [icon]="item.icon"
@@ -51,10 +38,10 @@
                                 [ngClass]="getQaClass(item)"
                                 (menuItemClick)="onMenuItemClick(item)">
       </brna-top-level-menu-item>
-    </div>
+    </brna-menu-scroll>
   </div>
 
-  <div #bottomElements class="bottom-elements">
+  <div class="bottom-elements">
     <brna-top-level-menu-item caption="{{ 'MENU_CONTAINER_HELP' | translate }}"
                               icon="help"
                               [collapsed]="collapsed"
