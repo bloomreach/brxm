@@ -19,7 +19,7 @@ import { Inject, Injectable } from '@angular/core';
 import { ChildConfig, NavItem } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { bufferTime, filter, first, map, mergeMap, publishReplay, refCount, take, takeUntil, tap } from 'rxjs/operators';
+import { bufferTime, filter, first, map, mergeMap, publishReplay, refCount,  tap } from 'rxjs/operators';
 
 import { CriticalError } from '../../error-handling/models/critical-error';
 import { Connection } from '../../models/connection.model';
@@ -43,6 +43,8 @@ export class ClientAppService {
   private readonly connectedApps: Map<string, ClientAppWithConfig> = new Map<string, ClientAppWithConfig>();
   private activeAppUrl: string;
   private allAppsAreConnectedOrTimeout = false;
+
+  allAppsAreConnectedOrTimeout$: Promise<ClientAppWithConfig[]>;
 
   constructor(
     @Inject(APP_SETTINGS) private readonly appSettings: AppSettings,
@@ -83,19 +85,21 @@ export class ClientAppService {
     return this.doesAppSupportSites(this.activeApp);
   }
 
-  init(navItems: NavItem[]): Promise<void> {
+  async init(navItems: NavItem[]): Promise<void> {
     const uniqueURLs = this.filterUniqueURLs(navItems);
     this.uniqueURLs$.next(uniqueURLs);
 
     this.logger.debug(`Client app iframes are expected to be loaded (${uniqueURLs.length})`, uniqueURLs);
 
-    return this.waitForAllAppsToBeConnectedOrTimeout(
+    this.allAppsAreConnectedOrTimeout$ = this.waitForAllAppsToBeConnectedOrTimeout(
       this.connectedAppWithConfig$,
       uniqueURLs.length,
       this.appSettings.iframesConnectionTimeout * 1.5,
-    ).toPromise().then(() => {
-      this.allAppsAreConnectedOrTimeout = true;
-    });
+    ).toPromise();
+
+    await this.allAppsAreConnectedOrTimeout$;
+
+    this.allAppsAreConnectedOrTimeout = true;
   }
 
   activateApplication(appUrl: string): void {

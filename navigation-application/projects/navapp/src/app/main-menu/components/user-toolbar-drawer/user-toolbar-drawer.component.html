@@ -18,7 +18,10 @@
   <h1 class="header qa-usersettings-username">{{ userName }}</h1>
   <div class="qa-usersettings-email">{{ email }}</div>
   <div class="logout">
-    <a href="#" (click)="logout($event)" class="logout-link qa-usersettings-logout">{{ 'LOGOUT' | translate }}</a>
+    <a href="#"
+       (click)="logout($event)"
+       [class.disabled]="logoutDisabled"
+       class="logout-link qa-usersettings-logout">{{ 'LOGOUT' | translate }}</a>
   </div>
 </div>
 <div class="window-content-cover"></div>
