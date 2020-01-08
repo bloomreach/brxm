@@ -632,6 +632,16 @@
     "MENU_CONTAINER_LIBRARY" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "ERROR_UNABLE_TO_PERFORM_SILENT_LOGIN" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
