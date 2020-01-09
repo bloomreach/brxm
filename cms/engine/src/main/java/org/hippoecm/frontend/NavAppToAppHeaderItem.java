@@ -86,7 +86,7 @@ public class NavAppToAppHeaderItem extends HippoHeaderItem {
     }
 
     private String getNavAppCommunicationResourcePrefix() {
-        return System.getProperty(NAVAPP_COMMUNICATION_LOCATION, null) == null ? "navapp/" : "";
+        return System.getProperty(NAVAPP_COMMUNICATION_LOCATION, null) == null ? "angular/navapp/" : "";
     }
 
 
