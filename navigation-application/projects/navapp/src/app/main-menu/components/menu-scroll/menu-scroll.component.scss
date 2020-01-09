@@ -30,7 +30,11 @@
   }
 
   &.wheel-transition .content {
-    transition: transform .5s ease-in-out;
+    transition: transform .5s ease-out;
+  }
+
+  &.no-transition .content {
+    transition: none;
   }
 }
 

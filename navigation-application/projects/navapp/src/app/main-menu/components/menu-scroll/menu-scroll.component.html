@@ -16,13 +16,13 @@
 
 <div *ngIf="isScrollableUp"
      (click)="onScrollUpButtonClick($event)"
-     [@animateScrollUpButton]="true"
+     @animateScrollUpButton
      class="arrow arrow-up">
   <mat-icon svgIcon="chevron_up"></mat-icon>
 </div>
 <div *ngIf="isScrollableDown"
      (click)="onScrollDownButtonClick($event)"
-     [@animateScrollDownButton]="true"
+     @animateScrollDownButton
      class="arrow arrow-down">
   <mat-icon svgIcon="chevron_down"></mat-icon>
 </div>

@@ -136,8 +136,8 @@ export class MenuScrollComponent implements AfterViewInit {
       return;
     }
 
-    this.transitionClass = 'wheel-transition';
     const normalized = normalizeWheelEvent(event);
+    this.transitionClass = normalized.wheel ? 'wheel-transition' : 'no-transition';
     this.position = this.position + normalized.y;
   }
 
