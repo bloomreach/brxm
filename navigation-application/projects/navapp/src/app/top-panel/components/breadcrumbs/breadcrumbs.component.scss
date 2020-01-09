@@ -45,7 +45,7 @@
     }
 
     &:not(.has-suffix) {
-      font-weight: $font-weight-semibold;
+      font-weight: $font-weight-bold;
     }
 
     &:hover.has-suffix {
@@ -55,7 +55,7 @@
   }
 
   &.suffix {
-    font-weight: $font-weight-semibold;
+    font-weight: $font-weight-bold;
 
     > span {
       opacity: 1;
