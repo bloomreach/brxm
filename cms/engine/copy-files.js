@@ -17,7 +17,7 @@
 
 const fs = require('file-system');
 
-const targetDir = 'target/classes/navapp';
+const targetDir = 'target/classes/angular/navapp';
 
 // ----------------------------------------------------------------------------
 // Files needed for the Navigation Application

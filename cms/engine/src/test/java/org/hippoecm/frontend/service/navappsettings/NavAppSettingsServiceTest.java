@@ -461,7 +461,7 @@ public class NavAppSettingsServiceTest {
         assertThat(navConfigResources.get(0).getUrl(), is(URI.create(NAVIGATIONITEMS_ENDPOINT)));
         assertThat(appSettings.getInitialPath(), is("/"));
         assertThat(appSettings.getLogLevel(), is(OFF));
-        assertThat(appSettings.getNavAppResourceLocation(), is(URI.create("navapp")));
+        assertThat(appSettings.getNavAppResourceLocation(), is(URI.create("angular/navapp")));
         assertThat(appSettings.isCmsServingNavAppResources(), is(true));
     }
 

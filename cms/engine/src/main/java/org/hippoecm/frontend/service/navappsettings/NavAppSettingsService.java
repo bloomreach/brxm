@@ -160,7 +160,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
 
     private AppSettings createAppSettings(String initialPath, boolean localLogin, String logLevelQueryParamString) {
 
-        final URI cmsNavAppResourceUrl = URI.create("navapp");
+        final URI cmsNavAppResourceUrl = URI.create("angular/navapp");
         // It is assumed that the web.xml contains a servlet mapping for /navapp and that
         // the ResourceServlet is being used to serve the resources inside of that directory.
         // When running mvn package the files needed for the navapp (and navigation-communication)
