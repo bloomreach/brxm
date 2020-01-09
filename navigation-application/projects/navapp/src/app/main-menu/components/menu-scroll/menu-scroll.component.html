@@ -27,7 +27,7 @@
   <mat-icon svgIcon="chevron_down"></mat-icon>
 </div>
 <div #content
-     [style.transform]="'translate3d(0, -' + position + 'px, 0)'"
+     [style.transform]="'translateY(-' + position + 'px)'"
      (wheel)="onContentWheel($event)"
      class="content">
   <ng-content></ng-content>

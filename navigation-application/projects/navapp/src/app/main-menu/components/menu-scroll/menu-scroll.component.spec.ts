@@ -101,7 +101,7 @@ describe('MenuScrollComponent', () => {
 
       contentDe.triggerEventHandler('wheel', event);
 
-      expect(contentDe.styles.transform).toBe('translate3d(0, -0px, 0)');
+      expect(contentDe.styles.transform).toBe('translateY(-0px)');
     });
   });
 
@@ -188,7 +188,7 @@ describe('MenuScrollComponent', () => {
 
       tick();
 
-      expect(contentDe.styles.transform).toBe('translate3d(0, -86px, 0)');
+      expect(contentDe.styles.transform).toBe('translateY(-86px)');
     }));
 
     it('should prevent default action if content is scrolled', () => {
@@ -209,7 +209,7 @@ describe('MenuScrollComponent', () => {
 
       tick();
 
-      expect(contentDe.styles.transform).toBe('translate3d(0, -0px, 0)');
+      expect(contentDe.styles.transform).toBe('translateY(-0px)');
     }));
 
     it('should scroll the content', fakeAsync(() => {
@@ -219,7 +219,7 @@ describe('MenuScrollComponent', () => {
 
       tick();
 
-      expect(contentDe.styles.transform).toBe('translate3d(0, -10px, 0)');
+      expect(contentDe.styles.transform).toBe('translateY(-10px)');
     }));
 
     describe('when content scrolled 10px down', () => {
@@ -250,7 +250,7 @@ describe('MenuScrollComponent', () => {
 
         tick();
 
-        expect(contentDe.styles.transform).toBe('translate3d(0, -0px, 0)');
+        expect(contentDe.styles.transform).toBe('translateY(-0px)');
       }));
 
       it('should scroll step down if scroll down button is clicked', fakeAsync(() => {
@@ -262,7 +262,7 @@ describe('MenuScrollComponent', () => {
 
         tick();
 
-        expect(contentDe.styles.transform).toBe('translate3d(0, -96px, 0)');
+        expect(contentDe.styles.transform).toBe('translateY(-96px)');
       }));
 
       it('should scroll the content up', fakeAsync(() => {
@@ -277,7 +277,7 @@ describe('MenuScrollComponent', () => {
 
         tick();
 
-        expect(contentDe.styles.transform).toBe('translate3d(0, -8px, 0)');
+        expect(contentDe.styles.transform).toBe('translateY(-8px)');
       }));
 
       it('should scroll the content down', fakeAsync(() => {
@@ -287,7 +287,7 @@ describe('MenuScrollComponent', () => {
 
         tick();
 
-        expect(contentDe.styles.transform).toBe('translate3d(0, -20px, 0)');
+        expect(contentDe.styles.transform).toBe('translateY(-20px)');
       }));
     });
 
@@ -324,7 +324,7 @@ describe('MenuScrollComponent', () => {
 
         tick();
 
-        expect(contentDe.styles.transform).toBe('translate3d(0, -264px, 0)');
+        expect(contentDe.styles.transform).toBe('translateY(-264px)');
       }));
 
       it('should scroll the content up', fakeAsync(() => {
@@ -339,7 +339,7 @@ describe('MenuScrollComponent', () => {
 
         tick();
 
-        expect(contentDe.styles.transform).toBe('translate3d(0, -340px, 0)');
+        expect(contentDe.styles.transform).toBe('translateY(-340px)');
       }));
 
       it('should scroll the content down', fakeAsync(() => {
@@ -349,7 +349,7 @@ describe('MenuScrollComponent', () => {
 
         tick();
 
-        expect(contentDe.styles.transform).toBe('translate3d(0, -350px, 0)');
+        expect(contentDe.styles.transform).toBe('translateY(-350px)');
       }));
 
       describe('when container\'s height is increased due to window resize', () => {
@@ -366,7 +366,7 @@ describe('MenuScrollComponent', () => {
         }));
 
         it('should scroll content up', () => {
-          expect(contentDe.styles.transform).toBe('translate3d(0, -300px, 0)');
+          expect(contentDe.styles.transform).toBe('translateY(-300px)');
         });
       });
     });
