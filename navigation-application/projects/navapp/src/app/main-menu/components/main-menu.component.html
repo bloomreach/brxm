@@ -26,7 +26,7 @@
     <div [ngClass]="getQaClass('home')" class="home">
       <mat-icon svgIcon="br-logo"></mat-icon>
     </div>
-    <brna-menu-scroll class="scroll-box">
+    <brna-menu-scroll>
       <brna-top-level-menu-item *ngFor="let item of menuItems"
                                 [caption]="item.caption"
                                 [icon]="item.icon"

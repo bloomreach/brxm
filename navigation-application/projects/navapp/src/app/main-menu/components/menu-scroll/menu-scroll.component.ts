@@ -15,8 +15,7 @@
  */
 
 import { animate, group, style, transition, trigger } from '@angular/animations';
-import { AfterViewInit, Component, ElementRef, HostBinding, HostListener, OnDestroy, ViewChild } from '@angular/core';
-import { Subject } from 'rxjs';
+import { AfterViewInit, Component, ElementRef, HostBinding, HostListener, ViewChild } from '@angular/core';
 
 import { normalizeWheelEvent } from '../../../helpers/normalize-wheel-event';
 
@@ -59,14 +58,13 @@ import { normalizeWheelEvent } from '../../../helpers/normalize-wheel-event';
     ]),
   ],
 })
-export class MenuScrollComponent implements AfterViewInit, OnDestroy {
+export class MenuScrollComponent implements AfterViewInit {
   @ViewChild('content', { static: false })
   readonly content: ElementRef<HTMLElement>;
 
   @HostBinding('class')
-  transitionClass = 'onload-transition';
+  transitionClass = '';
 
-  private readonly unsubscribe = new Subject();
   private readonly occupiedHeight = 64; // The height occupied by arrow buttons
 
   private offsetTop = 0;
@@ -115,11 +113,6 @@ export class MenuScrollComponent implements AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     setTimeout(() => this.updateAvailableAndContentHeight());
-  }
-
-  ngOnDestroy(): void {
-    this.unsubscribe.next();
-    this.unsubscribe.complete();
   }
 
   onScrollUpButtonClick(event: MouseEvent): void {
