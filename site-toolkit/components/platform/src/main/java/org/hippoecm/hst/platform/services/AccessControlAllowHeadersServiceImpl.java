@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,13 +36,13 @@ public class AccessControlAllowHeadersServiceImpl implements AccessControlAllowH
         HippoServiceRegistry.unregister(this, AccessControlAllowHeadersService.class);
     }
 
-    private final Map<String, List<String>> allowedHeadersMap = new HashMap();
+    private final Map<String, List<String>> allowedHeadersMap = new HashMap<>();
 
     @Override
     public String getAllowedHeadersString() {
         return allowedHeadersMap.values().stream()
                 .flatMap(Collection::stream)
-                .filter(s -> StringUtils.isNotBlank(s))
+                .filter(StringUtils::isNotBlank)
                 .distinct()
                 .sorted()
                 .collect(Collectors.joining(", "));
@@ -55,13 +55,8 @@ public class AccessControlAllowHeadersServiceImpl implements AccessControlAllowH
 
     @Override
     public List<String> getAllowedHeaders(final String module) {
-        final List<String> list = allowedHeadersMap.get(module);
-        if (list == null) {
-            return null;
-        }
-        return Collections.unmodifiableList(list);
+        return allowedHeadersMap.get(module);
     }
-
 
     @Override
     public void setAllowedHeaders(final String module, final List<String> allowedHeaders) {

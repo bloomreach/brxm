@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,8 +24,6 @@ import java.util.stream.Stream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.google.common.net.HttpHeaders;
-
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.container.header.AccessControlAllowHeadersService;
@@ -46,12 +44,14 @@ import static org.springframework.http.HttpHeaders.VARY;
 
 /**
  * <p> Note that the hst:responseheaders configurable on VirtualHost, Mount or SitemapItem already have been written to
- * the response. If the headers ACCESS_CONTROL_ALLOW_METHODS, ACCESS_CONTROL_ALLOW_HEADERS are already set we combine
+ * the response.<br/>
+ * See HstDelegateeFilterBean#writeDefaultResponseHeaders(...)).<br/>
+ * If the headers ACCESS_CONTROL_ALLOW_METHODS, ACCESS_CONTROL_ALLOW_HEADERS are already set we combine
  * these header values. Although according the http spec (see below) adding headers should be allowed, it is cleaner to
  * merge them into one header name and remove duplicates. If the header ACCESS_CONTROL_MAX_AGE is already set, we do not
- * reset it to one day like we do by default with this CorsSupportValve </p> <p> Note that if the hst:responseheaders
- * already SETs a certain header name, for example "Access-Control-Allow-Methods", if should not matter that we add the
- * same header again, possibly with overlapping values <p>
+ * reset it to one day like we do by default with this CorsSupportValve </p>
+ * <p> Note that if the hst:responseheaders already SETs a certain header name, for example "Access-Control-Allow-Methods",
+ * if should not matter that we add the same header again, possibly with overlapping values <p>
  * <pre>
  *         https://tools.ietf.org/html/rfc2616#section-4.2
  *
@@ -73,10 +73,10 @@ public class CorsSupportValve implements Valve {
     private final static Logger log = LoggerFactory.getLogger(CorsSupportValve.class);
     private Map<String, String> defaultResponseHeaders;
 
-
     public void setDefaultResponseHeaders(Map<String, String> defaultResponseHeaders) {
         this.defaultResponseHeaders = defaultResponseHeaders;
     }
+
     @Override
     public void invoke(final ValveContext context) throws ContainerException {
 
@@ -107,6 +107,8 @@ public class CorsSupportValve implements Valve {
                 log.info("Request Origin '{}' is not allowed", requestOrigin);
                 // possible the hst:responseheaders already did set ACCESS_CONTROL_ALLOW_ORIGIN. In that case we keep it
                 // as is since explicitly set
+
+                // request (pipeline) handling completed here.
                 return;
             }
 
@@ -115,7 +117,7 @@ public class CorsSupportValve implements Valve {
                 servletResponse.setHeader(entry.getKey(), entry.getValue());
             }
 
-            // the CorsSupportValve only allows GET, POST and OPTIONS, since PUT and DELETE
+            // the CorsSupportValve only allows HEAD, GET and POST, since PUT and DELETE
             // are not applicable for the pipelines that use CorsSupportValve
             Collection<String> alreadySetHeaders = servletResponse.getHeaders(ACCESS_CONTROL_ALLOW_METHODS);
 
@@ -127,18 +129,18 @@ public class CorsSupportValve implements Valve {
 
             // regardless of "Access-Control-Request-Headers" we return all allowed headers
             AccessControlAllowHeadersService service = HippoServiceRegistry.getService(AccessControlAllowHeadersService.class);
-            if (service == null) {
-                log.info("No AccessControlAllowHeadersService present, return without setting extra response headers");
-                return;
-            }
-            final String allowedHeadersString = service.getAllowedHeadersString();
-            if (isNotBlank(allowedHeadersString)) {
-                alreadySetHeaders = servletResponse.getHeaders(ACCESS_CONTROL_ALLOW_HEADERS);
-                if (alreadySetHeaders != null) {
-                    servletResponse.addHeader(ACCESS_CONTROL_ALLOW_HEADERS, merge(alreadySetHeaders, allowedHeadersString));
-                } else {
-                    servletResponse.addHeader(ACCESS_CONTROL_ALLOW_HEADERS, allowedHeadersString);
+            if (service != null) {
+                final String allowedHeadersString = service.getAllowedHeadersString();
+                if (isNotBlank(allowedHeadersString)) {
+                    alreadySetHeaders = servletResponse.getHeaders(ACCESS_CONTROL_ALLOW_HEADERS);
+                    if (alreadySetHeaders != null) {
+                        servletResponse.setHeader(ACCESS_CONTROL_ALLOW_HEADERS, merge(alreadySetHeaders, allowedHeadersString));
+                    } else {
+                        servletResponse.setHeader(ACCESS_CONTROL_ALLOW_HEADERS, allowedHeadersString);
+                    }
                 }
+            } else {
+                log.info("No AccessControlAllowHeadersService present, return without setting extra response headers");
             }
 
             // A preflight request should be cached on the client to avoid frequent preflight requests for the same
@@ -147,7 +149,7 @@ public class CorsSupportValve implements Valve {
                 log.info("Header '{}' already set to value '{}', keeping that value", ACCESS_CONTROL_MAX_AGE, servletResponse.getHeader(ACCESS_CONTROL_MAX_AGE));
             } else {
                 // default cache header of 1 day
-                servletResponse.addHeader(ACCESS_CONTROL_MAX_AGE, "86400");
+                servletResponse.setHeader(ACCESS_CONTROL_MAX_AGE, "86400");
             }
 
             if (servletResponse.containsHeader(VARY)) {
@@ -157,13 +159,10 @@ public class CorsSupportValve implements Valve {
                         "different origins", VARY);
                 servletResponse.setHeader(VARY, "Origin");
             }
-
-            return;
+            // request (pipeline) handling completed here!
         } else {
             context.invokeNext();
-            return;
         }
-
     }
 
     private boolean originAllowed(final String requestOrigin, final HttpServletResponse servletResponse, final Mount mount) {
@@ -192,28 +191,25 @@ public class CorsSupportValve implements Valve {
      * looking for example like "foo, bar" and "bar,lux" and the extra might be ["lux","xyz"]. In that case the returned
      * result will be 'foo, bar, lux, xyz' </p>
      *
-     * @param preSetHeaders
-     * @param extra
-     * @return
+     * @param preSetHeaders current header values
+     * @param extra additional header values
+     * @return merged header values
      */
     String merge(final Collection<String> preSetHeaders, final String... extra) {
-        return Stream.concat(preSetHeaders.stream().filter(s -> isNotBlank(s)),
-                Arrays.stream(extra).filter(s -> isNotBlank(s)))
-                .map(s -> s.split(",")).flatMap(strings -> Arrays.stream(strings)).distinct()
-                .map(string -> StringUtils.trim(string))
-                .filter(s -> isNotBlank(s))
+        return Stream.concat(preSetHeaders.stream().filter(StringUtils::isNotBlank),
+                Arrays.stream(extra).filter(StringUtils::isNotBlank))
+                .map(s -> s.split(",")).flatMap(Arrays::stream).distinct()
+                .map(StringUtils::trim)
+                .filter(StringUtils::isNotBlank)
                 .sorted()
                 .collect(Collectors.joining(", "));
     }
 
     @Override
-    public void initialize() throws ContainerException {
-
+    public void initialize() {
     }
 
     @Override
     public void destroy() {
-
     }
-
 }

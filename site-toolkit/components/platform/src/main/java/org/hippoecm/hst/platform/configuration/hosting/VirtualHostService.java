@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,8 +27,8 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
@@ -274,7 +274,12 @@ public class VirtualHostService implements MutableVirtualHost {
         }
 
         if (virtualHostNode.getValueProvider().hasProperty(VIRTUALHOST_ALLOWED_ORIGINS)) {
-            allowedOrigins = unmodifiableList(Arrays.stream(virtualHostNode.getValueProvider().getStrings(VIRTUALHOST_ALLOWED_ORIGINS)).collect(Collectors.toList()));
+            allowedOrigins = unmodifiableList(
+                    Arrays.stream(virtualHostNode.getValueProvider().getStrings(VIRTUALHOST_ALLOWED_ORIGINS))
+                            // prevent tricky/failing behavior caused by accidental surrounding whitespaces
+                            .map(StringUtils::trim)
+                            .collect(Collectors.toList())
+            );
         } else if (parentHost != null) {
             allowedOrigins = parentHost.getAllowedOrigins();
         } else {
