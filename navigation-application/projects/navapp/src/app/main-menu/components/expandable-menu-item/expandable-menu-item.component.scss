@@ -66,4 +66,8 @@
   .item:last-child {
     padding-bottom: 10px;
   }
+
+  &.opened {
+    margin-bottom: 6px;
+  }
 }
