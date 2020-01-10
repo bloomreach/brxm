@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,16 +16,19 @@
 package org.hippoecm.hst.platform.configuration.hosting;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
 import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
@@ -45,10 +48,12 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.net.InetAddresses;
 
+import static java.util.Collections.unmodifiableList;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.supportedSchemeNotMatchingResponseCodesAsString;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_RESPONSE_HEADERS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PAGE_MODEL_API;
+import static org.hippoecm.hst.configuration.HstNodeTypes.VIRTUALHOST_ALLOWED_ORIGINS;
 
 public class VirtualHostService implements MutableVirtualHost {
 
@@ -103,6 +108,7 @@ public class VirtualHostService implements MutableVirtualHost {
     private String cdnHost;
     private boolean customHttpsSupported;
     private Map<String, String> responseHeaders;
+    private final Collection<String> allowedOrigins;
 
     public VirtualHostService(final VirtualHostsService virtualHosts,
                               final HstNode virtualHostNode,
@@ -267,6 +273,19 @@ public class VirtualHostService implements MutableVirtualHost {
             }
         }
 
+        if (virtualHostNode.getValueProvider().hasProperty(VIRTUALHOST_ALLOWED_ORIGINS)) {
+            allowedOrigins = unmodifiableList(
+                    Arrays.stream(virtualHostNode.getValueProvider().getStrings(VIRTUALHOST_ALLOWED_ORIGINS))
+                            // prevent tricky/failing behavior caused by accidental surrounding whitespaces
+                            .map(StringUtils::trim)
+                            .collect(Collectors.toList())
+            );
+        } else if (parentHost != null) {
+            allowedOrigins = parentHost.getAllowedOrigins();
+        } else {
+            allowedOrigins = Collections.emptyList();
+        }
+
         if (virtualHostNode.getValueProvider().hasProperty(GENERAL_PROPERTY_PAGE_MODEL_API)) {
             pageModelApi = virtualHostNode.getValueProvider().getString(GENERAL_PROPERTY_PAGE_MODEL_API);
         } else if (parentHost != null) {
@@ -374,6 +393,7 @@ public class VirtualHostService implements MutableVirtualHost {
         this.cdnHost = parent.cdnHost;
         this.customHttpsSupported = parent.customHttpsSupported;
         this.name = nameSegments[position];
+        this.allowedOrigins = parent.allowedOrigins;
 
         if (parent.responseHeaders == null) {
             this.responseHeaders = null;
@@ -539,6 +559,11 @@ public class VirtualHostService implements MutableVirtualHost {
         }
 
         return Collections.unmodifiableMap(responseHeaders);
+    }
+
+    @Override
+    public Collection<String> getAllowedOrigins() {
+        return allowedOrigins;
     }
 
     private String buildHostName() {

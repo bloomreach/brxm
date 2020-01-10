@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.configuration.hosting;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -210,4 +211,14 @@ public interface VirtualHost {
      */
     Map<String, String> getResponseHeaders();
 
+
+    /**
+     * <p>
+     *     Returns all the allowed origins for this {@link VirtualHost}
+     * </p>
+     * @return unmdifiable collection of the allowed origins for this virtualhost used in case of a CORS OPTIONS request,
+     * if no allowed origins specified, the parent virtual host its allowed origins will be used and if there is no
+     * parent an empty list will be returned.
+     */
+    Collection<String> getAllowedOrigins();
 }
