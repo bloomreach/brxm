@@ -72,15 +72,15 @@ public class CorsSupportValve implements Valve {
 
     private final static Logger log = LoggerFactory.getLogger(CorsSupportValve.class);
     private boolean allowCredentials;
-    private boolean optionsDisallowed;
+    private boolean allowOptionsRequest;
 
 
     public void setAllowCredentials(final boolean allowCredentials) {
         this.allowCredentials = allowCredentials;
     }
 
-    public void setOptionsDisallowed(final boolean optionsDisallowed) {
-        this.optionsDisallowed = optionsDisallowed;
+    public void setAllowOptionsRequest(final boolean allowOptionsRequest) {
+        this.allowOptionsRequest = allowOptionsRequest;
     }
 
     @Override
@@ -93,7 +93,7 @@ public class CorsSupportValve implements Valve {
             log.debug("OPTIONS request {} will be handled by CorsSupportValve", servletRequest);
 
             final HttpServletResponse servletResponse = context.getServletResponse();
-            if (optionsDisallowed) {
+            if (!allowOptionsRequest) {
                 try {
                     servletResponse.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Method OPTIONS is not " +
                             "allowed for " + servletRequest.toString());

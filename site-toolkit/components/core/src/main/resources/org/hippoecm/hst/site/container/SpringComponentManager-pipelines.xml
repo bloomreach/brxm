@@ -213,9 +213,10 @@
     </property>
   </bean>
 
-  <bean id="noOptionsCorsSupportValve"
+  <bean id="noOptionsAllowedCorsSupportValve"
         class="org.hippoecm.hst.core.container.CorsSupportValve">
-    <property name="optionsDisallowed" value="true"/>
+    <!-- even though allowOptionsRequest by default false, add for clarity -->
+    <property name="allowOptionsRequest" value="false"/>
   </bean>
   
   <!-- Pipelines -->
@@ -235,7 +236,7 @@
             </property>
             <property name="processingValves">
               <list>
-                <ref bean="noOptionsCorsSupportValve"/>
+                <ref bean="noOptionsAllowedCorsSupportValve"/>
                 <ref bean="securityValve" />
                 <ref bean="subjectBasedSessionValve" />
                 <ref bean="jcrSessionStatefulConcurrencyValve"/>
@@ -271,7 +272,7 @@
               <list>
                 <!-- the SpaSitePipeline is just normal HST website rendering except only the root component is rendered,
                      hence options request is also for this pipeline not supported -->
-                <ref bean="noOptionsCorsSupportValve"/>
+                <ref bean="noOptionsAllowedCorsSupportValve"/>
                 <ref bean="securityValve" />
                 <ref bean="subjectBasedSessionValve" />
                 <ref bean="jcrSessionStatefulConcurrencyValve"/>
@@ -330,7 +331,7 @@
             </property>
             <property name="processingValves">
               <list>
-                <ref bean="noOptionsCorsSupportValve"/>
+                <ref bean="noOptionsAllowedCorsSupportValve"/>
                 <ref bean="webFileValve" />
               </list>
             </property>
@@ -354,7 +355,7 @@
             </property>
             <property name="processingValves">
               <list>
-                <ref bean="noOptionsCorsSupportValve"/>
+                <ref bean="noOptionsAllowedCorsSupportValve"/>
                 <ref bean="localizationValve" />
                 <ref bean="securityValve" />
                 <ref bean="subjectBasedSessionValve" />
@@ -404,7 +405,7 @@
            <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
              <property name="processingValves">
               <list>
-                <ref bean="noOptionsCorsSupportValve"/>
+                <ref bean="noOptionsAllowedCorsSupportValve"/>
                 <ref bean="contextResolvingValve" />
                 <ref bean="resourceServingValve" />
                 <ref bean="componentRenderingValve" />

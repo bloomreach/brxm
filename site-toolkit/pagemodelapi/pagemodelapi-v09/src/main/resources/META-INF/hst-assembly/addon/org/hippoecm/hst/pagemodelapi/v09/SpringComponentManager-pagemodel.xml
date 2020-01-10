@@ -52,6 +52,7 @@
   <bean id="pageModelApiCorsSupportValve"
         class="org.hippoecm.hst.core.container.CorsSupportValve">
     <property name="allowCredentials" value="true"/>
+    <property name="allowOptionsRequest" value="true"/>
   </bean>
 
   <bean id="pageModelPipeline.v09" class="org.hippoecm.hst.core.container.HstSitePipeline">
