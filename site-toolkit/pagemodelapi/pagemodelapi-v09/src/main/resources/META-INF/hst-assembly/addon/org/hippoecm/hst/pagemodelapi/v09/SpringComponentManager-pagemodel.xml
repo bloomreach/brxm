@@ -51,11 +51,7 @@
 
   <bean id="pageModelApiCorsSupportValve"
         class="org.hippoecm.hst.core.container.CorsSupportValve">
-    <property name="defaultResponseHeaders">
-      <map>
-        <entry key="Access-Control-Allow-Credentials" value="true"/>
-      </map>
-    </property>
+    <property name="allowCredentials" value="true"/>
   </bean>
 
   <bean id="pageModelPipeline.v09" class="org.hippoecm.hst.core.container.HstSitePipeline">

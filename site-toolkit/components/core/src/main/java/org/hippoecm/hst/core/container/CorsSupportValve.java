@@ -15,9 +15,9 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -31,6 +31,7 @@ import org.hippoecm.hst.util.HstRequestUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -44,14 +45,13 @@ import static org.springframework.http.HttpHeaders.VARY;
 
 /**
  * <p> Note that the hst:responseheaders configurable on VirtualHost, Mount or SitemapItem already have been written to
- * the response.<br/>
- * See HstDelegateeFilterBean#writeDefaultResponseHeaders(...)).<br/>
- * If the headers ACCESS_CONTROL_ALLOW_METHODS, ACCESS_CONTROL_ALLOW_HEADERS are already set we combine
- * these header values. Although according the http spec (see below) adding headers should be allowed, it is cleaner to
- * merge them into one header name and remove duplicates. If the header ACCESS_CONTROL_MAX_AGE is already set, we do not
- * reset it to one day like we do by default with this CorsSupportValve </p>
- * <p> Note that if the hst:responseheaders already SETs a certain header name, for example "Access-Control-Allow-Methods",
- * if should not matter that we add the same header again, possibly with overlapping values <p>
+ * the response.<br/> See HstDelegateeFilterBean#writeDefaultResponseHeaders(...)).<br/> If the headers
+ * ACCESS_CONTROL_ALLOW_METHODS, ACCESS_CONTROL_ALLOW_HEADERS are already set we combine these header values. Although
+ * according the http spec (see below) adding headers should be allowed, it is cleaner to merge them into one header
+ * name and remove duplicates. If the header ACCESS_CONTROL_MAX_AGE is already set, we do not reset it to one day like
+ * we do by default with this CorsSupportValve </p> <p> Note that if the hst:responseheaders already SETs a certain
+ * header name, for example "Access-Control-Allow-Methods", if should not matter that we add the same header again,
+ * possibly with overlapping values <p>
  * <pre>
  *         https://tools.ietf.org/html/rfc2616#section-4.2
  *
@@ -71,10 +71,16 @@ import static org.springframework.http.HttpHeaders.VARY;
 public class CorsSupportValve implements Valve {
 
     private final static Logger log = LoggerFactory.getLogger(CorsSupportValve.class);
-    private Map<String, String> defaultResponseHeaders;
+    private boolean allowCredentials;
+    private boolean optionsDisallowed;
 
-    public void setDefaultResponseHeaders(Map<String, String> defaultResponseHeaders) {
-        this.defaultResponseHeaders = defaultResponseHeaders;
+
+    public void setAllowCredentials(final boolean allowCredentials) {
+        this.allowCredentials = allowCredentials;
+    }
+
+    public void setOptionsDisallowed(final boolean optionsDisallowed) {
+        this.optionsDisallowed = optionsDisallowed;
     }
 
     @Override
@@ -87,6 +93,16 @@ public class CorsSupportValve implements Valve {
             log.debug("OPTIONS request {} will be handled by CorsSupportValve", servletRequest);
 
             final HttpServletResponse servletResponse = context.getServletResponse();
+            if (optionsDisallowed) {
+                try {
+                    servletResponse.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Method OPTIONS is not " +
+                            "allowed for " + servletRequest.toString());
+                    return;
+                } catch (IOException e) {
+                    throw new ContainerException(e);
+                }
+            }
+
             servletResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
 
             String requestOrigin = servletRequest.getHeader(ORIGIN);
@@ -112,9 +128,8 @@ public class CorsSupportValve implements Valve {
                 return;
             }
 
-            // set the default response headers configured for this CorsSupportValve instance
-            for (Map.Entry<String, String> entry : defaultResponseHeaders.entrySet()) {
-                servletResponse.setHeader(entry.getKey(), entry.getValue());
+            if (allowCredentials) {
+                servletResponse.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
             }
 
             // the CorsSupportValve only allows HEAD, GET and POST, since PUT and DELETE
@@ -140,7 +155,7 @@ public class CorsSupportValve implements Valve {
                     }
                 }
             } else {
-                log.info("No AccessControlAllowHeadersService present, return without setting extra response headers");
+                log.info("No AccessControlAllowHeadersService present, do not set {} headers", ACCESS_CONTROL_ALLOW_HEADERS);
             }
 
             // A preflight request should be cached on the client to avoid frequent preflight requests for the same
@@ -192,7 +207,7 @@ public class CorsSupportValve implements Valve {
      * result will be 'foo, bar, lux, xyz' </p>
      *
      * @param preSetHeaders current header values
-     * @param extra additional header values
+     * @param extra         additional header values
      * @return merged header values
      */
     String merge(final Collection<String> preSetHeaders, final String... extra) {
@@ -212,4 +227,5 @@ public class CorsSupportValve implements Valve {
     @Override
     public void destroy() {
     }
+
 }
