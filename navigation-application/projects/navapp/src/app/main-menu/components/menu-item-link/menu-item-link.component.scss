@@ -19,7 +19,8 @@
 :host {
   display: block;
   font-size: $menu-drawer-font-size;
-  padding: 5px 10px 5px 0;
+  line-height: 32px;
+  padding-right: 10px;
 
   &.highlighted .menu-item-link {
     color: $menu-highlighted-text-color;

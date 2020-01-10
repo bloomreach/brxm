@@ -19,7 +19,7 @@
   <mat-icon svgIcon="expand_more" [class.hidden]="isOpened"></mat-icon>
   <mat-icon svgIcon="expand_less" [class.hidden]="!isOpened"></mat-icon>
 </h2>
-<div [@menuSlideInOut]="isOpened" class="items-wrapper">
+<div [@menuSlideInOut]="isOpened" [class.opened]="isOpened" class="items-wrapper">
   <ng-container *ngFor="let item of config.children">
     <brna-menu-item-link
       *ngIf="!isContainer(item)"
