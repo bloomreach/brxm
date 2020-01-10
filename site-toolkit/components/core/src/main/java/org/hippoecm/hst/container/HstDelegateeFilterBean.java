@@ -46,6 +46,7 @@ import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.ContainerNotFoundException;
+import org.hippoecm.hst.core.container.CorsSupportValve;
 import org.hippoecm.hst.core.container.HstContainerConfig;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstRequestProcessor;
@@ -882,14 +883,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         return newResolvedSiteMapItem;
     }
 
-    private final static String[] KNOWN_CORS_HEADER_NAMES = new String[]{
-            ACCESS_CONTROL_MAX_AGE,
-            ACCESS_CONTROL_ALLOW_HEADERS,
-            ACCESS_CONTROL_ALLOW_METHODS,
-            VARY,
-            ACCESS_CONTROL_ALLOW_ORIGIN,
-            ACCESS_CONTROL_ALLOW_CREDENTIALS
-    };
     /**
      * Write default response headers which are set in sitemap item, mount or virtual host configuration.
      * @param requestContext request context
@@ -900,7 +893,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
         if (headerMap != null) {
             headerMap.forEach((name, value) -> {
-                Optional<String> corsName = Arrays.stream(KNOWN_CORS_HEADER_NAMES).filter(s -> s.equalsIgnoreCase(name)).findFirst();
+                Optional<String> corsName = Arrays.stream(CorsSupportValve.KNOWN_CORS_HEADER_NAMES).filter(s -> s.equalsIgnoreCase(name)).findFirst();
                 if (corsName.isPresent()) {
                     // make sure to set this exact CAMEL CASE header string since we rely on this exact match in
                     // CorsSupportValve. Since header names in http are case insensitive, we need to set the correct

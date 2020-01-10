@@ -34,7 +34,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS;
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS;
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS;
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN;
@@ -74,6 +76,14 @@ public class CorsSupportValve implements Valve {
     private boolean allowCredentials;
     private boolean allowOptionsRequest;
 
+    public final static String[] KNOWN_CORS_HEADER_NAMES = new String[]{
+            ACCESS_CONTROL_MAX_AGE,
+            ACCESS_CONTROL_ALLOW_HEADERS,
+            ACCESS_CONTROL_ALLOW_METHODS,
+            VARY,
+            ACCESS_CONTROL_ALLOW_ORIGIN,
+            ACCESS_CONTROL_ALLOW_CREDENTIALS
+    };
 
     public void setAllowCredentials(final boolean allowCredentials) {
         this.allowCredentials = allowCredentials;
@@ -94,6 +104,14 @@ public class CorsSupportValve implements Valve {
 
             final HttpServletResponse servletResponse = context.getServletResponse();
             if (!allowOptionsRequest) {
+                // empty possible already set CORS headers
+                for (String knownCorsHeaderName : KNOWN_CORS_HEADER_NAMES) {
+                    if (servletResponse.containsHeader(knownCorsHeaderName)) {
+                        // unfortunately you cannot remove a header and setting null doesn't do anything, hence empty
+                        // string
+                        servletResponse.setHeader(knownCorsHeaderName, EMPTY);
+                    }
+                }
                 try {
                     servletResponse.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Method OPTIONS is not " +
                             "allowed for " + servletRequest.toString());
