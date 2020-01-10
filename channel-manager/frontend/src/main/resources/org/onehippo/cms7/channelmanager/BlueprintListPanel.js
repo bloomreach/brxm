@@ -33,6 +33,7 @@
             var me, config;
             me = this;
             config = {
+                border: false,
                 ctCls: 'br-grid',
                 id: me.id,
                 store: me.store,
