@@ -56,6 +56,7 @@ describe('MenuScrollComponent', () => {
     let component: EnoughSpaceTestComponent;
     let fixture: ComponentFixture<EnoughSpaceTestComponent>;
     let de: DebugElement;
+    let host: DebugElement;
     let contentDe: DebugElement;
 
     beforeEach(async(() => {
@@ -72,6 +73,7 @@ describe('MenuScrollComponent', () => {
 
       component = fixture.componentInstance;
       de = fixture.debugElement;
+      host = de.query(By.css('brna-menu-scroll'));
       contentDe = de.query(By.css('.content'));
 
       fixture.detectChanges();
@@ -99,7 +101,7 @@ describe('MenuScrollComponent', () => {
         deltaY: 10,
       };
 
-      contentDe.triggerEventHandler('wheel', event);
+      host.triggerEventHandler('wheel', event);
 
       expect(contentDe.styles.transform).toBe('translateY(-0px)');
     });
@@ -109,6 +111,7 @@ describe('MenuScrollComponent', () => {
     let component: NotEnoughSpaceTestComponent;
     let fixture: ComponentFixture<NotEnoughSpaceTestComponent>;
     let de: DebugElement;
+    let host: DebugElement;
     let contentDe: DebugElement;
 
     let mouseEvent: jasmine.SpyObj<MouseEvent>;
@@ -146,6 +149,7 @@ describe('MenuScrollComponent', () => {
 
       component = fixture.componentInstance;
       de = fixture.debugElement;
+      host = de.query(By.css('brna-menu-scroll'));
       contentDe = de.query(By.css('.content'));
 
       fixture.detectChanges(); // Call ngAfterViewInit which schedule height calculation
@@ -192,7 +196,7 @@ describe('MenuScrollComponent', () => {
     }));
 
     it('should prevent default action if content is scrolled', () => {
-      contentDe.triggerEventHandler('wheel', wheelEvent);
+      host.triggerEventHandler('wheel', wheelEvent);
 
       expect(wheelEvent.preventDefault).toHaveBeenCalled();
     });
@@ -203,7 +207,7 @@ describe('MenuScrollComponent', () => {
         deltaY: -10,
       };
 
-      contentDe.triggerEventHandler('wheel', event);
+      host.triggerEventHandler('wheel', event);
 
       fixture.detectChanges();
 
@@ -213,7 +217,7 @@ describe('MenuScrollComponent', () => {
     }));
 
     it('should scroll the content', fakeAsync(() => {
-      contentDe.triggerEventHandler('wheel', wheelEvent);
+      host.triggerEventHandler('wheel', wheelEvent);
 
       fixture.detectChanges();
 
@@ -224,7 +228,7 @@ describe('MenuScrollComponent', () => {
 
     describe('when content scrolled 10px down', () => {
       beforeEach(async(() => {
-        contentDe.triggerEventHandler('wheel', wheelEvent);
+        host.triggerEventHandler('wheel', wheelEvent);
 
         fixture.detectChanges();
       }));
@@ -271,7 +275,7 @@ describe('MenuScrollComponent', () => {
           deltaY: -2,
         };
 
-        contentDe.triggerEventHandler('wheel', event);
+        host.triggerEventHandler('wheel', event);
 
         fixture.detectChanges();
 
@@ -281,7 +285,7 @@ describe('MenuScrollComponent', () => {
       }));
 
       it('should scroll the content down', fakeAsync(() => {
-        contentDe.triggerEventHandler('wheel', wheelEvent);
+        host.triggerEventHandler('wheel', wheelEvent);
 
         fixture.detectChanges();
 
@@ -298,7 +302,7 @@ describe('MenuScrollComponent', () => {
           deltaY: 350,
         };
 
-        contentDe.triggerEventHandler('wheel', event);
+        host.triggerEventHandler('wheel', event);
 
         fixture.detectChanges();
       }));
@@ -333,7 +337,7 @@ describe('MenuScrollComponent', () => {
           deltaY: -10,
         };
 
-        contentDe.triggerEventHandler('wheel', event);
+        host.triggerEventHandler('wheel', event);
 
         fixture.detectChanges();
 
@@ -343,7 +347,7 @@ describe('MenuScrollComponent', () => {
       }));
 
       it('should scroll the content down', fakeAsync(() => {
-        contentDe.triggerEventHandler('wheel', wheelEvent);
+        host.triggerEventHandler('wheel', wheelEvent);
 
         fixture.detectChanges();
 

@@ -129,7 +129,8 @@ export class MenuScrollComponent implements AfterViewInit {
     this.position = this.position + this.step;
   }
 
-  onContentWheel(event: WheelEvent): void {
+  @HostListener('wheel', ['$event'])
+  onWheel(event: WheelEvent): void {
     event.preventDefault();
 
     if (!this.isScrollable) {
