@@ -42,18 +42,23 @@
                 viewConfig: {
                     forceFit: true
                 },
-
                 colModel: new Ext.grid.ColumnModel({
                     columns: [
                         {
-                            header: me.resources['new-channel-blueprint-name'],
-                            align: 'left'
+                            align: 'left',
+                            dataIndex: 'name',
+                            header: me.resources['new-channel-blueprint-name']
                         },
                         {
-                            header: me.resources['new-channel-blueprint-description'],
-                            align: 'left'
+                            align: 'left',
+                            dataIndex: 'description',
+                            header: me.resources['new-channel-blueprint-description']
                         }
-                    ]
+                    ],
+                    defaults: {
+                        sortable: true,
+                        menuDisabled: true,
+                    }
                 }),
                 sm: new Ext.grid.RowSelectionModel({
                     singleSelect: true
