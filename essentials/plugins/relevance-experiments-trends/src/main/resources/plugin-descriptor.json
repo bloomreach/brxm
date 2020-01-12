@@ -1,18 +1,15 @@
 {
-  "id": "relevancePlugin",
-  "name": "Relevance",
+  "id": "relevanceExperimentsTrendsPlugin",
+  "name": "Relevance Experiments and Trends",
   "icon": "/essentials/feature/images/relevance-plugin-icon.svg",
-  "introduction": "The Bloomreach Experience Relevance Module allows marketers to customize the appearance of their channels based on the characteristics of individual visitors.",
-  "description": "Please note that this component is a Bloomreach Experience only component. Adding this component to the community version will convert your project to an Enterprise project and might result in unexpected and unsupported behaviour of the project if you do not have an Enterprise license. This product includes GeoLite2 data created by MaxMind, available from <a href=\"http://www.maxmind.com\">http://www.maxmind.com</a>.",
+  "introduction": "Add Experiments and Trends to the Relevance feature and configure the project to use ElasticSearch.",
+  "description": "<p>Find interesting trends in the stream of visitors to your sites. Experiments allow you to determine if changes you make to a page component lead to more visitor conversions to a specific goal. Trends and Experiments require ElasticSearch.</p><p>Please note that this component is a Bloomreach Experience only component. Adding this component to the community version will convert your project to an Enterprise project and might result in unexpected and unsupported behaviour of the project if you do not have an Enterprise license.</p>",
   "documentationLink": "https://documentation.bloomreach.com/library/enterprise/enterprise-features/targeting/targeting.html",
   "imageUrls": [
-    "/essentials/feature/images/screenshots/audiences-characteristics.png",
-    "/essentials/feature/images/screenshots/audiences-realtime.png",
-    "/essentials/feature/images/screenshots/audiences-segments.png",
     "/essentials/feature/images/screenshots/audiences-trends.png"
   ],
   "installWithParameters": false,
-  "packageFile": "/META-INF/relevance_plugin_instructions.xml",
+  "packageFile": "/META-INF/relevance_experiments_trends_plugin_instructions.xml",
   "type": "feature",
   "vendor" : {
     "name" : "Bloomreach",
@@ -33,7 +30,7 @@
   },
   "pluginDependencies": [
     {
-      "pluginId": "enterpriseProject"
+      "pluginId": "relevancePlugin"
     }
   ]
 }
