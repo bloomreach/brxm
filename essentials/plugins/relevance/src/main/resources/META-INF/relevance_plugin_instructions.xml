@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -24,6 +24,9 @@
     <mavenDependency groupId="com.onehippo.cms7" artifactId="hippo-addon-targeting-shared-api" targetPom="project" scope="provided"/>
   
     <execute class="org.onehippo.cms7.essentials.plugins.relevance.RelevanceInstruction" />
+
+    <!-- add properties to existing {{projectRoot}}/conf/platform.properties -->
+    <file action="append" source="platform-dev-relevance.properties" target="{{projectRoot}}/conf/platform-dev.properties" />
   </instructionSet>
 
 </instructions>

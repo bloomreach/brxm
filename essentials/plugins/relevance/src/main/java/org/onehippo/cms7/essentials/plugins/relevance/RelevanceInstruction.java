@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,10 +36,8 @@ import org.onehippo.cms7.essentials.sdk.api.service.ProjectService;
 public class RelevanceInstruction implements Instruction {
 
     private static final String TARGETING_RESOURCE_NAME = "jdbc/targetingDS";
-    private static final String TARGETING_ENVIRONMENT_NAME = "elasticsearch/targetingDS";
     private static final String TARGETING_LOGGER = "com.onehippo.cms7.targeting";
     private static final Map<String, String> TARGETING_RESOURCE_ATTRIBUTES = new LinkedHashMap<>();
-    private static final Map<String, String> TARGETING_ENVIRONMENT_ATTRIBUTES = new LinkedHashMap<>();
     private static final String TARGETING_SHARED_API_ARTIFACT_ID = "hippo-addon-targeting-shared-api";
     private static final MavenDependency TARGETING_SHARED_API_DEPENDENCY
             = new MavenDependency(ProjectService.GROUP_ID_ENTERPRISE, TARGETING_SHARED_API_ARTIFACT_ID);
@@ -60,9 +58,6 @@ public class RelevanceInstruction implements Instruction {
         TARGETING_RESOURCE_ATTRIBUTES.put("password", "");
         TARGETING_RESOURCE_ATTRIBUTES.put("driverClassName", "org.h2.Driver");
         TARGETING_RESOURCE_ATTRIBUTES.put("url", "jdbc:h2:${repo.path}/targeting/targeting");
-
-        TARGETING_ENVIRONMENT_ATTRIBUTES.put("value", "{'indexName':'visits', 'locations':['http://localhost:9200/']}");
-        TARGETING_ENVIRONMENT_ATTRIBUTES.put("type", "java.lang.String");
     }
 
     @Inject private ContextXmlService contextXmlService;
@@ -74,7 +69,6 @@ public class RelevanceInstruction implements Instruction {
     @Override
     public Status execute(final Map<String, Object> parameters) {
         contextXmlService.addResource(TARGETING_RESOURCE_NAME, TARGETING_RESOURCE_ATTRIBUTES);
-        contextXmlService.addEnvironment(TARGETING_ENVIRONMENT_NAME, TARGETING_ENVIRONMENT_ATTRIBUTES);
 
         projectService.getLog4j2Files()
                 .forEach(f -> loggingService.addLoggerToLog4jConfiguration(f, TARGETING_LOGGER, "warn"));
@@ -89,7 +83,6 @@ public class RelevanceInstruction implements Instruction {
 
     public void populateChangeMessages(BiConsumer<Type, String> changeMessageQueue) {
         changeMessageQueue.accept(Type.EXECUTE, "Add Resource '" + TARGETING_RESOURCE_NAME + "' to context.xml.");
-        changeMessageQueue.accept(Type.EXECUTE, "Add Environment '" + TARGETING_ENVIRONMENT_NAME + "' to context.xml.");
         changeMessageQueue.accept(Type.EXECUTE, "Add Logger '" + TARGETING_LOGGER + "' to log4j2 config files.");
         changeMessageQueue.accept(Type.EXECUTE, "Add Relevance-related configuration to Maven cargo plugin configuration.");
         changeMessageQueue.accept(Type.EXECUTE, "Add dependency '" + ProjectService.GROUP_ID_ENTERPRISE
