@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -134,7 +134,9 @@ public class MavenCargoServiceImpl implements MavenCargoService {
             if (modelProfile != null) {
                 // Copy all properties. Existing properties will be overwritten
                 MavenModelUtils.mergeProperties(modelProfile, incomingProfile);
-                MavenModelUtils.mergeBuildPlugins(modelProfile.getBuild(), incomingProfile.getBuild());
+                if (incomingProfile.getBuild() != null) {
+                    MavenModelUtils.mergeBuildPlugins(modelProfile.getBuild(), incomingProfile.getBuild());
+                }
             } else {
                 // Model doesn't have a cargo.run profile yet, copy it
                 pomModel.addProfile(incomingProfile);
