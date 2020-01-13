@@ -24,6 +24,7 @@ import javax.servlet.ServletContext;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
+import org.assertj.core.api.Assertions;
 import org.hippoecm.hst.container.event.HttpSessionCreatedEvent;
 import org.hippoecm.hst.container.event.HttpSessionDestroyedEvent;
 import org.hippoecm.hst.core.container.ModuleNotFoundException;
@@ -536,6 +537,9 @@ public class TestSpringComponentManagerWithAddonModules {
         // initialize triggers the reordering of addonModuleDefinitions
         componentManager.initialize();
 
-        System.out.println(componentManager.addonModuleDefinitions.get(0).getName());
+        Assertions.assertThat(componentManager.addonModuleDefinitions.get(0).getName())
+                .as("Expected platform module to be the first loaded addon")
+                .isEqualTo("org.hippoecm.hst.platform");
+
     }
 }
