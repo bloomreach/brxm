@@ -21,4 +21,10 @@ export class UserSettingsMock implements UserSettings {
   email = 'test@gmail.com';
   language = 'en';
   timeZone = 'Europe/Amsterdam';
+
+  constructor(initObject = {}) {
+    Object.keys(initObject).forEach(key => {
+      this[key] = initObject[key];
+    });
+  }
 }

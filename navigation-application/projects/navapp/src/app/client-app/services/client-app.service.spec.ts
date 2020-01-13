@@ -113,10 +113,11 @@ describe('ClientAppService', () => {
   describe('initialization', () => {
     describe('when applications without "getConfig()" connected normally', () => {
       let initialized = false;
+      let allConnectionsSettled = false;
 
       beforeEach(async(() => {
         service.init(navItemsMock).then(() => initialized = true);
-
+        service.allConnectionsSettled.then(() => allConnectionsSettled = true);
         service.addConnection(new Connection('http://app1.com', {}));
         service.addConnection(new Connection('http://app2.com', {}));
       }));
@@ -128,6 +129,7 @@ describe('ClientAppService', () => {
 
       it('should resolve the returned init promise', () => {
         expect(initialized).toBeTruthy();
+        expect(allConnectionsSettled).toBeTruthy();
       });
     });
 
@@ -140,7 +142,7 @@ describe('ClientAppService', () => {
         });
 
         const childApi2 = jasmine.createSpyObj('ChildApi2', {
-          getConfig: Promise.resolve({apiVersion: '1.0.0'}),
+          getConfig: Promise.resolve({ apiVersion: '1.0.0' }),
         });
 
         service.init(navItemsMock).then(() => initialized = true);
@@ -161,13 +163,15 @@ describe('ClientAppService', () => {
 
     describe('when one application failed to connect', () => {
       let initialized = false;
+      let allConnectionsSettled = false;
 
       beforeEach(async(() => {
         const childApi = jasmine.createSpyObj('ChildApi2', {
-          getConfig: Promise.resolve({apiVersion: '1.0.0'}),
+          getConfig: Promise.resolve({ apiVersion: '1.0.0' }),
         });
 
         service.init(navItemsMock).then(() => initialized = true);
+        service.allConnectionsSettled.then(() => allConnectionsSettled = true);
 
         service.addConnection(new FailedConnection('http://app1.com', 'some reason'));
         service.addConnection(new Connection('http://app2.com', childApi));
@@ -180,16 +184,18 @@ describe('ClientAppService', () => {
 
       it('should resolve the returned init promise', () => {
         expect(initialized).toBeTruthy();
+        expect(allConnectionsSettled).toBeTruthy();
       });
     });
 
     describe('when all applications failed to connect and "iframesConnectionTimeout * 1.5" ms passed', () => {
       let initialized = false;
       let rejectionReason: Error;
+      let allConnectionsSettled: boolean;
 
       beforeEach(fakeAsync(() => {
         service.init(navItemsMock).then(() => initialized = true, e => rejectionReason = e);
-
+        service.allConnectionsSettled.then(() => allConnectionsSettled = true, () => allConnectionsSettled = false);
         service.addConnection(new FailedConnection('http://app1.com', 'some reason'));
         service.addConnection(new FailedConnection('http://app2.com', 'some reason'));
 
@@ -209,6 +215,7 @@ describe('ClientAppService', () => {
 
         expect(initialized).toBeFalsy();
         expect(rejectionReason).toEqual(expectedError);
+        expect(allConnectionsSettled).toBeFalsy();
       });
     });
 
@@ -422,7 +429,7 @@ describe('ClientAppService', () => {
 
     describe('during initialization', () => {
       it('should log iframe urls', () => {
-        service.init(navItemsMock).catch(() => {});
+        service.init(navItemsMock).catch(() => { });
 
         expect(logger.debug).toHaveBeenCalledWith('Client app iframes are expected to be loaded (2)', [
           'http://app1.com',
@@ -431,7 +438,7 @@ describe('ClientAppService', () => {
       });
 
       it('should log the added connection', () => {
-        service.init(navItemsMock).catch(() => {});
+        service.init(navItemsMock).catch(() => { });
 
         service.addConnection(new Connection('http://app1.com', {}));
 
@@ -441,7 +448,7 @@ describe('ClientAppService', () => {
       it('should log an error when a connection with unknown url is added', () => {
         spyOn(logger, 'error');
 
-        service.init(navItemsMock).catch(() => {});
+        service.init(navItemsMock).catch(() => { });
 
         const badConnection = new Connection('http://suspect-site.com', {});
 
@@ -469,7 +476,7 @@ describe('ClientAppService', () => {
         describe('and returns undefined', () => {
           beforeEach(async(() => {
             childApi1.getConfig.and.returnValue(Promise.resolve(undefined));
-            childApi2.getConfig.and.returnValue(Promise.resolve({apiVersion: '1.0.0'}));
+            childApi2.getConfig.and.returnValue(Promise.resolve({ apiVersion: '1.0.0' }));
 
             service.init(navItemsMock);
 
@@ -485,7 +492,7 @@ describe('ClientAppService', () => {
         describe('and returns the config object without apiVersion', () => {
           beforeEach(async(() => {
             childApi1.getConfig.and.returnValue(Promise.resolve({}));
-            childApi2.getConfig.and.returnValue(Promise.resolve({apiVersion: '1.0.0'}));
+            childApi2.getConfig.and.returnValue(Promise.resolve({ apiVersion: '1.0.0' }));
 
             service.init(navItemsMock);
 
@@ -505,7 +512,7 @@ describe('ClientAppService', () => {
             initialized = false;
 
             childApi1.getConfig.and.callFake(() => Promise.reject('some reason'));
-            childApi2.getConfig.and.returnValue(Promise.resolve({apiVersion: '1.0.0'}));
+            childApi2.getConfig.and.returnValue(Promise.resolve({ apiVersion: '1.0.0' }));
 
             service.init(navItemsMock).then(
               () => initialized = true,

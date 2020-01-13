@@ -44,7 +44,7 @@ export class ClientAppService {
   private activeAppUrl: string;
   private allAppsAreConnectedOrTimeout = false;
 
-  allAppsAreConnectedOrTimeout$: Promise<ClientAppWithConfig[]>;
+  allConnectionsSettled: Promise<ClientAppWithConfig[]>;
 
   constructor(
     @Inject(APP_SETTINGS) private readonly appSettings: AppSettings,
@@ -91,13 +91,13 @@ export class ClientAppService {
 
     this.logger.debug(`Client app iframes are expected to be loaded (${uniqueURLs.length})`, uniqueURLs);
 
-    this.allAppsAreConnectedOrTimeout$ = this.waitForAllAppsToBeConnectedOrTimeout(
+    this.allConnectionsSettled = this.waitForAllAppsToBeConnectedOrTimeout(
       this.connectedAppWithConfig$,
       uniqueURLs.length,
       this.appSettings.iframesConnectionTimeout * 1.5,
     ).toPromise();
 
-    await this.allAppsAreConnectedOrTimeout$;
+    await this.allConnectionsSettled;
 
     this.allAppsAreConnectedOrTimeout = true;
   }

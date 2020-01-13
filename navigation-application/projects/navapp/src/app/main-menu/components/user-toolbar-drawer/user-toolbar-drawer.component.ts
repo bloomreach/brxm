@@ -65,7 +65,7 @@ export class UserToolbarDrawerComponent implements OnInit {
   ) {}
 
   async ngOnInit(): Promise<void> {
-    await this.clientAppService.allAppsAreConnectedOrTimeout$;
+    await this.clientAppService.allConnectionsSettled;
     this.logoutDisabled = false;
   }
 
