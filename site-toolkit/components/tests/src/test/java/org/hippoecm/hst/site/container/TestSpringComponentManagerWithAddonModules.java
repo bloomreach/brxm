@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -504,5 +504,38 @@ public class TestSpringComponentManagerWithAddonModules {
 
         componentManager.stop();
         componentManager.close();
+    }
+
+    @Test
+    public void test_platform_addon_module_always_first_one() throws Exception {
+        Configuration configuration = new PropertiesConfiguration(getClass().getResource("/META-INF/assembly/with-addon-modules-config.properties"));
+        SpringComponentManager componentManager = new SpringComponentManager(configuration);
+        componentManager.setConfigurationResources(new String[]{WITH_ADDON_MODULES});
+
+        List<ModuleDefinition> addonModuleDefs = new ArrayList<ModuleDefinition>();
+
+        ModuleDefinition def1 = new ModuleDefinition();
+        def1.setName("org.example.analytics");
+        def1.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics/*.xml"));
+
+        addonModuleDefs.add(def1);
+
+        ModuleDefinition def2 = new ModuleDefinition();
+        def2.setName("org.example.analytics2");
+        def2.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics2/*.xml"));
+        addonModuleDefs.add(def2);
+
+        ModuleDefinition def3 = new ModuleDefinition();
+        def3.setName("org.hippoecm.hst.platform");
+        def3.setConfigLocations(Arrays.asList("classpath*:META-INF/hst-assembly/addon/org/example/analytics2/*.xml"));
+        addonModuleDefs.add(def3);
+
+
+        componentManager.setAddonModuleDefinitions(addonModuleDefs);
+
+        // initialize triggers the reordering of addonModuleDefinitions
+        componentManager.initialize();
+
+        System.out.println(componentManager.addonModuleDefinitions.get(0).getName());
     }
 }
