@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,16 +21,49 @@ import javax.jcr.Property;
 import org.easymock.EasyMock;
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
+import org.hippoecm.hst.platform.model.HstModel;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 public class ParametersInfoAnnotationUtilsTest {
+
+
+    private HstModelRegistry hstModelRegistry;
+
+    @Before
+    public void setUp() throws Exception {
+
+        hstModelRegistry = EasyMock.createNiceMock(HstModelRegistry.class);
+
+        final ComponentManager componentManager = EasyMock.createNiceMock(ComponentManager.class);
+        expect(componentManager.getComponent(EasyMock.anyString())).andStubReturn(null);
+        final HstModel hstModel = EasyMock.createNiceMock(HstModel.class);
+        expect(hstModel.getComponentManager()).andStubReturn(componentManager);
+        expect(hstModelRegistry.getHstModel(EasyMock.anyObject(ClassLoader.class))).andStubReturn(hstModel);
+
+        replay(hstModelRegistry, componentManager, hstModel);
+
+        HippoServiceRegistry.register(hstModelRegistry, HstModelRegistry.class);
+
+    }
+
+    @After
+    public void tearDown() {
+        HippoServiceRegistry.unregister(hstModelRegistry, HstModelRegistry.class);
+    }
 
     @Test
     public void testGetParametersInfoAnnotation_Class_ComponentConfiguration() throws Exception {
@@ -202,6 +235,7 @@ public class ParametersInfoAnnotationUtilsTest {
                 HstNodeTypes.NODETYPE_HST_COMPONENT);
         ParametersInfoAnnotationUtils.getParametersInfoAnnotation(componentConfigNode);
     }
+
 
     @Test
     public void testGetParametersInfoAnnotation_String_String() throws Exception {

@@ -213,6 +213,12 @@
     </property>
   </bean>
 
+  <bean id="noOptionsAllowedCorsSupportValve"
+        class="org.hippoecm.hst.core.container.CorsSupportValve">
+    <!-- even though allowOptionsRequest by default false, add for clarity -->
+    <property name="allowOptionsRequest" value="false"/>
+  </bean>
+  
   <!-- Pipelines -->
 
   <bean id="org.hippoecm.hst.core.container.Pipelines" class="org.hippoecm.hst.core.container.HstSitePipelines">
@@ -230,6 +236,7 @@
             </property>
             <property name="processingValves">
               <list>
+                <ref bean="noOptionsAllowedCorsSupportValve"/>
                 <ref bean="securityValve" />
                 <ref bean="subjectBasedSessionValve" />
                 <ref bean="jcrSessionStatefulConcurrencyValve"/>
@@ -255,7 +262,7 @@
         <!-- Spring API name 'SpaSitePipeline'-->
         <entry key="SpaSitePipeline">
            <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
-            <property name="initializationValves">
+             <property name="initializationValves">
               <list>
                 <ref bean="initializationValve" />
                 <ref bean="cmsSecurityValve"/>
@@ -263,6 +270,9 @@
             </property>
             <property name="processingValves">
               <list>
+                <!-- the SpaSitePipeline is just normal HST website rendering except only the root component is rendered,
+                     hence options request is also for this pipeline not supported -->
+                <ref bean="noOptionsAllowedCorsSupportValve"/>
                 <ref bean="securityValve" />
                 <ref bean="subjectBasedSessionValve" />
                 <ref bean="jcrSessionStatefulConcurrencyValve"/>
@@ -293,6 +303,8 @@
             </property>
             <property name="processingValves">
               <list>
+                <!-- note web application invoking pipeline does not include noOptionsCorsSupportValve to handle preflight
+                     requests:  should be handled by the delegatee web application -->
                 <ref bean="localizationValve" />
                 <ref bean="securityValve" />
                 <ref bean="subjectBasedSessionValve" />
@@ -319,6 +331,7 @@
             </property>
             <property name="processingValves">
               <list>
+                <ref bean="noOptionsAllowedCorsSupportValve"/>
                 <ref bean="webFileValve" />
               </list>
             </property>
@@ -342,6 +355,7 @@
             </property>
             <property name="processingValves">
               <list>
+                <ref bean="noOptionsAllowedCorsSupportValve"/>
                 <ref bean="localizationValve" />
                 <ref bean="securityValve" />
                 <ref bean="subjectBasedSessionValve" />
@@ -371,6 +385,8 @@
             </property>
             <property name="processingValves">
               <list>
+                <!-- note web application invoking pipeline does not include noOptionsCorsSupportValve to handle preflight
+                     requests:  should be handled by the delegatee web application -->
                 <ref bean="filterChainInvokingValve" />
               </list>
             </property>
@@ -389,6 +405,7 @@
            <bean class="org.hippoecm.hst.core.container.HstSitePipeline">
              <property name="processingValves">
               <list>
+                <ref bean="noOptionsAllowedCorsSupportValve"/>
                 <ref bean="contextResolvingValve" />
                 <ref bean="resourceServingValve" />
                 <ref bean="componentRenderingValve" />

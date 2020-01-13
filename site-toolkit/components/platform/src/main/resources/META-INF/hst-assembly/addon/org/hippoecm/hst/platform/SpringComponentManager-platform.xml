@@ -34,6 +34,8 @@
 
   <bean class="org.hippoecm.hst.platform.model.RuntimeHostServiceImpl" init-method="init" destroy-method="destroy"/>
 
+  <bean class="org.hippoecm.hst.platform.services.AccessControlAllowHeadersServiceImpl" init-method="init" destroy-method="destroy"/>
+
   <bean class="org.hippoecm.hst.platform.security.JwtTokenServiceImpl" init-method="init" destroy-method="destroy">
   </bean>
 </beans>

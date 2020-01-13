@@ -22,8 +22,12 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.core.component.HstComponent;
+import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
+import org.hippoecm.hst.platform.model.HstModelRegistry;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,9 +56,13 @@ public class ParametersInfoAnnotationUtils {
      * @param componentConfig ComponentConfiguration instance
      * @return the type of <code>ParametersInfo</code>
      */
-    public static ParametersInfo getParametersInfoAnnotation(Object component, ComponentConfiguration componentConfig) {
-        return getParametersInfoAnnotation(component.getClass(), componentConfig);
+    public static ParametersInfo getParametersInfoAnnotation(HstComponent component, ComponentConfiguration componentConfig) {
+        final Class<?> componentClazz = component.getClass();
+        return getParametersInfoAnnotation(componentClazz,
+                (componentConfig != null) ? componentConfig.getParametersInfoClassName() : null,
+                componentClazz.getClassLoader());
     }
+
 
     /**
      * Find the <code>ParametersInfo</code> annotation from either the annotation of a {@code componentClazz} or the
@@ -64,7 +72,7 @@ public class ParametersInfoAnnotationUtils {
      * @return the type of <code>ParametersInfo</code>
      */
     public static ParametersInfo getParametersInfoAnnotation(Class<?> componentClazz,
-            ComponentConfiguration componentConfig) {
+                                                             ComponentConfiguration componentConfig) {
         if (componentClazz == null) {
             return getParametersInfoAnnotation(componentClazz,
                     (componentConfig != null) ? componentConfig.getParametersInfoClassName() : null,
@@ -82,9 +90,15 @@ public class ParametersInfoAnnotationUtils {
      * @param componentConfig HstComponentConfiguration instance
      * @return the type of <code>ParametersInfo</code>
      */
-    public static ParametersInfo getParametersInfoAnnotation(final Object component,
+    public static ParametersInfo getParametersInfoAnnotation(final HstComponent component,
                                                              final HstComponentConfiguration componentConfig) {
-        return getParametersInfoAnnotation(component.getClass(), componentConfig);
+        if (component == null) {
+            return null;
+        }
+        final Class<?> componentClazz = component.getClass();
+        return getParametersInfoAnnotation(componentClazz,
+                (componentConfig != null) ? componentConfig.getParametersInfoClassName() : null,
+                componentClazz.getClassLoader());
     }
 
     /**
@@ -146,15 +160,22 @@ public class ParametersInfoAnnotationUtils {
             Class<?> componentClazz = null;
             String componentClassName = null;
 
-            try {
-                if (componentItemNode.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME)) {
-                    componentClassName = componentItemNode
-                            .getProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME).getString();
-                    componentClazz = Thread.currentThread().getContextClassLoader().loadClass(componentClassName);
+            final ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+            if (componentItemNode.hasProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME)) {
+                componentClassName = componentItemNode.getProperty(HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME).getString();
+                final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+                final ComponentManager componentManager = hstModelRegistry.getHstModel(classLoader).getComponentManager();
+                final Object component = componentManager.getComponent(componentClassName);
+                if (component != null) {
+                    componentClazz = component.getClass();
+                } else {
+                    try {
+                        componentClazz = classLoader.loadClass(componentClassName);
+                    } catch (Exception e) {
+                        log.warn("Component class not loadable, configured by {} property: {}", HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME,
+                                componentClassName);
+                    }
                 }
-            } catch (Exception e) {
-                log.warn("Component class not loadable, configured by {} property: {}",
-                        HstNodeTypes.COMPONENT_PROPERTY_COMPONENT_CLASSNAME, componentClassName);
             }
 
             String paramsInfoClassName = null;
@@ -169,7 +190,7 @@ public class ParametersInfoAnnotationUtils {
                         HstNodeTypes.COMPONENT_PROPERTY_PARAMETERSINFO_CLASSNAME, paramsInfoClassName, e);
             }
 
-            return getParametersInfoAnnotation(componentClazz, paramsInfoClassName, Thread.currentThread().getContextClassLoader());
+            return getParametersInfoAnnotation(componentClazz, paramsInfoClassName, classLoader);
         }
 
         return null;
@@ -199,26 +220,22 @@ public class ParametersInfoAnnotationUtils {
         Class<?> componentClazz = null;
 
         if (componentClazzName != null && !componentClazzName.isEmpty()) {
-            try {
-                componentClazz = classLoader.loadClass(componentClazzName);
-            } catch (Exception e) {
-                // parametersInfoClassName can also be defined as hst property without hst component class
-                log.info("Component class not loadable: {}", componentClazzName);
+            final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+            final ComponentManager componentManager = hstModelRegistry.getHstModel(classLoader).getComponentManager();
+            final Object component = componentManager.getComponent(componentClazzName);
+            if (component != null) {
+                componentClazz = component.getClass();
+            } else {
+                try {
+                    componentClazz = classLoader.loadClass(componentClazzName);
+                } catch (Exception e) {
+                    // parametersInfoClassName can also be defined as hst property without hst component class
+                    log.info("Component class not loadable: {}", componentClazzName);
+                }
             }
         }
 
         return getParametersInfoAnnotation(componentClazz, parametersInfoClassName, classLoader);
-    }
-
-    /**
-     * @deprecated Deprecated since since 13.4. Use {@link #getParametersInfoAnnotation(Class, String, ClassLoader)}
-     */
-    @Deprecated
-    public static ParametersInfo getParametersInfoAnnotation(final Class<?> componentClazz, final String parametersInfoClassName) {
-        if (componentClazz == null) {
-            return getParametersInfoAnnotation(componentClazz, parametersInfoClassName, Thread.currentThread().getContextClassLoader());
-        }
-        return getParametersInfoAnnotation(componentClazz, parametersInfoClassName, componentClazz.getClassLoader());
     }
 
     /**

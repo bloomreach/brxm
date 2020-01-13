@@ -17,8 +17,10 @@ package org.hippoecm.hst.container;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import javax.jcr.Repository;
 import javax.servlet.FilterChain;
@@ -45,6 +47,7 @@ import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.container.ContainerNotFoundException;
+import org.hippoecm.hst.core.container.CorsSupportValve;
 import org.hippoecm.hst.core.container.HstContainerConfig;
 import org.hippoecm.hst.core.container.HstContainerURL;
 import org.hippoecm.hst.core.container.HstRequestProcessor;
@@ -77,7 +80,6 @@ import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.http.HttpMethod;
 import org.springframework.web.context.ServletContextAware;
 
 import static java.lang.Boolean.TRUE;
@@ -88,7 +90,6 @@ import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 import static org.hippoecm.hst.configuration.channel.PreviewURLChannelInfo.PREVIEW_URL_PROPERTY_NAME;
 import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMSSESSIONCONTEXT_BINDING_PATH;
-import static org.hippoecm.hst.core.container.ContainerConstants.DEFAULT_SITE_PIPELINE_NAME;
 import static org.hippoecm.hst.core.container.ContainerConstants.FORWARD_RECURSION_ERROR;
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN;
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR;
@@ -98,6 +99,12 @@ import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRemoteAddr;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestHost;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestScheme;
 import static org.hippoecm.hst.util.HstRequestUtils.getRenderingHost;
+import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS;
+import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS;
+import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS;
+import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN;
+import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_MAX_AGE;
+import static org.springframework.http.HttpHeaders.VARY;
 
 
 public class HstDelegateeFilterBean extends AbstractFilterBean implements ServletContextAware, InitializingBean {
@@ -867,17 +874,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
         final String namedPipeline = resolvedSiteMapItem.getNamedPipeline();
 
-        if ((namedPipeline == null || DEFAULT_SITE_PIPELINE_NAME.equals(namedPipeline))
-                && HttpMethod.OPTIONS.matches(containerRequest.getMethod())) {
-            try {
-                res.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Method OPTIONS has not " +
-                        "been implemented for the default site pipeline");
-                return;
-            } catch (IOException e) {
-                throw new ContainerException(e);
-            }
-        }
-
         requestProcessor.processRequest(this.requestContainerConfig, requestContext, containerRequest, res, namedPipeline);
 
         // now, as long as there is a forward, we keep invoking processResolvedSiteMapItem:
@@ -962,7 +958,16 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
         if (headerMap != null) {
             headerMap.forEach((name, value) -> {
-                response.setHeader(name, value);
+                Optional<String> corsName = Arrays.stream(CorsSupportValve.KNOWN_CORS_HEADER_NAMES).filter(s -> s.equalsIgnoreCase(name)).findFirst();
+                if (corsName.isPresent()) {
+                    // make sure to set this exact CAMEL CASE header string since we rely on this exact match in
+                    // CorsSupportValve. Since header names in http are case insensitive, we need to set the correct
+                    // case sensitive names to check presence in CorsSupportValve
+                    response.setHeader(corsName.get(), value);
+                } else {
+                    response.setHeader(name, value);
+                }
+
             });
         }
     }

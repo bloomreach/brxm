@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.ServletContext;
 
@@ -73,7 +74,7 @@ public class SpringComponentManager implements ComponentManager {
             SpringComponentManager.class.getName().replace(".", "/") + "-*.xml"
             };
 
-    private List<ModuleDefinition> addonModuleDefinitions;
+    List<ModuleDefinition> addonModuleDefinitions;
     private Map<String, ModuleInstance> addonModuleInstancesMap;
     private List<ModuleInstance> addonModuleInstancesList;
 
@@ -127,6 +128,8 @@ public class SpringComponentManager implements ComponentManager {
             // sort the addon module to makes sure the ones that rely on a 'parent' are loaded after the parent is loaded
             orderAddonModuleDefinitions();
 
+            orderPlatformAddonModuleFirstIfPresent();
+
             addonModuleInstancesMap = Collections.synchronizedMap(new HashMap<String, ModuleInstance>());
             
             for (ModuleDefinition addonModuleDefinition : addonModuleDefinitions) {
@@ -174,12 +177,20 @@ public class SpringComponentManager implements ComponentManager {
         }
     }
 
-    private void orderAddonModuleDefinitions() {
+    void orderAddonModuleDefinitions() {
         ObjectOrderer<ModuleDefinition> objectOrderer = new ObjectOrderer<>("Addon Module Definition Orderer");
         for (ModuleDefinition addonModuleDefinition : addonModuleDefinitions) {
             objectOrderer.add(addonModuleDefinition, addonModuleDefinition.getName(), addonModuleDefinition.getParent(), null);
         }
         addonModuleDefinitions = objectOrderer.getOrderedObjects();
+    }
+
+    void orderPlatformAddonModuleFirstIfPresent() {
+        Optional<ModuleDefinition> platform = addonModuleDefinitions.stream().filter(addon -> "org.hippoecm.hst.platform".equals(addon.getName())).findFirst();
+        if (platform.isPresent()) {
+            addonModuleDefinitions.remove(platform.get());
+            addonModuleDefinitions.add(0, platform.get());
+        }
     }
 
     public void start() {
@@ -454,7 +465,7 @@ public class SpringComponentManager implements ComponentManager {
         if (addonModuleInstancesList == null) {
             return Collections.emptyList();
         }
-        
+
         List<ModuleInstance> addonModuleInstances = null;
         
         synchronized (addonModuleInstancesList) {

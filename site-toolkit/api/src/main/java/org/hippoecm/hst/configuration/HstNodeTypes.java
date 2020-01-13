@@ -175,6 +175,7 @@ public interface HstNodeTypes {
 
     String VIRTUALHOST_PROPERTY_SHOWPORT = "hst:showport";
     String VIRTUALHOST_PROPERTY_CDN_HOST = "hst:cdnhost";
+    String VIRTUALHOST_ALLOWED_ORIGINS = "hst:allowedorigins";
 
     String MOUNT_HST_ROOTNAME = "hst:root";
     String MOUNT_PROPERTY_SHOWCONTEXTPATH = "hst:showcontextpath";

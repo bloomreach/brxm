@@ -16,6 +16,7 @@
 package org.hippoecm.hst.site.request;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -617,6 +618,11 @@ public class PreviewDecoratorImpl implements PreviewDecorator {
         @Override
         public Map<String, String> getResponseHeaders() {
             return delegatee.getResponseHeaders();
+        }
+
+        @Override
+        public Collection<String> getAllowedOrigins() {
+            return delegatee.getAllowedOrigins();
         }
     }
 
