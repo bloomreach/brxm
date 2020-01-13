@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -158,7 +158,7 @@ public class SessionSecurityDelegationImpl implements SessionSecurityDelegation 
         Session session2 = null;
         try {
             try {
-                session2 = repository.login(cred2);
+                session2 = session1.impersonate(cred2);
             } catch (javax.jcr.LoginException e) {
                 logWarningAndRethrow(cred2, e);
 

@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.jcr;
 
+import javax.jcr.Credentials;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
@@ -31,6 +32,22 @@ public interface LazySession extends HippoSession {
      * Invokes logout() of the underlying session.
      */
     void logoutSession() throws RepositoryException;
+
+    /**
+     * <p>
+     *     Returns a {@link Session} exactly the same as via {@link Session#impersonate(Credentials)}, however keeps
+     *     a reference to the impersonated session in this {@link LazySession} such that when invoking
+     *     {@link #logoutCoupledImpersonations()} all the sessions created by this method get logged out.
+     * </p>
+     * @param credentials the credentials to impersonate from
+     * @return new impersonated {@link Session}
+     */
+    Session coupledImpersonate(Credentials credentials);
+
+    /**
+     * Logs out any impersonated session impersonated via {@link #coupledImpersonate} from this {@link LazySession}
+     */
+    void logoutCoupledImpersonations();
     
     /**
      * Returns the last refreshed time millis.

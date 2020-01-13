@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-20 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -68,6 +68,7 @@ public class ContentBeanUtils {
     private final static Logger log = LoggerFactory.getLogger(ContentBeanUtils.class);
 
     private static final String DISPOSABLE_SESSION_KEY_PREFIX = ContentBeanUtils.class.getName() + ";disposableSession";
+    private static final String REQUEST_SESSION_KEY_PREFIX = ContentBeanUtils.class.getName() + ";requestSessionCache";
 
     private ContentBeanUtils() {
     }
@@ -737,8 +738,7 @@ public class ContentBeanUtils {
             throw new HstComponentException("sessionIdentifier not allowed to be null");
         }
         try {
-            String userID = null;
-            Credentials cred = null;
+
             // if there exists subject based session, do use the credentials of that session to create session from disposable pool
             Session existingSession = requestContext.getSession(false);
 
@@ -754,17 +754,28 @@ public class ContentBeanUtils {
                 if (subject != null) {
                     Set<Credentials> repoCredsSet = subject.getPrivateCredentials(Credentials.class);
                     if (!repoCredsSet.isEmpty()) {
-                        cred = repoCredsSet.iterator().next();
-                        // this userID does not contain the mandatory credential domain separator needed for the lazy pools
-                        // hence we append it with [separator]lazy, for example @lazy
-                        userID = ((SimpleCredentials) cred).getUserID() + getCredentialsDomainSeparator() + "lazy";
+                        final Credentials cred = repoCredsSet.iterator().next();
+
+                        String requestSessionKey = REQUEST_SESSION_KEY_PREFIX + ";" + sessionIdentifier;
+                        final Session session = (Session) requestContext.getAttribute(requestSessionKey);
+                        if (session != null) {
+                            return session;
+                        }
+
+                        if (requestContext.getResolvedMount() != null && requestContext.getResolvedMount().isSubjectBasedSession()) {
+                            // we already have a subject based session, we cannot fetch a pooled session and also don't
+                            // need a disposable pooled session
+                            Session newSession = ((LazySession) existingSession).coupledImpersonate(cred);
+                            requestContext.setAttribute(requestSessionKey, newSession);
+                            return newSession;
+                        }
+                        throw new IllegalStateException(String.format("LazySession only expected for subject based session " +
+                                "mount but was not the case for mount '%s'", requestContext.getResolvedMount().getMount()));
                     }
                 }
             }
-            if (cred == null) {
-                cred = requestContext.getContextCredentialsProvider().getDefaultCredentials(requestContext);
-                userID = ((SimpleCredentials) cred).getUserID();
-            }
+            final Credentials cred = requestContext.getContextCredentialsProvider().getDefaultCredentials(requestContext);
+            final String userID = ((SimpleCredentials) cred).getUserID();
 
             char[] passwd = ((SimpleCredentials) cred).getPassword();
 

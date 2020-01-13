@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -67,32 +67,37 @@ public class CleanupValve extends AbstractBaseOrderableValve {
     }
     
     protected void clearSubjectSession(ValveContext valveContext, HstRequestContext requestContext, boolean sessionStateful) throws ContainerException {
-        LazySession lazySession = null;
-        
+
+        LazySession lazySession = (LazySession) requestContext.getAttribute(SubjectBasedSessionValve.SUBJECT_BASED_SESSION_ATTR_NAME);
+        if (lazySession == null) {
+            return;
+
+        }
         if (sessionStateful) {
             /*
              *  We do not log out or refresh session stateful jcr session: This is done by either:
              *  1) The JCRSessionStatefulConcurrencyValve refreshes the jcr session when needed
              *  2) When the HttpSession container the jcr session is invalidated (unbinded), the LazySession logs itself out in the finally part
              */
+            // only logout possibly coupled impersonated sessions (typically needed only for a single request)
+            lazySession.logoutCoupledImpersonations();
         } else {
-            lazySession = (LazySession) requestContext.getAttribute(SubjectBasedSessionValve.SUBJECT_BASED_SESSION_ATTR_NAME);
-            
-            if (lazySession != null) {
-                try {
-                    if (lazySession.isLive()) {
-                        lazySession.logout();
-                    }
-                } catch (Exception e) {
-                    if (log.isDebugEnabled()) {
-                        log.warn("Failed to logout session.", e);
-                    } else if (log.isWarnEnabled()) {
-                        log.warn("Failed to logout session. " + e);
-                    }
+            try {
+                // first logout possibly coupled impersonated sessions
+                lazySession.logoutCoupledImpersonations();
+
+                if (lazySession.isLive()) {
+                    lazySession.logout();
                 }
-                
-                requestContext.removeAttribute(SubjectBasedSessionValve.SUBJECT_BASED_SESSION_ATTR_NAME);
+            } catch (Exception e) {
+                if (log.isDebugEnabled()) {
+                    log.warn("Failed to logout session.", e);
+                } else if (log.isWarnEnabled()) {
+                    log.warn("Failed to logout session. " + e);
+                }
             }
+
+            requestContext.removeAttribute(SubjectBasedSessionValve.SUBJECT_BASED_SESSION_ATTR_NAME);
         }
     }
 }
