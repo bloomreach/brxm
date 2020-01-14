@@ -19,11 +19,15 @@ import org.hippoecm.frontend.attributes.StyleAttribute;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.panelperspective.PanelPluginPerspective;
+import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 
-public class SystemPerspective extends PanelPluginPerspective {
+public abstract class SystemPerspective extends PanelPluginPerspective {
 
     public SystemPerspective(final IPluginContext context, final IPluginConfig config) {
         super(context, config, "admin");
+        final PanelPluginBreadCrumbPanel panel = createPanel("panel");
+        replace(panel);
+        getBreadCrumbBar().setActive(panel);
         getBreadCrumbBar().add(StyleAttribute.append("display: none"));
     }
 
@@ -32,4 +36,5 @@ public class SystemPerspective extends PanelPluginPerspective {
         return AdminPanelPlugin.ADMIN_PANEL_SERVICE_ID;
     }
 
+    protected abstract PanelPluginBreadCrumbPanel createPanel(String componentId);
 }
