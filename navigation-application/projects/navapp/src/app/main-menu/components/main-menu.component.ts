@@ -158,12 +158,11 @@ export class MainMenuComponent implements OnInit, AfterViewInit {
   }
 
   private calculateAvailableHeightForScrollableArea(): number {
-    const occupied = [
-      this.home.nativeElement.clientHeight,
-      this.bottomElements.nativeElement.clientHeight,
-      this.progressBar.nativeElement.clientHeight,
-    ];
+    const occupied =
+      this.home.nativeElement.clientHeight +
+      this.bottomElements.nativeElement.clientHeight +
+      this.progressBar.nativeElement.clientHeight;
 
-    return this.el.nativeElement.clientHeight - occupied.reduce((total, height) => total + height, 0);
+    return this.el.nativeElement.clientHeight - occupied;
   }
 }
