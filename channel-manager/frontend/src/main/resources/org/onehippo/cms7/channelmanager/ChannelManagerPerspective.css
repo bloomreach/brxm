@@ -710,11 +710,106 @@
 }
 
 #x-form-el-contentRoot .x-form-field-wrap {
-  display: inline;
+  border: 1px solid rgba(0, 0, 0, .38);
+  border-radius: 4px;
+  box-sizing: border-box;
+  display: flex;
+  height: 36px;
+  padding: 0 0 0 8px;
+  width: 100% !important;
+}
+
+#x-form-el-contentRoot .x-form-field-wrap:focus-within {
+  border-color: #147ac8;
+  box-shadow: 0 0 0 1px #147ac8;
 }
 
 #x-form-el-contentRoot .x-form-text {
-  width: 425px !important;
+  border-radius: 0;
+  border: 0;
+  height: auto;
+  padding: 0 8px 0 0;
+}
+
+#x-form-el-contentRoot .x-form-text:focus {
+  box-shadow: none;
+}
+
+#x-form-el-contentRoot .x-form-trigger {
+  background-color: transparent;
+  border: 0;
+  height: 100%;
+  width: 36px;
+}
+
+#x-form-el-contentRoot .x-form-trigger:last-child {
+  border-bottom-right-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+/** Don't clip blue focus shadow in Firefox **/
+.ext-gecko .br-form .x-form-item {
+  overflow: visible !important;
+}
+
+.br-form {
+  text-align: left;
+}
+
+.br-form .x-form-field,
+.br-form .x-form-item,
+.br-form .x-form-item-label {
+  font-size: 14px;
+}
+
+.br-form .x-form-item {
+  margin-bottom: 0;
+}
+
+.br-form .x-form-item-label {
+  color: rgba(0, 0, 0, .6);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.br-form .x-form-element {
+  padding-bottom: 16px;
+}
+
+.br-form .x-form-element input {
+  border: 1px solid rgba(0, 0, 0, .38);
+  border-radius: 4px;
+  box-sizing: border-box;
+  height: 36px;
+  padding: 0 8px 0 8px;
+  width: 100%;
+}
+
+.br-form .x-form-element input:focus {
+  border-color: #147ac8;
+  box-shadow: 0 0 0 1px #147ac8;
+}
+
+.br-form .x-form-element .x-form-invalid,
+.br-form .x-form-element .x-form-invalid:focus {
+  background-color: transparent;
+  border-color: #d40022;
+  box-shadow: none;
+}
+
+.br-form .x-form-error-message {
+  background-color: #fbe6e9;
+  border: 1px solid #d40022;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.blueprint-display-field {
+  padding-left: 0 !important;
+}
+
+.blueprint-display-field .x-form-display-field {
+  padding-top: 0;
 }
 
 /*
