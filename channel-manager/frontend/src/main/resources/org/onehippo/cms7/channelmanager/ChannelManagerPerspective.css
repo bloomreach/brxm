@@ -563,6 +563,10 @@
   overflow: auto;
 }
 
+.br-window .x-window-footer {
+  border-top: 1px solid rgba(0, 0, 0, .12);
+}
+
 .br-grid .x-grid3-header {
   background-color: transparent;
   background-image: none;

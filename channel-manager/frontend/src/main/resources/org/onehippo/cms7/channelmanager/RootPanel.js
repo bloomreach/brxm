@@ -156,6 +156,7 @@
         height: 450,
         modal: true,
         resizable: false,
+        cls: 'br-window',
         closeAction: 'hide',
         layout: 'fit',
         items: [
