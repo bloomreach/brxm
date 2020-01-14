@@ -684,6 +684,10 @@
   background-color: rgba(20, 122, 200, 0.1) !important;
 }
 
+.br-grid .x-grid3-row-selected td {
+  font-weight: 600;
+}
+
 .component-properties-editor > .x-panel-bwrap > .x-panel-body,
 .component-properties-editor > .x-panel-bwrap > .x-panel-body > .x-box-inner {
   overflow-y: auto;
