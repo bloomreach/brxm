@@ -15,7 +15,7 @@
  */
 
 import { animate, group, style, transition, trigger } from '@angular/animations';
-import { AfterViewInit, Component, ElementRef, HostBinding, HostListener, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostBinding, HostListener, Input, ViewChild } from '@angular/core';
 
 import { normalizeWheelEvent } from '../../../helpers/normalize-wheel-event';
 
@@ -61,11 +61,28 @@ const SCROLL_BUTTONS_ENABLE_ANIMATIONS_DELAY = 100;
   ],
 })
 export class MenuScrollComponent implements AfterViewInit {
+  @Input()
+  set height(value: number) {
+    this.temporaryDisableScrollButtonAnimations(SCROLL_BUTTONS_ENABLE_ANIMATIONS_DELAY * 2);
+
+    const delta = value - this.availableHeight;
+
+    if (this.position > 0 && delta > 0) {
+      this.transitionClass = 'resize-transition';
+      this.position -= delta;
+    }
+
+    this.availableHeight = value;
+  }
+
   @ViewChild('content', { static: false })
   readonly content: ElementRef<HTMLElement>;
 
   @HostBinding('class')
   transitionClass = '';
+
+  @HostBinding('style.height.px')
+  availableHeight = 0;
 
   disableScrollButtonAnimations = false;
   enableScrollButtonAnimationsTimer: number;
@@ -73,10 +90,9 @@ export class MenuScrollComponent implements AfterViewInit {
   private readonly occupiedHeight = 64; // The height occupied by arrow buttons
 
   private offsetTop = 0;
-  private cachedAvailableHeight = 0;
   private cachedContentHeight = 0;
 
-  constructor(private readonly el: ElementRef) {}
+  constructor(private readonly el: ElementRef<HTMLElement>) {}
 
   get isScrollableUp(): boolean {
     return this.position > 0;
@@ -92,10 +108,6 @@ export class MenuScrollComponent implements AfterViewInit {
 
   set position(value: number) {
     this.offsetTop = Math.min(Math.max(0, value), Math.max(0, this.maxPosition));
-  }
-
-  private get availableHeight(): number {
-    return this.cachedAvailableHeight;
   }
 
   private get contentHeight(): number {
@@ -117,7 +129,7 @@ export class MenuScrollComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => this.updateAvailableAndContentHeight());
+    setTimeout(() => this.updateContentHeight());
   }
 
   onScrollUpButtonClick(event: MouseEvent): void {
@@ -149,39 +161,17 @@ export class MenuScrollComponent implements AfterViewInit {
     this.position = this.position + normalized.y;
   }
 
-  @HostListener('window:resize', ['$event'])
-  onResize(): void {
-    this.temporaryDisableScrollButtonAnimations(SCROLL_BUTTONS_ENABLE_ANIMATIONS_DELAY * 2);
-
-    const oldAvailableHeight = this.availableHeight;
-
-    this.updateAvailableAndContentHeight();
-
-    const newAvailableHeight = this.availableHeight;
-    const delta = newAvailableHeight - oldAvailableHeight;
-
-    if (this.position > 0 && delta > 0) {
-      this.transitionClass = 'resize-transition';
-      this.position -= delta;
-    }
-  }
-
-  private updateAvailableAndContentHeight(): void {
-    this.cachedAvailableHeight = this.el.nativeElement.offsetHeight;
+  private updateContentHeight(): void {
     this.cachedContentHeight = this.content.nativeElement.offsetHeight;
   }
 
   private temporaryDisableScrollButtonAnimations(ms: number): void {
     this.disableScrollButtonAnimations = true;
-    console.log('disableScrollButtonAnimations = true');
 
     if (this.enableScrollButtonAnimationsTimer) {
       clearTimeout(this.enableScrollButtonAnimationsTimer);
     }
 
-    this.enableScrollButtonAnimationsTimer = setTimeout(() => {
-      this.disableScrollButtonAnimations = false;
-      console.log('disableScrollButtonAnimations = false');
-    }, ms);
+    this.enableScrollButtonAnimationsTimer = setTimeout(() => this.disableScrollButtonAnimations = false, ms);
   }
 }

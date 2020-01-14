@@ -16,9 +16,13 @@
 
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import {
+  AfterViewInit,
   Component,
+  ElementRef,
   HostBinding,
+  HostListener,
   OnInit,
+  ViewChild,
 } from '@angular/core';
 import { NavigationTrigger } from '@bloomreach/navapp-communication';
 import { Observable, of } from 'rxjs';
@@ -44,12 +48,23 @@ import { MenuStateService } from '../services/menu-state.service';
     ]),
   ],
 })
-export class MainMenuComponent implements OnInit {
+export class MainMenuComponent implements OnInit, AfterViewInit {
   menuItems: MenuItem[] = [];
   isHelpToolbarOpened = false;
   isUserToolbarOpened = false;
+  availableHeightForScrollableArea = 0;
+
+  @ViewChild('progressBar', { static: false })
+  readonly progressBar: ElementRef<HTMLElement>;
+
+  @ViewChild('home', { static: false })
+  readonly home: ElementRef<HTMLElement>;
+
+  @ViewChild('bottomElements', { static: false })
+  readonly bottomElements: ElementRef<HTMLElement>;
 
   constructor(
+    private readonly el: ElementRef<HTMLElement>,
     private readonly menuStateService: MenuStateService,
     private readonly qaHelperService: QaHelperService,
     private readonly busyIndicatorService: BusyIndicatorService,
@@ -79,6 +94,10 @@ export class MainMenuComponent implements OnInit {
 
   ngOnInit(): void {
     this.menuItems = this.menuStateService.menu;
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => this.availableHeightForScrollableArea = this.calculateAvailableHeightForScrollableArea());
   }
 
   toggle(): void {
@@ -122,6 +141,11 @@ export class MainMenuComponent implements OnInit {
     return this.qaHelperService.getMenuItemClass(item);
   }
 
+  @HostListener('window:resize', ['$event'])
+  onResize(): void {
+    this.availableHeightForScrollableArea = this.calculateAvailableHeightForScrollableArea();
+  }
+
   private selectMenuItem(item: MenuItem): void {
     if (item instanceof MenuItemLink) {
       this.navigationService.navigateByNavItem(item.navItem, NavigationTrigger.Menu);
@@ -131,5 +155,15 @@ export class MainMenuComponent implements OnInit {
     if (item instanceof MenuItemContainer) {
       this.menuStateService.openDrawer(item);
     }
+  }
+
+  private calculateAvailableHeightForScrollableArea(): number {
+    const occupied = [
+      this.home.nativeElement.clientHeight,
+      this.bottomElements.nativeElement.clientHeight,
+      this.progressBar.nativeElement.clientHeight,
+    ];
+
+    return this.el.nativeElement.clientHeight - occupied.reduce((total, height) => total + height, 0);
   }
 }

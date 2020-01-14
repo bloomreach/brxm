@@ -14,7 +14,7 @@
   limitations under the License.
   -->
 
-<div #menu class="static-menu">
+<div class="static-menu">
   <div #progressBar class="progress-bar">
     <mat-progress-bar
       *ngIf="isBusyIndicatorVisible"
@@ -26,7 +26,7 @@
     <div #home [ngClass]="getQaClass('home')" class="home">
       <mat-icon svgIcon="br-logo"></mat-icon>
     </div>
-    <brna-menu-scroll [style.height.px]="menu.clientHeight - home.clientHeight - bottomElements.clientHeight - progressBar.clientHeight">
+    <brna-menu-scroll [height]="availableHeightForScrollableArea">
       <brna-top-level-menu-item *ngFor="let item of menuItems"
                                 [caption]="item.caption"
                                 [icon]="item.icon"
