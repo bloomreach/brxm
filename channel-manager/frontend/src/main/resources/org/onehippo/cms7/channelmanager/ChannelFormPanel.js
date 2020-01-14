@@ -60,7 +60,7 @@
                         id: 'displayedBlueprintId',
                         ctCls: 'blueprint-display-field',
                         labelStyle: 'padding: 0 4px 0 0; width: auto;',
-                        fieldLabel: me.resources['new-channel-field-blueprint'],
+                        fieldLabel: me.resources['new-channel-field-blueprint']
                     },
                     {
                         xtype: 'hidden',
@@ -69,7 +69,7 @@
                     {
                         xtype: 'label',
                         cls: 'x-form-item-label',
-                        text: me.resources['new-channel-field-name'],
+                        text: me.resources['new-channel-field-name']
                     },
                     {
                         xtype: 'textfield',

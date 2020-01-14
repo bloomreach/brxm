@@ -58,7 +58,7 @@
                     ],
                     defaults: {
                         sortable: true,
-                        menuDisabled: true,
+                        menuDisabled: true
                     }
                 }),
                 sm: new Ext.grid.RowSelectionModel({
