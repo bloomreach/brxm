@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1529,26 +1529,31 @@ a.x-menu-item {
   background-color: $modal-border-color;
 
   .x-window-tl .x-window-header {
+    align-items: center;
     background-color: $modal-header-bgcolor;
-    color: $darker-shade;
+    border-bottom: 1px solid $gray12;
+    color: $gray87;
+    display: flex;
+    flex-direction: row-reverse;
     font: normal $modal-header-font-size $font-family-base;
-    text-align: left;
     height: $modal-header-height;
-
+    justify-content: space-between;
     padding: 0 $modal-header-padding;
+    text-align: left;
 
     .x-window-header-text {
-      display: table-cell;
-      height: $modal-header-height;
-      vertical-align: middle;
+      font-weight: 600;
     }
+
     .x-tool-close {
-      width: 16px;
-      height: 16px;
-      margin-top: $modal-header-padding - 4;
-      background: url("#{$images_extjs}/icons/delete.svg") no-repeat left;
+      background: url("#{$images_extjs}/icons/delete.svg") no-repeat 5px 0;
+      background-size: 24px 24px;
+      height: 24px;
+      width: 24px;
+
       &:hover {
-        background: url("#{$images_extjs}/icons/delete-hover.svg") no-repeat left;
+        background: url("#{$images_extjs}/icons/delete-hover.svg") no-repeat 5px 0;
+        background-size: 24px 24px;
       }
     }
 
