@@ -75,6 +75,7 @@
 
 .channel-manager .channel-manager-toolbar.x-toolbar .br-toolbar-label {
   font-size: 20px;
+  padding-left: 0;
 }
 
 .channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-tl,
