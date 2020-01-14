@@ -600,6 +600,16 @@
   padding-right: 0;
 }
 
+/* Dialogs have a padding of 16px instead of 24px */
+#blueprints-panel .x-grid3-cell-first {
+  padding-left: 16px;
+}
+
+.br-grid .x-grid3-cell-first .x-grid3-hd-inner,
+.br-grid .x-grid3-cell-first .x-grid3-cell-inner {
+  padding-left: 0;
+}
+
 .br-grid .x-grid3-header-offset {
   padding-left: 0;
 }
