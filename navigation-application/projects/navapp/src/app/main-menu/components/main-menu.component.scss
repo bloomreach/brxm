@@ -23,10 +23,10 @@
 
 .home {
   align-items: center;
+  background-color: $menu-bg;
   display: grid;
   height: $menu-top-item-height;
   min-height: $menu-top-item-height;
-  background-color: $menu-bg;
   z-index: 2;
 
   .mat-icon {
