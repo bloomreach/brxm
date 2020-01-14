@@ -36,6 +36,8 @@ import org.springframework.http.HttpMethod;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.substringAfter;
+import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS;
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS;
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS;
@@ -85,6 +87,9 @@ public class CorsSupportValve implements Valve {
             ACCESS_CONTROL_ALLOW_CREDENTIALS
     };
 
+    // if true, Access-Control-Allow-Origin: * gets replaced with Access-Control-Allow-Origin: {client-origin}
+    private boolean replaceWildcardAllowOrigin;
+
     public void setAllowCredentials(final boolean allowCredentials) {
         this.allowCredentials = allowCredentials;
     }
@@ -93,16 +98,20 @@ public class CorsSupportValve implements Valve {
         this.allowOptionsRequest = allowOptionsRequest;
     }
 
+    public void setReplaceWildcardAllowOrigin(final boolean replaceWildcardAllowOrigin) {
+        this.replaceWildcardAllowOrigin = replaceWildcardAllowOrigin;
+    }
+
     @Override
     public void invoke(final ValveContext context) throws ContainerException {
 
         final HttpServletRequest servletRequest = context.getServletRequest();
+        final HttpServletResponse servletResponse = context.getServletResponse();
 
         if (HttpMethod.OPTIONS.matches(servletRequest.getMethod())) {
 
             log.debug("OPTIONS request {} will be handled by CorsSupportValve", servletRequest);
 
-            final HttpServletResponse servletResponse = context.getServletResponse();
             if (!allowOptionsRequest) {
                 // empty possible already set CORS headers
                 for (String knownCorsHeaderName : KNOWN_CORS_HEADER_NAMES) {
@@ -123,20 +132,11 @@ public class CorsSupportValve implements Valve {
 
             servletResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
 
-            String requestOrigin = servletRequest.getHeader(ORIGIN);
-            if (requestOrigin == null) {
-                // fallback to request host
-                final String farthestRequestHost = HstRequestUtils.getFarthestRequestHost(servletRequest, false);
-                final String farthestRequestScheme = HstRequestUtils.getFarthestRequestScheme(servletRequest);
-                requestOrigin = farthestRequestScheme + "://" + farthestRequestHost;
-            }
+            String requestOrigin = getOrigin(servletRequest);
             // check allowed hosts
 
             if (originAllowed(requestOrigin, servletResponse, context.getRequestContext().getResolvedMount().getMount())) {
-                log.info("Request Origin '{}' is allowed", requestOrigin);
-                // we set the ACCESS_CONTROL_ALLOW_ORIGIN explicitly to the requested origin, even if it is already
-                // set to '*' : We do this since '*' is not allowed in combination with ACCESS_CONTROL_ALLOW_CREDENTIALS: true
-                servletResponse.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, requestOrigin);
+                setAccessControlAllowOrigin(servletResponse, requestOrigin);
             } else {
                 log.info("Request Origin '{}' is not allowed", requestOrigin);
                 // possible the hst:responseheaders already did set ACCESS_CONTROL_ALLOW_ORIGIN. In that case we keep it
@@ -194,16 +194,46 @@ public class CorsSupportValve implements Valve {
             }
             // request (pipeline) handling completed here!
         } else {
+
+            if (replaceWildcardAllowOrigin && isAllowedOriginResponseHeaderWildcard(servletResponse)) {
+                setAccessControlAllowOrigin(servletResponse, getOrigin(servletRequest));
+            }
+
             context.invokeNext();
         }
     }
 
+    private String getOrigin(final HttpServletRequest servletRequest) {
+        String requestOrigin = servletRequest.getHeader(ORIGIN);
+        if (requestOrigin != null) {
+            return requestOrigin;
+        }
+
+        // if so check the Origin HTTP header and if the Origin header is missing check the referer (Origin misses for
+        // CORS or POST requests from firefox, see CMS-12155)
+        log.debug("'Origin' header missing, use 'Referer' header as recommended fallback by OWASP (like for CSRF protection)");
+        final String referer = servletRequest.getHeader("Referer");
+        if (referer != null) {
+            final String scheme = substringBefore(referer, "://");
+            // host possibly including port
+            final String host = substringBefore(substringAfter(referer,scheme + "://"), "/");
+            return scheme + "://" + host;
+        }
+
+        // fallback to request host
+        final String farthestRequestHost = HstRequestUtils.getFarthestRequestHost(servletRequest, false);
+        final String farthestRequestScheme = HstRequestUtils.getFarthestRequestScheme(servletRequest);
+        return farthestRequestScheme + "://" + farthestRequestHost;
+
+    }
+
     private boolean originAllowed(final String requestOrigin, final HttpServletResponse servletResponse, final Mount mount) {
+        if (isAllowedOriginResponseHeaderWildcard(servletResponse)) {
+            return true;
+        }
 
         if (servletResponse.containsHeader(ACCESS_CONTROL_ALLOW_ORIGIN)) {
-            if (servletResponse.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN).trim().equals("*")) {
-                return true;
-            } else if (servletResponse.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN).trim().equals(requestOrigin)) {
+            if (servletResponse.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN).trim().equals(requestOrigin)) {
                 return true;
             } else {
                 // regardless whether mount.getVirtualHost().getAllowedOrigins() allows the origin, when an explicit
@@ -217,6 +247,28 @@ public class CorsSupportValve implements Valve {
             return true;
         }
         return false;
+    }
+
+    private boolean isAllowedOriginResponseHeaderWildcard(final HttpServletResponse servletResponse) {
+        final String allowOrigin = servletResponse.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN);
+        if (allowOrigin == null) {
+            return false;
+        }
+        return allowOrigin.trim().equals("*");
+    }
+
+    private void setAccessControlAllowOrigin(final HttpServletResponse servletResponse, final String requestOrigin) {
+        log.info("Request Origin '{}' is allowed", requestOrigin);
+
+        if (isAllowedOriginResponseHeaderWildcard(servletResponse) && !replaceWildcardAllowOrigin) {
+            // keep Access-Control-Allow-Origin: *
+            return;
+        }
+
+        // we set the ACCESS_CONTROL_ALLOW_ORIGIN explicitly to the requested origin, even if it is already
+        // set to '*' : We do this since '*' is not allowed in combination with ACCESS_CONTROL_ALLOW_CREDENTIALS: true
+        servletResponse.setHeader(ACCESS_CONTROL_ALLOW_ORIGIN, requestOrigin);
+
     }
 
     /**
