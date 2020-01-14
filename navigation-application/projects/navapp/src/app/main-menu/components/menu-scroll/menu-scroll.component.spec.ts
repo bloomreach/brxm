@@ -38,7 +38,7 @@ class TestComponent {
   scrollContainerHeight = 600;
 }
 
-fdescribe('MenuScrollComponent', () => {
+describe('MenuScrollComponent', () => {
   let component: TestComponent;
   let fixture: ComponentFixture<TestComponent>;
   let de: DebugElement;
