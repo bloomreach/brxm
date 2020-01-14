@@ -17,7 +17,7 @@
 @import 'variables';
 
 :host {
-  display: inline-block;
+  display: block;
   position: relative;
 
   &.click-transition .content {
