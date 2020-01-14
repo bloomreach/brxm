@@ -85,14 +85,12 @@ export class MenuScrollComponent implements AfterViewInit {
   availableHeight = 0;
 
   disableScrollButtonAnimations = false;
-  enableScrollButtonAnimationsTimer: number;
+  enableScrollButtonAnimationsTimer: any;
 
   private readonly occupiedHeight = 64; // The height occupied by arrow buttons
 
   private offsetTop = 0;
   private cachedContentHeight = 0;
-
-  constructor(private readonly el: ElementRef<HTMLElement>) {}
 
   get isScrollableUp(): boolean {
     return this.position > 0;

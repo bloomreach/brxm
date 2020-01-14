@@ -15,7 +15,7 @@
  */
 
 import { Component, DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { async, ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -25,7 +25,7 @@ import { MenuScrollComponent } from './menu-scroll.component';
 
 @Component({
   template: `
-    <brna-menu-scroll>
+    <brna-menu-scroll [height]="scrollContainerHeight">
       <div style="height: 100px"></div>
       <div style="height: 100px"></div>
       <div style="height: 100px"></div>
@@ -34,47 +34,36 @@ import { MenuScrollComponent } from './menu-scroll.component';
     </brna-menu-scroll>
   `,
 })
-class EnoughSpaceTestComponent {}
-
-@Component({
-  template: `
-    <brna-menu-scroll [style.height.px]="scrollContainerHeight">
-      <div style="height: 100px"></div>
-      <div style="height: 100px"></div>
-      <div style="height: 100px"></div>
-      <div style="height: 100px"></div>
-      <div style="height: 100px"></div>
-    </brna-menu-scroll>
-  `,
-})
-class NotEnoughSpaceTestComponent {
-  scrollContainerHeight = 150;
+class TestComponent {
+  scrollContainerHeight = 600;
 }
 
-describe('MenuScrollComponent', () => {
-  describe('if there is enough space', () => {
-    let component: EnoughSpaceTestComponent;
-    let fixture: ComponentFixture<EnoughSpaceTestComponent>;
-    let de: DebugElement;
-    let host: DebugElement;
-    let contentDe: DebugElement;
+fdescribe('MenuScrollComponent', () => {
+  let component: TestComponent;
+  let fixture: ComponentFixture<TestComponent>;
+  let de: DebugElement;
+  let host: DebugElement;
+  let contentDe: DebugElement;
 
+  describe('if there is enough space', () => {
     beforeEach(async(() => {
       fixture = TestBed.configureTestingModule({
         imports: [
           NoopAnimationsModule,
         ],
         declarations: [
-          EnoughSpaceTestComponent,
+          TestComponent,
           MenuScrollComponent,
         ],
         schemas: [NO_ERRORS_SCHEMA],
-      }).createComponent(EnoughSpaceTestComponent);
+      }).createComponent(TestComponent);
 
       component = fixture.componentInstance;
       de = fixture.debugElement;
       host = de.query(By.css('brna-menu-scroll'));
       contentDe = de.query(By.css('.content'));
+
+      component.scrollContainerHeight = 600;
 
       fixture.detectChanges();
     }));
@@ -108,12 +97,6 @@ describe('MenuScrollComponent', () => {
   });
 
   describe('if there is not enough space', () => {
-    let component: NotEnoughSpaceTestComponent;
-    let fixture: ComponentFixture<NotEnoughSpaceTestComponent>;
-    let de: DebugElement;
-    let host: DebugElement;
-    let contentDe: DebugElement;
-
     let mouseEvent: jasmine.SpyObj<MouseEvent>;
     let wheelEvent: jasmine.SpyObj<WheelEvent>;
 
@@ -141,22 +124,23 @@ describe('MenuScrollComponent', () => {
           NoopAnimationsModule,
         ],
         declarations: [
-          NotEnoughSpaceTestComponent,
+          TestComponent,
           MenuScrollComponent,
         ],
         schemas: [NO_ERRORS_SCHEMA],
-      }).createComponent(NotEnoughSpaceTestComponent);
+      }).createComponent(TestComponent);
 
       component = fixture.componentInstance;
       de = fixture.debugElement;
       host = de.query(By.css('brna-menu-scroll'));
       contentDe = de.query(By.css('.content'));
 
+      component.scrollContainerHeight = 150;
+
       fixture.detectChanges(); // Call ngAfterViewInit which schedule height calculation
       tick();                  // Perform height calculation
-      fixture.detectChanges(); // Reflect changed in DOM
-
-      tick();
+      fixture.detectChanges(); // Reflect changes in DOM
+      flush();
     }));
 
     it('should create', () => {
@@ -211,7 +195,7 @@ describe('MenuScrollComponent', () => {
 
       fixture.detectChanges();
 
-      tick();
+      flush();
 
       expect(contentDe.styles.transform).toBe('translateY(-0px)');
     }));
@@ -221,7 +205,7 @@ describe('MenuScrollComponent', () => {
 
       fixture.detectChanges();
 
-      tick();
+      flush();
 
       expect(contentDe.styles.transform).toBe('translateY(-10px)');
     }));
@@ -279,7 +263,7 @@ describe('MenuScrollComponent', () => {
 
         fixture.detectChanges();
 
-        tick();
+        flush();
 
         expect(contentDe.styles.transform).toBe('translateY(-8px)');
       }));
@@ -289,7 +273,7 @@ describe('MenuScrollComponent', () => {
 
         fixture.detectChanges();
 
-        tick();
+        flush();
 
         expect(contentDe.styles.transform).toBe('translateY(-20px)');
       }));
@@ -341,7 +325,7 @@ describe('MenuScrollComponent', () => {
 
         fixture.detectChanges();
 
-        tick();
+        flush();
 
         expect(contentDe.styles.transform).toBe('translateY(-340px)');
       }));
@@ -351,22 +335,16 @@ describe('MenuScrollComponent', () => {
 
         fixture.detectChanges();
 
-        tick();
+        flush();
 
         expect(contentDe.styles.transform).toBe('translateY(-350px)');
       }));
 
-      describe('when container\'s height is increased due to window resize', () => {
-        beforeEach(fakeAsync(() => {
+      describe('when container\'s height is increased', () => {
+        beforeEach(async(() => {
           component.scrollContainerHeight = 200;
 
           fixture.detectChanges();
-          tick();
-
-          window.dispatchEvent(new Event('resize'));
-
-          fixture.detectChanges();
-          tick();
         }));
 
         it('should scroll content up', () => {
