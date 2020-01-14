@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -57,9 +57,6 @@ import org.slf4j.LoggerFactory;
 public class MirrorTemplatePlugin extends RenderPlugin<Node> {
     private static final Logger log = LoggerFactory.getLogger(MirrorTemplatePlugin.class);
 
-    private static final CssResourceReference MIRROR_TEMPLATE_PLUGIN =
-            new CssResourceReference(MirrorTemplatePlugin.class, MirrorTemplatePlugin.class.getSimpleName() + ".css");
-
     private final Fragment fragment;
 
     public MirrorTemplatePlugin(final IPluginContext context, final IPluginConfig config) {
@@ -75,12 +72,6 @@ public class MirrorTemplatePlugin extends RenderPlugin<Node> {
             addOpenLink();
         }
         add(fragment);
-    }
-
-    @Override
-    public void renderHead(final IHeaderResponse response) {
-        super.renderHead(response);
-        response.render(CssHeaderItem.forReference(MIRROR_TEMPLATE_PLUGIN));
     }
 
     public Fragment getFragment() {
