@@ -26,6 +26,8 @@
   display: grid;
   height: $menu-top-item-height;
   min-height: $menu-top-item-height;
+  background-color: $menu-bg;
+  z-index: 1;
 
   .mat-icon {
     color: $white;
@@ -40,7 +42,6 @@
   display: flex;
   flex-direction: column;
   font-size: 14px;
-  grid-template-rows: auto 1fr auto;
 }
 
 .progress-bar {
