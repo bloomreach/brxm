@@ -19,8 +19,6 @@ import { AfterViewInit, Component, ElementRef, HostBinding, HostListener, Input,
 
 import { normalizeWheelEvent } from '../../../helpers/normalize-wheel-event';
 
-const SCROLL_BUTTONS_ENABLE_ANIMATIONS_DELAY = 100;
-
 @Component({
   selector: 'brna-menu-scroll',
   templateUrl: 'menu-scroll.component.html',
@@ -63,7 +61,7 @@ const SCROLL_BUTTONS_ENABLE_ANIMATIONS_DELAY = 100;
 export class MenuScrollComponent implements AfterViewInit {
   @Input()
   set height(value: number) {
-    this.temporaryDisableScrollButtonAnimations(SCROLL_BUTTONS_ENABLE_ANIMATIONS_DELAY * 2);
+    this.disableScrollButtonAnimations = true;
 
     const delta = value - this.availableHeight;
 
@@ -85,7 +83,6 @@ export class MenuScrollComponent implements AfterViewInit {
   availableHeight = 0;
 
   disableScrollButtonAnimations = false;
-  enableScrollButtonAnimationsTimer: any;
 
   private readonly occupiedHeight = 64; // The height occupied by arrow buttons
 
@@ -133,6 +130,7 @@ export class MenuScrollComponent implements AfterViewInit {
   onScrollUpButtonClick(event: MouseEvent): void {
     event.preventDefault();
 
+    this.disableScrollButtonAnimations = false;
     this.transitionClass = 'click-transition';
     this.position = this.position - this.step;
   }
@@ -140,6 +138,7 @@ export class MenuScrollComponent implements AfterViewInit {
   onScrollDownButtonClick(event: MouseEvent): void {
     event.preventDefault();
 
+    this.disableScrollButtonAnimations = false;
     this.transitionClass = 'click-transition';
     this.position = this.position + this.step;
   }
@@ -152,7 +151,7 @@ export class MenuScrollComponent implements AfterViewInit {
       return;
     }
 
-    this.temporaryDisableScrollButtonAnimations(SCROLL_BUTTONS_ENABLE_ANIMATIONS_DELAY);
+    this.disableScrollButtonAnimations = true;
 
     const normalized = normalizeWheelEvent(event);
     this.transitionClass = normalized.wheel ? 'wheel-transition' : 'no-transition';
@@ -161,15 +160,5 @@ export class MenuScrollComponent implements AfterViewInit {
 
   private updateContentHeight(): void {
     this.cachedContentHeight = this.content.nativeElement.offsetHeight;
-  }
-
-  private temporaryDisableScrollButtonAnimations(ms: number): void {
-    this.disableScrollButtonAnimations = true;
-
-    if (this.enableScrollButtonAnimationsTimer) {
-      clearTimeout(this.enableScrollButtonAnimationsTimer);
-    }
-
-    this.enableScrollButtonAnimationsTimer = setTimeout(() => this.disableScrollButtonAnimations = false, ms);
   }
 }
