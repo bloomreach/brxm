@@ -189,6 +189,8 @@ public interface ContainerConstants {
 
     String PAGE_MODEL_API_VERSION = "API-Version";
 
+    String PAGE_MODEL_ACCEPT_VERSION = "Accept-version";
+
     /**
      * The attribute used on the {@link HstRequestContext} attributes to find out which branch of an {@link HstSite} or
      * document to use during rendering. The stored value in the attribute should be of type Map<HstSite, HstSite>

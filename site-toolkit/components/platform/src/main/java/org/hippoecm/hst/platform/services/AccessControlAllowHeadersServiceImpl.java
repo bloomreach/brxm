@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.platform.services;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,19 +25,27 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.container.header.AccessControlAllowHeadersService;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.onehippo.cms7.services.HippoServiceRegistry;
+
+import static java.util.Collections.singletonList;
 
 public class AccessControlAllowHeadersServiceImpl implements AccessControlAllowHeadersService {
 
+    private final Map<String, List<String>> allowedHeadersMap = new HashMap<>();
+
     public void init() {
+
+        allowedHeadersMap.put(AccessControlAllowHeadersServiceImpl.class.getName() + ".builtin",
+                singletonList(ContainerConstants.PAGE_MODEL_ACCEPT_VERSION));
+
+
         HippoServiceRegistry.register(this, AccessControlAllowHeadersService.class);
     }
 
     public void destroy() {
         HippoServiceRegistry.unregister(this, AccessControlAllowHeadersService.class);
     }
-
-    private final Map<String, List<String>> allowedHeadersMap = new HashMap<>();
 
     @Override
     public String getAllowedHeadersString() {
@@ -62,4 +71,5 @@ public class AccessControlAllowHeadersServiceImpl implements AccessControlAllowH
     public void setAllowedHeaders(final String module, final List<String> allowedHeaders) {
         allowedHeadersMap.put(module, Collections.unmodifiableList(allowedHeaders));
     }
+
 }

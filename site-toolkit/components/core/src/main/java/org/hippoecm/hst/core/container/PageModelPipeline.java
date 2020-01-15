@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.core.container;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -89,7 +90,15 @@ public class PageModelPipeline implements Pipeline {
         if (!initialized) {
             doInitialize();
         }
-        getPageModelPipelineDelegatee(servletRequest).invoke(requestContainerConfig, requestContext, servletRequest, servletResponse);
+        try {
+            getPageModelPipelineDelegatee(servletRequest).invoke(requestContainerConfig, requestContext, servletRequest, servletResponse);
+        } catch (UnsupportedApiVersion e) {
+            try {
+                servletResponse.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
+            } catch (IOException e1) {
+                throw new ContainerException("Unable to set 400 on response after invalid request version.", e);
+            }
+        }
     }
 
     /**
@@ -115,19 +124,33 @@ public class PageModelPipeline implements Pipeline {
     @Override
     public void cleanup(final HstContainerConfig requestContainerConfig, final HstRequestContext requestContext,
                         final HttpServletRequest servletRequest, final HttpServletResponse servletResponse) throws ContainerException {
-        getPageModelPipelineDelegatee(servletRequest).cleanup(requestContainerConfig, requestContext, servletRequest, servletResponse);
+        try {
+            getPageModelPipelineDelegatee(servletRequest).cleanup(requestContainerConfig, requestContext, servletRequest, servletResponse);
+        } catch (UnsupportedApiVersion ignore) {
+            // already handled during #invoke
+        }
     }
 
     @Override
     public void destroy() throws ContainerException {
     }
 
-    private Pipeline getPageModelPipelineDelegatee(final HttpServletRequest servletRequest) throws ContainerException {
+    /**
+     * <p>
+     *     Returns the {@link Pipeline} to delegate to. The selected {@link Pipeline} corresponds to the requested
+     *     Page Model API version. If there is no pipeline for the requested version, an {@link UnsupportedApiVersion}
+     *     is thrown
+     * </p>
+     * @param servletRequest
+     * @return The {@link Pipeline} to delegate to
+     * @throws UnsupportedApiVersion in case of an unsupported Page Model API is requested
+     */
+    private Pipeline getPageModelPipelineDelegatee(final HttpServletRequest servletRequest) throws UnsupportedApiVersion {
         final Pipeline pipeline = (Pipeline)servletRequest.getAttribute(PAGE_MODEL_PIPELINE_REQUEST_ATTR);
         if (pipeline != null) {
             return pipeline;
         }
-        final String requestPageModelApiVersion = servletRequest.getHeader(ContainerConstants.PAGE_MODEL_API_VERSION);
+        final String requestPageModelApiVersion = servletRequest.getHeader(ContainerConstants.PAGE_MODEL_ACCEPT_VERSION);
         if (StringUtils.isEmpty(requestPageModelApiVersion)) {
             final Pipeline defaultPipeline = getDefaultPageModelPipeline();
             servletRequest.setAttribute(ContainerConstants.PAGE_MODEL_API_VERSION, defaultPageModelApiVersion);
@@ -136,12 +159,8 @@ public class PageModelPipeline implements Pipeline {
         } else {
             final Pipeline requestedPipeline = pageModelApiPipelinesByVersion.get(requestPageModelApiVersion);
             if (requestedPipeline == null) {
-                log.info("Cannot find page model api pipeline for version '{}', return default page model pipeline " +
-                        "version '{}'", requestPageModelApiVersion, defaultPageModelApiVersion);
-                servletRequest.setAttribute(ContainerConstants.PAGE_MODEL_API_VERSION, defaultPageModelApiVersion);
-                final Pipeline defaultPipeline = getDefaultPageModelPipeline();
-                servletRequest.setAttribute(PAGE_MODEL_PIPELINE_REQUEST_ATTR, defaultPipeline);
-                return defaultPipeline;
+                throw new UnsupportedApiVersion(String.format("UnsupportedApiVersion: Header 'Accept-version: %s' points " +
+                        "to a non-supported version", requestPageModelApiVersion));
             } else {
                 log.info("Using page model api pipeline version '{}'", requestPageModelApiVersion);
                 servletRequest.setAttribute(ContainerConstants.PAGE_MODEL_API_VERSION, requestPageModelApiVersion);
@@ -151,13 +170,18 @@ public class PageModelPipeline implements Pipeline {
         }
     }
 
-    private Pipeline getDefaultPageModelPipeline() throws ContainerException {
+    private Pipeline getDefaultPageModelPipeline() throws UnsupportedApiVersion {
         final Pipeline defaultPipeline = pageModelApiPipelinesByVersion.get(defaultPageModelApiVersion);
         if (defaultPipeline == null) {
-            throw new ContainerException(String.format("Default model api pipeline for version '%s' does not exist.",
+            throw new UnsupportedApiVersion(String.format("Default Page Model API version '%s' is not supported.",
                     defaultPageModelApiVersion));
         }
         return defaultPipeline;
     }
 
+    private static class UnsupportedApiVersion extends Exception {
+        public UnsupportedApiVersion(final String message) {
+            super(message);
+        }
+    }
 }
