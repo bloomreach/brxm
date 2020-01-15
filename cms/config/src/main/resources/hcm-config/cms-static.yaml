@@ -123,7 +123,7 @@ definitions:
         plugin.class: org.hippoecm.frontend.plugins.cms.admin.AdminPerspective
         hipposys:userrole: xm.system.user
         wicket.id: service.tab
-        frontend:appPath: system
+        frontend:appPath: usermanagement
         /layout.wireframe:
           jcr:primaryType: frontend:pluginconfig
           center: id=hippo-panel-plugin-perspective-center,body=hippo-panel-plugin-perspective-center-body,scroll=true
