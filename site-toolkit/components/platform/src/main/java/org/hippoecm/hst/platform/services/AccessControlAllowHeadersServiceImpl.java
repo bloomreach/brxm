@@ -33,11 +33,26 @@ import static java.util.Collections.singletonList;
 public class AccessControlAllowHeadersServiceImpl implements AccessControlAllowHeadersService {
 
     private final Map<String, List<String>> allowedHeadersMap = new HashMap<>();
+    private String extraAllowedHeaders;
+
+    public void setExtraAllowedHeaders(final String extraAllowedHeaders) {
+        this.extraAllowedHeaders = extraAllowedHeaders;
+    }
 
     public void init() {
 
         allowedHeadersMap.put(AccessControlAllowHeadersServiceImpl.class.getName() + ".builtin",
                 singletonList(ContainerConstants.PAGE_MODEL_ACCEPT_VERSION));
+
+        if (StringUtils.isNotBlank(extraAllowedHeaders)) {
+            String[] split = StringUtils.split(extraAllowedHeaders, " ,\t\f\r\n");
+
+            final List<String> extraAllowedHeaders = Arrays.stream(split).map(s -> s.trim())
+                    .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
+
+            allowedHeadersMap.put(AccessControlAllowHeadersServiceImpl.class.getName() + ".extra",
+                    Collections.unmodifiableList(extraAllowedHeaders));
+        }
 
 
         HippoServiceRegistry.register(this, AccessControlAllowHeadersService.class);
