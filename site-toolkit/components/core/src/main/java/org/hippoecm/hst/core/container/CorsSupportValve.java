@@ -233,13 +233,9 @@ public class CorsSupportValve implements Valve {
         }
 
         if (servletResponse.containsHeader(ACCESS_CONTROL_ALLOW_ORIGIN)) {
-            if (servletResponse.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN).trim().equals(requestOrigin)) {
-                return true;
-            } else {
-                // regardless whether mount.getVirtualHost().getAllowedOrigins() allows the origin, when an explicit
-                // hst:responseheader for a certain host is set, we do not look at whitelisted origins
-                return false;
-            }
+            // regardless whether mount.getVirtualHost().getAllowedOrigins() allows the origin, when an explicit
+            // hst:responseheader for a certain host is set, we do not look at whitelisted origins
+            return servletResponse.getHeader(ACCESS_CONTROL_ALLOW_ORIGIN).trim().equals(requestOrigin);
         }
 
         if (mount.getVirtualHost().getAllowedOrigins().contains(requestOrigin)) {
