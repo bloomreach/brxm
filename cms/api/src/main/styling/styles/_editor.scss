@@ -246,6 +246,12 @@
     margin-right: 8px;
     white-space: nowrap;
   }
+
+  .expand-collapse-icon {
+    display: inline-block;
+    transform: rotate(0);
+    transition: transform 300ms ease-out;
+  }
 }
 
 .hippo-editor-compound-field {
@@ -264,11 +270,20 @@
       color: $editor-compound-field-color;
       font-weight: 600;
       margin-bottom: 8px;
+
+      .editor-plugin-template & {
+        cursor: pointer;
+      }
     }
 
     > .hippo-editor-field-subfield {
       padding-bottom: 4px;
       padding-top: 8px;
+      transition:
+        max-height 300ms ease-out,
+        padding 300ms ease-out,
+        margin 300ms ease-out,
+        opacity 300ms ease-out;
 
       &:not(:last-child) {
         border-bottom: 1px solid $gray12;
@@ -281,7 +296,28 @@
   }
 }
 
-@include hippo-editor-field-bg(1, 5);
+.hippo-editor-compound-field.collapsed > .hippo-editor-field {
+  > .hippo-editor-field-title .expand-collapse-icon {
+    transform: rotate(-90deg);
+  }
+
+  > .hippo-editor-field-title {
+    margin-bottom: 0;
+  }
+
+  > .add-link {
+    margin-top: 8px;
+  }
+
+  > .hippo-editor-field-subfield {
+    border: 0;
+    margin: 0;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    padding: 0;
+  }
+}
 
 .hippo-editor-field-title {
   color: $editor-field-title-color;
