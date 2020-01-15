@@ -133,54 +133,6 @@ definitions:
         jcr:primaryType: frontend:plugin
         cluster.name: cms-header-bar
         plugin.class: org.hippoecm.frontend.plugin.loader.PluginClusterLoader
-      /users:
-        jcr:primaryType: frontend:plugin
-        plugin.class: org.hippoecm.frontend.plugins.cms.admin.users.SystemUsersPerspective
-        hipposys:userrole: xm.security.viewer
-        jcr:mixinTypes: ['frontend:navigationitem']
-        frontend:appPath: systemusers
-        wicket.id: service.tab
-        /layout.wireframe:
-          jcr:primaryType: frontend:pluginconfig
-          center: id=hippo-panel-plugin-perspective-center,body=hippo-panel-plugin-perspective-center-body,scroll=true
-          root.id: hippo-panel-plugin-wrapper
-          top: id=hippo-panel-plugin-perspective-top,body=hippo-panel-plugin-perspective-top-body,height=52
-      /groups:
-        jcr:primaryType: frontend:plugin
-        plugin.class: org.hippoecm.frontend.plugins.cms.admin.groups.SystemGroupsPerspective
-        hipposys:userrole: xm.security.viewer
-        jcr:mixinTypes: ['frontend:navigationitem']
-        frontend:appPath: systemgroups
-        wicket.id: service.tab
-        /layout.wireframe:
-          jcr:primaryType: frontend:pluginconfig
-          center: id=hippo-panel-plugin-perspective-center,body=hippo-panel-plugin-perspective-center-body,scroll=true
-          root.id: hippo-panel-plugin-wrapper
-          top: id=hippo-panel-plugin-perspective-top,body=hippo-panel-plugin-perspective-top-body,height=52
-      /userroles:
-        jcr:primaryType: frontend:plugin
-        plugin.class: org.hippoecm.frontend.plugins.cms.admin.userroles.SystemUserRolesPerspective
-        hipposys:userrole: xm.security.viewer
-        jcr:mixinTypes: ['frontend:navigationitem']
-        frontend:appPath: systemuserroles
-        wicket.id: service.tab
-        /layout.wireframe:
-          jcr:primaryType: frontend:pluginconfig
-          center: id=hippo-panel-plugin-perspective-center,body=hippo-panel-plugin-perspective-center-body,scroll=true
-          root.id: hippo-panel-plugin-wrapper
-          top: id=hippo-panel-plugin-perspective-top,body=hippo-panel-plugin-perspective-top-body,height=52
-      /permissions:
-        jcr:primaryType: frontend:plugin
-        plugin.class: org.hippoecm.frontend.plugins.cms.admin.permissions.SystemPermissionsPerspective
-        hipposys:userrole: xm.security.viewer
-        jcr:mixinTypes: ['frontend:navigationitem']
-        frontend:appPath: systempermissions
-        wicket.id: service.tab
-        /layout.wireframe:
-          jcr:primaryType: frontend:pluginconfig
-          center: id=hippo-panel-plugin-perspective-center,body=hippo-panel-plugin-perspective-center-body,scroll=true
-          root.id: hippo-panel-plugin-wrapper
-          top: id=hippo-panel-plugin-perspective-top,body=hippo-panel-plugin-perspective-top-body,height=52
       /systeminfo:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.plugins.cms.admin.system.SystemInfoPerspective

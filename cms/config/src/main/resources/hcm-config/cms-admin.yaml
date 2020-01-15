@@ -2,3 +2,19 @@ definitions:
   config:
     /hippo:configuration/hippo:frontend/cms/cms-admin:
       jcr:primaryType: frontend:plugincluster
+      /users:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.plugins.cms.admin.users.ListUsersPlugin
+        hipposys:userrole: xm.security.viewer
+      /groups:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.plugins.cms.admin.groups.ListGroupsPlugin
+        hipposys:userrole: xm.security.viewer
+      /userroles:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.plugins.cms.admin.userroles.ListUserRolesPlugin
+        hipposys:userrole: xm.security.viewer
+      /permissions:
+        jcr:primaryType: frontend:plugin
+        plugin.class: org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionsPlugin
+        hipposys:userrole: xm.security.viewer
