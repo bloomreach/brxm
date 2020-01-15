@@ -82,7 +82,7 @@ export class MenuScrollComponent implements AfterViewInit {
   @HostBinding('style.height.px')
   availableHeight = 0;
 
-  disableScrollButtonAnimations = false;
+  disableScrollButtonAnimations = true;
 
   private readonly occupiedHeight = 64; // The height occupied by arrow buttons
 
