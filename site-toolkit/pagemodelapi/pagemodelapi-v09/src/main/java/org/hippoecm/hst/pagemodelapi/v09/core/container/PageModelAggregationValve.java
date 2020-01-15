@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -186,7 +186,7 @@ public class PageModelAggregationValve extends AggregationValve {
     @Override
     protected void writeAggregatedOutput(final ValveContext context, final HstComponentWindow rootRenderingWindow)
             throws ContainerException {
-        final HstRequestContext requestContext = RequestContextProvider.get();
+        final HstRequestContext requestContext = context.getRequestContext();
         final AggregatedPageModel aggregatedPageModel = ContentSerializationContext.getCurrentAggregatedPageModel();
 
         if (aggregatedPageModel == null) {
@@ -198,7 +198,8 @@ public class PageModelAggregationValve extends AggregationValve {
         try {
             response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
             response.setCharacterEncoding("UTF-8");
-            response.setHeader(ContainerConstants.PAGE_MODEL_API_VERSION, "0.9");
+            response.setHeader(ContainerConstants.PAGE_MODEL_API_VERSION,
+                    (String)requestContext.getServletRequest().getAttribute(ContainerConstants.PAGE_MODEL_API_VERSION));
 
             final ComponentWindowModel pageWindowModel = aggregatedPageModel.getPageWindowModel();
 
@@ -277,6 +278,11 @@ public class PageModelAggregationValve extends AggregationValve {
 
         aggregatedPageModel.setPageWindowModel(pageWindowModel);
         addPreviewFlagToPageModel(aggregatedPageModel, requestContext);
+
+        // include api version to _meta section
+        aggregatedPageModel.putMetadata("version",
+                requestContext.getServletRequest().getAttribute(ContainerConstants.PAGE_MODEL_API_VERSION));
+
         addLinksToPageModel(aggregatedPageModel);
 
         final int sortedComponentWindowsLen = sortedComponentWindows.length;

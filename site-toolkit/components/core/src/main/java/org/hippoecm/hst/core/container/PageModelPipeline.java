@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -130,6 +130,7 @@ public class PageModelPipeline implements Pipeline {
         final String requestPageModelApiVersion = servletRequest.getHeader(ContainerConstants.PAGE_MODEL_API_VERSION);
         if (StringUtils.isEmpty(requestPageModelApiVersion)) {
             final Pipeline defaultPipeline = getDefaultPageModelPipeline();
+            servletRequest.setAttribute(ContainerConstants.PAGE_MODEL_API_VERSION, defaultPageModelApiVersion);
             servletRequest.setAttribute(PAGE_MODEL_PIPELINE_REQUEST_ATTR, defaultPipeline);
             return defaultPipeline;
         } else {
@@ -137,11 +138,13 @@ public class PageModelPipeline implements Pipeline {
             if (requestedPipeline == null) {
                 log.info("Cannot find page model api pipeline for version '{}', return default page model pipeline " +
                         "version '{}'", requestPageModelApiVersion, defaultPageModelApiVersion);
+                servletRequest.setAttribute(ContainerConstants.PAGE_MODEL_API_VERSION, defaultPageModelApiVersion);
                 final Pipeline defaultPipeline = getDefaultPageModelPipeline();
                 servletRequest.setAttribute(PAGE_MODEL_PIPELINE_REQUEST_ATTR, defaultPipeline);
                 return defaultPipeline;
             } else {
                 log.info("Using page model api pipeline version '{}'", requestPageModelApiVersion);
+                servletRequest.setAttribute(ContainerConstants.PAGE_MODEL_API_VERSION, requestPageModelApiVersion);
                 servletRequest.setAttribute(PAGE_MODEL_PIPELINE_REQUEST_ATTR, requestedPipeline);
                 return requestedPipeline;
             }

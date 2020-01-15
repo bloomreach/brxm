@@ -1,5 +1,5 @@
 /*
-q *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+q *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,10 +14,6 @@ q *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
  *  limitations under the License.
  */
 package org.hippoecm.hst.servlet;
-
-import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL;
-import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL;
-import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_WEB_FILE_TEMPLATE_PROTOCOL;
 
 import java.io.IOException;
 import java.io.Writer;
@@ -52,11 +48,16 @@ import freemarker.ext.jsp.TaglibFactory;
 import freemarker.ext.servlet.AllHttpScopesHashModel;
 import freemarker.ext.servlet.FreemarkerServlet;
 import freemarker.template.Configuration;
+import freemarker.template.DefaultObjectWrapper;
 import freemarker.template.ObjectWrapper;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
+
+import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_CLASSPATH_TEMPLATE_PROTOCOL;
+import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_JCR_TEMPLATE_PROTOCOL;
+import static org.hippoecm.hst.core.container.ContainerConstants.FREEMARKER_WEB_FILE_TEMPLATE_PROTOCOL;
 
 public class HstFreemarkerServlet extends FreemarkerServlet {
 
@@ -140,6 +141,12 @@ public class HstFreemarkerServlet extends FreemarkerServlet {
             conf.setTemplateUpdateDelayMilliseconds(0);
         }
         conf.setLocalizedLookup(false);
+
+        // Enable FreeMarker Default BeanWrapper to recognize interface's default method implementations. ref: FREEMARKER-24.
+        final ObjectWrapper objectWrapper = conf.getObjectWrapper();
+        if (objectWrapper instanceof DefaultObjectWrapper) {
+            ((DefaultObjectWrapper) objectWrapper).setTreatDefaultMethodsAsBeanMembers(true);
+        }
     }
 
     @Override

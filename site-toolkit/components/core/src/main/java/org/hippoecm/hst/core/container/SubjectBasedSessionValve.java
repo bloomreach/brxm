@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ import org.hippoecm.hst.core.request.ResolvedMount;
  * SubjectBasedSessionValveImpl
  */
 public class SubjectBasedSessionValve extends AbstractBaseOrderableValve {
-    
+
     public static final String SUBJECT_BASED_SESSION_ATTR_NAME = SubjectBasedSessionValve.class.getName() + ".session";
     
     protected Repository subjectBasedRepository;

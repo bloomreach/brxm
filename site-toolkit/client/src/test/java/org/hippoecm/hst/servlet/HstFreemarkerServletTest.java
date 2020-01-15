@@ -1,5 +1,5 @@
 /**
- * Copyright 2014-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
  */
 package org.hippoecm.hst.servlet;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 
@@ -30,6 +30,15 @@ import org.springframework.mock.web.MockServletConfig;
 
 import freemarker.cache.MultiTemplateLoader;
 import freemarker.cache.TemplateLoader;
+import freemarker.template.Configuration;
+import freemarker.template.ObjectWrapper;
+import freemarker.template.TemplateCollectionModel;
+import freemarker.template.TemplateHashModelEx;
+import freemarker.template.TemplateModelIterator;
+import freemarker.template.TemplateScalarModel;
+
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 /**
  * HstFreemarkerServletTest
@@ -44,7 +53,15 @@ public class HstFreemarkerServletTest {
     final String classpathResourcePath = "classpath:/org/hippoecm/hst/pagecomposer/builtin/components/vbox.ftl";
     final String exceptionMessageOnWindows = "The filename, directory name, or volume label syntax is incorrect";
 
-    private HstFreemarkerServlet servlet;
+    @SuppressWarnings("serial")
+    private static class TestHstFreemarkerServlet extends HstFreemarkerServlet {
+        // expose Configurtion for testing below.
+        public Configuration getConfiguration() {
+            return super.getConfiguration();
+        }
+    };
+
+    private TestHstFreemarkerServlet servlet;
 
     @Before
     public void before() throws Exception {
@@ -57,7 +74,7 @@ public class HstFreemarkerServletTest {
         servletConfig.addInitParameter("TemplatePath", basePath);
         servletConfig.addInitParameter("ContentType", "text/html; charset=UTF-8");
 
-        servlet = new HstFreemarkerServlet();
+        servlet = new TestHstFreemarkerServlet();
         servlet.init(servletConfig);
     }
 
@@ -86,4 +103,48 @@ public class HstFreemarkerServletTest {
         }
     }
 
+    @Test
+    public void testTreatDefaultMethodsAsBeanMembers() throws Exception {
+        final ObjectWrapper objectWrapper = servlet.getConfiguration().getObjectWrapper();
+        final PurchaseOrder po = new PurchaseOrderImpl("1234567890");
+        // Note: ObjectWrapper#wrap(obj) is how FreeMarkerServlet creates a TemplateModel
+        //       through freemarker.ext.servlet.ServletContextHashModel.get(String)
+        final TemplateHashModelEx model = (TemplateHashModelEx) objectWrapper.wrap(po);
+        final TemplateCollectionModel keys = model.keys();
+
+        // Collect all the property/method keys of the templateModel.
+        final Set<String> modelPropKeys = new HashSet<>();
+        for (TemplateModelIterator it = keys.iterator(); it.hasNext(); ) {
+            final TemplateScalarModel keyModel = (TemplateScalarModel) it.next();
+            modelPropKeys.add(keyModel.getAsString());
+        }
+
+        // Assert if both properties were recognized.
+        assertTrue("id property is not recognized: " + modelPropKeys, modelPropKeys.contains("id"));
+        assertTrue("billingAddress property is not recognized: " + modelPropKeys, modelPropKeys.contains("billingAddress"));
+    }
+
+    public static interface PurchaseOrder {
+
+        public String getId();
+
+        @SuppressWarnings("unused")
+        public default String getBillingAddress() {
+            return "Unknown";
+        }
+    }
+
+    public static class PurchaseOrderImpl implements PurchaseOrder {
+
+        private final String id;
+
+        PurchaseOrderImpl(final String id) {
+            this.id = id;
+        }
+
+        @Override
+        public String getId() {
+            return id;
+        }
+    }
 }

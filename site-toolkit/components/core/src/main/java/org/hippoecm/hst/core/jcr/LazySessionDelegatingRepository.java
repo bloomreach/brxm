@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,9 @@ package org.hippoecm.hst.core.jcr;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
 import javax.jcr.Credentials;
 import javax.jcr.LoginException;
@@ -129,6 +132,7 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
         private long lastLoggedIn;
         private long lastRefreshed;
         private SessionsRefreshCounter sessionsRefreshCounter;
+        private List<Session> impersonatedSessions = new ArrayList();
 
         public LazySessionInvoker(Repository repository, Credentials credentials, String workspaceName, boolean logoutOnSessionUnbound) {
             this.repository = repository;
@@ -160,8 +164,20 @@ public class LazySessionDelegatingRepository extends DelegatingRepository {
                     return lastLoggedIn;
                 } else if ("lastRefreshed".equals(methodName)) {
                     return lastRefreshed;
+                } else if ("logoutCoupledImpersonations".equals(methodName)) {
+                    impersonatedSessions.stream().forEach(sess -> {
+                        log.info("Logging out impersonated session with id '{}'", sess.getUserID());
+                        sess.logout();
+                    });
+                    impersonatedSessions.clear();
+                } else if ("coupledImpersonate".equals(methodName)) {
+                    final Session impersonate = session.impersonate((Credentials) args[0]);
+                    log.info("Attach impersonated session with id '{}' to lazy session '{}'", impersonate.getUserID(),
+                            session.getUserID());
+                    impersonatedSessions.add(impersonate);
+                    return impersonate;
                 }
-                
+
                 return null;
             }
             
