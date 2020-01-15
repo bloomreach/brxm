@@ -29,6 +29,8 @@ import org.hippoecm.hst.core.component.HstRequestImpl;
 import org.hippoecm.hst.core.component.HstResponseImpl;
 import org.hippoecm.hst.core.component.HstResponseState;
 import org.hippoecm.hst.core.request.HstRequestContext;
+
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 
 
@@ -59,12 +61,12 @@ public class ActionValve extends AbstractBaseOrderableValve {
         final HttpServletRequest servletRequest = context.getServletRequest();
         final HttpServletResponse servletResponse = context.getServletResponse();
 
-        if (methodPostOnly && !HttpMethod.POST.equals(servletRequest.getMethod())) {
+        if (methodPostOnly && !HttpMethod.POST.name().equals(servletRequest.getMethod())) {
             try {
                 log.info("ActionValve is only allowed to be invoked as method POST but was invoked as method {}",
                         servletRequest.getMethod());
-                servletResponse.setHeader("Allow", "POST");
-                servletResponse.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "Method Not Allowed");
+                servletResponse.setHeader(HttpHeaders.ALLOW, HttpMethod.POST.name());
+                servletResponse.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, servletRequest.getMethod() + " Method Not Allowed");
                 return;
             } catch (IOException e) {
                 throw new ContainerException(e);
