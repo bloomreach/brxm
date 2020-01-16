@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -126,6 +126,15 @@ public interface ProjectService {
      * @return Path to the project's tomcat context.xml configuration file
      */
     Path getContextXmlPath();
+
+    /**
+     * Get the Path to the project's platform(-dev).properties configuration file.
+     *
+     * The platform.properties file is expected to be found at 'conf/platform-dev.properties'.
+     *
+     * @return Path to the project's platform.properties configuration file
+     */
+    Path getPlatformPropertiesPath();
 
     /**
      * Get the Path to the project's directory where the configuration files for the Maven Assembly plugin are located.

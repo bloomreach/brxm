@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,10 +87,18 @@ public class FileInstruction extends BuiltinInstruction {
 
     @Override
     void populateDefaultChangeMessages(final BiConsumer<Type, String> changeMessageQueue) {
-        if (action == Action.COPY) {
-            changeMessageQueue.accept(Type.FILE_CREATE, "Create project file '" + target + "'.");
-        } else {
-            changeMessageQueue.accept(Type.FILE_DELETE, "Delete project file '" + target + "'.");
+        switch (action) {
+            case COPY:
+                changeMessageQueue.accept(Type.FILE_CREATE, "Create project file '" + target + "'.");
+                break;
+            case DELETE:
+                changeMessageQueue.accept(Type.FILE_DELETE, "Delete project file '" + target + "'.");
+                break;
+            case APPEND:
+                changeMessageQueue.accept(Type.EXECUTE, "Append to project file '" + target + "'.");
+                break;
+            default:
+                changeMessageQueue.accept(Type.UNKNOWN, "Unknown action for project file '" + target + "'.");
         }
     }
 
