@@ -23,10 +23,10 @@
     </mat-progress-bar>
   </div>
   <div class="top-elements">
-    <div #home [ngClass]="getQaClass('home')" class="home">
-      <mat-icon svgIcon="br-logo"></mat-icon>
-    </div>
     <brna-menu-scroll [height]="availableHeightForScrollableArea">
+      <div #home [ngClass]="getQaClass('home')" class="home">
+        <mat-icon svgIcon="br-logo"></mat-icon>
+      </div>
       <brna-top-level-menu-item *ngFor="let item of menuItems"
                                 [caption]="item.caption"
                                 [icon]="item.icon"
