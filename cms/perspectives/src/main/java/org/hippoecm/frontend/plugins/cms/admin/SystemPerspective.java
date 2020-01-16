@@ -33,7 +33,7 @@ public abstract class SystemPerspective extends PanelPluginPerspective {
 
     @Override
     public String getPanelServiceId() {
-        return AdminPanelPlugin.ADMIN_PANEL_SERVICE_ID;
+        return getAppPath();
     }
 
     protected abstract PanelPluginBreadCrumbPanel createPanel(String componentId);
