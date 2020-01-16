@@ -61,8 +61,6 @@ import { normalizeWheelEvent } from '../../../helpers/normalize-wheel-event';
 export class MenuScrollComponent implements AfterViewInit {
   @Input()
   set height(value: number) {
-    this.disableScrollButtonAnimations = true;
-
     const delta = value - this.availableHeight;
 
     if (this.position > 0 && delta > 0) {
@@ -81,8 +79,6 @@ export class MenuScrollComponent implements AfterViewInit {
 
   @HostBinding('style.height.px')
   availableHeight = 0;
-
-  disableScrollButtonAnimations = true;
 
   private readonly occupiedHeight = 64; // The height occupied by arrow buttons
 
@@ -130,7 +126,6 @@ export class MenuScrollComponent implements AfterViewInit {
   onScrollUpButtonClick(event: MouseEvent): void {
     event.preventDefault();
 
-    this.disableScrollButtonAnimations = false;
     this.transitionClass = 'click-transition';
     this.position = this.position - this.step;
   }
@@ -138,7 +133,6 @@ export class MenuScrollComponent implements AfterViewInit {
   onScrollDownButtonClick(event: MouseEvent): void {
     event.preventDefault();
 
-    this.disableScrollButtonAnimations = false;
     this.transitionClass = 'click-transition';
     this.position = this.position + this.step;
   }
@@ -150,8 +144,6 @@ export class MenuScrollComponent implements AfterViewInit {
     if (!this.isScrollable) {
       return;
     }
-
-    this.disableScrollButtonAnimations = true;
 
     const normalized = normalizeWheelEvent(event);
     this.transitionClass = normalized.wheel ? 'wheel-transition' : 'no-transition';

@@ -17,14 +17,12 @@
 <div *ngIf="isScrollableUp"
      (click)="onScrollUpButtonClick($event)"
      @animateScrollUpButton
-     [@.disabled]="disableScrollButtonAnimations"
      class="arrow arrow-up qa-arrow-up">
   <mat-icon svgIcon="chevron_up"></mat-icon>
 </div>
 <div *ngIf="isScrollableDown"
      (click)="onScrollDownButtonClick($event)"
      @animateScrollDownButton
-     [@.disabled]="disableScrollButtonAnimations"
      class="arrow arrow-down qa-arrow-down">
   <mat-icon svgIcon="chevron_down"></mat-icon>
 </div>
