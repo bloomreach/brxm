@@ -102,11 +102,10 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
             final List<String> superTypes = field.getTypeDescriptor().getSuperTypes();
             if (superTypes.contains("hippo:compound")) {
                 add(ClassAttribute.append("hippo-editor-compound-field"));
-                if (IEditor.Mode.EDIT == mode) {
-                    expandCollapseIcon.setVisible(true);
-                    final String selector = String.format("#%s.hippo-editor-compound-field", getMarkupId());
-                    add(new CollapsibleFieldBehavior(selector));
-                }
+
+                final String selector = String.format("#%s.hippo-editor-compound-field", getMarkupId());
+                add(new CollapsibleFieldBehavior(selector));
+                expandCollapseIcon.setVisible(true);
             }
         }
     }
