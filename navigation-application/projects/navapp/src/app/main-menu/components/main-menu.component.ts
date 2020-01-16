@@ -57,9 +57,6 @@ export class MainMenuComponent implements OnInit, AfterViewInit {
   @ViewChild('progressBar', { static: false })
   readonly progressBar: ElementRef<HTMLElement>;
 
-  @ViewChild('home', { static: false })
-  readonly home: ElementRef<HTMLElement>;
-
   @ViewChild('bottomElements', { static: false })
   readonly bottomElements: ElementRef<HTMLElement>;
 
@@ -159,7 +156,6 @@ export class MainMenuComponent implements OnInit, AfterViewInit {
 
   private calculateAvailableHeightForScrollableArea(): number {
     const occupied =
-      this.home.nativeElement.clientHeight +
       this.bottomElements.nativeElement.clientHeight +
       this.progressBar.nativeElement.clientHeight;
 
