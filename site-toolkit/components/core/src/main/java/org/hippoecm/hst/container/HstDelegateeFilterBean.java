@@ -414,6 +414,8 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                         return;
                     }
 
+                    requestContext.setChannelManagerPreviewRequest(true);
+
                     if (resolvedMount.getMount().getHstSite() != null && req.getAttribute(PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE) == null) {
                         final Channel channel = resolvedMount.getMount().getHstSite().getChannel();
                         if (channel != null && channel.getProperties().containsKey(PREVIEW_URL_PROPERTY_NAME)
@@ -427,7 +429,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                         }
                     }
 
-                    requestContext.setChannelManagerPreviewRequest(true);
                     if (resolvedMount instanceof MutableResolvedMount) {
                         Mount undecoratedMount = resolvedMount.getMount();
                         if (!(undecoratedMount instanceof ContextualizableMount)) {
