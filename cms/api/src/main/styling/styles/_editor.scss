@@ -268,12 +268,9 @@
 
     > .hippo-editor-field-title {
       color: $editor-compound-field-color;
+      cursor: pointer;
       font-weight: 600;
       margin-bottom: 8px;
-
-      .editor-plugin-template & {
-        cursor: pointer;
-      }
     }
 
     > .hippo-editor-field-subfield {
