@@ -142,7 +142,6 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
         final HippoIcon expandCollapseIcon = HippoIcon.fromSprite("expand-collapse-icon", Icon.CHEVRON_DOWN);
         expandCollapseIcon.addCssClass("expand-collapse-icon");
-        expandCollapseIcon.setVisible(isEditMode());
         add(expandCollapseIcon);
 
         // use caption for backwards compatibility; i18n should use field name
