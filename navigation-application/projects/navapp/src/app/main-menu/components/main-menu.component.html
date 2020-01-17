@@ -22,22 +22,9 @@
       class="qa-busy-indicator">
     </mat-progress-bar>
   </div>
-  <div class="top-elements" [ngClass]="transitionClass$.value">
-    <div #arrowUp
-         class="arrow arrow-up"
-         [class.arrow-visible]="moveUpEnabled()">
-      <mat-icon svgIcon="chevron_up"></mat-icon>
-    </div>
-    <div #arrowDown
-         class="arrow arrow-down"
-         [class.arrow-visible]="moveDownEnabled()"
-         [style.bottom.px]="height.bottom">
-      <mat-icon svgIcon="chevron_down"></mat-icon>
-    </div>
-    <div #menu
-      class="menu"
-      [style.transform]="'translate3d(0, -' + menuOffsetTop$.value + 'px, 0)'">
-      <div [ngClass]="getQaClass('home')" class="home">
+  <div class="top-elements">
+    <brna-menu-scroll [height]="availableHeightForScrollableArea">
+      <div #home [ngClass]="getQaClass('home')" class="home">
         <mat-icon svgIcon="br-logo"></mat-icon>
       </div>
       <brna-top-level-menu-item *ngFor="let item of menuItems"
@@ -51,7 +38,7 @@
                                 [ngClass]="getQaClass(item)"
                                 (menuItemClick)="onMenuItemClick(item)">
       </brna-top-level-menu-item>
-    </div>
+    </brna-menu-scroll>
   </div>
 
   <div #bottomElements class="bottom-elements">

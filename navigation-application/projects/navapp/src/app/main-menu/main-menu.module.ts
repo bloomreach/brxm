@@ -28,6 +28,7 @@ import { HelpToolbarDrawerComponent } from './components/help-toolbar-drawer/hel
 import { MainMenuComponent } from './components/main-menu.component';
 import { MenuDrawerComponent } from './components/menu-drawer/menu-drawer.component';
 import { MenuItemLinkComponent } from './components/menu-item-link/menu-item-link.component';
+import { MenuScrollComponent } from './components/menu-scroll/menu-scroll.component';
 import { TopLevelMenuItemComponent } from './components/top-level-menu-item/top-level-menu-item.component';
 import { UserToolbarDrawerComponent } from './components/user-toolbar-drawer/user-toolbar-drawer.component';
 import { MenuBuilderService } from './services/menu-builder.service';
@@ -51,6 +52,7 @@ import { MenuStructureService } from './services/menu-structure.service';
     MenuItemLinkComponent,
     UserToolbarDrawerComponent,
     HelpToolbarDrawerComponent,
+    MenuScrollComponent,
   ],
   providers: [MenuStructureService, MenuBuilderService, MenuStateService],
   exports: [MainMenuComponent],
