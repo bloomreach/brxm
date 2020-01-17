@@ -116,6 +116,10 @@
       --focus-outline-color: #{$bloomreach-blue-darker};
       --disabled-color: #{$bloomreach-gray-12};
       --disabled-background-color: #{$bloomreach-gray-5};
+
+      md-icon {
+        color: currentColor;
+      }
     }
 
     &.md-accent {
