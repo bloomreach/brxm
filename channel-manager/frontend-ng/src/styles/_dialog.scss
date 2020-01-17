@@ -1,0 +1,56 @@
+// Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//  http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+@import 'variables';
+
+md-dialog.md-bloomreach-theme {
+  &.md-dialog-large {
+    height: 90%;
+    max-height: 90%;
+    max-width: 90%;
+    width: 90%;
+  }
+
+  &.md-dialog-medium {
+    height: 75%;
+    width: 75%;
+  }
+
+  &.md-dialog-small {
+    height: 60%;
+    width: 60%;
+  }
+
+  > md-toolbar:not(.md-menu-toolbar) {
+    background-color: $dialog-header-bg;
+    border-bottom: $dialog-header-border-bottom;
+    color: $dialog-header-color;
+    max-height: $dialog-header-height + 1;
+    min-height: $dialog-header-height + 1;
+
+    md-icon {
+      color: $dialog-header-icon-color;
+    }
+  }
+
+  md-dialog-content {
+    height: 100%;
+  }
+
+  md-dialog-actions {
+    background-color: $dialog-footer-bg;
+    border-top: $dialog-footer-border-top;
+    min-height: $dialog-footer-height + 1;
+  }
+}

@@ -148,10 +148,13 @@ $dialog-header-color: $text-dark;
 $dialog-header-height: 48px;
 $dialog-header-icon-color: $bloomreach-gray-60;
 
+$dialog-footer-bg: $bloomreach-gray-5;
+$dialog-footer-height: 52px;
+$dialog-footer-border-top: 1px solid $bloomreach-gray-12;
+
 // Picker
 $picker-subheader-bgcolor: $grey-100;
 $picker-border-color: $grey-400;
-$picker-actions-color: $grey-100;
 
 // Tree
 $tree-bg: $white;

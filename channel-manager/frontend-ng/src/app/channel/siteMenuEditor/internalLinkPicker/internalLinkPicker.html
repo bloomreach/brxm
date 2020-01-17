@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,10 +14,14 @@
   limitations under the License.
   -->
 
-<md-dialog aria-label="{{ 'PICKER_TITLE' | translate }}">
+<md-dialog aria-label="{{ 'PICKER_TITLE' | translate }}" class="md-dialog-medium md-bloomreach-theme">
   <md-toolbar>
     <div class="md-toolbar-tools">
-      <h2>{{ 'PICKER_TITLE' | translate }}</h2>
+      <md-truncate class="md-title" flex>{{ 'PICKER_TITLE' | translate }}</md-truncate>
+      <md-button class="md-icon-button"
+                 ng-click="picker.cancel()">
+        <md-icon md-font-icon="mdi-close"></md-icon>
+      </md-button>
     </div>
   </md-toolbar>
   <md-dialog-content layout="row" class="picker-content">
@@ -62,7 +66,7 @@
     <md-button ng-click="picker.cancel()">
       {{ 'CANCEL' | translate }}
     </md-button>
-    <md-button ng-click="picker.ok()" ng-disabled="!picker.selectedDocument">
+    <md-button ng-click="picker.ok()" ng-disabled="!picker.selectedDocument" class="md-primary">
       {{ 'OK' | translate }}
     </md-button>
   </md-dialog-actions>

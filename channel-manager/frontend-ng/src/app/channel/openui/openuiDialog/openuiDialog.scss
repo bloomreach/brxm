@@ -13,43 +13,8 @@
 // limitations under the License.
 @import 'variables';
 
-.openui-dialog {
-  &-large {
-    height: 90%;
-    max-height: 90%;
-    max-width: 90%;
-    width: 90%;
-  }
-
-  &-medium {
-    height: 75%;
-    width: 75%;
-  }
-
-  &-small {
-    height: 60%;
-    width: 60%;
-  }
-
-  > md-toolbar {
-    background-color: $dialog-header-bg;
-    color: $dialog-header-color;
-    max-height: $dialog-header-height;
-    min-height: $dialog-header-height;
-
-    md-icon {
-      color: $dialog-header-icon-color;
-    }
-  }
-
-  md-dialog-content {
-    border-top: $dialog-header-border-bottom;
-    height: 100%;
-
-    iframe {
-      border: 0;
-      display: block;
-      width: 100%;
-    }
-  }
+.openui-dialog md-dialog-content iframe {
+  border: 0;
+  display: block;
+  width: 100%;
 }
