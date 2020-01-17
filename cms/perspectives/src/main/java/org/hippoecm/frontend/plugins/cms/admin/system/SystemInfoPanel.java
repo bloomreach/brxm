@@ -18,37 +18,30 @@ package org.hippoecm.frontend.plugins.cms.admin.system;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.wicket.Component;
-import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.DataGridView;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.ICellPopulator;
 import org.apache.wicket.extensions.markup.html.repeater.data.grid.PropertyPopulator;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.OddEvenItem;
 import org.apache.wicket.model.IModel;
-import org.apache.wicket.model.ResourceModel;
 import org.hippoecm.frontend.model.SystemInfoDataProvider;
-import org.hippoecm.frontend.plugins.cms.admin.AdminBreadCrumbPanel;
+import org.hippoecm.frontend.plugins.cms.admin.SystemPanel;
 
-public class SystemInfoPanel extends AdminBreadCrumbPanel {
+public class SystemInfoPanel extends SystemPanel {
 
     private final SystemInfoDataProvider memoryInfo = new SystemInfoDataProvider();
 
-    public SystemInfoPanel(final String id, final IBreadCrumbModel breadCrumbModel) {
-        super(id, breadCrumbModel);
+    public SystemInfoPanel(final String id) {
+        super(id);
 
-        final List<ICellPopulator> columns = new ArrayList<>(2);
-        columns.add(new PropertyPopulator("Key"));
-        columns.add(new PropertyPopulator("Value"));
+        final List<ICellPopulator<?>> columns = new ArrayList<>(2);
+        columns.add(new PropertyPopulator<>("Key"));
+        columns.add(new PropertyPopulator<>("Value"));
         add(new DataGridView("rows", columns, memoryInfo) {
             protected Item newRowItem(final String id, final int index, final IModel model) {
                 return new OddEvenItem(id, index, model);
             }
         });
-    }
-
-    public IModel<String> getTitle(final Component component) {
-        return new ResourceModel("admin-system-info-title");
     }
 
 }

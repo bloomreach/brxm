@@ -34,11 +34,10 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.form.AjaxButton;
-import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModel;
-import org.apache.wicket.extensions.breadcrumb.IBreadCrumbModelListener;
-import org.apache.wicket.extensions.breadcrumb.IBreadCrumbParticipant;
 import org.apache.wicket.extensions.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.extensions.markup.html.tree.ITreeState;
+import org.apache.wicket.feedback.ContainerFeedbackMessageFilter;
+import org.apache.wicket.feedback.FeedbackMessage;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.form.Form;
@@ -56,9 +55,9 @@ import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeModel;
 import org.hippoecm.frontend.model.tree.JcrTreeNode;
 import org.hippoecm.frontend.plugin.IPluginContext;
+import org.hippoecm.frontend.plugins.cms.admin.SystemPanel;
 import org.hippoecm.frontend.plugins.cms.browse.tree.CmsJcrTree;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
 import org.hippoecm.frontend.plugins.standards.tree.icon.DefaultTreeNodeIconProvider;
 import org.hippoecm.frontend.plugins.standards.tree.icon.ITreeNodeIconProvider;
 import org.hippoecm.frontend.session.UserSession;
@@ -69,7 +68,7 @@ import org.slf4j.LoggerFactory;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_PATH;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPOSYS_SCRIPT;
 
-public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
+public class UpdaterPanel extends SystemPanel {
 
     private final static Logger log = LoggerFactory.getLogger(UpdaterPanel.class);
 
@@ -80,6 +79,8 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
 
     private static final Label EMPTY_EDITOR = new Label("updater-editor");
     private static final Map<String, String> CUSTOM_NODE_LABELS = createNodeNameMap();
+
+    private final FeedbackPanel feedback;
 
 
     private static Map<String, String> createNodeNameMap() {
@@ -183,8 +184,8 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
         }
     }
 
-    public UpdaterPanel(final String componentId, final IBreadCrumbModel breadCrumbModel, final IPluginContext context) {
-        super(componentId, breadCrumbModel);
+    public UpdaterPanel(final String componentId, final IPluginContext context) {
+        super(componentId);
 
         this.context = context;
 
@@ -196,18 +197,22 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
             }
         };
 
-        // customize feedbackpanel to display only messages from hippoform
-        final FeedbackPanel feedbackPanel = getFeedbackPanel();
-        if (feedbackPanel != null) {
-            feedbackPanel.setFilter(message -> {
-                final Component reporter = message.getReporter();
-                return reporter == UpdaterPanel.this.form;
-            });
-        }
-
         form.add(newButton);
 
         add(form);
+
+        final FeedbackPanel feedbackPanel = new FeedbackPanel("feedback", new ContainerFeedbackMessageFilter(UpdaterPanel.this) {
+            @Override
+            public boolean accept(final FeedbackMessage message1) {
+                return !message1.isRendered() && super.accept(message1);
+            }
+        });
+        feedbackPanel.setOutputMarkupId(true);
+        feedback = feedbackPanel;
+        add(feedback);
+        // customize feedbackpanel to display only messages from hippoform
+        feedback.setFilter(message -> message.getReporter() == this.form);
+
 
         treeModel = new JcrTreeModel(new JcrTreeNode(new JcrNodeModel(UPDATE_PATH), null)) {
             @Override
@@ -219,24 +224,6 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
             }
         };
         context.registerService(treeModel, IObserver.class.getName());
-
-        breadCrumbModel.addListener(new IBreadCrumbModelListener() {
-            @Override
-            public void breadCrumbActivated(final IBreadCrumbParticipant previousParticipant, final IBreadCrumbParticipant breadCrumbParticipant) {
-            }
-
-            @Override
-            public void breadCrumbAdded(final IBreadCrumbParticipant breadCrumbParticipant) {
-            }
-
-            @Override
-            public void breadCrumbRemoved(final IBreadCrumbParticipant breadCrumbParticipant) {
-                if (breadCrumbParticipant == UpdaterPanel.this) {
-                    breadCrumbModel.removeListener(this);
-                    context.unregisterService(treeModel, IObserver.class.getName());
-                }
-            }
-        });
 
         tree = new UpdaterTree("updater-tree", treeModel, newTreeNodeTranslator(), newTreeNodeIconProvider());
         tree.setRootLess(true);
@@ -407,7 +394,7 @@ public class UpdaterPanel extends PanelPluginBreadCrumbPanel {
             node.setProperty(HIPPOSYS_PATH, "/");
             return node;
         } catch (ItemExistsException e) {
-            return addUpdater(registry, index+1);
+            return addUpdater(registry, index + 1);
         }
     }
 
