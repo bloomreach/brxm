@@ -15,26 +15,24 @@
  */
 package org.hippoecm.frontend.plugins.cms.admin;
 
-import org.hippoecm.frontend.attributes.StyleAttribute;
+import java.util.function.Function;
+
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
-import org.hippoecm.frontend.plugins.standards.panelperspective.PanelPluginPerspective;
-import org.hippoecm.frontend.plugins.standards.panelperspective.breadcrumb.PanelPluginBreadCrumbPanel;
+import org.hippoecm.frontend.plugins.standards.perspective.Perspective;
+import org.hippoecm.frontend.plugins.yui.layout.WireframeBehavior;
+import org.hippoecm.frontend.plugins.yui.layout.WireframeSettings;
 
-public abstract class SystemPerspective extends PanelPluginPerspective {
+public class SystemPerspective extends Perspective {
 
-    public SystemPerspective(final IPluginContext context, final IPluginConfig config) {
-        super(context, config, "admin");
-        final PanelPluginBreadCrumbPanel panel = createPanel("panel");
-        replace(panel);
-        getBreadCrumbBar().setActive(panel);
-        getBreadCrumbBar().add(StyleAttribute.append("display: none"));
+    public SystemPerspective(IPluginContext context, IPluginConfig config,
+                             Function<String, ? extends SystemPanel> systemPanelFactory) {
+        super(context, config);
+        add(systemPanelFactory.apply("systemPanel"));
+        final IPluginConfig wfConfig = config.getPluginConfig("layout.wireframe");
+        if (wfConfig != null) {
+            add(new WireframeBehavior(new WireframeSettings(wfConfig)));
+        }
     }
 
-    @Override
-    public String getPanelServiceId() {
-        return getAppPath();
-    }
-
-    protected abstract PanelPluginBreadCrumbPanel createPanel(String componentId);
 }

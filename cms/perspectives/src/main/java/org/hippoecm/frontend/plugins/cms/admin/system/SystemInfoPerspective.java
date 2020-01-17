@@ -19,15 +19,10 @@ import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.cms.admin.SystemPerspective;
 
-@SuppressWarnings("unused")
 public class SystemInfoPerspective extends SystemPerspective {
 
     public SystemInfoPerspective(IPluginContext context, IPluginConfig config) {
-        super(context, config);
+        super(context, config, SystemInfoPanel::new);
     }
 
-    @Override
-    protected SystemInfoPanel createPanel(final String componentId) {
-        return new SystemInfoPanel("panel", getBreadCrumbBar());
-    }
 }

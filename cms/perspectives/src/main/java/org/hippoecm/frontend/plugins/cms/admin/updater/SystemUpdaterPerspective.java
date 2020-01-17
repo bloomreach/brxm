@@ -23,12 +23,7 @@ import org.hippoecm.frontend.plugins.cms.admin.SystemPerspective;
 public class SystemUpdaterPerspective extends SystemPerspective {
 
     public SystemUpdaterPerspective(final IPluginContext context, final IPluginConfig config) {
-        super(context, config);
-    }
-
-    @Override
-    protected UpdaterPanel createPanel(final String componentId) {
-        return new UpdaterPanel("panel", getBreadCrumbBar(), getPluginContext());
+        super(context, config, id -> new UpdaterPanel(id, context));
     }
 
 }

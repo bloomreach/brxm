@@ -142,9 +142,8 @@ definitions:
         wicket.id: service.tab
         /layout.wireframe:
           jcr:primaryType: frontend:pluginconfig
-          center: id=hippo-panel-plugin-perspective-center,body=hippo-panel-plugin-perspective-center-body,scroll=true
           root.id: hippo-panel-plugin-wrapper
-          top: id=hippo-panel-plugin-perspective-top,body=hippo-panel-plugin-perspective-top-body,height=4
+          center: id=hippo-system-perspective-center,body=hippo-system-perspective-center-body,scroll=true,gutter=10px
       /systemprops:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.plugins.cms.admin.system.SystemPropertiesPerspective
@@ -154,9 +153,8 @@ definitions:
         wicket.id: service.tab
         /layout.wireframe:
           jcr:primaryType: frontend:pluginconfig
-          center: id=hippo-panel-plugin-perspective-center,body=hippo-panel-plugin-perspective-center-body,scroll=true
           root.id: hippo-panel-plugin-wrapper
-          top: id=hippo-panel-plugin-perspective-top,body=hippo-panel-plugin-perspective-top-body,height=4
+          center: id=hippo-system-perspective-center,body=hippo-system-perspective-center-body,scroll=true,gutter=10px
       /updater:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.plugins.cms.admin.updater.SystemUpdaterPerspective
@@ -166,6 +164,5 @@ definitions:
         wicket.id: service.tab
         /layout.wireframe:
           jcr:primaryType: frontend:pluginconfig
-          center: id=hippo-panel-plugin-perspective-center,body=hippo-panel-plugin-perspective-center-body,scroll=true
           root.id: hippo-panel-plugin-wrapper
-          top: id=hippo-panel-plugin-perspective-top,body=hippo-panel-plugin-perspective-top-body,height=4
+          center: id=hippo-system-perspective-center,body=hippo-system-perspective-center-body,scroll=true
