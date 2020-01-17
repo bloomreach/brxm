@@ -14,10 +14,15 @@
  * limitations under the License.
  */
 
-import { animate, group, style, transition, trigger } from '@angular/animations';
+import { animate, group, state, style, transition, trigger } from '@angular/animations';
 import { AfterViewInit, Component, ElementRef, HostBinding, HostListener, Input, ViewChild } from '@angular/core';
 
 import { normalizeWheelEvent } from '../../../helpers/normalize-wheel-event';
+
+enum ScrollButtonAnimationState {
+  Animate = 'fast',
+  AnimateWithDelay = 'delayed',
+}
 
 @Component({
   selector: 'brna-menu-scroll',
@@ -25,42 +30,28 @@ import { normalizeWheelEvent } from '../../../helpers/normalize-wheel-event';
   styleUrls: ['menu-scroll.component.scss'],
   animations: [
     trigger('animateScrollUpButton', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(-100%)'}),
-        group([
-          animate('500ms', style({ opacity: 1 })),
-          animate('500ms ease-out', style({ transform: 'translateY(0)' })),
-        ]),
-      ]),
-      transition(':leave', [
-        style({ opacity: 1, transform: 'translateY(0)' }),
-        group([
-          animate('500ms 250ms', style({ opacity: 0 })),
-          animate('500ms 250ms ease-out', style({ transform: 'translateY(-100%)' })),
-        ]),
-      ]),
+      state('void', style({ opacity: 0, transform: 'translateY(-100%)'})),
+      state('fast,delayed', style({ opacity: 1, transform: 'translateY(0)'})),
+      transition('void => fast', animate('500ms ease-out')),
+      transition('fast => void', animate('500ms ease-out')),
+      transition('void => delayed', animate('500ms 250ms ease-out')),
+      transition('delayed => void', animate('500ms 250ms ease-out')),
     ]),
     trigger('animateScrollDownButton', [
-      transition(':enter', [
-        style({ opacity: 0, transform: 'translateY(100%)'}),
-        group([
-          animate('500ms', style({ opacity: 1 })),
-          animate('500ms ease-out', style({ transform: 'translateY(0)' })),
-        ]),
-      ]),
-      transition(':leave', [
-        style({ opacity: 1, transform: 'translateY(0)' }),
-        group([
-          animate('500ms 250ms', style({ opacity: 0 })),
-          animate('500ms 250ms ease-out', style({ transform: 'translateY(100%)' })),
-        ]),
-      ]),
+      state('void', style({ opacity: 0, transform: 'translateY(100%)'})),
+      state('fast,delayed', style({ opacity: 1, transform: 'translateY(0)'})),
+      transition('void => fast', animate('500ms ease-out')),
+      transition('fast => void', animate('500ms ease-out')),
+      transition('void => delayed', animate('500ms 250ms ease-out')),
+      transition('delayed => void', animate('500ms 250ms ease-out')),
     ]),
   ],
 })
 export class MenuScrollComponent implements AfterViewInit {
   @Input()
   set height(value: number) {
+    this.animationState = ScrollButtonAnimationState.Animate;
+
     const delta = value - this.availableHeight;
 
     if (this.position > 0 && delta > 0) {
@@ -79,6 +70,8 @@ export class MenuScrollComponent implements AfterViewInit {
 
   @HostBinding('style.height.px')
   availableHeight = 0;
+
+  animationState: ScrollButtonAnimationState;
 
   private readonly occupiedHeight = 64; // The height occupied by arrow buttons
 
@@ -126,6 +119,7 @@ export class MenuScrollComponent implements AfterViewInit {
   onScrollUpButtonClick(event: MouseEvent): void {
     event.preventDefault();
 
+    this.animationState = ScrollButtonAnimationState.AnimateWithDelay;
     this.transitionClass = 'click-transition';
     this.position = this.position - this.step;
   }
@@ -133,6 +127,7 @@ export class MenuScrollComponent implements AfterViewInit {
   onScrollDownButtonClick(event: MouseEvent): void {
     event.preventDefault();
 
+    this.animationState = ScrollButtonAnimationState.AnimateWithDelay;
     this.transitionClass = 'click-transition';
     this.position = this.position + this.step;
   }
@@ -145,6 +140,7 @@ export class MenuScrollComponent implements AfterViewInit {
       return;
     }
 
+    this.animationState = ScrollButtonAnimationState.Animate;
     const normalized = normalizeWheelEvent(event);
     this.transitionClass = normalized.wheel ? 'wheel-transition' : 'no-transition';
     this.position = this.position + normalized.y;
