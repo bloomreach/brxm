@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+  Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@
   <groupId>com.bloomreach.xm</groupId>
   <artifactId>navigation-application</artifactId>
   <name>BloomReach Navigation Application</name>
-  <version>1.0.0-SNAPSHOT</version>
+  <version>1.2.0-SNAPSHOT</version>
 
   <inceptionYear>2019</inceptionYear>
 
@@ -85,7 +85,7 @@
               <goal>npm</goal>
             </goals>
             <configuration>
-              <arguments>run build</arguments>
+              <arguments>run build:prod</arguments>
             </configuration>
           </execution>
           <execution>
