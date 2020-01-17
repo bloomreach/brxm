@@ -138,7 +138,7 @@ export class MainMenuComponent implements OnInit, AfterViewInit {
     return this.qaHelperService.getMenuItemClass(item);
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize(): void {
     this.availableHeightForScrollableArea = this.calculateAvailableHeightForScrollableArea();
   }
