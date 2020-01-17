@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { animate, group, state, style, transition, trigger } from '@angular/animations';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 import { AfterViewInit, Component, ElementRef, HostBinding, HostListener, Input, ViewChild } from '@angular/core';
 
 import { normalizeWheelEvent } from '../../../helpers/normalize-wheel-event';
@@ -32,18 +32,16 @@ enum ScrollButtonAnimationState {
     trigger('animateScrollUpButton', [
       state('void', style({ opacity: 0, transform: 'translateY(-100%)'})),
       state('fast,delayed', style({ opacity: 1, transform: 'translateY(0)'})),
-      transition('void => fast', animate('500ms ease-out')),
+      transition(':enter', animate('500ms ease-out')),
       transition('fast => void', animate('500ms ease-out')),
-      transition('void => delayed', animate('500ms 250ms ease-out')),
-      transition('delayed => void', animate('500ms 250ms ease-out')),
+      transition('delayed => void', animate('500ms 500ms ease-out')),
     ]),
     trigger('animateScrollDownButton', [
       state('void', style({ opacity: 0, transform: 'translateY(100%)'})),
       state('fast,delayed', style({ opacity: 1, transform: 'translateY(0)'})),
-      transition('void => fast', animate('500ms ease-out')),
+      transition(':enter', animate('500ms ease-out')),
       transition('fast => void', animate('500ms ease-out')),
-      transition('void => delayed', animate('500ms 250ms ease-out')),
-      transition('delayed => void', animate('500ms 250ms ease-out')),
+      transition('delayed => void', animate('500ms 500ms ease-out')),
     ]),
   ],
 })
