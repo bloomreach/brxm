@@ -1,4 +1,4 @@
-// Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@
 .md-bloomreach-theme {
   .md-button:not(.md-icon-button):not(.md-no-style) {
     --color: #{$bloomreach-black};
-    --background-color: #{$bloomreach-white};
+    --background-color: transparent;
     --border-color: #{$bloomreach-gray-38};
     --hover-color: var(--color);
     --hover-background-color: #{$bloomreach-gray-12};
@@ -64,7 +64,7 @@
     --focus-color: var(--color);
     --focus-background-color: var(--background-color);
     --focus-border-color: var(--border-color);
-    --focus-outline-color: #{$bloomreach-blue-light};
+    --focus-outline-color: #{$bloomreach-blue-darker};
     --disabled-color: #{$bloomreach-gray-12};
     --disabled-background-color: #{$bloomreach-white};
     --disabled-border-color: var(--disabled-color);
@@ -73,7 +73,7 @@
     border: 1px solid var(--border-color);
     border-radius: 4px;
     color: var(--color) !important;
-    font-weight: 600;
+    font-weight: 400;
     height: 36px;
     line-height: 34px;
     min-width: 64px;
@@ -113,7 +113,7 @@
       --background-color: #{$bloomreach-blue-primary};
       --border-color: #{$bloomreach-blue-primary};
       --hover-background-color: #{$bloomreach-blue-dark};
-      --focus-outline-color: #{$bloomreach-blue-light};
+      --focus-outline-color: #{$bloomreach-blue-darker};
       --disabled-color: #{$bloomreach-gray-12};
       --disabled-background-color: #{$bloomreach-gray-5};
     }
@@ -121,7 +121,7 @@
     &.md-accent {
       --color: #{$bloomreach-blue-primary};
       --border-color: #{$bloomreach-blue-primary};
-      --focus-outline-color: #{$bloomreach-blue-light};
+      --focus-outline-color: #{$bloomreach-blue-darker};
       --hover-background-color: #{$bloomreach-blue-light};
     }
   }
