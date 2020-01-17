@@ -154,6 +154,19 @@
                   <directory>${basedir}/dist</directory>
                   <filtering>false</filtering>
                 </resource>
+                <resource>
+                  <directory>${basedir}/node_modules/@bloomreach/navapp-communication/bundles</directory>
+                  <targetPath>navapp</targetPath>
+                  <filtering>false</filtering>
+                </resource>
+                <resource>
+                  <directory>${basedir}/node_modules/penpal/dist</directory>
+                  <includes>
+                    <include>penpal.js</include>
+                    <filtering>false</filtering>
+                  </includes>
+                  <targetPath>navapp</targetPath>
+                </resource>
               </resources>
             </configuration>
           </execution>
