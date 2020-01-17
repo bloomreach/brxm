@@ -23,11 +23,9 @@
 
 .home {
   align-items: center;
-  background-color: $menu-bg;
   display: grid;
   height: $menu-top-item-height;
   min-height: $menu-top-item-height;
-  z-index: 2;
 
   .mat-icon {
     color: $white;
