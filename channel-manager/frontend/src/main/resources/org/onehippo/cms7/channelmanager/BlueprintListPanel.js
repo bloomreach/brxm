@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -33,6 +33,8 @@
             var me, config;
             me = this;
             config = {
+                border: false,
+                ctCls: 'br-grid',
                 id: me.id,
                 store: me.store,
                 loadMask: true,
@@ -41,18 +43,23 @@
                 viewConfig: {
                     forceFit: true
                 },
-
                 colModel: new Ext.grid.ColumnModel({
                     columns: [
                         {
-                            header: me.resources['new-channel-blueprint-name'],
-                            align: 'left'
+                            align: 'left',
+                            dataIndex: 'name',
+                            header: me.resources['new-channel-blueprint-name']
                         },
                         {
-                            header: me.resources['new-channel-blueprint-description'],
-                            align: 'left'
+                            align: 'left',
+                            dataIndex: 'description',
+                            header: me.resources['new-channel-blueprint-description']
                         }
-                    ]
+                    ],
+                    defaults: {
+                        sortable: true,
+                        menuDisabled: true
+                    }
                 }),
                 sm: new Ext.grid.RowSelectionModel({
                     singleSelect: true

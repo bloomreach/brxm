@@ -1,5 +1,5 @@
 /**
- * Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -39,50 +39,56 @@
             var me, config;
             me = this;
             config = {
-                padding: 5,
+                border: false,
+                ctCls: 'br-form',
+                padding: 16,
                 url: me.store.proxy.url,
-                defaults: {
-                    labelAlign: 'top',
-                    width: 450,
-                    labelWidth: 100
-                },
+                defaults: {},
                 plugins: Hippo.ChannelManager.MarkRequiredFields,
                 items: [
                     {
                         xtype: 'panel',
                         id: 'errorMessage',
                         width: '100%',
-                        baseCls: 'x-form-invalid',
-                        padding: 10,
-                        style: 'margin-bottom: 10px',
+                        baseCls: 'x-form-error-message',
+                        padding: 8,
+                        style: 'margin-bottom: 16px',
                         hidden: true
                     },
                     {
                         xtype: 'displayfield',
-                        fieldLabel: me.resources['new-channel-field-blueprint'],
                         id: 'displayedBlueprintId',
-                        style: {
-                            textAlign: 'left',
-                            paddingLeft: '70px'
-                        }
+                        ctCls: 'blueprint-display-field',
+                        labelStyle: 'padding: 0 4px 0 0; width: auto;',
+                        fieldLabel: me.resources['new-channel-field-blueprint']
                     },
                     {
                         xtype: 'hidden',
                         id: 'blueprintId'
                     },
                     {
+                        xtype: 'label',
+                        cls: 'x-form-item-label',
+                        text: me.resources['new-channel-field-name']
+                    },
+                    {
                         xtype: 'textfield',
-                        fieldLabel: me.resources['new-channel-field-name'],
                         id: 'name',
+                        hideLabel: true,
                         allowBlank: false,
                         validator: function(value) {
                             return !(me.endsWith(value, me.ILLEGAL_CHANNEL_SUFFIX));
                         }
                     },
                     {
+                        xtype: 'label',
+                        cls: 'x-form-item-label',
+                        text: me.resources['new-channel-field-url']
+                    },
+                    {
                         xtype: 'textfield',
-                        fieldLabel: me.resources['new-channel-field-url'],
                         id: 'url',
+                        hideLabel: true,
                         allowBlank: false,
                         validator: function(value) {
                             var expr = /^https?:\/\/([\-\w]+\.)*\w+(\/[\-\w]+)*$/i;
@@ -94,13 +100,15 @@
                         }
                     },
                     {
+                        xtype: 'label',
+                        id: 'contentRootLabel',
+                        cls: 'x-form-item-label',
+                        text: me.resources['new-channel-field-content']
+                    },
+                    {
                         xtype: 'linkpicker',
-                        fieldLabel: me.resources['new-channel-field-content'],
                         id: 'contentRoot',
-                        hideMode: 'visibility',
-                        style: {
-                            marginLeft: '69px'
-                        },
+                        hideLabel: true,
                         pickerConfig: {
                             configuration: 'cms-pickers/folders',
                             selectableNodeTypes: ['hippostd:folder']
@@ -126,11 +134,13 @@
                 contentRootCmp = Ext.getCmp('contentRoot');
                 if (blueprint.get('hasContentPrototype')) {
                     contentRootCmp.hide();
+                    Ext.getCmp('contentRootLabel').hide();
                 } else {
                     contentRoot = blueprint.get('contentRoot');
                     contentRootCmp.setDefaultValue(contentRoot);
                     contentRootCmp.setValue(contentRoot);
                     contentRootCmp.show();
+                    Ext.getCmp('contentRootLabel').show();
                 }
 
                 this.getComponent('name').focus(false, 10);

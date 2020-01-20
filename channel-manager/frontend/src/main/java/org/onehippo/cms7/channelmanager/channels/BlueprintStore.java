@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -34,7 +34,6 @@ import org.onehippo.cms7.channelmanager.ChannelManagerHeaderItem;
 import org.wicketstuff.js.ext.data.ExtDataField;
 import org.wicketstuff.js.ext.data.ExtJsonStore;
 
-
 public class BlueprintStore extends ExtJsonStore<Object> {
 
     private static final String FIELD_NAME = "name";
@@ -42,10 +41,12 @@ public class BlueprintStore extends ExtJsonStore<Object> {
     private static final String FIELD_HAS_CONTENT_PROTOTYPE = "hasContentPrototype";
     private static final String FIELD_CONTENT_ROOT = "contentRoot";
 
-    private static final long serialVersionUID = 1L;
-
     public BlueprintStore() {
-        super(Arrays.asList(new ExtDataField(FIELD_NAME), new ExtDataField(FIELD_DESCRIPTION), new ExtDataField(FIELD_HAS_CONTENT_PROTOTYPE), new ExtDataField(FIELD_CONTENT_ROOT)));
+        super(Arrays.asList(
+                new ExtDataField(FIELD_NAME),
+                new ExtDataField(FIELD_DESCRIPTION),
+                new ExtDataField(FIELD_HAS_CONTENT_PROTOTYPE),
+                new ExtDataField(FIELD_CONTENT_ROOT)));
     }
 
     @Override
@@ -69,6 +70,12 @@ public class BlueprintStore extends ExtJsonStore<Object> {
         Map<String, String> baseParams = new HashMap<>();
         baseParams.put("xaction", "read");
         properties.put("baseParams", baseParams);
+
+        final Map<String, String> sortInfo = new HashMap<>();
+        sortInfo.put("field", FIELD_NAME);
+        sortInfo.put("direction", "ASC");
+        properties.put("sortInfo", sortInfo);
+
         return properties;
 
     }

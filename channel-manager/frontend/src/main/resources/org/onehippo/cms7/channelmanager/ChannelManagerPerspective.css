@@ -1,5 +1,5 @@
 /*
- * Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2011-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -75,6 +75,7 @@
 
 .channel-manager .channel-manager-toolbar.x-toolbar .br-toolbar-label {
   font-size: 20px;
+  padding-left: 0;
 }
 
 .channel-manager .channel-manager-toolbar.x-toolbar .x-btn-over .x-btn-tl,
@@ -562,90 +563,104 @@
   overflow: auto;
 }
 
-#channel-grid-panel .x-grid3-header {
+.br-window .x-window-footer {
+  border-top: 1px solid rgba(0, 0, 0, .12);
+}
+
+.br-grid .x-grid3-header {
   background-color: transparent;
   background-image: none;
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
   padding: 0;
 }
 
-#channel-grid-panel .x-grid3-header .x-grid3-hd-btn {
+.br-grid .x-grid3-header .x-grid3-hd-btn {
   background-color: transparent;
   background-image: url(caret-down.svg);
 }
 
-#channel-grid-panel .x-grid3-header .x-grid3-hd-btn:hover {
+.br-grid .x-grid3-header .x-grid3-hd-btn:hover {
   background-position: left center;
 }
 
-#channel-grid-panel .x-grid3-header .x-grid3-hd-inner {
+.br-grid .x-grid3-header .x-grid3-hd-inner {
   box-sizing: border-box;
   height: 40px;
 }
 
-#channel-grid-panel .x-grid3-body .x-grid3-cell-inner {
+.br-grid .x-grid3-body .x-grid3-cell-inner {
   align-items: center;
   box-sizing: border-box;
   display: flex;
   height: 48px;
 }
 
-#channel-grid-panel .x-grid3-cell-first {
+.br-grid .x-grid3-cell-first {
   padding-left: 24px;
   padding-right: 0;
 }
 
-#channel-grid-panel .x-grid3-header-offset {
+/* Dialogs have a padding of 16px instead of 24px */
+#blueprints-panel .x-grid3-cell-first {
+  padding-left: 16px;
+}
+
+.br-grid .x-grid3-cell-first .x-grid3-hd-inner,
+.br-grid .x-grid3-cell-first .x-grid3-cell-inner {
   padding-left: 0;
 }
 
-#channel-grid-panel .x-grid3-hd-row td,
-#channel-grid-panel .x-grid3-row td {
+.br-grid .x-grid3-header-offset {
+  padding-left: 0;
+}
+
+.br-grid .x-grid3-hd-row td,
+.br-grid .x-grid3-row td {
   border: 0;
   font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
 }
 
-#channel-grid-panel .x-grid3-hd-row td {
+.br-grid .x-grid3-hd-row td {
   color: rgba(0, 0, 0, 0.6);
   font-size: 12px;
 }
 
-#channel-grid-panel .x-grid3-hd-row td:hover {
+.br-grid .x-grid3-hd-row td:hover {
   background-color: rgba(0, 0, 0, 0.05);
   cursor: pointer;
 }
 
-#channel-grid-panel .x-grid3-hd-row td .x-grid3-hd-inner {
+.br-grid .x-grid3-hd-row td .x-grid3-hd-inner {
   background-color: initial;
   background-image: none;
   display: flex;
   align-items: center;
 }
 
-#channel-grid-panel .x-grid3-sort-icon {
+.br-grid .x-grid3-sort-icon {
   width: 16px;
   height: 16px;
 }
 
-#channel-grid-panel .x-grid3-hd-row td.sort-desc,
-#channel-grid-panel .x-grid3-hd-row td.sort-asc {
+.br-grid .x-grid3-hd-row td.sort-desc,
+.br-grid .x-grid3-hd-row td.sort-asc {
   color: rgba(0, 0, 0, 0.87);
 }
 
-#channel-grid-panel .sort-desc .x-grid3-sort-icon {
+.br-grid .sort-desc .x-grid3-sort-icon {
   background-image: url(arrow-down.svg);
 }
 
-#channel-grid-panel .sort-asc .x-grid3-sort-icon {
+.br-grid .sort-asc .x-grid3-sort-icon {
   background-image: url(arrow-up.svg);
 }
 
-#channel-grid-panel .x-grid3-row:first-child {
+.br-grid .x-grid3-row:first-child {
   border-color: transparent;
 }
 
-#channel-grid-panel .x-grid3-row {
+.br-grid .x-grid3-row {
   height: 48px;
   border-left: 0;
   border-right: 0;
@@ -656,13 +671,21 @@
   align-items: center;
 }
 
-#channel-grid-panel .x-grid3-row:hover {
+.br-grid .x-grid3-row:hover {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-#channel-grid-panel .x-grid3-row,
-#channel-grid-panel .x-grid3-row-alt {
+.br-grid .x-grid3-row,
+.br-grid .x-grid3-row-alt {
   background-color: #fff;
+}
+
+.br-grid .x-grid3-row-selected {
+  background-color: rgba(20, 122, 200, 0.1) !important;
+}
+
+.br-grid .x-grid3-row-selected td {
+  font-weight: 600;
 }
 
 .component-properties-editor > .x-panel-bwrap > .x-panel-body,
@@ -687,11 +710,106 @@
 }
 
 #x-form-el-contentRoot .x-form-field-wrap {
-  display: inline;
+  border: 1px solid rgba(0, 0, 0, .38);
+  border-radius: 4px;
+  box-sizing: border-box;
+  display: flex;
+  height: 36px;
+  padding: 0 0 0 8px;
+  width: 100% !important;
+}
+
+#x-form-el-contentRoot .x-form-field-wrap:focus-within {
+  border-color: #147ac8;
+  box-shadow: 0 0 0 1px #147ac8;
 }
 
 #x-form-el-contentRoot .x-form-text {
-  width: 425px !important;
+  border-radius: 0;
+  border: 0;
+  height: auto;
+  padding: 0 8px 0 0;
+}
+
+#x-form-el-contentRoot .x-form-text:focus {
+  box-shadow: none;
+}
+
+#x-form-el-contentRoot .x-form-trigger {
+  background-color: transparent;
+  border: 0;
+  height: 100%;
+  width: 36px;
+}
+
+#x-form-el-contentRoot .x-form-trigger:last-child {
+  border-bottom-right-radius: 4px;
+  border-top-right-radius: 4px;
+}
+
+/** Don't clip blue focus shadow in Firefox **/
+.ext-gecko .br-form .x-form-item {
+  overflow: visible !important;
+}
+
+.br-form {
+  text-align: left;
+}
+
+.br-form .x-form-field,
+.br-form .x-form-item,
+.br-form .x-form-item-label {
+  font-size: 14px;
+}
+
+.br-form .x-form-item {
+  margin-bottom: 0;
+}
+
+.br-form .x-form-item-label {
+  color: rgba(0, 0, 0, .6);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.br-form .x-form-element {
+  padding-bottom: 16px;
+}
+
+.br-form .x-form-element input {
+  border: 1px solid rgba(0, 0, 0, .38);
+  border-radius: 4px;
+  box-sizing: border-box;
+  height: 36px;
+  padding: 0 8px 0 8px;
+  width: 100%;
+}
+
+.br-form .x-form-element input:focus {
+  border-color: #147ac8;
+  box-shadow: 0 0 0 1px #147ac8;
+}
+
+.br-form .x-form-element .x-form-invalid,
+.br-form .x-form-element .x-form-invalid:focus {
+  background-color: transparent;
+  border-color: #d40022;
+  box-shadow: none;
+}
+
+.br-form .x-form-error-message {
+  background-color: #fbe6e9;
+  border: 1px solid #d40022;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.blueprint-display-field {
+  padding-left: 0 !important;
+}
+
+.blueprint-display-field .x-form-display-field {
+  padding-top: 0;
 }
 
 /*
