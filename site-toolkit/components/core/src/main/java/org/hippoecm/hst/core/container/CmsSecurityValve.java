@@ -85,7 +85,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                 if (jcrSession != null) {
                     try {
                         if (jcrSession.isLive() && jcrSession.hasPendingChanges()) {
-                            log.warn("JcrSession '{}' had pending changes at the end of the request. This should never be " +
+                            log.error("JcrSession '{}' had pending changes at the end of the request. This should never be " +
                                     "the case. Removing the changes now because the session will be reused.", jcrSession.getUserID());
                         }
                     } catch (RepositoryException e) {
@@ -132,7 +132,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                 } catch (LoginException e) {
                     // the credentials of the current CMS user have changed, so reset the current authentication
                     log.info("CMS user '{}' is not longer a valid user, resetting HTTP session and starting the SSO handshake again.",
-                            accessToken.getSubject());
+                            cmsUserCredentials.getUserID());
                     httpSession.invalidate();
                     throw new ContainerException("CMS user credentials have changed");
                 } catch (RepositoryException e) {
@@ -142,7 +142,7 @@ public class CmsSecurityValve extends AbstractBaseOrderableValve {
                     if (jcrSession != null) {
                         try {
                             if (jcrSession.isLive() && jcrSession.hasPendingChanges()) {
-                                log.warn("JcrSession '{}' had pending changes at the end of the request. This should never be " +
+                                log.error("JcrSession '{}' had pending changes at the end of the request. This should never be " +
                                         "the case. Removing the changes now because the session will be reused.", jcrSession.getUserID());
                             }
                             if (jcrSession instanceof HippoSession) {
