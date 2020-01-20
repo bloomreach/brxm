@@ -30,9 +30,7 @@ public class TokenCmsSessionContextRegistry {
 
     private static final String SESSION_LISTENER_ATTR = TokenCmsSessionContextRegistry.class.getName() + ".listenerAttr";
 
-    // since we do not want to pass the 'tokenCmsSessionContextMap' to the TokenCmsSessionContextMapCleanupListener
-    // since'tokenCmsSessionContextMap' is not serializable, use a static class member instead of instance member
-    private static final Cache<String, CmsSessionContext>
+    private final Cache<String, CmsSessionContext>
             tokenCmsSessionContextMap = CacheBuilder.newBuilder().build();
 
     void register(final String tokenSubject, final CmsSessionContext cmsSessionContext, final HttpSession session) {
@@ -41,7 +39,7 @@ public class TokenCmsSessionContextRegistry {
         if (tokenCmsSessionContextMap.getIfPresent(tokenSubject) == null) {
             // set a listener on the http session for invalidation
             tokenCmsSessionContextMap.put(tokenSubject, cmsSessionContext);
-            session.setAttribute(SESSION_LISTENER_ATTR, new TokenCmsSessionContextMapCleanupListener(tokenSubject));
+            session.setAttribute(SESSION_LISTENER_ATTR, new TokenCmsSessionContextMapCleanupListener(tokenSubject, tokenCmsSessionContextMap));
         }
 
     }
@@ -53,13 +51,19 @@ public class TokenCmsSessionContextRegistry {
     static class TokenCmsSessionContextMapCleanupListener implements HttpSessionActivationListener, HttpSessionBindingListener {
 
         private String subject;
+        // transient since not serializable and also should never be serialized as part of an http session
+        private transient Cache<String, CmsSessionContext> tokenCmsSessionContextMap;
 
-        TokenCmsSessionContextMapCleanupListener(final String subject) {
+        TokenCmsSessionContextMapCleanupListener(final String subject,  final Cache<String, CmsSessionContext> tokenCmsSessionContextMap) {
             this.subject = subject;
+            this.tokenCmsSessionContextMap = tokenCmsSessionContextMap;
         }
 
         @Override
         public void sessionWillPassivate(final HttpSessionEvent se) {
+            if (tokenCmsSessionContextMap == null) {
+                return;
+            }
             tokenCmsSessionContextMap.invalidate(subject);
         }
 
@@ -75,6 +79,9 @@ public class TokenCmsSessionContextRegistry {
 
         @Override
         public void valueUnbound(final HttpSessionBindingEvent event) {
+            if (tokenCmsSessionContextMap == null) {
+                return;
+            }
             tokenCmsSessionContextMap.invalidate(subject);
         }
     }
