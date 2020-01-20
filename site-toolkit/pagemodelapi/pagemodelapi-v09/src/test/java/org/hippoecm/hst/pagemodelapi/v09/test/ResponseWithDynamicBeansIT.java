@@ -31,9 +31,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class TestResponseWithDynamicBeans extends PageModelAPITest {
+public class ResponseWithDynamicBeansIT extends PageModelApiIT {
 
-    private static final Logger log = LoggerFactory.getLogger(TestResponseWithDynamicBeans.class);
+    private static final Logger log = LoggerFactory.getLogger(ResponseWithDynamicBeansIT.class);
 
     private static ObjectMapper mapper = new ObjectMapper();
 
