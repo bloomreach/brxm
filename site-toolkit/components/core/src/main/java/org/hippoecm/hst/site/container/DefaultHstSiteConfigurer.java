@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -441,14 +441,14 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
         if (StringUtils.isNotBlank(fileParam)) {
             Configuration config = loadConfigurationFromDefinitionXml(getResourceFile(fileParam, true));
             if (config != null) {
-                log.info("Adding Configurarion file to HST Configuration: {}", fileParam);
+                log.info("Adding configuration file to HST configuration: {}, context path: {}", fileParam, webappContext.getServletContext().getContextPath());
                 configs.add(config);
             }
         } else {
             fileParam = ServletConfigUtils.getInitParameter(null, getServletContext(), HST_CONFIG_PROPERTIES_PARAM, null);
             Configuration config = loadConfigurationFromProperties(getResourceFile(fileParam, true));
             if (config != null) {
-                log.info("Adding Configurarion file to HST Configuration: {}", fileParam);
+                log.info("Adding configuration file to HST configuration: {}, context path: {}", fileParam, webappContext.getServletContext().getContextPath());
                 configs.add(config);
             }
         }
@@ -456,7 +456,7 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
         {
             Configuration config = loadConfigurationFromProperties(getResourceFile(hstConfigEnvProperties, true));
             if (config != null) {
-                log.info("Adding Configuration file to HST Configuration: {}", fileParam);
+                log.info("Adding configuration file to HST configuration: {}, context path: {}", fileParam, webappContext.getServletContext().getContextPath());
                 configs.add(config);
             }
         }
@@ -465,13 +465,13 @@ public class DefaultHstSiteConfigurer implements HstSiteConfigurer {
 
         Configuration config = loadConfigurationFromDefinitionXml(getResourceFile(fileParam, true));
         if (config != null) {
-            log.info("Adding Configurarion file to HST Configuration: {}", fileParam);
+            log.info("Adding configuration file to HST configuration: {}, context path: {}", fileParam, webappContext.getServletContext().getContextPath());
             configs.add(config);
         } else {
             fileParam = "/WEB-INF/" + HST_CONFIG_PROPERTIES;
             config = loadConfigurationFromProperties(getResourceFile(fileParam, true));
             if (config != null) {
-                log.info("Adding Configurarion file to HST Configuration: {}", fileParam);
+                log.info("Adding configuration file to HST configuration: {}, context path: {}", fileParam, webappContext.getServletContext().getContextPath());
                 configs.add(config);
             }
         }
