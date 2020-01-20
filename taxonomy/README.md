@@ -25,7 +25,12 @@ http://www.onehippo.org/library/concepts/plugins/taxonomy/about.html
 The project now contains:
  - A taxonomy tree
  - A taxonomy field in a news document type
- - A category filter in the CMS, hiding all categories except first level if the user is part of the author group
  - A taxonomy page at /taxonomy
  - A search page at /search?query=humor
+ - A category filter in the CMS, hiding all categories except first level if the user is part of the author group.
+   Note: the filter is still to be configured by setting: 
+```
+  /hippo:configuration/hippo:frontend/cms/cms-services/taxonomyService/taxonomy.category.filters
+      =org.onehippo.taxonomy.demo.HideForAuthorCategoryFilter
+```
   
