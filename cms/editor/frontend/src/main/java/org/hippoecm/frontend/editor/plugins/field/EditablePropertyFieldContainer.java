@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.hippoecm.frontend.editor.plugins.field;
 
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -38,9 +36,9 @@ public class EditablePropertyFieldContainer extends EditableFieldContainer {
         controls.setVisible(propertyField.canRemoveItem() || propertyField.canReorderItems());
         queue(controls);
 
-        MarkupContainer remove = new AjaxLink("remove") {
+        final AjaxLink<Void> remove = new AjaxLink<Void>("remove") {
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 propertyField.onRemoveItem(model, target);
             }
         };
@@ -51,11 +49,11 @@ public class EditablePropertyFieldContainer extends EditableFieldContainer {
 
         final HippoIcon removeIcon = HippoIcon.fromSprite("remove-icon", Icon.TIMES);
         queue(removeIcon);
-        
-        boolean isFirst = (model.getIndex() == 0);
-        MarkupContainer upToTopLink = new AjaxLink("upToTop") {
+
+        final boolean isFirst = (model.getIndex() == 0);
+        final AjaxLink<Void> upToTopLink = new AjaxLink<Void>("upToTop") {
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 propertyField.onMoveItemToTop(model);
                 propertyField.redraw();
             }
@@ -67,9 +65,9 @@ public class EditablePropertyFieldContainer extends EditableFieldContainer {
         final HippoIcon upToTopIcon = HippoIcon.fromSprite("up-top-icon", Icon.ARROW_UP_LINE);
         queue(upToTopIcon);
 
-        MarkupContainer upLink = new AjaxLink("up") {
+        final AjaxLink<Void> upLink = new AjaxLink<Void>("up") {
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 propertyField.onMoveItemUp(model, target);
             }
         };
@@ -82,15 +80,15 @@ public class EditablePropertyFieldContainer extends EditableFieldContainer {
         final HippoIcon upIcon = HippoIcon.fromSprite("up-icon", Icon.ARROW_UP);
         queue(upIcon);
 
-        MarkupContainer downLink = new AjaxLink("down") {
+        final AjaxLink<Void> downLink = new AjaxLink<Void>("down") {
             @Override
-            public void onClick(AjaxRequestTarget target) {
-                JcrPropertyValueModel nextModel = new JcrPropertyValueModel(model.getIndex() + 1, model
+            public void onClick(final AjaxRequestTarget target) {
+                final JcrPropertyValueModel nextModel = new JcrPropertyValueModel(model.getIndex() + 1, model
                         .getJcrPropertymodel());
                 propertyField.onMoveItemUp(nextModel, target);
             }
         };
-        boolean isLast = (model.getIndex() == propertyField.provider.size() - 1);
+        final boolean isLast = (model.getIndex() == propertyField.provider.size() - 1);
         if (!propertyField.canReorderItems()) {
             downLink.setVisible(false);
         }
@@ -100,9 +98,9 @@ public class EditablePropertyFieldContainer extends EditableFieldContainer {
         final HippoIcon downIcon = HippoIcon.fromSprite("down-icon", Icon.ARROW_DOWN);
         queue(downIcon);
 
-        MarkupContainer downToBottomLink = new AjaxLink("downToBottom") {
+        final AjaxLink<Void> downToBottomLink = new AjaxLink<Void>("downToBottom") {
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 propertyField.onMoveItemToBottom(model);
                 propertyField.redraw();
             }
