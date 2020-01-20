@@ -18,15 +18,3 @@ definitions:
         jcr:primaryType: frontend:plugin
         plugin.class: org.hippoecm.frontend.plugins.cms.admin.permissions.PermissionsPlugin
         hipposys:userrole: xm.security.viewer
-      /systeminfo:
-        jcr:primaryType: frontend:plugin
-        plugin.class: org.hippoecm.frontend.plugins.cms.admin.system.SystemInfoPlugin
-        hipposys:userrole: xm.system.admin
-      /systemprops:
-        jcr:primaryType: frontend:plugin
-        plugin.class: org.hippoecm.frontend.plugins.cms.admin.system.SystemPropertiesPlugin
-        hipposys:userrole: xm.system.admin
-      /updater:
-        jcr:primaryType: frontend:plugin
-        plugin.class: org.hippoecm.frontend.plugins.cms.admin.updater.UpdaterPanelPlugin
-        hipposys:userrole: xm.system.admin
