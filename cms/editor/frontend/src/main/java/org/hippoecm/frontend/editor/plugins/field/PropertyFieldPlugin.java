@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -47,7 +47,7 @@ import org.hippoecm.frontend.types.ITypeDescriptor;
 
 public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrPropertyValueModel> {
 
-    private JcrNodeModel nodeModel;
+    private final JcrNodeModel nodeModel;
     private JcrPropertyModel propertyModel;
     private long nrValues;
     private IObserver propertyObserver;
@@ -55,7 +55,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
     // flag to check if the value orders have been changed when the property is ordered and multiple
     private boolean hasChangedPropValueOrder;
 
-    public PropertyFieldPlugin(IPluginContext context, IPluginConfig config) {
+    public PropertyFieldPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         hasChangedPropValueOrder = false;
@@ -106,10 +106,11 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
         return StringUtils.replace(name, ":", "-").toLowerCase();
 
     }
-    private JcrPropertyModel newPropertyModel(JcrNodeModel model) {
-        IFieldDescriptor field = getFieldHelper().getField();
+
+    private JcrPropertyModel newPropertyModel(final JcrNodeModel model) {
+        final IFieldDescriptor field = getFieldHelper().getField();
         if (field != null) {
-            String fieldAbsPath = model.getItemModel().getPath() + "/" + field.getPath();
+            final String fieldAbsPath = model.getItemModel().getPath() + "/" + field.getPath();
             return new JcrPropertyModel(fieldAbsPath);
         } else {
             return new JcrPropertyModel((Property) null);
@@ -139,7 +140,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
                     return propertyModel;
                 }
 
-                public void onEvent(Iterator<? extends IEvent<JcrPropertyModel>> events) {
+                public void onEvent(final Iterator<? extends IEvent<JcrPropertyModel>> events) {
                     //Only redraw if the number of properties or their order has changed.
                     if (propertyModel.size() != nrValues ||
                         (field.isOrdered() && hasChangedPropValueOrder)) {
@@ -156,7 +157,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
         }
     }
 
-    protected void unsubscribe(IFieldDescriptor field) {
+    protected void unsubscribe(final IFieldDescriptor field) {
         if (!field.getPath().equals("*")) {
             getPluginContext().unregisterService(propertyObserver, IObserver.class.getName());
             propertyModel = null;
@@ -164,8 +165,8 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
     }
 
     @Override
-    protected AbstractProvider<Property, JcrPropertyValueModel> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
-            IModel<Node> nodeModel) {
+    protected AbstractProvider<Property, JcrPropertyValueModel> newProvider(final IFieldDescriptor descriptor, final ITypeDescriptor type,
+                                                                            final IModel<Node> nodeModel) {
         if (!descriptor.getPath().equals("*")) {
             return new PropertyValueProvider(descriptor, type, newPropertyModel((JcrNodeModel) nodeModel).getItemModel());
         }
@@ -177,7 +178,7 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
         // filter out changes in the node model itself.
         // The property model observation takes care of that.
         if (!nodeModel.equals(getDefaultModel()) || (propertyModel != null && propertyModel.size() != nrValues)) {
-            IFieldDescriptor field = getFieldHelper().getField();
+            final IFieldDescriptor field = getFieldHelper().getField();
             if (field != null) {
                 unsubscribe(field);
                 subscribe(field);
@@ -201,25 +202,25 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
     }
 
     @Override
-    protected void populateViewItem(Item<IRenderService> item, final JcrPropertyValueModel model) {
+    protected void populateViewItem(final Item<IRenderService> item, final JcrPropertyValueModel model) {
         item.add(new FieldContainer("fieldContainer", item));
     }
 
     @Override
-    protected void populateEditItem(Item item, final JcrPropertyValueModel model) {
+    protected void populateEditItem(final Item<IRenderService> item, final JcrPropertyValueModel model) {
         item.add(new EditablePropertyFieldContainer("fieldContainer", item, model, this));
     }
 
     @Override
-    protected void populateCompareItem(Item<IRenderService> item, final JcrPropertyValueModel newModel, final JcrPropertyValueModel oldModel) {
+    protected void populateCompareItem(final Item<IRenderService> item, final JcrPropertyValueModel newModel, final JcrPropertyValueModel oldModel) {
         populateViewItem(item, newModel);
     }
 
     protected Component createAddLink() {
         if (canAddItem()) {
-          final AjaxLink link = new AjaxLink("add") {
+          final AjaxLink<Void> link = new AjaxLink<Void>("add") {
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
               target.focusComponent(this);
               PropertyFieldPlugin.this.onAddItem(target);
             }
