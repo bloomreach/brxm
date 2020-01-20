@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,10 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.hippoecm.frontend.editor.plugins.field;
 
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -30,20 +28,20 @@ import org.hippoecm.frontend.types.IFieldDescriptor;
 public class EditableNodeFieldContainer extends EditableFieldContainer {
 
     public EditableNodeFieldContainer(final String id,
-                               final Item<IRenderService> renderItem,
-                               final JcrNodeModel model,
-                               final NodeFieldPlugin nodeField) {
+                                      final Item<IRenderService> renderItem,
+                                      final JcrNodeModel model,
+                                      final NodeFieldPlugin nodeField) {
         super(id, renderItem);
 
         final int index = renderItem.getIndex();
 
-        WebMarkupContainer controls = new WebMarkupContainer("controls");
+        final WebMarkupContainer controls = new WebMarkupContainer("controls");
         controls.setVisible(nodeField.canRemoveItem() || nodeField.canReorderItems());
         queue(controls);
 
-        MarkupContainer remove = new AjaxLink("remove") {
+        final AjaxLink<Void> remove = new AjaxLink<Void>("remove") {
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 nodeField.onRemoveItem(model, target);
             }
         };
@@ -55,9 +53,9 @@ public class EditableNodeFieldContainer extends EditableFieldContainer {
         final HippoIcon removeIcon = HippoIcon.fromSprite("remove-icon", Icon.TIMES);
         queue(removeIcon);
 
-        MarkupContainer upToTopLink = new AjaxLink("upToTop") {
+        final AjaxLink<Void> upToTopLink = new AjaxLink<Void>("upToTop") {
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 nodeField.onMoveItemToTop(model);
                 nodeField.redraw();
             }
@@ -69,9 +67,9 @@ public class EditableNodeFieldContainer extends EditableFieldContainer {
         final HippoIcon upToTopIcon = HippoIcon.fromSprite("up-top-icon", Icon.ARROW_UP_LINE);
         queue(upToTopIcon);
 
-        MarkupContainer upLink = new AjaxLink("up") {
+        final AjaxLink<Void> upLink = new AjaxLink<Void>("up") {
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 nodeField.onMoveItemUp(model, target);
             }
         };
@@ -86,34 +84,38 @@ public class EditableNodeFieldContainer extends EditableFieldContainer {
         final HippoIcon upIcon = HippoIcon.fromSprite("up-icon", Icon.ARROW_UP);
         queue(upIcon);
 
-        MarkupContainer downLink = new AjaxLink("down") {
+        final AjaxLink<Void> downLink = new AjaxLink<Void>("down") {
             @Override
-            public void onClick(AjaxRequestTarget target) {
-                IFieldDescriptor field = nodeField.getFieldHelper().getField();
-                if (field != null) {
-                    String name = field.getPath();
-                    JcrNodeModel parent = model.getParentModel();
-                    if (parent != null) {
-                        JcrNodeModel nextModel = new JcrNodeModel(parent.getItemModel().getPath() + "/" + name + "["
-                                + (index + 2) + "]");
-                        nodeField.onMoveItemUp(nextModel, target);
-                    }
+            public void onClick(final AjaxRequestTarget target) {
+                final IFieldDescriptor field = nodeField.getFieldHelper().getField();
+                if (field == null) {
+                    return;
                 }
+
+                final JcrNodeModel parent = model.getParentModel();
+                if (parent == null) {
+                    return;
+                }
+
+                final String parentPath = parent.getItemModel().getPath();
+                final String nextPath = String.format("%s/%s[%d]", parentPath, field.getPath(), index + 2);
+                final JcrNodeModel nextModel = new JcrNodeModel(nextPath);
+                nodeField.onMoveItemUp(nextModel, target);
             }
         };
         if (!nodeField.canReorderItems()) {
             downLink.setVisible(false);
         }
-        boolean isLast = (index == nodeField.provider.size() - 1);
+        final boolean isLast = (index == nodeField.provider.size() - 1);
         downLink.setEnabled(!isLast);
         queue(downLink);
 
         final HippoIcon downIcon = HippoIcon.fromSprite("down-icon", Icon.ARROW_DOWN);
         queue(downIcon);
 
-        MarkupContainer downToBottomLink = new AjaxLink("downToBottom") {
+        final AjaxLink<Void> downToBottomLink = new AjaxLink<Void>("downToBottom") {
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 nodeField.onMoveItemToBottom(model);
                 nodeField.redraw();
             }
@@ -124,6 +126,5 @@ public class EditableNodeFieldContainer extends EditableFieldContainer {
 
         final HippoIcon downToBottomIcon = HippoIcon.fromSprite("down-bottom-icon", Icon.ARROW_DOWN_LINE);
         queue(downToBottomIcon);
-
     }
 }

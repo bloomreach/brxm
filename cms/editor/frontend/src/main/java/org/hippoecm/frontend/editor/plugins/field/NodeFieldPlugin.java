@@ -58,7 +58,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
 
     private static final Logger log = LoggerFactory.getLogger(NodeFieldPlugin.class);
 
-    public NodeFieldPlugin(IPluginContext context, IPluginConfig config) {
+    public NodeFieldPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         final HippoIcon expandCollapseIcon = HippoIcon.fromSprite("expand-collapse-icon", Icon.CHEVRON_DOWN);
@@ -118,12 +118,12 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
     }
 
     @Override
-    protected AbstractProvider<Node, JcrNodeModel> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
-                                                               IModel<Node> nodeModel) {
+    protected AbstractProvider<Node, JcrNodeModel> newProvider(final IFieldDescriptor descriptor, final ITypeDescriptor type,
+                                                               final IModel<Node> nodeModel) {
         try {
-            JcrNodeModel prototype = (JcrNodeModel) getTemplateEngine().getPrototype(type);
+            final JcrNodeModel prototype = (JcrNodeModel) getTemplateEngine().getPrototype(type);
             return new ChildNodeProvider(descriptor, prototype, new JcrItemModel<>(nodeModel.getObject()));
-        } catch (TemplateEngineException ex) {
+        } catch (final TemplateEngineException ex) {
             log.warn("Could not find prototype", ex);
             return null;
         }
@@ -158,8 +158,8 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
     }
 
     @Override
-    public void onEvent(Iterator events) {
-        IFieldDescriptor field = getFieldHelper().getField();
+    public void onEvent(final Iterator events) {
+        final IFieldDescriptor field = getFieldHelper().getField();
 
         // filter events
         if (field == null) {
@@ -171,8 +171,8 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
         }
 
         while (events.hasNext()) {
-            JcrEvent jcrEvent = (JcrEvent) events.next();
-            Event event = jcrEvent.getEvent();
+            final JcrEvent jcrEvent = (JcrEvent) events.next();
+            final Event event = jcrEvent.getEvent();
             try {
                 switch (event.getType()) {
                     case 0:
@@ -181,7 +181,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
                     case Event.NODE_ADDED:
                     case Event.NODE_MOVED:
                     case Event.NODE_REMOVED:
-                        String path = event.getPath();
+                        final String path = event.getPath();
                         String name = path.substring(path.lastIndexOf('/') + 1);
                         if (name.indexOf('[') > 0) {
                             name = name.substring(0, name.indexOf('['));
@@ -191,32 +191,32 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
                             return;
                         }
                 }
-            } catch (RepositoryException ex) {
+            } catch (final RepositoryException ex) {
                 log.error("Error filtering event", ex);
             }
         }
     }
 
     @Override
-    protected void populateViewItem(Item<IRenderService> item, final JcrNodeModel model) {
+    protected void populateViewItem(final Item<IRenderService> item, final JcrNodeModel model) {
         item.add(new FieldContainer("fieldContainer", item));
     }
 
     @Override
-    protected void populateEditItem(Item<IRenderService> item, final JcrNodeModel model) {
+    protected void populateEditItem(final Item<IRenderService> item, final JcrNodeModel model) {
         item.add(new EditableNodeFieldContainer("fieldContainer", item, model, this));
     }
 
     @Override
-    protected void populateCompareItem(Item<IRenderService> item, final JcrNodeModel newModel, final JcrNodeModel oldModel) {
+    protected void populateCompareItem(final Item<IRenderService> item, final JcrNodeModel newModel, final JcrNodeModel oldModel) {
         populateViewItem(item, newModel);
     }
 
     protected Component createAddLink() {
         if (canAddItem()) {
-            final AjaxLink link = new AjaxLink("add") {
+            final AjaxLink<Void> link = new AjaxLink<Void>("add") {
                 @Override
-                public void onClick(AjaxRequestTarget target) {
+                public void onClick(final AjaxRequestTarget target) {
                     target.focusComponent(this);
                     NodeFieldPlugin.this.onAddItem(target);
                 }
@@ -258,7 +258,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
         validateModelObjects();
     }
 
-    protected AbstractProvider getProvider() {
+    protected AbstractProvider<Node, JcrNodeModel> getProvider() {
         return provider;
     }
 
