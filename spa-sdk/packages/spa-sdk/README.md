@@ -112,10 +112,10 @@ The `Page` class represents the brXM page to render. This is the main entry poin
 
 Method | Description
 --- | ---
-`getComponent(...componentNames): Component \| undefined` | Gets a component in the page (e.g. `getComponent('main', 'right')`). If `componentNames` is omitted, then the page root component will be returned.
-`getContent(reference: Reference \| string): Content \| undefined` | Gets a content item used on the page.
+<code>getComponent(...componentNames): Component &vert; undefined</code> | Gets a component in the page (e.g. `getComponent('main', 'right')`). If `componentNames` is omitted, then the page root component will be returned.
+<code>getContent(reference: Reference &vert; string): Content &vert; undefined</code> | Gets a content item used on the page.
 `getMeta(meta): Meta[]` | Generates a meta-data from the provided `meta` model.
-`getTitle(): string \| undefined` | Gets the title of the page, or `undefined` if not configured.
+<code>getTitle(): string &vert; undefined</code> | Gets the title of the page, or `undefined` if not configured.
 `getUrl(link?: Link): string` | Generates a URL for a link object.<br> - If the link object type is internal or external, then it will prepend `spaBaseUrl`. In case when the link starts with the same path as in `cmsBaseUrl`, this part will be removed.<br> - If it is a resource link, then it will prepend the origin part from the `cmsBaseUrl` option.<br> - If the link parameter is omitted, then the link to the current page will be returned.<br> - In other cases, the link will be returned as-is.
 `getUrl(path: string): string` | Generates an SPA URL for the path.<br> - If it is a relative path, then it will prepend `spaBaseUrl`.<br> - If it is an absolute path, then the behavior will be similar to internal and external link generation.
 `isPreview(): boolean` | Returns whether the page is in the preview mode.
@@ -131,26 +131,26 @@ Method | Description
 `getId(): string` | Returns the component id.
 `getMeta(): Meta[]` | Returns the component meta-data collection.
 `getModels(): object` | Returns the map of the component models.
-`getUrl(): string \| undefined` | Returns the link to the partial component model.
+<code>getUrl(): string &vert; undefined</code> | Returns the link to the partial component model.
 `getName(): string` | Returns the name of the component.
 `getParameters(): object` | Returns the parameters of the component.
 `getChildren(): Component[]` | Returns the direct children of the component.
-`getComponent(...componentNames: string[]): Component \| undefined` | Looks up for a nested component.
-`getComponentById(id: string): Component \| undefined` | Looks up for a nested component by its id.
+<code>getComponent(...componentNames: string[]): Component &vert; undefined</code> | Looks up for a nested component.
+<code>getComponentById(id: string): Component &vert; undefined</code> | Looks up for a nested component by its id.
 
 ##### Container
 The `Container` class represents a page node that is actually present in the DOM but as an element surrounding its children. Container extends the Component class, and therefore, all the [Component methods](#component) are applicable here.
 
 Method | Description
 --- | ---
-`getType(): string \| undefined` | Returns the [type](https://documentation.bloomreach.com/library/concepts/template-composer/channel-editor-containers.html) of a container.
+<code>getType(): string &vert; undefined</code> | Returns the [type](https://documentation.bloomreach.com/library/concepts/template-composer/channel-editor-containers.html) of a container.
 
 ##### Container Item
 The `ContainerItem` objects are usually visible on the page and interact with the user. Container Item extends the Component class, and therefore, all the [Component methods](#component) are applicable here.
 
 Method | Description
 --- | ---
-`getType(): string \| undefined` | Returns the type of a container item. The available types depend on which container items have been configured in the backend (e.g. "Banner").
+<code>getType(): string &vert; undefined</code> | Returns the type of a container item. The available types depend on which container items have been configured in the backend (e.g. "Banner").
 `isHidden(): boolean` | Returns whether the component should not render anything. Hiding components is only possible with the Relevance feature.
 `on(eventName: string, listener: Function): Function` | Subscribes for an event and returns the unsubscribe function.
 `off(eventName: string, listener: Function): void` | Unsubscribes from an event.
@@ -161,11 +161,11 @@ The `Content` object holds document data that is used by the page components.
 Method | Description
 --- | ---
 `getId(): string` | Returns the content id.
-`getLocale(): string \| undefined` | Returns the content locale.
+<code>getLocale(): string &vert; undefined</code> | Returns the content locale.
 `getMeta(): Meta[]` | Returns the content meta-data collection.
 `getName(): string` | Returns the content name.
 `getData(): object` | Returns the content data as it is returned in the Page Model API.
-`getUrl(): string \| undefined` | Returns the link to the content.
+<code>getUrl(): string &vert; undefined</code> | Returns the link to the content.
 
 ##### Meta
 The `Meta` objects are being used by the brXM to page and its components.
