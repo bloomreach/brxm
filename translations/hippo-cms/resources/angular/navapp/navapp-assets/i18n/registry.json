@@ -565,10 +565,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "MENU_ITEM_XM_SYSTEM" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "MENU_CONTAINER_SETUP" : {
       "status" : "CLEAN",
       "locales" : null
@@ -634,6 +630,56 @@
       "locales" : null
     },
     "ERROR_UNABLE_TO_PERFORM_SILENT_LOGIN" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "MENU_ITEM_XM_SYSTEM_PROPERTIES" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "MENU_ITEM_XM_USER_MANAGEMENT" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "MENU_ITEM_XM_SYSTEM_INFO" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "MENU_CONTAINER_USER_MANAGEMENT" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "MENU_ITEM_XM_SYSTEM_UPDATER" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",

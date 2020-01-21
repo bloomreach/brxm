@@ -34,14 +34,16 @@
       "locales" : null
     },
     "panel-plugin-panel-title" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "password" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "admin-system-info-title-help" : {
       "status" : "CLEAN",
       "locales" : null
     },
@@ -66,10 +68,6 @@
       "locales" : null
     },
     "group-add-users-label" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "updater-panel-title-help" : {
       "status" : "CLEAN",
       "locales" : null
     },
@@ -150,10 +148,6 @@
       "locales" : null
     },
     "admin-groups-title-help" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "updater-panel-title" : {
       "status" : "CLEAN",
       "locales" : null
     },
@@ -285,14 +279,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "admin-system-properties-key" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "admin-system-info-title" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "admin-title" : {
       "status" : "CLEAN",
       "locales" : null
@@ -386,10 +372,6 @@
       "locales" : null
     },
     "user-membership-available-groups" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "system-info-title" : {
       "status" : "CLEAN",
       "locales" : null
     },
@@ -541,14 +523,6 @@
       "status" : "CLEAN",
       "locales" : null
     },
-    "admin-system-properties-title-help" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "admin-system-properties-title" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
     "user-cancel-action" : {
       "status" : "CLEAN",
       "locales" : null
@@ -586,10 +560,6 @@
       "locales" : null
     },
     "group-create-failed" : {
-      "status" : "CLEAN",
-      "locales" : null
-    },
-    "admin-system-properties-value" : {
       "status" : "CLEAN",
       "locales" : null
     },
