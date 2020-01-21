@@ -54,7 +54,7 @@ describe('SubpageToolbar', () => {
   it('displays the passed-in page title', () => {
     compileDirectiveAndGetController();
 
-    expect($element.find('h2').text()).toBe('testTitle');
+    expect($element.find('h1').text()).toBe('testTitle');
   });
 
   it('returns to the page when clicking the "back" button', () => {
