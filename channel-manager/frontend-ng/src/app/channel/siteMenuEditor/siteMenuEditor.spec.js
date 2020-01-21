@@ -101,7 +101,7 @@ describe('SiteMenuEditor', () => {
     return $element.controller('siteMenuEditor');
   }
 
-  fit('initializes correctly', () => {
+  it('initializes correctly', () => {
     $ctrl = compileDirectiveAndGetController();
 
     expect($ctrl.menuUuid).toBe('testUuid');
