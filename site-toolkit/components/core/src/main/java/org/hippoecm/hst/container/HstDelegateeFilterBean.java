@@ -99,12 +99,6 @@ import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRemoteAddr;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestHost;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestScheme;
 import static org.hippoecm.hst.util.HstRequestUtils.getRenderingHost;
-import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS;
-import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS;
-import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS;
-import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN;
-import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_MAX_AGE;
-import static org.springframework.http.HttpHeaders.VARY;
 
 
 public class HstDelegateeFilterBean extends AbstractFilterBean implements ServletContextAware, InitializingBean {
@@ -145,6 +139,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
     private String jwtTokenParam;
     private String jwtTokenAuthorizationHeader;
+    private boolean statelessRequestValidation;
 
     @Override
     public void setServletContext(ServletContext servletContext) {
@@ -186,6 +181,11 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
     public void setJwtTokenParam(final String jwtTokenParam) {
         this.jwtTokenParam = jwtTokenParam;
+    }
+
+
+    public void setStatelessRequestValidation(final boolean statelessRequestValidation) {
+        this.statelessRequestValidation = statelessRequestValidation;
     }
 
     @Override
@@ -244,7 +244,8 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         Task rootTask = null;
 
         // Sets up the container request wrapper
-        HstContainerRequest containerRequest = new HstContainerRequestImpl(req, hstManager.getPathSuffixDelimiter());
+        HstContainerRequestImpl containerRequest = new HstContainerRequestImpl(req, hstManager.getPathSuffixDelimiter(),
+                statelessRequestValidation);
 
         try {
 
@@ -403,6 +404,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             if (PAGE_MODEL_PIPELINE_NAME.equals(resolvedMount.getNamedPipeline())) {
                 log.debug("Request will invoke {} pipeline for request {} ", PAGE_MODEL_PIPELINE_NAME, containerRequest);
                 requestContext.setPageModelApiRequest(true);
+                containerRequest.setStatelessRequest();
             }
 
             if (renderingHost != null) {
@@ -598,6 +600,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             if (rootTask != null) {
                 HDC.cleanUp();
             }
+            containerRequest.finish();
         }
     }
 

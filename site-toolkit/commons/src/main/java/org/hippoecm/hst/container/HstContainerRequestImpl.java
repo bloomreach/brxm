@@ -20,6 +20,7 @@ import java.net.URLDecoder;
 
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -28,6 +29,8 @@ import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestHost;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestScheme;
@@ -53,10 +56,17 @@ import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestScheme;
  * @version $Id$
  */
 public class HstContainerRequestImpl extends GenericHttpServletRequestWrapper implements HstContainerRequest {
-    
+
+    private final static Logger log = LoggerFactory.getLogger(HstContainerRequestImpl.class);
+
     private String pathSuffix;
     private String pathSuffixDelimiter;
+    private final boolean statelessRequestValidation;
     private String stringRepresentation;
+    private boolean statelessRequest;
+
+    // the stacktrace used for creating the http session which in case of statelessRequest = true should never happen
+    private Exception createSessionStackTrace;
 
     /**
      * Creates a wrapper {@link HttpServletRequest} with a {@link HttpServletRequest#getServletPath()} that is an empty {@link String} (""). The 
@@ -66,27 +76,32 @@ public class HstContainerRequestImpl extends GenericHttpServletRequestWrapper im
      * @param pathSuffixDelimiter
      */
     public HstContainerRequestImpl(HttpServletRequest request, String pathSuffixDelimiter) {
+        this(request, pathSuffixDelimiter, false);
+    }
+
+    public HstContainerRequestImpl(final HttpServletRequest request, final String pathSuffixDelimiter,
+                                   final boolean statelessRequestValidation) {
         super(request);
-        
         this.pathSuffixDelimiter = pathSuffixDelimiter;
-        
+        this.statelessRequestValidation = statelessRequestValidation;
+
         if (pathSuffixDelimiter == null || "".equals(pathSuffixDelimiter)) {
             return;
         }
 
         String tempRequestURI = request.getRequestURI();
         int pathSuffixOffset = tempRequestURI.indexOf(pathSuffixDelimiter);
-        
+
         if (pathSuffixOffset != -1) {
             requestURI = tempRequestURI.substring(0, pathSuffixOffset);
             pathSuffix = tempRequestURI.substring(pathSuffixOffset + pathSuffixDelimiter.length());
         }
-        
+
         // we call setServletPath for bootstrapping pathInfo && pathTranslated
         setServletPath("");
-        
+
     }
-    
+
     public String getPathSuffix() {
         return pathSuffix;
     }
@@ -180,4 +195,68 @@ public class HstContainerRequestImpl extends GenericHttpServletRequestWrapper im
         return getRequestURI();
     }
 
+
+
+    @Override
+    public HttpSession getSession(final boolean create) {
+        if (statelessRequestValidation && create && statelessRequest) {
+            createSessionStackTrace = new Exception("Http Session Creation Stack");
+        }
+        return super.getSession(create);
+    }
+
+    @Override
+    public HttpSession getSession() {
+        if (statelessRequestValidation && statelessRequest) {
+            createSessionStackTrace = new Exception("Http Session Creation Stack");
+        }
+        return super.getSession();
+    }
+
+    /**
+     * <p>
+     *     if {@code statelessRequest} is true, this http servlet request is marked as stateless <b>if</b> it did not
+     *     already have an http session: if it already got an http session, the http session can already be created
+     *     for the current domain by a different mount.
+     * </p>
+     * <p>
+     *     If a request gets marked as stateless, it means that during the request processing, no http session should be
+     *     created. If there is an http session created for a stateless request, this is a coding error. During
+     *     {@link #finish()} an error will be logged for such a use case
+     * </p>
+     */
+    public void setStatelessRequest() {
+        if (getSession(false) == null) {
+            log.debug("Request is stateless and no http session yet, hence request must stay stateless");
+            // if there is not yet an http session, for a page model api request there should not be created an
+            // http session, not even in channel manager preview
+            this.statelessRequest = true;
+        } else {
+            log.debug("Although the request is marked stateless, already an http session existed hence skipping this " +
+                    "request to be stateless");
+        }
+    }
+
+    /**
+     * <p>
+     *     invoked by the HST when finished with this {@link HstContainerRequestImpl}.
+     * </p>
+     */
+    public void finish() {
+        if (statelessRequestValidation && statelessRequest) {
+            HttpSession session = getSession(false);
+            if (session != null) {
+                session.invalidate();
+                if (log.isInfoEnabled()) {
+                    log.error("Stateless marked request should never create an http session but one was created. " +
+                            "The http session has been invalidated again to avoid congestion. Stacktrace: ", createSessionStackTrace);
+                } else {
+                    log.error("Stateless marked request should never create an http session but one was created. " +
+                            "The http session has been invalidated again to avoid congestion. Change log level of {} to " +
+                                    "info to see the stacktrace that created the http session", HstContainerRequestImpl.class);
+                }
+            }
+
+        }
+    }
 }

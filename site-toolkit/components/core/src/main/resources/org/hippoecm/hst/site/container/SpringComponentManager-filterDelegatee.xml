@@ -28,6 +28,7 @@
     <property name="hstRequestProcessor" ref="org.hippoecm.hst.core.container.HstRequestProcessor" />
     <property name="jwtTokenAuthorizationHeader" value="${jwt.token.authorization.header}"/>
     <property name="jwtTokenParam" value="${jwt.token.param}" />
+    <property name="statelessRequestValidation" value="${hst.stateless.request.validation}"/>
   </bean>
 
 
