@@ -89,7 +89,6 @@ class SiteMenuEditorCtrl {
     return this.SiteMenuService.loadMenu(this.menuUuid)
       .then((menu) => {
         this.lockedBy = menu.lockedBy;
-        console.log(menu.items);
         this.items = menu.items;
         [this.selectedItem] = this.items;
 
