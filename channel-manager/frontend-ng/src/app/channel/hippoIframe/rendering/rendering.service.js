@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ class RenderingService {
     PageMetaDataService,
     PageStructureService,
     ProjectService,
+    ScrollService,
   ) {
     'ngInject';
 
@@ -51,6 +52,7 @@ class RenderingService {
     this.PageMetaDataService = PageMetaDataService;
     this.PageStructureService = PageStructureService;
     this.ProjectService = ProjectService;
+    this.ScrollService = ScrollService;
 
     this.emitter = new Emittery();
   }
@@ -72,6 +74,7 @@ class RenderingService {
       return this.creatingOverlay;
     }
 
+    this.ScrollService.saveScrollPosition();
     this.PageStructureService.clearParsedElements();
     this.OverlayService.clear();
 
@@ -81,6 +84,7 @@ class RenderingService {
         this.updateDragDrop();
         this._updateChannelIfSwitched();
         this._parseLinks();
+        this.ScrollService.restoreScrollPosition();
 
         return this.emitter.emit(OVERLAY_CREATED_EVENT_NAME);
       })
