@@ -28,10 +28,6 @@ public class NodeFieldContainer extends FieldContainer {
         final IModel<String> hintModel = helper.getHintModel(this);
         final boolean isRequired = helper.isRequired();
 
-        final FieldTitle fieldTitle = helper.isCompoundField()
-            ? new CollapsibleFieldTitle("field-title", captionModel, hintModel, isRequired, renderItem)
-            : new FieldTitle("field-title", captionModel, hintModel, isRequired);
-
-        queue(fieldTitle);
+        queue(new CollapsibleFieldTitle("field-title", captionModel, hintModel, isRequired, renderItem));
     }
 }
