@@ -183,7 +183,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
     @Override
     protected void populateViewItem(final Item<IRenderService> item, final JcrNodeModel model) {
         if (helper.isCompoundField()) {
-            item.add(new NodeFieldContainer("fieldContainer", item, this));
+            item.add(new CompoundFieldContainer("fieldContainer", item, this));
         } else {
             item.add(new FieldContainer("fieldContainer", item));
         }
@@ -191,7 +191,12 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
 
     @Override
     protected void populateEditItem(final Item<IRenderService> item, final JcrNodeModel model) {
-        item.add(new EditableNodeFieldContainer("fieldContainer", item, model, this));
+        if (helper.isCompoundField()) {
+            item.add(new EditableCompoundFieldContainer("fieldContainer", item, model, this));
+        } else {
+            item.add(new EditableNodeFieldContainer("fieldContainer", item, model, this));
+        }
+
     }
 
     @Override
