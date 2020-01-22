@@ -43,7 +43,7 @@ public class EditableNodeFieldContainer extends EditableFieldContainer {
                 ? new CollapsibleFieldTitle("field-title", captionModel, hintModel, isRequired, renderItem)
                 : new FieldTitle("field-title", captionModel, hintModel, isRequired);
 
-        queue(fieldTitle);
+        queue(fieldTitle.setVisible(false));
 
         final int index = renderItem.getIndex();
 

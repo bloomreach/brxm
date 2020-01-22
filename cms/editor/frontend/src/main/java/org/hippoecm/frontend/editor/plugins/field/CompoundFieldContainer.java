@@ -19,8 +19,8 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.service.IRenderService;
 
-public class NodeFieldContainer extends FieldContainer {
-    public NodeFieldContainer(final String id, final Item<IRenderService> renderItem, final NodeFieldPlugin nodeField) {
+public class CompoundFieldContainer extends FieldContainer {
+    public CompoundFieldContainer(final String id, final Item<IRenderService> renderItem, final NodeFieldPlugin nodeField) {
         super(id, renderItem);
 
         final FieldPluginHelper helper = nodeField.helper;
