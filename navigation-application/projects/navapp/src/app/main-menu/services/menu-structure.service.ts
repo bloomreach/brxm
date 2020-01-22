@@ -225,6 +225,19 @@ export class MenuStructureService {
           new MenuItemLink('setup/algorithm-settings/global-facet-management',
             this.translate('MENU_ITEM_SETUP_ALGORITHM_SETTINGS_GLOBAL_FACET_MANAGEMENT')),
         ]),
+        new MenuItemLink('setup/user-management/merchandising-user/user-management',
+          this.translate('MENU_ITEM_SETUP_USER_MANAGEMENT_MERCHANDISING_USER_USER_MANAGEMENT')),
+        new MenuItemLink('xm-usermanagement', this.translate('MENU_ITEM_XM_USER_MANAGEMENT')),
+        new MenuItemLink('xm-form-data', this.translate('MENU_ITEM_XM_FORM_DATA')),
+
+        new MenuItemContainer(this.translate('MENU_ITEM_XM_SYSTEM'), [
+          new MenuItemLink('xm-content-feed', this.translate('MENU_ITEM_XM_CONTENT_FEED')),
+          new MenuItemLink('xm-replication', this.translate('MENU_ITEM_XM_REPLICATION')),
+          new MenuItemLink('xm-systeminfo', this.translate('MENU_ITEM_XM_SYSTEM_INFO')),
+          new MenuItemLink('xm-systemproperties', this.translate('MENU_ITEM_XM_SYSTEM_PROPERTIES')),
+          new MenuItemLink('xm-systemupdater', this.translate('MENU_ITEM_XM_SYSTEM_UPDATER')),
+        ]),
+
         new MenuItemContainer(this.translate('MENU_CONTAINER_DEVSTUDIO'), [
           new MenuItemLink('setup/devstudio/account-information', this.translate('MENU_ITEM_SETUP_DEVSTUDIO_ACCOUNT_INFORMATION')),
           new MenuItemLink('setup/devstudio/pixel-monitor', this.translate('MENU_ITEM_SETUP_DEVSTUDIO_PIXEL_MONITOR')),
@@ -236,12 +249,6 @@ export class MenuStructureService {
           new MenuItemLink('setup/devstudio/attribute-configuration', this.translate('MENU_ITEM_SETUP_DEVSTUDIO_ATTRIBUTE_CONFIGURATION')),
           new MenuItemLink('setup/devstudio/api-explorer', this.translate('MENU_ITEM_SETUP_DEVSTUDIO_API_EXPLORER')),
         ]),
-        new MenuItemContainer(this.translate('MENU_CONTAINER_USER_MANAGEMENT'), [
-          new MenuItemLink('setup/user-management/merchandising-user/user-management',
-            this.translate('MENU_ITEM_SETUP_USER_MANAGEMENT_MERCHANDISING_USER_USER_MANAGEMENT')),
-          new MenuItemLink('xm-usermanagement', this.translate('MENU_ITEM_XM_USER_MANAGEMENT')),
-        ]),
-        new MenuItemLink('xm-form-data', this.translate('MENU_ITEM_XM_FORM_DATA')),
 
         new MenuItemContainer(this.translate('MENU_CONTAINER_INTERNAL_ADMIN'), [
           new MenuItemLink('setup/user-management/merchandising-user/internal-user-management',
@@ -258,10 +265,7 @@ export class MenuStructureService {
             new MenuItemLink('setup/internal-admin/traffic-analysis/last-click-overview',
               this.translate('MENU_ITEM_SETUP_INTERNAL_ADMIN_TRAFFIC_ANALYSIS_LAST_CLICK_OVERVIEW')),
           ]),
-          new MenuItemLink('xm-systeminfo', this.translate('MENU_ITEM_XM_SYSTEM_INFO')),
-          new MenuItemLink('xm-systemproperties', this.translate('MENU_ITEM_XM_SYSTEM_PROPERTIES')),
-          new MenuItemLink('xm-systemupdater', this.translate('MENU_ITEM_XM_SYSTEM_UPDATER')),
-        ]),
+      ]),
         new MenuItemContainer(this.translate('MENU_CONTAINER_INTERNAL_REPORTS'), [
           new MenuItemContainer(this.translate('MENU_CONTAINER_ORGANIC_TRENDS'), [
             new MenuItemLink('setup/internal-reports/organic-trends/homepage-traffic',
