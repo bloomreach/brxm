@@ -40,7 +40,7 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 
-public class DefaultLoginPlugin extends SimpleLoginPlugin {
+public class DefaultLoginPlugin extends LoginPlugin {
 
     private static final TextTemplate INIT_JS = new PackageTextTemplate(DefaultLoginPlugin.class, "timezones-init.js");
     // jstz.min.js is fetched by npm
@@ -69,7 +69,7 @@ public class DefaultLoginPlugin extends SimpleLoginPlugin {
         return new LoginForm(id, autoComplete, locales, handler);
     }
 
-    protected class LoginForm extends CaptchaForm {
+    protected class LoginForm extends LoginPanel {
 
         private static final String TIMEZONE_COOKIE = "tzcookie";
         private static final int TIMEZONE_COOKIE_MAX_AGE = 365 * 24 * 3600; // expire one year from now

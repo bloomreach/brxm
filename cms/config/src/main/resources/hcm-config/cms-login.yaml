@@ -9,8 +9,6 @@ definitions:
           jcr:primaryType: frontend:plugin
           browsers.supported: [firefox 45 >=, safari 9 >=, chrome 56 >=, edge 40 >=]
           plugin.class: org.hippoecm.frontend.plugins.login.DefaultLoginPlugin
-          show.captcha.after.how.many.times: 3
           signin.form.autocomplete: true
-          use.captcha: true
           wicket.behavior: service.behavior.browser.check
           wicket.id: service.root
