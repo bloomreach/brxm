@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,9 +97,40 @@
   overflow: visible;
 }
 
-.content-block-title {
+.content-blocks-plugin > .hippo-editor-field-subfield.collapsed > .hippo-editor-field {
+  margin-bottom: 0;
+}
+
+.content-blocks-plugin > .hippo-editor-field-title.collapsible {
   font-size: 16px;
+  font-weight: 400;
+  line-height: 20px;
+}
+
+.content-blocks-plugin > .hippo-editor-field-title.collapsible.collapsed {
+  margin-bottom: 0;
+}
+
+.hippo-preview-document-wrapper .content-blocks-plugin > .hippo-editor-field-subfield.collapsible,
+.hippo-preview-document-wrapper .content-blocks-plugin > .hippo-editor-field-subfield.collapsible:last-child,
+.content-blocks-plugin > .hippo-editor-field-subfield.collapsible {
+  border: 1px solid rgba(0, 0, 0, .12);
+  border-radius: 4px;
+  padding: 8px;
+}
+
+.content-blocks-plugin > .hippo-editor-field-subfield.collapsible > .hippo-editor-field {
+  margin-bottom: 0;
+}
+
+.content-block-title {
+  display: flex;
   padding-bottom: 8px;
+  padding-top: 8px;
+}
+
+.content-block-title > .hippo-editor-field-title.collapsible {
+  margin-bottom: 0;
 }
 
 /* Dialog style */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,19 +16,28 @@
 package org.onehippo.forge.contentblocks;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.model.Model;
+import org.hippoecm.frontend.editor.plugins.field.CollapsibleFieldTitle;
 import org.hippoecm.frontend.editor.plugins.field.FieldContainer;
 import org.hippoecm.frontend.service.IRenderService;
 
 public class ContentBlocksFieldContainer extends FieldContainer {
 
-    private static final String ITEM_TITLE = "itemTitle";
-
-    public ContentBlocksFieldContainer(final String id, final Item<IRenderService> item, final String blockName) {
+    public ContentBlocksFieldContainer(final String id, final Item<IRenderService> item, final String blockName, final boolean isCollapsed) {
         super(id, item);
-        final Label itemLabel = new Label(ITEM_TITLE, blockName);
-        itemLabel.setVisible(StringUtils.isNotBlank(blockName));
-        add(itemLabel);
+
+        final CollapsibleFieldTitle fieldTitle = new CollapsibleFieldTitle("itemTitle", Model.of(blockName), null,
+                false, item, isCollapsed) {
+            @Override
+            protected void onCollapse(final boolean isCollapsed) {
+                ContentBlocksFieldContainer.this.onSetCollapsed(isCollapsed);
+            }
+        };
+        fieldTitle.setVisible(StringUtils.isNotBlank(blockName));
+        add(fieldTitle);
+    }
+
+    protected void onSetCollapsed(final boolean collapsed) {
     }
 }

@@ -32,13 +32,13 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
 
     public ContentBlocksEditableFieldContainer(final String id, final Item<IRenderService> item,
                                                final JcrNodeModel model, final ContentBlocksFieldPlugin plugin,
-                                               final String blockName) {
-        super(id, item, blockName);
+                                               final String blockName, final boolean isCollapsed) {
+        super(id, item, blockName, isCollapsed);
         add(getControls(plugin, model, item));
     }
 
-    private WebMarkupContainer getControls(final ContentBlocksFieldPlugin plugin, final JcrNodeModel model,
-                                           final Item<IRenderService> item) {
+    private static WebMarkupContainer getControls(final ContentBlocksFieldPlugin plugin, final JcrNodeModel model,
+                                                  final Item<IRenderService> item) {
         final WebMarkupContainer controls = new WebMarkupContainer("controls");
         controls.setVisible(plugin.canRemoveItem() || plugin.canReorderItems());
 
@@ -64,6 +64,7 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 plugin.onMoveItemToTop(model);
+                plugin.updateIndex(itemIndex, 0);
                 plugin.redraw();
             }
         };
@@ -79,6 +80,7 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 plugin.onMoveItemUp(model, target);
+                plugin.updateIndex(itemIndex, itemIndex - 1);
                 plugin.redraw();
             }
         };
@@ -101,6 +103,7 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
                     final String nextPath = parent.getItemModel().getPath() + '/' + nextName;
                     final JcrNodeModel nextModel = new JcrNodeModel(nextPath);
                     plugin.onMoveItemUp(nextModel, target);
+                    plugin.updateIndex(itemIndex, itemIndex +  1);
                     plugin.redraw();
                 }
             }
@@ -118,6 +121,7 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 plugin.onMoveItemToBottom(model);
+                plugin.updateIndex(itemIndex, -1);
                 plugin.redraw();
             }
         };

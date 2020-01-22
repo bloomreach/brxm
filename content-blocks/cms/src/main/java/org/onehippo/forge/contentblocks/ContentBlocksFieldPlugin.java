@@ -17,8 +17,10 @@ package org.onehippo.forge.contentblocks;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.jcr.Node;
@@ -55,9 +57,9 @@ import org.hippoecm.frontend.editor.compare.IComparer;
 import org.hippoecm.frontend.editor.editor.EditorForm;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
 import org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin;
-import org.hippoecm.frontend.editor.plugins.field.CollapsibleFieldBehavior;
+import org.hippoecm.frontend.editor.plugins.field.CollapsibleFieldTitle;
 import org.hippoecm.frontend.editor.plugins.field.FieldPluginHelper;
-import org.hippoecm.frontend.editor.plugins.fieldhint.FieldHint;
+import org.hippoecm.frontend.editor.plugins.field.FieldTitle;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.ChildNodeProvider;
@@ -100,24 +102,22 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
     public static final String DROPDOWN = "dropdown";
 
     private static final CssResourceReference CSS = new CssResourceReference(ContentBlocksFieldPlugin.class,
-                                                                             "style.css");
+            "style.css");
 
     private static final int MAX_ITEMS_UNLIMITED = Integer.MAX_VALUE;
-
     private static final String MAX_ITEMS = "maxitems";
     private static final String CLUSTER_OPTIONS = "cluster.options";
     private static final String PROVIDER_COMPOUND = "cpItemsPath";
     private static final String COMPOUND_LIST = "compoundList";
     private static final String SHOW_COMPOUND_NAMES = "showCompoundNames";
-
     private static final String FIELD_CONTAINER_ID = "fieldContainer";
-
     private static final String CONTENTPICKER_ADD = "contentpicker-add";
 
     private final List<String> compoundList;
     private final String providerCompoundType;
     private final boolean showCompoundNames;
     private final int maxItems;
+    private final Set<Integer> collapsedItems = new LinkedHashSet<>();
 
     private Link<CharSequence> focusMarker;
 
@@ -141,26 +141,14 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         maxItems = parameters.getInt(MAX_ITEMS, MAX_ITEMS_UNLIMITED);
         showCompoundNames = parameters.getAsBoolean(SHOW_COMPOUND_NAMES, false);
 
-        final HippoIcon expandCollapseIcon = HippoIcon.fromSprite("expand-collapse-icon", Icon.CHEVRON_DOWN);
-        expandCollapseIcon.addCssClass("expand-collapse-icon");
-        add(expandCollapseIcon);
-
-        // use caption for backwards compatibility; i18n should use field name
-        add(new Label("name", helper.getCaptionModel(this)));
-
-        final IFieldDescriptor field = getFieldHelper().getField();
-        final Label required = new Label("required", "*");
-        required.setVisible(field != null && (field.getValidators().contains("required") || field.isMandatory()));
-        add(required);
-
-        add(new FieldHint("hint-panel", helper.getHintModel(this)));
+        final IModel<String> caption = helper.getCaptionModel(this);
+        final IModel<String> hint = helper.getHintModel(this);
+        final FieldTitle fieldTitle = new CollapsibleFieldTitle("field-title", caption, hint, helper.isRequired(), this);
+        add(fieldTitle);
 
         final Component controls = createControls();
         controls.setVisible(isEditMode());
         add(controls);
-
-        final String selector = String.format("#%s > .hippo-editor-compound-field", getMarkupId());
-        add(new CollapsibleFieldBehavior(selector));
     }
 
     private Component createControls() {
@@ -382,12 +370,23 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
     @Override
     protected void populateEditItem(final Item<IRenderService> item, final JcrNodeModel model) {
-        item.add(new ContentBlocksEditableFieldContainer(FIELD_CONTAINER_ID, item, model, this, getBlockName(model)));
+        final boolean isCollapsed = collapsedItems.contains(item.getIndex());
+        item.add(new ContentBlocksEditableFieldContainer(FIELD_CONTAINER_ID,
+                item, model, this, getBlockName(model), isCollapsed) {
+            @Override
+            protected void onSetCollapsed(final boolean collapsed) {
+                if (collapsed) {
+                    collapsedItems.add(item.getIndex());
+                } else {
+                    collapsedItems.remove(item.getIndex());
+                }
+            }
+        });
     }
 
     @Override
     protected void populateViewItem(final Item<IRenderService> item, final JcrNodeModel model) {
-        item.add(new ContentBlocksFieldContainer(FIELD_CONTAINER_ID, item, getBlockName(model)));
+        item.add(new ContentBlocksFieldContainer(FIELD_CONTAINER_ID, item, getBlockName(model), false));
     }
 
     @Override
@@ -500,6 +499,32 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         }
     }
 
+    /**
+     * Update
+     * @param from
+     * @param to
+     */
+    public void updateIndex(final int from, int to) {
+        if (to == -1) { // to the bottom
+            to = provider.size() - 1;
+        }
+
+        final boolean isCollapsed = collapsedItems.remove(from);
+        int current = from;
+        while (current != to) {
+            int prev = current;
+            current = from > to ? current - 1 : current + 1;
+            if (collapsedItems.contains(current)) {
+                collapsedItems.add(prev);
+                collapsedItems.remove(current);
+            }
+        }
+
+        if (isCollapsed) {
+            collapsedItems.add(to);
+        }
+    }
+
     private static class FocusLink extends Link<CharSequence> {
 
         private FocusLink(final String id) {
@@ -589,8 +614,10 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         final IPluginConfig config = getPluginConfig().containsKey(CLUSTER_OPTIONS)
                 ? getPluginConfig().getPluginConfig(CLUSTER_OPTIONS)
                 : getPluginConfig();
+
         final SortHelper helper = new SortHelper();
         helper.sort(fieldDescriptors, config);
+
         return fieldDescriptors;
     }
 
