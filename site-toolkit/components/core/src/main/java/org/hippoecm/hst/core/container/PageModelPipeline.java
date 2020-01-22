@@ -159,8 +159,8 @@ public class PageModelPipeline implements Pipeline {
         } else {
             final Pipeline requestedPipeline = pageModelApiPipelinesByVersion.get(requestPageModelApiVersion);
             if (requestedPipeline == null) {
-                throw new UnsupportedApiVersion(String.format("UnsupportedApiVersion: Header 'Accept-version: %s' points " +
-                        "to a non-supported version", requestPageModelApiVersion));
+                throw new UnsupportedApiVersion(String.format("UnsupportedApiVersion: Header '%s: %s' points " +
+                        "to a non-supported version", ContainerConstants.PAGE_MODEL_ACCEPT_VERSION, requestPageModelApiVersion));
             } else {
                 log.info("Using page model api pipeline version '{}'", requestPageModelApiVersion);
                 servletRequest.setAttribute(ContainerConstants.PAGE_MODEL_API_VERSION, requestPageModelApiVersion);

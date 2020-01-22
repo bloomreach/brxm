@@ -189,7 +189,7 @@ public interface ContainerConstants {
 
     String PAGE_MODEL_API_VERSION = "API-Version";
 
-    String PAGE_MODEL_ACCEPT_VERSION = "Accept-version";
+    String PAGE_MODEL_ACCEPT_VERSION = "Accept-Version";
 
     /**
      * The attribute used on the {@link HstRequestContext} attributes to find out which branch of an {@link HstSite} or
