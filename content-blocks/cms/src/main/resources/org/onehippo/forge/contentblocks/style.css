@@ -119,17 +119,35 @@
   padding: 8px;
 }
 
+.hippo-editor-compound-field > .hippo-editor-field.content-blocks-plugin {
+  padding-top: 8px;
+}
+
+.hippo-editor-field.content-blocks-plugin > .hippo-editor-field-subfield {
+  margin-top: 16px;
+}
+
+.content-blocks-plugin > .hippo-editor-field-subfield.collapsible:first-of-type {
+  margin-top: 8px;
+}
+
 .content-blocks-plugin > .hippo-editor-field-subfield.collapsible > .hippo-editor-field {
   margin-bottom: 0;
 }
 
-.content-block-title {
-  display: flex;
-  padding-bottom: 8px;
-  padding-top: 8px;
+.contentpicker-blocks .hippo-editor-field .hippo-editor-field-title {
+  margin: 0 0 6px 0;
 }
 
-.content-block-title > .hippo-editor-field-title.collapsible {
+.content-block-title {
+  display: flex;
+}
+
+.content-block-title > .collapsible {
+  margin-bottom: 4px;
+}
+
+.content-block-title > .collapsible.collapsed {
   margin-bottom: 0;
 }
 
