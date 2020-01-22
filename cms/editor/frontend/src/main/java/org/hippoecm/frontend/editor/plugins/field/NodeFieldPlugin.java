@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.editor.plugins.field;
 
 import java.util.Iterator;
-import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -34,7 +33,6 @@ import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.editor.EditorForm;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
-import org.hippoecm.frontend.editor.plugins.fieldhint.FieldHint;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.ChildNodeProvider;
 import org.hippoecm.frontend.model.JcrItemModel;
@@ -49,7 +47,6 @@ import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.IValidationResult;
-import org.hippoecm.frontend.validation.ValidatorUtils;
 import org.hippoecm.frontend.validation.ViolationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,26 +58,17 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
     public NodeFieldPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        final HippoIcon expandCollapseIcon = HippoIcon.fromSprite("expand-collapse-icon", Icon.CHEVRON_DOWN);
-        expandCollapseIcon.addCssClass("expand-collapse-icon");
-        expandCollapseIcon.setVisible(false);
-        add(expandCollapseIcon);
-
-        // use caption for backwards compatibility; i18n should use field name
-        add(new Label("name", helper.getCaptionModel(this)));
+        final IModel<String> caption = helper.getCaptionModel(this);
+        final IModel<String> hint = helper.getHintModel(this);
+        final FieldTitle fieldTitle = new FieldTitle("field-title", caption, hint, helper.isRequired());
+        fieldTitle.setVisible(!helper.isCompoundField());
+        add(fieldTitle);
 
         add(createNrItemsLabel());
-
-        final Label required = new Label("required", "*");
-        add(required);
-
-        add(new FieldHint("hint-panel", helper.getHintModel(this)));
         add(createAddLink());
 
         final IFieldDescriptor field = getFieldHelper().getField();
         if (field != null) {
-            required.setVisible(ValidatorUtils.hasRequiredValidator(field.getValidators()));
-
             final String name = cssClassName(field.getTypeDescriptor().getName());
             add(ClassAttribute.append("hippo-node-field-name-" + name));
 
@@ -99,13 +87,8 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
                 add(ClassAttribute.append("hippo-node-field-protected"));
             }
 
-            final List<String> superTypes = field.getTypeDescriptor().getSuperTypes();
-            if (superTypes.contains("hippo:compound")) {
+            if (helper.isCompoundField()) {
                 add(ClassAttribute.append("hippo-editor-compound-field"));
-
-                final String selector = String.format("#%s.hippo-editor-compound-field", getMarkupId());
-                add(new CollapsibleFieldBehavior(selector));
-                expandCollapseIcon.setVisible(true);
             }
         }
     }
@@ -199,7 +182,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
 
     @Override
     protected void populateViewItem(final Item<IRenderService> item, final JcrNodeModel model) {
-        item.add(new FieldContainer("fieldContainer", item));
+        item.add(new NodeFieldContainer("fieldContainer", item, this));
     }
 
     @Override

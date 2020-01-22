@@ -27,8 +27,7 @@ import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.model.IModel;
-import org.hippoecm.frontend.editor.plugins.fieldhint.FieldHint;
-import org.hippoecm.frontend.validation.ValidatorUtils;
+import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.PropertyValueProvider;
@@ -39,7 +38,6 @@ import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
-import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.service.IRenderService;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.types.IFieldDescriptor;
@@ -61,23 +59,15 @@ public class PropertyFieldPlugin extends AbstractFieldPlugin<Property, JcrProper
         hasChangedPropValueOrder = false;
         nodeModel = (JcrNodeModel) getDefaultModel();
 
-        // use caption for backwards compatibility; i18n should use field name
-        add(new Label("name", helper.getCaptionModel(this)));
-
+        final IModel<String> captionModel = helper.getCaptionModel(this);
+        final IModel<String> hintModel = helper.getHintModel(this);
+        add(new FieldTitle("field-title", captionModel, hintModel, helper.isRequired()));
         add(createNrItemsLabel());
-
-        final Label required = new Label("required", "*");
-        add(required);
-
-        add(new FieldHint("hint-panel", helper.getHintModel(this)));
         add(createAddLink());
 
         final IFieldDescriptor field = getFieldHelper().getField();
         if (field != null) {
             subscribe(field);
-            if (!ValidatorUtils.hasRequiredValidator(field.getValidators())) {
-                required.setVisible(false);
-            }
 
             final String name = cssClassName(field.getTypeDescriptor().getName());
             add(ClassAttribute.append("hippo-property-field-name-" + name));
