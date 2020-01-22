@@ -18,6 +18,7 @@ package org.hippoecm.frontend.editor.plugins.field;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
+import org.apache.wicket.markup.html.panel.EmptyPanel;
 import org.apache.wicket.markup.repeater.Item;
 import org.hippoecm.frontend.model.properties.JcrPropertyValueModel;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
@@ -31,6 +32,8 @@ public class EditablePropertyFieldContainer extends EditableFieldContainer {
                                    final JcrPropertyValueModel model,
                                    final PropertyFieldPlugin propertyField) {
         super(id, renderItem);
+
+        queue(new EmptyPanel("field-title"));
 
         final WebMarkupContainer controls = new WebMarkupContainer("controls");
         controls.setVisible(propertyField.canRemoveItem() || propertyField.canReorderItems());

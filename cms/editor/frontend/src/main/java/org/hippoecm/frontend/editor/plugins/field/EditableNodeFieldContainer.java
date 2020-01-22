@@ -19,6 +19,7 @@ import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.repeater.Item;
+import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.IRenderService;
@@ -32,6 +33,17 @@ public class EditableNodeFieldContainer extends EditableFieldContainer {
                                       final JcrNodeModel model,
                                       final NodeFieldPlugin nodeField) {
         super(id, renderItem);
+
+        final FieldPluginHelper helper = nodeField.helper;
+        final IModel<String> captionModel = helper.getCaptionModel(this);
+        final IModel<String> hintModel = helper.getHintModel(this);
+        final boolean isRequired = helper.isRequired();
+
+        final FieldTitle fieldTitle = helper.isCompoundField()
+                ? new CollapsibleFieldTitle("field-title", captionModel, hintModel, isRequired, renderItem)
+                : new FieldTitle("field-title", captionModel, hintModel, isRequired);
+
+        queue(fieldTitle);
 
         final int index = renderItem.getIndex();
 
