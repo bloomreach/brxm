@@ -24,9 +24,8 @@ import { catchError, mapTo, startWith, takeUntil } from 'rxjs/operators';
 import { APP_BOOTSTRAPPED } from './bootstrap/app-bootstrapped';
 import { AppError } from './error-handling/models/app-error';
 import { ErrorHandlingService } from './error-handling/services/error-handling.service';
-import { UserSettings } from './models/dto/user-settings.dto';
 import { OverlayService } from './services/overlay.service';
-import { USER_SETTINGS } from './services/user-settings';
+import { PENDO } from './services/pendo';
 import { RightSidePanelService } from './top-panel/services/right-side-panel.service';
 
 @Component({
@@ -65,7 +64,7 @@ export class AppComponent implements OnInit, OnDestroy {
     private readonly overlayService: OverlayService,
     private readonly rightSidePanelService: RightSidePanelService,
     private readonly errorHandlingService: ErrorHandlingService,
-    @Inject(USER_SETTINGS) private readonly userSettings: UserSettings,
+    @Inject(PENDO) private readonly pendo: pendo.Pendo,
     @Inject(APP_BOOTSTRAPPED) private readonly appBootstrapped: Promise<void>,
   ) { }
 
@@ -79,11 +78,21 @@ export class AppComponent implements OnInit, OnDestroy {
     this.overlayService.visible$
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(visible => this.isOverlayVisible = visible);
+
+    this.setupPendo();
   }
 
   ngOnDestroy(): void {
     this.unsubscribe.next();
     this.unsubscribe.complete();
+  }
+
+  private setupPendo(): void {
+    this.pendo.initialize({
+      visitor: {
+        id: 'NAVAPP_TO_BE_DETERMINED',
+      },
+    });
   }
 
   private initializeObservables(): void {

@@ -40,7 +40,9 @@
             "styles": [
               "projects/navapp/src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [
+              "projects/navapp/src/app/pendo.js"
+            ]
           },
           "configurations": {
             "production": {

@@ -3,7 +3,8 @@
   "compilerOptions": {
     "outDir": "../../out-tsc/spec",
     "types": [
-      "node"
+      "node",
+      "pendo-io-browser"
     ]
   },
   "files": [

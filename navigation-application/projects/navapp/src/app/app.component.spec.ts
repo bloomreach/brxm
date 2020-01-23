@@ -24,10 +24,8 @@ import { of } from 'rxjs';
 import { AppComponent } from './app.component';
 import { APP_BOOTSTRAPPED } from './bootstrap/app-bootstrapped';
 import { ErrorHandlingService } from './error-handling/services/error-handling.service';
-import { UserSettings } from './models/dto/user-settings.dto';
-import { UserSettingsMock } from './models/dto/user-settings.mock';
 import { OverlayService } from './services/overlay.service';
-import { USER_SETTINGS } from './services/user-settings';
+import { PENDO } from './services/pendo';
 import { RightSidePanelService } from './top-panel/services/right-side-panel.service';
 
 describe('AppComponent', () => {
@@ -53,14 +51,12 @@ describe('AppComponent', () => {
     currentError: {},
   };
 
-  let userSettingsMock: UserSettings;
+  const pendoMock = jasmine.createSpyObj<pendo.Pendo>('PENDO', ['initialize', 'enableDebugging']);
 
   let bootstrappedResolve: () => void;
   let bootstrappedReject: () => void;
 
   beforeEach(() => {
-    userSettingsMock = new UserSettingsMock();
-
     const bootstrappedMock = new Promise<void>((res, rej) => {
       bootstrappedResolve = res;
       bootstrappedReject = rej;
@@ -76,8 +72,8 @@ describe('AppComponent', () => {
         { provide: OverlayService, useValue: overlayServiceMock },
         { provide: RightSidePanelService, useValue: rightSidePanelServiceMock },
         { provide: ErrorHandlingService, useValue: errorHandlingServiceMock },
-        { provide: USER_SETTINGS, useValue: userSettingsMock },
         { provide: APP_BOOTSTRAPPED, useValue: bootstrappedMock },
+        { provide: PENDO, useValue: pendoMock },
       ],
       schemas: [NO_ERRORS_SCHEMA],
     }).createComponent(AppComponent);
@@ -101,6 +97,11 @@ describe('AppComponent', () => {
 
     it('should set the side nav DOM element', () => {
       expect(rightSidePanelServiceMock.setSidenav).toHaveBeenCalledWith(component.sidenav);
+    });
+
+    it('should initialize pendo', () => {
+      const pendo = de.injector.get(PENDO);
+      expect(pendo.initialize).toHaveBeenCalled();
     });
   });
 

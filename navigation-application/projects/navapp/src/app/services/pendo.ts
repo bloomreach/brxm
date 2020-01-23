@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,6 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
+import { InjectionToken } from '@angular/core';
 
-import { AppSettings } from '../../models/dto/app-settings.dto';
-import { UserSettings } from '../../models/dto/user-settings.dto';
-
-export interface CustomWindow extends Window {
-  NavAppSettings: {
-    appSettings: AppSettings,
-    userSettings: UserSettings,
-  };
-
-  pendo: pendo.Pendo;
-}
-
-@Injectable()
-export class WindowRef {
-  get nativeWindow(): CustomWindow {
-    return window as any;
-  }
-}
+export const PENDO = new InjectionToken<pendo.Pendo>('PENDO');
