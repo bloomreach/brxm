@@ -74,7 +74,6 @@ import org.hippoecm.hst.platform.model.RuntimeHostService;
 import org.hippoecm.hst.container.security.AccessToken;
 import org.hippoecm.hst.container.security.JwtTokenService;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
-import org.hippoecm.hst.util.HstRequestUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.context.HippoWebappContext;
