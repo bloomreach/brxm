@@ -17,6 +17,8 @@ package org.hippoecm.hst.container;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -40,6 +42,7 @@ import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManager;
+import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.security.InvalidTokenException;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
@@ -95,6 +98,7 @@ import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR;
 import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPELINE_NAME;
 import static org.hippoecm.hst.util.HstRequestUtils.createURLWithExplicitSchemeForRequest;
+import static org.hippoecm.hst.util.HstRequestUtils.getClusterNodeAffinityId;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRemoteAddr;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestHost;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestScheme;
@@ -141,6 +145,8 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
     private String jwtTokenAuthorizationHeader;
     private boolean statelessRequestValidation;
 
+    private String clusterNodeAffinityParam;
+
     @Override
     public void setServletContext(ServletContext servletContext) {
         this.servletContext = servletContext;
@@ -171,11 +177,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
     }
 
     public void setJwtTokenAuthorizationHeader(final String jwtTokenAuthorizationHeader) {
-        if (!"Authorization".equalsIgnoreCase(jwtTokenAuthorizationHeader)) {
-            // TODO this is a non-standard http header: Make sure to add it to AccessControlAllowHeadersService
-            // TODO AFTER HSTTWO-4703 has been merged : otherwise, preflight requests won't indicate that the non-stanard
-            // TODO jwtTokenAuthorizationHeader is allowed as CORS header
-        }
         this.jwtTokenAuthorizationHeader = jwtTokenAuthorizationHeader;
     }
 
@@ -186,6 +187,10 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
     public void setStatelessRequestValidation(final boolean statelessRequestValidation) {
         this.statelessRequestValidation = statelessRequestValidation;
+    }
+
+    public void setClusterNodeAffinityParam(final String clusterNodeAffinityParam) {
+        this.clusterNodeAffinityParam = clusterNodeAffinityParam;
     }
 
     @Override
@@ -407,46 +412,63 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 containerRequest.setStatelessRequest();
             }
 
-            if (renderingHost != null) {
-                if (isRequestForChannelManagerPreview(vHosts, renderingHost, req)) {
-                    requestContext.setRenderHost(renderingHost);
-                    if (!authenticated) {
-                        ((HttpServletResponse) response).sendError(SC_UNAUTHORIZED);
-                        log.warn("Attempted Channel Manager preview request without being authenticated");
-                        return;
+            if (isRequestForChannelManagerPreview(vHosts, renderingHost, req)) {
+                requestContext.setRenderHost(renderingHost);
+                if (!authenticated) {
+                    ((HttpServletResponse) response).sendError(SC_UNAUTHORIZED);
+                    log.warn("Attempted Channel Manager preview request without being authenticated");
+                    return;
+                }
+
+                requestContext.setChannelManagerPreviewRequest(true);
+
+                if (resolvedMount instanceof MutableResolvedMount) {
+                    Mount undecoratedMount = resolvedMount.getMount();
+                    if (!(undecoratedMount instanceof ContextualizableMount)) {
+                        String msg = String.format("The matched mount for request '%s' is not an instanceof of a ContextualizableMount. " +
+                                "Cannot act as preview mount. Cannot proceed request for CMS SSO environment.", containerRequest);
+                        throw new MatchException(msg);
                     }
+                    Mount decoratedMount = previewDecorator.decorateMountAsPreview(undecoratedMount);
+                    if (decoratedMount == undecoratedMount) {
+                        log.debug("Matched mount pointing to site '{}' is already a preview so no need for CMS SSO hippoWebappContext to decorate the mount to a preview", undecoratedMount.getMountPoint());
+                    } else {
+                        log.debug("Matched mount pointing to site '{}' is because of CMS SSO hippoWebappContext replaced by preview decorated mount pointing to site '{}'", undecoratedMount.getMountPoint(), decoratedMount.getMountPoint());
+                    }
+                    ((MutableResolvedMount) resolvedMount).setMount(decoratedMount);
+                } else {
+                    throw new MatchException("ResolvedMount must be an instance of MutableResolvedMount to be usable in CMS SSO environment. Cannot proceed request for " + hostName + " and " + containerRequest.getRequestURI());
+                }
 
-                    requestContext.setChannelManagerPreviewRequest(true);
+                final HstSite hstSite = resolvedMount.getMount().getHstSite();
+                // if there is is not an access token on the request AND if the request is not for the Page Model API
+                // and there is a preview URL configured on the Channel, then we should redirect to this URL including
+                // a token
+                if (hstSite != null && hstSite.getChannel() != null && req.getAttribute(PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE) == null
+                        && !requestContext.isPageModelApiRequest()) {
+                    final Channel channel = hstSite.getChannel();
+                    final String previewURL = channel.getProperties().get(PREVIEW_URL_PROPERTY_NAME).toString();
 
-                    if (resolvedMount.getMount().getHstSite() != null && req.getAttribute(PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE) == null) {
-                        final Channel channel = resolvedMount.getMount().getHstSite().getChannel();
-                        if (channel != null && channel.getProperties().containsKey(PREVIEW_URL_PROPERTY_NAME)
-                                && StringUtils.isNotBlank(channel.getProperties().get(PREVIEW_URL_PROPERTY_NAME).toString())) {
+                    if (channel != null && channel.getProperties().containsKey(PREVIEW_URL_PROPERTY_NAME)
+                            && StringUtils.isNotBlank(previewURL)) {
+
+                        try {
+                            // parse the preview url
+                            final URI uri = new URI(previewURL);
 
                             final JwtTokenService jwtTokenService = HippoServiceRegistry.getService(JwtTokenService.class);
-                            res.sendRedirect(channel.getProperties().get(PREVIEW_URL_PROPERTY_NAME).toString()
-                                    + "?" + jwtTokenParam + "=" + jwtTokenService.createToken(req, emptyMap()) +
-                                    "&serverid=" + HstRequestUtils.getServerId(req));
+                            final String location = previewURL +
+                                    (uri.getQuery() == null ? "?" : "&")
+                                    + jwtTokenParam + "=" + jwtTokenService.createToken(req, emptyMap()) +
+                                    "&" + clusterNodeAffinityParam + "=" + getClusterNodeAffinityId(req, clusterNodeAffinityParam);
+                            res.sendRedirect(location);
+                            return;
+
+                        } catch (URISyntaxException e) {
+                            ((HttpServletResponse) response).sendError(HttpServletResponse.SC_FORBIDDEN);
+                            log.warn("Configured preview URL for Channel {} is not valid", channel);
                             return;
                         }
-                    }
-
-                    if (resolvedMount instanceof MutableResolvedMount) {
-                        Mount undecoratedMount = resolvedMount.getMount();
-                        if (!(undecoratedMount instanceof ContextualizableMount)) {
-                            String msg = String.format("The matched mount for request '%s' is not an instanceof of a ContextualizableMount. " +
-                                    "Cannot act as preview mount. Cannot proceed request for CMS SSO environment.", containerRequest);
-                            throw new MatchException(msg);
-                        }
-                        Mount decoratedMount = previewDecorator.decorateMountAsPreview(undecoratedMount);
-                        if (decoratedMount == undecoratedMount) {
-                            log.debug("Matched mount pointing to site '{}' is already a preview so no need for CMS SSO hippoWebappContext to decorate the mount to a preview", undecoratedMount.getMountPoint());
-                        } else {
-                            log.debug("Matched mount pointing to site '{}' is because of CMS SSO hippoWebappContext replaced by preview decorated mount pointing to site '{}'", undecoratedMount.getMountPoint(), decoratedMount.getMountPoint());
-                        }
-                        ((MutableResolvedMount) resolvedMount).setMount(decoratedMount);
-                    } else {
-                        throw new MatchException("ResolvedMount must be an instance of MutableResolvedMount to be usable in CMS SSO environment. Cannot proceed request for " + hostName + " and " + containerRequest.getRequestURI());
                     }
                 }
             }

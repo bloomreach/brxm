@@ -37,6 +37,12 @@
   <bean class="org.hippoecm.hst.platform.services.AccessControlAllowHeadersServiceImpl" init-method="init" destroy-method="destroy">
     <!-- the : below implies default value for extra.access.control.allowed.headers is empty string, keep the : -->
     <property name="extraAllowedHeaders" value="${extra.access.control.allowed.headers:}"/>
+    <property name="allowedHeaders">
+      <list>
+        <value>${jwt.token.authorization.header}</value>
+        <value>${cluster.node.affinity.param}</value>
+      </list>
+    </property>
   </bean>
 
   <bean class="org.hippoecm.hst.platform.security.NimbusJwtTokenServiceImpl" init-method="init" destroy-method="destroy">

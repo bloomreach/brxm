@@ -36,14 +36,11 @@ import org.springframework.http.HttpMethod;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.apache.commons.lang3.StringUtils.substringAfter;
-import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS;
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS;
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS;
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN;
 import static org.springframework.http.HttpHeaders.ACCESS_CONTROL_MAX_AGE;
-import static org.springframework.http.HttpHeaders.ORIGIN;
 import static org.springframework.http.HttpHeaders.VARY;
 
 
@@ -132,7 +129,7 @@ public class CorsSupportValve implements Valve {
 
             servletResponse.setStatus(HttpServletResponse.SC_NO_CONTENT);
 
-            String requestOrigin = getOrigin(servletRequest);
+            String requestOrigin = HstRequestUtils.getOrigin(servletRequest);
             // check allowed hosts
 
             if (originAllowed(requestOrigin, servletResponse, context.getRequestContext().getResolvedMount().getMount())) {
@@ -196,35 +193,11 @@ public class CorsSupportValve implements Valve {
         } else {
 
             if (replaceWildcardAllowOrigin && isAllowedOriginResponseHeaderWildcard(servletResponse)) {
-                setAccessControlAllowOrigin(servletResponse, getOrigin(servletRequest));
+                setAccessControlAllowOrigin(servletResponse, HstRequestUtils.getOrigin(servletRequest));
             }
 
             context.invokeNext();
         }
-    }
-
-    private String getOrigin(final HttpServletRequest servletRequest) {
-        String requestOrigin = servletRequest.getHeader(ORIGIN);
-        if (requestOrigin != null) {
-            return requestOrigin;
-        }
-
-        // if so check the Origin HTTP header and if the Origin header is missing check the referer (Origin misses for
-        // CORS or POST requests from firefox, see CMS-12155)
-        log.debug("'Origin' header missing, use 'Referer' header as recommended fallback by OWASP (like for CSRF protection)");
-        final String referer = servletRequest.getHeader("Referer");
-        if (referer != null) {
-            final String scheme = substringBefore(referer, "://");
-            // host possibly including port
-            final String host = substringBefore(substringAfter(referer,scheme + "://"), "/");
-            return scheme + "://" + host;
-        }
-
-        // fallback to request host
-        final String farthestRequestHost = HstRequestUtils.getFarthestRequestHost(servletRequest, false);
-        final String farthestRequestScheme = HstRequestUtils.getFarthestRequestScheme(servletRequest);
-        return farthestRequestScheme + "://" + farthestRequestHost;
-
     }
 
     private boolean originAllowed(final String requestOrigin, final HttpServletResponse servletResponse, final Mount mount) {

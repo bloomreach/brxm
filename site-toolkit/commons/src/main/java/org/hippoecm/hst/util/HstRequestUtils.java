@@ -51,6 +51,8 @@ import org.onehippo.cms7.services.context.HippoWebappContextRegistry;
 import org.onehippo.repository.branch.BranchConstants;
 
 import static org.apache.commons.lang.StringUtils.isNotEmpty;
+import static org.apache.commons.lang3.StringUtils.substringAfter;
+import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_BRANCH_ID;
 import static org.hippoecm.hst.site.HstServices.getComponentManager;
 
@@ -64,6 +66,7 @@ public class HstRequestUtils {
     public static final Pattern MATRIX_PARAMS_PATTERN = Pattern.compile(";[^\\/]*");
 
     public static final String HTTP_METHOD_POST = "POST";
+    public static final String ORIGIN = "Origin";
 
     public static String URI_ENCODING_DEFAULT_CHARSET_KEY = "uriencoding.default.charset";
     public static String URI_ENCODING_DEFAULT_CHARSET_VALUE = "UTF-8";
@@ -780,30 +783,51 @@ public class HstRequestUtils {
 
     /**
      * <p>
-     *     Returns the serverid for this request if present. The serverid lookup is done from a cookie and if not found,
-     *     a header will be checked. The following logic is applied
+     *     If present for this request, returns the cluster node affinity id for parameter
+     *     {@code clusterNodeAffinityParam}, which is typically 'serverid'. The {@code clusterNodeAffinityParam} lookup
+     *     is done from a cookie and if not found, a header will be checked. The following logic is applied
      *     <ul>
-     *         <li>if cookie present with case-insensitive name 'serverid', return the cookie value</li>
-     *         <li>else if the (case insensitive by spec) header 'serverid' exists, return the value of the header</li>
+     *         <li>if cookie present with case-insensitive name {@code clusterNodeAffinityParam}, return the cookie value</li>
+     *         <li>else if the (case insensitive by spec) header '{@code clusterNodeAffinityParam} exists, return the
+     *         value of the header</li>
      *         <li>else return {@code null}</li>
      *     </ul>
      * </p>
      * @param request the {@link HttpServletRequest} to find the server id from
      */
-    public static String getServerId(final HttpServletRequest request) {
+    public static String getClusterNodeAffinityId(final HttpServletRequest request, final String clusterNodeAffinityParam) {
         final Cookie[] cookies = request.getCookies();
         if (cookies != null) {
-            Optional<String> serverId = Arrays.stream(cookies).filter(cookie -> "serverid".equalsIgnoreCase(cookie.getName()))
+            Optional<String> serverId = Arrays.stream(cookies).filter(cookie -> clusterNodeAffinityParam.equalsIgnoreCase(cookie.getName()))
                     .map(cookie -> cookie.getValue()).findFirst();
             if (serverId.isPresent()) {
                 return serverId.get();
             }
         }
-        // TODO once HSTTWO-4703 has been merged, add 'serverid' by default to the AccessControlAllowHeadersService as
-        // TODO allowed header
-        return request.getHeader("serverid");
+        return request.getHeader(clusterNodeAffinityParam);
 
-        // TODO depending on NGINX, we might want to also check a query param 'serverid' if that is easier to support
-        // TODO on nginx instead of a header
+    }
+
+    public static String getOrigin(final HttpServletRequest servletRequest) {
+        String requestOrigin = servletRequest.getHeader(ORIGIN);
+        if (requestOrigin != null) {
+            return requestOrigin;
+        }
+
+        // if so check the Origin HTTP header and if the Origin header is missing check the referer (Origin misses for
+        // CORS or POST requests from firefox, see CMS-12155)
+        final String referer = servletRequest.getHeader("Referer");
+        if (referer != null) {
+            final String scheme = substringBefore(referer, "://");
+            // host possibly including port
+            final String host = substringBefore(substringAfter(referer,scheme + "://"), "/");
+            return scheme + "://" + host;
+        }
+
+        // fallback to request host
+        final String farthestRequestHost = HstRequestUtils.getFarthestRequestHost(servletRequest, false);
+        final String farthestRequestScheme = HstRequestUtils.getFarthestRequestScheme(servletRequest);
+        return farthestRequestScheme + "://" + farthestRequestHost;
+
     }
 }

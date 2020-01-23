@@ -28,27 +28,41 @@ import org.hippoecm.hst.container.header.AccessControlAllowHeadersService;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 
-import static java.util.Collections.singletonList;
+import static java.util.stream.Collectors.collectingAndThen;
 
 public class AccessControlAllowHeadersServiceImpl implements AccessControlAllowHeadersService {
 
     private final Map<String, List<String>> allowedHeadersMap = new HashMap<>();
     private String extraAllowedHeaders;
+    private List<String> allowedHeaders;
 
     public void setExtraAllowedHeaders(final String extraAllowedHeaders) {
         this.extraAllowedHeaders = extraAllowedHeaders;
     }
 
+    public void setAllowedHeaders(List<String> allowedHeaders) {
+        this.allowedHeaders = allowedHeaders;
+    }
+
     public void init() {
 
+        // filter out default allowed CORS Authorization header since not needed explicitly
+        List<String> unmodifiableBuiltinAllowedHeaders = allowedHeaders.stream().filter(header -> !"authorization".equalsIgnoreCase(header))
+                .collect(collectingAndThen(Collectors.toList(), allowedList -> {
+                    // add ContainerConstants.PAGE_MODEL_ACCEPT_VERSION as standard allowed header
+                    allowedList.add(ContainerConstants.PAGE_MODEL_ACCEPT_VERSION);
+                    return Collections.unmodifiableList(allowedList);
+                }));
+
         allowedHeadersMap.put(AccessControlAllowHeadersServiceImpl.class.getName() + ".builtin",
-                singletonList(ContainerConstants.PAGE_MODEL_ACCEPT_VERSION));
+                unmodifiableBuiltinAllowedHeaders);
+
 
         if (StringUtils.isNotBlank(extraAllowedHeaders)) {
             String[] split = StringUtils.split(extraAllowedHeaders, " ,\t\f\r\n");
 
             final List<String> extraAllowedHeaders = Arrays.stream(split).map(s -> s.trim())
-                    .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
+                    .collect(collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
 
             allowedHeadersMap.put(AccessControlAllowHeadersServiceImpl.class.getName() + ".extra",
                     Collections.unmodifiableList(extraAllowedHeaders));
