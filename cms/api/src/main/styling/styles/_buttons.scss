@@ -42,6 +42,7 @@
     color: $active-color;
   }
 
+  &.x-item-disabled,
   &[disabled],
   &[disabled]:hover {
     background-color: $disabled-bg !important;
