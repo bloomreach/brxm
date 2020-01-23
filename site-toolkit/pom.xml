@@ -85,7 +85,8 @@
 
     <hippo.jackrabbit.version>2.18.3-h2</hippo.jackrabbit.version>
     <hippo.commons.version>14.1.0-SNAPSHOT</hippo.commons.version>
-    <io.jsonwebtoken.version>0.10.7</io.jsonwebtoken.version>
+    <nimbus-jose-jwt.version>8.4</nimbus-jose-jwt.version>
+
     <hippo.repository.version>14.1.0-SNAPSHOT</hippo.repository.version>
     <hippo.configuration-management.version>14.1.0-SNAPSHOT</hippo.configuration-management.version>
     <hippo.utilities.version>14.1.0-SNAPSHOT</hippo.utilities.version>
@@ -430,23 +431,10 @@
         <scope>provided</scope>
       </dependency>
 
-      <!-- JWT Token support -->
       <dependency>
-        <groupId>io.jsonwebtoken</groupId>
-        <artifactId>jjwt-api</artifactId>
-        <version>${io.jsonwebtoken.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>io.jsonwebtoken</groupId>
-        <artifactId>jjwt-impl</artifactId>
-        <version>${io.jsonwebtoken.version}</version>
-        <scope>runtime</scope>
-      </dependency>
-      <dependency>
-        <groupId>io.jsonwebtoken</groupId>
-        <artifactId>jjwt-jackson</artifactId>
-        <version>${io.jsonwebtoken.version}</version>
-        <scope>runtime</scope>
+        <groupId>com.nimbusds</groupId>
+        <artifactId>nimbus-jose-jwt</artifactId>
+        <version>${nimbus-jose-jwt.version}</version>
       </dependency>
 
       <dependency>

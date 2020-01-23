@@ -39,6 +39,6 @@
     <property name="extraAllowedHeaders" value="${extra.access.control.allowed.headers:}"/>
   </bean>
 
-  <bean class="org.hippoecm.hst.platform.security.JwtTokenServiceImpl" init-method="init" destroy-method="destroy">
+  <bean class="org.hippoecm.hst.platform.security.NimbusJwtTokenServiceImpl" init-method="init" destroy-method="destroy">
   </bean>
 </beans>

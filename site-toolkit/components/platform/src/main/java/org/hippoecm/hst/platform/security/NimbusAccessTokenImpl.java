@@ -15,24 +15,28 @@
  */
 package org.hippoecm.hst.platform.security;
 
+import com.nimbusds.jose.JWSObject;
+
 import org.hippoecm.hst.container.security.AccessToken;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
+import net.minidev.json.JSONObject;
 
-public class AccessTokenImpl implements AccessToken {
+public class NimbusAccessTokenImpl implements AccessToken {
 
-    private Jws<Claims> claimsJws;
+    private final JWSObject jwsObject;
     private CmsSessionContext cmsSessionContext;
 
-    public AccessTokenImpl(final Jws<Claims> claimsJws, final CmsSessionContext cmsSessionContext) {
-        this.claimsJws = claimsJws;
+
+    public NimbusAccessTokenImpl(final JWSObject jwsObject, final CmsSessionContext cmsSessionContext) {
+
+        this.jwsObject = jwsObject;
         this.cmsSessionContext = cmsSessionContext;
     }
+
     @Override
     public String getSubject() {
-        return claimsJws.getBody().getSubject();
+        return (String) jwsObject.getHeader().getCustomParam("sub");
     }
 
     @Override
@@ -41,12 +45,13 @@ public class AccessTokenImpl implements AccessToken {
     }
 
     public String getClaim(final String claimName) {
-        final Object claim = claimsJws.getBody().get(claimName);
+        JSONObject jsonObject = jwsObject.getPayload().toJSONObject();
+        final Object claim = jsonObject.get(claimName);
         return claim == null ? null : claim.toString();
     }
 
     public String getHeader(final String headerName) {
-        Object header = claimsJws.getHeader().get(headerName);
+        Object header  = jwsObject.getHeader().getCustomParam(headerName);
         return header == null ? null : header.toString();
     }
 }
