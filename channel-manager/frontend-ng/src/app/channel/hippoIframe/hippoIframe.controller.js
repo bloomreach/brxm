@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -38,7 +38,6 @@ class HippoIframeCtrl {
     'ngInject';
 
     this.$element = $element;
-
     this.$rootScope = $rootScope;
     this.CmsService = CmsService;
     this.ComponentRenderingService = ComponentRenderingService;
@@ -55,30 +54,7 @@ class HippoIframeCtrl {
     this.SpaService = SpaService;
     this.ViewportService = ViewportService;
 
-    this.PageStructureService.clearParsedElements();
-
     this.iframeJQueryElement = this.$element.find('iframe');
-
-    this.iframeJQueryElement.on('load', () => this.onLoad());
-
-    this.HippoIframeService.initialize(this.$element, this.iframeJQueryElement);
-
-    this.OverlayService.init(this.iframeJQueryElement);
-
-    this.OverlayService.onEditMenu((menuUuid) => {
-      this.onEditMenu({ menuUuid });
-    });
-
-    this.OverlayService.onSelectDocument(this._selectDocument.bind(this));
-
-    const sheetJQueryElement = this.$element.find('.channel-iframe-sheet');
-    this.ViewportService.init(sheetJQueryElement);
-
-    const canvasJQueryElement = $element.find('.channel-iframe-canvas');
-    this.DragDropService.init(this.iframeJQueryElement, canvasJQueryElement, sheetJQueryElement);
-
-    this.SpaService.init(this.iframeJQueryElement);
-    this.RenderingService.init(this.iframeJQueryElement);
   }
 
   $onInit() {
@@ -86,6 +62,21 @@ class HippoIframeCtrl {
     this.CmsService.subscribe('delete-component', this._deleteComponent, this);
     this._offClick = this.DragDropService.onClick(this._clickComponent.bind(this));
     this._offDrop = this.DragDropService.onDrop(this._moveComponent.bind(this));
+
+    this.iframeJQueryElement.on('load', () => this.onLoad());
+
+    const canvasJQueryElement = this.$element.find('.channel-iframe-canvas');
+    const sheetJQueryElement = this.$element.find('.channel-iframe-sheet');
+
+    this.PageStructureService.clearParsedElements();
+    this.HippoIframeService.initialize(this.$element, this.iframeJQueryElement);
+    this.OverlayService.init(this.iframeJQueryElement);
+    this.OverlayService.onEditMenu(menuUuid => this.onEditMenu({ menuUuid }));
+    this.OverlayService.onSelectDocument(this._selectDocument.bind(this));
+    this.ViewportService.init(sheetJQueryElement);
+    this.DragDropService.init(this.iframeJQueryElement, canvasJQueryElement, sheetJQueryElement);
+    this.SpaService.init(this.iframeJQueryElement);
+    this.RenderingService.init(this.iframeJQueryElement);
   }
 
   $onChanges(changes) {
