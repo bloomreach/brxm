@@ -64,7 +64,7 @@
       this.hasComponent = false;
 
       Hippo.ChannelManager.ChannelEditor.ComponentPropertiesForm.superclass.constructor.call(this, Ext.apply(config, {
-        cls: 'componentPropertiesForm qa-properties-form',
+        cls: 'componentPropertiesForm qa-properties-form br-form',
         maskDisabled: false
       }));
     },
@@ -315,9 +315,16 @@
         return data;
       }
 
+      this.add({
+        xtype: 'label',
+        cls: 'x-form-item-label',
+        text: record.get('label')
+      });
+
       return this.add({
         xtype: 'combo',
-        fieldLabel: record.get('label'),
+        ctCls: 'br-combo',
+        hideLabel: true,
         store: new Ext.data.ArrayStore({
           fields: [
             'id',
@@ -372,9 +379,15 @@
         record.set('value', newValue);
       }
 
+      this.add({
+        xtype: 'label',
+        cls: 'x-form-item-label',
+        text: record.get('label')
+      });
+
       var propertyFieldConfig = {
-          fieldLabel: record.get('label'),
           xtype: xtype,
+          hideLabel: true,
           value: initialValue,
           defaultValue: defaultValue,
           displayValue: displayValue,
@@ -402,14 +415,17 @@
 
         switch (xtype) {
           case 'checkbox':
+            propertyFieldConfig.ctCls = 'br-checkbox';
             propertyFieldConfig.checked = (initialValue === true || initialValue === 'true' || initialValue === '1' || String(initialValue).toLowerCase() === 'on');
             propertyFieldConfig.listeners.check = commitValueOrDefault;
             break;
           case 'datefield':
+            propertyFieldConfig.ctCls = 'br-datefield';
             propertyFieldConfig.editable = false;
             propertyFieldConfig.format = 'Y-m-d';
             break;
           case 'linkpicker':
+            propertyFieldConfig.ctCls = 'br-linkpicker';
             propertyFieldConfig.pickerConfig = {
               configuration: record.get('pickerConfiguration'),
               remembersLastVisited: record.get('pickerRemembersLastVisited'),

@@ -107,6 +107,7 @@
                     },
                     {
                         xtype: 'linkpicker',
+                        ctCls: 'br-linkpicker',
                         id: 'contentRoot',
                         hideLabel: true,
                         pickerConfig: {
