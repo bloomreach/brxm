@@ -56,7 +56,7 @@ public class NimbusJwtTokenServiceImpl implements JwtTokenService {
 
     private void init() {
         try {
-            rsaJWK = new RSAKeyGenerator(3048)
+            rsaJWK = new RSAKeyGenerator(2048)
                     .keyUse(KeyUse.SIGNATURE) // indicate the intended use of the key
                     .keyID(UUID.randomUUID().toString()) // give the key a unique ID
                     .generate();
