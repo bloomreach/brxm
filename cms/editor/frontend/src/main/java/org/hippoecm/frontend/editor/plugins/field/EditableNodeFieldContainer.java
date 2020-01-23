@@ -32,6 +32,10 @@ public class EditableNodeFieldContainer extends EditableFieldContainer {
                                       final Item<IRenderService> renderItem,
                                       final JcrNodeModel model,
                                       final NodeFieldPlugin nodeField) {
+        this(id,renderItem,model, nodeField, false);
+    }
+
+    public EditableNodeFieldContainer(final String id, final Item<IRenderService> renderItem, final JcrNodeModel model, final NodeFieldPlugin nodeField, final boolean isCollapsed) {
         super(id, renderItem);
 
         final FieldPluginHelper helper = nodeField.helper;
@@ -40,7 +44,12 @@ public class EditableNodeFieldContainer extends EditableFieldContainer {
         final boolean isRequired = helper.isRequired();
 
         final FieldTitle fieldTitle = helper.isCompoundField()
-                ? new CollapsibleFieldTitle("field-title", captionModel, hintModel, isRequired, renderItem)
+                ? new CollapsibleFieldTitle("field-title", captionModel, hintModel, isRequired, renderItem, isCollapsed) {
+                    @Override
+                    protected void onCollapse(final boolean isCollapsed) {
+                        EditableNodeFieldContainer.this.onCollapse(isCollapsed);
+                    }
+                }
                 : new FieldTitle("field-title", captionModel, hintModel, isRequired);
 
         queue(fieldTitle.setVisible(false));
@@ -55,6 +64,7 @@ public class EditableNodeFieldContainer extends EditableFieldContainer {
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 nodeField.onRemoveItem(model, target);
+                nodeField.clearCollapsedItem(index);
             }
         };
         if (!nodeField.canRemoveItem()) {
@@ -69,6 +79,7 @@ public class EditableNodeFieldContainer extends EditableFieldContainer {
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 nodeField.onMoveItemToTop(model);
+                nodeField.moveCollapsedItem(index, 0);
                 nodeField.redraw();
             }
         };
@@ -83,6 +94,7 @@ public class EditableNodeFieldContainer extends EditableFieldContainer {
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 nodeField.onMoveItemUp(model, target);
+                nodeField.moveCollapsedItem(index, index - 1);
             }
         };
         if (!nodeField.canReorderItems()) {
@@ -113,6 +125,7 @@ public class EditableNodeFieldContainer extends EditableFieldContainer {
                 final String nextPath = String.format("%s/%s[%d]", parentPath, field.getPath(), index + 2);
                 final JcrNodeModel nextModel = new JcrNodeModel(nextPath);
                 nodeField.onMoveItemUp(nextModel, target);
+                nodeField.moveCollapsedItem(index, index + 1);
             }
         };
         if (!nodeField.canReorderItems()) {
@@ -129,6 +142,7 @@ public class EditableNodeFieldContainer extends EditableFieldContainer {
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 nodeField.onMoveItemToBottom(model);
+                nodeField.moveCollapsedItem(index, -1);
                 nodeField.redraw();
             }
         };
@@ -138,5 +152,8 @@ public class EditableNodeFieldContainer extends EditableFieldContainer {
 
         final HippoIcon downToBottomIcon = HippoIcon.fromSprite("down-bottom-icon", Icon.ARROW_DOWN_LINE);
         queue(downToBottomIcon);
+    }
+
+    protected void onCollapse(final boolean isCollapsed) {
     }
 }

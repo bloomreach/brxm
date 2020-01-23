@@ -19,17 +19,23 @@ import org.apache.wicket.markup.repeater.Item;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.service.IRenderService;
 
-public class EditableCompoundFieldContainer extends EditableNodeFieldContainer {
+public class EditableCollapsibleFieldContainer extends EditableNodeFieldContainer {
 
-    public EditableCompoundFieldContainer(final String id,
-                                          final Item<IRenderService> renderItem,
-                                          final JcrNodeModel model,
-                                          final NodeFieldPlugin nodeField) {
-        super(id, renderItem,model, nodeField);
+    public EditableCollapsibleFieldContainer(final String id,
+                                             final Item<IRenderService> renderItem,
+                                             final JcrNodeModel model,
+                                             final NodeFieldPlugin nodeField,
+                                             final boolean isCollapsed) {
+        super(id, renderItem,model, nodeField, isCollapsed);
     }
 
     @Override
     protected void onConfigure() {
         get("field-title").setVisible(true);
+    }
+
+    @Override
+    protected void onCollapse(final boolean isCollapsed) {
+        super.onCollapse(isCollapsed);
     }
 }
