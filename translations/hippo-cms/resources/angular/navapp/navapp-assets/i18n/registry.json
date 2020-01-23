@@ -640,7 +640,7 @@
       }
     },
     "MENU_ITEM_XM_SYSTEM_PROPERTIES" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -650,7 +650,7 @@
       }
     },
     "MENU_ITEM_XM_USER_MANAGEMENT" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -660,7 +660,7 @@
       }
     },
     "MENU_ITEM_XM_SYSTEM_INFO" : {
-      "status" : "ADDED",
+      "status" : "UPDATED",
       "locales" : {
         "de" : "UNRESOLVED",
         "fr" : "UNRESOLVED",
@@ -680,6 +680,36 @@
       }
     },
     "MENU_ITEM_XM_SYSTEM_UPDATER" : {
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "MENU_ITEM_XM_CONTENT_FEED" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "MENU_ITEM_XM_REPLICATION" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
+    },
+    "MENU_ITEM_XM_SYSTEM" : {
       "status" : "ADDED",
       "locales" : {
         "de" : "UNRESOLVED",
