@@ -42,13 +42,15 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
         final WebMarkupContainer controls = new WebMarkupContainer("controls");
         controls.setVisible(plugin.canRemoveItem() || plugin.canReorderItems());
 
+        final int itemIndex = item.getIndex();
+
         // remove button
         final AjaxLink<Void> remove = new AjaxLink<Void>("remove") {
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 final IDialogService dialogService = plugin.getPluginContext()
                         .getService(IDialogService.class.getName(), IDialogService.class);
-                dialogService.show(new ContentBlocksEditableFieldContainer.DeleteItemDialog(model, plugin));
+                dialogService.show(new ContentBlocksEditableFieldContainer.DeleteItemDialog(model, plugin, itemIndex));
             }
         };
         remove.setVisible(plugin.canRemoveItem());
@@ -57,14 +59,12 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
         final HippoIcon removeIcon = HippoIcon.fromSprite("remove-icon", Icon.TIMES);
         remove.add(removeIcon);
 
-        final int itemIndex = item.getIndex();
-
         // up to top arrow button
         final AjaxLink<Void> upToTopLink = new AjaxLink<Void>("upToTop") {
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 plugin.onMoveItemToTop(model);
-                plugin.updateIndex(itemIndex, 0);
+                plugin.moveCollapsedItem(itemIndex, 0);
                 plugin.redraw();
             }
         };
@@ -80,7 +80,7 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 plugin.onMoveItemUp(model, target);
-                plugin.updateIndex(itemIndex, itemIndex - 1);
+                plugin.moveCollapsedItem(itemIndex, itemIndex - 1);
                 plugin.redraw();
             }
         };
@@ -103,7 +103,7 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
                     final String nextPath = parent.getItemModel().getPath() + '/' + nextName;
                     final JcrNodeModel nextModel = new JcrNodeModel(nextPath);
                     plugin.onMoveItemUp(nextModel, target);
-                    plugin.updateIndex(itemIndex, itemIndex +  1);
+                    plugin.moveCollapsedItem(itemIndex, itemIndex +  1);
                     plugin.redraw();
                 }
             }
@@ -121,7 +121,7 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 plugin.onMoveItemToBottom(model);
-                plugin.updateIndex(itemIndex, -1);
+                plugin.moveCollapsedItem(itemIndex, -1);
                 plugin.redraw();
             }
         };
@@ -140,10 +140,12 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
 
         private final JcrNodeModel model;
         private final ContentBlocksFieldPlugin plugin;
+        private final int itemIndex;
 
-        DeleteItemDialog(final JcrNodeModel model, final ContentBlocksFieldPlugin plugin) {
+        DeleteItemDialog(final JcrNodeModel model, final ContentBlocksFieldPlugin plugin, final int itemIndex) {
             this.model = model;
             this.plugin = plugin;
+            this.itemIndex = itemIndex;
 
             setFocusOnCancel();
             setSize(DialogConstants.SMALL);
@@ -153,6 +155,7 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
         @Override
         protected void onOk() {
             plugin.onRemoveItem(model, getRequestCycle().find(AjaxRequestTarget.class));
+            plugin.clearCollapsedItem(itemIndex);
             plugin.redraw();
         }
     }

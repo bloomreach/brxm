@@ -17,10 +17,8 @@ package org.onehippo.forge.contentblocks;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.jcr.Node;
@@ -57,6 +55,7 @@ import org.hippoecm.frontend.editor.compare.IComparer;
 import org.hippoecm.frontend.editor.editor.EditorForm;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
 import org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin;
+import org.hippoecm.frontend.editor.plugins.field.CollapsedItems;
 import org.hippoecm.frontend.editor.plugins.field.CollapsibleFieldTitle;
 import org.hippoecm.frontend.editor.plugins.field.FieldPluginHelper;
 import org.hippoecm.frontend.editor.plugins.field.FieldTitle;
@@ -117,7 +116,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
     private final String providerCompoundType;
     private final boolean showCompoundNames;
     private final int maxItems;
-    private final Set<Integer> collapsedItems = new LinkedHashSet<>();
+    private final CollapsedItems collapsedItems = new CollapsedItems();
 
     private Link<CharSequence> focusMarker;
 
@@ -374,12 +373,8 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         item.add(new ContentBlocksEditableFieldContainer(FIELD_CONTAINER_ID,
                 item, model, this, getBlockName(model), isCollapsed) {
             @Override
-            protected void onSetCollapsed(final boolean collapsed) {
-                if (collapsed) {
-                    collapsedItems.add(item.getIndex());
-                } else {
-                    collapsedItems.remove(item.getIndex());
-                }
+            protected void onCollapse(final boolean collapsed) {
+                collapsedItems.set(item.getIndex(), collapsed);
             }
         });
     }
@@ -499,30 +494,12 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         }
     }
 
-    /**
-     * Update
-     * @param from
-     * @param to
-     */
-    public void updateIndex(final int from, int to) {
-        if (to == -1) { // to the bottom
-            to = provider.size() - 1;
-        }
+    public void moveCollapsedItem(final int from, final int to) {
+        collapsedItems.update(from, to, provider.size());
+    }
 
-        final boolean isCollapsed = collapsedItems.remove(from);
-        int current = from;
-        while (current != to) {
-            int prev = current;
-            current = from > to ? current - 1 : current + 1;
-            if (collapsedItems.contains(current)) {
-                collapsedItems.add(prev);
-                collapsedItems.remove(current);
-            }
-        }
-
-        if (isCollapsed) {
-            collapsedItems.add(to);
-        }
+    public void clearCollapsedItem(final int itemIndex) {
+        collapsedItems.clear(itemIndex, provider.size() + 1);
     }
 
     private static class FocusLink extends Link<CharSequence> {

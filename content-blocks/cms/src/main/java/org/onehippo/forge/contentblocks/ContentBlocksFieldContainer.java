@@ -31,13 +31,13 @@ public class ContentBlocksFieldContainer extends FieldContainer {
                 false, item, isCollapsed) {
             @Override
             protected void onCollapse(final boolean isCollapsed) {
-                ContentBlocksFieldContainer.this.onSetCollapsed(isCollapsed);
+                ContentBlocksFieldContainer.this.onCollapse(isCollapsed);
             }
         };
         fieldTitle.setVisible(StringUtils.isNotBlank(blockName));
-        add(fieldTitle);
+        queue(fieldTitle);
     }
 
-    protected void onSetCollapsed(final boolean collapsed) {
+    protected void onCollapse(final boolean collapsed) {
     }
 }
