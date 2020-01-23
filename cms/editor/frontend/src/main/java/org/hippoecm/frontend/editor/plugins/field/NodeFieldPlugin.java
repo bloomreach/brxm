@@ -55,6 +55,8 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
 
     private static final Logger log = LoggerFactory.getLogger(NodeFieldPlugin.class);
 
+    private final CollapsedItems collapsedItems = new CollapsedItems();
+
     public NodeFieldPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
@@ -183,7 +185,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
     @Override
     protected void populateViewItem(final Item<IRenderService> item, final JcrNodeModel model) {
         if (helper.isCompoundField()) {
-            item.add(new CompoundFieldContainer("fieldContainer", item, this));
+            item.add(new CollapsibleFieldContainer("fieldContainer", item, this));
         } else {
             item.add(new FieldContainer("fieldContainer", item));
         }
@@ -192,7 +194,13 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
     @Override
     protected void populateEditItem(final Item<IRenderService> item, final JcrNodeModel model) {
         if (helper.isCompoundField()) {
-            item.add(new EditableCompoundFieldContainer("fieldContainer", item, model, this));
+            final boolean isCollapsed = collapsedItems.contains(item.getIndex());
+            item.add(new EditableCollapsibleFieldContainer("fieldContainer", item, model, this, isCollapsed) {
+                @Override
+                protected void onCollapse(final boolean isCollapsed) {
+                    collapsedItems.set(item.getIndex(), isCollapsed);
+                }
+            });
         } else {
             item.add(new EditableNodeFieldContainer("fieldContainer", item, model, this));
         }
@@ -224,6 +232,14 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
         } else {
             return new Label("add").setVisible(false);
         }
+    }
+
+    protected void moveCollapsedItem(final int from, final int to) {
+        collapsedItems.update(from, to, provider.size());
+    }
+
+    protected void clearCollapsedItem(final int index) {
+        collapsedItems.clear(index, provider.size() + 1);
     }
 
     @Override
