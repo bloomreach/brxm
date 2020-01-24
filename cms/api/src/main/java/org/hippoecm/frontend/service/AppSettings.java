@@ -65,6 +65,13 @@ public interface AppSettings {
     NgxLoggerLevel getLogLevel();
 
     /**
+     * Returns {@code true} is usage statistics should be sent and {@code false} otherwise.
+     *
+     * @return if usage statistics is enabled
+     */
+    boolean isUsageStatisticsEnabled();
+
+    /**
      * Returns list of resources that must be called by the navapp to retrieve menu related navigation items.
      *
      * @return list of nav config resources
