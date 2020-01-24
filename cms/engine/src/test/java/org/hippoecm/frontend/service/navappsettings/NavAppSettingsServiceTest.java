@@ -50,7 +50,6 @@ import org.hippoecm.frontend.service.NavAppResource;
 import org.hippoecm.frontend.service.NavAppSettings;
 import org.hippoecm.frontend.service.NgxLoggerLevel;
 import org.hippoecm.frontend.service.ResourceType;
-import org.hippoecm.frontend.service.UserSettings;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.repository.api.HippoSession;
 import org.junit.After;
@@ -70,6 +69,7 @@ import static org.hippoecm.frontend.service.NgxLoggerLevel.INFO;
 import static org.hippoecm.frontend.service.NgxLoggerLevel.OFF;
 import static org.hippoecm.frontend.service.NgxLoggerLevel.TRACE;
 import static org.hippoecm.frontend.service.navappsettings.NavAppSettingsService.NAVIGATIONITEMS_ENDPOINT;
+import static org.hippoecm.frontend.usagestatistics.UsageStatisticsSettings.SYSPROP_SEND_USAGE_STATISTICS_TO_HIPPO;
 import static org.junit.Assert.assertThat;
 
 @RunWith(EasyMockRunner.class)
@@ -172,11 +172,13 @@ public class NavAppSettingsServiceTest {
         this.navAppSettingsService = new NavAppSettingsService(context, config, () -> userSession, () -> sessionAttributeStore, navAppResourceService);
 
         ThreadContext.setApplication(webApplication);
+        System.setProperty(SYSPROP_SEND_USAGE_STATISTICS_TO_HIPPO, Boolean.TRUE.toString());
     }
 
     @After
     public void tearDown() {
         ThreadContext.setApplication(null);
+        System.clearProperty(SYSPROP_SEND_USAGE_STATISTICS_TO_HIPPO);
     }
 
 
@@ -447,13 +449,6 @@ public class NavAppSettingsServiceTest {
     }
 
 
-    private void testUserSettingsAssertions(UserSettings userSettings) {
-        assertThat(userSettings.getUserName(), is("firstname lastname"));
-        assertThat(userSettings.getLanguage(), is(Locale.CANADA.getLanguage()));
-        assertThat(userSettings.getTimeZone(), is(TimeZone.getDefault()));
-        assertThat(userSettings.getEmail(), is("email"));
-    }
-
     private void testAppSettingsAssertions(AppSettings appSettings) {
         // First resource must always be present
         final List<NavAppResource> navConfigResources = appSettings.getNavConfigResources();
@@ -463,6 +458,7 @@ public class NavAppSettingsServiceTest {
         assertThat(appSettings.getLogLevel(), is(OFF));
         assertThat(appSettings.getNavAppResourceLocation(), is(URI.create("angular/navapp")));
         assertThat(appSettings.isCmsServingNavAppResources(), is(true));
+        assertThat(appSettings.isUsageStatisticsEnabled(), is(true));
     }
 
 }
