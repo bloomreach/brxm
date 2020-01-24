@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -63,72 +63,6 @@
 
 .hippo-tree-is-dragging {
   cursor: move;
-}
-
-.has-styling {
-  .spacer {
-    display: inline-block;
-    vertical-align: top;
-    width: 24px;
-  }
-
-  .angular-ui-tree-node {
-    cursor: pointer;
-    display: block;
-    line-height: 20px;
-    margin-top: 3px;
-    min-height: 20px;
-    padding: 0;
-
-    &.active > div:first-child {
-      background: $tree-active-bg;
-      border-color: $tree-active-border-color;
-      color: $tree-active-color;
-
-      md-icon {
-        color: $tree-active-color;
-      }
-    }
-  }
-
-  .angular-ui-tree-handle {
-    background-clip: padding-box;
-    background-color: $tree-bg;
-    box-sizing: border-box;
-    font-size: $tree-font-size;
-    padding: 1px 2px;
-
-    .drag-enabled & {
-      border: 1px solid $tree-border-color;
-      border-radius: $tree-border-radius;
-    }
-
-    &:hover {
-      background: $tree-hover-bg;
-      text-decoration: none;
-    }
-  }
-
-  .angular-ui-tree-placeholder {
-    border-radius: $tree-border-radius;
-    margin-top: 4px;
-  }
-
-  .angular-ui-tree-title {
-    display: inline-block;
-    vertical-align: middle;
-  }
-
-  .hippo-tree-item-toggle {
-    border: 0;
-    display: inline-block;
-    padding: 0;
-  }
-
-  .angular-ui-tree-title-wrapper md-icon {
-    font-size: 20px;
-    line-height: 24px;
-  }
 }
 
 .angular-ui-tree-placeholder {
