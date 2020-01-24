@@ -456,10 +456,11 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                             final URI uri = new URI(previewURL);
 
                             final JwtTokenService jwtTokenService = HippoServiceRegistry.getService(JwtTokenService.class);
+                            final String clusterNodeAffinityId = getClusterNodeAffinityId(req, clusterNodeAffinityParam);
                             final String location = previewURL +
                                     (uri.getQuery() == null ? "?" : "&")
                                     + jwtTokenParam + "=" + jwtTokenService.createToken(req, emptyMap()) +
-                                    "&" + clusterNodeAffinityParam + "=" + getClusterNodeAffinityId(req, clusterNodeAffinityParam);
+                                    (StringUtils.isNotBlank(clusterNodeAffinityId) ? "&" + clusterNodeAffinityParam + "=" + clusterNodeAffinityId : "");
                             res.sendRedirect(location);
                             return;
 
