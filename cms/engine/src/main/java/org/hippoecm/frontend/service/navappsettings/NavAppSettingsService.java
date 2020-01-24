@@ -42,6 +42,7 @@ import org.hippoecm.frontend.service.NgxLoggerLevel;
 import org.hippoecm.frontend.service.ResourceType;
 import org.hippoecm.frontend.service.UserSettings;
 import org.hippoecm.frontend.session.PluginUserSession;
+import org.hippoecm.frontend.usagestatistics.UsageStatisticsSettings;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.repository.security.User;
@@ -187,6 +188,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
 
         final int iframesConnectionTimeout = readIframesConnectionTimeout();
         final NgxLoggerLevel ngxLoggerLevel = readLogLevel(logLevelQueryParamString);
+        final boolean usageStaticsticsEnabled = UsageStatisticsSettings.get().isEnabled();
 
         return new AppSettings() {
 
@@ -228,6 +230,11 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
             @Override
             public NgxLoggerLevel getLogLevel() {
                 return ngxLoggerLevel;
+            }
+
+            @Override
+            public boolean isUsageStatisticsEnabled() {
+                return usageStaticsticsEnabled;
             }
         };
     }
