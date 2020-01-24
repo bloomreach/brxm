@@ -40,7 +40,7 @@
   </div>
 </md-toolbar>
 
-<subpage-content layout="row" class="qa-site-menu-editor md-bloomreach-theme" flex>
+<subpage-content layout="row" class="qa-site-menu-editor site-menu-editor md-bloomreach-theme" flex>
   <hippo-tree
        ng-if="$ctrl.items.length > 0"
        class="expansion-panel"
@@ -125,13 +125,11 @@
                   <div ng-message="required">{{ ::'LINK_REQUIRED' | translate }}</div>
                 </div>
               </md-input-container>
-              <div>
-                <md-button type="button"
-                           ng-disabled="$ctrl.isLockedByOther()"
-                           ng-click="$ctrl.showPicker($event)">
-                  {{ ::'SUBPAGE_MENU_EDITOR_SELECT_INTERNAL_LINK' | translate }}
-                </md-button>
-              </div>
+              <md-button type="button"
+                         ng-disabled="$ctrl.isLockedByOther()"
+                         ng-click="$ctrl.showPicker($event)">
+                {{ ::'SUBPAGE_MENU_EDITOR_SELECT_INTERNAL_LINK' | translate }}
+              </md-button>
             </div>
             <div ng-if="$ctrl.editingItem.linkType == 'EXTERNAL'"
                  layout="row">
