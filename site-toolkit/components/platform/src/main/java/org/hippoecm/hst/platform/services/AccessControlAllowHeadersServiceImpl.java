@@ -47,7 +47,7 @@ public class AccessControlAllowHeadersServiceImpl implements AccessControlAllowH
     public void init() {
 
         // filter out default allowed CORS Authorization header since not needed explicitly
-        List<String> unmodifiableBuiltinAllowedHeaders = allowedHeaders.stream().filter(header -> !"authorization".equalsIgnoreCase(header))
+        List<String> unmodifiableBuiltinAllowedHeaders = allowedHeaders.stream()
                 .collect(collectingAndThen(Collectors.toList(), allowedList -> {
                     // add ContainerConstants.PAGE_MODEL_ACCEPT_VERSION as standard allowed header
                     allowedList.add(ContainerConstants.PAGE_MODEL_ACCEPT_VERSION);
