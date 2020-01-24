@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,15 +15,18 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.jcr.NamespaceRegistry;
 import javax.jcr.PropertyType;
 import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NoSuchNodeTypeException;
 import javax.jcr.version.OnParentVersionAction;
 
 import org.apache.jackrabbit.core.fs.FileSystem;
+import org.apache.jackrabbit.core.nodetype.InvalidNodeTypeDefException;
 import org.apache.jackrabbit.core.nodetype.NodeTypeDefStore;
 import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.spi.Name;
@@ -46,6 +49,7 @@ public class HippoNodeTypeRegistry extends NodeTypeRegistry {
 
     private static ThreadLocal<Boolean> ignoreNextConflictingContent = new ThreadLocal<>();
     private static ThreadLocal<Boolean> ignoreNextCheckReferencesInContent = new ThreadLocal<>();
+    private static ThreadLocal<Boolean> ignoreNextPersistCustomNodeTypeDefs = new ThreadLocal<>();
 
     /**
      * <p>
@@ -86,6 +90,10 @@ public class HippoNodeTypeRegistry extends NodeTypeRegistry {
      * Note: this changes are not (and don't need to be) persisted as the builtin nodetypes as only read and
      * never written (back).
      * </p>
+     * @param store The {@link NodeTypeDefStore} into which the node type
+     *              definitions are loaded.
+     * @throws RepositoryException If an error occurs while loading the
+     *                             built-in node type definitions.
      */
     protected void loadBuiltInNodeTypeDefs(NodeTypeDefStore store)
             throws RepositoryException {
@@ -152,7 +160,8 @@ public class HippoNodeTypeRegistry extends NodeTypeRegistry {
      *
      * @param ntd  The node type definition replacing the former node type definition of the same name.
      * @param diff The diff of the node type definition with the currently registered type
-     * @throws javax.jcr.RepositoryException
+     * @throws RepositoryException If there is conflicting content or if the
+     *                             check failed for some other reason.
      */
     @Override
     protected void checkForConflictingContent(final QNodeTypeDefinition ntd, NodeTypeDefDiff diff) throws RepositoryException {
@@ -197,7 +206,7 @@ public class HippoNodeTypeRegistry extends NodeTypeRegistry {
      * @param ntd the new nodetypediff
      * @param diff the nodetypedefdiff of type MAJOR caused by a difference in supertype
      * @return either the original nodetypedefdiff (still of type MAJOR) or a fixed up modified instance (which still MAY be of type MAJOR for other reasons)
-     * @throws RepositoryException
+     * @throws RepositoryException repositoryException
      */
     protected NodeTypeDefDiff fixupTrivialSuperTypesDiff(final QNodeTypeDefinition ntd, final NodeTypeDefDiff diff) throws RepositoryException {
         QNodeTypeDefinition ntdOld = getNodeTypeDef(ntd.getName());
@@ -235,7 +244,7 @@ public class HippoNodeTypeRegistry extends NodeTypeRegistry {
      * @param superTypesMap the map to fill
      * @param superTypes the superTypes to map
      * @return the mapped superTypes
-     * @throws RepositoryException
+     * @throws RepositoryException repositoryException
      */
     protected Map<Name, QNodeTypeDefinition> buildSuperTypesMap(Map<Name, QNodeTypeDefinition> superTypesMap, Name[] superTypes) throws RepositoryException {
         for (Name name : superTypes) {
@@ -262,5 +271,89 @@ public class HippoNodeTypeRegistry extends NodeTypeRegistry {
                 def.getPrimaryItemName() == null &&
                 def.getPropertyDefs().length == 0 &&
                 def.getChildNodeDefs().length == 0;
+    }
+
+    /**
+     * Skip persisting external (already processed and persisted) nodetype registration again!
+     * @param ntDefs node type definitions
+     * @throws RepositoryException if an error occurs
+     * @throws InvalidNodeTypeDefException if the node type definition is invalid
+     */
+    public void externalRegistered(Collection<QNodeTypeDefinition> ntDefs) throws RepositoryException, InvalidNodeTypeDefException {
+        super.externalRegistered(ntDefs);
+        // save current threadlocal value
+        Boolean currentIgnoreNextPersistCustomNodeTypeDefs = ignoreNextPersistCustomNodeTypeDefs.get();
+        try {
+            ignoreNextPersistCustomNodeTypeDefs.set(true);
+            super.externalRegistered(ntDefs);
+        } finally {
+            // restore threadlocal value
+            ignoreNextPersistCustomNodeTypeDefs.set(currentIgnoreNextPersistCustomNodeTypeDefs);
+        }
+    }
+
+    /**
+     * Allow all external (already processed) nodetype reregistration: no need to verify them against possible
+     * incompatible changes. Furthermore skip persisting such (already processed and persisted) changes again!
+     * @param ntDef node type definition
+     * @throws RepositoryException if an error occurs
+     * @throws NoSuchNodeTypeException if the node type had not yet been registered
+     * @throws InvalidNodeTypeDefException if the node type definition is invalid
+     */
+    @Override
+    public void externalReregistered(QNodeTypeDefinition ntDef)
+            throws NoSuchNodeTypeException, InvalidNodeTypeDefException,
+            RepositoryException {
+        // save current threadlocal values
+        Boolean currentIgnoreNextConflictingContent = ignoreNextConflictingContent.get();
+        Boolean currentIgnoreNextPersistCustomNodeTypeDefs = ignoreNextPersistCustomNodeTypeDefs.get();
+        try {
+            ignoreNextConflictingContent.set(true);
+            ignoreNextPersistCustomNodeTypeDefs.set(true);
+            super.externalReregistered(ntDef);
+        } finally {
+            // restore threadlocal values
+            ignoreNextConflictingContent.set(currentIgnoreNextConflictingContent);
+            ignoreNextPersistCustomNodeTypeDefs.set(currentIgnoreNextPersistCustomNodeTypeDefs);
+        }
+    }
+
+    /**
+     * Allow all external (already processed) nodetype unregistration: no need to check references in context.
+     * Furthermore skip persisting such (already processed and persisted) changes again!
+     * @param ntNames node type qnames
+     * @throws RepositoryException if an error occurs
+     * @throws NoSuchNodeTypeException if a node type is already unregistered
+     */
+    @Override
+    public void externalUnregistered(Collection<Name> ntNames) throws RepositoryException, NoSuchNodeTypeException {
+        // save current threadlocal values
+        Boolean currentIgnoreNextCheckReferencesInContent = ignoreNextCheckReferencesInContent.get();
+        Boolean currentIgnoreNextPersistCustomNodeTypeDefs = ignoreNextPersistCustomNodeTypeDefs.get();
+        try {
+            ignoreNextCheckReferencesInContent.set(true);
+            ignoreNextPersistCustomNodeTypeDefs.set(true);
+            super.externalUnregistered(ntNames);
+        } finally {
+            // restore threadlocal values
+            ignoreNextCheckReferencesInContent.set(currentIgnoreNextCheckReferencesInContent);
+            ignoreNextPersistCustomNodeTypeDefs.set(currentIgnoreNextPersistCustomNodeTypeDefs);
+        }
+    }
+
+    /**
+     * Ignore persisting of custom node types if unnecessary for the current thread (once)
+     * @param store The {@link NodeTypeDefStore} containing the definitions to
+     *              be persisted.
+     * @throws RepositoryException If an error occurs while persisting the
+     *                             custom node type definitions.
+     */
+    @Override
+    protected void persistCustomNodeTypeDefs(NodeTypeDefStore store) throws RepositoryException {
+        if (ignoreNextPersistCustomNodeTypeDefs.get() != null) {
+            ignoreNextPersistCustomNodeTypeDefs.remove();
+            return;
+        }
+        super.persistCustomNodeTypeDefs(store);
     }
 }
