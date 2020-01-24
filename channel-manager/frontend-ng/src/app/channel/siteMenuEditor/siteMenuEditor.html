@@ -14,19 +14,31 @@
   limitations under the License.
   -->
 
-<subpage-toolbar flex="none"
-                 data-title="{{ ::'SUBPAGE_MENU_EDITOR_TITLE' | translate }}"
-                 on-back="$ctrl.onBack()">
-  <md-button class="md-primary qa-menu-item-add"
-             ng-click="$ctrl.addItem()"
-             ng-disabled="$ctrl.isLockedByOther() || $ctrl.isSaving.newItem">
-    <md-icon aria-label="{{::'SUBPAGE_MENU_EDITOR_ADD_MENU_ITEM' | translate }}"
-             class="mdi-18"
-             md-font-icon="mdi-plus">
-    </md-icon>
-    {{::'SUBPAGE_MENU_EDITOR_ADD_MENU_ITEM' | translate}}
-  </md-button>
-</subpage-toolbar>
+<md-toolbar flex="none" 
+            class="hippo-toolbar qa-toolbar md-bloomreach-theme ">
+  <div class="md-toolbar-tools">
+    <h1>{{ ::'SUBPAGE_MENU_EDITOR_TITLE' | translate }}</h1>
+
+    <span flex></span>
+
+    <md-button class="qa-button-back"
+               aria-label="{{ 'TOOLBAR_BUTTON_BACK' | translate }}"
+               title="{{ 'TOOLBAR_BUTTON_BACK' | translate }}"
+               ng-click="$ctrl.onBack()">
+      {{ 'TOOLBAR_BUTTON_DONE' | translate }}
+    </md-button>
+
+    <md-button class="md-primary qa-menu-item-add"
+               ng-click="$ctrl.addItem()"
+               ng-disabled="$ctrl.isLockedByOther() || $ctrl.isSaving.newItem">
+      <md-icon aria-label="{{::'SUBPAGE_MENU_EDITOR_ADD_MENU_ITEM' | translate }}"
+               class="mdi-18"
+               md-font-icon="mdi-plus">
+      </md-icon>
+      {{::'SUBPAGE_MENU_EDITOR_ADD_MENU_ITEM' | translate}}
+    </md-button>
+  </div>
+</md-toolbar>
 
 <subpage-content layout="row" class="qa-site-menu-editor" flex>
   <hippo-tree
@@ -152,7 +164,8 @@
           </md-card-content>
           <md-divider></md-divider>
           <md-card-actions layout="row"
-                           layout-align="space-between center">
+                           layout-align="space-between center"
+                           class="md-bloomreach-theme">
             <md-button type="button"
                        ng-disabled="$ctrl.isLockedByOther()"
                        aria-label="{{ ::'DELETE' | translate }}"
