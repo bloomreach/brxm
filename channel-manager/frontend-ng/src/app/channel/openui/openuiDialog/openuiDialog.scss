@@ -1,4 +1,4 @@
-// Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -31,7 +31,19 @@
     width: 60%;
   }
 
+  > md-toolbar {
+    background-color: $dialog-header-bg;
+    color: $dialog-header-color;
+    max-height: $dialog-header-height;
+    min-height: $dialog-header-height;
+
+    md-icon {
+      color: $dialog-header-icon-color;
+    }
+  }
+
   md-dialog-content {
+    border-top: $dialog-header-border-bottom;
     height: 100%;
 
     iframe {
