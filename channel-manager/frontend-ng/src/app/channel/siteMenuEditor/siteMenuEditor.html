@@ -40,7 +40,7 @@
   </div>
 </md-toolbar>
 
-<subpage-content layout="row" class="qa-site-menu-editor" flex>
+<subpage-content layout="row" class="qa-site-menu-editor md-bloomreach-theme" flex>
   <hippo-tree
        ng-if="$ctrl.items.length > 0"
        class="expansion-panel"
@@ -164,8 +164,7 @@
           </md-card-content>
           <md-divider></md-divider>
           <md-card-actions layout="row"
-                           layout-align="space-between center"
-                           class="md-bloomreach-theme">
+                           layout-align="space-between center">
             <md-button type="button"
                        ng-disabled="$ctrl.isLockedByOther()"
                        aria-label="{{ ::'DELETE' | translate }}"
@@ -182,7 +181,7 @@
               <md-button type="submit"
                          ng-disabled="$ctrl.isLockedByOther()"
                          aria-label="{{ ::'SAVE' | translate }}"
-                         class="md-raised md-primary">
+                         class="md-primary">
                 {{ ::'SAVE' | translate }}
               </md-button>
             </div>
