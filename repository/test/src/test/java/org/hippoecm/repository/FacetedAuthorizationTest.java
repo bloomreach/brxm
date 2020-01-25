@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -39,13 +39,13 @@ import javax.jcr.query.RowIterator;
 import javax.jcr.security.Privilege;
 
 import org.apache.jackrabbit.core.query.lucene.DecimalField;
+import org.assertj.core.api.Assertions;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeIterator;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.security.HippoAccessManager;
 import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.Utilities;
 import org.jetbrains.annotations.NotNull;
 import org.junit.After;
 import org.junit.Before;
@@ -62,8 +62,10 @@ import static org.hippoecm.repository.api.HippoNodeType.CONFIGURATION_PATH;
 import static org.hippoecm.repository.api.HippoNodeType.DOMAINS_PATH;
 import static org.hippoecm.repository.api.HippoNodeType.GROUPS_PATH;
 import static org.hippoecm.repository.api.HippoNodeType.USERS_PATH;
+import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.onehippo.repository.security.StandardPermissionNames.JCR_ADD_CHILD_NODES;
@@ -1997,5 +1999,51 @@ public class FacetedAuthorizationTest extends RepositoryTestCase {
         extendedSession.logout();
 
         adminSession.logout();
+    }
+
+    @Ignore
+    @Test
+    public void propertyBelowUnreadableNodeIsNotReadable() throws Exception {
+        // create nodes for which userSession does not have read access
+        final String[] extra = {
+                "/test-extra", "nt:unstructured",
+                "/test-extra/extranet", "nt:unstructured",
+                "/test-extra/extranet/doc", "hippo:handle",
+                "/test-extra/extranet/doc/doc", "hippo:document",
+                "hippo:availability", "live"
+        };
+
+        try {
+            build(extra, session);
+            session.save();
+            userSession = (HippoSession)server.login(TEST_USER_ID, TEST_USER_PASS.toCharArray());
+
+            // user session does not have read access below /test-extra
+            assertFalse(userSession.nodeExists("/test-extra"));
+            assertFalse(userSession.itemExists("/test-extra"));
+            assertFalse(userSession.nodeExists("/test-extra/extranet"));
+            assertFalse(userSession.nodeExists("/test-extra/extranet/doc"));
+            assertFalse(userSession.nodeExists("/test-extra/extranet/doc/doc"));
+            assertFalse(userSession.itemExists("/test-extra/extranet/doc/doc/hippo:availability"));
+
+            Assertions.assertThatThrownBy(() -> userSession.getNode("/test-extra"))
+                    .as("Expected PathNotFoundException")
+                    .isInstanceOf(PathNotFoundException.class);
+
+
+            Assertions.assertThatThrownBy(() -> userSession.getItem("/test-extra/extranet/doc/doc/hippo:availability"))
+                    .as("Expected PathNotFoundException")
+                    .isInstanceOf(PathNotFoundException.class);
+
+
+            assertNull(getMultipleStringProperty(userSession.getRootNode(), "test-extra/extranet/doc/doc/hippo:availability", null));
+
+        } finally {
+            if (userSession != null) {
+                userSession.logout();
+            }
+            session.getNode("/test-extra").remove();
+            session.save();
+        }
     }
 }
