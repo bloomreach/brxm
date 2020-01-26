@@ -1,5 +1,5 @@
 /*
- *  Copyright 2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -38,6 +38,11 @@ import javax.jcr.query.QueryResult;
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.repository.jackrabbit.HippoNodeTypeRegistry;
 import org.hippoecm.repository.util.NodeIterable;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.lock.LockException;
+import org.onehippo.cms7.services.lock.LockManager;
+import org.onehippo.cms7.services.lock.LockManagerUtils;
+import org.onehippo.cms7.services.lock.LockResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +71,9 @@ class MigrateToV12 {
     private static final String HIPPO_MODULES_PATH = "/hippo:configuration/hippo:modules";
     private static final String HTML_PROCESSOR = "htmlprocessor";
     private static final String HTML_PROCESSOR_SERVICE_MODULE = "org.onehippo.cms7.services.htmlprocessor.HtmlProcessorServiceModule";
+
+    private static final String MIGRATION_LOCK_KEY = "org.hippoecm.repository.migration";
+    private static final long MIGRATION_LOCK_ATTEMPT_INTERVAL = 1_000;
 
     // builtin htmlprocessor's
     private static final String NO_FILTER_PROCESSOR = "no-filter";
@@ -105,10 +113,27 @@ class MigrateToV12 {
     }
 
     public void migrateIfNeeded() throws RepositoryException {
+        if (dryRun) {
+            doMigrateIfNeeded();
+        } else {
+            LockManager lockManager = HippoServiceRegistry.getService(LockManager.class);
+            try (LockResource ignore = LockManagerUtils.waitForLock(lockManager, MIGRATION_LOCK_KEY, MIGRATION_LOCK_ATTEMPT_INTERVAL)) {
+                // force cluster sync
+                session.refresh(false);
+                doMigrateIfNeeded();
+            } catch (LockException |InterruptedException e) {
+                throw new RepositoryException(e);
+            }
+        }
+    }
+
+    private void doMigrateIfNeeded() throws RepositoryException {
         if (!ntm.hasNodeType(DEPRECATED_NT_HIPPOSYS_AUTOEXPORT)) {
             log.debug("No migration needed");
+            log.info("No migration needed");
             return;
         }
+        log.info("Start MigrateToV12");
 
         checkDeprecatedTypeNotInUse(DEPRECATED_NT_HIPPOSYS_AUTOEXPORT);
         migrateDomains();
@@ -120,7 +145,7 @@ class MigrateToV12 {
         if (!dryRun) {
             ntr.ignoreNextCheckReferencesInContent();
             ntm.unregisterNodeType(DEPRECATED_NT_HIPPOSYS_AUTOEXPORT);
-            log.info("Migrated");
+            log.info("MigrateToV12 completed.");
         } else {
             log.info("MigrateToV12 dry-run completed.");
         }
