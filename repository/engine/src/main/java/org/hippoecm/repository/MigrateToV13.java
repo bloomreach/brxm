@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,6 +18,11 @@ package org.hippoecm.repository;
 import org.hippoecm.repository.jackrabbit.HippoNodeTypeRegistry;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
+import org.onehippo.cms7.services.HippoServiceRegistry;
+import org.onehippo.cms7.services.lock.LockException;
+import org.onehippo.cms7.services.lock.LockManager;
+import org.onehippo.cms7.services.lock.LockManagerUtils;
+import org.onehippo.cms7.services.lock.LockResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,6 +67,10 @@ public class MigrateToV13 {
     public static final String NT_HST_SITE = "hst:site";
     public static final String NT_HST_SITES = "hst:sites";
     public static final String NT_HST_VIRTUALHOSTS = "hst:virtualhosts";
+    public static final String NT_MAJOR_RELEASE_MARKER = "hipposys:ntd_v13b";
+
+    private static final String MIGRATION_LOCK_KEY = "org.hippoecm.repository.migration";
+    private static final long MIGRATION_LOCK_ATTEMPT_INTERVAL = 1_000;
 
     private final Session session;
     private final HippoNodeTypeRegistry ntr;
@@ -79,7 +88,22 @@ public class MigrateToV13 {
     }
 
     public void migrateIfNeeded() throws RepositoryException {
-        if (!ntm.hasNodeType("hippo:initializeitem") && ntm.hasNodeType("hipposys:ntd_v13")) {
+        if (dryRun) {
+            doMigrateIfNeeded();
+        } else {
+            LockManager lockManager = HippoServiceRegistry.getService(LockManager.class);
+            try (LockResource ignore = LockManagerUtils.waitForLock(lockManager, MIGRATION_LOCK_KEY, MIGRATION_LOCK_ATTEMPT_INTERVAL)) {
+                // force cluster sync
+                session.refresh(false);
+                doMigrateIfNeeded();
+            } catch (LockException |InterruptedException e) {
+                throw new RepositoryException(e);
+            }
+        }
+    }
+
+    private void doMigrateIfNeeded() throws RepositoryException {
+        if (ntm.hasNodeType(NT_MAJOR_RELEASE_MARKER)) {
             log.info("No migration needed");
             return;
         }
@@ -121,7 +145,18 @@ public class MigrateToV13 {
             removeNodeType("hippo:initializefolder", false);
             removeNodeType("hipposys:initializeitem", false);
             removeNodeType("hippo:initializeitem", false);
+            registerMajorReleaseMarkerNodeType();
             log.info("MigrateToV13 completed.");
+        }
+    }
+
+    private void registerMajorReleaseMarkerNodeType() throws RepositoryException {
+        if (!dryRun && !ntm.hasNodeType(NT_MAJOR_RELEASE_MARKER)) {
+            log.info("Registering major release maker nodetype {}", NT_MAJOR_RELEASE_MARKER);
+            final NodeTypeTemplate ntt = ntm.createNodeTypeTemplate();
+            ntt.setName(NT_MAJOR_RELEASE_MARKER);
+            ntt.setAbstract(true);
+            ntm.registerNodeType(ntt, false);
         }
     }
 
