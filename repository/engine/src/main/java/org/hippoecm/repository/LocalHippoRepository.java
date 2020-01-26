@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -36,7 +36,6 @@ import org.apache.jackrabbit.core.journal.JournalConnectionHelperAccessorImpl;
 import org.apache.jackrabbit.core.util.db.ConnectionHelper;
 import org.hippoecm.repository.impl.RepositoryDecorator;
 import org.hippoecm.repository.impl.SessionDecorator;
-import org.hippoecm.repository.jackrabbit.HippoNodeTypeRegistry;
 import org.hippoecm.repository.nodetypes.NodeTypesChangeTracker;
 import org.hippoecm.repository.security.AuthenticationStatus;
 import org.hippoecm.repository.security.service.SecurityServiceImpl;
@@ -342,8 +341,6 @@ public class LocalHippoRepository extends HippoRepositoryImpl {
     }
 
     protected void migrateToV13IfNeeded(final Session rootSession, final boolean dryRun) throws RepositoryException {
-        new MigrateToV13(rootSession, (HippoNodeTypeRegistry)jackrabbitRepository.getNodeTypeRegistry(), dryRun)
-                .migrateIfNeeded();
     }
 
     @Override
