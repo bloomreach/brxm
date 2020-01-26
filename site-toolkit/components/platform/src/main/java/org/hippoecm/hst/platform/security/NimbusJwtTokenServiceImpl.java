@@ -17,7 +17,6 @@ package org.hippoecm.hst.platform.security;
 
 import java.text.ParseException;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -25,15 +24,14 @@ import javax.servlet.http.HttpSession;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
-import com.nimbusds.jose.JWSObject;
 import com.nimbusds.jose.JWSSigner;
 import com.nimbusds.jose.JWSVerifier;
-import com.nimbusds.jose.Payload;
 import com.nimbusds.jose.crypto.RSASSASigner;
 import com.nimbusds.jose.crypto.RSASSAVerifier;
-import com.nimbusds.jose.jwk.KeyUse;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.gen.RSAKeyGenerator;
+import com.nimbusds.jwt.JWTClaimsSet;
+import com.nimbusds.jwt.SignedJWT;
 
 import org.hippoecm.hst.container.security.AccessToken;
 import org.hippoecm.hst.container.security.InvalidTokenException;
@@ -41,49 +39,50 @@ import org.hippoecm.hst.container.security.JwtTokenService;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 
-import net.minidev.json.JSONObject;
-
 public class NimbusJwtTokenServiceImpl implements JwtTokenService {
 
+    private final JWSAlgorithm JWS_ALGORITHM = JWSAlgorithm.RS256;
+
     private RSAKey rsaJWK;
-    private RSAKey rsaPublicJWK;
     private JWSSigner signer;
     private JWSVerifier verifier;
-
     private boolean registered;
 
     private TokenCmsSessionContextRegistry registry = new TokenCmsSessionContextRegistry();
 
-    private void init() {
+    public void init() {
         try {
-            rsaJWK = new RSAKeyGenerator(2048)
-                    .keyUse(KeyUse.SIGNATURE) // indicate the intended use of the key
-                    .keyID(UUID.randomUUID().toString()) // give the key a unique ID
+            // Create RSA-key
+            rsaJWK = new RSAKeyGenerator(RSAKeyGenerator.MIN_KEY_SIZE_BITS)
+                    .algorithm(JWS_ALGORITHM) // specify the signing algorithm
                     .generate();
-            rsaPublicJWK = rsaJWK.toPublicJWK();
-            // Create RSA-signer with the private key
+            // Create RSA-signer
             signer = new RSASSASigner(rsaJWK);
-
-            verifier = new RSASSAVerifier(rsaPublicJWK);
-
+            // Create RSA-verifier
+            verifier = new RSASSAVerifier(rsaJWK);
             HippoServiceRegistry.register(this, JwtTokenService.class);
             registered = true;
         } catch (JOSEException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
-
-
     }
 
-    private void destroy() {
+    public void destroy() {
         if (registered) {
+            registered = false;
             HippoServiceRegistry.unregister(this, JwtTokenService.class);
+            registry.clearRegistry();
+            verifier = null;
+            signer = null;
+            rsaJWK = null;
         }
     }
-
 
     @Override
     public String createToken(final HttpServletRequest request, final Map<String, Object> claims) {
+        if (!registered) {
+            throw new IllegalStateException("Service not initialized");
+        }
         HttpSession session = request.getSession(false);
         if (session == null) {
             throw new IllegalStateException("Cannot create jwt token for unauthenticated users");
@@ -92,23 +91,21 @@ public class NimbusJwtTokenServiceImpl implements JwtTokenService {
         if (cmsSessionContext == null) {
             throw new IllegalStateException("Cannot create jwt token for unauthenticated users");
         }
-
-
-        JSONObject jsonObject = new JSONObject(claims);
         final String tokenSubject = cmsSessionContext.getId();
-        // Prepare JWS object with simple string as payload
-        JWSObject jwsObject;
-        try {
-            jwsObject = new JWSObject(
-                    new JWSHeader.Builder(JWSAlgorithm.RS256).customParam("sub", tokenSubject).build(),
-                    new Payload(jsonObject));
 
-            // Compute the RSA signature
-            jwsObject.sign(signer);
+        final JWTClaimsSet.Builder claimsSetBuilder = new JWTClaimsSet.Builder();
+        claims.forEach(claimsSetBuilder::claim);
+        // ensure subject is not (accidentally) overwritten by custom claims by adding it last
+        claimsSetBuilder.subject(tokenSubject);
+
+        final SignedJWT signedJWT = new SignedJWT(new JWSHeader(JWS_ALGORITHM), claimsSetBuilder.build());
+
+        // sign
+        try {
+            signedJWT.sign(signer);
         } catch (JOSEException e) {
             throw new IllegalArgumentException("JWT could not be signed", e);
         }
-
 
         registry.register(tokenSubject, cmsSessionContext, session);
 
@@ -117,31 +114,35 @@ public class NimbusJwtTokenServiceImpl implements JwtTokenService {
         // mZq3ivwoAjqa1uUkSBKFIX7ATndFF5ivnt-m8uApHO4kfIFOrW7w2Ezmlg3Qd
         // maXlS9DhN0nUk_hGI3amEjkKd0BWYCB8vfUbUv0XGjQip78AI4z1PrFRNidm7
         // -jPDm5Iq0SZnjKjCNS5Q15fokXZc8u0A
-        return jwsObject.serialize();
+        return signedJWT.serialize();
     }
 
     @Override
     public AccessToken getAccessToken(final String jws) throws InvalidTokenException {
-
+        if (!registered) {
+            throw new IllegalStateException("Service not initialized");
+        }
         try {
-            final JWSObject jwsObject = JWSObject.parse(jws);
-            if (!jwsObject.verify(verifier)) {
+            final SignedJWT signedJWT = SignedJWT.parse(jws);
+            if (!signedJWT.verify(verifier)) {
                 throw new InvalidTokenException("Token is not valid");
             }
-            Object sub = jwsObject.getHeader().getCustomParam("sub");
-            if (sub == null || !(sub instanceof String)) {
-                throw new InvalidTokenException("Token did not contain a 'sub' which is mandatory");
+            final JWSHeader jwsHeader = signedJWT.getHeader();
+            // getting the JWTClaimsSet (re)parses the payload, so only do this once!
+            final JWTClaimsSet jwtClaimsSet = signedJWT.getJWTClaimsSet();
+            String tokenSubject = jwtClaimsSet.getSubject();
+            if (tokenSubject == null) {
+                throw new InvalidTokenException("Token did not contain mandatory subject ('sub')");
             }
 
-            CmsSessionContext cmsSessionContext = registry.getCmsSessionContext((String)sub);
+            CmsSessionContext cmsSessionContext = registry.getCmsSessionContext(tokenSubject);
             if (cmsSessionContext == null) {
                 throw new InvalidTokenException("Token is not bound to a CmsSessionContext (any more)");
             }
 
-            return new NimbusAccessTokenImpl(jwsObject, cmsSessionContext);
+            return new NimbusAccessTokenImpl(jwsHeader, jwtClaimsSet, cmsSessionContext);
         } catch (ParseException | JOSEException e) {
             throw new InvalidTokenException("Invalid token");
         }
-
     }
 }

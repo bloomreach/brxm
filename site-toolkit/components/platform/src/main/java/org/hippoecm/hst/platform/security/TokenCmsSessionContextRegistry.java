@@ -48,6 +48,10 @@ public class TokenCmsSessionContextRegistry {
         return tokenCmsSessionContextMap.getIfPresent(subject);
     }
 
+    void clearRegistry() {
+        tokenCmsSessionContextMap.invalidateAll();
+    }
+
     static class TokenCmsSessionContextMapCleanupListener implements HttpSessionActivationListener, HttpSessionBindingListener {
 
         private String subject;

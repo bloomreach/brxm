@@ -15,28 +15,28 @@
  */
 package org.hippoecm.hst.platform.security;
 
-import com.nimbusds.jose.JWSObject;
+import com.nimbusds.jose.JWSHeader;
+import com.nimbusds.jwt.JWTClaimsSet;
 
 import org.hippoecm.hst.container.security.AccessToken;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 
-import net.minidev.json.JSONObject;
-
 public class NimbusAccessTokenImpl implements AccessToken {
 
-    private final JWSObject jwsObject;
+    private final JWSHeader jwsHeader;
+    private final JWTClaimsSet jwtClaimsSet;
     private CmsSessionContext cmsSessionContext;
 
 
-    public NimbusAccessTokenImpl(final JWSObject jwsObject, final CmsSessionContext cmsSessionContext) {
-
-        this.jwsObject = jwsObject;
+    public NimbusAccessTokenImpl(final JWSHeader jwsHeader, final JWTClaimsSet jwtClaimsSet, final CmsSessionContext cmsSessionContext) {
+        this.jwsHeader = jwsHeader;
+        this.jwtClaimsSet = jwtClaimsSet;
         this.cmsSessionContext = cmsSessionContext;
     }
 
     @Override
     public String getSubject() {
-        return (String) jwsObject.getHeader().getCustomParam("sub");
+        return jwtClaimsSet.getSubject();
     }
 
     @Override
@@ -45,13 +45,12 @@ public class NimbusAccessTokenImpl implements AccessToken {
     }
 
     public String getClaim(final String claimName) {
-        JSONObject jsonObject = jwsObject.getPayload().toJSONObject();
-        final Object claim = jsonObject.get(claimName);
+        final Object claim = jwtClaimsSet.getClaim(claimName);
         return claim == null ? null : claim.toString();
     }
 
     public String getHeader(final String headerName) {
-        Object header  = jwsObject.getHeader().getCustomParam(headerName);
+        Object header  = jwsHeader.getCustomParam(headerName);
         return header == null ? null : header.toString();
     }
 }
