@@ -14,25 +14,18 @@
  * limitations under the License.
  */
 
+/// <reference path="./cms.d.ts" />
 import { Typed } from 'emittery';
 import { Events } from './events';
 
 const GLOBAL_WINDOW = typeof window === 'undefined' ? undefined : window;
 
-/**
- * Channel Manager SPA window.
- */
-export interface CmsWindow extends Window {
-  SPA?: SpaApi;
-}
-
-interface SpaApi {
-  init(api: CmsApi): void;
-  renderComponent(id: string, properties: object): void;
-}
-
-interface CmsApi {
-  sync(): void;
+export interface CmsOptions {
+  /**
+   * The window reference for the CMS integration.
+   * By default the global window object will be used.
+   */
+  window?: Window;
 }
 
 /**
@@ -41,10 +34,9 @@ interface CmsApi {
 export interface Cms {
   /**
    * Initializes integration with the CMS.
-   * @param window The window reference for the CMS integration.
-   * By default the global window object will be used.
+   * @param options The CMS integration options.
    */
-  initialize(window?: CmsWindow): void;
+  initialize(options: CmsOptions): void;
 }
 
 export class Cms implements Cms {
@@ -69,7 +61,7 @@ export class Cms implements Cms {
     };
   }
 
-  initialize(window: CmsWindow | undefined = GLOBAL_WINDOW) {
+  initialize({ window = GLOBAL_WINDOW }) {
     if (this.api || !window || window.SPA) {
       return;
     }

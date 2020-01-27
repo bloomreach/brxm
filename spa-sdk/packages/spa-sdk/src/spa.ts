@@ -15,7 +15,7 @@
  */
 
 import { Typed } from 'emittery';
-import { Cms } from './cms';
+import { Cms, CmsOptions } from './cms';
 import { Factory, PageModel, Page, Visitor } from './page';
 import { Events, CmsUpdateEvent } from './events';
 import { HttpClient, HttpRequest } from './http';
@@ -39,7 +39,7 @@ export interface UrlOptions {
 /**
  * Configuration of the SPA SDK.
  */
-export interface Configuration {
+export interface Configuration extends CmsOptions {
   /**
    * HTTP client that will be used to fetch the page model.
    */
@@ -59,12 +59,6 @@ export interface Configuration {
    * Current visitor.
    */
   visitor?: Omit<Visitor, 'new'>;
-
-  /**
-   * The window reference for the CMS integration.
-   * By default the global window object will be used.
-   */
-  window?: Window;
 }
 
 /**
@@ -142,7 +136,7 @@ export class Spa {
       ? this.config.options.preview
       : this.config.options.live;
     this.urlBuilder.initialize(options);
-    this.cms.initialize(this.config.window);
+    this.cms.initialize(this.config);
 
     const url = this.urlBuilder.getApiUrl(this.config.request.path);
     this.page = this.pageFactory.create(model || await this.fetchPageModel(url));

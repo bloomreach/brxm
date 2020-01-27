@@ -15,36 +15,36 @@
  */
 
 import { Typed } from 'emittery';
-import { CmsWindow, Cms } from './cms';
+import { Cms } from './cms';
 import { Events } from './events';
 
 describe('Cms', () => {
   let cms: Cms;
   let eventBus: Typed<Events>;
-  let window: CmsWindow;
+  let window: Window;
 
   beforeEach(() => {
     eventBus = new Typed<Events>();
-    window = {} as CmsWindow;
+    window = {} as Window;
 
     cms = new Cms(eventBus);
   });
 
   describe('initialize', () => {
     it('should not fail if there is no window object', () => {
-      expect(() => cms.initialize()).not.toThrow();
+      expect(() => cms.initialize({})).not.toThrow();
     });
 
     it('should not initialize an SPA object if there is already one', () => {
       const spa: any = {};
-      const window = { SPA: spa } as CmsWindow;
-      cms.initialize(window);
+      const window = { SPA: spa } as Window;
+      cms.initialize({ window });
 
       expect(window.SPA).toBe(spa);
     });
 
     it('should initialize an SPA object', () => {
-      cms.initialize(window);
+      cms.initialize({ window });
 
       expect(window.SPA).toBeDefined();
       expect(window.SPA).toHaveProperty('init');
@@ -55,7 +55,7 @@ describe('Cms', () => {
   describe('onInit', () => {
     it('should process postponed events on initialization', async () => {
       const sync = jest.fn();
-      cms.initialize(window);
+      cms.initialize({ window });
       await eventBus.emit('page.ready', {});
 
       expect.assertions(2);
@@ -67,7 +67,7 @@ describe('Cms', () => {
 
   describe('onRenderComponent', () => {
     it('should emit cms.update on render component call', () => {
-      cms.initialize(window);
+      cms.initialize({ window });
       spyOn(eventBus, 'emit');
       window.SPA!.renderComponent('some-id', { property: 'value' });
 
@@ -81,7 +81,7 @@ describe('Cms', () => {
   describe('sync', () => {
     it('should call sync on page.ready event', async () => {
       const sync = jest.fn();
-      cms.initialize(window);
+      cms.initialize({ window });
       window.SPA!.init({ sync });
       await eventBus.emit('page.ready', {});
 

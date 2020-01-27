@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,12 +26,11 @@ import {
   TYPE_CONTAINER_BOX,
 } from './index';
 import { PageModel, TYPE_LINK_RESOURCE, TYPE_LINK_EXTERNAL, TYPE_LINK_INTERNAL } from './page';
-import { CmsWindow } from './cms';
 
 describe('initialize', () => {
   let page: Page;
   const httpClient = jest.fn(async () => ({ data: model as unknown as PageModel }));
-  const window = {} as CmsWindow;
+  const window = {} as Window;
 
   beforeEach(async () => {
     httpClient.mockClear();
