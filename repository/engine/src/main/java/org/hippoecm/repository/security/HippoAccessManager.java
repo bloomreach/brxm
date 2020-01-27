@@ -1430,7 +1430,7 @@ public class HippoAccessManager implements AccessManager, AccessControlManager, 
                 return canRead((NodeId) itemId);
             } else {
                 // make sure parent of property is readable
-                return canRead(null, ((PropertyId)itemId).getParentId());
+                return canRead(((PropertyId)itemId).getParentId());
             }
         } else if (absPath != null) {
             return canRead(absPath);
