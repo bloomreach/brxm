@@ -264,23 +264,21 @@
   > .hippo-editor-field {
     border: 1px solid $editor-compound-field-border;
     border-radius: $editor-field-border-radius;
-    padding: 16px 8px;
+    padding: 8px;
 
     > .hippo-editor-field-title {
       color: $editor-compound-field-color;
-      cursor: pointer;
       font-weight: 600;
-      margin-bottom: 8px;
+      margin-bottom: 0;
     }
 
     > .hippo-editor-field-subfield {
-      padding-bottom: 4px;
-      padding-top: 8px;
-      transition:
-        max-height 300ms ease-out,
-        padding 300ms ease-out,
-        margin 300ms ease-out,
-        opacity 300ms ease-out;
+      padding-top: 0;
+
+      // add margin to titles inside a field
+      .hippo-editor-field-subfield-item .hippo-editor-field-title:not(.collapsed) {
+        margin: 0 0 6px 0;
+      }
 
       &:not(:last-child) {
         border-bottom: 1px solid $gray12;
@@ -291,6 +289,64 @@
       }
     }
   }
+}
+
+.hippo-editor-compound-field > .hippo-editor-field > .add-link {
+  margin-top: 7px;
+}
+
+.collapsible {
+  &.hippo-editor-field-title {
+    align-items: center;
+    display: inline-flex;
+    color: $editor-compound-field-color;
+    cursor: pointer;
+    font-weight: 600;
+    line-height: 20px;
+    padding-bottom: 4px;
+    padding-left: 2px;
+    padding-top: 4px;
+
+    > span {
+      padding-left: 4px;
+
+      &:first-of-type {
+        padding-left: 8px;
+      }
+    }
+  }
+
+  &.hippo-editor-field-subfield-item {
+    transition:
+      margin 500ms ease-out,
+      max-height 500ms ease-out,
+      opacity 500ms ease-out,
+      padding 500ms ease-out;
+  }
+}
+
+.hippo-editor-field-title.collapsed .expand-collapse-icon {
+  transform: rotate(-90deg);
+}
+
+.collapsed {
+  .hippo-editor-field-subfield,
+  .hippo-editor-field-subfield-item {
+    border: 0 !important;
+    margin: 0 !important;
+    max-height: 0 !important;
+    opacity: 0 !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+  }
+}
+
+.hippo-editor-field > .hippo-editor-field-subfield.collapsed > .hippo-editor-field-title.collapsed {
+  margin-bottom: 0;
+}
+
+.hippo-node-field-multiple > .hippo-editor-field > .hippo-editor-field-subfield > .hippo-editor-field-title.collapsed {
+  margin-bottom: 8px;
 }
 
 .hippo-editor-compound-field.collapsed > .hippo-editor-field {
@@ -338,8 +394,7 @@
   }
 
   .hippo-editor-field-title {
-    font-size: 14px;
-    margin-bottom: 4px;
+    margin-bottom: 0;
   }
 
   .hippo-editor-field-subfield-input {
