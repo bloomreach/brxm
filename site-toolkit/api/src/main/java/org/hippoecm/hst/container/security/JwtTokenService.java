@@ -46,7 +46,8 @@ public interface JwtTokenService {
      * @param jws the signed JWT token
      * @return An {@link AccessToken} object
      * @throws InvalidTokenException in case the JWT token is not bound to a valid {@link CmsSessionContext} (any more)
-     * @throws IllegalArgumentException in case the JWT token is malformed, has an invalid signature or some other exception
+     * @throws TokenException in case the jwt service is not initialized or some unexpected exception happened not being
+     *         catched and thrown as a InvalidTokenException
      */
     AccessToken getAccessToken(String jws) throws InvalidTokenException;
 }

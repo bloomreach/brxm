@@ -44,7 +44,9 @@ import org.hippoecm.hst.configuration.internal.ContextualizableMount;
 import org.hippoecm.hst.configuration.model.HstManager;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.container.security.InvalidTokenException;
+import org.hippoecm.hst.container.security.AccessToken;
+import org.hippoecm.hst.container.security.JwtTokenService;
+import org.hippoecm.hst.container.security.TokenException;
 import org.hippoecm.hst.core.ResourceLifecycleManagement;
 import org.hippoecm.hst.core.component.HstURLFactory;
 import org.hippoecm.hst.core.container.ContainerConstants;
@@ -71,8 +73,6 @@ import org.hippoecm.hst.diagnosis.Task;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.platform.model.RuntimeHostService;
-import org.hippoecm.hst.container.security.AccessToken;
-import org.hippoecm.hst.container.security.JwtTokenService;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
@@ -90,12 +90,12 @@ import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
 import static org.hippoecm.hst.configuration.channel.PreviewURLChannelInfo.PREVIEW_URL_PROPERTY_NAME;
-import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMSSESSIONCONTEXT_BINDING_PATH;
 import static org.hippoecm.hst.core.container.ContainerConstants.FORWARD_RECURSION_ERROR;
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN;
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_URL_ATTR;
 import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_PIPELINE_NAME;
+import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE;
 import static org.hippoecm.hst.util.HstRequestUtils.createURLWithExplicitSchemeForRequest;
 import static org.hippoecm.hst.util.HstRequestUtils.getClusterNodeAffinityId;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRemoteAddr;
@@ -596,7 +596,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 log.info("{} for '{}': '{}'" , e.getClass().getName(), containerRequest,  e.toString());
             }
             sendError(req, res, HttpServletResponse.SC_NOT_FOUND);
-        } catch (InvalidTokenException e) {
+        } catch (TokenException e) {
             if(log.isDebugEnabled()) {
                 log.info("{} for '{}':",e.getClass().getName(), containerRequest , e);
             } else {

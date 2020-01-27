@@ -15,9 +15,13 @@
  */
 package org.hippoecm.hst.container.security;
 
-public class InvalidTokenException extends TokenException {
+public class TokenException extends RuntimeException {
 
-    public InvalidTokenException(String message) {
+    public TokenException(String message) {
         super(message);
+    }
+
+    public TokenException(final String message, final Throwable cause) {
+        super(message, cause);
     }
 }

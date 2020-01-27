@@ -36,6 +36,7 @@ import com.nimbusds.jwt.SignedJWT;
 import org.hippoecm.hst.container.security.AccessToken;
 import org.hippoecm.hst.container.security.InvalidTokenException;
 import org.hippoecm.hst.container.security.JwtTokenService;
+import org.hippoecm.hst.container.security.TokenException;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 
@@ -120,7 +121,7 @@ public class NimbusJwtTokenServiceImpl implements JwtTokenService {
     @Override
     public AccessToken getAccessToken(final String jws) throws InvalidTokenException {
         if (!registered) {
-            throw new IllegalStateException("Service not initialized");
+            throw new TokenException("TokenService not initialized");
         }
         try {
             final SignedJWT signedJWT = SignedJWT.parse(jws);
@@ -141,8 +142,13 @@ public class NimbusJwtTokenServiceImpl implements JwtTokenService {
             }
 
             return new NimbusAccessTokenImpl(jwsHeader, jwtClaimsSet, cmsSessionContext);
-        } catch (ParseException | JOSEException e) {
+        } catch (InvalidTokenException e) {
+            throw e;
+        } catch (ParseException | IllegalStateException | JOSEException e) {
+            // signedJWT.verify throws IllegalStateException if jws in not in signed or verified state
             throw new InvalidTokenException("Invalid token");
+        } catch (Exception e) {
+            throw new TokenException("Token exception happened", e);
         }
     }
 }
