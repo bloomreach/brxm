@@ -18,6 +18,6 @@ import subpageContentComponent from './content/subpageContent.component';
 
 const channelSubpageModule = angular
   .module('hippo-cm.channel.subpage', [])
-  .component('subpageContent', subpageContentComponent)
+  .component('subpageContent', subpageContentComponent);
 
 export default channelSubpageModule;
