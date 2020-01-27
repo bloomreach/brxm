@@ -14,6 +14,23 @@
  * limitations under the License.
  */
 
+interface Url {
+  hash: string;
+  origin: string;
+  pathname: string;
+  search: string;
+  searchParams: URLSearchParams;
+  path: string;
+}
+
+export function buildUrl(url: Partial<Url>) {
+  const searchParams = url.searchParams?.toString() ?? '';
+  const search = url.search ?? `${searchParams && `?${searchParams}`}`;
+  const path = url.path ?? `${url.pathname ?? ''}${search}${url.hash ?? ''}`;
+
+  return `${url.origin ?? ''}${path}`;
+}
+
 function isMatchedOrigin(origin: string, baseOrigin: string) {
   return !baseOrigin || !origin || baseOrigin === origin;
 }
@@ -47,7 +64,7 @@ export function mergeSearchParams(params: URLSearchParams, ...rest: URLSearchPar
   return result;
 }
 
-export function parseUrl(url: string) {
+export function parseUrl(url: string): Url {
   // URL constructor requires either a valid URL or a base URL.
   // Since this function returns a pathname, we can safely pass a fake host to be able to resolve relative URLs.
   const parsedUrl = url ? new URL(url, 'http://example.com') : {} as URL;

@@ -14,7 +14,21 @@
  * limitations under the License.
  */
 
-import { isMatched, mergeSearchParams, parseUrl } from './utils';
+import { buildUrl, isMatched, mergeSearchParams, parseUrl } from './utils';
+
+describe('buildUrl', () => {
+  it.each`
+    source                    | result
+    ${{ path: '/' }}          | ${'/'}
+    ${{ pathname: '/path' }}  | ${'/path'}
+    ${{ origin: '//example.com', path: '/path' }}   | ${'//example.com/path'}
+    ${{ pathname: '/path', search: '?a=b' }}        | ${'/path?a=b'}
+    ${{ pathname: '/path', hash: '#hash' }}         | ${'/path#hash'}
+    ${{ searchParams: new URLSearchParams('a=b') }} | ${'?a=b'}
+  `('should build "$source" into "$result"', ({ source, result }) => {
+    expect(buildUrl(source)).toEqual(result);
+  });
+});
 
 describe('isMatched', () => {
   it.each`

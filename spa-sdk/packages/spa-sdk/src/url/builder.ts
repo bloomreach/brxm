@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { mergeSearchParams, parseUrl } from './utils';
+import { buildUrl, mergeSearchParams, parseUrl } from './utils';
 
 const DEFAULT_API_BASE_URL = '/resourceapi';
 const DEFAULT_SPA_BASE_URL = '';
@@ -85,14 +85,16 @@ export class UrlBuilderImpl {
     }
 
     const route = pathname.substring(this.spaBaseUrl.pathname.length);
-    const query = mergeSearchParams(searchParams, this.apiBaseUrl.searchParams).toString();
 
-    return `${this.apiBaseUrl.origin}${this.apiBaseUrl.pathname}${route}${query && `?${query}`}`;
+    return buildUrl({
+      origin: this.apiBaseUrl.origin,
+      pathname: `${this.apiBaseUrl.pathname}${route}`,
+      searchParams: mergeSearchParams(searchParams, this.apiBaseUrl.searchParams),
+    });
   }
 
   getSpaUrl(link: string) {
     const { hash, pathname, searchParams } = parseUrl(link);
-    const query = mergeSearchParams(searchParams, this.spaBaseUrl.searchParams).toString();
     let route = pathname.startsWith(this.cmsBaseUrl.pathname)
       ? pathname.substring(this.cmsBaseUrl.pathname.length)
       : pathname;
@@ -101,6 +103,11 @@ export class UrlBuilderImpl {
       route = `/${route}`;
     }
 
-    return `${this.spaBaseUrl.origin}${this.spaBaseUrl.pathname}${route}${query && `?${query}`}${hash || this.spaBaseUrl.hash}`;
+    return buildUrl({
+      origin: this.spaBaseUrl.origin,
+      pathname: `${this.spaBaseUrl.pathname}${route}`,
+      searchParams: mergeSearchParams(searchParams, this.spaBaseUrl.searchParams),
+      hash: hash || this.spaBaseUrl.hash,
+    });
   }
 }
