@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.editor.plugins.field;
 
 import java.util.Iterator;
-import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -34,7 +33,6 @@ import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.editor.TemplateEngineException;
 import org.hippoecm.frontend.editor.editor.EditorForm;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
-import org.hippoecm.frontend.editor.plugins.fieldhint.FieldHint;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.ChildNodeProvider;
 import org.hippoecm.frontend.model.JcrItemModel;
@@ -49,7 +47,6 @@ import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.IValidationResult;
-import org.hippoecm.frontend.validation.ValidatorUtils;
 import org.hippoecm.frontend.validation.ViolationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,29 +55,22 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
 
     private static final Logger log = LoggerFactory.getLogger(NodeFieldPlugin.class);
 
-    public NodeFieldPlugin(IPluginContext context, IPluginConfig config) {
+    private final FlagList collapsedItems = new FlagList();
+
+    public NodeFieldPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        final HippoIcon expandCollapseIcon = HippoIcon.fromSprite("expand-collapse-icon", Icon.CHEVRON_DOWN);
-        expandCollapseIcon.addCssClass("expand-collapse-icon");
-        expandCollapseIcon.setVisible(false);
-        add(expandCollapseIcon);
-
-        // use caption for backwards compatibility; i18n should use field name
-        add(new Label("name", helper.getCaptionModel(this)));
+        final IModel<String> caption = helper.getCaptionModel(this);
+        final IModel<String> hint = helper.getHintModel(this);
+        final FieldTitle fieldTitle = new FieldTitle("field-title", caption, hint, helper.isRequired());
+        fieldTitle.setVisible(!helper.isCompoundField());
+        add(fieldTitle);
 
         add(createNrItemsLabel());
-
-        final Label required = new Label("required", "*");
-        add(required);
-
-        add(new FieldHint("hint-panel", helper.getHintModel(this)));
         add(createAddLink());
 
         final IFieldDescriptor field = getFieldHelper().getField();
         if (field != null) {
-            required.setVisible(ValidatorUtils.hasRequiredValidator(field.getValidators()));
-
             final String name = cssClassName(field.getTypeDescriptor().getName());
             add(ClassAttribute.append("hippo-node-field-name-" + name));
 
@@ -99,13 +89,8 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
                 add(ClassAttribute.append("hippo-node-field-protected"));
             }
 
-            final List<String> superTypes = field.getTypeDescriptor().getSuperTypes();
-            if (superTypes.contains("hippo:compound")) {
+            if (helper.isCompoundField()) {
                 add(ClassAttribute.append("hippo-editor-compound-field"));
-
-                final String selector = String.format("#%s.hippo-editor-compound-field", getMarkupId());
-                add(new CollapsibleFieldBehavior(selector));
-                expandCollapseIcon.setVisible(true);
             }
         }
     }
@@ -118,12 +103,12 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
     }
 
     @Override
-    protected AbstractProvider<Node, JcrNodeModel> newProvider(IFieldDescriptor descriptor, ITypeDescriptor type,
-                                                               IModel<Node> nodeModel) {
+    protected AbstractProvider<Node, JcrNodeModel> newProvider(final IFieldDescriptor descriptor, final ITypeDescriptor type,
+                                                               final IModel<Node> nodeModel) {
         try {
-            JcrNodeModel prototype = (JcrNodeModel) getTemplateEngine().getPrototype(type);
+            final JcrNodeModel prototype = (JcrNodeModel) getTemplateEngine().getPrototype(type);
             return new ChildNodeProvider(descriptor, prototype, new JcrItemModel<>(nodeModel.getObject()));
-        } catch (TemplateEngineException ex) {
+        } catch (final TemplateEngineException ex) {
             log.warn("Could not find prototype", ex);
             return null;
         }
@@ -158,8 +143,8 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
     }
 
     @Override
-    public void onEvent(Iterator events) {
-        IFieldDescriptor field = getFieldHelper().getField();
+    public void onEvent(final Iterator events) {
+        final IFieldDescriptor field = getFieldHelper().getField();
 
         // filter events
         if (field == null) {
@@ -171,8 +156,8 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
         }
 
         while (events.hasNext()) {
-            JcrEvent jcrEvent = (JcrEvent) events.next();
-            Event event = jcrEvent.getEvent();
+            final JcrEvent jcrEvent = (JcrEvent) events.next();
+            final Event event = jcrEvent.getEvent();
             try {
                 switch (event.getType()) {
                     case 0:
@@ -181,7 +166,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
                     case Event.NODE_ADDED:
                     case Event.NODE_MOVED:
                     case Event.NODE_REMOVED:
-                        String path = event.getPath();
+                        final String path = event.getPath();
                         String name = path.substring(path.lastIndexOf('/') + 1);
                         if (name.indexOf('[') > 0) {
                             name = name.substring(0, name.indexOf('['));
@@ -191,32 +176,47 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
                             return;
                         }
                 }
-            } catch (RepositoryException ex) {
+            } catch (final RepositoryException ex) {
                 log.error("Error filtering event", ex);
             }
         }
     }
 
     @Override
-    protected void populateViewItem(Item<IRenderService> item, final JcrNodeModel model) {
-        item.add(new FieldContainer("fieldContainer", item));
+    protected void populateViewItem(final Item<IRenderService> item, final JcrNodeModel model) {
+        if (helper.isCompoundField()) {
+            item.add(new CollapsibleFieldContainer("fieldContainer", item, this));
+        } else {
+            item.add(new FieldContainer("fieldContainer", item));
+        }
     }
 
     @Override
-    protected void populateEditItem(Item<IRenderService> item, final JcrNodeModel model) {
-        item.add(new EditableNodeFieldContainer("fieldContainer", item, model, this));
+    protected void populateEditItem(final Item<IRenderService> item, final JcrNodeModel model) {
+        if (helper.isCompoundField()) {
+            final boolean isCollapsed = collapsedItems.get(item.getIndex());
+            item.add(new EditableCollapsibleFieldContainer("fieldContainer", item, model, this, isCollapsed) {
+                @Override
+                protected void onCollapse(final boolean isCollapsed) {
+                    collapsedItems.set(item.getIndex(), isCollapsed);
+                }
+            });
+        } else {
+            item.add(new EditableNodeFieldContainer("fieldContainer", item, model, this));
+        }
+
     }
 
     @Override
-    protected void populateCompareItem(Item<IRenderService> item, final JcrNodeModel newModel, final JcrNodeModel oldModel) {
+    protected void populateCompareItem(final Item<IRenderService> item, final JcrNodeModel newModel, final JcrNodeModel oldModel) {
         populateViewItem(item, newModel);
     }
 
     protected Component createAddLink() {
         if (canAddItem()) {
-            final AjaxLink link = new AjaxLink("add") {
+            final AjaxLink<Void> link = new AjaxLink<Void>("add") {
                 @Override
-                public void onClick(AjaxRequestTarget target) {
+                public void onClick(final AjaxRequestTarget target) {
                     target.focusComponent(this);
                     NodeFieldPlugin.this.onAddItem(target);
                 }
@@ -232,6 +232,26 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
         } else {
             return new Label("add").setVisible(false);
         }
+    }
+
+    protected void moveCollapsedItemToTop(final int index) {
+        collapsedItems.moveTo(index, 0);
+    }
+
+    protected void moveCollapsedItemUp(final int index) {
+        collapsedItems.moveUp(index);
+    }
+
+    protected void moveCollapsedItemDown(final int index) {
+        collapsedItems.moveDown(index);
+    }
+
+    protected void moveCollapsedItemToBottom(final int index) {
+        collapsedItems.moveTo(index, provider.size());
+    }
+
+    protected void removeCollapsedItem(final int index) {
+        collapsedItems.remove(index);
     }
 
     @Override
@@ -258,7 +278,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
         validateModelObjects();
     }
 
-    protected AbstractProvider getProvider() {
+    protected AbstractProvider<Node, JcrNodeModel> getProvider() {
         return provider;
     }
 
