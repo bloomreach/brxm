@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ public class SortHelper implements Serializable {
 
     private IContentBlockComparator contentBlockComparator;
 
-    public void sort(List<IFieldDescriptor> values, IPluginConfig config) {
+    public void sort(final List<IFieldDescriptor> values, final IPluginConfig config) {
         if (values == null) {
             return;
         }
@@ -51,19 +51,19 @@ public class SortHelper implements Serializable {
         } else {
             // load class dynamically and instantiate
             try {
-                Class clazz = Class.forName(comparatorClass);
-                Object instance = clazz.newInstance();
+                final Class<?> clazz = Class.forName(comparatorClass);
+                final Object instance = clazz.newInstance();
                 if (instance instanceof IContentBlockComparator) {
                     contentBlockComparator = (IContentBlockComparator) instance;
                 } else {
                     log.error("Configured class {} does not implement IContentBlockComparator, using NO comparator",
                             comparatorClass);
                 }
-            } catch (ClassNotFoundException e) {
+            } catch (final ClassNotFoundException e) {
                 log.error("ClassNotFoundException for configured class {}, using NO comparator", comparatorClass);
-            } catch (InstantiationException e) {
+            } catch (final InstantiationException e) {
                 log.error("InstantiationException for configured class {}, using NO comparator", comparatorClass);
-            } catch (IllegalAccessException e) {
+            } catch (final IllegalAccessException e) {
                 log.error("IllegalAccessException for configured class {}, using NO comparator", comparatorClass);
             }
         }

@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+  ~ Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -17,10 +17,8 @@
   <wicket:panel>
     <wicket:child/>
     <div class="content-block-title">
-      <span wicket:id="itemTitle">[ item title ]</span>
+      <wicket:container wicket:id="itemTitle"/>
     </div>
-    <div class="hippo-editor-field-subfield contentpicker-blocks">
-      <div wicket:id="item"></div>
-    </div>
+    <div class="hippo-editor-field-subfield contentpicker-blocks" wicket:id="item"></div>
   </wicket:panel>
 </html>

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
  */
 package org.onehippo.forge.contentblocks;
 
-import org.apache.wicket.MarkupContainer;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
 import org.apache.wicket.markup.html.WebMarkupContainer;
@@ -33,23 +32,25 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
 
     public ContentBlocksEditableFieldContainer(final String id, final Item<IRenderService> item,
                                                final JcrNodeModel model, final ContentBlocksFieldPlugin plugin,
-                                               final String blockName) {
-        super(id, item, blockName);
+                                               final String blockName, final boolean isCollapsed) {
+        super(id, item, blockName, isCollapsed);
         add(getControls(plugin, model, item));
     }
 
-    private WebMarkupContainer getControls(final ContentBlocksFieldPlugin plugin, final JcrNodeModel model,
-                                           final Item<IRenderService> item) {
-        WebMarkupContainer controls = new WebMarkupContainer("controls");
+    private static WebMarkupContainer getControls(final ContentBlocksFieldPlugin plugin, final JcrNodeModel model,
+                                                  final Item<IRenderService> item) {
+        final WebMarkupContainer controls = new WebMarkupContainer("controls");
         controls.setVisible(plugin.canRemoveItem() || plugin.canReorderItems());
 
+        final int itemIndex = item.getIndex();
+
         // remove button
-        MarkupContainer remove = new AjaxLink("remove") {
+        final AjaxLink<Void> remove = new AjaxLink<Void>("remove") {
             @Override
-            public void onClick(AjaxRequestTarget target) {
-                IDialogService dialogService = plugin.getPluginContext()
+            public void onClick(final AjaxRequestTarget target) {
+                final IDialogService dialogService = plugin.getPluginContext()
                         .getService(IDialogService.class.getName(), IDialogService.class);
-                dialogService.show(new ContentBlocksEditableFieldContainer.DeleteItemDialog(model, plugin));
+                dialogService.show(new ContentBlocksEditableFieldContainer.DeleteItemDialog(model, plugin, itemIndex));
             }
         };
         remove.setVisible(plugin.canRemoveItem());
@@ -58,13 +59,12 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
         final HippoIcon removeIcon = HippoIcon.fromSprite("remove-icon", Icon.TIMES);
         remove.add(removeIcon);
 
-        final int itemIndex = item.getIndex();
-
         // up to top arrow button
-        MarkupContainer upToTopLink = new AjaxLink("upToTop") {
+        final AjaxLink<Void> upToTopLink = new AjaxLink<Void>("upToTop") {
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 plugin.onMoveItemToTop(model);
+                plugin.moveCollapsedItemToTop(itemIndex);
                 plugin.redraw();
             }
         };
@@ -76,10 +76,11 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
         upToTopLink.add(upToTopIcon);
 
         // up arrow button
-        MarkupContainer upLink = new AjaxLink("up") {
+        final AjaxLink<Void> upLink = new AjaxLink<Void>("up") {
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 plugin.onMoveItemUp(model, target);
+                plugin.moveCollapsedItemUp(itemIndex);
                 plugin.redraw();
             }
         };
@@ -91,17 +92,18 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
         upLink.add(upIcon);
 
         // down arrow button
-        MarkupContainer downLink = new AjaxLink("down") {
+        final AjaxLink<Void> downLink = new AjaxLink<Void>("down") {
             @Override
-            public void onClick(AjaxRequestTarget target) {
-                IFieldDescriptor field = plugin.getFieldHelper().getField();
-                String name = field.getPath();
-                JcrNodeModel parent = model.getParentModel();
+            public void onClick(final AjaxRequestTarget target) {
+                final IFieldDescriptor field = plugin.getFieldHelper().getField();
+                final String name = field.getPath();
+                final JcrNodeModel parent = model.getParentModel();
                 if (parent != null) {
-                    String nextName = name + '[' + (itemIndex + 2) + ']';
-                    String nextPath = parent.getItemModel().getPath() + '/' + nextName;
-                    JcrNodeModel nextModel = new JcrNodeModel(nextPath);
+                    final String nextName = name + '[' + (itemIndex + 2) + ']';
+                    final String nextPath = parent.getItemModel().getPath() + '/' + nextName;
+                    final JcrNodeModel nextModel = new JcrNodeModel(nextPath);
                     plugin.onMoveItemUp(nextModel, target);
+                    plugin.moveCollapsedItemDown(itemIndex);
                     plugin.redraw();
                 }
             }
@@ -115,10 +117,11 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
         downLink.add(downIcon);
 
         // down to bottom arrow button
-        MarkupContainer downToBottomLink = new AjaxLink("downToBottom") {
+        final AjaxLink<Void> downToBottomLink = new AjaxLink<Void>("downToBottom") {
             @Override
-            public void onClick(AjaxRequestTarget target) {
+            public void onClick(final AjaxRequestTarget target) {
                 plugin.onMoveItemToBottom(model);
+                plugin.moveCollapsedItemToBottom(itemIndex);
                 plugin.redraw();
             }
         };
@@ -137,10 +140,12 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
 
         private final JcrNodeModel model;
         private final ContentBlocksFieldPlugin plugin;
+        private final int itemIndex;
 
-        DeleteItemDialog(JcrNodeModel model, final ContentBlocksFieldPlugin plugin) {
+        DeleteItemDialog(final JcrNodeModel model, final ContentBlocksFieldPlugin plugin, final int itemIndex) {
             this.model = model;
             this.plugin = plugin;
+            this.itemIndex = itemIndex;
 
             setFocusOnCancel();
             setSize(DialogConstants.SMALL);
@@ -150,6 +155,7 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
         @Override
         protected void onOk() {
             plugin.onRemoveItem(model, getRequestCycle().find(AjaxRequestTarget.class));
+            plugin.removeCollapsedItem(itemIndex);
             plugin.redraw();
         }
     }
