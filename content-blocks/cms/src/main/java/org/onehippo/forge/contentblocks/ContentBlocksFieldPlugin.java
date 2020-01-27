@@ -55,10 +55,10 @@ import org.hippoecm.frontend.editor.compare.IComparer;
 import org.hippoecm.frontend.editor.editor.EditorForm;
 import org.hippoecm.frontend.editor.editor.EditorPlugin;
 import org.hippoecm.frontend.editor.plugins.field.AbstractFieldPlugin;
-import org.hippoecm.frontend.editor.plugins.field.CollapsedItems;
 import org.hippoecm.frontend.editor.plugins.field.CollapsibleFieldTitle;
 import org.hippoecm.frontend.editor.plugins.field.FieldPluginHelper;
 import org.hippoecm.frontend.editor.plugins.field.FieldTitle;
+import org.hippoecm.frontend.editor.plugins.field.FlagList;
 import org.hippoecm.frontend.i18n.types.TypeTranslator;
 import org.hippoecm.frontend.model.AbstractProvider;
 import org.hippoecm.frontend.model.ChildNodeProvider;
@@ -116,7 +116,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
     private final String providerCompoundType;
     private final boolean showCompoundNames;
     private final int maxItems;
-    private final CollapsedItems collapsedItems = new CollapsedItems();
+    private final FlagList collapsedItems = new FlagList();
 
     private Link<CharSequence> focusMarker;
 
@@ -133,7 +133,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         providerCompoundType = config.getString(PROVIDER_COMPOUND);
         if (configuredCompoundList == null && providerCompoundType == null) {
             log.error("Missing content picker configuration. Please make sure that the plugin configuration has " +
-                      "either '{}' or '{}' set.", COMPOUND_LIST, PROVIDER_COMPOUND);
+                    "either '{}' or '{}' set.", COMPOUND_LIST, PROVIDER_COMPOUND);
         }
 
         final IPluginConfig parameters = new JavaPluginConfig(config.getPluginConfig(CLUSTER_OPTIONS));
@@ -164,7 +164,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
                 break;
             default:
                 log.error("Invalid content picker type '{}'. Please make sure that property 'contentPickerType' in " +
-                        "plugin config is either '{}' or '{}'. Falling back to '{}' type.",
+                                "plugin config is either '{}' or '{}'. Falling back to '{}' type.",
                         type, LINKS, DROPDOWN, LINKS);
                 controls.add(new AddBlockWithLinks(CONTENTPICKER_ADD, this));
                 break;
@@ -369,7 +369,7 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
 
     @Override
     protected void populateEditItem(final Item<IRenderService> item, final JcrNodeModel model) {
-        final boolean isCollapsed = collapsedItems.contains(item.getIndex());
+        final boolean isCollapsed = collapsedItems.get(item.getIndex());
         item.add(new ContentBlocksEditableFieldContainer(FIELD_CONTAINER_ID,
                 item, model, this, getBlockName(model), isCollapsed) {
             @Override
@@ -494,12 +494,24 @@ public class ContentBlocksFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeM
         }
     }
 
-    public void moveCollapsedItem(final int from, final int to) {
-        collapsedItems.update(from, to, provider.size());
+    protected void moveCollapsedItemToTop(final int index) {
+        collapsedItems.moveTo(index, 0);
     }
 
-    public void clearCollapsedItem(final int itemIndex) {
-        collapsedItems.clear(itemIndex, provider.size() + 1);
+    protected void moveCollapsedItemUp(final int index) {
+        collapsedItems.moveUp(index);
+    }
+
+    protected void moveCollapsedItemDown(final int index) {
+        collapsedItems.moveDown(index);
+    }
+
+    protected void moveCollapsedItemToBottom(final int index) {
+        collapsedItems.moveTo(index, provider.size());
+    }
+
+    protected void removeCollapsedItem(final int index) {
+        collapsedItems.remove(index);
     }
 
     private static class FocusLink extends Link<CharSequence> {

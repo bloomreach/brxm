@@ -64,7 +64,7 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 plugin.onMoveItemToTop(model);
-                plugin.moveCollapsedItem(itemIndex, 0);
+                plugin.moveCollapsedItemToTop(itemIndex);
                 plugin.redraw();
             }
         };
@@ -80,7 +80,7 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 plugin.onMoveItemUp(model, target);
-                plugin.moveCollapsedItem(itemIndex, itemIndex - 1);
+                plugin.moveCollapsedItemUp(itemIndex);
                 plugin.redraw();
             }
         };
@@ -103,7 +103,7 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
                     final String nextPath = parent.getItemModel().getPath() + '/' + nextName;
                     final JcrNodeModel nextModel = new JcrNodeModel(nextPath);
                     plugin.onMoveItemUp(nextModel, target);
-                    plugin.moveCollapsedItem(itemIndex, itemIndex +  1);
+                    plugin.moveCollapsedItemDown(itemIndex);
                     plugin.redraw();
                 }
             }
@@ -121,7 +121,7 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
             @Override
             public void onClick(final AjaxRequestTarget target) {
                 plugin.onMoveItemToBottom(model);
-                plugin.moveCollapsedItem(itemIndex, -1);
+                plugin.moveCollapsedItemToBottom(itemIndex);
                 plugin.redraw();
             }
         };
@@ -155,7 +155,7 @@ public class ContentBlocksEditableFieldContainer extends ContentBlocksFieldConta
         @Override
         protected void onOk() {
             plugin.onRemoveItem(model, getRequestCycle().find(AjaxRequestTarget.class));
-            plugin.clearCollapsedItem(itemIndex);
+            plugin.removeCollapsedItem(itemIndex);
             plugin.redraw();
         }
     }
