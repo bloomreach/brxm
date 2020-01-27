@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -22,10 +22,10 @@
     <version>14.1.0-SPA_impr-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Site Toolkit Page Model API Version 0.9</name>
-  <description>Hippo Site Toolkit Page Model API Version 0.9</description>
+  <name>Hippo Site Toolkit Page Model API Common</name>
+  <description>Hippo Site Toolkit Page Model API Common</description>
   <groupId>org.onehippo.cms7.hst.pagemodelapi</groupId>
-  <artifactId>hst-pagemodelapi-v09</artifactId>
+  <artifactId>hst-pagemodelapi-common</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>
@@ -38,9 +38,9 @@
     </dependency>
 
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-web</artifactId>
-      <scope>provided</scope>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson2-databind.version}</version>
     </dependency>
 
     <dependency>
@@ -63,45 +63,11 @@
       <scope>provided</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.components</groupId>
-      <artifactId>hst-core</artifactId>
-      <version>${project.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.components</groupId>
-      <artifactId>hst-rewriter</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.pagemodelapi</groupId>
-      <artifactId>hst-pagemodelapi-common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
     <!-- repository api for cms security valve -->
     <dependency>
       <groupId>org.onehippo.cms7</groupId>
       <artifactId>hippo-repository-api</artifactId>
       <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>io.swagger</groupId>
-      <artifactId>swagger-core</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>io.swagger</groupId>
-      <artifactId>swagger-jaxrs</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.ws.rs</groupId>
-      <artifactId>javax.ws.rs-api</artifactId>
     </dependency>
 
     <!-- Test dependencies -->
@@ -111,44 +77,12 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>org.easymock</groupId>
-      <artifactId>easymock</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-mock</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-
     <!-- Hst test dependencies -->
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-test</artifactId>
       <version>${project.version}</version>
       <type>pom</type>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context-support</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.components</groupId>
-      <artifactId>hst-platform</artifactId>
-      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
 

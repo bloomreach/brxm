@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.core.beans.serialization;
+package org.hippoecm.hst.pagemodelapi.common.content.beans;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,7 +21,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hippoecm.hst.content.annotations.PageModelIgnore;
 import org.hippoecm.hst.content.annotations.PageModelIgnoreType;
 import org.hippoecm.hst.content.annotations.PageModelProperty;
-import org.hippoecm.hst.content.beans.PageModelObjectMapperFactory;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;

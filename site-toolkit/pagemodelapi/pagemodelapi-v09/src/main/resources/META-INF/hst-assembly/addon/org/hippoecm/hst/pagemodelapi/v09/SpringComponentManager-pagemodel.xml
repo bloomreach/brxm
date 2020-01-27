@@ -27,7 +27,7 @@
     </property>
   </bean>
 
-  <bean id="pageModelObjectMapperFactory" class="org.hippoecm.hst.content.beans.PageModelObjectMapperFactory">
+  <bean id="pageModelObjectMapperFactory" class="org.hippoecm.hst.pagemodelapi.common.content.beans.PageModelObjectMapperFactory">
   </bean>
 
   <bean id="org.hippoecm.hst.pagemodelapi.v09.content.rewriter.HtmlContentRewriter"
