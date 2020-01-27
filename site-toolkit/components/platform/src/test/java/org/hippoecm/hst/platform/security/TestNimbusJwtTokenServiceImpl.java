@@ -42,42 +42,50 @@ public class TestNimbusJwtTokenServiceImpl {
     public void testCreateAndVerifySignedToken() {
         NimbusJwtTokenServiceImpl tokenService = new NimbusJwtTokenServiceImpl();
         tokenService.init();
-        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
-        final HttpSession session = new MockHttpSession();
-        expect(request.getSession(eq(false))).andStubReturn(session);
-        CmsSessionContext cmsSessionContext = createNiceMock(CmsSessionContext.class);
-        session.setAttribute(CmsSessionContext.SESSION_KEY, cmsSessionContext);
-        expect(cmsSessionContext.getId()).andReturn("subject");
-        replay(request, cmsSessionContext);
-        final String jwsToken = tokenService.createToken(request, Collections.emptyMap());
-        final AccessToken accessToken = tokenService.getAccessToken(jwsToken);
-        assertEquals("subject", accessToken.getSubject());
-        assertNotNull(tokenService.registry.getCmsSessionContext("subject"));
+        try {
+            HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+            final HttpSession session = new MockHttpSession();
+            expect(request.getSession(eq(false))).andStubReturn(session);
+            CmsSessionContext cmsSessionContext = createNiceMock(CmsSessionContext.class);
+            session.setAttribute(CmsSessionContext.SESSION_KEY, cmsSessionContext);
+            expect(cmsSessionContext.getId()).andReturn("subject");
+            replay(request, cmsSessionContext);
+            final String jwsToken = tokenService.createToken(request, Collections.emptyMap());
+            final AccessToken accessToken = tokenService.getAccessToken(jwsToken);
+            assertEquals("subject", accessToken.getSubject());
+            assertNotNull(tokenService.registry.getCmsSessionContext("subject"));
+        } finally {
+            tokenService.destroy();
+        }
     }
 
     @Test
     public void testTokenWithCustomClaims() {
         NimbusJwtTokenServiceImpl tokenService = new NimbusJwtTokenServiceImpl();
         tokenService.init();
-        HttpServletRequest request = createNiceMock(HttpServletRequest.class);
-        final HttpSession session = new MockHttpSession();
-        expect(request.getSession(eq(false))).andStubReturn(session);
-        CmsSessionContext cmsSessionContext = createNiceMock(CmsSessionContext.class);
-        session.setAttribute(CmsSessionContext.SESSION_KEY, cmsSessionContext);
-        expect(cmsSessionContext.getId()).andReturn("subject");
-        replay(request, cmsSessionContext);
-        HashMap<String, Object> claims = new HashMap<>();
-        claims.put("foo", "bar");
-        claims.put("bar", "foo");
-        // {"sub": "random"} claim will be ignored/overwritten as it is predefined and used internally
-        claims.put("sub", "random");
-        final String jwsToken = tokenService.createToken(request,claims);
-        final AccessToken accessToken = tokenService.getAccessToken(jwsToken);
-        assertEquals("subject", accessToken.getSubject());
-        assertEquals("foo", accessToken.getClaim("bar"));
-        assertEquals("bar", accessToken.getClaim("foo"));
-        assertEquals("subject", accessToken.getClaim("sub"));
-        assertNotNull(tokenService.registry.getCmsSessionContext("subject"));
+        try {
+            HttpServletRequest request = createNiceMock(HttpServletRequest.class);
+            final HttpSession session = new MockHttpSession();
+            expect(request.getSession(eq(false))).andStubReturn(session);
+            CmsSessionContext cmsSessionContext = createNiceMock(CmsSessionContext.class);
+            session.setAttribute(CmsSessionContext.SESSION_KEY, cmsSessionContext);
+            expect(cmsSessionContext.getId()).andReturn("subject");
+            replay(request, cmsSessionContext);
+            HashMap<String, Object> claims = new HashMap<>();
+            claims.put("foo", "bar");
+            claims.put("bar", "foo");
+            // {"sub": "random"} claim will be ignored/overwritten as it is predefined and used internally
+            claims.put("sub", "random");
+            final String jwsToken = tokenService.createToken(request, claims);
+            final AccessToken accessToken = tokenService.getAccessToken(jwsToken);
+            assertEquals("subject", accessToken.getSubject());
+            assertEquals("foo", accessToken.getClaim("bar"));
+            assertEquals("bar", accessToken.getClaim("foo"));
+            assertEquals("subject", accessToken.getClaim("sub"));
+            assertNotNull(tokenService.registry.getCmsSessionContext("subject"));
+        } finally {
+            tokenService.destroy();
+        }
     }
 
     @Test
@@ -122,6 +130,8 @@ public class TestNimbusJwtTokenServiceImpl {
             if (!e.getMessage().startsWith("Token is not valid")) {
                 throw e;
             }
+        } finally {
+            tokenService.destroy();
         }
     }
 }
