@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,12 +15,9 @@
  */
 package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson;
 
-import org.hippoecm.hst.core.linking.HstLink;
-import org.hippoecm.hst.core.sitemenu.EditableMenu;
-import org.hippoecm.hst.core.sitemenu.EditableMenuItem;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonAppend;
+
+import org.hippoecm.hst.core.sitemenu.EditableMenuItem;
 
 @JsonAppend(props = {
         @JsonAppend.Prop(
@@ -29,27 +26,6 @@ import com.fasterxml.jackson.databind.annotation.JsonAppend;
         )
 }
 )
-public interface EditableMenuItemMixin extends EditableMenuItem, CommonMenuItemMixin {
+public interface EditableMenuItemMixin extends EditableMenuItem {
 
-    @Override
-    @JsonIgnore
-    EditableMenu getEditableMenu();
-
-    @Override
-    @JsonIgnore
-    EditableMenuItem getParentItem();
-
-    /**
-     * instead of getHstLink and getExternalLink we serialize a _links object
-     */
-    @JsonIgnore
-    @Override
-    HstLink getHstLink();
-
-    /**
-     * instead of getHstLink and getExternalLink we serialize a _links object
-     */
-    @JsonIgnore
-    @Override
-    String getExternalLink();
 }

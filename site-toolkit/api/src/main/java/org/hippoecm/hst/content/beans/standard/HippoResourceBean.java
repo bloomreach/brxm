@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,9 @@ package org.hippoecm.hst.content.beans.standard;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+
+import org.hippoecm.hst.content.annotations.PageModelIgnore;
+import org.hippoecm.hst.content.annotations.PageModelProperty;
 
 /**
  * This is a base interface for all beans that represent a hippo resource should implement.
@@ -41,6 +44,7 @@ public interface HippoResourceBean extends HippoBean {
      *
      * @return the number of bytes of binary stored in this resource
      */
+    @PageModelProperty("size")
      long getLength();
 
      /**
@@ -48,6 +52,7 @@ public interface HippoResourceBean extends HippoBean {
       *
       * @return kilobytes
       */
+     @PageModelIgnore
      BigDecimal getLengthKB();
 
      /**
@@ -55,6 +60,7 @@ public interface HippoResourceBean extends HippoBean {
       *
       * @return megabytes
       */
+     @PageModelIgnore
      BigDecimal getLengthMB();
 
      /**
@@ -68,5 +74,6 @@ public interface HippoResourceBean extends HippoBean {
      *
      * @return true if this resource contains blank data
      */
+    @PageModelIgnore
     boolean isBlank();
 }

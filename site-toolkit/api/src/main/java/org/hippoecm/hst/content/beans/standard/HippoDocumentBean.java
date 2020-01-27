@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 package org.hippoecm.hst.content.beans.standard;
+
+import org.hippoecm.hst.content.annotations.PageModelIgnore;
 
 /**
  * This is a marker interface for all beans that represent a document. When developers implement their own bean which
@@ -34,6 +36,7 @@ public interface HippoDocumentBean extends HippoBean, HippoTranslated {
      * @see HippoBean#getCanonicalUUID()
      * @return the uuid of the canonical handle or <code>null</code>
      */
+    @PageModelIgnore
     String getCanonicalHandleUUID();
     
     /**
@@ -48,12 +51,14 @@ public interface HippoDocumentBean extends HippoBean, HippoTranslated {
      * @see HippoBean#getCanonicalPath()
      * @return the jcr path of the canonical handle or <code>null</code>
      */
+    @PageModelIgnore
     String getCanonicalHandlePath();
 
     /**
      * @param beanMappingClass only return translations of type <code>beanMappingClass</code>
      * @return a {@link HippoAvailableTranslationsBean} where the translations must be of type <code>beanMappingClass</code>. This method never returns <code>null</code>
      */
+    @PageModelIgnore
     <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslations(Class<T> beanMappingClass);
 
     @Override

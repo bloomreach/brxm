@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.configuration.sitemenu.HstSiteMenuItemConfiguration;
+import org.hippoecm.hst.content.annotations.PageModelIgnore;
 
 /**
  * The HstSiteMenuItem's is a tree of HstSiteMenuItem. The root item does not have a parent. 
@@ -36,12 +37,14 @@ public interface HstSiteMenuItem extends CommonMenuItem {
      * 
      * @return parent <code>HstSiteMenuItem</code> or <code>null</code> if it is a root item 
      */
+    @PageModelIgnore
     HstSiteMenuItem getParentItem();
     
     /**
      * 
      * @return the container <code>HstSiteMenu</code> of this <code>HstSiteMenuItem</code>
      */
+    @PageModelIgnore
     HstSiteMenu getHstSiteMenu();
     
     
@@ -80,5 +83,6 @@ public interface HstSiteMenuItem extends CommonMenuItem {
      * @see #getParameters() , only this method returns parameters without inheritance
      * @return the Map of parameters contained in this <code>HstSiteMapItem</code>. If no parameters present, and empty map is returned
      */
+    @PageModelIgnore
     Map<String, String> getLocalParameters();
 }

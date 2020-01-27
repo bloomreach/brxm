@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package org.hippoecm.hst.core.sitemenu;
 
 import java.util.List;
 
+import org.hippoecm.hst.content.annotations.PageModelIgnore;
+
 public interface EditableMenuItem extends CommonMenuItem {
 
     /**
@@ -33,12 +35,14 @@ public interface EditableMenuItem extends CommonMenuItem {
     /**
      * @return The {@link EditableMenu} for this {@link EditableMenuItem}
      */
+    @PageModelIgnore
     EditableMenu getEditableMenu();
 
     /**
      * @return The parent {@link EditableMenuItem} of this item and <code>null</code> when there
      * is not parent
      */
+    @PageModelIgnore
     EditableMenuItem getParentItem();
 
     /**

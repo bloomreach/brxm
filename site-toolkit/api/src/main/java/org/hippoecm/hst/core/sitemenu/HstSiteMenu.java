@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,9 @@ package org.hippoecm.hst.core.sitemenu;
 
 import java.util.List;
 
+import org.hippoecm.hst.content.annotations.PageModelIgnore;
+
+
 /**
  * The interface for a SiteMenu implementation, containing possibly a tree of {@link HstSiteMenuItem}'s
  *
@@ -26,6 +29,7 @@ public interface HstSiteMenu extends CommonMenu {
      * 
      * @return the currently selected <code>HstSiteMenuItem</code> or <code>null</code> if none is selected
      */
+    @PageModelIgnore
     HstSiteMenuItem getSelectSiteMenuItem();
     
     /**
@@ -37,6 +41,7 @@ public interface HstSiteMenu extends CommonMenu {
      * 
      * @return the <code>HstSiteMenus</code> container for this HstSiteMenu
      */
+    @PageModelIgnore
     HstSiteMenus getHstSiteMenus();
     
     /**
@@ -44,6 +49,7 @@ public interface HstSiteMenu extends CommonMenu {
      * in turn need repository based menu build below it
      * @return the <code>HstSiteMenuItem</code> that is the last one in the tree of expanded items, or <code>null</code> if none is expanded
      */
+    @PageModelIgnore
     HstSiteMenuItem getDeepestExpandedItem();
     
     /**
@@ -51,6 +57,7 @@ public interface HstSiteMenu extends CommonMenu {
      * {@link EditableMenuItem}) will not being reflected in this HstSiteMenu instance. 
      * @return an <code>EditableMenu</code> instance of this HstSiteMenu. 
      */
+    @PageModelIgnore
     EditableMenu getEditableMenu();
 
 }

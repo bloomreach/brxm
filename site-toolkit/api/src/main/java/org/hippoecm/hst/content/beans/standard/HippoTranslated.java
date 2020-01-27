@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package org.hippoecm.hst.content.beans.standard;
 
 import java.util.Locale;
 
+import org.hippoecm.hst.content.annotations.PageModelIgnore;
+
 /**
  * Interface for beans of hippotranslation:translated.
  * @version $Id$
@@ -33,6 +35,7 @@ public interface HippoTranslated {
      * Returns the {@link Locale} for content bean. If there is no {@link Locale} found, <code>null</code> is returned
      * @return the {@link Locale} for content bean and <code>null</code> when missing
      */
+    @PageModelIgnore
     Locale getLocale();
     
 }

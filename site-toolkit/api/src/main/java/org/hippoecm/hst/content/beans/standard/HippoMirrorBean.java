@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 package org.hippoecm.hst.content.beans.standard;
+
+import org.hippoecm.hst.content.annotations.PageModelIgnore;
 
 public interface HippoMirrorBean extends HippoBean {
 
@@ -33,5 +35,8 @@ public interface HippoMirrorBean extends HippoBean {
      * </p>
      * @return the referenced <code>HippoBean</code> by this mirror or <code>null</code> when missing
      */
+    // TODO shouldn't we expose this? Perhaps the identifier of the referenced bean optionally? If exposed, how to avoid
+    // TODO recursion?
+    @PageModelIgnore
     HippoBean getReferencedBean();
 }

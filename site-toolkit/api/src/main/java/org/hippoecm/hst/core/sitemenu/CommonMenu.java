@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,9 @@
  */
 package org.hippoecm.hst.core.sitemenu;
 
+
+import org.hippoecm.hst.content.annotations.PageModelIgnore;
+
 public interface CommonMenu {
     
     /**
@@ -29,5 +32,6 @@ public interface CommonMenu {
      * 
      * @return <code>true</code> when any HstSiteMenuItem in this HstSiteMenu container is selected
      */
+    @PageModelIgnore
     boolean isExpanded();
 }

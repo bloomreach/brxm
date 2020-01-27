@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
+import org.hippoecm.hst.content.annotations.PageModelIgnore;
+import org.hippoecm.hst.content.annotations.PageModelProperty;
 import org.hippoecm.hst.content.beans.index.IndexField;
 
 /**
@@ -38,6 +40,7 @@ public interface IdentifiableContentBean extends ContentBean {
      */
     // the identifier is used as index id, hence add name="id"
     @IndexField(name="id", ignoreInCompound = true)
+    @PageModelIgnore
     String getIdentifier();
 
     /**
@@ -54,6 +57,8 @@ public interface IdentifiableContentBean extends ContentBean {
      * of the document variant.
      * @return the representational id for this {@link IdentifiableContentBean}
      */
+
+    @PageModelProperty("id")
     default String getRepresentationId() {
         return getIdentifier();
     }

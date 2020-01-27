@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package org.hippoecm.hst.content.beans.standard;
 
 import java.util.List;
 
+import org.hippoecm.hst.content.annotations.PageModelIgnore;
+
 
 /**
  * This is a base interface for all beans that represent a folder should implement. When developers implement their own bean which
@@ -27,7 +29,8 @@ public interface HippoFolderBean extends HippoBean, HippoTranslated {
     /**
      * @return the list of <code>HippoFolderBean</code> below this <code>HippoFolderBean</code> and an empty list of no folders present
      */
-    
+
+    @PageModelIgnore
     List<HippoFolderBean> getFolders();
     
     /**
@@ -47,6 +50,7 @@ public interface HippoFolderBean extends HippoBean, HippoTranslated {
      * <b>note</b> when only a subset of the documents is needed, and the total number is large, better use {@link #getDocumentIterator(Class)} as this is a lazy proxied iterator
      * @return the list of {@link HippoDocumentBean}s below this {@link HippoFolderBean} and an empty list if no documents present
      */
+    @PageModelIgnore
     List<HippoDocumentBean> getDocuments();
     
     /**

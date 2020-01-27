@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -20,6 +20,7 @@ import java.util.Map;
 
 import javax.jcr.Node;
 
+import org.hippoecm.hst.content.annotations.PageModelIgnore;
 import org.hippoecm.hst.content.beans.NodeAware;
 import org.hippoecm.hst.content.beans.manager.ObjectConverterAware;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
@@ -31,8 +32,10 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      * 
      * @return the backing jcr node for this bean. <code>null</code> if the bean is detached
      */
+    @PageModelIgnore
     Node getNode();
-    
+
+    @PageModelIgnore
     JCRValueProvider getValueProvider();
 
     /**
@@ -58,12 +61,14 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      *
      * @return the absolute jcr path of the backing jcr node.
      */
+    @PageModelIgnore
     String getPath();
 
     /**
      * Returns the canonical path
      * @return
      */
+    @PageModelIgnore
     default String getComparePath() {
         return getPath();
     }
@@ -83,6 +88,7 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      * @see HippoDocumentBean#getCanonicalHandleUUID()
      * @return the jcr uuid of the backing canonical (physical) jcr node or <code>null</code> 
      */
+    @PageModelIgnore
     String getCanonicalUUID();
     
     /**
@@ -100,11 +106,13 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      * @see HippoDocumentBean#getCanonicalHandlePath()
      * @return the jcr path of the backing canonical (physical) jcr node or <code>null</code> 
      */
+    @PageModelIgnore
     String getCanonicalPath();
 
     /**
      * Same as {@link #getProperty(String)}, where getProperty is only there for having a nice .getProperty['propname'] in jsp expression language
      */
+    @PageModelIgnore
     Map<String, Object> getProperties();
 
     /**
@@ -148,6 +156,7 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
     /**
      * @return Map of all properties, where the values can be of type String, String[], Boolean, Boolean[], Long, Long[], Double, Double[] or Calendar, Calendar[]
      */
+    @PageModelIgnore
     Map<String, Object> getProperty();
     
     /**
@@ -274,6 +283,7 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      * the parent of the handle must be taken
      * @return the parent bean wrt this bean, or if this bean backing jcr node is null or object converter cannot create a bean for the parent, return <code>null</code>
      */
+    @PageModelIgnore
     HippoBean getParentBean();
 
     /**
@@ -283,21 +293,25 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      * @return the canonical version of the current {@link HippoBean} or <code>null</code> in case that the backing {@link Node} is pure virtual or when
      * some exception happened
      */
+    @PageModelIgnore
     <T extends HippoBean> T getCanonicalBean();
     
     /**
      * @return <code>true</code> is this HippoBean is an instanceof <code>{@link HippoDocumentBean}</code>
      */
+    @PageModelIgnore
     boolean isHippoDocumentBean();
     
     /**
      * @return <code>true</code> is this HippoBean is an instanceof <code>{@link HippoFolderBean}</code>
      */
+    @PageModelIgnore
     boolean isHippoFolderBean();
     
     /**
      * @return <code>true</code> when the backing jcr Node has no child nodes
      */
+    @PageModelIgnore
     boolean isLeaf();
     
     /**
@@ -333,6 +347,7 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      * any {@link HippoBean} you can call {@link #getAvailableTranslations()}, we add it to the base {@link HippoBean} as well.
      * @return A {@link HippoAvailableTranslationsBean}.
      */
+    @PageModelIgnore
     <T extends HippoBean> HippoAvailableTranslationsBean<T> getAvailableTranslations();
     
     /**
@@ -367,11 +382,13 @@ public interface HippoBean extends IdentifiableContentBean, NodeAware, ObjectCon
      * 
      * @return a ComparatorMap in which you can compare HippoBeans via the get(Object o)
      */
+    @PageModelIgnore
     Map<Object,Object> getEqualComparator();
 
     /**
      * @return {@code true} if the backing node from {@link #getNode()} is a versioned node
      */
+    @PageModelIgnore
     boolean isVersionedNode();
 
 }

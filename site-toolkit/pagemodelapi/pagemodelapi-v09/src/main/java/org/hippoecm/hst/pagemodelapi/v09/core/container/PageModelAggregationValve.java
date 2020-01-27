@@ -31,6 +31,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.content.beans.PageModelObjectMapperFactory;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
@@ -126,8 +127,8 @@ public class PageModelAggregationValve extends AggregationValve {
      */
     private final ObjectMapper apiDocObjectMapper;
 
-    public PageModelAggregationValve(final ObjectMapper objectMapperInput, final Map<Class<?>, Class<?>> extraMixins) {
-        objectMapper = objectMapperInput.registerModule(new SimpleModule().setSerializerModifier(
+    public PageModelAggregationValve(final PageModelObjectMapperFactory factory, final Map<Class<?>, Class<?>> extraMixins) {
+        objectMapper = factory.createPageModelObjectMapper().registerModule(new SimpleModule().setSerializerModifier(
                 new HippoBeanModelsSerializerModifier(metadataDecorators)
         ));
         HstBeansObjectMapperDecorator.decorate(objectMapper, extraMixins);

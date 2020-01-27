@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -180,11 +180,13 @@ public class HstSiteMenuItemImpl extends AbstractMenuItem implements HstSiteMenu
     public boolean isRepositoryBased() {
         return this.repositoryBased;
     }
-    
-    public HstSiteMenuItem getDeepestExpandedItem(){
+
+    // do not use public method #getDeepestExpandedItem to avoid json serialization issues (or we would have to add
+    // PageModelIgnore
+    HstSiteMenuItem findDeepestExpandedItem(){
         for(HstSiteMenuItem item : hstSiteMenuItems) {
             if(item.isExpanded()) {
-                return ((HstSiteMenuItemImpl)item).getDeepestExpandedItem();
+                return ((HstSiteMenuItemImpl)item).findDeepestExpandedItem();
             }
         }
         return this;

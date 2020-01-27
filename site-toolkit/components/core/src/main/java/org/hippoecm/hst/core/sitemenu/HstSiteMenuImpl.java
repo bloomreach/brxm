@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -76,7 +76,7 @@ public class HstSiteMenuImpl extends AbstractMenu implements HstSiteMenu {
         // traverse to the deepest expanded item
         for(HstSiteMenuItem item: hstSiteMenuItems) {
             if(item.isExpanded()){
-                return ((HstSiteMenuItemImpl)item).getDeepestExpandedItem();
+                return ((HstSiteMenuItemImpl)item).findDeepestExpandedItem();
             }
         }
         return null;

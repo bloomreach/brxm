@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,8 @@ package org.hippoecm.hst.core.sitemenu;
 
 import java.util.List;
 
+import org.hippoecm.hst.content.annotations.PageModelIgnore;
+
 public interface EditableMenu extends CommonMenu {
 
     /**
@@ -24,6 +26,7 @@ public interface EditableMenu extends CommonMenu {
      * historical typo it is called getSelectMenuItem
      * @return the selected {@link EditableMenuItem} and <code>null</code> if none selected
      */
+    @PageModelIgnore
     EditableMenuItem getSelectMenuItem();
 
     /**
@@ -42,11 +45,13 @@ public interface EditableMenu extends CommonMenu {
      * 
      * @return The backing {@link HstSiteMenus} for this {@link EditableMenu}
      */
+    @PageModelIgnore
     HstSiteMenus getHstSiteMenus();
 
     /**
      * @return The deepest expanded {@link EditableMenuItem} and <code>null</code> if none
      * of the items are expanded
      */
+    @PageModelIgnore
     EditableMenuItem getDeepestExpandedItem();
 }

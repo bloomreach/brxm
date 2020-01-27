@@ -27,7 +27,7 @@
     </property>
   </bean>
 
-  <bean id="pageModelAggregationObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper">
+  <bean id="hippoBeansObjectMapperFactory" class="org.hippoecm.hst.content.beans.PageModelObjectMapperFactory">
   </bean>
 
   <bean id="org.hippoecm.hst.pagemodelapi.v09.content.rewriter.HtmlContentRewriter"
@@ -40,7 +40,7 @@
 
   <bean id="pageModelAggregationValve" parent="aggregationValve"
         class="org.hippoecm.hst.pagemodelapi.v09.core.container.PageModelAggregationValve">
-    <constructor-arg ref="pageModelAggregationObjectMapper"/>
+    <constructor-arg ref="hippoBeansObjectMapperFactory"/>
     <constructor-arg ref="pageModelJacksonObjectMapperExtraMixins"/>
     <property name="valveName" value="pageModelAggregationValve"/>
     <property name="componentWindowResponseAppenders" ref="composerComponentWindowResponseAppenders"/>
