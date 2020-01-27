@@ -20,22 +20,20 @@ import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionBindingListener;
 
-import org.easymock.Capture;
 import org.hippoecm.hst.container.security.AccessToken;
 import org.hippoecm.hst.container.security.InvalidTokenException;
 import org.junit.Test;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
+import org.springframework.mock.web.MockHttpSession;
 
-import static org.easymock.EasyMock.anyString;
-import static org.easymock.EasyMock.capture;
 import static org.easymock.EasyMock.createNiceMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
-import static org.easymock.EasyMock.expectLastCall;
 import static org.easymock.EasyMock.replay;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 public class TestNimbusJwtTokenServiceImpl {
@@ -45,15 +43,16 @@ public class TestNimbusJwtTokenServiceImpl {
         NimbusJwtTokenServiceImpl tokenService = new NimbusJwtTokenServiceImpl();
         tokenService.init();
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
-        final HttpSession session = createNiceMock(HttpSession.class);
+        final HttpSession session = new MockHttpSession();
         expect(request.getSession(eq(false))).andStubReturn(session);
         CmsSessionContext cmsSessionContext = createNiceMock(CmsSessionContext.class);
-        expect(session.getAttribute(CmsSessionContext.SESSION_KEY)).andStubReturn(cmsSessionContext);
+        session.setAttribute(CmsSessionContext.SESSION_KEY, cmsSessionContext);
         expect(cmsSessionContext.getId()).andReturn("subject");
-        replay(request, session, cmsSessionContext);
+        replay(request, cmsSessionContext);
         final String jwsToken = tokenService.createToken(request, Collections.emptyMap());
         final AccessToken accessToken = tokenService.getAccessToken(jwsToken);
         assertEquals("subject", accessToken.getSubject());
+        assertNotNull(tokenService.registry.getCmsSessionContext("subject"));
     }
 
     @Test
@@ -61,12 +60,12 @@ public class TestNimbusJwtTokenServiceImpl {
         NimbusJwtTokenServiceImpl tokenService = new NimbusJwtTokenServiceImpl();
         tokenService.init();
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
-        final HttpSession session = createNiceMock(HttpSession.class);
+        final HttpSession session = new MockHttpSession();
         expect(request.getSession(eq(false))).andStubReturn(session);
         CmsSessionContext cmsSessionContext = createNiceMock(CmsSessionContext.class);
-        expect(session.getAttribute(CmsSessionContext.SESSION_KEY)).andStubReturn(cmsSessionContext);
+        session.setAttribute(CmsSessionContext.SESSION_KEY, cmsSessionContext);
         expect(cmsSessionContext.getId()).andReturn("subject");
-        replay(request, session, cmsSessionContext);
+        replay(request, cmsSessionContext);
         HashMap<String, Object> claims = new HashMap<>();
         claims.put("foo", "bar");
         claims.put("bar", "foo");
@@ -78,6 +77,7 @@ public class TestNimbusJwtTokenServiceImpl {
         assertEquals("foo", accessToken.getClaim("bar"));
         assertEquals("bar", accessToken.getClaim("foo"));
         assertEquals("subject", accessToken.getClaim("sub"));
+        assertNotNull(tokenService.registry.getCmsSessionContext("subject"));
     }
 
     @Test
@@ -85,21 +85,24 @@ public class TestNimbusJwtTokenServiceImpl {
         NimbusJwtTokenServiceImpl tokenService = new NimbusJwtTokenServiceImpl();
         tokenService.init();
         HttpServletRequest request = createNiceMock(HttpServletRequest.class);
-        final HttpSession session = createNiceMock(HttpSession.class);
+        final HttpSession session = new MockHttpSession();
         expect(request.getSession(eq(false))).andStubReturn(session);
         CmsSessionContext cmsSessionContext = createNiceMock(CmsSessionContext.class);
-        expect(session.getAttribute(CmsSessionContext.SESSION_KEY)).andStubReturn(cmsSessionContext);
+
+        session.setAttribute(CmsSessionContext.SESSION_KEY, cmsSessionContext);
         expect(cmsSessionContext.getId()).andReturn("subject");
-        Capture<HttpSessionBindingListener> sessionBindingListenerCapture = Capture.newInstance();
-        session.setAttribute(anyString(), capture(sessionBindingListenerCapture));
-        expectLastCall().anyTimes();
-        replay(request, session, cmsSessionContext);
+
+        replay(request, cmsSessionContext);
         final String jwsToken = tokenService.createToken(request, Collections.emptyMap());
         // should succeed
         tokenService.getAccessToken(jwsToken);
 
-        // invalidate cmsSessionToken
-        sessionBindingListenerCapture.getValue().valueUnbound(null);
+
+        assertNotNull(tokenService.registry.getCmsSessionContext("subject"));
+        // invalidate session (aka cms logout) should result in the jwsToken no longer being valid
+        session.invalidate();
+        // session.invalidate should have remove 'subject' from the registry
+        assertNull(tokenService.registry.getCmsSessionContext("subject"));
         try {
             tokenService.getAccessToken(jwsToken);
             fail("Token expected to be no longer valid");

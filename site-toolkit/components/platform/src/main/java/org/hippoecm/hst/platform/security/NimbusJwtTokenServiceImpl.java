@@ -48,7 +48,7 @@ public class NimbusJwtTokenServiceImpl implements JwtTokenService {
     private JWSVerifier verifier;
     private boolean registered;
 
-    private TokenCmsSessionContextRegistry registry = new TokenCmsSessionContextRegistry();
+    TokenCmsSessionContextRegistry registry = new TokenCmsSessionContextRegistry();
 
     public void init() {
         try {
