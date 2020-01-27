@@ -14,11 +14,21 @@
   limitations under the License.
   -->
 
-<subpage-toolbar flex="none"
-                 data-title="{{ ::$ctrl.subpageTitle }}"
-                 on-back="$ctrl.onDone()"
-                 mode="cancel">
-</subpage-toolbar>
+<md-toolbar flex="none" 
+            class="hippo-toolbar qa-toolbar md-bloomreach-theme ">
+  <div class="md-toolbar-tools">
+    <h1>{{ ::$ctrl.subpageTitle }}</h1>
+
+    <span flex></span>
+
+    <md-button class="qa-button-back"
+               aria-label="{{ 'TOOLBAR_BUTTON_CLOSE' | translate }}"
+               title="{{ 'TOOLBAR_BUTTON_CLOSE' | translate }}"
+               ng-click="$ctrl.onDone()">
+      {{ 'TOOLBAR_BUTTON_CLOSE' | translate }}
+    </md-button>
+  </div>
+</md-toolbar>
 
 <subpage-content flex
                  layout="row"

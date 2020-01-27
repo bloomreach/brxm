@@ -53,6 +53,10 @@ md-toolbar.hippo-toolbar {
 
   .md-button {
     text-transform: none;
+
+    &:last-child {
+      margin-right: 0;
+    }
   }
 
   md-menu-bar {
@@ -88,8 +92,9 @@ md-toolbar.hippo-toolbar {
   }
 
   .md-toolbar-tools {
-    font-size: 14px;
+    font-size: $font-normal;
     height: $toolbar-height;
+    padding: 0 24px;
   }
 
   .button-group {
@@ -122,6 +127,12 @@ md-toolbar.hippo-toolbar {
 
     .normal-font-weight {
       font-weight: normal;
+    }
+  }
+
+  &.md-bloomreach-theme {
+    h1 {
+      font-size: $font-large;
     }
   }
 }

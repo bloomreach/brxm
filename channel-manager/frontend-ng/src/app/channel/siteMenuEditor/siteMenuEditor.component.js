@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import './siteMenuEditor.scss';
 import controller from './siteMenuEditor.controller';
 import template from './siteMenuEditor.html';
 

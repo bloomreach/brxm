@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,12 +14,33 @@
   limitations under the License.
   -->
 
-<subpage-toolbar flex="none"
-                 data-title="{{ ::'SUBPAGE_MENU_EDITOR_TITLE' | translate }}"
-                 on-back="$ctrl.onBack()">
-</subpage-toolbar>
+<md-toolbar flex="none" 
+            class="hippo-toolbar qa-toolbar md-bloomreach-theme ">
+  <div class="md-toolbar-tools">
+    <h1>{{ ::'SUBPAGE_MENU_EDITOR_TITLE' | translate }}</h1>
 
-<subpage-content layout="row" class="qa-site-menu-editor" flex>
+    <span flex></span>
+
+    <md-button class="qa-button-back"
+               aria-label="{{ 'TOOLBAR_BUTTON_BACK' | translate }}"
+               title="{{ 'TOOLBAR_BUTTON_BACK' | translate }}"
+               ng-click="$ctrl.onBack()">
+      {{ 'TOOLBAR_BUTTON_DONE' | translate }}
+    </md-button>
+
+    <md-button class="md-primary qa-menu-item-add"
+               ng-click="$ctrl.addItem()"
+               ng-disabled="$ctrl.isLockedByOther() || $ctrl.isSaving.newItem">
+      <md-icon aria-label="{{::'SUBPAGE_MENU_EDITOR_ADD_MENU_ITEM' | translate }}"
+               class="mdi-18"
+               md-font-icon="mdi-plus">
+      </md-icon>
+      {{::'SUBPAGE_MENU_EDITOR_ADD_MENU_ITEM' | translate}}
+    </md-button>
+  </div>
+</md-toolbar>
+
+<subpage-content layout="row" class="qa-site-menu-editor site-menu-editor md-bloomreach-theme" flex>
   <hippo-tree
        ng-if="$ctrl.items.length > 0"
        class="expansion-panel"
@@ -55,6 +76,7 @@
                            aria-label="{{ ::'EDIT' | translate }}"
                            ng-click="$ctrl.toggleEditState(item)"
                            data-nodrag
+                           focus-if="$ctrl.selectedItem.id === item.id"
                            stop-propagation>
                   <md-icon class="mdi-18"
                            md-font-icon="{{ $ctrl.editingItem.id === item.id ? 'mdi-chevron-up' : 'mdi-chevron-down' }}">
@@ -103,13 +125,11 @@
                   <div ng-message="required">{{ ::'LINK_REQUIRED' | translate }}</div>
                 </div>
               </md-input-container>
-              <div>
-                <md-button type="button"
-                           ng-disabled="$ctrl.isLockedByOther()"
-                           ng-click="$ctrl.showPicker($event)">
-                  {{ ::'SUBPAGE_MENU_EDITOR_SELECT_INTERNAL_LINK' | translate }}
-                </md-button>
-              </div>
+              <md-button type="button"
+                         ng-disabled="$ctrl.isLockedByOther()"
+                         ng-click="$ctrl.showPicker($event)">
+                {{ ::'SUBPAGE_MENU_EDITOR_SELECT_INTERNAL_LINK' | translate }}
+              </md-button>
             </div>
             <div ng-if="$ctrl.editingItem.linkType == 'EXTERNAL'"
                  layout="row">
@@ -159,7 +179,7 @@
               <md-button type="submit"
                          ng-disabled="$ctrl.isLockedByOther()"
                          aria-label="{{ ::'SAVE' | translate }}"
-                         class="md-raised md-primary">
+                         class="md-primary">
                 {{ ::'SAVE' | translate }}
               </md-button>
             </div>
@@ -169,16 +189,4 @@
     </form>
   </hippo-tree>
   <div class="empty-tree" ng-if="$ctrl.items.length === 0">{{ ::'SUBPAGE_MENU_EDITOR_EMPTY_MENU' | translate }}</div>
-  <div class="fab-space-holder"></div>
-  <md-button class="md-fab md-fab-bottom-right md-accent qa-menu-item-add"
-             ng-click="$ctrl.addItem()"
-             ng-disabled="$ctrl.isLockedByOther() || $ctrl.isSaving.newItem">
-    <md-icon aria-label="{{::'SUBPAGE_MENU_EDITOR_ADD_MENU_ITEM' | translate }}"
-             class="mdi-18"
-             md-font-icon="mdi-plus">
-    </md-icon>
-    <md-tooltip md-direction="top">
-      {{::'SUBPAGE_MENU_EDITOR_ADD_MENU_ITEM' | translate}}
-    </md-tooltip>
-  </md-button>
 </subpage-content>

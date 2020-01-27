@@ -110,6 +110,11 @@ $icon-button-default: $text-dim;
 
 // Typography
 $font-family: 'Open Sans', Roboto, 'Helvetica Neue', sans-serif;
+$font-family-semi-bold: 'Open Sans Semibold', $font-family;
+$font-large: 20px;
+$font-medium: 16px;
+$font-normal: 14px;
+$font-small: 12px;
 
 // $font-family-material2 has to be a string for it to be passed to @include angular-material-typography()
 // without node-sass throwing warnings

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@import 'variables';
+
 body {
   font-family: $font-family;
 }
@@ -43,6 +45,8 @@ h6 {
 }
 
 .md-bloomreach-theme {
+  font-size: $font-normal;
+
   .md-title {
     font-size: 16px;
     font-weight: 600;

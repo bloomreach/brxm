@@ -15,11 +15,9 @@
  */
 
 import subpageContentComponent from './content/subpageContent.component';
-import subpageToolbarComponent from './toolbar/subpageToolbar.component';
 
 const channelSubpageModule = angular
   .module('hippo-cm.channel.subpage', [])
-  .component('subpageContent', subpageContentComponent)
-  .component('subpageToolbar', subpageToolbarComponent);
+  .component('subpageContent', subpageContentComponent);
 
 export default channelSubpageModule;

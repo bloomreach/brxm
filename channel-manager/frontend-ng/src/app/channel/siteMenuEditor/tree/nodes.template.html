@@ -22,7 +22,7 @@
       ui-tree-node
       ng-if="$ctrl.hippoTree.displayItem(item)"
       ng-class="{active: $ctrl.hippoTree.selectedItem.id === item.id}">
-        <div ng-click="$ctrl.hippoTree.selectItem(item)">
+        <div ng-click="$ctrl.hippoTree.selectItem(item)" tabindex="-1">
           <hippo-tree-node data-item="item"></hippo-tree-node>
         </div>
         <hippo-tree-nodes ng-if="!item.collapsed" data-items="item.items"></hippo-tree-nodes>
