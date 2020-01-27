@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,26 +59,6 @@ describe('UrlBuilderImpl', () => {
       builder.initialize(options);
 
       expect(() => builder.getApiUrl(path)).toThrow(message);
-    });
-  });
-
-  describe('getCmsUrl', () => {
-    const options1 = { cmsBaseUrl: 'http://localhost:8080/site/spa' };
-    const options2 = { cmsBaseUrl: '//example.com' };
-
-    it.each`
-      options     | path       | expected
-      ${options1} | ${''}      | ${'http://localhost:8080'}
-      ${options1} | ${'/'}     | ${'http://localhost:8080/'}
-      ${options1} | ${'/news'} | ${'http://localhost:8080/news'}
-      ${options2} | ${'/'}     | ${'//example.com/'}
-      ${options2} | ${'/news'} | ${'//example.com/news'}
-      ${options2} | ${'//localhost/news'}          | ${'//example.com/news'}
-      ${options2} | ${'/news?something#something'} | ${'//example.com/news?something#something'}
-    `('should create a CMS URL for "$path" using options "$options"', ({ options, path, expected }) => {
-      builder.initialize(options);
-
-      expect(builder.getCmsUrl(path)).toBe(expected);
     });
   });
 

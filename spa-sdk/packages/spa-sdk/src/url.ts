@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,12 +51,6 @@ export interface UrlBuilder {
    * @returns The Page Model API URL.
    */
   getApiUrl(path: string): string;
-
-  /**
-   * @param path Source path to the CMS resource.
-   * @returns The URL to the CMS resource.
-   */
-  getCmsUrl(path: string): string;
 
   /**
    * @param path Source path to generate an SPA URL.
@@ -143,12 +137,6 @@ export class UrlBuilderImpl {
     const query = mergeSearchParams(searchParams, this.apiBaseUrl.searchParams).toString();
 
     return `${this.apiBaseUrl.origin}${this.apiBaseUrl.pathname}${route}${query && `?${query}`}`;
-  }
-
-  getCmsUrl(link: string) {
-    const { path } = parseUrl(link);
-
-    return `${this.cmsBaseUrl.origin}${path}`;
   }
 
   getSpaUrl(link: string) {

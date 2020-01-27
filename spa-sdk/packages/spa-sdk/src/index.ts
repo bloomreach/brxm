@@ -44,9 +44,7 @@ import {
   TYPE_COMPONENT_CONTAINER_ITEM,
   TYPE_COMPONENT_CONTAINER,
   TYPE_META_COMMENT,
-  TYPE_LINK_EXTERNAL,
   TYPE_LINK_INTERNAL,
-  TYPE_LINK_RESOURCE,
 } from './page';
 import { Configuration, Spa } from './spa';
 import { UrlBuilderImpl } from './url';
