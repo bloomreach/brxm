@@ -27,6 +27,10 @@ import { ErrorHandlingService } from './error-handling/services/error-handling.s
 import { OverlayService } from './services/overlay.service';
 import { PENDO } from './services/pendo';
 import { RightSidePanelService } from './top-panel/services/right-side-panel.service';
+import { AppSettings } from './models/dto/app-settings.dto';
+import { APP_SETTINGS } from './services/app-settings';
+import { USER_SETTINGS } from './services/user-settings';
+import { UserSettings } from './models/dto/user-settings.dto';
 
 @Component({
   selector: 'brna-root',
@@ -66,6 +70,8 @@ export class AppComponent implements OnInit, OnDestroy {
     private readonly errorHandlingService: ErrorHandlingService,
     @Inject(PENDO) private readonly pendo: pendo.Pendo,
     @Inject(APP_BOOTSTRAPPED) private readonly appBootstrapped: Promise<void>,
+    @Inject(APP_SETTINGS) private readonly appSettings: AppSettings,
+    @Inject(USER_SETTINGS) private readonly userSettings: UserSettings,
   ) { }
 
   get error(): AppError {
@@ -88,11 +94,13 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private setupPendo(): void {
-    this.pendo.initialize({
-      visitor: {
-        id: 'NAVAPP_TO_BE_DETERMINED',
-      },
-    });
+    if (this.appSettings.usageStatisticsEnabled) {
+      this.pendo.initialize({
+        visitor: {
+          id: this.userSettings.email || this.userSettings.userName,
+        },
+      });
+    }
   }
 
   private initializeObservables(): void {

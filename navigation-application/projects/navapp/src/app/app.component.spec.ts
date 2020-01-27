@@ -27,36 +27,45 @@ import { ErrorHandlingService } from './error-handling/services/error-handling.s
 import { OverlayService } from './services/overlay.service';
 import { PENDO } from './services/pendo';
 import { RightSidePanelService } from './top-panel/services/right-side-panel.service';
+import { AppSettingsMock } from './models/dto/app-settings.mock';
+import { APP_SETTINGS } from './services/app-settings';
+import { UserSettingsMock } from './models/dto/user-settings.mock';
+import { USER_SETTINGS } from './services/user-settings';
 
 describe('AppComponent', () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
   let de: DebugElement;
 
-  const translateServiceMock = jasmine.createSpyObj('TranslateService', [
-    'addLangs',
-    'setDefaultLang',
-    'use',
-  ]);
-
-  const overlayServiceMock = {
-    visible$: of(false),
-  };
-
-  const rightSidePanelServiceMock = jasmine.createSpyObj('RightSidePanelService', [
-    'setSidenav',
-  ]);
-
-  const errorHandlingServiceMock = {
-    currentError: {},
-  };
-
-  const pendoMock = jasmine.createSpyObj<pendo.Pendo>('PENDO', ['initialize', 'enableDebugging']);
-
   let bootstrappedResolve: () => void;
   let bootstrappedReject: () => void;
 
+  let rightSidePanelService: jasmine.SpyObj<RightSidePanelService>;
+  let pendo: jasmine.SpyObj<pendo.Pendo>;  
+  let userSettings = new UserSettingsMock();
+  const appSettings = new AppSettingsMock();
+
   beforeEach(() => {
+    const translateServiceMock = jasmine.createSpyObj('TranslateService', [
+      'addLangs',
+      'setDefaultLang',
+      'use',
+    ]);
+
+    const overlayServiceMock = {
+      visible$: of(false),
+    };
+
+    const rightSidePanelServiceMock = jasmine.createSpyObj('RightSidePanelService', [
+      'setSidenav',
+    ]);
+
+    const errorHandlingServiceMock = {
+      currentError: {},
+    };
+
+    const pendoMock = jasmine.createSpyObj<pendo.Pendo>('PENDO', ['initialize', 'enableDebugging']);
+
     const bootstrappedMock = new Promise<void>((res, rej) => {
       bootstrappedResolve = res;
       bootstrappedReject = rej;
@@ -74,12 +83,17 @@ describe('AppComponent', () => {
         { provide: ErrorHandlingService, useValue: errorHandlingServiceMock },
         { provide: APP_BOOTSTRAPPED, useValue: bootstrappedMock },
         { provide: PENDO, useValue: pendoMock },
+        { provide: APP_SETTINGS, useValue: appSettings },
+        { provide: USER_SETTINGS, useValue: userSettings }
       ],
       schemas: [NO_ERRORS_SCHEMA],
     }).createComponent(AppComponent);
 
     component = fixture.componentInstance;
     de = fixture.debugElement;
+
+    rightSidePanelService = TestBed.get(RightSidePanelService);
+    pendo = TestBed.get(PENDO);
 
     fixture.detectChanges();
   });
@@ -91,17 +105,29 @@ describe('AppComponent', () => {
   describe('upon initialization', () => {
     beforeEach(() => {
       component.sidenav = {} as any;
-
-      component.ngOnInit();
     });
 
     it('should set the side nav DOM element', () => {
-      expect(rightSidePanelServiceMock.setSidenav).toHaveBeenCalledWith(component.sidenav);
+      component.ngOnInit();
+
+      expect(rightSidePanelService.setSidenav).toHaveBeenCalledWith(component.sidenav);
     });
 
-    it('should initialize pendo', () => {
-      const pendo = de.injector.get(PENDO);
-      expect(pendo.initialize).toHaveBeenCalled();
+    it('should initialize pendo and track visitor by email', () => {
+      pendo.initialize.calls.reset();
+      const testEmail = 'test@gmail.com';
+      userSettings = new UserSettingsMock({
+        email: testEmail,
+      });
+      const expectedConfig = {
+        visitor: {
+          id: testEmail
+        }
+      }
+
+      component.ngOnInit();
+
+      expect(pendo.initialize).toHaveBeenCalledWith(expectedConfig);
     });
   });
 
