@@ -55,7 +55,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
 
     private static final Logger log = LoggerFactory.getLogger(NodeFieldPlugin.class);
 
-    private final CollapsedItems collapsedItems = new CollapsedItems();
+    private final FlagList collapsedItems = new FlagList();
 
     public NodeFieldPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -194,7 +194,7 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
     @Override
     protected void populateEditItem(final Item<IRenderService> item, final JcrNodeModel model) {
         if (helper.isCompoundField()) {
-            final boolean isCollapsed = collapsedItems.contains(item.getIndex());
+            final boolean isCollapsed = collapsedItems.get(item.getIndex());
             item.add(new EditableCollapsibleFieldContainer("fieldContainer", item, model, this, isCollapsed) {
                 @Override
                 protected void onCollapse(final boolean isCollapsed) {
@@ -234,12 +234,24 @@ public class NodeFieldPlugin extends AbstractFieldPlugin<Node, JcrNodeModel> {
         }
     }
 
-    protected void moveCollapsedItem(final int from, final int to) {
-        collapsedItems.update(from, to, provider.size());
+    protected void moveCollapsedItemToTop(final int index) {
+        collapsedItems.moveTo(index, 0);
     }
 
-    protected void clearCollapsedItem(final int index) {
-        collapsedItems.clear(index, provider.size() + 1);
+    protected void moveCollapsedItemUp(final int index) {
+        collapsedItems.moveUp(index);
+    }
+
+    protected void moveCollapsedItemDown(final int index) {
+        collapsedItems.moveDown(index);
+    }
+
+    protected void moveCollapsedItemToBottom(final int index) {
+        collapsedItems.moveTo(index, provider.size());
+    }
+
+    protected void removeCollapsedItem(final int index) {
+        collapsedItems.remove(index);
     }
 
     @Override
