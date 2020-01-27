@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+import { mergeSearchParams, parseUrl } from './utils';
+
 const DEFAULT_API_BASE_URL = '/resourceapi';
 const DEFAULT_SPA_BASE_URL = '';
 
@@ -57,57 +59,6 @@ export interface UrlBuilder {
    * @return The SPA URL for the channel path from the source path.
    */
   getSpaUrl(path: string): string;
-}
-
-function parseUrl(url: string) {
-  // URL constructor requires either a valid URL or a base URL.
-  // Since this function returns a pathname, we can safely pass a fake host to be able to resolve relative URLs.
-  const parsedUrl = url ? new URL(url, 'http://example.com') : {} as URL;
-  const { hash = '', search = '', searchParams = new URLSearchParams() } = parsedUrl;
-
-  // For links like `//example.com?query#hash` pathname will be `/` so we need to strip query and hash parameters first.
-  let origin = url.substring(0, url.length - search.length - hash.length);
-  let { pathname = '' } = parsedUrl;
-  if (!origin.endsWith(pathname)) {
-    pathname = pathname.substring(1);
-  }
-
-  origin = origin.substring(0, origin.length - pathname.length);
-
-  return { hash, origin, pathname, search, searchParams, path: `${pathname}${search}${hash}` };
-}
-
-function isMatchedOrigin(origin: string, baseOrigin: string) {
-  return !baseOrigin || !origin || baseOrigin === origin;
-}
-
-function isMatchedPathname(pathname: string, basePathname: string) {
-  return !basePathname || pathname.startsWith(basePathname);
-}
-
-function isMatchedQuery(search: URLSearchParams, baseSearch: URLSearchParams) {
-  let match = true;
-  baseSearch.forEach((value, key) => {
-    match = match && (!value && search.has(key) || search.getAll(key).includes(value));
-  });
-
-  return match;
-}
-
-export function isMatched(link: string, base = DEFAULT_SPA_BASE_URL) {
-  const linkUrl = parseUrl(link);
-  const baseUrl = parseUrl(base);
-
-  return isMatchedOrigin(linkUrl.origin, baseUrl.origin)
-    && isMatchedPathname(linkUrl.pathname, baseUrl.pathname)
-    && isMatchedQuery(linkUrl.searchParams, baseUrl.searchParams);
-}
-
-function mergeSearchParams(params1: URLSearchParams, params2: URLSearchParams) {
-  const result = new URLSearchParams(params1);
-  params2.forEach((value, key) => result.set(key, value));
-
-  return result;
 }
 
 export class UrlBuilderImpl {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { UrlBuilderImpl, isMatched } from './url';
+import { UrlBuilderImpl } from './builder';
 
 describe('UrlBuilderImpl', () => {
   const builder = new UrlBuilderImpl();
@@ -86,33 +86,5 @@ describe('UrlBuilderImpl', () => {
 
       expect(builder.getSpaUrl(path)).toBe(expected);
     });
-  });
-});
-
-describe('isMatched', () => {
-  it.each`
-    link                        | base
-    ${'http://example.com'}     | ${undefined}
-    ${'http://example.com'}     | ${''}
-    ${'http://example.com/'}    | ${'http://example.com/'}
-    ${'/'}                      | ${'http://example.com/'}
-    ${'/spa/something'}         | ${'/spa'}
-    ${'/spa/something?a=b'}     | ${'/spa?a=b'}
-    ${'/spa/something?a'}       | ${'/spa?a'}
-    ${'/spa/something?a=c'}     | ${'/spa?a'}
-  `('should match "$link" with "$base"', ({ link, base }) => {
-    expect(isMatched(link, base)).toBe(true);
-  });
-
-  it.each`
-    link                        | base
-    ${'http://example.com'}     | ${'http://example.com/'}
-    ${'http://example.com'}     | ${'http://localhost:8080/'}
-    ${'/spa'}                   | ${'/spa/something'}
-    ${'/spa/something'}         | ${'/spa?a=b'}
-    ${'/spa/something?c'}       | ${'/spa?a=b'}
-    ${'/spa/something'}         | ${'/spa?a'}
-  `('should not match "$link" with "$base"', ({ link, base }) => {
-    expect(isMatched(link, base)).toBe(false);
   });
 });
