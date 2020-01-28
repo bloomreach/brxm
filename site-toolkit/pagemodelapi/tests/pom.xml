@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the  "License");
   you may not use this file except in compliance with the License.
@@ -18,63 +18,55 @@
 
   <parent>
     <groupId>org.onehippo.cms7.hst</groupId>
-    <artifactId>components</artifactId>
+    <artifactId>pagemodelapi</artifactId>
     <version>14.1.0-SPA_impr-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Site Toolkit Tests Component</name>
-  <description>Hippo Site Toolkit Tests Component</description>
-  <groupId>org.onehippo.cms7.hst.components</groupId>
-  <artifactId>hst-components-test</artifactId>
+  <name>Hippo Site Toolkit Page Model API Version Tests</name>
+  <description>Hippo Site Toolkit Page Model API Version Tests</description>
+  <groupId>org.onehippo.cms7.hst.pagemodelapi</groupId>
+  <artifactId>hst-pagemodelapi-test</artifactId>
   <packaging>jar</packaging>
-  
+
   <dependencies>
 
+    <!-- Exclude commons-logging explicitly by a provided dependency. -->
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.pagemodelapi</groupId>
+      <artifactId>hst-pagemodelapi-v09</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.pagemodelapi</groupId>
+      <artifactId>hst-pagemodelapi-v10</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <!--<dependency>-->
+      <!--<groupId>org.onehippo.cms7.hst</groupId>-->
+      <!--<artifactId>hst-api</artifactId>-->
+      <!--<version>${project.version}</version>-->
+      <!--<scope>provided</scope>-->
+    <!--</dependency>-->
+
     <!-- Test dependencies -->
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-api</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-commons</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.components</groupId>
-      <artifactId>hst-core</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.onehippo.cms7.hst.components</groupId>
-      <artifactId>hst-platform</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
     <dependency>
       <groupId>org.easymock</groupId>
       <artifactId>easymock</artifactId>
       <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.assertj</groupId>
-      <artifactId>assertj-core</artifactId>
     </dependency>
 
     <dependency>
@@ -83,7 +75,7 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
-    
+
     <!-- Hst test dependencies -->
     <dependency>
       <groupId>org.onehippo.cms7.hst</groupId>
@@ -95,19 +87,7 @@
 
     <dependency>
       <groupId>org.springframework</groupId>
-      <artifactId>spring-core</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-beans</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
+      <artifactId>spring-test</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -118,67 +98,39 @@
     </dependency>
 
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-aop</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-web</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
+      <groupId>org.onehippo.cms7.hst.components</groupId>
+      <artifactId>hst-platform</artifactId>
+      <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
 
   </dependencies>
 
-  <profiles>
-    <profile>
-      <id>java8</id>
-      <activation>
-        <jdk>1.8</jdk>
-      </activation>
-      <dependencies>
-        <dependency>
-          <groupId>org.jooq</groupId>
-          <artifactId>joor-java-8</artifactId>
-        </dependency>
-      </dependencies>
-    </profile>
-
-    <profile>
-      <id>java11</id>
-      <activation>
-        <jdk>11</jdk>
-      </activation>
-
-      <dependencies>
-        <dependency>
-          <groupId>org.jooq</groupId>
-          <artifactId>joor</artifactId>
-        </dependency>
-      </dependencies>
-    </profile>
-  </profiles>
-
   <build>
+    <testResources>
+      <testResource>
+        <directory>src/test/java</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </testResource>
+      <testResource>
+        <directory>src/test/resources</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+      </testResource>
+    </testResources>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <workingDirectory>${project.build.directory}</workingDirectory>
-          <systemPropertyVariables>
-            <org.onehippo.repository.test.keepserver>true</org.onehippo.repository.test.keepserver>
-            <!-- Tests fail when repo.path is set
-            <repo.path>${project.build.directory}</repo.path>
-            -->
-          </systemPropertyVariables>
         </configuration>
       </plugin>
       <plugin>

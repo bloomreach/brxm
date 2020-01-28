@@ -22,10 +22,10 @@
     <version>14.1.0-SPA_impr-SNAPSHOT</version>
   </parent>
 
-  <name>Hippo Site Toolkit Page Model API Common</name>
-  <description>Hippo Site Toolkit Page Model API Common</description>
+  <name>Hippo Site Toolkit Page Model API Version 1.0</name>
+  <description>Hippo Site Toolkit Page Model API Version 1.0</description>
   <groupId>org.onehippo.cms7.hst.pagemodelapi</groupId>
-  <artifactId>hst-pagemodelapi-common</artifactId>
+  <artifactId>hst-pagemodelapi-v10</artifactId>
   <packaging>jar</packaging>
 
   <dependencies>
@@ -34,13 +34,12 @@
     <dependency>
       <groupId>commons-logging</groupId>
       <artifactId>commons-logging</artifactId>
-      <scope>provided</scope>
     </dependency>
 
     <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
-      <version>${jackson2-databind.version}</version>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-web</artifactId>
+      <scope>provided</scope>
     </dependency>
 
     <dependency>
@@ -60,7 +59,24 @@
       <groupId>org.onehippo.cms7.hst</groupId>
       <artifactId>hst-commons</artifactId>
       <version>${project.version}</version>
-      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.components</groupId>
+      <artifactId>hst-core</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.components</groupId>
+      <artifactId>hst-rewriter</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.onehippo.cms7.hst.pagemodelapi</groupId>
+      <artifactId>hst-pagemodelapi-common</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
     <!-- repository api for cms security valve -->
@@ -70,43 +86,24 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- Test dependencies -->
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <scope>test</scope>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-core</artifactId>
     </dependency>
 
-    <!-- Hst test dependencies -->
     <dependency>
-      <groupId>org.onehippo.cms7.hst</groupId>
-      <artifactId>hst-test</artifactId>
-      <version>${project.version}</version>
-      <type>pom</type>
-      <scope>test</scope>
+      <groupId>io.swagger</groupId>
+      <artifactId>swagger-jaxrs</artifactId>
     </dependency>
-    
+
+    <dependency>
+      <groupId>javax.ws.rs</groupId>
+      <artifactId>javax.ws.rs-api</artifactId>
+    </dependency>
+
   </dependencies>
 
   <build>
-    <testResources>
-      <testResource>
-        <directory>src/test/java</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
-        <excludes>
-          <exclude>**/*.java</exclude>
-        </excludes>
-      </testResource>
-      <testResource>
-        <directory>src/test/resources</directory>
-        <includes>
-          <include>**/*</include>
-        </includes>
-      </testResource>
-    </testResources>
-
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
