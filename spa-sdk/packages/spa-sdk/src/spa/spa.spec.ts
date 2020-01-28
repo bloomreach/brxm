@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,14 @@
 
 import { Typed } from 'emittery';
 import { mocked } from 'ts-jest/utils';
-import { Cms } from './cms';
-import { Component, Factory, PageModel, Page, TYPE_COMPONENT } from './page';
+import { Cms } from '../cms';
+import { Component, Factory, PageModel, Page, TYPE_COMPONENT } from '../page';
+import { Events } from '../events';
+import { UrlBuilder, isMatched } from '../url';
+import { Api } from './api';
 import { Configuration, Spa } from './spa';
-import { Events } from './events';
-import { UrlBuilder, isMatched } from './url';
 
-jest.mock('./url');
+jest.mock('../url');
 
 const model = {
   _meta: {},
@@ -38,7 +39,7 @@ const model = {
   },
 };
 const config = {
-  httpClient: jest.fn(async () => ({ data: model })),
+  httpClient: jest.fn(),
   options: {
     live: {
       cmsBaseUrl: 'http://localhost:8080/site/my-spa',
@@ -48,22 +49,12 @@ const config = {
     },
   },
   request: {
-    connection: {
-      remoteAddress: '127.0.0.1',
-    },
-    headers: {
-      cookie: 'JSESSIONID=1234',
-      host: 'example.com',
-    },
     path: '/',
-  },
-  visitor: {
-    id: 'visitor-id',
-    header: 'visitor-header',
   },
 };
 
 describe('Spa', () => {
+  let api: jest.Mocked<Api>;
   let cms: jest.Mocked<Cms>;
   let eventBus: Typed<Events>;
   let page: jest.Mocked<Page>;
@@ -73,6 +64,11 @@ describe('Spa', () => {
 
   beforeEach(() => {
     eventBus = new Typed<Events>();
+    api = {
+      initialize: jest.fn(),
+      getPage: jest.fn(() => model),
+      getComponent: jest.fn(() => model),
+    } as unknown as jest.Mocked<Api>;
     cms = { initialize: jest.fn() } as unknown as jest.Mocked<Cms>;
     page = { getComponent: jest.fn() } as unknown as jest.Mocked<Page>;
     pageFactory = { create: jest.fn() };
@@ -83,7 +79,7 @@ describe('Spa', () => {
 
     spyOn(eventBus, 'on').and.callThrough();
     pageFactory.create.mockReturnValue(page);
-    spa = new Spa(config as Configuration, cms, eventBus, pageFactory, urlBuilder);
+    spa = new Spa(config as Configuration, cms, eventBus, api, pageFactory, urlBuilder);
   });
 
   describe('initialize', () => {
@@ -102,20 +98,8 @@ describe('Spa', () => {
       expect(urlBuilder.initialize).nthCalledWith(2, config.options.preview);
     });
 
-    it('should generate a URL', () => {
-      expect(urlBuilder.getApiUrl).toBeCalledWith(config.request.path);
-    });
-
-    it('should request a page model', () => {
-      expect(config.httpClient).toBeCalledWith({
-        url: 'http://example.com',
-        method: 'GET',
-        headers: {
-          cookie: 'JSESSIONID=1234',
-          'x-forwarded-for': '127.0.0.1',
-          'visitor-header': 'visitor-id',
-        },
-      });
+    it('should get page through an API', () => {
+      expect(api.getPage).toBeCalledWith(config.request.path);
     });
 
     it('should use a page model from the arguments', async () => {
@@ -123,7 +107,7 @@ describe('Spa', () => {
       const model = {} as PageModel;
 
       await spa.initialize(model);
-      expect(config.httpClient).not.toBeCalled();
+      expect(api.getPage).not.toBeCalled();
       expect(pageFactory.create).toBeCalledWith(model);
     });
 
@@ -137,7 +121,7 @@ describe('Spa', () => {
 
     it('should reject a promise when fetching the page model fails', () => {
       const error = new Error('Failed to fetch page model data');
-      config.httpClient.mockImplementationOnce(() => { throw error; });
+      api.getPage.mockImplementationOnce(() => { throw error; });
       const promise = spa.initialize();
 
       expect.assertions(1);
@@ -164,7 +148,7 @@ describe('Spa', () => {
       await eventBus.emitSerial('cms.update', { id: 'some-component', properties: {} });
 
       expect(root.getComponentById).toBeCalledWith('some-component');
-      expect(config.httpClient).not.toBeCalled();
+      expect(api.getComponent).not.toBeCalled();
       expect(eventBus.emit).not.toBeCalled();
     });
 
@@ -177,15 +161,7 @@ describe('Spa', () => {
 
       it('should request a component model', () => {
         expect(component.getUrl).toBeCalled();
-        expect(config.httpClient).toBeCalledWith({
-          url: 'some-url',
-          method: 'POST',
-          data: 'a=b',
-          headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'visitor-header': 'visitor-id',
-          },
-        });
+        expect(api.getComponent).toBeCalledWith('some-url', { a: 'b' });
       });
 
       it('should emit page.update event', () => {

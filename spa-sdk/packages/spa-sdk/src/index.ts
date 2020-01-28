@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@
 
 import { DOMParser, XMLSerializer } from 'xmldom';
 import { Typed } from 'emittery';
-import { Events } from './events';
+import { ApiImpl, Spa, Configuration } from './spa';
 import { Cms } from './cms';
 import {
   ComponentFactory,
@@ -46,7 +46,7 @@ import {
   TYPE_META_COMMENT,
   TYPE_LINK_INTERNAL,
 } from './page';
-import { Configuration, Spa } from './spa';
+import { Events } from './events';
 import { UrlBuilderImpl } from './url';
 
 const eventBus = new Typed<Events>();
@@ -62,6 +62,7 @@ const xmlSerializer = new XMLSerializer();
  */
 export async function initialize(config: Configuration, model?: PageModel): Promise<Page> {
   const urlBuilder =  new UrlBuilderImpl();
+  const api = new ApiImpl(urlBuilder);
   const linkFactory = new LinkFactory()
     .register(TYPE_LINK_INTERNAL, urlBuilder.getSpaUrl.bind(urlBuilder));
   const linkRewriter = new LinkRewriterImpl(linkFactory, domParser, xmlSerializer);
@@ -92,7 +93,7 @@ export async function initialize(config: Configuration, model?: PageModel): Prom
     metaFactory,
   ));
 
-  const spa = new Spa(config, cms, eventBus, pageFactory, urlBuilder);
+  const spa = new Spa(config, cms, eventBus, api, pageFactory, urlBuilder);
   const page = await spa.initialize(model);
 
   pages.set(page, spa);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,11 @@
  */
 
 import { Typed } from 'emittery';
-import { Cms, CmsOptions } from './cms';
-import { Factory, PageModel, Page, Visitor } from './page';
-import { Events, CmsUpdateEvent } from './events';
-import { HttpClient, HttpRequest } from './http';
-import { UrlBuilder, UrlBuilderOptions, isMatched } from './url';
+import { Cms, CmsOptions } from '../cms';
+import { Factory, PageModel, Page } from '../page';
+import { Events, CmsUpdateEvent } from '../events';
+import { UrlBuilder, UrlBuilderOptions, isMatched } from '../url';
+import { Api, ApiOptions } from './api';
 
 /**
  * Configuration options for generating the page model URL.
@@ -39,26 +39,11 @@ export interface UrlOptions {
 /**
  * Configuration of the SPA SDK.
  */
-export interface Configuration extends CmsOptions {
-  /**
-   * HTTP client that will be used to fetch the page model.
-   */
-  httpClient: HttpClient<PageModel>;
-
+export interface Configuration extends ApiOptions, CmsOptions {
   /**
    * Options for generating the page model API URL.
    */
   options: UrlOptions;
-
-  /**
-   * Current user's request.
-   */
-  request: HttpRequest;
-
-  /**
-   * Current visitor.
-   */
-  visitor?: Omit<Visitor, 'new'>;
 }
 
 /**
@@ -78,41 +63,11 @@ export class Spa {
     protected config: Configuration,
     protected cms: Cms,
     protected eventBus: Typed<Events>,
+    private api: Api,
     private pageFactory: Factory<[PageModel], Page>,
     private urlBuilder: UrlBuilder,
   ) {
     this.onCmsUpdate = this.onCmsUpdate.bind(this);
-  }
-
-  private async fetchPageModel(url: string) {
-    const { remoteAddress: ip } = this.config.request.connection || {};
-    const { host, ...headers } = this.config.request.headers || {};
-    const response = await this.config.httpClient({
-      url,
-      headers: {
-        ...ip && { 'x-forwarded-for': ip },
-        ...this.config.visitor && { [this.config.visitor.header]: this.config.visitor.id },
-        ...headers,
-      },
-      method: 'GET',
-    });
-
-    return response.data;
-  }
-
-  private async fetchComponentModel(url: string, payload: object) {
-    const data = new URLSearchParams(payload as Record<string, string>);
-    const response = await this.config.httpClient({
-      url,
-      data: data.toString(),
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        ...this.config.visitor && { [this.config.visitor.header]: this.config.visitor.id },
-      },
-      method: 'POST',
-    });
-
-    return response.data;
   }
 
   protected async onCmsUpdate(event: CmsUpdateEvent) {
@@ -123,7 +78,7 @@ export class Spa {
       return;
     }
 
-    const model = await this.fetchComponentModel(url, event.properties);
+    const model = await this.api.getComponent(url, event.properties);
 
     this.eventBus.emit('page.update', { page: model });
   }
@@ -136,10 +91,10 @@ export class Spa {
       ? this.config.options.preview
       : this.config.options.live;
     this.urlBuilder.initialize(options);
+    this.api.initialize(this.config);
     this.cms.initialize(this.config);
 
-    const url = this.urlBuilder.getApiUrl(this.config.request.path);
-    this.page = this.pageFactory.create(model || await this.fetchPageModel(url));
+    this.page = this.pageFactory.create(model || await this.api.getPage(this.config.request.path));
 
     this.eventBus.on('cms.update', this.onCmsUpdate);
 
