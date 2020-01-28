@@ -53,7 +53,7 @@ import org.springframework.mock.web.MockServletContext;
  * This class exposes common functionality for testing against the Page Model API. It is built after
  * org.hippoecm.hst.restapi.AbstractRestApiIT and is identical to that.
  */
-public abstract class PageModelApiIT {
+public abstract class AbstractPageModelApiTestCases {
 
     protected SpringComponentManager componentManager;
     protected final MockServletContext servletContext = new MockServletContext();
@@ -110,8 +110,8 @@ public abstract class PageModelApiIT {
     }
 
     protected String[] getConfigurations() {
-        String classXmlFileName = PageModelApiIT.class.getName().replace(".", "/") + ".xml";
-        String classXmlFileName2 = PageModelApiIT.class.getName().replace(".", "/") + "-*.xml";
+        String classXmlFileName = AbstractPageModelApiTestCases.class.getName().replace(".", "/") + ".xml";
+        String classXmlFileName2 = AbstractPageModelApiTestCases.class.getName().replace(".", "/") + "-*.xml";
         String classXmlFileNamePlatform = "org/hippoecm/hst/test/platform-context.xml";
         return new String[]{classXmlFileName, classXmlFileName2, classXmlFileNamePlatform};
     }
