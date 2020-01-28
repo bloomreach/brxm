@@ -94,13 +94,15 @@ export class AppComponent implements OnInit, OnDestroy {
   }
 
   private setupPendo(): void {
-    if (this.appSettings.usageStatisticsEnabled) {
-      this.pendo.initialize({
-        visitor: {
-          id: this.userSettings.email || this.userSettings.userName,
-        },
-      });
+    if (!this.appSettings.usageStatisticsEnabled) {
+      return;
     }
+
+    this.pendo.initialize({
+      visitor: {
+        id: this.userSettings.email || this.userSettings.userName,
+      },
+    });
   }
 
   private initializeObservables(): void {
