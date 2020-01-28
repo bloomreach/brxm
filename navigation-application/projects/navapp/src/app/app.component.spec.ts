@@ -114,16 +114,33 @@ describe('AppComponent', () => {
     });
 
     it('should initialize pendo and track visitor by email', () => {
-      pendo.initialize.calls.reset();
-      const testEmail = 'test@gmail.com';
-      userSettings = new UserSettingsMock({
+      const testEmail = 'asdf@gmail.com';
+
+      Object.assign(userSettings, new UserSettingsMock({
         email: testEmail,
-      });
+      }));
       const expectedConfig = {
         visitor: {
           id: testEmail
         }
       }
+
+      component.ngOnInit();
+
+      expect(pendo.initialize).toHaveBeenCalledWith(expectedConfig);
+    });
+
+    it('should initialize pendo and fall back to track visitor by username', () => {
+      const testName = 'testuser';
+      Object.assign(userSettings, new UserSettingsMock({
+        email: null,
+        userName: testName,
+      }));
+      const expectedConfig = {
+        visitor: {
+          id: testName,
+        }
+      };
 
       component.ngOnInit();
 
