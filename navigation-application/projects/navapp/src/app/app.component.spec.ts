@@ -24,13 +24,13 @@ import { of } from 'rxjs';
 import { AppComponent } from './app.component';
 import { APP_BOOTSTRAPPED } from './bootstrap/app-bootstrapped';
 import { ErrorHandlingService } from './error-handling/services/error-handling.service';
+import { AppSettingsMock } from './models/dto/app-settings.mock';
+import { UserSettingsMock } from './models/dto/user-settings.mock';
+import { APP_SETTINGS } from './services/app-settings';
 import { OverlayService } from './services/overlay.service';
 import { PENDO } from './services/pendo';
-import { RightSidePanelService } from './top-panel/services/right-side-panel.service';
-import { AppSettingsMock } from './models/dto/app-settings.mock';
-import { APP_SETTINGS } from './services/app-settings';
-import { UserSettingsMock } from './models/dto/user-settings.mock';
 import { USER_SETTINGS } from './services/user-settings';
+import { RightSidePanelService } from './top-panel/services/right-side-panel.service';
 
 describe('AppComponent', () => {
   let component: AppComponent;
@@ -41,8 +41,8 @@ describe('AppComponent', () => {
   let bootstrappedReject: () => void;
 
   let rightSidePanelService: jasmine.SpyObj<RightSidePanelService>;
-  let pendo: jasmine.SpyObj<pendo.Pendo>;  
-  let userSettings = new UserSettingsMock();
+  let pendo: jasmine.SpyObj<pendo.Pendo>;
+  const userSettings = new UserSettingsMock();
   const appSettings = new AppSettingsMock();
 
   beforeEach(() => {
@@ -84,7 +84,7 @@ describe('AppComponent', () => {
         { provide: APP_BOOTSTRAPPED, useValue: bootstrappedMock },
         { provide: PENDO, useValue: pendoMock },
         { provide: APP_SETTINGS, useValue: appSettings },
-        { provide: USER_SETTINGS, useValue: userSettings }
+        { provide: USER_SETTINGS, useValue: userSettings },
       ],
       schemas: [NO_ERRORS_SCHEMA],
     }).createComponent(AppComponent);
@@ -121,9 +121,9 @@ describe('AppComponent', () => {
       }));
       const expectedConfig = {
         visitor: {
-          id: testEmail
-        }
-      }
+          id: testEmail,
+        },
+      };
 
       component.ngOnInit();
 
@@ -139,7 +139,7 @@ describe('AppComponent', () => {
       const expectedConfig = {
         visitor: {
           id: testName,
-        }
+        },
       };
 
       component.ngOnInit();

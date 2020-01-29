@@ -24,13 +24,13 @@ import { catchError, mapTo, startWith, takeUntil } from 'rxjs/operators';
 import { APP_BOOTSTRAPPED } from './bootstrap/app-bootstrapped';
 import { AppError } from './error-handling/models/app-error';
 import { ErrorHandlingService } from './error-handling/services/error-handling.service';
+import { AppSettings } from './models/dto/app-settings.dto';
+import { UserSettings } from './models/dto/user-settings.dto';
+import { APP_SETTINGS } from './services/app-settings';
 import { OverlayService } from './services/overlay.service';
 import { PENDO } from './services/pendo';
-import { RightSidePanelService } from './top-panel/services/right-side-panel.service';
-import { AppSettings } from './models/dto/app-settings.dto';
-import { APP_SETTINGS } from './services/app-settings';
 import { USER_SETTINGS } from './services/user-settings';
-import { UserSettings } from './models/dto/user-settings.dto';
+import { RightSidePanelService } from './top-panel/services/right-side-panel.service';
 
 @Component({
   selector: 'brna-root',
