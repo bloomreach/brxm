@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,49 +15,75 @@
  */
 package org.onehippo.forge.robotstxt.components;
 
-import com.google.common.base.Strings;
-import org.hippoecm.hst.component.support.bean.BaseHstComponent;
-import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.core.component.HstComponentException;
-import org.hippoecm.hst.core.component.HstRequest;
-import org.hippoecm.hst.core.component.HstResponse;
-import org.hippoecm.hst.core.linking.HstLink;
-import org.hippoecm.hst.core.linking.HstLinkCreator;
-import org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType;
-import org.onehippo.forge.robotstxt.annotated.Robotstxt;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryManager;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.hippoecm.hst.component.support.bean.BaseHstComponent;
+import org.hippoecm.hst.configuration.hosting.Mount;
+import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.core.component.HstComponentException;
+import org.hippoecm.hst.core.component.HstRequest;
+import org.hippoecm.hst.core.component.HstResponse;
+import org.hippoecm.hst.core.linking.HstLink;
+import org.hippoecm.hst.core.linking.HstLinkCreator;
+import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.util.PathUtils;
+import org.hippoecm.repository.jackrabbit.facetnavigation.FacNavNodeType;
+import org.onehippo.forge.robotstxt.annotated.Robotstxt;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Strings;
 
 public class RobotstxtComponent extends BaseHstComponent {
 
     private static final Logger log = LoggerFactory.getLogger(RobotstxtComponent.class);
+    private static final String ROBOTSTXT_PATH_MOUNT_PROPERTY = "robotstxt:path";
 
     @Override
     public void doBeforeRender(HstRequest request, HstResponse response) {
         super.doBeforeRender(request, response);
 
         // Disallow everything for preview sites ?
-        final Mount mount = request.getRequestContext().getResolvedMount().getMount();
+        final HstRequestContext requestContext = request.getRequestContext();
+        final Mount mount = requestContext.getResolvedMount().getMount();
         if (disallowPreviewMount(request, mount)) {
             request.setAttribute("disallowAll", true);
             return;
         }
+        // check if we have mount property set:
+        final String customPath = mount.getProperty(ROBOTSTXT_PATH_MOUNT_PROPERTY);
+        if (!Strings.isNullOrEmpty(customPath)) {
+            final String normalizedPath = PathUtils.normalizePath(customPath);
+            final HstRequestContext context = RequestContextProvider.get();
+            final HippoBean siteBean = context.getSiteContentBaseBean();
+            final Robotstxt document = siteBean.getBean(normalizedPath, Robotstxt.class);
+            if (document != null) {
+                log.debug("Using document resolved via '{}' mount property: {}", ROBOTSTXT_PATH_MOUNT_PROPERTY, normalizedPath);
+                setAttributes(request, mount, document);
+                return;
+            } else {
+                log.warn("Document [{}] is not a Robotstxt document for normalized path: {}", document, normalizedPath);
+            }
+        }
 
         // Process the CMS-based robots.txt configuration
-        final Robotstxt bean = request.getRequestContext().getContentBean(Robotstxt.class);
+        final Robotstxt bean = requestContext.getContentBean(Robotstxt.class);
         if (bean == null) {
             throw new HstComponentException("No bean found, check the HST configuration for the RobotstxtComponent");
         }
-        request.setAttribute("document", bean);
+        setAttributes(request, mount, bean);
+    }
 
+    private void setAttributes(final HstRequest request, final Mount mount, final Robotstxt bean) {
+        request.setAttribute("document", bean);
         // Handle faceted navigation
         if (isFacetedNavigationDisallowed(request, bean)) {
             request.setAttribute("disallowedFacNavLinks", getDisallowedFacetNavigationLinks(request, mount));
