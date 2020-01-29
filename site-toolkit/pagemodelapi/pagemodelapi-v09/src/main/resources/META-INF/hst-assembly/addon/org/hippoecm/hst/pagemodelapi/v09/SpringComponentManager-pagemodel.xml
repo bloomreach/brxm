@@ -35,7 +35,7 @@
     <constructor-arg>
       <bean class="org.hippoecm.hst.content.rewriter.HtmlCleanerFactoryBean"/>
     </constructor-arg>
-    <property name="removeAnchorTagOfBrokenLink" value="${pagemodelapi.v09.removeAnchorTagOfBrokenLink}"/>
+    <property name="removeAnchorTagOfBrokenLink" value="${pagemodelapi.v09.removeAnchorTagOfBrokenLink:true}"/>
   </bean>
 
   <bean id="pageModelAggregationValve" parent="aggregationValve"
@@ -44,8 +44,8 @@
     <constructor-arg ref="pageModelJacksonObjectMapperExtraMixins"/>
     <property name="valveName" value="pageModelAggregationValve"/>
     <property name="componentWindowResponseAppenders" ref="composerComponentWindowResponseAppenders"/>
-    <property name="defaultMaxContentReferenceLevel" value="${pagemodelapi.v09.defaultMaxContentReferenceLevel}"/>
-    <property name="apiDocPath" value="${pagemodelapi.v09.apiDocPath}" />
+    <property name="defaultMaxContentReferenceLevel" value="${pagemodelapi.v09.defaultMaxContentReferenceLevel:1}"/>
+    <property name="apiDocPath" value="${pagemodelapi.v09.apiDocPath:/swagger.json}" />
   </bean>
 
 

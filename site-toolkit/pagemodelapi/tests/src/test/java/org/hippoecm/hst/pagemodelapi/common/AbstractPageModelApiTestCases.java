@@ -71,9 +71,6 @@ public abstract class AbstractPageModelApiTestCases {
     public void setUp() throws Exception {
         final PropertiesConfiguration configuration = new PropertiesConfiguration();
         configuration.addProperty("hst.configuration.rootPath", "/hst:hst");
-        configuration.addProperty("pagemodelapi.v09.defaultMaxContentReferenceLevel", 1);
-        configuration.addProperty("pagemodelapi.v09.removeAnchorTagOfBrokenLink", true);
-        configuration.addProperty("pagemodelapi.v09.apiDocPath", "/swagger.json");
 
         componentManager = new SpringComponentManager(configuration);
         componentManager.setConfigurationResources(getConfigurations());
