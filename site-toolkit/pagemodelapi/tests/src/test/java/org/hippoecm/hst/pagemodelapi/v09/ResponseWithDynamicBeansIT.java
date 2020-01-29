@@ -17,15 +17,13 @@ package org.hippoecm.hst.pagemodelapi.v09;
 
 import java.util.Iterator;
 
-import javax.jcr.Session;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.pagemodelapi.common.AbstractPageModelApiTestCases;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -37,7 +35,6 @@ public class ResponseWithDynamicBeansIT extends AbstractPageModelApiTestCases {
     @Test
     public void test_pagemodelapi__dynamic_beans__document_with_contentblocks() throws Exception {
 
-        Session session = createLiveUserSession();
         final RequestResponseMock requestResponse = mockGetRequestResponse(
                 "http", "localhost", "/spa/resourceapi/genericdetail/dynamiccontent", null);
 
@@ -68,6 +65,5 @@ public class ResponseWithDynamicBeansIT extends AbstractPageModelApiTestCases {
         assertEquals("First field named 'essentialsGeneratedContentblocks' does not contain expected value", "Welcome Home with Essentials!", contentBlocks.next().path("text").path("value").asText());
         assertEquals("Second field named 'essentialsGeneratedContentblocks' does not contain expected value", "Welcome Home with Essentials and lazy loaded types!", contentBlocks.next().path("text").path("value").asText());
 
-        session.logout();
     }
 }
