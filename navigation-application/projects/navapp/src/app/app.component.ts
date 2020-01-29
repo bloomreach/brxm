@@ -24,8 +24,11 @@ import { catchError, mapTo, startWith, takeUntil } from 'rxjs/operators';
 import { APP_BOOTSTRAPPED } from './bootstrap/app-bootstrapped';
 import { AppError } from './error-handling/models/app-error';
 import { ErrorHandlingService } from './error-handling/services/error-handling.service';
+import { AppSettings } from './models/dto/app-settings.dto';
 import { UserSettings } from './models/dto/user-settings.dto';
+import { APP_SETTINGS } from './services/app-settings';
 import { OverlayService } from './services/overlay.service';
+import { PENDO } from './services/pendo';
 import { USER_SETTINGS } from './services/user-settings';
 import { RightSidePanelService } from './top-panel/services/right-side-panel.service';
 
@@ -65,8 +68,10 @@ export class AppComponent implements OnInit, OnDestroy {
     private readonly overlayService: OverlayService,
     private readonly rightSidePanelService: RightSidePanelService,
     private readonly errorHandlingService: ErrorHandlingService,
-    @Inject(USER_SETTINGS) private readonly userSettings: UserSettings,
+    @Inject(PENDO) private readonly pendo: pendo.Pendo,
     @Inject(APP_BOOTSTRAPPED) private readonly appBootstrapped: Promise<void>,
+    @Inject(APP_SETTINGS) private readonly appSettings: AppSettings,
+    @Inject(USER_SETTINGS) private readonly userSettings: UserSettings,
   ) { }
 
   get error(): AppError {
@@ -79,11 +84,25 @@ export class AppComponent implements OnInit, OnDestroy {
     this.overlayService.visible$
       .pipe(takeUntil(this.unsubscribe))
       .subscribe(visible => this.isOverlayVisible = visible);
+
+    this.setupPendo();
   }
 
   ngOnDestroy(): void {
     this.unsubscribe.next();
     this.unsubscribe.complete();
+  }
+
+  private setupPendo(): void {
+    if (!this.appSettings.usageStatisticsEnabled) {
+      return;
+    }
+
+    this.pendo.initialize({
+      visitor: {
+        id: this.userSettings.email || this.userSettings.userName,
+      },
+    });
   }
 
   private initializeObservables(): void {

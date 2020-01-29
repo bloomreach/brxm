@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,17 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
+import { NGXLogger } from 'ngx-logger';
 
-import { AppSettings } from '../../models/dto/app-settings.dto';
-import { UserSettings } from '../../models/dto/user-settings.dto';
+import { WindowRef } from '../shared/services/window-ref.service';
 
-export interface CustomWindow extends Window {
-  NavAppSettings: {
-    appSettings: AppSettings,
-    userSettings: UserSettings,
-  };
+export const pendoFactory = (windowRef: WindowRef, logger: NGXLogger): pendo.Pendo => {
+  const pendo = windowRef.nativeWindow.pendo;
 
-  pendo: pendo.Pendo;
-}
-
-@Injectable()
-export class WindowRef {
-  get nativeWindow(): CustomWindow {
-    return window as any;
+  if (!pendo) {
+    logger.warn('Pendo not found');
+    return {} as any;
   }
-}
+
+  return pendo;
+};

@@ -27,4 +27,5 @@ export interface AppSettings {
   logoutResources: ConfigResource[];
   iframesConnectionTimeout: number;
   logLevel: keyof typeof NgxLoggerLevel;
+  usageStatisticsEnabled: boolean;
 }

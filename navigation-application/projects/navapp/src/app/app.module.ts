@@ -31,6 +31,8 @@ import { ConfiguredLoggerModule } from './logger/configured-logger.module';
 import { MainMenuModule } from './main-menu/main-menu.module';
 import { APP_SETTINGS } from './services/app-settings';
 import { appSettingsFactory } from './services/app-settings.factory';
+import { PENDO } from './services/pendo';
+import { pendoFactory } from './services/pendo.factory';
 import { USER_ACTIVITY_DEBOUNCE_TIME } from './services/user-activity-debounce-time';
 import { USER_SETTINGS } from './services/user-settings';
 import { userSettingsFactory } from './services/user-settings.factory';
@@ -59,6 +61,7 @@ import { TranslationsModule } from './translations/translations.module';
     { provide: APP_SETTINGS, useFactory: appSettingsFactory, deps: [WindowRef, Location, NGXLogger] },
     { provide: USER_SETTINGS, useFactory: userSettingsFactory, deps: [WindowRef, NGXLogger] },
     { provide: USER_ACTIVITY_DEBOUNCE_TIME, useValue: 30000 },
+    { provide: PENDO, useFactory: pendoFactory, deps: [WindowRef, NGXLogger] },
   ],
   declarations: [AppComponent],
   bootstrap: [AppComponent],

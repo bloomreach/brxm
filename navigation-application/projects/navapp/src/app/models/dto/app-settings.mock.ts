@@ -38,6 +38,7 @@ export class AppSettingsMock implements AppSettings {
   ];
   iframesConnectionTimeout = 30000;
   logLevel = 'DEBUG' as any;
+  usageStatisticsEnabled = true;
 
   loginResources = [
     new ConfigResourceMock({

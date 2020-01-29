@@ -24,9 +24,11 @@ import { of } from 'rxjs';
 import { AppComponent } from './app.component';
 import { APP_BOOTSTRAPPED } from './bootstrap/app-bootstrapped';
 import { ErrorHandlingService } from './error-handling/services/error-handling.service';
-import { UserSettings } from './models/dto/user-settings.dto';
+import { AppSettingsMock } from './models/dto/app-settings.mock';
 import { UserSettingsMock } from './models/dto/user-settings.mock';
+import { APP_SETTINGS } from './services/app-settings';
 import { OverlayService } from './services/overlay.service';
+import { PENDO } from './services/pendo';
 import { USER_SETTINGS } from './services/user-settings';
 import { RightSidePanelService } from './top-panel/services/right-side-panel.service';
 
@@ -35,31 +37,34 @@ describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;
   let de: DebugElement;
 
-  const translateServiceMock = jasmine.createSpyObj('TranslateService', [
-    'addLangs',
-    'setDefaultLang',
-    'use',
-  ]);
-
-  const overlayServiceMock = {
-    visible$: of(false),
-  };
-
-  const rightSidePanelServiceMock = jasmine.createSpyObj('RightSidePanelService', [
-    'setSidenav',
-  ]);
-
-  const errorHandlingServiceMock = {
-    currentError: {},
-  };
-
-  let userSettingsMock: UserSettings;
-
   let bootstrappedResolve: () => void;
   let bootstrappedReject: () => void;
 
+  let rightSidePanelService: jasmine.SpyObj<RightSidePanelService>;
+  let pendo: jasmine.SpyObj<pendo.Pendo>;
+  const userSettings = new UserSettingsMock();
+  const appSettings = new AppSettingsMock();
+
   beforeEach(() => {
-    userSettingsMock = new UserSettingsMock();
+    const translateServiceMock = jasmine.createSpyObj('TranslateService', [
+      'addLangs',
+      'setDefaultLang',
+      'use',
+    ]);
+
+    const overlayServiceMock = {
+      visible$: of(false),
+    };
+
+    const rightSidePanelServiceMock = jasmine.createSpyObj('RightSidePanelService', [
+      'setSidenav',
+    ]);
+
+    const errorHandlingServiceMock = {
+      currentError: {},
+    };
+
+    const pendoMock = jasmine.createSpyObj<pendo.Pendo>('PENDO', ['initialize', 'enableDebugging']);
 
     const bootstrappedMock = new Promise<void>((res, rej) => {
       bootstrappedResolve = res;
@@ -76,14 +81,19 @@ describe('AppComponent', () => {
         { provide: OverlayService, useValue: overlayServiceMock },
         { provide: RightSidePanelService, useValue: rightSidePanelServiceMock },
         { provide: ErrorHandlingService, useValue: errorHandlingServiceMock },
-        { provide: USER_SETTINGS, useValue: userSettingsMock },
         { provide: APP_BOOTSTRAPPED, useValue: bootstrappedMock },
+        { provide: PENDO, useValue: pendoMock },
+        { provide: APP_SETTINGS, useValue: appSettings },
+        { provide: USER_SETTINGS, useValue: userSettings },
       ],
       schemas: [NO_ERRORS_SCHEMA],
     }).createComponent(AppComponent);
 
     component = fixture.componentInstance;
     de = fixture.debugElement;
+
+    rightSidePanelService = TestBed.get(RightSidePanelService);
+    pendo = TestBed.get(PENDO);
 
     fixture.detectChanges();
   });
@@ -95,12 +105,46 @@ describe('AppComponent', () => {
   describe('upon initialization', () => {
     beforeEach(() => {
       component.sidenav = {} as any;
-
-      component.ngOnInit();
     });
 
     it('should set the side nav DOM element', () => {
-      expect(rightSidePanelServiceMock.setSidenav).toHaveBeenCalledWith(component.sidenav);
+      component.ngOnInit();
+
+      expect(rightSidePanelService.setSidenav).toHaveBeenCalledWith(component.sidenav);
+    });
+
+    it('should initialize pendo and track visitor by email', () => {
+      const testEmail = 'asdf@gmail.com';
+
+      Object.assign(userSettings, new UserSettingsMock({
+        email: testEmail,
+      }));
+      const expectedConfig = {
+        visitor: {
+          id: testEmail,
+        },
+      };
+
+      component.ngOnInit();
+
+      expect(pendo.initialize).toHaveBeenCalledWith(expectedConfig);
+    });
+
+    it('should initialize pendo and fall back to track visitor by username', () => {
+      const testName = 'testuser';
+      Object.assign(userSettings, new UserSettingsMock({
+        email: null,
+        userName: testName,
+      }));
+      const expectedConfig = {
+        visitor: {
+          id: testName,
+        },
+      };
+
+      component.ngOnInit();
+
+      expect(pendo.initialize).toHaveBeenCalledWith(expectedConfig);
     });
   });
 
