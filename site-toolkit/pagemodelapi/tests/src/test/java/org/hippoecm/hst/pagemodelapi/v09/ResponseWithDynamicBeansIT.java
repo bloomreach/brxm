@@ -18,7 +18,6 @@ package org.hippoecm.hst.pagemodelapi.v09;
 import java.util.Iterator;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.pagemodelapi.common.AbstractPageModelApiTestCases;

@@ -36,6 +36,7 @@ definitions:
             /homepage:
               jcr:primaryType: hippo:handle
               jcr:mixinTypes: ['mix:referenceable', 'hippo:named']
+              jcr:uuid: 1ca07af9-cdf5-4bdd-9908-f991245bb062
               hippo:name: Home Page
               /homepage:
                 jcr:primaryType: unittestproject:textpage
@@ -55,6 +56,7 @@ definitions:
                 unittestproject:title: This is the homepage
                 /unittestproject:body:
                   jcr:primaryType: hippostd:html
+                  jcr:uuid: b309b5f1-dc78-40ad-a46b-8af23867fdb6
                   hippostd:content: This is the content of the homepage
             /aboutfolder:
               jcr:primaryType: hippostd:folder
@@ -276,6 +278,7 @@ definitions:
             /News1:
               jcr:primaryType: hippo:handle
               jcr:mixinTypes: ['mix:referenceable']
+              jcr:uuid: 303d40eb-f98c-4d61-84c7-a1ba14b5ceb3
               /News1:
                 jcr:primaryType: unittestproject:newspage
                 jcr:mixinTypes: ['mix:versionable']
@@ -291,6 +294,7 @@ definitions:
                 unittestproject:title: News Item 1
                 /unittestproject:body:
                   jcr:primaryType: hippostd:html
+                  jcr:uuid: 404d40eb-f98c-4d61-84c7-a1ba14b5cec3
                   hippostd:content: My news item 1 content
             /News2:
               jcr:primaryType: hippo:handle
