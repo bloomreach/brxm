@@ -30,8 +30,6 @@ import static org.junit.Assert.assertTrue;
 
 public class ResponseWithDynamicBeansIT extends AbstractPageModelApiTestCases {
 
-    private static ObjectMapper mapper = new ObjectMapper();
-
     @Test
     public void test_pagemodelapi__dynamic_beans__document_with_contentblocks() throws Exception {
 

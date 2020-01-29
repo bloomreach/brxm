@@ -29,6 +29,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.tool.DefaultContentBeansTool;
@@ -60,6 +62,7 @@ public abstract class AbstractPageModelApiTestCases {
     protected final MockServletContext servletContext = new MockServletContext();
     protected HippoWebappContext webappContext = new HippoWebappContext(HippoWebappContext.Type.SITE, servletContext);
     protected Filter filter;
+    protected static ObjectMapper mapper = new ObjectMapper();
 
     @BeforeClass
     public static void setUpClass() throws Exception {
