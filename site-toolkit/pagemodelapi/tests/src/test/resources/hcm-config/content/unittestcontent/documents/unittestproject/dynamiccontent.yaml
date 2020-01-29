@@ -3,6 +3,7 @@ definitions:
     /unittestcontent/documents/unittestproject/dynamiccontent:
       jcr:primaryType: hippo:handle
       jcr:mixinTypes: ['hippo:named', 'hippo:versionInfo', 'mix:referenceable']
+      jcr:uuid: d993b0a1-5859-44fe-bf4b-017cda163364
       hippo:name: DynamicContent
       hippo:versionHistory: 05b06f75-7241-4005-a0a6-2e9ad49508ce
       /dynamiccontent:

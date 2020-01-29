@@ -71,6 +71,18 @@ public class PageModelApiV09CompatibilityIT extends AbstractPageModelApiTestCase
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT_ORDER);
     }
 
+    @Test
+    public void dynamic_contentblocks_api_compatibility_v09_assertion() throws Exception {
+
+        String actual = getActualJson("/spa/resourceapi/genericdetail/dynamiccontent");
+
+        InputStream inputStream = PageModelApiV09CompatibilityIT.class.getResourceAsStream("pma_dynamiccontent.json");
+
+        String expected = IOUtils.toString(inputStream, "UTF-8");
+
+        JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT_ORDER);
+    }
+
     @NotNull
     private String getActualJson(final String pathInfo) throws IOException, ServletException {
         final RequestResponseMock requestResponse = mockGetRequestResponse(
