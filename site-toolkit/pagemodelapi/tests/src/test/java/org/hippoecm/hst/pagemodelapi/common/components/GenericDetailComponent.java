@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst.pagemodelapi.v09.test.components;
+package org.hippoecm.hst.pagemodelapi.common.components;
 
 import org.hippoecm.hst.core.component.GenericHstComponent;
 import org.hippoecm.hst.core.component.HstRequest;

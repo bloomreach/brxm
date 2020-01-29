@@ -4,5 +4,5 @@ definitions:
       jcr:primaryType: hst:pages
       /genericdetail:
         jcr:primaryType: hst:component
-        hst:componentclassname: org.hippoecm.hst.pagemodelapi.v09.test.components.GenericDetailComponent
+        hst:componentclassname: org.hippoecm.hst.pagemodelapi.common.components.GenericDetailComponent
         hst:template: detail

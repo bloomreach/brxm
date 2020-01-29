@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst.pagemodelapi.v09.test;
+package org.hippoecm.hst.pagemodelapi.v09;
 
 import java.util.Iterator;
 
 import javax.jcr.Session;
 
 import org.apache.commons.lang.StringUtils;
+import org.hippoecm.hst.pagemodelapi.common.AbstractPageModelApiTestCases;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -32,8 +31,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ResponseWithDynamicBeansIT extends AbstractPageModelApiTestCases {
-
-    private static final Logger log = LoggerFactory.getLogger(ResponseWithDynamicBeansIT.class);
 
     private static ObjectMapper mapper = new ObjectMapper();
 

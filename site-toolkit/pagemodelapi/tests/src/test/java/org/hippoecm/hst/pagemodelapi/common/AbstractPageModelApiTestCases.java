@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.hippoecm.hst.pagemodelapi.v09.test;
+package org.hippoecm.hst.pagemodelapi.common;
 
 import java.io.IOException;
 import java.util.List;
@@ -33,6 +33,7 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.tool.DefaultContentBeansTool;
 import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.pagemodelapi.v09.ResponseWithDynamicBeansIT;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.addon.module.model.ModuleDefinition;
