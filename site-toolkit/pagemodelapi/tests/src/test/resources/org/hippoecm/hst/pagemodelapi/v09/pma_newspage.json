@@ -115,7 +115,6 @@
       "date":1239782707580,
       "title":"News Item 1",
       "body":{
-        "id":"404d40eb-f98c-4d61-84c7-a1ba14b5cec3",
         "value":"My news item 1 content"
       },
       "summary":"Summary about news item 1"
