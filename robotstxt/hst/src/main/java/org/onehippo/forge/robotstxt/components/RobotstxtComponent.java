@@ -70,7 +70,7 @@ public class RobotstxtComponent extends BaseHstComponent {
                 setAttributes(request, mount, document);
                 return;
             } else {
-                log.warn("Document [{}] is not a Robotstxt document for normalized path: {}", document, normalizedPath);
+                log.warn("Document is missing or not a Robotstxt document for normalized path: {}", normalizedPath);
             }
         }
 
