@@ -20,6 +20,15 @@ import org.hippoecm.hst.content.annotations.PageModelIgnore;
 public interface HippoMirrorBean extends HippoBean {
 
     /**
+     * in the Page Model API we do not want to show uuid for nodes below a document (compound)
+     */
+    @PageModelIgnore
+    @Override
+    default String getRepresentationId() {
+        return getIdentifier();
+    }
+
+    /**
      * <p>
      *      When you want the HippoBean that this mirror represents, you can use this method.
      * </p>
@@ -35,7 +44,7 @@ public interface HippoMirrorBean extends HippoBean {
      * </p>
      * @return the referenced <code>HippoBean</code> by this mirror or <code>null</code> when missing
      */
-    // TODO shouldn't we expose this? Perhaps the identifier of the referenced bean optionally? If exposed, how to avoid
+    // TODO shouldn't we expose this in the Page Model? Perhaps the identifier of the referenced bean optionally? If exposed, how to avoid
     // TODO recursion?
     @PageModelIgnore
     HippoBean getReferencedBean();

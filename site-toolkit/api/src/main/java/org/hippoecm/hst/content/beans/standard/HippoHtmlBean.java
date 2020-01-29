@@ -23,6 +23,14 @@ import org.hippoecm.hst.content.annotations.PageModelIgnore;
  */
 public interface HippoHtmlBean extends HippoBean {
 
+    /**
+     * in the Page Model API we do not want to show uuid for nodes below a document (compound)
+     */
+    @PageModelIgnore
+    @Override
+    default String getRepresentationId() {
+        return getIdentifier();
+    }
 
     @PageModelIgnore
     @Override

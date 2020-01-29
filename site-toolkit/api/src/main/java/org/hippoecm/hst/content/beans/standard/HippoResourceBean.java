@@ -28,6 +28,15 @@ import org.hippoecm.hst.content.annotations.PageModelProperty;
 public interface HippoResourceBean extends HippoBean {
 
     /**
+     * in the Page Model API we do not want to show uuid for nodes below a document (compound)
+     */
+    @PageModelIgnore
+    @Override
+    default String getRepresentationId() {
+        return getIdentifier();
+    }
+
+    /**
      * Get the mime type of this resource.
      *
      * @return the mime type of this resource

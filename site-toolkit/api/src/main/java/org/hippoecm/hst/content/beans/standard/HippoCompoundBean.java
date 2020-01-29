@@ -16,10 +16,20 @@
 package org.hippoecm.hst.content.beans.standard;
 
 
+import org.hippoecm.hst.content.annotations.PageModelIgnore;
+
 /**
  * A marker interface for all beans that extend from the abstract hippo:compound type
  * 
  */
-public interface HippoCompoundBean extends HippoBean{
+public interface HippoCompoundBean extends HippoBean {
 
+    /**
+     * in the Page Model API we do not want to show uuid for nodes below a document (compound)
+     */
+    @PageModelIgnore
+    @Override
+    default String getRepresentationId() {
+        return getIdentifier();
+    }
 }
