@@ -1,0 +1,20 @@
+{
+  "type":"convertible",
+  "brand":"ferrari",
+  "owner":{
+    "name":"john"
+  },
+  "colors":[
+    "red",
+    "blue"
+  ],
+  "previousOwners":[
+    {
+      "name":"Mark"
+    },
+    {
+      "name":"Peter"
+    }
+  ],
+  "origin":"Italy"
+}

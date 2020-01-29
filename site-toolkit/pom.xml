@@ -108,6 +108,7 @@
     <swagger-jaxrs.version>1.5.15</swagger-jaxrs.version>
 
     <bytebuddy.version>1.10.2</bytebuddy.version>
+    <org.skyscreamer.version>1.5.0</org.skyscreamer.version>
 
   </properties>
 
@@ -651,6 +652,13 @@
         <groupId>org.onehippo.cms7</groupId>
         <artifactId>hippo-repository-testcontent</artifactId>
         <version>${hippo.repository.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.skyscreamer</groupId>
+        <artifactId>jsonassert</artifactId>
+        <version>${org.skyscreamer.version}</version>
         <scope>test</scope>
       </dependency>
 
