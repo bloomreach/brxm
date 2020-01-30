@@ -18,24 +18,28 @@
      [@fadeIn]="configChange$ | async"
      (clickOutside)="onClickedOutside()"
      class="content-wrapper">
-  <h1 class="header">{{ config?.caption }}</h1>
+  <brna-menu-scroll [height]="availableHeightForScrollableArea">
+    <div (click)="onMenuItemsWrapperClick($event)">
+      <h1 class="header">{{ config?.caption }}</h1>
 
-  <div *ngFor="let item of config.children">
-    <brna-menu-item-link
-                         *ngIf="!isContainer(item)"
-                         [caption]="item.caption"
-                         [navItem]="item.navItem"
-                         [highlighted]="isHighlighted(item)"
-                         [ngClass]="getQaClass(item)">
-    </brna-menu-item-link>
-    <brna-expandable-menu-item
-                               *ngIf="isContainer(item)"
-                               #expandableMenuItem
-                               [config]="item"
-                               [highlighted]="isHighlighted(item)"
-                               [ngClass]="getQaClass(item)"
-                               (click)="onExpandableMenuItemClick(expandableMenuItem)">
-    </brna-expandable-menu-item>
-  </div>
+      <div *ngFor="let item of config.children">
+        <brna-menu-item-link
+          *ngIf="!isContainer(item)"
+          [caption]="item.caption"
+          [navItem]="item.navItem"
+          [highlighted]="isHighlighted(item)"
+          [ngClass]="getQaClass(item)">
+        </brna-menu-item-link>
+        <brna-expandable-menu-item
+          *ngIf="isContainer(item)"
+          #expandableMenuItem
+          [config]="item"
+          [highlighted]="isHighlighted(item)"
+          [ngClass]="getQaClass(item)"
+          (click)="onExpandableMenuItemClick(expandableMenuItem)">
+        </brna-expandable-menu-item>
+      </div>
+    </div>
+  </brna-menu-scroll>
 </div>
 <div class="window-content-cover"></div>

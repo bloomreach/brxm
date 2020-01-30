@@ -17,10 +17,16 @@
 import { animate, query, style, transition, trigger } from '@angular/animations';
 import {
   Component,
+  ElementRef,
   HostBinding,
+  HostListener,
   Input,
-  OnChanges, QueryList,
-  SimpleChanges, ViewChildren,
+  OnChanges,
+  OnInit,
+  QueryList,
+  SimpleChanges,
+  ViewChild,
+  ViewChildren,
 } from '@angular/core';
 import { Subject } from 'rxjs';
 
@@ -29,6 +35,7 @@ import { MenuItemContainer } from '../../models/menu-item-container.model';
 import { MenuItem } from '../../models/menu-item.model';
 import { MenuStateService } from '../../services/menu-state.service';
 import { ExpandableMenuItemComponent } from '../expandable-menu-item/expandable-menu-item.component';
+import { MenuScrollComponent } from '../menu-scroll/menu-scroll.component';
 
 @Component({
   selector: 'brna-menu-drawer',
@@ -56,7 +63,7 @@ import { ExpandableMenuItemComponent } from '../expandable-menu-item/expandable-
     ]),
   ],
 })
-export class MenuDrawerComponent implements OnChanges {
+export class MenuDrawerComponent implements OnChanges, OnInit {
   configChange$ = new Subject();
 
   @HostBinding('@slideInOut')
@@ -65,10 +72,16 @@ export class MenuDrawerComponent implements OnChanges {
   @Input()
   config: MenuItemContainer;
 
+  @ViewChild(MenuScrollComponent, { static: false })
+  menuScrollComponent: MenuScrollComponent;
+
   @ViewChildren(ExpandableMenuItemComponent)
   expandableMenuItems: QueryList<ExpandableMenuItemComponent>;
 
+  availableHeightForScrollableArea: number;
+
   constructor(
+    private readonly elRef: ElementRef<HTMLElement>,
     private readonly menuStateService: MenuStateService,
     private readonly qaHelperService: QaHelperService,
   ) {}
@@ -77,6 +90,10 @@ export class MenuDrawerComponent implements OnChanges {
     if ('config' in changes) {
       this.configChange$.next({});
     }
+  }
+
+  ngOnInit(): void {
+    this.availableHeightForScrollableArea = this.elRef.nativeElement.clientHeight;
   }
 
   onClickedOutside(): void {
@@ -89,6 +106,10 @@ export class MenuDrawerComponent implements OnChanges {
       .forEach(x => x.close());
   }
 
+  onMenuItemsWrapperClick(): void {
+    this.menuScrollComponent.updateContentHeight();
+  }
+
   isContainer(item: MenuItem): boolean {
     return item instanceof MenuItemContainer;
   }
@@ -99,5 +120,10 @@ export class MenuDrawerComponent implements OnChanges {
 
   getQaClass(item: MenuItem): string {
     return this.qaHelperService.getMenuItemClass(item);
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    this.availableHeightForScrollableArea = this.elRef.nativeElement.clientHeight;
   }
 }
