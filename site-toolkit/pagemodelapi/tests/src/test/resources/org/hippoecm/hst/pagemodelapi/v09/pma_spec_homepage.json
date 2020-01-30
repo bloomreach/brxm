@@ -17,8 +17,24 @@
     "componentClass":"org.hippoecm.hst.pagemodelapi.common.components.GenericDetailComponent",
     "type":"COMPONENT",
     "models":{
+      "currentLink":{
+        "href":"/site/spa",
+        "type":"internal"
+      },
+      "sameChannelNewsLink":{
+        "href":"/site/spa/news/News1.html",
+        "type":"internal"
+      },
+      "otherChannelNewsLink":{
+        "href":"http://localhost/site/subsite/news/2008/SubNews1.html",
+        "type":"external"
+      },
       "document":{
         "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
+      },
+      "notFoundLink":{
+        "href":"/site/spa/pagenotfound",
+        "type":"internal"
       }
     },
     "components":[
@@ -99,7 +115,7 @@
       "date":1249891507580,
       "title":"This is the homepage",
       "body":{
-        "value":"This is the content of the homepage"
+        "value":"This is the content of the homepage with a link to <a href=\"/site/spa/news/News1.html\" data-type=\"internal\">News1</a> document"
       },
       "summary":"Summary of the homepage",
       "localeString":"en_US"
