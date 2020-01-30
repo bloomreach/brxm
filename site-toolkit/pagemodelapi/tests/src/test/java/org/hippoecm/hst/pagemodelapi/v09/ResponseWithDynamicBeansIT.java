@@ -20,14 +20,14 @@ import java.util.Iterator;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.pagemodelapi.common.AbstractPageModelApiTestCases;
+import org.hippoecm.hst.pagemodelapi.common.AbstractPageModelApiITCases;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class ResponseWithDynamicBeansIT extends AbstractPageModelApiTestCases {
+public class ResponseWithDynamicBeansIT extends AbstractPageModelApiITCases {
 
     @Test
     public void test_pagemodelapi__dynamic_beans__document_with_contentblocks() throws Exception {

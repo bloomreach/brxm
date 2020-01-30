@@ -19,7 +19,7 @@ package org.hippoecm.hst.pagemodelapi.v09;
 import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
-import org.hippoecm.hst.pagemodelapi.common.AbstractPageModelApiTestCases;
+import org.hippoecm.hst.pagemodelapi.common.AbstractPageModelApiITCases;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -40,7 +40,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
  *     </ol>
  * </p>
  */
-public class PageModelApiV09CompatibilityIT extends AbstractPageModelApiTestCases {
+public class PageModelApiV09CompatibilityIT extends AbstractPageModelApiITCases {
 
     @Test
     public void homepage_api_compatibility_v09_assertion() throws Exception {
