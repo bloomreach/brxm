@@ -35,6 +35,7 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.tool.DefaultContentBeansTool;
 import org.hippoecm.hst.core.container.ComponentManager;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.pagemodelapi.v09.ResponseWithDynamicBeansIT;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.site.HstServices;
@@ -202,4 +203,19 @@ public abstract class AbstractPageModelApiTestCases {
         }
 
     }
+
+    public String getActualJson(final String pathInfo) throws IOException, ServletException {
+        return getActualJson(pathInfo, "0.9");
+    }
+
+    public String getActualJson(final String pathInfo, final String apiVersion) throws IOException, ServletException {
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", pathInfo, null);
+
+        requestResponse.getRequest().addHeader(ContainerConstants.PAGE_MODEL_ACCEPT_VERSION, apiVersion);
+        final MockHttpServletResponse response = render(requestResponse);
+
+        return response.getContentAsString();
+    }
+
 }

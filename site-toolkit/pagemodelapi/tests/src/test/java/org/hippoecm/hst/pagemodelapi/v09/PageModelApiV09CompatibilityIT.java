@@ -16,18 +16,13 @@
 package org.hippoecm.hst.pagemodelapi.v09;
 
 
-import java.io.IOException;
 import java.io.InputStream;
-
-import javax.servlet.ServletException;
 
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.hst.pagemodelapi.common.AbstractPageModelApiTestCases;
-import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
-import org.springframework.mock.web.MockHttpServletResponse;
 
 /**
  * <p>
@@ -81,16 +76,6 @@ public class PageModelApiV09CompatibilityIT extends AbstractPageModelApiTestCase
         String expected = IOUtils.toString(inputStream, "UTF-8");
 
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT_ORDER);
-    }
-
-    @NotNull
-    private String getActualJson(final String pathInfo) throws IOException, ServletException {
-        final RequestResponseMock requestResponse = mockGetRequestResponse(
-                "http", "localhost", pathInfo, null);
-
-        final MockHttpServletResponse response = render(requestResponse);
-
-        return response.getContentAsString();
     }
 
 }
