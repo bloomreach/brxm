@@ -26,7 +26,7 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hippoecm.hst.core.container.ContainerConstants.PAGE_MODEL_API_VERSION;
 
-public class CommonPageModelApiIT extends AbstractPageModelApiTestCases {
+public class CommonPageModelApiIT extends AbstractPageModelApiITCases {
 
     @Test
     public void default_page_model_api_version_is_v09() throws Exception {
