@@ -344,8 +344,14 @@
       "locales" : null
     },
     "SUBPAGE_MENU_EDITOR_ADD_MENU_ITEM" : {
-      "status" : "CLEAN",
-      "locales" : null
+      "status" : "UPDATED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     },
     "SUBPAGE_PAGE_MOVE_TITLE" : {
       "status" : "CLEAN",
@@ -1164,6 +1170,16 @@
     "NONE_OPTION" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "TOOLBAR_BUTTON_DONE" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
