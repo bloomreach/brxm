@@ -52,7 +52,7 @@ public class PageModelApiV09CompatibilityIT extends AbstractPageModelApiTestCase
 
         String actual = getActualJson("/spa/resourceapi/home");
 
-        InputStream inputStream = PageModelApiV09CompatibilityIT.class.getResourceAsStream("pma_homepage.json");
+        InputStream inputStream = PageModelApiV09CompatibilityIT.class.getResourceAsStream("pma_spec_homepage.json");
 
         String expected = IOUtils.toString(inputStream, "UTF-8");
 
@@ -64,7 +64,7 @@ public class PageModelApiV09CompatibilityIT extends AbstractPageModelApiTestCase
 
         String actual = getActualJson("/spa/resourceapi/news/News1");
 
-        InputStream inputStream = PageModelApiV09CompatibilityIT.class.getResourceAsStream("pma_newspage.json");
+        InputStream inputStream = PageModelApiV09CompatibilityIT.class.getResourceAsStream("pma_spec_newspage.json");
 
         String expected = IOUtils.toString(inputStream, "UTF-8");
 
@@ -76,7 +76,7 @@ public class PageModelApiV09CompatibilityIT extends AbstractPageModelApiTestCase
 
         String actual = getActualJson("/spa/resourceapi/genericdetail/dynamiccontent");
 
-        InputStream inputStream = PageModelApiV09CompatibilityIT.class.getResourceAsStream("pma_dynamiccontent.json");
+        InputStream inputStream = PageModelApiV09CompatibilityIT.class.getResourceAsStream("pma_spec_dynamiccontent.json");
 
         String expected = IOUtils.toString(inputStream, "UTF-8");
 
