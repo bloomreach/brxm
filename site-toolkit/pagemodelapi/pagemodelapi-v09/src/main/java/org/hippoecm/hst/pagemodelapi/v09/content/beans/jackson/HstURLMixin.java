@@ -15,11 +15,9 @@
  */
 package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson;
 
-import org.hippoecm.hst.core.component.HstURL;
-
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonSerialize(converter = HstURLConverter.class)
-public interface HstURLMixin extends HstURL {
+public interface HstURLMixin {
 
 }

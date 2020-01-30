@@ -15,11 +15,9 @@
  */
 package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson;
 
-import org.hippoecm.hst.core.linking.HstLink;
-
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonSerialize(converter = HstLinkConverter.class)
-public interface HstLinkMixin extends HstLink {
+public interface HstLinkMixin {
 
 }
