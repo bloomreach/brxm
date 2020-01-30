@@ -19,7 +19,7 @@
      (clickOutside)="onClickedOutside()"
      class="content-wrapper">
   <brna-menu-scroll [height]="availableHeightForScrollableArea">
-    <div (click)="onMenuItemsWrapperClick($event)">
+    <div (click)="onMenuItemsWrapperClick()">
       <h1 class="header">{{ config?.caption }}</h1>
 
       <div *ngFor="let item of config.children">
