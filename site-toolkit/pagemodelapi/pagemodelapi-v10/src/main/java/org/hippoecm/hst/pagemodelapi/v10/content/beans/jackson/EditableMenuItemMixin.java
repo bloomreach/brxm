@@ -13,17 +13,19 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson;
+package org.hippoecm.hst.pagemodelapi.v10.content.beans.jackson;
 
 import com.fasterxml.jackson.databind.annotation.JsonAppend;
+
+import org.hippoecm.hst.core.sitemenu.EditableMenuItem;
 
 @JsonAppend(props = {
         @JsonAppend.Prop(
                 name = "_links",
-                value = HippoGalleryImageBeanLinksVirtualBeanPropertyWriter.class
+                value = MenuItemLinksVirtualBeanPropertyWriter.class
         )
 }
 )
-public interface HippoGalleryImageBeanMixin {
+public interface EditableMenuItemMixin extends EditableMenuItem {
 
 }
