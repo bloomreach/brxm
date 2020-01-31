@@ -56,10 +56,11 @@ public class PageModelApiV10LearningTest {
         alreadySerializingPageModelEntity.set(null);
         serializeStack.set(new Stack<>());
 
-        AggregatedPageModel ard = new AggregatedPageModel(root);
+        AggregatedPageModel test = new AggregatedPageModel(root);
 
-        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(ard));
+        objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(test);
 
+        // TODO assert that every $ref exists!
     }
 
 
