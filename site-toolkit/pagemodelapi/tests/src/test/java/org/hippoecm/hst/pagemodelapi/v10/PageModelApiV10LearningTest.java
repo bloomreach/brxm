@@ -73,16 +73,16 @@ public class PageModelApiV10LearningTest {
         @Override
         public JsonSerializer<?> modifySerializer(SerializationConfig config, BeanDescription beanDesc,
                                                   JsonSerializer<?> serializer) {
-            return new ComponentSerializer((JsonSerializer<Object>) serializer);
+            return new PageModelSerializer((JsonSerializer<Object>) serializer);
         }
 
     }
 
-    public class ComponentSerializer extends JsonSerializer<Object> {
+    public class PageModelSerializer extends JsonSerializer<Object> {
 
         private JsonSerializer<Object> serializer;
 
-        public ComponentSerializer(final JsonSerializer<Object> serializer) {
+        public PageModelSerializer(final JsonSerializer<Object> serializer) {
             this.serializer = serializer;
         }
 
@@ -223,8 +223,6 @@ public class PageModelApiV10LearningTest {
         public RootReference getRoot() {
             return new RootReference(object);
         }
-
-
     }
 
     public static class RootReference {
