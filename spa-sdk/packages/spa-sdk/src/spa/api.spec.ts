@@ -46,7 +46,7 @@ describe('ApiImpl', () => {
   beforeEach(async () => {
     urlBuilder = {
       initialize: jest.fn(),
-      getApiUrl: jest.fn(() => 'http://example.com'),
+      getApiUrl: jest.fn((path: string) => `http://example.com${path}`),
     } as unknown as jest.Mocked<UrlBuilder>;
 
     api = new ApiImpl(urlBuilder);
@@ -62,7 +62,7 @@ describe('ApiImpl', () => {
 
     it('should request a page model', () => {
       expect(config.httpClient).toBeCalledWith({
-        url: 'http://example.com',
+        url: 'http://example.com/',
         method: 'GET',
         headers: {
           cookie: 'JSESSIONID=1234',
@@ -91,9 +91,13 @@ describe('ApiImpl', () => {
   describe('getComponent', () => {
     beforeEach(async () => await api.getComponent('/component', { a: 'b' }));
 
+    it('should generate a URL', () => {
+      expect(urlBuilder.getApiUrl).toBeCalledWith('/component');
+    });
+
     it('should request a component model', () => {
       expect(config.httpClient).toBeCalledWith({
-        url: '/component',
+        url: 'http://example.com/component',
         method: 'POST',
         data: 'a=b',
         headers: {

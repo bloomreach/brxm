@@ -87,9 +87,10 @@ export class ApiImpl implements Api {
   async getComponent(path: string, payload: object) {
     const data = new URLSearchParams(payload as Record<string, string>);
     const { visitor } = this.options;
+    const url = this.urlBuilder.getApiUrl(path);
 
     const response = await this.options.httpClient({
-      url: path,
+      url,
       data: data.toString(),
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',

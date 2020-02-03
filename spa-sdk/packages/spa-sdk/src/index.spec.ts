@@ -191,10 +191,11 @@ describe('initialize', () => {
       } as PageModel,
     }));
 
-    window.SPA!.renderComponent('r1_r1_r1', {});
+    window.SPA!.renderComponent('r1_r1_r1', { some: 'value' });
     await new Promise(process.nextTick);
 
-    expect(httpClient).toBeCalledWith(expect.objectContaining({ url: banner0.getUrl() }));
+    expect(httpClient).toBeCalled();
+    expect(httpClient.mock.calls[0]).toMatchSnapshot();
     expect(listener0).toBeCalled();
     expect(listener1).not.toBeCalled();
   });
