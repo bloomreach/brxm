@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
+
 package org.hippoecm.frontend.plugins.standardworkflow;
 
 import java.io.Serializable;
@@ -37,6 +38,7 @@ import org.apache.wicket.markup.repeater.Item;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.markup.repeater.data.ListDataProvider;
 import org.apache.wicket.model.IModel;
+import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.PackageResource;
 import org.apache.wicket.request.resource.PackageResourceReference;
@@ -55,6 +57,8 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIconStack.Position;
+import org.hippoecm.frontend.plugins.standardworkflow.editdisplayorder.FolderSortingMechanism;
+import org.hippoecm.frontend.plugins.standardworkflow.editdisplayorder.FolderSortingMechanismDialog;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IBrowseService;
 import org.hippoecm.frontend.service.IEditor;
@@ -174,6 +178,40 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                 });
             }
 
+            final StringResourceModel name =
+                    new StringResourceModel("set-folder-sorting-mechanism", this);
+
+
+            add(new StdWorkflow("set-folder-sorting-mechanism", name, context, getModel()) {
+                final FolderSortingMechanism folderSortingMechanism = new FolderSortingMechanism(
+                        getFolderWorkflow().get());
+
+                @Override
+                protected Dialog createRequestDialog() {
+                    final IModel<String> titleModel =
+                            new StringResourceModel("set-folder-sorting-mechanism-title", this);
+                    return new FolderSortingMechanismDialog(this
+                            , model
+                            , titleModel
+                            , PropertyModel.of(folderSortingMechanism, "alphabetically"));
+                }
+
+                @Override
+                protected void execute() throws Exception {
+                    getFolderWorkflow().update(folderSortingMechanism);
+                }
+
+                @Override
+                protected Component getIcon(final String id) {
+                    return HippoIcon.fromSprite(id, Icon.SORT_BY_ALPHA);
+                }
+
+                private FolderWorkflow getFolderWorkflow() throws RepositoryException {
+                    final WorkflowManager manager = UserSession.get().getWorkflowManager();
+                    return (FolderWorkflow) manager.getWorkflow("embedded", model.getNode());
+                }
+            });
+
             if (isActionAvailable("delete", hints)) {
                 add(new StdWorkflow("delete", new StringResourceModel("delete-title", this), context, getModel()) {
 
@@ -218,6 +256,17 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                         return new DeleteDialog(this, notificationModel, false);
                     }
 
+                    @Override
+                    public void execute(WorkflowDescriptorModel model) throws Exception {
+                        // FIXME: this assumes that folders are always embedded in other folders
+                        // and there is some logic here to look up the parent.  The real solution is
+                        // in the visual component to merge two workflows.
+                        Node node = model.getNode();
+                        WorkflowManager manager = UserSession.get().getWorkflowManager();
+                        FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
+                        workflow.delete(node.getName() + (node.getIndex() > 1 ? "[" + node.getIndex() + "]" : ""));
+                    }
+
                     class DeleteDialog extends WorkflowDialog<Void> {
 
                         public DeleteDialog(IWorkflowInvoker invoker, IModel<String> notification, boolean deleteAllowed) {
@@ -238,17 +287,6 @@ public class FolderWorkflowPlugin extends RenderPlugin {
                         public IModel<String> getTitle() {
                             return new StringResourceModel("delete-title", FolderWorkflowPlugin.this);
                         }
-                    }
-
-                    @Override
-                    public void execute(WorkflowDescriptorModel model) throws Exception {
-                        // FIXME: this assumes that folders are always embedded in other folders
-                        // and there is some logic here to look up the parent.  The real solution is
-                        // in the visual component to merge two workflows.
-                        Node node = model.getNode();
-                        WorkflowManager manager = UserSession.get().getWorkflowManager();
-                        FolderWorkflow workflow = (FolderWorkflow) manager.getWorkflow("embedded", node.getParent());
-                        workflow.delete(node.getName() + (node.getIndex() > 1 ? "[" + node.getIndex() + "]" : ""));
                     }
                 });
             }
@@ -298,7 +336,7 @@ public class FolderWorkflowPlugin extends RenderPlugin {
 
                             // Try to match svgName with a built-in Icon
                             final String iconName = StringUtils.replace(svgName, "-", "_").toUpperCase();
-                            for (Icon icon: Icon.values()) {
+                            for (Icon icon : Icon.values()) {
                                 if (icon.name().equals(iconName)) {
                                     return HippoIcon.fromSprite(id, icon);
                                 }
@@ -376,7 +414,8 @@ public class FolderWorkflowPlugin extends RenderPlugin {
         }
     }
 
-    protected void onWorkflowAdded(String path) { }
+    protected void onWorkflowAdded(String path) {
+    }
 
     private boolean isActionAvailable(final String action, final Map<String, Serializable> hints) {
         return hints.containsKey(action) && hints.get(action) instanceof Boolean && (Boolean) hints.get(action);

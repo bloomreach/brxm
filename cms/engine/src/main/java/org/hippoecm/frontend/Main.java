@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -150,8 +150,6 @@ public class Main extends PluginApplication {
 
     public final static String PLUGIN_APPLICATION_NAME_PARAMETER = "config";
     public static final String PLUGIN_APPLICATION_HIDE_PERSPECTIVE_MENU_PARAMETER = "hidePerspectiveMenu";
-    public final static String PLUGIN_APPLICATION_VALUE_CMS = "cms";
-    public final static String PLUGIN_APPLICATION_VALUE_CONSOLE = "console";
 
     // comma separated init parameter
     public final static String ACCEPTED_ORIGIN_WHITELIST = "accepted-origin-whitelist";
@@ -216,7 +214,7 @@ public class Main extends PluginApplication {
         initializeFallBackCredentials();
 
         wicketFaviconService = HippoServiceRegistry.getService(WicketFaviconService.class);
-        if (wicketFaviconService == null){
+        if (wicketFaviconService == null) {
             wicketFaviconService = new WicketFaviconServiceImpl();
             HippoServiceRegistry.register(wicketFaviconService, WicketFaviconService.class);
         }
@@ -849,7 +847,7 @@ public class Main extends PluginApplication {
     }
 
     public static boolean isCmsApplication() {
-        return PluginUserSession.get().getApplicationName().equals("cms");
+        return PluginUserSession.get().getApplicationName().equals(PLUGIN_APPLICATION_VALUE_CMS);
     }
 
     public static boolean hasNoIFrameParameter() {

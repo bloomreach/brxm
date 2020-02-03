@@ -37,6 +37,7 @@ import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.list.ListItem;
 import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.IModel;
+import org.hippoecm.frontend.model.MixinModel;
 import org.hippoecm.frontend.model.NodeModelWrapper;
 import org.hippoecm.frontend.session.UserSession;
 import org.onehippo.repository.util.JcrConstants;
@@ -149,75 +150,5 @@ class NodeTypesEditor extends WebMarkupContainer {
         return result;
     }
 
-    private static class MixinModel extends NodeModelWrapper<Boolean> {
-
-        private static final long serialVersionUID = 1L;
-
-        private String type;
-
-        private MixinModel(IModel<Node> nodeModel, String mixin) {
-            super(nodeModel);
-            this.type = mixin;
-        }
-
-        public Boolean getObject() {
-            try {
-                return isNodeType();
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            }
-            return false;
-        }
-
-        public void setObject(Boolean value) {
-            try {
-                Node node = getNode();
-                if (node == null) {
-                    throw new UnsupportedOperationException();
-                }
-                if (value) {
-                    if (!isNodeType()) {
-                        node.addMixin(type);
-                    }
-                } else {
-                    if (isNodeType() && hasMixin()) {
-                        node.removeMixin(type);
-                    }
-                }
-            } catch (RepositoryException ex) {
-                log.error(ex.getMessage());
-            }
-        }
-
-        private boolean isNodeType() throws RepositoryException {
-            Node node = getNode();
-            if (node == null) {
-                return false;
-            }
-            return node.isNodeType(type);
-        }
-
-        private boolean hasMixin() throws RepositoryException {
-            Node node = getNode();
-            if (node == null) {
-                return false;
-            }
-            for (NodeType nodeType : node.getMixinNodeTypes()) {
-                if (nodeType.getName().equals(type)) {
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        public boolean isInherited() {
-            try {
-                return isNodeType() && !hasMixin();
-            } catch (RepositoryException re) {
-                log.error(re.getMessage());
-            }
-            return false;
-        }
-    }
 
 }

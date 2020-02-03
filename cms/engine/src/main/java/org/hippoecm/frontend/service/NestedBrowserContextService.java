@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.Main;
 import org.hippoecm.frontend.session.PluginUserSession;
 
-import static org.hippoecm.frontend.Main.PLUGIN_APPLICATION_VALUE_CMS;
+import static org.hippoecm.frontend.PluginApplication.PLUGIN_APPLICATION_VALUE_CMS;
 
 public class NestedBrowserContextService implements INestedBrowserContextService, IClusterable {
 
