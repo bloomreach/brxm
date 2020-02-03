@@ -38,6 +38,9 @@ public class GenericDetailComponent extends GenericHstComponent {
 
         request.setModel("document", requestContext.getContentBean());
 
+        // make sure that same document twice in same page model gets serialized only once
+        request.setModel("document-again", requestContext.getContentBean());
+
         // trigger some HstLinks on the model to make sure HstLinkMixin is triggered and that we do not make
         // BC incompatible changes to the Page Model API
 
