@@ -15,23 +15,33 @@
   -->
 
 <md-toolbar flex="none" 
-            class="hippo-toolbar qa-toolbar md-bloomreach-theme ">
+            class="hippo-toolbar qa-toolbar md-bloomreach-theme">
   <div class="md-toolbar-tools">
     <h1>{{ ::'SUBPAGE_PAGE_NEW_TITLE' | translate }}</h1>
 
     <span flex></span>
 
-    <md-button class="qa-button-back"
-               aria-label="{{ 'TOOLBAR_BUTTON_CLOSE' | translate }}"
-               title="{{ 'TOOLBAR_BUTTON_CLOSE' | translate }}"
+    <md-button class="qa-discard"
+               aria-label="{{ ::'CANCEL' | translate }}"
+               title="{{ ::'CANCEL' | translate }}"
                ng-click="$ctrl.onDone()">
-      {{ 'TOOLBAR_BUTTON_CLOSE' | translate }}
+      {{ ::'CANCEL' | translate }}
     </md-button>
+
+    <md-button aria-label="{{ ::'CREATE' | translate }}"
+               class="md-primary qa-action"
+               form="page-new"
+               title="{{ ::'CREATE' | translate }}"
+               type="submit">
+      {{ ::'CREATE' | translate }}
+    </md-button>
+
   </div>
 </md-toolbar>
 
 <subpage-content flex layout="row" class="qa-page-add md-bloomreach-theme">
-  <form name="form"
+  <form id="page-new"
+        name="form"
         flex="initial"
         class="qa-subpage"
         ng-submit="form.$valid && $ctrl.create()"
@@ -86,16 +96,5 @@
         <div ng-message="required">{{ ::'VALIDATION_REQUIRED' | translate }}</div>
       </div>
     </md-input-container>
-    <div layout="row" layout-align="end center">
-      <md-button type="button"
-                 class="qa-discard"
-                 ng-click="$ctrl.onDone()">
-        {{ ::'CANCEL' | translate }}
-      </md-button>
-      <md-button type="submit"
-                 class="md-raised md-primary qa-action">
-        {{ ::'CREATE' | translate }}
-      </md-button>
-    </div>
   </form>
 </subpage-content>

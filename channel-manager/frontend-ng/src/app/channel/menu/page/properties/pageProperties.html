@@ -1,5 +1,5 @@
 <!--
-  Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -14,23 +14,33 @@
   limitations under the License.
   -->
 <md-toolbar flex="none" 
-            class="hippo-toolbar qa-toolbar md-bloomreach-theme ">
+            class="hippo-toolbar qa-toolbar md-bloomreach-theme">
   <div class="md-toolbar-tools">
     <h1>{{ ::$ctrl.subpageTitle }}</h1>
 
     <span flex></span>
 
-    <md-button class="qa-button-back"
-               aria-label="{{ 'TOOLBAR_BUTTON_CLOSE' | translate }}"
-               title="{{ 'TOOLBAR_BUTTON_CLOSE' | translate }}"
+    <md-button aria-label="{{ ::'CANCEL' | translate }}"
+               class="qa-discard"
+               title="{{ ::'CANCEL' | translate }}"
                ng-click="$ctrl.onDone()">
-      {{ 'TOOLBAR_BUTTON_CLOSE' | translate }}
+      {{ ::'CANCEL' | translate }}
     </md-button>
+
+    <md-button aria-label="{{ ::'SAVE' | translate }}"
+               class="md-primary qa-action"
+               form="page-properties"
+               title="{{ ::'SAVE' | translate }}"
+               type="submit">
+      {{ ::'SAVE' | translate }}
+    </md-button>
+
   </div>
 </md-toolbar>
 
 <subpage-content flex layout="row" class="qa-page-properties md-bloomreach-theme">
-  <form name="form"
+  <form id="page-properties"
+        name="form"
         flex="initial"
         class="qa-subpage"
         ng-submit="form.$valid && $ctrl.save()"
@@ -74,16 +84,5 @@
         </md-option>
       </md-select>
     </md-input-container>
-    <div layout="row" layout-align="end center">
-      <md-button type="button"
-                 class="qa-discard"
-                 ng-click="$ctrl.onDone()">
-        {{ ::'CANCEL' | translate }}
-      </md-button>
-      <md-button type="submit"
-                 class="md-raised md-primary qa-action">
-        {{ ::'SAVE' | translate }}
-      </md-button>
-    </div>
   </form>
 </subpage-content>

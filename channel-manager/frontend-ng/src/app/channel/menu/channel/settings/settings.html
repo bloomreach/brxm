@@ -15,25 +15,36 @@
   -->
 
 <md-toolbar flex="none" 
-            class="hippo-toolbar qa-toolbar md-bloomreach-theme ">
+            class="hippo-toolbar qa-toolbar md-bloomreach-theme">
   <div class="md-toolbar-tools">
     <h1>{{ ::$ctrl.subpageTitle }}</h1>
 
     <span flex></span>
 
-    <md-button class="qa-button-back"
-               aria-label="{{ 'TOOLBAR_BUTTON_CLOSE' | translate }}"
-               title="{{ 'TOOLBAR_BUTTON_CLOSE' | translate }}"
+    <md-button aria-label="{{ 'CANCEL' | translate }}"
+               class="qa-discard"
+               title="{{ 'CANCEL' | translate }}"
                ng-click="$ctrl.onDone()">
-      {{ 'TOOLBAR_BUTTON_CLOSE' | translate }}
+      {{ 'CANCEL' | translate }}
     </md-button>
+
+    <md-button aria-label="{{ 'SAVE' | translate }}"
+               class="qa-action md-primary"
+               form="channel-settings"
+               title="{{ 'SAVE' | translate }}"
+               type="submit"
+               ng-disabled="$ctrl.isSaveDisabled()">
+      {{ ::'SAVE' | translate }}
+    </md-button>
+
   </div>
 </md-toolbar>
 
 <subpage-content flex
                  layout="row"
                  class="qa-channel-settings md-bloomreach-theme">
-  <form name="$ctrl.form"
+  <form id="channel-settings" 
+        name="$ctrl.form"
         flex="initial"
         class="qa-subpage"
         ng-submit="$ctrl.saveIfValid()"
@@ -59,18 +70,5 @@
                     info="::$ctrl.channelInfoDescription">
     </property-field>
 
-    <div layout="row"
-         layout-align="end center">
-      <md-button type="button"
-                 class="qa-discard"
-                 ng-click="$ctrl.onDone()">
-        {{ ::'CANCEL' | translate }}
-      </md-button>
-      <md-button type="submit"
-                 class="qa-action md-raised md-primary"
-                 ng-disabled="$ctrl.isSaveDisabled()">
-        {{ ::'SAVE' | translate }}
-      </md-button>
-    </div>
   </form>
 </subpage-content>
