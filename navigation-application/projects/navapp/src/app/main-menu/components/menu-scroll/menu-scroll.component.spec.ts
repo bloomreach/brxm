@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
+import { Component, DebugElement, NO_ERRORS_SCHEMA, ViewChild } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, flush, TestBed, tick } from '@angular/core/testing';
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
@@ -26,7 +26,7 @@ import { MenuScrollComponent } from './menu-scroll.component';
 @Component({
   template: `
     <brna-menu-scroll [height]="scrollContainerHeight">
-      <div style="height: 100px"></div>
+      <div [style.height.px]="contentFirstElementHeight"></div>
       <div style="height: 100px"></div>
       <div style="height: 100px"></div>
       <div style="height: 100px"></div>
@@ -35,7 +35,11 @@ import { MenuScrollComponent } from './menu-scroll.component';
   `,
 })
 class TestComponent {
+  @ViewChild(MenuScrollComponent, { static: true })
+  menuScroll: MenuScrollComponent;
+
   scrollContainerHeight = 600;
+  contentFirstElementHeight = 100;
 }
 
 describe('MenuScrollComponent', () => {
@@ -108,6 +112,7 @@ describe('MenuScrollComponent', () => {
 
       mouseEvent = jasmine.createSpyObj('mouseEvent', [
         'preventDefault',
+        'stopPropagation',
       ]);
 
       wheelEvent = jasmine.createSpyObj('wheelEvent',
@@ -277,6 +282,28 @@ describe('MenuScrollComponent', () => {
 
         expect(contentDe.styles.transform).toBe('translateY(-20px)');
       }));
+
+      describe('when content\'s height is decreased', () => {
+        beforeEach(async(() => {
+          component.contentFirstElementHeight = 50;
+
+          fixture.detectChanges();
+        }));
+
+        describe('and manual content height update is initiated', () => {
+          beforeEach(fakeAsync(() => {
+            component.menuScroll.updateContentHeight();
+            tick(50);
+
+            fixture.detectChanges();
+            tick();
+          }));
+
+          it('should auto scroll up', () => {
+            expect(contentDe.styles.transform).toBe('translateY(-0px)');
+          });
+        });
+      });
     });
 
     describe('when content scrolled fully down', () => {
@@ -349,6 +376,28 @@ describe('MenuScrollComponent', () => {
 
         it('should scroll content up', () => {
           expect(contentDe.styles.transform).toBe('translateY(-300px)');
+        });
+      });
+
+      describe('when content\'s height is decreased', () => {
+        beforeEach(async(() => {
+          component.contentFirstElementHeight = 50;
+
+          fixture.detectChanges();
+        }));
+
+        describe('and manual content height update is initiated', () => {
+          beforeEach(fakeAsync(() => {
+            component.menuScroll.updateContentHeight();
+            tick(50);
+
+            fixture.detectChanges();
+            tick();
+          }));
+
+          it('should auto scroll up', () => {
+            expect(contentDe.styles.transform).toBe('translateY(-300px)');
+          });
         });
       });
     });

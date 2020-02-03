@@ -50,12 +50,7 @@ export class MenuScrollComponent implements AfterViewInit {
   set height(value: number) {
     this.animationState = ScrollButtonAnimationState.Animate;
 
-    const delta = value - this.availableHeight;
-
-    if (this.position > 0 && delta > 0) {
-      this.transitionClass = 'resize-transition';
-      this.position -= delta;
-    }
+    this.autoScrollOnResize(value - this.availableHeight);
 
     this.availableHeight = value;
   }
@@ -75,6 +70,7 @@ export class MenuScrollComponent implements AfterViewInit {
 
   private offsetTop = 0;
   private cachedContentHeight = 0;
+  private updateContentHeightInterval: any;
 
   get isScrollableUp(): boolean {
     return this.position > 0;
@@ -116,6 +112,7 @@ export class MenuScrollComponent implements AfterViewInit {
 
   onScrollUpButtonClick(event: MouseEvent): void {
     event.preventDefault();
+    event.stopPropagation();
 
     this.animationState = ScrollButtonAnimationState.AnimateWithDelay;
     this.transitionClass = 'click-transition';
@@ -124,6 +121,7 @@ export class MenuScrollComponent implements AfterViewInit {
 
   onScrollDownButtonClick(event: MouseEvent): void {
     event.preventDefault();
+    event.stopPropagation();
 
     this.animationState = ScrollButtonAnimationState.AnimateWithDelay;
     this.transitionClass = 'click-transition';
@@ -144,7 +142,45 @@ export class MenuScrollComponent implements AfterViewInit {
     this.position = this.position + normalized.y;
   }
 
-  private updateContentHeight(): void {
-    this.cachedContentHeight = this.content.nativeElement.offsetHeight;
+  updateContentHeight(): void {
+    const firstUpdate = this.cachedContentHeight === 0;
+
+    const updateHeight = () => {
+      const newHeight = this.content.nativeElement.offsetHeight;
+      const addedSpace = this.cachedContentHeight - newHeight;
+
+      this.autoScrollOnResize(addedSpace);
+
+      this.cachedContentHeight = newHeight;
+
+      return addedSpace === 0;
+    };
+
+    updateHeight();
+
+    if (firstUpdate) {
+      return;
+    }
+
+    if (this.updateContentHeightInterval) {
+      clearInterval(this.updateContentHeightInterval);
+    }
+
+    this.updateContentHeightInterval = setInterval(() => {
+      if (!updateHeight()) {
+        return;
+      }
+
+      clearInterval(this.updateContentHeightInterval);
+    }, 50);
+  }
+
+  private autoScrollOnResize(addedSpace: number): void {
+    if (this.position < 0 || addedSpace < 0) {
+      return;
+    }
+
+    this.transitionClass = 'resize-transition';
+    this.position -= addedSpace;
   }
 }

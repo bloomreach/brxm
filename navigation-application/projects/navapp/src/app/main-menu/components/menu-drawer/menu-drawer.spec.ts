@@ -1,5 +1,5 @@
 /*!
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import { QaHelperService } from '../../../services/qa-helper.service';
 import { MenuItemContainer } from '../../models/menu-item-container.model';
 import { MenuItemLink } from '../../models/menu-item-link.model';
 import { MenuStateService } from '../../services/menu-state.service';
+import { MenuScrollComponent } from '../menu-scroll/menu-scroll.component';
 
 import { MenuDrawerComponent } from './menu-drawer.component';
 
@@ -33,6 +34,8 @@ describe('MenuDrawerComponent', () => {
   let menuStateServiceMock: jasmine.SpyObj<MenuStateService>;
   let qaHelperServiceMock: jasmine.SpyObj<QaHelperService>;
 
+  let menuScrollComponentMock: jasmine.SpyObj<MenuScrollComponent>;
+
   beforeEach(async(() => {
     menuStateServiceMock = jasmine.createSpyObj('MenuStateService', [
       'closeDrawer',
@@ -41,6 +44,10 @@ describe('MenuDrawerComponent', () => {
 
     qaHelperServiceMock = jasmine.createSpyObj('QaHelperService', [
       'getMenuItemClass',
+    ]);
+
+    menuScrollComponentMock = jasmine.createSpyObj('MenuScrollComponent', [
+      'updateContentHeight',
     ]);
 
     fixture = TestBed.configureTestingModule({
@@ -58,8 +65,15 @@ describe('MenuDrawerComponent', () => {
     component = fixture.componentInstance;
     de = fixture.debugElement;
 
+    fixture.debugElement.nativeElement.style.height = '200px';
+    component.ngOnInit();
+
     fixture.detectChanges();
   }));
+
+  it('should determine available height for the scrollable area', () => {
+    expect(component.availableHeightForScrollableArea).toBe(200);
+  });
 
   it('click outside should close the drawer', () => {
     component.onClickedOutside();
@@ -105,6 +119,14 @@ describe('MenuDrawerComponent', () => {
     expect(actual).toBeFalsy();
   });
 
+  it('should initiate scrollable content height refresh', () => {
+    component.menuScrollComponent = menuScrollComponentMock;
+
+    component.onMenuItemsWrapperClick();
+
+    expect(menuScrollComponentMock.updateContentHeight).toHaveBeenCalled();
+  });
+
   it('should check for the menu active state', () => {
     menuStateServiceMock.isMenuItemHighlighted.and.returnValue(true);
     const link = new MenuItemLink('some-id', 'some caption');
@@ -123,5 +145,13 @@ describe('MenuDrawerComponent', () => {
 
     expect(actual).toBe('qa-class');
     expect(qaHelperServiceMock.getMenuItemClass).toHaveBeenCalledWith(link);
+  });
+
+  it('should update available height for the scrollable area on window resize', () => {
+    fixture.debugElement.nativeElement.style.height = '100px';
+
+    window.dispatchEvent(new Event('resize'));
+
+    expect(component.availableHeightForScrollableArea).toBe(100);
   });
 });
