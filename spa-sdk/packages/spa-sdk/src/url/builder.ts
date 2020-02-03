@@ -80,6 +80,15 @@ export class UrlBuilderImpl {
   getApiUrl(link: string) {
     const { pathname, searchParams } = parseUrl(link);
 
+    // TODO: Remove when HSTTWO-4728 is resolved
+    if (this.apiBaseUrl.pathname && pathname.startsWith(this.apiBaseUrl.pathname)) {
+      return buildUrl({
+        pathname,
+        origin: this.apiBaseUrl.origin,
+        searchParams: mergeSearchParams(this.apiBaseUrl.searchParams, searchParams),
+      });
+    }
+
     if (this.spaBaseUrl.pathname && !pathname.startsWith(this.spaBaseUrl.pathname)) {
       throw new Error(`The path "${pathname}" does not start with the base path "${this.spaBaseUrl.pathname}".`);
     }

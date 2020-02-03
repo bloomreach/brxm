@@ -39,6 +39,8 @@ describe('UrlBuilderImpl', () => {
       ${options2} | ${'/news'}                | ${'http://127.0.0.1/resourceapi/news'}
       ${options3} | ${'/news'}                | ${'http://localhost:8080/site/spa/resourceapi/news?param=value'}
       ${options3} | ${'/news?a=b'}            | ${'http://localhost:8080/site/spa/resourceapi/news?a=b&param=value'}
+      ${options3} | ${'/site/spa/resourceapi/news?a=b'}     | ${'http://localhost:8080/site/spa/resourceapi/news?param=value&a=b'}
+      ${options3} | ${'/site/spa/resourceapi/news?param=b'} | ${'http://localhost:8080/site/spa/resourceapi/news?param=b'}
       ${options4} | ${'/news'}                | ${'http://localhost:8080/site/spa/resourceapi'}
       ${options4} | ${'/news/'}               | ${'http://localhost:8080/site/spa/resourceapi/'}
       ${options4} | ${'/news?a=b'}            | ${'http://localhost:8080/site/spa/resourceapi?a=b'}
