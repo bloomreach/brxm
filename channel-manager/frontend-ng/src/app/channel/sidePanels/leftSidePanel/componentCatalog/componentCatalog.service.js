@@ -61,6 +61,7 @@ class ComponentCatalogService {
     this.SidePanelService.lowerSidePanelBeneathMask();
     this.HippoIframeService.lowerIframeBeneathMask();
     this.OverlayService.disableAddMode();
+    this.OverlayService.offComponentClick();
     this.OverlayService.offContainerClick();
     this.MaskService.removeClickHandler();
   }
@@ -71,6 +72,7 @@ class ComponentCatalogService {
     this.SidePanelService.liftSidePanelAboveMask();
     this.HippoIframeService.liftIframeAboveMask();
     this.OverlayService.enableAddMode();
+    this.OverlayService.onComponentClick(this._handleComponentClick.bind(this));
     this.OverlayService.onContainerClick(this._handleContainerClick.bind(this));
     this.MaskService.onClick(this._handleMaskClick.bind(this));
   }
@@ -85,8 +87,32 @@ class ComponentCatalogService {
     this.SidePanelService.lowerSidePanelBeneathMask();
     this.HippoIframeService.lowerIframeBeneathMask();
     this.OverlayService.disableAddMode();
+    this.OverlayService.offComponentClick();
     this.OverlayService.offContainerClick();
     this.MaskService.removeClickHandler();
+  }
+
+  async _handleComponentClick(event, clickedComponent) {
+    const container = clickedComponent.getContainer();
+    const clickedComponentIndex = container.items.findIndex(item => item === clickedComponent);
+
+    if (container.isDisabled()) {
+      event.stopPropagation();
+      return;
+    }
+
+    const addedComponentId = await this._addComponent(container.getId());
+    await this._positionNewComponent(event, clickedComponentIndex, addedComponentId);
+  }
+
+  async _positionNewComponent(event, clickedComponentIndex, addedComponentId) {
+    const addedComponent = this.PageStructureService.getComponentById(addedComponentId);
+    const container = addedComponent.getContainer();
+    const components = container.items;
+    const shouldPlaceBefore = event.target.classList.contains('hippo-overlay-element-component-drop-area-before');
+    const nextComponent = shouldPlaceBefore ? components[clickedComponentIndex] : components[clickedComponentIndex + 1];
+
+    return this.ContainerService.moveComponent(addedComponent, container, nextComponent);
   }
 
   _handleContainerClick(event, container) {
@@ -111,6 +137,8 @@ class ComponentCatalogService {
       const component = this.PageStructureService.getComponentById(componentId);
       this.EditComponentService.startEditing(component);
     }
+
+    return componentId;
   }
 }
 

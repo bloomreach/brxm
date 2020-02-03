@@ -250,29 +250,123 @@
   width: $overlay-icon-size;
 }
 
+.hippo-overlay-element-component-drop-area {
+  display: none;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+
+  &:hover {
+    background: $overlay-container-add-mode-hover-bgcolor;
+    cursor: copy;
+
+    .hippo-overlay-element-component-drop-area-before,
+    .hippo-overlay-element-component-drop-area-after {
+      display: flex;
+    }
+  }
+
+  .hippo-overlay-element-component-drop-area-before,
+  .hippo-overlay-element-component-drop-area-after {
+    display: none;
+    flex: 0 0 50%;
+
+    &:hover {
+      color: $orange-a400;
+    }
+
+    .hippo-overlay-element-component-drop-area-icons {
+      display: flex;
+      pointer-events: none;
+
+      svg {
+        fill: currentColor;
+        pointer-events: none;
+      }
+    }
+  }
+
+  &.hippo-overlay-element-component-direction-horizontal {
+    flex-direction: row;
+
+    .hippo-overlay-element-component-drop-area-before {
+      align-items: center;
+      justify-content: flex-start;
+
+      .hippo-overlay-element-component-drop-area-icons svg {
+        transform: rotate(-90deg);
+      }
+    }
+
+    .hippo-overlay-element-component-drop-area-after {
+      align-items: center;
+      justify-content: flex-end;
+
+      .hippo-overlay-element-component-drop-area-icons {
+        flex-direction: row-reverse;
+
+        svg {
+          transform: rotate(90deg);
+        }
+      }
+    }
+  }
+
+  &.hippo-overlay-element-component-direction-vertical {
+    flex-direction: column;
+
+    .hippo-overlay-element-component-drop-area-before {
+      align-items: flex-start;
+      justify-content: center;
+
+      .hippo-overlay-element-component-drop-area-icons {
+        flex-direction: column;
+      }
+    }
+
+    .hippo-overlay-element-component-drop-area-after {
+      align-items: flex-end;
+      justify-content: center;
+
+      .hippo-overlay-element-component-drop-area-icons {
+        flex-direction: column-reverse;
+
+        svg {
+          transform: rotate(180deg);
+        }
+      }
+    }
+  }
+}
+
 // Adding a component
 .hippo-overlay-add-mode {
   pointer-events: auto;
 
-  .hippo-overlay-element-container {
+  .hippo-overlay-element-container .hippo-overlay-label {
+    visibility: visible;
+  }
+
+  .hippo-overlay-element-component .hippo-overlay-label {
+    visibility: hidden;
+  }
+
+  .hippo-overlay-element-container-empty:hover {
+    background: $overlay-container-add-mode-hover-bgcolor;
     cursor: copy;
     pointer-events: auto;
 
-    &:hover .hippo-overlay-icon {
+    .hippo-overlay-icon {
       display: block;
-    }
-
-    &:hover {
-      background: $overlay-container-add-mode-hover-bgcolor;
-    }
-
-    .hippo-overlay-label {
-      visibility: visible;
     }
   }
 
   .hippo-overlay-element-container-disabled {
     cursor: not-allowed;
+  }
+
+  .hippo-overlay-element-component-drop-area {
+    display: flex;
   }
 }
 
