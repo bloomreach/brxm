@@ -1,18 +1,36 @@
+/*
+ * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.hippoecm.hst.pagemodelapi.v10;
 
 import java.io.IOException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Stack;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.databind.BeanDescription;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationConfig;
@@ -22,12 +40,10 @@ import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 
 import org.junit.Test;
 
-public class PageModelApiV10LearningTest {
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
-    private ThreadLocal<Stack<WrapperEntity>> serializeStack = new ThreadLocal<Stack<WrapperEntity>>();
-    private ThreadLocal<Object> alreadySerializingPageModelEntity = new ThreadLocal<Object>();
-    private ThreadLocal<Object> poppedSerializingPageModelEntity = new ThreadLocal<Object>();
-    private ThreadLocal<WrapperEntity> pageRootEntity = new ThreadLocal<WrapperEntity>();
+public class PageModelApiV10LearningTest {
 
     final static Class[] PageModelEntities = {Component.class, Product.class, Content.class};
 
@@ -51,18 +67,39 @@ public class PageModelApiV10LearningTest {
                         .addModel("simple", "test2")
                         .addModel("product", new Product("3"))
                         .addModel("content", new Content("1"))
-                     .addChild(new Component("childOfchild2", "container")));
+                        .addChild(new Component("childOfchild2", "container")));
 
-        alreadySerializingPageModelEntity.set(null);
-        serializeStack.set(new Stack<>());
+        AggregatedPageModel pageModel = new AggregatedPageModel(root);
 
-        AggregatedPageModel test = new AggregatedPageModel(root);
+        final String serialized = objectMapper.writeValueAsString(pageModel);
 
-        objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(test);
+        JsonNode jsonNodeRoot = objectMapper.readTree(serialized);
 
-        // TODO assert that every $ref exists!
+        validate(jsonNodeRoot, jsonNodeRoot);
+
     }
 
+    private void validate(final JsonNode jsonNodeRoot, final JsonNode current) throws IOException {
+        Iterator<Map.Entry<String, JsonNode>> fieldsIterator = current.fields();
+
+        while (fieldsIterator.hasNext()) {
+            Map.Entry<String, JsonNode> field = fieldsIterator.next();
+            final JsonNode value = field.getValue();
+            if (value.isContainerNode()) {
+                validate(jsonNodeRoot, value); // RECURSIVE CALL
+            } else {
+                final String key = field.getKey();
+                if ("$ref".equals(key)) {
+                    // assert that the ref pointer exists
+
+                    final JsonPointer jsonPointer = JsonPointer.compile(value.asText());
+                    assertFalse(String.format("Missing reference '%s'", value.asText()),
+                            jsonNodeRoot.at(jsonPointer).isMissingNode());
+
+                }
+            }
+        }
+    }
 
     class PageModelSerializerModifier extends BeanSerializerModifier {
 
@@ -78,7 +115,13 @@ public class PageModelApiV10LearningTest {
 
     }
 
-    public class PageModelSerializer extends JsonSerializer<Object> {
+    public static class PageModelSerializer extends JsonSerializer<Object> {
+
+        private static ThreadLocal<Object> tlRoot = new ThreadLocal<>();
+        private static ThreadLocal<Object> tlFirstEntity = new ThreadLocal<>();
+        private static ThreadLocal<ArrayDeque<WrapperEntity>> tlSerializeQueue = new ThreadLocal<>();
+        private static ThreadLocal<Object> tlSerializingPageModelEntity = new ThreadLocal<>();
+
 
         private JsonSerializer<Object> serializer;
 
@@ -86,55 +129,65 @@ public class PageModelApiV10LearningTest {
             this.serializer = serializer;
         }
 
-        private boolean test = true;
-
         @Override
         public void serialize(final Object object, final JsonGenerator gen, final SerializerProvider serializerProvider) throws IOException {
-
-            if (object.getClass().equals(RootReference.class)) {
-                RootReference ref = (RootReference) object;
-                Object pageRoot = ref.getObject();
-                String jsonPointerId = createJsonPointerId();
-                WrapperEntity value = new WrapperEntity(pageRoot, jsonPointerId);
-                pageRootEntity.set(value);
-                serializeBeanReference(gen, jsonPointerId);
-                serializeStack.get().add(value);
-                return;
+            if (tlRoot.get() == null) {
+                tlRoot.set(object);
+                tlFirstEntity.set(Boolean.TRUE);
+                tlSerializeQueue.set(new ArrayDeque<>());
             }
+            try {
+                if (object.getClass().equals(RootReference.class)) {
+                    RootReference ref = (RootReference) object;
+                    Object pageRoot = ref.getObject();
+                    String jsonPointerId = createJsonPointerId();
+                    WrapperEntity value = new WrapperEntity(pageRoot, jsonPointerId);
+                    serializeBeanReference(gen, jsonPointerId);
+                    tlSerializeQueue.get().add(value);
+                    return;
+                }
 
-            Optional<Class> first = Arrays.stream(PageModelEntities).filter(aClass -> object.getClass().equals(aClass)).findFirst();
+                Optional<Class> pmaEntity = Arrays.stream(PageModelEntities).filter(aClass -> object.getClass().equals(aClass)).findFirst();
 
-            if (!first.isPresent()) {
-                serializer.serialize(object, gen, serializerProvider);
-                return;
-            }
-
-
-            if (alreadySerializingPageModelEntity.get() != null ||
-                    (poppedSerializingPageModelEntity.get() != null && poppedSerializingPageModelEntity.get() != object)) {
-                String jsonPointerId = createJsonPointerId();
-                serializeBeanReference(gen, jsonPointerId);
-                serializeStack.get().add(new WrapperEntity(object, jsonPointerId));
-                return;
-            } else {
-                if (poppedSerializingPageModelEntity.get() != null) {
+                if (!pmaEntity.isPresent()) {
                     serializer.serialize(object, gen, serializerProvider);
+                    return;
+                }
+
+
+                if (tlSerializingPageModelEntity.get() != null && tlSerializingPageModelEntity.get() != object) {
+                    String jsonPointerId = createJsonPointerId();
+                    serializeBeanReference(gen, jsonPointerId);
+                    tlSerializeQueue.get().add(new WrapperEntity(object, jsonPointerId));
+                    return;
                 } else {
+                    if (tlSerializingPageModelEntity.get() != null) {
+                        serializer.serialize(object, gen, serializerProvider);
+                    } else {
 
-                    while (!serializeStack.get().isEmpty()) {
+                        while (!tlSerializeQueue.get().isEmpty()) {
 
-                        WrapperEntity pop = serializeStack.get().remove(0);
-                        if (test) {
-                            gen.writeStartObject();
-                            test = false;
+                            WrapperEntity pop = tlSerializeQueue.get().removeFirst();
+                            if (tlFirstEntity.get() != null) {
+                                gen.writeStartObject();
+                                tlFirstEntity.set(null);
+                            }
+                            gen.writeFieldName(pop.jsonPointer);
+                            tlSerializingPageModelEntity.set(pop.object);
+                            gen.writeObject(pop.object);
+                            tlSerializingPageModelEntity.set(null);
+
                         }
-                        gen.writeFieldName(pop.jsonPointer);
-                        poppedSerializingPageModelEntity.set(pop.object);
-                        gen.writeObject(pop.object);
-                        poppedSerializingPageModelEntity.set(null);
-
                     }
-               }
+                }
+            } finally {
+                if (tlRoot.get() == object) {
+                    // cleanup
+                    tlRoot.set(null);
+                    tlFirstEntity.set(null);
+                    tlSerializeQueue.set(null);
+                    tlSerializingPageModelEntity.set(null);
+                }
             }
 
         }
@@ -161,7 +214,7 @@ public class PageModelApiV10LearningTest {
     private static final String CONTENT_JSON_POINTER_REFERENCE_PROP = "$ref";
 
     static String createJsonPointerId() {
-       return createJsonPointerId(UUID.randomUUID().toString()) ;
+        return createJsonPointerId(UUID.randomUUID().toString());
     }
 
     static String createJsonPointerId(final String uuid) {
@@ -202,6 +255,7 @@ public class PageModelApiV10LearningTest {
             children.add(child);
             return this;
         }
+
         public Component addModel(final String name, final Object model) {
             models.put(name, model);
             return this;
