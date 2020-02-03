@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,10 @@
     fileList += `?antiCache=${antiCache}`;
   }
 
+  function doesElementExist(selector) {
+    return !!document.querySelector(selector);
+  }
+
   fetch(fileList)
     .then(response => response.json())
     .then(files => {
@@ -58,6 +62,10 @@
       urls
         .filter(url => url.endsWith('.css'))
         .forEach(url => {
+          if (doesElementExist(`link[href="${url}"]`)) {
+            return;
+          }
+
           const linkTag = document.createElement('link');
           linkTag.rel = 'stylesheet';
           linkTag.href = url;
