@@ -1,5 +1,5 @@
 /*
- *  Copyright 2012-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2012-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,6 +19,9 @@ import org.apache.wicket.protocol.http.WebApplication;
 import org.apache.wicket.request.resource.ResourceReference;
 
 public abstract class PluginApplication extends WebApplication {
+
+    public static final String PLUGIN_APPLICATION_VALUE_CMS = "cms";
+    public static final String PLUGIN_APPLICATION_VALUE_CONSOLE = "console";
 
     public static PluginApplication get() {
         return (PluginApplication) WebApplication.get();

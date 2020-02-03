@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -46,6 +46,7 @@ import org.apache.wicket.markup.html.panel.Panel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.hippoecm.frontend.Main;
+import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.model.UserCredentials;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.session.LoginException;
@@ -82,11 +83,11 @@ public class LoginPanel extends Panel {
         form = createLoginForm(config);
         add(form);
     }
-    
+
     protected LoginForm createLoginForm(final LoginConfig config) {
         return new LoginForm(config.isAutoComplete(), config.getLocales(), config.getSupportedBrowsers());
     }
-    
+
     protected void login() throws LoginException {
         final PluginUserSession userSession = PluginUserSession.get();
 
@@ -333,7 +334,7 @@ public class LoginPanel extends Panel {
     }
 
     protected static boolean isConsole() {
-        return WebApplicationHelper.getApplicationName().equals(Main.PLUGIN_APPLICATION_VALUE_CONSOLE);
+        return WebApplicationHelper.getApplicationName().equals(PluginApplication.PLUGIN_APPLICATION_VALUE_CONSOLE);
     }
 
     protected void setCookieValue(final String cookieName, final String cookieValue, final int maxAge) {

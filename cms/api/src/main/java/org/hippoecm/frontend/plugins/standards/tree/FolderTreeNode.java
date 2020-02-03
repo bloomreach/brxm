@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2017 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,6 @@
 package org.hippoecm.frontend.plugins.standards.tree;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -24,6 +23,7 @@ import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
+import org.hippoecm.frontend.PluginApplication;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.model.tree.IJcrTreeNode;
 import org.hippoecm.frontend.model.tree.JcrTreeNameComparator;
@@ -34,6 +34,9 @@ import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.frontend.FrontendNodeType.FRONTEND_ORDER_CHILD_FOLDERS;
+import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
 
 public class FolderTreeNode extends JcrTreeNode {
 
@@ -47,6 +50,7 @@ public class FolderTreeNode extends JcrTreeNode {
     /**
      * Returns {@link #DISPLAY_NAME_COMPARATOR} if the current folder node is of {@link HippoStdNodeType#NT_DIRECTORY}
      * type. Otherwise, returns null, meaning to follow the natural JCR ordering on child folders.
+     *
      * @param model
      * @return
      */
@@ -75,7 +79,8 @@ public class FolderTreeNode extends JcrTreeNode {
 
     /**
      * Constructs a folder tree node using {@code model} and {@code config}.
-     * @param model jcr folder node model
+     *
+     * @param model  jcr folder node model
      * @param config document list filtering configuration
      */
     public FolderTreeNode(JcrNodeModel model, DocumentListFilter config) {
@@ -84,16 +89,17 @@ public class FolderTreeNode extends JcrTreeNode {
 
     /**
      * Constructs a folder tree node using {@code model}, {@code config} and {@code subfolderComparator}.
-     * <P>
+     * <p>
      * If non-null {@code subfolderComparator} is provided, subfolders are sorted by the given comparator.
-     * And, 
+     * And,
      * </P>
-     * @param model jcr folder node model
-     * @param config document list filtering configuration
+     *
+     * @param model               jcr folder node model
+     * @param config              document list filtering configuration
      * @param subfolderComparator subfolder comparator used in sorting if non-null object is provided
      */
     public FolderTreeNode(JcrNodeModel model, DocumentListFilter config,
-            Comparator<IJcrTreeNode> subfolderComparator) {
+                          Comparator<IJcrTreeNode> subfolderComparator) {
         super(model, null, getDisplayNameComparatorIfDirectoryNode(model));
         this.config = config;
         this.subfolderComparator = subfolderComparator;
@@ -101,12 +107,13 @@ public class FolderTreeNode extends JcrTreeNode {
 
     /**
      * Private constructor to create a folder tree node with specifying parent folder tree node.
-     * <P>
+     * <p>
      * If non-null {@code subfolderComparator} is provided, subfolders are sorted by the given comparator.
-     * And, 
+     * And,
      * </P>
-     * @param model jcr folder node model
-     * @param parent parent folder tree node
+     *
+     * @param model               jcr folder node model
+     * @param parent              parent folder tree node
      * @param subfolderComparator subfolder comparator used in sorting if non-null object is provided
      */
     private FolderTreeNode(JcrNodeModel model, FolderTreeNode parent, Comparator<IJcrTreeNode> subfolderComparator) {
@@ -139,7 +146,7 @@ public class FolderTreeNode extends JcrTreeNode {
 
     /**
      * {@inheritDoc}
-     * <P>
+     * <p>
      * Overrides to filter out child nodes based on folder filter configuration.
      * </P>
      */
@@ -165,7 +172,7 @@ public class FolderTreeNode extends JcrTreeNode {
      * </p>
      */
     @Override
-    protected JcrTreeNode createChildJcrTreeNode(JcrNodeModel childNodeModel)  {
+    protected JcrTreeNode createChildJcrTreeNode(JcrNodeModel childNodeModel) {
         return new FolderTreeNode(childNodeModel, this, subfolderComparator);
     }
 
@@ -178,14 +185,20 @@ public class FolderTreeNode extends JcrTreeNode {
      */
     @Override
     protected void sortChildTreeNodes(List<IJcrTreeNode> childTreeNodes) throws RepositoryException {
+        final Node baseNode = nodeModel.getNode();
         if (subfolderComparator != null) {
-            Node baseNode = nodeModel.getNode();
 
             if (!baseNode.isNodeType(HippoNodeType.NT_FACETRESULT)) {
-                Collections.sort(childTreeNodes,  subfolderComparator);
+                childTreeNodes.sort(subfolderComparator);
             }
         } else {
-            super.sortChildTreeNodes(childTreeNodes);
+            if (PluginApplication.exists() && PluginApplication.get().getPluginApplicationName().equals("cms")
+                    && baseNode.isNodeType(NT_FOLDER)
+                    && baseNode.isNodeType(FRONTEND_ORDER_CHILD_FOLDERS)) {
+                childTreeNodes.sort(DISPLAY_NAME_COMPARATOR);
+            } else {
+                super.sortChildTreeNodes(childTreeNodes);
+            }
         }
     }
 
