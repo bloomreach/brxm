@@ -50,7 +50,7 @@ describe('ApiImpl', () => {
     } as unknown as jest.Mocked<UrlBuilder>;
 
     api = new ApiImpl(urlBuilder);
-    await api.initialize(config);
+    api.initialize(config);
   });
 
   describe('getPage', () => {
@@ -77,12 +77,23 @@ describe('ApiImpl', () => {
     });
 
     it('should not include x-forwarded-for header when the remote address could not be determined', async () => {
-      await api.initialize({ httpClient: config.httpClient, request: { path: config.request.path } });
+      api.initialize({ httpClient: config.httpClient, request: { path: config.request.path } });
       await api.getPage(config.request.path);
 
       expect(config.httpClient).toBeCalledWith(expect.not.objectContaining({
         headers: {
           'x-forwarded-for': expect.anything(),
+        },
+      }));
+    });
+
+    it('should not include visitor header when visitor configuration is not defined', async () => {
+      api.initialize({ httpClient: config.httpClient, request: { path: config.request.path } });
+      await api.getPage(config.request.path);
+
+      expect(config.httpClient).toBeCalledWith(expect.not.objectContaining({
+        headers: {
+          'visitor-header': expect.anything(),
         },
       }));
     });
@@ -96,30 +107,18 @@ describe('ApiImpl', () => {
     });
 
     it('should request a component model', () => {
-      expect(config.httpClient).toBeCalledWith({
+      expect(config.httpClient).toBeCalledWith(expect.objectContaining({
         url: 'http://example.com/component',
         method: 'POST',
         data: 'a=b',
-        headers: {
+        headers: expect.objectContaining({
           'Content-Type': 'application/x-www-form-urlencoded',
-          'visitor-header': 'visitor-id',
-        },
-      });
+        }),
+      }));
     });
 
     it('should return a component model', async () => {
       expect(await api.getComponent('/', {})).toBe(model);
-    });
-
-    it('should not include visitor header when visitor configuration is not defined', async () => {
-      await api.initialize({ httpClient: config.httpClient, request: { path: config.request.path } });
-      await api.getComponent('/', {});
-
-      expect(config.httpClient).toBeCalledWith(expect.not.objectContaining({
-        headers: {
-          'visitor-header': expect.anything(),
-        },
-      }));
     });
   });
 });

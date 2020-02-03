@@ -16,7 +16,7 @@
 
 import { PageModel, Visitor } from '../page';
 import { UrlBuilder } from '../url';
-import { HttpClient, HttpRequest } from './http';
+import { HttpClientConfig, HttpClient, HttpRequest } from './http';
 
 export interface ApiOptions {
   /**
@@ -65,39 +65,37 @@ export class ApiImpl implements Api {
     this.options = options;
   }
 
-  async getPage(path: string) {
-    const { remoteAddress: ip } = this.options.request.connection || {};
-    const { host, ...headers } = this.options.request.headers || {};
-    const { visitor } = this.options;
+  getPage(path: string) {
     const url = this.urlBuilder.getApiUrl(path);
 
-    const response = await this.options.httpClient({
-      url,
-      headers: {
-        ...ip && { 'x-forwarded-for': ip },
-        ...visitor && { [visitor.header]: visitor.id },
-        ...headers,
-      },
-      method: 'GET',
-    });
-
-    return response.data;
+    return this.send({ url, method: 'GET' });
   }
 
-  async getComponent(path: string, payload: object) {
-    const data = new URLSearchParams(payload as Record<string, string>);
-    const { visitor } = this.options;
+  getComponent(path: string, payload: object) {
     const url = this.urlBuilder.getApiUrl(path);
+    const data = new URLSearchParams(payload as Record<string, string>);
 
-    const response = await this.options.httpClient({
+    return this.send({
       url,
       data: data.toString(),
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        ...visitor && { [visitor.header]: visitor.id },
       },
       method: 'POST',
     });
+  }
+
+  private async send(config: HttpClientConfig) {
+    const { remoteAddress: ip } = this.options.request.connection || {};
+    const { host, ...headers } = this.options.request.headers || {};
+    const { visitor } = this.options;
+
+    const response = await this.options.httpClient({...config, headers: {
+      ...ip && { 'x-forwarded-for': ip },
+      ...visitor && { [visitor.header]: visitor.id },
+      ...headers,
+      ...config.headers,
+    }});
 
     return response.data;
   }
