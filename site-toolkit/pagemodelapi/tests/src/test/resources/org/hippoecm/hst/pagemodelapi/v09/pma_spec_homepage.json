@@ -35,6 +35,153 @@
       "notFoundLink":{
         "href":"/site/spa/pagenotfound",
         "type":"internal"
+      },
+      "menu":{
+        "name":"main",
+        "siteMenuItems":[
+          {
+            "depth":3,
+            "repositoryBased":true,
+            "properties":{
+              "hst:referencesitemapitem":"news",
+              "hst:depth":3,
+              "hst:repobased":true
+            },
+            "name":"News",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/news",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"contact"
+            },
+            "name":"Contact",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/contact",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"contact-spring"
+            },
+            "name":"Contact-Spring",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/contact-spring",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"contact-dispatch"
+            },
+            "name":"Contact-Dispatch",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/contact-dispatch",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"contact-springmvc"
+            },
+            "name":"Contact-SpringMVC",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/contact-springmvc",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"search"
+            },
+            "name":"Search",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/search",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"uniquelinks"
+            },
+            "name":"UniqueLinks",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/uniquelinks",
+                "type":"internal"
+              }
+            }
+          }
+        ]
       }
     },
     "components":[

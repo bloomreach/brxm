@@ -44,6 +44,8 @@ public class GenericDetailComponent extends GenericHstComponent {
         final HstLinkCreator hstLinkCreator = requestContext.getHstLinkCreator();
         final HippoBean requestContentBean = requestContext.getContentBean();
 
+        request.setModel("menu", requestContext.getHstSiteMenus().getSiteMenu("main"));
+
         request.setModel("currentLink", hstLinkCreator.create(requestContentBean, requestContext));
 
         // include link not found
