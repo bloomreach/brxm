@@ -16,7 +16,7 @@
 
 import { PageModel } from '../page';
 import { UrlBuilder } from '../url';
-import { Api, ApiImpl } from './api';
+import { ApiImpl } from './api';
 
 jest.mock('../url');
 
@@ -40,7 +40,7 @@ const config = {
 };
 
 describe('ApiImpl', () => {
-  let api: Api;
+  let api: ApiImpl;
   let urlBuilder: jest.Mocked<UrlBuilder>;
 
   beforeEach(async () => {

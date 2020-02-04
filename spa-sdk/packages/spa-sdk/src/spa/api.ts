@@ -37,12 +37,6 @@ export interface ApiOptions {
 
 export interface Api {
   /**
-   * Initializes the API client with options.
-   * @param options The API client options.
-   */
-  initialize(options: ApiOptions): void;
-
-  /**
    * @param path Source path to generate the Page Model API URL.
    * @returns The Page Model.
    */

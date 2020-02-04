@@ -43,12 +43,6 @@ export interface UrlBuilderOptions {
 
 export interface UrlBuilder {
   /**
-   * Initializes the URL Builder with options.
-   * @param options The URL Builder options.
-   */
-  initialize(options: UrlBuilderOptions): void;
-
-  /**
    * @param path Source path to generate the Page Model API URL.
    * @returns The Page Model API URL.
    */

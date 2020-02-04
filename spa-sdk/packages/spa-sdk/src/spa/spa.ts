@@ -15,36 +15,9 @@
  */
 
 import { Typed } from 'emittery';
-import { Cms, CmsOptions } from '../cms';
+import { CmsUpdateEvent, Events } from '../events';
 import { Factory, PageModel, Page } from '../page';
-import { Events, CmsUpdateEvent } from '../events';
-import { UrlBuilder, UrlBuilderOptions, isMatched } from '../url';
-import { Api, ApiOptions } from './api';
-
-/**
- * Configuration options for generating the page model URL.
- */
-export interface UrlOptions {
-  /**
-   * URL mapping for the live page model.
-   */
-  live: UrlBuilderOptions;
-
-  /**
-   * URL mapping for the preview page model.
-   */
-  preview: UrlBuilderOptions;
-}
-
-/**
- * Configuration of the SPA SDK.
- */
-export interface Configuration extends ApiOptions, CmsOptions {
-  /**
-   * Options for generating the page model API URL.
-   */
-  options: UrlOptions;
-}
+import { Api } from './api';
 
 /**
  * SPA entry point interacting with the Channel Manager and the Page Model API.
@@ -53,19 +26,14 @@ export class Spa {
   private page?: Page;
 
   /**
-   * @param config Configuration of the SPA integration with brXM.
-   * @param cms Cms integration instance.
    * @param eventBus Event bus to exchange data between submodules.
    * @param pageFactory Factory to produce page instances.
    * @param urlBuilder API URL builder.
    */
   constructor(
-    protected config: Configuration,
-    protected cms: Cms,
     protected eventBus: Typed<Events>,
     private api: Api,
     private pageFactory: Factory<[PageModel], Page>,
-    private urlBuilder: UrlBuilder,
   ) {
     this.onCmsUpdate = this.onCmsUpdate.bind(this);
   }
@@ -84,19 +52,16 @@ export class Spa {
   }
 
   /**
-   * Intitializes the SPA.
+   * Initializes the SPA.
+   * @param path Page path.
+   * @param model Preloaded page model.
    */
-  async initialize(model?: PageModel): Promise<Page> {
-    const options = isMatched(this.config.request.path, this.config.options.preview.spaBaseUrl)
-      ? this.config.options.preview
-      : this.config.options.live;
-    this.urlBuilder.initialize(options);
-    this.api.initialize(this.config);
-    this.cms.initialize(this.config);
+  async initialize(path: string, model?: PageModel): Promise<Page> {
+    this.page = this.pageFactory.create(model || await this.api.getPage(path));
 
-    this.page = this.pageFactory.create(model || await this.api.getPage(this.config.request.path));
-
-    this.eventBus.on('cms.update', this.onCmsUpdate);
+    if (this.page.isPreview()) {
+      this.eventBus.on('cms.update', this.onCmsUpdate);
+    }
 
     return this.page;
   }

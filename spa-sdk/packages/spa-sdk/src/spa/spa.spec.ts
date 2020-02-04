@@ -15,13 +15,10 @@
  */
 
 import { Typed } from 'emittery';
-import { mocked } from 'ts-jest/utils';
-import { Cms } from '../cms';
 import { Component, Factory, PageModel, Page, TYPE_COMPONENT } from '../page';
 import { Events } from '../events';
-import { UrlBuilder, isMatched } from '../url';
 import { Api } from './api';
-import { Configuration, Spa } from './spa';
+import { Spa } from './spa';
 
 jest.mock('../url');
 
@@ -55,12 +52,10 @@ const config = {
 
 describe('Spa', () => {
   let api: jest.Mocked<Api>;
-  let cms: jest.Mocked<Cms>;
   let eventBus: Typed<Events>;
   let page: jest.Mocked<Page>;
   let pageFactory: jest.Mocked<Factory<[PageModel], Page>>;
   let spa: Spa;
-  let urlBuilder: jest.Mocked<UrlBuilder>;
 
   beforeEach(() => {
     eventBus = new Typed<Events>();
@@ -69,34 +64,19 @@ describe('Spa', () => {
       getPage: jest.fn(() => model),
       getComponent: jest.fn(() => model),
     } as unknown as jest.Mocked<Api>;
-    cms = { initialize: jest.fn() } as unknown as jest.Mocked<Cms>;
-    page = { getComponent: jest.fn() } as unknown as jest.Mocked<Page>;
+    page = {
+      getComponent: jest.fn(),
+      isPreview: jest.fn(),
+    } as unknown as jest.Mocked<Page>;
     pageFactory = { create: jest.fn() };
-    urlBuilder = {
-      initialize: jest.fn(),
-      getApiUrl: jest.fn(() => 'http://example.com'),
-    } as unknown as jest.Mocked<UrlBuilder>;
 
     spyOn(eventBus, 'on').and.callThrough();
     pageFactory.create.mockReturnValue(page);
-    spa = new Spa(config as Configuration, cms, eventBus, api, pageFactory, urlBuilder);
+    spa = new Spa(eventBus, api, pageFactory);
   });
 
   describe('initialize', () => {
-    beforeEach(async () => await spa.initialize());
-
-    it('should initialize a CMS integration', () => {
-      expect(cms.initialize).toBeCalled();
-    });
-
-    it('should use a preview configuration', async () => {
-      mocked(isMatched).mockReturnValueOnce(true);
-      await spa.initialize();
-
-      expect(urlBuilder.initialize).toBeCalledTimes(2);
-      expect(urlBuilder.initialize).nthCalledWith(1, config.options.live);
-      expect(urlBuilder.initialize).nthCalledWith(2, config.options.preview);
-    });
+    beforeEach(async () => await spa.initialize(config.request.path));
 
     it('should get page through an API', () => {
       expect(api.getPage).toBeCalledWith(config.request.path);
@@ -106,7 +86,7 @@ describe('Spa', () => {
       jest.clearAllMocks();
       const model = {} as PageModel;
 
-      await spa.initialize(model);
+      await spa.initialize(config.request.path, model);
       expect(api.getPage).not.toBeCalled();
       expect(pageFactory.create).toBeCalledWith(model);
     });
@@ -115,14 +95,16 @@ describe('Spa', () => {
       expect(pageFactory.create).toBeCalledWith(model);
     });
 
-    it('should subscribe for cms.update event', () => {
+    it('should subscribe for cms.update event', async () => {
+      page.isPreview.mockReturnValue(true);
+      await spa.initialize(config.request.path);
       expect(eventBus.on).toBeCalledWith('cms.update', expect.any(Function));
     });
 
     it('should reject a promise when fetching the page model fails', () => {
       const error = new Error('Failed to fetch page model data');
       api.getPage.mockImplementationOnce(() => { throw error; });
-      const promise = spa.initialize();
+      const promise = spa.initialize(config.request.path);
 
       expect.assertions(1);
       expect(promise).rejects.toBe(error);
@@ -138,8 +120,9 @@ describe('Spa', () => {
       component = { getUrl: jest.fn() } as unknown as jest.Mocked<Component>;
 
       page.getComponent.mockReturnValue(root);
+      page.isPreview.mockReturnValue(true);
       spyOn(eventBus, 'emit');
-      await spa.initialize();
+      await spa.initialize(config.request.path);
 
       jest.clearAllMocks();
     });
@@ -174,7 +157,7 @@ describe('Spa', () => {
     it('should unsubscribe from cms.update event', async () => {
       spyOn(eventBus, 'off');
 
-      await spa.initialize();
+      await spa.initialize(config.request.path);
       spa.destroy();
 
       expect(eventBus.off).toBeCalledWith('cms.update', expect.any(Function));

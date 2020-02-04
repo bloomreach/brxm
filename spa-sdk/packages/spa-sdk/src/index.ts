@@ -21,7 +21,7 @@
 
 import { DOMParser, XMLSerializer } from 'xmldom';
 import { Typed } from 'emittery';
-import { ApiImpl, Spa, Configuration } from './spa';
+import { ApiImpl, Spa } from './spa';
 import { Cms } from './cms';
 import {
   ComponentFactory,
@@ -46,8 +46,9 @@ import {
   TYPE_META_COMMENT,
   TYPE_LINK_INTERNAL,
 } from './page';
+import { Configuration } from './configuration';
 import { Events } from './events';
-import { UrlBuilderImpl } from './url';
+import { UrlBuilderImpl, isMatched } from './url';
 
 const eventBus = new Typed<Events>();
 const cms = new Cms(eventBus);
@@ -93,8 +94,15 @@ export async function initialize(config: Configuration, model?: PageModel): Prom
     metaFactory,
   ));
 
-  const spa = new Spa(config, cms, eventBus, api, pageFactory, urlBuilder);
-  const page = await spa.initialize(model);
+  const options = isMatched(config.request.path, config.options.preview.spaBaseUrl)
+    ? config.options.preview
+    : config.options.live;
+  urlBuilder.initialize(options);
+  api.initialize(config);
+  cms.initialize(config);
+
+  const spa = new Spa(eventBus, api, pageFactory);
+  const page = await spa.initialize(config.request.path, model);
 
   pages.set(page, spa);
 
@@ -111,7 +119,7 @@ export function destroy(page: Page): void {
   return spa && spa.destroy();
 }
 
-export { Configuration } from './spa';
+export { Configuration } from './configuration';
 export {
   Component,
   ContainerItem,
