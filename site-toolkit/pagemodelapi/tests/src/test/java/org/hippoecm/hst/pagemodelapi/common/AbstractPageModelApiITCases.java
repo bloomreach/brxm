@@ -82,7 +82,7 @@ public abstract class AbstractPageModelApiITCases {
         componentManager = new SpringComponentManager(configuration);
         componentManager.setConfigurationResources(getConfigurations());
 
-        servletContext.addInitParameter(DefaultContentBeansTool.BEANS_ANNOTATED_CLASSES_CONF_PARAM, "classpath*:org/onehippo/**/*.class");
+        servletContext.addInitParameter(DefaultContentBeansTool.BEANS_ANNOTATED_CLASSES_CONF_PARAM, "classpath*:org/hippoecm/hst/pagemodelapi/common/**/*.class");
         servletContext.setContextPath("/site");
         HippoWebappContextRegistry.get().register(webappContext);
 
