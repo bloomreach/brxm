@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -152,10 +152,10 @@ describe('ChannelSettings', () => {
     expect($scope.onError).toHaveBeenCalledWith('ERROR_CHANNEL_INFO_RETRIEVAL_FAILED', undefined);
   });
 
-  it('notifies the event "on-done" when clicking the back button', () => {
+  it('calls "onDone" when clicking cancel', () => {
     compileDirectiveAndGetController();
 
-    $element.find('.qa-button-back').click();
+    $element.find('.qa-discard').click();
     expect($scope.onDone).toHaveBeenCalled();
   });
 
