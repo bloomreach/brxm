@@ -32,7 +32,7 @@ import org.hippoecm.hst.core.container.HstComponentWindow;
 /**
  * Component window model representation.
  */
-@JsonPropertyOrder({"id", "links", "meta","name", "label", "type", "xtype", "componentClass", "params", "paramsInfo", "definitionId", "children", "models"})
+@JsonPropertyOrder({"id", "links", "meta","name", "label", "type", "xtype", "componentClass", "children", "models"})
 public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel {
 
     private final String name;

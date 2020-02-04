@@ -1,197 +1,307 @@
 {
-  "id":"r23",
-  "_meta":{
-    "version":"1.0"
+  "meta" : {
+    "version" : "1.0"
   },
-  "_links":{
-    "self":{
-      "href":"http://localhost/site/spa/resourceapi/genericdetail/_any_"
+  "links" : {
+    "self" : {
+      "href" : "http://localhost/site/spa/resourceapi/genericdetail/_any_"
     },
-    "site":{
-      "href":"http://localhost/site/spa/genericdetail/_any_"
+    "site" : {
+      "href" : "http://localhost/site/spa/genericdetail/_any_"
     }
   },
-  "page":{
-    "id":"r23",
-    "name":"genericdetail",
-    "componentClass":"org.hippoecm.hst.pagemodelapi.common.components.GenericDetailComponent",
-    "type":"COMPONENT",
-    "models":{
-      "document":{
-        "$ref":"/content/ud993b0a1585944febf4b017cda163364"
+  "root" : {
+    "$ref" : "/page/uid0"
+  },
+  "page" : {
+    "uid0" : {
+      "id" : "r23",
+      "links" : {
+        "componentRendering" : {
+          "href" : "/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23"
+        }
+      },
+      "meta" : {
+        "definitionId" : "hst:pages/genericdetail",
+        "params" : { }
+      },
+      "name" : "genericdetail",
+      "type" : "COMPONENT",
+      "componentClass" : "org.hippoecm.hst.pagemodelapi.common.components.GenericDetailComponent",
+      "children" : [ {
+        "$ref" : "/page/uid1"
+      }, {
+        "$ref" : "/page/uid2"
+      } ],
+      "models" : {
+        "currentLink" : {
+          "href" : "/site/spa/genericdetail/dynamiccontent",
+          "type" : "internal"
+        },
+        "sameChannelNewsLink" : {
+          "href" : "/site/spa/news/News1.html",
+          "type" : "internal"
+        },
+        "otherChannelNewsLink" : {
+          "href" : "http://localhost/site/subsite/news/2008/SubNews1.html",
+          "type" : "external"
+        },
+        "document" : {
+          "$ref" : "/page/ud993b0a1585944febf4b017cda163364"
+        },
+        "document-again" : {
+          "$ref" : "/page/ud993b0a1585944febf4b017cda163364"
+        },
+        "notFoundLink" : {
+          "href" : "/site/spa/pagenotfound",
+          "type" : "internal"
+        },
+        "menu" : {
+          "$ref" : "/page/uid3"
+        }
       }
     },
-    "components":[
-      {
-        "id":"r23_r1",
-        "name":"header",
-        "componentClass":"org.hippoecm.hst.core.component.GenericHstComponent",
-        "type":"COMPONENT",
-        "components":[
-          {
-            "id":"r23_r1_r1",
-            "name":"title",
-            "componentClass":"org.hippoecm.hst.core.component.GenericHstComponent",
-            "type":"COMPONENT",
-            "_meta":{
-              "params":{
-
-              }
-            },
-            "_links":{
-              "componentRendering":{
-                "href":"/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23_r1_r1"
-              }
+    "uid1" : {
+      "id" : "r23_r1",
+      "links" : {
+        "componentRendering" : {
+          "href" : "/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23_r1"
+        }
+      },
+      "meta" : {
+        "params" : { }
+      },
+      "name" : "header",
+      "type" : "COMPONENT",
+      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent",
+      "children" : [ {
+        "$ref" : "/page/uid4"
+      } ]
+    },
+    "uid2" : {
+      "id" : "r23_r2",
+      "links" : {
+        "componentRendering" : {
+          "href" : "/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23_r2"
+        }
+      },
+      "meta" : {
+        "params" : { }
+      },
+      "name" : "leftmenu",
+      "type" : "COMPONENT",
+      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
+    },
+    "ud993b0a1585944febf4b017cda163364" : {
+      "type" : "document",
+      "links" : {
+        "site" : {
+          "href" : "/site/spa/genericdetail/dynamiccontent",
+          "type" : "internal"
+        }
+      },
+      "data" : {
+        "name" : "dynamiccontent",
+        "displayName" : "DynamicContent",
+        "richTextEditorCompoundType" : {
+          "value" : "richtexteditorcontent"
+        },
+        "multipleBooleanTypeField" : [ false, true ],
+        "singleValueMultipleBooleanTypeField" : [ false ],
+        "multipleValueSingleBooleanTypeField" : false,
+        "dateTypeField" : 1553472000000,
+        "booleanTypeField" : false,
+        "longTypeField" : 50,
+        "doubleTypeField" : 100.0,
+        "multipleDoubleTypeField" : [ 100.0, 120.0 ],
+        "singleValueMultipleDoubleTypeField" : [ 100.0 ],
+        "multipleValueSingleDoubleTypeField" : 100.0,
+        "multipleLongTypeField" : [ 50, 60 ],
+        "singleValueMultipleLongTypeField" : [ 50 ],
+        "multipleValueSingleLongTypeField" : 50,
+        "contentblocks" : [ {
+          "name" : "pagemodelapitest:contentblocks",
+          "displayName" : "pagemodelapitest:contentblocks",
+          "text" : {
+            "value" : "Welcome Home!"
+          }
+        } ],
+        "multipleDateTypeField" : [ 1553472000000, 1553558400000 ],
+        "singleValueMultipleDateTypeField" : [ 1553472000000 ],
+        "multipleValueSingleDateTypeField" : 1553472000000,
+        "longTypeField2" : 100,
+        "resourceCompoundType" : {
+          "name" : "pagemodelapitest:resourceCompoundType",
+          "displayName" : "pagemodelapitest:resourceCompoundType",
+          "lastModified" : 1206529380000,
+          "mimeType" : "application/vnd.hippo.blank",
+          "filename" : "picture_thumbnail.jpeg",
+          "size" : 1490
+        },
+        "standardCompoundType" : {
+          "name" : "pagemodelapitest:standardCompoundType",
+          "displayName" : "pagemodelapitest:standardCompoundType",
+          "richTextEditorCompoundType" : {
+            "value" : "contentOfHtmlFiledInCompoundTypeClass"
+          },
+          "stringTypeField" : "alexanderkade",
+          "dynamicinnercompound" : {
+            "name" : "pagemodelapitest:dynamicinnercompound",
+            "displayName" : "pagemodelapitest:dynamicinnercompound",
+            "stringTypeField" : "http://test.com"
+          }
+        },
+        "contentblocksWithValidator" : [ {
+          "name" : "pagemodelapitest:contentblocksWithValidator",
+          "displayName" : "pagemodelapitest:contentblocksWithValidator",
+          "text" : {
+            "value" : "Welcome Home with validator!"
+          }
+        } ],
+        "essentialsGeneratedContentblocks" : [ {
+          "name" : "pagemodelapitest:essentialsGeneratedContentblocks",
+          "displayName" : "pagemodelapitest:essentialsGeneratedContentblocks",
+          "text" : {
+            "value" : "Welcome Home with Essentials!"
+          }
+        }, {
+          "name" : "pagemodelapitest:essentialsGeneratedContentblocks",
+          "displayName" : "pagemodelapitest:essentialsGeneratedContentblocks",
+          "text" : {
+            "value" : "Welcome Home with Essentials and lazy loaded types!"
+          }
+        } ],
+        "localeString" : "en",
+        "id" : "d993b0a1-5859-44fe-bf4b-017cda163364"
+      }
+    },
+    "uid3" : {
+      "type" : "menu",
+      "data" : {
+        "name" : "main",
+        "siteMenuItems" : [ {
+          "depth" : 3,
+          "repositoryBased" : true,
+          "properties" : {
+            "hst:referencesitemapitem" : "news",
+            "hst:depth" : 3,
+            "hst:repobased" : true
+          },
+          "name" : "News",
+          "childMenuItems" : [ ],
+          "parameters" : { },
+          "_links" : {
+            "site" : {
+              "href" : "/site/spa/news",
+              "type" : "internal"
             }
           }
-        ],
-        "_meta":{
-          "params":{
-
+        }, {
+          "depth" : 0,
+          "repositoryBased" : false,
+          "properties" : {
+            "hst:referencesitemapitem" : "contact"
+          },
+          "name" : "Contact",
+          "childMenuItems" : [ ],
+          "parameters" : { },
+          "_links" : {
+            "site" : {
+              "href" : "/site/spa/contact",
+              "type" : "internal"
+            }
           }
-        },
-        "_links":{
-          "componentRendering":{
-            "href":"/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23_r1"
+        }, {
+          "depth" : 0,
+          "repositoryBased" : false,
+          "properties" : {
+            "hst:referencesitemapitem" : "contact-spring"
+          },
+          "name" : "Contact-Spring",
+          "childMenuItems" : [ ],
+          "parameters" : { },
+          "_links" : {
+            "site" : {
+              "href" : "/site/spa/contact-spring",
+              "type" : "internal"
+            }
           }
-        }
-      },
-      {
-        "id":"r23_r2",
-        "name":"leftmenu",
-        "componentClass":"org.hippoecm.hst.core.component.GenericHstComponent",
-        "type":"COMPONENT",
-        "_meta":{
-          "params":{
-
+        }, {
+          "depth" : 0,
+          "repositoryBased" : false,
+          "properties" : {
+            "hst:referencesitemapitem" : "contact-dispatch"
+          },
+          "name" : "Contact-Dispatch",
+          "childMenuItems" : [ ],
+          "parameters" : { },
+          "_links" : {
+            "site" : {
+              "href" : "/site/spa/contact-dispatch",
+              "type" : "internal"
+            }
           }
-        },
-        "_links":{
-          "componentRendering":{
-            "href":"/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23_r2"
+        }, {
+          "depth" : 0,
+          "repositoryBased" : false,
+          "properties" : {
+            "hst:referencesitemapitem" : "contact-springmvc"
+          },
+          "name" : "Contact-SpringMVC",
+          "childMenuItems" : [ ],
+          "parameters" : { },
+          "_links" : {
+            "site" : {
+              "href" : "/site/spa/contact-springmvc",
+              "type" : "internal"
+            }
           }
-        }
-      }
-    ],
-    "_meta":{
-      "definitionId":"hst:pages/genericdetail",
-      "params":{
-
+        }, {
+          "depth" : 0,
+          "repositoryBased" : false,
+          "properties" : {
+            "hst:referencesitemapitem" : "search"
+          },
+          "name" : "Search",
+          "childMenuItems" : [ ],
+          "parameters" : { },
+          "_links" : {
+            "site" : {
+              "href" : "/site/spa/search",
+              "type" : "internal"
+            }
+          }
+        }, {
+          "depth" : 0,
+          "repositoryBased" : false,
+          "properties" : {
+            "hst:referencesitemapitem" : "uniquelinks"
+          },
+          "name" : "UniqueLinks",
+          "childMenuItems" : [ ],
+          "parameters" : { },
+          "_links" : {
+            "site" : {
+              "href" : "/site/spa/uniquelinks",
+              "type" : "internal"
+            }
+          }
+        } ]
       }
     },
-    "_links":{
-      "componentRendering":{
-        "href":"/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23"
-      }
-    }
-  },
-  "content":{
-    "ud993b0a1585944febf4b017cda163364":{
-      "id":"d993b0a1-5859-44fe-bf4b-017cda163364",
-      "_links":{
-        "site":{
-          "href":"/site/spa/genericdetail/dynamiccontent",
-          "type":"internal"
+    "uid4" : {
+      "id" : "r23_r1_r1",
+      "links" : {
+        "componentRendering" : {
+          "href" : "/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23_r1_r1"
         }
       },
-      "name":"dynamiccontent",
-      "displayName":"DynamicContent",
-      "richTextEditorCompoundType":{
-        "value":"richtexteditorcontent"
+      "meta" : {
+        "params" : { }
       },
-      "singleValueMultipleBooleanTypeField":[
-        false
-      ],
-      "multipleValueSingleBooleanTypeField":false,
-      "doubleTypeField":100.0,
-      "multipleDoubleTypeField":[
-        100.0,
-        120.0
-      ],
-      "singleValueMultipleDoubleTypeField":[
-        100.0
-      ],
-      "multipleValueSingleDoubleTypeField":100.0,
-      "multipleLongTypeField":[
-        50,
-        60
-      ],
-      "singleValueMultipleLongTypeField":[
-        50
-      ],
-      "multipleValueSingleLongTypeField":50,
-      "dateTypeField":1553472000000,
-      "multipleDateTypeField":[
-        1553472000000,
-        1553558400000
-      ],
-      "singleValueMultipleDateTypeField":[
-        1553472000000
-      ],
-      "longTypeField2":100,
-      "longTypeField":50,
-      "booleanTypeField":false,
-      "multipleBooleanTypeField":[
-        false,
-        true
-      ],
-      "multipleValueSingleDateTypeField":1553472000000,
-      "resourceCompoundType":{
-        "name":"pagemodelapitest:resourceCompoundType",
-        "displayName":"pagemodelapitest:resourceCompoundType",
-        "lastModified":1206529380000,
-        "mimeType":"application/vnd.hippo.blank",
-        "filename":"picture_thumbnail.jpeg",
-        "size":1490
-      },
-      "standardCompoundType":{
-        "name":"pagemodelapitest:standardCompoundType",
-        "displayName":"pagemodelapitest:standardCompoundType",
-        "richTextEditorCompoundType":{
-          "value":"contentOfHtmlFiledInCompoundTypeClass"
-        },
-        "stringTypeField":"alexanderkade",
-        "dynamicinnercompound":{
-          "name":"pagemodelapitest:dynamicinnercompound",
-          "displayName":"pagemodelapitest:dynamicinnercompound",
-          "stringTypeField":"http://test.com"
-        }
-      },
-      "contentblocks":[
-        {
-          "name":"pagemodelapitest:contentblocks",
-          "displayName":"pagemodelapitest:contentblocks",
-          "text":{
-            "value":"Welcome Home!"
-          }
-        }
-      ],
-      "contentblocksWithValidator":[
-        {
-          "name":"pagemodelapitest:contentblocksWithValidator",
-          "displayName":"pagemodelapitest:contentblocksWithValidator",
-          "text":{
-            "value":"Welcome Home with validator!"
-          }
-        }
-      ],
-      "essentialsGeneratedContentblocks":[
-        {
-          "name":"pagemodelapitest:essentialsGeneratedContentblocks",
-          "displayName":"pagemodelapitest:essentialsGeneratedContentblocks",
-          "text":{
-            "value":"Welcome Home with Essentials!"
-          }
-        },
-        {
-          "name":"pagemodelapitest:essentialsGeneratedContentblocks",
-          "displayName":"pagemodelapitest:essentialsGeneratedContentblocks",
-          "text":{
-            "value":"Welcome Home with Essentials and lazy loaded types!"
-          }
-        }
-      ],
-      "localeString":"en"
+      "name" : "title",
+      "type" : "COMPONENT",
+      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
     }
   }
 }

@@ -15,6 +15,16 @@
   },
   "page" : {
     "uid0" : {
+      "id" : "r25",
+      "links" : {
+        "componentRendering" : {
+          "href" : "/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25"
+        }
+      },
+      "meta" : {
+        "definitionId" : "hst:pages/homepage",
+        "params" : { }
+      },
       "name" : "homepage",
       "type" : "COMPONENT",
       "componentClass" : "org.hippoecm.hst.pagemodelapi.common.components.GenericDetailComponent",
@@ -49,48 +59,38 @@
         "menu" : {
           "$ref" : "/page/uid3"
         }
-      },
-      "id" : "r25",
-      "meta" : {
-        "definitionId" : "hst:pages/homepage",
-        "params" : { }
-      },
-      "links" : {
-        "componentRendering" : {
-          "href" : "/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25"
-        }
       }
     },
     "uid1" : {
+      "id" : "r25_r1",
+      "links" : {
+        "componentRendering" : {
+          "href" : "/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r1"
+        }
+      },
+      "meta" : {
+        "params" : { }
+      },
       "name" : "header",
       "type" : "COMPONENT",
       "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent",
       "children" : [ {
         "$ref" : "/page/uid4"
-      } ],
-      "id" : "r25_r1",
-      "meta" : {
-        "params" : { }
-      },
-      "links" : {
-        "componentRendering" : {
-          "href" : "/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r1"
-        }
-      }
+      } ]
     },
     "uid2" : {
-      "name" : "leftmenu",
-      "type" : "COMPONENT",
-      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent",
       "id" : "r25_r2",
-      "meta" : {
-        "params" : { }
-      },
       "links" : {
         "componentRendering" : {
           "href" : "/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r2"
         }
-      }
+      },
+      "meta" : {
+        "params" : { }
+      },
+      "name" : "leftmenu",
+      "type" : "COMPONENT",
+      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
     },
     "u1ca07af9cdf54bdd9908f991245bb062" : {
       "type" : "document",
@@ -101,28 +101,145 @@
         }
       },
       "data" : {
-        "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        "name" : "homepage",
+        "displayName" : "Home Page",
+        "date" : 1249891507580,
+        "title" : "This is the homepage",
+        "body" : {
+          "value" : "This is the content of the homepage with a link to <a href=\"/site/spa/news/News1.html\" data-type=\"internal\">News1</a> document"
+        },
+        "summary" : "Summary of the homepage",
+        "localeString" : "en_US",
+        "id" : "1ca07af9-cdf5-4bdd-9908-f991245bb062"
       }
     },
     "uid3" : {
       "type" : "menu",
       "data" : {
-        "$ref" : "/page/uid3"
+        "name" : "main",
+        "siteMenuItems" : [ {
+          "depth" : 3,
+          "repositoryBased" : true,
+          "properties" : {
+            "hst:referencesitemapitem" : "news",
+            "hst:depth" : 3,
+            "hst:repobased" : true
+          },
+          "name" : "News",
+          "childMenuItems" : [ ],
+          "parameters" : { },
+          "_links" : {
+            "site" : {
+              "href" : "/site/spa/news",
+              "type" : "internal"
+            }
+          }
+        }, {
+          "depth" : 0,
+          "repositoryBased" : false,
+          "properties" : {
+            "hst:referencesitemapitem" : "contact"
+          },
+          "name" : "Contact",
+          "childMenuItems" : [ ],
+          "parameters" : { },
+          "_links" : {
+            "site" : {
+              "href" : "/site/spa/contact",
+              "type" : "internal"
+            }
+          }
+        }, {
+          "depth" : 0,
+          "repositoryBased" : false,
+          "properties" : {
+            "hst:referencesitemapitem" : "contact-spring"
+          },
+          "name" : "Contact-Spring",
+          "childMenuItems" : [ ],
+          "parameters" : { },
+          "_links" : {
+            "site" : {
+              "href" : "/site/spa/contact-spring",
+              "type" : "internal"
+            }
+          }
+        }, {
+          "depth" : 0,
+          "repositoryBased" : false,
+          "properties" : {
+            "hst:referencesitemapitem" : "contact-dispatch"
+          },
+          "name" : "Contact-Dispatch",
+          "childMenuItems" : [ ],
+          "parameters" : { },
+          "_links" : {
+            "site" : {
+              "href" : "/site/spa/contact-dispatch",
+              "type" : "internal"
+            }
+          }
+        }, {
+          "depth" : 0,
+          "repositoryBased" : false,
+          "properties" : {
+            "hst:referencesitemapitem" : "contact-springmvc"
+          },
+          "name" : "Contact-SpringMVC",
+          "childMenuItems" : [ ],
+          "parameters" : { },
+          "_links" : {
+            "site" : {
+              "href" : "/site/spa/contact-springmvc",
+              "type" : "internal"
+            }
+          }
+        }, {
+          "depth" : 0,
+          "repositoryBased" : false,
+          "properties" : {
+            "hst:referencesitemapitem" : "search"
+          },
+          "name" : "Search",
+          "childMenuItems" : [ ],
+          "parameters" : { },
+          "_links" : {
+            "site" : {
+              "href" : "/site/spa/search",
+              "type" : "internal"
+            }
+          }
+        }, {
+          "depth" : 0,
+          "repositoryBased" : false,
+          "properties" : {
+            "hst:referencesitemapitem" : "uniquelinks"
+          },
+          "name" : "UniqueLinks",
+          "childMenuItems" : [ ],
+          "parameters" : { },
+          "_links" : {
+            "site" : {
+              "href" : "/site/spa/uniquelinks",
+              "type" : "internal"
+            }
+          }
+        } ]
       }
     },
     "uid4" : {
-      "name" : "title",
-      "type" : "COMPONENT",
-      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent",
       "id" : "r25_r1_r1",
-      "meta" : {
-        "params" : { }
-      },
       "links" : {
         "componentRendering" : {
           "href" : "/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r1_r1"
         }
-      }
+      },
+      "meta" : {
+        "params" : { }
+      },
+      "name" : "title",
+      "type" : "COMPONENT",
+      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
     }
   }
 }

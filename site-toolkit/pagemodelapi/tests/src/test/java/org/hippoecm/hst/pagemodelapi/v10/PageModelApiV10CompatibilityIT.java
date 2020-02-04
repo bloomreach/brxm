@@ -76,13 +76,10 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT_ORDER);
     }
 
-    @Ignore
     @Test
     public void dynamic_contentblocks_api_compatibility_v10_assertion() throws Exception {
 
         String actual = getActualJson("/spa/resourceapi/genericdetail/dynamiccontent", "1.0");
-
-        System.out.println(actual);
 
         InputStream inputStream = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_dynamiccontent.json");
 

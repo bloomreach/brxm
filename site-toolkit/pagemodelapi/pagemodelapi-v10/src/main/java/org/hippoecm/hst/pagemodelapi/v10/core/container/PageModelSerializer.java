@@ -50,7 +50,6 @@ public class PageModelSerializer extends JsonSerializer<Object> {
     private static ThreadLocal<SerializerContext> tlSerializerContext = new ThreadLocal<>();
 
     static class SerializerContext {
-        private Object root;
         private boolean firstEntity = true;
         private ArrayDeque<JsonPointerWrapper> serializeQueue = new ArrayDeque<>();
         // the current page model entity that is being serialized
@@ -85,32 +84,40 @@ public class PageModelSerializer extends JsonSerializer<Object> {
     @Override
     public void serialize(final Object object, final JsonGenerator gen, final SerializerProvider serializerProvider) throws IOException {
         SerializerContext serializerContext = tlSerializerContext.get();
-        if (serializerContext.root == null) {
-            serializerContext.root = object;
+
+        if (object.getClass().equals(AggregatedPageModel.RootReference.class)) {
+            AggregatedPageModel.RootReference ref = (AggregatedPageModel.RootReference) object;
+            Object pageRoot = ref.getObject();
+            String jsonPointerId = jsonPointerFactory.createJsonPointerId();
+            JsonPointerWrapper value = new JsonPointerWrapper(pageRoot, jsonPointerId);
+            serializeBeanReference(gen, jsonPointerId);
+            serializerContext.serializeQueue.add(value);
+            return;
         }
 
-        try {
-            if (object.getClass().equals(AggregatedPageModel.RootReference.class)) {
-                AggregatedPageModel.RootReference ref = (AggregatedPageModel.RootReference) object;
-                Object pageRoot = ref.getObject();
-                String jsonPointerId = jsonPointerFactory.createJsonPointerId();
-                JsonPointerWrapper value = new JsonPointerWrapper(pageRoot, jsonPointerId);
-                serializeBeanReference(gen, jsonPointerId);
-                serializerContext.serializeQueue.add(value);
-                return;
-            }
-
-            Optional<Class> pmaEntity = Arrays.stream(KNOWN_PMA_ENTITIES).filter(pmaClass -> pmaClass.isAssignableFrom(object.getClass())).findFirst();
-
-            if (!pmaEntity.isPresent()) {
-                // Not a PMA entity or already wrapped in DecoratedPageModelEntityWrapper, so no 'flattened' serialization
+        if (serializerContext.serializingPageModelEntity instanceof DecoratedPageModelEntityWrapper) {
+            if(((DecoratedPageModelEntityWrapper)serializerContext.serializingPageModelEntity).getData() == object){
+                // although a PMA entity, we now really need to serialize it
                 delegatee.serialize(object, gen, serializerProvider);
                 return;
             }
+        }
 
+        Optional<Class> pmaEntity = Arrays.stream(KNOWN_PMA_ENTITIES).filter(pmaClass -> pmaClass.isAssignableFrom(object.getClass())).findFirst();
 
+        if (!pmaEntity.isPresent()) {
+            // Not a PMA entity or already wrapped in DecoratedPageModelEntityWrapper, so no 'flattened' serialization
+            delegatee.serialize(object, gen, serializerProvider);
+            return;
+        }
 
-            if (serializerContext.serializingPageModelEntity != null && serializerContext.serializingPageModelEntity != object) {
+        if (serializerContext.serializingPageModelEntity != null) {
+
+            if (serializerContext.serializingPageModelEntity == object) {
+                delegatee.serialize(object, gen, serializerProvider);
+            } else {
+                // we are currently serializing a page model entity and during that serialization, we now encounter a
+                // new nested page model entity which must be postponed and therefor added to serializeQueue
 
                 // make sure same object returns same jsonPointerId : handy if the same model object is used multiple
                 // times in the PMA
@@ -154,41 +161,31 @@ public class PageModelSerializer extends JsonSerializer<Object> {
                 }
 
                 return;
+            }
+        } else {
+            while (!serializerContext.serializeQueue.isEmpty()) {
+                JsonPointerWrapper pop = serializerContext.serializeQueue.removeFirst();
 
-            } else {
-                serializerContext.handledPmaEntities.add(object);
-                if (serializerContext.serializingPageModelEntity != null) {
-                    delegatee.serialize(object, gen, serializerProvider);
-                } else {
-
-                    while (!serializerContext.serializeQueue.isEmpty()) {
-                        JsonPointerWrapper pop = serializerContext.serializeQueue.removeFirst();
-
-                        String jsonPointer = pop.getJsonPointer();
-                        if (serializerContext.serializedPointers.contains(jsonPointer)) {
-                            // already serialized, avoid doubles
-                            continue;
-                        }
-
-                        if (serializerContext.firstEntity) {
-                            gen.writeStartObject();
-                            serializerContext.firstEntity = false;
-                        }
-                        serializerContext.serializedPointers.add(jsonPointer);
-                        gen.writeFieldName(jsonPointer);
-                        serializerContext.serializingPageModelEntity = pop.getObject();
-                        gen.writeObject(pop.getObject());
-                        serializerContext.serializingPageModelEntity = null;
-
-                    }
+                String jsonPointer = pop.getJsonPointer();
+                if (serializerContext.serializedPointers.contains(jsonPointer)) {
+                    // already serialized, avoid doubles
+                    continue;
                 }
+
+                if (serializerContext.firstEntity) {
+                    gen.writeStartObject();
+                    serializerContext.firstEntity = false;
+                }
+                serializerContext.serializedPointers.add(jsonPointer);
+                gen.writeFieldName(jsonPointer);
+                serializerContext.serializingPageModelEntity = pop.getObject();
+                gen.writeObject(pop.getObject());
+                serializerContext.serializingPageModelEntity = null;
+
             }
-        } finally {
-            if (serializerContext.root == object) {
-                // cleanup
-                tlSerializerContext.set(null);
-            }
+
         }
+
     }
 
 
@@ -254,6 +251,7 @@ public class PageModelSerializer extends JsonSerializer<Object> {
 
     /**
      * Add links to content bean model.
+     *
      * @param contentBeanModel content bean model
      */
     private void addLinksToContent(final HstRequestContext requestContext, final DecoratedPageModelEntityWrapper<HippoDocumentBean> contentBeanModel) {
