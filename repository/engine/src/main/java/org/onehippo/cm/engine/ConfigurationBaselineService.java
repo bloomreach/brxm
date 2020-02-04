@@ -60,6 +60,7 @@ import org.onehippo.cm.model.impl.tree.ValueImpl;
 import org.onehippo.cm.model.parser.ConfigSourceParser;
 import org.onehippo.cm.model.parser.ModuleDescriptorParser;
 import org.onehippo.cm.model.parser.ParserException;
+import org.onehippo.cm.model.path.JcrPath;
 import org.onehippo.cm.model.path.JcrPaths;
 import org.onehippo.cm.model.source.ResourceInputProvider;
 import org.onehippo.repository.util.JcrConstants;
@@ -336,9 +337,11 @@ public class ConfigurationBaselineService {
                 }
 
                 final ModuleImpl reloadedModule = loadModuleDescriptor(moduleNode, module.getSiteName());
-                reloadedModule.setHstRoot(module.getHstRoot());
-                parseSources(singletonList(reloadedModule));
-                newBaselineModules.add(reloadedModule);
+                if (reloadedModule != null) {
+                    reloadedModule.setHstRoot(module.getHstRoot());
+                    parseSources(singletonList(reloadedModule));
+                    newBaselineModules.add(reloadedModule);
+                }
             }
 
             // update digest
@@ -756,7 +759,9 @@ public class ConfigurationBaselineService {
         // for each module node under this baseline
         for (Node moduleNode : findModuleNodes(baselineNode)) {
             final ModuleImpl module = loadModuleDescriptor(moduleNode, hcmSiteName);
-            modules.add(module);
+            if (module != null) {
+                modules.add(module);
+            }
         }
 
         log.debug("After parsing descriptors, we have {} modules", modules.size());
@@ -784,6 +789,18 @@ public class ConfigurationBaselineService {
                     .parse(is, moduleNode.getPath(), hcmSiteName);
 
             // TODO: determine and set actual HCM Site name
+
+            final JcrPath modulePath = JcrPaths.getPath(moduleNode.getPath());
+            final JcrPath expectedPath = modulePath.subpath(0, modulePath.getSegmentCount() - 3)
+                    .resolve(module.getProject().getGroup().getName())
+                    .resolve(module.getProject().getName())
+                    .resolve(module.getName());
+
+            if (!expectedPath.equals(modulePath)) {
+                log.error("Detected baseline module path inconsistency, expected module location: '{}', but actual is: '{}', skipping",
+                        expectedPath, moduleNode.getPath());
+                return null;
+            }
 
             final String lastExecutedAction = getLastExecutedAction(moduleNode);
             module.setLastExecutedAction(lastExecutedAction);
