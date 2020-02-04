@@ -51,7 +51,7 @@ public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel 
         componentClass = window.getComponentName();
 
         final HstComponentConfiguration.Type componentType = window.getComponentInfo().getComponentType();
-        type = componentType.toString();
+        type = toString(componentType);
         xtype = componentType.equals(HstComponentConfiguration.Type.CONTAINER_COMPONENT)
                 ? StringUtils.lowerCase(window.getComponent().getComponentConfiguration().getXType())
                 : null;
@@ -66,6 +66,20 @@ public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel 
             for (HstComponentWindow child : childComponentWindows.values()) {
                 components.add(new ComponentWindowModel(child));
             }
+        }
+    }
+
+    private String toString(final HstComponentConfiguration.Type componentType) {
+
+        switch (componentType) {
+            case COMPONENT:
+                return "component";
+            case CONTAINER_COMPONENT:
+                return "container";
+            case CONTAINER_ITEM_COMPONENT:
+                return "container-item";
+            default:
+                throw new IllegalArgumentException(String.format("Unknown component type '%s'", componentType));
         }
     }
 
