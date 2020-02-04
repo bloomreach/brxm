@@ -244,22 +244,6 @@ public class PageModelAggregationValve extends AggregationValve {
         return aggregatedPageModel;
     }
 
-    private String getHippoBeanType(final HippoBean bean) {
-        if (bean instanceof HippoDocumentBean) {
-            return "document";
-        }
-        if (bean instanceof HippoFolderBean) {
-            return "folder";
-        }
-        if (bean instanceof HippoGalleryImageSet) {
-            return "imageset";
-        }
-        if (bean instanceof HippoAssetBean) {
-            return "asset";
-        }
-        return null;
-    }
-
     /**
      * <code>HstRequestContext</code> specific {@link AggregatedPageModel} attribute name.
      */

@@ -33,7 +33,11 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.content.beans.standard.HippoAssetBean;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
+import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
+import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.pagemodel.container.MetadataDecorator;
 import org.hippoecm.hst.core.request.HstRequestContext;
@@ -147,7 +151,7 @@ public class PageModelSerializer extends JsonSerializer<Object> {
                 } else if (object instanceof HippoDocumentBean) {
 
                     HstRequestContext requestContext = RequestContextProvider.get();
-                    final DecoratedPageModelEntityWrapper<HippoDocumentBean> decoratedPageModelEntityWrapper = new DecoratedPageModelEntityWrapper(object, "document");
+                    final DecoratedPageModelEntityWrapper<HippoDocumentBean> decoratedPageModelEntityWrapper = new DecoratedPageModelEntityWrapper(object, getHippoBeanType((HippoDocumentBean)object));
                     addLinksToContent(requestContext, decoratedPageModelEntityWrapper);
                     for (MetadataDecorator metadataDecorator : metadataDecorators) {
                         metadataDecorator.decorateContentMetadata(requestContext,
@@ -264,6 +268,16 @@ public class PageModelSerializer extends JsonSerializer<Object> {
 
         contentBeanModel.putLink(LINK_NAME_SITE, LinkModel.convert(selfLink, requestContext));
 
+    }
+
+    private String getHippoBeanType(final HippoDocumentBean bean) {
+        if (bean instanceof HippoGalleryImageSet) {
+            return "imageset";
+        }
+        if (bean instanceof HippoAssetBean) {
+            return "asset";
+        }
+        return "document";
     }
 
 }
