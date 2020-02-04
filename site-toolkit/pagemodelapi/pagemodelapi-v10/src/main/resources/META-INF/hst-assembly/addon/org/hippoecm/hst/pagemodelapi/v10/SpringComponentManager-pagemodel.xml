@@ -38,14 +38,19 @@
     <property name="removeAnchorTagOfBrokenLink" value="${pagemodelapi.v10.removeAnchorTagOfBrokenLink:true}"/>
   </bean>
 
+  <bean id="jsonPointerFactory"
+        class="org.hippoecm.hst.pagemodelapi.v10.core.container.JsonPointerFactoryImpl"/>
+
   <bean id="pageModelAggregationValve" parent="aggregationValve"
         class="org.hippoecm.hst.pagemodelapi.v10.core.container.PageModelAggregationValve">
     <constructor-arg ref="pageModelObjectMapperFactory"/>
     <constructor-arg ref="pageModelJacksonObjectMapperExtraMixins"/>
+    <constructor-arg ref="jsonPointerFactory"/>
     <property name="valveName" value="pageModelAggregationValve"/>
     <property name="componentWindowResponseAppenders" ref="composerComponentWindowResponseAppenders"/>
     <property name="defaultMaxContentReferenceLevel" value="${pagemodelapi.v10.defaultMaxContentReferenceLevel:1}"/>
     <property name="apiDocPath" value="${pagemodelapi.v10.apiDocPath:/swagger.json}" />
+    <property name="prettyPrint" value="${pagemodelapi.v10.pretty.print:false}" />
   </bean>
 
 

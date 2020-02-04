@@ -25,29 +25,22 @@ import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.pagemodel.container.MetadataDecorator;
 
-class HippoBeanModelsSerializerModifier extends BeanSerializerModifier {
+class PageModelSerializerModifier extends BeanSerializerModifier {
 
     private final List<MetadataDecorator> metadataDecorators;
+    private JsonPointerFactory jsonPointerFactory;
 
-    public HippoBeanModelsSerializerModifier(final List<MetadataDecorator> metadataDecorators) {
+    public PageModelSerializerModifier(final List<MetadataDecorator> metadataDecorators,
+                                       final JsonPointerFactory jsonPointerFactory) {
         this.metadataDecorators = metadataDecorators;
+        this.jsonPointerFactory = jsonPointerFactory;
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public JsonSerializer<?> modifySerializer(SerializationConfig config, BeanDescription beanDesc,
-            JsonSerializer<?> serializer) {
-        final Class<?> beanClazz = beanDesc.getBeanClass();
-
-        if (beanClazz != null) {
-            if (HippoBean.class.isAssignableFrom(beanClazz)) {
-                // Customize JsonSerializer for HippoBean type as we need to accumulate HippoBeans and add JSON Pointer
-                // references in the first phase, and later serialize the HippoBeans in content section in the end.
-                return new HippoBeanSerializer((JsonSerializer<Object>) serializer, metadataDecorators);
-            }
-        }
-
-        return serializer;
+                                              JsonSerializer<?> serializer) {
+        return new PageModelSerializer((JsonSerializer<Object>) serializer, jsonPointerFactory, metadataDecorators);
     }
 
 }

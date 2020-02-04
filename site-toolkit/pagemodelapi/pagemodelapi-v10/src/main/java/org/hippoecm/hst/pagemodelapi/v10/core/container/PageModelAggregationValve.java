@@ -17,15 +17,12 @@ package org.hippoecm.hst.pagemodelapi.v10.core.container;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -35,10 +32,15 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.content.beans.standard.HippoAssetBean;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
+import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
+import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
+import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
@@ -62,14 +64,10 @@ import org.hippoecm.hst.pagemodelapi.v10.content.beans.jackson.LinkModel;
 import org.hippoecm.hst.pagemodelapi.v10.core.model.ComponentWindowModel;
 import org.hippoecm.hst.pagemodelapi.v10.core.model.IdentifiableLinkableMetadataBaseModel;
 import org.hippoecm.hst.util.ParametersInfoUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
-
-import io.swagger.jaxrs.Reader;
-import io.swagger.jaxrs.config.ReaderConfigUtils;
-import io.swagger.models.Path;
-import io.swagger.models.Swagger;
 
 /**
  * Page model aggregation valve, to write a JSON model from the aggregated data for a page request.
@@ -122,22 +120,24 @@ public class PageModelAggregationValve extends AggregationValve {
 
     private String apiDocPath;
 
-    /**
-     * API Document (Swagger) serializing ObjectMapper.
-     */
-    private final ObjectMapper apiDocObjectMapper;
+    private boolean prettyPrint;
 
-    public PageModelAggregationValve(final PageModelObjectMapperFactory factory, final Map<Class<?>, Class<?>> extraMixins) {
+    public PageModelAggregationValve(final PageModelObjectMapperFactory factory, final Map<Class<?>, Class<?>> extraMixins,
+                                     final JsonPointerFactory jsonPointerFactory) {
         objectMapper = factory.createPageModelObjectMapper().registerModule(new SimpleModule().setSerializerModifier(
-                new HippoBeanModelsSerializerModifier(metadataDecorators)
+                new PageModelSerializerModifier(metadataDecorators, jsonPointerFactory)
         ));
         HstBeansObjectMapperDecorator.decorate(objectMapper, extraMixins);
 
-        apiDocObjectMapper = new ObjectMapper().setSerializationInclusion(Include.NON_NULL);
     }
 
     public void setDefaultMaxContentReferenceLevel(int defaultMaxContentReferenceLevel) {
         this.defaultMaxContentReferenceLevel = defaultMaxContentReferenceLevel;
+    }
+
+    public void setPrettyPrint(final boolean prettyPrint) {
+
+        this.prettyPrint = prettyPrint;
     }
 
     /**
@@ -175,71 +175,7 @@ public class PageModelAggregationValve extends AggregationValve {
             final Map<HstComponentWindow, HstResponse> responseMap) throws ContainerException {
         final AggregatedPageModel aggregatedPageModel = (AggregatedPageModel) createAggregatedPageModel(
                 sortedComponentWindows, requestMap, responseMap);
-        ContentSerializationContext.setCurrentAggregatedPageModel(aggregatedPageModel);
-    }
-
-    /**
-     * {@inheritDoc}
-     * <p>
-     * Overrides <code>AggregationValve#processWindowsRender()</code> to create an {@link AggregatedPageModel}
-     * from the current page request and write it as JSON output.
-     */
-    @Override
-    protected void writeAggregatedOutput(final ValveContext context, final HstComponentWindow rootRenderingWindow)
-            throws ContainerException {
-        final HstRequestContext requestContext = context.getRequestContext();
-        final AggregatedPageModel aggregatedPageModel = ContentSerializationContext.getCurrentAggregatedPageModel();
-
-        if (aggregatedPageModel == null) {
-            throw new ContainerException("Page model cannot be null! Page model might not be aggregated for some reason in #processWindowsRender() for some reason.");
-        }
-
-        final HttpServletResponse response = requestContext.getServletResponse();
-
-        try {
-            response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-            response.setCharacterEncoding("UTF-8");
-            response.setHeader(ContainerConstants.PAGE_MODEL_API_VERSION,
-                    (String)requestContext.getServletRequest().getAttribute(ContainerConstants.PAGE_MODEL_API_VERSION));
-
-            final ComponentWindowModel pageWindowModel = aggregatedPageModel.getPageWindowModel();
-
-            ContentSerializationContext.setCurrentPhase(ContentSerializationContext.Phase.REFERENCING_CONTENT_IN_COMPONENT);
-
-            if (pageWindowModel != null) {
-                JsonNode pageNode = getObjectMapper().valueToTree(pageWindowModel);
-                aggregatedPageModel.setPageNode(pageNode);
-            }
-
-            ContentSerializationContext.setCurrentPhase(ContentSerializationContext.Phase.SERIALIZING_CONTENT);
-
-            if (aggregatedPageModel.hasAnyContent()) {
-                final int maxRefLevel = NumberUtils.toInt(
-                        requestContext.getServletRequest().getParameter(MAX_CONTENT_REFERENCE_LEVEL_PARAM_NAME),
-                        defaultMaxContentReferenceLevel);
-                final JsonNode contentNode = serializeContentMap(aggregatedPageModel.getContentMap(), maxRefLevel);
-                aggregatedPageModel.setContentNode(contentNode);
-            }
-
-            getObjectMapper().writeValue(response.getWriter(), aggregatedPageModel);
-        } catch (JsonGenerationException e) {
-            throw new ContainerException(e.getMessage(), e);
-        } catch (JsonMappingException e) {
-            throw new ContainerException(e.getMessage(), e);
-        } catch (IOException e) {
-            log.warn("Failed to write aggregated page model in json.", e);
-        } finally {
-            HippoBeanSerializationContext.clear();
-            ContentSerializationContext.clear();
-        }
-    }
-
-    /**
-     * Return the Jackson ObjectMapper used in JSON (de)serialization.
-     * @return the Jackson ObjectMapper used in JSON (de)serialization
-     */
-    protected ObjectMapper getObjectMapper() {
-        return objectMapper;
+        setCurrentAggregatedPageModel(aggregatedPageModel);
     }
 
     /**
@@ -254,15 +190,14 @@ public class PageModelAggregationValve extends AggregationValve {
      * @throws ContainerException if container exception occurs
      */
     protected Object createAggregatedPageModel(final HstComponentWindow[] sortedComponentWindows,
-            final Map<HstComponentWindow, HstRequest> requestMap,
-            final Map<HstComponentWindow, HstResponse> responseMap) throws ContainerException {
+                                               final Map<HstComponentWindow, HstRequest> requestMap,
+                                               final Map<HstComponentWindow, HstResponse> responseMap) throws ContainerException {
         final HstRequestContext requestContext = RequestContextProvider.get();
 
         // root component (page component) is the first item in the sortedComponentWindows.
         final HstComponentWindow rootWindow = sortedComponentWindows[0];
-        final String id = rootWindow.getReferenceNamespace();
 
-        final AggregatedPageModel aggregatedPageModel = new AggregatedPageModel(id);
+        final AggregatedPageModel aggregatedPageModel = new AggregatedPageModel(null);
         decorateAggregatedPageModel(requestContext, aggregatedPageModel);
 
         final ComponentWindowModel pageWindowModel = new ComponentWindowModel(rootWindow);
@@ -302,21 +237,117 @@ public class PageModelAggregationValve extends AggregationValve {
             decorateComponentWindowMetadata(hstRequest, hstResponse, currentComponentWindowModel);
 
             for (Map.Entry<String, Object> entry : hstRequest.getModelsMap().entrySet()) {
-                final String name = entry.getKey();
-                final Object model = entry.getValue();
-
-                if (model instanceof CommonMenu) {
-                    final CommonMenuWrapperModel menuWrapperModel = new CommonMenuWrapperModel((CommonMenu) model);
-                    decorateCommonMenuMetadata(menuWrapperModel);
-                    currentComponentWindowModel.putModel(name, menuWrapperModel);
-                } else {
-                    currentComponentWindowModel.putModel(name, model);
-                }
+                currentComponentWindowModel.putModel(entry.getKey(), entry.getValue());
             }
         }
 
         return aggregatedPageModel;
     }
+
+    private String getHippoBeanType(final HippoBean bean) {
+        if (bean instanceof HippoDocumentBean) {
+            return "document";
+        }
+        if (bean instanceof HippoFolderBean) {
+            return "folder";
+        }
+        if (bean instanceof HippoGalleryImageSet) {
+            return "imageset";
+        }
+        if (bean instanceof HippoAssetBean) {
+            return "asset";
+        }
+        return null;
+    }
+
+    /**
+     * <code>HstRequestContext</code> specific {@link AggregatedPageModel} attribute name.
+     */
+    private static final String AGGREGATED_PAGE_MODEL_ATTR = PageModelAggregationValve.class.getName()
+            + ".aggregatedPageModel";
+
+    /**
+     * Return the current {@link AggregatedPageModel} object.
+     * @return the current {@link AggregatedPageModel} object
+     */
+    public static AggregatedPageModel getCurrentAggregatedPageModel() {
+        final HstRequestContext requestContext = RequestContextProvider.get();
+
+        if (requestContext != null) {
+            return (AggregatedPageModel) requestContext.getAttribute(AGGREGATED_PAGE_MODEL_ATTR);
+        }
+
+        return null;
+    }
+
+    /**
+     * Set the current {@link AggregatedPageModel} object.
+     * @param aggregatedPageModel the current {@link AggregatedPageModel} object
+     */
+    public static void setCurrentAggregatedPageModel(AggregatedPageModel aggregatedPageModel) {
+        final HstRequestContext requestContext = RequestContextProvider.get();
+
+        if (requestContext == null) {
+            throw new IllegalStateException("HstRequestContext is not available.");
+        }
+
+        requestContext.setAttribute(AGGREGATED_PAGE_MODEL_ATTR, aggregatedPageModel);
+    }
+
+    /**
+     * {@inheritDoc}
+     * <p>
+     * Overrides <code>AggregationValve#processWindowsRender()</code> to create an {@link AggregatedPageModel}
+     * from the current page request and write it as JSON output.
+     */
+    @Override
+    protected void writeAggregatedOutput(final ValveContext context, final HstComponentWindow rootRenderingWindow)
+            throws ContainerException {
+        final HstRequestContext requestContext = context.getRequestContext();
+
+        final HttpServletResponse response = requestContext.getServletResponse();
+
+        // TODO include logic for final int maxRefLevel = NumberUtils.toInt(
+        // TODO  requestContext.getServletRequest().getParameter(MAX_CONTENT_REFERENCE_LEVEL_PARAM_NAME),
+        // TODO         defaultMaxContentReferenceLevel);
+
+        try {
+
+            PageModelSerializer.initContext();
+
+            response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
+            response.setCharacterEncoding("UTF-8");
+            response.setHeader(ContainerConstants.PAGE_MODEL_API_VERSION,
+                    (String)requestContext.getServletRequest().getAttribute(ContainerConstants.PAGE_MODEL_API_VERSION));
+
+
+            if (prettyPrint) {
+                getObjectMapper().writerWithDefaultPrettyPrinter().writeValue(response.getWriter(), getCurrentAggregatedPageModel());
+            } else {
+                getObjectMapper().writeValue(response.getWriter(), getCurrentAggregatedPageModel());
+            }
+
+
+        } catch (JsonGenerationException e) {
+            throw new ContainerException(e.getMessage(), e);
+        } catch (JsonMappingException e) {
+            throw new ContainerException(e.getMessage(), e);
+        } catch (IOException e) {
+            log.warn("Failed to write aggregated page model in json.", e);
+        } finally {
+            PageModelSerializer.closeContext();
+        }
+    }
+
+
+    /**
+     * Return the Jackson ObjectMapper used in JSON (de)serialization.
+     * @return the Jackson ObjectMapper used in JSON (de)serialization
+     */
+    protected ObjectMapper getObjectMapper() {
+        return objectMapper;
+    }
+
 
     @Override
     protected boolean isAggregationApiDocumentRequest(final ValveContext context) {
@@ -327,62 +358,6 @@ public class PageModelAggregationValve extends AggregationValve {
         }
 
         return false;
-    }
-
-    @Override
-    protected void writeAggregationApiDocument(final ValveContext context) throws ContainerException {
-        final HttpServletResponse response = context.getServletResponse();
-
-        try {
-            response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
-            response.setCharacterEncoding("UTF-8");
-            apiDocObjectMapper.writeValue(response.getWriter(), getAggregationApiDocument(context));
-        } catch (JsonGenerationException e) {
-            throw new ContainerException(e.getMessage(), e);
-        } catch (JsonMappingException e) {
-            throw new ContainerException(e.getMessage(), e);
-        } catch (IOException e) {
-            log.warn("Failed to write Swagger in json.", e);
-        }
-    }
-
-    /**
-     * Return a Page Aggregation API Document (e.g, Swagger).
-     * @param context {@link ValveContext} instance
-     * @return a Page Aggregation API Document (e.g, Swagger)
-     * @throws ContainerException if HST Container exception occurs
-     */
-    protected Object getAggregationApiDocument(final ValveContext context) throws ContainerException {
-        final HstRequestContext requestContext = context.getRequestContext();
-        final HstLink hstLink = requestContext.getHstLinkCreator().create("/",
-                requestContext.getResolvedMount().getMount());
-        final Reader reader = new Reader(new Swagger(),
-                ReaderConfigUtils.getReaderConfig(requestContext.getServletContext()));
-        final Swagger swagger = reader.read(PageModelApiSwaggerDefinition.class);
-        swagger.setBasePath(hstLink.toUrlForm(requestContext, false));
-
-        // As io.swagger.jaxrs.Reader depends on java.lang.Class#getMethods() which returns an unordered array at random,
-        // the swagger#paths shows operations in a random order.
-        // So, let's re-sort it for usability.
-        final Map<String, Path> sortedPaths = new TreeMap<>(new Comparator<String>() {
-            @Override
-            public int compare(String key1, String key2) {
-                if (PageModelApiSwaggerDefinition.PATH_PARAM_PATH_INFO.equals(key1)) {
-                    return -1;
-                } else if (PageModelApiSwaggerDefinition.PATH_PARAM_PATH_INFO.equals(key2)) {
-                    return 1;
-                } else if (PageModelApiSwaggerDefinition.PATH_PARAM_WITH_0_PATH_SEGMENT.equals(key1)) {
-                    return -1;
-                } else if (PageModelApiSwaggerDefinition.PATH_PARAM_WITH_0_PATH_SEGMENT.equals(key2)) {
-                    return 1;
-                }
-                return Integer.compare(key1.length(), key2.length());
-            }
-        });
-        sortedPaths.putAll(swagger.getPaths());
-        swagger.setPaths(sortedPaths);
-
-        return swagger;
     }
 
     /**
@@ -503,80 +478,30 @@ public class PageModelAggregationValve extends AggregationValve {
      * Invoke custom metadata decorators to give a chance to add more metadata for the component window.
      * @param menuWrapperModel a wrapper model for a {@link CommonMenu}
      */
-    private void decorateCommonMenuMetadata(final CommonMenuWrapperModel menuWrapperModel) {
-        if (CollectionUtils.isEmpty(metadataDecorators)) {
-            return;
-        }
-
-        final HstRequestContext requestContext = RequestContextProvider.get();
-
-        for (MetadataDecorator decorator : metadataDecorators) {
-            decorator.decorateCommonMenuMetadata(requestContext, menuWrapperModel.getMenu(), menuWrapperModel);
-        }
-    }
-
-    /**
-     * Serialize content model map which were accumulated from the references in models of components into a <code>JsonNode</code>
-     * and return the <code>JsonNode</code>.
-     * @param contentMap content model map
-     * @return <code>JsonNode</code> serialized from the content model map which were accumulated from the references in models
-     * of components
-     */
-    private JsonNode serializeContentMap(final Map<String, HippoBeanWrapperModel> contentMap, final int maxRefLevel) {
-        ObjectNode contentNode = getObjectMapper().createObjectNode();
-
-        for (Map.Entry<String, HippoBeanWrapperModel> entry : contentMap.entrySet()) {
-            final String jsonPropName = entry.getKey();
-            final HippoBeanWrapperModel beanModel = entry.getValue();
-
-            try {
-                appendContentItemModel(contentNode, jsonPropName, beanModel, maxRefLevel, 0);
-            } catch (Exception e) {
-                log.warn("Failed to append a content item: {}.", jsonPropName, e);
-            }
-        }
-
-        return contentNode;
-    }
-
-    /**
-     * Serialize {@code beanModel} into a <code>JsonNode</code> and append the <code>JsonNode</code> to {@code contentNode}
-     * with the property name, {@code jsonPropName}.
-     * @param contentNode to which the serialized <code>JsonNode</code> from {@code cbeanModel} should be appended
-     * @param jsonPropName JSON property name
-     * @param beanModel content item bean model
-     * @param maxRefLevel maximum reference depth level
-     * @param curRefLevel reference depth level
-     */
-    private void appendContentItemModel(ObjectNode contentNode, final String jsonPropName,
-            final HippoBeanWrapperModel beanModel, final int maxRefLevel, final int curRefLevel) {
-        if (curRefLevel > maxRefLevel) {
-            return;
-        }
-
-        if (!contentNode.has(jsonPropName)) {
-            final ObjectNode modelNode = getObjectMapper().valueToTree(beanModel);
-
-            // We want to put all the properties of the HippoBean nested in HippoBeanWrapperModel,
-            // so let's move the "bean" property object out to the parent node.
-            if (modelNode.has(HippoBeanWrapperModel.HIPPO_BEAN_PROP)) {
-                final ObjectNode beanNode = (ObjectNode) modelNode.remove(HippoBeanWrapperModel.HIPPO_BEAN_PROP);
-                modelNode.setAll(beanNode);
-            }
-
-            contentNode.set(jsonPropName, modelNode);
-        }
-
-        final Set<HippoBeanWrapperModel> set = HippoBeanSerializationContext
-                .getContentBeanModelSet(beanModel.getBean().getRepresentationId());
-
-        if (set != null && !set.isEmpty()) {
-            for (HippoBeanWrapperModel model : set) {
-                appendContentItemModel(contentNode,
-                        HippoBeanSerializer.representationIdToJsonPropName(model.getBean().getRepresentationId()),
-                        model, maxRefLevel, curRefLevel + 1);
-            }
-        }
-    }
-
+//    private void decorateCommonMenuMetadata(final DecoratedPageModelEntityWrapper<CommonMenu> menuWrapperModel) {
+//        if (CollectionUtils.isEmpty(metadataDecorators)) {
+//            return;
+//        }
+//
+//        final HstRequestContext requestContext = RequestContextProvider.get();
+//
+//        for (MetadataDecorator decorator : metadataDecorators) {
+//            decorator.decorateCommonMenuMetadata(requestContext, menuWrapperModel.getData(), menuWrapperModel);
+//        }
+//    }
+//
+//    /**
+//     * @param menuWrapperModel a wrapper model for a {@link HippoDocumentBean}
+//     */
+//    private void decorateDocumentMetadata(final DecoratedPageModelEntityWrapper<HippoDocumentBean> menuWrapperModel) {
+//        if (CollectionUtils.isEmpty(metadataDecorators)) {
+//            return;
+//        }
+//
+//        final HstRequestContext requestContext = RequestContextProvider.get();
+//
+//        for (MetadataDecorator decorator : metadataDecorators) {
+//            decorator.decorateContentMetadata(requestContext, menuWrapperModel.getData(), menuWrapperModel);
+//        }
+//    }
 }

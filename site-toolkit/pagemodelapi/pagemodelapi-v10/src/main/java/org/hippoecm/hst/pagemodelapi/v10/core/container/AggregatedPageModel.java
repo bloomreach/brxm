@@ -16,73 +16,36 @@
 package org.hippoecm.hst.pagemodelapi.v10.core.container;
 
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import org.hippoecm.hst.pagemodelapi.v10.core.model.ComponentWindowModel;
 import org.hippoecm.hst.pagemodelapi.v10.core.model.IdentifiableLinkableMetadataBaseModel;
 
 import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 
 /**
  * Aggregated page model which represents the whole output in the page model pipeline request processing.
  */
-@JsonPropertyOrder({ "id", "_meta", "_links", "page", "content" })
+@JsonPropertyOrder({ "meta", "links", "root", "page"})
 @ApiModel(description = "Aggregated page model from Page Model JSON API requests.")
 class AggregatedPageModel extends IdentifiableLinkableMetadataBaseModel {
 
-    private JsonNode pageNode;
-    private JsonNode contentNode;
-
     private ComponentWindowModel pageWindowModel;
-    private Map<String, HippoBeanWrapperModel> contentMap;
     private Map<String, ComponentWindowModel> flattened = new HashMap<>();
+
+    @JsonIgnore
+    @Override
+    public String getId() {
+        return super.getId();
+    }
 
     public AggregatedPageModel(final String id) {
         super(id);
-    }
-
-    @JsonProperty("page")
-    @JsonInclude(Include.NON_NULL)
-    @ApiModelProperty(
-            value = "Root page property in JSON object. For details, look up the online documentation about Page Model JSON API.",
-            dataType = "object"
-            )
-    public JsonNode getPageNode() {
-        return pageNode;
-    }
-
-    public void setPageNode(JsonNode pageNode) {
-        this.pageNode = pageNode;
-    }
-
-    @JsonProperty("content")
-    @JsonInclude(Include.NON_NULL)
-    @ApiModelProperty(
-            value = "Content section property in JSON object. For details, look up the online documentation about Page Model JSON API.",
-            dataType = "object"
-            )
-    public JsonNode getContentNode() {
-        return contentNode;
-    }
-
-    public void setContentNode(JsonNode contentNode) {
-        this.contentNode = contentNode;
-    }
-
-    @JsonIgnore
-    public ComponentWindowModel getPageWindowModel() {
-        return pageWindowModel;
     }
 
     public void setPageWindowModel(final ComponentWindowModel pageWindowModel) {
@@ -93,7 +56,7 @@ class AggregatedPageModel extends IdentifiableLinkableMetadataBaseModel {
     private void populateFlattened(final ComponentWindowModel pageWindowModel) {
         flattened.put(pageWindowModel.getId(), pageWindowModel);
 
-        final Set<ComponentWindowModel> components = pageWindowModel.getComponents();
+        final Set<ComponentWindowModel> components = pageWindowModel.getChildren();
 
         if (components != null) {
             for (ComponentWindowModel child : components) {
@@ -102,27 +65,27 @@ class AggregatedPageModel extends IdentifiableLinkableMetadataBaseModel {
         }
     }
 
-    @JsonIgnore
-    public Map<String, HippoBeanWrapperModel> getContentMap() {
-        return contentMap;
-    }
-
-    public void putContent(String id, HippoBeanWrapperModel content) {
-        if (contentMap == null) {
-            contentMap = new LinkedHashMap<>();
-        }
-
-        contentMap.put(id, content);
-    }
-
-    @JsonIgnore
-    public boolean hasAnyContent() {
-        return (contentMap != null && !contentMap.isEmpty());
-    }
-
-    @JsonIgnore
     public Optional<ComponentWindowModel> getModel(final String referenceNamespace) {
         return Optional.ofNullable(flattened.get(referenceNamespace));
     }
 
+    public ComponentWindowModel getPage() {
+        return pageWindowModel;
+    }
+
+    public RootReference getRoot() {
+        return new RootReference(pageWindowModel);
+    }
+
+    public static class RootReference {
+        private ComponentWindowModel object;
+
+        public RootReference(final ComponentWindowModel object) {
+            this.object = object;
+        }
+
+        public ComponentWindowModel getObject() {
+            return object;
+        }
+    }
 }

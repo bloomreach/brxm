@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
@@ -31,6 +32,7 @@ import org.hippoecm.hst.core.container.HstComponentWindow;
 /**
  * Component window model representation.
  */
+@JsonPropertyOrder({"id", "links", "meta","name", "label", "type", "xtype", "componentClass", "params", "paramsInfo", "definitionId", "children", "models"})
 public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel {
 
     private final String name;
@@ -101,6 +103,11 @@ public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel 
         return label;
     }
 
+    @JsonInclude(Include.NON_NULL)
+    public Set<ComponentWindowModel> getChildren() {
+        return components;
+    }
+
     /**
      * Return the contributed model map by <code>HstRequest{@link HstRequest#setModel(String,Object)} calls.
      * @return
@@ -118,8 +125,5 @@ public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel 
         models.put(name, model);
     }
 
-    @JsonInclude(Include.NON_NULL)
-    public Set<ComponentWindowModel> getComponents() {
-        return components;
-    }
+
 }

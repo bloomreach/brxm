@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,7 +35,7 @@ public class MetadataBaseModel implements MetadataContributable {
     public MetadataBaseModel() {
     }
 
-    @JsonProperty("_meta")
+    @JsonProperty("meta")
     @JsonInclude(Include.NON_NULL)
     public Map<String, Object> getMetadataMap() {
         if (metadataMap == null) {

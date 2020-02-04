@@ -75,6 +75,9 @@ public abstract class AbstractPageModelApiITCases {
     public void setUp() throws Exception {
         final PropertiesConfiguration configuration = new PropertiesConfiguration();
         configuration.addProperty("hst.configuration.rootPath", "/hst:hst");
+        // below is handy such that during integration tests, the PMA response is nicely formatted (if you do a
+        // sysout)
+        configuration.addProperty("pagemodelapi.v10.pretty.print", true);
 
         componentManager = new SpringComponentManager(configuration);
         componentManager.setConfigurationResources(getConfigurations());

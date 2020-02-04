@@ -50,7 +50,6 @@ class HstBeansObjectMapperDecorator {
 
         defaultMixins.put(HippoGalleryImageBean.class, HippoGalleryImageBeanMixin.class);
         defaultMixins.put(HippoHtmlBean.class, HippoHtmlBeanMixin.class);
-
         defaultMixins.put(HstURL.class, HstURLMixin.class);
         defaultMixins.put(HstLink.class, HstLinkMixin.class);
         defaultMixins.put(HstSiteMenuItem.class, HstSiteMenuItemMixin.class);
@@ -72,5 +71,6 @@ class HstBeansObjectMapperDecorator {
                 objectMapper.addMixIn(clazz, mixin);
             });
         }
+
     }
 }

@@ -27,6 +27,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.databind.BeanDescription;
@@ -41,7 +42,6 @@ import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 import org.junit.Test;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 
 public class PageModelApiV10LearningTest {
 
@@ -70,6 +70,9 @@ public class PageModelApiV10LearningTest {
                         .addChild(new Component("childOfchild2", "container")));
 
         AggregatedPageModel pageModel = new AggregatedPageModel(root);
+
+
+        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(pageModel));
 
         final String serialized = objectMapper.writeValueAsString(pageModel);
 
@@ -153,7 +156,6 @@ public class PageModelApiV10LearningTest {
                     serializer.serialize(object, gen, serializerProvider);
                     return;
                 }
-
 
                 if (tlSerializingPageModelEntity.get() != null && tlSerializingPageModelEntity.get() != object) {
                     String jsonPointerId = createJsonPointerId();
@@ -350,8 +352,33 @@ public class PageModelApiV10LearningTest {
             return id;
         }
 
-        public String getName() {
+        public String getType() {
             return "Not a PMA Entity";
+        }
+
+        @JsonUnwrapped
+        public Name getName() {
+            return new Name("john", "doe");
+        }
+    }
+
+    public class Name {
+
+        private final String john;
+        private final String doe;
+
+        public Name(final String john, final String doe) {
+
+            this.john = john;
+            this.doe = doe;
+        }
+
+        public String getJohn() {
+            return john;
+        }
+
+        public String getDoe() {
+            return doe;
         }
     }
 }
