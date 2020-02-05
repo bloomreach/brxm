@@ -42,7 +42,7 @@ public class JsonPointerFactoryImpl implements JsonPointerFactory {
 
     @Override
     public String createJsonPointerId() {
-        return createJsonPointerId(UUID.randomUUID().toString()) ;
+        return createJsonPointerIdForString(UUID.randomUUID().toString()) ;
     }
 
     protected String createJsonPointerIdForString(final String string) {
