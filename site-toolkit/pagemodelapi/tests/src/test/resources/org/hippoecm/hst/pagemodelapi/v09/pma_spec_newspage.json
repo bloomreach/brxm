@@ -17,8 +17,472 @@
     "componentClass":"org.hippoecm.hst.pagemodelapi.common.components.GenericDetailComponent",
     "type":"COMPONENT",
     "models":{
+      "currentLink":{
+        "href":"/site/spa/news/News1.html",
+        "type":"internal"
+      },
+      "menu-again":{
+        "name":"main",
+        "siteMenuItems":[
+          {
+            "depth":3,
+            "repositoryBased":true,
+            "properties":{
+              "hst:referencesitemapitem":"news",
+              "hst:depth":3,
+              "hst:repobased":true
+            },
+            "name":"News",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/news",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"contact"
+            },
+            "name":"Contact",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/contact",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"contact-spring"
+            },
+            "name":"Contact-Spring",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/contact-spring",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"contact-dispatch"
+            },
+            "name":"Contact-Dispatch",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/contact-dispatch",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"contact-springmvc"
+            },
+            "name":"Contact-SpringMVC",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/contact-springmvc",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"search"
+            },
+            "name":"Search",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/search",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"uniquelinks"
+            },
+            "name":"UniqueLinks",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/uniquelinks",
+                "type":"internal"
+              }
+            }
+          }
+        ]
+      },
+      "sameChannelNewsLink":{
+        "href":"/site/spa/news/News1.html",
+        "type":"internal"
+      },
+      "otherChannelNewsLink":{
+        "href":"http://localhost/site/subsite/news/2008/SubNews1.html",
+        "type":"external"
+      },
       "document":{
         "$ref":"/content/u303d40ebf98c4d6184c7a1ba14b5ceb3"
+      },
+      "document-again":{
+        "$ref":"/content/u303d40ebf98c4d6184c7a1ba14b5ceb3"
+      },
+      "menus":{
+        "siteMenus":{
+          "main":{
+            "name":"main",
+            "siteMenuItems":[
+              {
+                "depth":3,
+                "repositoryBased":true,
+                "properties":{
+                  "hst:referencesitemapitem":"news",
+                  "hst:depth":3,
+                  "hst:repobased":true
+                },
+                "name":"News",
+                "childMenuItems":[
+
+                ],
+                "parameters":{
+
+                },
+                "_links":{
+                  "site":{
+                    "href":"/site/spa/news",
+                    "type":"internal"
+                  }
+                }
+              },
+              {
+                "depth":0,
+                "repositoryBased":false,
+                "properties":{
+                  "hst:referencesitemapitem":"contact"
+                },
+                "name":"Contact",
+                "childMenuItems":[
+
+                ],
+                "parameters":{
+
+                },
+                "_links":{
+                  "site":{
+                    "href":"/site/spa/contact",
+                    "type":"internal"
+                  }
+                }
+              },
+              {
+                "depth":0,
+                "repositoryBased":false,
+                "properties":{
+                  "hst:referencesitemapitem":"contact-spring"
+                },
+                "name":"Contact-Spring",
+                "childMenuItems":[
+
+                ],
+                "parameters":{
+
+                },
+                "_links":{
+                  "site":{
+                    "href":"/site/spa/contact-spring",
+                    "type":"internal"
+                  }
+                }
+              },
+              {
+                "depth":0,
+                "repositoryBased":false,
+                "properties":{
+                  "hst:referencesitemapitem":"contact-dispatch"
+                },
+                "name":"Contact-Dispatch",
+                "childMenuItems":[
+
+                ],
+                "parameters":{
+
+                },
+                "_links":{
+                  "site":{
+                    "href":"/site/spa/contact-dispatch",
+                    "type":"internal"
+                  }
+                }
+              },
+              {
+                "depth":0,
+                "repositoryBased":false,
+                "properties":{
+                  "hst:referencesitemapitem":"contact-springmvc"
+                },
+                "name":"Contact-SpringMVC",
+                "childMenuItems":[
+
+                ],
+                "parameters":{
+
+                },
+                "_links":{
+                  "site":{
+                    "href":"/site/spa/contact-springmvc",
+                    "type":"internal"
+                  }
+                }
+              },
+              {
+                "depth":0,
+                "repositoryBased":false,
+                "properties":{
+                  "hst:referencesitemapitem":"search"
+                },
+                "name":"Search",
+                "childMenuItems":[
+
+                ],
+                "parameters":{
+
+                },
+                "_links":{
+                  "site":{
+                    "href":"/site/spa/search",
+                    "type":"internal"
+                  }
+                }
+              },
+              {
+                "depth":0,
+                "repositoryBased":false,
+                "properties":{
+                  "hst:referencesitemapitem":"uniquelinks"
+                },
+                "name":"UniqueLinks",
+                "childMenuItems":[
+
+                ],
+                "parameters":{
+
+                },
+                "_links":{
+                  "site":{
+                    "href":"/site/spa/uniquelinks",
+                    "type":"internal"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "notFoundLink":{
+        "href":"/site/spa/pagenotfound",
+        "type":"internal"
+      },
+      "menu":{
+        "name":"main",
+        "siteMenuItems":[
+          {
+            "depth":3,
+            "repositoryBased":true,
+            "properties":{
+              "hst:referencesitemapitem":"news",
+              "hst:depth":3,
+              "hst:repobased":true
+            },
+            "name":"News",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/news",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"contact"
+            },
+            "name":"Contact",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/contact",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"contact-spring"
+            },
+            "name":"Contact-Spring",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/contact-spring",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"contact-dispatch"
+            },
+            "name":"Contact-Dispatch",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/contact-dispatch",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"contact-springmvc"
+            },
+            "name":"Contact-SpringMVC",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/contact-springmvc",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"search"
+            },
+            "name":"Search",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/search",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"uniquelinks"
+            },
+            "name":"UniqueLinks",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/uniquelinks",
+                "type":"internal"
+              }
+            }
+          }
+        ]
       }
     },
     "components":[
@@ -117,7 +581,51 @@
       "body":{
         "value":"My news item 1 content"
       },
-      "summary":"Summary about news item 1"
+      "summary":"Summary about news item 1",
+      "textDocument":{
+        "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
+      }
+    },
+    "u1ca07af9cdf54bdd9908f991245bb062":{
+      "id":"1ca07af9-cdf5-4bdd-9908-f991245bb062",
+      "_links":{
+        "site":{
+          "href":"/site/spa",
+          "type":"internal"
+        }
+      },
+      "name":"homepage",
+      "displayName":"Home Page",
+      "date":1249891507580,
+      "title":"This is the homepage",
+      "body":{
+        "value":"This is the content of the homepage with a link to <a href=\"/site/spa/news/News1.html\" data-type=\"internal\">News1</a> document"
+      },
+      "summary":"Summary of the homepage",
+      "selfInstance":{
+        "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
+      },
+      "childObject":{
+        "name":"just-some-name",
+        "parent":{
+          "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
+        }
+      },
+      "listContainingSelf":[
+        {
+          "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
+        },
+        {
+          "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
+        }
+      ],
+      "selfBean":{
+        "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
+      },
+      "newsDocument":{
+        "$ref":"/content/u303d40ebf98c4d6184c7a1ba14b5ceb3"
+      },
+      "localeString":"en_US"
     }
   }
 }

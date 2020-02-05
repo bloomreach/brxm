@@ -47,8 +47,6 @@ public class PageModelApiV09CompatibilityIT extends AbstractPageModelApiITCases 
 
         String actual = getActualJson("/spa/resourceapi/home");
 
-        System.out.println(actual);
-
         InputStream inputStream = PageModelApiV09CompatibilityIT.class.getResourceAsStream("pma_spec_homepage.json");
 
         String expected = IOUtils.toString(inputStream, "UTF-8");
