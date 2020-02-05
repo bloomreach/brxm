@@ -26,7 +26,7 @@
         "params" : { }
       },
       "name" : "homepage",
-      "type" : "COMPONENT",
+      "type" : "component",
       "componentClass" : "org.hippoecm.hst.pagemodelapi.common.components.GenericDetailComponent",
       "children" : [ {
         "$ref" : "/page/uid1"
@@ -72,7 +72,7 @@
         "params" : { }
       },
       "name" : "header",
-      "type" : "COMPONENT",
+      "type" : "component",
       "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent",
       "children" : [ {
         "$ref" : "/page/uid4"
@@ -89,7 +89,7 @@
         "params" : { }
       },
       "name" : "leftmenu",
-      "type" : "COMPONENT",
+      "type" : "component",
       "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
     },
     "u1ca07af9cdf54bdd9908f991245bb062" : {
@@ -241,7 +241,7 @@
         "params" : { }
       },
       "name" : "title",
-      "type" : "COMPONENT",
+      "type" : "component",
       "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
     },
     "u303d40ebf98c4d6184c7a1ba14b5ceb3" : {
