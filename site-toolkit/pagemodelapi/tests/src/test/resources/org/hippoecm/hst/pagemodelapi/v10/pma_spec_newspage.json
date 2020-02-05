@@ -40,6 +40,9 @@
           "href" : "/site/spa/news/News1.html",
           "type" : "internal"
         },
+        "menu-again" : {
+          "$ref" : "/page/uid4"
+        },
         "sameChannelNewsLink" : {
           "href" : "/site/spa/news/News1.html",
           "type" : "internal"
@@ -53,6 +56,13 @@
         },
         "document-again" : {
           "$ref" : "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3"
+        },
+        "menus" : {
+          "siteMenus" : {
+            "main" : {
+              "$ref" : "/page/uid4"
+            }
+          }
         },
         "notFoundLink" : {
           "href" : "/site/spa/pagenotfound",
@@ -107,26 +117,6 @@
       "name" : "leftmenu",
       "type" : "component",
       "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
-    },
-    "u303d40ebf98c4d6184c7a1ba14b5ceb3" : {
-      "type" : "document",
-      "links" : {
-        "site" : {
-          "href" : "/site/spa/news/News1.html",
-          "type" : "internal"
-        }
-      },
-      "data" : {
-        "name" : "News1",
-        "displayName" : "News1",
-        "date" : 1239782707580,
-        "title" : "News Item 1",
-        "body" : {
-          "value" : "My news item 1 content"
-        },
-        "summary" : "Summary about news item 1",
-        "id" : "303d40eb-f98c-4d61-84c7-a1ba14b5ceb3"
-      }
     },
     "uid4" : {
       "type" : "menu",
@@ -240,6 +230,26 @@
             }
           }
         } ]
+      }
+    },
+    "u303d40ebf98c4d6184c7a1ba14b5ceb3" : {
+      "type" : "document",
+      "links" : {
+        "site" : {
+          "href" : "/site/spa/news/News1.html",
+          "type" : "internal"
+        }
+      },
+      "data" : {
+        "name" : "News1",
+        "displayName" : "News1",
+        "date" : 1239782707580,
+        "title" : "News Item 1",
+        "body" : {
+          "value" : "My news item 1 content"
+        },
+        "summary" : "Summary about news item 1",
+        "id" : "303d40eb-f98c-4d61-84c7-a1ba14b5ceb3"
       }
     },
     "uid5" : {

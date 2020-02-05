@@ -49,6 +49,13 @@ public class GenericDetailComponent extends GenericHstComponent {
 
         request.setModel("menu", requestContext.getHstSiteMenus().getSiteMenu("main"));
 
+        // make sure that same menu twice in same page model gets serialized only once
+        request.setModel("menu-again", requestContext.getHstSiteMenus().getSiteMenu("main"));
+
+
+        // make sure that the 'menu' within 'menus' get serialized via $ref and is the same $ref as 'menu' above
+        request.setModel("menus", requestContext.getHstSiteMenus());
+
         request.setModel("currentLink", hstLinkCreator.create(requestContentBean, requestContext));
 
         // include link not found
