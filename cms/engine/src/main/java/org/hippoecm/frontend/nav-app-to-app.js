@@ -110,8 +110,6 @@
       .then(childApi => childApi.navigate({ path }, triggeredBy));
   };
 
-  let isFirstNavigation = true;
-
   const cmsChildApi = {
 
     getConfig() {
@@ -159,10 +157,12 @@
             return navigateIframe(iframe, pathElements.join('/'), triggeredBy);
 
           case 'experience-manager':
-            // on first navigation do not navigate into the iframe
-            // it might not have registered yet and we do not support
-            // deeplinking to channel detail views yet
-            if (isFirstNavigation) {
+            // if iframe is undefined most probably it means it's not initialized yet
+            // we can't distinguish between not initialized yet state and not defined at al
+            if (!iframe) {
+              const message = '"experience-manager" iframe is not registered. Internal iframe navigation step is skipped.';
+              console.warn(message);
+
               return Promise.resolve();
             }
 
@@ -193,11 +193,7 @@
         }
       };
 
-      return navigateToPerspective()
-        .then(() => {
-          isFirstNavigation = false;
-          appLinkElement.click();
-        });
+      return navigateToPerspective().then(() => appLinkElement.click());
     },
 
     logout () {
