@@ -15,7 +15,7 @@
  */
 
 // This variable is updated automatically during the release process to be equal to the version in 'package.json'
-const version = '1.1.1-4';
+const version = '1.1.1';
 
 export function getVersion(): string {
   return version;
