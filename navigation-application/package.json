@@ -32,7 +32,7 @@
     "@angular/platform-browser": "8.2.14",
     "@angular/platform-browser-dynamic": "8.2.14",
     "@angular/router": "8.2.14",
-    "@bloomreach/navapp-communication": "1.1.1-4",
+    "@bloomreach/navapp-communication": "1.1.1",
     "@ngx-translate/core": "11.0.1",
     "@ngx-translate/http-loader": "4.0.0",
     "core-js": "3.4.5",
