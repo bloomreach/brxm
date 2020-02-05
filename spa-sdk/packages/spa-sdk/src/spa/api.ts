@@ -18,7 +18,23 @@ import { PageModel, Visitor } from '../page';
 import { UrlBuilder } from '../url';
 import { HttpClientConfig, HttpClient, HttpRequest } from './http';
 
+const DEFAULT_AUTHORIZATION_HEADER = 'Authorization';
+const DEFAULT_SERVER_ID_HEADER = 'serverid';
+
 export interface ApiOptions {
+  /**
+   * Authorization header.
+   * By default, `Authorization` will be used.
+   */
+  authorizationHeader?: string;
+
+  /**
+   * Authorization token.
+   * By default, the SDK will try to extract the token from the request query string
+   * using `authorizationQueryParameter` option.
+   */
+  authorizationToken?: string;
+
   /**
    * HTTP client that will be used to fetch the page model.
    */
@@ -28,6 +44,19 @@ export interface ApiOptions {
    * Current user's request.
    */
   request: HttpRequest;
+
+  /**
+   * Header identifying the current cluster node.
+   * By default, `serverid` will be used.
+   */
+  serverIdHeader?: string;
+
+  /**
+   * Cluster node identifier.
+   * By default, the SDK will try to extract the value from the request query string
+   * using `serverIdQueryParameter` option.
+   */
+  serverId?: string;
 
   /**
    * Current visitor.
@@ -82,10 +111,18 @@ export class ApiImpl implements Api {
   private async send(config: HttpClientConfig) {
     const { remoteAddress: ip } = this.options.request.connection || {};
     const { host, ...headers } = this.options.request.headers || {};
-    const { visitor } = this.options;
+    const {
+      authorizationHeader = DEFAULT_AUTHORIZATION_HEADER,
+      authorizationToken,
+      serverIdHeader = DEFAULT_SERVER_ID_HEADER,
+      serverId,
+      visitor,
+    } = this.options;
 
     const response = await this.options.httpClient({...config, headers: {
       ...ip && { 'x-forwarded-for': ip },
+      ...authorizationToken && { [authorizationHeader]: `Bearer ${authorizationToken}` },
+      ...serverId && { [serverIdHeader]: serverId },
       ...visitor && { [visitor.header]: visitor.id },
       ...headers,
       ...config.headers,

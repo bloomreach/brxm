@@ -97,6 +97,68 @@ describe('ApiImpl', () => {
         },
       }));
     });
+
+    it('should include authorization header', async () => {
+      api.initialize({
+        authorizationHeader: 'X-Auth',
+        authorizationToken: 'token',
+        httpClient: config.httpClient,
+        request: { path: config.request.path },
+      });
+      await api.getPage(config.request.path);
+
+      expect(config.httpClient).toBeCalledWith(expect.objectContaining({
+        headers: {
+          'X-Auth': 'Bearer token',
+        },
+      }));
+    });
+
+    it('should fall back to the default authorization header', async () => {
+      api.initialize({
+        authorizationToken: 'token',
+        httpClient: config.httpClient,
+        request: { path: config.request.path },
+      });
+      await api.getPage(config.request.path);
+
+      expect(config.httpClient).toBeCalledWith(expect.objectContaining({
+        headers: {
+          Authorization: 'Bearer token',
+        },
+      }));
+    });
+
+    it('should include server-id header', async () => {
+      api.initialize({
+        serverIdHeader: 'X-Server-Id',
+        serverId: 'some',
+        httpClient: config.httpClient,
+        request: { path: config.request.path },
+      });
+      await api.getPage(config.request.path);
+
+      expect(config.httpClient).toBeCalledWith(expect.objectContaining({
+        headers: {
+          'X-Server-Id': 'some',
+        },
+      }));
+    });
+
+    it('should fall back to the default server-id header', async () => {
+      api.initialize({
+        serverId: 'some',
+        httpClient: config.httpClient,
+        request: { path: config.request.path },
+      });
+      await api.getPage(config.request.path);
+
+      expect(config.httpClient).toBeCalledWith(expect.objectContaining({
+        headers: {
+          serverid: 'some',
+        },
+      }));
+    });
   });
 
   describe('getComponent', () => {
