@@ -34,9 +34,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoAssetBean;
-import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
-import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.pagemodel.container.MetadataDecorator;
@@ -89,6 +87,10 @@ public class PageModelSerializer extends JsonSerializer<Object> {
     public void serialize(final Object object, final JsonGenerator gen, final SerializerProvider serializerProvider) throws IOException {
         SerializerContext serializerContext = tlSerializerContext.get();
 
+        if (serializerContext == null) {
+            throw new IllegalStateException("PageModelSerializer not in the correct state for current thread, first " +
+                    "invoke #initContext to setup the required thread local");
+        }
         if (object.getClass().equals(AggregatedPageModel.RootReference.class)) {
             AggregatedPageModel.RootReference ref = (AggregatedPageModel.RootReference) object;
             Object pageRoot = ref.getObject();

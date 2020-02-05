@@ -24,10 +24,13 @@ import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
+import org.hippoecm.hst.core.parameters.Parameter;
+import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.platform.linking.DefaultHstLinkCreator;
 import org.hippoecm.hst.platform.linking.HstLinkImpl;
 
+@ParametersInfo(type = GenericDetailComponent.GenericDetailComponentInfo.class)
 public class GenericDetailComponent extends GenericHstComponent {
 
     @Override
@@ -89,4 +92,15 @@ public class GenericDetailComponent extends GenericHstComponent {
 
     }
 
+    public interface GenericDetailComponentInfo {
+
+        @Parameter(name = "parameterOne", defaultValue = "valueTwo")
+        String getParameterOne();
+
+        @Parameter(name = "parameterTwo", defaultValue = "valueTwo")
+        String getParameterTwo();
+
+        @Parameter(name =" test", defaultValue = "1")
+        long getValue();
+    }
 }

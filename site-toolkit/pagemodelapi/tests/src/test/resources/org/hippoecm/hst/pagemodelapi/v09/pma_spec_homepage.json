@@ -539,6 +539,11 @@
     ],
     "_meta":{
       "definitionId":"hst:pages/homepage",
+      "paramsInfo" : {
+        "parameterOne" : "valueTwo",
+        "parameterTwo" : "valueTwo",
+        "value" : 1
+      },
       "params":{
 
       }

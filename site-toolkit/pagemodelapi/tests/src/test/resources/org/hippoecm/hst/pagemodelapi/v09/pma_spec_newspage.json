@@ -555,6 +555,11 @@
     ],
     "_meta":{
       "definitionId":"hst:pages/newsoverview",
+      "paramsInfo" : {
+        "parameterOne" : "valueTwo",
+        "parameterTwo" : "valueTwo",
+        "value" : 1
+      },
       "params":{
 
       }

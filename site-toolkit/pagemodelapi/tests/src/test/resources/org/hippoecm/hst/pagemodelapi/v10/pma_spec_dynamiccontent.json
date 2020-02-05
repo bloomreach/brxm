@@ -23,6 +23,11 @@
       },
       "meta" : {
         "definitionId" : "hst:pages/genericdetail",
+        "paramsInfo" : {
+          "parameterOne" : "valueTwo",
+          "parameterTwo" : "valueTwo",
+          "value" : 1
+        },
         "params" : { }
       },
       "name" : "genericdetail",

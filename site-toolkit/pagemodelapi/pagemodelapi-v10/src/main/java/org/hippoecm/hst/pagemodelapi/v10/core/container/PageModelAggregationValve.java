@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -35,12 +34,6 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
-import org.hippoecm.hst.content.beans.standard.HippoAssetBean;
-import org.hippoecm.hst.content.beans.standard.HippoBean;
-import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
-import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
-import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
-import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
@@ -64,7 +57,6 @@ import org.hippoecm.hst.pagemodelapi.v10.content.beans.jackson.LinkModel;
 import org.hippoecm.hst.pagemodelapi.v10.core.model.ComponentWindowModel;
 import org.hippoecm.hst.pagemodelapi.v10.core.model.IdentifiableLinkableMetadataBaseModel;
 import org.hippoecm.hst.util.ParametersInfoUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -107,10 +99,11 @@ public class PageModelAggregationValve extends AggregationValve {
     private static final String MAX_CONTENT_REFERENCE_LEVEL_PARAM_NAME = "_maxreflevel";
 
     /**
-     * Jackson ObjectMapper instance for JSON (de)serialization.
+     * Page Model Object Jackson ObjectMapper instance for JSON (de)serialization.
      */
-    private final ObjectMapper objectMapper;
+    private final ObjectMapper pageModelObjectMapper;
 
+    private final ObjectMapper simpleObjectMapper = new ObjectMapper();
     /**
      * Custom metadata decorators.
      */
@@ -124,10 +117,10 @@ public class PageModelAggregationValve extends AggregationValve {
 
     public PageModelAggregationValve(final PageModelObjectMapperFactory factory, final Map<Class<?>, Class<?>> extraMixins,
                                      final JsonPointerFactory jsonPointerFactory) {
-        objectMapper = factory.createPageModelObjectMapper().registerModule(new SimpleModule().setSerializerModifier(
+        pageModelObjectMapper = factory.createPageModelObjectMapper().registerModule(new SimpleModule().setSerializerModifier(
                 new PageModelSerializerModifier(metadataDecorators, jsonPointerFactory)
         ));
-        HstBeansObjectMapperDecorator.decorate(objectMapper, extraMixins);
+        HstBeansObjectMapperDecorator.decorate(pageModelObjectMapper, extraMixins);
 
     }
 
@@ -306,9 +299,9 @@ public class PageModelAggregationValve extends AggregationValve {
 
 
             if (prettyPrint) {
-                getObjectMapper().writerWithDefaultPrettyPrinter().writeValue(response.getWriter(), getCurrentAggregatedPageModel());
+                pageModelObjectMapper.writerWithDefaultPrettyPrinter().writeValue(response.getWriter(), getCurrentAggregatedPageModel());
             } else {
-                getObjectMapper().writeValue(response.getWriter(), getCurrentAggregatedPageModel());
+                pageModelObjectMapper.writeValue(response.getWriter(), getCurrentAggregatedPageModel());
             }
 
 
@@ -322,16 +315,6 @@ public class PageModelAggregationValve extends AggregationValve {
             PageModelSerializer.closeContext();
         }
     }
-
-
-    /**
-     * Return the Jackson ObjectMapper used in JSON (de)serialization.
-     * @return the Jackson ObjectMapper used in JSON (de)serialization
-     */
-    protected ObjectMapper getObjectMapper() {
-        return objectMapper;
-    }
-
 
     @Override
     protected boolean isAggregationApiDocumentRequest(final ValveContext context) {
@@ -370,11 +353,10 @@ public class PageModelAggregationValve extends AggregationValve {
         }
 
         final Object paramsInfo = ParametersInfoUtils.createParametersInfo(window.getComponent(), compConfig, hstRequest);
-        JsonNode paramsInfoNode = null;
 
         if (paramsInfo != null) {
             try {
-                paramsInfoNode = getObjectMapper().valueToTree(paramsInfo);
+                final JsonNode paramsInfoNode = simpleObjectMapper.valueToTree(paramsInfo);
                 model.putMetadata(PARAMETERS_INFO_METADATA, paramsInfoNode);
             } catch (Exception e) {
                 log.warn("Failed to convert ParametersInfo instance ({}) to ObjectNode.", paramsInfo, e);
@@ -382,7 +364,7 @@ public class PageModelAggregationValve extends AggregationValve {
         }
 
         final ResolvedSiteMapItem resolvedSiteMapItem = RequestContextProvider.get().getResolvedSiteMapItem();
-        final ObjectNode paramsNode = getObjectMapper().getNodeFactory().objectNode();
+        final ObjectNode paramsNode = simpleObjectMapper.getNodeFactory().objectNode();
 
         for (String paramName : compConfig.getParameterNames()) {
             final String paramValue = compConfig.getParameter(paramName, resolvedSiteMapItem);
