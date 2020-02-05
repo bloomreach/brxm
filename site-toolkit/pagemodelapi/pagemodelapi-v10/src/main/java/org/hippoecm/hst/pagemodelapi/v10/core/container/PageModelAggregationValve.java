@@ -24,10 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -103,7 +101,6 @@ public class PageModelAggregationValve extends AggregationValve {
      */
     private final ObjectMapper pageModelObjectMapper;
 
-    private final ObjectMapper simpleObjectMapper = new ObjectMapper();
     /**
      * Custom metadata decorators.
      */
@@ -356,25 +353,14 @@ public class PageModelAggregationValve extends AggregationValve {
 
         if (paramsInfo != null) {
             try {
-                final JsonNode paramsInfoNode = simpleObjectMapper.valueToTree(paramsInfo);
-                model.putMetadata(PARAMETERS_INFO_METADATA, paramsInfoNode);
+                model.putMetadata(PARAMETERS_INFO_METADATA, paramsInfo);
             } catch (Exception e) {
                 log.warn("Failed to convert ParametersInfo instance ({}) to ObjectNode.", paramsInfo, e);
             }
         }
 
         final ResolvedSiteMapItem resolvedSiteMapItem = RequestContextProvider.get().getResolvedSiteMapItem();
-        final ObjectNode paramsNode = simpleObjectMapper.getNodeFactory().objectNode();
-
-        for (String paramName : compConfig.getParameterNames()) {
-            final String paramValue = compConfig.getParameter(paramName, resolvedSiteMapItem);
-
-            if (paramValue != null) {
-                paramsNode.put(paramName, paramValue);
-            }
-        }
-
-        model.putMetadata(PARAMETERS_METADATA, paramsNode);
+        model.putMetadata(PARAMETERS_METADATA, compConfig.getParameters(resolvedSiteMapItem));
     }
 
     private void addPreviewFlagToPageModel(final AggregatedPageModel aggregatedPageModel, final HstRequestContext requestContext) {
