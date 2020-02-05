@@ -288,6 +288,9 @@
           "value" : "My news item 1 content"
         },
         "summary" : "Summary about news item 1",
+        "textDocument" : {
+          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        },
         "id" : "303d40eb-f98c-4d61-84c7-a1ba14b5ceb3"
       }
     }
