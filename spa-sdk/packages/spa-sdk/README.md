@@ -35,17 +35,8 @@ import { initialize } from '@bloomreach/spa-sdk';
 
 async function showPage(path) {
   const page = await initialize({
+    cmsBaseUrl: 'http://localhost:8080/site',
     httpClient: axios,
-    options: {
-      live: {
-        cmsBaseUrl: 'http://localhost:8080/site',
-        spaBaseUrl: '',
-      },
-      preview: {
-        cmsBaseUrl: 'http://localhost:8080/site/_cmsinternal',
-        spaBaseUrl: '/site/_cmsinternal?bloomreach-preview=true',
-      },
-    },
     request: { path },
   });
 
@@ -60,8 +51,10 @@ The `initialize` function supports several options you may use to customize page
 
 Option | Required | Default | Description
 --- | :---: | --- | ---
+`apiBaseUrl` | no | `cmsBaseUrl` + `"/resourceapi"` | Base URL of the Page Model API (e.g. `http://localhost:8080/site/resourceapi` or `http://localhost:8080/site/channel/resourceapi`). This option will be ignored if `options` is present.
+`cmsBaseUrl` | _exclusive_ | _none_ | Base URL of the site (e.g. `http://localhost:8080/site` or `http://localhost:8080/site/channel`). This option is exclusive and should not be used together with `options`.
 `httpClient` | yes | _none_ | The HTTP client that will be used to fetch the page model. Signature is similar to [Axios](https://github.com/axios/axios#axiosconfig) client.
-`options` | yes | _none_ | The CMS URL options.
+`options` | _exclusive_ | _none_ | The CMS URL options. This option is exclusive and should not be used together with `cmsBaseUrl`. Use this property to enable the UrlRewriter-based setup. The option is **deprecated** and will be removed in the next major release.
 `options.live` | yes | _none_ | The CMS URL options for the live site.
 `options.live.apiBaseUrl` | no | `options.live.cmsBaseUrl` + `"/resourceapi"` | Base URL of the Page Model API for the live site (e.g. `http://localhost:8080/site/resourceapi` or `http://localhost:8080/site/channel/resourceapi`).
 `options.live.cmsBaseUrl` | yes | _none_ | Base URL of the live site (e.g. `http://localhost:8080/site` or `http://localhost:8080/site/channel`).
@@ -73,6 +66,7 @@ Option | Required | Default | Description
 `request` | yes | _none_ | Current user's request.
 `request.path` | yes | _none_ | The path part of the URL, including a query string if present (e.g. `/path/to/page?foo=1`).
 `request.headers` | no | `{}` | An object holding request headers. It should contain a `Cookie` header if rendering is happening on the server-side.
+`spaBaseUrl` | no | `""` | Base URL of the SPA (e.g. `/account` or `//www.example.com`). This option will be ignored if `options` is present.
 `visitor` | no | _none_ | An object holding information about the current visitor.
 `visitor.id` | yes | _none_ | The current visitor identifier.
 `visitor.header` | yes | _none_ | An HTTP-header using to pass the visitor identifier to the Page Model API.

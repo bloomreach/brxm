@@ -2,7 +2,7 @@
   "content": {
     "u895fb1b6410d497298946b6a06d2b361": {
       "content": {
-        "value": "Some text containing <a href=\"/site/_cmsinternal/my-spa/news\" data-type=\"internal\">link1</a>, <a href=\"/site/_cmsinternal/my-spa/about\" data-type=\"internal\">link2</a>, <a href=\"https://example.com\">link3</a>, and the image: <img src=\"http://127.0.0.1/binaries/image.jpg\" />"
+        "value": "Some text containing <a href=\"/site/my-spa/news\" data-type=\"internal\">link1</a>, <a href=\"/site/my-spa/about\" data-type=\"internal\">link2</a>, <a href=\"https://example.com\">link3</a>, and the image: <img src=\"http://127.0.0.1/binaries/image.jpg\" />"
       },
       "id": "895fb1b6-410d-4972-9894-6b6a06d2b361",
       "localeString": "en",
@@ -10,7 +10,7 @@
       "title": "Sample banner",
       "_links": {
         "site": {
-          "href": "http://127.0.0.1/site/_cmsinternal/another-spa/banner1.html",
+          "href": "http://127.0.0.1/site/another-spa/banner1.html",
           "type": "external"
         }
       },
@@ -30,7 +30,7 @@
       "title": "Sample banner 2",
       "_links": {
         "site": {
-          "href": "/site/_cmsinternal/my-spa/banner2.html",
+          "href": "/site/my-spa/banner2.html",
           "type": "internal"
         }
       },
@@ -67,7 +67,7 @@
             },
             "_links": {
               "componentRendering": {
-                "href": "/site/_cmsinternal/my-spa/resourceapi?_hn:type=component-rendering&_hn:ref=r1_r1_r1&org.hippoecm.hst.container.render_host=127.0.0.1"
+                "href": "/site/my-spa/resourceapi?_hn:type=component-rendering&_hn:ref=r1_r1_r1&org.hippoecm.hst.container.render_host=127.0.0.1"
               }
             },
             "_meta": {
@@ -80,7 +80,7 @@
               "beginNodeSpan": [
                 {
                   "type": "comment",
-                  "data": "<!-- { \"HST-Label\":\"Banner\", \"HST-LastModified\":\"1568281400490\", \"uuid\":\"03c65ab8-06cc-47d3-b6bd-adc928937c8d\", \"HST-Type\":\"CONTAINER_ITEM_COMPONENT\", \"refNS\":\"r3_r1_r1_r1\", \"url\":\"/site/_cmsinternal/my-spa/resourceapi?_hn:type=component-rendering&_hn:ref=r3_r1_r1_r1&org.hippoecm.hst.container.render_host=127.0.0.1\", \"HST-Render-Variant\":\"\"} -->"
+                  "data": "<!-- { \"HST-Label\":\"Banner\", \"HST-LastModified\":\"1568281400490\", \"uuid\":\"03c65ab8-06cc-47d3-b6bd-adc928937c8d\", \"HST-Type\":\"CONTAINER_ITEM_COMPONENT\", \"refNS\":\"r3_r1_r1_r1\", \"url\":\"/site/my-spa/resourceapi?_hn:type=component-rendering&_hn:ref=r3_r1_r1_r1&org.hippoecm.hst.container.render_host=127.0.0.1\", \"HST-Render-Variant\":\"\"} -->"
                 }
               ],
               "endNodeSpan": [
@@ -103,7 +103,7 @@
             },
             "_links": {
               "componentRendering": {
-                "href": "/site/_cmsinternal/my-spa/resourceapi?_hn:type=component-rendering&_hn:ref=r1_r1_r2&org.hippoecm.hst.container.render_host=127.0.0.1"
+                "href": "/site/my-spa/resourceapi?_hn:type=component-rendering&_hn:ref=r1_r1_r2&org.hippoecm.hst.container.render_host=127.0.0.1"
               }
             },
             "_meta": {
@@ -116,7 +116,7 @@
               "beginNodeSpan": [
                 {
                   "type": "comment",
-                  "data": "<!-- { \"HST-Label\":\"Banner\", \"HST-LastModified\":\"1568281400490\", \"uuid\":\"1f409759-ee0e-46eb-a65f-d73a507f6463\", \"HST-Type\":\"CONTAINER_ITEM_COMPONENT\", \"refNS\":\"r3_r1_r1_r2\", \"url\":\"/site/_cmsinternal/my-spa/resourceapi?_hn:type=component-rendering&_hn:ref=r3_r1_r1_r2&org.hippoecm.hst.container.render_host=127.0.0.1\", \"HST-Render-Variant\":\"\"} -->"
+                  "data": "<!-- { \"HST-Label\":\"Banner\", \"HST-LastModified\":\"1568281400490\", \"uuid\":\"1f409759-ee0e-46eb-a65f-d73a507f6463\", \"HST-Type\":\"CONTAINER_ITEM_COMPONENT\", \"refNS\":\"r3_r1_r1_r2\", \"url\":\"/site/my-spa/resourceapi?_hn:type=component-rendering&_hn:ref=r3_r1_r1_r2&org.hippoecm.hst.container.render_host=127.0.0.1\", \"HST-Render-Variant\":\"\"} -->"
                 }
               ],
               "endNodeSpan": [
@@ -132,7 +132,7 @@
     ],
     "_links": {
       "componentRendering": {
-        "href": "/site/_cmsinternal/my-spa/resourceapi?_hn:type=component-rendering&_hn:ref=r1&org.hippoecm.hst.container.render_host=127.0.0.1"
+        "href": "/site/my-spa/resourceapi?_hn:type=component-rendering&_hn:ref=r1&org.hippoecm.hst.container.render_host=127.0.0.1"
       }
     },
     "_meta": {

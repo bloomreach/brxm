@@ -46,9 +46,12 @@ import {
   TYPE_META_COMMENT,
   TYPE_LINK_INTERNAL,
 } from './page';
-import { Configuration } from './configuration';
+import { Configuration, isConfigurationWithProxy } from './configuration';
 import { Events } from './events';
-import { UrlBuilderImpl, isMatched } from './url';
+import { UrlBuilderImpl, appendSearchParams, extractSearchParams, isMatched } from './url';
+
+const DEFAULT_AUTHORIZATION_PARAMETER = 'token';
+const DEFAULT_SERVER_ID_PARAMETER = 'serverid';
 
 const eventBus = new Typed<Events>();
 const cms = new Cms(eventBus);
@@ -60,6 +63,7 @@ const xmlSerializer = new XMLSerializer();
  * Initializes the page model.
  *
  * @param config Configuration of the SPA integration with brXM.
+ * @param model Preloaded page model.
  */
 export async function initialize(config: Configuration, model?: PageModel): Promise<Page> {
   const urlBuilder =  new UrlBuilderImpl();
@@ -93,16 +97,41 @@ export async function initialize(config: Configuration, model?: PageModel): Prom
     linkRewriter,
     metaFactory,
   ));
-
-  const options = isMatched(config.request.path, config.options.preview.spaBaseUrl)
-    ? config.options.preview
-    : config.options.live;
-  urlBuilder.initialize(options);
-  api.initialize(config);
-  cms.initialize(config);
-
   const spa = new Spa(eventBus, api, pageFactory);
-  const page = await spa.initialize(config.request.path, model);
+
+  if (isConfigurationWithProxy(config)) {
+    const options = isMatched(config.request.path, config.options.preview.spaBaseUrl)
+      ? config.options.preview
+      : config.options.live;
+    urlBuilder.initialize(options);
+    api.initialize(config);
+    cms.initialize(config);
+
+    const page = await spa.initialize(config.request.path, model);
+    pages.set(page, spa);
+
+    return page;
+  }
+
+  const authorizationParameter = config.authorizationQueryParameter || DEFAULT_AUTHORIZATION_PARAMETER;
+  const serverIdParameter = config.serverIdQueryParameter || DEFAULT_SERVER_ID_PARAMETER;
+  const { url: path, searchParams } = extractSearchParams(
+    config.request.path,
+    [authorizationParameter, serverIdParameter],
+  );
+  const authorizationToken = searchParams.get(authorizationParameter) || undefined;
+  const serverId = searchParams.get(serverIdParameter) || undefined;
+
+  urlBuilder.initialize({
+    ...config,
+    spaBaseUrl: appendSearchParams(config.spaBaseUrl || '', searchParams),
+  });
+  api.initialize({ authorizationToken, serverId, ...config });
+
+  const page = await spa.initialize(path, model);
+  if (page.isPreview()) {
+    cms.initialize(config);
+  }
 
   pages.set(page, spa);
 

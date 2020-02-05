@@ -34,11 +34,37 @@ export interface UrlOptions {
 }
 
 /**
- * Configuration of the SPA SDK.
+ * Configuration of the SPA SDK using reverse proxy-based setup.
  */
-export interface Configuration extends ApiOptions, CmsOptions {
+export interface ConfigurationWithProxy extends ApiOptions, CmsOptions {
   /**
    * Options for generating the page model API URL.
    */
   options: UrlOptions;
+}
+
+/**
+ * Configuration of the SPA SDK using the JWT token-based setup.
+ */
+export interface ConfigurationWithJwt extends ApiOptions, CmsOptions, UrlBuilderOptions {
+  /**
+   * The query string parameter used to pass authorization header.
+   * By default, `token` parameter is used.
+   */
+  authorizationQueryParameter?: string;
+
+  /**
+   * The query string parameter used to pass a cluster node identifier.
+   * By default, `serverid` parameter is used.
+   */
+  serverIdQueryParameter?: string;
+}
+
+/**
+ * Configuration of the SPA SDK.
+ */
+export type Configuration = ConfigurationWithProxy | ConfigurationWithJwt;
+
+export function isConfigurationWithProxy(value: any): value is ConfigurationWithProxy {
+  return !!(value?.options?.live && value?.options?.preview);
 }

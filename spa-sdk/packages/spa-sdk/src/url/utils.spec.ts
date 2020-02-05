@@ -14,7 +14,18 @@
  * limitations under the License.
  */
 
-import { buildUrl, isMatched, mergeSearchParams, parseUrl } from './utils';
+import { appendSearchParams, buildUrl, extractSearchParams, isMatched, mergeSearchParams, parseUrl } from './utils';
+
+describe('appendSearchParams', () => {
+  it.each`
+    url                | params   | result
+    ${'//example.com'} | ${'a=b'} | ${'//example.com?a=b'}
+    ${'/path'}         | ${'a=b'} | ${'/path?a=b'}
+    ${'/path?a=b'}     | ${'a=c'} | ${'/path?a=c'}
+  `('should append "$params" to "$url"', ({ url, params, result }) => {
+    expect(appendSearchParams(url, new URLSearchParams(params))).toEqual(result);
+  });
+});
 
 describe('buildUrl', () => {
   it.each`
@@ -27,6 +38,21 @@ describe('buildUrl', () => {
     ${{ searchParams: new URLSearchParams('a=b') }} | ${'?a=b'}
   `('should build "$source" into "$result"', ({ source, result }) => {
     expect(buildUrl(source)).toEqual(result);
+  });
+});
+
+describe('extractSearchParams', () => {
+  it.each`
+    url                    | params        | result             | search
+    ${'//example.com?a=b'} | ${['a']}      | ${'//example.com'} | ${'a=b'}
+    ${'/path?a=b&c=d'}     | ${['a']}      | ${'/path?c=d'}     | ${'a=b'}
+    ${'/path?a=b&c=d'}     | ${['a', 'b']} | ${'/path?c=d'}     | ${'a=b'}
+    ${'/path?a=b&b=c'}     | ${['a', 'b']} | ${'/path'}         | ${'a=b&b=c'}
+  `('should extract "$search" from "$url"', ({ url, params, result, search }) => {
+    expect(extractSearchParams(url, params)).toEqual({
+      url: result,
+      searchParams: new URLSearchParams(search),
+    });
   });
 });
 

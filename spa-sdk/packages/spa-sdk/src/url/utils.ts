@@ -23,12 +23,35 @@ interface Url {
   path: string;
 }
 
+export function appendSearchParams(url: string, params: URLSearchParams) {
+  const { hash, origin, pathname, searchParams } = parseUrl(url);
+
+  return buildUrl({ hash, origin, pathname, searchParams: mergeSearchParams(searchParams, params) });
+}
+
 export function buildUrl(url: Partial<Url>) {
   const searchParams = url.searchParams?.toString() ?? '';
   const search = url.search ?? `${searchParams && `?${searchParams}`}`;
   const path = url.path ?? `${url.pathname ?? ''}${search}${url.hash ?? ''}`;
 
   return `${url.origin ?? ''}${path}`;
+}
+
+export function extractSearchParams(url: string, params: string[]) {
+  const { hash, origin, pathname, searchParams } = parseUrl(url);
+  const extracted = new URLSearchParams();
+
+  params.forEach((param) => {
+    if (searchParams.has(param)) {
+      extracted.set(param, searchParams.get(param)!);
+      searchParams.delete(param);
+    }
+  });
+
+  return {
+    searchParams: extracted,
+    url: buildUrl({ hash, origin, pathname, searchParams }),
+  };
 }
 
 function isMatchedOrigin(origin: string, baseOrigin: string) {

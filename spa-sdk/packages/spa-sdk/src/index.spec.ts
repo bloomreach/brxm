@@ -37,6 +37,22 @@ describe('initialize', () => {
     page = await initialize({
       httpClient,
       window,
+      cmsBaseUrl: 'http://localhost:8080/site/my-spa',
+      request: { path: '/?token=something' },
+      spaBaseUrl: '//example.com',
+    });
+
+    window.SPA!.init({ sync: jest.fn() });
+  });
+
+  afterEach(() => {
+    destroy(page);
+  });
+
+  it('should initialize a reverse proxy-based setup', async () => {
+    page = await initialize({
+      httpClient,
+      window,
       request: { path: '/?bloomreach-preview=true' },
       options: {
         live: {
@@ -49,11 +65,7 @@ describe('initialize', () => {
       },
     });
 
-    window.SPA!.init({ sync: jest.fn() });
-  });
-
-  afterEach(() => {
-    destroy(page);
+    expect(page.getTitle()).toBe('Homepage');
   });
 
   it('should be a page entity', () => {
@@ -79,12 +91,12 @@ describe('initialize', () => {
   });
 
   it.each`
-    link                                | expected
-    ${''}                               | ${'//example.com/?bloomreach-preview=true'}
-    ${'/site/_cmsinternal/my-spa/news'} | ${'//example.com/news?bloomreach-preview=true'}
+    link                   | expected
+    ${''}                  | ${'//example.com/?token=something'}
+    ${'/site/my-spa/news'} | ${'//example.com/news?token=something'}
     ${{ href: 'http://127.0.0.1/news?a=b', type: TYPE_LINK_EXTERNAL }}     | ${'http://127.0.0.1/news?a=b'}
-    ${{ href: '/news?a=b', type: TYPE_LINK_INTERNAL }}                     | ${'//example.com/news?a=b&bloomreach-preview=true'}
-    ${{ href: 'news#hash', type: TYPE_LINK_INTERNAL }}                     | ${'//example.com/news?bloomreach-preview=true#hash'}
+    ${{ href: '/news?a=b', type: TYPE_LINK_INTERNAL }}                     | ${'//example.com/news?a=b&token=something'}
+    ${{ href: 'news#hash', type: TYPE_LINK_INTERNAL }}                     | ${'//example.com/news?token=something#hash'}
     ${{ href: 'http://127.0.0.1/resource.jpg', type: TYPE_LINK_RESOURCE }} | ${'http://127.0.0.1/resource.jpg'}
   `('should create a URL "$expected" for link "$link"', ({ link, expected }) => {
     expect(page.getUrl(link)).toBe(expected);
@@ -162,8 +174,8 @@ describe('initialize', () => {
     const banner1 = page.getComponent('main', 'banner1');
     const document1 = page.getContent(banner1!.getModels().document);
 
-    expect(document0!.getUrl()).toBe('http://127.0.0.1/site/_cmsinternal/another-spa/banner1.html');
-    expect(document1!.getUrl()).toBe('//example.com/banner2.html?bloomreach-preview=true');
+    expect(document0!.getUrl()).toBe('http://127.0.0.1/site/another-spa/banner1.html');
+    expect(document1!.getUrl()).toBe('//example.com/banner2.html?token=something');
   });
 
   it('should rewrite links in the HTML blob', () => {
