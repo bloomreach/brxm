@@ -236,6 +236,23 @@
         "newsDocument" : {
           "$ref" : "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3"
         },
+        "selfBean" : {
+          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        },
+        "selfInstance" : {
+          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        },
+        "childObject" : {
+          "name" : "just-some-name",
+          "parent" : {
+            "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+          }
+        },
+        "listContainingSelf" : [ {
+          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        }, {
+          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        } ],
         "localeString" : "en_US",
         "id" : "1ca07af9-cdf5-4bdd-9908-f991245bb062"
       }

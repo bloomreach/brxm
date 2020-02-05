@@ -100,8 +100,13 @@ public class PageModelSerializer extends JsonSerializer<Object> {
         }
 
         if (serializerContext.serializingPageModelEntity instanceof DecoratedPageModelEntityWrapper) {
-            if(((DecoratedPageModelEntityWrapper)serializerContext.serializingPageModelEntity).getData() == object){
+            final DecoratedPageModelEntityWrapper entity = (DecoratedPageModelEntityWrapper) serializerContext.serializingPageModelEntity;
+            if (entity.getData() == object && !entity.isSerialized()) {
                 // although a PMA entity, we now really need to serialize it
+
+                // Now to avoid potential recursion for a PMA entity referencing itself (same java instance via some chain),
+                // we now mark the DecoratedPageModelEntityWrapper as serialized!
+                entity.setSerialized(true);
                 delegatee.serialize(object, gen, serializerProvider);
                 return;
             }
@@ -151,7 +156,7 @@ public class PageModelSerializer extends JsonSerializer<Object> {
                 } else if (object instanceof HippoDocumentBean) {
 
                     HstRequestContext requestContext = RequestContextProvider.get();
-                    final DecoratedPageModelEntityWrapper<HippoDocumentBean> decoratedPageModelEntityWrapper = new DecoratedPageModelEntityWrapper(object, getHippoBeanType((HippoDocumentBean)object));
+                    final DecoratedPageModelEntityWrapper<HippoDocumentBean> decoratedPageModelEntityWrapper = new DecoratedPageModelEntityWrapper(object, getHippoBeanType((HippoDocumentBean) object));
                     addLinksToContent(requestContext, decoratedPageModelEntityWrapper);
                     for (MetadataDecorator metadataDecorator : metadataDecorators) {
                         metadataDecorator.decorateContentMetadata(requestContext,
@@ -235,6 +240,7 @@ public class PageModelSerializer extends JsonSerializer<Object> {
 
         private final T data;
         private final String type;
+        private boolean serialized;
 
         public DecoratedPageModelEntityWrapper(final T data, final String type) {
             super(null);
@@ -249,6 +255,15 @@ public class PageModelSerializer extends JsonSerializer<Object> {
         @JsonInclude(NON_NULL)
         public String getType() {
             return type;
+        }
+
+        @JsonIgnore
+        public boolean isSerialized() {
+            return serialized;
+        }
+
+        public void setSerialized(final boolean serialized) {
+            this.serialized = serialized;
         }
     }
 
