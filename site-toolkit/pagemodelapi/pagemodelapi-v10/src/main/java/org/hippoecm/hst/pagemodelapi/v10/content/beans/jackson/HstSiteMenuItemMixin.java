@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.annotation.JsonAppend;
 
 @JsonAppend(props = {
         @JsonAppend.Prop(
-                name = "_links",
+                name = "links",
                 value = MenuItemLinksVirtualBeanPropertyWriter.class
         )
 }

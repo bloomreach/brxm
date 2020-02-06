@@ -122,7 +122,7 @@
           "name" : "News",
           "childMenuItems" : [ ],
           "parameters" : { },
-          "_links" : {
+          "links" : {
             "site" : {
               "href" : "/site/spa/news",
               "type" : "internal"
@@ -137,7 +137,7 @@
           "name" : "Contact",
           "childMenuItems" : [ ],
           "parameters" : { },
-          "_links" : {
+          "links" : {
             "site" : {
               "href" : "/site/spa/contact",
               "type" : "internal"
@@ -152,7 +152,7 @@
           "name" : "Contact-Spring",
           "childMenuItems" : [ ],
           "parameters" : { },
-          "_links" : {
+          "links" : {
             "site" : {
               "href" : "/site/spa/contact-spring",
               "type" : "internal"
@@ -167,7 +167,7 @@
           "name" : "Contact-Dispatch",
           "childMenuItems" : [ ],
           "parameters" : { },
-          "_links" : {
+          "links" : {
             "site" : {
               "href" : "/site/spa/contact-dispatch",
               "type" : "internal"
@@ -182,7 +182,7 @@
           "name" : "Contact-SpringMVC",
           "childMenuItems" : [ ],
           "parameters" : { },
-          "_links" : {
+          "links" : {
             "site" : {
               "href" : "/site/spa/contact-springmvc",
               "type" : "internal"
@@ -197,7 +197,7 @@
           "name" : "Search",
           "childMenuItems" : [ ],
           "parameters" : { },
-          "_links" : {
+          "links" : {
             "site" : {
               "href" : "/site/spa/search",
               "type" : "internal"
@@ -212,7 +212,7 @@
           "name" : "UniqueLinks",
           "childMenuItems" : [ ],
           "parameters" : { },
-          "_links" : {
+          "links" : {
             "site" : {
               "href" : "/site/spa/uniquelinks",
               "type" : "internal"
