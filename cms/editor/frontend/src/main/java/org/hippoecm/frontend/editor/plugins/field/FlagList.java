@@ -20,10 +20,12 @@ package org.hippoecm.frontend.editor.plugins.field;
 import java.util.BitSet;
 import java.util.stream.IntStream;
 
+import org.apache.wicket.util.io.IClusterable;
+
 /**
  * Represents a list of flags. Flags can be set to true or false, can be moved up and down and removed.
  */
-public final class FlagList {
+public final class FlagList implements IClusterable {
 
     private final BitSet flags = new BitSet();
 
