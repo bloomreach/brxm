@@ -34,7 +34,9 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoAssetBean;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
+import org.hippoecm.hst.content.beans.standard.HippoFolderBean;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.core.linking.HstLink;
 import org.hippoecm.hst.core.pagemodel.container.MetadataDecorator;
@@ -86,7 +88,8 @@ public class PageModelSerializer extends JsonSerializer<Object> {
         this.metadataDecorators = metadataDecorators;
     }
 
-    final Class[] KNOWN_PMA_ENTITIES = new Class[]{ComponentWindowModel.class, HippoDocumentBean.class, CommonMenu.class};
+    final Class[] KNOWN_PMA_ENTITIES = new Class[]{ComponentWindowModel.class, HippoDocumentBean.class,
+            HippoFolderBean.class, CommonMenu.class};
 
     @Override
     public void serialize(final Object object, final JsonGenerator gen, final SerializerProvider serializerProvider) throws IOException {
@@ -139,7 +142,7 @@ public class PageModelSerializer extends JsonSerializer<Object> {
                 int nextDepth = 0;
                 if (serializerContext.serializingPageModelEntity instanceof DecoratedPageModelEntityWrapper) {
                     nextDepth = ((DecoratedPageModelEntityWrapper) serializerContext.serializingPageModelEntity).getCurrentDepth();
-                    if (object instanceof HippoDocumentBean) {
+                    if (object instanceof HippoDocumentBean || object instanceof HippoFolderBean) {
                         nextDepth++;
                     }
                     if (nextDepth > serializerContext.maxDocumentRefLevel) {
@@ -155,7 +158,7 @@ public class PageModelSerializer extends JsonSerializer<Object> {
                             gen.writeStartObject();
                             // just serialize only the ID of the document bean and return : the bean does not get
                             // serialized since deeper than max reference
-                            gen.writeStringField("id", ((HippoDocumentBean) object).getRepresentationId());
+                            gen.writeStringField("uuid", ((HippoBean) object).getRepresentationId());
                             gen.writeEndObject();
                         }
                         return;
@@ -188,11 +191,11 @@ public class PageModelSerializer extends JsonSerializer<Object> {
                     }
                     serializerContext.serializeQueue.add(new JsonPointerWrapper(decoratedPageModelEntityWrapper, jsonPointerId));
 
-                } else if (object instanceof HippoDocumentBean) {
+                } else if (object instanceof HippoDocumentBean || object instanceof HippoFolderBean) {
 
                     HstRequestContext requestContext = RequestContextProvider.get();
-                    final DecoratedPageModelEntityWrapper<HippoDocumentBean> decoratedPageModelEntityWrapper
-                            = new DecoratedPageModelEntityWrapper(object, getHippoBeanType((HippoDocumentBean) object), nextDepth);
+                    final DecoratedPageModelEntityWrapper<HippoBean> decoratedPageModelEntityWrapper
+                            = new DecoratedPageModelEntityWrapper(object, getHippoBeanType((HippoBean) object), nextDepth);
                     addLinksToContent(requestContext, decoratedPageModelEntityWrapper);
                     for (MetadataDecorator metadataDecorator : metadataDecorators) {
                         metadataDecorator.decorateContentMetadata(requestContext,
@@ -318,10 +321,10 @@ public class PageModelSerializer extends JsonSerializer<Object> {
      *
      * @param contentBeanModel content bean model
      */
-    private void addLinksToContent(final HstRequestContext requestContext, final DecoratedPageModelEntityWrapper<HippoDocumentBean> contentBeanModel) {
-        final HippoDocumentBean document = contentBeanModel.getData();
+    private void addLinksToContent(final HstRequestContext requestContext, final DecoratedPageModelEntityWrapper<HippoBean> contentBeanModel) {
+        final HippoBean bean = contentBeanModel.getData();
 
-        final HstLink selfLink = requestContext.getHstLinkCreator().create(document.getNode(), requestContext);
+        final HstLink selfLink = requestContext.getHstLinkCreator().create(bean.getNode(), requestContext);
         if (selfLink == null) {
             return;
         }
@@ -330,12 +333,15 @@ public class PageModelSerializer extends JsonSerializer<Object> {
 
     }
 
-    private String getHippoBeanType(final HippoDocumentBean bean) {
+    private String getHippoBeanType(final HippoBean bean) {
         if (bean instanceof HippoGalleryImageSet) {
             return "imageset";
         }
         if (bean instanceof HippoAssetBean) {
             return "asset";
+        }
+        if (bean instanceof HippoFolderBean) {
+            return "folder";
         }
         return "document";
     }

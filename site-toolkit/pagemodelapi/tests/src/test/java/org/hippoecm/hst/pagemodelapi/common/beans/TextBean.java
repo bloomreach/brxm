@@ -31,6 +31,11 @@ public class TextBean extends HippoDocument {
         return beanByUUID;
     }
 
+    public HippoBean getFolderBean() {
+        // assertion wrt how FolderBean is serialized
+        return this.getParentBean();
+    }
+
     /**
      * <p>
      *    Proof that self referencing does not break serialization but just gets replaced with a $ref

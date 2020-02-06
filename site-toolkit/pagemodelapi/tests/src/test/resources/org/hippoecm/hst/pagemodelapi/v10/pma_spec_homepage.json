@@ -238,14 +238,17 @@
           "value" : "This is the content of the homepage with a link to <a href=\"/site/spa/news/News1.html\" data-type=\"internal\">News1</a> document"
         },
         "summary" : "Summary of the homepage",
-        "newsDocument" : {
-          "$ref" : "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3"
-        },
         "selfBean" : {
           "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
         },
         "selfInstance" : {
           "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        },
+        "newsDocument" : {
+          "$ref" : "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3"
+        },
+        "folderBean" : {
+          "$ref" : "/page/ucbcbcbcb5fa848a8b03b4524373d992a"
         },
         "childObject" : {
           "name" : "just-some-name",
@@ -297,6 +300,22 @@
           "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
         },
         "id" : "303d40eb-f98c-4d61-84c7-a1ba14b5ceb3"
+      }
+    },
+    "ucbcbcbcb5fa848a8b03b4524373d992a" : {
+      "type" : "folder",
+      "links" : {
+        "site" : {
+          "href" : "/site/spa/genericdetail/common",
+          "type" : "internal"
+        }
+      },
+      "data" : {
+        "name" : "common",
+        "displayName" : "common",
+        "localeString" : "en_US",
+        "documentSize" : 1,
+        "id" : "cbcbcbcb-5fa8-48a8-b03b-4524373d992a"
       }
     }
   }
