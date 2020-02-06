@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,10 +23,13 @@ import java.rmi.RemoteException;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
+import org.hippoecm.repository.api.Folder;
 import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.onehippo.repository.api.annotation.WorkflowAction;
+
+import com.sun.corba.se.spi.orbutil.threadpool.Work;
 
 /**
  * Work-flow interface that is generally available on container documents.  Container documents are documents that contain
@@ -385,4 +388,22 @@ public interface FolderWorkflow extends Workflow {
      */
     public Document move(Document offspring, Document target, String name, Map<String,String> arguments)
       throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+    /**
+     *
+     * @return A {@link Folder} instance that represents the folder
+     * @throws WorkflowException  indicates that the work-flow call failed due work-flow specific conditions
+     * @throws RepositoryException  indicates that the work-flow call failed because of storage problems internal to the repository
+     */
+    Folder get() throws WorkflowException, RepositoryException;
+
+    /**
+     *
+     * @param The {@link Folder} that should update the backing folder node
+     * @return The {@link Folder} that was updated
+     * @throws WorkflowException  indicates that the work-flow call failed due work-flow specific conditions
+     * @throws RepositoryException  indicates that the work-flow call failed because of storage problems internal to the repository
+     */
+    Folder update(Folder folder) throws WorkflowException, RepositoryException;
+
 }
