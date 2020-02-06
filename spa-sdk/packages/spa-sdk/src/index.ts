@@ -22,7 +22,7 @@
 import { DOMParser, XMLSerializer } from 'xmldom';
 import { Typed } from 'emittery';
 import { ApiImpl, Spa } from './spa';
-import { Cms14Impl } from './cms';
+import { Cms14Impl, CmsImpl, PostMessage } from './cms';
 import {
   ComponentFactory,
   ComponentImpl,
@@ -48,13 +48,15 @@ import {
 } from './page';
 import { Configuration, isConfigurationWithProxy } from './configuration';
 import { Events } from './events';
-import { UrlBuilderImpl, appendSearchParams, extractSearchParams, isMatched } from './url';
+import { UrlBuilderImpl, appendSearchParams, extractSearchParams, isMatched, parseUrl } from './url';
 
 const DEFAULT_AUTHORIZATION_PARAMETER = 'token';
 const DEFAULT_SERVER_ID_PARAMETER = 'serverid';
 
 const eventBus = new Typed<Events>();
+const postMessage = new PostMessage();
 const cms14 = new Cms14Impl(eventBus);
+const cms = new CmsImpl(eventBus, postMessage, postMessage);
 const domParser = new DOMParser();
 const pages = new WeakMap<Page, Spa>();
 const xmlSerializer = new XMLSerializer();
@@ -130,7 +132,9 @@ export async function initialize(config: Configuration, model?: PageModel): Prom
 
   const page = await spa.initialize(path, model);
   if (page.isPreview()) {
-    cms14.initialize(config);
+    const { origin } = parseUrl(config.cmsBaseUrl);
+    postMessage.initialize({ ...config, origin });
+    cms.initialize();
   }
 
   pages.set(page, spa);

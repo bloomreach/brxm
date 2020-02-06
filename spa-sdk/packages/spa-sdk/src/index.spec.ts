@@ -30,7 +30,6 @@ import { PageModel, TYPE_LINK_RESOURCE, TYPE_LINK_EXTERNAL, TYPE_LINK_INTERNAL }
 describe('initialize', () => {
   let page: Page;
   const httpClient = jest.fn(async () => ({ data: model as unknown as PageModel }));
-  const window = {} as Window;
 
   beforeEach(async () => {
     httpClient.mockClear();
@@ -41,8 +40,6 @@ describe('initialize', () => {
       request: { path: '/?token=something' },
       spaBaseUrl: '//example.com',
     });
-
-    window.SPA!.init({ sync: jest.fn() });
   });
 
   afterEach(() => {
@@ -203,8 +200,18 @@ describe('initialize', () => {
       } as PageModel,
     }));
 
-    window.SPA!.renderComponent('r1_r1_r1', { some: 'value' });
-    await new Promise(process.nextTick);
+    window.postMessage(
+      {
+        type: 'brxm:event',
+        event: 'update',
+        payload: {
+          id: 'r1_r1_r1',
+          properties: { some: 'value' },
+        },
+      },
+      '*',
+    );
+    await new Promise(resolve => setTimeout(resolve, 0));
 
     expect(httpClient).toBeCalled();
     expect(httpClient.mock.calls[0]).toMatchSnapshot();
