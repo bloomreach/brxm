@@ -17,6 +17,7 @@ package org.hippoecm.hst.pagecomposer.jaxrs;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,6 +47,8 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 
 import static javax.servlet.http.HttpServletResponse.SC_FORBIDDEN;
+import static org.apache.commons.lang3.StringUtils.substringAfter;
+import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID;
 import static org.junit.Assert.assertTrue;
 
@@ -171,6 +174,10 @@ public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
         request.setMethod(method);
         if (queryString != null) {
             request.setQueryString(queryString);
+
+            // for some reason queryString does not end up as parameters so set those explicitly
+            Arrays.stream(queryString.split("&"))
+                    .forEach(paramKeyVal -> request.setParameter(substringBefore(paramKeyVal, "="), substringAfter(paramKeyVal, "=")));
         }
 
         return new RequestResponseMock(request, response);

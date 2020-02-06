@@ -16,6 +16,7 @@
 package org.hippoecm.hst.pagemodelapi.common;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.jcr.Credentials;
@@ -52,6 +53,9 @@ import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+
+import static org.apache.commons.lang3.StringUtils.substringAfter;
+import static org.apache.commons.lang3.StringUtils.substringBefore;
 
 /**
  * This class exposes common functionality for testing against the Page Model API. It is built after
@@ -184,6 +188,11 @@ public abstract class AbstractPageModelApiITCases {
         request.setMethod("GET");
         if (queryString != null) {
             request.setQueryString(queryString);
+
+            // for some reason queryString does not end up as parameters so set those explicitly
+            Arrays.stream(queryString.split("&"))
+                    .forEach(paramKeyVal -> request.setParameter(substringBefore(paramKeyVal, "="), substringAfter(paramKeyVal, "=")));
+
         }
         return new RequestResponseMock(request, response);
     }
@@ -212,8 +221,12 @@ public abstract class AbstractPageModelApiITCases {
     }
 
     public String getActualJson(final String pathInfo, final String apiVersion) throws IOException, ServletException {
+        return getActualJson(pathInfo, apiVersion, null);
+    }
+
+    public String getActualJson(final String pathInfo, final String apiVersion, final String queryString) throws IOException, ServletException {
         final RequestResponseMock requestResponse = mockGetRequestResponse(
-                "http", "localhost", pathInfo, null);
+                "http", "localhost", pathInfo, queryString);
 
         requestResponse.getRequest().addHeader(ContainerConstants.PAGE_MODEL_ACCEPT_VERSION, apiVersion);
         final MockHttpServletResponse response = render(requestResponse);

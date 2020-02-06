@@ -16,6 +16,7 @@
 package org.hippoecm.hst.restapi;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.jcr.Credentials;
@@ -48,6 +49,9 @@ import org.springframework.mock.web.MockFilterChain;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
+
+import static org.apache.commons.lang3.StringUtils.substringAfter;
+import static org.apache.commons.lang3.StringUtils.substringBefore;
 
 
 public class AbstractRestApiIT {
@@ -171,6 +175,9 @@ public class AbstractRestApiIT {
         request.setMethod("GET");
         if (queryString != null) {
             request.setQueryString(queryString);
+            // for some reason queryString does not end up as parameters so set those explicitly
+            Arrays.stream(queryString.split("&"))
+                    .forEach(paramKeyVal -> request.setParameter(substringBefore(paramKeyVal, "="), substringAfter(paramKeyVal, "=")));
         }
         return new RequestResponseMock(request, response);
     }
