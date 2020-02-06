@@ -51,9 +51,12 @@ interface SpaProcedures extends Procedures {
 }
 
 interface SpaEvents {
+  ready: never;
 }
 
 export class CmsImpl implements Cms {
+  private window?: Window;
+
   constructor(
     protected eventBus: Typed<Events>,
     protected rpcClient: RpcClient<CmsProcedures, CmsEvents>,
@@ -63,9 +66,29 @@ export class CmsImpl implements Cms {
     this.onUpdate = this.onUpdate.bind(this);
   }
 
-  initialize() {
+  initialize({ window = GLOBAL_WINDOW }: CmsOptions) {
+    this.window = window;
+    this.notifyOnReady();
     this.eventBus.on('page.ready', this.onPageReady);
     this.rpcClient.on('update', this.onUpdate);
+  }
+
+  private notifyOnReady() {
+    const notify = () => this.rpcServer.trigger('ready', undefined as never);
+    const onStateChange = () => {
+      if (this.window!.document!.readyState === 'loading') {
+        return;
+      }
+
+      notify();
+      this.window!.document!.removeEventListener('readystatechange', onStateChange);
+    };
+
+    if (this.window?.document?.readyState !== 'loading') {
+      return notify();
+    }
+
+    this.window?.document?.addEventListener('readystatechange', onStateChange);
   }
 
   protected onPageReady() {

@@ -40,9 +40,48 @@ describe('CmsImpl', () => {
     cms = new CmsImpl(eventBus, rpcClient, rpcServer);
   });
 
+  describe('initialize', () => {
+    const getReadyState = jest.fn();
+
+    beforeEach(() => {
+      Object.defineProperty(document, 'readyState', {
+        get: getReadyState,
+      });
+    });
+
+    it('should trigger ready event right away', () => {
+      getReadyState.mockReturnValueOnce('interactive');
+      cms.initialize({ window });
+
+      expect(rpcServer.trigger).toHaveBeenCalledWith('ready', undefined);
+    });
+
+    it('should not trigger ready event on state change if the state is still loading', async () => {
+      getReadyState.mockReturnValueOnce('loading');
+      getReadyState.mockReturnValueOnce('loading');
+      cms.initialize({ window });
+
+      document.dispatchEvent(new ProgressEvent('readystatechange'));
+      await new Promise(resolve => setTimeout(resolve, 0));
+
+      expect(rpcServer.trigger).not.toHaveBeenCalled();
+    });
+
+    it('should trigger ready event on state change', async () => {
+      getReadyState.mockReturnValueOnce('loading');
+      getReadyState.mockReturnValueOnce('interactive');
+      cms.initialize({ window });
+
+      document.dispatchEvent(new ProgressEvent('readystatechange'));
+      await new Promise(resolve => setTimeout(resolve, 0));
+
+      expect(rpcServer.trigger).toHaveBeenCalledWith('ready', undefined);
+    });
+  });
+
   describe('onPageReady', () => {
     it('should process postponed events on initialization', async () => {
-      cms.initialize();
+      cms.initialize({ window });
       await eventBus.emit('page.ready', {});
 
       expect(rpcClient.call).toHaveBeenCalledWith('sync');
@@ -51,7 +90,7 @@ describe('CmsImpl', () => {
 
   describe('onUpdate', () => {
     it('should process postponed events on initialization', async () => {
-      cms.initialize();
+      cms.initialize({ window });
 
       expect(rpcClient.on).toHaveBeenCalledWith('update', expect.any(Function));
 

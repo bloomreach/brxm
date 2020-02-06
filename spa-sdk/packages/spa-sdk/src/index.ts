@@ -134,7 +134,7 @@ export async function initialize(config: Configuration, model?: PageModel): Prom
   if (page.isPreview()) {
     const { origin } = parseUrl(config.cmsBaseUrl);
     postMessage.initialize({ ...config, origin });
-    cms.initialize();
+    cms.initialize(config);
   }
 
   pages.set(page, spa);
