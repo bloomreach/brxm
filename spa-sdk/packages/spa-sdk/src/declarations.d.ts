@@ -14,6 +14,4 @@
  * limitations under the License.
  */
 
-export * from './cms';
-export * from './cms14';
-export * from './rpc';
+type Callable<T = any, U extends unknown[] = any[]> = (...args: U) => T;
