@@ -58,7 +58,7 @@
 
       this.saveButton = new Ext.Button({
         xtype: 'button',
-        cls: 'btn btn-default qa-save-button',
+        cls: 'btn btn-br-secondary qa-save-button',
         text: Hippo.ChannelManager.ChannelEditor.Resources['properties-window-button-save'],
         scope: this,
         handler: function () {
@@ -84,7 +84,7 @@
 
       this.doneButton = new Ext.Button({
         xtype: 'button',
-        cls: 'btn btn-default qa-done-button',
+        cls: 'btn btn-br-primary qa-done-button',
         text: Hippo.ChannelManager.ChannelEditor.Resources['properties-window-button-done'],
         scope: this,
         handler: function () {
@@ -93,6 +93,7 @@
       });
 
       Hippo.ChannelManager.ChannelEditor.ComponentPropertiesWindow.superclass.constructor.call(this, Ext.apply(config, {
+        cls: 'br-window',
         layout: 'fit',
         width: windowWidth,
         items: this.componentPropertiesPanel,
