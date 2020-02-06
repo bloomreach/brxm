@@ -1,0 +1,280 @@
+{
+  "meta" : {
+    "version" : "1.0"
+  },
+  "links" : {
+    "self" : {
+      "href" : "http://localhost/site/spa/resourceapi"
+    },
+    "site" : {
+      "href" : "http://localhost/site/spa"
+    }
+  },
+  "root" : {
+    "$ref" : "/page/uid0"
+  },
+  "page" : {
+    "uid0" : {
+      "id" : "r25",
+      "links" : {
+        "componentRendering" : {
+          "href" : "/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25&_maxreflevel=0"
+        }
+      },
+      "meta" : {
+        "definitionId" : "hst:pages/homepage",
+        "paramsInfo" : {
+          "parameterOne" : "valueTwo",
+          "parameterTwo" : "valueTwo",
+          "value" : 1
+        },
+        "params" : { }
+      },
+      "name" : "homepage",
+      "type" : "component",
+      "componentClass" : "org.hippoecm.hst.pagemodelapi.common.components.GenericDetailComponent",
+      "children" : [ {
+        "$ref" : "/page/uid1"
+      }, {
+        "$ref" : "/page/uid2"
+      } ],
+      "models" : {
+        "currentLink" : {
+          "href" : "/site/spa",
+          "type" : "internal"
+        },
+        "menu-again" : {
+          "$ref" : "/page/uid3"
+        },
+        "sameChannelNewsLink" : {
+          "href" : "/site/spa/news/News1.html",
+          "type" : "internal"
+        },
+        "otherChannelNewsLink" : {
+          "href" : "http://localhost/site/subsite/news/2008/SubNews1.html",
+          "type" : "external"
+        },
+        "document" : {
+          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        },
+        "document-again" : {
+          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        },
+        "menus" : {
+          "siteMenus" : {
+            "main" : {
+              "$ref" : "/page/uid3"
+            }
+          }
+        },
+        "notFoundLink" : {
+          "href" : "/site/spa/pagenotfound",
+          "type" : "internal"
+        },
+        "menu" : {
+          "$ref" : "/page/uid3"
+        }
+      }
+    },
+    "uid1" : {
+      "id" : "r25_r1",
+      "links" : {
+        "componentRendering" : {
+          "href" : "/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r1&_maxreflevel=0"
+        }
+      },
+      "meta" : {
+        "params" : { }
+      },
+      "name" : "header",
+      "type" : "component",
+      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent",
+      "children" : [ {
+        "$ref" : "/page/uid4"
+      } ]
+    },
+    "uid2" : {
+      "id" : "r25_r2",
+      "links" : {
+        "componentRendering" : {
+          "href" : "/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r2&_maxreflevel=0"
+        }
+      },
+      "meta" : {
+        "params" : { }
+      },
+      "name" : "leftmenu",
+      "type" : "component",
+      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
+    },
+    "uid3" : {
+      "type" : "menu",
+      "data" : {
+        "name" : "main",
+        "siteMenuItems" : [ {
+          "depth" : 3,
+          "repositoryBased" : true,
+          "properties" : {
+            "hst:referencesitemapitem" : "news",
+            "hst:depth" : 3,
+            "hst:repobased" : true
+          },
+          "name" : "News",
+          "childMenuItems" : [ ],
+          "parameters" : { },
+          "_links" : {
+            "site" : {
+              "href" : "/site/spa/news",
+              "type" : "internal"
+            }
+          }
+        }, {
+          "depth" : 0,
+          "repositoryBased" : false,
+          "properties" : {
+            "hst:referencesitemapitem" : "contact"
+          },
+          "name" : "Contact",
+          "childMenuItems" : [ ],
+          "parameters" : { },
+          "_links" : {
+            "site" : {
+              "href" : "/site/spa/contact",
+              "type" : "internal"
+            }
+          }
+        }, {
+          "depth" : 0,
+          "repositoryBased" : false,
+          "properties" : {
+            "hst:referencesitemapitem" : "contact-spring"
+          },
+          "name" : "Contact-Spring",
+          "childMenuItems" : [ ],
+          "parameters" : { },
+          "_links" : {
+            "site" : {
+              "href" : "/site/spa/contact-spring",
+              "type" : "internal"
+            }
+          }
+        }, {
+          "depth" : 0,
+          "repositoryBased" : false,
+          "properties" : {
+            "hst:referencesitemapitem" : "contact-dispatch"
+          },
+          "name" : "Contact-Dispatch",
+          "childMenuItems" : [ ],
+          "parameters" : { },
+          "_links" : {
+            "site" : {
+              "href" : "/site/spa/contact-dispatch",
+              "type" : "internal"
+            }
+          }
+        }, {
+          "depth" : 0,
+          "repositoryBased" : false,
+          "properties" : {
+            "hst:referencesitemapitem" : "contact-springmvc"
+          },
+          "name" : "Contact-SpringMVC",
+          "childMenuItems" : [ ],
+          "parameters" : { },
+          "_links" : {
+            "site" : {
+              "href" : "/site/spa/contact-springmvc",
+              "type" : "internal"
+            }
+          }
+        }, {
+          "depth" : 0,
+          "repositoryBased" : false,
+          "properties" : {
+            "hst:referencesitemapitem" : "search"
+          },
+          "name" : "Search",
+          "childMenuItems" : [ ],
+          "parameters" : { },
+          "_links" : {
+            "site" : {
+              "href" : "/site/spa/search",
+              "type" : "internal"
+            }
+          }
+        }, {
+          "depth" : 0,
+          "repositoryBased" : false,
+          "properties" : {
+            "hst:referencesitemapitem" : "uniquelinks"
+          },
+          "name" : "UniqueLinks",
+          "childMenuItems" : [ ],
+          "parameters" : { },
+          "_links" : {
+            "site" : {
+              "href" : "/site/spa/uniquelinks",
+              "type" : "internal"
+            }
+          }
+        } ]
+      }
+    },
+    "u1ca07af9cdf54bdd9908f991245bb062" : {
+      "type" : "document",
+      "links" : {
+        "site" : {
+          "href" : "/site/spa",
+          "type" : "internal"
+        }
+      },
+      "data" : {
+        "name" : "homepage",
+        "displayName" : "Home Page",
+        "date" : 1249891507580,
+        "title" : "This is the homepage",
+        "body" : {
+          "value" : "This is the content of the homepage with a link to <a href=\"/site/spa/news/News1.html\" data-type=\"internal\">News1</a> document"
+        },
+        "summary" : "Summary of the homepage",
+        "newsDocument" : {
+          "id" : "303d40eb-f98c-4d61-84c7-a1ba14b5ceb3"
+        },
+        "selfBean" : {
+          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        },
+        "selfInstance" : {
+          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        },
+        "childObject" : {
+          "name" : "just-some-name",
+          "parent" : {
+            "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+          }
+        },
+        "listContainingSelf" : [ {
+          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        }, {
+          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        } ],
+        "localeString" : "en_US",
+        "id" : "1ca07af9-cdf5-4bdd-9908-f991245bb062"
+      }
+    },
+    "uid4" : {
+      "id" : "r25_r1_r1",
+      "links" : {
+        "componentRendering" : {
+          "href" : "/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r1_r1&_maxreflevel=0"
+        }
+      },
+      "meta" : {
+        "params" : { }
+      },
+      "name" : "title",
+      "type" : "component",
+      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
+    }
+  }
+}

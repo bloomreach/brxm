@@ -60,10 +60,15 @@ public class PageModelSerializer extends JsonSerializer<Object> {
         Set<String> serializedPointers = new HashSet<>();
         Set<Object> handledPmaEntities = new HashSet<>();
         Map<Object, String> objectJsonPointerMap = new HashMap<>();
+        private int maxDocumentRefLevel;
+
+        public SerializerContext(final int maxDocumentRefLevel) {
+            this.maxDocumentRefLevel = maxDocumentRefLevel;
+        }
     }
 
-    static void initContext() {
-        tlSerializerContext.set(new SerializerContext());
+    static void initContext(final int maxDocumentRefLevel) {
+        tlSerializerContext.set(new SerializerContext(maxDocumentRefLevel));
     }
 
     static void closeContext() {
@@ -128,7 +133,34 @@ public class PageModelSerializer extends JsonSerializer<Object> {
                 delegatee.serialize(object, gen, serializerProvider);
             } else {
                 // we are currently serializing a page model entity and during that serialization, we now encounter a
-                // new nested page model entity which must be postponed and therefor added to serializeQueue
+                // new nested page model entity which must be postponed and therefor added to serializeQueue unless it
+                // is a document at a deeper than max level depth
+
+                int nextDepth = 0;
+                if (serializerContext.serializingPageModelEntity instanceof DecoratedPageModelEntityWrapper) {
+                    nextDepth = ((DecoratedPageModelEntityWrapper) serializerContext.serializingPageModelEntity).getCurrentDepth();
+                    if (object instanceof HippoDocumentBean) {
+                        nextDepth++;
+                    }
+                    if (nextDepth > serializerContext.maxDocumentRefLevel) {
+                        if (serializerContext.handledPmaEntities.contains(object)) {
+                            // even though deeper reference than max depth, the referenced doc has been already handled,
+                            // so just include the reference
+                            String jsonPointerId = serializerContext.objectJsonPointerMap
+                                    .computeIfAbsent(object, obj -> jsonPointerFactory.createJsonPointerId(object));
+
+                            serializeBeanReference(gen, jsonPointerId);
+                            return;
+                        } else {
+                            gen.writeStartObject();
+                            // just serialize only the ID of the document bean and return : the bean does not get
+                            // serialized since deeper than max reference
+                            gen.writeStringField("id", ((HippoDocumentBean) object).getRepresentationId());
+                            gen.writeEndObject();
+                        }
+                        return;
+                    }
+                }
 
                 // make sure same object returns same jsonPointerId : handy if the same model object is used multiple
                 // times in the PMA
@@ -148,7 +180,8 @@ public class PageModelSerializer extends JsonSerializer<Object> {
                 if (object instanceof CommonMenu) {
 
                     HstRequestContext requestContext = RequestContextProvider.get();
-                    final DecoratedPageModelEntityWrapper<CommonMenu> decoratedPageModelEntityWrapper = new DecoratedPageModelEntityWrapper(object, "menu");
+                    final DecoratedPageModelEntityWrapper<CommonMenu> decoratedPageModelEntityWrapper
+                            = new DecoratedPageModelEntityWrapper(object, "menu", nextDepth);
                     for (MetadataDecorator metadataDecorator : metadataDecorators) {
                         metadataDecorator.decorateCommonMenuMetadata(requestContext,
                                 decoratedPageModelEntityWrapper.getData(), decoratedPageModelEntityWrapper);
@@ -158,7 +191,8 @@ public class PageModelSerializer extends JsonSerializer<Object> {
                 } else if (object instanceof HippoDocumentBean) {
 
                     HstRequestContext requestContext = RequestContextProvider.get();
-                    final DecoratedPageModelEntityWrapper<HippoDocumentBean> decoratedPageModelEntityWrapper = new DecoratedPageModelEntityWrapper(object, getHippoBeanType((HippoDocumentBean) object));
+                    final DecoratedPageModelEntityWrapper<HippoDocumentBean> decoratedPageModelEntityWrapper
+                            = new DecoratedPageModelEntityWrapper(object, getHippoBeanType((HippoDocumentBean) object), nextDepth);
                     addLinksToContent(requestContext, decoratedPageModelEntityWrapper);
                     for (MetadataDecorator metadataDecorator : metadataDecorators) {
                         metadataDecorator.decorateContentMetadata(requestContext,
@@ -242,12 +276,16 @@ public class PageModelSerializer extends JsonSerializer<Object> {
 
         private final T data;
         private final String type;
+        // in case of a HippoDocumentBean serialization, keeps track of the depth : if deeper than max depth, we should
+        // not serialize a hippo document
+        private int currentDepth;
         private boolean serialized;
 
-        public DecoratedPageModelEntityWrapper(final T data, final String type) {
+        public DecoratedPageModelEntityWrapper(final T data, final String type, final int currentDepth) {
             super(null);
             this.data = data;
             this.type = type;
+            this.currentDepth = currentDepth;
         }
 
         public T getData() {
@@ -266,6 +304,11 @@ public class PageModelSerializer extends JsonSerializer<Object> {
 
         public void setSerialized(final boolean serialized) {
             this.serialized = serialized;
+        }
+
+        @JsonIgnore
+        public int getCurrentDepth() {
+            return currentDepth;
         }
     }
 

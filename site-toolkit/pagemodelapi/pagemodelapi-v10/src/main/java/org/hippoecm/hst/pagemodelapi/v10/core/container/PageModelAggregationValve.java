@@ -29,6 +29,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
@@ -287,7 +288,10 @@ public class PageModelAggregationValve extends AggregationValve {
 
         try {
 
-            PageModelSerializer.initContext();
+            final int maxDocumentRefLevel = NumberUtils.toInt(
+                    requestContext.getServletRequest().getParameter(MAX_CONTENT_REFERENCE_LEVEL_PARAM_NAME),
+                    defaultMaxContentReferenceLevel);
+            PageModelSerializer.initContext(maxDocumentRefLevel);
 
             response.setContentType(MediaType.APPLICATION_JSON_UTF8_VALUE);
             response.setCharacterEncoding("UTF-8");

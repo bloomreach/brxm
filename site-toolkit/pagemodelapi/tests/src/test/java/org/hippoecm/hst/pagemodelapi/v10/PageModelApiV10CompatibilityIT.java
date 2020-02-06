@@ -57,7 +57,26 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
 
         String actual = getActualJson("/spa/resourceapi/home", "1.0");
 
+
         InputStream inputStream = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_homepage.json");
+
+        String expected = IOUtils.toString(inputStream, "UTF-8");
+
+        JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT_ORDER);
+    }
+
+    /**
+     * _maxreflevel = 0 means that referenced documents from documents do not gete serialized
+     * @throws Exception
+     */
+    @Test
+    public void homepage_api_compatibility_v10_assertion_with_max_document_ref_level_0() throws Exception {
+
+        String actual = getActualJson("/spa/resourceapi/home", "1.0", "_maxreflevel=0");
+
+        System.out.println(actual);
+
+        InputStream inputStream = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_homepage_maxreflevel0.json");
 
         String expected = IOUtils.toString(inputStream, "UTF-8");
 
