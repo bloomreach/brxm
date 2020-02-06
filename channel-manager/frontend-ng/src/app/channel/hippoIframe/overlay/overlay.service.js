@@ -97,11 +97,17 @@ class OverlayService {
   }
 
   _onUnload() {
-    this.$rootScope.$apply(() => {
+    const tearDown = () => {
       this.observer.disconnect();
       delete this.overlay;
       delete this.iframeWindow;
-    });
+    };
+
+    if (this.$rootScope.$$phase) {
+      tearDown();
+    } else {
+      this.$rootScope.$apply(tearDown);
+    }
   }
 
   _initOverlay() {
