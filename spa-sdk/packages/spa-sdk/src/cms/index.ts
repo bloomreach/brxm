@@ -16,4 +16,5 @@
 
 export * from './cms';
 export * from './cms14';
+export * from './post-message';
 export * from './rpc';

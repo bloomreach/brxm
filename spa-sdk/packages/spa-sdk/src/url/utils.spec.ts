@@ -62,6 +62,8 @@ describe('isMatched', () => {
     ${'http://example.com'}     | ${undefined}
     ${'http://example.com'}     | ${''}
     ${'http://example.com/'}    | ${'http://example.com/'}
+    ${'//example.com/'}         | ${'http://example.com/'}
+    ${'http://example.com/'}    | ${'//example.com/'}
     ${'/'}                      | ${'http://example.com/'}
     ${'/spa/something'}         | ${'/spa'}
     ${'/spa/something?a=b'}     | ${'/spa?a=b'}
@@ -74,6 +76,7 @@ describe('isMatched', () => {
   it.each`
     link                        | base
     ${'http://example.com'}     | ${'http://example.com/'}
+    ${'https://example.com'}    | ${'http://example.com/'}
     ${'http://example.com'}     | ${'http://localhost:8080/'}
     ${'/spa'}                   | ${'/spa/something'}
     ${'/spa/something'}         | ${'/spa?a=b'}

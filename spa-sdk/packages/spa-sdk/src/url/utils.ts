@@ -55,7 +55,12 @@ export function extractSearchParams(url: string, params: string[]) {
 }
 
 function isMatchedOrigin(origin: string, baseOrigin: string) {
-  return !baseOrigin || !origin || baseOrigin === origin;
+  const [schema, host = ''] = origin.split('//', 2);
+  const [baseSchema, baseHost = ''] = baseOrigin.split('//', 2);
+
+  return !baseOrigin
+    || !origin
+    || (!schema || !baseSchema || schema === baseSchema) && baseHost === host;
 }
 
 function isMatchedPathname(pathname: string, basePathname: string) {
