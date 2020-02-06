@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,32 +14,14 @@
  * limitations under the License.
  */
 
-/// <reference path="./cms.d.ts" />
+/// <reference path="./cms14.d.ts" />
 import { Typed } from 'emittery';
-import { Events } from './events';
+import { Events } from '../events';
+import { CmsOptions, Cms } from './cms';
 
 const GLOBAL_WINDOW = typeof window === 'undefined' ? undefined : window;
 
-export interface CmsOptions {
-  /**
-   * The window reference for the CMS integration.
-   * By default the global window object will be used.
-   */
-  window?: Window;
-}
-
-/**
- * CMS integration layer.
- */
-export interface Cms {
-  /**
-   * Initializes integration with the CMS.
-   * @param options The CMS integration options.
-   */
-  initialize(options: CmsOptions): void;
-}
-
-export class Cms implements Cms {
+export class Cms14Impl implements Cms {
   private api?: CmsApi;
   private postponed: Function[] = [];
 
@@ -61,7 +43,7 @@ export class Cms implements Cms {
     };
   }
 
-  initialize({ window = GLOBAL_WINDOW }) {
+  initialize({ window = GLOBAL_WINDOW }: CmsOptions) {
     if (this.api || !window || window.SPA) {
       return;
     }

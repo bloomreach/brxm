@@ -22,7 +22,7 @@
 import { DOMParser, XMLSerializer } from 'xmldom';
 import { Typed } from 'emittery';
 import { ApiImpl, Spa } from './spa';
-import { Cms } from './cms';
+import { Cms14Impl } from './cms';
 import {
   ComponentFactory,
   ComponentImpl,
@@ -54,7 +54,7 @@ const DEFAULT_AUTHORIZATION_PARAMETER = 'token';
 const DEFAULT_SERVER_ID_PARAMETER = 'serverid';
 
 const eventBus = new Typed<Events>();
-const cms = new Cms(eventBus);
+const cms14 = new Cms14Impl(eventBus);
 const domParser = new DOMParser();
 const pages = new WeakMap<Page, Spa>();
 const xmlSerializer = new XMLSerializer();
@@ -105,7 +105,7 @@ export async function initialize(config: Configuration, model?: PageModel): Prom
       : config.options.live;
     urlBuilder.initialize(options);
     api.initialize(config);
-    cms.initialize(config);
+    cms14.initialize(config);
 
     const page = await spa.initialize(config.request.path, model);
     pages.set(page, spa);
@@ -130,7 +130,7 @@ export async function initialize(config: Configuration, model?: PageModel): Prom
 
   const page = await spa.initialize(path, model);
   if (page.isPreview()) {
-    cms.initialize(config);
+    cms14.initialize(config);
   }
 
   pages.set(page, spa);

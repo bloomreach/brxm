@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,11 @@
  */
 
 import { Typed } from 'emittery';
-import { Cms } from './cms';
-import { Events } from './events';
+import { Events } from '../events';
+import { Cms14Impl } from './cms14';
 
 describe('Cms', () => {
-  let cms: Cms;
+  let cms: Cms14Impl;
   let eventBus: Typed<Events>;
   let window: Window;
 
@@ -27,7 +27,7 @@ describe('Cms', () => {
     eventBus = new Typed<Events>();
     window = {} as Window;
 
-    cms = new Cms(eventBus);
+    cms = new Cms14Impl(eventBus);
   });
 
   describe('initialize', () => {
