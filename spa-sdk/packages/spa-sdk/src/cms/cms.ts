@@ -38,3 +38,34 @@ export interface Cms {
    */
   initialize(options: CmsOptions): void;
 }
+
+interface CmsProcedures extends Procedures {
+  sync(): void;
+}
+
+interface CmsEvents {
+}
+
+interface SpaProcedures extends Procedures {
+}
+
+interface SpaEvents {
+}
+
+export class CmsImpl implements Cms {
+  constructor(
+    protected eventBus: Typed<Events>,
+    protected rpcClient: RpcClient<CmsProcedures, CmsEvents>,
+    protected rpcServer: RpcServer<SpaProcedures, SpaEvents>,
+  ) {
+    this.onPageReady = this.onPageReady.bind(this);
+  }
+
+  initialize() {
+    this.eventBus.on('page.ready', this.onPageReady);
+  }
+
+  protected onPageReady() {
+    this.rpcClient.call('sync');
+  }
+}
