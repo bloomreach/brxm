@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { mocked } from 'ts-jest/utils';
 import { Typed } from 'emittery';
 import { Events } from '../events';
 import { CmsImpl } from './cms';
@@ -45,6 +46,21 @@ describe('CmsImpl', () => {
       await eventBus.emit('page.ready', {});
 
       expect(rpcClient.call).toHaveBeenCalledWith('sync');
+    });
+  });
+
+  describe('onUpdate', () => {
+    it('should process postponed events on initialization', async () => {
+      cms.initialize();
+
+      expect(rpcClient.on).toHaveBeenCalledWith('update', expect.any(Function));
+
+      const [, onUpdate] = mocked(rpcClient.on).mock.calls.pop()!;
+      const event = { id: 'id', properties: { a: 'b' } };
+      const emitSpy = spyOn(eventBus, 'emit');
+      onUpdate(event);
+
+      expect(emitSpy).toHaveBeenCalledWith('cms.update', event);
     });
   });
 });

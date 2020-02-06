@@ -44,6 +44,7 @@ interface CmsProcedures extends Procedures {
 }
 
 interface CmsEvents {
+  update: CmsUpdateEvent;
 }
 
 interface SpaProcedures extends Procedures {
@@ -59,13 +60,19 @@ export class CmsImpl implements Cms {
     protected rpcServer: RpcServer<SpaProcedures, SpaEvents>,
   ) {
     this.onPageReady = this.onPageReady.bind(this);
+    this.onUpdate = this.onUpdate.bind(this);
   }
 
   initialize() {
     this.eventBus.on('page.ready', this.onPageReady);
+    this.rpcClient.on('update', this.onUpdate);
   }
 
   protected onPageReady() {
     this.rpcClient.call('sync');
+  }
+
+  protected onUpdate(event: CmsUpdateEvent) {
+    this.eventBus.emit('cms.update', event);
   }
 }
