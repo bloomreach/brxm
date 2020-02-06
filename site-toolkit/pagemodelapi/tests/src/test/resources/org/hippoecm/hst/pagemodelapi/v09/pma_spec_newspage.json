@@ -499,6 +499,10 @@
         "_links":{
           "componentRendering":{
             "href":"/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r1"
+          },
+          "self":{
+            "href":"http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r1",
+            "type":"external"
           }
         }
       },
@@ -521,6 +525,10 @@
             "_links":{
               "componentRendering":{
                 "href":"/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r1"
+              },
+              "self":{
+                "href":"http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r1",
+                "type":"external"
               }
             }
           }
@@ -533,6 +541,10 @@
         "_links":{
           "componentRendering":{
             "href":"/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2"
+          },
+          "self":{
+            "href":"http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2",
+            "type":"external"
           }
         }
       },
@@ -549,16 +561,20 @@
         "_links":{
           "componentRendering":{
             "href":"/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r3"
+          },
+          "self":{
+            "href":"http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r3",
+            "type":"external"
           }
         }
       }
     ],
     "_meta":{
       "definitionId":"hst:pages/newsoverview",
-      "paramsInfo" : {
-        "parameterOne" : "valueTwo",
-        "parameterTwo" : "valueTwo",
-        "value" : 1
+      "paramsInfo":{
+        "parameterOne":"valueTwo",
+        "parameterTwo":"valueTwo",
+        "value":1
       },
       "params":{
 
@@ -567,6 +583,10 @@
     "_links":{
       "componentRendering":{
         "href":"/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14"
+      },
+      "self":{
+        "href":"http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14",
+        "type":"external"
       }
     }
   },
@@ -607,6 +627,15 @@
         "value":"This is the content of the homepage with a link to <a href=\"/site/spa/news/News1.html\" data-type=\"internal\">News1</a> document"
       },
       "summary":"Summary of the homepage",
+      "newsDocument":{
+        "$ref":"/content/u303d40ebf98c4d6184c7a1ba14b5ceb3"
+      },
+      "folderBean":{
+        "$ref":"/content/ucbcbcbcb5fa848a8b03b4524373d992a"
+      },
+      "selfBean":{
+        "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
+      },
       "selfInstance":{
         "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
       },
@@ -624,12 +653,6 @@
           "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
         }
       ],
-      "selfBean":{
-        "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
-      },
-      "newsDocument":{
-        "$ref":"/content/u303d40ebf98c4d6184c7a1ba14b5ceb3"
-      },
       "localeString":"en_US"
     }
   }

@@ -17,8 +17,472 @@
     "componentClass":"org.hippoecm.hst.pagemodelapi.common.components.GenericDetailComponent",
     "type":"COMPONENT",
     "models":{
+      "currentLink":{
+        "href":"/site/spa/genericdetail/dynamiccontent",
+        "type":"internal"
+      },
+      "menu-again":{
+        "name":"main",
+        "siteMenuItems":[
+          {
+            "depth":3,
+            "repositoryBased":true,
+            "properties":{
+              "hst:referencesitemapitem":"news",
+              "hst:depth":3,
+              "hst:repobased":true
+            },
+            "name":"News",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/news",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"contact"
+            },
+            "name":"Contact",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/contact",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"contact-spring"
+            },
+            "name":"Contact-Spring",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/contact-spring",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"contact-dispatch"
+            },
+            "name":"Contact-Dispatch",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/contact-dispatch",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"contact-springmvc"
+            },
+            "name":"Contact-SpringMVC",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/contact-springmvc",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"search"
+            },
+            "name":"Search",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/search",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"uniquelinks"
+            },
+            "name":"UniqueLinks",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/uniquelinks",
+                "type":"internal"
+              }
+            }
+          }
+        ]
+      },
+      "sameChannelNewsLink":{
+        "href":"/site/spa/news/News1.html",
+        "type":"internal"
+      },
+      "otherChannelNewsLink":{
+        "href":"http://localhost/site/subsite/news/2008/SubNews1.html",
+        "type":"external"
+      },
       "document":{
         "$ref":"/content/ud993b0a1585944febf4b017cda163364"
+      },
+      "document-again":{
+        "$ref":"/content/ud993b0a1585944febf4b017cda163364"
+      },
+      "menus":{
+        "siteMenus":{
+          "main":{
+            "name":"main",
+            "siteMenuItems":[
+              {
+                "depth":3,
+                "repositoryBased":true,
+                "properties":{
+                  "hst:referencesitemapitem":"news",
+                  "hst:depth":3,
+                  "hst:repobased":true
+                },
+                "name":"News",
+                "childMenuItems":[
+
+                ],
+                "parameters":{
+
+                },
+                "_links":{
+                  "site":{
+                    "href":"/site/spa/news",
+                    "type":"internal"
+                  }
+                }
+              },
+              {
+                "depth":0,
+                "repositoryBased":false,
+                "properties":{
+                  "hst:referencesitemapitem":"contact"
+                },
+                "name":"Contact",
+                "childMenuItems":[
+
+                ],
+                "parameters":{
+
+                },
+                "_links":{
+                  "site":{
+                    "href":"/site/spa/contact",
+                    "type":"internal"
+                  }
+                }
+              },
+              {
+                "depth":0,
+                "repositoryBased":false,
+                "properties":{
+                  "hst:referencesitemapitem":"contact-spring"
+                },
+                "name":"Contact-Spring",
+                "childMenuItems":[
+
+                ],
+                "parameters":{
+
+                },
+                "_links":{
+                  "site":{
+                    "href":"/site/spa/contact-spring",
+                    "type":"internal"
+                  }
+                }
+              },
+              {
+                "depth":0,
+                "repositoryBased":false,
+                "properties":{
+                  "hst:referencesitemapitem":"contact-dispatch"
+                },
+                "name":"Contact-Dispatch",
+                "childMenuItems":[
+
+                ],
+                "parameters":{
+
+                },
+                "_links":{
+                  "site":{
+                    "href":"/site/spa/contact-dispatch",
+                    "type":"internal"
+                  }
+                }
+              },
+              {
+                "depth":0,
+                "repositoryBased":false,
+                "properties":{
+                  "hst:referencesitemapitem":"contact-springmvc"
+                },
+                "name":"Contact-SpringMVC",
+                "childMenuItems":[
+
+                ],
+                "parameters":{
+
+                },
+                "_links":{
+                  "site":{
+                    "href":"/site/spa/contact-springmvc",
+                    "type":"internal"
+                  }
+                }
+              },
+              {
+                "depth":0,
+                "repositoryBased":false,
+                "properties":{
+                  "hst:referencesitemapitem":"search"
+                },
+                "name":"Search",
+                "childMenuItems":[
+
+                ],
+                "parameters":{
+
+                },
+                "_links":{
+                  "site":{
+                    "href":"/site/spa/search",
+                    "type":"internal"
+                  }
+                }
+              },
+              {
+                "depth":0,
+                "repositoryBased":false,
+                "properties":{
+                  "hst:referencesitemapitem":"uniquelinks"
+                },
+                "name":"UniqueLinks",
+                "childMenuItems":[
+
+                ],
+                "parameters":{
+
+                },
+                "_links":{
+                  "site":{
+                    "href":"/site/spa/uniquelinks",
+                    "type":"internal"
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "notFoundLink":{
+        "href":"/site/spa/pagenotfound",
+        "type":"internal"
+      },
+      "menu":{
+        "name":"main",
+        "siteMenuItems":[
+          {
+            "depth":3,
+            "repositoryBased":true,
+            "properties":{
+              "hst:referencesitemapitem":"news",
+              "hst:depth":3,
+              "hst:repobased":true
+            },
+            "name":"News",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/news",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"contact"
+            },
+            "name":"Contact",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/contact",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"contact-spring"
+            },
+            "name":"Contact-Spring",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/contact-spring",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"contact-dispatch"
+            },
+            "name":"Contact-Dispatch",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/contact-dispatch",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"contact-springmvc"
+            },
+            "name":"Contact-SpringMVC",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/contact-springmvc",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"search"
+            },
+            "name":"Search",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/search",
+                "type":"internal"
+              }
+            }
+          },
+          {
+            "depth":0,
+            "repositoryBased":false,
+            "properties":{
+              "hst:referencesitemapitem":"uniquelinks"
+            },
+            "name":"UniqueLinks",
+            "childMenuItems":[
+
+            ],
+            "parameters":{
+
+            },
+            "_links":{
+              "site":{
+                "href":"/site/spa/uniquelinks",
+                "type":"internal"
+              }
+            }
+          }
+        ]
       }
     },
     "components":[
@@ -41,6 +505,10 @@
             "_links":{
               "componentRendering":{
                 "href":"/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23_r1_r1"
+              },
+              "self":{
+                "href":"http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23_r1_r1",
+                "type":"external"
               }
             }
           }
@@ -53,6 +521,10 @@
         "_links":{
           "componentRendering":{
             "href":"/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23_r1"
+          },
+          "self":{
+            "href":"http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23_r1",
+            "type":"external"
           }
         }
       },
@@ -69,16 +541,20 @@
         "_links":{
           "componentRendering":{
             "href":"/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23_r2"
+          },
+          "self":{
+            "href":"http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23_r2",
+            "type":"external"
           }
         }
       }
     ],
     "_meta":{
       "definitionId":"hst:pages/genericdetail",
-      "paramsInfo" : {
-        "parameterOne" : "valueTwo",
-        "parameterTwo" : "valueTwo",
-        "value" : 1
+      "paramsInfo":{
+        "parameterOne":"valueTwo",
+        "parameterTwo":"valueTwo",
+        "value":1
       },
       "params":{
 
@@ -87,6 +563,10 @@
     "_links":{
       "componentRendering":{
         "href":"/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23"
+      },
+      "self":{
+        "href":"http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23",
+        "type":"external"
       }
     }
   },
@@ -101,18 +581,6 @@
       },
       "name":"dynamiccontent",
       "displayName":"DynamicContent",
-      "richTextEditorCompoundType":{
-        "value":"richtexteditorcontent"
-      },
-      "singleValueMultipleBooleanTypeField":[
-        false
-      ],
-      "multipleValueSingleBooleanTypeField":false,
-      "doubleTypeField":100.0,
-      "multipleDoubleTypeField":[
-        100.0,
-        120.0
-      ],
       "singleValueMultipleDoubleTypeField":[
         100.0
       ],
@@ -133,14 +601,8 @@
       "singleValueMultipleDateTypeField":[
         1553472000000
       ],
-      "longTypeField2":100,
-      "longTypeField":50,
-      "booleanTypeField":false,
-      "multipleBooleanTypeField":[
-        false,
-        true
-      ],
       "multipleValueSingleDateTypeField":1553472000000,
+      "longTypeField2":100,
       "resourceCompoundType":{
         "name":"pagemodelapitest:resourceCompoundType",
         "displayName":"pagemodelapitest:resourceCompoundType",
@@ -152,16 +614,27 @@
       "standardCompoundType":{
         "name":"pagemodelapitest:standardCompoundType",
         "displayName":"pagemodelapitest:standardCompoundType",
-        "richTextEditorCompoundType":{
-          "value":"contentOfHtmlFiledInCompoundTypeClass"
-        },
-        "stringTypeField":"alexanderkade",
         "dynamicinnercompound":{
           "name":"pagemodelapitest:dynamicinnercompound",
           "displayName":"pagemodelapitest:dynamicinnercompound",
           "stringTypeField":"http://test.com"
+        },
+        "stringTypeField":"alexanderkade",
+        "richTextEditorCompoundType":{
+          "value":"contentOfHtmlFiledInCompoundTypeClass"
         }
       },
+      "singleValueMultipleBooleanTypeField":[
+        false
+      ],
+      "multipleValueSingleBooleanTypeField":false,
+      "doubleTypeField":100.0,
+      "multipleDoubleTypeField":[
+        100.0,
+        120.0
+      ],
+      "booleanTypeField":false,
+      "longTypeField":50,
       "contentblocks":[
         {
           "name":"pagemodelapitest:contentblocks",
@@ -195,6 +668,13 @@
             "value":"Welcome Home with Essentials and lazy loaded types!"
           }
         }
+      ],
+      "richTextEditorCompoundType":{
+        "value":"richtexteditorcontent"
+      },
+      "multipleBooleanTypeField":[
+        false,
+        true
       ],
       "localeString":"en"
     }

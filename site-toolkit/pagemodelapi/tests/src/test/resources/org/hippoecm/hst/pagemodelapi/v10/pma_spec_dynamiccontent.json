@@ -17,8 +17,9 @@
     "uid0" : {
       "id" : "r23",
       "links" : {
-        "componentRendering" : {
-          "href" : "/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23"
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23",
+          "type" : "external"
         }
       },
       "meta" : {
@@ -79,8 +80,9 @@
     "uid1" : {
       "id" : "r23_r1",
       "links" : {
-        "componentRendering" : {
-          "href" : "/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23_r1"
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23_r1",
+          "type" : "external"
         }
       },
       "meta" : {
@@ -96,8 +98,9 @@
     "uid2" : {
       "id" : "r23_r2",
       "links" : {
-        "componentRendering" : {
-          "href" : "/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23_r2"
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23_r2",
+          "type" : "external"
         }
       },
       "meta" : {
@@ -232,14 +235,7 @@
       "data" : {
         "name" : "dynamiccontent",
         "displayName" : "DynamicContent",
-        "richTextEditorCompoundType" : {
-          "value" : "richtexteditorcontent"
-        },
-        "multipleValueSingleLongTypeField" : 50,
-        "multipleDateTypeField" : [ 1553472000000, 1553558400000 ],
-        "singleValueMultipleDateTypeField" : [ 1553472000000 ],
         "longTypeField2" : 100,
-        "multipleValueSingleDateTypeField" : 1553472000000,
         "resourceCompoundType" : {
           "name" : "pagemodelapitest:resourceCompoundType",
           "displayName" : "pagemodelapitest:resourceCompoundType",
@@ -251,15 +247,15 @@
         "standardCompoundType" : {
           "name" : "pagemodelapitest:standardCompoundType",
           "displayName" : "pagemodelapitest:standardCompoundType",
-          "richTextEditorCompoundType" : {
-            "value" : "contentOfHtmlFiledInCompoundTypeClass"
-          },
           "dynamicinnercompound" : {
             "name" : "pagemodelapitest:dynamicinnercompound",
             "displayName" : "pagemodelapitest:dynamicinnercompound",
             "stringTypeField" : "http://test.com"
           },
-          "stringTypeField" : "alexanderkade"
+          "stringTypeField" : "alexanderkade",
+          "richTextEditorCompoundType" : {
+            "value" : "contentOfHtmlFiledInCompoundTypeClass"
+          }
         },
         "contentblocksWithValidator" : [ {
           "name" : "pagemodelapitest:contentblocksWithValidator",
@@ -281,6 +277,12 @@
             "value" : "Welcome Home with Essentials and lazy loaded types!"
           }
         } ],
+        "richTextEditorCompoundType" : {
+          "value" : "richtexteditorcontent"
+        },
+        "multipleBooleanTypeField" : [ false, true ],
+        "singleValueMultipleBooleanTypeField" : [ false ],
+        "doubleTypeField" : 100.0,
         "contentblocks" : [ {
           "name" : "pagemodelapitest:contentblocks",
           "displayName" : "pagemodelapitest:contentblocks",
@@ -288,18 +290,19 @@
             "value" : "Welcome Home!"
           }
         } ],
+        "booleanTypeField" : false,
+        "dateTypeField" : 1553472000000,
+        "longTypeField" : 50,
+        "multipleValueSingleBooleanTypeField" : false,
+        "multipleDoubleTypeField" : [ 100.0, 120.0 ],
         "singleValueMultipleDoubleTypeField" : [ 100.0 ],
         "multipleValueSingleDoubleTypeField" : 100.0,
         "multipleLongTypeField" : [ 50, 60 ],
         "singleValueMultipleLongTypeField" : [ 50 ],
-        "singleValueMultipleBooleanTypeField" : [ false ],
-        "multipleValueSingleBooleanTypeField" : false,
-        "doubleTypeField" : 100.0,
-        "multipleDoubleTypeField" : [ 100.0, 120.0 ],
-        "multipleBooleanTypeField" : [ false, true ],
-        "booleanTypeField" : false,
-        "dateTypeField" : 1553472000000,
-        "longTypeField" : 50,
+        "multipleValueSingleLongTypeField" : 50,
+        "multipleDateTypeField" : [ 1553472000000, 1553558400000 ],
+        "singleValueMultipleDateTypeField" : [ 1553472000000 ],
+        "multipleValueSingleDateTypeField" : 1553472000000,
         "localeString" : "en",
         "id" : "d993b0a1-5859-44fe-bf4b-017cda163364"
       }
@@ -307,8 +310,9 @@
     "uid4" : {
       "id" : "r23_r1_r1",
       "links" : {
-        "componentRendering" : {
-          "href" : "/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23_r1_r1"
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23_r1_r1",
+          "type" : "external"
         }
       },
       "meta" : {

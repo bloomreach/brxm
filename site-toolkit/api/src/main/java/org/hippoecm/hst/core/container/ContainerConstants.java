@@ -184,7 +184,9 @@ public interface ContainerConstants {
 
     /**
      * Generic Link Name for the component rendering.
+     * @deprecated only part of Page Model API 0.9, in 1.0 the link is 'self' for component rendering
      */
+    @Deprecated
     String LINK_NAME_COMPONENT_RENDERING = "componentRendering";
 
     String PAGE_MODEL_API_VERSION = "API-Version";

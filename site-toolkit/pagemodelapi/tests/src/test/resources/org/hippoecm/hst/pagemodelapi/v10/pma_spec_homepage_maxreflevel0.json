@@ -17,8 +17,9 @@
     "uid0" : {
       "id" : "r25",
       "links" : {
-        "componentRendering" : {
-          "href" : "/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25&_maxreflevel=0"
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25&_maxreflevel=0",
+          "type" : "external"
         }
       },
       "meta" : {
@@ -79,8 +80,9 @@
     "uid1" : {
       "id" : "r25_r1",
       "links" : {
-        "componentRendering" : {
-          "href" : "/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r1&_maxreflevel=0"
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r1&_maxreflevel=0",
+          "type" : "external"
         }
       },
       "meta" : {
@@ -96,8 +98,9 @@
     "uid2" : {
       "id" : "r25_r2",
       "links" : {
-        "componentRendering" : {
-          "href" : "/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r2&_maxreflevel=0"
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r2&_maxreflevel=0",
+          "type" : "external"
         }
       },
       "meta" : {
@@ -268,8 +271,9 @@
     "uid4" : {
       "id" : "r25_r1_r1",
       "links" : {
-        "componentRendering" : {
-          "href" : "/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r1_r1&_maxreflevel=0"
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r1_r1&_maxreflevel=0",
+          "type" : "external"
         }
       },
       "meta" : {

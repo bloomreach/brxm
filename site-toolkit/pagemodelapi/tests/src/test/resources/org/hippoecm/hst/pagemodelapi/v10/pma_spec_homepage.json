@@ -17,8 +17,9 @@
     "uid0" : {
       "id" : "r25",
       "links" : {
-        "componentRendering" : {
-          "href" : "/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25"
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25",
+          "type" : "external"
         }
       },
       "meta" : {
@@ -79,8 +80,9 @@
     "uid1" : {
       "id" : "r25_r1",
       "links" : {
-        "componentRendering" : {
-          "href" : "/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r1"
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r1",
+          "type" : "external"
         }
       },
       "meta" : {
@@ -96,8 +98,9 @@
     "uid2" : {
       "id" : "r25_r2",
       "links" : {
-        "componentRendering" : {
-          "href" : "/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r2"
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r2",
+          "type" : "external"
         }
       },
       "meta" : {
@@ -238,17 +241,17 @@
           "value" : "This is the content of the homepage with a link to <a href=\"/site/spa/news/News1.html\" data-type=\"internal\">News1</a> document"
         },
         "summary" : "Summary of the homepage",
-        "selfBean" : {
-          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
-        },
-        "selfInstance" : {
-          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
-        },
         "newsDocument" : {
           "$ref" : "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3"
         },
         "folderBean" : {
           "$ref" : "/page/ucbcbcbcb5fa848a8b03b4524373d992a"
+        },
+        "selfBean" : {
+          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        },
+        "selfInstance" : {
+          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
         },
         "childObject" : {
           "name" : "just-some-name",
@@ -268,8 +271,9 @@
     "uid4" : {
       "id" : "r25_r1_r1",
       "links" : {
-        "componentRendering" : {
-          "href" : "/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r1_r1"
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r1_r1",
+          "type" : "external"
         }
       },
       "meta" : {

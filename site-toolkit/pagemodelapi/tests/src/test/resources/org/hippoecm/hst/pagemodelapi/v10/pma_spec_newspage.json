@@ -17,8 +17,9 @@
     "uid0" : {
       "id" : "r14",
       "links" : {
-        "componentRendering" : {
-          "href" : "/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14"
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14",
+          "type" : "external"
         }
       },
       "meta" : {
@@ -81,8 +82,9 @@
     "uid1" : {
       "id" : "r14_r1",
       "links" : {
-        "componentRendering" : {
-          "href" : "/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r1"
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r1",
+          "type" : "external"
         }
       },
       "meta" : {
@@ -95,8 +97,9 @@
     "uid2" : {
       "id" : "r14_r2",
       "links" : {
-        "componentRendering" : {
-          "href" : "/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2"
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2",
+          "type" : "external"
         }
       },
       "meta" : {
@@ -112,8 +115,9 @@
     "uid3" : {
       "id" : "r14_r3",
       "links" : {
-        "componentRendering" : {
-          "href" : "/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r3"
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r3",
+          "type" : "external"
         }
       },
       "meta" : {
@@ -263,8 +267,9 @@
     "uid5" : {
       "id" : "r14_r2_r1",
       "links" : {
-        "componentRendering" : {
-          "href" : "/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r1"
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi/news/News1?_hn:type=component-rendering&_hn:ref=r14_r2_r1",
+          "type" : "external"
         }
       },
       "meta" : {
@@ -291,14 +296,17 @@
           "value" : "This is the content of the homepage with a link to <a href=\"/site/spa/news/News1.html\" data-type=\"internal\">News1</a> document"
         },
         "summary" : "Summary of the homepage",
-        "newsDocument" : {
-          "$ref" : "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3"
-        },
         "selfBean" : {
           "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
         },
         "selfInstance" : {
           "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        },
+        "newsDocument" : {
+          "$ref" : "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3"
+        },
+        "folderBean" : {
+          "uuid" : "cbcbcbcb-5fa8-48a8-b03b-4524373d992a"
         },
         "childObject" : {
           "name" : "just-some-name",

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -59,6 +60,11 @@ import org.hippoecm.hst.util.ParametersInfoUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
+
+import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SELF;
+import static org.hippoecm.hst.pagemodelapi.v10.content.beans.jackson.LinkModel.LinkType.EXTERNAL;
+import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestHost;
+import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestScheme;
 
 /**
  * Page model aggregation valve, to write a JSON model from the aggregated data for a page request.
@@ -223,7 +229,7 @@ public class PageModelAggregationValve extends AggregationValve {
                     .orElseThrow(() -> new ContainerException(
                             String.format("Expected window for '%s' to be present", window.getReferenceName())));
 
-            addComponentRenderingURLLink(hstResponse, currentComponentWindowModel);
+            addComponentRenderingURLLink(hstResponse, requestContext.getServletRequest(), currentComponentWindowModel);
             addParametersInfoMetadata(window, hstRequest, currentComponentWindowModel);
             decorateComponentWindowMetadata(hstRequest, hstResponse, currentComponentWindowModel);
 
@@ -333,10 +339,12 @@ public class PageModelAggregationValve extends AggregationValve {
      * @param hstResponse HstResponse
      * @param linkableModel linkable model
      */
-    private void addComponentRenderingURLLink(HstResponse hstResponse,
-            IdentifiableLinkableMetadataBaseModel linkableModel) {
+    private void addComponentRenderingURLLink(final HstResponse hstResponse,
+                                              final HttpServletRequest request,
+                                              final IdentifiableLinkableMetadataBaseModel linkableModel) {
         HstURL compRenderURL = hstResponse.createComponentRenderingURL();
-        linkableModel.putLink(ContainerConstants.LINK_NAME_COMPONENT_RENDERING, new LinkModel(compRenderURL.toString()));
+        final String fullyQualifiedHref = getFarthestRequestScheme(request) + "://"  + getFarthestRequestHost(request) + compRenderURL.toString();
+        linkableModel.putLink(LINK_NAME_SELF, new LinkModel(fullyQualifiedHref, EXTERNAL));
     }
 
     /**
@@ -384,7 +392,7 @@ public class PageModelAggregationValve extends AggregationValve {
 
         final Mount selfMount = requestContext.getResolvedMount().getMount();
         final HstLink selfLink = linkCreator.create(siteMapItem, selfMount);
-        pageModel.putLink(ContainerConstants.LINK_NAME_SELF, new LinkModel(selfLink.toUrlForm(requestContext, true)));
+        pageModel.putLink(LINK_NAME_SELF, new LinkModel(selfLink.toUrlForm(requestContext, true)));
 
         final Mount siteMount = selfMount.getParent();
         if (siteMount != null) {

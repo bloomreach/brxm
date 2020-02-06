@@ -11,9 +11,172 @@
       "href":"http://localhost/site/spa"
     }
   },
-  "page":{  },
+  "page":{
+    "id":"r25",
+    "name":"homepage",
+    "componentClass":"org.hippoecm.hst.pagemodelapi.common.components.GenericDetailComponent",
+    "type":"COMPONENT",
+    "models":{
+      "currentLink":{
+        "href":"/site/spa",
+        "type":"internal"
+      },
+      "menu-again":{  },
+      "sameChannelNewsLink":{
+        "href":"/site/spa/news/News1.html",
+        "type":"internal"
+      },
+      "otherChannelNewsLink":{
+        "href":"http://localhost/site/subsite/news/2008/SubNews1.html",
+        "type":"external"
+      },
+      "document":{
+        "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
+      },
+      "document-again":{
+        "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
+      },
+      "menus":{  },
+      "notFoundLink":{
+        "href":"/site/spa/pagenotfound",
+        "type":"internal"
+      },
+      "menu":{  }
+    },
+    "components":[
+      {
+        "id":"r25_r1",
+        "name":"header",
+        "componentClass":"org.hippoecm.hst.core.component.GenericHstComponent",
+        "type":"COMPONENT",
+        "components":[
+          {
+            "id":"r25_r1_r1",
+            "name":"title",
+            "componentClass":"org.hippoecm.hst.core.component.GenericHstComponent",
+            "type":"COMPONENT",
+            "_meta":{
+              "params":{
+
+              }
+            },
+            "_links":{
+              "componentRendering":{
+                "href":"/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r1_r1",
+                "type":"external"
+              },
+              "self":{
+                "href":"http://localhost/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r1_r1",
+                "type":"external"
+              }
+            }
+          }
+        ],
+        "_meta":{
+          "params":{
+
+          }
+        },
+        "_links":{
+          "componentRendering":{
+            "href":"/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r1",
+            "type":"external"
+          },
+          "self":{
+            "href":"http://localhost/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r1",
+            "type":"external"
+          }
+        }
+      },
+      {
+        "id":"r25_r2",
+        "name":"leftmenu",
+        "componentClass":"org.hippoecm.hst.core.component.GenericHstComponent",
+        "type":"COMPONENT",
+        "_meta":{
+          "params":{
+
+          }
+        },
+        "_links":{
+          "componentRendering":{
+            "href":"/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r2",
+            "type":"external"
+          },
+          "self":{
+            "href":"http://localhost/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r2",
+            "type":"external"
+          }
+        }
+      }
+    ],
+    "_meta":{
+      "definitionId":"hst:pages/homepage",
+      "paramsInfo":{
+        "parameterOne":"valueTwo",
+        "parameterTwo":"valueTwo",
+        "value":1
+      },
+      "params":{
+
+      }
+    },
+    "_links":{
+      "componentRendering":{
+        "href":"/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25",
+        "type":"external"
+      },
+      "self":{
+        "href":"http://localhost/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25",
+        "type":"external"
+      }
+    }
+  },
   "content":{
-    "u1ca07af9cdf54bdd9908f991245bb062":{  },
+    "u1ca07af9cdf54bdd9908f991245bb062":{
+      "id":"1ca07af9-cdf5-4bdd-9908-f991245bb062",
+      "_links":{
+        "site":{
+          "href":"/site/spa",
+          "type":"internal"
+        }
+      },
+      "name":"homepage",
+      "displayName":"Home Page",
+      "date":1249891507580,
+      "title":"This is the homepage",
+      "body":{
+        "value":"This is the content of the homepage with a link to <a href=\"/site/spa/news/News1.html\" data-type=\"internal\">News1</a> document"
+      },
+      "summary":"Summary of the homepage",
+      "selfBean":{
+        "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
+      },
+      "selfInstance":{
+        "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
+      },
+      "newsDocument":{
+        "$ref":"/content/u303d40ebf98c4d6184c7a1ba14b5ceb3"
+      },
+      "folderBean":{
+        "$ref":"/content/ucbcbcbcb5fa848a8b03b4524373d992a"
+      },
+      "childObject":{
+        "name":"just-some-name",
+        "parent":{
+          "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
+        }
+      },
+      "listContainingSelf":[
+        {
+          "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
+        },
+        {
+          "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
+        }
+      ],
+      "localeString":"en_US"
+    },
     "u303d40ebf98c4d6184c7a1ba14b5ceb3":{
       "id":"303d40eb-f98c-4d61-84c7-a1ba14b5ceb3",
       "_links":{
