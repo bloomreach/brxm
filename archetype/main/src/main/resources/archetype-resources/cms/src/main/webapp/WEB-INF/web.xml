@@ -69,6 +69,10 @@
       <param-value>deployment</param-value>
     </init-param>
     <init-param>
+      <param-name>repository-address</param-name>
+      <param-value>vm://</param-value>
+    </init-param>
+    <init-param>
       <param-name>upload-limit</param-name>
       <param-value>4096k</param-value>
     </init-param>
@@ -89,6 +93,10 @@
     <init-param>
       <param-name>wicket.configuration</param-name>
       <param-value>deployment</param-value>
+    </init-param>
+    <init-param>
+      <param-name>repository-address</param-name>
+      <param-value>vm://</param-value>
     </init-param>
   </filter>
 
@@ -172,6 +180,10 @@
   <servlet>
     <servlet-name>PingServlet</servlet-name>
     <servlet-class>org.hippoecm.repository.PingServlet</servlet-class>
+    <init-param>
+      <param-name>repository-address</param-name>
+      <param-value>vm://</param-value>
+    </init-param>
     <load-on-startup>5</load-on-startup>
   </servlet>
 
