@@ -58,6 +58,7 @@ class HippoIframeCtrl {
     this.ViewportService = ViewportService;
 
     this.iframeJQueryElement = this.$element.find('iframe');
+    this._onSpaReady = this._onSpaReady.bind(this);
   }
 
   $onInit() {
@@ -67,6 +68,7 @@ class HippoIframeCtrl {
     this._offDrop = this.DragDropService.onDrop(this._moveComponent.bind(this));
 
     this.iframeJQueryElement.on('load', () => this.onLoad());
+    this._offSdkReady = this.$rootScope.$on('spa:ready', this._onSpaReady);
 
     const canvasJQueryElement = this.$element.find('.channel-iframe-canvas');
     const sheetJQueryElement = this.$element.find('.channel-iframe-sheet');
@@ -100,6 +102,7 @@ class HippoIframeCtrl {
     this.CmsService.unsubscribe('delete-component', this._deleteComponent, this);
     this._offClick();
     this._offDrop();
+    this._offSdkReady();
   }
 
   async onLoad() {
@@ -120,6 +123,14 @@ class HippoIframeCtrl {
     }
 
     this.RenderingService.createOverlay();
+  }
+
+  async _onSpaReady() {
+    if (this._isIframeAccessible()) {
+      return;
+    }
+
+    this.$rootScope.$broadcast('hippo-iframe:load');
   }
 
   /**
