@@ -152,13 +152,11 @@ describe('OverlayService', () => {
 
   it('deletes iframe reference on iframe unload', async () => {
     await loadIframeFixture();
-    spyOn($rootScope, '$apply').and.callFake((callback) => {
-      callback();
-
-      expect(OverlayService.iframeWindow).toBeUndefined();
-    });
+    spyOn($rootScope, '$apply').and.callFake(callback => callback());
 
     await $(iframeWindow).trigger('unload');
+
+    expect(OverlayService.iframeWindow).toBeUndefined();
   });
 
   it('syncs when the iframe DOM is changed', async () => {

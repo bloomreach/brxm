@@ -92,7 +92,7 @@ class OverlayService {
     });
 
     const win = $(this.iframeWindow);
-    win.on('unload', () => this._onUnload());
+    win.one('unload', () => this._onUnload());
     win.on('resize', () => this.sync());
   }
 
