@@ -69,6 +69,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_EXCLUDE_PRIMARY_TYPES;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_MODIFY;
+import static org.hippoecm.repository.HippoStdNodeType.NT_DIRECTORY;
 import static org.hippoecm.repository.HippoStdNodeType.NT_FOLDER;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROTOTYPE;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
@@ -128,6 +129,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     private final Session rootSession;
     private final WorkflowContext workflowContext;
     private final Node subject;
+    private final JCRFolderDAO folderDAO;
 
     public FolderWorkflowImpl(WorkflowContext context, Session userSession, Session rootSession, Node subject)
             throws RepositoryException {
@@ -135,6 +137,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         this.userSession = userSession;
         this.rootSession = rootSession;
         this.subject = rootSession.getNodeByIdentifier(subject.getIdentifier());
+        this.folderDAO = new JCRFolderDAO(NT_FOLDER, NT_DIRECTORY);
     }
 
     private static String findNextSiblingRelPath(Node node) {
@@ -790,14 +793,11 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     @Override
     public Folder get() throws WorkflowException {
         try {
-            final JCRFolderDAO folderDAO = new JCRFolderDAO(rootSession, subject.getIdentifier());
-            final Folder folder = folderDAO.get();
-            log.debug("get folder : {} from node : { path: {}}", folder, subject.getPath());
-            return folder;
+            final Node folderNode = rootSession.getNodeByIdentifier(subject.getIdentifier());
+            return folderDAO.get(folderNode);
         } catch (RepositoryException e) {
-            final String message = String.format("Could not create folder based on node : { path: %s}, returning empty folder"
+            final String message = String.format("Failed to read folder node: { path: %s}"
                     , JcrUtils.getNodePathQuietly(subject));
-            log.warn(message, e);
             throw new WorkflowException(message);
         }
     }
@@ -805,19 +805,19 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     @Override
     public Folder update(final Folder folder) throws WorkflowException {
         if (folder == null) {
-            final String message = String.format("Folder should not be null, cannot update node : { path : {%s} }"
+            final String message = String.format("Folder should not be null, cannot update node: { path : {%s} }"
                     , JcrUtils.getNodePathQuietly(subject));
             throw new WorkflowException(message);
         }
         try {
-            final JCRFolderDAO folderDAO = new JCRFolderDAO(rootSession, subject.getIdentifier());
-            final Folder updatedFolder = folderDAO.update(folder);
+            final Node folderNode = rootSession.getNodeByIdentifier(subject.getIdentifier());
+            folderDAO.update(folder, folderNode);
+            rootSession.save();
             log.debug("update backing node : { path: {}} with folder : {}", subject.getPath(), folder);
-            return updatedFolder;
+            return folder;
         } catch (RepositoryException e) {
             final String message = String.format("Could not update node : { path : {%s} } from folder : %s"
                     , JcrUtils.getNodePathQuietly(subject), folder);
-            log.warn(message, e);
             throw new WorkflowException(message);
         }
     }
@@ -927,8 +927,7 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
         if (folder.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
             final VersionManager versionManager = rootSession.getWorkspace().getVersionManager();
             versionManager.checkout(folder.getPath());
-        }
-        else{
+        } else {
             log.warn("Unable to checkout node, node : { path : {} } is not versionable", JcrUtils.getNodePathQuietly(subject));
         }
     }

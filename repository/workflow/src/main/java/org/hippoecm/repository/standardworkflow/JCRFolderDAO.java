@@ -4,7 +4,9 @@
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -15,113 +17,116 @@
 
 package org.hippoecm.repository.standardworkflow;
 
-import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 
 import org.hippoecm.repository.api.Folder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * This class transforms a hippostd:folder or hippostd:directory node
- * to a {@link Folder} instance and vice versa.
- * So far it only takes into account the mixins on the node.
- */
-public final class JCRFolderDAO {
+import static java.util.stream.Collectors.toSet;
+import static org.hippoecm.repository.util.JcrUtils.getMixinNodeTypes;
+import static org.hippoecm.repository.util.JcrUtils.getPrimaryNodeType;
+import static org.onehippo.repository.util.JcrConstants.JCR_FROZEN_NODE;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JCRFolderDAO.class);
-    /**
-     * Identifier of a node of type hippostd:folder or hippostd:directory.
-     */
-    private String folderNodeIdentifier;
-    /**
-     * Jcr root session.
-     */
-    private Session rootSession;
+final class JCRFolderDAO {
+
+    private static final Logger log = LoggerFactory.getLogger(JCRFolderDAO.class);
+
+    private final Set<String> supportedPrimaryNodeTypes;
 
     /**
-     * Create new FolderDAO.
-     * @param session    {@link Session} root session
-     * @param identifier Identifier of a hippostd:folder or hippostd:directory
-     */
-    public JCRFolderDAO(final Session session, final String identifier) {
-        if (identifier == null) {
-            throw new NullPointerException("Identifier should not be null");
-        }
-        if (session == null) {
-            throw new NullPointerException("Session should not be null");
-        }
-        LOGGER.debug("Create JCRFolderDAO with session : { userID: {}} for node : { identifier : {}}"
-                , session.getUserID(), identifier);
-        this.folderNodeIdentifier = identifier;
-        this.rootSession = session;
-    }
-
-    /**
-     * Constructs a {@link Folder} POJO based on the backing node.
+     * Constructs a Folder DAO that can be used to get and update folder nodes . When getting or updating a folder
+     * for a node the node's primary type must be one from the supportedPrimaryNodeTypes.
      *
-     * @return {@link Folder} instance with the mixin names of the backing folder node
-     * @throws RepositoryException if a mixin could not be added
+     * @param supportedPrimaryNodeTypes node types that are supported as folder node types
      */
-    public Folder get() throws RepositoryException {
-        final Folder folder = new FolderImpl();
-        getMixinNames().forEach(mixin -> folder.addMixin(mixin));
-        LOGGER.debug("folder: {}", folder);
-        return folder;
+    JCRFolderDAO(String... supportedPrimaryNodeTypes) {
+        this.supportedPrimaryNodeTypes = Stream.of(supportedPrimaryNodeTypes).collect(toSet());
     }
 
     /**
-     * Synchronize the mixins on the backing node of type hippostd:folder or hippostd:directory
-     * with the folder. Inherited mixins are not taken into account.
+     * Returns a {@link Folder} representing the given folder node.
      *
-     * @param folder {@link Folder} instance whose mixins will be mapped to the backing node. Folder should
-     *               not be {@code null}.
-     * @return {@link Folder} instance
-     * @throws RepositoryException
+     * @param folderNode a folder node
+     * @return folder representation of the node
+     * @throws RepositoryException      if reading node properties fails
+     * @throws IllegalArgumentException if the primary node type of the folder node is not supported
      */
-    public Folder update(final Folder folder) throws RepositoryException {
-        if (folder == null) {
-            throw new NullPointerException("folder should not be null");
+    Folder get(final Node folderNode) throws RepositoryException {
+        log.debug("get folder from node: { path: {} }", folderNode.getPath());
+
+        validateHasSupportedPrimaryType(folderNode);
+
+        return new FolderImpl(folderNode);
+    }
+
+    /**
+     * Persists the properties of the @{link Folder} to the given folder node. The folder and node must have the same
+     * identifier, otherwise an {@link IllegalArgumentException} will be thrown.
+     *
+     * @param folder     a folder
+     * @param folderNode a node with the same identifier as the folder
+     * @throws RepositoryException      if reading or writing node properties fails
+     * @throws IllegalArgumentException if the primary node type of the folder node is not supported or if the node is frozen
+     */
+    void update(final Folder folder, final Node folderNode) throws RepositoryException {
+        log.debug("update node : { path: {} } with {}", folderNode.getPath(), folder);
+
+        validateHasSupportedPrimaryType(folderNode);
+        validateNotFrozen(folderNode);
+        validateEqualIdentifiers(folderNode, folder);
+
+        final Set<String> mixinNames = folder.getMixins();
+
+        for (final NodeType mixinNodeType : getMixinNodeTypes(folderNode)) {
+            final String mixinName = mixinNodeType.getName();
+            if (!mixinNames.contains(mixinName)) {
+                log.debug("Removing mixin {}", mixinName);
+                folderNode.removeMixin(mixinName);
+            }
         }
-        LOGGER.debug("Update node : { identifier: {} } from folder : {}", folderNodeIdentifier, folder);
-        updateMixins(folder);
-        rootSession.save();
-        return folder;
-    }
 
-    private void updateMixins(final Folder folder) throws RepositoryException {
-        Set<String> mixinsOnJcrNode = getMixinNames();
-        Set<String> mixinsOnFolderPOJO = folder.getMixins();
-
-        final Node folderNode = getNodeByIdentifier();
-        for (final String mixin : difference(mixinsOnFolderPOJO, mixinsOnJcrNode)) {
-            folderNode.addMixin(mixin);
-        }
-        for (final String mixin : difference(mixinsOnJcrNode, mixinsOnFolderPOJO)) {
-            folderNode.removeMixin(mixin);
+        for (final String mixinName : mixinNames) {
+            if (!folderNode.isNodeType(mixinName)) {
+                log.debug("Adding mixin {}", mixinName);
+                folderNode.addMixin(mixinName);
+            }
         }
     }
 
-    private Set<String> getMixinNames() throws RepositoryException {
-        return Stream.of(getNodeByIdentifier().getMixinNodeTypes())
-                .map(NodeType::getName)
-                .collect(Collectors.toSet());
+    private void validateEqualIdentifiers(final Node folderNode, final Folder folder) throws RepositoryException {
+        if (!folderNode.getIdentifier().equals(folder.getIdentifier())) {
+            final String message = String.format(
+                    "folderNode identifier '%s' not equal to folder identifier '%s'",
+                    folderNode.getIdentifier(), folder.getIdentifier());
+            throw new IllegalArgumentException(message);
+        }
     }
 
-    private Set<String> difference(final Set<String> a, final Set<String> b) {
-        Set<String> result = new HashSet<>(a);
-        result.removeAll(b);
-        return result;
+    private void validateHasSupportedPrimaryType(final Node folderNode) throws RepositoryException {
+        Objects.requireNonNull(folderNode, "Folder node must not be null");
+        final String primaryNodeTypeName = getPrimaryNodeType(folderNode).getName();
+        if (!supportedPrimaryNodeTypes.contains(primaryNodeTypeName)) {
+            final String message = String.format(
+                    "Node { path: %s } has an unsupported primary type: '%s'. Supported primary types are: %s",
+                    folderNode.getPath(), primaryNodeTypeName, supportedPrimaryNodeTypes);
+            throw new IllegalArgumentException(message);
+        }
     }
 
-    private Node getNodeByIdentifier() throws RepositoryException {
-        return rootSession.getNodeByIdentifier(folderNodeIdentifier);
+    private void validateNotFrozen(final Node folderNode) throws RepositoryException {
+        if (folderNode.isNodeType(JCR_FROZEN_NODE)) {
+            final String message = String.format(
+                    "Node { path: %s } cannot be updated because it has mixin type '%s'.",
+                    folderNode.getPath(), JCR_FROZEN_NODE);
+            throw new IllegalArgumentException(message);
+        }
     }
+
 }

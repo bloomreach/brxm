@@ -18,40 +18,62 @@ package org.hippoecm.repository.standardworkflow;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Stream;
+
+import javax.jcr.Node;
+import javax.jcr.RepositoryException;
+import javax.jcr.nodetype.NodeType;
 
 import org.hippoecm.repository.api.Folder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FolderImpl implements Folder {
+import static java.util.stream.Collectors.toSet;
+import static org.hippoecm.repository.util.JcrUtils.getMixinNodeTypes;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FolderImpl.class);
-    private Set<String> mixins = new HashSet<>();
+final class FolderImpl implements Folder {
 
-    @Override
-    public String addMixin(final String mixin) {
-        LOGGER.debug("Add mixin: {}", mixin);
-        mixins.add(mixin);
-        return mixin;
+    private static final Logger log = LoggerFactory.getLogger(FolderImpl.class);
+
+    private final String identifier;
+    private final Set<String> mixins;
+
+    private FolderImpl(String identifier, Set<String> mixins) {
+        this.identifier = identifier;
+        this.mixins = mixins;
+    }
+
+    FolderImpl(Node folderNode) throws RepositoryException {
+        this(folderNode.getIdentifier(), Stream.of(getMixinNodeTypes(folderNode)).map(NodeType::getName).collect(toSet()));
     }
 
     @Override
-    public String removeMixin(final String mixin) {
-        LOGGER.debug("Remove mixin: {}", mixin);
-        mixins.remove(mixin);
-        return mixin;
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    @Override
+    public boolean addMixin(final String mixin) {
+        log.debug("Add mixin: {}", mixin);
+        return mixins.add(mixin);
+    }
+
+    @Override
+    public boolean removeMixin(final String mixin) {
+        log.debug("Remove mixin: {}", mixin);
+        return mixins.remove(mixin);
     }
 
     @Override
     public Set<String> getMixins() {
-        LOGGER.debug("Returning mixins: {}", String.join(", ", mixins));
+        log.debug("Returning mixins: {}", mixins);
         return new HashSet<>(mixins);
     }
 
     @Override
     public String toString() {
         return "FolderImpl{" +
-                "mixins=" + String.join(",", mixins) +
+                "mixins=" + mixins +
                 '}';
     }
 

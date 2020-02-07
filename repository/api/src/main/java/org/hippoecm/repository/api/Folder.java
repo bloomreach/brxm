@@ -21,21 +21,30 @@ import java.util.Set;
 public interface Folder extends Serializable {
 
     /**
-     * Add a mixin by name.
-     * @param mixin the name of the mixin
-     * @return the name of the mixin
+     * Returns the identifier of the folder
+     *
+     * @return identifier
      */
-    String addMixin(String mixin);
+    String getIdentifier();
 
     /**
-     * Remove a mixin by name.
+     * Add a mixin by name and return {@code true} if it was not present yet and {@code false} otherwise.
+     *
      * @param mixin the name of the mixin
-     * @return the name of the mixin
+     * @return if the mixin being added was not present yet
      */
-    String removeMixin(String mixin);
+    boolean addMixin(String mixin);
 
     /**
-     * @return {@link Set containing mixin names}
+     * Remove a mixin by name and return {@code true} if it was present and {@code false} otherwise.
+     *
+     * @param mixin the name of the mixin
+     * @return if the mixin being removed was present
+     */
+    boolean removeMixin(String mixin);
+
+    /**
+     * @return {@link Set} containing mixin names
      */
     Set<String> getMixins();
 }
