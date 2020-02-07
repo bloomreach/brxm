@@ -241,14 +241,17 @@
           "value" : "This is the content of the homepage with a link to <a href=\"/site/spa/news/News1.html\" data-type=\"internal\">News1</a> document and a link to an image <img src=\"http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg\" /> and to thumbnail <img src=\"http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg\" />"
         },
         "summary" : "Summary of the homepage",
+        "imageSetBean" : {
+          "$ref" : "/page/udb02dde500984488a72c2a4fc6d51beb"
+        },
+        "selfBean" : {
+          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        },
         "newsDocument" : {
           "$ref" : "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3"
         },
         "folderBean" : {
           "$ref" : "/page/ucbcbcbcb5fa848a8b03b4524373d992a"
-        },
-        "selfBean" : {
-          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
         },
         "selfInstance" : {
           "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
@@ -282,6 +285,52 @@
       "name" : "title",
       "type" : "component",
       "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
+    },
+    "udb02dde500984488a72c2a4fc6d51beb" : {
+      "type" : "imageset",
+      "links" : {
+        "site" : {
+          "href" : "/site/spa/pagenotfound",
+          "type" : "internal"
+        }
+      },
+      "data" : {
+        "name" : "picture.jpeg",
+        "displayName" : "picture.jpeg",
+        "thumbnail" : {
+          "name" : "hippogallery:thumbnail",
+          "displayName" : "hippogallery:thumbnail",
+          "width" : -1,
+          "height" : -1,
+          "lastModified" : 1236880917884,
+          "mimeType" : "image/jpeg",
+          "filename" : "picture_thumbnail.jpeg",
+          "size" : 1490,
+          "links" : {
+            "site" : {
+              "href" : "http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg",
+              "type" : "resource"
+            }
+          }
+        },
+        "original" : {
+          "name" : "hippogallery:original",
+          "displayName" : "hippogallery:original",
+          "width" : -1,
+          "height" : -1,
+          "lastModified" : 1236880917884,
+          "mimeType" : "image/jpeg",
+          "filename" : "picture_original.jpeg",
+          "size" : 168981,
+          "links" : {
+            "site" : {
+              "href" : "http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg",
+              "type" : "resource"
+            }
+          }
+        },
+        "id" : "db02dde5-0098-4488-a72c-2a4fc6d51beb"
+      }
     },
     "u303d40ebf98c4d6184c7a1ba14b5ceb3" : {
       "type" : "document",

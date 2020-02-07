@@ -21,6 +21,7 @@ import java.util.List;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
+import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
 
 @Node(jcrType="unittestproject:textpage")
 public class TextBean extends HippoDocument {
@@ -34,6 +35,11 @@ public class TextBean extends HippoDocument {
     public HippoBean getFolderBean() {
         // assertion wrt how FolderBean is serialized
         return this.getParentBean();
+    }
+
+    public HippoBean getImageSetBean() {
+        // assertion wrt how image set is serialized
+        return getBeanByUUID("db02dde5-0098-4488-a72c-2a4fc6d51beb", HippoGalleryImageSetBean.class);
     }
 
     /**
