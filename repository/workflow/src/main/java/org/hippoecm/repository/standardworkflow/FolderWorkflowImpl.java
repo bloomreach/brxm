@@ -924,8 +924,13 @@ public class FolderWorkflowImpl implements FolderWorkflow, EmbedWorkflow, Intern
     }
 
     private void checkout(final Node folder) throws RepositoryException {
-        final VersionManager versionManager = rootSession.getWorkspace().getVersionManager();
-        versionManager.checkout(folder.getPath());
+        if (folder.isNodeType(JcrConstants.MIX_VERSIONABLE)) {
+            final VersionManager versionManager = rootSession.getWorkspace().getVersionManager();
+            versionManager.checkout(folder.getPath());
+        }
+        else{
+            log.warn("Unable to checkout node, node : { path : {} } is not versionable", JcrUtils.getNodePathQuietly(subject));
+        }
     }
 
     public Document moveTo(Document sourceFolder, Document offspring, String targetName, Map<String, String> arguments) throws WorkflowException, RepositoryException, RemoteException {

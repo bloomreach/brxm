@@ -32,42 +32,38 @@ public class JCRFolderDAOTest extends RepositoryTestCase {
 
 
     private Node folderNode;
-    private Node root;
+    private JCRFolderDAO dao;
 
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        root = session.getRootNode().addNode("test","nt:unstructured");
+        Node root = session.getRootNode().addNode("test","nt:unstructured");
         folderNode = root.addNode("folderNode","nt:unstructured");
+        dao = new JCRFolderDAO(session, folderNode.getIdentifier());
     }
 
     @Test
     public void get() throws RepositoryException {
         folderNode.addMixin("mix:referenceable");
-        JCRFolderDAO  dao = new JCRFolderDAO(session, folderNode.getIdentifier());
         final Folder folder = dao.get();
         assertEquals(Stream.of("mix:referenceable").collect(Collectors.toSet()), folder.getMixins());
     }
 
     @Test
     public void update_add_mixin() throws RepositoryException {
-        JCRFolderDAO  dao = new JCRFolderDAO(session, folderNode.getIdentifier());
         final Folder folder = dao.get();
         folder.addMixin("mix:referenceable");
         dao.update(folder);
-        final Node updatedFolderNode = root.getNode("folderNode");
-        assertTrue(updatedFolderNode.isNodeType("mix:referenceable"));
+        assertTrue(folderNode.isNodeType("mix:referenceable"));
     }
 
     @Test
     public void update_remove_mixin() throws RepositoryException {
         folderNode.addMixin("mix:referenceable");
-        JCRFolderDAO  dao = new JCRFolderDAO(session, folderNode.getIdentifier());
         final Folder folder = dao.get();
         folder.removeMixin("mix:referenceable");
         dao.update(folder);
-        final Node updatedFolderNode = root.getNode("folderNode");
-        assertFalse(updatedFolderNode.isNodeType("mix:referenceable"));
+        assertFalse(folderNode.isNodeType("mix:referenceable"));
     }
 }
