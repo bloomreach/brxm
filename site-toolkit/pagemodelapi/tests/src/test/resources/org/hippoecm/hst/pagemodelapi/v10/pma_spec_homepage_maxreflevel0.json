@@ -235,23 +235,26 @@
       "data" : {
         "name" : "homepage",
         "displayName" : "Home Page",
+        "summary" : "Summary of the homepage",
         "date" : 1249891507580,
         "title" : "This is the homepage",
         "body" : {
           "value" : "This is the content of the homepage with a link to <a href=\"/site/spa/news/News1.html\" data-type=\"internal\">News1</a> document and a link to an image <img src=\"http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg\" /> and to thumbnail <img src=\"http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg\" />"
         },
-        "summary" : "Summary of the homepage",
         "imageSetBean" : {
           "uuid" : "db02dde5-0098-4488-a72c-2a4fc6d51beb"
         },
-        "selfBean" : {
-          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        "assetBean" : {
+          "uuid" : "5e56d406-b302-445e-9f80-e624ba053bc4"
         },
         "newsDocument" : {
           "uuid" : "303d40eb-f98c-4d61-84c7-a1ba14b5ceb3"
         },
         "folderBean" : {
           "uuid" : "cbcbcbcb-5fa8-48a8-b03b-4524373d992a"
+        },
+        "selfBean" : {
+          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
         },
         "selfInstance" : {
           "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"

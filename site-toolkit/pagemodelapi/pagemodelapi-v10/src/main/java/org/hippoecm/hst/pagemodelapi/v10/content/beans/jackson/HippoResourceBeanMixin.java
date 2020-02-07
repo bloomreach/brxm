@@ -20,10 +20,10 @@ import com.fasterxml.jackson.databind.annotation.JsonAppend;
 @JsonAppend(props = {
         @JsonAppend.Prop(
                 name = "links",
-                value = HippoGalleryImageBeanLinksVirtualBeanPropertyWriter.class
+                value = HippoResourceBeanLinksVirtualBeanPropertyWriter.class
         )
 }
 )
-public interface HippoGalleryImageBeanMixin {
+public interface HippoResourceBeanMixin {
 
 }

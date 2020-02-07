@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.hippoecm.hst.content.beans.Node;
+import org.hippoecm.hst.content.beans.standard.HippoAssetBean;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
@@ -41,6 +42,13 @@ public class TextBean extends HippoDocument {
         // assertion wrt how image set is serialized
         return getBeanByUUID("db02dde5-0098-4488-a72c-2a4fc6d51beb", HippoGalleryImageSetBean.class);
     }
+
+    public HippoBean getAssetBean() {
+        // assertion wrt how asset is serialized
+        return getBeanByUUID("5e56d406-b302-445e-9f80-e624ba053bc4", HippoAssetBean.class);
+    }
+
+
 
     /**
      * <p>
