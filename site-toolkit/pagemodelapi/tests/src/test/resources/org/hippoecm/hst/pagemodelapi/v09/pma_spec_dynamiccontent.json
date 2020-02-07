@@ -5,11 +5,12 @@
   },
   "_links":{
     "self":{
-      "href":"http://localhost/site/spa/resourceapi/genericdetail/_any_"
+      "href":"http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent",
+      "type":"external"
     },
     "site":{
-      "href":"http://localhost/site/spa/genericdetail/_any_",
-      "type" : "internal"
+      "href":"http://localhost/site/spa/genericdetail/dynamiccontent",
+      "type":"internal"
     }
   },
   "page":{
@@ -582,6 +583,19 @@
       },
       "name":"dynamiccontent",
       "displayName":"DynamicContent",
+      "multipleBooleanTypeField":[
+        false,
+        true
+      ],
+      "singleValueMultipleBooleanTypeField":[
+        false
+      ],
+      "multipleValueSingleBooleanTypeField":false,
+      "doubleTypeField":100.0,
+      "multipleDoubleTypeField":[
+        100.0,
+        120.0
+      ],
       "singleValueMultipleDoubleTypeField":[
         100.0
       ],
@@ -594,7 +608,6 @@
         50
       ],
       "multipleValueSingleLongTypeField":50,
-      "dateTypeField":1553472000000,
       "multipleDateTypeField":[
         1553472000000,
         1553558400000
@@ -610,7 +623,13 @@
         "lastModified":1206529380000,
         "mimeType":"application/vnd.hippo.blank",
         "filename":"picture_thumbnail.jpeg",
-        "size":1490
+        "size":1490,
+        "_links":{
+          "site":{
+            "href":"http://localhost/site/binaries/unittestcontent/documents/unittestproject/dynamiccontent/dynamiccontent/pagemodelapitest%3AresourceCompoundType",
+            "type":"resource"
+          }
+        }
       },
       "standardCompoundType":{
         "name":"pagemodelapitest:standardCompoundType",
@@ -625,26 +644,6 @@
           "value":"contentOfHtmlFiledInCompoundTypeClass"
         }
       },
-      "singleValueMultipleBooleanTypeField":[
-        false
-      ],
-      "multipleValueSingleBooleanTypeField":false,
-      "doubleTypeField":100.0,
-      "multipleDoubleTypeField":[
-        100.0,
-        120.0
-      ],
-      "booleanTypeField":false,
-      "longTypeField":50,
-      "contentblocks":[
-        {
-          "name":"pagemodelapitest:contentblocks",
-          "displayName":"pagemodelapitest:contentblocks",
-          "text":{
-            "value":"Welcome Home!"
-          }
-        }
-      ],
       "contentblocksWithValidator":[
         {
           "name":"pagemodelapitest:contentblocksWithValidator",
@@ -654,6 +653,20 @@
           }
         }
       ],
+      "contentblocks":[
+        {
+          "name":"pagemodelapitest:contentblocks",
+          "displayName":"pagemodelapitest:contentblocks",
+          "text":{
+            "value":"Welcome Home!"
+          }
+        }
+      ],
+      "richTextEditorCompoundType":{
+        "value":"richtexteditorcontent"
+      },
+      "dateTypeField":1553472000000,
+      "booleanTypeField":false,
       "essentialsGeneratedContentblocks":[
         {
           "name":"pagemodelapitest:essentialsGeneratedContentblocks",
@@ -670,13 +683,7 @@
           }
         }
       ],
-      "richTextEditorCompoundType":{
-        "value":"richtexteditorcontent"
-      },
-      "multipleBooleanTypeField":[
-        false,
-        true
-      ],
+      "longTypeField":50,
       "localeString":"en"
     }
   }

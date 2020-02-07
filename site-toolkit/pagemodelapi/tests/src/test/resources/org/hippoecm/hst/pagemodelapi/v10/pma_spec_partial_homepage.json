@@ -1,0 +1,54 @@
+{
+  "meta" : {
+    "version" : "1.0"
+  },
+  "links" : {
+    "site" : {
+      "href" : "/?dummy=bar",
+      "type" : "internal"
+    },
+    "self" : {
+      "href" : "http://localhost/site/spa/resourceapi./header?dummy=bar",
+      "type" : "external"
+    }
+  },
+  "root" : {
+    "$ref" : "/page/uid0"
+  },
+  "page" : {
+    "uid0" : {
+      "id" : "r25_r1",
+      "links" : {
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r25_r1&dummy=bar",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "definitionId" : "hst:pages/homepage-hst:abstractpages/basepage/header",
+        "params" : { }
+      },
+      "name" : "header",
+      "type" : "component",
+      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent",
+      "children" : [ {
+        "$ref" : "/page/uid1"
+      } ]
+    },
+    "uid1" : {
+      "id" : "r25_r1_r1",
+      "links" : {
+        "self" : {
+          "href" : "http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r25_r1_r1&dummy=bar",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "params" : { }
+      },
+      "name" : "title",
+      "type" : "component",
+      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
+    }
+  }
+}

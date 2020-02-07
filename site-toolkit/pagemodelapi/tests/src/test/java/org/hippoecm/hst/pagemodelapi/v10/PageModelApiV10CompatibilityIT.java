@@ -58,7 +58,8 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
     @Test
     public void homepage_api_compatibility_v10_assertion() throws Exception {
 
-        String actual = getActualJson("/spa/resourceapi/home", "1.0");
+        String actual = getActualJson("/spa/resourceapi", "1.0");
+
 
         InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_homepage.json");
 
@@ -66,19 +67,62 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
     }
 
     /**
-     * _maxreflevel = 0 means that referenced documents from documents do not gete serialized
+     * _maxreflevel = 0 means that referenced documents from documents do not get serialized
+     * also the query string should be embedded in the URLS
      * @throws Exception
      */
     @Test
     public void homepage_api_compatibility_v10_assertion_with_max_document_ref_level_0() throws Exception {
 
-        String actual = getActualJson("/spa/resourceapi/home", "1.0", "_maxreflevel=0");
+        String actual = getActualJson("/spa/resourceapi", "1.0", "_maxreflevel=0");
+
 
         InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_homepage_maxreflevel0.json");
 
         assertions(actual, expected);
     }
 
+    /**
+     * For partial rendering, we do want the querystring to be repeated in BOTH the 'SELF' link as well as the 'SITE'
+     * link *HOWEVER* the partial rendering part should only be present in the 'SELF' link and never in the 'SITE' link
+     * @throws Exception
+     */
+    @Test
+    public void partial_homepage_api_compatibility_v10_assertion() throws Exception {
+
+        String actual = getActualJson("/spa/resourceapi./header", "1.0", "dummy=bar");
+
+        InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_partial_homepage.json");
+
+        assertions(actual, expected);
+    }
+
+    /**
+     * Even though explicit /home in URL we still expect main page links without 'home' (only in component rendering
+     *  links the /home part will be present)
+     *
+     *   "links" : {
+     *      "self" : {
+     *"        href" : "http://localhost/site/spa/resourceapi",
+     *        "type" : "external"
+     *      },
+     *      "site" : {
+     *         "href" : "/",
+     *         "type" : "internal"
+     *      }
+     *},
+     * @throws Exception
+     */
+    @Test
+    public void homepage_api_compatibility_v10_assertion_explicit_home() throws Exception {
+
+        // explicitly include /home
+        String actual = getActualJson("/spa/resourceapi/home", "1.0");
+
+        InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_homepage_explicit_home.json");
+
+        assertions(actual, expected);
+    }
 
     @Test
     public void newspage_api_compatibility_v10_assertion() throws Exception {

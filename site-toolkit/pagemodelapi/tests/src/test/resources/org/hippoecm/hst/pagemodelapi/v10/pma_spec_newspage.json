@@ -4,7 +4,8 @@
   },
   "links" : {
     "self" : {
-      "href" : "http://localhost/site/spa/resourceapi/news/_default_"
+      "href" : "http://localhost/site/spa/resourceapi/news/News1",
+      "type" : "external"
     },
     "site" : {
       "href" : "/news/News1",
@@ -297,17 +298,17 @@
         "body" : {
           "value" : "This is the content of the homepage with a link to <a href=\"/site/spa/news/News1.html\" data-type=\"internal\">News1</a> document and a link to an image <img src=\"http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg\" /> and to thumbnail <img src=\"http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg\" />"
         },
-        "newsDocument" : {
-          "$ref" : "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3"
-        },
-        "folderBean" : {
-          "uuid" : "cbcbcbcb-5fa8-48a8-b03b-4524373d992a"
-        },
         "imageSetBean" : {
           "uuid" : "db02dde5-0098-4488-a72c-2a4fc6d51beb"
         },
         "assetBean" : {
           "uuid" : "5e56d406-b302-445e-9f80-e624ba053bc4"
+        },
+        "newsDocument" : {
+          "$ref" : "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3"
+        },
+        "folderBean" : {
+          "uuid" : "cbcbcbcb-5fa8-48a8-b03b-4524373d992a"
         },
         "selfBean" : {
           "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"

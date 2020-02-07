@@ -33,6 +33,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
+import org.hippoecm.hst.container.HstContainerRequest;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
@@ -61,6 +62,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SELF;
 import static org.hippoecm.hst.pagemodelapi.v10.content.beans.jackson.LinkModel.LinkType.EXTERNAL;
 import static org.hippoecm.hst.pagemodelapi.v10.content.beans.jackson.LinkModel.LinkType.INTERNAL;
@@ -390,18 +392,37 @@ public class PageModelAggregationValve extends AggregationValve {
         final HstRequestContext requestContext = RequestContextProvider.get();
         final HstLinkCreator linkCreator = requestContext.getHstLinkCreator();
         final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
-        final HstSiteMapItem siteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
 
         final Mount selfMount = requestContext.getResolvedMount().getMount();
-        final HstLink selfLink = linkCreator.create(siteMapItem, selfMount);
-        pageModel.putLink(LINK_NAME_SELF, new LinkModel(selfLink.toUrlForm(requestContext, true)));
+        final HstLink selfLink = linkCreator.create(resolvedSiteMapItem.getPathInfo(), selfMount);
+        String hrefSelf = selfLink.toUrlForm(requestContext, true);
 
         // the site link for the current Page Model API output is *always* internal and relative within the sitemap of the
         // current channel hence just take path info from resolved sitemap item
+        String hrefSite = resolvedSiteMapItem.getPathInfo();
 
-        String pathInfo = resolvedSiteMapItem.getPathInfo();
-        pathInfo = pathInfo.equals(selfMount.getHomePage()) ? "/" : "/" + pathInfo;
-        pageModel.putLink(ContainerConstants.LINK_NAME_SITE, new LinkModel(pathInfo, INTERNAL));
+        hrefSite = hrefSite.equals(selfMount.getHomePage()) ? "/" : "/" + hrefSite;
+
+        HttpServletRequest servletRequest = requestContext.getServletRequest();
+
+        // now if needed include the getPathSuffix() and if present in the 'SELF' link but never in the 'site link'
+        if (servletRequest instanceof HstContainerRequest) {
+            String pathSuffix = ((HstContainerRequest) servletRequest).getPathSuffix();
+            if (isNotBlank(pathSuffix)) {
+                hrefSelf += "./" + pathSuffix;
+            }
+        }
+
+        // include query string if present
+        String queryString = servletRequest.getQueryString();
+        if (isNotBlank(queryString)) {
+            hrefSelf += "?" + queryString;
+            hrefSite += "?" + queryString;
+        }
+
+
+        pageModel.putLink(LINK_NAME_SELF, new LinkModel(hrefSelf, EXTERNAL));
+        pageModel.putLink(ContainerConstants.LINK_NAME_SITE, new LinkModel(hrefSite, INTERNAL));
 
     }
 

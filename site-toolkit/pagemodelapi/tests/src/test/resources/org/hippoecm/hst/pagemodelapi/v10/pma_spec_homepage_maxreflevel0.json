@@ -4,10 +4,11 @@
   },
   "links" : {
     "self" : {
-      "href" : "http://localhost/site/spa/resourceapi"
+      "href" : "http://localhost/site/spa/resourceapi?_maxreflevel=0",
+      "type" : "external"
     },
     "site" : {
-      "href" : "/",
+      "href" : "/?_maxreflevel=0",
       "type" : "internal"
     }
   },
@@ -19,7 +20,7 @@
       "id" : "r25",
       "links" : {
         "self" : {
-          "href" : "http://localhost/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25&_maxreflevel=0",
+          "href" : "http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r25&_maxreflevel=0",
           "type" : "external"
         }
       },
@@ -82,7 +83,7 @@
       "id" : "r25_r1",
       "links" : {
         "self" : {
-          "href" : "http://localhost/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r1&_maxreflevel=0",
+          "href" : "http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r25_r1&_maxreflevel=0",
           "type" : "external"
         }
       },
@@ -100,7 +101,7 @@
       "id" : "r25_r2",
       "links" : {
         "self" : {
-          "href" : "http://localhost/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r2&_maxreflevel=0",
+          "href" : "http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r25_r2&_maxreflevel=0",
           "type" : "external"
         }
       },
@@ -279,7 +280,7 @@
       "id" : "r25_r1_r1",
       "links" : {
         "self" : {
-          "href" : "http://localhost/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r1_r1&_maxreflevel=0",
+          "href" : "http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r25_r1_r1&_maxreflevel=0",
           "type" : "external"
         }
       },

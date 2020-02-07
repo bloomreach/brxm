@@ -4,7 +4,8 @@
   },
   "links" : {
     "self" : {
-      "href" : "http://localhost/site/spa/resourceapi"
+      "href" : "http://localhost/site/spa/resourceapi",
+      "type" : "external"
     },
     "site" : {
       "href" : "/",
@@ -19,7 +20,7 @@
       "id" : "r25",
       "links" : {
         "self" : {
-          "href" : "http://localhost/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25",
+          "href" : "http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r25",
           "type" : "external"
         }
       },
@@ -82,7 +83,7 @@
       "id" : "r25_r1",
       "links" : {
         "self" : {
-          "href" : "http://localhost/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r1",
+          "href" : "http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r25_r1",
           "type" : "external"
         }
       },
@@ -100,7 +101,7 @@
       "id" : "r25_r2",
       "links" : {
         "self" : {
-          "href" : "http://localhost/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r2",
+          "href" : "http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r25_r2",
           "type" : "external"
         }
       },
@@ -242,6 +243,15 @@
         "body" : {
           "value" : "This is the content of the homepage with a link to <a href=\"/site/spa/news/News1.html\" data-type=\"internal\">News1</a> document and a link to an image <img src=\"http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg\" /> and to thumbnail <img src=\"http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg\" />"
         },
+        "newsDocument" : {
+          "$ref" : "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3"
+        },
+        "folderBean" : {
+          "$ref" : "/page/ucbcbcbcb5fa848a8b03b4524373d992a"
+        },
+        "imageSetBean" : {
+          "$ref" : "/page/udb02dde500984488a72c2a4fc6d51beb"
+        },
         "assetBean" : {
           "$ref" : "/page/u5e56d406b302445e9f80e624ba053bc4"
         },
@@ -262,15 +272,6 @@
         }, {
           "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
         } ],
-        "newsDocument" : {
-          "$ref" : "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3"
-        },
-        "folderBean" : {
-          "$ref" : "/page/ucbcbcbcb5fa848a8b03b4524373d992a"
-        },
-        "imageSetBean" : {
-          "$ref" : "/page/udb02dde500984488a72c2a4fc6d51beb"
-        },
         "localeString" : "en_US",
         "id" : "1ca07af9-cdf5-4bdd-9908-f991245bb062"
       }
@@ -279,7 +280,7 @@
       "id" : "r25_r1_r1",
       "links" : {
         "self" : {
-          "href" : "http://localhost/site/spa/resourceapi/home?_hn:type=component-rendering&_hn:ref=r25_r1_r1",
+          "href" : "http://localhost/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r25_r1_r1",
           "type" : "external"
         }
       },
@@ -289,27 +290,6 @@
       "name" : "title",
       "type" : "component",
       "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
-    },
-    "u5e56d406b302445e9f80e624ba053bc4" : {
-      "type" : "asset",
-      "data" : {
-        "name" : "testdata.pdf",
-        "displayName" : "Test Data PDF",
-        "asset" : {
-          "name" : "hippogallery:asset",
-          "displayName" : "hippogallery:asset",
-          "lastModified" : 1581065746713,
-          "mimeType" : "application/pdf",
-          "size" : 17381,
-          "links" : {
-            "site" : {
-              "href" : "http://localhost/site/binaries/unittestcontent/assets/folder/testdata.pdf",
-              "type" : "resource"
-            }
-          }
-        },
-        "id" : "5e56d406-b302-445e-9f80-e624ba053bc4"
-      }
     },
     "u303d40ebf98c4d6184c7a1ba14b5ceb3" : {
       "type" : "document",
@@ -345,8 +325,8 @@
       "data" : {
         "name" : "common",
         "displayName" : "common",
-        "documentSize" : 1,
         "localeString" : "en_US",
+        "documentSize" : 1,
         "id" : "cbcbcbcb-5fa8-48a8-b03b-4524373d992a"
       }
     },
@@ -355,22 +335,6 @@
       "data" : {
         "name" : "picture.jpeg",
         "displayName" : "picture.jpeg",
-        "original" : {
-          "name" : "hippogallery:original",
-          "displayName" : "hippogallery:original",
-          "width" : -1,
-          "height" : -1,
-          "lastModified" : 1236880917884,
-          "mimeType" : "image/jpeg",
-          "filename" : "picture_original.jpeg",
-          "size" : 168981,
-          "links" : {
-            "site" : {
-              "href" : "http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg",
-              "type" : "resource"
-            }
-          }
-        },
         "thumbnail" : {
           "name" : "hippogallery:thumbnail",
           "displayName" : "hippogallery:thumbnail",
@@ -387,7 +351,44 @@
             }
           }
         },
+        "original" : {
+          "name" : "hippogallery:original",
+          "displayName" : "hippogallery:original",
+          "width" : -1,
+          "height" : -1,
+          "lastModified" : 1236880917884,
+          "mimeType" : "image/jpeg",
+          "filename" : "picture_original.jpeg",
+          "size" : 168981,
+          "links" : {
+            "site" : {
+              "href" : "http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg",
+              "type" : "resource"
+            }
+          }
+        },
         "id" : "db02dde5-0098-4488-a72c-2a4fc6d51beb"
+      }
+    },
+    "u5e56d406b302445e9f80e624ba053bc4" : {
+      "type" : "asset",
+      "data" : {
+        "name" : "testdata.pdf",
+        "displayName" : "Test Data PDF",
+        "asset" : {
+          "name" : "hippogallery:asset",
+          "displayName" : "hippogallery:asset",
+          "lastModified" : 1581065746713,
+          "mimeType" : "application/pdf",
+          "size" : 17381,
+          "links" : {
+            "site" : {
+              "href" : "http://localhost/site/binaries/unittestcontent/assets/folder/testdata.pdf",
+              "type" : "resource"
+            }
+          }
+        },
+        "id" : "5e56d406-b302-445e-9f80-e624ba053bc4"
       }
     }
   }

@@ -5,11 +5,12 @@
   },
   "_links":{
     "self":{
-      "href":"http://localhost/site/spa/resourceapi/news/_default_"
+      "href":"http://localhost/site/spa/resourceapi/news/News1",
+      "type":"external"
     },
     "site":{
       "href":"http://localhost/site/spa/news/News1",
-      "type" : "internal"
+      "type":"internal"
     }
   },
   "page":{

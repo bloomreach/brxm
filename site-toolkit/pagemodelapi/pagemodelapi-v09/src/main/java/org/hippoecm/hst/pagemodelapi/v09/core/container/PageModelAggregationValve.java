@@ -465,11 +465,10 @@ public class PageModelAggregationValve extends AggregationValve {
         final HstRequestContext requestContext = RequestContextProvider.get();
         final HstLinkCreator linkCreator = requestContext.getHstLinkCreator();
         final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
-        final HstSiteMapItem siteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
 
         final Mount selfMount = requestContext.getResolvedMount().getMount();
-        final HstLink selfLink = linkCreator.create(siteMapItem, selfMount);
-        pageModel.putLink(LINK_NAME_SELF, new LinkModel(selfLink.toUrlForm(requestContext, true)));
+        final HstLink selfLink = linkCreator.create(resolvedSiteMapItem.getPathInfo(), selfMount);
+        pageModel.putLink(LINK_NAME_SELF, new LinkModel(selfLink.toUrlForm(requestContext, true), EXTERNAL));
 
         final Mount siteMount = selfMount.getParent();
         if (siteMount != null) {

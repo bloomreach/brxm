@@ -45,7 +45,7 @@ public class PageModelApiV09CompatibilityIT extends AbstractPageModelApiITCases 
     @Test
     public void homepage_api_compatibility_v09_assertion() throws Exception {
 
-        String actual = getActualJson("/spa/resourceapi/home");
+        String actual = getActualJson("/spa/resourceapi");
 
         InputStream inputStream = PageModelApiV09CompatibilityIT.class.getResourceAsStream("pma_spec_homepage.json");
 
