@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -87,11 +87,11 @@ describe('ContainerService', () => {
         getLabel() {},
       }));
       spyOn(PageStructureService, 'renderNewComponentInContainer');
-      spyOn(SpaService, 'detectedSpa');
+      spyOn(SpaService, 'isSpa');
     });
 
     it('adds a component to a container in the page structure', () => {
-      SpaService.detectedSpa.and.returnValue(false);
+      SpaService.isSpa.and.returnValue(false);
       ContainerService.addComponent();
       $rootScope.$digest();
       expect(PageStructureService.addComponentToContainer).toHaveBeenCalled();
@@ -100,7 +100,7 @@ describe('ContainerService', () => {
     });
 
     it('reloads the iframe if there is an SPA', () => {
-      SpaService.detectedSpa.and.returnValue(true);
+      SpaService.isSpa.and.returnValue(true);
       ContainerService.addComponent();
       $rootScope.$digest();
       expect(PageStructureService.addComponentToContainer).toHaveBeenCalled();
@@ -175,7 +175,7 @@ describe('ContainerService', () => {
     it('shows the confirmation dialog and reloads the page if there is an SPA', () => {
       const mockComponent = jasmine.createSpyObj('ComponentElement', ['getLabel']);
       const oldContainer = {};
-      spyOn(SpaService, 'detectedSpa').and.returnValue(true);
+      spyOn(SpaService, 'isSpa').and.returnValue(true);
       spyOn(DragDropService, 'replaceContainer');
       spyOn(PageStructureService, 'getComponentById').and.returnValue(mockComponent);
       spyOn(PageStructureService, 'removeComponentById').and.returnValue($q.when(oldContainer));

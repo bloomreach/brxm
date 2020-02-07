@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,45 +44,35 @@ describe('SpaService', () => {
     spyOn(DomService, 'getIframeWindow').and.returnValue(iframeWindow);
   });
 
-  describe('initialization of the service', () => {
-    it('initializes the iframe element', () => {
-      const iframeJQueryElement = {};
-      SpaService.init(iframeJQueryElement);
-      SpaService.detectSpa();
-      expect(DomService.getIframeWindow).toHaveBeenCalledWith(iframeJQueryElement);
-    });
-  });
-
-  describe('detection of SPA', () => {
-    it('detects when an SPA is not present', () => {
-      expect(SpaService.detectSpa()).toBe(false);
-      expect(SpaService.spa).toBe(null);
-      expect(SpaService.detectedSpa()).toBe(false);
+  describe('isSpa', () => {
+    it('returns false when a legacy SPA is not present', () => {
+      SpaService.initLegacy();
+      expect(SpaService.isSpa()).toBe(false);
     });
 
-    it('detects when an SPA is present', () => {
+    it('returns true when a legacy SPA is present', () => {
       iframeWindow.SPA = {};
-      expect(SpaService.detectSpa()).toBe(true);
-      expect(SpaService.spa).toEqual(jasmine.any(Object));
-      expect(SpaService.detectedSpa()).toBe(true);
+      SpaService.initLegacy();
+      expect(SpaService.isSpa()).toBe(true);
     });
 
-    it('knows no SPA is present when there is no iframe window', () => {
+    it('returns false when there is no iframe window', () => {
       DomService.getIframeWindow.and.returnValue(null);
-      expect(SpaService.detectSpa()).toBe(false);
-      expect(SpaService.spa).toBe(null);
-      expect(SpaService.detectedSpa()).toBe(false);
+      SpaService.initLegacy();
+      expect(SpaService.isSpa()).toBe(false);
     });
   });
 
-  describe('initialization of the SPA', () => {
+  describe('initLegacy', () => {
+    let publicApi;
+
     beforeEach(() => {
       iframeWindow.SPA = jasmine.createSpyObj('SPA', ['init']);
-      SpaService.detectSpa();
+      SpaService.initLegacy();
+      [publicApi] = iframeWindow.SPA.init.calls.mostRecent().args;
     });
 
-    it('initializes the SPA', () => {
-      SpaService.initSpa();
+    it('calls an initialization handle', () => {
       expect(iframeWindow.SPA.init).toHaveBeenCalledWith(jasmine.any(Object));
     });
 
@@ -90,19 +80,8 @@ describe('SpaService', () => {
       const error = new Error('bad stuff happened');
       iframeWindow.SPA.init.and.throwError(error);
       spyOn($log, 'error');
-      SpaService.initSpa();
+      SpaService.initLegacy();
       expect($log.error).toHaveBeenCalledWith('Failed to initialize Single Page Application', error);
-    });
-  });
-
-  describe('public API', () => {
-    let publicApi;
-
-    beforeEach(() => {
-      iframeWindow.SPA = jasmine.createSpyObj('SPA', ['init']);
-      SpaService.detectSpa();
-      SpaService.initSpa();
-      [publicApi] = iframeWindow.SPA.init.calls.mostRecent().args;
     });
 
     it('can create the overlay', () => {
@@ -124,22 +103,22 @@ describe('SpaService', () => {
     });
   });
 
-  describe('render component', () => {
+  describe('renderComponent', () => {
     it('ignores the SPA when it does not exist', () => {
-      SpaService.detectSpa();
+      SpaService.initLegacy();
       expect(SpaService.renderComponent({})).toBe(false);
     });
 
     it('ignores the SPA when it does not define a renderComponent function', () => {
       iframeWindow.SPA = {};
-      SpaService.detectSpa();
+      SpaService.initLegacy();
       expect(SpaService.renderComponent({})).toBe(false);
     });
 
     describe('an SPA that defines a renderComponent function', () => {
       beforeEach(() => {
         iframeWindow.SPA = jasmine.createSpyObj('SPA', ['renderComponent']);
-        SpaService.detectSpa();
+        SpaService.initLegacy();
       });
 
       it('ignores null and undefined components', () => {

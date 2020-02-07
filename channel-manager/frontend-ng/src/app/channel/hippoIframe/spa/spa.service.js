@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-class SpaService {
+export default class SpaService {
   constructor($log, DomService, OverlayService, RenderingService) {
     'ngInject';
 
@@ -24,30 +24,23 @@ class SpaService {
     this.RenderingService = RenderingService;
   }
 
-  _warnDeprecated() {
-    this.$log.warn('This version of the SPA SDK is deprecated and will not work in the next major release.');
-  }
-
   init(iframeJQueryElement) {
     this.iframeJQueryElement = iframeJQueryElement;
   }
 
-  detectSpa() {
-    this.spa = null;
+  isSpa() {
+    return !!this._legacyHandle;
+  }
 
-    const iframeWindow = this.DomService.getIframeWindow(this.iframeJQueryElement);
-    if (iframeWindow) {
-      this.spa = iframeWindow.SPA || null;
+  /**
+   * @deprecated
+   */
+  initLegacy() {
+    this._detectLegacySpa();
+    if (!this._legacyHandle) {
+      return false;
     }
 
-    return this.detectedSpa();
-  }
-
-  detectedSpa() {
-    return !!this.spa;
-  }
-
-  initSpa() {
     try {
       const publicApi = {
         createOverlay: () => {
@@ -62,24 +55,37 @@ class SpaService {
           this.RenderingService.createOverlay();
         },
       };
-      this.spa.init(publicApi);
+      this._legacyHandle.init(publicApi);
     } catch (error) {
       this.$log.error('Failed to initialize Single Page Application', error);
     }
+
+    return true;
   }
 
-  renderComponent(component, parameters = {}) {
-    if (!component || !this.spa || !angular.isFunction(this.spa.renderComponent)) {
+  _detectLegacySpa() {
+    this._legacyHandle = null;
+
+    const iframeWindow = this.DomService.getIframeWindow(this.iframeJQueryElement);
+    if (iframeWindow) {
+      this._legacyHandle = iframeWindow.SPA || null;
+    }
+  }
+
+  _warnDeprecated() {
+    this.$log.warn('This version of the SPA SDK is deprecated and will not work in the next major release.');
+  }
+
+  renderComponent(component, properties = {}) {
+    if (!component || !this._legacyHandle || !angular.isFunction(this._legacyHandle.renderComponent)) {
       return false;
     }
 
     try {
-      return this.spa.renderComponent(component.getReferenceNamespace(), parameters) !== false;
+      return this._legacyHandle.renderComponent(component.getReferenceNamespace(), properties) !== false;
     } catch (error) {
       this.$log.error(error);
       return true;
     }
   }
 }
-
-export default SpaService;
