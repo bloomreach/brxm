@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,6 +25,7 @@ import LinkProcessorService from './processing/linkProcessor.service';
 import OverlayService from './overlay/overlay.service';
 import PageModule from './page/page.module';
 import RenderingService from './rendering/rendering.service';
+import RpcService from './spa/rpc.service';
 import ScrollService from './scrolling/scroll.service';
 import SpaService from './spa/spa.service';
 import ViewportService from './viewport/viewport.service';
@@ -43,6 +44,7 @@ const channelHippoIframeModule = angular
   .service('LinkProcessorService', LinkProcessorService)
   .service('OverlayService', OverlayService)
   .service('RenderingService', RenderingService)
+  .service('RpcService', RpcService)
   .service('ScrollService', ScrollService)
   .service('SpaService', SpaService)
   .service('ViewportService', ViewportService);
