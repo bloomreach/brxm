@@ -102,11 +102,11 @@ class HippoIframeCtrl {
   onLoad() {
     this.$rootScope.$broadcast('hippo-iframe:load');
 
-    if (this.SpaService.detectSpa()) {
-      this.SpaService.initSpa();
-    } else {
-      this.RenderingService.createOverlay();
+    if (this.SpaService.initLegacy()) {
+      return;
     }
+
+    this.RenderingService.createOverlay();
   }
 
   _renderComponent(componentId, propertiesMap) {

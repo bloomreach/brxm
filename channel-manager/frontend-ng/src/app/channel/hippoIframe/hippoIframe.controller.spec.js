@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -193,7 +193,7 @@ describe('hippoIframeCtrl', () => {
   });
 
   it('creates the overlay when loading a new page', () => {
-    spyOn(SpaService, 'detectSpa').and.returnValue(false);
+    spyOn(SpaService, 'initLegacy').and.returnValue(false);
     spyOn(RenderingService, 'createOverlay').and.returnValue($q.resolve());
 
     $ctrl.onLoad();
@@ -204,7 +204,7 @@ describe('hippoIframeCtrl', () => {
 
   it('triggers an event when page is loaded', () => {
     const listener = jasmine.createSpy('listener');
-    spyOn(SpaService, 'detectSpa').and.returnValue(true);
+    spyOn(SpaService, 'initLegacy').and.returnValue(true);
 
     $rootScope.$on('hippo-iframe:load', listener);
     $ctrl.onLoad();
@@ -212,14 +212,13 @@ describe('hippoIframeCtrl', () => {
     expect(listener).toHaveBeenCalled();
   });
 
-  it('initializes the SPA when a SPA is detected', () => {
-    spyOn(SpaService, 'detectSpa').and.returnValue(true);
-    spyOn(SpaService, 'initSpa');
+  it('initializes the legacy SPA integration', () => {
+    spyOn(SpaService, 'initLegacy').and.returnValue(true);
 
     $ctrl.onLoad();
     $rootScope.$digest();
 
-    expect(SpaService.initSpa).toHaveBeenCalled();
+    expect(SpaService.initLegacy).toHaveBeenCalled();
   });
 
   it('updates drag-drop when the components overlay is toggled and the iframe finished loading', () => {
