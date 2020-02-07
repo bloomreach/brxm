@@ -71,38 +71,14 @@ public class PageModelApiV10LearningTest {
 
         AggregatedPageModel pageModel = new AggregatedPageModel(root);
 
-
-        System.out.println(objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(pageModel));
-
         final String serialized = objectMapper.writeValueAsString(pageModel);
 
         JsonNode jsonNodeRoot = objectMapper.readTree(serialized);
 
-        validate(jsonNodeRoot, jsonNodeRoot);
+        JsonValidationUtil.validateReferences(jsonNodeRoot, jsonNodeRoot);
 
     }
 
-    private void validate(final JsonNode jsonNodeRoot, final JsonNode current) throws IOException {
-        Iterator<Map.Entry<String, JsonNode>> fieldsIterator = current.fields();
-
-        while (fieldsIterator.hasNext()) {
-            Map.Entry<String, JsonNode> field = fieldsIterator.next();
-            final JsonNode value = field.getValue();
-            if (value.isContainerNode()) {
-                validate(jsonNodeRoot, value); // RECURSIVE CALL
-            } else {
-                final String key = field.getKey();
-                if ("$ref".equals(key)) {
-                    // assert that the ref pointer exists
-
-                    final JsonPointer jsonPointer = JsonPointer.compile(value.asText());
-                    assertFalse(String.format("Missing reference '%s'", value.asText()),
-                            jsonNodeRoot.at(jsonPointer).isMissingNode());
-
-                }
-            }
-        }
-    }
 
     class PageModelSerializerModifier extends BeanSerializerModifier {
 

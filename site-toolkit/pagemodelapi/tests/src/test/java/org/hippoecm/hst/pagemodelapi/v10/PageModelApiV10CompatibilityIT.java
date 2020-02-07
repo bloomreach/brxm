@@ -16,13 +16,16 @@
 package org.hippoecm.hst.pagemodelapi.v10;
 
 
+import java.io.IOException;
 import java.io.InputStream;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.hst.pagemodelapi.common.AbstractPageModelApiITCases;
-import org.json.JSONObject;
+import org.json.JSONException;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -57,11 +60,9 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
 
         String actual = getActualJson("/spa/resourceapi/home", "1.0");
 
-        InputStream inputStream = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_homepage.json");
+        InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_homepage.json");
 
-        String expected = IOUtils.toString(inputStream, "UTF-8");
-
-        JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT_ORDER);
+        assertions(actual, expected);
     }
 
     /**
@@ -73,23 +74,20 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
 
         String actual = getActualJson("/spa/resourceapi/home", "1.0", "_maxreflevel=0");
 
-        InputStream inputStream = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_homepage_maxreflevel0.json");
+        InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_homepage_maxreflevel0.json");
 
-        String expected = IOUtils.toString(inputStream, "UTF-8");
-
-        JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT_ORDER);
+        assertions(actual, expected);
     }
+
 
     @Test
     public void newspage_api_compatibility_v10_assertion() throws Exception {
 
         String actual = getActualJson("/spa/resourceapi/news/News1", "1.0");
 
-        InputStream inputStream = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_newspage.json");
+        InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_newspage.json");
 
-        String expected = IOUtils.toString(inputStream, "UTF-8");
-
-        JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT_ORDER);
+        assertions(actual, expected);
     }
 
     @Test
@@ -97,11 +95,16 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
 
         String actual = getActualJson("/spa/resourceapi/genericdetail/dynamiccontent", "1.0");
 
-        InputStream inputStream = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_dynamiccontent.json");
+        InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_dynamiccontent.json");
 
-        String expected = IOUtils.toString(inputStream, "UTF-8");
+        assertions(actual, expected);
+    }
 
+    private void assertions(final String actual, final InputStream expectedStream) throws IOException, JSONException {
+        String expected = IOUtils.toString(expectedStream, "UTF-8");
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT_ORDER);
+        JsonNode jsonNodeRoot = new ObjectMapper().readTree(expected);
+        JsonValidationUtil.validateReferences(jsonNodeRoot, jsonNodeRoot);
     }
 
 }
