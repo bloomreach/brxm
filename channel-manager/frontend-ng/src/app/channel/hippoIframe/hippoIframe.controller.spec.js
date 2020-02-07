@@ -22,6 +22,7 @@ describe('hippoIframeCtrl', () => {
   let CmsService;
   let ComponentRenderingService;
   let ContainerService;
+  let DomService;
   let DragDropService;
   let EditComponentService;
   let FeedbackService;
@@ -35,11 +36,13 @@ describe('hippoIframeCtrl', () => {
   let ViewportService;
   let $ctrl;
   let onEditMenu;
+  let contentWindow;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
     ComponentRenderingService = jasmine.createSpyObj('ComponentRenderingService', ['renderComponent']);
+    DomService = jasmine.createSpyObj('DomService', ['addScript', 'getAssetUrl']);
     EditComponentService = jasmine.createSpyObj('EditComponentService', ['startEditing']);
     FeedbackService = jasmine.createSpyObj('FeedbackService', ['showErrorResponse', 'showNotification']);
     HstComponentService = jasmine.createSpyObj('HstComponentService', ['setPathParameter']);
@@ -47,6 +50,7 @@ describe('hippoIframeCtrl', () => {
 
     angular.mock.module(($provide) => {
       $provide.value('ComponentRenderingService', ComponentRenderingService);
+      $provide.value('DomService', DomService);
       $provide.value('EditComponentService', EditComponentService);
       $provide.value('FeedbackService', FeedbackService);
       $provide.value('HstComponentService', HstComponentService);
@@ -82,13 +86,18 @@ describe('hippoIframeCtrl', () => {
       SpaService = _SpaService_;
       ViewportService = _ViewportService_;
 
-      $element = angular.element('<div></div>');
+      $element = angular.element('<div><iframe /></div>');
 
       spyOn(OverlayService, 'onEditMenu');
       spyOn(OverlayService, 'onSelectDocument');
       spyOn(DragDropService, 'onClick').and.callThrough();
       spyOn(DragDropService, 'onDrop').and.callThrough();
       onEditMenu = jasmine.createSpy('onEditMenu');
+      contentWindow = {
+        document: {
+          body: { innerHTML: 'something' },
+        },
+      };
 
       $ctrl = $componentController('hippoIframe', {
         $element,
@@ -108,6 +117,7 @@ describe('hippoIframeCtrl', () => {
       });
 
       $ctrl.$onInit();
+      Object.defineProperty($ctrl.iframeJQueryElement[0], 'contentWindow', { value: contentWindow });
     });
   });
 
@@ -192,6 +202,25 @@ describe('hippoIframeCtrl', () => {
     expect(CmsService.unsubscribe).toHaveBeenCalledWith('delete-component', jasmine.any(Function), $ctrl);
   });
 
+  it('injects the iframe bundle into the iframe', () => {
+    DomService.getAssetUrl.and.returnValue('url');
+
+    $ctrl.onLoad();
+    $rootScope.$digest();
+
+    expect(DomService.getAssetUrl).toHaveBeenCalledWith(jasmine.stringMatching('iframe'));
+    expect(DomService.addScript).toHaveBeenCalledWith(contentWindow, 'url');
+  });
+
+  it('does not inject the iframe bundle into a cross-origin iframe', () => {
+    Object.defineProperty(contentWindow, 'document', { get: () => { throw new Error('Access denied.'); } });
+
+    expect(() => $ctrl.onLoad()).not.toThrow();
+    $rootScope.$digest();
+
+    expect(DomService.addScript).not.toHaveBeenCalled();
+  });
+
   it('creates the overlay when loading a new page', () => {
     spyOn(SpaService, 'initLegacy').and.returnValue(false);
     spyOn(RenderingService, 'createOverlay').and.returnValue($q.resolve());
@@ -208,6 +237,7 @@ describe('hippoIframeCtrl', () => {
 
     $rootScope.$on('hippo-iframe:load', listener);
     $ctrl.onLoad();
+    $rootScope.$digest();
 
     expect(listener).toHaveBeenCalled();
   });
