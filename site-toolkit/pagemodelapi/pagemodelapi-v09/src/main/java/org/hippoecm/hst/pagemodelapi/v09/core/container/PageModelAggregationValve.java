@@ -74,6 +74,7 @@ import io.swagger.models.Swagger;
 import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_COMPONENT_RENDERING;
 import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SELF;
 import static org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.LinkModel.LinkType.EXTERNAL;
+import static org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.LinkModel.LinkType.INTERNAL;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestHost;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestScheme;
 
@@ -463,7 +464,8 @@ public class PageModelAggregationValve extends AggregationValve {
     private void addLinksToPageModel(IdentifiableLinkableMetadataBaseModel pageModel) {
         final HstRequestContext requestContext = RequestContextProvider.get();
         final HstLinkCreator linkCreator = requestContext.getHstLinkCreator();
-        final HstSiteMapItem siteMapItem = requestContext.getResolvedSiteMapItem().getHstSiteMapItem();
+        final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
+        final HstSiteMapItem siteMapItem = resolvedSiteMapItem.getHstSiteMapItem();
 
         final Mount selfMount = requestContext.getResolvedMount().getMount();
         final HstLink selfLink = linkCreator.create(siteMapItem, selfMount);
@@ -471,8 +473,9 @@ public class PageModelAggregationValve extends AggregationValve {
 
         final Mount siteMount = selfMount.getParent();
         if (siteMount != null) {
-            final HstLink siteLink = linkCreator.create(siteMapItem, siteMount);
-            pageModel.putLink(ContainerConstants.LINK_NAME_SITE, new LinkModel(siteLink.toUrlForm(requestContext, true)));
+            final HstLink siteLink = linkCreator.create(resolvedSiteMapItem.getPathInfo(), siteMount);
+            pageModel.putLink(ContainerConstants.LINK_NAME_SITE,
+                    new LinkModel(siteLink.toUrlForm(requestContext, true), INTERNAL));
         } else {
             log.warn("Expected a 'PageModelPipeline' always to be nested below a parent site mount. This is not the " +
                     "case for '{}'. Cannot add site links", selfMount);

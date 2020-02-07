@@ -7,7 +7,8 @@
       "href" : "http://localhost/site/spa/resourceapi"
     },
     "site" : {
-      "href" : "http://localhost/site/spa"
+      "href" : "/",
+      "type" : "internal"
     }
   },
   "root" : {

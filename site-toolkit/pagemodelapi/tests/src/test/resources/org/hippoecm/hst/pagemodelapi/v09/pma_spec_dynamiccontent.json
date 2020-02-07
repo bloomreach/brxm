@@ -8,7 +8,8 @@
       "href":"http://localhost/site/spa/resourceapi/genericdetail/_any_"
     },
     "site":{
-      "href":"http://localhost/site/spa/genericdetail/_any_"
+      "href":"http://localhost/site/spa/genericdetail/_any_",
+      "type" : "internal"
     }
   },
   "page":{

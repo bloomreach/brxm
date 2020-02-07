@@ -8,7 +8,8 @@
       "href":"http://localhost/site/spa/resourceapi/news/_default_"
     },
     "site":{
-      "href":"http://localhost/site/spa/news/_default_"
+      "href":"http://localhost/site/spa/news/News1",
+      "type" : "internal"
     }
   },
   "page":{

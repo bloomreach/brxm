@@ -7,7 +7,8 @@
       "href" : "http://localhost/site/spa/resourceapi/news/_default_"
     },
     "site" : {
-      "href" : "http://localhost/site/spa/news/_default_"
+      "href" : "/news/News1",
+      "type" : "internal"
     }
   },
   "root" : {
