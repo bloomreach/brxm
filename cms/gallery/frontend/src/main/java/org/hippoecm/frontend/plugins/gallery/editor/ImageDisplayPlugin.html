@@ -1,5 +1,5 @@
 <!--
- *  Copyright 2011-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,6 +30,19 @@
         <label class="simple-editor-label"><wicket:message key="height.label">Height: </wicket:message></label><span wicket:id="height" class="simple-editor-value"> </span> <span class="simple-editor-value"><wicket:message key="pixels.suffix"></wicket:message></span>
       </li>
     </ul>
+    <wicket:enclosure child="link">
+      <ul>
+        <li>
+          <label class="simple-editor-label"><wicket:message key="mimetype.label">Mime type:</wicket:message></label><span wicket:id="mimetype" class="simple-editor-value"></span>
+        </li>
+        <li>
+          <label class="simple-editor-label"><wicket:message key="filesize.label">File size:</wicket:message></label><span wicket:id="filesize" class="simple-editor-value"></span>
+        </li>
+        <li>
+          <a wicket:id="link" class="simple-editor-value"><wicket:message key="download.link">link</wicket:message></a>
+        </li>
+       </ul>
+    </wicket:enclosure>
   </wicket:fragment>
 
   <wicket:fragment wicket:id="embed">
