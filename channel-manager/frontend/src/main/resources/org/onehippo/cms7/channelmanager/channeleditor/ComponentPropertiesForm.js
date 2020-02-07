@@ -238,7 +238,7 @@
           if (groupLabel !== lastGroupLabel && groupLabel !== null) {
             this.add({
               cls: 'field-group-title',
-              text: this._isReadOnlyTemplate(record) ? '' : Ext.util.Format.htmlEncode(groupLabel),
+              text: this._isTemplatePickerField(record) ? '' : Ext.util.Format.htmlEncode(groupLabel),
               xtype: 'label'
             });
             lastGroupLabel = groupLabel;
@@ -248,8 +248,8 @@
       }, this);
     },
 
-    _isReadOnlyTemplate: function (record) {
-      return this.isReadOnly && record.get('name') === 'org.hippoecm.hst.core.component.template';
+    _isTemplatePickerField: function (record) {
+      return record.get('name') === 'org.hippoecm.hst.core.component.template';
     },
 
     _initField: function (record) {
