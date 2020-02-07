@@ -379,6 +379,10 @@ textarea.x-form-focus,
       color: $button-primary-color;
     }
 
+    &.btn-br-secondary button {
+      color: $button-secondary-color;
+    }
+
     &.btn-br-primary.x-item-disabled,
     &.btn-br-primary.x-item-disabled:hover {
       background-color: $button-primary-disabled-bg !important;
