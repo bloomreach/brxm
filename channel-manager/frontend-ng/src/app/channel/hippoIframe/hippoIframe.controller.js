@@ -15,6 +15,7 @@
  */
 
 import './hippoIframe.scss';
+import iframeBundle from '../../iframe';
 
 class HippoIframeCtrl {
   constructor(
@@ -23,6 +24,7 @@ class HippoIframeCtrl {
     CmsService,
     ComponentRenderingService,
     ContainerService,
+    DomService,
     DragDropService,
     EditComponentService,
     FeedbackService,
@@ -42,6 +44,7 @@ class HippoIframeCtrl {
     this.CmsService = CmsService;
     this.ComponentRenderingService = ComponentRenderingService;
     this.ContainerService = ContainerService;
+    this.DomService = DomService;
     this.DragDropService = DragDropService;
     this.EditComponentService = EditComponentService;
     this.FeedbackService = FeedbackService;
@@ -99,7 +102,17 @@ class HippoIframeCtrl {
     this._offDrop();
   }
 
-  onLoad() {
+  async onLoad() {
+    if (!this._isIframeAccessible()) {
+      return;
+    }
+
+    // TODO: call penpal connect to child
+    await this.DomService.addScript(
+      this.iframeJQueryElement[0].contentWindow,
+      this.DomService.getAssetUrl(iframeBundle),
+    );
+
     this.$rootScope.$broadcast('hippo-iframe:load');
 
     if (this.SpaService.initLegacy()) {
@@ -107,6 +120,25 @@ class HippoIframeCtrl {
     }
 
     this.RenderingService.createOverlay();
+  }
+
+  /**
+   * Checks whether the iframe DOM is accessible from the Channel Manager.
+   * At first, it tries to access the document from the content window,
+   * and in case if it a cross-origin website, an exception will be thrown.
+   * In case, when the document was not loaded due to some error, the document's body will be empty.
+   *
+   * @see https://stackoverflow.com/a/12381504
+   */
+  _isIframeAccessible() {
+    let html;
+
+    try {
+      const { document } = this.iframeJQueryElement[0].contentWindow;
+      html = document.body.innerHTML;
+    } catch (error) {} // eslint-disable-line no-empty
+
+    return html != null;
   }
 
   _renderComponent(componentId, propertiesMap) {

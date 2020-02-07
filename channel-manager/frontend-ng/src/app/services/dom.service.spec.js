@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -285,5 +285,11 @@ describe('DomService', () => {
     expect(DomService.escapeHtml('&<>"\'/')).toEqual('&amp;&lt;&gt;&quot;&#x27;&#x2F;');
     expect(DomService.escapeHtml('<script>alert("xss")</script>'))
       .toEqual('&lt;script&gt;alert(&quot;xss&quot;)&lt;&#x2F;script&gt;');
+  });
+
+  describe('getAssetUrl', () => {
+    it('should resolve a relative link', () => {
+      expect(DomService.getAssetUrl('some.js')).toContain('/some.js');
+    });
   });
 });
