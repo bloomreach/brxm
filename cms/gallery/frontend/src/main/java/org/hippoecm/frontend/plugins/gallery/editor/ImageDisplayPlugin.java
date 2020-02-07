@@ -51,6 +51,10 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
 
     private static final Logger log = LoggerFactory.getLogger(ImageDisplayPlugin.class);
 
+    public static final String CONFIG_DISPLAY_DIMENSIONS_ONLY = "display.dimensions.only";
+    public static final String CONFIG_DISPLAY_MAX_WIDTH = "display.max.width";
+    public static final String CONFIG_DISPLAY_MAX_HEIGHT = "display.max.height";
+
     public static final int DEFAULT_DISPLAY_MAX_WIDTH = 800;
     public static final int DEFAULT_DISPLAY_MAX_HEIGHT = 800;
 
@@ -137,7 +141,7 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
         fragment.add(new JcrImage("image", resource, width, height));
         addImageMetaData(node, fragment);
 
-        final boolean showExtraMeta  = !config.getBoolean("display.dimensions.only");
+        final boolean showExtraMeta  = !config.getBoolean(CONFIG_DISPLAY_DIMENSIONS_ONLY);
         addExtraMetaData(resource, filename, fragment, showExtraMeta);
 
         return fragment;
@@ -162,8 +166,8 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
             return false;
         }
 
-        final long maxWidth = config.getAsLong("display.max.width", 800);
-        final long maxHeight = config.getAsLong("display.max.height", 800);
+        final long maxWidth = config.getAsLong(CONFIG_DISPLAY_MAX_WIDTH, DEFAULT_DISPLAY_MAX_WIDTH);
+        final long maxHeight = config.getAsLong(CONFIG_DISPLAY_MAX_HEIGHT, DEFAULT_DISPLAY_MAX_HEIGHT);
 
         return width <= maxWidth && height <= maxHeight;
     }
