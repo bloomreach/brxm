@@ -185,6 +185,16 @@ describe('SpaService', () => {
     });
   });
 
+  describe('inject', () => {
+    it('calls a remote procedure', () => {
+      spyOn(RpcService, 'call');
+      SpaService.inject('something');
+
+      expect(RpcService.call).toHaveBeenCalledWith('inject', 'something');
+    });
+  });
+
+
   describe('renderComponent', () => {
     it('ignores the SPA when it does not exist', () => {
       SpaService.initLegacy();

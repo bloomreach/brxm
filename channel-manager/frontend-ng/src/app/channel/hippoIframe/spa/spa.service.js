@@ -123,6 +123,10 @@ export default class SpaService {
     this.$log.warn('This version of the SPA SDK is deprecated and will not work in the next major release.');
   }
 
+  inject(resource) {
+    return this.RpcService.call('inject', resource);
+  }
+
   renderComponent(component, properties = {}) {
     if (!component || !this._legacyHandle || !angular.isFunction(this._legacyHandle.renderComponent)) {
       return false;
