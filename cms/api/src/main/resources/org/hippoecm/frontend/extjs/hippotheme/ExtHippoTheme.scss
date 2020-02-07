@@ -1682,7 +1682,7 @@ a.x-menu-item {
       box-sizing: border-box;
       height: 36px;
       padding: 0 8px 0 8px;
-      width: 100%;
+      width: 100% !important;
 
       &:focus {
         border-color: $bluePrimary;
