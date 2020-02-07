@@ -291,12 +291,6 @@
     },
     "u5e56d406b302445e9f80e624ba053bc4" : {
       "type" : "asset",
-      "links" : {
-        "site" : {
-          "href" : "/site/spa/pagenotfound",
-          "type" : "internal"
-        }
-      },
       "data" : {
         "name" : "testdata.pdf",
         "displayName" : "Test Data PDF",
@@ -357,12 +351,6 @@
     },
     "udb02dde500984488a72c2a4fc6d51beb" : {
       "type" : "imageset",
-      "links" : {
-        "site" : {
-          "href" : "/site/spa/pagenotfound",
-          "type" : "internal"
-        }
-      },
       "data" : {
         "name" : "picture.jpeg",
         "displayName" : "picture.jpeg",

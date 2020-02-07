@@ -45,6 +45,8 @@ import org.hippoecm.hst.core.sitemenu.CommonMenu;
 import org.hippoecm.hst.pagemodelapi.v10.content.beans.jackson.LinkModel;
 import org.hippoecm.hst.pagemodelapi.v10.core.model.ComponentWindowModel;
 import org.hippoecm.hst.pagemodelapi.v10.core.model.IdentifiableLinkableMetadataBaseModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SITE;
@@ -52,6 +54,8 @@ import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SITE;
 public class PageModelSerializer extends JsonSerializer<Object> {
 
     private static ThreadLocal<SerializerContext> tlSerializerContext = new ThreadLocal<>();
+
+    private static Logger log = LoggerFactory.getLogger(PageModelSerializer.class);
 
     static class SerializerContext {
         private boolean firstEntity = true;
@@ -186,6 +190,7 @@ public class PageModelSerializer extends JsonSerializer<Object> {
                     final DecoratedPageModelEntityWrapper<CommonMenu> decoratedPageModelEntityWrapper
                             = new DecoratedPageModelEntityWrapper(object, "menu", nextDepth);
                     for (MetadataDecorator metadataDecorator : metadataDecorators) {
+                        log.trace("Decorate menu '{}' with metadataDecorator '{}'", ((CommonMenu)object).getName(), metadataDecorator);
                         metadataDecorator.decorateCommonMenuMetadata(requestContext,
                                 decoratedPageModelEntityWrapper.getData(), decoratedPageModelEntityWrapper);
                     }
@@ -196,8 +201,16 @@ public class PageModelSerializer extends JsonSerializer<Object> {
                     HstRequestContext requestContext = RequestContextProvider.get();
                     final DecoratedPageModelEntityWrapper<HippoBean> decoratedPageModelEntityWrapper
                             = new DecoratedPageModelEntityWrapper(object, getHippoBeanType((HippoBean) object), nextDepth);
-                    addLinksToContent(requestContext, decoratedPageModelEntityWrapper);
+                    if (object instanceof HippoAssetBean || object instanceof HippoGalleryImageSet) {
+                        log.trace("Skip adding links to hippo asset or gallery document since only links to the " +
+                                "resources in them are useful");
+                    } else {
+                        log.trace("Add links to document or folder bean");
+                        addLinksToContent(requestContext, decoratedPageModelEntityWrapper);
+                    }
+
                     for (MetadataDecorator metadataDecorator : metadataDecorators) {
+                        log.trace("Decorate '{}' with metadataDecorator '{}'", ((HippoBean)object).getPath(), metadataDecorator);
                         metadataDecorator.decorateContentMetadata(requestContext,
                                 decoratedPageModelEntityWrapper.getData(), decoratedPageModelEntityWrapper);
                     }
