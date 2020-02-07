@@ -1,5 +1,5 @@
 /*
- *  Copyright 2011-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2011-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.ContentDisposition;
+
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.editor.compare.StreamComparer;
 import org.hippoecm.frontend.model.IModelReference;
@@ -40,6 +41,7 @@ import org.hippoecm.frontend.resource.JcrResourceStream;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.gallery.HippoGalleryNodeType;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,9 +115,9 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
             if (mimeType.indexOf('/') > 0) {
                 String category = mimeType.substring(0, mimeType.indexOf('/'));
                 if ("image".equals(category) && shouldDisplayImage(resource, node, config)) {
-                    fragment = createImageFragment(id, resource, node, config);
+                    fragment = createImageFragment(id, resource, filename, node, config);
                 } else {
-                    fragment = createEmbedFragment(id, resource, filename);
+                    fragment = createEmbedFragment(id, resource, filename, node);
                 }
             }
         } catch (IOException | RepositoryException ex) {
@@ -124,17 +126,29 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
         return fragment;
     }
 
-    protected Fragment createImageFragment(String id, final JcrResourceStream resource, Node node, IPluginConfig config)
-            throws RepositoryException {
-        final boolean displayMetaData  = config.getBoolean("display.meta.showSize");
-        final Fragment fragment = displayMetaData ? new Fragment(id, "imageMeta", this) : new Fragment(id, "image", this);
-        if (displayMetaData) {
-            addFileSizeData(resource, id, fragment);
-        }
+    protected Fragment createImageFragment(final String id, final JcrResourceStream resource, final String filename,
+                                           final Node node, final IPluginConfig config) throws RepositoryException {
+
+        final Fragment fragment = new Fragment(id, "image", this);
+
         int width = getWidthOrZero(node);
         int height = getHeightOrZero(node);
+
         fragment.add(new JcrImage("image", resource, width, height));
         addImageMetaData(node, fragment);
+
+        final boolean showExtraMeta  = !config.getBoolean("display.dimensions.only");
+        addExtraMetaData(resource, filename, fragment, showExtraMeta);
+
+        return fragment;
+    }
+
+    private Fragment createEmbedFragment(final String id, final JcrResourceStream resource, final String filename,final Node node) throws RepositoryException {
+
+        final Fragment fragment = new Fragment(id, "embed", this);
+        addImageMetaData(node, fragment);
+        addExtraMetaData(resource, filename, fragment, true);
+
         return fragment;
     }
 
@@ -177,20 +191,11 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
         }
     }
 
-    private Fragment createEmbedFragment(String id, final JcrResourceStream resource, final String filename) throws RepositoryException {
-        Fragment fragment = new Fragment(id, "embed", this);
-        addFileSizeData(resource, filename, fragment);
-        final Node node = getModelObject();
-        addImageMetaData(node, fragment);
-        return fragment;
-    }
-
-    private void addFileSizeData(final JcrResourceStream resource, final String filename, final Fragment fragment) {
+    private void addExtraMetaData(final JcrResourceStream resource, final String filename, final Fragment fragment, final boolean showExtraMeta) {
         fragment.add(new Label("filesize", Model.of(formatter.format(resource.length().bytes()))));
         fragment.add(new Label("mimetype", Model.of(resource.getContentType())));
-        fragment.add(new ResourceLink<Void>("link", new JcrResource(resource) {
-            private static final long serialVersionUID = 1L;
 
+        final ResourceLink<Void> link = new ResourceLink<Void>("link", new JcrResource(resource) {
             @Override
             protected ResourceResponse newResourceResponse(final Attributes attributes) {
                 ResourceResponse response = super.newResourceResponse(attributes);
@@ -200,15 +205,18 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
             }
 
         }) {
-            private static final long serialVersionUID = 1L;
-
             @Override
             protected void onDetach() {
                 resource.detach();
                 super.onDetach();
             }
 
-        });
+        };
+
+        // a <wicket:enclosure> element is used to hide also filesize and mimetype
+        link.setVisible(showExtraMeta);
+
+        fragment.add(link);
     }
 
     @Override
