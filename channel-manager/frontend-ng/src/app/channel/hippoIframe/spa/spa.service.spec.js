@@ -16,9 +16,12 @@
 
 describe('SpaService', () => {
   let $log;
+  let $rootScope;
+  let ChannelService;
   let DomService;
   let OverlayService;
   let RenderingService;
+  let RpcService;
   let SpaService;
 
   const iframeWindow = {
@@ -29,19 +32,77 @@ describe('SpaService', () => {
 
     inject((
       _$log_,
+      _$rootScope_,
+      _ChannelService_,
       _DomService_,
       _OverlayService_,
       _RenderingService_,
+      _RpcService_,
       _SpaService_,
     ) => {
       $log = _$log_;
+      $rootScope = _$rootScope_;
+      ChannelService = _ChannelService_;
       DomService = _DomService_;
       OverlayService = _OverlayService_;
       RenderingService = _RenderingService_;
+      RpcService = _RpcService_;
       SpaService = _SpaService_;
     });
 
     spyOn(DomService, 'getIframeWindow').and.returnValue(iframeWindow);
+  });
+
+  describe('init', () => {
+    let iframeJQueryElement;
+
+    beforeEach(() => {
+      iframeJQueryElement = angular.element('<iframe />');
+      spyOn(RpcService, 'initialize');
+      spyOn(ChannelService, 'getChannel');
+      spyOn(ChannelService, 'getProperties');
+    });
+
+    it('uses the iframe content window as a target', () => {
+      SpaService.init(iframeJQueryElement);
+
+      expect(RpcService.initialize).toHaveBeenCalledWith(jasmine.objectContaining({
+        target: iframeJQueryElement[0].contentWindow,
+      }));
+    });
+
+    it('uses an origin from the preview url', () => {
+      ChannelService.getProperties.and.returnValue({
+        'org.hippoecm.hst.configuration.channel.PreviewURLChannelInfo_url': 'http://example.com:3000/something',
+      });
+      SpaService.init(iframeJQueryElement);
+
+      expect(RpcService.initialize).toHaveBeenCalledWith(jasmine.objectContaining({
+        origin: 'http://example.com:3000',
+      }));
+    });
+
+    it('uses an origin from the channel url', () => {
+      ChannelService.getChannel.and.returnValue({ url: 'http://localhost:8080/_cmsinternal' });
+      SpaService.init(iframeJQueryElement);
+
+      expect(RpcService.initialize).toHaveBeenCalledWith(jasmine.objectContaining({
+        origin: 'http://localhost:8080',
+      }));
+    });
+
+    it('uses an empty origin when there is no configured url', () => {
+      SpaService.init(iframeJQueryElement);
+
+      expect(RpcService.initialize).toHaveBeenCalledWith(jasmine.objectContaining({ origin: '' }));
+    });
+
+    it('uses an empty origin when the url is invalid', () => {
+      ChannelService.getChannel.and.returnValue({ url: '/_cmsinternal' });
+      SpaService.init(iframeJQueryElement);
+
+      expect(RpcService.initialize).toHaveBeenCalledWith(jasmine.objectContaining({ origin: '' }));
+    });
   });
 
   describe('isSpa', () => {
@@ -59,6 +120,27 @@ describe('SpaService', () => {
     it('returns false when there is no iframe window', () => {
       DomService.getIframeWindow.and.returnValue(null);
       SpaService.initLegacy();
+      expect(SpaService.isSpa()).toBe(false);
+    });
+
+    it('returns true when there was a ready event', () => {
+      const element = angular.element('<iframe />');
+
+      SpaService.init(element);
+      $rootScope.$emit('spa:ready');
+      $rootScope.$digest();
+
+      expect(SpaService.isSpa()).toBe(true);
+    });
+
+    it('returns false when the SPA was unloaded', () => {
+      const element = angular.element('<iframe />');
+
+      SpaService.init(element);
+      $rootScope.$emit('spa:ready');
+      element.trigger('unload');
+      $rootScope.$digest();
+
       expect(SpaService.isSpa()).toBe(false);
     });
   });

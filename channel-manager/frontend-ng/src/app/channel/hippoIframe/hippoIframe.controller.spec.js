@@ -251,6 +251,29 @@ describe('hippoIframeCtrl', () => {
     expect(SpaService.initLegacy).toHaveBeenCalled();
   });
 
+  it('triggers an event when the SPA SDK is ready', () => {
+    const listener = jasmine.createSpy('listener');
+    Object.defineProperty(contentWindow, 'document', { get: () => { throw new Error('Access denied.'); } });
+
+    $rootScope.$on('hippo-iframe:load', listener);
+    $rootScope.$emit('spa:ready');
+
+    $rootScope.$digest();
+
+    expect(listener).toHaveBeenCalled();
+  });
+
+  it('does not trigger an event when the iframe has the same origin', () => {
+    const listener = jasmine.createSpy('listener');
+
+    $rootScope.$on('hippo-iframe:load', listener);
+    $rootScope.$emit('spa:ready');
+
+    $rootScope.$digest();
+
+    expect(listener).not.toHaveBeenCalled();
+  });
+
   it('updates drag-drop when the components overlay is toggled and the iframe finished loading', () => {
     spyOn(RenderingService, 'updateDragDrop');
 

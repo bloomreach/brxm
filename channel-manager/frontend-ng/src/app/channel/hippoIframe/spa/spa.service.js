@@ -14,22 +14,68 @@
  * limitations under the License.
  */
 
+const PROPERTY_URL = 'url';
+const PROPERTY_SPA_URL = 'org.hippoecm.hst.configuration.channel.PreviewURLChannelInfo_url';
+
 export default class SpaService {
-  constructor($log, DomService, OverlayService, RenderingService) {
+  constructor($log, $rootScope, ChannelService, DomService, OverlayService, RenderingService, RpcService) {
     'ngInject';
 
     this.$log = $log;
+    this.$rootScope = $rootScope;
+    this.ChannelService = ChannelService;
     this.DomService = DomService;
     this.OverlayService = OverlayService;
     this.RenderingService = RenderingService;
+    this.RpcService = RpcService;
+
+    this._onSdkReady = this._onSdkReady.bind(this);
+    this._onUnload = this._onUnload.bind(this);
   }
 
   init(iframeJQueryElement) {
+    this.RpcService.initialize({
+      origin: this._getOrigin(),
+      target: iframeJQueryElement[0].contentWindow,
+    });
+
     this.iframeJQueryElement = iframeJQueryElement;
+    this.iframeJQueryElement.on('unload', this._onUnload);
+
+    if (this._offSdkReady) {
+      this._offSdkReady();
+    }
+    this._offSdkReady = this.$rootScope.$on('spa:ready', this._onSdkReady);
+  }
+
+  _getOrigin() {
+    const properties = this.ChannelService.getProperties();
+    const channel = this.ChannelService.getChannel();
+    const url = (properties && properties[PROPERTY_SPA_URL]) || (channel && channel[PROPERTY_URL]);
+
+    if (!url) {
+      return '';
+    }
+
+    try {
+      const { origin } = new URL(url);
+
+      return origin;
+    } catch (error) {
+      return '';
+    }
+  }
+
+  _onSdkReady() {
+    this._isSpa = true;
+  }
+
+  _onUnload() {
+    this._isSpa = false;
   }
 
   isSpa() {
-    return !!this._legacyHandle;
+    return !!(this._isSpa || this._legacyHandle);
   }
 
   /**
