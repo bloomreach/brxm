@@ -52,6 +52,7 @@ export default class SpaService {
           this.OverlayService.sync();
         },
         sync: () => {
+          this._warnDeprecated();
           this.RenderingService.createOverlay();
         },
       };
