@@ -57,7 +57,7 @@ definitions:
                 /unittestproject:body:
                   jcr:primaryType: hippostd:html
                   jcr:uuid: b309b5f1-dc78-40ad-a46b-8af23867fdb6
-                  hippostd:content: This is the content of the homepage with a link to <a href="news1">News1</a> document and a link to an image <img src="picture.jpg/{_document}/hippogallery:original" />
+                  hippostd:content: This is the content of the homepage with a link to <a href="news1">News1</a> document and a link to an image <img src="picture.jpg/{_document}/hippogallery:original" /> and to thumbnail <img src="picture.jpg/{_document}/hippogallery:thumbnail" />
                   /news1:
                     jcr:primaryType: hippo:facetselect
                     hippo:docbase: 303d40eb-f98c-4d61-84c7-a1ba14b5ceb3
