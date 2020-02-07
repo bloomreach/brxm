@@ -46,11 +46,11 @@
 }
 
 .x-item-disabled {
-  color: $dark-shade;
+  color: $gray38 !important;
 }
 
 .x-item-disabled * {
-  color: $dark-shade;
+  color: $gray38 !important;
 }
 
 .x-splitbar-proxy {
@@ -1661,8 +1661,6 @@ a.x-menu-item {
     padding-bottom: 16px;
 
     .x-item-disabled {
-      background-color: #ebeced;
-
       &:focus,
       &:focus-within {
         border-color: $gray38 !important;
@@ -1703,10 +1701,6 @@ a.x-menu-item {
         border-bottom-right-radius: 4px;
         height: 34px;
         width: 34px;
-      }
-
-      input[type="text"][disabled] + .x-form-arrow-trigger {
-        background-color: #ebeced;
       }
 
       &:focus-within {
