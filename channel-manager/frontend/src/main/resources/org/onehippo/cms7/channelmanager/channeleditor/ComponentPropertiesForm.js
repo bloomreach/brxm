@@ -235,7 +235,7 @@
 
         if (record.get('hiddenInChannelManager') === false) {
           groupLabel = record.get('groupLabel');
-          if (groupLabel !== lastGroupLabel) {
+          if (groupLabel !== lastGroupLabel && groupLabel !== null) {
             this.add({
               cls: 'field-group-title',
               text: this._isReadOnlyTemplate(record) ? '' : Ext.util.Format.htmlEncode(groupLabel),
