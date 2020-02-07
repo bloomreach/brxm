@@ -29,9 +29,7 @@ if (fs.existsSync(dotenvPath)) {
 module.exports = {
   assetPrefix: process.env.PUBLIC_URL || '/',
   publicRuntimeConfig: {
-    liveBrBaseUrl: process.env.LIVE_BR_BASE_URL,
-    liveSpaBaseUrl: process.env.LIVE_SPA_BASE_URL,
-    previewBrBaseUrl: process.env.PREVIEW_BR_BASE_URL,
-    previewSpaBaseUrl: process.env.PREVIEW_SPA_BASE_URL,
+    cmsBaseUrl: process.env.CMS_BASE_URL,
+    liveSpaBaseUrl: process.env.SPA_BASE_URL,
   },
 };

@@ -16,10 +16,8 @@ PUBLIC_URL=http://localhost:3000
 
 In the same `.env` file, also specify the brXM instance to fetch the page model from:
 ```
-LIVE_BR_BASE_URL=http://localhost:8080/site
-LIVE_SPA_BASE_URL=
-PREVIEW_BR_BASE_URL=http://localhost:8080/site/_cmsinternal
-PREVIEW_SPA_BASE_URL=/site/_cmsinternal?bloomreach-preview=true
+CMS_BASE_URL=http://localhost:8080/site
+SPA_BASE_URL=
 ```
 
 Finally, build and run the Next.js app as followed:

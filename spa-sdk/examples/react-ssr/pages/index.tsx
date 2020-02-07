@@ -39,16 +39,8 @@ export default class Index extends React.Component<IndexProps> {
 
   static async getInitialProps(context: NextPageContext) {
     const config = {
-      options: {
-        live: {
-          cmsBaseUrl: publicRuntimeConfig.liveBrBaseUrl,
-          spaBaseUrl: publicRuntimeConfig.liveSpaBaseUrl,
-        },
-        preview: {
-          cmsBaseUrl: publicRuntimeConfig.previewBrBaseUrl,
-          spaBaseUrl: publicRuntimeConfig.previewSpaBaseUrl,
-        },
-      },
+      cmsBaseUrl: publicRuntimeConfig.cmsBaseUrl,
+      spaBaseUrl: publicRuntimeConfig.spaBaseUrl,
       request: { path: context.asPath || '' },
       visitor: Index.visitor,
     };
