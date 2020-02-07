@@ -382,7 +382,7 @@
       this.add({
         xtype: 'label',
         cls: 'x-form-item-label',
-        text: record.get('label')
+        text: this._createLabel(record)
       });
 
       var propertyFieldConfig = {
@@ -438,6 +438,10 @@
         }
 
         return this.add(propertyFieldConfig);
+    },
+
+    _createLabel: function(record) {
+      return record.get('label') + (record.get('required') ? ' *' : '');
     },
 
     _loadException: function (proxy, type, actions, options, response) {
