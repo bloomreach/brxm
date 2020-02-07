@@ -128,7 +128,16 @@ export default class SpaService {
   }
 
   renderComponent(component, properties = {}) {
-    if (!component || !this._legacyHandle || !angular.isFunction(this._legacyHandle.renderComponent)) {
+    if (!component || !this.isSpa()) {
+      return false;
+    }
+
+    if (!this._legacyHandle) {
+      this.RpcService.trigger('update', { properties, id: component.getReferenceNamespace() });
+      return true;
+    }
+
+    if (!angular.isFunction(this._legacyHandle.renderComponent)) {
       return false;
     }
 

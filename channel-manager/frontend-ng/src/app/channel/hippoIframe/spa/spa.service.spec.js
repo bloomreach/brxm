@@ -207,6 +207,29 @@ describe('SpaService', () => {
       expect(SpaService.renderComponent({})).toBe(false);
     });
 
+    it('calls a remote procedure when it is not a legacy SPA', () => {
+      spyOn(SpaService, 'isSpa').and.returnValue(true);
+      spyOn(RpcService, 'trigger');
+
+      const properties = { a: 'b' };
+      const component = jasmine.createSpyObj('component', ['getReferenceNamespace']);
+      component.getReferenceNamespace.and.returnValue('r1_r2_r3');
+
+      expect(SpaService.renderComponent(component, properties)).toBe(true);
+      expect(RpcService.trigger).toHaveBeenCalledWith('update', jasmine.objectContaining({
+        properties,
+        id: 'r1_r2_r3',
+      }));
+    });
+
+    it('does not call a remote procudure when it is not an SPA', () => {
+      spyOn(SpaService, 'isSpa').and.returnValue(false);
+      spyOn(RpcService, 'trigger');
+
+      expect(SpaService.renderComponent({})).toBe(false);
+      expect(RpcService.trigger).not.toHaveBeenCalled();
+    });
+
     describe('an SPA that defines a renderComponent function', () => {
       beforeEach(() => {
         iframeWindow.SPA = jasmine.createSpyObj('SPA', ['renderComponent']);
