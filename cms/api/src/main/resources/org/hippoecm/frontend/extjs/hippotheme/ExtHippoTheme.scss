@@ -1778,11 +1778,16 @@ a.x-menu-item {
       }
     }
 
-    .x-form-invalid,
-    .x-form-invalid:focus {
+    .x-form-invalid {
       background-color: transparent;
       border-color: $red;
       box-shadow: none;
+    }
+
+    .x-form-invalid:focus {
+      background-color: transparent;
+      border-color: $red;
+      box-shadow: 0 0 0 1px $red;
     }
   }
 
