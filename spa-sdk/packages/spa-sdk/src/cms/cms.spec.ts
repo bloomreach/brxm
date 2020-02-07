@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import { mocked } from 'ts-jest/utils';
 import { Typed } from 'emittery';
 import { Events } from '../events';
 import { CmsImpl } from './cms';
@@ -23,8 +22,8 @@ import { RpcClient, RpcServer } from './rpc';
 describe('CmsImpl', () => {
   let cms: CmsImpl;
   let eventBus: Typed<Events>;
-  let rpcClient: RpcClient<any, any>;
-  let rpcServer: RpcServer<any, any>;
+  let rpcClient: jest.Mocked<RpcClient<any, any>>;
+  let rpcServer: jest.Mocked<RpcServer<any, any>>;
 
   beforeEach(() => {
     eventBus = new Typed<Events>();
@@ -77,6 +76,12 @@ describe('CmsImpl', () => {
 
       expect(rpcServer.trigger).toHaveBeenCalledWith('ready', undefined);
     });
+
+    it('should register inject procedure', async () => {
+      cms.initialize({ window });
+
+      expect(rpcServer.register).toHaveBeenCalledWith('inject', expect.any(Function));
+    });
   });
 
   describe('onPageReady', () => {
@@ -94,12 +99,58 @@ describe('CmsImpl', () => {
 
       expect(rpcClient.on).toHaveBeenCalledWith('update', expect.any(Function));
 
-      const [, onUpdate] = mocked(rpcClient.on).mock.calls.pop()!;
+      const [, onUpdate] = rpcClient.on.mock.calls.pop()!;
       const event = { id: 'id', properties: { a: 'b' } };
       const emitSpy = spyOn(eventBus, 'emit');
       onUpdate(event);
 
       expect(emitSpy).toHaveBeenCalledWith('cms.update', event);
+    });
+  });
+
+  describe('inject', () => {
+    let inject: (string: any) => Promise<void>;
+    const sourceDocument = document;
+    const getDocument = jest.fn<Document | undefined, []>(() => sourceDocument);
+
+    beforeEach(() => {
+      rpcServer.register.mockImplementationOnce((command, callback) => { inject = callback; });
+      cms.initialize({ window });
+      Object.defineProperty(window, 'document', { get: getDocument });
+    });
+
+    it('should not proceed if there is no window', async () => {
+      getDocument.mockReturnValueOnce(undefined);
+
+      await expect(inject('something')).rejects.toThrow('SPA document is not ready.');
+    });
+
+    it('should put a script element', async () => {
+      inject('url1');
+
+      await new Promise(process.nextTick);
+
+      expect(window.document.querySelector('script[src="url1"]')).not.toBeNull();
+    });
+
+    it('should resolve a promise on load event', async () => {
+      const promise = inject('url2');
+
+      await new Promise(process.nextTick);
+      const element = window.document.querySelector('script[src="url2"]');
+      element?.dispatchEvent(new Event('load'));
+
+      await expect(promise).resolves.toBeUndefined();
+    });
+
+    it('should reject a promise on error event', async () => {
+      const promise = inject('url3');
+
+      await new Promise(process.nextTick);
+      const element = window.document.querySelector('script[src="url3"]');
+      element?.dispatchEvent(new Event('error'));
+
+      await expect(promise).rejects.toThrow("Failed to load resource 'url3'.");
     });
   });
 });

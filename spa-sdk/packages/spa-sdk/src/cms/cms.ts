@@ -64,6 +64,7 @@ export class CmsImpl implements Cms {
   ) {
     this.onPageReady = this.onPageReady.bind(this);
     this.onUpdate = this.onUpdate.bind(this);
+    this.inject = this.inject.bind(this);
   }
 
   initialize({ window = GLOBAL_WINDOW }: CmsOptions) {
@@ -71,6 +72,7 @@ export class CmsImpl implements Cms {
     this.notifyOnReady();
     this.eventBus.on('page.ready', this.onPageReady);
     this.rpcClient.on('update', this.onUpdate);
+    this.rpcServer.register('inject', this.inject);
   }
 
   private notifyOnReady() {
@@ -97,5 +99,21 @@ export class CmsImpl implements Cms {
 
   protected onUpdate(event: CmsUpdateEvent) {
     this.eventBus.emit('cms.update', event);
+  }
+
+  protected inject(resource: string) {
+    if (!this.window?.document) {
+      return Promise.reject(new Error('SPA document is not ready.'));
+    }
+
+    return new Promise((resolve, reject) => {
+      const script = this.window!.document.createElement('script');
+
+      script.type = 'text/javascript';
+      script.src = resource;
+      script.addEventListener('load', () => resolve());
+      script.addEventListener('error', () => reject(new Error(`Failed to load resource '${resource}'.`)));
+      this.window!.document.body.appendChild(script);
+    });
   }
 }
