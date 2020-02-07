@@ -14,14 +14,10 @@ Then, copy `.env.dist` file to `.env` and customize it to contain a correct [PUB
 PUBLIC_URL=http://localhost:3000
 ```
 
-Beware of [this issue](https://github.com/facebook/create-react-app/pull/7259). The PUBLIC_URL may not work in development mode.
-
 In the same `.env` file, also specify the brXM instance to fetch the page model from:
 ```
-REACT_APP_LIVE_BR_BASE_URL=http://localhost:8080/site
-REACT_APP_LIVE_SPA_BASE_URL=
-REACT_APP_PREVIEW_BR_BASE_URL=http://localhost:8080/site/_cmsinternal
-REACT_APP_PREVIEW_SPA_BASE_URL=/site/_cmsinternal?bloomreach-preview=true
+REACT_APP_CMS_BASE_URL=http://localhost:8080/site
+REACT_APP_SPA_BASE_URL=
 ```
 
 Finally, build and run the React app as follows:

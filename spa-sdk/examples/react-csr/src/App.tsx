@@ -25,16 +25,8 @@ axios.interceptors.request.use(config => ({ ...config, withCredentials: true }))
 export default function App(props: RouteComponentProps) {
   const configuration = {
     httpClient: axios,
-    options: {
-      live: {
-        cmsBaseUrl: process.env.REACT_APP_LIVE_BR_BASE_URL!,
-        spaBaseUrl: process.env.REACT_APP_LIVE_SPA_BASE_URL,
-      },
-      preview: {
-        cmsBaseUrl: process.env.REACT_APP_PREVIEW_BR_BASE_URL!,
-        spaBaseUrl: process.env.REACT_APP_PREVIEW_SPA_BASE_URL,
-      },
-    },
+    cmsBaseUrl: process.env.REACT_APP_CMS_BASE_URL!,
+    spaBaseUrl: process.env.REACT_APP_SPA_BASE_URL,
     request: {
       path: `${props.location.pathname}${props.location.search}`,
     },
