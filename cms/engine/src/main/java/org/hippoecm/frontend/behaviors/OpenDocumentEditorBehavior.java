@@ -120,18 +120,16 @@ public class OpenDocumentEditorBehavior extends AbstractDefaultAjaxBehavior {
     }
 
     private IEditor<?> getEditor(String documentId) throws ServiceException, RepositoryException {
-        final JcrNodeModel documentHandleModel = getJcrNodeModel(documentId);
+        final Node handle = UserSession.get().getJcrSession().getNodeByIdentifier(documentId);
+        JcrNodeModel documentHandleModel = new JcrNodeModel(handle);
         final IEditorManager editorManager = context.getService("service.edit", IEditorManager.class);
         final IEditor<?> editor = editorManager.getEditor(documentHandleModel);
         if (editor != null) {
+            log.debug("Open existing editor for handle: { uuid: {}}", documentId);
             return editor;
         }
+        log.debug("Open new editor for handle: { uuid: {}}", documentId);
         return editorManager.openEditor(documentHandleModel);
-    }
-
-    private JcrNodeModel getJcrNodeModel(final String documentId) throws RepositoryException {
-        final Node documentHandle = UserSession.get().getJcrSession().getNodeByIdentifier(documentId);
-        return new JcrNodeModel(documentHandle);
     }
 
     private String getDocumentId(String path) throws RepositoryException {

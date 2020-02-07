@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,21 +28,29 @@ public class NodeUsageEvent extends UsageEvent {
     public static final Logger log = LoggerFactory.getLogger(NodeUsageEvent.class);
 
     private static final String EVENT_PARAM_NODE_ID = "node";
+    private final IdentifierStrategy strategy;
 
-    public NodeUsageEvent(final String name, final IModel<Node> nodeModel) {
+    public NodeUsageEvent(final String name, final IModel<Node> nodeModel, IdentifierStrategy strategy) {
         super(name);
-
+        this.strategy = strategy;
         final Node node = nodeModel.getObject();
         if (node != null) {
             try {
-                setParameter(EVENT_PARAM_NODE_ID, getNodeIdentifier(node));
+                String id = getNodeIdentifier(node);
+                if (id !=null){
+                    setParameter(EVENT_PARAM_NODE_ID, id);
+                }
             } catch (RepositoryException e) {
                 log.warn("Error retrieving node identifier", e);
             }
         }
     }
 
+    public NodeUsageEvent(final String name, final IModel<Node> nodeModel) {
+        this(name, nodeModel, Node::getIdentifier);
+    }
+
     protected String getNodeIdentifier(final Node node) throws RepositoryException {
-        return node.getIdentifier();
+        return strategy.getIdentifier(node);
     }
 }

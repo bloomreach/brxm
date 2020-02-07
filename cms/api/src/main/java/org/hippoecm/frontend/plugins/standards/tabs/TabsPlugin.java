@@ -66,6 +66,7 @@ import org.hippoecm.frontend.service.ServiceTracker;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.service.render.RenderService;
 import org.hippoecm.frontend.skin.Icon;
+import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -423,6 +424,23 @@ public class TabsPlugin extends RenderPlugin {
         if (!isHidden) {
             focusRecentTab();
         }
+    }
+
+    /**
+     * Returns the jcr path of the selected TAB or {@code null} if it's hidden or none is selected.
+     *
+     * @return path of selected tab.
+     */
+    public String getSelectedTabPath() {
+        if (isHidden) {
+            return null;
+        }
+        final Tab tab = findMostRecentlySelectedTab();
+        if (tab == null) {
+            return null;
+        }
+        final Node tabNode = tab.getModel().getObject();
+        return JcrUtils.getNodePathQuietly(tabNode);
     }
 
     public void focusRecentTab() {

@@ -1,4 +1,4 @@
-// Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -43,15 +43,22 @@
     }
   }
 
+  .hippo-editor-large .hippo-editor-field-textarea {
+    line-height: $editor-large-line-height;
+  }
+
+  .hippo-editor-large .hippo-editor-field-datepicker {
+    font-size: $editor-large-font-size;
+  }
+
   .hippo-editor-field-title {
     margin-bottom: 4px;
   }
 
   .even,
   .odd {
-    margin-bottom: 18px;
-    padding-bottom: 18px;
-    border-bottom: 1px solid $gray12;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
 
     &:last-child,
     .even,
@@ -94,9 +101,14 @@
 
         &:last-child {
           border-bottom: none;
+          padding: 0;
         }
       }
     }
+  }
+
+  .hippo-node-field-multiple > .hippo-editor-field > .hippo-editor-field-subfield > .hippo-editor-field-title {
+    margin-bottom: 0;
   }
 
   .hippo-property-field-type-string.hippo-property-field-multiple .hippo-editor-field-value {

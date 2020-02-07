@@ -1,12 +1,12 @@
 /*
- *  Copyright 2009-2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -94,7 +94,7 @@ public class FieldPluginTest extends PluginTest {
         super.setUp();
 
         build(session, testData);
-        
+
         template = new JavaClusterConfig();
         template.addReference("wicket.model");
         template.addService("wicket.id");
@@ -152,16 +152,16 @@ public class FieldPluginTest extends PluginTest {
         start(config);
         tester.startPage(home);
 
-        tester.assertLabel("root:name", "Field");
+        tester.assertLabel("root:field-title:h3:name", "Field");
         assertNull(tester.getComponentFromLastRenderedPage("root:add"));
-        assertNull(tester.getComponentFromLastRenderedPage("root:required"));
+        assertNull(tester.getComponentFromLastRenderedPage("root:field-title:h3:required"));
 
         List<TestService> services = context.getServices("service.test", TestService.class);
         assertEquals(1, services.size());
         assertEquals("view", services.get(0).getMode());
 
         // verify
-        verify(engine, modelRef);        
+        verify(engine, modelRef);
     }
 
     @Test
@@ -192,7 +192,7 @@ public class FieldPluginTest extends PluginTest {
         assertEquals(0, services.size());
 
         // verify
-        verify(engine, modelRef);        
+        verify(engine, modelRef);
     }
 
     @Test
@@ -220,9 +220,9 @@ public class FieldPluginTest extends PluginTest {
         start(config);
         tester.startPage(home);
 
-        tester.assertLabel("root:name", "Field");
+        tester.assertLabel("root:field-title:h3:name", "Field");
         assertNull(tester.getComponentFromLastRenderedPage("root:add"));
-        assertNull(tester.getComponentFromLastRenderedPage("root:required"));
+        assertNull(tester.getComponentFromLastRenderedPage("root:field-title:h3:required"));
 
         List<TestService> services = context.getServices("service.test", TestService.class);
         assertEquals(2, services.size());
@@ -230,7 +230,7 @@ public class FieldPluginTest extends PluginTest {
         assertEquals("view", services.get(1).getMode());
 
         // verify
-        verify(engine, modelRef, baseRef);        
+        verify(engine, modelRef, baseRef);
     }
 
     @Test
@@ -258,16 +258,16 @@ public class FieldPluginTest extends PluginTest {
         start(config);
         tester.startPage(home);
 
-        tester.assertLabel("root:name", "Field");
+        tester.assertLabel("root:field-title:h3:name", "Field");
         assertNull(tester.getComponentFromLastRenderedPage("root:add"));
-        assertNull(tester.getComponentFromLastRenderedPage("root:required"));
+        assertNull(tester.getComponentFromLastRenderedPage("root:field-title:h3:required"));
 
         List<TestService> services = context.getServices("service.test", TestService.class);
         assertEquals(1, services.size());
         assertEquals("compare", services.get(0).getMode());
 
         // verify
-        verify(engine, modelRef, baseRef);        
+        verify(engine, modelRef, baseRef);
     }
 
     @Test
@@ -294,16 +294,16 @@ public class FieldPluginTest extends PluginTest {
         start(config);
         tester.startPage(home);
 
-        tester.assertLabel("root:name", "Field");
+        tester.assertLabel("root:field-title:h3:name", "Field");
         assertNull(tester.getComponentFromLastRenderedPage("root:add"));
-        assertNull(tester.getComponentFromLastRenderedPage("root:required"));
+        assertNull(tester.getComponentFromLastRenderedPage("root:field-title:h3:required"));
 
         List<TestService> services = context.getServices("service.test", TestService.class);
         assertEquals(1, services.size());
         assertEquals("view", services.get(0).getMode());
 
         // verify
-        verify(engine, modelRef, baseRef);        
+        verify(engine, modelRef, baseRef);
     }
 
 }

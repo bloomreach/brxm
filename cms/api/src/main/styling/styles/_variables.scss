@@ -1,4 +1,4 @@
-// Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -188,6 +188,10 @@ $editor-subfield-in-compound-border: $gray12;
 $editor-compound-field-color:        $gray87;
 $editor-compound-field-border:       $gray12;
 $editor-padding:                     24px;
+
+$editor-large-font-size:             26px;
+$editor-large-input-height:          32px;
+$editor-large-line-height:           $editor-large-input-height / $editor-large-font-size;
 
 // Editor preview
 $editor-preview-field-bgcolor:       $lightest-shade;

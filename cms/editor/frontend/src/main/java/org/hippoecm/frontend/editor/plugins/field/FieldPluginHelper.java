@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
  *  limitations under the License.
  */
 package org.hippoecm.frontend.editor.plugins.field;
+
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.Component;
@@ -33,6 +35,8 @@ import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.types.ITypeDescriptor;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
+import org.hippoecm.frontend.validation.ValidatorUtils;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.repository.l10n.LocalizationService;
 import org.onehippo.repository.l10n.ResourceBundle;
@@ -223,6 +227,23 @@ public class FieldPluginHelper implements IDetachable {
             return new StringResourceModel(hint, component).setDefaultValue(hint);
         }
         return null;
+    }
+
+    public boolean isCompoundField() {
+        if (field == null) {
+            return false;
+        }
+
+        final List<String> superTypes = field.getTypeDescriptor().getSuperTypes();
+        return superTypes.contains(HippoNodeType.NT_COMPOUND);
+    }
+
+    public boolean isRequired() {
+        if (field == null) {
+            return false;
+        }
+
+        return ValidatorUtils.hasRequiredValidator(field.getValidators()) || field.isMandatory();
     }
 
     String getStringFromBundle(final String key) {

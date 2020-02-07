@@ -42,6 +42,7 @@ import org.hippoecm.frontend.service.NgxLoggerLevel;
 import org.hippoecm.frontend.service.ResourceType;
 import org.hippoecm.frontend.service.UserSettings;
 import org.hippoecm.frontend.session.PluginUserSession;
+import org.hippoecm.frontend.usagestatistics.UsageStatisticsSettings;
 import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.repository.security.User;
@@ -160,7 +161,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
 
     private AppSettings createAppSettings(String initialPath, boolean localLogin, String logLevelQueryParamString) {
 
-        final URI cmsNavAppResourceUrl = URI.create("navapp");
+        final URI cmsNavAppResourceUrl = URI.create("angular/navapp");
         // It is assumed that the web.xml contains a servlet mapping for /navapp and that
         // the ResourceServlet is being used to serve the resources inside of that directory.
         // When running mvn package the files needed for the navapp (and navigation-communication)
@@ -187,6 +188,7 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
 
         final int iframesConnectionTimeout = readIframesConnectionTimeout();
         final NgxLoggerLevel ngxLoggerLevel = readLogLevel(logLevelQueryParamString);
+        final boolean usageStaticsticsEnabled = UsageStatisticsSettings.get().isEnabled();
 
         return new AppSettings() {
 
@@ -228,6 +230,11 @@ public class NavAppSettingsService extends Plugin implements INavAppSettingsServ
             @Override
             public NgxLoggerLevel getLogLevel() {
                 return ngxLoggerLevel;
+            }
+
+            @Override
+            public boolean isUsageStatisticsEnabled() {
+                return usageStaticsticsEnabled;
             }
         };
     }
