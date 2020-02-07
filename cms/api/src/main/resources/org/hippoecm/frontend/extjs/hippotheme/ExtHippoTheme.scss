@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1529,26 +1529,31 @@ a.x-menu-item {
   background-color: $modal-border-color;
 
   .x-window-tl .x-window-header {
+    align-items: center;
     background-color: $modal-header-bgcolor;
-    color: $darker-shade;
+    border-bottom: 1px solid $gray12;
+    color: $gray87;
+    display: flex;
+    flex-direction: row-reverse;
     font: normal $modal-header-font-size $font-family-base;
-    text-align: left;
     height: $modal-header-height;
-
+    justify-content: space-between;
     padding: 0 $modal-header-padding;
+    text-align: left;
 
     .x-window-header-text {
-      display: table-cell;
-      height: $modal-header-height;
-      vertical-align: middle;
+      font-weight: 600;
     }
+
     .x-tool-close {
-      width: 16px;
-      height: 16px;
-      margin-top: $modal-header-padding - 4;
-      background: url("#{$images_extjs}/icons/delete.svg") no-repeat left;
+      background: url("#{$images_extjs}/icons/delete.svg") no-repeat 5px 0;
+      background-size: 24px 24px;
+      height: 24px;
+      width: 24px;
+
       &:hover {
-        background: url("#{$images_extjs}/icons/delete-hover.svg") no-repeat left;
+        background: url("#{$images_extjs}/icons/delete-hover.svg") no-repeat 5px 0;
+        background-size: 24px 24px;
       }
     }
 
@@ -1614,6 +1619,180 @@ a.x-menu-item {
     .x-toolbar-left-row .x-toolbar-cell:first-child {
       padding-left: $modal-footer-padding;
     }
+  }
+}
+
+.br-window.x-window {
+  .x-window-mc {
+    font: $font-size-base $font-family-base;
+  }
+
+  .x-window-footer {
+    border-top: 1px solid rgba(0, 0, 0, .12);
+  }
+}
+
+
+.br-form {
+  text-align: left;
+
+  /** Don't clip blue focus shadow in Firefox **/
+  .ext-gecko & .x-form-item {
+    overflow: visible !important;
+  }
+
+  .x-form-field,
+  .x-form-item,
+  .x-form-item-label {
+    font-size: 14px;
+  }
+
+  .x-form-item {
+    margin-bottom: 0;
+  }
+
+  .x-form-item-label {
+    color: $gray60;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .x-form-element {
+    padding-bottom: 16px;
+
+    .x-item-disabled {
+      background-color: #ebeced;
+
+      &:focus,
+      &:focus-within {
+        border-color: $gray38 !important;
+        box-shadow: none !important;
+      }
+
+      input {
+        background-color: transparent;
+      }
+    }
+
+    input {
+      border: 1px solid $gray38;
+      border-radius: 4px;
+      box-sizing: border-box;
+      height: 36px;
+      padding: 0 8px 0 8px;
+      width: 100%;
+
+      &:focus {
+        border-color: $bluePrimary;
+        box-shadow: 0 0 0 1px $bluePrimary;
+      }
+    }
+
+    &.br-combo {
+      input {
+        border-right: none;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+      }
+
+      .x-form-arrow-trigger {
+        background: $white url(images/form/trigger.svg) no-repeat center;
+        border: 1px solid $gray38;
+        border-left: 0;
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+        height: 34px;
+        width: 34px;
+      }
+
+      input[type="text"][disabled] + .x-form-arrow-trigger {
+        background-color: #ebeced;
+      }
+
+      &:focus-within {
+        .x-form-arrow-trigger {
+          border-color: $bluePrimary;
+          box-shadow: 0 0 0 1px $bluePrimary;
+        }
+      }
+    }
+
+    &.br-linkpicker {
+      .x-form-field-wrap {
+        border: 1px solid $gray38;
+        border-radius: 4px;
+        box-sizing: border-box;
+        display: flex;
+        height: 36px;
+        padding: 0 0 0 8px;
+        width: 100% !important;
+      }
+
+      .x-form-field-wrap:focus-within {
+        border-color: $bluePrimary;
+        box-shadow: 0 0 0 1px $bluePrimary;
+      }
+
+      .x-form-text {
+        border-radius: 0;
+        border: 0;
+        height: auto;
+        padding: 0 8px 0 0;
+      }
+
+      .x-form-text:focus {
+        box-shadow: none;
+      }
+
+      .x-form-trigger {
+        background-color: transparent;
+        border: 0;
+        height: 100%;
+        width: 36px;
+      }
+
+      .x-form-trigger:last-child {
+        border-bottom-right-radius: 4px;
+        border-top-right-radius: 4px;
+      }
+    }
+
+    &.br-checkbox {
+      padding-bottom: 0;
+
+      .x-item-disabled {
+        background-color: transparent;
+      }
+
+      .x-form-check-wrap {
+        height: 24px;
+      }
+
+      input {
+        top: -8px;
+      }
+
+      input,
+      input:focus,
+      &:focus-within {
+        border: 0;
+        box-shadow: none;
+      }
+    }
+
+    .x-form-invalid,
+    .x-form-invalid:focus {
+      background-color: transparent;
+      border-color: $red;
+      box-shadow: none;
+    }
+  }
+
+  .x-form-error-message {
+    background-color: $danger-light;
+    border: 1px solid $red;
+    border-radius: 4px;
+    font-size: 14px;
   }
 }
 

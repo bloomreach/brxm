@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2019 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -109,6 +109,7 @@
     <commons-lang.version>2.6</commons-lang.version>
     <commons-io.version>2.6</commons-io.version>
     <commons-proxy.version>1.0</commons-proxy.version>
+    <commons-imaging.version>1.0-alpha1</commons-imaging.version>
 
     <org.apache.geronimo.specs.j2ee-connector.version>1.1.1</org.apache.geronimo.specs.j2ee-connector.version>
 
@@ -123,13 +124,12 @@
     <json-lib.version>2.4</json-lib.version>
 
     <drewnoakes-extractor.version>2.11.0</drewnoakes-extractor.version>
-    <sanselan.version>0.97-incubator</sanselan.version>
     <imgscalr-lib.version>4.2</imgscalr-lib.version>
 
     <yui.sources.version>1.01.12</yui.sources.version>
     <hippo.htmldiff.version>2.0.0</hippo.htmldiff.version>
     <hippo.jcrdiff.version>1.01.07</hippo.jcrdiff.version>
-    <hippo.ckeditor.version>4.12.1-h2-SNAPSHOT</hippo.ckeditor.version>
+    <hippo.ckeditor.version>4.12.1-h2</hippo.ckeditor.version>
 
     <jslint.plugin.version>1.0.1</jslint.plugin.version>
 

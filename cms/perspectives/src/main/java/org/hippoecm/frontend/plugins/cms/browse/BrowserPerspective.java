@@ -16,9 +16,9 @@
 package org.hippoecm.frontend.plugins.cms.browse;
 
 import java.util.Iterator;
+import java.util.Optional;
 
 import javax.jcr.Node;
-import javax.jcr.RepositoryException;
 
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
@@ -113,21 +113,8 @@ public class BrowserPerspective extends Perspective {
             @Override
             void onUpdateModel(final IModel<Node> oldModel, final IModel<Node> newModel) {
                 final String newTab = JcrUtils.getNodePathQuietly(newModel.getObject());
-
-                final ParentApiCaller parentApiCaller = new ParentApiCaller();
-                if (newTab == null) {
-                    parentApiCaller.updateNavLocation(getAppPath());
-                } else {
-                    try {
-                        final String path = String.format("%s/uuid/%s", getAppPath(), newModel.getObject().getIdentifier());
-                        parentApiCaller.updateNavLocation(path);
-                    } catch (RepositoryException e) {
-                        log.warn("Failed to update nav location for document with path '{}'", newTab);
-                    }
-                }
-
+                updateNavLocation(newTab);
                 state.onTabChanged(newTab);
-
             }
         };
 
@@ -197,6 +184,7 @@ public class BrowserPerspective extends Perspective {
     protected void onActivated() {
         super.onActivated();
         tabs.focusRecentTabUnlessHidden();
+        updateNavLocation(tabs.getSelectedTabPath());
     }
 
     @Override
@@ -285,5 +273,13 @@ public class BrowserPerspective extends Perspective {
             }
         }
 
+    }
+
+    private void updateNavLocation(String selectedTabPath) {
+        final String appPath = getAppPath();
+        final String path = Optional.ofNullable(selectedTabPath)
+                .map(tabPath -> String.format("%s/path%s", appPath, tabPath))
+                .orElse(appPath);
+        new ParentApiCaller().updateNavLocation(path);
     }
 }

@@ -1,4 +1,4 @@
-// Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+// Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -110,8 +110,7 @@
 
   .dialog-link,
   .hippo-editor-field-textarea,
-  .hippo-editor-field-value-container,
-  .yui-date-time-field input {
+  .hippo-editor-field-value-container {
     background-color: $editor-subfield-bg;
     border: 1px solid $editor-subfield-border;
     border-radius: $editor-field-border-radius;
@@ -124,7 +123,12 @@
     }
 
     .hippo-editor-large & {
-      font-size: 26px;
+      font-size: $editor-large-font-size;
+      line-height: $editor-large-line-height;
+
+      input {
+        height: $editor-large-input-height;
+      }
     }
 
     &.non-breaking {
@@ -242,6 +246,12 @@
     margin-right: 8px;
     white-space: nowrap;
   }
+
+  .expand-collapse-icon {
+    display: inline-block;
+    transform: rotate(0);
+    transition: transform 300ms ease-out;
+  }
 }
 
 .hippo-editor-compound-field {
@@ -254,17 +264,21 @@
   > .hippo-editor-field {
     border: 1px solid $editor-compound-field-border;
     border-radius: $editor-field-border-radius;
-    padding: 16px 8px;
+    padding: 8px;
 
     > .hippo-editor-field-title {
       color: $editor-compound-field-color;
       font-weight: 600;
-      margin-bottom: 8px;
+      margin-bottom: 0;
     }
 
     > .hippo-editor-field-subfield {
-      padding-bottom: 4px;
-      padding-top: 8px;
+      padding-top: 0;
+
+      // add margin to titles inside a field
+      .hippo-editor-field-subfield-item .hippo-editor-field-title:not(.collapsed) {
+        margin: 0 0 6px 0;
+      }
 
       &:not(:last-child) {
         border-bottom: 1px solid $gray12;
@@ -277,7 +291,86 @@
   }
 }
 
-@include hippo-editor-field-bg(1, 5);
+.hippo-editor-compound-field > .hippo-editor-field > .add-link {
+  margin-top: 7px;
+}
+
+.collapsible {
+  &.hippo-editor-field-title {
+    align-items: center;
+    display: inline-flex;
+    color: $editor-compound-field-color;
+    cursor: pointer;
+    font-weight: 600;
+    line-height: 20px;
+    padding-bottom: 4px;
+    padding-left: 2px;
+    padding-top: 4px;
+
+    > span {
+      padding-left: 4px;
+
+      &:first-of-type {
+        padding-left: 8px;
+      }
+    }
+  }
+
+  &.hippo-editor-field-subfield-item {
+    transition:
+      margin 500ms ease-out,
+      max-height 500ms ease-out,
+      opacity 500ms ease-out,
+      padding 500ms ease-out;
+  }
+}
+
+.hippo-editor-field-title.collapsed .expand-collapse-icon {
+  transform: rotate(-90deg);
+}
+
+.collapsed {
+  .hippo-editor-field-subfield,
+  .hippo-editor-field-subfield-item {
+    border: 0 !important;
+    margin: 0 !important;
+    max-height: 0 !important;
+    opacity: 0 !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+  }
+}
+
+.hippo-editor-field > .hippo-editor-field-subfield.collapsed > .hippo-editor-field-title.collapsed {
+  margin-bottom: 0;
+}
+
+.hippo-node-field-multiple > .hippo-editor-field > .hippo-editor-field-subfield > .hippo-editor-field-title.collapsed {
+  margin-bottom: 8px;
+}
+
+.hippo-editor-compound-field.collapsed > .hippo-editor-field {
+  > .hippo-editor-field-title .expand-collapse-icon {
+    transform: rotate(-90deg);
+  }
+
+  > .hippo-editor-field-title {
+    margin-bottom: 0;
+  }
+
+  > .add-link {
+    margin-top: 8px;
+  }
+
+  > .hippo-editor-field-subfield {
+    border: 0;
+    margin: 0;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    padding: 0;
+  }
+}
 
 .hippo-editor-field-title {
   color: $editor-field-title-color;
@@ -301,8 +394,7 @@
   }
 
   .hippo-editor-field-title {
-    font-size: 14px;
-    margin-bottom: 4px;
+    margin-bottom: 0;
   }
 
   .hippo-editor-field-subfield-input {

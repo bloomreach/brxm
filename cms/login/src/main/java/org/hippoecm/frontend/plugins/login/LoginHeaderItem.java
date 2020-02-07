@@ -24,6 +24,7 @@ import org.apache.wicket.request.Response;
 import org.apache.wicket.request.resource.JavaScriptResourceReference;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.HippoHeaderItem;
+import org.hippoecm.frontend.Main;
 
 public class LoginHeaderItem extends HippoHeaderItem {
 
@@ -50,7 +51,7 @@ public class LoginHeaderItem extends HippoHeaderItem {
     public void render(final Response response) {
 
         OnDomReadyHeaderItem.forScript(
-                "if (top.location != self.location) { top.location.reload(); };"
+                String.format("if (top.location != location && new URL(location.href).searchParams.has('%s')) { top.location.reload(); };", Main.CMS_AS_IFRAME_QUERY_PARAMETER)
         ).render(response);
 
         CssHeaderItem.forReference(isDevelopmentMode() ? THEME_CSS : THEME_MIN_CSS).render(response);

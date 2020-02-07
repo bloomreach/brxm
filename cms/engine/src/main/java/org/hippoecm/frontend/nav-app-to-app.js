@@ -27,6 +27,8 @@
 (function () {
   'use strict';
 
+  const NAVAPP_COMMUNICATION_LIBRARY = window.bloomreach && window.bloomreach['navapp-communication'];
+
   class IFrameConnections {
     constructor(parentApiPromise) {
       this.parentApiPromise = parentApiPromise;
@@ -108,9 +110,12 @@
       .then(childApi => childApi.navigate({ path }, triggeredBy));
   };
 
-  let isFirstNavigation = true;
-
   const cmsChildApi = {
+
+    getConfig() {
+      const apiVersion = (NAVAPP_COMMUNICATION_LIBRARY && NAVAPP_COMMUNICATION_LIBRARY.getVersion()) || 'unknown';
+      return { apiVersion };
+    },
 
     beforeNavigation () {
       const beforeNavigationPromises = Hippo.iframeConnections.getChildApiPromises()
@@ -152,10 +157,12 @@
             return navigateIframe(iframe, pathElements.join('/'), triggeredBy);
 
           case 'experience-manager':
-            // on first navigation do not navigate into the iframe
-            // it might not have registered yet and we do not support
-            // deeplinking to channel detail views yet
-            if (isFirstNavigation) {
+            // if iframe is undefined most probably it means it's not initialized yet
+            // we can't distinguish between not initialized yet state and not defined at al
+            if (!iframe) {
+              const message = '"experience-manager" iframe is not registered. Internal iframe navigation step is skipped.';
+              console.warn(message);
+
               return Promise.resolve();
             }
 
@@ -186,11 +193,7 @@
         }
       };
 
-      return navigateToPerspective()
-        .then(() => {
-          isFirstNavigation = false;
-          appLinkElement.click();
-        });
+      return navigateToPerspective().then(() => appLinkElement.click());
     },
 
     logout () {
@@ -231,13 +234,15 @@
   });
 
 
-  const parentApiPromise = window.bloomreach && window.bloomreach['navapp-communication']
-    .connectToParent({parentOrigin: '${parentOrigin}', methods: cmsChildApi})
+  const parentApiPromise = (NAVAPP_COMMUNICATION_LIBRARY && NAVAPP_COMMUNICATION_LIBRARY.connectToParent({parentOrigin: '${parentOrigin}', methods: cmsChildApi})
     .then(parentApi => {
       Hippo.UserActivity.registerOnInactive(() => parentApi.onSessionExpired());
       Hippo.UserActivity.registerOnActive(() => parentApi.onUserActivity());
+      parentApi.getConfig().then(config => {
+        console.info(`Connected to parent, parent api version = ${config.apiVersion}`);
+      });
       return parentApi;
-    });
+    })) || Promise.reject(new Error('navapp-communication library is required'));
 
   Hippo.iframeConnections = new IFrameConnections(
     parentApiPromise
