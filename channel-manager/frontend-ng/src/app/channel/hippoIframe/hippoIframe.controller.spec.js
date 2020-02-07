@@ -251,9 +251,22 @@ describe('hippoIframeCtrl', () => {
     expect(SpaService.initLegacy).toHaveBeenCalled();
   });
 
+  it('injects the iframe bundle when the SPA SDK is ready', () => {
+    Object.defineProperty(contentWindow, 'document', { get: () => { throw new Error('Access denied.'); } });
+    spyOn(SpaService, 'inject');
+    DomService.getAssetUrl.and.returnValue('url');
+
+    $rootScope.$emit('spa:ready');
+    $rootScope.$digest();
+
+    expect(DomService.getAssetUrl).toHaveBeenCalledWith(jasmine.stringMatching('iframe'));
+    expect(SpaService.inject).toHaveBeenCalledWith('url');
+  });
+
   it('triggers an event when the SPA SDK is ready', () => {
     const listener = jasmine.createSpy('listener');
     Object.defineProperty(contentWindow, 'document', { get: () => { throw new Error('Access denied.'); } });
+    spyOn(SpaService, 'inject');
 
     $rootScope.$on('hippo-iframe:load', listener);
     $rootScope.$emit('spa:ready');

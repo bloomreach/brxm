@@ -130,6 +130,9 @@ class HippoIframeCtrl {
       return;
     }
 
+    // TODO: call penpal connect to child
+    await this.SpaService.inject(this.DomService.getAssetUrl(iframeBundle));
+
     this.$rootScope.$broadcast('hippo-iframe:load');
   }
 
