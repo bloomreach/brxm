@@ -688,6 +688,10 @@
   overflow-x: hidden !important;
 }
 
+.br-delete-variant-btn {
+  margin-top: 2px;
+}
+
 .componentPropertiesForm .x-item-disabled .x-form-trigger-over {
   background-position: 50% 50% !important;
 }

@@ -84,7 +84,7 @@
       if (this.variant.id !== 'hippo-default') {
         this.deleteButton = new Ext.Button({
           text: Hippo.ChannelManager.ChannelEditor.Resources['properties-form-button-delete'],
-          cls: 'btn btn-default qa-delete-button',
+          cls: 'btn btn-default br-delete-variant-btn qa-delete-button',
           handler: function () {
             Ext.Ajax.request({
               method: 'DELETE',
