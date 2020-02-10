@@ -414,6 +414,7 @@ public interface FolderWorkflow extends Workflow {
      * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
      * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the repository
      */
+    @WorkflowAction(loggable = false, mutates = false)
     Folder get() throws WorkflowException, RepositoryException;
 
     /**
@@ -422,6 +423,7 @@ public interface FolderWorkflow extends Workflow {
      * @throws WorkflowException   indicates that the work-flow call failed due work-flow specific conditions
      * @throws RepositoryException indicates that the work-flow call failed because of storage problems internal to the repository
      */
+    @WorkflowAction(loggable = false)
     Folder update(Folder folder) throws WorkflowException, RepositoryException;
 
 }
