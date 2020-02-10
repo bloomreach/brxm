@@ -456,34 +456,4 @@ public class PageModelAggregationValve extends AggregationValve {
         }
     }
 
-    /**
-     * Invoke custom metadata decorators to give a chance to add more metadata for the component window.
-     * @param menuWrapperModel a wrapper model for a {@link CommonMenu}
-     */
-//    private void decorateCommonMenuMetadata(final DecoratedPageModelEntityWrapper<CommonMenu> menuWrapperModel) {
-//        if (CollectionUtils.isEmpty(metadataDecorators)) {
-//            return;
-//        }
-//
-//        final HstRequestContext requestContext = RequestContextProvider.get();
-//
-//        for (MetadataDecorator decorator : metadataDecorators) {
-//            decorator.decorateCommonMenuMetadata(requestContext, menuWrapperModel.getData(), menuWrapperModel);
-//        }
-//    }
-//
-//    /**
-//     * @param menuWrapperModel a wrapper model for a {@link HippoDocumentBean}
-//     */
-//    private void decorateDocumentMetadata(final DecoratedPageModelEntityWrapper<HippoDocumentBean> menuWrapperModel) {
-//        if (CollectionUtils.isEmpty(metadataDecorators)) {
-//            return;
-//        }
-//
-//        final HstRequestContext requestContext = RequestContextProvider.get();
-//
-//        for (MetadataDecorator decorator : metadataDecorators) {
-//            decorator.decorateContentMetadata(requestContext, menuWrapperModel.getData(), menuWrapperModel);
-//        }
-//    }
 }
