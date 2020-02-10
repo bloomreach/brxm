@@ -55,6 +55,14 @@ describe('CmsImpl', () => {
       expect(rpcServer.trigger).toHaveBeenCalledWith('ready', undefined);
     });
 
+    it('should trigger ready event only once per window', () => {
+      getReadyState.mockReturnValueOnce('interactive');
+      cms.initialize({ window });
+      cms.initialize({ window });
+
+      expect(rpcServer.trigger).toHaveBeenCalledTimes(1);
+    });
+
     it('should not trigger ready event on state change if the state is still loading', async () => {
       getReadyState.mockReturnValueOnce('loading');
       getReadyState.mockReturnValueOnce('loading');

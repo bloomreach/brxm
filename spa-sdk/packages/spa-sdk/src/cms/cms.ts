@@ -68,6 +68,10 @@ export class CmsImpl implements Cms {
   }
 
   initialize({ window = GLOBAL_WINDOW }: CmsOptions) {
+    if (this.window === window) {
+      return;
+    }
+
     this.window = window;
     this.notifyOnReady();
     this.eventBus.on('page.ready', this.onPageReady);
