@@ -14,8 +14,6 @@
  * limitations under the License.
  */
 
-import { connectToParent } from '@bloomreach/navapp-communication';
-
 class ChannelService {
   constructor(
     $log,
@@ -25,6 +23,7 @@ class ChannelService {
     CatalogService,
     CmsService,
     ConfigService,
+    NavappCommunication,
     FeedbackService,
     HstService,
     PathService,
@@ -42,6 +41,7 @@ class ChannelService {
     this.CatalogService = CatalogService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
+    this.NavappCommunication = NavappCommunication;
     this.FeedbackService = FeedbackService;
     this.HstService = HstService;
     this.PathService = PathService;
@@ -58,7 +58,7 @@ class ChannelService {
       navigate: (location, triggeredBy) => this.navigate(location, triggeredBy),
       beforeNavigation: () => this._beforeNavigation(),
     };
-    this.parentApiPromise = connectToParent({ parentOrigin, methods });
+    this.parentApiPromise = this.NavappCommunication.connectToParent({ parentOrigin, methods });
   }
 
   /**
