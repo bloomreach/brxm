@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@
     var Lang = YAHOO.lang,
       knownParams = ['path=', 'uuid='],
       isSupported = history && Lang.isFunction(history.pushState),
+      pageTitle = document.title,
       ParameterHistoryImpl,
       ParameterHistoryStub;
 
@@ -55,6 +56,8 @@
         // button will not cause a skip in the popstate handler (since the custom state object would not be found).
         // Note: This will not affect the state value for the first popstate callback on Safari, it is always null.
         history.replaceState(this.state, '', document.location.search);
+        var path = document.location.search.substring(document.location.search.indexOf('/'));
+        document.title = pageTitle + ' | ' + path;
 
         this.initialized = true;
       },
@@ -69,6 +72,7 @@
         } else {
           history.pushState(this.state, '', url);
         }
+        document.title = pageTitle + ' | ' + path;
       },
 
       // Add or replace request parameter name=value. From the current query string, remove all known
