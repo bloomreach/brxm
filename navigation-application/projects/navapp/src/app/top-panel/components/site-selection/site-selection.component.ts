@@ -16,13 +16,18 @@
 
 import { FlatTreeControl } from '@angular/cdk/tree';
 import {
+  AfterContentInit,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
+  ElementRef,
   OnDestroy,
   OnInit,
+  ViewChild,
 } from '@angular/core';
-import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
+import { MatTree, MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { Site } from '@bloomreach/navapp-communication';
+import { PerfectScrollbarComponent } from 'ngx-perfect-scrollbar';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -44,7 +49,7 @@ interface SiteFlatNode {
   styleUrls: ['site-selection.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SiteSelectionComponent implements OnInit, OnDestroy {
+export class SiteSelectionComponent implements OnInit, AfterContentInit, OnDestroy {
   searchText = '';
   treeControl = new FlatTreeControl<SiteFlatNode>(
     node => node.level,
@@ -58,6 +63,12 @@ export class SiteSelectionComponent implements OnInit, OnDestroy {
   );
   dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
+  @ViewChild(PerfectScrollbarComponent, { static: true })
+  scrollbar: PerfectScrollbarComponent;
+
+  @ViewChild(MatTree, { static: true, read: ElementRef })
+  treeElRef: ElementRef<HTMLElement>;
+
   private sites: Site[];
   private selectedSite: Site;
   private readonly unsubscribe = new Subject();
@@ -65,6 +76,7 @@ export class SiteSelectionComponent implements OnInit, OnDestroy {
   constructor(
     private readonly siteService: SiteService,
     private readonly rightSidePanelService: RightSidePanelService,
+    private readonly cd: ChangeDetectorRef,
   ) { }
 
   get isNotFoundPanelVisible(): boolean {
@@ -85,6 +97,10 @@ export class SiteSelectionComponent implements OnInit, OnDestroy {
       this.selectedSite = x;
       this.updateDataSource();
     });
+  }
+
+  ngAfterContentInit(): void {
+    this.scrollToActiveNode();
   }
 
   ngOnDestroy(): void {
@@ -213,5 +229,17 @@ export class SiteSelectionComponent implements OnInit, OnDestroy {
     }
 
     return undefined;
+  }
+
+  private scrollToActiveNode(): void {
+    this.cd.detectChanges(); // Ensures the content of MatTree is checked
+
+    const nodeEl: HTMLElement = this.treeElRef.nativeElement.querySelector('mat-tree-node.active');
+
+    if (!nodeEl) {
+      return;
+    }
+
+    this.scrollbar.directiveRef.scrollToY(nodeEl.offsetTop);
   }
 }

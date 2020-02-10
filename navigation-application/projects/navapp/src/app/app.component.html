@@ -1,5 +1,5 @@
 <!--
-  Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+  Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -15,8 +15,8 @@
   -->
 
 <mat-sidenav-container>
-  <mat-sidenav position="start">
-    <brna-site-selection></brna-site-selection>
+  <mat-sidenav #sidenav position="start">
+    <brna-site-selection *ngIf="sidenav.opened"></brna-site-selection>
   </mat-sidenav>
   <mat-sidenav-content>
     <div class="overlay" [@showOverlay]="isOverlayVisible"></div>

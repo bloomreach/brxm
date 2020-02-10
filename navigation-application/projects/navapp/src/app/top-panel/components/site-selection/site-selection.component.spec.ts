@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
-import { MatIconModule } from '@angular/material/icon';
 import { MatTreeModule } from '@angular/material/tree';
 import { Site } from '@bloomreach/navapp-communication';
 import { PerfectScrollbarModule } from 'ngx-perfect-scrollbar';
-import { Subject } from 'rxjs';
+import { of } from 'rxjs';
 
 import { SiteService } from '../../../services/site.service';
 import { RightSidePanelService } from '../../services/right-side-panel.service';
@@ -31,7 +31,6 @@ describe('SiteSelectionComponent', () => {
   let component: SiteSelectionComponent;
   let fixture: ComponentFixture<SiteSelectionComponent>;
 
-  const selectSiteSubject = new Subject<Site>();
   const mockSites: Site[] = [
     {
       siteId: -1,
@@ -88,19 +87,18 @@ describe('SiteSelectionComponent', () => {
     updateSelectedSite: Promise.resolve(),
     setSelectedSite: undefined,
   });
-  siteServiceMock.selectedSite$ = selectSiteSubject;
+  siteServiceMock.selectedSite$ = of(mockSites[1]);
   siteServiceMock.sites = mockSites;
 
   const rightSidePanelServiceMock = jasmine.createSpyObj('RightSidePanelService', [
     'close',
   ]);
 
-  beforeEach(() => {
+  beforeEach(async(() => {
     fixture = TestBed.configureTestingModule({
       imports: [
         FormsModule,
         MatTreeModule,
-        MatIconModule,
         PerfectScrollbarModule,
       ],
       declarations: [SiteSelectionComponent],
@@ -108,12 +106,17 @@ describe('SiteSelectionComponent', () => {
         { provide: SiteService, useValue: siteServiceMock },
         { provide: RightSidePanelService, useValue: rightSidePanelServiceMock },
       ],
+      schemas: [NO_ERRORS_SCHEMA],
     }).createComponent(SiteSelectionComponent);
 
     component = fixture.componentInstance;
-  });
 
-  it('should be crated', () => {
+    component.ngOnInit();
+
+    fixture.detectChanges();
+  }));
+
+  it('should be created', () => {
     expect(component).toBeDefined();
   });
 
@@ -132,5 +135,17 @@ describe('SiteSelectionComponent', () => {
     component.onNodeClicked(node);
 
     expect(siteServiceMock.updateSelectedSite).toHaveBeenCalledWith(expected);
+  });
+
+  it('should scroll to the active node', () => {
+    component.scrollbar = {
+      directiveRef: {
+        scrollToY: jasmine.createSpy(),
+      },
+    } as any;
+
+    component.ngAfterContentInit();
+
+    expect(component.scrollbar.directiveRef.scrollToY).toHaveBeenCalledWith(48);
   });
 });
