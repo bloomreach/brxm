@@ -97,6 +97,9 @@ class OverlayService {
   }
 
   _onUnload() {
+    // For some reason digest cycle is active in that moment,
+    // there is a temporary fix for that problem
+    // See https://issues.onehippo.com//browse/CHANNELMGR-2480
     const tearDown = () => {
       this.observer.disconnect();
       delete this.overlay;
