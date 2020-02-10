@@ -103,6 +103,19 @@ describe('SpaService', () => {
 
       expect(RpcService.initialize).toHaveBeenCalledWith(jasmine.objectContaining({ origin: '' }));
     });
+
+    it('registers sync overlay callback', () => {
+      let sync;
+
+      spyOn(RpcService, 'register').and.callFake((command, callback) => { sync = callback; });
+      spyOn(RenderingService, 'createOverlay');
+      SpaService.init(iframeJQueryElement);
+
+      expect(RpcService.register).toHaveBeenCalledWith('sync', jasmine.any(Function));
+
+      sync();
+      expect(RenderingService.createOverlay).toHaveBeenCalled();
+    });
   });
 
   describe('isSpa', () => {
