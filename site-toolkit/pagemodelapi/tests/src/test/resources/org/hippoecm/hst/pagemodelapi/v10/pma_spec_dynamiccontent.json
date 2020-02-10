@@ -43,14 +43,14 @@
       } ],
       "models" : {
         "currentLink" : {
-          "href" : "/site/spa/genericdetail/dynamiccontent",
+          "href" : "/genericdetail/dynamiccontent",
           "type" : "internal"
         },
         "menu-again" : {
           "$ref" : "/page/uid3"
         },
         "sameChannelNewsLink" : {
-          "href" : "/site/spa/news/News1.html",
+          "href" : "/news/News1.html",
           "type" : "internal"
         },
         "otherChannelNewsLink" : {
@@ -71,7 +71,7 @@
           }
         },
         "notFoundLink" : {
-          "href" : "/site/spa/pagenotfound",
+          "href" : "/pagenotfound",
           "type" : "internal"
         },
         "menu" : {
@@ -129,7 +129,7 @@
           "parameters" : { },
           "links" : {
             "site" : {
-              "href" : "/site/spa/news",
+              "href" : "/news",
               "type" : "internal"
             }
           }
@@ -144,7 +144,7 @@
           "parameters" : { },
           "links" : {
             "site" : {
-              "href" : "/site/spa/contact",
+              "href" : "/contact",
               "type" : "internal"
             }
           }
@@ -159,7 +159,7 @@
           "parameters" : { },
           "links" : {
             "site" : {
-              "href" : "/site/spa/contact-spring",
+              "href" : "/contact-spring",
               "type" : "internal"
             }
           }
@@ -174,7 +174,7 @@
           "parameters" : { },
           "links" : {
             "site" : {
-              "href" : "/site/spa/contact-dispatch",
+              "href" : "/contact-dispatch",
               "type" : "internal"
             }
           }
@@ -189,7 +189,7 @@
           "parameters" : { },
           "links" : {
             "site" : {
-              "href" : "/site/spa/contact-springmvc",
+              "href" : "/contact-springmvc",
               "type" : "internal"
             }
           }
@@ -204,7 +204,7 @@
           "parameters" : { },
           "links" : {
             "site" : {
-              "href" : "/site/spa/search",
+              "href" : "/search",
               "type" : "internal"
             }
           }
@@ -219,7 +219,7 @@
           "parameters" : { },
           "links" : {
             "site" : {
-              "href" : "/site/spa/uniquelinks",
+              "href" : "/uniquelinks",
               "type" : "internal"
             }
           }
@@ -230,21 +230,19 @@
       "type" : "document",
       "links" : {
         "site" : {
-          "href" : "/site/spa/genericdetail/dynamiccontent",
+          "href" : "/genericdetail/dynamiccontent",
           "type" : "internal"
         }
       },
       "data" : {
         "name" : "dynamiccontent",
         "displayName" : "DynamicContent",
+        "multipleDoubleTypeField" : [ 100.0, 120.0 ],
         "singleValueMultipleDoubleTypeField" : [ 100.0 ],
         "multipleValueSingleDoubleTypeField" : 100.0,
         "multipleLongTypeField" : [ 50, 60 ],
         "singleValueMultipleLongTypeField" : [ 50 ],
         "multipleValueSingleLongTypeField" : 50,
-        "multipleBooleanTypeField" : [ false, true ],
-        "multipleValueSingleBooleanTypeField" : false,
-        "multipleDoubleTypeField" : [ 100.0, 120.0 ],
         "multipleDateTypeField" : [ 1553472000000, 1553558400000 ],
         "singleValueMultipleDateTypeField" : [ 1553472000000 ],
         "multipleValueSingleDateTypeField" : 1553472000000,
@@ -266,27 +264,16 @@
         "standardCompoundType" : {
           "name" : "pagemodelapitest:standardCompoundType",
           "displayName" : "pagemodelapitest:standardCompoundType",
+          "richTextEditorCompoundType" : {
+            "value" : "contentOfHtmlFiledInCompoundTypeClass"
+          },
           "stringTypeField" : "alexanderkade",
           "dynamicinnercompound" : {
             "name" : "pagemodelapitest:dynamicinnercompound",
             "displayName" : "pagemodelapitest:dynamicinnercompound",
             "stringTypeField" : "http://test.com"
-          },
-          "richTextEditorCompoundType" : {
-            "value" : "contentOfHtmlFiledInCompoundTypeClass"
           }
         },
-        "doubleTypeField" : 100.0,
-        "booleanTypeField" : false,
-        "longTypeField" : 50,
-        "singleValueMultipleBooleanTypeField" : [ false ],
-        "contentblocks" : [ {
-          "name" : "pagemodelapitest:contentblocks",
-          "displayName" : "pagemodelapitest:contentblocks",
-          "text" : {
-            "value" : "Welcome Home!"
-          }
-        } ],
         "contentblocksWithValidator" : [ {
           "name" : "pagemodelapitest:contentblocksWithValidator",
           "displayName" : "pagemodelapitest:contentblocksWithValidator",
@@ -307,10 +294,23 @@
             "value" : "Welcome Home with Essentials and lazy loaded types!"
           }
         } ],
+        "contentblocks" : [ {
+          "name" : "pagemodelapitest:contentblocks",
+          "displayName" : "pagemodelapitest:contentblocks",
+          "text" : {
+            "value" : "Welcome Home!"
+          }
+        } ],
+        "booleanTypeField" : false,
         "richTextEditorCompoundType" : {
           "value" : "richtexteditorcontent"
         },
+        "multipleBooleanTypeField" : [ false, true ],
+        "singleValueMultipleBooleanTypeField" : [ false ],
+        "multipleValueSingleBooleanTypeField" : false,
+        "doubleTypeField" : 100.0,
         "dateTypeField" : 1553472000000,
+        "longTypeField" : 50,
         "localeString" : "en",
         "id" : "d993b0a1-5859-44fe-bf4b-017cda163364"
       }

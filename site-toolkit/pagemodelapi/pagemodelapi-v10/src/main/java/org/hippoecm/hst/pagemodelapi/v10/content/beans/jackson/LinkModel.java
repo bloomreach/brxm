@@ -116,6 +116,11 @@ public class LinkModel {
      */
     public static LinkModel convert(final HstLink hstLink, final HstRequestContext requestContext) {
         final Mount linkMount = hstLink.getMount();
+
+        if (linkMount == null) {
+            return new LinkModel(hstLink.getPath(), EXTERNAL);
+        }
+
         // admittedly a bit of a dirty check to check on PageModelPipeline. Can this be improved?
         HstLink siteLink;
 
@@ -132,7 +137,9 @@ public class LinkModel {
         final LinkType linkType = getLinkType(requestContext, siteLink);
         final String href;
         if (linkType == INTERNAL) {
-            href = siteLink.toUrlForm(requestContext, false);
+            // for internal links, we do not return mount path, since within the SPA, most likely the sitemap path
+            // only is relevant!
+            href = "/" + siteLink.getPath();
         } else {
             // 'resource' URLs (eg binaries) and 'external' types for Page Model API always must be fully qualified
             href = siteLink.toUrlForm(requestContext, true);

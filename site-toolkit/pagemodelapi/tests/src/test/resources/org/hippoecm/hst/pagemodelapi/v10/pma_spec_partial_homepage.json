@@ -3,13 +3,13 @@
     "version" : "1.0"
   },
   "links" : {
-    "site" : {
-      "href" : "/?dummy=bar",
-      "type" : "internal"
-    },
     "self" : {
       "href" : "http://localhost/site/spa/resourceapi./header?dummy=bar",
       "type" : "external"
+    },
+    "site" : {
+      "href" : "/?dummy=bar",
+      "type" : "internal"
     }
   },
   "root" : {

@@ -43,14 +43,14 @@
       } ],
       "models" : {
         "currentLink" : {
-          "href" : "/site/spa",
+          "href" : "/",
           "type" : "internal"
         },
         "menu-again" : {
           "$ref" : "/page/uid3"
         },
         "sameChannelNewsLink" : {
-          "href" : "/site/spa/news/News1.html",
+          "href" : "/news/News1.html",
           "type" : "internal"
         },
         "otherChannelNewsLink" : {
@@ -71,7 +71,7 @@
           }
         },
         "notFoundLink" : {
-          "href" : "/site/spa/pagenotfound",
+          "href" : "/pagenotfound",
           "type" : "internal"
         },
         "menu" : {
@@ -129,7 +129,7 @@
           "parameters" : { },
           "links" : {
             "site" : {
-              "href" : "/site/spa/news",
+              "href" : "/news",
               "type" : "internal"
             }
           }
@@ -144,7 +144,7 @@
           "parameters" : { },
           "links" : {
             "site" : {
-              "href" : "/site/spa/contact",
+              "href" : "/contact",
               "type" : "internal"
             }
           }
@@ -159,7 +159,7 @@
           "parameters" : { },
           "links" : {
             "site" : {
-              "href" : "/site/spa/contact-spring",
+              "href" : "/contact-spring",
               "type" : "internal"
             }
           }
@@ -174,7 +174,7 @@
           "parameters" : { },
           "links" : {
             "site" : {
-              "href" : "/site/spa/contact-dispatch",
+              "href" : "/contact-dispatch",
               "type" : "internal"
             }
           }
@@ -189,7 +189,7 @@
           "parameters" : { },
           "links" : {
             "site" : {
-              "href" : "/site/spa/contact-springmvc",
+              "href" : "/contact-springmvc",
               "type" : "internal"
             }
           }
@@ -204,7 +204,7 @@
           "parameters" : { },
           "links" : {
             "site" : {
-              "href" : "/site/spa/search",
+              "href" : "/search",
               "type" : "internal"
             }
           }
@@ -219,7 +219,7 @@
           "parameters" : { },
           "links" : {
             "site" : {
-              "href" : "/site/spa/uniquelinks",
+              "href" : "/uniquelinks",
               "type" : "internal"
             }
           }
@@ -230,7 +230,7 @@
       "type" : "document",
       "links" : {
         "site" : {
-          "href" : "/site/spa",
+          "href" : "/",
           "type" : "internal"
         }
       },
@@ -241,19 +241,19 @@
         "date" : 1249891507580,
         "title" : "This is the homepage",
         "body" : {
-          "value" : "This is the content of the homepage with a link to <a href=\"/site/spa/news/News1.html\" data-type=\"internal\">News1</a> document and a link to an image <img src=\"http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg\" /> and to thumbnail <img src=\"http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg\" />"
-        },
-        "newsDocument" : {
-          "$ref" : "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3"
-        },
-        "folderBean" : {
-          "$ref" : "/page/ucbcbcbcb5fa848a8b03b4524373d992a"
+          "value" : "This is the content of the homepage with a link to <a href=\"/news/News1.html\" data-type=\"internal\">News1</a> document and a link to an image <img src=\"http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg\" /> and to thumbnail <img src=\"http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg\" />"
         },
         "imageSetBean" : {
           "$ref" : "/page/udb02dde500984488a72c2a4fc6d51beb"
         },
         "assetBean" : {
           "$ref" : "/page/u5e56d406b302445e9f80e624ba053bc4"
+        },
+        "newsDocument" : {
+          "$ref" : "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3"
+        },
+        "folderBean" : {
+          "$ref" : "/page/ucbcbcbcb5fa848a8b03b4524373d992a"
         },
         "selfBean" : {
           "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
@@ -290,45 +290,6 @@
       "name" : "title",
       "type" : "component",
       "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
-    },
-    "u303d40ebf98c4d6184c7a1ba14b5ceb3" : {
-      "type" : "document",
-      "links" : {
-        "site" : {
-          "href" : "/site/spa/news/News1.html",
-          "type" : "internal"
-        }
-      },
-      "data" : {
-        "name" : "News1",
-        "displayName" : "News1",
-        "summary" : "Summary about news item 1",
-        "date" : 1239782707580,
-        "title" : "News Item 1",
-        "body" : {
-          "value" : "My news item 1 content"
-        },
-        "textDocument" : {
-          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
-        },
-        "id" : "303d40eb-f98c-4d61-84c7-a1ba14b5ceb3"
-      }
-    },
-    "ucbcbcbcb5fa848a8b03b4524373d992a" : {
-      "type" : "folder",
-      "links" : {
-        "site" : {
-          "href" : "/site/spa/genericdetail/common",
-          "type" : "internal"
-        }
-      },
-      "data" : {
-        "name" : "common",
-        "displayName" : "common",
-        "localeString" : "en_US",
-        "documentSize" : 1,
-        "id" : "cbcbcbcb-5fa8-48a8-b03b-4524373d992a"
-      }
     },
     "udb02dde500984488a72c2a4fc6d51beb" : {
       "type" : "imageset",
@@ -389,6 +350,45 @@
           }
         },
         "id" : "5e56d406-b302-445e-9f80-e624ba053bc4"
+      }
+    },
+    "u303d40ebf98c4d6184c7a1ba14b5ceb3" : {
+      "type" : "document",
+      "links" : {
+        "site" : {
+          "href" : "/news/News1.html",
+          "type" : "internal"
+        }
+      },
+      "data" : {
+        "name" : "News1",
+        "displayName" : "News1",
+        "summary" : "Summary about news item 1",
+        "date" : 1239782707580,
+        "title" : "News Item 1",
+        "body" : {
+          "value" : "My news item 1 content"
+        },
+        "textDocument" : {
+          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        },
+        "id" : "303d40eb-f98c-4d61-84c7-a1ba14b5ceb3"
+      }
+    },
+    "ucbcbcbcb5fa848a8b03b4524373d992a" : {
+      "type" : "folder",
+      "links" : {
+        "site" : {
+          "href" : "/genericdetail/common",
+          "type" : "internal"
+        }
+      },
+      "data" : {
+        "name" : "common",
+        "displayName" : "common",
+        "localeString" : "en_US",
+        "documentSize" : 1,
+        "id" : "cbcbcbcb-5fa8-48a8-b03b-4524373d992a"
       }
     }
   }

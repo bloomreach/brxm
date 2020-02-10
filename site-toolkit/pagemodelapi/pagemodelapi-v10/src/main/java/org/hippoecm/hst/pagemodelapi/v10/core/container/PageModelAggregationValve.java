@@ -399,6 +399,8 @@ public class PageModelAggregationValve extends AggregationValve {
 
         // the site link for the current Page Model API output is *always* internal and relative within the sitemap of the
         // current channel hence just take path info from resolved sitemap item
+
+        // TODO RE{EAT BELOW IN org.hippoecm.hst.pagemodelapi.v10.core.container.PageModelSerializer.addLinksToContent()
         String hrefSite = resolvedSiteMapItem.getPathInfo();
 
         hrefSite = hrefSite.equals(selfMount.getHomePage()) ? "/" : "/" + hrefSite;
