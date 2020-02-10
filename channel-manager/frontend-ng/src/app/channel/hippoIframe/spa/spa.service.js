@@ -31,6 +31,7 @@ export default class SpaService {
 
     this._onSdkReady = this._onSdkReady.bind(this);
     this._onUnload = this._onUnload.bind(this);
+    this._sync = this._sync.bind(this);
   }
 
   init(iframeJQueryElement) {
@@ -46,6 +47,7 @@ export default class SpaService {
       this._offSdkReady();
     }
     this._offSdkReady = this.$rootScope.$on('spa:ready', this._onSdkReady);
+    this.RpcService.register('sync', this._sync);
   }
 
   _getOrigin() {
@@ -147,5 +149,9 @@ export default class SpaService {
       this.$log.error(error);
       return true;
     }
+  }
+
+  _sync() {
+    return this.RenderingService.createOverlay();
   }
 }
