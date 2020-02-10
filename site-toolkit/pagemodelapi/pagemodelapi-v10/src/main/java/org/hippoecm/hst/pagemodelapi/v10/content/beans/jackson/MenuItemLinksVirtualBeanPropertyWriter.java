@@ -65,7 +65,6 @@ public class MenuItemLinksVirtualBeanPropertyWriter extends AbstractLinksVirtual
             return linksMap;
         }
 
-        // TODO IF INTERNAL IT MUST BECOME WITHOUT /site/spa
         final LinkModel linkModel = LinkModel.convert(menuItemLink, requestContext);
         linksMap.put(LINK_NAME_SITE, linkModel);
         return linksMap;
