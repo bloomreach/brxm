@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -352,13 +352,13 @@ public abstract class AbstractLockManager implements InternalLockManager {
         // modifying 'locks'
         final Runnable exceptionCatchingRunnable = () -> {
             final long start = System.currentTimeMillis();
-            getLogger().info("Running '{}' at {}", runnable.getClass().getName(), Calendar.getInstance().getTime());
+            getLogger().debug("Running '{}' at {}", runnable.getClass().getName(), Calendar.getInstance().getTime());
             try {
                 runnable.run();
             } catch (Exception e) {
                 getLogger().error("Background job '{}' resulted in exception.", runnable.getClass().getName(), e);
             }
-            getLogger().info("Running '{}' finished in '{}' ms.", runnable.getClass().getName(), (System.currentTimeMillis() - start));
+            getLogger().debug("Running '{}' finished in '{}' ms.", runnable.getClass().getName(), (System.currentTimeMillis() - start));
         };
         if (periodSeconds > longestIntervalSeconds) {
             longestIntervalSeconds = periodSeconds;

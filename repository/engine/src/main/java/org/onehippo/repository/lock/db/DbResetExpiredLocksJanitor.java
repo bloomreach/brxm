@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ public class DbResetExpiredLocksJanitor implements Runnable {
                 resetStatement.setLong(1, currentTime);
                 resetStatement.setLong(2, currentTime);
                 int updated = resetStatement.executeUpdate();
-                log.info("Expired {} locks", updated);
+                log.debug("Expired {} locks", updated);
             }
         } catch (SQLException e) {
             log.error("Error while trying to reset locks", e);
