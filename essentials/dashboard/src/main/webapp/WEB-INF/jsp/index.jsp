@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" session="false" pageEncoding="UTF-8" %>
 <%--
-  Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -109,11 +109,6 @@
             <hippo-icon name="gear" size="m"></hippo-icon>
               Settings
           </a>
-        </li>
-        <li>
-          <a target="_blank" href="https://issues.onehippo.com/rest/collectors/1.0/template/form/e07a17b7?os_authType=none">
-            <hippo-icon name="comment" size="m"></hippo-icon>
-            Feedback</a>
         </li>
       </ul>
     </div>
