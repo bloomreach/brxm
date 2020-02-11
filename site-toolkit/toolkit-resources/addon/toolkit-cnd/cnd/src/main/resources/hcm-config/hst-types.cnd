@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the  "License");
  * you may not use this file except in compliance with the License.
@@ -348,6 +348,7 @@
 - hst:responseheaders (string) multiple
 // path element below which the page model api will become available
 - hst:pagemodelapi (string)
+- hst:linkurlprefix (string)
 - * (string)
 
 [hst:portmount] > nt:base, mix:referenceable
@@ -383,6 +384,7 @@
 - hst:responseheaders (string) multiple
 // path element below which for every mount for this host (or sub host) the page model api will become available
 - hst:pagemodelapi (string)
+- hst:linkurlprefix (string)
 - hst:allowedorigins (string) multiple
 
 [hst:virtualhostgroup] > nt:base, mix:referenceable

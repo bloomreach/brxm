@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -189,6 +189,14 @@ public interface VirtualHost {
      * http/https is allowed but is not preferred
      */
     String getCdnHost();
+
+    /**
+     * <p>
+     *     Returns the 'HST Link URL prefix' in case one is configured
+     * </p>
+     * @return
+     */
+    String getHstLinkUrlPrefix();
 
     /**
      * @return <code>true</code> if this {@link VirtualHost} allows a {@link HttpServletRequest} over <code>https</code> to

@@ -89,6 +89,7 @@ public interface HstNodeTypes {
     String GENERAL_PROEPRTY_SCHEME_AGNOSTIC = "hst:schemeagnostic";
     String GENERAL_PROPERTY_RESPONSE_HEADERS = "hst:responseheaders";
     String GENERAL_PROPERTY_PAGE_MODEL_API = "hst:pagemodelapi";
+    String GENERAL_PROPERTY_HST_LINK_URL_PREFIX = "hst:linkurlprefix";
 
     String VIRTUALHOST_PROPERTY_CUSTOM_HTTPS_SUPPORT = "hst:customhttpssupport";
 

@@ -44,6 +44,7 @@ import org.hippoecm.hst.util.PathUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.commons.lang3.StringUtils.substringBefore;
 import static org.hippoecm.hst.configuration.ConfigurationConstants.CDN_SUPPORTED_PIPELINES;
 import static org.hippoecm.hst.util.PathUtils.FULLY_QUALIFIED_URL_PREFIXES;
@@ -192,11 +193,11 @@ public class HstLinkImpl implements HstLink {
     ContentType getContentType() {
         return contentType;
     }
-    
+
     @Override
     public boolean isContainerResource() {
         if (Type.UNKNOWN == type) {
-            if (RequestContextProvider.get() == null || mount == null ) {
+            if (RequestContextProvider.get() == null || mount == null) {
                 type = Type.CONTAINER_RESOURCE;
             } else if (!mount.isMapped()) {
                 type = Type.MOUNT_RESOURCE;
@@ -329,16 +330,27 @@ public class HstLinkImpl implements HstLink {
                     }
                 }
             } else {
-                // the above !requestContext.isChannelManagerPreviewRequest() check is to avoid fully qualified links in CMS channel manager:
+                // the above requestContext.isChannelManagerPreviewRequest() check is to avoid fully qualified links in CMS channel manager:
                 // for the cms, we never want a fully qualified URLs for links as that is managed through the 'renderHost'
 
-                if (StringUtils.isNotBlank(mount.getVirtualHost().getCdnHost())) {
+                if (isNotBlank(mount.getVirtualHost().getCdnHost())) {
                     final HstSiteMapItem siteMapItem = resolveSiteMapItem(requestContext);
                     if (siteMapItem != null && siteMapItem.isContainerResource()
                             && isCdnSupportedPipeline(siteMapItem.getNamedPipeline())) {
                         log.debug("Using CDN host '{}' for container resource '{}'", mount.getVirtualHost().getCdnHost(), urlString);
                         return mount.getVirtualHost().getCdnHost() + urlString;
                     }
+                }
+
+                if (isContainerResource()) {
+                    // baseUrlPrefix can be different for the root mount which handles resources than for the current
+                    // 'mount' which is present for a container resource link, hence first get root mount
+                    final Mount root = getRootMount(mount);
+                    if (isNotBlank(root.getHstLinkUrlPrefix())) {
+                        return root.getHstLinkUrlPrefix() + urlString;
+                    }
+                } else if (isNotBlank(mount.getHstLinkUrlPrefix())) {
+                    return mount.getHstLinkUrlPrefix() + urlString;
                 }
 
                 HstLinkImplCharacteristics hstLinkImplCharacteristics = new HstLinkImplCharacteristics(requestContext, fullyQualified);
@@ -368,10 +380,18 @@ public class HstLinkImpl implements HstLink {
 
                     urlString = host + urlString;
                 }
+
             }
         }
 
         return urlString;
+    }
+
+    private Mount getRootMount(final Mount mount) {
+        if (mount.getParent() == null) {
+            return mount;
+        }
+        return getRootMount(mount.getParent());
     }
 
     // one host can contain port number and the other not
@@ -460,7 +480,7 @@ public class HstLinkImpl implements HstLink {
                 }
             }
 
-            if (mount.isMapped() &&  (mount.containsMultipleSchemes()
+            if (mount.isMapped() && (mount.containsMultipleSchemes()
                     || requestMount.containsMultipleSchemes()
                     || (requestMount.getVirtualHost().isCustomHttpsSupported() && farthestRequestScheme.equals("https")))) {
                 // in case (requestMount.getVirtualHost().isCustomHttpsSupported() && farthestRequestScheme.equals("https"))

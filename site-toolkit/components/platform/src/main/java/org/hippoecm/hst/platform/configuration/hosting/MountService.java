@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.platform.configuration.hosting;
 
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_HST_LINK_URL_PREFIX;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PAGE_MODEL_API;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_RESPONSE_HEADERS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.MOUNT_PROPERTY_NOCHANNELINFO;
@@ -230,6 +231,8 @@ public class MountService implements ContextualizableMount, MutableMount {
     private Map<String, String> responseHeaders;
 
     private Set<String> finalPipelines = ImmutableSet.of(PAGE_MODEL_PIPELINE_NAME);
+
+    private String hstLinkUrlPrefix;
 
     public MountService(final HstNode mount,
                         final Mount parent,
@@ -515,6 +518,36 @@ public class MountService implements ContextualizableMount, MutableMount {
             }
         }
 
+
+        if(mount.getValueProvider().hasProperty(GENERAL_PROPERTY_HST_LINK_URL_PREFIX)) {
+            hstLinkUrlPrefix = mount.getValueProvider().getString(GENERAL_PROPERTY_HST_LINK_URL_PREFIX);
+            if (!VirtualHostService.validURLPrefix(hstLinkUrlPrefix)) {
+                log.error("Ignoring invalid property '{}={}' on Mount '{}'. Supported formats are " +
+                        "http://hostname, https://hostname or //hostname (hostname can include portnumber). " +
+                        "After the hostname a path info is allowed which is not allowed to end with a '/'. " +
+                        "Querystring or fragment is not allowed", GENERAL_PROPERTY_HST_LINK_URL_PREFIX, hstLinkUrlPrefix,
+                        mount.getValueProvider().getPath());
+                hstLinkUrlPrefix = null;
+            }
+        }
+
+        if (hstLinkUrlPrefix == null) {
+            if (parent != null) {
+                hstLinkUrlPrefix = parent.getHstLinkUrlPrefix();
+            } else {
+                hstLinkUrlPrefix = virtualHost.getHstLinkUrlPrefix();
+            }
+        }
+
+        else {
+            // try to get the one from the parent
+            if(parent != null) {
+                this.locale = parent.getLocale();
+            } else {
+                this.locale = virtualHost.getLocale();
+            }
+        }
+
         try {
             if (mountPoint == null) {
                 log.info("Mount '{}' at '{}' does have an empty mountPoint. This means the Mount is not using a HstSite and does not have a content path", getName(), mount.getValueProvider().getPath());
@@ -731,6 +764,11 @@ public class MountService implements ContextualizableMount, MutableMount {
 
     public boolean isSchemeAgnostic() {
         return schemeAgnostic;
+    }
+
+    @Override
+    public String getHstLinkUrlPrefix() {
+        return hstLinkUrlPrefix;
     }
 
     @Override

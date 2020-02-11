@@ -15,6 +15,8 @@
  */
 package org.hippoecm.hst.platform.configuration.hosting;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -51,6 +53,7 @@ import com.google.common.net.InetAddresses;
 import static java.util.Collections.unmodifiableList;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.supportedSchemeNotMatchingResponseCodesAsString;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_HST_LINK_URL_PREFIX;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_RESPONSE_HEADERS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PAGE_MODEL_API;
 import static org.hippoecm.hst.configuration.HstNodeTypes.VIRTUALHOST_ALLOWED_ORIGINS;
@@ -80,7 +83,7 @@ public class VirtualHostService implements MutableVirtualHost {
      */
     private String locale;
 
-    /**!validCdnHost
+    /**
      * Whether the {@link Mount}'s contained by this VirtualHostService should show the hst version as a response header when they are a preview {@link Mount}
      */
     private boolean versionInPreviewHeader;
@@ -102,6 +105,7 @@ public class VirtualHostService implements MutableVirtualHost {
     private boolean schemeAgnostic;
     private int schemeNotMatchingResponseCode = -1;
     private final String pageModelApi;
+    private String linkUrlPrefix;
     private Integer defaultPort;
     private final boolean cacheable;
     private String [] defaultResourceBundleIds;
@@ -249,15 +253,10 @@ public class VirtualHostService implements MutableVirtualHost {
             cdnHost = parentHost.getCdnHost();
         }
 
-        if (StringUtils.isBlank(cdnHost) && !StringUtils.isEmpty(cdnHost)) {
-            // only white space
-            cdnHost = "";
-        }
-
-        if (StringUtils.isNotBlank(cdnHost) && !validCdnHost(cdnHost)) {
+        if (cdnHost != null && !validURLPrefix(cdnHost)) {
             log.error("Ignoring invalid CDN host '{}'. Supported formats are http://hostname, https://hostname or " +
                     "//hostname (hostname can include portnumber). It is not allowed to end with a '/'. " +
-                    "Ignoring invalid configured cdnHost '{}'.", cdnHost, cdnHost);
+                    "Querystring or fragment is not allowed", cdnHost);
             cdnHost = null;
         }
 
@@ -292,6 +291,22 @@ public class VirtualHostService implements MutableVirtualHost {
             pageModelApi = parentHost.getPageModelApi();
         } else {
             pageModelApi = null;
+        }
+
+
+        if (virtualHostNode.getValueProvider().hasProperty(GENERAL_PROPERTY_HST_LINK_URL_PREFIX)) {
+            linkUrlPrefix = virtualHostNode.getValueProvider().getString(GENERAL_PROPERTY_HST_LINK_URL_PREFIX);
+        } else if (parentHost != null) {
+            linkUrlPrefix = parentHost.getHstLinkUrlPrefix();
+        } else {
+            linkUrlPrefix = null;
+        }
+
+        if (linkUrlPrefix != null && !validURLPrefix(linkUrlPrefix)) {
+            log.error("Ignoring invalid link URL prefix '{}'. Supported formats are http://hostname, https://hostname or " +
+                    "//hostname (hostname can include portnumber). After the hostname a path info is allowed which is not" +
+                    "allowed to end with a '/'. Querystring or fragment is not allowed", linkUrlPrefix);
+            linkUrlPrefix = null;
         }
 
         String fullName = virtualHostNode.getValueProvider().getName();
@@ -378,6 +393,7 @@ public class VirtualHostService implements MutableVirtualHost {
         this.virtualHosts = parent.virtualHosts;
         this.hostGroupName = hostGroupName;
         this.pageModelApi = parent.pageModelApi;
+        this.linkUrlPrefix = parent.linkUrlPrefix;
         this.defaultPort = defaultPort;
         this.scheme = parent.scheme;
         this.schemeAgnostic = parent.schemeAgnostic;
@@ -426,13 +442,24 @@ public class VirtualHostService implements MutableVirtualHost {
         portMounts.put(portMount.getPortNumber(), portMount);
     }
 
-    private boolean validCdnHost(final String cdnHost) {
-        // note, this is a very simple validation, very far from complete. However this is a basic check to avoid
-        // cdn host ends with with a / or that it doesn't start with https://, http:// or //
-        if (!cdnHost.startsWith("//") && !cdnHost.startsWith("http://") && !cdnHost.startsWith("https://")) {
+    static boolean validURLPrefix(final String host) {
+        if (StringUtils.isBlank(host)) {
             return false;
         }
-        if (cdnHost.endsWith("/")) {
+        try {
+            final URI uri = new URI(host);
+            if (!"http".equals(uri.getScheme()) && !"https".equals(uri.getScheme())) {
+                // scheme should be http or https
+                return false;
+            }
+            if (uri.getPath() != null && uri.getPath().endsWith("/")) {
+                return false;
+            }
+            if (uri.getQuery() != null || uri.getFragment() != null) {
+                return false;
+            }
+        } catch (URISyntaxException e) {
+            log.warn("'{}' is not a valid host : ", host, e.getMessage());
             return false;
         }
         return true;
@@ -493,6 +520,10 @@ public class VirtualHostService implements MutableVirtualHost {
 
     String getPageModelApi() {
         return pageModelApi;
+    }
+
+    public String getHstLinkUrlPrefix() {
+        return linkUrlPrefix;
     }
 
     public Integer getDefaultPort() {

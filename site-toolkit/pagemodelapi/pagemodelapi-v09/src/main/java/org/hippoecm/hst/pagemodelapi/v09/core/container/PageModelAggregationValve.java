@@ -304,7 +304,7 @@ public class PageModelAggregationValve extends AggregationValve {
                     .orElseThrow(() -> new ContainerException(
                             String.format("Expected window for '%s' to be present", window.getReferenceName())));
 
-            addComponentRenderingURLLink(hstResponse, requestContext.getServletRequest(), currentComponentWindowModel);
+            addComponentRenderingURLLink(hstResponse, requestContext, currentComponentWindowModel);
             addParametersInfoMetadata(window, hstRequest, currentComponentWindowModel);
             decorateComponentWindowMetadata(hstRequest, hstResponse, currentComponentWindowModel);
 
@@ -392,14 +392,8 @@ public class PageModelAggregationValve extends AggregationValve {
         return swagger;
     }
 
-    /**
-     * Adding componentRendering and 'self' URL link to the linkable model.
-     * @param hstResponse HstResponse
-     * @param request the http servlet request (not {@link HstRequest}
-     * @param linkableModel linkable model
-     */
     private void addComponentRenderingURLLink(final HstResponse hstResponse,
-                                              final HttpServletRequest request,
+                                              final HstRequestContext requestContext,
                                               final IdentifiableLinkableMetadataBaseModel linkableModel) {
         final HstURL compRenderURL = hstResponse.createComponentRenderingURL();
         // component rendering links are always 'external' from the SPA point of view
@@ -407,7 +401,15 @@ public class PageModelAggregationValve extends AggregationValve {
 
         // keep LINK_NAME_COMPONENT_RENDERING link for BR in PMA version 0.9
         linkableModel.putLink(LINK_NAME_COMPONENT_RENDERING, new LinkModel(absoluteHref));
-        final String fullyQualifiedHref = getFarthestRequestScheme(request) + "://"  + getFarthestRequestHost(request) + absoluteHref;
+
+        final String fullyQualifiedHref;
+        String pageModelApiHost = requestContext.getResolvedMount().getMount().getHstLinkUrlPrefix();
+        if (pageModelApiHost != null) {
+            fullyQualifiedHref = pageModelApiHost + compRenderURL.toString();
+        } else {
+            final HttpServletRequest request = requestContext.getServletRequest();
+            fullyQualifiedHref = getFarthestRequestScheme(request) + "://" + getFarthestRequestHost(request) + compRenderURL.toString();
+        }
         linkableModel.putLink(LINK_NAME_SELF, new LinkModel(fullyQualifiedHref, EXTERNAL));
     }
 

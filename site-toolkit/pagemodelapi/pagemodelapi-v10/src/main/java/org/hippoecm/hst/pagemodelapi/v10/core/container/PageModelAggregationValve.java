@@ -32,7 +32,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
-import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.HstContainerRequest;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.core.component.HstRequest;
@@ -52,7 +51,6 @@ import org.hippoecm.hst.core.pagemodel.model.MetadataContributable;
 import org.hippoecm.hst.core.request.ComponentConfiguration;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
-import org.hippoecm.hst.core.sitemenu.CommonMenu;
 import org.hippoecm.hst.pagemodelapi.common.content.beans.PageModelObjectMapperFactory;
 import org.hippoecm.hst.pagemodelapi.v10.content.beans.jackson.LinkModel;
 import org.hippoecm.hst.pagemodelapi.v10.core.model.ComponentWindowModel;
@@ -232,7 +230,7 @@ public class PageModelAggregationValve extends AggregationValve {
                     .orElseThrow(() -> new ContainerException(
                             String.format("Expected window for '%s' to be present", window.getReferenceName())));
 
-            addComponentRenderingURLLink(hstResponse, requestContext.getServletRequest(), currentComponentWindowModel);
+            addComponentRenderingURLLink(hstResponse, requestContext, currentComponentWindowModel);
             addParametersInfoMetadata(window, hstRequest, currentComponentWindowModel);
             decorateComponentWindowMetadata(hstRequest, hstResponse, currentComponentWindowModel);
 
@@ -332,16 +330,18 @@ public class PageModelAggregationValve extends AggregationValve {
         return false;
     }
 
-    /**
-     * Adding componentRendering URL link to the linkable model.
-     * @param hstResponse HstResponse
-     * @param linkableModel linkable model
-     */
     private void addComponentRenderingURLLink(final HstResponse hstResponse,
-                                              final HttpServletRequest request,
+                                              final HstRequestContext requestContext,
                                               final IdentifiableLinkableMetadataBaseModel linkableModel) {
         HstURL compRenderURL = hstResponse.createComponentRenderingURL();
-        final String fullyQualifiedHref = getFarthestRequestScheme(request) + "://"  + getFarthestRequestHost(request) + compRenderURL.toString();
+        final String fullyQualifiedHref;
+        String pageModelApiHost = requestContext.getResolvedMount().getMount().getHstLinkUrlPrefix();
+        if (pageModelApiHost != null) {
+            fullyQualifiedHref = pageModelApiHost + compRenderURL.toString();
+        } else {
+            final HttpServletRequest request = requestContext.getServletRequest();
+            fullyQualifiedHref = getFarthestRequestScheme(request) + "://" + getFarthestRequestHost(request) + compRenderURL.toString();
+        }
         linkableModel.putLink(LINK_NAME_SELF, new LinkModel(fullyQualifiedHref, EXTERNAL));
     }
 

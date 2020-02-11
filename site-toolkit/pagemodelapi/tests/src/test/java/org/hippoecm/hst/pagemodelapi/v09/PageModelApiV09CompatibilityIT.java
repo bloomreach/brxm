@@ -18,11 +18,15 @@ package org.hippoecm.hst.pagemodelapi.v09;
 
 import java.io.InputStream;
 
+import javax.jcr.Session;
+
 import org.apache.commons.io.IOUtils;
 import org.hippoecm.hst.pagemodelapi.common.AbstractPageModelApiITCases;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
+
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_HST_LINK_URL_PREFIX;
 
 /**
  * <p>
@@ -76,6 +80,35 @@ public class PageModelApiV09CompatibilityIT extends AbstractPageModelApiITCases 
         String expected = IOUtils.toString(inputStream, "UTF-8");
 
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT_ORDER);
+    }
+
+    @Test
+    public void explicit_hst_link_prefix_for_host() throws Exception {
+
+        // since only on HOST configured link url prefix,
+        // we expect binaries still to also have the prefix (which is localhost in this test setup)
+        Session session = null;
+        try {
+
+            session = createSession("admin", "admin");
+
+            session.getNode(LOCALHOST_JCR_PATH).setProperty(GENERAL_PROPERTY_HST_LINK_URL_PREFIX, "http://www.example.com");
+            session.save();
+
+            String actual = getActualJson("/spa/resourceapi");
+
+            InputStream inputStream = PageModelApiV09CompatibilityIT.class.getResourceAsStream("pma_spec_explicit_hst_url_prefix_host.json");
+
+            String expected = IOUtils.toString(inputStream, "UTF-8");
+
+            JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT_ORDER);
+        } finally {
+            if (session != null) {
+                session.getNode(LOCALHOST_JCR_PATH).getProperty(GENERAL_PROPERTY_HST_LINK_URL_PREFIX).remove();
+                session.save();
+                session.logout();
+            }
+        }
     }
 
 }

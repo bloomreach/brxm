@@ -63,6 +63,11 @@ import static org.apache.commons.lang3.StringUtils.substringBefore;
  */
 public abstract class AbstractPageModelApiITCases {
 
+
+    public static final String LOCALHOST_JCR_PATH = "/hst:hst/hst:hosts/dev-localhost/localhost";
+    public static final String SPA_MOUNT_JCR_PATH = LOCALHOST_JCR_PATH + "/hst:root/spa";
+
+
     protected SpringComponentManager componentManager;
     protected final MockServletContext servletContext = new MockServletContext();
     protected HippoWebappContext webappContext = new HippoWebappContext(HippoWebappContext.Type.SITE, servletContext);
