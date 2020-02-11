@@ -23,6 +23,7 @@ import dropSvg from '../../../../images/html/add.svg?sprite';
 import disabledSvg from '../../../../images/html/not-allowed.svg?sprite';
 import plusSvg from '../../../../images/html/plus.svg?sprite';
 import searchSvg from '../../../../images/html/search.svg?sprite';
+import chevronUp from '../../../../images/html/chevron-up.svg?sprite';
 
 class OverlayService {
   constructor(
@@ -143,6 +144,7 @@ class OverlayService {
   _resetMask() {
     this.disableAddMode();
     this.offContainerClick();
+    this.offComponentClick();
     this.MaskService.unmask();
     this.MaskService.removeClickHandler();
     this.HippoIframeService.lowerIframeBeneathMask();
@@ -262,20 +264,46 @@ class OverlayService {
     this.overlay.append(overlayElement);
   }
 
-  onContainerClick(clickHandler) {
-    this.PageStructureService.getContainers().forEach((container) => {
-      const element = container.getOverlayElement();
-      element.on('click', (event) => {
-        clickHandler(event, container);
+  onComponentClick(clickHandler) {
+    this.PageStructureService
+      .getContainers()
+      .map(container => container.items)
+      .flat()
+      .forEach((component) => {
+        const element = component.getOverlayElement();
+        element.on('click', event => clickHandler(event, component));
       });
-    });
+  }
+
+  onContainerClick(clickHandler) {
+    this.PageStructureService
+      .getContainers()
+      .forEach((container) => {
+        const element = container.getOverlayElement();
+        element.on('click', (event) => {
+          clickHandler(event, container);
+        });
+      });
+  }
+
+  offComponentClick() {
+    this.PageStructureService
+      .getContainers()
+      .forEach((container) => {
+        container.items.forEach((component) => {
+          const element = component.getOverlayElement();
+          element.off('click');
+        });
+      });
   }
 
   offContainerClick() {
-    this.PageStructureService.getContainers().forEach((container) => {
-      const element = container.getOverlayElement();
-      element.off('click');
-    });
+    this.PageStructureService
+      .getContainers()
+      .forEach((container) => {
+        const element = container.getOverlayElement();
+        element.off('click');
+      });
   }
 
   _addLabel(structureElement, overlayElement) {
@@ -319,6 +347,9 @@ class OverlayService {
         this._addLinkMarkup(overlayElement, menuLinkSvg, 'EDIT_MENU', 'qa-menu-link');
         this._addMenuLinkClickHandler(structureElement, overlayElement);
         break;
+      case 'component':
+        this._addComponentMarkup(structureElement, overlayElement);
+        break;
       default:
         break;
     }
@@ -326,6 +357,34 @@ class OverlayService {
 
   _getSvg(svg) {
     return this.SvgService.getSvg(this.iframeWindow, svg);
+  }
+
+  _addComponentMarkup(structureElement, overlayElement) {
+    const dropAreaBefore = this._addDropArea('before', structureElement);
+    const dropAreaAfter = this._addDropArea('after', structureElement);
+    const direction = structureElement.container.metaData['HST-XType'] === 'HST.Span' ? 'horizontal' : 'vertical';
+
+    angular.element('<div></div>')
+      .addClass('hippo-overlay-element-component-drop-area')
+      .addClass(`hippo-overlay-element-component-direction-${direction}`)
+      .append(dropAreaBefore)
+      .append(dropAreaAfter)
+      .appendTo(overlayElement);
+  }
+
+  _addDropArea(placement, structureElement) {
+    return angular.element('<div></div>')
+      .addClass(`hippo-overlay-element-component-drop-area-${placement}`)
+      .append(this._addComponentDropIcons(structureElement.container));
+  }
+
+  _addComponentDropIcons(container) {
+    return angular.element('<div></div>')
+      .addClass('hippo-overlay-element-component-drop-area-icons')
+      .append(this._getSvg(chevronUp))
+      .append(this._getSvg(container.isDisabled()
+        ? disabledSvg
+        : dropSvg));
   }
 
   _addDropIcon(container, overlayElement) {
@@ -661,7 +720,6 @@ class OverlayService {
   _isElementVisible(structureElement, boxElement) {
     switch (structureElement.getType()) {
       case 'component':
-        return this.isComponentsOverlayDisplayed && !this.isInAddMode;
       case 'container':
         return this.isComponentsOverlayDisplayed;
       case 'content-link':
