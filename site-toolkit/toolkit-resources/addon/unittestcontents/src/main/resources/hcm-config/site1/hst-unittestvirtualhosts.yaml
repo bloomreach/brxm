@@ -1,8 +1,6 @@
 definitions:
   config:
     /hst:hst/hst:hosts:
-#     deprecated in 13.2.0, hst:defaulthostname will be dropped in 14.2.0
-      hst:defaulthostname: localhost
       hst:homepage: home
       hst:pagenotfound: pagenotfound
       /dev-localhost:
