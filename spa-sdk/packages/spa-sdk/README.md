@@ -73,6 +73,9 @@ Option | Required | Default | Description
 `request` | yes | _none_ | Current user's request.
 `request.path` | yes | _none_ | The path part of the URL, including a query string if present (e.g. `/path/to/page?foo=1`).
 `request.headers` | no | `{}` | An object holding request headers. It should contain a `Cookie` header if rendering is happening on the server-side.
+`visitor` | no | _none_ | An object holding information about the current visitor.
+`visitor.id` | yes | _none_ | The current visitor identifier.
+`visitor.header` | yes | _none_ | An HTTP-header using to pass the visitor identifier to the Page Model API.
 `window` | no | `window` | A window object reference will be used to interact with brXM. It needs to be set when initialize is being called within an iframe or worker process.
 
 ### Reference
@@ -118,6 +121,8 @@ Method | Description
 <code>getTitle(): string &vert; undefined</code> | Gets the title of the page, or `undefined` if not configured.
 `getUrl(link?: Link): string` | Generates a URL for a link object.<br> - If the link object type is internal, then it will prepend `spaBaseUrl`. In case when the link starts with the same path as in `cmsBaseUrl`, this part will be removed.<br> - If the link parameter is omitted, then the link to the current page will be returned.<br> - In other cases, the link will be returned as-is.
 `getUrl(path: string): string` | Generates an SPA URL for the path.<br> - If it is a relative path, then it will prepend `spaBaseUrl`.<br> - If it is an absolute path, then the behavior will be similar to internal link generation.
+<code>getVisitor(): Visitor &vert; undefined</code> | Gets the current visitor information, or undefined if the [Relevance Module](https://documentation.bloomreach.com/library/enterprise/enterprise-features/targeting/targeting.html) is not enabled. The `Visitor` object consists of the following properties:<br> - `id: string` - the current visitor identifier;<br> - `header: string` - an HTTP-header using to pass the visitor identifier to the Page Model API.
+<code>getVisit(): Visit &vert; undefined</code> | Gets the current visit information, or undefined if the [Relevance Module](https://documentation.bloomreach.com/library/enterprise/enterprise-features/targeting/targeting.html) is not enabled. The `Visit` object consists of the following properties:<br> - `id: string` - the current visit identifier;<br> - `new: boolean` - a flag showing that this is a new visit.
 `isPreview(): boolean` | Returns whether the page is in the preview mode.
 `rewriteLinks(content: string, type?: string): string` | Rewrite links to pages and resources in the HTML content. This method looks up for `a` tags with `data-type` and `href` attributes and `img` tags with `src` attribute. Links will be updated according to the configuration used to initialize the page. The `type` parameter is similar to `mimeType` parameter of the [DOMParser](https://developer.mozilla.org/en-US/docs/Web/API/DOMParser).
 `sync(): void` | Synchronizes the brXM integration state (UI elements positions).
