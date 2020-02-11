@@ -405,7 +405,8 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
 
         if (contextPath != null) {
             urlBuilder.append(contextPath);
-        } else if (requestContext.isChannelManagerPreviewRequest() ||  requestContext.getResolvedMount().getMount().isContextPathInUrl()) {
+        } else if ((requestContext.isChannelManagerPreviewRequest() && !requestContext.isPageModelApiRequest())
+                || requestContext.getResolvedMount().getMount().isContextPathInUrl()) {
             urlBuilder.append(containerURL.getContextPath());
         }
         // if there is a matchingIgnoredPrefix on the ResolvedMount, we include it here again after the contextpath
@@ -414,7 +415,7 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
         }
 
         String resourceWindowReferenceNamespace = containerURL.getResourceWindowReferenceNamespace();
-        String path = null;
+        String path;
 
         if (ContainerConstants.CONTAINER_REFERENCE_NAMESPACE.equals(resourceWindowReferenceNamespace)) {
             String oldPathInfo = containerURL.getPathInfo();

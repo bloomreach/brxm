@@ -255,7 +255,7 @@ public class HstLinkImpl implements HstLink {
 
         // check if we need to set an explicit contextPath 
         String explicitContextPath = null;
-        if (requestContext.isChannelManagerPreviewRequest()) {
+        if (requestContext.isChannelManagerPreviewRequest() && !requestContext.isPageModelApiRequest()) {
             if (mount != null) {
                 explicitContextPath = mount.getContextPath();
             } else {
