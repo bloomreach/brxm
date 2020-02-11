@@ -42,11 +42,4 @@ public class TestDynamicBeanUtils {
         assertEquals("getIntroduction1", getterName);
     }
 
-    @Test
-    public void testCreateMethodNameWithUnderscore() {
-        final String propertyName = "myproject:title_1";
-        final String getterName = DynamicBeanUtils.createMethodName(propertyName);
-        assertEquals("getTitle_1", getterName);
-    }
-
 }
