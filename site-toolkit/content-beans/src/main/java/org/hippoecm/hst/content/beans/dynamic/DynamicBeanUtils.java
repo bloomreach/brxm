@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ public class DynamicBeanUtils {
     public static final Pattern NAMESPACE_PATTERN = Pattern.compile(":");
     public static final Pattern DOT_PATTERN = Pattern.compile("\\.");
     public static final Pattern PATTERN_SPACES = Pattern.compile("\\s");
-    public static final Pattern PATTERN_ALPHANUMERIC = Pattern.compile("[^A-Za-z0-9:]");
+    public static final Pattern PATTERN_ALLOWED_CHARS = Pattern.compile("[^A-Za-z0-9:_]");
     public static final String INVALID_CLASS_NAME = "InvalidClassName";
 
     public static String createJavaClassName(String name) {
@@ -67,7 +67,7 @@ public class DynamicBeanUtils {
             throw new IllegalArgumentException(String.format("Unable to construct method name from: %s", name));
         }
         myName = CharMatcher.whitespace().removeFrom(myName);
-        myName = PATTERN_ALPHANUMERIC.matcher(myName).replaceAll("");
+        myName = PATTERN_ALLOWED_CHARS.matcher(myName).replaceAll("");
         // replace all whitespaces and non-alphanumeric characters except colon:
         final int index = myName.indexOf(':');
         if (index == -1 || index == myName.length() - 1) {
