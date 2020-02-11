@@ -12,7 +12,7 @@
         <#if item.date?? && item.date.time??>
           <p><@fmt.formatDate value=item.date.time type="both" dateStyle="medium" timeStyle="short"/></p>
         </#if>
-        <#if item.enddate?? && item.endDate.time??>
+        <#if item.endDate?? && item.endDate.time??>
           <p><@fmt.formatDate value=item.endDate.time type="both" dateStyle="medium" timeStyle="short"/></p>
         </#if>
         <p>${item.location?html}</p>
