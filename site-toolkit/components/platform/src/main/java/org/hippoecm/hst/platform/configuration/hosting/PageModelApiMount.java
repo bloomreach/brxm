@@ -310,7 +310,6 @@ public class PageModelApiMount implements ContextualizableMount {
 
     @Override
     public Channel getChannel() {
-        // no channel for page model api mount
         return hstSite.getChannel();
     }
 
