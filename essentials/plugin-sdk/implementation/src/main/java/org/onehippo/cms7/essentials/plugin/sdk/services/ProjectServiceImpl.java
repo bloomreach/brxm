@@ -173,6 +173,11 @@ public class ProjectServiceImpl implements ProjectService {
     }
 
     @Override
+    public Path getPlatformHstConfigPropertiesPath() {
+        return getBasePathForModule(Module.CMS).resolve("src/main/webapp/WEB-INF/hst-config.properties");
+    }
+
+    @Override
     public Path getAssemblyFolderPath() {
         return getBasePathForModule(Module.PROJECT).resolve("src").resolve("main").resolve("assembly");
     }
