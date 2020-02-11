@@ -21,6 +21,12 @@ import org.hippoecm.hst.core.component.HstResponse;
 
 /**
  * Hippo HST component for simple (document detail) request handling, it just fetches sitemap mapped bean.
+ *
+ *   ### NOTE: this component class should not be referenced from an hst:catalog component,
+ *             because such a component does not work (i.e. redirect to 404 page) if the
+ *             component is dropped onto / rendered on a page with no content associated
+ *             (through the matching sitemap item).
+ *
  * Use {@code EssentialsDocumentComponent} for picked documents (e.g. banner and alike)
  */
 
