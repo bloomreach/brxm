@@ -63,6 +63,7 @@ import org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.LinkModel;
 import org.hippoecm.hst.pagemodelapi.v09.core.model.ComponentWindowModel;
 import org.hippoecm.hst.pagemodelapi.v09.core.model.IdentifiableLinkableMetadataBaseModel;
 import org.hippoecm.hst.util.ParametersInfoUtils;
+import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
@@ -77,6 +78,7 @@ import static org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.LinkModel.
 import static org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.LinkModel.LinkType.INTERNAL;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestHost;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestScheme;
+import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 
 /**
  * Page model aggregation valve, to write a JSON model from the aggregated data for a page request.
@@ -290,6 +292,13 @@ public class PageModelAggregationValve extends AggregationValve {
         // include api version to _meta section
         aggregatedPageModel.putMetadata("version",
                 requestContext.getServletRequest().getAttribute(ContainerConstants.PAGE_MODEL_API_VERSION));
+
+        final Channel channel = requestContext.getResolvedMount().getMount().getChannel();
+        if (channel.getBranchId() == null) {
+            aggregatedPageModel.putMetadata("branch", MASTER_BRANCH_ID);
+        } else {
+            aggregatedPageModel.putMetadata("branch", channel.getBranchId());
+        }
 
         addLinksToPageModel(aggregatedPageModel);
 

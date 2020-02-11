@@ -127,7 +127,6 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
         // explicitly include /home
         String actual = getActualJson("/spa/resourceapi/home", "1.0");
 
-        System.out.println(actual);
         InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_homepage_explicit_home.json");
 
         assertions(actual, expected);
@@ -223,8 +222,6 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
 
             String actual = getActualJson("/spa/resourceapi", "1.0");
 
-            System.out.println(actual);
-
             InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_explicit_hst_url_with_pathinfo.json");
 
             assertions(actual, expected);
@@ -280,7 +277,6 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
 
             String actual = getActualJson("/spa/resourceapi", "1.0");
 
-            System.out.println(actual);
             InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_cdn_and_hst_url_prefix.json");
 
             assertions(actual, expected);
