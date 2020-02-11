@@ -32,7 +32,7 @@ public class DynamicBeanUtils {
     public static final Pattern NAMESPACE_PATTERN = Pattern.compile(":");
     public static final Pattern DOT_PATTERN = Pattern.compile("\\.");
     public static final Pattern PATTERN_SPACES = Pattern.compile("\\s");
-    public static final Pattern PATTERN_ALLOWED_CHARS = Pattern.compile("[^A-Za-z0-9:_]");
+    public static final Pattern PATTERN_ALLOWED_CHARS = Pattern.compile("[^A-Za-z0-9:]");
     public static final String INVALID_CLASS_NAME = "InvalidClassName";
 
     public static String createJavaClassName(String name) {
