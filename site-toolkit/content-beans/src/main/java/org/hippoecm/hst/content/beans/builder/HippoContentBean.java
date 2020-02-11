@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -39,10 +40,11 @@ public class HippoContentBean {
     private static final Logger log = LoggerFactory.getLogger(HippoContentBean.class);
     private static final String GALLERY_IMAGESET_NODETYPE = "hippogallery:imageset";
     private final ContentType contentType;
-    private final String prefix;
+    private final String namespace;
     private final String documentType;
     private final List<HippoContentProperty> properties = new ArrayList<>();
     private final List<HippoContentChildNode> children = new ArrayList<>();
+    private final List<String> allowedNamespaces = new ArrayList<>();
     private String parentDocumentType;
     private Class<? extends HippoBean> parentBean;
     private boolean parentReloaded = false;
@@ -54,7 +56,7 @@ public class HippoContentBean {
     public HippoContentBean(final String documentType, final Class<? extends HippoBean> parentBean, final ContentType contentType) {
         this.contentType = contentType;
         this.documentType = documentType;
-        this.prefix = StringUtils.substringBefore(documentType, ":");
+        this.namespace = StringUtils.substringBefore(documentType, ":");
 
         if (contentType == null) {
             return;
@@ -66,6 +68,7 @@ public class HippoContentBean {
             this.parentBean = parentBean;
         }
 
+        processAllowedNamespaces();
         processProperties();
         processChildNodes();
     }
@@ -81,10 +84,24 @@ public class HippoContentBean {
         this.parentReloaded = true;
     }
 
+    /**
+     * Allowed namespaces stores the list of namespaces that the dynamic bean generation
+     * should create the getters for their properties/childs. If a contentType is an aggregatedType,
+     * then getter methods should be created for the fields of all aggregated document types.
+     */
+    private void processAllowedNamespaces() {
+        if (CollectionUtils.isEmpty(contentType.getAggregatedTypes())) {
+            allowedNamespaces.add(namespace);
+        } else {
+            allowedNamespaces.addAll(contentType.getAggregatedTypes().stream().map(type -> StringUtils.substringBefore(type, ":"))
+                    .collect(Collectors.toList()));
+        }
+    }
+
     private void processSuperTypes() {
         final Set<String> superTypes = contentType.getSuperTypes()
                     .stream()
-                    .filter(type -> type.startsWith(prefix))
+                    .filter(type -> namespace.equals(getNamespace(type)))
                     .collect(Collectors.toSet());
 
         if (!superTypes.isEmpty()) {
@@ -112,7 +129,7 @@ public class HippoContentBean {
     }
 
     private void assignParentDocumentType(final Set<String> superTypes) {
-        final String baseDocumentName = prefix + ":basedocument";
+        final String baseDocumentName = namespace + ":basedocument";
 
         // If there is a custom document type other than basedocument in project namespace, use that.
         // Otherwise, use basedocument as the parent document type.
@@ -130,7 +147,7 @@ public class HippoContentBean {
 
         contentType.getChildren().entrySet()
             .stream()
-            .filter(entry -> entry.getKey().startsWith(prefix))
+            .filter(entry -> allowedNamespaces.contains(getNamespace(entry.getKey())))
             .forEach(entry -> children.add(new HippoContentChildNode(entry.getKey(), entry.getValue())));
     }
 
@@ -141,8 +158,12 @@ public class HippoContentBean {
 
         contentType.getProperties().entrySet()
             .stream()
-            .filter(entry -> entry.getKey().startsWith(prefix))
+            .filter(entry -> allowedNamespaces.contains(getNamespace(entry.getKey())))
             .forEach(entry -> properties.add(new HippoContentProperty(entry.getKey(), entry.getValue())));
+    }
+
+    private String getNamespace(final String documentType) {
+        return StringUtils.substringBefore(documentType, ":");
     }
 
     public List<HippoContentProperty> getProperties() {
