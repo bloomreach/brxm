@@ -14,13 +14,16 @@
  * limitations under the License.
  */
 
-import angular from 'angular';
-import servicesModule from '../services/services.module';
-import config from './iframe.config';
+export default function config($provide) {
+  'ngInject';
 
-const iframeModule = angular
-  .module('hippo-cm-iframe', [servicesModule])
-  .config(config)
-  .run($log => $log.info('hello from iframe'));
+  $provide.decorator('$q', ($delegate) => {
+    'ngInject';
 
-export default iframeModule.name;
+    if (window.$Promise !== $delegate) {
+      window.$Promise = $delegate;
+    }
+
+    return $delegate;
+  });
+}
