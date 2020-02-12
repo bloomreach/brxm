@@ -1,5 +1,5 @@
 /*
- * Copyright 2012-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2012-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,7 +43,7 @@ public class ChannelOverview extends ExtPanel {
                            boolean blueprintsAvailable) {
 
         this.blueprintsAvailable = blueprintsAvailable;
-        log.info("Blueprints for new channels are available: {}", blueprintsAvailable);
+        log.debug("Blueprints for new channels are available: {}", blueprintsAvailable);
 
         final ChannelIconPanel channelIconCard = new ChannelIconPanel(channelListConfig, channelStoreFuture);
         channelIconCard.setRegion(BorderLayout.Region.CENTER);
