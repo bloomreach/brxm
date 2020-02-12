@@ -50,6 +50,19 @@ export default class SpaService {
     this.RpcService.register('sync', this._sync);
   }
 
+  destroy() {
+    if (this._offSdkReady) {
+      this._offSdkReady();
+      delete this._offSdkReady();
+    }
+
+    this.iframeJQueryElement.off('unload', this._onUnload);
+    this.RpcService.destroy();
+
+    this._isSpa = false;
+    delete this._legacyHandle;
+  }
+
   _getOrigin() {
     const properties = this.ChannelService.getProperties();
     const channel = this.ChannelService.getChannel();

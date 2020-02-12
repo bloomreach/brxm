@@ -95,6 +95,7 @@ function mockHost() {
       navigator: window.navigator,
       dispatchEvent: window.dispatchEvent.bind(window),
       postMessage: window.postMessage.bind(window),
+      removeEventListener: window.removeEventListener.bind(window),
     };
 
     $window.APP_CONFIG = {
