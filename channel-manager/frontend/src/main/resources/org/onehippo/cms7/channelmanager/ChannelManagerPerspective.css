@@ -688,6 +688,10 @@
   overflow-x: hidden !important;
 }
 
+.br-delete-variant-btn {
+  margin-top: 2px;
+}
+
 .componentPropertiesForm .x-item-disabled .x-form-trigger-over {
   background-position: 50% 50% !important;
 }
@@ -708,9 +712,10 @@
 }
 
 #componentPropertiesWindow.br-window .field-group-title {
+  border-top: 1px solid rgba(0, 0, 0, .12);
+  font-weight: 600;
   margin: 8px 0 4px;
   padding-top: 8px;
-  border-top: 1px solid rgba(0, 0, 0, .12);
 }
 
 #componentPropertiesWindow.br-window .field-group-title:first-child {

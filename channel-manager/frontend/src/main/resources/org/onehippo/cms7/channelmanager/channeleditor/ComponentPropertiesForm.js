@@ -84,7 +84,7 @@
       if (this.variant.id !== 'hippo-default') {
         this.deleteButton = new Ext.Button({
           text: Hippo.ChannelManager.ChannelEditor.Resources['properties-form-button-delete'],
-          cls: 'btn btn-default qa-delete-button',
+          cls: 'btn btn-default br-delete-variant-btn qa-delete-button',
           handler: function () {
             Ext.Ajax.request({
               method: 'DELETE',
@@ -235,10 +235,10 @@
 
         if (record.get('hiddenInChannelManager') === false) {
           groupLabel = record.get('groupLabel');
-          if (groupLabel !== lastGroupLabel) {
+          if (groupLabel !== lastGroupLabel && groupLabel !== null) {
             this.add({
               cls: 'field-group-title',
-              text: this._isReadOnlyTemplate(record) ? '' : Ext.util.Format.htmlEncode(groupLabel),
+              text: this._isTemplatePickerField(record) ? '' : Ext.util.Format.htmlEncode(groupLabel),
               xtype: 'label'
             });
             lastGroupLabel = groupLabel;
@@ -248,8 +248,8 @@
       }, this);
     },
 
-    _isReadOnlyTemplate: function (record) {
-      return this.isReadOnly && record.get('name') === 'org.hippoecm.hst.core.component.template';
+    _isTemplatePickerField: function (record) {
+      return record.get('name') === 'org.hippoecm.hst.core.component.template';
     },
 
     _initField: function (record) {
@@ -382,7 +382,7 @@
       this.add({
         xtype: 'label',
         cls: 'x-form-item-label',
-        text: record.get('label')
+        text: this._createLabel(record)
       });
 
       var propertyFieldConfig = {
@@ -438,6 +438,10 @@
         }
 
         return this.add(propertyFieldConfig);
+    },
+
+    _createLabel: function(record) {
+      return record.get('label') + (record.get('required') ? ' *' : '');
     },
 
     _loadException: function (proxy, type, actions, options, response) {
