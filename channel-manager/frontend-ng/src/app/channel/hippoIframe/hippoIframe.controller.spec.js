@@ -20,6 +20,7 @@ describe('hippoIframeCtrl', () => {
   let $rootScope;
   let $window;
   let CmsService;
+  let CommunicationService;
   let ComponentRenderingService;
   let ContainerService;
   let DomService;
@@ -64,6 +65,7 @@ describe('hippoIframeCtrl', () => {
       _$rootScope_,
       _$window_,
       _CmsService_,
+      _CommunicationService_,
       _ContainerService_,
       _DragDropService_,
       _HippoIframeService_,
@@ -77,6 +79,7 @@ describe('hippoIframeCtrl', () => {
       $rootScope = _$rootScope_;
       $window = _$window_;
       CmsService = _CmsService_;
+      CommunicationService = _CommunicationService_;
       ContainerService = _ContainerService_;
       DragDropService = _DragDropService_;
       HippoIframeService = _HippoIframeService_;
@@ -88,6 +91,7 @@ describe('hippoIframeCtrl', () => {
 
       $element = angular.element('<div><iframe /></div>');
 
+      spyOn(CommunicationService, 'connect').and.returnValue($q.resolve());
       spyOn(OverlayService, 'onEditMenu');
       spyOn(OverlayService, 'onSelectDocument');
       spyOn(DragDropService, 'onClick').and.callThrough();
@@ -202,6 +206,15 @@ describe('hippoIframeCtrl', () => {
     expect(CmsService.unsubscribe).toHaveBeenCalledWith('delete-component', jasmine.any(Function), $ctrl);
   });
 
+  it('initiates a connection with the iframe bundle', () => {
+    $ctrl.onLoad();
+    $rootScope.$digest();
+
+    expect(CommunicationService.connect).toHaveBeenCalledWith(jasmine.objectContaining({
+      target: $ctrl.iframeJQueryElement[0],
+    }));
+  });
+
   it('injects the iframe bundle into the iframe', () => {
     DomService.getAssetUrl.and.returnValue('url');
 
@@ -251,6 +264,19 @@ describe('hippoIframeCtrl', () => {
     expect(SpaService.initLegacy).toHaveBeenCalled();
   });
 
+  it('initiates a connection with the iframe bundle when the SPA SDK is ready', () => {
+    spyOn(SpaService, 'getOrigin').and.returnValue('http://localhost:3000');
+    Object.defineProperty(contentWindow, 'document', { get: () => { throw new Error('Access denied.'); } });
+
+    $rootScope.$emit('spa:ready');
+    $rootScope.$digest();
+
+    expect(CommunicationService.connect).toHaveBeenCalledWith(jasmine.objectContaining({
+      origin: 'http://localhost:3000',
+      target: $ctrl.iframeJQueryElement[0],
+    }));
+  });
+
   it('injects the iframe bundle when the SPA SDK is ready', () => {
     Object.defineProperty(contentWindow, 'document', { get: () => { throw new Error('Access denied.'); } });
     spyOn(SpaService, 'inject');
@@ -285,6 +311,20 @@ describe('hippoIframeCtrl', () => {
     $rootScope.$digest();
 
     expect(listener).not.toHaveBeenCalled();
+  });
+
+  it('disconnects with the iframe bundle on the iframe unload', () => {
+    spyOn(CommunicationService, 'disconnect');
+    $ctrl.iframeJQueryElement.trigger('unload');
+
+    expect(CommunicationService.disconnect).toHaveBeenCalled();
+  });
+
+  it('disconnects with the iframe bundle on the component destruction', () => {
+    spyOn(CommunicationService, 'disconnect');
+    $ctrl.$onDestroy();
+
+    expect(CommunicationService.disconnect).toHaveBeenCalled();
   });
 
   it('destroys an SPA integration on the component destruction', () => {
