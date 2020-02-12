@@ -58,8 +58,7 @@ describe('SpaService', () => {
     beforeEach(() => {
       iframeJQueryElement = angular.element('<iframe />');
       spyOn(RpcService, 'initialize');
-      spyOn(ChannelService, 'getChannel');
-      spyOn(ChannelService, 'getProperties');
+      spyOn(SpaService, 'getOrigin');
     });
 
     it('uses the iframe content window as a target', () => {
@@ -70,37 +69,13 @@ describe('SpaService', () => {
       }));
     });
 
-    it('uses an origin from the preview url', () => {
-      ChannelService.getProperties.and.returnValue({
-        'org.hippoecm.hst.configuration.channel.PreviewURLChannelInfo_url': 'http://example.com:3000/something',
-      });
+    it('passes an SPA origin', () => {
+      SpaService.getOrigin.and.returnValue('http://example.com:3000');
       SpaService.init(iframeJQueryElement);
 
       expect(RpcService.initialize).toHaveBeenCalledWith(jasmine.objectContaining({
         origin: 'http://example.com:3000',
       }));
-    });
-
-    it('uses an origin from the channel url', () => {
-      ChannelService.getChannel.and.returnValue({ url: 'http://localhost:8080/_cmsinternal' });
-      SpaService.init(iframeJQueryElement);
-
-      expect(RpcService.initialize).toHaveBeenCalledWith(jasmine.objectContaining({
-        origin: 'http://localhost:8080',
-      }));
-    });
-
-    it('uses an empty origin when there is no configured url', () => {
-      SpaService.init(iframeJQueryElement);
-
-      expect(RpcService.initialize).toHaveBeenCalledWith(jasmine.objectContaining({ origin: '' }));
-    });
-
-    it('uses an empty origin when the url is invalid', () => {
-      ChannelService.getChannel.and.returnValue({ url: '/_cmsinternal' });
-      SpaService.init(iframeJQueryElement);
-
-      expect(RpcService.initialize).toHaveBeenCalledWith(jasmine.objectContaining({ origin: '' }));
     });
 
     it('registers sync overlay callback', () => {
@@ -114,6 +89,37 @@ describe('SpaService', () => {
 
       sync();
       expect(RenderingService.createOverlay).toHaveBeenCalled();
+    });
+  });
+
+  describe('getOrigin', () => {
+    beforeEach(() => {
+      spyOn(ChannelService, 'getChannel');
+      spyOn(ChannelService, 'getProperties');
+    });
+
+    it('returns an origin from the preview url', () => {
+      ChannelService.getProperties.and.returnValue({
+        'org.hippoecm.hst.configuration.channel.PreviewURLChannelInfo_url': 'http://example.com:3000/something',
+      });
+
+      expect(SpaService.getOrigin()).toBe('http://example.com:3000');
+    });
+
+    it('returns an origin from the channel url', () => {
+      ChannelService.getChannel.and.returnValue({ url: 'http://localhost:8080/_cmsinternal' });
+
+      expect(SpaService.getOrigin()).toBe('http://localhost:8080');
+    });
+
+    it('returns an empty origin when there is no configured url', () => {
+      expect(SpaService.getOrigin()).toBeUndefined();
+    });
+
+    it('returns an empty origin when the url is invalid', () => {
+      ChannelService.getChannel.and.returnValue({ url: '/_cmsinternal' });
+
+      expect(SpaService.getOrigin()).toBeUndefined();
     });
   });
 

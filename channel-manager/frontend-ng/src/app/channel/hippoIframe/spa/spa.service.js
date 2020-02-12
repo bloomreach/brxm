@@ -36,7 +36,7 @@ export default class SpaService {
 
   init(iframeJQueryElement) {
     this.RpcService.initialize({
-      origin: this._getOrigin(),
+      origin: this.getOrigin(),
       target: iframeJQueryElement[0].contentWindow,
     });
 
@@ -63,22 +63,21 @@ export default class SpaService {
     delete this._legacyHandle;
   }
 
-  _getOrigin() {
+  getOrigin() {
     const properties = this.ChannelService.getProperties();
     const channel = this.ChannelService.getChannel();
     const url = (properties && properties[PROPERTY_SPA_URL]) || (channel && channel[PROPERTY_URL]);
 
     if (!url) {
-      return '';
+      return;
     }
 
     try {
       const { origin } = new URL(url);
 
+      // eslint-disable-next-line consistent-return
       return origin;
-    } catch (error) {
-      return '';
-    }
+    } catch (error) {} // eslint-disable-line no-empty
   }
 
   _onSdkReady() {
