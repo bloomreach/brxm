@@ -14,17 +14,34 @@
  * limitations under the License.
  */
 
-import angular from 'angular';
-import Penpal from 'penpal';
-import servicesModule from '../services/services.module';
-import config from './iframe.config';
-import CommunicationService from './communication.service';
+export default class CommunicationService {
+  constructor($q, $rootScope, Penpal) {
+    'ngInject';
 
-const iframeModule = angular
-  .module('hippo-cm-iframe', [servicesModule])
-  .config(config)
-  .constant('Penpal', Penpal)
-  .service('CommunicationService', CommunicationService)
-  .run($log => $log.info('hello from iframe'));
+    this.$q = $q;
+    this.$rootScope = $rootScope;
+    this.Penpal = Penpal;
+  }
 
-export default iframeModule.name;
+  async connect() {
+    this._connection = this.Penpal.connectToParent({
+      methods: {
+        emit: this._emit.bind(this),
+      },
+    });
+
+    this._parent = await this._connection.promise;
+  }
+
+  _emit(event, data) {
+    this.$rootScope.$emit(`cm:${event}`, data);
+  }
+
+  emit(event, data) {
+    if (!this._parent) {
+      return;
+    }
+
+    this._parent.emit(event, data);
+  }
+}
