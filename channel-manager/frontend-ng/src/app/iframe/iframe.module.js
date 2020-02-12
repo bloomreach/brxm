@@ -25,6 +25,8 @@ const iframeModule = angular
   .config(config)
   .constant('Penpal', Penpal)
   .service('CommunicationService', CommunicationService)
-  .run($log => $log.info('hello from iframe'));
+
+  // eslint-disable-next-line no-shadow
+  .run(CommunicationService => CommunicationService.connect());
 
 export default iframeModule.name;
