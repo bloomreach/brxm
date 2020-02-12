@@ -287,6 +287,13 @@ describe('hippoIframeCtrl', () => {
     expect(listener).not.toHaveBeenCalled();
   });
 
+  it('destroys an SPA integration on the component destruction', () => {
+    spyOn(SpaService, 'destroy');
+    $ctrl.$onDestroy();
+
+    expect(SpaService.destroy).toHaveBeenCalled();
+  });
+
   it('updates drag-drop when the components overlay is toggled and the iframe finished loading', () => {
     spyOn(RenderingService, 'updateDragDrop');
 

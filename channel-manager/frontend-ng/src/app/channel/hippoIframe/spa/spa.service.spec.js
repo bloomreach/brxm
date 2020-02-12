@@ -23,9 +23,7 @@ describe('SpaService', () => {
   let RenderingService;
   let RpcService;
   let SpaService;
-
-  const iframeWindow = {
-  };
+  let iframeWindow;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -50,6 +48,7 @@ describe('SpaService', () => {
       SpaService = _SpaService_;
     });
 
+    iframeWindow = {};
     spyOn(DomService, 'getIframeWindow').and.returnValue(iframeWindow);
   });
 
@@ -115,6 +114,50 @@ describe('SpaService', () => {
 
       sync();
       expect(RenderingService.createOverlay).toHaveBeenCalled();
+    });
+  });
+
+  describe('destroy', () => {
+    let iframeJQueryElement;
+
+    beforeEach(() => {
+      iframeJQueryElement = angular.element('<iframe />');
+      spyOn(RpcService, 'initialize');
+      spyOn(ChannelService, 'getChannel');
+      spyOn(ChannelService, 'getProperties');
+
+      SpaService.init(iframeJQueryElement);
+    });
+
+    it('stops reacting on the SPA ready event', () => {
+      SpaService.destroy();
+      $rootScope.$emit('spa:ready');
+      $rootScope.$digest();
+
+      expect(SpaService.isSpa()).toBe(false);
+    });
+
+    it('resets the SPA flag', () => {
+      $rootScope.$emit('spa:ready');
+      $rootScope.$digest();
+      SpaService.destroy();
+
+      expect(SpaService.isSpa()).toBe(false);
+    });
+
+    it('resets the legacy handle', () => {
+      iframeWindow.SPA = {};
+      SpaService.initLegacy();
+      SpaService.destroy();
+
+      expect(SpaService.isSpa()).toBe(false);
+    });
+
+    it('destroys a remote connection', () => {
+      spyOn(RpcService, 'destroy');
+      SpaService.destroy();
+
+      expect(RpcService.destroy).toHaveBeenCalled();
     });
   });
 

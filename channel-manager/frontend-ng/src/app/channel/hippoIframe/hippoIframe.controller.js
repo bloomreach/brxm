@@ -98,6 +98,7 @@ class HippoIframeCtrl {
   }
 
   $onDestroy() {
+    this.SpaService.destroy();
     this.CmsService.unsubscribe('render-component', this._renderComponent, this);
     this.CmsService.unsubscribe('delete-component', this._deleteComponent, this);
     this._offClick();
