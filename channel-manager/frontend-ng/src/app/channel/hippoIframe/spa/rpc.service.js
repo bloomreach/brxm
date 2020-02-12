@@ -39,6 +39,12 @@ export default class RpcService {
     this.$window.addEventListener('message', this._onMessage);
   }
 
+  destroy() {
+    this.$window.removeEventListener('message', this._onMessage);
+    delete this._origin;
+    delete this._target;
+  }
+
   call(command, ...payload) {
     return this.$q((resolve, reject) => {
       const id = this._generateId();

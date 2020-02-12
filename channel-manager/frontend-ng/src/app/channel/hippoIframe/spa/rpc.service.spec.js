@@ -227,4 +227,19 @@ describe('RpcService', () => {
       );
     });
   });
+
+  describe('destroy', () => {
+    it('should stop reacting on events', () => {
+      const listener = jasmine.createSpy();
+      $rootScope.$on('spa:something', listener);
+
+      $window.dispatchEvent(new MessageEvent('message', {
+        data: { type: 'brxm:event', event: 'something', payload: { a: 'b' } },
+        origin: 'http://localhost:3000',
+      }));
+      $rootScope.$digest();
+
+      expect(listener).not.toHaveBeenCalledWith();
+    });
+  });
 });
