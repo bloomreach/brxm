@@ -22,6 +22,7 @@ class HippoIframeCtrl {
     $element,
     $rootScope,
     CmsService,
+    CommunicationService,
     ComponentRenderingService,
     ContainerService,
     DomService,
@@ -42,6 +43,7 @@ class HippoIframeCtrl {
     this.$element = $element;
     this.$rootScope = $rootScope;
     this.CmsService = CmsService;
+    this.CommunicationService = CommunicationService;
     this.ComponentRenderingService = ComponentRenderingService;
     this.ContainerService = ContainerService;
     this.DomService = DomService;
@@ -59,6 +61,8 @@ class HippoIframeCtrl {
 
     this.iframeJQueryElement = this.$element.find('iframe');
     this._onSpaReady = this._onSpaReady.bind(this);
+    this.onLoad = this.onLoad.bind(this);
+    this._onUnload = this._onUnload.bind(this);
   }
 
   $onInit() {
@@ -67,7 +71,8 @@ class HippoIframeCtrl {
     this._offClick = this.DragDropService.onClick(this._clickComponent.bind(this));
     this._offDrop = this.DragDropService.onDrop(this._moveComponent.bind(this));
 
-    this.iframeJQueryElement.on('load', () => this.onLoad());
+    this.iframeJQueryElement.on('load', this.onLoad);
+    this.iframeJQueryElement.on('unload', this._onUnload);
     this._offSdkReady = this.$rootScope.$on('spa:ready', this._onSpaReady);
 
     const canvasJQueryElement = this.$element.find('.channel-iframe-canvas');
@@ -98,6 +103,7 @@ class HippoIframeCtrl {
   }
 
   $onDestroy() {
+    this.CommunicationService.disconnect();
     this.SpaService.destroy();
     this.CmsService.unsubscribe('render-component', this._renderComponent, this);
     this.CmsService.unsubscribe('delete-component', this._deleteComponent, this);
@@ -111,11 +117,14 @@ class HippoIframeCtrl {
       return;
     }
 
-    // TODO: call penpal connect to child
+    const target = this.iframeJQueryElement[0];
+    const connection = this.CommunicationService.connect({ target });
+
     await this.DomService.addScript(
-      this.iframeJQueryElement[0].contentWindow,
+      target.contentWindow,
       this.DomService.getAssetUrl(iframeBundle),
     );
+    await connection;
 
     this.$rootScope.$broadcast('hippo-iframe:load');
 
@@ -126,13 +135,20 @@ class HippoIframeCtrl {
     this.RenderingService.createOverlay();
   }
 
+  _onUnload() {
+    this.CommunicationService.disconnect();
+  }
+
   async _onSpaReady() {
     if (this._isIframeAccessible()) {
       return;
     }
 
-    // TODO: call penpal connect to child
+    const target = this.iframeJQueryElement[0];
+    const connection = this.CommunicationService.connect({ target, origin: this.SpaService.getOrigin() });
+
     await this.SpaService.inject(this.DomService.getAssetUrl(iframeBundle));
+    await connection;
 
     this.$rootScope.$broadcast('hippo-iframe:load');
   }
