@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -31,7 +32,7 @@ import { UserToolbarDrawerComponent } from './user-toolbar-drawer.component';
 describe('User Drawer Component', () => {
   let component: UserToolbarDrawerComponent;
   let fixture: ComponentFixture<UserToolbarDrawerComponent>;
-  let de: DebugElement;
+  let logoutDe: DebugElement;
 
   let authService: jasmine.SpyObj<AuthService>;
   const userName = 'myUserName';
@@ -68,7 +69,10 @@ describe('User Drawer Component', () => {
     authService = TestBed.get(AuthService);
 
     component = fixture.componentInstance;
-    de = fixture.debugElement;
+
+    logoutDe = fixture.debugElement.query(By.css('.qa-usersettings-logout'));
+
+    fixture.detectChanges();
   }));
 
   it('should exist', () => {
@@ -86,9 +90,19 @@ describe('User Drawer Component', () => {
   });
 
   it('should logout', () => {
-    const event = new Event('click');
-    component.logout(event);
+    logoutDe.triggerEventHandler('click', { preventDefault: () => {} });
+
     expect(authService.logout).toHaveBeenCalledWith('UserLoggedOut');
+  });
+
+  it('should prevent default action if user clicked "logout"', () => {
+    const eventMock = jasmine.createSpyObj('ClickEvent', [
+      'preventDefault',
+    ]);
+
+    logoutDe.triggerEventHandler('click', eventMock);
+
+    expect(eventMock.preventDefault).toHaveBeenCalled();
   });
 
   it('should return the userName', () => {
@@ -101,7 +115,14 @@ describe('User Drawer Component', () => {
     expect(email).toEqual(userEmail);
   });
 
-  it('should emit userDrawerOpenChange', () => {
+  it('should emit userDrawerOpenChange if user clicked outside', () => {
+    spyOn(component.userDrawerOpenChange, 'emit');
+
+    component.onClickedOutside();
+    expect(component.userDrawerOpenChange.emit).toHaveBeenCalledWith(false);
+  });
+
+  it('should emit userDrawerOpenChange if user clicked "logout"', () => {
     spyOn(component.userDrawerOpenChange, 'emit');
 
     component.onClickedOutside();
