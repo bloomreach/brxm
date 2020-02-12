@@ -46,11 +46,11 @@
 }
 
 .x-item-disabled {
-  color: $dark-shade;
+  color: $gray38 !important;
 }
 
 .x-item-disabled * {
-  color: $dark-shade;
+  color: $gray38 !important;
 }
 
 .x-splitbar-proxy {
@@ -377,6 +377,10 @@ textarea.x-form-focus,
 
     &.btn-br-primary button {
       color: $button-primary-color;
+    }
+
+    &.btn-br-secondary button {
+      color: $button-secondary-color;
     }
 
     &.btn-br-primary.x-item-disabled,
@@ -1661,8 +1665,6 @@ a.x-menu-item {
     padding-bottom: 16px;
 
     .x-item-disabled {
-      background-color: #ebeced;
-
       &:focus,
       &:focus-within {
         border-color: $gray38 !important;
@@ -1680,7 +1682,7 @@ a.x-menu-item {
       box-sizing: border-box;
       height: 36px;
       padding: 0 8px 0 8px;
-      width: 100%;
+      width: 100% !important;
 
       &:focus {
         border-color: $bluePrimary;
@@ -1703,10 +1705,6 @@ a.x-menu-item {
         border-bottom-right-radius: 4px;
         height: 34px;
         width: 34px;
-      }
-
-      input[type="text"][disabled] + .x-form-arrow-trigger {
-        background-color: #ebeced;
       }
 
       &:focus-within {
@@ -1780,11 +1778,16 @@ a.x-menu-item {
       }
     }
 
-    .x-form-invalid,
-    .x-form-invalid:focus {
+    .x-form-invalid {
       background-color: transparent;
       border-color: $red;
       box-shadow: none;
+    }
+
+    .x-form-invalid:focus {
+      background-color: transparent;
+      border-color: $red;
+      box-shadow: 0 0 0 1px $red;
     }
   }
 
