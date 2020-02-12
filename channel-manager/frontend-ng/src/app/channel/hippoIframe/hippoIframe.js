@@ -15,6 +15,7 @@
  */
 
 import hippoIframeComponent from './hippoIframe.component';
+import CommunicationService from './spa/communication.service';
 import ComponentRenderingService from './rendering/component-rendering.service';
 import ContainerService from './container/container.service';
 import DragDropService from './dragDrop/dragDrop.service';
@@ -36,6 +37,7 @@ const channelHippoIframeModule = angular
   ])
   .component('hippoIframe', hippoIframeComponent)
   .constant('HstConstants', HstConstants)
+  .service('CommunicationService', CommunicationService)
   .service('ComponentRenderingService', ComponentRenderingService)
   .service('ContainerService', ContainerService)
   .service('DragDropService', DragDropService)
