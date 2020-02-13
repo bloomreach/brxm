@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-project</artifactId>
-    <version>30.4.2</version>
+    <version>30.4.3-SNAPSHOT</version>
   </parent>
 
   <name>Hippo Plugin Poll</name>
