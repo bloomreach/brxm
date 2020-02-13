@@ -445,12 +445,10 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                 // a token
                 if (hstSite != null && hstSite.getChannel() != null && req.getAttribute(PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE) == null
                         && !requestContext.isPageModelApiRequest()) {
+
                     final Channel channel = hstSite.getChannel();
-                    final String previewURL = channel.getProperties().get(PREVIEW_URL_PROPERTY_NAME).toString();
-
-                    if (channel != null && channel.getProperties().containsKey(PREVIEW_URL_PROPERTY_NAME)
-                            && StringUtils.isNotBlank(previewURL)) {
-
+                    if (StringUtils.isNotBlank((String)channel.getProperties().get(PREVIEW_URL_PROPERTY_NAME))) {
+                        String previewURL = (String)channel.getProperties().get(PREVIEW_URL_PROPERTY_NAME);
                         try {
                             // parse the preview url
                             final URI uri = new URI(previewURL);
