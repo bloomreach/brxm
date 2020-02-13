@@ -27,7 +27,7 @@
   <description>BloomReach CMS Project Archetype Parent</description>
 
   <artifactId>hippo-project-archetype-parent</artifactId>
-  <version>13.4.2-SNAPSHOT</version>
+  <version>13.4.3-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <properties>
