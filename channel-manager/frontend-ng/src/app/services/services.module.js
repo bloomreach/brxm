@@ -15,7 +15,6 @@
  */
 
 import Penpal from 'penpal';
-import * as NavappCommunication from '@bloomreach/navapp-communication';
 
 // TODO: Move some of these toplevel modules into functional specific folders/modules
 import BrowserService from './browser.service';
@@ -43,7 +42,6 @@ import WorkflowService from './workflow.service';
 const servicesModule = angular
   .module('hippo-cm.services', [])
   .constant('Penpal', Penpal)
-  .constant('NavappCommunication', NavappCommunication)
   .service('BrowserService', BrowserService)
   .service('CatalogService', CatalogService)
   .service('CmsService', CmsService)

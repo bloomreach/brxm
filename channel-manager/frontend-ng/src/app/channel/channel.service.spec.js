@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { connectToParent } from '@bloomreach/navapp-communication';
 
 describe('ChannelService', () => {
   let $log;
@@ -29,6 +30,7 @@ describe('ChannelService', () => {
   let SiteMapService;
   let channelMock;
   let projectMock;
+  let ParentApiMock;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -55,6 +57,13 @@ describe('ChannelService', () => {
       locale: 'en',
       projectsEnabled: false,
     };
+
+    ParentApiMock = jasmine.createSpyObj('ParentApi', ['updateNavLocation']);
+
+    const connectToParentCaller = {
+      connectToParent: ({ parentOrigin, methods }) => connectToParent({ methods, parentOrigin }),
+    };
+    spyOn(connectToParentCaller, 'connectToParent').and.returnValue(() => Promise.resolve(ParentApiMock));
 
     angular.mock.module(($provide) => {
       $provide.value('ConfigService', ConfigServiceMock);
@@ -672,6 +681,7 @@ describe('ChannelService', () => {
     const done = 'DONE';
     const promise = { then: () => done };
     HstService.doDelete.and.returnValue(promise);
+    ParentApiMock.updateNavLocation.and.returnValue(promise);
 
     expect(ChannelService.deleteChannel()).toEqual(done);
     expect(HstService.doDelete).toHaveBeenCalledWith(ConfigServiceMock.rootUuid, 'channels', channelMock.id);

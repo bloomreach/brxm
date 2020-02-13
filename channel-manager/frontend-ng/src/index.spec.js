@@ -159,23 +159,10 @@ function disableStateTransitionErrors() {
   });
 }
 
-function mockNavappConnection() {
-  angular.mock.module('hippo-cm', ($provide) => {
-    const parentApiMock = {
-      updateNavLocation: () => Promise.resolve(),
-    };
-
-    $provide.constant('NavappCommunication', {
-      connectToParent: () => Promise.resolve(parentApiMock),
-    });
-  });
-}
-
 beforeEach(mockHost);
 beforeEach(mockFallbackTranslations);
 beforeEach(mockMdIcon);
 beforeEach(disableStateTransitionErrors);
-beforeEach(mockNavappConnection);
 
 const context = require.context('./app', true, /\.js$/);
 context.keys().forEach(context);

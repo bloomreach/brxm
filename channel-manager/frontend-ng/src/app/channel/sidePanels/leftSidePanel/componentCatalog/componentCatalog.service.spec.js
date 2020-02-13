@@ -117,37 +117,12 @@ describe('ComponentCatalogService', () => {
   describe('adding a component to container', () => {
     let isDisabled;
     let mockContainer;
-    let mockComponent;
-    let mockComponent2;
-    let mockComponent3;
     let mockEvent;
-    let mockEventTarget;
     const selectedComponent = {};
 
     beforeEach(() => {
-      [mockEventTarget] = Array.from(angular.element('<div></div>'));
       isDisabled = false;
-
-      mockEvent = {
-        stopPropagation: jasmine.createSpy('stopPropagation'),
-        get target() { return mockEventTarget; },
-      };
-
-      mockComponent = {
-        getId: () => 456,
-        getContainer: () => mockContainer,
-      };
-
-      mockComponent2 = {
-        getId: () => 789,
-        getContainer: () => mockContainer,
-      };
-
-      mockComponent3 = {
-        getId: () => 123,
-        getContainer: () => mockContainer,
-      };
-
+      mockEvent = jasmine.createSpyObj('mockEvent', ['stopPropagation']);
       mockContainer = {
         isDisabled() {
           return isDisabled;
@@ -155,10 +130,6 @@ describe('ComponentCatalogService', () => {
         getId() {
           return 123;
         },
-        items: [
-          mockComponent,
-          mockComponent2,
-        ],
       };
 
       ComponentCatalogService.selectedComponent = selectedComponent;
@@ -169,53 +140,6 @@ describe('ComponentCatalogService', () => {
       spyOn(HippoIframeService, 'reload').and.returnValue($q.resolve());
       spyOn(PageStructureService, 'getContainerById').and.returnValue(mockContainer);
       spyOn(RightSidePanelService, 'close');
-    });
-
-    describe('positioning of component within container', () => {
-      it('should position the component after the click target', () => {
-        const addedComponent = mockComponent3;
-        [mockEventTarget] = Array.from(
-          angular.element('<div class="hippo-overlay-element-component-drop-area-after"></div>'),
-        );
-        spyOn(PageStructureService, 'getComponentById').and.returnValue(addedComponent);
-        spyOn(ComponentCatalogService, '_addComponent').and.returnValue($q.resolve(addedComponent.getId()));
-        spyOn(ContainerService, 'moveComponent').and.returnValue($q.resolve());
-
-        ComponentCatalogService._handleComponentClick(mockEvent, mockComponent);
-        $rootScope.$digest();
-
-        expect(ContainerService.moveComponent).toHaveBeenCalledWith(addedComponent, mockContainer, mockComponent2);
-      });
-
-      it('should position the component after the click target last in the container', () => {
-        const addedComponent = mockComponent3;
-        [mockEventTarget] = Array.from(
-          angular.element('<div class="hippo-overlay-element-component-drop-area-after"></div>'),
-        );
-        spyOn(PageStructureService, 'getComponentById').and.returnValue(addedComponent);
-        spyOn(ComponentCatalogService, '_addComponent').and.returnValue($q.resolve(addedComponent.getId()));
-        spyOn(ContainerService, 'moveComponent').and.returnValue($q.resolve());
-
-        ComponentCatalogService._handleComponentClick(mockEvent, mockComponent2);
-        $rootScope.$digest();
-
-        expect(ContainerService.moveComponent).toHaveBeenCalledWith(addedComponent, mockContainer, undefined);
-      });
-
-      it('should position the component before the click target', () => {
-        const addedComponent = mockComponent3;
-        [mockEventTarget] = Array.from(
-          angular.element('<div class="hippo-overlay-element-component-drop-area-before"></div>'),
-        );
-        spyOn(PageStructureService, 'getComponentById').and.returnValue(addedComponent);
-        spyOn(ComponentCatalogService, '_addComponent').and.returnValue($q.resolve(addedComponent.getId()));
-        spyOn(ContainerService, 'moveComponent').and.returnValue($q.resolve());
-
-        ComponentCatalogService._handleComponentClick(mockEvent, mockComponent2);
-        $rootScope.$digest();
-
-        expect(ContainerService.moveComponent).toHaveBeenCalledWith(addedComponent, mockContainer, mockComponent2);
-      });
     });
 
     it('adds component to a container', () => {
