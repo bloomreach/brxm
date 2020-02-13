@@ -34,7 +34,7 @@
 
   <groupId>org.onehippo.cms7.hst</groupId>
   <artifactId>hst</artifactId>
-  <version>13.4.2-SNAPSHOT</version>
+  <version>13.4.2</version>
   <packaging>pom</packaging>
   <inceptionYear>2008</inceptionYear>
   <issueManagement>
@@ -84,18 +84,18 @@
     <javadoc.base.version>13.1</javadoc.base.version>
 
     <hippo.jackrabbit.version>2.18.3-h2</hippo.jackrabbit.version>
-    <hippo.commons.version>13.4.2-SNAPSHOT</hippo.commons.version>
-    <hippo.repository.version>13.4.2-SNAPSHOT</hippo.repository.version>
-    <hippo.configuration-management.version>13.4.2-SNAPSHOT</hippo.configuration-management.version>
-    <hippo.utilities.version>13.4.2-SNAPSHOT</hippo.utilities.version>
-    <hippo.services.version>13.4.2-SNAPSHOT</hippo.services.version>
-    <hippo.services.eventbus.version>13.4.2-SNAPSHOT</hippo.services.eventbus.version>
+    <hippo.commons.version>13.4.2</hippo.commons.version>
+    <hippo.repository.version>13.4.2</hippo.repository.version>
+    <hippo.configuration-management.version>13.4.2</hippo.configuration-management.version>
+    <hippo.utilities.version>13.4.2</hippo.utilities.version>
+    <hippo.services.version>13.4.2</hippo.services.version>
+    <hippo.services.eventbus.version>13.4.2</hippo.services.eventbus.version>
     <hippo.services.search.version>13.4.0</hippo.services.search.version>
-    <hippo.services.contenttype.version>13.4.2-SNAPSHOT</hippo.services.contenttype.version>
-    <hippo.testutils.version>13.4.2-SNAPSHOT</hippo.testutils.version>
-    <hippo.plugin.gallerypicker.version>13.4.2-SNAPSHOT</hippo.plugin.gallerypicker.version>
-    <hippo.plugin.selections.version>13.4.2-SNAPSHOT</hippo.plugin.selections.version>
-    <hippo.packages.version>13.4.2-SNAPSHOT</hippo.packages.version>
+    <hippo.services.contenttype.version>13.4.2</hippo.services.contenttype.version>
+    <hippo.testutils.version>13.4.2</hippo.testutils.version>
+    <hippo.plugin.gallerypicker.version>13.4.2</hippo.plugin.gallerypicker.version>
+    <hippo.plugin.selections.version>13.4.2</hippo.plugin.selections.version>
+    <hippo.packages.version>13.4.2</hippo.packages.version>
     
     <sf.htmlcleaner.version>2.22</sf.htmlcleaner.version>
 
