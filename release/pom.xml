@@ -62,7 +62,7 @@
     <hippo.services.webfiles.version>13.4.2-SNAPSHOT</hippo.services.webfiles.version>
     <hippo.services.htmlprocessor.version>13.4.2-SNAPSHOT</hippo.services.htmlprocessor.version>
     <hippo.utilities.version>13.4.2-SNAPSHOT</hippo.utilities.version>
-    <hippo.testutils.version>13.4.2-SNAPSHOT</hippo.testutils.version>
+    <hippo.testutils.version>13.4.2</hippo.testutils.version>
     <hippo.l10n-tooling.version>13.4.2-SNAPSHOT</hippo.l10n-tooling.version>
 
     <!-- Hippo standard plugin versions -->
