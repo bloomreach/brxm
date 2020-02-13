@@ -76,7 +76,7 @@
     <hippo.plugin.resourcebundle-editor.version>13.4.2</hippo.plugin.resourcebundle-editor.version>
     <hippo.plugin.robotstxt.version>13.4.2</hippo.plugin.robotstxt.version>
     <hippo.plugin.selections.version>13.4.2</hippo.plugin.selections.version>
-    <hippo.plugin.seo-support.version>13.4.2-SNAPSHOT</hippo.plugin.seo-support.version>
+    <hippo.plugin.seo-support.version>13.4.2</hippo.plugin.seo-support.version>
     <hippo.plugin.sitemap.version>13.4.2-SNAPSHOT</hippo.plugin.sitemap.version>
     <hippo.plugin.taxonomy.version>13.4.2</hippo.plugin.taxonomy.version>
     <hippo.addon-crisp.version>13.4.2</hippo.addon-crisp.version>
