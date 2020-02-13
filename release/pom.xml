@@ -48,7 +48,7 @@
 
     <hippo.configuration-management.version>13.4.2</hippo.configuration-management.version>
     <hippo.addon-channel-manager.version>13.4.2-SNAPSHOT</hippo.addon-channel-manager.version>
-    <hippo.addon-search-service.version>13.4.2-SNAPSHOT</hippo.addon-search-service.version>
+    <hippo.addon-search-service.version>13.4.2</hippo.addon-search-service.version>
     <hippo.commons.version>13.4.2</hippo.commons.version>
     <hippo.cms.version>13.4.2-SNAPSHOT</hippo.cms.version>
     <hippo.hst.version>13.4.2-SNAPSHOT</hippo.hst.version>
