@@ -707,7 +707,8 @@
 .br-window .br-form .br-combo .x-form-field-wrap {
   width: 100% !important;
 }
-.br-window .br-form .br-combo input {
+
+.br-window .br-form .br-combo input:not([type="checkbox"]):not([type="radio"]) {
   width: calc(100% - 36px) !important;
 }
 
