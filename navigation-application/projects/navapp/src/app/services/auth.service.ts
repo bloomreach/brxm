@@ -101,7 +101,7 @@ export class AuthService {
 
   private getLoginLocation(loginMessageKey: string): string {
     const queryParams = loginMessageKey && `/?loginmessage=${loginMessageKey}` || '/';
-    const baseUrl = this.appSettings.basePath;
+    const baseUrl = this.appSettings.loginPath || this.appSettings.basePath;
 
     return this.location.prepareExternalUrl(`${baseUrl}${queryParams}`);
   }

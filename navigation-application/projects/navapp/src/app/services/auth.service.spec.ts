@@ -226,7 +226,7 @@ describe('AuthService', () => {
       }));
 
       it('should redirect to the login location', () => {
-        expect(locationMock.prepareExternalUrl).toHaveBeenCalledWith('/base/path/?loginmessage=test-logout-message');
+        expect(locationMock.prepareExternalUrl).toHaveBeenCalledWith('/login/path/?loginmessage=test-logout-message');
         expect(documentMock.location.replace).toHaveBeenCalledWith('https://some-domain.com/base/path');
       });
     });
