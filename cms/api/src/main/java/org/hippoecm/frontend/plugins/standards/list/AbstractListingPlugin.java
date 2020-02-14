@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -239,15 +239,18 @@ public abstract class AbstractListingPlugin<T> extends RenderPlugin<T> implement
         final ISortableDataProvider<Node, String> dataProvider = getDataProvider();
 
         ISortState<String> newSortState = dataProvider.getSortState();
+
+        boolean sortOrderChanged = false;
         for (ListColumn<Node> column : tableDefinition.getColumns()) {
             String sortProperty = column.getSortProperty();
             SortOrder propertySortOrder = sortState.getPropertySortOrder(sortProperty);
             if (propertySortOrder != newSortState.getPropertySortOrder(sortProperty)) {
                 newSortState.setPropertySortOrder(sortProperty, propertySortOrder);
+                sortOrderChanged = true;
             }
         }
 
-        dataTable = getListDataTable("table", tableDefinition, dataProvider, this, isOrderable(), pagingDefinition);
+        dataTable = getListDataTable("table", tableDefinition, dataProvider, this, sortOrderChanged ? true : isOrderable(), pagingDefinition);
         replace(dataTable);
         dataTable.init(getPluginContext());
 
