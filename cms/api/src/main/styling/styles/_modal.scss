@@ -143,6 +143,11 @@
       margin-bottom: $editor-field-title-bottom-margin;
     }
 
+    .label--dark {
+      color: $gray87;
+      margin-bottom: $editor-field-title-bottom-margin;
+    }
+
     .input-row {
       padding: 0 0 16px 0;
 
@@ -200,7 +205,6 @@
 
     .radio-box-group {
       align-items: center;
-      color: $gray60;
       column-gap: 8px;
       display: grid;
       grid-template-columns: auto auto;
