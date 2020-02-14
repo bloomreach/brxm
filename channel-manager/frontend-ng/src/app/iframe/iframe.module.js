@@ -27,6 +27,13 @@ const iframeModule = angular
   .service('CommunicationService', CommunicationService)
 
   // eslint-disable-next-line no-shadow
-  .run(CommunicationService => CommunicationService.connect());
+  .run(($window, CommunicationService) => {
+    CommunicationService.connect();
+
+    // The `unload` event cannot be used here because `event.source` in the target MessageEvent
+    // will be `null`. Penpal checks `event.source`, and in this case, it will reject the request.
+    // @see https://github.com/Aaronius/penpal/blob/master/src/connectCallReceiver.js#L34
+    $window.addEventListener('beforeunload', () => CommunicationService.emit('unload'));
+  });
 
 export default iframeModule.name;

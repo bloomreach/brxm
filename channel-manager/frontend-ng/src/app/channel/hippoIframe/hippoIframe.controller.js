@@ -72,8 +72,8 @@ class HippoIframeCtrl {
     this._offDrop = this.DragDropService.onDrop(this._moveComponent.bind(this));
 
     this.iframeJQueryElement.on('load', this.onLoad);
-    this.iframeJQueryElement.on('unload', this._onUnload);
     this._offSdkReady = this.$rootScope.$on('spa:ready', this._onSpaReady);
+    this._offSdkUnload = this.$rootScope.$on('iframe:unload', this._onUnload);
 
     const canvasJQueryElement = this.$element.find('.channel-iframe-canvas');
     const sheetJQueryElement = this.$element.find('.channel-iframe-sheet');
@@ -110,6 +110,7 @@ class HippoIframeCtrl {
     this._offClick();
     this._offDrop();
     this._offSdkReady();
+    this._offSdkUnload();
   }
 
   async onLoad() {

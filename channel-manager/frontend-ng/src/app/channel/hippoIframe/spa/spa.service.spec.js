@@ -200,7 +200,19 @@ describe('SpaService', () => {
 
       SpaService.init(element);
       $rootScope.$emit('spa:ready');
-      element.trigger('unload');
+      $rootScope.$emit('iframe:unload');
+      $rootScope.$digest();
+
+      expect(SpaService.isSpa()).toBe(false);
+    });
+
+    it('returns false when the legacy SPA was unloaded', () => {
+      const element = angular.element('<iframe />');
+
+      iframeWindow.SPA = {};
+      SpaService.init(element);
+      SpaService.initLegacy();
+      $rootScope.$emit('iframe:unload');
       $rootScope.$digest();
 
       expect(SpaService.isSpa()).toBe(false);
