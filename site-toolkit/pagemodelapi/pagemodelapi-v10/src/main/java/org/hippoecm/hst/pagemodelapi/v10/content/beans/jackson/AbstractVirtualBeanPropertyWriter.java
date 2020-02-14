@@ -1,12 +1,12 @@
 /*
- *  Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * @param <S> the type of the original source bean type
  * @param <T> the type of the target extra property object type
  */
-abstract public class AbstractVirtualBeanPropertyWriter<S, T> extends VirtualBeanPropertyWriter {
+public abstract class AbstractVirtualBeanPropertyWriter<S, T> extends VirtualBeanPropertyWriter {
 
     private static final long serialVersionUID = 1L;
 
@@ -70,7 +70,7 @@ abstract public class AbstractVirtualBeanPropertyWriter<S, T> extends VirtualBea
      * @return a links map or null
      * @throws Exception if any exception occurs
      */
-    abstract protected T createValue(final HstRequestContext requestContext, final S item) throws Exception;
+    protected abstract T createValue(final HstRequestContext requestContext, final S item) throws Exception;
 
     /**
      * Create a new instance with the configuration objects.
@@ -87,7 +87,7 @@ abstract public class AbstractVirtualBeanPropertyWriter<S, T> extends VirtualBea
      * @param type java type
      * @return a new instance with the configuration objects
      */
-    abstract protected VirtualBeanPropertyWriter createInstanceWithConfig(MapperConfig<?> config, AnnotatedClass declaringClass,
+    protected abstract VirtualBeanPropertyWriter createInstanceWithConfig(MapperConfig<?> config, AnnotatedClass declaringClass,
             BeanPropertyDefinition propDef, JavaType type);
 
     /**
