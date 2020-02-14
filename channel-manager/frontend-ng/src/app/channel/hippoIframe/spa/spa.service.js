@@ -53,7 +53,7 @@ export default class SpaService {
   destroy() {
     if (this._offSdkReady) {
       this._offSdkReady();
-      delete this._offSdkReady();
+      delete this._offSdkReady;
     }
 
     this.iframeJQueryElement.off('unload', this._onUnload);
