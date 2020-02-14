@@ -1,12 +1,12 @@
 /*
  *  Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -42,34 +42,29 @@ import org.hippoecm.hst.pagemodelapi.v10.content.beans.jackson.HstURLMixin;
  */
 class HstBeansObjectMapperDecorator {
 
-    private static final Map<Class<?>, Class<?>> defaultMixins = new LinkedHashMap<>();
+    private static final Map<Class<?>, Class<?>> DEFAULT_MIXINS = new LinkedHashMap<>();
 
     static {
-        defaultMixins.put(Session.class, DefaultJsonIgnoreTypeMixin.class);
-        defaultMixins.put(Node.class, DefaultJsonIgnoreTypeMixin.class);
+        DEFAULT_MIXINS.put(Session.class, DefaultJsonIgnoreTypeMixin.class);
+        DEFAULT_MIXINS.put(Node.class, DefaultJsonIgnoreTypeMixin.class);
 
-        defaultMixins.put(HippoResourceBean.class, HippoResourceBeanMixin.class);
-        defaultMixins.put(HippoHtmlBean.class, HippoHtmlBeanMixin.class);
-        defaultMixins.put(HstURL.class, HstURLMixin.class);
-        defaultMixins.put(HstLink.class, HstLinkMixin.class);
-        defaultMixins.put(HstSiteMenuItem.class, HstSiteMenuItemMixin.class);
-        defaultMixins.put(EditableMenuItem.class, EditableMenuItemMixin.class);
+        DEFAULT_MIXINS.put(HippoResourceBean.class, HippoResourceBeanMixin.class);
+        DEFAULT_MIXINS.put(HippoHtmlBean.class, HippoHtmlBeanMixin.class);
+        DEFAULT_MIXINS.put(HstURL.class, HstURLMixin.class);
+        DEFAULT_MIXINS.put(HstLink.class, HstLinkMixin.class);
+        DEFAULT_MIXINS.put(HstSiteMenuItem.class, HstSiteMenuItemMixin.class);
+        DEFAULT_MIXINS.put(EditableMenuItem.class, EditableMenuItemMixin.class);
     }
 
     private HstBeansObjectMapperDecorator() {
     }
 
     static void decorate(final ObjectMapper objectMapper, final Map<Class<?>, Class<?>> extraMixins) {
-        if (defaultMixins != null) {
-            defaultMixins.forEach((clazz, mixin) -> {
-                objectMapper.addMixIn(clazz, mixin);
-            });
-        }
+
+        DEFAULT_MIXINS.forEach(objectMapper::addMixIn);
 
         if (extraMixins != null) {
-            extraMixins.forEach((clazz, mixin) -> {
-                objectMapper.addMixIn(clazz, mixin);
-            });
+            extraMixins.forEach(objectMapper::addMixIn);
         }
 
     }

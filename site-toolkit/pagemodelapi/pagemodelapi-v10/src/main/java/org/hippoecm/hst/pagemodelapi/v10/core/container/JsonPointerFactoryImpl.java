@@ -17,6 +17,7 @@ package org.hippoecm.hst.pagemodelapi.v10.core.container;
 
 import java.util.UUID;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.content.beans.standard.IdentifiableContentBean;
 
 // TODO make pluggable for downstream projects, for example such that a Product Ecommerce object can get a certain id
@@ -29,24 +30,20 @@ public class JsonPointerFactoryImpl implements JsonPointerFactory {
     @Override
     public String createJsonPointerId(final Object object) {
         if (object instanceof IdentifiableContentBean) {
-            final String id = ((IdentifiableContentBean)object).getRepresentationId();
-            if (id == null) {
-                return createJsonPointerId();
-            } else {
+            final String id = ((IdentifiableContentBean) object).getRepresentationId();
+            if (id != null) {
                 return createJsonPointerIdForString(id);
             }
-        } else {
-            return createJsonPointerId();
         }
+        return createJsonPointerId();
     }
 
     @Override
     public String createJsonPointerId() {
-        return createJsonPointerIdForString(UUID.randomUUID().toString()) ;
+        return createJsonPointerIdForString(UUID.randomUUID().toString());
     }
 
     protected String createJsonPointerIdForString(final String string) {
-        return new StringBuilder(string.length()).append(CONTENT_ID_JSON_NAME_PREFIX).append(string.replaceAll("-", ""))
-                .toString();
+        return CONTENT_ID_JSON_NAME_PREFIX + StringUtils.remove(string, '-');
     }
 }
