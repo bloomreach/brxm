@@ -25,13 +25,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonSerializer;
-import com.fasterxml.jackson.databind.SerializerProvider;
-
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoAssetBean;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -48,6 +41,13 @@ import org.hippoecm.hst.pagemodelapi.v10.core.model.IdentifiableLinkableMetadata
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SITE;
 
@@ -57,16 +57,16 @@ public class PageModelSerializer extends JsonSerializer<Object> {
 
     private static Logger log = LoggerFactory.getLogger(PageModelSerializer.class);
 
-    static class SerializerContext {
+    private static class SerializerContext {
         private boolean firstEntity = true;
-        private ArrayDeque<JsonPointerWrapper> serializeQueue = new ArrayDeque<>();
+        private final ArrayDeque<JsonPointerWrapper> serializeQueue = new ArrayDeque<>();
         // the current page model entity that is being serialized
         private Object serializingPageModelEntity;
         // hash set to keep track of already serialized objects (same pointers)
-        Set<String> serializedPointers = new HashSet<>();
-        Set<Object> handledPmaEntities = new HashSet<>();
-        Map<Object, String> objectJsonPointerMap = new HashMap<>();
-        private int maxDocumentRefLevel;
+        private final Set<String> serializedPointers = new HashSet<>();
+        private final Set<Object> handledPmaEntities = new HashSet<>();
+        private final Map<Object, String> objectJsonPointerMap = new HashMap<>();
+        private final int maxDocumentRefLevel;
 
         public SerializerContext(final int maxDocumentRefLevel) {
             this.maxDocumentRefLevel = maxDocumentRefLevel;
@@ -78,11 +78,11 @@ public class PageModelSerializer extends JsonSerializer<Object> {
     }
 
     static void closeContext() {
-        tlSerializerContext.set(null);
+        tlSerializerContext.remove();
     }
 
-    private JsonSerializer<Object> delegatee;
-    private JsonPointerFactory jsonPointerFactory;
+    private final JsonSerializer<Object> delegatee;
+    private final JsonPointerFactory jsonPointerFactory;
     private final List<MetadataDecorator> metadataDecorators;
 
     public PageModelSerializer(final JsonSerializer<Object> delegatee, final JsonPointerFactory jsonPointerFactory,
@@ -92,147 +92,71 @@ public class PageModelSerializer extends JsonSerializer<Object> {
         this.metadataDecorators = metadataDecorators;
     }
 
-    final Class[] KNOWN_PMA_ENTITIES = new Class[]{ComponentWindowModel.class, HippoDocumentBean.class,
-            HippoFolderBean.class, CommonMenu.class};
+    private static final Class<?>[] KNOWN_PMA_ENTITIES = {
+            ComponentWindowModel.class,
+            HippoDocumentBean.class,
+            HippoFolderBean.class,
+            CommonMenu.class
+    };
 
     @Override
     public void serialize(final Object object, final JsonGenerator gen, final SerializerProvider serializerProvider) throws IOException {
-        SerializerContext serializerContext = tlSerializerContext.get();
+        final SerializerContext serializerContext = getSerializerContext();
 
+        if (object instanceof AggregatedPageModel.RootReference) {
+            serializeRoot((AggregatedPageModel.RootReference) object, gen, serializerContext);
+        } else {
+
+            final Optional<DecoratedPageModelEntityWrapper<?>> nonSerializedWrappedEntity = getNonSerializedWrappedEntity(object, serializerContext);
+            if (Arrays.stream(KNOWN_PMA_ENTITIES).noneMatch(pmaClass -> pmaClass.isInstance(object))
+                    || serializerContext.serializingPageModelEntity == object
+                    || nonSerializedWrappedEntity.isPresent()) {
+                // If it's a DecoratedPageModelEntityWrapper for the current object then set it to serialized
+                nonSerializedWrappedEntity.ifPresent(e -> e.setSerialized(true));
+                // Not a PMA entity
+                // or entity == object
+                // or already wrapped in DecoratedPageModelEntityWrapper
+                // , so no 'flattened' serialization
+                delegatee.serialize(object, gen, serializerProvider);
+            } else if (serializerContext.serializingPageModelEntity != null) {
+                serializePageModelEntityIfNeeded(object, gen, serializerContext);
+            } else {
+                serializeQueuedObjects(gen, serializerContext);
+            }
+        }
+    }
+
+    private Optional<DecoratedPageModelEntityWrapper<?>> getNonSerializedWrappedEntity(Object object, SerializerContext serializerContext) {
+        if (serializerContext.serializingPageModelEntity instanceof DecoratedPageModelEntityWrapper) {
+            final DecoratedPageModelEntityWrapper<?> wrapper = (DecoratedPageModelEntityWrapper<?>) serializerContext.serializingPageModelEntity;
+            if (wrapper.getData() == object && !wrapper.isSerialized()) {
+                return Optional.of(wrapper);
+            }
+        }
+        return Optional.empty();
+    }
+
+    private PageModelSerializer.SerializerContext getSerializerContext() {
+        final SerializerContext serializerContext = tlSerializerContext.get();
         if (serializerContext == null) {
             throw new IllegalStateException("PageModelSerializer not in the correct state for current thread, first " +
                     "invoke #initContext to setup the required thread local");
         }
-        if (object.getClass().equals(AggregatedPageModel.RootReference.class)) {
-            AggregatedPageModel.RootReference ref = (AggregatedPageModel.RootReference) object;
-            Object pageRoot = ref.getObject();
-            String jsonPointerId = jsonPointerFactory.createJsonPointerId();
-            JsonPointerWrapper value = new JsonPointerWrapper(pageRoot, jsonPointerId);
-            serializeBeanReference(gen, jsonPointerId);
-            serializerContext.serializeQueue.add(value);
-            return;
-        }
+        return serializerContext;
+    }
 
-        if (serializerContext.serializingPageModelEntity instanceof DecoratedPageModelEntityWrapper) {
-            final DecoratedPageModelEntityWrapper entity = (DecoratedPageModelEntityWrapper) serializerContext.serializingPageModelEntity;
-            if (entity.getData() == object && !entity.isSerialized()) {
-                // although a PMA entity, we now really need to serialize it
+    private void serializeRoot(final AggregatedPageModel.RootReference ref, final JsonGenerator gen, final SerializerContext serializerContext) throws IOException {
+        final String jsonPointerId = jsonPointerFactory.createJsonPointerId();
+        serializeBeanReference(gen, jsonPointerId);
+        final JsonPointerWrapper value = new JsonPointerWrapper(ref.getObject(), jsonPointerId);
+        serializerContext.serializeQueue.add(value);
+    }
 
-                // Now to avoid potential recursion for a PMA entity referencing itself (same java instance via some chain),
-                // we now mark the DecoratedPageModelEntityWrapper as serialized!
-                entity.setSerialized(true);
-                delegatee.serialize(object, gen, serializerProvider);
-                return;
-            }
-        }
-
-        Optional<Class> pmaEntity = Arrays.stream(KNOWN_PMA_ENTITIES).filter(pmaClass -> pmaClass.isAssignableFrom(object.getClass())).findFirst();
-
-        if (!pmaEntity.isPresent()) {
-            // Not a PMA entity or already wrapped in DecoratedPageModelEntityWrapper, so no 'flattened' serialization
-            delegatee.serialize(object, gen, serializerProvider);
-            return;
-        }
-
-        if (serializerContext.serializingPageModelEntity != null) {
-
-            if (serializerContext.serializingPageModelEntity == object) {
-                delegatee.serialize(object, gen, serializerProvider);
-            } else {
-                // we are currently serializing a page model entity and during that serialization, we now encounter a
-                // new nested page model entity which must be postponed and therefor added to serializeQueue unless it
-                // is a document at a deeper than max level depth
-
-                int nextDepth = 0;
-                if (serializerContext.serializingPageModelEntity instanceof DecoratedPageModelEntityWrapper) {
-                    nextDepth = ((DecoratedPageModelEntityWrapper) serializerContext.serializingPageModelEntity).getCurrentDepth();
-                    if (object instanceof HippoDocumentBean || object instanceof HippoFolderBean) {
-                        nextDepth++;
-                    }
-                    if (nextDepth > serializerContext.maxDocumentRefLevel) {
-                        if (serializerContext.handledPmaEntities.contains(object)) {
-                            // even though deeper reference than max depth, the referenced doc has been already handled,
-                            // so just include the reference
-                            String jsonPointerId = serializerContext.objectJsonPointerMap
-                                    .computeIfAbsent(object, obj -> jsonPointerFactory.createJsonPointerId(object));
-
-                            serializeBeanReference(gen, jsonPointerId);
-                            return;
-                        } else {
-                            gen.writeStartObject();
-                            // just serialize only the ID of the document bean and return : the bean does not get
-                            // serialized since deeper than max reference
-                            gen.writeStringField("uuid", ((HippoBean) object).getRepresentationId());
-                            gen.writeEndObject();
-                        }
-                        return;
-                    }
-                }
-
-                // make sure same object returns same jsonPointerId : handy if the same model object is used multiple
-                // times in the PMA
-                String jsonPointerId = serializerContext.objectJsonPointerMap
-                        .computeIfAbsent(object, obj -> jsonPointerFactory.createJsonPointerId(object));
-
-                serializeBeanReference(gen, jsonPointerId);
-
-                if (serializerContext.handledPmaEntities.contains(object)) {
-                    // already handled pma entity, so only the $ref is enough for this object
-                    return;
-                }
-
-                serializerContext.handledPmaEntities.add(object);
-
-
-                if (object instanceof CommonMenu) {
-
-                    HstRequestContext requestContext = RequestContextProvider.get();
-                    final DecoratedPageModelEntityWrapper<CommonMenu> decoratedPageModelEntityWrapper
-                            = new DecoratedPageModelEntityWrapper(object, "menu", nextDepth);
-                    for (MetadataDecorator metadataDecorator : metadataDecorators) {
-                        log.trace("Decorate menu '{}' with metadataDecorator '{}'", ((CommonMenu)object).getName(), metadataDecorator);
-                        metadataDecorator.decorateCommonMenuMetadata(requestContext,
-                                decoratedPageModelEntityWrapper.getData(), decoratedPageModelEntityWrapper);
-                    }
-                    serializerContext.serializeQueue.add(new JsonPointerWrapper(decoratedPageModelEntityWrapper, jsonPointerId));
-
-                } else if (object instanceof HippoDocumentBean || object instanceof HippoFolderBean) {
-
-                    HstRequestContext requestContext = RequestContextProvider.get();
-                    final DecoratedPageModelEntityWrapper<HippoBean> decoratedPageModelEntityWrapper
-                            = new DecoratedPageModelEntityWrapper(object, getHippoBeanType((HippoBean) object), nextDepth);
-                    if (object instanceof HippoAssetBean || object instanceof HippoGalleryImageSet) {
-                        log.trace("Skip adding links to hippo asset or gallery document since only links to the " +
-                                "resources in them are useful");
-                    } else {
-                        log.trace("Add links to document or folder bean");
-                        addLinksToContent(requestContext, decoratedPageModelEntityWrapper);
-                    }
-
-                    for (MetadataDecorator metadataDecorator : metadataDecorators) {
-                        log.trace("Decorate '{}' with metadataDecorator '{}'", ((HippoBean)object).getPath(), metadataDecorator);
-                        metadataDecorator.decorateContentMetadata(requestContext,
-                                decoratedPageModelEntityWrapper.getData(), decoratedPageModelEntityWrapper);
-                    }
-
-                    serializerContext.serializeQueue.add(new JsonPointerWrapper(decoratedPageModelEntityWrapper, jsonPointerId));
-                } else {
-                    // no extra wrapping needed other than json pointer inclusion
-                    serializerContext.serializeQueue.add(new JsonPointerWrapper(object, jsonPointerId));
-                }
-
-                return;
-            }
-        } else {
-            while (!serializerContext.serializeQueue.isEmpty()) {
-                JsonPointerWrapper pop = serializerContext.serializeQueue.removeFirst();
-
-                String jsonPointer = pop.getJsonPointer();
-                if (serializerContext.serializedPointers.contains(jsonPointer)) {
-                    // already serialized, avoid doubles
-                    continue;
-                }
-
+    private void serializeQueuedObjects(final JsonGenerator gen, final SerializerContext serializerContext) throws IOException {
+        while (!serializerContext.serializeQueue.isEmpty()) {
+            final JsonPointerWrapper pop = serializerContext.serializeQueue.removeFirst();
+            final String jsonPointer = pop.getJsonPointer();
+            if (!serializerContext.serializedPointers.contains(jsonPointer)) {
                 if (serializerContext.firstEntity) {
                     gen.writeStartObject();
                     serializerContext.firstEntity = false;
@@ -242,27 +166,115 @@ public class PageModelSerializer extends JsonSerializer<Object> {
                 serializerContext.serializingPageModelEntity = pop.getObject();
                 gen.writeObject(pop.getObject());
                 serializerContext.serializingPageModelEntity = null;
-
             }
+        }
+    }
 
+    private void serializePageModelEntityIfNeeded(final Object object, final JsonGenerator gen, final SerializerContext serializerContext) throws IOException {
+        int nextDepth = serializePageModelEntity(object, gen, serializerContext);
+        if (nextDepth >= 0) {
+            // make sure same object returns same jsonPointerId : handy if the same model object is used multiple
+            // times in the PMA
+            final String jsonPointerId = serializerContext.objectJsonPointerMap
+                    .computeIfAbsent(object, obj -> jsonPointerFactory.createJsonPointerId(object));
+
+            serializeBeanReference(gen, jsonPointerId);
+
+            if (!serializerContext.handledPmaEntities.contains(object)) {
+                serializerContext.handledPmaEntities.add(object);
+                final JsonPointerWrapper jsonPointerWrapper = getJsonPointerWrapper(object, nextDepth, jsonPointerId);
+                serializerContext.serializeQueue.add(jsonPointerWrapper);
+            }
+        }
+    }
+
+    private int serializePageModelEntity(final Object object, final JsonGenerator gen, final SerializerContext serializerContext) throws IOException {
+        // we are currently serializing a page model entity and during that serialization, we now encounter a
+        // new nested page model entity which must be postponed and therefore added to serializeQueue unless it
+        // is a document at a deeper than max level depth
+        final Object pageModelEntity = serializerContext.serializingPageModelEntity;
+        int nextDepth = 0;
+        if (pageModelEntity instanceof DecoratedPageModelEntityWrapper) {
+            nextDepth = ((DecoratedPageModelEntityWrapper<?>) pageModelEntity).getCurrentDepth();
+            if (object instanceof HippoDocumentBean || object instanceof HippoFolderBean) {
+                nextDepth++;
+            }
+            if (nextDepth > serializerContext.maxDocumentRefLevel) {
+                if (serializerContext.handledPmaEntities.contains(object)) {
+                    // even though deeper reference than max depth, the referenced doc has been already handled,
+                    // so just include the reference
+                    String jsonPointerId = serializerContext.objectJsonPointerMap
+                            .computeIfAbsent(object, obj -> jsonPointerFactory.createJsonPointerId(object));
+
+                    serializeBeanReference(gen, jsonPointerId);
+                } else {
+                    gen.writeStartObject();
+                    // just serialize only the ID of the document bean and return : the bean does not get
+                    // serialized since deeper than max reference
+                    gen.writeStringField("uuid", ((HippoBean) object).getRepresentationId());
+                    gen.writeEndObject();
+                }
+                return -1;
+            }
+        }
+        return nextDepth;
+    }
+
+    private PageModelSerializer.JsonPointerWrapper getJsonPointerWrapper(final Object object, final int nextDepth, final String jsonPointerId) {
+        if (object instanceof CommonMenu) {
+            final DecoratedPageModelEntityWrapper<CommonMenu> decoratedPageModelEntityWrapper = wrapCommonMenu(nextDepth, (CommonMenu) object);
+            return new JsonPointerWrapper(decoratedPageModelEntityWrapper, jsonPointerId);
+        }
+        if (object instanceof HippoDocumentBean || object instanceof HippoFolderBean) {
+            final DecoratedPageModelEntityWrapper<HippoBean> decoratedPageModelEntityWrapper = wrapHippoBean(nextDepth, (HippoBean) object);
+            return new JsonPointerWrapper(decoratedPageModelEntityWrapper, jsonPointerId);
+        }
+        // no extra wrapping needed other than json pointer inclusion
+        return new JsonPointerWrapper(object, jsonPointerId);
+    }
+
+    private PageModelSerializer.DecoratedPageModelEntityWrapper<HippoBean> wrapHippoBean(final int nextDepth, final HippoBean hippoBean) {
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        final DecoratedPageModelEntityWrapper<HippoBean> wrapper
+                = new DecoratedPageModelEntityWrapper<>(hippoBean, getHippoBeanType(hippoBean), nextDepth);
+        if (hippoBean instanceof HippoAssetBean || hippoBean instanceof HippoGalleryImageSet) {
+            log.trace("Skip adding links to hippo asset or gallery document since only links to the " +
+                    "resources in them are useful");
+        } else {
+            log.trace("Add links to document or folder bean");
+            addLinksToContent(requestContext, wrapper);
         }
 
+        for (MetadataDecorator metadataDecorator : metadataDecorators) {
+            log.trace("Decorate '{}' with metadataDecorator '{}'", hippoBean.getPath(), metadataDecorator);
+            metadataDecorator.decorateContentMetadata(requestContext,
+                    wrapper.getData(), wrapper);
+        }
+        return wrapper;
+    }
+
+    private PageModelSerializer.DecoratedPageModelEntityWrapper<CommonMenu> wrapCommonMenu(final int nextDepth, final CommonMenu commonMenu) {
+        final HstRequestContext requestContext = RequestContextProvider.get();
+        final DecoratedPageModelEntityWrapper<CommonMenu> wrapper
+                = new DecoratedPageModelEntityWrapper<>(commonMenu, "menu", nextDepth);
+        for (MetadataDecorator metadataDecorator : metadataDecorators) {
+            log.trace("Decorate menu '{}' with metadataDecorator '{}'", commonMenu.getName(), metadataDecorator);
+            metadataDecorator.decorateCommonMenuMetadata(requestContext,
+                    wrapper.getData(), wrapper);
+        }
+        return wrapper;
     }
 
 
     private void serializeBeanReference(final JsonGenerator gen,
                                         final String jsonPointerId) throws IOException {
+        // JSON Pointer Reference Property name.
+        final String ref = "$ref";
         gen.writeStartObject();
-        gen.writeStringField(CONTENT_JSON_POINTER_REFERENCE_PROP,
+        gen.writeStringField(ref,
                 "/page/" + jsonPointerId);
         gen.writeEndObject();
     }
-
-
-    /**
-     * JSON Pointer Reference Property name.
-     */
-    private static final String CONTENT_JSON_POINTER_REFERENCE_PROP = "$ref";
 
 
     private static class JsonPointerWrapper {
@@ -288,7 +300,7 @@ public class PageModelSerializer extends JsonSerializer<Object> {
     }
 
     @JsonPropertyOrder({"id", "type", "links", "meta", "data"})
-    private class DecoratedPageModelEntityWrapper<T> extends IdentifiableLinkableMetadataBaseModel {
+    private static class DecoratedPageModelEntityWrapper<T> extends IdentifiableLinkableMetadataBaseModel {
 
         private final T data;
         private final String type;

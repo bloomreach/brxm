@@ -17,7 +17,7 @@ package org.hippoecm.hst.pagemodelapi.v10.core.container;
 
 public interface JsonPointerFactory {
 
-    String createJsonPointerId(final Object object);
+    String createJsonPointerId(Object object);
 
     String createJsonPointerId();
 }
