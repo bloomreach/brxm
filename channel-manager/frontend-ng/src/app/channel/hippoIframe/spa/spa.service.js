@@ -35,18 +35,23 @@ export default class SpaService {
   }
 
   init(iframeJQueryElement) {
+    this.iframeJQueryElement = iframeJQueryElement;
+
     this.RpcService.initialize({
       origin: this.getOrigin(),
       target: iframeJQueryElement[0].contentWindow,
     });
 
-    this.iframeJQueryElement = iframeJQueryElement;
-    this.iframeJQueryElement.on('unload', this._onUnload);
+    if (this._offSdkUnload) {
+      this._offSdkUnload();
+    }
+    this._offSdkUnload = this.$rootScope.$on('iframe:unload', this._onUnload);
 
     if (this._offSdkReady) {
       this._offSdkReady();
     }
     this._offSdkReady = this.$rootScope.$on('spa:ready', this._onSdkReady);
+
     this.RpcService.register('sync', this._sync);
   }
 
@@ -55,8 +60,11 @@ export default class SpaService {
       this._offSdkReady();
       delete this._offSdkReady;
     }
+    if (this._offSdkUnload) {
+      this._offSdkUnload();
+      delete this._offSdkUnload;
+    }
 
-    this.iframeJQueryElement.off('unload', this._onUnload);
     this.RpcService.destroy();
 
     this._isSpa = false;
@@ -86,6 +94,7 @@ export default class SpaService {
 
   _onUnload() {
     this._isSpa = false;
+    delete this._legacyHandle;
   }
 
   isSpa() {

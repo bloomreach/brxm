@@ -315,7 +315,8 @@ describe('hippoIframeCtrl', () => {
 
   it('disconnects with the iframe bundle on the iframe unload', () => {
     spyOn(CommunicationService, 'disconnect');
-    $ctrl.iframeJQueryElement.trigger('unload');
+    $rootScope.$emit('iframe:unload');
+    $rootScope.$digest();
 
     expect(CommunicationService.disconnect).toHaveBeenCalled();
   });
