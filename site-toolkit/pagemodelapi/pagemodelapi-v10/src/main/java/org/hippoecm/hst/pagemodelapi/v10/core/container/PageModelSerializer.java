@@ -116,7 +116,7 @@ public class PageModelSerializer extends JsonSerializer<Object> {
                 // Not a PMA entity
                 // or entity == object
                 // or already wrapped in DecoratedPageModelEntityWrapper
-                // , so no 'flattened' serialization
+                // , so no delegate to normal serialization (since if needed, flattening already done)
                 delegatee.serialize(object, gen, serializerProvider);
             } else if (serializerContext.serializingPageModelEntity != null) {
                 serializePageModelEntityIfNeeded(object, gen, serializerContext);
