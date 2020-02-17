@@ -107,6 +107,7 @@
 
     <bytebuddy.version>1.10.2</bytebuddy.version>
     <org.skyscreamer.version>1.5.0</org.skyscreamer.version>
+    <nimbus-jose-jwt.version>8.4</nimbus-jose-jwt.version>
 
   </properties>
 
