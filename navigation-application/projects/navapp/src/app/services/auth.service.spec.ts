@@ -1,5 +1,5 @@
 /*!
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,87 +15,100 @@
  */
 
 import { DOCUMENT, Location } from '@angular/common';
-import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { ChildPromisedApi, ClientError } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 import { Subject } from 'rxjs';
 
 import { ClientAppMock } from '../client-app/models/client-app.mock';
 import { ClientAppService } from '../client-app/services/client-app.service';
+import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { AppSettingsMock } from '../models/dto/app-settings.mock';
 
 import { APP_SETTINGS } from './app-settings';
 import { AuthService } from './auth.service';
 import { BusyIndicatorService } from './busy-indicator.service';
 import { ConnectionService } from './connection.service';
+import { MainLoaderService } from './main-loader.service';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let childApiMock: jasmine.SpyObj<ChildPromisedApi>;
 
   const errorMock$ = new Subject<ClientError>();
-  const sessionExpiredMock$ = new Subject();
+  const sessionExpiredMock$ = new Subject<void>();
 
-  const connectionServiceMock = {
-    onError$: errorMock$,
-    onSessionExpired$: sessionExpiredMock$,
-    createConnection: undefined,
-    removeConnection: undefined,
-  };
+  let connectionServiceMock: jasmine.SpyObj<ConnectionService>;
+  let child1ApiMock: jasmine.SpyObj<ChildPromisedApi>;
+  let child2ApiMock: jasmine.SpyObj<ChildPromisedApi>;
+  let clientAppServiceMock: jasmine.SpyObj<ClientAppService>;
+  let mainLoaderServiceMock: jasmine.SpyObj<MainLoaderService>;
+  let busyIndicatorServiceMock: jasmine.SpyObj<BusyIndicatorService>;
+  let errorHandlingServiceMock: jasmine.SpyObj<ErrorHandlingService>;
+  let locationMock: jasmine.SpyObj<Location>;
+  let loggerMock: jasmine.SpyObj<NGXLogger>;
+  let documentMock: jasmine.SpyObj<Document>;
 
-  const clientAppServiceMock = {
-    apps: undefined,
-  };
-
-  const busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', [
-    'show',
-    'hide',
-  ]);
-
-  const appSettingsMock = new AppSettingsMock();
-  const numberOfLoginApps = appSettingsMock.loginResources.length;
-  const numberOfLogoutApps = appSettingsMock.logoutResources.length;
-
-  const documentMock = {
-    location: {
-      replace: undefined,
-    },
-  };
-
-  const locationMock = jasmine.createSpyObj('Location', [
-    'prepareExternalUrl',
-  ]);
-
-  const loggerMock = jasmine.createSpyObj('NGXLogger', [
-    'error',
-  ]);
+  let numberOfLoginApps: number;
 
   beforeEach(() => {
-    connectionServiceMock.createConnection = jasmine
-      .createSpy('createConnection')
-      .and
-      .returnValue(Promise.resolve({ url: 'testUrl' }));
-    connectionServiceMock.removeConnection = jasmine
-      .createSpy('removeConnection')
-      .and
-      .returnValue(Promise.resolve());
+    connectionServiceMock = jasmine.createSpyObj('MainLoaderService', {
+      createConnection: Promise.resolve({ url: 'testUrl' }),
+      removeConnection: Promise.resolve(),
+    });
+    connectionServiceMock.onError$ = errorMock$;
+    connectionServiceMock.onSessionExpired$ = sessionExpiredMock$;
 
-    childApiMock = jasmine.createSpyObj('ChildApi', [
+    child1ApiMock = jasmine.createSpyObj('Child1Api', [
       'logout',
     ]);
-    clientAppServiceMock.apps = [
-      new ClientAppMock({ url: 'http://test.com', api: childApiMock }),
-      new ClientAppMock({ url: 'http://test2.com', api: childApiMock }),
+    child2ApiMock = jasmine.createSpyObj('Child2Api', [
+      'logout',
+    ]);
+    clientAppServiceMock = {} as any;
+    (clientAppServiceMock as any).apps = [
+      new ClientAppMock({ url: 'http://test.com', api: child1ApiMock }),
+      new ClientAppMock({ url: 'http://test2.com', api: child2ApiMock }),
     ];
 
-    documentMock.location.replace = jasmine.createSpy('replace');
+    mainLoaderServiceMock = jasmine.createSpyObj('MainLoaderService', [
+      'show',
+      'hide',
+    ]);
+
+    busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', [
+      'show',
+      'hide',
+    ]);
+
+    errorHandlingServiceMock = jasmine.createSpyObj('ErrorHandlingService', [
+      'setCriticalError',
+    ]);
+
+    locationMock = jasmine.createSpyObj('Location', [
+      'prepareExternalUrl',
+    ]);
+
+    loggerMock = jasmine.createSpyObj('NGXLogger', [
+      'error',
+    ]);
+
+    const appSettingsMock = new AppSettingsMock();
+    numberOfLoginApps = appSettingsMock.loginResources.length;
+
+    documentMock = {
+      location: {
+        replace: jasmine.createSpy('replace'),
+      },
+    } as any;
 
     TestBed.configureTestingModule({
       providers: [
         AuthService,
         { provide: ConnectionService, useValue: connectionServiceMock },
         { provide: ClientAppService, useValue: clientAppServiceMock },
+        { provide: MainLoaderService, useValue: mainLoaderServiceMock },
         { provide: BusyIndicatorService, useValue: busyIndicatorServiceMock },
+        { provide: ErrorHandlingService, useValue: errorHandlingServiceMock },
         { provide: Location, useValue: locationMock },
         { provide: NGXLogger, useValue: loggerMock },
         { provide: APP_SETTINGS, useValue: appSettingsMock },
@@ -152,23 +165,70 @@ describe('AuthService', () => {
   });
 
   describe('logging out', () => {
-    it('should tell all apps to logout', fakeAsync(() => {
-      service.logout('Test logout message');
-      tick(1000);
+    let resolveChild1Logout: () => void;
+    let rejectChild1Logout: (reason?: any) => void;
+    let resolveChild2Logout: () => void;
+    let rejectChild2Logout: (reason?: any) => void;
 
-      expect(childApiMock.logout).toHaveBeenCalledTimes(numberOfLogoutApps);
-    }));
-
-    it('should redirect to the login location', fakeAsync(() => {
+    beforeEach(() => {
       locationMock.prepareExternalUrl.and.returnValue('https://some-domain.com/base/path');
-      const logoutMessage = 'test-logout-message';
+      child1ApiMock.logout.and.returnValue(new Promise((resolve, reject) => {
+        resolveChild1Logout = resolve;
+        rejectChild1Logout = reject;
+      }));
+      child2ApiMock.logout.and.returnValue(new Promise((resolve, reject) => {
+        resolveChild2Logout = resolve;
+        rejectChild2Logout = reject;
+      }));
 
-      service.logout(logoutMessage);
+      service.logout('test-logout-message');
+    });
 
-      tick(1000);
+    it('should tell all apps to logout', () => {
+      expect(child1ApiMock.logout).toHaveBeenCalled();
+      expect(child2ApiMock.logout).toHaveBeenCalled();
+    });
 
-      expect(locationMock.prepareExternalUrl).toHaveBeenCalledWith('/login/path/?loginmessage=test-logout-message');
-      expect(documentMock.location.replace).toHaveBeenCalledWith('https://some-domain.com/base/path');
-    }));
+    it('should show the main loader', () => {
+      expect(mainLoaderServiceMock.show).toHaveBeenCalled();
+    });
+
+    it('should show the busy indicator', () => {
+      expect(busyIndicatorServiceMock.show).toHaveBeenCalled();
+    });
+
+    describe('if something went wrong and Child1Api.logout promise has been rejected', () => {
+      beforeEach(async(() => {
+        rejectChild1Logout(new Error('something went wrong'));
+      }));
+
+      it('should hide the main loader', () => {
+        expect(mainLoaderServiceMock.hide).toHaveBeenCalled();
+      });
+
+      it('should hide the busy indicator', () => {
+        expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
+      });
+
+      it('should show the error to a user', () => {
+        expect(errorHandlingServiceMock.setCriticalError).toHaveBeenCalledWith('ERROR_UNABLE_TO_LOG_OUT', 'something went wrong');
+      });
+
+      it('should not redirect to the login page', () => {
+        expect(documentMock.location.replace).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('after child application apis responded successfully', () => {
+      beforeEach(async(() => {
+        resolveChild1Logout();
+        resolveChild2Logout();
+      }));
+
+      it('should redirect to the login location', () => {
+        expect(locationMock.prepareExternalUrl).toHaveBeenCalledWith('/login/path/?loginmessage=test-logout-message');
+        expect(documentMock.location.replace).toHaveBeenCalledWith('https://some-domain.com/base/path');
+      });
+    });
   });
 });

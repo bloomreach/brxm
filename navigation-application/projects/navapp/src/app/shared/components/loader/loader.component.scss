@@ -20,8 +20,13 @@
   display: grid;
   place-items: center;
 
+  // Reposition the icon so it is in the same position as the initial
+  // loading icon background present on the brna-root element in default.scss
   img {
     height: 64px;
+    left: -($menu-collapsed-width / 2);
+    position: relative;
+    top: -($top-panel-height / 2);
     width: 64px;
   }
 }

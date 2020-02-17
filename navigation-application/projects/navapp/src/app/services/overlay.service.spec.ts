@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-import { fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { BehaviorSubject, of, Subject } from 'rxjs';
+import { TestBed } from '@angular/core/testing';
+import { Subject } from 'rxjs';
 
 import { ConnectionService } from './connection.service';
 import { OverlayService } from './overlay.service';
 
 describe('OverlayService', () => {
-  let overlayService: OverlayService;
+  let service: OverlayService;
+
   const showMask = new Subject<void>();
   const hideMask = new Subject<void>();
+
   beforeEach(() => {
     const connectionServiceMock = {
       showMask$: showMask,
@@ -36,47 +38,68 @@ describe('OverlayService', () => {
       ],
     });
 
-    overlayService = TestBed.get(OverlayService);
+    service = TestBed.get(OverlayService);
   });
 
-  it('should save state for overlay visibility', () => {
-    overlayService.visible$.subscribe(visible => {
-      expect(visible).toBe(false);
-    }).unsubscribe();
+  it('should be hidden by default', () => {
+    expect(service.isVisible).toBeFalsy();
   });
 
-  it('should set visibility', () => {
+  it('should show it', () => {
     showMask.next();
-    overlayService.visible$
-      .subscribe(visible => {
-        expect(visible).toBe(true);
-      })
-      .unsubscribe();
-    hideMask.next();
-    showMask.next();
-    hideMask.next();
-    overlayService.visible$
-      .subscribe(visible => {
-        expect(visible).toBe(false);
-      })
-      .unsubscribe();
+
+    expect(service.isVisible).toBeTruthy();
   });
 
-  it('should return invisible if hideMask is called the same number of times as showMask', () => {
-    const actualVisible = [];
-    const subscription = overlayService.visible$
-      .subscribe(visible => actualVisible.push(visible));
+  describe('when it is visible', () => {
+    beforeEach(() => {
+      showMask.next();
+    });
 
-    showMask.next();
-    showMask.next();
-    showMask.next();
-    hideMask.next();
-    hideMask.next();
-    hideMask.next();
-    subscription.unsubscribe();
+    it('should hide it', () => {
+      hideMask.next();
 
-    const expectedVisible = [false, true, false];
-    expect(actualVisible).toEqual(expectedVisible);
+      expect(service.isVisible).toBeFalsy();
+    });
   });
 
+  it('should be hidden after multiple visibility switches', () => {
+    showMask.next();
+    hideMask.next();
+    showMask.next();
+    hideMask.next();
+
+    expect(service.isVisible).toBeFalsy();
+  });
+
+  it('should be visible if hideMask is called less times as showMask', () => {
+    showMask.next();
+    showMask.next();
+    showMask.next();
+    hideMask.next();
+    hideMask.next();
+
+    expect(service.isVisible).toBeTruthy();
+  });
+
+  it('should be hidden if hideMask is called the same number of times as showMask', () => {
+    showMask.next();
+    showMask.next();
+    showMask.next();
+    hideMask.next();
+    hideMask.next();
+    hideMask.next();
+
+    expect(service.isVisible).toBeFalsy();
+  });
+
+  it('should be visible if hideMask is called less times than showMask after first showMask call', () => {
+    hideMask.next();
+    showMask.next();
+    showMask.next();
+    hideMask.next();
+    showMask.next();
+
+    expect(service.isVisible).toBeTruthy();
+  });
 });

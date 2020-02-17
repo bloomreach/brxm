@@ -1,5 +1,5 @@
 <!--
-  Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+  Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -28,10 +28,8 @@
     </nav>
     <main [@stackMain]="isOverlayVisible">
       <brna-error-page *ngIf="error" [error]="error"></brna-error-page>
-      <brna-loader *ngIf="isLoading$ | async"></brna-loader>
+      <brna-loader *ngIf="isLoaderVisible"></brna-loader>
       <brna-client-app-container></brna-client-app-container>
     </main>
   </mat-sidenav-content>
 </mat-sidenav-container>
-
-
