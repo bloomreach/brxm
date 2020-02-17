@@ -19,6 +19,7 @@ package org.hippoecm.repository.standardworkflow;
 
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import javax.jcr.Node;
@@ -31,6 +32,7 @@ import org.slf4j.LoggerFactory;
 
 import static java.util.stream.Collectors.toSet;
 import static org.hippoecm.repository.util.JcrUtils.getMixinNodeTypes;
+import static org.hippoecm.repository.util.JcrUtils.getNodePathQuietly;
 import static org.hippoecm.repository.util.JcrUtils.getPrimaryNodeType;
 import static org.onehippo.repository.util.JcrConstants.JCR_FROZEN_NODE;
 
@@ -111,11 +113,18 @@ final class JCRFolderDAO {
 
     private void validateHasSupportedPrimaryType(final Node folderNode) throws RepositoryException {
         Objects.requireNonNull(folderNode, "Folder node must not be null");
-        final String primaryNodeTypeName = getPrimaryNodeType(folderNode).getName();
-        if (!supportedPrimaryNodeTypes.contains(primaryNodeTypeName)) {
+        final Predicate<String> hasType = type -> {
+            try {
+                return folderNode.isNodeType(type);
+            } catch (RepositoryException e) {
+                log.error("Failed to test if node at path '{}; is of primary type {}", getNodePathQuietly(folderNode), type, e);
+                return false;
+            }
+        };
+        if (supportedPrimaryNodeTypes.stream().noneMatch(hasType)) {
             final String message = String.format(
                     "Node { path: %s } has an unsupported primary type: '%s'. Supported primary types are: %s",
-                    folderNode.getPath(), primaryNodeTypeName, supportedPrimaryNodeTypes);
+                    folderNode.getPath(), getPrimaryNodeType(folderNode).getName(), supportedPrimaryNodeTypes);
             throw new IllegalArgumentException(message);
         }
     }
