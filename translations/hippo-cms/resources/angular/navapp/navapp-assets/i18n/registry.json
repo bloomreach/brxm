@@ -652,6 +652,16 @@
     "MENU_ITEM_XM_SYSTEM" : {
       "status" : "CLEAN",
       "locales" : null
+    },
+    "ERROR_UNABLE_TO_LOG_OUT" : {
+      "status" : "ADDED",
+      "locales" : {
+        "de" : "UNRESOLVED",
+        "fr" : "UNRESOLVED",
+        "nl" : "UNRESOLVED",
+        "zh" : "UNRESOLVED",
+        "es" : "UNRESOLVED"
+      }
     }
   }
 }
