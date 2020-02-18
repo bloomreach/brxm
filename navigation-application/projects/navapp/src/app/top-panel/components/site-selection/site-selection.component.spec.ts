@@ -15,7 +15,7 @@
  */
 
 import { NO_ERRORS_SCHEMA } from '@angular/core';
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { FormsModule } from '@angular/forms';
 import { MatTreeModule } from '@angular/material/tree';
 import { Site } from '@bloomreach/navapp-communication';
@@ -94,7 +94,7 @@ describe('SiteSelectionComponent', () => {
     'close',
   ]);
 
-  beforeEach(async(() => {
+  beforeEach(() => {
     fixture = TestBed.configureTestingModule({
       imports: [
         FormsModule,
@@ -112,9 +112,7 @@ describe('SiteSelectionComponent', () => {
     component = fixture.componentInstance;
 
     component.ngOnInit();
-
-    fixture.detectChanges();
-  }));
+  });
 
   it('should be created', () => {
     expect(component).toBeDefined();
