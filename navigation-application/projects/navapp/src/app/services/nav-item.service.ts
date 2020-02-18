@@ -111,13 +111,10 @@ export class NavItemService implements OnDestroy {
 
   private createActivationObservable(navItemDto: NavItemDto): Observable<boolean> {
     const activationSubject = new ReplaySubject<boolean>(1);
-
-    if (!this.navItemActivators.has(navItemDto.appIframeUrl)) {
-      this.navItemActivators.set(navItemDto.appIframeUrl, new Map<string, Subject<boolean>>());
-    }
-
-    const appPathActivations = this.navItemActivators.get(navItemDto.appIframeUrl);
+    const appPathActivations = new Map<string, Subject<boolean>>();
     appPathActivations.set(navItemDto.appPath, activationSubject);
+
+    this.navItemActivators.set(navItemDto.appIframeUrl, appPathActivations);
 
     return activationSubject;
   }

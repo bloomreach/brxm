@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,8 @@
  */
 
 import { Injectable } from '@angular/core';
+import { NGXLogger } from 'ngx-logger';
+import { skip } from 'rxjs/operators';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { AppError } from '../error-handling/models/app-error';
@@ -23,9 +25,11 @@ import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { NavItem } from '../models/nav-item.model';
 import { AuthService } from '../services/auth.service';
 import { BusyIndicatorService } from '../services/busy-indicator.service';
-import { NavConfigService } from '../services/nav-config.service';
+import { Configuration, NavConfigService } from '../services/nav-config.service';
 import { NavItemService } from '../services/nav-item.service';
 import { NavigationService } from '../services/navigation.service';
+import { SiteService } from '../services/site.service';
+import { WindowRef } from '../shared/services/window-ref.service';
 
 let bootstrapResolve: () => void;
 let bootstrapReject: () => void;
@@ -46,36 +50,69 @@ export class BootstrapService {
     private readonly menuStateService: MenuStateService,
     private readonly navigationService: NavigationService,
     private readonly busyIndicatorService: BusyIndicatorService,
+    private readonly siteService: SiteService,
     private readonly errorHandlingService: ErrorHandlingService,
-  ) { }
+    private readonly windowRef: WindowRef,
+    private readonly logger: NGXLogger,
+  ) {
+    this.clientAppService.appConnected$.subscribe(app => this.navItemService.activateNavItems(app.url));
+    this.siteService.selectedSite$.pipe(
+      skip(1),  // Skip initial value
+    ).subscribe(() => this.reinitialize());
+  }
 
   async bootstrap(): Promise<void> {
+    this.logger.debug('Bootstrapping the application');
+
     this.busyIndicatorService.show();
 
     await this.performSilentLogin();
 
-    const navItems = await this.fetchNavItems();
+    const configuration = await this.fetchConfiguration();
 
-    this.clientAppService.appConnected$.subscribe(app => {
-      this.navItemService.activateNavItems(app.url);
-    });
+    if (!configuration) {
+      return;
+    }
+
+    this.siteService.init(configuration.sites, configuration.selectedSiteId);
+
+    const navItems = this.navItemService.registerNavItemDtos(configuration.navItems);
 
     this.initializeServices(navItems).then(() => this.busyIndicatorService.hide());
   }
 
+  async reinitialize(): Promise<void> {
+    this.logger.debug('Reinitializing the application');
+
+    this.busyIndicatorService.show();
+
+    const navItemDtos = await this.navConfigService.refetchNavItems();
+    this.logger.debug('Nav items', navItemDtos);
+
+    this.windowRef.nativeWindow.location.reload();
+  }
+
   private async performSilentLogin(): Promise<void> {
+    this.logger.debug('Performing silent login');
+
     try {
       await this.authService.loginAllResources();
+
+      this.logger.debug('Silent login has done successfully');
     } catch (error) {
       this.errorHandlingService.setCriticalError('ERROR_UNABLE_TO_PERFORM_SILENT_LOGIN', this.extractErrorMessage(error));
     }
   }
 
-  private async fetchNavItems(): Promise<NavItem[]> {
-    try {
-      const navItemDtos = await this.navConfigService.init();
+  private async fetchConfiguration(): Promise<Configuration> {
+    this.logger.debug('Fetching the application\'s configuration');
 
-      return this.navItemService.registerNavItemDtos(navItemDtos);
+    try {
+      const configuration = await this.navConfigService.fetchNavigationConfiguration();
+
+      this.logger.debug('The application configuration has been fetched successfully');
+
+      return configuration;
     } catch (error) {
       this.errorHandlingService.setCriticalError('ERROR_UNABLE_TO_LOAD_CONFIGURATION', this.extractErrorMessage(error));
     }
