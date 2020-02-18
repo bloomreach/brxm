@@ -1,5 +1,5 @@
 /*!
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,12 +21,13 @@ import { NGXLogger } from 'ngx-logger';
 import { filter } from 'rxjs/operators';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
-import { InternalError } from '../error-handling/models/internal-error';
+import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { AppSettings } from '../models/dto/app-settings.dto';
 
 import { APP_SETTINGS } from './app-settings';
 import { BusyIndicatorService } from './busy-indicator.service';
 import { ConnectionService } from './connection.service';
+import { MainLoaderService } from './main-loader.service';
 
 @Injectable({
   providedIn: 'root',
@@ -35,7 +36,9 @@ export class AuthService {
   constructor(
     private readonly connectionService: ConnectionService,
     private readonly clientAppService: ClientAppService,
+    private readonly mainLoaderService: MainLoaderService,
     private readonly busyIndicatorService: BusyIndicatorService,
+    private readonly errorHandlingService: ErrorHandlingService,
     private readonly location: Location,
     private readonly logger: NGXLogger,
     @Inject(APP_SETTINGS) private readonly appSettings: AppSettings,
@@ -74,6 +77,7 @@ export class AuthService {
   }
 
   async logout(loginMessageKey: string): Promise<void> {
+    this.mainLoaderService.show();
     this.busyIndicatorService.show();
 
     const logoutAppPromises = this.clientAppService.apps
@@ -85,19 +89,30 @@ export class AuthService {
     try {
       await Promise.all(logoutAppPromises);
       await Promise.all(logoutResourcePromises);
-    } finally {
-      const loginLocation = this.getLoginLocation(loginMessageKey);
+
+      this.redirectToLoginPage(loginMessageKey);
+    } catch (e) {
+      this.mainLoaderService.hide();
       this.busyIndicatorService.hide();
-      setTimeout(() => {
-        this.document.location.replace(loginLocation);
-      }, 1000);
+
+      this.errorHandlingService.setCriticalError('ERROR_UNABLE_TO_LOG_OUT', e.message);
     }
   }
 
   private getLoginLocation(loginMessageKey: string): string {
     const queryParams = loginMessageKey && `/?loginmessage=${loginMessageKey}` || '/';
-    const baseUrl = this.appSettings.basePath;
+    const baseUrl = this.appSettings.loginPath || this.appSettings.basePath;
 
     return this.location.prepareExternalUrl(`${baseUrl}${queryParams}`);
+  }
+
+  private redirectToLoginPage(loginMessageKey: string): void {
+    const loginLocation = this.getLoginLocation(loginMessageKey);
+
+    // A temporary solution related to complexity in notifying the navapp when the logout process is done
+    // It's suggested that logout process is done in 1000 ms
+    setTimeout(() => {
+      this.document.location.replace(loginLocation);
+    }, 1000);
   }
 }

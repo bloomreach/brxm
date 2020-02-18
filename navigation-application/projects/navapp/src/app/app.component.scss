@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -66,12 +66,4 @@ brna-error-page ~ brna-client-app-container,
 brna-error-page ~ brna-loader,
 brna-loader ~ brna-client-app-container {
   display: none;
-}
-
-brna-loader {
-  // Reposition the icon so it is in the same position as the initial
-  // loading icon background present on the brna-root element in default.scss
-  left: -($menu-collapsed-width / 2);
-  position: relative;
-  top: -($top-panel-height / 2);
 }

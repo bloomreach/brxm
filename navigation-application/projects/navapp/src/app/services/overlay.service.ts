@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, OnDestroy } from '@angular/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { distinctUntilAccumulatorIsEmpty } from '../helpers/distinct-until-equal-number-of-values';
 
@@ -24,19 +25,30 @@ import { ConnectionService } from './connection.service';
 @Injectable({
   providedIn: 'root',
 })
-export class OverlayService {
-  visible$: Observable<boolean>;
+export class OverlayService implements OnDestroy {
+  private readonly unsubscribe = new Subject<void>();
+  private visible = false;
 
   constructor(
     private readonly connectionService: ConnectionService,
   ) {
-    const counter = new BehaviorSubject<boolean>(false);
+    const visible$ = new Subject<boolean>();
 
-    this.connectionService.showMask$.subscribe(() => counter.next(true));
-    this.connectionService.hideMask$.subscribe(() => counter.next(false));
+    this.connectionService.showMask$.subscribe(() => visible$.next(true));
+    this.connectionService.hideMask$.subscribe(() => visible$.next(false));
 
-    this.visible$ = counter.pipe(
+    visible$.pipe(
+      takeUntil(this.unsubscribe),
       distinctUntilAccumulatorIsEmpty(),
-    );
+    ).subscribe(x => this.visible = x);
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe.next();
+    this.unsubscribe.complete();
+  }
+
+  get isVisible(): boolean {
+    return this.visible;
   }
 }

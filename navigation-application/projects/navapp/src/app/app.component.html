@@ -28,10 +28,8 @@
     </nav>
     <main [@stackMain]="isOverlayVisible">
       <brna-error-page *ngIf="error" [error]="error"></brna-error-page>
-      <brna-loader *ngIf="isLoading$ | async"></brna-loader>
+      <brna-loader *ngIf="isLoaderVisible"></brna-loader>
       <brna-client-app-container></brna-client-app-container>
     </main>
   </mat-sidenav-content>
 </mat-sidenav-container>
-
-
