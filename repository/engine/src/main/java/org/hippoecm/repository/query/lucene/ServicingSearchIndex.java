@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@ import org.apache.jackrabbit.core.id.PropertyId;
 import org.apache.jackrabbit.core.nodetype.EffectiveNodeType;
 import org.apache.jackrabbit.core.query.ExecutableQuery;
 import org.apache.jackrabbit.core.query.lucene.AbstractQueryImpl;
+import org.apache.jackrabbit.core.query.lucene.ConsistencyCheckError;
 import org.apache.jackrabbit.core.query.lucene.FieldNames;
 import org.apache.jackrabbit.core.query.lucene.FilterMultiColumnQueryHits;
 import org.apache.jackrabbit.core.query.lucene.IndexFormatVersion;
@@ -82,6 +83,7 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.hippoecm.repository.dataprovider.HippoNodeId;
+import org.hippoecm.repository.jackrabbit.IndexRepairer;
 import org.hippoecm.repository.jackrabbit.InternalHippoSession;
 import org.hippoecm.repository.query.lucene.util.CachingMultiReaderQueryFilter;
 import org.hippoecm.repository.util.RepoUtils;
@@ -398,6 +400,9 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
 
     @Override
     public void setEnableConsistencyCheck(final boolean b) {
+        // at start up we never run the consistency check since done in
+        // org.hippoecm.repository.jackrabbit.RepositoryImpl.searchIndexConsistencyCheck(), see
+        // REPO-608
         super.setEnableConsistencyCheck(false);
         servicingConsistencyCheckEnabled = b;
     }
@@ -410,6 +415,11 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
     @Override
     public boolean isUseSimpleFSDirectory() {
         return useSimpleFSDirectory;
+    }
+
+
+    public List<ConsistencyCheckError> repairInconsistencies() throws IOException {
+        return new IndexRepairer(this).repairInconsistencies();
     }
 
     @Override
