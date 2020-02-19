@@ -15,8 +15,8 @@
   -->
 
 <mat-sidenav-container>
-  <mat-sidenav position="start">
-    <brna-site-selection></brna-site-selection>
+  <mat-sidenav #sidenav position="start">
+    <brna-site-selection *ngIf="sidenav.opened"></brna-site-selection>
   </mat-sidenav>
   <mat-sidenav-content>
     <div class="overlay" [@showOverlay]="isOverlayVisible"></div>
