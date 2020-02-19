@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -74,6 +74,8 @@ import org.slf4j.LoggerFactory;
  *              should be avoided
  *         </li>
  *     </ul>
+ *     The second cluster node is once a cluster node that has consistency check at startup and once a cluster node (repo2)
+ *     that has only repair duplicate entries (repo3)
  * </p>
  */
 public class ClusterStartupTest extends ClusterUtilitiesTest {
