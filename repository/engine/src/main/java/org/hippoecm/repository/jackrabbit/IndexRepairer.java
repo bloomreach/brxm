@@ -17,8 +17,6 @@ package org.hippoecm.repository.jackrabbit;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -108,7 +106,8 @@ public class IndexRepairer {
 
                 final Set<UUID> duplicateEntries = new HashSet<>();
                 // avoid rehashing since this set can contain many millions of items
-                final Set<UUID> allEntries = new HashSet<>((int) Math.ceil(reader.maxDoc() / 0.75));
+                // note use numDocs instead of maxDoc since numdocs contains actual number
+                final Set<UUID> allEntries = new HashSet<>((int) Math.ceil(reader.numDocs() / 0.75));
 
                 int logProgressEvery = reader.maxDoc() / 10;
                 int logProgressAt = logProgressEvery;
