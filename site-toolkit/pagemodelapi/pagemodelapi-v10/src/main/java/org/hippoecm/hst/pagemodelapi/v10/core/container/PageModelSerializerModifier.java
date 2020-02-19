@@ -1,5 +1,5 @@
 /*
- *  Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,7 +22,7 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
 
-import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.PageModelEntity;
 import org.hippoecm.hst.core.pagemodel.container.MetadataDecorator;
 
 class PageModelSerializerModifier extends BeanSerializerModifier {
@@ -40,7 +40,12 @@ class PageModelSerializerModifier extends BeanSerializerModifier {
     @Override
     public JsonSerializer<?> modifySerializer(SerializationConfig config, BeanDescription beanDesc,
                                               JsonSerializer<?> serializer) {
-        return new PageModelSerializer((JsonSerializer<Object>) serializer, jsonPointerFactory, metadataDecorators);
+
+        final Class<?> beanClazz = beanDesc.getBeanClass();
+        if (PageModelEntity.class.isAssignableFrom(beanClazz) || AggregatedPageModel.RootReference.class.isAssignableFrom(beanClazz)) {
+            return new PageModelSerializer((JsonSerializer<Object>) serializer, jsonPointerFactory, metadataDecorators);
+        }
+        return serializer;
     }
 
 }
