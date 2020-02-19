@@ -58,12 +58,8 @@ public class IndexRepairer {
 
         final long start = System.currentTimeMillis();
 
-        if (Boolean.getBoolean("disableStartupIndexConsistencyCheck")) {
-            log.info("Explicit system property 'disableStartupIndexConsistencyCheck' set to true, skipping check");
-            return emptyList();
-        } else {
-            log.info("Start index consistency check");
-        }
+        log.info("Start index consistency check");
+
         try {
             final ConsistencyCheck consistencyCheck = searchIndex.runConsistencyCheck();
             List<ConsistencyCheckError> errors = consistencyCheck.getErrors();
