@@ -29,12 +29,14 @@ import org.hippoecm.hst.core.pagemodel.model.MetadataContributable;
 import org.hippoecm.hst.core.request.HstRequestContext;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.ser.ResolvableSerializer;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SITE;
 
-class HippoBeanSerializer extends JsonSerializer<HippoBean> {
+class HippoBeanSerializer extends JsonSerializer<HippoBean> implements ResolvableSerializer {
 
     /**
      * Content JSON Pointer prefix.
@@ -61,22 +63,30 @@ class HippoBeanSerializer extends JsonSerializer<HippoBean> {
                 .toString();
     }
 
-    private final JsonSerializer<Object> beanSerializer;
+    private final JsonSerializer<Object> delegatee;
 
     private final List<MetadataDecorator> metadataDecorators;
 
-    public HippoBeanSerializer(JsonSerializer<Object> beanSerializer,
+    public HippoBeanSerializer(JsonSerializer<Object> delegatee,
                                final List<MetadataDecorator> metadataDecorators) {
-        this.beanSerializer = beanSerializer;
+        this.delegatee = delegatee;
         this.metadataDecorators = metadataDecorators;
     }
+
+    @Override
+    public void resolve(final SerializerProvider provider) throws JsonMappingException {
+        if (delegatee instanceof ResolvableSerializer) {
+            ((ResolvableSerializer) delegatee).resolve(provider);
+        }
+    }
+
 
     @Override
     public void serialize(final HippoBean bean, JsonGenerator gen, SerializerProvider provider) throws IOException {
         final ContentSerializationContext.Phase curPhase = ContentSerializationContext.getCurrentPhase();
 
         if (curPhase == null) {
-            beanSerializer.serialize(bean, gen, provider);
+            delegatee.serialize(bean, gen, provider);
             return;
         }
 
@@ -89,7 +99,7 @@ class HippoBeanSerializer extends JsonSerializer<HippoBean> {
         }
 
         if (!inContentSection) {
-            beanSerializer.serialize(bean, gen, provider);
+            delegatee.serialize(bean, gen, provider);
             return;
         }
 
@@ -109,7 +119,7 @@ class HippoBeanSerializer extends JsonSerializer<HippoBean> {
             try {
                 ContentSerializationContext.setCurrentPhase(ContentSerializationContext.Phase.REFERENCING_CONTENT_IN_CONTENT);
                 HippoBeanSerializationContext.beginTopLevelContentBean(representationId);
-                beanSerializer.serialize(bean, gen, provider);
+                delegatee.serialize(bean, gen, provider);
             } finally {
                 HippoBeanSerializationContext.endTopLevelContentBean();
                 ContentSerializationContext.setCurrentPhase(ContentSerializationContext.Phase.SERIALIZING_CONTENT);

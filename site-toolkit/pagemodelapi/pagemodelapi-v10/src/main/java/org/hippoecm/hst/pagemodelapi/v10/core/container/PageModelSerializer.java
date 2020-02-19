@@ -45,13 +45,15 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.ser.ResolvableSerializer;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 import static org.hippoecm.hst.core.container.ContainerConstants.LINK_NAME_SITE;
 
-public class PageModelSerializer extends JsonSerializer<Object> {
+public class PageModelSerializer extends JsonSerializer<Object> implements ResolvableSerializer {
 
     private static ThreadLocal<SerializerContext> tlSerializerContext = new ThreadLocal<>();
 
@@ -98,6 +100,14 @@ public class PageModelSerializer extends JsonSerializer<Object> {
             HippoFolderBean.class,
             CommonMenu.class
     };
+
+
+    @Override
+    public void resolve(final SerializerProvider provider) throws JsonMappingException {
+        if (delegatee instanceof ResolvableSerializer) {
+            ((ResolvableSerializer) delegatee).resolve(provider);
+        }
+    }
 
     @Override
     public void serialize(final Object object, final JsonGenerator gen, final SerializerProvider serializerProvider) throws IOException {
