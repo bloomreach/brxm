@@ -422,6 +422,10 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         return new IndexRepairer(this).repairInconsistencies();
     }
 
+    public List<String> repairDuplicates() throws IOException {
+        return new IndexRepairer(this).repairDuplicates();
+    }
+
     @Override
     public void updateNodes(Iterator<NodeId> remove, Iterator<NodeState> add) throws RepositoryException, IOException {
 
