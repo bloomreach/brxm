@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ describe('EditComponentMainCtrl', () => {
   let EditComponentService;
   let FeedbackService;
   let HippoIframeService;
-  let OverlayService;
   let RenderingService;
 
   let $ctrl;
@@ -75,7 +74,6 @@ describe('EditComponentMainCtrl', () => {
       FeedbackService = jasmine.createSpyObj('FeedbackService', ['showError']);
       EditComponentService = jasmine.createSpyObj('EditComponentService', ['isReadyForUser', 'killEditor']);
       HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
-      OverlayService = jasmine.createSpyObj('OverlayService', ['onSelectDocument']);
 
       $scope = $rootScope.$new();
       $ctrl = $componentController('editComponentMain', {
@@ -86,7 +84,6 @@ describe('EditComponentMainCtrl', () => {
         EditComponentService,
         FeedbackService,
         HippoIframeService,
-        OverlayService,
       });
 
       form = jasmine.createSpyObj('form', ['$setPristine']);
@@ -146,49 +143,49 @@ describe('EditComponentMainCtrl', () => {
   });
 
   describe('handling of select-document clicks in the overlay', () => {
-    let defaultOnSelectDocument;
-    let onSelectDocument;
-    let component;
+    const eventData = {
+      containerItem: { getId: () => '1' },
+      parameterName: 'parameterName',
+    };
 
     beforeEach(() => {
-      defaultOnSelectDocument = jasmine.createSpy('oldHandler');
-      OverlayService.onSelectDocument.and.returnValue(defaultOnSelectDocument);
-
-      $ctrl.$onInit();
-      const { args } = OverlayService.onSelectDocument.calls.mostRecent();
-      [onSelectDocument] = args;
-
-      component = jasmine.createSpyObj('component', ['getId']);
+      spyOn($scope, '$broadcast');
+      ComponentEditor.getComponentId.and.returnValue('1');
     });
 
-    it('broadcasts an event when a document is selected for the currently edited component', () => {
-      component.getId.and.returnValue('1');
-      ComponentEditor.getComponentId.and.returnValue('1');
-      spyOn($scope, '$broadcast');
-
-      onSelectDocument(component, 'parameterName');
+    it('should broadcast an event when a document is selected for the currently edited component', () => {
+      $ctrl.$onInit();
+      $rootScope.$emit('document:select', eventData);
 
       expect($scope.$broadcast).toHaveBeenCalledWith('edit-component:select-document', 'parameterName');
     });
 
-    it('invokes the default behavior when a document is selected for a component that is not being edited', () => {
-      component.getId.and.returnValue('1');
+    it('should not broadcast an event when a document is selected for a component that is not being edited', () => {
       ComponentEditor.getComponentId.and.returnValue('2');
 
-      onSelectDocument(component, 'parameterName', '/base/currentPath', {}, '/base');
+      $ctrl.$onInit();
+      $rootScope.$emit('document:select', eventData);
 
-      expect(defaultOnSelectDocument).toHaveBeenCalledWith(
-        component,
-        'parameterName',
-        '/base/currentPath',
-        {},
-        '/base',
-      );
+      expect($scope.$broadcast).not.toHaveBeenCalled();
     });
 
-    it('restores the default behavior when destroyed', () => {
+    it('should prevent default handler when a document is selected for the currently edited component', () => {
+      const listener = jasmine.createSpy();
+      $rootScope.$on('document:select', listener);
+      $ctrl.$onInit();
+      $rootScope.$emit('document:select', eventData);
+
+      const { args: [event] } = listener.calls.mostRecent();
+
+      expect(event.defaultPrevented).toBe(true);
+    });
+
+    it('should unsubscribe from the document:select event on destroy', () => {
+      $ctrl.$onInit();
       $ctrl.$onDestroy();
-      expect(OverlayService.onSelectDocument).toHaveBeenCalledWith(defaultOnSelectDocument);
+      $rootScope.$emit('document:select', eventData);
+
+      expect($scope.$broadcast).not.toHaveBeenCalled();
     });
   });
 

@@ -604,8 +604,6 @@ describe('OverlayService', () => {
   });
 
   it('can select a document', async () => {
-    const selectDocumentHandler = jasmine.createSpy('selectDocumentHander');
-    OverlayService.onSelectDocument(selectDocumentHandler);
     ChannelService.isEditable = () => true;
     spyOn(CmsService, 'reportUsageStatistic');
 
@@ -614,20 +612,17 @@ describe('OverlayService', () => {
     const pickPathButton = $(overlayElementScenario5).find('.hippo-fab-main');
     expectNoPropagatedClicks();
 
+    spyOn($rootScope, '$emit');
     pickPathButton.click();
 
-    expect(selectDocumentHandler).toHaveBeenCalledWith(
-      jasmine.any(Object), 'manage-content-component-parameter', undefined, jasmine.any(Object), '',
-    );
+    expect($rootScope.$emit).toHaveBeenCalledWith('document:select', jasmine.objectContaining({
+      containerItem: jasmine.any(Object),
+      parameterName: 'manage-content-component-parameter',
+      parameterValue: undefined,
+      pickerConfig: jasmine.any(Object),
+      parameterBasePath: '',
+    }));
     expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('PickContentButton');
-  });
-
-  it('can (re)register a select-document-handler', () => {
-    const selectDocumentHandler1 = jasmine.createSpy('selectDocumentHander1');
-    const selectDocumentHandler2 = jasmine.createSpy('selectDocumentHander2');
-
-    expect(OverlayService.onSelectDocument(selectDocumentHandler1)).toBe(angular.noop);
-    expect(OverlayService.onSelectDocument(selectDocumentHandler2)).toBe(selectDocumentHandler1);
   });
 
   it('does not throw an error when calling edit menu handler if not set', async () => {

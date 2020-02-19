@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,6 +27,7 @@ class EditComponentMainCtrl {
   constructor(
     $log,
     $q,
+    $rootScope,
     $scope,
     ChannelService,
     CmsService,
@@ -35,13 +36,13 @@ class EditComponentMainCtrl {
     EditComponentService,
     FeedbackService,
     HippoIframeService,
-    OverlayService,
     RenderingService,
   ) {
     'ngInject';
 
     this.$log = $log;
     this.$q = $q;
+    this.$rootScope = $rootScope;
     this.$scope = $scope;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
@@ -50,18 +51,19 @@ class EditComponentMainCtrl {
     this.EditComponentService = EditComponentService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
-    this.OverlayService = OverlayService;
     this.RenderingService = RenderingService;
+
+    this._onDocumentSelect = this._onDocumentSelect.bind(this);
   }
 
   $onInit() {
-    this._overrideSelectDocumentHandler();
+    this._offDocumentSelect = this.$rootScope.$on('document:select', this._onDocumentSelect);
     this._offComponentMoved = this.ContainerService.onComponentMoved(() => this.ComponentEditor.updatePreview());
     this.$scope.$on('hippo-iframe:load', () => this._onIframeLoad());
   }
 
   $onDestroy() {
-    this._restoreSelectDocumentHandler();
+    this._offDocumentSelect();
     this._offComponentMoved();
 
     if (this._offOverlayCreated) {
@@ -182,19 +184,10 @@ class EditComponentMainCtrl {
     return this.$q.resolve();
   }
 
-  _overrideSelectDocumentHandler() {
-    this.defaultSelectDocumentHandler = this.OverlayService.onSelectDocument(this._onSelectDocument.bind(this));
-  }
-
-  _restoreSelectDocumentHandler() {
-    this.OverlayService.onSelectDocument(this.defaultSelectDocumentHandler);
-  }
-
-  _onSelectDocument(component, parameterName, parameterValue, pickerConfig, parameterBasePath) {
-    if (this.ComponentEditor.getComponentId() === component.getId()) {
-      this.$scope.$broadcast('edit-component:select-document', parameterName);
-    } else {
-      this.defaultSelectDocumentHandler(component, parameterName, parameterValue, pickerConfig, parameterBasePath);
+  _onDocumentSelect(event, data) {
+    if (this.ComponentEditor.getComponentId() === data.containerItem.getId()) {
+      event.preventDefault();
+      this.$scope.$broadcast('edit-component:select-document', data.parameterName);
     }
   }
 }

@@ -67,6 +67,7 @@ class HippoIframeCtrl {
     this._onUnload = this._onUnload.bind(this);
     this._onNewHeadContributions = this._onNewHeadContributions.bind(this);
     this._onMoveComponent = this._onMoveComponent.bind(this);
+    this._onDocumentSelect = this._onDocumentSelect.bind(this);
   }
 
   $onInit() {
@@ -82,6 +83,7 @@ class HippoIframeCtrl {
       'hippo-iframe:new-head-contributions',
       this._onNewHeadContributions,
     );
+    this._offDocumentSelect = this.$rootScope.$on('document:select', this._onDocumentSelect);
 
     const canvasJQueryElement = this.$element.find('.channel-iframe-canvas');
     const sheetJQueryElement = this.$element.find('.channel-iframe-sheet');
@@ -90,7 +92,6 @@ class HippoIframeCtrl {
     this.HippoIframeService.initialize(this.$element, this.iframeJQueryElement);
     this.OverlayService.init(this.iframeJQueryElement);
     this.OverlayService.onEditMenu(menuUuid => this.onEditMenu({ menuUuid }));
-    this.OverlayService.onSelectDocument(this._selectDocument.bind(this));
     this.ViewportService.init(sheetJQueryElement);
     this.DragDropService.init(this.iframeJQueryElement, canvasJQueryElement, sheetJQueryElement);
     this.SpaService.init(this.iframeJQueryElement);
@@ -121,6 +122,7 @@ class HippoIframeCtrl {
     this._offSdkReady();
     this._offSdkUnload();
     this._offNewHeadContributions();
+    this._offDocumentSelect();
   }
 
   async onLoad() {
@@ -220,9 +222,16 @@ class HippoIframeCtrl {
     return this.HippoIframeService.isIframeLifted;
   }
 
-  _selectDocument(component, parameterName, parameterValue, pickerConfig, parameterBasePath) {
-    return this.PickerService.pickPath(pickerConfig, parameterValue)
-      .then(({ path }) => this._onPathPicked(component, parameterName, path, parameterBasePath));
+  _onDocumentSelect(event, data) {
+    this.$rootScope.$evalAsync(async () => {
+      if (event.defaultPrevented) {
+        return;
+      }
+
+      const { path } = await this.PickerService.pickPath(data.pickerConfig, data.parameterValue);
+
+      this._onPathPicked(data.containerItem, data.parameterName, path, data.parameterBasePath);
+    });
   }
 
   _onPathPicked(component, parameterName, path, parameterBasePath) {
