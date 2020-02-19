@@ -102,7 +102,7 @@ public class RepositoryImpl extends ExtendedJackrabbitRepositoryImpl implements 
                 searchIndex.repairInconsistencies();
             } else {
                 // as a minimum on any new startup, always repair duplicates as this is a cheap fix that does not require
-                // any database interaction
+                // any database interaction for finding duplicates
                 searchIndex.repairDuplicates();
             }
         } catch (IOException e) {
