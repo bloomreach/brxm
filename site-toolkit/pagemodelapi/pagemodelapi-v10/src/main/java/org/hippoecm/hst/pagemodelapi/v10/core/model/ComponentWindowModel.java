@@ -26,6 +26,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
+import org.hippoecm.hst.content.PageModelEntity;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 
@@ -33,7 +34,7 @@ import org.hippoecm.hst.core.container.HstComponentWindow;
  * Component window model representation.
  */
 @JsonPropertyOrder({"id", "links", "meta","name", "label", "type", "xtype", "componentClass", "children", "models"})
-public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel {
+public class ComponentWindowModel extends IdentifiableLinkableMetadataBaseModel implements PageModelEntity {
 
     private final String name;
     private final String componentClass;

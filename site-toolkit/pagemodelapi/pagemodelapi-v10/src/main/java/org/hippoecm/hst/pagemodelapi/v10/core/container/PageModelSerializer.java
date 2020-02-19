@@ -26,6 +26,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.content.PageModelEntity;
 import org.hippoecm.hst.content.beans.standard.HippoAssetBean;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
@@ -36,7 +37,6 @@ import org.hippoecm.hst.core.pagemodel.container.MetadataDecorator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.sitemenu.CommonMenu;
 import org.hippoecm.hst.pagemodelapi.v10.content.beans.jackson.LinkModel;
-import org.hippoecm.hst.pagemodelapi.v10.core.model.ComponentWindowModel;
 import org.hippoecm.hst.pagemodelapi.v10.core.model.IdentifiableLinkableMetadataBaseModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,14 +94,6 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
         this.metadataDecorators = metadataDecorators;
     }
 
-    private static final Class<?>[] KNOWN_PMA_ENTITIES = {
-            ComponentWindowModel.class,
-            HippoDocumentBean.class,
-            HippoFolderBean.class,
-            CommonMenu.class
-    };
-
-
     @Override
     public void resolve(final SerializerProvider provider) throws JsonMappingException {
         if (delegatee instanceof ResolvableSerializer) {
@@ -118,7 +110,8 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
         } else {
 
             final Optional<DecoratedPageModelEntityWrapper<?>> nonSerializedWrappedEntity = getNonSerializedWrappedEntity(object, serializerContext);
-            if (Arrays.stream(KNOWN_PMA_ENTITIES).noneMatch(pmaClass -> pmaClass.isInstance(object))
+
+            if (!PageModelEntity.class.isAssignableFrom(object.getClass())
                     || serializerContext.serializingPageModelEntity == object
                     || nonSerializedWrappedEntity.isPresent()) {
                 // If it's a DecoratedPageModelEntityWrapper for the current object then set it to serialized

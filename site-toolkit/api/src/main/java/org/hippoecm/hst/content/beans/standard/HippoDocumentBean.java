@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.content.beans.standard;
 
+import org.hippoecm.hst.content.PageModelEntity;
 import org.hippoecm.hst.content.annotations.PageModelIgnore;
 
 /**
@@ -22,7 +23,7 @@ import org.hippoecm.hst.content.annotations.PageModelIgnore;
  * does not extend the standard HippoDocument bean, they should implement this interface. This ensures that linkrewriting
  * works correctly for extensions like .html or .xml etc etc
  */
-public interface HippoDocumentBean extends HippoBean, HippoTranslated {
+public interface HippoDocumentBean extends HippoBean, HippoTranslated, PageModelEntity {
 
     /**
      * Returns the jcr uuid of the backing canonical <b>handle</b>  jcr node or <code>null</code> when 

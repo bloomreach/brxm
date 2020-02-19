@@ -17,8 +17,9 @@ package org.hippoecm.hst.core.sitemenu;
 
 
 import org.hippoecm.hst.content.annotations.PageModelIgnore;
+import org.hippoecm.hst.content.PageModelEntity;
 
-public interface CommonMenu {
+public interface CommonMenu extends PageModelEntity {
     
     /**
      * Returns the name of this SiteMenu. For example, you could have a "topmenu", "leftmenu" and "footermenu" on your site,
