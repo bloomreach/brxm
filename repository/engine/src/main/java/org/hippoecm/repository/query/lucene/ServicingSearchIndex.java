@@ -422,6 +422,10 @@ public class ServicingSearchIndex extends SearchIndex implements HippoQueryHandl
         return new IndexRepairer(this).repairInconsistencies();
     }
 
+    /**
+     * This is a lightweight check for fixing duplicates whereas {@link #repairInconsistencies()} requires to fetch
+     * all node ids from the database. This method only repairs duplicates and nothing else
+     */
     public List<String> repairDuplicates() throws IOException {
         return new IndexRepairer(this).repairDuplicates();
     }
