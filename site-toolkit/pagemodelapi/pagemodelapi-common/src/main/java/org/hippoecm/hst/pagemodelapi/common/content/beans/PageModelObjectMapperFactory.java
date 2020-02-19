@@ -21,6 +21,7 @@ import com.fasterxml.jackson.databind.introspect.Annotated;
 import com.fasterxml.jackson.databind.introspect.AnnotatedClass;
 import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector;
 
+import org.hippoecm.hst.content.annotations.PageModelAnyGetter;
 import org.hippoecm.hst.content.annotations.PageModelIgnore;
 import org.hippoecm.hst.content.annotations.PageModelIgnoreType;
 import org.hippoecm.hst.content.annotations.PageModelProperty;
@@ -78,6 +79,15 @@ public class PageModelObjectMapperFactory {
                 return ignore.value();
             }
             return super.isIgnorableType(ac);
+        }
+
+        @Override
+        public Boolean hasAnyGetter(Annotated a) {
+            PageModelAnyGetter ann = _findAnnotation(a, PageModelAnyGetter.class);
+            if (ann != null && ann.enabled()) {
+                return true;
+            }
+            return super.hasAnyGetter(a);
         }
     }
 }
