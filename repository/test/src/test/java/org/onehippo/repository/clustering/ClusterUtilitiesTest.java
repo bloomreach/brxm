@@ -15,7 +15,6 @@
  */
 package org.onehippo.repository.clustering;
 
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
