@@ -16,13 +16,17 @@
 package org.hippoecm.hst.pagemodelapi.common.beans;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.hippoecm.hst.content.annotations.PageModelAnyGetter;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.standard.HippoAssetBean;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSetBean;
+import org.hippoecm.hst.content.PageModelEntity;
 
 @Node(jcrType="unittestproject:textpage")
 public class TextBean extends HippoDocument {
@@ -101,4 +105,64 @@ public class TextBean extends HippoDocument {
             return textBean;
         }
     }
+
+    /**
+     * <p>
+     *     Because of PageModelAnyGetter we expect the Map<String, Object> to be serialized flattened. Since
+     *     Bar implements PageModelEntity we also expect bar to be serialized with a $ref
+     * </p>
+     */
+    @PageModelAnyGetter
+    public Map<String, Object> getObjectMap() {
+        Map<String, Object> overlays = new HashMap<>();
+
+        overlays.put("foo", new Foo("foo", "Foo Text"));
+        overlays.put("bar", new Bar("bar", "Bar Text"));
+
+        return overlays;
+    }
+
+    public static class Foo {
+
+        final String name;
+        final String text;
+
+        public Foo(final String name, final String text) {
+
+            this.name = name;
+            this.text = text;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getText() {
+            return text;
+        }
+    }
+
+    /**
+     * bar implements PageModelEntity meaning it should get serialized as $ref (opposed to objects Foo)
+     */
+    public static class Bar implements PageModelEntity {
+
+        final String name;
+        final String text;
+
+        public Bar(final String name, final String text) {
+
+            this.name = name;
+            this.text = text;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getText() {
+            return text;
+        }
+    }
+
 }

@@ -84,7 +84,6 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
 
         String actual = getActualJson("/spa/resourceapi", "1.0", "_maxreflevel=0");
 
-
         InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_homepage_maxreflevel0.json");
 
         assertions(actual, expected);

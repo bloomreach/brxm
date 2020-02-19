@@ -26,11 +26,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonPointer;
 import com.fasterxml.jackson.databind.BeanDescription;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -38,6 +40,7 @@ import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.BeanSerializerModifier;
+import com.fasterxml.jackson.databind.ser.ResolvableSerializer;
 
 import org.junit.Test;
 
@@ -69,9 +72,11 @@ public class PageModelApiV10LearningTest {
                         .addModel("content", new Content("1"))
                         .addChild(new Component("childOfchild2", "container")));
 
+        String s = new ObjectMapper().writerWithDefaultPrettyPrinter().writeValueAsString(root);
+
         AggregatedPageModel pageModel = new AggregatedPageModel(root);
 
-        final String serialized = objectMapper.writeValueAsString(pageModel);
+        final String serialized = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(pageModel);
 
         JsonNode jsonNodeRoot = objectMapper.readTree(serialized);
 
@@ -94,7 +99,7 @@ public class PageModelApiV10LearningTest {
 
     }
 
-    public static class PageModelSerializer extends JsonSerializer<Object> {
+    public static class PageModelSerializer extends JsonSerializer<Object> implements ResolvableSerializer {
 
         private static ThreadLocal<Object> tlRoot = new ThreadLocal<>();
         private static ThreadLocal<Object> tlFirstEntity = new ThreadLocal<>();
@@ -106,6 +111,13 @@ public class PageModelApiV10LearningTest {
 
         public PageModelSerializer(final JsonSerializer<Object> serializer) {
             this.serializer = serializer;
+        }
+
+        @Override
+        public void resolve(final SerializerProvider provider) throws JsonMappingException {
+            if (serializer instanceof ResolvableSerializer) {
+                ((ResolvableSerializer) serializer).resolve(provider);
+            }
         }
 
         @Override
@@ -299,6 +311,14 @@ public class PageModelApiV10LearningTest {
         public String getType() {
             return "product";
         }
+
+        @JsonAnyGetter
+        public Map<String, String> getValues() {
+            Map<String, String> map = new HashMap<>();
+            map.put("foo", "Foo");
+            map.put("bar", "Bar");
+            return map;
+        }
     }
 
     public class Content {
@@ -349,11 +369,11 @@ public class PageModelApiV10LearningTest {
             this.doe = doe;
         }
 
-        public String getJohn() {
+        public String getFirstName() {
             return john;
         }
 
-        public String getDoe() {
+        public String getLastName() {
             return doe;
         }
     }

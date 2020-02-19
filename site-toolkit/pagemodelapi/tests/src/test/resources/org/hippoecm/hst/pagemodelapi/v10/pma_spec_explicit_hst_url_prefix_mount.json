@@ -28,8 +28,8 @@
       "meta" : {
         "definitionId" : "hst:pages/homepage",
         "paramsInfo" : {
-          "parameterTwo" : "valueTwo",
           "parameterOne" : "valueTwo",
+          "parameterTwo" : "valueTwo",
           "value" : 1
         },
         "params" : { }
@@ -274,7 +274,14 @@
           "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
         } ],
         "localeString" : "en_US",
-        "id" : "1ca07af9-cdf5-4bdd-9908-f991245bb062"
+        "id" : "1ca07af9-cdf5-4bdd-9908-f991245bb062",
+        "bar" : {
+          "$ref" : "/page/uid5"
+        },
+        "foo" : {
+          "name" : "foo",
+          "text" : "Foo Text"
+        }
       }
     },
     "uid4" : {
@@ -312,6 +319,7 @@
         "textDocument" : {
           "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
         },
+        "localeString" : null,
         "id" : "303d40eb-f98c-4d61-84c7-a1ba14b5ceb3"
       }
     },
@@ -326,8 +334,8 @@
       "data" : {
         "name" : "common",
         "displayName" : "common",
-        "localeString" : "en_US",
         "documentSize" : 1,
+        "localeString" : "en_US",
         "id" : "cbcbcbcb-5fa8-48a8-b03b-4524373d992a"
       }
     },
@@ -336,6 +344,7 @@
       "data" : {
         "name" : "picture.jpeg",
         "displayName" : "picture.jpeg",
+        "description" : null,
         "original" : {
           "name" : "hippogallery:original",
           "displayName" : "hippogallery:original",
@@ -368,6 +377,8 @@
             }
           }
         },
+        "fileName" : null,
+        "localeString" : null,
         "id" : "db02dde5-0098-4488-a72c-2a4fc6d51beb"
       }
     },
@@ -381,6 +392,7 @@
           "displayName" : "hippogallery:asset",
           "lastModified" : 1581065746713,
           "mimeType" : "application/pdf",
+          "filename" : null,
           "size" : 17381,
           "links" : {
             "site" : {
@@ -389,8 +401,13 @@
             }
           }
         },
+        "localeString" : null,
         "id" : "5e56d406-b302-445e-9f80-e624ba053bc4"
       }
+    },
+    "uid5" : {
+      "name" : "bar",
+      "text" : "Bar Text"
     }
   }
 }

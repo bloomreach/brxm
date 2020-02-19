@@ -622,7 +622,15 @@
           "$ref":"/content/u1ca07af9cdf54bdd9908f991245bb062"
         }
       ],
-      "localeString":"en_US"
+      "localeString":"en_US",
+      "bar":{
+        "name":"bar",
+        "text":"Bar Text"
+      },
+      "foo":{
+        "name":"foo",
+        "text":"Foo Text"
+      }
     },
     "udb02dde500984488a72c2a4fc6d51beb":{
       "id":"db02dde5-0098-4488-a72c-2a4fc6d51beb",
