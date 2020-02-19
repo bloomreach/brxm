@@ -61,6 +61,10 @@ class Monkey {
         return name;
     }
 
+    Session getSession() {
+        return session;
+    }
+
     private Action selectAction() {
         return actions.get(random.nextInt(actions.size()));
     }

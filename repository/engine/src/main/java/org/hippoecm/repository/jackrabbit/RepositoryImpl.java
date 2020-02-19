@@ -15,7 +15,10 @@
  */
 package org.hippoecm.repository.jackrabbit;
 
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Credentials;
@@ -45,11 +48,16 @@ import org.apache.jackrabbit.core.nodetype.NodeTypeRegistry;
 import org.apache.jackrabbit.core.observation.ObservationDispatcher;
 import org.apache.jackrabbit.core.persistence.PersistenceManager;
 import org.apache.jackrabbit.core.query.QueryHandler;
+import org.apache.jackrabbit.core.query.lucene.CachingMultiIndexReader;
+import org.apache.jackrabbit.core.query.lucene.ConsistencyCheck;
+import org.apache.jackrabbit.core.query.lucene.FieldNames;
+import org.apache.jackrabbit.core.query.lucene.FieldSelectors;
 import org.apache.jackrabbit.core.security.JackrabbitSecurityManager;
 import org.apache.jackrabbit.core.security.authentication.AuthContext;
 import org.apache.jackrabbit.core.state.ISMLocking;
 import org.apache.jackrabbit.core.state.ItemStateException;
 import org.apache.jackrabbit.core.state.SharedItemStateManager;
+import org.apache.lucene.document.Document;
 import org.hippoecm.repository.FacetedNavigationEngine;
 import org.hippoecm.repository.jmx.RepositoryStat;
 import org.hippoecm.repository.query.lucene.HippoQueryHandler;
@@ -74,11 +82,7 @@ public class RepositoryImpl extends ExtendedJackrabbitRepositoryImpl implements 
 
     protected RepositoryImpl(RepositoryConfig repConfig) throws RepositoryException {
         super(repConfig);
-
-        final Thread indexRepairThread = new Thread(this::indexRepair);
-        indexRepairThread.setDaemon(true);
-        indexRepairThread.start();
-
+        searchIndexConsistencyCheck();
         registerJmxRepositoryStatistics();
     }
 
@@ -88,13 +92,19 @@ public class RepositoryImpl extends ExtendedJackrabbitRepositoryImpl implements 
         super.doShutdown();
     }
 
-    private void indexRepair() {
+    private void searchIndexConsistencyCheck() throws RepositoryException {
         try {
             final ServicingSearchIndex searchIndex = (ServicingSearchIndex) getSearchManager("default").getQueryHandler();
-
-            new IndexRepairer(searchIndex).repairInconsistencies();
-
-        } catch (RepositoryException e) {
+            if (searchIndex.getServicingConsistencyCheckEnabled()) {
+                // regardless searchIndex.getAutoRepair() true or false, we repair the index : there is no point in
+                // expensive check without fixing the index
+                searchIndex.repairInconsistencies();
+            } else {
+                // as a minimum on any new startup, always repair duplicates as this is a cheap fix that does not require
+                // any database interaction
+                searchIndex.repairDuplicates();
+            }
+        } catch (IOException e) {
             log.error("Search index consistency check failed", e);
         }
     }

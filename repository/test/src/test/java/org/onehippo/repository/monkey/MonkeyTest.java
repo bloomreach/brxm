@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -119,8 +119,9 @@ public class MonkeyTest extends ClusterTest {
         return clusterContentEqual()
                 && checkIndexConsistency(repo1)
                 && checkIndexConsistency(repo2)
-                && checkDatabaseConsistency(repo1)
-                && checkDatabaseConsistency(repo2);
+                && checkDatabaseConsistency(repo1, session1)
+                // note on purpose check repo2 against session1
+                && checkDatabaseConsistency(repo2, session1);
     }
 
 }
