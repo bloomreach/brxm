@@ -57,7 +57,6 @@ class OverlayService {
     this.SvgService = SvgService;
 
     this.editMenuHandler = angular.noop;
-    this.selectDocumentHandler = angular.noop;
 
     this.isComponentsOverlayDisplayed = false;
     this.isContentOverlayDisplayed = false;
@@ -83,12 +82,6 @@ class OverlayService {
 
   onEditMenu(callback) {
     this.editMenuHandler = callback;
-  }
-
-  onSelectDocument(callback) {
-    const previousHandler = this.selectDocumentHandler;
-    this.selectDocumentHandler = callback;
-    return previousHandler;
   }
 
   _onLoad() {
@@ -711,13 +704,7 @@ class OverlayService {
   }
 
   _selectDocument(config) {
-    this.selectDocumentHandler(
-      config.containerItem,
-      config.parameterName,
-      config.parameterValue,
-      config.pickerConfig,
-      config.parameterBasePath,
-    );
+    this.$rootScope.$emit('document:select', config);
     this.CmsService.reportUsageStatistic('PickContentButton');
   }
 
