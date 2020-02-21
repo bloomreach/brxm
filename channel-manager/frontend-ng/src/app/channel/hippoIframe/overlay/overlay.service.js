@@ -267,7 +267,7 @@ class OverlayService {
   onComponentClick(clickHandler) {
     this.PageStructureService
       .getContainers()
-      .map(container => container.items)
+      .map(container => container.getComponents())
       .flat()
       .forEach((component) => {
         const element = component.getOverlayElement();
@@ -290,7 +290,7 @@ class OverlayService {
     this.PageStructureService
       .getContainers()
       .forEach((container) => {
-        container.items.forEach((component) => {
+        container.getComponents().forEach((component) => {
           const element = component.getOverlayElement();
           element.off('click');
         });
@@ -365,7 +365,7 @@ class OverlayService {
   _addComponentMarkup(structureElement, overlayElement) {
     const dropAreaBefore = this._addDropArea('before', structureElement);
     const dropAreaAfter = this._addDropArea('after', structureElement);
-    const direction = structureElement.container.metaData['HST-XType'] === 'HST.Span' ? 'horizontal' : 'vertical';
+    const direction = structureElement.getContainer().getDragDirection();
 
     angular.element('<div></div>')
       .addClass('hippo-overlay-element-component-drop-area')
@@ -474,7 +474,7 @@ class OverlayService {
       : '';
 
     const config = {
-      containerItem: structureElement.getEnclosingElement(),
+      containerItem: structureElement.getComponent(),
       defaultPath: structureElement.getDefaultPath(),
       documentTemplateQuery: structureElement.getDocumentTemplateQuery(),
       folderTemplateQuery: structureElement.getFolderTemplateQuery(),

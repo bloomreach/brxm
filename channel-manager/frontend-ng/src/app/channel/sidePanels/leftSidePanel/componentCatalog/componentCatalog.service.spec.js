@@ -155,7 +155,7 @@ describe('ComponentCatalogService', () => {
         getId() {
           return 123;
         },
-        items: [
+        getComponents: () => [
           mockComponent,
           mockComponent2,
         ],

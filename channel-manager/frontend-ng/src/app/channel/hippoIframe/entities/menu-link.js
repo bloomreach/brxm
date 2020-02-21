@@ -14,14 +14,7 @@
  * limitations under the License.
  */
 
-import EmbeddedLink from './link-entity';
+import { MenuLink as BaseMenuLink } from '../../../model/entities';
+import { LinkEntityMixin } from './link-entity';
 
-class MenuLink extends EmbeddedLink {
-  constructor(commentElement, metaData) {
-    'ngInject';
-
-    super('menu-link', commentElement, metaData);
-  }
-}
-
-export default MenuLink;
+export class MenuLink extends LinkEntityMixin(BaseMenuLink) {}

@@ -627,7 +627,7 @@ describe('PageStructureService', () => {
     const embeddedLinks = PageStructureService.getEmbeddedLinks();
 
     expect(embeddedLinks.length).toBe(4);
-    embeddedLinks.forEach(embeddedLink => expect(embeddedLink.getEnclosingElement()).toBeUndefined());
+    embeddedLinks.forEach(embeddedLink => expect(embeddedLink.getComponent()).toBeUndefined());
 
     expect(embeddedLinks[0].getBoxElement().length).toBe(0);
 
@@ -635,10 +635,10 @@ describe('PageStructureService', () => {
 
     const attachedEmbeddedLinks = PageStructureService.getEmbeddedLinks();
     expect(attachedEmbeddedLinks.length).toBe(4);
-    expect(attachedEmbeddedLinks[0].getEnclosingElement()).toBe(componentA);
-    expect(attachedEmbeddedLinks[1].getEnclosingElement()).toBe(null);
-    expect(attachedEmbeddedLinks[2].getEnclosingElement()).toBe(null);
-    expect(attachedEmbeddedLinks[3].getEnclosingElement()).toBe(containerVBox);
+    expect(attachedEmbeddedLinks[0].getComponent()).toBe(componentA);
+    expect(attachedEmbeddedLinks[1].getComponent()).toBe(null);
+    expect(attachedEmbeddedLinks[2].getComponent()).toBe(null);
+    expect(attachedEmbeddedLinks[3].getComponent()).toBe(containerVBox);
 
     expect(attachedEmbeddedLinks[0].getBoxElement().length).toBe(1);
     expect(attachedEmbeddedLinks[0].getBoxElement().attr('class')).toBe('hst-fab');
@@ -668,8 +668,8 @@ describe('PageStructureService', () => {
     const updatedComponentA = PageStructureService.getContainers()[0].getComponents()[0];
     const editMenuLinks = PageStructureService.getEmbeddedLinks();
     expect(editMenuLinks.length).toBe(2);
-    expect(editMenuLinks[0].getEnclosingElement()).toBe(null);
-    expect(editMenuLinks[1].getEnclosingElement()).toBe(updatedComponentA);
+    expect(editMenuLinks[0].getComponent()).toBe(null);
+    expect(editMenuLinks[1].getComponent()).toBe(updatedComponentA);
   });
 
   it('re-renders a component with no more content link', () => {
@@ -719,7 +719,7 @@ describe('PageStructureService', () => {
     const updatedComponentA = PageStructureService.getContainers()[0].getComponents()[0];
     const embeddedLinks = PageStructureService.getEmbeddedLinks();
     expect(embeddedLinks.length).toBe(1);
-    expect(embeddedLinks[0].getEnclosingElement()).toBe(updatedComponentA);
+    expect(embeddedLinks[0].getComponent()).toBe(updatedComponentA);
   });
 
   it('gracefully re-renders a component twice quickly after eachother', () => {
@@ -1003,7 +1003,7 @@ describe('PageStructureService', () => {
       expect(embeddedLinks[0].getId()).toBe('menu-in-page');
       expect(embeddedLinks[1].getDocumentTemplateQuery()).toBe('new-test-document');
       expect(embeddedLinks[2].getDocumentTemplateQuery()).toBe('new-manage-content-in-container-vbox');
-      expect(embeddedLinks[2].getEnclosingElement()).toBe(newContainer);
+      expect(embeddedLinks[2].getComponent()).toBe(newContainer);
       done();
     });
     $rootScope.$digest();
