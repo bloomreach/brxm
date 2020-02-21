@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -90,11 +90,11 @@ describe('RenderingService', () => {
 
   describe('createOverlay', () => {
     beforeEach(() => {
-      spyOn(HstCommentsProcessorService, 'run');
       spyOn(HippoIframeService, 'signalPageLoadCompleted');
       spyOn(OverlayService, 'clear');
       spyOn(PageStructureService, 'clearParsedElements');
       spyOn(PageStructureService, 'attachEmbeddedLinks');
+      spyOn(HstCommentsProcessorService, 'run').and.returnValue([]);
       spyOn(RenderingService, 'updateDragDrop');
       spyOn(ScrollService, 'saveScrollPosition');
       spyOn(ScrollService, 'restoreScrollPosition');
@@ -111,7 +111,7 @@ describe('RenderingService', () => {
       expect(ScrollService.saveScrollPosition).toHaveBeenCalled();
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(OverlayService.clear).toHaveBeenCalled();
-      expect(HstCommentsProcessorService.run).toHaveBeenCalledWith(iframeDocument, jasmine.any(Function));
+      expect(HstCommentsProcessorService.run).toHaveBeenCalledWith(iframeDocument);
       expect(PageStructureService.attachEmbeddedLinks).toHaveBeenCalled();
       expect(RenderingService.updateDragDrop).toHaveBeenCalled();
       expect(RenderingService.emitter.emit).toHaveBeenCalledWith('overlay-created');
@@ -130,7 +130,7 @@ describe('RenderingService', () => {
       expect(ScrollService.saveScrollPosition).toHaveBeenCalled();
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(OverlayService.clear).toHaveBeenCalled();
-      expect(HstCommentsProcessorService.run).toHaveBeenCalledWith(iframeDocument, jasmine.any(Function));
+      expect(HstCommentsProcessorService.run).toHaveBeenCalledWith(iframeDocument);
       expect(PageStructureService.attachEmbeddedLinks).toHaveBeenCalled();
       expect(RenderingService.updateDragDrop).toHaveBeenCalled();
       expect(RenderingService.emitter.emit).toHaveBeenCalledWith('overlay-created');

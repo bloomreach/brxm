@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -93,10 +93,10 @@ describe('OverlayService', () => {
 
       try {
         PageStructureService.clearParsedElements();
-        HstCommentsProcessorService.run(
-          iframeWindow.document,
-          PageStructureService.registerParsedElement.bind(PageStructureService),
-        );
+        // eslint-disable-next-line no-restricted-syntax
+        for (const { element, json } of HstCommentsProcessorService.run(iframeWindow.document)) {
+          PageStructureService.registerParsedElement(element, json);
+        }
         PageStructureService.attachEmbeddedLinks();
         deferred.resolve();
       } catch (e) {
