@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,58 +17,57 @@
 import HstConstants from '../hst.constants';
 
 class HstCommentsProcessorService {
-  constructor($log) {
+  constructor($document, $log) {
     'ngInject';
 
+    this.$document = $document;
     this.$log = $log;
   }
 
-  run(document, callback) {
+  run(document) {
     if (!document) {
       throw new Error('DOM document is empty');
     }
-    this.processCommentsWithXPath(document, callback);
+
+    return this._processCommentsWithXPath(document);
   }
 
-  processFragment(jQueryNodeCollection, callback) {
-    for (let i = 0; i < jQueryNodeCollection.length; i += 1) {
-      this.processCommentsWithDomWalking(jQueryNodeCollection[i], callback);
+  * processFragment(jQueryNodeCollection) {
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < jQueryNodeCollection.length; i++) {
+      yield* this._processCommentsWithXPath(jQueryNodeCollection[i]);
     }
   }
 
-  processCommentsWithXPath(document, callback) {
-    const query = document.evaluate('//comment()', document, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
-    for (let i = 0; i < query.snapshotLength; i += 1) {
-      this._processComment(query.snapshotItem(i), callback);
-    }
-  }
+  * _processCommentsWithXPath(node) {
+    if (node.nodeType === Node.COMMENT_NODE) {
+      yield* this._processComment(node);
 
-  processCommentsWithDomWalking(node, callback) {
-    if (!node || node.nodeType === undefined) {
       return;
     }
 
-    if (node.nodeType === 8) {
-      this._processComment(node, callback);
-    } else {
-      for (let i = 0; i < node.childNodes.length; i += 1) {
-        this.processCommentsWithDomWalking(node.childNodes[i], callback);
-      }
+    const document = node.nodeType === Node.DOCUMENT_NODE
+      ? node
+      : this.$document[0];
+
+    const query = document.evaluate('.//comment()', node, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < query.snapshotLength; i++) {
+      yield* this._processComment(query.snapshotItem(i));
     }
   }
 
-  _processComment(element, callback) {
+  * _processComment(element) {
     const data = this._getCommentData(element);
 
-    if (this._isHstComment(data)) {
-      const json = this._parseJson(data);
-      if (json !== null) {
-        try {
-          callback(element, json);
-        } catch (e) {
-          this.$log.warn('Error invoking callback on HST comment', e, json);
-        }
-      }
+    if (!this._isHstComment(data) && !this._isHstEndMarker(data)) {
+      return;
+    }
+
+    const json = this._parseJson(data);
+
+    if (json) {
+      yield { element, json };
     }
   }
 
@@ -82,15 +81,19 @@ class HstCommentsProcessorService {
   }
 
   _isHstComment(data) {
+    return this._isJsonString(data) && data.includes(HstConstants.TYPE);
+  }
+
+  _isHstEndMarker(data) {
+    return this._isJsonString(data) && data.includes(HstConstants.END_MARKER);
+  }
+
+  _isJsonString(data) {
     if (data === null) {
       return false;
     }
     const trimmedData = data.trim();
-    return trimmedData.startsWith('{') && trimmedData.endsWith('}') && trimmedData.includes(HstConstants.TYPE);
-  }
-
-  _isHstEndMarker(data) {
-    return data !== null && data.startsWith(' {') && data.endsWith('} ') && data.includes(HstConstants.END_MARKER);
+    return trimmedData.startsWith('{') && trimmedData.endsWith('}');
   }
 
   _parseJson(data) {
@@ -103,24 +106,23 @@ class HstCommentsProcessorService {
   }
 
   locateComponent(id, startingDomElement) {
-    let { nextSibling } = startingDomElement;
     let boxDomElement;
 
-    while (nextSibling !== null) {
-      if (nextSibling.nodeType === 1 && !boxDomElement) {
+    for (let { nextSibling } = startingDomElement; nextSibling; { nextSibling } = nextSibling) {
+      if (nextSibling.nodeType === Node.ELEMENT_NODE && !boxDomElement) {
         boxDomElement = nextSibling; // use the first element of type 1 to draw the overlay box
       }
+
       if (this._isEndMarker(nextSibling, id)) {
         return [boxDomElement, nextSibling];
       }
-      ({ nextSibling } = nextSibling);
     }
 
     throw new Error(`No component end marker found for '${id}'.`);
   }
 
   _isEndMarker(domElement, id) {
-    if (domElement.nodeType === 8) {
+    if (domElement.nodeType === Node.COMMENT_NODE) {
       const data = this._getCommentData(domElement);
       if (this._isHstEndMarker(data)) {
         const json = this._parseJson(data);

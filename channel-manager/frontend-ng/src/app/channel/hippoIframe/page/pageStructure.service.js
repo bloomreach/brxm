@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -457,14 +457,15 @@ class PageStructureService {
    */
   _createContainer(jQueryNodeCollection) {
     let container = null;
+    const comments = Array.from(this.HstCommentsProcessorService.processFragment(jQueryNodeCollection));
 
-    this.HstCommentsProcessorService.processFragment(jQueryNodeCollection, (commentDomElement, metaData) => {
-      const type = metaData[HstConstants.TYPE];
+    comments.forEach(({ element, json }) => {
+      const type = json[HstConstants.TYPE];
       try {
         switch (type) {
           case HstConstants.TYPE_CONTAINER:
             if (!container) {
-              container = new ContainerElement(commentDomElement, metaData, this.HstCommentsProcessorService);
+              container = new ContainerElement(element, json, this.HstCommentsProcessorService);
             } else {
               this.$log.warn('More than one container in the DOM Element!');
               return;
@@ -478,26 +479,26 @@ class PageStructureService {
             }
 
             try {
-              container.addComponent(new ComponentElement(commentDomElement, metaData,
+              container.addComponent(new ComponentElement(element, json,
                 container, this.HstCommentsProcessorService));
             } catch (exception) {
-              this.$log.debug(exception, metaData);
+              this.$log.debug(exception, json);
             }
             break;
 
           case HstConstants.TYPE_UNPROCESSED_HEAD_CONTRIBUTIONS:
             if (container) {
-              const unprocessedElements = metaData[HstConstants.HEAD_ELEMENTS];
+              const unprocessedElements = json[HstConstants.HEAD_ELEMENTS];
               container.setHeadContributions(unprocessedElements);
             }
             break;
 
           case HstConstants.TYPE_MANAGE_CONTENT_LINK:
-            this._registerManageContentLink(commentDomElement, metaData);
+            this._registerManageContentLink(element, json);
             break;
 
           case HstConstants.TYPE_EDIT_MENU_LINK:
-            this._registerMenuLink(commentDomElement, metaData);
+            this._registerMenuLink(element, json);
             break;
 
           default:
@@ -505,7 +506,7 @@ class PageStructureService {
             break;
         }
       } catch (exception) {
-        this.$log.debug(exception, metaData);
+        this.$log.debug(exception, json);
       }
     });
 
@@ -521,31 +522,32 @@ class PageStructureService {
    */
   _createComponent(jQueryNodeCollection, container) {
     let component = null;
+    const comments = Array.from(this.HstCommentsProcessorService.processFragment(jQueryNodeCollection));
 
-    this.HstCommentsProcessorService.processFragment(jQueryNodeCollection, (commentDomElement, metaData) => {
-      const type = metaData[HstConstants.TYPE];
+    comments.forEach(({ element, json }) => {
+      const type = json[HstConstants.TYPE];
       switch (type) {
         case HstConstants.TYPE_COMPONENT:
           try {
-            component = new ComponentElement(commentDomElement, metaData, container, this.HstCommentsProcessorService);
+            component = new ComponentElement(element, json, container, this.HstCommentsProcessorService);
           } catch (exception) {
-            this.$log.debug(exception, metaData);
+            this.$log.debug(exception, json);
           }
           break;
 
         case HstConstants.TYPE_UNPROCESSED_HEAD_CONTRIBUTIONS:
           if (component) {
-            const unprocessedElements = metaData[HstConstants.HEAD_ELEMENTS];
+            const unprocessedElements = json[HstConstants.HEAD_ELEMENTS];
             component.setHeadContributions(unprocessedElements);
           }
           break;
 
         case HstConstants.TYPE_MANAGE_CONTENT_LINK:
-          this._registerManageContentLink(commentDomElement, metaData);
+          this._registerManageContentLink(element, json);
           break;
 
         case HstConstants.TYPE_EDIT_MENU_LINK:
-          this._registerMenuLink(commentDomElement, metaData);
+          this._registerMenuLink(element, json);
           break;
 
         default:
