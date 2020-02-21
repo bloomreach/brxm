@@ -14,56 +14,7 @@
  * limitations under the License.
  */
 
-import EmbeddedLink from './link-entity';
+import { ManageContentLink as BaseManageContentLink } from '../../../model/entities';
+import { LinkEntityMixin } from './link-entity';
 
-class ManageContentLink extends EmbeddedLink {
-  constructor(commentElement, metaData) {
-    super('manage-content-link', commentElement, metaData);
-  }
-
-  getDefaultPath() {
-    return this.metaData.defaultPath;
-  }
-
-  getParameterName() {
-    return this.metaData.parameterName;
-  }
-
-  getParameterValue() {
-    return this.metaData.parameterValue;
-  }
-
-  isParameterValueRelativePath() {
-    return this.metaData.parameterValueIsRelativePath === 'true';
-  }
-
-  getPickerConfig() {
-    if (!this.metaData.parameterName) {
-      return null;
-    }
-    return {
-      configuration: this.metaData.pickerConfiguration,
-      initialPath: this.metaData.pickerInitialPath,
-      isRelativePath: false, // the path is made relative in HstComponentService#saveParameter, and not by the picker
-      remembersLastVisited: this.metaData.pickerRemembersLastVisited === 'true',
-      rootPath: this.metaData.pickerRootPath,
-      selectableNodeTypes: this.metaData.pickerSelectableNodeTypes
-        ? this.metaData.pickerSelectableNodeTypes.split(',')
-        : [],
-    };
-  }
-
-  getRootPath() {
-    return this.metaData.rootPath;
-  }
-
-  getDocumentTemplateQuery() {
-    return this.metaData.documentTemplateQuery;
-  }
-
-  getFolderTemplateQuery() {
-    return this.metaData.folderTemplateQuery;
-  }
-}
-
-export default ManageContentLink;
+export class ManageContentLink extends LinkEntityMixin(BaseManageContentLink) {}

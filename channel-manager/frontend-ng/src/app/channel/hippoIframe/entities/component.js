@@ -14,41 +14,16 @@
  * limitations under the License.
  */
 
-import HstConstants from '../hst.constants';
-import PageStructureElement from './component-entity';
+import { Component as BaseComponent } from '../../../model/entities';
+import { ComponentEntityMixin } from './component-entity';
 
-class ComponentElement extends PageStructureElement {
-  constructor(startCommentDomElement, metaData, container, commentProcessor) {
-    'ngInject';
-
-    const elements = commentProcessor.locateComponent(metaData.uuid, startCommentDomElement);
-    const endCommentDomElement = elements[1];
-    let boxDomElement = elements[0];
-
-    if (!PageStructureElement.isXTypeNoMarkup(container.metaData)) {
-      boxDomElement = startCommentDomElement.parentNode;
-    }
-
-    super('component', metaData, startCommentDomElement, endCommentDomElement, boxDomElement);
-
-    this.container = container;
-  }
-
-  getContainer() {
-    return this.container;
-  }
-
+export class Component extends ComponentEntityMixin(BaseComponent) {
   setContainer(container) {
-    this.container = container;
-  }
+    super.setContainer(container);
 
-  getRenderVariant() {
-    return this.metaData[HstConstants.RENDER_VARIANT] || HstConstants.DEFAULT_RENDER_VARIANT;
-  }
-
-  getReferenceNamespace() {
-    return this.metaData[HstConstants.REFERENCE_NAMESPACE];
+    if (container && !container.isXTypeNoMarkup()) {
+      const startComment = this.getStartComment();
+      this.setBoxElement(startComment.parent());
+    }
   }
 }
-
-export default ComponentElement;

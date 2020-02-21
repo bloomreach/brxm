@@ -670,12 +670,12 @@ describe('OverlayService', () => {
         locked = false,
         folderTemplateQuery = false,
       ) {
-        const enclosing = {
+        const component = {
           isLocked: () => locked,
         };
         const structureElement = {
           getDefaultPath: () => null,
-          getEnclosingElement: () => enclosing,
+          getComponent: () => component,
           getFolderTemplateQuery: () => folderTemplateQuery,
           getParameterName: () => parameterName,
           getParameterValue: () => null,

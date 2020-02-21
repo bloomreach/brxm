@@ -14,38 +14,12 @@
  * limitations under the License.
  */
 
-import PageStructureElement from './component-entity';
+import { EntityMixin } from './entity';
 
-class EmbeddedLink extends PageStructureElement {
-  constructor(type, commentElement, metaData) {
-    'ngInject';
-
-    super(type, metaData, commentElement, commentElement, null);
-  }
-
-  getUuid() {
-    return this.metaData.uuid;
-  }
-
-  hasLabel() {
-    return false;
-  }
-
-  getLabel() {
-    return '';
-  }
-
-  setEnclosingElement(element) {
-    this.enclosingElement = element;
-  }
-
-  getEnclosingElement() {
-    return this.enclosingElement;
-  }
-
-  generateBoxElement() {
-    return $('<a class="hst-fab"></a>');
-  }
+export function LinkEntityMixin(BaseClass) {
+  return class LinkEntityMixed extends EntityMixin(BaseClass) {
+    generateBoxElement() {
+      return $('<a class="hst-fab"></a>');
+    }
+  };
 }
-
-export default EmbeddedLink;

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import ComponentElement from '../entities/component';
-import ContainerElement from '../entities/container';
 import HstConstants from '../hst.constants';
-import ManageContentLink from '../entities/manage-content-link';
-import MenuLink from '../entities/menu-link';
+import { Component } from '../entities/component';
+import { Container } from '../entities/container';
+import { ManageContentLink } from '../entities/manage-content-link';
+import { MenuLink } from '../entities/menu-link';
 
 class PageStructureService {
   constructor(
@@ -88,7 +88,7 @@ class PageStructureService {
   }
 
   _registerContainer(commentDomElement, metaData) {
-    const container = new ContainerElement(commentDomElement, metaData, this.HstCommentsProcessorService);
+    const container = new Container(commentDomElement, metaData, this.HstCommentsProcessorService);
     this.containers.push(container);
   }
 
@@ -100,7 +100,7 @@ class PageStructureService {
 
     const container = this.containers[this.containers.length - 1];
     try {
-      const component = new ComponentElement(commentDomElement, metaData, container, this.HstCommentsProcessorService);
+      const component = new Component(commentDomElement, metaData, container, this.HstCommentsProcessorService);
       container.addComponent(component);
     } catch (exception) {
       this.$log.debug(exception, metaData);
@@ -143,7 +143,7 @@ class PageStructureService {
   }
 
   _attachEmbeddedLink(link) {
-    let enclosingElement = link.getEnclosingElement();
+    let enclosingElement = link.getComponent();
 
     if (enclosingElement === undefined) {
       // link is not yet attached, determine enclosing element.
@@ -163,7 +163,7 @@ class PageStructureService {
       if (enclosingElement === undefined) {
         enclosingElement = null; // marks that the *page* is the enclosing element
       }
-      link.setEnclosingElement(enclosingElement);
+      link.setComponent(enclosingElement);
 
       // insert transparent placeholder into page
       link.prepareBoxElement();
@@ -356,10 +356,10 @@ class PageStructureService {
     this.embeddedLinks = this._getLinksNotEnclosedInElement(this.embeddedLinks, component);
   }
 
-  _getLinksNotEnclosedInElement(links, element) {
+  _getLinksNotEnclosedInElement(links, component) {
     const remainingContentLinks = [];
     links.forEach((link) => {
-      if (link.getEnclosingElement() !== element) {
+      if (link.getComponent() !== component) {
         remainingContentLinks.push(link);
       }
     });
@@ -465,7 +465,7 @@ class PageStructureService {
         switch (type) {
           case HstConstants.TYPE_CONTAINER:
             if (!container) {
-              container = new ContainerElement(element, json, this.HstCommentsProcessorService);
+              container = new Container(element, json, this.HstCommentsProcessorService);
             } else {
               this.$log.warn('More than one container in the DOM Element!');
               return;
@@ -479,7 +479,7 @@ class PageStructureService {
             }
 
             try {
-              container.addComponent(new ComponentElement(element, json,
+              container.addComponent(new Component(element, json,
                 container, this.HstCommentsProcessorService));
             } catch (exception) {
               this.$log.debug(exception, json);
@@ -529,7 +529,7 @@ class PageStructureService {
       switch (type) {
         case HstConstants.TYPE_COMPONENT:
           try {
-            component = new ComponentElement(element, json, container, this.HstCommentsProcessorService);
+            component = new Component(element, json, container, this.HstCommentsProcessorService);
           } catch (exception) {
             this.$log.debug(exception, json);
           }

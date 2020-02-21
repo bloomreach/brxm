@@ -94,12 +94,13 @@ class ComponentCatalogService {
 
   async _handleComponentClick(event, clickedComponent) {
     const container = clickedComponent.getContainer();
-    const clickedComponentIndex = container.items.findIndex(item => item.getId() === clickedComponent.getId());
+    const components = container.getComponents();
+    const clickedComponentIndex = components.findIndex(item => item.getId() === clickedComponent.getId());
     const shouldPlaceBefore = event.target.classList.contains('hippo-overlay-element-component-drop-area-before');
 
     const nextComponent = shouldPlaceBefore
-      ? container.items[clickedComponentIndex]
-      : container.items[clickedComponentIndex + 1];
+      ? components[clickedComponentIndex]
+      : components[clickedComponentIndex + 1];
 
     if (container.isDisabled()) {
       event.stopPropagation();
