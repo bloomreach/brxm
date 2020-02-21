@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import ComponentElement from './element/componentElement';
-import ContainerElement from './element/containerElement';
+import ComponentElement from '../entities/component';
+import ContainerElement from '../entities/container';
 import HstConstants from '../hst.constants';
-import ManageContentLink from './element/manageContentLink';
-import MenuLink from './element/menuLink';
+import ManageContentLink from '../entities/manage-content-link';
+import MenuLink from '../entities/menu-link';
 
 class PageStructureService {
   constructor(
