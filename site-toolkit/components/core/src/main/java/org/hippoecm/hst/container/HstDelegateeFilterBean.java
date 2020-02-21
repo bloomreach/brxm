@@ -89,7 +89,7 @@ import static java.util.Collections.emptyMap;
 import static javax.servlet.http.HttpServletResponse.SC_NO_CONTENT;
 import static javax.servlet.http.HttpServletResponse.SC_UNAUTHORIZED;
 import static org.apache.commons.lang3.StringUtils.startsWithIgnoreCase;
-import static org.hippoecm.hst.configuration.channel.PreviewURLChannelInfo.PREVIEW_URL_PROPERTY_NAME;
+import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_URL_PROPERTY_NAME;
 import static org.hippoecm.hst.core.container.ContainerConstants.CMSSESSIONCONTEXT_BINDING_PATH;
 import static org.hippoecm.hst.core.container.ContainerConstants.FORWARD_RECURSION_ERROR;
 import static org.hippoecm.hst.core.container.ContainerConstants.HST_JAAS_LOGIN_ATTEMPT_RESOURCE_TOKEN;
