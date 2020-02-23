@@ -15,11 +15,13 @@
  */
 
 import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { first, take } from 'rxjs/operators';
 
 import { NavItemMock } from '../../models/nav-item.mock';
 import { NavItemService } from '../../services/nav-item.service';
 import { MenuItemContainer } from '../models/menu-item-container.model';
 import { MenuItemLinkMock } from '../models/menu-item-link.mock';
+import { MenuItem } from '../models/menu-item.model';
 
 import { MenuBuilderService } from './menu-builder.service';
 import { MenuStateService } from './menu-state.service';
@@ -98,10 +100,12 @@ describe('MenuStateService', () => {
     expect(menuBuilderServiceMock.buildMenu).toHaveBeenCalledWith(navItemsMock);
   });
 
-  it('should return the built menu', () => {
+  it('should emit the built menu', async () => {
     const expected = builtMenuMock;
 
-    const actual = service.menu;
+    const actual = await service.menu$.pipe(
+      take(1),
+    ).toPromise();
 
     expect(actual).toEqual(expected);
   });
@@ -109,7 +113,7 @@ describe('MenuStateService', () => {
   it('should return the found home menu item', () => {
     const expected = builtMenuMock[0].children[0];
 
-    const actual = service.homeMenuItem;
+    const actual = service.currentHomeMenuItem;
 
     expect(actual).toEqual(expected);
   });

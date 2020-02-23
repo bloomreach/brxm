@@ -1,5 +1,5 @@
-/*!
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+/*
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import { Observable, of } from 'rxjs';
+import { NEVER, Observable } from 'rxjs';
 
 import { NavItem } from './nav-item.model';
 
 export class NavItemMock extends NavItem {
-  constructor(initObject = {}, activation?: Observable<boolean>) {
+  constructor(initObject = {}, unsubscribe: Observable<void> = NEVER, activated = true) {
     const dto = {
       id: 'testNavItemId',
       displayName: 'testDisplayName',
@@ -28,6 +28,10 @@ export class NavItemMock extends NavItem {
       ...initObject,
     };
 
-    super(dto, activation || of(true));
+    super(dto, unsubscribe);
+
+    if (activated) {
+      this.activate();
+    }
   }
 }

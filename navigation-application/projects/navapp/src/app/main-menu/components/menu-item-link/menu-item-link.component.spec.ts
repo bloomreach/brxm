@@ -1,5 +1,5 @@
-/*!
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+/*
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core
 import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NavigationTrigger } from '@bloomreach/navapp-communication';
+import { NEVER } from 'rxjs';
 
 import { NavItemMock } from '../../../models/nav-item.mock';
 import { NavItem } from '../../../models/nav-item.model';
@@ -106,32 +107,55 @@ describe('MenuItemLinkComponent', () => {
 
   describe('when a nav item is set', () => {
     let navItemMock: NavItem;
+    let linkEl: DebugElement;
 
     beforeEach(async(() => {
-      navItemMock = new NavItemMock();
+      linkEl = de.query(By.css('a'));
+
+      navItemMock = new NavItemMock({}, NEVER, false);
 
       component.navItem = navItemMock;
 
       fixture.detectChanges();
     }));
 
-    it('should not be disabled', () => {
-      expect(de.classes.disabled).toBeFalsy();
+    it('should be disabled', () => {
+      expect(de.classes.disabled).toBeTruthy();
     });
 
     describe('if received a click event', () => {
       beforeEach(() => {
-        const a = de.query(By.css('a'));
-
-        a.triggerEventHandler('click', mouseEventObj);
+        linkEl.triggerEventHandler('click', mouseEventObj);
       });
 
       it('should prevent default event handling', () => {
         expect(mouseEventObj.preventDefault).toHaveBeenCalled();
       });
 
-      it('should navigate to the nav item', () => {
-        expect(navigationServiceMock.navigateByNavItem).toHaveBeenCalledWith(navItemMock, NavigationTrigger.Menu);
+      it('should not navigate to the nav item', () => {
+        expect(navigationServiceMock.navigateByNavItem).not.toHaveBeenCalled();
+      });
+    });
+
+    describe('and activated', () => {
+      beforeEach(async(() => {
+        navItemMock.activate();
+
+        fixture.detectChanges();
+      }));
+
+      describe('if received a click event', () => {
+        beforeEach(() => {
+          linkEl.triggerEventHandler('click', mouseEventObj);
+        });
+
+        it('should prevent default event handling', () => {
+          expect(mouseEventObj.preventDefault).toHaveBeenCalled();
+        });
+
+        it('should navigate to the nav item', () => {
+          expect(navigationServiceMock.navigateByNavItem).toHaveBeenCalledWith(navItemMock, NavigationTrigger.Menu);
+        });
       });
     });
   });
