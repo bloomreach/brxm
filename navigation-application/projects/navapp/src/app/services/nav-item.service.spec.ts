@@ -1,5 +1,5 @@
-/*!
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+/*
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -52,6 +52,7 @@ describe('NavItemService', () => {
 
   const loggerMock = jasmine.createSpyObj('NGXLogger', [
     'warn',
+    'debug',
   ]);
 
   beforeEach(() => {
@@ -103,6 +104,10 @@ describe('NavItemService', () => {
   describe('when nav items are registered', () => {
     beforeEach(() => {
       service.registerNavItemDtos(mockNavItemDtos);
+    });
+
+    it('should log that', () => {
+      expect(loggerMock.debug).toHaveBeenCalledWith('Register nav items', mockNavItemDtos);
     });
 
     it('should find a nav item by an iframe url and an app path', () => {

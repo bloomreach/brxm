@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@ import { NavigationTrigger, NavLocation } from '@bloomreach/navapp-communication
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, EMPTY, from, Observable, of, Subject, Subscription, throwError } from 'rxjs';
-import { catchError, filter, finalize, mapTo, switchMap, tap } from 'rxjs/operators';
+import { catchError, filter, finalize, mapTo, switchMap, take, tap } from 'rxjs/operators';
 
 import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
@@ -109,7 +109,7 @@ export class NavigationService implements OnDestroy {
   }
 
   private get homeUrl(): string {
-    const homeMenuItem = this.menuStateService.homeMenuItem;
+    const homeMenuItem = this.menuStateService.currentHomeMenuItem;
 
     if (!homeMenuItem) {
       throw new CriticalError('ERROR_CONFIGURATION', 'Unable to find home item');
@@ -321,6 +321,7 @@ export class NavigationService implements OnDestroy {
       switchMap(t => t.navItem.active$.pipe(
         filter(x => x),
         mapTo(t),
+        take(1),
       )),
       // Ensure the app with the found id exists and it has the connected API
       switchMap(t => {

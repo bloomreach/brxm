@@ -1,5 +1,5 @@
-/*!
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+/*
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,11 +37,11 @@ describe('ErrorPageComponent', () => {
   ]);
 
   let menuStateServiceMock: any = {
-    homeMenuItem: undefined,
+    currentHomeMenuItem: undefined,
   };
 
   beforeEach(() => {
-    menuStateServiceMock.homeMenuItem = new MenuItemLinkMock();
+    menuStateServiceMock.currentHomeMenuItem = new MenuItemLinkMock();
 
     TestBed.configureTestingModule({
       declarations: [ErrorPageComponent],
@@ -75,7 +75,7 @@ describe('ErrorPageComponent', () => {
   });
 
   it('should hide go to home button when there is no home menu item', () => {
-    menuStateServiceMock.homeMenuItem = undefined;
+    menuStateServiceMock.currentHomeMenuItem = undefined;
     component.error = new AppError(404, 'Some error');
 
     fixture.detectChanges();

@@ -26,6 +26,7 @@ import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { NavItemMock } from '../models/nav-item.mock';
 import { AuthService } from '../services/auth.service';
 import { BusyIndicatorService } from '../services/busy-indicator.service';
+import { MainLoaderService } from '../services/main-loader.service';
 import { NavConfigService } from '../services/nav-config.service';
 import { NavItemService } from '../services/nav-item.service';
 import { NavigationService } from '../services/navigation.service';
@@ -86,6 +87,7 @@ describe('BootstrapService', () => {
   let clientAppServiceMock: jasmine.SpyObj<ClientAppService>;
   let menuStateServiceMock: jasmine.SpyObj<MenuStateService>;
   let navigationServiceMock: jasmine.SpyObj<NavigationService>;
+  let mainLoaderServiceMock: jasmine.SpyObj<MainLoaderService>;
   let busyIndicatorServiceMock: jasmine.SpyObj<BusyIndicatorService>;
   let siteServiceMock: jasmine.SpyObj<SiteService>;
   let errorHandlingServiceMock: jasmine.SpyObj<ErrorHandlingService>;
@@ -127,6 +129,11 @@ describe('BootstrapService', () => {
       initialNavigation: Promise.resolve(),
     });
 
+    mainLoaderServiceMock = jasmine.createSpyObj('MainLoaderService', [
+      'show',
+      'hide',
+    ]);
+
     busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', [
       'show',
       'hide',
@@ -164,6 +171,7 @@ describe('BootstrapService', () => {
         { provide: ClientAppService, useValue: clientAppServiceMock },
         { provide: MenuStateService, useValue: menuStateServiceMock },
         { provide: NavigationService, useValue: navigationServiceMock },
+        { provide: MainLoaderService, useValue: mainLoaderServiceMock },
         { provide: BusyIndicatorService, useValue: busyIndicatorServiceMock },
         { provide: SiteService, useValue: siteServiceMock },
         { provide: ErrorHandlingService, useValue: errorHandlingServiceMock },

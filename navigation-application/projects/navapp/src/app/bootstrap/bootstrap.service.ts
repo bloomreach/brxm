@@ -25,6 +25,7 @@ import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { NavItem } from '../models/nav-item.model';
 import { AuthService } from '../services/auth.service';
 import { BusyIndicatorService } from '../services/busy-indicator.service';
+import { MainLoaderService } from '../services/main-loader.service';
 import { Configuration, NavConfigService } from '../services/nav-config.service';
 import { NavItemService } from '../services/nav-item.service';
 import { NavigationService } from '../services/navigation.service';
@@ -49,6 +50,7 @@ export class BootstrapService {
     private readonly clientAppService: ClientAppService,
     private readonly menuStateService: MenuStateService,
     private readonly navigationService: NavigationService,
+    private readonly mainLoaderService: MainLoaderService,
     private readonly busyIndicatorService: BusyIndicatorService,
     private readonly siteService: SiteService,
     private readonly errorHandlingService: ErrorHandlingService,
@@ -84,12 +86,20 @@ export class BootstrapService {
   async reinitialize(): Promise<void> {
     this.logger.debug('Reinitializing the application');
 
+    this.mainLoaderService.show();
     this.busyIndicatorService.show();
 
     const navItemDtos = await this.navConfigService.refetchNavItems();
-    this.logger.debug('Nav items', navItemDtos);
+
+    const navItems = this.navItemService.registerNavItemDtos(navItemDtos);
+
+    // reinitialize services
+    this.menuStateService.init(navItems);
 
     this.windowRef.nativeWindow.location.reload();
+
+    this.mainLoaderService.hide();
+    this.busyIndicatorService.hide();
   }
 
   private async performSilentLogin(): Promise<void> {
