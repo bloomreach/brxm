@@ -45,6 +45,7 @@ export interface ChildConnection {
 })
 export class ConnectionService {
   private readonly connections = new Map<string, ChildConnection>();
+  private readonly pendingConnections = new Map<string, Promise<ChildConnection>>();
   private readonly renderer: Renderer2 = this.rendererFactory.createRenderer(undefined, undefined);
 
   showMask$ = new Subject<void>();
@@ -69,11 +70,19 @@ export class ConnectionService {
       return this.connections.get(url);
     }
 
+    if (this.pendingConnections.has(url)) {
+      return this.pendingConnections.get(url);
+    }
+
     const iframe = this.createHiddenIframe(url);
     this.renderer.appendChild(this.document.body, iframe);
 
-    const connection = await this.connectToIframe(iframe);
+    const connectionPromise = this.connectToIframe(iframe);
+    this.pendingConnections.set(url, connectionPromise);
+
+    const connection = await connectionPromise;
     this.connections.set(url, connection);
+    this.pendingConnections.delete(url);
 
     return connection;
   }
