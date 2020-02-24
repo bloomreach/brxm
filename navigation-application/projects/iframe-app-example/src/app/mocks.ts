@@ -546,8 +546,14 @@ export const mockNavItems: NavItem[] = [
 ];
 
 export const mockNavItemsMapPerSite = {
-  11: mockNavItems.slice(0, 10),
-  21: mockNavItems.slice(10, 20),
+  11: mockNavItems.slice(0, 10).map(x => ({
+    ...x,
+    appIframeUrl: x.appIframeUrl.replace('brsm', 'brsm1'),
+  })),
+  21: mockNavItems.slice(10, 20).map(x => ({
+    ...x,
+    appIframeUrl: x.appIframeUrl.replace('brsm', 'brsm2'),
+  })),
   31: mockNavItems.slice(20, 30),
 };
 

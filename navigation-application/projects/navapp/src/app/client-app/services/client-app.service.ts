@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -37,20 +37,18 @@ interface ClientAppWithConfig {
 export class ClientAppService {
   private readonly uniqueURLs$ = new BehaviorSubject<string[]>([]);
   private readonly connection$ = new Subject<Connection>();
-  private readonly connectedAppWithConfig$: Observable<ClientAppWithConfig>;
+  private readonly connectedAppWithConfig$ = new Subject<ClientAppWithConfig>();
   private readonly userActivityReceived$ = new Subject<ClientApp>();
 
   private readonly connectedApps: Map<string, ClientAppWithConfig> = new Map<string, ClientAppWithConfig>();
   private activeAppUrl: string;
   private allAppsAreConnectedOrTimeout = false;
 
-  allConnectionsSettled: Promise<ClientAppWithConfig[]>;
-
   constructor(
     @Inject(APP_SETTINGS) private readonly appSettings: AppSettings,
     private readonly logger: NGXLogger,
   ) {
-    this.connectedAppWithConfig$ = this.transformConnectionsToApps(this.connection$);
+    this.transformConnectionsToApps(this.connection$).subscribe(this.connectedAppWithConfig$);
   }
 
   get urls$(): Observable<string[]> {
@@ -72,7 +70,11 @@ export class ClientAppService {
       return undefined;
     }
 
-    return this.getApp(this.activeAppUrl);
+    try {
+      return this.getApp(this.activeAppUrl);
+    } catch {
+      return undefined;
+    }
   }
 
   get doesActiveAppSupportSites(): boolean {
@@ -86,18 +88,24 @@ export class ClientAppService {
   }
 
   async init(navItems: NavItem[]): Promise<void> {
+    this.allAppsAreConnectedOrTimeout = false;
+
     const uniqueURLs = this.filterUniqueURLs(navItems);
-    this.uniqueURLs$.next(uniqueURLs);
 
     this.logger.debug(`Client app iframes are expected to be loaded (${uniqueURLs.length})`, uniqueURLs);
 
-    this.allConnectionsSettled = this.waitForAllAppsToBeConnectedOrTimeout(
+    const allAppsAreConnectedOrTimeoutPromise = this.waitForAllAppsToBeConnectedOrTimeout(
       this.connectedAppWithConfig$,
       uniqueURLs.length,
       this.appSettings.iframesConnectionTimeout * 1.5,
     ).toPromise();
 
-    await this.allConnectionsSettled;
+    this.reuseAlreadyConnectedAppsWithoutSitesSupport(uniqueURLs);
+
+    // Propagate urls of apps to load
+    this.uniqueURLs$.next(uniqueURLs);
+
+    await allAppsAreConnectedOrTimeoutPromise;
 
     this.allAppsAreConnectedOrTimeout = true;
   }
@@ -252,5 +260,20 @@ export class ClientAppService {
         );
       }),
     );
+  }
+
+  private reuseAlreadyConnectedAppsWithoutSitesSupport(newAppUrls: string[]): void {
+    for (const [url, appWithConfig] of this.connectedApps) {
+      if (newAppUrls.includes(url) && !appWithConfig.config.showSiteDropdown) {
+        continue;
+      }
+
+      this.connectedApps.delete(url);
+    }
+
+    for (const [url, appWithConfig] of this.connectedApps) {
+      this.logger.debug(`Reuse existing connection for the app without sites support '${url}'`);
+      this.connectedAppWithConfig$.next(appWithConfig);
+    }
   }
 }

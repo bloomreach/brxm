@@ -98,12 +98,14 @@ export class ConnectionService {
       methodInvocationTimeout: this.appSettings.iframesConnectionTimeout,
     };
 
+    this.logger.debug(`Initiating a connection to the iframe '${url}'`);
+
     try {
       const api = await connectToChild(config);
 
       return { url, iframe, api };
     } catch (error) {
-      throw new Error(`Could not create connection for '${url}': ${error}`);
+      throw new Error(`Could not create a connection for '${url}': ${error}`);
     }
   }
 
