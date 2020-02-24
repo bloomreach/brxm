@@ -467,7 +467,7 @@ class OverlayService {
   _initManageContentConfig(structureElement) {
     // each property should be filled with the method that will extract the data from the HST comment
     // Passing the full config through privileges to adjust buttons for authors
-    const documentUuid = structureElement.getUuid();
+    const documentUuid = structureElement.getId();
     const parameterName = structureElement.getParameterName();
     const parameterBasePath = structureElement.isParameterValueRelativePath()
       ? this.ChannelService.getChannel().contentRoot
@@ -644,7 +644,7 @@ class OverlayService {
     this._linkButtonTransition(overlayElement);
 
     this._addClickHandler(overlayElement, () => {
-      this._editContent(structureElement.getUuid());
+      this._editContent(structureElement.getId());
     });
   }
 
@@ -653,7 +653,7 @@ class OverlayService {
 
     this._addClickHandler(overlayElement, () => {
       this.$rootScope.$evalAsync(() => {
-        this.editMenuHandler(structureElement.getUuid());
+        this.editMenuHandler(structureElement.getId());
       });
     });
   }
