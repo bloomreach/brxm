@@ -27,6 +27,7 @@ class PageStructureService {
   constructor(
     $log,
     $q,
+    $rootScope,
     ChannelService,
     FeedbackService,
     HippoIframeService,
@@ -41,6 +42,7 @@ class PageStructureService {
 
     this.$log = $log;
     this.$q = $q;
+    this.$rootScope = $rootScope;
     this.ChannelService = ChannelService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
@@ -51,7 +53,6 @@ class PageStructureService {
     this.ModelFactoryService = ModelFactoryService;
     this.PageMetaDataService = PageMetaDataService;
 
-    this.changeListeners = [];
     this.containers = [];
     this.embeddedLinks = [];
     this.headContributions = [];
@@ -140,14 +141,8 @@ class PageStructureService {
     this._notifyChangeListeners();
   }
 
-  registerChangeListener(callback) {
-    this.changeListeners.push(callback);
-  }
-
   _notifyChangeListeners() {
-    this.changeListeners.forEach((callback) => {
-      callback();
-    });
+    this.$rootScope.$emit('iframe:page:change');
   }
 
   getEmbeddedLinks() {

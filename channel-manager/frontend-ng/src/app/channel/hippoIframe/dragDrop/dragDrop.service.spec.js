@@ -19,6 +19,7 @@ import 'angular-mocks';
 
 describe('DragDropService', () => {
   let $q;
+  let $rootScope;
   let ChannelService;
   let ConfigService;
   let DomService;
@@ -37,6 +38,7 @@ describe('DragDropService', () => {
 
     inject((
       _$q_,
+      _$rootScope_,
       _ChannelService_,
       _ConfigService_,
       _DomService_,
@@ -44,6 +46,7 @@ describe('DragDropService', () => {
       _PageStructureService_,
     ) => {
       $q = _$q_;
+      $rootScope = _$rootScope_;
       ChannelService = _ChannelService_;
       ConfigService = _ConfigService_;
       DomService = _DomService_;
@@ -137,6 +140,15 @@ describe('DragDropService', () => {
       expect(DragDropService.drake).toBeNull();
       expect(DragDropService.dragulaOptions).toBeNull();
       expect(DragDropService.isDragging()).toBeFalsy();
+      done();
+    });
+  });
+
+  it('reloads the dragula containers on a page change', (done) => {
+    loadIframeFixture(() => {
+      const drakeContainers = DragDropService.drake.containers;
+      $rootScope.$emit('iframe:page:change');
+      expect(DragDropService.drake.containers).not.toBe(drakeContainers);
       done();
     });
   });
