@@ -80,11 +80,14 @@ export class ConnectionService {
     const connectionPromise = this.connectToIframe(iframe);
     this.pendingConnections.set(url, connectionPromise);
 
-    const connection = await connectionPromise;
-    this.connections.set(url, connection);
-    this.pendingConnections.delete(url);
+    try {
+      const connection = await connectionPromise;
+      this.connections.set(url, connection);
 
-    return connection;
+      return connection;
+    } finally {
+      this.pendingConnections.delete(url);
+    }
   }
 
   removeConnection(url: string): void {
