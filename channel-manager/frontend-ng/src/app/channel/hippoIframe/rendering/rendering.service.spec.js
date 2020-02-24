@@ -21,7 +21,6 @@ describe('RenderingService', () => {
   let DomService;
   let DragDropService;
   let HippoIframeService;
-  let HstCommentsProcessorService;
   let OverlayService;
   let PageMetaDataService;
   let PageStructureService;
@@ -56,7 +55,6 @@ describe('RenderingService', () => {
       _DomService_,
       _DragDropService_,
       _HippoIframeService_,
-      _HstCommentsProcessorService_,
       _OverlayService_,
       _PageMetaDataService_,
       _PageStructureService_,
@@ -69,7 +67,6 @@ describe('RenderingService', () => {
       DomService = _DomService_;
       DragDropService = _DragDropService_;
       HippoIframeService = _HippoIframeService_;
-      HstCommentsProcessorService = _HstCommentsProcessorService_;
       OverlayService = _OverlayService_;
       PageMetaDataService = _PageMetaDataService_;
       PageStructureService = _PageStructureService_;
@@ -93,8 +90,7 @@ describe('RenderingService', () => {
       spyOn(HippoIframeService, 'signalPageLoadCompleted');
       spyOn(OverlayService, 'clear');
       spyOn(PageStructureService, 'clearParsedElements');
-      spyOn(PageStructureService, 'attachEmbeddedLinks');
-      spyOn(HstCommentsProcessorService, 'run').and.returnValue([]);
+      spyOn(PageStructureService, 'parseElements');
       spyOn(RenderingService, 'updateDragDrop');
       spyOn(ScrollService, 'saveScrollPosition');
       spyOn(ScrollService, 'restoreScrollPosition');
@@ -111,15 +107,14 @@ describe('RenderingService', () => {
       expect(ScrollService.saveScrollPosition).toHaveBeenCalled();
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(OverlayService.clear).toHaveBeenCalled();
-      expect(HstCommentsProcessorService.run).toHaveBeenCalledWith(iframeDocument);
-      expect(PageStructureService.attachEmbeddedLinks).toHaveBeenCalled();
+      expect(PageStructureService.parseElements).toHaveBeenCalledWith(iframeDocument);
       expect(RenderingService.updateDragDrop).toHaveBeenCalled();
       expect(RenderingService.emitter.emit).toHaveBeenCalledWith('overlay-created');
       expect(ScrollService.restoreScrollPosition).toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
 
-    it('handles the reparsing of an existing page', () => {
+    it('handles the re-loading of an existing page', () => {
       spyOn(DomService, 'hasCssLink').and.returnValue(true);
       spyOn(DomService, 'addCssLinks');
 
@@ -130,8 +125,7 @@ describe('RenderingService', () => {
       expect(ScrollService.saveScrollPosition).toHaveBeenCalled();
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(OverlayService.clear).toHaveBeenCalled();
-      expect(HstCommentsProcessorService.run).toHaveBeenCalledWith(iframeDocument);
-      expect(PageStructureService.attachEmbeddedLinks).toHaveBeenCalled();
+      expect(PageStructureService.parseElements).toHaveBeenCalledWith(iframeDocument);
       expect(RenderingService.updateDragDrop).toHaveBeenCalled();
       expect(RenderingService.emitter.emit).toHaveBeenCalledWith('overlay-created');
       expect(ScrollService.restoreScrollPosition).toHaveBeenCalled();
@@ -147,7 +141,7 @@ describe('RenderingService', () => {
       $rootScope.$digest();
 
       expect(DomService.addCssLinks).toHaveBeenCalledTimes(1);
-      expect(HstCommentsProcessorService.run).toHaveBeenCalledTimes(1);
+      expect(PageStructureService.parseElements).toHaveBeenCalledTimes(1);
       expect(promise1).toBe(promise2);
     });
 
@@ -161,8 +155,7 @@ describe('RenderingService', () => {
       expect(ScrollService.saveScrollPosition).toHaveBeenCalled();
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(OverlayService.clear).toHaveBeenCalled();
-      expect(HstCommentsProcessorService.run).not.toHaveBeenCalled();
-      expect(PageStructureService.attachEmbeddedLinks).not.toHaveBeenCalled();
+      expect(PageStructureService.parseElements).not.toHaveBeenCalled();
       expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
       expect(RenderingService.emitter.emit).not.toHaveBeenCalledWith();
       expect(ScrollService.restoreScrollPosition).not.toHaveBeenCalled();
@@ -177,8 +170,7 @@ describe('RenderingService', () => {
 
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(OverlayService.clear).toHaveBeenCalled();
-      expect(HstCommentsProcessorService.run).not.toHaveBeenCalled();
-      expect(PageStructureService.attachEmbeddedLinks).not.toHaveBeenCalled();
+      expect(PageStructureService.parseElements).not.toHaveBeenCalled();
       expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
       expect(RenderingService.emitter.emit).not.toHaveBeenCalledWith();
       expect(ScrollService.restoreScrollPosition).not.toHaveBeenCalled();

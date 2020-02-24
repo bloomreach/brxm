@@ -281,7 +281,7 @@ class DragDropService {
     this.ScrollService.disable();
     this.draggingOrClicking = false;
 
-    $(element)
+    angular.element(element)
       .off(MOUSEUP_EVENT_NAME)
       .off(MOUSELEAVE_EVENT_NAME)
       .removeClass(COMPONENT_QA_CLASS);

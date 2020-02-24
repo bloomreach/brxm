@@ -97,7 +97,7 @@ class PageStructureService {
   _createHeadContributions({ json }) {
     const headContributions = new HeadContributions(json);
 
-    this.headContributions.push(headContributions.getElements());
+    this.headContributions.push(...headContributions.getElements());
 
     return headContributions;
   }
@@ -105,8 +105,9 @@ class PageStructureService {
   _createMenuLink({ element: startComment, json }) {
     const menuLink = new MenuLink(json);
 
-    menuLink.setStartComment(startComment);
-    menuLink.setEndComment(startComment);
+    menuLink.setStartComment(angular.element(startComment));
+    menuLink.setEndComment(angular.element(startComment));
+    menuLink.prepareBoxElement();
     this.embeddedLinks.push(menuLink);
 
     return menuLink;
@@ -115,11 +116,19 @@ class PageStructureService {
   _createManageContentLink({ element: startComment, json }) {
     const manageContentLink = new ManageContentLink(json);
 
-    manageContentLink.setStartComment(startComment);
-    manageContentLink.setEndComment(startComment);
+    manageContentLink.setStartComment(angular.element(startComment));
+    manageContentLink.setEndComment(angular.element(startComment));
+    manageContentLink.prepareBoxElement();
     this.embeddedLinks.push(manageContentLink);
 
     return manageContentLink;
+  }
+
+  parseElements(document) {
+    const comments = Array.from(this.HstCommentsProcessorService.run(document));
+
+    this._page = this.ModelFactoryService.createPage(comments);
+    this._notifyChangeListeners();
   }
 
   clearParsedElements() {
@@ -139,42 +148,6 @@ class PageStructureService {
     this.changeListeners.forEach((callback) => {
       callback();
     });
-  }
-
-  // Attaching the embedded links to the page structure (by means of the 'enclosingElement') is only
-  // done as a final step of processing an entire page or markup fragment, because it requires an
-  // up-to-date and complete page structure (containers, components).
-  attachEmbeddedLinks() {
-    this.embeddedLinks.forEach(link => this._attachEmbeddedLink(link));
-    this._notifyChangeListeners();
-  }
-
-  _attachEmbeddedLink(link) {
-    let enclosingElement = link.getComponent();
-
-    if (enclosingElement === undefined) {
-      // link is not yet attached, determine enclosing element.
-      const commentDomElement = link.getStartComment()[0];
-      this.getContainers().some((container) => {
-        container.getComponents().some((component) => {
-          if (component.containsDomElement(commentDomElement)) {
-            enclosingElement = component;
-          }
-          return enclosingElement;
-        });
-        if (!enclosingElement && container.containsDomElement(commentDomElement)) {
-          enclosingElement = container;
-        }
-        return enclosingElement;
-      });
-      if (enclosingElement === undefined) {
-        enclosingElement = null; // marks that the *page* is the enclosing element
-      }
-      link.setComponent(enclosingElement);
-
-      // insert transparent placeholder into page
-      link.prepareBoxElement();
-    }
   }
 
   getEmbeddedLinks() {
@@ -273,6 +246,7 @@ class PageStructureService {
 
           const newMarkup = response.data;
           const updatedComponent = this._updateComponent(component, newMarkup);
+          this._notifyChangeListeners();
 
           if ($.isEmptyObject(propertiesMap) && this.containsNewHeadContributions(updatedComponent)) {
             this.$log.info(
@@ -324,7 +298,6 @@ class PageStructureService {
     } else {
       container.removeComponent(oldComponent);
     }
-    this.attachEmbeddedLinks();
 
     return newComponent;
   }
@@ -355,7 +328,6 @@ class PageStructureService {
     }
 
     const newContainer = this.replaceContainer(oldContainer, container);
-    this.attachEmbeddedLinks();
 
     return newContainer;
   }
