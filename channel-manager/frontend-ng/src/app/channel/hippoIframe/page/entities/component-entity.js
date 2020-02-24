@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Container } from '../../../model/entities';
+import { Container } from '../../../../model/entities';
 import { EntityMixin } from './entity';
 
 export function ComponentEntityMixin(BaseClass) {

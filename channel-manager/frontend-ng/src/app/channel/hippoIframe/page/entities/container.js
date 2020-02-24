@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Container as BaseContainer } from '../../../model/entities';
+import { Container as BaseContainer } from '../../../../model/entities';
 import { ComponentEntityMixin } from './component-entity';
 
 export class Container extends ComponentEntityMixin(BaseContainer) {

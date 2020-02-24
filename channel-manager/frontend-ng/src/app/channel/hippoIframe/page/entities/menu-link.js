@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { MenuLink as BaseMenuLink } from '../../../model/entities';
+import { MenuLink as BaseMenuLink } from '../../../../model/entities';
 import { LinkEntityMixin } from './link-entity';
 
 export class MenuLink extends LinkEntityMixin(BaseMenuLink) {}
