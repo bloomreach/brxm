@@ -120,8 +120,7 @@ class RenderingService {
   _parseHstComments() {
     const document = this.DomService.getIframeDocument(this.iframeJQueryElement);
     const comments = Array.from(this.HstCommentsProcessorService.run(document));
-
-    comments.forEach(({ element, json }) => this.PageStructureService.registerParsedElement(element, json));
+    // TODO: parse comments
     this.PageStructureService.attachEmbeddedLinks();
   }
 

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -69,9 +69,8 @@ describe('DragDropService', () => {
       },
       mockCommentData[`container${number}`],
     );
-    PageStructureService.registerParsedElement(iframeContainerComment, commentData);
-    const containers = PageStructureService.getContainers();
-    return containers[containers.length - 1];
+    // TODO: temporary workaround
+    return PageStructureService._createContainer({ element: iframeContainerComment, json: commentData });
   }
 
   function createComponent(number) {
@@ -84,8 +83,8 @@ describe('DragDropService', () => {
       },
       mockCommentData[`component${number}`],
     );
-    PageStructureService.registerParsedElement(iframeComponentComment, commentData);
-    return PageStructureService.getComponentById(`component${number}`);
+    // TODO: temporary workaround
+    return PageStructureService._createComponent({ element: iframeComponentComment, json: commentData });
   }
 
   function loadIframeFixture(callback) {

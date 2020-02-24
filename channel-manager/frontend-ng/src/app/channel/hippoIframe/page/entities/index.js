@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
-import ModelModule from '../../../model/model.module';
-import MarkupService from './markup.service';
-import PageMetaDataService from './pageMetaData.service';
-import PageStructureService from './pageStructure.service';
-
-const pageModule = angular
-  .module('hippo-cm.channel.hippoIframe.page', [ModelModule.name])
-  .service('MarkupService', MarkupService)
-  .service('PageMetaDataService', PageMetaDataService)
-  .service('PageStructureService', PageStructureService);
-
-export default pageModule;
+export * from './component';
+export * from './container';
+export * from './manage-content-link';
+export * from './menu-link';

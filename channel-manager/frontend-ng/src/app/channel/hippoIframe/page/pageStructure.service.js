@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-import HstConstants from '../hst.constants';
-import { Component } from '../entities/component';
-import { Container } from '../entities/container';
-import { ManageContentLink } from '../entities/manage-content-link';
-import { MenuLink } from '../entities/menu-link';
+import { EndMarker, HeadContributions, PageMeta } from '../../../model/entities';
+import * as HstConstants from '../../../model/constants';
+import {
+  Component,
+  Container,
+  ManageContentLink,
+  MenuLink,
+} from './entities';
 
 class PageStructureService {
   constructor(
@@ -31,6 +34,7 @@ class PageStructureService {
     HstComponentService,
     HstService,
     MarkupService,
+    ModelFactoryService,
     PageMetaDataService,
   ) {
     'ngInject';
@@ -44,11 +48,78 @@ class PageStructureService {
     this.HstComponentService = HstComponentService;
     this.HstService = HstService;
     this.MarkupService = MarkupService;
+    this.ModelFactoryService = ModelFactoryService;
     this.PageMetaDataService = PageMetaDataService;
 
     this.changeListeners = [];
+    this.containers = [];
     this.embeddedLinks = [];
-    this.clearParsedElements();
+    this.headContributions = [];
+
+    this.ModelFactoryService
+      .transform(({ json }) => json)
+      .register(HstConstants.TYPE_COMPONENT, this._createComponent.bind(this))
+      .register(HstConstants.TYPE_CONTAINER, this._createContainer.bind(this))
+      .register(HstConstants.TYPE_EDIT_MENU_LINK, this._createMenuLink.bind(this))
+      .register(HstConstants.TYPE_MANAGE_CONTENT_LINK, this._createManageContentLink.bind(this))
+      .register(HstConstants.TYPE_PROCESSED_HEAD_CONTRIBUTIONS, this._createHeadContributions.bind(this))
+      .register(HstConstants.TYPE_UNPROCESSED_HEAD_CONTRIBUTIONS, this._createHeadContributions.bind(this))
+      .register(HstConstants.END_MARKER, ({ json }) => new EndMarker(json))
+      .register(HstConstants.TYPE_PAGE_META, ({ json }) => new PageMeta(json));
+  }
+
+  _createComponent({ element: startComment, json }) {
+    const component = new Component(json);
+    const [boxElement, endComment] = this.HstCommentsProcessorService.locateComponent(component.getId(), startComment);
+
+    component.setStartComment(angular.element(startComment));
+    component.setEndComment(angular.element(endComment));
+    component.setBoxElement(angular.element(boxElement));
+
+    return component;
+  }
+
+  _createContainer({ element: startComment, json }) {
+    const container = new Container(json);
+    const [containerElement, endComment] = this.HstCommentsProcessorService.locateComponent(
+      container.getId(),
+      startComment,
+    );
+    const boxElement = container.isXTypeNoMarkup() ? startComment.parentNode : containerElement;
+
+    container.setStartComment(angular.element(startComment));
+    container.setEndComment(angular.element(endComment));
+    container.setBoxElement(angular.element(boxElement));
+
+    return container;
+  }
+
+  _createHeadContributions({ json }) {
+    const headContributions = new HeadContributions(json);
+
+    this.headContributions.push(headContributions.getElements());
+
+    return headContributions;
+  }
+
+  _createMenuLink({ element: startComment, json }) {
+    const menuLink = new MenuLink(json);
+
+    menuLink.setStartComment(startComment);
+    menuLink.setEndComment(startComment);
+    this.embeddedLinks.push(menuLink);
+
+    return menuLink;
+  }
+
+  _createManageContentLink({ element: startComment, json }) {
+    const manageContentLink = new ManageContentLink(json);
+
+    manageContentLink.setStartComment(startComment);
+    manageContentLink.setEndComment(startComment);
+    this.embeddedLinks.push(manageContentLink);
+
+    return manageContentLink;
   }
 
   clearParsedElements() {
@@ -58,70 +129,6 @@ class PageStructureService {
     this.headContributions = [];
     this.PageMetaDataService.clear();
     this._notifyChangeListeners();
-  }
-
-  registerParsedElement(commentDomElement, metaData) {
-    const type = metaData[HstConstants.TYPE];
-    switch (type) {
-      case HstConstants.TYPE_CONTAINER:
-        this._registerContainer(commentDomElement, metaData);
-        break;
-      case HstConstants.TYPE_COMPONENT:
-        this._registerComponent(commentDomElement, metaData);
-        break;
-      case HstConstants.TYPE_PAGE:
-        this._registerPageMetaData(metaData);
-        break;
-      case HstConstants.TYPE_PROCESSED_HEAD_CONTRIBUTIONS:
-      case HstConstants.TYPE_UNPROCESSED_HEAD_CONTRIBUTIONS:
-        this._registerHeadContributions(metaData);
-        break;
-      case HstConstants.TYPE_MANAGE_CONTENT_LINK:
-        this._registerManageContentLink(commentDomElement, metaData);
-        break;
-      case HstConstants.TYPE_EDIT_MENU_LINK:
-        this._registerMenuLink(commentDomElement, metaData);
-        break;
-      default:
-        this.$log.warn(`Ignoring unknown page structure element '${type}'`);
-    }
-  }
-
-  _registerContainer(commentDomElement, metaData) {
-    const container = new Container(commentDomElement, metaData, this.HstCommentsProcessorService);
-    this.containers.push(container);
-  }
-
-  _registerComponent(commentDomElement, metaData) {
-    if (this.containers.length === 0) {
-      this.$log.warn('Unable to register component outside of a container context.');
-      return;
-    }
-
-    const container = this.containers[this.containers.length - 1];
-    try {
-      const component = new Component(commentDomElement, metaData, container, this.HstCommentsProcessorService);
-      container.addComponent(component);
-    } catch (exception) {
-      this.$log.debug(exception, metaData);
-    }
-  }
-
-  _registerPageMetaData(metaData) {
-    delete metaData[HstConstants.TYPE];
-    this.PageMetaDataService.add(metaData);
-  }
-
-  _registerHeadContributions(metaData) {
-    this.headContributions = this.headContributions.concat(metaData[HstConstants.HEAD_ELEMENTS]);
-  }
-
-  _registerManageContentLink(commentDomElement, metaData) {
-    this.embeddedLinks.push(new ManageContentLink(commentDomElement, metaData));
-  }
-
-  _registerMenuLink(commentDomElement, metaData) {
-    this.embeddedLinks.push(new MenuLink(commentDomElement, metaData));
   }
 
   registerChangeListener(callback) {
@@ -300,9 +307,17 @@ class PageStructureService {
       this._notifyChangeListeners();
     });
 
-    const newComponent = this._createComponent($newMarkup, container);
+    const comments = Array.from(this.HstCommentsProcessorService.processFragment($newMarkup));
+    let newComponent;
+
+    try {
+      newComponent = this.ModelFactoryService.createComponent(comments);
+    } catch (e) {
+      this.$log.error(e.message);
+    }
 
     if (newComponent) {
+      newComponent.setContainer(container);
       container.replaceComponent(oldComponent, newComponent);
       // reuse the overlay element to reduce DOM manipulation and improve performance
       newComponent.setOverlayElement(oldComponent.getOverlayElement());
@@ -331,10 +346,17 @@ class PageStructureService {
       this._notifyChangeListeners();
     });
 
-    const container = this._createContainer($newMarkup);
-    const newContainer = this._replaceContainer(oldContainer, container);
+    const comments = Array.from(this.HstCommentsProcessorService.processFragment($newMarkup));
+    let container;
+    try {
+      container = this.ModelFactoryService.createContainer(comments);
+    } catch (e) {
+      this.$log.error(e.message);
+    }
 
+    const newContainer = this.replaceContainer(oldContainer, container);
     this.attachEmbeddedLinks();
+
     return newContainer;
   }
 
@@ -447,120 +469,6 @@ class PageStructureService {
       this.containers.splice(index, 1);
     }
     return newContainer;
-  }
-
-  /**
-   * Create a new container with meta-data from the given markup value
-   * @param markup
-   * @returns {*}
-   * @private
-   */
-  _createContainer(jQueryNodeCollection) {
-    let container = null;
-    const comments = Array.from(this.HstCommentsProcessorService.processFragment(jQueryNodeCollection));
-
-    comments.forEach(({ element, json }) => {
-      const type = json[HstConstants.TYPE];
-      try {
-        switch (type) {
-          case HstConstants.TYPE_CONTAINER:
-            if (!container) {
-              container = new Container(element, json, this.HstCommentsProcessorService);
-            } else {
-              this.$log.warn('More than one container in the DOM Element!');
-              return;
-            }
-            break;
-
-          case HstConstants.TYPE_COMPONENT:
-            if (!container) {
-              this.$log.warn('Unable to register component outside of a container context.');
-              return;
-            }
-
-            try {
-              container.addComponent(new Component(element, json,
-                container, this.HstCommentsProcessorService));
-            } catch (exception) {
-              this.$log.debug(exception, json);
-            }
-            break;
-
-          case HstConstants.TYPE_UNPROCESSED_HEAD_CONTRIBUTIONS:
-            if (container) {
-              const unprocessedElements = json[HstConstants.HEAD_ELEMENTS];
-              container.setHeadContributions(unprocessedElements);
-            }
-            break;
-
-          case HstConstants.TYPE_MANAGE_CONTENT_LINK:
-            this._registerManageContentLink(element, json);
-            break;
-
-          case HstConstants.TYPE_EDIT_MENU_LINK:
-            this._registerMenuLink(element, json);
-            break;
-
-          default:
-            this.$log.warn(`Ignoring unknown page structure element '${type}'`);
-            break;
-        }
-      } catch (exception) {
-        this.$log.debug(exception, json);
-      }
-    });
-
-    if (!container) {
-      this.$log.error('Failed to create a new container');
-    }
-
-    return container;
-  }
-
-  /**
-   * Create a new component with meta-data from the given markup value
-   */
-  _createComponent(jQueryNodeCollection, container) {
-    let component = null;
-    const comments = Array.from(this.HstCommentsProcessorService.processFragment(jQueryNodeCollection));
-
-    comments.forEach(({ element, json }) => {
-      const type = json[HstConstants.TYPE];
-      switch (type) {
-        case HstConstants.TYPE_COMPONENT:
-          try {
-            component = new Component(element, json, container, this.HstCommentsProcessorService);
-          } catch (exception) {
-            this.$log.debug(exception, json);
-          }
-          break;
-
-        case HstConstants.TYPE_UNPROCESSED_HEAD_CONTRIBUTIONS:
-          if (component) {
-            const unprocessedElements = json[HstConstants.HEAD_ELEMENTS];
-            component.setHeadContributions(unprocessedElements);
-          }
-          break;
-
-        case HstConstants.TYPE_MANAGE_CONTENT_LINK:
-          this._registerManageContentLink(element, json);
-          break;
-
-        case HstConstants.TYPE_EDIT_MENU_LINK:
-          this._registerMenuLink(element, json);
-          break;
-
-        default:
-          this.$log.warn(`Ignoring unknown page structure element '${type}'`);
-          break;
-      }
-    });
-
-    if (!component) {
-      this.$log.error('Failed to create a new component');
-    }
-
-    return component;
   }
 
   _showFeedbackAndReload(errorKey, params) {
