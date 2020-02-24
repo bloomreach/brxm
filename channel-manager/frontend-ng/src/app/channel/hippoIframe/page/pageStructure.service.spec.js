@@ -156,17 +156,15 @@ describe('PageStructureService', () => {
       expect(PageStructureService._page).toBe('new-page');
     });
 
-    it('notifies all change listeners after page elements have been parsed', () => {
-      const spy1 = jasmine.createSpy('on-change-1');
-      const spy2 = jasmine.createSpy('on-change-2');
-      PageStructureService.registerChangeListener(spy1);
-      PageStructureService.registerChangeListener(spy2);
-      HstCommentsProcessorService.run.and.returnValue({ json: {} });
+    it('emits event "iframe:page:change" after page elements have been parsed', () => {
+      HstCommentsProcessorService.run.and.returnValue([{ json: {} }]);
+      const onChange = jasmine.createSpy('on-change');
+      const offChange = $rootScope.$on('iframe:page:change', onChange);
 
       PageStructureService.parseElements(document);
+      expect(onChange).toHaveBeenCalled();
 
-      expect(spy1).toHaveBeenCalled();
-      expect(spy2).toHaveBeenCalled();
+      offChange();
     });
   });
 

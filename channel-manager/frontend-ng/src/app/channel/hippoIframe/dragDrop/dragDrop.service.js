@@ -49,8 +49,6 @@ class DragDropService {
     this.draggingOrClicking = false;
     this.dropping = false;
     this.emitter = new Emittery();
-
-    PageStructureService.registerChangeListener(() => this._sync());
   }
 
   init(iframeJQueryElement, canvasJQueryElement, sheetJQueryElement) {
@@ -59,6 +57,11 @@ class DragDropService {
 
     this.ScrollService.init(iframeJQueryElement, canvasJQueryElement, sheetJQueryElement);
     this.iframeJQueryElement.on('load', () => this._onLoad());
+
+    if (this._offPageChange) {
+      this._offPageChange();
+    }
+    this._offPageChange = this.$rootScope.$on('iframe:page:change', () => this._sync());
   }
 
   onDrop(callback) {

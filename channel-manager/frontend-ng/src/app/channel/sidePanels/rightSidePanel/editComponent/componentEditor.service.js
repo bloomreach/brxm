@@ -24,6 +24,7 @@ const isEmpty = str => str === undefined || str === null || str === '';
 class ComponentEditorService {
   constructor(
     $q,
+    $rootScope,
     $translate,
     ChannelService,
     CmsService,
@@ -40,6 +41,7 @@ class ComponentEditorService {
     'ngInject';
 
     this.$q = $q;
+    this.$rootScope = $rootScope;
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
@@ -54,13 +56,13 @@ class ComponentEditorService {
     this.PageStructureService = PageStructureService;
 
     this.killed = false;
-    PageStructureService.registerChangeListener(this._onStructureChange.bind(this));
   }
 
   open({
     channel, component, container, page,
   }) {
     this.close();
+    this._offPageChange = this.$rootScope.$on('iframe:page:change', () => this._onPageChange());
     this.request = this.HstComponentService.getProperties(component.id, component.variant);
 
     this.request.then(response => this._onLoadSuccess(channel, component, container, page, response.properties))
@@ -119,7 +121,7 @@ class ComponentEditorService {
     return this.$q.reject();
   }
 
-  _onStructureChange() {
+  _onPageChange() {
     if (!this.component) {
       return;
     }
@@ -331,6 +333,9 @@ class ComponentEditorService {
   }
 
   close() {
+    if (this._offPageChange) {
+      this._offPageChange();
+    }
     if (this.request) {
       this.request.cancel();
     }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,10 +44,6 @@ describe('ComponentEditorService', () => {
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent');
-
-    inject((_PageStructureService_) => {
-      spyOn(_PageStructureService_, 'registerChangeListener');
-    });
 
     inject((
       _$q_,
@@ -107,33 +103,25 @@ describe('ComponentEditorService', () => {
   });
 
   describe('responding to page structure changes', () => {
-    let onStructureChange;
-
     beforeEach(() => {
       spyOn(ComponentEditor, 'reopen');
       spyOn(PageStructureService, 'getComponentById');
-      [onStructureChange] = PageStructureService.registerChangeListener.calls.mostRecent().args;
 
-      ComponentEditor.component = { id: 'some-id' };
-      ComponentEditor.container = {
-        isDisabled: false,
-        isInherited: false,
-        id: 1,
-      };
+      openComponentEditor(testData);
     });
 
     it('should do nothing without a component', () => {
       delete ComponentEditor.component;
-      onStructureChange();
+      $rootScope.$emit('iframe:page:change');
       expect(PageStructureService.getComponentById).not.toHaveBeenCalled();
     });
 
     it('should not update when the component is not on the page', () => {
       PageStructureService.getComponentById.and.returnValue(null);
-      onStructureChange();
+      $rootScope.$emit('iframe:page:change');
 
-      expect(PageStructureService.getComponentById).toHaveBeenCalledWith('some-id');
-      expect(ComponentEditor.container.id).toBe(1);
+      expect(PageStructureService.getComponentById).toHaveBeenCalledWith('componentId');
+      expect(ComponentEditor.container.id).toBe('containerId');
     });
 
     it('should update the container information if it has changed', () => {
@@ -141,14 +129,14 @@ describe('ComponentEditorService', () => {
         container: {
           isDisabled: () => false,
           isInherited: () => true,
-          getId: () => 2,
+          getId: () => 'new-containerId',
         },
       });
-      onStructureChange();
+      $rootScope.$emit('iframe:page:change');
 
       expect(ComponentEditor.container.isDisabled).toBe(false);
       expect(ComponentEditor.container.isInherited).toBe(true);
-      expect(ComponentEditor.container.id).toBe(2);
+      expect(ComponentEditor.container.id).toBe('new-containerId');
       expect(ComponentEditor.reopen).not.toHaveBeenCalled();
     });
 
@@ -163,7 +151,7 @@ describe('ComponentEditorService', () => {
       spyOn(PageMetaDataService, 'get').and.returnValue({
         [HstConstants.PAGE_ID]: 'some-id',
       });
-      onStructureChange();
+      $rootScope.$emit('iframe:page:change');
 
       expect(PageMetaDataService.get).toHaveBeenCalled();
       expect(ComponentEditor.page[HstConstants.PAGE_ID]).toBe('some-id');
@@ -177,7 +165,7 @@ describe('ComponentEditorService', () => {
           getId: () => 2,
         },
       });
-      onStructureChange();
+      $rootScope.$emit('iframe:page:change');
 
       expect(ComponentEditor.reopen).toHaveBeenCalled();
     });

@@ -153,11 +153,20 @@ describe('OverlayService', () => {
     expect(OverlayService.iframeWindow).toBeUndefined();
   });
 
+  it('syncs when the page structure has changed', async () => {
+    spyOn(OverlayService, 'sync');
+    await loadIframeFixture();
+
+    $rootScope.$emit('iframe:page:change');
+    expect(OverlayService.sync).toHaveBeenCalled();
+  });
+
   it('syncs when the iframe DOM is changed', async () => {
     spyOn(OverlayService, 'sync');
     await loadIframeFixture();
 
     iframe('body').css('color', 'green');
+    expect(OverlayService.sync).toHaveBeenCalled();
   });
 
   it('syncs when the iframe is resized', async () => {

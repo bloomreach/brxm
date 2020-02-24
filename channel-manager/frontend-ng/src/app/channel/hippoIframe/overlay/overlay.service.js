@@ -63,13 +63,16 @@ class OverlayService {
     this.isContentOverlayDisplayed = false;
 
     this._translate = (key, params) => $translate.instant(key, params, undefined, false, 'escape');
-
-    PageStructureService.registerChangeListener(() => this.sync());
   }
 
   init(iframeJQueryElement) {
     this.iframeJQueryElement = iframeJQueryElement;
     this.iframeJQueryElement.on('load', () => this._onLoad());
+
+    if (this._offPageChange) {
+      this._offPageChange();
+    }
+    this._offPageChange = this.$rootScope.$on('iframe:page:change', () => this.sync());
   }
 
   onEditMenu(callback) {
