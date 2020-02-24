@@ -112,7 +112,8 @@ describe('DragDropService', () => {
   }
 
   function eventHandlerCount(jqueryElement, event) {
-    const eventHandlers = $._data(jqueryElement[0], 'events');
+    const eventHandlers = angular.element._data(jqueryElement[0], 'events');
+
     return eventHandlers && eventHandlers.hasOwnProperty(event) ? eventHandlers[event].length : 0;
   }
 
@@ -206,7 +207,7 @@ describe('DragDropService', () => {
         done();
       });
 
-      const mouseUp = $.Event('mouseup');
+      const mouseUp = angular.element.Event('mouseup');
       mouseUp.which = 1; // left mouse button, see https://api.jquery.com/event.which/
       componentElement1.trigger(mouseUp);
     });

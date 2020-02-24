@@ -26,7 +26,6 @@ describe('OverlayService', () => {
   let CreateContentService;
   let DomService;
   let ExperimentStateService;
-  let HstCommentsProcessorService;
   let MarkupService;
   let OverlayService;
   let PageStructureService;
@@ -51,7 +50,6 @@ describe('OverlayService', () => {
       _CreateContentService_,
       _DomService_,
       _ExperimentStateService_,
-      _HstCommentsProcessorService_,
       _MarkupService_,
       _OverlayService_,
       _PageStructureService_,
@@ -65,7 +63,6 @@ describe('OverlayService', () => {
       CreateContentService = _CreateContentService_;
       DomService = _DomService_;
       ExperimentStateService = _ExperimentStateService_;
-      HstCommentsProcessorService = _HstCommentsProcessorService_;
       MarkupService = _MarkupService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
@@ -93,11 +90,8 @@ describe('OverlayService', () => {
 
       try {
         PageStructureService.clearParsedElements();
-        // eslint-disable-next-line no-restricted-syntax
-        for (const { element, json } of HstCommentsProcessorService.run(iframeWindow.document)) {
-          PageStructureService.registerParsedElement(element, json);
-        }
-        PageStructureService.attachEmbeddedLinks();
+        PageStructureService.parseElements(document);
+
         deferred.resolve();
       } catch (e) {
         // Karma silently swallows stack traces for synchronous tests, so log them in an explicit fail

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -71,11 +71,15 @@ describe('PageStructureService', () => {
   let ChannelService;
   let FeedbackService;
   let HippoIframeService;
+  let HstCommentsProcessorService;
   let HstComponentService;
   let HstService;
   let MarkupService;
+  let ModelFactoryService;
   let PageMetaDataService;
   let PageStructureService;
+
+  let registered;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe.page');
@@ -90,9 +94,11 @@ describe('PageStructureService', () => {
       _EditComponentService_,
       _FeedbackService_,
       _HippoIframeService_,
+      _HstCommentsProcessorService_,
       _HstComponentService_,
       _HstService_,
       _MarkupService_,
+      _ModelFactoryService_,
       _PageMetaDataService_,
       _PageStructureService_,
     ) => {
@@ -103,48 +109,90 @@ describe('PageStructureService', () => {
       ChannelService = _ChannelService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
+      HstCommentsProcessorService = _HstCommentsProcessorService_;
       HstComponentService = _HstComponentService_;
       HstService = _HstService_;
       MarkupService = _MarkupService_;
+      ModelFactoryService = _ModelFactoryService_;
       PageMetaDataService = _PageMetaDataService_;
       PageStructureService = _PageStructureService_;
     });
 
+    registered = [];
+
     spyOn(ChannelService, 'recordOwnChange');
+    spyOn(HstCommentsProcessorService, 'run').and.returnValue(registered);
+    spyOn(ModelFactoryService, 'createPage').and.callThrough();
   });
 
   beforeEach(() => {
     jasmine.getFixtures().load('channel/hippoIframe/page/pageStructure.service.fixture.html');
   });
 
-  it('has no containers initially', () => {
-    expect(PageStructureService.getContainers()).toEqual([]);
-  });
-
-  it('has no embedded links initially', () => {
-    expect(PageStructureService.getEmbeddedLinks()).toEqual([]);
-  });
-
-  it('rejects components if there is no container yet', () => {
-    spyOn($log, 'warn');
-    PageStructureService.registerParsedElement(undefined, {
-      'HST-Type': 'CONTAINER_ITEM_COMPONENT',
+  describe('initially', () => {
+    it('should have no page', () => {
+      expect(PageStructureService._page).not.toBeDefined();
     });
 
-    expect(PageStructureService.getContainers()).toEqual([]);
-    expect($log.warn).toHaveBeenCalled();
+    it('should have no containers', () => {
+      expect(PageStructureService.getContainers()).toEqual([]);
+    });
+
+    it('should have no embedded links', () => {
+      expect(PageStructureService.getEmbeddedLinks()).toEqual([]);
+    });
   });
 
-  const childComment = (element) => {
-    const children = element.childNodes;
-    for (let i = 0; i < children.length; i += 1) {
-      const child = children[i];
-      if (child.nodeType === 8) {
-        return child;
-      }
-    }
-    return null;
-  };
+  describe('parseElements', () => {
+    it('creates a new page from the HST comment elements in the document', () => {
+      const comments = [{ id: 1 }, { id: 2 }];
+      HstCommentsProcessorService.run.and.returnValue(comments);
+      ModelFactoryService.createPage.and.returnValue('new-page');
+
+      PageStructureService.parseElements(document);
+
+      expect(HstCommentsProcessorService.run).toHaveBeenCalledWith(document);
+      expect(ModelFactoryService.createPage).toHaveBeenCalledWith(comments);
+      expect(PageStructureService._page).toBe('new-page');
+    });
+
+    it('notifies all change listeners after page elements have been parsed', () => {
+      const spy1 = jasmine.createSpy('on-change-1');
+      const spy2 = jasmine.createSpy('on-change-2');
+      PageStructureService.registerChangeListener(spy1);
+      PageStructureService.registerChangeListener(spy2);
+      HstCommentsProcessorService.run.and.returnValue({ json: {} });
+
+      PageStructureService.parseElements(document);
+
+      expect(spy1).toHaveBeenCalled();
+      expect(spy2).toHaveBeenCalled();
+    });
+  });
+
+  describe('getContainerById', () => {
+    let mockContainer;
+    beforeEach(() => {
+      mockContainer = { getId() { return 123; } };
+      PageStructureService.containers = [mockContainer, { getId() { return 456; } }];
+    });
+
+    it('returns a known container', () => {
+      expect(PageStructureService.getContainerById(123)).toBe(mockContainer);
+    });
+
+    it('returns undefined when getting an unknown container', () => {
+      expect(PageStructureService.getContainerById(789)).toBeUndefined();
+    });
+  });
+
+  const childComment = element => [...element.childNodes]
+    .filter(child => child.nodeType === Node.COMMENT_NODE)
+    .shift();
+
+  const lastComment = element => [...element.childNodes]
+    .filter(child => child.nodeType === Node.COMMENT_NODE)
+    .pop();
 
   const previousComment = (element) => {
     while (element.previousSibling) {
@@ -166,49 +214,76 @@ describe('PageStructureService', () => {
     return null;
   };
 
-  const registerParsedElement = (commentElement) => {
-    PageStructureService.registerParsedElement(commentElement, JSON.parse(commentElement.data));
-  };
+  const registerParsedElement = element => registered.push({ element, json: JSON.parse(element.data) });
 
   const registerEmptyVBoxContainer = () => {
     const container = $j('#container-vbox-empty', $document)[0];
+
     registerParsedElement(previousComment(container));
+    registerParsedElement(nextComment(container));
+
     return container;
   };
 
-  const registerVBoxContainer = () => {
+  const registerVBoxContainer = (callback) => {
     const container = $j('#container-vbox', $document)[0];
+
     registerParsedElement(previousComment(container));
+    if (callback) {
+      callback();
+    }
+    registerParsedElement(nextComment(container));
+
     return container;
   };
 
-  const registerVBoxComponent = (id) => {
+  const registerVBoxComponent = (id, callback) => {
     const component = $j(`#${id}`, $document)[0];
+
     registerParsedElement(childComment(component));
+    if (callback) {
+      callback();
+    }
+    registerParsedElement(lastComment(component));
+
     return component;
   };
 
-  const registerNoMarkupContainer = (id = '#container-no-markup') => {
+  const registerNoMarkupContainer = (callback, id = '#container-no-markup') => {
     const container = $j(id, $document)[0];
+
     registerParsedElement(childComment(container));
+    if (callback) {
+      callback();
+    }
+    registerParsedElement(lastComment(container));
+
     return container;
   };
 
-  const registerEmptyNoMarkupContainer = () => registerNoMarkupContainer('#container-no-markup-empty');
+  const registerEmptyNoMarkupContainer = () => registerNoMarkupContainer(undefined, '#container-no-markup-empty');
 
-  const registerLowercaseNoMarkupContainer = () => registerNoMarkupContainer('#container-no-markup-lowercase');
+  const registerLowercaseNoMarkupContainer = () => registerNoMarkupContainer(
+    undefined,
+    '#container-no-markup-lowercase',
+  );
 
   const registerEmptyLowercaseNoMarkupContainer = () => {
-    registerNoMarkupContainer('#container-no-markup-lowercase-empty');
+    registerNoMarkupContainer(undefined, '#container-no-markup-lowercase-empty');
   };
 
   const registerNoMarkupContainerWithoutTextNodesAfterEndComment = () => {
-    registerNoMarkupContainer('#container-no-markup-without-text-nodes-after-end-comment');
+    registerNoMarkupContainer(undefined, '#container-no-markup-without-text-nodes-after-end-comment');
   };
 
-  const registerNoMarkupComponent = () => {
+  const registerNoMarkupComponent = (callback) => {
     const component = $j('#component-no-markup', $document)[0];
     registerParsedElement(previousComment(component));
+    if (callback) {
+      callback();
+    }
+    registerParsedElement(nextComment(component));
+
     return component;
   };
 
@@ -227,17 +302,18 @@ describe('PageStructureService', () => {
   it('registers containers in the correct order', () => {
     const container1 = registerVBoxContainer();
     const container2 = registerNoMarkupContainer();
+    PageStructureService.parseElements();
 
     const containers = PageStructureService.getContainers();
     expect(containers.length).toEqual(2);
 
-    expect(containers[0].type).toEqual('container');
+    expect(containers[0].getType()).toEqual('container');
     expect(containers[0].isEmpty()).toEqual(true);
     expect(containers[0].getComponents()).toEqual([]);
     expect(containers[0].getBoxElement()[0]).toEqual(container1);
     expect(containers[0].getLabel()).toEqual('vBox container');
 
-    expect(containers[1].type).toEqual('container');
+    expect(containers[1].getType()).toEqual('container');
     expect(containers[1].isEmpty()).toEqual(true);
     expect(containers[1].getComponents()).toEqual([]);
     expect(containers[1].getBoxElement()[0]).toEqual(container2);
@@ -248,11 +324,16 @@ describe('PageStructureService', () => {
   });
 
   it('adds components to the most recently registered container', () => {
-    registerVBoxContainer();
-    registerVBoxContainer();
+    let componentA;
+    let componentB;
 
-    const componentA = registerVBoxComponent('componentA');
-    const componentB = registerVBoxComponent('componentB');
+    registerVBoxContainer();
+    registerVBoxContainer(() => {
+      componentA = registerVBoxComponent('componentA');
+      componentB = registerVBoxComponent('componentB');
+    });
+
+    PageStructureService.parseElements();
 
     const containers = PageStructureService.getContainers();
     expect(containers.length).toEqual(2);
@@ -260,12 +341,12 @@ describe('PageStructureService', () => {
     expect(containers[1].isEmpty()).toEqual(false);
     expect(containers[1].getComponents().length).toEqual(2);
 
-    expect(containers[1].getComponents()[0].type).toEqual('component');
+    expect(containers[1].getComponents()[0].getType()).toEqual('component');
     expect(containers[1].getComponents()[0].getBoxElement()[0]).toBe(componentA);
     expect(containers[1].getComponents()[0].getLabel()).toEqual('component A');
     expect(containers[1].getComponents()[0].container).toEqual(containers[1]);
 
-    expect(containers[1].getComponents()[1].type).toEqual('component');
+    expect(containers[1].getComponents()[1].getType()).toEqual('component');
     expect(containers[1].getComponents()[1].getBoxElement()[0]).toBe(componentB);
     expect(containers[1].getComponents()[1].getLabel()).toEqual('component B');
     expect(containers[1].getComponents()[1].container).toEqual(containers[1]);
@@ -273,6 +354,8 @@ describe('PageStructureService', () => {
 
   it('registers edit menu links', () => {
     registerEmbeddedLink('#edit-menu-in-page');
+    PageStructureService.parseElements();
+
     const editMenuLinks = PageStructureService.getEmbeddedLinks();
     expect(editMenuLinks.length).toBe(1);
     expect(editMenuLinks[0].getId()).toBe('menu-in-page');
@@ -280,6 +363,8 @@ describe('PageStructureService', () => {
 
   it('registers manage content links', () => {
     registerEmbeddedLink('#manage-content-in-page');
+    PageStructureService.parseElements();
+
     const manageContentLinks = PageStructureService.getEmbeddedLinks();
     const manageContentLink = manageContentLinks[0];
     expect(manageContentLink.getDefaultPath()).toBe('test-default-path');
@@ -300,6 +385,8 @@ describe('PageStructureService', () => {
 
   it('recognizes a manage content link for a parameter that stores an absolute path', () => {
     registerEmbeddedLink('#manage-content-with-absolute-path');
+    PageStructureService.parseElements();
+
     const manageContentLinks = PageStructureService.getEmbeddedLinks();
     const manageContentLink = manageContentLinks[0];
     expect(manageContentLink.getDocumentTemplateQuery()).toBe('new-test-document');
@@ -321,6 +408,7 @@ describe('PageStructureService', () => {
   it('registers processed and unprocessed head contributions', () => {
     registerHeadContributions('#processed-head-contributions');
     registerHeadContributions('#unprocessed-head-contributions');
+    PageStructureService.parseElements();
 
     expect(PageStructureService.headContributions).toEqual([
       '<title>processed</title>',
@@ -334,6 +422,7 @@ describe('PageStructureService', () => {
     registerEmbeddedLink('#manage-content-in-page');
     registerEmbeddedLink('#edit-menu-in-page');
     registerHeadContributions('#processed-head-contributions');
+    PageStructureService.parseElements();
 
     expect(PageStructureService.getContainers().length).toEqual(1);
     expect(PageStructureService.getEmbeddedLinks().length).toEqual(2);
@@ -346,19 +435,9 @@ describe('PageStructureService', () => {
     expect(PageStructureService.headContributions.length).toBe(0);
   });
 
-  it('registers additional elements', () => {
-    registerVBoxContainer();
-
-    const testElement = $j('#test', $document);
-
-    const containers = PageStructureService.getContainers();
-    containers[0].setJQueryElement('test', testElement);
-
-    expect(containers[0].getJQueryElement('test')).toEqual(testElement);
-  });
-
   it('finds the DOM element of a no-markup container as parent of the comment', () => {
     const container = registerNoMarkupContainer();
+    PageStructureService.parseElements();
 
     const containers = PageStructureService.getContainers();
     expect(containers.length).toEqual(1);
@@ -366,9 +445,12 @@ describe('PageStructureService', () => {
   });
 
   it('finds the DOM element of a component of a no-markup container as next sibling of the comment', () => {
-    registerNoMarkupContainer();
+    let component;
 
-    const component = registerNoMarkupComponent();
+    registerNoMarkupContainer(() => {
+      component = registerNoMarkupComponent();
+    });
+    PageStructureService.parseElements();
 
     const containers = PageStructureService.getContainers();
     expect(containers.length).toEqual(1);
@@ -379,8 +461,8 @@ describe('PageStructureService', () => {
   });
 
   it('registers no iframe box element in case of a no-markup, empty component', () => {
-    registerNoMarkupContainer();
-    registerEmptyNoMarkupComponent();
+    registerNoMarkupContainer(() => registerEmptyNoMarkupComponent());
+    PageStructureService.parseElements();
 
     const containers = PageStructureService.getContainers();
     expect(containers.length).toEqual(1);
@@ -393,6 +475,7 @@ describe('PageStructureService', () => {
     registerVBoxContainer();
     registerNoMarkupContainer();
     registerLowercaseNoMarkupContainer();
+    PageStructureService.parseElements();
 
     const containers = PageStructureService.getContainers();
     expect(containers[0].isEmptyInDom()).toEqual(false);
@@ -404,6 +487,7 @@ describe('PageStructureService', () => {
     registerEmptyVBoxContainer();
     registerEmptyNoMarkupContainer();
     registerEmptyLowercaseNoMarkupContainer();
+    PageStructureService.parseElements();
 
     const containers = PageStructureService.getContainers();
     expect(containers[0].isEmptyInDom()).toEqual(true);
@@ -424,16 +508,10 @@ describe('PageStructureService', () => {
     });
   });
 
-  it('ignores unknown HST types', () => {
-    PageStructureService.registerParsedElement(null, {
-      'HST-Type': 'unknown type',
-    });
-  });
-
   it('returns a known component', () => {
     registerVBoxContainer();
-    registerVBoxContainer();
-    registerVBoxComponent('componentA');
+    registerVBoxContainer(() => registerVBoxComponent('componentA'));
+    PageStructureService.parseElements();
 
     const pageComponent = PageStructureService.getComponentById('aaaa');
 
@@ -442,13 +520,9 @@ describe('PageStructureService', () => {
     expect(pageComponent.getLabel()).toEqual('component A');
   });
 
-  it('returns null when getting an unknown component', () => {
-    expect(PageStructureService.getComponentById('no-such-component')).toBeNull();
-  });
-
   it('removes a valid component and calls HST successfully', () => {
-    registerVBoxContainer();
-    registerVBoxComponent('componentA');
+    registerVBoxContainer(() => registerVBoxComponent('componentA'));
+    PageStructureService.parseElements();
 
     spyOn(HstComponentService, 'deleteComponent').and.returnValue($q.when([]));
     spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(''));
@@ -462,8 +536,8 @@ describe('PageStructureService', () => {
   });
 
   it('removes a valid component but fails to call HST due to an unknown reason, then iframe should be reloaded and a feedback toast should be shown', () => { // eslint-disable-line max-len
-    registerVBoxContainer();
-    registerVBoxComponent('componentA');
+    registerVBoxContainer(() => registerVBoxComponent('componentA'));
+    PageStructureService.parseElements();
 
     spyOn(FeedbackService, 'showError');
     spyOn(HippoIframeService, 'reload').and.returnValue($q.when(''));
@@ -482,8 +556,8 @@ describe('PageStructureService', () => {
   });
 
   it('removes a valid component but fails to call HST due to locked component then iframe should be reloaded and a feedback toast should be shown', () => { // eslint-disable-line max-len
-    registerVBoxContainer();
-    registerVBoxComponent('componentA');
+    registerVBoxContainer(() => registerVBoxComponent('componentA'));
+    PageStructureService.parseElements();
 
     spyOn(FeedbackService, 'showError');
     spyOn(HippoIframeService, 'reload').and.returnValue($q.when(''));
@@ -503,8 +577,8 @@ describe('PageStructureService', () => {
   });
 
   it('removes an invalid component', () => {
-    registerVBoxContainer();
-    registerVBoxComponent('componentA');
+    registerVBoxContainer(() => registerVBoxComponent('componentA'));
+    PageStructureService.parseElements();
 
     spyOn(HstComponentService, 'deleteComponent').and.returnValue($q.when([]));
 
@@ -517,6 +591,7 @@ describe('PageStructureService', () => {
   it('returns a container by iframe element', () => {
     registerVBoxContainer();
     const containerElement = registerNoMarkupContainer();
+    PageStructureService.parseElements();
 
     const container = PageStructureService.getContainerByIframeElement(containerElement);
 
@@ -602,9 +677,11 @@ describe('PageStructureService', () => {
   });
 
   it('prints parsed elements', () => {
-    registerVBoxContainer();
-    registerVBoxComponent('componentA');
-    registerVBoxComponent('componentB');
+    registerVBoxContainer(() => {
+      registerVBoxComponent('componentA');
+      registerVBoxComponent('componentB');
+    });
+    PageStructureService.parseElements();
 
     spyOn($log, 'debug');
 
@@ -614,31 +691,24 @@ describe('PageStructureService', () => {
   });
 
   it('attaches the embedded link to the enclosing component', () => {
-    registerVBoxContainer();
-    registerVBoxComponent('componentA');
-    registerVBoxComponent('componentB');
-    registerEmbeddedLink('#edit-menu-in-component-a');
+    registerVBoxContainer(() => {
+      registerVBoxComponent('componentA', () => {
+        registerEmbeddedLink('#edit-menu-in-component-a');
+      });
+      registerVBoxComponent('componentB');
+      registerEmbeddedLink('#manage-content-in-container-vbox');
+    });
     registerEmbeddedLink('#edit-menu-in-page');
     registerEmbeddedLink('#manage-content-in-page');
-    registerEmbeddedLink('#manage-content-in-container-vbox');
-
-    const containerVBox = PageStructureService.getContainers()[0];
-    const componentA = containerVBox.getComponents()[0];
-    const embeddedLinks = PageStructureService.getEmbeddedLinks();
-
-    expect(embeddedLinks.length).toBe(4);
-    embeddedLinks.forEach(embeddedLink => expect(embeddedLink.getComponent()).toBeUndefined());
-
-    expect(embeddedLinks[0].getBoxElement().length).toBe(0);
-
-    PageStructureService.attachEmbeddedLinks();
+    PageStructureService.parseElements();
 
     const attachedEmbeddedLinks = PageStructureService.getEmbeddedLinks();
+
     expect(attachedEmbeddedLinks.length).toBe(4);
     expect(attachedEmbeddedLinks[0].getComponent()).toBe(componentA);
-    expect(attachedEmbeddedLinks[1].getComponent()).toBe(null);
-    expect(attachedEmbeddedLinks[2].getComponent()).toBe(null);
-    expect(attachedEmbeddedLinks[3].getComponent()).toBe(containerVBox);
+    expect(attachedEmbeddedLinks[1].getComponent()).toBe(containerVBox);
+    expect(attachedEmbeddedLinks[2].getComponent()).toBeUndefined();
+    expect(attachedEmbeddedLinks[3].getComponent()).toBeUndefined();
 
     expect(attachedEmbeddedLinks[0].getBoxElement().length).toBe(1);
     expect(attachedEmbeddedLinks[0].getBoxElement().attr('class')).toBe('hst-fab');
@@ -646,11 +716,13 @@ describe('PageStructureService', () => {
 
   it('re-renders a component with an edit menu link', () => {
     // set up page structure with component and edit menu link in it
-    registerVBoxContainer();
-    registerVBoxComponent('componentA');
-    registerEmbeddedLink('#edit-menu-in-component-a');
+    registerVBoxContainer(() => {
+      registerVBoxComponent('componentA', () => {
+        registerEmbeddedLink('#edit-menu-in-component-a');
+      });
+    });
     registerEmbeddedLink('#edit-menu-in-page');
-    PageStructureService.attachEmbeddedLinks();
+    PageStructureService.parseElements();
 
     const updatedMarkup = `
       ${itemComment('component A', 'aaaa')}
@@ -668,16 +740,18 @@ describe('PageStructureService', () => {
     const updatedComponentA = PageStructureService.getContainers()[0].getComponents()[0];
     const editMenuLinks = PageStructureService.getEmbeddedLinks();
     expect(editMenuLinks.length).toBe(2);
-    expect(editMenuLinks[0].getComponent()).toBe(null);
-    expect(editMenuLinks[1].getComponent()).toBe(updatedComponentA);
+    expect(editMenuLinks[0].getComponent()).toBe(updatedComponentA);
+    expect(editMenuLinks[1].getComponent()).toBeUndefined();
   });
 
   it('re-renders a component with no more content link', () => {
     // set up page structure with component and content link in it
-    registerNoMarkupContainer();
-    registerNoMarkupComponent();
-    registerEmbeddedLink('#manage-content-in-component-no-markup');
-    PageStructureService.attachEmbeddedLinks();
+    registerNoMarkupContainer(() => {
+      registerNoMarkupComponent(() => {
+        registerEmbeddedLink('#manage-content-in-component-no-markup');
+      });
+    });
+    PageStructureService.parseElements();
 
     const updatedMarkup = `
       ${itemComment('Component in NoMarkup container', 'component-no-markup')}
@@ -697,9 +771,8 @@ describe('PageStructureService', () => {
 
   it('re-renders a component, adding an edit menu link', () => {
     // set up page structure with component and edit menu link in it
-    registerVBoxContainer();
-    registerVBoxComponent('componentA');
-    PageStructureService.attachEmbeddedLinks();
+    registerVBoxContainer(() => registerVBoxComponent('componentA'));
+    PageStructureService.parseElements();
 
     expect(PageStructureService.getEmbeddedLinks().length).toBe(0);
 
@@ -779,8 +852,8 @@ describe('PageStructureService', () => {
   });
 
   it('does not add a re-rendered and incorrectly commented component to the page structure', () => {
-    registerVBoxContainer();
-    registerVBoxComponent('componentA');
+    registerVBoxContainer(() => registerVBoxComponent('componentA'));
+    PageStructureService.parseElements();
 
     const updatedMarkup = `
       ${itemComment('component A', 'aaaa')}
@@ -801,8 +874,8 @@ describe('PageStructureService', () => {
   });
 
   it('knows that a re-rendered component contains new head contributions', () => {
-    registerVBoxContainer();
-    registerVBoxComponent('componentA');
+    registerVBoxContainer(() => registerVBoxComponent('componentA'));
+    PageStructureService.parseElements();
 
     const updatedMarkup = `
       ${itemComment('component A', 'aaaa')}
@@ -824,8 +897,8 @@ describe('PageStructureService', () => {
   });
 
   it('knows that a re-rendered component does not contain new head contributions', () => {
-    registerVBoxContainer();
-    registerVBoxComponent('componentA');
+    registerVBoxContainer(() => registerVBoxComponent('componentA'));
+    PageStructureService.parseElements();
 
     const updatedMarkup = `
       ${itemComment('component A', 'aaaa')}
@@ -846,9 +919,9 @@ describe('PageStructureService', () => {
   });
 
   it('knows that a re-rendered component does not contain new head contributions if they have already been rendered by the page', () => { // eslint-disable-line max-len
-    registerVBoxContainer();
-    registerVBoxComponent('componentA');
+    registerVBoxContainer(() => registerVBoxComponent('componentA'));
     registerHeadContributions('#processed-head-contributions');
+    PageStructureService.parseElements();
 
     const updatedMarkup = `
       ${itemComment('component A', 'aaaa')}
@@ -870,8 +943,8 @@ describe('PageStructureService', () => {
   });
 
   it('does not reload the page when a component is re-rendered with custom properties', () => {
-    registerVBoxContainer();
-    registerVBoxComponent('componentA');
+    registerVBoxContainer(() => registerVBoxComponent('componentA'));
+    PageStructureService.parseElements();
 
     const updatedMarkup = `
       ${itemComment('component A', 'aaaa')}
@@ -890,14 +963,12 @@ describe('PageStructureService', () => {
     PageStructureService.renderComponent(component, propertiesMap);
     $rootScope.$digest();
 
-    const updatedComponent = PageStructureService.getContainers()[0].getComponents()[0];
-    expect(PageStructureService.containsNewHeadContributions(updatedComponent)).toBe(true);
     expect(HippoIframeService.reload).not.toHaveBeenCalled();
   });
 
   it('notifies change listeners when updating a component', () => {
-    registerVBoxContainer();
-    registerVBoxComponent('componentA');
+    registerVBoxContainer(() => registerVBoxComponent('componentA'));
+    PageStructureService.parseElements();
 
     const container = PageStructureService.getContainers()[0];
     const component = container.getComponents()[0];
@@ -916,6 +987,8 @@ describe('PageStructureService', () => {
 
   it('retrieves a container by overlay element', () => {
     registerVBoxContainer();
+    PageStructureService.parseElements();
+
     const container = PageStructureService.getContainers()[0];
     const overlayElement = { };
 
@@ -928,7 +1001,7 @@ describe('PageStructureService', () => {
 
   it('re-renders a NoMarkup container', () => {
     registerNoMarkupContainer();
-    PageStructureService.attachEmbeddedLinks();
+    PageStructureService.parseElements();
 
     const container = PageStructureService.getContainers()[0];
     container.getEndComment().after('<p>Trailing element, to be removed</p>'); // insert trailing dom element
@@ -951,6 +1024,7 @@ describe('PageStructureService', () => {
 
   it('re-renders a NoMarkup container without any text nodes after the end comment', () => {
     registerNoMarkupContainerWithoutTextNodesAfterEndComment();
+    PageStructureService.parseElements();
 
     const container = PageStructureService.getContainers()[0];
     const updatedMarkup = `
@@ -968,14 +1042,13 @@ describe('PageStructureService', () => {
 
   it('re-renders a container with an edit menu link', (done) => {
     // set up page structure with component and edit menu link in it
-    registerVBoxContainer();
-    registerVBoxComponent('componentA');
-    registerEmbeddedLink('#edit-menu-in-component-a');
+    registerVBoxContainer(() => {
+      registerVBoxComponent('componentA', () => registerEmbeddedLink('#edit-menu-in-component-a'));
+      registerEmbeddedLink('#manage-content-in-container-vbox');
+    });
     registerEmbeddedLink('#edit-menu-in-page');
     registerEmbeddedLink('#manage-content-in-page');
-    registerEmbeddedLink('#manage-content-in-container-vbox');
-
-    PageStructureService.attachEmbeddedLinks();
+    PageStructureService.parseElements();
 
     const container = PageStructureService.getContainers()[0];
     const updatedMarkup = `
@@ -1010,8 +1083,8 @@ describe('PageStructureService', () => {
   });
 
   it('known that a re-rendered container contains new head contributions', (done) => {
-    registerVBoxContainer();
-    registerVBoxComponent('componentA');
+    registerVBoxContainer(() => registerVBoxComponent('componentA'));
+    PageStructureService.parseElements();
 
     const container = PageStructureService.getContainers()[0];
     const updatedMarkup = `
@@ -1035,8 +1108,8 @@ describe('PageStructureService', () => {
   });
 
   it('notifies change listeners when updating a container', (done) => {
-    registerVBoxContainer();
-    registerVBoxComponent('componentA');
+    registerVBoxContainer(() => registerVBoxComponent('componentA'));
+    PageStructureService.parseElements();
 
     const container = PageStructureService.getContainers()[0];
     const updatedMarkup = `
@@ -1063,8 +1136,8 @@ describe('PageStructureService', () => {
   });
 
   it('knows that a re-rendered container does not contain new head contributions', (done) => {
-    registerVBoxContainer();
-    registerVBoxComponent('componentA');
+    registerVBoxContainer(() => registerVBoxComponent('componentA'));
+    PageStructureService.parseElements();
 
     const container = PageStructureService.getContainers()[0];
     const updatedMarkup = `
@@ -1087,9 +1160,9 @@ describe('PageStructureService', () => {
   });
 
   it('known that a re-rendered container does not contain new head contributions if they have already been rendered by the page', (done) => { // eslint-disable-line max-len
-    registerVBoxContainer();
-    registerVBoxComponent('componentA');
+    registerVBoxContainer(() => registerVBoxComponent('componentA'));
     registerHeadContributions('#processed-head-contributions');
+    PageStructureService.parseElements();
 
     const container = PageStructureService.getContainers()[0];
     const updatedMarkup = `
@@ -1122,9 +1195,11 @@ describe('PageStructureService', () => {
     }
 
     it('can move the first component to the second position in the container', () => {
-      registerVBoxContainer();
-      registerVBoxComponent('componentA');
-      registerVBoxComponent('componentB');
+      registerVBoxContainer(() => {
+        registerVBoxComponent('componentA');
+        registerVBoxComponent('componentB');
+      });
+      PageStructureService.parseElements();
 
       const container = PageStructureService.getContainers()[0];
       const componentA = container.getComponents()[0];
@@ -1141,9 +1216,11 @@ describe('PageStructureService', () => {
     });
 
     it('can move the second component to the first position in the container', () => {
-      registerVBoxContainer();
-      registerVBoxComponent('componentA');
-      registerVBoxComponent('componentB');
+      registerVBoxContainer(() => {
+        registerVBoxComponent('componentA');
+        registerVBoxComponent('componentB');
+      });
+      PageStructureService.parseElements();
 
       const container = PageStructureService.getContainers()[0];
       const componentA = container.getComponents()[0];
@@ -1161,10 +1238,12 @@ describe('PageStructureService', () => {
     });
 
     it('can move a component to another container', () => {
-      registerVBoxContainer();
-      registerVBoxComponent('componentA');
-      registerVBoxComponent('componentB');
+      registerVBoxContainer(() => {
+        registerVBoxComponent('componentA');
+        registerVBoxComponent('componentB');
+      });
       registerEmptyVBoxContainer();
+      PageStructureService.parseElements();
 
       const container1 = PageStructureService.getContainers()[0];
       const component = container1.getComponents()[0];
@@ -1185,9 +1264,11 @@ describe('PageStructureService', () => {
     });
 
     it('shows an error when a component is moved within a container that just got locked by another user', () => {
-      registerVBoxContainer();
-      registerVBoxComponent('componentA');
-      registerVBoxComponent('componentB');
+      registerVBoxContainer(() => {
+        registerVBoxComponent('componentA');
+        registerVBoxComponent('componentB');
+      });
+      PageStructureService.parseElements();
 
       const container = PageStructureService.getContainers()[0];
       const component = container.getComponents()[0];
@@ -1206,9 +1287,11 @@ describe('PageStructureService', () => {
     });
 
     it('shows an error when a component is moved out of a container that just got locked by another user', () => {
-      registerVBoxContainer();
-      registerVBoxComponent('componentA');
+      registerVBoxContainer(() => {
+        registerVBoxComponent('componentA');
+      });
       registerEmptyVBoxContainer();
+      PageStructureService.parseElements();
 
       const container1 = PageStructureService.getContainers()[0];
       const component = container1.getComponents()[0];
@@ -1229,9 +1312,11 @@ describe('PageStructureService', () => {
     });
 
     it('shows an error when a component is moved into a container that just got locked by another user', () => {
-      registerVBoxContainer();
-      registerVBoxComponent('componentA');
+      registerVBoxContainer(() => {
+        registerVBoxComponent('componentA');
+      });
       registerEmptyVBoxContainer();
+      PageStructureService.parseElements();
 
       const container1 = PageStructureService.getContainers()[0];
       const component = container1.getComponents()[0];
@@ -1249,22 +1334,6 @@ describe('PageStructureService', () => {
         component: 'component A',
       });
       expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('getContainerById', () => {
-    let mockContainer;
-    beforeEach(() => {
-      mockContainer = { getId() { return 123; } };
-      PageStructureService.containers = [mockContainer, { getId() { return 456; } }];
-    });
-
-    it('returns a known container', () => {
-      expect(PageStructureService.getContainerById(123)).toBe(mockContainer);
-    });
-
-    it('returns undefined when getting an unknown container', () => {
-      expect(PageStructureService.getContainerById(789)).toBeUndefined();
     });
   });
 });

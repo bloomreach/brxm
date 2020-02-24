@@ -29,7 +29,6 @@ class RenderingService {
     DragDropService,
     Emittery,
     HippoIframeService,
-    HstCommentsProcessorService,
     LinkProcessorService,
     OverlayService,
     PageMetaDataService,
@@ -46,7 +45,6 @@ class RenderingService {
     this.DomService = DomService;
     this.DragDropService = DragDropService;
     this.HippoIframeService = HippoIframeService;
-    this.HstCommentsProcessorService = HstCommentsProcessorService;
     this.LinkProcessorService = LinkProcessorService;
     this.OverlayService = OverlayService;
     this.PageMetaDataService = PageMetaDataService;
@@ -80,7 +78,8 @@ class RenderingService {
 
     this.creatingOverlay = this._insertCss()
       .then(() => {
-        this._parseHstComments();
+        this.PageStructureService.parseElements(this.DomService.getIframeDocument(this.iframeJQueryElement));
+
         this.updateDragDrop();
         this._updateChannelIfSwitched();
         this._parseLinks();
@@ -115,13 +114,6 @@ class RenderingService {
     } catch (e) {
       return this.$q.reject();
     }
-  }
-
-  _parseHstComments() {
-    const document = this.DomService.getIframeDocument(this.iframeJQueryElement);
-    const comments = Array.from(this.HstCommentsProcessorService.run(document));
-    // TODO: parse comments
-    this.PageStructureService.attachEmbeddedLinks();
   }
 
   updateDragDrop() {
