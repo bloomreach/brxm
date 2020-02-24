@@ -275,7 +275,7 @@ describe('PageStructureService', () => {
     registerEmbeddedLink('#edit-menu-in-page');
     const editMenuLinks = PageStructureService.getEmbeddedLinks();
     expect(editMenuLinks.length).toBe(1);
-    expect(editMenuLinks[0].getUuid()).toBe('menu-in-page');
+    expect(editMenuLinks[0].getId()).toBe('menu-in-page');
   });
 
   it('registers manage content links', () => {
@@ -1000,7 +1000,7 @@ describe('PageStructureService', () => {
       // edit menu link in component A is no longer there
       const embeddedLinks = PageStructureService.getEmbeddedLinks();
       expect(embeddedLinks.length).toBe(3);
-      expect(embeddedLinks[0].getUuid()).toBe('menu-in-page');
+      expect(embeddedLinks[0].getId()).toBe('menu-in-page');
       expect(embeddedLinks[1].getDocumentTemplateQuery()).toBe('new-test-document');
       expect(embeddedLinks[2].getDocumentTemplateQuery()).toBe('new-manage-content-in-container-vbox');
       expect(embeddedLinks[2].getEnclosingElement()).toBe(newContainer);

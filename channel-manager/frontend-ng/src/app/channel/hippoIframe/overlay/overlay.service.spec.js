@@ -682,7 +682,7 @@ describe('OverlayService', () => {
           getPickerConfig: () => null,
           getRootPath: () => null,
           getDocumentTemplateQuery: () => documentTemplateQuery,
-          getUuid: () => uuid,
+          getId: () => uuid,
           isParameterValueRelativePath: () => false,
         };
         return OverlayService._initManageContentConfig(structureElement);
