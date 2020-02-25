@@ -39,8 +39,11 @@ import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.Workflow;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
+
+    private final StdWorkflow saveDraftAction;
 
     public EditingWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
@@ -80,6 +83,39 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 return null;
             }
         });
+
+        saveDraftAction = new StdWorkflow("saveDraft", new StringResourceModel("saveDraft", this).setDefaultValue("Save Draft"), getModel()) {
+
+            @Override
+            public String getSubMenu() {
+                return "top";
+            }
+
+            @Override
+            protected Component getIcon(final String id) {
+                return HippoIcon.fromSprite(id, Icon.FLOPPY);
+            }
+
+            @Override
+            public String getCssClass() {
+                return ButtonStyle.SECONDARY.getCssClass();
+            }
+
+            @Override
+            public boolean isFormSubmitted() {
+                return true;
+            }
+
+            @Override
+            protected String execute(Workflow wf) throws Exception {
+                ((DocumentWorkflow) wf).saveDraft();
+                final IEditorManager editorMgr = context.getService("service.edit", IEditorManager.class);
+                IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
+                editor.close();
+                return null;
+            }
+        };
+        add(saveDraftAction);
 
         add(new StdWorkflow("done", new StringResourceModel("done", this).setDefaultValue("Done"), context, getModel()) {
 
@@ -186,6 +222,8 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
                 return null;
             }
         });
+
+        hideOrDisable(getHints(),"saveDraft",saveDraftAction);
     }
 
     public WorkflowDescriptorModel getModel() {
