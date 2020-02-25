@@ -17,7 +17,6 @@ package org.hippoecm.hst.pagemodelapi.v10.core.container;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -111,7 +110,7 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
 
             final Optional<DecoratedPageModelEntityWrapper<?>> nonSerializedWrappedEntity = getNonSerializedWrappedEntity(object, serializerContext);
 
-            if (!PageModelEntity.class.isAssignableFrom(object.getClass())
+            if (!(object instanceof PageModelEntity)
                     || serializerContext.serializingPageModelEntity == object
                     || nonSerializedWrappedEntity.isPresent()) {
                 // If it's a DecoratedPageModelEntityWrapper for the current object then set it to serialized
