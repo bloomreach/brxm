@@ -24,6 +24,7 @@ describe('DragDropService', () => {
   let ConfigService;
   let DomService;
   let DragDropService;
+  let ModelFactoryService;
   let PageStructureService;
   let iframe;
   let canvas;
@@ -43,6 +44,7 @@ describe('DragDropService', () => {
       _ConfigService_,
       _DomService_,
       _DragDropService_,
+      _ModelFactoryService_,
       _PageStructureService_,
     ) => {
       $q = _$q_;
@@ -51,6 +53,7 @@ describe('DragDropService', () => {
       ConfigService = _ConfigService_;
       DomService = _DomService_;
       DragDropService = _DragDropService_;
+      ModelFactoryService = _ModelFactoryService_;
       PageStructureService = _PageStructureService_;
     });
 
@@ -73,7 +76,10 @@ describe('DragDropService', () => {
       mockCommentData[`container${number}`],
     );
     // TODO: temporary workaround
-    return PageStructureService._createContainer({ element: iframeContainerComment, json: commentData });
+    const commentEl = $(`<!-- ${JSON.stringify(commentData)} -->`)[0];
+    iframeContainerComment.replaceWith(commentEl);
+
+    return { element: commentEl, json: commentData };
   }
 
   function createComponent(number) {
@@ -87,7 +93,7 @@ describe('DragDropService', () => {
       mockCommentData[`component${number}`],
     );
     // TODO: temporary workaround
-    return PageStructureService._createComponent({ element: iframeComponentComment, json: commentData });
+    iframeComponentComment.replaceWith($(`<!-- ${JSON.stringify(commentData)} -->`)[0]);
   }
 
   function loadIframeFixture(callback) {
@@ -96,10 +102,15 @@ describe('DragDropService', () => {
     iframe.one('load', () => {
       const iframeWindow = iframe[0].contentWindow;
 
-      container1 = createContainer(1);
-      component1 = createComponent(1, container1);
+      createContainer(1);
+      createComponent(1, container1);
+      createContainer(2);
 
-      container2 = createContainer(2);
+      PageStructureService.parseElements(DomService.getIframeDocument(iframe));
+
+      container1 = PageStructureService.getPage().getContainerById('container1');
+      container2 = PageStructureService.getPage().getContainerById('container2');
+      component1 = PageStructureService.getPage().getComponentById('component1');
 
       DragDropService.enable().then(() => {
         try {
@@ -393,7 +404,7 @@ describe('DragDropService', () => {
 
   it('replaces a container', (done) => {
     loadIframeFixture(() => {
-      const reRenderedContainer1 = createContainer(3);
+      const reRenderedContainer1 = ModelFactoryService.createContainer([createContainer(3)]);
 
       DragDropService.replaceContainer(container1, reRenderedContainer1);
 
@@ -410,7 +421,7 @@ describe('DragDropService', () => {
 
   it('ignores the replacement of an unknown container', (done) => {
     loadIframeFixture(() => {
-      const unknownContainer = createContainer(3);
+      const unknownContainer = ModelFactoryService.createContainer([createContainer(3)]);
 
       DragDropService.replaceContainer(unknownContainer, container1);
 
@@ -441,12 +452,15 @@ describe('DragDropService', () => {
   });
 
   it('updates the drag direction of a container', (done) => {
+    mockCommentData.container2 = {
+      'HST-XType': 'HST.Span',
+    };
+
     loadIframeFixture(() => {
       DragDropService._updateDragDirection(container1.getBoxElement()[0]);
       expect(DragDropService.dragulaOptions.direction).toEqual('vertical');
 
-      const spanContainer = createContainer(5, 'HST.Span');
-      DragDropService._updateDragDirection(spanContainer.getBoxElement()[0]);
+      DragDropService._updateDragDirection(container2.getBoxElement()[0]);
       expect(DragDropService.dragulaOptions.direction).toEqual('horizontal');
 
       done();

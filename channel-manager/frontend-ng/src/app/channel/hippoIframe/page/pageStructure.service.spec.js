@@ -127,11 +127,7 @@ describe('PageStructureService', () => {
 
   describe('initially', () => {
     it('should have no page', () => {
-      expect(PageStructureService._page).not.toBeDefined();
-    });
-
-    it('should have no containers', () => {
-      expect(PageStructureService.getContainers()).toEqual([]);
+      expect(PageStructureService.getPage()).not.toBeDefined();
     });
 
     it('should have no embedded links', () => {
@@ -150,11 +146,12 @@ describe('PageStructureService', () => {
 
       expect(HstCommentsProcessorService.run).toHaveBeenCalledWith(document);
       expect(ModelFactoryService.createPage).toHaveBeenCalledWith(comments);
-      expect(PageStructureService._page).toBe('new-page');
+      expect(PageStructureService.getPage()).toBe('new-page');
     });
 
     it('emits event "iframe:page:change" after page elements have been parsed', () => {
-      HstCommentsProcessorService.run.and.returnValue([{ json: {} }]);
+      const comment = { json: { id: 1 } };
+      HstCommentsProcessorService.run.and.returnValue([comment]);
       const onChange = jasmine.createSpy('on-change');
       const offChange = $rootScope.$on('iframe:page:change', onChange);
 
@@ -165,19 +162,142 @@ describe('PageStructureService', () => {
     });
   });
 
-  describe('getContainerById', () => {
+  describe('renderComponent', () => {
+    it('gracefully handles requests to re-render an undefined or null component', (done) => {
+      spyOn(MarkupService, 'fetchComponentMarkup');
+
+      $q.all(
+        PageStructureService.renderComponent(),
+        PageStructureService.renderComponent(null),
+      ).then(() => {
+        expect(MarkupService.fetchComponentMarkup).not.toHaveBeenCalled();
+        done();
+      });
+
+      $rootScope.$digest();
+    });
+
+    it('loads the component markup from the backend using the MarkupService', (done) => {
+      spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.resolve('markup'));
+      const component = {};
+      const properties = {};
+
+      PageStructureService.renderComponent(component, properties)
+        .then(() => {
+          expect(MarkupService.fetchComponentMarkup).toHaveBeenCalledWith(component, properties);
+          done();
+        });
+
+      $rootScope.$digest();
+    });
+
+    it('shows an error message and reloads the page when a component has been deleted', (done) => {
+      spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.reject({ status: 404 }));
+      spyOn(FeedbackService, 'showDismissible');
+
+      PageStructureService.renderComponent({}).catch(() => {
+        expect(FeedbackService.showDismissible).toHaveBeenCalledWith('FEEDBACK_NOT_FOUND_MESSAGE');
+        done();
+      });
+
+      $rootScope.$digest();
+    });
+
+    it('does nothing if markup for a component cannot be retrieved but status is not 404', (done) => {
+      spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.reject({}));
+      spyOn(FeedbackService, 'showError');
+
+      PageStructureService.renderComponent({}).then(() => {
+        expect(FeedbackService.showError).not.toHaveBeenCalled();
+        done();
+      });
+
+      $rootScope.$digest();
+    });
+  });
+
+  describe('addComponentToContainer', () => {
+    let mockComponent;
     let mockContainer;
+
     beforeEach(() => {
-      mockContainer = { getId() { return 123; } };
-      PageStructureService.containers = [mockContainer, { getId() { return 456; } }];
+      mockComponent = {
+        id: 'mock-component',
+        name: 'Mock Component',
+      };
+      mockContainer = jasmine.createSpyObj(['getId']);
+      mockContainer.getId.and.returnValue('mock-container');
     });
 
-    it('returns a known container', () => {
-      expect(PageStructureService.getContainerById(123)).toBe(mockContainer);
+    it('uses the HstService to add a new catalog component to the backend', (done) => {
+      spyOn(HstService, 'addHstComponent').and.returnValue(
+        $q.resolve({ id: 'new-component' }),
+      );
+
+      PageStructureService.addComponentToContainer(mockComponent, mockContainer)
+        .then(() => {
+          expect(HstService.addHstComponent).toHaveBeenCalledWith(mockComponent, 'mock-container');
+          done();
+        });
+
+      $rootScope.$digest();
     });
 
-    it('returns undefined when getting an unknown container', () => {
-      expect(PageStructureService.getContainerById(789)).toBeUndefined();
+    it('shows the default error message when failed to add a new component from catalog', (done) => {
+      spyOn(FeedbackService, 'showError');
+      spyOn(HstService, 'addHstComponent').and.returnValue(
+        $q.reject({
+          error: 'cafebabe-error-key',
+          parameterMap: {},
+        }),
+      );
+
+      PageStructureService.addComponentToContainer(mockComponent, mockContainer)
+        .catch(() => {
+          expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT', {
+            component: 'Mock Component',
+          });
+          done();
+        });
+
+      $rootScope.$digest();
+    });
+
+    it('shows the locked error message when adding a new component on a container locked by another user', (done) => {
+      spyOn(FeedbackService, 'showError');
+      spyOn(HstService, 'addHstComponent').and.returnValue(
+        $q.reject({
+          error: 'ITEM_ALREADY_LOCKED',
+          parameterMap: {
+            lockedBy: 'another-user',
+            lockedOn: 1234,
+          },
+        }),
+      );
+
+      PageStructureService.addComponentToContainer(mockComponent, mockContainer);
+      $rootScope.$digest();
+
+      expect(HstService.addHstComponent).toHaveBeenCalledWith(mockComponent, 'mock-container');
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED', {
+        lockedBy: 'another-user',
+        lockedOn: 1234,
+        component: 'Mock Component',
+      });
+      done();
+    });
+
+    it('records a change after adding a new component to a container successfully', (done) => {
+      spyOn(HstService, 'addHstComponent').and.returnValue($q.resolve({ id: 'newUuid' }));
+
+      PageStructureService.addComponentToContainer(mockComponent, mockContainer)
+        .then((newComponentId) => {
+          expect(HstService.addHstComponent).toHaveBeenCalledWith(mockComponent, 'mock-container');
+          expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+          expect(newComponentId).toEqual('newUuid');
+          done();
+        });
+      $rootScope.$digest();
     });
   });
 
@@ -438,7 +558,8 @@ describe('PageStructureService', () => {
     const container2 = registerNoMarkupContainer();
     PageStructureService.parseElements();
 
-    const containers = PageStructureService.getContainers();
+    const page = PageStructureService.getPage();
+    const containers = page.getContainers();
     expect(containers.length).toEqual(2);
 
     expect(containers[0].getType()).toEqual('container');
@@ -453,8 +574,8 @@ describe('PageStructureService', () => {
     expect(containers[1].getBoxElement()[0]).toEqual(container2);
     expect(containers[1].getLabel()).toEqual('NoMarkup container');
 
-    expect(PageStructureService.hasContainer(containers[0])).toEqual(true);
-    expect(PageStructureService.hasContainer(containers[1])).toEqual(true);
+    expect(page.hasContainer(containers[0])).toEqual(true);
+    expect(page.hasContainer(containers[1])).toEqual(true);
   });
 
   it('adds components to the most recently registered container', () => {
@@ -469,7 +590,7 @@ describe('PageStructureService', () => {
 
     PageStructureService.parseElements();
 
-    const containers = PageStructureService.getContainers();
+    const containers = PageStructureService.getPage().getContainers();
     expect(containers.length).toEqual(2);
     expect(containers[0].isEmpty()).toEqual(true);
     expect(containers[1].isEmpty()).toEqual(false);
@@ -544,7 +665,7 @@ describe('PageStructureService', () => {
     registerHeadContributions('#unprocessed-head-contributions');
     PageStructureService.parseElements();
 
-    expect(PageStructureService.headContributions).toEqual([
+    expect([...PageStructureService.headContributions]).toEqual([
       '<title>processed</title>',
       '<script>window.processed = true</script>',
       '<link href="unprocessed.css">',
@@ -558,14 +679,13 @@ describe('PageStructureService', () => {
     registerHeadContributions('#processed-head-contributions');
     PageStructureService.parseElements();
 
-    expect(PageStructureService.getContainers().length).toEqual(1);
+    expect(PageStructureService.getPage()).toBeDefined();
     expect(PageStructureService.getEmbeddedLinks().length).toEqual(2);
     expect(PageStructureService.headContributions.size).toBe(2);
 
     PageStructureService.clearParsedElements();
 
     expect(PageStructureService.getPage()).toBeUndefined();
-    expect(PageStructureService.getContainers().length).toEqual(0);
     expect(PageStructureService.getEmbeddedLinks().length).toEqual(0);
     expect(PageStructureService.headContributions.size).toBe(0);
   });
@@ -574,7 +694,7 @@ describe('PageStructureService', () => {
     const container = registerNoMarkupContainer();
     PageStructureService.parseElements();
 
-    const containers = PageStructureService.getContainers();
+    const containers = PageStructureService.getPage().getContainers();
     expect(containers.length).toEqual(1);
     expect(containers[0].getBoxElement()[0]).toBe(container);
   });
@@ -587,7 +707,7 @@ describe('PageStructureService', () => {
     });
     PageStructureService.parseElements();
 
-    const containers = PageStructureService.getContainers();
+    const containers = PageStructureService.getPage().getContainers();
     expect(containers.length).toEqual(1);
     expect(containers[0].isEmpty()).toEqual(false);
     expect(containers[0].getComponents().length).toEqual(1);
@@ -599,7 +719,7 @@ describe('PageStructureService', () => {
     registerNoMarkupContainer(() => registerEmptyNoMarkupComponent());
     PageStructureService.parseElements();
 
-    const containers = PageStructureService.getContainers();
+    const containers = PageStructureService.getPage().getContainers();
     expect(containers.length).toEqual(1);
     expect(containers[0].isEmpty()).toEqual(false);
     expect(containers[0].getComponents().length).toEqual(1);
@@ -612,7 +732,7 @@ describe('PageStructureService', () => {
     registerLowercaseNoMarkupContainer();
     PageStructureService.parseElements();
 
-    const containers = PageStructureService.getContainers();
+    const containers = PageStructureService.getPage().getContainers();
     expect(containers[0].isEmptyInDom()).toEqual(false);
     expect(containers[1].isEmptyInDom()).toEqual(false);
     expect(containers[2].isEmptyInDom()).toEqual(false);
@@ -624,7 +744,7 @@ describe('PageStructureService', () => {
     registerEmptyLowercaseNoMarkupContainer();
     PageStructureService.parseElements();
 
-    const containers = PageStructureService.getContainers();
+    const containers = PageStructureService.getPage().getContainers();
     expect(containers[0].isEmptyInDom()).toEqual(true);
     expect(containers[1].isEmptyInDom()).toEqual(true);
     expect(containers[2].isEmptyInDom()).toEqual(true);
@@ -635,7 +755,7 @@ describe('PageStructureService', () => {
     registerVBoxContainer(() => registerVBoxComponent('componentA'));
     PageStructureService.parseElements();
 
-    const pageComponent = PageStructureService.getComponentById('aaaa');
+    const pageComponent = PageStructureService.getPage().getComponentById('aaaa');
 
     expect(pageComponent).not.toBeNull();
     expect(pageComponent.getId()).toEqual('aaaa');
@@ -673,8 +793,6 @@ describe('PageStructureService', () => {
 
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT',
       jasmine.objectContaining({ component: 'component A' }));
-
-    expect(HippoIframeService.reload).toHaveBeenCalled();
   });
 
   it('removes a valid component but fails to call HST due to locked component then iframe should be reloaded and a feedback toast should be shown', () => { // eslint-disable-line max-len
@@ -694,8 +812,6 @@ describe('PageStructureService', () => {
 
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED',
       jasmine.objectContaining({ component: 'component A' }));
-
-    expect(HippoIframeService.reload).toHaveBeenCalled();
   });
 
   it('removes an invalid component', () => {
@@ -721,20 +837,6 @@ describe('PageStructureService', () => {
     expect(container.getId()).toEqual('container-no-markup');
   });
 
-  it('prints parsed elements', () => {
-    registerVBoxContainer(() => {
-      registerVBoxComponent('componentA');
-      registerVBoxComponent('componentB');
-    });
-    PageStructureService.parseElements();
-
-    spyOn($log, 'debug');
-
-    PageStructureService.printParsedElements();
-
-    expect($log.debug.calls.count()).toEqual(3);
-  });
-
   it('attaches the embedded link to the enclosing component', () => {
     registerVBoxContainer(() => {
       registerVBoxComponent('componentA', () => {
@@ -747,6 +849,9 @@ describe('PageStructureService', () => {
     registerEmbeddedLink('#manage-content-in-page');
     PageStructureService.parseElements();
 
+    const page = PageStructureService.getPage();
+    const [containerVBox] = page.getContainers();
+    const [componentA] = containerVBox.getComponents();
     const attachedEmbeddedLinks = PageStructureService.getEmbeddedLinks();
 
     expect(attachedEmbeddedLinks.length).toBe(4);
@@ -778,15 +883,17 @@ describe('PageStructureService', () => {
     `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
 
-    const component = PageStructureService.getComponentById('aaaa');
+    const page = PageStructureService.getPage();
+    const component = page.getComponentById('aaaa');
     PageStructureService.renderComponent(component);
     $rootScope.$digest();
 
-    const updatedComponentA = PageStructureService.getContainers()[0].getComponents()[0];
+    const [updatedComponentA] = page.getContainers()[0].getComponents();
     const editMenuLinks = PageStructureService.getEmbeddedLinks();
+
     expect(editMenuLinks.length).toBe(2);
-    expect(editMenuLinks[0].getComponent()).toBe(updatedComponentA);
-    expect(editMenuLinks[1].getComponent()).toBeUndefined();
+    expect(editMenuLinks[0].getComponent()).toBeUndefined();
+    expect(editMenuLinks[1].getComponent()).toBe(updatedComponentA);
   });
 
   it('re-renders a component with no more content link', () => {
@@ -807,7 +914,7 @@ describe('PageStructureService', () => {
     `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
 
-    const component = PageStructureService.getComponentById('component-no-markup');
+    const component = PageStructureService.getPage().getComponentById('component-no-markup');
     PageStructureService.renderComponent(component);
     $rootScope.$digest();
 
@@ -830,11 +937,12 @@ describe('PageStructureService', () => {
     `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
 
-    const component = PageStructureService.getComponentById('aaaa');
+    const page = PageStructureService.getPage();
+    const component = page.getComponentById('aaaa');
     PageStructureService.renderComponent(component);
     $rootScope.$digest();
 
-    const updatedComponentA = PageStructureService.getContainers()[0].getComponents()[0];
+    const [updatedComponentA] = page.getContainers()[0].getComponents();
     const embeddedLinks = PageStructureService.getEmbeddedLinks();
     expect(embeddedLinks.length).toBe(1);
     expect(embeddedLinks[0].getComponent()).toBe(updatedComponentA);
@@ -842,8 +950,8 @@ describe('PageStructureService', () => {
 
   it('gracefully re-renders a component twice quickly after eachother', () => {
     // set up page structure with component
-    registerVBoxContainer();
-    registerVBoxComponent('componentB');
+    registerVBoxContainer(() => registerVBoxComponent('componentB'));
+    PageStructureService.parseElements();
 
     const updatedMarkup = `
       ${itemComment('component B', 'bbbb')}
@@ -852,7 +960,7 @@ describe('PageStructureService', () => {
     `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
 
-    const component = PageStructureService.getComponentById('bbbb');
+    const component = PageStructureService.getPage().getComponentById('bbbb');
     PageStructureService.renderComponent(component);
     PageStructureService.renderComponent(component);
 
@@ -874,12 +982,13 @@ describe('PageStructureService', () => {
     spyOn($log, 'error');
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
 
-    const component = PageStructureService.getComponentById('aaaa');
+    const page = PageStructureService.getPage();
+    const component = page.getComponentById('aaaa');
     PageStructureService.renderComponent(component);
     $rootScope.$digest();
 
-    expect(PageStructureService.getContainers().length).toBe(1);
-    expect(PageStructureService.getContainers()[0].getComponents().length).toBe(0);
+    expect(page.getContainers().length).toBe(1);
+    expect(page.getContainers()[0].getComponents().length).toBe(0);
     expect($log.error).toHaveBeenCalled();
   });
 
@@ -899,11 +1008,12 @@ describe('PageStructureService', () => {
       `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
 
-    const component = PageStructureService.getComponentById('aaaa');
+    const page = PageStructureService.getPage();
+    const component = page.getComponentById('aaaa');
     PageStructureService.renderComponent(component);
     $rootScope.$digest();
 
-    const updatedComponent = PageStructureService.getContainers()[0].getComponents()[0];
+    const [updatedComponent] = page.getContainers()[0].getComponents();
     expect(onNewHeadContributions).toHaveBeenCalledWith(jasmine.any(Object), updatedComponent);
 
     offNewHeadContributions();
@@ -924,7 +1034,7 @@ describe('PageStructureService', () => {
     `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
 
-    const component = PageStructureService.getComponentById('aaaa');
+    const component = PageStructureService.getPage().getComponentById('aaaa');
     PageStructureService.renderComponent(component);
     $rootScope.$digest();
 
@@ -950,7 +1060,7 @@ describe('PageStructureService', () => {
     `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
 
-    const component = PageStructureService.getComponentById('aaaa');
+    const component = PageStructureService.getPage().getComponentById('aaaa');
     PageStructureService.renderComponent(component);
     $rootScope.$digest();
 
@@ -975,7 +1085,7 @@ describe('PageStructureService', () => {
     `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
 
-    const component = PageStructureService.getComponentById('aaaa');
+    const component = PageStructureService.getPage().getComponentById('aaaa');
     const propertiesMap = {
       parameter: 'customValue',
     };
@@ -991,8 +1101,9 @@ describe('PageStructureService', () => {
     registerVBoxContainer(() => registerVBoxComponent('componentA'));
     PageStructureService.parseElements();
 
-    const container = PageStructureService.getContainers()[0];
-    const component = container.getComponents()[0];
+    const page = PageStructureService.getPage();
+    const [container] = page.getContainers();
+    const [component] = container.getComponents();
     const updatedMarkup = `
       ${itemComment('component A', 'aaaa')}
         <p id="updated-component-with-new-head-contribution">
@@ -1006,25 +1117,12 @@ describe('PageStructureService', () => {
     expect(PageStructureService._notifyChangeListeners).toHaveBeenCalled();
   });
 
-  it('retrieves a container by overlay element', () => {
-    registerVBoxContainer();
-    PageStructureService.parseElements();
-
-    const container = PageStructureService.getContainers()[0];
-    const overlayElement = { };
-
-    expect(PageStructureService.getContainerByOverlayElement({ })).toBeUndefined();
-    container.setOverlayElement(overlayElement);
-
-    expect(PageStructureService.getContainerByOverlayElement({ })).toBeUndefined();
-    expect(PageStructureService.getContainerByOverlayElement(overlayElement)).toBeUndefined();
-  });
-
   it('re-renders a NoMarkup container', () => {
     registerNoMarkupContainer();
     PageStructureService.parseElements();
 
-    const container = PageStructureService.getContainers()[0];
+    const page = PageStructureService.getPage();
+    const [container] = page.getContainers();
     container.getEndComment().after('<p>Trailing element, to be removed</p>'); // insert trailing dom element
     expect(container.getEndComment().next().length).toBe(1);
     const updatedMarkup = `
@@ -1038,7 +1136,7 @@ describe('PageStructureService', () => {
     PageStructureService.renderContainer(container);
     $rootScope.$digest();
 
-    const newContainer = PageStructureService.getContainers()[0];
+    const [newContainer] = page.getContainers();
     expect(newContainer).not.toBe(container);
     expect(newContainer.getEndComment().next().length).toBe(0);
   });
@@ -1047,7 +1145,8 @@ describe('PageStructureService', () => {
     registerNoMarkupContainerWithoutTextNodesAfterEndComment();
     PageStructureService.parseElements();
 
-    const container = PageStructureService.getContainers()[0];
+    const page = PageStructureService.getPage();
+    const [container] = page.getContainers();
     const updatedMarkup = `
       ${containerComment('Empty NoMarkup container', 'HST.NoMarkup', 'no-markup-no-text-nodes-after-end-comment')}
       ${endComment('no-markup-no-text-nodes-after-end-comment')}
@@ -1056,7 +1155,7 @@ describe('PageStructureService', () => {
     PageStructureService.renderContainer(container);
     $rootScope.$digest();
 
-    const newContainer = PageStructureService.getContainers()[0];
+    const [newContainer] = page.getContainers();
     expect(newContainer).not.toBe(container);
     expect(newContainer.isEmpty()).toBe(true);
   });
@@ -1071,7 +1170,8 @@ describe('PageStructureService', () => {
     registerEmbeddedLink('#manage-content-in-page');
     PageStructureService.parseElements();
 
-    const container = PageStructureService.getContainers()[0];
+    const page = PageStructureService.getPage();
+    const [container] = page.getContainers();
     const updatedMarkup = `
       ${containerComment('vBox container', 'HST.vBox', 'container-vbox')}
       <div id="container-vbox">
@@ -1088,8 +1188,8 @@ describe('PageStructureService', () => {
     `;
     spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
     PageStructureService.renderContainer(container).then((newContainer) => {
-      expect(PageStructureService.getContainers().length).toBe(1);
-      expect(PageStructureService.getContainers()[0]).toBe(newContainer);
+      expect(page.getContainers().length).toBe(1);
+      expect(page.getContainers()[0]).toBe(newContainer);
 
       // edit menu link in component A is no longer there
       const embeddedLinks = PageStructureService.getEmbeddedLinks();
@@ -1107,7 +1207,7 @@ describe('PageStructureService', () => {
     registerVBoxContainer(() => registerVBoxComponent('componentA'));
     PageStructureService.parseElements();
 
-    const container = PageStructureService.getContainers()[0];
+    const [container] = PageStructureService.getPage().getContainers();
     const updatedMarkup = `
       ${containerComment('vBox container', 'HST.vBox', 'container-vbox')}
       <div id="container-vbox">
@@ -1121,8 +1221,10 @@ describe('PageStructureService', () => {
       ${unprocessedHeadContributionsComment('<script>window.newScript=true</script>')}
     `;
     spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
+    spyOn($rootScope, '$emit');
+
     PageStructureService.renderContainer(container).then((newContainer) => {
-      expect(PageStructureService.containsNewHeadContributions(newContainer)).toBe(true);
+      expect($rootScope.$emit).toHaveBeenCalledWith('hippo-iframe:new-head-contributions', newContainer);
       done();
     });
     $rootScope.$digest();
@@ -1132,7 +1234,7 @@ describe('PageStructureService', () => {
     registerVBoxContainer(() => registerVBoxComponent('componentA'));
     PageStructureService.parseElements();
 
-    const container = PageStructureService.getContainers()[0];
+    const [container] = PageStructureService.getPage().getContainers();
     const updatedMarkup = `
       ${containerComment('vBox container', 'HST.vBox', 'container-vbox')}
       <div id="container-vbox">
@@ -1160,7 +1262,7 @@ describe('PageStructureService', () => {
     registerVBoxContainer(() => registerVBoxComponent('componentA'));
     PageStructureService.parseElements();
 
-    const container = PageStructureService.getContainers()[0];
+    const [container] = PageStructureService.getPage().getContainers();
     const updatedMarkup = `
       ${containerComment('vBox container', 'HST.vBox', 'container-vbox')}
       <div id="container-vbox">
@@ -1173,8 +1275,10 @@ describe('PageStructureService', () => {
       ${endComment('container-vbox')}
     `;
     spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
-    PageStructureService.renderContainer(container).then((newContainer) => {
-      expect(PageStructureService.containsNewHeadContributions(newContainer)).toBe(false);
+    spyOn($rootScope, '$emit');
+
+    PageStructureService.renderContainer(container).then(() => {
+      expect($rootScope.$emit).not.toHaveBeenCalledWith('hippo-iframe:new-head-contributions', jasmine.anything());
       done();
     });
     $rootScope.$digest();
@@ -1185,7 +1289,7 @@ describe('PageStructureService', () => {
     registerHeadContributions('#processed-head-contributions');
     PageStructureService.parseElements();
 
-    const container = PageStructureService.getContainers()[0];
+    const [container] = PageStructureService.getPage().getContainers();
     const updatedMarkup = `
       ${containerComment('vBox container', 'HST.vBox', 'container-vbox')}
       <div id="container-vbox">
@@ -1199,8 +1303,10 @@ describe('PageStructureService', () => {
       ${unprocessedHeadContributionsComment('<script>window.processed = true</script>')}
     `;
     spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.when(updatedMarkup));
-    PageStructureService.renderContainer(container).then((newContainer) => {
-      expect(PageStructureService.containsNewHeadContributions(newContainer)).toBe(false);
+    spyOn($rootScope, '$emit');
+
+    PageStructureService.renderContainer(container).then(() => {
+      expect($rootScope.$emit).not.toHaveBeenCalledWith('hippo-iframe:new-head-contributions', jasmine.anything());
       done();
     });
     $rootScope.$digest();
@@ -1222,8 +1328,8 @@ describe('PageStructureService', () => {
       });
       PageStructureService.parseElements();
 
-      const container = PageStructureService.getContainers()[0];
-      const componentA = container.getComponents()[0];
+      const [container] = PageStructureService.getPage().getContainers();
+      const [componentA] = container.getComponents();
 
       spyOn(HstService, 'updateHstContainer');
       expect(componentIds(container)).toEqual(['aaaa', 'bbbb']);
@@ -1243,9 +1349,8 @@ describe('PageStructureService', () => {
       });
       PageStructureService.parseElements();
 
-      const container = PageStructureService.getContainers()[0];
-      const componentA = container.getComponents()[0];
-      const componentB = container.getComponents()[1];
+      const [container] = PageStructureService.getPage().getContainers();
+      const [componentA, componentB] = container.getComponents();
 
       spyOn(HstService, 'updateHstContainer');
       expect(componentIds(container)).toEqual(['aaaa', 'bbbb']);
@@ -1266,9 +1371,8 @@ describe('PageStructureService', () => {
       registerEmptyVBoxContainer();
       PageStructureService.parseElements();
 
-      const container1 = PageStructureService.getContainers()[0];
-      const component = container1.getComponents()[0];
-      const container2 = PageStructureService.getContainers()[1];
+      const [container1, container2] = PageStructureService.getPage().getContainers();
+      const [component] = container1.getComponents();
 
       spyOn(HstService, 'updateHstContainer');
       expect(componentIds(container1)).toEqual(['aaaa', 'bbbb']);
@@ -1291,8 +1395,8 @@ describe('PageStructureService', () => {
       });
       PageStructureService.parseElements();
 
-      const container = PageStructureService.getContainers()[0];
-      const component = container.getComponents()[0];
+      const [container] = PageStructureService.getPage().getContainers();
+      const [component] = container.getComponents();
 
       spyOn(HstService, 'updateHstContainer').and.returnValue($q.reject());
       spyOn(FeedbackService, 'showError');
@@ -1314,9 +1418,8 @@ describe('PageStructureService', () => {
       registerEmptyVBoxContainer();
       PageStructureService.parseElements();
 
-      const container1 = PageStructureService.getContainers()[0];
-      const component = container1.getComponents()[0];
-      const container2 = PageStructureService.getContainers()[1];
+      const [container1, container2] = PageStructureService.getPage().getContainers();
+      const [component] = container1.getComponents();
 
       spyOn(HstService, 'updateHstContainer').and.returnValues($q.reject(), $q.resolve());
       spyOn(FeedbackService, 'showError');
@@ -1339,9 +1442,8 @@ describe('PageStructureService', () => {
       registerEmptyVBoxContainer();
       PageStructureService.parseElements();
 
-      const container1 = PageStructureService.getContainers()[0];
-      const component = container1.getComponents()[0];
-      const container2 = PageStructureService.getContainers()[1];
+      const [container1, container2] = PageStructureService.getPage().getContainers();
+      const [component] = container1.getComponents();
 
       spyOn(HstService, 'updateHstContainer').and.returnValues($q.resolve(), $q.reject());
       spyOn(FeedbackService, 'showError');

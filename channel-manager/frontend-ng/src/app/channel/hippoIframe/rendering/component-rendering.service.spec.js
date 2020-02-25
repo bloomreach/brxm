@@ -23,7 +23,8 @@ describe('ComponentRenderingService', () => {
   let PageStructureService;
   let SpaService;
 
-  let component;
+  let mockComponent;
+  let mockPage;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -46,8 +47,11 @@ describe('ComponentRenderingService', () => {
       SpaService = _SpaService_;
     });
 
-    component = { id: '1234' };
-    spyOn(PageStructureService, 'getComponentById').and.returnValue(component);
+    mockComponent = { id: '1234' };
+    mockPage = {
+      getComponentById: jasmine.createSpy('getComponentById').and.returnValue(mockComponent),
+    };
+    spyOn(PageStructureService, 'getPage').and.returnValue(mockPage);
     spyOn(SpaService, 'renderComponent').and.returnValue(false);
   });
 
@@ -57,7 +61,7 @@ describe('ComponentRenderingService', () => {
     });
 
     it('rejects unknown components', (done) => {
-      PageStructureService.getComponentById.and.returnValue(null);
+      mockPage.getComponentById.and.returnValue(null);
       spyOn($log, 'warn');
 
       ComponentRenderingService.renderComponent('1234')
@@ -76,7 +80,7 @@ describe('ComponentRenderingService', () => {
 
       ComponentRenderingService.renderComponent('1234', { foo: 1 })
         .then(() => {
-          expect(SpaService.renderComponent).toHaveBeenCalledWith(component, { foo: 1 });
+          expect(SpaService.renderComponent).toHaveBeenCalledWith(mockComponent, { foo: 1 });
           expect(PageStructureService.renderComponent).not.toHaveBeenCalled();
           done();
         });
@@ -89,8 +93,8 @@ describe('ComponentRenderingService', () => {
 
       ComponentRenderingService.renderComponent('1234', { foo: 1 })
         .then(() => {
-          expect(SpaService.renderComponent).toHaveBeenCalledWith(component, { foo: 1 });
-          expect(PageStructureService.renderComponent).toHaveBeenCalledWith(component, { foo: 1 });
+          expect(SpaService.renderComponent).toHaveBeenCalledWith(mockComponent, { foo: 1 });
+          expect(PageStructureService.renderComponent).toHaveBeenCalledWith(mockComponent, { foo: 1 });
           done();
         });
 

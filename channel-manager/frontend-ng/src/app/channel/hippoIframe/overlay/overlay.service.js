@@ -236,12 +236,19 @@ class OverlayService {
   }
 
   _getAllStructureElements() {
-    return this.PageStructureService.getContainers().reduce((result, container) => {
+    const links = this.PageStructureService.getEmbeddedLinks();
+    const page = this.PageStructureService.getPage();
+
+    if (!page) {
+      return [...links];
+    }
+
+    return page.getContainers().reduce((result, container) => {
       result.push(container, ...container.getComponents());
 
       return result;
     }, [])
-      .concat(this.PageStructureService.getEmbeddedLinks());
+      .concat(links);
   }
 
   _syncElement(structureElement) {
@@ -270,8 +277,12 @@ class OverlayService {
   }
 
   onComponentClick(clickHandler) {
-    this.PageStructureService
-      .getContainers()
+    const page = this.PageStructureService.getPage();
+    if (!page) {
+      return;
+    }
+
+    page.getContainers()
       .map(container => container.getComponents())
       .flat()
       .forEach((component) => {
@@ -281,34 +292,44 @@ class OverlayService {
   }
 
   onContainerClick(clickHandler) {
-    this.PageStructureService
-      .getContainers()
-      .forEach((container) => {
-        const element = container.getOverlayElement();
-        element.on('click', (event) => {
-          clickHandler(event, container);
-        });
+    const page = this.PageStructureService.getPage();
+    if (!page) {
+      return;
+    }
+
+    page.getContainers().forEach((container) => {
+      const element = container.getOverlayElement();
+      element.on('click', (event) => {
+        clickHandler(event, container);
       });
+    });
   }
 
   offComponentClick() {
-    this.PageStructureService
-      .getContainers()
-      .forEach((container) => {
-        container.getComponents().forEach((component) => {
-          const element = component.getOverlayElement();
-          element.off('click');
-        });
+    const page = this.PageStructureService.getPage();
+    if (!page) {
+      return;
+    }
+
+    page.getContainers()
+      .map(container => container.getComponents())
+      .flat()
+      .forEach((component) => {
+        const element = component.getOverlayElement();
+        element.off('click');
       });
   }
 
   offContainerClick() {
-    this.PageStructureService
-      .getContainers()
-      .forEach((container) => {
-        const element = container.getOverlayElement();
-        element.off('click');
-      });
+    const page = this.PageStructureService.getPage();
+    if (!page) {
+      return;
+    }
+
+    page.getContainers().forEach((container) => {
+      const element = container.getOverlayElement();
+      element.off('click');
+    });
   }
 
   _addLabel(structureElement, overlayElement) {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -124,12 +124,13 @@ class ComponentCatalogService {
       await this.RightSidePanelService.close();
     }
 
-    const container = this.PageStructureService.getContainerById(containerId);
+    const page = this.PageStructureService.getPage();
+    const container = page && page.getContainerById(containerId);
     const componentId = await this.ContainerService.addComponent(this.selectedComponent, container, nextComponentId);
     delete this.selectedComponent;
 
     if (!this.ConfigService.relevancePresent) {
-      const component = this.PageStructureService.getComponentById(componentId);
+      const component = page && page.getComponentById(componentId);
       this.EditComponentService.startEditing(component);
     }
 

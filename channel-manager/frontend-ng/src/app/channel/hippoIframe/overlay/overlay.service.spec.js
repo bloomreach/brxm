@@ -90,7 +90,7 @@ describe('OverlayService', () => {
 
       try {
         PageStructureService.clearParsedElements();
-        PageStructureService.parseElements(document);
+        PageStructureService.parseElements(DomService.getIframeDocument($iframe));
 
         deferred.resolve();
       } catch (e) {
@@ -178,7 +178,7 @@ describe('OverlayService', () => {
   });
 
   it('generates an empty overlay when there are no page structure elements', async () => {
-    spyOn(PageStructureService, 'getContainers').and.returnValue([]);
+    spyOn(PageStructureService, 'getPage').and.returnValue(null);
     spyOn(PageStructureService, 'getEmbeddedLinks').and.returnValue([]);
     await loadIframeFixture();
 
@@ -186,7 +186,7 @@ describe('OverlayService', () => {
   });
 
   it('sets the class hippo overlay classes on the HTML element', async () => {
-    spyOn(PageStructureService, 'getContainers').and.returnValue([]);
+    spyOn(PageStructureService, 'getPage').and.returnValue(null);
     spyOn(PageStructureService, 'getEmbeddedLinks').and.returnValue([]);
     await loadIframeFixture();
 
@@ -309,7 +309,7 @@ describe('OverlayService', () => {
     await loadIframeFixture();
 
     const markupComponentC = iframe('#componentC');
-    const componentC = PageStructureService.getComponentById('cccc');
+    const componentC = PageStructureService.getPage().getComponentById('cccc');
     const boxElement = componentC.getBoxElement();
 
     expect(boxElement.is(markupComponentC)).toBe(true);
@@ -322,7 +322,7 @@ describe('OverlayService', () => {
 
     await PageStructureService.renderComponent(componentC);
 
-    const generatedBoxElement = PageStructureService.getComponentById('cccc').getBoxElement();
+    const generatedBoxElement = PageStructureService.getPage().getComponentById('cccc').getBoxElement();
     expect(generatedBoxElement).toBeDefined();
     expect(generatedBoxElement).toHaveClass('hippo-overlay-box-empty');
   });
@@ -438,7 +438,7 @@ describe('OverlayService', () => {
     `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: componentMarkupWithExperiment }));
 
-    const componentA = PageStructureService.getComponentById('aaaa');
+    const componentA = PageStructureService.getPage().getComponentById('aaaa');
     await PageStructureService.renderComponent(componentA);
 
     const label = componentElementA.find('.hippo-overlay-label');
@@ -538,7 +538,7 @@ describe('OverlayService', () => {
     OverlayService.attachComponentMouseDown(mousedownSpy);
 
     await loadIframeFixture();
-    const component = PageStructureService.getComponentById('aaaa');
+    const component = PageStructureService.getPage().getComponentById('aaaa');
     const overlayComponentElement = iframe('.hippo-overlay > .hippo-overlay-element-component').first();
 
     overlayComponentElement.mousedown();
@@ -641,7 +641,7 @@ describe('OverlayService', () => {
     `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: componentMarkupWithoutMenuLink }));
 
-    const componentA = PageStructureService.getComponentById('aaaa');
+    const componentA = PageStructureService.getPage().getComponentById('aaaa');
     await PageStructureService.renderComponent(componentA);
 
     expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(25);
