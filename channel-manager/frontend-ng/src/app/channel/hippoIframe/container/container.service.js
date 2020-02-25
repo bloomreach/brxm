@@ -63,21 +63,18 @@ class ContainerService {
       const newComponentId = await this.PageStructureService
         .addComponentToContainer(catalogComponent, container, nextComponentId);
       if (!this._reloadSpa()) {
-        await this._renderNewComponent(newComponentId, container);
+        await this.PageStructureService.renderContainer(container);
       }
 
       return newComponentId;
     } catch (error) {
+      this.HippoIframeService.reload();
       this.FeedbackService.showError('ERROR_ADD_COMPONENT', {
         component: catalogComponent.label,
       });
 
       throw error;
     }
-  }
-
-  _renderNewComponent(componentId, container) {
-    return this.PageStructureService.renderNewComponentInContainer(componentId, container);
   }
 
   _reloadSpa() {
@@ -132,6 +129,7 @@ class ContainerService {
   _doDelete(componentId) {
     return () => this.PageStructureService.removeComponentById(componentId)
       .then(container => this._reloadSpa() || this._renderContainer(container))
+      .catch(() => this.HippoIframeService.reload())
       .finally(() => this.CmsService.publish('destroy-component-properties-window'));
   }
 }

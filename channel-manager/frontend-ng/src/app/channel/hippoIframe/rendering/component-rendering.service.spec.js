@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ describe('ComponentRenderingService', () => {
   let $q;
   let $rootScope;
   let ComponentRenderingService;
+  let HippoIframeService;
   let PageStructureService;
   let SpaService;
 
@@ -32,6 +33,7 @@ describe('ComponentRenderingService', () => {
       _$q_,
       _$rootScope_,
       _ComponentRenderingService_,
+      _HippoIframeService_,
       _PageStructureService_,
       _SpaService_,
     ) => {
@@ -39,17 +41,18 @@ describe('ComponentRenderingService', () => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       ComponentRenderingService = _ComponentRenderingService_;
+      HippoIframeService = _HippoIframeService_;
       PageStructureService = _PageStructureService_;
       SpaService = _SpaService_;
     });
 
     component = { id: '1234' };
     spyOn(PageStructureService, 'getComponentById').and.returnValue(component);
+    spyOn(SpaService, 'renderComponent').and.returnValue(false);
   });
 
   describe('render component', () => {
     beforeEach(() => {
-      spyOn(SpaService, 'renderComponent');
       spyOn(PageStructureService, 'renderComponent');
     });
 
@@ -59,8 +62,9 @@ describe('ComponentRenderingService', () => {
 
       ComponentRenderingService.renderComponent('1234')
         .then(() => fail('Should be rejected'))
-        .catch(() => {
+        .catch((e) => {
           expect($log.warn).toHaveBeenCalledWith('Cannot render unknown component with ID \'1234\'');
+          expect(e.message).toBe('Cannot render unknown component with ID \'1234\'.');
           done();
         });
 
@@ -80,8 +84,7 @@ describe('ComponentRenderingService', () => {
       $rootScope.$apply();
     });
 
-    it('second renders a component via the PageStructureService', (done) => {
-      SpaService.renderComponent.and.returnValue(false);
+    it('then tries to render a component via the PageStructureService', (done) => {
       PageStructureService.renderComponent.and.returnValue($q.resolve());
 
       ComponentRenderingService.renderComponent('1234', { foo: 1 })
@@ -95,7 +98,6 @@ describe('ComponentRenderingService', () => {
     });
 
     it('rejects when render component via the PageStructureService fails', (done) => {
-      SpaService.renderComponent.and.returnValue(false);
       PageStructureService.renderComponent.and.returnValue($q.reject());
 
       ComponentRenderingService.renderComponent('1234', { foo: 1 })
@@ -103,6 +105,18 @@ describe('ComponentRenderingService', () => {
         .catch(done);
 
       $rootScope.$apply();
+    });
+
+    it('reloads the iframe when render component via the PageStructureService fails', (done) => {
+      PageStructureService.renderComponent.and.returnValue($q.reject());
+      spyOn(HippoIframeService, 'reload');
+
+      ComponentRenderingService.renderComponent('1234', { foo: 1 });
+      $rootScope.$apply();
+
+      expect(HippoIframeService.reload).toHaveBeenCalled();
+
+      done();
     });
   });
 });
