@@ -184,6 +184,145 @@ describe('PageStructureService', () => {
     });
   });
 
+  describe('renderComponent', () => {
+    it('gracefully handles requests to re-render an undefined or null component', (done) => {
+      spyOn(MarkupService, 'fetchComponentMarkup');
+
+      $q.all(
+        PageStructureService.renderComponent(),
+        PageStructureService.renderComponent(null),
+      ).then(() => {
+        expect(MarkupService.fetchComponentMarkup).not.toHaveBeenCalled();
+        done();
+      });
+
+      $rootScope.$digest();
+    });
+
+    it('loads the component markup from the backend using the MarkupService', (done) => {
+      spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.resolve('markup'));
+      const component = {};
+      const properties = {};
+
+      PageStructureService.renderComponent(component, properties)
+        .then(() => {
+          expect(MarkupService.fetchComponentMarkup).toHaveBeenCalledWith(component, properties);
+          done();
+        });
+
+      $rootScope.$digest();
+    });
+
+    it('shows an error message and reloads the page when a component has been deleted', (done) => {
+      spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.reject({ status: 404 }));
+      spyOn(FeedbackService, 'showDismissible');
+
+      PageStructureService.renderComponent({}).catch(() => {
+        expect(FeedbackService.showDismissible).toHaveBeenCalledWith('FEEDBACK_NOT_FOUND_MESSAGE');
+        done();
+      });
+
+      $rootScope.$digest();
+    });
+
+    it('does nothing if markup for a component cannot be retrieved but status is not 404', (done) => {
+      spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.reject({}));
+      spyOn(FeedbackService, 'showError');
+
+      PageStructureService.renderComponent({}).then(() => {
+        expect(FeedbackService.showError).not.toHaveBeenCalled();
+        done();
+      });
+
+      $rootScope.$digest();
+    });
+  });
+
+  describe('addComponentToContainer', () => {
+    let mockComponent;
+    let mockContainer;
+
+    beforeEach(() => {
+      mockComponent = {
+        id: 'mock-component',
+        name: 'Mock Component',
+      };
+      mockContainer = jasmine.createSpyObj(['getId']);
+      mockContainer.getId.and.returnValue('mock-container');
+    });
+
+    it('uses the HstService to add a new catalog component to the backend', (done) => {
+      spyOn(HstService, 'addHstComponent').and.returnValue(
+        $q.resolve({ id: 'new-component' }),
+      );
+
+      PageStructureService.addComponentToContainer(mockComponent, mockContainer)
+        .then(() => {
+          expect(HstService.addHstComponent).toHaveBeenCalledWith(mockComponent, 'mock-container');
+          done();
+        });
+
+      $rootScope.$digest();
+    });
+
+    it('shows the default error message when failed to add a new component from catalog', (done) => {
+      spyOn(FeedbackService, 'showError');
+      spyOn(HstService, 'addHstComponent').and.returnValue(
+        $q.reject({
+          error: 'cafebabe-error-key',
+          parameterMap: {},
+        }),
+      );
+
+      PageStructureService.addComponentToContainer(mockComponent, mockContainer)
+        .catch(() => {
+          expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT', {
+            component: 'Mock Component',
+          });
+          done();
+        });
+
+      $rootScope.$digest();
+    });
+
+    it('shows the locked error message when adding a new component on a container locked by another user', (done) => {
+      spyOn(FeedbackService, 'showError');
+      spyOn(HstService, 'addHstComponent').and.returnValue(
+        $q.reject({
+          error: 'ITEM_ALREADY_LOCKED',
+          parameterMap: {
+            lockedBy: 'another-user',
+            lockedOn: 1234,
+          },
+        }),
+      );
+
+      PageStructureService.addComponentToContainer(mockComponent, mockContainer);
+      $rootScope.$digest();
+
+      expect(HstService.addHstComponent).toHaveBeenCalledWith(mockComponent, 'mock-container', undefined);
+      expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED', {
+        lockedBy: 'another-user',
+        lockedOn: 1234,
+        component: 'Mock Component',
+      });
+      done();
+    });
+
+    it('records a change after adding a new component to a container successfully', (done) => {
+      spyOn(HstService, 'addHstComponent').and.returnValue($q.resolve({ id: 'newUuid' }));
+
+      PageStructureService.addComponentToContainer(mockComponent, mockContainer)
+        .then((newComponentId) => {
+          expect(HstService.addHstComponent).toHaveBeenCalledWith(mockComponent, 'mock-container', undefined);
+          expect(ChannelService.recordOwnChange).toHaveBeenCalled();
+          expect(newComponentId).toEqual('newUuid');
+          done();
+        });
+      $rootScope.$digest();
+    });
+  });
+
   const childComment = element => [...element.childNodes]
     .filter(child => child.nodeType === Node.COMMENT_NODE)
     .shift();
@@ -424,13 +563,13 @@ describe('PageStructureService', () => {
 
     expect(PageStructureService.getContainers().length).toEqual(1);
     expect(PageStructureService.getEmbeddedLinks().length).toEqual(2);
-    expect(PageStructureService.headContributions.length).toBe(2);
+    expect(PageStructureService.headContributions.size).toBe(2);
 
     PageStructureService.clearParsedElements();
 
     expect(PageStructureService.getContainers().length).toEqual(0);
     expect(PageStructureService.getEmbeddedLinks().length).toEqual(0);
-    expect(PageStructureService.headContributions.length).toBe(0);
+    expect(PageStructureService.headContributions.size).toBe(0);
   });
 
   it('finds the DOM element of a no-markup container as parent of the comment', () => {
@@ -597,83 +736,6 @@ describe('PageStructureService', () => {
     expect(container.getId()).toEqual('container-no-markup');
   });
 
-  it('shows the default error message when failed to add a new component from catalog', () => {
-    const catalogComponent = {
-      id: 'foo-bah',
-      name: 'Foo Bah Component',
-    };
-    const mockContainer = jasmine.createSpyObj(['getId']);
-    mockContainer.getId.and.returnValue('container-1');
-
-    spyOn(FeedbackService, 'showError');
-    spyOn(HippoIframeService, 'reload').and.returnValue($q.when());
-    const deferred = $q.defer();
-    spyOn(HstService, 'addHstComponent').and.returnValue(deferred.promise);
-
-    PageStructureService.addComponentToContainer(catalogComponent, mockContainer);
-    deferred.reject({
-      error: 'cafebabe-error-key',
-      parameterMap: {},
-    });
-    $rootScope.$digest();
-
-    expect(HstService.addHstComponent).toHaveBeenCalledWith(catalogComponent, 'container-1', undefined);
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT', { component: 'Foo Bah Component' });
-    expect(HippoIframeService.reload).toHaveBeenCalled();
-  });
-
-  it('shows the locked error message when adding a new component and the container was locked by another user', () => {
-    const catalogComponent = {
-      id: 'foo-bah',
-      name: 'Foo Bah Component',
-    };
-    const mockContainer = jasmine.createSpyObj(['getId']);
-    mockContainer.getId.and.returnValue('container-1');
-
-    spyOn(HippoIframeService, 'reload').and.returnValue($q.when());
-    spyOn(FeedbackService, 'showError');
-    const deferred = $q.defer();
-    spyOn(HstService, 'addHstComponent').and.returnValue(deferred.promise);
-
-    PageStructureService.addComponentToContainer(catalogComponent, mockContainer);
-    deferred.reject({
-      error: 'ITEM_ALREADY_LOCKED',
-      parameterMap: {
-        lockedBy: 'another-user',
-        lockedOn: 1234,
-      },
-    });
-    $rootScope.$digest();
-
-    expect(HstService.addHstComponent).toHaveBeenCalledWith(catalogComponent, 'container-1', undefined);
-    expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED', {
-      lockedBy: 'another-user',
-      lockedOn: 1234,
-      component: 'Foo Bah Component',
-    });
-    expect(HippoIframeService.reload).toHaveBeenCalled();
-  });
-
-  it('records a change when adding a new component to a container successfully', (done) => {
-    const catalogComponent = {
-      id: 'foo-bah',
-      name: 'Foo Bah Component',
-    };
-    const mockContainer = jasmine.createSpyObj(['getId']);
-    mockContainer.getId.and.returnValue('container-1');
-
-    spyOn(HstService, 'addHstComponent').and.returnValue($q.resolve({ id: 'newUuid' }));
-
-    PageStructureService.addComponentToContainer(catalogComponent, mockContainer)
-      .then((newComponentId) => {
-        expect(HstService.addHstComponent).toHaveBeenCalledWith(catalogComponent, 'container-1', undefined);
-        expect(ChannelService.recordOwnChange).toHaveBeenCalled();
-        expect(newComponentId).toEqual('newUuid');
-        done();
-      });
-    $rootScope.$digest();
-  });
-
   it('prints parsed elements', () => {
     registerVBoxContainer(() => {
       registerVBoxComponent('componentA');
@@ -814,41 +876,6 @@ describe('PageStructureService', () => {
     }).not.toThrow();
   });
 
-  it('gracefully handles requests to re-render an undefined or null component', () => {
-    spyOn(MarkupService, 'fetchComponentMarkup');
-
-    PageStructureService.renderComponent();
-    PageStructureService.renderComponent(null);
-
-    expect(MarkupService.fetchComponentMarkup).not.toHaveBeenCalled();
-  });
-
-  it('shows an error message and reloads the page when a component has been deleted', (done) => {
-    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.reject({ status: 404 }));
-    spyOn(HippoIframeService, 'reload');
-    spyOn(FeedbackService, 'showDismissible');
-
-    PageStructureService.renderComponent({}).catch(() => {
-      expect(HippoIframeService.reload).toHaveBeenCalled();
-      expect(FeedbackService.showDismissible).toHaveBeenCalledWith('FEEDBACK_NOT_FOUND_MESSAGE');
-      done();
-    });
-    $rootScope.$digest();
-  });
-
-  it('does nothing if markup for a component cannot be retrieved but status is not 404', (done) => {
-    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.reject({}));
-    spyOn(HippoIframeService, 'reload');
-    spyOn(FeedbackService, 'showError');
-
-    PageStructureService.renderComponent({}).then(() => {
-      expect(HippoIframeService.reload).not.toHaveBeenCalled();
-      expect(FeedbackService.showError).not.toHaveBeenCalled();
-      done();
-    });
-    $rootScope.$digest();
-  });
-
   it('does not add a re-rendered and incorrectly commented component to the page structure', () => {
     registerVBoxContainer(() => registerVBoxComponent('componentA'));
     PageStructureService.parseElements();
@@ -872,6 +899,9 @@ describe('PageStructureService', () => {
   });
 
   it('knows that a re-rendered component contains new head contributions', () => {
+    const onNewHeadContributions = jasmine.createSpy('new-head-contributions');
+    const offNewHeadContributions = $rootScope.$on('hippo-iframe:new-head-contributions', onNewHeadContributions);
+
     registerVBoxContainer(() => registerVBoxComponent('componentA'));
     PageStructureService.parseElements();
 
@@ -883,18 +913,21 @@ describe('PageStructureService', () => {
       ${unprocessedHeadContributionsComment('<script>window.newScript=true</script>')}
       `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
-    spyOn(HippoIframeService, 'reload');
 
     const component = PageStructureService.getComponentById('aaaa');
     PageStructureService.renderComponent(component);
     $rootScope.$digest();
 
     const updatedComponent = PageStructureService.getContainers()[0].getComponents()[0];
-    expect(PageStructureService.containsNewHeadContributions(updatedComponent)).toBe(true);
-    expect(HippoIframeService.reload).toHaveBeenCalled();
+    expect(onNewHeadContributions).toHaveBeenCalledWith(jasmine.any(Object), updatedComponent);
+
+    offNewHeadContributions();
   });
 
   it('knows that a re-rendered component does not contain new head contributions', () => {
+    const onNewHeadContributions = jasmine.createSpy('new-head-contributions');
+    const offNewHeadContributions = $rootScope.$on('hippo-iframe:new-head-contributions', onNewHeadContributions);
+
     registerVBoxContainer(() => registerVBoxComponent('componentA'));
     PageStructureService.parseElements();
 
@@ -905,18 +938,20 @@ describe('PageStructureService', () => {
       ${endComment('aaaa')}
     `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
-    spyOn(HippoIframeService, 'reload');
 
     const component = PageStructureService.getComponentById('aaaa');
     PageStructureService.renderComponent(component);
     $rootScope.$digest();
 
-    const updatedComponentA = PageStructureService.getContainers()[0].getComponents()[0];
-    expect(PageStructureService.containsNewHeadContributions(updatedComponentA)).toBe(false);
-    expect(HippoIframeService.reload).not.toHaveBeenCalled();
+    expect(onNewHeadContributions).not.toHaveBeenCalled();
+
+    offNewHeadContributions();
   });
 
   it('knows that a re-rendered component does not contain new head contributions if they have already been rendered by the page', () => { // eslint-disable-line max-len
+    const onNewHeadContributions = jasmine.createSpy('new-head-contributions');
+    const offNewHeadContributions = $rootScope.$on('hippo-iframe:new-head-contributions', onNewHeadContributions);
+
     registerVBoxContainer(() => registerVBoxComponent('componentA'));
     registerHeadContributions('#processed-head-contributions');
     PageStructureService.parseElements();
@@ -929,18 +964,20 @@ describe('PageStructureService', () => {
       ${unprocessedHeadContributionsComment('<script>window.processed = true</script>')}
     `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
-    spyOn(HippoIframeService, 'reload');
 
     const component = PageStructureService.getComponentById('aaaa');
     PageStructureService.renderComponent(component);
     $rootScope.$digest();
 
-    const updatedComponent = PageStructureService.getContainers()[0].getComponents()[0];
-    expect(PageStructureService.containsNewHeadContributions(updatedComponent)).toBe(false);
-    expect(HippoIframeService.reload).not.toHaveBeenCalled();
+    expect(onNewHeadContributions).not.toHaveBeenCalled();
+
+    offNewHeadContributions();
   });
 
   it('does not reload the page when a component is re-rendered with custom properties', () => {
+    const onNewHeadContributions = jasmine.createSpy('new-head-contributions');
+    const offNewHeadContributions = $rootScope.$on('hippo-iframe:new-head-contributions', onNewHeadContributions);
+
     registerVBoxContainer(() => registerVBoxComponent('componentA'));
     PageStructureService.parseElements();
 
@@ -952,7 +989,6 @@ describe('PageStructureService', () => {
       ${unprocessedHeadContributionsComment('<script>window.newScript=true</script>')}
     `;
     spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: updatedMarkup }));
-    spyOn(HippoIframeService, 'reload');
 
     const component = PageStructureService.getComponentById('aaaa');
     const propertiesMap = {
@@ -961,7 +997,9 @@ describe('PageStructureService', () => {
     PageStructureService.renderComponent(component, propertiesMap);
     $rootScope.$digest();
 
-    expect(HippoIframeService.reload).not.toHaveBeenCalled();
+    expect(onNewHeadContributions).not.toHaveBeenCalled();
+
+    offNewHeadContributions();
   });
 
   it('notifies change listeners when updating a component', () => {

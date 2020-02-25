@@ -255,6 +255,14 @@ describe('hippoIframeCtrl', () => {
     expect(listener).toHaveBeenCalled();
   });
 
+  it('reloads the iframe when it receives a "hippo-iframe:new-head-contributions" event', () => {
+    spyOn(HippoIframeService, 'reload');
+    const mockComponent = jasmine.createSpyObj('ComponentElement', ['getLabel']);
+    $rootScope.$emit('hippo-iframe:new-head-contributions', mockComponent);
+
+    expect(HippoIframeService.reload).toHaveBeenCalled();
+  });
+
   it('initializes the legacy SPA integration', () => {
     spyOn(SpaService, 'initLegacy').and.returnValue(true);
 

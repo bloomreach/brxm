@@ -86,37 +86,45 @@ describe('ContainerService', () => {
         getContainer() {},
         getLabel() {},
       }));
-      spyOn(PageStructureService, 'renderNewComponentInContainer');
+      spyOn(PageStructureService, 'renderContainer');
       spyOn(SpaService, 'isSpa');
     });
 
     it('adds a component to a container in the page structure', () => {
       SpaService.isSpa.and.returnValue(false);
-      ContainerService.addComponent();
+
+      const component = {};
+      const container = {};
+      ContainerService.addComponent(component, container);
       $rootScope.$digest();
-      expect(PageStructureService.addComponentToContainer).toHaveBeenCalled();
+
+      expect(PageStructureService.addComponentToContainer).toHaveBeenCalledWith(component, container, undefined);
       expect(HippoIframeService.reload).not.toHaveBeenCalled();
-      expect(PageStructureService.renderNewComponentInContainer).toHaveBeenCalled();
+      expect(PageStructureService.renderContainer).toHaveBeenCalledWith(container);
     });
 
     it('reloads the iframe if there is an SPA', () => {
       SpaService.isSpa.and.returnValue(true);
+
       ContainerService.addComponent();
       $rootScope.$digest();
+
       expect(PageStructureService.addComponentToContainer).toHaveBeenCalled();
       expect(HippoIframeService.reload).toHaveBeenCalled();
-      expect(PageStructureService.renderNewComponentInContainer).not.toHaveBeenCalled();
+      expect(PageStructureService.renderContainer).not.toHaveBeenCalled();
     });
 
-    it('handles errors when thrown, upon adding a component to container', () => {
+    it('handles errors and reloads the iframe, upon adding a component to container', () => {
       PageStructureService.addComponentToContainer.and.returnValue($q.reject());
       spyOn(FeedbackService, 'showError');
 
       ContainerService.addComponent({ label: 'Banner' });
       $rootScope.$digest();
+
       expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT', {
         component: 'Banner',
       });
+      expect(HippoIframeService.reload).toHaveBeenCalled();
     });
   });
 
@@ -149,17 +157,26 @@ describe('ContainerService', () => {
   });
 
   describe('delete component', () => {
+    let mockComponent;
+
+    beforeEach(() => {
+      spyOn(CmsService, 'publish');
+      spyOn(DragDropService, 'replaceContainer');
+      spyOn(DialogService, 'confirm').and.callThrough();
+      spyOn(DialogService, 'show').and.returnValue($q.resolve());
+      spyOn(HippoIframeService, 'reload');
+
+      mockComponent = jasmine.createSpyObj('ComponentElement', ['getLabel']);
+      spyOn(PageStructureService, 'getComponentById').and.returnValue(mockComponent);
+      spyOn(PageStructureService, 'removeComponentById');
+      spyOn(PageStructureService, 'renderContainer');
+    });
+
     it('shows the confirmation dialog and deletes selected component on confirmation', () => {
-      const mockComponent = jasmine.createSpyObj('ComponentElement', ['getLabel']);
       const oldContainer = {};
       const newContainer = {};
-      spyOn(DragDropService, 'replaceContainer');
-      spyOn(PageStructureService, 'getComponentById').and.returnValue(mockComponent);
-      spyOn(PageStructureService, 'removeComponentById').and.returnValue($q.when(oldContainer));
-      spyOn(PageStructureService, 'renderContainer').and.returnValue($q.when(newContainer));
-      spyOn(DialogService, 'show').and.returnValue($q.resolve());
-      spyOn(DialogService, 'confirm').and.callThrough();
-      spyOn(CmsService, 'publish');
+      PageStructureService.removeComponentById.and.returnValue($q.when(oldContainer));
+      PageStructureService.renderContainer.and.returnValue($q.when(newContainer));
 
       ContainerService.deleteComponent('1234');
       $rootScope.$digest();
@@ -173,16 +190,9 @@ describe('ContainerService', () => {
     });
 
     it('shows the confirmation dialog and reloads the page if there is an SPA', () => {
-      const mockComponent = jasmine.createSpyObj('ComponentElement', ['getLabel']);
       const oldContainer = {};
       spyOn(SpaService, 'isSpa').and.returnValue(true);
-      spyOn(DragDropService, 'replaceContainer');
-      spyOn(PageStructureService, 'getComponentById').and.returnValue(mockComponent);
-      spyOn(PageStructureService, 'removeComponentById').and.returnValue($q.when(oldContainer));
-      spyOn(DialogService, 'show').and.returnValue($q.resolve());
-      spyOn(DialogService, 'confirm').and.callThrough();
-      spyOn(HippoIframeService, 'reload');
-      spyOn(CmsService, 'publish');
+      PageStructureService.removeComponentById.and.returnValue($q.when(oldContainer));
 
       ContainerService.deleteComponent('1234');
       $rootScope.$digest();
@@ -197,11 +207,8 @@ describe('ContainerService', () => {
     });
 
     it('shows component properties dialog after rejecting the delete operation', () => {
-      const mockComponent = jasmine.createSpyObj('ComponentElement', ['getLabel']);
-      spyOn(PageStructureService, 'getComponentById').and.returnValue(mockComponent);
       spyOn(EditComponentService, 'startEditing');
-      spyOn(DialogService, 'show').and.returnValue($q.reject());
-      spyOn(DialogService, 'confirm').and.callThrough();
+      DialogService.show.and.returnValue($q.reject());
 
       ContainerService.deleteComponent('1234');
       $rootScope.$digest();
@@ -212,10 +219,28 @@ describe('ContainerService', () => {
       expect(EditComponentService.startEditing).toHaveBeenCalledWith(mockComponent);
     });
 
+    it('reloads the iframe when removal fails', () => {
+      PageStructureService.removeComponentById.and.returnValue($q.reject());
+
+      ContainerService.deleteComponent('1234');
+      $rootScope.$digest();
+
+      expect(HippoIframeService.reload).toHaveBeenCalled();
+    });
+
+    it('reloads the iframe when rendering fails', () => {
+      PageStructureService.removeComponentById.and.returnValue($q.resolve());
+      PageStructureService.renderContainer.and.returnValue($q.reject());
+
+      ContainerService.deleteComponent('1234');
+      $rootScope.$digest();
+
+      expect(HippoIframeService.reload).toHaveBeenCalled();
+    });
+
     it('logs a warning for unknown components', () => {
       spyOn($log, 'warn');
-      spyOn(PageStructureService, 'getComponentById').and.returnValue(null);
-      spyOn(PageStructureService, 'removeComponentById');
+      PageStructureService.getComponentById.and.returnValue(null);
 
       ContainerService.deleteComponent('unknown');
       $rootScope.$digest();

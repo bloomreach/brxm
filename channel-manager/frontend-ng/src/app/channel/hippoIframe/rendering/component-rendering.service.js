@@ -18,6 +18,7 @@ class ComponentRenderingService {
   constructor(
     $log,
     $q,
+    HippoIframeService,
     PageStructureService,
     SpaService,
   ) {
@@ -25,20 +26,33 @@ class ComponentRenderingService {
 
     this.$log = $log;
     this.$q = $q;
+    this.HippoIframeService = HippoIframeService;
     this.PageStructureService = PageStructureService;
     this.SpaService = SpaService;
   }
 
-  renderComponent(componentId, properties) {
+  async renderComponent(componentId, properties) {
     const component = this.PageStructureService.getComponentById(componentId);
     if (!component) {
       this.$log.warn(`Cannot render unknown component with ID '${componentId}'`);
-      return this.$q.reject();
+
+      throw new Error(`Cannot render unknown component with ID '${componentId}'.`);
     }
+
     // let the SPA render the component; if it returns false, we render the component instead
-    return this.SpaService.renderComponent(component, properties)
-      ? this.$q.resolve()
-      : this.PageStructureService.renderComponent(component, properties);
+    if (this.SpaService.renderComponent(component, properties)) {
+      return;
+    }
+
+    try {
+      // eslint-disable-next-line consistent-return
+      return await this.PageStructureService.renderComponent(component, properties);
+    } catch (error) {
+      // component being edited is removed (by someone else), reload the page
+      this.HippoIframeService.reload();
+
+      throw error;
+    }
   }
 }
 

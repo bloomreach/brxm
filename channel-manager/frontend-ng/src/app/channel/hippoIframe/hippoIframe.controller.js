@@ -20,6 +20,7 @@ import iframeBundle from '../../iframe';
 class HippoIframeCtrl {
   constructor(
     $element,
+    $log,
     $rootScope,
     CmsService,
     CommunicationService,
@@ -41,6 +42,7 @@ class HippoIframeCtrl {
     'ngInject';
 
     this.$element = $element;
+    this.$log = $log;
     this.$rootScope = $rootScope;
     this.CmsService = CmsService;
     this.CommunicationService = CommunicationService;
@@ -63,6 +65,7 @@ class HippoIframeCtrl {
     this._onSpaReady = this._onSpaReady.bind(this);
     this.onLoad = this.onLoad.bind(this);
     this._onUnload = this._onUnload.bind(this);
+    this._onNewHeadContributions = this._onNewHeadContributions.bind(this);
   }
 
   $onInit() {
@@ -74,6 +77,10 @@ class HippoIframeCtrl {
     this.iframeJQueryElement.on('load', this.onLoad);
     this._offSdkReady = this.$rootScope.$on('spa:ready', this._onSpaReady);
     this._offSdkUnload = this.$rootScope.$on('iframe:unload', this._onUnload);
+    this._offNewHeadContributions = this.$rootScope.$on(
+      'hippo-iframe:new-head-contributions',
+      this._onNewHeadContributions,
+    );
 
     const canvasJQueryElement = this.$element.find('.channel-iframe-canvas');
     const sheetJQueryElement = this.$element.find('.channel-iframe-sheet');
@@ -111,6 +118,7 @@ class HippoIframeCtrl {
     this._offDrop();
     this._offSdkReady();
     this._offSdkUnload();
+    this._offNewHeadContributions();
   }
 
   async onLoad() {
@@ -152,6 +160,11 @@ class HippoIframeCtrl {
     await connection;
 
     this.$rootScope.$broadcast('hippo-iframe:load');
+  }
+
+  _onNewHeadContributions(event, component) {
+    this.$log.info(`Updated '${component.getLabel()}' component needs additional head contributions.`);
+    this.HippoIframeService.reload();
   }
 
   /**

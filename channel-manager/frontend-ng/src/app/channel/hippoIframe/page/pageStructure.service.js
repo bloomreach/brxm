@@ -30,7 +30,6 @@ class PageStructureService {
     $rootScope,
     ChannelService,
     FeedbackService,
-    HippoIframeService,
     HstCommentsProcessorService,
     HstComponentService,
     HstService,
@@ -45,7 +44,6 @@ class PageStructureService {
     this.$rootScope = $rootScope;
     this.ChannelService = ChannelService;
     this.FeedbackService = FeedbackService;
-    this.HippoIframeService = HippoIframeService;
     this.HstCommentsProcessorService = HstCommentsProcessorService;
     this.HstComponentService = HstComponentService;
     this.HstService = HstService;
@@ -55,7 +53,7 @@ class PageStructureService {
 
     this.containers = [];
     this.embeddedLinks = [];
-    this.headContributions = [];
+    this.headContributions = new Set();
 
     this.ModelFactoryService
       .transform(({ json }) => json)
@@ -98,7 +96,8 @@ class PageStructureService {
   _createHeadContributions({ json }) {
     const headContributions = new HeadContributions(json);
 
-    this.headContributions.push(...headContributions.getElements());
+    headContributions.getElements()
+      .forEach(item => this.headContributions.add(item));
 
     return headContributions;
   }
@@ -136,7 +135,7 @@ class PageStructureService {
     this.embeddedLinks.splice(0)
       .forEach(element => element.getBoxElement().remove());
     this.containers = [];
-    this.headContributions = [];
+    this.headContributions.clear();
     this.PageMetaDataService.clear();
     this._notifyChangeListeners();
   }
@@ -178,26 +177,29 @@ class PageStructureService {
   removeComponentById(componentId) {
     const component = this.getComponentById(componentId);
 
-    if (component) {
-      const oldContainer = component.getContainer();
-      return this.HstComponentService.deleteComponent(oldContainer.getId(), componentId)
-        .then(() => {
-          this._onAfterRemoveComponent();
-          return oldContainer;
-        },
-        (errorResponse) => {
-          const errorKey = errorResponse.error === 'ITEM_ALREADY_LOCKED'
-            ? 'ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED'
-            : 'ERROR_DELETE_COMPONENT';
-          const params = errorResponse.parameterMap;
-          params.component = component.getLabel();
-          return this._showFeedbackAndReload(errorKey, params);
-        });
+    if (!component) {
+      this.$log.debug(
+        `Could not remove component with ID '${componentId}' because it does not exist in the page structure.`,
+      );
+      return this.$q.reject();
     }
-    this.$log.debug(
-      `Could not remove component with ID '${componentId}' because it does not exist in the page structure.`,
-    );
-    return this.$q.reject();
+
+    const oldContainer = component.getContainer();
+    return this.HstComponentService.deleteComponent(oldContainer.getId(), componentId)
+      .then(() => {
+        this._onAfterRemoveComponent();
+        return oldContainer;
+      },
+      (errorResponse) => {
+        const errorKey = errorResponse.error === 'ITEM_ALREADY_LOCKED'
+          ? 'ERROR_DELETE_COMPONENT_ITEM_ALREADY_LOCKED'
+          : 'ERROR_DELETE_COMPONENT';
+        const params = errorResponse.parameterMap;
+        params.component = component.getLabel();
+        this.FeedbackService.showError(errorKey, params);
+
+        return this.$q.reject();
+      });
   }
 
   _onAfterRemoveComponent() {
@@ -240,20 +242,16 @@ class PageStructureService {
           component = this.getComponentById(component.getId());
 
           const newMarkup = response.data;
+          const oldHeadContributionsSize = this.headContributions.size;
           const updatedComponent = this._updateComponent(component, newMarkup);
           this._notifyChangeListeners();
 
-          if ($.isEmptyObject(propertiesMap) && this.containsNewHeadContributions(updatedComponent)) {
-            this.$log.info(
-              `Updated '${updatedComponent.getLabel()}' component needs additional head contributions, reloading page`,
-            );
-            this.HippoIframeService.reload();
+          if ($.isEmptyObject(propertiesMap) && oldHeadContributionsSize !== this.headContributions.size) {
+            this.$rootScope.$emit('hippo-iframe:new-head-contributions', updatedComponent);
           }
         })
         .catch((response) => {
           if (response.status === 404) {
-            // component being edited is removed (by someone else), reload the page
-            this.HippoIframeService.reload();
             this.FeedbackService.showDismissible('FEEDBACK_NOT_FOUND_MESSAGE');
             return this.$q.reject();
           }
@@ -297,13 +295,17 @@ class PageStructureService {
     return newComponent;
   }
 
-  renderContainer(container) {
-    return this.MarkupService.fetchContainerMarkup(container)
-      .then(markup => this._updateContainer(container, markup))
-      .then((newContainer) => {
-        this._notifyChangeListeners();
-        return newContainer;
-      });
+  async renderContainer(container) {
+    const markup = await this.MarkupService.fetchContainerMarkup(container);
+    const oldHeadContributionsSize = this.headContributions.size;
+    const newContainer = await this._updateContainer(container, markup);
+
+    this._notifyChangeListeners();
+    if (oldHeadContributionsSize !== this.headContributions.size) {
+      this.$rootScope.$emit('hippo-iframe:new-head-contributions', newContainer);
+    }
+
+    return newContainer;
   }
 
   _updateContainer(oldContainer, newMarkup) {
@@ -325,14 +327,6 @@ class PageStructureService {
     const newContainer = this.replaceContainer(oldContainer, container);
 
     return newContainer;
-  }
-
-  containsNewHeadContributions(pageStructureElement) {
-    if (!pageStructureElement) {
-      return false;
-    }
-    const elementHeadContributions = pageStructureElement.getHeadContributions();
-    return elementHeadContributions.some(contribution => !this.headContributions.includes(contribution));
   }
 
   _removeEmbeddedLinksInContainer(container) {
@@ -369,7 +363,9 @@ class PageStructureService {
             : 'ERROR_ADD_COMPONENT';
           const params = errorResponse.parameterMap;
           params.component = catalogComponent.name;
-          return this._showFeedbackAndReload(errorKey, params);
+          this.FeedbackService.showError(errorKey, params);
+
+          return this.$q.reject();
         },
       );
   }
@@ -402,19 +398,6 @@ class PageStructureService {
     return this.HstService.updateHstContainer(container.getId(), container.getHstRepresentation());
   }
 
-  renderNewComponentInContainer(newComponentId, container) {
-    return this.renderContainer(container)
-      .then(() => this.getComponentById(newComponentId))
-      .then((newComponent) => {
-        if (this.containsNewHeadContributions(newComponent.getContainer())) {
-          this.$log.info(
-            `New '${newComponent.getLabel()}' component needs additional head contributions, reloading page`,
-          );
-          this.HippoIframeService.reload();
-        }
-      });
-  }
-
   getContainerByOverlayElement(overlayElement) {
     return this.containers.find((container) => {
       const containerOverlay = container.getOverlayElement();
@@ -436,11 +419,6 @@ class PageStructureService {
       this.containers.splice(index, 1);
     }
     return newContainer;
-  }
-
-  _showFeedbackAndReload(errorKey, params) {
-    this.FeedbackService.showError(errorKey, params);
-    return this.HippoIframeService.reload().then(() => this.$q.reject());
   }
 }
 
