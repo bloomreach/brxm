@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@ import org.onehippo.repository.documentworkflow.action.RetrieveVersionAction;
 import org.onehippo.repository.documentworkflow.action.ScheduleWorkflowAction;
 import org.onehippo.repository.documentworkflow.action.SetHolderAction;
 import org.onehippo.repository.documentworkflow.action.SetPreReintegrationLabelsAction;
+import org.onehippo.repository.documentworkflow.action.SetTransferableAction;
 import org.onehippo.repository.documentworkflow.action.VersionRestoreToAction;
 import org.onehippo.repository.documentworkflow.action.VersionVariantAction;
 import org.onehippo.repository.documentworkflow.action.WorkflowRequestAction;
@@ -83,42 +84,48 @@ public class BaseDocumentWorkflowTest {
 
         MockNode scxmlConfigNode = registry.createConfigNode();
         MockNode scxmlNode = registry.addScxmlNode(scxmlConfigNode, "documentworkflow", loadSCXML());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "action", ActionAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "result", ResultAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "feedback", FeedbackAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "copyVariant", CopyVariantAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "configVariant", ConfigVariantAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "workflowRequest", WorkflowRequestAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "archiveDocument", ArchiveDocumentAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "isModified", IsModifiedAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "scheduleWorkflow", ScheduleWorkflowAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "copyDocument", CopyDocumentAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "moveDocument", MoveDocumentAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "renameDocument", RenameDocumentAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "setHolder", SetHolderAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "deleteRequest", DeleteRequestAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "workflowException", WorkflowExceptionAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "version", VersionVariantAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "listVersions", ListVersionsVariantAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "retrieveVersion", RetrieveVersionAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "restoreVersion", RestoreVersionAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "versionRestoreTo", VersionRestoreToAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "restoreVersionByVersion", RestoreVersionByVersionAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "requestAction", RequestActionAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "rejectRequest", RejectRequestAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "logEvent", LogEventAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "listBranches", ListBranchesAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "branch", BranchAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "getBranch", GetBranchAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "removeBranch", RemoveBranchAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "checkoutBranch", CheckoutBranchAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "setPreReintegrationLabels", SetPreReintegrationLabelsAction.class.getName());
-        registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", "label", LabelAction.class.getName());
+        getMockNode(scxmlNode, "action", ActionAction.class.getName());
+        getMockNode(scxmlNode, "result", ResultAction.class.getName());
+        getMockNode(scxmlNode, "feedback", FeedbackAction.class.getName());
+        getMockNode(scxmlNode, "copyVariant", CopyVariantAction.class.getName());
+        getMockNode(scxmlNode, "configVariant", ConfigVariantAction.class.getName());
+        getMockNode(scxmlNode, "workflowRequest", WorkflowRequestAction.class.getName());
+        getMockNode(scxmlNode, "archiveDocument", ArchiveDocumentAction.class.getName());
+        getMockNode(scxmlNode, "isModified", IsModifiedAction.class.getName());
+        getMockNode(scxmlNode, "scheduleWorkflow", ScheduleWorkflowAction.class.getName());
+        getMockNode(scxmlNode, "copyDocument", CopyDocumentAction.class.getName());
+        getMockNode(scxmlNode, "moveDocument", MoveDocumentAction.class.getName());
+        getMockNode(scxmlNode, "renameDocument", RenameDocumentAction.class.getName());
+        getMockNode(scxmlNode, "setHolder", SetHolderAction.class.getName());
+        getMockNode(scxmlNode, "setTransferable", SetTransferableAction.class.getName());
+        getMockNode(scxmlNode, "setTransferable", SetTransferableAction.class.getName());
+        getMockNode(scxmlNode, "deleteRequest", DeleteRequestAction.class.getName());
+        getMockNode(scxmlNode, "workflowException", WorkflowExceptionAction.class.getName());
+        getMockNode(scxmlNode, "version", VersionVariantAction.class.getName());
+        getMockNode(scxmlNode, "listVersions", ListVersionsVariantAction.class.getName());
+        getMockNode(scxmlNode, "retrieveVersion", RetrieveVersionAction.class.getName());
+        getMockNode(scxmlNode, "restoreVersion", RestoreVersionAction.class.getName());
+        getMockNode(scxmlNode, "versionRestoreTo", VersionRestoreToAction.class.getName());
+        getMockNode(scxmlNode, "restoreVersionByVersion", RestoreVersionByVersionAction.class.getName());
+        getMockNode(scxmlNode, "requestAction", RequestActionAction.class.getName());
+        getMockNode(scxmlNode, "rejectRequest", RejectRequestAction.class.getName());
+        getMockNode(scxmlNode, "logEvent", LogEventAction.class.getName());
+        getMockNode(scxmlNode, "listBranches", ListBranchesAction.class.getName());
+        getMockNode(scxmlNode, "branch", BranchAction.class.getName());
+        getMockNode(scxmlNode, "getBranch", GetBranchAction.class.getName());
+        getMockNode(scxmlNode, "removeBranch", RemoveBranchAction.class.getName());
+        getMockNode(scxmlNode, "checkoutBranch", CheckoutBranchAction.class.getName());
+        getMockNode(scxmlNode, "setPreReintegrationLabels", SetPreReintegrationLabelsAction.class.getName());
+        getMockNode(scxmlNode, "label", LabelAction.class.getName());
         registry.setUp(scxmlConfigNode);
 
         HippoServiceRegistry.registerService(registry, SCXMLRegistry.class);
         HippoServiceRegistry.registerService(service, SCXMLExecutorFactory.class);
 
+    }
+
+    private static MockNode getMockNode(final MockNode scxmlNode, final String action, final String name) throws Exception {
+        return registry.addCustomAction(scxmlNode, "http://www.onehippo.org/cms7/repository/scxml", action, name);
     }
 
     protected static void destroyDocumentWorkflowSCXMLRegistry() throws Exception {

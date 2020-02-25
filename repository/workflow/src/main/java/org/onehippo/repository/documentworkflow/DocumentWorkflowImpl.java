@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ import javax.jcr.version.Version;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.DocumentWorkflowAction;
+import org.hippoecm.repository.api.MappingException;
 import org.hippoecm.repository.api.RepositoryMap;
 import org.hippoecm.repository.api.WorkflowAction;
 import org.hippoecm.repository.api.WorkflowException;
@@ -226,6 +227,16 @@ public class DocumentWorkflowImpl extends WorkflowImpl implements DocumentWorkfl
     @Override
     public Document commitEditableInstance() throws WorkflowException, RepositoryException {
         return (Document) triggerAction(DocumentWorkflowAction.commitEditableInstance());
+    }
+
+    @Override
+    public Document saveDraft() throws WorkflowException {
+        return (Document) triggerAction(DocumentWorkflowAction.saveDraft());
+    }
+
+    @Override
+    public Document editDraft() throws WorkflowException {
+        return (Document) triggerAction(DocumentWorkflowAction.editDraft());
     }
 
     @Override

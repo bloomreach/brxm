@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -659,6 +659,31 @@ public interface DocumentWorkflow extends Workflow, EditableWorkflow, CopyWorkfl
      * exist
      */
     void depublishBranch(String branchId) throws WorkflowException;
+
+
+
+    /**
+     * Marks the draft as transferable. Other users are allowed to become the holder of the document.
+     * @return the document which has been marked as draft.
+     * @throws WorkflowException  indicates that the work-flow call failed due work-flow specific conditions
+     * @throws MappingException indicates that the work-flow call failed because of configuration problems
+     * @throws RepositoryException  indicates that the work-flow call failed because of storage problems internal to the repository
+     * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
+     */
+    Document saveDraft()
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
+
+
+    /**
+     * Requests the current draft variant of the document
+     * @return The draft variant of the document as is
+     * @throws WorkflowException  indicates that the work-flow call failed due work-flow specific conditions
+     * @throws MappingException indicates that the work-flow call failed because of configuration problems
+     * @throws RepositoryException  indicates that the work-flow call failed because of storage problems internal to the repository
+     * @throws RemoteException indicates that the work-flow call failed because of a connection problem with the repository
+     */
+    Document editDraft()
+            throws WorkflowException, MappingException, RepositoryException, RemoteException;
 
     /**
      * Triggers workflow based on {@link org.hippoecm.repository.api.WorkflowAction}

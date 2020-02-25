@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!--
-  Copyright 2013-2019 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -96,7 +96,7 @@
 
     // true if draft exists and not currently editor or edited by current user
     def boolean isEditable() {
-      !holder or editor
+      !holder or editor or transferable
     }
 
     // true if published version (can be frozen node) for branchId exists
@@ -151,6 +151,12 @@
     def boolean isCurrentUnpublishedVersioned() {
       workflowData.isCurrentUnpublishedVersioned(unpublished)
     }
+
+    // true if the current draft below the handle has the transferable status. The transferable status indicates
+    // that other uses can become the holder of the draft.
+    def boolean isTransferable() {
+      draft?.transferable
+    }
   </script>
 
   <!-- the initial no-document state is used to prevent entering the handle state if there is no document -->
@@ -190,10 +196,10 @@
           <hippo:action action="commitEditableInstance" enabledExpr="false"/>
         </onentry>
         <!-- event-less transition to state "editing" if there is no pending request and the draft variant is edited -->
-        <transition target="editing"  cond="editing"/>
+        <transition target="editing"  cond="editing and !transferable"/>
         <!-- (else) event-less transition to state "editable" if there is no pending request and the draft variant
                     doesn't exist yet or isn't edited -->
-        <transition target="editable" cond="!requestPending or notMaster"/>
+        <transition target="editable" cond="!requestPending or notMaster or transferable"/>
       </state>
 
       <!-- editing state becomes active when the draft variant is currently edited -->
@@ -205,9 +211,16 @@
             <!-- if current user is holder, (s)he is allowed to obtain editable instance -->
             <hippo:action action="obtainEditableInstance" enabledExpr="true"/>
             <hippo:action action="commitEditableInstance" enabledExpr="true"/>
+            <hippo:setTransferable transferable="false"/>
+            <if cond="!!draft">
+              <hippo:action action="saveDraft" enabledExpr="true"/>
+            </if>
           <else/>
             <!-- for a not-current editor the current editor (holder) is reported through the 'inUseBy' feedback -->
-            <hippo:feedback key="inUseBy" value="holder"/>
+
+           <if cond="!transferable" >
+             <hippo:feedback key="inUseBy" value="holder"/>
+           </if>
           </if>
           <if cond="!editor and workflowContext.isGranted(draft,'hippo:admin')">
             <!-- For an admin (granted hippo:admin) enable the unlock operation if not-current editor -->
@@ -216,7 +229,9 @@
         </onentry>
       </state>
 
-      <!-- editable state becomes active if editing is possible but there is no current editor -->
+      <!-- editable state becomes active if editing is possible but there is no current editor or if
+      the draft is transferable -->
+
       <state id="editable">
         <onentry>
           <if cond="workflowContext.isGranted(draft,'hippo:admin')">
@@ -225,6 +240,9 @@
           </if>
           <!-- enable the operation to start editing -->
           <hippo:action action="obtainEditableInstance" enabledExpr="branchExists"/>
+          <if cond="transferable">
+            <hippo:action action="editDraft" enabledExpr="true"/>
+          </if>
         </onentry>
       </state>
 
@@ -241,7 +259,7 @@
       <transition event="obtainEditableInstance">
         <!-- copy/update draft unless user already is holder (editing) -->
 
-        <if cond="!editor">
+        <if cond="!editor or transferable">
           <if cond="!!unpublished">
             <!-- unpublished document exists -->
             <!-- make sure the unpublished is the right branch -->
@@ -273,6 +291,19 @@
           <hippo:configVariant variant="draft" applyModified="true" setHolder="true" availabilities=""/>
         </if>
         <!-- store the (newly created or updated) draft document as result -->
+        <hippo:result value="draft"/>
+      </transition>
+
+      <!-- target-less transition to 'save' the current edited draft variant by adding the transferable property -->
+      <transition event="saveDraft">
+        <hippo:setTransferable transferable="true"/>
+        <hippo:result value="draft"/>
+      </transition>
+
+      <!-- target-less transition to 'edit' the current edited draft -->
+      <transition event="editDraft">
+        <hippo:setHolder holder="user"/>
+        <hippo:setTransferable transferable="false"/>
         <hippo:result value="draft"/>
       </transition>
 
@@ -308,6 +339,7 @@
            with that of the current invoking admin (granted hippo:admin) user. -->
       <transition event="unlock">
         <hippo:setHolder holder="user"/>
+        <hippo:setTransferable transferable="false"/>
       </transition>
 
     </state>

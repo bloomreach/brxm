@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 package org.onehippo.repository.documentworkflow;
 
 import java.io.Serializable;
+import java.util.Map;
 import java.util.TreeMap;
 
 public class HintsBuilder {
@@ -26,10 +27,13 @@ public class HintsBuilder {
     public static String INFO_PREVIEW_AVAILABLE = "previewAvailable";
     public static String INFO_IN_USE_BY = "inUseBy";
     public static String INFO_REQUESTS = "requests";
+    public static final String TRANSFERABLE = "transferable";
 
     public static String ACTION_CHECK_MODIFIED = "checkModified";
     public static String ACTION_DISPOSE_EDITABLE_INSTANCE = "disposeEditableInstance";
     public static String ACTION_OBTAIN_EDITABLE_INSTANCE = "obtainEditableInstance";
+    public static final String ACTION_EDIT_DRAFT = "editDraft";
+    public static final String ACTION_SAVE_DRAFT = "saveDraft";
     public static String ACTION_COMMIT_EDITABLE_INSTANCE = "commitEditableInstance";
     public static String ACTION_UNLOCK = "unlock";
     public static String ACTION_REJECT_REQUEST = "rejectRequest";
@@ -271,4 +275,13 @@ public class HintsBuilder {
         return this;
     }
 
+    public HintsBuilder editDraft() {
+        actions.put(ACTION_EDIT_DRAFT, true);
+        return this;
+    }
+
+    public HintsBuilder saveDraft() {
+        actions.put(ACTION_SAVE_DRAFT, true);
+        return this;
+    }
 }

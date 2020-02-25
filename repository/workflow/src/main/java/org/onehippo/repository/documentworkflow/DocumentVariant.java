@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -78,6 +78,27 @@ public class DocumentVariant extends Document {
 
     public String getHolder() throws RepositoryException {
         return getStringProperty(HippoStdNodeType.HIPPOSTD_HOLDER);
+    }
+
+    /**
+     *
+     * Updates or deletes ( in case of {@code null} the {@link HippoStdNodeType#HIPPOSTD_TRANSFERABLE} property.
+     *
+     * @param transferable {@link Boolean#TRUE}, {@link Boolean#FALSE} or {@code null}
+     * @throws RepositoryException
+     */
+    public void setTransferable(Boolean transferable) throws RepositoryException {
+        setBooleanProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE, transferable);
+    }
+
+    /**
+     * Reads the {@link HippoStdNodeType#HIPPOSTD_TRANSFERABLE} property.
+     *
+     * @return {@link Boolean#TRUE}, {@link Boolean#FALSE} or {@code null} if the property is not present
+     * @throws RepositoryException
+     */
+    public Boolean isTransferable() throws RepositoryException {
+        return getBooleanProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE);
     }
 
     public void setAvailability(String[] availability) throws RepositoryException {

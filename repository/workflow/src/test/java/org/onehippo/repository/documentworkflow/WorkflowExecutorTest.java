@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -120,6 +120,7 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
                 .requestDepublication(false)
                 .requestPublication(false)
                 .terminateable(false)
+                .saveDraft()
                 .actions();
         assertExpectedActions(data, expectedActions);
     }
@@ -191,6 +192,7 @@ public class WorkflowExecutorTest extends BaseDocumentWorkflowTest {
                 .retrieveVersion()
                 .terminateable(false)
                 .copy()
+                .saveDraft()
                 .actions();
         assertExpectedActions(data, expectedActions);
     }

@@ -467,6 +467,7 @@ public class DocumentWorkflowDepublishBranchTest extends AbstractDocumentWorkflo
         session.save();
         workflow.commitEditableInstance();
 
+
         workflow.obtainEditableInstance("foo");
         draft.setProperty("title", "title in editing");
         draft.setProperty("summary", "summary in editing");
@@ -481,6 +482,7 @@ public class DocumentWorkflowDepublishBranchTest extends AbstractDocumentWorkflo
         assertTrue(versionHistory.hasVersionLabel("master-unpublished"));
 
         workflow.depublishBranch("foo");
+        session.save();
 
         // as a result, we expect the 'bar' live version to be live. The 'bar' unpublished version is a different version
         // and is expected to be restored
