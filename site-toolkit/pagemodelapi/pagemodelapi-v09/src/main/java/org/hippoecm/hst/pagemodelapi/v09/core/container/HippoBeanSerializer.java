@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
@@ -59,8 +60,7 @@ class HippoBeanSerializer extends JsonSerializer<HippoBean> implements Resolvabl
      * @return a safe JSON property/variable name converted from the handle ID or node ID
      */
     static String representationIdToJsonPropName(final String uuid) {
-        return new StringBuilder(uuid.length()).append(CONTENT_ID_JSON_NAME_PREFIX).append(uuid.replaceAll("-", ""))
-                .toString();
+        return CONTENT_ID_JSON_NAME_PREFIX + StringUtils.remove(uuid, '-');
     }
 
     private final JsonSerializer<Object> delegatee;
@@ -92,10 +92,8 @@ class HippoBeanSerializer extends JsonSerializer<HippoBean> implements Resolvabl
 
         boolean inContentSection = bean.isHippoFolderBean();
 
-        if (!inContentSection) {
-            if (bean.isHippoDocumentBean() && ((HippoDocumentBean) bean).getCanonicalHandleUUID() != null) {
-                inContentSection = true;
-            }
+        if (!inContentSection && bean.isHippoDocumentBean() && ((HippoDocumentBean) bean).getCanonicalHandleUUID() != null) {
+            inContentSection = true;
         }
 
         if (!inContentSection) {
