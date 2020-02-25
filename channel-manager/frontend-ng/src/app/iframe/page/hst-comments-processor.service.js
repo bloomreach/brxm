@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import HstConstants from '../hst.constants';
+import * as HstConstants from '../../model/constants';
 
 class HstCommentsProcessorService {
   constructor($document, $log) {

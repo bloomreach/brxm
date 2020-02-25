@@ -44,6 +44,15 @@ export default class CommunicationService {
     delete this._connection;
   }
 
+  _call(command, ...args) {
+    if (!this._child) {
+      return;
+    }
+
+    // eslint-disable-next-line consistent-return
+    return this._child[command](...args);
+  }
+
   _emit(event, data) {
     this.$rootScope.$emit(`iframe:${event}`, data);
   }
@@ -54,5 +63,17 @@ export default class CommunicationService {
     }
 
     this._child.emit(event, data);
+  }
+
+  parseElements(...args) {
+    return this._call('parseElements', ...args);
+  }
+
+  updateComponent(...args) {
+    return this._call('updateComponent', ...args);
+  }
+
+  updateContainer(...args) {
+    return this._call('updateContainer', ...args);
   }
 }

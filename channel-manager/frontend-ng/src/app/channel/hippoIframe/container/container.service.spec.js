@@ -152,7 +152,7 @@ describe('ContainerService', () => {
       expect(PageStructureService.renderContainer).toHaveBeenCalledWith(targetContainer);
       expect(DragDropService.replaceContainer).toHaveBeenCalledWith(sourceContainer, rerenderedSourceContainer);
       expect(DragDropService.replaceContainer).toHaveBeenCalledWith(targetContainer, rerenderedTargetContainer);
-      expect(ContainerService.emitter.emit).toHaveBeenCalledWith('component-moved', component);
+      expect(ContainerService.emitter.emit).toHaveBeenCalledWith('component-moved');
     });
   });
 

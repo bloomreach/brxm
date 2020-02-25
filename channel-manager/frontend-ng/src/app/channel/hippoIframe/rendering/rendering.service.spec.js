@@ -104,7 +104,7 @@ describe('RenderingService', () => {
       expect(ScrollService.saveScrollPosition).toHaveBeenCalled();
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(OverlayService.clear).toHaveBeenCalled();
-      expect(PageStructureService.parseElements).toHaveBeenCalledWith(iframeDocument);
+      expect(PageStructureService.parseElements).toHaveBeenCalledWith();
       expect(RenderingService.updateDragDrop).toHaveBeenCalled();
       expect(RenderingService.emitter.emit).toHaveBeenCalledWith('overlay-created');
       expect(ScrollService.restoreScrollPosition).toHaveBeenCalled();
@@ -122,7 +122,7 @@ describe('RenderingService', () => {
       expect(ScrollService.saveScrollPosition).toHaveBeenCalled();
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(OverlayService.clear).toHaveBeenCalled();
-      expect(PageStructureService.parseElements).toHaveBeenCalledWith(iframeDocument);
+      expect(PageStructureService.parseElements).toHaveBeenCalledWith();
       expect(RenderingService.updateDragDrop).toHaveBeenCalled();
       expect(RenderingService.emitter.emit).toHaveBeenCalledWith('overlay-created');
       expect(ScrollService.restoreScrollPosition).toHaveBeenCalled();

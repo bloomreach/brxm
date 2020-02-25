@@ -67,12 +67,18 @@ class OverlayService {
 
   init(iframeJQueryElement) {
     this.iframeJQueryElement = iframeJQueryElement;
-    this.iframeJQueryElement.on('load', () => this._onLoad());
+    this._offLoad = this.$rootScope.$on('hippo-iframe:load', () => this._onLoad());
 
     if (this._offPageChange) {
       this._offPageChange();
     }
     this._offPageChange = this.$rootScope.$on('iframe:page:change', () => this.sync());
+  }
+
+  destroy() {
+    if (this._offLoad) {
+      this._offLoad();
+    }
   }
 
   onEditMenu(callback) {
@@ -98,6 +104,10 @@ class OverlayService {
     const win = $(this.iframeWindow);
     win.one('unload', () => this._onUnload());
     win.on('resize', () => this.sync());
+
+    this.PageStructureService = this.iframeWindow.angular.element(this.iframeWindow.document)
+      .injector()
+      .get('PageStructureService');
   }
 
   _onUnload() {

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,7 @@
  * limitations under the License.
  */
 
-import { Component as BaseComponent } from '../../../../model/entities';
-import { ComponentEntityMixin } from './component-entity';
+import { ManageContentLink as BaseManageContentLink } from '../../../model/entities';
+import { LinkEntityMixin } from './link-entity';
 
-export class Component extends ComponentEntityMixin(BaseComponent) {
-  setContainer(container) {
-    super.setContainer(container);
-
-    if (container && !container.isXTypeNoMarkup()) {
-      const startComment = this.getStartComment();
-      this.setBoxElement(startComment.parent());
-    }
-  }
-}
+export class ManageContentLink extends LinkEntityMixin(BaseManageContentLink) {}

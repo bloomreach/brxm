@@ -15,9 +15,10 @@
  */
 
 export default class CommunicationService {
-  constructor($q, $rootScope, Penpal) {
+  constructor($injector, $q, $rootScope, Penpal) {
     'ngInject';
 
+    this.$injector = $injector;
     this.$q = $q;
     this.$rootScope = $rootScope;
     this.Penpal = Penpal;
@@ -26,6 +27,9 @@ export default class CommunicationService {
   async connect() {
     this._connection = this.Penpal.connectToParent({
       methods: {
+        parseElements: this._parseElements.bind(this),
+        updateComponent: this._updateComponent.bind(this),
+        updateContainer: this._updateContainer.bind(this),
         emit: this._emit.bind(this),
       },
     });
@@ -35,6 +39,18 @@ export default class CommunicationService {
 
   _emit(event, data) {
     this.$rootScope.$emit(`cm:${event}`, data);
+  }
+
+  _parseElements(...args) {
+    return this.$injector.get('PageStructureService').parseElements(...args);
+  }
+
+  _updateComponent(...args) {
+    return this.$injector.get('PageStructureService').updateComponent(...args);
+  }
+
+  _updateContainer(...args) {
+    return this.$injector.get('PageStructureService').updateContainer(...args);
   }
 
   emit(event, data) {

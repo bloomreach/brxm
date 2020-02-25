@@ -75,9 +75,8 @@ class RenderingService {
     this.OverlayService.clear();
 
     this.creatingOverlay = this._insertCss()
+      .then(() => this.PageStructureService.parseElements())
       .then(() => {
-        this.PageStructureService.parseElements(this.DomService.getIframeDocument(this.iframeJQueryElement));
-
         this.updateDragDrop();
         this._updateChannelIfSwitched();
         this._parseLinks();

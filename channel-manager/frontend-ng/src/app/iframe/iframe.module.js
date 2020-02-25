@@ -16,19 +16,26 @@
 
 import angular from 'angular';
 import Penpal from 'penpal';
-import servicesModule from '../services/services.module';
+import ModelModule from '../model/model.module';
+import ServicesModule from '../services/services.module';
 import config from './iframe.config';
 import CommunicationService from './communication.service';
+import HstCommentsProcessorService from './page/hst-comments-processor.service';
+import PageStructureService from './page/page-structure.service';
 
 const iframeModule = angular
-  .module('hippo-cm-iframe', [servicesModule])
+  .module('hippo-cm-iframe', [ModelModule.name, ServicesModule])
   .config(config)
   .constant('Penpal', Penpal)
   .service('CommunicationService', CommunicationService)
+  .service('HstCommentsProcessorService', HstCommentsProcessorService)
+  .service('PageStructureService', PageStructureService)
 
   // eslint-disable-next-line no-shadow
-  .run(($window, CommunicationService) => {
+  .run(($rootScope, $window, CommunicationService) => {
     CommunicationService.connect();
+
+    $rootScope.$on('iframe:page:change', () => CommunicationService.emit('page:change'));
 
     // The `unload` event cannot be used here because `event.source` in the target MessageEvent
     // will be `null`. Penpal checks `event.source`, and in this case, it will reject the request.
