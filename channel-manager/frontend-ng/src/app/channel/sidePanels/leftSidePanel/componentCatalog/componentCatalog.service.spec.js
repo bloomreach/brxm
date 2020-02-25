@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -116,12 +116,13 @@ describe('ComponentCatalogService', () => {
 
   describe('adding a component to container', () => {
     let isDisabled;
-    let mockContainer;
     let mockComponent;
     let mockComponent2;
     let mockComponent3;
+    let mockContainer;
     let mockEvent;
     let mockEventTarget;
+    let mockPage;
     const selectedComponent = {};
 
     beforeEach(() => {
@@ -163,11 +164,16 @@ describe('ComponentCatalogService', () => {
 
       ComponentCatalogService.selectedComponent = selectedComponent;
 
+      mockPage = {
+        getContainerById: jasmine.createSpy('getContainerById').and.returnValue(mockContainer),
+        getComponentById: jasmine.createSpy('getComponentById').and.returnValue(mockComponent),
+      };
+
       spyOn($log, 'info');
       spyOn(ContainerService, 'addComponent');
       spyOn(EditComponentService, 'startEditing');
       spyOn(HippoIframeService, 'reload').and.returnValue($q.resolve());
-      spyOn(PageStructureService, 'getContainerById').and.returnValue(mockContainer);
+      spyOn(PageStructureService, 'getPage').and.returnValue(mockPage);
       spyOn(RightSidePanelService, 'close');
     });
 
@@ -228,13 +234,12 @@ describe('ComponentCatalogService', () => {
     it('adds component to a container', () => {
       ContainerService.addComponent.and.returnValue('789');
       RightSidePanelService.close.and.returnValue($q.resolve());
-      spyOn(PageStructureService, 'getComponentById').and.returnValue({ id: 789 });
 
       ComponentCatalogService._handleContainerClick(mockEvent, mockContainer);
       $rootScope.$digest();
 
       expect(ContainerService.addComponent).toHaveBeenCalledWith(selectedComponent, mockContainer, undefined);
-      expect(EditComponentService.startEditing).toHaveBeenCalledWith({ id: 789 });
+      expect(EditComponentService.startEditing).toHaveBeenCalledWith(mockComponent);
       expect(RightSidePanelService.close).toHaveBeenCalled();
     });
 

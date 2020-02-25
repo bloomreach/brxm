@@ -49,7 +49,6 @@ class PageStructureService {
     this.MarkupService = MarkupService;
     this.ModelFactoryService = ModelFactoryService;
 
-    this.containers = [];
     this.embeddedLinks = [];
     this.headContributions = new Set();
 
@@ -132,7 +131,6 @@ class PageStructureService {
   clearParsedElements() {
     this.embeddedLinks.splice(0)
       .forEach(element => element.getBoxElement().remove());
-    this.containers = [];
     this.headContributions.clear();
     delete this._page;
 
@@ -147,27 +145,6 @@ class PageStructureService {
     return this.embeddedLinks;
   }
 
-  getComponentById(id) {
-    let component = null;
-    this.containers.some((container) => {
-      component = container.getComponent(id);
-      return component;
-    });
-    return component;
-  }
-
-  hasContainer(container) {
-    return this.containers.indexOf(container) !== -1;
-  }
-
-  getContainers() {
-    return this.containers;
-  }
-
-  getContainerById(id) {
-    return this.containers.find(item => item.getId() === id);
-  }
-
   getPage() {
     return this._page;
   }
@@ -178,7 +155,7 @@ class PageStructureService {
    * @return the container of the removed component
    */
   removeComponentById(componentId) {
-    const component = this.getComponentById(componentId);
+    const component = this._page && this._page.getComponentById(componentId);
 
     if (!component) {
       this.$log.debug(
@@ -210,25 +187,30 @@ class PageStructureService {
   }
 
   getComponentByOverlayElement(componentOverlayElement) {
-    let component;
-    this.containers.some((container) => {
-      component = container.getComponents().find(c => c.getOverlayElement().is(componentOverlayElement));
-      return !!component;
-    });
-    return component;
+    if (!this._page) {
+      return;
+    }
+
+    const containers = this._page.getContainers();
+
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < containers.length; i++) {
+      const component = containers[i].getComponents().find(c => c.getOverlayElement().is(componentOverlayElement));
+      if (component) {
+        // eslint-disable-next-line consistent-return
+        return component;
+      }
+    }
   }
 
   getContainerByIframeElement(containerIFrameElement) {
-    return this.containers.find(container => container.getBoxElement().is(containerIFrameElement));
-  }
+    if (!this._page) {
+      return;
+    }
 
-  printParsedElements() {
-    this.containers.forEach((container, index) => {
-      this.$log.debug(`Container ${index}`, container);
-      container.items.forEach((component, itemIndex) => {
-        this.$log.debug(`  Component ${itemIndex}`, component);
-      });
-    });
+    // eslint-disable-next-line consistent-return
+    return this._page.getContainers()
+      .find(container => container.getBoxElement().is(containerIFrameElement));
   }
 
   /**
@@ -242,7 +224,7 @@ class PageStructureService {
       return this.MarkupService.fetchComponentMarkup(component, propertiesMap)
         .then((response) => {
           // re-fetch component because a parallel renderComponent call may have updated the component's markup
-          component = this.getComponentById(component.getId());
+          component = this._page && this._page.getComponentById(component.getId());
 
           const newMarkup = response.data;
           const oldHeadContributionsSize = this.headContributions.size;
@@ -327,7 +309,7 @@ class PageStructureService {
       this.$log.error(e.message);
     }
 
-    const newContainer = this.replaceContainer(oldContainer, container);
+    const newContainer = this._page.replaceContainer(oldContainer, container);
 
     return newContainer;
   }
@@ -399,29 +381,6 @@ class PageStructureService {
 
   _storeContainer(container) {
     return this.HstService.updateHstContainer(container.getId(), container.getHstRepresentation());
-  }
-
-  getContainerByOverlayElement(overlayElement) {
-    return this.containers.find((container) => {
-      const containerOverlay = container.getOverlayElement();
-      return containerOverlay && (containerOverlay[0] === overlayElement);
-    });
-  }
-
-  _replaceContainer(oldContainer, newContainer) {
-    const index = this.containers.indexOf(oldContainer);
-    if (index === -1) {
-      this.$log.warn('Cannot find container', oldContainer);
-      return null;
-    }
-    if (newContainer) {
-      this.containers[index] = newContainer;
-      // reuse the overlay element to reduce DOM manipulation and improve performance
-      newContainer.setOverlayElement(oldContainer.getOverlayElement());
-    } else {
-      this.containers.splice(index, 1);
-    }
-    return newContainer;
   }
 }
 

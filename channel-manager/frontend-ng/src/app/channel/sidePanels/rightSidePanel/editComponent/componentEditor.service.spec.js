@@ -99,7 +99,7 @@ describe('ComponentEditorService', () => {
   describe('responding to page structure changes', () => {
     beforeEach(() => {
       spyOn(ComponentEditor, 'reopen');
-      spyOn(PageStructureService, 'getComponentById');
+      spyOn(PageStructureService, 'getPage');
 
       openComponentEditor(testData);
     });
@@ -107,25 +107,40 @@ describe('ComponentEditorService', () => {
     it('should do nothing without a component', () => {
       delete ComponentEditor.component;
       $rootScope.$emit('iframe:page:change');
-      expect(PageStructureService.getComponentById).not.toHaveBeenCalled();
+
+      expect(PageStructureService.getPage).not.toHaveBeenCalled();
+    });
+
+    it('should not update when the page is not set', () => {
+      PageStructureService.getPage.and.returnValue(null);
+      $rootScope.$emit('iframe:page:change');
+
+      expect(PageStructureService.getPage).toHaveBeenCalled();
+      expect(ComponentEditor.container.id).toBe('containerId');
     });
 
     it('should not update when the component is not on the page', () => {
-      PageStructureService.getComponentById.and.returnValue(null);
+      const page = {
+        getComponentById: jasmine.createSpy('getComponentById').and.returnValue(null),
+      };
+      PageStructureService.getPage.and.returnValue(page);
       $rootScope.$emit('iframe:page:change');
 
-      expect(PageStructureService.getComponentById).toHaveBeenCalledWith('componentId');
+      expect(page.getComponentById).toHaveBeenCalledWith('componentId');
       expect(ComponentEditor.container.id).toBe('containerId');
     });
 
     it('should update the container information if it has changed', () => {
-      PageStructureService.getComponentById.and.returnValue({
+      const page = jasmine.createSpyObj('page', ['getComponentById']);
+      page.getComponentById.and.returnValue({
         container: {
           isDisabled: () => false,
           isInherited: () => true,
           getId: () => 'new-containerId',
         },
       });
+      PageStructureService.getPage.and.returnValue(page);
+
       $rootScope.$emit('iframe:page:change');
 
       expect(ComponentEditor.container.isDisabled).toBe(false);
@@ -135,17 +150,16 @@ describe('ComponentEditorService', () => {
     });
 
     it('should update the page information if it has changed', () => {
-      const page = jasmine.createSpyObj('page', ['getId']);
+      const page = jasmine.createSpyObj('page', ['getComponentById', 'getId']);
       page.getId.and.returnValue('new-page-id');
-      spyOn(PageStructureService, 'getPage').and.returnValue(page);
-
-      PageStructureService.getComponentById.and.returnValue({
+      page.getComponentById.and.returnValue({
         container: {
           isDisabled: () => false,
           isInherited: () => true,
           getId: () => 2,
         },
       });
+      PageStructureService.getPage.and.returnValue(page);
 
       $rootScope.$emit('iframe:page:change');
 
@@ -154,13 +168,16 @@ describe('ComponentEditorService', () => {
     });
 
     it('should reopen editor', () => {
-      PageStructureService.getComponentById.and.returnValue({
+      const page = jasmine.createSpyObj('page', ['getComponentById']);
+      page.getComponentById.and.returnValue({
         container: {
           isDisabled: () => true,
           isInherited: () => true,
           getId: () => 2,
         },
       });
+      PageStructureService.getPage.and.returnValue(page);
+
       $rootScope.$emit('iframe:page:change');
 
       expect(ComponentEditor.reopen).toHaveBeenCalled();

@@ -1,5 +1,5 @@
 <!--
-  ~ Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+  ~ Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -56,7 +56,7 @@
   </head>
   <body>
     <main>
-      <!-- { 
+      <!-- {
         "HST-Type": "CONTAINER_COMPONENT",
         "HST-Label": "vBox container",
         "HST-XType": "HST.vBox",
@@ -64,14 +64,14 @@
       } -->
       <div id="container-vbox" class="hst-container">
         <div id="componentA" class="hst-container-item">
-        <!-- { 
+        <!-- {
           "HST-Type": "CONTAINER_ITEM_COMPONENT",
           "HST-Label": "component A",
           "uuid": "aaaa"
         } -->
           <p id="markup-in-component-a">Some markup in component A</p>
           <p id="edit-menu-in-component-a">
-          <!-- { 
+          <!-- {
             "HST-Type": "EDIT_MENU_LINK",
             "uuid": "menu-in-component-a"
           } -->
@@ -224,12 +224,12 @@
       } -->
 
       <!-- Locked container (by other user) -->
-      <!-- { 
+      <!-- {
         "HST-Type": "CONTAINER_COMPONENT",
         "HST-Label": "vBox locked container",
         "HST-XType": "HST.vBox",
         "uuid": "container-vbox-locked",
-        "HST-LockedBy": "other user" 
+        "HST-LockedBy": "other user"
       } -->
       <div id="container-vbox-locked" class="hst-container">
         <p id="manage-content-scenario-8">
@@ -295,9 +295,9 @@
       <!-- Locked container (by current user) -->
       <!-- {
         "HST-Type": "CONTAINER_COMPONENT",
-        "HST-Label": "vBox locked container",
+        "HST-Label": "vBox locked-self container",
         "HST-XType": "HST.vBox",
-        "uuid": "container-vbox-locked",
+        "uuid": "container-vbox-locked-self",
         "HST-LockedBy": "user",
         "HST-LockedBy-Current-User": "true"
       } -->
@@ -312,7 +312,7 @@
       </div>
       <!-- {
         "HST-End": "true",
-        "uuid": "container-vbox-locked"
+        "uuid": "container-vbox-locked-self"
       } -->
       <!-- Template part that is not a container item inside a container -->
       <div id="not-in-a-container" class="has-edit-button">

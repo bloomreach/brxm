@@ -123,7 +123,7 @@ class ComponentEditorService {
     }
 
     const page = this.PageStructureService.getPage();
-    const component = this.PageStructureService.getComponentById(this.component.id);
+    const component = page && page.getComponentById(this.component.id);
     if (!component) {
       return;
     }
