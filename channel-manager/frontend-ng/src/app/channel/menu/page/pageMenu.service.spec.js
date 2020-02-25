@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ describe('PageMenuService', () => {
   let HippoIframeService;
   let PageMenuService;
   let PageToolsService;
-  let PageMetaDataService;
+  let PageStructureService;
   let SiteMapItemService;
   let SiteMapService;
 
@@ -72,7 +72,7 @@ describe('PageMenuService', () => {
       _FeedbackService_,
       _HippoIframeService_,
       _PageMenuService_,
-      _PageMetaDataService_,
+      _PageStructureService_,
       _SiteMapItemService_,
       _SiteMapService_,
     ) => {
@@ -84,7 +84,7 @@ describe('PageMenuService', () => {
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       PageMenuService = _PageMenuService_;
-      PageMetaDataService = _PageMetaDataService_;
+      PageStructureService = _PageStructureService_;
       SiteMapItemService = _SiteMapItemService_;
       SiteMapService = _SiteMapService_;
     });
@@ -157,7 +157,6 @@ describe('PageMenuService', () => {
         spyOn(DialogService, 'confirm').and.returnValue(confirmDialog);
         spyOn(DialogService, 'show');
         spyOn(HippoIframeService, 'load');
-        spyOn(PageMetaDataService, 'getSiteMapItemId').and.returnValue('siteMapItemId');
       });
 
       // menu button
@@ -182,6 +181,12 @@ describe('PageMenuService', () => {
 
       // all other menu options
       it('loads the meta data of the current page when opening the page menu', () => {
+        const page = jasmine.createSpyObj('page', ['getMeta']);
+        const pageMeta = jasmine.createSpyObj('pageMeta', ['getSiteMapItemId']);
+        pageMeta.getSiteMapItemId.and.returnValue('siteMapItemId');
+        page.getMeta.and.returnValue(pageMeta);
+        spyOn(PageStructureService, 'getPage').and.returnValue(page);
+
         const { menu } = PageMenuService;
         menu.onClick();
 

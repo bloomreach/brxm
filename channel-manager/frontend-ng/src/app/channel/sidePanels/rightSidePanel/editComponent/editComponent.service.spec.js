@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ describe('EditComponentService', () => {
   let ConfigService;
   let EditComponentService;
   let MaskService;
-  let PageMetaDataService;
+  let PageStructureService;
   let RightSidePanelService;
 
   let mockComponent;
@@ -48,7 +48,6 @@ describe('EditComponentService', () => {
       isInherited: 'container.inherited',
       id: 'container.uuid',
     },
-    page: 'page',
   };
 
   beforeEach(() => {
@@ -83,7 +82,7 @@ describe('EditComponentService', () => {
       _ConfigService_,
       _EditComponentService_,
       _MaskService_,
-      _PageMetaDataService_,
+      _PageStructureService_,
       _RightSidePanelService_,
     ) => {
       $log = _$log_;
@@ -96,18 +95,16 @@ describe('EditComponentService', () => {
       ConfigService = _ConfigService_;
       EditComponentService = _EditComponentService_;
       MaskService = _MaskService_;
-      PageMetaDataService = _PageMetaDataService_;
+      PageStructureService = _PageStructureService_;
       RightSidePanelService = _RightSidePanelService_;
     });
 
     spyOn($translate, 'instant').and.callThrough();
     spyOn(ChannelService, 'getChannel');
-    spyOn(PageMetaDataService, 'get');
 
     ComponentEditor.open.and.returnValue($q.resolve());
     ComponentEditor.getComponentName.and.returnValue(testData.component.label);
     ChannelService.getChannel.and.returnValue(testData.channel);
-    PageMetaDataService.get.and.returnValue(testData.page);
 
     mockComponent.getId.and.returnValue(testData.component.id);
     mockComponent.getLabel.and.returnValue(testData.component.label);
@@ -240,13 +237,21 @@ describe('EditComponentService', () => {
     });
 
     it('triggers an event to show the component properties dialog', () => {
+      const page = jasmine.createSpyObj('page', ['getMeta']);
+      const pageMeta = jasmine.createSpyObj('pageMeta', ['toJSON']);
+      pageMeta.toJSON.and.returnValue('page-data');
+      page.getMeta.and.returnValue(pageMeta);
+      spyOn(PageStructureService, 'getPage').and.returnValue(page);
       spyOn(MaskService, 'mask');
       spyOn($window.APP_TO_CMS, 'publish');
 
       editComponent();
 
       expect(MaskService.mask).toHaveBeenCalled();
-      expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-component-properties', testData);
+      expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('show-component-properties', {
+        ...testData,
+        page: 'page-data',
+      });
     });
 
     it('removes the mask when the component properties dialog is closed', () => {

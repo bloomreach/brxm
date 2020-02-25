@@ -76,7 +76,6 @@ describe('PageStructureService', () => {
   let HstService;
   let MarkupService;
   let ModelFactoryService;
-  let PageMetaDataService;
   let PageStructureService;
 
   let registered;
@@ -99,7 +98,6 @@ describe('PageStructureService', () => {
       _HstService_,
       _MarkupService_,
       _ModelFactoryService_,
-      _PageMetaDataService_,
       _PageStructureService_,
     ) => {
       $document = _$document_;
@@ -114,7 +112,6 @@ describe('PageStructureService', () => {
       HstService = _HstService_;
       MarkupService = _MarkupService_;
       ModelFactoryService = _ModelFactoryService_;
-      PageMetaDataService = _PageMetaDataService_;
       PageStructureService = _PageStructureService_;
     });
 
@@ -122,7 +119,6 @@ describe('PageStructureService', () => {
 
     spyOn(ChannelService, 'recordOwnChange');
     spyOn(HstCommentsProcessorService, 'run').and.returnValue(registered);
-    spyOn(ModelFactoryService, 'createPage').and.callThrough();
   });
 
   beforeEach(() => {
@@ -145,6 +141,7 @@ describe('PageStructureService', () => {
 
   describe('parseElements', () => {
     it('creates a new page from the HST comment elements in the document', () => {
+      spyOn(ModelFactoryService, 'createPage');
       const comments = [{ id: 1 }, { id: 2 }];
       HstCommentsProcessorService.run.and.returnValue(comments);
       ModelFactoryService.createPage.and.returnValue('new-page');
@@ -567,6 +564,7 @@ describe('PageStructureService', () => {
 
     PageStructureService.clearParsedElements();
 
+    expect(PageStructureService.getPage()).toBeUndefined();
     expect(PageStructureService.getContainers().length).toEqual(0);
     expect(PageStructureService.getEmbeddedLinks().length).toEqual(0);
     expect(PageStructureService.headContributions.size).toBe(0);
@@ -630,19 +628,6 @@ describe('PageStructureService', () => {
     expect(containers[0].isEmptyInDom()).toEqual(true);
     expect(containers[1].isEmptyInDom()).toEqual(true);
     expect(containers[2].isEmptyInDom()).toEqual(true);
-  });
-
-  it('parses the page meta-data and adds it to the PageMetaDataService', () => {
-    spyOn(PageMetaDataService, 'add');
-
-    PageStructureService.registerParsedElement(null, {
-      'HST-Type': 'PAGE-META-DATA',
-      'HST-Mount-Id': 'testMountId',
-    });
-
-    expect(PageMetaDataService.add).toHaveBeenCalledWith({
-      'HST-Mount-Id': 'testMountId',
-    });
   });
 
   it('returns a known component', () => {

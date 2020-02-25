@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,11 +22,12 @@ describe('PageToolsService', () => {
   let ChannelService;
   let ExtensionService;
   let PageToolsService;
-  let PageMetaDataService;
+  let PageStructureService;
   let RightSidePanelService;
 
   let extension1;
   let extension2;
+  let pageMeta;
 
   beforeEach(() => {
     extension1 = {
@@ -54,7 +55,7 @@ describe('PageToolsService', () => {
       _$translate_,
       _ChannelService_,
       _PageToolsService_,
-      _PageMetaDataService_,
+      _PageStructureService_,
       _RightSidePanelService_,
     ) => {
       $rootScope = _$rootScope_;
@@ -63,22 +64,26 @@ describe('PageToolsService', () => {
       $translate = _$translate_;
       ChannelService = _ChannelService_;
       PageToolsService = _PageToolsService_;
-      PageMetaDataService = _PageMetaDataService_;
+      PageStructureService = _PageStructureService_;
       RightSidePanelService = _RightSidePanelService_;
     });
 
     spyOn(ChannelService, 'getChannel');
-    spyOn(PageMetaDataService, 'getPathInfo');
+
+    const page = jasmine.createSpyObj('page', ['getMeta']);
+    pageMeta = jasmine.createSpyObj('pageMeta', ['getPathInfo']);
+    page.getMeta.and.returnValue(pageMeta);
+    spyOn(PageStructureService, 'getPage').and.returnValue(page);
   });
 
   function pageName(pagePath) {
-    PageMetaDataService.getPathInfo.and.returnValue(pagePath);
+    pageMeta.getPathInfo.and.returnValue(pagePath);
     return PageToolsService._getPageName();
   }
 
   function pageUrl(channelUrl, pagePath) {
     ChannelService.getChannel.and.returnValue({ url: channelUrl });
-    PageMetaDataService.getPathInfo.and.returnValue(pagePath);
+    pageMeta.getPathInfo.and.returnValue(pagePath);
     return PageToolsService._getPageUrl();
   }
 

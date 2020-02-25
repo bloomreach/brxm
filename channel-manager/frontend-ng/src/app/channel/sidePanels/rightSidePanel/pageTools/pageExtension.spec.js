@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,11 +28,17 @@ describe('pageExtension', () => {
         },
       };
 
-      const PageMetaDataService = {
+      const pageMeta = {
         getChannelId: () => 'testChannelId',
         getPageId: () => 'testPageId',
         getPathInfo: () => '/page/subpage.html',
         getSiteMapItemId: () => 'testSitemapItemId',
+      };
+
+      const PageStructureService = {
+        getPage: () => ({
+          getMeta: () => pageMeta,
+        }),
       };
 
       const ChannelService = {
@@ -45,7 +51,7 @@ describe('pageExtension', () => {
       $ctrl = $componentController('pageExtension', {
         $uiRouterGlobals,
         ChannelService,
-        PageMetaDataService,
+        PageStructureService,
       });
     });
   });

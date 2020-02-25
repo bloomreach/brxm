@@ -191,7 +191,7 @@ class OverlayService {
   }
 
   _isSelectedComponentElement(element) {
-    return element.type === 'component' && element.metaData.uuid === this._selectedComponentId;
+    return element.getType() === 'component' && element.getId() === this._selectedComponentId;
   }
 
   sync() {
@@ -225,11 +225,13 @@ class OverlayService {
 
   _onOverlayMouseDown(event) {
     const target = $(event.target);
-    if (target.hasClass('hippo-overlay-element-component') && this.componentMouseDownCallback) {
-      const component = this.PageStructureService.getComponentByOverlayElement(target);
-      if (component) {
-        this.componentMouseDownCallback(event, component);
-      }
+    if (!target.hasClass('hippo-overlay-element-component') || !this.componentMouseDownCallback) {
+      return;
+    }
+
+    const component = this.PageStructureService.getComponentByOverlayElement(target);
+    if (component) {
+      this.componentMouseDownCallback(event, component);
     }
   }
 

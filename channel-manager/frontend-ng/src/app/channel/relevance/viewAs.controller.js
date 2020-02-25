@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,6 @@ class ViewAsCtrl {
     FeedbackService,
     HippoIframeService,
     HstService,
-    PageMetaDataService,
     SessionService,
   ) {
     'ngInject';
@@ -39,7 +38,6 @@ class ViewAsCtrl {
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.HstService = HstService;
-    this.PageMetaDataService = PageMetaDataService;
     this.SessionService = SessionService;
 
     this.globalVariants = [];

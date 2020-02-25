@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ describe('HippoIframeService', () => {
   let ChannelService;
   let ConfigService;
   let HippoIframeService;
-  let PageMetaDataService;
+  let PageStructureService;
   let PageToolsService;
   let ScrollService;
   const iframeSrc = `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/hippoIframe.service.iframe.fixture.html`; // eslint-disable-line max-len
@@ -36,10 +36,10 @@ describe('HippoIframeService', () => {
       _$rootScope_,
       _$window_,
       _ChannelService_,
-      _HippoIframeService_,
       _ConfigService_,
+      _HippoIframeService_,
+      _PageStructureService_,
       _PageToolsService_,
-      _PageMetaDataService_,
       _ScrollService_,
     ) => {
       $log = _$log_;
@@ -48,8 +48,8 @@ describe('HippoIframeService', () => {
       ChannelService = _ChannelService_;
       ConfigService = _ConfigService_;
       HippoIframeService = _HippoIframeService_;
+      PageStructureService = _PageStructureService_;
       PageToolsService = _PageToolsService_;
-      PageMetaDataService = _PageMetaDataService_;
       ScrollService = _ScrollService_;
     });
 
@@ -78,13 +78,19 @@ describe('HippoIframeService', () => {
   }
 
   describe('initializePath', () => {
+    let pageMeta;
+
     beforeEach(() => {
       HippoIframeService.renderPathInfo = '/path';
       spyOn(ChannelService, 'getChannel');
       spyOn(ChannelService, 'makeRenderPath');
-      spyOn(PageMetaDataService, 'getContextPath');
       spyOn(HippoIframeService, 'load');
       spyOn(HippoIframeService, 'reload');
+
+      const page = jasmine.createSpyObj('page', ['getMeta']);
+      pageMeta = jasmine.createSpyObj('pageMeta', ['getContextPath']);
+      page.getMeta.and.returnValue(pageMeta);
+      spyOn(PageStructureService, 'getPage').and.returnValue(page);
     });
 
     it('changes the page in the current channel', () => {
@@ -102,8 +108,10 @@ describe('HippoIframeService', () => {
     it('reloads the same render path in the same context', () => {
       ChannelService.makeRenderPath.and.returnValue('/path');
       ChannelService.getChannel.and.returnValue({ contextPath: '/site' });
-      PageMetaDataService.getContextPath.and.returnValue('/site');
+      pageMeta.getContextPath.and.returnValue('/site');
+
       HippoIframeService.initializePath('/path');
+
       expect(HippoIframeService.reload).toHaveBeenCalled();
     });
 
@@ -126,7 +134,7 @@ describe('HippoIframeService', () => {
       HippoIframeService.renderPathInfo = '/path';
       ChannelService.makeRenderPath.and.returnValue('/path');
       ChannelService.getChannel.and.returnValue({ contextPath: '/site' });
-      PageMetaDataService.getContextPath.and.returnValue('/differentContextPath');
+      pageMeta.getContextPath.and.returnValue('/differentContextPath');
 
       HippoIframeService.initializePath('/path');
 

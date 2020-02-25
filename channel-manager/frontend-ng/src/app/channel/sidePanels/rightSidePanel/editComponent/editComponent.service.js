@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ class EditComponentService {
     ComponentEditor,
     ConfigService,
     MaskService,
-    PageMetaDataService,
+    PageStructureService,
     ProjectService,
     RightSidePanelService,
   ) {
@@ -41,7 +41,7 @@ class EditComponentService {
     this.ComponentEditor = ComponentEditor;
     this.ConfigService = ConfigService;
     this.MaskService = MaskService;
-    this.PageMetaDataService = PageMetaDataService;
+    this.PageStructureService = PageStructureService;
     this.ProjectService = ProjectService;
     this.RightSidePanelService = RightSidePanelService;
 
@@ -82,12 +82,14 @@ class EditComponentService {
         isInherited: componentElement.container.isInherited(),
         id: componentElement.container.getId(),
       },
-      page: this.PageMetaDataService.get(),
     };
 
     if (this.ConfigService.relevancePresent) {
       this.MaskService.mask();
-      this.CmsService.publish('show-component-properties', properties);
+      this.CmsService.publish('show-component-properties', {
+        ...properties,
+        page: this.PageStructureService.getPage().getMeta().toJSON(),
+      });
     } else {
       this.$state.go('hippo-cm.channel.edit-component', { properties });
     }
