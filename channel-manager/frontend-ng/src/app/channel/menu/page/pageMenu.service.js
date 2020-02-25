@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2017-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +23,8 @@ class PageMenuService extends MenuService {
     DialogService,
     FeedbackService,
     HippoIframeService,
+    PageStructureService,
     PageToolsService,
-    PageMetaDataService,
     SessionService,
     SiteMapItemService,
     SiteMapService,
@@ -38,8 +38,8 @@ class PageMenuService extends MenuService {
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
+    this.PageStructureService = PageStructureService;
     this.PageToolsService = PageToolsService;
-    this.PageMetaDataService = PageMetaDataService;
     this.SessionService = SessionService;
     this.SiteMapItemService = SiteMapItemService;
     this.SiteMapService = SiteMapService;
@@ -96,8 +96,9 @@ class PageMenuService extends MenuService {
   }
 
   onOpenMenu() {
+    const page = this.PageStructureService.getPage();
     const siteMapId = this.ChannelService.getSiteMapId();
-    const siteMapItemId = this.PageMetaDataService.getSiteMapItemId();
+    const siteMapItemId = page && page.getMeta().getSiteMapItemId();
     this.SiteMapItemService.loadAndCache(siteMapId, siteMapItemId);
     this.ChannelService.loadPageModifiableChannels();
   }

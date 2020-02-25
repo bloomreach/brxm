@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -34,8 +34,6 @@ class ComponentEditorService {
     HippoIframeService,
     HstComponentService,
     OverlayService,
-    HstConstants,
-    PageMetaDataService,
     PageStructureService,
   ) {
     'ngInject';
@@ -51,15 +49,13 @@ class ComponentEditorService {
     this.HippoIframeService = HippoIframeService;
     this.HstComponentService = HstComponentService;
     this.OverlayService = OverlayService;
-    this.HstConstants = HstConstants;
-    this.PageMetaDataService = PageMetaDataService;
     this.PageStructureService = PageStructureService;
 
     this.killed = false;
   }
 
   open({
-    channel, component, container, page,
+    channel, component, container, page = this.PageStructureService.getPage(),
   }) {
     this.close();
     this._offPageChange = this.$rootScope.$on('iframe:page:change', () => this._onPageChange());
@@ -85,7 +81,7 @@ class ComponentEditorService {
       return;
     }
 
-    const pagePath = this.page[this.HstConstants.PATH_INFO];
+    const pagePath = this.page.getMeta().getPathInfo();
 
     if (!this.ChannelService.matchesChannel(this.channel.id)) {
       this.ChannelService.initializeChannel(this.channel.id, this.channel.contextPath, this.channel.hostGroup)
@@ -96,11 +92,11 @@ class ComponentEditorService {
   }
 
   isForeignPage() {
-    const currentPage = this.PageMetaDataService.get();
+    const currentPage = this.PageStructureService.getPage();
 
     return currentPage && this.page && this.component
-      && currentPage[this.HstConstants.PAGE_ID] !== this.page[this.HstConstants.PAGE_ID]
-      && !this.PageStructureService.getComponentById(this.component.id);
+      && currentPage.getMeta().getPageId() !== this.page.getMeta().getPageId()
+      && !currentPage.getComponentById(this.component.id);
   }
 
   _onLoadSuccess(channel, component, container, page, properties) {
@@ -126,12 +122,13 @@ class ComponentEditorService {
       return;
     }
 
+    const page = this.PageStructureService.getPage();
     const component = this.PageStructureService.getComponentById(this.component.id);
     if (!component) {
       return;
     }
 
-    this.page = this.PageMetaDataService.get();
+    this.page = page;
 
     const changedContainer = {
       isDisabled: component.container.isDisabled(),

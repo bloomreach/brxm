@@ -31,7 +31,6 @@ class RenderingService {
     HippoIframeService,
     LinkProcessorService,
     OverlayService,
-    PageMetaDataService,
     PageStructureService,
     ProjectService,
     ScrollService,
@@ -47,7 +46,6 @@ class RenderingService {
     this.HippoIframeService = HippoIframeService;
     this.LinkProcessorService = LinkProcessorService;
     this.OverlayService = OverlayService;
-    this.PageMetaDataService = PageMetaDataService;
     this.PageStructureService = PageStructureService;
     this.ProjectService = ProjectService;
     this.ScrollService = ScrollService;
@@ -131,8 +129,9 @@ class RenderingService {
   }
 
   _updateChannelIfSwitched() {
+    const page = this.PageStructureService.getPage();
     const channelIdFromService = this.ChannelService.getId();
-    const channelIdFromPage = this.PageMetaDataService.getChannelId();
+    const channelIdFromPage = page && page.getMeta().getChannelId();
 
     if (!channelIdFromPage) {
       this.$log.info('There is no channel detected in the page metadata.');
@@ -143,7 +142,7 @@ class RenderingService {
       return;
     }
 
-    const contextPathFromPage = this.PageMetaDataService.getContextPath();
+    const contextPathFromPage = page.getMeta().getContextPath();
     const hostGroupFromPreviousChannel = this.ChannelService.getHostGroup();
 
     if (this.ProjectService.isBranch() && !this.ProjectService.hasBranchOfProject(channelIdFromPage)) {

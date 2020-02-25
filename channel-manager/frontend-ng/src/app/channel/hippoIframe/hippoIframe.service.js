@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,8 +21,8 @@ class HippoIframeService {
     ChannelService,
     CmsService,
     ConfigService,
+    PageStructureService,
     PageToolsService,
-    PageMetaDataService,
     ProjectService,
     ScrollService,
   ) {
@@ -34,8 +34,8 @@ class HippoIframeService {
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
+    this.PageStructureService = PageStructureService;
     this.PageToolsService = PageToolsService;
-    this.PageMetaDataService = PageMetaDataService;
     this.ProjectService = ProjectService;
     this.ScrollService = ScrollService;
   }
@@ -69,7 +69,9 @@ class HippoIframeService {
   }
 
   _isDifferentContextPath() {
-    return this.PageMetaDataService.getContextPath() !== this.ChannelService.getChannel().contextPath;
+    const page = this.PageStructureService.getPage();
+
+    return !page || page.getMeta().getContextPath() !== this.ChannelService.getChannel().contextPath;
   }
 
   isPageLoaded() {

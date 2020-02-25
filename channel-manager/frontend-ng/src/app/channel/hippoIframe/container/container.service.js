@@ -104,7 +104,8 @@ class ContainerService {
   }
 
   deleteComponent(componentId) {
-    const component = this.PageStructureService.getComponentById(componentId);
+    const page = this.PageStructureService.getPage();
+    const component = page && page.getComponentById(componentId);
     if (!component) {
       this.$log.warn(`Cannot delete unknown component with id '${componentId}'`);
       return;

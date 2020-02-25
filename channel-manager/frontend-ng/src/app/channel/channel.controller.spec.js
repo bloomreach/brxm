@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,33 +23,33 @@ describe('ChannelController', () => {
   let $timeout;
   let $window;
   let ChannelService;
-  let SidePanelService;
   let ComponentsService;
   let FeedbackService;
   let HippoIframeService;
-  let PageMetaDataService;
   let OverlayService;
+  let PageStructureService;
+  let SidePanelService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
     inject((
       $componentController,
-      _$timeout_,
       _$q_,
+      _$timeout_,
       _$window_,
-      _FeedbackService_,
       _ChannelService_,
       _CmsService_,
+      _FeedbackService_,
       _OverlayService_,
     ) => {
       const resolvedPromise = _$q_.when();
 
-      $timeout = _$timeout_;
       $q = _$q_;
+      $timeout = _$timeout_;
       $window = _$window_;
-      FeedbackService = _FeedbackService_;
       ChannelService = _ChannelService_;
+      FeedbackService = _FeedbackService_;
       OverlayService = _OverlayService_;
 
       spyOn(ChannelService, 'clearChannel');
@@ -73,8 +73,8 @@ describe('ChannelController', () => {
         'reload',
       ]);
 
-      PageMetaDataService = jasmine.createSpyObj('PageMetaDataService', [
-        'getRenderVariant',
+      PageStructureService = jasmine.createSpyObj('PageStructureService', [
+        'getPage',
       ]);
 
       $ctrl = $componentController('channel', {
@@ -82,7 +82,7 @@ describe('ChannelController', () => {
         SidePanelService,
         ComponentsService,
         HippoIframeService,
-        PageMetaDataService,
+        PageStructureService,
       });
     });
 
@@ -149,8 +149,14 @@ describe('ChannelController', () => {
     expect($ctrl.isEditable()).toBe(true);
   });
 
-  it('gets the render variant from the page meta-data service', () => {
-    PageMetaDataService.getRenderVariant.and.returnValue('variant1');
+  it('gets the render variant from the page meta', () => {
+    const page = jasmine.createSpyObj('page', ['getMeta']);
+    const pageMeta = jasmine.createSpyObj('pageMeta', ['getRenderVariant']);
+
+    PageStructureService.getPage.and.returnValue(page);
+    page.getMeta.and.returnValue(pageMeta);
+    pageMeta.getRenderVariant.and.returnValue('variant1');
+
     expect($ctrl.getRenderVariant()).toBe('variant1');
   });
 

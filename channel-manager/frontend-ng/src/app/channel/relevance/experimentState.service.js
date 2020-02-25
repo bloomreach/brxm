@@ -29,13 +29,16 @@ class ExperimentStateService {
   }
 
   getExperimentId(component) {
-    return component.metaData[EXPERIMENT_ID];
+    const meta = component.toJSON();
+
+    return meta[EXPERIMENT_ID];
   }
 
   getExperimentStateLabel(component) {
     let label = null;
     if (this.hasExperiment(component)) {
-      const state = component.metaData[EXPERIMENT_STATE];
+      const meta = component.toJSON();
+      const state = meta[EXPERIMENT_STATE];
       label = this.$translate.instant(`EXPERIMENT_LABEL_${state}`);
     }
     return label;

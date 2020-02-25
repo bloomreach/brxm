@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,12 @@
  */
 
 class pageExtensionCtrl {
-  constructor($uiRouterGlobals, ChannelService, PageMetaDataService) {
+  constructor($uiRouterGlobals, ChannelService, PageStructureService) {
     'ngInject';
 
     this.$uiRouterGlobals = $uiRouterGlobals;
     this.ChannelService = ChannelService;
-    this.PageMetaDataService = PageMetaDataService;
+    this.PageStructureService = PageStructureService;
   }
 
   $onInit() {
@@ -35,10 +35,12 @@ class pageExtensionCtrl {
   }
 
   _setPageContext(url) {
-    const id = this.PageMetaDataService.getPageId();
-    const channelId = this.PageMetaDataService.getChannelId();
-    const siteMapItemId = this.PageMetaDataService.getSiteMapItemId();
-    const path = this.PageMetaDataService.getPathInfo();
+    const page = this.PageStructureService.getPage();
+    const meta = page && page.getMeta();
+    const id = meta && meta.getPageId();
+    const channelId = meta && meta.getChannelId();
+    const siteMapItemId = meta && meta.getSiteMapItemId();
+    const path = meta && meta.getPathInfo();
     const channel = this.ChannelService.getChannel();
 
     this.pageContext = {

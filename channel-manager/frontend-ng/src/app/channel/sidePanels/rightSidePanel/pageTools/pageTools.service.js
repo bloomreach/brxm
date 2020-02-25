@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,7 @@ class PageToolsService {
     $translate,
     ChannelService,
     ExtensionService,
-    PageMetaDataService,
+    PageStructureService,
     PathService,
     RightSidePanelService,
   ) {
@@ -40,7 +40,7 @@ class PageToolsService {
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.ExtensionService = ExtensionService;
-    this.PageMetaDataService = PageMetaDataService;
+    this.PageStructureService = PageStructureService;
     this.PathService = PathService;
     this.RightSidePanelService = RightSidePanelService;
 
@@ -108,14 +108,16 @@ class PageToolsService {
   }
 
   _getPageName() {
-    const pagePath = this.PageMetaDataService.getPathInfo();
+    const page = this.PageStructureService.getPage();
+    const pagePath = page && page.getMeta().getPathInfo();
     const baseName = this.PathService.baseName(pagePath);
     return this.PathService.concatPaths('/', baseName);
   }
 
   _getPageUrl() {
+    const page = this.PageStructureService.getPage();
     const channelBaseUrl = this.ChannelService.getChannel().url;
-    const pagePath = this.PageMetaDataService.getPathInfo();
+    const pagePath = page && page.getMeta().getPathInfo();
     return this.PathService.concatPaths(channelBaseUrl, pagePath);
   }
 

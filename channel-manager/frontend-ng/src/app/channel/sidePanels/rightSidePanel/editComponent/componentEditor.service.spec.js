@@ -27,9 +27,7 @@ describe('ComponentEditorService', () => {
   let FeedbackService;
   let HippoIframeService;
   let HstComponentService;
-  let HstConstants;
   let OverlayService;
-  let PageMetaDataService;
   let PageStructureService;
 
   let testData;
@@ -58,9 +56,7 @@ describe('ComponentEditorService', () => {
       _FeedbackService_,
       _HippoIframeService_,
       _HstComponentService_,
-      _HstConstants_,
       _OverlayService_,
-      _PageMetaDataService_,
       _PageStructureService_,
     ) => {
       $q = _$q_;
@@ -75,9 +71,7 @@ describe('ComponentEditorService', () => {
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       HstComponentService = _HstComponentService_;
-      HstConstants = _HstConstants_;
       OverlayService = _OverlayService_;
-      PageMetaDataService = _PageMetaDataService_;
       PageStructureService = _PageStructureService_;
     });
 
@@ -141,6 +135,10 @@ describe('ComponentEditorService', () => {
     });
 
     it('should update the page information if it has changed', () => {
+      const page = jasmine.createSpyObj('page', ['getId']);
+      page.getId.and.returnValue('new-page-id');
+      spyOn(PageStructureService, 'getPage').and.returnValue(page);
+
       PageStructureService.getComponentById.and.returnValue({
         container: {
           isDisabled: () => false,
@@ -148,13 +146,11 @@ describe('ComponentEditorService', () => {
           getId: () => 2,
         },
       });
-      spyOn(PageMetaDataService, 'get').and.returnValue({
-        [HstConstants.PAGE_ID]: 'some-id',
-      });
+
       $rootScope.$emit('iframe:page:change');
 
-      expect(PageMetaDataService.get).toHaveBeenCalled();
-      expect(ComponentEditor.page[HstConstants.PAGE_ID]).toBe('some-id');
+      expect(PageStructureService.getPage).toHaveBeenCalled();
+      expect(ComponentEditor.page.getId()).toBe('new-page-id');
     });
 
     it('should reopen editor', () => {
@@ -497,16 +493,24 @@ describe('ComponentEditorService', () => {
   });
 
   describe('open a component page', () => {
+    let page;
+    let pageMeta;
+
     beforeEach(() => {
       spyOn(HippoIframeService, 'load');
       spyOn(HippoIframeService, 'initializePath');
       spyOn(ChannelService, 'matchesChannel');
       spyOn(ChannelService, 'initializeChannel').and.returnValue($q.resolve());
+
+      page = jasmine.createSpyObj('page', ['getMeta']);
+      pageMeta = jasmine.createSpyObj('pageMeta', ['getPathInfo']);
+      page.getMeta.and.returnValue(pageMeta);
     });
 
     it('opens a component page in the same channel', () => {
+      pageMeta.getPathInfo.and.returnValue('/path');
+      ComponentEditor.page = page;
       ComponentEditor.channel = { id: 'test-id-1' };
-      ComponentEditor.page = { [HstConstants.PATH_INFO]: '/path' };
       ChannelService.matchesChannel.and.returnValue(true);
       ComponentEditor.openComponentPage();
 
@@ -515,12 +519,13 @@ describe('ComponentEditorService', () => {
     });
 
     it('opens a component page in a different channel', () => {
+      pageMeta.getPathInfo.and.returnValue('/path');
+      ComponentEditor.page = page;
       ComponentEditor.channel = {
         id: 'test-id-1',
         contextPath: 'context-path',
         hostGroup: 'host-group',
       };
-      ComponentEditor.page = { [HstConstants.PATH_INFO]: '/path' };
       ChannelService.matchesChannel.and.returnValue(false);
       ComponentEditor.openComponentPage();
       $timeout.flush();
@@ -538,29 +543,42 @@ describe('ComponentEditorService', () => {
   });
 
   describe('foreign page state', () => {
+    let localPageMeta;
+    let page;
+    let pageMeta;
+
     beforeEach(() => {
       ComponentEditor.component = { id: 'id1' };
 
-      spyOn(PageMetaDataService, 'get').and.returnValue({ [HstConstants.PAGE_ID]: 'id1' });
+      const localPage = jasmine.createSpyObj('localPage', ['getMeta']);
+      localPageMeta = jasmine.createSpyObj('localPageMeta', ['getPageId']);
+      localPage.getMeta.and.returnValue(localPageMeta);
+      ComponentEditor.page = localPage;
+
+      page = jasmine.createSpyObj('page', ['getMeta', 'getComponentById']);
+      pageMeta = jasmine.createSpyObj('pageMeta', ['getPageId']);
+      page.getMeta.and.returnValue(pageMeta);
+      spyOn(PageStructureService, 'getPage').and.returnValue(page);
     });
 
     it('should not be on a foreign page', () => {
-      spyOn(PageStructureService, 'getComponentById').and.returnValue(false);
-      ComponentEditor.page = { [HstConstants.PAGE_ID]: 'id1' };
+      page.getComponentById.and.returnValue(false);
+      localPageMeta.getPageId.and.returnValue('id1');
+      pageMeta.getPageId.and.returnValue('id1');
 
       expect(ComponentEditor.isForeignPage()).toBe(false);
     });
 
     it('should not be on a foreign page for a shared container', () => {
-      spyOn(PageStructureService, 'getComponentById').and.returnValue({});
-      ComponentEditor.page = { [HstConstants.PAGE_ID]: 'id2' };
+      page.getComponentById.and.returnValue({});
+      localPageMeta.getPageId.and.returnValue('id2');
 
       expect(ComponentEditor.isForeignPage()).toBe(false);
     });
 
     it('should be on a foreign page', () => {
-      spyOn(PageStructureService, 'getComponentById').and.returnValue(false);
-      ComponentEditor.page = { [HstConstants.PAGE_ID]: 'id2' };
+      page.getComponentById.and.returnValue(false);
+      localPageMeta.getPageId.and.returnValue('id2');
 
       expect(ComponentEditor.isForeignPage()).toBe(true);
     });

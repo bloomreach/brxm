@@ -35,7 +35,6 @@ class PageStructureService {
     HstService,
     MarkupService,
     ModelFactoryService,
-    PageMetaDataService,
   ) {
     'ngInject';
 
@@ -49,7 +48,6 @@ class PageStructureService {
     this.HstService = HstService;
     this.MarkupService = MarkupService;
     this.ModelFactoryService = ModelFactoryService;
-    this.PageMetaDataService = PageMetaDataService;
 
     this.containers = [];
     this.embeddedLinks = [];
@@ -136,7 +134,8 @@ class PageStructureService {
       .forEach(element => element.getBoxElement().remove());
     this.containers = [];
     this.headContributions.clear();
-    this.PageMetaDataService.clear();
+    delete this._page;
+
     this._notifyChangeListeners();
   }
 
@@ -167,6 +166,10 @@ class PageStructureService {
 
   getContainerById(id) {
     return this.containers.find(item => item.getId() === id);
+  }
+
+  getPage() {
+    return this._page;
   }
 
   /**

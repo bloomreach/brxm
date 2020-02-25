@@ -156,8 +156,9 @@ describe('ContainerService', () => {
     });
   });
 
-  describe('delete component', () => {
+  describe('deleteComponent', () => {
     let mockComponent;
+    let mockPage;
 
     beforeEach(() => {
       spyOn(CmsService, 'publish');
@@ -167,7 +168,9 @@ describe('ContainerService', () => {
       spyOn(HippoIframeService, 'reload');
 
       mockComponent = jasmine.createSpyObj('ComponentElement', ['getLabel']);
-      spyOn(PageStructureService, 'getComponentById').and.returnValue(mockComponent);
+      mockPage = jasmine.createSpyObj('PageElement', ['getComponentById']);
+      mockPage.getComponentById.and.returnValue(mockComponent);
+      spyOn(PageStructureService, 'getPage').and.returnValue(mockPage);
       spyOn(PageStructureService, 'removeComponentById');
       spyOn(PageStructureService, 'renderContainer');
     });
@@ -240,7 +243,7 @@ describe('ContainerService', () => {
 
     it('logs a warning for unknown components', () => {
       spyOn($log, 'warn');
-      PageStructureService.getComponentById.and.returnValue(null);
+      mockPage.getComponentById.and.returnValue(null);
 
       ContainerService.deleteComponent('unknown');
       $rootScope.$digest();
