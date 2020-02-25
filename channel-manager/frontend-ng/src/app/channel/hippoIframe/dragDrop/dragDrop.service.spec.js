@@ -17,7 +17,7 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-describe('DragDropService', () => {
+xdescribe('DragDropService', () => {
   let $q;
   let $rootScope;
   let ChannelService;

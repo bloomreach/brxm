@@ -20,8 +20,6 @@ import ComponentRenderingService from './rendering/component-rendering.service';
 import ContainerService from './container/container.service';
 import DragDropService from './dragDrop/dragDrop.service';
 import HippoIframeService from './hippoIframe.service';
-import HstConstants from './hst.constants';
-import HstCommentsProcessorService from './processing/hstCommentsProcessor.service';
 import LinkProcessorService from './processing/linkProcessor.service';
 import OverlayService from './overlay/overlay.service';
 import PageModule from './page/page.module';
@@ -36,13 +34,11 @@ const channelHippoIframeModule = angular
     PageModule.name,
   ])
   .component('hippoIframe', hippoIframeComponent)
-  .constant('HstConstants', HstConstants)
   .service('CommunicationService', CommunicationService)
   .service('ComponentRenderingService', ComponentRenderingService)
   .service('ContainerService', ContainerService)
   .service('DragDropService', DragDropService)
   .service('HippoIframeService', HippoIframeService)
-  .service('HstCommentsProcessorService', HstCommentsProcessorService)
   .service('LinkProcessorService', LinkProcessorService)
   .service('OverlayService', OverlayService)
   .service('RenderingService', RenderingService)

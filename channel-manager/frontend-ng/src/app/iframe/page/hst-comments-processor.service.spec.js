@@ -21,13 +21,13 @@ describe('HstCommentsProcessorService', () => {
   let HstCommentsProcessorService;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm.channel.hippoIframe');
+    angular.mock.module('hippo-cm-iframe');
 
     inject((_HstCommentsProcessorService_) => {
       HstCommentsProcessorService = _HstCommentsProcessorService_;
     });
 
-    jasmine.getFixtures().load('channel/hippoIframe/processing/hstCommentsProcessor.service.fixture.html');
+    jasmine.getFixtures().load('iframe/page/hst-comments-processor.service.fixture.html');
   });
 
   describe('run', () => {

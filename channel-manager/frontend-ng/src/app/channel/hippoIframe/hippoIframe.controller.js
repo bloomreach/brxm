@@ -66,15 +66,16 @@ class HippoIframeCtrl {
     this.onLoad = this.onLoad.bind(this);
     this._onUnload = this._onUnload.bind(this);
     this._onNewHeadContributions = this._onNewHeadContributions.bind(this);
+    this._onMoveComponent = this._onMoveComponent.bind(this);
   }
 
   $onInit() {
     this.CmsService.subscribe('render-component', this._renderComponent, this);
     this.CmsService.subscribe('delete-component', this._deleteComponent, this);
     this._offClick = this.DragDropService.onClick(this._clickComponent.bind(this));
-    this._offDrop = this.DragDropService.onDrop(this._moveComponent.bind(this));
 
     this.iframeJQueryElement.on('load', this.onLoad);
+    this._offMoveComponent = this.$rootScope.$on('iframe:component:move', this._onMoveComponent);
     this._offSdkReady = this.$rootScope.$on('spa:ready', this._onSpaReady);
     this._offSdkUnload = this.$rootScope.$on('iframe:unload', this._onUnload);
     this._offNewHeadContributions = this.$rootScope.$on(
@@ -111,11 +112,12 @@ class HippoIframeCtrl {
 
   $onDestroy() {
     this.CommunicationService.disconnect();
+    this.OverlayService.destroy();
     this.SpaService.destroy();
     this.CmsService.unsubscribe('render-component', this._renderComponent, this);
     this.CmsService.unsubscribe('delete-component', this._deleteComponent, this);
     this._offClick();
-    this._offDrop();
+    this._offMoveComponent();
     this._offSdkReady();
     this._offSdkUnload();
     this._offNewHeadContributions();
@@ -194,8 +196,16 @@ class HippoIframeCtrl {
     this.EditComponentService.startEditing(component);
   }
 
-  _moveComponent([component, targetContainer, targetContainerNextComponent]) {
-    return this.ContainerService.moveComponent(component, targetContainer, targetContainerNextComponent);
+  _onMoveComponent(event, { componentId, containerId, nextComponentId }) {
+    const page = this.PageStructureService.getPage();
+    if (!page) {
+      return;
+    }
+    const component = page.getComponentById(componentId);
+    const container = page.getContainerById(containerId);
+    const nextComponent = page.getComponentById(nextComponentId);
+
+    this.ContainerService.moveComponent(component, container, nextComponent);
   }
 
   _deleteComponent(componentId) {

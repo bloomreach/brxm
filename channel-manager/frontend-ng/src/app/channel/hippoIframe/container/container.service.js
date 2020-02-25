@@ -88,10 +88,10 @@ class ContainerService {
     return true;
   }
 
-  moveComponent(component, targetContainer, targetContainerNextComponent) {
-    return this.PageStructureService.moveComponent(component, targetContainer, targetContainerNextComponent)
+  moveComponent(component, container, nextComponent) {
+    return this.PageStructureService.moveComponent(component, container, nextComponent)
       .then(changedContainers => this._reloadSpa() || this._renderContainers(changedContainers))
-      .then(() => this.emitter.emit(COMPONENT_MOVED_EVENT_NAME, component));
+      .then(() => this.emitter.emit(COMPONENT_MOVED_EVENT_NAME));
   }
 
   _renderContainers(changedContainers) {

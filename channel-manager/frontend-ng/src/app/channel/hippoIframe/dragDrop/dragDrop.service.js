@@ -15,7 +15,6 @@
  */
 
 const COMPONENT_CLICK_EVENT_NAME = 'component-click';
-const COMPONENT_DROP_EVENT_NAME = 'component-drop';
 const COMPONENT_QA_CLASS = 'qa-dragula-component';
 const MIRROR_WRAPPER_SELECTOR = '.channel-dragula-mirror';
 const MOUSELEAVE_EVENT_NAME = 'mouseleave.dragDropService';
@@ -56,16 +55,12 @@ class DragDropService {
     this.canvasJQueryElement = canvasJQueryElement;
 
     this.ScrollService.init(iframeJQueryElement, canvasJQueryElement, sheetJQueryElement);
-    this.iframeJQueryElement.on('load', () => this._onLoad());
+    this.$rootScope.$on('hippo-iframe:load', () => this._onLoad());
 
     if (this._offPageChange) {
       this._offPageChange();
     }
     this._offPageChange = this.$rootScope.$on('iframe:page:change', () => this._sync());
-  }
-
-  onDrop(callback) {
-    return this._on(COMPONENT_DROP_EVENT_NAME, callback);
   }
 
   onClick(callback) {
@@ -92,6 +87,10 @@ class DragDropService {
       this.ScrollService.disable();
       this._destroyDragula();
     });
+
+    this.PageStructureService = this.iframe.angular.element(this.iframe.document)
+      .injector()
+      .get('PageStructureService');
   }
 
   _destroyDragula() {
@@ -296,7 +295,7 @@ class DragDropService {
       .removeClass(COMPONENT_QA_CLASS);
   }
 
-  _onDrop(movedElement, targetContainerElement, sourceContainerElement, targetNextComponentElement) {
+  async _onDrop(movedElement, targetContainerElement, sourceContainerElement, targetNextComponentElement) {
     this.dropping = true;
 
     const sourceContainer = this.PageStructureService.getContainerByIframeElement(sourceContainerElement);
@@ -304,10 +303,11 @@ class DragDropService {
     const targetContainer = this.PageStructureService.getContainerByIframeElement(targetContainerElement);
     const targetNextComponent = targetContainer.getComponentByIframeElement(targetNextComponentElement);
 
-    return this.emitter.emit(COMPONENT_DROP_EVENT_NAME, [movedComponent, targetContainer, targetNextComponent])
-      .finally(() => {
-        this.dropping = false;
-      });
+    try {
+      await this.PageStructureService.moveComponent(movedComponent, targetContainer, targetNextComponent);
+    } finally {
+      this.dropping = false;
+    }
   }
 
   _dispatchMouseDownInIframe($event, component) {
