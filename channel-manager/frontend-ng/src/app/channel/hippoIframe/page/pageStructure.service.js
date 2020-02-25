@@ -316,22 +316,17 @@ class PageStructureService {
 
   _removeEmbeddedLinksInContainer(container) {
     container.getComponents().forEach(component => this._removeEmbeddedLinksInComponent(component));
-
-    this.embeddedLinks = this._getLinksNotEnclosedInElement(this.embeddedLinks, container);
+    this._removeEmbeddedLinksInComponent(container);
   }
 
   _removeEmbeddedLinksInComponent(component) {
-    this.embeddedLinks = this._getLinksNotEnclosedInElement(this.embeddedLinks, component);
-  }
-
-  _getLinksNotEnclosedInElement(links, component) {
-    const remainingContentLinks = [];
-    links.forEach((link) => {
-      if (link.getComponent() !== component) {
-        remainingContentLinks.push(link);
-      }
-    });
-    return remainingContentLinks;
+    component.getLinks()
+      .forEach((link) => {
+        const index = this.embeddedLinks.indexOf(link);
+        if (index > -1) {
+          this.embeddedLinks.splice(index, 1);
+        }
+      });
   }
 
   addComponentToContainer(catalogComponent, container, nextComponentId) {
