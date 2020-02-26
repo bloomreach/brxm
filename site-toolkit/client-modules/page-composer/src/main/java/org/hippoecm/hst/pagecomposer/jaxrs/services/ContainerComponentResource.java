@@ -53,8 +53,8 @@ public class ContainerComponentResource extends AbstractConfigResource {
     }
 
     @FunctionalInterface
-    interface ContainerAction<Response> {
-        Response apply() throws ClientException, RepositoryException;
+    interface ContainerAction<R> {
+        R apply() throws RepositoryException;
     }
 
     @POST
