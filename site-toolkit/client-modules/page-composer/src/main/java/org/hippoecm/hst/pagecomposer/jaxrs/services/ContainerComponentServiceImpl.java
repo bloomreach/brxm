@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -30,6 +31,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ItemNotFoundExcep
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,11 +92,39 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
     }
 
     @Override
+    public ContainerItem createContainerItem(final Session session, final String catalogItemUUID, final String siblingItemUUID, final long versionStamp) throws ClientException, RepositoryException {
+
+        final ContainerItem containerItem = createContainerItem(session, catalogItemUUID, versionStamp);
+        final String itemIdentifier = containerItem.getContainerItem().getIdentifier();
+
+        final List<String> children = new ArrayList<>();
+        final Node containerNode = lockAndGetContainer(versionStamp);
+        for (final Node itemNode : new NodeIterable(containerNode.getNodes())) {
+            if (itemNode.getIdentifier().equals(siblingItemUUID)) {
+                children.add(itemIdentifier);
+            }
+            children.add(itemNode.getIdentifier());
+        }
+
+        if (children.contains(siblingItemUUID)) {
+            updateContainerOrder(session, children, containerNode);
+        } else {
+            log.warn("Cannot find container item '{}' in container '{}', adding the new container item '{}' at the end instead",
+                    siblingItemUUID,
+                    containerNode.getIdentifier(),
+                    itemIdentifier
+            );
+        }
+
+        return containerItem;
+    }
+
+    @Override
     public void updateContainer(final Session session, final ContainerRepresentation container) throws ClientException, RepositoryException {
         try {
             final Node containerNode = lockAndGetContainer(container.getLastModifiedTimestamp());
 
-            updateContainerOrder(session, container, containerNode);
+            updateContainerOrder(session, container.getChildren(), containerNode);
             HstConfigurationUtils.persistChanges(session);
         } catch (RepositoryException e) {
             log.warn("Exception during updating container item: {}", e);
@@ -117,9 +147,8 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
     }
 
     private void updateContainerOrder(final Session session,
-                                      final ContainerRepresentation container,
+                                      final List<String> children,
                                       final Node containerNode) throws RepositoryException {
-        final List<String> children = container.getChildren();
         int childCount = (children != null ? children.size() : 0);
         if (childCount > 0) {
             try {

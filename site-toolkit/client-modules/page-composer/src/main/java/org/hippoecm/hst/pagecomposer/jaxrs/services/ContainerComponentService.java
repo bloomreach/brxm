@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,8 @@ public interface ContainerComponentService {
     }
 
     ContainerItem createContainerItem(Session session, String itemUUID, long versionStamp) throws ClientException, RepositoryException;
+
+    ContainerItem createContainerItem(Session session, String itemUUID, String siblingItemUUID, long versionStamp) throws ClientException, RepositoryException;
 
     /**
      * Update order of items inside the container.
