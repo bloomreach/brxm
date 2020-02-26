@@ -15,12 +15,13 @@
  */
 
 import { Injectable } from '@angular/core';
-import { NavigationTrigger } from '@bloomreach/navapp-communication';
+import { NavigationTrigger, NavItem } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 import { skip } from 'rxjs/operators';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { AppError } from '../error-handling/models/app-error';
+import { CriticalError } from '../error-handling/models/critical-error';
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { AuthService } from '../services/auth.service';
@@ -55,51 +56,47 @@ export class BootstrapService {
   }
 
   async bootstrap(): Promise<void> {
-    this.logger.debug('Bootstrapping the application');
+    try {
+      this.logger.debug('Bootstrapping the application');
 
-    this.showLoader();
+      this.showLoader();
 
-    await this.performSilentLogin();
+      await this.performSilentLogin();
 
-    const configuration = await this.fetchConfiguration();
+      const configuration = await this.fetchConfiguration();
 
-    if (!configuration) {
-      return;
-    }
+      this.initializeServices(configuration);
 
-    if (!this.initializeServices(configuration)) {
+      this.navigationService.initialNavigation().catch(error => this.handleInitializationError(error));
+    } catch (error) {
+      this.handleInitializationError(error);
+    } finally {
       this.hideLoader();
-
-      return;
     }
-
-    this.navigationService.initialNavigation()
-      .catch(error => this.handleInitializationError(error))
-      .then(() => this.hideLoader());
   }
 
   async reinitialize(): Promise<void> {
-    this.logger.debug('Reinitializing the application');
+    try {
+      this.logger.debug('Reinitializing the application');
 
-    this.showLoader();
+      this.showLoader();
 
-    const navItemDtos = await this.navConfigService.refetchNavItems();
+      const navItemDtos = await this.navConfigService.refetchNavItems();
 
-    const configuration: Configuration = {
-      navItems: navItemDtos,
-      sites: undefined,
-      selectedSiteId: undefined,
-    };
+      const configuration: Configuration = {
+        navItems: navItemDtos,
+        sites: undefined,
+        selectedSiteId: undefined,
+      };
 
-    if (!this.initializeServices(configuration)) {
+      this.initializeServices(configuration);
+
+      await this.navigationService.navigateToHome(NavigationTrigger.InitialNavigation);
+    } catch (error) {
+      this.handleInitializationError(error);
+    } finally {
       this.hideLoader();
-
-      return;
     }
-
-    this.navigationService.navigateToHome(NavigationTrigger.NotDefined)
-      .catch(error => this.handleInitializationError(error))
-      .then(() => this.hideLoader());
   }
 
   private async performSilentLogin(): Promise<void> {
@@ -110,7 +107,7 @@ export class BootstrapService {
 
       this.logger.debug('Silent login has done successfully');
     } catch (error) {
-      this.errorHandlingService.setCriticalError('ERROR_UNABLE_TO_PERFORM_SILENT_LOGIN', this.extractErrorMessage(error));
+      throw new CriticalError('ERROR_UNABLE_TO_PERFORM_SILENT_LOGIN', this.extractErrorMessage(error));
     }
   }
 
@@ -124,28 +121,20 @@ export class BootstrapService {
 
       return configuration;
     } catch (error) {
-      this.errorHandlingService.setCriticalError('ERROR_UNABLE_TO_LOAD_CONFIGURATION', this.extractErrorMessage(error));
+      throw new CriticalError('ERROR_UNABLE_TO_LOAD_CONFIGURATION', this.extractErrorMessage(error));
     }
   }
 
-  private initializeServices(configuration: Configuration): boolean {
-    try {
-      if (configuration.sites && configuration.selectedSiteId) {
-        this.siteService.init(configuration.sites, configuration.selectedSiteId);
-      }
-
-      const navItems = this.navItemService.registerNavItemDtos(configuration.navItems);
-
-      this.menuStateService.init(navItems);
-      this.navigationService.init(navItems);
-      this.clientAppService.init(navItems).catch(error => this.handleInitializationError(error));
-
-      return true;
-    } catch (error) {
-      this.handleInitializationError(error);
-
-      return false;
+  private initializeServices(configuration: Configuration): void {
+    if (configuration.sites && configuration.selectedSiteId) {
+      this.siteService.init(configuration.sites, configuration.selectedSiteId);
     }
+
+    const navItems = this.navItemService.registerNavItemDtos(configuration.navItems);
+
+    this.menuStateService.init(navItems);
+    this.navigationService.init(navItems);
+    this.clientAppService.init(navItems).catch(error => this.handleInitializationError(error));
   }
 
   private handleInitializationError(error: any): void {

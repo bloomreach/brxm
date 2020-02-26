@@ -15,7 +15,7 @@
  */
 
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -44,7 +44,6 @@ import { ClientAppComponent } from '../client-app/client-app.component';
       transition('true => false', animate('200ms ease-out')),
     ]),
   ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClientAppContainerComponent implements OnInit, OnDestroy {
   private readonly unsubscribe = new Subject();
@@ -82,9 +81,14 @@ export class ClientAppContainerComponent implements OnInit, OnDestroy {
   }
 
   private updateClientApps(urls: string[]): void {
+    const isInitialUpdate = this.urls.length === 0;
     this.urls = urls;
 
     this.cd.detectChanges();
+
+    if (isInitialUpdate) {
+      return;
+    }
 
     const alreadyConnectedAppUrls = this.clientAppService.apps.map(x => x.url);
 

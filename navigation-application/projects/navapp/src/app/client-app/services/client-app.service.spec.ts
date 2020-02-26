@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -113,11 +113,9 @@ describe('ClientAppService', () => {
   describe('initialization', () => {
     describe('when applications without "getConfig()" connected normally', () => {
       let initialized = false;
-      let allConnectionsSettled = false;
 
       beforeEach(async(() => {
         service.init(navItemsMock).then(() => initialized = true);
-        service.allConnectionsSettled.then(() => allConnectionsSettled = true);
         service.addConnection(new Connection('http://app1.com', {}));
         service.addConnection(new Connection('http://app2.com', {}));
       }));
@@ -129,7 +127,6 @@ describe('ClientAppService', () => {
 
       it('should resolve the returned init promise', () => {
         expect(initialized).toBeTruthy();
-        expect(allConnectionsSettled).toBeTruthy();
       });
     });
 
@@ -163,7 +160,6 @@ describe('ClientAppService', () => {
 
     describe('when one application failed to connect', () => {
       let initialized = false;
-      let allConnectionsSettled = false;
 
       beforeEach(async(() => {
         const childApi = jasmine.createSpyObj('ChildApi2', {
@@ -171,7 +167,6 @@ describe('ClientAppService', () => {
         });
 
         service.init(navItemsMock).then(() => initialized = true);
-        service.allConnectionsSettled.then(() => allConnectionsSettled = true);
 
         service.addConnection(new FailedConnection('http://app1.com', 'some reason'));
         service.addConnection(new Connection('http://app2.com', childApi));
@@ -184,18 +179,15 @@ describe('ClientAppService', () => {
 
       it('should resolve the returned init promise', () => {
         expect(initialized).toBeTruthy();
-        expect(allConnectionsSettled).toBeTruthy();
       });
     });
 
     describe('when all applications failed to connect and "iframesConnectionTimeout * 1.5" ms passed', () => {
       let initialized = false;
       let rejectionReason: Error;
-      let allConnectionsSettled: boolean;
 
       beforeEach(fakeAsync(() => {
         service.init(navItemsMock).then(() => initialized = true, e => rejectionReason = e);
-        service.allConnectionsSettled.then(() => allConnectionsSettled = true, () => allConnectionsSettled = false);
         service.addConnection(new FailedConnection('http://app1.com', 'some reason'));
         service.addConnection(new FailedConnection('http://app2.com', 'some reason'));
 
@@ -215,7 +207,6 @@ describe('ClientAppService', () => {
 
         expect(initialized).toBeFalsy();
         expect(rejectionReason).toEqual(expectedError);
-        expect(allConnectionsSettled).toBeFalsy();
       });
     });
 

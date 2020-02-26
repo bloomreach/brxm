@@ -15,12 +15,13 @@
  */
 
 import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { Site, SiteId } from '@bloomreach/navapp-communication';
+import { NavigationTrigger, Site, SiteId } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 import { Subject } from 'rxjs';
 
 import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
+import { CriticalError } from '../error-handling/models/critical-error';
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { NavItemMock } from '../models/nav-item.mock';
@@ -127,6 +128,7 @@ describe('BootstrapService', () => {
     navigationServiceMock = jasmine.createSpyObj('NavigationService', {
       init: undefined,
       initialNavigation: Promise.resolve(),
+      navigateToHome: Promise.resolve(),
     });
 
     mainLoaderServiceMock = jasmine.createSpyObj('MainLoaderService', [
@@ -146,8 +148,8 @@ describe('BootstrapService', () => {
     (siteServiceMock as any).selectedSite$ = selectedSiteSubject;
 
     errorHandlingServiceMock = jasmine.createSpyObj('ErrorHandlingService', [
-      'setCriticalError',
       'setInternalError',
+      'setError',
     ]);
 
     windowRefMock = {
@@ -197,8 +199,17 @@ describe('BootstrapService', () => {
         expect(bootstrapped).toBeTruthy();
       });
 
+      it('should show the main loader', () => {
+        expect(mainLoaderServiceMock.show).toHaveBeenCalled();
+      });
+
       it('should show the busy indicator', () => {
         expect(busyIndicatorServiceMock.show).toHaveBeenCalled();
+      });
+
+      it('should hide the mail loader', () => {
+        expect(mainLoaderServiceMock.hide).toHaveBeenCalled();
+        expect(mainLoaderServiceMock.show).toHaveBeenCalledBefore(mainLoaderServiceMock.hide);
       });
 
       it('should hide the busy indicator', () => {
@@ -226,16 +237,16 @@ describe('BootstrapService', () => {
         expect(navItemServiceMock.registerNavItemDtos).toHaveBeenCalledWith(navItemDtosMock);
       });
 
-      it('should initialize ClientAppService', () => {
-        expect(clientAppServiceMock.init).toHaveBeenCalledWith(navItemsMock);
-      });
-
       it('should initialize MenuStateService', () => {
         expect(menuStateServiceMock.init).toHaveBeenCalledWith(navItemsMock);
       });
 
       it('should initialize NavigationService', () => {
         expect(navigationServiceMock.init).toHaveBeenCalledWith(navItemsMock);
+      });
+
+      it('should initialize ClientAppService', () => {
+        expect(clientAppServiceMock.init).toHaveBeenCalledWith(navItemsMock);
       });
 
       it('should perform initial navigation', () => {
@@ -275,32 +286,366 @@ describe('BootstrapService', () => {
 
     describe('if something goes wrong', () => {
       describe('and silent login has failed', () => {
-        beforeEach(async(() => {
+        let bootstrapped: boolean;
+
+        beforeEach(async () => {
+          bootstrapped = false;
+
           authServiceMock.loginAllResources.and.callFake(() => Promise.reject(new Error('silent login has failed')));
 
-          service.bootstrap();
-        }));
+          await service.bootstrap();
+
+          bootstrapped = true;
+        });
 
         it('should set the error', () => {
-          expect(errorHandlingServiceMock.setCriticalError).toHaveBeenCalledWith(
-            'ERROR_UNABLE_TO_PERFORM_SILENT_LOGIN',
-            'silent login has failed',
-          );
+          const expectedError = new CriticalError('ERROR_UNABLE_TO_PERFORM_SILENT_LOGIN', 'silent login has failed');
+
+          expect(errorHandlingServiceMock.setError).toHaveBeenCalledWith(expectedError);
+        });
+
+        it('should bootstrap the app', () => {
+          expect(bootstrapped).toBeTruthy();
         });
       });
 
       describe('and nav item DTOs fetching has failed', () => {
-        beforeEach(async(() => {
+        let bootstrapped: boolean;
+
+        beforeEach(async () => {
+          bootstrapped = false;
+
           navConfigServiceMock.fetchNavigationConfiguration.and.callFake(() => Promise.reject(
             new Error('nav item DTOs fetching has failed'),
           ));
 
+          await service.bootstrap();
+
+          bootstrapped = true;
+        });
+
+        it('should set the error', () => {
+          const expectedError = new CriticalError(
+            'ERROR_UNABLE_TO_LOAD_CONFIGURATION',
+            'nav item DTOs fetching has failed',
+          );
+
+          expect(errorHandlingServiceMock.setError).toHaveBeenCalledWith(expectedError);
+        });
+
+        it('should bootstrap the app', () => {
+          expect(bootstrapped).toBeTruthy();
+        });
+      });
+
+      describe('and registration of nav item DTOs thrown an exception', () => {
+        let bootstrapped: boolean;
+
+        beforeEach(async () => {
+          bootstrapped = false;
+
+          navItemServiceMock.registerNavItemDtos.and.callFake(() => {
+            throw new Error('registration of nav item DTOs fetching has failed');
+          });
+
+          await service.bootstrap();
+
+          bootstrapped = true;
+        });
+
+        it('should set the error', () => {
+          expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(
+            'ERROR_INITIALIZATION',
+            'registration of nav item DTOs fetching has failed',
+          );
+        });
+
+        it('should bootstrap the app', () => {
+          expect(bootstrapped).toBeTruthy();
+        });
+      });
+
+      describe('and ClientAppService initialization has thrown an exception', () => {
+        let bootstrapped: boolean;
+
+        beforeEach(async () => {
+          bootstrapped = false;
+
+          clientAppServiceMock.init.and.callFake(() => {
+            throw new Error('ClientAppService initialization error');
+          });
+
+          await service.bootstrap();
+
+          bootstrapped = true;
+        });
+
+        it('should set the error', () => {
+          expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(
+            'ERROR_INITIALIZATION',
+            'ClientAppService initialization error',
+          );
+        });
+
+        it('should bootstrap the app', () => {
+          expect(bootstrapped).toBeTruthy();
+        });
+      });
+
+      describe('and ClientAppService initialization has failed', () => {
+        let bootstrapped: boolean;
+
+        beforeEach(async () => {
+          bootstrapped = false;
+
+          clientAppServiceMock.init.and.callFake(() => Promise.reject(new Error('some error')));
+
+          await service.bootstrap();
+
+          bootstrapped = true;
+        });
+
+        it('should set the error', () => {
+          expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(
+            'ERROR_INITIALIZATION',
+            'some error',
+          );
+        });
+
+        it('should bootstrap the app', () => {
+          expect(bootstrapped).toBeTruthy();
+        });
+      });
+
+      describe('and MenuStateService initialization has thrown an exception', () => {
+        let bootstrapped: boolean;
+
+        beforeEach(async () => {
+          bootstrapped = false;
+
+          menuStateServiceMock.init.and.callFake(() => {
+            throw new Error('MenuStateService initialization error');
+          });
+
+          await service.bootstrap();
+
+          bootstrapped = true;
+        });
+
+        it('should set the error', () => {
+          expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(
+            'ERROR_INITIALIZATION',
+            'MenuStateService initialization error',
+          );
+        });
+
+        it('should bootstrap the app', () => {
+          expect(bootstrapped).toBeTruthy();
+        });
+      });
+
+      describe('and NavigationService initialization has thrown an exception', () => {
+        let bootstrapped: boolean;
+
+        beforeEach(async () => {
+          bootstrapped = false;
+
+          navigationServiceMock.init.and.callFake(() => {
+            throw new Error('NavigationService initialization error');
+          });
+
+          await service.bootstrap();
+
+          bootstrapped = true;
+        });
+
+        it('should set the error', () => {
+          expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(
+            'ERROR_INITIALIZATION',
+            'NavigationService initialization error',
+          );
+        });
+
+        it('should bootstrap the app', () => {
+          expect(bootstrapped).toBeTruthy();
+        });
+      });
+
+      describe('and initial navigation has thrown an exception', () => {
+        let bootstrapped: boolean;
+
+        beforeEach(async () => {
+          bootstrapped = false;
+
+          navigationServiceMock.initialNavigation.and.callFake(() => {
+            throw new Error('initial navigation error');
+          });
+
           service.bootstrap();
+
+          await service.bootstrap();
+
+          bootstrapped = true;
+        });
+
+        it('should set the error', () => {
+          expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(
+            'ERROR_INITIALIZATION',
+            'initial navigation error',
+          );
+        });
+
+        it('should bootstrap the app', () => {
+          expect(bootstrapped).toBeTruthy();
+        });
+      });
+
+      describe('and initial navigation has failed', () => {
+        let bootstrapped: boolean;
+
+        beforeEach(async () => {
+          bootstrapped = false;
+
+          navigationServiceMock.initialNavigation.and.callFake(() => Promise.reject(new Error('some error')));
+
+          await service.bootstrap();
+
+          bootstrapped = true;
+        });
+
+        it('should set the error', () => {
+          expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(
+            'ERROR_INITIALIZATION',
+            'some error',
+          );
+        });
+
+        it('should bootstrap the app', () => {
+          expect(bootstrapped).toBeTruthy();
+        });
+      });
+
+      describe('error', () => {
+        it('should be set if an exception object is provided', fakeAsync(() => {
+          const expectedError = new CriticalError('ERROR_UNABLE_TO_PERFORM_SILENT_LOGIN', 'error');
+
+          authServiceMock.loginAllResources.and.callFake(() => {
+            throw new Error('error');
+          });
+
+          service.bootstrap();
+
+          tick();
+
+          expect(errorHandlingServiceMock.setError).toHaveBeenCalledWith(expectedError);
+        }));
+
+        it('should be set if a string is provided as a rejection reason', fakeAsync(() => {
+          const expectedError = new CriticalError('ERROR_UNABLE_TO_PERFORM_SILENT_LOGIN', 'error');
+
+          authServiceMock.loginAllResources.and.callFake(() => Promise.reject('error'));
+
+          service.bootstrap();
+
+          tick();
+
+          expect(errorHandlingServiceMock.setError).toHaveBeenCalledWith(expectedError);
+        }));
+      });
+    });
+  });
+
+  describe('reinitialize', () => {
+    describe('if everything goes well', () => {
+      let reinitialized: boolean;
+
+      const newNavItemDtosMock = [
+        { id: '4', appIframeUrl: 'https://some-new-url', appPath: 'home/path' },
+        { id: '5', appIframeUrl: 'https://some-new-url', appPath: 'some/path' },
+        { id: '6', appIframeUrl: 'https://another-new-url', appPath: 'another/path' },
+      ];
+
+      const newNavItemsMock = [
+        new NavItemMock({ id: '4' }),
+        new NavItemMock({ id: '5' }),
+        new NavItemMock({ id: '6' }),
+      ];
+
+      beforeEach(async(() => {
+        reinitialized = false;
+
+        navConfigServiceMock.refetchNavItems.and.returnValue(newNavItemDtosMock);
+        navItemServiceMock.registerNavItemDtos.and.returnValue(newNavItemsMock);
+
+        service.reinitialize().then(() => reinitialized = true);
+      }));
+
+      it('should complete successfully', () => {
+        expect(reinitialized).toBeTruthy();
+      });
+
+      it('should show the main loader', () => {
+        expect(mainLoaderServiceMock.show).toHaveBeenCalled();
+      });
+
+      it('should show the busy indicator', () => {
+        expect(busyIndicatorServiceMock.show).toHaveBeenCalled();
+      });
+
+      it('should hide the mail loader', () => {
+        expect(mainLoaderServiceMock.hide).toHaveBeenCalled();
+        expect(mainLoaderServiceMock.show).toHaveBeenCalledBefore(mainLoaderServiceMock.hide);
+      });
+
+      it('should hide the busy indicator', () => {
+        expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
+        expect(busyIndicatorServiceMock.show).toHaveBeenCalledBefore(busyIndicatorServiceMock.hide);
+      });
+
+      it('should refetch nav item DTOs', () => {
+        expect(navConfigServiceMock.refetchNavItems).toHaveBeenCalled();
+      });
+
+      it('should register fetched nav item DTOs', () => {
+        expect(navItemServiceMock.registerNavItemDtos).toHaveBeenCalledWith(newNavItemDtosMock);
+      });
+
+      it('should initialize MenuStateService', () => {
+        expect(menuStateServiceMock.init).toHaveBeenCalledWith(newNavItemsMock);
+      });
+
+      it('should initialize NavigationService', () => {
+        expect(navigationServiceMock.init).toHaveBeenCalledWith(newNavItemsMock);
+      });
+
+      it('should initialize ClientAppService', () => {
+        expect(clientAppServiceMock.init).toHaveBeenCalledWith(newNavItemsMock);
+      });
+
+      it('should perform navigation to the home page', () => {
+        expect(navigationServiceMock.navigateToHome).toHaveBeenCalledWith(NavigationTrigger.InitialNavigation);
+      });
+
+      describe('logging', () => {
+        it('should log the start of reinitializing process', () => {
+          expect(loggerMock.debug).toHaveBeenCalledWith('Reinitializing the application');
+        });
+      });
+    });
+
+    describe('if something goes wrong', () => {
+      describe('and nav item DTOs fetching has failed', () => {
+        beforeEach(async(() => {
+          navConfigServiceMock.refetchNavItems.and.callFake(() => Promise.reject(
+            new Error('nav item DTOs fetching has failed'),
+          ));
+
+          service.reinitialize();
         }));
 
         it('should set the error', () => {
-          expect(errorHandlingServiceMock.setCriticalError).toHaveBeenCalledWith(
-            'ERROR_UNABLE_TO_LOAD_CONFIGURATION',
+          expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(
+            'ERROR_INITIALIZATION',
             'nav item DTOs fetching has failed',
           );
         });
@@ -308,16 +653,16 @@ describe('BootstrapService', () => {
 
       describe('and registration of nav item DTOs thrown an exception', () => {
         beforeEach(async(() => {
-          navConfigServiceMock.fetchNavigationConfiguration.and.callFake(() => {
+          navItemServiceMock.registerNavItemDtos.and.callFake(() => {
             throw new Error('registration of nav item DTOs fetching has failed');
           });
 
-          service.bootstrap();
+          service.reinitialize();
         }));
 
         it('should set the error', () => {
-          expect(errorHandlingServiceMock.setCriticalError).toHaveBeenCalledWith(
-            'ERROR_UNABLE_TO_LOAD_CONFIGURATION',
+          expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(
+            'ERROR_INITIALIZATION',
             'registration of nav item DTOs fetching has failed',
           );
         });
@@ -329,7 +674,7 @@ describe('BootstrapService', () => {
             throw new Error('ClientAppService initialization error');
           });
 
-          service.bootstrap();
+          service.reinitialize();
         }));
 
         it('should set the error', () => {
@@ -344,7 +689,7 @@ describe('BootstrapService', () => {
         beforeEach(async(() => {
           clientAppServiceMock.init.and.callFake(() => Promise.reject(new Error('some error')));
 
-          service.bootstrap();
+          service.reinitialize();
         }));
 
         it('should set the error', () => {
@@ -361,7 +706,7 @@ describe('BootstrapService', () => {
             throw new Error('MenuStateService initialization error');
           });
 
-          service.bootstrap();
+          service.reinitialize();
         }));
 
         it('should set the error', () => {
@@ -378,7 +723,7 @@ describe('BootstrapService', () => {
             throw new Error('NavigationService initialization error');
           });
 
-          service.bootstrap();
+          service.reinitialize();
         }));
 
         it('should set the error', () => {
@@ -389,28 +734,28 @@ describe('BootstrapService', () => {
         });
       });
 
-      describe('and initial navigation has thrown an exception', () => {
+      describe('and navigation to home page has thrown an exception', () => {
         beforeEach(async(() => {
-          navigationServiceMock.initialNavigation.and.callFake(() => {
-            throw new Error('initial navigation error');
+          navigationServiceMock.navigateToHome.and.callFake(() => {
+            throw new Error('navigation to home page error');
           });
 
-          service.bootstrap();
+          service.reinitialize();
         }));
 
         it('should set the error', () => {
           expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith(
             'ERROR_INITIALIZATION',
-            'initial navigation error',
+            'navigation to home page error',
           );
         });
       });
 
-      describe('and initial navigation has failed', () => {
+      describe('and navigation to home page has failed', () => {
         beforeEach(async(() => {
-          navigationServiceMock.initialNavigation.and.callFake(() => Promise.reject(new Error('some error')));
+          navigationServiceMock.navigateToHome.and.callFake(() => Promise.reject(new Error('some error')));
 
-          service.bootstrap();
+          service.reinitialize();
         }));
 
         it('should set the error', () => {
@@ -423,62 +768,26 @@ describe('BootstrapService', () => {
 
       describe('error', () => {
         it('should be set if an exception object is provided', fakeAsync(() => {
-          authServiceMock.loginAllResources.and.callFake(() => {
+          navigationServiceMock.navigateToHome.and.callFake(() => {
             throw new Error('error');
           });
 
-          service.bootstrap();
+          service.reinitialize();
 
           tick();
 
-          expect(errorHandlingServiceMock.setCriticalError).toHaveBeenCalledWith(
-            'ERROR_UNABLE_TO_PERFORM_SILENT_LOGIN',
-            'error',
-          );
+          expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith('ERROR_INITIALIZATION', 'error');
         }));
 
         it('should be set if a string is provided as a rejection reason', fakeAsync(() => {
-          authServiceMock.loginAllResources.and.callFake(() => Promise.reject('error'));
+          navigationServiceMock.navigateToHome.and.callFake(() => Promise.reject('error'));
 
-          service.bootstrap();
+          service.reinitialize();
 
           tick();
 
-          expect(errorHandlingServiceMock.setCriticalError).toHaveBeenCalledWith(
-            'ERROR_UNABLE_TO_PERFORM_SILENT_LOGIN',
-            'error',
-          );
+          expect(errorHandlingServiceMock.setInternalError).toHaveBeenCalledWith('ERROR_INITIALIZATION', 'error');
         }));
-      });
-    });
-  });
-
-  describe('reinitialize', () => {
-    describe('if everything goes well', () => {
-      let reinitialized: boolean;
-
-      beforeEach(async(() => {
-        reinitialized = false;
-
-        service.reinitialize().then(() => reinitialized = true);
-      }));
-
-      it('should complete successfully', () => {
-        expect(reinitialized).toBeTruthy();
-      });
-
-      it('should show the busy indicator', () => {
-        expect(busyIndicatorServiceMock.show).toHaveBeenCalled();
-      });
-
-      it('should refetch nav items', () => {
-        expect(navConfigServiceMock.refetchNavItems).toHaveBeenCalled();
-      });
-
-      describe('logging', () => {
-        it('should log the start of reinitializing process', () => {
-          expect(loggerMock.debug).toHaveBeenCalledWith('Reinitializing the application');
-        });
       });
     });
   });

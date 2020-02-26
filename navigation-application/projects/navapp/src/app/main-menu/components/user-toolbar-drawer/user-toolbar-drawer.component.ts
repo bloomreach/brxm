@@ -21,7 +21,6 @@ import {
   HostBinding,
   Inject,
   Input,
-  OnInit,
   Output,
 } from '@angular/core';
 
@@ -45,7 +44,7 @@ import { USER_SETTINGS } from '../../../services/user-settings';
     ]),
   ],
 })
-export class UserToolbarDrawerComponent implements OnInit {
+export class UserToolbarDrawerComponent {
   @Input()
   userDrawerOpen: boolean;
 
@@ -55,16 +54,10 @@ export class UserToolbarDrawerComponent implements OnInit {
   @HostBinding('@slideInOut')
   animate = true;
 
-  logoutDisabled = true;
-
   constructor(
     private readonly authService: AuthService,
     @Inject(USER_SETTINGS) private readonly userSettings: UserSettings,
   ) {}
-
-  async ngOnInit(): Promise<void> {
-    this.logoutDisabled = false;
-  }
 
   get userName(): string {
     return this.userSettings.userName;

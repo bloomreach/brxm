@@ -85,18 +85,22 @@ export class ConnectionService {
       this.connections.set(url, connection);
 
       return connection;
+    } catch (e) {
+      return e;
     } finally {
       this.pendingConnections.delete(url);
     }
   }
 
   removeConnection(url: string): void {
+    const pendingConnection = this.pendingConnections.get(url);
     const connection = this.connections.get(url);
 
-    if (!connection) {
+    if (!pendingConnection && !connection) {
       throw new Error(`Connection to '${url}' does not exist`);
     }
 
+    this.pendingConnections.delete(url);
     this.connections.delete(url);
     this.renderer.removeChild(this.document.body, connection.iframe);
   }

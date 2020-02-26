@@ -32,8 +32,8 @@ import { ClientAppService } from '../../services/client-app.service';
 
 @Component({
   selector: 'brna-client-app',
-  templateUrl: './client-app.component.html',
-  styleUrls: ['./client-app.component.scss'],
+  templateUrl: 'client-app.component.html',
+  styleUrls: ['client-app.component.scss'],
 })
 export class ClientAppComponent implements OnInit, AfterViewInit {
   @Input()
@@ -65,7 +65,7 @@ export class ClientAppComponent implements OnInit, AfterViewInit {
   }
 
   private reload(): void {
-    this.iframe.nativeElement.src = this.url;
+    this.iframe.nativeElement.src = this.domSanitizer.sanitize(SecurityContext.URL, this.url);
   }
 
   private connect(): void {
