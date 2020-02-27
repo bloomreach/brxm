@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractBeanBuilderService {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractBeanBuilderService.class);
-    private static final String DOCBASE = "Docbase";
 
     private enum DocumentType {
         STRING("String"), //
@@ -116,7 +115,7 @@ public abstract class AbstractBeanBuilderService {
                 addBeanMethodDocbase(propertyName, methodName, multiple, builder);
                 break;
             default:
-                addCustomPropertyType(propertyName, methodName, multiple, property.getType(), builder);
+                addCustomPropertyType(propertyName, methodName, multiple, bean.getDocumentType(), property.getCmsType(), builder);
                 break;
             }
         }
@@ -186,12 +185,12 @@ public abstract class AbstractBeanBuilderService {
      * @return the corresponding document type
      */
     private DocumentType getPropertyDocumentType(final String type, final String cmsType) {
-        final DocumentType documentType = DocumentType.getDocumentType(type);
+        DocumentType documentType = DocumentType.getDocumentType(type);
 
         // if a document type is a string type, then the cms/item type check
-        // must be made to figure out whether the document type is a docbase
-        if (documentType == DocumentType.STRING && DOCBASE.equals(cmsType)) {
-            return DocumentType.DOCBASE;
+        // should be made to figure out the actual type of the document
+        if (documentType == DocumentType.STRING) {
+            documentType = DocumentType.getDocumentType(cmsType);
         }
 
         return documentType;
@@ -296,10 +295,11 @@ public abstract class AbstractBeanBuilderService {
      * @param propertyName of the property type
      * @param methodName of the method
      * @param multiple whether a document property keeps multiple values or not
+     * @param documentType of the document
      * @param type of the document property
      * @param builder {@link org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder}
      */
-    protected abstract void addCustomPropertyType(String propertyName, String methodName, boolean multiple, String type, DynamicBeanBuilder builder);
+    protected abstract void addCustomPropertyType(String propertyName, String methodName, boolean multiple, String documentType, String type, DynamicBeanBuilder builder);
 
     /**
      * Adds a method to the bean which returns {@link org.hippoecm.hst.content.beans.standard.HippoHtmlBean} object type
