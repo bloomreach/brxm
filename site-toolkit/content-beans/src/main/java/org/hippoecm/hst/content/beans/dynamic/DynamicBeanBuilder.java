@@ -1,6 +1,6 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
@@ -15,6 +15,7 @@
  */
 package org.hippoecm.hst.content.beans.dynamic;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -23,6 +24,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import javax.jcr.Node;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -263,6 +266,21 @@ public class DynamicBeanBuilder {
     private void addBeanMethodPrimitive(final String methodName, final Class<?> returnType, final String propertyName, final boolean multiple) {
         final String superMethodName = multiple ? METHOD_GET_MULTIPLE_PROPERTY : METHOD_GET_SINGLE_PROPERTY; 
         addSimpleGetMethod(methodName, returnType, superMethodName, propertyName);
+    }
+
+
+    void addBeanMethodCustomField(final Class<?> returnType, final String methodName, final String propertyName,
+            final boolean multiple, final Node documentTypeNode) {
+        try {
+            final Constructor<?> constructor = returnType.getConstructor(String.class, Node.class);
+            final Object instance = constructor.newInstance(propertyName, documentTypeNode);
+            builder = builder
+                        .defineMethod(methodName, returnType, Modifier.PUBLIC)
+                        .intercept(MethodDelegation.to(instance));
+            methodAdded = true;
+        } catch (Exception e) {
+            log.error("Can't define method {} : {}", methodName, e);
+        }
     }
 
     /**

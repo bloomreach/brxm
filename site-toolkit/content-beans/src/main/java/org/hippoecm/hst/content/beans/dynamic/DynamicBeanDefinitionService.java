@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -18,10 +18,12 @@ package org.hippoecm.hst.content.beans.dynamic;
 import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_GALLERYTYPE;
 
 import javax.jcr.Credentials;
+import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.builder.AbstractBeanBuilderService;
 import org.hippoecm.hst.content.beans.builder.HippoContentBean;
@@ -31,6 +33,7 @@ import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
 import org.hippoecm.hst.site.HstServices;
+import org.hippoecm.repository.api.HippoNodeType;
 import org.onehippo.cms7.services.contenttype.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,11 +59,9 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
             return;
         }
 
-        final Repository repository = componentManager.getComponent(Repository.class.getName());
-        final Credentials configUser = componentManager.getComponent(Credentials.class.getName() + ".hstconfigreader");
         Session session = null;
         try {
-            session = repository.login(configUser);
+            session = getSession(componentManager);
             try {
                 final HippoBean gallery = (HippoBean) objectConverter.getObject(session, "/content/gallery");
                 if (gallery == null) {
@@ -76,9 +77,41 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
         } catch (RepositoryException e) {
             throw new RuntimeRepositoryException(e);
         } finally {
-            if (session != null) {
-                 session.logout();
-            }
+            closeSession(session);
+        }
+    }
+
+    private Session getSession(final ComponentManager componentManager) throws RepositoryException {
+        final Repository repository = componentManager.getComponent(Repository.class.getName());
+        final Credentials configUser = componentManager.getComponent(Credentials.class.getName() + ".hstconfigreader");
+        return repository.login(configUser);
+    }
+
+    private void closeSession(final Session session) {
+        if (session != null) {
+            session.logout();
+        }
+    }
+
+    private Node getDocumentTypeNode(final String documentType) {
+        final ComponentManager componentManager = HstServices.getComponentManager();
+        if (componentManager == null) {
+            log.error("HST Services haven't been initialized yet.");
+            return null;
+        }
+
+        Session session = null;
+        try {
+            session = getSession(componentManager);
+
+            final String documentTypeNodePath = HippoNodeType.NAMESPACES_PATH + "/"
+                    + StringUtils.substringBefore(documentType, ":") + "/" + StringUtils.substringAfter(documentType, ":");
+
+            return session.getRootNode().getNode(documentTypeNodePath);
+        } catch (RepositoryException e) {
+            throw new RuntimeRepositoryException(e);
+        } finally {
+            closeSession(session);
         }
     }
 
@@ -186,8 +219,19 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
     }
 
     @Override
-    protected void addCustomPropertyType(final String propertyName, final String methodName, final boolean multiple, final String type, final DynamicBeanBuilder builder) {
-        log.warn("Failed to create getter for property: {} of type: {}", propertyName, type);
+    protected void addCustomPropertyType(final String propertyName, final String methodName, final boolean multiple, final String documentType, final String type, final DynamicBeanBuilder builder) {
+        final Class<? extends HippoBean> generatedBeanDefinition = getOrCreateCustomBean(type);
+        if (generatedBeanDefinition == null) {
+            log.warn("Failed to create getter for property: {} of type: {}", propertyName, type);
+            return;
+        }
+
+        final Node documentTypeNode = getDocumentTypeNode(documentType);
+        if (documentTypeNode == null) {
+            return;
+        }
+
+        builder.addBeanMethodCustomField(generatedBeanDefinition, methodName, propertyName, multiple, documentTypeNode);
     }
 
     @Override
