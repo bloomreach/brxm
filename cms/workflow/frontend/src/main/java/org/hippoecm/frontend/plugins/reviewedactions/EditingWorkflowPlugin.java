@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.HippoNode;
@@ -108,10 +109,8 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
+                UserSession.get().getJcrSession().save();
                 ((DocumentWorkflow) wf).saveDraft();
-                final IEditorManager editorMgr = context.getService("service.edit", IEditorManager.class);
-                IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
-                editor.close();
                 return null;
             }
         };
