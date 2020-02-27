@@ -16,8 +16,8 @@
 package org.hippoecm.frontend.editor.plugins.resource;
 
 import java.io.IOException;
-import java.io.InputStream;
 
+import javax.jcr.Binary;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
@@ -39,12 +39,13 @@ import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.util.ByteSizeFormatter;
 import org.hippoecm.frontend.resource.JcrResource;
 import org.hippoecm.frontend.resource.JcrResourceStream;
-import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.frontend.service.IEditor.Mode;
 
 public class ImageDisplayPlugin extends RenderPlugin<Node> {
 
@@ -57,64 +58,79 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
     public ImageDisplayPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        final IEditor.Mode mode = IEditor.Mode.fromString(config.getString("mode"), IEditor.Mode.VIEW);
-        if (mode == IEditor.Mode.COMPARE && config.containsKey("model.compareTo")) {
-            final IModelReference<Node> baseModelRef = context.getService(config.getString("model.compareTo"),
-                    IModelReference.class);
-            boolean doCompare = false;
-            if (baseModelRef != null) {
-                final IModel<Node> baseModel = baseModelRef.getModel();
-                final Node baseNode = baseModel.getObject();
-                final Node currentNode = getModel().getObject();
-                if (baseNode != null && currentNode != null) {
-                    try {
-                        final InputStream baseStream = baseNode.getProperty(JcrConstants.JCR_DATA).getStream();
-                        final InputStream currentStream = currentNode.getProperty(JcrConstants.JCR_DATA).getStream();
-                        final StreamComparer comparer = new StreamComparer();
-                        if (!comparer.areEqual(baseStream, currentStream)) {
-                            doCompare = true;
-                        }
-                    } catch (final RepositoryException e) {
-                        log.error("Could not compare streams", e);
-                    }
-                }
-            }
-            if (doCompare) {
-                final Fragment fragment = new Fragment("fragment", "compare", this);
-                final Fragment baseFragment = createResourceFragment("base", baseModelRef.getModel());
-                baseFragment.add(ClassAttribute.append("hippo-diff-removed"));
-                fragment.add(baseFragment);
+        final IModel<Node> compareModel = getCompareModel();
+        if (compareModel != null) {
+            final Fragment fragment = new Fragment("fragment", "compare", this);
+            final Fragment baseFragment = createResourceFragment("base", compareModel);
+            baseFragment.add(ClassAttribute.append("hippo-diff-removed"));
+            fragment.add(baseFragment);
 
-                final Fragment currentFragment = createResourceFragment("current", getModel());
-                currentFragment.add(ClassAttribute.append("hippo-diff-added"));
-                fragment.add(currentFragment);
-                add(fragment);
-            } else {
-                add(createResourceFragment("fragment", getModel()));
-            }
+            final Fragment currentFragment = createResourceFragment("current", getModel());
+            currentFragment.add(ClassAttribute.append("hippo-diff-added"));
+            fragment.add(currentFragment);
+            add(fragment);
         } else {
             add(createResourceFragment("fragment", getModel()));
         }
     }
 
-    private Fragment createResourceFragment(final String id, final IModel<Node> model) {
-        Fragment fragment = new Fragment(id, "unknown", this);
-        try (final JcrResourceStream stream = new JcrResourceStream(model)) {
-            if (stream.length().bytes() < 0) {
-                return fragment;
+    private IModel<Node> getCompareModel() {
+        final IPluginConfig config = getPluginConfig();
+        final IPluginContext context = getPluginContext();
+        final Mode mode = Mode.fromString(config.getString("mode"), Mode.VIEW);
+
+        if (mode != Mode.COMPARE || !config.containsKey("model.compareTo")) {
+            return null;
+        }
+
+        //noinspection unchecked
+        final IModelReference<Node> baseModelRef = context.getService(config.getString("model.compareTo"),
+                IModelReference.class);
+        if (baseModelRef == null) {
+            return null;
+        }
+
+        final IModel<Node> baseModel = baseModelRef.getModel();
+        final Node baseNode = baseModel.getObject();
+        final Node currentNode = getModel().getObject();
+        if (baseNode == null || currentNode == null) {
+            return null;
+        }
+
+        try {
+            final Binary baseBinary = baseNode.getProperty(JcrConstants.JCR_DATA).getBinary();
+            final Binary currentBinary = currentNode.getProperty(JcrConstants.JCR_DATA).getBinary();
+            final StreamComparer comparer = new StreamComparer();
+            if (!comparer.areEqual(baseBinary.getStream(), currentBinary.getStream())) {
+                return baseModel;
             }
+        } catch (final RepositoryException e) {
+            log.error("Could not compare streams", e);
+        }
 
-            fragment = new Fragment(id, "embed", this);
-            fragment.add(new Label("filesize", Model.of(formatter.format(stream.length().bytes()))));
-            fragment.add(new Label("mimetype", Model.of(stream.getContentType())));
-            fragment.add(createFileLink(stream, stream.getChainedModel().getObject()));
+        return null;
+    }
 
-            if (stream.getContentType().equals(MIME_TYPE_HIPPO_BLANK)) {
-                fragment.setVisible(false);
+    private Fragment createResourceFragment(final String id, final IModel<Node> model) {
+        try (final JcrResourceStream stream = new JcrResourceStream(model)) {
+            if (stream.length().bytes() >= 0) {
+                return createResourceFragment(id, stream);
             }
         } catch (final IOException | RepositoryException ex) {
             log.error(ex.getMessage());
         }
+
+        return new Fragment(id, "unknown", this);
+    }
+
+    private Fragment createResourceFragment(final String id, final JcrResourceStream stream) throws RepositoryException {
+        final Fragment fragment = new Fragment(id, "embed", this);
+
+        fragment.add(new Label("filesize", Model.of(formatter.format(stream.length().bytes()))));
+        fragment.add(new Label("mimetype", Model.of(stream.getContentType())));
+        fragment.add(createFileLink(stream, stream.getChainedModel().getObject()));
+        fragment.setVisible(!stream.getContentType().equals(MIME_TYPE_HIPPO_BLANK));
+
         return fragment;
     }
 
@@ -122,35 +138,33 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
         final String filename = lookupFilename(node);
         final String linkLabel = lookupLinkLabel(filename);
         final FileResource fileResource = new FileResource(stream, filename);
+
         final FileLink filelink = new FileLink("link", fileResource, stream);
-        filelink.add(new Label("filename", new Model<>(linkLabel)));
+        filelink.add(new Label("filename", Model.of(linkLabel)));
         return filelink;
     }
 
     private String lookupLinkLabel(final String filename) {
-        final String linkLabel;
-
-        if (HippoNodeType.NT_RESOURCE.equals(filename)) {
-            final ComponentStringResourceLoader componentStringResourceLoader = new ComponentStringResourceLoader();
-            linkLabel = componentStringResourceLoader.loadStringResource(this, "download.link", getLocale(), null,
-                    null);
-        } else {
-            linkLabel = filename;
+        if (!HippoNodeType.NT_RESOURCE.equals(filename)) {
+            return filename;
         }
-        return linkLabel;
+
+        final ComponentStringResourceLoader componentStringResourceLoader = new ComponentStringResourceLoader();
+        return componentStringResourceLoader.loadStringResource(this, "download.link", getLocale(), null, null);
     }
 
-    private String lookupFilename(final Node node) throws RepositoryException {
-        String filename = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_FILENAME, null);
+    private static String lookupFilename(final Node node) throws RepositoryException {
+        final String filename = JcrUtils.getStringProperty(node, HippoNodeType.HIPPO_FILENAME, null);
 
-        if (StringUtils.isEmpty(filename)) {
-            if (node.getDefinition().getName().equals("*")) {
-                filename = node.getName();
-            } else {
-                filename = node.getParent().getName();
-            }
+        if (StringUtils.isNotEmpty(filename)) {
+            return filename;
         }
-        return filename;
+
+        if (node.getDefinition().getName().equals("*")) {
+            return node.getName();
+        }
+
+        return node.getParent().getName();
     }
 
     @Override
@@ -164,6 +178,7 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
 
         public FileResource(final JcrResourceStream stream, final String filename) {
             super(stream);
+
             setFileName(filename);
             setContentDisposition(ContentDisposition.ATTACHMENT);
         }
