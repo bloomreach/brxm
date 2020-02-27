@@ -1,5 +1,5 @@
 /*
- * Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -99,6 +99,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         private IModel<Node> unpublished;
         private IModel<Node> published;
         private boolean isHolder;
+        private boolean isTransferable;
         private String user;
         private Optional<BranchHandle> branchHandle = Optional.empty();
 
@@ -142,6 +143,9 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                         if (child.hasProperty(HippoStdNodeType.HIPPOSTD_HOLDER)
                                 && child.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).getString().equals(user)) {
                             isHolder = true;
+                        }
+                        if (child.hasProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE)){
+                            isTransferable = child.getProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE).getBoolean();
                         }
                         break;
                 }
@@ -205,9 +209,12 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
 
         // select draft if it exists
         if (wfState.draft != null) {
-            if (wfState.isHolder) {
+            if (wfState.isHolder && !wfState.isTransferable) {
                 return Mode.EDIT;
             } else {
+                if (wfState.isTransferable){
+                    return Mode.VIEW;
+                }
                 if (wfState.published != null) {
                     return Mode.COMPARE;
                 }
@@ -293,6 +300,15 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                 }
                 return state.draft;
             case VIEW:
+                if (state.draft != null && state.isTransferable){
+                   if (state.published != null){
+                       state.published.detach();
+                   }
+                   if (state.unpublished != null){
+                       state.unpublished.detach();
+                   }
+                   return state.draft;
+                }
                 if (state.unpublished != null) {
                     if (state.published != null) {
                         state.published.detach();
