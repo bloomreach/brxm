@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,6 +42,7 @@ const NAVAPP_COMMUNICATION_IMPLEMENTATION_API_VERSION = '1.0.0';
 })
 export class AppComponent implements OnInit {
   navigateCount = 0;
+  internalNavigationsCount = 0;
   navigatedTo: string;
   buttonClicked = 0;
   parent: ParentPromisedApi;
@@ -156,6 +157,16 @@ export class AppComponent implements OnInit {
             .then(parentConfig => this.parentApiVersion = parentConfig.apiVersion);
         }
       });
+
+    window.addEventListener('popstate', event => {
+      if (event.state) {
+        this.internalNavigationsCount = event.state.navigationsCount;
+
+        return;
+      }
+
+      this.internalNavigationsCount = 0;
+    });
   }
 
   onButtonClicked(): void {
@@ -181,6 +192,16 @@ export class AppComponent implements OnInit {
     } else {
       this.parent.navigate({ path, breadcrumbLabel });
     }
+  }
+
+  navigateInternally(): void {
+    this.internalNavigationsCount++;
+    window.history.pushState({ navigationsCount: this.internalNavigationsCount }, '', `/some-url${this.internalNavigationsCount}`);
+  }
+
+  navigateInternallyWithReplaceState(): void {
+    this.internalNavigationsCount++;
+    window.history.replaceState({ navigationsCount: this.internalNavigationsCount }, '', `/some-url${this.internalNavigationsCount}`);
   }
 
   showError(): void {
