@@ -66,8 +66,7 @@ describe('ConnectionService', () => {
       createRenderer: rendererMock,
     });
 
-    connectToChildSpy = spyOnProperty(commLib, 'connectToChild');
-    connectToChildSpy.and.returnValue(parentConfig => {
+    connectToChildSpy = spyOnProperty(commLib, 'connectToChild').and.returnValue(parentConfig => {
       parentMethods = parentConfig.methods;
 
       return Promise.resolve({});
@@ -94,17 +93,28 @@ describe('ConnectionService', () => {
 
   describe('createConnection', () => {
     const url = 'http://localhost/testUrl';
-    let connection: ChildConnection;
+    let connectionPromise: Promise<ChildConnection>;
+    let connectToChildResolve: (value: ChildConnection) => any;
+    let connectToChildReject: (reason?: any) => any;
 
-    beforeEach(async () => {
-      connection = await service.createConnection(url);
+    beforeEach(() => {
+      connectToChildSpy.and.returnValue(parentConfig => {
+        parentMethods = parentConfig.methods;
+
+        return new Promise((resolve, reject) => {
+          connectToChildResolve = resolve;
+          connectToChildReject = reject;
+        });
+      });
+
+      connectionPromise = service.createConnection(url);
     });
 
     it('should create an iframe', () => {
       expect(documentMock.createElement).toHaveBeenCalledWith('iframe');
     });
 
-    it('should make the create iframe hidden and add to the DOM', () => {
+    it('should make the created iframe hidden and add it to the DOM', () => {
       expect(rendererMock.appendChild).toHaveBeenCalledWith(documentMock.body, {
         src: url,
         style: {
@@ -116,28 +126,79 @@ describe('ConnectionService', () => {
       });
     });
 
-    it('should create a connection', () => {
+    it('should create a connection', async () => {
+      connectToChildResolve({} as ChildConnection);
+
+      const connection = await connectionPromise;
+
       expect(connection.url).toBe(url);
     });
 
-    it('should not create the same connection twice but return en existing one from the pool', async () => {
-      documentMock.createElement.calls.reset();
-      rendererMock.appendChild.calls.reset();
+    describe('if the same connection is required', () => {
+      let newConnectionPromise: Promise<ChildConnection>;
 
-      const newConnection = await service.createConnection(url);
+      beforeEach(() => {
+        connectToChildSpy.calls.reset();
 
-      expect(newConnection).toBe(connection);
-      expect(documentMock.createElement).not.toHaveBeenCalled();
-      expect(rendererMock.appendChild).not.toHaveBeenCalled();
+        newConnectionPromise = service.createConnection(url);
+      });
+
+      it('should return the same connection', async () => {
+        const expected = {
+          url: 'some-url',
+          iframe: {} as HTMLIFrameElement,
+          api: childApiMock,
+        };
+
+        connectToChildResolve(expected);
+
+        const connection = await connectionPromise;
+        const newConnection = await newConnectionPromise;
+
+        expect(newConnection).toBe(connection);
+      });
+
+      it('should not call connectToIframe', async () => {
+        expect(connectToChildSpy).not.toHaveBeenCalled();
+      });
+
+      it('should not create an additional iframe', async () => {
+        connectToChildResolve({} as ChildConnection);
+
+        await newConnectionPromise;
+
+        expect(documentMock.createElement).toHaveBeenCalledTimes(1);
+        expect(rendererMock.appendChild).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    describe('if connection is failed', () => {
+      let errorThrown: Error;
+
+      beforeEach(async () => {
+        errorThrown = undefined;
+
+        connectToChildReject('some reason');
+
+        try {
+          await service.createConnection(url);
+        } catch (e) {
+          errorThrown = e;
+        }
+      });
+
+      it('should return a rejected promise', () => {
+        const expectedError = new Error('Could not create a connection for \'http://localhost/testUrl\': some reason');
+
+        expect(errorThrown).toEqual(expectedError);
+      });
     });
   });
 
   describe('when a connection to a hidden iframe is created', () => {
     const url = 'http://localhost/testUrl';
 
-    beforeEach(async () => {
-      return service.createConnection(url);
-    });
+    beforeEach(async () => service.createConnection(url));
 
     describe('removeConnection', () => {
       it('should remove the connection', () => {
@@ -187,7 +248,7 @@ describe('ConnectionService', () => {
     tick();
 
     expect(catchedError).toBeDefined();
-    expect(catchedError.message).toBe('Could not create connection for \'https://app.com\': some error');
+    expect(catchedError.message).toBe('Could not create a connection for \'https://app.com\': some error');
   }));
 
   describe('when the iframe is connected', () => {

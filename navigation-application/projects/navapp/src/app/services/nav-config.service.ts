@@ -187,7 +187,7 @@ export class NavConfigService {
   }
 
   private closeCreatedConnections(resources: ConfigResource[]): void {
-    const iframeResources = resources.filter(x => x.url === 'IFRAME');
+    const iframeResources = resources.filter(x => x.resourceType === 'IFRAME');
 
     for (const resource of iframeResources) {
       try {

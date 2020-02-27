@@ -45,6 +45,7 @@ export interface ChildConnection {
 })
 export class ConnectionService {
   private readonly connections = new Map<string, ChildConnection>();
+  private readonly pendingConnections = new Map<string, Promise<ChildConnection>>();
   private readonly renderer: Renderer2 = this.rendererFactory.createRenderer(undefined, undefined);
 
   showMask$ = new Subject<void>();
@@ -69,22 +70,37 @@ export class ConnectionService {
       return this.connections.get(url);
     }
 
+    if (this.pendingConnections.has(url)) {
+      return this.pendingConnections.get(url);
+    }
+
     const iframe = this.createHiddenIframe(url);
     this.renderer.appendChild(this.document.body, iframe);
 
-    const connection = await this.connectToIframe(iframe);
-    this.connections.set(url, connection);
+    const connectionPromise = this.connectToIframe(iframe);
+    this.pendingConnections.set(url, connectionPromise);
 
-    return connection;
+    try {
+      const connection = await connectionPromise;
+      this.connections.set(url, connection);
+
+      return connection;
+    } catch (e) {
+      return e;
+    } finally {
+      this.pendingConnections.delete(url);
+    }
   }
 
   removeConnection(url: string): void {
+    const pendingConnection = this.pendingConnections.get(url);
     const connection = this.connections.get(url);
 
-    if (!connection) {
+    if (!pendingConnection && !connection) {
       throw new Error(`Connection to '${url}' does not exist`);
     }
 
+    this.pendingConnections.delete(url);
     this.connections.delete(url);
     this.renderer.removeChild(this.document.body, connection.iframe);
   }
@@ -98,12 +114,14 @@ export class ConnectionService {
       methodInvocationTimeout: this.appSettings.iframesConnectionTimeout,
     };
 
+    this.logger.debug(`Initiating a connection to the iframe '${url}'`);
+
     try {
       const api = await connectToChild(config);
 
       return { url, iframe, api };
     } catch (error) {
-      throw new Error(`Could not create connection for '${url}': ${error}`);
+      throw new Error(`Could not create a connection for '${url}': ${error}`);
     }
   }
 

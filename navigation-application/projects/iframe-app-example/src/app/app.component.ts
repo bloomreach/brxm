@@ -54,7 +54,7 @@ export class AppComponent implements OnInit {
   ) { }
 
   get isBrSmMock(): boolean {
-    return this.location.path() === '/brsm';
+    return this.location.path().startsWith('/brsm');
   }
 
   get childApiMethods(): ChildApi {

@@ -14,45 +14,23 @@
  * limitations under the License.
  */
 
-import { Inject, Injectable } from '@angular/core';
-import { merge, of, Subject } from 'rxjs';
-import { fromPromise } from 'rxjs/internal-compatibility';
-import { catchError, mapTo, skipUntil, startWith } from 'rxjs/operators';
-
-import { APP_BOOTSTRAPPED } from '../bootstrap/app-bootstrapped';
+import { Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MainLoaderService {
-  private readonly source = new Subject<boolean>();
-  private visible: boolean;
-
-  constructor(@Inject(APP_BOOTSTRAPPED) private readonly appBootstrapped: Promise<void>) {
-    const appBootstrapped$ = fromPromise(this.appBootstrapped).pipe(
-      mapTo(false),
-      catchError(() => of(false)),
-    );
-
-    merge(
-      appBootstrapped$.pipe(
-        startWith(true),
-      ),
-      this.source.pipe(
-        skipUntil(appBootstrapped$),
-      ),
-    ).subscribe(x => this.visible = x);
-  }
+  private visible = true;
 
   get isVisible(): boolean {
     return this.visible;
   }
 
   show(): void {
-    this.source.next(true);
+    this.visible = true;
   }
 
   hide(): void {
-    this.source.next(false);
+    this.visible = false;
   }
 }

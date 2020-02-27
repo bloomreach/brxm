@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,12 @@
  * limitations under the License.
  */
 
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { DebugElement, SecurityContext } from '@angular/core';
+import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { By, DomSanitizer } from '@angular/platform-browser';
 
+import { Connection } from '../../../models/connection.model';
+import { FailedConnection } from '../../../models/failed-connection.model';
 import { ConnectionService } from '../../../services/connection.service';
 import { ClientAppService } from '../../services/client-app.service';
 
@@ -24,46 +28,119 @@ import { ClientAppComponent } from './client-app.component';
 describe('ClientAppComponent', () => {
   let component: ClientAppComponent;
   let fixture: ComponentFixture<ClientAppComponent>;
+  let iframeDe: DebugElement;
 
-  const mockConnection = {
-    api: {},
-  };
+  let domSanitizerMock: jasmine.SpyObj<DomSanitizer>;
+  let connectionServiceMock: jasmine.SpyObj<ConnectionService>;
+  let clientAppServiceMock: jasmine.SpyObj<ClientAppService>;
 
-  const clientAppServiceMock = jasmine.createSpyObj(['addConnection']);
-
-  const connectionService = jasmine.createSpyObj('ConnectionService', {
-    connectToIframe: Promise.resolve(mockConnection),
-  });
+  let resolveIframeConnection: (value: Connection) => any;
+  let rejectIframeConnection: (reason?: string) => any;
 
   beforeEach(async(() => {
-    TestBed.configureTestingModule({
+    domSanitizerMock = jasmine.createSpyObj('DomSanitizer', {
+      sanitize: 'sanitized-url',
+      bypassSecurityTrustResourceUrl: 'sanitized-url',
+    });
+
+    connectionServiceMock = jasmine.createSpyObj('ConnectionService', {
+      connectToIframe: new Promise((resolve, reject) => {
+        resolveIframeConnection = resolve;
+        rejectIframeConnection = reject;
+      }),
+    });
+
+    clientAppServiceMock = jasmine.createSpyObj('ClientAppService', [
+      'addConnection',
+    ]);
+
+    fixture = TestBed.configureTestingModule({
       providers: [
+        { provide: DomSanitizer, useValue: domSanitizerMock },
+        { provide: ConnectionService, useValue: connectionServiceMock },
         { provide: ClientAppService, useValue: clientAppServiceMock },
-        { provide: ConnectionService, useValue: connectionService },
       ],
       declarations: [ClientAppComponent],
-    });
-  }));
+    }).createComponent(ClientAppComponent);
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(ClientAppComponent);
     component = fixture.componentInstance;
-    component.url = '';
+    iframeDe = fixture.debugElement.query(By.css('iframe'));
+
+    component.url = 'some-url';
+
+    component.ngOnInit();
+
     fixture.detectChanges();
-  });
+  }));
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
   it('should sanitize the provided url', () => {
-    spyOn(console, 'warn');
-    component.url = 'Javascript:alert(\'xss\')';
-    fixture.detectChanges();
-    component.ngOnInit();
-    // tslint:disable-next-line: no-console
-    expect(console.warn).toHaveBeenCalledWith(
-      'WARNING: sanitizing unsafe URL value Javascript:alert(\'xss\') (see http://g.co/ng/security#xss)',
-    );
+    expect(domSanitizerMock.sanitize).toHaveBeenCalledWith(SecurityContext.URL, 'some-url');
+    expect(domSanitizerMock.bypassSecurityTrustResourceUrl).toHaveBeenCalledWith('sanitized-url');
+  });
+
+  describe('connection to the iframe', () => {
+    it('should be initiated', () => {
+      expect(connectionServiceMock.connectToIframe).toHaveBeenCalledWith(iframeDe.nativeElement);
+    });
+
+    it('should add a connection if iframe has been successfully connected', fakeAsync(() => {
+      const expected = new Connection(iframeDe.nativeElement.src, {});
+
+      resolveIframeConnection(expected);
+
+      tick();
+
+      expect(clientAppServiceMock.addConnection).toHaveBeenCalledWith(expected);
+    }));
+
+    it('should add a failed connection if there is an error', fakeAsync(() => {
+      const expected = new FailedConnection(iframeDe.nativeElement.src, 'some reason');
+
+      rejectIframeConnection('some reason');
+
+      tick();
+
+      expect(clientAppServiceMock.addConnection).toHaveBeenCalledWith(expected);
+    }));
+  });
+
+  describe('reloadAndConnect', () => {
+    it('should reload the iframe', () => {
+      const spy = spyOnProperty(iframeDe.nativeElement, 'src', 'set');
+
+      component.reloadAndConnect();
+
+      expect(spy).toHaveBeenCalledWith('sanitized-url');
+    });
+
+    describe('connection to the iframe', () => {
+      it('should be initiated', () => {
+        expect(connectionServiceMock.connectToIframe).toHaveBeenCalledWith(iframeDe.nativeElement);
+      });
+
+      it('should add a connection if iframe has been successfully connected', fakeAsync(() => {
+        const expected = new Connection(iframeDe.nativeElement.src, {});
+
+        resolveIframeConnection(expected);
+
+        tick();
+
+        expect(clientAppServiceMock.addConnection).toHaveBeenCalledWith(expected);
+      }));
+
+      it('should add a failed connection if there is an error', fakeAsync(() => {
+        const expected = new FailedConnection(iframeDe.nativeElement.src, 'some reason');
+
+        rejectIframeConnection('some reason');
+
+        tick();
+
+        expect(clientAppServiceMock.addConnection).toHaveBeenCalledWith(expected);
+      }));
+    });
   });
 });

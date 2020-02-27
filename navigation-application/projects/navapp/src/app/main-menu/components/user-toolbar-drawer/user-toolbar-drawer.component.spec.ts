@@ -79,16 +79,6 @@ describe('User Drawer Component', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should wait for connections to be settled and then enable logout', async () => {
-    try {
-      await component.ngOnInit();
-    } catch (error) {
-      fail(error);
-    }
-
-    expect(component.logoutDisabled).toBeFalse();
-  });
-
   it('should logout', () => {
     logoutDe.triggerEventHandler('click', { preventDefault: () => {} });
 

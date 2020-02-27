@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,8 @@ import { ClientAppService } from '../../services/client-app.service';
 
 @Component({
   selector: 'brna-client-app',
-  templateUrl: './client-app.component.html',
-  styleUrls: ['./client-app.component.scss'],
+  templateUrl: 'client-app.component.html',
+  styleUrls: ['client-app.component.scss'],
 })
 export class ClientAppComponent implements OnInit, AfterViewInit {
   @Input()
@@ -56,6 +56,19 @@ export class ClientAppComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit(): void {
+    this.connect();
+  }
+
+  reloadAndConnect(): void {
+    this.reload();
+    this.connect();
+  }
+
+  private reload(): void {
+    this.iframe.nativeElement.src = this.domSanitizer.sanitize(SecurityContext.URL, this.url);
+  }
+
+  private connect(): void {
     const nativeIFrame = this.iframe.nativeElement;
     const url = nativeIFrame.src;
 
