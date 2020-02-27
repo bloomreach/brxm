@@ -16,6 +16,8 @@
 package org.hippoecm.frontend.editor.plugins.resource;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.UUID;
 
 import javax.jcr.Binary;
 import javax.jcr.Node;
@@ -24,22 +26,23 @@ import javax.jcr.RepositoryException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.markup.html.basic.Label;
-import org.apache.wicket.markup.html.link.ResourceLink;
+import org.apache.wicket.markup.html.link.ILinkListener;
+import org.apache.wicket.markup.html.link.Link;
 import org.apache.wicket.markup.html.panel.Fragment;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
-import org.apache.wicket.request.resource.ContentDisposition;
-import org.apache.wicket.request.resource.IResource;
+import org.apache.wicket.request.mapper.parameter.PageParameters;
 import org.apache.wicket.resource.loader.ComponentStringResourceLoader;
+import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.editor.compare.StreamComparer;
 import org.hippoecm.frontend.model.IModelReference;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.plugins.standards.util.ByteSizeFormatter;
-import org.hippoecm.frontend.resource.JcrResource;
 import org.hippoecm.frontend.resource.JcrResourceStream;
 import org.hippoecm.frontend.service.render.RenderPlugin;
+import org.hippoecm.frontend.widgets.download.DownloadLink;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.util.JcrUtils;
 import org.slf4j.Logger;
@@ -134,14 +137,14 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
         return fragment;
     }
 
-    private FileLink createFileLink(final JcrResourceStream stream, final Node node) throws RepositoryException {
+    private Link<Void> createFileLink(final JcrResourceStream stream, final Node node) throws RepositoryException {
         final String filename = lookupFilename(node);
-        final String linkLabel = lookupLinkLabel(filename);
-        final FileResource fileResource = new FileResource(stream, filename);
+        final FileLink fileLink = new FileLink("link", filename, stream);
 
-        final FileLink filelink = new FileLink("link", fileResource, stream);
-        filelink.add(new Label("filename", Model.of(linkLabel)));
-        return filelink;
+        final String linkLabel = lookupLinkLabel(filename);
+        fileLink.add(new Label("filename", Model.of(linkLabel)));
+
+        return fileLink;
     }
 
     private String lookupLinkLabel(final String filename) {
@@ -174,23 +177,38 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
         redraw();
     }
 
-    private static class FileResource extends JcrResource {
-
-        public FileResource(final JcrResourceStream stream, final String filename) {
-            super(stream);
-
-            setFileName(filename);
-            setContentDisposition(ContentDisposition.ATTACHMENT);
-        }
-    }
-
-    private static class FileLink extends ResourceLink<Void> {
-
+    private static class FileLink extends DownloadLink<Void> {
+        private final String filename;
         private final JcrResourceStream stream;
 
-        public FileLink(final String id, final IResource resource, final JcrResourceStream stream) {
-            super(id, resource);
+        public FileLink(final String id, final String filename, final JcrResourceStream stream) {
+            super(id);
+            this.filename = filename;
             this.stream = stream;
+        }
+
+        @Override
+        protected CharSequence getURL() {
+            // Append a cache-bust request parameter to prevent the client from caching the resource in case the headers
+            // set by parent class DownloadLink are ignored or overridden.
+            final PageParameters parameters = new PageParameters();
+            parameters.set("v", UUID.randomUUID());
+            return urlFor(ILinkListener.INTERFACE, parameters);
+        }
+
+        @Override
+        protected String getFilename() {
+            return filename;
+        }
+
+        @Override
+        protected InputStream getContent() {
+            try {
+                return stream.getInputStream();
+            } catch (ResourceStreamNotFoundException e) {
+                log.error("Resource not found", e);
+            }
+            return null;
         }
 
         @Override
@@ -199,5 +217,4 @@ public class ImageDisplayPlugin extends RenderPlugin<Node> {
             super.onDetach();
         }
     }
-
 }
