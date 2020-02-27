@@ -204,6 +204,10 @@ export class AppComponent implements OnInit {
     window.history.replaceState({ navigationsCount: this.internalNavigationsCount }, '', `/some-url${this.internalNavigationsCount}`);
   }
 
+  reloadPage(): void {
+    window.location.href = `${window.location.href}/something`;
+  }
+
   showError(): void {
     this.parent.onError({
       errorCode: 500,
