@@ -66,10 +66,9 @@ import static org.apache.commons.lang3.StringUtils.substringBefore;
  */
 public abstract class AbstractPageModelApiITCases {
 
-
     public static final String LOCALHOST_JCR_PATH = "/hst:hst/hst:hosts/dev-localhost/localhost";
     public static final String SPA_MOUNT_JCR_PATH = LOCALHOST_JCR_PATH + "/hst:root/spa";
-
+    public static final String ANNOTATED_CLASSES_CONFIGURATION_PARAM = "classpath*:org/hippoecm/hst/pagemodelapi/common/**/*.class";
 
     protected SpringComponentManager componentManager;
     protected final MockServletContext servletContext = new MockServletContext();
@@ -95,7 +94,7 @@ public abstract class AbstractPageModelApiITCases {
         componentManager = new SpringComponentManager(configuration);
         componentManager.setConfigurationResources(getConfigurations());
 
-        servletContext.addInitParameter(DefaultContentBeansTool.BEANS_ANNOTATED_CLASSES_CONF_PARAM, "classpath*:org/hippoecm/hst/pagemodelapi/common/**/*.class");
+        servletContext.addInitParameter(DefaultContentBeansTool.BEANS_ANNOTATED_CLASSES_CONF_PARAM, getAnnotatedClassesConfigurationParam());
         servletContext.setContextPath("/site");
         HippoWebappContextRegistry.get().register(webappContext);
 
@@ -117,6 +116,10 @@ public abstract class AbstractPageModelApiITCases {
         final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
         final InternalHstModel hstModel = (InternalHstModel) provider.getHstModel();
         eventPathsInvalidator = hstModel.getEventPathsInvalidator();
+    }
+
+    protected String getAnnotatedClassesConfigurationParam() {
+        return ANNOTATED_CLASSES_CONFIGURATION_PARAM;
     }
 
     @After
