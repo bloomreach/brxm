@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -48,7 +48,7 @@ export async function connectToChild({
   connectionTimeout,
   methodInvocationTimeout,
 }: ChildConnectConfig): Promise<ChildPromisedApi> {
-  const childMethods = await Penpal.connectToChild({ iframe, methods, connectionTimeout }).promise;
+  const childMethods = await Penpal.connectToChild({ iframe, methods, timeout: connectionTimeout }).promise;
 
   return wrapChildMethodsWithTimeout(childMethods, methodInvocationTimeout);
 }

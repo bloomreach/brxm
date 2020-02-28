@@ -59,7 +59,7 @@ describe('connectToChild', () => {
     const expected = {
       iframe: connectionConfig.iframe,
       methods: connectionConfig.methods,
-      connectionTimeout: 10000,
+      timeout: 10000,
     };
 
     connectToChild(connectionConfig);
