@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -544,6 +544,18 @@ export const mockNavItems: NavItem[] = [
     appPath: 'custom',
   },
 ];
+
+export const mockNavItemsMapPerSite = {
+  11: mockNavItems.slice(0, 10).map(x => ({
+    ...x,
+    appIframeUrl: x.appIframeUrl.replace('brsm', 'brsm1'),
+  })),
+  21: mockNavItems.slice(10, 20).map(x => ({
+    ...x,
+    appIframeUrl: x.appIframeUrl.replace('brsm', 'brsm2'),
+  })),
+  31: mockNavItems.slice(20, 30),
+};
 
 export const mockSites: Site[] = [
   {

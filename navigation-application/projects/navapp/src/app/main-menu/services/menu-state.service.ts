@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { skip } from 'rxjs/operators';
 
 import { NavItem } from '../../models/nav-item.model';
 import { NavItemService } from '../../services/nav-item.service';
@@ -27,9 +28,10 @@ import { MenuBuilderService } from './menu-builder.service';
 
 @Injectable()
 export class MenuStateService {
-  private menuItems: MenuItem[] = [];
-  private homeMenuItemLink: MenuItemLink;
+  private readonly menuItems$ = new BehaviorSubject<MenuItem[]>([]);
   private readonly activePath = new BehaviorSubject<MenuItem[]>([]);
+
+  private homeMenuItemLink: MenuItemLink;
   private collapsed = true;
   private currentDrawerMenuItem: MenuItemContainer;
 
@@ -38,11 +40,11 @@ export class MenuStateService {
     private readonly navItemService: NavItemService,
   ) { }
 
-  get menu(): MenuItem[] {
-    return this.menuItems;
+  get menu$(): Observable<MenuItem[]> {
+    return this.menuItems$.asObservable();
   }
 
-  get homeMenuItem(): MenuItemLink {
+  get currentHomeMenuItem(): MenuItemLink {
     return this.homeMenuItemLink;
   }
 
@@ -63,8 +65,10 @@ export class MenuStateService {
   }
 
   init(navItems: NavItem[]): void {
-    this.menuItems = this.menuBuilderService.buildMenu(navItems);
-    this.homeMenuItemLink = this.findHomeMenuItemLink(this.menuItems);
+    const menuItems = this.menuBuilderService.buildMenu(navItems);
+    this.homeMenuItemLink = this.findHomeMenuItemLink(menuItems);
+
+    this.menuItems$.next(menuItems);
   }
 
   deactivateMenuItem(): void {
@@ -102,8 +106,10 @@ export class MenuStateService {
   private setActiveItem(activeItemId: string): void {
     this.closeDrawer();
 
+    const menuItems = this.menuItems$.value;
+
     const prevActivePath = this.activePath.value;
-    const activePath = this.buildActivePath(this.menuItems, activeItemId);
+    const activePath = this.buildActivePath(menuItems, activeItemId);
 
     const arePathsEqual = prevActivePath &&
       prevActivePath.length === activePath.length &&

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,18 +15,16 @@
  */
 
 import { DebugElement, NO_ERRORS_SCHEMA } from '@angular/core';
-import { ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { By } from '@angular/platform-browser';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
 
 import { AppComponent } from './app.component';
-import { APP_BOOTSTRAPPED } from './bootstrap/app-bootstrapped';
+import { AppError } from './error-handling/models/app-error';
 import { ErrorHandlingService } from './error-handling/services/error-handling.service';
 import { AppSettingsMock } from './models/dto/app-settings.mock';
 import { UserSettingsMock } from './models/dto/user-settings.mock';
 import { APP_SETTINGS } from './services/app-settings';
+import { MainLoaderService } from './services/main-loader.service';
 import { OverlayService } from './services/overlay.service';
 import { PENDO } from './services/pendo';
 import { USER_SETTINGS } from './services/user-settings';
@@ -37,39 +35,32 @@ describe('AppComponent', () => {
   let fixture: ComponentFixture<AppComponent>;
   let de: DebugElement;
 
-  let bootstrappedResolve: () => void;
-  let bootstrappedReject: () => void;
-
-  let rightSidePanelService: jasmine.SpyObj<RightSidePanelService>;
+  let overlayServiceMock: OverlayService;
+  let rightSidePanelServiceMock: jasmine.SpyObj<RightSidePanelService>;
+  let errorHandlingServiceMock: ErrorHandlingService;
+  let mainLoaderServiceMock: MainLoaderService;
   let pendo: jasmine.SpyObj<pendo.Pendo>;
   const userSettings = new UserSettingsMock();
   const appSettings = new AppSettingsMock();
 
   beforeEach(() => {
-    const translateServiceMock = jasmine.createSpyObj('TranslateService', [
-      'addLangs',
-      'setDefaultLang',
-      'use',
-    ]);
+    overlayServiceMock = {
+      isVisible: false,
+    } as any;
 
-    const overlayServiceMock = {
-      visible$: of(false),
-    };
-
-    const rightSidePanelServiceMock = jasmine.createSpyObj('RightSidePanelService', [
+    rightSidePanelServiceMock = jasmine.createSpyObj('RightSidePanelService', [
       'setSidenav',
     ]);
 
-    const errorHandlingServiceMock = {
-      currentError: {},
-    };
+    errorHandlingServiceMock = {
+      currentError: undefined,
+    } as any;
+
+    mainLoaderServiceMock = {
+      isVisible: false,
+    } as any;
 
     const pendoMock = jasmine.createSpyObj<pendo.Pendo>('PENDO', ['initialize', 'enableDebugging']);
-
-    const bootstrappedMock = new Promise<void>((res, rej) => {
-      bootstrappedResolve = res;
-      bootstrappedReject = rej;
-    });
 
     fixture = TestBed.configureTestingModule({
       imports: [
@@ -77,11 +68,10 @@ describe('AppComponent', () => {
       ],
       declarations: [AppComponent],
       providers: [
-        { provide: TranslateService, useValue: translateServiceMock },
         { provide: OverlayService, useValue: overlayServiceMock },
         { provide: RightSidePanelService, useValue: rightSidePanelServiceMock },
         { provide: ErrorHandlingService, useValue: errorHandlingServiceMock },
-        { provide: APP_BOOTSTRAPPED, useValue: bootstrappedMock },
+        { provide: MainLoaderService, useValue: mainLoaderServiceMock },
         { provide: PENDO, useValue: pendoMock },
         { provide: APP_SETTINGS, useValue: appSettings },
         { provide: USER_SETTINGS, useValue: userSettings },
@@ -92,7 +82,10 @@ describe('AppComponent', () => {
     component = fixture.componentInstance;
     de = fixture.debugElement;
 
-    rightSidePanelService = TestBed.get(RightSidePanelService);
+    overlayServiceMock = TestBed.get(OverlayService);
+    rightSidePanelServiceMock = TestBed.get(RightSidePanelService);
+    errorHandlingServiceMock = TestBed.get(ErrorHandlingService);
+    mainLoaderServiceMock = TestBed.get(MainLoaderService);
     pendo = TestBed.get(PENDO);
 
     fixture.detectChanges();
@@ -100,6 +93,32 @@ describe('AppComponent', () => {
 
   it('should create the app', () => {
     expect(component).toBeDefined();
+  });
+
+  it('should return the current error', () => {
+    const expected = new AppError(500, 'some error');
+
+    (errorHandlingServiceMock as any).currentError = expected;
+
+    const actual = component.error;
+
+    expect(actual).toBe(expected);
+  });
+
+  it('should return overlay\'s visibility state', () => {
+    (overlayServiceMock as any).isVisible = true;
+
+    const actual = component.isOverlayVisible;
+
+    expect(actual).toBeTruthy();
+  });
+
+  it('should return main loader\'s visibility state', () => {
+    (mainLoaderServiceMock as any).isVisible = true;
+
+    const actual = component.isLoaderVisible;
+
+    expect(actual).toBeTruthy();
   });
 
   describe('upon initialization', () => {
@@ -110,7 +129,7 @@ describe('AppComponent', () => {
     it('should set the side nav DOM element', () => {
       component.ngOnInit();
 
-      expect(rightSidePanelService.setSidenav).toHaveBeenCalledWith(component.sidenav);
+      expect(rightSidePanelServiceMock.setSidenav).toHaveBeenCalledWith(component.sidenav);
     });
 
     it('should initialize pendo and track visitor by email', () => {
@@ -146,41 +165,5 @@ describe('AppComponent', () => {
 
       expect(pendo.initialize).toHaveBeenCalledWith(expectedConfig);
     });
-  });
-
-  describe('loading indicator', () => {
-    it('should be shown until the app is bootstrapped', () => {
-      const loader = de.query(By.css('brna-loader'));
-
-      expect(loader).not.toBeNull();
-    });
-
-    it('should be hidden after the app is bootstrapped', fakeAsync(() => {
-      bootstrappedResolve();
-
-      tick();
-
-      fixture.detectChanges();
-
-      tick();
-
-      const loader = de.query(By.css('brna-loader'));
-
-      expect(loader).toBeNull();
-    }));
-
-    it('should be hidden  after the app\'s bootstrapping is failed', fakeAsync(() => {
-      bootstrappedReject();
-
-      tick();
-
-      fixture.detectChanges();
-
-      tick();
-
-      const loader = de.query(By.css('brna-loader'));
-
-      expect(loader).toBeNull();
-    }));
   });
 });

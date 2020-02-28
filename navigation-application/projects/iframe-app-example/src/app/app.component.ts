@@ -27,7 +27,7 @@ import {
 } from '@bloomreach/navapp-communication';
 import { CookieService } from 'ngx-cookie-service';
 
-import { mockNavItems, mockSites } from './mocks';
+import { mockNavItems, mockNavItemsMapPerSite, mockSites } from './mocks';
 
 const SITE_COOKIE_NAME = 'EXAMPLE_APP_SITE_ID';
 const NAVAPP_COMMUNICATION_IMPLEMENTATION_API_VERSION = '1.0.0';
@@ -55,7 +55,7 @@ export class AppComponent implements OnInit {
   ) { }
 
   get isBrSmMock(): boolean {
-    return this.location.path() === '/brsm';
+    return this.location.path().startsWith('/brsm');
   }
 
   get childApiMethods(): ChildApi {
@@ -79,11 +79,14 @@ export class AppComponent implements OnInit {
         return new Promise(r => setTimeout(r, 300));
       },
       getNavItems: () => {
-        return new Promise(resolve => {
-          setTimeout(() => {
-            resolve(mockNavItems);
-          }, 100);
-        });
+        if (!this.selectedSiteId) {
+          return mockNavItems;
+        }
+
+        const key = `${this.selectedSiteId.siteId}${this.selectedSiteId.accountId}`;
+        const mockNavItemsPerSite = mockNavItemsMapPerSite[key];
+
+        return mockNavItemsPerSite || mockNavItems;
       },
       logout: () => {
         if (this.navigateCount % 2) {

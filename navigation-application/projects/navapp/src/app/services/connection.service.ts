@@ -1,5 +1,5 @@
-/*!
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+/*
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { DOCUMENT } from '@angular/common';
 import { Inject, Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 import {
   ChildPromisedApi,
@@ -44,6 +45,7 @@ export interface ChildConnection {
 })
 export class ConnectionService {
   private readonly connections = new Map<string, ChildConnection>();
+  private readonly pendingConnections = new Map<string, Promise<ChildConnection>>();
   private readonly renderer: Renderer2 = this.rendererFactory.createRenderer(undefined, undefined);
 
   showMask$ = new Subject<void>();
@@ -57,36 +59,50 @@ export class ConnectionService {
   constructor(
     @Inject(APP_SETTINGS) private readonly appSettings: AppSettings,
     @Inject(USER_SETTINGS) private readonly userSettings: UserSettings,
+    @Inject(DOCUMENT) private readonly document: Document,
     private readonly rendererFactory: RendererFactory2,
     private readonly busyIndicatorService: BusyIndicatorService,
     private readonly logger: NGXLogger,
   ) { }
 
-  getConnection(url: string): ChildConnection {
-    return this.connections.get(url);
-  }
-
   async createConnection(url: string): Promise<ChildConnection> {
-    const iframe = document.createElement('iframe');
-    iframe.src = url;
-    iframe.style.visibility = 'hidden';
-    iframe.style.position = 'absolute';
-    iframe.style.width = '1px';
-    iframe.style.height = '1px';
-    this.renderer.appendChild(document.body, iframe);
+    if (this.connections.has(url)) {
+      return this.connections.get(url);
+    }
 
-    return await this.connectToIframe(iframe);
+    if (this.pendingConnections.has(url)) {
+      return this.pendingConnections.get(url);
+    }
+
+    const iframe = this.createHiddenIframe(url);
+    this.renderer.appendChild(this.document.body, iframe);
+
+    const connectionPromise = this.connectToIframe(iframe);
+    this.pendingConnections.set(url, connectionPromise);
+
+    try {
+      const connection = await connectionPromise;
+      this.connections.set(url, connection);
+
+      return connection;
+    } catch (e) {
+      return e;
+    } finally {
+      this.pendingConnections.delete(url);
+    }
   }
 
   removeConnection(url: string): void {
+    const pendingConnection = this.pendingConnections.get(url);
     const connection = this.connections.get(url);
 
-    if (!connection) {
-      throw new Error(`Connection to ${url} does not exist`);
+    if (!pendingConnection && !connection) {
+      throw new Error(`Connection to '${url}' does not exist`);
     }
 
+    this.pendingConnections.delete(url);
     this.connections.delete(url);
-    this.renderer.removeChild(document.body, connection.iframe);
+    this.renderer.removeChild(this.document.body, connection.iframe);
   }
 
   async connectToIframe(iframe: HTMLIFrameElement): Promise<ChildConnection> {
@@ -98,14 +114,14 @@ export class ConnectionService {
       methodInvocationTimeout: this.appSettings.iframesConnectionTimeout,
     };
 
+    this.logger.debug(`Initiating a connection to the iframe '${url}'`);
+
     try {
       const api = await connectToChild(config);
-      const connection: ChildConnection = { url, iframe, api };
-      this.connections.set(url, connection);
 
-      return connection;
+      return { url, iframe, api };
     } catch (error) {
-      throw new Error(`Could not create connection for '${url}': ${error}`);
+      throw new Error(`Could not create a connection for '${url}': ${error}`);
     }
   }
 
@@ -149,5 +165,16 @@ export class ConnectionService {
       },
       onUserActivity: () => this.onUserActivity$.next(),
     };
+  }
+
+  private createHiddenIframe(url: string): HTMLIFrameElement {
+    const iframe = this.document.createElement('iframe');
+    iframe.src = url;
+    iframe.style.visibility = 'hidden';
+    iframe.style.position = 'absolute';
+    iframe.style.width = '1px';
+    iframe.style.height = '1px';
+
+    return iframe;
   }
 }

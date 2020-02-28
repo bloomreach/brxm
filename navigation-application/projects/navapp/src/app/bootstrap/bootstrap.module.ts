@@ -16,9 +16,8 @@
 
 import { APP_INITIALIZER, NgModule } from '@angular/core';
 
-import { APP_BOOTSTRAPPED } from './app-bootstrapped';
 import { appInitializer } from './app-initializer';
-import { appBootstrappedPromise, BootstrapService } from './bootstrap.service';
+import { BootstrapService } from './bootstrap.service';
 
 @NgModule({
   providers: [
@@ -27,10 +26,6 @@ import { appBootstrappedPromise, BootstrapService } from './bootstrap.service';
       useFactory: appInitializer,
       deps: [BootstrapService],
       multi: true,
-    },
-    {
-      provide: APP_BOOTSTRAPPED,
-      useValue: appBootstrappedPromise,
     },
   ],
 })

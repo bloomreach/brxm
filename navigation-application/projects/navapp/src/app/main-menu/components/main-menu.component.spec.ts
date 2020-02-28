@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +20,7 @@ import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NavigationTrigger } from '@bloomreach/navapp-communication';
 import { TranslateModule } from '@ngx-translate/core';
-import { Subject, Subscription } from 'rxjs';
+import { NEVER, of } from 'rxjs';
 
 import { NavItemMock } from '../../models/nav-item.mock';
 import { NavItem } from '../../models/nav-item.model';
@@ -68,7 +68,7 @@ describe('MainMenuComponent', () => {
       'isMenuItemHighlighted',
       'activateMenuItem',
     ]);
-    (menuStateServiceMock as any).menu = menuMock;
+    (menuStateServiceMock as any).menu$ = of(menuMock);
     (menuStateServiceMock as any).isDrawerOpened = false;
 
     qaHelperServiceMock = jasmine.createSpyObj('QaHelperService', [
@@ -297,54 +297,40 @@ describe('MainMenuComponent', () => {
 
   describe('isMenuItemDisabled', () => {
     describe('when MenuItemLink instance is provided', () => {
-      const navItemActiveSubject = new Subject<boolean>();
-      let subscription: Subscription;
-
       let navItem: NavItem;
       let menuItemLink: MenuItemLink;
-      let activeSnapshot: boolean;
 
       beforeEach(() => {
-        activeSnapshot = undefined;
-        navItem = new NavItemMock({}, navItemActiveSubject);
+        navItem = new NavItemMock({}, NEVER, false);
         menuItemLink = new MenuItemLinkMock({ navItem });
-
-        subscription = component
-          .isMenuItemDisabled(menuItemLink)
-          .subscribe(active => activeSnapshot = active);
-      });
-
-      afterEach(() => {
-        subscription.unsubscribe();
       });
 
       it('should return "true" initially', () => {
-        expect(activeSnapshot).toBeTruthy();
+        const actual = component.isMenuItemDisabled(menuItemLink);
+
+        expect(actual).toBeTruthy();
       });
 
       it('should return "false" if a nav item is active', () => {
-        navItemActiveSubject.next(true);
+        navItem.activate();
 
-        expect(activeSnapshot).toBeFalsy();
+        const actual = component.isMenuItemDisabled(menuItemLink);
+
+        expect(actual).toBeFalsy();
       });
     });
 
     describe('when MenuItemContainer instance is provided', () => {
-      let subscription: Subscription;
-      let activeSnapshot: boolean;
+      let menuItemContainer: MenuItemContainer;
 
       beforeEach(() => {
-        subscription = component
-          .isMenuItemDisabled(new MenuItemContainerMock())
-          .subscribe(active => activeSnapshot = active);
-      });
-
-      afterEach(() => {
-        subscription.unsubscribe();
+        menuItemContainer = new MenuItemContainerMock();
       });
 
       it('should return "false"', () => {
-        expect(activeSnapshot).toBeFalsy();
+        const actual = component.isMenuItemDisabled(new MenuItemContainerMock());
+
+        expect(actual).toBeFalsy();
       });
     });
   });

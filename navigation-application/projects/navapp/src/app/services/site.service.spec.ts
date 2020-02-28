@@ -1,5 +1,5 @@
-/*!
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+/*
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { Site, SiteId } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
+import { first } from 'rxjs/operators';
 
 import { ClientAppMock } from '../client-app/models/client-app.mock';
 import { ClientAppService } from '../client-app/services/client-app.service';
@@ -26,7 +27,7 @@ import { BusyIndicatorService } from './busy-indicator.service';
 import { SiteService } from './site.service';
 
 describe('SiteService', () => {
-  let siteService: SiteService;
+  let service: SiteService;
   let app1UpdateSelectedSite: jasmine.Spy;
   let app2UpdateSelectedSite: jasmine.Spy;
   let app3UpdateSelectedSite: jasmine.Spy;
@@ -36,6 +37,34 @@ describe('SiteService', () => {
   const loggerMock = jasmine.createSpyObj('NGXLogger', [
     'debug',
   ]);
+
+  const sitesMock: Site[] = [
+    {
+      siteId: 1,
+      accountId: 456,
+      isNavappEnabled: true,
+      name: 'myTestSite',
+      subGroups: [
+        {
+          siteId: 2,
+          accountId: 123,
+          isNavappEnabled: true,
+          name: 'myTestSite2',
+        },
+      ],
+    },
+    {
+      siteId: 3,
+      accountId: 890,
+      isNavappEnabled: true,
+      name: 'myTestSite3',
+    },
+  ];
+
+  const selectedSiteIdMock: SiteId = {
+    siteId: 2,
+    accountId: 123,
+  };
 
   beforeEach(() => {
     const busyIndicatorServiceMock = jasmine.createSpyObj('BusyIndicatorService', [
@@ -88,29 +117,6 @@ describe('SiteService', () => {
       } as any,
     };
 
-    const mockSites: Site[] = [
-      {
-        siteId: 1,
-        accountId: 456,
-        isNavappEnabled: true,
-        name: 'myTestSite',
-        subGroups: [
-          {
-            siteId: 2,
-            accountId: 123,
-            isNavappEnabled: true,
-            name: 'myTestSite2',
-          },
-        ],
-      },
-      {
-        siteId: 3,
-        accountId: 890,
-        isNavappEnabled: true,
-        name: 'myTestSite3',
-      },
-    ];
-
     TestBed.configureTestingModule({
       providers: [
         SiteService,
@@ -121,72 +127,29 @@ describe('SiteService', () => {
       ],
     });
 
-    siteService = TestBed.get(SiteService);
-    siteService.sites = mockSites;
+    service = TestBed.get(SiteService);
   });
 
-  it('should set selected site', fakeAsync(() => {
-    const siteId: SiteId = {
-      siteId: 2,
-      accountId: 123,
-    };
-
-    siteService.selectedSite$.subscribe(site => {
-      expect(site.siteId).toEqual(siteId.siteId);
+  it('should initialize the service', fakeAsync(() => {
+    service.selectedSite$.pipe(
+      first(),
+    ).subscribe(site => {
+      expect(site.siteId).toEqual(selectedSiteIdMock.siteId);
     });
 
-    siteService.setSelectedSite(siteId);
+    service.init(sitesMock, selectedSiteIdMock);
+
+    expect(service.sites).toEqual(sitesMock);
 
     tick();
   }));
 
-  it('should update the selected site for the active app', () => {
-    const site: Site = {
-      siteId: 2,
-      accountId: 123,
-      name: 'some name',
-      isNavappEnabled: true,
-    };
+  describe('when the service is initialized', () => {
+    beforeEach(() => {
+      service.init(sitesMock, selectedSiteIdMock);
+    });
 
-    siteService.updateSelectedSite(site);
-
-    expect(app2UpdateSelectedSite).toHaveBeenCalledWith(site);
-  });
-
-  it('should broadcast to non-active apps that the selected site should be updated', fakeAsync(() => {
-    const site: Site = {
-      siteId: 2,
-      accountId: 123,
-      name: 'some name',
-      isNavappEnabled: true,
-    };
-
-    siteService.updateSelectedSite(site);
-
-    tick();
-
-    expect(app1UpdateSelectedSite).toHaveBeenCalledWith();
-    expect(app3UpdateSelectedSite).toHaveBeenCalledWith();
-
-    expect(app2UpdateSelectedSite).toHaveBeenCalledBefore(app1UpdateSelectedSite);
-    expect(app2UpdateSelectedSite).toHaveBeenCalledBefore(app3UpdateSelectedSite);
-  }));
-
-  it('should redirect to iUI if navapp isn\'t enabled for the selected site', () => {
-    const site: Site = {
-      siteId: 2,
-      accountId: 123,
-      name: 'some name',
-      isNavappEnabled: false,
-    };
-
-    siteService.updateSelectedSite(site);
-
-    expect(windowRefMock.nativeWindow.location.assign).toHaveBeenCalledWith('/some/path');
-  });
-
-  describe('logging', () => {
-    describe('updateSelectedSite()', () => {
+    it('should update the selected site for the active app', () => {
       const site: Site = {
         siteId: 2,
         accountId: 123,
@@ -194,21 +157,40 @@ describe('SiteService', () => {
         isNavappEnabled: true,
       };
 
-      beforeEach(async(() => {
-        siteService.updateSelectedSite(site);
-      }));
+      service.updateSelectedSite(site);
 
-      it('should log that updateSelectedSite() is called for the active app', () => {
-        expect(loggerMock.debug).toHaveBeenCalledWith('updateSelectedSite() is called for the active app \'testApp2\'', site);
-      });
+      expect(app2UpdateSelectedSite).toHaveBeenCalledWith(site);
+    });
 
-      it('should log that updateSelectedSite() is called for the other apps', () => {
-        expect(loggerMock.debug).toHaveBeenCalledWith('updateSelectedSite() is called for \'testApp1\'');
-        expect(loggerMock.debug).toHaveBeenCalledWith('updateSelectedSite() is called for \'testApp3\'');
-      });
+    it('should redirect to iUI if navapp isn\'t enabled for the selected site', () => {
+      const site: Site = {
+        siteId: 2,
+        accountId: 123,
+        name: 'some name',
+        isNavappEnabled: false,
+      };
 
-      it('should log updateSelectedSite() broadcasting has been finished successfully', () => {
-        expect(loggerMock.debug).toHaveBeenCalledWith('updateSelectedSite() broadcasting finished successfully');
+      service.updateSelectedSite(site);
+
+      expect(windowRefMock.nativeWindow.location.assign).toHaveBeenCalledWith('/some/path');
+    });
+
+    describe('logging', () => {
+      describe('updateSelectedSite()', () => {
+        const site: Site = {
+          siteId: 2,
+          accountId: 123,
+          name: 'some name',
+          isNavappEnabled: true,
+        };
+
+        beforeEach(async(() => {
+          service.updateSelectedSite(site);
+        }));
+
+        it('should log that updateSelectedSite() is called for the active app', () => {
+          expect(loggerMock.debug).toHaveBeenCalledWith('updateSelectedSite() is called for the active app \'testApp2\'', site);
+        });
       });
     });
   });

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,9 +15,17 @@
  */
 
 import { NavItem as NavItemDto } from '@bloomreach/navapp-communication';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 export class NavItem implements NavItemDto {
+  private readonly activation$ = new BehaviorSubject<boolean>(false);
+
+  constructor(
+    private readonly dto: NavItemDto,
+    private readonly unsubscribe: Observable<void>,
+  ) {}
+
   get id(): string {
     return this.dto.id;
   }
@@ -35,11 +43,16 @@ export class NavItem implements NavItemDto {
   }
 
   get active$(): Observable<boolean> {
-    return this.activation$;
+    return this.activation$.pipe(
+      takeUntil(this.unsubscribe),
+    );
   }
 
-  constructor(
-    private readonly dto: NavItemDto,
-    private readonly activation$: Observable<boolean>,
-  ) {}
+  get active(): boolean {
+    return this.activation$.value;
+  }
+
+  activate(): void {
+    this.activation$.next(true);
+  }
 }

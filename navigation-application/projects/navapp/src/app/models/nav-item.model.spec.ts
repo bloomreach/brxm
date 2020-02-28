@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,14 @@
  * limitations under the License.
  */
 
-import { async } from '@angular/core/testing';
 import { NavItem as NavItemDto } from '@bloomreach/navapp-communication';
-import { isObservable, Subject } from 'rxjs';
-import { first } from 'rxjs/operators';
+import { isObservable, Subject, Subscription } from 'rxjs';
 
 import { NavItem } from './nav-item.model';
 
 describe('NavItem', () => {
   let model: NavItem;
+  let unsubscribe: Subject<void>;
 
   const dto: NavItemDto = {
     id: 'some-id',
@@ -31,10 +30,10 @@ describe('NavItem', () => {
     displayName: 'some display name',
   };
 
-  const activation = new Subject<boolean>();
-
   beforeEach(() => {
-    model = new NavItem(dto, activation);
+    unsubscribe = new Subject();
+
+    model = new NavItem(dto, unsubscribe);
   });
 
   it('should return an id', () => {
@@ -69,19 +68,55 @@ describe('NavItem', () => {
     expect(actual).toBe(expected);
   });
 
+  it('should not be active', () => {
+    const actual = model.active;
+
+    expect(actual).toBeFalsy();
+  });
+
   it('should return an activation observable', () => {
     const actual = isObservable(model.active$);
 
     expect(actual).toBeTruthy();
   });
 
-  it('should be be able to be activated', async(() => {
-    model.active$.pipe(
-      first(),
-    ).subscribe(x => {
-      expect(x).toBeTruthy();
+  it('should be be able to be activated', () => {
+    model.activate();
+
+    const actual = model.active;
+
+    expect(actual).toBeTruthy();
+  });
+
+  describe('activation observable', () => {
+    let currentState: boolean;
+    let subscription: Subscription;
+
+    beforeEach(() => {
+      currentState = undefined;
+      subscription = model.active$.subscribe(x => currentState = x);
     });
 
-    activation.next(true);
-  }));
+    afterEach(() => {
+      subscription.unsubscribe();
+    });
+
+    it('should emit false as a first value', () => {
+      expect(currentState).toBeFalsy();
+    });
+
+    it('should emit true when the nav item is activated', () => {
+      model.activate();
+
+      expect(currentState).toBeTruthy();
+    });
+
+    it('should not emit values after unsubscribe emitted', () => {
+      unsubscribe.next();
+
+      model.activate();
+
+      expect(currentState).toBeFalsy();
+    });
+  });
 });

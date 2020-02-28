@@ -1,5 +1,5 @@
-/*!
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+/*
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 import { Location, PopStateEvent } from '@angular/common';
 import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
-import { NavigationTrigger, NavItem, NavLocation } from '@bloomreach/navapp-communication';
+import { NavigationTrigger, NavLocation } from '@bloomreach/navapp-communication';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
 import { of, Subject } from 'rxjs';
@@ -30,6 +30,7 @@ import { MenuStateService } from '../main-menu/services/menu-state.service';
 import { AppSettings } from '../models/dto/app-settings.dto';
 import { AppSettingsMock } from '../models/dto/app-settings.mock';
 import { NavItemMock } from '../models/nav-item.mock';
+import { NavItem } from '../models/nav-item.model';
 import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
 
 import { APP_SETTINGS } from './app-settings';
@@ -42,23 +43,7 @@ describe('NavigationService', () => {
   let service: NavigationService;
 
   let basePath: string;
-  const navItemsMock = [
-    new NavItemMock({
-      id: 'item1',
-      appIframeUrl: 'http://domain.com/iframe1/url',
-      appPath: 'app/path/to/home',
-    }),
-    new NavItemMock({
-      id: 'item2',
-      appIframeUrl: 'http://domain.com/iframe1/url',
-      appPath: 'app/path/to/page1',
-    }),
-    new NavItemMock({
-      id: 'item3',
-      appIframeUrl: 'http://domain.com/iframe2/url',
-      appPath: 'another/app/path/to/home',
-    }),
-  ];
+  let navItemsMock: NavItem[];
 
   let appSettingsMock: AppSettings;
   let locationMock: jasmine.SpyObj<Location>;
@@ -76,6 +61,23 @@ describe('NavigationService', () => {
 
   beforeEach(() => {
     basePath = '/base-path';
+    navItemsMock = [
+      new NavItemMock({
+        id: 'item1',
+        appIframeUrl: 'http://domain.com/iframe1/url',
+        appPath: 'app/path/to/home',
+      }),
+      new NavItemMock({
+        id: 'item2',
+        appIframeUrl: 'http://domain.com/iframe1/url',
+        appPath: 'app/path/to/page1',
+      }),
+      new NavItemMock({
+        id: 'item3',
+        appIframeUrl: 'http://domain.com/iframe2/url',
+        appPath: 'another/app/path/to/home',
+      }),
+    ];
     appSettingsMock = new AppSettingsMock({
       basePath,
       initialPath: '/iframe1/url/app/path/to/home',
@@ -108,7 +110,7 @@ describe('NavigationService', () => {
       'activateMenuItem',
       'deactivateMenuItem',
     ]);
-    (menuStateServiceMock as any).homeMenuItem = {
+    (menuStateServiceMock as any).currentHomeMenuItem = {
       navItem: {
         appIframeUrl: 'http://domain.com/iframe1/url',
         appPath: 'app/path/to/home',
@@ -329,21 +331,19 @@ describe('NavigationService', () => {
   });
 
   describe('nav item', () => {
-    let navItemActive: Subject<boolean>;
+    let navItemActive$: Subject<boolean>;
 
     beforeEach(() => {
-      navItemActive = new Subject<boolean>();
+      navItemActive$ = new Subject<boolean>();
 
-      const navItem = new NavItemMock(
-        {
-          id: 'item1',
-          appIframeUrl: 'http://domain.com/iframe1/url',
-          appPath: 'app/path/to/home',
-        },
-        navItemActive,
-      );
+      const navItemMock: NavItem = {
+        id: 'item1',
+        appIframeUrl: 'http://domain.com/iframe1/url',
+        appPath: 'app/path/to/home',
+        active$: navItemActive$,
+      } as any;
 
-      service.init([navItem]);
+      service.init([navItemMock]);
       service.initialNavigation();
     });
 
@@ -353,15 +353,15 @@ describe('NavigationService', () => {
     });
 
     it('should not proceed the navigation process if active$ emitted "false"', () => {
-      navItemActive.next(false);
+      navItemActive$.next(false);
 
       expect(clientAppServiceMock.getApp).not.toHaveBeenCalled();
       expect(childApi.beforeNavigation).not.toHaveBeenCalled();
     });
 
     it('should proceed the navigation process when nav item is ready', () => {
-      navItemActive.next(true);
-      navItemActive.complete();
+      navItemActive$.next(true);
+      navItemActive$.complete();
 
       expect(clientAppServiceMock.getApp).toHaveBeenCalled();
       expect(childApi.beforeNavigation).toHaveBeenCalled();

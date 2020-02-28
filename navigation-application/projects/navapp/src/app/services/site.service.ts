@@ -1,5 +1,5 @@
-/*!
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+/*
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,8 +28,9 @@ import { BusyIndicatorService } from './busy-indicator.service';
   providedIn: 'root',
 })
 export class SiteService {
-  sites: Site[] = [];
   private readonly selectedSite = new ReplaySubject<Site>(1);
+
+  private currentSites: Site[] = [];
 
   constructor(
     private readonly busyIndicatorService: BusyIndicatorService,
@@ -42,32 +43,31 @@ export class SiteService {
     return this.selectedSite.asObservable();
   }
 
-  setSelectedSite(siteId: SiteId): void {
-    const selectedSite = this.findSite(this.sites, siteId);
+  get sites(): Site[] {
+    return this.currentSites;
+  }
+
+  init(sites: Site[], selectedSiteId: SiteId): void {
+    this.currentSites = sites;
+
+    const selectedSite = this.findSite(this.currentSites, selectedSiteId);
     this.selectedSite.next(selectedSite);
   }
 
-  updateSelectedSite(site: Site): Promise<void> {
+  async updateSelectedSite(site: Site): Promise<void> {
     this.busyIndicatorService.show();
 
     if (!site.isNavappEnabled) {
-      this.redirectToiUI();
-
-      return;
+      return this.redirectToiUI();
     }
 
     this.logger.debug(`updateSelectedSite() is called for the active app '${this.clientAppService.activeApp.url}'`, site);
+    await this.clientAppService.activeApp.api.updateSelectedSite(site);
+    this.logger.debug('Active app successfully updated the selected site');
 
-    return this.clientAppService.activeApp.api
-      .updateSelectedSite(site)
-      .then(() => {
-        this.logger.debug('Active app successfully updated the selected site. Start broadcasting updateSelectedSite() for the other apps.');
+    this.selectedSite.next(site);
 
-        return this.broadcastSelectedSite();
-      })
-      .then(() => this.setSelectedSite(site))
-      .then(() => this.reloadPage())
-      .finally(() => this.busyIndicatorService.hide());
+    this.busyIndicatorService.hide();
   }
 
   private findSite(sites: Site[], siteId: SiteId): Site {
@@ -86,24 +86,6 @@ export class SiteService {
         return childSite;
       }
     }
-  }
-
-  private broadcastSelectedSite(): Promise<void> {
-    const updatePromises = this.clientAppService.apps
-      .filter(app => app.api && app.api.updateSelectedSite && app !== this.clientAppService.activeApp)
-      .map(app => {
-        this.logger.debug(`updateSelectedSite() is called for '${app.url}'`);
-
-        return app.api.updateSelectedSite();
-      });
-
-    return Promise.all(updatePromises).then(() => {
-      this.logger.debug('updateSelectedSite() broadcasting finished successfully');
-    });
-  }
-
-  private reloadPage(): void {
-    this.windowRef.nativeWindow.location.reload();
   }
 
   private redirectToiUI(): void {

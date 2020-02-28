@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,24 +15,22 @@
  */
 
 import { Injectable } from '@angular/core';
+import { NavigationTrigger, NavItem } from '@bloomreach/navapp-communication';
+import { NGXLogger } from 'ngx-logger';
+import { skip } from 'rxjs/operators';
 
 import { ClientAppService } from '../client-app/services/client-app.service';
 import { AppError } from '../error-handling/models/app-error';
+import { CriticalError } from '../error-handling/models/critical-error';
 import { ErrorHandlingService } from '../error-handling/services/error-handling.service';
 import { MenuStateService } from '../main-menu/services/menu-state.service';
-import { NavItem } from '../models/nav-item.model';
 import { AuthService } from '../services/auth.service';
 import { BusyIndicatorService } from '../services/busy-indicator.service';
-import { NavConfigService } from '../services/nav-config.service';
+import { MainLoaderService } from '../services/main-loader.service';
+import { Configuration, NavConfigService } from '../services/nav-config.service';
 import { NavItemService } from '../services/nav-item.service';
 import { NavigationService } from '../services/navigation.service';
-
-let bootstrapResolve: () => void;
-let bootstrapReject: () => void;
-export const appBootstrappedPromise = new Promise((resolve, reject) => {
-  bootstrapResolve = resolve;
-  bootstrapReject = reject;
-});
+import { SiteService } from '../services/site.service';
 
 @Injectable({
   providedIn: 'root',
@@ -45,55 +43,98 @@ export class BootstrapService {
     private readonly clientAppService: ClientAppService,
     private readonly menuStateService: MenuStateService,
     private readonly navigationService: NavigationService,
+    private readonly mainLoaderService: MainLoaderService,
     private readonly busyIndicatorService: BusyIndicatorService,
+    private readonly siteService: SiteService,
     private readonly errorHandlingService: ErrorHandlingService,
-  ) { }
+    private readonly logger: NGXLogger,
+  ) {
+    this.clientAppService.appConnected$.subscribe(app => this.navItemService.activateNavItems(app.url));
+    this.siteService.selectedSite$.pipe(
+      skip(1),  // Skip initial value
+    ).subscribe(() => this.reinitialize());
+  }
 
   async bootstrap(): Promise<void> {
-    this.busyIndicatorService.show();
+    try {
+      this.logger.debug('Bootstrapping the application');
 
-    await this.performSilentLogin();
+      this.showLoader();
 
-    const navItems = await this.fetchNavItems();
+      await this.performSilentLogin();
 
-    this.clientAppService.appConnected$.subscribe(app => {
-      this.navItemService.activateNavItems(app.url);
-    });
+      const configuration = await this.fetchConfiguration();
 
-    this.initializeServices(navItems).then(() => this.busyIndicatorService.hide());
+      this.initializeServices(configuration);
+
+      this.navigationService.initialNavigation().catch(error => this.handleInitializationError(error));
+    } catch (error) {
+      this.handleInitializationError(error);
+    } finally {
+      this.hideLoader();
+    }
+  }
+
+  async reinitialize(): Promise<void> {
+    try {
+      this.logger.debug('Reinitializing the application');
+
+      this.showLoader();
+
+      const navItemDtos = await this.navConfigService.refetchNavItems();
+
+      const configuration: Configuration = {
+        navItems: navItemDtos,
+        sites: undefined,
+        selectedSiteId: undefined,
+      };
+
+      this.initializeServices(configuration);
+
+      await this.navigationService.navigateToHome(NavigationTrigger.InitialNavigation);
+    } catch (error) {
+      this.handleInitializationError(error);
+    } finally {
+      this.hideLoader();
+    }
   }
 
   private async performSilentLogin(): Promise<void> {
+    this.logger.debug('Performing silent login');
+
     try {
       await this.authService.loginAllResources();
+
+      this.logger.debug('Silent login has done successfully');
     } catch (error) {
-      this.errorHandlingService.setCriticalError('ERROR_UNABLE_TO_PERFORM_SILENT_LOGIN', this.extractErrorMessage(error));
+      throw new CriticalError('ERROR_UNABLE_TO_PERFORM_SILENT_LOGIN', this.extractErrorMessage(error));
     }
   }
 
-  private async fetchNavItems(): Promise<NavItem[]> {
-    try {
-      const navItemDtos = await this.navConfigService.init();
+  private async fetchConfiguration(): Promise<Configuration> {
+    this.logger.debug('Fetching the application\'s configuration');
 
-      return this.navItemService.registerNavItemDtos(navItemDtos);
+    try {
+      const configuration = await this.navConfigService.fetchNavigationConfiguration();
+
+      this.logger.debug('The application configuration has been fetched successfully');
+
+      return configuration;
     } catch (error) {
-      this.errorHandlingService.setCriticalError('ERROR_UNABLE_TO_LOAD_CONFIGURATION', this.extractErrorMessage(error));
+      throw new CriticalError('ERROR_UNABLE_TO_LOAD_CONFIGURATION', this.extractErrorMessage(error));
     }
   }
 
-  private initializeServices(navItems: NavItem[]): Promise<void> {
-    try {
-      this.clientAppService.init(navItems).catch(error => this.handleInitializationError(error));
-      this.menuStateService.init(navItems);
-      this.navigationService.init(navItems);
-
-      return this.navigationService.initialNavigation()
-        .then(bootstrapResolve, error => this.handleInitializationError(error));
-    } catch (error) {
-      this.handleInitializationError(error);
-
-      return Promise.resolve();
+  private initializeServices(configuration: Configuration): void {
+    if (configuration.sites && configuration.selectedSiteId) {
+      this.siteService.init(configuration.sites, configuration.selectedSiteId);
     }
+
+    const navItems = this.navItemService.registerNavItemDtos(configuration.navItems);
+
+    this.menuStateService.init(navItems);
+    this.navigationService.init(navItems);
+    this.clientAppService.init(navItems).catch(error => this.handleInitializationError(error));
   }
 
   private handleInitializationError(error: any): void {
@@ -111,5 +152,15 @@ export class BootstrapService {
 
   private extractErrorMessage(error: any): string {
     return error ? (error.message ? error.message : error) : '';
+  }
+
+  private showLoader(): void {
+    this.mainLoaderService.show();
+    this.busyIndicatorService.show();
+  }
+
+  private hideLoader(): void {
+    this.mainLoaderService.hide();
+    this.busyIndicatorService.hide();
   }
 }

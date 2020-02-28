@@ -14,26 +14,16 @@
  * limitations under the License.
  */
 
-import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
-
-import { APP_BOOTSTRAPPED } from '../bootstrap/app-bootstrapped';
+import { TestBed } from '@angular/core/testing';
 
 import { MainLoaderService } from './main-loader.service';
 
 describe('MainLoaderService', () => {
   let service: MainLoaderService;
-  let resolveAppBootstrappedPromise: () => void;
-  let rejectAppBootstrappedPromise: () => void;
 
   beforeEach(() => {
-    const appBootstrappedPromise = new Promise((resolve, reject) => {
-      resolveAppBootstrappedPromise = resolve;
-      rejectAppBootstrappedPromise = reject;
-    });
-
     TestBed.configureTestingModule({
       providers: [
-        { provide: APP_BOOTSTRAPPED, useValue: appBootstrappedPromise },
         MainLoaderService,
       ],
     });
@@ -41,49 +31,25 @@ describe('MainLoaderService', () => {
     service = TestBed.get(MainLoaderService);
   });
 
-  it('should be visible initially', () => {
+  it('should set make the loader visible initially', () => {
     expect(service.isVisible).toBeTruthy();
   });
 
-  it('should be hidden when appBootstrap promise is resolved', fakeAsync(() => {
-    resolveAppBootstrappedPromise();
-
-    tick();
-
-    expect(service.isVisible).toBeFalsy();
-  }));
-
-  it('should be hidden when appBootstrap promise is rejected', fakeAsync(() => {
-    rejectAppBootstrappedPromise();
-
-    tick();
-
-    expect(service.isVisible).toBeFalsy();
-  }));
-
-  it('should not hide the loader', () => {
+  it('should hide the loader', () => {
     service.hide();
 
-    expect(service.isVisible).toBeTruthy();
+    expect(service.isVisible).toBeFalsy();
   });
 
-  describe('after appBootstrap promise is resolved', () => {
-    beforeEach(async(() => {
-      resolveAppBootstrappedPromise();
-    }));
+  describe('when the loader is hidden', () => {
+    beforeEach(() => {
+      service.hide();
+    });
 
     it('should show the loader', () => {
       service.show();
 
       expect(service.isVisible).toBeTruthy();
-    });
-
-    describe('if the loader is visible', () => {
-      it('should hide it', () => {
-        service.hide();
-
-        expect(service.isVisible).toBeFalsy();
-      });
     });
   });
 });

@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,13 @@
  */
 
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit, QueryList, ViewChildren } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { NavigationService } from '../../../services/navigation.service';
 import { ClientAppService } from '../../services/client-app.service';
+import { ClientAppComponent } from '../client-app/client-app.component';
 
 @Component({
   selector: 'brna-client-app-container',
@@ -49,9 +50,13 @@ export class ClientAppContainerComponent implements OnInit, OnDestroy {
 
   urls: string[] = [];
 
+  @ViewChildren(ClientAppComponent)
+  clientAppComponents: QueryList<ClientAppComponent>;
+
   constructor(
     private readonly clientAppService: ClientAppService,
     private readonly navigationService: NavigationService,
+    private readonly cd: ChangeDetectorRef,
   ) {}
 
   get isNavigating$(): Observable<boolean> {
@@ -61,7 +66,7 @@ export class ClientAppContainerComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.clientAppService.urls$
       .pipe(takeUntil(this.unsubscribe))
-      .subscribe(urls => this.urls = urls);
+      .subscribe(urls => this.updateClientApps(urls));
   }
 
   ngOnDestroy(): void {
@@ -71,10 +76,22 @@ export class ClientAppContainerComponent implements OnInit, OnDestroy {
 
   isActive(appURL: string): boolean {
     const activeApp = this.clientAppService.activeApp;
-    if (!activeApp) {
-      return false;
+
+    return activeApp ? activeApp.url === appURL : false;
+  }
+
+  private updateClientApps(urls: string[]): void {
+    const isInitialUpdate = this.urls.length === 0;
+    this.urls = urls;
+
+    this.cd.detectChanges();
+
+    if (isInitialUpdate) {
+      return;
     }
 
-    return activeApp.url === appURL;
+    const alreadyConnectedAppUrls = this.clientAppService.apps.map(x => x.url);
+
+    this.clientAppComponents.filter(x => !alreadyConnectedAppUrls.includes(x.url)).forEach(x => x.reloadAndConnect());
   }
 }

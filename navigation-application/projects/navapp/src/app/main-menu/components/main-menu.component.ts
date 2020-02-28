@@ -49,7 +49,7 @@ import { MenuStateService } from '../services/menu-state.service';
   ],
 })
 export class MainMenuComponent implements OnInit, AfterViewInit {
-  menuItems: MenuItem[] = [];
+  menuItems$: Observable<MenuItem[]>;
   isHelpToolbarOpened = false;
   isUserToolbarOpened = false;
   availableHeightForScrollableArea = 0;
@@ -90,7 +90,7 @@ export class MainMenuComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.menuItems = this.menuStateService.menu;
+    this.menuItems$ = this.menuStateService.menu$;
   }
 
   ngAfterViewInit(): void {
@@ -123,15 +123,12 @@ export class MainMenuComponent implements OnInit, AfterViewInit {
     return this.menuStateService.isMenuItemHighlighted(item);
   }
 
-  isMenuItemDisabled(item: MenuItem): Observable<boolean> {
+  isMenuItemDisabled(item: MenuItem): boolean {
     if (item instanceof MenuItemLink) {
-      return item.navItem.active$.pipe(
-        startWith(false),
-        map(x => !x),
-      );
+      return !item.navItem.active;
     }
 
-    return of(false);
+    return false;
   }
 
   getQaClass(item: MenuItem | string): string {

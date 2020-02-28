@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,7 +21,7 @@ import {
   HttpTestingController,
 } from '@angular/common/http/testing';
 import { async, TestBed } from '@angular/core/testing';
-import { NavItem, Site } from '@bloomreach/navapp-communication';
+import { ChildPromisedApi, NavItem, Site } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 
 import { AppSettings } from '../models/dto/app-settings.dto';
@@ -30,30 +30,21 @@ import { NavItemDtoMock } from '../models/dto/nav-item-dto.mock';
 
 import { APP_SETTINGS } from './app-settings';
 import { ConnectionService } from './connection.service';
-import { NavConfigService } from './nav-config.service';
-import { NavItemService } from './nav-item.service';
-import { SiteService } from './site.service';
+import { Configuration, NavConfigService } from './nav-config.service';
 
 describe('NavConfigService', () => {
   let service: NavConfigService;
   let http: HttpClient;
   let httpTestingController: HttpTestingController;
-  let navItemService: NavItemService;
-  let siteService: SiteService;
   let appSettings: AppSettings;
 
-  const navItems = [
+  const navItemsMock = [
     new NavItemDtoMock({ id: 'iframeItem' }),
     new NavItemDtoMock({ id: 'restItem' }),
     new NavItemDtoMock({ id: 'internalRestItem' }),
   ];
 
-  const locationMock = jasmine.createSpyObj('Location', [
-    'prepareExternalUrl',
-  ]);
-  locationMock.prepareExternalUrl.and.callFake((path: string) => path);
-
-  const sites: Site[] = [
+  const sitesMock: Site[] = [
     {
       siteId: 1,
       accountId: 123,
@@ -68,52 +59,55 @@ describe('NavConfigService', () => {
     },
   ];
 
-  const selectedSite = {
-    siteId: sites[0].siteId,
-    accountId: sites[0].accountId,
+  const selectedSiteMock = {
+    siteId: sitesMock[0].siteId,
+    accountId: sitesMock[0].accountId,
   };
 
-  const loggerMock = jasmine.createSpyObj('NGXLogger', [
-    'debug',
-  ]);
+  let locationMock: jasmine.SpyObj<Location>;
+  let connectionServiceMock: jasmine.SpyObj<ConnectionService>;
+  let childApiMock: jasmine.SpyObj<ChildPromisedApi>;
+  let loggerMock: jasmine.SpyObj<NGXLogger>;
 
   beforeEach(() => {
-    const appSettingsMock = new AppSettingsMock();
+    locationMock = jasmine.createSpyObj('Location', [
+      'prepareExternalUrl',
+    ]);
+    locationMock.prepareExternalUrl.and.callFake((path: string) => path);
 
-    const siteServiceMock = {
-      sites: [],
-      setSelectedSite: jasmine.createSpy('setSelectedSite'),
-    };
-
-    const connectionServiceMock = jasmine.createSpyObj('ConnectionService', {
+    childApiMock = jasmine.createSpyObj('ChildPromisedApi', {
+      getNavItems: [navItemsMock[0]],
+      getSites: sitesMock,
+      getSelectedSite: selectedSiteMock,
+    });
+    connectionServiceMock = jasmine.createSpyObj('ConnectionService', {
       createConnection: Promise.resolve({
         url: 'testIFRAMEurl',
-        api: {
-          getNavItems: () => [navItems[0]],
-          getSites: () => sites,
-          getSelectedSite: () => selectedSite,
-        },
+        api: childApiMock,
       }),
       removeConnection: Promise.resolve(),
     });
+
+    loggerMock = jasmine.createSpyObj('NGXLogger', [
+      'debug',
+    ]);
+
+    const appSettingsMock = new AppSettingsMock();
 
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       providers: [
         NavConfigService,
         { provide: Location, useValue: locationMock },
-        { provide: APP_SETTINGS, useValue: appSettingsMock },
         { provide: ConnectionService, useValue: connectionServiceMock },
-        { provide: SiteService, useValue: siteServiceMock },
         { provide: NGXLogger, useValue: loggerMock },
+        { provide: APP_SETTINGS, useValue: appSettingsMock },
       ],
     });
 
     service = TestBed.get(NavConfigService);
     http = TestBed.get(HttpClient);
     httpTestingController = TestBed.get(HttpTestingController);
-    siteService = TestBed.get(SiteService);
-    navItemService = TestBed.get(NavItemService);
     appSettings = TestBed.get(APP_SETTINGS);
   });
 
@@ -121,88 +115,125 @@ describe('NavConfigService', () => {
     httpTestingController.verify();
   });
 
-  describe('logging', () => {
+  describe('fetchNavigationConfiguration', () => {
+    let configuration: Configuration;
+
     beforeEach(async(() => {
       const rootUrl = appSettings.basePath;
 
-      service.init();
+      service.fetchNavigationConfiguration().then(x => configuration = x);
 
       const restReq = httpTestingController.expectOne(appSettings.navConfigResources[1].url);
-      restReq.flush([navItems[1]]);
+      restReq.flush([navItemsMock[1]]);
 
       const internalRestReq = httpTestingController.expectOne(`${rootUrl}${appSettings.navConfigResources[2].url}`);
-      internalRestReq.flush([navItems[2]]);
+      internalRestReq.flush([navItemsMock[2]]);
     }));
 
-    it('should log starting of fetching from REST', () => {
-      expect(loggerMock.debug).toHaveBeenCalledWith('Fetching configuration from an REST endpoint \'\/testRESTurl\'');
+    afterEach(() => {
+      httpTestingController.verify();
     });
 
-    it('should log starting of fetching from internal REST', () => {
-      expect(loggerMock.debug).toHaveBeenCalledWith('Fetching configuration from an Internal REST endpoint \'\/internalRESTurl\'');
+    it('should fetch the configuration', () => {
+      expect(configuration).toEqual({
+        navItems: navItemsMock,
+        sites: sitesMock,
+        selectedSiteId: selectedSiteMock,
+      });
     });
 
-    it('should log starting of fetching from an iframe', () => {
-      expect(loggerMock.debug).toHaveBeenCalledWith('Fetching configuration from an iframe \'\/testIFRAMEurl\'');
+    it('should create a connection to an iframe to retrieve a configuration', () => {
+      expect(connectionServiceMock.createConnection).toHaveBeenCalledWith(appSettings.navConfigResources[0].url);
     });
 
-    it('should log successful fetching from REST', () => {
-      expect(loggerMock.debug).toHaveBeenCalledWith(
-        'Nav items have been received from the REST endpoint \'\/testRESTurl\'',
-        [navItems[1]],
-      );
+    describe('refetchNavItems', () => {
+      let navItems: NavItem[];
+
+      const newIframeNavItems = [
+        new NavItemDtoMock({ id: 'newIframeItem' }),
+      ];
+
+      beforeEach(async(() => {
+        const rootUrl = appSettings.basePath;
+
+        childApiMock.getNavItems.and.returnValue(newIframeNavItems);
+
+        service.refetchNavItems().then(x => navItems = x);
+
+        httpTestingController.expectNone(appSettings.navConfigResources[1].url);
+        httpTestingController.expectNone(`${rootUrl}${appSettings.navConfigResources[2].url}`);
+      }));
+
+      afterEach(() => {
+        httpTestingController.verify();
+      });
+
+      it('should refetch the nav items', () => {
+        const expected = newIframeNavItems.concat(navItemsMock.slice(1));
+
+        expect(navItems).toEqual(expected);
+      });
+
+      it('should create a connection to an iframe to retrieve a configuration', () => {
+        expect(connectionServiceMock.createConnection).toHaveBeenCalledWith(appSettings.navConfigResources[0].url);
+      });
     });
 
-    it('should log successful fetching from internal REST', () => {
-      expect(loggerMock.debug).toHaveBeenCalledWith(
-        'Nav items have been received from the REST endpoint \'\/base\/path\/internalRESTurl\'',
-        [navItems[2]],
-      );
-    });
+    describe('logging', () => {
+      it('should log starting of fetching of nav items from REST', () => {
+        expect(loggerMock.debug).toHaveBeenCalledWith('Fetching nav items from an REST endpoint \'\/testRESTurl\'');
+      });
 
-    it('should log successful fetching from an iframe', () => {
-      expect(loggerMock.debug).toHaveBeenCalledWith(
-        'Nav items have been received from the iframe \'\/testIFRAMEurl\'',
-        [navItems[0]],
-      );
-      expect(loggerMock.debug).toHaveBeenCalledWith(
-        'Sites have been received from the iframe \'/testIFRAMEurl\'',
-        sites,
-      );
-      expect(loggerMock.debug).toHaveBeenCalledWith(
-        'Selected site id has been received from the iframe \'/testIFRAMEurl\'',
-        selectedSite,
-      );
-    });
-  });
+      it('should log that nav items have been successfully fetched from REST', () => {
+        expect(loggerMock.debug).toHaveBeenCalledWith(
+          'Nav items have been received from the REST endpoint \'\/testRESTurl\'',
+          [navItemsMock[1]],
+        );
+      });
 
-  describe('after initialization', () => {
-    let navItemsAfterInitialization: NavItem[];
+      it('should log starting of fetching of nav items from internal REST', () => {
+        expect(loggerMock.debug).toHaveBeenCalledWith('Fetching nav items from an Internal REST endpoint \'\/internalRESTurl\'');
+      });
 
-    beforeEach(async(() => {
-      navItemsAfterInitialization = [];
+      it('should log that nav items have been successfully fetched from internal REST', () => {
+        expect(loggerMock.debug).toHaveBeenCalledWith(
+          'Nav items have been received from the REST endpoint \'\/base\/path\/internalRESTurl\'',
+          [navItemsMock[2]],
+        );
+      });
 
-      service.init().then(x => navItemsAfterInitialization = x);
+      it('should log starting of fetching of nav items from an iframe', () => {
+        expect(loggerMock.debug).toHaveBeenCalledWith('Fetching nav items from an iframe \'\/testIFRAMEurl\'');
+      });
 
-      const rootUrl = appSettings.basePath;
+      it('should log that nav items have been successfully fetched an iframe', () => {
+        expect(loggerMock.debug).toHaveBeenCalledWith(
+          'Nav items have been received from the iframe \'\/testIFRAMEurl\'',
+          [navItemsMock[0]],
+        );
+      });
 
-      const restReq = httpTestingController.expectOne(appSettings.navConfigResources[1].url);
-      restReq.flush([navItems[1]]);
+      it('should log starting of fetching of sites from an iframe', () => {
+        expect(loggerMock.debug).toHaveBeenCalledWith('Fetching sites from an iframe \'\/testIFRAMEurl\'');
+      });
 
-      const internalRestReq = httpTestingController.expectOne(`${rootUrl}${appSettings.navConfigResources[2].url}`);
-      internalRestReq.flush([navItems[2]]);
-    }));
+      it('should log that sites have been successfully fetched an iframe', () => {
+        expect(loggerMock.debug).toHaveBeenCalledWith(
+          'Sites have been received from the iframe \'/testIFRAMEurl\'',
+          sitesMock,
+        );
+      });
 
-    it('should set the selected site', () => {
-      expect(siteService.setSelectedSite).toHaveBeenCalledWith(selectedSite);
-    });
+      it('should log starting of fetching of the selected site from an iframe', () => {
+        expect(loggerMock.debug).toHaveBeenCalledWith('Fetching a selected site from an iframe \'\/testIFRAMEurl\'');
+      });
 
-    it('should set sites', () => {
-      expect(siteService.sites).toEqual(sites);
-    });
-
-    it('should return fetched nav items', () => {
-      expect(navItemsAfterInitialization).toEqual(navItems);
+      it('should log that the selected site has been successfully fetched an iframe', () => {
+        expect(loggerMock.debug).toHaveBeenCalledWith(
+          'Selected site has been received from the iframe \'/testIFRAMEurl\'',
+          selectedSiteMock,
+        );
+      });
     });
   });
 });
