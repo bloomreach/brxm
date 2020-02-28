@@ -15,21 +15,14 @@
 
 package org.hippoecm.frontend.editor;
 
-import java.util.function.Supplier;
+public interface Document {
 
-public class PublishableEditorState {
-
-    Supplier<String> getUnpublished;
-    Supplier<String> getPublished;
-    Supplier<String> getDraft;
-    Supplier<String> getRevision;
-
-    String getBaseIdentifier(){
-        return null;
-    }
-
-
-
+    String getUnpublished();
+    String getPublished();
+    String getDraft();
+    String getRevision();
+    boolean isTransferable();
+    boolean isHolder();
 
 
 }
