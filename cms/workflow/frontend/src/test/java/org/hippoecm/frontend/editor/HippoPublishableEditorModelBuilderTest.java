@@ -102,7 +102,7 @@ public class HippoPublishableEditorModelBuilderTest {
                         , HippoStdPublishableEditorModel.INVALID() },
                 // 20 = 010100
                 { createDocument().notDraft().unpublished().notPublished().revision().notHolder().notTransferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                        , createModel().editor(UNPUBLISHED).base(REVISION).mode(COMPARE)},
                 // 21 = 010101
                 { createDocument().notDraft().unpublished().notPublished().revision().notHolder().transferable()
                         , HippoStdPublishableEditorModel.INVALID() },
