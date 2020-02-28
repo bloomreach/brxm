@@ -16,7 +16,6 @@
 
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.jcr.Node;
@@ -31,7 +30,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ItemNotFoundExcep
 import org.hippoecm.hst.pagecomposer.jaxrs.services.helpers.ContainerHelper;
 import org.hippoecm.hst.pagecomposer.jaxrs.util.HstConfigurationUtils;
 import org.hippoecm.repository.util.JcrUtils;
-import org.hippoecm.repository.util.NodeIterable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,27 +93,16 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
     public ContainerItem createContainerItem(final Session session, final String catalogItemUUID, final String siblingItemUUID, final long versionStamp) throws RepositoryException {
 
         final ContainerItem containerItem = createContainerItem(session, catalogItemUUID, versionStamp);
-        final String itemIdentifier = containerItem.getContainerItem().getIdentifier();
+        final String newItemName = containerItem.getContainerItem().getName();
+        final String siblingItemName = getContainerItem(session, siblingItemUUID).getName();
 
-        final List<String> children = new ArrayList<>();
         final Node containerNode = lockAndGetContainer(versionStamp);
-        for (final Node itemNode : new NodeIterable(containerNode.getNodes())) {
-            if (itemNode.getIdentifier().equals(siblingItemUUID)) {
-                children.add(itemIdentifier);
-            }
-            children.add(itemNode.getIdentifier());
-        }
-
-        if (children.contains(siblingItemUUID)) {
-            updateContainerOrder(session, children, containerNode);
+        if (containerNode.hasNode(siblingItemName)) {
+            containerNode.orderBefore(siblingItemName, newItemName);
         } else {
-            log.warn("Cannot find container item '{}' in container '{}', adding the new container item '{}' at the end instead",
-                    siblingItemUUID,
-                    containerNode.getIdentifier(),
-                    itemIdentifier
-            );
+            log.warn("Cannot order new item '{}' before '{}' because container '{}' does not contain '{}'.",
+                    newItemName, siblingItemName, containerNode.getPath(), siblingItemName);
         }
-
         return containerItem;
     }
 
