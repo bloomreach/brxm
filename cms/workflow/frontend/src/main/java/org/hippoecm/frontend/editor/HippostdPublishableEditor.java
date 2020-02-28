@@ -19,10 +19,8 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Stream;
 
-import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -43,9 +41,7 @@ import org.hippoecm.frontend.usagestatistics.events.DocumentUsageEvent;
 import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.IValidationService;
 import org.hippoecm.frontend.validation.ValidationException;
-import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.Document;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.HippoSession;
 import org.hippoecm.repository.api.HippoWorkspace;
 import org.hippoecm.repository.api.MappingException;
@@ -54,8 +50,6 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
-import org.onehippo.repository.branch.BranchHandle;
-import org.onehippo.repository.documentworkflow.BranchHandleImpl;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,97 +77,13 @@ import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
  */
 public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implements EventListener {
 
-    private static final long serialVersionUID = 1L;
-
-    private static final Logger log = LoggerFactory.getLogger(HippostdPublishableEditor.class);
     public static final String UNABLE_TO_VALIDATE_THE_DOCUMENT = "Unable to validate the document";
-
+    private static final long serialVersionUID = 1L;
+    private static final Logger log = LoggerFactory.getLogger(HippostdPublishableEditor.class);
     private BranchIdModel branchIdModel;
     private Boolean isValid;
     private boolean modified;
     private IModel<Node> editorModel;
-
-    // CMS-10723 Made WorkflowState package-private to be able to unit test
-    static class WorkflowState {
-        private IModel<Node> draft;
-        private IModel<Node> unpublished;
-        private IModel<Node> published;
-        private boolean isHolder;
-        private boolean isTransferable;
-        private String user;
-        private Optional<BranchHandle> branchHandle = Optional.empty();
-
-        public WorkflowState() {
-        }
-
-        public WorkflowState(final Node handle, final String branchId) {
-            try {
-                branchHandle = Optional.of(new BranchHandleImpl(branchId, handle));
-            } catch (WorkflowException e) {
-                log.warn(e.getMessage(), e);
-            }
-        }
-
-        void process(final Node child) throws RepositoryException {
-            if (child.hasProperty(HippoStdNodeType.HIPPOSTD_STATE)) {
-                final String state = child.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
-                switch (state) {
-                    case HippoStdNodeType.UNPUBLISHED:
-                        if (unpublished != null) {
-                            this.unpublished.detach();
-                        }
-                        this.unpublished = new JcrNodeModel(branchHandle.map(BranchHandle::getUnpublished).orElse(child));
-                        break;
-                    case HippoStdNodeType.PUBLISHED:
-                        if (published != null) {
-                            this.published.detach();
-                        }
-                        // if there is no published for the branch we fallback to master published and if there is
-                        // no master published we just use child
-                        this.published = new JcrNodeModel(branchHandle
-                                .map(BranchHandle::getPublished)
-                                .orElseGet(() -> branchHandle.map(BranchHandle::getPublishedMaster).orElse(child))
-                        );
-                        break;
-                    case HippoStdNodeType.DRAFT:
-                        if (this.draft != null) {
-                            this.draft.detach();
-                        }
-                        draft = new JcrNodeModel(branchHandle.map(BranchHandle::getDraft).orElse(child));
-                        if (child.hasProperty(HippoStdNodeType.HIPPOSTD_HOLDER)
-                                && child.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).getString().equals(user)) {
-                            isHolder = true;
-                        }
-                        if (child.hasProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE)){
-                            isTransferable = child.getProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE).getBoolean();
-                        }
-                        break;
-                }
-            }
-        }
-
-        void setUser(final String user) {
-            this.user = user;
-        }
-
-        /* For testing purposes */
-        void setDraft(final IModel<Node> draft) {
-            this.draft = draft;
-        }
-
-        void setUnpublished(final IModel<Node> unpublished) {
-            this.unpublished = unpublished;
-        }
-
-        void setPublished(final IModel<Node> published) {
-            this.published = published;
-        }
-
-        void setHolder(final boolean holder) {
-            isHolder = holder;
-        }
-
-    }
 
     public HippostdPublishableEditor(final IEditorContext manager, final IPluginContext context, final IPluginConfig config, final IModel<Node> model)
             throws EditorException {
@@ -190,184 +100,38 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     }
 
     static Mode getMode(final IModel<Node> nodeModel, final String branchId) throws EditorException {
-        final Node node = nodeModel.getObject();
-        try {
-            if (node.isNodeType(JcrConstants.NT_VERSION)) {
-                final Node frozen = node.getNode(JcrConstants.JCR_FROZEN_NODE);
-                final String uuid = frozen.getProperty(JcrConstants.JCR_FROZEN_UUID).getString();
-                try {
-                    node.getSession().getNodeByIdentifier(uuid);
-                    return Mode.COMPARE;
-                } catch (final ItemNotFoundException ex) {
-                    return Mode.VIEW;
-                }
-            }
-        } catch (final RepositoryException e) {
-            throw new EditorException("Could not determine mode", e);
-        }
-        final WorkflowState wfState = getWorkflowState(node, branchId);
-
-        // select draft if it exists
-        if (wfState.draft != null) {
-            if (wfState.isHolder && !wfState.isTransferable) {
-                return Mode.EDIT;
-            } else {
-                if (wfState.isTransferable){
-                    return Mode.VIEW;
-                }
-                if (wfState.published != null) {
-                    return Mode.COMPARE;
-                }
-                return Mode.VIEW;
-            }
-        }
-
-        // show preview
-        if (wfState.unpublished == null && wfState.published == null) {
-            throw new EditorException("unable to find draft or unpublished variants");
-        }
-
-        if (wfState.unpublished != null && wfState.published != null) {
-            return Mode.COMPARE;
-        }
-        if (wfState.published != null) {
-            wfState.published.detach();
-        }
-        if (wfState.unpublished != null) {
-            wfState.unpublished.detach();
-        }
-        if (wfState.draft != null) {
-            wfState.draft.detach();
-        }
-        return Mode.VIEW;
-    }
-
-    static WorkflowState getWorkflowState(final Node handleNode, final String branchId) throws EditorException {
-        final WorkflowState wfState = new WorkflowState(handleNode, branchId);
-        try {
-            final String user = UserSession.get().getJcrSession().getUserID();
-            wfState.setUser(user);
-            if (!handleNode.isNodeType(HippoNodeType.NT_HANDLE)) {
-                throw new EditorException("Invalid node, not of type " + HippoNodeType.NT_HANDLE);
-            }
-            for (final NodeIterator iter = handleNode.getNodes(); iter.hasNext(); ) {
-                final Node child = iter.nextNode();
-                if (child.getName().equals(handleNode.getName())) {
-                    wfState.process(child);
-                }
-            }
-        } catch (final RepositoryException ex) {
-            throw new EditorException("Could not determine workflow state", ex);
-        }
-        return wfState;
-    }
-
-    static Node getVersionHandle(final Node versionNode) throws EditorException {
-        try {
-            final Node frozenNode = versionNode.getNode(JcrConstants.JCR_FROZEN_NODE);
-            final String uuid = frozenNode.getProperty(JcrConstants.JCR_FROZEN_UUID).getString();
-            final Node variant = versionNode.getSession().getNodeByIdentifier(uuid);
-            return variant.getParent();
-        } catch (final RepositoryException ex) {
-            throw new EditorException("Failed to build version information", ex);
-        }
+        final HippoStdPublishableEditorModel model = getEditorStateModel(branchId, nodeModel.getObject());
+        return model.getMode();
     }
 
     @Override
     protected IModel<Node> getEditorModel() throws EditorException {
         final IModel<Node> model = super.getEditorModel();
         Node node = model.getObject();
-        boolean compareToVersion = false;
-        try {
-            if (isParentOfFrozenNode(node)) {
-                node = getVersionHandle(node);
-                compareToVersion = true;
-            }
-        } catch (final RepositoryException ex) {
-            throw new EditorException("Error locating editor model", ex);
-        }
-        final WorkflowState state = getWorkflowState(node, branchIdModel.getBranchId());
-        switch (getMode()) {
-            case EDIT:
-                if (state.draft == null || !state.isHolder) {
-                    throw new EditorException("No draft present for editing");
-                }
-                if (state.published != null) {
-                    state.published.detach();
-                }
-                if (state.unpublished != null) {
-                    state.unpublished.detach();
-                }
-                return state.draft;
-            case VIEW:
-                if (state.draft != null && state.isTransferable){
-                   if (state.published != null){
-                       state.published.detach();
-                   }
-                   if (state.unpublished != null){
-                       state.unpublished.detach();
-                   }
-                   return state.draft;
-                }
-                if (state.unpublished != null) {
-                    if (state.published != null) {
-                        state.published.detach();
-                    }
-                    if (state.draft != null) {
-                        state.draft.detach();
-                    }
-                    return state.unpublished;
-                }
-                if (state.published != null) {
-                    if (state.unpublished != null) {
-                        state.unpublished.detach();
-                    }
-                    if (state.draft != null) {
-                        state.draft.detach();
-                    }
-                    return state.published;
-                }
-                return state.draft;
-            default:
-                if (!compareToVersion && (state.unpublished == null || state.published == null)) {
-                    throw new EditorException("Can only compare when both unpublished and published are present");
-                }
-                Stream.of(state.published, state.draft).forEach(this::detachVariant);
-                return state.unpublished;
-        }
+        final HippoStdPublishableEditorModel editorModel = getEditorStateModel(branchIdModel.getBranchId(), node);
+        return new JcrNodeModel(editorModel.getEditor());
     }
 
     @Override
     protected IModel<Node> getBaseModel() throws EditorException {
         final Node node = super.getEditorModel().getObject();
-        try {
-            if (node.isNodeType(JcrConstants.NT_VERSION)) {
-                return new JcrNodeModel(node.getNode(JcrConstants.JCR_FROZEN_NODE));
-            }
-        } catch (final RepositoryException ex) {
-            throw new EditorException("Error locating base revision", ex);
-        }
-        final WorkflowState state = getWorkflowState(node, branchIdModel.getBranchId());
-        if (getMode() == Mode.EDIT) {
-            throw new EditorException("Base model is not supported in edit mode");
-        } else {
-            if (state.published != null) {
-                Stream.of(state.unpublished, state.draft).forEach(this::detachVariant);
-                return state.published;
-            }
-            if (state.unpublished != null) {
-                Stream.of(state.published, state.draft).forEach(this::detachVariant);
-                return state.unpublished;
-            }
+        final HippoStdPublishableEditorModel editorModel = getEditorStateModel(branchIdModel.getBranchId(), node);
+        if (editorModel.getBase().isEmpty()){
             return super.getBaseModel();
+        }
+        else{
+            return new JcrNodeModel(editorModel.getBase());
         }
     }
 
-
-    private void detachVariant(IModel<Node> model) {
-        if (model != null) {
-            model.detach();
-        }
+    private static HippoStdPublishableEditorModel getEditorStateModel(final String branchId
+            , final Node handleOrVersion) throws EditorException {
+        return HippoPublishableEditorModelBuilder
+                .build(DocumentBuilder
+                        .create()
+                        .branchId(branchId)
+                        .node(handleOrVersion)
+                        .build());
     }
 
     @Override
@@ -761,6 +525,4 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     protected UsageEvent createUsageEvent(final String name, final IModel<Node> model) {
         return new DocumentUsageEvent(name, model, "publishable-editor");
     }
-
-
 }

@@ -46,8 +46,8 @@ public class HippoPublishableEditorModelBuilder {
             throw new EditorException(message);
         }
         if (isRevision()) {
-            if (hasPublished() || hasUnpublished() || hasDraft()){
-                final String message = "Document : %s cannot be a revision and also have a draft, unpublished or published";
+            if (hasPublished() || hasDraft()){
+                final String message = "Document : %s cannot be a revision and also have a draft, published";
                 throw new EditorException(String.format(message, document));
             }
             return buildHasRevision();
