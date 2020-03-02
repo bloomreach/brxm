@@ -117,6 +117,10 @@ export class BootstrapService {
     try {
       const configuration = await this.navConfigService.fetchNavigationConfiguration();
 
+      if (configuration.navItems.length === 0) {
+        throw new Error('There are no nav items to process. Either the configuration is wrong or all config resources failed.');
+      }
+
       this.logger.debug('The application configuration has been fetched successfully');
 
       return configuration;

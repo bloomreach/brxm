@@ -15,7 +15,7 @@
  */
 
 import { Location } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { NavItem, Site, SiteId } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
@@ -107,7 +107,7 @@ export class NavConfigService {
 
       return sites;
     } catch (e) {
-      this.logger.error(`Unable to fetch sites from an iframe '${resource.url}'`, e);
+      this.logger.error(`Unable to fetch sites from the iframe '${resource.url}'`, e);
 
       return [];
     }
@@ -126,29 +126,41 @@ export class NavConfigService {
 
       return selectedSite;
     } catch (e) {
-      this.logger.error(`Unable to fetch a selected site from an iframe '${resource.url}'`, e);
+      this.logger.error(`Unable to fetch a selected site from the iframe '${resource.url}'`, e);
     }
   }
 
   private async fetchNavItemsFromREST(url: string): Promise<NavItem[]> {
-    this.logger.debug(`Fetching nav items from an REST endpoint '${url}'`);
-    const navItems = await this.http.get<NavItem[]>(url).toPromise();
-    this.logger.debug(`Nav items have been fetched from the REST endpoint '${url}'`, navItems);
+    try {
+      this.logger.debug(`Fetching nav items from an REST endpoint '${url}'`);
+      const navItems = await this.http.get<NavItem[]>(url).toPromise();
+      this.logger.debug(`Nav items have been fetched from the REST endpoint '${url}'`, navItems);
 
-    return navItems;
+      return navItems;
+    } catch (e) {
+      this.logger.error(`Unable to fetch nav items from the REST endpoint '${url}'`, e.message);
+
+      return [];
+    }
   }
 
   private async fetchNavItemsFromInternalREST(url: string, baseUrl: string): Promise<NavItem[]> {
-    this.logger.debug(`Fetching nav items from an Internal REST endpoint '${url}'`);
+    try {
+      this.logger.debug(`Fetching nav items from an Internal REST endpoint '${url}'`);
 
-    url = Location.joinWithSlash(baseUrl, url);
+      url = Location.joinWithSlash(baseUrl, url);
 
-    const navItems = await this.fetchNavItemsFromREST(url);
-    navItems.forEach(item => item.appIframeUrl = Location.joinWithSlash(baseUrl, item.appIframeUrl));
+      const navItems = await this.http.get<NavItem[]>(url).toPromise();
+      navItems.forEach(item => item.appIframeUrl = Location.joinWithSlash(baseUrl, item.appIframeUrl));
 
-    this.logger.debug(`Nav items have been fetched from the Internal REST endpoint '${url}'`, navItems);
+      this.logger.debug(`Nav items have been fetched from the Internal REST endpoint '${url}'`, navItems);
 
-    return navItems;
+      return navItems;
+    } catch (e) {
+      this.logger.error(`Unable to fetch nav items from the Internal REST endpoint '${url}'`, e.message);
+
+      return [];
+    }
   }
 
   private async fetchNavItemsFromIframe(url: string): Promise<NavItem[]> {
