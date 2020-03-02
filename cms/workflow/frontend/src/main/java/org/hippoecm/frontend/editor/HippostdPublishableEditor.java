@@ -131,6 +131,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
                         .create()
                         .branchId(branchId)
                         .node(handleOrVersion)
+                        .userId(UserSession.get().getJcrSession().getUserID())
                         .build());
     }
 

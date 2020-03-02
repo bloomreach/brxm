@@ -17,6 +17,8 @@ package org.hippoecm.frontend.editor;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.frontend.service.EditorException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.frontend.service.IEditor.Mode;
 
@@ -25,9 +27,9 @@ import static org.hippoecm.frontend.service.IEditor.Mode;
  */
 public class HippoPublishableEditorModelBuilder {
 
+    private static final Logger log = LoggerFactory.getLogger(HippoPublishableEditorModelBuilder.class);
     private Document document;
     private HippoStdPublishableEditorModel model;
-    public static final HippoStdPublishableEditorModel INVALID = HippoStdPublishableEditorModel.INVALID();
 
     public static HippoStdPublishableEditorModel build(final Document document) throws EditorException {
         return new HippoPublishableEditorModelBuilder().setDocument(document).build();
@@ -35,38 +37,35 @@ public class HippoPublishableEditorModelBuilder {
 
     HippoPublishableEditorModelBuilder setDocument(Document document) {
         this.document = document;
-        this.model = HippoStdPublishableEditorModel.create();
+        this.model = new HippoStdPublishableEditorModel();
         return this;
     }
 
     HippoStdPublishableEditorModel build() throws EditorException {
-        if (!hasDraft() && ( isHolder() || isTransferable() )){
+        if (!hasDraft() && (isHolder() || isTransferable())) {
             final String message = "Document : %s cannot have a holder or transferable property if there is no draft";
-            String.format(message, document);
-            throw new EditorException(message);
+            throw new EditorException(String.format(message, document));
         }
         if (isRevision()) {
-            if (hasPublished() || hasDraft()){
-                final String message = "Document : %s cannot be a revision and also have a draft, published";
-                throw new EditorException(String.format(message, document));
-            }
-            return buildHasRevision();
+            buildRevision();
+        } else if (hasDraft()) {
+            buildDraft();
+        } else {
+            buildPublishedUnpublished();
         }
-        if (hasDraft()) {
-            return buildHasDraft();
-        }
-        return buildPublishedUnpublished();
+        log.debug("Mapped document : {} to model {}", document, model);
+        return model;
 
     }
 
-    private HippoStdPublishableEditorModel buildHasRevision() throws EditorException {
-        if (hasUnpublished()){
-            return model.base(getRevision()).editor(getUnpublished()).mode(Mode.COMPARE);
-        }
-        else{
+    private void buildRevision() throws EditorException {
+        if (hasUnpublished()) {
+            model.setBase(getRevision());
+            model.setEditor(getUnpublished());
+            model.setMode(Mode.COMPARE);
+        } else {
             final String message = "A revision without an unpublished variant is invalid, document : %s";
             throw new EditorException(String.format(message, document));
-
         }
     }
 
@@ -78,42 +77,49 @@ public class HippoPublishableEditorModelBuilder {
         return document.getRevision();
     }
 
-    private HippoStdPublishableEditorModel buildPublishedUnpublished() throws EditorException {
+    private void buildPublishedUnpublished() throws EditorException {
         if (hasPublished()) {
             if (hasUnpublished()) {
-                return model.mode(Mode.COMPARE).base(getPublished()).editor(getUnpublished());
-            }
-            return model.mode(Mode.VIEW).noBase().editor(getPublished());
-        }
-            if (hasUnpublished()) {
-                return model.mode(Mode.VIEW).editor(getUnpublished());
+                model.setMode(Mode.COMPARE);
+                model.setEditor(getUnpublished());
+                model.setBase(getPublished());
             } else {
-                String message = "Document: %s without revision, draft, unpublished or published is invalid";
-                throw new EditorException(String.format(message, document));
+                model.setEditor(getPublished());
+                model.setMode(Mode.VIEW);
+                model.setBase(StringUtils.EMPTY);
             }
+        } else if (hasUnpublished()) {
+            model.setMode(Mode.VIEW);
+            model.setEditor(getUnpublished());
+        } else {
+            String message = "Document: %s without revision, draft, unpublished or published is invalid";
+            throw new EditorException(String.format(message, document));
+        }
     }
 
-    private HippoStdPublishableEditorModel buildHasDraft() {
+    private void buildDraft() {
+        model.setEditor(getDraft());
         if (document.isTransferable()) {
-            return model.editor(getDraft()).mode(Mode.VIEW);
+            model.setMode(Mode.VIEW);
+        } else if (isHolder()) {
+            model.setMode(Mode.EDIT);
+        } else if (hasPublished()) {
+            model.setBase(getPublished());
+            model.setMode(Mode.COMPARE);
+        } else if (hasUnpublished()) {
+            model.setBase(getUnpublished());
+            model.setMode(Mode.COMPARE);
+        } else {
+            model.setBase(StringUtils.EMPTY);
+            model.setMode(Mode.VIEW);
         }
-        if (isHolder()) {
-            return model.editor(getDraft()).mode(Mode.EDIT);
-        }
-        if (hasPublished()){
-            return model.editor(getDraft()).base(getPublished()).mode(Mode.COMPARE);
-        }
-        if (hasUnpublished()){
-            return model.editor(getDraft()).base(getUnpublished()).mode(Mode.COMPARE);
-        }
-        return model.editor(getDraft()).noBase().mode(Mode.VIEW);
     }
 
     private boolean isHolder() {
         return document.isHolder();
     }
 
-    private boolean isTransferable(){
+    private boolean isTransferable() {
         return document.isTransferable();
     }
 

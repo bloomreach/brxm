@@ -32,17 +32,13 @@ public class HippoStdPublishableEditorModel {
 
 
 
-    private HippoStdPublishableEditorModel() {
+    HippoStdPublishableEditorModel() {
         this.mode = IEditor.Mode.VIEW;
         this.base = StringUtils.EMPTY;
         this.editor = StringUtils.EMPTY;
     }
 
-    public static HippoStdPublishableEditorModel create(){
-        return new HippoStdPublishableEditorModel();
-    }
-
-    public static HippoStdPublishableEditorModel INVALID() {
+    public static HippoStdPublishableEditorModel invalid() {
         final HippoStdPublishableEditorModel hippoStdPublishableEditorModel = new HippoStdPublishableEditorModel();
         hippoStdPublishableEditorModel.mode = null;
         hippoStdPublishableEditorModel.editor = "INVALID";
@@ -50,24 +46,16 @@ public class HippoStdPublishableEditorModel {
         return hippoStdPublishableEditorModel;
     }
 
-    public HippoStdPublishableEditorModel mode(IEditor.Mode mode){
+    public void setMode(IEditor.Mode mode){
         this.mode = mode;
-        return this;
     }
 
-    public HippoStdPublishableEditorModel base(String identifier){
+    public void setBase(String identifier){
         this.base = identifier;
-        return this;
     }
 
-    public HippoStdPublishableEditorModel noBase(){
-        this.base = StringUtils.EMPTY;
-        return this;
-    }
-
-    public HippoStdPublishableEditorModel editor(String identifier){
+    public void setEditor(String identifier){
         this.editor = identifier;
-        return this;
     }
 
     public IEditor.Mode getMode() {
