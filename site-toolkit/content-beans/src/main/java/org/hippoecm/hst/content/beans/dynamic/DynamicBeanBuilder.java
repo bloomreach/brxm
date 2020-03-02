@@ -111,7 +111,7 @@ public class DynamicBeanBuilder {
     /**
      * Byte buddy doesn't support automated if else blocks, so an interceptor must
      * be used to handle if else. The whole logic is copied from the essentials bean
-     * generation tool. 
+     * generation tool.
      *
      */
     public static class MultipleDocbaseInterceptor {
@@ -140,7 +140,7 @@ public class DynamicBeanBuilder {
     /**
      * Creates a class definition regarding of a given name and a parent bean. The created
      * bean is extended from the parent bean.
-     * 
+     *
      * @param className the name of the class (eg: NewsDocument)
      * @param parentBean the parent bean (eg: BaseDocument)
      */
@@ -268,9 +268,27 @@ public class DynamicBeanBuilder {
         addSimpleGetMethod(methodName, returnType, superMethodName, propertyName);
     }
 
-
-    void addBeanMethodCustomField(final Class<?> returnType, final String methodName, final String propertyName,
-            final boolean multiple, final Node documentTypeNode) {
+    /**
+     * Creates an instance of returnType, then calls the corresponding method in the returnType instance.
+     * <br/>
+     * <br/>
+     * returnType class should have the constructor below;
+     * <pre>
+     *     public returnType(final String propertyName, final Node documentTypeNode)
+     * </pre>
+     * The method in returnType class which gets called should be in format below;
+     * <pre>
+     *     public returnType anyMethodName(@Super(proxyType = TargetType.class) Object superObject)
+     * </pre>
+     * Generated method will be;
+     * <pre>
+     * public returnType methodName() {
+     *     final returnTypeInstance = new returnType(propertyName, documentTypeNode);
+     *     return returnTypeInstance.anyMethodName(hippoBeanInstance);
+     * }
+     * </pre>
+     */
+    void addBeanMethodCustomField(final Class<?> returnType, final String methodName, final String propertyName, final Node documentTypeNode) {
         try {
             final Constructor<?> constructor = returnType.getConstructor(String.class, Node.class);
             final Object instance = constructor.newInstance(propertyName, documentTypeNode);
@@ -285,9 +303,9 @@ public class DynamicBeanBuilder {
 
     /**
      * Invokes the super method of the parent bean with the given property name as a parameter.
-     * 
+     *
      * <pre>
-     * public returnType methodName() {  
+     * public returnType methodName() {
      *     return HippoBean.superMethodName(superMethodParameter);
      * }
      * </pre>
@@ -334,9 +352,9 @@ public class DynamicBeanBuilder {
 
     /**
      * Invokes the super method from the parent bean with the given document type name as a parameter.
-     * 
+     *
      * <pre>
-     * public returnType methodName() {  
+     * public returnType methodName() {
      *     return HippoBean.superMethodName(propertyName, superMethodReturnType);
      * }
      * </pre>
