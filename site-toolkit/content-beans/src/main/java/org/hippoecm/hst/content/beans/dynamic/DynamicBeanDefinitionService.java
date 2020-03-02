@@ -88,7 +88,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
     }
 
     private void closeSession(final Session session) {
-        if (session != null) {
+        if (session != null && session.isLive()) {
             session.logout();
         }
     }
@@ -231,7 +231,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
             return;
         }
 
-        builder.addBeanMethodCustomField(generatedBeanDefinition, methodName, propertyName, multiple, documentTypeNode);
+        builder.addBeanMethodCustomField(generatedBeanDefinition, methodName, propertyName, documentTypeNode);
     }
 
     @Override
