@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -58,14 +58,14 @@ export class AuthService {
     const loginResources = this.appSettings.loginResources || [];
     const loginPromises = loginResources.map(resource => {
       return this.connectionService
-        .createConnection(resource.url)
+        .connect(resource.url)
         .catch(e => {
           this.logger.error(`Silent login has failed for '${resource.url}'`, e);
 
           return Promise.reject(e);
         })
         .finally(() => {
-          this.connectionService.removeConnection(resource.url);
+          this.connectionService.disconnect(resource.url);
         });
     });
 
@@ -84,7 +84,7 @@ export class AuthService {
       .filter(app => !!app.api.logout)
       .map(app => app.api.logout());
     const logoutResources = this.appSettings.logoutResources || [];
-    const logoutResourcePromises = logoutResources.map(resource => this.connectionService.createConnection(resource.url));
+    const logoutResourcePromises = logoutResources.map(resource => this.connectionService.connect(resource.url));
 
     try {
       await Promise.all(logoutAppPromises);

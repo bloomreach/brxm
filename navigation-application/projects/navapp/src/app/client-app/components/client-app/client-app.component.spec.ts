@@ -17,6 +17,7 @@
 import { DebugElement, SecurityContext } from '@angular/core';
 import { async, ComponentFixture, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { By, DomSanitizer } from '@angular/platform-browser';
+import { ChildPromisedApi } from '@bloomreach/navapp-communication';
 
 import { Connection } from '../../../models/connection.model';
 import { FailedConnection } from '../../../models/failed-connection.model';
@@ -34,7 +35,7 @@ describe('ClientAppComponent', () => {
   let connectionServiceMock: jasmine.SpyObj<ConnectionService>;
   let clientAppServiceMock: jasmine.SpyObj<ClientAppService>;
 
-  let resolveIframeConnection: (value: Connection) => any;
+  let resolveIframeConnection: (value: ChildPromisedApi) => any;
   let rejectIframeConnection: (reason?: string) => any;
 
   beforeEach(async(() => {
@@ -88,9 +89,10 @@ describe('ClientAppComponent', () => {
     });
 
     it('should add a connection if iframe has been successfully connected', fakeAsync(() => {
-      const expected = new Connection(iframeDe.nativeElement.src, {});
+      const api = {};
+      const expected = new Connection(iframeDe.nativeElement.src, api);
 
-      resolveIframeConnection(expected);
+      resolveIframeConnection(api);
 
       tick();
 
@@ -123,9 +125,10 @@ describe('ClientAppComponent', () => {
       });
 
       it('should add a connection if iframe has been successfully connected', fakeAsync(() => {
-        const expected = new Connection(iframeDe.nativeElement.src, {});
+        const api = {};
+        const expected = new Connection(iframeDe.nativeElement.src, api);
 
-        resolveIframeConnection(expected);
+        resolveIframeConnection(api);
 
         tick();
 

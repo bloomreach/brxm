@@ -52,8 +52,8 @@ describe('AuthService', () => {
 
   beforeEach(() => {
     connectionServiceMock = jasmine.createSpyObj('MainLoaderService', {
-      createConnection: Promise.resolve({ url: 'testUrl' }),
-      removeConnection: Promise.resolve(),
+      connect: Promise.resolve({ url: 'testUrl' }),
+      disconnect: Promise.resolve(),
     });
     connectionServiceMock.onError$ = errorMock$;
     connectionServiceMock.onSessionExpired$ = sessionExpiredMock$;
@@ -146,21 +146,21 @@ describe('AuthService', () => {
 
       tick();
 
-      expect(connectionServiceMock.createConnection).toHaveBeenCalledTimes(numberOfLoginApps);
+      expect(connectionServiceMock.connect).toHaveBeenCalledTimes(numberOfLoginApps);
       expect(service.logout).not.toHaveBeenCalled();
-      expect(connectionServiceMock.removeConnection).toHaveBeenCalledTimes(numberOfLoginApps);
+      expect(connectionServiceMock.disconnect).toHaveBeenCalledTimes(numberOfLoginApps);
     }));
 
     it('should logout if any of the logins fail', fakeAsync(() => {
-      connectionServiceMock.createConnection.and.callFake(() => Promise.reject({ message: 'Error' }));
+      connectionServiceMock.connect.and.callFake(() => Promise.reject({ message: 'Error' }));
 
       service.loginAllResources();
 
       tick();
 
-      expect(connectionServiceMock.createConnection).toHaveBeenCalledTimes(numberOfLoginApps);
+      expect(connectionServiceMock.connect).toHaveBeenCalledTimes(numberOfLoginApps);
       expect(service.logout).toHaveBeenCalledWith('SilentLoginFailed');
-      expect(connectionServiceMock.removeConnection).toHaveBeenCalledTimes(numberOfLoginApps);
+      expect(connectionServiceMock.disconnect).toHaveBeenCalledTimes(numberOfLoginApps);
     }));
   });
 

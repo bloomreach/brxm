@@ -24,7 +24,7 @@ import { AppSettingsMock } from '../models/dto/app-settings.mock';
 import { UserSettingsMock } from '../models/dto/user-settings.mock';
 
 import { APP_SETTINGS } from './app-settings';
-import { ChildConnection, ConnectionService } from './connection.service';
+import { ConnectionService } from './connection.service';
 import { USER_SETTINGS } from './user-settings';
 
 // That allows to get rid of the "createElement is deprecated" warning
@@ -93,8 +93,8 @@ describe('ConnectionService', () => {
 
   describe('createConnection', () => {
     const url = 'http://localhost/testUrl';
-    let connectionPromise: Promise<ChildConnection>;
-    let connectToChildResolve: (value: ChildConnection) => any;
+    let connectionPromise: Promise<commLib.ChildPromisedApi>;
+    let connectToChildResolve: (value: commLib.ChildPromisedApi) => any;
     let connectToChildReject: (reason?: any) => any;
 
     beforeEach(() => {
@@ -107,7 +107,7 @@ describe('ConnectionService', () => {
         });
       });
 
-      connectionPromise = service.createConnection(url);
+      connectionPromise = service.connect(url);
     });
 
     it('should create an iframe', () => {
@@ -127,35 +127,31 @@ describe('ConnectionService', () => {
     });
 
     it('should create a connection', async () => {
-      connectToChildResolve({} as ChildConnection);
+      const expected = childApiMock;
 
-      const connection = await connectionPromise;
+      connectToChildResolve(expected);
 
-      expect(connection.url).toBe(url);
+      const api = await connectionPromise;
+
+      expect(api).toBe(expected);
     });
 
     describe('if the same connection is required', () => {
-      let newConnectionPromise: Promise<ChildConnection>;
+      let newConnectionPromise: Promise<commLib.ChildPromisedApi>;
 
       beforeEach(() => {
         connectToChildSpy.calls.reset();
 
-        newConnectionPromise = service.createConnection(url);
+        newConnectionPromise = service.connect(url);
       });
 
       it('should return the same connection', async () => {
-        const expected = {
-          url: 'some-url',
-          iframe: {} as HTMLIFrameElement,
-          api: childApiMock,
-        };
+        connectToChildResolve(childApiMock);
 
-        connectToChildResolve(expected);
+        const api = await connectionPromise;
+        const newApi = await newConnectionPromise;
 
-        const connection = await connectionPromise;
-        const newConnection = await newConnectionPromise;
-
-        expect(newConnection).toBe(connection);
+        expect(newApi).toBe(api);
       });
 
       it('should not call connectToIframe', async () => {
@@ -163,7 +159,7 @@ describe('ConnectionService', () => {
       });
 
       it('should not create an additional iframe', async () => {
-        connectToChildResolve({} as ChildConnection);
+        connectToChildResolve({} as commLib.ChildPromisedApi);
 
         await newConnectionPromise;
 
@@ -181,7 +177,7 @@ describe('ConnectionService', () => {
         connectToChildReject('some reason');
 
         try {
-          await service.createConnection(url);
+          await service.connect(url);
         } catch (e) {
           errorThrown = e;
         }
@@ -198,11 +194,11 @@ describe('ConnectionService', () => {
   describe('when a connection to a hidden iframe is created', () => {
     const url = 'http://localhost/testUrl';
 
-    beforeEach(async () => service.createConnection(url));
+    beforeEach(async () => service.connect(url));
 
-    describe('removeConnection', () => {
+    describe('disconnect', () => {
       it('should remove the connection', () => {
-        service.removeConnection(url);
+        service.disconnect(url);
 
         expect(rendererMock.removeChild).toHaveBeenCalledWith(documentMock.body, {
           src: url,
@@ -215,8 +211,8 @@ describe('ConnectionService', () => {
         });
       });
 
-      it('should throw an exception if a connection does not exist', () => {
-        expect(() => service.removeConnection('unknown-url')).toThrowError('Connection to \'unknown-url\' does not exist');
+      it('should not throw an exception if a connection does not exist', () => {
+        expect(() => service.disconnect('unknown-url')).not.toThrow();
       });
     });
   });
@@ -226,11 +222,8 @@ describe('ConnectionService', () => {
       src: 'https://app.com',
     } as any;
 
-    service.connectToIframe(iframeMock).then(connection => {
-      expect(connection).toBeDefined();
-      expect(connection.url).toEqual('https://app.com');
-      expect(connection.iframe).toEqual(iframeMock);
-      expect(connection.api).toEqual(childApiMock);
+    service.connectToIframe(iframeMock).then(api => {
+      expect(api).toEqual(childApiMock);
     });
   }));
 

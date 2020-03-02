@@ -15,7 +15,7 @@
  */
 
 import { Injectable } from '@angular/core';
-import { NavigationTrigger, NavItem } from '@bloomreach/navapp-communication';
+import { NavigationTrigger } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 import { skip } from 'rxjs/operators';
 

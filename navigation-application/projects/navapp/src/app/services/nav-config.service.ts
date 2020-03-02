@@ -17,14 +17,8 @@
 import { Location } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import {
-  ChildApi,
-  NavItem,
-  Site,
-  SiteId,
-} from '@bloomreach/navapp-communication';
+import { NavItem, Site, SiteId } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
-import { tap } from 'rxjs/operators';
 
 import { AppSettings } from '../models/dto/app-settings.dto';
 import { ConfigResource } from '../models/dto/config-resource.dto';
@@ -38,14 +32,10 @@ export interface Configuration {
   selectedSiteId: SiteId;
 }
 
-type ChildApiMethod<T extends string> = Extract<keyof(ChildApi), T>;
-
 @Injectable({
   providedIn: 'root',
 })
 export class NavConfigService {
-  private navItemsFromRestCache: NavItem[] = [];
-
   constructor(
     private readonly http: HttpClient,
     private readonly location: Location,
@@ -57,23 +47,11 @@ export class NavConfigService {
   async fetchNavigationConfiguration(): Promise<Configuration> {
     const resources = this.appSettings.navConfigResources;
 
-    this.navItemsFromRestCache = [];
-
     try {
-      const navItemsPerResourcePromises = resources.map(async r => {
-        const navItems = await this.fetchNavItems(r);
-
-        if (r.resourceType === 'REST' || r.resourceType === 'INTERNAL_REST') {
-          this.navItemsFromRestCache = this.navItemsFromRestCache.concat(navItems);
-        }
-
-        return navItems;
-      });
-
       const [navItemsPerResource, sitesPerResource, selectedSitePerResource] = await Promise.all([
-        Promise.all(navItemsPerResourcePromises),
-        Promise.all(resources.map(r => this.fetchSites(r))),
-        Promise.all(resources.map(r => this.fetchSelectedSite(r))),
+        Promise.all(resources.map(r => this.fetchNavItems(r))),
+        Promise.all(resources.map(r => this.fetchSitesFromIframe(r))),
+        Promise.all(resources.map(r => this.fetchSelectedSiteFromIframe(r))),
       ]);
 
       return {
@@ -87,12 +65,12 @@ export class NavConfigService {
   }
 
   async refetchNavItems(): Promise<NavItem[]> {
-    const resources = this.appSettings.navConfigResources.filter(x => x.resourceType === 'IFRAME');
+    const resources = this.appSettings.navConfigResources;
 
     try {
       const navItemsPerResource = await Promise.all(resources.map(r => this.fetchNavItems(r)));
 
-      return navItemsPerResource.flat().concat(this.navItemsFromRestCache);
+      return navItemsPerResource.flat();
     } finally {
       this.closeCreatedConnections(resources);
     }
@@ -101,25 +79,13 @@ export class NavConfigService {
   private async fetchNavItems(resource: ConfigResource): Promise<NavItem[]> {
     switch (resource.resourceType) {
       case 'REST':
-        this.logger.debug(`Fetching nav items from an REST endpoint '${resource.url}'`);
-        const restNavItems = await this.fetchNavItemsFromREST(resource.url);
-        this.logger.debug(`Nav items have been received from the REST endpoint '${resource.url}'`, restNavItems);
-
-        return restNavItems;
+        return this.fetchNavItemsFromREST(resource.url);
 
       case 'INTERNAL_REST':
-        this.logger.debug(`Fetching nav items from an Internal REST endpoint '${resource.url}'`);
-        const internalRestNavItems = await this.fetchNavItemsFromInternalREST(resource.url);
-        this.logger.debug(`Nav items have been received from the Internal REST endpoint '${resource.url}'`, internalRestNavItems);
-
-        return internalRestNavItems;
+        return this.fetchNavItemsFromInternalREST(resource.url, this.appSettings.basePath);
 
       case 'IFRAME':
-        this.logger.debug(`Fetching nav items from an iframe '${resource.url}'`);
-        const iframeNavItems = await this.fetchFromIframe(resource.url, 'getNavItems');
-        this.logger.debug(`Nav items have been received from the iframe '${resource.url}'`, iframeNavItems);
-
-        return iframeNavItems;
+        return this.fetchNavItemsFromIframe(resource.url);
 
       default:
         return Promise.reject(
@@ -128,57 +94,76 @@ export class NavConfigService {
     }
   }
 
-  private async fetchSites(resource: ConfigResource): Promise<Site[]> {
+  private async fetchSitesFromIframe(resource: ConfigResource): Promise<Site[]> {
     if (resource.resourceType !== 'IFRAME') {
       return [];
     }
 
-    this.logger.debug(`Fetching sites from an iframe '${resource.url}'`);
-    const sites = await this.fetchFromIframe(resource.url, 'getSites');
-    this.logger.debug(`Sites have been received from the iframe '${resource.url}'`, sites);
+    try {
+      this.logger.debug(`Fetching sites from an iframe '${resource.url}'`);
+      const api = await this.connectionService.connect(resource.url);
+      const sites = await api.getSites();
+      this.logger.debug(`Sites have been fetched from the iframe '${resource.url}'`, sites);
 
-    return sites;
+      return sites;
+    } catch (e) {
+      this.logger.error(`Unable to fetch sites from an iframe '${resource.url}'`, e);
+
+      return [];
+    }
   }
 
-  private async fetchSelectedSite(resource: ConfigResource): Promise<SiteId> {
+  private async fetchSelectedSiteFromIframe(resource: ConfigResource): Promise<SiteId> {
     if (resource.resourceType !== 'IFRAME') {
       return undefined;
     }
 
-    this.logger.debug(`Fetching a selected site from an iframe '${resource.url}'`);
-    const selectedSite = await this.fetchFromIframe(resource.url, 'getSelectedSite');
-    this.logger.debug(`Selected site has been received from the iframe '${resource.url}'`, selectedSite);
+    try {
+      this.logger.debug(`Fetching a selected site from an iframe '${resource.url}'`);
+      const api = await this.connectionService.connect(resource.url);
+      const selectedSite = await api.getSelectedSite();
+      this.logger.debug(`Selected site has been fetched from the iframe '${resource.url}'`, selectedSite);
 
-    return selectedSite;
+      return selectedSite;
+    } catch (e) {
+      this.logger.error(`Unable to fetch a selected site from an iframe '${resource.url}'`, e);
+    }
   }
 
-  private fetchNavItemsFromREST(url: string): Promise<NavItem[]> {
-    this.logger.debug(`Fetching configuration from an REST endpoint '${url}'`);
+  private async fetchNavItemsFromREST(url: string): Promise<NavItem[]> {
+    this.logger.debug(`Fetching nav items from an REST endpoint '${url}'`);
+    const navItems = await this.http.get<NavItem[]>(url).toPromise();
+    this.logger.debug(`Nav items have been fetched from the REST endpoint '${url}'`, navItems);
 
-    return this.http.get<NavItem[]>(url).pipe(
-      tap(x => this.logger.debug(`Nav items have been received from the REST endpoint '${url}'`, x)),
-    ).toPromise();
+    return navItems;
   }
 
-  private async fetchNavItemsFromInternalREST(url: string): Promise<NavItem[]> {
-    this.logger.debug(`Fetching configuration from an Internal REST endpoint '${url}'`);
+  private async fetchNavItemsFromInternalREST(url: string, baseUrl: string): Promise<NavItem[]> {
+    this.logger.debug(`Fetching nav items from an Internal REST endpoint '${url}'`);
 
-    const baseUrl = this.location.prepareExternalUrl(this.appSettings.basePath);
     url = Location.joinWithSlash(baseUrl, url);
 
     const navItems = await this.fetchNavItemsFromREST(url);
     navItems.forEach(item => item.appIframeUrl = Location.joinWithSlash(baseUrl, item.appIframeUrl));
 
+    this.logger.debug(`Nav items have been fetched from the Internal REST endpoint '${url}'`, navItems);
+
     return navItems;
   }
 
-  private async fetchFromIframe(url: string, method: ChildApiMethod<'getNavItems'>): Promise<NavItem[]>;
-  private async fetchFromIframe(url: string, method: ChildApiMethod<'getSites'>): Promise<Site[]>;
-  private async fetchFromIframe(url: string, method: ChildApiMethod<'getSelectedSite'>): Promise<SiteId>;
-  private async fetchFromIframe(url: string, method: string): Promise<any> {
-    const connection = await this.connectionService.createConnection(url);
+  private async fetchNavItemsFromIframe(url: string): Promise<NavItem[]> {
+    try {
+      this.logger.debug(`Fetching nav items from an iframe '${url}'`);
+      const api = await this.connectionService.connect(url);
+      const navItems = await api.getNavItems();
+      this.logger.debug(`Nav items have been fetched from the iframe '${url}'`, navItems);
 
-    return connection.api[method]();
+      return navItems;
+    } catch (e) {
+      this.logger.error(`Unable to fetch nav items from an iframe '${url}'`, e);
+
+      return [];
+    }
   }
 
   private closeCreatedConnections(resources: ConfigResource[]): void {
@@ -186,9 +171,9 @@ export class NavConfigService {
 
     for (const resource of iframeResources) {
       try {
-        this.connectionService.removeConnection(resource.url);
+        this.connectionService.disconnect(resource.url);
       } catch (e) {
-        this.logger.error('Could not close connection to configuration provider iframe', e);
+        this.logger.error('Could not close connection to iframe configuration provider', e);
       }
     }
   }
