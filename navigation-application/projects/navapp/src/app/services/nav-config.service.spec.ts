@@ -26,6 +26,8 @@ import { NGXLogger } from 'ngx-logger';
 
 import { AppSettings } from '../models/dto/app-settings.dto';
 import { AppSettingsMock } from '../models/dto/app-settings.mock';
+import { ConfigResource } from '../models/dto/config-resource.dto';
+import { ConfigResourceMock } from '../models/dto/config-resource.mock';
 import { NavItemDtoMock } from '../models/dto/nav-item-dto.mock';
 
 import { APP_SETTINGS } from './app-settings';
@@ -233,6 +235,45 @@ describe('NavConfigService', () => {
           'Selected site has been received from the iframe \'/testIFRAMEurl\'',
           selectedSiteMock,
         );
+      });
+    });
+  });
+
+  describe('fetchNavigationConfiguration for only REST config resources', () => {
+    let configuration: Configuration;
+
+    beforeEach(async(() => {
+      appSettings.navConfigResources = [
+        new ConfigResourceMock({
+          resourceType: 'REST',
+          url: '/testRESTurl',
+        }) as ConfigResource,
+        new ConfigResourceMock({
+          resourceType: 'INTERNAL_REST',
+          url: '/internalRESTurl',
+        }) as ConfigResource,
+      ];
+
+      const rootUrl = appSettings.basePath;
+
+      service.fetchNavigationConfiguration().then(x => configuration = x);
+
+      const restReq = httpTestingController.expectOne(appSettings.navConfigResources[0].url);
+      restReq.flush([navItemsMock[1]]);
+
+      const internalRestReq = httpTestingController.expectOne(`${rootUrl}${appSettings.navConfigResources[1].url}`);
+      internalRestReq.flush([navItemsMock[2]]);
+    }));
+
+    afterEach(() => {
+      httpTestingController.verify();
+    });
+
+    it('should fetch the configuration', () => {
+      expect(configuration).toEqual({
+        navItems: navItemsMock.slice(1, 3),
+        sites: [],
+        selectedSiteId: undefined,
       });
     });
   });
