@@ -18,20 +18,34 @@ package org.hippoecm.frontend.editor;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.apache.commons.lang.StringUtils;
 import org.hippoecm.frontend.service.EditorException;
+import org.hippoecm.frontend.service.IEditor;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
-import static org.hippoecm.frontend.editor.TestDocument.*;
-import static org.hippoecm.frontend.service.IEditor.Mode.COMPARE;
+import static org.hippoecm.frontend.editor.TestDocument.DRAFT;
+import static org.hippoecm.frontend.editor.TestDocument.PUBLISHED;
+import static org.hippoecm.frontend.editor.TestDocument.REVISION;
+import static org.hippoecm.frontend.editor.TestDocument.UNPUBLISHED;
+import static org.hippoecm.frontend.editor.TestDocument.create;
 import static org.hippoecm.frontend.service.IEditor.Mode.EDIT;
 import static org.hippoecm.frontend.service.IEditor.Mode.VIEW;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+
 @RunWith(Parameterized.class)
 public class HippoPublishableEditorModelBuilderTest {
 
+
+    private Document document;
+    private HippoStdPublishableEditorModel model;
+
+    public HippoPublishableEditorModelBuilderTest(Document document, HippoStdPublishableEditorModel model) {
+        this.document = document;
+        this.model = model;
+    }
 
     // The bits of the boolean representation of the test number refer to the
     // draft, unpublished, published, revision, holder, transferable properties of document
@@ -39,199 +53,199 @@ public class HippoPublishableEditorModelBuilderTest {
     // the holder
     @Parameterized.Parameters
     public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
+        return Arrays.asList(new Object[][]{
                 // 0 = 000000
-                { createDocument().notDraft().notUnpublished().notPublished().notRevision().notHolder().notTransferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().notUnpublished().notPublished().notRevision().notHolder().notTransferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 1 = 000001
-                { createDocument().notDraft().notUnpublished().notPublished().notRevision().notHolder().transferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().notUnpublished().notPublished().notRevision().notHolder().transferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 2 = 000010
-                { createDocument().notDraft().notUnpublished().notPublished().notRevision().holder().notTransferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().notUnpublished().notPublished().notRevision().holder().notTransferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 3 = 000011
-                { createDocument().notDraft().notUnpublished().notPublished().notRevision().holder().transferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().notUnpublished().notPublished().notRevision().holder().transferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 4 = 000100
-                { createDocument().notDraft().notUnpublished().notPublished().revision().notHolder().notTransferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().notUnpublished().notPublished().revision().notHolder().notTransferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 5 = 000101
-                { createDocument().notDraft().notUnpublished().notPublished().revision().notHolder().transferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().notUnpublished().notPublished().revision().notHolder().transferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 6 = 000110
-                { createDocument().notDraft().notUnpublished().notPublished().revision().holder().notTransferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().notUnpublished().notPublished().revision().holder().notTransferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 7 = 000111
-                { createDocument().notDraft().notUnpublished().notPublished().revision().holder().transferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().notUnpublished().notPublished().revision().holder().transferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 8 = 001000
-                { createDocument().notDraft().notUnpublished().published().notRevision().notHolder().notTransferable()
-                        , createModel().editor(PUBLISHED).noBase().mode(VIEW) },
+                {createDocument().notDraft().notUnpublished().published().notRevision().notHolder().notTransferable()
+                        , createModel(PUBLISHED, VIEW)},
                 // 9 = 001001
-                { createDocument().notDraft().notUnpublished().published().notRevision().notHolder().transferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().notUnpublished().published().notRevision().notHolder().transferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 10 = 001010
-                { createDocument().notDraft().notUnpublished().published().notRevision().holder().notTransferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().notUnpublished().published().notRevision().holder().notTransferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 11 = 001011
-                { createDocument().notDraft().notUnpublished().published().notRevision().holder().transferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().notUnpublished().published().notRevision().holder().transferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 12 = 001100
-                { createDocument().notDraft().notUnpublished().published().revision().notHolder().notTransferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().notUnpublished().published().revision().notHolder().notTransferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 13 = 001101
-                { createDocument().notDraft().notUnpublished().published().revision().notHolder().transferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().notUnpublished().published().revision().notHolder().transferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 14 = 001110
-                { createDocument().notDraft().notUnpublished().published().revision().holder().notTransferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().notUnpublished().published().revision().holder().notTransferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 15 = 001111
-                { createDocument().notDraft().notUnpublished().published().revision().holder().transferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().notUnpublished().published().revision().holder().transferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 16 = 010000
-                { createDocument().notDraft().unpublished().notPublished().notRevision().notHolder().notTransferable()
-                        , createModel().editor(UNPUBLISHED).noBase().mode(VIEW) },
+                {createDocument().notDraft().unpublished().notPublished().notRevision().notHolder().notTransferable()
+                        , createModel(UNPUBLISHED, VIEW)},
                 // 17 = 010001
-                { createDocument().notDraft().unpublished().notPublished().notRevision().notHolder().transferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().unpublished().notPublished().notRevision().notHolder().transferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 18 = 010010
-                { createDocument().notDraft().unpublished().notPublished().notRevision().holder().notTransferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().unpublished().notPublished().notRevision().holder().notTransferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 19 = 010011
-                { createDocument().notDraft().unpublished().notPublished().notRevision().holder().transferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().unpublished().notPublished().notRevision().holder().transferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 20 = 010100
-                { createDocument().notDraft().unpublished().notPublished().revision().notHolder().notTransferable()
-                        , createModel().editor(UNPUBLISHED).base(REVISION).mode(COMPARE)},
+                {createDocument().notDraft().unpublished().notPublished().revision().notHolder().notTransferable()
+                        , createModel(UNPUBLISHED, REVISION)},
                 // 21 = 010101
-                { createDocument().notDraft().unpublished().notPublished().revision().notHolder().transferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().unpublished().notPublished().revision().notHolder().transferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 22 = 010110
-                { createDocument().notDraft().unpublished().notPublished().revision().holder().notTransferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().unpublished().notPublished().revision().holder().notTransferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 23 = 010111
-                { createDocument().notDraft().unpublished().notPublished().revision().holder().transferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().unpublished().notPublished().revision().holder().transferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 24 = 011000
-                { createDocument().notDraft().unpublished().published().notRevision().notHolder().notTransferable()
-                        , createModel().editor(UNPUBLISHED).base(PUBLISHED).mode(COMPARE) },
+                {createDocument().notDraft().unpublished().published().notRevision().notHolder().notTransferable()
+                        , createModel(UNPUBLISHED, PUBLISHED)},
                 // 25 = 011001
-                { createDocument().notDraft().unpublished().published().notRevision().notHolder().transferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().unpublished().published().notRevision().notHolder().transferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 26 = 011010
-                { createDocument().notDraft().unpublished().published().notRevision().holder().notTransferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().unpublished().published().notRevision().holder().notTransferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 27 = 011011
-                { createDocument().notDraft().unpublished().published().notRevision().holder().transferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().unpublished().published().notRevision().holder().transferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 28 = 011100
-                { createDocument().notDraft().unpublished().published().revision().notHolder().notTransferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().unpublished().published().revision().notHolder().notTransferable()
+                        , createModel(UNPUBLISHED, REVISION)},
                 // 29 = 011101
-                { createDocument().notDraft().unpublished().published().revision().notHolder().transferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().unpublished().published().revision().notHolder().transferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 30 = 011110
-                { createDocument().notDraft().unpublished().published().revision().holder().notTransferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().unpublished().published().revision().holder().notTransferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 31 = 011111
-                { createDocument().notDraft().unpublished().published().revision().holder().transferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().notDraft().unpublished().published().revision().holder().transferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 32 = 100000
-                { createDocument().draft().notUnpublished().notPublished().notRevision().notHolder().notTransferable()
-                        , createModel().editor(DRAFT).noBase().mode(VIEW) },
+                {createDocument().draft().notUnpublished().notPublished().notRevision().notHolder().notTransferable()
+                        , createModel(DRAFT, VIEW)},
                 // 33 = 100001
-                { createDocument().draft().notUnpublished().notPublished().notRevision().notHolder().transferable()
-                        , createModel().editor(DRAFT).noBase().mode(VIEW) },
+                {createDocument().draft().notUnpublished().notPublished().notRevision().notHolder().transferable()
+                        , createModel(DRAFT, VIEW)},
                 // 34 = 100010
-                { createDocument().draft().notUnpublished().notPublished().notRevision().holder().notTransferable()
-                        , createModel().editor(DRAFT).noBase().mode(EDIT) },
+                {createDocument().draft().notUnpublished().notPublished().notRevision().holder().notTransferable()
+                        , createModel(DRAFT, EDIT)},
                 // 35 = 100011
-                { createDocument().draft().notUnpublished().notPublished().notRevision().holder().transferable()
-                        , createModel().editor(DRAFT).noBase().mode(VIEW) },
+                {createDocument().draft().notUnpublished().notPublished().notRevision().holder().transferable()
+                        , createModel(DRAFT, VIEW)},
                 // 36 = 100100
-                { createDocument().draft().notUnpublished().notPublished().revision().notHolder().notTransferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().draft().notUnpublished().notPublished().revision().notHolder().notTransferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 37 = 100101
-                { createDocument().draft().notUnpublished().notPublished().revision().notHolder().transferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().draft().notUnpublished().notPublished().revision().notHolder().transferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 38 = 100110
-                { createDocument().draft().notUnpublished().notPublished().revision().holder().notTransferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().draft().notUnpublished().notPublished().revision().holder().notTransferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 39 = 100111
-                { createDocument().draft().notUnpublished().notPublished().revision().holder().transferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().draft().notUnpublished().notPublished().revision().holder().transferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 40 = 101000
-                { createDocument().draft().notUnpublished().published().notRevision().notHolder().notTransferable()
-                        , createModel().editor(DRAFT).base(PUBLISHED).mode(COMPARE)},
+                {createDocument().draft().notUnpublished().published().notRevision().notHolder().notTransferable()
+                        , createModel(DRAFT, PUBLISHED)},
                 // 41 = 101001
-                { createDocument().draft().notUnpublished().published().notRevision().notHolder().transferable()
-                        , createModel().editor(DRAFT).noBase().mode(VIEW)},
+                {createDocument().draft().notUnpublished().published().notRevision().notHolder().transferable()
+                        , createModel(DRAFT, VIEW)},
                 // 42 = 101010
-                { createDocument().draft().notUnpublished().published().notRevision().holder().notTransferable()
-                        , createModel().editor(DRAFT).noBase().mode(EDIT)},
+                {createDocument().draft().notUnpublished().published().notRevision().holder().notTransferable()
+                        , createModel(DRAFT, EDIT)},
                 // 43 = 101011
-                { createDocument().draft().notUnpublished().published().notRevision().holder().transferable()
-                        , createModel().editor(DRAFT).noBase().mode(VIEW)},
+                {createDocument().draft().notUnpublished().published().notRevision().holder().transferable()
+                        , createModel(DRAFT, VIEW)},
                 // 44 = 101100
-                { createDocument().draft().notUnpublished().published().revision().notHolder().notTransferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().draft().notUnpublished().published().revision().notHolder().notTransferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 45 = 101101
-                { createDocument().draft().notUnpublished().published().revision().notHolder().transferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().draft().notUnpublished().published().revision().notHolder().transferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 46 = 101110
-                { createDocument().draft().notUnpublished().published().revision().holder().notTransferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().draft().notUnpublished().published().revision().holder().notTransferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 47 = 101111
-                { createDocument().draft().notUnpublished().published().revision().holder().transferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().draft().notUnpublished().published().revision().holder().transferable()
+                        , HippoStdPublishableEditorModel.invalid()},
                 // 48 = 110000
-                { createDocument().draft().unpublished().notPublished().notRevision().notHolder().notTransferable()
-                        , createModel().editor(DRAFT).base(UNPUBLISHED).mode(COMPARE) },
+                {createDocument().draft().unpublished().notPublished().notRevision().notHolder().notTransferable()
+                        , createModel(DRAFT, UNPUBLISHED)},
                 // 49 = 110001
-                { createDocument().draft().unpublished().notPublished().notRevision().notHolder().transferable()
-                        , createModel().editor(DRAFT).noBase().mode(VIEW) },
+                {createDocument().draft().unpublished().notPublished().notRevision().notHolder().transferable()
+                        , createModel(DRAFT, VIEW)},
                 // 50 = 110010
-                { createDocument().draft().unpublished().notPublished().notRevision().holder().notTransferable()
-                        , createModel().editor(DRAFT).noBase().mode(EDIT) },
+                {createDocument().draft().unpublished().notPublished().notRevision().holder().notTransferable()
+                        , createModel(DRAFT, EDIT)},
                 // 51 = 110011
-                { createDocument().draft().unpublished().notPublished().notRevision().holder().transferable()
-                        , createModel().editor(DRAFT).noBase().mode(VIEW) },
+                {createDocument().draft().unpublished().notPublished().notRevision().holder().transferable()
+                        , createModel(DRAFT, VIEW)},
                 // 52 = 110100
-                { createDocument().draft().unpublished().notPublished().revision().notHolder().notTransferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().draft().unpublished().notPublished().revision().notHolder().notTransferable()
+                        , createModel(UNPUBLISHED, REVISION)},
                 // 53 = 110101
-                { createDocument().draft().unpublished().notPublished().revision().notHolder().transferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().draft().unpublished().notPublished().revision().notHolder().transferable()
+                        , createModel(UNPUBLISHED, REVISION)},
                 // 54 = 110110
-                { createDocument().draft().unpublished().notPublished().revision().holder().notTransferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().draft().unpublished().notPublished().revision().holder().notTransferable()
+                        , createModel(UNPUBLISHED, REVISION)},
                 // 55 = 110111
-                { createDocument().draft().unpublished().notPublished().revision().holder().transferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().draft().unpublished().notPublished().revision().holder().transferable()
+                        , createModel(UNPUBLISHED, REVISION)},
                 // 56 = 111000
-                { createDocument().draft().unpublished().published().notRevision().notHolder().notTransferable()
-                        , createModel().editor(DRAFT).base(PUBLISHED).mode(COMPARE) },
+                {createDocument().draft().unpublished().published().notRevision().notHolder().notTransferable()
+                        , createModel(DRAFT, PUBLISHED)},
                 // 57 = 111001
-                { createDocument().draft().unpublished().published().notRevision().notHolder().transferable()
-                        , createModel().editor(DRAFT).noBase().mode(VIEW)},
+                {createDocument().draft().unpublished().published().notRevision().notHolder().transferable()
+                        , createModel(DRAFT, VIEW)},
                 // 58 = 111010
-                { createDocument().draft().unpublished().published().notRevision().holder().notTransferable()
-                        , createModel().editor(DRAFT).noBase().mode(EDIT) },
+                {createDocument().draft().unpublished().published().notRevision().holder().notTransferable()
+                        , createModel(DRAFT, EDIT)},
                 // 59 = 111011
-                { createDocument().draft().unpublished().published().notRevision().holder().transferable()
-                        , createModel().editor(DRAFT).noBase().mode(VIEW) },
+                {createDocument().draft().unpublished().published().notRevision().holder().transferable()
+                        , createModel(DRAFT, VIEW)},
                 // 60 = 111100
-                { createDocument().draft().unpublished().published().notRevision().notHolder().notTransferable()
-                        , createModel().editor(DRAFT).base(PUBLISHED).mode(COMPARE) },
+                {createDocument().draft().unpublished().published().notRevision().notHolder().notTransferable()
+                        , createModel(DRAFT, PUBLISHED)},
                 // 61 = 111101
-                { createDocument().draft().unpublished().published().revision().notHolder().transferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().draft().unpublished().published().revision().notHolder().transferable()
+                        , createModel(UNPUBLISHED, REVISION)},
                 // 62 = 111110
-                { createDocument().draft().unpublished().published().revision().holder().notTransferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().draft().unpublished().published().revision().holder().notTransferable()
+                        , createModel(UNPUBLISHED, REVISION)},
                 // 63 = 111111
-                { createDocument().draft().unpublished().published().revision().holder().transferable()
-                        , HippoStdPublishableEditorModel.INVALID() },
+                {createDocument().draft().unpublished().published().revision().holder().transferable()
+                        , createModel(UNPUBLISHED, REVISION)},
         });
     }
 
@@ -241,17 +255,21 @@ public class HippoPublishableEditorModelBuilderTest {
     }
 
     @NotNull
-    protected static HippoStdPublishableEditorModel createModel() {
-        return HippoStdPublishableEditorModel.create();
+    protected static HippoStdPublishableEditorModel createModel(String editor, String base) {
+        final HippoStdPublishableEditorModel model = new HippoStdPublishableEditorModel();
+        model.setMode(IEditor.Mode.COMPARE);
+        model.setEditor(editor);
+        model.setBase(base);
+        return model;
     }
 
-    private Document document;
-
-    private HippoStdPublishableEditorModel model;
-
-    public HippoPublishableEditorModelBuilderTest(Document document, HippoStdPublishableEditorModel model) {
-        this.document = document;
-        this.model = model;
+    @NotNull
+    protected static HippoStdPublishableEditorModel createModel(String editor, IEditor.Mode mode) {
+        final HippoStdPublishableEditorModel model = new HippoStdPublishableEditorModel();
+        model.setEditor(editor);
+        model.setMode(mode);
+        model.setBase(StringUtils.EMPTY);
+        return model;
     }
 
     @Test
@@ -259,8 +277,8 @@ public class HippoPublishableEditorModelBuilderTest {
         HippoStdPublishableEditorModel actual;
         try {
             actual = HippoPublishableEditorModelBuilder.build(document);
-        } catch (EditorException e){
-            actual =  HippoStdPublishableEditorModel.INVALID();
+        } catch (EditorException e) {
+            actual = HippoStdPublishableEditorModel.invalid();
         }
         final HippoStdPublishableEditorModel expected = this.model;
         final String message = String.format("Expected \n%s to map to: \n%s instead of \n%s", document, model, actual);
