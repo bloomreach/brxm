@@ -34,7 +34,7 @@ import { APP_SETTINGS } from './app-settings';
 import { ConnectionService } from './connection.service';
 import { Configuration, NavConfigService } from './nav-config.service';
 
-fdescribe('NavConfigService', () => {
+describe('NavConfigService', () => {
   let service: NavConfigService;
   let http: HttpClient;
   let httpTestingController: HttpTestingController;
@@ -309,7 +309,7 @@ fdescribe('NavConfigService', () => {
       it('should log that nav items have been successfully fetched an iframe', () => {
         expect(loggerMock.debug).toHaveBeenCalledWith(
           'Nav items have been fetched from the iframe \'\/testIFRAMEurl\'',
-          [navItemsMock[0]],
+          [newIframeNavItems[0]],
         );
       });
     });
