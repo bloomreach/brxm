@@ -76,15 +76,10 @@ export class NavConfigService {
         Promise.all(resources.map(r => this.fetchSelectedSite(r))),
       ]);
 
-      const selectedSite = selectedSitePerResource.find(x => !!x);
-
       return {
         navItems: navItemsPerResource.flat(),
         sites: sitesPerResource.flat(),
-        selectedSiteId: {
-          accountId: selectedSite.accountId,
-          siteId: selectedSite.siteId || -1,
-        },
+        selectedSiteId: this.findSelectedSiteId(selectedSitePerResource),
       };
     } finally {
       this.closeCreatedConnections(resources);
@@ -196,5 +191,18 @@ export class NavConfigService {
         this.logger.error('Could not close connection to configuration provider iframe', e);
       }
     }
+  }
+
+  private findSelectedSiteId(selectedSitesFromResources: SiteId[]): SiteId {
+    const selectedSite = selectedSitesFromResources.find(x => !!x);
+
+    if (!selectedSite) {
+      return;
+    }
+
+    return {
+      accountId: selectedSite.accountId,
+      siteId: selectedSite.siteId || -1,
+    };
   }
 }
