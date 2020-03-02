@@ -31,6 +31,7 @@
   <li><button (click)="navigateInternally()">history.pushState() navigation</button></li>
   <li><button (click)="navigateInternallyWithReplaceState()">history.replaceState() navigation</button></li>
   <li><button (click)="reloadPage()">Reload</button></li>
+  <li><button (click)="sendNotAuthorizedError()">Send NotAuthorizedError</button></li>
   <li>
     <button (click)="navigateTo('experience-manager/channel1', '<script>alert(window.location)</script>')">
       Navigate to CM with a breadcrumb label

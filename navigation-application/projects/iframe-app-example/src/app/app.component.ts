@@ -19,6 +19,7 @@ import { Location, LocationStrategy, PathLocationStrategy } from '@angular/commo
 import { Component, OnInit } from '@angular/core';
 import {
   ChildApi,
+  ClientErrorCodes,
   connectToParent,
   NavLocation,
   ParentConnectConfig,
@@ -209,6 +210,13 @@ export class AppComponent implements OnInit {
 
   reloadPage(): void {
     window.location.href = `${window.location.href}/something`;
+  }
+
+  sendNotAuthorizedError(): void {
+    this.parent.onError({
+      message: 'Not authorized',
+      errorCode: ClientErrorCodes.NotAuthorizedError,
+    });
   }
 
   showError(): void {
