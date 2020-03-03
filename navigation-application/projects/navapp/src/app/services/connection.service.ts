@@ -34,10 +34,9 @@ import { APP_SETTINGS } from './app-settings';
 import { BusyIndicatorService } from './busy-indicator.service';
 import { USER_SETTINGS } from './user-settings';
 
-export interface ChildConnection {
-  url: string;
+interface ChildConnection {
   iframe: HTMLIFrameElement;
-  api: ChildPromisedApi;
+  apiPromise: Promise<ChildPromisedApi>;
 }
 
 @Injectable({
@@ -45,7 +44,6 @@ export interface ChildConnection {
 })
 export class ConnectionService {
   private readonly connections = new Map<string, ChildConnection>();
-  private readonly pendingConnections = new Map<string, Promise<ChildConnection>>();
   private readonly renderer: Renderer2 = this.rendererFactory.createRenderer(undefined, undefined);
 
   showMask$ = new Subject<void>();
@@ -65,47 +63,35 @@ export class ConnectionService {
     private readonly logger: NGXLogger,
   ) { }
 
-  async createConnection(url: string): Promise<ChildConnection> {
+  connect(url: string): Promise<ChildPromisedApi> {
     if (this.connections.has(url)) {
-      return this.connections.get(url);
-    }
-
-    if (this.pendingConnections.has(url)) {
-      return this.pendingConnections.get(url);
+      return this.connections.get(url).apiPromise;
     }
 
     const iframe = this.createHiddenIframe(url);
     this.renderer.appendChild(this.document.body, iframe);
 
-    const connectionPromise = this.connectToIframe(iframe);
-    this.pendingConnections.set(url, connectionPromise);
+    const childApiPromise = this.connectToIframe(iframe);
 
-    try {
-      const connection = await connectionPromise;
-      this.connections.set(url, connection);
+    this.connections.set(url, {
+      iframe,
+      apiPromise: childApiPromise,
+    });
 
-      return connection;
-    } catch (e) {
-      return e;
-    } finally {
-      this.pendingConnections.delete(url);
-    }
+    return childApiPromise;
   }
 
-  removeConnection(url: string): void {
-    const pendingConnection = this.pendingConnections.get(url);
+  disconnect(url: string): void {
     const connection = this.connections.get(url);
 
-    if (!pendingConnection && !connection) {
-      throw new Error(`Connection to '${url}' does not exist`);
-    }
-
-    this.pendingConnections.delete(url);
     this.connections.delete(url);
-    this.renderer.removeChild(this.document.body, connection.iframe);
+
+    if (connection && connection.iframe) {
+      this.renderer.removeChild(this.document.body, connection.iframe);
+    }
   }
 
-  async connectToIframe(iframe: HTMLIFrameElement): Promise<ChildConnection> {
+  async connectToIframe(iframe: HTMLIFrameElement): Promise<ChildPromisedApi> {
     const url = iframe.src;
     const config = {
       iframe,
@@ -114,12 +100,10 @@ export class ConnectionService {
       methodInvocationTimeout: this.appSettings.iframesConnectionTimeout,
     };
 
-    this.logger.debug(`Initiating a connection to the iframe '${url}'`);
+    this.logger.debug(`Initiating a connection to an iframe '${url}'`);
 
     try {
-      const api = await connectToChild(config);
-
-      return { url, iframe, api };
+      return await connectToChild(config);
     } catch (error) {
       throw new Error(`Could not create a connection for '${url}': ${error}`);
     }

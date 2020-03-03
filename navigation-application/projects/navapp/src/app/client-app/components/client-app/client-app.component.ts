@@ -75,7 +75,7 @@ export class ClientAppComponent implements OnInit, AfterViewInit {
     this.connectionService
       .connectToIframe(nativeIFrame)
       .then(
-        connection => this.clientAppService.addConnection(new Connection(url, connection.api)),
+        api => this.clientAppService.addConnection(new Connection(url, api)),
         error => this.clientAppService.addConnection(new FailedConnection(url, error)),
       );
   }

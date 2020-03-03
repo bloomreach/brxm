@@ -338,6 +338,34 @@ describe('BootstrapService', () => {
         });
       });
 
+      describe('and nav item DTOs fetching resolved with an empty array', () => {
+        let bootstrapped: boolean;
+
+        beforeEach(async () => {
+          bootstrapped = false;
+
+          navConfigServiceMock.fetchNavigationConfiguration.and.returnValue({
+            navItems: [],
+            sites: [],
+            selectedSite: undefined,
+          });
+
+          await service.bootstrap();
+
+          bootstrapped = true;
+        });
+
+        it('should set the error', () => {
+          const expectedError = new CriticalError('ERROR_UNABLE_TO_LOAD_CONFIGURATION');
+
+          expect(errorHandlingServiceMock.setError).toHaveBeenCalledWith(expectedError);
+        });
+
+        it('should bootstrap the app', () => {
+          expect(bootstrapped).toBeTruthy();
+        });
+      });
+
       describe('and registration of nav item DTOs thrown an exception', () => {
         let bootstrapped: boolean;
 
