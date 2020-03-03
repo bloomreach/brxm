@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -22,6 +22,7 @@ import java.util.Optional;
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -32,14 +33,18 @@ import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 import org.hippoecm.frontend.service.IBrowseService;
+import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
+import org.hippoecm.frontend.service.ServiceException;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.util.CodecUtils;
 import org.hippoecm.frontend.util.DocumentUtils;
+import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.util.WorkflowUtils;
+import org.jetbrains.annotations.Nullable;
 import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
@@ -216,5 +221,24 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
 
     protected String getBranchId() {
         return branchIdModel == null ? BranchConstants.MASTER_BRANCH_ID : branchIdModel.getBranchId();
+    }
+
+    @Nullable
+    protected String openEditor(final Document docRef) throws RepositoryException, ServiceException {
+        Session session = UserSession.get().getJcrSession();
+        session.refresh(true);
+        Node docNode = session.getNodeByIdentifier(docRef.getIdentity());
+        IEditorManager editorMgr = getPluginContext().getService(
+                getPluginConfig().getString(IEditorManager.EDITOR_ID), IEditorManager.class);
+        if (editorMgr != null) {
+            JcrNodeModel docModel = new JcrNodeModel(docNode);
+            IEditor editor = editorMgr.getEditor(docModel);
+            if (editor == null) {
+                editorMgr.openEditor(docModel);
+            }
+        } else {
+            log.warn("No editor found to edit {}", docNode.getPath());
+        }
+        return null;
     }
 }
