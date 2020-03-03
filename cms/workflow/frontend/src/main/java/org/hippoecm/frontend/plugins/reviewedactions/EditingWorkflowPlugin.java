@@ -85,7 +85,8 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
         });
 
-        saveDraftAction = new StdWorkflow("saveDraft", new StringResourceModel("saveDraft", this).setDefaultValue("Save Draft"), getModel()) {
+        saveDraftAction = new StdWorkflow("saveDraft",
+                new StringResourceModel("save-draft", this).setDefaultValue("Keep Draft"), getModel()) {
 
             @Override
             public String getSubMenu() {
