@@ -104,10 +104,7 @@ export class UrlMapperService {
     let appBasePath: string;
 
     try {
-      // URL class constructor requires url to be absolute url with domain, it throws an error in a case of absence the domain.
-      // If base param is set in the constructor it is used as a default value if the domain isn't presented on top of that
-      // only pathname is used so this value doesn't matter, 'http://localhost' is used as a fallback value
-      appBasePath = this.trimSlashes(new URL(appIframeUrl, 'http://localhost').pathname);
+      appBasePath = this.trimSlashes(new URL(appIframeUrl).pathname);
     } catch {
       throw new InternalError(undefined, `The url has incorrect format: ${appIframeUrl}`);
     }
