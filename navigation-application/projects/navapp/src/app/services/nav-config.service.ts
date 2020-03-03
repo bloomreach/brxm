@@ -15,7 +15,7 @@
  */
 
 import { Location } from '@angular/common';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { NavItem, Site, SiteId } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
@@ -36,6 +36,14 @@ export interface Configuration {
   providedIn: 'root',
 })
 export class NavConfigService {
+  private static isValidAbsoluteUrl(url: string): boolean {
+    try {
+      return !! new URL(url);
+    } catch {
+      return false;
+    }
+  }
+
   constructor(
     private readonly http: HttpClient,
     private readonly location: Location,
@@ -79,10 +87,8 @@ export class NavConfigService {
   private async fetchNavItems(resource: ConfigResource): Promise<NavItem[]> {
     switch (resource.resourceType) {
       case 'REST':
-        return this.fetchNavItemsFromREST(resource.url);
-
       case 'INTERNAL_REST':
-        return this.fetchNavItemsFromInternalREST(resource.url, this.appSettings.basePath);
+        return this.fetchNavItemsFromREST(resource.url);
 
       case 'IFRAME':
         return this.fetchNavItemsFromIframe(resource.url);
@@ -132,32 +138,16 @@ export class NavConfigService {
 
   private async fetchNavItemsFromREST(url: string): Promise<NavItem[]> {
     try {
+      url = this.ensureUrlIsAbsolute(url);
+
       this.logger.debug(`Fetching nav items from an REST endpoint '${url}'`);
       const navItems = await this.http.get<NavItem[]>(url).toPromise();
-      this.logger.debug(`Nav items have been fetched from the REST endpoint '${url}'`, navItems);
+      const normalizedNavItems = this.normalizeNavItems(navItems);
+      this.logger.debug(`Nav items have been fetched from the REST endpoint '${url}'`, normalizedNavItems);
 
-      return navItems;
+      return normalizedNavItems;
     } catch (e) {
       this.logger.error(`Unable to fetch nav items from the REST endpoint '${url}'`, e.message);
-
-      return [];
-    }
-  }
-
-  private async fetchNavItemsFromInternalREST(url: string, baseUrl: string): Promise<NavItem[]> {
-    try {
-      this.logger.debug(`Fetching nav items from an Internal REST endpoint '${url}'`);
-
-      url = Location.joinWithSlash(baseUrl, url);
-
-      const navItems = await this.http.get<NavItem[]>(url).toPromise();
-      navItems.forEach(item => item.appIframeUrl = Location.joinWithSlash(baseUrl, item.appIframeUrl));
-
-      this.logger.debug(`Nav items have been fetched from the Internal REST endpoint '${url}'`, navItems);
-
-      return navItems;
-    } catch (e) {
-      this.logger.error(`Unable to fetch nav items from the Internal REST endpoint '${url}'`, e.message);
 
       return [];
     }
@@ -201,5 +191,22 @@ export class NavConfigService {
       accountId: selectedSite.accountId,
       siteId: selectedSite.siteId || -1,
     };
+  }
+
+  private ensureUrlIsAbsolute(url: string): string {
+    if (NavConfigService.isValidAbsoluteUrl(url)) {
+      return url;
+    }
+
+    const baseUrl = this.location.prepareExternalUrl(this.appSettings.basePath);
+
+    return Location.joinWithSlash(baseUrl, url);
+  }
+
+  private normalizeNavItems(navItems: NavItem[]): NavItem[] {
+    return navItems.map(navItem => ({
+      ...navItem,
+      appIframeUrl: this.ensureUrlIsAbsolute(navItem.appIframeUrl),
+    }));
   }
 }
