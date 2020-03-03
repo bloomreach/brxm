@@ -194,16 +194,14 @@ describe('UrlMapperService', () => {
       expect(actual).toBe(expected);
     });
 
-    it('should throw an exception when the nav item contains a relative url instead of an absolute one', () => {
-      const expectedError = new InternalError(undefined, 'The url has incorrect format: /some/url');
-
+    it('should not throw an exception when the nav item contains a relative url instead of an absolute one', () => {
       const navItem = new NavItemMock({
         id: 'some-id',
         appIframeUrl: '/some/url',
         appPath: 'path/to/page',
       });
 
-      expect(() => service.mapNavItemToBrowserUrl(navItem)).toThrow(expectedError);
+      expect(() => service.mapNavItemToBrowserUrl(navItem)).not.toThrow();
     });
   });
 
