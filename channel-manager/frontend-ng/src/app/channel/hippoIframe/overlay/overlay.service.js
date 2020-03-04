@@ -33,7 +33,6 @@ class OverlayService {
     ChannelService,
     CmsService,
     DomService,
-    EditContentService,
     ExperimentStateService,
     HippoIframeService,
     MaskService,
@@ -47,7 +46,6 @@ class OverlayService {
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.DomService = DomService;
-    this.EditContentService = EditContentService;
     this.ExperimentStateService = ExperimentStateService;
     this.HippoIframeService = HippoIframeService;
     this.MaskService = MaskService;
@@ -689,7 +687,7 @@ class OverlayService {
   }
 
   _editContent(uuid) {
-    this.EditContentService.startEditing(uuid);
+    this.$rootScope.$emit('document:edit', uuid);
     this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
   }
 

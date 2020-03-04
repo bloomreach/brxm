@@ -30,6 +30,7 @@ class HippoIframeCtrl {
     DomService,
     DragDropService,
     EditComponentService,
+    EditContentService,
     FeedbackService,
     HippoIframeService,
     HstComponentService,
@@ -53,6 +54,7 @@ class HippoIframeCtrl {
     this.DomService = DomService;
     this.DragDropService = DragDropService;
     this.EditComponentService = EditComponentService;
+    this.EditContentService = EditContentService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.HstComponentService = HstComponentService;
@@ -70,6 +72,7 @@ class HippoIframeCtrl {
     this._onNewHeadContributions = this._onNewHeadContributions.bind(this);
     this._onMoveComponent = this._onMoveComponent.bind(this);
     this._onDocumentCreate = this._onDocumentCreate.bind(this);
+    this._onDocumentEdit = this._onDocumentEdit.bind(this);
     this._onDocumentSelect = this._onDocumentSelect.bind(this);
   }
 
@@ -88,6 +91,7 @@ class HippoIframeCtrl {
       this._onNewHeadContributions,
     );
     this._offDocumentCreate = this.$rootScope.$on('document:create', this._onDocumentCreate);
+    this._offDocumentEdit = this.$rootScope.$on('document:edit', this._onDocumentEdit);
     this._offDocumentSelect = this.$rootScope.$on('document:select', this._onDocumentSelect);
 
     const canvasJQueryElement = this.$element.find('.channel-iframe-canvas');
@@ -128,6 +132,7 @@ class HippoIframeCtrl {
     this._offSdkUnload();
     this._offNewHeadContributions();
     this._offDocumentCreate();
+    this._offDocumentEdit();
     this._offDocumentSelect();
   }
 
@@ -230,6 +235,10 @@ class HippoIframeCtrl {
 
   _onDocumentCreate(event, data) {
     this.CreateContentService.start(data);
+  }
+
+  _onDocumentEdit(event, uuid) {
+    this.EditContentService.startEditing(uuid);
   }
 
   _onDocumentSelect(event, data) {
