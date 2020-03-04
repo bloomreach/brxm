@@ -56,8 +56,6 @@ class OverlayService {
     this.PageStructureService = PageStructureService;
     this.SvgService = SvgService;
 
-    this.editMenuHandler = angular.noop;
-
     this.isComponentsOverlayDisplayed = false;
     this.isContentOverlayDisplayed = false;
 
@@ -78,10 +76,6 @@ class OverlayService {
     if (this._offLoad) {
       this._offLoad();
     }
-  }
-
-  onEditMenu(callback) {
-    this.editMenuHandler = callback;
   }
 
   _onLoad() {
@@ -680,11 +674,9 @@ class OverlayService {
   _addMenuLinkClickHandler(structureElement, overlayElement) {
     this._linkButtonTransition(overlayElement);
 
-    this._addClickHandler(overlayElement, () => {
-      this.$rootScope.$evalAsync(() => {
-        this.editMenuHandler(structureElement.getId());
-      });
-    });
+    this._addClickHandler(overlayElement, () => this.$rootScope.$evalAsync(
+      () => this.$rootScope.$emit('menu:edit', structureElement.getId()),
+    ));
   }
 
   _addClickHandler(jqueryElement, handler) {

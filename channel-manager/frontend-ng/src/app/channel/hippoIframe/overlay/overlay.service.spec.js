@@ -633,18 +633,16 @@ describe('OverlayService', () => {
     expect(() => menuLink.click()).not.toThrow();
   });
 
-  it('calls the edit menu handler to edit a menu', async () => {
-    const editMenuHandler = jasmine.createSpy('editMenuHandler');
-
-    OverlayService.onEditMenu(editMenuHandler);
+  it('should trigger the menu:edit event', async () => {
     OverlayService.showComponentsOverlay(true);
     await loadIframeFixture();
     const menuLink = iframe('.hippo-overlay > .hippo-overlay-element-menu-link');
 
     expectNoPropagatedClicks();
+    spyOn($rootScope, '$emit');
     await menuLink.click();
 
-    expect(editMenuHandler).toHaveBeenCalledWith('menu-in-component-a');
+    expect($rootScope.$emit).toHaveBeenCalledWith('menu:edit', 'menu-in-component-a');
   });
 
   it('removes overlay elements when they are no longer part of the page structure', async () => {
