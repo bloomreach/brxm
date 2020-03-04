@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.ContentTypesProvider;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
+import org.hippoecm.hst.content.beans.standard.DynamicBeanInterceptor;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.onehippo.cms7.services.contenttype.ContentTypes;
 import org.slf4j.Logger;
@@ -32,9 +33,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
-import static java.util.Collections.unmodifiableMap;
 import static org.hippoecm.hst.util.ObjectConverterUtils.DEFAULT_FALLBACK_NODE_TYPES;
 import static org.hippoecm.hst.util.ObjectConverterUtils.getAggregatedMapping;
+import static org.hippoecm.hst.util.ObjectConverterUtils.getInterceptorMapping;
 
 /**
  * A proxy, which keeps a cache of instantiated object converters per content types.
@@ -52,16 +53,20 @@ public class VersionedObjectConverterProxy implements ObjectConverter {
 
     private final ContentTypesProvider contentTypesProvider;
     private final Map<String, Class<? extends HippoBean>> jcrNodeTypeClassPairs;
+    private final Map<String, Class<? extends DynamicBeanInterceptor>> dynamicBeanInterceptorPairs;
 
-    public VersionedObjectConverterProxy(final Collection<Class<? extends HippoBean>> annotatedClasses,
+    public VersionedObjectConverterProxy(final Collection<Class<? extends HippoBean>> annotatedNodeClasses,
+            final Collection<Class<? extends DynamicBeanInterceptor>> annotatedInterceptorClasses,
             final ContentTypesProvider contentTypesProvider) {
-        this(annotatedClasses, contentTypesProvider, false);
+        this(annotatedNodeClasses, annotatedInterceptorClasses, contentTypesProvider, false);
     }
 
-    public VersionedObjectConverterProxy(final Collection<Class<? extends HippoBean>> annotatedClasses,
+    public VersionedObjectConverterProxy(final Collection<Class<? extends HippoBean>> annotatedNodeClasses,
+            final Collection<Class<? extends DynamicBeanInterceptor>> annotatedInterceptorClasses,
             final ContentTypesProvider contentTypesProvider, final boolean ignoreDuplicates) {
         this.contentTypesProvider = contentTypesProvider;
-        this.jcrNodeTypeClassPairs = getAggregatedMapping(annotatedClasses, ignoreDuplicates);
+        this.jcrNodeTypeClassPairs = getAggregatedMapping(annotatedNodeClasses, ignoreDuplicates);
+        this.dynamicBeanInterceptorPairs = getInterceptorMapping(annotatedInterceptorClasses, ignoreDuplicates);
     }
 
     /**
@@ -71,9 +76,9 @@ public class VersionedObjectConverterProxy implements ObjectConverter {
         final ContentTypes contentTypes = contentTypesProvider.getContentTypes();
         try {
             return instanceCache.get(contentTypes, () -> new DynamicObjectConverterImpl(jcrNodeTypeClassPairs,
-                    DEFAULT_FALLBACK_NODE_TYPES, contentTypes));
+                    dynamicBeanInterceptorPairs, DEFAULT_FALLBACK_NODE_TYPES, contentTypes));
         } catch (ExecutionException e) {
-            throw new RuntimeException("Could not create ObjectConverter",e);
+            throw new RuntimeException("Could not create ObjectConverter", e);
         }
     }
 

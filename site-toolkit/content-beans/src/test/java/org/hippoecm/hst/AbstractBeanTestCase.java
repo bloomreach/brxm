@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,11 +17,13 @@ package org.hippoecm.hst;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.hippoecm.hst.content.beans.*;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.manager.VersionedObjectConverterProxy;
+import org.hippoecm.hst.content.beans.standard.DynamicBeanInterceptor;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.junit.BeforeClass;
 import org.onehippo.cms7.services.HippoServiceRegistry;
@@ -37,15 +39,18 @@ public abstract class AbstractBeanTestCase extends RepositoryTestCase {
         RepositoryTestCase.setUpClass();
     }
 
-
     protected ObjectConverter createObjectConverter() {
         return createObjectConverter((List<Class<? extends HippoBean>>) getAnnotatedClasses());
     }
- 
-    protected ObjectConverter createObjectConverter(List<Class<? extends HippoBean>> annotatedClasses) {
-        return new VersionedObjectConverterProxy(annotatedClasses,
-                new ContentTypesProvider(HippoServiceRegistry.getService(ContentTypeService.class)), true);
 
+    protected ObjectConverter createObjectConverter(List<Class<? extends HippoBean>> annotatedNodeClasses) {
+        return createObjectConverter(annotatedNodeClasses, Collections.emptyList());
+    }
+
+    protected ObjectConverter createObjectConverter(List<Class<? extends HippoBean>> annotatedNodeClasses,
+            List<Class<? extends DynamicBeanInterceptor>> annotatedInterceptorClasses) {
+        return new VersionedObjectConverterProxy(annotatedNodeClasses, annotatedInterceptorClasses,
+                new ContentTypesProvider(HippoServiceRegistry.getService(ContentTypeService.class)), true);
     }
 
     protected Collection<Class<? extends HippoBean>> getAnnotatedClasses() {
@@ -63,5 +68,5 @@ public abstract class AbstractBeanTestCase extends RepositoryTestCase {
         annotatedClasses.add(TooDeepLink.class);
         return annotatedClasses;
     }
-    
+
 }

@@ -296,10 +296,10 @@ public abstract class AbstractBeanBuilderService {
      * @param methodName of the method
      * @param multiple whether a document property keeps multiple values or not
      * @param documentType of the document
-     * @param type of the document property
+     * @param cmsType cms type of the document property
      * @param builder {@link org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder}
      */
-    protected abstract void addCustomPropertyType(String propertyName, String methodName, boolean multiple, String documentType, String type, DynamicBeanBuilder builder);
+    protected abstract void addCustomPropertyType(String propertyName, String methodName, boolean multiple, String documentType, String cmsType, DynamicBeanBuilder builder);
 
     /**
      * Adds a method to the bean which returns {@link org.hippoecm.hst.content.beans.standard.HippoHtmlBean} object type

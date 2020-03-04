@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,9 +27,11 @@ import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.hippoecm.hst.content.beans.Interceptor;
 import org.hippoecm.hst.content.beans.Node;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.manager.ObjectConverterImpl;
+import org.hippoecm.hst.content.beans.standard.DynamicBeanInterceptor;
 import org.hippoecm.hst.content.beans.standard.HippoAsset;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDirectory;
@@ -143,6 +145,7 @@ public class ObjectConverterUtils {
      * @param annotatedClasses Annotated class mapping against jcr primary node types.
      * @param ignoreDuplicates Flag whether duplicate mapping for a node type is ignored or not. If it is false, it throws <CODE>IllegalArgumentException</CODE> on duplicate mappings.
      */
+    @SuppressWarnings("unchecked")
     public static Map<String, Class<? extends HippoBean>> getAggregatedMapping(final Collection<Class<? extends HippoBean>> annotatedClasses, final boolean ignoreDuplicates) {
         return getAggregatedMapping(annotatedClasses, (Class<? extends HippoBean>[]) DEFAULT_BUILT_IN_MAPPING_CLASSES, ignoreDuplicates);
     }
@@ -173,6 +176,26 @@ public class ObjectConverterUtils {
     }
 
     /**
+     * Creates an annotated class mapping against dynamic bean interceptor types
+     * @param annotatedInterceptorClasses Annotated class mapping against dynamic bean interceptor types.
+     * @param ignoreDuplicates Flag whether duplicate mapping for an interceptor is ignored or not. If it is false, it throws <CODE>IllegalArgumentException</CODE> on duplicate mappings.
+     */
+    public static Map<String, Class<? extends DynamicBeanInterceptor>> getInterceptorMapping(
+            final Collection<Class<? extends DynamicBeanInterceptor>> annotatedInterceptorClasses,
+            final boolean ignoreDuplicates) {
+
+        Map<String, Class<? extends DynamicBeanInterceptor>> dynamicBeanInterceptorPairs = new HashMap<String, Class<? extends DynamicBeanInterceptor>>();
+
+        if (annotatedInterceptorClasses != null && !annotatedInterceptorClasses.isEmpty()) {
+            for (Class<? extends DynamicBeanInterceptor> clazz : annotatedInterceptorClasses) {
+                addDynamicBeanInterceptorClassPair(dynamicBeanInterceptorPairs, clazz, ignoreDuplicates) ;
+            }
+        }
+
+        return Collections.unmodifiableMap(dynamicBeanInterceptorPairs);
+    }
+
+    /**
      * Returns the default built-in fallback jcr primary node types
      * @return
      */
@@ -181,7 +204,7 @@ public class ObjectConverterUtils {
         System.arraycopy(DEFAULT_FALLBACK_NODE_TYPES, 0, fallbackTypes, 0, DEFAULT_FALLBACK_NODE_TYPES.length);
         return fallbackTypes;
     }
-    
+
     /**
      * Collects bean classes annotated by {@link org.hippoecm.hst.content.beans.Node}
      * from the location specified by <CODE>locationPattern</CODE>.
@@ -196,9 +219,9 @@ public class ObjectConverterUtils {
      * @see {@link ClasspathResourceScanner}
      */
     @SuppressWarnings("unchecked")
-    public static List<Class<? extends HippoBean>> getAnnotatedClasses(final ClasspathResourceScanner resourceScanner, String ... locationPatterns) throws IOException, SAXException, ParserConfigurationException {
-        List<Class<? extends HippoBean>> annotatedClasses = new ArrayList<Class<? extends HippoBean>>();
-        Set<String> annotatedClassNames = resourceScanner.scanClassNamesAnnotatedBy(Node.class, false, locationPatterns);
+    public static List<Class<? extends HippoBean>> getNodeAnnotatedClasses(final ClasspathResourceScanner resourceScanner, String ... locationPatterns) throws IOException, SAXException, ParserConfigurationException {
+        final List<Class<? extends HippoBean>> annotatedClasses = new ArrayList<Class<? extends HippoBean>>();
+        final Set<String> annotatedClassNames = resourceScanner.scanClassNamesAnnotatedBy(Node.class, false, locationPatterns);
         
         if (annotatedClassNames != null && !annotatedClassNames.isEmpty()) {
             Class<?> clazz;
@@ -211,7 +234,7 @@ public class ObjectConverterUtils {
                     continue;
                 }
 
-                int mod = clazz.getModifiers();
+                final int mod = clazz.getModifiers();
 
                 if (!Modifier.isPublic(mod)) {
                     log.info("ObjectConverterUtils skipped annotated class registration. The class must be a *public* class: {}.", className);
@@ -220,6 +243,53 @@ public class ObjectConverterUtils {
 
                 if (HippoBean.class.isAssignableFrom(clazz)) {
                     annotatedClasses.add((Class<? extends HippoBean>) clazz);
+                } else {
+                    log.info("ObjectConverterUtils skipped annotated class registration. The class must be type of {}: {}.", HippoBean.class, className);
+                }
+            }
+        }
+        
+        return annotatedClasses;
+    }
+
+    /**
+     * Collects bean classes annotated by {@link org.hippoecm.hst.content.beans.Interceptor}
+     * from the location specified by <CODE>locationPattern</CODE>.
+     * Class resources will be collected by the specified <CODE>resourceScanner</CODE>.
+     *  
+     * @param resourceScanner
+     * @param locationPatterns
+     * @return
+     * @throws IOException
+     * @throws SAXException
+     * @throws ParserConfigurationException
+     * @see {@link ClasspathResourceScanner}
+     */
+    @SuppressWarnings("unchecked")
+    public static List<Class<? extends DynamicBeanInterceptor>> getInterceptorAnnotatedClasses(final ClasspathResourceScanner resourceScanner, String ... locationPatterns) throws IOException, SAXException, ParserConfigurationException {
+        final List<Class<? extends DynamicBeanInterceptor>> annotatedClasses = new ArrayList<Class<? extends DynamicBeanInterceptor>>();
+        final Set<String> annotatedClassNames = resourceScanner.scanClassNamesAnnotatedBy(Interceptor.class, false, locationPatterns);
+        
+        if (annotatedClassNames != null && !annotatedClassNames.isEmpty()) {
+            Class<?> clazz;
+            
+            for (String className : annotatedClassNames) {
+                try {
+                    clazz = Thread.currentThread().getContextClassLoader().loadClass(className);
+                } catch (ClassNotFoundException e) {
+                    log.info("ObjectConverterUtils skipped annotated class registration. The class cannot be loaded: {}.", className);
+                    continue;
+                }
+
+                final int mod = clazz.getModifiers();
+
+                if (!Modifier.isPublic(mod)) {
+                    log.info("ObjectConverterUtils skipped annotated class registration. The class must be a *public* class: {}.", className);
+                    continue;
+                }
+
+                if (DynamicBeanInterceptor.class.isAssignableFrom(clazz)) {
+                    annotatedClasses.add((Class<? extends DynamicBeanInterceptor>) clazz);
                 } else {
                     log.info("ObjectConverterUtils skipped annotated class registration. The class must be type of {}: {}.", HippoBean.class, className);
                 }
@@ -259,5 +329,36 @@ public class ObjectConverterUtils {
         }
         
         jcrPrimaryNodeTypeClassPairs.put(jcrPrimaryNodeType, clazz);
+    }
+    
+    private static void addDynamicBeanInterceptorClassPair(Map<String, Class<? extends DynamicBeanInterceptor>> dynamicBeanPairs,
+            Class<? extends DynamicBeanInterceptor> clazz, boolean ignoreDuplicates) throws IllegalArgumentException {
+        String cmsType = null;
+
+        if (clazz.isAnnotationPresent(Interceptor.class)) {
+            Interceptor anno = clazz.getAnnotation(Interceptor.class);
+            cmsType = anno.cmsType();
+        }
+
+        if (cmsType == null) {
+            throw new IllegalArgumentException("There's no annotation for cmsType in the class: " + clazz);
+        }
+
+        if (dynamicBeanPairs.containsKey(cmsType)) {
+            if (ignoreDuplicates) {
+                log.debug(
+                        "Duplicate annotated class '{}' found for primary type '{}'. The already registered class '{}' is preserved.",
+                        new Object[] { clazz.getName(), cmsType, dynamicBeanPairs.get(cmsType).getName() });
+            } else {
+                throw new IllegalArgumentException("Annotated class '" + clazz.getName() + "' for primarytype '" + cmsType
+                        + "' is a duplicate of already registered class '" + dynamicBeanPairs.get(cmsType).getName() + "'. "
+                        + "You might have configured a bean that does not have a annotation for the cmsType and "
+                        + "inherits the cmsType from the bean it extends, resulting in 2 beans with the same cmsType. Correct your beans.");
+            }
+
+            return;
+        }
+
+        dynamicBeanPairs.put(cmsType, clazz);
     }
 }
