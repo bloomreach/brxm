@@ -76,6 +76,7 @@ class HippoIframeCtrl {
     this._offClick = this.DragDropService.onClick(this._clickComponent.bind(this));
 
     this.iframeJQueryElement.on('load', this.onLoad);
+    this._offEditMenu = this.$rootScope.$on('menu:edit', (event, menuUuid) => this.onEditMenu({ menuUuid }));
     this._offMoveComponent = this.$rootScope.$on('iframe:component:move', this._onMoveComponent);
     this._offSdkReady = this.$rootScope.$on('spa:ready', this._onSpaReady);
     this._offSdkUnload = this.$rootScope.$on('iframe:unload', this._onUnload);
@@ -91,7 +92,6 @@ class HippoIframeCtrl {
     this.PageStructureService.clearParsedElements();
     this.HippoIframeService.initialize(this.$element, this.iframeJQueryElement);
     this.OverlayService.init(this.iframeJQueryElement);
-    this.OverlayService.onEditMenu(menuUuid => this.onEditMenu({ menuUuid }));
     this.ViewportService.init(sheetJQueryElement);
     this.DragDropService.init(this.iframeJQueryElement, canvasJQueryElement, sheetJQueryElement);
     this.SpaService.init(this.iframeJQueryElement);
@@ -118,6 +118,7 @@ class HippoIframeCtrl {
     this.CmsService.unsubscribe('render-component', this._renderComponent, this);
     this.CmsService.unsubscribe('delete-component', this._deleteComponent, this);
     this._offClick();
+    this._offEditMenu();
     this._offMoveComponent();
     this._offSdkReady();
     this._offSdkUnload();

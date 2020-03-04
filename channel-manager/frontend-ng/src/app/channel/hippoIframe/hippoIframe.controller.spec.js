@@ -92,7 +92,6 @@ describe('hippoIframeCtrl', () => {
       $element = angular.element('<div><iframe /></div>');
 
       spyOn(CommunicationService, 'connect').and.returnValue($q.resolve());
-      spyOn(OverlayService, 'onEditMenu');
       spyOn(DragDropService, 'onClick').and.callThrough();
       onEditMenu = jasmine.createSpy('onEditMenu');
       contentWindow = {
@@ -392,9 +391,9 @@ describe('hippoIframeCtrl', () => {
     expect(OverlayService.showContentOverlay).toHaveBeenCalledWith(false);
   });
 
-  it('calls its edit menu function when the overlay service wants to edit a menu', () => {
-    const callback = OverlayService.onEditMenu.calls.mostRecent().args[0];
-    callback('menu-uuid');
+  it('calls its edit menu function on menu:edit event', () => {
+    $rootScope.$emit('menu:edit', 'menu-uuid');
+
     expect(onEditMenu).toHaveBeenCalledWith({ menuUuid: 'menu-uuid' });
   });
 
