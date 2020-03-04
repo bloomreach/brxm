@@ -142,8 +142,10 @@ export class NavConfigService {
 
       this.logger.debug(`Fetching nav items from an REST endpoint '${url}'`);
       const navItems = await this.http.get<NavItem[]>(url).toPromise();
+      this.logger.debug(`Nav items have been fetched from the REST endpoint '${url}'`, navItems);
+
       const normalizedNavItems = this.normalizeNavItems(navItems);
-      this.logger.debug(`Nav items have been fetched from the REST endpoint '${url}'`, normalizedNavItems);
+      this.logger.debug(`Nav items fetched from the REST endpoint '${url}' after normalization`, normalizedNavItems);
 
       return normalizedNavItems;
     } catch (e) {
