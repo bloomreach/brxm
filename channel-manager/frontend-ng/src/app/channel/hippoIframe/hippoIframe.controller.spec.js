@@ -27,6 +27,7 @@ describe('hippoIframeCtrl', () => {
   let DomService;
   let DragDropService;
   let EditComponentService;
+  let EditContentService;
   let FeedbackService;
   let HippoIframeService;
   let HstComponentService;
@@ -47,6 +48,7 @@ describe('hippoIframeCtrl', () => {
     CreateContentService = jasmine.createSpyObj('CreateContentService', ['start']);
     DomService = jasmine.createSpyObj('DomService', ['addScript', 'getAssetUrl']);
     EditComponentService = jasmine.createSpyObj('EditComponentService', ['startEditing']);
+    EditContentService = jasmine.createSpyObj('EditContentService', ['startEditing']);
     FeedbackService = jasmine.createSpyObj('FeedbackService', ['showErrorResponse', 'showNotification']);
     HstComponentService = jasmine.createSpyObj('HstComponentService', ['setPathParameter']);
     PickerService = jasmine.createSpyObj('PickerService', ['pickPath']);
@@ -56,6 +58,7 @@ describe('hippoIframeCtrl', () => {
       $provide.value('CreateContentService', CreateContentService);
       $provide.value('DomService', DomService);
       $provide.value('EditComponentService', EditComponentService);
+      $provide.value('EditContentService', EditContentService);
       $provide.value('FeedbackService', FeedbackService);
       $provide.value('HstComponentService', HstComponentService);
       $provide.value('PickerService', PickerService);
@@ -405,6 +408,12 @@ describe('hippoIframeCtrl', () => {
     $rootScope.$emit('document:create', data);
 
     expect(CreateContentService.start).toHaveBeenCalledWith(data);
+  });
+
+  it('should start create content service on document:edit event', () => {
+    $rootScope.$emit('document:edit', 'content-uuid');
+
+    expect(EditContentService.startEditing).toHaveBeenCalledWith('content-uuid');
   });
 
   describe('_onDocumentSelect', () => {

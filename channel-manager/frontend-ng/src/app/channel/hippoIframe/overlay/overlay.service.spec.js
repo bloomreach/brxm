@@ -600,6 +600,18 @@ describe('OverlayService', () => {
     }));
   });
 
+  it('should trigger document:edit event', async () => {
+    await loadIframeFixture();
+    const overlayElementScenario1 = iframe('.hippo-overlay-element-manage-content-link')[0];
+    const createContentButton = $(overlayElementScenario1).find('.hippo-fab-main');
+
+    expectNoPropagatedClicks();
+    spyOn($rootScope, '$emit');
+    createContentButton.click();
+
+    expect($rootScope.$emit).toHaveBeenCalledWith('document:edit', 'manage-content-uuid');
+  });
+
   it('can select a document', async () => {
     ChannelService.isEditable = () => true;
     spyOn(CmsService, 'reportUsageStatistic');
