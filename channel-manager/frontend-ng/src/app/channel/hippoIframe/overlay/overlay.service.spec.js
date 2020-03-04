@@ -26,7 +26,6 @@ describe('OverlayService', () => {
   let iframeWindow;
   let ChannelService;
   let CmsService;
-  let CreateContentService;
   let DomService;
   let ExperimentStateService;
   let OverlayService;
@@ -49,7 +48,6 @@ describe('OverlayService', () => {
       _$rootScope_,
       _ChannelService_,
       _CmsService_,
-      _CreateContentService_,
       _DomService_,
       _ExperimentStateService_,
       _OverlayService_,
@@ -61,7 +59,6 @@ describe('OverlayService', () => {
       $rootScope = _$rootScope_;
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
-      CreateContentService = _CreateContentService_;
       DomService = _DomService_;
       ExperimentStateService = _ExperimentStateService_;
       OverlayService = _OverlayService_;
@@ -589,18 +586,18 @@ describe('OverlayService', () => {
     expect(mousedownSpy).not.toHaveBeenCalled();
   });
 
-  it('can create content', async () => {
-    spyOn(CreateContentService, 'start');
-
+  it('should trigger document:create event', async () => {
     await loadIframeFixture();
     const overlayElementScenario2 = iframe('.hippo-overlay-element-manage-content-link')[1];
     const createContentButton = $(overlayElementScenario2).find('.hippo-fab-main');
 
     expectNoPropagatedClicks();
+    spyOn($rootScope, '$emit');
     createContentButton.click();
 
-    const config = CreateContentService.start.calls.mostRecent().args[0];
-    expect(config.documentTemplateQuery).toBe('manage-content-document-template-query');
+    expect($rootScope.$emit).toHaveBeenCalledWith('document:create', jasmine.objectContaining({
+      documentTemplateQuery: 'manage-content-document-template-query',
+    }));
   });
 
   it('can select a document', async () => {

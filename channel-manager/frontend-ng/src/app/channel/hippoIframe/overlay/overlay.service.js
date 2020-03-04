@@ -32,7 +32,6 @@ class OverlayService {
     $translate,
     ChannelService,
     CmsService,
-    CreateContentService,
     DomService,
     EditContentService,
     ExperimentStateService,
@@ -47,7 +46,6 @@ class OverlayService {
     this.$rootScope = $rootScope;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
-    this.CreateContentService = CreateContentService;
     this.DomService = DomService;
     this.EditContentService = EditContentService;
     this.ExperimentStateService = ExperimentStateService;
@@ -687,7 +685,7 @@ class OverlayService {
   }
 
   _createContent(config) {
-    this.CreateContentService.start(config);
+    this.$rootScope.$emit('document:create', config);
   }
 
   _editContent(uuid) {
