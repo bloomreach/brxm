@@ -29,6 +29,7 @@ import javax.jcr.Node;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import org.hippoecm.hst.content.beans.standard.DynamicBeanInterceptor;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoCompound;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
@@ -269,32 +270,36 @@ public class DynamicBeanBuilder {
     }
 
     /**
-     * Creates an instance of returnType, then calls the corresponding method in the returnType instance.
-     * <br/>
-     * <br/>
-     * returnType class should have the constructor below;
-     * <pre>
-     *     public returnType(final String propertyName, final Node documentTypeNode)
-     * </pre>
-     * The method in returnType class which gets called should be in format below;
-     * <pre>
-     *     public returnType anyMethodName(@Super(proxyType = TargetType.class) Object superObject)
-     * </pre>
-     * Generated method will be;
+     * Creates an instance of interceptorDefinition, then calls the corresponding method in
+     * interceptorDefinition instance which returns the expected returnType.
+     * Instance of interceptorDefinition only gets created once and shared by all generated
+     * dynamic bean instances.
+     * <br><br>
+     * Template of the generated method is;
+     *
      * <pre>
      * public returnType methodName() {
-     *     final returnTypeInstance = new returnType(propertyName, documentTypeNode);
-     *     return returnTypeInstance.anyMethodName(hippoBeanInstance);
+     *     returnType returnTypeInstance = interceptorDefinitionInstance.interceptorMethod(propertyName, multiple, documentTypeNode);
+     *     return returnTypeInstance;
+     * }
+     * </pre>
+     *
+     * An example generated method would be;
+     * <pre>
+     * public Foo getFoo() {
+     *     Foo foo = fooInterceptor.interceptorMethod(propertyName, multiple, documentTypeNode);
+     *     return foo;
      * }
      * </pre>
      */
-    void addBeanMethodCustomField(final Class<?> returnType, final String methodName, final String propertyName, final Node documentTypeNode) {
+    void addBeanMethodCustomField(final Class<? extends DynamicBeanInterceptor> interceptorDefinition, final String methodName,
+            final String propertyName, final boolean multiple, final Node documentTypeNode) {
         try {
-            final Constructor<?> constructor = returnType.getConstructor(String.class, Node.class);
-            final Object instance = constructor.newInstance(propertyName, documentTypeNode);
+            final Constructor<?> constructor = interceptorDefinition.getConstructor(String.class, Boolean.class, Node.class);
+            final DynamicBeanInterceptor interceptor = (DynamicBeanInterceptor) constructor.newInstance(propertyName, multiple, documentTypeNode);
             builder = builder
-                        .defineMethod(methodName, returnType, Modifier.PUBLIC)
-                        .intercept(MethodDelegation.to(instance));
+                        .defineMethod(methodName, interceptor.getCmsType(), Modifier.PUBLIC)
+                        .intercept(MethodDelegation.to(interceptor));
             methodAdded = true;
         } catch (Exception e) {
             log.error("Can't define method {} : {}", methodName, e);
@@ -303,10 +308,19 @@ public class DynamicBeanBuilder {
 
     /**
      * Invokes the super method of the parent bean with the given property name as a parameter.
+     * <br><br>
+     * Template of the generated method is;
      *
      * <pre>
      * public returnType methodName() {
-     *     return HippoBean.superMethodName(superMethodParameter);
+     *     return HippoBean.superMethodName(propertyName);
+     * }
+     * </pre>
+     *
+     * An example generated method would be;
+     * <pre>
+     * public String getTitle() {
+     *     return HippoBean.getProperty("myproject:title");
      * }
      * </pre>
      */
@@ -352,10 +366,19 @@ public class DynamicBeanBuilder {
 
     /**
      * Invokes the super method from the parent bean with the given document type name as a parameter.
+     * <br><br>
+     * Template of the generated method is;
      *
      * <pre>
      * public returnType methodName() {
      *     return HippoBean.superMethodName(propertyName, superMethodReturnType);
+     * }
+     * </pre>
+     *
+     * An example generated method would be;
+     * <pre>
+     * public List getAuthors() {
+     *     return HippoBean.getChildBeansByName("myproject:authors", HippoDocument.class);
      * }
      * </pre>
      */

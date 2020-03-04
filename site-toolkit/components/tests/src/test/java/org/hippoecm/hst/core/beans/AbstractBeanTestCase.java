@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.hst.core.beans;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.configuration.Configuration;
@@ -121,8 +122,8 @@ public abstract class AbstractBeanTestCase extends AbstractTestConfigurations {
     }
 
     protected ObjectConverter getObjectConverter() {
-        return new VersionedObjectConverterProxy(getAnnotatedClasses(),
-                new ContentTypesProvider(HippoServiceRegistry.getService(ContentTypeService.class)) , true);
+        return new VersionedObjectConverterProxy(getAnnotatedClasses(), Collections.emptyList(),
+                new ContentTypesProvider(HippoServiceRegistry.getService(ContentTypeService.class)), true);
     }
 
     protected Collection<Class<? extends HippoBean>> getAnnotatedClasses() {

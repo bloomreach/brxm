@@ -17,6 +17,7 @@ package org.hippoecm.hst.pagemodelapi.common.content.beans;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,6 +31,7 @@ import org.hippoecm.hst.content.beans.manager.ObjectBeanManager;
 import org.hippoecm.hst.content.beans.manager.ObjectBeanManagerImpl;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.manager.VersionedObjectConverterProxy;
+import org.hippoecm.hst.content.beans.standard.DynamicBeanInterceptor;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
 import org.hippoecm.hst.content.beans.standard.HippoHtml;
@@ -104,9 +106,14 @@ public class HippoBeansApiObjectMapperIT  extends RepositoryTestCase {
     }
 
     protected ObjectConverter createObjectConverter(List<Class<? extends HippoBean>> annotatedClasses) {
-        return new VersionedObjectConverterProxy(annotatedClasses,
-                new ContentTypesProvider(HippoServiceRegistry.getService(ContentTypeService.class)), true);
+        return createObjectConverter(annotatedClasses, Collections.emptyList());
 
+    }
+
+    protected ObjectConverter createObjectConverter(List<Class<? extends HippoBean>> annotatedNodeClasses,
+            List<Class<? extends DynamicBeanInterceptor>> annotatedInterceptorClasses) {
+        return new VersionedObjectConverterProxy(annotatedNodeClasses, annotatedInterceptorClasses,
+                new ContentTypesProvider(HippoServiceRegistry.getService(ContentTypeService.class)), true);
     }
 
 
