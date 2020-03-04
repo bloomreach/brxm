@@ -31,7 +31,6 @@ class OverlayService {
     $rootScope,
     $translate,
     ChannelService,
-    CmsService,
     DomService,
     ExperimentStateService,
     HippoIframeService,
@@ -44,7 +43,6 @@ class OverlayService {
     this.$log = $log;
     this.$rootScope = $rootScope;
     this.ChannelService = ChannelService;
-    this.CmsService = CmsService;
     this.DomService = DomService;
     this.ExperimentStateService = ExperimentStateService;
     this.HippoIframeService = HippoIframeService;
@@ -688,12 +686,10 @@ class OverlayService {
 
   _editContent(uuid) {
     this.$rootScope.$emit('document:edit', uuid);
-    this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
   }
 
   _selectDocument(config) {
     this.$rootScope.$emit('document:select', config);
-    this.CmsService.reportUsageStatistic('PickContentButton');
   }
 
   _linkButtonTransition(element) {

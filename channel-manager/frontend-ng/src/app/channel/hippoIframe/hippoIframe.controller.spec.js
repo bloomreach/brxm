@@ -411,9 +411,11 @@ describe('hippoIframeCtrl', () => {
   });
 
   it('should start create content service on document:edit event', () => {
+    spyOn(CmsService, 'reportUsageStatistic');
     $rootScope.$emit('document:edit', 'content-uuid');
 
     expect(EditContentService.startEditing).toHaveBeenCalledWith('content-uuid');
+    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsEditContent');
   });
 
   describe('_onDocumentSelect', () => {
@@ -428,6 +430,10 @@ describe('hippoIframeCtrl', () => {
       parameterBasePath: '/base',
       pickerConfig: {},
     };
+
+    beforeEach(() => {
+      spyOn(CmsService, 'reportUsageStatistic');
+    });
 
     it('can pick a path and update the component', () => {
       PickerService.pickPath.and.returnValue($q.resolve({ path: '/base/pickedPath' }));
@@ -472,6 +478,13 @@ describe('hippoIframeCtrl', () => {
       $rootScope.$digest();
 
       expect(PickerService.pickPath).not.toHaveBeenCalled();
+    });
+
+    it('should report usage statistic', () => {
+      $rootScope.$emit('document:select', eventData);
+      $rootScope.$digest();
+
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('PickContentButton');
     });
   });
 });

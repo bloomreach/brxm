@@ -238,10 +238,14 @@ class HippoIframeCtrl {
   }
 
   _onDocumentEdit(event, uuid) {
+    this.CmsService.reportUsageStatistic('CMSChannelsEditContent');
+
     this.EditContentService.startEditing(uuid);
   }
 
   _onDocumentSelect(event, data) {
+    this.CmsService.reportUsageStatistic('PickContentButton');
+
     this.$rootScope.$evalAsync(async () => {
       if (event.defaultPrevented) {
         return;

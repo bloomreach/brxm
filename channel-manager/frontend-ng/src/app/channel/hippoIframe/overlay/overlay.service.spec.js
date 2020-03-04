@@ -25,7 +25,6 @@ describe('OverlayService', () => {
   let angularElement;
   let iframeWindow;
   let ChannelService;
-  let CmsService;
   let DomService;
   let ExperimentStateService;
   let OverlayService;
@@ -47,7 +46,6 @@ describe('OverlayService', () => {
       _$q_,
       _$rootScope_,
       _ChannelService_,
-      _CmsService_,
       _DomService_,
       _ExperimentStateService_,
       _OverlayService_,
@@ -58,7 +56,6 @@ describe('OverlayService', () => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       ChannelService = _ChannelService_;
-      CmsService = _CmsService_;
       DomService = _DomService_;
       ExperimentStateService = _ExperimentStateService_;
       OverlayService = _OverlayService_;
@@ -79,7 +76,6 @@ describe('OverlayService', () => {
     angularElement = angular.element;
     spyOn(angular, 'element').and.callThrough();
 
-    spyOn(CmsService, 'subscribe').and.callThrough();
     spyOn(SvgService, 'getSvg').and.callFake(() => angular.element('<svg>test</svg>'));
 
     jasmine.getFixtures().load('channel/hippoIframe/overlay/overlay.service.fixture.html');
@@ -614,7 +610,6 @@ describe('OverlayService', () => {
 
   it('can select a document', async () => {
     ChannelService.isEditable = () => true;
-    spyOn(CmsService, 'reportUsageStatistic');
 
     await loadIframeFixture();
     const overlayElementScenario5 = iframe('.hippo-overlay-element-manage-content-link')[4];
@@ -631,7 +626,6 @@ describe('OverlayService', () => {
       pickerConfig: jasmine.any(Object),
       parameterBasePath: '',
     }));
-    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('PickContentButton');
   });
 
   it('does not throw an error when calling edit menu handler if not set', async () => {
