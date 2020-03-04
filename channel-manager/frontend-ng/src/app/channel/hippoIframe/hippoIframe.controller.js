@@ -26,6 +26,7 @@ class HippoIframeCtrl {
     CommunicationService,
     ComponentRenderingService,
     ContainerService,
+    CreateContentService,
     DomService,
     DragDropService,
     EditComponentService,
@@ -48,6 +49,7 @@ class HippoIframeCtrl {
     this.CommunicationService = CommunicationService;
     this.ComponentRenderingService = ComponentRenderingService;
     this.ContainerService = ContainerService;
+    this.CreateContentService = CreateContentService;
     this.DomService = DomService;
     this.DragDropService = DragDropService;
     this.EditComponentService = EditComponentService;
@@ -67,6 +69,7 @@ class HippoIframeCtrl {
     this._onUnload = this._onUnload.bind(this);
     this._onNewHeadContributions = this._onNewHeadContributions.bind(this);
     this._onMoveComponent = this._onMoveComponent.bind(this);
+    this._onDocumentCreate = this._onDocumentCreate.bind(this);
     this._onDocumentSelect = this._onDocumentSelect.bind(this);
   }
 
@@ -84,6 +87,7 @@ class HippoIframeCtrl {
       'hippo-iframe:new-head-contributions',
       this._onNewHeadContributions,
     );
+    this._offDocumentCreate = this.$rootScope.$on('document:create', this._onDocumentCreate);
     this._offDocumentSelect = this.$rootScope.$on('document:select', this._onDocumentSelect);
 
     const canvasJQueryElement = this.$element.find('.channel-iframe-canvas');
@@ -123,6 +127,7 @@ class HippoIframeCtrl {
     this._offSdkReady();
     this._offSdkUnload();
     this._offNewHeadContributions();
+    this._offDocumentCreate();
     this._offDocumentSelect();
   }
 
@@ -221,6 +226,10 @@ class HippoIframeCtrl {
 
   isIframeLifted() {
     return this.HippoIframeService.isIframeLifted;
+  }
+
+  _onDocumentCreate(event, data) {
+    this.CreateContentService.start(data);
   }
 
   _onDocumentSelect(event, data) {

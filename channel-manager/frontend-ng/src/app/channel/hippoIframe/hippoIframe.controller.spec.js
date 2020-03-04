@@ -23,6 +23,7 @@ describe('hippoIframeCtrl', () => {
   let CommunicationService;
   let ComponentRenderingService;
   let ContainerService;
+  let CreateContentService;
   let DomService;
   let DragDropService;
   let EditComponentService;
@@ -43,6 +44,7 @@ describe('hippoIframeCtrl', () => {
     angular.mock.module('hippo-cm');
 
     ComponentRenderingService = jasmine.createSpyObj('ComponentRenderingService', ['renderComponent']);
+    CreateContentService = jasmine.createSpyObj('CreateContentService', ['start']);
     DomService = jasmine.createSpyObj('DomService', ['addScript', 'getAssetUrl']);
     EditComponentService = jasmine.createSpyObj('EditComponentService', ['startEditing']);
     FeedbackService = jasmine.createSpyObj('FeedbackService', ['showErrorResponse', 'showNotification']);
@@ -51,6 +53,7 @@ describe('hippoIframeCtrl', () => {
 
     angular.mock.module(($provide) => {
       $provide.value('ComponentRenderingService', ComponentRenderingService);
+      $provide.value('CreateContentService', CreateContentService);
       $provide.value('DomService', DomService);
       $provide.value('EditComponentService', EditComponentService);
       $provide.value('FeedbackService', FeedbackService);
@@ -395,6 +398,13 @@ describe('hippoIframeCtrl', () => {
     $rootScope.$emit('menu:edit', 'menu-uuid');
 
     expect(onEditMenu).toHaveBeenCalledWith({ menuUuid: 'menu-uuid' });
+  });
+
+  it('should start create content service on document:create event', () => {
+    const data = {};
+    $rootScope.$emit('document:create', data);
+
+    expect(CreateContentService.start).toHaveBeenCalledWith(data);
   });
 
   describe('_onDocumentSelect', () => {
