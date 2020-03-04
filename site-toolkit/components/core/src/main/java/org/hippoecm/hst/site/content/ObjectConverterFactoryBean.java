@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hippoecm.hst.content.beans.ContentTypesProvider;
 import org.hippoecm.hst.content.beans.manager.ObjectConverter;
 import org.hippoecm.hst.content.beans.manager.VersionedObjectConverterProxy;
+import org.hippoecm.hst.content.beans.standard.DynamicBeanInterceptor;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.tool.DefaultContentBeansTool;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -99,7 +100,8 @@ public class ObjectConverterFactoryBean extends AbstractFactoryBean<ObjectConver
 
     @Override
     protected ObjectConverter createInstance() {
-        List<Class<? extends HippoBean>> annotatedClasses = null;
+        List<Class<? extends HippoBean>> annotatedNodeClasses = null;
+        List<Class<? extends DynamicBeanInterceptor>> annotatedInterceptorClasses = null;
 
         if (annotatedClassesResourcePath == null && servletContext != null) {
             annotatedClassesResourcePath = servletContext.getInitParameter(annotatedClassesInitParam);
@@ -107,7 +109,9 @@ public class ObjectConverterFactoryBean extends AbstractFactoryBean<ObjectConver
 
         if (annotatedClassesResourcePath != null) {
             try {
-                annotatedClasses = ObjectConverterUtils.getAnnotatedClasses(classpathResourceScanner,
+                annotatedNodeClasses = ObjectConverterUtils.getNodeAnnotatedClasses(classpathResourceScanner,
+                        StringUtils.split(annotatedClassesResourcePath, ", \t\r\n"));
+                annotatedInterceptorClasses = ObjectConverterUtils.getInterceptorAnnotatedClasses(classpathResourceScanner,
                         StringUtils.split(annotatedClassesResourcePath, ", \t\r\n"));
             } catch (Exception e) {
                 throw new IllegalStateException(e);
@@ -115,9 +119,9 @@ public class ObjectConverterFactoryBean extends AbstractFactoryBean<ObjectConver
         }
 
         if (generateDynamicBean == null || generateDynamicBean.booleanValue()) {
-            return new VersionedObjectConverterProxy(annotatedClasses, contentTypesProvider);
+            return new VersionedObjectConverterProxy(annotatedNodeClasses, annotatedInterceptorClasses, contentTypesProvider);
         } else {
-            return ObjectConverterUtils.createObjectConverter(annotatedClasses);
+            return ObjectConverterUtils.createObjectConverter(annotatedNodeClasses);
         }
     }
 

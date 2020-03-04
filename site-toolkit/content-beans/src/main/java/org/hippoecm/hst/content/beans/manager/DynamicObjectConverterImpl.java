@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@ package org.hippoecm.hst.content.beans.manager;
 
 import java.lang.ref.WeakReference;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nonnull;
 import javax.jcr.Node;
@@ -26,6 +27,7 @@ import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.builder.HippoContentBean;
 import org.hippoecm.hst.content.beans.dynamic.DynamicBeanDefinitionService;
 import org.hippoecm.hst.content.beans.dynamic.DynamicBeanService;
+import org.hippoecm.hst.content.beans.standard.DynamicBeanInterceptor;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
 import org.onehippo.cms7.services.contenttype.ContentType;
@@ -33,6 +35,7 @@ import org.onehippo.cms7.services.contenttype.ContentTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.commons.collections.MapUtils.isNotEmpty;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
 /**
@@ -42,12 +45,18 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
 
     private static final Logger log = LoggerFactory.getLogger(DynamicObjectConverterImpl.class);
 
+    private final Map<String, Class<? extends DynamicBeanInterceptor>> dynamicBeanInterceptorPairs = new ConcurrentHashMap<>();
     private final DynamicBeanService dynamicBeanService;
     private final WeakReference<ContentTypes> contentTypesRef;
 
-    DynamicObjectConverterImpl(final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs, final String[] fallBackJcrNodeTypes,
-                               final ContentTypes contentTypes) {
+    DynamicObjectConverterImpl(final Map<String, Class<? extends HippoBean>> jcrPrimaryNodeTypeBeanPairs,
+            final Map<String, Class<? extends DynamicBeanInterceptor>> dynamicBeanInterceptorPairs,
+            final String[] fallBackJcrNodeTypes, final ContentTypes contentTypes) {
         super(jcrPrimaryNodeTypeBeanPairs, fallBackJcrNodeTypes);
+
+        if (isNotEmpty(dynamicBeanInterceptorPairs)) {
+            this.dynamicBeanInterceptorPairs.putAll(dynamicBeanInterceptorPairs);
+        }
 
         // Store ContentTypes as a WeakReference so that
         // corresponding ObjectConverter cache entry at VersionedObjectConverterProxy could be eventually invalidated
@@ -158,6 +167,10 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
             throw new IllegalStateException("The required ContentTypes object has been already garbage collected!");
         }
         return contentTypes.getType(name);
+    }
+
+    public Class<? extends DynamicBeanInterceptor> getInterceptorDefinition(final String cmsType) {
+        return dynamicBeanInterceptorPairs.get(cmsType);
     }
 
 }

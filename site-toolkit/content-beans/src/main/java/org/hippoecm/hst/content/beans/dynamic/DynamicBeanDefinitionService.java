@@ -28,6 +28,7 @@ import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.builder.AbstractBeanBuilderService;
 import org.hippoecm.hst.content.beans.builder.HippoContentBean;
 import org.hippoecm.hst.content.beans.manager.DynamicObjectConverterImpl;
+import org.hippoecm.hst.content.beans.standard.DynamicBeanInterceptor;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.core.container.ComponentManager;
@@ -219,10 +220,10 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
     }
 
     @Override
-    protected void addCustomPropertyType(final String propertyName, final String methodName, final boolean multiple, final String documentType, final String type, final DynamicBeanBuilder builder) {
-        final Class<? extends HippoBean> generatedBeanDefinition = getOrCreateCustomBean(type);
-        if (generatedBeanDefinition == null) {
-            log.warn("Failed to create getter for property: {} of type: {}", propertyName, type);
+    protected void addCustomPropertyType(final String propertyName, final String methodName, final boolean multiple, final String documentType, final String cmsType, final DynamicBeanBuilder builder) {
+        final Class<? extends DynamicBeanInterceptor> interceptorDefinition = objectConverter.getInterceptorDefinition(cmsType);
+        if (interceptorDefinition == null) {
+            log.warn("Failed to create getter for property: {} of type: {}", propertyName, cmsType);
             return;
         }
 
@@ -231,7 +232,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
             return;
         }
 
-        builder.addBeanMethodCustomField(generatedBeanDefinition, methodName, propertyName, documentTypeNode);
+        builder.addBeanMethodCustomField(interceptorDefinition, methodName, propertyName, multiple, documentTypeNode);
     }
 
     @Override
