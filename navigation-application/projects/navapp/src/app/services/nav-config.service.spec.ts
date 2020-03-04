@@ -41,9 +41,9 @@ describe('NavConfigService', () => {
   let appSettings: AppSettings;
 
   const navItemsMock = [
-    { ...new NavItemDtoMock({ id: 'iframeItem' }) },
-    { ...new NavItemDtoMock({ id: 'restItem' }) },
-    { ...new NavItemDtoMock({ id: 'internalRestItem' }) },
+    new NavItemDtoMock({ id: 'iframeItem' }),
+    new NavItemDtoMock({ id: 'restItem' }),
+    new NavItemDtoMock({ id: 'internalRestItem', appIframeUrl: '/relative/url' }),
   ];
 
   const sitesMock: Site[] = [
@@ -154,7 +154,11 @@ describe('NavConfigService', () => {
 
     it('should fetch the configuration', () => {
       expect(configuration).toEqual({
-        navItems: navItemsMock,
+        navItems: [
+          navItemsMock[0],
+          { ...navItemsMock[1] },
+          { ...navItemsMock[2], appIframeUrl: 'https://example.com/base/path/relative/url' },
+        ],
         sites: sitesMock,
         selectedSiteId: selectedSiteMock,
       });
@@ -176,6 +180,13 @@ describe('NavConfigService', () => {
         );
       });
 
+      it('should log normalized nav items fetched from REST', () => {
+        expect(loggerMock.debug).toHaveBeenCalledWith(
+          `Nav items fetched from the REST endpoint 'https://example.com/testRESTurl' after normalization`,
+          [{ ...navItemsMock[1] }],
+        );
+      });
+
       it('should log starting of fetching of nav items from internal REST', () => {
         expect(loggerMock.debug).toHaveBeenCalledWith(
           `Fetching nav items from an REST endpoint 'https://example.com/base/path/internalRESTurl'`,
@@ -186,6 +197,13 @@ describe('NavConfigService', () => {
         expect(loggerMock.debug).toHaveBeenCalledWith(
           `Nav items have been fetched from the REST endpoint 'https://example.com/base/path/internalRESTurl'`,
           [navItemsMock[2]],
+        );
+      });
+
+      it('should log normalized nav items fetched from internal REST', () => {
+        expect(loggerMock.debug).toHaveBeenCalledWith(
+          `Nav items fetched from the REST endpoint 'https://example.com/base/path/internalRESTurl' after normalization`,
+          [{ ...navItemsMock[2], appIframeUrl: 'https://example.com/base/path/relative/url' }],
         );
       });
 
@@ -254,7 +272,10 @@ describe('NavConfigService', () => {
 
     it('should fetch the configuration', () => {
       expect(configuration).toEqual({
-        navItems: navItemsMock.slice(1, 3),
+        navItems: [
+          { ...navItemsMock[1] },
+          { ...navItemsMock[2], appIframeUrl: 'https://example.com/base/path/relative/url' },
+        ],
         sites: [],
         selectedSiteId: undefined,
       });
@@ -333,7 +354,7 @@ describe('NavConfigService', () => {
     let navItems: NavItem[];
 
     const newIframeNavItems = [
-      { ...new NavItemDtoMock({id: 'newIframeItem'}) },
+      new NavItemDtoMock({id: 'newIframeItem'}),
     ];
 
     beforeEach(async(() => {
@@ -354,7 +375,11 @@ describe('NavConfigService', () => {
     });
 
     it('should refetch the nav items', () => {
-      const expected = newIframeNavItems.concat(navItemsMock.slice(1));
+      const expected = [
+        newIframeNavItems[0],
+        { ...navItemsMock[1] },
+        { ...navItemsMock[2], appIframeUrl: 'https://example.com/base/path/relative/url' },
+      ];
 
       expect(navItems).toEqual(expected);
     });
