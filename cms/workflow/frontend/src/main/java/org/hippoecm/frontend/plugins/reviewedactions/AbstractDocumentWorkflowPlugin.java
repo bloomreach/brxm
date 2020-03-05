@@ -220,7 +220,6 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
         return branchIdModel == null ? BranchConstants.MASTER_BRANCH_ID : branchIdModel.getBranchId();
     }
 
-    @Nullable
     protected String openEditor(final Document docRef) throws RepositoryException, ServiceException {
         Session session = UserSession.get().getJcrSession();
         session.refresh(true);
