@@ -79,10 +79,12 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
 
             @Override
             protected IModel getTitle() {
-                final StringResourceModel inUseBy = new StringResourceModel("in-use-by", this).setModel(null).setParameters(
+                final StringResourceModel inUseBy =
+                        new StringResourceModel("in-use-by", this).setModel(null).setParameters(
                         new PropertyModel(AbstractPreviewWorkflowPlugin.this, "inUseBy"));
-                final StringResourceModel draftChanges = new StringResourceModel("draft-changes",this);
-                return transferable?draftChanges:inUseBy;
+                final StringResourceModel draftChanges =
+                        new StringResourceModel("draft-changes",this);
+                return transferable ? draftChanges : inUseBy;
             }
 
             @Override
