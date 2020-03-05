@@ -24,7 +24,7 @@ import javax.jcr.Session;
 
 import org.hippoecm.hst.content.beans.ContentTypesProvider;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
-import org.hippoecm.hst.content.beans.standard.DynamicBeanInterceptor;
+import org.hippoecm.hst.content.beans.dynamic.DynamicBeanInterceptor;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.onehippo.cms7.services.contenttype.ContentTypes;
 import org.slf4j.Logger;

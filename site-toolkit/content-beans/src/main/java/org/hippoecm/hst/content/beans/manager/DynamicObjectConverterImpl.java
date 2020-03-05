@@ -26,7 +26,7 @@ import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.builder.HippoContentBean;
 import org.hippoecm.hst.content.beans.dynamic.DynamicBeanDefinitionService;
 import org.hippoecm.hst.content.beans.dynamic.DynamicBeanService;
-import org.hippoecm.hst.content.beans.standard.DynamicBeanInterceptor;
+import org.hippoecm.hst.content.beans.dynamic.DynamicBeanInterceptor;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.onehippo.cms7.essentials.dashboard.annotations.HippoEssentialsGenerated;
 import org.onehippo.cms7.services.contenttype.ContentType;
