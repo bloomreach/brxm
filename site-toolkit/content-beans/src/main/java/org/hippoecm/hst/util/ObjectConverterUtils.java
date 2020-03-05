@@ -184,7 +184,7 @@ public class ObjectConverterUtils {
             final Collection<Class<? extends DynamicBeanInterceptor>> annotatedInterceptorClasses,
             final boolean ignoreDuplicates) {
 
-        Map<String, Class<? extends DynamicBeanInterceptor>> dynamicBeanInterceptorPairs = new HashMap<String, Class<? extends DynamicBeanInterceptor>>();
+        Map<String, Class<? extends DynamicBeanInterceptor>> dynamicBeanInterceptorPairs = new HashMap<>();
 
         if (annotatedInterceptorClasses != null && !annotatedInterceptorClasses.isEmpty()) {
             for (Class<? extends DynamicBeanInterceptor> clazz : annotatedInterceptorClasses) {
