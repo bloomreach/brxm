@@ -25,9 +25,9 @@ import java.util.regex.Pattern;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.collections.Transformer;
-import org.apache.commons.collections.map.LazyMap;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.collections4.Transformer;
+import org.apache.commons.collections4.map.LazyMap;
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +72,7 @@ public class ESIVarsPlaceholderResolver implements PlaceholderResolver {
                 Arrays.asList(StringUtils.split(StringUtils.defaultIfEmpty(request.getHeader("Accept-Language"), ""), " ,"));
         varsMap.put("HTTP_ACCEPT_LANGUAGE", acceptLanguageList);
 
-        Map cookiesMap = LazyMap.decorate(new HashMap<String, String>(), new Transformer() {
+        Map cookiesMap = LazyMap.lazyMap(new HashMap<String, String>(), new Transformer() {
             @Override
             public Object transform(Object cookieName) {
                 Cookie cookie = getCookie((String) cookieName);
@@ -91,7 +91,7 @@ public class ESIVarsPlaceholderResolver implements PlaceholderResolver {
 
         varsMap.put("HTTP_REFERER", request.getHeader("Referer"));
 
-        Map uaMap = LazyMap.decorate(new HashMap<String, String>(), new Transformer() {
+        Map uaMap = LazyMap.lazyMap(new HashMap<String, String>(), new Transformer() {
             @Override
             public Object transform(Object key) {
                 if (StringUtils.isEmpty(uai.getBrowser())) {
@@ -112,7 +112,7 @@ public class ESIVarsPlaceholderResolver implements PlaceholderResolver {
 
         varsMap.put("HTTP_USER_AGENT", uaMap);
 
-        Map queryStringMap = LazyMap.decorate(new HashMap<String, String>(), new Transformer() {
+        Map queryStringMap = LazyMap.lazyMap(new HashMap<String, String>(), new Transformer() {
             @Override
             public Object transform(Object paramName) {
                 return request.getParameter((String) paramName);

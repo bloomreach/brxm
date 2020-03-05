@@ -1,5 +1,5 @@
 /*
- *  Copyright 2014-2016 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.cache.CacheElement;
 import org.hippoecm.hst.cache.HstCache;
 import org.hippoecm.hst.cache.webfiles.CacheableWebFile;

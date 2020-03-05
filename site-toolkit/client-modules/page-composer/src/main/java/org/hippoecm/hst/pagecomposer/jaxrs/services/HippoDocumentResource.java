@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,7 +25,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;

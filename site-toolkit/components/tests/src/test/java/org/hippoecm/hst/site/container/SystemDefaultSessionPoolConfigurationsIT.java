@@ -1,5 +1,5 @@
 /*
- * Copyright 2014-2014 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2014-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,8 @@ import java.util.Map;
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
 
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.hippoecm.hst.core.jcr.pool.BasicPoolingRepository;
 import org.hippoecm.hst.core.jcr.pool.LazyMultipleRepositoryImpl;
 import org.hippoecm.hst.core.jcr.pool.MultipleRepository;

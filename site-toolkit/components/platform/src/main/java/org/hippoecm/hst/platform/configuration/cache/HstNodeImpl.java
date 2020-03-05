@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.platform.configuration.model.ConfigurationNodesLoadingException;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.internal.StringPool;
