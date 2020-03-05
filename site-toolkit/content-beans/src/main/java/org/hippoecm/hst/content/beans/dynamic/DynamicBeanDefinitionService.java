@@ -62,7 +62,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
 
         Session session = null;
         try {
-            session = getSession(componentManager);
+            session = getPooledConfigReaderSession(componentManager);
             try {
                 final HippoBean gallery = (HippoBean) objectConverter.getObject(session, "/content/gallery");
                 if (gallery == null) {
@@ -82,7 +82,11 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
         }
     }
 
-    private Session getSession(final ComponentManager componentManager) throws RepositoryException {
+    /**
+     * returns a pooled config reader user session. Since this method can be invoked from a background thread, make
+     * sure to always logout this session in a finally (otherwise it might never be returned to the pool)
+     */
+    private Session getPooledConfigReaderSession(final ComponentManager componentManager) throws RepositoryException {
         final Repository repository = componentManager.getComponent(Repository.class.getName());
         final Credentials configUser = componentManager.getComponent(Credentials.class.getName() + ".hstconfigreader");
         return repository.login(configUser);
@@ -103,7 +107,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
 
         Session session = null;
         try {
-            session = getSession(componentManager);
+            session = getPooledConfigReaderSession(componentManager);
 
             final String documentTypeNodePath = HippoNodeType.NAMESPACES_PATH + "/"
                     + StringUtils.substringBefore(documentType, ":") + "/" + StringUtils.substringAfter(documentType, ":");
