@@ -20,7 +20,6 @@ class ComponentCatalogService {
     ConfigService,
     ContainerService,
     EditComponentService,
-    FeedbackService,
     HippoIframeService,
     MaskService,
     OverlayService,
@@ -35,7 +34,6 @@ class ComponentCatalogService {
     this.ConfigService = ConfigService;
     this.EditComponentService = EditComponentService;
     this.ContainerService = ContainerService;
-    this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.MaskService = MaskService;
     this.OverlayService = OverlayService;
@@ -46,24 +44,6 @@ class ComponentCatalogService {
 
   getSelectedComponent() {
     return this.selectedComponent;
-  }
-
-  _enableAddModeMask() {
-    this.MaskService.mask('mask-add-component');
-    this.SidePanelService.liftSidePanelAboveMask();
-    this.HippoIframeService.liftIframeAboveMask();
-    this.OverlayService.enableAddMode();
-  }
-
-  _disableAddModeMask() {
-    this.MaskService.resetMaskClass();
-
-    this.SidePanelService.lowerSidePanelBeneathMask();
-    this.HippoIframeService.lowerIframeBeneathMask();
-    this.OverlayService.disableAddMode();
-    this.OverlayService.offComponentClick();
-    this.OverlayService.offContainerClick();
-    this.MaskService.removeClickHandler();
   }
 
   selectComponent(component) {
