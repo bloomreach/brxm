@@ -132,21 +132,28 @@ export default class PageStructureService {
     return this._page;
   }
 
-  getComponentByOverlayElement(componentOverlayElement) {
+  getComponentByOverlayElement(overlayElement) {
+    if (!this._page) {
+      return;
+    }
+
+    // eslint-disable-next-line consistent-return
+    return this._page.getContainers()
+      .map(container => container.getComponents())
+      .flat()
+      .find(component => component.getOverlayElement().is(overlayElement)
+        || angular.element.contains(component.getOverlayElement()[0], overlayElement));
+  }
+
+  getContainerByOverlayElement(overlayElement) {
     if (!this._page) {
       return;
     }
 
     const containers = this._page.getContainers();
 
-    // eslint-disable-next-line no-plusplus
-    for (let i = 0; i < containers.length; i++) {
-      const component = containers[i].getComponents().find(c => c.getOverlayElement().is(componentOverlayElement));
-      if (component) {
-        // eslint-disable-next-line consistent-return
-        return component;
-      }
-    }
+    // eslint-disable-next-line consistent-return
+    return containers.find(container => container.getOverlayElement().is(overlayElement));
   }
 
   getContainerByIframeElement(containerIFrameElement) {

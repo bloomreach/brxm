@@ -15,7 +15,6 @@
  */
 
 describe('ComponentCatalogService', () => {
-  let $log;
   let $q;
   let $rootScope;
   let ComponentCatalogService;
@@ -32,250 +31,147 @@ describe('ComponentCatalogService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
+    ConfigService = {};
+    ContainerService = jasmine.createSpyObj('ContainerService', ['addComponent']);
+    EditComponentService = jasmine.createSpyObj('EditComponentService', ['startEditing']);
+    MaskService = jasmine.createSpyObj('MaskService', ['mask', 'unmask', 'onClick', 'removeClickHandler']);
+    HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['liftIframeAboveMask', 'lowerIframeBeneathMask']);
+    OverlayService = jasmine.createSpyObj('OverlayService', [
+      'liftSidePanelAboveMask',
+      'lowerIframeBeneathMask',
+      'toggleAddMode',
+    ]);
+    PageStructureService = jasmine.createSpyObj('PageStructureService', ['getPage']);
+    RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['close']);
+    SidePanelService = jasmine.createSpyObj('SidePanelService', [
+      'liftSidePanelAboveMask',
+      'lowerSidePanelBeneathMask',
+    ]);
+
+    angular.mock.module(($provide) => {
+      $provide.value('ConfigService', ConfigService);
+      $provide.value('ContainerService', ContainerService);
+      $provide.value('EditComponentService', EditComponentService);
+      $provide.value('MaskService', MaskService);
+      $provide.value('HippoIframeService', HippoIframeService);
+      $provide.value('OverlayService', OverlayService);
+      $provide.value('PageStructureService', PageStructureService);
+      $provide.value('RightSidePanelService', RightSidePanelService);
+      $provide.value('SidePanelService', SidePanelService);
+    });
+
     inject((
-      _$log_,
       _$q_,
       _$rootScope_,
       _ComponentCatalogService_,
-      _ConfigService_,
-      _ContainerService_,
-      _EditComponentService_,
-      _HippoIframeService_,
-      _MaskService_,
-      _OverlayService_,
-      _PageStructureService_,
-      _RightSidePanelService_,
-      _SidePanelService_,
     ) => {
-      $log = _$log_;
       $q = _$q_;
       $rootScope = _$rootScope_;
       ComponentCatalogService = _ComponentCatalogService_;
-      ConfigService = _ConfigService_;
-      ContainerService = _ContainerService_;
-      EditComponentService = _EditComponentService_;
-      HippoIframeService = _HippoIframeService_;
-      MaskService = _MaskService_;
-      OverlayService = _OverlayService_;
-      PageStructureService = _PageStructureService_;
-      RightSidePanelService = _RightSidePanelService_;
-      SidePanelService = _SidePanelService_;
     });
   });
 
-  describe('component add mode', () => {
-    beforeEach(() => {
-      spyOn(MaskService, 'mask');
-      spyOn(MaskService, 'unmask');
-      spyOn(MaskService, 'removeClickHandler');
-      spyOn(MaskService, 'onClick');
-      spyOn(SidePanelService, 'liftSidePanelAboveMask');
-      spyOn(SidePanelService, 'lowerSidePanelBeneathMask');
-      spyOn(HippoIframeService, 'liftIframeAboveMask');
-      spyOn(HippoIframeService, 'lowerIframeBeneathMask');
-      spyOn(OverlayService, 'onContainerClick');
-      spyOn(OverlayService, 'enableAddMode');
-      spyOn(OverlayService, 'disableAddMode');
-      spyOn(OverlayService, 'offContainerClick');
-      spyOn(OverlayService, 'showComponentsOverlay');
-      spyOn(ContainerService, 'addComponent');
-    });
+  describe('selectComponent', () => {
+    it('should update the user interface on select component', () => {
+      OverlayService.toggleAddMode.and.returnValue($q.defer());
+      ComponentCatalogService.selectComponent();
 
-    it('should forward mask and z-indexes handling and setup click handlers', () => {
-      ComponentCatalogService.selectComponent({ id: 'componentId' });
-
-      expect(MaskService.mask).toHaveBeenCalled();
+      expect(MaskService.mask).toHaveBeenCalledWith('mask-add-component');
       expect(SidePanelService.liftSidePanelAboveMask).toHaveBeenCalled();
       expect(HippoIframeService.liftIframeAboveMask).toHaveBeenCalled();
-      expect(OverlayService.enableAddMode).toHaveBeenCalled();
-      expect(OverlayService.onContainerClick).toHaveBeenCalledWith(jasmine.any(Function));
-      expect(MaskService.onClick).toHaveBeenCalledWith(jasmine.any(Function));
     });
 
-    it('should disable on mask click', () => {
-      ComponentCatalogService._handleMaskClick();
+    it('should restore the user interface after selecting a component', () => {
+      OverlayService.toggleAddMode.and.returnValue($q.reject());
+      ComponentCatalogService.selectComponent();
+      $rootScope.$digest();
 
-      expect(ComponentCatalogService.selectedComponent).toBe(undefined);
-      expect(MaskService.unmask).toHaveBeenCalled();
+      expect(MaskService.unmask).toHaveBeenCalledWith();
       expect(SidePanelService.lowerSidePanelBeneathMask).toHaveBeenCalled();
       expect(HippoIframeService.lowerIframeBeneathMask).toHaveBeenCalled();
-      expect(OverlayService.disableAddMode).toHaveBeenCalled();
-      expect(OverlayService.offContainerClick).toHaveBeenCalled();
-      expect(MaskService.removeClickHandler).toHaveBeenCalled();
     });
 
-    it('remove overlay if it was added by ComponentCatalogService', () => {
-      OverlayService.isComponentsOverlayDisplayed = true;
-      OverlayService.toggleOverlayByComponent = true;
-      ComponentCatalogService._handleMaskClick();
+    it('should toggle on overlay add mode', () => {
+      ComponentCatalogService.selectComponent();
 
-      expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(false);
-      expect(OverlayService.toggleOverlayByComponent).toEqual(false);
+      expect(OverlayService.toggleAddMode).toHaveBeenCalledWith(true);
+    });
+
+    it('should toggle off overlay add mode on mask click', () => {
+      ComponentCatalogService.selectComponent();
+      const { args: [onMaskClick] } = MaskService.onClick.calls.mostRecent();
+      onMaskClick();
+
+      expect(OverlayService.toggleAddMode).toHaveBeenCalledWith(false);
     });
   });
 
-  describe('adding a component to container', () => {
-    let isDisabled;
-    let mockComponent;
-    let mockComponent2;
-    let mockComponent3;
-    let mockContainer;
-    let mockEvent;
-    let mockEventTarget;
-    let mockPage;
-    const selectedComponent = {};
+  describe('_addComponent', () => {
+    const component = {};
+    const container = {};
+    let page;
 
     beforeEach(() => {
-      [mockEventTarget] = Array.from(angular.element('<div></div>'));
-      isDisabled = false;
+      OverlayService.toggleAddMode.and.returnValue($q.resolve({
+        container: 'container-id',
+        nextComponent: 'component-id',
+      }));
 
-      mockEvent = {
-        stopPropagation: jasmine.createSpy('stopPropagation'),
-        get target() { return mockEventTarget; },
-      };
+      page = jasmine.createSpyObj('Page', ['getComponentById', 'getContainerById']);
+      page.getComponentById.and.returnValue(component);
+      page.getContainerById.and.returnValue(container);
 
-      mockComponent = {
-        getId: () => 456,
-        getContainer: () => mockContainer,
-      };
-
-      mockComponent2 = {
-        getId: () => 789,
-        getContainer: () => mockContainer,
-      };
-
-      mockComponent3 = {
-        getId: () => 123,
-        getContainer: () => mockContainer,
-      };
-
-      mockContainer = {
-        isDisabled() {
-          return isDisabled;
-        },
-        getId() {
-          return 123;
-        },
-        getComponents: () => [
-          mockComponent,
-          mockComponent2,
-        ],
-      };
-
-      ComponentCatalogService.selectedComponent = selectedComponent;
-
-      mockPage = {
-        getContainerById: jasmine.createSpy('getContainerById').and.returnValue(mockContainer),
-        getComponentById: jasmine.createSpy('getComponentById').and.returnValue(mockComponent),
-      };
-
-      spyOn($log, 'info');
-      spyOn(ContainerService, 'addComponent');
-      spyOn(EditComponentService, 'startEditing');
-      spyOn(HippoIframeService, 'reload').and.returnValue($q.resolve());
-      spyOn(PageStructureService, 'getPage').and.returnValue(mockPage);
-      spyOn(RightSidePanelService, 'close');
+      PageStructureService.getPage.and.returnValue(page);
+      ContainerService.addComponent.and.returnValue('new-component-id');
     });
 
-    describe('positioning of component within container', () => {
-      const addedComponent = mockComponent3;
-
-      beforeEach(() => {
-        ComponentCatalogService.selectedComponent = addedComponent;
-      });
-
-      it('should position the component after the click target', () => {
-        const clickedComponent = mockComponent;
-        const expectedNextComponentId = mockComponent2.getId();
-        [mockEventTarget] = Array.from(
-          angular.element('<div class="hippo-overlay-element-component-drop-area-after"></div>'),
-        );
-
-        ComponentCatalogService._handleComponentClick(mockEvent, clickedComponent);
-        $rootScope.$digest();
-
-        expect(ContainerService.addComponent)
-          .toHaveBeenCalledWith(addedComponent, mockContainer, expectedNextComponentId);
-      });
-
-      it('should position the component after the click target last in the container', () => {
-        const clickedComponent = mockComponent2;
-        const expectedNextComponentId = undefined;
-        [mockEventTarget] = Array.from(
-          angular.element('<div class="hippo-overlay-element-component-drop-area-after"></div>'),
-        );
-
-        ComponentCatalogService._handleComponentClick(mockEvent, clickedComponent);
-        $rootScope.$digest();
-
-        expect(ContainerService.addComponent)
-          .toHaveBeenCalledWith(addedComponent, mockContainer, expectedNextComponentId);
-      });
-
-      it('should position the component before the click target', () => {
-        const clickedComponent = mockComponent2;
-        const expectedNextComponentId = mockComponent2.getId();
-        [mockEventTarget] = Array.from(
-          angular.element('<div class="hippo-overlay-element-component-drop-area-before"></div>'),
-        );
-
-        ComponentCatalogService._handleComponentClick(mockEvent, clickedComponent);
-        $rootScope.$digest();
-
-        expect(ContainerService.addComponent)
-          .toHaveBeenCalledWith(addedComponent, mockContainer, expectedNextComponentId);
-      });
-
-      afterEach(() => {
-        ComponentCatalogService.selectedComponent = selectedComponent;
-      });
-    });
-
-    it('adds component to a container', () => {
-      ContainerService.addComponent.and.returnValue('789');
-      RightSidePanelService.close.and.returnValue($q.resolve());
-
-      ComponentCatalogService._handleContainerClick(mockEvent, mockContainer);
+    it('should call the container service to add a component', () => {
+      const selectedComponent = {};
+      ComponentCatalogService.selectComponent(selectedComponent);
       $rootScope.$digest();
 
-      expect(ContainerService.addComponent).toHaveBeenCalledWith(selectedComponent, mockContainer, undefined);
-      expect(EditComponentService.startEditing).toHaveBeenCalledWith(mockComponent);
+      expect(page.getContainerById).toHaveBeenCalledWith('container-id');
+      expect(ContainerService.addComponent).toHaveBeenCalledWith(selectedComponent, container, 'component-id');
+    });
+
+    it('should close the right side panel', () => {
+      ComponentCatalogService.selectComponent();
+      $rootScope.$digest();
+
       expect(RightSidePanelService.close).toHaveBeenCalled();
     });
 
-    it('does not open the component editor when relevance feature is present', () => {
-      ConfigService.relevancePresent = true;
-
-      ComponentCatalogService._handleContainerClick(mockEvent, mockContainer);
+    it('should open the component editor', () => {
+      ComponentCatalogService.selectComponent();
       $rootScope.$digest();
 
-      expect(ContainerService.addComponent).toHaveBeenCalledWith(selectedComponent, mockContainer, undefined);
-      expect(EditComponentService.startEditing).not.toHaveBeenCalled();
+      expect(page.getComponentById).toHaveBeenCalledWith('new-component-id');
+      expect(EditComponentService.startEditing).toHaveBeenCalledWith(component);
+    });
+
+    it('should not close the right side panel if relevance is present', () => {
+      ConfigService.relevancePresent = true;
+      ComponentCatalogService.selectComponent();
+      $rootScope.$digest();
+
       expect(RightSidePanelService.close).not.toHaveBeenCalled();
     });
 
-    it('ignores component add if the right side panel was not closed', () => {
-      RightSidePanelService.close.and.returnValue($q.reject());
-      ComponentCatalogService._handleContainerClick(mockEvent, mockContainer);
+    it('should not open the component editor if relevance is present', () => {
+      ConfigService.relevancePresent = true;
+      ComponentCatalogService.selectComponent();
+      $rootScope.$digest();
 
-      expect(ContainerService.addComponent).not.toHaveBeenCalled();
-    });
-
-    it('ignores component add to a disabled container', () => {
-      isDisabled = true;
-      ComponentCatalogService._handleContainerClick(mockEvent, mockContainer);
-
-      expect(ContainerService.addComponent).not.toHaveBeenCalled();
-      expect(mockEvent.stopPropagation).toHaveBeenCalled();
+      expect(EditComponentService.startEditing).not.toHaveBeenCalled();
     });
   });
 
-  describe('returning the selected component', () => {
+  describe('getSelectedComponent', () => {
     it('should return the selected component', () => {
-      const component = { id: 'component' };
-      ComponentCatalogService.selectedComponent = component;
+      OverlayService.toggleAddMode.and.returnValue($q.defer());
+      ComponentCatalogService.selectComponent({ id: 'component' });
 
-      expect(ComponentCatalogService.getSelectedComponent()).toEqual(component);
+      expect(ComponentCatalogService.getSelectedComponent()).toEqual({ id: 'component' });
     });
   });
 });
