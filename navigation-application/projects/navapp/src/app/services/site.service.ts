@@ -57,13 +57,14 @@ export class SiteService {
   async updateSelectedSite(site: Site): Promise<void> {
     this.busyIndicatorService.show();
 
-    if (!site.isNavappEnabled) {
-      return this.redirectToiUI();
-    }
-
     this.logger.debug(`updateSelectedSite() is called for the active app '${this.clientAppService.activeApp.url}'`, site);
     await this.clientAppService.activeApp.api.updateSelectedSite(site);
     this.logger.debug('Active app successfully updated the selected site');
+
+    if (!site.isNavappEnabled) {
+      this.logger.debug('Redirect to SM iUI for non-navapp site/account');
+      return this.redirectToiUI();
+    }
 
     this.selectedSite.next(site);
 
@@ -92,8 +93,14 @@ export class SiteService {
     // For iUI mode, remove '/navapp' from the url.
     // This needs to be updated once we figure out a reasonable route name for navapp mode.
     const path = this.windowRef.nativeWindow.location.href;
-    const newPath = path.replace('/navapp', '');
 
-    this.windowRef.nativeWindow.location.assign(newPath);
+    let newUrl = new URL(path.replace('/navapp', ''));
+    // if no app URL specified, set to current active app's url
+    if (newUrl.pathname === '/') {
+      const currentAppUrl = new URL(this.clientAppService.activeApp.url);
+      newUrl = new URL(newUrl.href + currentAppUrl.pathname.replace('/sm/', ''));
+    }
+
+    this.windowRef.nativeWindow.location.assign(newUrl.href);
   }
 }

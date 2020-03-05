@@ -89,15 +89,15 @@ describe('SiteService', () => {
 
     clientAppMocks = [
       new ClientAppMock({
-        url: 'testApp1',
+        url: 'https://abc.com/sm/testApp1',
         api: { updateSelectedSite: app1UpdateSelectedSite },
       }),
       new ClientAppMock({
-        url: 'testApp2',
+        url: 'https://abc.com/sm/testApp2',
         api: { updateSelectedSite: app2UpdateSelectedSite },
       }),
       new ClientAppMock({
-        url: 'testApp3',
+        url: 'https://abc.com/sm/testApp3',
         api: { updateSelectedSite: app3UpdateSelectedSite },
       }),
     ];
@@ -110,7 +110,7 @@ describe('SiteService', () => {
     windowRefMock = {
       nativeWindow: {
         location: {
-          href: '/navapp/some/path',
+          href: 'https://abc.com/navapp/',
           reload: jasmine.createSpy('reload'),
           assign: jasmine.createSpy('assign'),
         },
@@ -162,7 +162,7 @@ describe('SiteService', () => {
       expect(app2UpdateSelectedSite).toHaveBeenCalledWith(site);
     });
 
-    it('should redirect to iUI if navapp isn\'t enabled for the selected site', () => {
+    it('should redirect to iUI if navapp isn\'t enabled for the selected site', async () => {
       const site: Site = {
         siteId: 2,
         accountId: 123,
@@ -170,9 +170,9 @@ describe('SiteService', () => {
         isNavappEnabled: false,
       };
 
-      service.updateSelectedSite(site);
-
-      expect(windowRefMock.nativeWindow.location.assign).toHaveBeenCalledWith('/some/path');
+      await service.updateSelectedSite(site);
+      expect(app2UpdateSelectedSite).toHaveBeenCalledWith(site);
+      expect(windowRefMock.nativeWindow.location.assign).toHaveBeenCalledWith('https://abc.com/testApp2');
     });
 
     describe('logging', () => {
@@ -189,7 +189,10 @@ describe('SiteService', () => {
         }));
 
         it('should log that updateSelectedSite() is called for the active app', () => {
-          expect(loggerMock.debug).toHaveBeenCalledWith('updateSelectedSite() is called for the active app \'testApp2\'', site);
+          expect(loggerMock.debug).toHaveBeenCalledWith(
+            'updateSelectedSite() is called for the active app \'https://abc.com/sm/testApp2\'',
+            site,
+          );
         });
       });
     });
