@@ -92,9 +92,9 @@ public class DocumentBuilderTest extends RepositoryTestCase {
     }
 
     @Test
-    public void DraftPublishedUnpublished() throws RepositoryException, EditorException {
+    public void draftPublishedUnpublished() throws RepositoryException, EditorException {
         build(draftPublishedUnpublished, session);
-        final DocumentImpl actual = DocumentBuilder
+        final Document actual = DocumentBuilder
                 .create()
                 .node(session.getNode("/test/content/document")).build();
         final DocumentImpl expected = new DocumentImpl();
@@ -105,9 +105,9 @@ public class DocumentBuilderTest extends RepositoryTestCase {
     }
 
     @Test
-    public void DraftPublishedUnpublishedTransferable() throws RepositoryException, EditorException {
+    public void draftPublishedUnpublishedTransferable() throws RepositoryException, EditorException {
         build(draftPublishedUnpublishedTransferable, session);
-        final DocumentImpl actual = DocumentBuilder
+        final Document actual = DocumentBuilder
                 .create()
                 .node(session.getNode("/test/content/document")).build();
         final DocumentImpl expected = new DocumentImpl();
@@ -119,9 +119,9 @@ public class DocumentBuilderTest extends RepositoryTestCase {
     }
 
     @Test
-    public void DraftPublishedUnpublishedTransferableHolder() throws RepositoryException, EditorException {
+    public void draftPublishedUnpublishedTransferableHolder() throws RepositoryException, EditorException {
         build(draftPublishedUnpublishedTransferableHolder, session);
-        final DocumentImpl actual = DocumentBuilder
+        final Document actual = DocumentBuilder
                 .create()
                 .userId("userId")
                 .node(session.getNode("/test/content/document")).build();

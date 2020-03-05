@@ -15,23 +15,30 @@
 
 package org.hippoecm.frontend.editor;
 
+import java.util.Map;
 import java.util.Objects;
 
+import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
-import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.repository.HippoStdNodeType;
-import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.branch.BranchHandle;
 import org.onehippo.repository.documentworkflow.BranchHandleImpl;
+import org.onehippo.repository.documentworkflow.DocumentHandle;
+import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.repository.HippoStdNodeType.DRAFT;
+import static org.hippoecm.repository.HippoStdNodeType.PUBLISHED;
+import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 
 /**
  * Maps a {@link javax.jcr.Node} to a {@link Document}.
@@ -45,9 +52,11 @@ public class DocumentBuilder {
     private String branchId;
     private String userId;
     private Node handleNode;
+    private DocumentHandle documentHandle;
+    private BranchHandle branchHandle;
 
     private DocumentBuilder() {
-        branchId = "master";
+        branchId = BranchConstants.MASTER_BRANCH_ID;
         document = new DocumentImpl();
         userId = StringUtils.EMPTY;
     }
@@ -57,16 +66,19 @@ public class DocumentBuilder {
     }
 
     public DocumentBuilder branchId(final String branchId) {
+        Objects.requireNonNull(branchId);
         this.branchId = branchId;
         return this;
     }
 
     public DocumentBuilder node(final Node node) {
+        Objects.requireNonNull(node);
         this.node = node;
         return this;
     }
 
     public DocumentBuilder userId(String userId) {
+        Objects.requireNonNull(userId);
         this.userId = userId;
         return this;
     }
@@ -77,8 +89,10 @@ public class DocumentBuilder {
      * @return {@link Document} representation of the supplied node ( See {@link #node(Node)}
      * @throws EditorException
      */
-    public DocumentImpl build() throws EditorException {
+    public Document build() throws EditorException {
         Objects.requireNonNull(node);
+        Objects.requireNonNull(userId);
+        Objects.requireNonNull(branchId);
         log.debug("Building document for node : { path : {} }", JcrUtils.getNodePathQuietly(node));
         try {
             buildRevision();
@@ -93,7 +107,7 @@ public class DocumentBuilder {
 
     protected void buildRevision() throws RepositoryException, EditorException {
         if (isVersion()) {
-            log.debug("Node : { path : {} } is a revision, building revision", node);
+            log.debug("Node : { path : {} } is a revision, building revision", node.getPath());
             final Node frozenNode = node.getNode(JcrConstants.JCR_FROZEN_NODE);
             document.setRevision(frozenNode.getPath());
             handleNode = getVersionHandle(frozenNode);
@@ -108,61 +122,47 @@ public class DocumentBuilder {
 
     protected Node getVersionHandle(final Node frozenNode) throws RepositoryException, EditorException {
         final String uuid = frozenNode.getProperty(JcrConstants.JCR_FROZEN_UUID).getString();
-        final Node variant = node.getSession().getNodeByIdentifier(uuid);
-        if (variant == null) {
-            String message = "Associated unpublished variant : { identifier : %s } " +
+        try {
+            final Node variant = node.getSession().getNodeByIdentifier(uuid);
+            final Node parent = variant.getParent();
+            log.debug("Found associated unpublished variant : { path : {} } for frozen Node : { path : {} }"
+                    , parent.getPath(), frozenNode.getPath());
+            return parent;
+        } catch (ItemNotFoundException e) {
+            String message = "Associated unpublished variant: { identifier : %s } or its handle " +
                     "for frozenNode : { path : %s } cannot be found";
             throw new EditorException(String.format(message, uuid, frozenNode.getPath()));
         }
-        final Node parent = variant.getParent();
-        log.debug("Found associated unpublished variant : { path : {} } for frozen Node : { path : {} }"
-                , parent, frozenNode);
-        return parent;
     }
 
-    protected void buildHandle() throws WorkflowException, RepositoryException, EditorException {
-        BranchHandle branchHandle = new BranchHandleImpl(branchId, handleNode);
-        if (isHandle()) {
-            final NodeIterator nodes = handleNode.getNodes();
-            for (final NodeIterator iter = nodes; iter.hasNext(); ) {
-                final Node child = iter.nextNode();
-                if (isVariant(child)) {
-                    log.debug("Build variant : { path : {} }", child.getPath());
-                    buildVariant(branchHandle, child);
-                }
+    protected void buildHandle() throws WorkflowException, RepositoryException {
+        documentHandle = new DocumentHandle(handleNode);
+        documentHandle.initialize(branchId);
+        branchHandle = new BranchHandleImpl(branchId, documentHandle);
+        final Map<String, DocumentVariant> documents = documentHandle.getDocuments();
+        for (String key : documents.keySet()) {
+            final DocumentVariant documentVariant = documents.get(key);
+            if (documentVariant == null ){
+                break;
+            }
+            if (DRAFT.equals(key) ){
+                buildDraft(documentVariant.getNode());
+                final Boolean transferable = documentVariant.isTransferable();
+                document.setTransferable(transferable == null ? false : transferable);
+                log.debug("Transferable: {}", document.isTransferable());
+                document.setHolder(this.userId.equals(documentVariant.getHolder()));
+                log.debug("Holder is current user: {}", document.isHolder());
+            }
+            if (UNPUBLISHED.equals(key)){
+                buildUnpublished(documentVariant.getNode());
+            }
+            if (PUBLISHED.equals(key)){
+                buildPublished(documentVariant.getNode());
             }
         }
     }
 
-    protected boolean isVariant(final Node child) throws RepositoryException {
-        return child.getName().equals(handleNode.getName())
-                && child.hasProperty(HippoStdNodeType.HIPPOSTD_STATE);
-    }
-
-    protected boolean isHandle() throws RepositoryException {
-        return handleNode.isNodeType(HippoNodeType.NT_HANDLE);
-    }
-
-    private void buildVariant(final BranchHandle branchHandle, final Node child)
-            throws RepositoryException, EditorException {
-        final String state = child.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
-        switch (state) {
-            case HippoStdNodeType.UNPUBLISHED:
-                buildUnpublished(branchHandle, child);
-                break;
-            case HippoStdNodeType.PUBLISHED:
-                buildPublished(branchHandle, child);
-                break;
-            case HippoStdNodeType.DRAFT:
-                buildDraft(branchHandle, child);
-                break;
-            default:
-                String message = "Variant : { path: %s } has invalid state : %s.";
-                throw new EditorException(String.format(message, state, child.getPath()));
-        }
-    }
-
-    protected void buildDraft(final BranchHandle branchHandle, final Node child)
+    protected void buildDraft(final Node child)
             throws RepositoryException {
         log.debug("Build draft variant : { path : {} }", child.getPath());
         if (hasRevision()) {
@@ -177,31 +177,15 @@ public class DocumentBuilder {
             draft = child;
         }
         document.setDraft(draft.getPath());
-        buildHolder(child);
-        buildTransferable(child);
+
+
     }
 
     private boolean hasRevision() {
         return !StringUtils.EMPTY.equals(document.getRevision());
     }
 
-    private void buildTransferable(final Node child) throws RepositoryException {
-        if (child.hasProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE)) {
-            final boolean transferable = child.getProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE).getBoolean();
-            document.setTransferable(transferable);
-        }
-        log.debug("Transferable: {}", document.isTransferable() );
-    }
-
-    private void buildHolder(final Node child) throws RepositoryException {
-        if (child.hasProperty(HippoStdNodeType.HIPPOSTD_HOLDER)
-                && child.getProperty(HippoStdNodeType.HIPPOSTD_HOLDER).getString().equals(userId)) {
-            document.setHolder(true);
-        }
-        log.debug("Holder is current user: {}", document.isHolder());
-    }
-
-    protected void buildPublished(final BranchHandle branchHandle, final Node child)
+    protected void buildPublished(final Node child)
             throws RepositoryException {
         // if there is no published for the branch we fallback to master published and if there is
         // no master published we just use child
@@ -216,7 +200,7 @@ public class DocumentBuilder {
         document.setPublished(published.getPath());
     }
 
-    protected void buildUnpublished(final BranchHandle branchHandle, final Node child)
+    protected void buildUnpublished(final Node child)
             throws RepositoryException {
         log.debug("Build unpublished variant : { path : {} }", child.getPath());
         Node unpublished = branchHandle.getUnpublished();
