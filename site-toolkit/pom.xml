@@ -68,6 +68,7 @@
 
     <xalan.version>2.7.2</xalan.version>
 
+    <commons-lang.version>2.6</commons-lang.version>
     <commons-lang3.version>3.9</commons-lang3.version>
     <commons-collections4.version>4.4</commons-collections4.version>
     <commons-pool.version>1.6</commons-pool.version>
