@@ -127,11 +127,7 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
         if (parent.isNodeType(NT_FOLDER)) {
             return true;
         }
-        if (parent.isNodeType(NT_DIRECTORY)) {
-            return true;
-        }
-
-        return false;
+        return parent.isNodeType(NT_DIRECTORY);
     }
 
     protected Node getVariant(final Node handle, final WorkflowUtils.Variant variant) throws RepositoryException {
@@ -201,6 +197,7 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
                 return result;
             }
         } catch (RepositoryException ignored) {
+            log.warn("Something went wrong while getting the document name", ignored);
         }
         return new StringResourceModel("unknown", this);
     }

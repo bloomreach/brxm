@@ -44,6 +44,7 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
+    public static final String SERVICE_EDIT = "service.edit";
     private final StdWorkflow saveDraftAction;
 
     public EditingWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
@@ -78,7 +79,7 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             protected String execute(Workflow wf) throws Exception {
-                final IEditorManager editorMgr = context.getService("service.edit", IEditorManager.class);
+                final IEditorManager editorMgr = context.getService(SERVICE_EDIT, IEditorManager.class);
                 IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
                 editor.save();
                 return null;
@@ -146,7 +147,7 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             public String execute(Workflow wf) throws Exception {
-                final IEditorManager editorMgr = context.getService("service.edit", IEditorManager.class);
+                final IEditorManager editorMgr = context.getService(SERVICE_EDIT, IEditorManager.class);
                 IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
                 editor.done();
                 return null;
@@ -184,7 +185,7 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             @Override
             protected IDialogService.Dialog createRequestDialog() {
                 try {
-                    final IEditorManager editorMgr = context.getService("service.edit", IEditorManager.class);
+                    final IEditorManager editorMgr = context.getService(SERVICE_EDIT, IEditorManager.class);
                     IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
 
                     if (editor.isModified() || !editor.isValid()) {
@@ -216,7 +217,7 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
             @Override
             public String execute(Workflow wf) throws Exception {
-                final IEditorManager editorMgr = context.getService("service.edit", IEditorManager.class);
+                final IEditorManager editorMgr = context.getService(SERVICE_EDIT, IEditorManager.class);
                 IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
                 editor.discard();
                 return null;
