@@ -17,7 +17,6 @@ package org.hippoecm.hst.content.beans.manager;
 
 import java.lang.ref.WeakReference;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.annotation.Nonnull;
 import javax.jcr.Node;
@@ -35,7 +34,6 @@ import org.onehippo.cms7.services.contenttype.ContentTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.commons.collections.MapUtils.isNotEmpty;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
 /**
@@ -45,7 +43,7 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
 
     private static final Logger log = LoggerFactory.getLogger(DynamicObjectConverterImpl.class);
 
-    private final Map<String, Class<? extends DynamicBeanInterceptor>> dynamicBeanInterceptorPairs = new ConcurrentHashMap<>();
+    private final Map<String, Class<? extends DynamicBeanInterceptor>> dynamicBeanInterceptorPairs;
     private final DynamicBeanService dynamicBeanService;
     private final WeakReference<ContentTypes> contentTypesRef;
 
@@ -54,9 +52,7 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
             final String[] fallBackJcrNodeTypes, final ContentTypes contentTypes) {
         super(jcrPrimaryNodeTypeBeanPairs, fallBackJcrNodeTypes);
 
-        if (isNotEmpty(dynamicBeanInterceptorPairs)) {
-            this.dynamicBeanInterceptorPairs.putAll(dynamicBeanInterceptorPairs);
-        }
+        this.dynamicBeanInterceptorPairs= dynamicBeanInterceptorPairs;
 
         // Store ContentTypes as a WeakReference so that
         // corresponding ObjectConverter cache entry at VersionedObjectConverterProxy could be eventually invalidated
@@ -170,6 +166,9 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
     }
 
     public Class<? extends DynamicBeanInterceptor> getInterceptorDefinition(final String cmsType) {
+        if (dynamicBeanInterceptorPairs == null) {
+            return null;
+        }
         return dynamicBeanInterceptorPairs.get(cmsType);
     }
 
