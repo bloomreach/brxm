@@ -22,7 +22,6 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.wicket.migrate.StringResourceModelMigration;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
@@ -41,14 +40,16 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
+    /** Workflow action that edits the unpublished variant of a document. */
     private final StdWorkflow editAction;
+    /** Workflow action that edits the current draft if it has been saved as draft. */
     private final StdWorkflow editDraftAction;
     private final Map<String, Serializable> info;
 
     @SuppressWarnings({"unused", "FieldCanBeLocal"}) // used by a PropertyModel
     private String inUseBy;
 
-    protected AbstractPreviewWorkflowPlugin(final IPluginContext context, IPluginConfig config) {
+    protected AbstractPreviewWorkflowPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
         info = getHints();
@@ -76,7 +77,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
 
             @Override
             protected IModel getTitle() {
-                return StringResourceModelMigration.of("in-use-by", this, null,
+                return new StringResourceModel("in-use-by", this).setModel(null).setParameters(
                         new PropertyModel(AbstractPreviewWorkflowPlugin.this, "inUseBy"));
             }
 
@@ -88,7 +89,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
         });
 
 
-        editDraftAction = new StdWorkflow("editDraft", new StringResourceModel("edit-draft-label", this), getModel()) {
+        editDraftAction = new StdWorkflow("editDraftAction", new StringResourceModel("edit-draft-label", this), getModel()) {
 
             @Override
             public String getSubMenu() {
@@ -102,7 +103,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
 
 
             @Override
-            protected String execute(Workflow wf) throws Exception {
+            protected String execute(final Workflow wf) throws Exception {
                 DocumentWorkflow workflow = (DocumentWorkflow) wf;
                 Document docRef = workflow.editDraft();
                 return openEditor(docRef);
@@ -134,7 +135,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
             @Override
             protected IDialogService.Dialog createRequestDialog() {
                 ConfirmDialog confirmationDialog = new ConfirmDialog(new StringResourceModel("edit-discard-changes-confirmation-title", AbstractPreviewWorkflowPlugin.this)
-                        , new StringResourceModel("edit-discard-changes-confirmation-body", AbstractPreviewWorkflowPlugin.this)){
+                        , new StringResourceModel("edit-discard-changes-confirmation-body", AbstractPreviewWorkflowPlugin.this)) {
                     @Override
                     public void invokeWorkflow() throws Exception {
                         editAction.invokeWorkflow();
@@ -144,7 +145,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
             }
 
             @Override
-            protected String execute(Workflow wf) throws Exception {
+            protected String execute(final Workflow wf) throws Exception {
                 DocumentWorkflow workflow = (DocumentWorkflow) wf;
                 String branchId = getBranchIdModel().getBranchId();
                 Document docRef = workflow.obtainEditableInstance(branchId);
