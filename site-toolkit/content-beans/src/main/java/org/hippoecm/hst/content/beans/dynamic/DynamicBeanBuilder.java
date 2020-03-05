@@ -29,7 +29,6 @@ import javax.jcr.Node;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import org.hippoecm.hst.content.beans.standard.DynamicBeanInterceptor;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.content.beans.standard.HippoCompound;
 import org.hippoecm.hst.content.beans.standard.HippoDocument;
