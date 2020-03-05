@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.collections.IteratorUtils;
+import org.apache.commons.collections4.IteratorUtils;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.components.HstComponentInfo;
 import org.hippoecm.hst.core.component.HstComponent;
@@ -110,7 +110,7 @@ public class HstComponentWindowImpl implements HstComponentWindow {
     
     public void addComponentExcpetion(HstComponentException e) {
         if (this.componentExceptions == null) {
-            this.componentExceptions = new LinkedList<HstComponentException>();
+            this.componentExceptions = new LinkedList<>();
         }
         
         this.componentExceptions.add(e);
@@ -277,13 +277,12 @@ public class HstComponentWindowImpl implements HstComponentWindow {
         return null;
     }
     
-    @SuppressWarnings("unchecked")
     public Enumeration<String> getAttributeNames() {
         if (attributes != null) {
-            return (Enumeration<String>) IteratorUtils.asEnumeration(attributes.keySet().iterator());
+            return IteratorUtils.asEnumeration(attributes.keySet().iterator());
         }
         
-        return (Enumeration<String>) IteratorUtils.asEnumeration(Collections.emptySet().iterator());
+        return IteratorUtils.asEnumeration(Collections.emptyIterator());
     }
 
     @Override

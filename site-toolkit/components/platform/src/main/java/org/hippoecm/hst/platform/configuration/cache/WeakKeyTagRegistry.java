@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,10 +24,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.map.IdentityMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +41,7 @@ public class WeakKeyTagRegistry<U, K> {
     private static final Logger log = LoggerFactory.getLogger(WeakKeyTagRegistry.class);
 
     final Map<U, List<WeakReference<K>>> tagKeysMap = new HashMap<>();
-    final Map<WeakReference<K>, List<U>> keyTagsMap = new IdentityMap();
+    final Map<WeakReference<K>, List<U>> keyTagsMap = new IdentityHashMap();
     private final ReferenceQueue<K> cleanupQueue = new ReferenceQueue<>();
 
     public void put(U tag, K key) {
