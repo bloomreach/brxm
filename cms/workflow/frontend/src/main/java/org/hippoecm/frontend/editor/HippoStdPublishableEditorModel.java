@@ -38,13 +38,7 @@ public class HippoStdPublishableEditorModel {
         this.editor = StringUtils.EMPTY;
     }
 
-    public static HippoStdPublishableEditorModel invalid() {
-        final HippoStdPublishableEditorModel hippoStdPublishableEditorModel = new HippoStdPublishableEditorModel();
-        hippoStdPublishableEditorModel.mode = null;
-        hippoStdPublishableEditorModel.editor = "INVALID";
-        hippoStdPublishableEditorModel.base = "INVALID";
-        return hippoStdPublishableEditorModel;
-    }
+
 
     public void setMode(IEditor.Mode mode){
         this.mode = mode;
