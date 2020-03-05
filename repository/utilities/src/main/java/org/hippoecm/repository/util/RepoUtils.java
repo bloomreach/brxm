@@ -26,7 +26,7 @@ import java.util.jar.Manifest;
 import javax.jcr.Session;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.util.ISO9075;
 
 /**

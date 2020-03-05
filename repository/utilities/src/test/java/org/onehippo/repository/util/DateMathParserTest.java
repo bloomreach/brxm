@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package org.onehippo.repository.util;
 
-import org.apache.commons.lang.time.DurationFormatUtils;
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,8 +97,8 @@ public class DateMathParserTest {
             log.debug("{} and {} have a diffent timezones offset", sdf.format(startDate), sdf.format(endDate));
         }
 
-        final String expected = DurationFormatUtils.formatDurationISO(utcDurationInMillis);
-        final String actual = DurationFormatUtils.formatDurationISO(durationInMillis);
+        final String expected = DurationFormatUtils.formatDurationISO(Math.abs(utcDurationInMillis));
+        final String actual = DurationFormatUtils.formatDurationISO(Math.abs(durationInMillis));
         assertEquals(expected, actual);
 
         log.debug("Expected duration:{}, actual duration:{}", expected, actual);

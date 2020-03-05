@@ -34,7 +34,7 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.nodetype.NodeType;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.repository.util.MavenComparableVersion;
 import org.onehippo.cm.engine.impl.ContentDefinitionSorter;
 import org.onehippo.cm.model.ConfigurationModel;

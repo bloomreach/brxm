@@ -24,7 +24,7 @@ import java.util.concurrent.Semaphore;
 
 import javax.jcr.Session;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

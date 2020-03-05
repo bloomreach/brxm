@@ -30,7 +30,7 @@ import javax.jcr.Session;
 import com.google.common.collect.Sets;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.onehippo.cm.ConfigurationService;
 import org.onehippo.cm.engine.InternalConfigurationService;
 import org.onehippo.cm.model.impl.ConfigurationModelImpl;

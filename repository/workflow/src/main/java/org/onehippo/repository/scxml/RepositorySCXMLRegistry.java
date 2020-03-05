@@ -32,8 +32,8 @@ import javax.xml.stream.XMLReporter;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.scxml2.env.groovy.GroovyEvaluator;
 import org.apache.commons.scxml2.env.groovy.GroovyExtendableScriptCache;
 import org.apache.commons.scxml2.io.SCXMLReader;

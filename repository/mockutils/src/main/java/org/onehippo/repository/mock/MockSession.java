@@ -38,7 +38,7 @@ import javax.jcr.retention.RetentionManager;
 import javax.jcr.security.AccessControlManager;
 import javax.transaction.xa.XAResource;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.repository.api.HippoSession;
 import org.onehippo.repository.security.SessionUser;
 import org.onehippo.repository.security.domain.DomainRuleExtension;

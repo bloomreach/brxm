@@ -18,7 +18,7 @@ package org.onehippo.repository.l10n;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.LocaleUtils;
+import org.apache.commons.lang3.LocaleUtils;
 import org.junit.Test;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 

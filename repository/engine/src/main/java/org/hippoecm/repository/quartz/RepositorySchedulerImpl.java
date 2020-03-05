@@ -23,7 +23,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.scheduling.RepositoryJobCronTrigger;
 import org.onehippo.repository.scheduling.RepositoryJobInfo;

@@ -89,12 +89,10 @@
 
     <!-- Project Dependencies -->
     <commons-io.version>2.6</commons-io.version>
-    <commons-lang.version>2.6</commons-lang.version>
     <commons-text.version>1.6</commons-text.version>
-    <commons-lang3.version>3.8.1</commons-lang3.version>
+    <commons-lang3.version>3.9</commons-lang3.version>
     <commons-beanutils.version>1.9.4</commons-beanutils.version>
-    <commons-collections.version>3.2.2</commons-collections.version>
-    <commons-collections4.version>4.2</commons-collections4.version>
+    <commons-collections4.version>4.4</commons-collections4.version>
     <tika.version>1.22</tika.version>
     <!-- keep pdfbox version aligned with the version tika-parsers depends on -->
     <!-- The pdfbox version we use is different from the current version used by tika.
@@ -445,11 +443,6 @@
         <version>${commons-io.version}</version>
       </dependency>
       <dependency>
-        <groupId>commons-collections</groupId>
-        <artifactId>commons-collections</artifactId>
-        <version>${commons-collections.version}</version>
-      </dependency>
-      <dependency>
         <groupId>org.apache.commons</groupId>
         <artifactId>commons-collections4</artifactId>
         <version>${commons-collections4.version}</version>
@@ -549,11 +542,6 @@
             <artifactId>commons-logging</artifactId>
           </exclusion>
         </exclusions>
-      </dependency>
-      <dependency>
-        <groupId>commons-lang</groupId>
-        <artifactId>commons-lang</artifactId>
-        <version>${commons-lang.version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.commons</groupId>

@@ -26,7 +26,7 @@ import javax.jcr.RepositoryException;
 
 import com.google.common.collect.ImmutableList;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.lucene.analysis.ASCIIFoldingFilter;
 import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
