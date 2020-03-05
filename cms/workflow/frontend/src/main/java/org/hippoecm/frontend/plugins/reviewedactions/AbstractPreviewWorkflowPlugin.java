@@ -45,6 +45,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
     /** Workflow action that edits the current draft if it has been saved as draft. */
     private final StdWorkflow editDraftAction;
     private final Map<String, Serializable> info;
+    private final boolean transferable;
 
     @SuppressWarnings({"unused", "FieldCanBeLocal"}) // used by a PropertyModel
     private String inUseBy;
@@ -54,6 +55,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
 
         info = getHints();
         inUseBy = getHint("inUseBy");
+        transferable = isActionAllowed(getHints(),"editDraft");
         add(new StdWorkflow("infoEdit", "infoEdit") {
 
             /**
@@ -67,7 +69,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
              */
             @Override
             public boolean isVisible() {
-                return StringUtils.isNotEmpty(inUseBy);
+                return StringUtils.isNotEmpty(inUseBy) || transferable;
             }
 
             @Override
@@ -77,8 +79,10 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
 
             @Override
             protected IModel getTitle() {
-                return new StringResourceModel("in-use-by", this).setModel(null).setParameters(
+                final StringResourceModel inUseBy = new StringResourceModel("in-use-by", this).setModel(null).setParameters(
                         new PropertyModel(AbstractPreviewWorkflowPlugin.this, "inUseBy"));
+                final StringResourceModel draftChanges = new StringResourceModel("draft-changes",this);
+                return transferable?draftChanges:inUseBy;
             }
 
             @Override
