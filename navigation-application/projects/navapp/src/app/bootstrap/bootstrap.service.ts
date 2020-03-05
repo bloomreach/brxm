@@ -67,11 +67,12 @@ export class BootstrapService {
 
       this.initializeServices(configuration);
 
-      this.navigationService.initialNavigation().catch(error => this.handleInitializationError(error));
+      this.navigationService.initialNavigation().then(
+        () => this.hideLoader(),
+        error => this.handleInitializationError(error),
+      );
     } catch (error) {
       this.handleInitializationError(error);
-    } finally {
-      this.hideLoader();
     }
   }
 
@@ -142,6 +143,8 @@ export class BootstrapService {
   }
 
   private handleInitializationError(error: any): void {
+    this.hideLoader();
+
     if (error instanceof AppError) {
       this.errorHandlingService.setError(error);
 
