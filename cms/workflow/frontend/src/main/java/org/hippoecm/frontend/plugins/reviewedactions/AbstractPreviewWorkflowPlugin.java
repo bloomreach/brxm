@@ -109,15 +109,11 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
             }
 
         };
-        final StringResourceModel editNoTransferableDraft =
-                new StringResourceModel("edit-discard-changes-label", this);
         final StringResourceModel editDraftResourceModel =
                 new StringResourceModel("edit-label", this);
         final boolean isTransferable = isActionAllowed(info, "editDraft");
-        final StringResourceModel editResourceModel =
-                isTransferable ? editDraftResourceModel : editNoTransferableDraft;
 
-        editAction = new StdWorkflow("edit", editResourceModel, getPluginContext(), getModel()) {
+        editAction = new StdWorkflow("edit", editDraftResourceModel, getPluginContext(), getModel()) {
 
             @Override
             public String getSubMenu() {
