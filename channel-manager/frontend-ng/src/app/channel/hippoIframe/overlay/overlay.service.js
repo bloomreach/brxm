@@ -28,31 +28,30 @@ import chevronUp from '../../../../images/html/chevron-up.svg?sprite';
 class OverlayService {
   constructor(
     $log,
+    $q,
     $rootScope,
     $translate,
     ChannelService,
     DomService,
     ExperimentStateService,
-    HippoIframeService,
-    MaskService,
     PageStructureService,
     SvgService,
   ) {
     'ngInject';
 
     this.$log = $log;
+    this.$q = $q;
     this.$rootScope = $rootScope;
     this.ChannelService = ChannelService;
     this.DomService = DomService;
     this.ExperimentStateService = ExperimentStateService;
-    this.HippoIframeService = HippoIframeService;
-    this.MaskService = MaskService;
     this.PageStructureService = PageStructureService;
     this.SvgService = SvgService;
 
     this.isComponentsOverlayDisplayed = false;
     this.isContentOverlayDisplayed = false;
 
+    this._onOverlayClick = this._onOverlayClick.bind(this);
     this._translate = (key, params) => $translate.instant(key, params, undefined, false, 'escape');
   }
 
@@ -123,31 +122,81 @@ class OverlayService {
 
       this._onOverlayMouseDown(event);
     });
+
+    this.overlay.on('click', this._onOverlayClick);
   }
 
-  enableAddMode() {
-    this.isInAddMode = true;
-    this.overlay.addClass('hippo-overlay-add-mode');
-    this.overlay.on('click', () => {
-      this.$rootScope.$apply(() => {
-        this._resetMask();
-      });
+  async toggleAddMode(value) {
+    this.isInAddMode = !!value;
+    this.overlay.toggleClass('hippo-overlay-add-mode', value);
+
+    if (this._addModeDeferred) {
+      this._addModeDeferred.reject();
+      delete this._addModeDeferred;
+    }
+
+    if (!value) {
+      return;
+    }
+
+    this._addModeDeferred = this.$q.defer();
+
+    // eslint-disable-next-line consistent-return
+    return this._addModeDeferred.promise;
+  }
+
+  _onOverlayClick(event) {
+    if (!this.isInAddMode) {
+      return;
+    }
+
+    const component = this.PageStructureService.getComponentByOverlayElement(event.target);
+
+    if (component) {
+      // eslint-disable-next-line consistent-return
+      return this._onComponentClick(event, component);
+    }
+
+    const container = this.PageStructureService.getContainerByOverlayElement(event.target);
+    if (container) {
+      // eslint-disable-next-line consistent-return
+      return this._onContainerClick(event, container);
+    }
+
+    this.toggleAddMode(false);
+  }
+
+  _onComponentClick(event, component) {
+    const container = component.getContainer();
+    if (container.isDisabled()) {
+      return;
+    }
+
+    const components = container.getComponents();
+    const componentIndex = components.findIndex(item => item.getId() === component.getId());
+    const shouldPlaceBefore = event.target.classList.contains('hippo-overlay-element-component-drop-area-before');
+    const nextComponent = shouldPlaceBefore
+      ? components[componentIndex]
+      : components[componentIndex + 1];
+
+    this._addModeDeferred.resolve({
+      container: container.getId(),
+      nextComponent: nextComponent && nextComponent.getId(),
     });
+    delete this._addModeDeferred;
+
+    this.toggleAddMode(false);
   }
 
-  _resetMask() {
-    this.disableAddMode();
-    this.offContainerClick();
-    this.offComponentClick();
-    this.MaskService.unmask();
-    this.MaskService.removeClickHandler();
-    this.HippoIframeService.lowerIframeBeneathMask();
-  }
+  _onContainerClick(event, container) {
+    if (container.isDisabled()) {
+      return;
+    }
 
-  disableAddMode() {
-    this.isInAddMode = false;
-    this.overlay.removeClass('hippo-overlay-add-mode');
-    this.overlay.off('click');
+    this._addModeDeferred.resolve({ container: container.getId() });
+    delete this._addModeDeferred;
+
+    this.toggleAddMode(false);
   }
 
   showComponentsOverlay(isDisplayed) {
@@ -267,62 +316,6 @@ class OverlayService {
     this.overlay.append(overlayElement);
   }
 
-  onComponentClick(clickHandler) {
-    const page = this.PageStructureService.getPage();
-    if (!page) {
-      return;
-    }
-
-    page.getContainers()
-      .map(container => container.getComponents())
-      .flat()
-      .forEach((component) => {
-        const element = component.getOverlayElement();
-        element.on('click', event => clickHandler(event, component));
-      });
-  }
-
-  onContainerClick(clickHandler) {
-    const page = this.PageStructureService.getPage();
-    if (!page) {
-      return;
-    }
-
-    page.getContainers().forEach((container) => {
-      const element = container.getOverlayElement();
-      element.on('click', (event) => {
-        clickHandler(event, container);
-      });
-    });
-  }
-
-  offComponentClick() {
-    const page = this.PageStructureService.getPage();
-    if (!page) {
-      return;
-    }
-
-    page.getContainers()
-      .map(container => container.getComponents())
-      .flat()
-      .forEach((component) => {
-        const element = component.getOverlayElement();
-        element.off('click');
-      });
-  }
-
-  offContainerClick() {
-    const page = this.PageStructureService.getPage();
-    if (!page) {
-      return;
-    }
-
-    page.getContainers().forEach((container) => {
-      const element = container.getOverlayElement();
-      element.off('click');
-    });
-  }
-
   _addLabel(structureElement, overlayElement) {
     if (structureElement.hasLabel()) {
       const labelElement = $(`
@@ -365,9 +358,6 @@ class OverlayService {
         this._addMenuLinkClickHandler(structureElement, overlayElement);
         break;
       case 'component':
-        if (structureElement.getContainer().isDisabled()) {
-          break;
-        }
         this._addComponentMarkup(structureElement, overlayElement);
         break;
       default:
@@ -380,11 +370,15 @@ class OverlayService {
   }
 
   _addComponentMarkup(structureElement, overlayElement) {
-    const dropAreaBefore = this._addDropArea('before', structureElement);
-    const dropAreaAfter = this._addDropArea('after', structureElement);
+    if (structureElement.getContainer().isDisabled()) {
+      return;
+    }
+
+    const dropAreaBefore = this._createDropArea('before', structureElement);
+    const dropAreaAfter = this._createDropArea('after', structureElement);
     const direction = structureElement.getContainer().getDragDirection();
 
-    angular.element('<div></div>')
+    angular.element('<div>')
       .addClass('hippo-overlay-element-component-drop-area')
       .addClass(`hippo-overlay-element-component-direction-${direction}`)
       .append(dropAreaBefore)
@@ -392,14 +386,14 @@ class OverlayService {
       .appendTo(overlayElement);
   }
 
-  _addDropArea(placement, structureElement) {
-    return angular.element('<div></div>')
+  _createDropArea(placement, structureElement) {
+    return angular.element('<div>')
       .addClass(`hippo-overlay-element-component-drop-area-${placement}`)
-      .append(this._addComponentDropIcons(structureElement.container));
+      .append(this._createComponentDropIcons(structureElement.container));
   }
 
-  _addComponentDropIcons(container) {
-    return angular.element('<div></div>')
+  _createComponentDropIcons(container) {
+    return angular.element('<div>')
       .addClass('hippo-overlay-element-component-drop-area-icons')
       .append(this._getSvg(chevronUp))
       .append(this._getSvg(container.isDisabled()

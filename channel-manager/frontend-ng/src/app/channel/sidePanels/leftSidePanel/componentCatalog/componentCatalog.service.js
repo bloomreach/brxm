@@ -16,7 +16,6 @@
 
 class ComponentCatalogService {
   constructor(
-    $log,
     ConfigService,
     ContainerService,
     EditComponentService,
@@ -28,8 +27,6 @@ class ComponentCatalogService {
     SidePanelService,
   ) {
     'ngInject';
-
-    this.$log = $log;
 
     this.ConfigService = ConfigService;
     this.EditComponentService = EditComponentService;
@@ -46,57 +43,33 @@ class ComponentCatalogService {
     return this.selectedComponent;
   }
 
-  selectComponent(component) {
+  async selectComponent(component) {
     this.selectedComponent = component;
     this.MaskService.mask('mask-add-component');
     this.SidePanelService.liftSidePanelAboveMask();
     this.HippoIframeService.liftIframeAboveMask();
-    this.OverlayService.enableAddMode();
-    this.OverlayService.onComponentClick(this._handleComponentClick.bind(this));
-    this.OverlayService.onContainerClick(this._handleContainerClick.bind(this));
-    this.MaskService.onClick(this._handleMaskClick.bind(this));
+    this.MaskService.onClick(this._onMaskClick.bind(this));
+
+    try {
+      const { container, nextComponent } = await this.OverlayService.toggleAddMode(true);
+
+      await this._addComponent(container, nextComponent);
+    } finally {
+      delete this.selectedComponent;
+      this.MaskService.unmask();
+      this.SidePanelService.lowerSidePanelBeneathMask();
+      this.HippoIframeService.lowerIframeBeneathMask();
+      this.MaskService.removeClickHandler();
+    }
   }
 
-  _handleMaskClick() {
+  _onMaskClick() {
     if (this.OverlayService.toggleOverlayByComponent) {
       this.OverlayService.toggleOverlayByComponent = false;
       this.OverlayService.showComponentsOverlay(false);
     }
-    delete this.selectedComponent;
-    this.MaskService.unmask();
-    this.SidePanelService.lowerSidePanelBeneathMask();
-    this.HippoIframeService.lowerIframeBeneathMask();
-    this.OverlayService.disableAddMode();
-    this.OverlayService.offComponentClick();
-    this.OverlayService.offContainerClick();
-    this.MaskService.removeClickHandler();
-  }
 
-  async _handleComponentClick(event, clickedComponent) {
-    const container = clickedComponent.getContainer();
-    const components = container.getComponents();
-    const clickedComponentIndex = components.findIndex(item => item.getId() === clickedComponent.getId());
-    const shouldPlaceBefore = event.target.classList.contains('hippo-overlay-element-component-drop-area-before');
-
-    const nextComponent = shouldPlaceBefore
-      ? components[clickedComponentIndex]
-      : components[clickedComponentIndex + 1];
-
-    if (container.isDisabled()) {
-      event.stopPropagation();
-      return;
-    }
-
-    this._addComponent(container.getId(), nextComponent && nextComponent.getId());
-  }
-
-  _handleContainerClick(event, container) {
-    if (container.isDisabled()) {
-      event.stopPropagation();
-      return;
-    }
-
-    this._addComponent(container.getId());
+    this.OverlayService.toggleAddMode(false);
   }
 
   async _addComponent(containerId, nextComponentId) {
@@ -113,8 +86,6 @@ class ComponentCatalogService {
       const component = page && page.getComponentById(componentId);
       this.EditComponentService.startEditing(component);
     }
-
-    return componentId;
   }
 }
 

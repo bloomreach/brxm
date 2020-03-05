@@ -1038,4 +1038,95 @@ describe('OverlayService', () => {
       });
     });
   });
+
+  describe('toggleAddMode', () => {
+    beforeEach(() => loadIframeFixture());
+
+    it('should add a css class when the add mode is enabled', () => {
+      OverlayService.toggleAddMode(true);
+
+      expect(iframe('.hippo-overlay-add-mode').length).toBe(1);
+    });
+
+    it('should remove a css class when the add mode is disabled', () => {
+      OverlayService.toggleAddMode(true);
+      OverlayService.toggleAddMode(false);
+
+      expect(iframe('.hippo-overlay-add-mode').length).toBe(0);
+    });
+
+    it('should reject add mode promise when the mode is disabled', (done) => {
+      const promise = OverlayService.toggleAddMode(true);
+      OverlayService.toggleAddMode(false);
+
+      promise.catch((result) => {
+        expect(result).toBeUndefined();
+        done();
+      });
+    });
+
+    it('should reject add mode promise on overlay click', (done) => {
+      const promise = OverlayService.toggleAddMode(true);
+      iframe('.hippo-overlay').click();
+
+      promise.catch((result) => {
+        expect(result).toBeUndefined();
+        done();
+      });
+    });
+
+    it('should resolve add mode promise on the container click', (done) => {
+      const promise = OverlayService.toggleAddMode(true);
+      const containerOverlay = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(0);
+
+      containerOverlay.click();
+      promise.then((result) => {
+        expect(result).toEqual({ container: 'container-vbox' });
+        done();
+      });
+    });
+
+    it('should stay in the add mode on the disabled container click', () => {
+      OverlayService.toggleAddMode(true);
+      const containerOverlay = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(4);
+
+      containerOverlay.click();
+      expect(OverlayService.isInAddMode).toBe(true);
+    });
+
+    it('should add a component before the clicked one', (done) => {
+      const promise = OverlayService.toggleAddMode(true);
+      const componentBeforeArea = iframe(`.hippo-overlay
+        > .hippo-overlay-element-component:eq(0)
+        .hippo-overlay-element-component-drop-area-before`);
+
+      componentBeforeArea.click();
+      promise.then((result) => {
+        expect(result).toEqual({ container: 'container-vbox', nextComponent: 'aaaa' });
+        done();
+      });
+    });
+
+    it('should add a component after the clicked one', (done) => {
+      const promise = OverlayService.toggleAddMode(true);
+      const componentAfterArea = iframe(`.hippo-overlay
+        > .hippo-overlay-element-component:eq(0)
+        .hippo-overlay-element-component-drop-area-after`);
+
+      componentAfterArea.click();
+      promise.then((result) => {
+        expect(result).toEqual({ container: 'container-vbox', nextComponent: 'bbbb' });
+        done();
+      });
+    });
+
+    it('should stay in the add mode on the disabled component click', () => {
+      OverlayService.toggleAddMode(true);
+      const disabledComponentOverlay = iframe(`.hippo-overlay
+        > .hippo-overlay-element-component:eq(3)`)[0];
+
+      disabledComponentOverlay.click();
+      expect(OverlayService.isInAddMode).toBe(true);
+    });
+  });
 });
