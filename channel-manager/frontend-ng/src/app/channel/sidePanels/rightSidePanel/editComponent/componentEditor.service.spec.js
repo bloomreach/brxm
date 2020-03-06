@@ -79,7 +79,6 @@ describe('ComponentEditorService', () => {
     spyOn(HstComponentService, 'deleteComponent').and.returnValue($q.resolve({}));
     spyOn(CmsService, 'reportUsageStatistic');
     spyOn(OverlayService, 'selectComponent');
-    spyOn(OverlayService, 'deselectComponent');
 
     testData = {
       channel: 'channel',
@@ -794,7 +793,7 @@ describe('ComponentEditorService', () => {
       expect(ComponentEditor.properties).toBeUndefined();
       expect(ComponentEditor.propertyGroups).toBeUndefined();
       expect(ComponentEditor.error).toBeUndefined();
-      expect(OverlayService.deselectComponent).toHaveBeenCalled();
+      expect(OverlayService.selectComponent).toHaveBeenCalledWith(null);
     });
   });
 
