@@ -67,6 +67,9 @@ export class BootstrapService {
 
       this.initializeServices(configuration);
 
+      // this method is intended to be used as app initializer promise, that mean app doesn't start until that promise is resolved.
+      // Initial navigation can be finished only after iframes are loaded which happens only after the app has started. To prevent
+      // app waiting to start forever initialNavigation() result is process separately and without await keyword.
       this.navigationService.initialNavigation().then(
         () => this.hideLoader(),
         error => this.handleInitializationError(error),
