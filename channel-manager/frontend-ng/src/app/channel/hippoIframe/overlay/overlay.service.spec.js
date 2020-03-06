@@ -26,6 +26,7 @@ describe('OverlayService', () => {
   let iframeWindow;
   let ChannelService;
   let DomService;
+  let DragDropService;
   let ExperimentStateService;
   let OverlayService;
   let PageStructureService;
@@ -36,9 +37,11 @@ describe('OverlayService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.hippoIframe');
 
+    DragDropService = jasmine.createSpyObj('DragDropService', ['enable', 'disable', 'isEnabled', 'startDragOrClick']);
     PickerService = jasmine.createSpyObj('PickerService', ['pickPath']);
 
     angular.mock.module(($provide) => {
+      $provide.value('DragDropService', DragDropService);
       $provide.value('PickerService', PickerService);
     });
 
@@ -204,35 +207,60 @@ describe('OverlayService', () => {
     expect(iframe('.hippo-overlay')).toBeEmpty();
   });
 
-  it('sets the class hippo overlay classes on the HTML element', async () => {
-    spyOn(PageStructureService, 'getPage').and.returnValue(null);
-    spyOn(PageStructureService, 'getEmbeddedLinks').and.returnValue([]);
-    await loadIframeFixture();
+  describe('toggleComponentsOverlay', () => {
+    beforeEach(async () => {
+      spyOn(PageStructureService, 'getPage').and.returnValue(null);
+      spyOn(PageStructureService, 'getEmbeddedLinks').and.returnValue([]);
 
-    // Components overlay
-    OverlayService.toggleComponentsOverlay(true);
-    expect(iframe('html')).toHaveClass('hippo-show-components');
+      await loadIframeFixture();
+    });
 
-    OverlayService.toggleComponentsOverlay(false);
-    expect(iframe('html')).not.toHaveClass('hippo-show-components');
+    it('should add the hippo-show-components class on toggling component overlays on', async () => {
+      OverlayService.toggleComponentsOverlay(true);
 
-    // Content overlay
-    OverlayService.toggleContentsOverlay(true);
-    expect(iframe('html')).toHaveClass('hippo-show-content');
+      expect(iframe('html')).toHaveClass('hippo-show-components');
+    });
 
-    OverlayService.toggleContentsOverlay(false);
-    expect(iframe('html')).not.toHaveClass('hippo-show-content');
+    it('should remove the hippo-show-components class on toggling component overlays off', async () => {
+      OverlayService.toggleComponentsOverlay(true);
+      OverlayService.toggleComponentsOverlay(false);
 
-    // Combined
-    OverlayService.toggleComponentsOverlay(true);
-    OverlayService.toggleContentsOverlay(true);
-    expect(iframe('html')).toHaveClass('hippo-show-components');
-    expect(iframe('html')).toHaveClass('hippo-show-content');
+      expect(iframe('html')).not.toHaveClass('hippo-show-components');
+    });
 
-    OverlayService.toggleComponentsOverlay(false);
-    OverlayService.toggleContentsOverlay(false);
-    expect(iframe('html')).not.toHaveClass('hippo-show-components');
-    expect(iframe('html')).not.toHaveClass('hippo-show-content');
+    it('should enable drag and drop on toggling component overlays on', async () => {
+      OverlayService.toggleComponentsOverlay(true);
+
+      expect(DragDropService.enable).toHaveBeenCalled();
+    });
+
+    it('should disable drag and drop on toggling component overlays off', async () => {
+      OverlayService.toggleComponentsOverlay(false);
+
+      expect(DragDropService.disable).toHaveBeenCalled();
+    });
+  });
+
+  describe('toggleContentsOverlay', () => {
+    beforeEach(async () => {
+      spyOn(PageStructureService, 'getPage').and.returnValue(null);
+      spyOn(PageStructureService, 'getEmbeddedLinks').and.returnValue([]);
+
+      await loadIframeFixture();
+    });
+
+    it('should add the hippo-show-content class on toggling content overlays on', () => {
+      OverlayService.toggleContentsOverlay(true);
+
+      expect(iframe('html')).toHaveClass('hippo-show-content');
+    });
+
+    it('should remove the hippo-show-content class on toggling content overlays off', () => {
+      OverlayService.toggleContentsOverlay(true);
+      OverlayService.toggleContentsOverlay(false);
+
+      expect(iframe('html')).not.toHaveClass('hippo-show-content');
+    });
   });
 
   it('generates overlay elements', async () => {
@@ -552,34 +580,39 @@ describe('OverlayService', () => {
     });
   }
 
-  it('mousedown event on component-overlay calls attached callback with component reference', async () => {
-    const mousedownSpy = jasmine.createSpy('mousedown');
-    OverlayService.attachComponentMouseDown(mousedownSpy);
+  describe('_onOverlayMouseDown', () => {
+    let component;
+    let overlayComponentElement;
 
-    await loadIframeFixture();
-    const component = PageStructureService.getPage().getComponentById('aaaa');
-    const overlayComponentElement = iframe('.hippo-overlay > .hippo-overlay-element-component').first();
+    beforeEach(async () => {
+      await loadIframeFixture();
 
-    overlayComponentElement.mousedown();
-    expect(mousedownSpy).toHaveBeenCalledWith(jasmine.anything(), component);
-    mousedownSpy.calls.reset();
+      component = PageStructureService.getPage().getComponentById('aaaa');
+      overlayComponentElement = iframe('.hippo-overlay > .hippo-overlay-element-component').first();
+      OverlayService.toggleComponentsOverlay(true);
+    });
 
-    OverlayService.detachComponentMouseDown();
-    overlayComponentElement.mousedown();
-    expect(mousedownSpy).not.toHaveBeenCalled();
-  });
+    it('should delegate mouse down event to the drag and drop service', () => {
+      DragDropService.isEnabled.and.returnValue(true);
+      overlayComponentElement.mousedown();
 
-  it('mousedown event on component-overlay only calls attached callback if related component is found', async () => {
-    const mousedownSpy = jasmine.createSpy('mousedown');
-    OverlayService.attachComponentMouseDown(mousedownSpy);
+      expect(DragDropService.startDragOrClick).toHaveBeenCalledWith(jasmine.any(Object), component);
+    });
 
-    spyOn(PageStructureService, 'getComponentByOverlayElement').and.returnValue(false);
+    it('should not delegate mouse down event to the drag and drop service if it is disabled', () => {
+      DragDropService.isEnabled.and.returnValue(false);
+      overlayComponentElement.mousedown();
 
-    await loadIframeFixture();
-    const overlayComponentElement = iframe('.hippo-overlay > .hippo-overlay-element-component').first();
-    overlayComponentElement.mousedown();
+      expect(DragDropService.startDragOrClick).not.toHaveBeenCalled();
+    });
 
-    expect(mousedownSpy).not.toHaveBeenCalled();
+    it('should not delegate mouse down event to the drag and drop service if related component was not found', () => {
+      DragDropService.isEnabled.and.returnValue(true);
+      spyOn(PageStructureService, 'getComponentByOverlayElement').and.returnValue(undefined);
+      overlayComponentElement.mousedown();
+
+      expect(DragDropService.startDragOrClick).not.toHaveBeenCalled();
+    });
   });
 
   it('should trigger document:create event', async () => {

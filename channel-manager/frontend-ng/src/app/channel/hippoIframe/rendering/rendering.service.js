@@ -26,7 +26,6 @@ class RenderingService {
     $rootScope,
     ChannelService,
     DomService,
-    DragDropService,
     Emittery,
     HippoIframeService,
     LinkProcessorService,
@@ -42,7 +41,6 @@ class RenderingService {
     this.$rootScope = $rootScope;
     this.ChannelService = ChannelService;
     this.DomService = DomService;
-    this.DragDropService = DragDropService;
     this.HippoIframeService = HippoIframeService;
     this.LinkProcessorService = LinkProcessorService;
     this.OverlayService = OverlayService;
@@ -77,7 +75,6 @@ class RenderingService {
     this.creatingOverlay = this._insertCss()
       .then(() => this.PageStructureService.parseElements())
       .then(() => {
-        this.updateDragDrop();
         this._updateChannelIfSwitched();
         this._parseLinks();
         this.ScrollService.restoreScrollPosition();
@@ -110,20 +107,6 @@ class RenderingService {
       return this.DomService.addCssLinks(iframeWindow, [hippoIframeCss], INJECTED_CSS_CLASS);
     } catch (e) {
       return this.$q.reject();
-    }
-  }
-
-  updateDragDrop() {
-    if (this.OverlayService.isComponentsOverlayDisplayed) {
-      this.DragDropService.enable()
-        .then(() => {
-          this.OverlayService.attachComponentMouseDown((e, component) => {
-            this.DragDropService.startDragOrClick(e, component);
-          });
-        });
-    } else {
-      this.DragDropService.disable();
-      this.OverlayService.detachComponentMouseDown();
     }
   }
 

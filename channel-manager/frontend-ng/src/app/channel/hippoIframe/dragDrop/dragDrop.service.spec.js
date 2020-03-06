@@ -161,6 +161,19 @@ describe('DragDropService', () => {
     return eventHandlers && eventHandlers.hasOwnProperty(event) ? eventHandlers[event].length : 0;
   }
 
+  describe('isEnabled', () => {
+    it('should return false when the drag and drop service is not enabled', () => {
+      expect(DragDropService.isEnabled()).toBe(false);
+    });
+
+    it('should return true when the drag and drop service is enabled', (done) => {
+      loadIframeFixture(() => {
+        expect(DragDropService.isEnabled()).toBe(true);
+        done();
+      });
+    });
+  });
+
   it('is not dragging initially', () => {
     expect(DragDropService.isDragging()).toBeFalsy();
   });
