@@ -24,7 +24,6 @@ class ContainerService {
     $translate,
     CmsService,
     DialogService,
-    DragDropService,
     EditComponentService,
     Emittery,
     FeedbackService,
@@ -40,7 +39,6 @@ class ContainerService {
     this.$translate = $translate;
     this.CmsService = CmsService;
     this.DialogService = DialogService;
-    this.DragDropService = DragDropService;
     this.EditComponentService = EditComponentService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
@@ -88,19 +86,17 @@ class ContainerService {
     return true;
   }
 
-  moveComponent(component, container, nextComponent) {
-    return this.PageStructureService.moveComponent(component, container, nextComponent)
-      .then(changedContainers => this._reloadSpa() || this._renderContainers(changedContainers))
-      .then(() => this.emitter.emit(COMPONENT_MOVED_EVENT_NAME));
-  }
+  async moveComponent(component, container, nextComponent) {
+    const changedContainers = await this.PageStructureService.moveComponent(component, container, nextComponent);
+    if (this._reloadSpa()) {
+      return;
+    }
 
-  _renderContainers(changedContainers) {
-    return this.$q.all(changedContainers.map(container => this._renderContainer(container)));
-  }
+    await this.$q.all(changedContainers.map(
+      changedContainer => this.PageStructureService.renderContainer(changedContainer),
+    ));
 
-  _renderContainer(container) {
-    return this.PageStructureService.renderContainer(container)
-      .then(newContainer => this.DragDropService.replaceContainer(container, newContainer));
+    this.emitter.emit(COMPONENT_MOVED_EVENT_NAME);
   }
 
   deleteComponent(componentId) {
@@ -129,7 +125,7 @@ class ContainerService {
 
   _doDelete(componentId) {
     return () => this.PageStructureService.removeComponentById(componentId)
-      .then(container => this._reloadSpa() || this._renderContainer(container))
+      .then(container => this._reloadSpa() || this.PageStructureService.renderContainer(container))
       .catch(() => this.HippoIframeService.reload())
       .finally(() => this.CmsService.publish('destroy-component-properties-window'));
   }

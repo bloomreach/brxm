@@ -37,6 +37,7 @@ export default class PageStructureService {
     this.$document = $document;
     this.$q = $q;
     this.$rootScope = $rootScope;
+
     this.CommunicationService = CommunicationService;
     this.HstCommentsProcessorService = HstCommentsProcessorService;
     this.ModelFactoryService = ModelFactoryService;
