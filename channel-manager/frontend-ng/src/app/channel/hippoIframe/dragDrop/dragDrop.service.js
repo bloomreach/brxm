@@ -24,26 +24,20 @@ class DragDropService {
   constructor(
     $q,
     $rootScope,
-    BrowserService,
-    ChannelService,
     ConfigService,
     DomService,
     Emittery,
     PageStructureService,
     ScrollService,
-    HippoIframeService,
   ) {
     'ngInject';
 
     this.$q = $q;
     this.$rootScope = $rootScope;
-    this.BrowserService = BrowserService;
-    this.ChannelService = ChannelService;
     this.ConfigService = ConfigService;
     this.DomService = DomService;
     this.PageStructureService = PageStructureService;
     this.ScrollService = ScrollService;
-    this.HippoIframeService = HippoIframeService;
 
     this.draggingOrClicking = false;
     this.dropping = false;

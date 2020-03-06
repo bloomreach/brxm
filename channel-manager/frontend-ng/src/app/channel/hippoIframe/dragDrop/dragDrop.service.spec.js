@@ -22,7 +22,6 @@ describe('DragDropService', () => {
   let $q;
   let $rootScope;
   let angularElement;
-  let ChannelService;
   let ConfigService;
   let DomService;
   let DragDropService;
@@ -42,14 +41,12 @@ describe('DragDropService', () => {
     inject((
       _$q_,
       _$rootScope_,
-      _ChannelService_,
       _ConfigService_,
       _DomService_,
       _DragDropService_,
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
-      ChannelService = _ChannelService_;
       ConfigService = _ConfigService_;
       DomService = _DomService_;
       DragDropService = _DragDropService_;
@@ -67,7 +64,6 @@ describe('DragDropService', () => {
     angularElement = angular.element;
     spyOn(angular, 'element').and.callThrough();
 
-    spyOn(ChannelService, 'recordOwnChange');
     jasmine.getFixtures().load('channel/hippoIframe/dragDrop/dragDrop.service.fixture.html');
 
     iframe = $('#testIframe');
