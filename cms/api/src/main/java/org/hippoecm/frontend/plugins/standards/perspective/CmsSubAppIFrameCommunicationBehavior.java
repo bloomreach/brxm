@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * <p>Add this {@link Behavior} to a {@link Perspective} to add an iframe that communicates
  * with the cms using the navigation application communication library.</p>
  *
- * <p>This behavior:</p>
+ * <p>This behavior:
  * <li>adds an iframe element with {@link #iFrameElementId} and {@link #iFrameElementSrc}</li>
  * <li>adds javascript to header ( after the navapp-communication script has loaded ) that:</li>
  * <ul>
@@ -74,15 +74,17 @@ public class CmsSubAppIFrameCommunicationBehavior extends Behavior {
             Perspective perspective = (Perspective) component;
             log.info("Bind perspective:{}, add iframe element:{id:{},src{}}",perspective.getClass().getName()
                     , this.iFrameElementId, this.iFrameElementSrc);
-            perspective.add(new WebComponent("iframe") {
+            final WebComponent iframe = new WebComponent("iframe") {
+
                 @Override
                 protected void onComponentTag(final ComponentTag tag) {
                     super.onComponentTag(tag);
                     tag.put("src", CmsSubAppIFrameCommunicationBehavior.this.iFrameElementSrc);
-                    tag.put("id", CmsSubAppIFrameCommunicationBehavior.this.iFrameElementId);
                     tag.put("class", CmsSubAppIFrameCommunicationBehavior.this.iFrameElementId);
                 }
-            });
+            };
+            iframe.setMarkupId(CmsSubAppIFrameCommunicationBehavior.this.iFrameElementId);
+            perspective.add(iframe);
         }
     }
 
