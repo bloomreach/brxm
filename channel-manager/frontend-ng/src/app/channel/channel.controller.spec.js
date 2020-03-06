@@ -26,7 +26,6 @@ describe('ChannelController', () => {
   let ComponentsService;
   let FeedbackService;
   let HippoIframeService;
-  let OverlayService;
   let PageStructureService;
   let SidePanelService;
 
@@ -41,7 +40,6 @@ describe('ChannelController', () => {
       _ChannelService_,
       _CmsService_,
       _FeedbackService_,
-      _OverlayService_,
     ) => {
       const resolvedPromise = _$q_.when();
 
@@ -50,7 +48,6 @@ describe('ChannelController', () => {
       $window = _$window_;
       ChannelService = _ChannelService_;
       FeedbackService = _FeedbackService_;
-      OverlayService = _OverlayService_;
 
       spyOn(ChannelService, 'clearChannel');
       spyOn(ChannelService, 'hasChannel');
@@ -87,24 +84,6 @@ describe('ChannelController', () => {
     });
 
     spyOn(FeedbackService, 'showError');
-  });
-
-  describe('initialize overlays', () => {
-    it('content overlay and component overlay values are aligned with OverlayService', () => {
-      expect($ctrl.isContentOverlayDisplayed).toEqual(OverlayService.isContentOverlayDisplayed);
-      expect($ctrl.isComponentsOverlayDisplayed).toEqual(OverlayService.isComponentsOverlayDisplayed);
-    });
-
-    it('setters of isContentOverlayDisplayed & isComponentOverlayDisplayed call overlayService functions', () => {
-      spyOn(OverlayService, 'showContentOverlay');
-      spyOn(OverlayService, 'showComponentsOverlay');
-      const arg = false;
-      $ctrl.isContentOverlayDisplayed = arg;
-      $ctrl.isComponentsOverlayDisplayed = arg;
-
-      expect(OverlayService.showContentOverlay).toHaveBeenCalledWith(arg);
-      expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(arg);
-    });
   });
 
   it('checks whether the channel is loaded', () => {
@@ -158,10 +137,6 @@ describe('ChannelController', () => {
     pageMeta.getRenderVariant.and.returnValue('variant1');
 
     expect($ctrl.getRenderVariant()).toBe('variant1');
-  });
-
-  it('should not be true by default (components overlay)', () => {
-    expect($ctrl.isComponentsOverlayDisplayed).toEqual(false);
   });
 
   it('correctly shows and hides subpages', () => {
