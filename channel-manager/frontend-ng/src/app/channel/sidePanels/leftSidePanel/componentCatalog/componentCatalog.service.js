@@ -48,7 +48,7 @@ class ComponentCatalogService {
     this.MaskService.mask('mask-add-component');
     this.SidePanelService.liftSidePanelAboveMask();
     this.HippoIframeService.liftIframeAboveMask();
-    this.MaskService.onClick(this._onMaskClick.bind(this));
+    this.MaskService.onClick(() => this.OverlayService.toggleAddMode(false));
 
     try {
       const { container, nextComponent } = await this.OverlayService.toggleAddMode(true);
@@ -61,15 +61,6 @@ class ComponentCatalogService {
       this.HippoIframeService.lowerIframeBeneathMask();
       this.MaskService.removeClickHandler();
     }
-  }
-
-  _onMaskClick() {
-    if (this.OverlayService.toggleOverlayByComponent) {
-      this.OverlayService.toggleOverlayByComponent = false;
-      this.OverlayService.showComponentsOverlay(false);
-    }
-
-    this.OverlayService.toggleAddMode(false);
   }
 
   async _addComponent(containerId, nextComponentId) {

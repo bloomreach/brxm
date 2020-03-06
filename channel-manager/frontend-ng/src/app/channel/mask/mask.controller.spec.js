@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,14 +17,12 @@
 describe('$ctrl', () => {
   let $ctrl;
   let MaskService;
-  let OverlayService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_MaskService_, $componentController, _OverlayService_) => {
+    inject((_MaskService_, $componentController) => {
       MaskService = _MaskService_;
-      OverlayService = _OverlayService_;
 
       $ctrl = $componentController('mask', { MaskService });
     });
@@ -39,14 +37,6 @@ describe('$ctrl', () => {
     MaskService.maskClass = 'masked';
 
     expect($ctrl.getMaskClass()).toEqual('masked');
-  });
-
-  it('should change toggle its own state', () => {
-    OverlayService.toggleOverlayByComponent = true;
-    $ctrl.state = true;
-    $ctrl.onClick();
-
-    expect($ctrl.state).toEqual(false);
   });
 
   it('should forward clickHandler', () => {
