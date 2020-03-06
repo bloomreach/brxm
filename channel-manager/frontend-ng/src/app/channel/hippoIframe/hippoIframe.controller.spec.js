@@ -370,31 +370,31 @@ describe('hippoIframeCtrl', () => {
   });
 
   it('toggles the components overlay', () => {
-    spyOn(OverlayService, 'showComponentsOverlay');
+    spyOn(OverlayService, 'toggleComponentsOverlay');
 
     $ctrl.$onChanges({
       showComponentsOverlay: { currentValue: true },
     });
-    expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(true);
+    expect(OverlayService.toggleComponentsOverlay).toHaveBeenCalledWith(true);
 
     $ctrl.$onChanges({
       showComponentsOverlay: { currentValue: false },
     });
-    expect(OverlayService.showComponentsOverlay).toHaveBeenCalledWith(false);
+    expect(OverlayService.toggleComponentsOverlay).toHaveBeenCalledWith(false);
   });
 
   it('toggles the content overlay', () => {
-    spyOn(OverlayService, 'showContentOverlay');
+    spyOn(OverlayService, 'toggleContentsOverlay');
 
     $ctrl.$onChanges({
       showContentOverlay: { currentValue: true },
     });
-    expect(OverlayService.showContentOverlay).toHaveBeenCalledWith(true);
+    expect(OverlayService.toggleContentsOverlay).toHaveBeenCalledWith(true);
 
     $ctrl.$onChanges({
       showContentOverlay: { currentValue: false },
     });
-    expect(OverlayService.showContentOverlay).toHaveBeenCalledWith(false);
+    expect(OverlayService.toggleContentsOverlay).toHaveBeenCalledWith(false);
   });
 
   it('calls its edit menu function on menu:edit event', () => {
