@@ -32,7 +32,7 @@
       <artifactId>hippo-repository-api</artifactId>
       <scope>provided</scope>
     </dependency>
-   <dependency>
+    <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-collections4</artifactId>
     </dependency>
@@ -40,13 +40,13 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-proxy</artifactId>
     </dependency>
-      <dependency>
-          <groupId>commons-lang</groupId>
-          <artifactId>commons-lang</artifactId>
-          <version>${commons-lang.version}</version>
-      </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>${commons-lang.version}</version>
+    </dependency>
 
-   <dependency>
+    <dependency>
       <groupId>org.apache.jackrabbit</groupId>
       <artifactId>jackrabbit-ocm</artifactId>
     </dependency>
