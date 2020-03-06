@@ -155,7 +155,7 @@
     // true if the current draft below the handle has the transferable status. The transferable status indicates
     // that other uses can become the holder of the draft.
     def boolean isTransferable() {
-      draft?.transferable
+      draft?.transferable and not requestPending
     }
   </script>
 
@@ -453,7 +453,7 @@
         <onentry>
           <!-- by default report the request publication operation as available but disabled -->
           <hippo:action action="requestPublication" enabledExpr="false"/>
-          <if cond="workflowContext.isGranted(unpublished ?: published ?: draft, 'hippo:editor')">
+          <if cond="workflowContext.isGranted(unpublished ?: published ?: draft, 'hippo:editor') and not transferable">
               <!-- if editor user (granted hippo:editor) by default report the publish operation as available but disabled -->
               <hippo:action action="publish" enabledExpr="false"/>
           </if>
@@ -513,20 +513,20 @@
           <hippo:action action="requestDepublication" enabledExpr="false"/>
           <if cond="workflowContext.isGranted(published ?: unpublished ?: draft, 'hippo:editor')">
             <!-- if editor user (granted hippo:editor) by default report the depublish operation as available but disabled -->
-            <hippo:action action="depublish" enabledExpr="false"/>
+            <hippo:action action="depublish" enabledExpr="!!transferable"/>
           </if>
         </onentry>
         <!-- event-less transition to depublishable state if not currently editing and the document is 'live' -->
-        <transition target="depublishable" cond="!editing and live and master"/>
+        <transition target="depublishable" cond="(!editing or (transferable and editor) ) and live and master"/>
       </state>
 
       <!-- state depublishable is active when the  document is live and not currently edited -->
       <state id="depublishable">
         <onentry>
-          <if cond="(!requestPending or user=='workflowuser') and master">
+          <if cond="(!requestPending or transferable or user=='workflowuser') and master">
             <!-- if no request pending OR invoked by the 'workflowuser' user (scheduled workflow jobs daemon):
                  enable request depublication operation -->
-            <hippo:action action="requestDepublication" enabledExpr="true"/>
+            <hippo:action action="requestDepublication" enabledExpr="!transferable"/>
             <if cond="workflowContext.isGranted(published, 'hippo:editor')">
               <!-- if (also) editor user (granted hippo:editor): enable publish operation -->
               <hippo:action action="depublish" enabledExpr="true"/>
@@ -818,7 +818,7 @@
 
     <state id="publish-branch">
       <onentry>
-        <if cond="workflowContext.isGranted(unpublished ?: published ?: draft, 'hippo:editor')">
+        <if cond="workflowContext.isGranted(unpublished ?: published ?: draft, 'hippo:editor') and not transferable">
           <hippo:action action="publishBranch" enabledExpr="false"/>
         </if>
       </onentry>
@@ -826,7 +826,7 @@
        currently not allowed or possible -->
       <state id="no-publish-branch">
         <!-- event-less transition to 'can-publish-branch' state -->
-        <transition target="can-publish-branch" cond="!!unpublished and branchExists and modified"/>
+        <transition target="can-publish-branch" cond="!!unpublished and branchExists and modified and not transferable"/>
       </state>
       <state id="can-publish-branch">
         <onentry>
@@ -1017,7 +1017,7 @@
       <!-- the initial no-copy state is used and active when the user is not an author (granted hippo:author) -->
       <state id="no-copy">
         <!-- event-less transition to copyable state when the user is an author (granted hippo:author) -->
-        <transition target="copyable" cond="workflowContext.isGranted(copySource,'hippo:author') and branchExists"/>
+        <transition target="copyable" cond="workflowContext.isGranted(copySource,'hippo:author') and branchExists and not transferable"/>
       </state>
 
       <!-- the state copyable is active for users which are author (granted hippo:author) -->
