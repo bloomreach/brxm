@@ -21,7 +21,6 @@ describe('ContainerService', () => {
   let CmsService;
   let ContainerService;
   let DialogService;
-  let DragDropService;
   let EditComponentService;
   let FeedbackService;
   let HippoIframeService;
@@ -49,7 +48,6 @@ describe('ContainerService', () => {
       _CmsService_,
       _ContainerService_,
       _DialogService_,
-      _DragDropService_,
       _EditComponentService_,
       _FeedbackService_,
       _HippoIframeService_,
@@ -62,7 +60,6 @@ describe('ContainerService', () => {
       CmsService = _CmsService_;
       ContainerService = _ContainerService_;
       DialogService = _DialogService_;
-      DragDropService = _DragDropService_;
       EditComponentService = _EditComponentService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
@@ -140,7 +137,6 @@ describe('ContainerService', () => {
       spyOn(PageStructureService, 'moveComponent').and.returnValue($q.resolve([sourceContainer, targetContainer]));
       spyOn(PageStructureService, 'renderContainer')
         .and.returnValues($q.resolve(rerenderedSourceContainer), $q.resolve(rerenderedTargetContainer));
-      spyOn(DragDropService, 'replaceContainer').and.returnValues($q.resolve(), $q.resolve());
 
       ContainerService.moveComponent(component, targetContainer, newContainerNextComponent);
       $rootScope.$digest();
@@ -150,8 +146,6 @@ describe('ContainerService', () => {
       );
       expect(PageStructureService.renderContainer).toHaveBeenCalledWith(sourceContainer);
       expect(PageStructureService.renderContainer).toHaveBeenCalledWith(targetContainer);
-      expect(DragDropService.replaceContainer).toHaveBeenCalledWith(sourceContainer, rerenderedSourceContainer);
-      expect(DragDropService.replaceContainer).toHaveBeenCalledWith(targetContainer, rerenderedTargetContainer);
       expect(ContainerService.emitter.emit).toHaveBeenCalledWith('component-moved');
     });
   });
@@ -162,7 +156,6 @@ describe('ContainerService', () => {
 
     beforeEach(() => {
       spyOn(CmsService, 'publish');
-      spyOn(DragDropService, 'replaceContainer');
       spyOn(DialogService, 'confirm').and.callThrough();
       spyOn(DialogService, 'show').and.returnValue($q.resolve());
       spyOn(HippoIframeService, 'reload');
@@ -188,7 +181,6 @@ describe('ContainerService', () => {
       expect(DialogService.confirm).toHaveBeenCalled();
       expect(DialogService.show).toHaveBeenCalled();
       expect(PageStructureService.removeComponentById).toHaveBeenCalledWith('1234');
-      expect(DragDropService.replaceContainer).toHaveBeenCalledWith(oldContainer, newContainer);
       expect(CmsService.publish).toHaveBeenCalledWith('destroy-component-properties-window');
     });
 
@@ -204,7 +196,6 @@ describe('ContainerService', () => {
       expect(DialogService.confirm).toHaveBeenCalled();
       expect(DialogService.show).toHaveBeenCalled();
       expect(PageStructureService.removeComponentById).toHaveBeenCalledWith('1234');
-      expect(DragDropService.replaceContainer).not.toHaveBeenCalled();
       expect(HippoIframeService.reload).toHaveBeenCalled();
       expect(CmsService.publish).toHaveBeenCalledWith('destroy-component-properties-window');
     });

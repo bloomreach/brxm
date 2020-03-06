@@ -25,7 +25,6 @@ describe('DragDropService', () => {
   let ConfigService;
   let DomService;
   let DragDropService;
-  let ModelFactoryService;
   let PageStructureService;
   let iframe;
   let canvas;
@@ -59,7 +58,6 @@ describe('DragDropService', () => {
 
     $injector = fake.injector();
     PageStructureService = fake.injector().get('PageStructureService');
-    ModelFactoryService = fake.injector().get('ModelFactoryService');
     PageStructureService.$rootScope = $rootScope;
     angularElement = angular.element;
     spyOn(angular, 'element').and.callThrough();
@@ -355,55 +353,6 @@ describe('DragDropService', () => {
           expect(clickHandler).not.toHaveBeenCalled();
         });
       });
-    });
-  });
-
-  it('replaces a container', (done) => {
-    loadIframeFixture(() => {
-      const reRenderedContainer1 = ModelFactoryService.createContainer(createContainer(3));
-
-      DragDropService.replaceContainer(container1, reRenderedContainer1);
-
-      // wait until the current $digest is done before expecting results
-      setTimeout(() => {
-        expect(DragDropService.drake.containers.map(angular.element)).toEqual([
-          reRenderedContainer1.getBoxElement(),
-          container2.getBoxElement(),
-        ]);
-        done();
-      }, 0);
-    });
-  });
-
-  it('ignores the replacement of an unknown container', (done) => {
-    loadIframeFixture(() => {
-      const unknownContainer = ModelFactoryService.createContainer(createContainer(3));
-
-      DragDropService.replaceContainer(unknownContainer, container1);
-
-      // wait until the current $digest is done before expecting results
-      setTimeout(() => {
-        expect(DragDropService.drake.containers.map(angular.element)).toEqual([
-          container1.getBoxElement(),
-          container2.getBoxElement(),
-        ]);
-        done();
-      }, 0);
-    });
-  });
-
-  it('ignores the replacement of a non-existing container', (done) => {
-    loadIframeFixture(() => {
-      DragDropService.replaceContainer(container1, null);
-
-      // wait until the current $digest is done before expecting results
-      setTimeout(() => {
-        expect(DragDropService.drake.containers.map(angular.element)).toEqual([
-          container1.getBoxElement(),
-          container2.getBoxElement(),
-        ]);
-        done();
-      }, 0);
     });
   });
 

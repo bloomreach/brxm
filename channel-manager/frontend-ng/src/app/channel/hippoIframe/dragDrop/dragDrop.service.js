@@ -177,16 +177,6 @@ class DragDropService {
       .map(container => container.getBoxElement()[0]);
   }
 
-  replaceContainer(oldContainer, newContainer) {
-    return this.dragulaPromise.then(() => {
-      const oldIndex = this.drake.containers.indexOf(oldContainer.getBoxElement()[0]);
-      if (oldIndex >= 0 && newContainer) {
-        const newElement = newContainer.getBoxElement()[0];
-        this.drake.containers[oldIndex] = newElement;
-      }
-    });
-  }
-
   startDragOrClick($event, component) {
     this.draggingOrClicking = true;
 
@@ -293,7 +283,7 @@ class DragDropService {
       .removeClass(COMPONENT_QA_CLASS);
   }
 
-  async _onDrop(movedElement, targetContainerElement, sourceContainerElement, targetNextComponentElement) {
+  _onDrop(movedElement, targetContainerElement, sourceContainerElement, targetNextComponentElement) {
     this.dropping = true;
 
     const sourceContainer = this.PageStructureService.getContainerByIframeElement(sourceContainerElement);
@@ -302,7 +292,7 @@ class DragDropService {
     const targetNextComponent = targetContainer.getComponentByIframeElement(targetNextComponentElement);
 
     try {
-      await this.PageStructureService.moveComponent(movedComponent, targetContainer, targetNextComponent);
+      this.PageStructureService.moveComponent(movedComponent, targetContainer, targetNextComponent);
     } finally {
       this.dropping = false;
     }
