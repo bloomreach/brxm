@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,11 @@
  */
 
 describe('componentCatalogController', () => {
+  let $q;
+  let $rootScope;
   let $translate;
   let MaskService;
   let ComponentCatalogService;
-  let OverlayService;
   let $ctrl;
 
   const component = {
@@ -29,11 +30,12 @@ describe('componentCatalogController', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject(($componentController, _$translate_, _MaskService_, _ComponentCatalogService_, _OverlayService_) => {
+    inject(($componentController, _$q_, _$rootScope_, _$translate_, _MaskService_, _ComponentCatalogService_) => {
+      $q = _$q_;
+      $rootScope = _$rootScope_;
       $translate = _$translate_;
       MaskService = _MaskService_;
       ComponentCatalogService = _ComponentCatalogService_;
-      OverlayService = _OverlayService_;
 
       $ctrl = $componentController('componentCatalog');
     });
@@ -41,21 +43,33 @@ describe('componentCatalogController', () => {
     spyOn(ComponentCatalogService, 'getSelectedComponent').and.returnValue(component);
   });
 
-  it('toggleState should toggle the state of the overlay toggle if it is falsy', () => {
-    $ctrl._toggleState();
+  describe('onSelect', () => {
+    beforeEach(() => {
+      spyOn(ComponentCatalogService, 'selectComponent');
+    });
 
-    expect($ctrl.state).toEqual(true);
-    expect(OverlayService.toggleOverlayByComponent).toEqual(true);
-  });
+    it('should set state to true', () => {
+      ComponentCatalogService.selectComponent.and.returnValue($q.defer());
 
-  it('sets the selected component', () => {
-    spyOn(ComponentCatalogService, 'selectComponent');
-    spyOn($ctrl, '_toggleState');
+      $ctrl.onSelect();
+      expect($ctrl.state).toEqual(true);
+    });
 
-    $ctrl.onSelect(component);
+    it('should restore state on an error in selecting a component', () => {
+      ComponentCatalogService.selectComponent.and.returnValue($q.reject());
 
-    expect($ctrl._toggleState).toHaveBeenCalled();
-    expect(ComponentCatalogService.selectComponent).toHaveBeenCalledWith(component);
+      $ctrl.state = false;
+      $ctrl.onSelect();
+      $rootScope.$digest();
+
+      expect($ctrl.state).toEqual(false);
+    });
+
+    it('should set the selected component', () => {
+      $ctrl.onSelect(component);
+
+      expect(ComponentCatalogService.selectComponent).toHaveBeenCalledWith(component);
+    });
   });
 
   it('returns the label of component as its label', () => {

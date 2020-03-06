@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,9 @@
  * limitations under the License.
  */
 
+import controller from './mask.controller';
 import template from './mask.html';
-import MaskCtrl from './mask.controller';
 
-const maskComponent = {
-  bindings: {
-    state: '=',
-  },
-  template,
-  controller: MaskCtrl,
-};
+const maskComponent = { template, controller };
 
 export default maskComponent;

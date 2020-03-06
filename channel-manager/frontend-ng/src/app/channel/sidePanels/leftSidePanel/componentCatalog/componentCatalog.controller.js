@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,32 +15,30 @@
  */
 
 class ComponentCatalogController {
-  constructor($translate, ComponentCatalogService, MaskService, OverlayService) {
+  constructor($translate, ComponentCatalogService, MaskService) {
     'ngInject';
 
     this.$translate = $translate;
     this.MaskService = MaskService;
-    this.OverlayService = OverlayService;
     this.ComponentCatalogService = ComponentCatalogService;
 
     this.filteredFields = ['label'];
     this.filteredComponents = [];
   }
 
-  _toggleState() {
-    if (!this.state) {
-      this.OverlayService.toggleOverlayByComponent = true;
-      this.state = true;
-    }
-  }
-
   onFilter(filteredComponents) {
     this.filteredComponents = filteredComponents;
   }
 
-  onSelect(component) {
-    this._toggleState();
-    this.ComponentCatalogService.selectComponent(component);
+  async onSelect(component) {
+    const { state } = this;
+
+    this.state = true;
+    try {
+      await this.ComponentCatalogService.selectComponent(component);
+    } catch (error) {
+      this.state = state;
+    }
   }
 
   isComponentSelected(component) {
