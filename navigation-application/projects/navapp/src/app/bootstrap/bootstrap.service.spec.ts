@@ -285,6 +285,11 @@ describe('BootstrapService', () => {
     });
 
     describe('if something goes wrong', () => {
+      beforeEach(() => {
+        mainLoaderServiceMock.show.calls.reset();
+        mainLoaderServiceMock.hide.calls.reset();
+      });
+
       describe('and silent login has failed', () => {
         let bootstrapped: boolean;
 
