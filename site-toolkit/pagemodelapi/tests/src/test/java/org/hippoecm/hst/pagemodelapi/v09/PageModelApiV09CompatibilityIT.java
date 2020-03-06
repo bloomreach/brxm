@@ -17,6 +17,7 @@ package org.hippoecm.hst.pagemodelapi.v09;
 
 
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import javax.jcr.Session;
 
@@ -53,7 +54,7 @@ public class PageModelApiV09CompatibilityIT extends AbstractPageModelApiITCases 
 
         InputStream inputStream = PageModelApiV09CompatibilityIT.class.getResourceAsStream("pma_spec_homepage.json");
 
-        String expected = IOUtils.toString(inputStream, "UTF-8");
+        String expected = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
 
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT_ORDER);
     }
@@ -65,7 +66,7 @@ public class PageModelApiV09CompatibilityIT extends AbstractPageModelApiITCases 
 
         InputStream inputStream = PageModelApiV09CompatibilityIT.class.getResourceAsStream("pma_spec_newspage.json");
 
-        String expected = IOUtils.toString(inputStream, "UTF-8");
+        String expected = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
 
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT_ORDER);
     }
@@ -77,7 +78,7 @@ public class PageModelApiV09CompatibilityIT extends AbstractPageModelApiITCases 
 
         InputStream inputStream = PageModelApiV09CompatibilityIT.class.getResourceAsStream("pma_spec_dynamiccontent.json");
 
-        String expected = IOUtils.toString(inputStream, "UTF-8");
+        String expected = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
 
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT_ORDER);
     }
@@ -102,7 +103,7 @@ public class PageModelApiV09CompatibilityIT extends AbstractPageModelApiITCases 
 
             InputStream inputStream = PageModelApiV09CompatibilityIT.class.getResourceAsStream("pma_spec_explicit_hst_url_prefix_host.json");
 
-            String expected = IOUtils.toString(inputStream, "UTF-8");
+            String expected = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
 
             JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT_ORDER);
         } finally {

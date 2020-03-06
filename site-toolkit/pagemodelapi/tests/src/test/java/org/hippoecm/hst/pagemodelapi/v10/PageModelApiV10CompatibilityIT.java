@@ -18,6 +18,7 @@ package org.hippoecm.hst.pagemodelapi.v10;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.function.Predicate;
 
 import javax.jcr.Session;
@@ -351,7 +352,7 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
 
 
     private void assertions(final String actual, final InputStream expectedStream) throws IOException, JSONException {
-        String expected = IOUtils.toString(expectedStream, "UTF-8");
+        String expected = IOUtils.toString(expectedStream, StandardCharsets.UTF_8);
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT_ORDER);
         JsonNode jsonNodeRoot = new ObjectMapper().readTree(expected);
         JsonValidationUtil.validateReferences(jsonNodeRoot, jsonNodeRoot);

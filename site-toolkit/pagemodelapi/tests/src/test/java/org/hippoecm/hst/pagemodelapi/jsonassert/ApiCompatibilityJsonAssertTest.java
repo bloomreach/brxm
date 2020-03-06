@@ -17,6 +17,7 @@ package org.hippoecm.hst.pagemodelapi.jsonassert;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -194,7 +195,7 @@ public class ApiCompatibilityJsonAssertTest {
     private String getSimpleJson(final String filename) throws IOException {
         InputStream inputStream = ApiCompatibilityJsonAssertTest.class.getResourceAsStream(filename);
 
-        return IOUtils.toString(inputStream, "UTF-8");
+        return IOUtils.toString(inputStream, StandardCharsets.UTF_8);
     }
 
     public static class Ferrari extends Car {
