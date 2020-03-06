@@ -287,7 +287,7 @@ describe('OverlayService', () => {
       OverlayService.selectComponent('aaaa');
       expectActiveComponent('component A');
 
-      OverlayService.deselectComponent();
+      OverlayService.selectComponent(null);
       expectNoActiveComponent();
     });
 

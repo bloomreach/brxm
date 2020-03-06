@@ -225,11 +225,6 @@ class OverlayService {
     this.sync();
   }
 
-  deselectComponent() {
-    delete this._selectedComponentId;
-    this.sync();
-  }
-
   _isSelectedComponentElement(element) {
     return element.getType() === 'component' && element.getId() === this._selectedComponentId;
   }

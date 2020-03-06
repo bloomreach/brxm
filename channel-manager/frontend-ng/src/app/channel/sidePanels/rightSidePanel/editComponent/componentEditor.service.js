@@ -338,7 +338,7 @@ class ComponentEditorService {
     }
 
     this._clearData();
-    this.OverlayService.deselectComponent();
+    this.OverlayService.selectComponent(null);
     delete this.error;
   }
 
