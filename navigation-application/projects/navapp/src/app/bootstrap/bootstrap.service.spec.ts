@@ -207,7 +207,7 @@ describe('BootstrapService', () => {
         expect(busyIndicatorServiceMock.show).toHaveBeenCalled();
       });
 
-      it('should hide the mail loader', () => {
+      it('should hide the main loader', () => {
         expect(mainLoaderServiceMock.hide).toHaveBeenCalled();
         expect(mainLoaderServiceMock.show).toHaveBeenCalledBefore(mainLoaderServiceMock.hide);
       });
@@ -285,6 +285,11 @@ describe('BootstrapService', () => {
     });
 
     describe('if something goes wrong', () => {
+      beforeEach(() => {
+        mainLoaderServiceMock.show.calls.reset();
+        mainLoaderServiceMock.hide.calls.reset();
+      });
+
       describe('and silent login has failed', () => {
         let bootstrapped: boolean;
 
@@ -304,8 +309,14 @@ describe('BootstrapService', () => {
           expect(errorHandlingServiceMock.setError).toHaveBeenCalledWith(expectedError);
         });
 
-        it('should bootstrap the app', () => {
-          expect(bootstrapped).toBeTruthy();
+        it('should hide the main loader', () => {
+          expect(mainLoaderServiceMock.hide).toHaveBeenCalled();
+          expect(mainLoaderServiceMock.show).toHaveBeenCalledBefore(mainLoaderServiceMock.hide);
+        });
+
+        it('should hide the busy indicator', () => {
+          expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
+          expect(busyIndicatorServiceMock.show).toHaveBeenCalledBefore(busyIndicatorServiceMock.hide);
         });
       });
 
@@ -336,6 +347,16 @@ describe('BootstrapService', () => {
         it('should bootstrap the app', () => {
           expect(bootstrapped).toBeTruthy();
         });
+
+        it('should hide the main loader', () => {
+          expect(mainLoaderServiceMock.hide).toHaveBeenCalled();
+          expect(mainLoaderServiceMock.show).toHaveBeenCalledBefore(mainLoaderServiceMock.hide);
+        });
+
+        it('should hide the busy indicator', () => {
+          expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
+          expect(busyIndicatorServiceMock.show).toHaveBeenCalledBefore(busyIndicatorServiceMock.hide);
+        });
       });
 
       describe('and nav item DTOs fetching resolved with an empty array', () => {
@@ -364,6 +385,16 @@ describe('BootstrapService', () => {
         it('should bootstrap the app', () => {
           expect(bootstrapped).toBeTruthy();
         });
+
+        it('should hide the main loader', () => {
+          expect(mainLoaderServiceMock.hide).toHaveBeenCalled();
+          expect(mainLoaderServiceMock.show).toHaveBeenCalledBefore(mainLoaderServiceMock.hide);
+        });
+
+        it('should hide the busy indicator', () => {
+          expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
+          expect(busyIndicatorServiceMock.show).toHaveBeenCalledBefore(busyIndicatorServiceMock.hide);
+        });
       });
 
       describe('and registration of nav item DTOs thrown an exception', () => {
@@ -390,6 +421,16 @@ describe('BootstrapService', () => {
 
         it('should bootstrap the app', () => {
           expect(bootstrapped).toBeTruthy();
+        });
+
+        it('should hide the main loader', () => {
+          expect(mainLoaderServiceMock.hide).toHaveBeenCalled();
+          expect(mainLoaderServiceMock.show).toHaveBeenCalledBefore(mainLoaderServiceMock.hide);
+        });
+
+        it('should hide the busy indicator', () => {
+          expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
+          expect(busyIndicatorServiceMock.show).toHaveBeenCalledBefore(busyIndicatorServiceMock.hide);
         });
       });
 
@@ -418,6 +459,16 @@ describe('BootstrapService', () => {
         it('should bootstrap the app', () => {
           expect(bootstrapped).toBeTruthy();
         });
+
+        it('should hide the main loader', () => {
+          expect(mainLoaderServiceMock.hide).toHaveBeenCalled();
+          expect(mainLoaderServiceMock.show).toHaveBeenCalledBefore(mainLoaderServiceMock.hide);
+        });
+
+        it('should hide the busy indicator', () => {
+          expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
+          expect(busyIndicatorServiceMock.show).toHaveBeenCalledBefore(busyIndicatorServiceMock.hide);
+        });
       });
 
       describe('and ClientAppService initialization has failed', () => {
@@ -442,6 +493,16 @@ describe('BootstrapService', () => {
 
         it('should bootstrap the app', () => {
           expect(bootstrapped).toBeTruthy();
+        });
+
+        it('should hide the main loader', () => {
+          expect(mainLoaderServiceMock.hide).toHaveBeenCalled();
+          expect(mainLoaderServiceMock.show).toHaveBeenCalledBefore(mainLoaderServiceMock.hide);
+        });
+
+        it('should hide the busy indicator', () => {
+          expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
+          expect(busyIndicatorServiceMock.show).toHaveBeenCalledBefore(busyIndicatorServiceMock.hide);
         });
       });
 
@@ -470,6 +531,16 @@ describe('BootstrapService', () => {
         it('should bootstrap the app', () => {
           expect(bootstrapped).toBeTruthy();
         });
+
+        it('should hide the main loader', () => {
+          expect(mainLoaderServiceMock.hide).toHaveBeenCalled();
+          expect(mainLoaderServiceMock.show).toHaveBeenCalledBefore(mainLoaderServiceMock.hide);
+        });
+
+        it('should hide the busy indicator', () => {
+          expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
+          expect(busyIndicatorServiceMock.show).toHaveBeenCalledBefore(busyIndicatorServiceMock.hide);
+        });
       });
 
       describe('and NavigationService initialization has thrown an exception', () => {
@@ -496,6 +567,16 @@ describe('BootstrapService', () => {
 
         it('should bootstrap the app', () => {
           expect(bootstrapped).toBeTruthy();
+        });
+
+        it('should hide the main loader', () => {
+          expect(mainLoaderServiceMock.hide).toHaveBeenCalled();
+          expect(mainLoaderServiceMock.show).toHaveBeenCalledBefore(mainLoaderServiceMock.hide);
+        });
+
+        it('should hide the busy indicator', () => {
+          expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
+          expect(busyIndicatorServiceMock.show).toHaveBeenCalledBefore(busyIndicatorServiceMock.hide);
         });
       });
 
@@ -526,6 +607,16 @@ describe('BootstrapService', () => {
         it('should bootstrap the app', () => {
           expect(bootstrapped).toBeTruthy();
         });
+
+        it('should hide the main loader', () => {
+          expect(mainLoaderServiceMock.hide).toHaveBeenCalled();
+          expect(mainLoaderServiceMock.show).toHaveBeenCalledBefore(mainLoaderServiceMock.hide);
+        });
+
+        it('should hide the busy indicator', () => {
+          expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
+          expect(busyIndicatorServiceMock.show).toHaveBeenCalledBefore(busyIndicatorServiceMock.hide);
+        });
       });
 
       describe('and initial navigation has failed', () => {
@@ -550,6 +641,16 @@ describe('BootstrapService', () => {
 
         it('should bootstrap the app', () => {
           expect(bootstrapped).toBeTruthy();
+        });
+
+        it('should hide the main loader', () => {
+          expect(mainLoaderServiceMock.hide).toHaveBeenCalled();
+          expect(mainLoaderServiceMock.show).toHaveBeenCalledBefore(mainLoaderServiceMock.hide);
+        });
+
+        it('should hide the busy indicator', () => {
+          expect(busyIndicatorServiceMock.hide).toHaveBeenCalled();
+          expect(busyIndicatorServiceMock.show).toHaveBeenCalledBefore(busyIndicatorServiceMock.hide);
         });
       });
 
@@ -620,7 +721,7 @@ describe('BootstrapService', () => {
         expect(busyIndicatorServiceMock.show).toHaveBeenCalled();
       });
 
-      it('should hide the mail loader', () => {
+      it('should hide the main loader', () => {
         expect(mainLoaderServiceMock.hide).toHaveBeenCalled();
         expect(mainLoaderServiceMock.show).toHaveBeenCalledBefore(mainLoaderServiceMock.hide);
       });
