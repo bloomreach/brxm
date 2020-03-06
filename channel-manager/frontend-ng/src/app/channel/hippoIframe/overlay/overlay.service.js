@@ -33,6 +33,7 @@ class OverlayService {
     $translate,
     ChannelService,
     DomService,
+    DragDropService,
     ExperimentStateService,
     PageStructureService,
     SvgService,
@@ -44,6 +45,7 @@ class OverlayService {
     this.$rootScope = $rootScope;
     this.ChannelService = ChannelService;
     this.DomService = DomService;
+    this.DragDropService = DragDropService;
     this.ExperimentStateService = ExperimentStateService;
     this.PageStructureService = PageStructureService;
     this.SvgService = SvgService;
@@ -202,6 +204,12 @@ class OverlayService {
   toggleComponentsOverlay(value) {
     this.isComponentsOverlayDisplayed = value;
     this._updateOverlayClasses();
+
+    if (value) {
+      this.DragDropService.enable();
+    } else {
+      this.DragDropService.disable();
+    }
   }
 
   toggleContentsOverlay(value) {
@@ -250,23 +258,18 @@ class OverlayService {
     }
   }
 
-  attachComponentMouseDown(callback) {
-    this.componentMouseDownCallback = callback;
-  }
-
-  detachComponentMouseDown() {
-    this.componentMouseDownCallback = null;
-  }
-
   _onOverlayMouseDown(event) {
     const target = $(event.target);
-    if (!target.hasClass('hippo-overlay-element-component') || !this.componentMouseDownCallback) {
+    if (!target.hasClass('hippo-overlay-element-component')
+      || !this.isComponentsOverlayDisplayed
+      || !this.DragDropService.isEnabled()
+    ) {
       return;
     }
 
     const component = this.PageStructureService.getComponentByOverlayElement(target);
     if (component) {
-      this.componentMouseDownCallback(event, component);
+      this.DragDropService.startDragOrClick(event, component);
     }
   }
 

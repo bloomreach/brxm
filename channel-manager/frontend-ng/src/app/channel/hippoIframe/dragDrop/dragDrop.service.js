@@ -136,6 +136,10 @@ class DragDropService {
     this._destroyDrake();
   }
 
+  isEnabled() {
+    return !!this.drake;
+  }
+
   _injectDragula(iframe) {
     const appRootUrl = this.DomService.getAppRootUrl();
     const dragulaJs = `${appRootUrl}scripts/dragula.min.js?antiCache=${this.ConfigService.antiCache}`;

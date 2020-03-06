@@ -342,33 +342,6 @@ describe('hippoIframeCtrl', () => {
     expect(SpaService.destroy).toHaveBeenCalled();
   });
 
-  it('updates drag-drop when the components overlay is toggled and the iframe finished loading', () => {
-    spyOn(RenderingService, 'updateDragDrop');
-
-    HippoIframeService.pageLoaded = false;
-    $ctrl.$onChanges({
-      showComponentsOverlay: { currentValue: true },
-    });
-    expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
-
-    $ctrl.$onChanges({
-      showComponentsOverlay: { currentValue: false },
-    });
-    expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
-
-    HippoIframeService.pageLoaded = true;
-    $ctrl.$onChanges({
-      showComponentsOverlay: { currentValue: true },
-    });
-    expect(RenderingService.updateDragDrop).toHaveBeenCalled();
-
-    RenderingService.updateDragDrop.calls.reset();
-    $ctrl.$onChanges({
-      showComponentsOverlay: { currentValue: false },
-    });
-    expect(RenderingService.updateDragDrop).toHaveBeenCalled();
-  });
-
   it('toggles the components overlay', () => {
     spyOn(OverlayService, 'toggleComponentsOverlay');
 

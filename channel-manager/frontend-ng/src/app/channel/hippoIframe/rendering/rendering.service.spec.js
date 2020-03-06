@@ -19,7 +19,6 @@ describe('RenderingService', () => {
   let $rootScope;
   let ChannelService;
   let DomService;
-  let DragDropService;
   let HippoIframeService;
   let OverlayService;
   let PageStructureService;
@@ -52,7 +51,6 @@ describe('RenderingService', () => {
       _$rootScope_,
       _ChannelService_,
       _DomService_,
-      _DragDropService_,
       _HippoIframeService_,
       _OverlayService_,
       _PageStructureService_,
@@ -63,7 +61,6 @@ describe('RenderingService', () => {
       $rootScope = _$rootScope_;
       ChannelService = _ChannelService_;
       DomService = _DomService_;
-      DragDropService = _DragDropService_;
       HippoIframeService = _HippoIframeService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
@@ -88,7 +85,6 @@ describe('RenderingService', () => {
       spyOn(OverlayService, 'clear');
       spyOn(PageStructureService, 'clearParsedElements');
       spyOn(PageStructureService, 'parseElements');
-      spyOn(RenderingService, 'updateDragDrop');
       spyOn(ScrollService, 'saveScrollPosition');
       spyOn(ScrollService, 'restoreScrollPosition');
     });
@@ -105,7 +101,6 @@ describe('RenderingService', () => {
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(OverlayService.clear).toHaveBeenCalled();
       expect(PageStructureService.parseElements).toHaveBeenCalledWith();
-      expect(RenderingService.updateDragDrop).toHaveBeenCalled();
       expect(RenderingService.emitter.emit).toHaveBeenCalledWith('overlay-created');
       expect(ScrollService.restoreScrollPosition).toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
@@ -123,7 +118,6 @@ describe('RenderingService', () => {
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(OverlayService.clear).toHaveBeenCalled();
       expect(PageStructureService.parseElements).toHaveBeenCalledWith();
-      expect(RenderingService.updateDragDrop).toHaveBeenCalled();
       expect(RenderingService.emitter.emit).toHaveBeenCalledWith('overlay-created');
       expect(ScrollService.restoreScrollPosition).toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
@@ -153,7 +147,6 @@ describe('RenderingService', () => {
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(OverlayService.clear).toHaveBeenCalled();
       expect(PageStructureService.parseElements).not.toHaveBeenCalled();
-      expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
       expect(RenderingService.emitter.emit).not.toHaveBeenCalledWith();
       expect(ScrollService.restoreScrollPosition).not.toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
@@ -168,7 +161,6 @@ describe('RenderingService', () => {
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(OverlayService.clear).toHaveBeenCalled();
       expect(PageStructureService.parseElements).not.toHaveBeenCalled();
-      expect(RenderingService.updateDragDrop).not.toHaveBeenCalled();
       expect(RenderingService.emitter.emit).not.toHaveBeenCalledWith();
       expect(ScrollService.restoreScrollPosition).not.toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
@@ -220,50 +212,6 @@ describe('RenderingService', () => {
 
         expect(ChannelService.initializeChannel).not.toHaveBeenCalled();
       });
-    });
-  });
-
-  describe('updateDragDrop', () => {
-    beforeEach(() => {
-      spyOn(DragDropService, 'enable').and.returnValue($q.resolve());
-      spyOn(DragDropService, 'disable');
-    });
-
-    it('enables/disables drag-drop when the components overlay is toggled', () => {
-      OverlayService.isComponentsOverlayDisplayed = true;
-      RenderingService.updateDragDrop();
-      $rootScope.$digest();
-
-      expect(DragDropService.enable).toHaveBeenCalled();
-      expect(DragDropService.disable).not.toHaveBeenCalled();
-
-      DragDropService.enable.calls.reset();
-      OverlayService.isComponentsOverlayDisplayed = false;
-      RenderingService.updateDragDrop();
-      $rootScope.$digest();
-
-      expect(DragDropService.enable).not.toHaveBeenCalled();
-      expect(DragDropService.disable).toHaveBeenCalled();
-    });
-
-    it('attaches/detaches component mousedown handler when the components overlay is toggled', () => {
-      spyOn(OverlayService, 'attachComponentMouseDown');
-      spyOn(OverlayService, 'detachComponentMouseDown');
-
-      OverlayService.isComponentsOverlayDisplayed = true;
-      RenderingService.updateDragDrop();
-      $rootScope.$digest();
-
-      expect(OverlayService.attachComponentMouseDown).toHaveBeenCalled();
-      expect(OverlayService.detachComponentMouseDown).not.toHaveBeenCalled();
-
-      OverlayService.attachComponentMouseDown.calls.reset();
-      OverlayService.isComponentsOverlayDisplayed = false;
-      RenderingService.updateDragDrop();
-      $rootScope.$digest();
-
-      expect(OverlayService.attachComponentMouseDown).not.toHaveBeenCalled();
-      expect(OverlayService.detachComponentMouseDown).toHaveBeenCalled();
     });
   });
 });
