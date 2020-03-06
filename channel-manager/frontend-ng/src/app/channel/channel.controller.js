@@ -25,7 +25,6 @@ class ChannelCtrl {
     ConfigService,
     FeedbackService,
     HippoIframeService,
-    OverlayService,
     PageMenuService,
     PageStructureService,
     ProjectService,
@@ -42,7 +41,6 @@ class ChannelCtrl {
     this.ConfigService = ConfigService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
-    this.OverlayService = OverlayService;
     this.PageMenuService = PageMenuService;
     this.PageStructureService = PageStructureService;
     this.ProjectService = ProjectService;
@@ -56,6 +54,8 @@ class ChannelCtrl {
 
   $onInit() {
     this.projectsEnabled = this.ConfigService.projectsEnabled;
+    this.isComponentsOverlayDisplayed = false;
+    this.isContentOverlayDisplayed = false;
 
     this.CmsService.subscribe('reload-page', this._reloadPage, this);
   }
@@ -79,22 +79,6 @@ class ChannelCtrl {
 
     this.FeedbackService.showError(errorKey, errorResponse.parameterMap);
     this.HippoIframeService.reload();
-  }
-
-  get isContentOverlayDisplayed() {
-    return this.OverlayService.isContentOverlayDisplayed;
-  }
-
-  set isContentOverlayDisplayed(value) {
-    this.OverlayService.showContentOverlay(value);
-  }
-
-  get isComponentsOverlayDisplayed() {
-    return this.OverlayService.isComponentsOverlayDisplayed;
-  }
-
-  set isComponentsOverlayDisplayed(value) {
-    this.OverlayService.showComponentsOverlay(value);
   }
 
   isControlsDisabled() {
