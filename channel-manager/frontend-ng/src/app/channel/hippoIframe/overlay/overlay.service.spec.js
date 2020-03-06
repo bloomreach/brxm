@@ -210,27 +210,27 @@ describe('OverlayService', () => {
     await loadIframeFixture();
 
     // Components overlay
-    OverlayService.showComponentsOverlay(true);
+    OverlayService.toggleComponentsOverlay(true);
     expect(iframe('html')).toHaveClass('hippo-show-components');
 
-    OverlayService.showComponentsOverlay(false);
+    OverlayService.toggleComponentsOverlay(false);
     expect(iframe('html')).not.toHaveClass('hippo-show-components');
 
     // Content overlay
-    OverlayService.showContentOverlay(true);
+    OverlayService.toggleContentsOverlay(true);
     expect(iframe('html')).toHaveClass('hippo-show-content');
 
-    OverlayService.showContentOverlay(false);
+    OverlayService.toggleContentsOverlay(false);
     expect(iframe('html')).not.toHaveClass('hippo-show-content');
 
     // Combined
-    OverlayService.showComponentsOverlay(true);
-    OverlayService.showContentOverlay(true);
+    OverlayService.toggleComponentsOverlay(true);
+    OverlayService.toggleContentsOverlay(true);
     expect(iframe('html')).toHaveClass('hippo-show-components');
     expect(iframe('html')).toHaveClass('hippo-show-content');
 
-    OverlayService.showComponentsOverlay(false);
-    OverlayService.showContentOverlay(false);
+    OverlayService.toggleComponentsOverlay(false);
+    OverlayService.toggleContentsOverlay(false);
     expect(iframe('html')).not.toHaveClass('hippo-show-components');
     expect(iframe('html')).not.toHaveClass('hippo-show-content');
   });
@@ -466,7 +466,7 @@ describe('OverlayService', () => {
   });
 
   it('syncs the position of overlay elements when content overlay is active', async () => {
-    OverlayService.showContentOverlay(true);
+    OverlayService.toggleContentsOverlay(true);
     await loadIframeFixture();
 
     const components = iframe('.hippo-overlay > .hippo-overlay-element-component');
@@ -492,8 +492,8 @@ describe('OverlayService', () => {
   });
 
   it('syncs the position of overlay elements in edit mode', async () => {
-    OverlayService.showComponentsOverlay(true);
-    OverlayService.showContentOverlay(false);
+    OverlayService.toggleComponentsOverlay(true);
+    OverlayService.toggleContentsOverlay(false);
     await loadIframeFixture();
 
     const components = iframe('.hippo-overlay > .hippo-overlay-element-component');
@@ -527,7 +527,7 @@ describe('OverlayService', () => {
   });
 
   it('takes the scroll position of the iframe into account when positioning overlay elements', async () => {
-    OverlayService.showContentOverlay(true);
+    OverlayService.toggleContentsOverlay(true);
     await loadIframeFixture();
     // enlarge body so the iframe can scroll
     const body = iframe('body');
@@ -637,7 +637,7 @@ describe('OverlayService', () => {
   });
 
   it('should trigger the menu:edit event', async () => {
-    OverlayService.showComponentsOverlay(true);
+    OverlayService.toggleComponentsOverlay(true);
     await loadIframeFixture();
     const menuLink = iframe('.hippo-overlay > .hippo-overlay-element-menu-link');
 
@@ -649,7 +649,7 @@ describe('OverlayService', () => {
   });
 
   it('removes overlay elements when they are no longer part of the page structure', async () => {
-    OverlayService.showComponentsOverlay(true);
+    OverlayService.toggleComponentsOverlay(true);
 
     await loadIframeFixture();
 

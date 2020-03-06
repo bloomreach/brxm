@@ -199,13 +199,13 @@ class OverlayService {
     this.toggleAddMode(false);
   }
 
-  showComponentsOverlay(isDisplayed) {
-    this.isComponentsOverlayDisplayed = isDisplayed;
+  toggleComponentsOverlay(value) {
+    this.isComponentsOverlayDisplayed = value;
     this._updateOverlayClasses();
   }
 
-  showContentOverlay(isDisplayed) {
-    this.isContentOverlayDisplayed = isDisplayed;
+  toggleContentsOverlay(value) {
+    this.isContentOverlayDisplayed = value;
     this._updateOverlayClasses();
   }
 

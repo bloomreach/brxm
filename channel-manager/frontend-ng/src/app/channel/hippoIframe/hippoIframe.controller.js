@@ -108,14 +108,14 @@ class HippoIframeCtrl {
 
   $onChanges(changes) {
     if (changes.showComponentsOverlay) {
-      this.OverlayService.showComponentsOverlay(changes.showComponentsOverlay.currentValue);
+      this.OverlayService.toggleComponentsOverlay(changes.showComponentsOverlay.currentValue);
       if (this.HippoIframeService.pageLoaded) {
         this.RenderingService.updateDragDrop();
       }
     }
 
     if (changes.showContentOverlay) {
-      this.OverlayService.showContentOverlay(changes.showContentOverlay.currentValue);
+      this.OverlayService.toggleContentsOverlay(changes.showContentOverlay.currentValue);
     }
   }
 
