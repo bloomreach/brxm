@@ -39,9 +39,10 @@ public class PageModelPipeline implements Pipeline {
 
     private Map<String, Pipeline> pageModelApiPipelinesByVersion = new HashMap<>();
 
-    protected List<Valve> extraInitValves = new ArrayList<>();
-    protected List<Valve> extraProcessingValves = new ArrayList<>();
-    protected List<Valve> extraCleanupValves = new ArrayList<>();
+    // shared init/processing/cleanup valves for all page model pipelines
+    protected List<Valve> sharedInitValves = new ArrayList<>();
+    protected List<Valve> sharedProcessingValves = new ArrayList<>();
+    protected List<Valve> sharedCleanupValves = new ArrayList<>();
 
     private volatile boolean initialized = false;
 
@@ -55,12 +56,22 @@ public class PageModelPipeline implements Pipeline {
         this.defaultPageModelApiVersion = defaultPageModelApiVersion;
     }
 
+
+    public void setInitializationValves(final List<Valve> initializationValves) {
+        initializationValves.forEach(valve -> sharedInitValves.add(valve));
+    }
+
+
+    public void setCleanupValves(final List<Valve> cleanupValves) {
+        cleanupValves.forEach(valve -> sharedCleanupValves.add(valve));
+    }
+
     /**
      * Used by downstream projects to be able to add a valve to all delegatee pageModelApiPipelinesByVersion pipelines
      */
     @SuppressWarnings("unused")
     public void addInitializationValve(Valve initializationValve) {
-        extraInitValves.add(initializationValve);
+        sharedInitValves.add(initializationValve);
     }
 
     /**
@@ -68,7 +79,7 @@ public class PageModelPipeline implements Pipeline {
      */
     @SuppressWarnings("unused")
     public void addProcessingValve(Valve processingValve) {
-        extraProcessingValves.add(processingValve);
+        sharedProcessingValves.add(processingValve);
     }
 
     /**
@@ -76,7 +87,7 @@ public class PageModelPipeline implements Pipeline {
      */
     @SuppressWarnings("unused")
     public void addCleanupValve(Valve cleanupValve) {
-        extraCleanupValves.add(cleanupValve);
+        sharedCleanupValves.add(cleanupValve);
     }
 
 
@@ -113,9 +124,9 @@ public class PageModelPipeline implements Pipeline {
         for (Pipeline pipeline : pageModelApiPipelinesByVersion.values()) {
             if (pipeline instanceof HstSitePipeline) {
                 final HstSitePipeline hstSitePipeline = (HstSitePipeline) pipeline;
-                extraInitValves.forEach(valve -> hstSitePipeline.addInitializationValve(valve));
-                extraProcessingValves.forEach(valve -> hstSitePipeline.addProcessingValve(valve));
-                extraCleanupValves.forEach(valve -> hstSitePipeline.addCleanupValve(valve));
+                sharedInitValves.forEach(valve -> hstSitePipeline.addInitializationValve(valve));
+                sharedProcessingValves.forEach(valve -> hstSitePipeline.addProcessingValve(valve));
+                sharedCleanupValves.forEach(valve -> hstSitePipeline.addCleanupValve(valve));
             }
         }
         initialized = true;
@@ -178,6 +189,7 @@ public class PageModelPipeline implements Pipeline {
         }
         return defaultPipeline;
     }
+
 
     private static class UnsupportedApiVersion extends Exception {
         public UnsupportedApiVersion(final String message) {

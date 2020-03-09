@@ -29,7 +29,6 @@
     <property name="jwtTokenAuthorizationHeader" value="${jwt.token.authorization.header}"/>
     <property name="jwtTokenParam" value="${jwt.token.param}" />
     <property name="clusterNodeAffinityParam" value="${cluster.node.affinity.param}"/>
-    <property name="statelessRequestValidation" value="${hst.stateless.request.validation}"/>
   </bean>
 
 

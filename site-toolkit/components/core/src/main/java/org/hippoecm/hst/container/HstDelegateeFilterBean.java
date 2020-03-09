@@ -142,7 +142,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
     private String jwtTokenParam;
     private String jwtTokenAuthorizationHeader;
-    private boolean statelessRequestValidation;
 
     private String clusterNodeAffinityParam;
 
@@ -181,11 +180,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
 
     public void setJwtTokenParam(final String jwtTokenParam) {
         this.jwtTokenParam = jwtTokenParam;
-    }
-
-
-    public void setStatelessRequestValidation(final boolean statelessRequestValidation) {
-        this.statelessRequestValidation = statelessRequestValidation;
     }
 
     public void setClusterNodeAffinityParam(final String clusterNodeAffinityParam) {
@@ -248,8 +242,7 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
         Task rootTask = null;
 
         // Sets up the container request wrapper
-        HstContainerRequestImpl containerRequest = new HstContainerRequestImpl(req, hstManager.getPathSuffixDelimiter(),
-                statelessRequestValidation);
+        HstContainerRequestImpl containerRequest = new HstContainerRequestImpl(req, hstManager.getPathSuffixDelimiter());
 
         try {
 
@@ -408,7 +401,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             if (PAGE_MODEL_PIPELINE_NAME.equals(resolvedMount.getNamedPipeline())) {
                 log.debug("Request will invoke {} pipeline for request {} ", PAGE_MODEL_PIPELINE_NAME, containerRequest);
                 requestContext.setPageModelApiRequest(true);
-                containerRequest.setStatelessRequest();
             }
 
             if (isRequestForChannelManagerPreview(vHosts, renderingHost, req)) {
@@ -620,7 +612,6 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
             if (rootTask != null) {
                 HDC.cleanUp();
             }
-            containerRequest.finish();
         }
     }
 

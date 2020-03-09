@@ -1,8 +1,12 @@
 definitions:
   config:
-    /hst:hst/hst:configurations/unittestproject/hst:sitemap/genericdetail:
-      jcr:primaryType: hst:sitemapitem
-      /_any_:
+    /hst:hst/hst:configurations/unittestproject/hst:sitemap:
+      /genericdetail:
         jcr:primaryType: hst:sitemapitem
-        hst:componentconfigurationid: hst:pages/genericdetail
-        hst:relativecontentpath: ${1}
+        /_any_:
+          jcr:primaryType: hst:sitemapitem
+          hst:componentconfigurationid: hst:pages/genericdetail
+          hst:relativecontentpath: ${1}
+      /httpsessionpage:
+        jcr:primaryType: hst:sitemapitem
+        hst:componentconfigurationid: hst:pages/httpsessionpage
