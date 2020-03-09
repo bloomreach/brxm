@@ -70,7 +70,8 @@ class HippoIframeCtrl {
     this.onLoad = this.onLoad.bind(this);
     this._onUnload = this._onUnload.bind(this);
     this._onNewHeadContributions = this._onNewHeadContributions.bind(this);
-    this._onMoveComponent = this._onMoveComponent.bind(this);
+    this._onComponentClick = this._onComponentClick.bind(this);
+    this._onComponentMove = this._onComponentMove.bind(this);
     this._onDocumentCreate = this._onDocumentCreate.bind(this);
     this._onDocumentEdit = this._onDocumentEdit.bind(this);
     this._onDocumentSelect = this._onDocumentSelect.bind(this);
@@ -79,11 +80,11 @@ class HippoIframeCtrl {
   $onInit() {
     this.CmsService.subscribe('render-component', this._renderComponent, this);
     this.CmsService.subscribe('delete-component', this._deleteComponent, this);
-    this._offClick = this.DragDropService.onClick(this._clickComponent.bind(this));
 
     this.iframeJQueryElement.on('load', this.onLoad);
     this._offEditMenu = this.$rootScope.$on('menu:edit', (event, menuUuid) => this.onEditMenu({ menuUuid }));
-    this._offMoveComponent = this.$rootScope.$on('iframe:component:move', this._onMoveComponent);
+    this._offComponentClick = this.$rootScope.$on('component:click', this._onComponentClick);
+    this._offComponentMove = this.$rootScope.$on('iframe:component:move', this._onComponentMove);
     this._offSdkReady = this.$rootScope.$on('spa:ready', this._onSpaReady);
     this._offSdkUnload = this.$rootScope.$on('iframe:unload', this._onUnload);
     this._offNewHeadContributions = this.$rootScope.$on(
@@ -122,9 +123,9 @@ class HippoIframeCtrl {
     this.SpaService.destroy();
     this.CmsService.unsubscribe('render-component', this._renderComponent, this);
     this.CmsService.unsubscribe('delete-component', this._deleteComponent, this);
-    this._offClick();
     this._offEditMenu();
-    this._offMoveComponent();
+    this._offComponentClick();
+    this._offComponentMove();
     this._offSdkReady();
     this._offSdkUnload();
     this._offNewHeadContributions();
@@ -202,11 +203,11 @@ class HippoIframeCtrl {
     this.ComponentRenderingService.renderComponent(componentId, propertiesMap);
   }
 
-  _clickComponent(component) {
+  _onComponentClick(event, component) {
     this.EditComponentService.startEditing(component);
   }
 
-  _onMoveComponent(event, { componentId, containerId, nextComponentId }) {
+  _onComponentMove(event, { componentId, containerId, nextComponentId }) {
     const page = this.PageStructureService.getPage();
     if (!page) {
       return;

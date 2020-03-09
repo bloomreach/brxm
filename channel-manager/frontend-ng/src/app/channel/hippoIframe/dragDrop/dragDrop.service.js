@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-const COMPONENT_CLICK_EVENT_NAME = 'component-click';
 const COMPONENT_QA_CLASS = 'qa-dragula-component';
 const MIRROR_WRAPPER_SELECTOR = '.channel-dragula-mirror';
 const MOUSELEAVE_EVENT_NAME = 'mouseleave.dragDropService';
@@ -26,7 +25,6 @@ class DragDropService {
     $rootScope,
     ConfigService,
     DomService,
-    Emittery,
     PageStructureService,
     ScrollService,
   ) {
@@ -41,7 +39,6 @@ class DragDropService {
 
     this.draggingOrClicking = false;
     this.dropping = false;
-    this.emitter = new Emittery();
   }
 
   init(iframeJQueryElement, canvasJQueryElement, sheetJQueryElement) {
@@ -55,14 +52,6 @@ class DragDropService {
       this._offPageChange();
     }
     this._offPageChange = this.$rootScope.$on('iframe:page:change', () => this._sync());
-  }
-
-  onClick(callback) {
-    return this._on(COMPONENT_CLICK_EVENT_NAME, callback);
-  }
-
-  _on(eventName, callback) {
-    return this.emitter.on(eventName, argument => this.$rootScope.$apply(() => callback(argument)));
   }
 
   _sync() {
@@ -197,7 +186,7 @@ class DragDropService {
     if (!this.isDragging()) {
       this._onStopDragOrClick(component.getBoxElement());
 
-      this.emitter.emit(COMPONENT_CLICK_EVENT_NAME, component);
+      this.$rootScope.$emit('component:click', component);
       this._digestIfNeeded();
     }
   }
