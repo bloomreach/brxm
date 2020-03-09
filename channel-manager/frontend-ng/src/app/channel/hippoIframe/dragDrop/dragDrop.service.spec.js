@@ -205,102 +205,103 @@ describe('DragDropService', () => {
     });
   });
 
-  it('forwards a shifted mouse event to the iframe when it starts dragging in an iframe', (done) => {
-    loadIframeFixture(() => {
-      const mockedMouseDownEvent = {
-        clientX: 100,
-        clientY: 200,
-      };
-      const iframeComponentElement1 = component1.getBoxElement()[0];
+  describe('startDragOrClick', () => {
+    it('forwards a shifted mouse event to the iframe when it starts dragging in an iframe', (done) => {
+      loadIframeFixture(() => {
+        const mockedMouseDownEvent = {
+          clientX: 100,
+          clientY: 200,
+        };
+        const iframeComponentElement1 = component1.getBoxElement()[0];
 
-      iframe.offset({
-        left: 10,
-        top: 20,
-      });
-      spyOn(iframeComponentElement1, 'dispatchEvent');
+        iframe.offset({
+          left: 10,
+          top: 20,
+        });
+        spyOn(iframeComponentElement1, 'dispatchEvent');
 
-      DragDropService.startDragOrClick(mockedMouseDownEvent, component1);
+        DragDropService.startDragOrClick(mockedMouseDownEvent, component1);
 
-      expect(DragDropService.isDraggingOrClicking()).toBeTruthy();
-      expect(DragDropService.isDragging()).toBeFalsy();
+        expect(DragDropService.isDraggingOrClicking()).toBeTruthy();
+        expect(DragDropService.isDragging()).toBeFalsy();
 
-      const dispatchedEvent = iframeComponentElement1.dispatchEvent.calls.argsFor(0)[0];
-      expect(dispatchedEvent.type).toEqual('mousedown');
-      expect(dispatchedEvent.bubbles).toEqual(true);
-      expect(dispatchedEvent.clientX).toEqual(90);
-      expect(dispatchedEvent.clientY).toEqual(180);
+        const dispatchedEvent = iframeComponentElement1.dispatchEvent.calls.argsFor(0)[0];
+        expect(dispatchedEvent.type).toEqual('mousedown');
+        expect(dispatchedEvent.bubbles).toEqual(true);
+        expect(dispatchedEvent.clientX).toEqual(90);
+        expect(dispatchedEvent.clientY).toEqual(180);
 
-      done();
-    });
-  });
-
-  it('stops dragging or clicking when disabled', (done) => {
-    loadIframeFixture(() => {
-      const mockedMouseDownEvent = {
-        clientX: 100,
-        clientY: 200,
-      };
-
-      DragDropService.startDragOrClick(mockedMouseDownEvent, component1);
-      expect(DragDropService.isDraggingOrClicking()).toBeTruthy();
-      expect(DragDropService.isDragging()).toBeFalsy();
-
-      DragDropService.disable();
-      expect(DragDropService.isDraggingOrClicking()).toBeFalsy();
-      expect(DragDropService.isDragging()).toBeFalsy();
-
-      done();
-    });
-  });
-
-  it('emits event "component-click" when a component receives a mouseup event from the left mouse button', (done) => {
-    loadIframeFixture(() => {
-      spyOn(DragDropService.emitter, 'emit').and.callThrough();
-
-      const mockedMouseDownEvent = {
-        clientX: 100,
-        clientY: 200,
-      };
-
-      const componentElement1 = component1.getBoxElement();
-
-      DragDropService.startDragOrClick(mockedMouseDownEvent, component1);
-
-      componentElement1.on('mouseup', () => {
-        expect(DragDropService.emitter.emit).toHaveBeenCalledWith('component-click', component1);
         done();
       });
-
-      const mouseUp = angular.element.Event('mouseup');
-      mouseUp.which = 1; // left mouse button, see https://api.jquery.com/event.which/
-      componentElement1.trigger(mouseUp);
     });
-  });
 
-  it('cancels the click simulation for showing a component\'s properties when the mouse cursor leaves a disabled component', (done) => { // eslint-disable-line max-len
-    mockCommentData.container1 = {
-      'HST-LockedBy': 'anotherUser',
-    };
-    loadIframeFixture(() => {
-      const mockedMouseDownEvent = {
-        clientX: 100,
-        clientY: 200,
-      };
-      const componentElement1 = component1.getBoxElement();
-      DragDropService.startDragOrClick(mockedMouseDownEvent, component1);
+    it('stops dragging or clicking when disabled', (done) => {
+      loadIframeFixture(() => {
+        const mockedMouseDownEvent = {
+          clientX: 100,
+          clientY: 200,
+        };
 
-      expect(DragDropService.isDraggingOrClicking()).toEqual(true);
-      expect(eventHandlerCount(componentElement1, 'mouseup')).toEqual(1);
-      expect(eventHandlerCount(componentElement1, 'mouseout')).toEqual(1);
+        DragDropService.startDragOrClick(mockedMouseDownEvent, component1);
+        expect(DragDropService.isDraggingOrClicking()).toBeTruthy();
+        expect(DragDropService.isDragging()).toBeFalsy();
 
-      componentElement1.one('mouseout.test', () => {
-        expect(DragDropService.isDraggingOrClicking()).toEqual(false);
-        expect(eventHandlerCount(componentElement1, 'mouseup')).toEqual(0);
-        expect(eventHandlerCount(componentElement1, 'mouseout')).toEqual(0);
+        DragDropService.disable();
+        expect(DragDropService.isDraggingOrClicking()).toBeFalsy();
+        expect(DragDropService.isDragging()).toBeFalsy();
+
         done();
       });
+    });
 
-      componentElement1.trigger('mouseout');
+    it('should emit component:click event on a left button mouseup event', (done) => {
+      loadIframeFixture(() => {
+        spyOn($rootScope, '$emit');
+
+        const mockedMouseDownEvent = {
+          clientX: 100,
+          clientY: 200,
+        };
+
+        const componentElement1 = component1.getBoxElement();
+
+        DragDropService.startDragOrClick(mockedMouseDownEvent, component1);
+
+        const mouseUp = angular.element.Event('mouseup');
+        mouseUp.which = 1; // left mouse button, see https://api.jquery.com/event.which/
+        componentElement1.trigger(mouseUp);
+
+        expect($rootScope.$emit).toHaveBeenCalledWith('component:click', component1);
+
+        done();
+      });
+    });
+
+    it('cancels the click simulation for showing a component\'s properties when the mouse cursor leaves a disabled component', (done) => { // eslint-disable-line max-len
+      mockCommentData.container1 = {
+        'HST-LockedBy': 'anotherUser',
+      };
+      loadIframeFixture(() => {
+        const mockedMouseDownEvent = {
+          clientX: 100,
+          clientY: 200,
+        };
+        const componentElement1 = component1.getBoxElement();
+        DragDropService.startDragOrClick(mockedMouseDownEvent, component1);
+
+        expect(DragDropService.isDraggingOrClicking()).toEqual(true);
+        expect(eventHandlerCount(componentElement1, 'mouseup')).toEqual(1);
+        expect(eventHandlerCount(componentElement1, 'mouseout')).toEqual(1);
+
+        componentElement1.one('mouseout.test', () => {
+          expect(DragDropService.isDraggingOrClicking()).toEqual(false);
+          expect(eventHandlerCount(componentElement1, 'mouseup')).toEqual(0);
+          expect(eventHandlerCount(componentElement1, 'mouseout')).toEqual(0);
+          done();
+        });
+
+        componentElement1.trigger('mouseout');
+      });
     });
   });
 
@@ -324,35 +325,6 @@ describe('DragDropService', () => {
       expect(DragDropService._isContainerEnabled(iframe)).toBeFalsy();
 
       done();
-    });
-  });
-
-  describe('onClick', () => {
-    describe('callback handler', () => {
-      let clickHandler;
-
-      beforeEach(() => {
-        clickHandler = jasmine.createSpy('onClickHandler');
-      });
-
-      it('registers a callback', () => {
-        DragDropService.onClick(clickHandler);
-
-        loadIframeFixture(() => {
-          DragDropService._onComponentClick(component1);
-          expect(clickHandler).toHaveBeenCalled();
-        });
-      });
-
-      it('returns an unbind function to clear a registered callback', () => {
-        const unbind = DragDropService.onClick(clickHandler);
-
-        loadIframeFixture(() => {
-          unbind();
-          DragDropService._onComponentClick(component1);
-          expect(clickHandler).not.toHaveBeenCalled();
-        });
-      });
     });
   });
 

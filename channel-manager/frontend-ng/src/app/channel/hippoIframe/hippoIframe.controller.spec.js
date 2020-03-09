@@ -98,7 +98,6 @@ describe('hippoIframeCtrl', () => {
       $element = angular.element('<div><iframe /></div>');
 
       spyOn(CommunicationService, 'connect').and.returnValue($q.resolve());
-      spyOn(DragDropService, 'onClick').and.callThrough();
       onEditMenu = jasmine.createSpy('onEditMenu');
       contentWindow = {
         document: {
@@ -129,21 +128,10 @@ describe('hippoIframeCtrl', () => {
   });
 
   describe('click component', () => {
-    it('starts editing a component when it receives an "onClick" event from the DragDropService', () => {
-      const onClickHandler = DragDropService.onClick.calls.mostRecent().args[0];
-      onClickHandler({ id: 'testId' });
+    it('starts editing a component on component:click event', () => {
+      $rootScope.$emit('component:click', { id: 'testId' });
 
       expect(EditComponentService.startEditing).toHaveBeenCalledWith({ id: 'testId' });
-    });
-
-    it('removes the on-click event handler when destroyed', () => {
-      const unbind = jasmine.createSpy('unbind');
-      DragDropService.onClick.and.returnValue(unbind);
-
-      $ctrl.$onInit();
-      $ctrl.$onDestroy();
-
-      expect(unbind).toHaveBeenCalled();
     });
   });
 
