@@ -29,6 +29,7 @@ class PageStructureService {
     HstService,
     MarkupService,
     ModelFactoryService,
+    ProjectService,
   ) {
     'ngInject';
 
@@ -42,6 +43,7 @@ class PageStructureService {
     this.HstService = HstService;
     this.MarkupService = MarkupService;
     this.ModelFactoryService = ModelFactoryService;
+    this.ProjectService = ProjectService;
 
     this.headContributions = new Set();
 
@@ -64,6 +66,38 @@ class PageStructureService {
 
     this._page = this.ModelFactoryService.createPage(comments);
     this._notifyChangeListeners();
+    this._updateChannel();
+  }
+
+  _updateChannel() {
+    const channelIdFromService = this.ChannelService.getId();
+    const channelIdFromPage = this._page && this._page.getMeta().getChannelId();
+
+    if (!channelIdFromPage) {
+      this.$log.info('There is no channel detected in the page metadata.');
+
+      return;
+    }
+
+    if (channelIdFromService === channelIdFromPage) {
+      return;
+    }
+
+    const contextPathFromPage = this._page.getMeta().getContextPath();
+    const hostGroupFromPreviousChannel = this.ChannelService.getHostGroup();
+
+    // Current channel is a branch, but new channel has no branch of that project
+    // therefore load master
+    const branchId = this.ProjectService.isBranch() && !this.ProjectService.hasBranchOfProject(channelIdFromPage)
+      ? this.ProjectService.masterId
+      : undefined;
+
+    this.ChannelService.initializeChannel(
+      channelIdFromPage,
+      contextPathFromPage,
+      hostGroupFromPreviousChannel,
+      branchId,
+    );
   }
 
   clearParsedElements() {

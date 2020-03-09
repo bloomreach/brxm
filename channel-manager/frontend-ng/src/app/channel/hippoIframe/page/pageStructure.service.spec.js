@@ -232,6 +232,57 @@ describe('PageStructureService', () => {
       expect([...PageStructureService.headContributions])
         .toEqual([...unprocessedHeadContributions, ...processedHeadContributions]);
     });
+
+    describe('channels switch', () => {
+      let pageMeta;
+
+      beforeEach(() => {
+        spyOn(ChannelService, 'initializeChannel').and.returnValue($q.resolve());
+        spyOn(ChannelService, 'getHostGroup').and.returnValue('theHostGroup');
+        spyOn(ChannelService, 'getId');
+        spyOn(ModelFactoryService, 'createPage');
+
+        const page = jasmine.createSpyObj('page', ['getMeta']);
+        pageMeta = jasmine.createSpyObj('pageMeta', ['getChannelId', 'getContextPath']);
+        pageMeta.getContextPath.and.returnValue('/contextPathX');
+        page.getMeta.and.returnValue(pageMeta);
+        ModelFactoryService.createPage.and.returnValue(page);
+
+        PageStructureService.parseElements();
+      });
+
+      it('switches channels when the channel id in the page meta-data differs from the current channel id', () => {
+        pageMeta.getChannelId.and.returnValue('channelX');
+        ChannelService.getId.and.returnValue('channelY');
+
+        $rootScope.$digest();
+
+        expect(ChannelService.initializeChannel).toHaveBeenCalledWith(
+          'channelX',
+          '/contextPathX',
+          'theHostGroup',
+          undefined,
+        );
+      });
+
+      it('does not switch channels when the channel id from the meta same to the current one', () => {
+        pageMeta.getChannelId.and.returnValue('channelX');
+        ChannelService.getId.and.returnValue('channelX');
+
+        $rootScope.$digest();
+
+        expect(ChannelService.initializeChannel).not.toHaveBeenCalled();
+      });
+
+      it('does not switch channels when there is no meta', () => {
+        pageMeta.getChannelId.and.returnValue(undefined);
+        ChannelService.getId.and.returnValue('channelX');
+
+        $rootScope.$digest();
+
+        expect(ChannelService.initializeChannel).not.toHaveBeenCalled();
+      });
+    });
   });
 
   describe('renderComponent', () => {

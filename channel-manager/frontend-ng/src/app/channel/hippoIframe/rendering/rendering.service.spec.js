@@ -17,7 +17,6 @@
 describe('RenderingService', () => {
   let $q;
   let $rootScope;
-  let ChannelService;
   let DomService;
   let HippoIframeService;
   let OverlayService;
@@ -49,7 +48,6 @@ describe('RenderingService', () => {
     inject((
       _$q_,
       _$rootScope_,
-      _ChannelService_,
       _DomService_,
       _HippoIframeService_,
       _OverlayService_,
@@ -59,7 +57,6 @@ describe('RenderingService', () => {
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
-      ChannelService = _ChannelService_;
       DomService = _DomService_;
       HippoIframeService = _HippoIframeService_;
       OverlayService = _OverlayService_;
@@ -164,54 +161,6 @@ describe('RenderingService', () => {
       expect(RenderingService.emitter.emit).not.toHaveBeenCalledWith();
       expect(ScrollService.restoreScrollPosition).not.toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
-    });
-
-    describe('channels switch', () => {
-      let pageMeta;
-
-      beforeEach(() => {
-        spyOn(ChannelService, 'initializeChannel').and.returnValue($q.resolve());
-        spyOn(ChannelService, 'getHostGroup').and.returnValue('theHostGroup');
-        spyOn(ChannelService, 'getId');
-        spyOn(DomService, 'addCssLinks').and.returnValue($q.resolve());
-        spyOn(PageStructureService, 'getPage');
-        spyOn(RenderingService, '_parseLinks');
-
-        const page = jasmine.createSpyObj('page', ['getMeta']);
-        pageMeta = jasmine.createSpyObj('pageMeta', ['getChannelId', 'getContextPath']);
-        pageMeta.getContextPath.and.returnValue('/contextPathX');
-        page.getMeta.and.returnValue(pageMeta);
-        PageStructureService.getPage.and.returnValue(page);
-
-        RenderingService.createOverlay();
-      });
-
-      it('switches channels when the channel id in the page meta-data differs from the current channel id', () => {
-        pageMeta.getChannelId.and.returnValue('channelX');
-        ChannelService.getId.and.returnValue('channelY');
-
-        $rootScope.$digest();
-
-        expect(ChannelService.initializeChannel).toHaveBeenCalledWith('channelX', '/contextPathX', 'theHostGroup');
-      });
-
-      it('does not switch channels when the channel id from the meta same to the current one', () => {
-        pageMeta.getChannelId.and.returnValue('channelX');
-        ChannelService.getId.and.returnValue('channelX');
-
-        $rootScope.$digest();
-
-        expect(ChannelService.initializeChannel).not.toHaveBeenCalled();
-      });
-
-      it('does not switch channels when there is no meta', () => {
-        pageMeta.getChannelId.and.returnValue(undefined);
-        ChannelService.getId.and.returnValue('channelX');
-
-        $rootScope.$digest();
-
-        expect(ChannelService.initializeChannel).not.toHaveBeenCalled();
-      });
     });
   });
 });
