@@ -24,14 +24,12 @@ class RenderingService {
     $log,
     $q,
     $rootScope,
-    ChannelService,
     DomService,
     Emittery,
     HippoIframeService,
     LinkProcessorService,
     OverlayService,
     PageStructureService,
-    ProjectService,
     ScrollService,
   ) {
     'ngInject';
@@ -39,13 +37,11 @@ class RenderingService {
     this.$log = $log;
     this.$q = $q;
     this.$rootScope = $rootScope;
-    this.ChannelService = ChannelService;
     this.DomService = DomService;
     this.HippoIframeService = HippoIframeService;
     this.LinkProcessorService = LinkProcessorService;
     this.OverlayService = OverlayService;
     this.PageStructureService = PageStructureService;
-    this.ProjectService = ProjectService;
     this.ScrollService = ScrollService;
 
     this.emitter = new Emittery();
@@ -75,7 +71,6 @@ class RenderingService {
     this.creatingOverlay = this._insertCss()
       .then(() => this.PageStructureService.parseElements())
       .then(() => {
-        this._updateChannelIfSwitched();
         this._parseLinks();
         this.ScrollService.restoreScrollPosition();
 
@@ -107,38 +102,6 @@ class RenderingService {
       return this.DomService.addCssLinks(iframeWindow, [hippoIframeCss], INJECTED_CSS_CLASS);
     } catch (e) {
       return this.$q.reject();
-    }
-  }
-
-  _updateChannelIfSwitched() {
-    const page = this.PageStructureService.getPage();
-    const channelIdFromService = this.ChannelService.getId();
-    const channelIdFromPage = page && page.getMeta().getChannelId();
-
-    if (!channelIdFromPage) {
-      this.$log.info('There is no channel detected in the page metadata.');
-
-      return;
-    }
-    if (channelIdFromService === channelIdFromPage) {
-      return;
-    }
-
-    const contextPathFromPage = page.getMeta().getContextPath();
-    const hostGroupFromPreviousChannel = this.ChannelService.getHostGroup();
-
-    if (this.ProjectService.isBranch() && !this.ProjectService.hasBranchOfProject(channelIdFromPage)) {
-      // Current channel is a branch, but new channel has no branch of that project
-      // therefore load master
-      this.ChannelService.initializeChannel(
-        channelIdFromPage,
-        contextPathFromPage,
-        hostGroupFromPreviousChannel,
-        this.ProjectService.masterId,
-      );
-    } else {
-      // otherwise load new channel within current project
-      this.ChannelService.initializeChannel(channelIdFromPage, contextPathFromPage, hostGroupFromPreviousChannel);
     }
   }
 
