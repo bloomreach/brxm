@@ -240,6 +240,11 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
         //INTENTIONALLY LEFT BLANK
     }
 
+
+    public void saveDraft() throws EditorException{
+        //INTENTIONALLY LEFT BLANK
+    }
+
     /**
      * Default implementation that does nothing. Subclasses are expected to override this behaviour.
      *

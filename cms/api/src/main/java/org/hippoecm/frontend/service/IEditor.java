@@ -104,6 +104,8 @@ public interface IEditor<T> extends IClusterable {
      */
     void save() throws EditorException;
 
+    void saveDraft() throws EditorException;
+
     /**
      * Saves the document, and switches the editor to VIEW mode.
      *

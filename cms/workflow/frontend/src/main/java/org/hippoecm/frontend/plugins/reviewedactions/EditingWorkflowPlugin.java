@@ -87,7 +87,7 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         });
 
         saveDraftAction = new StdWorkflow("saveDraft",
-                new StringResourceModel("save-draft", this).setDefaultValue("Keep Draft"), getModel()) {
+                new StringResourceModel("save-draft", this).setDefaultValue("Keep draft"), getModel()) {
 
             @Override
             public String getSubMenu() {
@@ -105,14 +105,10 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
-            public boolean isFormSubmitted() {
-                return true;
-            }
-
-            @Override
             protected String execute(Workflow wf) throws Exception {
-                UserSession.get().getJcrSession().save();
-                ((DocumentWorkflow) wf).saveDraft();
+                final IEditorManager editorMgr = context.getService(SERVICE_EDIT, IEditorManager.class);
+                IEditor<Node> editor = editorMgr.getEditor(new JcrNodeModel(getModel().getNode()));
+                editor.saveDraft();
                 return null;
             }
         };
