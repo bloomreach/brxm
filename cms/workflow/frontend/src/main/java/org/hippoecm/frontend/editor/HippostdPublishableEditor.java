@@ -50,6 +50,7 @@ import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.api.WorkflowManager;
 import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.standardworkflow.FolderWorkflow;
+import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,6 +84,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     private BranchIdModel branchIdModel;
     private Boolean isValid;
     private boolean modified;
+    private boolean skipValidation;
     private IModel<Node> editorModel;
 
     public HippostdPublishableEditor(final IEditorContext manager, final IPluginContext context, final IPluginConfig config, final IModel<Node> model)
@@ -238,6 +240,11 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     }
 
     public boolean isValid() throws EditorException {
+        if (skipValidation){
+            skipValidation = false;
+            isValid = true;
+            return isValid;
+        }
         if (isValid == null) {
             try {
                 validate();
@@ -246,6 +253,19 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             }
         }
         return isValid;
+    }
+
+    public void saveDraft() throws EditorException {
+        try {
+            final DocumentWorkflow wf = (DocumentWorkflow) getEditableWorkflow();
+            //TODO mrop add saveDraft to Editable interface and remove cast
+            UserSession.get().getJcrSession().save();
+            skipValidation = true;
+             wf.saveDraft();
+        } catch (RepositoryException | WorkflowException | RemoteException e) {
+            throw new EditorException("Error during saving draft");
+        }
+
     }
 
     /**
