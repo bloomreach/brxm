@@ -36,7 +36,6 @@ class EditComponentMainCtrl {
     EditComponentService,
     FeedbackService,
     HippoIframeService,
-    RenderingService,
   ) {
     'ngInject';
 
@@ -51,32 +50,32 @@ class EditComponentMainCtrl {
     this.EditComponentService = EditComponentService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
-    this.RenderingService = RenderingService;
 
     this._onDocumentSelect = this._onDocumentSelect.bind(this);
+    this._onOverlayCreate = this._onOverlayCreate.bind(this);
   }
 
   $onInit() {
     this._offDocumentSelect = this.$rootScope.$on('document:select', this._onDocumentSelect);
+    this._offOverlayCreate = this.$rootScope.$on('overlay:create', this._onOverlayCreate);
     this._offComponentMoved = this.ContainerService.onComponentMoved(() => this.ComponentEditor.updatePreview());
-    this.$scope.$on('hippo-iframe:load', () => this._onIframeLoad());
   }
 
   $onDestroy() {
     this._offDocumentSelect();
     this._offComponentMoved();
 
-    if (this._offOverlayCreated) {
-      this._offOverlayCreated();
+    if (this._offOverlayCreate) {
+      this._offOverlayCreate();
     }
   }
 
-  _onIframeLoad() {
-    this._offOverlayCreated = this.RenderingService.onOverlayCreated(() => {
-      this._offOverlayCreated();
-      delete this._offOverlayCreated;
-      this.ComponentEditor.updatePreview();
-    });
+  _onOverlayCreate(event, isPartial) {
+    if (isPartial) {
+      return;
+    }
+
+    this.ComponentEditor.updatePreview();
   }
 
   getPropertyGroups() {

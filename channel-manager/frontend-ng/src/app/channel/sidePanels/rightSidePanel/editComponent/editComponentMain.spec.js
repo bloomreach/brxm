@@ -26,7 +26,6 @@ describe('EditComponentMainCtrl', () => {
   let EditComponentService;
   let FeedbackService;
   let HippoIframeService;
-  let RenderingService;
 
   let $ctrl;
   let form;
@@ -41,14 +40,12 @@ describe('EditComponentMainCtrl', () => {
       _$q_,
       _ContainerService_,
       _EditComponentService_,
-      _RenderingService_,
     ) => {
       $rootScope = _$rootScope_;
       $log = _$log_;
       $q = _$q_;
       ContainerService = _ContainerService_;
       EditComponentService = _EditComponentService_;
-      RenderingService = _RenderingService_;
 
       ChannelService = jasmine.createSpyObj('ChannelService', ['recordOwnChange']);
       CmsService = jasmine.createSpyObj('CmsService', [
@@ -116,29 +113,28 @@ describe('EditComponentMainCtrl', () => {
     });
   });
 
-  describe('handling of "overlay-created" event', () => {
-    let unbind;
-
+  describe('handling of overlay:create event', () => {
     beforeEach(() => {
-      unbind = jasmine.createSpy('unbind');
-      spyOn(RenderingService, 'onOverlayCreated').and.returnValue(unbind);
       $ctrl.$onInit();
-
-      $rootScope.$broadcast('hippo-iframe:load');
     });
 
-    it('redraws the preview of the component being edited', () => {
-      const onOverlayCreated = RenderingService.onOverlayCreated.calls.mostRecent().args[0];
-      onOverlayCreated();
+    it('should redraw the preview of the edited component', () => {
+      $rootScope.$emit('overlay:create');
 
       expect(ComponentEditor.updatePreview).toHaveBeenCalled();
-      expect(unbind).toHaveBeenCalled();
     });
 
-    it('removes the "onOverlayCreated" event listener when destroyed', () => {
-      $ctrl.$onDestroy();
+    it('should not redraw the preview of the edited component on partial render', () => {
+      $rootScope.$emit('overlay:create', true);
 
-      expect(unbind).toHaveBeenCalled();
+      expect(ComponentEditor.updatePreview).not.toHaveBeenCalled();
+    });
+
+    it('should stop reacting on overlay:create events after destruction', () => {
+      $ctrl.$onDestroy();
+      $rootScope.$emit('overlay:create');
+
+      expect(ComponentEditor.updatePreview).not.toHaveBeenCalled();
     });
   });
 

@@ -16,7 +16,6 @@
 
 import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss?url';
 
-const OVERLAY_CREATED_EVENT_NAME = 'overlay-created';
 const INJECTED_CSS_CLASS = 'hippo-css';
 
 class RenderingService {
@@ -25,7 +24,6 @@ class RenderingService {
     $q,
     $rootScope,
     DomService,
-    Emittery,
     HippoIframeService,
     LinkProcessorService,
     OverlayService,
@@ -43,27 +41,13 @@ class RenderingService {
     this.OverlayService = OverlayService;
     this.PageStructureService = PageStructureService;
     this.ScrollService = ScrollService;
-
-    this.emitter = new Emittery();
   }
 
   init(iframeJQueryElement) {
     this.iframeJQueryElement = iframeJQueryElement;
   }
 
-  onOverlayCreated(callback) {
-    return this._on(OVERLAY_CREATED_EVENT_NAME, callback);
-  }
-
-  _on(eventName, callback) {
-    return this.emitter.on(eventName, argument => this.$rootScope.$apply(() => callback(argument)));
-  }
-
-  createOverlay() {
-    if (this.creatingOverlay) {
-      return this.creatingOverlay;
-    }
-
+  createOverlay(isPartial) {
     this.ScrollService.savePosition();
     this.PageStructureService.clearParsedElements();
     this.OverlayService.clear();
@@ -73,18 +57,14 @@ class RenderingService {
       .then(() => {
         this._parseLinks();
         this.ScrollService.restorePosition();
-
-        return this.emitter.emit(OVERLAY_CREATED_EVENT_NAME);
+        this.$rootScope.$emit('overlay:create', isPartial);
       })
       .finally(() => {
         this.HippoIframeService.signalPageLoadCompleted();
-        delete this.creatingOverlay;
       });
     // TODO: handle error.
     // show dialog explaining that for this channel, the CM can currently not be used,
     // and return to the channel overview upon confirming?
-
-    return this.creatingOverlay;
   }
 
   _insertCss() {
