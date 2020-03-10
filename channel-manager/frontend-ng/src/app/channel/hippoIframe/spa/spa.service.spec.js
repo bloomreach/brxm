@@ -270,15 +270,27 @@ describe('SpaService', () => {
 
 
   describe('renderComponent', () => {
-    it('ignores the SPA when it does not exist', () => {
+    it('ignores the SPA when it does not exist', (done) => {
       SpaService.initLegacy();
-      expect(SpaService.renderComponent({})).toBe(false);
+      SpaService.renderComponent({})
+        .catch((error) => {
+          expect(error).toEqual(new Error('Cannot render the component in the SPA.'));
+        })
+        .then(done);
+
+      $rootScope.$digest();
     });
 
-    it('ignores the SPA when it does not define a renderComponent function', () => {
+    it('ignores the SPA when it does not define a renderComponent function', (done) => {
       iframeWindow.SPA = {};
       SpaService.initLegacy();
-      expect(SpaService.renderComponent({})).toBe(false);
+      SpaService.renderComponent({})
+        .catch((error) => {
+          expect(error).toEqual(new Error('The SPA does not support the component rendering.'));
+        })
+        .then(done);
+
+      $rootScope.$digest();
     });
 
     it('calls a remote procedure when it is not a legacy SPA', () => {
@@ -289,19 +301,65 @@ describe('SpaService', () => {
       const component = jasmine.createSpyObj('component', ['getReferenceNamespace']);
       component.getReferenceNamespace.and.returnValue('r1_r2_r3');
 
-      expect(SpaService.renderComponent(component, properties)).toBe(true);
+      SpaService.renderComponent(component, properties);
       expect(RpcService.trigger).toHaveBeenCalledWith('update', jasmine.objectContaining({
         properties,
         id: 'r1_r2_r3',
       }));
     });
 
-    it('does not call a remote procudure when it is not an SPA', () => {
+    it('does not call a remote procedure when it is not an SPA', (done) => {
       spyOn(SpaService, 'isSpa').and.returnValue(false);
       spyOn(RpcService, 'trigger');
 
-      expect(SpaService.renderComponent({})).toBe(false);
-      expect(RpcService.trigger).not.toHaveBeenCalled();
+      SpaService.renderComponent({})
+        .catch((error) => {
+          expect(RpcService.trigger).not.toHaveBeenCalled();
+          expect(error).toEqual(new Error('Cannot render the component in the SPA.'));
+        })
+        .then(done);
+
+      $rootScope.$digest();
+    });
+
+    it('should reject a promise on iframe unload event', (done) => {
+      spyOn(SpaService, 'isSpa').and.returnValue(true);
+      spyOn(RpcService, 'trigger');
+
+      const component = jasmine.createSpyObj('component', ['getReferenceNamespace']);
+      component.getReferenceNamespace.and.returnValue('r1_r2_r3');
+
+      SpaService.init(angular.element('<iframe>'));
+      SpaService.renderComponent(component, {})
+        .catch((error) => {
+          expect(error).toEqual(new Error('Could not update the component.'));
+        })
+        .then(done);
+
+      $rootScope.$emit('iframe:unload');
+      $rootScope.$digest();
+    });
+
+    it('should resolve a promise on the next sync call', (done) => {
+      spyOn(SpaService, 'isSpa').and.returnValue(true);
+      spyOn(RenderingService, 'createOverlay');
+      spyOn(RpcService, 'register');
+      spyOn(RpcService, 'trigger');
+
+      const component = jasmine.createSpyObj('component', ['getReferenceNamespace']);
+      component.getReferenceNamespace.and.returnValue('r1_r2_r3');
+
+      SpaService.init(angular.element('<iframe>'));
+      SpaService.renderComponent(component, {})
+        .then(() => {
+          expect(RenderingService.createOverlay).toHaveBeenCalledWith(true);
+        })
+        .then(done);
+
+      const { args: [, onSync] } = RpcService.register.calls.mostRecent();
+
+      onSync();
+      $rootScope.$digest();
     });
 
     describe('an SPA that defines a renderComponent function', () => {
@@ -310,9 +368,24 @@ describe('SpaService', () => {
         SpaService.initLegacy();
       });
 
-      it('ignores null and undefined components', () => {
-        expect(SpaService.renderComponent()).toBe(false);
-        expect(SpaService.renderComponent(null)).toBe(false);
+      it('ignores null component', (done) => {
+        SpaService.renderComponent(null)
+          .catch((error) => {
+            expect(error).toEqual(new Error('Cannot render the component in the SPA.'));
+          })
+          .then(done);
+
+        $rootScope.$digest();
+      });
+
+      it('ignores undefined component', (done) => {
+        SpaService.renderComponent(null)
+          .catch((error) => {
+            expect(error).toEqual(new Error('Cannot render the component in the SPA.'));
+          })
+          .then(done);
+
+        $rootScope.$digest();
       });
 
       describe('with an existing component', () => {
@@ -323,27 +396,28 @@ describe('SpaService', () => {
         });
 
         it('renders the component in the SPA', () => {
-          expect(SpaService.renderComponent(component)).toBe(true);
+          SpaService.renderComponent(component);
+
           expect(iframeWindow.SPA.renderComponent).toHaveBeenCalledWith('r1_r2_r3', {});
         });
 
         it('renders the component with specific parameters in the SPA', () => {
-          expect(SpaService.renderComponent(component, { foo: 1 })).toBe(true);
+          SpaService.renderComponent(component, { foo: 1 });
+
           expect(iframeWindow.SPA.renderComponent).toHaveBeenCalledWith('r1_r2_r3', { foo: 1 });
         });
 
-        it('can let the SPA indicate it did not render the component ', () => {
-          iframeWindow.SPA.renderComponent.and.returnValue(false);
-          expect(SpaService.renderComponent(component)).toBe(false);
-          expect(iframeWindow.SPA.renderComponent).toHaveBeenCalledWith('r1_r2_r3', {});
-        });
-
-        it('logs an error when the SPA throws an error while rendering the component', () => {
+        it('rejects with an error when the SPA throws an error while rendering the component', (done) => {
           spyOn($log, 'error');
-          iframeWindow.SPA.renderComponent.and.throwError('Failed to render');
+          iframeWindow.SPA.renderComponent.and.throwError('Failed to render.');
 
-          expect(SpaService.renderComponent(component)).toBe(true);
-          expect($log.error).toHaveBeenCalledWith(new Error('Failed to render'));
+          SpaService.renderComponent(component)
+            .catch((error) => {
+              expect(error).toEqual(new Error('Failed to render.'));
+            })
+            .then(done);
+
+          $rootScope.$digest();
         });
       });
     });

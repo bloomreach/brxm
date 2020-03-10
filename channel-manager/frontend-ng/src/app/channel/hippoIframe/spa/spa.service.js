@@ -18,10 +18,11 @@ const PROPERTY_URL = 'url';
 const PROPERTY_SPA_URL = 'org.hippoecm.hst.configuration.channel.PreviewURLChannelInfo_url';
 
 export default class SpaService {
-  constructor($log, $rootScope, ChannelService, DomService, OverlayService, RenderingService, RpcService) {
+  constructor($log, $q, $rootScope, ChannelService, DomService, OverlayService, RenderingService, RpcService) {
     'ngInject';
 
     this.$log = $log;
+    this.$q = $q;
     this.$rootScope = $rootScope;
     this.ChannelService = ChannelService;
     this.DomService = DomService;
@@ -31,7 +32,26 @@ export default class SpaService {
 
     this._onSdkReady = this._onSdkReady.bind(this);
     this._onUnload = this._onUnload.bind(this);
-    this._sync = this._sync.bind(this);
+    this._onSync = this._onSync.bind(this);
+
+    this._renderingPool = [];
+  }
+
+  getOrigin() {
+    const properties = this.ChannelService.getProperties();
+    const channel = this.ChannelService.getChannel();
+    const url = (properties && properties[PROPERTY_SPA_URL]) || (channel && channel[PROPERTY_URL]);
+
+    if (!url) {
+      return;
+    }
+
+    try {
+      const { origin } = new URL(url);
+
+      // eslint-disable-next-line consistent-return
+      return origin;
+    } catch (error) {} // eslint-disable-line no-empty
   }
 
   init(iframeJQueryElement) {
@@ -52,7 +72,7 @@ export default class SpaService {
     }
     this._offSdkReady = this.$rootScope.$on('spa:ready', this._onSdkReady);
 
-    this.RpcService.register('sync', this._sync);
+    this.RpcService.register('sync', this._onSync);
   }
 
   destroy() {
@@ -66,26 +86,7 @@ export default class SpaService {
     }
 
     this.RpcService.destroy();
-
-    this._isSpa = false;
-    delete this._legacyHandle;
-  }
-
-  getOrigin() {
-    const properties = this.ChannelService.getProperties();
-    const channel = this.ChannelService.getChannel();
-    const url = (properties && properties[PROPERTY_SPA_URL]) || (channel && channel[PROPERTY_URL]);
-
-    if (!url) {
-      return;
-    }
-
-    try {
-      const { origin } = new URL(url);
-
-      // eslint-disable-next-line consistent-return
-      return origin;
-    } catch (error) {} // eslint-disable-line no-empty
+    this._onUnload();
   }
 
   _onSdkReady() {
@@ -95,6 +96,9 @@ export default class SpaService {
   _onUnload() {
     this._isSpa = false;
     delete this._legacyHandle;
+
+    this._renderingPool.splice(0)
+      .forEach(deferred => deferred.reject(new Error('Could not update the component.')));
   }
 
   isSpa() {
@@ -114,7 +118,7 @@ export default class SpaService {
       const publicApi = {
         createOverlay: () => {
           this._warnDeprecated();
-          this.RenderingService.createOverlay();
+          this._onSync();
         },
         syncOverlay: () => {
           this._warnDeprecated();
@@ -122,7 +126,7 @@ export default class SpaService {
         },
         sync: () => {
           this._warnDeprecated();
-          this.RenderingService.createOverlay();
+          this._onSync();
         },
       };
       this._legacyHandle.init(publicApi);
@@ -150,29 +154,30 @@ export default class SpaService {
     return this.RpcService.call('inject', resource);
   }
 
-  renderComponent(component, properties = {}) {
+  async renderComponent(component, properties = {}) {
     if (!component || !this.isSpa()) {
-      return false;
+      throw new Error('Cannot render the component in the SPA.');
     }
 
     if (!this._legacyHandle) {
       this.RpcService.trigger('update', { properties, id: component.getReferenceNamespace() });
-      return true;
+    } else if (angular.isFunction(this._legacyHandle.renderComponent)) {
+      this._legacyHandle.renderComponent(component.getReferenceNamespace(), properties);
+    } else {
+      throw new Error('The SPA does not support the component rendering.');
     }
 
-    if (!angular.isFunction(this._legacyHandle.renderComponent)) {
-      return false;
-    }
+    const deferred = this.$q.defer();
+    this._renderingPool.push(deferred);
 
-    try {
-      return this._legacyHandle.renderComponent(component.getReferenceNamespace(), properties) !== false;
-    } catch (error) {
-      this.$log.error(error);
-      return true;
-    }
+    return deferred.promise;
   }
 
-  _sync() {
-    return this.RenderingService.createOverlay();
+  _onSync() {
+    const isPartial = !!this._renderingPool.length;
+    this._renderingPool.splice(0)
+      .forEach(deferred => deferred.resolve());
+
+    this.RenderingService.createOverlay(isPartial);
   }
 }
