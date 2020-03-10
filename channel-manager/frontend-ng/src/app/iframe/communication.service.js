@@ -22,6 +22,8 @@ export default class CommunicationService {
     this.$q = $q;
     this.$rootScope = $rootScope;
     this.Penpal = Penpal;
+
+    this.emit = this._call.bind(this, 'emit');
   }
 
   async connect() {
@@ -35,6 +37,15 @@ export default class CommunicationService {
     });
 
     this._parent = await this._connection.promise;
+  }
+
+  _call(command, ...args) {
+    if (!this._parent) {
+      return;
+    }
+
+    // eslint-disable-next-line consistent-return
+    return this._parent[command](...args);
   }
 
   _emit(event, data) {
@@ -51,13 +62,5 @@ export default class CommunicationService {
 
   _updateContainer(...args) {
     return this.$injector.get('PageStructureService').updateContainer(...args);
-  }
-
-  emit(event, data) {
-    if (!this._parent) {
-      return;
-    }
-
-    this._parent.emit(event, data);
   }
 }
