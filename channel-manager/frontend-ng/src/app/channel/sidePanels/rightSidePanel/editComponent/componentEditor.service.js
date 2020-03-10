@@ -332,6 +332,7 @@ class ComponentEditorService {
   close() {
     if (this._offPageChange) {
       this._offPageChange();
+      delete this._offPageChange;
     }
     if (this.request) {
       this.request.cancel();

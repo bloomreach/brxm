@@ -31,19 +31,8 @@ describe('RenderingService', () => {
     },
   };
 
-  class EmitteryMock {
-    constructor() {
-      this.on = jasmine.createSpy('on');
-      this.emit = jasmine.createSpy('emit');
-    }
-  }
-
   beforeEach(() => {
     angular.mock.module('hippo-cm');
-
-    angular.mock.module(($provide) => {
-      $provide.constant('Emittery', EmitteryMock);
-    });
 
     inject((
       _$q_,
@@ -69,13 +58,6 @@ describe('RenderingService', () => {
     spyOn(DomService, 'getIframeWindow').and.returnValue(window);
   });
 
-  describe('onOverlayCreated', () => {
-    it('registers an "overlay-created" callback', () => {
-      RenderingService.onOverlayCreated(angular.noop);
-      expect(RenderingService.emitter.on).toHaveBeenCalledWith('overlay-created', jasmine.any(Function));
-    });
-  });
-
   describe('createOverlay', () => {
     beforeEach(() => {
       spyOn(HippoIframeService, 'signalPageLoadCompleted');
@@ -98,7 +80,6 @@ describe('RenderingService', () => {
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(OverlayService.clear).toHaveBeenCalled();
       expect(PageStructureService.parseElements).toHaveBeenCalledWith();
-      expect(RenderingService.emitter.emit).toHaveBeenCalledWith('overlay-created');
       expect(ScrollService.restorePosition).toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
@@ -115,22 +96,8 @@ describe('RenderingService', () => {
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(OverlayService.clear).toHaveBeenCalled();
       expect(PageStructureService.parseElements).toHaveBeenCalledWith();
-      expect(RenderingService.emitter.emit).toHaveBeenCalledWith('overlay-created');
       expect(ScrollService.restorePosition).toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
-    });
-
-    it('prevents concurrent invocations', () => {
-      spyOn(DomService, 'hasCssLink').and.returnValue(false);
-      spyOn(DomService, 'addCssLinks').and.returnValue($q.resolve());
-
-      const promise1 = RenderingService.createOverlay();
-      const promise2 = RenderingService.createOverlay();
-      $rootScope.$digest();
-
-      expect(DomService.addCssLinks).toHaveBeenCalledTimes(1);
-      expect(PageStructureService.parseElements).toHaveBeenCalledTimes(1);
-      expect(promise1).toBe(promise2);
     });
 
     it('clears the parsed elements, then stops when loading the hippo-iframe CSS file throws an error', () => {
@@ -144,7 +111,6 @@ describe('RenderingService', () => {
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(OverlayService.clear).toHaveBeenCalled();
       expect(PageStructureService.parseElements).not.toHaveBeenCalled();
-      expect(RenderingService.emitter.emit).not.toHaveBeenCalledWith();
       expect(ScrollService.restorePosition).not.toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
@@ -158,9 +124,19 @@ describe('RenderingService', () => {
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(OverlayService.clear).toHaveBeenCalled();
       expect(PageStructureService.parseElements).not.toHaveBeenCalled();
-      expect(RenderingService.emitter.emit).not.toHaveBeenCalledWith();
       expect(ScrollService.restorePosition).not.toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
+    });
+
+    it('should emit overlay:create event', () => {
+      spyOn(DomService, 'hasCssLink').and.returnValue(true);
+      spyOn(DomService, 'addCssLinks');
+      spyOn($rootScope, '$emit');
+
+      RenderingService.createOverlay(true);
+      $rootScope.$digest();
+
+      expect($rootScope.$emit).toHaveBeenCalledWith('overlay:create', true);
     });
   });
 });
