@@ -31,7 +31,6 @@ describe('OverlayService', () => {
   let OverlayService;
   let PageStructureService;
   let PickerService;
-  let ScrollService;
   let SvgService;
 
   beforeEach(() => {
@@ -53,7 +52,6 @@ describe('OverlayService', () => {
       _ExperimentStateService_,
       _OverlayService_,
       _PageStructureService_,
-      _ScrollService_,
       _SvgService_,
     ) => {
       $q = _$q_;
@@ -63,7 +61,6 @@ describe('OverlayService', () => {
       ExperimentStateService = _ExperimentStateService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
-      ScrollService = _ScrollService_;
       SvgService = _SvgService_;
     });
 
@@ -505,10 +502,9 @@ describe('OverlayService', () => {
     const menuLink = iframe('.hippo-overlay > .hippo-overlay-element-menu-link');
     expect(menuLink).not.toHaveClass('hippo-overlay-element-visible');
 
-    const scrollBarSize = ScrollService.getScrollBarSize();
     const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link');
     expect(contentLink.css('top')).toBe('0px');
-    expect(contentLink.css('left')).toBe(`${300 - 40 - scrollBarSize}px`);
+    expect(contentLink.css('left')).toBe(`${300 - 40}px`);
     expect(contentLink.css('width')).toBe('40px');
     expect(contentLink.css('height')).toBe('40px');
 
@@ -565,10 +561,9 @@ describe('OverlayService', () => {
     iframeWindow.scrollTo(1, 2);
     OverlayService.sync();
 
-    const scrollBarSize = ScrollService.getScrollBarSize();
     const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link');
     expect(contentLink.css('top')).toBe('0px');
-    expect(contentLink.css('left')).toBe(`${300 - 40 - scrollBarSize}px`);
+    expect(contentLink.css('left')).toBe(`${300 - 40}px`);
     expect(contentLink.css('width')).toBe('40px');
     expect(contentLink.css('height')).toBe('40px');
   });

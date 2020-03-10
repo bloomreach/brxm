@@ -22,6 +22,7 @@ import config from './iframe.config';
 import CommunicationService from './communication.service';
 import HstCommentsProcessorService from './page/hst-comments-processor.service';
 import PageStructureService from './page/page-structure.service';
+import ScrollService from './overlay/scroll.service';
 
 const iframeModule = angular
   .module('hippo-cm-iframe', [ModelModule.name, ServicesModule])
@@ -30,6 +31,7 @@ const iframeModule = angular
   .service('CommunicationService', CommunicationService)
   .service('HstCommentsProcessorService', HstCommentsProcessorService)
   .service('PageStructureService', PageStructureService)
+  .service('ScrollService', ScrollService)
 
   // eslint-disable-next-line no-shadow
   .run(($rootScope, $window, CommunicationService) => {

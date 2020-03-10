@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,574 +17,353 @@
 import angular from 'angular';
 import 'angular-mocks';
 
+function range(min, max) {
+  return {
+    asymmetricMatch(value) {
+      return value >= min && value <= max;
+    },
+
+    jasmineToString() {
+      return `<Range: [${min}, ${max}]>`;
+    },
+  };
+}
+
 describe('ScrollService', () => {
+  let BrowserService;
+  let CommunicationService;
   let ScrollService;
   let $iframe;
   let $canvas;
   let $sheet;
-  let maxScrollTop;
-  let maxScrollLeft;
-
-  const margin = 10; // this margin ensures the mouse is over the element by 10 px
-  const offsetLeft = 40;
-  const offsetTop = 40;
-  const canvasHeight = 200;
-  const canvasWidth = 200;
-  const iframeHeight = 400;
-  const iframeWidth = 400;
-
-  const exitOnTop = [margin + offsetLeft, offsetTop];
-  const exitOnBottom = [margin + offsetLeft, canvasHeight + offsetTop];
-  const exitOnLeft = [offsetLeft, margin + offsetTop];
-  const exitOnRight = [canvasWidth + offsetLeft, margin + offsetTop];
-
-  const iframeSrc = `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/scrolling/scroll.service.iframe.fixture.html`; // eslint-disable-line max-len
+  let $rootScope;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm.channel.hippoIframe');
+    angular.mock.module('hippo-cm');
 
     jasmine.getFixtures().load('channel/hippoIframe/scrolling/scroll.service.fixture.html');
-    $iframe = $('#testIframe');
-    $canvas = $('#testCanvas');
-    $sheet = $('#testSheet');
 
-    inject((_ScrollService_) => {
-      ScrollService = _ScrollService_;
-      ScrollService.init($iframe, $canvas, $sheet);
+    BrowserService = jasmine.createSpyObj('BrowserService', ['isFF']);
+    CommunicationService = jasmine.createSpyObj('CommunicationService', [
+      'disableScroll',
+      'enableScroll',
+      'getScroll',
+      'setScroll',
+      'stopScroll',
+    ]);
+
+    angular.mock.module(($provide) => {
+      $provide.value('BrowserService', BrowserService);
+      $provide.value('CommunicationService', CommunicationService);
     });
+
+    $iframe = angular.element('#testIframe');
+    $canvas = angular.element('#testCanvas');
+    $sheet = angular.element('#testSheet');
+
+    inject((_$rootScope_, _ScrollService_) => {
+      $rootScope = _$rootScope_;
+      ScrollService = _ScrollService_;
+    });
+
+    ScrollService.init($iframe, $canvas, $sheet);
   });
 
   beforeEach(() => {
-    const scrollBarSize = ScrollService.getScrollBarSize();
-    maxScrollTop = (iframeHeight - canvasHeight) + scrollBarSize;
-    maxScrollLeft = iframeWidth - canvasWidth;
-  });
+    angular.element.fx.off = true;
 
-  function loadIframeFixture(callback) {
-    $iframe.one('load', () => {
-      try {
-        callback();
-      } catch (e) {
-        fail(e);
-      }
-    });
-    $iframe.attr('src', iframeSrc);
-    ScrollService.init($iframe, $canvas, $sheet);
-  }
+    CommunicationService.getScroll.and.returnValue({
+      scrollLeft: 500,
+      scrollTop: 500,
 
-  describe('mouse enter/leave event listeners', () => {
-    it('should start/stop scrolling on mouse enter/leave events', (done) => {
-      loadIframeFixture(() => {
-        spyOn(ScrollService, '_startScrolling').and.callThrough();
-        spyOn(ScrollService, '_stopScrolling').and.callThrough();
-        ScrollService.enable(() => true);
-
-        $iframe.trigger('mouseleave');
-        expect(ScrollService._startScrolling).toHaveBeenCalled();
-
-        $iframe.trigger('mouseenter');
-        expect(ScrollService._stopScrolling).toHaveBeenCalled();
-
-        done();
-      });
-    });
-
-    it('should only attach mouse-enter/mouse-leave once', (done) => {
-      loadIframeFixture(() => {
-        spyOn(ScrollService, '_bindMouseEnterMouseLeave');
-        ScrollService.enable();
-        expect(ScrollService._bindMouseEnterMouseLeave).toHaveBeenCalled();
-        ScrollService._bindMouseEnterMouseLeave.calls.reset();
-
-        ScrollService.enable();
-        expect(ScrollService._bindMouseEnterMouseLeave).not.toHaveBeenCalled();
-        done();
-      });
-    });
-
-    it('should stop scrolling and unbind event listeners when disabled', (done) => {
-      loadIframeFixture(() => {
-        spyOn(ScrollService, '_unbindMouseEnterMouseLeave').and.callThrough();
-        spyOn(ScrollService, '_stopScrolling');
-
-        ScrollService.enable();
-        ScrollService.disable();
-
-        expect(ScrollService._unbindMouseEnterMouseLeave).toHaveBeenCalled();
-        expect(ScrollService._stopScrolling).toHaveBeenCalled();
-        done();
-      });
-    });
-
-    it('should only stop scrolling and unbind event listeners if previously enabled', (done) => {
-      loadIframeFixture(() => {
-        spyOn(ScrollService, '_unbindMouseEnterMouseLeave');
-        spyOn(ScrollService, '_stopScrolling');
-
-        ScrollService.disable();
-
-        expect(ScrollService._unbindMouseEnterMouseLeave).not.toHaveBeenCalled();
-        expect(ScrollService._stopScrolling).not.toHaveBeenCalled();
-        done();
-      });
+      scrollWidth: 1000,
+      scrollHeight: 1000,
     });
   });
 
-  describe('scroll up', () => {
-    it('should not scroll up when page is at the top and mouse leaves on top', (done) => {
-      loadIframeFixture(() => {
-        spyOn(ScrollService, '_scroll');
+  describe('getScroll', () => {
+    it('should return scroll metrics', () => {
+      expect(ScrollService.getScroll()).toEqual(jasmine.objectContaining({
+        top: jasmine.any(Number),
+        right: jasmine.any(Number),
+        bottom: jasmine.any(Number),
+        left: jasmine.any(Number),
 
-        ScrollService.enable();
-        ScrollService._startScrolling(...exitOnTop);
+        scrollWidth: jasmine.any(Number),
+        scrollHeight: jasmine.any(Number),
 
-        expect(ScrollService._scroll).not.toHaveBeenCalled();
-        done();
-      });
+        scrollLeft: jasmine.any(Number),
+        scrollMaxX: jasmine.any(Number),
+
+        targetX: jasmine.any(String),
+        targetY: jasmine.any(String),
+      }));
     });
 
-    it('should scroll up when page is not at the top and mouse leaves at the top', (done) => {
-      loadIframeFixture(() => {
-        spyOn(ScrollService, '_scroll');
-
-        const body = $iframe.contents().find('body');
-        body.scrollTop(maxScrollTop / 2);
-        ScrollService.enable();
-        ScrollService._startScrolling(...exitOnTop);
-
-        const htmlBody = $iframe.contents().find('html, body');
-        expect(ScrollService._scroll).toHaveBeenCalledWith(htmlBody, { scrollTop: 0 }, jasmine.any(Number));
-        done();
-      });
+    it('should return iframe as a vertical scroll target', () => {
+      expect(ScrollService.getScroll()).toEqual(jasmine.objectContaining({ targetY: 'iframe' }));
     });
 
-    it('should scroll up when page is at the bottom and mouse leaves at the top', (done) => {
-      loadIframeFixture(() => {
-        spyOn(ScrollService, '_scroll');
+    it('should return canvas as a horizontal scroll target when the iframe is thiner than canvas', () => {
+      $iframe.width(100);
 
-        const body = $iframe.contents().find('body');
-        body.scrollTop(maxScrollTop);
-        ScrollService.enable();
-        ScrollService._startScrolling(...exitOnTop);
+      expect(ScrollService.getScroll()).toEqual(jasmine.objectContaining({ targetX: 'iframe' }));
+    });
 
-        const htmlBody = $iframe.contents().find('html, body');
-        expect(ScrollService._scroll).toHaveBeenCalledWith(htmlBody, { scrollTop: 0 }, jasmine.any(Number));
-        done();
-      });
+    it('should return canvas as a horizontal scroll target when the iframe is wider than canvas', () => {
+      expect(ScrollService.getScroll()).toEqual(jasmine.objectContaining({ targetX: 'canvas' }));
     });
   });
 
-  describe('scroll down', () => {
-    it('should not scroll down when page is at the bottom and mouse leaves at the bottom', (done) => {
-      loadIframeFixture(() => {
-        spyOn(ScrollService, '_scroll');
+  describe('disable', () => {
+    it('should stop iframe scrolling', () => {
+      ScrollService.enable();
+      ScrollService.disable();
 
-        const body = $iframe.contents().find('body');
-        body.scrollTop(maxScrollTop);
-        ScrollService.enable();
-        ScrollService._startScrolling(...exitOnBottom);
-
-        expect(ScrollService._scroll).not.toHaveBeenCalled();
-        done();
-      });
+      expect(CommunicationService.stopScroll).toHaveBeenCalled();
     });
 
-    it('should scroll down when page is not at the bottom and mouse leaves at the bottom', (done) => {
-      loadIframeFixture(() => {
-        spyOn(ScrollService, '_scroll');
+    it('should not stop iframe scrolling if it was not enabled previously', () => {
+      ScrollService.disable();
 
-        const body = $iframe.contents().find('body');
-        body.scrollTop(maxScrollTop / 2);
-        ScrollService.enable();
-        ScrollService._startScrolling(...exitOnBottom);
-
-        const htmlBody = $iframe.contents().find('html, body');
-        expect(ScrollService._scroll).toHaveBeenCalledWith(htmlBody, { scrollTop: maxScrollTop }, jasmine.any(Number));
-        done();
-      });
+      expect(CommunicationService.stopScroll).not.toHaveBeenCalled();
     });
 
-    it('should scroll down when page is at the top and mouse leaves at the bottom', (done) => {
-      loadIframeFixture(() => {
-        spyOn(ScrollService, '_scroll');
+    it('should stop reacting on mouseleave events', () => {
+      ScrollService.enable();
+      ScrollService.disable();
 
-        ScrollService.enable();
-        ScrollService._startScrolling(...exitOnBottom);
+      const event = angular.element.Event('mouseleave');
+      event.pageX = 300;
+      event.pageY = 100;
 
-        const htmlBody = $iframe.contents().find('html, body');
-        expect(ScrollService._scroll).toHaveBeenCalledWith(htmlBody, { scrollTop: maxScrollTop }, jasmine.any(Number));
-        done();
-      });
-    });
-  });
+      $iframe.width(100);
+      $iframe.trigger(event);
+      $rootScope.$digest();
 
-  describe('scroll left', () => {
-    it('should not scroll left when page is at the left and mouse leaves at the left', (done) => {
-      loadIframeFixture(() => {
-        spyOn(ScrollService, '_scroll');
-
-        ScrollService.enable();
-        ScrollService._startScrolling(...exitOnLeft);
-
-        expect(ScrollService._scroll).not.toHaveBeenCalled();
-        done();
-      });
+      expect(CommunicationService.setScroll).not.toHaveBeenCalled();
     });
 
-    it('should scroll left when page is not at the left and mouse leaves at the left', (done) => {
-      loadIframeFixture(() => {
-        spyOn(ScrollService, '_scroll');
+    it('should stop reacting on mouseenter events', () => {
+      ScrollService.enable();
+      ScrollService.disable();
 
-        $canvas.scrollLeft(maxScrollLeft / 2);
-        ScrollService.enable();
-        ScrollService._startScrolling(...exitOnLeft);
+      CommunicationService.stopScroll.calls.reset();
 
-        expect(ScrollService._scroll).toHaveBeenCalledWith($canvas, { scrollLeft: 0 }, jasmine.any(Number));
-        done();
-      });
+      const event = angular.element.Event('mouseenter');
+
+      $iframe.width(100);
+      $iframe.trigger(event);
+      $rootScope.$digest();
+
+      expect(CommunicationService.stopScroll).not.toHaveBeenCalled();
     });
 
-    it('should scroll left when page is at the right and mouse leaves at the left', (done) => {
-      loadIframeFixture(() => {
-        spyOn(ScrollService, '_scroll');
+    it('should disable iframe scrolling in firefox', () => {
+      BrowserService.isFF.and.returnValue(true);
+      ScrollService.enable();
+      ScrollService.disable();
 
-        $canvas.scrollLeft(maxScrollLeft);
-        ScrollService.enable();
-        ScrollService._startScrolling(...exitOnLeft);
+      expect(CommunicationService.disableScroll).toHaveBeenCalled();
+    });
 
-        expect(ScrollService._scroll).toHaveBeenCalledWith($canvas, { scrollLeft: 0 }, jasmine.any(Number));
-        done();
-      });
+    it('should stop reacting on scroll:start events in firefox', () => {
+      BrowserService.isFF.and.returnValue(true);
+      ScrollService.enable();
+      ScrollService.disable();
+
+      $iframe.width(100);
+      $rootScope.$emit('iframe:scroll:start', { pageX: 300, pageY: 100 });
+      $rootScope.$digest();
+
+      expect(CommunicationService.setScroll).not.toHaveBeenCalled();
+    });
+
+    it('should stop reacting on scroll:stop events in firefox', () => {
+      BrowserService.isFF.and.returnValue(true);
+      ScrollService.enable();
+      ScrollService.disable();
+
+      CommunicationService.stopScroll.calls.reset();
+
+      $iframe.width(100);
+      $rootScope.$emit('iframe:scroll:stop');
+      $rootScope.$digest();
+
+      expect(CommunicationService.stopScroll).not.toHaveBeenCalled();
     });
   });
 
-  describe('scroll right', () => {
-    it('should not scroll right when page is at the right and mouse leaves at the right', (done) => {
-      loadIframeFixture(() => {
-        spyOn(ScrollService, '_scroll');
-
-        $canvas.scrollLeft(maxScrollLeft);
+  describe('enable', () => {
+    describe('scrolling in all browsers', () => {
+      beforeEach(() => {
         ScrollService.enable();
-        ScrollService._startScrolling(...exitOnRight);
-
-        expect(ScrollService._scroll).not.toHaveBeenCalled();
-        done();
       });
-    });
 
-    it('should scroll right when page is not at the right and mouse leaves at the right', (done) => {
-      loadIframeFixture(() => {
-        spyOn(ScrollService, '_scroll');
+      it('should scroll canvas left', () => {
+        const event = angular.element.Event('mouseleave');
+        event.pageX = 0;
+        event.pageY = 100;
 
-        $canvas.scrollLeft(maxScrollLeft / 2);
-        ScrollService.enable();
-        ScrollService._startScrolling(...exitOnRight);
+        $canvas.scrollLeft(50);
+        $iframe.trigger(event);
+        $rootScope.$digest();
 
-        expect(ScrollService._scroll).toHaveBeenCalledWith($canvas, { scrollLeft: maxScrollLeft }, jasmine.any(Number));
-        done();
+        expect($canvas.scrollLeft()).toBe(0);
       });
-    });
 
-    it('should scroll right when page is at the left and mouse leaves at the right', (done) => {
-      loadIframeFixture(() => {
-        spyOn(ScrollService, '_scroll');
+      it('should scroll canvas right', () => {
+        const event = angular.element.Event('mouseleave');
+        event.pageX = 300;
+        event.pageY = 100;
 
-        ScrollService.enable();
-        ScrollService._startScrolling(...exitOnRight);
+        $iframe.trigger(event);
+        $rootScope.$digest();
 
-        expect(ScrollService._scroll).toHaveBeenCalledWith($canvas, { scrollLeft: maxScrollLeft }, jasmine.any(Number));
-        done();
+        expect($canvas.scrollLeft()).toBe(200);
       });
-    });
-  });
 
-  describe('start/stop of scroll animation', () => {
-    it('should always start a new horizontal scroll animation', (done) => {
-      loadIframeFixture(() => {
-        ScrollService.enable();
-        spyOn(ScrollService.canvas, 'stop').and.callThrough();
-        spyOn(ScrollService.canvas, 'animate').and.callThrough();
+      it('should scroll iframe left', () => {
+        const event = angular.element.Event('mouseleave');
+        event.pageX = 0;
+        event.pageY = 100;
 
-        const to = { scrollLeft: 0 };
-        ScrollService._scroll(ScrollService.canvas, to, 0);
+        $iframe.width(100);
+        $iframe.trigger(event);
+        $rootScope.$digest();
 
-        expect(ScrollService.canvas.stop).toHaveBeenCalled();
-        expect(ScrollService.canvas.animate).toHaveBeenCalledWith(to, { duration: 0 });
-        done();
+        expect(CommunicationService.setScroll).toHaveBeenCalledWith({ scrollLeft: 0 }, 1000);
       });
-    });
 
-    it('should always start a new vertical scroll animation', (done) => {
-      loadIframeFixture(() => {
-        ScrollService.enable();
-        spyOn(ScrollService.iframeHtmlBody, 'stop').and.callThrough();
-        spyOn(ScrollService.iframeHtmlBody, 'animate').and.callThrough();
+      it('should scroll iframe right', () => {
+        const event = angular.element.Event('mouseleave');
+        event.pageX = 300;
+        event.pageY = 100;
 
-        const to = { scrollTop: 0 };
-        ScrollService._scroll(ScrollService.iframeHtmlBody, to, 0);
+        $iframe.width(100);
 
-        expect(ScrollService.iframeHtmlBody.stop).toHaveBeenCalled();
-        expect(ScrollService.iframeHtmlBody.animate).toHaveBeenCalledWith(to, { duration: 0 });
-        done();
+        $iframe.trigger(event);
+        $rootScope.$digest();
+
+        // add a scrollbar error
+        expect(CommunicationService.setScroll).toHaveBeenCalledWith({ scrollLeft: range(900, 950) }, range(800, 850));
       });
-    });
 
-    it('should stop the horizontal scrolling animation when stopScrolling is called', (done) => {
-      loadIframeFixture(() => {
-        ScrollService.enable();
-        const canvas = spyOn(ScrollService.canvas, 'stop');
+      it('should scroll iframe up', () => {
+        const event = angular.element.Event('mouseleave');
+        event.pageX = 100;
+        event.pageY = 0;
 
-        ScrollService._stopScrolling();
+        $iframe.height(100);
+        $iframe.trigger(event);
+        $rootScope.$digest();
 
-        expect(canvas).toHaveBeenCalled();
-        canvas.calls.reset();
-
-        ScrollService.canvas = null;
-        ScrollService._stopScrolling();
-
-        expect(canvas).not.toHaveBeenCalled();
-        done();
+        expect(CommunicationService.setScroll).toHaveBeenCalledWith({ scrollTop: 0 }, 1000);
       });
-    });
 
-    it('should stop the vertical scrolling animation when stopScrolling is called', (done) => {
-      loadIframeFixture(() => {
-        ScrollService.enable();
-        const iframeHtmlBody = spyOn(ScrollService.iframeHtmlBody, 'stop');
+      it('should scroll iframe down', () => {
+        const event = angular.element.Event('mouseleave');
+        event.pageX = 100;
+        event.pageY = 300;
 
-        ScrollService._stopScrolling();
+        $iframe.height(100);
+        $iframe.trigger(event);
+        $rootScope.$digest();
 
-        expect(iframeHtmlBody).toHaveBeenCalled();
-        iframeHtmlBody.calls.reset();
-
-        ScrollService.iframeHtmlBody = null;
-        ScrollService._stopScrolling();
-
-        expect(iframeHtmlBody).not.toHaveBeenCalled();
-        done();
+        // add a scrollbar error
+        expect(CommunicationService.setScroll).toHaveBeenCalledWith({ scrollTop: range(900, 950) }, range(800, 850));
       });
-    });
-  });
 
-  it('should calculate a scroll duration based on distance between a min and max time', () => {
-    expect(ScrollService._calculateDuration(0)).toBe(0);
-    expect(ScrollService._calculateDuration(0.5, 500, 1500)).toBe(500);
-    expect(ScrollService._calculateDuration(250, 500, 1500)).toBe(500);
-    expect(ScrollService._calculateDuration(300, 500, 1500)).toBe(600);
-    expect(ScrollService._calculateDuration(750, 500, 1500)).toBe(1500);
-    expect(ScrollService._calculateDuration(800, 500, 1500)).toBe(1500);
-  });
+      it('should not scroll iframe if it is already there', () => {
+        CommunicationService.getScroll.and.returnValue({
+          scrollLeft: 0,
+          scrollTop: 0,
 
-  describe('save/restore scroll position', () => {
-    it('should save scroll position on canvas', (done) => {
-      loadIframeFixture(() => {
-        const iframeWindow = $($iframe[0].contentWindow);
-
-        $iframe.width(400);
-        $canvas.width(200);
-        iframeWindow.scrollTop(10);
-        $canvas.scrollLeft(20);
-
-        ScrollService.saveScrollPosition();
-        expect(ScrollService.savedScrollPosition).toEqual({
-          top: 10,
-          canvasLeft: 20,
-          iframeLeft: 0,
+          scrollWidth: 1000,
+          scrollHeight: 1000,
         });
 
-        done();
+        const event = angular.element.Event('mouseleave');
+        event.pageX = 0;
+        event.pageY = 100;
+
+        $iframe.width(100);
+        $iframe.trigger(event);
+        $rootScope.$digest();
+
+        expect(CommunicationService.setScroll).not.toHaveBeenCalled();
+      });
+
+      it('should stop iframe scrolling on mouseenter event', () => {
+        const event = angular.element.Event('mouseenter');
+
+        $iframe.trigger(event);
+        $rootScope.$digest();
+
+        expect(CommunicationService.stopScroll).toHaveBeenCalled();
       });
     });
 
-    it('should save scroll position on iframe', (done) => {
-      loadIframeFixture(() => {
-        const iframeWindow = $($iframe[0].contentWindow);
-
-        $iframe.width(400);
-        iframeWindow.scrollTop(10);
-        $iframe.contents().find('.channel-iframe-element').width(600);
-        iframeWindow.scrollLeft(30);
-
-        ScrollService.saveScrollPosition();
-        expect(ScrollService.savedScrollPosition).toEqual({
-          top: 10,
-          iframeLeft: 30,
-          canvasLeft: 0,
-        });
-
-        done();
+    describe('scrolling in firefox', () => {
+      beforeEach(() => {
+        BrowserService.isFF.and.returnValue(true);
+        ScrollService.enable();
       });
-    });
 
-    it('should restore scroll position on canvas', (done) => {
-      loadIframeFixture(() => {
-        const iframeWindow = $($iframe[0].contentWindow);
-        $iframe.width(400);
-        $canvas.width(200);
-
-        ScrollService.savedScrollPosition = {
-          top: 30,
-          iframeLeft: 0,
-          canvasLeft: 20,
-        };
-        ScrollService.restoreScrollPosition();
-
-        expect(iframeWindow.scrollTop()).toEqual(30);
-        expect(iframeWindow.scrollLeft()).toEqual(0);
-        expect($canvas.scrollLeft()).toEqual(20);
-
-        done();
+      it('should enable scroll inside the iframe', () => {
+        expect(CommunicationService.enableScroll).toHaveBeenCalled();
       });
-    });
 
-    it('should restore scroll position on iframe', (done) => {
-      loadIframeFixture(() => {
-        const iframeWindow = $($iframe[0].contentWindow);
+      it('should scroll on scroll:start event', () => {
+        $iframe.width(100);
+        $rootScope.$emit('iframe:scroll:start', { pageX: 0, pageY: 100 });
+        $rootScope.$digest();
 
-        $iframe.width(400);
-        $iframe.contents().find('.channel-iframe-element').width(600);
-        iframeWindow.scrollLeft(30);
+        expect(CommunicationService.setScroll).toHaveBeenCalledWith({ scrollLeft: 0 }, 1000);
+      });
 
-        ScrollService.savedScrollPosition = {
-          top: 15,
-          iframeLeft: 10,
-          canvasLeft: 0,
-        };
-        ScrollService.restoreScrollPosition();
+      it('should stop scroll on scroll:stop event', () => {
+        $iframe.width(100);
+        $rootScope.$emit('iframe:scroll:stop');
+        $rootScope.$digest();
 
-        expect(iframeWindow.scrollTop()).toEqual(15);
-        expect(iframeWindow.scrollLeft()).toEqual(10);
-        expect($canvas.scrollLeft()).toEqual(0);
-
-        done();
+        expect(CommunicationService.stopScroll).toHaveBeenCalled();
       });
     });
   });
 
-  describe('the mousemove workaround for Firefox', () => {
-    let BrowserService;
+  describe('savePosition', () => {
+    it('should get iframe scroll metrics', () => {
+      ScrollService.savePosition();
 
-    beforeEach(() => {
-      inject((_BrowserService_) => {
-        BrowserService = _BrowserService_;
-        spyOn(BrowserService, 'isFF').and.returnValue(true);
-      });
-    });
-
-    function triggerMouseMove(pageX, pageY) {
-      const event = $.Event('mousemove'); // eslint-disable-line new-cap
-      event.pageX = pageX;
-      event.pageY = pageY;
-      $iframe.contents().trigger(event);
-    }
-
-    it('should bind the mousemove event handler when the service is enabled', (done) => {
-      loadIframeFixture(() => {
-        spyOn(ScrollService, '_bindMouseMove');
-
-        ScrollService.enable();
-        expect(ScrollService._bindMouseMove).toHaveBeenCalled();
-
-        done();
-      });
-    });
-
-    it('should unbind the mousemove event handler when the service is disabled', (done) => {
-      loadIframeFixture(() => {
-        spyOn(ScrollService, '_unbindMouseMove').and.callThrough();
-
-        ScrollService.enable();
-        ScrollService.disable();
-
-        expect(ScrollService._unbindMouseMove).toHaveBeenCalled();
-        done();
-      });
-    });
-
-    it('should call start scrolling once when mouse moves over the upper bound', (done) => {
-      loadIframeFixture(() => {
-        spyOn(ScrollService, '_startScrolling');
-        ScrollService.enable(() => true);
-
-        triggerMouseMove(1, 0);
-        expect(ScrollService._startScrolling).toHaveBeenCalled();
-        ScrollService._startScrolling.calls.reset();
-
-        triggerMouseMove(1, 0);
-        expect(ScrollService._startScrolling).not.toHaveBeenCalled();
-
-        done();
-      });
-    });
-
-    it('should call start scrolling once when mouse moves over the lower bound', (done) => {
-      loadIframeFixture(() => {
-        spyOn(ScrollService, '_startScrolling');
-        ScrollService.enable(() => true);
-
-        triggerMouseMove(1, canvasHeight);
-        expect(ScrollService._startScrolling).toHaveBeenCalled();
-        ScrollService._startScrolling.calls.reset();
-
-        triggerMouseMove(1, canvasHeight);
-        expect(ScrollService._startScrolling).not.toHaveBeenCalled();
-
-        done();
-      });
-    });
-
-    it('should call start scrolling once when mouse moves over the left bound', (done) => {
-      loadIframeFixture(() => {
-        spyOn(ScrollService, '_startScrolling');
-        ScrollService.enable(() => true);
-
-        triggerMouseMove(0, 1);
-        expect(ScrollService._startScrolling).toHaveBeenCalled();
-        ScrollService._startScrolling.calls.reset();
-
-        triggerMouseMove(0, 1);
-        expect(ScrollService._startScrolling).not.toHaveBeenCalled();
-
-        done();
-      });
-    });
-
-    it('should call start scrolling once when mouse moves over the right bound', (done) => {
-      loadIframeFixture(() => {
-        spyOn(ScrollService, '_startScrolling');
-        ScrollService.enable(() => true);
-
-        triggerMouseMove(canvasWidth, 1);
-        expect(ScrollService._startScrolling).toHaveBeenCalled();
-        ScrollService._startScrolling.calls.reset();
-
-        triggerMouseMove(canvasWidth, 1);
-        expect(ScrollService._startScrolling).not.toHaveBeenCalled();
-
-        done();
-      });
-    });
-
-    it('should call stop scrolling once when mouse re-enters the page', (done) => {
-      loadIframeFixture(() => {
-        spyOn(ScrollService, '_stopScrolling');
-        ScrollService.enable(() => true);
-
-        triggerMouseMove(0, 0);
-        triggerMouseMove(10, 10);
-        expect(ScrollService._stopScrolling).toHaveBeenCalled();
-        ScrollService._stopScrolling.calls.reset();
-
-        triggerMouseMove(11, 11);
-        expect(ScrollService._stopScrolling).not.toHaveBeenCalled();
-
-        done();
-      });
+      expect(CommunicationService.getScroll).toHaveBeenCalled();
     });
   });
 
-  it('should calculate the scroll bar width', () => {
-    const size = ScrollService.getScrollBarSize();
-    expect(size).toBeGreaterThan(-1);
+  describe('restorePosition', () => {
+    it('should restore iframe scroll', () => {
+      CommunicationService.getScroll.and.returnValue({
+        scrollLeft: 100,
+        scrollTop: 200,
+      });
+
+      ScrollService.savePosition();
+      $rootScope.$digest();
+      ScrollService.restorePosition();
+
+      expect(CommunicationService.setScroll).toHaveBeenCalledWith({ scrollLeft: 100, scrollTop: 200 });
+    });
+
+    it('should restore canvas scroll', () => {
+      $canvas.scrollLeft(200);
+
+      ScrollService.savePosition();
+      $rootScope.$digest();
+
+      spyOn($canvas, 'scrollLeft');
+      ScrollService.restorePosition();
+
+      expect($canvas.scrollLeft).toHaveBeenCalledWith(200);
+    });
   });
 });

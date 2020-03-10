@@ -64,7 +64,7 @@ class RenderingService {
       return this.creatingOverlay;
     }
 
-    this.ScrollService.saveScrollPosition();
+    this.ScrollService.savePosition();
     this.PageStructureService.clearParsedElements();
     this.OverlayService.clear();
 
@@ -72,7 +72,7 @@ class RenderingService {
       .then(() => this.PageStructureService.parseElements())
       .then(() => {
         this._parseLinks();
-        this.ScrollService.restoreScrollPosition();
+        this.ScrollService.restorePosition();
 
         return this.emitter.emit(OVERLAY_CREATED_EVENT_NAME);
       })

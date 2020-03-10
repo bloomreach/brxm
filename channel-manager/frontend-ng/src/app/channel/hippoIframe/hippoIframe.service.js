@@ -114,7 +114,7 @@ class HippoIframeService {
       return this.deferredReload.promise;
     }
 
-    this.ScrollService.saveScrollPosition();
+    this.ScrollService.savePosition();
 
     this.deferredReload = this.$q.defer();
     this.iframeJQueryElement[0].contentWindow.location.reload();
@@ -126,7 +126,7 @@ class HippoIframeService {
     this.renderPathInfo = this._determineRenderPathInfo();
     this.pageLoaded = true;
 
-    this.ScrollService.restoreScrollPosition();
+    this.ScrollService.restorePosition();
     this.PageToolsService.updatePageTools();
 
     const deferred = this.deferredReload;
