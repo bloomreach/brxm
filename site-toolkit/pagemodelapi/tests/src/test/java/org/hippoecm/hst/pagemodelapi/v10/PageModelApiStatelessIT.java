@@ -17,6 +17,8 @@ package org.hippoecm.hst.pagemodelapi.v10;
 
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.apache.logging.log4j.core.LogEvent;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.PageModelApiCleanupValve;
@@ -91,5 +93,28 @@ public class PageModelApiStatelessIT extends AbstractPageModelApiITCases {
         assertThat(requestResponse.getRequest().getSession(false))
                 .as("Expected that a http session was created")
                 .isNotNull();
+    }
+
+    @Test
+    public void assertions_existing_http_session_allowed_for_page_model_api_request() throws Exception {
+
+        final RequestResponseMock requestResponse = mockGetRequestResponse(
+                "http", "localhost", "/spa/resourceapi/httpsessionpage", null);
+
+        // Create a session for the request
+        final HttpSession session = requestResponse.getRequest().getSession();
+        requestResponse.getRequest().addHeader(ContainerConstants.PAGE_MODEL_ACCEPT_VERSION, "1.0");
+
+        try (Log4jInterceptor interceptor = Log4jInterceptor.onError().trap(PageModelApiCleanupValve.class).build()) {
+            render(requestResponse);
+            List<LogEvent> messages = interceptor.getEvents();
+            assertThat(messages.size())
+                    .as("Expected no error message for allowed http session presence")
+                    .isEqualTo(0);
+
+        }
+
+        assertThat(requestResponse.getRequest().getSession()).isSameAs(session);
+
     }
 }

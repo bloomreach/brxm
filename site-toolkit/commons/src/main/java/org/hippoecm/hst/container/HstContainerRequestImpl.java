@@ -1,12 +1,12 @@
 /*
  *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -36,21 +36,22 @@ import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestScheme;
 /**
  * <p>
  * The {@link HstContainerRequestImpl} is a wrapper around the {@link GenericHttpServletRequestWrapper}. As the {@link HstRequestProcessor}
- * is invoked from a {@link Filter}, the original {@link HttpServletRequest} does return an empty {@link HttpServletRequest#getPathInfo()}. 
+ * is invoked from a {@link Filter}, the original {@link HttpServletRequest} does return an empty {@link HttpServletRequest#getPathInfo()}.
  * However, in the context of {@link HstRequestProcessor}, the {@link HttpServletRequest#getServletPath()} is equivalent to {@link ResolvedMount#getResolvedMountPath()}
  * and the {@link HttpServletRequest#getPathInfo()} equivalent to the {@link HttpServletRequest#getRequestURI()} after the {@link HttpServletRequest#getServletPath()}
- * (and the same for {@link HttpServletRequest#getPathTranslated()} only then not decoded.). 
+ * (and the same for {@link HttpServletRequest#getPathTranslated()} only then not decoded.).
  * </p>
  * <p>
  * Therefore, this {@link HstContainerRequestImpl} object has a setter {@link #setServletPath(String)}, that recomputes the {@link #getPathInfo()}. When the constructor
- * is called, the <code>servletPath</code> is set to an empty {@link String} (""). After for example a {@link ResolvedMount} is found, the {@link #setServletPath(String)} can be 
+ * is called, the <code>servletPath</code> is set to an empty {@link String} (""). After for example a {@link ResolvedMount} is found, the {@link #setServletPath(String)} can be
  * called to recompute/reset the <code>servletPath</code> and <code>pathInfo</code> (and <code>pathTranslated</code>)
  * </p>
  * <p>
- * The {@link #getPathInfo()} won't return the part in the {@link #getRequestURI()} after the <code>pathSuffixDelimiter</code>. 
+ * The {@link #getPathInfo()} won't return the part in the {@link #getRequestURI()} after the <code>pathSuffixDelimiter</code>.
  * The delimiter itself won't be part of the {@link #getPathInfo()} either.
- * Also the return won't include any matrix parameters. 
+ * Also the return won't include any matrix parameters.
  * </p>
+ *
  * @version $Id$
  */
 public class HstContainerRequestImpl extends GenericHttpServletRequestWrapper implements HstContainerRequest {
@@ -60,13 +61,15 @@ public class HstContainerRequestImpl extends GenericHttpServletRequestWrapper im
     private boolean statelessRequestValidation;
     private String stringRepresentation;
 
-    // the stacktrace used for creating the http session which in case of statelessRequest = true should never happen
+    // The stacktrace that is created if statelessRequestValidation is enabled and getSession() or getSession(true)
+    // is called on an instance of this class.
     private Exception createSessionStackTrace;
 
     /**
-     * Creates a wrapper {@link HttpServletRequest} with a {@link HttpServletRequest#getServletPath()} that is an empty {@link String} (""). The 
+     * Creates a wrapper {@link HttpServletRequest} with a {@link HttpServletRequest#getServletPath()} that is an empty {@link String} (""). The
      * {@link HttpServletRequest#getPathInfo()} will be the part of the {@link HttpServletRequest#getRequestURI()} after the {@link HttpServletRequest#getContextPath()}
      * and before the {@link #getPathSuffix()} and before the {@link HstRequestUtils#MATRIX_PARAMS_PATTERN}
+     *
      * @param request
      * @param pathSuffixDelimiter
      */
@@ -98,54 +101,55 @@ public class HstContainerRequestImpl extends GenericHttpServletRequestWrapper im
     public String getPathSuffix() {
         return pathSuffix;
     }
-    
+
     @Override
     public StringBuffer getRequestURL() {
         if (pathSuffix == null) {
             return super.getRequestURL();
         }
-        
+
         StringBuffer tempRequestURL = requestURL;
-        
+
         if (tempRequestURL == null) {
             tempRequestURL = super.getRequestURL();
-        
+
             if (tempRequestURL != null) {
                 tempRequestURL.delete(tempRequestURL.indexOf(pathSuffixDelimiter), tempRequestURL.length());
             }
-            
+
             requestURL = tempRequestURL;
         }
-        
+
         return tempRequestURL;
     }
-    
+
     /**
      * <p>
      * Sets a new <code>servletPath</code> on the {@link HttpServletRequest}. For an {@link HstRequest}, the <code>servletPath</code> becomes the {@link ResolvedMount#getResolvedMountPath()} of
-     * the {@link ResolvedMount} belonging to the {@link HstRequestContext}. 
+     * the {@link ResolvedMount} belonging to the {@link HstRequestContext}.
      * </p>
      * <p>When the {@link ResolvedMount#getMount()} returns a 'root' {@link Mount}, the <code>servletPath</code> is an empty string (""). Otherwise, it always starts with a  slash "/".
      * </p>
-     * @see ResolvedMount#getResolvedMountPath()
+     *
      * @param servletPath
+     * @see ResolvedMount#getResolvedMountPath()
      */
     @Override
     public void setServletPath(String servletPath) {
         // recompute the pathInfo with the original requestURI
         super.setServletPath(servletPath);
         pathTranslated = getRequestURI().substring(getContextPath().length());
-        if(getServletPath() != null) {
+        if (getServletPath() != null) {
             pathTranslated = pathTranslated.substring(getServletPath().length());
         }
-        
-        // we do not need to strip off the pathSuffix as this is already done in the constructor. 
+
+        // we do not need to strip off the pathSuffix as this is already done in the constructor.
         pathTranslated = HstRequestUtils.removeAllMatrixParams(pathTranslated);
         // pathTranslated is the not decoded version of pathInfo
         setDecodedPathInfo(pathTranslated);
-        
+
     }
-    
+
     private void setDecodedPathInfo(String pathTranslated) {
         String encoding = HstRequestUtils.getURIEncoding(this);
         try {
@@ -157,13 +161,14 @@ public class HstContainerRequestImpl extends GenericHttpServletRequestWrapper im
 
     @Override
     public String getPathInfo() {
-        return pathInfo;  
+        return pathInfo;
     }
-    
+
     @Override
     public String getPathTranslated() {
-       return pathTranslated;
+        return pathTranslated;
     }
+
     @Override
     public String toString() {
         if (stringRepresentation != null) {
@@ -187,7 +192,6 @@ public class HstContainerRequestImpl extends GenericHttpServletRequestWrapper im
         }
         return getRequestURI();
     }
-
 
 
     @Override

@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 public class PageModelApiCleanupValve extends AbstractBaseOrderableValve {
 
-    final static Logger log = LoggerFactory.getLogger(PageModelApiCleanupValve.class);
+    private static final Logger log = LoggerFactory.getLogger(PageModelApiCleanupValve.class);
 
     @Override
     public void invoke(final ValveContext context) throws ContainerException {

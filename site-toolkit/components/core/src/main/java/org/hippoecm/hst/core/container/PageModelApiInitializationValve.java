@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 public class PageModelApiInitializationValve extends AbstractBaseOrderableValve {
 
-    final static Logger log = LoggerFactory.getLogger(PageModelApiInitializationValve.class);
+    private static final Logger log = LoggerFactory.getLogger(PageModelApiInitializationValve.class);
     private boolean statelessRequestValidation;
 
     public void setStatelessRequestValidation(final boolean statelessRequestValidation) {
@@ -34,7 +34,7 @@ public class PageModelApiInitializationValve extends AbstractBaseOrderableValve 
     public void invoke(final ValveContext context) throws ContainerException {
         HttpServletRequest request = context.getServletRequest();
         if (logErrorForCreatedHttpSession(request)) {
-            ((HstContainerRequestImpl)request).setStatelessRequestValidation(true);
+            ((HstContainerRequestImpl) request).setStatelessRequestValidation(true);
         }
 
         context.invokeNext();
@@ -47,11 +47,10 @@ public class PageModelApiInitializationValve extends AbstractBaseOrderableValve 
 
         HstContainerRequestImpl req = (HstContainerRequestImpl) servletRequest;
         if (req.getSession(false) == null) {
-            log.debug("Request {} already has an http session, no need to report prohibited http session creation in " +
-                    "Page Model Api request", req);
             return statelessRequestValidation;
         }
-
+        log.debug("Request {} already has an http session, no need to report prohibited http session creation in " +
+                "Page Model Api request", req);
         return false;
 
     }
