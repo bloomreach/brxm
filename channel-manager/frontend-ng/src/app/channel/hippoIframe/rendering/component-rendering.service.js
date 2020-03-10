@@ -35,19 +35,25 @@ class ComponentRenderingService {
     const page = this.PageStructureService.getPage();
     const component = page && page.getComponentById(componentId);
     if (!component) {
-      this.$log.warn(`Cannot render unknown component with ID '${componentId}'`);
+      this.$log.warn(`Cannot render unknown component with ID '${componentId}'.`);
 
       throw new Error(`Cannot render unknown component with ID '${componentId}'.`);
     }
 
-    // let the SPA render the component; if it returns false, we render the component instead
-    if (this.SpaService.renderComponent(component, properties)) {
-      return;
+    if (this.SpaService.isSpa()) {
+      try {
+        await this.SpaService.renderComponent(component, properties);
+
+        return;
+      } catch (error) {
+        this.$log.error(error);
+
+        throw error;
+      }
     }
 
     try {
-      // eslint-disable-next-line consistent-return
-      return await this.PageStructureService.renderComponent(component, properties);
+      await this.PageStructureService.renderComponent(component, properties);
     } catch (error) {
       // component being edited is removed (by someone else), reload the page
       this.HippoIframeService.reload();
