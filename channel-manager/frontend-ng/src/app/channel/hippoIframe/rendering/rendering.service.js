@@ -28,7 +28,6 @@ class RenderingService {
     LinkProcessorService,
     OverlayService,
     PageStructureService,
-    ScrollService,
   ) {
     'ngInject';
 
@@ -40,7 +39,6 @@ class RenderingService {
     this.LinkProcessorService = LinkProcessorService;
     this.OverlayService = OverlayService;
     this.PageStructureService = PageStructureService;
-    this.ScrollService = ScrollService;
   }
 
   init(iframeJQueryElement) {
@@ -48,14 +46,12 @@ class RenderingService {
   }
 
   createOverlay(isPartial) {
-    this.ScrollService.savePosition();
     this.OverlayService.clear();
 
     this.creatingOverlay = this._insertCss()
       .then(() => this.PageStructureService.parseElements())
       .then(() => {
         this._parseLinks();
-        this.ScrollService.restorePosition();
         this.$rootScope.$emit('overlay:create', isPartial);
       })
       .finally(() => {
