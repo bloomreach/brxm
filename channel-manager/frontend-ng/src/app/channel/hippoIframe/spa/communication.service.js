@@ -20,6 +20,11 @@ export default class CommunicationService {
 
     this.$rootScope = $rootScope;
     this.Penpal = Penpal;
+
+    this.emit = this._call.bind(this, 'emit');
+    this.parseElements = this._call.bind(this, 'parseElements');
+    this.updateComponent = this._call.bind(this, 'updateComponent');
+    this.updateContainer = this._call.bind(this, 'updateContainer');
   }
 
   async connect({ target, origin }) {
@@ -55,25 +60,5 @@ export default class CommunicationService {
 
   _emit(event, data) {
     this.$rootScope.$emit(`iframe:${event}`, data);
-  }
-
-  emit(event, data) {
-    if (!this._child) {
-      return;
-    }
-
-    this._child.emit(event, data);
-  }
-
-  parseElements(...args) {
-    return this._call('parseElements', ...args);
-  }
-
-  updateComponent(...args) {
-    return this._call('updateComponent', ...args);
-  }
-
-  updateContainer(...args) {
-    return this._call('updateContainer', ...args);
   }
 }
