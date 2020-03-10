@@ -28,8 +28,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.jcr.Node;
-import javax.jcr.Property;
-import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Value;
@@ -195,6 +193,12 @@ public class ChannelPropertyMapper {
                 }
             }
 
+            // now add all properties which are present on the jcr node but not represented in a channel info class
+            final Map<String, Object> allProperties = channelInfoNode.getValueProvider().getProperties();
+            allProperties.keySet().forEach(
+                    propertyName -> properties.computeIfAbsent(propertyName, name -> allProperties.get(name))
+            );
+
             channel.setProperties(properties);
         }
 
@@ -268,9 +272,7 @@ public class ChannelPropertyMapper {
                     ChannelInfoClassProcessor.getProperties(channelInfoClazz, channelInfoMixinClasses),
                     channel.getProperties());
         } else {
-            if (channelNode.hasNode(HstNodeTypes.NODENAME_HST_CHANNELINFO)) {
-                channelNode.getNode(HstNodeTypes.NODENAME_HST_CHANNELINFO).remove();
-            }
+            log.debug("No channel info type present, just keep already present properties as-is");
         }
     }
 
@@ -296,13 +298,8 @@ public class ChannelPropertyMapper {
     }
 
     public static void saveProperties(Node node, List<HstPropertyDefinition> definitions, Map<String, Object> properties) throws RepositoryException {
-        for (PropertyIterator propertyIterator = node.getProperties(); propertyIterator.hasNext(); ) {
-            Property prop = propertyIterator.nextProperty();
-            if (prop.getDefinition().isProtected()) {
-                continue;
-            }
-            prop.remove();
-        }
+        // properties which are already present on the node but not part of List<HstPropertyDefinition> definitions are
+        // kept unchanged
         for (HstPropertyDefinition definition : definitions) {
             if (properties.containsKey(definition.getName()) && properties.get(definition.getName()) != null) {
                 setHstValueToJcr(node, definition, properties.get(definition.getName()));
