@@ -62,7 +62,6 @@ describe('RenderingService', () => {
     beforeEach(() => {
       spyOn(HippoIframeService, 'signalPageLoadCompleted');
       spyOn(OverlayService, 'clear');
-      spyOn(PageStructureService, 'clearParsedElements');
       spyOn(PageStructureService, 'parseElements');
       spyOn(ScrollService, 'savePosition');
       spyOn(ScrollService, 'restorePosition');
@@ -77,7 +76,6 @@ describe('RenderingService', () => {
 
       expect(DomService.addCssLinks).toHaveBeenCalledWith(window, [jasmine.any(String)], 'hippo-css');
       expect(ScrollService.savePosition).toHaveBeenCalled();
-      expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(OverlayService.clear).toHaveBeenCalled();
       expect(PageStructureService.parseElements).toHaveBeenCalledWith();
       expect(ScrollService.restorePosition).toHaveBeenCalled();
@@ -93,7 +91,6 @@ describe('RenderingService', () => {
 
       expect(DomService.addCssLinks).not.toHaveBeenCalled();
       expect(ScrollService.savePosition).toHaveBeenCalled();
-      expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(OverlayService.clear).toHaveBeenCalled();
       expect(PageStructureService.parseElements).toHaveBeenCalledWith();
       expect(ScrollService.restorePosition).toHaveBeenCalled();
@@ -108,7 +105,6 @@ describe('RenderingService', () => {
       $rootScope.$digest();
 
       expect(ScrollService.savePosition).toHaveBeenCalled();
-      expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(OverlayService.clear).toHaveBeenCalled();
       expect(PageStructureService.parseElements).not.toHaveBeenCalled();
       expect(ScrollService.restorePosition).not.toHaveBeenCalled();
@@ -121,7 +117,6 @@ describe('RenderingService', () => {
       RenderingService.createOverlay();
       $rootScope.$digest();
 
-      expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(OverlayService.clear).toHaveBeenCalled();
       expect(PageStructureService.parseElements).not.toHaveBeenCalled();
       expect(ScrollService.restorePosition).not.toHaveBeenCalled();

@@ -62,6 +62,7 @@ class PageStructureService {
   }
 
   async parseElements() {
+    this._clear();
     const comments = await this.CommunicationService.parseElements();
 
     this._page = this.ModelFactoryService.createPage(comments);
@@ -100,7 +101,7 @@ class PageStructureService {
     );
   }
 
-  clearParsedElements() {
+  _clear() {
     this.headContributions.clear();
     delete this._page;
   }
