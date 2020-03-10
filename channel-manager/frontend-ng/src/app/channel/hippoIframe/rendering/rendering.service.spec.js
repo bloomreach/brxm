@@ -82,8 +82,8 @@ describe('RenderingService', () => {
       spyOn(OverlayService, 'clear');
       spyOn(PageStructureService, 'clearParsedElements');
       spyOn(PageStructureService, 'parseElements');
-      spyOn(ScrollService, 'saveScrollPosition');
-      spyOn(ScrollService, 'restoreScrollPosition');
+      spyOn(ScrollService, 'savePosition');
+      spyOn(ScrollService, 'restorePosition');
     });
 
     it('handles the loading of a new page', () => {
@@ -94,12 +94,12 @@ describe('RenderingService', () => {
       $rootScope.$digest();
 
       expect(DomService.addCssLinks).toHaveBeenCalledWith(window, [jasmine.any(String)], 'hippo-css');
-      expect(ScrollService.saveScrollPosition).toHaveBeenCalled();
+      expect(ScrollService.savePosition).toHaveBeenCalled();
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(OverlayService.clear).toHaveBeenCalled();
       expect(PageStructureService.parseElements).toHaveBeenCalledWith();
       expect(RenderingService.emitter.emit).toHaveBeenCalledWith('overlay-created');
-      expect(ScrollService.restoreScrollPosition).toHaveBeenCalled();
+      expect(ScrollService.restorePosition).toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
 
@@ -111,12 +111,12 @@ describe('RenderingService', () => {
       $rootScope.$digest();
 
       expect(DomService.addCssLinks).not.toHaveBeenCalled();
-      expect(ScrollService.saveScrollPosition).toHaveBeenCalled();
+      expect(ScrollService.savePosition).toHaveBeenCalled();
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(OverlayService.clear).toHaveBeenCalled();
       expect(PageStructureService.parseElements).toHaveBeenCalledWith();
       expect(RenderingService.emitter.emit).toHaveBeenCalledWith('overlay-created');
-      expect(ScrollService.restoreScrollPosition).toHaveBeenCalled();
+      expect(ScrollService.restorePosition).toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
 
@@ -140,12 +140,12 @@ describe('RenderingService', () => {
       RenderingService.createOverlay();
       $rootScope.$digest();
 
-      expect(ScrollService.saveScrollPosition).toHaveBeenCalled();
+      expect(ScrollService.savePosition).toHaveBeenCalled();
       expect(PageStructureService.clearParsedElements).toHaveBeenCalled();
       expect(OverlayService.clear).toHaveBeenCalled();
       expect(PageStructureService.parseElements).not.toHaveBeenCalled();
       expect(RenderingService.emitter.emit).not.toHaveBeenCalledWith();
-      expect(ScrollService.restoreScrollPosition).not.toHaveBeenCalled();
+      expect(ScrollService.restorePosition).not.toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
 
@@ -159,7 +159,7 @@ describe('RenderingService', () => {
       expect(OverlayService.clear).toHaveBeenCalled();
       expect(PageStructureService.parseElements).not.toHaveBeenCalled();
       expect(RenderingService.emitter.emit).not.toHaveBeenCalledWith();
-      expect(ScrollService.restoreScrollPosition).not.toHaveBeenCalled();
+      expect(ScrollService.restorePosition).not.toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
   });

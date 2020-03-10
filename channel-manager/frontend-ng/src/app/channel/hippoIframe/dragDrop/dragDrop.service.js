@@ -41,11 +41,10 @@ class DragDropService {
     this.dropping = false;
   }
 
-  init(iframeJQueryElement, canvasJQueryElement, sheetJQueryElement) {
+  init(iframeJQueryElement, canvasJQueryElement) {
     this.iframeJQueryElement = iframeJQueryElement;
     this.canvasJQueryElement = canvasJQueryElement;
 
-    this.ScrollService.init(iframeJQueryElement, canvasJQueryElement, sheetJQueryElement);
     this.$rootScope.$on('hippo-iframe:load', () => this._onLoad());
 
     if (this._offPageChange) {

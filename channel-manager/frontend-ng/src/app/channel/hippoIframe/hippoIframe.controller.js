@@ -38,6 +38,7 @@ class HippoIframeCtrl {
     PageStructureService,
     PickerService,
     RenderingService,
+    ScrollService,
     SpaService,
     ViewportService,
   ) {
@@ -62,6 +63,7 @@ class HippoIframeCtrl {
     this.PageStructureService = PageStructureService;
     this.PickerService = PickerService;
     this.RenderingService = RenderingService;
+    this.ScrollService = ScrollService;
     this.SpaService = SpaService;
     this.ViewportService = ViewportService;
 
@@ -102,7 +104,8 @@ class HippoIframeCtrl {
     this.HippoIframeService.initialize(this.$element, this.iframeJQueryElement);
     this.OverlayService.init(this.iframeJQueryElement);
     this.ViewportService.init(sheetJQueryElement);
-    this.DragDropService.init(this.iframeJQueryElement, canvasJQueryElement, sheetJQueryElement);
+    this.DragDropService.init(this.iframeJQueryElement, canvasJQueryElement);
+    this.ScrollService.init(this.iframeJQueryElement, canvasJQueryElement, sheetJQueryElement);
     this.SpaService.init(this.iframeJQueryElement);
     this.RenderingService.init(this.iframeJQueryElement);
   }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,19 @@
  * limitations under the License.
  */
 
-const EVENT_NAMESPACE = '.scroll-events';
 const DURATION_MIN = 500;
 const DURATION_MAX = 1500;
 
-class ScrollService {
-  constructor(BrowserService, DomService) {
+export default class ScrollService {
+  constructor($rootScope, BrowserService, CommunicationService) {
     'ngInject';
 
+    this.$rootScope = $rootScope;
     this.BrowserService = BrowserService;
-    this.DomService = DomService;
+    this.CommunicationService = CommunicationService;
+
+    this._onScrollStart = this._onScrollStart.bind(this);
+    this._onScrollStop = this._onScrollStop.bind(this);
   }
 
   init(iframe, canvas, sheet) {
@@ -32,107 +35,100 @@ class ScrollService {
     this.canvas = canvas;
     this.enabled = false;
 
-    this.savedScrollPosition = {
-      top: 0,
-      canvasLeft: 0,
-      iframeLeft: 0,
+    this._position = {
+      canvasScrollLeft: 0,
+      iframeScrollLeft: 0,
+      iframeScrollTop: 0,
+    };
+  }
+
+  getScroll() {
+    const canvasOffset = this.canvas.offset();
+    const canvasWidth = this.canvas.outerWidth();
+    const canvasLeft = canvasOffset.left;
+    const canvasRight = canvasOffset.left + canvasWidth;
+
+    const sheetOffset = this.sheet.offset();
+    const sheetWidth = this.sheet.outerWidth();
+    const sheetLeft = sheetOffset.left;
+    const sheetRight = sheetOffset.left + sheetWidth;
+
+    const offset = this.iframe.offset();
+    const scrollWidth = this.iframe.outerWidth();
+    const scrollHeight = this.iframe.outerHeight();
+
+    const { top } = offset;
+    const right = Math.min(canvasRight, sheetRight);
+    const bottom = top + scrollHeight;
+    const left = sheetLeft >= 0 ? sheetLeft : canvasLeft;
+
+    const scrollLeft = this.canvas.scrollLeft();
+    const scrollMaxX = scrollWidth - canvasWidth;
+
+    const targetX = scrollWidth > canvasWidth ? 'canvas' : 'iframe';
+    const targetY = 'iframe';
+
+    return {
+      // boundary coordinates
+      top,
+      right,
+      bottom,
+      left,
+
+      scrollWidth,
+      scrollHeight,
+
+      // scroll positions
+      scrollLeft,
+      scrollMaxX,
+
+      // target elements
+      targetX,
+      targetY,
     };
   }
 
   enable() {
-    if (!this.enabled && this.iframe) {
-      this._initIframeElements();
-      if (this.BrowserService.isFF()) {
-        this._bindMouseMove();
-      } else {
-        this._bindMouseEnterMouseLeave();
-      }
-      this.enabled = true;
+    if (this.enabled) {
+      return;
     }
+
+    this.enabled = true;
+
+    if (this.BrowserService.isFF()) {
+      this._offScrollStart = this.$rootScope.$on('iframe:scroll:start', ($event, data) => this._onScrollStart(data));
+      this._offScrollStop = this.$rootScope.$on('iframe:scroll:stop', this._onScrollStop);
+      this.CommunicationService.enableScroll();
+
+      return;
+    }
+
+    this.iframe
+      .on('mouseenter', this._onScrollStop)
+      .on('mouseleave', this._onScrollStart);
   }
 
   disable() {
-    if (this.enabled && this.iframe) {
-      this._stopScrolling();
-      if (this.BrowserService.isFF()) {
-        this._unbindMouseMove();
-      } else {
-        this._unbindMouseEnterMouseLeave();
-      }
-      this.enabled = false;
+    if (!this.enabled) {
+      return;
     }
-  }
 
-  _initIframeElements() {
-    this.iframeWindow = $(this.iframe[0].contentWindow);
-    this.iframeDocument = this.iframe.contents();
-    this.iframeHtmlBody = this.iframeDocument.find('html, body');
-    this.iframeBody = this.iframeDocument.find('body');
-  }
+    this._onScrollStop();
+    this.enabled = false;
+    if (this.BrowserService.isFF()) {
+      this._offScrollStart();
+      this._offScrollStop();
+      this.CommunicationService.disableScroll();
 
-  _bindMouseEnterMouseLeave() {
+      return;
+    }
+
     this.iframe
-      .on(`mouseenter${EVENT_NAMESPACE}`, () => this._stopScrolling())
-      .on(`mouseleave${EVENT_NAMESPACE}`, event => this._startScrolling(event.pageX, event.pageY));
+      .off('mouseenter', this._onScrollStop)
+      .off('mouseleave', this._onScrollStart);
   }
 
-  _unbindMouseEnterMouseLeave() {
-    this.iframe.off(EVENT_NAMESPACE);
-  }
-
-  _bindMouseMove() {
-    const iframe = {
-      top: 0,
-      right: 0,
-      bottom: 0,
-      left: 0,
-    };
-    let iframeX;
-    let iframeY;
-    let mouseHasLeft = false;
-    let target = null;
-
-    const loadCoords = () => {
-      const {
-        top, right, bottom, left, targetX,
-      } = this._getScrollData();
-      iframeY = top;
-      iframeX = left;
-      iframe.bottom = bottom - top;
-      iframe.right = right - left;
-      target = targetX;
-    };
-
-    loadCoords();
-    this.iframeWindow.on(`resize${EVENT_NAMESPACE}`, loadCoords);
-
-    this.iframeDocument.on(`mousemove${EVENT_NAMESPACE}`, (event) => {
-      // event pageX&Y coordinates are relative to the iframe, but expected to be relative to the NG app.
-      const scrollLeft = target === this.canvas ? this.canvas.scrollLeft() : this.iframeWindow.scrollLeft();
-      const scrollTop = this.iframeWindow.scrollTop();
-      const pageX = event.pageX - scrollLeft;
-      const pageY = event.pageY - scrollTop;
-
-      if (mouseHasLeft) {
-        if (pageX > iframe.left && pageX < iframe.right && pageY > iframe.top && pageY < iframe.bottom) {
-          // mouse enters
-          this._stopScrolling();
-          mouseHasLeft = false;
-        }
-      } else if (pageX <= iframe.left || pageX >= iframe.right || pageY <= iframe.top || pageY >= iframe.bottom) {
-        // mouse leaves
-        mouseHasLeft = true;
-        this._startScrolling(pageX + iframeX, pageY + iframeY);
-      }
-    });
-  }
-
-  _unbindMouseMove() {
-    this.iframeWindow.off(EVENT_NAMESPACE);
-    this.iframeDocument.off(EVENT_NAMESPACE);
-  }
-
-  _startScrolling(mouseX, mouseY) {
+  async _onScrollStart({ pageX, pageY }) {
     const {
       top,
       right,
@@ -144,168 +140,117 @@ class ScrollService {
       scrollMaxY,
       targetX,
       targetY,
-    } = this._getScrollData();
+    } = await this._getScrollData();
+    const scrollX = (pos, distance) => this._scroll(targetX, { scrollLeft: pos }, distance);
+    const scrollY = (pos, distance) => this._scroll(targetY, { scrollTop: pos }, distance);
 
-    const scroll = (to, distance, target) => {
-      if (distance > 0) {
-        const duration = this._calculateDuration(distance, DURATION_MIN, DURATION_MAX);
-        this._scroll(target, to, duration);
-      }
-    };
-
-    const scrollX = (posX, distance) => {
-      scroll({ scrollLeft: posX }, distance, targetX);
-    };
-
-    const scrollY = (posY, distance) => {
-      scroll({ scrollTop: posY }, distance, targetY);
-    };
-
-    if (mouseY <= top) {
+    if (pageY <= top) {
       // scroll up
       scrollY(0, scrollTop);
-    } else if (mouseY >= bottom) {
+    } else if (pageY >= bottom) {
       // scroll down
       scrollY(scrollMaxY, scrollMaxY - scrollTop);
-    } else if (mouseX <= left) {
+    } else if (pageX <= left) {
       // scroll left
       scrollX(0, scrollLeft);
-    } else if (mouseX >= right) {
+    } else if (pageX >= right) {
       // scroll right
       scrollX(scrollMaxX, scrollMaxX - scrollLeft);
     }
   }
 
-  _stopScrolling() {
-    if (this.iframeHtmlBody) {
-      this.iframeHtmlBody.stop();
-    }
+  _onScrollStop() {
     if (this.canvas) {
       this.canvas.stop();
     }
+
+    this.CommunicationService.stopScroll();
   }
 
-  _scroll(target, to, duration) {
-    target.stop().animate(to, {
-      duration,
-    });
-  }
-
-  _calculateDuration(distance, min, max) {
-    if (distance === 0) {
-      return 0;
+  _scroll(target, scroll, distance) {
+    if (distance <= 0) {
+      return;
     }
 
-    const duration = distance * 2;
-    return Math.min(Math.max(min, duration), max);
-  }
+    const duration = Math.min(Math.max(DURATION_MIN, distance * 2), DURATION_MAX);
 
-  _getScrollData() {
-    const canvasOffset = this.canvas.offset();
-    const canvasWidth = this.canvas.outerWidth();
-    const canvasLeft = canvasOffset.left;
-    const canvasRight = canvasOffset.left + canvasWidth;
+    if (target === 'canvas') {
+      this.canvas.stop().animate(scroll, { duration });
 
-    const sheetOffset = this.sheet.offset();
-    const sheetWidth = this.sheet.outerWidth();
-    const sheetLeft = sheetOffset.left;
-    const sheetRight = sheetOffset.left + sheetWidth;
-
-    const iframeOffset = this.iframe.offset();
-    const iframeWidth = this.iframe.outerWidth();
-    const iframeHeight = this.iframe.outerHeight();
-
-    const body = this.iframeBody[0];
-    const bodyScrollWidth = body.scrollWidth;
-    const bodyScrollHeight = body.scrollHeight;
-
-    const { top } = iframeOffset;
-    const right = Math.min(canvasRight, sheetRight);
-    const bottom = top + iframeHeight;
-    const left = sheetLeft >= 0 ? sheetLeft : canvasLeft;
-
-    const canvasScrollMaxX = iframeWidth - canvasWidth;
-    const iframeScrollMaxX = bodyScrollWidth - iframeWidth;
-    const useCanvas = iframeWidth > canvasWidth;
-
-    const scrollTop = this.iframeWindow.scrollTop();
-    const scrollLeft = useCanvas ? canvasOffset.left - sheetOffset.left : this.iframeWindow.scrollLeft();
-
-    const targetX = useCanvas ? this.canvas : this.iframeHtmlBody;
-    const targetY = this.iframeHtmlBody;
-
-    const win = this.iframeWindow[0];
-    // Firefox exposes scrollMaxX and scrollMaxY which is exactly what we need. If the property is not a number,
-    // we need to calculate it. See https://developer.mozilla.org/en-US/docs/Web/API/Window/scrollMaxX
-    let scrollMaxX;
-    if (typeof win.scrollMaxX === 'number') {
-      ({ scrollMaxX } = win);
-    } else {
-      scrollMaxX = useCanvas ? canvasScrollMaxX : iframeScrollMaxX;
+      return;
     }
 
-    let scrollMaxY;
-    if (typeof win.scrollMaxY === 'number') {
-      ({ scrollMaxY } = win);
-    } else {
-      scrollMaxY = bodyScrollHeight - iframeHeight;
-      if (bodyScrollWidth > iframeWidth) {
-        // horizontal scrollbar drawn in the site
-        scrollMaxY += this.getScrollBarSize();
-      }
+    this.CommunicationService.setScroll(scroll, duration);
+  }
+
+  async _getScrollData() {
+    const canvasScroll = this.getScroll();
+    const iframeScroll = await this.CommunicationService.getScroll();
+    const isUsingCanvas = canvasScroll.targetX === 'canvas';
+    const scrollLeft = isUsingCanvas ? canvasScroll.scrollLeft : iframeScroll.scrollLeft;
+
+    let { scrollMaxX } = iframeScroll;
+    if (isUsingCanvas) {
+      ({ scrollMaxX } = canvasScroll);
+    } else if (scrollMaxX == null) {
+      scrollMaxX = iframeScroll.scrollWidth - canvasScroll.scrollWidth;
+    }
+
+    let { scrollMaxY } = iframeScroll;
+    if (scrollMaxY == null) {
+      scrollMaxY = iframeScroll.scrollHeight - canvasScroll.scrollHeight
+        + (iframeScroll.scrollWidth > canvasScroll.scrollWidth ? this._getScrollBarSize() : 0);
     }
 
     return {
-      // boundary coordinates
-      top,
-      right,
-      bottom,
-      left,
-
-      // scroll positions
+      ...canvasScroll,
+      ...iframeScroll,
       scrollLeft,
-      scrollTop,
-
-      // max scroll positions
       scrollMaxX,
       scrollMaxY,
-
-      // target elements
-      targetX,
-      targetY,
     };
   }
 
-  saveScrollPosition() {
-    this._initIframeElements();
-    this.savedScrollPosition.top = this.iframeWindow.scrollTop();
-    this.savedScrollPosition.iframeLeft = this.iframeWindow.scrollLeft();
-    this.savedScrollPosition.canvasLeft = this.canvas.scrollLeft();
-  }
-
-  restoreScrollPosition() {
-    this._initIframeElements();
-    this.iframeWindow.scrollTop(this.savedScrollPosition.top);
-    this.iframeWindow.scrollLeft(this.savedScrollPosition.iframeLeft);
-    this.canvas.scrollLeft(this.savedScrollPosition.canvasLeft);
-  }
-
-  getScrollBarSize() {
+  _getScrollBarSize() {
     if (!this._scrollBarSize) {
       const outerWidth = 100;
-      const $outer = $('<div>').css({
-        visibility: 'hidden',
-        width: outerWidth,
-        overflow: 'scroll',
-      }).appendTo('body');
-      const widthWithScroll = $('<div>').css('width', '100%')
+      const $outer = angular.element('<div>')
+        .css({
+          visibility: 'hidden',
+          width: outerWidth,
+          overflow: 'scroll',
+        })
+        .appendTo('body');
+      const widthWithScroll = angular.element('<div>')
+        .css('width', '100%')
         .appendTo($outer)
         .outerWidth();
+
       $outer.remove();
       this._scrollBarSize = outerWidth - widthWithScroll;
     }
+
     return this._scrollBarSize;
   }
-}
 
-export default ScrollService;
+  async savePosition() {
+    const canvasScrollLeft = this.canvas.scrollLeft();
+    const {
+      scrollLeft: iframeScrollLeft,
+      scrollTop: iframeScrollTop,
+    } = await this.CommunicationService.getScroll();
+
+    Object.assign(this._position, { canvasScrollLeft, iframeScrollLeft, iframeScrollTop });
+  }
+
+  async restorePosition() {
+    const {
+      canvasScrollLeft,
+      iframeScrollLeft: scrollLeft,
+      iframeScrollTop: scrollTop,
+    } = this._position;
+
+    this.canvas.scrollLeft(canvasScrollLeft);
+    await this.CommunicationService.setScroll({ scrollLeft, scrollTop });
+  }
+}

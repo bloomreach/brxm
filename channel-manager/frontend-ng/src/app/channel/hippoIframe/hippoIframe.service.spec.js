@@ -56,8 +56,8 @@ describe('HippoIframeService', () => {
     spyOn(ChannelService, 'makePath').and.returnValue('/test/url');
     spyOn(ChannelService, 'extractRenderPathInfo');
     spyOn(PageToolsService, 'updatePageTools');
-    spyOn(ScrollService, 'saveScrollPosition');
-    spyOn(ScrollService, 'restoreScrollPosition');
+    spyOn(ScrollService, 'savePosition');
+    spyOn(ScrollService, 'restorePosition');
 
     jasmine.getFixtures().load('channel/hippoIframe/hippoIframe.service.fixture.html');
 
@@ -167,14 +167,14 @@ describe('HippoIframeService', () => {
       spyOn($log, 'warn');
 
       iframe.one('load', () => { // catch the reload event to signal page load completion
-        expect(ScrollService.saveScrollPosition).toHaveBeenCalled();
-        expect(ScrollService.restoreScrollPosition).not.toHaveBeenCalled();
+        expect(ScrollService.savePosition).toHaveBeenCalled();
+        expect(ScrollService.restorePosition).not.toHaveBeenCalled();
         expect(PageToolsService.updatePageTools).not.toHaveBeenCalled();
         expect(HippoIframeService.deferredReload).toBeTruthy();
 
         HippoIframeService.signalPageLoadCompleted();
 
-        expect(ScrollService.restoreScrollPosition).toHaveBeenCalled();
+        expect(ScrollService.restorePosition).toHaveBeenCalled();
         expect(PageToolsService.updatePageTools).toHaveBeenCalled();
 
         $rootScope.$digest();

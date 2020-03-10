@@ -15,14 +15,20 @@
  */
 
 export default class CommunicationService {
-  constructor($rootScope, Penpal) {
+  constructor($injector, $rootScope, Penpal) {
     'ngInject';
 
+    this.$injector = $injector;
     this.$rootScope = $rootScope;
     this.Penpal = Penpal;
 
+    this.disableScroll = this._call.bind(this, 'disableScroll');
     this.emit = this._call.bind(this, 'emit');
+    this.enableScroll = this._call.bind(this, 'enableScroll');
+    this.getScroll = this._call.bind(this, 'getScroll');
     this.parseElements = this._call.bind(this, 'parseElements');
+    this.setScroll = this._call.bind(this, 'setScroll');
+    this.stopScroll = this._call.bind(this, 'stopScroll');
     this.updateComponent = this._call.bind(this, 'updateComponent');
     this.updateContainer = this._call.bind(this, 'updateContainer');
   }
@@ -33,6 +39,7 @@ export default class CommunicationService {
       iframe: target,
       methods: {
         emit: this._emit.bind(this),
+        getScroll: this._getScroll.bind(this),
       },
     });
 
@@ -60,5 +67,9 @@ export default class CommunicationService {
 
   _emit(event, data) {
     this.$rootScope.$emit(`iframe:${event}`, data);
+  }
+
+  _getScroll(...args) {
+    return this.$injector.get('ScrollService').getScroll(...args);
   }
 }

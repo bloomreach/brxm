@@ -24,12 +24,18 @@ export default class CommunicationService {
     this.Penpal = Penpal;
 
     this.emit = this._call.bind(this, 'emit');
+    this.getScroll = this._call.bind(this, 'getScroll');
   }
 
   async connect() {
     this._connection = this.Penpal.connectToParent({
       methods: {
+        disableScroll: this._disableScroll.bind(this),
+        enableScroll: this._enableScroll.bind(this),
+        getScroll: this._getScroll.bind(this),
         parseElements: this._parseElements.bind(this),
+        setScroll: this._setScroll.bind(this),
+        stopScroll: this._stopScroll.bind(this),
         updateComponent: this._updateComponent.bind(this),
         updateContainer: this._updateContainer.bind(this),
         emit: this._emit.bind(this),
@@ -52,8 +58,28 @@ export default class CommunicationService {
     this.$rootScope.$emit(`cm:${event}`, data);
   }
 
+  _disableScroll(...args) {
+    return this.$injector.get('ScrollService').disable(...args);
+  }
+
+  _enableScroll(...args) {
+    return this.$injector.get('ScrollService').enable(...args);
+  }
+
+  _getScroll(...args) {
+    return this.$injector.get('ScrollService').getScroll(...args);
+  }
+
   _parseElements(...args) {
     return this.$injector.get('PageStructureService').parseElements(...args);
+  }
+
+  _setScroll(...args) {
+    return this.$injector.get('ScrollService').setScroll(...args);
+  }
+
+  _stopScroll(...args) {
+    return this.$injector.get('ScrollService').stopScroll(...args);
   }
 
   _updateComponent(...args) {
