@@ -283,6 +283,29 @@ describe('PageStructureService', () => {
         expect(ChannelService.initializeChannel).not.toHaveBeenCalled();
       });
     });
+
+    it('should clear the page structure', () => {
+      spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.resolve('new-markup'));
+      mockParseElements(
+        mockPage('page-1',
+          mockContainer('Container 1', 'container-1', 'HST.vBox',
+            mockItem('Component 1', 'component-1')),
+          mockContainer('Container 2', 'container-2', 'HST.vBox',
+            mockUnprocessedHeadContributions(['head-contribution']))),
+      );
+
+      PageStructureService.parseElements();
+      $rootScope.$digest();
+
+      expect(PageStructureService.getPage()).toBeDefined();
+      expect(PageStructureService.headContributions.size).toBe(1);
+
+      mockParseElements([]);
+      PageStructureService.parseElements();
+      $rootScope.$digest();
+
+      expect(PageStructureService.headContributions.size).toBe(0);
+    });
   });
 
   describe('renderComponent', () => {
@@ -829,30 +852,6 @@ describe('PageStructureService', () => {
         component: 'Component 1',
       });
       expect(ChannelService.recordOwnChange).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('clearParsedElements', () => {
-    it('clears the page structure', () => {
-      spyOn(MarkupService, 'fetchContainerMarkup').and.returnValue($q.resolve('new-markup'));
-      mockParseElements(
-        mockPage('page-1',
-          mockContainer('Container 1', 'container-1', 'HST.vBox',
-            mockItem('Component 1', 'component-1')),
-          mockContainer('Container 2', 'container-2', 'HST.vBox',
-            mockUnprocessedHeadContributions(['head-contribution']))),
-      );
-
-      PageStructureService.parseElements();
-      $rootScope.$digest();
-
-      expect(PageStructureService.getPage()).toBeDefined();
-      expect(PageStructureService.headContributions.size).toBe(1);
-
-      PageStructureService.clearParsedElements();
-
-      expect(PageStructureService.getPage()).toBeUndefined();
-      expect(PageStructureService.headContributions.size).toBe(0);
     });
   });
 

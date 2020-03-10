@@ -49,7 +49,6 @@ class RenderingService {
 
   createOverlay(isPartial) {
     this.ScrollService.savePosition();
-    this.PageStructureService.clearParsedElements();
     this.OverlayService.clear();
 
     this.creatingOverlay = this._insertCss()

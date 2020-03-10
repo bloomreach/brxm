@@ -104,7 +104,8 @@ export default class PageStructureService {
     return manageContentLink;
   }
 
-  async parseElements() {
+  parseElements() {
+    this._clear();
     const comments = Array.from(this.HstCommentsProcessorService.run(this.$document[0]));
 
     this._page = this.ModelFactoryService.createPage(comments);
@@ -113,12 +114,10 @@ export default class PageStructureService {
     return comments.map(({ json }) => json);
   }
 
-  clearParsedElements() {
+  _clear() {
     this.embeddedLinks.splice(0)
       .forEach(element => element.getBoxElement().remove());
     delete this._page;
-
-    this._notifyChangeListeners();
   }
 
   _notifyChangeListeners() {

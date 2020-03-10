@@ -100,7 +100,6 @@ class HippoIframeCtrl {
     const canvasJQueryElement = this.$element.find('.channel-iframe-canvas');
     const sheetJQueryElement = this.$element.find('.channel-iframe-sheet');
 
-    this.PageStructureService.clearParsedElements();
     this.HippoIframeService.initialize(this.$element, this.iframeJQueryElement);
     this.OverlayService.init(this.iframeJQueryElement);
     this.ViewportService.init(sheetJQueryElement);

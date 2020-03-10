@@ -338,10 +338,8 @@ describe('PageStructureService', () => {
         expect(component.getBoxElement()[0]).toBeUndefined();
       });
     });
-  });
 
-  describe('clearParsedElements', () => {
-    it('clears the page structure', () => {
+    it('should clear the page structure', () => {
       registerVBoxContainer();
       registerEmbeddedLink('#manage-content-in-page');
       registerEmbeddedLink('#edit-menu-in-page');
@@ -350,20 +348,10 @@ describe('PageStructureService', () => {
       expect(PageStructureService.getPage()).toBeDefined();
       expect(PageStructureService.getEmbeddedLinks()).toHaveLength(2);
 
-      PageStructureService.clearParsedElements();
+      registered.splice(0);
+      PageStructureService.parseElements();
 
-      expect(PageStructureService.getPage()).toBeUndefined();
       expect(PageStructureService.getEmbeddedLinks()).toHaveLength(0);
-    });
-
-    it('emits event "iframe:page:change" after page elements have been cleared', () => {
-      const onChange = jasmine.createSpy('on-change');
-      const offChange = $rootScope.$on('iframe:page:change', onChange);
-      PageStructureService.clearParsedElements();
-
-      expect(onChange).toHaveBeenCalled();
-
-      offChange();
     });
   });
 

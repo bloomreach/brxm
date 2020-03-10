@@ -108,7 +108,6 @@ describe('OverlayService', () => {
 
       $rootScope.$emit('hippo-iframe:load');
       try {
-        PageStructureService.clearParsedElements();
         PageStructureService.parseElements();
 
         deferred.resolve();
