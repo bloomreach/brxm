@@ -52,26 +52,30 @@ class EditComponentMainCtrl {
     this.HippoIframeService = HippoIframeService;
 
     this._onDocumentSelect = this._onDocumentSelect.bind(this);
-    this._onOverlayCreate = this._onOverlayCreate.bind(this);
+    this._onPageChange = this._onPageChange.bind(this);
   }
 
   $onInit() {
-    this._offDocumentSelect = this.$rootScope.$on('document:select', this._onDocumentSelect);
-    this._offOverlayCreate = this.$rootScope.$on('overlay:create', this._onOverlayCreate);
     this._offComponentMoved = this.ContainerService.onComponentMoved(() => this.ComponentEditor.updatePreview());
+    this._offDocumentSelect = this.$rootScope.$on('document:select', this._onDocumentSelect);
+    this._offPageChange = this.$rootScope.$on('page:change', this._onPageChange);
   }
 
   $onDestroy() {
-    this._offDocumentSelect();
     this._offComponentMoved();
+    this._offDocumentSelect();
+    this._offPageChange();
+  }
 
-    if (this._offOverlayCreate) {
-      this._offOverlayCreate();
+  _onDocumentSelect(event, data) {
+    if (this.ComponentEditor.getComponentId() === data.containerItem.getId()) {
+      event.preventDefault();
+      this.$scope.$broadcast('edit-component:select-document', data.parameterName);
     }
   }
 
-  _onOverlayCreate(event, isPartial) {
-    if (isPartial) {
+  _onPageChange(event, data) {
+    if (!data || !data.initial) {
       return;
     }
 
@@ -181,13 +185,6 @@ class EditComponentMainCtrl {
         .catch(this.$q.reject);
     }
     return this.$q.resolve();
-  }
-
-  _onDocumentSelect(event, data) {
-    if (this.ComponentEditor.getComponentId() === data.containerItem.getId()) {
-      event.preventDefault();
-      this.$scope.$broadcast('edit-component:select-document', data.parameterName);
-    }
   }
 }
 

@@ -174,10 +174,10 @@ export default class SpaService {
   }
 
   _onSync() {
-    const isPartial = !!this._renderingPool.length;
+    const initial = !this._renderingPool.length;
     this._renderingPool.splice(0)
       .forEach(deferred => deferred.resolve());
 
-    this.RenderingService.createOverlay(isPartial);
+    this.RenderingService.createOverlay(initial);
   }
 }

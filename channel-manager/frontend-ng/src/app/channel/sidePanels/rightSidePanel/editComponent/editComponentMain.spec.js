@@ -113,26 +113,27 @@ describe('EditComponentMainCtrl', () => {
     });
   });
 
-  describe('handling of overlay:create event', () => {
+  describe('handling of page:change event', () => {
     beforeEach(() => {
       $ctrl.$onInit();
     });
 
-    it('should redraw the preview of the edited component', () => {
-      $rootScope.$emit('overlay:create');
+    it('should redraw the preview of the edited component on an initial render', () => {
+      $rootScope.$emit('page:change', { initial: true });
 
       expect(ComponentEditor.updatePreview).toHaveBeenCalled();
     });
 
-    it('should not redraw the preview of the edited component on partial render', () => {
-      $rootScope.$emit('overlay:create', true);
+    it('should not redraw the preview of the edited component on not an initial render', () => {
+      $rootScope.$emit('page:change');
+      $rootScope.$emit('page:change', { initial: false });
 
       expect(ComponentEditor.updatePreview).not.toHaveBeenCalled();
     });
 
-    it('should stop reacting on overlay:create events after destruction', () => {
+    it('should stop reacting on page:change events after destruction', () => {
       $ctrl.$onDestroy();
-      $rootScope.$emit('overlay:create');
+      $rootScope.$emit('page:change');
 
       expect(ComponentEditor.updatePreview).not.toHaveBeenCalled();
     });

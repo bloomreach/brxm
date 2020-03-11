@@ -230,7 +230,7 @@ describe('hippoIframeCtrl', () => {
     $ctrl.onLoad();
     $rootScope.$digest();
 
-    expect(RenderingService.createOverlay).toHaveBeenCalled();
+    expect(RenderingService.createOverlay).toHaveBeenCalledWith(true);
   });
 
   it('triggers an event when page is loaded', () => {

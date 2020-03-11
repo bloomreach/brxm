@@ -88,7 +88,7 @@ describe('SpaService', () => {
       expect(RpcService.register).toHaveBeenCalledWith('sync', jasmine.any(Function));
 
       sync();
-      expect(RenderingService.createOverlay).toHaveBeenCalled();
+      expect(RenderingService.createOverlay).toHaveBeenCalledWith(true);
     });
   });
 
@@ -352,7 +352,7 @@ describe('SpaService', () => {
       SpaService.init(angular.element('<iframe>'));
       SpaService.renderComponent(component, {})
         .then(() => {
-          expect(RenderingService.createOverlay).toHaveBeenCalledWith(true);
+          expect(RenderingService.createOverlay).toHaveBeenCalledWith(false);
         })
         .then(done);
 

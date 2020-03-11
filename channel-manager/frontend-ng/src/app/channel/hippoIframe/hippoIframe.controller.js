@@ -156,7 +156,7 @@ class HippoIframeCtrl {
       return;
     }
 
-    this.RenderingService.createOverlay();
+    this.RenderingService.createOverlay(true);
   }
 
   _onUnload() {
