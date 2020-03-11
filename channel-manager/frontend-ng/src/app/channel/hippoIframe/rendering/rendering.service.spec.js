@@ -18,7 +18,6 @@ describe('RenderingService', () => {
   let $q;
   let $rootScope;
   let DomService;
-  let HippoIframeService;
   let PageStructureService;
   let RenderingService;
 
@@ -36,14 +35,12 @@ describe('RenderingService', () => {
       _$q_,
       _$rootScope_,
       _DomService_,
-      _HippoIframeService_,
       _PageStructureService_,
       _RenderingService_,
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       DomService = _DomService_;
-      HippoIframeService = _HippoIframeService_;
       PageStructureService = _PageStructureService_;
       RenderingService = _RenderingService_;
     });
@@ -54,7 +51,6 @@ describe('RenderingService', () => {
 
   describe('createOverlay', () => {
     beforeEach(() => {
-      spyOn(HippoIframeService, 'signalPageLoadCompleted');
       spyOn(PageStructureService, 'parseElements');
     });
 
@@ -67,7 +63,6 @@ describe('RenderingService', () => {
 
       expect(DomService.addCssLinks).toHaveBeenCalledWith(window, [jasmine.any(String)], 'hippo-css');
       expect(PageStructureService.parseElements).toHaveBeenCalledWith(true);
-      expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
 
     it('handles the re-loading of an existing page', () => {
@@ -79,7 +74,6 @@ describe('RenderingService', () => {
 
       expect(DomService.addCssLinks).not.toHaveBeenCalled();
       expect(PageStructureService.parseElements).toHaveBeenCalledWith(false);
-      expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
 
     it('clears the parsed elements, then stops when loading the hippo-iframe CSS file throws an error', () => {
@@ -90,7 +84,6 @@ describe('RenderingService', () => {
       $rootScope.$digest();
 
       expect(PageStructureService.parseElements).not.toHaveBeenCalled();
-      expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
 
     it('clears the parsed elements, then stops if the iframe DOM is not present', () => {
@@ -100,7 +93,6 @@ describe('RenderingService', () => {
       $rootScope.$digest();
 
       expect(PageStructureService.parseElements).not.toHaveBeenCalled();
-      expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
   });
 });

@@ -23,7 +23,6 @@ class RenderingService {
     $log,
     $q,
     DomService,
-    HippoIframeService,
     LinkProcessorService,
     PageStructureService,
   ) {
@@ -32,7 +31,6 @@ class RenderingService {
     this.$log = $log;
     this.$q = $q;
     this.DomService = DomService;
-    this.HippoIframeService = HippoIframeService;
     this.LinkProcessorService = LinkProcessorService;
     this.PageStructureService = PageStructureService;
   }
@@ -46,9 +44,6 @@ class RenderingService {
       .then(() => this.PageStructureService.parseElements(initial))
       .then(() => {
         this._parseLinks();
-      })
-      .finally(() => {
-        this.HippoIframeService.signalPageLoadCompleted();
       });
     // TODO: handle error.
     // show dialog explaining that for this channel, the CM can currently not be used,
