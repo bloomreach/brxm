@@ -105,14 +105,14 @@ describe('ComponentEditorService', () => {
 
     it('should do nothing without a component', () => {
       delete ComponentEditor.component;
-      $rootScope.$emit('iframe:page:change');
+      $rootScope.$emit('page:change');
 
       expect(PageStructureService.getPage).not.toHaveBeenCalled();
     });
 
     it('should not update when the page is not set', () => {
       PageStructureService.getPage.and.returnValue(null);
-      $rootScope.$emit('iframe:page:change');
+      $rootScope.$emit('page:change');
 
       expect(PageStructureService.getPage).toHaveBeenCalled();
       expect(ComponentEditor.container.id).toBe('containerId');
@@ -123,7 +123,7 @@ describe('ComponentEditorService', () => {
         getComponentById: jasmine.createSpy('getComponentById').and.returnValue(null),
       };
       PageStructureService.getPage.and.returnValue(page);
-      $rootScope.$emit('iframe:page:change');
+      $rootScope.$emit('page:change');
 
       expect(page.getComponentById).toHaveBeenCalledWith('componentId');
       expect(ComponentEditor.container.id).toBe('containerId');
@@ -140,7 +140,7 @@ describe('ComponentEditorService', () => {
       });
       PageStructureService.getPage.and.returnValue(page);
 
-      $rootScope.$emit('iframe:page:change');
+      $rootScope.$emit('page:change');
 
       expect(ComponentEditor.container.isDisabled).toBe(false);
       expect(ComponentEditor.container.isInherited).toBe(true);
@@ -160,7 +160,7 @@ describe('ComponentEditorService', () => {
       });
       PageStructureService.getPage.and.returnValue(page);
 
-      $rootScope.$emit('iframe:page:change');
+      $rootScope.$emit('page:change');
 
       expect(PageStructureService.getPage).toHaveBeenCalled();
       expect(ComponentEditor.page.getId()).toBe('new-page-id');
@@ -177,7 +177,7 @@ describe('ComponentEditorService', () => {
       });
       PageStructureService.getPage.and.returnValue(page);
 
-      $rootScope.$emit('iframe:page:change');
+      $rootScope.$emit('page:change');
 
       expect(ComponentEditor.reopen).toHaveBeenCalled();
     });

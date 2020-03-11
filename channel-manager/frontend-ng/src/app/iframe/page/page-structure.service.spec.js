@@ -296,9 +296,9 @@ describe('PageStructureService', () => {
       expect(attachedEmbeddedLinks[0].getBoxElement().attr('class')).toBe('hst-fab');
     });
 
-    it('emits event "iframe:page:change" after page elements have been parsed', () => {
+    it('emits event "page:change" after page elements have been parsed', () => {
       const onChange = jasmine.createSpy('on-change');
-      const offChange = $rootScope.$on('iframe:page:change', onChange);
+      const offChange = $rootScope.$on('page:change', onChange);
       PageStructureService.parseElements();
 
       expect(onChange).toHaveBeenCalled();
@@ -493,7 +493,7 @@ describe('PageStructureService', () => {
 
     it('notifies change listeners when updating a component', () => {
       const onPageChange = jasmine.createSpy('on-page-change');
-      const offPageChange = $rootScope.$on('iframe:page:change', onPageChange);
+      const offPageChange = $rootScope.$on('page:change', onPageChange);
 
       registerVBoxContainer(() => registerVBoxComponent('componentA'));
       PageStructureService.parseElements();
@@ -607,7 +607,7 @@ describe('PageStructureService', () => {
 
     it('notifies change listeners when updating a container', () => {
       const onPageChange = jasmine.createSpy('on-page-change');
-      const offPageChange = $rootScope.$on('iframe:page:change', onPageChange);
+      const offPageChange = $rootScope.$on('page:change', onPageChange);
 
       registerVBoxContainer(() => registerVBoxComponent('componentA'));
       PageStructureService.parseElements();

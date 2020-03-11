@@ -204,9 +204,9 @@ describe('PageStructureService', () => {
       expect(manageContentLink.getDocumentTemplateQuery()).toBe('doc-tpl-query');
     });
 
-    it('emits event "iframe:page:change" after page elements have been parsed', () => {
+    it('emits event "page:change" after page elements have been parsed', () => {
       const onChange = jasmine.createSpy('on-change');
-      const offChange = $rootScope.$on('iframe:page:change', onChange);
+      const offChange = $rootScope.$on('page:change', onChange);
 
       mockParseElements();
       PageStructureService.parseElements();
@@ -318,7 +318,7 @@ describe('PageStructureService', () => {
       onPageChange = jasmine.createSpy('on-page-change');
       offs = [
         $rootScope.$on('hippo-iframe:new-head-contributions', onHeadContributions),
-        $rootScope.$on('iframe:page:change', onPageChange),
+        $rootScope.$on('page:change', onPageChange),
       ];
 
       spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.resolve({ data: 'new-markup' }));
@@ -391,7 +391,7 @@ describe('PageStructureService', () => {
       expect(container1.getComponent('component1')).toBeFalsy();
     });
 
-    it('emits "iframe:page:change" after a model change', () => {
+    it('emits "page:change" after a model change', () => {
       const updatedComponentData = mockItem('Update component', 'component-1');
       mockUpdateComponent(updatedComponentData);
 
@@ -516,9 +516,9 @@ describe('PageStructureService', () => {
       expect(updatedContainer1.getLabel()).toBe('Updated container');
     });
 
-    it('emits "iframe:page:change" after a model change', () => {
+    it('emits "page:change" after a model change', () => {
       const onPageChange = jasmine.createSpy('on-page-change');
-      const offPageChange = $rootScope.$on('iframe:page:change', onPageChange);
+      const offPageChange = $rootScope.$on('page:change', onPageChange);
 
       const updatedContainerData = mockContainer('Updated container', 'container-1', 'HST.vBox');
       mockUpdateContainer(updatedContainerData);

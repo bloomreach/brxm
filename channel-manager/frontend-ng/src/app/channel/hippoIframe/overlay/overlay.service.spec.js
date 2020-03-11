@@ -73,6 +73,7 @@ describe('OverlayService', () => {
     PageStructureService = fake.injector().get('PageStructureService');
     $iframeRootScope = fake.injector().get('$rootScope');
     PageStructureService.$rootScope = $rootScope;
+    $rootScope.$on('page:change', (...args) => $rootScope.$emit('iframe:page:change', ...args));
     angularElement = angular.element;
     spyOn(angular, 'element').and.callThrough();
 
