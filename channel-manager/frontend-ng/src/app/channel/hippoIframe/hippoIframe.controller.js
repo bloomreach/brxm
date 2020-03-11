@@ -77,6 +77,8 @@ class HippoIframeCtrl {
     this._onDocumentCreate = this._onDocumentCreate.bind(this);
     this._onDocumentEdit = this._onDocumentEdit.bind(this);
     this._onDocumentSelect = this._onDocumentSelect.bind(this);
+    this._onDragStart = this._onDragStart.bind(this);
+    this._onDragStop = this._onDragStop.bind(this);
   }
 
   $onInit() {
@@ -96,6 +98,8 @@ class HippoIframeCtrl {
     this._offDocumentCreate = this.$rootScope.$on('document:create', this._onDocumentCreate);
     this._offDocumentEdit = this.$rootScope.$on('document:edit', this._onDocumentEdit);
     this._offDocumentSelect = this.$rootScope.$on('document:select', this._onDocumentSelect);
+    this._offDragStart = this.$rootScope.$on('drag:start', this._onDragStart);
+    this._offDragStop = this.$rootScope.$on('drag:stop', this._onDragStop);
 
     const canvasJQueryElement = this.$element.find('.channel-iframe-canvas');
     const sheetJQueryElement = this.$element.find('.channel-iframe-sheet');
@@ -103,7 +107,7 @@ class HippoIframeCtrl {
     this.HippoIframeService.initialize(this.$element, this.iframeJQueryElement);
     this.OverlayService.init(this.iframeJQueryElement);
     this.ViewportService.init(sheetJQueryElement);
-    this.DragDropService.init(this.iframeJQueryElement, canvasJQueryElement);
+    this.DragDropService.init(this.iframeJQueryElement);
     this.ScrollService.init(this.iframeJQueryElement, canvasJQueryElement, sheetJQueryElement);
     this.SpaService.init(this.iframeJQueryElement);
     this.RenderingService.init(this.iframeJQueryElement);
@@ -134,6 +138,8 @@ class HippoIframeCtrl {
     this._offDocumentCreate();
     this._offDocumentEdit();
     this._offDocumentSelect();
+    this._offDragStart();
+    this._offDragStop();
   }
 
   async onLoad() {
@@ -255,6 +261,16 @@ class HippoIframeCtrl {
 
       this._onPathPicked(data.containerItem, data.parameterName, path, data.parameterBasePath);
     });
+  }
+
+  _onDragStart() {
+    this.$element.find('.channel-iframe-canvas')
+      .addClass('hippo-dragging');
+  }
+
+  _onDragStop() {
+    this.$element.find('.channel-iframe-canvas')
+      .removeClass('hippo-dragging');
   }
 
   _onPathPicked(component, parameterName, path, parameterBasePath) {

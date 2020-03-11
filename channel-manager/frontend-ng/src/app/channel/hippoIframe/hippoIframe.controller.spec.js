@@ -95,7 +95,11 @@ describe('hippoIframeCtrl', () => {
       SpaService = _SpaService_;
       ViewportService = _ViewportService_;
 
-      $element = angular.element('<div><iframe /></div>');
+      $element = angular.element(`<div>
+        <div class="channel-iframe-canvas">
+          <iframe />
+        </div>
+      </div>`);
 
       spyOn(CommunicationService, 'connect').and.returnValue($q.resolve());
       onEditMenu = jasmine.createSpy('onEditMenu');
@@ -446,6 +450,27 @@ describe('hippoIframeCtrl', () => {
       $rootScope.$digest();
 
       expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('PickContentButton');
+    });
+  });
+
+  describe('_onDragStart', () => {
+    beforeEach(() => {
+      $rootScope.$emit('drag:start');
+    });
+
+    it('should set hippo-dragging class on the canvas element', () => {
+      expect($element.find('.channel-iframe-canvas')).toHaveClass('hippo-dragging');
+    });
+  });
+
+  describe('_onDragStop', () => {
+    beforeEach(() => {
+      $rootScope.$emit('drag:start');
+      $rootScope.$emit('drag:stop');
+    });
+
+    it('should remove hippo-dragging class from the canvas element', () => {
+      expect($element.find('.channel-iframe-canvas')).not.toHaveClass('hippo-dragging');
     });
   });
 });
