@@ -23,7 +23,6 @@ class RenderingService {
     $log,
     $q,
     DomService,
-    LinkProcessorService,
     PageStructureService,
   ) {
     'ngInject';
@@ -31,7 +30,6 @@ class RenderingService {
     this.$log = $log;
     this.$q = $q;
     this.DomService = DomService;
-    this.LinkProcessorService = LinkProcessorService;
     this.PageStructureService = PageStructureService;
   }
 
@@ -41,10 +39,7 @@ class RenderingService {
 
   createOverlay(initial) {
     this.creatingOverlay = this._insertCss()
-      .then(() => this.PageStructureService.parseElements(initial))
-      .then(() => {
-        this._parseLinks();
-      });
+      .then(() => this.PageStructureService.parseElements(initial));
     // TODO: handle error.
     // show dialog explaining that for this channel, the CM can currently not be used,
     // and return to the channel overview upon confirming?
@@ -66,11 +61,6 @@ class RenderingService {
     } catch (e) {
       return this.$q.reject();
     }
-  }
-
-  _parseLinks() {
-    const iframeDocument = this.DomService.getIframeDocument(this.iframeJQueryElement);
-    this.LinkProcessorService.run(iframeDocument);
   }
 }
 
