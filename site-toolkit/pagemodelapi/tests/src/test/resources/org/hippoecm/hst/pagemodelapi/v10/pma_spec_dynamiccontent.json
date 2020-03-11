@@ -18,10 +18,10 @@
   },
   "page" : {
     "uid0" : {
-      "id" : "r23",
+      "id" : "r24",
       "links" : {
         "self" : {
-          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23",
+          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r24",
           "type" : "external"
         }
       },
@@ -81,10 +81,10 @@
       }
     },
     "uid1" : {
-      "id" : "r23_r1",
+      "id" : "r24_r1",
       "links" : {
         "self" : {
-          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23_r1",
+          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r24_r1",
           "type" : "external"
         }
       },
@@ -99,10 +99,10 @@
       } ]
     },
     "uid2" : {
-      "id" : "r23_r2",
+      "id" : "r24_r2",
       "links" : {
         "self" : {
-          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23_r2",
+          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r24_r2",
           "type" : "external"
         }
       },
@@ -318,10 +318,10 @@
       }
     },
     "uid4" : {
-      "id" : "r23_r1_r1",
+      "id" : "r24_r1_r1",
       "links" : {
         "self" : {
-          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r23_r1_r1",
+          "href" : "http://localhost/site/spa/resourceapi/genericdetail/dynamiccontent?_hn:type=component-rendering&_hn:ref=r24_r1_r1",
           "type" : "external"
         }
       },
