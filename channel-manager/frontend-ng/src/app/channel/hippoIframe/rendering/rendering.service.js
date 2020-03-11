@@ -22,7 +22,6 @@ class RenderingService {
   constructor(
     $log,
     $q,
-    $rootScope,
     DomService,
     HippoIframeService,
     LinkProcessorService,
@@ -32,7 +31,6 @@ class RenderingService {
 
     this.$log = $log;
     this.$q = $q;
-    this.$rootScope = $rootScope;
     this.DomService = DomService;
     this.HippoIframeService = HippoIframeService;
     this.LinkProcessorService = LinkProcessorService;
@@ -43,12 +41,11 @@ class RenderingService {
     this.iframeJQueryElement = iframeJQueryElement;
   }
 
-  createOverlay(isPartial) {
+  createOverlay(initial) {
     this.creatingOverlay = this._insertCss()
-      .then(() => this.PageStructureService.parseElements())
+      .then(() => this.PageStructureService.parseElements(initial))
       .then(() => {
         this._parseLinks();
-        this.$rootScope.$emit('overlay:create', isPartial);
       })
       .finally(() => {
         this.HippoIframeService.signalPageLoadCompleted();

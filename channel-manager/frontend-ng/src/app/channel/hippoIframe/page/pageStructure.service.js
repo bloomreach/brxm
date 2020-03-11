@@ -61,12 +61,12 @@ class PageStructureService {
     return headContributions;
   }
 
-  async parseElements() {
+  async parseElements(initial) {
     this._clear();
     const comments = await this.CommunicationService.parseElements();
 
     this._page = this.ModelFactoryService.createPage(comments);
-    this._notifyChangeListeners();
+    this._notifyChangeListeners({ initial });
     this._updateChannel();
   }
 
@@ -106,8 +106,8 @@ class PageStructureService {
     delete this._page;
   }
 
-  _notifyChangeListeners() {
-    this.$rootScope.$emit('page:change');
+  _notifyChangeListeners(data) {
+    this.$rootScope.$emit('page:change', data);
   }
 
   getPage() {

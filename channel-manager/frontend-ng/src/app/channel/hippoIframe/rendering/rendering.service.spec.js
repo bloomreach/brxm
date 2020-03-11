@@ -62,11 +62,11 @@ describe('RenderingService', () => {
       spyOn(DomService, 'hasCssLink').and.returnValue(false);
       spyOn(DomService, 'addCssLinks').and.returnValue($q.resolve());
 
-      RenderingService.createOverlay();
+      RenderingService.createOverlay(true);
       $rootScope.$digest();
 
       expect(DomService.addCssLinks).toHaveBeenCalledWith(window, [jasmine.any(String)], 'hippo-css');
-      expect(PageStructureService.parseElements).toHaveBeenCalledWith();
+      expect(PageStructureService.parseElements).toHaveBeenCalledWith(true);
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
 
@@ -74,11 +74,11 @@ describe('RenderingService', () => {
       spyOn(DomService, 'hasCssLink').and.returnValue(true);
       spyOn(DomService, 'addCssLinks');
 
-      RenderingService.createOverlay();
+      RenderingService.createOverlay(false);
       $rootScope.$digest();
 
       expect(DomService.addCssLinks).not.toHaveBeenCalled();
-      expect(PageStructureService.parseElements).toHaveBeenCalledWith();
+      expect(PageStructureService.parseElements).toHaveBeenCalledWith(false);
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
     });
 
@@ -101,17 +101,6 @@ describe('RenderingService', () => {
 
       expect(PageStructureService.parseElements).not.toHaveBeenCalled();
       expect(HippoIframeService.signalPageLoadCompleted).toHaveBeenCalled();
-    });
-
-    it('should emit overlay:create event', () => {
-      spyOn(DomService, 'hasCssLink').and.returnValue(true);
-      spyOn(DomService, 'addCssLinks');
-      spyOn($rootScope, '$emit');
-
-      RenderingService.createOverlay(true);
-      $rootScope.$digest();
-
-      expect($rootScope.$emit).toHaveBeenCalledWith('overlay:create', true);
     });
   });
 });
