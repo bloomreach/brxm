@@ -39,7 +39,9 @@ export default class CommunicationService {
       iframe: target,
       methods: {
         emit: this._emit.bind(this),
+        getLocale: this._getLocale.bind(this),
         getScroll: this._getScroll.bind(this),
+        getTranslations: this._getTranslations.bind(this),
       },
     });
 
@@ -69,7 +71,15 @@ export default class CommunicationService {
     this.$rootScope.$emit(`iframe:${event}`, data);
   }
 
+  _getLocale() {
+    return this.$injector.get('$translate').use();
+  }
+
   _getScroll(...args) {
     return this.$injector.get('ScrollService').getScroll(...args);
+  }
+
+  _getTranslations(...args) {
+    return this.$injector.get('$translate').getTranslationTable(...args);
   }
 }

@@ -15,29 +15,34 @@
  */
 
 import angular from 'angular';
+import ngTranslate from 'angular-translate';
 import Penpal from 'penpal';
 import ModelModule from '../model/model.module';
 import ServicesModule from '../services/services.module';
 import config from './iframe.config';
+import translateLoader from './translate-loader.factory';
 import CommunicationService from './communication.service';
 import HstCommentsProcessorService from './page/hst-comments-processor.service';
 import PageStructureService from './page/page-structure.service';
 import ScrollService from './overlay/scroll.service';
 
 const iframeModule = angular
-  .module('hippo-cm-iframe', [ModelModule.name, ServicesModule])
+  .module('hippo-cm-iframe', [ngTranslate, ModelModule.name, ServicesModule])
   .config(config)
   .constant('Penpal', Penpal)
+  .factory('translateLoader', translateLoader)
   .service('CommunicationService', CommunicationService)
   .service('HstCommentsProcessorService', HstCommentsProcessorService)
   .service('PageStructureService', PageStructureService)
   .service('ScrollService', ScrollService)
 
   // eslint-disable-next-line no-shadow
-  .run(($rootScope, $window, CommunicationService) => {
+  .run(($rootScope, $translate, $window, CommunicationService) => {
     'ngInject';
 
-    CommunicationService.connect();
+    CommunicationService.connect()
+      .then(CommunicationService.getLocale)
+      .then(locale => $translate.use(locale));
 
     $rootScope.$on('page:change', () => CommunicationService.emit('page:change'));
 
