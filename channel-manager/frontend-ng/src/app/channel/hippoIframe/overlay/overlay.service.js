@@ -54,6 +54,7 @@ class OverlayService {
     this.isContentOverlayDisplayed = false;
 
     this._onOverlayClick = this._onOverlayClick.bind(this);
+    this._onPageChange = this._onPageChange.bind(this);
     this._translate = (key, params) => $translate.instant(key, params, undefined, false, 'escape');
   }
 
@@ -64,7 +65,7 @@ class OverlayService {
     if (this._offPageChange) {
       this._offPageChange();
     }
-    this._offPageChange = this.$rootScope.$on('iframe:page:change', () => this.sync());
+    this._offPageChange = this.$rootScope.$on('iframe:page:change', this._onPageChange);
   }
 
   destroy() {
@@ -107,6 +108,10 @@ class OverlayService {
     } else {
       this.$rootScope.$apply(tearDown);
     }
+  }
+
+  _onPageChange() {
+    this.sync();
   }
 
   _initOverlay() {
@@ -242,20 +247,20 @@ class OverlayService {
       return;
     }
 
-    const currentOverlayElements = this._getAllStructureElements()
-      .reduce((overlayElements, element) => {
-        this._syncElement(element);
+    const overlays = new Set();
 
-        return overlayElements.add(element.getOverlayElement()[0]);
-      }, new Set());
+    this._getAllStructureElements().forEach((element) => {
+      this._syncElement(element);
 
-    this._tidyOverlay(currentOverlayElements);
-  }
+      overlays.add(element.getOverlayElement()[0]);
+      overlays.add(element.getBoxElement()[0]);
+    });
 
-  clear() {
-    if (this.overlay) {
-      this.overlay.empty();
+    if (this._overlays) {
+      this._overlays.forEach(element => element && !overlays.has(element) && element.remove());
     }
+
+    this._overlays = overlays;
   }
 
   _onOverlayMouseDown(event) {
@@ -766,19 +771,6 @@ class OverlayService {
     overlayElement.css('left', `${position.left}px`);
     overlayElement.css('width', `${position.width}px`);
     overlayElement.css('height', `${position.height}px`);
-  }
-
-  _tidyOverlay(elementsToKeep) {
-    const overlayElements = this.overlay.children();
-
-    // to improve performance, only iterate when there are elements to remove
-    if (overlayElements.length > elementsToKeep.size) {
-      overlayElements.each((index, element) => {
-        if (!elementsToKeep.has(element)) {
-          $(element).remove();
-        }
-      });
-    }
   }
 }
 

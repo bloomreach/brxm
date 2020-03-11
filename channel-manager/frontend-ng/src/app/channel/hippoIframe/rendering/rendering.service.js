@@ -26,7 +26,6 @@ class RenderingService {
     DomService,
     HippoIframeService,
     LinkProcessorService,
-    OverlayService,
     PageStructureService,
   ) {
     'ngInject';
@@ -37,7 +36,6 @@ class RenderingService {
     this.DomService = DomService;
     this.HippoIframeService = HippoIframeService;
     this.LinkProcessorService = LinkProcessorService;
-    this.OverlayService = OverlayService;
     this.PageStructureService = PageStructureService;
   }
 
@@ -46,8 +44,6 @@ class RenderingService {
   }
 
   createOverlay(isPartial) {
-    this.OverlayService.clear();
-
     this.creatingOverlay = this._insertCss()
       .then(() => this.PageStructureService.parseElements())
       .then(() => {

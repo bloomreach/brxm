@@ -291,9 +291,6 @@ describe('PageStructureService', () => {
       expect(attachedEmbeddedLinks[1].getComponent()).toBe(containerVBox);
       expect(attachedEmbeddedLinks[2].getComponent()).toBeUndefined();
       expect(attachedEmbeddedLinks[3].getComponent()).toBeUndefined();
-
-      expect(attachedEmbeddedLinks[0].getBoxElement()).toHaveLength(1);
-      expect(attachedEmbeddedLinks[0].getBoxElement().attr('class')).toBe('hst-fab');
     });
 
     it('emits event "page:change" after page elements have been parsed', () => {
