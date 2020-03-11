@@ -58,7 +58,7 @@ class ComponentEditorService {
     channel, component, container, page = this.PageStructureService.getPage(),
   }) {
     this.close();
-    this._offPageChange = this.$rootScope.$on('iframe:page:change', () => this._onPageChange());
+    this._offPageChange = this.$rootScope.$on('page:change', () => this._onPageChange());
     this.request = this.HstComponentService.getProperties(component.id, component.variant);
 
     this.request.then(response => this._onLoadSuccess(channel, component, container, page, response.properties))

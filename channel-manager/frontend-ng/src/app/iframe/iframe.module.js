@@ -39,7 +39,7 @@ const iframeModule = angular
 
     CommunicationService.connect();
 
-    $rootScope.$on('iframe:page:change', () => CommunicationService.emit('page:change'));
+    $rootScope.$on('page:change', () => CommunicationService.emit('page:change'));
 
     // The `unload` event cannot be used here because `event.source` in the target MessageEvent
     // will be `null`. Penpal checks `event.source`, and in this case, it will reject the request.

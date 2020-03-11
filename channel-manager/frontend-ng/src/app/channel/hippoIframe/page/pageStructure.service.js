@@ -107,7 +107,7 @@ class PageStructureService {
   }
 
   _notifyChangeListeners() {
-    this.$rootScope.$emit('iframe:page:change');
+    this.$rootScope.$emit('page:change');
   }
 
   getPage() {
