@@ -87,7 +87,6 @@ export default class PageStructureService {
 
     menuLink.setStartComment(angular.element(startComment));
     menuLink.setEndComment(angular.element(startComment));
-    menuLink.prepareBoxElement();
     this.embeddedLinks.push(menuLink);
 
     return menuLink;
@@ -98,7 +97,6 @@ export default class PageStructureService {
 
     manageContentLink.setStartComment(angular.element(startComment));
     manageContentLink.setEndComment(angular.element(startComment));
-    manageContentLink.prepareBoxElement();
     this.embeddedLinks.push(manageContentLink);
 
     return manageContentLink;
@@ -115,8 +113,7 @@ export default class PageStructureService {
   }
 
   _clear() {
-    this.embeddedLinks.splice(0)
-      .forEach(element => element.getBoxElement().remove());
+    this.embeddedLinks.splice(0);
     delete this._page;
   }
 
