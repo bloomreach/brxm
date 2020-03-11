@@ -26,7 +26,6 @@ class DragDropService {
     ConfigService,
     DomService,
     PageStructureService,
-    ScrollService,
   ) {
     'ngInject';
 
@@ -35,7 +34,6 @@ class DragDropService {
     this.ConfigService = ConfigService;
     this.DomService = DomService;
     this.PageStructureService = PageStructureService;
-    this.ScrollService = ScrollService;
 
     this.draggingOrClicking = false;
     this.dropping = false;
@@ -65,31 +63,13 @@ class DragDropService {
     }
 
     $(this.iframe).one('unload', () => {
-      this.ScrollService.disable();
-      this._destroyDragula();
+      this.disable();
+      this.dragulaPromise = null;
     });
 
     this.PageStructureService = this.iframe.angular.element(this.iframe.document)
       .injector()
       .get('PageStructureService');
-  }
-
-  _destroyDragula() {
-    this._destroyDrake();
-    this.dragulaPromise = null;
-  }
-
-  _destroyDrake() {
-    if (this.drake) {
-      if (this.isDragging()) {
-        this.drake.cancel(true);
-      }
-      this.drake.destroy();
-      this.drake = null;
-      this.dragulaOptions = null;
-      this.draggingOrClicking = false;
-      this.dropping = false;
-    }
   }
 
   enable() {
@@ -119,8 +99,18 @@ class DragDropService {
   }
 
   disable() {
-    this.ScrollService.disable();
-    this._destroyDrake();
+    if (!this.drake) {
+      return;
+    }
+
+    if (this.isDragging()) {
+      this.drake.cancel(true);
+    }
+    this.drake.destroy();
+    this.drake = null;
+    this.dragulaOptions = null;
+    this.draggingOrClicking = false;
+    this.dropping = false;
   }
 
   isEnabled() {
@@ -214,8 +204,6 @@ class DragDropService {
     this._updateDragDirection(containerElement);
     this.$rootScope.$emit('drag:start');
 
-    this.ScrollService.enable();
-
     // make Angular evaluate isDragging() again
     this._digestIfNeeded();
   }
@@ -261,7 +249,6 @@ class DragDropService {
     this._getIframeHtmlElement().removeClass('hippo-dragging hippo-overlay-permeable');
     this.$rootScope.$emit('drag:stop');
 
-    this.ScrollService.disable();
     this.draggingOrClicking = false;
 
     angular.element(element)
