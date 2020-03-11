@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,16 +14,25 @@
  * limitations under the License.
  */
 
-class LinkProcessorService {
-  constructor($translate, $window) {
+export default class LinkProcessorService {
+  constructor($document, $rootScope, $translate, $window) {
     'ngInject';
 
+    this.$document = $document;
+    this.$rootScope = $rootScope;
     this.$translate = $translate;
     this.$window = $window;
+
+    this._onClick = this._onClick.bind(this);
+    this._onPageChange = this._onPageChange.bind(this);
   }
 
-  run(document) {
-    angular.element(document).find('a').each((index, el) => {
+  initialize() {
+    this.$rootScope.$on('page:change', this._onPageChange);
+  }
+
+  _onPageChange() {
+    this.$document.find('a').each((index, el) => {
       const link = angular.element(el);
       const url = link.attr('href') || link.attr('xlink:href');
 
@@ -34,12 +43,8 @@ class LinkProcessorService {
       // Intercept all clicks on external links: open them in a new tab if confirmed by the user
       link
         .attr('target', '_blank')
-        .click((event) => {
-          // TODO: should use proper dialog!!
-          if (!this.$window.confirm(this.$translate.instant('CONFIRM_OPEN_EXTERNAL_LINK'))) {
-            event.preventDefault();
-          }
-        });
+        .off('click', this._onClick)
+        .on('click', this._onClick);
     });
   }
 
@@ -48,6 +53,11 @@ class LinkProcessorService {
     // ones. So any link that starts with a scheme is an external one.
     return /^(?:[a-z][a-z0-9]+:)?\/\//.test(url);
   }
-}
 
-export default LinkProcessorService;
+  _onClick(event) {
+    // TODO: should use proper dialog!!
+    if (!this.$window.confirm(this.$translate.instant('CONFIRM_OPEN_EXTERNAL_LINK'))) {
+      event.preventDefault();
+    }
+  }
+}

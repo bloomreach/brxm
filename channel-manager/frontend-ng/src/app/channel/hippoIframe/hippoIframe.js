@@ -20,7 +20,6 @@ import ComponentRenderingService from './rendering/component-rendering.service';
 import ContainerService from './container/container.service';
 import DragDropService from './dragDrop/dragDrop.service';
 import HippoIframeService from './hippoIframe.service';
-import LinkProcessorService from './processing/linkProcessor.service';
 import OverlayService from './overlay/overlay.service';
 import PageModule from './page/page.module';
 import RenderingService from './rendering/rendering.service';
@@ -39,7 +38,6 @@ const channelHippoIframeModule = angular
   .service('ContainerService', ContainerService)
   .service('DragDropService', DragDropService)
   .service('HippoIframeService', HippoIframeService)
-  .service('LinkProcessorService', LinkProcessorService)
   .service('OverlayService', OverlayService)
   .service('RenderingService', RenderingService)
   .service('RpcService', RpcService)

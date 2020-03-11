@@ -23,6 +23,7 @@ import config from './iframe.config';
 import translateLoader from './translate-loader.factory';
 import CommunicationService from './communication.service';
 import HstCommentsProcessorService from './page/hst-comments-processor.service';
+import LinkProcessorService from './overlay/link-processor.service';
 import PageStructureService from './page/page-structure.service';
 import ScrollService from './overlay/scroll.service';
 
@@ -33,16 +34,19 @@ const iframeModule = angular
   .factory('translateLoader', translateLoader)
   .service('CommunicationService', CommunicationService)
   .service('HstCommentsProcessorService', HstCommentsProcessorService)
+  .service('LinkProcessorService', LinkProcessorService)
   .service('PageStructureService', PageStructureService)
   .service('ScrollService', ScrollService)
 
   // eslint-disable-next-line no-shadow
-  .run(($rootScope, $translate, $window, CommunicationService) => {
+  .run(($rootScope, $translate, $window, CommunicationService, LinkProcessorService) => {
     'ngInject';
 
     CommunicationService.connect()
       .then(CommunicationService.getLocale)
       .then(locale => $translate.use(locale));
+
+    LinkProcessorService.initialize();
 
     $rootScope.$on('page:change', () => CommunicationService.emit('page:change'));
 

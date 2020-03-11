@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,24 +20,27 @@ import 'angular-mocks';
 describe('LinkProcessorService', () => {
   let LinkProcessorService;
   let $document;
+  let $rootScope;
   let $window;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm.channel.hippoIframe');
+    angular.mock.module('hippo-cm-iframe');
 
-    inject((_$document_, _$window_, _LinkProcessorService_) => {
+    inject((_$document_, _$rootScope_, _$window_, _LinkProcessorService_) => {
       $document = _$document_;
+      $rootScope = _$rootScope_;
       $window = _$window_;
       LinkProcessorService = _LinkProcessorService_;
     });
   });
 
   beforeEach(() => {
-    jasmine.getFixtures().load('channel/hippoIframe/processing/linkProcessor.service.fixture.html');
+    jasmine.getFixtures().load('iframe/overlay/link-processor.service.fixture.html');
+    LinkProcessorService.initialize();
   });
 
   it('does not set the attribute "target" for internal links', () => {
-    LinkProcessorService.run($document);
+    $rootScope.$emit('page:change');
 
     $j('.qa-internal-link', $document).each(function checkTarget() {
       expect(this).not.toHaveAttr('target', '_blank');
@@ -45,7 +48,7 @@ describe('LinkProcessorService', () => {
   });
 
   it('does not set the attribute "target" for local links', () => {
-    LinkProcessorService.run($document);
+    $rootScope.$emit('page:change');
 
     $j('.qa-local-link', $document).each(function checkTarget() {
       expect(this).not.toHaveAttr('target', '_blank');
@@ -53,7 +56,7 @@ describe('LinkProcessorService', () => {
   });
 
   it('sets attribute "target" to _blank for external links', () => {
-    LinkProcessorService.run($document);
+    $rootScope.$emit('page:change');
 
     $j('.qa-external-link', $document).each(function checkTarget() {
       expect(this).toHaveAttr('target', '_blank');
@@ -64,7 +67,7 @@ describe('LinkProcessorService', () => {
     const nrOfExternalLinks = $j('.qa-external-link', $document).length;
     const confirmSpy = spyOn($window, 'confirm').and.returnValue(true);
 
-    LinkProcessorService.run($document);
+    $rootScope.$emit('page:change');
     $j('a', $document).click();
     expect(confirmSpy.calls.count()).toEqual(nrOfExternalLinks);
   });
@@ -72,7 +75,7 @@ describe('LinkProcessorService', () => {
   it('should prevent opening an external link if confirm is cancelled', () => {
     spyOn($window, 'confirm').and.returnValue(false);
 
-    LinkProcessorService.run($document);
+    $rootScope.$emit('page:change');
     $j('.qa-external-link', $document).each(function checkClick() {
       const spyEvent = window.spyOnEvent(this, 'click');
       $j(this).click();
@@ -84,7 +87,7 @@ describe('LinkProcessorService', () => {
   it('should open an external link if confirm is ok', () => {
     spyOn($window, 'confirm').and.returnValue(true);
 
-    LinkProcessorService.run($document);
+    $rootScope.$emit('page:change');
     $j('.qa-external-link', $document).each(function checkClick() {
       const spyEvent = window.spyOnEvent(this, 'click');
       $j(this).click();
