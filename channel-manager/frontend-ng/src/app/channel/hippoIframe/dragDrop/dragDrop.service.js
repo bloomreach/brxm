@@ -41,9 +41,8 @@ class DragDropService {
     this.dropping = false;
   }
 
-  init(iframeJQueryElement, canvasJQueryElement) {
+  init(iframeJQueryElement) {
     this.iframeJQueryElement = iframeJQueryElement;
-    this.canvasJQueryElement = canvasJQueryElement;
 
     this.$rootScope.$on('hippo-iframe:load', () => this._onLoad());
 
@@ -212,8 +211,8 @@ class DragDropService {
 
   _onStartDrag(containerElement) {
     this._getIframeHtmlElement().addClass('hippo-dragging');
-    this.canvasJQueryElement.addClass('hippo-dragging');
     this._updateDragDirection(containerElement);
+    this.$rootScope.$emit('drag:start');
 
     this.ScrollService.enable();
 
@@ -260,7 +259,7 @@ class DragDropService {
 
   _onStopDragOrClick(element) {
     this._getIframeHtmlElement().removeClass('hippo-dragging hippo-overlay-permeable');
-    this.canvasJQueryElement.removeClass('hippo-dragging');
+    this.$rootScope.$emit('drag:stop');
 
     this.ScrollService.disable();
     this.draggingOrClicking = false;
