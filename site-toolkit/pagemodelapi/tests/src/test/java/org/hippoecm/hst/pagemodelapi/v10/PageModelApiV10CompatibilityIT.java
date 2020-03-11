@@ -165,6 +165,9 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
             session.getNode(SPA_MOUNT_JCR_PATH).setProperty(GENERAL_PROPERTY_HST_LINK_URL_PREFIX, "http://www.example.com");
             session.save();
 
+            // trigger direct invalidation of model without waiting for jcr event
+            eventPathsInvalidator.eventPaths(SPA_MOUNT_JCR_PATH);
+
             String actual = getActualJson("/spa/resourceapi", "1.0");
 
             InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_explicit_hst_url_prefix_mount.json");
