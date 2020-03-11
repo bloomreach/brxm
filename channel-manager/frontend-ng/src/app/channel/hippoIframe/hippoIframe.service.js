@@ -18,6 +18,7 @@ class HippoIframeService {
   constructor(
     $log,
     $q,
+    $rootScope,
     ChannelService,
     CmsService,
     ConfigService,
@@ -30,6 +31,7 @@ class HippoIframeService {
 
     this.$log = $log;
     this.$q = $q;
+    this.$rootScope = $rootScope;
 
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
@@ -38,6 +40,8 @@ class HippoIframeService {
     this.PageToolsService = PageToolsService;
     this.ProjectService = ProjectService;
     this.ScrollService = ScrollService;
+
+    this._onPageChange = this._onPageChange.bind(this);
   }
 
   initialize(hippoIframeJQueryElement, iframeJQueryElement) {
@@ -52,6 +56,11 @@ class HippoIframeService {
         this.reload();
       }
     });
+
+    if (this._offPageChange) {
+      this._offPageChange();
+    }
+    this._offPageChange = this.$rootScope.$on('page:change', this._onPageChange);
   }
 
   initializePath(channelRelativePath) {
@@ -118,11 +127,15 @@ class HippoIframeService {
 
     this.deferredReload = this.$q.defer();
     this.iframeJQueryElement[0].contentWindow.location.reload();
+
     return this.deferredReload.promise;
   }
 
-  // called by the rendering service when the processing of the loaded page is completed.
-  signalPageLoadCompleted() {
+  _onPageChange(event, data) {
+    if (!data || !data.initial) {
+      return;
+    }
+
     this.renderPathInfo = this._determineRenderPathInfo();
     this.pageLoaded = true;
 

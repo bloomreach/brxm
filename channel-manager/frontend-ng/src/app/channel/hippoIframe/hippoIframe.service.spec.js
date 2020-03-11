@@ -146,7 +146,8 @@ describe('HippoIframeService', () => {
     expect(HippoIframeService.isPageLoaded()).toBe(false);
     HippoIframeService.load('dummy');
     expect(HippoIframeService.isPageLoaded()).toBe(false);
-    HippoIframeService.signalPageLoadCompleted();
+    $rootScope.$emit('page:change', { initial: true });
+
     expect(HippoIframeService.isPageLoaded()).toBe(true);
   });
 
@@ -172,7 +173,7 @@ describe('HippoIframeService', () => {
         expect(PageToolsService.updatePageTools).not.toHaveBeenCalled();
         expect(HippoIframeService.deferredReload).toBeTruthy();
 
-        HippoIframeService.signalPageLoadCompleted();
+        $rootScope.$emit('page:change', { initial: true });
 
         expect(ScrollService.restorePosition).toHaveBeenCalled();
         expect(PageToolsService.updatePageTools).toHaveBeenCalled();
@@ -205,23 +206,23 @@ describe('HippoIframeService', () => {
       done();
     });
 
-    HippoIframeService.signalPageLoadCompleted();
+    $rootScope.$emit('page:change', { initial: true });
 
     $rootScope.$digest();
   });
 
   it('reports page loads as user activity', () => {
     spyOn($window.APP_TO_CMS, 'publish');
-    HippoIframeService.signalPageLoadCompleted();
+    $rootScope.$emit('page:change', { initial: true });
+
     expect($window.APP_TO_CMS.publish).toHaveBeenCalledWith('user-activity');
   });
 
   it('ignores page loads which are no reloads', () => {
-    spyOn($log, 'warn');
+    $rootScope.$emit('page:change');
+    $rootScope.$emit('page:change', { initial: false });
 
-    HippoIframeService.signalPageLoadCompleted();
-
-    expect($log.warn).not.toHaveBeenCalled();
+    expect(ScrollService.restorePosition).not.toHaveBeenCalled();
   });
 
   it('loads the requested renderPathInfo', () => {
@@ -233,20 +234,22 @@ describe('HippoIframeService', () => {
 
   it('extracts the current renderPathInfo when the page has been loaded', () => {
     ChannelService.extractRenderPathInfo.and.returnValue('dummy');
-    HippoIframeService.signalPageLoadCompleted();
+    $rootScope.$emit('page:change', { initial: true });
+
     expect(HippoIframeService.getCurrentRenderPathInfo()).toBe('dummy');
   });
 
   it('resets the current renderPathInfo when the iframe path cannot be found', () => {
     HippoIframeService.initialize(undefined); // undo initialization
-    HippoIframeService.signalPageLoadCompleted();
+    $rootScope.$emit('page:change', { initial: true });
+
     expect(HippoIframeService.getCurrentRenderPathInfo()).not.toBeDefined();
   });
 
   it('uses jQuery to trigger a reload if the src attribute matches the to-be-loaded path', () => {
     ChannelService.extractRenderPathInfo.and.returnValue('/target');
     HippoIframeService.load('/target');
-    HippoIframeService.signalPageLoadCompleted();
+    $rootScope.$emit('page:change', { initial: true });
 
     spyOn(iframe, 'attr');
     HippoIframeService.load('/not/target');
@@ -268,7 +271,8 @@ describe('HippoIframeService', () => {
 
     it('stores the current renderPath in sessionStorage', () => {
       ChannelService.extractRenderPathInfo.and.returnValue('dummy');
-      HippoIframeService.signalPageLoadCompleted();
+      $rootScope.$emit('page:change', { initial: true });
+
       expect(sessionStorage.channelPath).toBe('dummy');
     });
 
