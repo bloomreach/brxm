@@ -94,11 +94,13 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
 
         final ContainerItem containerItem = createContainerItem(session, catalogItemUUID, versionStamp);
         final String newItemName = containerItem.getContainerItem().getName();
-        final String siblingItemName = getContainerItem(session, siblingItemUUID).getName();
+        final Node siblingItem = getContainerItem(session, siblingItemUUID);
+        final String siblingItemName = siblingItem.getName();
 
         final Node containerNode = lockAndGetContainer(versionStamp);
-        if (containerNode.hasNode(siblingItemName)) {
+        if (siblingItem.getParent().isSame(containerNode)) {
             containerNode.orderBefore(siblingItemName, newItemName);
+            HstConfigurationUtils.persistChanges(session);
         } else {
             log.warn("Cannot order new item '{}' before '{}' because container '{}' does not contain '{}'.",
                     newItemName, siblingItemName, containerNode.getPath(), siblingItemName);
