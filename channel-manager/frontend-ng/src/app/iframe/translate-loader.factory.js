@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-export default function config($provide, $translateProvider, $translateSanitizationProvider) {
+export default function translateLoader(CommunicationService) {
   'ngInject';
 
-  $provide.decorator('$q', ($delegate) => {
-    'ngInject';
-
-    if (window.$Promise !== $delegate) {
-      window.$Promise = $delegate;
+  return async ({ key }) => {
+    try {
+      return await CommunicationService.getTranslations(key);
+    } catch (error) {
+      throw key;
     }
-
-    return $delegate;
-  });
-
-  $translateSanitizationProvider.addStrategy('none', value => value);
-  $translateProvider.useSanitizeValueStrategy('none');
-  $translateProvider.useLoader('translateLoader');
+  };
 }
