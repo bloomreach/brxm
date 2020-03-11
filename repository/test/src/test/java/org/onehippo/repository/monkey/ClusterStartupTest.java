@@ -136,7 +136,7 @@ public class ClusterStartupTest extends ClusterUtilitiesTest {
             cleanup();
         }
         if (dbtype.equals("h2")) {
-            server = Server.createTcpServer("-tcpPort", dbport, "-baseDir", h2Path, "-ifNotExists").start();
+            server = Server.createTcpServer("-tcpPort", dbport, "-baseDir", h2Path).start();
         }
 
         final String repoPathSysProp = System.getProperty("repo.path", "");
