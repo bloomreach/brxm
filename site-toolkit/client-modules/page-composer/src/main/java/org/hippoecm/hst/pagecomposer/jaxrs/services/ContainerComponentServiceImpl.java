@@ -99,7 +99,7 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
 
         final Node containerNode = lockAndGetContainer(versionStamp);
         if (siblingItem.getParent().isSame(containerNode)) {
-            containerNode.orderBefore(siblingItemName, newItemName);
+            containerNode.orderBefore(newItemName, siblingItemName);
             HstConfigurationUtils.persistChanges(session);
         } else {
             log.warn("Cannot order new item '{}' before '{}' because container '{}' does not contain '{}'.",
