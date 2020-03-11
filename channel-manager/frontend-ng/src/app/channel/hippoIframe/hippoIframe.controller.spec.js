@@ -35,6 +35,7 @@ describe('hippoIframeCtrl', () => {
   let PageStructureService;
   let PickerService;
   let RenderingService;
+  let ScrollService;
   let SpaService;
   let ViewportService;
   let $ctrl;
@@ -52,6 +53,7 @@ describe('hippoIframeCtrl', () => {
     FeedbackService = jasmine.createSpyObj('FeedbackService', ['showErrorResponse', 'showNotification']);
     HstComponentService = jasmine.createSpyObj('HstComponentService', ['setPathParameter']);
     PickerService = jasmine.createSpyObj('PickerService', ['pickPath']);
+    ScrollService = jasmine.createSpyObj('ScrollService', ['enable', 'disable', 'init']);
 
     angular.mock.module(($provide) => {
       $provide.value('ComponentRenderingService', ComponentRenderingService);
@@ -62,6 +64,7 @@ describe('hippoIframeCtrl', () => {
       $provide.value('FeedbackService', FeedbackService);
       $provide.value('HstComponentService', HstComponentService);
       $provide.value('PickerService', PickerService);
+      $provide.value('ScrollService', ScrollService);
     });
 
     inject((
@@ -320,6 +323,12 @@ describe('hippoIframeCtrl', () => {
     expect(CommunicationService.disconnect).toHaveBeenCalled();
   });
 
+  it('disables scrolling on the iframe unload', () => {
+    $rootScope.$emit('iframe:unload');
+
+    expect(ScrollService.disable).toHaveBeenCalled();
+  });
+
   it('disconnects with the iframe bundle on the component destruction', () => {
     spyOn(CommunicationService, 'disconnect');
     $ctrl.$onDestroy();
@@ -461,6 +470,10 @@ describe('hippoIframeCtrl', () => {
     it('should set hippo-dragging class on the canvas element', () => {
       expect($element.find('.channel-iframe-canvas')).toHaveClass('hippo-dragging');
     });
+
+    it('should enable scrolling', () => {
+      expect(ScrollService.enable).toHaveBeenCalled();
+    });
   });
 
   describe('_onDragStop', () => {
@@ -471,6 +484,10 @@ describe('hippoIframeCtrl', () => {
 
     it('should remove hippo-dragging class from the canvas element', () => {
       expect($element.find('.channel-iframe-canvas')).not.toHaveClass('hippo-dragging');
+    });
+
+    it('should disable scrolling', () => {
+      expect(ScrollService.disable).toHaveBeenCalled();
     });
   });
 });

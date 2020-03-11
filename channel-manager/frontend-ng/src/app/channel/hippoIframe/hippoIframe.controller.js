@@ -166,6 +166,7 @@ class HippoIframeCtrl {
   }
 
   _onUnload() {
+    this.ScrollService.disable();
     this.CommunicationService.disconnect();
   }
 
@@ -264,11 +265,13 @@ class HippoIframeCtrl {
   }
 
   _onDragStart() {
+    this.ScrollService.enable();
     this.$element.find('.channel-iframe-canvas')
       .addClass('hippo-dragging');
   }
 
   _onDragStop() {
+    this.ScrollService.disable();
     this.$element.find('.channel-iframe-canvas')
       .removeClass('hippo-dragging');
   }
