@@ -26,6 +26,7 @@ import javax.jcr.Session;
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.builder.AbstractBeanBuilderService;
+import org.hippoecm.hst.content.beans.builder.DocumentType;
 import org.hippoecm.hst.content.beans.builder.HippoContentBean;
 import org.hippoecm.hst.content.beans.manager.DynamicObjectConverterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -187,46 +188,54 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
     }
 
     @Override
-    protected boolean hasChange(final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+    protected boolean hasChange(String methodName, boolean multiple, DynamicBeanBuilder builder) {
         // creates the method if it doesn't exist on the parent bean 
         return ClassUtils.getMethodIfAvailable(builder.getParentBeanClass(), methodName) == null;
     }
 
     @Override
-    protected void addBeanMethodString(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+    protected void addBeanMethodString(String propertyName, String methodName, boolean multiple, DynamicBeanBuilder builder) {
         builder.addBeanMethodString(methodName, propertyName, multiple);
     }
 
     @Override
-    protected void addBeanMethodCalendar(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+    protected void addBeanMethodCalendar(String propertyName, String methodName, boolean multiple, DynamicBeanBuilder builder) {
         builder.addBeanMethodCalendar(methodName, propertyName, multiple);
     }
 
     @Override
-    protected void addBeanMethodBoolean(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+    protected void addBeanMethodBoolean(String propertyName, String methodName, boolean multiple, DynamicBeanBuilder builder) {
         builder.addBeanMethodBoolean(methodName, propertyName, multiple);
     }
 
     @Override
-    protected void addBeanMethodLong(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+    protected void addBeanMethodLong(String propertyName, String methodName, boolean multiple, DynamicBeanBuilder builder) {
         builder.addBeanMethodLong(methodName, propertyName, multiple);
     }
 
     @Override
-    protected void addBeanMethodDouble(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+    protected void addBeanMethodDouble(String propertyName, String methodName, boolean multiple, DynamicBeanBuilder builder) {
         builder.addBeanMethodDouble(methodName, propertyName, multiple);
     }
 
     @Override
-    protected void addBeanMethodDocbase(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+    protected void addBeanMethodDocbase(String propertyName, String methodName, boolean multiple, DynamicBeanBuilder builder) {
        builder.addBeanMethodDocbase(methodName, propertyName, multiple);
     }
 
     @Override
-    protected void addCustomPropertyType(final String propertyName, final String methodName, final boolean multiple, final String documentType, final String cmsType, final DynamicBeanBuilder builder) {
+    protected void addCustomPropertyType(String propertyName, String methodName, boolean multiple, String documentType,
+            String type, String cmsType, DynamicBeanBuilder builder) {
+
         final Class<? extends DynamicBeanInterceptor> interceptorDefinition = objectConverter.getInterceptorDefinition(cmsType);
         if (interceptorDefinition == null) {
-            log.warn("Failed to create getter for property: {} of type: {}", propertyName, cmsType);
+            // if the field doesn't have a custom interceptor but is a String type,
+            // then generate the field as a string value
+            if (DocumentType.STRING == DocumentType.getDocumentType(type)) {
+                builder.addBeanMethodString(methodName, propertyName, multiple);
+            } else {
+                log.warn("Failed to create getter for property: {} of type: {}", propertyName, cmsType);                
+            }
             return;
         }
 
@@ -239,7 +248,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
     }
 
     @Override
-    protected void addBeanMethodHippoHtml(final String propertyName, final String methodName, boolean multiple, final DynamicBeanBuilder builder) {
+    protected void addBeanMethodHippoHtml(String propertyName, String methodName, boolean multiple, DynamicBeanBuilder builder) {
         builder.addBeanMethodHippoHtml(methodName, propertyName, multiple);
     }
 
@@ -266,32 +275,32 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
     }
 
     @Override
-    protected void addBeanMethodImageLink(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+    protected void addBeanMethodImageLink(String propertyName, String methodName, boolean multiple, DynamicBeanBuilder builder) {
         builder.addBeanMethodImageLink(methodName, propertyName, getGalleryImageSetTypeClass(), multiple);
     }
 
     @Override
-    protected void addBeanMethodHippoMirror(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+    protected void addBeanMethodHippoMirror(String propertyName, String methodName, boolean multiple, DynamicBeanBuilder builder) {
         builder.addBeanMethodHippoMirror(methodName, propertyName, multiple);
     }
 
     @Override
-    protected void addBeanMethodHippoImage(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+    protected void addBeanMethodHippoImage(String propertyName, String methodName, boolean multiple, DynamicBeanBuilder builder) {
         builder.addBeanMethodHippoImage(methodName, propertyName, multiple);
     }
 
     @Override
-    protected void addBeanMethodHippoResource(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+    protected void addBeanMethodHippoResource(String propertyName, String methodName, boolean multiple, DynamicBeanBuilder builder) {
         builder.addBeanMethodHippoResource(methodName, propertyName, multiple);
     }
 
     @Override
-    protected void addBeanMethodContentBlocks(final String propertyName, final String methodName, final boolean multiple, final DynamicBeanBuilder builder) {
+    protected void addBeanMethodContentBlocks(String propertyName, String methodName, boolean multiple, DynamicBeanBuilder builder) {
         builder.addBeanMethodContentBlocks(methodName, propertyName, multiple);
     }
 
     @Override
-    protected void addBeanMethodCompoundType(final String propertyName, final String methodName, final boolean multiple, final String type, final DynamicBeanBuilder builder) {
+    protected void addBeanMethodCompoundType(String propertyName, String methodName, boolean multiple, String type, DynamicBeanBuilder builder) {
         final Class<? extends HippoBean> generatedBeanDefinition = getOrCreateCustomBean(type);
         if (generatedBeanDefinition == null) {
             return;
@@ -301,7 +310,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
     }
 
     @Override
-    protected void addCustomNodeType(final String propertyName, final String methodName, final boolean multiple, final String type, final DynamicBeanBuilder builder) {
+    protected void addCustomNodeType(String propertyName, String methodName, boolean multiple, String type, DynamicBeanBuilder builder) {
         final Class<? extends HippoBean> generatedBeanDefinition = getOrCreateCustomBean(type);
         if (generatedBeanDefinition == null) {
             return;
@@ -310,7 +319,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
         builder.addBeanMethodInternalType(methodName, generatedBeanDefinition, propertyName, multiple);
     }
 
-    private Class<? extends HippoBean> getOrCreateCustomBean(final String documentType) {
+    private Class<? extends HippoBean> getOrCreateCustomBean(String documentType) {
         Class<? extends HippoBean> generatedBeanDefinition = objectConverter.getClassFor(documentType);
         if (generatedBeanDefinition == null) {
             // Custom generic bean should be created because the document type doesn't exist in objectConverter

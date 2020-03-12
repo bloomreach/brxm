@@ -15,8 +15,6 @@
  */
 package org.hippoecm.hst.content.beans.builder;
 
-import java.util.Arrays;
-
 import org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder;
 import org.hippoecm.hst.content.beans.dynamic.DynamicBeanUtils;
 import org.slf4j.Logger;
@@ -28,43 +26,6 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractBeanBuilderService {
 
     private static final Logger log = LoggerFactory.getLogger(AbstractBeanBuilderService.class);
-
-    private enum DocumentType {
-        STRING("String"), //
-        HTML("Html"), //
-        PASSWORD("Password"), //
-        TEXT("Text"), //
-        DATE("Date"), //
-        BOOLEAN("Boolean"), //
-        LONG("Long"), //
-        DOUBLE("Double"), //
-        DOCBASE("Docbase"), //
-        HIPPO_HTML("hippostd:html"), //
-        HIPPO_IMAGELINK("hippogallerypicker:imagelink"), //
-        HIPPO_MIRROR("hippo:mirror"), //
-        HIPPO_IMAGE("hippogallery:image"), //
-        HIPPO_RESOURCE("hippo:resource"), //
-        HIPPO_COMPOUND("hippo:compound"), //
-        CONTENT_BLOCKS("content:blocks"), //
-        UNKNOWN("Unknown");
-
-        private String type;
-
-        public String getDocumentType() {
-            return this.type;
-        }
-
-        DocumentType(String type) {
-            this.type = type;
-        }
-
-        public static DocumentType getDocumentType(String type) {
-            return Arrays.stream(DocumentType.values())
-                .filter(doc -> doc.getDocumentType().equals(type))
-                .findFirst()
-                .orElse(DocumentType.UNKNOWN);
-        }
-    }
 
     /**
      * Generates bean method by its properties
@@ -115,7 +76,7 @@ public abstract class AbstractBeanBuilderService {
                 addBeanMethodDocbase(propertyName, methodName, multiple, builder);
                 break;
             default:
-                addCustomPropertyType(propertyName, methodName, multiple, bean.getDocumentType(), property.getCmsType(), builder);
+                addCustomPropertyType(propertyName, methodName, multiple, bean.getDocumentType(), property.getType(), property.getCmsType(), builder);
                 break;
             }
         }
@@ -296,10 +257,11 @@ public abstract class AbstractBeanBuilderService {
      * @param methodName of the method
      * @param multiple whether a document property keeps multiple values or not
      * @param documentType of the document
+     * @param type effective type of the document property
      * @param cmsType cms type of the document property
      * @param builder {@link org.hippoecm.hst.content.beans.dynamic.DynamicBeanBuilder}
      */
-    protected abstract void addCustomPropertyType(String propertyName, String methodName, boolean multiple, String documentType, String cmsType, DynamicBeanBuilder builder);
+    protected abstract void addCustomPropertyType(String propertyName, String methodName, boolean multiple, String documentType, String type, String cmsType, DynamicBeanBuilder builder);
 
     /**
      * Adds a method to the bean which returns {@link org.hippoecm.hst.content.beans.standard.HippoHtmlBean} object type
