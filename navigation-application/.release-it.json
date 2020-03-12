@@ -1,4 +1,8 @@
 {
+  "scripts": {
+    "beforeStart": "npm run lint && npm run test:single-run",
+    "beforeStage": "npm run build:prod"
+  },
   "git": {
     "requireCleanWorkingDir": true,
     "commitMessage": "TRIVIAL prepare release bloomreach-navigation-application-${version}",
