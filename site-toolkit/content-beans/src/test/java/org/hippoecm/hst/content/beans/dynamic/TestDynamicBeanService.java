@@ -62,6 +62,7 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
     private static final String MULTIPLE_VALUE_SINGLE_LONG_TYPE_METHOD_NAME = "getMultipleValueSingleLongTypeField";
     private static final String HTML_TYPE_METHOD_NAME = "getHtmlTypeField";
     private static final String STRING_TYPE_METHOD_NAME = "getStringTypeField";
+    private static final String UNKNOWN_STRING_TYPE_METHOD_NAME = "getUnknownStringTypeField";
     private static final String TEXT_TYPE_METHOD_NAME = "getTextTypeField";
 
     private static final String LINK_COMPOUND_TYPE_METHOD_NAME = "getMirrorCompoundType";
@@ -75,7 +76,6 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
         return TEST_DOCUMENT_TYPE_CONTENTS_PATH;
     }
 
-    @Ignore // This test belongs to the improvement of CMS-11933
     @Test
     public void testGetValueOfStringTypeFieldWithoutContentBean() throws Exception {
 
@@ -85,6 +85,17 @@ public class TestDynamicBeanService extends AbstractDynamicBeanServiceTest {
 
         assertNotNull("The method '" + STRING_TYPE_METHOD_NAME + "' didn't return any value", value);
         assertEquals("string Value", value);
+    }
+
+    @Test
+    public void testGetValueOfUnknownStringTypeFieldWithoutContentBean() throws Exception {
+
+        Object generatedBean = getContentBean();
+
+        String value = callContentBeanMethod(generatedBean, UNKNOWN_STRING_TYPE_METHOD_NAME, String.class);
+
+        assertNotNull("The method '" + UNKNOWN_STRING_TYPE_METHOD_NAME + "' didn't return any value", value);
+        assertEquals("unknown string Value", value);
     }
 
     @Ignore // This test belongs to the improvement of CMS-11933
