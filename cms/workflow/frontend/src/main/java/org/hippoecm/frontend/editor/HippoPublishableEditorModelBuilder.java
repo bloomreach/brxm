@@ -100,7 +100,15 @@ public class HippoPublishableEditorModelBuilder {
     private void buildDraft() {
         model.setEditor(getDraft());
         if (document.isTransferable()) {
-            model.setMode(Mode.VIEW);
+            if (hasPublished()) {
+                model.setMode(Mode.COMPARE);
+                model.setBase(getPublished());
+            } else if (hasUnpublished()) {
+                model.setMode(Mode.COMPARE);
+                model.setBase(getUnpublished());
+            } else {
+                model.setMode(Mode.VIEW);
+            }
         } else if (isHolder()) {
             model.setMode(Mode.EDIT);
         } else if (hasPublished()) {

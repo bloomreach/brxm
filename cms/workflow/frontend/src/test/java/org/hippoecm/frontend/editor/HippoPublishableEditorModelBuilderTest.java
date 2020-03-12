@@ -179,13 +179,13 @@ public class HippoPublishableEditorModelBuilderTest {
                         , createModel(DRAFT, PUBLISHED)},
                 // 41 = 101001
                 {createDocument().draft().notUnpublished().published().notRevision().notHolder().transferable()
-                        , createModel(DRAFT, VIEW)},
+                        , createModel(DRAFT, PUBLISHED)},
                 // 42 = 101010
                 {createDocument().draft().notUnpublished().published().notRevision().holder().notTransferable()
                         , createModel(DRAFT, EDIT)},
                 // 43 = 101011
                 {createDocument().draft().notUnpublished().published().notRevision().holder().transferable()
-                        , createModel(DRAFT, VIEW)},
+                        , createModel(DRAFT, PUBLISHED)},
                 // 44 = 101100
                 {createDocument().draft().notUnpublished().published().revision().notHolder().notTransferable()
                         , invalid()},
@@ -203,13 +203,13 @@ public class HippoPublishableEditorModelBuilderTest {
                         , createModel(DRAFT, UNPUBLISHED)},
                 // 49 = 110001
                 {createDocument().draft().unpublished().notPublished().notRevision().notHolder().transferable()
-                        , createModel(DRAFT, VIEW)},
+                        , createModel(DRAFT, UNPUBLISHED)},
                 // 50 = 110010
                 {createDocument().draft().unpublished().notPublished().notRevision().holder().notTransferable()
                         , createModel(DRAFT, EDIT)},
                 // 51 = 110011
                 {createDocument().draft().unpublished().notPublished().notRevision().holder().transferable()
-                        , createModel(DRAFT, VIEW)},
+                        , createModel(DRAFT, UNPUBLISHED)},
                 // 52 = 110100
                 {createDocument().draft().unpublished().notPublished().revision().notHolder().notTransferable()
                         , createModel(UNPUBLISHED, REVISION)},
@@ -227,13 +227,13 @@ public class HippoPublishableEditorModelBuilderTest {
                         , createModel(DRAFT, PUBLISHED)},
                 // 57 = 111001
                 {createDocument().draft().unpublished().published().notRevision().notHolder().transferable()
-                        , createModel(DRAFT, VIEW)},
+                        , createModel(DRAFT, PUBLISHED)},
                 // 58 = 111010
                 {createDocument().draft().unpublished().published().notRevision().holder().notTransferable()
                         , createModel(DRAFT, EDIT)},
                 // 59 = 111011
                 {createDocument().draft().unpublished().published().notRevision().holder().transferable()
-                        , createModel(DRAFT, VIEW)},
+                        , createModel(DRAFT, PUBLISHED)},
                 // 60 = 111100
                 {createDocument().draft().unpublished().published().notRevision().notHolder().notTransferable()
                         , createModel(DRAFT, PUBLISHED)},
