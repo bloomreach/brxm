@@ -200,7 +200,7 @@ public class HippoPublishableEditorModelBuilderTest {
                         , invalid()},
                 // 48 = 110000
                 {createDocument().draft().unpublished().notPublished().notRevision().notHolder().notTransferable()
-                        , createModel(DRAFT, UNPUBLISHED)},
+                        , createModel(UNPUBLISHED, VIEW)},
                 // 49 = 110001
                 {createDocument().draft().unpublished().notPublished().notRevision().notHolder().transferable()
                         , createModel(DRAFT, UNPUBLISHED)},
@@ -224,7 +224,7 @@ public class HippoPublishableEditorModelBuilderTest {
                         , createModel(UNPUBLISHED, REVISION)},
                 // 56 = 111000
                 {createDocument().draft().unpublished().published().notRevision().notHolder().notTransferable()
-                        , createModel(DRAFT, PUBLISHED)},
+                        , createModel(UNPUBLISHED, PUBLISHED)},
                 // 57 = 111001
                 {createDocument().draft().unpublished().published().notRevision().notHolder().transferable()
                         , createModel(DRAFT, PUBLISHED)},
@@ -236,7 +236,7 @@ public class HippoPublishableEditorModelBuilderTest {
                         , createModel(DRAFT, PUBLISHED)},
                 // 60 = 111100
                 {createDocument().draft().unpublished().published().notRevision().notHolder().notTransferable()
-                        , createModel(DRAFT, PUBLISHED)},
+                        , createModel(UNPUBLISHED, PUBLISHED)},
                 // 61 = 111101
                 {createDocument().draft().unpublished().published().revision().notHolder().transferable()
                         , createModel(UNPUBLISHED, REVISION)},
