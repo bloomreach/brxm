@@ -28,7 +28,6 @@ class HippoIframeCtrl {
     ContainerService,
     CreateContentService,
     DomService,
-    DragDropService,
     EditComponentService,
     EditContentService,
     FeedbackService,
@@ -53,7 +52,6 @@ class HippoIframeCtrl {
     this.ContainerService = ContainerService;
     this.CreateContentService = CreateContentService;
     this.DomService = DomService;
-    this.DragDropService = DragDropService;
     this.EditComponentService = EditComponentService;
     this.EditContentService = EditContentService;
     this.FeedbackService = FeedbackService;
@@ -87,7 +85,7 @@ class HippoIframeCtrl {
 
     this.iframeJQueryElement.on('load', this.onLoad);
     this._offEditMenu = this.$rootScope.$on('menu:edit', (event, menuUuid) => this.onEditMenu({ menuUuid }));
-    this._offComponentClick = this.$rootScope.$on('component:click', this._onComponentClick);
+    this._offComponentClick = this.$rootScope.$on('iframe:component:click', this._onComponentClick);
     this._offComponentMove = this.$rootScope.$on('iframe:component:move', this._onComponentMove);
     this._offSdkReady = this.$rootScope.$on('spa:ready', this._onSpaReady);
     this._offSdkUnload = this.$rootScope.$on('iframe:unload', this._onUnload);
@@ -98,8 +96,8 @@ class HippoIframeCtrl {
     this._offDocumentCreate = this.$rootScope.$on('document:create', this._onDocumentCreate);
     this._offDocumentEdit = this.$rootScope.$on('document:edit', this._onDocumentEdit);
     this._offDocumentSelect = this.$rootScope.$on('document:select', this._onDocumentSelect);
-    this._offDragStart = this.$rootScope.$on('drag:start', this._onDragStart);
-    this._offDragStop = this.$rootScope.$on('drag:stop', this._onDragStop);
+    this._offDragStart = this.$rootScope.$on('iframe:drag:start', this._onDragStart);
+    this._offDragStop = this.$rootScope.$on('iframe:drag:stop', this._onDragStop);
 
     const canvasJQueryElement = this.$element.find('.channel-iframe-canvas');
     const sheetJQueryElement = this.$element.find('.channel-iframe-sheet');
@@ -107,7 +105,6 @@ class HippoIframeCtrl {
     this.HippoIframeService.initialize(this.$element, this.iframeJQueryElement);
     this.OverlayService.init(this.iframeJQueryElement);
     this.ViewportService.init(sheetJQueryElement);
-    this.DragDropService.init(this.iframeJQueryElement);
     this.ScrollService.init(this.iframeJQueryElement, canvasJQueryElement, sheetJQueryElement);
     this.SpaService.init(this.iframeJQueryElement);
     this.RenderingService.init(this.iframeJQueryElement);
@@ -195,7 +192,13 @@ class HippoIframeCtrl {
     this.ComponentRenderingService.renderComponent(componentId, propertiesMap);
   }
 
-  _onComponentClick(event, component) {
+  _onComponentClick(event, componentId) {
+    const page = this.PageStructureService.getPage();
+    const component = page && page.getComponentById(componentId);
+    if (!component) {
+      return;
+    }
+
     this.EditComponentService.startEditing(component);
   }
 

@@ -108,6 +108,7 @@ describe('OverlayService', () => {
       });
 
       $rootScope.$emit('hippo-iframe:load');
+      OverlayService.DragDropService = DragDropService;
       try {
         PageStructureService.parseElements();
 

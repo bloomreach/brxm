@@ -22,6 +22,7 @@ import ServicesModule from '../services/services.module';
 import config from './iframe.config';
 import translateLoader from './translate-loader.factory';
 import CommunicationService from './communication.service';
+import DragDropService from './overlay/drag-drop.service';
 import HstCommentsProcessorService from './page/hst-comments-processor.service';
 import LinkProcessorService from './overlay/link-processor.service';
 import PageStructureService from './page/page-structure.service';
@@ -33,19 +34,21 @@ const iframeModule = angular
   .constant('Penpal', Penpal)
   .factory('translateLoader', translateLoader)
   .service('CommunicationService', CommunicationService)
+  .service('DragDropService', DragDropService)
   .service('HstCommentsProcessorService', HstCommentsProcessorService)
   .service('LinkProcessorService', LinkProcessorService)
   .service('PageStructureService', PageStructureService)
   .service('ScrollService', ScrollService)
 
   // eslint-disable-next-line no-shadow
-  .run(($rootScope, $translate, $window, CommunicationService, LinkProcessorService) => {
+  .run(($rootScope, $translate, $window, CommunicationService, DragDropService, LinkProcessorService) => {
     'ngInject';
 
     CommunicationService.connect()
       .then(CommunicationService.getLocale)
       .then(locale => $translate.use(locale));
 
+    DragDropService.initialize();
     LinkProcessorService.initialize();
 
     $rootScope.$on('page:change', () => CommunicationService.emit('page:change'));

@@ -33,7 +33,6 @@ class OverlayService {
     $translate,
     ChannelService,
     DomService,
-    DragDropService,
     ExperimentStateService,
     PageStructureService,
     SvgService,
@@ -45,7 +44,6 @@ class OverlayService {
     this.$rootScope = $rootScope;
     this.ChannelService = ChannelService;
     this.DomService = DomService;
-    this.DragDropService = DragDropService;
     this.ExperimentStateService = ExperimentStateService;
     this.PageStructureService = PageStructureService;
     this.SvgService = SvgService;
@@ -87,6 +85,10 @@ class OverlayService {
     const win = $(this.iframeWindow);
     win.one('unload', () => this._onUnload());
     win.on('resize', () => this.sync());
+
+    this.DragDropService = this.iframeWindow.angular.element(this.iframeWindow.document)
+      .injector()
+      .get('DragDropService');
 
     this.PageStructureService = this.iframeWindow.angular.element(this.iframeWindow.document)
       .injector()
@@ -209,6 +211,10 @@ class OverlayService {
   toggleComponentsOverlay(value) {
     this.isComponentsOverlayDisplayed = value;
     this._updateOverlayClasses();
+
+    if (!this.DragDropService) {
+      return;
+    }
 
     if (value) {
       this.DragDropService.enable();
