@@ -24,6 +24,7 @@ export default class CommunicationService {
     this.Penpal = Penpal;
 
     this.emit = this._call.bind(this, 'emit');
+    this.getAssetUrl = this._call.bind(this, 'getAssetUrl');
     this.getLocale = this._call.bind(this, 'getLocale');
     this.getScroll = this._call.bind(this, 'getScroll');
     this.getTranslations = this._call.bind(this, 'getTranslations');

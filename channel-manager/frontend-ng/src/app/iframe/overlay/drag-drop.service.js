@@ -19,19 +19,23 @@ const MIRROR_WRAPPER_SELECTOR = '.channel-dragula-mirror';
 const MOUSELEAVE_EVENT_NAME = 'mouseleave.dragDropService';
 const MOUSEUP_EVENT_NAME = 'mouseup.dragDropService';
 
-class DragDropService {
+export default class DragDropService {
   constructor(
+    $document,
     $q,
     $rootScope,
-    ConfigService,
+    $window,
+    CommunicationService,
     DomService,
     PageStructureService,
   ) {
     'ngInject';
 
+    this.$document = $document;
     this.$q = $q;
     this.$rootScope = $rootScope;
-    this.ConfigService = ConfigService;
+    this.$window = $window;
+    this.CommunicationService = CommunicationService;
     this.DomService = DomService;
     this.PageStructureService = PageStructureService;
 
@@ -39,15 +43,8 @@ class DragDropService {
     this.dropping = false;
   }
 
-  init(iframeJQueryElement) {
-    this.iframeJQueryElement = iframeJQueryElement;
-
-    this.$rootScope.$on('hippo-iframe:load', () => this._onLoad());
-
-    if (this._offPageChange) {
-      this._offPageChange();
-    }
-    this._offPageChange = this.$rootScope.$on('iframe:page:change', () => this._sync());
+  initialize() {
+    this.$rootScope.$on('page:change', () => this._sync());
   }
 
   _sync() {
@@ -56,46 +53,36 @@ class DragDropService {
     }
   }
 
-  _onLoad() {
-    this.iframe = this.iframeJQueryElement[0].contentWindow;
-    if (!this.iframe) {
-      return;
-    }
-
-    $(this.iframe).one('unload', () => {
-      this.disable();
-      this.dragulaPromise = null;
-    });
-
-    this.PageStructureService = this.iframe.angular.element(this.iframe.document)
-      .injector()
-      .get('PageStructureService');
-  }
-
-  enable() {
+  async enable() {
     if (!this.dragulaPromise) {
-      this.dragulaPromise = this._injectDragula(this.iframe);
+      this.dragulaPromise = this._injectDragula();
     }
 
-    return this.dragulaPromise.then(() => {
-      const containerBoxElements = this._getContainerBoxElements();
+    await this.dragulaPromise;
 
-      this.dragulaOptions = {
-        ignoreInputTextSelection: false,
-        mirrorContainer: $(MIRROR_WRAPPER_SELECTOR)[0],
-        moves: (el, source) => !this.dropping && this._isContainerEnabled(source),
-        accepts: (el, target) => this._isContainerEnabled(target),
-        invalid: () => !this.draggingOrClicking,
-        dragDelay: 300,
-      };
+    const containerBoxElements = this._getContainerBoxElements();
+    const isParentAccessible = this.$window.parent
+      && this.$window.parent !== this.$window
+      && this.DomService.isFrameAccessible(this.$window.parent);
+    const mirrorContainer = isParentAccessible
+      ? angular.element(MIRROR_WRAPPER_SELECTOR, this.$window.parent.document)[0]
+      : undefined;
 
-      this.drake = this.iframe.dragula(containerBoxElements, this.dragulaOptions);
-      this.drake.on('drag', (el, source) => this._onStartDrag(source));
-      this.drake.on('cloned', (clone, original) => this._onMirrorCreated(clone, original));
-      this.drake.on('over', (el, container) => this._updateDragDirection(container));
-      this.drake.on('dragend', el => this._onStopDragOrClick(el));
-      this.drake.on('drop', (el, target, source, sibling) => this._onDrop(el, target, source, sibling));
-    });
+    this.dragulaOptions = {
+      mirrorContainer,
+      ignoreInputTextSelection: false,
+      moves: (el, source) => !this.dropping && this._isContainerEnabled(source),
+      accepts: (el, target) => this._isContainerEnabled(target),
+      invalid: () => !this.draggingOrClicking,
+      dragDelay: 300,
+    };
+
+    this.drake = this.$window.dragula(containerBoxElements, this.dragulaOptions);
+    this.drake.on('drag', (el, source) => this._onStartDrag(source));
+    this.drake.on('cloned', (clone, original) => this._onMirrorCreated(clone, original));
+    this.drake.on('over', (el, container) => this._updateDragDirection(container));
+    this.drake.on('dragend', el => this._onStopDragOrClick(el));
+    this.drake.on('drop', (el, target, source, sibling) => this._onDrop(el, target, source, sibling));
   }
 
   disable() {
@@ -117,25 +104,21 @@ class DragDropService {
     return !!this.drake;
   }
 
-  _injectDragula(iframe) {
-    const appRootUrl = this.DomService.getAppRootUrl();
-    const dragulaJs = `${appRootUrl}scripts/dragula.min.js?antiCache=${this.ConfigService.antiCache}`;
+  async _injectDragula() {
+    const asset = await this.CommunicationService.getAssetUrl('scripts/dragula.min.js');
 
-    if (!this._usesRequireJs(iframe)) {
-      return this.DomService.addScript(iframe, dragulaJs);
+    if (this._usesRequireJs()) {
+      return this.$q(resolve => this.$window.require([asset], (dragula) => {
+        this.$window.dragula = dragula;
+        resolve();
+      }));
     }
 
-    const d = this.$q.defer();
-    iframe.require([dragulaJs], (dragula) => {
-      iframe.dragula = dragula;
-      d.resolve();
-    });
-
-    return d.promise;
+    return this.DomService.addScript(this.$window, asset);
   }
 
-  _usesRequireJs(iframe) {
-    return angular.isFunction(iframe.require) && iframe.require === iframe.requirejs;
+  _usesRequireJs() {
+    return angular.isFunction(this.$window.require) && this.$window.require === this.$window.requirejs;
   }
 
   _isContainerEnabled(containerElement) {
@@ -157,7 +140,7 @@ class DragDropService {
   startDragOrClick($event, component) {
     this.draggingOrClicking = true;
 
-    this._getIframeHtmlElement().addClass('hippo-overlay-permeable');
+    this.$document.find('html').addClass('hippo-overlay-permeable');
     this._dispatchMouseDownInIframe($event, component);
 
     const componentBoxElement = component.getBoxElement();
@@ -174,7 +157,7 @@ class DragDropService {
     if (!this.isDragging()) {
       this._onStopDragOrClick(component.getBoxElement());
 
-      this.$rootScope.$emit('component:click', component);
+      this.CommunicationService.emit('component:click', component.getId());
       this._digestIfNeeded();
     }
   }
@@ -200,12 +183,9 @@ class DragDropService {
   }
 
   _onStartDrag(containerElement) {
-    this._getIframeHtmlElement().addClass('hippo-dragging');
+    this.$document.find('html').addClass('hippo-dragging');
     this._updateDragDirection(containerElement);
-    this.$rootScope.$emit('drag:start');
-
-    // make Angular evaluate isDragging() again
-    this._digestIfNeeded();
+    this.CommunicationService.emit('drag:start');
   }
 
   _onMirrorCreated(mirrorElement, originalElement) {
@@ -235,9 +215,6 @@ class DragDropService {
         '[a-z\\-]*user-select',
       ],
     );
-
-    const iframeOffset = this.iframeJQueryElement.offset();
-    $(MIRROR_WRAPPER_SELECTOR).offset(iframeOffset);
   }
 
   _updateDragDirection(containerElement) {
@@ -246,8 +223,8 @@ class DragDropService {
   }
 
   _onStopDragOrClick(element) {
-    this._getIframeHtmlElement().removeClass('hippo-dragging hippo-overlay-permeable');
-    this.$rootScope.$emit('drag:stop');
+    this.$document.find('html').removeClass('hippo-dragging hippo-overlay-permeable');
+    this.CommunicationService.emit('drag:stop');
 
     this.draggingOrClicking = false;
 
@@ -273,24 +250,8 @@ class DragDropService {
   }
 
   _dispatchMouseDownInIframe($event, component) {
-    const [clientX, clientY] = this._shiftCoordinates($event);
-    const iframeMouseDownEvent = this.DomService.createMouseDownEvent(this.iframe, clientX, clientY);
-    const iframeElement = component.getBoxElement();
-    iframeElement[0].dispatchEvent(iframeMouseDownEvent);
-  }
-
-  _getIframeHtmlElement() {
-    return this.iframeJQueryElement.contents().find('html');
-  }
-
-  _shiftCoordinates($event) {
-    const iframeOffset = this.iframeJQueryElement.offset();
-
-    const shiftedX = $event.clientX - iframeOffset.left;
-    const shiftedY = $event.clientY - iframeOffset.top;
-
-    return [shiftedX, shiftedY];
+    const mouseDownEvent = this.DomService.createMouseDownEvent(this.$window, $event.clientX, $event.clientY);
+    const boxElement = component.getBoxElement();
+    boxElement[0].dispatchEvent(mouseDownEvent);
   }
 }
-
-export default DragDropService;

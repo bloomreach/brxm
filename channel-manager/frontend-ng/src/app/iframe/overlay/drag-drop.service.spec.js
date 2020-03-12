@@ -18,16 +18,13 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('DragDropService', () => {
-  let $injector;
+  let $document;
   let $q;
   let $rootScope;
-  let angularElement;
-  let ConfigService;
+  let CommunicationService;
   let DomService;
   let DragDropService;
   let PageStructureService;
-  let iframe;
-  let canvas;
 
   let mockCommentData;
   let container1;
@@ -35,43 +32,37 @@ describe('DragDropService', () => {
   let container2;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm.channel.hippoIframe');
+    angular.mock.module('hippo-cm-iframe');
 
     inject((
+      _$document_,
       _$q_,
       _$rootScope_,
-      _ConfigService_,
+      _CommunicationService_,
       _DomService_,
       _DragDropService_,
+      _PageStructureService_,
     ) => {
+      $document = _$document_;
       $q = _$q_;
       $rootScope = _$rootScope_;
-      ConfigService = _ConfigService_;
+      CommunicationService = _CommunicationService_;
       DomService = _DomService_;
       DragDropService = _DragDropService_;
+      PageStructureService = _PageStructureService_;
     });
 
-    const fake = angular.element('<div>');
+    jasmine.getFixtures().load('iframe/overlay/drag-drop.service.fixture.html');
 
-    angular.bootstrap(fake, ['hippo-cm-iframe']);
-    window.$Promise = $q;
+    spyOn(CommunicationService, 'getAssetUrl').and.callFake(href => href);
+    DragDropService.$window = window;
 
-    $injector = fake.injector();
-    PageStructureService = fake.injector().get('PageStructureService');
-    PageStructureService.$rootScope = $rootScope;
-    angularElement = angular.element;
-    spyOn(angular, 'element').and.callThrough();
-
-    jasmine.getFixtures().load('channel/hippoIframe/dragDrop/dragDrop.service.fixture.html');
-
-    iframe = $('#testIframe');
-    canvas = $('#testCanvas');
     mockCommentData = {};
   });
 
   function createContainer(number, xtype = 'HST.NoMarkup') {
-    const iframeStartContainerComment = iframe.contents().find(`#iframeStartContainerComment${number}`);
-    const iframeEndContainerComment = iframe.contents().find(`#iframeEndContainerComment${number}`);
+    const iframeStartContainerComment = $document.find(`#iframeStartContainerComment${number}`);
+    const iframeEndContainerComment = $document.contents().find(`#iframeEndContainerComment${number}`);
     const startCommentData = Object.assign(
       {
         uuid: `container${number}`,
@@ -97,7 +88,7 @@ describe('DragDropService', () => {
   }
 
   function createComponent(number) {
-    const iframeComponentComment = iframe.contents().find(`#iframeComponentComment${number}`)[0];
+    const iframeComponentComment = $document.find(`#iframeComponentComment${number}`)[0];
     const commentData = Object.assign(
       {
         uuid: `component${number}`,
@@ -110,47 +101,29 @@ describe('DragDropService', () => {
     iframeComponentComment.replaceWith($(`<!-- ${JSON.stringify(commentData)} -->`)[0]);
   }
 
-  function loadIframeFixture(callback) {
-    DragDropService.init(iframe, canvas);
+  function enableDragDrop(callback) {
+    DragDropService.initialize();
 
-    iframe.one('load', () => {
-      const iframeWindow = iframe[0].contentWindow;
+    createContainer(1);
+    createComponent(1, container1);
+    createContainer(2);
 
-      iframeWindow.angular = angular;
-      PageStructureService.$document = angular.element(iframeWindow.document);
+    PageStructureService.parseElements();
 
-      angular.element.and.callFake((selector, ...rest) => {
-        const result = angularElement(selector, ...rest);
+    container1 = PageStructureService.getPage().getContainerById('container1');
+    container2 = PageStructureService.getPage().getContainerById('container2');
+    component1 = PageStructureService.getPage().getComponentById('component1');
 
-        if (selector === iframeWindow.document) {
-          result.injector = () => $injector;
-        }
-
-        return result;
-      });
-      $rootScope.$emit('hippo-iframe:load');
-
-      createContainer(1);
-      createComponent(1, container1);
-      createContainer(2);
-
-      PageStructureService.parseElements();
-
-      container1 = PageStructureService.getPage().getContainerById('container1');
-      container2 = PageStructureService.getPage().getContainerById('container2');
-      component1 = PageStructureService.getPage().getComponentById('component1');
-
-      DragDropService.enable().then(() => {
-        try {
-          callback(iframeWindow);
-        } catch (e) {
-          // Karma silently swallows stack traces for synchronous tests, so log them in an explicit fail
-          fail(e);
-        }
-      });
+    DragDropService.enable().then(() => {
+      try {
+        callback();
+      } catch (e) {
+        // Karma silently swallows stack traces for synchronous tests, so log them in an explicit fail
+        fail(e);
+      }
     });
 
-    iframe.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/dragDrop/dragDrop.service.iframe.fixture.html`); // eslint-disable-line max-len
+    $rootScope.$digest();
   }
 
   function eventHandlerCount(jqueryElement, event) {
@@ -165,7 +138,7 @@ describe('DragDropService', () => {
     });
 
     it('should return true when the drag and drop service is enabled', (done) => {
-      loadIframeFixture(() => {
+      enableDragDrop(() => {
         expect(DragDropService.isEnabled()).toBe(true);
         done();
       });
@@ -177,29 +150,17 @@ describe('DragDropService', () => {
   });
 
   it('injects dragula.js into the iframe', (done) => {
-    loadIframeFixture((iframeWindow) => {
-      expect(typeof iframeWindow.dragula).toEqual('function');
+    enableDragDrop(() => {
       expect(DragDropService.drake).toBeDefined();
       expect(DragDropService.isDragging()).toBeFalsy();
       done();
     });
   });
 
-  it('destroys dragula on iframe unload', (done) => {
-    loadIframeFixture((iframeWindow) => {
-      expect(DragDropService.drake).not.toBeNull();
-      $(iframeWindow).trigger('unload');
-      expect(DragDropService.drake).toBeNull();
-      expect(DragDropService.dragulaOptions).toBeNull();
-      expect(DragDropService.isDragging()).toBeFalsy();
-      done();
-    });
-  });
-
   it('reloads the dragula containers on a page change', (done) => {
-    loadIframeFixture(() => {
+    enableDragDrop(() => {
       const drakeContainers = DragDropService.drake.containers;
-      $rootScope.$emit('iframe:page:change');
+      $rootScope.$emit('page:change');
       expect(DragDropService.drake.containers).not.toBe(drakeContainers);
       done();
     });
@@ -207,17 +168,13 @@ describe('DragDropService', () => {
 
   describe('startDragOrClick', () => {
     it('forwards a shifted mouse event to the iframe when it starts dragging in an iframe', (done) => {
-      loadIframeFixture(() => {
+      enableDragDrop(() => {
         const mockedMouseDownEvent = {
           clientX: 100,
           clientY: 200,
         };
         const iframeComponentElement1 = component1.getBoxElement()[0];
 
-        iframe.offset({
-          left: 10,
-          top: 20,
-        });
         spyOn(iframeComponentElement1, 'dispatchEvent');
 
         DragDropService.startDragOrClick(mockedMouseDownEvent, component1);
@@ -228,15 +185,15 @@ describe('DragDropService', () => {
         const dispatchedEvent = iframeComponentElement1.dispatchEvent.calls.argsFor(0)[0];
         expect(dispatchedEvent.type).toEqual('mousedown');
         expect(dispatchedEvent.bubbles).toEqual(true);
-        expect(dispatchedEvent.clientX).toEqual(90);
-        expect(dispatchedEvent.clientY).toEqual(180);
+        expect(dispatchedEvent.clientX).toEqual(100);
+        expect(dispatchedEvent.clientY).toEqual(200);
 
         done();
       });
     });
 
     it('stops dragging or clicking when disabled', (done) => {
-      loadIframeFixture(() => {
+      enableDragDrop(() => {
         const mockedMouseDownEvent = {
           clientX: 100,
           clientY: 200,
@@ -255,8 +212,8 @@ describe('DragDropService', () => {
     });
 
     it('should emit component:click event on a left button mouseup event', (done) => {
-      loadIframeFixture(() => {
-        spyOn($rootScope, '$emit');
+      enableDragDrop(() => {
+        spyOn(CommunicationService, 'emit');
 
         const mockedMouseDownEvent = {
           clientX: 100,
@@ -271,7 +228,7 @@ describe('DragDropService', () => {
         mouseUp.which = 1; // left mouse button, see https://api.jquery.com/event.which/
         componentElement1.trigger(mouseUp);
 
-        expect($rootScope.$emit).toHaveBeenCalledWith('component:click', component1);
+        expect(CommunicationService.emit).toHaveBeenCalledWith('component:click', component1.getId());
 
         done();
       });
@@ -281,7 +238,7 @@ describe('DragDropService', () => {
       mockCommentData.container1 = {
         'HST-LockedBy': 'anotherUser',
       };
-      loadIframeFixture(() => {
+      enableDragDrop(() => {
         const mockedMouseDownEvent = {
           clientX: 100,
           clientY: 200,
@@ -309,20 +266,20 @@ describe('DragDropService', () => {
     mockCommentData.container1 = {
       'HST-LockedBy': 'anotherUser',
     };
-    loadIframeFixture(() => {
+    enableDragDrop(() => {
       expect(angular.element(DragDropService.drake.containers)).toEqual(container2.getBoxElement());
       done();
     });
   });
 
   it('checks internally whether a container is disabled', (done) => {
-    loadIframeFixture(() => {
+    enableDragDrop(() => {
       expect(DragDropService._isContainerEnabled(container1.getBoxElement())).toBeTruthy();
 
       spyOn(container1, 'isDisabled').and.returnValue(true);
       expect(DragDropService._isContainerEnabled(container1.getBoxElement())).toBeFalsy();
 
-      expect(DragDropService._isContainerEnabled(iframe)).toBeFalsy();
+      expect(DragDropService._isContainerEnabled($document)).toBeFalsy();
 
       done();
     });
@@ -333,7 +290,7 @@ describe('DragDropService', () => {
       'HST-XType': 'HST.Span',
     };
 
-    loadIframeFixture(() => {
+    enableDragDrop(() => {
       DragDropService._updateDragDirection(container1.getBoxElement()[0]);
       expect(DragDropService.dragulaOptions.direction).toEqual('vertical');
 
@@ -345,62 +302,47 @@ describe('DragDropService', () => {
   });
 
   describe('DragulaJS injection', () => {
-    let mockIframe = {}; // "require" and "requirejs" functions are not defined
-
-    it('injects DragulaJS when RequireJS is not available using DomService', (done) => {
-      loadIframeFixture(() => {
-        spyOn(DomService, 'getAppRootUrl').and.returnValue('http://localhost:8080/cms/');
-        ConfigService.antiCache = '123';
-        const DragulaJSPath = `${DomService.getAppRootUrl()}scripts/dragula.min.js?antiCache=${ConfigService.antiCache}`; // eslint-disable-line max-len
-
-        spyOn(DomService, 'addScript').and.returnValue($q.resolve());
-
-        DragDropService._injectDragula(mockIframe);
-        expect(DomService.addScript).toHaveBeenCalledWith(mockIframe, DragulaJSPath);
-
-        done();
-      });
+    afterEach(() => {
+      delete window.require;
+      delete window.requirejs;
     });
 
-    it('injects DragulaJS using DomService when a require function exists that is not RequireJs', (done) => {
-      loadIframeFixture(() => {
-        mockIframe = {
-          require: () => fail(),
-        };
+    it('injects DragulaJS when RequireJS is not available using DomService', () => {
+      spyOn(DomService, 'addScript').and.returnValue($q.resolve());
+      CommunicationService.getAssetUrl.and.returnValue($q.resolve('url'));
 
-        spyOn(DomService, 'getAppRootUrl').and.returnValue('http://localhost:8080/cms/');
-        ConfigService.antiCache = '123';
-        const DragulaJSPath = `${DomService.getAppRootUrl()}scripts/dragula.min.js?antiCache=${ConfigService.antiCache}`; // eslint-disable-line max-len
+      DragDropService._injectDragula();
+      $rootScope.$digest();
 
-        spyOn(DomService, 'addScript').and.returnValue($q.resolve());
-
-        DragDropService._injectDragula(mockIframe);
-        expect(DomService.addScript).toHaveBeenCalledWith(mockIframe, DragulaJSPath);
-
-        done();
-      });
+      expect(DomService.addScript).toHaveBeenCalledWith(window, 'url');
     });
 
-    it('injects DragulaJS when RequireJS is available', (done) => {
-      loadIframeFixture(() => {
-        const requireFn = (modules, callback) => { callback('dragulaLoaded'); };
+    it('injects DragulaJS using DomService when a require function exists that is not RequireJs', () => {
+      window.require = () => fail();
 
-        mockIframe = {
-          require: requireFn,
-          requirejs: requireFn,
-        };
+      spyOn(DomService, 'addScript').and.returnValue($q.resolve());
+      CommunicationService.getAssetUrl.and.returnValue($q.resolve('url'));
 
-        spyOn(DomService, 'getAppRootUrl').and.returnValue('http://localhost:8080/cms/');
-        ConfigService.antiCache = '123';
+      DragDropService._injectDragula();
+      $rootScope.$digest();
 
-        spyOn(DomService, 'addScript');
+      expect(DomService.addScript).toHaveBeenCalledWith(window, 'url');
+    });
 
-        DragDropService._injectDragula(mockIframe);
-        expect(DomService.addScript).not.toHaveBeenCalled();
+    it('injects DragulaJS when RequireJS is available', () => {
+      const requireFn = (modules, callback) => { callback('dragulaLoaded'); };
 
-        expect(mockIframe.dragula).toBe('dragulaLoaded');
-        done();
-      });
+      window.require = requireFn;
+      window.requirejs = requireFn;
+
+      spyOn(DomService, 'addScript');
+      CommunicationService.getAssetUrl.and.returnValue($q.resolve('url'));
+
+      DragDropService._injectDragula();
+      $rootScope.$digest();
+
+      expect(DomService.addScript).not.toHaveBeenCalled();
+      expect(window.dragula).toBe('dragulaLoaded');
     });
   });
 });

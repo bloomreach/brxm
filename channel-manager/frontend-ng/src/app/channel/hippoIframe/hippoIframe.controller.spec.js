@@ -25,7 +25,6 @@ describe('hippoIframeCtrl', () => {
   let ContainerService;
   let CreateContentService;
   let DomService;
-  let DragDropService;
   let EditComponentService;
   let EditContentService;
   let FeedbackService;
@@ -76,7 +75,6 @@ describe('hippoIframeCtrl', () => {
       _CmsService_,
       _CommunicationService_,
       _ContainerService_,
-      _DragDropService_,
       _HippoIframeService_,
       _OverlayService_,
       _PageStructureService_,
@@ -90,7 +88,6 @@ describe('hippoIframeCtrl', () => {
       CmsService = _CmsService_;
       CommunicationService = _CommunicationService_;
       ContainerService = _ContainerService_;
-      DragDropService = _DragDropService_;
       HippoIframeService = _HippoIframeService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
@@ -117,7 +114,6 @@ describe('hippoIframeCtrl', () => {
         $element,
         CmsService,
         ContainerService,
-        DragDropService,
         HippoIframeService,
         OverlayService,
         PageStructureService,
@@ -136,10 +132,30 @@ describe('hippoIframeCtrl', () => {
   });
 
   describe('click component', () => {
-    it('starts editing a component on component:click event', () => {
-      $rootScope.$emit('component:click', { id: 'testId' });
+    it('should start editing a component on component:click event', () => {
+      const component = { id: 'testId' };
+      spyOn(PageStructureService, 'getPage').and.returnValue({
+        getComponentById: () => component,
+      });
+      $rootScope.$emit('iframe:component:click', 'testId');
 
       expect(EditComponentService.startEditing).toHaveBeenCalledWith({ id: 'testId' });
+    });
+
+    it('should not start editing a component if the page is not ready', () => {
+      spyOn(PageStructureService, 'getPage');
+      $rootScope.$emit('iframe:component:click', 'testId');
+
+      expect(EditComponentService.startEditing).not.toHaveBeenCalled();
+    });
+
+    it('should not start editing a component if the component is not on the page', () => {
+      spyOn(PageStructureService, 'getPage').and.returnValue({
+        getComponentById: () => {},
+      });
+      $rootScope.$emit('iframe:component:click', 'testId');
+
+      expect(EditComponentService.startEditing).not.toHaveBeenCalled();
     });
   });
 
@@ -470,7 +486,7 @@ describe('hippoIframeCtrl', () => {
 
   describe('_onDragStart', () => {
     beforeEach(() => {
-      $rootScope.$emit('drag:start');
+      $rootScope.$emit('iframe:drag:start');
     });
 
     it('should set hippo-dragging class on the canvas element', () => {
@@ -484,8 +500,8 @@ describe('hippoIframeCtrl', () => {
 
   describe('_onDragStop', () => {
     beforeEach(() => {
-      $rootScope.$emit('drag:start');
-      $rootScope.$emit('drag:stop');
+      $rootScope.$emit('iframe:drag:start');
+      $rootScope.$emit('iframe:drag:stop');
     });
 
     it('should remove hippo-dragging class from the canvas element', () => {
