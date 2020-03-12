@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,7 +23,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.repository.api.HippoNodeType;
@@ -52,13 +52,13 @@ public class ViolationUtils {
 
     public static String getFieldViolationScript(final String selector, final ViolationMessage violation) {
         final String message = violation.getMessage();
-        final String htmlEscapedMessage = StringEscapeUtils.escapeHtml(message);
+        final String htmlEscapedMessage = StringEscapeUtils.escapeHtml4(message);
         return String.format(
                 "%s.addClass('%s').append('<span class=\"%s\">%s</span>');",
                 selector,
                 INVALID_CLASS,
                 VALIDATION_MESSAGE_CLASS,
-                StringEscapeUtils.escapeJavaScript(htmlEscapedMessage));
+                StringEscapeUtils.escapeEcmaScript(htmlEscapedMessage));
     }
 
     public static String getViolationPerCompoundScript(final String selector, final IFieldDescriptor field, final IModel<IValidationResult> validationModel) {
@@ -66,7 +66,7 @@ public class ViolationUtils {
 
         getViolationPerCompound(field, validationModel).forEach(violation -> {
             final String message = violation.getMessage();
-            final String htmlEscapedMessage = StringEscapeUtils.escapeHtml(message);
+            final String htmlEscapedMessage = StringEscapeUtils.escapeHtml4(message);
             final String messageElement = String.format(
                 "<div class=\"%s compound-validation-message\">%s</div>",
                 VALIDATION_MESSAGE_CLASS,
@@ -76,7 +76,7 @@ public class ViolationUtils {
                 "subfields.eq(%d).addClass('%s').prepend('%s');",
                 violation.getIndex(),
                 COMPOUND_VALIDATION_BORDER_CLASS,
-                StringEscapeUtils.escapeJavaScript(messageElement))
+                StringEscapeUtils.escapeEcmaScript(messageElement))
             );
         });
 

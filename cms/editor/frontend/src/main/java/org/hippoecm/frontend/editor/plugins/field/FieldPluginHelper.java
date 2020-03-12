@@ -17,7 +17,7 @@ package org.hippoecm.frontend.editor.plugins.field;
 
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.Session;
 import org.apache.wicket.model.IDetachable;

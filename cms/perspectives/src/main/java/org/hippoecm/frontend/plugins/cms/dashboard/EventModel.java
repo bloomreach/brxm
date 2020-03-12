@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -25,8 +25,8 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Value;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.commons.JcrUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IComponentAssignedModel;
@@ -91,7 +91,7 @@ public class EventModel implements IComponentAssignedModel<String> {
                     this.arguments[i] = values[i].getString();
                 }
             }
-            this.user = StringEscapeUtils.escapeHtml(node.getProperty("hippolog:user").getString());
+            this.user = StringEscapeUtils.escapeHtml4(node.getProperty("hippolog:user").getString());
             this.nameModel = nameModel;
 
         } catch (RepositoryException e) {
@@ -212,7 +212,7 @@ public class EventModel implements IComponentAssignedModel<String> {
                         final String resourceKey = StringUtils.replaceOnce(method, "delete", "delete-unknown");
                         operationModel = new StringResourceModel(resourceKey, component).setParameters(user);
                     } else {
-                        name = StringEscapeUtils.escapeHtml(name);
+                        name = StringEscapeUtils.escapeHtml4(name);
                         operationModel = new StringResourceModel(method, component).setParameters(user, name);
                     }
                 } else {

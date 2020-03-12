@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.wicket.Application;
 import org.apache.wicket.Page;
 import org.apache.wicket.Session;
@@ -46,7 +47,6 @@ import org.hippoecm.frontend.plugins.jquery.upload.TemporaryFileItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.commons.lang.StringEscapeUtils.escapeHtml;
 
 /**
  * The file upload behavior to handle uploads sent by ajax requests. The component container can override the following
@@ -231,7 +231,7 @@ public abstract class AjaxFileUploadBehavior extends AbstractAjaxBehavior {
 
     private String generateHtmlResponse(final Map<String, FileUploadInfo> uploadedFiles) {
         String jsonResponse = generateJsonResponse(uploadedFiles);
-        String escapedJson = escapeHtml(jsonResponse);
+        String escapedJson = StringEscapeUtils.escapeHtml4(jsonResponse);
         return escapedJson;
     }
 

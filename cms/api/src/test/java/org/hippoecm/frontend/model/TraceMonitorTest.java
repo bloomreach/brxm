@@ -17,8 +17,8 @@ package org.hippoecm.frontend.model;
 
 import static org.junit.Assert.assertEquals;
 
-import org.apache.commons.lang.BooleanUtils;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.easymock.EasyMock;
 import org.junit.After;
 import org.junit.Before;

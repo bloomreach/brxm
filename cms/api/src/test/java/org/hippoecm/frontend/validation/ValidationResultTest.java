@@ -18,7 +18,7 @@ package org.hippoecm.frontend.validation;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.model.Model;
 import org.hippoecm.frontend.types.MockFieldDescriptor;
 import org.hippoecm.frontend.types.MockTypeDescriptor;

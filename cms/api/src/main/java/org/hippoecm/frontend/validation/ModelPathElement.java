@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.validation;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.wicket.model.IDetachable;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 

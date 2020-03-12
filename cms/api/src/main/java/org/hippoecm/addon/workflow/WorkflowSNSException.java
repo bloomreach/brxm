@@ -18,7 +18,7 @@ package org.hippoecm.addon.workflow;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.repository.api.WorkflowException;
 
 /**

@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.richtext.htmlprocessor;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.request.cycle.RequestCycle;
 import org.onehippo.cms7.services.htmlprocessor.richtext.URLEncoder;
 
