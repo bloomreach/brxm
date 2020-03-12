@@ -24,6 +24,7 @@
   <Loggers>
     <Logger name="org.hippoecm.repository.LocalHippoRepository" level="warn"/>
     <Logger name="org.hippoecm.hst" level="warn"/>
+    <Logger name="org.hippoecm.hst.content.beans.dynamic" level="trace"/>
 
     <Root level="warn">
       <AppenderRef ref="console"/>

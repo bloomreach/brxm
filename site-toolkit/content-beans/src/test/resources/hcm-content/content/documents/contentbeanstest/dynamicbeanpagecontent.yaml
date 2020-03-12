@@ -30,6 +30,7 @@
     contentbeanstest:multipleValueSingleLongTypeField: [50]
     contentbeanstest:radioGroupTypeField: 'radiogroupvalue'
     contentbeanstest:stringTypeField: string Value
+    contentbeanstest:unknownStringTypeField: unknown string Value
     contentbeanstest:textTypeField: textvalue
     contentbeanstest:longTypeField2: 100
     hippo:availability: []

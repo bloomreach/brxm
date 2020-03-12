@@ -12,14 +12,22 @@ definitions:
           hipposysedit:node: true
           hipposysedit:supertype: ['contentbeanstest:basedocument', 'hippostd:relaxed']
           hipposysedit:uri: http://www.hippoecm.org/hst/nt/contentbeanstest/1.0
-#          /stringTypeField:
-#            jcr:primaryType: hipposysedit:field
-#            hipposysedit:mandatory: false
-#            hipposysedit:multiple: false
-#            hipposysedit:ordered: false
-#            hipposysedit:path: contentbeanstest:stringTypeField
-#            hipposysedit:primary: false
-#            hipposysedit:type: Text
+          /stringTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:stringTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: String
+          /unknownStringTypeField:
+            jcr:primaryType: hipposysedit:field
+            hipposysedit:mandatory: false
+            hipposysedit:multiple: false
+            hipposysedit:ordered: false
+            hipposysedit:path: contentbeanstest:unknownStringTypeField
+            hipposysedit:primary: false
+            hipposysedit:type: UnknownString
           /booleanTypeField:
             jcr:primaryType: hipposysedit:field
             hipposysedit:mandatory: false
@@ -257,6 +265,7 @@ definitions:
           hippotranslation:locale: document-type-locale
           jcr:mixinTypes: ['mix:referenceable']
           contentbeanstest:stringTypeField: ''
+          contentbeanstest:unknownStringTypeField: ''
           contentbeanstest:booleanTypeField: false
           contentbeanstest:doubleTypeField: 0.0
           contentbeanstest:longTypeField: 0
