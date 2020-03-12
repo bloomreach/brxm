@@ -47,7 +47,7 @@ describe('hippoIframeCtrl', () => {
 
     ComponentRenderingService = jasmine.createSpyObj('ComponentRenderingService', ['renderComponent']);
     CreateContentService = jasmine.createSpyObj('CreateContentService', ['start']);
-    DomService = jasmine.createSpyObj('DomService', ['addScript', 'getAssetUrl']);
+    DomService = jasmine.createSpyObj('DomService', ['addScript', 'getAssetUrl', 'isFrameAccessible']);
     EditComponentService = jasmine.createSpyObj('EditComponentService', ['startEditing']);
     EditContentService = jasmine.createSpyObj('EditContentService', ['startEditing']);
     FeedbackService = jasmine.createSpyObj('FeedbackService', ['showErrorResponse', 'showNotification']);
@@ -202,6 +202,7 @@ describe('hippoIframeCtrl', () => {
   });
 
   it('initiates a connection with the iframe bundle', () => {
+    DomService.isFrameAccessible.and.returnValue(true);
     $ctrl.onLoad();
     $rootScope.$digest();
 
@@ -211,6 +212,7 @@ describe('hippoIframeCtrl', () => {
   });
 
   it('injects the iframe bundle into the iframe', () => {
+    DomService.isFrameAccessible.and.returnValue(true);
     DomService.getAssetUrl.and.returnValue('url');
 
     $ctrl.onLoad();
@@ -221,9 +223,9 @@ describe('hippoIframeCtrl', () => {
   });
 
   it('does not inject the iframe bundle into a cross-origin iframe', () => {
-    Object.defineProperty(contentWindow, 'document', { get: () => { throw new Error('Access denied.'); } });
+    DomService.isFrameAccessible.and.returnValue(false);
 
-    expect(() => $ctrl.onLoad()).not.toThrow();
+    $ctrl.onLoad();
     $rootScope.$digest();
 
     expect(DomService.addScript).not.toHaveBeenCalled();
@@ -233,6 +235,7 @@ describe('hippoIframeCtrl', () => {
     spyOn($rootScope, '$emit');
     spyOn(SpaService, 'initLegacy').and.returnValue(false);
     spyOn(RenderingService, 'createOverlay').and.returnValue($q.resolve());
+    DomService.isFrameAccessible.and.returnValue(true);
 
     $ctrl.onLoad();
     $rootScope.$digest();
@@ -243,6 +246,7 @@ describe('hippoIframeCtrl', () => {
   it('triggers an event when page is loaded', () => {
     spyOn($rootScope, '$emit');
     spyOn(SpaService, 'initLegacy').and.returnValue(true);
+    DomService.isFrameAccessible.and.returnValue(true);
 
     $ctrl.onLoad();
     $rootScope.$digest();
@@ -261,6 +265,7 @@ describe('hippoIframeCtrl', () => {
   it('initializes the legacy SPA integration', () => {
     spyOn($rootScope, '$emit');
     spyOn(SpaService, 'initLegacy').and.returnValue(true);
+    DomService.isFrameAccessible.and.returnValue(true);
 
     $ctrl.onLoad();
     $rootScope.$digest();
@@ -270,7 +275,7 @@ describe('hippoIframeCtrl', () => {
 
   it('initiates a connection with the iframe bundle when the SPA SDK is ready', () => {
     spyOn(SpaService, 'getOrigin').and.returnValue('http://localhost:3000');
-    Object.defineProperty(contentWindow, 'document', { get: () => { throw new Error('Access denied.'); } });
+    DomService.isFrameAccessible.and.returnValue(false);
 
     $rootScope.$emit('spa:ready');
     $rootScope.$digest();
@@ -282,8 +287,8 @@ describe('hippoIframeCtrl', () => {
   });
 
   it('injects the iframe bundle when the SPA SDK is ready', () => {
-    Object.defineProperty(contentWindow, 'document', { get: () => { throw new Error('Access denied.'); } });
     spyOn(SpaService, 'inject');
+    DomService.isFrameAccessible.and.returnValue(false);
     DomService.getAssetUrl.and.returnValue('url');
 
     $rootScope.$emit('spa:ready');
@@ -294,8 +299,8 @@ describe('hippoIframeCtrl', () => {
   });
 
   it('triggers an event when the SPA SDK is ready', () => {
-    Object.defineProperty(contentWindow, 'document', { get: () => { throw new Error('Access denied.'); } });
     spyOn(SpaService, 'inject');
+    DomService.isFrameAccessible.and.returnValue(false);
 
     $rootScope.$emit('spa:ready');
     spyOn($rootScope, '$emit');
@@ -305,6 +310,8 @@ describe('hippoIframeCtrl', () => {
   });
 
   it('does not trigger an event when the iframe has the same origin', () => {
+    DomService.isFrameAccessible.and.returnValue(true);
+
     const listener = jasmine.createSpy('listener');
 
     $rootScope.$on('hippo-iframe:load', listener);
