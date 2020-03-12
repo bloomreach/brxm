@@ -50,6 +50,7 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.util.ListModel;
 import org.apache.wicket.request.resource.CssResourceReference;
+
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.editor.ITemplateEngine;
@@ -73,10 +74,14 @@ import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.Violation;
+
 import org.onehippo.forge.selection.frontend.model.ValueList;
 import org.onehippo.forge.selection.frontend.plugin.sorting.SortHelper;
 import org.onehippo.forge.selection.frontend.provider.IValueListProvider;
 import org.onehippo.forge.selection.frontend.utils.SelectionUtils;
+
+import com.google.common.collect.Lists;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -402,6 +407,8 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
 
                     @Override
                     protected void onUpdate(final AjaxRequestTarget target) {
+                        final Iterator selectedChoices = recorder.getPalette().getSelectedChoices();
+                        model.setObject(Lists.newArrayList(selectedChoices));
                     }
 
                 });
