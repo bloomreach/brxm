@@ -239,9 +239,13 @@
             <hippo:action action="unlock" enabledExpr="false"/>
           </if>
           <!-- enable the operation to start editing -->
-          <hippo:action action="obtainEditableInstance" enabledExpr="branchExists"/>
+
           <if cond="transferable">
             <hippo:action action="editDraft" enabledExpr="true"/>
+            <hippo:action action="obtainEditableInstance" enabledExpr="branchExists and (!!unpublished or !!published)"/>
+          <else>
+            <hippo:action action="obtainEditableInstance" enabledExpr="branchExists"/>
+          </else>
           </if>
         </onentry>
       </state>

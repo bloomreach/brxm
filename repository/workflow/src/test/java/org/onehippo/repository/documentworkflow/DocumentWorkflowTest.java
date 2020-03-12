@@ -336,14 +336,14 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE, true);
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER,"otheruser");
         assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
-                .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit().editable()
-                .editDraft()
+                .status(true).isLive(false).previewAvailable(false).checkModified(false).noEdit()
+                .editDraft().obtainEditableInstance(false)
                 .requestPublication(false).requestDepublication(false).listVersions()
                 .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
                 .terminateable(false)
                 .hints());
         assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
-                .status().logEvent().editable().noRequest().noPublish().noDepublish().noVersioning().noTerminate().noCopy()
+                .status().editable().logEvent().noRequest().noPublish().noDepublish().noVersioning().noTerminate().noCopy()
                 .noBranchable().noCheckoutBranch().noRemoveBranch().noReintegrateBranch().noPublishBranch().noDepublishBranch()
                 .states()
         );
