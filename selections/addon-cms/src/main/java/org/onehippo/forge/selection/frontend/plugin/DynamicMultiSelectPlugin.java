@@ -1,5 +1,5 @@
 /*
- * Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -50,6 +50,7 @@ import org.apache.wicket.markup.repeater.RefreshingView;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.request.resource.CssResourceReference;
+
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.editor.ITemplateEngine;
 import org.hippoecm.frontend.editor.plugins.field.FieldPluginHelper;
@@ -72,11 +73,14 @@ import org.hippoecm.frontend.validation.IValidationResult;
 import org.hippoecm.frontend.validation.ModelPath;
 import org.hippoecm.frontend.validation.ModelPathElement;
 import org.hippoecm.frontend.validation.Violation;
-import org.hippoecm.repository.util.JcrUtils;
+
 import org.onehippo.forge.selection.frontend.model.ValueList;
 import org.onehippo.forge.selection.frontend.plugin.sorting.SortHelper;
 import org.onehippo.forge.selection.frontend.provider.IValueListProvider;
 import org.onehippo.forge.selection.frontend.utils.SelectionUtils;
+
+import com.google.common.collect.Lists;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -406,13 +410,15 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
             // trigger setObject on selection changed
             @Override
             protected Recorder newRecorderComponent() {
-                Recorder recorder = super.newRecorderComponent();
+                final Recorder recorder = super.newRecorderComponent();
                 recorder.add(new AjaxFormComponentUpdatingBehavior("change") {
 
                     private static final long serialVersionUID = 1L;
 
                     @Override
-                    protected void onUpdate(AjaxRequestTarget target) {
+                    protected void onUpdate(final AjaxRequestTarget target) {
+                        final Iterator selectedChoices = recorder.getPalette().getSelectedChoices();
+                        model.setObject(Lists.newArrayList(selectedChoices));
                     }
 
                 });
@@ -435,7 +441,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
         CheckBoxMultipleChoice checkboxes = new CheckBoxMultipleChoice("checkboxes", model, choicesModel,
                 new ValueListItemRenderer(valueList));
         checkboxes.setSuffix("<br/>");
-        
+
         // trigger setObject on selection changed
         checkboxes.add(new AjaxFormChoiceComponentUpdatingBehavior() {
 
