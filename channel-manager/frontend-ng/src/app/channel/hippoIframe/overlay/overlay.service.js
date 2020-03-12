@@ -33,7 +33,6 @@ class OverlayService {
     $translate,
     ChannelService,
     DomService,
-    ExperimentStateService,
     PageStructureService,
     SvgService,
   ) {
@@ -44,7 +43,6 @@ class OverlayService {
     this.$rootScope = $rootScope;
     this.ChannelService = ChannelService;
     this.DomService = DomService;
-    this.ExperimentStateService = ExperimentStateService;
     this.PageStructureService = PageStructureService;
     this.SvgService = SvgService;
 
@@ -750,18 +748,18 @@ class OverlayService {
     const labelElement = overlayElement.children('.hippo-overlay-label');
     const iconElement = labelElement.children('svg');
 
-    if (this.ExperimentStateService.hasExperiment(component)) {
+    if (component.hasExperiment()) {
       labelElement.addClass('hippo-overlay-label-experiment');
 
-      const experimentId = this.ExperimentStateService.getExperimentId(component);
+      const experimentId = component.getExperimentId();
       labelElement.attr('data-qa-experiment-id', experimentId);
 
       if (iconElement.length === 0) {
         labelElement.prepend(this._getSvg(flaskSvg));
       }
 
-      const experimentState = this.ExperimentStateService.getExperimentStateLabel(component);
-      this._setLabelText(labelElement, experimentState);
+      const experimentState = component.getExperimentStateLabel();
+      this._setLabelText(labelElement, experimentState && this._translate(experimentState));
     } else {
       labelElement.removeClass('hippo-overlay-label-experiment');
       labelElement.removeAttr('data-qa-experiment-id');

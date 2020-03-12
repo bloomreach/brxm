@@ -18,6 +18,22 @@ import * as HstConstants from '../constants';
 import { ComponentEntity } from './component-entity';
 
 export class Component extends ComponentEntity {
+  hasExperiment() {
+    return !!this.getExperimentId();
+  }
+
+  getExperimentId() {
+    return this._meta[HstConstants.EXPERIMENT_ID];
+  }
+
+  getExperimentStateLabel() {
+    if (!this.hasExperiment()) {
+      return null;
+    }
+
+    return `EXPERIMENT_LABEL_${this._meta[HstConstants.EXPERIMENT_STATE]}`;
+  }
+
   getContainer() {
     return this.container;
   }
