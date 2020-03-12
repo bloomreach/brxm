@@ -1,5 +1,5 @@
 /*
- * Copyright 2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.dialog;
 
-import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 
@@ -32,7 +32,7 @@ class EscapeHtmlStringModel extends LoadableDetachableModel<String> {
 
     @Override
     protected String load() {
-        return delegate == null ? null : StringEscapeUtils.escapeHtml(delegate.getObject());
+        return delegate == null ? null : StringEscapeUtils.escapeHtml4(delegate.getObject());
     }
 
 }

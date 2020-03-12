@@ -18,7 +18,7 @@ package org.hippoecm.frontend.plugins.yui.javascript;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.wicket.util.io.IClusterable;
 
 public final class YuiType implements IClusterable {

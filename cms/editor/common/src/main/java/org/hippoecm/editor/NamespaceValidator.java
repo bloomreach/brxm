@@ -17,7 +17,7 @@ package org.hippoecm.editor;
 
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.validation.IValidator;
 import org.hippoecm.frontend.plugins.standards.ClassResourceModel;
 

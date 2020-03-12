@@ -19,7 +19,7 @@ package org.hippoecm.frontend.plugins.standardworkflow.validators;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.FormComponent;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;

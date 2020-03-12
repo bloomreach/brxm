@@ -15,8 +15,8 @@
  */
 package org.hippoecm.frontend.plugins.cms.browse;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.wicket.util.io.IClusterable;
 
 public class BrowseState implements IClusterable {

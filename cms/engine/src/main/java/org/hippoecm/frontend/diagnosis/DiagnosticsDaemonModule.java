@@ -22,7 +22,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.request.Request;
 import org.hippoecm.frontend.session.PluginUserSession;
 import org.hippoecm.frontend.util.RequestUtils;

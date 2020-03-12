@@ -23,8 +23,8 @@ import java.util.StringTokenizer;
 import javax.jcr.query.InvalidQueryException;
 import javax.jcr.query.QueryResult;
 
-import org.apache.commons.lang.ArrayUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.hippoecm.frontend.plugins.standards.browse.BrowserSearchResult;
 import org.slf4j.Logger;

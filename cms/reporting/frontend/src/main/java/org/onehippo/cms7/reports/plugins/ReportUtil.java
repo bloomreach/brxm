@@ -15,7 +15,7 @@
  */
 package org.onehippo.cms7.reports.plugins;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.StringResourceModel;
 import org.hippoecm.frontend.l10n.ResourceBundleModel;

@@ -19,7 +19,7 @@ package org.hippoecm.frontend.plugins.richtext.dialog.images;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 class ShownImageVariantsBuilder {
 

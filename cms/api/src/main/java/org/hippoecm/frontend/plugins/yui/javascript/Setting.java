@@ -15,9 +15,9 @@
  */
 package org.hippoecm.frontend.plugins.yui.javascript;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.wicket.util.io.IClusterable;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
 

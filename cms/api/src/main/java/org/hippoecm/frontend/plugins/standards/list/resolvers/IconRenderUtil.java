@@ -20,7 +20,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.nodetype.NodeType;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.request.resource.ResourceReference;
 import org.hippoecm.frontend.plugins.standards.icon.BrowserStyle;
 import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;

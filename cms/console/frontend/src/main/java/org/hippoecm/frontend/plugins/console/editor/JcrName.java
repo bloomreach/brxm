@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.console.editor;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Wrapper around a JCR name.

@@ -18,7 +18,7 @@ package org.hippoecm.frontend.plugins.yui.layout;
 
 import java.util.Map;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.wicket.Component;
 import org.apache.wicket.Page;
 import org.apache.wicket.ajax.AjaxRequestTarget;

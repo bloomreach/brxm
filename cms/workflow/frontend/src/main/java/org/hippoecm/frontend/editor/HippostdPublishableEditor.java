@@ -60,7 +60,7 @@ import org.onehippo.repository.util.JcrConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.commons.lang.BooleanUtils.isFalse;
+import static org.apache.commons.lang3.BooleanUtils.isFalse;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_BRANCHES_PROPERTY;
 import static org.hippoecm.repository.util.JcrUtils.getMultipleStringProperty;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;

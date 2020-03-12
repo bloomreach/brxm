@@ -33,7 +33,7 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreePath;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Session;
 import org.apache.wicket.extensions.markup.html.tree.DefaultTreeState;
 import org.apache.wicket.extensions.markup.html.tree.ITreeStateListener;

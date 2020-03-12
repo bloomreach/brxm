@@ -44,8 +44,8 @@ import javax.jcr.observation.EventListener;
 import javax.jcr.observation.ObservationManager;
 import javax.jcr.util.TraversingItemVisitor;
 
-import org.apache.commons.lang.builder.ToStringBuilder;
-import org.apache.commons.lang.builder.ToStringStyle;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.wicket.util.collections.ConcurrentHashSet;
 import org.hippoecm.frontend.model.JcrHelper;
 import org.hippoecm.frontend.session.PluginUserSession;

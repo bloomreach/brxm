@@ -23,7 +23,7 @@ import javax.jcr.Binary;
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.jackrabbit.JcrConstants;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.markup.html.link.ILinkListener;

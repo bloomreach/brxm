@@ -33,8 +33,8 @@ import javax.jcr.observation.EventListenerIterator;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.math.NumberUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.DefaultPageManagerProvider;
 import org.apache.wicket.IPageRendererProvider;

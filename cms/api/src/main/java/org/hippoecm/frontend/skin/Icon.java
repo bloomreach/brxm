@@ -17,7 +17,7 @@ package org.hippoecm.frontend.skin;
 
 import java.io.IOException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.request.resource.PackageResourceReference;
 import org.apache.wicket.util.resource.ResourceStreamNotFoundException;
 import org.hippoecm.frontend.service.IconSize;

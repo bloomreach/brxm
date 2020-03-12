@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.markup.html.SecurePackageResourceGuard;
 import org.hippoecm.frontend.util.WebApplicationHelper;
 import org.slf4j.Logger;

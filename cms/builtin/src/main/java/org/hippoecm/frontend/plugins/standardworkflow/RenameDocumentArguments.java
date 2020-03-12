@@ -15,7 +15,7 @@
  */
 package org.hippoecm.frontend.plugins.standardworkflow;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.util.io.IClusterable;
 
 public class RenameDocumentArguments implements IClusterable {
