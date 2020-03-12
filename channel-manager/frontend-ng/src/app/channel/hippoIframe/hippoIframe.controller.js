@@ -153,7 +153,7 @@ class HippoIframeCtrl {
 
     await this.DomService.addScript(
       target.contentWindow,
-      this.DomService.getAssetUrl(iframeBundle),
+      this.HippoIframeService.getAssetUrl(iframeBundle),
     );
     await connection;
 
@@ -180,7 +180,7 @@ class HippoIframeCtrl {
 
     const connection = this.CommunicationService.connect({ target, origin: this.SpaService.getOrigin() });
 
-    await this.SpaService.inject(this.DomService.getAssetUrl(iframeBundle));
+    await this.SpaService.inject(this.HippoIframeService.getAssetUrl(iframeBundle));
     await connection;
 
     this.$rootScope.$emit('hippo-iframe:load');

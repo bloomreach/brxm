@@ -47,7 +47,7 @@ describe('hippoIframeCtrl', () => {
 
     ComponentRenderingService = jasmine.createSpyObj('ComponentRenderingService', ['renderComponent']);
     CreateContentService = jasmine.createSpyObj('CreateContentService', ['start']);
-    DomService = jasmine.createSpyObj('DomService', ['addScript', 'getAssetUrl', 'isFrameAccessible']);
+    DomService = jasmine.createSpyObj('DomService', ['addScript', 'isFrameAccessible']);
     EditComponentService = jasmine.createSpyObj('EditComponentService', ['startEditing']);
     EditContentService = jasmine.createSpyObj('EditContentService', ['startEditing']);
     FeedbackService = jasmine.createSpyObj('FeedbackService', ['showErrorResponse', 'showNotification']);
@@ -105,6 +105,7 @@ describe('hippoIframeCtrl', () => {
       </div>`);
 
       spyOn(CommunicationService, 'connect').and.returnValue($q.resolve());
+      spyOn(HippoIframeService, 'getAssetUrl').and.returnValue('url');
       onEditMenu = jasmine.createSpy('onEditMenu');
       contentWindow = {
         document: {
@@ -213,12 +214,11 @@ describe('hippoIframeCtrl', () => {
 
   it('injects the iframe bundle into the iframe', () => {
     DomService.isFrameAccessible.and.returnValue(true);
-    DomService.getAssetUrl.and.returnValue('url');
 
     $ctrl.onLoad();
     $rootScope.$digest();
 
-    expect(DomService.getAssetUrl).toHaveBeenCalledWith(jasmine.stringMatching('iframe'));
+    expect(HippoIframeService.getAssetUrl).toHaveBeenCalledWith(jasmine.stringMatching('iframe'));
     expect(DomService.addScript).toHaveBeenCalledWith(contentWindow, 'url');
   });
 
@@ -289,12 +289,11 @@ describe('hippoIframeCtrl', () => {
   it('injects the iframe bundle when the SPA SDK is ready', () => {
     spyOn(SpaService, 'inject');
     DomService.isFrameAccessible.and.returnValue(false);
-    DomService.getAssetUrl.and.returnValue('url');
 
     $rootScope.$emit('spa:ready');
     $rootScope.$digest();
 
-    expect(DomService.getAssetUrl).toHaveBeenCalledWith(jasmine.stringMatching('iframe'));
+    expect(HippoIframeService.getAssetUrl).toHaveBeenCalledWith(jasmine.stringMatching('iframe'));
     expect(SpaService.inject).toHaveBeenCalledWith('url');
   });
 
