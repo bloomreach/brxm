@@ -472,6 +472,11 @@ public abstract class AbstractCmsEditor<T> implements IEditor<T>, IDetachable, I
         }
     }
 
+    @Override
+    public boolean isTransferable() throws EditorException {
+        return false;
+    }
+
     private class EditorActivatedHeaderItem extends HeaderItem {
 
         @Override

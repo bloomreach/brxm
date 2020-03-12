@@ -85,6 +85,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     private Boolean isValid;
     private boolean modified;
     private IModel<Node> editorModel;
+    private boolean transferable;
 
     public HippostdPublishableEditor(final IEditorContext manager, final IPluginContext context, final IPluginConfig config, final IModel<Node> model)
             throws EditorException {
@@ -249,11 +250,18 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         return isValid;
     }
 
+    @Override
+    public boolean isTransferable() throws EditorException {
+        return transferable;
+    }
+
     public void saveDraft() throws EditorException {
         try {
             final DocumentWorkflow wf = (DocumentWorkflow) getEditableWorkflow();
-            UserSession.get().getJcrSession().save();
              wf.saveDraft();
+            final Map<String, Serializable> hints = wf.hints();
+            final Boolean transferable = (Boolean) hints.get("transferable");
+            this.transferable = transferable == null ? false : transferable;
         } catch (RepositoryException | WorkflowException | RemoteException e) {
             throw new EditorException("Error during saving draft");
         }
