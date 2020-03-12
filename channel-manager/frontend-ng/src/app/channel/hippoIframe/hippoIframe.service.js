@@ -22,6 +22,7 @@ class HippoIframeService {
     ChannelService,
     CmsService,
     ConfigService,
+    DomService,
     PageStructureService,
     PageToolsService,
     ProjectService,
@@ -36,6 +37,7 @@ class HippoIframeService {
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
+    this.DomService = DomService;
     this.PageStructureService = PageStructureService;
     this.PageToolsService = PageToolsService;
     this.ProjectService = ProjectService;
@@ -177,6 +179,10 @@ class HippoIframeService {
   lockWidth() {
     const hippoIframeWidth = this.hippoIframeJQueryElement.outerWidth();
     this.hippoIframeJQueryElement[0].style.setProperty('--locked-width', `${hippoIframeWidth}px`);
+  }
+
+  getAssetUrl(href) {
+    return this.DomService.getAssetUrl(`${href}?antiCache=${this.ConfigService.antiCache}`);
   }
 }
 

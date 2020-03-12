@@ -22,6 +22,7 @@ describe('HippoIframeService', () => {
   let iframe;
   let ChannelService;
   let ConfigService;
+  let DomService;
   let HippoIframeService;
   let PageStructureService;
   let PageToolsService;
@@ -30,6 +31,12 @@ describe('HippoIframeService', () => {
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
+
+    DomService = jasmine.createSpyObj('DomService', ['getAssetUrl']);
+
+    angular.mock.module(($provide) => {
+      $provide.value('DomService', DomService);
+    });
 
     inject((
       _$log_,
@@ -278,6 +285,21 @@ describe('HippoIframeService', () => {
 
     afterEach(() => {
       delete sessionStorage.channelPath;
+    });
+  });
+
+  describe('getAssetUrl', () => {
+    it('should append antiCache query string parameter', () => {
+      ConfigService.antiCache = 'something';
+      HippoIframeService.getAssetUrl('/path');
+
+      expect(DomService.getAssetUrl).toHaveBeenCalledWith('/path?antiCache=something');
+    });
+
+    it('should call the DOM service to resolve url', () => {
+      DomService.getAssetUrl.and.returnValue('url');
+
+      expect(HippoIframeService.getAssetUrl('/path')).toBe('url');
     });
   });
 });
