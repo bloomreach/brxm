@@ -21,13 +21,13 @@ describe('ComponentEditorService', () => {
   let $translate;
   let ChannelService;
   let CmsService;
+  let CommunicationService;
   let ComponentEditor;
   let ComponentRenderingService;
   let DialogService;
   let FeedbackService;
   let HippoIframeService;
   let HstComponentService;
-  let OverlayService;
   let PageStructureService;
 
   let testData;
@@ -43,6 +43,12 @@ describe('ComponentEditorService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm.channel.rightSidePanel.editComponent');
 
+    CommunicationService = jasmine.createSpyObj('CommunicationService', ['selectComponent']);
+
+    angular.mock.module(($provide) => {
+      $provide.value('CommunicationService', CommunicationService);
+    });
+
     inject((
       _$q_,
       _$rootScope_,
@@ -56,7 +62,6 @@ describe('ComponentEditorService', () => {
       _FeedbackService_,
       _HippoIframeService_,
       _HstComponentService_,
-      _OverlayService_,
       _PageStructureService_,
     ) => {
       $q = _$q_;
@@ -71,14 +76,12 @@ describe('ComponentEditorService', () => {
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       HstComponentService = _HstComponentService_;
-      OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
     });
 
     spyOn(HstComponentService, 'getProperties').and.returnValue($q.resolve({}));
     spyOn(HstComponentService, 'deleteComponent').and.returnValue($q.resolve({}));
     spyOn(CmsService, 'reportUsageStatistic');
-    spyOn(OverlayService, 'selectComponent');
 
     testData = {
       channel: 'channel',
@@ -181,6 +184,36 @@ describe('ComponentEditorService', () => {
 
       expect(ComponentEditor.reopen).toHaveBeenCalled();
     });
+
+    describe('restoring selected component', () => {
+      beforeEach(() => {
+        const page = {
+          getComponentById: jasmine.createSpy('getComponentById').and.returnValue({
+            getId: () => 'componentId',
+            container: {
+              isDisabled: () => true,
+              isInherited: () => true,
+              getId: () => 'containerId',
+            },
+          }),
+        };
+        PageStructureService.getPage.and.returnValue(page);
+        CommunicationService.selectComponent.calls.reset();
+      });
+
+      it('should select the component on initial page change', () => {
+        $rootScope.$emit('page:change', { initial: true });
+
+        expect(CommunicationService.selectComponent).toHaveBeenCalledWith('componentId');
+      });
+
+      it('should not select the component on not initial page change', () => {
+        $rootScope.$emit('page:change');
+        $rootScope.$emit('page:change', { initial: false });
+
+        expect(CommunicationService.selectComponent).not.toHaveBeenCalled();
+      });
+    });
   });
 
   describe('opening a component editor', () => {
@@ -215,7 +248,7 @@ describe('ComponentEditorService', () => {
       expect(ComponentEditor.container).toBe(testData.container);
       expect(ComponentEditor.page).toBe(testData.page);
       expect(ComponentEditor.properties).toBe(properties);
-      expect(OverlayService.selectComponent).toHaveBeenCalledWith('componentId');
+      expect(CommunicationService.selectComponent).toHaveBeenCalledWith('componentId');
     });
 
     it('reloads the page and shows a message when retrieving properties returns an error', () => {
@@ -793,7 +826,7 @@ describe('ComponentEditorService', () => {
       expect(ComponentEditor.properties).toBeUndefined();
       expect(ComponentEditor.propertyGroups).toBeUndefined();
       expect(ComponentEditor.error).toBeUndefined();
-      expect(OverlayService.selectComponent).toHaveBeenCalledWith(null);
+      expect(CommunicationService.selectComponent).toHaveBeenCalledWith(null);
     });
   });
 

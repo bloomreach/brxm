@@ -34,11 +34,16 @@ describe('DragDropService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm-iframe');
 
+    CommunicationService = jasmine.createSpyObj('CommunicationService', ['emit', 'getAssetUrl']);
+
+    angular.mock.module(($provide) => {
+      $provide.value('CommunicationService', CommunicationService);
+    });
+
     inject((
       _$document_,
       _$q_,
       _$rootScope_,
-      _CommunicationService_,
       _DomService_,
       _DragDropService_,
       _PageStructureService_,
@@ -46,7 +51,6 @@ describe('DragDropService', () => {
       $document = _$document_;
       $q = _$q_;
       $rootScope = _$rootScope_;
-      CommunicationService = _CommunicationService_;
       DomService = _DomService_;
       DragDropService = _DragDropService_;
       PageStructureService = _PageStructureService_;
@@ -54,7 +58,7 @@ describe('DragDropService', () => {
 
     jasmine.getFixtures().load('iframe/overlay/drag-drop.service.fixture.html');
 
-    spyOn(CommunicationService, 'getAssetUrl').and.callFake(href => href);
+    CommunicationService.getAssetUrl.and.callFake(href => href);
     DragDropService.$window = window;
 
     mockCommentData = {};
@@ -213,8 +217,6 @@ describe('DragDropService', () => {
 
     it('should emit component:click event on a left button mouseup event', (done) => {
       enableDragDrop(() => {
-        spyOn(CommunicationService, 'emit');
-
         const mockedMouseDownEvent = {
           clientX: 100,
           clientY: 200,

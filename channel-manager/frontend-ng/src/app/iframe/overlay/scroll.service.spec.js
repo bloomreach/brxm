@@ -29,22 +29,23 @@ describe('ScrollService', () => {
 
     jasmine.getFixtures().load('iframe/overlay/scroll.service.fixture.html');
 
+    CommunicationService = jasmine.createSpyObj('CommunicationService', ['emit', 'getScroll']);
+
+    angular.mock.module(($provide) => {
+      $provide.value('CommunicationService', CommunicationService);
+    });
+
     inject((
       _$document_,
       _$rootScope_,
       _$window_,
-      _CommunicationService_,
       _ScrollService_,
     ) => {
       $document = _$document_;
       $rootScope = _$rootScope_;
       $window = _$window_;
-      CommunicationService = _CommunicationService_;
       ScrollService = _ScrollService_;
     });
-
-    spyOn(CommunicationService, 'emit');
-    spyOn(CommunicationService, 'getScroll');
   });
 
   describe('getScroll', () => {

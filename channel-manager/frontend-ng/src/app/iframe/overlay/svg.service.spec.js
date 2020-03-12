@@ -18,51 +18,61 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('SvgService', () => {
+  let $document;
   let $httpBackend;
+  let $q;
   let $timeout;
-  let $window;
+  let CommunicationService;
   let SvgService;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm');
+    angular.mock.module('hippo-cm-iframe');
 
-    inject((_$httpBackend_, _$timeout_, _$window_, _SvgService_) => {
+    CommunicationService = jasmine.createSpyObj('CommunicationService', ['getAssetUrl']);
+
+    angular.mock.module(($provide) => {
+      $provide.value('CommunicationService', CommunicationService);
+    });
+
+    inject((_$document_, _$httpBackend_, _$q_, _$timeout_, _SvgService_) => {
+      $document = _$document_;
       $httpBackend = _$httpBackend_;
+      $q = _$q_;
       $timeout = _$timeout_;
-      $window = _$window_;
       SvgService = _SvgService_;
     });
+
+    CommunicationService.getAssetUrl.and.callFake(href => $q.resolve(href));
   });
 
   describe('getSvg', () => {
     beforeEach(() => {
-      angular.element($window.document.body)
-        .empty();
+      $document.find('body').empty();
 
       $httpBackend.whenGET('sprite.svg')
         .respond(200, '<svg>sprite</svg>');
 
-      SvgService.getSvg($window, {
+      SvgService.getSvg({
         url: 'sprite.svg#icon',
         viewBox: '0 0 100 100',
       })
         .wrap('<button>')
         .parent()
-        .appendTo($window.document.body);
+        .appendTo($document.find('body'));
 
       $httpBackend.flush();
       $timeout.flush();
     });
 
     it('injects sprite', () => {
-      const sprite = angular.element('body > svg:first', $window.document);
+      const sprite = $document.find('body > svg:first');
 
       expect(sprite).toHaveAttr('data-src', 'sprite.svg');
       expect(sprite.text()).toBe('sprite');
     });
 
     it('places svg icon', () => {
-      const icon = angular.element('button svg', $window.document);
+      const icon = $document.find('button svg');
 
       expect(icon).toHaveAttr('width', '100');
       expect(icon).toHaveAttr('height', '100');
@@ -71,7 +81,7 @@ describe('SvgService', () => {
     });
 
     it('loads sprite only once', () => {
-      SvgService.getSvg($window, {
+      SvgService.getSvg({
         url: 'sprite.svg#icon',
         viewBox: '0 0 100 100',
       });
@@ -79,7 +89,7 @@ describe('SvgService', () => {
       $timeout.flush();
 
       $httpBackend.verifyNoOutstandingExpectation();
-      expect(angular.element('svg[data-src="sprite.svg"]', $window.document).length).toBe(1);
+      expect($document.find('svg[data-src="sprite.svg"]')).toHaveLength(1);
     });
   });
 });

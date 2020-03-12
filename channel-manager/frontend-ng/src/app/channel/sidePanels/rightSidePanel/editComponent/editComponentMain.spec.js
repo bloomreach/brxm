@@ -141,7 +141,7 @@ describe('EditComponentMainCtrl', () => {
 
   describe('handling of select-document clicks in the overlay', () => {
     const eventData = {
-      containerItem: { getId: () => '1' },
+      containerItemId: '1',
       parameterName: 'parameterName',
     };
 
@@ -152,7 +152,7 @@ describe('EditComponentMainCtrl', () => {
 
     it('should broadcast an event when a document is selected for the currently edited component', () => {
       $ctrl.$onInit();
-      $rootScope.$emit('document:select', eventData);
+      $rootScope.$emit('iframe:document:select', eventData);
 
       expect($scope.$broadcast).toHaveBeenCalledWith('edit-component:select-document', 'parameterName');
     });
@@ -161,16 +161,16 @@ describe('EditComponentMainCtrl', () => {
       ComponentEditor.getComponentId.and.returnValue('2');
 
       $ctrl.$onInit();
-      $rootScope.$emit('document:select', eventData);
+      $rootScope.$emit('iframe:document:select', eventData);
 
       expect($scope.$broadcast).not.toHaveBeenCalled();
     });
 
     it('should prevent default handler when a document is selected for the currently edited component', () => {
       const listener = jasmine.createSpy();
-      $rootScope.$on('document:select', listener);
+      $rootScope.$on('iframe:document:select', listener);
       $ctrl.$onInit();
-      $rootScope.$emit('document:select', eventData);
+      $rootScope.$emit('iframe:document:select', eventData);
 
       const { args: [event] } = listener.calls.mostRecent();
 
@@ -180,7 +180,7 @@ describe('EditComponentMainCtrl', () => {
     it('should unsubscribe from the document:select event on destroy', () => {
       $ctrl.$onInit();
       $ctrl.$onDestroy();
-      $rootScope.$emit('document:select', eventData);
+      $rootScope.$emit('iframe:document:select', eventData);
 
       expect($scope.$broadcast).not.toHaveBeenCalled();
     });

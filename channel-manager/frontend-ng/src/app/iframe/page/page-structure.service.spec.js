@@ -30,16 +30,20 @@ describe('PageStructureService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm-iframe');
 
+    CommunicationService = jasmine.createSpyObj('CommunicationService', ['emit']);
+
+    angular.mock.module(($provide) => {
+      $provide.value('CommunicationService', CommunicationService);
+    });
+
     inject((
       _$document_,
       _$rootScope_,
-      _CommunicationService_,
       _HstCommentsProcessorService_,
       _PageStructureService_,
     ) => {
       $document = _$document_;
       $rootScope = _$rootScope_;
-      CommunicationService = _CommunicationService_;
       HstCommentsProcessorService = _HstCommentsProcessorService_;
       PageStructureService = _PageStructureService_;
     });
@@ -634,8 +638,6 @@ describe('PageStructureService', () => {
     }
 
     it('can move components in a container', () => {
-      spyOn(CommunicationService, 'emit');
-
       registerVBoxContainer(() => {
         registerVBoxComponent('componentA');
         registerVBoxComponent('componentB');
@@ -672,8 +674,6 @@ describe('PageStructureService', () => {
     });
 
     it('can move a component to another container', () => {
-      spyOn(CommunicationService, 'emit');
-
       registerVBoxContainer(() => {
         registerVBoxComponent('componentA');
         registerVBoxComponent('componentB');

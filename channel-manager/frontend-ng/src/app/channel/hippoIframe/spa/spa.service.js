@@ -18,7 +18,7 @@ const PROPERTY_URL = 'url';
 const PROPERTY_SPA_URL = 'org.hippoecm.hst.configuration.channel.PreviewURLChannelInfo_url';
 
 export default class SpaService {
-  constructor($log, $q, $rootScope, ChannelService, DomService, OverlayService, RenderingService, RpcService) {
+  constructor($log, $q, $rootScope, ChannelService, DomService, RenderingService, RpcService) {
     'ngInject';
 
     this.$log = $log;
@@ -26,7 +26,6 @@ export default class SpaService {
     this.$rootScope = $rootScope;
     this.ChannelService = ChannelService;
     this.DomService = DomService;
-    this.OverlayService = OverlayService;
     this.RenderingService = RenderingService;
     this.RpcService = RpcService;
 
@@ -122,7 +121,7 @@ export default class SpaService {
         },
         syncOverlay: () => {
           this._warnDeprecated();
-          this.OverlayService.sync();
+          this._onSync();
         },
         sync: () => {
           this._warnDeprecated();

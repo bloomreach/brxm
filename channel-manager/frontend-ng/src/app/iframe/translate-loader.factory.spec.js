@@ -26,19 +26,21 @@ describe('translateLoader', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm-iframe');
 
+    CommunicationService = jasmine.createSpyObj('CommunicationService', ['getTranslations']);
+
+    angular.mock.module(($provide) => {
+      $provide.value('CommunicationService', CommunicationService);
+    });
+
     inject((
       _$q_,
       _$rootScope_,
       _translateLoader_,
-      _CommunicationService_,
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       translateLoader = _translateLoader_;
-      CommunicationService = _CommunicationService_;
     });
-
-    spyOn(CommunicationService, 'getTranslations');
   });
 
   it('should get translations via the communication service', (done) => {

@@ -16,24 +16,24 @@
 
 class ComponentCatalogService {
   constructor(
+    CommunicationService,
     ConfigService,
     ContainerService,
     EditComponentService,
     HippoIframeService,
     MaskService,
-    OverlayService,
     PageStructureService,
     RightSidePanelService,
     SidePanelService,
   ) {
     'ngInject';
 
+    this.CommunicationService = CommunicationService;
     this.ConfigService = ConfigService;
     this.EditComponentService = EditComponentService;
     this.ContainerService = ContainerService;
     this.HippoIframeService = HippoIframeService;
     this.MaskService = MaskService;
-    this.OverlayService = OverlayService;
     this.PageStructureService = PageStructureService;
     this.RightSidePanelService = RightSidePanelService;
     this.SidePanelService = SidePanelService;
@@ -48,10 +48,10 @@ class ComponentCatalogService {
     this.MaskService.mask('mask-add-component');
     this.SidePanelService.liftSidePanelAboveMask();
     this.HippoIframeService.liftIframeAboveMask();
-    this.MaskService.onClick(() => this.OverlayService.toggleAddMode(false));
+    this.MaskService.onClick(() => this.CommunicationService.toggleAddMode(false));
 
     try {
-      const { container, nextComponent } = await this.OverlayService.toggleAddMode(true);
+      const { container, nextComponent } = await this.CommunicationService.toggleAddMode(true);
 
       await this._addComponent(container, nextComponent);
     } finally {

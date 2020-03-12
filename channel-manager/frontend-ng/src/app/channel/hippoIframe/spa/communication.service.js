@@ -27,8 +27,12 @@ export default class CommunicationService {
     this.enableScroll = this._call.bind(this, 'enableScroll');
     this.getScroll = this._call.bind(this, 'getScroll');
     this.parseElements = this._call.bind(this, 'parseElements');
+    this.selectComponent = this._call.bind(this, 'selectComponent');
     this.setScroll = this._call.bind(this, 'setScroll');
     this.stopScroll = this._call.bind(this, 'stopScroll');
+    this.toggleAddMode = this._call.bind(this, 'toggleAddMode');
+    this.toggleComponentsOverlay = this._call.bind(this, 'toggleComponentsOverlay');
+    this.toggleContentsOverlay = this._call.bind(this, 'toggleContentsOverlay');
     this.updateComponent = this._call.bind(this, 'updateComponent');
     this.updateContainer = this._call.bind(this, 'updateContainer');
   }
@@ -43,6 +47,7 @@ export default class CommunicationService {
         getLocale: this._getLocale.bind(this),
         getScroll: this._getScroll.bind(this),
         getTranslations: this._getTranslations.bind(this),
+        isEditable: this._isEditable.bind(this),
       },
     });
 
@@ -86,5 +91,9 @@ export default class CommunicationService {
 
   _getTranslations(...args) {
     return this.$injector.get('$translate').getTranslationTable(...args);
+  }
+
+  _isEditable(...args) {
+    return this.$injector.get('ChannelService').isEditable(...args);
   }
 }

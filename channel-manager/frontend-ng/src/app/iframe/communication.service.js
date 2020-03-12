@@ -28,6 +28,7 @@ export default class CommunicationService {
     this.getLocale = this._call.bind(this, 'getLocale');
     this.getScroll = this._call.bind(this, 'getScroll');
     this.getTranslations = this._call.bind(this, 'getTranslations');
+    this.isEditable = this._call.bind(this, 'isEditable');
   }
 
   async connect() {
@@ -37,8 +38,12 @@ export default class CommunicationService {
         enableScroll: this._enableScroll.bind(this),
         getScroll: this._getScroll.bind(this),
         parseElements: this._parseElements.bind(this),
+        selectComponent: this._selectComponent.bind(this),
         setScroll: this._setScroll.bind(this),
         stopScroll: this._stopScroll.bind(this),
+        toggleAddMode: this._toggleAddMode.bind(this),
+        toggleComponentsOverlay: this._toggleComponentsOverlay.bind(this),
+        toggleContentsOverlay: this._toggleContentsOverlay.bind(this),
         updateComponent: this._updateComponent.bind(this),
         updateContainer: this._updateContainer.bind(this),
         emit: this._emit.bind(this),
@@ -77,12 +82,28 @@ export default class CommunicationService {
     return this.$injector.get('PageStructureService').parseElements(...args);
   }
 
+  _selectComponent(...args) {
+    return this.$injector.get('OverlayService').selectComponent(...args);
+  }
+
   _setScroll(...args) {
     return this.$injector.get('ScrollService').setScroll(...args);
   }
 
   _stopScroll(...args) {
     return this.$injector.get('ScrollService').stopScroll(...args);
+  }
+
+  _toggleAddMode(...args) {
+    return this.$injector.get('OverlayService').toggleAddMode(...args);
+  }
+
+  _toggleComponentsOverlay(...args) {
+    return this.$injector.get('OverlayService').toggleComponentsOverlay(...args);
+  }
+
+  _toggleContentsOverlay(...args) {
+    return this.$injector.get('OverlayService').toggleContentsOverlay(...args);
   }
 
   _updateComponent(...args) {
