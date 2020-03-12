@@ -27,7 +27,6 @@ describe('OverlayService', () => {
   let ChannelService;
   let DomService;
   let DragDropService;
-  let ExperimentStateService;
   let OverlayService;
   let PageStructureService;
   let PickerService;
@@ -49,7 +48,6 @@ describe('OverlayService', () => {
       _$rootScope_,
       _ChannelService_,
       _DomService_,
-      _ExperimentStateService_,
       _OverlayService_,
       _PageStructureService_,
       _SvgService_,
@@ -58,7 +56,6 @@ describe('OverlayService', () => {
       $rootScope = _$rootScope_;
       ChannelService = _ChannelService_;
       DomService = _DomService_;
-      ExperimentStateService = _ExperimentStateService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
       SvgService = _SvgService_;
@@ -457,8 +454,9 @@ describe('OverlayService', () => {
     const componentWithExperiment = iframe('.hippo-overlay > .hippo-overlay-element-component').eq(3);
     const labelText = componentWithExperiment.find('.hippo-overlay-label-text');
     expect(labelText.html()).toBe('EXPERIMENT_LABEL_RUNNING');
+    const component = PageStructureService.getComponentByOverlayElement(componentWithExperiment);
 
-    spyOn(ExperimentStateService, 'getExperimentStateLabel').and.returnValue('EXPERIMENT_LABEL_COMPLETED');
+    spyOn(component, 'getExperimentStateLabel').and.returnValue('EXPERIMENT_LABEL_COMPLETED');
     OverlayService.sync();
 
     expect(labelText.html()).toBe('EXPERIMENT_LABEL_COMPLETED');

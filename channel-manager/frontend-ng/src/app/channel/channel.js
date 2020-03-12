@@ -1,5 +1,5 @@
 /*
- * Copyright 2015-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,10 +26,10 @@ import menuModule from './menu/menu.module';
 import openUiModule from './openui/openui.service.module';
 import overlayToggleModule from './overlayToggle/overlayToggle';
 import projectToggleModule from './projectToggle/projectToggle.module';
-import relevanceModule from './relevance/relevance';
 import sidePanelModule from './sidePanels/sidePanel';
 import siteMenuEditorModule from './siteMenuEditor/siteMenuEditor.module';
 import subpageModule from './subpage/subpage.module';
+import viewAsModule from './view-as/view-as.module';
 import viewportToggleModule from './viewportToggle/viewportToggle.module';
 
 const channelModule = angular
@@ -40,10 +40,10 @@ const channelModule = angular
     openUiModule,
     overlayToggleModule.name,
     projectToggleModule.name,
-    relevanceModule.name,
     sidePanelModule.name,
     siteMenuEditorModule.name,
     subpageModule.name,
+    viewAsModule.name,
     viewportToggleModule.name,
   ])
   .config(channelConfig)

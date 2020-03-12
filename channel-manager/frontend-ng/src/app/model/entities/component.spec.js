@@ -17,6 +17,49 @@
 import { Component } from './component';
 
 describe('Component', () => {
+  describe('hasExperiment', () => {
+    it('should return true when the component has an experiment', () => {
+      const component = new Component({
+        'Targeting-experiment-id': 'something',
+      });
+
+      expect(component.hasExperiment()).toBe(true);
+    });
+
+    it('should return false when the component has no experiment', () => {
+      const component = new Component({});
+
+      expect(component.hasExperiment()).toBe(false);
+    });
+  });
+
+  describe('getExperimentId', () => {
+    it('should return an experiment id', () => {
+      const component = new Component({
+        'Targeting-experiment-id': 'something',
+      });
+
+      expect(component.getExperimentId()).toBe('something');
+    });
+  });
+
+  describe('getExperimentStateLabel', () => {
+    it('should return null when the component has no experiment', () => {
+      const component = new Component({});
+
+      expect(component.getExperimentStateLabel()).toBeNull();
+    });
+
+    it('should return an experiment state label', () => {
+      const component = new Component({
+        'Targeting-experiment-id': 'something',
+        'Targeting-experiment-state': 'COMPLETED',
+      });
+
+      expect(component.getExperimentStateLabel()).toBe('EXPERIMENT_LABEL_COMPLETED');
+    });
+  });
+
   describe('setContainer', () => {
     it('should set a container', () => {
       const component = new Component({});

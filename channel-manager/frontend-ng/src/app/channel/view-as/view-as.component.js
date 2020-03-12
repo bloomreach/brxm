@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-import ViewAsComponent from './viewAs.component';
-import ViewAsCtrl from './viewAs.controller';
-import ExperimentStateService from './experimentState.service';
+import controller from './view-as.controller';
+import template from './view-as.html';
 
-const channelRelevanceModule = angular
-  .module('hippo-cm.channel.relevance', [])
-  .component('relevanceViewAs', ViewAsComponent)
-  .controller('ViewAsCtrl', ViewAsCtrl)
-  .service('ExperimentStateService', ExperimentStateService);
+const viewAsComponent = {
+  bindings: {
+    renderVariant: '=',
+  },
+  controller,
+  template,
+};
 
-export default channelRelevanceModule;
+export default viewAsComponent;

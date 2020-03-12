@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-import controller from './viewAs.controller';
-import template from './viewAs.html';
+import ViewAsComponent from './view-as.component';
+import ViewAsCtrl from './view-as.controller';
 
-const viewAsComponent = {
-  bindings: {
-    renderVariant: '=',
-  },
-  controller,
-  template,
-};
+const viewAsModule = angular
+  .module('hippo-cm.channel.view-as', [])
+  .component('viewAs', ViewAsComponent)
+  .controller('ViewAsCtrl', ViewAsCtrl);
 
-export default viewAsComponent;
+export default viewAsModule;
