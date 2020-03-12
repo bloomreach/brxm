@@ -21,6 +21,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.frontend.service.IEditor.Mode;
+import static org.hippoecm.frontend.service.IEditor.Mode.COMPARE;
+import static org.hippoecm.frontend.service.IEditor.Mode.EDIT;
 
 /**
  * Maps a {@link Document} to a {@link HippoStdPublishableEditorModel}
@@ -98,8 +100,8 @@ public class HippoPublishableEditorModelBuilder {
     }
 
     private void buildDraft() {
-        model.setEditor(getDraft());
         if (document.isTransferable()) {
+            model.setEditor(getDraft());
             if (hasPublished()) {
                 model.setMode(Mode.COMPARE);
                 model.setBase(getPublished());
@@ -109,17 +111,28 @@ public class HippoPublishableEditorModelBuilder {
             } else {
                 model.setMode(Mode.VIEW);
             }
-        } else if (isHolder()) {
-            model.setMode(Mode.EDIT);
-        } else if (hasPublished()) {
-            model.setBase(getPublished());
-            model.setMode(Mode.COMPARE);
-        } else if (hasUnpublished()) {
-            model.setBase(getUnpublished());
-            model.setMode(Mode.COMPARE);
         } else {
-            model.setBase(StringUtils.EMPTY);
-            model.setMode(Mode.VIEW);
+            if (isHolder()) {
+                model.setEditor(getDraft());
+                model.setMode(EDIT);
+            } else if (hasUnpublished()) {
+                model.setEditor(getUnpublished());
+                if (hasPublished()) {
+                    model.setBase(getPublished());
+                    model.setMode(Mode.COMPARE);
+                } else {
+                    model.setBase(StringUtils.EMPTY);
+                    model.setMode(Mode.VIEW);
+                }
+            } else if (hasPublished()) {
+                model.setEditor(getDraft());
+                model.setBase(getPublished());
+                model.setMode(COMPARE);
+            } else {
+                model.setEditor(getDraft());
+                model.setBase(StringUtils.EMPTY);
+                model.setMode(Mode.VIEW);
+            }
         }
     }
 
