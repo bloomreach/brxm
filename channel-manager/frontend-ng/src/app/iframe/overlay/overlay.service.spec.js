@@ -14,18 +14,14 @@
  * limitations under the License.
  */
 
-import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss?url';
+import hippoIframeCss from '../../../styles/string/hippo-iframe.scss?url';
 
 describe('OverlayService', () => {
-  let $iframe;
-  let $iframeRootScope;
-  let $injector;
+  let $document;
   let $q;
   let $rootScope;
-  let angularElement;
-  let iframeWindow;
-  let ChannelService;
-  let DomService;
+  let $window;
+  let CommunicationService;
   let DragDropService;
   let OverlayService;
   let PageStructureService;
@@ -33,118 +29,76 @@ describe('OverlayService', () => {
   let SvgService;
 
   beforeEach(() => {
-    angular.mock.module('hippo-cm.channel.hippoIframe');
+    angular.mock.module('hippo-cm-iframe');
 
-    DragDropService = jasmine.createSpyObj('DragDropService', ['enable', 'disable', 'isEnabled', 'startDragOrClick']);
+    CommunicationService = jasmine.createSpyObj('CommunicationService', ['isEditable', 'emit']);
+    DragDropService = jasmine.createSpyObj('DragDropService', [
+      'enable',
+      'disable',
+      'isEnabled',
+      'startDragOrClick',
+    ]);
     PickerService = jasmine.createSpyObj('PickerService', ['pickPath']);
 
     angular.mock.module(($provide) => {
+      $provide.value('CommunicationService', CommunicationService);
       $provide.value('DragDropService', DragDropService);
       $provide.value('PickerService', PickerService);
     });
 
     inject((
+      _$document_,
       _$q_,
       _$rootScope_,
-      _ChannelService_,
-      _DomService_,
+      _$window_,
       _OverlayService_,
       _PageStructureService_,
       _SvgService_,
     ) => {
+      $document = _$document_;
       $q = _$q_;
       $rootScope = _$rootScope_;
-      ChannelService = _ChannelService_;
-      DomService = _DomService_;
+      $window = _$window_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
       SvgService = _SvgService_;
     });
 
-    const fake = angular.element('<div>');
-
-    angular.bootstrap(fake, ['hippo-cm-iframe']);
-    window.$Promise = $q;
-
-    $injector = fake.injector();
-    PageStructureService = fake.injector().get('PageStructureService');
-    $iframeRootScope = fake.injector().get('$rootScope');
-    PageStructureService.$rootScope = $rootScope;
-    $rootScope.$on('page:change', (...args) => $rootScope.$emit('iframe:page:change', ...args));
-    angularElement = angular.element;
-    spyOn(angular, 'element').and.callThrough();
-
     spyOn(SvgService, 'getSvg').and.callFake(() => angular.element('<svg>test</svg>'));
 
-    jasmine.getFixtures().load('channel/hippoIframe/overlay/overlay.service.fixture.html');
-    $iframe = $('.iframe');
+    jasmine.getFixtures().load('iframe/overlay/overlay.service.fixture.html');
 
-    // initialize the overlay service only once per test so there is only one MutationObserver
-    // (otherwise multiple MutationObservers will react on each other's changes and crash the browser)
-    OverlayService.init($iframe);
+    const { fixturesPath } = jasmine.getStyleFixtures();
+    jasmine.getStyleFixtures().fixturesPath = '';
+    jasmine.getStyleFixtures().load(hippoIframeCss.slice(1));
+    jasmine.getStyleFixtures().fixturesPath = fixturesPath;
+  });
+
+  afterEach(() => {
+    $document.find('body')
+      .empty()
+      .off('click');
   });
 
   function loadIframeFixture() {
-    const deferred = $q.defer();
+    const promise = OverlayService.initialize()
+      .then(() => PageStructureService.parseElements())
+      .catch((error) => {
+        fail(error);
 
-    $iframe.one('load', async () => {
-      iframeWindow = $iframe[0].contentWindow;
-      await DomService.addCssLinks(iframeWindow, [hippoIframeCss]);
-
-      iframeWindow.angular = angular;
-      PageStructureService.$document = angular.element(iframeWindow.document);
-
-      angular.element.and.callFake((selector, ...rest) => {
-        const result = angularElement(selector, ...rest);
-
-        if (selector === iframeWindow.document) {
-          result.injector = () => $injector;
-        }
-
-        return result;
+        return $q.reject(error);
+      })
+      .finally(() => {
+        setTimeout(() => $rootScope.$digest(), 0);
       });
 
-      $rootScope.$emit('hippo-iframe:load');
-      OverlayService.DragDropService = DragDropService;
-      try {
-        PageStructureService.parseElements();
+    $rootScope.$digest();
 
-        deferred.resolve();
-      } catch (e) {
-        // Karma silently swallows stack traces for synchronous tests, so log them in an explicit fail
-        fail(e);
-        deferred.reject(e);
-      }
-    });
-
-    $iframe.attr('src', `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/overlay/overlay.service.iframe.fixture.html`); // eslint-disable-line max-len
-
-    return deferred.promise;
+    return promise;
   }
-
-  function iframe(selector) {
-    return $(selector, iframeWindow.document);
-  }
-
-  it('initializes when the iframe is loaded', async () => {
-    spyOn(OverlayService, '_onLoad');
-    await loadIframeFixture();
-
-    expect(OverlayService._onLoad).toHaveBeenCalled();
-  });
 
   it('does not throw errors when synced before init', () => {
     expect(() => OverlayService.sync()).not.toThrow();
-  });
-
-  it('attaches an unload handler to the iframe', async () => {
-    // call through so the mutation observer is disconnected before the second one is started
-    spyOn(OverlayService, '_onUnload').and.callThrough();
-    await loadIframeFixture();
-    // load URL again to cause unload
-    await loadIframeFixture();
-
-    expect(OverlayService._onUnload).toHaveBeenCalled();
   });
 
   it('attaches a MutationObserver on the iframe document on first load', async () => {
@@ -153,28 +107,11 @@ describe('OverlayService', () => {
     expect(OverlayService.observer).not.toBeNull();
   });
 
-  it('disconnects the MutationObserver on iframe unload', async () => {
-    await loadIframeFixture();
-    const disconnect = spyOn(OverlayService.observer, 'disconnect').and.callThrough();
-    await loadIframeFixture();
-
-    expect(disconnect).toHaveBeenCalled();
-  });
-
-  it('deletes iframe reference on iframe unload', async () => {
-    await loadIframeFixture();
-    spyOn($rootScope, '$apply').and.callFake(callback => callback());
-
-    await $(iframeWindow).trigger('unload');
-
-    expect(OverlayService.iframeWindow).toBeUndefined();
-  });
-
   it('syncs when the page structure has changed', async () => {
-    spyOn(OverlayService, 'sync');
     await loadIframeFixture();
+    spyOn(OverlayService, 'sync');
+    await $rootScope.$emit('page:change');
 
-    $rootScope.$emit('iframe:page:change');
     expect(OverlayService.sync).toHaveBeenCalled();
   });
 
@@ -182,14 +119,14 @@ describe('OverlayService', () => {
     spyOn(OverlayService, 'sync');
     await loadIframeFixture();
 
-    iframe('body').css('color', 'green');
+    $document.find('body').css('color', 'green');
     expect(OverlayService.sync).toHaveBeenCalled();
   });
 
   it('syncs when the iframe is resized', async () => {
     spyOn(OverlayService, 'sync');
     await loadIframeFixture();
-    $(iframeWindow).trigger('resize');
+    await $document.trigger('resize');
 
     expect(OverlayService.sync).toHaveBeenCalled();
   });
@@ -199,21 +136,22 @@ describe('OverlayService', () => {
     spyOn(PageStructureService, 'getEmbeddedLinks').and.returnValue([]);
     await loadIframeFixture();
 
-    expect(iframe('.hippo-overlay')).toBeEmpty();
+    expect($document.find('.hippo-overlay')).toBeEmpty();
   });
 
   it('should clean all overlay elements on sync', async () => {
     await loadIframeFixture();
 
-    expect(iframe('.hippo-overlay').children()).not.toHaveLength(0);
-    expect(iframe('.hst-fab')).not.toHaveLength(0);
+    expect($document.find('.hippo-overlay').children()).not.toHaveLength(0);
+    expect($document.find('.hst-fab')).not.toHaveLength(0);
 
     spyOn(PageStructureService, 'getPage').and.returnValue(null);
     spyOn(PageStructureService, 'getEmbeddedLinks').and.returnValue([]);
-    $rootScope.$emit('iframe:page:change');
 
-    expect(iframe('.hippo-overlay').children()).toHaveLength(0);
-    expect(iframe('.hst-fab')).toHaveLength(0);
+    await $rootScope.$emit('page:change');
+
+    expect($document.find('.hippo-overlay').children()).toHaveLength(0);
+    expect($document.find('.hst-fab')).toHaveLength(0);
   });
 
   describe('toggleComponentsOverlay', () => {
@@ -224,26 +162,26 @@ describe('OverlayService', () => {
       await loadIframeFixture();
     });
 
-    it('should add the hippo-show-components class on toggling component overlays on', async () => {
+    it('should add the hippo-show-components class on toggling component overlays on', () => {
       OverlayService.toggleComponentsOverlay(true);
 
-      expect(iframe('html')).toHaveClass('hippo-show-components');
+      expect($document.find('html')).toHaveClass('hippo-show-components');
     });
 
-    it('should remove the hippo-show-components class on toggling component overlays off', async () => {
+    it('should remove the hippo-show-components class on toggling component overlays off', () => {
       OverlayService.toggleComponentsOverlay(true);
       OverlayService.toggleComponentsOverlay(false);
 
-      expect(iframe('html')).not.toHaveClass('hippo-show-components');
+      expect($document.find('html')).not.toHaveClass('hippo-show-components');
     });
 
-    it('should enable drag and drop on toggling component overlays on', async () => {
+    it('should enable drag and drop on toggling component overlays on', () => {
       OverlayService.toggleComponentsOverlay(true);
 
       expect(DragDropService.enable).toHaveBeenCalled();
     });
 
-    it('should disable drag and drop on toggling component overlays off', async () => {
+    it('should disable drag and drop on toggling component overlays off', () => {
       OverlayService.toggleComponentsOverlay(false);
 
       expect(DragDropService.disable).toHaveBeenCalled();
@@ -261,14 +199,14 @@ describe('OverlayService', () => {
     it('should add the hippo-show-content class on toggling content overlays on', () => {
       OverlayService.toggleContentsOverlay(true);
 
-      expect(iframe('html')).toHaveClass('hippo-show-content');
+      expect($document.find('html')).toHaveClass('hippo-show-content');
     });
 
     it('should remove the hippo-show-content class on toggling content overlays off', () => {
       OverlayService.toggleContentsOverlay(true);
       OverlayService.toggleContentsOverlay(false);
 
-      expect(iframe('html')).not.toHaveClass('hippo-show-content');
+      expect($document.find('html')).not.toHaveClass('hippo-show-content');
     });
   });
 
@@ -276,24 +214,24 @@ describe('OverlayService', () => {
     await loadIframeFixture();
 
     // Total overlay elements
-    expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(26);
+    expect($document.find('.hippo-overlay > .hippo-overlay-element')).toHaveLength(26);
 
-    expect(iframe('.hippo-overlay > .hippo-overlay-element-component').length).toBe(4);
-    expect(iframe('.hippo-overlay > .hippo-overlay-element-container').length).toBe(6);
-    expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
-    expect(iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link').length).toBe(15);
-    expect(iframe('.hst-fab')).toHaveLength(16);
+    expect($document.find('.hippo-overlay > .hippo-overlay-element-component')).toHaveLength(4);
+    expect($document.find('.hippo-overlay > .hippo-overlay-element-container')).toHaveLength(6);
+    expect($document.find('.hippo-overlay > .hippo-overlay-element-menu-link')).toHaveLength(1);
+    expect($document.find('.hippo-overlay > .hippo-overlay-element-manage-content-link')).toHaveLength(15);
+    expect($document.find('.hst-fab')).toHaveLength(16);
   });
 
   describe('selected component highlighting', () => {
     const activeComponentSelector = '.hippo-overlay > .hippo-overlay-element-component-active';
     function expectActiveComponent(qaName) {
-      expect(iframe(activeComponentSelector).length).toBe(1);
-      expect(iframe(`${activeComponentSelector} [data-qa-name="${qaName}"]`).length).toBe(1);
+      expect($document.find(activeComponentSelector)).toHaveLength(1);
+      expect($document.find(`${activeComponentSelector} [data-qa-name="${qaName}"]`)).toHaveLength(1);
     }
 
     function expectNoActiveComponent() {
-      expect(iframe(activeComponentSelector).length).toBe(0);
+      expect($document.find(activeComponentSelector)).toHaveLength(0);
     }
 
     it('highlights component after selecting it', async () => {
@@ -326,32 +264,32 @@ describe('OverlayService', () => {
   it('sets specific CSS classes on the box- and overlay elements of containers', async () => {
     await loadIframeFixture();
 
-    const vboxContainerBox = iframe('#container-vbox');
+    const vboxContainerBox = $document.find('#container-vbox');
     expect(vboxContainerBox).toHaveClass('hippo-overlay-box-container-filled');
 
-    const vboxContainerOverlay = iframe('.hippo-overlay-element-container').eq(0);
+    const vboxContainerOverlay = $document.find('.hippo-overlay-element-container').eq(0);
     expect(vboxContainerOverlay).not.toHaveClass('hippo-overlay-element-container-empty');
 
-    const nomarkupContainerBox = iframe('#container-nomarkup');
+    const nomarkupContainerBox = $document.find('#container-nomarkup');
     expect(nomarkupContainerBox).toHaveClass('hippo-overlay-box-container-filled');
 
-    const nomarkupContainerOverlay = iframe('.hippo-overlay-element-container').eq(1);
+    const nomarkupContainerOverlay = $document.find('.hippo-overlay-element-container').eq(1);
     expect(nomarkupContainerOverlay).not.toHaveClass('hippo-overlay-element-container-empty');
 
-    const emptyContainerBox = iframe('#container-empty');
+    const emptyContainerBox = $document.find('#container-empty');
     expect(emptyContainerBox).not.toHaveClass('hippo-overlay-box-container-filled');
 
-    const emptyContainerOverlay = iframe('.hippo-overlay-element-container').eq(2);
+    const emptyContainerOverlay = $document.find('.hippo-overlay-element-container').eq(2);
     expect(emptyContainerOverlay).toHaveClass('hippo-overlay-element-container-empty');
 
-    const inheritedContainerOverlay = iframe('.hippo-overlay-element-container').eq(3);
+    const inheritedContainerOverlay = $document.find('.hippo-overlay-element-container').eq(3);
     expect(inheritedContainerOverlay).toHaveClass('hippo-overlay-element-container-disabled');
   });
 
   it('generates box elements for re-rendered components without any markup in an HST.NoMarkup container', async () => {
     await loadIframeFixture();
 
-    const markupComponentC = iframe('#componentC');
+    const markupComponentC = $document.find('#componentC');
     const componentC = PageStructureService.getPage().getComponentById('cccc');
     const boxElement = componentC.getBoxElement();
 
@@ -362,8 +300,7 @@ describe('OverlayService', () => {
       <!-- { "HST-End": "true", "uuid": "cccc" } -->
     `;
 
-    PageStructureService.updateComponent(componentC.getId(), emptyMarkup);
-    $iframeRootScope.$digest();
+    await PageStructureService.updateComponent(componentC.getId(), emptyMarkup);
 
     const generatedBoxElement = PageStructureService.getPage().getComponentById('cccc').getBoxElement();
     expect(generatedBoxElement).toBeDefined();
@@ -373,85 +310,85 @@ describe('OverlayService', () => {
   it('only renders labels for structure elements that have a label', async () => {
     await loadIframeFixture();
 
-    expect(iframe('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label').length).toBe(4);
-    expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label').length).toBe(6);
-    expect(iframe('.hippo-overlay > .hippo-overlay-element-link > .hippo-overlay-label').length).toBe(0);
+    expect($document.find('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label')).toHaveLength(4);
+    expect($document.find('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label')).toHaveLength(6);
+    expect($document.find('.hippo-overlay > .hippo-overlay-element-link > .hippo-overlay-label')).toHaveLength(0);
 
-    const emptyContainer = iframe('.hippo-overlay-element-container').eq(2);
+    const emptyContainer = $document.find('.hippo-overlay-element-container').eq(2);
     expect(emptyContainer.find('.hippo-overlay-label-text').html()).toBe('Empty container');
   });
 
   it('renders the name structure elements in a data-qa-name attribute', async () => {
     await loadIframeFixture();
 
-    expect(iframe('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label[data-qa-name]').length)
-      .toBe(4);
-    expect(iframe('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label[data-qa-name]').length)
-      .toBe(6);
-    expect(iframe('.hippo-overlay-element-container:eq(2) .hippo-overlay-label').attr('data-qa-name'))
+    expect($document.find('.hippo-overlay > .hippo-overlay-element-component > .hippo-overlay-label[data-qa-name]'))
+      .toHaveLength(4);
+    expect($document.find('.hippo-overlay > .hippo-overlay-element-container > .hippo-overlay-label[data-qa-name]'))
+      .toHaveLength(6);
+    expect($document.find('.hippo-overlay-element-container:eq(2) .hippo-overlay-label').attr('data-qa-name'))
       .toBe('Empty container');
   });
 
   it('renders icons for links', async () => {
     await loadIframeFixture();
-    const svg = iframe('.hippo-overlay > .hippo-overlay-element-link > svg');
+    const svg = $document.find('.hippo-overlay > .hippo-overlay-element-link > svg');
 
-    expect(svg.length).toBe(1);
+    expect(svg).toHaveLength(1);
     expect(svg.eq(0)).toContainText('test');
   });
 
   it('renders a title for links', async () => {
     await loadIframeFixture();
 
-    expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').attr('title')).toBe('EDIT_MENU');
+    expect($document.find('.hippo-overlay > .hippo-overlay-element-menu-link').attr('title')).toBe('EDIT_MENU');
   });
 
   it('renders lock icons for disabled containers', async () => {
     await loadIframeFixture();
-    const disabledContainer = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(4);
+    const disabledContainer = $document.find('.hippo-overlay > .hippo-overlay-element-container').eq(4);
     const lock = disabledContainer.find('.hippo-overlay-lock');
 
-    expect(lock.length).toBe(1);
-    expect(lock.find('svg').length).toBe(1);
+    expect(lock).toHaveLength(1);
+    expect(lock.find('svg')).toHaveLength(1);
     expect(lock.attr('data-locked-by')).toBe('CONTAINER_LOCKED_BY');
   });
 
   it('does not render lock icons for enabled containers', async () => {
     await loadIframeFixture();
-    const containers = iframe('.hippo-overlay > .hippo-overlay-element-container');
+    const containers = $document.find('.hippo-overlay > .hippo-overlay-element-container');
 
-    expect(containers.eq(0).find('.hippo-overlay-lock').length).toBe(0);
-    expect(containers.eq(1).find('.hippo-overlay-lock').length).toBe(0);
+    expect(containers.eq(0).find('.hippo-overlay-lock')).toHaveLength(0);
+    expect(containers.eq(1).find('.hippo-overlay-lock')).toHaveLength(0);
   });
 
   it('renders lock icons for inherited containers', async () => {
     await loadIframeFixture();
 
-    const inheritedContainer = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(3);
+    const inheritedContainer = $document.find('.hippo-overlay > .hippo-overlay-element-container').eq(3);
     const lock = inheritedContainer.find('.hippo-overlay-lock');
-    expect(lock.length).toBe(1);
-    expect(lock.find('svg').length).toBe(1);
+    expect(lock).toHaveLength(1);
+    expect(lock.find('svg')).toHaveLength(1);
     expect(lock.attr('data-locked-by')).toBe('CONTAINER_INHERITED');
   });
 
   it('renders the experiment state of components', async () => {
     await loadIframeFixture();
-    const componentWithExperiment = iframe('.hippo-overlay > .hippo-overlay-element-component').eq(3);
+    const componentWithExperiment = $document.find('.hippo-overlay > .hippo-overlay-element-component').eq(3);
     const label = componentWithExperiment.find('.hippo-overlay-label');
 
-    expect(label.length).toBe(1);
+    expect(label).toHaveLength(1);
     expect(label.attr('data-qa-experiment-id')).toBe('1234');
-    expect(label.find('svg').length).toBe(1);
+    expect(label.find('svg')).toHaveLength(1);
 
     const labelText = label.find('.hippo-overlay-label-text');
-    expect(labelText.length).toBe(1);
+    expect(labelText).toHaveLength(1);
     expect(labelText.html()).toBe('EXPERIMENT_LABEL_RUNNING');
   });
 
   it('updates the experiment state of components', async () => {
     await loadIframeFixture();
 
-    const componentWithExperiment = iframe('.hippo-overlay > .hippo-overlay-element-component').eq(3);
+    const componentWithExperiment = $document.find('.hippo-overlay > .hippo-overlay-element-component').eq(3);
     const labelText = componentWithExperiment.find('.hippo-overlay-label-text');
     expect(labelText.html()).toBe('EXPERIMENT_LABEL_RUNNING');
     const component = PageStructureService.getComponentByOverlayElement(componentWithExperiment);
@@ -464,7 +401,7 @@ describe('OverlayService', () => {
 
   it('starts showing the experiment state of a component for which an experiment was just created', async () => {
     await loadIframeFixture();
-    const componentElementA = iframe('.hippo-overlay > .hippo-overlay-element-component').eq(0);
+    const componentElementA = $document.find('.hippo-overlay > .hippo-overlay-element-component').eq(0);
     const labelText = componentElementA.find('.hippo-overlay-label-text');
 
     expect(labelText.html()).toBe('component A');
@@ -482,8 +419,7 @@ describe('OverlayService', () => {
     `;
 
     const componentA = PageStructureService.getPage().getComponentById('aaaa');
-    PageStructureService.updateComponent(componentA.getId(), componentMarkupWithExperiment);
-    $iframeRootScope.$digest();
+    await PageStructureService.updateComponent(componentA.getId(), componentMarkupWithExperiment);
 
     const label = componentElementA.find('.hippo-overlay-label');
     expect(label.attr('data-qa-experiment-id')).toBe('567');
@@ -494,24 +430,24 @@ describe('OverlayService', () => {
     OverlayService.toggleContentsOverlay(true);
     await loadIframeFixture();
 
-    const components = iframe('.hippo-overlay > .hippo-overlay-element-component');
+    const components = $document.find('.hippo-overlay > .hippo-overlay-element-component');
 
     const componentA = $(components[0]);
     expect(componentA).not.toHaveClass('hippo-overlay-element-visible');
 
-    const menuLink = iframe('.hippo-overlay > .hippo-overlay-element-menu-link');
+    const menuLink = $document.find('.hippo-overlay > .hippo-overlay-element-menu-link');
     expect(menuLink).not.toHaveClass('hippo-overlay-element-visible');
 
-    const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link');
+    const contentLink = $document.find('.hippo-overlay > .hippo-overlay-element-manage-content-link');
     expect(contentLink.css('top')).toBe('0px');
-    expect(contentLink.css('left')).toBe(`${300 - 40}px`);
+    expect(contentLink.css('left')).toBe(`${$document.width() - 40}px`);
     expect(contentLink.css('width')).toBe('40px');
     expect(contentLink.css('height')).toBe('40px');
 
     const componentB = $(components[1]);
     expect(componentB).not.toHaveClass('hippo-overlay-element-visible');
 
-    const emptyContainer = $(iframe('.hippo-overlay > .hippo-overlay-element-container')[1]);
+    const emptyContainer = $($document.find('.hippo-overlay > .hippo-overlay-element-container')[1]);
     expect(emptyContainer).not.toHaveClass('hippo-overlay-element-visible');
   });
 
@@ -520,7 +456,7 @@ describe('OverlayService', () => {
     OverlayService.toggleContentsOverlay(false);
     await loadIframeFixture();
 
-    const components = iframe('.hippo-overlay > .hippo-overlay-element-component');
+    const components = $document.find('.hippo-overlay > .hippo-overlay-element-component');
 
     const componentA = components.eq(0);
     expect(componentA.css('top')).toBe('4px');
@@ -528,13 +464,13 @@ describe('OverlayService', () => {
     expect(componentA.css('width')).toBe(`${200 - 2}px`);
     expect(componentA.css('height')).toBe('100px');
 
-    const menuLink = iframe('.hippo-overlay > .hippo-overlay-element-menu-link');
+    const menuLink = $document.find('.hippo-overlay > .hippo-overlay-element-menu-link');
     expect(menuLink.css('top')).toBe(`${4 + 30}px`);
     expect(menuLink.css('left')).toBe(`${200 - 40}px`);
     expect(menuLink.css('width')).toBe('40px');
     expect(menuLink.css('height')).toBe('40px');
 
-    const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link');
+    const contentLink = $document.find('.hippo-overlay > .hippo-overlay-element-manage-content-link');
     expect(contentLink).not.toHaveClass('hippo-overlay-element-visible');
 
     const componentB = components.eq(1);
@@ -543,7 +479,7 @@ describe('OverlayService', () => {
     expect(componentB.css('width')).toBe(`${200 - 2}px`);
     expect(componentB.css('height')).toBe('200px');
 
-    const emptyContainer = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(2);
+    const emptyContainer = $document.find('.hippo-overlay > .hippo-overlay-element-container').eq(2);
     expect(emptyContainer.css('top')).toBe(`${400 + 40 + 4}px`);
     expect(emptyContainer.css('left')).toBe('0px');
     expect(emptyContainer.css('width')).toBe('200px');
@@ -554,22 +490,23 @@ describe('OverlayService', () => {
     OverlayService.toggleContentsOverlay(true);
     await loadIframeFixture();
     // enlarge body so the iframe can scroll
-    const body = iframe('body');
+    const body = $document.find('body');
     body.width('200%');
     body.height('200%');
 
-    iframeWindow.scrollTo(1, 2);
+    $window.scrollX = 1;
+    $window.scrollY = 2;
     OverlayService.sync();
 
-    const contentLink = iframe('.hippo-overlay > .hippo-overlay-element-manage-content-link');
-    expect(contentLink.css('top')).toBe('0px');
-    expect(contentLink.css('left')).toBe(`${300 - 40}px`);
+    const contentLink = $document.find('.hippo-overlay > .hippo-overlay-element-manage-content-link');
+    expect(contentLink.css('top')).toBe('2px');
+    expect(contentLink.css('left')).toBe(`${$document.width() / 2 - 40 + 1}px`);
     expect(contentLink.css('width')).toBe('40px');
     expect(contentLink.css('height')).toBe('40px');
   });
 
   function expectNoPropagatedClicks() {
-    const body = iframe('body');
+    const body = $document.find('body');
     body.click(() => {
       fail('click event should not propagate to the page');
     });
@@ -583,7 +520,7 @@ describe('OverlayService', () => {
       await loadIframeFixture();
 
       component = PageStructureService.getPage().getComponentById('aaaa');
-      overlayComponentElement = iframe('.hippo-overlay > .hippo-overlay-element-component').first();
+      overlayComponentElement = $document.find('.hippo-overlay > .hippo-overlay-element-component').first();
       OverlayService.toggleComponentsOverlay(true);
     });
 
@@ -612,53 +549,49 @@ describe('OverlayService', () => {
 
   it('should trigger document:create event', async () => {
     await loadIframeFixture();
-    const overlayElementScenario2 = iframe('.hippo-overlay-element-manage-content-link')[1];
+    const overlayElementScenario2 = $document.find('.hippo-overlay-element-manage-content-link')[1];
     const createContentButton = $(overlayElementScenario2).find('.hippo-fab-main');
 
     expectNoPropagatedClicks();
-    spyOn($rootScope, '$emit');
     createContentButton.click();
 
-    expect($rootScope.$emit).toHaveBeenCalledWith('document:create', jasmine.objectContaining({
+    expect(CommunicationService.emit).toHaveBeenCalledWith('document:create', jasmine.objectContaining({
       documentTemplateQuery: 'manage-content-document-template-query',
     }));
   });
 
   it('should trigger document:edit event', async () => {
     await loadIframeFixture();
-    const overlayElementScenario1 = iframe('.hippo-overlay-element-manage-content-link')[0];
+    const overlayElementScenario1 = $document.find('.hippo-overlay-element-manage-content-link')[0];
     const createContentButton = $(overlayElementScenario1).find('.hippo-fab-main');
 
     expectNoPropagatedClicks();
-    spyOn($rootScope, '$emit');
     createContentButton.click();
 
-    expect($rootScope.$emit).toHaveBeenCalledWith('document:edit', 'manage-content-uuid');
+    expect(CommunicationService.emit).toHaveBeenCalledWith('document:edit', 'manage-content-uuid');
   });
 
   it('can select a document', async () => {
-    ChannelService.isEditable = () => true;
-
+    CommunicationService.isEditable.and.returnValue(true);
     await loadIframeFixture();
-    const overlayElementScenario5 = iframe('.hippo-overlay-element-manage-content-link')[4];
+    const overlayElementScenario5 = $document.find('.hippo-overlay-element-manage-content-link')[4];
     const pickPathButton = $(overlayElementScenario5).find('.hippo-fab-main');
     expectNoPropagatedClicks();
 
-    spyOn($rootScope, '$emit');
     pickPathButton.click();
 
-    expect($rootScope.$emit).toHaveBeenCalledWith('document:select', jasmine.objectContaining({
-      containerItem: jasmine.any(Object),
+    expect(CommunicationService.emit).toHaveBeenCalledWith('document:select', jasmine.objectContaining({
+      containerItemId: 'bbbb',
+      isParameterValueRelativePath: false,
       parameterName: 'manage-content-component-parameter',
       parameterValue: undefined,
       pickerConfig: jasmine.any(Object),
-      parameterBasePath: '',
     }));
   });
 
   it('does not throw an error when calling edit menu handler if not set', async () => {
     await loadIframeFixture();
-    const menuLink = iframe('.hippo-overlay > .hippo-overlay-element-menu-link');
+    const menuLink = $document.find('.hippo-overlay > .hippo-overlay-element-menu-link');
 
     expectNoPropagatedClicks();
     expect(() => menuLink.click()).not.toThrow();
@@ -667,13 +600,12 @@ describe('OverlayService', () => {
   it('should trigger the menu:edit event', async () => {
     OverlayService.toggleComponentsOverlay(true);
     await loadIframeFixture();
-    const menuLink = iframe('.hippo-overlay > .hippo-overlay-element-menu-link');
+    const menuLink = $document.find('.hippo-overlay > .hippo-overlay-element-menu-link');
 
     expectNoPropagatedClicks();
-    spyOn($rootScope, '$emit');
-    await menuLink.click();
+    menuLink.click();
 
-    expect($rootScope.$emit).toHaveBeenCalledWith('menu:edit', 'menu-in-component-a');
+    expect(CommunicationService.emit).toHaveBeenCalledWith('menu:edit', 'menu-in-component-a');
   });
 
   it('removes overlay elements when they are no longer part of the page structure', async () => {
@@ -681,8 +613,8 @@ describe('OverlayService', () => {
 
     await loadIframeFixture();
 
-    expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(26);
-    expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(1);
+    expect($document.find('.hippo-overlay > .hippo-overlay-element')).toHaveLength(26);
+    expect($document.find('.hippo-overlay > .hippo-overlay-element-menu-link')).toHaveLength(1);
 
     const componentMarkupWithoutMenuLink = `
       <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component A", "uuid": "aaaa" } -->
@@ -691,16 +623,16 @@ describe('OverlayService', () => {
     `;
 
     const componentA = PageStructureService.getPage().getComponentById('aaaa');
-    PageStructureService.updateComponent(componentA.getId(), componentMarkupWithoutMenuLink);
-    $iframeRootScope.$digest();
+    await PageStructureService.updateComponent(componentA.getId(), componentMarkupWithoutMenuLink);
 
-    expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(25);
-    expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(0);
+    expect($document.find('.hippo-overlay > .hippo-overlay-element')).toHaveLength(25);
+    expect($document.find('.hippo-overlay > .hippo-overlay-element-menu-link')).toHaveLength(0);
   });
 
   describe('Manage content dial button(s)', () => {
     beforeEach(() => {
-      ChannelService.isEditable = () => true;
+      CommunicationService.isEditable.and.returnValue(true);
+      OverlayService._isEditable = true;
     });
 
     it('returns correct configuration out of config object', () => {
@@ -711,7 +643,7 @@ describe('OverlayService', () => {
       };
       const buttons = OverlayService._getButtons(config);
 
-      expect(buttons.length).toEqual(3);
+      expect(buttons).toHaveLength(3);
       expect(Object.keys(buttons[0])).toEqual(['id', 'mainIcon', 'optionIcon', 'callback', 'tooltip']);
     });
 
@@ -724,6 +656,7 @@ describe('OverlayService', () => {
         folderTemplateQuery = false,
       ) {
         const component = {
+          getId: () => 'aaaa',
           isLocked: () => locked,
         };
         const structureElement = {
@@ -750,7 +683,7 @@ describe('OverlayService', () => {
 
       describe('when channel is not editable', () => {
         beforeEach(() => {
-          ChannelService.isEditable = () => false;
+          OverlayService._isEditable = false;
         });
 
         it('always filters out property parameterName', () => {
@@ -789,22 +722,24 @@ describe('OverlayService', () => {
     async function manageContentScenario(scenarioNumber) {
       await loadIframeFixture();
 
-      const container = iframe('.hippo-overlay-element-manage-content-link')[scenarioNumber - 1];
+      const container = $document.find('.hippo-overlay-element-manage-content-link').eq(scenarioNumber - 1);
+
       return {
-        mainButton: $(container).find('.hippo-fab-main'),
-        optionButtons: $(container).find('.hippo-fab-options'),
+        mainButton: container.find('.hippo-fab-main'),
+        optionButtons: container.find('.hippo-fab-options'),
       };
     }
 
     describe('Dial button scenario\'s for unlocked containers', () => {
       it('Scenario 1', async () => {
         const { mainButton, optionButtons } = await manageContentScenario(1);
+
         expect(mainButton.hasClass('qa-edit-content')).toBe(true);
         expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
 
         mainButton.trigger('mouseenter');
         expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
-        expect(optionButtons.children().length).toBe(0);
+        expect(optionButtons.children()).toHaveLength(0);
       });
 
       it('Scenario 2', async () => {
@@ -814,7 +749,7 @@ describe('OverlayService', () => {
 
         mainButton.trigger('mouseenter');
         expect(mainButton.attr('title')).toBe('CREATE_DOCUMENT');
-        expect(optionButtons.children().length).toBe(0);
+        expect(optionButtons.children()).toHaveLength(0);
       });
 
       it('Scenario 3', async () => {
@@ -824,7 +759,7 @@ describe('OverlayService', () => {
 
         mainButton.trigger('mouseenter');
         expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
-        expect(optionButtons.children().length).toBe(1);
+        expect(optionButtons.children()).toHaveLength(1);
         expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
       });
 
@@ -835,7 +770,7 @@ describe('OverlayService', () => {
 
         mainButton.trigger('mouseenter');
         expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
-        expect(optionButtons.children().length).toBe(1);
+        expect(optionButtons.children()).toHaveLength(1);
         expect(optionButtons.children()[0].getAttribute('title')).toBe('SELECT_DOCUMENT');
       });
 
@@ -846,7 +781,7 @@ describe('OverlayService', () => {
 
         mainButton.trigger('mouseenter');
         expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT');
-        expect(optionButtons.children().length).toBe(1);
+        expect(optionButtons.children()).toHaveLength(1);
         expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
       });
 
@@ -857,7 +792,7 @@ describe('OverlayService', () => {
 
         mainButton.trigger('mouseenter');
         expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
-        expect(optionButtons.children().length).toBe(2);
+        expect(optionButtons.children()).toHaveLength(2);
         expect(optionButtons.children()[0].getAttribute('title')).toBe('SELECT_DOCUMENT');
         expect(optionButtons.children()[1].getAttribute('title')).toBe('CREATE_DOCUMENT');
       });
@@ -865,15 +800,15 @@ describe('OverlayService', () => {
 
     describe('when channel is not editable', () => {
       beforeEach(() => {
-        ChannelService.isEditable = () => false;
+        CommunicationService.isEditable.and.returnValue(false);
       });
 
       it('Scenario 5 does not show any button(s)', async () => {
         const { mainButton, optionButtons } = await manageContentScenario(5);
 
-        expect(mainButton.length).toBe(0);
-        expect(optionButtons.length).toBe(0);
-        expect(optionButtons.children().length).toBe(0);
+        expect(mainButton).toHaveLength(0);
+        expect(optionButtons).toHaveLength(0);
+        expect(optionButtons.children()).toHaveLength(0);
       });
     });
 
@@ -894,13 +829,13 @@ describe('OverlayService', () => {
 
         mainButton.trigger('mouseenter');
         expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT');
-        expect(optionButtons.children().length).toBe(1);
+        expect(optionButtons.children()).toHaveLength(1);
         expect(optionButtons.children()[0].getAttribute('title')).toBe('CREATE_DOCUMENT');
       });
 
       describe('shows disabled buttons when locked by another user', () => {
         function eventHandlerCount(jqueryElement, event) {
-          const eventHandlers = $._data(jqueryElement[0], 'events');
+          const eventHandlers = angular.element._data(jqueryElement[0], 'events');
           return eventHandlers && eventHandlers.hasOwnProperty(event) ? eventHandlers[event].length : 0;
         }
 
@@ -911,7 +846,7 @@ describe('OverlayService', () => {
 
           mainButton.trigger('mouseenter');
           expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
-          expect(optionButtons.children().length).toBe(1);
+          expect(optionButtons.children()).toHaveLength(1);
 
           const firstOption = $(optionButtons.children()[0]);
           expect(firstOption.attr('title')).toBe('SELECT_DOCUMENT_LOCKED');
@@ -927,7 +862,7 @@ describe('OverlayService', () => {
 
           mainButton.trigger('mouseenter');
           expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT_LOCKED');
-          expect(optionButtons.children().length).toBe(1);
+          expect(optionButtons.children()).toHaveLength(1);
 
           const firstOption = $(optionButtons.children()[0]);
           expect(firstOption.attr('title')).toBe('CREATE_DOCUMENT_LOCKED');
@@ -941,7 +876,7 @@ describe('OverlayService', () => {
 
           mainButton.trigger('mouseenter');
           expect(mainButton.attr('title')).toBe('EDIT_CONTENT');
-          expect(optionButtons.children().length).toBe(2);
+          expect(optionButtons.children()).toHaveLength(2);
 
           const firstOption = $(optionButtons.children()[0]);
           expect(firstOption.attr('title')).toBe('SELECT_DOCUMENT_LOCKED');
@@ -961,7 +896,7 @@ describe('OverlayService', () => {
 
           mainButton.trigger('mouseenter');
           expect(mainButton.attr('title')).toBe('SELECT_DOCUMENT_LOCKED');
-          expect(optionButtons.children().length).toBe(0);
+          expect(optionButtons.children()).toHaveLength(0);
         });
       });
     });
@@ -984,7 +919,7 @@ describe('OverlayService', () => {
         };
 
         const buttons = OverlayService._getButtons(config);
-        expect(buttons.length).toBe(1);
+        expect(buttons).toHaveLength(1);
         expect(buttons[0].tooltip).toBe('EDIT_CONTENT');
       });
 
@@ -996,7 +931,7 @@ describe('OverlayService', () => {
         };
 
         const buttons = OverlayService._getButtons(config);
-        expect(buttons.length).toBe(1);
+        expect(buttons).toHaveLength(1);
         expect(buttons[0].tooltip).toBe('CREATE_DOCUMENT');
       });
 
@@ -1008,7 +943,7 @@ describe('OverlayService', () => {
         };
 
         const buttons = OverlayService._getButtons(config);
-        expect(buttons.length).toBe(2);
+        expect(buttons).toHaveLength(2);
         expect(buttons[0].tooltip).toBe('EDIT_CONTENT');
         expect(buttons[1].tooltip).toBe('CREATE_DOCUMENT');
       });
@@ -1021,7 +956,7 @@ describe('OverlayService', () => {
         };
 
         const buttons = OverlayService._getButtons(config);
-        expect(buttons.length).toBe(2);
+        expect(buttons).toHaveLength(2);
         expect(buttons[0].tooltip).toBe('EDIT_CONTENT');
         expect(buttons[1].tooltip).toBe('SELECT_DOCUMENT');
       });
@@ -1034,7 +969,7 @@ describe('OverlayService', () => {
         };
 
         const buttons = OverlayService._getButtons(config);
-        expect(buttons.length).toBe(2);
+        expect(buttons).toHaveLength(2);
         expect(buttons[0].tooltip).toBe('SELECT_DOCUMENT');
         expect(buttons[1].tooltip).toBe('CREATE_DOCUMENT');
       });
@@ -1047,7 +982,7 @@ describe('OverlayService', () => {
         };
 
         const buttons = OverlayService._getButtons(config);
-        expect(buttons.length).toBe(3);
+        expect(buttons).toHaveLength(3);
         expect(buttons[0].tooltip).toBe('EDIT_CONTENT');
         expect(buttons[1].tooltip).toBe('SELECT_DOCUMENT');
         expect(buttons[2].tooltip).toBe('CREATE_DOCUMENT');
@@ -1061,7 +996,7 @@ describe('OverlayService', () => {
         };
 
         const buttons = OverlayService._getButtons(config);
-        expect(buttons.length).toBe(1);
+        expect(buttons).toHaveLength(1);
         expect(buttons[0].tooltip).toBe('SELECT_DOCUMENT');
       });
     });
@@ -1073,14 +1008,14 @@ describe('OverlayService', () => {
     it('should add a css class when the add mode is enabled', () => {
       OverlayService.toggleAddMode(true);
 
-      expect(iframe('.hippo-overlay-add-mode').length).toBe(1);
+      expect($document.find('.hippo-overlay-add-mode')).toHaveLength(1);
     });
 
     it('should remove a css class when the add mode is disabled', () => {
       OverlayService.toggleAddMode(true);
       OverlayService.toggleAddMode(false);
 
-      expect(iframe('.hippo-overlay-add-mode').length).toBe(0);
+      expect($document.find('.hippo-overlay-add-mode')).toHaveLength(0);
     });
 
     it('should reject add mode promise when the mode is disabled', (done) => {
@@ -1095,7 +1030,7 @@ describe('OverlayService', () => {
 
     it('should reject add mode promise on overlay click', (done) => {
       const promise = OverlayService.toggleAddMode(true);
-      iframe('.hippo-overlay').click();
+      $document.find('.hippo-overlay').click();
 
       promise.catch((result) => {
         expect(result).toBeUndefined();
@@ -1105,7 +1040,7 @@ describe('OverlayService', () => {
 
     it('should resolve add mode promise on the container click', (done) => {
       const promise = OverlayService.toggleAddMode(true);
-      const containerOverlay = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(0);
+      const containerOverlay = $document.find('.hippo-overlay > .hippo-overlay-element-container').eq(0);
 
       containerOverlay.click();
       promise.then((result) => {
@@ -1116,7 +1051,7 @@ describe('OverlayService', () => {
 
     it('should stay in the add mode on the disabled container click', () => {
       OverlayService.toggleAddMode(true);
-      const containerOverlay = iframe('.hippo-overlay > .hippo-overlay-element-container').eq(4);
+      const containerOverlay = $document.find('.hippo-overlay > .hippo-overlay-element-container').eq(4);
 
       containerOverlay.click();
       expect(OverlayService.isInAddMode).toBe(true);
@@ -1124,7 +1059,7 @@ describe('OverlayService', () => {
 
     it('should add a component before the clicked one', (done) => {
       const promise = OverlayService.toggleAddMode(true);
-      const componentBeforeArea = iframe(`.hippo-overlay
+      const componentBeforeArea = $document.find(`.hippo-overlay
         > .hippo-overlay-element-component:eq(0)
         .hippo-overlay-element-component-drop-area-before`);
 
@@ -1137,7 +1072,7 @@ describe('OverlayService', () => {
 
     it('should add a component after the clicked one', (done) => {
       const promise = OverlayService.toggleAddMode(true);
-      const componentAfterArea = iframe(`.hippo-overlay
+      const componentAfterArea = $document.find(`.hippo-overlay
         > .hippo-overlay-element-component:eq(0)
         .hippo-overlay-element-component-drop-area-after`);
 
@@ -1150,7 +1085,7 @@ describe('OverlayService', () => {
 
     it('should stay in the add mode on the disabled component click', () => {
       OverlayService.toggleAddMode(true);
-      const disabledComponentOverlay = iframe(`.hippo-overlay
+      const disabledComponentOverlay = $document.find(`.hippo-overlay
         > .hippo-overlay-element-component:eq(3)`)[0];
 
       disabledComponentOverlay.click();

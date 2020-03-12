@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,49 +15,52 @@
  */
 
 export default class SvgService {
-  constructor($http, $q) {
+  constructor($document, $http, CommunicationService) {
     'ngInject';
 
+    this.$document = $document;
     this.$http = $http;
-    this.$q = $q;
+    this.CommunicationService = CommunicationService;
 
     this.cache = {};
   }
 
   _loadSprite(src) {
     if (!this.cache[src]) {
-      this.cache[src] = this.$http.get(src).then(({ data }) => data);
+      this.cache[src] = this.CommunicationService.getAssetUrl(src)
+        .then(url => this.$http.get(url));
     }
 
     return this.cache[src];
   }
 
-  _getSprite(window, src) {
-    return angular.element(`body > svg[data-src="${src}"]`, window.document)[0];
+  _getSprite(src) {
+    return this.$document.find(`body > svg[data-src="${src}"]`)[0];
   }
 
-  _injectSprite(window, src, contents) {
-    const sprite = this._getSprite(window, src);
+  _injectSprite(src, contents) {
+    const sprite = this._getSprite(src);
 
     return sprite || angular.element(contents)
       .width(0)
       .height(0)
-      .hide()
       .attr('data-src', src)
-      .prependTo(angular.element('body', window.document))[0];
+      .hide()
+      .prependTo(this.$document.find('body'))[0];
   }
 
-  _resolveSprite(window, src) {
-    return this._loadSprite(src)
-      .then(this._injectSprite.bind(this, window, src));
+  async _resolveSprite(src) {
+    const { data } = await this._loadSprite(src);
+
+    return this._injectSprite(src, data);
   }
 
-  getSvg(window, { url, viewBox }) {
+  getSvg({ url, viewBox }) {
     const [src, id] = url.split('#');
     const [x, y, width, height] = viewBox.split(' ');
     const reference = angular.element('<svg>');
 
-    this._resolveSprite(window, src)
+    this._resolveSprite(src)
       .then(() => reference.replaceWith(
         angular.element(`<svg viewBox="${viewBox}"><use xlink:href="#${id}"/></svg>`)
           .attr('width', width - x)

@@ -17,13 +17,13 @@
 describe('ComponentCatalogService', () => {
   let $q;
   let $rootScope;
+  let CommunicationService;
   let ComponentCatalogService;
   let ConfigService;
   let ContainerService;
   let EditComponentService;
   let HippoIframeService;
   let MaskService;
-  let OverlayService;
   let PageStructureService;
   let RightSidePanelService;
   let SidePanelService;
@@ -32,15 +32,11 @@ describe('ComponentCatalogService', () => {
     angular.mock.module('hippo-cm');
 
     ConfigService = {};
+    CommunicationService = jasmine.createSpyObj('CommunicationService', ['toggleAddMode']);
     ContainerService = jasmine.createSpyObj('ContainerService', ['addComponent']);
     EditComponentService = jasmine.createSpyObj('EditComponentService', ['startEditing']);
     MaskService = jasmine.createSpyObj('MaskService', ['mask', 'unmask', 'onClick', 'removeClickHandler']);
     HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['liftIframeAboveMask', 'lowerIframeBeneathMask']);
-    OverlayService = jasmine.createSpyObj('OverlayService', [
-      'liftSidePanelAboveMask',
-      'lowerIframeBeneathMask',
-      'toggleAddMode',
-    ]);
     PageStructureService = jasmine.createSpyObj('PageStructureService', ['getPage']);
     RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['close']);
     SidePanelService = jasmine.createSpyObj('SidePanelService', [
@@ -49,12 +45,12 @@ describe('ComponentCatalogService', () => {
     ]);
 
     angular.mock.module(($provide) => {
+      $provide.value('CommunicationService', CommunicationService);
       $provide.value('ConfigService', ConfigService);
       $provide.value('ContainerService', ContainerService);
       $provide.value('EditComponentService', EditComponentService);
       $provide.value('MaskService', MaskService);
       $provide.value('HippoIframeService', HippoIframeService);
-      $provide.value('OverlayService', OverlayService);
       $provide.value('PageStructureService', PageStructureService);
       $provide.value('RightSidePanelService', RightSidePanelService);
       $provide.value('SidePanelService', SidePanelService);
@@ -73,7 +69,7 @@ describe('ComponentCatalogService', () => {
 
   describe('selectComponent', () => {
     it('should update the user interface on select component', () => {
-      OverlayService.toggleAddMode.and.returnValue($q.defer());
+      CommunicationService.toggleAddMode.and.returnValue($q.defer());
       ComponentCatalogService.selectComponent();
 
       expect(MaskService.mask).toHaveBeenCalledWith('mask-add-component');
@@ -82,7 +78,7 @@ describe('ComponentCatalogService', () => {
     });
 
     it('should restore the user interface after selecting a component', () => {
-      OverlayService.toggleAddMode.and.returnValue($q.reject());
+      CommunicationService.toggleAddMode.and.returnValue($q.reject());
       ComponentCatalogService.selectComponent();
       $rootScope.$digest();
 
@@ -94,7 +90,7 @@ describe('ComponentCatalogService', () => {
     it('should toggle on overlay add mode', () => {
       ComponentCatalogService.selectComponent();
 
-      expect(OverlayService.toggleAddMode).toHaveBeenCalledWith(true);
+      expect(CommunicationService.toggleAddMode).toHaveBeenCalledWith(true);
     });
 
     it('should toggle off overlay add mode on mask click', () => {
@@ -102,7 +98,7 @@ describe('ComponentCatalogService', () => {
       const { args: [onMaskClick] } = MaskService.onClick.calls.mostRecent();
       onMaskClick();
 
-      expect(OverlayService.toggleAddMode).toHaveBeenCalledWith(false);
+      expect(CommunicationService.toggleAddMode).toHaveBeenCalledWith(false);
     });
   });
 
@@ -112,7 +108,7 @@ describe('ComponentCatalogService', () => {
     let page;
 
     beforeEach(() => {
-      OverlayService.toggleAddMode.and.returnValue($q.resolve({
+      CommunicationService.toggleAddMode.and.returnValue($q.resolve({
         container: 'container-id',
         nextComponent: 'component-id',
       }));
@@ -168,7 +164,7 @@ describe('ComponentCatalogService', () => {
 
   describe('getSelectedComponent', () => {
     it('should return the selected component', () => {
-      OverlayService.toggleAddMode.and.returnValue($q.defer());
+      CommunicationService.toggleAddMode.and.returnValue($q.defer());
       ComponentCatalogService.selectComponent({ id: 'component' });
 
       expect(ComponentCatalogService.getSelectedComponent()).toEqual({ id: 'component' });

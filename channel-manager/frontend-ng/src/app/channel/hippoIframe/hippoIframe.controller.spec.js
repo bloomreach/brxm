@@ -19,6 +19,7 @@ describe('hippoIframeCtrl', () => {
   let $q;
   let $rootScope;
   let $window;
+  let ChannelService;
   let CmsService;
   let CommunicationService;
   let ComponentRenderingService;
@@ -30,7 +31,6 @@ describe('hippoIframeCtrl', () => {
   let FeedbackService;
   let HippoIframeService;
   let HstComponentService;
-  let OverlayService;
   let PageStructureService;
   let PickerService;
   let RenderingService;
@@ -73,11 +73,11 @@ describe('hippoIframeCtrl', () => {
       _$q_,
       _$rootScope_,
       _$window_,
+      _ChannelService_,
       _CmsService_,
       _CommunicationService_,
       _ContainerService_,
       _HippoIframeService_,
-      _OverlayService_,
       _PageStructureService_,
       _RenderingService_,
       _SpaService_,
@@ -86,11 +86,11 @@ describe('hippoIframeCtrl', () => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       $window = _$window_;
+      ChannelService = _ChannelService_;
       CmsService = _CmsService_;
       CommunicationService = _CommunicationService_;
       ContainerService = _ContainerService_;
       HippoIframeService = _HippoIframeService_;
-      OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
       RenderingService = _RenderingService_;
       SpaService = _SpaService_;
@@ -116,7 +116,6 @@ describe('hippoIframeCtrl', () => {
         CmsService,
         ContainerService,
         HippoIframeService,
-        OverlayService,
         PageStructureService,
         RenderingService,
         SpaService,
@@ -260,15 +259,19 @@ describe('hippoIframeCtrl', () => {
     expect(RenderingService.createOverlay).toHaveBeenCalledWith(true);
   });
 
-  it('triggers an event when page is loaded', () => {
-    spyOn($rootScope, '$emit');
+  it('should sync overlay toggles when page is loaded', () => {
+    spyOn(CommunicationService, 'toggleComponentsOverlay');
+    spyOn(CommunicationService, 'toggleContentsOverlay');
     spyOn(SpaService, 'initLegacy').and.returnValue(true);
     DomService.isFrameAccessible.and.returnValue(true);
 
+    $ctrl.showComponentsOverlay = true;
+    $ctrl.showContentOverlay = true;
     $ctrl.onLoad();
     $rootScope.$digest();
 
-    expect($rootScope.$emit).toHaveBeenCalledWith('hippo-iframe:load');
+    expect(CommunicationService.toggleComponentsOverlay).toHaveBeenCalledWith(true);
+    expect(CommunicationService.toggleContentsOverlay).toHaveBeenCalledWith(true);
   });
 
   it('reloads the iframe when it receives a "hippo-iframe:new-head-contributions" event', () => {
@@ -314,18 +317,25 @@ describe('hippoIframeCtrl', () => {
     expect(SpaService.inject).toHaveBeenCalledWith('url');
   });
 
-  it('triggers an event when the SPA SDK is ready', () => {
+  it('should sync overlay toggles when the SPA SDK is ready', () => {
+    spyOn(CommunicationService, 'toggleComponentsOverlay');
+    spyOn(CommunicationService, 'toggleContentsOverlay');
     spyOn(SpaService, 'inject');
     DomService.isFrameAccessible.and.returnValue(false);
 
+    $ctrl.showComponentsOverlay = true;
+    $ctrl.showContentOverlay = true;
     $rootScope.$emit('spa:ready');
     spyOn($rootScope, '$emit');
     $rootScope.$digest();
 
-    expect($rootScope.$emit).toHaveBeenCalledWith('hippo-iframe:load');
+    expect(CommunicationService.toggleComponentsOverlay).toHaveBeenCalledWith(true);
+    expect(CommunicationService.toggleContentsOverlay).toHaveBeenCalledWith(true);
   });
 
-  it('does not trigger an event when the iframe has the same origin', () => {
+  it('should not sync overlay toggles when the iframe has the same origin', () => {
+    spyOn(CommunicationService, 'toggleComponentsOverlay');
+    spyOn(CommunicationService, 'toggleContentsOverlay');
     DomService.isFrameAccessible.and.returnValue(true);
 
     const listener = jasmine.createSpy('listener');
@@ -335,7 +345,8 @@ describe('hippoIframeCtrl', () => {
 
     $rootScope.$digest();
 
-    expect(listener).not.toHaveBeenCalled();
+    expect(CommunicationService.toggleComponentsOverlay).not.toHaveBeenCalled();
+    expect(CommunicationService.toggleContentsOverlay).not.toHaveBeenCalled();
   });
 
   it('disconnects with the iframe bundle on the iframe unload', () => {
@@ -367,76 +378,120 @@ describe('hippoIframeCtrl', () => {
   });
 
   it('toggles the components overlay', () => {
-    spyOn(OverlayService, 'toggleComponentsOverlay');
+    spyOn(CommunicationService, 'toggleComponentsOverlay');
 
     $ctrl.$onChanges({
       showComponentsOverlay: { currentValue: true },
     });
-    expect(OverlayService.toggleComponentsOverlay).toHaveBeenCalledWith(true);
+    expect(CommunicationService.toggleComponentsOverlay).toHaveBeenCalledWith(true);
 
     $ctrl.$onChanges({
       showComponentsOverlay: { currentValue: false },
     });
-    expect(OverlayService.toggleComponentsOverlay).toHaveBeenCalledWith(false);
+    expect(CommunicationService.toggleComponentsOverlay).toHaveBeenCalledWith(false);
   });
 
   it('toggles the content overlay', () => {
-    spyOn(OverlayService, 'toggleContentsOverlay');
+    spyOn(CommunicationService, 'toggleContentsOverlay');
 
     $ctrl.$onChanges({
       showContentOverlay: { currentValue: true },
     });
-    expect(OverlayService.toggleContentsOverlay).toHaveBeenCalledWith(true);
+    expect(CommunicationService.toggleContentsOverlay).toHaveBeenCalledWith(true);
 
     $ctrl.$onChanges({
       showContentOverlay: { currentValue: false },
     });
-    expect(OverlayService.toggleContentsOverlay).toHaveBeenCalledWith(false);
+    expect(CommunicationService.toggleContentsOverlay).toHaveBeenCalledWith(false);
   });
 
   it('calls its edit menu function on menu:edit event', () => {
-    $rootScope.$emit('menu:edit', 'menu-uuid');
+    $rootScope.$emit('iframe:menu:edit', 'menu-uuid');
+    $rootScope.$digest();
 
     expect(onEditMenu).toHaveBeenCalledWith({ menuUuid: 'menu-uuid' });
   });
 
-  it('should start create content service on document:create event', () => {
-    const data = {};
-    $rootScope.$emit('document:create', data);
+  describe('_onDocumentCreate', () => {
+    const containerItem = { id: 'id' };
+    let page;
 
-    expect(CreateContentService.start).toHaveBeenCalledWith(data);
+    beforeEach(() => {
+      page = jasmine.createSpyObj('Page', ['getComponentById']);
+      page.getComponentById.and.returnValue(containerItem);
+
+      spyOn(ChannelService, 'getChannel').and.returnValue({ contentRoot: '/path' });
+      spyOn(PageStructureService, 'getPage').and.returnValue(page);
+    });
+
+    it('should start create content service on document:create event', () => {
+      const data = {
+        containerItemId: 'id',
+        isParameterValueRelativePath: true,
+        something: 'value',
+      };
+      $rootScope.$emit('iframe:document:create', data);
+
+      expect(page.getComponentById).toHaveBeenCalledWith('id');
+      expect(CreateContentService.start).toHaveBeenCalledWith(jasmine.objectContaining({
+        containerItem,
+        parameterBasePath: '/path',
+        something: 'value',
+      }));
+    });
+
+    it('should not use channel root path if the value is not relative', () => {
+      const data = { parameterBasePath: '/something' };
+      $rootScope.$emit('iframe:document:create', data);
+
+      expect(CreateContentService.start).toHaveBeenCalledWith(jasmine.objectContaining({
+        parameterBasePath: '',
+      }));
+    });
   });
 
-  it('should start create content service on document:edit event', () => {
-    spyOn(CmsService, 'reportUsageStatistic');
-    $rootScope.$emit('document:edit', 'content-uuid');
+  describe('_onDocumentEdit', () => {
+    it('should start create content service on document:edit event', () => {
+      spyOn(CmsService, 'reportUsageStatistic');
+      $rootScope.$emit('iframe:document:edit', 'content-uuid');
 
-    expect(EditContentService.startEditing).toHaveBeenCalledWith('content-uuid');
-    expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsEditContent');
+      expect(EditContentService.startEditing).toHaveBeenCalledWith('content-uuid');
+      expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('CMSChannelsEditContent');
+    });
   });
 
   describe('_onDocumentSelect', () => {
+    const containerItem = {
+      getId: () => 'componentId',
+      getLabel: () => 'componentLabel',
+      getRenderVariant: () => 'hippo-default',
+    };
+
     const eventData = {
-      containerItem: {
-        getId: () => 'componentId',
-        getLabel: () => 'componentLabel',
-        getRenderVariant: () => 'hippo-default',
-      },
+      containerItemId: 'id',
+      isParameterValueRelativePath: true,
       parameterName: 'parameterName',
       parameterValue: '/base/currentPath',
       parameterBasePath: '/base',
       pickerConfig: {},
     };
 
+    let page;
+
     beforeEach(() => {
+      page = jasmine.createSpyObj('Page', ['getComponentById']);
+      page.getComponentById.and.returnValue(containerItem);
+
+      spyOn(ChannelService, 'getChannel').and.returnValue({ contentRoot: '/base' });
       spyOn(CmsService, 'reportUsageStatistic');
+      spyOn(PageStructureService, 'getPage').and.returnValue(page);
     });
 
     it('can pick a path and update the component', () => {
       PickerService.pickPath.and.returnValue($q.resolve({ path: '/base/pickedPath' }));
       HstComponentService.setPathParameter.and.returnValue($q.resolve());
 
-      $rootScope.$emit('document:select', eventData);
+      $rootScope.$emit('iframe:document:select', eventData);
       $rootScope.$digest();
 
       expect(PickerService.pickPath).toHaveBeenCalledWith(eventData.pickerConfig, '/base/currentPath');
@@ -455,7 +510,7 @@ describe('hippoIframeCtrl', () => {
       HstComponentService.setPathParameter.and.returnValue($q.reject({ data: errorData }));
       spyOn(HippoIframeService, 'reload');
 
-      $rootScope.$emit('document:select', { ...eventData, parameterValue: '/base/currentPath' });
+      $rootScope.$emit('iframe:document:select', { ...eventData, parameterValue: '/base/currentPath' });
       $rootScope.$digest();
 
       expect(PickerService.pickPath).toHaveBeenCalledWith(eventData.pickerConfig, '/base/currentPath');
@@ -470,15 +525,15 @@ describe('hippoIframeCtrl', () => {
     });
 
     it('should not proceed if the default behavior prevented', () => {
-      $rootScope.$on('document:select', event => event.preventDefault());
-      $rootScope.$emit('document:select', eventData);
+      $rootScope.$on('iframe:document:select', event => event.preventDefault());
+      $rootScope.$emit('iframe:document:select', eventData);
       $rootScope.$digest();
 
       expect(PickerService.pickPath).not.toHaveBeenCalled();
     });
 
     it('should report usage statistic', () => {
-      $rootScope.$emit('document:select', eventData);
+      $rootScope.$emit('iframe:document:select', eventData);
       $rootScope.$digest();
 
       expect(CmsService.reportUsageStatistic).toHaveBeenCalledWith('PickContentButton');

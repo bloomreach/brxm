@@ -57,7 +57,7 @@ class EditComponentMainCtrl {
 
   $onInit() {
     this._offComponentMoved = this.ContainerService.onComponentMoved(() => this.ComponentEditor.updatePreview());
-    this._offDocumentSelect = this.$rootScope.$on('document:select', this._onDocumentSelect);
+    this._offDocumentSelect = this.$rootScope.$on('iframe:document:select', this._onDocumentSelect);
     this._offPageChange = this.$rootScope.$on('page:change', this._onPageChange);
   }
 
@@ -68,7 +68,7 @@ class EditComponentMainCtrl {
   }
 
   _onDocumentSelect(event, data) {
-    if (this.ComponentEditor.getComponentId() === data.containerItem.getId()) {
+    if (this.ComponentEditor.getComponentId() === data.containerItemId) {
       event.preventDefault();
       this.$scope.$broadcast('edit-component:select-document', data.parameterName);
     }

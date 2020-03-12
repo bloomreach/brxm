@@ -15,33 +15,39 @@
  */
 
 import MutationSummary from 'mutation-summary';
-import contentLinkSvg from '../../../../images/html/edit-document.svg?sprite';
-import flaskSvg from '../../../../images/html/flask.svg?sprite';
-import lockSvg from '../../../../images/html/lock.svg?sprite';
-import menuLinkSvg from '../../../../images/html/edit-menu.svg?sprite';
-import dropSvg from '../../../../images/html/add.svg?sprite';
-import disabledSvg from '../../../../images/html/not-allowed.svg?sprite';
-import plusSvg from '../../../../images/html/plus.svg?sprite';
-import searchSvg from '../../../../images/html/search.svg?sprite';
-import chevronUp from '../../../../images/html/chevron-up.svg?sprite';
+import contentLinkSvg from '../../../images/html/edit-document.svg?sprite';
+import flaskSvg from '../../../images/html/flask.svg?sprite';
+import lockSvg from '../../../images/html/lock.svg?sprite';
+import menuLinkSvg from '../../../images/html/edit-menu.svg?sprite';
+import dropSvg from '../../../images/html/add.svg?sprite';
+import disabledSvg from '../../../images/html/not-allowed.svg?sprite';
+import plusSvg from '../../../images/html/plus.svg?sprite';
+import searchSvg from '../../../images/html/search.svg?sprite';
+import chevronUp from '../../../images/html/chevron-up.svg?sprite';
 
-class OverlayService {
+export default class OverlayService {
   constructor(
+    $document,
     $log,
     $q,
     $rootScope,
     $translate,
-    ChannelService,
+    $window,
+    CommunicationService,
+    DragDropService,
     DomService,
     PageStructureService,
     SvgService,
   ) {
     'ngInject';
 
+    this.$document = $document;
     this.$log = $log;
     this.$q = $q;
     this.$rootScope = $rootScope;
-    this.ChannelService = ChannelService;
+    this.$window = $window;
+    this.CommunicationService = CommunicationService;
+    this.DragDropService = DragDropService;
     this.DomService = DomService;
     this.PageStructureService = PageStructureService;
     this.SvgService = SvgService;
@@ -49,107 +55,36 @@ class OverlayService {
     this.isComponentsOverlayDisplayed = false;
     this.isContentOverlayDisplayed = false;
 
+    this._onOverlayMouseDown = this._onOverlayMouseDown.bind(this);
     this._onOverlayClick = this._onOverlayClick.bind(this);
     this._onPageChange = this._onPageChange.bind(this);
     this._translate = (key, params) => $translate.instant(key, params, undefined, false, 'escape');
   }
 
-  init(iframeJQueryElement) {
-    this.iframeJQueryElement = iframeJQueryElement;
-    this._offLoad = this.$rootScope.$on('hippo-iframe:load', () => this._onLoad());
+  async initialize() {
+    this.$rootScope.$on('page:change', this._onPageChange);
 
-    if (this._offPageChange) {
-      this._offPageChange();
-    }
-    this._offPageChange = this.$rootScope.$on('iframe:page:change', this._onPageChange);
-  }
+    await this.$q(this.$document.ready);
 
-  destroy() {
-    if (this._offLoad) {
-      this._offLoad();
-    }
-  }
-
-  _onLoad() {
-    this.iframeWindow = this.iframeJQueryElement[0].contentWindow;
-    this._initOverlay();
-
-    this.observer = new MutationSummary({
+    this._observer = new MutationSummary({
       callback: () => this.sync(),
-      rootNode: this.iframeWindow.document,
+      rootNode: this.$document[0],
       queries: [{ all: true }],
     });
-
-    const win = $(this.iframeWindow);
-    win.one('unload', () => this._onUnload());
-    win.on('resize', () => this.sync());
-
-    this.DragDropService = this.iframeWindow.angular.element(this.iframeWindow.document)
-      .injector()
-      .get('DragDropService');
-
-    this.PageStructureService = this.iframeWindow.angular.element(this.iframeWindow.document)
-      .injector()
-      .get('PageStructureService');
+    this.$window.addEventListener('resize', () => this.sync());
   }
 
-  _onUnload() {
-    // For some reason digest cycle is active in that moment,
-    // there is a temporary fix for that problem
-    // See https://issues.onehippo.com//browse/CHANNELMGR-2480
-    const tearDown = () => {
-      this.observer.disconnect();
-      delete this.overlay;
-      delete this.iframeWindow;
-    };
-
-    if (this.$rootScope.$$phase) {
-      tearDown();
-    } else {
-      this.$rootScope.$apply(tearDown);
+  async _onPageChange() {
+    this._isEditable = await this.CommunicationService.isEditable();
+    if (!this._overlay || !this.$document.find('body > .hippo-overlay').length) {
+      this._overlay = angular.element('<div>', { class: 'hippo-overlay' })
+        .on('click', this._onOverlayClick)
+        .on('mousedown', this._onOverlayMouseDown)
+        .appendTo(this.$document.find('body'));
+      this._updateOverlayClasses();
     }
-  }
 
-  _onPageChange() {
     this.sync();
-  }
-
-  _initOverlay() {
-    this.overlay = $('<div class="hippo-overlay"></div>');
-    $(this.iframeWindow.document.body).append(this.overlay);
-    this._updateOverlayClasses();
-
-    this.overlay.mousedown((event) => {
-      // let right-click trigger context-menu instead of starting dragging
-      event.preventDefault();
-
-      // we already dispatch a mousedown event on the same location, so don't propagate this one to avoid that
-      // dragula receives one mousedown event too many
-      event.stopPropagation();
-
-      this._onOverlayMouseDown(event);
-    });
-
-    this.overlay.on('click', this._onOverlayClick);
-  }
-
-  async toggleAddMode(value) {
-    this.isInAddMode = !!value;
-    this.overlay.toggleClass('hippo-overlay-add-mode', value);
-
-    if (this._addModeDeferred) {
-      this._addModeDeferred.reject();
-      delete this._addModeDeferred;
-    }
-
-    if (!value) {
-      return;
-    }
-
-    this._addModeDeferred = this.$q.defer();
-
-    // eslint-disable-next-line consistent-return
-    return this._addModeDeferred.promise;
   }
 
   _onOverlayClick(event) {
@@ -206,13 +141,50 @@ class OverlayService {
     this.toggleAddMode(false);
   }
 
+  _onOverlayMouseDown(event) {
+    // let right-click trigger context-menu instead of starting dragging
+    event.preventDefault();
+
+    // we already dispatch a mousedown event on the same location, so don't propagate this one to avoid that
+    // dragula receives one mousedown event too many
+    event.stopPropagation();
+
+    const target = angular.element(event.target);
+    if (!target.hasClass('hippo-overlay-element-component')
+      || !this.isComponentsOverlayDisplayed
+      || !this.DragDropService.isEnabled()
+    ) {
+      return;
+    }
+
+    const component = this.PageStructureService.getComponentByOverlayElement(target);
+    if (component) {
+      this.DragDropService.startDragOrClick(event, component);
+    }
+  }
+
+  async toggleAddMode(value) {
+    this.isInAddMode = !!value;
+    this._overlay.toggleClass('hippo-overlay-add-mode', value);
+
+    if (this._addModeDeferred) {
+      this._addModeDeferred.reject();
+      delete this._addModeDeferred;
+    }
+
+    if (!value) {
+      return;
+    }
+
+    this._addModeDeferred = this.$q.defer();
+
+    // eslint-disable-next-line consistent-return
+    return this._addModeDeferred.promise;
+  }
+
   toggleComponentsOverlay(value) {
     this.isComponentsOverlayDisplayed = value;
     this._updateOverlayClasses();
-
-    if (!this.DragDropService) {
-      return;
-    }
 
     if (value) {
       this.DragDropService.enable();
@@ -227,11 +199,11 @@ class OverlayService {
   }
 
   _updateOverlayClasses() {
-    if (!this.overlay) {
+    if (!this._overlay) {
       return;
     }
 
-    const html = $(this.iframeWindow.document.documentElement);
+    const html = angular.element(this.$document[0].documentElement);
     html.toggleClass('hippo-show-components', this.isComponentsOverlayDisplayed);
     html.toggleClass('hippo-show-content', this.isContentOverlayDisplayed);
     // don't call sync() explicitly: the DOM mutation will trigger it automatically
@@ -247,7 +219,7 @@ class OverlayService {
   }
 
   sync() {
-    if (!this.overlay) {
+    if (!this._overlay) {
       return;
     }
 
@@ -265,21 +237,6 @@ class OverlayService {
     }
 
     this._overlays = overlays;
-  }
-
-  _onOverlayMouseDown(event) {
-    const target = $(event.target);
-    if (!target.hasClass('hippo-overlay-element-component')
-      || !this.isComponentsOverlayDisplayed
-      || !this.DragDropService.isEnabled()
-    ) {
-      return;
-    }
-
-    const component = this.PageStructureService.getComponentByOverlayElement(target);
-    if (component) {
-      this.DragDropService.startDragOrClick(event, component);
-    }
   }
 
   _getAllStructureElements() {
@@ -309,7 +266,7 @@ class OverlayService {
   }
 
   _addOverlayElement(structureElement) {
-    const overlayElement = $(`
+    const overlayElement = angular.element(`
       <div class="hippo-overlay-element hippo-overlay-element-${structureElement.getType()}">
       </div>`);
 
@@ -320,12 +277,12 @@ class OverlayService {
 
     this._syncElements(structureElement, overlayElement);
 
-    this.overlay.append(overlayElement);
+    this._overlay.append(overlayElement);
   }
 
   _addLabel(structureElement, overlayElement) {
     if (structureElement.hasLabel()) {
-      const labelElement = $(`
+      const labelElement = angular.element(`
         <span class="hippo-overlay-label">
           <span class="hippo-overlay-label-text"></span>
         </span>
@@ -341,10 +298,11 @@ class OverlayService {
 
   _setLabelText(labelElement, text) {
     const textElement = labelElement.children('.hippo-overlay-label-text');
-    const escapedText = this.DomService.escapeHtml(text);
-    // use html() with manual escaping instead of text() because the latter crashes Chrome during unit tests :-/
-    textElement.html(escapedText);
-    return escapedText;
+    if (textElement.text() !== text) {
+      textElement.text(text);
+    }
+
+    return text;
   }
 
   _addMarkupAndBehavior(structureElement, overlayElement) {
@@ -370,10 +328,6 @@ class OverlayService {
       default:
         break;
     }
-  }
-
-  _getSvg(svg) {
-    return this.SvgService.getSvg(this.iframeWindow, svg);
   }
 
   _addComponentMarkup(structureElement, overlayElement) {
@@ -402,15 +356,15 @@ class OverlayService {
   _createComponentDropIcons(container) {
     return angular.element('<div>')
       .addClass('hippo-overlay-element-component-drop-area-icons')
-      .append(this._getSvg(chevronUp))
-      .append(this._getSvg(container.isDisabled()
+      .append(this.SvgService.getSvg(chevronUp))
+      .append(this.SvgService.getSvg(container.isDisabled()
         ? disabledSvg
         : dropSvg));
   }
 
   _addDropIcon(container, overlayElement) {
     angular.element('<div class="hippo-overlay-icon"></div>')
-      .append(this._getSvg(container.isDisabled()
+      .append(this.SvgService.getSvg(container.isDisabled()
         ? disabledSvg
         : dropSvg))
       .appendTo(overlayElement);
@@ -420,7 +374,7 @@ class OverlayService {
     if (container.isDisabled()) {
       const lockedBy = this._getLockedByText(container);
       angular.element(`<div class="hippo-overlay-lock" data-locked-by="${lockedBy}"></div>`)
-        .append(this._getSvg(lockSvg))
+        .append(this.SvgService.getSvg(lockSvg))
         .appendTo(overlayElement);
     }
   }
@@ -436,7 +390,7 @@ class OverlayService {
   _addLinkMarkup(overlayElement, svg, titleKey, qaClass = '') {
     overlayElement.addClass(`hippo-overlay-element-link hippo-overlay-element-link-button ${qaClass}`);
     overlayElement.attr('title', this._translate(titleKey));
-    overlayElement.append(this._getSvg(svg));
+    overlayElement.append(this.SvgService.getSvg(svg));
   }
 
   _initManageContentLink(structureElement, overlayElement) {
@@ -457,7 +411,7 @@ class OverlayService {
     const optionButtons = buttons.slice(1);
 
     const mainButtonElement = this._createMainButton(mainButton, config);
-    const optionsButtonsElement = $('<div class="hippo-fab-options"></div>');
+    const optionsButtonsElement = angular.element('<div class="hippo-fab-options"></div>');
 
     overlayElement
       .addClass('hippo-overlay-element-link')
@@ -485,26 +439,23 @@ class OverlayService {
   _initManageContentConfig(structureElement) {
     // each property should be filled with the method that will extract the data from the HST comment
     // Passing the full config through privileges to adjust buttons for authors
-    const documentUuid = structureElement.getId();
     const parameterName = structureElement.getParameterName();
-    const parameterBasePath = structureElement.isParameterValueRelativePath()
-      ? this.ChannelService.getChannel().contentRoot
-      : '';
+    const containerItem = structureElement.getComponent();
 
     const config = {
-      containerItem: structureElement.getComponent(),
+      containerItemId: containerItem && containerItem.getId(),
       defaultPath: structureElement.getDefaultPath(),
       documentTemplateQuery: structureElement.getDocumentTemplateQuery(),
       folderTemplateQuery: structureElement.getFolderTemplateQuery(),
-      documentUuid,
-      parameterBasePath,
+      documentUuid: structureElement.getId(),
+      isParameterValueRelativePath: structureElement.isParameterValueRelativePath(),
       parameterName,
       parameterValue: structureElement.getParameterValue(),
       pickerConfig: structureElement.getPickerConfig(),
       rootPath: structureElement.getRootPath(),
     };
 
-    if (!this.ChannelService.isEditable()) {
+    if (!this._isEditable) {
       delete config.parameterName;
 
       if (config.documentUuid) { // whenever uuid is available, only edit button for authors
@@ -519,13 +470,13 @@ class OverlayService {
     }
 
     if (parameterName
-      && config.containerItem
-      && config.containerItem.isLocked()
-      && !config.containerItem.isLockedByCurrentUser()) {
+      && containerItem
+      && containerItem.isLocked()
+      && !containerItem.isLockedByCurrentUser()) {
       config.isLockedByOtherUser = true;
     }
 
-    if (config.parameterName && !config.containerItem) {
+    if (config.parameterName && !containerItem) {
       this.$log.warn(
         `Ignoring component parameter "${config.parameterName}" of manage content button outside catalog item`,
       );
@@ -581,8 +532,8 @@ class OverlayService {
   }
 
   _createMainButton(button, manageContentConfig) {
-    const mainButton = $(`<button title="${button.tooltip}"></button>`)
-      .append(this._getSvg(button.mainIcon));
+    const mainButton = angular.element(`<button title="${button.tooltip}"></button>`)
+      .append(this.SvgService.getSvg(button.mainIcon));
 
     mainButton.addClass(`hippo-fab-main hippo-fab-main-${button.id} qa-manage-content-link`);
 
@@ -610,8 +561,8 @@ class OverlayService {
   }
 
   _createOptionButton(button, index) {
-    const optionButton = $(`<button title="${button.tooltip}"></button>`)
-      .append(this._getSvg(button.optionIcon));
+    const optionButton = angular.element(`<button title="${button.tooltip}"></button>`)
+      .append(this.SvgService.getSvg(button.optionIcon));
 
     optionButton.addClass(`hippo-fab-option hippo-fab-option-${button.id} hippo-fab-option-${index}`);
 
@@ -640,22 +591,18 @@ class OverlayService {
   _getElementPosition(boxElement) {
     const rect = boxElement[0].getBoundingClientRect();
     return {
-      top: rect.top + this.iframeWindow.scrollY,
-      left: rect.left + this.iframeWindow.scrollX,
+      top: rect.top + this.$window.scrollY,
+      left: rect.left + this.$window.scrollX,
       width: rect.width,
       height: rect.height,
     };
   }
 
   _getViewportPosition() {
-    const top = $(this.iframeWindow).scrollTop(); // The position you see at top of scrollbar
-    const viewHeight = $(this.iframeWindow).height();
-    const bottom = top + viewHeight;
+    const { scrollY: top, innerHeight } = this.$window;
+    const bottom = top + innerHeight;
 
-    return {
-      top,
-      bottom,
-    };
+    return { top, bottom };
   }
 
   _addContentLinkClickHandler(structureElement, overlayElement) {
@@ -669,9 +616,10 @@ class OverlayService {
   _addMenuLinkClickHandler(structureElement, overlayElement) {
     this._linkButtonTransition(overlayElement);
 
-    this._addClickHandler(overlayElement, () => this.$rootScope.$evalAsync(
-      () => this.$rootScope.$emit('menu:edit', structureElement.getId()),
-    ));
+    this._addClickHandler(
+      overlayElement,
+      () => this.CommunicationService.emit('menu:edit', structureElement.getId()),
+    );
   }
 
   _addClickHandler(jqueryElement, handler) {
@@ -682,15 +630,15 @@ class OverlayService {
   }
 
   _createContent(config) {
-    this.$rootScope.$emit('document:create', config);
+    this.CommunicationService.emit('document:create', config);
   }
 
   _editContent(uuid) {
-    this.$rootScope.$emit('document:edit', uuid);
+    this.CommunicationService.emit('document:edit', uuid);
   }
 
   _selectDocument(config) {
-    this.$rootScope.$emit('document:select', config);
+    this.CommunicationService.emit('document:select', config);
   }
 
   _linkButtonTransition(element) {
@@ -755,7 +703,7 @@ class OverlayService {
       labelElement.attr('data-qa-experiment-id', experimentId);
 
       if (iconElement.length === 0) {
-        labelElement.prepend(this._getSvg(flaskSvg));
+        labelElement.prepend(this.SvgService.getSvg(flaskSvg));
       }
 
       const experimentState = component.getExperimentStateLabel();
@@ -777,5 +725,3 @@ class OverlayService {
     overlayElement.css('height', `${position.height}px`);
   }
 }
-
-export default OverlayService;

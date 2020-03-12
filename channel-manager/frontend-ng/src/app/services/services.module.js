@@ -37,7 +37,6 @@ import SessionService from './session.service';
 import SiteMapItemService from './siteMapItem.service';
 import SiteMapService from './siteMap.service';
 import SiteMenuService from './siteMenu.service';
-import SvgService from './svg.service';
 import WorkflowService from './workflow.service';
 
 const servicesModule = angular
@@ -63,7 +62,6 @@ const servicesModule = angular
   .service('SiteMapItemService', SiteMapItemService)
   .service('SiteMapService', SiteMapService)
   .service('SiteMenuService', SiteMenuService)
-  .service('SvgService', SvgService)
   .service('WorkflowService', WorkflowService);
 
 export default servicesModule.name;

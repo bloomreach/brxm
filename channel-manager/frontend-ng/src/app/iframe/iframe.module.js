@@ -25,8 +25,10 @@ import CommunicationService from './communication.service';
 import DragDropService from './overlay/drag-drop.service';
 import HstCommentsProcessorService from './page/hst-comments-processor.service';
 import LinkProcessorService from './overlay/link-processor.service';
+import OverlayService from './overlay/overlay.service';
 import PageStructureService from './page/page-structure.service';
 import ScrollService from './overlay/scroll.service';
+import SvgService from './overlay/svg.service';
 
 const iframeModule = angular
   .module('hippo-cm-iframe', [ngTranslate, ModelModule.name, ServicesModule])
@@ -37,21 +39,26 @@ const iframeModule = angular
   .service('DragDropService', DragDropService)
   .service('HstCommentsProcessorService', HstCommentsProcessorService)
   .service('LinkProcessorService', LinkProcessorService)
+  .service('OverlayService', OverlayService)
   .service('PageStructureService', PageStructureService)
   .service('ScrollService', ScrollService)
+  .service('SvgService', SvgService)
 
   // eslint-disable-next-line no-shadow
-  .run(($rootScope, $translate, $window, CommunicationService, DragDropService, LinkProcessorService) => {
+  .run(($translate, $window, CommunicationService, DragDropService, LinkProcessorService, OverlayService) => {
     'ngInject';
 
+    if (!$window.top || $window === $window.top) {
+      return;
+    }
+
     CommunicationService.connect()
-      .then(CommunicationService.getLocale)
+      .then(() => CommunicationService.getLocale())
       .then(locale => $translate.use(locale));
 
-    DragDropService.initialize();
     LinkProcessorService.initialize();
-
-    $rootScope.$on('page:change', () => CommunicationService.emit('page:change'));
+    DragDropService.initialize();
+    OverlayService.initialize();
 
     // The `unload` event cannot be used here because `event.source` in the target MessageEvent
     // will be `null`. Penpal checks `event.source`, and in this case, it will reject the request.

@@ -119,6 +119,7 @@ function mockHost() {
       search: '?proCache4321&parentExtIFramePanelId=ext-42&antiCache=1234',
     };
 
+    $window.top = $window;
     $window.parent = {
       document: {
         documentElement: {

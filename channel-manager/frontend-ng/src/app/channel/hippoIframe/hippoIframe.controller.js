@@ -22,6 +22,7 @@ class HippoIframeCtrl {
     $log,
     $rootScope,
     iframeAsset,
+    ChannelService,
     CmsService,
     CommunicationService,
     ComponentRenderingService,
@@ -33,7 +34,6 @@ class HippoIframeCtrl {
     FeedbackService,
     HippoIframeService,
     HstComponentService,
-    OverlayService,
     PageStructureService,
     PickerService,
     RenderingService,
@@ -47,6 +47,7 @@ class HippoIframeCtrl {
     this.$log = $log;
     this.$rootScope = $rootScope;
     this.iframeAsset = iframeAsset;
+    this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.CommunicationService = CommunicationService;
     this.ComponentRenderingService = ComponentRenderingService;
@@ -58,7 +59,6 @@ class HippoIframeCtrl {
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.HstComponentService = HstComponentService;
-    this.OverlayService = OverlayService;
     this.PageStructureService = PageStructureService;
     this.PickerService = PickerService;
     this.RenderingService = RenderingService;
@@ -78,6 +78,7 @@ class HippoIframeCtrl {
     this._onDocumentSelect = this._onDocumentSelect.bind(this);
     this._onDragStart = this._onDragStart.bind(this);
     this._onDragStop = this._onDragStop.bind(this);
+    this._onMenuEdit = this._onMenuEdit.bind(this);
   }
 
   $onInit() {
@@ -85,7 +86,6 @@ class HippoIframeCtrl {
     this.CmsService.subscribe('delete-component', this._deleteComponent, this);
 
     this.iframeJQueryElement.on('load', this.onLoad);
-    this._offEditMenu = this.$rootScope.$on('menu:edit', (event, menuUuid) => this.onEditMenu({ menuUuid }));
     this._offComponentClick = this.$rootScope.$on('iframe:component:click', this._onComponentClick);
     this._offComponentMove = this.$rootScope.$on('iframe:component:move', this._onComponentMove);
     this._offSdkReady = this.$rootScope.$on('spa:ready', this._onSpaReady);
@@ -94,17 +94,17 @@ class HippoIframeCtrl {
       'hippo-iframe:new-head-contributions',
       this._onNewHeadContributions,
     );
-    this._offDocumentCreate = this.$rootScope.$on('document:create', this._onDocumentCreate);
-    this._offDocumentEdit = this.$rootScope.$on('document:edit', this._onDocumentEdit);
-    this._offDocumentSelect = this.$rootScope.$on('document:select', this._onDocumentSelect);
+    this._offDocumentCreate = this.$rootScope.$on('iframe:document:create', this._onDocumentCreate);
+    this._offDocumentEdit = this.$rootScope.$on('iframe:document:edit', this._onDocumentEdit);
+    this._offDocumentSelect = this.$rootScope.$on('iframe:document:select', this._onDocumentSelect);
     this._offDragStart = this.$rootScope.$on('iframe:drag:start', this._onDragStart);
     this._offDragStop = this.$rootScope.$on('iframe:drag:stop', this._onDragStop);
+    this._offMenuEdit = this.$rootScope.$on('iframe:menu:edit', this._onMenuEdit);
 
     const canvasJQueryElement = this.$element.find('.channel-iframe-canvas');
     const sheetJQueryElement = this.$element.find('.channel-iframe-sheet');
 
     this.HippoIframeService.initialize(this.$element, this.iframeJQueryElement);
-    this.OverlayService.init(this.iframeJQueryElement);
     this.ViewportService.init(sheetJQueryElement);
     this.ScrollService.init(this.iframeJQueryElement, canvasJQueryElement, sheetJQueryElement);
     this.SpaService.init(this.iframeJQueryElement);
@@ -113,21 +113,19 @@ class HippoIframeCtrl {
 
   $onChanges(changes) {
     if (changes.showComponentsOverlay) {
-      this.OverlayService.toggleComponentsOverlay(changes.showComponentsOverlay.currentValue);
+      this.CommunicationService.toggleComponentsOverlay(changes.showComponentsOverlay.currentValue);
     }
 
     if (changes.showContentOverlay) {
-      this.OverlayService.toggleContentsOverlay(changes.showContentOverlay.currentValue);
+      this.CommunicationService.toggleContentsOverlay(changes.showContentOverlay.currentValue);
     }
   }
 
   $onDestroy() {
     this.CommunicationService.disconnect();
-    this.OverlayService.destroy();
     this.SpaService.destroy();
     this.CmsService.unsubscribe('render-component', this._renderComponent, this);
     this.CmsService.unsubscribe('delete-component', this._deleteComponent, this);
-    this._offEditMenu();
     this._offComponentClick();
     this._offComponentMove();
     this._offSdkReady();
@@ -138,6 +136,7 @@ class HippoIframeCtrl {
     this._offDocumentSelect();
     this._offDragStart();
     this._offDragStop();
+    this._offMenuEdit();
   }
 
   async onLoad() {
@@ -155,7 +154,7 @@ class HippoIframeCtrl {
     );
     await connection;
 
-    this.$rootScope.$emit('hippo-iframe:load');
+    this._sync();
 
     if (this.SpaService.initLegacy()) {
       return;
@@ -181,7 +180,12 @@ class HippoIframeCtrl {
     await this.SpaService.inject(this.HippoIframeService.getAssetUrl(this.iframeAsset));
     await connection;
 
-    this.$rootScope.$emit('hippo-iframe:load');
+    this._sync();
+  }
+
+  _sync() {
+    this.CommunicationService.toggleComponentsOverlay(this.showComponentsOverlay);
+    this.CommunicationService.toggleContentsOverlay(this.showContentOverlay);
   }
 
   _onNewHeadContributions(event, component) {
@@ -227,7 +231,9 @@ class HippoIframeCtrl {
     return this.HippoIframeService.isIframeLifted;
   }
 
-  _onDocumentCreate(event, data) {
+  _onDocumentCreate(event, config) {
+    const data = this._getButtonData(config);
+
     this.CreateContentService.start(data);
   }
 
@@ -237,7 +243,7 @@ class HippoIframeCtrl {
     this.EditContentService.startEditing(uuid);
   }
 
-  _onDocumentSelect(event, data) {
+  _onDocumentSelect(event, config) {
     this.CmsService.reportUsageStatistic('PickContentButton');
 
     this.$rootScope.$evalAsync(async () => {
@@ -245,6 +251,7 @@ class HippoIframeCtrl {
         return;
       }
 
+      const data = this._getButtonData(config);
       const { path } = await this.PickerService.pickPath(data.pickerConfig, data.parameterValue);
 
       this._onPathPicked(data.containerItem, data.parameterName, path, data.parameterBasePath);
@@ -261,6 +268,12 @@ class HippoIframeCtrl {
     this.ScrollService.disable();
     this.$element.find('.channel-iframe-canvas')
       .removeClass('hippo-dragging');
+  }
+
+  _onMenuEdit(event, menuUuid) {
+    this.$rootScope.$evalAsync(
+      () => this.onEditMenu({ menuUuid }),
+    );
   }
 
   _onPathPicked(component, parameterName, path, parameterBasePath) {
@@ -287,6 +300,17 @@ class HippoIframeCtrl {
         // probably the container got locked by another user, so reload the page to show new locked containers
         this.HippoIframeService.reload();
       });
+  }
+
+  _getButtonData(config) {
+    const { containerItemId, isParameterValueRelativePath, ...data } = config;
+    const parameterBasePath = isParameterValueRelativePath
+      ? this.ChannelService.getChannel().contentRoot
+      : '';
+    const page = this.PageStructureService.getPage();
+    const containerItem = page && page.getComponentById(containerItemId);
+
+    return { ...data, containerItem, parameterBasePath };
   }
 }
 

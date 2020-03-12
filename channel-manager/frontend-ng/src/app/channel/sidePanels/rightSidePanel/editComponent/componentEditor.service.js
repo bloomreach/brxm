@@ -28,12 +28,12 @@ class ComponentEditorService {
     $translate,
     ChannelService,
     CmsService,
+    CommunicationService,
     ComponentRenderingService,
     DialogService,
     FeedbackService,
     HippoIframeService,
     HstComponentService,
-    OverlayService,
     PageStructureService,
   ) {
     'ngInject';
@@ -43,22 +43,24 @@ class ComponentEditorService {
     this.$translate = $translate;
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
+    this.CommunicationService = CommunicationService;
     this.ComponentRenderingService = ComponentRenderingService;
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.HstComponentService = HstComponentService;
-    this.OverlayService = OverlayService;
     this.PageStructureService = PageStructureService;
 
     this.killed = false;
+
+    this._onPageChange = this._onPageChange.bind(this);
   }
 
   open({
     channel, component, container, page = this.PageStructureService.getPage(),
   }) {
     this.close();
-    this._offPageChange = this.$rootScope.$on('page:change', () => this._onPageChange());
+    this._offPageChange = this.$rootScope.$on('page:change', this._onPageChange);
     this.request = this.HstComponentService.getProperties(component.id, component.variant);
 
     this.request.then(response => this._onLoadSuccess(channel, component, container, page, response.properties))
@@ -107,7 +109,7 @@ class ComponentEditorService {
     this.properties = this._normalizeProperties(properties);
     this.propertyGroups = this._groupProperties(this.properties);
 
-    this.OverlayService.selectComponent(component.id);
+    this.CommunicationService.selectComponent(component.id);
     this.CmsService.reportUsageStatistic('CompConfigSidePanelOpened');
   }
 
@@ -117,7 +119,7 @@ class ComponentEditorService {
     return this.$q.reject();
   }
 
-  _onPageChange() {
+  _onPageChange(event, data) {
     if (!this.component) {
       return;
     }
@@ -126,6 +128,10 @@ class ComponentEditorService {
     const component = page && page.getComponentById(this.component.id);
     if (!component) {
       return;
+    }
+
+    if (data && data.initial) {
+      this.CommunicationService.selectComponent(component.getId());
     }
 
     this.page = page;
@@ -339,7 +345,7 @@ class ComponentEditorService {
     }
 
     this._clearData();
-    this.OverlayService.selectComponent(null);
+    this.CommunicationService.selectComponent(null);
     delete this.error;
   }
 

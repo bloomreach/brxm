@@ -19,7 +19,6 @@ describe('SpaService', () => {
   let $rootScope;
   let ChannelService;
   let DomService;
-  let OverlayService;
   let RenderingService;
   let RpcService;
   let SpaService;
@@ -33,7 +32,6 @@ describe('SpaService', () => {
       _$rootScope_,
       _ChannelService_,
       _DomService_,
-      _OverlayService_,
       _RenderingService_,
       _RpcService_,
       _SpaService_,
@@ -42,7 +40,6 @@ describe('SpaService', () => {
       $rootScope = _$rootScope_;
       ChannelService = _ChannelService_;
       DomService = _DomService_;
-      OverlayService = _OverlayService_;
       RenderingService = _RenderingService_;
       RpcService = _RpcService_;
       SpaService = _SpaService_;
@@ -247,9 +244,9 @@ describe('SpaService', () => {
     });
 
     it('can sync the positions of the overlay elements', () => {
-      spyOn(OverlayService, 'sync');
+      spyOn(RenderingService, 'createOverlay');
       publicApi.syncOverlay();
-      expect(OverlayService.sync).toHaveBeenCalled();
+      expect(RenderingService.createOverlay).toHaveBeenCalled();
     });
 
     it('can sync the positions and meta-data of the overlay elements', () => {
