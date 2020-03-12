@@ -143,11 +143,12 @@ class HippoIframeCtrl {
   }
 
   async onLoad() {
-    if (!this._isIframeAccessible()) {
+    const target = this.iframeJQueryElement[0];
+
+    if (!this.DomService.isFrameAccessible(target)) {
       return;
     }
 
-    const target = this.iframeJQueryElement[0];
     const connection = this.CommunicationService.connect({ target });
 
     await this.DomService.addScript(
@@ -171,11 +172,12 @@ class HippoIframeCtrl {
   }
 
   async _onSpaReady() {
-    if (this._isIframeAccessible()) {
+    const target = this.iframeJQueryElement[0];
+
+    if (this.DomService.isFrameAccessible(target)) {
       return;
     }
 
-    const target = this.iframeJQueryElement[0];
     const connection = this.CommunicationService.connect({ target, origin: this.SpaService.getOrigin() });
 
     await this.SpaService.inject(this.DomService.getAssetUrl(iframeBundle));
@@ -187,25 +189,6 @@ class HippoIframeCtrl {
   _onNewHeadContributions(event, component) {
     this.$log.info(`Updated '${component.getLabel()}' component needs additional head contributions.`);
     this.HippoIframeService.reload();
-  }
-
-  /**
-   * Checks whether the iframe DOM is accessible from the Channel Manager.
-   * At first, it tries to access the document from the content window,
-   * and in case if it a cross-origin website, an exception will be thrown.
-   * In case, when the document was not loaded due to some error, the document's body will be empty.
-   *
-   * @see https://stackoverflow.com/a/12381504
-   */
-  _isIframeAccessible() {
-    let html;
-
-    try {
-      const { document } = this.iframeJQueryElement[0].contentWindow;
-      html = document.body.innerHTML;
-    } catch (error) {} // eslint-disable-line no-empty
-
-    return html != null;
   }
 
   _renderComponent(componentId, propertiesMap) {

@@ -292,4 +292,38 @@ describe('DomService', () => {
       expect(DomService.getAssetUrl('some.js')).toContain('/some.js');
     });
   });
+
+  describe('isFrameAccessible', () => {
+    it('should return false when content window document is not accessible', () => {
+      const iframe = { contentWindow: {} };
+      Object.defineProperty(iframe.contentWindow, 'document', { get: () => { throw new Error('error'); } });
+
+      expect(DomService.isFrameAccessible(iframe)).toBe(false);
+    });
+
+    it('should return false when parent document is not accessible', () => {
+      const parent = {};
+      Object.defineProperty(parent, 'document', { get: () => { throw new Error('error'); } });
+
+      expect(DomService.isFrameAccessible(parent)).toBe(false);
+    });
+
+    it('should return false when document has no body', () => {
+      const parent = { document: {} };
+
+      expect(DomService.isFrameAccessible(parent)).toBe(false);
+    });
+
+    it('should return false when document body has no HTML', () => {
+      const parent = { document: { body: {} } };
+
+      expect(DomService.isFrameAccessible(parent)).toBe(false);
+    });
+
+    it('should return true when document body has HTML', () => {
+      const parent = { document: { body: { innerHTML: '' } } };
+
+      expect(DomService.isFrameAccessible(parent)).toBe(true);
+    });
+  });
 });

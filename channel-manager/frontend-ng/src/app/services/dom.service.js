@@ -37,6 +37,25 @@ class DomService {
     return link[0].href;
   }
 
+  /**
+   * Checks whether the iframe DOM is accessible from the Channel Manager.
+   * At first, it tries to access the document from the content window,
+   * and in case if it a cross-origin website, an exception will be thrown.
+   * In case, when the document was not loaded due to some error, the document's body will be empty.
+   *
+   * @see https://stackoverflow.com/a/12381504
+   */
+  isFrameAccessible(frame) {
+    let html;
+
+    try {
+      const { document } = frame.contentWindow || frame;
+      html = document.body.innerHTML;
+    } catch (error) {} // eslint-disable-line no-empty
+
+    return html != null;
+  }
+
   getIframeWindow(iframeJQueryElement) {
     return iframeJQueryElement[0].contentWindow;
   }
