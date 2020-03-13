@@ -169,7 +169,7 @@ export default class PageStructureService {
   async updateComponent(componentId, newMarkup) {
     const oldComponent = this._page && this._page.getComponentById(componentId);
     if (!oldComponent) {
-      return;
+      return [];
     }
 
     const container = oldComponent.getContainer();
@@ -197,14 +197,13 @@ export default class PageStructureService {
 
     this._notifyChangeListeners();
 
-    // eslint-disable-next-line consistent-return
     return comments.map(({ json }) => json);
   }
 
   async updateContainer(containerId, newMarkup) {
     const oldContainer = this._page && this._page.getContainerById(containerId);
     if (!oldContainer) {
-      return;
+      return [];
     }
 
     const $newMarkup = $(newMarkup);
@@ -223,7 +222,6 @@ export default class PageStructureService {
     this._page.replaceContainer(oldContainer, container);
     this._notifyChangeListeners();
 
-    // eslint-disable-next-line consistent-return
     return comments.map(({ json }) => json);
   }
 
