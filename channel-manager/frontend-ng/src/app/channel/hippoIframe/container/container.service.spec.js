@@ -65,13 +65,6 @@ describe('ContainerService', () => {
     });
   });
 
-  describe('onComponentMoved', () => {
-    it('registers a "component-moved" callback', () => {
-      ContainerService.onComponentMoved(angular.noop);
-      expect(ContainerService.emitter.on).toHaveBeenCalledWith('component-moved', jasmine.any(Function));
-    });
-  });
-
   describe('add component', () => {
     beforeEach(() => {
       spyOn($log, 'info');
@@ -123,18 +116,20 @@ describe('ContainerService', () => {
   });
 
   describe('move component', () => {
-    it('moves components in the page structure, re-renders containers and updates the drag-drop logic', () => {
-      const component = {};
-      const sourceContainer = {};
-      const targetContainer = {};
-      const newContainerNextComponent = {};
-      const rerenderedSourceContainer = {};
-      const rerenderedTargetContainer = {};
+    const component = {};
+    const sourceContainer = {};
+    const targetContainer = {};
+    const newContainerNextComponent = {};
+    const rerenderedSourceContainer = {};
+    const rerenderedTargetContainer = {};
 
+    beforeEach(() => {
       spyOn(PageStructureService, 'moveComponent').and.returnValue($q.resolve([sourceContainer, targetContainer]));
       spyOn(PageStructureService, 'renderContainer')
         .and.returnValues($q.resolve(rerenderedSourceContainer), $q.resolve(rerenderedTargetContainer));
+    });
 
+    it('moves components in the page structure, re-renders containers and updates the drag-drop logic', () => {
       ContainerService.moveComponent(component, targetContainer, newContainerNextComponent);
       $rootScope.$digest();
 
@@ -143,7 +138,14 @@ describe('ContainerService', () => {
       );
       expect(PageStructureService.renderContainer).toHaveBeenCalledWith(sourceContainer);
       expect(PageStructureService.renderContainer).toHaveBeenCalledWith(targetContainer);
-      expect(ContainerService.emitter.emit).toHaveBeenCalledWith('component-moved');
+    });
+
+    it('should emit component:moved event in the end', () => {
+      spyOn($rootScope, '$emit');
+      ContainerService.moveComponent(component, targetContainer, newContainerNextComponent);
+      $rootScope.$digest();
+
+      expect($rootScope.$emit).toHaveBeenCalledWith('component:moved');
     });
   });
 

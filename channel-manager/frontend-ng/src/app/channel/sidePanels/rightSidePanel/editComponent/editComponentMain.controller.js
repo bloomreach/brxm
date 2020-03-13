@@ -32,7 +32,6 @@ class EditComponentMainCtrl {
     ChannelService,
     CmsService,
     ComponentEditor,
-    ContainerService,
     EditComponentService,
     FeedbackService,
     HippoIframeService,
@@ -46,17 +45,17 @@ class EditComponentMainCtrl {
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.ComponentEditor = ComponentEditor;
-    this.ContainerService = ContainerService;
     this.EditComponentService = EditComponentService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
 
+    this._onComponentMoved = this._onComponentMoved.bind(this);
     this._onDocumentSelect = this._onDocumentSelect.bind(this);
     this._onPageChange = this._onPageChange.bind(this);
   }
 
   $onInit() {
-    this._offComponentMoved = this.ContainerService.onComponentMoved(() => this.ComponentEditor.updatePreview());
+    this._offComponentMoved = this.$rootScope.$on('component:moved', this._onComponentMoved);
     this._offDocumentSelect = this.$rootScope.$on('iframe:document:select', this._onDocumentSelect);
     this._offPageChange = this.$rootScope.$on('page:change', this._onPageChange);
   }
@@ -65,6 +64,10 @@ class EditComponentMainCtrl {
     this._offComponentMoved();
     this._offDocumentSelect();
     this._offPageChange();
+  }
+
+  _onComponentMoved() {
+    this.ComponentEditor.updatePreview();
   }
 
   _onDocumentSelect(event, data) {

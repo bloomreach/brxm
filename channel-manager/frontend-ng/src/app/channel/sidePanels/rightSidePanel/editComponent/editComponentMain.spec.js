@@ -22,7 +22,6 @@ describe('EditComponentMainCtrl', () => {
   let ChannelService;
   let CmsService;
   let ComponentEditor;
-  let ContainerService;
   let EditComponentService;
   let FeedbackService;
   let HippoIframeService;
@@ -38,13 +37,11 @@ describe('EditComponentMainCtrl', () => {
       _$rootScope_,
       _$log_,
       _$q_,
-      _ContainerService_,
       _EditComponentService_,
     ) => {
       $rootScope = _$rootScope_;
       $log = _$log_;
       $q = _$q_;
-      ContainerService = _ContainerService_;
       EditComponentService = _EditComponentService_;
 
       ChannelService = jasmine.createSpyObj('ChannelService', ['recordOwnChange']);
@@ -90,26 +87,12 @@ describe('EditComponentMainCtrl', () => {
     });
   });
 
-  describe('handling of "component-moved" event', () => {
-    let unbind;
-
-    beforeEach(() => {
-      unbind = jasmine.createSpy('unbind');
-      spyOn(ContainerService, 'onComponentMoved').and.returnValue(unbind);
-      $ctrl.$onInit();
-    });
-
+  describe('handling of component:moved event', () => {
     it('redraws the preview of the component being edited', () => {
-      const onComponentMoved = ContainerService.onComponentMoved.calls.mostRecent().args[0];
-      onComponentMoved();
+      $ctrl.$onInit();
+      $rootScope.$emit('component:moved');
 
       expect(ComponentEditor.updatePreview).toHaveBeenCalled();
-    });
-
-    it('removes the "onComponentMoved" event listener when destroyed', () => {
-      $ctrl.$onDestroy();
-
-      expect(unbind).toHaveBeenCalled();
     });
   });
 
