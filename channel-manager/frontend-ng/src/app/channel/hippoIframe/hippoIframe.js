@@ -16,7 +16,6 @@
 
 import hippoIframeComponent from './hippoIframe.component';
 import CommunicationService from './spa/communication.service';
-import ComponentRenderingService from './rendering/component-rendering.service';
 import ContainerService from './container/container.service';
 import HippoIframeService from './hippoIframe.service';
 import PageModule from './page/page.module';
@@ -31,7 +30,6 @@ const channelHippoIframeModule = angular
   ])
   .component('hippoIframe', hippoIframeComponent)
   .service('CommunicationService', CommunicationService)
-  .service('ComponentRenderingService', ComponentRenderingService)
   .service('ContainerService', ContainerService)
   .service('HippoIframeService', HippoIframeService)
   .service('RpcService', RpcService)

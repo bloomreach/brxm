@@ -25,7 +25,6 @@ class HippoIframeCtrl {
     ChannelService,
     CmsService,
     CommunicationService,
-    ComponentRenderingService,
     ContainerService,
     CreateContentService,
     DomService,
@@ -49,7 +48,6 @@ class HippoIframeCtrl {
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.CommunicationService = CommunicationService;
-    this.ComponentRenderingService = ComponentRenderingService;
     this.ContainerService = ContainerService;
     this.CreateContentService = CreateContentService;
     this.DomService = DomService;
@@ -81,7 +79,7 @@ class HippoIframeCtrl {
 
   $onInit() {
     this.CmsService.subscribe('render-component', this._renderComponent, this);
-    this.CmsService.subscribe('delete-component', this._deleteComponent, this);
+    this.CmsService.subscribe('delete-component', this._onComponentDelete, this);
 
     this.iframeJQueryElement.on('load', this.onLoad);
     this._offComponentClick = this.$rootScope.$on('iframe:component:click', this._onComponentClick);
@@ -122,7 +120,7 @@ class HippoIframeCtrl {
     this.CommunicationService.disconnect();
     this.SpaService.destroy();
     this.CmsService.unsubscribe('render-component', this._renderComponent, this);
-    this.CmsService.unsubscribe('delete-component', this._deleteComponent, this);
+    this.CmsService.unsubscribe('delete-component', this._onComponentDelete, this);
     this._offComponentClick();
     this._offComponentMove();
     this._offSdkReady();
@@ -191,7 +189,7 @@ class HippoIframeCtrl {
   }
 
   _renderComponent(componentId, propertiesMap) {
-    this.ComponentRenderingService.renderComponent(componentId, propertiesMap);
+    this.ContainerService.renderComponent(componentId, propertiesMap);
   }
 
   _onComponentClick(event, componentId) {
@@ -204,6 +202,21 @@ class HippoIframeCtrl {
     this.EditComponentService.startEditing(component);
   }
 
+  async _onComponentDelete(componentId) {
+    const page = this.PageStructureService.getPage();
+    const component = page && page.getComponentById(componentId);
+    if (!component) {
+      this.$log.warn(`Cannot delete unknown component with id '${componentId}'`);
+      return;
+    }
+
+    try {
+      await this.ContainerService.deleteComponent(component);
+    } catch (error) {
+      this.EditComponentService.startEditing(component);
+    }
+  }
+
   _onComponentMove(event, { componentId, containerId, nextComponentId }) {
     const page = this.PageStructureService.getPage();
     if (!page) {
@@ -214,10 +227,6 @@ class HippoIframeCtrl {
     const nextComponent = page.getComponentById(nextComponentId);
 
     this.ContainerService.moveComponent(component, container, nextComponent);
-  }
-
-  _deleteComponent(componentId) {
-    this.ContainerService.deleteComponent(componentId);
   }
 
   getSrc() {
@@ -282,7 +291,7 @@ class HippoIframeCtrl {
       componentId, componentVariant, parameterName, path, parameterBasePath,
     )
       .then(() => {
-        this.ComponentRenderingService.renderComponent(componentId);
+        this.ContainerService.renderComponent(componentId);
         this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
       })
       .catch((response) => {

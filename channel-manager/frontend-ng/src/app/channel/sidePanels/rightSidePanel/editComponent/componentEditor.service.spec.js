@@ -23,7 +23,7 @@ describe('ComponentEditorService', () => {
   let CmsService;
   let CommunicationService;
   let ComponentEditor;
-  let ComponentRenderingService;
+  let ContainerService;
   let DialogService;
   let FeedbackService;
   let HippoIframeService;
@@ -57,7 +57,7 @@ describe('ComponentEditorService', () => {
       _ChannelService_,
       _CmsService_,
       _ComponentEditor_,
-      _ComponentRenderingService_,
+      _ContainerService_,
       _DialogService_,
       _FeedbackService_,
       _HippoIframeService_,
@@ -71,7 +71,7 @@ describe('ComponentEditorService', () => {
       ChannelService = _ChannelService_;
       CmsService = _CmsService_;
       ComponentEditor = _ComponentEditor_;
-      ComponentRenderingService = _ComponentRenderingService_;
+      ContainerService = _ContainerService_;
       DialogService = _DialogService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
@@ -680,7 +680,7 @@ describe('ComponentEditorService', () => {
 
   describe('updatePreview', () => {
     beforeEach(() => {
-      spyOn(ComponentRenderingService, 'renderComponent').and.returnValue($q.resolve());
+      spyOn(ContainerService, 'renderComponent').and.returnValue($q.resolve());
     });
 
     it('transforms the "properties" data and passes it to the PageStructureService to render the component', (done) => {
@@ -694,7 +694,7 @@ describe('ComponentEditorService', () => {
       properties[1].value = 'value-b';
 
       ComponentEditor.updatePreview().then(() => {
-        expect(ComponentRenderingService.renderComponent).toHaveBeenCalledWith(testData.component.id, {
+        expect(ContainerService.renderComponent).toHaveBeenCalledWith(testData.component.id, {
           a: 'value-a',
           b: 'value-b',
           c: 'value-c',
@@ -712,7 +712,7 @@ describe('ComponentEditorService', () => {
       openComponentEditor(properties);
 
       ComponentEditor.updatePreview().then(() => {
-        expect(ComponentRenderingService.renderComponent).toHaveBeenCalledWith(testData.component.id, {
+        expect(ContainerService.renderComponent).toHaveBeenCalledWith(testData.component.id, {
           a: '2017-09-21',
         });
         done();
@@ -912,14 +912,14 @@ describe('ComponentEditorService', () => {
     describe('with valid data', () => {
       it('resolves with "SAVE" when the dialog resolves with "SAVE", and does not show an alert nor redraw the component', (done) => { // eslint-disable-line max-len
         spyOn(ComponentEditor, 'save').and.returnValue($q.resolve());
-        spyOn(ComponentRenderingService, 'renderComponent');
+        spyOn(ContainerService, 'renderComponent');
         DialogService.show.and.returnValue($q.resolve('SAVE'));
 
         ComponentEditor.confirmSaveOrDiscardChanges(true)
           .then((action) => {
             expect(action).toBe('SAVE');
             expect(DialogService.alert).not.toHaveBeenCalled();
-            expect(ComponentRenderingService.renderComponent).not.toHaveBeenCalled();
+            expect(ContainerService.renderComponent).not.toHaveBeenCalled();
             done();
           });
         $rootScope.$digest();
@@ -951,14 +951,14 @@ describe('ComponentEditorService', () => {
 
       it('shows an alert when the dialog resolved with "SAVE" and neither saves nor redraws the component', (done) => {
         spyOn(ComponentEditor, 'save');
-        spyOn(ComponentRenderingService, 'renderComponent');
+        spyOn(ContainerService, 'renderComponent');
         DialogService.show.and.returnValues($q.resolve('SAVE'), $q.resolve());
 
         ComponentEditor.confirmSaveOrDiscardChanges(false)
           .catch(() => {
             expect(DialogService.alert).toHaveBeenCalled();
             expect(ComponentEditor.save).not.toHaveBeenCalled();
-            expect(ComponentRenderingService.renderComponent).not.toHaveBeenCalled();
+            expect(ContainerService.renderComponent).not.toHaveBeenCalled();
             done();
           });
         $rootScope.$digest();
