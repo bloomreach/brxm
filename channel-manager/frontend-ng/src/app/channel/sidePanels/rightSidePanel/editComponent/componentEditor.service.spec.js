@@ -679,8 +679,15 @@ describe('ComponentEditorService', () => {
   });
 
   describe('updatePreview', () => {
+    const mockComponent = {};
+    let mockPage;
+
     beforeEach(() => {
+      mockPage = jasmine.createSpyObj('Page', ['getComponentById']);
+      mockPage.getComponentById.and.returnValue(mockComponent);
+
       spyOn(ContainerService, 'renderComponent').and.returnValue($q.resolve());
+      spyOn(PageStructureService, 'getPage').and.returnValue(mockPage);
     });
 
     it('transforms the "properties" data and passes it to the PageStructureService to render the component', (done) => {
@@ -694,7 +701,8 @@ describe('ComponentEditorService', () => {
       properties[1].value = 'value-b';
 
       ComponentEditor.updatePreview().then(() => {
-        expect(ContainerService.renderComponent).toHaveBeenCalledWith(testData.component.id, {
+        expect(mockPage.getComponentById).toHaveBeenCalledWith(testData.component.id);
+        expect(ContainerService.renderComponent).toHaveBeenCalledWith(mockComponent, {
           a: 'value-a',
           b: 'value-b',
           c: 'value-c',
@@ -712,12 +720,25 @@ describe('ComponentEditorService', () => {
       openComponentEditor(properties);
 
       ComponentEditor.updatePreview().then(() => {
-        expect(ContainerService.renderComponent).toHaveBeenCalledWith(testData.component.id, {
+        expect(ContainerService.renderComponent).toHaveBeenCalledWith(mockComponent, {
           a: '2017-09-21',
         });
         done();
       });
       $rootScope.$digest();
+    });
+
+    it('should not render a component if it is not present on the page', () => {
+      mockPage.getComponentById.and.returnValue(null);
+
+      const properties = [
+        { name: 'a', value: '2017-09-21T00:00:00.000+02:00', type: 'datefield' },
+      ];
+      openComponentEditor(properties);
+      ComponentEditor.updatePreview();
+      $rootScope.$digest();
+
+      expect(ContainerService.renderComponent).not.toHaveBeenCalled();
     });
   });
 

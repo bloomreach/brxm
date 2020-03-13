@@ -284,8 +284,15 @@ class ComponentEditorService {
     return undefined;
   }
 
-  updatePreview() {
-    return this.ContainerService.renderComponent(this.component.id, this._propertiesAsFormData());
+  async updatePreview() {
+    const page = this.PageStructureService.getPage();
+    const component = page && page.getComponentById(this.component.id);
+
+    if (!component) {
+      return;
+    }
+
+    await this.ContainerService.renderComponent(component, this._propertiesAsFormData());
   }
 
   async save() {

@@ -121,16 +121,7 @@ class ContainerService {
       .finally(() => this.CmsService.publish('destroy-component-properties-window'));
   }
 
-  async renderComponent(componentId, properties) {
-    const page = this.PageStructureService.getPage();
-    const component = page && page.getComponentById(componentId);
-
-    if (!component) {
-      this.$log.warn(`Cannot render unknown component with ID '${componentId}'.`);
-
-      throw new Error(`Cannot render unknown component with ID '${componentId}'.`);
-    }
-
+  async renderComponent(component, properties) {
     if (this.SpaService.isSpa()) {
       try {
         await this.SpaService.renderComponent(component, properties);
