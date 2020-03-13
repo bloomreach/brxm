@@ -60,20 +60,11 @@ class DomService {
     return iframeJQueryElement[0].contentWindow;
   }
 
-  hasIframeDocument(iframeJQueryElement) {
-    return !!this.getIframeDocument(iframeJQueryElement);
-  }
-
-  getIframeDocument(iframeJQueryElement) {
-    return iframeJQueryElement.contents()[0];
-  }
-
-  addCssLinks(window, files, cssClass) {
+  addCssLinks(window, files) {
     return this.$q.all(files.map(file => this.$q((resolve, reject) => {
       const link = angular.element('<link>', {
         rel: 'stylesheet',
         href: file,
-        class: cssClass,
       });
 
       // resolves relative path in order to use absolute one inside the iframe
@@ -82,13 +73,6 @@ class DomService {
         .on('error', () => this.$rootScope.$apply(reject))
         .appendTo(angular.element('head', window.document));
     })));
-  }
-
-  hasCssLink(window, cssClass) {
-    if (!window.document || !window.document.head) {
-      return false;
-    }
-    return window.document.head.getElementsByClassName(cssClass).length > 0;
   }
 
   addScript(window, url) {

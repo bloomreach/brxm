@@ -36,7 +36,6 @@ class HippoIframeCtrl {
     HstComponentService,
     PageStructureService,
     PickerService,
-    RenderingService,
     ScrollService,
     SpaService,
     ViewportService,
@@ -61,7 +60,6 @@ class HippoIframeCtrl {
     this.HstComponentService = HstComponentService;
     this.PageStructureService = PageStructureService;
     this.PickerService = PickerService;
-    this.RenderingService = RenderingService;
     this.ScrollService = ScrollService;
     this.SpaService = SpaService;
     this.ViewportService = ViewportService;
@@ -108,7 +106,6 @@ class HippoIframeCtrl {
     this.ViewportService.init(sheetJQueryElement);
     this.ScrollService.init(this.iframeJQueryElement, canvasJQueryElement, sheetJQueryElement);
     this.SpaService.init(this.iframeJQueryElement);
-    this.RenderingService.init(this.iframeJQueryElement);
   }
 
   $onChanges(changes) {
@@ -160,7 +157,7 @@ class HippoIframeCtrl {
       return;
     }
 
-    this.RenderingService.createOverlay(true);
+    this.PageStructureService.parseElements(true);
   }
 
   _onUnload() {

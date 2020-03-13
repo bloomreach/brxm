@@ -20,7 +20,6 @@ import ComponentRenderingService from './rendering/component-rendering.service';
 import ContainerService from './container/container.service';
 import HippoIframeService from './hippoIframe.service';
 import PageModule from './page/page.module';
-import RenderingService from './rendering/rendering.service';
 import RpcService from './spa/rpc.service';
 import ScrollService from './scrolling/scroll.service';
 import SpaService from './spa/spa.service';
@@ -35,7 +34,6 @@ const channelHippoIframeModule = angular
   .service('ComponentRenderingService', ComponentRenderingService)
   .service('ContainerService', ContainerService)
   .service('HippoIframeService', HippoIframeService)
-  .service('RenderingService', RenderingService)
   .service('RpcService', RpcService)
   .service('ScrollService', ScrollService)
   .service('SpaService', SpaService)

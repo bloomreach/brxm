@@ -139,7 +139,9 @@ class HippoIframeService {
     }
 
     this.renderPathInfo = this._determineRenderPathInfo();
-    this.pageLoaded = true;
+    this.$rootScope.$apply(() => {
+      this.pageLoaded = true;
+    });
 
     this.ScrollService.restorePosition();
     this.PageToolsService.updatePageTools();

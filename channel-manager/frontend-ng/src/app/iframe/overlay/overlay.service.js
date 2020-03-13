@@ -24,6 +24,7 @@ import disabledSvg from '../../../images/html/not-allowed.svg?sprite';
 import plusSvg from '../../../images/html/plus.svg?sprite';
 import searchSvg from '../../../images/html/search.svg?sprite';
 import chevronUp from '../../../images/html/chevron-up.svg?sprite';
+import iframeCss from '../../../styles/string/hippo-iframe.scss?url';
 
 export default class OverlayService {
   constructor(
@@ -75,7 +76,14 @@ export default class OverlayService {
   }
 
   async _onPageChange() {
+    if (!this._cssPromise) {
+      const url = await this.CommunicationService.getAssetUrl(iframeCss);
+      this._cssPromise = this.DomService.addCssLinks(this.$window, [url]);
+    }
+
     this._isEditable = await this.CommunicationService.isEditable();
+    await this._cssPromise;
+
     if (!this._overlay || !this.$document.find('body > .hippo-overlay').length) {
       this._overlay = angular.element('<div>', { class: 'hippo-overlay' })
         .on('click', this._onOverlayClick)
