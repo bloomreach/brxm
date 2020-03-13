@@ -379,7 +379,7 @@ describe('PageStructureService', () => {
       expect(PageStructureService.getPage()).toBeDefined();
 
       PageStructureService.updateComponent('unknown').then((newComponent) => {
-        expect(newComponent).toBeUndefined();
+        expect(newComponent).toEqual([]);
         done();
       });
       $rootScope.$digest();
@@ -518,7 +518,7 @@ describe('PageStructureService', () => {
       expect(PageStructureService.getPage()).toBeDefined();
 
       PageStructureService.updateContainer('unknown').then((newContainer) => {
-        expect(newContainer).toBeUndefined();
+        expect(newContainer).toEqual([]);
         done();
       });
       $rootScope.$digest();
