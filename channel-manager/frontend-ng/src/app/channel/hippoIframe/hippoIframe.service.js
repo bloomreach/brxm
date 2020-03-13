@@ -135,12 +135,11 @@ class HippoIframeService {
     return this.deferredReload.promise;
   }
 
-  _onPageChange(event, data) {
+  async _onPageChange(event, data) {
     if (!data || !data.initial) {
       return;
     }
 
-    this.renderPathInfo = this._determineRenderPathInfo();
     this.$rootScope.$apply(() => {
       this.pageLoaded = true;
     });
@@ -157,14 +156,16 @@ class HippoIframeService {
 
     this.CmsService.publish('user-activity');
 
+    this.renderPathInfo = await this._determineRenderPathInfo();
     if (this.ConfigService.isDevMode()) {
       sessionStorage.channelPath = this.renderPathInfo;
     }
   }
 
-  _determineRenderPathInfo() {
+  async _determineRenderPathInfo() {
     try {
-      const loadedPath = this.iframeJQueryElement[0].contentWindow.location.pathname;
+      const loadedPath = await this.CommunicationService.getPath();
+
       return this.ChannelService.extractRenderPathInfo(loadedPath);
     } catch (ignoredError) {
       // if pathname is not found, reset renderPathInfo
