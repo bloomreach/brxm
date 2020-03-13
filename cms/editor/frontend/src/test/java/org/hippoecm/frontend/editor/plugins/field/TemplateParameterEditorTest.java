@@ -1,5 +1,5 @@
 /*
- *  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -124,7 +124,7 @@ public class TemplateParameterEditorTest {
 
         expect(mockConfig.getName()).andReturn("mock-plugin-config").anyTimes();
 
-        final Capture<String> keyArgument = new Capture<>();
+        final Capture<String> keyArgument = Capture.newInstance();
 
         expect(mockConfig.getStringArray(
                 and(
@@ -133,7 +133,7 @@ public class TemplateParameterEditorTest {
                 )))
             .andAnswer(() -> (String[]) propertyValues.get(keyArgument.getValue())).anyTimes();
 
-        final Capture<Object> valueArgument = new Capture<>();
+        final Capture<Object> valueArgument = Capture.newInstance();
         expect(mockConfig.put(
                 and(
                         capture(keyArgument),
