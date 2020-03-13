@@ -61,6 +61,7 @@ class ComponentCatalogService {
     this.SidePanelService.lowerSidePanelBeneathMask();
     this.HippoIframeService.lowerIframeBeneathMask();
     this.OverlayService.disableAddMode();
+    this.OverlayService.offComponentClick();
     this.OverlayService.offContainerClick();
     this.MaskService.removeClickHandler();
   }
@@ -71,6 +72,7 @@ class ComponentCatalogService {
     this.SidePanelService.liftSidePanelAboveMask();
     this.HippoIframeService.liftIframeAboveMask();
     this.OverlayService.enableAddMode();
+    this.OverlayService.onComponentClick(this._handleComponentClick.bind(this));
     this.OverlayService.onContainerClick(this._handleContainerClick.bind(this));
     this.MaskService.onClick(this._handleMaskClick.bind(this));
   }
@@ -85,8 +87,26 @@ class ComponentCatalogService {
     this.SidePanelService.lowerSidePanelBeneathMask();
     this.HippoIframeService.lowerIframeBeneathMask();
     this.OverlayService.disableAddMode();
+    this.OverlayService.offComponentClick();
     this.OverlayService.offContainerClick();
     this.MaskService.removeClickHandler();
+  }
+
+  async _handleComponentClick(event, clickedComponent) {
+    const container = clickedComponent.getContainer();
+    const clickedComponentIndex = container.items.findIndex(item => item.getId() === clickedComponent.getId());
+    const shouldPlaceBefore = event.target.classList.contains('hippo-overlay-element-component-drop-area-before');
+
+    const nextComponent = shouldPlaceBefore
+      ? container.items[clickedComponentIndex]
+      : container.items[clickedComponentIndex + 1];
+
+    if (container.isDisabled()) {
+      event.stopPropagation();
+      return;
+    }
+
+    this._addComponent(container.getId(), nextComponent && nextComponent.getId());
   }
 
   _handleContainerClick(event, container) {
@@ -98,19 +118,21 @@ class ComponentCatalogService {
     this._addComponent(container.getId());
   }
 
-  async _addComponent(containerId) {
+  async _addComponent(containerId, nextComponentId) {
     if (!this.ConfigService.relevancePresent) {
       await this.RightSidePanelService.close();
     }
 
     const container = this.PageStructureService.getContainerById(containerId);
-    const componentId = await this.ContainerService.addComponent(this.selectedComponent, container);
+    const componentId = await this.ContainerService.addComponent(this.selectedComponent, container, nextComponentId);
     delete this.selectedComponent;
 
     if (!this.ConfigService.relevancePresent) {
       const component = this.PageStructureService.getComponentById(componentId);
       this.EditComponentService.startEditing(component);
     }
+
+    return componentId;
   }
 }
 

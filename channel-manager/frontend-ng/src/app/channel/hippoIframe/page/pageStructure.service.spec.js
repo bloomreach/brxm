@@ -544,7 +544,7 @@ describe('PageStructureService', () => {
     });
     $rootScope.$digest();
 
-    expect(HstService.addHstComponent).toHaveBeenCalledWith(catalogComponent, 'container-1');
+    expect(HstService.addHstComponent).toHaveBeenCalledWith(catalogComponent, 'container-1', undefined);
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT', { component: 'Foo Bah Component' });
     expect(HippoIframeService.reload).toHaveBeenCalled();
   });
@@ -572,7 +572,7 @@ describe('PageStructureService', () => {
     });
     $rootScope.$digest();
 
-    expect(HstService.addHstComponent).toHaveBeenCalledWith(catalogComponent, 'container-1');
+    expect(HstService.addHstComponent).toHaveBeenCalledWith(catalogComponent, 'container-1', undefined);
     expect(FeedbackService.showError).toHaveBeenCalledWith('ERROR_ADD_COMPONENT_ITEM_ALREADY_LOCKED', {
       lockedBy: 'another-user',
       lockedOn: 1234,
@@ -593,7 +593,7 @@ describe('PageStructureService', () => {
 
     PageStructureService.addComponentToContainer(catalogComponent, mockContainer)
       .then((newComponentId) => {
-        expect(HstService.addHstComponent).toHaveBeenCalledWith(catalogComponent, 'container-1');
+        expect(HstService.addHstComponent).toHaveBeenCalledWith(catalogComponent, 'container-1', undefined);
         expect(ChannelService.recordOwnChange).toHaveBeenCalled();
         expect(newComponentId).toEqual('newUuid');
         done();

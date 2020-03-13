@@ -58,9 +58,10 @@ class ContainerService {
     return this.emitter.on(eventName, argument => this.$rootScope.$apply(() => callback(argument)));
   }
 
-  async addComponent(catalogComponent, container) {
+  async addComponent(catalogComponent, container, nextComponentId) {
     try {
-      const newComponentId = await this.PageStructureService.addComponentToContainer(catalogComponent, container);
+      const newComponentId = await this.PageStructureService
+        .addComponentToContainer(catalogComponent, container, nextComponentId);
       if (!this._reloadSpa()) {
         await this._renderNewComponent(newComponentId, container);
       }
