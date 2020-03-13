@@ -26,7 +26,7 @@ import javax.jcr.Session;
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.content.beans.ObjectBeanManagerException;
 import org.hippoecm.hst.content.beans.builder.AbstractBeanBuilderService;
-import org.hippoecm.hst.content.beans.builder.DocumentType;
+import org.hippoecm.hst.content.beans.builder.CmsFieldType;
 import org.hippoecm.hst.content.beans.builder.HippoContentBean;
 import org.hippoecm.hst.content.beans.manager.DynamicObjectConverterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
@@ -231,7 +231,7 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
         if (interceptorDefinition == null) {
             // if the field doesn't have a custom interceptor but is a String type,
             // then generate the field as a string value
-            if (DocumentType.STRING == DocumentType.getDocumentType(type)) {
+            if (CmsFieldType.STRING == CmsFieldType.getCmsFieldType(type)) {
                 builder.addBeanMethodString(methodName, propertyName, multiple);
             } else {
                 log.warn("Failed to create getter for property: {} of type: {}", propertyName, cmsType);                

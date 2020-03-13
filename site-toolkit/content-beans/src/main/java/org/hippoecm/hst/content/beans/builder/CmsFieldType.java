@@ -20,9 +20,12 @@ import java.util.Arrays;
 import org.onehippo.cms7.services.contenttype.ContentType;
 
 /**
- * Document types to wrap {@link ContentType} types to getter fields in Dynamic Beans. 
+ * Enum of field types which can be added to document types as a property/node.
+ * While generating a dynamic bean, these types get used to map {@link ContentType}
+ * fields to content bean getters.
  */
-public enum DocumentType {
+public enum CmsFieldType {
+
     STRING("String"), //
     HTML("Html"), //
     PASSWORD("Password"), //
@@ -43,18 +46,18 @@ public enum DocumentType {
 
     private String type;
 
-    public String getDocumentType() {
+    public String getCmsFieldType() {
         return this.type;
     }
 
-    DocumentType(String type) {
+    CmsFieldType(String type) {
         this.type = type;
     }
 
-    public static DocumentType getDocumentType(String type) {
-        return Arrays.stream(DocumentType.values())
-                .filter(doc -> doc.getDocumentType().equals(type))
+    public static CmsFieldType getCmsFieldType(String type) {
+        return Arrays.stream(CmsFieldType.values())
+                .filter(doc -> doc.getCmsFieldType().equals(type))
                 .findFirst()
-                .orElse(DocumentType.UNKNOWN);
+                .orElse(CmsFieldType.UNKNOWN);
     }
 }

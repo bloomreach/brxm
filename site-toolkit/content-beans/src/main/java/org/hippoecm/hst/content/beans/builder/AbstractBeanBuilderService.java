@@ -51,9 +51,9 @@ public abstract class AbstractBeanBuilderService {
                 continue;
             }
 
-            final DocumentType documentType = getPropertyDocumentType(property.getType(), property.getCmsType());
+            final CmsFieldType cmsFieldType = getCmsFieldType(property.getType(), property.getCmsType());
 
-            switch (documentType) {
+            switch (cmsFieldType) {
             case STRING:
             case HTML:
             case PASSWORD:
@@ -106,10 +106,10 @@ public abstract class AbstractBeanBuilderService {
                 continue;
             }
 
-            final DocumentType documentType = childNode.isContentBlocks() ?
-                    DocumentType.CONTENT_BLOCKS : DocumentType.getDocumentType(childNode.getType());
+            final CmsFieldType cmsFieldType = childNode.isContentBlocks() ?
+                    CmsFieldType.CONTENT_BLOCKS : CmsFieldType.getCmsFieldType(childNode.getType());
 
-            switch (documentType) {
+            switch (cmsFieldType) {
             case HIPPO_HTML:
                 addBeanMethodHippoHtml(propertyName, methodName, multiple, builder);
                 break;
@@ -139,23 +139,22 @@ public abstract class AbstractBeanBuilderService {
     }
 
     /**
-     * Gets the corresponding document type enum value of a given document type by checking
-     * a possible docbase definition
+     * Gets the corresponding cms field type enum value of the given document type
      * 
      * @param type of the document
      * @param cmsType itemType of the {@link org.onehippo.cms7.services.contenttype.ContentTypeProperty}
      * @return the corresponding document type
      */
-    private DocumentType getPropertyDocumentType(final String type, final String cmsType) {
-        DocumentType documentType = DocumentType.getDocumentType(type);
+    private CmsFieldType getCmsFieldType(final String type, final String cmsType) {
+        CmsFieldType cmsFieldType = CmsFieldType.getCmsFieldType(type);
 
-        // if a document type is a string type, then the cms/item type check
+        // if a cms field type is a string type, then the cms/item type check
         // should be made to figure out the actual type of the document
-        if (documentType == DocumentType.STRING) {
-            documentType = DocumentType.getDocumentType(cmsType);
+        if (cmsFieldType == CmsFieldType.STRING) {
+            cmsFieldType = CmsFieldType.getCmsFieldType(cmsType);
         }
 
-        return documentType;
+        return cmsFieldType;
     }
 
     /**
