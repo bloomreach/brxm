@@ -388,7 +388,7 @@ describe('PageStructureService', () => {
       expect($rootScope.$emit).toHaveBeenCalledWith('page:change', undefined);
     });
 
-    it('emits "hippo-iframe:new-head-contributions" for new head contributions', () => {
+    it('emits "page:new-head-contributions" for new head contributions', () => {
       spyOn($rootScope, '$emit');
       const headContribution = mockUnprocessedHeadContributions(['<style/>', '<script/>']);
 
@@ -402,16 +402,16 @@ describe('PageStructureService', () => {
 
       const updatedComponent1 = page.getComponentById('component-1');
 
-      expect($rootScope.$emit).toHaveBeenCalledWith('hippo-iframe:new-head-contributions', updatedComponent1);
+      expect($rootScope.$emit).toHaveBeenCalledWith('page:new-head-contributions', updatedComponent1);
 
       $rootScope.$emit.calls.reset();
       PageStructureService.renderComponent(component1);
       $rootScope.$digest();
 
-      expect($rootScope.$emit).not.toHaveBeenCalledWith('hippo-iframe:new-head-contributions', jasmine.anything());
+      expect($rootScope.$emit).not.toHaveBeenCalledWith('page:new-head-contributions', jasmine.anything());
     });
 
-    it('ignores "hippo-iframe:new-head-contributions" if component properties are passed', () => {
+    it('ignores "page:new-head-contributions" if component properties are passed', () => {
       spyOn($rootScope, '$emit');
 
       const headContribution = mockUnprocessedHeadContributions(['<style/>', '<script/>']);
@@ -423,7 +423,7 @@ describe('PageStructureService', () => {
       PageStructureService.renderComponent(component1, { text: 'value' });
       $rootScope.$digest();
 
-      expect($rootScope.$emit).not.toHaveBeenCalledWith('hippo-iframe:new-head-contributions', jasmine.anything());
+      expect($rootScope.$emit).not.toHaveBeenCalledWith('page:new-head-contributions', jasmine.anything());
     });
 
     it('shows an error message and reloads the page when a component has been deleted', (done) => {
@@ -519,9 +519,9 @@ describe('PageStructureService', () => {
       expect($rootScope.$emit).toHaveBeenCalledWith('page:change', undefined);
     });
 
-    it('emits "hippo-iframe:new-head-contributions" for new head contributions', () => {
+    it('emits "page:new-head-contributions" for new head contributions', () => {
       const onNewHeadContributions = jasmine.createSpy('new-head-contributions');
-      const offNewHeadContributions = $rootScope.$on('hippo-iframe:new-head-contributions', onNewHeadContributions);
+      const offNewHeadContributions = $rootScope.$on('page:new-head-contributions', onNewHeadContributions);
 
       const headContribution = mockUnprocessedHeadContributions(['<style/>', '<script/>']);
       const updatedContainerData = mockContainer('Updated container', 'container-1', 'HST.vBox', headContribution);

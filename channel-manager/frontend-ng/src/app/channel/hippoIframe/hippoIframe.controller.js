@@ -87,7 +87,7 @@ class HippoIframeCtrl {
     this._offSdkReady = this.$rootScope.$on('spa:ready', this._onSpaReady);
     this._offSdkUnload = this.$rootScope.$on('iframe:unload', this._onUnload);
     this._offNewHeadContributions = this.$rootScope.$on(
-      'hippo-iframe:new-head-contributions',
+      'page:new-head-contributions',
       this._onNewHeadContributions,
     );
     this._offDocumentCreate = this.$rootScope.$on('iframe:document:create', this._onDocumentCreate);
