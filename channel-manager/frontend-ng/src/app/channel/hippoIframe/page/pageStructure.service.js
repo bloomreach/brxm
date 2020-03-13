@@ -185,7 +185,7 @@ class PageStructureService {
       this._notifyChangeListeners();
 
       if ($.isEmptyObject(propertiesMap) && oldHeadContributionsSize !== this.headContributions.size) {
-        this.$rootScope.$emit('hippo-iframe:new-head-contributions', newComponent);
+        this.$rootScope.$emit('page:new-head-contributions', newComponent);
       }
     } catch (response) {
       if (response.status === 404) {
@@ -211,7 +211,7 @@ class PageStructureService {
     this._notifyChangeListeners();
 
     if (oldHeadContributionsSize !== this.headContributions.size) {
-      this.$rootScope.$emit('hippo-iframe:new-head-contributions', newContainer);
+      this.$rootScope.$emit('page:new-head-contributions', newContainer);
     }
 
     return newContainer;

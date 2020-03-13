@@ -316,10 +316,10 @@ describe('hippoIframeCtrl', () => {
     expect(CommunicationService.toggleContentsOverlay).toHaveBeenCalledWith(true);
   });
 
-  it('reloads the iframe when it receives a "hippo-iframe:new-head-contributions" event', () => {
+  it('reloads the iframe when it receives a "page:new-head-contributions" event', () => {
     spyOn(HippoIframeService, 'reload');
     const mockComponent = jasmine.createSpyObj('ComponentElement', ['getLabel']);
-    $rootScope.$emit('hippo-iframe:new-head-contributions', mockComponent);
+    $rootScope.$emit('page:new-head-contributions', mockComponent);
 
     expect(HippoIframeService.reload).toHaveBeenCalled();
   });
