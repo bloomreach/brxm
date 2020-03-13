@@ -27,6 +27,7 @@ export default class CommunicationService {
     this.enableScroll = this._call.bind(this, 'enableScroll');
     this.getScroll = this._call.bind(this, 'getScroll');
     this.parseElements = this._call.bind(this, 'parseElements');
+    this.reload = this._call.bind(this, 'reload');
     this.selectComponent = this._call.bind(this, 'selectComponent');
     this.setScroll = this._call.bind(this, 'setScroll');
     this.stopScroll = this._call.bind(this, 'stopScroll');

@@ -38,6 +38,7 @@ export default class CommunicationService {
         enableScroll: this._enableScroll.bind(this),
         getScroll: this._getScroll.bind(this),
         parseElements: this._parseElements.bind(this),
+        reload: this._reload.bind(this),
         selectComponent: this._selectComponent.bind(this),
         setScroll: this._setScroll.bind(this),
         stopScroll: this._stopScroll.bind(this),
@@ -80,6 +81,10 @@ export default class CommunicationService {
 
   _parseElements(...args) {
     return this.$injector.get('PageStructureService').parseElements(...args);
+  }
+
+  _reload() {
+    return this.$injector.get('$window').location.reload();
   }
 
   _selectComponent(...args) {

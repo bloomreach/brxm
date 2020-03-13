@@ -21,6 +21,7 @@ class HippoIframeService {
     $rootScope,
     ChannelService,
     CmsService,
+    CommunicationService,
     ConfigService,
     DomService,
     PageStructureService,
@@ -36,6 +37,7 @@ class HippoIframeService {
 
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
+    this.CommunicationService = CommunicationService;
     this.ConfigService = ConfigService;
     this.DomService = DomService;
     this.PageStructureService = PageStructureService;
@@ -128,7 +130,7 @@ class HippoIframeService {
     this.ScrollService.savePosition();
 
     this.deferredReload = this.$q.defer();
-    this.iframeJQueryElement[0].contentWindow.location.reload();
+    this.CommunicationService.reload();
 
     return this.deferredReload.promise;
   }
