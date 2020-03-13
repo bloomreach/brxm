@@ -24,7 +24,6 @@ class ContainerService {
     $translate,
     CmsService,
     DialogService,
-    EditComponentService,
     Emittery,
     FeedbackService,
     HippoIframeService,
@@ -39,7 +38,6 @@ class ContainerService {
     this.$translate = $translate;
     this.CmsService = CmsService;
     this.DialogService = DialogService;
-    this.EditComponentService = EditComponentService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
     this.PageStructureService = PageStructureService;
@@ -99,17 +97,10 @@ class ContainerService {
     this.emitter.emit(COMPONENT_MOVED_EVENT_NAME);
   }
 
-  deleteComponent(componentId) {
-    const page = this.PageStructureService.getPage();
-    const component = page && page.getComponentById(componentId);
-    if (!component) {
-      this.$log.warn(`Cannot delete unknown component with id '${componentId}'`);
-      return;
-    }
-    this._confirmDelete(component).then(
-      this._doDelete(componentId),
-      () => this.EditComponentService.startEditing(component),
-    );
+  async deleteComponent(component) {
+    await this._confirmDelete(component);
+
+    this._doDelete(component.getId());
   }
 
   _confirmDelete(selectedComponent) {
@@ -124,10 +115,42 @@ class ContainerService {
   }
 
   _doDelete(componentId) {
-    return () => this.PageStructureService.removeComponentById(componentId)
+    return this.PageStructureService.removeComponentById(componentId)
       .then(container => this._reloadSpa() || this.PageStructureService.renderContainer(container))
       .catch(() => this.HippoIframeService.reload())
       .finally(() => this.CmsService.publish('destroy-component-properties-window'));
+  }
+
+  async renderComponent(componentId, properties) {
+    const page = this.PageStructureService.getPage();
+    const component = page && page.getComponentById(componentId);
+
+    if (!component) {
+      this.$log.warn(`Cannot render unknown component with ID '${componentId}'.`);
+
+      throw new Error(`Cannot render unknown component with ID '${componentId}'.`);
+    }
+
+    if (this.SpaService.isSpa()) {
+      try {
+        await this.SpaService.renderComponent(component, properties);
+
+        return;
+      } catch (error) {
+        this.$log.error(error);
+
+        throw error;
+      }
+    }
+
+    try {
+      await this.PageStructureService.renderComponent(component, properties);
+    } catch (error) {
+      // component being edited is removed (by someone else), reload the page
+      this.HippoIframeService.reload();
+
+      throw error;
+    }
   }
 }
 

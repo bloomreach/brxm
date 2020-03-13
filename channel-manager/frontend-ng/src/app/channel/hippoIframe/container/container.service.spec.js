@@ -21,7 +21,6 @@ describe('ContainerService', () => {
   let CmsService;
   let ContainerService;
   let DialogService;
-  let EditComponentService;
   let FeedbackService;
   let HippoIframeService;
   let PageStructureService;
@@ -48,7 +47,6 @@ describe('ContainerService', () => {
       _CmsService_,
       _ContainerService_,
       _DialogService_,
-      _EditComponentService_,
       _FeedbackService_,
       _HippoIframeService_,
       _PageStructureService_,
@@ -60,7 +58,6 @@ describe('ContainerService', () => {
       CmsService = _CmsService_;
       ContainerService = _ContainerService_;
       DialogService = _DialogService_;
-      EditComponentService = _EditComponentService_;
       FeedbackService = _FeedbackService_;
       HippoIframeService = _HippoIframeService_;
       PageStructureService = _PageStructureService_;
@@ -152,7 +149,6 @@ describe('ContainerService', () => {
 
   describe('deleteComponent', () => {
     let mockComponent;
-    let mockPage;
 
     beforeEach(() => {
       spyOn(CmsService, 'publish');
@@ -160,10 +156,8 @@ describe('ContainerService', () => {
       spyOn(DialogService, 'show').and.returnValue($q.resolve());
       spyOn(HippoIframeService, 'reload');
 
-      mockComponent = jasmine.createSpyObj('ComponentElement', ['getLabel']);
-      mockPage = jasmine.createSpyObj('PageElement', ['getComponentById']);
-      mockPage.getComponentById.and.returnValue(mockComponent);
-      spyOn(PageStructureService, 'getPage').and.returnValue(mockPage);
+      mockComponent = jasmine.createSpyObj('ComponentElement', ['getId', 'getLabel']);
+      mockComponent.getId.and.returnValue('1234');
       spyOn(PageStructureService, 'removeComponentById');
       spyOn(PageStructureService, 'renderContainer');
     });
@@ -174,7 +168,7 @@ describe('ContainerService', () => {
       PageStructureService.removeComponentById.and.returnValue($q.when(oldContainer));
       PageStructureService.renderContainer.and.returnValue($q.when(newContainer));
 
-      ContainerService.deleteComponent('1234');
+      ContainerService.deleteComponent(mockComponent);
       $rootScope.$digest();
 
       expect(mockComponent.getLabel).toHaveBeenCalled();
@@ -189,7 +183,7 @@ describe('ContainerService', () => {
       spyOn(SpaService, 'isSpa').and.returnValue(true);
       PageStructureService.removeComponentById.and.returnValue($q.when(oldContainer));
 
-      ContainerService.deleteComponent('1234');
+      ContainerService.deleteComponent(mockComponent);
       $rootScope.$digest();
 
       expect(mockComponent.getLabel).toHaveBeenCalled();
@@ -200,23 +194,10 @@ describe('ContainerService', () => {
       expect(CmsService.publish).toHaveBeenCalledWith('destroy-component-properties-window');
     });
 
-    it('shows component properties dialog after rejecting the delete operation', () => {
-      spyOn(EditComponentService, 'startEditing');
-      DialogService.show.and.returnValue($q.reject());
-
-      ContainerService.deleteComponent('1234');
-      $rootScope.$digest();
-
-      expect(mockComponent.getLabel).toHaveBeenCalled();
-      expect(DialogService.confirm).toHaveBeenCalled();
-      expect(DialogService.show).toHaveBeenCalled();
-      expect(EditComponentService.startEditing).toHaveBeenCalledWith(mockComponent);
-    });
-
     it('reloads the iframe when removal fails', () => {
       PageStructureService.removeComponentById.and.returnValue($q.reject());
 
-      ContainerService.deleteComponent('1234');
+      ContainerService.deleteComponent(mockComponent);
       $rootScope.$digest();
 
       expect(HippoIframeService.reload).toHaveBeenCalled();
@@ -226,21 +207,105 @@ describe('ContainerService', () => {
       PageStructureService.removeComponentById.and.returnValue($q.resolve());
       PageStructureService.renderContainer.and.returnValue($q.reject());
 
-      ContainerService.deleteComponent('1234');
+      ContainerService.deleteComponent(mockComponent);
       $rootScope.$digest();
 
       expect(HippoIframeService.reload).toHaveBeenCalled();
     });
+  });
 
-    it('logs a warning for unknown components', () => {
-      spyOn($log, 'warn');
+  describe('renderComponent', () => {
+    let mockComponent;
+    let mockPage;
+
+    beforeEach(() => {
+      mockComponent = { id: '1234' };
+      mockPage = {
+        getComponentById: jasmine.createSpy('getComponentById').and.returnValue(mockComponent),
+      };
+
+      spyOn(PageStructureService, 'renderComponent');
+      spyOn(PageStructureService, 'getPage').and.returnValue(mockPage);
+      spyOn(SpaService, 'renderComponent').and.returnValue(false);
+    });
+
+    it('rejects unknown components', (done) => {
       mockPage.getComponentById.and.returnValue(null);
+      spyOn($log, 'warn');
 
-      ContainerService.deleteComponent('unknown');
-      $rootScope.$digest();
+      ContainerService.renderComponent('1234')
+        .then(() => fail('Should be rejected'))
+        .catch((e) => {
+          expect($log.warn).toHaveBeenCalledWith('Cannot render unknown component with ID \'1234\'.');
+          expect(e.message).toBe('Cannot render unknown component with ID \'1234\'.');
+          done();
+        });
 
-      expect($log.warn).toHaveBeenCalledWith('Cannot delete unknown component with id \'unknown\'');
-      expect(PageStructureService.removeComponentById).not.toHaveBeenCalled();
+      $rootScope.$apply();
+    });
+
+    it('first tries to render a component via the SPA', (done) => {
+      spyOn(SpaService, 'isSpa').and.returnValue(true);
+
+      ContainerService.renderComponent('1234', { foo: 1 })
+        .then(() => {
+          expect(SpaService.renderComponent).toHaveBeenCalledWith(mockComponent, { foo: 1 });
+          expect(PageStructureService.renderComponent).not.toHaveBeenCalled();
+          done();
+        });
+
+      $rootScope.$apply();
+    });
+
+    it('then tries to render a component via the PageStructureService', (done) => {
+      spyOn(SpaService, 'isSpa').and.returnValue(false);
+      PageStructureService.renderComponent.and.returnValue($q.resolve());
+
+      ContainerService.renderComponent('1234', { foo: 1 })
+        .then(() => {
+          expect(SpaService.renderComponent).not.toHaveBeenCalled();
+          expect(PageStructureService.renderComponent).toHaveBeenCalledWith(mockComponent, { foo: 1 });
+          done();
+        });
+
+      $rootScope.$apply();
+    });
+
+    it('rejects when render component via the PageStructureService fails', (done) => {
+      PageStructureService.renderComponent.and.returnValue($q.reject());
+
+      ContainerService.renderComponent('1234', { foo: 1 })
+        .then(() => fail('Should be rejected'))
+        .catch(done);
+
+      $rootScope.$apply();
+    });
+
+    it('rejects when render component via the SPA fails ', (done) => {
+      spyOn(SpaService, 'isSpa').and.returnValue(true);
+      SpaService.renderComponent.and.returnValue($q.reject('error'));
+      spyOn($log, 'error');
+
+      ContainerService.renderComponent('1234', { foo: 1 })
+        .catch((error) => {
+          expect(error).toBe('error');
+          expect($log.error).toHaveBeenCalledWith('error');
+        })
+        .then(done);
+
+      $rootScope.$apply();
+    });
+
+    it('reloads the iframe when render component via the PageStructureService fails', (done) => {
+      PageStructureService.renderComponent.and.returnValue($q.reject());
+      spyOn(HippoIframeService, 'reload');
+
+      ContainerService.renderComponent('1234', { foo: 1 });
+      $rootScope.$apply();
+
+      expect(HippoIframeService.reload).toHaveBeenCalled();
+
+      done();
     });
   });
 });

@@ -16,13 +16,13 @@
 
 describe('hippoIframeCtrl', () => {
   let $element;
+  let $log;
   let $q;
   let $rootScope;
   let $window;
   let ChannelService;
   let CmsService;
   let CommunicationService;
-  let ComponentRenderingService;
   let ContainerService;
   let CreateContentService;
   let DomService;
@@ -43,7 +43,6 @@ describe('hippoIframeCtrl', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    ComponentRenderingService = jasmine.createSpyObj('ComponentRenderingService', ['renderComponent']);
     CreateContentService = jasmine.createSpyObj('CreateContentService', ['start']);
     DomService = jasmine.createSpyObj('DomService', ['addScript', 'isFrameAccessible']);
     EditComponentService = jasmine.createSpyObj('EditComponentService', ['startEditing']);
@@ -55,7 +54,6 @@ describe('hippoIframeCtrl', () => {
 
     angular.mock.module(($provide) => {
       $provide.value('iframeAsset', 'iframe.bundle.js');
-      $provide.value('ComponentRenderingService', ComponentRenderingService);
       $provide.value('CreateContentService', CreateContentService);
       $provide.value('DomService', DomService);
       $provide.value('EditComponentService', EditComponentService);
@@ -69,6 +67,7 @@ describe('hippoIframeCtrl', () => {
     inject((
       $componentController,
       _$compile_,
+      _$log_,
       _$q_,
       _$rootScope_,
       _$window_,
@@ -81,6 +80,7 @@ describe('hippoIframeCtrl', () => {
       _SpaService_,
       _ViewportService_,
     ) => {
+      $log = _$log_;
       $q = _$q_;
       $rootScope = _$rootScope_;
       $window = _$window_;
@@ -156,15 +156,19 @@ describe('hippoIframeCtrl', () => {
   });
 
   describe('render component', () => {
+    beforeEach(() => {
+      spyOn(ContainerService, 'renderComponent');
+    });
+
     it('renders a component when it receives a "render-component" event from the CMS', () => {
       $window.CMS_TO_APP.publish('render-component', '1234', { foo: 1 });
-      expect(ComponentRenderingService.renderComponent).toHaveBeenCalledWith('1234', { foo: 1 });
+      expect(ContainerService.renderComponent).toHaveBeenCalledWith('1234', { foo: 1 });
     });
 
     it('does not respond to the render-component event anymore when destroyed', () => {
       $ctrl.$onDestroy();
       $window.CMS_TO_APP.publish('render-component', '1234', { foo: 1 });
-      expect(ComponentRenderingService.renderComponent).not.toHaveBeenCalled();
+      expect(ContainerService.renderComponent).not.toHaveBeenCalled();
     });
   });
 
@@ -192,16 +196,42 @@ describe('hippoIframeCtrl', () => {
   });
 
   describe('delete component', () => {
+    const component = {};
+    let page;
+
     beforeEach(() => {
       spyOn(ContainerService, 'deleteComponent');
+
+      page = jasmine.createSpyObj('Page', ['getComponentById']);
+      page.getComponentById.and.returnValue(component);
+
+      spyOn(PageStructureService, 'getPage').and.returnValue(page);
     });
 
-    it('deletes a component via the ContainerService', () => {
+    it('should delete a component', () => {
       $window.CMS_TO_APP.publish('delete-component', '1234');
-      expect(ContainerService.deleteComponent).toHaveBeenCalledWith('1234');
+
+      expect(page.getComponentById).toHaveBeenCalledWith('1234');
+      expect(ContainerService.deleteComponent).toHaveBeenCalledWith(component);
     });
 
-    it('does not respond to the delete-component event anymore when destroyed', () => {
+    it('should log warning if the component does not exist', () => {
+      spyOn($log, 'warn');
+      page.getComponentById.and.returnValue(null);
+      $window.CMS_TO_APP.publish('delete-component', '1234');
+
+      expect($log.warn).toHaveBeenCalled();
+      expect(ContainerService.deleteComponent).not.toHaveBeenCalled();
+    });
+
+    it('should log warning if the component does not exist', () => {
+      ContainerService.deleteComponent.and.throwError('Some Error');
+      $window.CMS_TO_APP.publish('delete-component', '1234');
+
+      expect(EditComponentService.startEditing).toHaveBeenCalledWith(component);
+    });
+
+    it('should not respond to the delete-component event anymore when destroyed', () => {
       $ctrl.$onDestroy();
       $window.CMS_TO_APP.publish('delete-component', '1234');
       expect(ContainerService.deleteComponent).not.toHaveBeenCalled();
@@ -484,6 +514,8 @@ describe('hippoIframeCtrl', () => {
     });
 
     it('can pick a path and update the component', () => {
+      spyOn(ContainerService, 'renderComponent');
+
       PickerService.pickPath.and.returnValue($q.resolve({ path: '/base/pickedPath' }));
       HstComponentService.setPathParameter.and.returnValue($q.resolve());
 
@@ -494,7 +526,7 @@ describe('hippoIframeCtrl', () => {
       expect(HstComponentService.setPathParameter).toHaveBeenCalledWith(
         'componentId', 'hippo-default', 'parameterName', '/base/pickedPath', '/base',
       );
-      expect(ComponentRenderingService.renderComponent).toHaveBeenCalledWith('componentId');
+      expect(ContainerService.renderComponent).toHaveBeenCalledWith('componentId');
       expect(FeedbackService.showNotification).toHaveBeenCalledWith(
         'NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName: 'componentLabel' },
       );

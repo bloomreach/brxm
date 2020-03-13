@@ -29,7 +29,7 @@ class ComponentEditorService {
     ChannelService,
     CmsService,
     CommunicationService,
-    ComponentRenderingService,
+    ContainerService,
     DialogService,
     FeedbackService,
     HippoIframeService,
@@ -44,7 +44,7 @@ class ComponentEditorService {
     this.ChannelService = ChannelService;
     this.CmsService = CmsService;
     this.CommunicationService = CommunicationService;
-    this.ComponentRenderingService = ComponentRenderingService;
+    this.ContainerService = ContainerService;
     this.DialogService = DialogService;
     this.FeedbackService = FeedbackService;
     this.HippoIframeService = HippoIframeService;
@@ -285,7 +285,7 @@ class ComponentEditorService {
   }
 
   updatePreview() {
-    return this.ComponentRenderingService.renderComponent(this.component.id, this._propertiesAsFormData());
+    return this.ContainerService.renderComponent(this.component.id, this._propertiesAsFormData());
   }
 
   async save() {
