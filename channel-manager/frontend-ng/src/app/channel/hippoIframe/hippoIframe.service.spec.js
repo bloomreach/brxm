@@ -21,20 +21,22 @@ describe('HippoIframeService', () => {
   let hippoIframe;
   let iframe;
   let ChannelService;
+  let CommunicationService;
   let ConfigService;
   let DomService;
   let HippoIframeService;
   let PageStructureService;
   let PageToolsService;
   let ScrollService;
-  const iframeSrc = `/${jasmine.getFixtures().fixturesPath}/channel/hippoIframe/hippoIframe.service.iframe.fixture.html`; // eslint-disable-line max-len
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
+    CommunicationService = jasmine.createSpyObj('CommunicationService', ['reload']);
     DomService = jasmine.createSpyObj('DomService', ['getAssetUrl']);
 
     angular.mock.module(($provide) => {
+      $provide.value('CommunicationService', CommunicationService);
       $provide.value('DomService', DomService);
     });
 
@@ -72,17 +74,6 @@ describe('HippoIframeService', () => {
     iframe = $j('#testIframe');
     HippoIframeService.initialize(hippoIframe, iframe);
   });
-
-  function loadIframeFixture(callback) {
-    iframe.one('load', () => {
-      try {
-        callback();
-      } catch (e) {
-        fail(e);
-      }
-    });
-    iframe.attr('src', iframeSrc);
-  }
 
   describe('initializePath', () => {
     let pageMeta;
@@ -169,31 +160,25 @@ describe('HippoIframeService', () => {
     $rootScope.$digest();
   });
 
-  it('reloads the iframe and waits for the page load to complete', (done) => {
-    loadIframeFixture(() => { // give the iframe something to reload.
-      HippoIframeService.pageLoaded = true;
-      spyOn($log, 'warn');
+  it('reloads the iframe and waits for the page load to complete', () => {
+    HippoIframeService.pageLoaded = true;
+    spyOn($log, 'warn');
 
-      iframe.one('load', () => { // catch the reload event to signal page load completion
-        expect(ScrollService.savePosition).toHaveBeenCalled();
-        expect(ScrollService.restorePosition).not.toHaveBeenCalled();
-        expect(PageToolsService.updatePageTools).not.toHaveBeenCalled();
-        expect(HippoIframeService.deferredReload).toBeTruthy();
+    HippoIframeService.reload();
 
-        $rootScope.$emit('page:change', { initial: true });
+    expect(ScrollService.savePosition).toHaveBeenCalled();
+    expect(ScrollService.restorePosition).not.toHaveBeenCalled();
+    expect(CommunicationService.reload).toHaveBeenCalled();
+    expect(PageToolsService.updatePageTools).not.toHaveBeenCalled();
+    expect(HippoIframeService.deferredReload).toBeTruthy();
 
-        expect(ScrollService.restorePosition).toHaveBeenCalled();
-        expect(PageToolsService.updatePageTools).toHaveBeenCalled();
+    $rootScope.$emit('page:change', { initial: true });
 
-        $rootScope.$digest();
-      });
+    expect(ScrollService.restorePosition).toHaveBeenCalled();
+    expect(PageToolsService.updatePageTools).toHaveBeenCalled();
 
-      HippoIframeService.reload().then(() => { // trigger the reload, wait for its completion
-        expect(HippoIframeService.deferredReload).toBeFalsy();
-        expect($log.warn).not.toHaveBeenCalled();
-        done();
-      });
-    });
+    expect(HippoIframeService.deferredReload).toBeFalsy();
+    expect($log.warn).not.toHaveBeenCalled();
   });
 
   it('logs a warning upon a reload request when a reload is already ongoing', (done) => {
