@@ -22,6 +22,7 @@ describe('OverlayService', () => {
   let $rootScope;
   let $window;
   let CommunicationService;
+  let DomService;
   let DragDropService;
   let OverlayService;
   let PageStructureService;
@@ -31,7 +32,7 @@ describe('OverlayService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm-iframe');
 
-    CommunicationService = jasmine.createSpyObj('CommunicationService', ['isEditable', 'emit']);
+    CommunicationService = jasmine.createSpyObj('CommunicationService', ['emit', 'getAssetUrl', 'isEditable']);
     DragDropService = jasmine.createSpyObj('DragDropService', [
       'enable',
       'disable',
@@ -51,6 +52,7 @@ describe('OverlayService', () => {
       _$q_,
       _$rootScope_,
       _$window_,
+      _DomService_,
       _OverlayService_,
       _PageStructureService_,
       _SvgService_,
@@ -59,11 +61,13 @@ describe('OverlayService', () => {
       $q = _$q_;
       $rootScope = _$rootScope_;
       $window = _$window_;
+      DomService = _DomService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
       SvgService = _SvgService_;
     });
 
+    spyOn(DomService, 'addCssLinks').and.returnValue($q.resolve());
     spyOn(SvgService, 'getSvg').and.callFake(() => angular.element('<svg>test</svg>'));
 
     jasmine.getFixtures().load('iframe/overlay/overlay.service.fixture.html');
@@ -110,7 +114,7 @@ describe('OverlayService', () => {
   it('syncs when the page structure has changed', async () => {
     await loadIframeFixture();
     spyOn(OverlayService, 'sync');
-    await $rootScope.$emit('page:change');
+    await OverlayService._onPageChange();
 
     expect(OverlayService.sync).toHaveBeenCalled();
   });
@@ -148,10 +152,19 @@ describe('OverlayService', () => {
     spyOn(PageStructureService, 'getPage').and.returnValue(null);
     spyOn(PageStructureService, 'getEmbeddedLinks').and.returnValue([]);
 
-    await $rootScope.$emit('page:change');
+    await OverlayService._onPageChange();
 
     expect($document.find('.hippo-overlay').children()).toHaveLength(0);
     expect($document.find('.hst-fab')).toHaveLength(0);
+  });
+
+  it('should add iframe css', async () => {
+    CommunicationService.getAssetUrl.and.returnValue('url');
+
+    await loadIframeFixture();
+
+    expect(CommunicationService.getAssetUrl).toHaveBeenCalledWith(jasmine.stringMatching('hippo-iframe'));
+    expect(DomService.addCssLinks).toHaveBeenCalledWith($window, ['url']);
   });
 
   describe('toggleComponentsOverlay', () => {

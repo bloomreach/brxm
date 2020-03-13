@@ -54,36 +54,12 @@ describe('DomService', () => {
     iframe.attr('src', `${fixturesPath}/services/dom.service.iframe.fixture.html`);
   }
 
-  it('returns the window of an iframe', (done) => {
-    testInIframe((iframeWindow) => {
-      const iframe = $j('#testIframe');
-      expect(DomService.getIframeWindow(iframe)).toEqual(iframeWindow);
-      done();
-    });
-  });
-
-  it('knows whether an iframe has a document', (done) => {
-    testInIframe(() => {
-      const iframe = $j('#testIframe');
-      expect(DomService.hasIframeDocument(iframe)).toEqual(true);
-      done();
-    });
-  });
-
-  it('returns the document of an iframe', (done) => {
-    testInIframe((iframeWindow) => {
-      const iframe = $j('#testIframe');
-      expect(DomService.getIframeDocument(iframe)).toEqual(iframeWindow.document);
-      done();
-    });
-  });
-
   it('adds a CSS link tag to the head', (done) => {
     testInIframe((iframeWindow) => {
       DomService.addCssLinks(iframeWindow, [
         'testFile.css',
         'anotherFile.css',
-      ], 'css-class');
+      ]);
 
       const head = $j(iframeWindow.document).find('head');
       const links = $j(head).children('link');
@@ -93,27 +69,7 @@ describe('DomService', () => {
       expect(links.eq(0).attr('href')).toContain('testFile.css');
       expect(links.eq(1).attr('href')).toContain('anotherFile.css');
 
-      expect(links.eq(0).attr('class')).toContain('css-class');
-      expect(links.eq(1).attr('class')).toContain('css-class');
-
       done();
-    });
-  });
-
-  describe('hasCssLink', () => {
-    it('returns false when a link is not present', (done) => {
-      testInIframe((iframeWindow) => {
-        expect(DomService.hasCssLink(iframeWindow, 'css-class')).toBe(false);
-        done();
-      });
-    });
-
-    it('returns true when a link is present', (done) => {
-      testInIframe((iframeWindow) => {
-        DomService.addCssLinks(iframeWindow, ['testFile.css'], 'css-class');
-        expect(DomService.hasCssLink(iframeWindow, 'css-class')).toBe(true);
-        done();
-      });
     });
   });
 

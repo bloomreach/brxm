@@ -33,7 +33,6 @@ describe('hippoIframeCtrl', () => {
   let HstComponentService;
   let PageStructureService;
   let PickerService;
-  let RenderingService;
   let ScrollService;
   let SpaService;
   let ViewportService;
@@ -79,7 +78,6 @@ describe('hippoIframeCtrl', () => {
       _ContainerService_,
       _HippoIframeService_,
       _PageStructureService_,
-      _RenderingService_,
       _SpaService_,
       _ViewportService_,
     ) => {
@@ -92,7 +90,6 @@ describe('hippoIframeCtrl', () => {
       ContainerService = _ContainerService_;
       HippoIframeService = _HippoIframeService_;
       PageStructureService = _PageStructureService_;
-      RenderingService = _RenderingService_;
       SpaService = _SpaService_;
       ViewportService = _ViewportService_;
 
@@ -117,7 +114,6 @@ describe('hippoIframeCtrl', () => {
         ContainerService,
         HippoIframeService,
         PageStructureService,
-        RenderingService,
         SpaService,
         ViewportService,
       }, {
@@ -250,13 +246,13 @@ describe('hippoIframeCtrl', () => {
   it('creates the overlay when loading a new page', () => {
     spyOn($rootScope, '$emit');
     spyOn(SpaService, 'initLegacy').and.returnValue(false);
-    spyOn(RenderingService, 'createOverlay').and.returnValue($q.resolve());
+    spyOn(PageStructureService, 'parseElements').and.returnValue($q.resolve());
     DomService.isFrameAccessible.and.returnValue(true);
 
     $ctrl.onLoad();
     $rootScope.$digest();
 
-    expect(RenderingService.createOverlay).toHaveBeenCalledWith(true);
+    expect(PageStructureService.parseElements).toHaveBeenCalledWith(true);
   });
 
   it('should sync overlay toggles when page is loaded', () => {

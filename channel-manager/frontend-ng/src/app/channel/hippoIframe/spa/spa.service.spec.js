@@ -19,7 +19,7 @@ describe('SpaService', () => {
   let $rootScope;
   let ChannelService;
   let DomService;
-  let RenderingService;
+  let PageStructureService;
   let RpcService;
   let SpaService;
   let iframeWindow;
@@ -32,7 +32,7 @@ describe('SpaService', () => {
       _$rootScope_,
       _ChannelService_,
       _DomService_,
-      _RenderingService_,
+      _PageStructureService_,
       _RpcService_,
       _SpaService_,
     ) => {
@@ -40,7 +40,7 @@ describe('SpaService', () => {
       $rootScope = _$rootScope_;
       ChannelService = _ChannelService_;
       DomService = _DomService_;
-      RenderingService = _RenderingService_;
+      PageStructureService = _PageStructureService_;
       RpcService = _RpcService_;
       SpaService = _SpaService_;
     });
@@ -79,13 +79,13 @@ describe('SpaService', () => {
       let sync;
 
       spyOn(RpcService, 'register').and.callFake((command, callback) => { sync = callback; });
-      spyOn(RenderingService, 'createOverlay');
+      spyOn(PageStructureService, 'parseElements');
       SpaService.init(iframeJQueryElement);
 
       expect(RpcService.register).toHaveBeenCalledWith('sync', jasmine.any(Function));
 
       sync();
-      expect(RenderingService.createOverlay).toHaveBeenCalledWith(true);
+      expect(PageStructureService.parseElements).toHaveBeenCalledWith(true);
     });
   });
 
@@ -238,21 +238,21 @@ describe('SpaService', () => {
     });
 
     it('can create the overlay', () => {
-      spyOn(RenderingService, 'createOverlay');
+      spyOn(PageStructureService, 'parseElements');
       publicApi.createOverlay();
-      expect(RenderingService.createOverlay).toHaveBeenCalled();
+      expect(PageStructureService.parseElements).toHaveBeenCalled();
     });
 
     it('can sync the positions of the overlay elements', () => {
-      spyOn(RenderingService, 'createOverlay');
+      spyOn(PageStructureService, 'parseElements');
       publicApi.syncOverlay();
-      expect(RenderingService.createOverlay).toHaveBeenCalled();
+      expect(PageStructureService.parseElements).toHaveBeenCalled();
     });
 
     it('can sync the positions and meta-data of the overlay elements', () => {
-      spyOn(RenderingService, 'createOverlay');
+      spyOn(PageStructureService, 'parseElements');
       publicApi.sync();
-      expect(RenderingService.createOverlay).toHaveBeenCalled();
+      expect(PageStructureService.parseElements).toHaveBeenCalled();
     });
   });
 
@@ -339,7 +339,7 @@ describe('SpaService', () => {
 
     it('should resolve a promise on the next sync call', (done) => {
       spyOn(SpaService, 'isSpa').and.returnValue(true);
-      spyOn(RenderingService, 'createOverlay');
+      spyOn(PageStructureService, 'parseElements');
       spyOn(RpcService, 'register');
       spyOn(RpcService, 'trigger');
 
@@ -349,7 +349,7 @@ describe('SpaService', () => {
       SpaService.init(angular.element('<iframe>'));
       SpaService.renderComponent(component, {})
         .then(() => {
-          expect(RenderingService.createOverlay).toHaveBeenCalledWith(false);
+          expect(PageStructureService.parseElements).toHaveBeenCalledWith(false);
         })
         .then(done);
 
