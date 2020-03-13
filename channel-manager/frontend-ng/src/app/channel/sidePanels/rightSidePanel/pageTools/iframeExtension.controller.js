@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ export default class IframeExtensionCtrl {
     $element,
     $rootScope,
     ChannelService,
-    DomService,
     HippoIframeService,
     OpenUiService,
     PathService,
@@ -29,7 +28,6 @@ export default class IframeExtensionCtrl {
     this.$element = $element;
     this.$rootScope = $rootScope;
     this.ChannelService = ChannelService;
-    this.DomService = DomService;
     this.HippoIframeService = HippoIframeService;
     this.OpenUiService = OpenUiService;
     this.PathService = PathService;

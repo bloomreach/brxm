@@ -56,10 +56,6 @@ class DomService {
     return html != null;
   }
 
-  getIframeWindow(iframeJQueryElement) {
-    return iframeJQueryElement[0].contentWindow;
-  }
-
   addCssLinks(window, files) {
     return this.$q.all(files.map(file => this.$q((resolve, reject) => {
       const link = angular.element('<link>', {

@@ -139,7 +139,7 @@ export default class SpaService {
   _detectLegacySpa() {
     this._legacyHandle = null;
 
-    const iframeWindow = this.DomService.getIframeWindow(this.iframeJQueryElement);
+    const iframeWindow = this.iframeJQueryElement[0].contentWindow;
     if (iframeWindow) {
       this._legacyHandle = iframeWindow.SPA || null;
     }
