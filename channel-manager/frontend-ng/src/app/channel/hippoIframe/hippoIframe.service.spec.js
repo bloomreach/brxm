@@ -32,7 +32,7 @@ describe('HippoIframeService', () => {
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    CommunicationService = jasmine.createSpyObj('CommunicationService', ['reload']);
+    CommunicationService = jasmine.createSpyObj('CommunicationService', ['getPath', 'reload']);
     DomService = jasmine.createSpyObj('DomService', ['getAssetUrl']);
 
     angular.mock.module(($provide) => {
@@ -226,7 +226,9 @@ describe('HippoIframeService', () => {
 
   it('extracts the current renderPathInfo when the page has been loaded', () => {
     ChannelService.extractRenderPathInfo.and.returnValue('dummy');
+    CommunicationService.getPath.and.returnValue('dummy');
     $rootScope.$emit('page:change', { initial: true });
+    $rootScope.$digest();
 
     expect(HippoIframeService.getCurrentRenderPathInfo()).toBe('dummy');
   });
@@ -263,7 +265,9 @@ describe('HippoIframeService', () => {
 
     it('stores the current renderPath in sessionStorage', () => {
       ChannelService.extractRenderPathInfo.and.returnValue('dummy');
+      CommunicationService.getPath.and.returnValue('dummy');
       $rootScope.$emit('page:change', { initial: true });
+      $rootScope.$digest();
 
       expect(sessionStorage.channelPath).toBe('dummy');
     });
