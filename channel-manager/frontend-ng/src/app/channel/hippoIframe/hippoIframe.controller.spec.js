@@ -55,6 +55,7 @@ describe('hippoIframeCtrl', () => {
     ScrollService = jasmine.createSpyObj('ScrollService', ['enable', 'disable', 'init']);
 
     angular.mock.module(($provide) => {
+      $provide.value('iframeAsset', 'iframe.bundle.js');
       $provide.value('ComponentRenderingService', ComponentRenderingService);
       $provide.value('CreateContentService', CreateContentService);
       $provide.value('DomService', DomService);
@@ -234,7 +235,7 @@ describe('hippoIframeCtrl', () => {
     $ctrl.onLoad();
     $rootScope.$digest();
 
-    expect(HippoIframeService.getAssetUrl).toHaveBeenCalledWith(jasmine.stringMatching('iframe'));
+    expect(HippoIframeService.getAssetUrl).toHaveBeenCalledWith('iframe.bundle.js');
     expect(DomService.addScript).toHaveBeenCalledWith(contentWindow, 'url');
   });
 
@@ -309,7 +310,7 @@ describe('hippoIframeCtrl', () => {
     $rootScope.$emit('spa:ready');
     $rootScope.$digest();
 
-    expect(HippoIframeService.getAssetUrl).toHaveBeenCalledWith(jasmine.stringMatching('iframe'));
+    expect(HippoIframeService.getAssetUrl).toHaveBeenCalledWith('iframe.bundle.js');
     expect(SpaService.inject).toHaveBeenCalledWith('url');
   });
 
