@@ -12,7 +12,6 @@
     "lint": "npm run lint:styles && ng lint",
     "lint:styles": "stylelint \"projects/**/*.scss\"",
     "build:prod": "ng build --prod",
-    "prerelease:navapp": "npm run lint && npm run test:single-run && npm run build:prod",
     "release:navapp": "release-it",
     "release:navapp-communication": "cd ./projects/navapp-communication && release-it",
     "docs": "typedoc && minicat projects/navapp-communication/src/docs/typedoc.css >> docs/assets/css/main.css"
