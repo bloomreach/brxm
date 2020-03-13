@@ -216,38 +216,18 @@ describe('ContainerService', () => {
 
   describe('renderComponent', () => {
     let mockComponent;
-    let mockPage;
 
     beforeEach(() => {
-      mockComponent = { id: '1234' };
-      mockPage = {
-        getComponentById: jasmine.createSpy('getComponentById').and.returnValue(mockComponent),
-      };
+      mockComponent = { getId: () => '1234' };
 
       spyOn(PageStructureService, 'renderComponent');
-      spyOn(PageStructureService, 'getPage').and.returnValue(mockPage);
       spyOn(SpaService, 'renderComponent').and.returnValue(false);
-    });
-
-    it('rejects unknown components', (done) => {
-      mockPage.getComponentById.and.returnValue(null);
-      spyOn($log, 'warn');
-
-      ContainerService.renderComponent('1234')
-        .then(() => fail('Should be rejected'))
-        .catch((e) => {
-          expect($log.warn).toHaveBeenCalledWith('Cannot render unknown component with ID \'1234\'.');
-          expect(e.message).toBe('Cannot render unknown component with ID \'1234\'.');
-          done();
-        });
-
-      $rootScope.$apply();
     });
 
     it('first tries to render a component via the SPA', (done) => {
       spyOn(SpaService, 'isSpa').and.returnValue(true);
 
-      ContainerService.renderComponent('1234', { foo: 1 })
+      ContainerService.renderComponent(mockComponent, { foo: 1 })
         .then(() => {
           expect(SpaService.renderComponent).toHaveBeenCalledWith(mockComponent, { foo: 1 });
           expect(PageStructureService.renderComponent).not.toHaveBeenCalled();
@@ -261,7 +241,7 @@ describe('ContainerService', () => {
       spyOn(SpaService, 'isSpa').and.returnValue(false);
       PageStructureService.renderComponent.and.returnValue($q.resolve());
 
-      ContainerService.renderComponent('1234', { foo: 1 })
+      ContainerService.renderComponent(mockComponent, { foo: 1 })
         .then(() => {
           expect(SpaService.renderComponent).not.toHaveBeenCalled();
           expect(PageStructureService.renderComponent).toHaveBeenCalledWith(mockComponent, { foo: 1 });
@@ -274,7 +254,7 @@ describe('ContainerService', () => {
     it('rejects when render component via the PageStructureService fails', (done) => {
       PageStructureService.renderComponent.and.returnValue($q.reject());
 
-      ContainerService.renderComponent('1234', { foo: 1 })
+      ContainerService.renderComponent(mockComponent, { foo: 1 })
         .then(() => fail('Should be rejected'))
         .catch(done);
 
@@ -286,7 +266,7 @@ describe('ContainerService', () => {
       SpaService.renderComponent.and.returnValue($q.reject('error'));
       spyOn($log, 'error');
 
-      ContainerService.renderComponent('1234', { foo: 1 })
+      ContainerService.renderComponent(mockComponent, { foo: 1 })
         .catch((error) => {
           expect(error).toBe('error');
           expect($log.error).toHaveBeenCalledWith('error');
@@ -300,7 +280,7 @@ describe('ContainerService', () => {
       PageStructureService.renderComponent.and.returnValue($q.reject());
       spyOn(HippoIframeService, 'reload');
 
-      ContainerService.renderComponent('1234', { foo: 1 });
+      ContainerService.renderComponent(mockComponent, { foo: 1 });
       $rootScope.$apply();
 
       expect(HippoIframeService.reload).toHaveBeenCalled();

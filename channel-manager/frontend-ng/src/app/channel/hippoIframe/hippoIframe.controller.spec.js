@@ -156,18 +156,34 @@ describe('hippoIframeCtrl', () => {
   });
 
   describe('render component', () => {
+    const mockComponent = {};
+    let mockPage;
+
     beforeEach(() => {
+      mockPage = jasmine.createSpyObj('Page', ['getComponentById']);
+      mockPage.getComponentById.and.returnValue(mockComponent);
+
       spyOn(ContainerService, 'renderComponent');
+      spyOn(PageStructureService, 'getPage').and.returnValue(mockPage);
     });
 
     it('renders a component when it receives a "render-component" event from the CMS', () => {
       $window.CMS_TO_APP.publish('render-component', '1234', { foo: 1 });
-      expect(ContainerService.renderComponent).toHaveBeenCalledWith('1234', { foo: 1 });
+      expect(ContainerService.renderComponent).toHaveBeenCalledWith(mockComponent, { foo: 1 });
     });
 
     it('does not respond to the render-component event anymore when destroyed', () => {
       $ctrl.$onDestroy();
       $window.CMS_TO_APP.publish('render-component', '1234', { foo: 1 });
+      expect(ContainerService.renderComponent).not.toHaveBeenCalled();
+    });
+
+    it('should log warning on unknown component', () => {
+      mockPage.getComponentById.and.returnValue(null);
+      spyOn($log, 'warn');
+      $window.CMS_TO_APP.publish('render-component', '1234', { foo: 1 });
+
+      expect($log.warn).toHaveBeenCalledWith('Cannot render unknown component with ID \'1234\'.');
       expect(ContainerService.renderComponent).not.toHaveBeenCalled();
     });
   });
@@ -526,7 +542,7 @@ describe('hippoIframeCtrl', () => {
       expect(HstComponentService.setPathParameter).toHaveBeenCalledWith(
         'componentId', 'hippo-default', 'parameterName', '/base/pickedPath', '/base',
       );
-      expect(ContainerService.renderComponent).toHaveBeenCalledWith('componentId');
+      expect(ContainerService.renderComponent).toHaveBeenCalledWith(containerItem);
       expect(FeedbackService.showNotification).toHaveBeenCalledWith(
         'NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName: 'componentLabel' },
       );

@@ -78,7 +78,7 @@ class HippoIframeCtrl {
   }
 
   $onInit() {
-    this.CmsService.subscribe('render-component', this._renderComponent, this);
+    this.CmsService.subscribe('render-component', this._onComponentRender, this);
     this.CmsService.subscribe('delete-component', this._onComponentDelete, this);
 
     this.iframeJQueryElement.on('load', this.onLoad);
@@ -119,7 +119,7 @@ class HippoIframeCtrl {
   $onDestroy() {
     this.CommunicationService.disconnect();
     this.SpaService.destroy();
-    this.CmsService.unsubscribe('render-component', this._renderComponent, this);
+    this.CmsService.unsubscribe('render-component', this._onComponentRender, this);
     this.CmsService.unsubscribe('delete-component', this._onComponentDelete, this);
     this._offComponentClick();
     this._offComponentMove();
@@ -188,10 +188,6 @@ class HippoIframeCtrl {
     this.HippoIframeService.reload();
   }
 
-  _renderComponent(componentId, propertiesMap) {
-    this.ContainerService.renderComponent(componentId, propertiesMap);
-  }
-
   _onComponentClick(event, componentId) {
     const page = this.PageStructureService.getPage();
     const component = page && page.getComponentById(componentId);
@@ -227,6 +223,19 @@ class HippoIframeCtrl {
     const nextComponent = page.getComponentById(nextComponentId);
 
     this.ContainerService.moveComponent(component, container, nextComponent);
+  }
+
+  _onComponentRender(componentId, propertiesMap) {
+    const page = this.PageStructureService.getPage();
+    const component = page && page.getComponentById(componentId);
+
+    if (!component) {
+      this.$log.warn(`Cannot render unknown component with ID '${componentId}'.`);
+
+      return;
+    }
+
+    this.ContainerService.renderComponent(component, propertiesMap);
   }
 
   getSrc() {
@@ -291,7 +300,7 @@ class HippoIframeCtrl {
       componentId, componentVariant, parameterName, path, parameterBasePath,
     )
       .then(() => {
-        this.ContainerService.renderComponent(componentId);
+        this.ContainerService.renderComponent(component);
         this.FeedbackService.showNotification('NOTIFICATION_DOCUMENT_SELECTED_FOR_COMPONENT', { componentName });
       })
       .catch((response) => {
