@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--
-  Copyright 2015-2018 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2015-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -19,13 +19,23 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Hippo Channel Manager Frontend NG</title>
+
+    <% for (let css of htmlWebpackPlugin.files.css) { %>
+      <link href="<%= css %>" rel="stylesheet">
+    <% } %>
   </head>
 
-  <body ng-app="hippo-cm" ng-strict-di>
+  <body ng-app="hippo-cm" ng-strict-di iframe-asset="<%= htmlWebpackPlugin.files.chunks.iframe.entry %>">
     <div ui-view layout-fill>
       <md-toolbar class="hippo-toolbar">
         <md-progress-linear md-mode="indeterminate"></md-progress-linear>
       </md-toolbar>
     </div>
+
+    <% for (let js of htmlWebpackPlugin.files.js) { %>
+      <% if (js !== htmlWebpackPlugin.files.chunks.iframe.entry) { %>
+        <script type="text/javascript" src="<%= js %>"></script>
+      <% } %>
+    <% } %>
   </body>
 </html>

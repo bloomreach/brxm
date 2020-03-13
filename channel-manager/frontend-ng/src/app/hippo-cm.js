@@ -43,6 +43,11 @@ const hippoCmModule = angular
     servicesModule,
   ])
   .component('hippoCm', hippoCmComponent)
+  .factory('iframeAsset', ($rootElement) => {
+    'ngInject';
+
+    return $rootElement.attr('iframe-asset');
+  })
   .config(config);
 
 export default hippoCmModule;

@@ -27,26 +27,36 @@ const {
 /* eslint import/no-extraneous-dependencies: "off" */
 const merge = require('webpack-merge');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { ProvidePlugin } = require('webpack');
 
-const webpackConfig = merge(config, {
+const webpackConfig = merge.strategy({ plugins: 'replace' })(config, {
   entry: {
     'vendor-styles': src('vendors'),
+    iframe: src('app/iframe'),
   },
 
   output: {
     publicPath: '',
   },
 
-  module: {
-    rules: [
-      {
-        test: /iframe\/index\.js$/,
-        use: {
-          loader: require.resolve('./entry-loader'),
-          options: { name: 'iframe' },
+  optimization: {
+    runtimeChunk: {
+      name: entrypoint => (entrypoint.name === 'iframe' ? 'iframe' : config.optimization.runtimeChunk.name),
+    },
+    splitChunks: {
+      chunks: chunk => chunk.name !== 'iframe',
+      cacheGroups: {
+        packages: {
+          name: 'packages',
+          test: /[\\/]node_modules[\\/]/,
         },
       },
+    },
+  },
+
+  module: {
+    rules: [
       {
         test: /babel-plugin-transform-async-to-promises/,
         use: {
@@ -62,6 +72,8 @@ const webpackConfig = merge(config, {
   },
 
   plugins: [
+    ...config.plugins.filter(plugin => !(plugin instanceof HtmlWebpackPlugin)),
+
     env !== 'test' && new ProvidePlugin({
       $: 'jquery',
       'window.$': 'jquery',
@@ -79,6 +91,18 @@ const webpackConfig = merge(config, {
         to: dist('scripts'),
       },
     ]),
+
+    env !== 'test' && new HtmlWebpackPlugin({
+      template: src('index.ejs'),
+      inject: false,
+      minify: {
+        html5: true,
+        removeComments: env === 'prod',
+        collapseWhitespace: env === 'prod',
+        preserveLineBreaks: true,
+        decodeEntities: true,
+      },
+    }),
   ].filter(Boolean),
 });
 

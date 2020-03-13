@@ -15,13 +15,13 @@
  */
 
 import './hippoIframe.scss';
-import iframeBundle from '../../iframe';
 
 class HippoIframeCtrl {
   constructor(
     $element,
     $log,
     $rootScope,
+    iframeAsset,
     CmsService,
     CommunicationService,
     ComponentRenderingService,
@@ -46,6 +46,7 @@ class HippoIframeCtrl {
     this.$element = $element;
     this.$log = $log;
     this.$rootScope = $rootScope;
+    this.iframeAsset = iframeAsset;
     this.CmsService = CmsService;
     this.CommunicationService = CommunicationService;
     this.ComponentRenderingService = ComponentRenderingService;
@@ -150,7 +151,7 @@ class HippoIframeCtrl {
 
     await this.DomService.addScript(
       target.contentWindow,
-      this.HippoIframeService.getAssetUrl(iframeBundle),
+      this.HippoIframeService.getAssetUrl(this.iframeAsset),
     );
     await connection;
 
@@ -177,7 +178,7 @@ class HippoIframeCtrl {
 
     const connection = this.CommunicationService.connect({ target, origin: this.SpaService.getOrigin() });
 
-    await this.SpaService.inject(this.HippoIframeService.getAssetUrl(iframeBundle));
+    await this.SpaService.inject(this.HippoIframeService.getAssetUrl(this.iframeAsset));
     await connection;
 
     this.$rootScope.$emit('hippo-iframe:load');
