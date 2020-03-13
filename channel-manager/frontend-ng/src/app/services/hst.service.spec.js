@@ -303,7 +303,17 @@ describe('HstService', () => {
         expect(response).toEqual({ id: 'cafebabe' });
       });
 
-      expect(hstService.doPost).toHaveBeenCalledWith(null, 'container1', '123456');
+      expect(hstService.doPost).toHaveBeenCalledWith(null, 'container1', '123456', undefined);
+    });
+
+    it('adds a new component from catalog toolkit before another component', () => {
+      spyOn(hstService, 'doPost').and.returnValue($q.when({ id: 'cafebabe' }));
+
+      hstService.addHstComponent({ id: '123456' }, 'container1', '654321').then((response) => {
+        expect(response).toEqual({ id: 'cafebabe' });
+      });
+
+      expect(hstService.doPost).toHaveBeenCalledWith(null, 'container1', '123456', '654321');
     });
 
     it('updates component orders of a container', () => {

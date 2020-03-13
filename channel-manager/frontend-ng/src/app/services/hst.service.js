@@ -14,19 +14,22 @@
  * limitations under the License.
  */
 
-let q;
-let http;
-
 const FORM_HEADERS = {
   'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
 };
 
 class HstService {
-  constructor($q, $http, CmsService, ConfigService, PathService) {
+  constructor(
+    $http,
+    $q,
+    CmsService,
+    ConfigService,
+    PathService,
+  ) {
     'ngInject';
 
-    q = $q;
-    http = $http;
+    this.$q = $q;
+    this.$http = $http;
 
     this.CmsService = CmsService;
     this.ConfigService = ConfigService;
@@ -48,7 +51,7 @@ class HstService {
 
   getChannel(id, contextPath, hostGroup) {
     if (!id) {
-      return q.reject('Channel id must be defined');
+      return this.$q.reject('Channel id must be defined');
     }
 
     const currentContextPath = this.contextPath;
@@ -58,7 +61,7 @@ class HstService {
       this.hostGroup = hostGroup;
       return this.doGet(this.ConfigService.rootUuid, 'channels', id);
     } catch (e) {
-      return q.reject(e);
+      return this.$q.reject(e);
     } finally {
       this.contextPath = currentContextPath;
       this.hostGroup = currentHostGroup;
@@ -117,9 +120,9 @@ class HstService {
     headers.contextPath = this.contextPath;
     headers.hostGroup = this.hostGroup;
 
-    const canceller = q.defer();
-    const promise = q((resolve, reject) => {
-      http({
+    const canceller = this.$q.defer();
+    const promise = this.$q((resolve, reject) => {
+      this.$http({
         method,
         url,
         headers,
@@ -163,16 +166,8 @@ class HstService {
     return str.join('&');
   }
 
-  /**
-   * Add a component to the specified container.
-   *
-   * @param catalogComponent
-   * @param containerId
-   * @returns {*} a promise. If creation is successful, it contains a JSON object describing new component.
-   * Otherwise, it contains the error response.
-   */
-  addHstComponent(catalogComponent, containerId) {
-    return this.doPost(null, containerId, catalogComponent.id);
+  addHstComponent(catalogComponent, containerId, nextComponentId) {
+    return this.doPost(null, containerId, catalogComponent.id, nextComponentId);
   }
 
   updateHstContainer(containerId, containerRepresentation) {

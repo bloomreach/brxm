@@ -117,12 +117,37 @@ describe('ComponentCatalogService', () => {
   describe('adding a component to container', () => {
     let isDisabled;
     let mockContainer;
+    let mockComponent;
+    let mockComponent2;
+    let mockComponent3;
     let mockEvent;
+    let mockEventTarget;
     const selectedComponent = {};
 
     beforeEach(() => {
+      [mockEventTarget] = Array.from(angular.element('<div></div>'));
       isDisabled = false;
-      mockEvent = jasmine.createSpyObj('mockEvent', ['stopPropagation']);
+
+      mockEvent = {
+        stopPropagation: jasmine.createSpy('stopPropagation'),
+        get target() { return mockEventTarget; },
+      };
+
+      mockComponent = {
+        getId: () => 456,
+        getContainer: () => mockContainer,
+      };
+
+      mockComponent2 = {
+        getId: () => 789,
+        getContainer: () => mockContainer,
+      };
+
+      mockComponent3 = {
+        getId: () => 123,
+        getContainer: () => mockContainer,
+      };
+
       mockContainer = {
         isDisabled() {
           return isDisabled;
@@ -130,6 +155,10 @@ describe('ComponentCatalogService', () => {
         getId() {
           return 123;
         },
+        items: [
+          mockComponent,
+          mockComponent2,
+        ],
       };
 
       ComponentCatalogService.selectedComponent = selectedComponent;
@@ -142,6 +171,60 @@ describe('ComponentCatalogService', () => {
       spyOn(RightSidePanelService, 'close');
     });
 
+    describe('positioning of component within container', () => {
+      const addedComponent = mockComponent3;
+
+      beforeEach(() => {
+        ComponentCatalogService.selectedComponent = addedComponent;
+      });
+
+      it('should position the component after the click target', () => {
+        const clickedComponent = mockComponent;
+        const expectedNextComponentId = mockComponent2.getId();
+        [mockEventTarget] = Array.from(
+          angular.element('<div class="hippo-overlay-element-component-drop-area-after"></div>'),
+        );
+
+        ComponentCatalogService._handleComponentClick(mockEvent, clickedComponent);
+        $rootScope.$digest();
+
+        expect(ContainerService.addComponent)
+          .toHaveBeenCalledWith(addedComponent, mockContainer, expectedNextComponentId);
+      });
+
+      it('should position the component after the click target last in the container', () => {
+        const clickedComponent = mockComponent2;
+        const expectedNextComponentId = undefined;
+        [mockEventTarget] = Array.from(
+          angular.element('<div class="hippo-overlay-element-component-drop-area-after"></div>'),
+        );
+
+        ComponentCatalogService._handleComponentClick(mockEvent, clickedComponent);
+        $rootScope.$digest();
+
+        expect(ContainerService.addComponent)
+          .toHaveBeenCalledWith(addedComponent, mockContainer, expectedNextComponentId);
+      });
+
+      it('should position the component before the click target', () => {
+        const clickedComponent = mockComponent2;
+        const expectedNextComponentId = mockComponent2.getId();
+        [mockEventTarget] = Array.from(
+          angular.element('<div class="hippo-overlay-element-component-drop-area-before"></div>'),
+        );
+
+        ComponentCatalogService._handleComponentClick(mockEvent, clickedComponent);
+        $rootScope.$digest();
+
+        expect(ContainerService.addComponent)
+          .toHaveBeenCalledWith(addedComponent, mockContainer, expectedNextComponentId);
+      });
+
+      afterEach(() => {
+        ComponentCatalogService.selectedComponent = selectedComponent;
+      });
+    });
+
     it('adds component to a container', () => {
       ContainerService.addComponent.and.returnValue('789');
       RightSidePanelService.close.and.returnValue($q.resolve());
@@ -150,7 +233,7 @@ describe('ComponentCatalogService', () => {
       ComponentCatalogService._handleContainerClick(mockEvent, mockContainer);
       $rootScope.$digest();
 
-      expect(ContainerService.addComponent).toHaveBeenCalledWith(selectedComponent, mockContainer);
+      expect(ContainerService.addComponent).toHaveBeenCalledWith(selectedComponent, mockContainer, undefined);
       expect(EditComponentService.startEditing).toHaveBeenCalledWith({ id: 789 });
       expect(RightSidePanelService.close).toHaveBeenCalled();
     });
@@ -161,7 +244,7 @@ describe('ComponentCatalogService', () => {
       ComponentCatalogService._handleContainerClick(mockEvent, mockContainer);
       $rootScope.$digest();
 
-      expect(ContainerService.addComponent).toHaveBeenCalledWith(selectedComponent, mockContainer);
+      expect(ContainerService.addComponent).toHaveBeenCalledWith(selectedComponent, mockContainer, undefined);
       expect(EditComponentService.startEditing).not.toHaveBeenCalled();
       expect(RightSidePanelService.close).not.toHaveBeenCalled();
     });

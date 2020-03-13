@@ -366,8 +366,8 @@ class PageStructureService {
     return remainingContentLinks;
   }
 
-  addComponentToContainer(catalogComponent, container) {
-    return this.HstService.addHstComponent(catalogComponent, container.getId())
+  addComponentToContainer(catalogComponent, container, nextComponentId) {
+    return this.HstService.addHstComponent(catalogComponent, container.getId(), nextComponentId)
       .then(
         (newComponentJson) => {
           this.ChannelService.recordOwnChange();

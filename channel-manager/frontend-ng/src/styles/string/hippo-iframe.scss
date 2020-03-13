@@ -74,7 +74,8 @@
     pointer-events: none;
     z-index: $z-index-overlay-container;
 
-    &-empty {
+    &-empty,
+    &-disabled {
       box-shadow: inset 0 0 1px 0 $overlay-container-inline-color, inset 0 0 8px 0 $overlay-container-glow-color;
       pointer-events: auto;
     }
@@ -250,29 +251,143 @@
   width: $overlay-icon-size;
 }
 
+.hippo-overlay-element-component-drop-area {
+  display: none;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+
+  &:hover {
+    background: $overlay-container-add-mode-hover-bgcolor;
+    cursor: copy;
+
+    .hippo-overlay-element-component-drop-area-before,
+    .hippo-overlay-element-component-drop-area-after {
+      display: flex;
+    }
+  }
+
+  .hippo-overlay-element-component-drop-area-before,
+  .hippo-overlay-element-component-drop-area-after {
+    color: $text-disabled;
+    display: none;
+    flex: 0 0 50%;
+
+    &:hover {
+      color: $bloomreach-blue-primary;
+    }
+
+    .hippo-overlay-element-component-drop-area-icons {
+      display: flex;
+      pointer-events: none;
+
+      svg {
+        fill: currentColor;
+        pointer-events: none;
+      }
+    }
+  }
+
+  &.hippo-overlay-element-component-direction-horizontal {
+    flex-direction: row;
+
+    .hippo-overlay-element-component-drop-area-before {
+      align-items: center;
+      justify-content: flex-start;
+
+      &:hover {
+        box-shadow: inset $overlay-drop-area-shadow-size 0 $overlay-drop-area-shadow-color;
+      }
+
+      .hippo-overlay-element-component-drop-area-icons svg {
+        transform: rotate(-90deg);
+      }
+    }
+
+    .hippo-overlay-element-component-drop-area-after {
+      align-items: center;
+      justify-content: flex-end;
+
+      &:hover {
+        box-shadow: inset (-$overlay-drop-area-shadow-size) 0 $overlay-drop-area-shadow-color;
+      }
+
+      .hippo-overlay-element-component-drop-area-icons {
+        flex-direction: row-reverse;
+
+        svg {
+          transform: rotate(90deg);
+        }
+      }
+    }
+  }
+
+  &.hippo-overlay-element-component-direction-vertical {
+    flex-direction: column;
+
+    .hippo-overlay-element-component-drop-area-before {
+      align-items: flex-start;
+      justify-content: center;
+
+      &:hover {
+        box-shadow: inset 0 $overlay-drop-area-shadow-size $overlay-drop-area-shadow-color;
+      }
+
+      .hippo-overlay-element-component-drop-area-icons {
+        flex-direction: column;
+      }
+    }
+
+    .hippo-overlay-element-component-drop-area-after {
+      align-items: flex-end;
+      justify-content: center;
+
+      &:hover {
+        box-shadow: inset 0 (-$overlay-drop-area-shadow-size) $overlay-drop-area-shadow-color;
+      }
+
+      .hippo-overlay-element-component-drop-area-icons {
+        flex-direction: column-reverse;
+
+        svg {
+          transform: rotate(180deg);
+        }
+      }
+    }
+  }
+}
+
 // Adding a component
 .hippo-overlay-add-mode {
   pointer-events: auto;
 
-  .hippo-overlay-element-container {
-    cursor: copy;
-    pointer-events: auto;
+  .hippo-overlay-element-container .hippo-overlay-label {
+    visibility: visible;
+  }
 
-    &:hover .hippo-overlay-icon {
+  .hippo-overlay-element-component .hippo-overlay-label {
+    visibility: hidden;
+  }
+
+  .hippo-overlay-element-container-empty:hover,
+  .hippo-overlay-element-container-disabled:hover {
+    background: $overlay-container-add-mode-hover-bgcolor;
+
+    .hippo-overlay-icon {
       display: block;
     }
+  }
 
-    &:hover {
-      background: $overlay-container-add-mode-hover-bgcolor;
-    }
-
-    .hippo-overlay-label {
-      visibility: visible;
-    }
+  .hippo-overlay-element-container-empty {
+    cursor: copy;
   }
 
   .hippo-overlay-element-container-disabled {
     cursor: not-allowed;
+  }
+
+  .hippo-overlay-element-component-drop-area {
+    display: flex;
   }
 }
 
