@@ -18,11 +18,10 @@ describe('SpaService', () => {
   let $log;
   let $rootScope;
   let ChannelService;
-  let DomService;
   let PageStructureService;
   let RpcService;
   let SpaService;
-  let iframeWindow;
+  let contentWindow;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
@@ -39,14 +38,14 @@ describe('SpaService', () => {
       $log = _$log_;
       $rootScope = _$rootScope_;
       ChannelService = _ChannelService_;
-      DomService = _DomService_;
       PageStructureService = _PageStructureService_;
       RpcService = _RpcService_;
       SpaService = _SpaService_;
     });
 
-    iframeWindow = {};
-    spyOn(DomService, 'getIframeWindow').and.returnValue(iframeWindow);
+    contentWindow = {};
+
+    SpaService.init([{ contentWindow }]);
   });
 
   describe('init', () => {
@@ -149,7 +148,7 @@ describe('SpaService', () => {
     });
 
     it('resets the legacy handle', () => {
-      iframeWindow.SPA = {};
+      contentWindow.SPA = {};
       SpaService.initLegacy();
       SpaService.destroy();
 
@@ -171,13 +170,13 @@ describe('SpaService', () => {
     });
 
     it('returns true when a legacy SPA is present', () => {
-      iframeWindow.SPA = {};
+      contentWindow.SPA = {};
       SpaService.initLegacy();
       expect(SpaService.isSpa()).toBe(true);
     });
 
     it('returns false when there is no iframe window', () => {
-      DomService.getIframeWindow.and.returnValue(null);
+      SpaService.init([{}]);
       SpaService.initLegacy();
       expect(SpaService.isSpa()).toBe(false);
     });
@@ -206,7 +205,7 @@ describe('SpaService', () => {
     it('returns false when the legacy SPA was unloaded', () => {
       const element = angular.element('<iframe />');
 
-      iframeWindow.SPA = {};
+      contentWindow.SPA = {};
       SpaService.init(element);
       SpaService.initLegacy();
       $rootScope.$emit('iframe:unload');
@@ -220,18 +219,18 @@ describe('SpaService', () => {
     let publicApi;
 
     beforeEach(() => {
-      iframeWindow.SPA = jasmine.createSpyObj('SPA', ['init']);
+      contentWindow.SPA = jasmine.createSpyObj('SPA', ['init']);
       SpaService.initLegacy();
-      [publicApi] = iframeWindow.SPA.init.calls.mostRecent().args;
+      [publicApi] = contentWindow.SPA.init.calls.mostRecent().args;
     });
 
     it('calls an initialization handle', () => {
-      expect(iframeWindow.SPA.init).toHaveBeenCalledWith(jasmine.any(Object));
+      expect(contentWindow.SPA.init).toHaveBeenCalledWith(jasmine.any(Object));
     });
 
     it('logs errors thrown by the SPA', () => {
       const error = new Error('bad stuff happened');
-      iframeWindow.SPA.init.and.throwError(error);
+      contentWindow.SPA.init.and.throwError(error);
       spyOn($log, 'error');
       SpaService.initLegacy();
       expect($log.error).toHaveBeenCalledWith('Failed to initialize Single Page Application', error);
@@ -279,7 +278,7 @@ describe('SpaService', () => {
     });
 
     it('ignores the SPA when it does not define a renderComponent function', (done) => {
-      iframeWindow.SPA = {};
+      contentWindow.SPA = {};
       SpaService.initLegacy();
       SpaService.renderComponent({})
         .catch((error) => {
@@ -361,7 +360,7 @@ describe('SpaService', () => {
 
     describe('an SPA that defines a renderComponent function', () => {
       beforeEach(() => {
-        iframeWindow.SPA = jasmine.createSpyObj('SPA', ['renderComponent']);
+        contentWindow.SPA = jasmine.createSpyObj('SPA', ['renderComponent']);
         SpaService.initLegacy();
       });
 
@@ -395,18 +394,18 @@ describe('SpaService', () => {
         it('renders the component in the SPA', () => {
           SpaService.renderComponent(component);
 
-          expect(iframeWindow.SPA.renderComponent).toHaveBeenCalledWith('r1_r2_r3', {});
+          expect(contentWindow.SPA.renderComponent).toHaveBeenCalledWith('r1_r2_r3', {});
         });
 
         it('renders the component with specific parameters in the SPA', () => {
           SpaService.renderComponent(component, { foo: 1 });
 
-          expect(iframeWindow.SPA.renderComponent).toHaveBeenCalledWith('r1_r2_r3', { foo: 1 });
+          expect(contentWindow.SPA.renderComponent).toHaveBeenCalledWith('r1_r2_r3', { foo: 1 });
         });
 
         it('rejects with an error when the SPA throws an error while rendering the component', (done) => {
           spyOn($log, 'error');
-          iframeWindow.SPA.renderComponent.and.throwError('Failed to render.');
+          contentWindow.SPA.renderComponent.and.throwError('Failed to render.');
 
           SpaService.renderComponent(component)
             .catch((error) => {

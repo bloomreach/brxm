@@ -1,5 +1,5 @@
 /*
- * Copyright 2018-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2018-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,7 +23,6 @@ describe('iframeExtension', () => {
   let context;
   let extension;
   let ChannelService;
-  let DomService;
   let HippoIframeService;
   let OpenUiService;
   let connection;
@@ -51,7 +50,6 @@ describe('iframeExtension', () => {
     };
 
     ChannelService = jasmine.createSpyObj('ChannelService', ['reload']);
-    DomService = jasmine.createSpyObj('DomService', ['getIframeWindow']);
     HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['reload']);
     OpenUiService = jasmine.createSpyObj('OpenUiService', ['initialize', 'openDialog']);
 
@@ -68,7 +66,6 @@ describe('iframeExtension', () => {
     $ctrl = $componentController('iframeExtension', {
       $element,
       ChannelService,
-      DomService,
       HippoIframeService,
       OpenUiService,
     }, {
