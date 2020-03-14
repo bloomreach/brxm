@@ -103,4 +103,31 @@ describe('CommunicationService', () => {
       expect(child.emit).toHaveBeenCalledWith('event', 'something');
     });
   });
+
+  describe('ready', () => {
+    beforeEach(() => {
+      Penpal.connectToChild.and.callFake(() => ({ promise: Promise.resolve(child) }));
+    });
+
+    it('should resolve if it is already connected', async () => {
+      const spy = jasmine.createSpy();
+
+      setTimeout(() => $rootScope.$digest(), 0);
+      await CommunicationService.connect({});
+      await CommunicationService.ready().then(spy);
+
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it('should resolve if it is already connected', async () => {
+      const promise = CommunicationService.ready();
+
+      expect(promise.$$state.status).toBe(-1);
+
+      setTimeout(() => $rootScope.$digest(), 0);
+      await CommunicationService.connect({});
+
+      expect(promise.$$state.status).toBe(1);
+    });
+  });
 });

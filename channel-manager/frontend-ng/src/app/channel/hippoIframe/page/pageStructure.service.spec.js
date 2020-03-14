@@ -62,6 +62,7 @@ describe('PageStructureService', () => {
     });
 
     spyOn(ChannelService, 'recordOwnChange');
+    spyOn(CommunicationService, 'ready').and.returnValue($q.resolve());
   });
 
   function mockUpdateComponent(data = []) {
