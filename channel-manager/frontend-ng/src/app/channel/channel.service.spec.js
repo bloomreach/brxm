@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -512,14 +512,12 @@ describe('ChannelService', () => {
     expect(ChannelService.getHomePageRenderPathInfo()).toBe('');
   });
 
-  it('should log a warning trying to extract a renderPathInfo if there is no matching channel prefix', () => {
+  it('should return source path if there is no matching channel prefix', () => {
     loadChannel();
-    spyOn($log, 'warn');
     const nonMatchingPrefix = '/testContexxxtPath/test/render.path';
 
     expect(ChannelService.extractRenderPathInfo(nonMatchingPrefix))
       .toBe(nonMatchingPrefix);
-    expect($log.warn).toHaveBeenCalled();
   });
 
   it('should return the channel\'s siteMap ID', () => {
