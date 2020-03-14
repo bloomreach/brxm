@@ -15,10 +15,11 @@
  */
 
 export default class CommunicationService {
-  constructor($injector, $rootScope, Penpal) {
+  constructor($injector, $q, $rootScope, Penpal) {
     'ngInject';
 
     this.$injector = $injector;
+    this.$q = $q;
     this.$rootScope = $rootScope;
     this.Penpal = Penpal;
 
@@ -54,6 +55,22 @@ export default class CommunicationService {
     });
 
     this._child = await this._connection.promise;
+    if (this._await) {
+      this._await.resolve();
+    }
+  }
+
+  async ready() {
+    if (this._child) {
+      return;
+    }
+
+    if (!this._await) {
+      this._await = this.$q.defer();
+    }
+
+    // eslint-disable-next-line consistent-return
+    return this._await.promise;
   }
 
   disconnect() {
@@ -62,6 +79,7 @@ export default class CommunicationService {
     }
 
     this._connection.destroy();
+    delete this._await;
     delete this._child;
     delete this._connection;
   }

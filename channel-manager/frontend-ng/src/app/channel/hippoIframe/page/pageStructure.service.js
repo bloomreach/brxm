@@ -63,6 +63,8 @@ class PageStructureService {
 
   async parseElements(initial) {
     this._clear();
+
+    await this.CommunicationService.ready();
     const comments = await this.CommunicationService.parseElements();
 
     this._page = this.ModelFactoryService.createPage(comments);
