@@ -203,7 +203,6 @@ class ChannelService {
 
   extractRenderPathInfo(path) {
     if (!path.startsWith(this.channelPrefix)) {
-      this.$log.warn(`Current path '${path}' does not match current channel's path prefix '${this.channelPrefix}'.`);
       return path;
     }
 
