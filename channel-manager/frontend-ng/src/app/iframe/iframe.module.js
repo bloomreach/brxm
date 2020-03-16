@@ -33,6 +33,8 @@ const iframeModule = angular
 
   // eslint-disable-next-line no-shadow
   .run(($rootScope, $window, CommunicationService) => {
+    'ngInject';
+
     CommunicationService.connect();
 
     $rootScope.$on('iframe:page:change', () => CommunicationService.emit('page:change'));
