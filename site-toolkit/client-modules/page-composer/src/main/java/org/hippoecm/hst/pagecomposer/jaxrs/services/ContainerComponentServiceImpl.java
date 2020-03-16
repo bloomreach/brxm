@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -41,7 +41,7 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
     private PageComposerContextService pageComposerContextService;
     private ContainerHelper containerHelper;
 
-    class ContainerItemImpl implements ContainerItem {
+    static final class ContainerItemImpl implements ContainerItem {
 
         private final Node containerItem;
         private final long timeStamp;
@@ -69,7 +69,7 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
 
     @Override
     public ContainerItem createContainerItem(final Session session, final String catalogItemUUID, final long versionStamp)
-            throws RepositoryException, ClientException {
+            throws RepositoryException {
         try {
             final Node catalogItem = getContainerItem(session, catalogItemUUID);
             final Node containerNode = lockAndGetContainer(versionStamp);
@@ -84,26 +84,43 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
             final long newVersionStamp = getVersionStamp(containerNode);
             return new ContainerItemImpl(newItem, newVersionStamp);
         } catch (RepositoryException e) {
-            log.warn("Exception during creating new container item: {}", e);
+            log.warn("Exception during creating new container item: {}", catalogItemUUID);
             throw e;
         }
     }
 
     @Override
-    public void updateContainer(final Session session, final ContainerRepresentation container) throws ClientException, RepositoryException {
+    public ContainerItem createContainerItem(final Session session, final String catalogItemUUID, final String siblingItemUUID, final long versionStamp) throws RepositoryException {
+
+        final ContainerItem containerItem = createContainerItem(session, catalogItemUUID, versionStamp);
+        final String newItemName = containerItem.getContainerItem().getName();
+        final String siblingItemName = getContainerItem(session, siblingItemUUID).getName();
+
+        final Node containerNode = lockAndGetContainer(versionStamp);
+        if (containerNode.hasNode(siblingItemName)) {
+            containerNode.orderBefore(siblingItemName, newItemName);
+        } else {
+            log.warn("Cannot order new item '{}' before '{}' because container '{}' does not contain '{}'.",
+                    newItemName, siblingItemName, containerNode.getPath(), siblingItemName);
+        }
+        return containerItem;
+    }
+
+    @Override
+    public void updateContainer(final Session session, final ContainerRepresentation container) throws RepositoryException {
         try {
             final Node containerNode = lockAndGetContainer(container.getLastModifiedTimestamp());
 
-            updateContainerOrder(session, container, containerNode);
+            updateContainerOrder(session, container.getChildren(), containerNode);
             HstConfigurationUtils.persistChanges(session);
         } catch (RepositoryException e) {
-            log.warn("Exception during updating container item: {}", e);
+            log.warn("Exception during updating container item: {}", container);
             throw e;
         }
     }
 
     @Override
-    public void deleteContainerItem(final Session session, final String itemUUID, final long versionStamp) throws ClientException, RepositoryException {
+    public void deleteContainerItem(final Session session, final String itemUUID, final long versionStamp) throws RepositoryException {
         try {
             final Node containerItem = getContainerItem(session, itemUUID);
 
@@ -111,15 +128,14 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
             containerItem.remove();
             HstConfigurationUtils.persistChanges(session);
         } catch (RepositoryException e) {
-            log.warn("Failed to delete node with id '" + itemUUID + "':", e);
+            log.warn("Failed to delete node with id '{}'.", itemUUID);
             throw e;
         }
     }
 
     private void updateContainerOrder(final Session session,
-                                      final ContainerRepresentation container,
+                                      final List<String> children,
                                       final Node containerNode) throws RepositoryException {
-        final List<String> children = container.getChildren();
         int childCount = (children != null ? children.size() : 0);
         if (childCount > 0) {
             try {
@@ -142,8 +158,8 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
                     }
                     --index;
                 }
-            } catch (javax.jcr.ItemNotFoundException e) {
-                log.warn("ItemNotFoundException: Cannot update containerNode '{}'.", containerNode.getPath(), e);
+            } catch (ItemNotFoundException e) {
+                log.warn("ItemNotFoundException: Cannot update containerNode '{}'.", containerNode.getPath());
                 throw e;
             }
         }
@@ -159,7 +175,7 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
         return versionStamp;
     }
 
-    private Node lockAndGetContainer(final long versionStamp) throws ClientException, RepositoryException {
+    private Node lockAndGetContainer(final long versionStamp) throws RepositoryException {
         final Node containerNode = pageComposerContextService.getRequestConfigNode(HstNodeTypes.NODETYPE_HST_CONTAINERCOMPONENT);
         if (containerNode == null) {
             log.warn("Exception during creating new container item : Could not find container node to add item to.");
@@ -169,13 +185,13 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
             // the acquireLock also checks all ancestors whether they are not locked by someone else
             containerHelper.acquireLock(containerNode, versionStamp);
         } catch (ClientException e) {
-            log.info("Exception while trying to lock '" + containerNode.getPath() + "': ", e);
+            log.info("Exception while trying to lock '{}'", containerNode.getPath());
             throw e;
         }
         return containerNode;
     }
 
-    private Node getContainerItem(final Session session, final String itemUUID) throws RepositoryException, ClientException {
+    private Node getContainerItem(final Session session, final String itemUUID) throws RepositoryException {
         final Node containerItem = session.getNodeByIdentifier(itemUUID);
 
         if (!containerItem.isNodeType(NODETYPE_HST_CONTAINERITEMCOMPONENT)) {

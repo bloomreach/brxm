@@ -1,12 +1,12 @@
 /*
- *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -14,8 +14,6 @@
  *  limitations under the License.
  */
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
-
-import java.util.UUID;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
@@ -31,8 +29,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
-import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
@@ -42,6 +38,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils.isValidUUID;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 
 @Path("/hst:containercomponent/")
@@ -55,8 +52,8 @@ public class ContainerComponentResource extends AbstractConfigResource {
     }
 
     @FunctionalInterface
-    interface ContainerAction<Response> {
-        Response apply() throws ClientException, RepositoryException;
+    interface ContainerAction<R> {
+        R apply() throws RepositoryException;
     }
 
     @POST
@@ -65,33 +62,41 @@ public class ContainerComponentResource extends AbstractConfigResource {
     @Produces(MediaType.APPLICATION_JSON)
     @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
     public Response createContainerItem(final @PathParam("itemUUID") String itemUUID,
-                                        final @QueryParam("lastModifiedTimestamp") long versionStamp) throws ContainerException {
-        if (StringUtils.isEmpty(itemUUID)) {
+                                        final @QueryParam("lastModifiedTimestamp") long versionStamp) {
+        if (!isValidUUID(itemUUID)) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("There must be a uuid of the containeritem to copy from")
+                    .entity(String.format("Value of path parameter itemUUID: '%s' is not a valid UUID", itemUUID))
                     .build();
         }
-        try {
-            UUID.fromString(itemUUID);
-        } catch (IllegalArgumentException e) {
-            return Response.status(Response.Status.BAD_REQUEST)
-                    .entity("There must be a valid uuid of the containeritem to copy from")
-                    .build();
-        }
-
         final ContainerAction<Response> createContainerItem = () -> {
             final ContainerItem newContainerItem = containerComponentService.createContainerItem(getSession(), itemUUID, versionStamp);
-
-            final Node newNode = newContainerItem.getContainerItem();
-            final ContainerItemRepresentation containerItemRepresentation = new ContainerItemRepresentation().represent(newNode, newContainerItem.getTimeStamp());
-
-            log.info("Successfully created containerItemRepresentation '{}' with path '{}'" , newNode.getName(), newNode.getPath());
-            return Response.status(Response.Status.CREATED)
-                    .entity(containerItemRepresentation)
-                    .build();
+            return respondNewContainerItemCreated(newContainerItem);
         };
-
         return handleAction(createContainerItem);
+    }
+
+    @POST
+    @Path("/{itemUUID}/{siblingItemUUID}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
+    public Response createContainerItemAndAddBefore(final @PathParam("itemUUID") String itemUUID,
+                                                    final @PathParam("siblingItemUUID") String siblingItemUUID,
+                                                    final @QueryParam("lastModifiedTimestamp") long versionStamp) {
+        if (!isValidUUID(itemUUID)) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(String.format("Value of path parameter itemUUID: '%s' is not a valid UUID", itemUUID))
+                    .build();
+        }
+        if (!isValidUUID(siblingItemUUID)) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity(String.format("Value of path parameter siblingItemUUID: '%s' is not a valid UUID", siblingItemUUID))
+                    .build();
+        }
+        return handleAction(() -> {
+            final ContainerItem newContainerItem = containerComponentService.createContainerItem(getSession(), itemUUID, siblingItemUUID, versionStamp);
+            return respondNewContainerItemCreated(newContainerItem);
+        });
     }
 
 
@@ -145,5 +150,15 @@ public class ContainerComponentResource extends AbstractConfigResource {
 
     private Response createErrorResponse(final Response.Status httpStatusCode, final ErrorStatus errorStatus) {
         return Response.status(httpStatusCode).entity(errorStatus).build();
+    }
+
+    private Response respondNewContainerItemCreated(ContainerItem newContainerItem) throws RepositoryException {
+        final Node newNode = newContainerItem.getContainerItem();
+        final ContainerItemRepresentation containerItemRepresentation = new ContainerItemRepresentation().represent(newNode, newContainerItem.getTimeStamp());
+
+        log.info("Successfully created containerItemRepresentation '{}' with path '{}'", newNode.getName(), newNode.getPath());
+        return Response.status(Response.Status.CREATED)
+                .entity(containerItemRepresentation)
+                .build();
     }
 }
