@@ -30,6 +30,7 @@ import org.hippoecm.hst.content.beans.builder.CmsFieldType;
 import org.hippoecm.hst.content.beans.builder.HippoContentBean;
 import org.hippoecm.hst.content.beans.manager.DynamicObjectConverterImpl;
 import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoCompound;
 import org.hippoecm.hst.content.beans.standard.HippoGalleryImageSet;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.jcr.RuntimeRepositoryException;
@@ -134,6 +135,15 @@ public class DynamicBeanDefinitionService extends AbstractBeanBuilderService imp
 
         if (contentBean.getParentBean() == null) {
             setOrCreateParentBeanDefinition(contentBean);
+        }
+
+        // HippoCompound is an abstract class hence an instance of this class cannot be created.
+        // ObjectConverter does create an instance of the delegated class while mapping the instance
+        // to the jcr node. To avoid of InstantiationException while dynamic bean generation, if the
+        // parent bean of a class is HippoCompound, then class should be generated regardless of any
+        // other conditions.
+        if (HippoCompound.class.equals(contentBean.getParentBean())) {
+            contentBean.forceGeneration();
         }
 
         return generateBeanDefinition(contentBean);

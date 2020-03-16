@@ -51,3 +51,5 @@
 
 [contentbeanstest:contentblocks] > hippo:compound, hippostd:relaxed
   orderable
+
+[contentbeanstest:emptycompound] > hippo:compound

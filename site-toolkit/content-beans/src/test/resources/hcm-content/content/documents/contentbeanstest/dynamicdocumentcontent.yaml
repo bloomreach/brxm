@@ -42,3 +42,5 @@
         jcr:primaryType: hippostd:html
         hippostd:content: |-
           Welcome Home with lazy loaded compounds!
+    /contentbeanstest:emptycompoundfield:
+      jcr:primaryType: contentbeanstest:emptycompound
