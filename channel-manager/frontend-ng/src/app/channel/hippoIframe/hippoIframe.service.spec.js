@@ -15,7 +15,9 @@
  */
 
 describe('HippoIframeService', () => {
+  let $http;
   let $log;
+  let $q;
   let $rootScope;
   let $window;
   let hippoIframe;
@@ -41,7 +43,9 @@ describe('HippoIframeService', () => {
     });
 
     inject((
+      _$http_,
       _$log_,
+      _$q_,
       _$rootScope_,
       _$window_,
       _ChannelService_,
@@ -51,7 +55,9 @@ describe('HippoIframeService', () => {
       _PageToolsService_,
       _ScrollService_,
     ) => {
+      $http = _$http_;
       $log = _$log_;
+      $q = _$q_;
       $rootScope = _$rootScope_;
       $window = _$window_;
       ChannelService = _ChannelService_;
@@ -289,6 +295,23 @@ describe('HippoIframeService', () => {
       DomService.getAssetUrl.and.returnValue('url');
 
       expect(HippoIframeService.getAssetUrl('/path')).toBe('url');
+    });
+  });
+
+  describe('getAsset', () => {
+    it('should send get request', (done) => {
+      spyOn($http, 'get').and.returnValue($q.resolve({ data: 'something' }));
+      spyOn(HippoIframeService, 'getAssetUrl').and.returnValue('url');
+
+      HippoIframeService.getAsset('/path').then((data) => {
+        expect(data).toBe('something');
+        expect(HippoIframeService.getAssetUrl).toHaveBeenCalledWith('/path');
+        expect($http.get).toHaveBeenCalledWith('url');
+
+        done();
+      });
+
+      $rootScope.$digest();
     });
   });
 });
