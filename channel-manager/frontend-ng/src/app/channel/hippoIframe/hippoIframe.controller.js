@@ -137,7 +137,7 @@ class HippoIframeCtrl {
     );
     await connection;
 
-    this.$rootScope.$broadcast('hippo-iframe:load');
+    this.$rootScope.$emit('hippo-iframe:load');
 
     if (this.SpaService.initLegacy()) {
       return;
@@ -161,7 +161,7 @@ class HippoIframeCtrl {
     await this.SpaService.inject(this.DomService.getAssetUrl(iframeBundle));
     await connection;
 
-    this.$rootScope.$broadcast('hippo-iframe:load');
+    this.$rootScope.$emit('hippo-iframe:load');
   }
 
   _onNewHeadContributions(event, component) {

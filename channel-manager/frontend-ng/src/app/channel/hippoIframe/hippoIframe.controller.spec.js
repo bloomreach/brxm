@@ -230,7 +230,8 @@ describe('hippoIframeCtrl', () => {
     expect(DomService.addScript).not.toHaveBeenCalled();
   });
 
-  xit('creates the overlay when loading a new page', () => {
+  it('creates the overlay when loading a new page', () => {
+    spyOn($rootScope, '$emit');
     spyOn(SpaService, 'initLegacy').and.returnValue(false);
     spyOn(RenderingService, 'createOverlay').and.returnValue($q.resolve());
 
@@ -240,15 +241,14 @@ describe('hippoIframeCtrl', () => {
     expect(RenderingService.createOverlay).toHaveBeenCalled();
   });
 
-  xit('triggers an event when page is loaded', () => {
-    const listener = jasmine.createSpy('listener');
+  it('triggers an event when page is loaded', () => {
+    spyOn($rootScope, '$emit');
     spyOn(SpaService, 'initLegacy').and.returnValue(true);
 
-    $rootScope.$on('hippo-iframe:load', listener);
     $ctrl.onLoad();
     $rootScope.$digest();
 
-    expect(listener).toHaveBeenCalled();
+    expect($rootScope.$emit).toHaveBeenCalledWith('hippo-iframe:load');
   });
 
   it('reloads the iframe when it receives a "hippo-iframe:new-head-contributions" event', () => {
@@ -259,7 +259,8 @@ describe('hippoIframeCtrl', () => {
     expect(HippoIframeService.reload).toHaveBeenCalled();
   });
 
-  xit('initializes the legacy SPA integration', () => {
+  it('initializes the legacy SPA integration', () => {
+    spyOn($rootScope, '$emit');
     spyOn(SpaService, 'initLegacy').and.returnValue(true);
 
     $ctrl.onLoad();
@@ -293,17 +294,15 @@ describe('hippoIframeCtrl', () => {
     expect(SpaService.inject).toHaveBeenCalledWith('url');
   });
 
-  xit('triggers an event when the SPA SDK is ready', () => {
-    const listener = jasmine.createSpy('listener');
+  it('triggers an event when the SPA SDK is ready', () => {
     Object.defineProperty(contentWindow, 'document', { get: () => { throw new Error('Access denied.'); } });
     spyOn(SpaService, 'inject');
 
-    $rootScope.$on('hippo-iframe:load', listener);
     $rootScope.$emit('spa:ready');
-
+    spyOn($rootScope, '$emit');
     $rootScope.$digest();
 
-    expect(listener).toHaveBeenCalled();
+    expect($rootScope.$emit).toHaveBeenCalledWith('hippo-iframe:load');
   });
 
   it('does not trigger an event when the iframe has the same origin', () => {
