@@ -52,7 +52,7 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
             final String[] fallBackJcrNodeTypes, final ContentTypes contentTypes) {
         super(jcrPrimaryNodeTypeBeanPairs, fallBackJcrNodeTypes);
 
-        this.dynamicBeanInterceptorPairs= dynamicBeanInterceptorPairs;
+        this.dynamicBeanInterceptorPairs = dynamicBeanInterceptorPairs;
 
         // Store ContentTypes as a WeakReference so that
         // corresponding ObjectConverter cache entry at VersionedObjectConverterProxy could be eventually invalidated
@@ -132,14 +132,7 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
         super.addBeanDefinition(documentType, beanClass);
     }
 
-    /**
-     * There isn't any java bean class for this document type, it will be generated on the fly.
-     */
     private Class<? extends HippoBean> createDynamicBeanDefinition(final Node node) throws RepositoryException {
-        return createDynamicBeanDefinition(node, null);
-    }
-
-    private Class<? extends HippoBean> createDynamicBeanDefinition(final Node node, Class<? extends HippoBean> superClazz) throws RepositoryException {
         final String documentType = node.getPrimaryNodeType().getName();
 
         final ContentTypes contentTypes = contentTypesRef.get();
@@ -148,7 +141,7 @@ public class DynamicObjectConverterImpl extends ObjectConverterImpl {
             throw new IllegalStateException("The required ContentTypes object has been already garbage collected!");
         }
 
-        final HippoContentBean contentBean = new HippoContentBean(documentType, superClazz, contentTypes.getType(documentType));
+        final HippoContentBean contentBean = new HippoContentBean(documentType, null, contentTypes.getType(documentType));
         return dynamicBeanService.createBeanDefinition(contentBean);
     }
     

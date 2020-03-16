@@ -36,4 +36,6 @@
       /contentbeanstest:richTextEditorCompoundType:
         jcr:primaryType: hippostd:html
         hippostd:content: 'multipleListContent'
+    /contentbeanstest:emptycompoundfield:
+      jcr:primaryType: contentbeanstest:emptycompound
         

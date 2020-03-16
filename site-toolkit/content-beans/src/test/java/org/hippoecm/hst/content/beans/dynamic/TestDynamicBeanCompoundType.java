@@ -1,12 +1,12 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
- * 
+ *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,12 +28,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 /**
- * 
- * Tests the dynamic bean service for custom compound types 
+ *
+ * Tests the dynamic bean service for custom compound types
  */
 public class TestDynamicBeanCompoundType extends AbstractDynamicBeanServiceTest {
 
     private static final String TEST_DOCUMENT_TYPE_CONTENTS_PATH = "/content/documents/contentbeanstest/content/dynamicdocumentcontent/dynamicdocumentcontent";
+    private static final String TEST_EMPTY_COMPOUND_TYPE_CONTENTS_PATH = "/content/documents/contentbeanstest/content/dynamicdocumentcontent/dynamicdocumentcontent/contentbeanstest:emptycompoundfield";
 
     private static final String CUSTOM_COMPOUND_TYPE_METHOD_NAME = "getDynamiccompound";
     private static final String CUSTOM_COMPOUND_TYPE_METHOD_NAME_WITH_RETURN_LIST = "getDynamiccompoundmultiple";
@@ -128,5 +129,14 @@ public class TestDynamicBeanCompoundType extends AbstractDynamicBeanServiceTest 
         assertEquals("http://test.com", result);
         assertNotNull(generatedBean);
 
+    }
+
+    @Test
+    public void testEmptyCompound() throws Exception {
+
+        Object generatedBean = objectConverter.getObject(session, TEST_EMPTY_COMPOUND_TYPE_CONTENTS_PATH);
+
+        assertNotNull("The content bean is not created for " + TEST_EMPTY_COMPOUND_TYPE_CONTENTS_PATH, generatedBean);
+        assertThat(generatedBean, instanceOf(HippoCompound.class));
     }
 }
