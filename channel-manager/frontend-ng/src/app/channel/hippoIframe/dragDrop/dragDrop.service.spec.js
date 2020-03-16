@@ -17,9 +17,11 @@
 import angular from 'angular';
 import 'angular-mocks';
 
-xdescribe('DragDropService', () => {
+describe('DragDropService', () => {
+  let $injector;
   let $q;
   let $rootScope;
+  let angularElement;
   let ChannelService;
   let ConfigService;
   let DomService;
@@ -44,8 +46,6 @@ xdescribe('DragDropService', () => {
       _ConfigService_,
       _DomService_,
       _DragDropService_,
-      _ModelFactoryService_,
-      _PageStructureService_,
     ) => {
       $q = _$q_;
       $rootScope = _$rootScope_;
@@ -53,9 +53,19 @@ xdescribe('DragDropService', () => {
       ConfigService = _ConfigService_;
       DomService = _DomService_;
       DragDropService = _DragDropService_;
-      ModelFactoryService = _ModelFactoryService_;
-      PageStructureService = _PageStructureService_;
     });
+
+    const fake = angular.element('<div>');
+
+    angular.bootstrap(fake, ['hippo-cm-iframe']);
+    window.$Promise = $q;
+
+    $injector = fake.injector();
+    PageStructureService = fake.injector().get('PageStructureService');
+    ModelFactoryService = fake.injector().get('ModelFactoryService');
+    PageStructureService.$rootScope = $rootScope;
+    angularElement = angular.element;
+    spyOn(angular, 'element').and.callThrough();
 
     spyOn(ChannelService, 'recordOwnChange');
     jasmine.getFixtures().load('channel/hippoIframe/dragDrop/dragDrop.service.fixture.html');
@@ -66,8 +76,9 @@ xdescribe('DragDropService', () => {
   });
 
   function createContainer(number, xtype = 'HST.NoMarkup') {
-    const iframeContainerComment = iframe.contents().find(`#iframeContainerComment${number}`)[0];
-    const commentData = Object.assign(
+    const iframeStartContainerComment = iframe.contents().find(`#iframeStartContainerComment${number}`);
+    const iframeEndContainerComment = iframe.contents().find(`#iframeEndContainerComment${number}`);
+    const startCommentData = Object.assign(
       {
         uuid: `container${number}`,
         'HST-Type': 'CONTAINER_COMPONENT',
@@ -75,11 +86,20 @@ xdescribe('DragDropService', () => {
       },
       mockCommentData[`container${number}`],
     );
+    const endCommentData = {
+      uuid: `container${number}`,
+      'HST-End': 'true',
+    };
     // TODO: temporary workaround
-    const commentEl = $(`<!-- ${JSON.stringify(commentData)} -->`)[0];
-    iframeContainerComment.replaceWith(commentEl);
+    const startCommentEl = $(`<!-- ${JSON.stringify(startCommentData)} -->`)[0];
+    const endCommentEl = $(`<!-- ${JSON.stringify(endCommentData)} -->`)[0];
+    iframeStartContainerComment.replaceWith(startCommentEl);
+    iframeEndContainerComment.replaceWith(endCommentEl);
 
-    return { element: commentEl, json: commentData };
+    return [
+      { element: startCommentEl, json: startCommentData },
+      { element: endCommentEl, json: endCommentData },
+    ];
   }
 
   function createComponent(number) {
@@ -102,11 +122,25 @@ xdescribe('DragDropService', () => {
     iframe.one('load', () => {
       const iframeWindow = iframe[0].contentWindow;
 
+      iframeWindow.angular = angular;
+      PageStructureService.$document = angular.element(iframeWindow.document);
+
+      angular.element.and.callFake((selector, ...rest) => {
+        const result = angularElement(selector, ...rest);
+
+        if (selector === iframeWindow.document) {
+          result.injector = () => $injector;
+        }
+
+        return result;
+      });
+      $rootScope.$emit('hippo-iframe:load');
+
       createContainer(1);
       createComponent(1, container1);
       createContainer(2);
 
-      PageStructureService.parseElements(DomService.getIframeDocument(iframe));
+      PageStructureService.parseElements();
 
       container1 = PageStructureService.getPage().getContainerById('container1');
       container2 = PageStructureService.getPage().getContainerById('container2');
@@ -315,96 +349,9 @@ xdescribe('DragDropService', () => {
     });
   });
 
-  describe('onDrop', () => {
-    describe('callback handler', () => {
-      let dropHandler;
-
-      beforeEach(() => {
-        dropHandler = jasmine.createSpy('onDropHandler');
-      });
-
-      it('registers a callback', (done) => {
-        DragDropService.onDrop(dropHandler);
-
-        loadIframeFixture(() => {
-          DragDropService._onDrop(component1.getBoxElement(), container2.getBoxElement(), container1.getBoxElement())
-            .then(() => {
-              expect(dropHandler).toHaveBeenCalled();
-              done();
-            });
-        });
-      });
-
-      it('returns an unbind function to clear a registered callback', (done) => {
-        const unbind = DragDropService.onDrop(dropHandler);
-        loadIframeFixture(() => {
-          unbind();
-          DragDropService._onDrop(component1.getBoxElement(), container2.getBoxElement(), container1.getBoxElement())
-            .then(() => {
-              expect(dropHandler).not.toHaveBeenCalled();
-              done();
-            });
-        });
-      });
-    });
-
-    describe('"component-drop" event', () => {
-      let emit;
-      beforeEach(() => {
-        emit = spyOn(DragDropService.emitter, 'emit');
-      });
-
-      it('emits event "component-drop" when a component is dropped', (done) => {
-        emit.and.returnValue($q.resolve());
-
-        loadIframeFixture(() => {
-          DragDropService._onDrop(component1.getBoxElement(), container2.getBoxElement(), container1.getBoxElement())
-            .then(() => {
-              expect(emit).toHaveBeenCalledWith('component-drop', [component1, container2, undefined]);
-              done();
-            });
-        });
-      });
-
-      it('sets dropping state to true while emitting "component-drop"', () => {
-        emit.and.returnValue($q(angular.noop));
-
-        loadIframeFixture(() => {
-          expect(DragDropService.dropping).toBe(false);
-          DragDropService._onDrop(component1.getBoxElement(), container2.getBoxElement(), container1.getBoxElement());
-          expect(DragDropService.dropping).toBe(true);
-        });
-      });
-
-      it('sets dropping state back to false when "component-drop" emit resolves', (done) => {
-        emit.and.returnValue($q.resolve());
-
-        loadIframeFixture(() => {
-          DragDropService._onDrop(component1.getBoxElement(), container2.getBoxElement(), container1.getBoxElement())
-            .then(() => {
-              expect(DragDropService.dropping).toBe(false);
-              done();
-            });
-        });
-      });
-
-      it('sets dropping state back to false when "component-drop" emit rejects', (done) => {
-        emit.and.returnValue($q.reject());
-
-        loadIframeFixture(() => {
-          DragDropService._onDrop(component1.getBoxElement(), container2.getBoxElement(), container1.getBoxElement())
-            .catch(() => {
-              expect(DragDropService.dropping).toBe(false);
-              done();
-            });
-        });
-      });
-    });
-  });
-
   it('replaces a container', (done) => {
     loadIframeFixture(() => {
-      const reRenderedContainer1 = ModelFactoryService.createContainer([createContainer(3)]);
+      const reRenderedContainer1 = ModelFactoryService.createContainer(createContainer(3));
 
       DragDropService.replaceContainer(container1, reRenderedContainer1);
 
@@ -421,7 +368,7 @@ xdescribe('DragDropService', () => {
 
   it('ignores the replacement of an unknown container', (done) => {
     loadIframeFixture(() => {
-      const unknownContainer = ModelFactoryService.createContainer([createContainer(3)]);
+      const unknownContainer = ModelFactoryService.createContainer(createContainer(3));
 
       DragDropService.replaceContainer(unknownContainer, container1);
 
