@@ -13,21 +13,32 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.content.beans;
+package org.hippoecm.hst.content.beans.standard;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Inherited;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+public class KeyLabelValue {
 
-/**
- * Marks a class as an interceptor for certain cms types to use in Dynamic Bean generation.
- * 
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Target({ ElementType.TYPE, ElementType.METHOD })
-@Inherited
-public @interface Interceptor {
-    String[] cmsTypes();
+    private String key;
+    private String label;
+
+    public KeyLabelValue(String key, String label) {
+        this.key = key;
+        this.label = label;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
 }
