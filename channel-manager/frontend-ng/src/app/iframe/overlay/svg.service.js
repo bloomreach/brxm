@@ -27,8 +27,7 @@ export default class SvgService {
 
   _loadSprite(src) {
     if (!this.cache[src]) {
-      this.cache[src] = this.CommunicationService.getAssetUrl(src)
-        .then(url => this.$http.get(url));
+      this.cache[src] = this.CommunicationService.getAsset(src);
     }
 
     return this.cache[src];
@@ -50,9 +49,9 @@ export default class SvgService {
   }
 
   async _resolveSprite(src) {
-    const { data } = await this._loadSprite(src);
+    const contents = await this._loadSprite(src);
 
-    return this._injectSprite(src, data);
+    return this._injectSprite(src, contents);
   }
 
   getSvg({ url, viewBox }) {

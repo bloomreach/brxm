@@ -16,6 +16,7 @@
 
 class HippoIframeService {
   constructor(
+    $http,
     $log,
     $q,
     $rootScope,
@@ -31,6 +32,7 @@ class HippoIframeService {
   ) {
     'ngInject';
 
+    this.$http = $http;
     this.$log = $log;
     this.$q = $q;
     this.$rootScope = $rootScope;
@@ -184,6 +186,13 @@ class HippoIframeService {
   lockWidth() {
     const hippoIframeWidth = this.hippoIframeJQueryElement.outerWidth();
     this.hippoIframeJQueryElement[0].style.setProperty('--locked-width', `${hippoIframeWidth}px`);
+  }
+
+  async getAsset(href) {
+    const url = this.getAssetUrl(href);
+    const { data } = await this.$http.get(url);
+
+    return data;
   }
 
   getAssetUrl(href) {

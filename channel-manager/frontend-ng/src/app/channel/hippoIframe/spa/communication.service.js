@@ -46,6 +46,7 @@ export default class CommunicationService {
       iframe: target,
       methods: {
         emit: this._emit.bind(this),
+        getAsset: this._getAsset.bind(this),
         getAssetUrl: this._getAssetUrl.bind(this),
         getLocale: this._getLocale.bind(this),
         getScroll: this._getScroll.bind(this),
@@ -95,6 +96,10 @@ export default class CommunicationService {
 
   _emit(event, data) {
     this.$rootScope.$emit(`iframe:${event}`, data);
+  }
+
+  _getAsset(...args) {
+    return this.$injector.get('HippoIframeService').getAsset(...args);
   }
 
   _getAssetUrl(...args) {

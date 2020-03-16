@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,38 +19,33 @@ import 'angular-mocks';
 
 describe('SvgService', () => {
   let $document;
-  let $httpBackend;
   let $q;
-  let $timeout;
+  let $rootScope;
   let CommunicationService;
   let SvgService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm-iframe');
 
-    CommunicationService = jasmine.createSpyObj('CommunicationService', ['getAssetUrl']);
+    CommunicationService = jasmine.createSpyObj('CommunicationService', ['getAsset']);
 
     angular.mock.module(($provide) => {
       $provide.value('CommunicationService', CommunicationService);
     });
 
-    inject((_$document_, _$httpBackend_, _$q_, _$timeout_, _SvgService_) => {
+    inject((_$document_, _$q_, _$rootScope_, _SvgService_) => {
       $document = _$document_;
-      $httpBackend = _$httpBackend_;
       $q = _$q_;
-      $timeout = _$timeout_;
+      $rootScope = _$rootScope_;
       SvgService = _SvgService_;
     });
-
-    CommunicationService.getAssetUrl.and.callFake(href => $q.resolve(href));
   });
 
   describe('getSvg', () => {
     beforeEach(() => {
       $document.find('body').empty();
 
-      $httpBackend.whenGET('sprite.svg')
-        .respond(200, '<svg>sprite</svg>');
+      CommunicationService.getAsset.and.returnValue($q.resolve('<svg>sprite</svg>'));
 
       SvgService.getSvg({
         url: 'sprite.svg#icon',
@@ -60,8 +55,7 @@ describe('SvgService', () => {
         .parent()
         .appendTo($document.find('body'));
 
-      $httpBackend.flush();
-      $timeout.flush();
+      $rootScope.$digest();
     });
 
     it('injects sprite', () => {
@@ -85,10 +79,8 @@ describe('SvgService', () => {
         url: 'sprite.svg#icon',
         viewBox: '0 0 100 100',
       });
+      $rootScope.$digest();
 
-      $timeout.flush();
-
-      $httpBackend.verifyNoOutstandingExpectation();
       expect($document.find('svg[data-src="sprite.svg"]')).toHaveLength(1);
     });
   });
