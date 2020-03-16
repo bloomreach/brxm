@@ -34,12 +34,6 @@ export default class ScrollService {
     this.sheet = sheet;
     this.canvas = canvas;
     this.enabled = false;
-
-    this._position = {
-      canvasScrollLeft: 0,
-      iframeScrollLeft: 0,
-      iframeScrollTop: 0,
-    };
   }
 
   getScroll() {
@@ -240,15 +234,20 @@ export default class ScrollService {
       scrollTop: iframeScrollTop,
     } = await this.CommunicationService.getScroll();
 
-    Object.assign(this._position, { canvasScrollLeft, iframeScrollLeft, iframeScrollTop });
+    this._position = { canvasScrollLeft, iframeScrollLeft, iframeScrollTop };
   }
 
   async restorePosition() {
+    if (!this._position) {
+      return;
+    }
+
     const {
       canvasScrollLeft,
       iframeScrollLeft: scrollLeft,
       iframeScrollTop: scrollTop,
     } = this._position;
+    delete this._position;
 
     this.canvas.scrollLeft(canvasScrollLeft);
     await this.CommunicationService.setScroll({ scrollLeft, scrollTop });
