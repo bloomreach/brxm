@@ -39,6 +39,8 @@
 .hst-fab {
   display: block;
   height: $embedded-link-height;
+  min-height: $embedded-link-height;
+  min-width: $embedded-link-width;
   pointer-events: none;
   position: absolute;
   right: 0;
@@ -222,7 +224,7 @@
   }
 }
 
-.hippo-show-components .hippo-overlay-box:not(.hippo-overlay-box-container-filled) {
+.hippo-show-components .hippo-overlay-box:not(.hippo-overlay-box-container-filled):not(.hst-fab) {
   min-height: $overlay-box-minheight;
 }
 
