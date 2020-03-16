@@ -74,8 +74,7 @@
     pointer-events: none;
     z-index: $z-index-overlay-container;
 
-    &-empty,
-    &-disabled {
+    &-empty {
       box-shadow: inset 0 0 1px 0 $overlay-container-inline-color, inset 0 0 8px 0 $overlay-container-glow-color;
       pointer-events: auto;
     }
