@@ -365,5 +365,18 @@ describe('ScrollService', () => {
 
       expect($canvas.scrollLeft).toHaveBeenCalledWith(200);
     });
+
+    it('should not restore any scroll position if it was previously restored', () => {
+      ScrollService.savePosition();
+      $rootScope.$digest();
+      ScrollService.restorePosition();
+
+      spyOn($canvas, 'scrollLeft');
+      CommunicationService.setScroll.calls.reset();
+      ScrollService.restorePosition();
+
+      expect($canvas.scrollLeft).not.toHaveBeenCalled();
+      expect(CommunicationService.setScroll).not.toHaveBeenCalled();
+    });
   });
 });
