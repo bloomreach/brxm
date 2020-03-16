@@ -22,5 +22,17 @@
   "exclude": [
     "src/test.ts",
     "**/*.spec.ts"
-  ]
+  ],
+  "typedocOptions": {
+    "exclude": [
+      "**/utils/*.ts"
+    ],
+    "excludeNotExported": true,
+    "excludePrivate": true,
+    "excludeProtected": true,
+    "hideGenerator": true,
+    "mode": "file",
+    "out": "./docs/navapp-communication",
+    "name": "Bloomreach Navigation Communication Library"
+  }
 }

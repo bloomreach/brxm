@@ -14,7 +14,8 @@
     "build:prod": "ng build --prod",
     "release:navapp": "release-it",
     "release:navapp-communication": "cd ./projects/navapp-communication && release-it",
-    "docs": "typedoc && minicat projects/navapp-communication/src/docs/typedoc.css >> docs/assets/css/main.css"
+    "docs:navapp": "typedoc --tsconfig ./tsconfig.json",
+    "docs:navapp-communication": "typedoc --tsconfig ./projects/navapp-communication/tsconfig.lib.json"
   },
   "browser": "dist/navapp/main.js",
   "files": [
