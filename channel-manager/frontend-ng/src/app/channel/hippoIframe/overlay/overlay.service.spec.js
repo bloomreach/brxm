@@ -16,17 +16,19 @@
 
 import hippoIframeCss from '../../../../styles/string/hippo-iframe.scss?url';
 
-xdescribe('OverlayService', () => {
+describe('OverlayService', () => {
   let $iframe;
+  let $iframeRootScope;
+  let $injector;
   let $q;
   let $rootScope;
+  let angularElement;
   let iframeWindow;
   let ChannelService;
   let CmsService;
   let CreateContentService;
   let DomService;
   let ExperimentStateService;
-  let MarkupService;
   let OverlayService;
   let PageStructureService;
   let PickerService;
@@ -50,7 +52,6 @@ xdescribe('OverlayService', () => {
       _CreateContentService_,
       _DomService_,
       _ExperimentStateService_,
-      _MarkupService_,
       _OverlayService_,
       _PageStructureService_,
       _ScrollService_,
@@ -63,12 +64,23 @@ xdescribe('OverlayService', () => {
       CreateContentService = _CreateContentService_;
       DomService = _DomService_;
       ExperimentStateService = _ExperimentStateService_;
-      MarkupService = _MarkupService_;
       OverlayService = _OverlayService_;
       PageStructureService = _PageStructureService_;
       ScrollService = _ScrollService_;
       SvgService = _SvgService_;
     });
+
+    const fake = angular.element('<div>');
+
+    angular.bootstrap(fake, ['hippo-cm-iframe']);
+    window.$Promise = $q;
+
+    $injector = fake.injector();
+    PageStructureService = fake.injector().get('PageStructureService');
+    $iframeRootScope = fake.injector().get('$rootScope');
+    PageStructureService.$rootScope = $rootScope;
+    angularElement = angular.element;
+    spyOn(angular, 'element').and.callThrough();
 
     spyOn(CmsService, 'subscribe').and.callThrough();
     spyOn(SvgService, 'getSvg').and.callFake(() => angular.element('<svg>test</svg>'));
@@ -88,9 +100,23 @@ xdescribe('OverlayService', () => {
       iframeWindow = $iframe[0].contentWindow;
       await DomService.addCssLinks(iframeWindow, [hippoIframeCss]);
 
+      iframeWindow.angular = angular;
+      PageStructureService.$document = angular.element(iframeWindow.document);
+
+      angular.element.and.callFake((selector, ...rest) => {
+        const result = angularElement(selector, ...rest);
+
+        if (selector === iframeWindow.document) {
+          result.injector = () => $injector;
+        }
+
+        return result;
+      });
+
+      $rootScope.$emit('hippo-iframe:load');
       try {
         PageStructureService.clearParsedElements();
-        PageStructureService.parseElements(DomService.getIframeDocument($iframe));
+        PageStructureService.parseElements();
 
         deferred.resolve();
       } catch (e) {
@@ -318,9 +344,9 @@ xdescribe('OverlayService', () => {
       <!-- { "HST-Type": "CONTAINER_ITEM_COMPONENT", "HST-Label": "component C", "uuid": "cccc" } -->
       <!-- { "HST-End": "true", "uuid": "cccc" } -->
     `;
-    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: emptyMarkup }));
 
-    await PageStructureService.renderComponent(componentC);
+    PageStructureService.updateComponent(componentC.getId(), emptyMarkup);
+    $iframeRootScope.$digest();
 
     const generatedBoxElement = PageStructureService.getPage().getComponentById('cccc').getBoxElement();
     expect(generatedBoxElement).toBeDefined();
@@ -436,10 +462,10 @@ xdescribe('OverlayService', () => {
         <p id="markup-in-component-a">Markup in component A that just got an experiment</p>
       <!-- { "HST-End": "true", "uuid": "aaaa" } -->
     `;
-    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: componentMarkupWithExperiment }));
 
     const componentA = PageStructureService.getPage().getComponentById('aaaa');
-    await PageStructureService.renderComponent(componentA);
+    PageStructureService.updateComponent(componentA.getId(), componentMarkupWithExperiment);
+    $iframeRootScope.$digest();
 
     const label = componentElementA.find('.hippo-overlay-label');
     expect(label.attr('data-qa-experiment-id')).toBe('567');
@@ -639,10 +665,10 @@ xdescribe('OverlayService', () => {
         <p id="markup-in-component-a">Markup in component A without menu link</p>
       <!-- { "HST-End": "true", "uuid": "aaaa" } -->
     `;
-    spyOn(MarkupService, 'fetchComponentMarkup').and.returnValue($q.when({ data: componentMarkupWithoutMenuLink }));
 
     const componentA = PageStructureService.getPage().getComponentById('aaaa');
-    await PageStructureService.renderComponent(componentA);
+    PageStructureService.updateComponent(componentA.getId(), componentMarkupWithoutMenuLink);
+    $iframeRootScope.$digest();
 
     expect(iframe('.hippo-overlay > .hippo-overlay-element').length).toBe(25);
     expect(iframe('.hippo-overlay > .hippo-overlay-element-menu-link').length).toBe(0);
