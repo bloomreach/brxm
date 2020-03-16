@@ -26,6 +26,7 @@ import {
 export default class PageStructureService {
   constructor(
     $document,
+    $q,
     $rootScope,
     CommunicationService,
     HstCommentsProcessorService,
@@ -34,6 +35,7 @@ export default class PageStructureService {
     'ngInject';
 
     this.$document = $document;
+    this.$q = $q;
     this.$rootScope = $rootScope;
     this.CommunicationService = CommunicationService;
     this.HstCommentsProcessorService = HstCommentsProcessorService;
@@ -160,20 +162,17 @@ export default class PageStructureService {
   /**
    * Update the component with the new markup
    */
-  updateComponent(componentId, newMarkup) {
+  async updateComponent(componentId, newMarkup) {
     const oldComponent = this._page && this._page.getComponentById(componentId);
     if (!oldComponent) {
       return;
     }
 
-    const $newMarkup = $(newMarkup);
     const container = oldComponent.getContainer();
+    const $newMarkup = $(newMarkup);
 
     this._removeEmbeddedLinksInComponent(oldComponent);
-
-    oldComponent.replaceDOM($newMarkup, () => {
-      this._notifyChangeListeners();
-    });
+    await this.$q(resolve => oldComponent.replaceDOM($newMarkup, resolve));
 
     const comments = Array.from(this.HstCommentsProcessorService.processFragment($newMarkup));
     let newComponent;
@@ -183,33 +182,31 @@ export default class PageStructureService {
       // eslint-disable-next-line no-empty
     } catch (e) {}
 
-    if (!newComponent) {
+    if (newComponent) {
+      newComponent.setContainer(container);
+      container.replaceComponent(oldComponent, newComponent);
+      // reuse the overlay element to reduce DOM manipulation and improve performance
+      newComponent.setOverlayElement(oldComponent.getOverlayElement());
+    } else {
       container.removeComponent(oldComponent);
-
-      return;
     }
 
-    newComponent.setContainer(container);
-    container.replaceComponent(oldComponent, newComponent);
-    // reuse the overlay element to reduce DOM manipulation and improve performance
-    newComponent.setOverlayElement(oldComponent.getOverlayElement());
+    this._notifyChangeListeners();
 
     // eslint-disable-next-line consistent-return
     return comments.map(({ json }) => json);
   }
 
-  updateContainer(containerId, newMarkup) {
+  async updateContainer(containerId, newMarkup) {
     const oldContainer = this._page && this._page.getContainerById(containerId);
     if (!oldContainer) {
       return;
     }
 
-    this._removeEmbeddedLinksInContainer(oldContainer);
     const $newMarkup = $(newMarkup);
 
-    oldContainer.replaceDOM($newMarkup, () => {
-      this._notifyChangeListeners();
-    });
+    this._removeEmbeddedLinksInContainer(oldContainer);
+    await this.$q(resolve => oldContainer.replaceDOM($newMarkup, resolve));
 
     const comments = Array.from(this.HstCommentsProcessorService.processFragment($newMarkup));
     let container;
@@ -219,10 +216,11 @@ export default class PageStructureService {
       // eslint-disable-next-line no-empty
     } catch (e) {}
 
-    const newContainer = this._page.replaceContainer(oldContainer, container);
+    this._page.replaceContainer(oldContainer, container);
+    this._notifyChangeListeners();
 
     // eslint-disable-next-line consistent-return
-    return newContainer && comments.map(({ json }) => json);
+    return comments.map(({ json }) => json);
   }
 
   _removeEmbeddedLinksInContainer(container) {

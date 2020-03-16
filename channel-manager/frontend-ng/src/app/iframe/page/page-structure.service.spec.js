@@ -385,16 +385,15 @@ describe('PageStructureService', () => {
   });
 
   describe('updateComponent', () => {
-    it('does no throw an error if component is unknown', () => {
+    it('does no throw an error if component is unknown', (done) => {
       PageStructureService.parseElements();
       expect(PageStructureService.getPage()).toBeDefined();
 
-      try {
-        const newComponent = PageStructureService.updateComponent('unknown');
+      PageStructureService.updateComponent('unknown').then((newComponent) => {
         expect(newComponent).toBeUndefined();
-      } catch (e) {
-        fail('Should not throw an error');
-      }
+        done();
+      });
+      $rootScope.$digest();
     });
 
     it('updates a component with an edit menu link', () => {
@@ -414,6 +413,7 @@ describe('PageStructureService', () => {
           </p>
         ${endComment('aaaa')}
       `);
+      $rootScope.$digest();
 
       const page = PageStructureService.getPage();
       const updatedComponentA = page.getComponentById('aaaa');
@@ -440,6 +440,7 @@ describe('PageStructureService', () => {
           </div>
         ${endComment('component-no-markup')}
       `);
+      $rootScope.$digest();
 
       expect(PageStructureService.getEmbeddedLinks()).toHaveLength(0);
     });
@@ -458,6 +459,7 @@ describe('PageStructureService', () => {
           </p>
         ${endComment('aaaa')}
       `);
+      $rootScope.$digest();
 
       const page = PageStructureService.getPage();
       const updatedComponentA = page.getComponentById('aaaa');
@@ -494,6 +496,7 @@ describe('PageStructureService', () => {
             ${editMenuLinkComment('updated-menu-in-component-a')}
           </p>
         `);
+      $rootScope.$digest();
 
       const page = PageStructureService.getPage();
       expect(page.getContainers()).toHaveLength(1);
@@ -513,6 +516,7 @@ describe('PageStructureService', () => {
           </p>
         ${endComment('aaaa')}
       `);
+      $rootScope.$digest();
       expect(onPageChange).toHaveBeenCalled();
 
       offPageChange();
@@ -520,16 +524,15 @@ describe('PageStructureService', () => {
   });
 
   describe('updateContainer', () => {
-    it('does no throw an error if container is unknown', () => {
+    it('does no throw an error if container is unknown', (done) => {
       PageStructureService.parseElements();
       expect(PageStructureService.getPage()).toBeDefined();
 
-      try {
-        const newContainer = PageStructureService.updateContainer('unknown');
+      PageStructureService.updateContainer('unknown').then((newContainer) => {
         expect(newContainer).toBeUndefined();
-      } catch (e) {
-        fail('should not throw an error');
-      }
+        done();
+      });
+      $rootScope.$digest();
     });
 
     it('updates a NoMarkup container', () => {
@@ -548,6 +551,7 @@ describe('PageStructureService', () => {
           ${endComment('aaaa')}
         ${endComment('container-no-markup')}
       `);
+      $rootScope.$digest();
 
       const newContainer = page.getContainerById('container-no-markup');
       expect(newContainer).not.toBe(container);
@@ -566,6 +570,7 @@ describe('PageStructureService', () => {
         ${containerComment('Empty NoMarkup container', 'HST.NoMarkup', containerId)}
         ${endComment(containerId)}
       `);
+      $rootScope.$digest();
 
       const newContainer = page.getContainerById(containerId);
       expect(newContainer).not.toBe(container);
@@ -596,6 +601,7 @@ describe('PageStructureService', () => {
         </div>
         ${endComment('container-vbox')}
       `);
+      $rootScope.$digest();
 
       const page = PageStructureService.getPage();
       expect(page.getContainers()).toHaveLength(1);
@@ -629,6 +635,7 @@ describe('PageStructureService', () => {
         </div>
         ${endComment('container-vbox')}
       `);
+      $rootScope.$digest();
 
       expect(onPageChange).toHaveBeenCalled();
 
