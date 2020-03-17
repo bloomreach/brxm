@@ -207,6 +207,40 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
     }
 
     @Test
+    public void testDocumentIsTransferable() throws Exception {
+        WorkflowManager manager = ((HippoWorkspace) session.getWorkspace()).getWorkflowManager();
+        Node handle = session.getRootNode().getNode("test/folder/document");
+        Node document = handle.getNode(handle.getName());
+        document.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
+        document.setProperty(HippoTranslationNodeType.ID, DOCUMENT_T9N_ID);
+        document.setProperty(HippoTranslationNodeType.LOCALE, "en");
+        document.addMixin(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT);
+        document.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE, Calendar.getInstance());
+        document.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY, "admin");
+        document.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE, Calendar.getInstance());
+        document.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY, "admin");
+        final Node draft = handle.addNode("document");
+        draft.addMixin(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT);
+        draft.addMixin(HippoTranslationNodeType.NT_TRANSLATED);
+        draft.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_DATE, Calendar.getInstance());
+        draft.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY, "admin");
+        draft.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATION_DATE, Calendar.getInstance());
+        draft.setProperty(HippoTranslationNodeType.ID, DOCUMENT_T9N_ID);
+        draft.setProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_CREATED_BY, "admin");
+        draft.setProperty(HippoTranslationNodeType.LOCALE, "en");
+        draft.setProperty(HippoStdNodeType.HIPPOSTD_STATE, HippoStdNodeType.DRAFT);
+        draft.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER,"admin");
+        draft.setProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE,true);
+        session.save();
+        session.refresh(false);
+
+        Workflow workflowInterface = manager.getWorkflow("translation", document);
+        TranslationWorkflow workflow = (TranslationWorkflow) workflowInterface;
+        final Map<String, Serializable> hints = workflow.hints();
+        assertFalse((Boolean) hints.get("addTranslation"));
+    }
+
+    @Test
     public void testTranslateFolder() throws Exception {
         Node deFolder = session.getRootNode().getNode("test").addNode("folder_de", "hippostd:folder");
         deFolder.addMixin(JcrConstants.MIX_VERSIONABLE);

@@ -50,11 +50,27 @@ final class AddTranslationHint {
     }
 
     private Boolean hideTranslation() throws RepositoryException {
-        return isDraft() || isTransferable();
+        return isDraft() || isTransferable() || ( hasUnpublished() &&  isPublished() );
+    }
+
+    private boolean isPublished() throws RepositoryException {
+        return isState(HippoStdNodeType.PUBLISHED);
+    }
+
+    private boolean hasUnpublished() {
+        return hasState(HippoStdNodeType.UNPUBLISHED);
     }
 
     private Boolean isTransferable() throws RepositoryException {
-        return isDraft() && documents.get(HippoStdNodeType.DRAFT).isTransferable();
+        return hasDraft() && Boolean.TRUE.equals(documents.get(HippoStdNodeType.DRAFT).isTransferable());
+    }
+
+    private Boolean hasDraft() {
+        return hasState(HippoStdNodeType.DRAFT);
+    }
+
+    private boolean hasState(final String state) {
+        return documents.containsKey(state);
     }
 
     private Boolean isDraft() throws RepositoryException {
@@ -63,7 +79,7 @@ final class AddTranslationHint {
 
     private Boolean isState(final String state)
             throws RepositoryException {
-        return documents.containsKey(state)
+        return hasState(state)
                 && documents.get(state).getNode().getIdentifier().equals(documentVariant.getIdentifier());
     }
 
