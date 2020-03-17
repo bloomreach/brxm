@@ -41,6 +41,8 @@ import org.hippoecm.repository.translation.HippoTranslatedNode;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.hippoecm.repository.translation.TranslationWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
+import org.onehippo.repository.documentworkflow.DocumentHandle;
+import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -155,7 +157,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
             if (category == null) {
                 category = categoryName;
             }
-            if (type == null && types.size() > 0) {
+            if (type == null && types.isEmpty()) {
                 type = types.iterator().next();
             }
         }
@@ -227,32 +229,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
     public Map<String, Serializable> hints() throws WorkflowException, RepositoryException {
         Map<String, Serializable> hints = new TreeMap<>();
 
-        if (userSubject.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
-            String state = userSubject.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
-            if (HippoStdNodeType.DRAFT.equals(state)) {
-                hints.put("addTranslation", Boolean.FALSE);
-            } else {
-                NodeIterator siblings = userSubject.getParent().getNodes(userSubject.getName());
-                Node unpublished = null;
-                Node published = null;
-                while (siblings.hasNext()) {
-                    Node sibling = siblings.nextNode();
-                    if (sibling.isNodeType(HippoStdNodeType.NT_PUBLISHABLE)) {
-                        String siblingState = sibling.getProperty(HippoStdNodeType.HIPPOSTD_STATE).getString();
-                        if (HippoStdNodeType.UNPUBLISHED.equals(siblingState)) {
-                            unpublished = sibling;
-                        } else if (HippoStdNodeType.PUBLISHED.equals(siblingState)) {
-                            published = sibling;
-                        }
-                    }
-                }
-                if (unpublished != null && published != null) {
-                    if (HippoStdNodeType.PUBLISHED.equals(state)) {
-                        hints.put("addTranslation", Boolean.FALSE);
-                    }
-                }
-            }
-        }
+        hints.put("addTranslation", isUserAllowedToAddTranslation());
 
         final HippoTranslatedNode translatedNode = new HippoTranslatedNode(userSubject);
         Set<String> translations;
@@ -281,6 +258,30 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
         return hints;
     }
 
+    private boolean isUserAllowedToAddTranslation() throws RepositoryException, WorkflowException {
+        final Node handle = userSubject.getParent();
+        DocumentHandle documentHandle = new DocumentHandle(handle);
+        documentHandle.initialize();
+        final Map<String, DocumentVariant> documents = documentHandle.getDocuments();
+        return !isDraft(documents) && !(hasUnpublished(documents) && isPublished(documents));
+    }
+
+    private boolean hasUnpublished(final Map<String, DocumentVariant> documents) {
+        return documents.containsKey(HippoStdNodeType.UNPUBLISHED);
+    }
+
+    private boolean isPublished(final Map<String, DocumentVariant> documents) throws RepositoryException {
+        return isState(documents, HippoStdNodeType.PUBLISHED);
+    }
+
+    private boolean isDraft(final Map<String, DocumentVariant> documents) throws RepositoryException {
+        return isState(documents, HippoStdNodeType.DRAFT);
+    }
+
+    private boolean isState(final Map<String, DocumentVariant> documents, final String state) throws RepositoryException {
+        return documents.containsKey(state) && documents.get(state).getNode().getIdentifier().equals(userSubject.getIdentifier());
+    }
+
     /**
      * Bring the new document to edit mode for the current user.
      */
@@ -301,7 +302,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
             final Map<String, Set<String>> copyPrototypes = getPrototypes(folderWorkflow);
 
             // check if equal
-            if (copyPrototypes == null || copyPrototypes.size() == 0) {
+            if (copyPrototypes.size() == 0) {
                 return;
             }
             
