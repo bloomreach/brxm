@@ -41,8 +41,6 @@ import org.hippoecm.repository.translation.HippoTranslatedNode;
 import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.hippoecm.repository.translation.TranslationWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
-import org.onehippo.repository.documentworkflow.DocumentHandle;
-import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -157,7 +155,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
             if (category == null) {
                 category = categoryName;
             }
-            if (type == null && types.isEmpty()) {
+            if (type == null && !types.isEmpty()) {
                 type = types.iterator().next();
             }
         }
@@ -229,7 +227,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
     public Map<String, Serializable> hints() throws WorkflowException, RepositoryException {
         Map<String, Serializable> hints = new TreeMap<>();
 
-        hints.put("addTranslation", isUserAllowedToAddTranslation());
+        hints.put("addTranslation", AddTranslationHint.canAddTranslation(userSubject));
 
         final HippoTranslatedNode translatedNode = new HippoTranslatedNode(userSubject);
         Set<String> translations;
@@ -256,30 +254,6 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
         hints.put("available", (Serializable) available);
         hints.put("locale", translatedNode.getLocale());
         return hints;
-    }
-
-    private boolean isUserAllowedToAddTranslation() throws RepositoryException, WorkflowException {
-        final Node handle = userSubject.getParent();
-        DocumentHandle documentHandle = new DocumentHandle(handle);
-        documentHandle.initialize();
-        final Map<String, DocumentVariant> documents = documentHandle.getDocuments();
-        return !isDraft(documents) && !(hasUnpublished(documents) && isPublished(documents));
-    }
-
-    private boolean hasUnpublished(final Map<String, DocumentVariant> documents) {
-        return documents.containsKey(HippoStdNodeType.UNPUBLISHED);
-    }
-
-    private boolean isPublished(final Map<String, DocumentVariant> documents) throws RepositoryException {
-        return isState(documents, HippoStdNodeType.PUBLISHED);
-    }
-
-    private boolean isDraft(final Map<String, DocumentVariant> documents) throws RepositoryException {
-        return isState(documents, HippoStdNodeType.DRAFT);
-    }
-
-    private boolean isState(final Map<String, DocumentVariant> documents, final String state) throws RepositoryException {
-        return documents.containsKey(state) && documents.get(state).getNode().getIdentifier().equals(userSubject.getIdentifier());
     }
 
     /**
