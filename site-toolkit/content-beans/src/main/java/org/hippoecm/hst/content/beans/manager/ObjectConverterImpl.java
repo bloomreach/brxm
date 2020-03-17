@@ -331,6 +331,10 @@ public class ObjectConverterImpl implements ObjectConverter {
             Optional<Node> version = getVersionForLabel(versionHistory, branchId, preview);
             if (!version.isPresent() || !version.get().hasNode(JCR_FROZEN_NODE)) {
                 // lookup master revision in absence of a branch version
+                if (branchIdOfNode.equals(BranchConstants.MASTER_BRANCH_ID)) {
+                    // current node is for master, thus return current one
+                    return node;
+                }
                 version = getVersionForLabel(versionHistory, BranchConstants.MASTER_BRANCH_ID, preview);
             }
             if (!version.isPresent() || !version.get().hasNode(JCR_FROZEN_NODE)) {
