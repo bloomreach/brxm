@@ -194,7 +194,8 @@
                 <exclude>.*</exclude>
                 <exclude>**/*.md</exclude>
                 <exclude>projects/navapp/**/*.svg</exclude>
-                <exclude>**/browserslist</exclude>
+                <exclude>**/.auto-changelog</exclude>\n
+                <exclude>**/browserslist</exclude>\n
                 <exclude>projects/target/surefire-reports/TEST-karma.xml</exclude>
                 <!-- Generated or pulled-in files which are not cleaned up -->
                 <exclude>**/node_modules/**/*</exclude>

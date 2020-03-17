@@ -1,7 +1,7 @@
 {
-  "scripts": {
-    "beforeStart": "npm run lint && npm run test:single-run",
-    "beforeStage": "npm run build:prod"
+  "hooks": {
+    "before:init": "npm run lint && npm run test:single-run",
+    "after:bump": "npm run build:prod && npx auto-changelog"
   },
   "git": {
     "requireCleanWorkingDir": true,
