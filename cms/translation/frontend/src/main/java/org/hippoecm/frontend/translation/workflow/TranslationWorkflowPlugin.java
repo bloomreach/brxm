@@ -178,10 +178,18 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
         private void load() {
             availableLocales = new LinkedList<>();
             for (String language : getAvailableLanguages()) {
-                availableLocales.add(localeProvider.getLocale(language));
+                if (canAddTranslation() || hasLocale(language)){
+                    availableLocales.add(localeProvider.getLocale(language));
+                }
             }
             availableLocales.sort(Comparator.comparing(o -> o.getDisplayName(getLocale())));
         }
+
+        private boolean canAddTranslation() {
+            return !Boolean.FALSE.equals(canTranslateModel.getObject());
+        }
+
+
 
         @Override
         public Iterator<? extends HippoLocale> iterator(long first, long count) {
