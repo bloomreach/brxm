@@ -696,7 +696,9 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
            log.warn("Could not determine translations status of document", e);
         }
 
-        add(new EmptyPanel("content"));
+        final EmptyPanel emptyPanel = new EmptyPanel("content");
+        emptyPanel.setVisible(false);
+        add(emptyPanel);
 
         add(new MenuDescription() {
             @Override
@@ -712,7 +714,9 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
             @Override
             public MarkupContainer getContent() {
                 Fragment fragment = new Fragment("content", "languages", TranslationWorkflowPlugin.this);
-                fragment.add(new HippoLocaleDataView(localeProvider, languageModel));
+                final AvailableLocaleProvider availableLocaleProvider = new AvailableLocaleProvider(localeProvider);
+                fragment.add(new HippoLocaleDataView(availableLocaleProvider, languageModel));
+                fragment.setVisible(availableLocaleProvider.size()>1);
                 TranslationWorkflowPlugin.this.addOrReplace(fragment);
                 return fragment;
             }
@@ -803,8 +807,8 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
 
         private final IModel<String> languageModel;
 
-        public HippoLocaleDataView(final ILocaleProvider localeProvider, final IModel<String> languageModel) {
-            super("languages", new AvailableLocaleProvider(localeProvider));
+        public HippoLocaleDataView(final AvailableLocaleProvider localeProvider, final IModel<String> languageModel) {
+            super("languages", localeProvider);
             this.languageModel = languageModel;
             onPopulate();
         }
