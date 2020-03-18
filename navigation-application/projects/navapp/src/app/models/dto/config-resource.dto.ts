@@ -14,7 +14,19 @@
  * limitations under the License.
  */
 
+/**
+ * ConfigResource is a resource where navitems / login / logout urls are provided
+ * they can be of different types, for type IFRAME an iframe is created and a connection is made
+ * with the navapp communication library to retrieve the necessary information.
+ */
 export interface ConfigResource {
+  /**
+   * The type of resource
+   */
   resourceType: 'IFRAME' | 'REST' | 'INTERNAL_REST';
+
+  /**
+   * The URL of the resource
+   */
   url: string;
 }

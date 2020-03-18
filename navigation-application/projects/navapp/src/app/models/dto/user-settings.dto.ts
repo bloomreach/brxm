@@ -14,9 +14,28 @@
  * limitations under the License.
  */
 
+/**
+ * The UserSettings are provided in the NavAppSettings and provide information
+ * about the logged in user
+ */
 export interface UserSettings {
+  /**
+   * The username of the user account
+   */
   userName: string;
+
+  /**
+   * the user's email
+   */
   email?: string;
+
+  /**
+   * The selected language in the login screen. E.g. 'en' or 'nl' (not ISO language code such as en-us or nl-be!)
+   */
   language: string;
+
+  /**
+   * The selected timezone in the login screen.
+   */
   timeZone: string;
 }
