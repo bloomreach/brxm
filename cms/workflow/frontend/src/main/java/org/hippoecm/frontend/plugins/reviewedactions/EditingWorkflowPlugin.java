@@ -100,6 +100,11 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
             }
 
             @Override
+            protected IModel<String> getTooltip() {
+                return new StringResourceModel("save-draft-hint", this);
+            }
+
+            @Override
             public String getCssClass() {
                 return ButtonStyle.SECONDARY.getCssClass();
             }
