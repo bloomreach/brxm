@@ -264,14 +264,6 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
         }
 
         @Override
-        public boolean isVisible() {
-            if (super.isVisible() && findPage() != null) {
-                return canTranslateModel.getObject();
-            }
-            return false;
-        }
-
-        @Override
         protected Component getIcon(final String id) {
             final HippoLocale hippoLocale = localeModel.getObject();
             final HippoIconStack nodeIcon = new HippoIconStack(id, IconSize.M);
