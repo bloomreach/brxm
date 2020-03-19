@@ -107,6 +107,10 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
                 return ButtonStyle.SECONDARY.getCssClass();
             }
 
+            @Override
+            protected IModel<String> getTooltip() {
+                return new StringResourceModel("edit-draft-hint", this);
+            }
 
             @Override
             protected String execute(final Workflow wf) throws Exception {
