@@ -376,7 +376,7 @@ describe('PageStructureService', () => {
   describe('updateComponent', () => {
     it('does no throw an error if component is unknown', (done) => {
       PageStructureService.parseElements();
-      expect(PageStructureService.getPage()).toBeDefined();
+      expect(PageStructureService.getPage()).toBeUndefined();
 
       PageStructureService.updateComponent('unknown').then((newComponent) => {
         expect(newComponent).toEqual([]);
@@ -515,7 +515,7 @@ describe('PageStructureService', () => {
   describe('updateContainer', () => {
     it('does no throw an error if container is unknown', (done) => {
       PageStructureService.parseElements();
-      expect(PageStructureService.getPage()).toBeDefined();
+      expect(PageStructureService.getPage()).toBeUndefined();
 
       PageStructureService.updateContainer('unknown').then((newContainer) => {
         expect(newContainer).toEqual([]);

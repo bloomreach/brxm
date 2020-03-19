@@ -36,6 +36,11 @@ describe('ModelFactoryService', () => {
   });
 
   describe('createPage', () => {
+    it('should return undefined on empty meta', () => {
+      expect(ModelFactoryService.createPage()).toBeUndefined();
+      expect(ModelFactoryService.createPage([])).toBeUndefined();
+    });
+
     it('should merge meta', () => {
       const meta = new PageMeta();
       spyOn(meta, 'addMeta');
