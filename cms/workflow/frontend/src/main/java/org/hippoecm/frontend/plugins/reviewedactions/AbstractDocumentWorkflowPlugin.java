@@ -26,8 +26,10 @@ import javax.jcr.Session;
 
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
+import org.hippoecm.addon.workflow.ConfirmDialog;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
+import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.model.BranchIdModel;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -44,7 +46,6 @@ import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.StringCodec;
 import org.hippoecm.repository.util.WorkflowUtils;
-import org.jetbrains.annotations.Nullable;
 import org.onehippo.repository.branch.BranchConstants;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 import org.slf4j.Logger;
@@ -236,5 +237,22 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
             log.warn("No editor found to edit {}", docNode.getPath());
         }
         return null;
+    }
+
+    protected static class CancelDialog extends ConfirmDialog {
+        private StdWorkflow workflow;
+
+        CancelDialog(final IModel<String> title, final IModel<String> question, final IModel<String> okLabel,
+                     final StdWorkflow workflow) {
+            super(title, question);
+            setSize(DialogConstants.SMALL_AUTO);
+            setOkLabel(okLabel);
+            this.workflow = workflow;
+        }
+
+        @Override
+        public void invokeWorkflow() throws Exception {
+            workflow.invokeWorkflow();
+        }
     }
 }

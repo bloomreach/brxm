@@ -22,11 +22,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.addon.workflow.ConfirmDialog;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.buttons.ButtonStyle;
-import org.hippoecm.frontend.dialog.DialogConstants;
 import org.hippoecm.frontend.dialog.IDialogService;
 import org.hippoecm.frontend.model.JcrNodeModel;
 import org.hippoecm.frontend.plugin.IPluginContext;
@@ -35,12 +33,10 @@ import org.hippoecm.frontend.plugins.standards.icon.HippoIcon;
 import org.hippoecm.frontend.service.EditorException;
 import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.IEditorManager;
-import org.hippoecm.frontend.session.UserSession;
 import org.hippoecm.frontend.skin.CmsIcon;
 import org.hippoecm.frontend.skin.Icon;
 import org.hippoecm.repository.api.HippoNode;
 import org.hippoecm.repository.api.Workflow;
-import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
@@ -232,20 +228,4 @@ public class EditingWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
         return (WorkflowDescriptorModel) getDefaultModel();
     }
 
-    private static class CancelDialog extends ConfirmDialog {
-        private StdWorkflow workflow;
-
-        CancelDialog(final IModel<String> title, final IModel<String> question, final IModel<String> okLabel,
-                     final StdWorkflow workflow) {
-            super(title, question);
-            setSize(DialogConstants.SMALL_AUTO);
-            setOkLabel(okLabel);
-            this.workflow = workflow;
-        }
-
-        @Override
-        public void invokeWorkflow() throws Exception {
-            workflow.invokeWorkflow();
-        }
-    }
 }
