@@ -36,6 +36,10 @@ describe('PageMeta', () => {
 
       expect(meta.getPathInfo()).toBe('something');
     });
+
+    it('should implement fluent interface', () => {
+      expect(meta.addMeta(new PageMeta({}))).toBe(meta);
+    });
   });
 
   describe('getPathInfo', () => {
