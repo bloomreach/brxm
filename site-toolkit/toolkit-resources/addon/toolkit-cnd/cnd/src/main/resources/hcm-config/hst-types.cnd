@@ -479,3 +479,6 @@
 
 [hst:formdatapayload] mixin
 - hst:payload (string)
+
+[hst:page] mixin
++ hst:page (hst:component) = hst:component
