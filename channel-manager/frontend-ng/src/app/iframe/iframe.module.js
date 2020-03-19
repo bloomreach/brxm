@@ -54,11 +54,11 @@ const iframeModule = angular
 
     CommunicationService.connect()
       .then(() => CommunicationService.getLocale())
-      .then(locale => $translate.use(locale));
-
-    LinkProcessorService.initialize();
-    DragDropService.initialize();
-    OverlayService.initialize();
+      .then(locale => $translate.use(locale))
+      .then(() => DragDropService.initialize())
+      .then(() => LinkProcessorService.initialize())
+      .then(() => OverlayService.initialize())
+      .then(() => CommunicationService.ready());
 
     // The `unload` event cannot be used here because `event.source` in the target MessageEvent
     // will be `null`. Penpal checks `event.source`, and in this case, it will reject the request.

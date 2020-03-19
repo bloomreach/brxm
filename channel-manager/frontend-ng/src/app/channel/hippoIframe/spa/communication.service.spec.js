@@ -51,7 +51,7 @@ describe('CommunicationService', () => {
       Penpal.connectToChild.and.callFake((options) => {
         ({ methods } = options);
 
-        return { destroy, promise: Promise.resolve(child) };
+        return { destroy, promise: $q.resolve(child) };
       });
 
       CommunicationService.connect({ target: iframe, origin: 'http://localhost:3000' });
@@ -105,29 +105,41 @@ describe('CommunicationService', () => {
   });
 
   describe('ready', () => {
+    let ready;
+
     beforeEach(() => {
-      Penpal.connectToChild.and.callFake(() => ({ promise: Promise.resolve(child) }));
+      Penpal.connectToChild.and.callFake((options) => {
+        ({ methods: { ready } } = options);
+
+        return { promise: $q.resolve(child) };
+      });
+
+      CommunicationService.connect({});
+      $rootScope.$digest();
     });
 
-    it('should resolve if it is already connected', async () => {
+    it('should resolve if it is already ready', () => {
       const spy = jasmine.createSpy();
 
-      setTimeout(() => $rootScope.$digest(), 0);
-      await CommunicationService.connect({});
-      await CommunicationService.ready().then(spy);
+      ready();
+      CommunicationService.ready().then(spy);
+      $rootScope.$digest();
 
       expect(spy).toHaveBeenCalled();
     });
 
-    it('should resolve if it is already connected', async () => {
-      const promise = CommunicationService.ready();
+    it('should resolve when it is ready', () => {
+      const spy = jasmine.createSpy();
 
-      expect(promise.$$state.status).toBe(-1);
+      CommunicationService.ready().then(spy);
+      $rootScope.$digest();
 
-      setTimeout(() => $rootScope.$digest(), 0);
-      await CommunicationService.connect({});
+      expect(spy).not.toHaveBeenCalled();
 
-      expect(promise.$$state.status).toBe(1);
+      ready();
+      $rootScope.$digest();
+
+      expect(spy).toHaveBeenCalled();
     });
   });
 });

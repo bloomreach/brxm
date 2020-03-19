@@ -52,20 +52,14 @@ export default class CommunicationService {
         getScroll: this._getScroll.bind(this),
         getTranslations: this._getTranslations.bind(this),
         isEditable: this._isEditable.bind(this),
+        ready: this._ready.bind(this),
       },
     });
 
     this._child = await this._connection.promise;
-    if (this._await) {
-      this._await.resolve();
-    }
   }
 
   async ready() {
-    if (this._child) {
-      return;
-    }
-
     if (!this._await) {
       this._await = this.$q.defer();
     }
@@ -120,5 +114,13 @@ export default class CommunicationService {
 
   _isEditable(...args) {
     return this.$injector.get('ChannelService').isEditable(...args);
+  }
+
+  _ready() {
+    if (!this._await) {
+      this._await = this.$q.defer();
+    }
+
+    this._await.resolve();
   }
 }
