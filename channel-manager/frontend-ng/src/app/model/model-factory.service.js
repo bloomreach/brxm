@@ -40,16 +40,9 @@ export default class ModelFactoryService {
     }
 
     const { children, links, meta: pageMeta } = this._parseMeta(metaCollection);
-
-    const meta = pageMeta.reduce((result, item) => {
-      if (!result) {
-        return item;
-      }
-
-      result.addMeta(item);
-
-      return result;
-    }, undefined);
+    const meta = pageMeta.length
+      ? pageMeta.reduce((result, item) => result.addMeta(item))
+      : new PageMeta({});
 
     // eslint-disable-next-line consistent-return
     return new Page(meta, children, links);

@@ -20,6 +20,8 @@ import { Entity } from './entity';
 export class PageMeta extends Entity {
   addMeta(meta) {
     Object.assign(this._meta, meta._meta);
+
+    return this;
   }
 
   getPathInfo() {

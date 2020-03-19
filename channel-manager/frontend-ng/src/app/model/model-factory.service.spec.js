@@ -43,7 +43,7 @@ describe('ModelFactoryService', () => {
 
     it('should merge meta', () => {
       const meta = new PageMeta();
-      spyOn(meta, 'addMeta');
+      spyOn(meta, 'addMeta').and.returnValue(meta);
 
       ModelFactoryService.register(HstConstants.TYPE_PAGE_META, () => meta);
       const page = ModelFactoryService.createPage([
@@ -54,6 +54,12 @@ describe('ModelFactoryService', () => {
       expect(page.getMeta()).toBe(meta);
       expect(meta.addMeta).toHaveBeenCalledTimes(1);
       expect(meta.addMeta).toHaveBeenCalledWith(meta);
+    });
+
+    it('should create empty page meta object if there is no page meta-data', () => {
+      const page = ModelFactoryService.createPage([{ 'HST-Type': 'EDIT_MENU_LINK' }]);
+
+      expect(page.getMeta().toJSON()).toEqual({});
     });
 
     it('should build children', () => {
