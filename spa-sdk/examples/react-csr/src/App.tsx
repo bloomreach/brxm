@@ -20,8 +20,6 @@ import { Link, RouteComponentProps } from 'react-router-dom';
 import { BrComponent, BrPage, BrPageContext } from '@bloomreach/react-sdk';
 import { Banner, Content, Menu, NewsList } from './components';
 
-axios.interceptors.request.use(config => ({ ...config, withCredentials: true }));
-
 export default function App(props: RouteComponentProps) {
   const configuration = {
     httpClient: axios,

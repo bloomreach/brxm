@@ -24,8 +24,6 @@ import { Configuration, Page, initialize } from '@bloomreach/spa-sdk';
 import { Banner, Content, Menu, NewsList } from '../components';
 import routes from '../routes';
 
-axios.interceptors.request.use(config => ({ ...config, withCredentials: true }));
-
 const { Link } = routes;
 const { publicRuntimeConfig } = getConfig();
 
