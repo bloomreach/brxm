@@ -25,7 +25,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
-import org.hippoecm.addon.workflow.ConfirmDialog;
 import org.hippoecm.addon.workflow.StdWorkflow;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.frontend.buttons.ButtonStyle;
@@ -40,9 +39,13 @@ import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
 public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWorkflowPlugin {
 
-    /** Workflow action that edits the unpublished variant of a document. */
+    /**
+     * Workflow action that edits the unpublished variant of a document.
+     */
     private final StdWorkflow editAction;
-    /** Workflow action that edits the current draft if it has been saved as draft. */
+    /**
+     * Workflow action that edits the current draft if it has been saved as draft.
+     */
     private final StdWorkflow editDraftAction;
     private final Map<String, Serializable> info;
     private final boolean transferable;
@@ -55,7 +58,7 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
 
         info = getHints();
         inUseBy = getHint("inUseBy");
-        transferable = isActionAllowed(getHints(),"editDraft");
+        transferable = isActionAllowed(getHints(), "editDraft");
         add(new StdWorkflow("infoEdit", "infoEdit") {
 
             /**
@@ -81,9 +84,9 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
             protected IModel getTitle() {
                 final StringResourceModel inUseBy =
                         new StringResourceModel("in-use-by", this).setModel(null).setParameters(
-                        new PropertyModel(AbstractPreviewWorkflowPlugin.this, "inUseBy"));
+                                new PropertyModel(AbstractPreviewWorkflowPlugin.this, "inUseBy"));
                 final StringResourceModel draftChanges =
-                        new StringResourceModel("draft-changes",this);
+                        new StringResourceModel("draft-changes", this);
                 return transferable ? draftChanges : inUseBy;
             }
 
@@ -138,20 +141,24 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
 
             @Override
             protected IModel<String> getTooltip() {
-                final StringResourceModel model = new StringResourceModel("edit-discard-changes-hint", AbstractPreviewWorkflowPlugin.this);
+                final StringResourceModel model =
+                        new StringResourceModel("edit-discard-changes-hint"
+                                , AbstractPreviewWorkflowPlugin.this);
                 return isTransferable ? model : super.getTooltip();
             }
 
             @Override
             protected IDialogService.Dialog createRequestDialog() {
-                ConfirmDialog confirmationDialog = new ConfirmDialog(new StringResourceModel("edit-discard-changes-confirmation-title", AbstractPreviewWorkflowPlugin.this)
-                        , new StringResourceModel("edit-discard-changes-confirmation-body", AbstractPreviewWorkflowPlugin.this)) {
-                    @Override
-                    public void invokeWorkflow() throws Exception {
-                        editAction.invokeWorkflow();
-                    }
-                };
-                return isTransferable ? confirmationDialog : super.createRequestDialog();
+                final StringResourceModel title =
+                        new StringResourceModel("edit-discard-changes-confirmation-title"
+                                , AbstractPreviewWorkflowPlugin.this);
+                final StringResourceModel question =
+                        new StringResourceModel("edit-discard-changes-confirmation-body"
+                                , AbstractPreviewWorkflowPlugin.this)
+                                .setParameters(getDocumentName());
+                final StringResourceModel okLabel = new StringResourceModel("edit-discard-changes-confirmation-ok-button"
+                        , AbstractPreviewWorkflowPlugin.this);
+                return isTransferable ? new CancelDialog(title, question, okLabel, this) : super.createRequestDialog();
             }
 
             @Override
@@ -197,5 +204,4 @@ public abstract class AbstractPreviewWorkflowPlugin extends AbstractDocumentWork
         }
         return StringUtils.EMPTY;
     }
-
 }
