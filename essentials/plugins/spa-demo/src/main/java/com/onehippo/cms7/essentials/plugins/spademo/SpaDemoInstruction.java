@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -24,6 +24,7 @@ import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.onehippo.cms7.essentials.sdk.api.install.Instruction;
 import org.onehippo.cms7.essentials.sdk.api.service.JcrService;
 import org.onehippo.cms7.essentials.sdk.api.service.SettingsService;
@@ -49,10 +50,12 @@ public class SpaDemoInstruction implements Instruction {
         try {
             // Configure Page Model API
             final Node root = session.getNode(hstRootNode);
-            root.setProperty("hst:pagemodelapi", "resourceapi");
-            root.setProperty("hst:responseheaders", new String[] {
-                    "Access-Control-Allow-Origin: http://localhost:3000",
-                    "Access-Control-Allow-Credentials: true"
+            root.setProperty(HstNodeTypes.GENERAL_PROPERTY_PAGE_MODEL_API, "resourceapi");
+            root.setProperty(HstNodeTypes.GENERAL_PROPERTY_RESPONSE_HEADERS, new String[] {
+                    "Access-Control-Allow-Origin: *"
+            });
+            root.setProperty(HstNodeTypes.VIRTUALHOST_ALLOWED_ORIGINS, new String[] {
+                    "http://localhost:3000"
             });
 
             // Update URL Rewriter configuration

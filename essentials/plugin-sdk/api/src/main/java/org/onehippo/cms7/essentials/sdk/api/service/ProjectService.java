@@ -137,6 +137,16 @@ public interface ProjectService {
     Path getPlatformPropertiesPath();
 
     /**
+     * Get the Path to the project's CMS its hst-config.properties configuration file.
+     *
+     * The hst-config.properties file is expected to be found at 'cms/src/main/webapp/WEB-INF/hst-config.properties'.
+     *
+     * @return Path to the project's CMS hst-config.properties configuration file
+     * @return
+     */
+    Path getPlatformHstConfigPropertiesPath();
+
+    /**
      * Get the Path to the project's directory where the configuration files for the Maven Assembly plugin are located.
      *
      * These files are expected to be found in 'src/main/assembly' of the project.

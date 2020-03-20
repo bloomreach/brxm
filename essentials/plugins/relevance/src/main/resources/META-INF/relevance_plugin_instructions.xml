@@ -26,7 +26,7 @@
     <execute class="org.onehippo.cms7.essentials.plugins.relevance.RelevanceInstruction" />
 
     <!-- add properties to existing {{projectRoot}}/conf/platform.properties -->
-    <file action="append" source="platform-dev-relevance.properties" target="{{projectRoot}}/conf/platform-dev.properties" />
+    <file action="append" source="platform-dev-relevance.properties" target="{{cmsWebInfRoot}}/hst-config.properties" />
   </instructionSet>
 
 </instructions>

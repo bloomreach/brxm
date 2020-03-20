@@ -73,14 +73,14 @@ public class RelevanceExperimentsTrendsInstruction implements Instruction {
         changeMessageQueue.accept(Type.EXECUTE, "Add Environment '" + TARGETING_ENVIRONMENT_NAME + "' to context.xml.");
         changeMessageQueue.accept(Type.EXECUTE, "Add ElasticSearch related configuration to Maven cargo plugin configuration.");
         changeMessageQueue.accept(Type.EXECUTE, "Remove property " + ELASTICSEARCH_DISABLED_PROPERTY + " from " +
-                projectService.getPlatformPropertiesPath() + ".");
+                projectService.getPlatformHstConfigPropertiesPath() + ".");
     }
 
     private void removePlatformProperty(String property) throws IOException
     {
-        List<String> out = Files.lines(projectService.getPlatformPropertiesPath())
+        List<String> out = Files.lines(projectService.getPlatformHstConfigPropertiesPath())
                 .filter(line -> !line.startsWith(property))
                 .collect(Collectors.toList());
-        Files.write(projectService.getPlatformPropertiesPath(), out, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
+        Files.write(projectService.getPlatformHstConfigPropertiesPath(), out, StandardOpenOption.WRITE, StandardOpenOption.TRUNCATE_EXISTING);
     }
 }
