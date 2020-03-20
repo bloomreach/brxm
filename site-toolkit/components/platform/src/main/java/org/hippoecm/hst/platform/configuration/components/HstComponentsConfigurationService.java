@@ -235,20 +235,13 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
             ((HstComponentConfigurationService) componentConfiguration).setReferenceName(StringPool.get(autoRefName));
         }
 
-        ((HstComponentConfigurationService) componentConfiguration).autocreateReferenceNames();
+        ((HstComponentConfigurationService) componentConfiguration).autocreateReferenceNames(false);
     }
 
-    // TODO
     private void createExperienceComponentRefNames(final HstComponentConfigurationService experiencePageComponentConfig) {
-        if (!experiencePageComponentConfig.isExperiencePageComponent()) {
-            // component instance from in memory HstModel : this one already has a refName which can be kept
-            // TODO Is this really correct? child hst components coming from Hst in memory model have been cloned
-            // so better perhaps to recreate the namespace after all?
-            return;
-        }
         // this is the root experience page
         experiencePageComponentConfig.setReferenceName("ep");
-        experiencePageComponentConfig.createExperienceComponentRefNames();
+        experiencePageComponentConfig.autocreateReferenceNames(true);
     }
 
     /**

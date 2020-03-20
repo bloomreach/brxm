@@ -150,7 +150,7 @@ public class ExperiencePageIT extends AbstractBeanTestCase {
             HstComponentConfiguration body = hstComponentConfiguration.getChildByName("body");
             assertThat(body).as("'body' component expected to be part of Experience Page explicitly").isNotNull();
             assertThat(body.isExperiencePageComponent()).isTrue();
-            assertThat(body.getReferenceName()).startsWith("ep");
+            assertThat(body.getReferenceName()).startsWith("r");
 
         } catch (ContainerException e) {
             fail(e.getMessage());

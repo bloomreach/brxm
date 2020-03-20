@@ -1234,32 +1234,24 @@ public class HstComponentConfigurationService implements HstComponentConfigurati
         }
     }
 
-    protected void autocreateReferenceNames() {
+    /**
+     * <p>
+     *     In case of Experience Pages, the experience page can have inherited CLONED components
+     *     from the HST in memory model. These cloned components already have a reference name, but that reference
+     *     name might be incorrect since for example due to inheritance, the experience page might have inherited below
+     *     one component two children both with reference name 'r1'. To avoid this problem, the flag 'recreate = true'
+     *     triggers the recreation of the reference names
+     * </p>
+     * @param recreate if true, then regardless of whether the reference name is present or not, it gets recreated
+     */
+    void autocreateReferenceNames(final boolean recreate) {
 
         for (HstComponentConfigurationService child : orderedListConfigs) {
-            child.autocreateReferenceNames();
-            if (child.getReferenceName() == null || "".equals(child.getReferenceName())) {
+            child.autocreateReferenceNames(recreate);
+            if (recreate || child.getReferenceName() == null || "".equals(child.getReferenceName())) {
                 String autoRefName = "r" + (++autocreatedCounter);
                 while (usedChildReferenceNames.contains(autoRefName)) {
                     autoRefName = "r" + (++autocreatedCounter);
-                }
-                child.setReferenceName(StringPool.get(autoRefName));
-            }
-        }
-    }
-
-    protected void createExperienceComponentRefNames() {
-        for (HstComponentConfigurationService child : orderedListConfigs) {
-            if (!child.isExperiencePageComponent()) {
-                // hst component from in memory hst model, these already have reference names
-                continue;
-            }
-            child.createExperienceComponentRefNames();
-            if (child.getReferenceName() == null || "".equals(child.getReferenceName())) {
-                // set ref name for experience page, to avoid collisions, to not use 'r' which is used by hst model exp pages
-                String autoRefName = "ep" + (++autocreatedCounter);
-                while (usedChildReferenceNames.contains(autoRefName)) {
-                    autoRefName = "ep" + (++autocreatedCounter);
                 }
                 child.setReferenceName(StringPool.get(autoRefName));
             }
