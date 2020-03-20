@@ -146,24 +146,24 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         
         templateResourceMap = Collections.unmodifiableMap(getTemplateResourceMap(ccn.getCompositeConfigurationNodes().get(HstNodeTypes.NODENAME_HST_TEMPLATES)));
 
-        enhanceComponentTree(templateResourceMap, nonPrototypeRootComponents);
+        populateComponentReferences(canonicalComponentConfigurations);
+
+        //  autocreating missing referenceNames
+        for (HstComponentConfiguration child : nonPrototypeRootComponents) {
+            autocreateReferenceNames(child);
+        }
+
+        enhanceComponentTree(nonPrototypeRootComponents);
 
     }
 
-    private void enhanceComponentTree(Map<String, Template> templateResourceMap, final List<HstComponentConfiguration> childComponents) {
-        // merging referenced components:  to avoid circular population, hold a list of already populated configs
-        List<HstComponentConfiguration> populated = new ArrayList<HstComponentConfiguration>();
-        for (HstComponentConfiguration child : canonicalComponentConfigurations.values()) {
-            if (!populated.contains(child)) {
-                ((HstComponentConfigurationService) child).populateComponentReferences(canonicalComponentConfigurations,
-                        populated);
-            }
+    public void populateComponentReferences(final Map<String, HstComponentConfiguration> populate) {
+        for (HstComponentConfiguration child : populate.values()) {
+            ((HstComponentConfigurationService) child).populateComponentReferences(populate);
         }
+    }
 
-        //  autocreating missing referenceNames
-        for (HstComponentConfiguration child : childComponents) {
-            autocreateReferenceNames(child);
-        }
+    public void enhanceComponentTree(final List<HstComponentConfiguration> childComponents) {
 
         // setting renderpaths for each component
         for (HstComponentConfiguration child : childComponents) {
@@ -224,17 +224,86 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
         return templateResourceMap;
     }
 
-    private void autocreateReferenceNames(HstComponentConfiguration componentConfiguration) {
+    private void autocreateReferenceNames(final HstComponentConfiguration componentConfiguration) {
+
         if (componentConfiguration.getReferenceName() == null || "".equals(componentConfiguration.getReferenceName())) {
+
             String autoRefName = "r" + (++autoCreatedCounter);
             while (usedReferenceNames.contains(autoRefName)) {
                 autoRefName = "r" + (++autoCreatedCounter);
             }
             ((HstComponentConfigurationService) componentConfiguration).setReferenceName(StringPool.get(autoRefName));
         }
+
         ((HstComponentConfigurationService) componentConfiguration).autocreateReferenceNames();
     }
-    
+
+    // TODO
+    private void createExperienceComponentRefNames(final HstComponentConfigurationService experiencePageComponentConfig) {
+        if (!experiencePageComponentConfig.isExperiencePageComponent()) {
+            // component instance from in memory HstModel : this one already has a refName which can be kept
+            // TODO Is this really correct? child hst components coming from Hst in memory model have been cloned
+            // so better perhaps to recreate the namespace after all?
+            return;
+        }
+        // this is the root experience page
+        experiencePageComponentConfig.setReferenceName("ep");
+        experiencePageComponentConfig.createExperienceComponentRefNames();
+    }
+
+    /**
+     *
+     * <p>
+     *     Note that this method is invoked concurrently! Therefore, it should never modify non thread-safe instance
+     *     variables of objects that are shared between threads, like this {@link HstComponentsConfigurationService} instance!
+     * </p>
+     * <p>
+     *     Although hard to see from the code below, it does not modify ANY HST component instance from the HST in
+     *     memory model, but only the 'request based Experience Page Components'
+     * </p>
+     * @param experiencePageComponentConfig
+     */
+    public void populateExperiencePage(final HstComponentConfigurationService experiencePageComponentConfig) {
+        // we need to populate the components for experiencePageComponentConfig but can only do so if we also have
+        // all the populated hstModelComponents from the in memory hst model (for example to resolve hst
+        // config inherited components for experience page)
+
+        final Map<String, HstComponentConfiguration> hstModelComponents = getComponentConfigurations();
+
+        // add experiencePageComponentConfig to combined
+        final Map<String, HstComponentConfiguration> combined = experiencePageComponentConfig.flattened()
+                .collect(Collectors.toMap(HstComponentConfiguration::getId, comp -> comp));
+
+        // populated HstComponentsConfigurationService#getComponentConfigurations() plus the flattened list of
+        // components in experiencePageComponentConfig
+        combined.putAll(hstModelComponents);
+
+        // below is very delicate wrt concurrency: A HstComponentConfiguration is NOT thread-safe. However, the
+        // method below won't populate (or modify) *any* component from hstComponentsConfigurationService.getComponentConfigurations()
+        // since all these components already have
+        //
+        // HstComponentConfigurationService#referencesPopulated = true
+        //
+        // therefor, only the HstComponents from 'experiencePageComponentConfig' will be modified, and those components
+        // are only for the current request and thus there won't be concurrency on those objects. Therefor the
+        // below method is allowed even though there can be concurrency on the HstComponent objects from the
+        // in memory HST model!
+        populateComponentReferences(combined);
+
+        // As a result of 'populateComponentReferences', any HST configuration model referenced hst components from
+        // the experience page hst:page, will be *cloned* into the experiencePageComponentConfig. Therefor at this
+        // point, experiencePageComponentConfig will contain all the required HstComponentService instances and these
+        // are *not* shared with the Hst in memory model.
+
+
+        createExperienceComponentRefNames(experiencePageComponentConfig);
+
+        // resolve inherited components : note only the experiencePageComponentConfig is enhanced, not the
+        // HstComponentService objects from the shared in memory model, so no concurrency involved
+        enhanceComponentTree(Collections.singletonList(experiencePageComponentConfig));
+
+    }
+
     /*
      * rootNodeName is either hst:components, hst:pages, hst:abstractpages or hst:prototypepages.
      */
@@ -334,6 +403,7 @@ public class HstComponentsConfigurationService implements HstComponentsConfigura
     public String toString() {
         return "HstComponentsConfigurationService [id='"+id+"', hashcode = '"+hashCode()+"']";
     }
+
 
     public static class Template {
 

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2015 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -310,6 +310,11 @@ public interface HstComponentConfiguration extends HstComponentInfo {
      * @return <code>true</code> when this {@link HstComponentConfiguration} is marked as deleted.
      */
     boolean isMarkedDeleted();
+
+    /**
+     * @return {@code true} if this component is part of an experience page
+     */
+    boolean isExperiencePageComponent();
 
     /**
      * @return a depth-first stream of this {@link HstComponentConfiguration} plus its descendants

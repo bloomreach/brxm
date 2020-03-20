@@ -205,6 +205,36 @@ definitions:
                       jcr:primaryType: hippostd:html
                       hippostd:content: This is the content of the aboutsubfolder
                         page
+          /experiences:
+            jcr:primaryType: hippostd:folder
+            jcr:mixinTypes: ['mix:referenceable']
+            hippostd:foldertype: [new-folder, new-document]
+            /expPage1:
+              jcr:primaryType: hippo:handle
+              jcr:mixinTypes: ['mix:referenceable']
+              /expPage1:
+                jcr:primaryType: unittestproject:newspage
+                jcr:mixinTypes: ['mix:versionable', 'hst:page']
+                hippo:availability: [live, preview]
+                hippostd:holder: admin
+                hippostd:state: published
+                hippostdpubwf:createdBy: admin
+                hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                hippostdpubwf:lastModifiedBy: admin
+                unittestproject:date: 2009-08-10T10:05:07.580+02:00
+                unittestproject:summary: Summary about Experience Page
+                unittestproject:title: My Experience Page 1
+                /unittestproject:body:
+                  jcr:primaryType: hippostd:html
+                  hippostd:content: My Experience Page 1
+                /hst:page:
+                  jcr:primaryType: hst:component
+                  hst:referencecomponent: hst:abstractpages/basepage
+                  /body:
+                    jcr:primaryType: hst:component
+                    hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
+                    hst:template: detail
           /News:
             jcr:primaryType: hippostd:folder
             jcr:mixinTypes: ['mix:referenceable']
@@ -283,6 +313,32 @@ definitions:
                 jcr:primaryType: hippostd:folder
                 jcr:mixinTypes: ['mix:referenceable']
                 hippostd:foldertype: [new-folder, new-document]
+                /articleAsExpPage:
+                  jcr:primaryType: hippo:handle
+                  jcr:mixinTypes: ['mix:referenceable']
+                  /articleAsExpPage:
+                    jcr:primaryType: unittestproject:newspage
+                    jcr:mixinTypes: ['mix:versionable', 'hst:page']
+                    hippo:availability: [live, preview]
+                    hippostd:holder: admin
+                    hippostd:state: published
+                    hippostdpubwf:createdBy: admin
+                    hippostdpubwf:creationDate: 2010-01-21T12:34:11.055+02:00
+                    hippostdpubwf:lastModificationDate: 2010-01-22T12:34:11.055+02:00
+                    hippostdpubwf:lastModifiedBy: admin
+                    unittestproject:date: 2009-08-10T10:05:07.580+02:00
+                    unittestproject:summary: Summary about articleAsExpPage
+                    unittestproject:title: My articleAsExpPage 1
+                    /unittestproject:body:
+                      jcr:primaryType: hippostd:html
+                      hippostd:content: My articleAsExpPage Page 1
+                    /hst:page:
+                      jcr:primaryType: hst:component
+                      hst:referencecomponent: hst:abstractpages/basepage
+                      /body:
+                        jcr:primaryType: hst:component
+                        hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
+                        hst:template: detail
             /2008:
               jcr:primaryType: hippostd:folder
               jcr:mixinTypes: ['mix:referenceable']

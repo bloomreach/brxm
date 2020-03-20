@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 package org.hippoecm.hst.site.request;
 
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
@@ -27,13 +28,20 @@ import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.site.HstSite;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
 import org.hippoecm.hst.container.RequestContextProvider;
+import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
 import org.hippoecm.hst.core.util.PropertyParser;
+import org.hippoecm.hst.experiencepage.ExperiencePageService;
+import org.hippoecm.hst.experiencepage.ExperiencePageLoadingException;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.hippoecm.hst.configuration.HstNodeTypes.MIXINTYPE_HST_PAGE;
+import static org.hippoecm.hst.configuration.HstNodeTypes.NODENAME_HST_PAGE;
 
 /**
  * ResolvedSiteMapItemImpl
@@ -48,13 +56,12 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
     private Properties localResolvedParameters;
     private ResolvedMount resolvedMount;
     private String relativeContentPath;
-    private HstComponentConfiguration hstComponentConfiguration;
+    private Optional<HstComponentConfiguration> hstComponentConfiguration;
     private String pathInfo;
     private String pageTitle;
     private PropertyParser pp;
-    private boolean isComponentResolved;
 
-    public ResolvedSiteMapItemImpl(HstSiteMapItem hstSiteMapItem , Properties params, String pathInfo, ResolvedMount resolvedMount) {
+    public ResolvedSiteMapItemImpl(HstSiteMapItem hstSiteMapItem, Properties params, String pathInfo, ResolvedMount resolvedMount) {
         this.pathInfo = PathUtils.normalizePath(pathInfo);
         this.hstSiteMapItem = hstSiteMapItem;
         this.resolvedMount = resolvedMount;
@@ -71,7 +78,7 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
 
         pp = new PropertyParser(params);
 
-        for(Entry<String, String> entry : hstSiteMapItem.getParameters().entrySet()) {
+        for (Entry<String, String> entry : hstSiteMapItem.getParameters().entrySet()) {
             Object o = pp.resolveProperty(entry.getKey(), entry.getValue());
             if (o != null) {
                 resolvedParameters.put(entry.getKey(), o);
@@ -87,7 +94,7 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
             }
         }
 
-        for(Entry<String, String> entry : hstSiteMapItem.getLocalParameters().entrySet()) {
+        for (Entry<String, String> entry : hstSiteMapItem.getLocalParameters().entrySet()) {
             Object o = pp.resolveProperty(entry.getKey(), entry.getValue());
             if (o != null) {
                 localResolvedParameters.put(entry.getKey(), o);
@@ -98,11 +105,11 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
         pageTitle = (String)pp.resolveProperty("pageTitle", hstSiteMapItem.getPageTitle());
     }
 
-    public int getStatusCode(){
+    public int getStatusCode() {
         return hstSiteMapItem.getStatusCode();
     }
 
-    public int getErrorCode(){
+    public int getErrorCode() {
         return hstSiteMapItem.getErrorCode();
     }
 
@@ -112,24 +119,25 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
 
 
     public HstComponentConfiguration getHstComponentConfiguration() {
-        if (isComponentResolved) {
-            return hstComponentConfiguration;
+
+        if (hstComponentConfiguration != null) {
+            return hstComponentConfiguration.orElse(null);
         }
         resolveComponentConfiguration();
 
-        return hstComponentConfiguration;
+        return hstComponentConfiguration.orElse(null);
     }
 
     public String getParameter(String name) {
-        return (String)resolvedParameters.get(name);
+        return (String) resolvedParameters.get(name);
     }
 
-    public Properties getParameters(){
+    public Properties getParameters() {
         return resolvedParameters;
     }
 
     public String getLocalParameter(String name) {
-        return (String)localResolvedParameters.get(name);
+        return (String) localResolvedParameters.get(name);
     }
 
     public Properties getLocalParameters() {
@@ -171,30 +179,58 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
 
     private void resolveComponentConfiguration() {
 
-        // check whether there is a more specific mapping
+        if (getRelativeContentPath() != null) {
+            // find out whether there is a content bean for the request, and if so, check whether the backing node
+            // is a document that contains its own hst components: if so, load this configuration dynamically if not
+            // yet in cache : when this method is invoked, the matching phase has been done and we can use the
+            // HstRequestContext!
+
+            final HippoBean contentBean = RequestContextProvider.get().getContentBean();
+            if (contentBean != null && contentBean.getNode() != null) {
+
+                final Node node = contentBean.getNode();
+                try {
+                    if (node.isNodeType(MIXINTYPE_HST_PAGE) && node.hasNode(NODENAME_HST_PAGE)) {
+                        // experience page!
+                        final Node page = node.getNode(NODENAME_HST_PAGE);
+                        // this is a node of type hst:component, fetch the hst component configuration for it
+                        final ExperiencePageService experiencePageService
+                                = HippoServiceRegistry.getService(ExperiencePageService.class);
+
+                        final HstComponentConfiguration config = experiencePageService.loadExperiencePage(page, this);
+                        hstComponentConfiguration = Optional.of(config);
+                        return;
+                    }
+                } catch (RepositoryException e) {
+                    throw new ExperiencePageLoadingException("Failed to load HstPage" , e);
+                }
+            }
+        }
+
+        // check whether there is a more specific mapping (note that for experience pages this is never needed)
         String componentConfigurationId = resolveMappedConponentConfigurationId();
 
         HstSite hstSite = hstSiteMapItem.getHstSiteMap().getSite();
         if (componentConfigurationId == null && hstSiteMapItem.getComponentConfigurationId() == null) {
             log.debug("The ResolvedSiteMapItemImpl does not have a component configuration id because the sitemap item '{}' does not have one", hstSiteMapItem.getId());
+            hstComponentConfiguration =  Optional.empty();
         } else {
             if (componentConfigurationId == null) {
                 log.debug("No mapped component configuration id, getting the default componentconfiguration id");
                 componentConfigurationId = hstSiteMapItem.getComponentConfigurationId();
             }
 
-            if (componentConfigurationId != null) {
-                final String resolvedComponentConfigurationId = (String)pp.resolveProperty("componentConfigurationId", componentConfigurationId);
-                hstComponentConfiguration = hstSite.getComponentsConfiguration().getComponentConfiguration(resolvedComponentConfigurationId);
+            final String resolvedComponentConfigurationId = (String) pp.resolveProperty("componentConfigurationId", componentConfigurationId);
+            final HstComponentConfiguration config = hstSite.getComponentsConfiguration().getComponentConfiguration(resolvedComponentConfigurationId);
 
-                if (hstComponentConfiguration == null) {
-                    log.warn("ResolvedSiteMapItemImpl cannot be created correctly, because the component configuration id {} cannot be found.",
-                            componentConfigurationId);
-                }
+            if (config == null) {
+                log.warn("ResolvedSiteMapItemImpl cannot be created correctly, because the component configuration id {} cannot be found.",
+                        componentConfigurationId);
+                hstComponentConfiguration = Optional.empty();
+            } else {
+                hstComponentConfiguration = Optional.of(config);
             }
         }
-
-        isComponentResolved = true;
     }
 
     /**
@@ -218,7 +254,7 @@ public class ResolvedSiteMapItemImpl implements ResolvedSiteMapItem {
                 return null;
             }
 
-            Node node =  session.getNode(absPath);
+            Node node = session.getNode(absPath);
             if (node.isNodeType(HippoNodeType.NT_HANDLE)) {
                 // we need to fetch the document below the handle if it is present
                 if (!node.hasNode(node.getName())) {

@@ -82,6 +82,9 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
         pageMetaData.put(ChannelManagerConstants.HST_MOUNT_ID, mount.getIdentifier());
         pageMetaData.put(ChannelManagerConstants.HST_SITE_ID, mount.getHstSite().getCanonicalIdentifier());
         pageMetaData.put(ChannelManagerConstants.HST_PAGE_ID, compConfig.getCanonicalIdentifier());
+        // provide info for CM that the page is an experience page: The top hst component for experience pages
+        // always has compConfig.isExperiencePageComponent() = true
+        pageMetaData.put(ChannelManagerConstants.HST_EXPERIENCE_PAGE,  Boolean.valueOf(compConfig.isExperiencePageComponent()).toString());
 
         final ResolvedSiteMapItem resolvedSiteMapItem = requestContext.getResolvedSiteMapItem();
         if (resolvedSiteMapItem != null) {
@@ -134,17 +137,18 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
                                            final HstComponentWindow window) {
         final HstComponentConfiguration config = (HstComponentConfiguration)window.getComponentInfo();
 
-        if (!config.getCanonicalStoredLocation().contains(WORKSPACE_PATH_ELEMENT)) {
-            log.debug("Component '{}' not editable as not part of hst:workspace configuration", config.toString());
-            return;
+        if (config.getCanonicalStoredLocation().contains(WORKSPACE_PATH_ELEMENT) || config.isExperiencePageComponent()) {
+            final Map<String, String> preambleAttributes = new HashMap<>();
+            final Map<String, String> epilogueAttributes = new HashMap<>();
+            populateAttributes(window, request, preambleAttributes, epilogueAttributes);
+            response.addPreamble(createCommentWithAttr(preambleAttributes, response));
+            response.addEpilogue(createCommentWithAttr(epilogueAttributes, response));
+        } else {
+            log.debug("Component '{}' not editable as not part of hst:workspace configuration and not part of " +
+                    "an experience page", config.toString());
         }
-
-        final Map<String, String> preambleAttributes = new HashMap<>();
-        final Map<String, String> epilogueAttributes = new HashMap<>();
-        populateAttributes(window, request, preambleAttributes, epilogueAttributes);
-        response.addPreamble(createCommentWithAttr(preambleAttributes, response));
-        response.addEpilogue(createCommentWithAttr(epilogueAttributes, response));
     }
+
 
     final void populateAttributes(HstComponentWindow window, HstRequest request,
                                   Map<String, String> preambleAttributes, Map<String, String> epilogueAttributes) {

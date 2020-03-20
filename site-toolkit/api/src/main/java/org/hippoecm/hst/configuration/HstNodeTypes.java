@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -58,6 +58,7 @@ public interface HstNodeTypes {
     String NODETYPE_HST_BLUEPRINTS = "hst:blueprints";
     String NODETYPE_HST_CONTAINERCOMPONENTSFOLDER = "hst:containercomponentfolder";
 
+    String MIXINTYPE_HST_PAGE = "hst:page";
     String MIXINTYPE_HST_EDITABLE = "hst:editable";
     String EDITABLE_PROPERTY_STATE = "hst:state";
 
@@ -125,6 +126,7 @@ public interface HstNodeTypes {
     String SITEMAPITEM_PROPERTY_STATUSCODE = "hst:statuscode";
     String SITEMAPITEM_PROPERTY_ERRORCODE = "hst:errorcode";
     String SITEMAPITEM_PROPERTY_RELATIVECONTENTPATH = "hst:relativecontentpath";
+
     String SITEMAPITEM_PROPERTY_COMPONENTCONFIGURATIONID = "hst:componentconfigurationid";
 
     String SITEMAPITEM_PROPERTY_COMPONENT_CONFIG_MAPPING_NAMES = "hst:componentconfigurationmappingnames";
@@ -223,6 +225,8 @@ public interface HstNodeTypes {
     String NODENAME_HST_COMPONENTS = "hst:components";
     String NODENAME_HST_CATALOG = "hst:catalog";
     String NODENAME_HST_PAGES = "hst:pages";
+    String NODENAME_HST_PAGE = "hst:page";
+
     String NODENAME_HST_ABSTRACTPAGES = "hst:abstractpages";
     String NODENAME_HST_PROTOTYPEPAGES = "hst:prototypepages";
     String NODENAME_HST_TEMPLATES = "hst:templates";

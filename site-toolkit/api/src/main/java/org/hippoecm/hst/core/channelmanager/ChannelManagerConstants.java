@@ -1,5 +1,5 @@
 /*
- *  Copyright 2013-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -26,6 +26,7 @@ public interface ChannelManagerConstants {
     String HST_MOUNT_ID = "HST-Mount-Id";
     String HST_SITE_ID = "HST-Site-Id";
     String HST_PAGE_ID = "HST-Page-Id";
+    String HST_EXPERIENCE_PAGE = "HST-Experience-Page";
     String HST_SITEMAP_ID = "HST-Sitemap-Id";
     String HST_SITEMAPITEM_ID = "HST-SitemapItem-Id";
     String HST_PAGE_EDITABLE = "HST-Page-Editable";
