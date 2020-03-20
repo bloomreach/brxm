@@ -171,42 +171,32 @@ describe('HippoIframeService', () => {
     spyOn($log, 'warn');
 
     HippoIframeService.reload();
+    $rootScope.$digest();
 
     expect(ScrollService.savePosition).toHaveBeenCalled();
     expect(ScrollService.restorePosition).not.toHaveBeenCalled();
     expect(CommunicationService.reload).toHaveBeenCalled();
     expect(PageToolsService.updatePageTools).not.toHaveBeenCalled();
-    expect(HippoIframeService.deferredReload).toBeTruthy();
 
     $rootScope.$emit('page:change', { initial: true });
 
     expect(ScrollService.restorePosition).toHaveBeenCalled();
     expect(PageToolsService.updatePageTools).toHaveBeenCalled();
 
-    expect(HippoIframeService.deferredReload).toBeFalsy();
     expect($log.warn).not.toHaveBeenCalled();
   });
 
-  it('logs a warning upon a reload request when a reload is already ongoing', (done) => {
+  it('logs a warning upon a reload request when a reload is already ongoing', () => {
     spyOn($log, 'warn');
 
     HippoIframeService.pageLoaded = true;
-    const initialPromise = HippoIframeService.reload();
+    HippoIframeService.reload();
 
     expect($log.warn).not.toHaveBeenCalled();
 
-    const subsequentPromise = HippoIframeService.reload();
+    HippoIframeService.reload();
 
     expect($log.warn).toHaveBeenCalled();
-    expect(subsequentPromise).toBe(initialPromise);
-
-    initialPromise.then(() => {
-      done();
-    });
-
-    $rootScope.$emit('page:change', { initial: true });
-
-    $rootScope.$digest();
   });
 
   it('reports page loads as user activity', () => {
