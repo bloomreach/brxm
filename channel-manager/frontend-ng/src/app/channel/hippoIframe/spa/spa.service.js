@@ -14,9 +14,6 @@
  * limitations under the License.
  */
 
-const PROPERTY_URL = 'url';
-const PROPERTY_SPA_URL = 'org.hippoecm.hst.configuration.channel.PreviewURLChannelInfo_url';
-
 export default class SpaService {
   constructor($log, $q, $rootScope, ChannelService, DomService, PageStructureService, RpcService) {
     'ngInject';
@@ -36,30 +33,8 @@ export default class SpaService {
     this._renderingPool = [];
   }
 
-  getOrigin() {
-    const properties = this.ChannelService.getProperties();
-    const channel = this.ChannelService.getChannel();
-    const url = (properties && properties[PROPERTY_SPA_URL]) || (channel && channel[PROPERTY_URL]);
-
-    if (!url) {
-      return;
-    }
-
-    try {
-      const { origin } = new URL(url);
-
-      // eslint-disable-next-line consistent-return
-      return origin;
-    } catch (error) {} // eslint-disable-line no-empty
-  }
-
   init(iframeJQueryElement) {
     this.iframeJQueryElement = iframeJQueryElement;
-
-    this.RpcService.initialize({
-      origin: this.getOrigin(),
-      target: iframeJQueryElement[0].contentWindow,
-    });
 
     if (this._offSdkUnload) {
       this._offSdkUnload();
@@ -84,7 +59,6 @@ export default class SpaService {
       delete this._offSdkUnload;
     }
 
-    this.RpcService.destroy();
     this._onUnload();
   }
 

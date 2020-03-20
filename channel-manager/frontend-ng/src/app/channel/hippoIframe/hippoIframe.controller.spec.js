@@ -336,7 +336,7 @@ describe('hippoIframeCtrl', () => {
   });
 
   it('initiates a connection with the iframe bundle when the SPA SDK is ready', () => {
-    spyOn(SpaService, 'getOrigin').and.returnValue('http://localhost:3000');
+    spyOn(ChannelService, 'getOrigin').and.returnValue('http://localhost:3000');
     DomService.isFrameAccessible.and.returnValue(false);
 
     $rootScope.$emit('spa:ready');

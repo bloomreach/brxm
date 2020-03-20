@@ -35,6 +35,7 @@ class HippoIframeCtrl {
     HstComponentService,
     PageStructureService,
     PickerService,
+    RpcService,
     ScrollService,
     SpaService,
     ViewportService,
@@ -58,6 +59,7 @@ class HippoIframeCtrl {
     this.HstComponentService = HstComponentService;
     this.PageStructureService = PageStructureService;
     this.PickerService = PickerService;
+    this.RpcService = RpcService;
     this.ScrollService = ScrollService;
     this.SpaService = SpaService;
     this.ViewportService = ViewportService;
@@ -104,6 +106,7 @@ class HippoIframeCtrl {
     this.ViewportService.init(sheetJQueryElement);
     this.ScrollService.init(this.iframeJQueryElement, canvasJQueryElement, sheetJQueryElement);
     this.SpaService.init(this.iframeJQueryElement);
+    this.RpcService.initialize(this.iframeJQueryElement[0].contentWindow);
   }
 
   $onChanges(changes) {
@@ -119,6 +122,7 @@ class HippoIframeCtrl {
   $onDestroy() {
     this.CommunicationService.disconnect();
     this.SpaService.destroy();
+    this.RpcService.destroy();
     this.CmsService.unsubscribe('render-component', this._onComponentRender, this);
     this.CmsService.unsubscribe('delete-component', this._onComponentDelete, this);
     this._offComponentClick();
@@ -170,7 +174,7 @@ class HippoIframeCtrl {
       return;
     }
 
-    const connection = this.CommunicationService.connect({ target, origin: this.SpaService.getOrigin() });
+    const connection = this.CommunicationService.connect({ target, origin: this.ChannelService.getOrigin() });
 
     await this.SpaService.inject(this.HippoIframeService.getAssetUrl(this.iframeAsset));
     await connection;

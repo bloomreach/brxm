@@ -681,4 +681,35 @@ describe('ChannelService', () => {
     ChannelService.setToolbarDisplayed(false);
     expect(ChannelService.isToolbarDisplayed).toBe(false);
   });
+
+  describe('getOrigin', () => {
+    beforeEach(() => {
+      spyOn(ChannelService, 'getChannel');
+      spyOn(ChannelService, 'getProperties');
+    });
+
+    it('returns an origin from the preview url', () => {
+      ChannelService.getProperties.and.returnValue({
+        'org.hippoecm.hst.configuration.channel.PreviewURLChannelInfo_url': 'http://example.com:3000/something',
+      });
+
+      expect(ChannelService.getOrigin()).toBe('http://example.com:3000');
+    });
+
+    it('returns an origin from the channel url', () => {
+      ChannelService.getChannel.and.returnValue({ url: 'http://localhost:8080/_cmsinternal' });
+
+      expect(ChannelService.getOrigin()).toBe('http://localhost:8080');
+    });
+
+    it('returns an empty origin when there is no configured url', () => {
+      expect(ChannelService.getOrigin()).toBeUndefined();
+    });
+
+    it('returns an empty origin when the url is invalid', () => {
+      ChannelService.getChannel.and.returnValue({ url: '/_cmsinternal' });
+
+      expect(ChannelService.getOrigin()).toBeUndefined();
+    });
+  });
 });
