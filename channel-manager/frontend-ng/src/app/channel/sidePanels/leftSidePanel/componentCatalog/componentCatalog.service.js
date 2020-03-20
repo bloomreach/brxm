@@ -16,6 +16,7 @@
 
 class ComponentCatalogService {
   constructor(
+    $rootScope,
     CommunicationService,
     ConfigService,
     ContainerService,
@@ -28,6 +29,7 @@ class ComponentCatalogService {
   ) {
     'ngInject';
 
+    this.$rootScope = $rootScope;
     this.CommunicationService = CommunicationService;
     this.ConfigService = ConfigService;
     this.EditComponentService = EditComponentService;
@@ -37,6 +39,8 @@ class ComponentCatalogService {
     this.PageStructureService = PageStructureService;
     this.RightSidePanelService = RightSidePanelService;
     this.SidePanelService = SidePanelService;
+
+    this._onMaskClick = this._onMaskClick.bind(this);
   }
 
   getSelectedComponent() {
@@ -44,23 +48,29 @@ class ComponentCatalogService {
   }
 
   async selectComponent(component) {
+    const offMaskClick = this.$rootScope.$on('mask:click', this._onMaskClick);
+
     this.selectedComponent = component;
     this.MaskService.mask('mask-add-component');
     this.SidePanelService.liftSidePanelAboveMask();
     this.HippoIframeService.liftIframeAboveMask();
-    this.MaskService.onClick(() => this.CommunicationService.toggleAddMode(false));
 
     try {
       const { container, nextComponent } = await this.CommunicationService.toggleAddMode(true);
 
       await this._addComponent(container, nextComponent);
     } finally {
+      offMaskClick();
+
       delete this.selectedComponent;
       this.MaskService.unmask();
       this.SidePanelService.lowerSidePanelBeneathMask();
       this.HippoIframeService.lowerIframeBeneathMask();
-      this.MaskService.removeClickHandler();
     }
+  }
+
+  _onMaskClick() {
+    this.CommunicationService.toggleAddMode(false);
   }
 
   async _addComponent(containerId, nextComponentId) {

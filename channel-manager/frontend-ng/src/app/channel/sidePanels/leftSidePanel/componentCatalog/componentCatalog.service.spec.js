@@ -35,7 +35,7 @@ describe('ComponentCatalogService', () => {
     CommunicationService = jasmine.createSpyObj('CommunicationService', ['toggleAddMode']);
     ContainerService = jasmine.createSpyObj('ContainerService', ['addComponent']);
     EditComponentService = jasmine.createSpyObj('EditComponentService', ['startEditing']);
-    MaskService = jasmine.createSpyObj('MaskService', ['mask', 'unmask', 'onClick', 'removeClickHandler']);
+    MaskService = jasmine.createSpyObj('MaskService', ['mask', 'unmask']);
     HippoIframeService = jasmine.createSpyObj('HippoIframeService', ['liftIframeAboveMask', 'lowerIframeBeneathMask']);
     PageStructureService = jasmine.createSpyObj('PageStructureService', ['getPage']);
     RightSidePanelService = jasmine.createSpyObj('RightSidePanelService', ['close']);
@@ -95,10 +95,19 @@ describe('ComponentCatalogService', () => {
 
     it('should toggle off overlay add mode on mask click', () => {
       ComponentCatalogService.selectComponent();
-      const { args: [onMaskClick] } = MaskService.onClick.calls.mostRecent();
-      onMaskClick();
+      $rootScope.$emit('mask:click');
 
       expect(CommunicationService.toggleAddMode).toHaveBeenCalledWith(false);
+    });
+
+    it('should stop reacting on mask clicks when it is done', () => {
+      CommunicationService.toggleAddMode.and.returnValue($q.resolve());
+      ComponentCatalogService.selectComponent();
+      $rootScope.$digest();
+      CommunicationService.toggleAddMode.calls.reset();
+      $rootScope.$emit('mask:click');
+
+      expect(CommunicationService.toggleAddMode).not.toHaveBeenCalled();
     });
   });
 

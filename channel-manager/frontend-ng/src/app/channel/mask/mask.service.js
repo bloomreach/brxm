@@ -14,25 +14,16 @@
  * limitations under the License.
  */
 
-class MaskService {
+export default class MaskService {
   constructor($rootScope) {
     'ngInject';
 
     this.$rootScope = $rootScope;
     this.defaultMaskClass = 'masked';
-    this.clickHandler = angular.noop;
   }
 
   _resetMaskClass() {
     this.maskClass = this.defaultMaskClass;
-  }
-
-  onClick(clickHandler) {
-    this.clickHandler = clickHandler;
-  }
-
-  removeClickHandler() {
-    this.clickHandler = angular.noop;
   }
 
   mask(optionalMaskClass = '') {
@@ -54,5 +45,3 @@ class MaskService {
     });
   }
 }
-
-export default MaskService;

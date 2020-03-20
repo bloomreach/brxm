@@ -15,9 +15,10 @@
  */
 
 class MaskCtrl {
-  constructor(MaskService) {
+  constructor($rootScope, MaskService) {
     'ngInject';
 
+    this.$rootScope = $rootScope;
     this.MaskService = MaskService;
   }
 
@@ -26,7 +27,7 @@ class MaskCtrl {
   }
 
   onClick() {
-    this.MaskService.clickHandler();
+    this.$rootScope.$emit('mask:click');
   }
 }
 
