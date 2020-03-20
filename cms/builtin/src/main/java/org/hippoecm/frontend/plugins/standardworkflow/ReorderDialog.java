@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,8 +27,10 @@ import javax.jcr.RepositoryException;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.ajax.markup.html.AjaxLink;
+import org.apache.wicket.extensions.markup.html.repeater.data.grid.DataGridView;
 import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IDetachable;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
@@ -59,9 +61,19 @@ import org.hippoecm.repository.api.WorkflowDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * <p>This class implements the functionality to Reorder subfolders.</p>
+ *
+ * <p>The {@link FolderWorkflowPlugin} adds this dialog to the "reorder" action.</p>
+ *
+ * <p>The {@link #mapping} can be used as argument to
+ * {@link org.hippoecm.repository.standardworkflow.FolderWorkflow#reorder(List)}
+ * to perform the actual ordering.</p>
+ */
 class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
 
-    private static final Logger log = LoggerFactory.getLogger(ReorderDialog.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ReorderDialog.class);
+    public static final String TABLE = "table";
 
     private ReorderPanel panel;
     private List<String> mapping;
@@ -73,14 +85,14 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
         private JcrNodeModel nodeModel;
         private int index;
 
-        ListItem(JcrNodeModel nodeModel) {
+        ListItem(final JcrNodeModel nodeModel) {
             this.nodeModel = nodeModel;
             try {
                 name = nodeModel.getNode().getName();
                 index = nodeModel.getNode().getIndex();
                 displayName = new NodeNameModel(nodeModel);
             } catch (RepositoryException e) {
-                log.error(e.getMessage(), e);
+                LOG.error(e.getMessage(), e);
             }
         }
 
@@ -97,7 +109,7 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
         }
 
         public String getPathName() {
-            return name + (index > 1 ? "["+index+"]" : "");
+            return name + (index > 1 ? "[" + index + "]" : "");
         }
 
         public void detach() {
@@ -105,7 +117,7 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
         }
 
         @Override
-        public boolean equals(Object other) {
+        public boolean equals(final Object other) {
             if (other instanceof ListItem) {
                 ListItem otherItem = (ListItem) other;
                 try {
@@ -129,7 +141,7 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
 
         private final List<ListItem> listItems;
 
-        ReorderDataProvider(DocumentsProvider documents) {
+        ReorderDataProvider(final DocumentsProvider documents) {
             listItems = new LinkedList<>();
             Iterator<Node> it = documents.iterator(0, documents.size());
             while (it.hasNext()) {
@@ -141,12 +153,12 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
         }
 
         @Override
-        public Iterator<ListItem> iterator(long first, long count) {
+        public Iterator<ListItem> iterator(final long first, final long count) {
             return listItems.subList((int) first, (int) (first + count)).iterator();
         }
 
         @Override
-        public IModel<ListItem> model(ListItem object) {
+        public IModel<ListItem> model(final ListItem object) {
             return new Model<>(object);
         }
 
@@ -162,7 +174,7 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
             }
         }
 
-        public void shiftTop(ListItem item) {
+        public void shiftTop(final ListItem item) {
             int index = listItems.indexOf(item);
             if (index > 0) {
                 listItems.remove(index);
@@ -170,7 +182,7 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
             }
         }
 
-        public void shiftUp(ListItem item) {
+        public void shiftUp(final ListItem item) {
             int index = listItems.indexOf(item);
             if (index > 0) {
                 listItems.remove(index);
@@ -178,7 +190,7 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
             }
         }
 
-        public void shiftDown(ListItem item) {
+        public void shiftDown(final ListItem item) {
             int index = listItems.indexOf(item);
             if (index < listItems.size()) {
                 listItems.remove(index);
@@ -186,7 +198,7 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
             }
         }
 
-        public void shiftBottom(ListItem item) {
+        public void shiftBottom(final ListItem item) {
             int index = listItems.indexOf(item);
             if (index < listItems.size()) {
                 listItems.remove(index);
@@ -214,7 +226,7 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
         private AjaxLink<Void> top;
         private AjaxLink<Void> bottom;
 
-        public ReorderPanel(String id, JcrNodeModel model, DocumentListFilter filter) {
+        ReorderPanel(final String id, final JcrNodeModel model, final DocumentListFilter filter) {
             super(id);
             setOutputMarkupId(true);
 
@@ -240,7 +252,7 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
             column = new ListColumn<>(Model.of(""), "name");
             column.setRenderer(new IListCellRenderer<ListItem>() {
 
-                public Component getRenderer(String id, IModel<ListItem> model) {
+                public Component getRenderer(final String id, final IModel<ListItem> model) {
                     ListItem item = model.getObject();
                     return new Label(id, item.getDisplayName());
                 }
@@ -262,19 +274,17 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
 
             pagingDefinition = new ListPagingDefinition();
             pagingDefinition.setPageSize(dataProvider.size() > 0 ? (int) dataProvider.size() : 1);
-            dataTable = new ListDataTable<>("table", tableDefinition, dataProvider, this, false, pagingDefinition);
+            updateListDataTable();
             add(dataTable);
 
             top = new AjaxLink<Void>("top") {
                 @Override
-                public void onClick(AjaxRequestTarget target) {
+                public void onClick(final AjaxRequestTarget target) {
                     IModel<ListItem> selection = dataTable.getModel();
                     dataProvider.shiftTop(selection.getObject());
 
                     ReorderPanel thisPanel = ReorderPanel.this;
-                    dataTable = new ListDataTable<>("table", tableDefinition, dataProvider, thisPanel, false,
-                            pagingDefinition);
-                    dataTable.setScrollSelectedIntoView(true, true);
+                    updateListDataTable();
                     thisPanel.replace(dataTable);
                     selectionChanged(selection);
                 }
@@ -286,15 +296,10 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
 
             up = new AjaxLink<Void>("up") {
                 @Override
-                public void onClick(AjaxRequestTarget target) {
+                public void onClick(final AjaxRequestTarget target) {
                     IModel<ListItem> selection = dataTable.getModel();
                     dataProvider.shiftUp(selection.getObject());
-
-                    ReorderPanel thisPanel = ReorderPanel.this;
-                    dataTable = new ListDataTable<>("table", tableDefinition, dataProvider, thisPanel, false,
-                            pagingDefinition);
-                    dataTable.setScrollSelectedIntoView(true, true);
-                    thisPanel.replace(dataTable);
+                    updateListDataTable();
                     selectionChanged(selection);
                 }
             };
@@ -303,15 +308,11 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
 
             down = new AjaxLink<Void>("down") {
                 @Override
-                public void onClick(AjaxRequestTarget target) {
+                public void onClick(final AjaxRequestTarget target) {
                     IModel<ListItem> selection = dataTable.getModel();
                     dataProvider.shiftDown(selection.getObject());
 
-                    ReorderPanel thisPanel = ReorderPanel.this;
-                    dataTable = new ListDataTable<>("table", tableDefinition, dataProvider, thisPanel, false,
-                            pagingDefinition);
-                    dataTable.setScrollSelectedIntoView(true, false);
-                    thisPanel.replace(dataTable);
+                    updateListDataTable();
                     selectionChanged(selection);
                 }
             };
@@ -320,15 +321,11 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
 
             bottom = new AjaxLink<Void>("bottom") {
                 @Override
-                public void onClick(AjaxRequestTarget target) {
+                public void onClick(final AjaxRequestTarget target) {
                     IModel<ListItem> selection = dataTable.getModel();
                     dataProvider.shiftBottom(selection.getObject());
 
-                    ReorderPanel thisPanel = ReorderPanel.this;
-                    dataTable = new ListDataTable<>("table", tableDefinition, dataProvider, thisPanel, false,
-                            pagingDefinition);
-                    dataTable.setScrollSelectedIntoView(true, false);
-                    thisPanel.replace(dataTable);
+                    updateListDataTable();
                     selectionChanged(selection);
                 }
             };
@@ -348,7 +345,24 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
             }
         }
 
-        public void selectionChanged(IModel<ListItem> model) {
+        private void updateListDataTable() {
+            dataTable = new ListDataTable<ListItem>(TABLE, tableDefinition, dataProvider
+                    , ReorderPanel.this::selectionChanged, false, pagingDefinition) {
+                @Override
+                protected DataGridView newDataGridView(final String id, final List list
+                        , final IDataProvider dataProvider) {
+                    final DataGridView dataGridView = super.newDataGridView(id, list, dataProvider);
+                    if (pagingDefinition.getPageSize() == dataProvider.size()) {
+                        dataGridView.setVersioned(false);
+                    }
+                    return dataGridView;
+                }
+            };
+            dataTable.setScrollSelectedIntoView(true, true);
+            ReorderPanel.this.addOrReplace(dataTable);
+        }
+
+        public void selectionChanged(final IModel<ListItem> model) {
             ListItem item = model.getObject();
             long position = -1;
             long size = dataProvider.size();
@@ -381,14 +395,26 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
         }
     }
 
-    ReorderDialog(IWorkflowInvoker invoker, IPluginConfig pluginConfig, WorkflowDescriptorModel model,
-                  List<String> mapping) {
+    /**
+     * <p>Shows a dialog to reorder to subfolders of the backing node of the supplied model.</p>
+     *
+     * <p>The {@link #onOk()} calls the invoker.</p>
+     *
+     * <p>Mind that the {@link #mapping} is both input and output of this dialog.</p>
+     *
+     * @param invoker {@link IWorkflowInvoker}
+     * @param pluginConfig
+     * @param model {@link WorkflowDescriptorModel} for the backing folder node
+     * @param order The order of the subfolders of the backing folder node, that this dialog modifies.
+     */
+    ReorderDialog(final IWorkflowInvoker invoker, final IPluginConfig pluginConfig, final WorkflowDescriptorModel model,
+                  final List<String> order) {
         super(invoker, model);
 
         setTitleKey("reorder");
         setSize(DialogConstants.MEDIUM_AUTO);
 
-        this.mapping = mapping;
+        this.mapping = order;
 
         String name;
         try {
@@ -397,7 +423,7 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
             add(panel);
             name = folderModel.getNode().getName();
         } catch (RepositoryException e) {
-            log.error(e.getMessage(), e);
+            LOG.error(e.getMessage(), e);
             name = "";
         }
         add(new Label("message", new StringResourceModel("reorder-message", this).setParameters(name)));
