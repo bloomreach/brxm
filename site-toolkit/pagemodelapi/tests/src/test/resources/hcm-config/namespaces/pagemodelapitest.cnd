@@ -4,9 +4,6 @@
 <'hippostdpubwf'='http://www.onehippo.org/jcr/hippostdpubwf/nt/1.0'>
 <'hippotranslation'='http://www.onehippo.org/jcr/hippotranslation/nt/1.0'>
 
-[pagemodelapitest:contentblocks] > hippo:compound, hippostd:relaxed
-  orderable
-
 [pagemodelapitest:dynamiccompound] > hippo:compound, hippostd:relaxed
   orderable
 

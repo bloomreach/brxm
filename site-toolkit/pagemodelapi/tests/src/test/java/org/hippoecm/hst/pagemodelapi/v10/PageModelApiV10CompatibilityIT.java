@@ -145,7 +145,7 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
     }
 
     @Test
-    public void dynamic_contentblocks_api_compatibility_v10_assertion() throws Exception {
+    public void dynamic_content_api_compatibility_v10_assertion() throws Exception {
 
         String actual = getActualJson("/spa/resourceapi/genericdetail/dynamiccontent", "1.0");
 

@@ -645,45 +645,11 @@
           "value":"contentOfHtmlFiledInCompoundTypeClass"
         }
       },
-      "contentblocksWithValidator":[
-        {
-          "name":"pagemodelapitest:contentblocksWithValidator",
-          "displayName":"pagemodelapitest:contentblocksWithValidator",
-          "text":{
-            "value":"Welcome Home with validator!"
-          }
-        }
-      ],
-      "contentblocks":[
-        {
-          "name":"pagemodelapitest:contentblocks",
-          "displayName":"pagemodelapitest:contentblocks",
-          "text":{
-            "value":"Welcome Home!"
-          }
-        }
-      ],
       "richTextEditorCompoundType":{
         "value":"richtexteditorcontent"
       },
       "dateTypeField":1553472000000,
       "booleanTypeField":false,
-      "essentialsGeneratedContentblocks":[
-        {
-          "name":"pagemodelapitest:essentialsGeneratedContentblocks",
-          "displayName":"pagemodelapitest:essentialsGeneratedContentblocks",
-          "text":{
-            "value":"Welcome Home with Essentials!"
-          }
-        },
-        {
-          "name":"pagemodelapitest:essentialsGeneratedContentblocks",
-          "displayName":"pagemodelapitest:essentialsGeneratedContentblocks",
-          "text":{
-            "value":"Welcome Home with Essentials and lazy loaded types!"
-          }
-        }
-      ],
       "longTypeField":50,
       "localeString":"en"
     }
