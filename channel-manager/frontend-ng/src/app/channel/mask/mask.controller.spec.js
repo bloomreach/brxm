@@ -16,14 +16,16 @@
 
 describe('$ctrl', () => {
   let $ctrl;
+  let $rootScope;
   let MaskService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_MaskService_, $componentController) => {
+    inject((_$rootScope_, _MaskService_, $componentController) => {
       MaskService = _MaskService_;
 
+      $rootScope = _$rootScope_;
       $ctrl = $componentController('mask', { MaskService });
     });
   });
@@ -40,10 +42,10 @@ describe('$ctrl', () => {
   });
 
   it('should forward clickHandler', () => {
-    spyOn(MaskService, 'clickHandler');
+    spyOn($rootScope, '$emit');
 
     $ctrl.onClick();
 
-    expect(MaskService.clickHandler).toHaveBeenCalled();
+    expect($rootScope.$emit).toHaveBeenCalledWith('mask:click');
   });
 });
