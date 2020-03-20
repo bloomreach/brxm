@@ -239,7 +239,7 @@ public abstract class AbstractDocumentWorkflowPlugin extends RenderPlugin {
         return null;
     }
 
-    protected static class CancelDialog extends ConfirmDialog {
+    final static class CancelDialog extends ConfirmDialog {
         private StdWorkflow workflow;
 
         CancelDialog(final IModel<String> title, final IModel<String> question, final IModel<String> okLabel,
