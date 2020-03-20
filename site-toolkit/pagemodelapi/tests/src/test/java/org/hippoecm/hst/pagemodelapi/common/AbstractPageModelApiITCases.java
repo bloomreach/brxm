@@ -37,7 +37,6 @@ import org.hippoecm.hst.container.ModifiableRequestContextProvider;
 import org.hippoecm.hst.content.tool.DefaultContentBeansTool;
 import org.hippoecm.hst.core.container.ComponentManager;
 import org.hippoecm.hst.core.container.ContainerConstants;
-import org.hippoecm.hst.pagemodelapi.v09.ResponseWithDynamicBeansIT;
 import org.hippoecm.hst.platform.HstModelProvider;
 import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.platform.api.model.InternalHstModel;
@@ -156,7 +155,7 @@ public abstract class AbstractPageModelApiITCases {
     }
 
 
-    protected MockHttpServletResponse render(final ResponseWithDynamicBeansIT.RequestResponseMock requestResponse) throws IOException, ServletException {
+    protected MockHttpServletResponse render(final RequestResponseMock requestResponse) throws IOException, ServletException {
         final MockHttpServletRequest request = requestResponse.getRequest();
         final MockHttpServletResponse response = requestResponse.getResponse();
 
