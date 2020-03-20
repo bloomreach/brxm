@@ -1,5 +1,5 @@
 /*
- * Copyright 2016 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,14 @@
  */
 
 describe('MaskService', () => {
+  let $rootScope;
   let MaskService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_MaskService_) => {
+    inject((_$rootScope_, _MaskService_) => {
+      $rootScope = _$rootScope_;
       MaskService = _MaskService_;
     });
   });
@@ -56,17 +58,23 @@ describe('MaskService', () => {
   describe('toggling the mask', () => {
     it('should enable the mask', () => {
       MaskService.mask();
+      $rootScope.$digest();
+
       expect(MaskService.isMasked).toBe(true);
       expect(MaskService.maskClass).toBe('masked');
     });
 
     it('should set the optional mask class if provided', () => {
       MaskService.mask('myMaskClass');
+      $rootScope.$digest();
+
       expect(MaskService.maskClass).toBe('masked myMaskClass');
     });
 
     it('should disable the mask', () => {
       MaskService.unmask();
+      $rootScope.$digest();
+
       expect(MaskService.isMasked).toBe(false);
     });
   });
