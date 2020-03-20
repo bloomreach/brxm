@@ -119,22 +119,25 @@ class HippoIframeService {
     return this.renderPathInfo;
   }
 
-  reload() {
-    if (!this.pageLoaded) {
-      return this.$q.resolve();
+  async reload() {
+    if (!this.isPageLoaded()) {
+      return;
     }
 
-    if (this.deferredReload) {
+    if (this._deferredReload) {
       this.$log.warn('Trying to reload when a reload is already ongoing. Taking no action.');
-      return this.deferredReload.promise;
+
+      // eslint-disable-next-line consistent-return
+      return this._deferredReload.promise;
     }
 
-    this.ScrollService.savePosition();
+    this._deferredReload = this.$q.defer();
 
-    this.deferredReload = this.$q.defer();
-    this.CommunicationService.reload();
+    await this.ScrollService.savePosition();
+    await this.CommunicationService.reload();
 
-    return this.deferredReload.promise;
+    // eslint-disable-next-line consistent-return
+    return this._deferredReload.promise;
   }
 
   async _onPageChange(event, data) {
@@ -149,10 +152,10 @@ class HippoIframeService {
     this.ScrollService.restorePosition();
     this.PageToolsService.updatePageTools();
 
-    const deferred = this.deferredReload;
+    const deferred = this._deferredReload;
     if (deferred) {
       // delete the "state" before resolving the promise.
-      delete this.deferredReload;
+      delete this._deferredReload;
       deferred.resolve();
     }
 
