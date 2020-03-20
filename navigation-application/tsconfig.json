@@ -33,15 +33,5 @@
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
     "strictInjectionParameters": true
-  },
-  "typedocOptions": {
-    "exclude": "!**/+(api|child||parent).ts",
-    "excludeExternals": true,
-    "excludePrivate": true,
-    "excludeProtected": true,
-    "hideGenerator": true,
-    "mode": "file",
-    "out": "docs",
-    "readme": "projects/navapp-communication/src/docs/index.md"
   }
 }

@@ -14,5 +14,15 @@
   "exclude": [
     "src/test.ts",
     "src/**/*.spec.ts"
-  ]
+  ],
+  "typedocOptions": {
+    "exclude": "!**/src/app/models/dto/**.dto.ts",
+    "excludeNotExported": true,
+    "excludePrivate": true,
+    "excludeProtected": true,
+    "hideGenerator": true,
+    "mode": "file",
+    "out": "./docs/navapp",
+    "name": "Bloomreach Navigation Application"
+  }
 }

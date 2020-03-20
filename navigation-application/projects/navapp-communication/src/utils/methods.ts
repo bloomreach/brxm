@@ -14,13 +14,8 @@
  * limitations under the License.
  */
 
-/**
- * CSS tweaks for the generated TypeDoc documentation.
- */
+import { ChildApi, ParentApi } from '../lib/api';
 
-/**
- * Remove the "Defined in" blocks
- * @see https://github.com/TypeStrong/typedoc/issues/808
- */
-.tsd-signatures { margin-bottom: 0 }
-.tsd-sources { display: none }
+type MethodNames = keyof ChildApi | keyof ParentApi;
+
+export type Methods = { [k in MethodNames]?: (...args: any[]) => any };

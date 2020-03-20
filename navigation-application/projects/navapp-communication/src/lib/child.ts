@@ -16,11 +16,12 @@
 
 import Penpal from 'penpal';
 
+import { wrapWithTimeout } from '../utils/wrap-with-timeout';
+
 import {
   ChildConnectConfig,
   ChildPromisedApi,
 } from './api';
-import { wrapWithTimeout } from './wrap-with-timeout';
 
 const wrapChildMethodsWithTimeout = (methods: ChildPromisedApi, timeout: number) => {
   const beforeNavigation = methods.beforeNavigation;

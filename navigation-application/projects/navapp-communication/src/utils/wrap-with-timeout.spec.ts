@@ -17,7 +17,8 @@
 import { fakeAsync, tick } from '@angular/core/testing';
 import { NavItemDtoMock } from 'projects/navapp/src/app/models/dto/nav-item-dto.mock';
 
-import { ChildApi, ChildPromisedApi, NavigationTrigger, NavItem } from './api';
+import { ChildApi, ChildPromisedApi, NavigationTrigger, NavItem } from '../lib/api';
+
 import { DEFAULT_COMMUNICATION_TIMEOUT } from './utils';
 import { wrapWithTimeout } from './wrap-with-timeout';
 

@@ -19,7 +19,7 @@ import {
   ChildPromisedApi,
   ParentApi,
   ParentPromisedApi,
-} from './api';
+} from '../lib/api';
 
 export const DEFAULT_COMMUNICATION_TIMEOUT = 300000; // 5 minutes
 
