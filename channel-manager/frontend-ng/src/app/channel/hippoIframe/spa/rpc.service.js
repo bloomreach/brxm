@@ -21,27 +21,26 @@ const STATE_FULFILLED = 'fulfilled';
 const STATE_REJECTED = 'rejected';
 
 export default class RpcService {
-  constructor($q, $rootScope, $window) {
+  constructor($q, $rootScope, $window, ChannelService) {
     'ngInject';
 
     this.$q = $q;
     this.$rootScope = $rootScope;
     this.$window = $window;
+    this.ChannelService = ChannelService;
 
     this._calls = new Map();
     this._callbacks = new Map();
     this._onMessage = this._onMessage.bind(this);
   }
 
-  initialize({ target, origin }) {
+  initialize(target) {
     this._target = target;
-    this._origin = origin;
     this.$window.addEventListener('message', this._onMessage);
   }
 
   destroy() {
     this.$window.removeEventListener('message', this._onMessage);
-    delete this._origin;
     delete this._target;
   }
 
@@ -77,15 +76,16 @@ export default class RpcService {
   }
 
   _send(message) {
-    if (!this._target || !this._origin) {
+    const origin = this.ChannelService.getOrigin();
+    if (!this._target || !origin) {
       return;
     }
 
-    this._target.postMessage(message, this._origin);
+    this._target.postMessage(message, origin);
   }
 
   _onMessage(event) {
-    if (!event.data || event.origin !== this._origin) {
+    if (!event.data || event.origin !== this.ChannelService.getOrigin()) {
       return;
     }
 

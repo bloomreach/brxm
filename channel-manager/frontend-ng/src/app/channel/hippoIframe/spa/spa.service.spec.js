@@ -53,25 +53,7 @@ describe('SpaService', () => {
 
     beforeEach(() => {
       iframeJQueryElement = angular.element('<iframe />');
-      spyOn(RpcService, 'initialize');
-      spyOn(SpaService, 'getOrigin');
-    });
-
-    it('uses the iframe content window as a target', () => {
-      SpaService.init(iframeJQueryElement);
-
-      expect(RpcService.initialize).toHaveBeenCalledWith(jasmine.objectContaining({
-        target: iframeJQueryElement[0].contentWindow,
-      }));
-    });
-
-    it('passes an SPA origin', () => {
-      SpaService.getOrigin.and.returnValue('http://example.com:3000');
-      SpaService.init(iframeJQueryElement);
-
-      expect(RpcService.initialize).toHaveBeenCalledWith(jasmine.objectContaining({
-        origin: 'http://example.com:3000',
-      }));
+      spyOn(ChannelService, 'getOrigin');
     });
 
     it('registers sync overlay callback', () => {
@@ -88,43 +70,11 @@ describe('SpaService', () => {
     });
   });
 
-  describe('getOrigin', () => {
-    beforeEach(() => {
-      spyOn(ChannelService, 'getChannel');
-      spyOn(ChannelService, 'getProperties');
-    });
-
-    it('returns an origin from the preview url', () => {
-      ChannelService.getProperties.and.returnValue({
-        'org.hippoecm.hst.configuration.channel.PreviewURLChannelInfo_url': 'http://example.com:3000/something',
-      });
-
-      expect(SpaService.getOrigin()).toBe('http://example.com:3000');
-    });
-
-    it('returns an origin from the channel url', () => {
-      ChannelService.getChannel.and.returnValue({ url: 'http://localhost:8080/_cmsinternal' });
-
-      expect(SpaService.getOrigin()).toBe('http://localhost:8080');
-    });
-
-    it('returns an empty origin when there is no configured url', () => {
-      expect(SpaService.getOrigin()).toBeUndefined();
-    });
-
-    it('returns an empty origin when the url is invalid', () => {
-      ChannelService.getChannel.and.returnValue({ url: '/_cmsinternal' });
-
-      expect(SpaService.getOrigin()).toBeUndefined();
-    });
-  });
-
   describe('destroy', () => {
     let iframeJQueryElement;
 
     beforeEach(() => {
       iframeJQueryElement = angular.element('<iframe />');
-      spyOn(RpcService, 'initialize');
       spyOn(ChannelService, 'getChannel');
       spyOn(ChannelService, 'getProperties');
 
@@ -153,13 +103,6 @@ describe('SpaService', () => {
       SpaService.destroy();
 
       expect(SpaService.isSpa()).toBe(false);
-    });
-
-    it('destroys a remote connection', () => {
-      spyOn(RpcService, 'destroy');
-      SpaService.destroy();
-
-      expect(RpcService.destroy).toHaveBeenCalled();
     });
   });
 

@@ -17,10 +17,17 @@
 describe('RpcService', () => {
   let $rootScope;
   let $window;
+  let ChannelService;
   let RpcService;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
+
+    ChannelService = jasmine.createSpyObj('ChannelService', ['getOrigin']);
+
+    angular.mock.module(($provide) => {
+      $provide.value('ChannelService', ChannelService);
+    });
 
     inject((
       _$rootScope_,
@@ -32,8 +39,10 @@ describe('RpcService', () => {
       RpcService = _RpcService_;
 
       spyOn($window, 'postMessage').and.callThrough();
-      RpcService.initialize({ target: $window, origin: 'http://localhost:3000' });
+      RpcService.initialize($window);
     });
+
+    ChannelService.getOrigin.and.returnValue('http://localhost:3000');
   });
 
   describe('call', () => {
