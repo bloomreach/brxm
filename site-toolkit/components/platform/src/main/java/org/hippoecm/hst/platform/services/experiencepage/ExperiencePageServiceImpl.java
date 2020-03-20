@@ -50,32 +50,39 @@ public class ExperiencePageServiceImpl implements ExperiencePageService {
     @Override
     public HstComponentConfiguration loadExperiencePage(final Node hstPage, final ResolvedSiteMapItem resolvedSiteMapItem) {
 
+        final ClassLoader currentClassLoader = Thread.currentThread().getContextClassLoader();
 
-        HstNodeImpl hstNode = getHstNode(hstPage);
+        try {
+            // set the classloader of the platform webapp to load the model
+            Thread.currentThread().setContextClassLoader(this.getClass().getClassLoader());
+            HstNodeImpl hstNode = getHstNode(hstPage);
 
-        // the root configuration prefix is *JUST* the path to the hstPage itself (hstPage is typically a
-        // node of type hst:component below a document variant
-        final String rootConfigurationPrefix = hstNode.getValueProvider().getPath();
+            // the root configuration prefix is *JUST* the path to the hstPage itself (hstPage is typically a
+            // node of type hst:component below a document variant
+            final String rootConfigurationPrefix = hstNode.getValueProvider().getPath();
 
-        // just like explicit pages below the workspace do not support referenceable containers (aka components that
-        // are of type 'hst:containercomponentreference', we also (of course) do not support this below hst:page
-        // nodes below eg a hippo document variant: All the hst component configuration changes for that hst:page
-        // are explicitly below the hst:page node and not to some referenceable container
-        final Map<String, HstNode> referenceableContainers = Collections.emptyMap();
+            // just like explicit pages below the workspace do not support referenceable containers (aka components that
+            // are of type 'hst:containercomponentreference', we also (of course) do not support this below hst:page
+            // nodes below eg a hippo document variant: All the hst component configuration changes for that hst:page
+            // are explicitly below the hst:page node and not to some referenceable container
+            final Map<String, HstNode> referenceableContainers = Collections.emptyMap();
 
-        final HstComponentConfigurationService experiencePageComponentConfig =
-                new HstComponentConfigurationService(hstNode, null, ROOT_EXPERIENCE_PAGES_NAME, referenceableContainers, rootConfigurationPrefix);
+            final HstComponentConfigurationService experiencePageComponentConfig =
+                    new HstComponentConfigurationService(hstNode, null, ROOT_EXPERIENCE_PAGES_NAME, referenceableContainers, rootConfigurationPrefix);
 
-        // mark all the canonically present hst component nodes below the experience page to have 'experiencePageComponent = true'
-        markAllExperienceComponents(experiencePageComponentConfig);
+            // mark all the canonically present hst component nodes below the experience page to have 'experiencePageComponent = true'
+            markAllExperienceComponents(experiencePageComponentConfig);
 
-        final HstSite site = resolvedSiteMapItem.getHstSiteMapItem().getHstSiteMap().getSite();
-        final HstComponentsConfigurationService hstComponentsConfigurationService = (HstComponentsConfigurationService) site.getComponentsConfiguration();
+            final HstSite site = resolvedSiteMapItem.getHstSiteMapItem().getHstSiteMap().getSite();
+            final HstComponentsConfigurationService hstComponentsConfigurationService = (HstComponentsConfigurationService) site.getComponentsConfiguration();
 
-        hstComponentsConfigurationService.populateExperiencePage(experiencePageComponentConfig);
+            hstComponentsConfigurationService.populateExperiencePage(experiencePageComponentConfig);
 
 
-        return experiencePageComponentConfig;
+            return experiencePageComponentConfig;
+        } finally {
+            Thread.currentThread().setContextClassLoader(currentClassLoader);
+        }
 
 
     }
