@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,47 +15,54 @@
  */
 
 import { Inject, Injectable, OnDestroy } from '@angular/core';
-import { Subject } from 'rxjs';
-import { map, takeUntil, throttleTime } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
+import { throttleTime } from 'rxjs/operators';
 
 import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
 
+import { ConnectionService } from './connection.service';
 import { USER_ACTIVITY_DEBOUNCE_TIME } from './user-activity-debounce-time';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserActivityService implements OnDestroy {
-  private readonly event$ = new Subject<ClientApp>();
-  private readonly unsubscribe = new Subject();
+  private subscription: Subscription;
 
   constructor(
+    private readonly connectionService: ConnectionService,
     private readonly clientAppService: ClientAppService,
     @Inject(USER_ACTIVITY_DEBOUNCE_TIME) private readonly userActivityDebounceTime,
   ) {
     if (!this.userActivityDebounceTime) {
       throw new Error('USER_ACTIVITY_DEBOUNCE_TIME must be set');
     }
-
-    this.startBroadcasting();
   }
 
   ngOnDestroy(): void {
-    this.unsubscribe.next();
-    this.unsubscribe.complete();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
-  broadcastUserActivity(): void {
-    this.event$.next(this.clientAppService.activeApp);
-  }
+  startPropagation(): void {
+    if (this.subscription) {
+      return;
+    }
 
-  private startBroadcasting(): void {
-    this.event$.pipe(
-      takeUntil(this.unsubscribe),
+    this.subscription = this.connectionService.onUserActivity$.pipe(
       throttleTime(this.userActivityDebounceTime),
-      map(activeApp => this.clientAppService.apps.filter(app => app !== activeApp)),
-      map(apps => apps.filter(app => !!app.api.onUserActivity)),
-    ).subscribe(apps => apps.forEach(app => app.api.onUserActivity()));
+    ).subscribe(() => this.propagate());
+  }
+
+  private getAppsToBroadcast(): ClientApp[] {
+    return this.clientAppService.apps.filter(app => !!app.api.onUserActivity);
+  }
+
+  private propagate(): void {
+    for (const app of this.getAppsToBroadcast()) {
+      app.api.onUserActivity();
+    }
   }
 }

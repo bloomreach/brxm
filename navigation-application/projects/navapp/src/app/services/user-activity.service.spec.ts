@@ -1,5 +1,5 @@
-/*!
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+/*
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,11 +16,13 @@
 
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { async, TestBed } from '@angular/core/testing';
+import { Subject } from 'rxjs';
 import 'zone.js/dist/zone-patch-rxjs-fake-async';
 
 import { ClientApp } from '../client-app/models/client-app.model';
 import { ClientAppService } from '../client-app/services/client-app.service';
 
+import { ConnectionService } from './connection.service';
 import { USER_ACTIVITY_DEBOUNCE_TIME } from './user-activity-debounce-time';
 import { UserActivityService } from './user-activity.service';
 
@@ -28,6 +30,11 @@ describe('UserActivityService', () => {
   let service: UserActivityService;
 
   let clientApps: ClientApp[];
+
+  const userActivity$ = new Subject<void>();
+  const connectionService = {
+    onUserActivity$: userActivity$,
+  };
 
   let clientAppServiceMock = {
     activeApp: undefined,
@@ -48,6 +55,7 @@ describe('UserActivityService', () => {
       ],
       providers: [
         UserActivityService,
+        { provide: ConnectionService, useValue: connectionService },
         { provide: ClientAppService, useValue: clientAppServiceMock },
         { provide: USER_ACTIVITY_DEBOUNCE_TIME, useValue: 100 },
       ],
@@ -55,63 +63,43 @@ describe('UserActivityService', () => {
 
     service = TestBed.get(UserActivityService);
     clientAppServiceMock = TestBed.get(ClientAppService);
+
+    service.startPropagation();
   });
 
-  it('should broadcast user activity to app2 and app3 if app1 is active', () => {
-    clientAppServiceMock.activeApp = clientAppServiceMock.apps[0];
+  it('should propagate user activity to all apps', () => {
+    userActivity$.next();
 
-    service.broadcastUserActivity();
-
-    expect(clientApps[0].api.onUserActivity).not.toHaveBeenCalled();
+    expect(clientApps[0].api.onUserActivity).toHaveBeenCalled();
     expect(clientApps[1].api.onUserActivity).toHaveBeenCalled();
     expect(clientApps[2].api.onUserActivity).toHaveBeenCalled();
   });
 
-  it('should broadcast user activity to app1 and app3 if app2 is active', () => {
-    clientAppServiceMock.activeApp = clientAppServiceMock.apps[1];
-
-    service.broadcastUserActivity();
-
-    expect(clientApps[1].api.onUserActivity).not.toHaveBeenCalled();
-    expect(clientApps[0].api.onUserActivity).toHaveBeenCalled();
-    expect(clientApps[2].api.onUserActivity).toHaveBeenCalled();
-  });
-
-  it('should broadcast user activity to app1 and app2 if app3 is active', () => {
-    clientAppServiceMock.activeApp = clientAppServiceMock.apps[2];
-
-    service.broadcastUserActivity();
-
-    expect(clientApps[2].api.onUserActivity).not.toHaveBeenCalled();
-    expect(clientApps[0].api.onUserActivity).toHaveBeenCalled();
-    expect(clientApps[1].api.onUserActivity).toHaveBeenCalled();
-  });
-
-  describe('after the first broadcast has triggered', () => {
+  describe('after the first propagation has triggered', () => {
     beforeEach(() => {
       clientAppServiceMock.activeApp = clientAppServiceMock.apps[1];
 
-      service.broadcastUserActivity();
+      userActivity$.next();
 
       (clientApps[0].api.onUserActivity as jasmine.Spy).calls.reset();
       (clientApps[1].api.onUserActivity as jasmine.Spy).calls.reset();
       (clientApps[2].api.onUserActivity as jasmine.Spy).calls.reset();
     });
 
-    it('should not broadcast before time delay has passed', () => {
-      service.broadcastUserActivity();
+    it('should not propagate before time delay has passed', () => {
+      userActivity$.next();
 
       expect(clientApps[0].api.onUserActivity).not.toHaveBeenCalled();
       expect(clientApps[1].api.onUserActivity).not.toHaveBeenCalled();
       expect(clientApps[2].api.onUserActivity).not.toHaveBeenCalled();
     });
 
-    it('should broadcast next time after the timeout has passed', async(() => {
+    it('should propagate next time after the timeout has passed', async(() => {
       setTimeout(() => {
-        service.broadcastUserActivity();
+        userActivity$.next();
 
         expect(clientApps[0].api.onUserActivity).toHaveBeenCalled();
-        expect(clientApps[1].api.onUserActivity).not.toHaveBeenCalled();
+        expect(clientApps[1].api.onUserActivity).toHaveBeenCalled();
         expect(clientApps[2].api.onUserActivity).toHaveBeenCalled();
       }, 200);
     }));

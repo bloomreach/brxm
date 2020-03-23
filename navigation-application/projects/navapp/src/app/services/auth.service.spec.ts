@@ -1,4 +1,4 @@
-/*!
+/*
  * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,6 +30,7 @@ import { AuthService } from './auth.service';
 import { BusyIndicatorService } from './busy-indicator.service';
 import { ConnectionService } from './connection.service';
 import { MainLoaderService } from './main-loader.service';
+import { UserActivityService } from './user-activity.service';
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -47,6 +48,7 @@ describe('AuthService', () => {
   let locationMock: jasmine.SpyObj<Location>;
   let loggerMock: jasmine.SpyObj<NGXLogger>;
   let documentMock: jasmine.SpyObj<Document>;
+  let userActivityServiceMock: jasmine.SpyObj<UserActivityService>;
 
   let numberOfLoginApps: number;
 
@@ -101,6 +103,10 @@ describe('AuthService', () => {
       },
     } as any;
 
+    userActivityServiceMock = jasmine.createSpyObj('UserActivityService', [
+      'startPropagation',
+    ]);
+
     TestBed.configureTestingModule({
       providers: [
         AuthService,
@@ -113,6 +119,7 @@ describe('AuthService', () => {
         { provide: NGXLogger, useValue: loggerMock },
         { provide: APP_SETTINGS, useValue: appSettingsMock },
         { provide: DOCUMENT, useValue: documentMock },
+        { provide: UserActivityService, useValue: userActivityServiceMock },
       ],
     });
 
@@ -134,6 +141,10 @@ describe('AuthService', () => {
     sessionExpiredMock$.next();
 
     expect(service.logout).toHaveBeenCalledWith('SessionExpired');
+  });
+
+  it('should start user activity propagation', () => {
+    expect(userActivityServiceMock.startPropagation).toHaveBeenCalled();
   });
 
   describe('Logging in', () => {

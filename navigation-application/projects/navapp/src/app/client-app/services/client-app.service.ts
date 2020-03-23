@@ -38,7 +38,6 @@ export class ClientAppService {
   private readonly uniqueURLs$ = new BehaviorSubject<string[]>([]);
   private readonly connection$ = new Subject<Connection>();
   private readonly connectedAppWithConfig$ = new Subject<ClientAppWithConfig>();
-  private readonly userActivityReceived$ = new Subject<ClientApp>();
 
   private readonly connectedApps: Map<string, ClientAppWithConfig> = new Map<string, ClientAppWithConfig>();
   private activeAppUrl: string;
@@ -164,11 +163,6 @@ export class ClientAppService {
     }
 
     return this.connectedApps.get(appUrl).config;
-  }
-
-  onUserActivity(): Promise<void> {
-    this.userActivityReceived$.next(this.activeApp);
-    return Promise.resolve();
   }
 
   private filterUniqueURLs(navItems: NavItem[]): string[] {
