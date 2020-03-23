@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -55,6 +55,10 @@ export default class Index extends React.Component<IndexProps> {
         `${config.visitor.header}=${config.visitor.id}; Max-Age=${365 * 24 * 60 * 60}; Path=/; HttpOnly`,
       );
     }
+
+    // Limit the number of hosts that are allowed to embed your application.
+    // @see https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy/frame-ancestors
+    context?.res?.setHeader('Content-Security-Policy', `frame-ancestors 'self' ${new URL(config.cmsBaseUrl).host}`);
 
     return { config, page };
   }
