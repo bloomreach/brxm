@@ -59,7 +59,7 @@
       </releases>
     </repository>
   </repositories>
-  
+
   <issueManagement>
     <system>Jira</system>
     <url>https://issues.onehippo.com/browse/HIPPLUG/component/12847</url>
@@ -88,6 +88,12 @@
       <dependency>
         <groupId>org.onehippo.cms7.hst</groupId>
         <artifactId>hst-client</artifactId>
+        <version>${hippo.hst.version}</version>
+        <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.onehippo.cms7.hst</groupId>
+        <artifactId>hst-commons</artifactId>
         <version>${hippo.hst.version}</version>
         <scope>provided</scope>
       </dependency>
