@@ -59,18 +59,19 @@ public class RobotstxtComponent extends BaseHstComponent {
             return;
         }
         // check if we have mount property set:
-        final String customPath = mount.getProperty(ROBOTSTXT_PATH_MOUNT_PROPERTY);
-        if (!Strings.isNullOrEmpty(customPath)) {
-            final String normalizedPath = PathUtils.normalizePath(customPath);
-            final HstRequestContext context = RequestContextProvider.get();
-            final HippoBean siteBean = context.getSiteContentBaseBean();
+        final String robotsTxtPath = mount.getProperty(ROBOTSTXT_PATH_MOUNT_PROPERTY);
+        if (!Strings.isNullOrEmpty(robotsTxtPath)) {
+            final HippoBean siteBean = requestContext.getSiteContentBaseBean();
+            final String normalizedPath = PathUtils.normalizePath(robotsTxtPath);
             final Robotstxt document = siteBean.getBean(normalizedPath, Robotstxt.class);
             if (document != null) {
-                log.debug("Using document resolved via '{}' mount property: {}", ROBOTSTXT_PATH_MOUNT_PROPERTY, normalizedPath);
+                log.debug("Using document {} resolved via mount property '{}' with normalized path: {}",
+                        siteBean.getPath(), ROBOTSTXT_PATH_MOUNT_PROPERTY, normalizedPath);
                 setAttributes(request, mount, document);
                 return;
             } else {
-                log.warn("Document is missing or not a Robotstxt document for normalized path: {}", normalizedPath);
+                log.warn("Document is missing or not a Robotstxt document from mount property '{}' with normalized path: {}",
+                        ROBOTSTXT_PATH_MOUNT_PROPERTY, siteBean.getPath() + "/" + normalizedPath);
             }
         }
 
@@ -79,6 +80,8 @@ public class RobotstxtComponent extends BaseHstComponent {
         if (bean == null) {
             throw new HstComponentException("No bean found, check the HST configuration for the RobotstxtComponent");
         }
+
+        log.debug("Using document {} resolved via requestContext '{}'", bean.getPath(), requestContext.getBaseURL().getPathInfo());
         setAttributes(request, mount, bean);
     }
 
