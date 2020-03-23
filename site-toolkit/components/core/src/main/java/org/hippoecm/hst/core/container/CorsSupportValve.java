@@ -196,6 +196,10 @@ public class CorsSupportValve implements Valve {
                 setAccessControlAllowOrigin(servletResponse, HstRequestUtils.getOrigin(servletRequest));
             }
 
+            if (allowCredentials) {
+                servletResponse.setHeader(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
+            }
+
             context.invokeNext();
         }
     }
