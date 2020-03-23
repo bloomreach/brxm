@@ -62,7 +62,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * <p>This class implements the functionality to Reorder subfolders.</p>
+ * <p>This class implements the functionality to reorder subfolders.</p>
  *
  * <p>The {@link FolderWorkflowPlugin} adds this dialog to the "reorder" action.</p>
  *
@@ -72,8 +72,8 @@ import org.slf4j.LoggerFactory;
  */
 class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ReorderDialog.class);
-    public static final String TABLE = "table";
+    private static final Logger log = LoggerFactory.getLogger(ReorderDialog.class);
+    private static final String TABLE = "table";
 
     private ReorderPanel panel;
     private List<String> mapping;
@@ -92,7 +92,7 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
                 index = nodeModel.getNode().getIndex();
                 displayName = new NodeNameModel(nodeModel);
             } catch (RepositoryException e) {
-                LOG.error(e.getMessage(), e);
+                log.error(e.getMessage(), e);
             }
         }
 
@@ -215,7 +215,7 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
         }
     }
 
-    class ReorderPanel extends WebMarkupContainer implements TableSelectionListener<ListItem> {
+    private static class ReorderPanel extends WebMarkupContainer implements TableSelectionListener<ListItem> {
 
         private TableDefinition<ListItem> tableDefinition;
         private ReorderDataProvider dataProvider;
@@ -396,7 +396,7 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
     }
 
     /**
-     * <p>Shows a dialog to reorder to subfolders of the backing node of the supplied model.</p>
+     * <p>Shows a dialog to reorder subfolders of the backing node of the supplied model.</p>
      *
      * <p>The {@link #onOk()} calls the invoker.</p>
      *
@@ -423,7 +423,7 @@ class ReorderDialog extends WorkflowDialog<WorkflowDescriptor> {
             add(panel);
             name = folderModel.getNode().getName();
         } catch (RepositoryException e) {
-            LOG.error(e.getMessage(), e);
+            log.error(e.getMessage(), e);
             name = "";
         }
         add(new Label("message", new StringResourceModel("reorder-message", this).setParameters(name)));
