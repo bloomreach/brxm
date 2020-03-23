@@ -66,7 +66,7 @@ public class RobotstxtComponent extends BaseHstComponent {
             final Robotstxt document = siteBean.getBean(normalizedPath, Robotstxt.class);
             if (document != null) {
                 log.debug("Using document {} resolved via mount property '{}' with normalized path: {}",
-                        siteBean.getPath(), ROBOTSTXT_PATH_MOUNT_PROPERTY, normalizedPath);
+                        document.getPath(), ROBOTSTXT_PATH_MOUNT_PROPERTY, normalizedPath);
                 setAttributes(request, mount, document);
                 return;
             } else {
