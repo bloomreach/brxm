@@ -1,7 +1,7 @@
-/content/documents/administration/robots:
+/content/documents/administration/robots-disallow:
   jcr:primaryType: hippo:handle
   jcr:mixinTypes: ['mix:referenceable']
-  /robots:
+  /robots-disallow:
     jcr:primaryType: robotstxt:robotstxt
     jcr:mixinTypes: ['mix:referenceable', 'mix:versionable']
     hippo:availability: [live, preview]
@@ -12,5 +12,5 @@
     hippostdpubwf:lastModifiedBy: admin
     /robotstxt:section:
       jcr:primaryType: robotstxt:section
-      robotstxt:disallow: [/skip/this/url]
+      robotstxt:disallow: [/]
       robotstxt:useragent: '*'
