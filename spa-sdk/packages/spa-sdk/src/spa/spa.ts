@@ -41,7 +41,7 @@ export class Spa {
   protected async onCmsUpdate(event: CmsUpdateEvent) {
     const root = this.page!.getComponent();
     const component = root.getComponentById(event.id);
-    const url = component && component.getUrl();
+    const url = component?.getUrl();
     if (!url) {
       return;
     }

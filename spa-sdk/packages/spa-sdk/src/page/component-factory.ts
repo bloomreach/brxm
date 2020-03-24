@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,7 @@ export class ComponentFactory extends MultipleTypeFactory<ComponentType, Compone
 
     while (queue.length) {
       const head = queue.shift()!;
-      if (!head.children && head.model.components && head.model.components.length) {
+      if (!head.children && head.model.components?.length) {
         head.children = [];
         queue.unshift(
           ...head.model.components.map(model => ({ model, siblings: head.children })),
@@ -49,7 +49,7 @@ export class ComponentFactory extends MultipleTypeFactory<ComponentType, Compone
         continue;
       }
 
-      component = this.buildComponent(head.model, head.children || []);
+      component = this.buildComponent(head.model, head.children ?? []);
 
       if (head.siblings) {
         head.siblings.push(component);

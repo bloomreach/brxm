@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -57,7 +57,7 @@ export class BrNode extends React.Component<BrNodeProps> {
 
   private renderChildren() {
     return this.props.children
-      || this.props.component.getChildren()
+      ?? this.props.component.getChildren()
         .map((child, index) => <BrNode key={index} component={child} />);
   }
 

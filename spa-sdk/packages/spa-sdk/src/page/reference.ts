@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -26,5 +26,5 @@ export interface Reference {
  * @param value The value to check.
  */
 export function isReference(value: any): value is Reference {
-  return !!(value && value.$ref);
+  return !!value?.$ref;
 }

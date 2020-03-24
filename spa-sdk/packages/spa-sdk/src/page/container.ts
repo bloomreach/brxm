@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -97,7 +97,7 @@ export class ContainerImpl extends ComponentImpl implements Container {
   }
 
   getType() {
-    return this.model.xtype && this.model.xtype.toLowerCase() as ContainerType;
+    return this.model.xtype?.toLowerCase() as ContainerType;
   }
 }
 

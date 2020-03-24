@@ -147,9 +147,7 @@ export async function initialize(config: Configuration, model?: PageModel): Prom
  * @param page Page instance to destroy.
  */
 export function destroy(page: Page): void {
-  const spa = pages.get(page);
-
-  return spa && spa.destroy();
+  return pages.get(page)?.destroy();
 }
 
 export { Configuration } from './configuration';
