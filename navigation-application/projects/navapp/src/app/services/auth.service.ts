@@ -28,6 +28,7 @@ import { APP_SETTINGS } from './app-settings';
 import { BusyIndicatorService } from './busy-indicator.service';
 import { ConnectionService } from './connection.service';
 import { MainLoaderService } from './main-loader.service';
+import { UserActivityService } from './user-activity.service';
 
 @Injectable({
   providedIn: 'root',
@@ -43,6 +44,7 @@ export class AuthService {
     private readonly logger: NGXLogger,
     @Inject(APP_SETTINGS) private readonly appSettings: AppSettings,
     @Inject(DOCUMENT) private readonly document: Document,
+    userActivityService: UserActivityService,
   ) {
     this.connectionService
       .onError$
@@ -52,6 +54,10 @@ export class AuthService {
     this.connectionService
       .onSessionExpired$
       .subscribe(() => this.logout('SessionExpired'));
+
+    // User activity propagation prevents auto log out due to inactivity if a client app properly
+    // handle this propagation
+    userActivityService.startPropagation();
   }
 
   async loginAllResources(): Promise<void> {
