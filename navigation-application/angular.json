@@ -89,12 +89,6 @@
             }
           }
         },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "browserTarget": "navapp:build"
-          }
-        },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
@@ -114,8 +108,7 @@
             ],
             "styles": [
               "projects/navapp/src/styles.scss"
-            ],
-            "scripts": []
+            ]
           }
         },
         "lint": {
@@ -192,36 +185,14 @@
             ],
             "styles": [
               "projects/iframe-app-example/src/styles.css"
-            ],
-            "scripts": []
+            ]
           },
           "configurations": {
-            "production": {
+            "nav-items-fetch-error": {
               "fileReplacements": [
                 {
                   "replace": "projects/iframe-app-example/src/environments/environment.ts",
-                  "with": "projects/iframe-app-example/src/environments/environment.prod.ts"
-                }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "extractCss": true,
-              "namedChunks": false,
-              "aot": true,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "6kb",
-                  "maximumError": "10kb"
+                  "with": "projects/iframe-app-example/src/environments/environment.nav-items-fetch-error.ts"
                 }
               ]
             }
@@ -235,15 +206,22 @@
             "disableHostCheck": true
           },
           "configurations": {
-            "production": {
-              "browserTarget": "iframe-app-example:build:production"
+            "nav-items-fetch-error": {
+              "browserTarget": "iframe-app-example:build:nav-items-fetch-error"
             }
           }
         },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "browserTarget": "iframe-app-example:build"
+            "main": "projects/iframe-app-example/src/test.ts",
+            "polyfills": "projects/iframe-app-example/src/polyfills.ts",
+            "tsConfig": "projects/iframe-app-example/tsconfig.spec.json",
+            "karmaConfig": "projects/iframe-app-example/karma.conf.js",
+            "codeCoverage": true,
+            "assets": [
+              "projects/iframe-app-example/src/favicon.ico"
+            ]
           }
         },
         "lint": {
