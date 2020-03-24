@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -28,7 +28,7 @@ type ContentLinks = 'site';
  * @hidden
  */
 export interface ContentModel {
-  _links?: Record<ContentLinks, Link>;
+  _links: Record<ContentLinks, Link>;
   _meta?: MetaCollectionModel;
   id: string;
   localeString?: string;
@@ -104,6 +104,6 @@ export class ContentImpl implements Content {
   }
 
   getUrl() {
-    return this.model._links && this.linkFactory.create(this.model._links.site);
+    return this.linkFactory.create(this.model._links.site);
   }
 }

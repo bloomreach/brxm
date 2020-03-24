@@ -76,7 +76,7 @@ interface PageMeta {
  * @hidden
  */
 export interface PageModel {
-  _links?: Record<PageLinks, Link>;
+  _links: Record<PageLinks, Link>;
   _meta: PageMeta;
   content?: { [reference: string]: ContentModel };
   page: (ComponentModel | ContainerItemModel | ContainerModel) & PageRootModel;
@@ -227,11 +227,7 @@ export class PageImpl implements Page {
   }
 
   getUrl(link?: Link | string) {
-    return this.linkFactory.create(link || (
-      this.model._links
-        ? { ...this.model._links.site, type: TYPE_LINK_INTERNAL }
-        : ''
-    ));
+    return this.linkFactory.create(link || { ...this.model._links.site, type: TYPE_LINK_INTERNAL });
   }
 
   getVisitor() {

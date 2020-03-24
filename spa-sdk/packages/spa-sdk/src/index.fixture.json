@@ -163,6 +163,12 @@
       "pageTitle": "Homepage"
     }
   },
+  "_links": {
+    "site": {
+      "type": "internal",
+      "href": "http://127.0.0.1:9080/"
+    }
+  },
   "_meta": {
     "preview": true
   }

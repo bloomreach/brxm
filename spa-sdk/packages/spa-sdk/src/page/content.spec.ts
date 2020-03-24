@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +22,14 @@ import { MetaCollectionModel, MetaImpl, Meta, META_POSITION_BEGIN } from './meta
 let linkFactory: jest.Mocked<Factory<[Link], string>>;
 let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], Meta[]>>;
 
-function createContent(model: ContentModel) {
-  return new ContentImpl(model, linkFactory, metaFactory);
+const model = {
+  _links: { site: { href: 'url' } },
+  id: 'some-id',
+  name: 'some-name',
+} as ContentModel;
+
+function createContent(contentModel = model) {
+  return new ContentImpl(contentModel, linkFactory, metaFactory);
 }
 
 beforeEach(() => {
@@ -34,7 +40,7 @@ beforeEach(() => {
 describe('ContentImpl', () => {
   describe('getId', () => {
     it('should return a content item id', () => {
-      const content = createContent({ id: 'some-id', name: 'some-name' });
+      const content = createContent();
 
       expect(content.getId()).toBe('some-id');
     });
@@ -42,13 +48,13 @@ describe('ContentImpl', () => {
 
   describe('getLocale', () => {
     it('should return a content item locale', () => {
-      const content = createContent({ id: 'some-id', name: 'some-name', localeString: 'some-locale' });
+      const content = createContent({ ...model, localeString: 'some-locale' });
 
       expect(content.getLocale()).toBe('some-locale');
     });
 
     it('should return undefined when there is no locale', () => {
-      const content = createContent({ id: 'some-id', name: 'some-name' });
+      const content = createContent();
 
       expect(content.getLocale()).toBeUndefined();
     });
@@ -60,14 +66,14 @@ describe('ContentImpl', () => {
       const meta = new MetaImpl({ data: '', type: 'comment' }, META_POSITION_BEGIN);
       metaFactory.create.mockReturnValueOnce([meta]);
 
-      const content = createContent({ id: 'some-id', name: 'some-name', _meta: metaModel });
+      const content = createContent({ ...model, _meta: metaModel });
 
       expect(metaFactory.create).toBeCalledWith(metaModel);
       expect(content.getMeta()).toEqual([meta]);
     });
 
     it('should pass an empty object if there is no meta-data', () => {
-      createContent({ id: 'some-id', name: 'some-name' });
+      createContent();
 
       expect(metaFactory.create).toBeCalledWith({});
     });
@@ -75,7 +81,7 @@ describe('ContentImpl', () => {
 
   describe('getName', () => {
     it('should return a content item name', () => {
-      const content = createContent({ id: 'some-id', name: 'some-name' });
+      const content = createContent();
 
       expect(content.getName()).toBe('some-name');
     });
@@ -83,25 +89,19 @@ describe('ContentImpl', () => {
 
   describe('getData', () => {
     it('should return a content item data', () => {
-      const content = createContent({ id: 'some-id', name: 'some-name' });
+      const content = createContent();
 
-      expect(content.getData()).toEqual({ id: 'some-id', name: 'some-name' });
+      expect(content.getData()).toEqual(expect.objectContaining({ id: 'some-id', name: 'some-name' }));
     });
   });
 
   describe('getUrl', () => {
     it('should return a content url', () => {
-      const content = createContent({ id: 'some-id', name: 'some-name', _links: { site: { href: 'url' } } });
+      const content = createContent();
       linkFactory.create.mockReturnValueOnce('url');
 
       expect(content.getUrl()).toBe('url');
       expect(linkFactory.create).toBeCalledWith({ href: 'url' });
-    });
-
-    it('should return undefined when content links are missing', () => {
-      const content = createContent({ id: 'some-id', name: 'some-name' });
-
-      expect(content.getUrl()).toBeUndefined();
     });
   });
 });

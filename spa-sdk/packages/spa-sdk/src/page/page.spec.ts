@@ -33,6 +33,10 @@ let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], Meta[]>>;
 let root: Component;
 
 const model = {
+  _links: {
+    self: { href: 'self-url' },
+    site: { href: 'site-url' },
+  },
   _meta: {},
   page: { _meta: {}, id: 'id', type: TYPE_COMPONENT },
 } as PageModel;
@@ -133,23 +137,10 @@ describe('PageImpl', () => {
     });
 
     it('should pass the current page link', () => {
-      const page = createPage({
-        ...model,
-        _links: {
-          site: { href: 'site-url' },
-          self: { href: 'self-url' },
-        },
-      });
-
-      expect(page.getUrl()).toBe('url');
-      expect(linkFactory.create).toBeCalledWith({ href: 'site-url', type: TYPE_LINK_INTERNAL });
-    });
-
-    it('should pass empty string', () => {
       const page = createPage();
 
       expect(page.getUrl()).toBe('url');
-      expect(linkFactory.create).toBeCalledWith('');
+      expect(linkFactory.create).toBeCalledWith({ href: 'site-url', type: TYPE_LINK_INTERNAL });
     });
   });
 

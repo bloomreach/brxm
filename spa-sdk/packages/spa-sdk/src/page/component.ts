@@ -66,7 +66,7 @@ type ComponentModels = Record<string, any>;
  * @hidden
  */
 export interface ComponentModel {
-  _links?: Record<ComponentLinks, Link>;
+  _links: Record<ComponentLinks, Link>;
   _meta: ComponentMeta;
   id: string;
   models?: ComponentModels;
@@ -154,7 +154,7 @@ export class ComponentImpl implements Component {
   }
 
   getUrl() {
-    return this.model._links && this.linkFactory.create(this.model._links.componentRendering);
+    return this.linkFactory.create(this.model._links.componentRendering);
   }
 
   getName() {
