@@ -14,24 +14,14 @@
  * limitations under the License.
  */
 
-// tslint:disable:no-console
 import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import {
-  ChildApi,
-  ClientErrorCodes,
-  connectToParent,
-  NavLocation,
-  ParentConnectConfig,
-  ParentPromisedApi,
-  SiteId,
-} from '@bloomreach/navapp-communication';
-import { CookieService } from 'ngx-cookie-service';
+import { ClientErrorCodes } from '@bloomreach/navapp-communication';
 
-import { mockNavItems, mockNavItemsMapPerSite, mockSites } from './mocks';
-
-const SITE_COOKIE_NAME = 'EXAMPLE_APP_SITE_ID';
-const NAVAPP_COMMUNICATION_IMPLEMENTATION_API_VERSION = '1.0.0';
+import { AppState } from './services/app-state';
+import { ChildApiMethodsService } from './services/child-api-methods.service';
+import { CommunicationService } from './services/communication.service';
+import { NavigatorService } from './services/navigator.service';
 
 @Component({
   selector: 'app-root',
@@ -42,187 +32,60 @@ const NAVAPP_COMMUNICATION_IMPLEMENTATION_API_VERSION = '1.0.0';
   ],
 })
 export class AppComponent implements OnInit {
-  navigateCount = 0;
-  internalNavigationsCount = 0;
-  navigatedTo: string;
-  buttonClicked = 0;
-  parent: ParentPromisedApi;
-  overlaid = false;
   parentApiVersion: string;
 
   constructor(
-    private readonly location: Location,
-    private readonly cookiesService: CookieService,
+    private readonly communicationService: CommunicationService,
+    private readonly childApiMethodsService: ChildApiMethodsService,
+    private readonly navigator: NavigatorService,
+    // tslint:disable-next-line:member-access
+    public readonly state: AppState,
   ) { }
 
-  get isBrSmMock(): boolean {
-    return this.location.path().startsWith('/brsm');
+  get currentLocation(): string {
+    return `${location}`;
   }
 
-  get childApiMethods(): ChildApi {
-    const methods: ChildApi = {
-      getConfig: () => ({
-        apiVersion: NAVAPP_COMMUNICATION_IMPLEMENTATION_API_VERSION,
-        showSiteDropdown: false,
-        communicationTimeout: 500,
-      }),
-      navigate: (location: NavLocation) => {
-        this.navigateCount += 1;
-        this.navigatedTo = location.path;
+  async ngOnInit(): Promise<void> {
+    await this.communicationService.connect(this.childApiMethodsService.getMethods());
 
-        if (this.navigatedTo === 'experience-manager/channel1') {
-          this.parent.updateNavLocation({
-            path: location.path,
-            breadcrumbLabel: 'Channel 1',
-          });
-        }
-
-        return new Promise(r => setTimeout(r, 300));
-      },
-      getNavItems: () => {
-        if (!this.selectedSiteId) {
-          return mockNavItems;
-        }
-
-        const key = `${this.selectedSiteId.siteId}${this.selectedSiteId.accountId}`;
-        const mockNavItemsPerSite = mockNavItemsMapPerSite[key];
-
-        return mockNavItemsPerSite || mockNavItems;
-      },
-      logout: () => {
-        if (this.navigateCount % 2) {
-          return Promise.reject(new Error('Whoa!'));
-        } else {
-          return Promise.resolve();
-        }
-      },
-      onUserActivity: () => {
-        console.log('parent reported user activity');
-      },
-    };
-
-    if (this.isBrSmMock) {
-      methods.getConfig = () => ({
-        apiVersion: NAVAPP_COMMUNICATION_IMPLEMENTATION_API_VERSION,
-        showSiteDropdown: true,
-      });
-
-      methods.getSites = () => {
-        return mockSites;
-      };
-
-      methods.getSelectedSite = () => {
-        return this.selectedSiteId;
-      };
-
-      methods.updateSelectedSite = (siteId?: SiteId) => {
-        this.selectedSiteId = siteId;
-      };
-    }
-
-    return methods;
-  }
-
-  get selectedSiteId(): SiteId {
-    let [accountId, siteId] = this.cookiesService.get(SITE_COOKIE_NAME).split(',').map(x => +x);
-
-    if (!accountId || !siteId) {
-      const firstSite = mockSites[0];
-
-      accountId = firstSite.accountId;
-      siteId = firstSite.siteId;
-
-      this.selectedSiteId = { accountId, siteId };
-    }
-
-    return { accountId, siteId };
-  }
-
-  set selectedSiteId(value: SiteId) {
-    this.cookiesService.set(SITE_COOKIE_NAME, `${value.accountId},${value.siteId}`);
-  }
-
-  ngOnInit(): void {
-    if (window.parent === window) {
-      console.error('Iframe app was not loaded inside iframe');
-      return;
-    }
-
-    const config: ParentConnectConfig = {
-      parentOrigin: '*',
-      methods: this.childApiMethods,
-    };
-
-    connectToParent(config)
-      .then(parent => (this.parent = parent))
-      .then(() => {
-        if (this.parent.getConfig) {
-          this.parent.getConfig()
-            .then(parentConfig => this.parentApiVersion = parentConfig.apiVersion);
-        }
-      });
-
-    window.addEventListener('popstate', event => {
-      if (event.state) {
-        this.internalNavigationsCount = event.state.navigationsCount;
-
-        return;
-      }
-
-      this.internalNavigationsCount = 0;
-    });
+    this.parentApiVersion = this.communicationService.parentApiVersion;
   }
 
   onButtonClicked(): void {
-    this.parent.onUserActivity().then(() => { this.buttonClicked++; });
+    this.state.buttonClickedCounter++;
+    this.communicationService.notifyAboutUserActivity();
   }
 
   toggleOverlay(): void {
-    if (this.overlaid) {
-      this.parent.hideMask().then(() => {
-        this.overlaid = false;
-      });
-    } else {
-      this.parent.showMask().then(() => {
-        this.overlaid = true;
-      });
-    }
+    this.communicationService.toggleMask();
   }
 
   navigateTo(path: string, breadcrumbLabel?: string): void {
-    if (path.startsWith(this.navigatedTo)) {
-      this.navigatedTo = path;
-      this.parent.updateNavLocation({ path: this.navigatedTo, breadcrumbLabel });
-    } else {
-      this.parent.navigate({ path, breadcrumbLabel });
-    }
+    this.communicationService.navigateTo(path, breadcrumbLabel);
   }
 
   navigateInternally(): void {
-    this.internalNavigationsCount++;
-    window.history.pushState({ navigationsCount: this.internalNavigationsCount }, '', `/some-url${this.internalNavigationsCount}`);
+    this.navigator.navigate(false);
   }
 
   navigateInternallyWithReplaceState(): void {
-    this.internalNavigationsCount++;
-    window.history.replaceState({ navigationsCount: this.internalNavigationsCount }, '', `/some-url${this.internalNavigationsCount}`);
+    this.navigator.navigate();
   }
 
   reloadPage(): void {
-    window.location.href = `${window.location.href}/something`;
+    this.navigator.reloadPage();
   }
 
-  sendNotAuthorizedError(): void {
-    this.parent.onError({
-      message: 'Not authorized',
-      errorCode: ClientErrorCodes.NotAuthorizedError,
-    });
+  sendNotAuthenticatedError(): void {
+    this.communicationService.sendError(ClientErrorCodes.NotAuthorizedError, 'Not authenticated');
   }
 
-  showError(): void {
-    this.parent.onError({
-      errorCode: 500,
-      message: 'Error from the iframe app example',
-    });
+  showError(message: string): void {
+    this.communicationService.sendError(ClientErrorCodes.InternalError, message);
+  }
+
+  toggleLogoutErrorState(): void {
+    this.state.generateAnErrorUponLogout = !this.state.generateAnErrorUponLogout;
   }
 }

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { CookieService } from 'ngx-cookie-service';
@@ -27,7 +28,11 @@ import { AppComponent } from './app.component';
   imports: [
     BrowserModule,
   ],
-  providers: [CookieService],
+  providers: [
+    Location,
+    { provide: LocationStrategy, useClass: PathLocationStrategy },
+    CookieService,
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule { }
