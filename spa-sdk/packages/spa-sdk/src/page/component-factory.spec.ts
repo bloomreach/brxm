@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +16,16 @@
 
 import { ComponentFactory } from './component-factory';
 import {
-  ComponentImpl,
   ComponentModel,
-  Component,
   TYPE_COMPONENT,
   TYPE_COMPONENT_CONTAINER_ITEM,
   TYPE_COMPONENT_CONTAINER,
 } from './component';
+
+const model = {
+  id: 'id',
+  type: TYPE_COMPONENT,
+} as ComponentModel;
 
 describe('ComponentFactory', () => {
   describe('create', () => {
@@ -33,18 +36,31 @@ describe('ComponentFactory', () => {
         .register(TYPE_COMPONENT, builder1)
         .register(TYPE_COMPONENT_CONTAINER, builder2);
 
-      factory.create({ id: 'id1', type: TYPE_COMPONENT, name: 'Component 1' });
-      factory.create({ id: 'id2', type: TYPE_COMPONENT_CONTAINER, name: 'Component 2' });
+      factory.create({ ...model, id: 'id1', name: 'Component 1' });
+      factory.create({ ...model, id: 'id2', type: TYPE_COMPONENT_CONTAINER, name: 'Component 2' });
 
-      expect(builder1).toBeCalledWith({ id: 'id1', type: TYPE_COMPONENT, name: 'Component 1' }, []);
-      expect(builder2).toBeCalledWith({ id: 'id2', type: TYPE_COMPONENT_CONTAINER, name: 'Component 2' }, []);
+      expect(builder1).toBeCalledWith({ ...model, id: 'id1', name: 'Component 1' }, []);
+      expect(builder2).toBeCalledWith(
+        {
+          ...model,
+          id: 'id2',
+          type: TYPE_COMPONENT_CONTAINER,
+          name: 'Component 2',
+        },
+        [],
+      );
     });
 
     it('should throw an exception on unknown component type', () => {
       const factory = new ComponentFactory()
         .register(TYPE_COMPONENT_CONTAINER_ITEM, jest.fn());
 
-      expect(() => factory.create({ id: 'id1', type: TYPE_COMPONENT_CONTAINER, name: 'Component 1' })).toThrowError();
+      expect(() => factory.create({
+        ...model,
+        id: 'id1',
+        type: TYPE_COMPONENT_CONTAINER,
+        name: 'Component 1',
+      })).toThrowError();
     });
 
     it('should produce a tree structure', () => {
@@ -53,14 +69,14 @@ describe('ComponentFactory', () => {
         .register(TYPE_COMPONENT, builder);
 
       const root = factory.create({
+        ...model,
         id: 'root',
-        type: TYPE_COMPONENT,
         components: [
-          { id: 'a', type: TYPE_COMPONENT },
-          { id: 'b', type: TYPE_COMPONENT,
+          { ...model, id: 'a' },
+          { ...model, id: 'b',
             components: [
-              { id: 'c', type: TYPE_COMPONENT },
-              { id: 'd', type: TYPE_COMPONENT },
+              { ...model, id: 'c' },
+              { ...model, id: 'd' },
             ] },
         ],
       });

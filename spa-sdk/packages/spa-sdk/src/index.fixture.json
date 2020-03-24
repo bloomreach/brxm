@@ -127,7 +127,21 @@
               ]
             }
           }
-        ]
+        ],
+        "_meta": {
+          "beginNodeSpan": [
+            {
+              "type": "comment",
+              "data": "<!-- { \"HST-LockedOn\":\"1585037995666\", \"HST-Label\":\"Homepage Main Container\", \"HST-LastModified\":\"1585037995679\", \"HST-XType\":\"hst.vbox\", \"HST-LockedBy\":\"admin\", \"uuid\":\"daadea5c-beee-4e84-83e2-d9e02722229b\", \"HST-Type\":\"CONTAINER_COMPONENT\", \"refNS\":\"r3_r1_r1\", \"url\":\"/site/spa-react-csr/resourceapi?_hn:type=component-rendering&_hn:ref=r3_r1_r1\", \"HST-LockedBy-Current-User\":\"true\"} -->"
+            }
+          ],
+          "endNodeSpan": [
+            {
+              "type": "comment",
+              "data": "<!-- { \"uuid\":\"daadea5c-beee-4e84-83e2-d9e02722229b\", \"HST-End\":\"true\"} -->"
+            }
+          ]
+        }
       }
     ],
     "_links": {

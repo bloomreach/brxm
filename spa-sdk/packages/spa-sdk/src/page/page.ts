@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -45,7 +45,7 @@ interface PageRootMeta extends ComponentMeta {
  * @hidden
  */
 interface PageRootModel {
-  _meta?: PageRootMeta;
+  _meta: PageRootMeta;
 }
 
 /**
@@ -77,7 +77,7 @@ interface PageMeta {
  */
 export interface PageModel {
   _links?: Record<PageLinks, Link>;
-  _meta?: PageMeta;
+  _meta: PageMeta;
   content?: { [reference: string]: ContentModel };
   page: (ComponentModel | ContainerItemModel | ContainerModel) & PageRootModel;
 }
@@ -223,7 +223,7 @@ export class PageImpl implements Page {
   }
 
   getTitle() {
-    return this.model.page._meta && this.model.page._meta.pageTitle;
+    return this.model.page._meta.pageTitle;
   }
 
   getUrl(link?: Link | string) {
@@ -235,15 +235,15 @@ export class PageImpl implements Page {
   }
 
   getVisitor() {
-    return this.model._meta && this.model._meta.visitor;
+    return this.model._meta.visitor;
   }
 
   getVisit() {
-    return this.model._meta && this.model._meta.visit;
+    return this.model._meta.visit;
   }
 
   isPreview() {
-    return !!(this.model._meta && this.model._meta.preview);
+    return !!this.model._meta.preview;
   }
 
   rewriteLinks(content: string, type: SupportedType = 'text/html') {

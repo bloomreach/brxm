@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,8 +32,13 @@ let linkRewriter: jest.Mocked<LinkRewriter>;
 let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], Meta[]>>;
 let root: Component;
 
-function createPage(model: PageModel) {
-  return new PageImpl(model, root, contentFactory, eventBus, linkFactory, linkRewriter, metaFactory);
+const model = {
+  _meta: {},
+  page: { _meta: {}, id: 'id', type: TYPE_COMPONENT },
+} as PageModel;
+
+function createPage(pageModel = model) {
+  return new PageImpl(pageModel, root, contentFactory, eventBus, linkFactory, linkRewriter, metaFactory);
 }
 
 beforeEach(() => {
@@ -51,7 +56,7 @@ beforeEach(() => {
 describe('PageImpl', () => {
   describe('getComponent', () => {
     it('should forward a call to the root component', () => {
-      const page = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
+      const page = createPage();
       page.getComponent('a', 'b');
 
       expect(root.getComponent).toBeCalledWith('a', 'b');
@@ -63,11 +68,11 @@ describe('PageImpl', () => {
 
     beforeEach(() => {
       page = createPage({
+        ...model,
         content: {
-          content1: { id: 'id1', name: 'content1' },
-          content2: { id: 'id2', name: 'content2' },
+          content1: { id: 'id1', name: 'content1' } as ContentModel,
+          content2: { id: 'id2', name: 'content2' } as ContentModel,
         },
-        page: { id: 'id', type: TYPE_COMPONENT },
       });
     });
 
@@ -85,7 +90,7 @@ describe('PageImpl', () => {
   describe('getMeta', () => {
     it('should delegate to the MetaFactory to create new meta', () => {
       const metaFactoryCreateSpy = jest.spyOn(metaFactory, 'create');
-      const page = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
+      const page = createPage();
 
       const metaCollectionModel = {} as MetaCollectionModel;
       page.getMeta(metaCollectionModel);
@@ -97,9 +102,9 @@ describe('PageImpl', () => {
   describe('getTitle', () => {
     it('should return a page title', () => {
       const page = createPage({
+        ...model,
         page: {
-          id: 'id',
-          type: TYPE_COMPONENT,
+          ...model.page,
           _meta: { pageTitle: 'something' },
         },
       });
@@ -108,11 +113,9 @@ describe('PageImpl', () => {
     });
 
     it('should return an undefined value', () => {
-      const page1 = createPage({ page: { id: 'id', type: TYPE_COMPONENT, _meta: {} } });
-      const page2 = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
+      const page = createPage();
 
-      expect(page1.getTitle()).toBeUndefined();
-      expect(page2.getTitle()).toBeUndefined();
+      expect(page.getTitle()).toBeUndefined();
     });
   });
 
@@ -123,7 +126,7 @@ describe('PageImpl', () => {
 
     it('should pass a link to the link factory', () => {
       const link = { href: '' };
-      const page = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
+      const page = createPage();
 
       expect(page.getUrl(link)).toBe('url');
       expect(linkFactory.create).toBeCalledWith(link);
@@ -131,7 +134,7 @@ describe('PageImpl', () => {
 
     it('should pass the current page link', () => {
       const page = createPage({
-        page: { id: 'id', type: TYPE_COMPONENT },
+        ...model,
         _links: {
           site: { href: 'site-url' },
           self: { href: 'self-url' },
@@ -143,7 +146,7 @@ describe('PageImpl', () => {
     });
 
     it('should pass empty string', () => {
-      const page = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
+      const page = createPage();
 
       expect(page.getUrl()).toBe('url');
       expect(linkFactory.create).toBeCalledWith('');
@@ -153,7 +156,7 @@ describe('PageImpl', () => {
   describe('getVisitor', () => {
     it('should return a visitor', () => {
       const page = createPage({
-        page: { id: 'id', type: TYPE_COMPONENT },
+        ...model,
         _meta: {
           visitor: {
             id: 'some-id',
@@ -171,18 +174,16 @@ describe('PageImpl', () => {
     });
 
     it('should return an undefined value', () => {
-      const page1 = createPage({ page: { id: 'id', type: TYPE_COMPONENT, _meta: {} } });
-      const page2 = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
+      const page = createPage();
 
-      expect(page1.getVisitor()).toBeUndefined();
-      expect(page2.getVisitor()).toBeUndefined();
+      expect(page.getVisitor()).toBeUndefined();
     });
   });
 
   describe('getVisit', () => {
     it('should return a visit', () => {
       const page = createPage({
-        page: { id: 'id', type: TYPE_COMPONENT },
+        ...model,
         _meta: {
           visit: {
             id: 'some-id',
@@ -198,44 +199,37 @@ describe('PageImpl', () => {
     });
 
     it('should return an undefined value', () => {
-      const page1 = createPage({ page: { id: 'id', type: TYPE_COMPONENT, _meta: {} } });
-      const page2 = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
+      const page = createPage();
 
-      expect(page1.getVisit()).toBeUndefined();
-      expect(page2.getVisit()).toBeUndefined();
+      expect(page.getVisit()).toBeUndefined();
     });
   });
 
   describe('isPreview', () => {
     it('should return true', () => {
-      const page = createPage({
-        page: { id: 'id', type: TYPE_COMPONENT },
-        _meta: { preview: true },
-      });
+      const page = createPage({ ...model, _meta: { preview: true } });
 
       expect(page.isPreview()).toBe(true);
     });
 
     it('should return false', () => {
-      const page1 = createPage({ page: { id: 'id', type: TYPE_COMPONENT, _meta: {} } });
-      const page2 = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
+      const page = createPage();
 
-      expect(page1.isPreview()).toBe(false);
-      expect(page2.isPreview()).toBe(false);
+      expect(page.isPreview()).toBe(false);
     });
   });
 
   describe('onPageUpdate', () => {
     it('should update content on page.update event', async () => {
-      const page = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
+      const page = createPage();
 
       expect(page.getContent('content')).toBeUndefined();
 
       await eventBus.emitSerial('page.update', { page: {
+        ...model,
         content: {
-          content: { id: 'id', name: 'content' },
+          content: { id: 'id', name: 'content' } as ContentModel,
         },
-        page: { id: 'id', type: TYPE_COMPONENT },
       } });
 
       expect(contentFactory.create).toBeCalledWith({ id: 'id', name: 'content' });
@@ -247,7 +241,7 @@ describe('PageImpl', () => {
     it('should pass a call to the link rewriter', () => {
       linkRewriter.rewrite.mockReturnValueOnce('rewritten');
 
-      const page = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
+      const page = createPage();
 
       expect(page.rewriteLinks('something', 'text/html')).toBe('rewritten');
       expect(linkRewriter.rewrite).toBeCalledWith('something', 'text/html');
@@ -258,7 +252,7 @@ describe('PageImpl', () => {
     it('should emit page.ready event', () => {
       spyOn(eventBus, 'emit');
 
-      const page = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
+      const page = createPage();
       page.sync();
 
       expect(eventBus.emit).toBeCalledWith('page.ready', {});
@@ -267,8 +261,7 @@ describe('PageImpl', () => {
 
   describe('toJSON', () => {
     it('should return a page model', () => {
-      const model = { page: { id: 'id', type: TYPE_COMPONENT } } as PageModel;
-      const page = createPage(model);
+      const page = createPage();
 
       expect(page.toJSON()).toBe(model);
     });
@@ -277,7 +270,7 @@ describe('PageImpl', () => {
 
 describe('isPage', () => {
   it('should return true', () => {
-    const page = createPage({ page: { id: 'id', type: TYPE_COMPONENT } });
+    const page = createPage();
 
     expect(isPage(page)).toBe(true);
   });

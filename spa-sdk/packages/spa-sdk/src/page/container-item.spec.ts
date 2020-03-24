@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,13 +21,20 @@ import { Events } from '../events';
 import { Factory } from './factory';
 import { Link } from './link';
 import { MetaCollectionModel, Meta } from './meta';
+import { PageModel } from './page';
 
 let eventBus: Typed<Events>;
 let linkFactory: jest.Mocked<Factory<[Link], string>>;
 let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], Meta[]>>;
 
-function createContainerItem(model: ContainerItemModel) {
-  return new ContainerItemImpl(model, eventBus, linkFactory, metaFactory);
+const model = {
+  _meta: {},
+  id: 'id',
+  type: TYPE_COMPONENT_CONTAINER_ITEM,
+} as ContainerItemModel;
+
+function createContainerItem(containerItemModel = model) {
+  return new ContainerItemImpl(containerItemModel, eventBus, linkFactory, metaFactory);
 }
 
 beforeEach(() => {
@@ -39,7 +46,7 @@ beforeEach(() => {
 describe('ContainerItemImpl', () => {
   describe('getType', () => {
     it('should return a type', () => {
-      const containerItem = createContainerItem({ id: 'id', type: TYPE_COMPONENT_CONTAINER_ITEM, label: 'Banner' });
+      const containerItem = createContainerItem({ ...model, label: 'Banner' });
 
       expect(containerItem.getType()).toBe('Banner');
     });
@@ -48,8 +55,7 @@ describe('ContainerItemImpl', () => {
   describe('isHidden', () => {
     it('should be hidden', () => {
       const containerItem = createContainerItem({
-        id: 'id',
-        type: TYPE_COMPONENT_CONTAINER_ITEM,
+        ...model,
         _meta: {
           params: { 'com.onehippo.cms7.targeting.TargetingParameterUtil.hide': 'on' },
         },
@@ -60,33 +66,28 @@ describe('ContainerItemImpl', () => {
 
     it('should not be hidden', () => {
       const containerItem1 = createContainerItem({
-        id: 'id',
-        type: TYPE_COMPONENT_CONTAINER_ITEM,
+        ...model,
         _meta: {
           params: { 'com.onehippo.cms7.targeting.TargetingParameterUtil.hide': 'off' },
         },
       });
 
       const containerItem2 = createContainerItem({
-        id: 'id',
-        type: TYPE_COMPONENT_CONTAINER_ITEM,
+        ...model,
         _meta: { params: {} },
       });
-      const containerItem3 = createContainerItem({ id: 'id', type: TYPE_COMPONENT_CONTAINER_ITEM, _meta: { } });
-      const containerItem4 = createContainerItem({ id: 'id', type: TYPE_COMPONENT_CONTAINER_ITEM });
+      const containerItem3 = createContainerItem();
 
       expect(containerItem1.isHidden()).toBe(false);
       expect(containerItem2.isHidden()).toBe(false);
       expect(containerItem3.isHidden()).toBe(false);
-      expect(containerItem4.isHidden()).toBe(false);
     });
   });
 
   describe('getParameters', () => {
     it('should return parameters', () => {
       const containerItem = createContainerItem({
-        id: 'id',
-        type: TYPE_COMPONENT_CONTAINER_ITEM,
+        ...model,
         _meta: {
           paramsInfo: { a: '1', b: '2' },
         },
@@ -96,11 +97,9 @@ describe('ContainerItemImpl', () => {
     });
 
     it('should return an empty object', () => {
-      const containerItem1 = createContainerItem({ id: 'id', type: TYPE_COMPONENT_CONTAINER_ITEM, _meta: {} });
-      const containerItem2 = createContainerItem({ id: 'id', type: TYPE_COMPONENT_CONTAINER_ITEM });
+      const containerItem = createContainerItem();
 
-      expect(containerItem1.getParameters()).toEqual({});
-      expect(containerItem2.getParameters()).toEqual({});
+      expect(containerItem.getParameters()).toEqual({});
     });
   });
 
@@ -108,7 +107,7 @@ describe('ContainerItemImpl', () => {
     let containerItem: ContainerItem;
 
     beforeEach(() => {
-      containerItem = createContainerItem({ id: 'id1', type: TYPE_COMPONENT_CONTAINER_ITEM, label: 'a' });
+      containerItem = createContainerItem({ ...model, id: 'id1', label: 'a' });
       metaFactory.create.mockClear();
     });
 
@@ -116,8 +115,8 @@ describe('ContainerItemImpl', () => {
       await eventBus.emitSerial(
         'page.update',
         { page: {
-          page: { id: 'id2', type: TYPE_COMPONENT_CONTAINER_ITEM, label: 'b' },
-        } },
+          page: { ...model, id: 'id2', label: 'b' },
+        } as PageModel },
       );
 
       expect(metaFactory.create).not.toBeCalled();
@@ -131,8 +130,8 @@ describe('ContainerItemImpl', () => {
       await eventBus.emitSerial(
         'page.update',
         { page: {
-          page: { id: 'id1', type: TYPE_COMPONENT_CONTAINER_ITEM, _meta: metaModel },
-        } },
+          page: { ...model, id: 'id1', _meta: metaModel },
+        } as PageModel },
       );
 
       expect(metaFactory.create).toBeCalledWith(metaModel);
@@ -143,8 +142,8 @@ describe('ContainerItemImpl', () => {
       await eventBus.emitSerial(
         'page.update',
         { page: {
-          page: { id: 'id1', type: TYPE_COMPONENT_CONTAINER_ITEM, label: 'b' },
-        } },
+          page: { ...model, id: 'id1', label: 'b' },
+        } as PageModel },
       );
 
       expect(containerItem.getType()).toBe('b');
@@ -157,8 +156,8 @@ describe('ContainerItemImpl', () => {
       await eventBus.emitSerial(
         'page.update',
         { page: {
-          page: { id: 'id1', type: TYPE_COMPONENT_CONTAINER_ITEM },
-        } },
+          page: { ...model, id: 'id1' },
+        } as PageModel },
       );
       await new Promise(process.nextTick);
 
@@ -169,18 +168,13 @@ describe('ContainerItemImpl', () => {
 
 describe('isContainerItem', () => {
   it('should return true', () => {
-    const containerItem = createContainerItem({ id: 'id', type: TYPE_COMPONENT_CONTAINER_ITEM });
+    const containerItem = createContainerItem();
 
     expect(isContainerItem(containerItem)).toBe(true);
   });
 
   it('should return false', () => {
-    const component = new ComponentImpl(
-      { id: 'id', type: TYPE_COMPONENT_CONTAINER_ITEM },
-      [],
-      linkFactory,
-      metaFactory,
-    );
+    const component = new ComponentImpl(model, [], linkFactory, metaFactory);
 
     expect(isContainerItem(undefined)).toBe(false);
     expect(isContainerItem(component)).toBe(false);
