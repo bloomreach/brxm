@@ -21,26 +21,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpSession;
-
 import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.components.HstComponentConfiguration;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.internal.CanonicalInfo;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMap;
 import org.hippoecm.hst.configuration.sitemap.HstSiteMapItem;
-import org.hippoecm.hst.container.security.AccessToken;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.core.container.HstComponentWindow;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.util.HstRequestUtils;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE;
 import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_VARIANT;
 
 public class CmsComponentWindowResponseAppender extends AbstractComponentWindowResponseAppender implements ComponentWindowResponseAppender {
@@ -61,18 +58,7 @@ public class CmsComponentWindowResponseAppender extends AbstractComponentWindowR
             return;
         }
 
-        final CmsSessionContext cmsSessionContext;
-        if (request.getAttribute(PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE) == null) {
-            final HttpSession session = request.getSession(false);
-            if (session == null) {
-                throw new IllegalStateException("HttpSession should never be null here.");
-            }
-
-            cmsSessionContext = CmsSessionContext.getContext(session);
-        } else {
-            // token based rendering for preview
-            cmsSessionContext = ((AccessToken) request.getAttribute(PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE)).getCmsSessionContext();
-        }
+        final CmsSessionContext cmsSessionContext = HstRequestUtils.getCmsSessionContext(request);
 
         if (cmsSessionContext == null) {
             throw new IllegalStateException("cmsSessionContext should never be null here.");

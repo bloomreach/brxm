@@ -35,6 +35,7 @@ import javax.servlet.http.HttpSession;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.site.HstSite;
+import org.hippoecm.hst.container.security.AccessToken;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.component.HstURL;
@@ -53,6 +54,7 @@ import org.onehippo.repository.branch.BranchConstants;
 import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 import static org.apache.commons.lang3.StringUtils.substringAfter;
 import static org.apache.commons.lang3.StringUtils.substringBefore;
+import static org.hippoecm.hst.core.container.ContainerConstants.PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE;
 import static org.hippoecm.hst.core.container.ContainerConstants.RENDER_BRANCH_ID;
 import static org.hippoecm.hst.site.HstServices.getComponentManager;
 
@@ -829,5 +831,42 @@ public class HstRequestUtils {
         final String farthestRequestScheme = HstRequestUtils.getFarthestRequestScheme(servletRequest);
         return farthestRequestScheme + "://" + farthestRequestHost;
 
+    }
+
+    /**
+     * <p>
+     *     If the {@code request} is tied to a {@link CmsSessionContext}, this method returns that {@link CmsSessionContext}.
+     *     Note that the {@code request} can be tied to in two different ways to a {@link CmsSessionContext}:
+     *     <ol>
+     *         <li>If the request has a PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE attribute, then the
+     *            {@link CmsSessionContext} from the token is returned
+     *         </li>
+     *         <li>
+     *             If the request has an {@link HttpSession}, then the {@link CmsSessionContext} linked to that http
+     *             session is returned of present
+     *         </li>
+     *     </ol>
+     * </p>
+     * @param request the {@link HttpServletRequest} to return the {@link CmsSessionContext} for if present
+     * @return the {@link CmsSessionContext} for the {@code request} if present and otherwise returns {@code null}
+     */
+    public static CmsSessionContext getCmsSessionContext(final HttpServletRequest request) {
+        Object token = request.getAttribute(PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE);
+        if (token == null) {
+            final HttpSession session = request.getSession(false);
+            if (session == null) {
+                return null;
+            }
+
+            return CmsSessionContext.getContext(session);
+        } else {
+            // token based rendering for preview
+            if (token instanceof AccessToken) {
+                return ((AccessToken) token).getCmsSessionContext();
+            } else {
+                throw new IllegalStateException(String.format("For attribute '%s' only an object of type '%s' " +
+                        "is allowed", PREVIEW_ACCESS_TOKEN_REQUEST_ATTRIBUTE, AccessToken.class.getName()));
+            }
+        }
     }
 }

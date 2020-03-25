@@ -263,10 +263,17 @@ public class RootResource extends AbstractConfigResource implements ComponentMan
                                     @Context HttpServletRequest servletRequest,
                                     @PathParam("renderingHost") String renderingHost,
                                     @PathParam("mountId") String mountId) {
-        final HttpSession session = servletRequest.getSession(true);
-
+        // session should never be null here
+        final HttpSession session = servletRequest.getSession(false);
+        if (session == null) {
+            throw new IllegalStateException("Session should never be null here");
+        }
 
         final CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(session);
+        if (cmsSessionContext == null) {
+            throw new IllegalStateException("CmsSessionContext should never be null here");
+        }
+
         final Map<String, Serializable> contextPayload = cmsSessionContext.getContextPayload();
 
         contextPayload.put(ContainerConstants.RENDERING_HOST, renderingHost);
