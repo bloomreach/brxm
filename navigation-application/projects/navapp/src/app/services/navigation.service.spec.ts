@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Location, PopStateEvent } from '@angular/common';
+import { Location, LocationStrategy, PopStateEvent } from '@angular/common';
 import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { NavigationTrigger, NavLocation } from '@bloomreach/navapp-communication';
 import { TranslateService } from '@ngx-translate/core';
@@ -47,6 +47,7 @@ describe('NavigationService', () => {
 
   let appSettingsMock: AppSettings;
   let locationMock: jasmine.SpyObj<Location>;
+  let locationStrategyMock: jasmine.SpyObj<LocationStrategy>;
   let clientAppServiceMock: jasmine.SpyObj<ClientAppService>;
   let menuStateServiceMock: jasmine.SpyObj<MenuStateService>;
   let busyIndicatorServiceMock: jasmine.SpyObj<BusyIndicatorService>;
@@ -84,15 +85,17 @@ describe('NavigationService', () => {
     });
 
     locationMock = jasmine.createSpyObj('Location', [
-      'path',
       'subscribe',
       'isCurrentPathEqualTo',
       'replaceState',
       'go',
     ]);
-    locationMock.path.and.returnValue('');
     locationMock.isCurrentPathEqualTo.and.returnValue(false);
     locationMock.subscribe.and.callFake(cb => locationChangeFunction = cb);
+
+    locationStrategyMock = jasmine.createSpyObj('LocationStrategy', {
+      path: '/',
+    });
 
     childApi = jasmine.createSpyObj('ChildApi', {
       beforeNavigation: Promise.resolve(true),
@@ -166,6 +169,7 @@ describe('NavigationService', () => {
         { provide: ConnectionService, useValue: connectionServiceMock },
         { provide: ErrorHandlingService, useValue: errorHandlingServiceMock },
         { provide: Location, useValue: locationMock },
+        { provide: LocationStrategy, useValue: locationStrategyMock },
         { provide: MenuStateService, useValue: menuStateServiceMock },
         { provide: UrlMapperService, useValue: urlMapperServiceMock },
         { provide: TranslateService, useValue: translateServiceMock },
@@ -224,7 +228,7 @@ describe('NavigationService', () => {
 
     it('should use the browser\'s location path', fakeAsync(() => {
       appSettingsMock.initialPath = undefined;
-      locationMock.path.and.returnValue(`${basePath}/iframe1/url/app/path/to/page1`);
+      locationStrategyMock.path.and.returnValue(`${basePath}/iframe1/url/app/path/to/page1`);
 
       service.initialNavigation();
 
@@ -235,7 +239,7 @@ describe('NavigationService', () => {
 
     it('should use the browser\'s location path with a query string', fakeAsync(() => {
       appSettingsMock.initialPath = undefined;
-      locationMock.path.and.returnValue(`${basePath}/iframe1/url/app/path/to/page1?queryString=value`);
+      locationStrategyMock.path.and.returnValue(`${basePath}/iframe1/url/app/path/to/page1?queryString=value`);
 
       service.initialNavigation();
 
@@ -246,7 +250,7 @@ describe('NavigationService', () => {
 
     it('should use the browser\'s location path with a hash', fakeAsync(() => {
       appSettingsMock.initialPath = undefined;
-      locationMock.path.and.returnValue(`${basePath}/iframe1/url/app/path/to/page1?#hash`);
+      locationStrategyMock.path.and.returnValue(`${basePath}/iframe1/url/app/path/to/page1?#hash`);
 
       service.initialNavigation();
 
@@ -257,13 +261,24 @@ describe('NavigationService', () => {
 
     it('should use the browser\'s location path with a query string and a hash', fakeAsync(() => {
       appSettingsMock.initialPath = undefined;
-      locationMock.path.and.returnValue(`${basePath}/iframe1/url/app/path/to/page1?q=value#hash`);
+      locationStrategyMock.path.and.returnValue(`${basePath}/iframe1/url/app/path/to/page1?q=value#hash`);
 
       service.initialNavigation();
 
       tick();
 
       expect(locationMock.replaceState).toHaveBeenCalledWith(`${basePath}/iframe1/url/app/path/to/page1?q=value#hash`, '', {});
+    }));
+
+    it('should preserve trailing slash in the browser\'s location path', fakeAsync(() => {
+      appSettingsMock.initialPath = undefined;
+      locationStrategyMock.path.and.returnValue(`${basePath}/iframe1/url/app/path/to/page1/?q=value#hash`);
+
+      service.initialNavigation();
+
+      tick();
+
+      expect(locationMock.replaceState).toHaveBeenCalledWith(`${basePath}/iframe1/url/app/path/to/page1/?q=value#hash`, '', {});
     }));
   });
 

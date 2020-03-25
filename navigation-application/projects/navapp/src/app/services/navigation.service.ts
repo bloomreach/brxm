@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Location } from '@angular/common';
+import { Location, LocationStrategy } from '@angular/common';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { NavigationTrigger, NavLocation } from '@bloomreach/navapp-communication';
 import { TranslateService } from '@ngx-translate/core';
@@ -80,6 +80,7 @@ export class NavigationService implements OnDestroy {
     private readonly connectionService: ConnectionService,
     private readonly errorHandlingService: ErrorHandlingService,
     private readonly location: Location,
+    private readonly locationStrategy: LocationStrategy,
     private readonly menuStateService: MenuStateService,
     private readonly urlMapperService: UrlMapperService,
     private readonly translateService: TranslateService,
@@ -127,7 +128,10 @@ export class NavigationService implements OnDestroy {
 
     const url = this.appSettings.initialPath ?
       Location.joinWithSlash(this.basePath, this.appSettings.initialPath) :
-      this.location.path(true);
+      // As of Angular 8 Location.path(true) returns the current path with hash. The path value is provided by LocationStrategy.path(true)
+      // but Location service performs normalization to strip off base path, 'index.html' and the path's trailing slash which is
+      // important to implement proper navigation due to that not normalized path with hash is used.
+      this.locationStrategy.path(true);
 
     return this.scheduleNavigation(url, NavigationTrigger.InitialNavigation, {}, true);
   }
@@ -281,7 +285,7 @@ export class NavigationService implements OnDestroy {
         this.logger.debug(`Navigation: initiated to the url '${t.url}'`);
         const url = stripOffQueryStringAndHash(t.url);
 
-        if (!url) {
+        if (url === '' || url === '/') {
           t.url = this.homeUrl;
           this.logger.debug(`Navigation: redirected to home url '${t.url}'`);
         }
