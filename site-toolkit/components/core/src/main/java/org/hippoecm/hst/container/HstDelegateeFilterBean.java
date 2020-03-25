@@ -103,6 +103,7 @@ import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRemoteAddr;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestHost;
 import static org.hippoecm.hst.util.HstRequestUtils.getFarthestRequestScheme;
 import static org.hippoecm.hst.util.HstRequestUtils.getRenderingHost;
+import static org.hippoecm.hst.util.HstRequestUtils.getRequestHosts;
 
 
 public class HstDelegateeFilterBean extends AbstractFilterBean implements ServletContextAware, InitializingBean {
@@ -328,6 +329,17 @@ public class HstDelegateeFilterBean extends AbstractFilterBean implements Servle
                     log.warn("'{}' can not be matched to a host. Skip HST Filter and request processing. ", containerRequest);
                 }
                 chain.doFilter(request, response);
+                return;
+            }
+
+            final String requestHostName = getRequestHosts(containerRequest, false)[0];
+            if (!requestHostName.equals(hostName) && vHosts.matchVirtualHost(requestHostName) == null) {
+                // There are several causes why this might happen:
+                // - hst host and reverse proxy configuration mismatch
+                // - forwarded host header spoofing (either by a developer or a malicious attacker)
+                log.warn("Request host '{}' for {} does not match any virtual host, skip hst request processing and return status {} (NOT_FOUND) now",
+                        requestHostName, containerRequest, HttpServletResponse.SC_NOT_FOUND);
+                res.setStatus(HttpServletResponse.SC_NOT_FOUND);
                 return;
             }
 
