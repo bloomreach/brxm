@@ -28,6 +28,7 @@
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "lint": "tslint --project .",
+    "prepare": "$npm_execpath run build",
     "test": "jest --coverage"
   },
   "dependencies": {

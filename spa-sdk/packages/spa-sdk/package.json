@@ -29,6 +29,7 @@
     "build": "rollup -c rollup.config.js",
     "docs": "tsc --emitDeclarationOnly && dts-bundle-generator --out-file dist/spa-sdk.d.ts dist/index.d.ts && typedoc dist/spa-sdk.d.ts && minicat src/docs/typedoc.css >> docs/assets/css/main.css && rm dist/spa-sdk.d.ts",
     "lint": "tslint --project .",
+    "prepare": "$npm_execpath run build",
     "test": "jest"
   },
   "jest": {
