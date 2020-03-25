@@ -34,6 +34,7 @@ export default [
         sourcemapExcludeSources: true,
         globals: {
           react: 'React',
+          'react-dom': 'ReactDOM',
           '@bloomreach/spa-sdk': 'BloomreachSpaSdk',
         },
       },
@@ -42,6 +43,7 @@ export default [
         format: 'esm',
         globals: {
           react: 'React',
+          'react-dom': 'ReactDOM',
           '@bloomreach/spa-sdk': 'BloomreachSpaSdk',
         },
       },
