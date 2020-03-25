@@ -42,6 +42,7 @@ import org.apache.wicket.markup.repeater.data.DataView;
 import org.apache.wicket.markup.repeater.data.IDataProvider;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
+import org.apache.wicket.model.Model;
 import org.apache.wicket.model.PropertyModel;
 import org.apache.wicket.model.StringResourceModel;
 import org.apache.wicket.request.resource.ResourceReference;
@@ -52,6 +53,7 @@ import org.hippoecm.addon.workflow.WorkflowSNSException;
 import org.hippoecm.editor.type.JcrTypeStore;
 import org.hippoecm.frontend.dialog.IDialogService.Dialog;
 import org.hippoecm.frontend.model.JcrNodeModel;
+import org.hippoecm.frontend.model.ModelReference;
 import org.hippoecm.frontend.model.ocm.StoreException;
 import org.hippoecm.frontend.plugin.IPluginContext;
 import org.hippoecm.frontend.plugin.config.IPluginConfig;
@@ -88,6 +90,7 @@ import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.hippoecm.repository.translation.TranslationWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
+import org.jetbrains.annotations.NotNull;
 import org.onehippo.translate.TranslateWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,23 +102,174 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 public final class TranslationWorkflowPlugin extends RenderPlugin {
 
     public static final String TRANSLATE = "translate";
+    private static final String COULD_NOT_CREATE_FOLDERS = "could-not-create-folders";
     private static Logger log = LoggerFactory.getLogger(TranslationWorkflowPlugin.class);
-    private final IModel<Boolean> canTranslateModel;
+    private TranslationsModel translationsModel;
+    private DocumentTranslationProvider translationProvider;
 
-    private final class LanguageModel extends LoadableDetachableModel<String> {
-        @Override
-        protected String load() {
-            WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) TranslationWorkflowPlugin.this.getDefaultModel();
-            if (wdm != null) {
-                try {
-                    Node documentNode = wdm.getNode();
-                    return documentNode.getProperty(HippoTranslationNodeType.LOCALE).getString();
-                } catch (RepositoryException ex) {
-                    log.error(ex.getMessage(), ex);
+    public TranslationWorkflowPlugin(IPluginContext context, IPluginConfig config) {
+        super(context, config);
+
+        final IModel<String> languageModel = new LanguageModel();
+        final ILocaleProvider localeProvider = getLocaleProvider();
+
+        Node documentNode = null;
+        DocumentTranslationProvider docTranslationProvider = null;
+        try {
+            documentNode = getDocumentNode();
+
+            docTranslationProvider = new DocumentTranslationProvider(new JcrNodeModel(documentNode),
+                    localeProvider);
+        } catch (RepositoryException e) {
+            log.warn("Unable to find document node");
+        }
+        translationProvider = docTranslationProvider;
+
+        if (documentNode == null) {
+            return;
+        }
+
+        try {
+            if (!TranslationUtil.isNtTranslated(documentNode.getParent().getParent()) &&
+                    (!TranslationUtil.isNtTranslated(documentNode) || !localeProvider.isKnown(languageModel.getObject()))) {
+                return;
+            }
+        } catch (RepositoryException e) {
+            log.warn("Could not determine translations status of document", e);
+        }
+
+        final EmptyPanel emptyPanel = new EmptyPanel("content");
+        add(emptyPanel);
+        if (documentNode != null) {
+            try {
+                final Node parent = documentNode.getParent();
+                final String identifier = parent.getIdentifier();
+                getOrCreateTranslationModel(identifier);
+                translationsModel.addWorkflowDescriptorModel((WorkflowDescriptorModel) getDefaultModel());
+                addMenuDescription(localeProvider, languageModel, identifier);
+            } catch (RepositoryException e) {
+                log.warn("Could not determine identifier of handle for node : { path : {} }", JcrUtils.getNodePathQuietly(documentNode));
+            }
+        }
+    }
+
+    private static void collectFields(String relPath, String nodeType, Set<String> plainTextFields, Set<String> richTextFields) {
+        try {
+            final JcrTypeStore jcrTypeStore = new JcrTypeStore();
+            final ITypeDescriptor type = jcrTypeStore.load(nodeType);
+            for (Map.Entry<String, IFieldDescriptor> field : type.getFields().entrySet()) {
+                final IFieldDescriptor fieldDescriptor = field.getValue();
+                if ("*".equals(fieldDescriptor.getPath())) {
+                    continue;
+                }
+                final ITypeDescriptor fieldType = fieldDescriptor.getTypeDescriptor();
+                final String fieldPath = fieldPath(relPath, fieldDescriptor);
+                if (fieldType.getType().equals(HippoStdNodeType.NT_HTML)) {
+                    final String propertyPath = fieldPath + '/' + HippoStdNodeType.HIPPOSTD_CONTENT;
+                    richTextFields.add(propertyPath);
+                } else if (fieldType.getName().equals("Text")) {
+                    plainTextFields.add(fieldPath);
+                } else if (fieldType.getName().equals("Html")) {
+                    richTextFields.add(fieldPath);
+                } else if (fieldType.isNode()) {
+                    collectFields(fieldPath, fieldType.getType(), plainTextFields, richTextFields);
                 }
             }
-            return "unknown";
+        } catch (StoreException ex) {
+            // ignore nt:base
         }
+    }
+
+    private static String fieldPath(final String basePath, final IFieldDescriptor fieldDescriptor) {
+        return (basePath != null ? basePath + '/' : "") + fieldDescriptor.getPath();
+    }
+
+    private void getOrCreateTranslationModel(String identifier) {
+        IPluginContext context = getPluginContext();
+        String referenceModelIdentifier = TranslationsModel.class.getName() + "." + identifier + "." + UserSession.get().getId();
+        final ModelReference service = context.getService(referenceModelIdentifier, ModelReference.class);
+        if (service == null) {
+            translationsModel = new TranslationsModel();
+            ModelReference<TranslationsModel> translationsModelReference = new ModelReference<TranslationsModel>(referenceModelIdentifier, new Model(translationsModel));
+            translationsModelReference.init(context);
+        } else {
+            translationsModel = (TranslationsModel) context.getReference(service).getService().getModel().getObject();
+        }
+    }
+
+    private void addMenuDescription(final ILocaleProvider localeProvider, final IModel<String> languageModel, String identifier) {
+        IPluginContext context = getPluginContext();
+        String referenceModelIdentifier = TranslationMenuDescription.class.getName() + "." + identifier  + "." + UserSession.get().getId();
+        final ModelReference service = context.getService(referenceModelIdentifier, ModelReference.class);
+        if (service == null) {
+            ModelReference<Boolean> translationsModelReference = new ModelReference<Boolean>(referenceModelIdentifier, new Model(Boolean.TRUE));
+            translationsModelReference.init(context);
+            TranslationMenuDescription translationMenuDescription = new TranslationMenuDescription(localeProvider, languageModel);
+            add(translationMenuDescription);
+        }
+    }
+
+    @NotNull
+    private String getAttributeName(final String identifier) {
+        return TranslationWorkflowPlugin.class.getName() + ".menuDescriptionAddedForHandleWithId." + identifier;
+    }
+
+    public boolean hasLocale(String locale) {
+        return translationProvider != null && translationProvider.contains(locale);
+    }
+
+    /**
+     * Detaches all models
+     */
+    @Override
+    public void detachModels() {
+        super.detachModels();
+        try {
+            UserSession.get().setAttribute(getAttributeName(getDocumentNode().getParent().getIdentifier()), null);
+        } catch (RepositoryException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private Node getDocumentNode() throws RepositoryException {
+        WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
+        if (wdm != null) {
+            return wdm.getNode();
+        }
+        return null;
+    }
+
+    @Override
+    public WorkflowDescriptor getModelObject() {
+        WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
+        if (wdm != null) {
+            return wdm.getObject();
+        }
+        return null;
+    }
+
+    protected ILocaleProvider getLocaleProvider() {
+        return getPluginContext().getService(
+                getPluginConfig().getString(ILocaleProvider.SERVICE_ID, ILocaleProvider.class.getName()),
+                ILocaleProvider.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected IBrowseService<IModel<Node>> getBrowserService() {
+        final String serviceId = getPluginConfig().getString(IBrowseService.BROWSER_ID, "service.browse");
+        return getPluginContext().getService(serviceId, IBrowseService.class);
+    }
+
+    protected StringCodec getLocalizeCodec() {
+        return CodecUtils.getDisplayNameCodec(getPluginContext());
+    }
+
+    @Override
+    protected void onDetach() {
+        if (translationProvider != null) {
+            translationProvider.detach();
+        }
+        super.onDetach();
     }
 
     private static class TranslatedFolder {
@@ -167,6 +321,22 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
         }
     }
 
+    private final class LanguageModel extends LoadableDetachableModel<String> {
+        @Override
+        protected String load() {
+            WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) TranslationWorkflowPlugin.this.getDefaultModel();
+            if (wdm != null) {
+                try {
+                    Node documentNode = wdm.getNode();
+                    return documentNode.getProperty(HippoTranslationNodeType.LOCALE).getString();
+                } catch (RepositoryException ex) {
+                    log.error(ex.getMessage(), ex);
+                }
+            }
+            return "unknown";
+        }
+    }
+
     private final class AvailableLocaleProvider implements IDataProvider<HippoLocale> {
         private final ILocaleProvider localeProvider;
         private transient List<HippoLocale> availableLocales;
@@ -177,26 +347,21 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
 
         private void load() {
             availableLocales = new LinkedList<>();
-            for (String language : getAvailableLanguages()) {
-                if (canAddTranslation() || hasLocale(language)){
+            final Translations translations = translationsModel.getObject();
+            for (String language : translations.getAvailableTranslations()) {
+                if (translations.canAddTranslation() || hasLocale(language)) {
                     availableLocales.add(localeProvider.getLocale(language));
                 }
             }
             availableLocales.sort(Comparator.comparing(o -> o.getDisplayName(getLocale())));
         }
 
-        private boolean canAddTranslation() {
-            return !Boolean.FALSE.equals(canTranslateModel.getObject());
-        }
-
-
-
         @Override
         public Iterator<? extends HippoLocale> iterator(long first, long count) {
             if (availableLocales == null) {
                 load();
             }
-            return availableLocales.subList((int) first, (int)(first + count)).iterator();
+            return availableLocales.subList((int) first, (int) (first + count)).iterator();
         }
 
         @Override
@@ -247,13 +412,11 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
         private final String language;
         private final IModel<String> languageModel;
         private final IModel<HippoLocale> localeModel;
-
+        private final IModel<String> title;
+        boolean autoTranslateContent;
         private String name;
         private String url;
-        boolean autoTranslateContent;
-
         private List<FolderTranslation> folders;
-        private final IModel<String> title;
 
         private TranslationAction(String id, IModel<String> name, IModel<HippoLocale> localeModel, String language, IModel<String> languageModel) {
             super(id, name, getPluginContext(), (WorkflowDescriptorModel) TranslationWorkflowPlugin.this.getModel());
@@ -329,7 +492,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
             // and that there is a document handle node at the end of the list (representing the to-be-translated document).
             final int indexOfDeepestFolder = folders.size() - 1;
             int i = 1;
-            while(i < indexOfDeepestFolder && !folders.get(i).isEditable()) {
+            while (i < indexOfDeepestFolder && !folders.get(i).isEditable()) {
                 i++;
             }
 
@@ -387,10 +550,10 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
         /**
          * Prevent the creation of same-name-sibling (SNS) folders when translating a document (or folder?).
          * This affects
-         *
-         *   1) the case where the deepest existing folder already has a child node with the same (node-)name
-         *   2) the case where the deepest existing folder already has a child node with the same localized name
-         *
+         * <p>
+         * 1) the case where the deepest existing folder already has a child node with the same (node-)name
+         * 2) the case where the deepest existing folder already has a child node with the same localized name
+         * <p>
          * An exception of type {@link WorkflowSNSException} will be thrown if there is an SNS issue.
          */
         private void avoidSameNameSiblings(final Session session, final int indexOfDeepestTranslatedFolder)
@@ -539,12 +702,12 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
 
         private void findTranslatedTargetAncestor(TranslatedFolder targetTranslatedFolder, final TranslatedFolder sourceSibling) throws RepositoryException {
             targetTranslatedFolder = targetTranslatedFolder.getParent();
-            if (targetTranslatedFolder!=null && targetTranslatedFolder.equals(sourceSibling)) {
+            if (targetTranslatedFolder != null && targetTranslatedFolder.equals(sourceSibling)) {
                 return;
             }
             while (targetTranslatedFolder != null) {
                 TranslatedFolder backLink = targetTranslatedFolder.getSibling(languageModel.getObject());
-                if ( (backLink != null) ) {
+                if ((backLink != null)) {
                     break;
                 }
 
@@ -634,167 +797,6 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
         }
     }
 
-    private static final String COULD_NOT_CREATE_FOLDERS = "could-not-create-folders";
-
-    private DocumentTranslationProvider translationProvider;
-
-    public TranslationWorkflowPlugin(IPluginContext context, IPluginConfig config) {
-        super(context, config);
-
-        final IModel<String> languageModel = new LanguageModel();
-        final ILocaleProvider localeProvider = getLocaleProvider();
-
-        Node documentNode = null;
-        DocumentTranslationProvider docTranslationProvider = null;
-        try {
-            documentNode = getDocumentNode();
-            docTranslationProvider = new DocumentTranslationProvider(new JcrNodeModel(documentNode),
-                    localeProvider);
-        } catch (RepositoryException e) {
-            log.warn("Unable to find document node");
-        }
-        translationProvider = docTranslationProvider;
-
-        // lazily determine whether the document can be translated
-        canTranslateModel = new LoadableDetachableModel<Boolean>() {
-            @Override
-            protected Boolean load() {
-                WorkflowDescriptor descriptor = getModelObject();
-                if (descriptor != null) {
-                    try {
-                        Map<String, Serializable> hints = descriptor.hints();
-                        if (hints.containsKey("addTranslation") && hints.get("addTranslation").equals(Boolean.FALSE)) {
-                            return false;
-                        }
-
-                    } catch (RepositoryException e) {
-                        log.error("Failed to analyze hints for translations workflow", e);
-                    }
-                }
-                return true;
-            }
-        };
-
-        if (documentNode == null) {
-            return;
-        }
-
-        try {
-            if (!TranslationUtil.isNtTranslated(documentNode.getParent().getParent()) &&
-                (!TranslationUtil.isNtTranslated(documentNode) || !localeProvider.isKnown(languageModel.getObject()))) {
-                return;
-            }
-        } catch (RepositoryException e) {
-           log.warn("Could not determine translations status of document", e);
-        }
-
-        final EmptyPanel emptyPanel = new EmptyPanel("content");
-        emptyPanel.setVisible(false);
-        add(emptyPanel);
-
-        add(new MenuDescription() {
-            @Override
-            public Component getLabel() {
-                Fragment fragment = new Fragment("label", "label", TranslationWorkflowPlugin.this);
-                HippoLocale locale = localeProvider.getLocale(languageModel.getObject());
-                ResourceReference resourceRef = locale.getIcon(IconSize.M, LocaleState.EXISTS);
-                fragment.add(new CachingImage("img", resourceRef));
-                fragment.add(new Label("current-language", locale.getDisplayName(getLocale())));
-                return fragment;
-            }
-
-            @Override
-            public MarkupContainer getContent() {
-                Fragment fragment = new Fragment("content", "languages", TranslationWorkflowPlugin.this);
-                final AvailableLocaleProvider availableLocaleProvider = new AvailableLocaleProvider(localeProvider);
-                fragment.add(new HippoLocaleDataView(availableLocaleProvider, languageModel));
-                fragment.setVisible(availableLocaleProvider.size()>1);
-                TranslationWorkflowPlugin.this.addOrReplace(fragment);
-                return fragment;
-            }
-        });
-
-    }
-
-    public boolean hasLocale(String locale) {
-        return translationProvider != null && translationProvider.contains(locale);
-    }
-
-
-
-    private Node getDocumentNode() throws RepositoryException {
-        WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
-        if (wdm != null) {
-            return wdm.getNode();
-        }
-        return null;
-    }
-
-    @Override
-    public WorkflowDescriptor getModelObject() {
-        WorkflowDescriptorModel wdm = (WorkflowDescriptorModel) getDefaultModel();
-        if (wdm != null) {
-            return wdm.getObject();
-        }
-        return null;
-    }
-
-    protected ILocaleProvider getLocaleProvider() {
-        return getPluginContext().getService(
-                getPluginConfig().getString(ILocaleProvider.SERVICE_ID, ILocaleProvider.class.getName()),
-                ILocaleProvider.class);
-    }
-
-    @SuppressWarnings("unchecked")
-    protected IBrowseService<IModel<Node>> getBrowserService() {
-        final String serviceId = getPluginConfig().getString(IBrowseService.BROWSER_ID, "service.browse");
-        return getPluginContext().getService(serviceId, IBrowseService.class);
-    }
-
-    protected StringCodec getLocalizeCodec() {
-        return CodecUtils.getDisplayNameCodec(getPluginContext());
-    }
-
-    @Override
-    protected void onDetach() {
-        if (translationProvider != null) {
-            translationProvider.detach();
-        }
-        this.canTranslateModel.detach();
-        super.onDetach();
-    }
-
-    private static void collectFields(String relPath, String nodeType, Set<String> plainTextFields, Set<String> richTextFields) {
-        try {
-            final JcrTypeStore jcrTypeStore = new JcrTypeStore();
-            final ITypeDescriptor type = jcrTypeStore.load(nodeType);
-            for (Map.Entry<String, IFieldDescriptor> field : type.getFields().entrySet()) {
-                final IFieldDescriptor fieldDescriptor = field.getValue();
-                if ("*".equals(fieldDescriptor.getPath())) {
-                    continue;
-                }
-                final ITypeDescriptor fieldType = fieldDescriptor.getTypeDescriptor();
-                final String fieldPath = fieldPath(relPath, fieldDescriptor);
-                if (fieldType.getType().equals(HippoStdNodeType.NT_HTML)) {
-                    final String propertyPath = fieldPath + '/' + HippoStdNodeType.HIPPOSTD_CONTENT;
-                    richTextFields.add(propertyPath);
-                } else if (fieldType.getName().equals("Text")) {
-                    plainTextFields.add(fieldPath);
-                } else if (fieldType.getName().equals("Html")) {
-                    richTextFields.add(fieldPath);
-                } else if (fieldType.isNode()) {
-                    collectFields(fieldPath, fieldType.getType(), plainTextFields, richTextFields);
-                }
-            }
-        } catch (StoreException ex) {
-            // ignore nt:base
-        }
-    }
-
-    private static String fieldPath(final String basePath, final IFieldDescriptor fieldDescriptor) {
-        return (basePath != null ? basePath + '/' : "") + fieldDescriptor.getPath();
-    }
-
     private class HippoLocaleDataView extends DataView<HippoLocale> {
 
         private final IModel<String> languageModel;
@@ -828,6 +830,35 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
         protected void onDetach() {
             languageModel.detach();
             super.onDetach();
+        }
+    }
+
+    private class TranslationMenuDescription extends MenuDescription {
+        private final ILocaleProvider localeProvider;
+        private final IModel<String> languageModel;
+
+        public TranslationMenuDescription(final ILocaleProvider localeProvider, final IModel<String> languageModel) {
+            this.localeProvider = localeProvider;
+            this.languageModel = languageModel;
+        }
+
+        @Override
+        public Component getLabel() {
+            Fragment fragment = new Fragment("label", "label", TranslationWorkflowPlugin.this);
+            HippoLocale locale = localeProvider.getLocale(languageModel.getObject());
+            ResourceReference resourceRef = locale.getIcon(IconSize.M, LocaleState.EXISTS);
+            fragment.add(new CachingImage("img", resourceRef));
+            fragment.add(new Label("current-language", locale.getDisplayName(getLocale())));
+            return fragment;
+        }
+
+        @Override
+        public MarkupContainer getContent() {
+            Fragment fragment = new Fragment("content", "languages", TranslationWorkflowPlugin.this);
+            final AvailableLocaleProvider availableLocaleProvider = new AvailableLocaleProvider(localeProvider);
+            fragment.add(new HippoLocaleDataView(availableLocaleProvider, languageModel));
+            TranslationWorkflowPlugin.this.addOrReplace(fragment);
+            return fragment;
         }
     }
 }
