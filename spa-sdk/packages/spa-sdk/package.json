@@ -58,6 +58,12 @@
       "**/?(*.)spec.ts"
     ]
   },
+  "browserslist": [
+    "last 1 chrome version",
+    "last 1 firefox version",
+    "last 1 safari version",
+    "last 1 edge version"
+  ],
   "devDependencies": {
     "@babel/core": "^7.7",
     "@babel/plugin-proposal-class-properties": "^7.7",
