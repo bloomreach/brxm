@@ -45,7 +45,7 @@
   <mask />
 
   <resize-handle element="$ctrl.sideNavElement"
-                 min-width="320"
+                 min-width="$ctrl.getMinWidth()"
                  on-resize="$ctrl.onResize(newWidth)"
                  handle-position="right">
   </resize-handle>

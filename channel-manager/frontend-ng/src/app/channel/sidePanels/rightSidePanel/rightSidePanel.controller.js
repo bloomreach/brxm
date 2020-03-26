@@ -114,6 +114,10 @@ class RightSidePanelCtrl {
     // to trigger hiding/showing pagination handles of md-tabs
     this.$window.dispatchEvent(new Event('resize'));
   }
+
+  getMinWidth() {
+    return MIN_WIDTH;
+  }
 }
 
 export default RightSidePanelCtrl;

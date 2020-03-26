@@ -94,6 +94,10 @@ class LeftSidePanelCtrl {
   isEditable() {
     return this.ChannelService.isEditable();
   }
+
+  getMinWidth() {
+    return MIN_WIDTH;
+  }
 }
 
 export default LeftSidePanelCtrl;
