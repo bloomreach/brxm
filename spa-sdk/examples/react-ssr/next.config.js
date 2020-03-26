@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,6 +30,6 @@ module.exports = {
   assetPrefix: process.env.PUBLIC_URL || '/',
   publicRuntimeConfig: {
     cmsBaseUrl: process.env.CMS_BASE_URL,
-    liveSpaBaseUrl: process.env.SPA_BASE_URL,
+    spaBaseUrl: process.env.SPA_BASE_URL,
   },
 };
