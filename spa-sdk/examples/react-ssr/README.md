@@ -9,9 +9,9 @@ Run [Docker](https://hub.docker.com/repository/docker/bloomreach/xm-spa-example)
 docker run --net=host bloomreach/xm-spa-example
 ```
 
-Then, copy `.env.dist` file to `.env` and customize it to contain a correct `PUBLIC_URL` path, for example:
+Then, copy `.env.dist` file to `.env` and customize it to contain a correct `PUBLIC_URL` path:
 ```
-PUBLIC_URL=http://localhost:3000
+PUBLIC_URL=
 ```
 
 In the same `.env` file, also specify the brXM instance to fetch the page model from:
