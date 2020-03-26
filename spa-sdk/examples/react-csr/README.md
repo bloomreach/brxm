@@ -9,12 +9,7 @@ Run [Docker](https://hub.docker.com/repository/docker/bloomreach/xm-spa-example)
 docker run --net=host bloomreach/xm-spa-example
 ```
 
-Then, copy `.env.dist` file to `.env` and customize it to contain a correct [PUBLIC_URL](https://create-react-app.dev/docs/using-the-public-folder) path, for example:
-```
-PUBLIC_URL=http://localhost:3000
-```
-
-In the same `.env` file, also specify the brXM instance to fetch the page model from:
+Then, copy `.env.dist` file to `.env` and specify the brXM instance to fetch the page model from:
 ```
 REACT_APP_CMS_BASE_URL=http://localhost:8080/site
 REACT_APP_SPA_BASE_URL=
