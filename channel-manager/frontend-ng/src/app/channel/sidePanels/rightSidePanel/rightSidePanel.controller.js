@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 
 const LS_KEY_PANEL_WIDTH = 'channelManager.sidePanel.right.width';
+const MIN_WIDTH = 400;
 
 class RightSidePanelCtrl {
   constructor(
@@ -47,9 +48,11 @@ class RightSidePanelCtrl {
   }
 
   $onInit() {
-    this.lastSavedWidth = this.localStorageService.get(LS_KEY_PANEL_WIDTH) || '440px';
+    const storedWidth = parseInt(this.localStorageService.get(LS_KEY_PANEL_WIDTH), 10) || MIN_WIDTH;
+    const width = Math.max(storedWidth, MIN_WIDTH);
+
     this.sideNavElement = this.$element.find('.right-side-panel');
-    this.sideNavElement[0].style.width = this.lastSavedWidth;
+    this.sideNavElement[0].style.width = `${width}px`;
 
     this.$transitions.onBefore({ from: 'hippo-cm.channel', to: 'hippo-cm.channel.*.**' }, () => this._openPanel());
     this.$transitions.onSuccess({ from: 'hippo-cm.channel.**', to: 'hippo-cm.channel' }, () => this._closePanel());
@@ -66,8 +69,7 @@ class RightSidePanelCtrl {
   }
 
   onResize(newWidth) {
-    this.lastSavedWidth = `${newWidth}px`;
-    this.localStorageService.set(LS_KEY_PANEL_WIDTH, this.lastSavedWidth);
+    this.localStorageService.set(LS_KEY_PANEL_WIDTH, newWidth);
   }
 
   isLoading() {
