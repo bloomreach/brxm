@@ -19,7 +19,13 @@ import java.util.Set;
 
 public interface Translations {
 
+    /**
+     * @return Set of available translation keys for a handle.
+     */
     Set<String> getAvailableTranslations();
 
-    Boolean canAddTranslation();
+    /**
+     * @return {@code true} if adding translations is allowed, otherwise false.
+     */
+    boolean canAddTranslation();
 }
