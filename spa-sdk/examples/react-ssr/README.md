@@ -17,7 +17,6 @@ PUBLIC_URL=
 In the same `.env` file, also specify the brXM instance to fetch the page model from:
 ```
 CMS_BASE_URL=http://localhost:8080/site
-SPA_BASE_URL=
 ```
 
 Finally, build and run the Next.js app as followed:
