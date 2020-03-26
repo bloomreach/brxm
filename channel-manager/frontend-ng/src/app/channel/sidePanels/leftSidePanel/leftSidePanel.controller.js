@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 
 const LS_KEY_PANEL_WIDTH = 'channelManager.sidePanel.left.width';
+const MIN_WIDTH = 290;
 
 class LeftSidePanelCtrl {
   constructor(
@@ -38,9 +39,11 @@ class LeftSidePanelCtrl {
   }
 
   $onInit() {
-    this.lastSavedWidth = this.localStorageService.get(LS_KEY_PANEL_WIDTH) || '320px';
+    const storedWidth = parseInt(this.localStorageService.get(LS_KEY_PANEL_WIDTH), 10) || MIN_WIDTH;
+    const width = Math.max(storedWidth, MIN_WIDTH);
+
     this.sideNavElement = this.$element.find('.left-side-panel');
-    this.sideNavElement[0].style.width = this.lastSavedWidth;
+    this.sideNavElement[0].style.width = `${width}px`;
   }
 
   $postLink() {
@@ -48,8 +51,7 @@ class LeftSidePanelCtrl {
   }
 
   onResize(newWidth) {
-    this.lastSavedWidth = `${newWidth}px`;
-    this.localStorageService.set(LS_KEY_PANEL_WIDTH, this.lastSavedWidth);
+    this.localStorageService.set(LS_KEY_PANEL_WIDTH, newWidth);
   }
 
   get selectedTab() {
