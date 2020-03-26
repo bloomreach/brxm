@@ -140,16 +140,14 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
 
         final EmptyPanel emptyPanel = new EmptyPanel("content");
         add(emptyPanel);
-        if (documentNode != null) {
-            try {
-                final Node parent = documentNode.getParent();
-                final String identifier = parent.getIdentifier();
-                getOrCreateTranslationModel(identifier);
-                translationsModel.addWorkflowDescriptorModel((WorkflowDescriptorModel) getDefaultModel());
-                addMenuDescription(localeProvider, languageModel, identifier);
-            } catch (RepositoryException e) {
-                log.warn("Could not determine identifier of handle for node : { path : {} }", JcrUtils.getNodePathQuietly(documentNode));
-            }
+        try {
+            final Node parent = documentNode.getParent();
+            final String identifier = parent.getIdentifier();
+            getOrCreateTranslationModel(identifier);
+            translationsModel.addWorkflowDescriptorModel((WorkflowDescriptorModel) getDefaultModel());
+            addMenuDescription(localeProvider, languageModel, identifier);
+        } catch (RepositoryException e) {
+            log.warn("Could not determine identifier of handle for node : { path : {} }", JcrUtils.getNodePathQuietly(documentNode));
         }
     }
 
@@ -190,7 +188,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
         final ModelReference service = context.getService(referenceModelIdentifier, ModelReference.class);
         if (service == null) {
             translationsModel = new TranslationsModel();
-            ModelReference<TranslationsModel> translationsModelReference = new ModelReference<TranslationsModel>(referenceModelIdentifier, new Model(translationsModel));
+            ModelReference<TranslationsModel> translationsModelReference = new ModelReference<>(referenceModelIdentifier, new Model(translationsModel));
             translationsModelReference.init(context);
         } else {
             translationsModel = (TranslationsModel) context.getReference(service).getService().getModel().getObject();
@@ -202,7 +200,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
         String referenceModelIdentifier = TranslationMenuDescription.class.getName() + "." + identifier  + "." + UserSession.get().getId();
         final ModelReference service = context.getService(referenceModelIdentifier, ModelReference.class);
         if (service == null) {
-            ModelReference<Boolean> translationsModelReference = new ModelReference<Boolean>(referenceModelIdentifier, new Model(Boolean.TRUE));
+            ModelReference<Boolean> translationsModelReference = new ModelReference<>(referenceModelIdentifier, new Model(Boolean.TRUE));
             translationsModelReference.init(context);
             TranslationMenuDescription translationMenuDescription = new TranslationMenuDescription(localeProvider, languageModel);
             add(translationMenuDescription);
@@ -216,19 +214,6 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
 
     public boolean hasLocale(String locale) {
         return translationProvider != null && translationProvider.contains(locale);
-    }
-
-    /**
-     * Detaches all models
-     */
-    @Override
-    public void detachModels() {
-        super.detachModels();
-        try {
-            UserSession.get().setAttribute(getAttributeName(getDocumentNode().getParent().getIdentifier()), null);
-        } catch (RepositoryException e) {
-            e.printStackTrace();
-        }
     }
 
     private Node getDocumentNode() throws RepositoryException {
@@ -477,8 +462,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                     log.error("No workflow descriptor model for document");
                 }
             } else {
-                log.warn("Cannot navigate to translation - configured browser.id '" + getPluginConfig().getString(
-                        "browser.id") + "' is invalid.");
+                log.warn("Cannot navigate to translation - configured browser.id '{}' is invalid." ,getPluginConfig().getString( "browser.id"));
             }
             return null;
         }
@@ -539,9 +523,8 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                 if (browser != null) {
                     browser.browse(new JcrNodeModel(session.getNodeByIdentifier(translatedDocument.getIdentity())));
                 } else {
-                    log.warn(
-                            "Cannot open newly created document - configured browser.id " + getPluginConfig().getString(
-                                    "browser.id") + " is invalid.");
+                    log.warn("Cannot open newly created document - configured browser.id '{}' is invalid."
+                            , getPluginConfig().getString( "browser.id"));
                 }
             }
             return null;
