@@ -31,56 +31,47 @@ import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.repository.api.Workflow;
 import org.hippoecm.repository.api.WorkflowException;
 import org.hippoecm.repository.translation.TranslationWorkflow;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class TranslationsModel extends LoadableDetachableModel<Translations> implements IModel<Translations>  {
+/**
+ * <p>
+ * Determines that union of the hints given by the {@link TranslationWorkflow}.
+ * </p>
+ * <p>The {@link TranslationWorkflow} operates on nodes of type hippotranslation:translated, which
+ * are in most cases the variants under a handle. The menu in the editor displays the combined information
+ * of all variants under a handle.</p>
+ */
+final class TranslationsModel extends LoadableDetachableModel<Translations> implements IModel<Translations> {
 
+    /** Key of hint whose value is a boolean that indicates if for a document variant adding a translation is allowed. */
+    private static final String ADD_TRANSLATION = "addTranslation";
+    /** Key of hint whose value is list of Strings of available locales. */
+    private static final String AVAILABLE = "available";
+    private static final Logger log = LoggerFactory.getLogger(TranslationsModel.class);
+    /** set of workflow descriptor models that are united by this class. */
+    private Set<WorkflowDescriptorModel> workflowDescriptorModels = new HashSet<>();
 
-    public static final String ADD_TRANSLATION = "addTranslation";
-    private Set<WorkflowDescriptorModel> workflowDescriptorModels;
-
-    /**
-     * Default constructor, constructs the model in detached state with no data associated with the
-     * model.
-     */
-    public TranslationsModel() {
-        workflowDescriptorModels = new HashSet<>();
-    }
-    
-    public void addWorkflowDescriptorModel(WorkflowDescriptorModel wf) {
+    public void addWorkflowDescriptorModel(final WorkflowDescriptorModel wf) {
         workflowDescriptorModels.add(wf);
     }
 
-    /**
-     * Loads and returns the (temporary) model object.
-     *
-     * @return the (temporary) model object
-     */
     @Override
     protected Translations load() {
         Set<String> availableLocales = new TreeSet<>();
-        Boolean canAddTranslation = false;
+        boolean canAddTranslation = false;
         for (WorkflowDescriptorModel workflowDescriptorModel : workflowDescriptorModels) {
             final Workflow workflow = workflowDescriptorModel.getWorkflow();
-            if (workflow instanceof TranslationWorkflow){
+            if (workflow instanceof TranslationWorkflow) {
                 TranslationWorkflow translationWorkflow = (TranslationWorkflow) workflow;
-                final Map<String, Serializable> hints;
                 try {
-                    hints = translationWorkflow.hints();
-                    availableLocales.addAll((Collection<? extends String>) hints.get("available"));
+                    final Map<String, Serializable> hints = translationWorkflow.hints();
+                    availableLocales.addAll((Collection<? extends String>) hints.get(AVAILABLE));
                     canAddTranslation = canAddTranslation || canAddTranslation(hints);
-                } catch (WorkflowException e) {
-                    e.printStackTrace();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                } catch (RepositoryException e) {
-                    e.printStackTrace();
+                } catch (WorkflowException | RemoteException | RepositoryException e) {
+                    log.warn("Could not get hints for workflow");
                 }
-
             }
-            else{
-                // log scary message
-            }
-
         }
         final boolean finalCanAddTranslation = canAddTranslation;
         return new Translations() {
@@ -90,7 +81,7 @@ public class TranslationsModel extends LoadableDetachableModel<Translations> imp
             }
 
             @Override
-            public Boolean canAddTranslation() {
+            public boolean canAddTranslation() {
                 return finalCanAddTranslation;
             }
         };
