@@ -517,7 +517,7 @@
           <hippo:action action="requestDepublication" enabledExpr="false"/>
           <if cond="workflowContext.isGranted(published ?: unpublished ?: draft, 'hippo:editor')">
             <!-- if editor user (granted hippo:editor) by default report the depublish operation as available but disabled -->
-            <hippo:action action="depublish" enabledExpr="!!transferable"/>
+            <hippo:action action="depublish" enabledExpr="false"/>
           </if>
         </onentry>
         <!-- event-less transition to depublishable state if not currently editing and the document is 'live' -->

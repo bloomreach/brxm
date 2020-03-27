@@ -295,6 +295,24 @@ public class DocumentWorkflowTest extends BaseDocumentWorkflowTest {
                 .states()
         );
 
+        session.setPermissions(unpublishedVariant.getPath(), "hippo:editor", true);
+        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE, true);
+        draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER,"testuser");
+        assertMatchingKeyValues(wf.hints(), HintsBuilder.build()
+                .status(true).isLive(false).previewAvailable(true).checkModified(true).noEdit().editable().editDraft()
+                .requestPublication(false).requestDepublication(false).listVersions().retrieveVersion()
+                .listBranches().branch(false).getBranch(false).checkoutBranch(false).removeBranch(false)
+                .depublish(false).depublishBranch(false).reintegrateBranch(false)
+                .versionable()
+                .hints());
+        assertMatchingSCXMLStates(wf.getWorkflowExecutor(), StatesBuilder.build()
+                .status().logEvent().editable().noRequest().noPublish().noDepublish().versionable().noTerminate().noCopy()
+                .noBranchable().noCheckoutBranch().noRemoveBranch().noReintegrateBranch().noPublishBranch().noDepublishBranch()
+                .states()
+        );
+
+        session.setPermissions(unpublishedVariant.getPath(), "hippo:editor", false);
+
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE, (String) null);
         draftVariant.setProperty(HippoStdNodeType.HIPPOSTD_HOLDER,(String) null);
 
