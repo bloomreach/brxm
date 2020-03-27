@@ -1,6 +1,0 @@
-/content/urlrewriter/spa-rules:
-  jcr:primaryType: urlrewriter:ruleset
-  jcr:mixinTypes: ['hippo:named', 'mix:referenceable']
-  jcr:uuid: a5314c62-e971-45dc-af59-b58bbf2ce58f
-  hippo:name: SPA Rules
-  hippostd:foldertype: [new-urlrewriter-folder, new-urlrewriter-document]

@@ -45,13 +45,5 @@
       <artifactId>hippo-enterprise-package-cms-dependencies</artifactId>
       <type>pom</type>
     </dependency>
-    <dependency>
-      <groupId>com.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-urlrewriter-module-cms</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.onehippo.cms7</groupId>
-      <artifactId>hippo-addon-urlrewriter-module-repository</artifactId>
-    </dependency>
   </dependencies>
 </project>
