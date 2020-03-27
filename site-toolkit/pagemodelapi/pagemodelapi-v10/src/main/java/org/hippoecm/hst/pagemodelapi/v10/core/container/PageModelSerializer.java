@@ -105,9 +105,8 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
         final SerializerContext serializerContext = getSerializerContext();
 
         if (object instanceof AggregatedPageModel.RootReference) {
-            serializeRoot((AggregatedPageModel.RootReference) object, gen, serializerContext);
-        } else {
-
+            serializeRootRef((AggregatedPageModel.RootReference) object, gen, serializerContext);
+        }  else {
             final Optional<DecoratedPageModelEntityWrapper<?>> nonSerializedWrappedEntity = getNonSerializedWrappedEntity(object, serializerContext);
 
             if (!(object instanceof PageModelEntity)
@@ -147,11 +146,23 @@ public class PageModelSerializer extends JsonSerializer<Object> implements Resol
         return serializerContext;
     }
 
-    private void serializeRoot(final AggregatedPageModel.RootReference ref, final JsonGenerator gen, final SerializerContext serializerContext) throws IOException {
-        final String jsonPointerId = jsonPointerFactory.createJsonPointerId();
+    private void serializeRootRef(final AggregatedPageModel.RootReference ref, final JsonGenerator gen, final SerializerContext serializerContext) throws IOException {
+        final String jsonPointerId = jsonPointerFactory.createJsonPointerId(ref.getObject());
         serializeBeanReference(gen, jsonPointerId);
-        final JsonPointerWrapper value = new JsonPointerWrapper(ref.getObject(), jsonPointerId);
-        serializerContext.serializeQueue.add(value);
+
+        if (ref.getObject() instanceof HippoBean) {
+            HippoBean hippoBean = (HippoBean) ref.getObject();
+
+            DecoratedPageModelEntityWrapper<HippoBean> wrapper = wrapHippoBean(0, hippoBean);
+
+            //DecoratedPageModelEntityWrapper wrapper = new DecoratedPageModelEntityWrapper(hippoBean, getHippoBeanType(hippoBean), 0);
+
+            final JsonPointerWrapper value = new JsonPointerWrapper(wrapper, jsonPointerId);
+            serializerContext.serializeQueue.add(value);
+        } else {
+            final JsonPointerWrapper value = new JsonPointerWrapper(ref.getObject(), jsonPointerId);
+            serializerContext.serializeQueue.add(value);
+        }
     }
 
     private void serializeQueuedObjects(final JsonGenerator gen, final SerializerContext serializerContext) throws IOException {

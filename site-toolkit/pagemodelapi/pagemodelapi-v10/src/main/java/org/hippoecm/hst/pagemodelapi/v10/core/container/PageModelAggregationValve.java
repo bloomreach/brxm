@@ -214,6 +214,8 @@ public class PageModelAggregationValve extends AggregationValve {
         }
 
         aggregatedPageModel.setPageWindowModel(pageWindowModel);
+        aggregatedPageModel.setDocument(requestContext.getContentBean());
+
         addPreviewFlagToPageModel(aggregatedPageModel, requestContext);
 
         // include api version to _meta section

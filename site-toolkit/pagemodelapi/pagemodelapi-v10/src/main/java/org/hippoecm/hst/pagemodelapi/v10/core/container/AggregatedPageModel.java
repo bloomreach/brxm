@@ -21,8 +21,11 @@ import java.util.Optional;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import org.hippoecm.hst.content.beans.standard.HippoBean;
+import org.hippoecm.hst.content.beans.standard.HippoDocumentBean;
 import org.hippoecm.hst.pagemodelapi.v10.core.model.ComponentWindowModel;
 import org.hippoecm.hst.pagemodelapi.v10.core.model.IdentifiableLinkableMetadataBaseModel;
 
@@ -31,12 +34,13 @@ import io.swagger.annotations.ApiModel;
 /**
  * Aggregated page model which represents the whole output in the page model pipeline request processing.
  */
-@JsonPropertyOrder({ "meta", "links", "root", "page"})
+@JsonPropertyOrder({ "meta", "links", "root", "document", "page"})
 @ApiModel(description = "Aggregated page model from Page Model JSON API requests.")
 class AggregatedPageModel extends IdentifiableLinkableMetadataBaseModel {
 
     private ComponentWindowModel pageWindowModel;
     private Map<String, ComponentWindowModel> flattened = new HashMap<>();
+    private HippoDocumentBean primaryRequestDocument;
 
     @JsonIgnore
     @Override
@@ -51,6 +55,15 @@ class AggregatedPageModel extends IdentifiableLinkableMetadataBaseModel {
     public void setPageWindowModel(final ComponentWindowModel pageWindowModel) {
         this.pageWindowModel = pageWindowModel;
         populateFlattened(pageWindowModel);
+    }
+
+    /**
+     * Sets the primaryRequestDocument if requestBean is not null and of type {@link HippoDocumentBean}
+     */
+    public void setDocument(final HippoBean requestBean) {
+        if (requestBean instanceof HippoDocumentBean) {
+            this.primaryRequestDocument = (HippoDocumentBean)requestBean;
+        }
     }
 
     private void populateFlattened(final ComponentWindowModel pageWindowModel) {
@@ -75,15 +88,24 @@ class AggregatedPageModel extends IdentifiableLinkableMetadataBaseModel {
         return new RootReference(pageWindowModel);
     }
 
-    public static class RootReference {
-        private ComponentWindowModel object;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public RootReference getDocument() {
+        if (primaryRequestDocument == null) {
+            return null;
+        }
+        return new RootReference(primaryRequestDocument);
+    }
 
-        public RootReference(final ComponentWindowModel object) {
+    public static class RootReference {
+        private Object object;
+
+        public RootReference(final Object object) {
             this.object = object;
         }
 
-        public ComponentWindowModel getObject() {
+        public Object getObject() {
             return object;
         }
     }
+
 }
