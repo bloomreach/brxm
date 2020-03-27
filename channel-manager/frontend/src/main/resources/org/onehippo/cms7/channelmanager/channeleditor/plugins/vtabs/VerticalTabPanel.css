@@ -40,11 +40,14 @@
 .x-tot2ivn-vr-tab-panel {
     background: #ffffff;
     border-color: #40a6ff !important;
+    height: 100%;
 }
 
 /* Left Panel */
 .x-tot2ivn-vr-tab-panel-header {
     float: left;
+    height: 100%;
+    overflow-y: auto !important;
 }
 
 .x-tot2ivn-vr-tab-panel .x-tot2ivn-vr-tab-strip-spacer {
