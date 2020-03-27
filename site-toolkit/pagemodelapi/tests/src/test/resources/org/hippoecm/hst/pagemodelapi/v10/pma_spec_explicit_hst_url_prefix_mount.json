@@ -16,6 +16,9 @@
   "root" : {
     "$ref" : "/page/uid0"
   },
+  "document" : {
+    "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+  },
   "page" : {
     "uid0" : {
       "id" : "r26",
@@ -80,6 +83,63 @@
         }
       }
     },
+    "u1ca07af9cdf54bdd9908f991245bb062" : {
+      "type" : "document",
+      "links" : {
+        "site" : {
+          "href" : "/",
+          "type" : "internal"
+        }
+      },
+      "data" : {
+        "name" : "homepage",
+        "displayName" : "Home Page",
+        "summary" : "Summary of the homepage",
+        "date" : 1249891507580,
+        "title" : "This is the homepage",
+        "body" : {
+          "value" : "This is the content of the homepage with a link to <a href=\"/news/News1.html\" data-type=\"internal\">News1</a> document and a link to an image <img src=\"http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg\" /> and to thumbnail <img src=\"http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg\" />"
+        },
+        "newsDocument" : {
+          "$ref" : "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3"
+        },
+        "folderBean" : {
+          "$ref" : "/page/ucbcbcbcb5fa848a8b03b4524373d992a"
+        },
+        "imageSetBean" : {
+          "$ref" : "/page/udb02dde500984488a72c2a4fc6d51beb"
+        },
+        "assetBean" : {
+          "$ref" : "/page/u5e56d406b302445e9f80e624ba053bc4"
+        },
+        "selfBean" : {
+          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        },
+        "selfInstance" : {
+          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        },
+        "childObject" : {
+          "name" : "just-some-name",
+          "parent" : {
+            "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+          }
+        },
+        "listContainingSelf" : [ {
+          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        }, {
+          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
+        } ],
+        "localeString" : "en_US",
+        "id" : "1ca07af9-cdf5-4bdd-9908-f991245bb062",
+        "bar" : {
+          "$ref" : "/page/uid4"
+        },
+        "foo" : {
+          "name" : "foo",
+          "text" : "Foo Text"
+        }
+      }
+    },
     "uid1" : {
       "id" : "r26_r1",
       "links" : {
@@ -95,7 +155,7 @@
       "type" : "component",
       "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent",
       "children" : [ {
-        "$ref" : "/page/uid4"
+        "$ref" : "/page/uid5"
       } ]
     },
     "uid2" : {
@@ -227,78 +287,6 @@
         } ]
       }
     },
-    "u1ca07af9cdf54bdd9908f991245bb062" : {
-      "type" : "document",
-      "links" : {
-        "site" : {
-          "href" : "/",
-          "type" : "internal"
-        }
-      },
-      "data" : {
-        "name" : "homepage",
-        "displayName" : "Home Page",
-        "summary" : "Summary of the homepage",
-        "date" : 1249891507580,
-        "title" : "This is the homepage",
-        "body" : {
-          "value" : "This is the content of the homepage with a link to <a href=\"/news/News1.html\" data-type=\"internal\">News1</a> document and a link to an image <img src=\"http://localhost/site/binaries/unittestcontent/gallery/picture.jpeg\" /> and to thumbnail <img src=\"http://localhost/site/binaries/thumbnail/unittestcontent/gallery/picture.jpeg\" />"
-        },
-        "newsDocument" : {
-          "$ref" : "/page/u303d40ebf98c4d6184c7a1ba14b5ceb3"
-        },
-        "folderBean" : {
-          "$ref" : "/page/ucbcbcbcb5fa848a8b03b4524373d992a"
-        },
-        "imageSetBean" : {
-          "$ref" : "/page/udb02dde500984488a72c2a4fc6d51beb"
-        },
-        "assetBean" : {
-          "$ref" : "/page/u5e56d406b302445e9f80e624ba053bc4"
-        },
-        "selfBean" : {
-          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
-        },
-        "selfInstance" : {
-          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
-        },
-        "childObject" : {
-          "name" : "just-some-name",
-          "parent" : {
-            "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
-          }
-        },
-        "listContainingSelf" : [ {
-          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
-        }, {
-          "$ref" : "/page/u1ca07af9cdf54bdd9908f991245bb062"
-        } ],
-        "localeString" : "en_US",
-        "id" : "1ca07af9-cdf5-4bdd-9908-f991245bb062",
-        "bar" : {
-          "$ref" : "/page/uid5"
-        },
-        "foo" : {
-          "name" : "foo",
-          "text" : "Foo Text"
-        }
-      }
-    },
-    "uid4" : {
-      "id" : "r26_r1_r1",
-      "links" : {
-        "self" : {
-          "href" : "http://www.example.com/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r26_r1_r1",
-          "type" : "external"
-        }
-      },
-      "meta" : {
-        "params" : { }
-      },
-      "name" : "title",
-      "type" : "component",
-      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
-    },
     "u303d40ebf98c4d6184c7a1ba14b5ceb3" : {
       "type" : "document",
       "links" : {
@@ -334,8 +322,8 @@
       "data" : {
         "name" : "common",
         "displayName" : "common",
-        "documentSize" : 1,
         "localeString" : "en_US",
+        "documentSize" : 1,
         "id" : "cbcbcbcb-5fa8-48a8-b03b-4524373d992a"
       }
     },
@@ -405,9 +393,24 @@
         "id" : "5e56d406-b302-445e-9f80-e624ba053bc4"
       }
     },
-    "uid5" : {
+    "uid4" : {
       "name" : "bar",
       "text" : "Bar Text"
+    },
+    "uid5" : {
+      "id" : "r26_r1_r1",
+      "links" : {
+        "self" : {
+          "href" : "http://www.example.com/site/spa/resourceapi?_hn:type=component-rendering&_hn:ref=r26_r1_r1",
+          "type" : "external"
+        }
+      },
+      "meta" : {
+        "params" : { }
+      },
+      "name" : "title",
+      "type" : "component",
+      "componentClass" : "org.hippoecm.hst.core.component.GenericHstComponent"
     }
   }
 }

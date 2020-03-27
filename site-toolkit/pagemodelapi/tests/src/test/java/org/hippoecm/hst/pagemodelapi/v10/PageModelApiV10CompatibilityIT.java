@@ -38,6 +38,8 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_HST_LINK_URL_PREFIX;
 import static org.hippoecm.hst.configuration.HstNodeTypes.VIRTUALHOST_PROPERTY_CDN_HOST;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 
 /**
@@ -304,11 +306,56 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
         }
     }
 
+    /**
+     * The /search sitemap item does not have a relative content path and thus does not have a content bean
+     */
+    @Test
+    public void no_request_content_bean() throws Exception {
+        String actual = getActualJson("/spa/resourceapi/search", "1.0");
+
+        InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_searchpage.json");
+
+        assertions(actual, expected);
+
+        // assert there is not "document" field on 'root-level' present since there is no request primary document,
+        // only a "root" field for the root component
+        JsonNode jsonNodeRoot = new ObjectMapper().readTree(actual);
+
+        assertNotNull(jsonNodeRoot.get("root"));
+        // See org.hippoecm.hst.pagemodelapi.v10.core.container.AggregatedPageModel.getDocument() the
+        // @JsonInclude(JsonInclude.Include.NON_NULL)
+        assertNull(jsonNodeRoot.get("document"));
+    }
+
+    /**
+     * The /news sitemap item does have a relative content path that points to a folder
+     */
+    @Test
+    public void no_request_content_bean_is_folder() throws Exception {
+
+        String actual = getActualJson("/spa/resourceapi/news", "1.0");
+
+        InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_newsfolder.json");
+
+        assertions(actual, expected);
+
+        // assert there is not "document" field on 'root-level' present since there is no request primary document (only folder),
+        // only a "root" field for the root component
+        JsonNode jsonNodeRoot = new ObjectMapper().readTree(actual);
+
+        assertNotNull(jsonNodeRoot.get("root"));
+        // See org.hippoecm.hst.pagemodelapi.v10.core.container.AggregatedPageModel.getDocument() the
+        // @JsonInclude(JsonInclude.Include.NON_NULL)
+        assertNull(jsonNodeRoot.get("document"));
+    }
+
+
     private void assertions(final String actual, final InputStream expectedStream) throws IOException, JSONException {
         String expected = IOUtils.toString(expectedStream, "UTF-8");
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT_ORDER);
         JsonNode jsonNodeRoot = new ObjectMapper().readTree(expected);
         JsonValidationUtil.validateReferences(jsonNodeRoot, jsonNodeRoot);
     }
+
 
 }
