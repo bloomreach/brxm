@@ -5,21 +5,21 @@
   <parent>
     <groupId>com.onehippo.cms7</groupId>
     <artifactId>hippo-cms7-enterprise-release</artifactId>
-    <version>14.0.0</version>
+    <version>14.2.0-SNAPSHOT</version>
   </parent>
 
   <name>XM SPA Example</name>
   <description>XM SPA Example</description>
   <groupId>com.bloomreach</groupId>
   <artifactId>xm-spa-example</artifactId>
-  <version>14.0.0</version>
+  <version>14.2.0</version>
   <packaging>pom</packaging>
 
-  <!-- 
+  <!--
     The below project elements are emptied/overridden as otherwise their metadata would be
     inherited or merged from the parent hippo-cms7-release pom (or its hippo-cms7-project pom).
 
-    DO NOT remove these tags but instead fill them in appropriately as needed, 
+    DO NOT remove these tags but instead fill them in appropriately as needed,
     UNLESS the inherited values are valid for your project.
   -->
   <organization />
@@ -61,7 +61,7 @@
     <!--***START temporary override of versions*** -->
     <!-- ***END temporary override of versions*** -->
 
-    <essentials.version>14.0.0</essentials.version>
+    <essentials.version>14.2.0-SNAPSHOT</essentials.version>
     <jsp-api.version>2.2</jsp-api.version>
     <taglibs.version>1.2.5</taglibs.version>
 
