@@ -192,14 +192,14 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
         IPluginContext context = getPluginContext();
         String referenceModelIdentifier = TranslationsModel.class.getName() + "." + identifier + "."
                 + UserSession.get().getId();
-        final ModelReference service = context.getService(referenceModelIdentifier, ModelReference.class);
+        final ModelReference<Translations> service = context.getService(referenceModelIdentifier, ModelReference.class);
         if (service == null) {
             translationsModel = new TranslationsModel();
-            ModelReference<TranslationsModel> translationsModelReference =
-                    new ModelReference<>(referenceModelIdentifier, new Model(translationsModel));
+            ModelReference<Translations> translationsModelReference =
+                    new ModelReference<>(referenceModelIdentifier, translationsModel);
             translationsModelReference.init(context);
         } else {
-            translationsModel = (TranslationsModel) context.getReference(service).getService().getModel().getObject();
+            translationsModel = (TranslationsModel) context.getReference(service).getService().getModel();
         }
     }
 
