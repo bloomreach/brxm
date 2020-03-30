@@ -10,9 +10,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
-
 package org.hippoecm.frontend.translation.workflow;
 
 import java.util.Set;
@@ -28,4 +26,19 @@ public interface Translations {
      * @return {@code true} if adding translations is allowed, otherwise false.
      */
     boolean canAddTranslation();
+
+    static Translations of(final Set<String> availableTranslations, final boolean canAddTranslation) {
+        return new Translations() {
+            @Override
+            public Set<String> getAvailableTranslations() {
+                return availableTranslations;
+            }
+
+            @Override
+            public boolean canAddTranslation() {
+                return canAddTranslation;
+            }
+        };
+    }
+
 }
