@@ -36,13 +36,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * <p>
- * Determines that union of the hints given by the {@link TranslationWorkflow}.
+ * Determines the union of the hints given by the {@link TranslationWorkflow}.
  * </p>
  * <p>The {@link TranslationWorkflow} operates on nodes of type hippotranslation:translated, which
  * are in most cases the variants under a handle. The menu in the editor displays the combined information
  * of all variants under a handle.</p>
  */
-final class TranslationsModel extends LoadableDetachableModel<Translations> implements IModel<Translations> {
+final class TranslationsModel extends LoadableDetachableModel<Translations> {
 
     /** Key of hint whose value is a boolean that indicates if for a document variant adding a translation is allowed. */
     private static final String ADD_TRANSLATION = "addTranslation";
@@ -73,18 +73,7 @@ final class TranslationsModel extends LoadableDetachableModel<Translations> impl
                 }
             }
         }
-        final boolean finalCanAddTranslation = canAddTranslation;
-        return new Translations() {
-            @Override
-            public Set<String> getAvailableTranslations() {
-                return availableLocales;
-            }
-
-            @Override
-            public boolean canAddTranslation() {
-                return finalCanAddTranslation;
-            }
-        };
+        return Translations.of(availableLocales, canAddTranslation);
     }
 
     private boolean canAddTranslation(final Map<String, Serializable> hints) {

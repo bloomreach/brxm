@@ -22,9 +22,11 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 import javax.jcr.AccessDeniedException;
 import javax.jcr.ItemNotFoundException;
@@ -90,7 +92,6 @@ import org.hippoecm.repository.translation.HippoTranslationNodeType;
 import org.hippoecm.repository.translation.TranslationWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeIterable;
-import org.jetbrains.annotations.NotNull;
 import org.onehippo.translate.TranslateWorkflow;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,9 +102,11 @@ import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
 public final class TranslationWorkflowPlugin extends RenderPlugin {
 
-    public static final String TRANSLATE = "translate";
+    private static final Logger log = LoggerFactory.getLogger(TranslationWorkflowPlugin.class);
+
+    private static final String TRANSLATE = "translate";
     private static final String COULD_NOT_CREATE_FOLDERS = "could-not-create-folders";
-    private static Logger log = LoggerFactory.getLogger(TranslationWorkflowPlugin.class);
+
     /** Model that collects the workflow instances of the variants of the document and unites the information. */
     private TranslationsModel translationsModel;
     private DocumentTranslationProvider translationProvider;
@@ -115,16 +118,13 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
         final ILocaleProvider localeProvider = getLocaleProvider();
 
         Node documentNode = null;
-        DocumentTranslationProvider docTranslationProvider = null;
         try {
             documentNode = getDocumentNode();
-            docTranslationProvider = new DocumentTranslationProvider(new JcrNodeModel(documentNode),
+            translationProvider = new DocumentTranslationProvider(new JcrNodeModel(documentNode),
                     localeProvider);
         } catch (RepositoryException e) {
             log.warn("Unable to find document node");
         }
-        translationProvider = docTranslationProvider;
-
         if (documentNode == null) {
             return;
         }
@@ -143,10 +143,11 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
 
         final EmptyPanel emptyPanel = new EmptyPanel("content");
         add(emptyPanel);
+
         try {
-            final Node parent = documentNode.getParent();
-            final String identifier = parent.getIdentifier();
-            getOrCreateTranslationModel(identifier);
+            final Node handleNode = documentNode.getParent();
+            final String identifier = handleNode.getIdentifier();
+            loadTranslationsModel(identifier);
             translationsModel.addWorkflowDescriptorModel((WorkflowDescriptorModel) getDefaultModel());
             addMenuDescription(localeProvider, languageModel, identifier);
         } catch (RepositoryException e) {
@@ -187,7 +188,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
         return (basePath != null ? basePath + '/' : "") + fieldDescriptor.getPath();
     }
 
-    private void getOrCreateTranslationModel(final String identifier) {
+    private void loadTranslationsModel(final String identifier) {
         IPluginContext context = getPluginContext();
         String referenceModelIdentifier = TranslationsModel.class.getName() + "." + identifier + "."
                 + UserSession.get().getId();
@@ -338,13 +339,13 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
 
         private void load() {
             availableLocales = new LinkedList<>();
+            final Locale locale = getLocale();
             final Translations translations = translationsModel.getObject();
-            for (String language : translations.getAvailableTranslations()) {
-                if (translations.canAddTranslation() || hasLocale(language)) {
-                    availableLocales.add(localeProvider.getLocale(language));
-                }
-            }
-            availableLocales.sort(Comparator.comparing(o -> o.getDisplayName(getLocale())));
+            availableLocales = translations.getAvailableTranslations().stream()
+                    .filter(language -> translations.canAddTranslation() || hasLocale(language))
+                    .map(localeProvider::getLocale)
+                    .sorted(Comparator.comparing(o -> o.getDisplayName(locale)))
+                    .collect(Collectors.toList());
         }
 
         @Override
@@ -359,7 +360,6 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
         public IModel<HippoLocale> model(HippoLocale object) {
             final String id = object.getName();
             return new LoadableDetachableModel<HippoLocale>() {
-                private static final long serialVersionUID = 1L;
 
                 @Override
                 protected HippoLocale load() {
@@ -680,7 +680,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
 
                 // walk up the source tree until a translated ancestor is found
                 TranslatedSourceAncestorFinder translatedSourceAncestorFinder = new TranslatedSourceAncestorFinder(sourceTranslatedFolder).invoke();
-                if (translatedSourceAncestorFinder.is()) {
+                if (translatedSourceAncestorFinder.isFound()) {
                     break;
                 }
                 sourceTranslatedFolder = translatedSourceAncestorFinder.getSourceTranslatedFolder();
@@ -747,7 +747,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                 this.sourceTranslatedFolder = sourceTranslatedFolder;
             }
 
-            boolean is() {
+            boolean isFound() {
                 return myResult;
             }
 
