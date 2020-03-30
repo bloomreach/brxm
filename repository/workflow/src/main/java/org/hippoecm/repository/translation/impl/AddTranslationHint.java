@@ -27,7 +27,7 @@ import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 
 /**
- * Determines is a user is allowed to add translations.
+ * Determines if a user is allowed to add translations.
  */
 final class AddTranslationHint {
 
@@ -41,16 +41,15 @@ final class AddTranslationHint {
     }
 
     private AddTranslationHint(final Node userSubject) throws WorkflowException, RepositoryException {
-        Objects.requireNonNull(userSubject);
-        this.documentVariant = userSubject;
-        Node handle = userSubject.getParent();
-        DocumentHandle documentHandle = new DocumentHandle(handle);
+        this.documentVariant = Objects.requireNonNull(userSubject);
+        final Node handle = userSubject.getParent();
+        final DocumentHandle documentHandle = new DocumentHandle(handle);
         documentHandle.initialize();
         documents = documentHandle.getDocuments();
     }
 
     private Boolean hideTranslation() throws RepositoryException {
-        return isDraft() || isTransferable() || ( hasUnpublished() &&  isPublished() );
+        return isDraft() || isTransferable() || ( hasUnpublished() && isPublished() );
     }
 
     private boolean isPublished() throws RepositoryException {

@@ -276,7 +276,7 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
             final Map<String, Set<String>> copyPrototypes = getPrototypes(folderWorkflow);
 
             // check if equal
-            if (copyPrototypes.size() == 0) {
+            if (copyPrototypes.isEmpty()) {
                 return;
             }
             
