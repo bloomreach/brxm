@@ -23,4 +23,5 @@ public class ChannelManagerPrivileges {
 
     public final static String CHANNEL_VIEWER_PRIVILEGE_NAME = "hippo:channel-viewer";
 
+    public static final String XPAGE_EDITOR_PRIVILEGE_NAME = "hippo:x-page-editor";
 }

@@ -1,12 +1,12 @@
 /*
  *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
- * 
+ *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
- * 
+ *
  *       http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
  *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,7 +16,6 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.cxf;
 
 import java.util.Map;
-import java.util.UUID;
 import java.util.function.BiPredicate;
 
 import javax.jcr.Credentials;
@@ -29,16 +28,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.hippoecm.hst.configuration.HstNodeTypes;
 import org.hippoecm.hst.configuration.channel.ChannelManager;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.core.container.ComponentManager;
-import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.core.container.ContainerException;
 import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.request.HstRequestContext;
 import org.hippoecm.hst.core.request.HstSiteMapMatcher;
 import org.hippoecm.hst.jaxrs.cxf.CXFJaxrsService;
+import org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils;
+import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
 import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.util.PathUtils;
@@ -59,8 +60,8 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 
     private static Logger log = LoggerFactory.getLogger(CXFJaxrsHstConfigService.class);
 
-    public final static String REQUEST_CONFIG_NODE_IDENTIFIER = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.contentNode.identifier";
-    public final static String REQUEST_ERROR_MESSAGE_ATTRIBUTE = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.exception.message";
+    public static final String REQUEST_CONFIG_NODE_IDENTIFIER = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.contentNode.identifier";
+    public static final String REQUEST_ERROR_MESSAGE_ATTRIBUTE = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.exception.message";
 
     private Repository repository;
     private Credentials credentials;
@@ -90,67 +91,45 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
     @Override
     /*
      * temporarily splitting off and saving suffix from pathInfo until this is generally handled with HSTTWO-1189
-	 */
+     */
     protected String getJaxrsPathInfo(HstRequestContext requestContext, HttpServletRequest request) throws ContainerException {
         return requestContext.getPathSuffix();
     }
 
     @Override
     protected HttpServletRequest getJaxrsRequest(HstRequestContext requestContext, HttpServletRequest request) throws ContainerException {
-        String uuid = PathUtils.normalizePath(requestContext.getBaseURL().getPathInfo());
-        if (uuid == null) {
-            throw new ContainerException("CXFJaxrsHstConfigService expects a 'uuid' as pathInfo but pathInfo was null. Cannot process REST call");
-        }
-        try {
-            UUID.fromString(uuid);
-        } catch (IllegalArgumentException e) {
+
+        final String uuid = PathUtils.normalizePath(requestContext.getBaseURL().getPathInfo());
+        if (!UUIDUtils.isValidUUID(uuid)){
             throw new ContainerException("CXFJaxrsHstConfigService expects a 'uuid' as pathInfo but was '" + uuid + "'. Cannot process REST call");
         }
 
-        String resourceType = "";
+        final String contextPath = requestContext.getServletRequest().getHeader("contextPath");
+        if (contextPath == null) {
+            throw new IllegalArgumentException("'contextPath' header is missing");
+        }
+
+        // note you CANNOT use HstModelProvider spring bean since that will always give you the platform HstModel
+        // instead of for the contextPath for the current request
+        final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
+        final InternalHstModel liveHstModel = (InternalHstModel) hstModelRegistry.getHstModel(contextPath);
+        if (liveHstModel == null) {
+            throw new IllegalArgumentException(String.format("Cannot find an hst model for context path '%s'", contextPath));
+        }
 
         Session session = null;
         try {
-            // set the correct 'editing virtual hosts object' on the HstRequestContext : This hst request context is for the
-            // platform webapp but the 'rest' endpoints need to interact with the hst model of the site webapps.
-            final String contextPath = requestContext.getServletRequest().getHeader("contextPath");
-            if (contextPath == null) {
-                throw new IllegalArgumentException("'contextPath' header is missing");
-            }
-
-            // note you CANNOT use HstModelProvider spring bean since that will always give you the platform HstModel
-            // instead of for the contextPath for the current request
-            final HstModelRegistry hstModelRegistry = HippoServiceRegistry.getService(HstModelRegistry.class);
-            final InternalHstModel liveHstModel = (InternalHstModel)hstModelRegistry.getHstModel(contextPath);
-            if (liveHstModel == null) {
-                throw new IllegalArgumentException(String.format("Cannot find an hst model for context path '%s'", contextPath));
-            }
-            requestContext.setAttribute(EDITING_HST_MODEL_LINK_CREATOR_ATTR, liveHstModel.getHstLinkCreator());
-
-            final InternalHstModel liveHstModelSnapshot = new HstModelSnapshot(liveHstModel);
-            final InternalHstModel previewHstModelSnapshot = new HstModelSnapshot(liveHstModelSnapshot, previewDecorator);
-
-            requestContext.setAttribute(LIVE_EDITING_HST_MODEL_ATTR, liveHstModelSnapshot);
-            requestContext.setAttribute(PREVIEW_EDITING_HST_MODEL_ATTR, previewHstModelSnapshot);
-
-
             // we need the HST configuration user jcr session since some CMS user sessions (for example authors) typically
             // don't have read access on the hst configuration nodes. So we cannot use the session from the request context here
             // session below will be pooled hst config reader session
             session = repository.login(credentials);
-            Node node = session.getNodeByIdentifier(uuid);
+            final Node node = session.getNodeByIdentifier(uuid);
 
-            if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
-                resourceType = HippoNodeType.NT_DOCUMENT;
-            } else {
-                resourceType = node.getPrimaryNodeType().getName();
-            }
+            final String adjustedPath = adjustEndpointPath(node, requestContext.getPathSuffix());
+            setRequestContextAttributes(node, requestContext, liveHstModel);
 
-            if (node.isNodeType(NODETYPE_HST_MOUNT)) {
-                final HttpSession httpSession = requestContext.getServletRequest().getSession();
-                CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
-                cmsSessionContext.getContextPayload().put(CMS_REQUEST_RENDERING_MOUNT_ID, uuid);
-            }
+            log.debug("Invoking JAX-RS endpoint {}: {} for uuid {}", request.getMethod(), adjustedPath, uuid);
+            return new PathsAdjustedHttpServletRequestWrapper(request, getJaxrsServletPath(requestContext), adjustedPath);
 
         } catch (ItemNotFoundException e) {
             log.info("Configuration node with uuid {} does not exist any more : {}", uuid, e);
@@ -164,17 +143,44 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
                 session.logout();
             }
         }
+    }
 
-        requestContext.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, uuid);
+    private void setRequestContextAttributes(Node node, HstRequestContext requestContext, InternalHstModel liveHstModel) throws RepositoryException {
+        requestContext.setAttribute(EDITING_HST_MODEL_LINK_CREATOR_ATTR, liveHstModel.getHstLinkCreator());
 
-        // use JAX-RS service endpoint url-template: /{resourceType}/{suffix}
-        StringBuilder jaxrsEndpointRequestPath = new StringBuilder("/").append(resourceType).append("/");
-        if (requestContext.getPathSuffix() != null) {
-            jaxrsEndpointRequestPath.append(requestContext.getPathSuffix());
+        final InternalHstModel liveHstModelSnapshot = new HstModelSnapshot(liveHstModel);
+        final InternalHstModel previewHstModelSnapshot = new HstModelSnapshot(liveHstModelSnapshot, previewDecorator);
+
+        requestContext.setAttribute(LIVE_EDITING_HST_MODEL_ATTR, liveHstModelSnapshot);
+        requestContext.setAttribute(PREVIEW_EDITING_HST_MODEL_ATTR, previewHstModelSnapshot);
+
+        final String uuid = node.getIdentifier();
+        if (node.isNodeType(NODETYPE_HST_MOUNT)) {
+            final HttpSession httpSession = requestContext.getServletRequest().getSession();
+            CmsSessionContext cmsSessionContext = CmsSessionContext.getContext(httpSession);
+            cmsSessionContext.getContextPayload().put(CMS_REQUEST_RENDERING_MOUNT_ID, uuid);
         }
+        requestContext.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, uuid);
+    }
 
-        log.debug("Invoking JAX-RS endpoint {}: {} for uuid {}", new Object[]{request.getMethod(), jaxrsEndpointRequestPath.toString(), uuid});
-        return new PathsAdjustedHttpServletRequestWrapper(request, getJaxrsServletPath(requestContext), jaxrsEndpointRequestPath.toString());
+    private String adjustEndpointPath(Node node, String optionalPathSuffix) throws RepositoryException {
+        final StringBuilder builder = new StringBuilder();
+        if (node.isNodeType(HstNodeTypes.MIXINTYPE_HST_PAGE)
+                && node.getParent().isNodeType(HippoNodeType.NT_DOCUMENT)) {
+            builder.append("/experiencepage/");
+        } else {
+            builder.append("/");
+        }
+        if (node.isNodeType(HippoNodeType.NT_DOCUMENT)) {
+            builder.append(HippoNodeType.NT_DOCUMENT);
+        } else {
+            builder.append(node.getPrimaryNodeType().getName());
+        }
+        builder.append("/");
+        if (optionalPathSuffix != null) {
+            builder.append(optionalPathSuffix);
+        }
+        return builder.toString();
     }
 
     private HttpServletRequest setErrorMessageAndReturn(HstRequestContext requestContext, HttpServletRequest request, String message) throws ContainerException {
@@ -197,6 +203,7 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
         public HstModelSnapshot(final InternalHstModel delegatee) {
             this.delegatee = delegatee;
         }
+
         public HstModelSnapshot(final InternalHstModel delegatee, final PreviewDecorator previewDecorator) {
             this.delegatee = delegatee;
             this.previewDecorator = previewDecorator;

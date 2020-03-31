@@ -211,6 +211,11 @@
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageContainerComponentResource"/>
+          </constructor-arg>
+        </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMenuResource" parent="abstractConfigResource">
               <property name="siteMenuHelper" ref="siteMenuHelper"/>
               <property name="siteMenuItemHelper">
