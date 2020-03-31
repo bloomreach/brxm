@@ -25,9 +25,9 @@ public interface Translations {
     /**
      * @return {@code true} if adding translations is allowed, otherwise false.
      */
-    boolean canAddTranslation();
+    Boolean canAddTranslation();
 
-    static Translations of(final Set<String> availableTranslations, final boolean canAddTranslation) {
+    static Translations of(final Set<String> availableTranslations, final Boolean canAddTranslation){
         return new Translations() {
             @Override
             public Set<String> getAvailableTranslations() {
@@ -35,7 +35,7 @@ public interface Translations {
             }
 
             @Override
-            public boolean canAddTranslation() {
+            public Boolean canAddTranslation() {
                 return canAddTranslation;
             }
         };
