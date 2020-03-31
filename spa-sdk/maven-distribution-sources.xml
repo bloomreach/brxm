@@ -26,25 +26,26 @@
     <fileSet>
       <directory>packages/spa-sdk</directory>
       <outputDirectory>packages/spa-sdk</outputDirectory>
+      <excludes>
+        <exclude>coverage</exclude>
+        <exclude>dist</exclude>
+        <exclude>node_modules</exclude>
+      </excludes>
       <includes>
-        <include>.jsbeautifyrc</include>
-        <include>babel.config.js</include>
-        <include>package.json</include>
-        <include>rollup.config.js</include>
-        <include>tsconfig.json</include>
-        <include>tslint.json</include>
+        <include>*</include>
         <include>src/**</include>
       </includes>
     </fileSet>
     <fileSet>
       <directory>packages/react-sdk</directory>
       <outputDirectory>packages/react-sdk</outputDirectory>
+      <excludes>
+        <exclude>coverage</exclude>
+        <exclude>dist</exclude>
+        <exclude>node_modules</exclude>
+      </excludes>
       <includes>
-        <include>babel.config.js</include>
-        <include>package.json</include>
-        <include>rollup.config.js</include>
-        <include>tsconfig.json</include>
-        <include>tslint.json</include>
+        <include>*</include>
         <include>src/**</include>
       </includes>
     </fileSet>
@@ -79,9 +80,6 @@
       <includes>
         <include>package.json</include>
         <include>yarn.lock</include>
-        <include>terser.json</include>
-        <include>tsconfig.json</include>
-        <include>tslint.json</include>
       </includes>
     </fileSet>
   </fileSets>
