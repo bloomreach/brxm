@@ -100,7 +100,7 @@ import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
-public final class TranslationWorkflowPlugin extends RenderPlugin {
+public final class TranslationWorkflowPlugin extends RenderPlugin<WorkflowDescriptor> {
 
     private static final Logger log = LoggerFactory.getLogger(TranslationWorkflowPlugin.class);
 
@@ -342,7 +342,6 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
             final Locale locale = getLocale();
             final Translations translations = translationsModel.getObject();
             availableLocales = translations.getAvailableTranslations().stream()
-                    .filter(language -> translations.canAddTranslation() || hasLocale(language))
                     .map(localeProvider::getLocale)
                     .sorted(Comparator.comparing(o -> o.getDisplayName(locale)))
                     .collect(Collectors.toList());
@@ -803,7 +802,7 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
             final HippoLocale locale = item.getModelObject();
             final String language = locale.getName();
 
-            item.add(new TranslationAction("language", new LoadableDetachableModel<String>() {
+            final TranslationAction translationsItem = new TranslationAction("language", new LoadableDetachableModel<String>() {
 
                 @Override
                 protected String load() {
@@ -814,7 +813,10 @@ public final class TranslationWorkflowPlugin extends RenderPlugin {
                     return base;
                 }
             }, item.getModel(), language, languageModel
-            ));
+            );
+            final Boolean canAddTranslation = translationsModel.getObject().canAddTranslation();
+            translationsItem.setEnabled(canAddTranslation != null || hasLocale(language));
+            item.add(translationsItem);
         }
 
         @Override

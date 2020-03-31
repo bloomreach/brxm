@@ -25,7 +25,6 @@ import java.util.TreeSet;
 
 import javax.jcr.RepositoryException;
 
-import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.LoadableDetachableModel;
 import org.hippoecm.addon.workflow.WorkflowDescriptorModel;
 import org.hippoecm.repository.api.Workflow;
@@ -44,11 +43,13 @@ import org.slf4j.LoggerFactory;
  */
 final class TranslationsModel extends LoadableDetachableModel<Translations> {
 
+    private static final Logger log = LoggerFactory.getLogger(TranslationsModel.class);
+
     /** Key of hint whose value is a boolean that indicates if for a document variant adding a translation is allowed. */
     private static final String ADD_TRANSLATION = "addTranslation";
     /** Key of hint whose value is list of Strings of available locales. */
     private static final String AVAILABLE = "available";
-    private static final Logger log = LoggerFactory.getLogger(TranslationsModel.class);
+
     /** set of workflow descriptor models that are united by this class. */
     private Set<WorkflowDescriptorModel> workflowDescriptorModels = new HashSet<>();
 
@@ -59,7 +60,7 @@ final class TranslationsModel extends LoadableDetachableModel<Translations> {
     @Override
     protected Translations load() {
         Set<String> availableLocales = new TreeSet<>();
-        boolean canAddTranslation = false;
+        Boolean accumulatedCanAddTranslation = null;
         for (WorkflowDescriptorModel workflowDescriptorModel : workflowDescriptorModels) {
             final Workflow workflow = workflowDescriptorModel.getWorkflow();
             if (workflow instanceof TranslationWorkflow) {
@@ -67,17 +68,24 @@ final class TranslationsModel extends LoadableDetachableModel<Translations> {
                 try {
                     final Map<String, Serializable> hints = translationWorkflow.hints();
                     availableLocales.addAll((Collection<? extends String>) hints.get(AVAILABLE));
-                    canAddTranslation = canAddTranslation || canAddTranslation(hints);
+                    final Boolean canAddTranslation = canAddTranslation(hints);
+                    if (canAddTranslation != null) {
+                        if (accumulatedCanAddTranslation == null) {
+                            accumulatedCanAddTranslation = canAddTranslation;
+                        } else {
+                            accumulatedCanAddTranslation = accumulatedCanAddTranslation || canAddTranslation;
+                        }
+                    }
                 } catch (WorkflowException | RemoteException | RepositoryException e) {
                     log.warn("Could not get hints for workflow");
                 }
             }
         }
-        return Translations.of(availableLocales, canAddTranslation);
+        return Translations.of(availableLocales, accumulatedCanAddTranslation);
     }
 
-    private boolean canAddTranslation(final Map<String, Serializable> hints) {
-        return !hints.containsKey(ADD_TRANSLATION) || hints.get(ADD_TRANSLATION).equals(Boolean.TRUE);
+    private Boolean canAddTranslation(final Map<String, Serializable> hints) {
+        return hints.containsKey(ADD_TRANSLATION) ? (Boolean) hints.get(ADD_TRANSLATION) : null;
     }
 }
 
