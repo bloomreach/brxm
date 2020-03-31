@@ -227,7 +227,9 @@ public class TranslationWorkflowImpl implements TranslationWorkflow, InternalWor
     public Map<String, Serializable> hints() throws WorkflowException, RepositoryException {
         Map<String, Serializable> hints = new TreeMap<>();
 
-        hints.put("addTranslation", AddTranslationHint.canAddTranslation(userSubject));
+        if (AddTranslationHint.canAddTranslation(userSubject)){
+            hints.put("addTranslation", Boolean.TRUE);
+        }
 
         final HippoTranslatedNode translatedNode = new HippoTranslatedNode(userSubject);
         Set<String> translations;

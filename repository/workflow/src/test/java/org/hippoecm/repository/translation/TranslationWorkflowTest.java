@@ -237,7 +237,7 @@ public class TranslationWorkflowTest extends RepositoryTestCase {
         Workflow workflowInterface = manager.getWorkflow("translation", document);
         TranslationWorkflow workflow = (TranslationWorkflow) workflowInterface;
         final Map<String, Serializable> hints = workflow.hints();
-        assertFalse((Boolean) hints.get("addTranslation"));
+        assertFalse(hints.containsKey("addTranslation"));
     }
 
     @Test
