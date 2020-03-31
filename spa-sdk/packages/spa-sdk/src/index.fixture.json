@@ -164,9 +164,13 @@
     }
   },
   "_links": {
+    "self": {
+      "type": "external",
+      "href": "http://127.0.0.1:9080/site/my-spa/resourceapi"
+    },
     "site": {
       "type": "internal",
-      "href": "http://127.0.0.1:9080/"
+      "href": "http://127.0.0.1:9080/site/my-spa"
     }
   },
   "_meta": {
