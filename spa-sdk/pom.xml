@@ -125,34 +125,21 @@
         <configuration>
           <filesets>
             <fileset>
-              <directory>packages/spa-sdk/coverage</directory>
+              <directory>examples</directory>
+              <includes>
+                <include>*/node_modules/**</include>
+                <include>react-csr/build/**</include>
+                <include>react-ssr/.next/**</include>
+              </includes>
             </fileset>
             <fileset>
-              <directory>packages/spa-sdk/dist</directory>
-            </fileset>
-            <fileset>
-              <directory>packages/spa-sdk/docs</directory>
-            </fileset>
-            <fileset>
-              <directory>packages/spa-sdk/node_modules</directory>
-            </fileset>
-            <fileset>
-              <directory>packages/react-sdk/dist</directory>
-            </fileset>
-            <fileset>
-              <directory>packages/react-sdk/node_modules</directory>
-            </fileset>
-            <fileset>
-              <directory>examples/react-csr/node_modules</directory>
-            </fileset>
-            <fileset>
-              <directory>examples/react-ssr/node_modules</directory>
-            </fileset>
-            <fileset>
-              <directory>examples/react-csr/build</directory>
-            </fileset>
-            <fileset>
-              <directory>examples/react-ssr/.next</directory>
+              <directory>packages</directory>
+              <includes>
+                <include>*/coverage/**</include>
+                <include>*/dist/**</include>
+                <include>*/docs/**</include>
+                <include>*/node_modules/**</include>
+              </includes>
             </fileset>
             <fileset>
               <directory>node</directory>

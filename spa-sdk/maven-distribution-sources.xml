@@ -24,56 +24,27 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <fileSets>
     <fileSet>
-      <directory>packages/spa-sdk</directory>
-      <outputDirectory>packages/spa-sdk</outputDirectory>
+      <directory>examples</directory>
+      <outputDirectory>examples</outputDirectory>
       <excludes>
-        <exclude>coverage</exclude>
-        <exclude>dist</exclude>
-        <exclude>node_modules</exclude>
+        <exclude>*/.env</exclude>
+        <exclude>*/node_modules/**</exclude>
+        <exclude>*/README.md</exclude>
+        <exclude>react-csr/build/**</exclude>
+        <exclude>react-ssr/.next/**</exclude>
+        <exclude>xm/**</exclude>
       </excludes>
-      <includes>
-        <include>*</include>
-        <include>src/**</include>
-      </includes>
     </fileSet>
     <fileSet>
-      <directory>packages/react-sdk</directory>
-      <outputDirectory>packages/react-sdk</outputDirectory>
+      <directory>packages</directory>
+      <outputDirectory>packages</outputDirectory>
       <excludes>
-        <exclude>coverage</exclude>
-        <exclude>dist</exclude>
-        <exclude>node_modules</exclude>
+        <exclude>*/coverage/**</exclude>
+        <exclude>*/dist/**</exclude>
+        <exclude>*/docs/**</exclude>
+        <exclude>*/node_modules/**</exclude>
+        <exclude>*/README.md</exclude>
       </excludes>
-      <includes>
-        <include>*</include>
-        <include>src/**</include>
-      </includes>
-    </fileSet>
-    <fileSet>
-      <directory>examples/react-csr</directory>
-      <outputDirectory>examples/react-csr</outputDirectory>
-      <includes>
-        <include>package.json</include>
-        <include>server.js</include>
-        <include>tsconfig.json</include>
-        <include>public/**</include>
-        <include>src/**</include>
-      </includes>
-    </fileSet>
-    <fileSet>
-      <directory>examples/react-ssr</directory>
-      <outputDirectory>examples/react-ssr</outputDirectory>
-      <includes>
-        <include>next.config.js</include>
-        <include>next-env.d.ts</include>
-        <include>package.json</include>
-        <include>routes.js</include>
-        <include>server.js</include>
-        <include>tsconfig.json</include>
-        <include>components/**</include>
-        <include>pages/**</include>
-        <include>static/**</include>
-      </includes>
     </fileSet>
     <fileSet>
       <directory>.</directory>
