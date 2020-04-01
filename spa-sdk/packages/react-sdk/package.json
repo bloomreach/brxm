@@ -1,7 +1,7 @@
 {
   "name": "@bloomreach/react-sdk",
   "version": "14.2.0",
-  "description": "BloomReach SPA SDK for React",
+  "description": "Bloomreach SPA SDK for React",
   "keywords": [
     "bloomreach",
     "sdk",
