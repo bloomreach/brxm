@@ -22,7 +22,7 @@
     "lint": "ng lint",
     "ng": "ng",
     "prepare": "$npm_execpath run build",
-    "test": "ng test"
+    "test": "ng test --passWithNoTests"
   },
   "main": "dist/bundles/bloomreach-ng-sdk.umd.js",
   "module": "dist/fesm5/bloomreach-ng-sdk.js",
