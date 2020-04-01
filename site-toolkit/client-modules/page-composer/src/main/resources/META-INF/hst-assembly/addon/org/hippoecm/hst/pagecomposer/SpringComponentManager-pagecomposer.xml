@@ -152,8 +152,8 @@
   <bean id="uriValidator" class="org.hippoecm.hst.pagecomposer.jaxrs.services.validators.UriValidator"/>
 
   <!--
-    The internal server factory. 
-    Each JAX-RS service component is registered by "resourceProvider" property. 
+    The internal server factory.
+    Each JAX-RS service component is registered by "resourceProvider" property.
   -->
 
   <bean id="validatorFactory" class="org.hippoecm.hst.pagecomposer.jaxrs.services.validators.ValidatorFactory"/>
@@ -211,7 +211,9 @@
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageContainerComponentResource"/>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageContainerComponentResource" >
+              <property name="XPageContainerComponentService" ref="containerComponentService"/>
+            </bean>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
