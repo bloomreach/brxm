@@ -128,6 +128,7 @@
               <directory>examples</directory>
               <includes>
                 <include>*/node_modules/**</include>
+                <include>angular/dist/**</include>
                 <include>react-csr/build/**</include>
                 <include>react-ssr/.next/**</include>
               </includes>
