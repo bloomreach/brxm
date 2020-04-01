@@ -23,5 +23,6 @@ public class ChannelManagerPrivileges {
 
     public final static String CHANNEL_VIEWER_PRIVILEGE_NAME = "hippo:channel-viewer";
 
-    public static final String XPAGE_EDITOR_PRIVILEGE_NAME = "hippo:x-page-editor";
+    // TODO (meggermont): Change this to the correct role name
+    public static final String XPAGE_EDITOR_PRIVILEGE_NAME = CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 }
