@@ -1,10 +1,9 @@
-/node/
 node_modules/
-/target/
+/node
+/target
 /packages/*/coverage/
 /packages/*/dist/
 /packages/*/docs/
-/examples/*/build/
-/examples/*/.next/
 /examples/*/.env
-*.iml
+/examples/react-csr/build
+/examples/react-ssr/.next
