@@ -19,6 +19,7 @@
     "@angular/platform-browser": "^9.1",
     "@angular/platform-browser-dynamic": "^9.1",
     "@angular/router": "^9.1",
+    "@bloomreach/ng-sdk": "^14.2",
     "rxjs": "^6.5",
     "tslib": "^1.11",
     "zone.js": "^0.10"
