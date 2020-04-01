@@ -16,7 +16,10 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.cxf;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.function.BiPredicate;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.jcr.Credentials;
 import javax.jcr.ItemNotFoundException;
@@ -100,7 +103,7 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
     protected HttpServletRequest getJaxrsRequest(HstRequestContext requestContext, HttpServletRequest request) throws ContainerException {
 
         final String uuid = PathUtils.normalizePath(requestContext.getBaseURL().getPathInfo());
-        if (!UUIDUtils.isValidUUID(uuid)){
+        if (!UUIDUtils.isValidUUID(uuid)) {
             throw new ContainerException("CXFJaxrsHstConfigService expects a 'uuid' as pathInfo but was '" + uuid + "'. Cannot process REST call");
         }
 
@@ -125,10 +128,11 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
             session = repository.login(credentials);
             final Node node = session.getNodeByIdentifier(uuid);
 
-            final String adjustedPath = adjustEndpointPath(node, requestContext.getPathSuffix());
+            final String method = request.getMethod();
+            final String adjustedPath = adjustEndpointPath(node, requestContext.getPathSuffix(), method);
             setRequestContextAttributes(node, requestContext, liveHstModel);
 
-            log.debug("Invoking JAX-RS endpoint {}: {} for uuid {}", request.getMethod(), adjustedPath, uuid);
+            log.debug("Invoking JAX-RS endpoint {}: {} for uuid {}", method, adjustedPath, uuid);
             return new PathsAdjustedHttpServletRequestWrapper(request, getJaxrsServletPath(requestContext), adjustedPath);
 
         } catch (ItemNotFoundException e) {
@@ -163,10 +167,10 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
         requestContext.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, uuid);
     }
 
-    private String adjustEndpointPath(Node node, String optionalPathSuffix) throws RepositoryException {
+    private String adjustEndpointPath(Node node, String optionalPathSuffix, String method) throws RepositoryException {
+        final Set<String> methods = Stream.of("POST", "PUT", "DELETE").collect(Collectors.toSet());
         final StringBuilder builder = new StringBuilder();
-        if (node.isNodeType(HstNodeTypes.MIXINTYPE_HST_PAGE)
-                && node.getParent().isNodeType(HippoNodeType.NT_DOCUMENT)) {
+        if (methods.contains(method) && belongsToXPage(node)) {
             builder.append("/experiencepage/");
         } else {
             builder.append("/");
@@ -181,6 +185,15 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
             builder.append(optionalPathSuffix);
         }
         return builder.toString();
+    }
+
+    private boolean belongsToXPage(Node node) throws RepositoryException {
+        if (node.getSession().getRootNode().isSame(node)) {
+            return false;
+        }
+        return node.getName().equals(HstNodeTypes.NODENAME_HST_PAGE)
+                && node.getParent().isNodeType(HstNodeTypes.MIXINTYPE_HST_PAGE)
+                || belongsToXPage(node.getParent());
     }
 
     private HttpServletRequest setErrorMessageAndReturn(HstRequestContext requestContext, HttpServletRequest request, String message) throws ContainerException {
