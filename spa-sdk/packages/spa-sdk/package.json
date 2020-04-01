@@ -30,33 +30,11 @@
     "docs": "tsc --emitDeclarationOnly && dts-bundle-generator --out-file dist/spa-sdk.d.ts dist/index.d.ts && typedoc dist/spa-sdk.d.ts && minicat src/docs/typedoc.css >> docs/assets/css/main.css && rm dist/spa-sdk.d.ts",
     "lint": "tslint --project .",
     "prepare": "$npm_execpath run build",
-    "test": "jest"
+    "test": "jest --coverage"
   },
   "jest": {
-    "testEnvironment": "jsdom",
-    "coverageDirectory": "./coverage",
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "src/**/*.ts"
-    ],
-    "coveragePathIgnorePatterns": [
-      ".*\\.d\\.ts"
-    ],
-    "moduleFileExtensions": [
-      "ts",
-      "js"
-    ],
-    "transform": {
-      "^.+\\.ts$": "ts-jest"
-    },
-    "globals": {
-      "ts-jest": {
-        "tsConfig": "tsconfig.json"
-      }
-    },
-    "testMatch": [
-      "**/?(*.)spec.ts"
-    ]
+    "preset": "ts-jest",
+    "testEnvironment": "jsdom"
   },
   "browserslist": [
     "last 1 chrome version",
