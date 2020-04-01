@@ -22,7 +22,7 @@
   },
   "homepage": "https://code.onehippo.org/cms-community/bloomreach-spa-sdk",
   "scripts": {
-    "build": "yarn workspaces run build",
+    "build": "SKIP_PREFLIGHT_CHECK=true yarn workspaces run build",
     "docs": "yarn workspaces run docs",
     "lint": "yarn workspaces run lint",
     "test": "yarn workspaces run test"
