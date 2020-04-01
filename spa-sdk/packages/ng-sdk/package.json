@@ -37,6 +37,9 @@
     "dist/*/**",
     "dist/**/*.d.ts"
   ],
+  "dependencies": {
+    "@bloomreach/spa-sdk": "^14.2"
+  },
   "peerDependencies": {
     "@angular/common": "^9.1",
     "@angular/core": "^9.1",
@@ -64,6 +67,5 @@
     "tslint": "^6.1",
     "typescript": "^3.8",
     "zone.js": "^0.10"
-  },
-  "dependencies": {}
+  }
 }
