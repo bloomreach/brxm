@@ -18,10 +18,11 @@
     "url": "https://issues.onehippo.com/projects/CMS/issues"
   },
   "scripts": {
-    "ng": "ng",
     "build": "ng build",
-    "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "ng": "ng",
+    "prepare": "$npm_execpath run build",
+    "test": "ng test"
   },
   "main": "dist/bundles/bloomreach-ng-sdk.umd.js",
   "module": "dist/fesm5/bloomreach-ng-sdk.js",
