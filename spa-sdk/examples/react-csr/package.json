@@ -4,7 +4,7 @@
   "version": "14.2.0",
   "private": true,
   "dependencies": {
-    "@bloomreach/react-sdk": "^14.1",
+    "@bloomreach/react-sdk": "^14.2",
     "axios": "^0.19",
     "react": "^16.12",
     "react-dom": "^16.12",
