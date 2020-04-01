@@ -1,6 +1,22 @@
 {
   "name": "@bloomreach/ng-sdk",
   "version": "14.2.0",
+  "description": "Bloomreach SPA SDK for Angular",
+  "keywords": [
+    "bloomreach",
+    "sdk",
+    "angular"
+  ],
+  "author": "Bloomreach B.V.",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://code.onehippo.org/cms-community/bloomreach-spa-sdk",
+    "directory": "packages/ng-sdk"
+  },
+  "bugs": {
+    "url": "https://issues.onehippo.com/projects/CMS/issues"
+  },
   "scripts": {
     "ng": "ng",
     "build": "ng build",
