@@ -6,11 +6,11 @@
   "dependencies": {
     "@bloomreach/react-sdk": "^14.2",
     "axios": "^0.19",
-    "react": "^16.12",
-    "react-dom": "^16.12",
+    "react": "^16.13",
+    "react-dom": "^16.13",
     "react-router-dom": "^5.1",
-    "react-scripts": "3.3.0",
-    "typescript": "^3.7"
+    "react-scripts": "3.4.1",
+    "typescript": "^3.8"
   },
   "scripts": {
     "build": "react-scripts build",
