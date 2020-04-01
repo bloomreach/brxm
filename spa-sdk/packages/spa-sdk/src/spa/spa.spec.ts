@@ -132,7 +132,7 @@ describe('Spa', () => {
 
       expect(root.getComponentById).toBeCalledWith('some-component');
       expect(api.getComponent).not.toBeCalled();
-      expect(eventBus.emit).not.toBeCalled();
+      expect(eventBus.emit).not.toBeCalledWith('page.update', expect.anything());
     });
 
     describe('on component update', () => {
