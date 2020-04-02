@@ -1,12 +1,12 @@
 /**
- * Copyright 2013 Hippo B.V. (http://www.onehippo.com)
- * 
+ * Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
+ *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *         http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -40,12 +40,17 @@ import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.util.CopyHandler;
 import org.hippoecm.repository.util.JcrUtils;
 import org.hippoecm.repository.util.NodeInfo;
+import org.hippoecm.repository.util.NodeIterable;
 import org.hippoecm.repository.util.OverwritingCopyHandler;
 import org.hippoecm.repository.util.PropInfo;
 import org.hippoecm.repository.util.PropertyIterable;
 import org.onehippo.repository.api.WorkflowTask;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.util.JcrConstants;
+
+import static org.hippoecm.repository.HippoStdNodeType.MIXIN_SKIPDRAFT;
+import static org.hippoecm.repository.api.HippoNodeType.NT_DOCUMENT;
+import static org.hippoecm.repository.api.HippoNodeType.NT_HANDLE;
 
 /**
  * Abstract base workflow task class having sharable workflow/document related operations and
@@ -55,16 +60,16 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
 
     private static final long serialVersionUID = 1L;
 
-    protected static final String[] PROTECTED_MIXINS = new String[] {
-        JcrConstants.MIX_VERSIONABLE,
-        JcrConstants.MIX_REFERENCEABLE,
-        HippoNodeType.NT_HARDDOCUMENT,
-        HippoStdNodeType.NT_PUBLISHABLE,
-        HippoStdNodeType.NT_PUBLISHABLESUMMARY,
-        HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT
+    protected static final String[] PROTECTED_MIXINS = new String[]{
+            JcrConstants.MIX_VERSIONABLE,
+            JcrConstants.MIX_REFERENCEABLE,
+            HippoNodeType.NT_HARDDOCUMENT,
+            HippoStdNodeType.NT_PUBLISHABLE,
+            HippoStdNodeType.NT_PUBLISHABLESUMMARY,
+            HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT
     };
 
-    protected static final String[] PROTECTED_PROPERTIES = new String[] {
+    protected static final String[] PROTECTED_PROPERTIES = new String[]{
             HippoNodeType.HIPPO_AVAILABILITY,
             HippoNodeType.HIPPO_RELATED,
             HippoNodeType.HIPPO_PATHS,
@@ -116,23 +121,6 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
         this.workflowContext = workflowContext;
     }
 
-    protected Node cloneDocumentNode(Node srcNode) throws RepositoryException {
-        final Node parent = srcNode.getParent();
-        JcrUtils.ensureIsCheckedOut(parent);
-
-        Node destNode = parent.addNode(srcNode.getName(), srcNode.getPrimaryNodeType().getName());
-
-        if (!destNode.isNodeType(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT)) {
-            destNode.addMixin(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT);
-        }
-
-        if (srcNode.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY) && !destNode.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)) {
-            destNode.addMixin(HippoStdNodeType.NT_PUBLISHABLESUMMARY);
-        }
-
-        return copyTo(srcNode, destNode);
-    }
-
     /**
      * Copies {@link Node} {@code srcNode} to {@code destNode}.
      * Special properties and mixins are filtered out; those are actively maintained by the workflow.
@@ -141,8 +129,31 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
      * @param destNode the node that the contents of srcNode will be copied to
      * @return destNode
      * @throws RepositoryException
+     * @deprecated since 14.3.0 : do not use this method any more. Instead use {@link #copyTo(Node, Node, boolean)} and
+     * specify whether source or dest is draft variant. This methods invokes {@link #copyTo(Node, Node, boolean)} with
+     * 'srcOrDestIsDraft = false'
      */
-    protected Node copyTo(final Node srcNode, Node destNode) throws RepositoryException {
+    @Deprecated
+    protected Node copyTo(final Node srcNode, final Node destNode) throws RepositoryException {
+        return copyTo(srcNode, destNode, false);
+    }
+
+    /**
+     * <p>
+     *     Copies {@link Node} {@code srcNode} to {@code destNode}.
+     *     Special properties and mixins are filtered out; those are actively maintained by the workflow.
+     * </p>
+     * <p>
+     *     If {@code srcOrDestIsDraft} is {@code true}, the copy is between a draft and other variant. In that case,
+     *     nodes of type {@code hippo:skipDraft} are skipped from being copied (and also not removed from the
+     *     {@code destNode} if present
+     * </p>
+     * @param srcNode the node to copy
+     * @param destNode the node that the contents of srcNode will be copied to
+     * @return destNode
+     * @throws RepositoryException
+     */
+    protected Node copyTo(final Node srcNode, final Node destNode, final boolean srcOrDestIsDraft) throws RepositoryException {
         final CopyHandler chain = new OverwritingCopyHandler(destNode) {
 
             @Override
@@ -175,6 +186,24 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
             }
 
             @Override
+            protected void removeChildNodes(final Node node) throws RepositoryException {
+                for (Node child : new NodeIterable(node.getNodes())) {
+                    if (child.getDefinition().isProtected()) {
+                        continue;
+                    }
+                    if (srcOrDestIsDraft && child.isNodeType(MIXIN_SKIPDRAFT) &&
+                            getCurrent() == destNode &&
+                            destNode.isNodeType(NT_DOCUMENT) && destNode.getParent().isNodeType(NT_HANDLE)) {
+                        // do not replace direct children of type 'skipdraft' since when copy from draft to unpublished,
+                        // these nodes should not be replaced
+                        continue;
+                    }
+
+                    child.remove();
+                }
+            }
+
+            @Override
             protected void replaceMixins(final Node node, final NodeInfo nodeInfo) throws RepositoryException {
                 Set<String> mixinSet = new TreeSet<>();
                 Collections.addAll(mixinSet, nodeInfo.getMixinNames());
@@ -200,6 +229,16 @@ public abstract class AbstractDocumentTask implements WorkflowTask, Serializable
                     return;
                 }
                 super.setProperty(propInfo);
+            }
+
+            @Override
+            public boolean skipNode(final Node child) throws RepositoryException {
+                if (srcOrDestIsDraft && child.isNodeType(MIXIN_SKIPDRAFT) &&
+                        getCurrent() == destNode && destNode.isNodeType(NT_DOCUMENT)
+                        && destNode.getParent().isNodeType(NT_HANDLE)) {
+                    return true;
+                }
+                return false;
             }
         };
         JcrUtils.copyTo(srcNode, chain);

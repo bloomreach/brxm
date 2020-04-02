@@ -1,5 +1,5 @@
 /*
- *  Copyright 2009-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2009-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -133,6 +133,9 @@ public interface HippoStdNodeType {
      */
     String NT_DATE_FIELDS = "hippostd:datefields";
 
+
+    String MIXIN_SKIPDRAFT = "hippostd:skipdraft";
+
     /**
      * The property in a hippostd:html node instance that hold the HTML fragment.
      */
@@ -237,4 +240,10 @@ public interface HippoStdNodeType {
     String DRAFT = "draft";
     
     String NEW = "new";
+    /**
+     * Boolean property that indicates if a draft is transferable. Transferable indicates that other uses can
+     * take ownership of the document.
+     */
+    String HIPPOSTD_TRANSFERABLE = "hippostd:transferable";
+
 }

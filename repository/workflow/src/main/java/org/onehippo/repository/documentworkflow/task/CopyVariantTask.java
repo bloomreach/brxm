@@ -1,5 +1,5 @@
 /**
- * Copyright 2013-2015 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,11 +23,15 @@ import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 
 import org.hippoecm.repository.HippoStdNodeType;
+import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.HippoNodeType;
 import org.hippoecm.repository.api.WorkflowException;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.util.JcrConstants;
+
+import static org.hippoecm.repository.HippoStdNodeType.DRAFT;
 
 /**
  * Custom workflow task for copying (creating if necessary) from one variant node to another variant node
@@ -60,8 +64,14 @@ public class CopyVariantTask extends AbstractDocumentTask {
 
         DocumentHandle dm = getDocumentHandle();
 
-        DocumentVariant sourceDoc = dm.getDocuments().get(getSourceState());
-        DocumentVariant targetDoc = dm.getDocuments().get(getTargetState());
+        final String sourceState = getSourceState();
+        final String targetState = getTargetState();
+
+        // a copy *to* or from draft should ignore direct children below the variant of nodetype hippo:skipdraft
+        final boolean srcOrDestIsDraft = DRAFT.equals(sourceState) || DRAFT.equals(targetState);
+
+        DocumentVariant sourceDoc = dm.getDocuments().get(sourceState);
+        DocumentVariant targetDoc = dm.getDocuments().get(targetState);
 
         if (sourceDoc == null || !sourceDoc.hasNode()) {
             throw new WorkflowException("Source document variant (node) is not available.");
@@ -75,9 +85,21 @@ public class CopyVariantTask extends AbstractDocumentTask {
 
         if (targetDoc == null) {
             saveNeeded = true;
-            targetNode = cloneDocumentNode(sourceNode);
 
-            if (HippoStdNodeType.DRAFT.equals(getTargetState())) {
+            final Node parent = sourceNode.getParent();
+            JcrUtils.ensureIsCheckedOut(parent);
+
+            targetNode = parent.addNode(sourceNode.getName(), sourceNode.getPrimaryNodeType().getName());
+
+            if (!targetNode.isNodeType(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT)) {
+                targetNode.addMixin(HippoStdPubWfNodeType.HIPPOSTDPUBWF_DOCUMENT);
+            }
+
+            if (sourceNode.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY) && !targetNode.isNodeType(HippoStdNodeType.NT_PUBLISHABLESUMMARY)) {
+                targetNode.addMixin(HippoStdNodeType.NT_PUBLISHABLESUMMARY);
+            }
+
+            if (DRAFT.equals(getTargetState())) {
                 if (targetNode.isNodeType(HippoNodeType.NT_HARDDOCUMENT)) {
                     targetNode.removeMixin(HippoNodeType.NT_HARDDOCUMENT);
                 }
@@ -85,6 +107,8 @@ public class CopyVariantTask extends AbstractDocumentTask {
             if (!targetNode.isNodeType(JcrConstants.MIX_REFERENCEABLE)) {
                 targetNode.addMixin(JcrConstants.MIX_REFERENCEABLE);
             }
+
+            copyTo(sourceNode, targetNode, srcOrDestIsDraft);
 
             targetDoc = new DocumentVariant(targetNode);
             targetDoc.setState(getTargetState());
@@ -96,7 +120,7 @@ public class CopyVariantTask extends AbstractDocumentTask {
                 throw new WorkflowException(
                         "The target document variant (node) is the same as the source document variant (node).");
             }
-            copyTo(sourceNode, targetNode);
+            copyTo(sourceNode, targetNode, srcOrDestIsDraft);
         }
 
         if (saveNeeded) {
