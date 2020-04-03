@@ -22,11 +22,10 @@
             md-is-locked-open="$ctrl.isLockedOpen()"
             ng-style="{ 'width': $ctrl.width + 'px' }">
 
-  <resize-handle element="$ctrl.sideNavElement"
-                 on-resize="$ctrl.onResize(newWidth)"
-                 min-width="$ctrl.getMinWidth()"
+  <resize-handle element-width="$ctrl.width"
+                 handle-position="left"
                  ng-if="!$ctrl.isFullScreen()"
-                 handle-position="left">
+                 on-resize="$ctrl.onResize(newWidth)">
   </resize-handle>
 
   <md-toolbar class="right-side-panel-top-toolbar">
