@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,10 +16,7 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.cxf;
 
 import java.util.Map;
-import java.util.Set;
 import java.util.function.BiPredicate;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.jcr.Credentials;
 import javax.jcr.ItemNotFoundException;
@@ -65,6 +62,7 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 
     public static final String REQUEST_CONFIG_NODE_IDENTIFIER = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.contentNode.identifier";
     public static final String REQUEST_ERROR_MESSAGE_ATTRIBUTE = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.exception.message";
+    public static final String REQUEST_IS_EXPERIENCE_PAGE_ATRRIBUTE = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.is_experiencePage";
 
     private Repository repository;
     private Credentials credentials;
@@ -129,7 +127,7 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
             final Node node = session.getNodeByIdentifier(uuid);
 
             final String method = request.getMethod();
-            final String adjustedPath = adjustEndpointPath(node, requestContext.getPathSuffix(), method);
+            final String adjustedPath = adjustEndpointPath(node, requestContext);
             setRequestContextAttributes(node, requestContext, liveHstModel);
 
             log.debug("Invoking JAX-RS endpoint {}: {} for uuid {}", method, adjustedPath, uuid);
@@ -167,9 +165,10 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
         requestContext.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, uuid);
     }
 
-    private String adjustEndpointPath(Node node, String optionalPathSuffix, String method) throws RepositoryException {
+    private String adjustEndpointPath(Node node, HstRequestContext requestContext) throws RepositoryException {
         final StringBuilder builder = new StringBuilder();
         if (belongsToXPage(node)) {
+            requestContext.setAttribute(REQUEST_IS_EXPERIENCE_PAGE_ATRRIBUTE, Boolean.TRUE);
             builder.append("/experiencepage/");
         } else {
             builder.append("/");
@@ -180,6 +179,7 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
             builder.append(node.getPrimaryNodeType().getName());
         }
         builder.append("/");
+        final String optionalPathSuffix = requestContext.getPathSuffix();
         if (optionalPathSuffix != null) {
             builder.append(optionalPathSuffix);
         }

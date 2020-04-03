@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -23,6 +23,6 @@ public class ChannelManagerPrivileges {
 
     public final static String CHANNEL_VIEWER_PRIVILEGE_NAME = "hippo:channel-viewer";
 
-    // TODO (meggermont): Change this to the correct role name
-    public static final String XPAGE_EDITOR_PRIVILEGE_NAME = CHANNEL_WEBMASTER_PRIVILEGE_NAME;
+    // users having role hippo:author on an experience page can modify its content and its layout
+    public static final String XPAGE_REQUIRED_PRIVILEGE_NAME = "hippo:author";
 }

@@ -17,6 +17,7 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.services;
 
 import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_RENDERING_MOUNT_ID;
+import static org.hippoecm.hst.pagecomposer.jaxrs.cxf.CXFJaxrsHstConfigService.REQUEST_IS_EXPERIENCE_PAGE_ATRRIBUTE;
 
 import javax.jcr.ItemNotFoundException;
 import javax.jcr.Node;
@@ -48,6 +49,11 @@ public class PageComposerContextService {
 
     public HstRequestContext getRequestContext() {
         return RequestContextProvider.get();
+    }
+
+
+    public boolean isExperiencePageRequest() {
+       return Boolean.TRUE == getRequestContext().getAttribute(REQUEST_IS_EXPERIENCE_PAGE_ATRRIBUTE);
     }
 
     public String getRequestConfigIdentifier() {

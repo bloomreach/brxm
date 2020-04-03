@@ -34,7 +34,6 @@ import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.AbstractConfigResource;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResourceInterface;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentService.ContainerItem;
@@ -43,7 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils.isValidUUID;
-import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.XPAGE_EDITOR_PRIVILEGE_NAME;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.XPAGE_REQUIRED_PRIVILEGE_NAME;
 
 @Path("/experiencepage/hst:containercomponent/")
 public class XPageContainerComponentResource implements ContainerComponentResourceInterface {
@@ -64,7 +63,7 @@ public class XPageContainerComponentResource implements ContainerComponentResour
     @Path("/{itemUUID}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @PrivilegesAllowed(XPAGE_EDITOR_PRIVILEGE_NAME)
+    @PrivilegesAllowed(XPAGE_REQUIRED_PRIVILEGE_NAME)
     public Response createContainerItem(final @PathParam("itemUUID") String itemUUID,
                                         final @QueryParam("lastModifiedTimestamp") long versionStamp) {
         if (!isValidUUID(itemUUID)) {
@@ -83,7 +82,7 @@ public class XPageContainerComponentResource implements ContainerComponentResour
     @Path("/{itemUUID}/{siblingItemUUID}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @PrivilegesAllowed(XPAGE_EDITOR_PRIVILEGE_NAME)
+    @PrivilegesAllowed(XPAGE_REQUIRED_PRIVILEGE_NAME)
     public Response createContainerItemAndAddBefore(final @PathParam("itemUUID") String itemUUID,
                                                     final @PathParam("siblingItemUUID") String siblingItemUUID,
                                                     final @QueryParam("lastModifiedTimestamp") long versionStamp) {
@@ -108,7 +107,7 @@ public class XPageContainerComponentResource implements ContainerComponentResour
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @PrivilegesAllowed(XPAGE_EDITOR_PRIVILEGE_NAME)
+    @PrivilegesAllowed(XPAGE_REQUIRED_PRIVILEGE_NAME)
     public Response updateContainer(final ContainerRepresentation container) {
         final ContainerAction<Response> updateContainer = () -> {
             xPageContainerComponentService.updateContainer(getSession(), container);
@@ -121,7 +120,7 @@ public class XPageContainerComponentResource implements ContainerComponentResour
     @DELETE
     @Path("/{itemUUID}")
     @Produces(MediaType.APPLICATION_JSON)
-    @PrivilegesAllowed(XPAGE_EDITOR_PRIVILEGE_NAME)
+    @PrivilegesAllowed(XPAGE_REQUIRED_PRIVILEGE_NAME)
     public Response deleteContainerItem(final @PathParam("itemUUID") String itemUUID,
                                         final @QueryParam("lastModifiedTimestamp") long versionStamp) {
         final ContainerAction<Response> deleteContainerItem = () -> {

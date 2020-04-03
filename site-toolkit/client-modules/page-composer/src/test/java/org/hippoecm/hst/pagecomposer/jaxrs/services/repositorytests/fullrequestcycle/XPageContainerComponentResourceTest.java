@@ -19,9 +19,11 @@ import java.io.IOException;
 import java.util.Map;
 
 import javax.jcr.ItemNotFoundException;
+import javax.jcr.Property;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
+import javax.jcr.Value;
 import javax.servlet.ServletException;
 import javax.ws.rs.core.Response;
 
@@ -67,12 +69,29 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
     }
 
     /**
-     * Note an author who does not have role Author on the experience page is not allowed to modify the hst:page
+     * Note an author who does not have role hippo:author on the experience page is not allowed to modify the hst:page
      * in the experience page document
      */
     @Test
     public void create_container_item_NOT_allowed_it_not_role_author() throws Exception {
+        // for author user, temporarily remove the role 'hippo:author' : Without this role, (s)he should not be allowed
+        // to invoked the XPageContainerComponentResource
 
+        final Session admin = createSession(ADMIN_CREDENTIALS);
+        Property privilegesProp = admin.getNode("/hippo:configuration/hippo:roles/author").getProperty("hipposys:privileges");
+        Value[] before = privilegesProp.getValues();
+        privilegesProp.remove();
+        admin.save();
+
+        try {
+            startEdit(ADMIN_CREDENTIALS);
+            // since author does not have privilege hippo:author anymore, expect a FORBIDDEN
+            createAndDeleteAs(AUTHOR_CREDENTIALS, false);
+        } finally {
+            // restore privileges
+            admin.getNode("/hippo:configuration/hippo:roles/author").setProperty("hipposys:privileges", before);
+            admin.save();
+        }
     }
 
     private void createAndDeleteAs(final SimpleCredentials creds, final boolean allowed) throws IOException, ServletException, RepositoryException {

@@ -48,7 +48,7 @@ import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ServerErrorExcept
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
+import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.XPAGE_REQUIRED_PRIVILEGE_NAME;
 
 /**
  * The REST resource handler for the nodes that are of the type "hst:containeritemcomponent". This is specified using
@@ -75,7 +75,7 @@ public class XPageContainerItemComponentResource extends AbstractConfigResource 
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
+    @PrivilegesAllowed(XPAGE_REQUIRED_PRIVILEGE_NAME)
     @Override
     public Response getVariants() {
 
@@ -103,7 +103,7 @@ public class XPageContainerItemComponentResource extends AbstractConfigResource 
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
+    @PrivilegesAllowed(XPAGE_REQUIRED_PRIVILEGE_NAME)
     @Override
     public Response retainVariants(final String[] variants,
                                    final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
@@ -130,7 +130,7 @@ public class XPageContainerItemComponentResource extends AbstractConfigResource 
     @GET
     @Path("/{variant}/{locale}")
     @Produces(MediaType.APPLICATION_JSON)
-    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
+    @PrivilegesAllowed(XPAGE_REQUIRED_PRIVILEGE_NAME)
     @Override
     public ContainerItemComponentRepresentation getVariant(final @PathParam("variant") String variant,
                                final @PathParam("locale") String localeString) {
@@ -159,7 +159,7 @@ public class XPageContainerItemComponentResource extends AbstractConfigResource 
     @PUT
     @Path("/{variantId}")
     @Produces(MediaType.APPLICATION_JSON)
-    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
+    @PrivilegesAllowed(XPAGE_REQUIRED_PRIVILEGE_NAME)
     @Override
     public Response moveAndUpdateVariant(final @PathParam("variantId") String variantId,
                                          final @HeaderParam("Move-To") String  newVariantId,
@@ -195,7 +195,7 @@ public class XPageContainerItemComponentResource extends AbstractConfigResource 
     @POST
     @Path("/{variantId}")
     @Produces(MediaType.APPLICATION_JSON)
-    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
+    @PrivilegesAllowed(XPAGE_REQUIRED_PRIVILEGE_NAME)
     @Override
     public Response createVariant(final @PathParam("variantId") String variantId,
                                   final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
@@ -214,7 +214,7 @@ public class XPageContainerItemComponentResource extends AbstractConfigResource 
     @DELETE
     @Path("/{variantId}")
     @Produces(MediaType.APPLICATION_JSON)
-    @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
+    @PrivilegesAllowed(XPAGE_REQUIRED_PRIVILEGE_NAME)
     @Override
     public Response deleteVariant(final @PathParam("variantId") String variantId,
                                   final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
