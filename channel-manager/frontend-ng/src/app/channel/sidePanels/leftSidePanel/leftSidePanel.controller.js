@@ -20,6 +20,7 @@ const MIN_WIDTH = 290;
 class LeftSidePanelCtrl {
   constructor(
     $element,
+    $scope,
     localStorageService,
     CatalogService,
     ChannelService,
@@ -30,6 +31,7 @@ class LeftSidePanelCtrl {
     'ngInject';
 
     this.$element = $element;
+    this.$scope = $scope;
     this.localStorageService = localStorageService;
     this.CatalogService = CatalogService;
     this.ChannelService = ChannelService;
@@ -52,7 +54,13 @@ class LeftSidePanelCtrl {
   }
 
   onResize(newWidth) {
-    this.localStorageService.set(LS_KEY_PANEL_WIDTH, newWidth);
+    if (newWidth < MIN_WIDTH && this.width === MIN_WIDTH) {
+      return;
+    }
+
+    this.width = Math.max(newWidth, MIN_WIDTH);
+    this.localStorageService.set(LS_KEY_PANEL_WIDTH, this.width);
+    this.$scope.$digest();
   }
 
   get selectedTab() {
@@ -94,10 +102,6 @@ class LeftSidePanelCtrl {
 
   isEditable() {
     return this.ChannelService.isEditable();
-  }
-
-  getMinWidth() {
-    return MIN_WIDTH;
   }
 }
 

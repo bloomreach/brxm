@@ -97,6 +97,40 @@ describe('LeftSidePanel', () => {
     });
   });
 
+  describe('onResize', () => {
+    it('updates the panel width', () => {
+      $ctrl.width = 400;
+      $ctrl.onResize(800);
+
+      expect($ctrl.width).toBe(800);
+    });
+
+    it('respects the minimum width boundary', () => {
+      $ctrl.width = 400;
+
+      $ctrl.onResize(280);
+
+      expect($ctrl.width).toBe(290);
+    });
+
+    it('stores the new panel width in local storage', () => {
+      spyOn($ctrl.localStorageService, 'set');
+      $ctrl.onResize(800);
+
+      expect($ctrl.localStorageService.set).toHaveBeenCalledWith('channelManager.sidePanel.left.width', 800);
+    });
+
+    it('ignores new width if less than the minimum width while current width is equal to the minimum width', () => {
+      $ctrl.width = 290;
+      spyOn($ctrl.localStorageService, 'set');
+
+      $ctrl.onResize(280);
+
+      expect($ctrl.width).toBe(290);
+      expect($ctrl.localStorageService.set).not.toHaveBeenCalled();
+    });
+  });
+
   it('knows when it is locked open', () => {
     spyOn(SidePanelService, 'isOpen').and.returnValue(true);
 
