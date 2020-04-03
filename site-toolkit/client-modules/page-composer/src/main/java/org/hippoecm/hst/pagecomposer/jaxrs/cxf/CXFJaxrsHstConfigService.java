@@ -168,9 +168,8 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
     }
 
     private String adjustEndpointPath(Node node, String optionalPathSuffix, String method) throws RepositoryException {
-        final Set<String> methods = Stream.of("POST", "PUT", "DELETE").collect(Collectors.toSet());
         final StringBuilder builder = new StringBuilder();
-        if (methods.contains(method) && belongsToXPage(node)) {
+        if (belongsToXPage(node)) {
             builder.append("/experiencepage/");
         } else {
             builder.append("/");

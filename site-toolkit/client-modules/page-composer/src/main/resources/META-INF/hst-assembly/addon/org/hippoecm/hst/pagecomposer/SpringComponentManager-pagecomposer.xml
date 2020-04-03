@@ -209,6 +209,7 @@
             <ref bean="containerItemComponentResource"/>
           </constructor-arg>
         </bean>
+        <!-- below the container and container item resources for experience pages -->
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageContainerComponentResource" >
@@ -216,6 +217,14 @@
             </bean>
           </constructor-arg>
         </bean>
+        <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
+          <constructor-arg>
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageContainerItemComponentResource" >
+              <property name="XpageContainerItemComponentService" ref="containerItemComponentService"/>
+            </bean>
+          </constructor-arg>
+        </bean>
+        <!-- end experience pages -->
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
             <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.SiteMenuResource" parent="abstractConfigResource">

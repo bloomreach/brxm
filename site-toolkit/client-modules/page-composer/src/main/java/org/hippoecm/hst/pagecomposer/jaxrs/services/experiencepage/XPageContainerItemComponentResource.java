@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-package org.hippoecm.hst.pagecomposer.jaxrs.services;
+package org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -40,6 +40,9 @@ import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemComponentRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.AbstractConfigResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentResourceInterface;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerItemComponentService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ServerErrorException;
 import org.slf4j.Logger;
@@ -53,14 +56,14 @@ import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivilege
  * <p>
  * The resources handler operates on variants and their parameters.
  */
-@Path("/hst:containeritemcomponent/")
-public class ContainerItemComponentResource extends AbstractConfigResource implements ContainerItemComponentResourceInterface {
-    private static Logger log = LoggerFactory.getLogger(ContainerItemComponentResource.class);
+@Path("/experiencepage/hst:containeritemcomponent/")
+public class XPageContainerItemComponentResource extends AbstractConfigResource implements ContainerItemComponentResourceInterface {
+    private static Logger log = LoggerFactory.getLogger(XPageContainerItemComponentResource.class);
 
-    private ContainerItemComponentService containerItemComponentService;
+    private ContainerItemComponentService xPageContainerItemComponentService;
 
-    public void setContainerItemComponentService(final ContainerItemComponentService containerItemComponentService) {
-        this.containerItemComponentService = containerItemComponentService;
+    public void setXpageContainerItemComponentService(final ContainerItemComponentService containerItemComponentService) {
+        this.xPageContainerItemComponentService = containerItemComponentService;
     }
 
     /**
@@ -77,7 +80,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource imple
     public Response getVariants() {
 
         try {
-            Set<String> variants = this.containerItemComponentService.getVariants();
+            Set<String> variants = this.xPageContainerItemComponentService.getVariants();
             log.info("Available variants: {}", variants);
             return ok("Available variants: ", variants);
         } catch (ClientException e){
@@ -106,7 +109,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource imple
                                    final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
         try {
             final HashSet<String> retainedVariants = new HashSet<>(Arrays.asList(variants));
-            final Set<String> removedVariants = this.containerItemComponentService.retainVariants(retainedVariants, versionStamp);
+            final Set<String> removedVariants = this.xPageContainerItemComponentService.retainVariants(retainedVariants, versionStamp);
             return ok("Removed variants:", removedVariants);
         } catch (RepositoryException e) {
             log.error("Unable to cleanup the variants of the component", e);
@@ -132,7 +135,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource imple
     public ContainerItemComponentRepresentation getVariant(final @PathParam("variant") String variant,
                                final @PathParam("locale") String localeString) {
         try {
-            return this.containerItemComponentService.getVariant(variant, localeString);
+            return this.xPageContainerItemComponentService.getVariant(variant, localeString);
         } catch (Exception e) {
             log.warn("Failed to retrieve parameters.", e);
         }
@@ -164,10 +167,10 @@ public class ContainerItemComponentResource extends AbstractConfigResource imple
                                          final MultivaluedMap<String, String> params) {
         try {
             if (StringUtils.isEmpty(newVariantId)) {
-                this.containerItemComponentService.updateVariant(variantId, versionStamp, params);
+                this.xPageContainerItemComponentService.updateVariant(variantId, versionStamp, params);
                 return ok("Parameters for '" + variantId + "' saved successfully.");
             } else {
-                this.containerItemComponentService.moveAndUpdateVariant(variantId, newVariantId, versionStamp, params);
+                this.xPageContainerItemComponentService.moveAndUpdateVariant(variantId, newVariantId, versionStamp, params);
                 return ok("Parameters renamed from '" + variantId + "' to '" + newVariantId + "' and saved successfully.");
             }
         } catch (ClientException e) {
@@ -198,7 +201,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource imple
                                   final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
 
         try {
-            this.containerItemComponentService.createVariant(variantId, versionStamp);
+            this.xPageContainerItemComponentService.createVariant(variantId, versionStamp);
             return created("Variant '" + variantId + "' created successfully");
         } catch (ClientException e) {
             return clientError("Could not create variant '" + variantId + "'", e.getErrorStatus());
@@ -216,7 +219,7 @@ public class ContainerItemComponentResource extends AbstractConfigResource imple
     public Response deleteVariant(final @PathParam("variantId") String variantId,
                                   final @HeaderParam("lastModifiedTimestamp") long versionStamp) {
         try {
-            this.containerItemComponentService.deleteVariant(variantId, versionStamp);
+            this.xPageContainerItemComponentService.deleteVariant(variantId, versionStamp);
             return ok("Variant '" + variantId + "' deleted successfully");
         } catch (ClientException e) {
             log.warn("Could not delete variant '{}'", variantId, e);

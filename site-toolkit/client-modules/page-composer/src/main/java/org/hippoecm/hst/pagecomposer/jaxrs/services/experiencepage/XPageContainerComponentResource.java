@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,6 +34,8 @@ import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.AbstractConfigResource;
+import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentResourceInterface;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentService;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentService.ContainerItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
@@ -44,7 +46,7 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils.isValidUUID;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.XPAGE_EDITOR_PRIVILEGE_NAME;
 
 @Path("/experiencepage/hst:containercomponent/")
-public class XPageContainerComponentResource {
+public class XPageContainerComponentResource implements ContainerComponentResourceInterface {
     private static Logger log = LoggerFactory.getLogger(XPageContainerComponentResource.class);
 
     private ContainerComponentService xPageContainerComponentService;
