@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +20,6 @@ describe('resizeHandle component', () => {
   let $window;
 
   let mockHandleElement;
-  let mockSidePanelElement;
 
   const event = angular.element.Event;
 
@@ -34,13 +33,11 @@ describe('resizeHandle component', () => {
 
     jasmine.getFixtures().load('channel/sidePanels/resizeHandle/resizeHandle.controller.fixture.html');
     mockHandleElement = $('#resizeHandle');
-    mockSidePanelElement = $('#sidePanel');
 
     $ctrl = $componentController('resizeHandle', {
       $element: mockHandleElement,
     }, {
-      element: mockSidePanelElement,
-      minWidth: 100,
+      elementWidth: 100,
       onResize: () => { },
     });
 
@@ -51,10 +48,6 @@ describe('resizeHandle component', () => {
 
   afterEach(() => {
     $('.resize-handle-mask').remove();
-  });
-
-  it('initializes minWidth', () => {
-    expect($ctrl.minWidth).toBe(100);
   });
 
   describe('starting a resize', () => {
@@ -98,10 +91,6 @@ describe('resizeHandle component', () => {
   });
 
   describe('resizing', () => {
-    beforeEach(() => {
-      mockSidePanelElement.width('100px');
-    });
-
     it('captures the mouse move events on the mask element', () => {
       mockHandleElement.trigger(event('mousedown', { which: 1, pageX: 100 }));
 
@@ -119,12 +108,10 @@ describe('resizeHandle component', () => {
       $('.resize-handle-mask').trigger(event('mousemove', { buttons: 1, pageX: 0 }));
 
       expect($ctrl.onResize).toHaveBeenCalledWith({ newWidth: 200 });
-      expect(mockSidePanelElement).toHaveCss({ width: '200px' });
 
       $('.resize-handle-mask').trigger(event('mousemove', { buttons: 1, pageX: 50 }));
 
       expect($ctrl.onResize).toHaveBeenCalledWith({ newWidth: 150 });
-      expect(mockSidePanelElement).toHaveCss({ width: '150px' });
     });
 
     it('resizes the target element if handle is on the right side', () => {
@@ -135,26 +122,10 @@ describe('resizeHandle component', () => {
       $('.resize-handle-mask').trigger(event('mousemove', { buttons: 1, pageX: 200 }));
 
       expect($ctrl.onResize).toHaveBeenCalledWith({ newWidth: 200 });
-      expect(mockSidePanelElement).toHaveCss({ width: '200px' });
 
       $('.resize-handle-mask').trigger(event('mousemove', { buttons: 1, pageX: 150 }));
 
       expect($ctrl.onResize).toHaveBeenCalledWith({ newWidth: 150 });
-      expect(mockSidePanelElement).toHaveCss({ width: '150px' });
-    });
-
-    it('does not resize below the minWidth', () => {
-      mockHandleElement.trigger(event('mousedown', { which: 1, pageX: 100 }));
-
-      const mask = $('.resize-handle-mask');
-      mask.trigger(event('mousemove', { buttons: 1, pageX: 0 }));
-
-      expect($ctrl.onResize).not.toHaveBeenCalled();
-
-      mockSidePanelElement.width('150px');
-      mask.trigger(event('mousemove', { buttons: 1, pageX: 0 }));
-
-      expect($ctrl.onResize).toHaveBeenCalledWith({ newWidth: 100 });
     });
 
     it('does not resize above the maxWidth', () => {
@@ -164,11 +135,6 @@ describe('resizeHandle component', () => {
       mask.trigger(event('mousemove', { buttons: 1, pageX: $ctrl.maxWidth + 10 }));
 
       expect($ctrl.onResize).toHaveBeenCalledWith({ newWidth: $ctrl.maxWidth });
-
-      $ctrl.onResize.calls.reset();
-      mask.trigger(event('mousemove', { buttons: 1, pageX: $ctrl.maxWidth + 10 }));
-
-      expect($ctrl.onResize).not.toHaveBeenCalled();
     });
   });
 
