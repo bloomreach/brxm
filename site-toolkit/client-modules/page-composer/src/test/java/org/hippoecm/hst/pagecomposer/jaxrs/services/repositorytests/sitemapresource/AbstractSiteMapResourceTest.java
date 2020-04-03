@@ -276,7 +276,6 @@ public abstract class AbstractSiteMapResourceTest extends AbstractPageComposerTe
 
         final ContainerComponentService containerComponentService = new ContainerComponentServiceImpl(pageComposerContextService, helper);
         containerComponentResource.setContainerComponentService(containerComponentService);
-        containerComponentResource.setPageComposerContextService(pageComposerContextService);
         return containerComponentResource;
     }
 

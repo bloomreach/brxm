@@ -29,7 +29,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
@@ -43,7 +42,7 @@ import static org.hippoecm.hst.pagecomposer.jaxrs.util.UUIDUtils.isValidUUID;
 import static org.hippoecm.hst.platform.services.channel.ChannelManagerPrivileges.CHANNEL_WEBMASTER_PRIVILEGE_NAME;
 
 @Path("/hst:containercomponent/")
-public class ContainerComponentResource implements ContainerComponentResourceInterface {
+public class ContainerComponentResource extends AbstractConfigResource implements ContainerComponentResourceInterface {
     private static Logger log = LoggerFactory.getLogger(ContainerComponentResource.class);
 
     private ContainerComponentService containerComponentService;
@@ -122,7 +121,6 @@ public class ContainerComponentResource implements ContainerComponentResourceInt
     @Path("/{itemUUID}")
     @Produces(MediaType.APPLICATION_JSON)
     @PrivilegesAllowed(CHANNEL_WEBMASTER_PRIVILEGE_NAME)
-    @Override
     public Response deleteContainerItem(final @PathParam("itemUUID") String itemUUID,
                                         final @QueryParam("lastModifiedTimestamp") long versionStamp) {
         final ContainerAction<Response> deleteContainerItem = () -> {
@@ -134,7 +132,7 @@ public class ContainerComponentResource implements ContainerComponentResourceInt
     }
 
     private Session getSession() throws RepositoryException {
-        return RequestContextProvider.get().getSession();
+        return getPageComposerContextService().getRequestContext().getSession();
     }
 
     private Response handleAction(final ContainerAction<Response> action) {

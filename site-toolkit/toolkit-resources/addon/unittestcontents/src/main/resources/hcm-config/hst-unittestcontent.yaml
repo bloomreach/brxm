@@ -235,6 +235,14 @@ definitions:
                     jcr:primaryType: hst:component
                     hst:componentclassname: org.hippoecm.hst.core.component.GenericHstComponent
                     hst:template: detail
+                    /container:
+                      jcr:primaryType: hst:containercomponent
+                      hst:xtype: hst.vbox
+                      /banner:
+                        jcr:primaryType: hst:containeritemcomponent
+                        hst:componentclassname: org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.BannerComponent
+                        hst:parameternames: [path]
+                        hst:parametervalues: [/content/document]
           /News:
             jcr:primaryType: hippostd:folder
             jcr:mixinTypes: ['mix:referenceable']
