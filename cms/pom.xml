@@ -90,7 +90,7 @@
     <hippo.services.version>14.2.0-SNAPSHOT</hippo.services.version>
     <hippo.services.htmlprocessor.version>14.2.0-SNAPSHOT</hippo.services.htmlprocessor.version>
     <hippo.services.validation.version>14.2.0-SNAPSHOT</hippo.services.validation.version>
-    <hippo.repository.version>14.2.0-SNAPSHOT</hippo.repository.version>
+    <hippo.repository.version>14.2.0-keep-draft-SNAPSHOT</hippo.repository.version>
     <hippo.configuration-management.version>14.2.0-SNAPSHOT</hippo.configuration-management.version>
 
     <!-- Test dependencies  -->
