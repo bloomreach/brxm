@@ -14,12 +14,13 @@
   limitations under the License.
   -->
 
-<md-sidenav layout-fill
+<md-sidenav class="md-sidenav-right right-side-panel qa-side-panel-right md-bloomreach-theme"
             layout="column"
-            md-is-locked-open="$ctrl.isLockedOpen()"
-            class="md-sidenav-right right-side-panel qa-side-panel-right md-bloomreach-theme"
+            layout-fill
             md-component-id="right-side-panel"
-            md-disable-backdrop>
+            md-disable-backdrop
+            md-is-locked-open="$ctrl.isLockedOpen()"
+            ng-style="{ 'width': $ctrl.width + 'px' }">
 
   <resize-handle element="$ctrl.sideNavElement"
                  on-resize="$ctrl.onResize(newWidth)"
