@@ -21,6 +21,7 @@ class RightSidePanelCtrl {
   constructor(
     $element,
     $mdConstant,
+    $scope,
     $transitions,
     $window,
     SidePanelService,
@@ -30,6 +31,7 @@ class RightSidePanelCtrl {
     'ngInject';
 
     this.$element = $element;
+    this.$scope = $scope;
     this.$transitions = $transitions;
     this.$window = $window;
 
@@ -70,7 +72,13 @@ class RightSidePanelCtrl {
   }
 
   onResize(newWidth) {
-    this.localStorageService.set(LS_KEY_PANEL_WIDTH, newWidth);
+    if (newWidth < MIN_WIDTH && this.width === MIN_WIDTH) {
+      return;
+    }
+
+    this.width = Math.max(newWidth, MIN_WIDTH);
+    this.localStorageService.set(LS_KEY_PANEL_WIDTH, this.width);
+    this.$scope.$digest();
   }
 
   isLoading() {
@@ -114,10 +122,6 @@ class RightSidePanelCtrl {
     this.SidePanelService.setFullScreen('right', fullScreen);
     // to trigger hiding/showing pagination handles of md-tabs
     this.$window.dispatchEvent(new Event('resize'));
-  }
-
-  getMinWidth() {
-    return MIN_WIDTH;
   }
 }
 

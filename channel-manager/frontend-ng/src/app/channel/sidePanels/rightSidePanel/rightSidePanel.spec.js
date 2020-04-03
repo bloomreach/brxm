@@ -96,6 +96,40 @@ describe('RightSidePanel', () => {
     });
   });
 
+  describe('onResize', () => {
+    it('updates the panel width', () => {
+      $ctrl.width = 400;
+      $ctrl.onResize(800);
+
+      expect($ctrl.width).toBe(800);
+    });
+
+    it('respects the minimum width boundary', () => {
+      $ctrl.width = 500;
+
+      $ctrl.onResize(100);
+
+      expect($ctrl.width).toBe(400);
+    });
+
+    it('stores the new panel width in local storage', () => {
+      spyOn($ctrl.localStorageService, 'set');
+      $ctrl.onResize(800);
+
+      expect($ctrl.localStorageService.set).toHaveBeenCalledWith('channelManager.sidePanel.right.width', 800);
+    });
+
+    it('ignores new width if less than the minimum width while current width is equal to the minimum width', () => {
+      $ctrl.width = 400;
+      spyOn($ctrl.localStorageService, 'set');
+
+      $ctrl.onResize(390);
+
+      expect($ctrl.width).toBe(400);
+      expect($ctrl.localStorageService.set).not.toHaveBeenCalled();
+    });
+  });
+
   it('initializes the right side panel with the side panel service upon $postLink', () => {
     $ctrl.$onInit();
     $ctrl.$postLink();
@@ -178,13 +212,6 @@ describe('RightSidePanel', () => {
     spyOn($ctrl, 'close');
     $ctrl.$element.trigger(e);
     expect($ctrl.close).not.toHaveBeenCalled();
-  });
-
-  it('stores the panel width in local storage on resize', () => {
-    spyOn($ctrl.localStorageService, 'set');
-    $ctrl.onResize(800);
-
-    expect($ctrl.localStorageService.set).toHaveBeenCalledWith('channelManager.sidePanel.right.width', 800);
   });
 
   it('knows when it is locked open', () => {
