@@ -23,7 +23,7 @@
     <Logger additivity="false" name="org.onehippo.audit" level="info"/>
 
     <!-- index repair logging -->
-    <Logger additivity="false" name="org.hippoecm.repository.jackrabbit.IndexRepairer" level="info"/>
+    <Logger name="org.hippoecm.repository.jackrabbit.IndexRepairer" level="info"/>
 
     <!-- Site logging -->
     <Logger name="org.hippoecm.hst" level="warn"/>
