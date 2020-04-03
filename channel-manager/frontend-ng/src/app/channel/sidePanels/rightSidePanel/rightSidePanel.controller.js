@@ -48,16 +48,17 @@ class RightSidePanelCtrl {
   }
 
   $onInit() {
-    const storedWidth = parseInt(this.localStorageService.get(LS_KEY_PANEL_WIDTH), 10) || MIN_WIDTH;
-    const width = Math.max(storedWidth, MIN_WIDTH);
-
     this.sideNavElement = this.$element.find('.right-side-panel');
-    this.sideNavElement[0].style.width = `${width}px`;
+    this.width = Math.max(this._getStoredWidth(), MIN_WIDTH);
 
     this.$transitions.onBefore({ from: 'hippo-cm.channel', to: 'hippo-cm.channel.*.**' }, () => this._openPanel());
     this.$transitions.onSuccess({ from: 'hippo-cm.channel.**', to: 'hippo-cm.channel' }, () => this._closePanel());
     this.$transitions.onSuccess({ from: 'hippo-cm.channel.*', to: 'hippo-cm.channel.*.**' }, () => this._focusPanel());
     this.$transitions.onError({ from: 'hippo-cm.channel.**' }, () => this._focusPanel());
+  }
+
+  _getStoredWidth() {
+    return parseInt(this.localStorageService.get(LS_KEY_PANEL_WIDTH), 10) || -1;
   }
 
   $postLink() {
