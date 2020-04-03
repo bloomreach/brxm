@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,22 +18,25 @@ import angular from 'angular';
 import 'angular-mocks';
 
 describe('LeftSidePanel', () => {
-  let $compile;
+  let $componentController;
   let $rootScope;
   let CatalogService;
   let SidePanelService;
   let SiteMapService;
 
+  let $ctrl;
+  let $element;
+  let sideNavElement;
+
   const catalogComponents = [
     { label: 'dummy' },
   ];
-  let parentScope;
 
   beforeEach(() => {
     angular.mock.module('hippo-cm');
 
-    inject((_$compile_, _$rootScope_, _CatalogService_, _SidePanelService_, _SiteMapService_) => {
-      $compile = _$compile_;
+    inject((_$componentController_, _$rootScope_, _CatalogService_, _SidePanelService_, _SiteMapService_) => {
+      $componentController = _$componentController_;
       $rootScope = _$rootScope_;
       CatalogService = _CatalogService_;
       SidePanelService = _SidePanelService_;
@@ -45,63 +48,91 @@ describe('LeftSidePanel', () => {
     spyOn(SidePanelService, 'close');
     spyOn(SidePanelService, 'initialize');
     spyOn(SiteMapService, 'get').and.returnValue([]);
+
+    $element = angular.element('<div></div>');
+    sideNavElement = angular.element('<div class="left-side-panel"></div>');
+    $element.append(sideNavElement);
+
+    const $scope = $rootScope.$new();
+    $ctrl = $componentController('leftSidePanel', {
+      $element,
+      $scope,
+      SidePanelService,
+    });
+    $rootScope.$digest();
   });
 
-  function instantiateController(componentsVisible) {
-    parentScope = $rootScope.$new();
-    parentScope.componentsVisible = componentsVisible;
-    const el = angular.element('<left-side-panel components-visible="componentsVisible"></left-side-panel>');
-    $compile(el)(parentScope);
-    $rootScope.$digest();
-    return el.controller('left-side-panel');
-  }
+  describe('$onInit', () => {
+    it('restores the panel width from local storage when stored as a number', () => {
+      spyOn($ctrl.localStorageService, 'get').and.returnValue('800');
 
-  it('initializes the channel left side panel service upon instantiation', () => {
-    instantiateController(false);
+      $ctrl.$onInit();
 
-    expect(SidePanelService.initialize).toHaveBeenCalled();
+      expect($ctrl.width).toBe(800);
+    });
+
+    it('restores the panel width from local storage when stored as a dimension', () => {
+      spyOn($ctrl.localStorageService, 'get').and.returnValue('600px');
+
+      $ctrl.$onInit();
+
+      expect($ctrl.width).toBe(600);
+    });
+
+    it('falls back to the minimum width if the panel width is unknown', () => {
+      spyOn($ctrl.localStorageService, 'get').and.returnValue(null);
+
+      $ctrl.$onInit();
+
+      expect($ctrl.width).toBe(290);
+    });
+  });
+
+  describe('$postLink', () => {
+    it('initializes the channel left side panel service upon instantiation', () => {
+      $ctrl.$onInit();
+      $ctrl.$postLink();
+
+      expect(SidePanelService.initialize).toHaveBeenCalledWith('left', $element, sideNavElement);
+    });
   });
 
   it('knows when it is locked open', () => {
-    const ctrl = instantiateController();
     spyOn(SidePanelService, 'isOpen').and.returnValue(true);
-    expect(ctrl.isLockedOpen()).toBe(true);
+
+    expect($ctrl.isLockedOpen()).toBe(true);
   });
 
   it('knows when it is not locked open', () => {
-    const ctrl = instantiateController();
     spyOn(SidePanelService, 'isOpen').and.returnValue(false);
-    expect(ctrl.isLockedOpen()).toBe(false);
+
+    expect($ctrl.isLockedOpen()).toBe(false);
   });
 
   it('retrieves the catalog from the channel service', () => {
     CatalogService.getComponents.and.returnValue(catalogComponents);
-    const ChannelLeftSidePanelCtrl = instantiateController();
 
-    expect(ChannelLeftSidePanelCtrl.getCatalog()).toBe(catalogComponents);
+    expect($ctrl.getCatalog()).toBe(catalogComponents);
   });
 
   it('only shows the components tab when components are visible, and if there are catalog items', () => {
-    const ChannelLeftSidePanelCtrl = instantiateController(false);
-    expect(ChannelLeftSidePanelCtrl.showComponentsTab()).toBe(false);
+    $ctrl.componentsVisible = false;
+    expect($ctrl.showComponentsTab()).toBe(false);
 
-    parentScope.componentsVisible = true;
-    $rootScope.$digest();
-    expect(ChannelLeftSidePanelCtrl.showComponentsTab()).toBe(false);
+    $ctrl.componentsVisible = true;
+    expect($ctrl.showComponentsTab()).toBe(false);
 
     CatalogService.getComponents.and.returnValue(catalogComponents);
-    expect(ChannelLeftSidePanelCtrl.showComponentsTab()).toBe(true);
+    expect($ctrl.showComponentsTab()).toBe(true);
 
-    parentScope.componentsVisible = false;
-    $rootScope.$digest();
-    expect(ChannelLeftSidePanelCtrl.showComponentsTab()).toBe(false);
+    $ctrl.componentsVisible = false;
+    expect($ctrl.showComponentsTab()).toBe(false);
   });
 
   it('retrieves the site map items from the channel siteMap service', () => {
     const siteMapItems = ['dummy'];
-    const ChannelLeftSidePanelCtrl = instantiateController(false);
     SiteMapService.get.and.returnValue(siteMapItems);
 
-    expect(ChannelLeftSidePanelCtrl.getSiteMapItems()).toBe(siteMapItems);
+    expect($ctrl.getSiteMapItems()).toBe(siteMapItems);
   });
 });

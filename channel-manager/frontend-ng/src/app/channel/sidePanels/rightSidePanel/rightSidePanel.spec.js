@@ -70,6 +70,32 @@ describe('RightSidePanel', () => {
     $rootScope.$digest();
   });
 
+  describe('$onInit', () => {
+    it('restores the panel width from local storage when stored as a number', () => {
+      spyOn($ctrl.localStorageService, 'get').and.returnValue('800');
+
+      $ctrl.$onInit();
+
+      expect($ctrl.width).toBe(800);
+    });
+
+    it('restores the panel width from local storage when stored as a dimension', () => {
+      spyOn($ctrl.localStorageService, 'get').and.returnValue('600px');
+
+      $ctrl.$onInit();
+
+      expect($ctrl.width).toBe(600);
+    });
+
+    it('falls back to the minimum width if the panel width is unknown', () => {
+      spyOn($ctrl.localStorageService, 'get').and.returnValue(null);
+
+      $ctrl.$onInit();
+
+      expect($ctrl.width).toBe(400);
+    });
+  });
+
   it('initializes the right side panel with the side panel service upon $postLink', () => {
     $ctrl.$onInit();
     $ctrl.$postLink();
@@ -152,30 +178,6 @@ describe('RightSidePanel', () => {
     spyOn($ctrl, 'close');
     $ctrl.$element.trigger(e);
     expect($ctrl.close).not.toHaveBeenCalled();
-  });
-
-  it('restores the panel width from local storage when stored as a number', () => {
-    spyOn($ctrl.localStorageService, 'get').and.returnValue('800');
-
-    $ctrl.$onInit();
-
-    expect(sideNavElement.css('width')).toBe('800px');
-  });
-
-  it('restores the panel width from local storage when stored as a dimension', () => {
-    spyOn($ctrl.localStorageService, 'get').and.returnValue('600px');
-
-    $ctrl.$onInit();
-
-    expect(sideNavElement.css('width')).toBe('600px');
-  });
-
-  it('falls back to the minimum width if the panel width is unknown', () => {
-    spyOn($ctrl.localStorageService, 'get').and.returnValue(null);
-
-    $ctrl.$onInit();
-
-    expect(sideNavElement.css('width')).toBe(`${$ctrl.getMinWidth()}px`);
   });
 
   it('stores the panel width in local storage on resize', () => {
