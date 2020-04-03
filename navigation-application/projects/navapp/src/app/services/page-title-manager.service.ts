@@ -16,8 +16,9 @@
 
 import { Injectable } from '@angular/core';
 import { Title } from '@angular/platform-browser';
+import { map } from 'rxjs/operators';
 
-import { ConnectionService } from './connection.service';
+import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
 
 @Injectable({
   providedIn: 'root',
@@ -27,7 +28,7 @@ export class PageTitleManagerService {
 
   constructor(
     private readonly titleService: Title,
-    private readonly connectionService: ConnectionService,
+    private readonly breadcrumbsService: BreadcrumbsService,
   ) { }
 
   init(): void {
@@ -35,14 +36,20 @@ export class PageTitleManagerService {
     this.trackBreadcrumbLabelAndSetAsPageTitle();
   }
 
-  private setPageTitle(subTitle: string): void {
-    const separator = subTitle ? ' | ' : '';
-    const title = `${this.initialPageTitle}${separator}${subTitle || ''}`;
+  private setPageSubTitle(subTitle: string): void {
+    const title = `${this.initialPageTitle} | ${subTitle || ''}`;
 
     this.titleService.setTitle(title);
   }
 
   private trackBreadcrumbLabelAndSetAsPageTitle(): void {
-    this.connectionService.updateNavLocation$.subscribe(location => this.setPageTitle(location.breadcrumbLabel));
+    this.breadcrumbsService.breadcrumbs$.pipe(
+      map(breadcrumbs => {
+        const suffix = breadcrumbs[breadcrumbs.length - 1];
+        const lastBreadcrumb = breadcrumbs[breadcrumbs.length - 2];
+
+        return suffix || lastBreadcrumb;
+      }),
+    ).subscribe(pageSubTitle => this.setPageSubTitle(pageSubTitle));
   }
 }

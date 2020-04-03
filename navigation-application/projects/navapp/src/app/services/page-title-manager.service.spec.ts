@@ -16,35 +16,35 @@
 
 import { TestBed } from '@angular/core/testing';
 import { Title } from '@angular/platform-browser';
-import { NavLocation } from '@bloomreach/navapp-communication';
 import { Subject } from 'rxjs';
 
-import { ConnectionService } from './connection.service';
+import { BreadcrumbsService } from '../top-panel/services/breadcrumbs.service';
+
 import { PageTitleManagerService } from './page-title-manager.service';
 
 describe('PageTitleManagerService', () => {
   let service: PageTitleManagerService;
   let titleServiceMock: jasmine.SpyObj<Title>;
-  let connectionServiceMock: ConnectionService;
-  let updateNavLocation$: Subject<NavLocation>;
+  let breadcrumbsServiceMock: BreadcrumbsService;
+  let breadcrumbs$: Subject<string[]>;
 
   beforeEach(() => {
     titleServiceMock = jasmine.createSpyObj('TitleService', {
-      getTitle: 'Some title',
+      getTitle: 'Some page title',
       setTitle: undefined,
     });
 
-    updateNavLocation$ = new Subject<NavLocation>();
+    breadcrumbs$ = new Subject<string[]>();
 
-    connectionServiceMock = {
-      updateNavLocation$,
-    } as ConnectionService;
+    breadcrumbsServiceMock = {
+      breadcrumbs$,
+    } as any;
 
     TestBed.configureTestingModule({
       providers: [
         PageTitleManagerService,
         { provide: Title, useValue: titleServiceMock },
-        { provide: ConnectionService, useValue: connectionServiceMock },
+        { provide: BreadcrumbsService, useValue: breadcrumbsServiceMock },
       ],
     });
 
@@ -61,7 +61,7 @@ describe('PageTitleManagerService', () => {
     });
 
     it('should subscribe on nav location updates', () => {
-      expect(updateNavLocation$.observers.length).toBe(1);
+      expect(breadcrumbs$.observers.length).toBe(1);
     });
   });
 
@@ -70,16 +70,16 @@ describe('PageTitleManagerService', () => {
       service.init();
     });
 
-    it('should set the page title whenever breadcrumb label is updated', () => {
-      updateNavLocation$.next({ path: '/some/path', breadcrumbLabel: 'Some breadcrumb label' });
+    it('should use the breadcrumb suffix when it is updated to set the page title', () => {
+      breadcrumbs$.next(['Some breadcrumb', 'Some breadcrumb label']);
 
-      expect(titleServiceMock.setTitle).toHaveBeenCalledWith('Some title | Some breadcrumb label');
+      expect(titleServiceMock.setTitle).toHaveBeenCalledWith('Some page title | Some breadcrumb label');
     });
 
-    it('should set the default page title when breadcrumb label is absent', () => {
-      updateNavLocation$.next({ path: '/some/path', breadcrumbLabel: undefined });
+    it('should use the last breadcrumb when the breadcrumb suffix is absent to set the page title', () => {
+      breadcrumbs$.next(['Some breadcrumb', '']);
 
-      expect(titleServiceMock.setTitle).toHaveBeenCalledWith('Some title');
+      expect(titleServiceMock.setTitle).toHaveBeenCalledWith('Some page title | Some breadcrumb');
     });
   });
 });
