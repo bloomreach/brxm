@@ -19,8 +19,8 @@
  * @module index
  */
 
-import { DOMParser, XMLSerializer } from 'xmldom';
-import { Typed } from 'emittery';
+import xmldom from 'xmldom';
+import emittery from 'emittery';
 import { ApiImpl, Spa } from './spa';
 import { Cms14Impl, CmsImpl, PostMessage } from './cms';
 import {
@@ -53,13 +53,13 @@ import { UrlBuilderImpl, appendSearchParams, extractSearchParams, isMatched, par
 const DEFAULT_AUTHORIZATION_PARAMETER = 'token';
 const DEFAULT_SERVER_ID_PARAMETER = 'serverid';
 
-const eventBus = new Typed<Events>();
+const eventBus = new emittery.Typed<Events>();
 const postMessage = new PostMessage();
 const cms14 = new Cms14Impl(eventBus);
 const cms = new CmsImpl(eventBus, postMessage, postMessage);
-const domParser = new DOMParser();
+const domParser = new xmldom.DOMParser();
 const pages = new WeakMap<Page, Spa>();
-const xmlSerializer = new XMLSerializer();
+const xmlSerializer = new xmldom.XMLSerializer();
 
 /**
  * Initializes the page model.

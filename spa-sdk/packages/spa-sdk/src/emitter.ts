@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Events, Typed } from 'emittery';
+import emittery, { Events } from 'emittery';
 
 type Constructor = new (...args: any[]) => any;
 
@@ -54,7 +54,7 @@ export function EmitterMixin<T extends Constructor, U extends Events>(Super: T) 
      * @todo should be private
      * @see https://github.com/Microsoft/TypeScript/issues/17293
      */
-    /* private */ emitter = new Typed<U>();
+    /* private */ emitter = new emittery.Typed<U>();
 
     on = this.emitter.on.bind(this.emitter);
     off = this.emitter.off.bind(this.emitter);
