@@ -21,11 +21,13 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
 import { AppError } from './error-handling/models/app-error';
 import { ErrorHandlingService } from './error-handling/services/error-handling.service';
+import { AppSettings } from './models/dto/app-settings.dto';
 import { AppSettingsMock } from './models/dto/app-settings.mock';
 import { UserSettingsMock } from './models/dto/user-settings.mock';
 import { APP_SETTINGS } from './services/app-settings';
 import { MainLoaderService } from './services/main-loader.service';
 import { OverlayService } from './services/overlay.service';
+import { PageTitleManagerService } from './services/page-title-manager.service';
 import { PENDO } from './services/pendo';
 import { USER_SETTINGS } from './services/user-settings';
 import { RightSidePanelService } from './top-panel/services/right-side-panel.service';
@@ -39,9 +41,10 @@ describe('AppComponent', () => {
   let rightSidePanelServiceMock: jasmine.SpyObj<RightSidePanelService>;
   let errorHandlingServiceMock: ErrorHandlingService;
   let mainLoaderServiceMock: MainLoaderService;
-  let pendo: jasmine.SpyObj<pendo.Pendo>;
+  let pageTitleManagerServiceMock: jasmine.SpyObj<PageTitleManagerService>;
+  let pendoMock: jasmine.SpyObj<pendo.Pendo>;
   const userSettings = new UserSettingsMock();
-  const appSettings = new AppSettingsMock();
+  let appSettings: AppSettings;
 
   beforeEach(() => {
     overlayServiceMock = {
@@ -60,7 +63,13 @@ describe('AppComponent', () => {
       isVisible: false,
     } as any;
 
-    const pendoMock = jasmine.createSpyObj<pendo.Pendo>('PENDO', ['initialize', 'enableDebugging']);
+    pageTitleManagerServiceMock = jasmine.createSpyObj('PageTitleManagerService', [
+      'init',
+    ]);
+
+    pendoMock = jasmine.createSpyObj<pendo.Pendo>('PENDO', ['initialize', 'enableDebugging']);
+
+    appSettings = new AppSettingsMock();
 
     fixture = TestBed.configureTestingModule({
       imports: [
@@ -72,6 +81,7 @@ describe('AppComponent', () => {
         { provide: RightSidePanelService, useValue: rightSidePanelServiceMock },
         { provide: ErrorHandlingService, useValue: errorHandlingServiceMock },
         { provide: MainLoaderService, useValue: mainLoaderServiceMock },
+        { provide: PageTitleManagerService, useValue: pageTitleManagerServiceMock },
         { provide: PENDO, useValue: pendoMock },
         { provide: APP_SETTINGS, useValue: appSettings },
         { provide: USER_SETTINGS, useValue: userSettings },
@@ -86,9 +96,7 @@ describe('AppComponent', () => {
     rightSidePanelServiceMock = TestBed.get(RightSidePanelService);
     errorHandlingServiceMock = TestBed.get(ErrorHandlingService);
     mainLoaderServiceMock = TestBed.get(MainLoaderService);
-    pendo = TestBed.get(PENDO);
-
-    fixture.detectChanges();
+    appSettings = TestBed.get(APP_SETTINGS);
   });
 
   it('should create the app', () => {
@@ -132,6 +140,12 @@ describe('AppComponent', () => {
       expect(rightSidePanelServiceMock.setSidenav).toHaveBeenCalledWith(component.sidenav);
     });
 
+    it('should initialize PageTitleManagerService', () => {
+      component.ngOnInit();
+
+      expect(pageTitleManagerServiceMock.init).toHaveBeenCalled();
+    });
+
     it('should initialize pendo and track visitor by email', () => {
       const testEmail = 'asdf@gmail.com';
 
@@ -146,7 +160,7 @@ describe('AppComponent', () => {
 
       component.ngOnInit();
 
-      expect(pendo.initialize).toHaveBeenCalledWith(expectedConfig);
+      expect(pendoMock.initialize).toHaveBeenCalledWith(expectedConfig);
     });
 
     it('should initialize pendo and fall back to track visitor by username', () => {
@@ -163,7 +177,15 @@ describe('AppComponent', () => {
 
       component.ngOnInit();
 
-      expect(pendo.initialize).toHaveBeenCalledWith(expectedConfig);
+      expect(pendoMock.initialize).toHaveBeenCalledWith(expectedConfig);
+    });
+
+    it('should not initialize pendo if usage statistics collection is disabled', () => {
+      appSettings.usageStatisticsEnabled = false;
+
+      component.ngOnInit();
+
+      expect(pendoMock.initialize).not.toHaveBeenCalled();
     });
   });
 });

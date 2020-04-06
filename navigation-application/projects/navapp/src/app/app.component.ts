@@ -25,6 +25,7 @@ import { UserSettings } from './models/dto/user-settings.dto';
 import { APP_SETTINGS } from './services/app-settings';
 import { MainLoaderService } from './services/main-loader.service';
 import { OverlayService } from './services/overlay.service';
+import { PageTitleManagerService } from './services/page-title-manager.service';
 import { PENDO } from './services/pendo';
 import { USER_SETTINGS } from './services/user-settings';
 import { RightSidePanelService } from './top-panel/services/right-side-panel.service';
@@ -62,6 +63,7 @@ export class AppComponent implements OnInit {
     private readonly rightSidePanelService: RightSidePanelService,
     private readonly errorHandlingService: ErrorHandlingService,
     private readonly mainLoaderService: MainLoaderService,
+    private readonly pageTitleManagerService: PageTitleManagerService,
     @Inject(PENDO) private readonly pendo: pendo.Pendo,
     @Inject(APP_SETTINGS) private readonly appSettings: AppSettings,
     @Inject(USER_SETTINGS) private readonly userSettings: UserSettings,
@@ -82,6 +84,7 @@ export class AppComponent implements OnInit {
   ngOnInit(): void {
     this.rightSidePanelService.setSidenav(this.sidenav);
 
+    this.pageTitleManagerService.init();
     this.setupPendo();
   }
 
