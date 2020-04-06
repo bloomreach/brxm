@@ -15,3 +15,4 @@
  */
 
 export * from './lib/ng-sdk.module';
+export * from './lib/br-page/br-page.component';
