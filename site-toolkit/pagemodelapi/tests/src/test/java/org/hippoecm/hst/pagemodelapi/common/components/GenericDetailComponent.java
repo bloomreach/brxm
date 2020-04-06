@@ -59,7 +59,9 @@ public class GenericDetailComponent extends GenericHstComponent {
         // make sure that the 'menu' within 'menus' get serialized via $ref and is the same $ref as 'menu' above
         request.setModel("menus", requestContext.getHstSiteMenus());
 
-        request.setModel("currentLink", hstLinkCreator.create(requestContentBean, requestContext));
+        if (requestContentBean != null) {
+            request.setModel("currentLink", hstLinkCreator.create(requestContentBean, requestContext));
+        }
 
         // include link not found
         HstLink notFoundLink = new HstLinkImpl(DefaultHstLinkCreator.DEFAULT_PAGE_NOT_FOUND_PATH, requestContext.getResolvedMount().getMount());
