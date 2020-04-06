@@ -127,8 +127,9 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
             final Node node = session.getNodeByIdentifier(uuid);
 
             final String method = request.getMethod();
-            final String adjustedPath = adjustEndpointPath(node, requestContext);
-            setRequestContextAttributes(node, requestContext, liveHstModel);
+            final boolean belongsToXPage = belongsToXPage(node);
+            final String adjustedPath = adjustEndpointPath(node, requestContext.getPathSuffix(), belongsToXPage);
+            setRequestContextAttributes(node, requestContext, liveHstModel, belongsToXPage);
 
             log.debug("Invoking JAX-RS endpoint {}: {} for uuid {}", method, adjustedPath, uuid);
             return new PathsAdjustedHttpServletRequestWrapper(request, getJaxrsServletPath(requestContext), adjustedPath);
@@ -147,7 +148,7 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
         }
     }
 
-    private void setRequestContextAttributes(Node node, HstRequestContext requestContext, InternalHstModel liveHstModel) throws RepositoryException {
+    private void setRequestContextAttributes(Node node, HstRequestContext requestContext, InternalHstModel liveHstModel, boolean belongsToXPage) throws RepositoryException {
         requestContext.setAttribute(EDITING_HST_MODEL_LINK_CREATOR_ATTR, liveHstModel.getHstLinkCreator());
 
         final InternalHstModel liveHstModelSnapshot = new HstModelSnapshot(liveHstModel);
@@ -163,12 +164,14 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
             cmsSessionContext.getContextPayload().put(CMS_REQUEST_RENDERING_MOUNT_ID, uuid);
         }
         requestContext.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, uuid);
+        if (belongsToXPage) {
+            requestContext.setAttribute(REQUEST_IS_EXPERIENCE_PAGE_ATRRIBUTE, Boolean.TRUE);
+        }
     }
 
-    private String adjustEndpointPath(Node node, HstRequestContext requestContext) throws RepositoryException {
+    private String adjustEndpointPath(Node node, String optionalPathSuffix, boolean belongsToXPage) throws RepositoryException {
         final StringBuilder builder = new StringBuilder();
-        if (belongsToXPage(node)) {
-            requestContext.setAttribute(REQUEST_IS_EXPERIENCE_PAGE_ATRRIBUTE, Boolean.TRUE);
+        if (belongsToXPage) {
             builder.append("/experiencepage/");
         } else {
             builder.append("/");
@@ -179,7 +182,6 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
             builder.append(node.getPrimaryNodeType().getName());
         }
         builder.append("/");
-        final String optionalPathSuffix = requestContext.getPathSuffix();
         if (optionalPathSuffix != null) {
             builder.append(optionalPathSuffix);
         }
