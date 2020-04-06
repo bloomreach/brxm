@@ -14,12 +14,26 @@
  * limitations under the License.
  */
 
-/// <reference path="./cms14.d.ts" />
 import { Typed } from 'emittery';
 import { Events } from '../events';
 import { CmsOptions, Cms } from './cms';
 
 const GLOBAL_WINDOW = typeof window === 'undefined' ? undefined : window;
+
+declare global {
+  interface Window {
+    SPA?: SpaApi;
+  }
+}
+
+interface SpaApi {
+  init(api: CmsApi): void;
+  renderComponent(id: string, properties: object): void;
+}
+
+interface CmsApi {
+  sync(): void;
+}
 
 export class Cms14Impl implements Cms {
   private api?: CmsApi;
