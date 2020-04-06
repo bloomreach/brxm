@@ -16,6 +16,8 @@
 
 import { EmitterMixin, Emitter } from '../emitter';
 
+type Callable<T = any, U extends unknown[] = any[]> = (...args: U) => T;
+
 const TYPE_EVENT = 'brxm:event';
 const TYPE_RESPONSE = 'brxm:response';
 const TYPE_REQUEST = 'brxm:request';
