@@ -15,7 +15,7 @@
     "component-selector": [
       true,
       "element",
-      "lib",
+      "br",
       "kebab-case"
     ],
     "curly": true,
@@ -25,7 +25,7 @@
     "directive-selector": [
       true,
       "attribute",
-      "lib",
+      "br",
       "camelCase"
     ],
     "eofline": true,
