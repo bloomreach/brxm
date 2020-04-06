@@ -45,7 +45,6 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
         createAndDeleteAs(ADMIN_CREDENTIALS, true);
     }
 
-    @Ignore("This must be fixed but editor does not have write access to hst:page below experience page")
     @Test
     public void create_and_delete_container_item_as_editor() throws Exception {
 
@@ -58,7 +57,6 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
     /**
      * Note an author cannot modify hst config pages but *CAN* modify experience pages if the cms user as role author
      */
-    @Ignore("This must be fixed but author does not have write access to hst:page below experience page")
     @Test
     public void create_and_delete_container_item_as_author() throws Exception {
 
@@ -118,7 +116,7 @@ public class XPageContainerComponentResourceTest extends AbstractXPageComponentR
             assertEquals(Response.Status.CREATED.getStatusCode(), createResponse.getStatus());
             final String createdUUID = createResponseMap.get("id");
 
-            // newly created item
+            // assertion on newly created item
             assertTrue(session.nodeExists(unpublishedExpPageVariant.getPath() + "/hst:page/body/container/testitem"));
             assertTrue(session.getNodeByIdentifier(createdUUID) != null);
 

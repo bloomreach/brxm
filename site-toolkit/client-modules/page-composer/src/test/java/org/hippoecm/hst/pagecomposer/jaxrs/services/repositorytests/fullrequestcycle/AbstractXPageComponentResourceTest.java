@@ -57,7 +57,7 @@ public abstract class AbstractXPageComponentResourceTest extends AbstractFullReq
         WorkflowManager workflowManager = ((HippoSession) session).getWorkspace().getWorkflowManager();
 
         Node handle = session.getNode(EXPERIENCE_PAGE_HANDLE_PATH);
-        DocumentWorkflow documentWorkflow =  (DocumentWorkflow) workflowManager.getWorkflow("default", handle);
+        DocumentWorkflow documentWorkflow = (DocumentWorkflow) workflowManager.getWorkflow("default", handle);
         documentWorkflow.depublish();
 
         // note the published variant still exists

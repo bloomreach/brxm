@@ -23,6 +23,8 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.hippoecm.hst.configuration.HstNodeTypes;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItem;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemImpl;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.InvalidNodeTypeException;
@@ -40,27 +42,6 @@ public class ContainerComponentServiceImpl implements ContainerComponentService 
 
     private PageComposerContextService pageComposerContextService;
     private ContainerHelper containerHelper;
-
-    static final class ContainerItemImpl implements ContainerItem {
-
-        private final Node containerItem;
-        private final long timeStamp;
-
-        public ContainerItemImpl(Node containerItem, long timeStamp) {
-            this.containerItem = containerItem;
-            this.timeStamp = timeStamp;
-        }
-
-        @Override
-        public Node getContainerItem() {
-            return containerItem;
-        }
-
-        @Override
-        public long getTimeStamp() {
-            return timeStamp;
-        }
-    }
 
     public ContainerComponentServiceImpl(PageComposerContextService pageComposerContextService, ContainerHelper containerHelper) {
         this.pageComposerContextService = pageComposerContextService;

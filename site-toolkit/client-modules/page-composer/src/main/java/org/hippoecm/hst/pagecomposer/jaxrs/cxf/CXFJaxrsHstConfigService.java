@@ -44,6 +44,7 @@ import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.util.PathUtils;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.cmscontext.CmsSessionContext;
 import org.onehippo.cms7.services.hst.Channel;
@@ -55,6 +56,8 @@ import static org.hippoecm.hst.core.container.ContainerConstants.CMS_REQUEST_REN
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService.EDITING_HST_MODEL_LINK_CREATOR_ATTR;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService.LIVE_EDITING_HST_MODEL_ATTR;
 import static org.hippoecm.hst.pagecomposer.jaxrs.services.PageComposerContextService.PREVIEW_EDITING_HST_MODEL_ATTR;
+import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
+import static org.hippoecm.repository.HippoStdNodeType.UNPUBLISHED;
 
 public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 
@@ -62,7 +65,12 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
 
     public static final String REQUEST_CONFIG_NODE_IDENTIFIER = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.contentNode.identifier";
     public static final String REQUEST_ERROR_MESSAGE_ATTRIBUTE = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.exception.message";
-    public static final String REQUEST_IS_EXPERIENCE_PAGE_ATRRIBUTE = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.is_experiencePage";
+    public static final String REQUEST_IS_EXPERIENCE_PAGE_ATRRIBUTE = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.isExpPage";
+    public static final String REQUEST_EXPERIENCE_PAGE_UNPUBLISHED_UUID_VARIANT_ATRRIBUTE = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.expPageHandleUUID";
+    public static final String REQUEST_EXPERIENCE_PAGE_HANDLE_UUID_ATRRIBUTE = "org.hippoecm.hst.pagecomposer.jaxrs.cxf.expPageUnpulbishedUUID";
+
+
+
 
     private Repository repository;
     private Credentials credentials;
@@ -127,9 +135,8 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
             final Node node = session.getNodeByIdentifier(uuid);
 
             final String method = request.getMethod();
-            final boolean belongsToXPage = belongsToXPage(node);
-            final String adjustedPath = adjustEndpointPath(node, requestContext.getPathSuffix(), belongsToXPage);
-            setRequestContextAttributes(node, requestContext, liveHstModel, belongsToXPage);
+            final String adjustedPath = adjustEndpointPath(node, requestContext);
+            setRequestContextAttributes(node, requestContext, liveHstModel);
 
             log.debug("Invoking JAX-RS endpoint {}: {} for uuid {}", method, adjustedPath, uuid);
             return new PathsAdjustedHttpServletRequestWrapper(request, getJaxrsServletPath(requestContext), adjustedPath);
@@ -148,7 +155,7 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
         }
     }
 
-    private void setRequestContextAttributes(Node node, HstRequestContext requestContext, InternalHstModel liveHstModel, boolean belongsToXPage) throws RepositoryException {
+    private void setRequestContextAttributes(Node node, HstRequestContext requestContext, InternalHstModel liveHstModel) throws RepositoryException {
         requestContext.setAttribute(EDITING_HST_MODEL_LINK_CREATOR_ATTR, liveHstModel.getHstLinkCreator());
 
         final InternalHstModel liveHstModelSnapshot = new HstModelSnapshot(liveHstModel);
@@ -164,14 +171,16 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
             cmsSessionContext.getContextPayload().put(CMS_REQUEST_RENDERING_MOUNT_ID, uuid);
         }
         requestContext.setAttribute(CXFJaxrsHstConfigService.REQUEST_CONFIG_NODE_IDENTIFIER, uuid);
-        if (belongsToXPage) {
-            requestContext.setAttribute(REQUEST_IS_EXPERIENCE_PAGE_ATRRIBUTE, Boolean.TRUE);
-        }
     }
 
-    private String adjustEndpointPath(Node node, String optionalPathSuffix, boolean belongsToXPage) throws RepositoryException {
+    private String adjustEndpointPath(Node node, HstRequestContext requestContext) throws RepositoryException {
         final StringBuilder builder = new StringBuilder();
-        if (belongsToXPage) {
+        Node xPageUnpublishedVariant = getXPageUnpublishedVariant(node);
+        if (xPageUnpublishedVariant != null) {
+            requestContext.setAttribute(REQUEST_IS_EXPERIENCE_PAGE_ATRRIBUTE, Boolean.TRUE);
+            // never store the Node since backed by an hst config user which can be returned to the pool after this work
+            requestContext.setAttribute(REQUEST_EXPERIENCE_PAGE_UNPUBLISHED_UUID_VARIANT_ATRRIBUTE, xPageUnpublishedVariant.getIdentifier());
+            requestContext.setAttribute(REQUEST_EXPERIENCE_PAGE_HANDLE_UUID_ATRRIBUTE, xPageUnpublishedVariant.getParent().getIdentifier());
             builder.append("/experiencepage/");
         } else {
             builder.append("/");
@@ -182,19 +191,34 @@ public class CXFJaxrsHstConfigService extends CXFJaxrsService {
             builder.append(node.getPrimaryNodeType().getName());
         }
         builder.append("/");
+        final String optionalPathSuffix = requestContext.getPathSuffix();
         if (optionalPathSuffix != null) {
             builder.append(optionalPathSuffix);
         }
         return builder.toString();
     }
 
-    private boolean belongsToXPage(Node node) throws RepositoryException {
+    /**
+     * if belongs to XPage, returns the unpublished variant. If it is an XPage but there is no unpublished variant,
+     * we throw an IllegalStateException for now, see CMS-13262
+     */
+    private Node getXPageUnpublishedVariant(Node node) throws RepositoryException {
         if (node.getSession().getRootNode().isSame(node)) {
-            return false;
+            return null;
         }
-        return node.getName().equals(HstNodeTypes.NODENAME_HST_PAGE)
-                && node.getParent().isNodeType(HstNodeTypes.MIXINTYPE_HST_PAGE)
-                || belongsToXPage(node.getParent());
+
+        if (node.getName().equals(HstNodeTypes.NODENAME_HST_PAGE) && node.getParent().isNodeType(HstNodeTypes.MIXINTYPE_HST_PAGE)) {
+            // found hst:page, parent must be hippo:document and must be unpublished variant
+            Node unpublished = node.getParent();
+            if (UNPUBLISHED.equals(JcrUtils.getStringProperty(unpublished, HIPPOSTD_STATE, null))) {
+                return unpublished;
+            } else {
+                throw new IllegalStateException(String.format("There is no unpublished variant for the Experience Page '%s'. " +
+                        "Not yet supported. Todo, see CMS-13262", node.getPath()));
+            }
+        }
+
+        return getXPageUnpublishedVariant(node.getParent());
     }
 
     private HttpServletRequest setErrorMessageAndReturn(HstRequestContext requestContext, HttpServletRequest request, String message) throws ContainerException {

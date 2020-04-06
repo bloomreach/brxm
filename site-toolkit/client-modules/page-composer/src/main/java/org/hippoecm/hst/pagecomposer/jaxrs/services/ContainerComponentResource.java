@@ -30,10 +30,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
+import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerItemRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ContainerRepresentation;
 import org.hippoecm.hst.pagecomposer.jaxrs.model.ErrorStatus;
-import org.hippoecm.hst.pagecomposer.jaxrs.services.ContainerComponentService.ContainerItem;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.exceptions.ClientException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -212,14 +212,16 @@
         <!-- below the container and container item resources for experience pages -->
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageContainerComponentResource" >
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageContainerComponentResource"
+                  parent="abstractConfigResource">
               <property name="XPageContainerComponentService" ref="containerComponentService"/>
             </bean>
           </constructor-arg>
         </bean>
         <bean class="org.apache.cxf.jaxrs.lifecycle.SingletonResourceProvider">
           <constructor-arg>
-            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageContainerItemComponentResource" >
+            <bean class="org.hippoecm.hst.pagecomposer.jaxrs.services.experiencepage.XPageContainerItemComponentResource"
+                  parent="abstractConfigResource">
               <property name="XpageContainerItemComponentService" ref="containerItemComponentService"/>
             </bean>
           </constructor-arg>
