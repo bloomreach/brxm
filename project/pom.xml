@@ -75,8 +75,8 @@
     <aspectjweaver.version>1.8.9</aspectjweaver.version> <!-- should be synchronized with dependency of spring-aop -->
     <groovy.version>2.4.15</groovy.version>
     <freemarker.version>2.3.28</freemarker.version>
-    <nodejs.version>v12.8.1</nodejs.version>
-    <npm.version>6.10.2</npm.version>
+    <nodejs.version>v12.16.1</nodejs.version>
+    <npm.version>6.13.4</npm.version>
 
     <!-- END properties versions with dependency management -->
     <maven.required.version>3.3.9</maven.required.version>
@@ -96,7 +96,7 @@
     <maven.plugin.flatten.version>1.1.0</maven.plugin.flatten.version>
     <maven.plugin.exec.version>1.6.0</maven.plugin.exec.version>
     <maven.plugin.failsafe.version>3.0.0-M1</maven.plugin.failsafe.version>
-    <maven.plugin.frontend.version>1.8.0</maven.plugin.frontend.version>
+    <maven.plugin.frontend.version>1.9.1</maven.plugin.frontend.version>
     <maven.plugin.install.version>2.5.2</maven.plugin.install.version>
     <maven.plugin.jar.version>3.1.0</maven.plugin.jar.version>
     <maven.plugin.jacoco.version>0.8.3</maven.plugin.jacoco.version>
