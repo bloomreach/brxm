@@ -80,6 +80,11 @@
         },
         "menu" : {
           "$ref" : "/page/uid3"
+        },
+        "testLinkAndMetaNull" : {
+          "id" : "some-id",
+          "meta" : { },
+          "links" : { }
         }
       }
     },

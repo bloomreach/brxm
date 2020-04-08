@@ -19,7 +19,6 @@ package org.hippoecm.hst.pagemodelapi.v10;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.function.Predicate;
 
 import javax.jcr.Session;
 
@@ -29,8 +28,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
 import org.hippoecm.hst.pagemodelapi.common.AbstractPageModelApiITCases;
+import org.hippoecm.hst.pagemodelapi.common.context.ApiVersionProvider;
 import org.hippoecm.hst.platform.configuration.hosting.MountService;
 import org.json.JSONException;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
@@ -39,6 +40,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_HST_LINK_URL_PREFIX;
 import static org.hippoecm.hst.configuration.HstNodeTypes.VIRTUALHOST_PROPERTY_CDN_HOST;
+import static org.hippoecm.hst.pagemodelapi.common.context.ApiVersionProvider.ApiVersion.V10;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -62,10 +64,20 @@ import static org.junit.Assert.assertNull;
 public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases {
 
     @Before
+    @Override
     public void setUp() throws Exception {
+        ApiVersionProvider.set(V10);
         super.setUp();
         DeterministicJsonPointerFactory.reset();
     }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+        ApiVersionProvider.clear();
+    }
+
 
     @Test
     public void homepage_api_compatibility_v10_assertion() throws Exception {

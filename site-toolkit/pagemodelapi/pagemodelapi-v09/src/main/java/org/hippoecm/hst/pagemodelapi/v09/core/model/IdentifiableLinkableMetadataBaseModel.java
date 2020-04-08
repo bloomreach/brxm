@@ -19,8 +19,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson.LinkModel;
@@ -37,10 +35,9 @@ public class IdentifiableLinkableMetadataBaseModel extends IdentifiableMetadataB
     }
 
     @JsonProperty("_links")
-    @JsonInclude(Include.NON_NULL)
     public Map<String, LinkModel> getLinksMap() {
         if (linksMap == null) {
-            return null;
+            return Collections.emptyMap();
         }
 
         return Collections.unmodifiableMap(linksMap);

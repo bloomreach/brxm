@@ -79,6 +79,11 @@
         },
         "menu" : {
           "$ref" : "/page/uid4"
+        },
+        "testLinkAndMetaNull" : {
+          "id" : "some-id",
+          "meta" : { },
+          "links" : { }
         }
       }
     },

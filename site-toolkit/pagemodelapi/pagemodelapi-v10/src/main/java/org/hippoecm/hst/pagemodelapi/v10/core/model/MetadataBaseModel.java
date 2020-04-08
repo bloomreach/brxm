@@ -19,8 +19,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import org.hippoecm.hst.core.pagemodel.model.MetadataContributable;
@@ -36,10 +34,9 @@ public class MetadataBaseModel implements MetadataContributable {
     }
 
     @JsonProperty("meta")
-    @JsonInclude(Include.NON_NULL)
     public Map<String, Object> getMetadataMap() {
         if (metadataMap == null) {
-            return null;
+            return Collections.emptyMap();
         }
 
         return Collections.unmodifiableMap(metadataMap);

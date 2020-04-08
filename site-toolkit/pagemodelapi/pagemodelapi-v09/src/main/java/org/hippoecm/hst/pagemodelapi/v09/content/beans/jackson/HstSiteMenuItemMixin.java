@@ -15,13 +15,6 @@
  */
 package org.hippoecm.hst.pagemodelapi.v09.content.beans.jackson;
 
-import java.util.Map;
-
-import org.hippoecm.hst.core.linking.HstLink;
-import org.hippoecm.hst.core.sitemenu.HstSiteMenu;
-import org.hippoecm.hst.core.sitemenu.HstSiteMenuItem;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonAppend;
 
 @JsonAppend(props = {

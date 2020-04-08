@@ -486,6 +486,11 @@
             }
           }
         ]
+      },
+      "testLinkAndMetaNull" : {
+        "id" : "some-id",
+        "_meta" : { },
+        "_links" : { }
       }
     },
     "components":[
