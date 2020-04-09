@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
  */
 
 import { Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material';
 import { ClientErrorCodes } from '@bloomreach/navapp-communication';
 import { TranslateService } from '@ngx-translate/core';
 import { NGXLogger } from 'ngx-logger';
@@ -31,10 +32,13 @@ export class ErrorHandlingService {
 
   constructor(
     private readonly connectionService: ConnectionService,
+    private readonly snackBar: MatSnackBar,
     private readonly translateService: TranslateService,
     private readonly logger: NGXLogger,
   ) {
-    this.connectionService.onError$.subscribe(error => this.setClientError(error.errorCode, error.message));
+    this.connectionService.onError$.subscribe(({errorCode, message, errorType}) => {
+      this.setClientError(errorCode, message, errorType);
+    });
   }
 
   get currentError(): AppError {
@@ -72,14 +76,26 @@ export class ErrorHandlingService {
     this.error = new InternalError(publicDescription, internalDescription);
   }
 
-  setClientError(errorCode: ClientErrorCodes, message?: string): void {
-    const error = new AppError(
-      this.mapClientErrorCodeToHttpErrorCode(errorCode),
-      this.mapClientErrorCodeToText(errorCode),
-      message,
-    );
+  setClientError(errorCode: ClientErrorCodes, message?: string, errorType?: string): void {
+    const errorCodeAsText = this.mapClientErrorCodeToText(errorCode);
 
-    this.error = error;
+    if (errorType === 'lenient') {
+      let errorMessage = this.translateService.instant(errorCodeAsText);
+      if (message) {
+        errorMessage += `: ${message}`;
+      }
+      this.snackBar.open(errorMessage, this.translateService.instant('ERROR_SNACK_BAR_DISMISS'), {
+        duration: 5 * 1000,
+        horizontalPosition: 'right',
+        verticalPosition: 'top',
+      });
+    } else {
+      this.error = new AppError(
+        this.mapClientErrorCodeToHttpErrorCode(errorCode),
+        errorCodeAsText,
+        message,
+      );
+    }
   }
 
   clearError(): void {
