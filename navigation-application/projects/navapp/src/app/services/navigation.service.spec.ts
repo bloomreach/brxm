@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Location, LocationStrategy, PopStateEvent } from '@angular/common';
+import { Location, PopStateEvent } from '@angular/common';
 import { async, fakeAsync, TestBed, tick } from '@angular/core/testing';
 import { NavigationTrigger, NavLocation } from '@bloomreach/navapp-communication';
 import { TranslateService } from '@ngx-translate/core';
@@ -47,7 +47,6 @@ describe('NavigationService', () => {
 
   let appSettingsMock: AppSettings;
   let locationMock: jasmine.SpyObj<Location>;
-  let locationStrategyMock: jasmine.SpyObj<LocationStrategy>;
   let clientAppServiceMock: jasmine.SpyObj<ClientAppService>;
   let menuStateServiceMock: jasmine.SpyObj<MenuStateService>;
   let busyIndicatorServiceMock: jasmine.SpyObj<BusyIndicatorService>;
@@ -78,6 +77,11 @@ describe('NavigationService', () => {
         appIframeUrl: 'http://domain.com/iframe2/url',
         appPath: 'another/app/path/to/home',
       }),
+      new NavItemMock({
+        id: 'item4',
+        appIframeUrl: 'http://domain.com/iframe2/url',
+        appPath: '/#/hash/path',
+      }),
     ];
     appSettingsMock = new AppSettingsMock({
       basePath,
@@ -85,17 +89,16 @@ describe('NavigationService', () => {
     });
 
     locationMock = jasmine.createSpyObj('Location', [
+      'normalize',
       'subscribe',
+      'path',
       'isCurrentPathEqualTo',
       'replaceState',
       'go',
     ]);
+    locationMock.normalize.and.callFake(x => x.replace('/#', '#'));
     locationMock.isCurrentPathEqualTo.and.returnValue(false);
     locationMock.subscribe.and.callFake(cb => locationChangeFunction = cb);
-
-    locationStrategyMock = jasmine.createSpyObj('LocationStrategy', {
-      path: '/',
-    });
 
     childApi = jasmine.createSpyObj('ChildApi', {
       beforeNavigation: Promise.resolve(true),
@@ -135,7 +138,7 @@ describe('NavigationService', () => {
     ]);
     (urlMapperServiceMock as any).basePath = basePath;
     urlMapperServiceMock.mapNavItemToBrowserUrl.and.callFake(
-      (navItem: NavItem) => `${basePath}${new URL(navItem.appIframeUrl).pathname}/${navItem.appPath}`,
+      (navItem: NavItem) => `${basePath}${Location.joinWithSlash(new URL(navItem.appIframeUrl).pathname, navItem.appPath)}`,
     );
     urlMapperServiceMock.trimLeadingSlash.and.callFake((value: string) => value.replace(/^\//, ''));
     urlMapperServiceMock.extractPathAndQueryStringAndHash.and.returnValue(['', '']);
@@ -169,7 +172,6 @@ describe('NavigationService', () => {
         { provide: ConnectionService, useValue: connectionServiceMock },
         { provide: ErrorHandlingService, useValue: errorHandlingServiceMock },
         { provide: Location, useValue: locationMock },
-        { provide: LocationStrategy, useValue: locationStrategyMock },
         { provide: MenuStateService, useValue: menuStateServiceMock },
         { provide: UrlMapperService, useValue: urlMapperServiceMock },
         { provide: TranslateService, useValue: translateServiceMock },
@@ -228,7 +230,7 @@ describe('NavigationService', () => {
 
     it('should use the browser\'s location path', fakeAsync(() => {
       appSettingsMock.initialPath = undefined;
-      locationStrategyMock.path.and.returnValue(`${basePath}/iframe1/url/app/path/to/page1`);
+      locationMock.path.and.returnValue(`${basePath}/iframe1/url/app/path/to/page1`);
 
       service.initialNavigation();
 
@@ -239,7 +241,7 @@ describe('NavigationService', () => {
 
     it('should use the browser\'s location path with a query string', fakeAsync(() => {
       appSettingsMock.initialPath = undefined;
-      locationStrategyMock.path.and.returnValue(`${basePath}/iframe1/url/app/path/to/page1?queryString=value`);
+      locationMock.path.and.returnValue(`${basePath}/iframe1/url/app/path/to/page1?queryString=value`);
 
       service.initialNavigation();
 
@@ -250,7 +252,7 @@ describe('NavigationService', () => {
 
     it('should use the browser\'s location path with a hash', fakeAsync(() => {
       appSettingsMock.initialPath = undefined;
-      locationStrategyMock.path.and.returnValue(`${basePath}/iframe1/url/app/path/to/page1?#hash`);
+      locationMock.path.and.returnValue(`${basePath}/iframe1/url/app/path/to/page1?#hash`);
 
       service.initialNavigation();
 
@@ -261,7 +263,7 @@ describe('NavigationService', () => {
 
     it('should use the browser\'s location path with a query string and a hash', fakeAsync(() => {
       appSettingsMock.initialPath = undefined;
-      locationStrategyMock.path.and.returnValue(`${basePath}/iframe1/url/app/path/to/page1?q=value#hash`);
+      locationMock.path.and.returnValue(`${basePath}/iframe1/url/app/path/to/page1?q=value#hash`);
 
       service.initialNavigation();
 
@@ -270,15 +272,17 @@ describe('NavigationService', () => {
       expect(locationMock.replaceState).toHaveBeenCalledWith(`${basePath}/iframe1/url/app/path/to/page1?q=value#hash`, '', {});
     }));
 
-    it('should preserve trailing slash in the browser\'s location path', fakeAsync(() => {
+    it('should normalize an url to process the navigation', fakeAsync(() => {
       appSettingsMock.initialPath = undefined;
-      locationStrategyMock.path.and.returnValue(`${basePath}/iframe1/url/app/path/to/page1/?q=value#hash`);
+      locationMock.path.and.returnValue('some/url');
+      locationMock.normalize.and.returnValue(`${basePath}/iframe1/url/app/path/to/page1?q=value#hash`);
 
       service.initialNavigation();
 
       tick();
 
-      expect(locationMock.replaceState).toHaveBeenCalledWith(`${basePath}/iframe1/url/app/path/to/page1/?q=value#hash`, '', {});
+      expect(locationMock.normalize).toHaveBeenCalledWith('some/url');
+      expect(locationMock.replaceState).toHaveBeenCalledWith(`${basePath}/iframe1/url/app/path/to/page1?q=value#hash`, '', {});
     }));
   });
 
@@ -526,7 +530,24 @@ describe('NavigationService', () => {
 
       tick();
 
+      expect(locationMock.normalize).toHaveBeenCalledWith(`${basePath}/iframe2/url/another/app/path/to/home`);
       expect(menuStateServiceMock.activateMenuItem).toHaveBeenCalledWith('http://domain.com/iframe2/url', 'another/app/path/to/home');
+      expect(breadcrumbsServiceMock.setSuffix).toHaveBeenCalledWith('label');
+      expect(locationMock.replaceState).not.toHaveBeenCalled();
+      expect(locationMock.go).not.toHaveBeenCalled();
+    }));
+
+    it('should navigate on location changes if there is hash in appPath', fakeAsync(() => {
+      const urlChangeEvent: PopStateEvent = {
+        url: `${basePath}/iframe2/url#/hash/path`,
+        state: { breadcrumbLabel: 'label', flags: '{}' },
+      };
+
+      locationChangeFunction(urlChangeEvent);
+
+      tick();
+
+      expect(menuStateServiceMock.activateMenuItem).toHaveBeenCalledWith('http://domain.com/iframe2/url', '/#/hash/path');
       expect(breadcrumbsServiceMock.setSuffix).toHaveBeenCalledWith('label');
       expect(locationMock.replaceState).not.toHaveBeenCalled();
       expect(locationMock.go).not.toHaveBeenCalled();

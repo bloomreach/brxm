@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Location, LocationStrategy } from '@angular/common';
+import { Location } from '@angular/common';
 import { Inject, Injectable, OnDestroy } from '@angular/core';
 import { NavigationTrigger, NavLocation } from '@bloomreach/navapp-communication';
 import { TranslateService } from '@ngx-translate/core';
@@ -80,7 +80,6 @@ export class NavigationService implements OnDestroy {
     private readonly connectionService: ConnectionService,
     private readonly errorHandlingService: ErrorHandlingService,
     private readonly location: Location,
-    private readonly locationStrategy: LocationStrategy,
     private readonly menuStateService: MenuStateService,
     private readonly urlMapperService: UrlMapperService,
     private readonly translateService: TranslateService,
@@ -128,10 +127,7 @@ export class NavigationService implements OnDestroy {
 
     const url = this.appSettings.initialPath ?
       Location.joinWithSlash(this.basePath, this.appSettings.initialPath) :
-      // As of Angular 8 Location.path(true) returns the current path with hash. The path value is provided by LocationStrategy.path(true)
-      // but Location service performs normalization to strip off base path, 'index.html' and the path's trailing slash which is
-      // important to implement proper navigation due to that not normalized path with hash is used.
-      this.locationStrategy.path(true);
+      this.location.path(true);
 
     return this.scheduleNavigation(url, NavigationTrigger.InitialNavigation, {}, true);
   }
@@ -266,8 +262,10 @@ export class NavigationService implements OnDestroy {
       reject = rej;
     });
 
+    const normalizedUrl = this.location.normalize(url);
+
     this.transitions.next({
-      url,
+      url: normalizedUrl,
       state,
       source,
       replaceState,
@@ -306,11 +304,6 @@ export class NavigationService implements OnDestroy {
 
           const publicDescription = this.translateService.instant('ERROR_UNKNOWN_URL', { url: t.url });
           return throwError(new NotFoundError(publicDescription));
-        }
-
-        if (!t.url.startsWith(route.path)) {
-          t.url = route.path;
-          t.state = {};
         }
 
         const appPathAddOn = t.url.slice(route.path.length);
@@ -425,7 +418,7 @@ export class NavigationService implements OnDestroy {
 
   private generateRoutes(navItems: NavItem[]): Route[] {
     return navItems.map(navItem => ({
-      path: this.urlMapperService.mapNavItemToBrowserUrl(navItem),
+      path: this.location.normalize(this.urlMapperService.mapNavItemToBrowserUrl(navItem)),
       navItem,
     }));
   }
