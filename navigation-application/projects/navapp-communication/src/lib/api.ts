@@ -352,6 +352,12 @@ export interface ClientError {
    */
   errorCode: ClientErrorCodes;
   /**
+   * The error type can be either "blocking" or "lenient". If an error is considered "blocking", the user should not
+   * be able to continue. If an error is considered "lenient", it should only indicate to the user that an error
+   * occurred, but never block the user.
+   */
+  errorType?: string;
+  /**
    * Human readable message that can be displayed to the user
    */
   message?: string;
