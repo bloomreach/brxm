@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  Copyright 2007-2019 Hippo B.V. (http://www.onehippo.com)
+  Copyright 2007-2020 Hippo B.V. (http://www.onehippo.com)
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -133,7 +133,6 @@
 
     <yui.sources.version>1.01.12</yui.sources.version>
     <hippo.htmldiff.version>2.0.0</hippo.htmldiff.version>
-    <hippo.jcrdiff.version>1.01.07</hippo.jcrdiff.version>
     <hippo.ckeditor.version>4.12.1-h1</hippo.ckeditor.version>
 
     <jslint.plugin.version>1.0.1</jslint.plugin.version>
@@ -383,17 +382,6 @@
         <groupId>commons-beanutils</groupId>
         <artifactId>commons-beanutils</artifactId>
         <version>${commons-beanutils.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>jcrdiff-client</artifactId>
-        <version>${hippo.jcrdiff.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.onehippo.cms7</groupId>
-        <artifactId>jcrdiff-core</artifactId>
-        <version>${hippo.jcrdiff.version}</version>
       </dependency>
 
       <!-- test dependencies -->
