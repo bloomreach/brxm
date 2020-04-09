@@ -86,6 +86,7 @@ describe('NavigationService', () => {
 
     locationMock = jasmine.createSpyObj('Location', [
       'subscribe',
+      'path',
       'isCurrentPathEqualTo',
       'replaceState',
       'go',
@@ -531,6 +532,33 @@ describe('NavigationService', () => {
       expect(locationMock.replaceState).not.toHaveBeenCalled();
       expect(locationMock.go).not.toHaveBeenCalled();
     }));
+
+    describe('reload', () => {
+      it('should should reload the current route', async () => {
+        locationMock.path.and.returnValue(`${basePath}/iframe2/url/another/app/path/to/home`);
+        locationMock.isCurrentPathEqualTo.and.returnValue(true);
+
+        await service.reload();
+
+        expect(menuStateServiceMock.activateMenuItem).toHaveBeenCalledWith('http://domain.com/iframe2/url', 'another/app/path/to/home');
+        expect(breadcrumbsServiceMock.setSuffix).toHaveBeenCalledWith(undefined);
+        expect(locationMock.replaceState).toHaveBeenCalledWith(
+          `${basePath}/iframe2/url/another/app/path/to/home`,
+          '',
+          {},
+        );
+      });
+
+      it('should throw an exception if current location is impossible to reload', async () => {
+        locationMock.path.and.returnValue(`some/unknown/path`);
+
+        let errorMessage: string;
+
+        await service.reload().catch(e => errorMessage = e.message);
+
+        expect(errorMessage).toBe('Navigation impossible');
+      });
+    });
 
     describe('navigateToDefaultAppPage', () => {
       it('should navigate to the default page for the app', fakeAsync(() => {
