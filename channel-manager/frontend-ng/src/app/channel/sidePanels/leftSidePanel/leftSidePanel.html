@@ -22,7 +22,8 @@
             md-is-locked-open="$ctrl.isLockedOpen()"
             md-is-open="$ctrl.isOpen"
             ng-class="{'sidepanel-lifted': $ctrl.isSidePanelLifted()}"
-            ng-style="{ 'width': $ctrl.width + 'px' }">
+            style="width: {{$ctrl.width + 'px'}}">
+
   <md-tabs flex
            md-border-bottom
            md-no-pagination

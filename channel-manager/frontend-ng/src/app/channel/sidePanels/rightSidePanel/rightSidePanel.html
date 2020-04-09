@@ -20,7 +20,7 @@
             md-component-id="right-side-panel"
             md-disable-backdrop
             md-is-locked-open="$ctrl.isLockedOpen()"
-            ng-style="{ 'width': $ctrl.width + 'px' }">
+            style="width: {{$ctrl.width}}px;">
 
   <resize-handle element-width="$ctrl.width"
                  handle-position="left"
