@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 BloomReach. All rights reserved. (https://www.bloomreach.com/)
+ * Copyright 2019-2020 BloomReach. All rights reserved. (https://www.bloomreach.com/)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,12 +15,16 @@
  */
 
 import { NgModule } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatRippleModule } from '@angular/material/core';
-import { MatIconModule, MatIconRegistry } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatSidenavModule } from '@angular/material/sidenav';
-import { MatTreeModule } from '@angular/material/tree';
+import {
+  MatButtonModule,
+  MatIconModule,
+  MatIconRegistry,
+  MatProgressBarModule,
+  MatRippleModule,
+  MatSidenavModule,
+  MatSnackBarModule,
+  MatTreeModule,
+} from '@angular/material';
 import { DomSanitizer } from '@angular/platform-browser';
 
 import { registerIcons as registerCommonIcons } from './common-icons';
@@ -28,12 +32,13 @@ import { registerIcons as registerMenuIcons } from './menu-icons';
 
 @NgModule({
   exports: [
-    MatRippleModule,
-    MatIconModule,
     MatButtonModule,
-    MatTreeModule,
-    MatSidenavModule,
+    MatIconModule,
     MatProgressBarModule,
+    MatRippleModule,
+    MatSidenavModule,
+    MatSnackBarModule,
+    MatTreeModule,
   ],
 })
 export class MaterialModule {
