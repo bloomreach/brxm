@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,8 +15,15 @@
 (function () {
   "use strict";
 
-  Wicket.Event.subscribe(Wicket.Event.Topic.AJAX_CALL_FAILURE, function () {
-    Hippo.onError({errorCode: window.bloomreach['navapp-communication'].ClientErrorCodes.InternalError, message: "The server did not respond"})
+  Wicket.Event.subscribe(Wicket.Event.Topic.AJAX_CALL_FAILURE, function (jqEvent, attributes, jqXHR) {
+    const errorElement = jqXHR.responseXML.documentElement;
+    const errorType = (errorElement && errorElement.getAttribute('type'));
+    const message = (errorElement && errorElement.textContent) || 'The server did not respond';
+    Hippo.onError({
+      errorCode: window.bloomreach['navapp-communication'].ClientErrorCodes.InternalError,
+      errorType,
+      message,
+    })
   });
 
 }());
