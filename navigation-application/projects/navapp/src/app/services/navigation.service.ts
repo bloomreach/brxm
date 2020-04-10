@@ -200,6 +200,20 @@ export class NavigationService implements OnDestroy {
     return this.navigateByUrl(this.homeUrl, triggeredBy);
   }
 
+  async reload(): Promise<void> {
+    const currentUrl = this.location.path(true);
+
+    if (!this.isNavigationPossible(currentUrl)) {
+      throw new Error('Navigation impossible');
+    }
+
+    return this.navigateByUrl(currentUrl, NavigationTrigger.InitialNavigation);
+  }
+
+  private isNavigationPossible(url: string): boolean {
+    return !!this.matchRoute(url);
+  }
+
   private navigateByUrl(url: string, triggeredBy: NavigationTrigger, breadcrumbLabel?: string): Promise<void> {
     this.errorHandlingService.clearError();
 
