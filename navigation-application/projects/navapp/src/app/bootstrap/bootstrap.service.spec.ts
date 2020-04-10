@@ -129,6 +129,7 @@ describe('BootstrapService', () => {
       init: undefined,
       initialNavigation: Promise.resolve(),
       navigateToHome: Promise.resolve(),
+      reload: Promise.resolve(),
     });
 
     mainLoaderServiceMock = jasmine.createSpyObj('MainLoaderService', [
@@ -751,8 +752,8 @@ describe('BootstrapService', () => {
         expect(clientAppServiceMock.init).toHaveBeenCalledWith(newNavItemsMock);
       });
 
-      it('should perform navigation to the home page', () => {
-        expect(navigationServiceMock.navigateToHome).toHaveBeenCalledWith(NavigationTrigger.InitialNavigation);
+      it('should reload the page (SPA reload without actual reload)', () => {
+        expect(navigationServiceMock.reload).toHaveBeenCalled();
       });
 
       describe('logging', () => {
@@ -863,8 +864,37 @@ describe('BootstrapService', () => {
         });
       });
 
+      describe('and reloading of the page has thrown an exception', () => {
+        beforeEach(async(() => {
+          navigationServiceMock.reload.and.callFake(() => {
+            throw new Error('reload of the page error');
+          });
+
+          service.reinitialize();
+        }));
+
+        it('should navigate to the home page', () => {
+          expect(navigationServiceMock.navigateToHome).toHaveBeenCalled();
+        });
+      });
+
+      describe('and reloading of the page has failed', () => {
+        beforeEach(async(() => {
+          navigationServiceMock.reload.and.callFake(() => Promise.reject(new Error('some error')));
+
+          service.reinitialize();
+        }));
+
+        it('should navigate to the home page', () => {
+          expect(navigationServiceMock.navigateToHome).toHaveBeenCalled();
+        });
+      });
+
       describe('and navigation to home page has thrown an exception', () => {
         beforeEach(async(() => {
+          navigationServiceMock.reload.and.callFake(() => {
+            throw new Error('reload of the page error');
+          });
           navigationServiceMock.navigateToHome.and.callFake(() => {
             throw new Error('navigation to home page error');
           });
@@ -882,6 +912,9 @@ describe('BootstrapService', () => {
 
       describe('and navigation to home page has failed', () => {
         beforeEach(async(() => {
+          navigationServiceMock.reload.and.callFake(() => {
+            throw new Error('reload of the page error');
+          });
           navigationServiceMock.navigateToHome.and.callFake(() => Promise.reject(new Error('some error')));
 
           service.reinitialize();
@@ -897,7 +930,7 @@ describe('BootstrapService', () => {
 
       describe('error', () => {
         it('should be set if an exception object is provided', fakeAsync(() => {
-          navigationServiceMock.navigateToHome.and.callFake(() => {
+          clientAppServiceMock.init.and.callFake(() => {
             throw new Error('error');
           });
 
@@ -909,7 +942,7 @@ describe('BootstrapService', () => {
         }));
 
         it('should be set if a string is provided as a rejection reason', fakeAsync(() => {
-          navigationServiceMock.navigateToHome.and.callFake(() => Promise.reject('error'));
+          clientAppServiceMock.init.and.callFake(() => Promise.reject('error'));
 
           service.reinitialize();
 

@@ -95,7 +95,7 @@ export class BootstrapService {
 
       this.initializeServices(configuration);
 
-      await this.navigationService.navigateToHome(NavigationTrigger.InitialNavigation);
+      await this.refreshPageIfPossibleOrNavigateHome();
     } catch (error) {
       this.handleInitializationError(error);
     } finally {
@@ -143,6 +143,14 @@ export class BootstrapService {
     this.menuStateService.init(navItems);
     this.navigationService.init(navItems);
     this.clientAppService.init(navItems).catch(error => this.handleInitializationError(error));
+  }
+
+  private async refreshPageIfPossibleOrNavigateHome(): Promise<void> {
+    try {
+      await this.navigationService.reload();
+    } catch {
+      await this.navigationService.navigateToHome(NavigationTrigger.InitialNavigation);
+    }
   }
 
   private handleInitializationError(error: any): void {
