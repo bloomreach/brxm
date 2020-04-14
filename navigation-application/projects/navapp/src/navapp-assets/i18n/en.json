@@ -163,5 +163,5 @@
   "ERROR_NOT_FOUND": "Page not found",
   "ERROR_UNKNOWN_URL": "Unknown url: {{url}}",
   "ERROR_UNABLE_TO_CONNECT_TO_CLIENT_APP": "Unable to connect to the client applications",
-  "ERROR_SNACK_BAR_DISMISS": "ok"
+  "ERROR_SNACK_BAR_DISMISS": "OK"
 }
