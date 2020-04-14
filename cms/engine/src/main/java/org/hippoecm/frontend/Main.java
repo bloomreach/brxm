@@ -492,9 +492,6 @@ public class Main extends PluginApplication {
 
             // do not render Wicket-specific markup since it can break CSS
             getMarkupSettings().setStripWicketTags(true);
-
-            // In dev-mode we use the built-in exception mapper
-            exceptionMapperProvider = super.getExceptionMapperProvider();
         } else {
             // don't serialize pages for performance
             setPageManagerProvider(new DefaultPageManagerProvider(this) {
@@ -564,7 +561,9 @@ public class Main extends PluginApplication {
 
     @Override
     public IProvider<IExceptionMapper> getExceptionMapperProvider() {
-        return exceptionMapperProvider;
+        return exceptionMapperProvider != null
+            ? exceptionMapperProvider
+            : super.getExceptionMapperProvider();
     }
 
     protected IPackageResourceGuard createPackageResourceGuard() {
