@@ -162,5 +162,6 @@
   "ERROR_SOMETHING_WENT_WRONG": "Something went wrong",
   "ERROR_NOT_FOUND": "Page not found",
   "ERROR_UNKNOWN_URL": "Unknown url: {{url}}",
-  "ERROR_UNABLE_TO_CONNECT_TO_CLIENT_APP": "Unable to connect to the client applications"
+  "ERROR_UNABLE_TO_CONNECT_TO_CLIENT_APP": "Unable to connect to the client applications",
+  "ERROR_SNACK_BAR_DISMISS": "OK"
 }
