@@ -36,10 +36,15 @@ import org.hippoecm.hst.core.internal.MutableResolvedMount;
 import org.hippoecm.hst.core.internal.PreviewDecorator;
 import org.hippoecm.hst.core.request.ResolvedMount;
 import org.hippoecm.hst.core.request.ResolvedSiteMapItem;
+import org.hippoecm.hst.core.request.ResolvedVirtualHost;
 import org.hippoecm.hst.mock.core.request.MockHstRequestContext;
+import org.hippoecm.hst.platform.HstModelProvider;
+import org.hippoecm.hst.platform.api.model.EventPathsInvalidator;
+import org.hippoecm.hst.platform.api.model.InternalHstModel;
 import org.hippoecm.hst.platform.model.HstModel;
 import org.hippoecm.hst.platform.model.HstModelRegistry;
 import org.hippoecm.hst.platform.model.RuntimeHostService;
+import org.hippoecm.hst.site.HstServices;
 import org.hippoecm.hst.site.request.PreviewDecoratorImpl;
 import org.hippoecm.hst.util.GenericHttpServletRequestWrapper;
 import org.hippoecm.hst.util.HstRequestUtils;
@@ -49,11 +54,13 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.onehippo.cms7.services.HippoServiceRegistry;
 import org.onehippo.cms7.services.contenttype.ContentTypeService;
+import org.onehippo.testutils.log4j.Log4jInterceptor;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -63,6 +70,7 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
     private HstManager hstSitesManager;
     private HstURLFactory hstURLFactory;
     private Session requestContextSession;
+    private EventPathsInvalidator invalidator;
 
     @Override
     @Before
@@ -83,6 +91,10 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
         requestContext.setNonDefaultObjectBeanManagers(objectBeanManagerMap);
 
         ModifiableRequestContextProvider.set(requestContext);
+
+
+        final HstModelProvider provider = HstServices.getComponentManager().getComponent(HstModelProvider.class);
+        invalidator = ((InternalHstModel) provider.getHstModel()).getEventPathsInvalidator();
     }
 
     @After
@@ -1137,4 +1149,225 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
         }
     }
 
+    /**
+     * <p>
+     *     Remember: For a domain www.example.com, 'com' is the top-level domain, 'example' the domain and 'www' the subdomain
+     *     First replace the structure
+     *     <pre>
+     *         + testgroup
+     *           + test
+     *             + unit
+     *               + www
+     *     </pre>
+     *     with
+     *     <pre>
+     *         + testgroup
+     *           + ${toplevel}
+     *             + ${domainname}
+     *               + www
+     *     </pre>
+     *     replace the structure
+     * </p>
+     */
+    @Test
+    public void virtualhost_placeholder_simple_correct_configuration() throws Exception {
+        final Session session = createSession();
+        createHstConfigBackup(session);
+
+        try {
+            System.setProperty("toplevel", "foo");
+            session.move("/hst:hst/hst:hosts/testgroup/test", "/hst:hst/hst:hosts/testgroup/${toplevel}");
+            session.save();
+
+            invalidator.eventPaths("/hst:hst/hst:hosts/testgroup/${toplevel}", "/hst:hst/hst:hosts/testgroup/test");
+
+            VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+
+            final ResolvedVirtualHost resolvedVirtualHost = vhosts.matchVirtualHost("www.unit.foo");
+
+            assertNotNull("expected ${toplevel} to have been replaced with 'foo'", resolvedVirtualHost);
+
+        } finally {
+            System.clearProperty("toplevel");
+            restoreHstConfigBackup(session);
+            session.logout();
+        }
+    }
+
+    @Test
+    public void virtualhost_multi_placeholders_simple_correct_configuration() throws Exception {
+        final Session session = createSession();
+        createHstConfigBackup(session);
+
+        try {
+            System.setProperty("toplevel", "foo");
+            System.setProperty("domainpart1", "bar");
+            System.setProperty("domainpart2", "lux");
+
+            session.move("/hst:hst/hst:hosts/testgroup/test", "/hst:hst/hst:hosts/testgroup/${toplevel}");
+
+            session.move("/hst:hst/hst:hosts/testgroup/${toplevel}/unit",
+                    "/hst:hst/hst:hosts/testgroup/${toplevel}/${domainpart1}-${domainpart2}");
+            session.save();
+
+            invalidator.eventPaths("/hst:hst/hst:hosts/testgroup/${toplevel}", "/hst:hst/hst:hosts/testgroup/test");
+
+            VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+
+            final ResolvedVirtualHost resolvedVirtualHost = vhosts.matchVirtualHost("www.bar-lux.foo");
+
+            assertNotNull("expected ${toplevel} to have been replaced with 'foo'", resolvedVirtualHost);
+
+        } finally {
+            System.clearProperty("toplevel");
+            System.clearProperty("domainpart1");
+            System.clearProperty("domainpart2");
+            restoreHstConfigBackup(session);
+            session.logout();
+        }
+    }
+
+    @Test
+    public void virtualhost_with_placeholders_reload_correctly() throws Exception {
+        final Session session = createSession();
+        createHstConfigBackup(session);
+
+        try {
+            System.setProperty("toplevel", "foo");
+
+            session.move("/hst:hst/hst:hosts/testgroup/test", "/hst:hst/hst:hosts/testgroup/${toplevel}");
+
+            session.save();
+            invalidator.eventPaths("/hst:hst/hst:hosts/testgroup/${toplevel}", "/hst:hst/hst:hosts/testgroup/test");
+
+            VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+
+            assertNull(vhosts.matchVirtualHost("www.unit.test"));
+
+            // now move host back, make sure the invalidation and reload of hst model works just fine
+
+            session.move("/hst:hst/hst:hosts/testgroup/${toplevel}", "/hst:hst/hst:hosts/testgroup/test");
+
+            session.save();
+
+            invalidator.eventPaths("/hst:hst/hst:hosts/testgroup/${toplevel}", "/hst:hst/hst:hosts/testgroup/test");
+
+            vhosts = hstSitesManager.getVirtualHosts();
+            assertNotNull(vhosts.matchVirtualHost("www.unit.test"));
+        } finally {
+            System.clearProperty("toplevel");
+            System.clearProperty("domainpart1");
+            System.clearProperty("domainpart2");
+            restoreHstConfigBackup(session);
+            session.logout();
+        }
+    }
+
+    @Test
+    public void mount_nodename_placeholders_are_not_resolved() throws Exception {
+        final Session session = createSession();
+        createHstConfigBackup(session);
+        try {
+            System.setProperty("mountname", "foo");
+
+            session.move("/hst:hst/hst:hosts/testgroup/test/unit/www/hst:root/custompipeline",
+                    "/hst:hst/hst:hosts/testgroup/test/unit/www/hst:root/${mountname}");
+
+            session.save();
+            invalidator.eventPaths("/hst:hst/hst:hosts/testgroup/${toplevel}", "/hst:hst/hst:hosts/testgroup/test");
+
+            VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+
+            final ResolvedVirtualHost resolvedVirtualHost = vhosts.matchVirtualHost("www.unit.test");
+            assertEquals("Mount name not expected to be substituted",
+                    "hst:root", resolvedVirtualHost.matchMount("/foo").getMount().getName());
+            assertEquals("Mount name not expected to be substituted",
+                    "${mountname}", resolvedVirtualHost.matchMount("/${mountname}").getMount().getName());
+
+        } finally {
+            System.clearProperty("mountname");
+            restoreHstConfigBackup(session);
+            session.logout();
+        }
+    }
+
+    @Test
+    public void virtualhost_unresolvable_placeholders_configuration_skips_host_and_does_not_log_WARN() throws Exception {
+        final Session session = createSession();
+        createHstConfigBackup(session);
+
+        try (Log4jInterceptor log4jInterceptor = Log4jInterceptor.onWarn().trap().build()){
+
+            session.move("/hst:hst/hst:hosts/testgroup/test", "/hst:hst/hst:hosts/testgroup/${toplevel}");
+
+            session.save();
+            invalidator.eventPaths("/hst:hst/hst:hosts/testgroup/${toplevel}", "/hst:hst/hst:hosts/testgroup/test");
+
+            VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+
+            assertNull(vhosts.matchVirtualHost("www.unit.${toplevel}"));
+
+            assertEquals("Expected no WARN for a non-resolvable host due to unresolvable placeholder",
+                     0, log4jInterceptor.getEvents().size());
+
+        } finally {
+            restoreHstConfigBackup(session);
+            session.logout();
+        }
+    }
+
+    @Test
+    public void virtualhost_unresolvable_placeholders_configuration_does_not_fail_other_hosts() throws Exception {
+        final Session session = createSession();
+        createHstConfigBackup(session);
+
+        try {
+
+            // unresolvable placeholder
+            session.move("/hst:hst/hst:hosts/testgroup/test", "/hst:hst/hst:hosts/testgroup/${toplevel}");
+
+            session.save();
+            invalidator.eventPaths("/hst:hst/hst:hosts/testgroup/${toplevel}", "/hst:hst/hst:hosts/testgroup/test");
+
+            VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+
+            assertNull(vhosts.matchVirtualHost("www.unit.${toplevel}"));
+            assertNotNull("Other hosts should still work", vhosts.matchVirtualHost("localhost"));
+
+        } finally {
+            restoreHstConfigBackup(session);
+            session.logout();
+        }
+    }
+
+    @Test
+    public void system_property_value_containing_dot_for_host_placeholder_not_allowed_and_error_log() throws Exception {
+        final Session session = createSession();
+        createHstConfigBackup(session);
+
+        try (Log4jInterceptor log4jInterceptor = Log4jInterceptor.onError().trap().build()) {
+
+            // not allowed, a '.' in the value for property placeholder
+            System.setProperty("toplevel", "foo.bar");
+
+            // unresolvable placeholder
+            session.move("/hst:hst/hst:hosts/testgroup/test", "/hst:hst/hst:hosts/testgroup/${toplevel}");
+
+            session.save();
+            invalidator.eventPaths("/hst:hst/hst:hosts/testgroup/${toplevel}", "/hst:hst/hst:hosts/testgroup/test");
+
+            VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+
+            assertNull(vhosts.matchVirtualHost("www.unit.foo.bar"));
+
+            assertEquals(1, log4jInterceptor.getEvents().size());
+            assertEquals("Unable to add virtualhost with name '${toplevel}'. Fix the configuration. This virtualhost will be skipped.",
+                    log4jInterceptor.messages().findFirst().get());
+
+        } finally {
+            System.clearProperty("toplevel");
+            restoreHstConfigBackup(session);
+            session.logout();
+        }
+    }
 }
