@@ -77,13 +77,16 @@ export class ErrorHandlingService {
   }
 
   setClientError(errorCode: ClientErrorCodes, message?: string, errorType?: string): void {
-    const errorCodeAsText = this.mapClientErrorCodeToText(errorCode);
+    const errorCodeAsText = this.translateService.instant(this.mapClientErrorCodeToText(errorCode));
 
     if (errorType === 'lenient') {
-      let errorMessage = this.translateService.instant(errorCodeAsText);
-      if (message) {
-        errorMessage += `: ${message}`;
-      }
+      const errorMessage = message
+        ? this.translateService.instant('ERROR_SNACK_BAR_MESSAGE', {
+          error: errorCodeAsText,
+          cause: message,
+        })
+        : errorCodeAsText;
+
       this.snackBar.open(errorMessage, this.translateService.instant('ERROR_SNACK_BAR_DISMISS'), {
         duration: 5 * 1000,
         horizontalPosition: 'right',

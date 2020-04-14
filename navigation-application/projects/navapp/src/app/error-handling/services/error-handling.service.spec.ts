@@ -120,7 +120,11 @@ describe('ErrorHandlingService', () => {
     it('should show a snack-bar notification', () => {
       service.setClientError(ClientErrorCodes.UnknownError, 'Optional message', 'lenient');
 
-      expect(snackBarMock.open).toHaveBeenCalledWith('Something went wrong: Optional message', 'ERROR_SNACK_BAR_DISMISS', snackBarConfig);
+      expect(snackBarMock.open).toHaveBeenCalledWith('ERROR_SNACK_BAR_MESSAGE', 'ERROR_SNACK_BAR_DISMISS', snackBarConfig);
+      expect(translateServiceMock.instant).toHaveBeenCalledWith('ERROR_SNACK_BAR_MESSAGE', {
+        error: 'Something went wrong',
+        cause: 'Optional message',
+      });
       expect(translateServiceMock.instant).toHaveBeenCalledWith('ERROR_SNACK_BAR_DISMISS');
     });
 
