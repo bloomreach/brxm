@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,10 +19,10 @@ import { ContainerImpl, ContainerModel, isContainer, TYPE_CONTAINER_BOX } from '
 import { ContainerItem } from './container-item';
 import { Factory } from './factory';
 import { Link } from './link';
-import { MetaCollectionModel, Meta } from './meta';
+import { MetaCollectionModel, MetaCollection } from './meta-collection';
 
 let linkFactory: jest.Mocked<Factory<[Link], string>>;
-let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], Meta[]>>;
+let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], MetaCollection>>;
 
 const model = {
   _meta: {},

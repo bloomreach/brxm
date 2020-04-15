@@ -17,10 +17,10 @@
 import { ComponentImpl, ComponentModel, Component, TYPE_COMPONENT, isComponent } from './component';
 import { Factory } from './factory';
 import { Link } from './link';
-import { MetaCollectionModel, MetaImpl, Meta, META_POSITION_BEGIN } from './meta';
+import { MetaCollectionModel, MetaCollection } from './meta-collection';
 
 let linkFactory: jest.Mocked<Factory<[Link], string>>;
-let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], Meta[]>>;
+let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], MetaCollection>>;
 
 const model = {
   _links: { componentRendering: { href: 'url' } },
@@ -48,14 +48,14 @@ describe('ComponentImpl', () => {
   });
 
   describe('getMeta', () => {
-    it('should return a meta-data array', () => {
-      const meta = new MetaImpl({ data: '', type: 'comment' }, META_POSITION_BEGIN);
+    it('should return a meta-data collection', () => {
+      const meta = {} as MetaCollection;
 
-      metaFactory.create.mockReturnValueOnce([meta]);
+      metaFactory.create.mockReturnValueOnce(meta);
       const component = createComponent();
 
       expect(metaFactory.create).toBeCalledWith(model._meta);
-      expect(component.getMeta()).toEqual([meta]);
+      expect(component.getMeta()).toEqual(meta);
     });
   });
 

@@ -16,7 +16,7 @@
 
 import { Factory } from './factory';
 import { Link } from './link';
-import { MetaCollectionModel, Meta } from './meta';
+import { MetaCollectionModel, MetaCollection } from './meta-collection';
 
 /**
  * Generic component type.
@@ -87,7 +87,7 @@ export interface Component {
   /**
    * @return The component meta-data collection.
    */
-  getMeta(): Meta[];
+  getMeta(): MetaCollection;
 
   /**
    * @return The map of the component models.
@@ -129,13 +129,13 @@ export interface Component {
 }
 
 export class ComponentImpl implements Component {
-  protected meta: Meta[];
+  protected meta: MetaCollection;
 
   constructor(
     protected model: ComponentModel,
     protected children: Component[],
     private linkFactory: Factory<[Link], string>,
-    metaFactory: Factory<[MetaCollectionModel], Meta[]>,
+    metaFactory: Factory<[MetaCollectionModel], MetaCollection>,
   ) {
     this.meta = metaFactory.create(model._meta);
   }

@@ -16,7 +16,7 @@
 
 import { Factory } from './factory';
 import { Link } from './link';
-import { MetaCollectionModel, Meta } from './meta';
+import { MetaCollectionModel, MetaCollection } from './meta-collection';
 
 /**
  * @hidden
@@ -53,7 +53,7 @@ export interface Content {
   /**
    * @return The content meta-data collection.
    */
-  getMeta(): Meta[];
+  getMeta(): MetaCollection;
 
   /**
    * @return The content name.
@@ -73,12 +73,12 @@ export interface Content {
 }
 
 export class ContentImpl implements Content {
-  protected meta: Meta[];
+  protected meta: MetaCollection;
 
   constructor(
     protected model: ContentModel,
     private linkFactory: Factory<[Link], string>,
-    metaFactory: Factory<[MetaCollectionModel], Meta[]>,
+    metaFactory: Factory<[MetaCollectionModel], MetaCollection>,
   ) {
     this.meta = metaFactory.create(this.model._meta || {});
   }

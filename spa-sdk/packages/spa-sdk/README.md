@@ -111,7 +111,7 @@ Method | Description
 --- | ---
 <code>getComponent(...componentNames): Component &vert; undefined</code> | Gets a component in the page (e.g. `getComponent('main', 'right')`). If `componentNames` is omitted, then the page root component will be returned.
 <code>getContent(reference: Reference &vert; string): Content &vert; undefined</code> | Gets a content item used on the page.
-`getMeta(meta): Meta[]` | Generates a meta-data from the provided `meta` model.
+`getMeta(meta): MetaCollection` | Generates a meta-data collection from the provided `meta` model.
 <code>getTitle(): string &vert; undefined</code> | Gets the title of the page, or `undefined` if not configured.
 `getUrl(link?: Link): string` | Generates a URL for a link object.<br> - If the link object type is internal, then it will prepend `spaBaseUrl`. In case when the link starts with the same path as in `cmsBaseUrl`, this part will be removed.<br> - If the link parameter is omitted, then the link to the current page will be returned.<br> - In other cases, the link will be returned as-is.
 `getUrl(path: string): string` | Generates an SPA URL for the path.<br> - If it is a relative path, then it will prepend `spaBaseUrl`.<br> - If it is an absolute path, then the behavior will be similar to internal link generation.
@@ -128,7 +128,7 @@ The `Component` class corresponds to page nodes, and it may hold other component
 Method | Description
 --- | ---
 `getId(): string` | Returns the component id.
-`getMeta(): Meta[]` | Returns the component meta-data collection.
+`getMeta(): MetaCollection` | Returns the component meta-data collection.
 `getModels(): object` | Returns the map of the component models.
 <code>getUrl(): string &vert; undefined</code> | Returns the link to the partial component model.
 `getName(): string` | Returns the name of the component.
@@ -161,7 +161,7 @@ Method | Description
 --- | ---
 `getId(): string` | Returns the content id.
 <code>getLocale(): string &vert; undefined</code> | Returns the content locale.
-`getMeta(): Meta[]` | Returns the content meta-data collection.
+`getMeta(): MetaCollection` | Returns the content meta-data collection.
 `getName(): string` | Returns the content name.
 `getData(): object` | Returns the content data as it is returned in the Page Model API.
 <code>getUrl(): string &vert; undefined</code> | Returns the link to the content.

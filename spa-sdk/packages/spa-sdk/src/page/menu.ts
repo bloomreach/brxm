@@ -15,7 +15,7 @@
  */
 
 import { Link } from './link';
-import { MetaCollectionModel } from './meta';
+import { MetaCollectionModel } from './meta-collection';
 
 /**
  * @hidden

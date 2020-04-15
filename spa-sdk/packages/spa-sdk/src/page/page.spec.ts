@@ -21,7 +21,7 @@ import { Events } from '../events';
 import { Factory } from './factory';
 import { LinkRewriter } from './link-rewriter';
 import { Link, TYPE_LINK_INTERNAL } from './link';
-import { MetaCollectionModel, Meta } from './meta';
+import { MetaCollectionModel, MetaCollection } from './meta-collection';
 import { PageImpl, PageModel, Page, isPage } from './page';
 
 let content: Content;
@@ -29,7 +29,7 @@ let contentFactory: jest.Mocked<Factory<[ContentModel], Content>>;
 let eventBus: Typed<Events>;
 let linkFactory: jest.Mocked<Factory<[Link], string>>;
 let linkRewriter: jest.Mocked<LinkRewriter>;
-let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], Meta[]>>;
+let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], MetaCollection>>;
 let root: Component;
 
 const model = {
@@ -95,11 +95,11 @@ describe('PageImpl', () => {
     it('should delegate to the MetaFactory to create new meta', () => {
       const metaFactoryCreateSpy = jest.spyOn(metaFactory, 'create');
       const page = createPage();
+      const model = {};
 
-      const metaCollectionModel = {} as MetaCollectionModel;
-      page.getMeta(metaCollectionModel);
+      page.getMeta(model);
 
-      expect(metaFactoryCreateSpy).toHaveBeenCalledWith(metaCollectionModel);
+      expect(metaFactoryCreateSpy).toHaveBeenCalledWith(model);
     });
   });
 

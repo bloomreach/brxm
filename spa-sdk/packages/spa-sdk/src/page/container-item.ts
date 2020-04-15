@@ -27,7 +27,7 @@ import { EmitterMixin, Emitter } from '../emitter';
 import { Events, PageUpdateEvent } from '../events';
 import { Factory } from './factory';
 import { Link } from './link';
-import { MetaCollectionModel, Meta } from './meta';
+import { MetaCollectionModel, MetaCollection } from './meta-collection';
 
 const PARAMETER_HIDDEN = 'com.onehippo.cms7.targeting.TargetingParameterUtil.hide';
 
@@ -96,7 +96,7 @@ export class ContainerItemImpl
     protected model: ContainerItemModel,
     eventBus: Typed<Events>,
     linkFactory: Factory<[Link], string>,
-    private metaFactory: Factory<[MetaCollectionModel], Meta[]>,
+    private metaFactory: Factory<[MetaCollectionModel], MetaCollection>,
   ) {
     super(model, [], linkFactory, metaFactory);
 

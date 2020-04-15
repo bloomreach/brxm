@@ -17,10 +17,10 @@
 import { ContentImpl, ContentModel } from './content';
 import { Factory } from './factory';
 import { Link } from './link';
-import { MetaCollectionModel, MetaImpl, Meta, META_POSITION_BEGIN } from './meta';
+import { MetaCollectionModel, MetaCollection } from './meta-collection';
 
 let linkFactory: jest.Mocked<Factory<[Link], string>>;
-let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], Meta[]>>;
+let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], MetaCollection>>;
 
 const model = {
   _links: { site: { href: 'url' } },
@@ -63,13 +63,13 @@ describe('ContentImpl', () => {
   describe('getMeta', () => {
     it('should return a meta-data array', () => {
       const metaModel = {};
-      const meta = new MetaImpl({ data: '', type: 'comment' }, META_POSITION_BEGIN);
-      metaFactory.create.mockReturnValueOnce([meta]);
+      const meta = {} as MetaCollection;
+      metaFactory.create.mockReturnValueOnce(meta);
 
       const content = createContent({ ...model, _meta: metaModel });
 
       expect(metaFactory.create).toBeCalledWith(metaModel);
-      expect(content.getMeta()).toEqual([meta]);
+      expect(content.getMeta()).toEqual(meta);
     });
 
     it('should pass an empty object if there is no meta-data', () => {

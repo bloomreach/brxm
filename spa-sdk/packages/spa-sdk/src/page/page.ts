@@ -23,7 +23,7 @@ import { Factory } from './factory';
 import { LinkRewriter } from './link-rewriter';
 import { Link, TYPE_LINK_INTERNAL } from './link';
 import { Events, PageUpdateEvent } from '../events';
-import { MetaCollectionModel, Meta } from './meta';
+import { MetaCollectionModel, MetaCollection } from './meta-collection';
 import { Reference, isReference } from './reference';
 import { Visitor, Visit } from './relevance';
 
@@ -107,10 +107,10 @@ export interface Page {
   getContent(reference: Reference | string): Content | undefined;
 
   /**
-   * Generates a meta-data from the provided meta-data model.
-   * @param meta the meta-collection as returned by the page-model-api
+   * Generates a meta-data collection from the provided meta-data model.
+   * @param meta The meta-data collection model as returned by the page-model-api.
    */
-  getMeta(meta: MetaCollectionModel): Meta[];
+  getMeta(meta: MetaCollectionModel): MetaCollection;
 
   /**
    * @return The title of the page, or `undefined` if not configured.
@@ -183,7 +183,7 @@ export class PageImpl implements Page {
     private eventBus: Typed<Events>,
     private linkFactory: Factory<[Link | string], string>,
     private linkRewriter: LinkRewriter,
-    private metaFactory: Factory<[MetaCollectionModel], Meta[]>,
+    private metaFactory: Factory<[MetaCollectionModel], MetaCollection>,
   ) {
     eventBus.on('page.update', this.onPageUpdate.bind(this));
 

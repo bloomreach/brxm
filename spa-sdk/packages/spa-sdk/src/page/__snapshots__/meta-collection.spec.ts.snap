@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`MetaCollectionImpl constructor should hold meta-data items 1`] = `
+MetaCollectionImpl [
+  Object {
+    "data": "meta1",
+  },
+  Object {
+    "data": "meta2",
+  },
+]
+`;

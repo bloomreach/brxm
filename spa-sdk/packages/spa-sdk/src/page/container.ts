@@ -18,7 +18,7 @@ import { ComponentImpl, ComponentModel, Component, TYPE_COMPONENT_CONTAINER } fr
 import { ContainerItem } from './container-item';
 import { Factory } from './factory';
 import { Link } from './link';
-import { MetaCollectionModel, Meta } from './meta';
+import { MetaCollectionModel, MetaCollection } from './meta-collection';
 
 /**
  * A blocked container with blocked items.
@@ -87,7 +87,7 @@ export class ContainerImpl extends ComponentImpl implements Container {
     protected model: ContainerModel,
     protected children: ContainerItem[],
     linkFactory: Factory<[Link], string>,
-    metaFactory: Factory<[MetaCollectionModel], Meta[]>,
+    metaFactory: Factory<[MetaCollectionModel], MetaCollection>,
   ) {
     super(model, children, linkFactory, metaFactory);
   }

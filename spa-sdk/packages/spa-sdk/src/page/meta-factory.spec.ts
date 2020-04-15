@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -30,36 +30,16 @@ describe('MetaFactory', () => {
       builder2.mockClear();
     });
 
-    it('should return an empty array on no meta-data', () => {
-      expect(factory.create({})).toEqual([]);
-    });
-
     it('should call a registered builder', () => {
-      factory.create({
-        beginNodeSpan: [
-          { data: 'meta1', type: 'type1' as MetaType },
-          { data: 'meta2', type: 'type2' as MetaType },
-        ],
-      });
-
-      expect(builder1).toBeCalledWith({ data: 'meta1', type: 'type1' }, META_POSITION_BEGIN);
-      expect(builder2).toBeCalledWith({ data: 'meta2', type: 'type2' }, META_POSITION_BEGIN);
-    });
-
-    it('should throw an exception on unknown component type', () => {
-      expect(() => factory.create({
-        beginNodeSpan: [{ data: 'data0', type: 'type0' as MetaType }],
-      })).toThrowError();
-    });
-
-    it('should pass a position of the meta', () => {
-      factory.create({
-        beginNodeSpan: [{ data: 'meta1', type: 'type1' as MetaType }],
-        endNodeSpan: [{ data: 'meta2', type: 'type2' as MetaType }],
-      });
+      factory.create({ data: 'meta1', type: 'type1' as MetaType }, META_POSITION_BEGIN);
+      factory.create({ data: 'meta2', type: 'type2' as MetaType }, META_POSITION_END);
 
       expect(builder1).toBeCalledWith({ data: 'meta1', type: 'type1' }, META_POSITION_BEGIN);
       expect(builder2).toBeCalledWith({ data: 'meta2', type: 'type2' }, META_POSITION_END);
+    });
+
+    it('should throw an exception on unknown component type', () => {
+      expect(() => factory.create({ data: 'data0', type: 'type0' as MetaType }, META_POSITION_BEGIN)).toThrowError();
     });
   });
 });

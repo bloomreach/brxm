@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
  */
 
 import { MultipleTypeFactory } from './factory';
-import { MetaCollectionModel, MetaModel, MetaPosition, MetaType, Meta, META_POSITION_BEGIN, META_POSITION_END } from './meta';
+import { MetaModel, MetaPosition, MetaType, Meta } from './meta';
 
 type MetaBuilder = (model: MetaModel, position: MetaPosition) => Meta;
 
@@ -23,19 +23,12 @@ type MetaBuilder = (model: MetaModel, position: MetaPosition) => Meta;
  * The factory to produce meta-data collection from the page model meta-data.
  */
 export class MetaFactory extends MultipleTypeFactory<MetaType, MetaBuilder> {
-  create(meta: MetaCollectionModel) {
-    return [
-      ...(meta.beginNodeSpan || []).map(this.buildMeta.bind(this, META_POSITION_BEGIN)),
-      ...(meta.endNodeSpan || []).map(this.buildMeta.bind(this, META_POSITION_END)),
-    ];
-  }
-
-  private buildMeta(position: MetaPosition, model: MetaModel) {
-    const builder = this.mapping.get(model.type);
+  create(meta: MetaModel, position: MetaPosition) {
+    const builder = this.mapping.get(meta.type);
     if (!builder) {
-      throw new Error(`Unsupported meta type: '${model.type}'.`);
+      throw new Error(`Unsupported meta type: '${meta.type}'.`);
     }
 
-    return builder(model, position);
+    return builder(meta, position);
   }
 }

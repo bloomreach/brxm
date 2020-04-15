@@ -20,12 +20,12 @@ import { ContainerItemImpl, ContainerItemModel, ContainerItem, isContainerItem }
 import { Events } from '../events';
 import { Factory } from './factory';
 import { Link } from './link';
-import { MetaCollectionModel, Meta } from './meta';
+import { MetaCollectionModel, MetaCollection } from './meta-collection';
 import { PageModel } from './page';
 
 let eventBus: Typed<Events>;
 let linkFactory: jest.Mocked<Factory<[Link], string>>;
-let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], Meta[]>>;
+let metaFactory: jest.Mocked<Factory<[MetaCollectionModel], MetaCollection>>;
 
 const model = {
   _meta: {},
@@ -125,7 +125,7 @@ describe('ContainerItemImpl', () => {
 
     it('should update a meta-data on page.update event', async () => {
       const metaModel = {};
-      const meta = [] as Meta[];
+      const meta = {} as MetaCollection;
       metaFactory.create.mockReturnValueOnce(meta);
       await eventBus.emitSerial(
         'page.update',

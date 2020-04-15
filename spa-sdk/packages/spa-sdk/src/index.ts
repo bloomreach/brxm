@@ -34,6 +34,8 @@ import {
   ContentImpl,
   LinkFactory,
   LinkRewriterImpl,
+  MetaCollectionImpl,
+  MetaCollectionModel,
   MetaCommentImpl,
   MetaFactory,
   PageImpl,
@@ -75,21 +77,29 @@ export async function initialize(config: Configuration, model?: PageModel): Prom
   const linkRewriter = new LinkRewriterImpl(linkFactory, domParser, xmlSerializer);
   const metaFactory = new MetaFactory()
     .register(TYPE_META_COMMENT, (model, position) => new MetaCommentImpl(model, position));
+  const metaCollectionFactory = new SingleTypeFactory(
+    (model: MetaCollectionModel) => new MetaCollectionImpl(model, metaFactory),
+  );
   const componentFactory = new ComponentFactory()
-    .register(TYPE_COMPONENT, (model, children) => new ComponentImpl(model, children, linkFactory, metaFactory))
+    .register(TYPE_COMPONENT, (model, children) => new ComponentImpl(
+      model,
+      children,
+      linkFactory,
+      metaCollectionFactory,
+    ))
     .register(TYPE_COMPONENT_CONTAINER, (model, children) => new ContainerImpl(
       model as ContainerModel,
       children as ContainerItem[],
       linkFactory,
-      metaFactory,
+      metaCollectionFactory,
     ))
     .register(TYPE_COMPONENT_CONTAINER_ITEM, model => new ContainerItemImpl(
       model as ContainerItemModel,
       eventBus,
       linkFactory,
-      metaFactory,
+      metaCollectionFactory,
     ));
-  const contentFactory = new SingleTypeFactory(model => new ContentImpl(model, linkFactory, metaFactory));
+  const contentFactory = new SingleTypeFactory(model => new ContentImpl(model, linkFactory, metaCollectionFactory));
   const pageFactory = new SingleTypeFactory(model => new PageImpl(
     model,
     componentFactory.create(model.page),
@@ -97,7 +107,7 @@ export async function initialize(config: Configuration, model?: PageModel): Prom
     eventBus,
     linkFactory,
     linkRewriter,
-    metaFactory,
+    metaCollectionFactory,
   ));
   const spa = new Spa(eventBus, api, pageFactory);
 
@@ -158,6 +168,7 @@ export {
   Content,
   Link,
   Menu,
+  MetaCollection,
   MetaComment,
   Meta,
   PageModel,
