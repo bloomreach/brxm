@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,7 @@
 import React from 'react';
 import { mocked } from 'ts-jest/utils';
 import { shallow } from 'enzyme';
-import { isContainer, isContainerItem, Component, Meta, Page } from '@bloomreach/spa-sdk';
+import { isContainer, isContainerItem, Component, MetaCollection, Page } from '@bloomreach/spa-sdk';
 import { BrMeta } from '../meta';
 import { BrNode } from './BrNode';
 import { BrNodeComponent } from './BrNodeComponent';
@@ -51,7 +51,7 @@ describe('BrNode', () => {
   });
 
   it('should render a component meta-data', () => {
-    const meta = [] as Meta[];
+    const meta = {} as MetaCollection;
     props.component.getMeta.mockReturnValueOnce(meta);
     const wrapper = shallow(<BrNode {...props} />);
 

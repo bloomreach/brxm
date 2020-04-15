@@ -1,9 +1,7 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`BrMeta componentDidMount should render comment meta only 1`] = `"<div><!--begin comment 1--><span style=\\"display: none;\\"></span></div>"`;
+exports[`BrMeta componentDidMount should render meta-data surrounding children 1`] = `<a />`;
 
-exports[`BrMeta componentDidMount should render comments surrounding children 1`] = `"<div><!--begin comment 1--><!--begin comment 2--><a></a><b></b><span style=\\"display: none;\\"></span><!--end comment 1--><!--end comment 2--></div>"`;
-
-exports[`BrMeta componentDidUpdate should rerender comments on update 1`] = `"<!--begin comment 1--><a></a><span style=\\"display: none;\\"></span><!--end comment 1-->"`;
+exports[`BrMeta componentDidMount should render meta-data surrounding children 2`] = `<b />`;
 
 exports[`BrMeta render should render only children if there is no meta 1`] = `"<div><a></a><b></b></div>"`;

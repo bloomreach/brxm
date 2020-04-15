@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 import React from 'react';
 import { shallow } from 'enzyme';
-import { Menu, Meta, Page } from '@bloomreach/spa-sdk';
+import { Menu, MetaCollection, Page } from '@bloomreach/spa-sdk';
 import { BrManageMenuButton } from './BrManageMenuButton';
 import { BrMeta } from '../meta';
 
@@ -56,7 +56,7 @@ describe('BrManageMenuButton', () => {
   });
 
   it('should render menu-button meta-data created with page context', () => {
-    const meta: Meta[] = [];
+    const meta = {} as MetaCollection;
     context.getMeta.mockReturnValueOnce(meta);
     context.isPreview.mockReturnValueOnce(true);
     props.menu._meta = {};

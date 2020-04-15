@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,23 +14,11 @@
  * limitations under the License.
  */
 
-import { Component, Page, Meta } from '@bloomreach/spa-sdk';
+import { Component, Page } from '@bloomreach/spa-sdk';
 
-const { META_POSITION_BEGIN, META_POSITION_END } = jest.requireActual('@bloomreach/spa-sdk');
-
-const meta = [
-  new class implements Meta {
-    getData = jest.fn(() => 'meta1');
-    getPosition = jest.fn(() => META_POSITION_BEGIN as typeof META_POSITION_BEGIN);
-  },
-  new class implements Meta {
-    getData = jest.fn(() => 'meta2');
-    getPosition = jest.fn(() => META_POSITION_END as typeof META_POSITION_END);
-  },
-];
 const component = new class implements Component {
   getId = jest.fn();
-  getMeta = jest.fn(() => meta);
+  getMeta = jest.fn();
   getModels = jest.fn();
   getUrl = jest.fn();
   getName = jest.fn();

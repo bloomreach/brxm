@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,57 +16,38 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { MetaComment, Meta, META_POSITION_BEGIN, META_POSITION_END, isMetaComment } from '@bloomreach/spa-sdk';
+import { MetaCollection } from '@bloomreach/spa-sdk';
 
 interface BrMetaProps {
-  meta: Meta[];
+  meta: MetaCollection;
 }
 
 export class BrMeta extends React.Component<BrMetaProps> {
-  private comments: Comment[] = [];
-  private head?: Element | Text;
   private tailRef = React.createRef<HTMLElement>();
 
   componentDidMount() {
-    this.head = ReactDOM.findDOMNode(this)!;
     this.renderMeta();
   }
 
-  componentDidUpdate() {
-    this.head = ReactDOM.findDOMNode(this)!;
-    this.removeMeta();
+  componentDidUpdate(prevProps: BrMetaProps) {
+    prevProps.meta.clear();
+
     this.renderMeta();
   }
 
   componentWillUnmount() {
-    this.removeMeta();
-  }
-
-  private removeMeta() {
-    this.comments.splice(0).forEach(comment => comment.remove());
+    this.props.meta.clear();
   }
 
   private renderMeta() {
-    this.props.meta.filter(meta => isMetaComment(meta) && meta.getPosition() === META_POSITION_BEGIN)
-      .forEach(this.renderMetaComment.bind(this));
-    this.props.meta.filter(meta => isMetaComment(meta) && meta.getPosition() === META_POSITION_END)
-      .reverse()
-      .forEach(this.renderMetaComment.bind(this));
-  }
+    const head = ReactDOM.findDOMNode(this);
+    const tail = this.tailRef?.current;
 
-  private renderMetaComment(meta: MetaComment) {
-    const comment = this.head!.ownerDocument!.createComment(meta.getData());
-    this.comments.push(comment);
-
-    if (meta.getPosition() === META_POSITION_BEGIN) {
-      return void this.head!.parentNode!.insertBefore(comment, this.head!);
+    if (!head || !tail) {
+      return;
     }
 
-    if (!this.tailRef.current!.nextSibling) {
-      return void this.tailRef.current!.parentNode!.appendChild(comment);
-    }
-
-    this.tailRef.current!.parentNode!.insertBefore(comment, this.tailRef.current!.nextSibling);
+    this.props.meta.render(head, tail);
   }
 
   render() {
