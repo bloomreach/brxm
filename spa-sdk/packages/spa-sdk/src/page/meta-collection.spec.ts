@@ -16,7 +16,8 @@
 
 import { MetaFactory } from './meta-factory';
 import { MetaCollectionImpl } from './meta-collection';
-import { MetaType, Meta, META_POSITION_BEGIN, META_POSITION_END } from './meta';
+import { MetaType, Meta, META_POSITION_BEGIN, META_POSITION_END, TYPE_META_COMMENT } from './meta';
+import { MetaCommentImpl } from './meta-comment';
 
 describe('MetaCollectionImpl', () => {
   describe('constructor', () => {
@@ -76,6 +77,97 @@ describe('MetaCollectionImpl', () => {
       );
 
       expect(collection).toMatchSnapshot();
+    });
+  });
+
+  describe('clear', () => {
+    let a: HTMLElement;
+    let collection: MetaCollectionImpl;
+
+    beforeEach(() => {
+      collection = new MetaCollectionImpl(
+        {
+          beginNodeSpan: [{ data: 'meta1', type: TYPE_META_COMMENT }],
+          endNodeSpan: [{ data: 'meta2', type: TYPE_META_COMMENT }],
+        },
+        new MetaFactory()
+          .register(TYPE_META_COMMENT, (model, position) => new MetaCommentImpl(model, position))
+      );
+
+      a = document.createElement('a');
+
+      document.body.append(a);
+    });
+
+    afterEach(() => {
+      document.body.innerHTML = '';
+    });
+
+    it('should remove rendered comments', () => {
+      collection.render(a, a);
+      collection.clear();
+
+      expect(document.body).toMatchSnapshot();
+    });
+  });
+
+  describe('render', () => {
+    let a: HTMLElement;
+    let b: HTMLElement;
+    let collection: MetaCollectionImpl;
+
+    beforeEach(() => {
+      collection = new MetaCollectionImpl(
+        {
+          beginNodeSpan: [
+            { data: 'meta1', type: TYPE_META_COMMENT },
+            { data: 'meta2', type: TYPE_META_COMMENT },
+          ],
+          endNodeSpan: [
+            { data: 'meta3', type: TYPE_META_COMMENT },
+            { data: 'meta4', type: TYPE_META_COMMENT },
+          ],
+        },
+        new MetaFactory()
+          .register(TYPE_META_COMMENT, (model, position) => new MetaCommentImpl(model, position))
+      );
+
+      a = document.createElement('a');
+      b = document.createElement('b');
+
+      document.body.append(a, b);
+    });
+
+    afterEach(() => {
+      document.body.innerHTML = '';
+    });
+
+    it('should not render on detached element', () => {
+      document.body.removeChild(a);
+
+      collection.render(a, a);
+
+      expect(document.body).toMatchSnapshot();
+    });
+
+    it('should not render on document node', () => {
+      const node = document.body.parentNode?.parentNode as Element;
+
+      collection.render(node, node);
+
+      expect(document.body).toMatchSnapshot();
+    });
+
+    it('should surround an element with comments', () => {
+      collection.render(a, a);
+
+      expect(document.body).toMatchSnapshot();
+    });
+
+    it('should surround multiple elements with comments', () => {
+      collection.render(a, b);
+
+      expect(document.body).toMatchSnapshot();
     });
   });
 });

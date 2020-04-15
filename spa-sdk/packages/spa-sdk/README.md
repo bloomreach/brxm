@@ -166,6 +166,12 @@ Method | Description
 `getData(): object` | Returns the content data as it is returned in the Page Model API.
 <code>getUrl(): string &vert; undefined</code> | Returns the link to the content.
 
+##### MetaCollection
+Method | Description
+--- | ---
+`clear(): void` | Clears previously rendered meta-data objects.
+`render(head: HTMLElement, tail: HTMLElement): void;` | Renders meta-data objects on the page.
+
 ##### Meta
 The `Meta` objects are being used by the brXM to page and its components.
 
