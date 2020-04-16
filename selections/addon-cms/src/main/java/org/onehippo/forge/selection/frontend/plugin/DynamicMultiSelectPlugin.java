@@ -243,6 +243,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
         if (this.propertyModel != null) {
             this.propertyModel.detach();
         }
+        helper.detach();
         super.onDetach();
     }
 
