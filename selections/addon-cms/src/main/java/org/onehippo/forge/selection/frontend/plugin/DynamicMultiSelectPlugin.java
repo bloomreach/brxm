@@ -137,7 +137,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
                 IValueListProvider.class);
 
         if (selectedProvider == null) {
-            log.warn("DynamicMultiSelectPlugin: value list provider can not be found by name '{}'",
+            log.warn("DynamicMultiSelectPlugin: value list provider cannot be found by name '{}'",
                     config.getString(IValueListProvider.SERVICE));
 
             // dummy markup
@@ -152,7 +152,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
         final JcrMultiPropertyValueModel<String> model = new JcrMultiPropertyValueModel<>(
                 getPropertyModel().getItemModel());
 
-        //HIPPLUG-908: Start using cluster.options instead of valuelist.options, maintaining backwards compatibility.
+        // HIPPLUG-908: Start using cluster.options instead of valuelist.options, maintaining backwards compatibility.
         IPluginConfig options = config.getPluginConfig(CONFIG_CLUSTER_OPTIONS);
         if (options == null) {
             options = config.getPluginConfig(CONFIG_VALUELIST_OPTIONS);
@@ -244,6 +244,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
         if (this.propertyModel != null) {
             this.propertyModel.detach();
         }
+        helper.detach();
         super.onDetach();
     }
 
