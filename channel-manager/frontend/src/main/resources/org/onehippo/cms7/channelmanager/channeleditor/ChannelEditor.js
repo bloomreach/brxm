@@ -280,14 +280,14 @@
     },
 
     _maskSurroundings: function() {
-      if (Hippo && Hippo.showMask) {
-        Hippo.showMask();
+      if (Hippo && Hippo.navapp.showMask) {
+        Hippo.navapp.showMask();
       }
     },
 
     _unmaskSurroundings: function() {
-      if (Hippo && Hippo.hideMask) {
-        Hippo.hideMask();
+      if (Hippo && Hippo.navapp.hideMask) {
+        Hippo.navapp.hideMask();
       }
     },
 
