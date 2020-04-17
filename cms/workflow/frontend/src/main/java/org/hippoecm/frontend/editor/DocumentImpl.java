@@ -27,6 +27,7 @@ public class DocumentImpl implements Document{
     private String revision;
     private boolean holder;
     private boolean transferable;
+    private boolean retainable;
 
 
     public DocumentImpl() {
@@ -57,6 +58,10 @@ public class DocumentImpl implements Document{
         this.transferable = transferable;
     }
 
+    public void setRetainable(final boolean retainable) {
+        this.retainable = retainable;
+    }
+
     @Override
     public String getUnpublished() {
         return unpublished;
@@ -81,6 +86,12 @@ public class DocumentImpl implements Document{
     public boolean isTransferable() {
         return transferable;
     }
+
+    @Override
+    public boolean isRetainable() {
+        return retainable;
+    }
+
 
     @Override
     public boolean isHolder() {
@@ -120,6 +131,7 @@ public class DocumentImpl implements Document{
                 ", revision='" + revision + '\'' +
                 ", holder=" + holder +
                 ", transferable=" + transferable +
+                ", retainable=" + retainable +
                 '}';
     }
 }
