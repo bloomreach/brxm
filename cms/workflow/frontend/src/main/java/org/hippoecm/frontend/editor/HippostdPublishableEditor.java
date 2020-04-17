@@ -85,6 +85,7 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
     private Boolean isValid;
     private boolean modified;
     private IModel<Node> editorModel;
+    private IModel<Node> baseModel;
     private boolean transferable;
 
     public HippostdPublishableEditor(final IEditorContext manager, final IPluginContext context, final IPluginConfig config, final IModel<Node> model)
@@ -111,7 +112,8 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         final IModel<Node> model = super.getEditorModel();
         Node node = model.getObject();
         final HippoStdPublishableEditorModel editorModel = getEditorStateModel(branchIdModel.getBranchId(), node);
-        return new JcrNodeModel(editorModel.getEditor());
+        this.editorModel = new JcrNodeModel(editorModel.getEditor());
+        return this.editorModel;
     }
 
     @Override
@@ -122,7 +124,8 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
             return super.getBaseModel();
         }
         else{
-            return new JcrNodeModel(editorModel.getBase());
+            this.baseModel = new JcrNodeModel(editorModel.getBase());
+            return this.baseModel;
         }
     }
 
@@ -534,6 +537,9 @@ public class HippostdPublishableEditor extends AbstractCmsEditor<Node> implement
         isValid = null;
         if (editorModel != null) {
             editorModel.detach();
+        }
+        if (baseModel != null){
+            baseModel.detach();
         }
         if (branchIdModel != null) {
             branchIdModel.detach();
