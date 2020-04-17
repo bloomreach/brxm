@@ -22,7 +22,7 @@ public interface Document {
     String getDraft();
     String getRevision();
     boolean isTransferable();
+    boolean isRetainable();
     boolean isHolder();
-
 
 }

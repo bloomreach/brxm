@@ -147,8 +147,8 @@ public class DocumentBuilder {
             }
             if (DRAFT.equals(key) ){
                 buildDraft(documentVariant.getNode());
-                final Boolean transferable = documentVariant.isTransferable();
-                document.setTransferable(transferable == null ? false : transferable);
+                document.setTransferable(documentVariant.isTransferable());
+                document.setRetainable(documentVariant.isRetainable());
                 log.debug("Transferable: {}", document.isTransferable());
                 document.setHolder(this.userId.equals(documentVariant.getHolder()));
                 log.debug("Holder is current user: {}", document.isHolder());
