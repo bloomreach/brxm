@@ -209,8 +209,6 @@ public class BranchResolvePropertyResolver implements PropertyResolver {
         Validate.notNull(variant);
         Validate.isTrue(variant.isNodeType(NT_DOCUMENT)
                 , EXPECTED_NODE_TYPE, variant.getPath(), NT_DOCUMENT);
-        Validate.isTrue(variant.isNodeType(HippoStdNodeType.NT_DOCUMENT)
-                , EXPECTED_NODE_TYPE, variant.getPath(), HippoStdNodeType.NT_DOCUMENT);
         return JcrUtils.getStringProperty(variant, HippoStdNodeType.HIPPOSTD_STATE, null);
     }
 

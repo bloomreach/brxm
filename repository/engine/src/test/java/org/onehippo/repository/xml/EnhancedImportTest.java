@@ -1,5 +1,5 @@
 /*
- *  Copyright 2010-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2010-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,28 +15,25 @@
  */
 package org.onehippo.repository.xml;
 
-import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.jcr.Node;
+import javax.jcr.NodeIterator;
+import javax.jcr.Property;
+import javax.jcr.PropertyIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.Value;
 
 import org.hippoecm.repository.api.HippoSession;
+import org.hippoecm.repository.util.JcrUtils;
+import org.hippoecm.repository.util.PropertyIterable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
-import org.onehippo.cms7.jcrdiff.JcrDiffException;
-import org.onehippo.cms7.jcrdiff.content.jcr.JcrTreeNode;
-import org.onehippo.cms7.jcrdiff.delta.Operation;
-import org.onehippo.cms7.jcrdiff.delta.Patch;
-import org.onehippo.cms7.jcrdiff.match.Matcher;
-import org.onehippo.cms7.jcrdiff.match.MatcherItemInfo;
-import org.onehippo.cms7.jcrdiff.match.PatchFactory;
-import org.onehippo.cms7.jcrdiff.serialization.PatchWriter;
 import org.onehippo.repository.testutils.RepositoryTestCase;
 
 import static javax.jcr.ImportUUIDBehavior.IMPORT_UUID_CREATE_NEW;
@@ -81,7 +78,7 @@ public class EnhancedImportTest extends RepositoryTestCase {
             assertArrayEquals(expectedContextPaths, contextPaths.toArray(new String[contextPaths.size()]));
         }
         importXML("/compare", name + "-result.xml");
-        assertTrue(compare(session.getNode("/test"), session.getNode("/compare/test")));
+        assertTrue(equals(session.getNode("/test"), session.getNode("/compare/test")));
     }
 
     private ImportResult importXML(final String path, final String resource) throws Exception {
@@ -142,25 +139,86 @@ public class EnhancedImportTest extends RepositoryTestCase {
         test();
     }
 
-    private boolean compare(Node node1, Node node2) throws RepositoryException, JcrDiffException, IOException {
-
-        final Matcher matcher = new Matcher();
-        final MatcherItemInfo currentInfo = new MatcherItemInfo(matcher.getContext(), new JcrTreeNode(node1));
-        final MatcherItemInfo referenceInfo = new MatcherItemInfo(matcher.getContext(), new JcrTreeNode(node2));
-        matcher.setSource(referenceInfo);
-        matcher.setResult(currentInfo);
-        matcher.match();
-
-        final PatchFactory factory = new PatchFactory();
-        final Patch patch = factory.createPatch(referenceInfo, currentInfo);
-
-        final List<Operation> operations = patch.getOperations();
-        if (!operations.isEmpty()) {
-            final PatchWriter patchWriter = new PatchWriter(patch, new OutputStreamWriter(System.out));
-            patchWriter.writePatch();
+    protected boolean equals(Node a, Node b) throws RepositoryException {
+        final boolean virtualA = JcrUtils.isVirtual(a);
+        if (virtualA != JcrUtils.isVirtual(b)) {
             return false;
+        } else if (virtualA) {
+            return true;
+        }
+
+        final PropertyIterator aProperties = a.getProperties();
+        final PropertyIterator bProperties = b.getProperties();
+
+        Map<String, Property> properties = new HashMap<>();
+        for (Property property : new PropertyIterable(aProperties)) {
+            final String name = property.getName();
+            if (property.getDefinition().isProtected()) {
+                continue;
+            }
+            if (!b.hasProperty(name)) {
+                return false;
+            }
+
+            properties.put(name, property);
+        }
+        for (Property bProp : new PropertyIterable(bProperties)) {
+            final String name = bProp.getName();
+            if (bProp.getDefinition().isProtected()) {
+                continue;
+            }
+            if (!properties.containsKey(name)) {
+                return false;
+            }
+
+            Property aProp = properties.get(name);
+            if (!equals(bProp, aProp)) {
+                return false;
+            }
+        }
+
+        NodeIterator aIter = a.getNodes();
+        NodeIterator bIter = b.getNodes();
+        if (aIter.getSize() != bIter.getSize()) {
+            return false;
+        }
+        while (aIter.hasNext()) {
+            Node aChild = aIter.nextNode();
+            Node bChild = bIter.nextNode();
+            if (!equals(aChild, bChild)) {
+                return false;
+            }
         }
         return true;
     }
 
+    private boolean equals(final Property bProp, final Property aProp) throws RepositoryException {
+        if (aProp.isMultiple() != bProp.isMultiple() || aProp.getType() != bProp.getType()) {
+            return false;
+        }
+
+        if (aProp.isMultiple()) {
+            Value[] aValues = aProp.getValues();
+            Value[] bValues = bProp.getValues();
+            if (aValues.length != bValues.length) {
+                return false;
+            }
+            for (int i = 0; i < aValues.length; i++) {
+                if (!equals(aValues[i], bValues[i])) {
+                    return false;
+                }
+            }
+        } else {
+            Value aValue = aProp.getValue();
+            Value bValue = bProp.getValue();
+            if (!equals(aValue, bValue)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private boolean equals(final Value aValue, final Value bValue) throws RepositoryException {
+        return aValue.getString().equals(bValue.getString());
+    }
 }
