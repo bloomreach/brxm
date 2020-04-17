@@ -25,6 +25,7 @@ import org.hippoecm.repository.HippoStdNodeType;
 import org.hippoecm.repository.HippoStdPubWfNodeType;
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.HippoNodeType;
+import org.hippoecm.repository.standardworkflow.EditableWorkflow;
 import org.hippoecm.repository.util.JcrUtils;
 import org.onehippo.repository.branch.BranchConstants;
 
@@ -44,6 +45,7 @@ public class DocumentVariant extends Document {
      *
      * @return backing Node
      */
+    @Override
     public Node getNode() {
         return super.getNode();
     }
@@ -81,24 +83,71 @@ public class DocumentVariant extends Document {
     }
 
     /**
+     * <p>Transferable documents allow changing the holder of the draft variant.</p>
+     * <p></p>
+     * <p>Reads the {@link HippoStdNodeType#HIPPOSTD_TRANSFERABLE} property.</p>
+     * <p>This property is <b>only</b> present on the draft variant.</p>
      *
-     * Updates or deletes ( in case of {@code null} the {@link HippoStdNodeType#HIPPOSTD_TRANSFERABLE} property.
-     *
-     * @param transferable {@link Boolean#TRUE}, {@link Boolean#FALSE} or {@code null}
-     * @throws RepositoryException
+     * @return {@code true} if the property is not present and {@link Boolean#TRUE}, otherwise {@code false}
+     * @throws RepositoryException if something went wrong when reading the property
      */
-    public void setTransferable(Boolean transferable) throws RepositoryException {
-        setBooleanProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE, transferable);
+    public boolean isTransferable() throws RepositoryException {
+        return Boolean.TRUE.equals(getBooleanProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE));
     }
 
     /**
-     * Reads the {@link HippoStdNodeType#HIPPOSTD_TRANSFERABLE} property.
+     * <p>Transferable documents allow changing the holder of the draft variant.</p>
+     * <p></p>
+     * <p>Set the {@link HippoStdNodeType#HIPPOSTD_RETAINABLE} property.</p>
+     * <p>This property can <b>only</b> be set on the draft variant.</p>
      *
-     * @return {@link Boolean#TRUE}, {@link Boolean#FALSE} or {@code null} if the property is not present
-     * @throws RepositoryException
+     * @param transferable {@link Boolean}
+     * @throws RepositoryException - if something went wrong when persisting the property or when an attempt is
+     *                             made to set the property on a non-draft variant
      */
-    public Boolean isTransferable() throws RepositoryException {
-        return getBooleanProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE);
+    public void setTransferable(final Boolean transferable) throws RepositoryException {
+        if (HippoStdNodeType.DRAFT.equals(getState())) {
+            setBooleanProperty(HippoStdNodeType.HIPPOSTD_TRANSFERABLE, transferable);
+        } else {
+            final String message = String.format("Setting %s is only allowed on draft variants"
+                    , HippoStdNodeType.HIPPOSTD_RETAINABLE);
+            throw new RepositoryException(message);
+        }
+    }
+
+    /**
+     * <p>Retainable documents have a draft variant that has changes as a result of
+     * {@link EditableWorkflow#saveDraft()}.</p>
+     * <p></p>
+     * <p>Reads the {@link HippoStdNodeType#HIPPOSTD_RETAINABLE} property.</p>
+     * <p>This property is <b>only</b> present on the draft variant.</p>
+     *
+     * @return {@code true} if the property is not present and {@link Boolean#TRUE}, otherwise {@code false}
+     * @throws RepositoryException if something went wrong when reading the property
+     */
+    public boolean isRetainable() throws RepositoryException {
+        return Boolean.TRUE.equals(getBooleanProperty(HippoStdNodeType.HIPPOSTD_RETAINABLE));
+    }
+
+    /**
+     * <p>Retainable documents have a draft variant that has changes as a result of
+     * {@link EditableWorkflow#saveDraft()}.</p>
+     * <p></p>
+     * <p>Set the {@link HippoStdNodeType#HIPPOSTD_RETAINABLE} property.</p>
+     * <p>This property can <b>only</b> be set on the draft variant.</p>
+     *
+     * @param retainable {@link Boolean}
+     * @throws RepositoryException - if something went wrong when persisting the property or when an attempt is
+     *                             made to set the property on a non-draft variant
+     */
+    public void setRetainable(final Boolean retainable) throws RepositoryException {
+        if (HippoStdNodeType.DRAFT.equals(getState())) {
+            setBooleanProperty(HippoStdNodeType.HIPPOSTD_RETAINABLE, retainable);
+        } else {
+            final String message = String.format("Setting %s is only allowed on draft variants"
+                    , HippoStdNodeType.HIPPOSTD_RETAINABLE);
+            throw new RepositoryException(message);
+        }
     }
 
     public void setAvailability(String[] availability) throws RepositoryException {
@@ -172,4 +221,7 @@ public class DocumentVariant extends Document {
     public String getLastModifiedBy() throws RepositoryException {
         return getStringProperty(HippoStdPubWfNodeType.HIPPOSTDPUBWF_LAST_MODIFIED_BY);
     }
+
+
+
 }

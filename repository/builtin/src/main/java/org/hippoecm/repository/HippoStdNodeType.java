@@ -20,6 +20,8 @@ package org.hippoecm.repository;
  * src/main/resources/hippostd.cnd
  */
 
+import org.hippoecm.repository.standardworkflow.EditableWorkflow;
+
 /**
  * This interface defines the node types and item names that are in use by
  * standard extensions of the Hippo repository.
@@ -238,8 +240,15 @@ public interface HippoStdNodeType {
     
     String NEW = "new";
     /**
-     * Boolean property that indicates if a draft is transferable. Transferable indicates that other uses can
-     * take ownership of the document.
+     * <p>A transferable document allows to transfer the holder.</p>
+     * <p>The property should only be present on the draft variant.</p>
      */
     String HIPPOSTD_TRANSFERABLE = "hippostd:transferable";
+
+    /**
+     * <p>A Retainable document has a draft variant with changes as a result of 1 or more
+     * {@link EditableWorkflow#saveDraft()} actions</p>
+     * <p>The property should only be present on a draft variant.</p>
+     */
+    String HIPPOSTD_RETAINABLE = "hippostd:retainable";
 }

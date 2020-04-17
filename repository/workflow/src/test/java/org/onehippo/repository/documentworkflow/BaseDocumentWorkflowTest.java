@@ -50,6 +50,7 @@ import org.onehippo.repository.documentworkflow.action.RetrieveVersionAction;
 import org.onehippo.repository.documentworkflow.action.ScheduleWorkflowAction;
 import org.onehippo.repository.documentworkflow.action.SetHolderAction;
 import org.onehippo.repository.documentworkflow.action.SetPreReintegrationLabelsAction;
+import org.onehippo.repository.documentworkflow.action.SetRetainableAction;
 import org.onehippo.repository.documentworkflow.action.SetTransferableAction;
 import org.onehippo.repository.documentworkflow.action.VersionRestoreToAction;
 import org.onehippo.repository.documentworkflow.action.VersionVariantAction;
@@ -98,7 +99,7 @@ public class BaseDocumentWorkflowTest {
         getMockNode(scxmlNode, "renameDocument", RenameDocumentAction.class.getName());
         getMockNode(scxmlNode, "setHolder", SetHolderAction.class.getName());
         getMockNode(scxmlNode, "setTransferable", SetTransferableAction.class.getName());
-        getMockNode(scxmlNode, "setTransferable", SetTransferableAction.class.getName());
+        getMockNode(scxmlNode, "setRetainable", SetRetainableAction.class.getName());
         getMockNode(scxmlNode, "deleteRequest", DeleteRequestAction.class.getName());
         getMockNode(scxmlNode, "workflowException", WorkflowExceptionAction.class.getName());
         getMockNode(scxmlNode, "version", VersionVariantAction.class.getName());

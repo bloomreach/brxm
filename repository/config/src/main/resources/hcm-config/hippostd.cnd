@@ -31,6 +31,7 @@
 - hippostd:state (string) = 'draft' mandatory copy < 'draft', 'unpublished', 'published', 'stale'
 - hippostd:holder (string) copy
 - hippostd:transferable (boolean)
+- hippostd:retainable (boolean)
 
 [hippostd:document] > hippo:document, hippostd:publishable, hippostd:publishableSummary, hippostd:languageable
 - hippostd:content (string) primary mandatory

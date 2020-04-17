@@ -255,6 +255,8 @@
       <transition event="disposeEditableInstance">
         <!-- remove holder from the draft document -->
         <hippo:setHolder holder="null"/>
+        <hippo:setTransferable transferable="false"/>
+        <hippo:setRetainable retainable="true"/>
         <hippo:result value="preview ? unpublished : published"/>
       </transition>
 
@@ -301,6 +303,7 @@
       <!-- target-less transition to 'save' the current edited draft variant by adding the transferable property -->
       <transition event="saveDraft">
         <hippo:setTransferable transferable="true"/>
+        <hippo:setRetainable retainable="true"/>
         <hippo:result value="draft"/>
       </transition>
 
@@ -315,6 +318,7 @@
            copying its content to the unpublished variant -->
       <transition event="commitEditableInstance">
         <hippo:setHolder holder="null"/>
+        <hippo:setRetainable retainable="false"/>
         <if cond="!!unpublished">
           <!-- if unpublished variant exist only 'commit' changes if there are any -->
           <hippo:isModified/>

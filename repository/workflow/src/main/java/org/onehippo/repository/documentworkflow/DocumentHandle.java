@@ -1,5 +1,5 @@
 /*
- * Copyright 2013-2017 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2013-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 
 package org.onehippo.repository.documentworkflow;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -41,9 +42,9 @@ import static org.hippoecm.repository.HippoStdNodeType.HIPPOSTD_STATE;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_MIXIN_BRANCH_INFO;
 import static org.hippoecm.repository.api.HippoNodeType.HIPPO_PROPERTY_BRANCH_ID;
 import static org.hippoecm.repository.api.HippoNodeType.NT_HIPPO_VERSION_INFO;
+import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
 import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_LABEL_UNPUBLISHED;
-import static org.hippoecm.repository.util.WorkflowUtils.Variant.UNPUBLISHED;
 import static org.onehippo.repository.util.JcrConstants.MIX_VERSIONABLE;
 
 /**
@@ -199,6 +200,50 @@ public class DocumentHandle implements SCXMLWorkflowData {
         return branches;
     }
 
+    /**
+     * <p>A handle is transferable if it contains a draft variant with a transferable property.</p>
+     *
+     * <p>This method is a convenience method to not have the repeat the same logic.</p>
+     *
+     * @return {@code true} if there exists a draft variant that is transferable, otherwise {@code false}
+     * @throws WorkflowException if the property could not be read from the repository
+     */
+    public boolean isTransferable() throws WorkflowException {
+        final Collection<DocumentVariant> documentVariants = documents.values();
+        for (DocumentVariant documentVariant : documentVariants) {
+            try {
+                if (documentVariant.isTransferable()) {
+                    return true;
+                }
+            } catch (RepositoryException e) {
+                throw new WorkflowException("Could not read transferable property from variant");
+            }
+        }
+        return false;
+    }
+
+    /**
+     * <p>A handle is retainable if it contains a draft variant with a retainable property.</p>
+     *
+     * <p>This method is a convenience method to not have the repeat the same logic.</p>
+     *
+     * @return {@code true} if there exists a draft variant that is retainable, otherwise {@code false}
+     * @throws WorkflowException if the property could not be read from the repository
+     */
+    public boolean isRetainable() throws WorkflowException {
+        final Collection<DocumentVariant> documentVariants = documents.values();
+        for (DocumentVariant documentVariant : documentVariants) {
+            try {
+                if (documentVariant.isRetainable()) {
+                    return true;
+                }
+            } catch (RepositoryException e) {
+                throw new WorkflowException("Could not read retainable property from variant");
+            }
+        }
+        return false;
+    }
+
     public boolean isOnlyMaster() {
         return branches.size() == 1 && branches.contains(MASTER_BRANCH_ID);
     }
@@ -236,7 +281,7 @@ public class DocumentHandle implements SCXMLWorkflowData {
      * the last unpublished revision for branch 'x'. Comparison is done on last modified timestamp. If the last modified
      * is the same, no new version is needed. If there is no version history, the current unpublished is not versioned
      */
-    public boolean isCurrentUnpublishedVersioned(final DocumentVariant unpublished) throws WorkflowException {
+    public boolean isCurrentUnpublishedVersioned(final DocumentVariant unpublished) {
         if (unpublished == null) {
             return false;
         }
@@ -313,34 +358,7 @@ public class DocumentHandle implements SCXMLWorkflowData {
             if (!unpublished.isNodeType(MIX_VERSIONABLE)) {
                 return;
             }
-
-            // first check the handle for being of nodetype NT_HIPPO_VERSION_INFO for performance: Otherwise, skip
-            // version history
-            if (unpublished.getParent().isNodeType(NT_HIPPO_VERSION_INFO)) {
-                final VersionManager versionManager = unpublished.getSession().getWorkspace().getVersionManager();
-                try {
-                    final VersionHistory versionHistory = versionManager.getVersionHistory(unpublished.getPath());
-
-                    if (versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED)) {
-                        // master branch present
-                        branches.add(MASTER_BRANCH_ID);
-                    }
-
-                    for (String label : versionHistory.getVersionLabels()) {
-                        if (label.endsWith("-" + UNPUBLISHED.getState())) {
-                            final Version version = versionHistory.getVersionByLabel(label);
-                            final Node frozenNode = version.getFrozenNode();
-                            if (frozenNode.hasProperty(HIPPO_PROPERTY_BRANCH_ID)) {
-                                // found a real branch instead of a label for a non-branch
-                                branches.add(frozenNode.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
-                            }
-                        }
-                    }
-                } catch (RepositoryException e) {
-                    log.info("Could not get version history, most likely the unpublished has mix:versionable but has not yet " +
-                            "been saved.", e);
-                }
-            }
+            initializeRevision(unpublished);
 
         }
 
@@ -349,6 +367,36 @@ public class DocumentHandle implements SCXMLWorkflowData {
                 branches.add(draft.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
             } else {
                 branches.add(MASTER_BRANCH_ID);
+            }
+        }
+    }
+
+    private void initializeRevision(final Node unpublished) throws RepositoryException {
+        // first check the handle for being of nodetype NT_HIPPO_VERSION_INFO for performance: Otherwise, skip
+        // version history
+        if (unpublished.getParent().isNodeType(NT_HIPPO_VERSION_INFO)) {
+            final VersionManager versionManager = unpublished.getSession().getWorkspace().getVersionManager();
+            try {
+                final VersionHistory versionHistory = versionManager.getVersionHistory(unpublished.getPath());
+
+                if (versionHistory.hasVersionLabel(MASTER_BRANCH_LABEL_UNPUBLISHED)) {
+                    // master branch present
+                    branches.add(MASTER_BRANCH_ID);
+                }
+
+                for (String label : versionHistory.getVersionLabels()) {
+                    if (label.endsWith("-" + UNPUBLISHED.getState())) {
+                        final Version version = versionHistory.getVersionByLabel(label);
+                        final Node frozenNode = version.getFrozenNode();
+                        if (frozenNode.hasProperty(HIPPO_PROPERTY_BRANCH_ID)) {
+                            // found a real branch instead of a label for a non-branch
+                            branches.add(frozenNode.getProperty(HIPPO_PROPERTY_BRANCH_ID).getString());
+                        }
+                    }
+                }
+            } catch (RepositoryException e) {
+                log.info("Could not get version history, most likely the unpublished has mix:versionable but has not yet " +
+                        "been saved.", e);
             }
         }
     }

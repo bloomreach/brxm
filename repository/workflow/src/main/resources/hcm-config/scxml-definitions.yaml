@@ -63,6 +63,10 @@ definitions:
           jcr:primaryType: hipposcxml:action
           hipposcxml:classname: org.onehippo.repository.documentworkflow.action.SetTransferableAction
           hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
+        /setRetainable:
+          jcr:primaryType: hipposcxml:action
+          hipposcxml:classname: org.onehippo.repository.documentworkflow.action.SetRetainableAction
+          hipposcxml:namespace: http://www.onehippo.org/cms7/repository/scxml
         /deleteRequest:
           jcr:primaryType: hipposcxml:action
           hipposcxml:classname: org.onehippo.repository.documentworkflow.action.DeleteRequestAction
