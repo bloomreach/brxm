@@ -19,7 +19,7 @@ import { Inject, Injectable } from '@angular/core';
 import { ChildConfig, NavItem } from '@bloomreach/navapp-communication';
 import { NGXLogger } from 'ngx-logger';
 import { BehaviorSubject, Observable, Subject } from 'rxjs';
-import { bufferTime, filter, first, map, mergeMap, publishReplay, refCount,  tap } from 'rxjs/operators';
+import { bufferTime, filter, first, map, mergeMap, publishReplay, refCount, takeUntil, tap } from 'rxjs/operators';
 
 import { CriticalError } from '../../error-handling/models/critical-error';
 import { Connection } from '../../models/connection.model';
@@ -38,6 +38,7 @@ export class ClientAppService {
   private readonly uniqueURLs$ = new BehaviorSubject<string[]>([]);
   private readonly connection$ = new Subject<Connection>();
   private readonly connectedAppWithConfig$ = new Subject<ClientAppWithConfig>();
+  private readonly reset$ = new Subject<void>();
 
   private readonly connectedApps: Map<string, ClientAppWithConfig> = new Map<string, ClientAppWithConfig>();
   private activeAppUrl: string;
@@ -87,6 +88,11 @@ export class ClientAppService {
   }
 
   async init(navItems: NavItem[]): Promise<void> {
+    this.reset$.next();
+    // it forces the microtask caused by this.reset$.next() to be executed which lead to finishing previous async init() invocation
+    // in other words it resets the state to perform another initialization
+    await (new Promise(r => setTimeout(r, 0)));
+
     this.allAppsAreConnectedOrTimeout = false;
 
     const uniqueURLs = this.filterUniqueURLs(navItems);
@@ -97,7 +103,7 @@ export class ClientAppService {
       this.connectedAppWithConfig$,
       uniqueURLs.length,
       this.appSettings.iframesConnectionTimeout * 1.5,
-    ).toPromise();
+    ).pipe(takeUntil(this.reset$)).toPromise();
 
     this.reuseAlreadyConnectedAppsWithoutSitesSupport(uniqueURLs);
 
@@ -137,12 +143,12 @@ export class ClientAppService {
 
     if (connection instanceof FailedConnection) {
       this.logger.warn(`Failed to establish a connection to the iframe '${url}'`, connection.reason);
+    } else {
+      this.logger.debug(`Connection is established to the iframe '${url}'`);
     }
 
     // Fix extra/missing trailing slash issue
     connection.appUrl = url;
-
-    this.logger.debug(`Connection is established to the iframe '${url}'`);
 
     this.connection$.next(connection);
   }
