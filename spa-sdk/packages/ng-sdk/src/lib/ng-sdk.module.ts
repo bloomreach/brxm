@@ -21,6 +21,7 @@ import { NgModule } from '@angular/core';
 import { BrComponentDirective } from './br-component.directive';
 import { BrNodeTypePipe } from './br-node-type.pipe';
 import { BrNodeComponentDirective } from './br-node-component.directive';
+import { BrNodeContainerDirective } from './br-node-container.directive';
 import { BrNodeDirective } from './br-node.directive';
 import { BrPageComponent } from './br-page/br-page.component';
 
@@ -28,6 +29,7 @@ import { BrPageComponent } from './br-page/br-page.component';
   declarations: [
     BrComponentDirective,
     BrNodeComponentDirective,
+    BrNodeContainerDirective,
     BrNodeDirective,
     BrNodeTypePipe,
     BrPageComponent,

@@ -1,0 +1,12 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`BrNodeContainerDirective getMapping should render a mapped container 1`] = `
+<div
+  id="root0"
+>
+  
+  <br-container-test>
+    <a />
+  </br-container-test>
+</div>
+`;
