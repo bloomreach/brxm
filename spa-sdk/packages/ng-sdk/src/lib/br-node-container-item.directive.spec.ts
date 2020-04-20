@@ -1,0 +1,122 @@
+/*
+ * Copyright 2020 Hippo B.V. (http://www.onehippo.com)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+import { mocked } from 'ts-jest/utils';
+import { Component, Input, NgModule } from '@angular/core';
+import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ContainerItem } from '@bloomreach/spa-sdk';
+import { BrNodeContainerItemDirective } from './br-node-container-item.directive';
+import { BrNodeDirective } from './br-node.directive';
+import { BrPageComponent } from './br-page/br-page.component';
+
+@Component({
+  selector: 'br-container-item-test',
+  template: '<a>{{ component.getModels().data }}</a>',
+})
+class ContainerItemTestComponent {}
+
+@NgModule({
+  declarations: [ContainerItemTestComponent],
+  entryComponents: [ContainerItemTestComponent],
+})
+class TestModule {}
+
+@Component({ template: '<ng-container [brNodeContainerItem]="containerItem"></ng-container>' })
+class TestComponent {
+  @Input() containerItem!: ContainerItem;
+}
+
+describe('BrNodeContainerItemDirective', () => {
+  let containerItem: ContainerItem;
+  let node: BrNodeDirective;
+  let page: BrPageComponent;
+  let component: TestComponent;
+  let fixture: ComponentFixture<TestComponent>;
+
+  beforeEach(() => {
+    containerItem = {
+      getType: () => 'something',
+      getMeta: () => ({
+        clear: jest.fn(),
+        render: jest.fn(),
+      }),
+      getModels: jest.fn(() => ({ data: 'something' })),
+      off: jest.fn(),
+      on: jest.fn(),
+    } as unknown as typeof containerItem;
+    node = {} as typeof node;
+    page = {
+      mapping: {},
+      state: { sync: jest.fn() },
+    } as unknown as typeof page;
+  });
+
+  beforeEach(async(() => {
+    TestBed.configureTestingModule({
+      declarations: [ TestComponent, BrNodeContainerItemDirective ],
+      imports: [ TestModule ],
+      providers: [
+        { provide: BrNodeDirective, useFactory: () => node },
+        { provide: BrPageComponent, useFactory: () => page },
+      ],
+    })
+    .compileComponents();
+  }));
+
+  beforeEach(() => {
+    fixture = TestBed.createComponent(TestComponent);
+    component = fixture.componentInstance;
+    component.containerItem = containerItem;
+    page.mapping.something = ContainerItemTestComponent;
+
+    fixture.detectChanges();
+  });
+
+  describe('getMapping', () => {
+    it('should render a mapped container item', () => {
+      expect(fixture.nativeElement).toMatchSnapshot();
+    });
+  });
+
+  describe('ngOnChanges', () => {
+    it('should react on update evants', () => {
+      mocked(containerItem.getModels).mockReturnValue({ data: 'updated' });
+      const [[, onUpdate]] = mocked(containerItem.on).mock.calls;
+      onUpdate({});
+      fixture.detectChanges();
+
+      expect(page.state?.sync).toBeCalled();
+      expect(fixture.nativeElement).toMatchSnapshot();
+    });
+
+    it('should unsubscribe from the old container item', () => {
+      const [[, onUpdate]] = mocked(containerItem.on).mock.calls;
+      component.containerItem = { ...containerItem };
+      fixture.detectChanges();
+
+      expect(containerItem.off).toBeCalledWith('update', onUpdate);
+    });
+  });
+
+  describe('ngOnDestroy', () => {
+    it('should stop reacting on update events after destruction', () => {
+      const [[, onUpdate]] = mocked(containerItem.on).mock.calls;
+      fixture.destroy();
+
+      expect(containerItem.off).toBeCalledWith('update', onUpdate);
+    });
+  });
+});

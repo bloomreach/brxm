@@ -22,6 +22,7 @@ import { BrComponentDirective } from './br-component.directive';
 import { BrNodeTypePipe } from './br-node-type.pipe';
 import { BrNodeComponentDirective } from './br-node-component.directive';
 import { BrNodeContainerDirective } from './br-node-container.directive';
+import { BrNodeContainerItemDirective } from './br-node-container-item.directive';
 import { BrNodeDirective } from './br-node.directive';
 import { BrPageComponent } from './br-page/br-page.component';
 
@@ -30,6 +31,7 @@ import { BrPageComponent } from './br-page/br-page.component';
     BrComponentDirective,
     BrNodeComponentDirective,
     BrNodeContainerDirective,
+    BrNodeContainerItemDirective,
     BrNodeDirective,
     BrNodeTypePipe,
     BrPageComponent,
