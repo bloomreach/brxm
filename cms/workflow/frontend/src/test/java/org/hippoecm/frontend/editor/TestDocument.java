@@ -29,6 +29,7 @@ public class TestDocument implements Document{
     private String draft;
     private boolean transferable;
     private boolean holder;
+    private boolean retainable;
 
     public TestDocument() {
         published = unpublished = draft = revision = StringUtils.EMPTY;
@@ -127,6 +128,11 @@ public class TestDocument implements Document{
     }
 
     @Override
+    public boolean isRetainable() {
+        return retainable;
+    }
+
+    @Override
     public boolean isHolder() {
         return holder;
     }
@@ -140,6 +146,7 @@ public class TestDocument implements Document{
                 ", revision='" + revision + '\'' +
                 ", draft='" + draft + '\'' +
                 ", transferable=" + transferable +
+                ", retainable=" + retainable +
                 ", holder=" + holder +
                 '}';
     }
