@@ -18,15 +18,20 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 
+import { BrComponentDirective } from './br-component.directive';
 import { BrNodeDirective } from './br-node.directive';
 import { BrPageComponent } from './br-page/br-page.component';
 
 @NgModule({
   declarations: [
+    BrComponentDirective,
     BrNodeDirective,
     BrPageComponent,
   ],
-  exports: [ BrPageComponent ],
+  exports: [
+    BrComponentDirective,
+    BrPageComponent,
+  ],
   imports: [ CommonModule, HttpClientModule ],
 })
 export class NgSdkModule { }

@@ -15,32 +15,13 @@
  */
 
 import { Directive, Input, TemplateRef } from '@angular/core';
-import { Component, Page } from '@bloomreach/spa-sdk';
-
-/**
- * The template context holding the current brXM Component.
- */
-export interface BrNodeContext {
-  /**
-   * The implicit value of the context is pointing to the current component.
-   */
-  $implicit: Component;
-
-  /**
-   * The current component.
-   */
-  component: Component;
-
-  /**
-   * The current page.
-   */
-  page: Page;
-}
+import { Component } from '@bloomreach/spa-sdk';
+import { BrComponentContext } from './br-component.directive';
 
 @Directive({
   selector: '[brNode]',
 })
 export class BrNodeDirective {
   @Input('brNode') component!: Component;
-  @Input('brNodeTemplate') template?: TemplateRef<BrNodeContext>;
+  @Input('brNodeTemplate') template?: TemplateRef<BrComponentContext>;
 }

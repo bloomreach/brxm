@@ -31,8 +31,12 @@ import { HttpClient } from '@angular/common/http';
 import { destroy, initialize, isPage, Configuration, Page, PageModel } from '@bloomreach/spa-sdk';
 import { from } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { BrNodeContext } from '../br-node.directive';
+import { BrComponentContext } from '../br-component.directive';
 import { BrProps } from '../br-props.model';
+
+interface BrNodeContext extends BrComponentContext {
+  template?: TemplateRef<BrComponentContext>;
+}
 
 /**
  * The brXM page.
