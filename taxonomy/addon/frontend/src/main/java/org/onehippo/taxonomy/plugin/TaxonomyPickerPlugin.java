@@ -138,7 +138,7 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
             add(new CategoryListView("keys"));
             final ClassificationModel model = new ClassificationModel(dao, getModel());
             final IDialogFactory dialogFactory = () -> {
-                final Locale locale = getPreferredLocaleObject();
+                final Locale locale = getPreferredLocale();
                 return createTaxonomyPickerDialog(model, locale);
             };
             final DialogLink dialogLink = new DialogLink("edit", new ResourceModel("edit"), dialogFactory, getDialogService());
@@ -183,7 +183,7 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
                 final Taxonomy taxonomy = getTaxonomy();
                 if (taxonomy != null && dao != null) {
                     final Classification classification = dao.getClassification(TaxonomyPickerPlugin.this.getModel());
-                    return new CanonicalCategory(taxonomy, classification.getCanonical(), getPreferredLocaleObject());
+                    return new CanonicalCategory(taxonomy, classification.getCanonical(), getPreferredLocale());
                 } else {
                     return null;
                 }
@@ -275,19 +275,8 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
     /**
      * Returns the translation locale of the document if exists.
      * Otherwise, returns the user's UI locale as a fallback.
-     *
-     * @deprecated use {@link #getPreferredLocaleObject()} instead
      */
-    @Deprecated
-    protected String getPreferredLocale() {
-        return getPreferredLocaleObject().getLanguage();
-    }
-
-    /**
-     * Returns the translation locale of the document if exists.
-     * Otherwise, returns the user's UI locale as a fallback.
-     */
-     protected Locale getPreferredLocaleObject() {
+     protected Locale getPreferredLocale() {
         final Node node = getModel().getObject();
         try {
             if (node.isNodeType(HippoTranslationNodeType.NT_TRANSLATED)
@@ -403,7 +392,7 @@ public class TaxonomyPickerPlugin extends RenderPlugin<Node> {
         if (taxonomy != null) {
             final Category category = taxonomy.getCategoryByKey(categoryKey);
             if (category != null) {
-                return Model.of(TaxonomyHelper.getCategoryName(category, getPreferredLocaleObject()));
+                return Model.of(TaxonomyHelper.getCategoryName(category, getPreferredLocale()));
             }
             return new ResourceModel(INVALID_TAXONOMY_CATEGORY_KEY);
         }
