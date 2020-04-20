@@ -10,3 +10,12 @@ exports[`BrNodeContainerDirective getMapping should render a mapped container 1`
   </br-container-test>
 </div>
 `;
+
+exports[`BrNodeContainerDirective getMapping should render box container by default 1`] = `
+<div
+  id="root1"
+>
+  
+  <br-container-box />
+</div>
+`;

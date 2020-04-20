@@ -16,6 +16,7 @@
 
 import { Directive, Type } from '@angular/core';
 import { Container } from '@bloomreach/spa-sdk';
+import { BrContainerBoxComponent } from './br-container-box/br-container-box.component';
 import { BrNodeComponentDirective } from './br-node-component.directive';
 import { BrProps } from './br-props.model';
 
@@ -27,6 +28,10 @@ export class BrNodeContainerDirective extends BrNodeComponentDirective<Container
   protected getMapping(): Type<BrProps> | undefined {
     const type = this.component.getType();
 
-    return type && this.page.mapping[type];
+    if (type && type in this.page.mapping) {
+      return this.page.mapping[type];
+    }
+
+    return BrContainerBoxComponent;
   }
 }

@@ -17,9 +17,15 @@
 import { Component, Input, NgModule } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { Container, TYPE_CONTAINER_BOX } from '@bloomreach/spa-sdk';
+import { BrContainerBoxComponent } from './br-container-box/br-container-box.component';
 import { BrNodeContainerDirective } from './br-node-container.directive';
 import { BrNodeDirective } from './br-node.directive';
 import { BrPageComponent } from './br-page/br-page.component';
+
+Component({
+  selector: 'br-container-box',
+  template: '',
+})(BrContainerBoxComponent);
 
 @Component({
   selector: 'br-container-test',
@@ -28,8 +34,8 @@ import { BrPageComponent } from './br-page/br-page.component';
 class ContainerTestComponent {}
 
 @NgModule({
-  declarations: [ContainerTestComponent],
-  entryComponents: [ContainerTestComponent],
+  declarations: [BrContainerBoxComponent, ContainerTestComponent],
+  entryComponents: [BrContainerBoxComponent, ContainerTestComponent],
 })
 class TestModule {}
 
@@ -78,6 +84,12 @@ describe('BrNodeContainerDirective', () => {
   describe('getMapping', () => {
     it('should render a mapped container', () => {
       page.mapping[TYPE_CONTAINER_BOX] = ContainerTestComponent;
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement).toMatchSnapshot();
+    });
+
+    it('should render box container by default', () => {
       fixture.detectChanges();
 
       expect(fixture.nativeElement).toMatchSnapshot();

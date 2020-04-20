@@ -19,6 +19,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 
 import { BrContainerItemUndefinedComponent } from './br-container-item-undefined/br-container-item-undefined.component';
+import { BrContainerBoxComponent } from './br-container-box/br-container-box.component';
 import { BrComponentDirective } from './br-component.directive';
 import { BrNodeTypePipe } from './br-node-type.pipe';
 import { BrNodeComponentDirective } from './br-node-component.directive';
@@ -30,6 +31,7 @@ import { BrPageComponent } from './br-page/br-page.component';
 @NgModule({
   declarations: [
     BrComponentDirective,
+    BrContainerBoxComponent,
     BrContainerItemUndefinedComponent,
     BrNodeComponentDirective,
     BrNodeContainerDirective,
@@ -39,6 +41,7 @@ import { BrPageComponent } from './br-page/br-page.component';
     BrPageComponent,
   ],
   entryComponents: [
+    BrContainerBoxComponent,
     BrContainerItemUndefinedComponent,
   ],
   exports: [
