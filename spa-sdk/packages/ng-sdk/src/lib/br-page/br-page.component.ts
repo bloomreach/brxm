@@ -14,7 +14,16 @@
  * limitations under the License.
  */
 
-import { AfterContentChecked, Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
+import {
+  AfterContentChecked,
+  ChangeDetectorRef,
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnChanges,
+  OnDestroy,
+  SimpleChanges,
+} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { destroy, initialize, isPage, Configuration, Page, PageModel } from '@bloomreach/spa-sdk';
 import { from } from 'rxjs';
@@ -24,8 +33,9 @@ import { map } from 'rxjs/operators';
  * The brXM page.
  */
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: 'br-page',
-  templateUrl: './br-page.component.html'
+  templateUrl: './br-page.component.html',
 })
 export class BrPageComponent implements AfterContentChecked, OnChanges, OnDestroy {
   /**
@@ -43,7 +53,7 @@ export class BrPageComponent implements AfterContentChecked, OnChanges, OnDestro
   private instance?: Page = undefined;
   private isSynced = false;
 
-  constructor(private httpClient: HttpClient) {
+  constructor(private changeDetectorRef: ChangeDetectorRef, private httpClient: HttpClient) {
     this.request = this.request.bind(this);
   }
 
@@ -93,7 +103,10 @@ export class BrPageComponent implements AfterContentChecked, OnChanges, OnDestro
     }
 
     from(initialize({ httpClient: this.request, ...this.configuration } as Configuration, page))
-      .subscribe(state => { this.state = state; });
+      .subscribe(state => {
+        this.state = state;
+        this.changeDetectorRef.detectChanges();
+      });
   }
 
   private request(...[{ data: body, headers, method, url }]: Parameters<Configuration['httpClient']>) {
