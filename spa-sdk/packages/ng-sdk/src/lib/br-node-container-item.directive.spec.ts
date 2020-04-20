@@ -18,9 +18,17 @@ import { mocked } from 'ts-jest/utils';
 import { Component, Input, NgModule } from '@angular/core';
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { ContainerItem } from '@bloomreach/spa-sdk';
+import {
+  BrContainerItemUndefinedComponent,
+} from './br-container-item-undefined/br-container-item-undefined.component';
 import { BrNodeContainerItemDirective } from './br-node-container-item.directive';
 import { BrNodeDirective } from './br-node.directive';
 import { BrPageComponent } from './br-page/br-page.component';
+
+Component({
+  selector: 'br-container-item-undefined',
+  template: '',
+})(BrContainerItemUndefinedComponent);
 
 @Component({
   selector: 'br-container-item-test',
@@ -29,8 +37,8 @@ import { BrPageComponent } from './br-page/br-page.component';
 class ContainerItemTestComponent {}
 
 @NgModule({
-  declarations: [ContainerItemTestComponent],
-  entryComponents: [ContainerItemTestComponent],
+  declarations: [BrContainerItemUndefinedComponent, ContainerItemTestComponent],
+  entryComponents: [BrContainerItemUndefinedComponent, ContainerItemTestComponent],
 })
 class TestModule {}
 
@@ -48,7 +56,7 @@ describe('BrNodeContainerItemDirective', () => {
 
   beforeEach(() => {
     containerItem = {
-      getType: () => 'something',
+      getType: jest.fn(() => 'something'),
       getMeta: () => ({
         clear: jest.fn(),
         render: jest.fn(),
@@ -87,6 +95,14 @@ describe('BrNodeContainerItemDirective', () => {
 
   describe('getMapping', () => {
     it('should render a mapped container item', () => {
+      expect(fixture.nativeElement).toMatchSnapshot();
+    });
+
+    it('should render undefined container item', () => {
+      mocked(containerItem.getType).mockReturnValueOnce('undefined');
+      component.containerItem = { ...containerItem };
+      fixture.detectChanges();
+
       expect(fixture.nativeElement).toMatchSnapshot();
     });
   });

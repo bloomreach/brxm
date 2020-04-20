@@ -26,6 +26,9 @@ import {
   ViewContainerRef,
 } from '@angular/core';
 import { ContainerItem } from '@bloomreach/spa-sdk';
+import {
+  BrContainerItemUndefinedComponent,
+} from './br-container-item-undefined/br-container-item-undefined.component';
 import { BrNodeComponentDirective } from './br-node-component.directive';
 import { BrNodeDirective } from './br-node.directive';
 import { BrPageComponent } from './br-page/br-page.component';
@@ -74,5 +77,7 @@ implements OnChanges, OnDestroy {
     if (type && type in this.page.mapping) {
       return this.page.mapping[type];
     }
+
+    return BrContainerItemUndefinedComponent;
   }
 }

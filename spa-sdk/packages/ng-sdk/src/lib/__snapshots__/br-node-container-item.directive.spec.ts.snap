@@ -13,9 +13,18 @@ exports[`BrNodeContainerItemDirective getMapping should render a mapped containe
 </div>
 `;
 
-exports[`BrNodeContainerItemDirective ngOnChanges should react on update evants 1`] = `
+exports[`BrNodeContainerItemDirective getMapping should render undefined container item 1`] = `
 <div
   id="root1"
+>
+  
+  <br-container-item-undefined />
+</div>
+`;
+
+exports[`BrNodeContainerItemDirective ngOnChanges should react on update evants 1`] = `
+<div
+  id="root2"
 >
   
   <br-container-item-test>
