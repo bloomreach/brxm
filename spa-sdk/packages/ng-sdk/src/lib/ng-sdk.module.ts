@@ -21,6 +21,7 @@ import { NgModule } from '@angular/core';
 import { BrContainerItemUndefinedComponent } from './br-container-item-undefined/br-container-item-undefined.component';
 import { BrContainerBoxComponent } from './br-container-box/br-container-box.component';
 import { BrComponentDirective } from './br-component.directive';
+import { BrManageContentButtonDirective } from './br-manage-content-button.directive';
 import { BrNodeTypePipe } from './br-node-type.pipe';
 import { BrNodeComponentDirective } from './br-node-component.directive';
 import { BrNodeContainerDirective } from './br-node-container.directive';
@@ -33,6 +34,7 @@ import { BrPageComponent } from './br-page/br-page.component';
     BrComponentDirective,
     BrContainerBoxComponent,
     BrContainerItemUndefinedComponent,
+    BrManageContentButtonDirective,
     BrNodeComponentDirective,
     BrNodeContainerDirective,
     BrNodeContainerItemDirective,
@@ -46,6 +48,7 @@ import { BrPageComponent } from './br-page/br-page.component';
   ],
   exports: [
     BrComponentDirective,
+    BrManageContentButtonDirective,
     BrPageComponent,
   ],
   imports: [ CommonModule, HttpClientModule ],

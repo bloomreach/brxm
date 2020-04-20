@@ -14,8 +14,15 @@
  * limitations under the License.
  */
 
-export * from './lib/ng-sdk.module';
-export * from './lib/br-component.directive';
-export * from './lib/br-manage-content-button.directive';
-export * from './lib/br-page/br-page.component';
-export * from './lib/br-props.model';
+import { Directive, Input } from '@angular/core';
+import { Content } from '@bloomreach/spa-sdk';
+import { BrMetaDirective } from './br-meta.directive';
+
+@Directive({ selector: '[brManageContentButton]' })
+export class BrManageContentButtonDirective extends BrMetaDirective {
+  @Input('brManageContentButton') content!: Content;
+
+  protected get meta() {
+    return this.content.getMeta();
+  }
+}
