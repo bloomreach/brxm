@@ -20,6 +20,7 @@ import { async, getTestBed, ComponentFixture, TestBed } from '@angular/core/test
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
 import { destroy, initialize, isPage, Component, Configuration, Page, PageModel } from '@bloomreach/spa-sdk';
 
+import { BrNodeTypePipe } from '../br-node-type.pipe';
 import { BrPageComponent } from './br-page.component';
 
 jest.mock('@bloomreach/spa-sdk');
@@ -32,7 +33,7 @@ describe('BrPageComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ BrPageComponent ],
+      declarations: [ BrNodeTypePipe, BrPageComponent ],
       imports: [ HttpClientTestingModule ],
       schemas: [ NO_ERRORS_SCHEMA ],
     })

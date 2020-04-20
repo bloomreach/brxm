@@ -17,6 +17,7 @@
     "types": [],
     "lib": [
       "es2018",
+      "es2019.array",
       "dom"
     ]
   },

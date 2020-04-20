@@ -20,12 +20,14 @@ import { NgModule } from '@angular/core';
 
 import { BrComponentDirective } from './br-component.directive';
 import { BrNodeTypePipe } from './br-node-type.pipe';
+import { BrNodeComponentDirective } from './br-node-component.directive';
 import { BrNodeDirective } from './br-node.directive';
 import { BrPageComponent } from './br-page/br-page.component';
 
 @NgModule({
   declarations: [
     BrComponentDirective,
+    BrNodeComponentDirective,
     BrNodeDirective,
     BrNodeTypePipe,
     BrPageComponent,
