@@ -86,6 +86,7 @@ public class AggregationValve extends AbstractBaseOrderableValve {
 
     @Override
     public void invoke(ValveContext context) throws ContainerException {
+
         HstRequestContext requestContext = context.getRequestContext();
         HstContainerURL baseURL = requestContext.getBaseURL();
         String actionWindowReferenceNamespace = baseURL.getActionWindowReferenceNamespace();

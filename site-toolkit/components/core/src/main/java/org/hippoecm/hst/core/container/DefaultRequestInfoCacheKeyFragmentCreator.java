@@ -41,6 +41,14 @@ public class DefaultRequestInfoCacheKeyFragmentCreator implements RequestInfoCac
     private static final Logger log = LoggerFactory.getLogger(DefaultRequestInfoCacheKeyFragmentCreator.class);
 
     private Optional<String> webFilesAntiCacheValue = null;
+    private boolean ignoreAntiCacheValue;
+
+    /**
+     * support suppressing the webFilesAntiCacheValue (for during tests)
+     */
+    public void setIgnoreAntiCacheValue(final boolean ignoreAntiCacheValue) {
+        this.ignoreAntiCacheValue = ignoreAntiCacheValue;
+    }
 
     public Serializable create(final HstRequestContext requestContext) {
         HttpServletRequest request = requestContext.getServletRequest();
@@ -49,7 +57,11 @@ public class DefaultRequestInfoCacheKeyFragmentCreator implements RequestInfoCac
 
         Optional<String> antiCacheValue = webFilesAntiCacheValue;
         if (antiCacheValue == null) {
-            antiCacheValue = populateAntiCacheValue(requestContext);
+            if (ignoreAntiCacheValue) {
+                antiCacheValue = Optional.empty();
+            } else {
+                antiCacheValue = populateAntiCacheValue(requestContext);
+            }
         }
 
         if (antiCacheValue.isPresent()) {
