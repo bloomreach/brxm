@@ -47,16 +47,24 @@ describe('BrPageComponent', () => {
     jest.resetAllMocks();
   });
 
-  describe('ngAfterViewChecked', () => {
+  describe('ngAfterContentChecked', () => {
     it('should sync a page', () => {
       component.state = { sync: jest.fn() } as unknown as Page;
-      component.ngAfterViewChecked();
+      component.ngAfterContentChecked();
 
       expect(component.state.sync).toBeCalled();
     });
 
+    it('should not sync a page twice', () => {
+      component.state = { sync: jest.fn() } as unknown as Page;
+      component.ngAfterContentChecked();
+      component.ngAfterContentChecked();
+
+      expect(component.state.sync).toBeCalledTimes(1);
+    });
+
     it('should not fail if the page is not ready', () => {
-      expect(() => component.ngAfterViewChecked()).not.toThrow();
+      expect(() => component.ngAfterContentChecked()).not.toThrow();
     });
   });
 
@@ -177,10 +185,11 @@ describe('BrPageComponent', () => {
 
   describe('ngOnDestroy', () => {
     it('should destroy a stored page', () => {
-      component.state = {} as Page;
+      const page = {} as Page;
+      component.state = page;
       component.ngOnDestroy();
 
-      expect(destroy).toBeCalledWith(component.state);
+      expect(destroy).toBeCalledWith(page);
     });
 
     it('should not destroy a page if it was not initialized', () => {

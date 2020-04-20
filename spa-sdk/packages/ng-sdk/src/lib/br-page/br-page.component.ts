@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { AfterViewChecked, Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
+import { AfterContentChecked, Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { destroy, initialize, isPage, Configuration, Page, PageModel } from '@bloomreach/spa-sdk';
 import { from } from 'rxjs';
@@ -27,7 +27,7 @@ import { map } from 'rxjs/operators';
   selector: 'br-page',
   templateUrl: './br-page.component.html'
 })
-export class BrPageComponent implements AfterViewChecked, OnChanges, OnDestroy {
+export class BrPageComponent implements AfterContentChecked, OnChanges, OnDestroy {
   /**
    * The configuration of the SPA SDK.
    * @see https://www.npmjs.com/package/@bloomreach/spa-sdk#configuration
@@ -40,14 +40,20 @@ export class BrPageComponent implements AfterViewChecked, OnChanges, OnDestroy {
    */
   @Input() page?: Page | PageModel;
 
-  state?: Page = undefined;
+  private instance?: Page = undefined;
+  private isSynced = false;
 
   constructor(private httpClient: HttpClient) {
     this.request = this.request.bind(this);
   }
 
-  ngAfterViewChecked() {
+  ngAfterContentChecked(): void {
+    if (this.isSynced) {
+      return;
+    }
+
     this.state?.sync();
+    this.isSynced = true;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -63,12 +69,22 @@ export class BrPageComponent implements AfterViewChecked, OnChanges, OnDestroy {
     this.destroy();
   }
 
+  get state(): Page | undefined {
+    return this.instance;
+  }
+
+  set state(value: Page | undefined) {
+    this.instance = value;
+    this.isSynced = false;
+  }
+
   private destroy() {
-    if (!this.state) {
+    if (!this.instance) {
       return;
     }
 
-    destroy(this.state);
+    destroy(this.instance);
+    delete this.instance;
   }
 
   private initialize(force: boolean) {
