@@ -23,11 +23,13 @@ import {
   OnChanges,
   OnDestroy,
   SimpleChanges,
+  Type,
 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { destroy, initialize, isPage, Configuration, Page, PageModel } from '@bloomreach/spa-sdk';
 import { from } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { BrProps } from '../br-props.model';
 
 /**
  * The brXM page.
@@ -43,6 +45,11 @@ export class BrPageComponent implements AfterContentChecked, OnChanges, OnDestro
    * @see https://www.npmjs.com/package/@bloomreach/spa-sdk#configuration
    */
   @Input() configuration!: Omit<Configuration, 'httpClient'>;
+
+  /**
+   * The brXM and Angular components mapping.
+   */
+  @Input() mapping: Record<string, Type<BrProps>> = {};
 
   /**
    * The pre-initialized page instance or prefetched page model.

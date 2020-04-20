@@ -14,6 +14,19 @@
  * limitations under the License.
  */
 
-export * from './lib/ng-sdk.module';
-export * from './lib/br-page/br-page.component';
-export * from './lib/br-props.model';
+import { Component, Page } from '@bloomreach/spa-sdk';
+
+/**
+ * The mapped component properties.
+ */
+export interface BrProps<T extends Component = Component> {
+  /**
+   * The mapped component.
+   */
+  component?: T;
+
+  /**
+   * The current page.
+   */
+  page?: Page;
+}
