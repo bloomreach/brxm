@@ -21,7 +21,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Set;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.jcr.RepositoryException;
 
@@ -50,7 +51,6 @@ import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
 import org.apache.wicket.model.util.ListModel;
 import org.apache.wicket.request.resource.CssResourceReference;
-
 import org.hippoecm.frontend.PluginRequestTarget;
 import org.hippoecm.frontend.attributes.ClassAttribute;
 import org.hippoecm.frontend.editor.ITemplateEngine;
@@ -71,19 +71,18 @@ import org.hippoecm.frontend.service.IEditor;
 import org.hippoecm.frontend.service.render.RenderPlugin;
 import org.hippoecm.frontend.types.IFieldDescriptor;
 import org.hippoecm.frontend.validation.IValidationResult;
-import org.hippoecm.frontend.validation.ModelPath;
-import org.hippoecm.frontend.validation.ModelPathElement;
-import org.hippoecm.frontend.validation.Violation;
-
+import org.hippoecm.frontend.validation.ValidatorUtils;
+import org.hippoecm.frontend.validation.ViolationUtils;
 import org.onehippo.forge.selection.frontend.model.ValueList;
 import org.onehippo.forge.selection.frontend.plugin.sorting.SortHelper;
 import org.onehippo.forge.selection.frontend.provider.IValueListProvider;
 import org.onehippo.forge.selection.frontend.utils.SelectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static org.hippoecm.frontend.validation.ViolationUtils.getFirstFieldViolation;
 
 /**
  * A dynamic multiselect plugin, which is backed by a ValueListProvider service that provides a ValueList object.
@@ -92,11 +91,13 @@ import org.slf4j.LoggerFactory;
  * pairs used to display values and labels in the dropdown.
  * <p/>
  * The plugin configuration must then be provided with a <code>source</code> property, which can either be a valid UUID
- * of a handle or the path to the document based on the JCR root.
+ * of a handle, or the path to the document based on the JCR root.
  */
 public class DynamicMultiSelectPlugin extends RenderPlugin {
-
     private static final Logger log = LoggerFactory.getLogger(DynamicMultiSelectPlugin.class);
+
+    private static final CssResourceReference CSS = new CssResourceReference(DynamicMultiSelectPlugin.class,
+            "DynamicMultiSelectPlugin.css");
 
     private static final String CONFIG_TYPE = "multiselect.type";
     private static final String CONFIG_SELECT_MAX_ROWS = "selectlist.maxrows";
@@ -107,45 +108,37 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
     private static final String CONFIG_VALUELIST_OPTIONS = "valuelist.options";
     private static final String CONFIG_CLUSTER_OPTIONS = "cluster.options";
 
-    private static final CssResourceReference CSS = new CssResourceReference(DynamicMultiSelectPlugin.class,
-            "DynamicMultiSelectPlugin.css");
-
     private final FieldPluginHelper helper;
     private final IEditor.Mode mode;
 
     private JcrPropertyModel propertyModel;
     private IObserver propertyObserver;
 
-    /**
-     * Constructor.
-     */
     public DynamicMultiSelectPlugin(final IPluginContext context, final IPluginConfig config) {
         super(context, config);
 
-        this.mode = IEditor.Mode.fromString(config.getString(ITemplateEngine.MODE, "view"));
-
+        mode = IEditor.Mode.fromString(config.getString(ITemplateEngine.MODE, "view"));
         helper = new FieldPluginHelper(context, config);
 
         subscribe();
 
         // use caption for backwards compatibility; i18n should use field name
         add(new Label("name", helper.getCaptionModel(this)));
+        add(new FieldHint("hint-panel", helper.getHintModel(this)));
 
         // required
         final Label required = new Label("required", "*");
-        if (helper.getField() != null && !helper.getField().getValidators().contains("required")) {
+        if (helper.getField() == null || !ValidatorUtils.hasRequiredValidator(helper.getField().getValidators())) {
             required.setVisible(false);
         }
         add(required);
-
-        add(new FieldHint("hint-panel", helper.getHintModel(this)));
 
         // configured provider
         final IValueListProvider selectedProvider = context.getService(config.getString(IValueListProvider.SERVICE),
                 IValueListProvider.class);
 
         if (selectedProvider == null) {
-            log.warn("DynamicMultiSelectPlugin: value list provider can not be found by name '{}'",
+            log.warn("DynamicMultiSelectPlugin: value list provider cannot be found by name '{}'",
                     config.getString(IValueListProvider.SERVICE));
 
             // dummy markup
@@ -160,30 +153,27 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
         final JcrMultiPropertyValueModel<String> model = new JcrMultiPropertyValueModel<>(
                 getPropertyModel().getItemModel());
 
-        //HIPPLUG-908: Start using cluster.options instead of valuelist.options, maintaining backwards compatibility.
+        // HIPPLUG-908: Start using cluster.options instead of valuelist.options, maintaining backwards compatibility.
         IPluginConfig options = config.getPluginConfig(CONFIG_CLUSTER_OPTIONS);
         if (options == null) {
             options = config.getPluginConfig(CONFIG_VALUELIST_OPTIONS);
             if (options == null) {
                 throw new WicketRuntimeException("Configuration node '" + CONFIG_CLUSTER_OPTIONS
-                        + "' not found in plugin configuration. " + config.toString());
+                        + "' not found in plugin configuration. " + config);
             }
 
             log.warn("The configuration node name '{}' is deprecated. Rename it to '{}'. options={}",
-                    CONFIG_VALUELIST_OPTIONS, CONFIG_CLUSTER_OPTIONS, options.toString());
+                    CONFIG_VALUELIST_OPTIONS, CONFIG_CLUSTER_OPTIONS, options);
         }
 
         final Locale locale = SelectionUtils.getLocale(SelectionUtils.getNode(model));
         final ValueList valueList = selectedProvider.getValueList(options.getString(Config.SOURCE), locale);
 
-        final SortHelper sortHelper = new SortHelper();
-        sortHelper.sort(valueList, options);
+        new SortHelper().sort(valueList, options);
 
-        final List<String> keys = new ArrayList<>(valueList.size());
-        for (final org.onehippo.forge.selection.frontend.model.ListItem item : valueList) {
-            keys.add(item.getKey());
-        }
-        final ListModel<String> choicesModel = new ListModel<>(keys);
+        final ListModel<String> choicesModel = new ListModel<>(valueList.stream()
+                .map(item -> item.getKey())
+                .collect(Collectors.toCollection(ArrayList::new)));
 
         final Fragment modeFragment;
         final String mode = config.getString(ITemplateEngine.MODE);
@@ -202,15 +192,14 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
 
     @Override
     public void render(final PluginRequestTarget target) {
-
         if (isActive() && IEditor.Mode.EDIT == mode) {
+            final IFieldDescriptor field = helper.getField();
             final IModel<IValidationResult> validationModel = helper.getValidationModel();
-            if (validationModel != null && validationModel.getObject() != null) {
-                final boolean valid = isFieldValid(validationModel.getObject());
-                if (!valid) {
-                    target.appendJavaScript("Wicket.$('" + getMarkupId() + "').setAttribute('class', 'invalid');");
-                }
-            }
+
+            getFirstFieldViolation(field, validationModel).ifPresent(violationMessage -> {
+                final String selector = String.format("$('#%s')", getMarkupId());
+                target.appendJavaScript(ViolationUtils.getFieldViolationScript(selector, violationMessage));
+            });
         }
 
         super.render(target);
@@ -223,27 +212,21 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
     /**
      * Checks if a field has any violations attached to it.
      *
-     * @param validation The IValidationResult that contains all violations that occurred for this editor
+     * @param validationResult The IValidationResult that contains all violations that occurred for this editor
      * @return true if there are no violations present or non of the validation belong to the current field
+     *
+     * @deprecated This is handled by calling {@link ViolationUtils#getFirstFieldViolation} and checking if a violation
+     *             is present
      */
-    protected boolean isFieldValid(final IValidationResult validation) {
-        if (!validation.isValid()) {
-            final IFieldDescriptor field = getFieldHelper().getField();
-            if (field == null) {
-                return false;
-            }
-            for (final Violation violation : validation.getViolations()) {
-                final Set<ModelPath> paths = violation.getDependentPaths();
-                for (final ModelPath path : paths) {
-                    if (path.getElements().length > 0) {
-                        final ModelPathElement first = path.getElements()[0];
-                        if (first.getField().equals(field)) {
-                            return false;
-                        }
-                    }
-                }
-            }
-        }
+    @Deprecated
+    protected boolean isFieldValid(final IValidationResult validationResult) {
+        final IFieldDescriptor field = helper.getField();
+        final Optional<ViolationUtils.ViolationMessage> violation = getFirstFieldViolation(field,
+                Model.of(validationResult));
+        return !violation.isPresent() && isContainerValid();
+    }
+
+    private boolean isContainerValid() {
         final IFeedbackMessageFilter filter = new ContainerFeedbackMessageFilter(this);
         return !getSession().getFeedbackMessages().hasMessage(filter);
     }
@@ -260,6 +243,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
         if (this.propertyModel != null) {
             this.propertyModel.detach();
         }
+        helper.detach();
         super.onDetach();
     }
 
@@ -293,9 +277,12 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
                                 new JcrItemModel<>(baseNodeModel.getNode().getProperty(field.getPath()))
                         );
 
-                        final String[] baseOptions = baseModel.getObject().toArray(new String[0]);
-                        final String[] currentOptions = model.getObject().toArray(new String[0]);
-                        final List<Change<String>> changes = LCS.getChangeSet(baseOptions, currentOptions);
+                        final List<String> baseOptions = baseModel.getObject();
+                        final List<String> currentOptions = model.getObject();
+                        final List<Change<String>> changes = LCS.getChangeSet(
+                                baseOptions.toArray(new String[0]),
+                                currentOptions.toArray(new String[0])
+                        );
                         // show view list
                         modeFragment.add(new CompareView("viewitems", changes, valueList));
                     } else {
@@ -318,7 +305,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
     }
 
     protected Fragment populateEditMode(final IPluginConfig config, final JcrMultiPropertyValueModel<String> model,
-                                        final ValueList valueList, final IModel<List<String>> choicesModel) {
+                                        final ValueList valueList, final ListModel<String> choicesModel) {
         final Fragment modeFragment = new Fragment("mode", "edit", this);
 
         final Fragment typeFragment;
@@ -335,7 +322,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
     }
 
     protected Fragment addList(final IPluginConfig config, final JcrMultiPropertyValueModel<String> model,
-                               final ValueList valueList, final IModel<List<String>> choicesModel) {
+                               final ValueList valueList, final ListModel<String> choicesModel) {
         final Fragment typeFragment = new Fragment("type", "edit-select", this);
 
         final ListMultipleChoice<String> multiselect = new ListMultipleChoice<>("multiselect", model, choicesModel,
@@ -353,7 +340,8 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
         try {
             multiselect.setMaxRows(Integer.parseInt(maxRows));
         } catch (final NumberFormatException nfe) {
-            log.warn("The configured value '{}' for " + CONFIG_SELECT_MAX_ROWS + " is not a valid number. Defaulting to 8.", maxRows);
+            log.warn("The configured value '{}' for {} is not a valid number. Defaulting to 8.", maxRows,
+                    CONFIG_SELECT_MAX_ROWS);
             multiselect.setMaxRows(8);
         }
 
@@ -374,7 +362,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
 
 
     protected Fragment addPalette(final IPluginConfig config, final JcrMultiPropertyValueModel<String> model,
-                                  final ValueList valueList, final IModel<List<String>> choicesModel) {
+                                  final ValueList valueList, final ListModel<String> choicesModel) {
         final Fragment typeFragment = new Fragment("type", "edit-palette", this);
 
         // set (configured) max rows
@@ -383,34 +371,32 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
         try {
             rows = Integer.parseInt(maxRows);
         } catch (final NumberFormatException nfe) {
-            log.warn("The configured value '{}' for " + CONFIG_PALETTE_MAX_ROWS + " is not a valid number. Defaulting to 10.", maxRows);
+            log.warn("The configured value '{}' for {} is not a valid number. Defaulting to 10.", maxRows,
+                    CONFIG_PALETTE_MAX_ROWS);
         }
 
         // set (configured) allow order value
         final boolean allowOrder = config.getBoolean(CONFIG_PALETTE_ALLOW_ORDER);
 
-        @SuppressWarnings("unchecked")
-        final Palette palette = new Palette("palette", model, choicesModel,
+        final Palette<String> palette = new Palette<String>("palette", model, choicesModel,
                 new ValueListItemRenderer(valueList), rows, allowOrder) {
 
             // FIXME: workaround for WICKET-2843
             @Override
-            public Collection getModelCollection() {
-                return new ArrayList(super.getModelCollection());
+            public Collection<String> getModelCollection() {
+                return new ArrayList<>(super.getModelCollection());
             }
 
             // trigger setObject on selection changed
             @Override
-            protected Recorder newRecorderComponent() {
-                final Recorder recorder = super.newRecorderComponent();
+            protected Recorder<String> newRecorderComponent() {
+                final Recorder<String> recorder = super.newRecorderComponent();
                 recorder.add(new AjaxFormComponentUpdatingBehavior("change") {
-
                     @Override
                     protected void onUpdate(final AjaxRequestTarget target) {
-                        final Iterator selectedChoices = recorder.getPalette().getSelectedChoices();
+                        final Iterator<String> selectedChoices = recorder.getPalette().getSelectedChoices();
                         model.setObject(Lists.newArrayList(selectedChoices));
                     }
-
                 });
                 return recorder;
             }
@@ -425,7 +411,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
     }
 
     protected Fragment addCheckboxes(final JcrMultiPropertyValueModel<String> model, final ValueList valueList,
-                                     final IModel<List<String>> choicesModel) {
+                                     final ListModel<String> choicesModel) {
         final Fragment typeFragment = new Fragment("type", "edit-checkboxes", this);
 
         final CheckBoxMultipleChoice<String> checkboxes = new CheckBoxMultipleChoice<>("checkboxes", model,
@@ -436,7 +422,6 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
 
         // trigger setObject on selection changed
         checkboxes.add(new AjaxFormChoiceComponentUpdatingBehavior() {
-
             @Override
             protected void onUpdate(final AjaxRequestTarget target) {
             }
@@ -522,7 +507,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
 
             // get the choice labels by the actual values/keys
             for (final Object item : actualValues) {
-                this.models.add(new Model<>(choices.getLabel(item)));
+                models.add(Model.of(choices.getLabel(item)));
             }
         }
 
@@ -572,11 +557,11 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
     /**
      * Link unselect all values from a select list.
      */
-    protected class UnselectLink extends AjaxLink {
+    protected class UnselectLink extends AjaxLink<List<String>> {
 
-        private ListMultipleChoice multiselect;
+        private final ListMultipleChoice multiselect;
 
-        UnselectLink(final String id, final ListMultipleChoice multiselect, final IModel model) {
+        UnselectLink(final String id, final ListMultipleChoice multiselect, final IModel<List<String>> model) {
             super(id, model);
             this.multiselect = multiselect;
         }
@@ -588,18 +573,18 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
             setModelObject(null);
 
             // make the multiselect update to remove selected items
-            target.add(this.multiselect);
+            target.add(multiselect);
         }
     }
 
     /**
      * Link select all values from a select list.
      */
-    protected class SelectLink extends AjaxLink {
+    protected class SelectLink extends AjaxLink<List<String>> {
 
-        private ListMultipleChoice multiselect;
+        private final ListMultipleChoice multiselect;
 
-        SelectLink(final String id, final ListMultipleChoice multiselect, final IModel model) {
+        SelectLink(final String id, final ListMultipleChoice multiselect, final IModel<List<String>> model) {
             super(id, model);
             this.multiselect = multiselect;
         }
@@ -611,7 +596,7 @@ public class DynamicMultiSelectPlugin extends RenderPlugin {
             setModelObject(multiselect.getChoices());
 
             // make the multiselect update to remove selected items
-            target.add(this.multiselect);
+            target.add(multiselect);
         }
     }
 }
