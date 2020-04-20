@@ -23,12 +23,15 @@ import {
   OnChanges,
   OnDestroy,
   SimpleChanges,
+  TemplateRef,
   Type,
+  ViewChild,
 } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { destroy, initialize, isPage, Configuration, Page, PageModel } from '@bloomreach/spa-sdk';
 import { from } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { BrNodeContext } from '../br-node.directive';
 import { BrProps } from '../br-props.model';
 
 /**
@@ -57,11 +60,28 @@ export class BrPageComponent implements AfterContentChecked, OnChanges, OnDestro
    */
   @Input() page?: Page | PageModel;
 
+  @ViewChild('brNode') node!: TemplateRef<BrNodeContext>;
+
   private instance?: Page = undefined;
   private isSynced = false;
 
   constructor(private changeDetectorRef: ChangeDetectorRef, private httpClient: HttpClient) {
     this.request = this.request.bind(this);
+  }
+
+  get context(): BrNodeContext | undefined {
+    const component = this.state?.getComponent();
+
+    if (!component) {
+      return;
+    }
+
+    return {
+      component,
+      $implicit: component,
+      // tslint:disable-next-line: no-non-null-assertion
+      page: this.state!,
+    };
   }
 
   ngAfterContentChecked(): void {

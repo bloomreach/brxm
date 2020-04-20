@@ -14,4 +14,8 @@
   limitations under the License.
   -->
 
-<br-component *ngIf="state"></br-component>
+<ng-template #brNode let-component let-template="template">
+  <ng-container [brNode]="component" [brNodeTemplate]="template" ></ng-container>
+</ng-template>
+
+<ng-template *ngIf="state" [ngTemplateOutlet]="brNode" [ngTemplateOutletContext]="context"></ng-template>

@@ -15,10 +15,10 @@
  */
 
 import { mocked } from 'ts-jest/utils';
-import { SimpleChange, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+import { SimpleChange, NO_ERRORS_SCHEMA } from '@angular/core';
 import { async, getTestBed, ComponentFixture, TestBed } from '@angular/core/testing';
 import { HttpTestingController, HttpClientTestingModule } from '@angular/common/http/testing';
-import { destroy, initialize, isPage, Configuration, Page, PageModel } from '@bloomreach/spa-sdk';
+import { destroy, initialize, isPage, Component, Configuration, Page, PageModel } from '@bloomreach/spa-sdk';
 
 import { BrPageComponent } from './br-page.component';
 
@@ -28,12 +28,13 @@ describe('BrPageComponent', () => {
   let component: BrPageComponent;
   let httpMock: HttpTestingController;
   let fixture: ComponentFixture<BrPageComponent>;
+  let page: jest.Mocked<Page>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
       declarations: [ BrPageComponent ],
       imports: [ HttpClientTestingModule ],
-      schemas: [ CUSTOM_ELEMENTS_SCHEMA ],
+      schemas: [ NO_ERRORS_SCHEMA ],
     })
     .compileComponents();
   }));
@@ -43,20 +44,58 @@ describe('BrPageComponent', () => {
     fixture = TestBed.createComponent(BrPageComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+    page = {
+      getComponent: jest.fn(),
+      sync: jest.fn(),
+    } as unknown as jest.Mocked<Page>;
 
     jest.resetAllMocks();
   });
 
+  describe('context', () => {
+    it('should be undefined when the state is not set', () => {
+      expect(component.context).toBeUndefined();
+    });
+
+    it('should be undefined when there is no root component', () => {
+      component.state = page;
+
+      expect(component.context).toBeUndefined();
+    });
+
+    it('should be undefined when there is no root component', () => {
+      component.state = page;
+
+      expect(component.context).toBeUndefined();
+    });
+
+    it('should contain a root component', () => {
+      const root = {} as Component;
+      page.getComponent.mockReturnValue(root);
+      component.state = page;
+
+      expect(component.context?.$implicit).toBe(root);
+      expect(component.context?.component).toBe(root);
+    });
+
+    it('should contain a page object', () => {
+      page.getComponent.mockReturnValue({} as Component);
+      component.state = page;
+
+      expect(component.context?.page).toBe(page);
+    });
+  });
+
   describe('ngAfterContentChecked', () => {
     it('should sync a page', () => {
-      component.state = { sync: jest.fn() } as unknown as Page;
+      component.state = page;
       component.ngAfterContentChecked();
 
       expect(component.state.sync).toBeCalled();
     });
 
     it('should not sync a page twice', () => {
-      component.state = { sync: jest.fn() } as unknown as Page;
+      component.state = page;
       component.ngAfterContentChecked();
       component.ngAfterContentChecked();
 
@@ -72,7 +111,7 @@ describe('BrPageComponent', () => {
     it('should use a page instance from inputs when configuraton is changed', () => {
       mocked(isPage).mockReturnValueOnce(true);
       component.configuration = {} as Configuration;
-      component.page = {} as Page;
+      component.page = page;
       component.ngOnChanges({
         configuration: new SimpleChange(undefined, component.configuration, true),
         page: new SimpleChange(undefined, component.page, true),
@@ -87,7 +126,7 @@ describe('BrPageComponent', () => {
 
       mocked(isPage).mockReturnValueOnce(true);
       component.configuration = {} as Configuration;
-      component.page = {} as Page;
+      component.page = page;
       component.state = previousPage;
       component.ngOnChanges({
         configuration: new SimpleChange({}, component.configuration, false),
@@ -98,9 +137,9 @@ describe('BrPageComponent', () => {
     });
 
     it('should initialize a new page when a page input was not changed', () => {
-      mocked(initialize).mockResolvedValueOnce({} as Page);
+      mocked(initialize).mockResolvedValueOnce(page);
       component.configuration = {} as Configuration;
-      component.page = {} as Page;
+      component.page = page
       component.ngOnChanges({
         configuration: new SimpleChange({}, component.configuration, false),
       });
@@ -110,7 +149,7 @@ describe('BrPageComponent', () => {
 
     it('should use a page instance from inputs when configuration was not changed', () => {
       mocked(isPage).mockReturnValueOnce(true);
-      component.page = {} as Page;
+      component.page = page;
       component.ngOnChanges({
         page: new SimpleChange(undefined, component.page, true),
       });
@@ -120,8 +159,6 @@ describe('BrPageComponent', () => {
     });
 
     it('should initialize a page from the configuration', async () => {
-      const page = {} as Page;
-
       mocked(initialize).mockResolvedValueOnce(page);
       component.configuration = { cmsBaseUrl: 'something' } as Configuration;
       component.ngOnChanges({
@@ -141,8 +178,6 @@ describe('BrPageComponent', () => {
     });
 
     it('should initialize a page from the page model', async () => {
-      const page = {} as Page;
-
       mocked(initialize).mockResolvedValueOnce(page);
       component.configuration = { cmsBaseUrl: 'something' } as Configuration;
       component.page = {} as PageModel;
@@ -158,7 +193,7 @@ describe('BrPageComponent', () => {
     });
 
     it('should pass a compatible http client', () => {
-      mocked(initialize).mockResolvedValueOnce({} as Page);
+      mocked(initialize).mockResolvedValueOnce(page);
       component.ngOnChanges({
         configuration: new SimpleChange(undefined, {}, true),
       });
@@ -185,7 +220,6 @@ describe('BrPageComponent', () => {
 
   describe('ngOnDestroy', () => {
     it('should destroy a stored page', () => {
-      const page = {} as Page;
       component.state = page;
       component.ngOnDestroy();
 
