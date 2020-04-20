@@ -19,6 +19,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 
 import { BrComponentDirective } from './br-component.directive';
+import { BrNodeTypePipe } from './br-node-type.pipe';
 import { BrNodeDirective } from './br-node.directive';
 import { BrPageComponent } from './br-page/br-page.component';
 
@@ -26,6 +27,7 @@ import { BrPageComponent } from './br-page/br-page.component';
   declarations: [
     BrComponentDirective,
     BrNodeDirective,
+    BrNodeTypePipe,
     BrPageComponent,
   ],
   exports: [
