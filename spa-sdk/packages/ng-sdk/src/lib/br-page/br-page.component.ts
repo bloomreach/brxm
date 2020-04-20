@@ -60,13 +60,18 @@ export class BrPageComponent implements AfterContentChecked, OnChanges, OnDestro
     if (changes.configuration?.currentValue !== changes.configuration?.previousValue
       || changes.page?.currentValue !== changes.page?.previousValue
     ) {
-      this.destroy();
+      this.ngOnDestroy();
       this.initialize(changes.page?.currentValue === changes.page?.previousValue);
     }
   }
 
   ngOnDestroy() {
-    this.destroy();
+    if (!this.instance) {
+      return;
+    }
+
+    destroy(this.instance);
+    delete this.instance;
   }
 
   get state(): Page | undefined {
@@ -78,16 +83,7 @@ export class BrPageComponent implements AfterContentChecked, OnChanges, OnDestro
     this.isSynced = false;
   }
 
-  private destroy() {
-    if (!this.instance) {
-      return;
-    }
-
-    destroy(this.instance);
-    delete this.instance;
-  }
-
-  private initialize(force: boolean) {
+  private initialize(force: boolean): void {
     const page = force ? undefined : this.page;
 
     if (isPage(page)) {
