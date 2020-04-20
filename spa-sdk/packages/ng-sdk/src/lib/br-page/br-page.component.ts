@@ -19,6 +19,7 @@ import {
   ChangeDetectorRef,
   ChangeDetectionStrategy,
   Component,
+  ContentChild,
   Input,
   OnChanges,
   OnDestroy,
@@ -65,6 +66,7 @@ export class BrPageComponent implements AfterContentChecked, OnChanges, OnDestro
   @Input() page?: Page | PageModel;
 
   @ViewChild('brNode') node!: TemplateRef<BrNodeContext>;
+  @ContentChild(TemplateRef) private template?: TemplateRef<BrComponentContext>;
 
   private instance?: Page = undefined;
   private isSynced = false;
@@ -85,6 +87,7 @@ export class BrPageComponent implements AfterContentChecked, OnChanges, OnDestro
       $implicit: component,
       // tslint:disable-next-line: no-non-null-assertion
       page: this.state!,
+      template: this.template,
     };
   }
 
