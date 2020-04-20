@@ -17,5 +17,6 @@
 export * from './lib/ng-sdk.module';
 export * from './lib/br-component.directive';
 export * from './lib/br-manage-content-button.directive';
+export * from './lib/br-manage-menu-button.directive';
 export * from './lib/br-page/br-page.component';
 export * from './lib/br-props.model';

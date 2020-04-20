@@ -22,6 +22,7 @@ import { BrContainerItemUndefinedComponent } from './br-container-item-undefined
 import { BrContainerBoxComponent } from './br-container-box/br-container-box.component';
 import { BrComponentDirective } from './br-component.directive';
 import { BrManageContentButtonDirective } from './br-manage-content-button.directive';
+import { BrManageMenuButtonDirective } from './br-manage-menu-button.directive';
 import { BrNodeTypePipe } from './br-node-type.pipe';
 import { BrNodeComponentDirective } from './br-node-component.directive';
 import { BrNodeContainerDirective } from './br-node-container.directive';
@@ -35,6 +36,7 @@ import { BrPageComponent } from './br-page/br-page.component';
     BrContainerBoxComponent,
     BrContainerItemUndefinedComponent,
     BrManageContentButtonDirective,
+    BrManageMenuButtonDirective,
     BrNodeComponentDirective,
     BrNodeContainerDirective,
     BrNodeContainerItemDirective,
@@ -49,6 +51,7 @@ import { BrPageComponent } from './br-page/br-page.component';
   exports: [
     BrComponentDirective,
     BrManageContentButtonDirective,
+    BrManageMenuButtonDirective,
     BrPageComponent,
   ],
   imports: [ CommonModule, HttpClientModule ],
