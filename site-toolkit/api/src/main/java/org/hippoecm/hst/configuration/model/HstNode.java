@@ -38,7 +38,7 @@ public interface HstNode {
      *     resolved, then an {@link IllegalStateException} is thrown
      * </p>
      * @return the substitutedName where property place holders are resolved.
-     * @throws RuntimeException If a placeholder cannot be resolved or if the substitude name contains a '.'
+     * @throws RuntimeException If a placeholder cannot be resolved or if the substituted name contains a '.'
      */
     String getSubstitutedName();
 

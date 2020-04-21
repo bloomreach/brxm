@@ -1274,7 +1274,8 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
                     "/hst:hst/hst:hosts/testgroup/test/unit/www/hst:root/${mountname}");
 
             session.save();
-            invalidator.eventPaths("/hst:hst/hst:hosts/testgroup/${toplevel}", "/hst:hst/hst:hosts/testgroup/test");
+            invalidator.eventPaths("/hst:hst/hst:hosts/testgroup/test/unit/www/hst:root/custompipeline",
+                    "/hst:hst/hst:hosts/testgroup/test/unit/www/hst:root/${mountname}");
 
             VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
 

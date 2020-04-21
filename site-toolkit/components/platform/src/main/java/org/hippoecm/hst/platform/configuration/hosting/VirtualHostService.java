@@ -309,14 +309,14 @@ public class VirtualHostService implements MutableVirtualHost {
             linkUrlPrefix = null;
         }
 
-        String fullName = virtualHostNode.getValueProvider().getName();
-        String[] nameSegments = fullName.split("[.]");
+        final String substitutedName = virtualHostNode.getSubstitutedName();
+        final String[] nameSegments = substitutedName.split("[.]");
 
         VirtualHostService attachPortMountToHost = this;
 
         if (nameSegments.length > 1) {
-            if (!InetAddresses.isInetAddress(fullName)) {
-                throw new ModelLoadingException("Node hst:virtualhost is not allowed to be '" + fullName +
+            if (!InetAddresses.isInetAddress(substitutedName)) {
+                throw new ModelLoadingException("Node hst:virtualhost is not allowed to be '" + substitutedName +
                         "'. Only ip-addresses are allowed to have a '.' in the nodename. Re-configure the host to a hierarchical structure");
             }
 
@@ -338,7 +338,7 @@ public class VirtualHostService implements MutableVirtualHost {
                 depth--;
             }
         } else {
-            this.name = virtualHostNode.getSubstitutedName();
+            this.name = substitutedName.toLowerCase();
         }
 
         hostName = StringPool.get(buildHostName());
