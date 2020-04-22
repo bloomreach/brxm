@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
@@ -27,9 +28,11 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 
 import org.apache.commons.lang3.StringUtils;
+import org.hippoecm.hst.core.util.PropertyParser;
 import org.hippoecm.hst.platform.configuration.model.ConfigurationNodesLoadingException;
 import org.hippoecm.hst.configuration.model.HstNode;
 import org.hippoecm.hst.core.internal.StringPool;
+import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.provider.ValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProvider;
 import org.hippoecm.hst.provider.jcr.JCRValueProviderImpl;
@@ -129,6 +132,26 @@ public class HstNodeImpl implements HstNode {
     @Override
     public String getName() {
         return provider.getName();
+    }
+
+    @Override
+    public String getSubstitutedName() {
+        final PropertyParser pp = new PropertyParser(System.getProperties());
+        final Object substitutedName =  pp.resolveProperty("substitutedName", provider.getName());
+        if (substitutedName == null) {
+            throw new ModelLoadingException(String.format("Could not replace placeholder '%s' because no such system " +
+                    "property.", provider.getName()), true);
+        }
+        if (substitutedName.equals(provider.getName())) {
+            // just return as is, might be a node name equal to for example 127.0.0.1 (and has not been substituted)
+            return String.valueOf(substitutedName);
+        }
+
+        String name = String.valueOf(substitutedName);
+        if (name.contains(".")) {
+            throw new ModelLoadingException(String.format("Invalid substituted name '%s' for '%s'", name, provider.getName()));
+        }
+        return name;
     }
     
     /* (non-Javadoc)

@@ -1,5 +1,5 @@
 /*
- *  Copyright 2019 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2019-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,21 +16,16 @@
 package org.hippoecm.hst.pagecomposer.jaxrs.cxf;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
-import javax.annotation.security.PermitAll;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.security.Privilege;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.message.Exchange;
 import org.hippoecm.hst.container.RequestContextProvider;
 import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.ChannelAgnostic;
-import org.hippoecm.hst.pagecomposer.jaxrs.api.annotation.PrivilegesAllowed;
 import org.onehippo.cms7.services.hst.Channel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

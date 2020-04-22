@@ -29,11 +29,11 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import com.google.common.net.InetAddresses;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.hippoecm.hst.configuration.HstNodeTypes;
-import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
-import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
 import org.hippoecm.hst.configuration.hosting.Mount;
 import org.hippoecm.hst.configuration.hosting.MutablePortMount;
 import org.hippoecm.hst.configuration.hosting.MutableVirtualHost;
@@ -41,21 +41,21 @@ import org.hippoecm.hst.configuration.hosting.PortMount;
 import org.hippoecm.hst.configuration.hosting.VirtualHost;
 import org.hippoecm.hst.configuration.hosting.VirtualHosts;
 import org.hippoecm.hst.configuration.model.HstNode;
-import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.core.internal.StringPool;
+import org.hippoecm.hst.platform.configuration.cache.HstConfigurationLoadingCache;
+import org.hippoecm.hst.platform.configuration.cache.HstNodeLoadingCache;
+import org.hippoecm.hst.platform.configuration.model.ModelLoadingException;
 import org.hippoecm.hst.util.HstRequestUtils;
 import org.hippoecm.hst.util.HttpHeaderUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.net.InetAddresses;
-
 import static java.util.Collections.unmodifiableList;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.isSupportedSchemeNotMatchingResponseCode;
 import static org.hippoecm.hst.configuration.ConfigurationUtils.supportedSchemeNotMatchingResponseCodesAsString;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_HST_LINK_URL_PREFIX;
-import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_RESPONSE_HEADERS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_PAGE_MODEL_API;
+import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_RESPONSE_HEADERS;
 import static org.hippoecm.hst.configuration.HstNodeTypes.VIRTUALHOST_ALLOWED_ORIGINS;
 
 public class VirtualHostService implements MutableVirtualHost {
@@ -309,14 +309,14 @@ public class VirtualHostService implements MutableVirtualHost {
             linkUrlPrefix = null;
         }
 
-        String fullName = virtualHostNode.getValueProvider().getName();
-        String[] nameSegments = fullName.split("[.]");
+        final String substitutedName = virtualHostNode.getSubstitutedName();
+        final String[] nameSegments = substitutedName.split("[.]");
 
         VirtualHostService attachPortMountToHost = this;
 
         if (nameSegments.length > 1) {
-            if (!InetAddresses.isInetAddress(fullName)) {
-                throw new ModelLoadingException("Node hst:virtualhost is not allowed to be '" + fullName +
+            if (!InetAddresses.isInetAddress(substitutedName)) {
+                throw new ModelLoadingException("Node hst:virtualhost is not allowed to be '" + substitutedName +
                         "'. Only ip-addresses are allowed to have a '.' in the nodename. Re-configure the host to a hierarchical structure");
             }
 
@@ -338,7 +338,7 @@ public class VirtualHostService implements MutableVirtualHost {
                 depth--;
             }
         } else {
-            this.name = virtualHostNode.getValueProvider().getName().toLowerCase();
+            this.name = substitutedName.toLowerCase();
         }
 
         hostName = StringPool.get(buildHostName());

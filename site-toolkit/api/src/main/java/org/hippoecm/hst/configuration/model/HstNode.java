@@ -31,6 +31,18 @@ public interface HstNode {
     String getName();
 
     /**
+     * <p>
+     *     For example if the HstNode has a {@link #getName()} '${environment}', or 'foo-${environment}', then if there is a system
+     *     property 'environment', the '${environment}' will be replaced with the value of the system property. If
+     *     the HstNode has a {@link #getName()} with one or more placeholders, then if one of the placeholder cannot be
+     *     resolved, then an {@link IllegalStateException} is thrown
+     * </p>
+     * @return the substitutedName where property place holders are resolved.
+     * @throws RuntimeException If a placeholder cannot be resolved or if the substituted name contains a '.'
+     */
+    String getSubstitutedName();
+
+    /**
      * @return the value provider for this {@link HstNode}
      */
     ValueProvider getValueProvider();

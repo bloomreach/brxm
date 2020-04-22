@@ -357,13 +357,20 @@ public class VirtualHostsService implements MutableVirtualHosts {
                             hostGroupNode.getValueProvider().getName() , defaultPort, hstNodeLoadingCache, hstConfigurationLoadingCache);
                     rootVirtualHosts.put(virtualHost.getName(), virtualHost);
                 } catch (ModelLoadingException e) {
-                    log.error("Unable to add virtualhost with name '"+virtualHostNode.getValueProvider().getName()+"'. Fix the configuration. This virtualhost will be skipped.", e);
+                    if (e.isMissingEnvironmentVariable()) {
+                        log.info("Skip virtualhost with name '{}'because missing environment variable.",
+                                virtualHostNode.getValueProvider().getName(), e);
+                    } else {
+                        log.error("Unable to add virtualhost with name '{}'. Fix the configuration. This virtualhost will be skipped.",
+                                virtualHostNode.getValueProvider().getName(), e);
+                    }
                     // continue to next virtualHost
                 } catch (DuplicateKeyNotAllowedHashMap.DuplicateKeyException e) {
                     log.error("VirtualHostMap is not allowed to have duplicate hostnames. This problem might also result from having two hosts configured"
                             + "something like 'preview.mycompany.org' and 'www.mycompany.org'. This results in 'mycompany.org' being a duplicate in a hierarchical presentation which the model makes from hosts splitted by dots. "
                             + "In this case, make sure to configure them hierarchically as org -> mycompany -> (preview , www)", e);
                 } catch (IllegalArgumentException e) {
+                    // do not use virtualHostNode.getSubstitutedName() since that one can throw an illegal state exc
                     log.error("Exception while trying to load virtual host '{}'", virtualHostNode.getName(), e);
                }
             }

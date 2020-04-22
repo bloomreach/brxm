@@ -18,7 +18,7 @@ package org.hippoecm.hst.pagemodelapi.v10;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.function.Predicate;
+import java.nio.charset.StandardCharsets;
 
 import javax.jcr.Session;
 
@@ -28,8 +28,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
 import org.hippoecm.hst.pagemodelapi.common.AbstractPageModelApiITCases;
+import org.hippoecm.hst.pagemodelapi.common.context.ApiVersionProvider;
 import org.hippoecm.hst.platform.configuration.hosting.MountService;
 import org.json.JSONException;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.onehippo.testutils.log4j.Log4jInterceptor;
@@ -38,6 +40,7 @@ import org.skyscreamer.jsonassert.JSONCompareMode;
 
 import static org.hippoecm.hst.configuration.HstNodeTypes.GENERAL_PROPERTY_HST_LINK_URL_PREFIX;
 import static org.hippoecm.hst.configuration.HstNodeTypes.VIRTUALHOST_PROPERTY_CDN_HOST;
+import static org.hippoecm.hst.pagemodelapi.common.context.ApiVersionProvider.ApiVersion.V10;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -61,10 +64,20 @@ import static org.junit.Assert.assertNull;
 public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases {
 
     @Before
+    @Override
     public void setUp() throws Exception {
+        ApiVersionProvider.set(V10);
         super.setUp();
         DeterministicJsonPointerFactory.reset();
     }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+        ApiVersionProvider.clear();
+    }
+
 
     @Test
     public void homepage_api_compatibility_v10_assertion() throws Exception {
@@ -144,7 +157,7 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
     }
 
     @Test
-    public void dynamic_contentblocks_api_compatibility_v10_assertion() throws Exception {
+    public void dynamic_content_api_compatibility_v10_assertion() throws Exception {
 
         String actual = getActualJson("/spa/resourceapi/genericdetail/dynamiccontent", "1.0");
 
@@ -351,7 +364,7 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
 
 
     private void assertions(final String actual, final InputStream expectedStream) throws IOException, JSONException {
-        String expected = IOUtils.toString(expectedStream, "UTF-8");
+        String expected = IOUtils.toString(expectedStream, StandardCharsets.UTF_8);
         JSONAssert.assertEquals(expected, actual, JSONCompareMode.STRICT_ORDER);
         JsonNode jsonNodeRoot = new ObjectMapper().readTree(expected);
         JsonValidationUtil.validateReferences(jsonNodeRoot, jsonNodeRoot);

@@ -20,6 +20,7 @@ import javax.jcr.RepositoryException;
 
 import org.hippoecm.hst.content.beans.standard.HippoBean;
 import org.hippoecm.hst.core.component.GenericHstComponent;
+import org.hippoecm.hst.core.component.HstComponentException;
 import org.hippoecm.hst.core.component.HstRequest;
 import org.hippoecm.hst.core.component.HstResponse;
 import org.hippoecm.hst.core.linking.HstLink;
@@ -27,6 +28,7 @@ import org.hippoecm.hst.core.linking.HstLinkCreator;
 import org.hippoecm.hst.core.parameters.Parameter;
 import org.hippoecm.hst.core.parameters.ParametersInfo;
 import org.hippoecm.hst.core.request.HstRequestContext;
+import org.hippoecm.hst.pagemodelapi.common.context.ApiVersionProvider;
 import org.hippoecm.hst.platform.linking.DefaultHstLinkCreator;
 import org.hippoecm.hst.platform.linking.HstLinkImpl;
 
@@ -74,6 +76,18 @@ public class GenericDetailComponent extends GenericHstComponent {
         //    },
         request.setModel("notFoundLink", notFoundLink);
 
+        // include an object of type IdentifiableLinkableMetadataBaseModel to make sure that even if 'links' or
+        // 'meta' is null, the fields are still present in the PMA output
+        final ApiVersionProvider.ApiVersion apiVersion = ApiVersionProvider.get();
+        switch (apiVersion) {
+            case V09:
+                    request.setModel("testLinkAndMetaNull", new org.hippoecm.hst.pagemodelapi.v09.core.model.IdentifiableLinkableMetadataBaseModel("some-id"));
+                    break;
+            case V10:
+                request.setModel("testLinkAndMetaNull", new org.hippoecm.hst.pagemodelapi.v10.core.model.IdentifiableLinkableMetadataBaseModel("some-id"));
+                break;
+        }
+
         try {
             final Node sameChannelNews = requestContext.getSession().getNode("/unittestcontent/documents/unittestproject/News/News1");
             final Node otherChannelNews = requestContext.getSession().getNode("/unittestcontent/documents/unittestsubproject/News/2008/SubNews1");
@@ -86,11 +100,9 @@ public class GenericDetailComponent extends GenericHstComponent {
 
             request.setModel("otherChannelNewsLink", otherChannelNewsLink);
 
-
         } catch (RepositoryException e) {
-            e.printStackTrace();
+            throw new HstComponentException(e);
         }
-
 
     }
 
@@ -105,4 +117,5 @@ public class GenericDetailComponent extends GenericHstComponent {
         @Parameter(name =" test", defaultValue = "1")
         long getValue();
     }
+
 }

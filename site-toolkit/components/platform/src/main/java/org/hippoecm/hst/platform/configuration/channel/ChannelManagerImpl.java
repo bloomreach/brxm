@@ -21,7 +21,9 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.jcr.ItemNotFoundException;
@@ -487,8 +489,58 @@ public class ChannelManagerImpl implements ChannelManager {
         if (parent.hasNode(nodeName)) {
             return parent.getNode(nodeName);
         } else {
+            final Set<String> substitutedNodeNames = findSubstitutedNodeNames(nodeName);
+            for (String substitutedNodeName : substitutedNodeNames) {
+                if (parent.hasNode(substitutedNodeName)) {
+                    log.info("Found the substituted child node '{}' for '{}'", substitutedNodeName, nodeName);
+                    return parent.getNode(substitutedNodeName);
+                }
+            }
+
             return parent.addNode(nodeName, nodeType);
         }
+    }
+
+    /**
+     * <p>
+     *   A 'host' name can be substituted by a system property. For example a host configuration like this:
+     *   <pre>
+     *   + hst:host
+     *     + brc
+     *       + cloud
+     *         + bloomreach
+     *           + ${brc_stack}
+     *             + ${brc_environment}
+     *    </pre>
+     *    might be bootstrapped, but runtime ${brc_stack} is for example replaced by 'customer' and ${brc_environment}
+     *    by 'prod'. Therefor when the new channel must be added for host 'prod.customer.bloomreach.cloud', then it
+     *    must be added below 'prod.customer.${brc_stack}.${brc_environment}' in JCR.
+     * </p>
+     * <p>
+     *     This method returns for {@code hostNameSegment}, for example 'customer', the value '${brc_stack}' IF there
+     *     was a system property 'brc_stack' with value 'customer'.
+     *
+     *     Since there can be multiple system properties with the value 'customer', we will return all those system
+     *     property names
+     * </p>
+     *
+     */
+    private static Set<String> findSubstitutedNodeNames(final String hostNameSegment) {
+        final Properties properties = System.getProperties();
+
+        // loop through all String system properties, then if the value of the system property is equal to
+        // 'hostNameSegment', return the system property name prepended with '${' and appended with '}' : this *can*
+        // be a present host node, see #getOrAddNode
+        return properties.stringPropertyNames().stream().filter(propName -> {
+            String value = properties.getProperty(propName);
+            if (hostNameSegment.equals(value)) {
+                // found a replaced host nodename like ${env} by a system property 'env'. The nodename was before the
+                // substition thus ${value}.
+                return true;
+            }
+            return false;
+        }).map(propName -> "${" + propName + "}").collect(Collectors.toSet());
+
     }
 
     static Node copyNodes(Node source, Node parent, String name) throws RepositoryException {
