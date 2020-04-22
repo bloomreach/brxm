@@ -18,11 +18,11 @@ package org.hippoecm.frontend.editor;
 import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hippoecm.frontend.service.IEditor;
 
 /**
  * Model for the {@link HippostdPublishableEditor} view.
- *
  */
 public class HippoStdPublishableEditorModel {
 
@@ -30,25 +30,21 @@ public class HippoStdPublishableEditorModel {
     private String base;
     private String editor;
 
-
-
     HippoStdPublishableEditorModel() {
         this.mode = IEditor.Mode.VIEW;
         this.base = StringUtils.EMPTY;
         this.editor = StringUtils.EMPTY;
     }
 
-
-
-    public void setMode(IEditor.Mode mode){
+    public void setMode(final IEditor.Mode mode) {
         this.mode = mode;
     }
 
-    public void setBase(String identifier){
+    public void setBase(final String identifier) {
         this.base = identifier;
     }
 
-    public void setEditor(String identifier){
+    public void setEditor(final String identifier) {
         this.editor = identifier;
     }
 
@@ -64,15 +60,16 @@ public class HippoStdPublishableEditorModel {
         return editor;
     }
 
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
+
         if (!(o instanceof HippoStdPublishableEditorModel)) {
             return false;
         }
+
         final HippoStdPublishableEditorModel that = (HippoStdPublishableEditorModel) o;
         return mode == that.mode &&
                 Objects.equals(base, that.base) &&
@@ -84,13 +81,12 @@ public class HippoStdPublishableEditorModel {
         return Objects.hash(mode, base, editor);
     }
 
-
     @Override
     public String toString() {
-        return "HippoStdPublishableEditorModel{" +
-                "mode=" + mode +
-                ", base='" + base + '\'' +
-                ", editor='" + editor + '\'' +
-                '}';
+        return new ToStringBuilder(this)
+                .append("mode", mode)
+                .append("base", base)
+                .append("editor", editor)
+                .build();
     }
 }
