@@ -126,7 +126,7 @@ public class IndexRepairer {
                     // use uuid for minimal memory consumption
                     final UUID uuid = UUID.fromString(d.get(FieldNames.UUID));
                     if (!allEntries.add(uuid)) {
-                        log.warn("Found duplicate index entry for '{}'", uuid);
+                        log.warn("Fixing duplicate index entry for '{}'", uuid);
                         duplicateEntries.add(uuid);
                     }
                 }
@@ -145,9 +145,9 @@ public class IndexRepairer {
                         log.info("Not re-indexing node with multiple occurrences because node no longer exists");
                     } catch (RepositoryException | ItemStateException | IOException e) {
                         if (log.isInfoEnabled()) {
-                            log.info("Could not reindex node with multiple occurrences", e);
+                            log.warn("Could not reindex node with multiple occurrences", e);
                         } else {
-                            log.info("Could not reindex node with multiple occurrences : {}", e.toString());
+                            log.warn("Could not reindex node with multiple occurrences : {}", e.toString());
                         }
                     }
                     messages.add(String.format("Fixed duplicate entry for node id '%s'", uuid));
