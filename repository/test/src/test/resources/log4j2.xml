@@ -99,7 +99,7 @@
     <Logger additivity="false" name="org.hippoecm.repository.quartz.JCRJobStore" level="warn">
       <AppenderRef ref="console"/>
     </Logger>
-    <Logger additivity="false" name="org.hippoecm.repository.jackrabbit.IndexRepairer" level="info">
+    <Logger additivity="false" name="org.hippoecm.repository.jackrabbit.IndexRepairer" level="warn">
       <AppenderRef ref="console"/>
     </Logger>
 
