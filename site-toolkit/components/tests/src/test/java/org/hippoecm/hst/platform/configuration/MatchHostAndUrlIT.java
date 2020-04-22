@@ -1371,4 +1371,28 @@ public class MatchHostAndUrlIT extends AbstractBeanTestCase {
             session.logout();
         }
     }
+
+    @Test
+    public void host_name_as_ip_address_works_even_though_it_contains_dots() throws Exception {
+        final Session session = createSession();
+        createHstConfigBackup(session);
+
+        try {
+
+            // unresolvable placeholder
+            session.move("/hst:hst/hst:hosts/testgroup/test/unit/www",
+                    "/hst:hst/hst:hosts/testgroup/127.0.0.9");
+
+            session.save();
+            invalidator.eventPaths("/hst:hst/hst:hosts/testgroup/test/unit/www", "/hst:hst/hst:hosts/testgroup");
+
+            VirtualHosts vhosts = hstSitesManager.getVirtualHosts();
+
+            assertNotNull(vhosts.matchVirtualHost("127.0.0.9"));
+
+        } finally {
+            restoreHstConfigBackup(session);
+            session.logout();
+        }
+    }
 }

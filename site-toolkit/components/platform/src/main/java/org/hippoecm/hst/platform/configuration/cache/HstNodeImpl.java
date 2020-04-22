@@ -142,9 +142,14 @@ public class HstNodeImpl implements HstNode {
             throw new ModelLoadingException(String.format("Could not replace placeholder '%s' because no such system " +
                     "property.", provider.getName()), true);
         }
+        if (substitutedName.equals(provider.getName())) {
+            // just return as is, might be a node name equal to for example 127.0.0.1 (and has not been substituted)
+            return String.valueOf(substitutedName);
+        }
+
         String name = String.valueOf(substitutedName);
         if (name.contains(".")) {
-            throw new ModelLoadingException(String.format("Invalid name '%s'", name));
+            throw new ModelLoadingException(String.format("Invalid substituted name '%s' for '%s'", name, provider.getName()));
         }
         return name;
     }
