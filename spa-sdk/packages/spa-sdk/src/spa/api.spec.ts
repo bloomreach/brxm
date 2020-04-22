@@ -98,7 +98,7 @@ describe('ApiImpl', () => {
       }));
     });
 
-    it('should include authorization header', async () => {
+    it('should include a custom authorization header', async () => {
       api.initialize({
         authorizationHeader: 'X-Auth',
         authorizationToken: 'token',
@@ -129,9 +129,9 @@ describe('ApiImpl', () => {
       }));
     });
 
-    it('should include server-id header', async () => {
+    it('should include a custom server-id header', async () => {
       api.initialize({
-        serverIdHeader: 'X-Server-Id',
+        serverIdHeader: 'X-Custom-Server-Id',
         serverId: 'some',
         httpClient: config.httpClient,
         request: { path: config.request.path },
@@ -140,7 +140,7 @@ describe('ApiImpl', () => {
 
       expect(config.httpClient).toBeCalledWith(expect.objectContaining({
         headers: {
-          'X-Server-Id': 'some',
+          'X-Custom-Server-Id': 'some',
         },
       }));
     });
@@ -155,7 +155,7 @@ describe('ApiImpl', () => {
 
       expect(config.httpClient).toBeCalledWith(expect.objectContaining({
         headers: {
-          serverid: 'some',
+          'X-Server-Id': 'some',
         },
       }));
     });
