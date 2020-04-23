@@ -211,4 +211,22 @@ public class EditingUtils {
         }
         return Optional.empty();
     }
+
+    /**
+     * <p>Get a backing JCR node of the draft variant of an editable document. If workflow or repository
+     * exceptions occur while getting the node an empty optional is returned and a warning is logged.</p>
+     *
+     * @param workflow {@link EditableWorkflow} for the desired document
+     * @param session  {@link Session} for obtaining the backing node
+     * @return {@link Node} or nothing, wrapped in an {@link Optional}
+     */
+    public static Optional<Node> getDraftNode(final EditableWorkflow workflow, final Session session) {
+        try {
+            final Document document = workflow.editDraft();
+            return Optional.of(document.getNode(session));
+        } catch (WorkflowException | RepositoryException | RemoteException e) {
+            log.warn("Failed to obtain draft for user '{}'.", session.getUserID(), e);
+        }
+        return Optional.empty();
+    }
 }
