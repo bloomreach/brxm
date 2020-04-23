@@ -21,12 +21,14 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.apache.commons.io.IOUtils;
 import org.assertj.core.api.Assertions;
+import org.hippoecm.hst.core.container.ContainerConstants;
 import org.hippoecm.hst.pagemodelapi.common.AbstractPageModelApiITCases;
 import org.hippoecm.hst.pagemodelapi.common.context.ApiVersionProvider;
 import org.hippoecm.hst.platform.configuration.hosting.MountService;
@@ -85,6 +87,26 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
         String actual = getActualJson("/spa/resourceapi", "1.0");
 
         InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_homepage.json");
+
+        assertions(actual, expected);
+    }
+
+
+    /**
+     * This test specifically confirms that _cmsinternal preview Channel Manager PMA requests will
+     * <ul>
+     *     <li>Have _cmsinternal in the PMA URLs</li>
+     *     <li>Won't have _cmsinternal in the URLs for (container) resources in the PMA response</li>
+     * </ul>
+     */
+    @Test
+    public void channel_manager_preview_homepage_api_compatibility_v10_assertion() throws Exception {
+
+        String actual = getActualJson("/_cmsinternal/spa/resourceapi", "1.0",
+                ContainerConstants.RENDERING_HOST  +"=localhost",
+                EDITOR_CREDS);
+
+        InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("preview_channel_mgr_pma_spec_homepage_.json");
 
         assertions(actual, expected);
     }
@@ -307,6 +329,40 @@ public class PageModelApiV10CompatibilityIT extends AbstractPageModelApiITCases 
             String actual = getActualJson("/spa/resourceapi", "1.0");
 
             InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("pma_spec_cdn_and_hst_url_prefix.json");
+
+            assertions(actual, expected);
+        } finally {
+            if (session != null) {
+                session.getNode(LOCALHOST_JCR_PATH).getProperty(GENERAL_PROPERTY_HST_LINK_URL_PREFIX).remove();
+                session.getNode(LOCALHOST_JCR_PATH).getProperty(VIRTUALHOST_PROPERTY_CDN_HOST).remove();
+                session.save();
+                session.logout();
+            }
+        }
+    }
+
+    /**
+     * Also with CND host, no _cmsinternal should be present for (container) resources
+     */
+    @Test
+    public void channel_manager_preview_cdn_host_and_hst_link_prefix_request() throws Exception {
+        Session session = null;
+        try {
+
+            session = createSession("admin", "admin");
+
+            session.getNode(LOCALHOST_JCR_PATH).setProperty(GENERAL_PROPERTY_HST_LINK_URL_PREFIX, "http://www.example.com");
+            session.getNode(LOCALHOST_JCR_PATH).setProperty(VIRTUALHOST_PROPERTY_CDN_HOST, "http://cdn.example.com");
+            session.save();
+
+            // trigger direct invalidation of model without waiting for jcr event
+            eventPathsInvalidator.eventPaths(LOCALHOST_JCR_PATH);
+
+            String actual = getActualJson("/_cmsinternal/spa/resourceapi", "1.0", null, EDITOR_CREDS);
+
+            System.out.println(actual);
+
+            InputStream expected = PageModelApiV10CompatibilityIT.class.getResourceAsStream("preview_channel_mgr_pma_spec_cdn_and_hst_url_prefix.json");
 
             assertions(actual, expected);
         } finally {

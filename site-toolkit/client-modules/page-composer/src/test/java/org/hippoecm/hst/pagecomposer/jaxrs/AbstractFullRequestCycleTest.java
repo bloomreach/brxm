@@ -1,5 +1,5 @@
 /*
- *  Copyright 2016-2018 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,13 +16,9 @@
 package org.hippoecm.hst.pagecomposer.jaxrs;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.jcr.Credentials;
-import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
@@ -37,6 +33,7 @@ import javax.servlet.http.HttpSession;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.hippoecm.hst.container.HstFilter;
+import org.hippoecm.hst.mock.core.request.MockCmsSessionContext;
 import org.hippoecm.hst.pagecomposer.jaxrs.cxf.PrivilegesAllowedInvokerPreprocessor;
 import org.hippoecm.hst.pagecomposer.jaxrs.services.repositorytests.fullrequestcycle.ConfigurationLockedTest;
 import org.junit.Before;
@@ -114,7 +111,7 @@ public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
             mockHttpSession = (MockHttpSession)request.getSession();
         }
 
-        final CmsSessionContextMock cmsSessionContext = new CmsSessionContextMock(authenticatedCmsUser);
+        final MockCmsSessionContext cmsSessionContext = new MockCmsSessionContext(authenticatedCmsUser);
         mockHttpSession.setAttribute(CmsSessionContext.SESSION_KEY, cmsSessionContext);
         if (mountId != null) {
             cmsSessionContext.getContextPayload().put(CMS_REQUEST_RENDERING_MOUNT_ID, mountId);
@@ -168,7 +165,10 @@ public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
         request.addHeader("hostGroup", "dev-localhost");
         // the context path of the site that is being edited
         request.addHeader("contextPath", "/site");
-        request.setPathInfo(pathInfo);
+        // for full request tests, we mimic the HstFilter: for a servlet filter, the servlet path is equal to the pathInfo
+        // and the pathInfo is null : HstDelegateeFilterBean later on sets these values correct
+        request.setServletPath(pathInfo);
+        request.setPathInfo(null);
         request.setContextPath(PLATFORM_CONTEXT_PATH);
         request.setRequestURI(PLATFORM_CONTEXT_PATH + pathInfo);
         request.setMethod(method);
@@ -210,36 +210,6 @@ public class AbstractFullRequestCycleTest extends AbstractComponentManagerTest {
             return (CmsSessionContext)session.getAttribute(CmsSessionContext.SESSION_KEY);
         }
 
-    }
-
-    public static class CmsSessionContextMock implements CmsSessionContext {
-
-        private SimpleCredentials credentials;
-        private Map<String, Serializable> contextPayload = new HashMap<>();
-
-        public CmsSessionContextMock(Credentials credentials) {
-            this.credentials = (SimpleCredentials)credentials;
-        }
-
-        @Override
-        public String getId() {
-            return null;
-        }
-
-        @Override
-        public String getCmsContextServiceId() {
-            return null;
-        }
-
-        @Override
-        public Object get(final String key) {
-            return CmsSessionContext.REPOSITORY_CREDENTIALS.equals(key) ? credentials : null;
-        }
-
-        @Override
-        public Map<String, Serializable> getContextPayload() {
-            return contextPayload;
-        }
     }
 
     public static class ForbiddenException extends RuntimeException {
