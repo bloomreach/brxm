@@ -17,12 +17,14 @@ package org.onehippo.repository.documentworkflow.integration;
 
 import java.rmi.RemoteException;
 
+import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 
 import org.hippoecm.repository.api.Document;
 import org.hippoecm.repository.api.WorkflowException;
 import org.junit.Assert;
 import org.junit.Test;
+import org.onehippo.repository.documentworkflow.DocumentHandle;
 import org.onehippo.repository.documentworkflow.DocumentVariant;
 import org.onehippo.repository.documentworkflow.DocumentWorkflow;
 
@@ -63,8 +65,11 @@ public class DocumentWorkflowKeepDraftTest extends AbstractDocumentWorkflowInteg
 
     private DocumentVariant getDocumentVariantAfterConsecutiveEditKeepDraftEditDraftAndSave() throws RepositoryException, WorkflowException, RemoteException {
         getDocumentVariantAfterConsecutiveEditKeepDraftAndEditDraft();
-        final Document document = workflow.commitEditableInstance();
-        return getDocumentVariant(document);
+        workflow.commitEditableInstance();
+        final Node handle = workflow.getNode();
+        final DocumentHandle documentHandle = new DocumentHandle(handle);
+        documentHandle.initialize();
+        return documentHandle.getDocuments().get("draft");
     }
 
     private DocumentVariant getDocumentVariantAfterConsecutiveEditKeepDraftAndEditDraft() throws RepositoryException, WorkflowException, RemoteException {
