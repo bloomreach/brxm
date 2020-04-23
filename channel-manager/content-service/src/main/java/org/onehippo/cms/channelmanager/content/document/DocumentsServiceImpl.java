@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2019 Hippo B.V. (http://www.onehippo.com)
+ * Copyright 2016-2020 Hippo B.V. (http://www.onehippo.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,7 +92,7 @@ import static org.onehippo.repository.branch.BranchConstants.MASTER_BRANCH_ID;
  * editable instance of a document will not give the correct available workflow actions. This implementation takes
  * that situation into account by retrieving the workflow actions from a Document that is not yet in edit mode.
  */
-public class DocumentsServiceImpl implements DocumentsService {
+public class DocumentsServiceImpl implements DocumentsService, SaveDraftDocumentService {
 
     private static final Logger log = LoggerFactory.getLogger(DocumentsServiceImpl.class);
 
@@ -108,7 +108,7 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public Document getDocument(final String uuid, final String branchId, final UserContext userContext) throws ErrorWithPayloadException {
+    public Document getDocument(final String uuid, final String branchId, final UserContext userContext) {
         final Node handle = getHandle(uuid, userContext.getSession());
         final DocumentType docType = getDocumentType(handle, userContext);
 
@@ -144,7 +144,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 
     @Override
     public Document branchDocument(final String uuid, final String branchId, final UserContext userContext)
-            throws ErrorWithPayloadException {
+            {
 
         final Node handle = getHandle(uuid, userContext.getSession());
         final DocumentWorkflow workflow = getDocumentWorkflow(handle);
@@ -176,7 +176,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         return document;
     }
 
-    private static boolean isDocumentDirty(final Node handle, final DocumentType docType, final Document document) {
+    static boolean isDocumentDirty(final Node handle, final DocumentType docType, final Document document) {
         return WorkflowUtils.getDocumentVariantNode(handle, Variant.UNPUBLISHED)
                 .map(unpublished -> {
                     final Map<String, List<FieldValue>> unpublishedFields = new HashMap<>();
@@ -186,7 +186,7 @@ public class DocumentsServiceImpl implements DocumentsService {
                 .orElse(false);
     }
 
-    private Set<String> getExistingBranches(final DocumentWorkflow workflow) throws InternalServerErrorException {
+    private Set<String> getExistingBranches(final DocumentWorkflow workflow) {
         try {
             return workflow.listBranches();
         } catch (WorkflowException e) {
@@ -195,8 +195,11 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public Document obtainEditableDocument(final String uuid, final String branchId, final UserContext userContext)
-            throws ErrorWithPayloadException {
+    public Document obtainEditableDocument(final String uuid, final String branchId, final UserContext userContext) {
+
+        if (canEditDraft(uuid, userContext)) {
+            editDraft(uuid, userContext);
+        }
 
         final Session session = userContext.getSession();
         final Node handle = getHandle(uuid, session);
@@ -297,8 +300,18 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
+    public Document editDraft(final String uuid, final UserContext userContext) {
+        return new JcrSaveDraftDocumentService().editDraft(uuid, userContext);
+    }
+
+    @Override
+    public boolean canEditDraft(final String identifier, final UserContext userContext) {
+       return new JcrSaveDraftDocumentService().canEditDraft(identifier, userContext);
+    }
+
+    @Override
     public List<FieldValue> updateEditableField(final String uuid, final String branchId, final FieldPath fieldPath,
-                                                final List<FieldValue> fieldValues, final UserContext userContext) throws ErrorWithPayloadException {
+                                                final List<FieldValue> fieldValues, final UserContext userContext) {
 
         final Session session = userContext.getSession();
         final Node handle = getHandle(uuid, session);
@@ -334,7 +347,7 @@ public class DocumentsServiceImpl implements DocumentsService {
 
     @Override
     public void discardEditableDocument(final String uuid, final String branchId, final UserContext userContext)
-            throws ErrorWithPayloadException {
+            {
         final Node handle = getHandle(uuid, userContext.getSession());
         final EditableWorkflow workflow = getEditableWorkflow(handle);
 
@@ -352,7 +365,7 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public Document createDocument(final NewDocumentInfo newDocumentInfo, final UserContext userContext) throws ErrorWithPayloadException {
+    public Document createDocument(final NewDocumentInfo newDocumentInfo, final UserContext userContext) {
         final String name = checkNotBlank("name", newDocumentInfo.getName());
         final String slug = checkNotBlank("slug", newDocumentInfo.getSlug());
         final String documentTemplateQuery = checkNotBlank("documentTemplateQuery", newDocumentInfo.getDocumentTemplateQuery());
@@ -378,7 +391,7 @@ public class DocumentsServiceImpl implements DocumentsService {
             throw new ConflictException(new ErrorInfo(Reason.SLUG_ALREADY_EXISTS));
         }
 
-        final DocumentType documentType = DocumentTypesService.get().getDocumentType(documentTypeId, userContext);
+        final DocumentType documentType = getDocumentTypeByNodeTypeIdentifier(userContext, documentTypeId);
         if (documentType.isReadOnlyDueToUnsupportedValidator()) {
             throw new ForbiddenException(new ErrorInfo(Reason.CREATE_WITH_UNSUPPORTED_VALIDATOR));
         }
@@ -405,7 +418,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
     }
 
-    private static Document getCreatedDocument(final Node handle, final DocumentType documentType) throws ErrorWithPayloadException, RepositoryException {
+    private static Document getCreatedDocument(final Node handle, final DocumentType documentType) throws RepositoryException {
         final Node draftNode = WorkflowUtils.getDocumentVariantNode(handle, Variant.DRAFT)
                 .orElseThrow(() -> new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR)));
         return createDocument(handle.getIdentifier(), handle, documentType, draftNode);
@@ -418,7 +431,7 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public Document updateDocumentNames(final String uuid, final String branchId, final Document document, final UserContext userContext) throws ErrorWithPayloadException {
+    public Document updateDocumentNames(final String uuid, final String branchId, final Document document, final UserContext userContext) {
         final String displayName = checkNotBlank("displayName", document.getDisplayName());
         final String urlName = checkNotBlank("urlName", document.getUrlName());
 
@@ -460,7 +473,7 @@ public class DocumentsServiceImpl implements DocumentsService {
     }
 
     @Override
-    public void deleteDocument(final String uuid, final String branchId, final UserContext userContext) throws ErrorWithPayloadException {
+    public void deleteDocument(final String uuid, final String branchId, final UserContext userContext) {
         final Node handle = getHandle(uuid, userContext.getSession());
         final DocumentWorkflow documentWorkflow = getDocumentWorkflow(handle);
 
@@ -491,7 +504,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
     }
 
-    private static void archiveDocument(final String uuid, final DocumentWorkflow documentWorkflow) throws InternalServerErrorException {
+    private static void archiveDocument(final String uuid, final DocumentWorkflow documentWorkflow) {
         try {
             log.info("Archiving document '{}'", uuid);
             documentWorkflow.delete();
@@ -501,7 +514,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
     }
 
-    private static void eraseDocument(final String uuid, final FolderWorkflow folderWorkflow, final Item handle) throws InternalServerErrorException {
+    private static void eraseDocument(final String uuid, final FolderWorkflow folderWorkflow, final Item handle) {
         try {
             log.info("Erasing document '{}'", uuid);
             folderWorkflow.delete(handle.getName());
@@ -511,7 +524,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         }
     }
 
-    private static String checkNotBlank(final String propName, final String propValue) throws BadRequestException {
+    private static String checkNotBlank(final String propName, final String propValue){
         if (StringUtils.isBlank(propValue)) {
             final String errorMessage = "Property '" + propName + "' cannot be blank or null";
             log.warn(errorMessage);
@@ -520,18 +533,26 @@ public class DocumentsServiceImpl implements DocumentsService {
         return propValue;
     }
 
-    private static DocumentType getDocumentType(final Node handle, final UserContext userContext) throws InternalServerErrorException {
-        final String id = DocumentUtils.getVariantNodeType(handle).orElseThrow(() -> new InternalServerErrorException(new ErrorInfo(Reason.DOES_NOT_EXIST)));
+    static DocumentType getDocumentType(final Node handle, final UserContext userContext) {
+        final String id = getVariantNodeType(handle).orElseThrow(() -> new InternalServerErrorException(new ErrorInfo(Reason.DOES_NOT_EXIST)));
 
         try {
-            return DocumentTypesService.get().getDocumentType(id, userContext);
+            return getDocumentTypeByNodeTypeIdentifier(userContext, id);
         } catch (final ErrorWithPayloadException e) {
             log.warn("Failed to retrieve type of document '{}'", getNodePathQuietly(handle), e);
             throw new InternalServerErrorException(new ErrorInfo(Reason.SERVER_ERROR));
         }
     }
 
-    private static Document assembleDocument(final String uuid, final Node handle, final Node variant, final DocumentType docType) {
+    static DocumentType getDocumentTypeByNodeTypeIdentifier(final UserContext userContext, final String id) {
+        return DocumentTypesService.get().getDocumentType(id, userContext);
+    }
+
+    static Optional<String> getVariantNodeType(final Node handle) {
+        return DocumentUtils.getVariantNodeType(handle);
+    }
+
+    static Document assembleDocument(final String uuid, final Node handle, final Node variant, final DocumentType docType) {
         final Document document = new Document();
         document.setId(uuid);
 
@@ -566,7 +587,7 @@ public class DocumentsServiceImpl implements DocumentsService {
         documentInfo.setLocale(DocumentLocaleUtils.getDocumentLocale(variant));
     }
 
-    private static ErrorInfo withDocumentInfo(final ErrorInfo errorInfo, final Node handle) {
+    static ErrorInfo withDocumentInfo(final ErrorInfo errorInfo, final Node handle) {
         DocumentUtils.getDisplayName(handle).ifPresent(displayName -> errorInfo.addParam("displayName", displayName));
 
         final PublicationState publicationState = PublicationStateUtils.getPublicationStateFromHandle(handle);
@@ -579,5 +600,6 @@ public class DocumentsServiceImpl implements DocumentsService {
         return hintsInspector.determineEditingFailure(branchId, hints, session)
                 .orElseGet(() -> new ErrorInfo(ErrorInfo.Reason.NO_HOLDER));
     }
+
 
 }
