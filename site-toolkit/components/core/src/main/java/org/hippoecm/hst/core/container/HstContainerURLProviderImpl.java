@@ -401,6 +401,13 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
     }
 
     public String toURLString(HstContainerURL containerURL, HstRequestContext requestContext, String contextPath) throws UnsupportedEncodingException, ContainerException {
+        return toURLString(containerURL, requestContext, contextPath, false);
+    }
+
+    @Override
+    public String toURLString(final HstContainerURL containerURL, final HstRequestContext requestContext, final String contextPath,
+                              final boolean containerResource) throws UnsupportedEncodingException, ContainerException {
+
         StringBuilder urlBuilder = new StringBuilder(100);
 
         if (contextPath != null) {
@@ -410,8 +417,16 @@ public class HstContainerURLProviderImpl implements HstContainerURLProvider {
             urlBuilder.append(containerURL.getContextPath());
         }
         // if there is a matchingIgnoredPrefix on the ResolvedMount, we include it here again after the contextpath
+        // UNLESS the url is for a containerResource and the current request is a PageModelAPI request: Namely for the
+        // PageModelAPI, we never want something like _cmsinternal to be present in the URL for container resources (eg
+        // binaries)
         if(!StringUtils.isEmpty(requestContext.getResolvedMount().getMatchingIgnoredPrefix())) {
-            urlBuilder.append('/').append(requestContext.getResolvedMount().getMatchingIgnoredPrefix());
+            if (requestContext.isPageModelApiRequest() && containerResource) {
+                log.debug("Do not include '{}' for url since url is meant for a container resource in the context of a " +
+                        "PageModelApi request", requestContext.getResolvedMount().getMatchingIgnoredPrefix());
+            } else {
+                urlBuilder.append('/').append(requestContext.getResolvedMount().getMatchingIgnoredPrefix());
+            }
         }
 
         String resourceWindowReferenceNamespace = containerURL.getResourceWindowReferenceNamespace();

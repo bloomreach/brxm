@@ -1,5 +1,5 @@
 /*
- *  Copyright 2008-2013 Hippo B.V. (http://www.onehippo.com)
+ *  Copyright 2008-2020 Hippo B.V. (http://www.onehippo.com)
  * 
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -101,13 +101,26 @@ public class HstURLImpl implements HstURL {
     public void write(Writer out, boolean escapeXML) throws IOException {
         write(out);
     }
-    
+
+    /**
+     * @return {@link #toString() toString(false)}
+     */
     public String toString() {
+        return toString(false);
+    }
+
+    /**
+     *
+     * @param containerResource
+     * @return returns String representation of HstURLImpl, possibly depending on whether {@code containerResource} is
+     * true or false
+     */
+    public String toString(final boolean containerResource) {
         HstContainerURL containerURL = this.urlProvider.createURL(this.baseContainerURL, this);
         containerURL.setResourceId(getResourceID());
-        
+
         try {
-            return this.urlProvider.toURLString(containerURL, requestContext, explicitContextPath);
+            return this.urlProvider.toURLString(containerURL, requestContext, explicitContextPath, containerResource);
         } catch (UnsupportedEncodingException e) {
             throw new HstComponentException(e);
         } catch (ContainerException e) {
